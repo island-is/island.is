@@ -43,14 +43,34 @@ describe('paymentFlow.utils', () => {
       expect(determinePaymentMethods(charges)).toEqual([PaymentMethod.CARD])
     })
 
-    it('should filter out unsupported payment methods', () => {
+    it('should map the FJS TRANSFER token to bank transfer when common to all charges', () => {
       const charges = [
         {
           paymentOptions: [
             FjsPaymentMethod.CARD,
-            FjsPaymentMethod.TRANSFER,
-            'random-payment-method',
+            FjsPaymentMethod.BANK_TRANSFER,
           ],
+        },
+        {
+          paymentOptions: [
+            FjsPaymentMethod.CARD,
+            FjsPaymentMethod.BANK_TRANSFER,
+          ],
+        },
+      ] as CatalogItemWithQuantity[]
+
+      const paymentMethods = determinePaymentMethods(charges)
+
+      expect(paymentMethods).toEqual([
+        PaymentMethod.CARD,
+        PaymentMethod.BANK_TRANSFER,
+      ])
+    })
+
+    it('should filter out unsupported payment methods', () => {
+      const charges = [
+        {
+          paymentOptions: [FjsPaymentMethod.CARD, 'random-payment-method'],
         },
       ] as CatalogItemWithQuantity[]
 

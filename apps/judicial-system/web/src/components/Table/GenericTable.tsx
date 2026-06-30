@@ -147,7 +147,7 @@ const GenericTable = <Cell,>({
                         render={
                           <motion.div
                             className={styles.contextMenuButton}
-                            aria-label="Valmynd"
+                            aria-label={`Frekari aðgerðir fyrir mál ${r.id}`}
                             key={r.id}
                             initial={{ opacity: 1 }}
                             animate={{ opacity: 1, y: 1 }}

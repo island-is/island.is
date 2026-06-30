@@ -21,14 +21,14 @@ const CustomsGeneralStorageLocations = () => {
   const [selectedDate] = useState<Date>(new Date())
 
   const columns = [
-    {
-      key: 'nationalId' as const,
-      label: formatMessage(m.storageLocationNationalId),
-    },
     { key: 'code' as const, label: formatMessage(m.storageLocationCode) },
     {
       key: 'companyName' as const,
       label: formatMessage(m.storageLocationCompanyName),
+    },
+    {
+      key: 'nationalId' as const,
+      label: formatMessage(m.storageLocationNationalId),
     },
     {
       key: 'location' as const,

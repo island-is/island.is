@@ -10,6 +10,12 @@ Payment flows are fetched by the payments web app (apps/payments) and rendered t
 
 When integrating to create a payment flow, be sure to check the Organization model in Contentful and make sure "kennitala" is not empty. This model is used to fetch the name and logo of the organization in the payment flow.
 
+## Bank transfer
+
+Direct bank-to-bank payment method (Blikk is the current provider). For the full flow through
+the service, the payer-facing screens, and what happens for each provider payment status, see
+[Bank transfer payment method](./src/app/bankTransferPayment/README.md).
+
 ## Payment worker
 
 ### What it does

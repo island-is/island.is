@@ -98,7 +98,7 @@ describe('IndictmentCountsList', () => {
       </IntlProviderWrapper>,
     )
 
-  it('renders section title Ákæruliðir', () => {
+  it('renders section title Ákæruliðir', async () => {
     const workingCase = createWorkingCase([
       {
         id: 'count-1',
@@ -111,7 +111,7 @@ describe('IndictmentCountsList', () => {
 
     renderComponent(workingCase)
 
-    expect(screen.getByText('Ákæruliðir')).toBeInTheDocument()
+    expect(await screen.findByText('Ákæruliðir')).toBeInTheDocument()
   })
 
   it('calls reorder with chronological displayOrder when sort button is clicked', async () => {

@@ -170,7 +170,7 @@ const CaseFileTable: FC<Props> = ({
                       render={
                         <motion.div
                           className={tableStyles.contextMenuButton}
-                          aria-label="Valmynd"
+                          aria-label={`Valmynd fyrir ${file.name}`}
                           key={file.id}
                           initial={{ opacity: 1 }}
                           animate={{ opacity: 1, y: 1 }}

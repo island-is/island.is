@@ -18,6 +18,7 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import { NationalRegistryV3Service } from '../../shared/api/national-registry-v3/national-registry-v3.service'
 import { sortAlpha } from '@island.is/shared/utils'
+import { getCeremonyPlace } from './marriage-conditions-submission.utils'
 import { TemplateApiError } from '@island.is/nest/problem'
 import {
   coreErrorMessages,
@@ -165,12 +166,7 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
       signed: true,
       type: person.type,
     }))
-    const ceremonyPlace: string =
-      ceremony.place?.ceremonyPlace === 'office' && ceremony.place?.office
-        ? ceremony.place?.office
-        : ceremony.place?.society
-        ? ceremony.place?.society
-        : ''
+    const ceremonyPlace: string = getCeremonyPlace(ceremony)
 
     const extraData: { [key: string]: string } = {
       vigsluDagur:

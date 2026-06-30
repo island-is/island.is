@@ -254,6 +254,11 @@ export const m = defineMessages({
     defaultMessage: 'Einstaklingur í umboði lögaðila',
     description: 'Individual on behalf of a legal entity',
   },
+  legalGuardianOnBehalfOfIndividual: {
+    id: 'form.system:legal-guardian-on-behalf-of-individual',
+    defaultMessage: 'Forsjáraðili í umboði einstaklings',
+    description: 'Legal guardian on behalf of an individual',
+  },
   individualWithPowerOfAttorney: {
     id: 'form.system:individual-with-power-of-attorney',
     defaultMessage: 'Einstaklingur með prókúru',

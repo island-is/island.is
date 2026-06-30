@@ -270,10 +270,12 @@ export const getDefenceUserPartyIds = (
 /**
  * Returns a human-readable description of who appealed and when.
  *
- * Branches by case type, then by appeal kind for indictment cases:
+ * Branches by case type, then by appeal kind for indictment cases. The
+ * prosecutor term differs by case type: request (R) cases say "sækjandi",
+ * indictment (S) cases say "ákærandi".
  * - Request cases (case-level appeals only): in-court branch + "Kært af X"
  *   passive form.
- * - Indictment ruling-order appeals: subject-verb form ("Sækjandi kærði
+ * - Indictment ruling-order appeals: subject-verb form ("Ákærandi kærði
  *   úrskurðinn …").
  * - Indictment case-level appeals (dismissal): same passive form as request
  *   cases out-of-court — no in-court mechanic.
@@ -317,7 +319,7 @@ export const getAppealActorText = (
     const dateStr = formatDate(appealCase.appealedDate, 'PPPp')
 
     if (appealCase.appealedByRole === UserRole.PROSECUTOR) {
-      return `Sækjandi kærði úrskurðinn ${dateStr}`
+      return `Ákærandi kærði úrskurðinn ${dateStr}`
     }
 
     const party = getAppealingPartyInfo(
@@ -334,7 +336,7 @@ export const getAppealActorText = (
   const dateStr = formatDate(appealCase?.appealedDate, 'PPPp')
 
   if (appealCase?.appealedByRole === UserRole.PROSECUTOR) {
-    return `Kært af sækjanda ${dateStr}`
+    return `Kært af ákæranda ${dateStr}`
   }
 
   const party = getAppealingPartyInfo(

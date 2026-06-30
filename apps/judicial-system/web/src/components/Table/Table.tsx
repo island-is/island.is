@@ -360,7 +360,11 @@ const Table: FC<TableProps> = (props) => {
                             render={
                               <motion.div
                                 className={styles.contextMenuButton}
-                                aria-label="Valmynd"
+                                aria-label={`Valmynd fyrir mál ${
+                                  row.courtCaseNumber ??
+                                  row.policeCaseNumbers?.[0] ??
+                                  row.id
+                                }`}
                                 key={row.id}
                                 initial={{ opacity: 1 }}
                                 animate={{ opacity: 1, y: 1 }}
