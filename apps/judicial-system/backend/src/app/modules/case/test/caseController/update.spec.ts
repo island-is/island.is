@@ -1230,6 +1230,7 @@ describe('CaseController - Update', () => {
         isSentToPrisonAdmin: false,
         indictmentReviewDecision: null,
         publicProsecutorIsRegisteredInPoliceSystem: null,
+        isDrivingLicenseSuspended: null,
       }
       expect(mockDefendantService.updateDatabaseDefendant).toHaveBeenCalledWith(
         caseId,
