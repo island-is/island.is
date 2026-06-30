@@ -13,7 +13,18 @@ import { m } from '../../lib/messages'
 import { Problem } from '@island.is/react-spa/shared'
 import { EmptyTable } from '../EmptyTable/EmptyTable'
 
-interface TableProps<TData extends object> {
+/**
+ * Portal-specific wrapper around `InteractiveTable` from `@island.is/island-ui/core`.
+ *
+ * Adds on top of `InteractiveTable`:
+ * - `error: ApolloError` → renders `<Problem>` (instead of a plain error string)
+ * - `loading` → renders `<EmptyTable loading />` skeleton
+ * - `emptyMessage` accepts `MessageDescriptor` in addition to `string`
+ * - Icelandic defaults for `srCaption` and `sortHint` via portal messages
+ *
+ * Prefer using `InteractiveTable` directly when you don't need these portal conveniences.
+ */
+interface PortalTableProps<TData extends object> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   columns: ColumnDef<TData, any>[]
   data: TData[]
@@ -31,7 +42,7 @@ interface TableProps<TData extends object> {
   meta?: TableMeta<TData>
 }
 
-export const Table = <TData extends object>({
+export const PortalTable = <TData extends object>({
   columns,
   data,
   loading,
@@ -46,7 +57,7 @@ export const Table = <TData extends object>({
   defaultSorting,
   srCaption,
   meta,
-}: TableProps<TData>) => {
+}: PortalTableProps<TData>) => {
   const { formatMessage } = useLocale()
 
   if (error) {
@@ -81,7 +92,7 @@ export const Table = <TData extends object>({
   )
 }
 
-export default Table
+export default PortalTable
 export type {
   ColumnDef,
   Row,
