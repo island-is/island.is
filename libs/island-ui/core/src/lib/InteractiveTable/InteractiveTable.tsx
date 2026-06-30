@@ -558,7 +558,7 @@ export const InteractiveTable = <TData extends object>({
   return (
     <>
       <Hidden above="sm">{mobileView}</Hidden>
-      <Hidden below="sm">{desktopTable}</Hidden>
+      <Hidden below="md">{desktopTable}</Hidden>
     </>
   )
 }
