@@ -26,6 +26,7 @@ import {
   hasSentNotification,
   isAppealFileCategoryVisible,
   mapStringToGender,
+  reconcileAppealDecisionsForRulingFileChange,
 } from './utils'
 
 describe('Utils', () => {
@@ -564,6 +565,60 @@ describe('Utils', () => {
           `Verjandi kærði úrskurðinn ${dateStr}`,
         )
       })
+    })
+  })
+
+  describe('reconcileAppealDecisionsForRulingFileChange', () => {
+    const decisions = [
+      { id: 'd1', rulingFileId: 'file-a' },
+      { id: 'd2', rulingFileId: 'file-a' },
+      { id: 'd3', rulingFileId: 'other-file' },
+    ] as unknown as Case['appealDecisions']
+
+    it('re-keys the ruling decisions onto the new file on a swap', () => {
+      expect(
+        reconcileAppealDecisionsForRulingFileChange(
+          decisions,
+          'file-a',
+          'file-b',
+        ),
+      ).toEqual([
+        { id: 'd1', rulingFileId: 'file-b' },
+        { id: 'd2', rulingFileId: 'file-b' },
+        { id: 'd3', rulingFileId: 'other-file' },
+      ])
+    })
+
+    it('drops the ruling decisions on removal (no new file)', () => {
+      expect(
+        reconcileAppealDecisionsForRulingFileChange(decisions, 'file-a', null),
+      ).toEqual([{ id: 'd3', rulingFileId: 'other-file' }])
+    })
+
+    it('is a no-op when the ruling file is unchanged', () => {
+      expect(
+        reconcileAppealDecisionsForRulingFileChange(
+          decisions,
+          'file-a',
+          'file-a',
+        ),
+      ).toBe(decisions)
+    })
+
+    it('is a no-op when there was no previous ruling file', () => {
+      expect(
+        reconcileAppealDecisionsForRulingFileChange(decisions, null, 'file-b'),
+      ).toBe(decisions)
+    })
+
+    it('handles missing appeal decisions', () => {
+      expect(
+        reconcileAppealDecisionsForRulingFileChange(
+          undefined,
+          'file-a',
+          'file-b',
+        ),
+      ).toBeUndefined()
     })
   })
 

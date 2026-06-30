@@ -406,6 +406,38 @@ export const getAppealingPartyInfo = (
 }
 
 /**
+ * Mirrors the backend's ruling-link reconciliation on the working case so the
+ * in-court appeal decision cards stay in sync when a court session's ruling
+ * order file changes:
+ * - swap (old -> new file): re-key the ruling's decisions onto the new file;
+ * - removal (old -> none, ruling type left ORDER): drop the ruling's decisions.
+ * Decisions are matched on `rulingFileId`, so without this the cards would look
+ * empty after a change even though the rows still exist (under the new file) or
+ * were deleted on the server.
+ */
+export const reconcileAppealDecisionsForRulingFileChange = (
+  appealDecisions: Case['appealDecisions'],
+  previousRulingFileId: string | null | undefined,
+  nextRulingFileId: string | null | undefined,
+): Case['appealDecisions'] => {
+  if (!previousRulingFileId || previousRulingFileId === nextRulingFileId) {
+    return appealDecisions
+  }
+
+  if (nextRulingFileId) {
+    return appealDecisions?.map((decision) =>
+      decision.rulingFileId === previousRulingFileId
+        ? { ...decision, rulingFileId: nextRulingFileId }
+        : decision,
+    )
+  }
+
+  return appealDecisions?.filter(
+    (decision) => decision.rulingFileId !== previousRulingFileId,
+  )
+}
+
+/**
  * Returns true iff the file's category is visible per the appeal-state rules,
  * given the specific appeal-case row in scope. Encodes:
  * - Brief categories: visible iff the appellant's role matches.

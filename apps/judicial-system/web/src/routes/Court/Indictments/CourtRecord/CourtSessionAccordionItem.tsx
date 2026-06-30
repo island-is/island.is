@@ -72,6 +72,7 @@ import {
   useOnceOn,
   useUsers,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { reconcileAppealDecisionsForRulingFileChange } from '@island.is/judicial-system-web/src/utils/utils'
 import { isCourtSessionValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { SelectRepresentative } from '../../../Shared/AddFiles/SelectCaseFileRepresentative'
@@ -195,12 +196,27 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       updates: Partial<CourtSessionResponse>,
       { persist = false } = {},
     ) => {
-      setWorkingCase((prev) => ({
-        ...prev,
-        courtSessions: prev.courtSessions?.map((session) =>
+      setWorkingCase((prev) => {
+        const courtSessions = prev.courtSessions?.map((session) =>
           session.id === courtSessionId ? { ...session, ...updates } : session,
-        ),
-      }))
+        )
+
+        // Changing a session's ruling order file re-keys (swap) or discards
+        // (removal) that ruling's appeal decisions on the backend. Mirror it on
+        // the working case so the decision cards keep their selections.
+        const appealDecisions =
+          'rulingFileId' in updates
+            ? reconcileAppealDecisionsForRulingFileChange(
+                prev.appealDecisions,
+                prev.courtSessions?.find(
+                  (session) => session.id === courtSessionId,
+                )?.rulingFileId,
+                updates.rulingFileId,
+              )
+            : prev.appealDecisions
+
+        return { ...prev, courtSessions, appealDecisions }
+      })
 
       if (persist) {
         const { courtSessionStrings, ...courtSessionUpdate } = updates
