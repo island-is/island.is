@@ -11,8 +11,12 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import { CourtDocumentType } from '@island.is/judicial-system/types'
+import {
+  CaseFileCategory,
+  CourtDocumentType,
+} from '@island.is/judicial-system/types'
 
+import { CaseFile } from '../models/caseFile.model'
 import { CourtDocument } from '../models/courtDocument.model'
 import { CourtSession } from '../models/courtSession.model'
 
@@ -61,6 +65,8 @@ export class CourtDocumentRepositoryService {
     private readonly courtDocumentModel: typeof CourtDocument,
     @InjectModel(CourtSession)
     private readonly courtSessionModel: typeof CourtSession,
+    @InjectModel(CaseFile)
+    private readonly caseFileModel: typeof CaseFile,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -497,15 +503,42 @@ export class CourtDocumentRepositoryService {
       const transaction = options.transaction
 
       // Get all court documents that are not yet filed in a court session
-      const courtDocumentsToFile = await this.courtDocumentModel.findAll({
-        attributes: ['id', 'created'],
+      const candidateCourtDocuments = await this.courtDocumentModel.findAll({
+        attributes: ['id', 'created', 'caseFileId'],
         where: { caseId, courtSessionId: null, documentOrder: 0 },
         order: [['created', 'ASC']],
         transaction,
       })
 
+      // Court documents backed by an "Önnur gögn" case file
+      // (CaseFileCategory.CASE_FILE) must NOT be auto-filed onto the court
+      // record. They stay unfiled so court users can file them manually.
+      // Generated documents (indictment, skjalaskrá, subpoenas) have no
+      // backing case file (caseFileId == null) and are always auto-filed, as
+      // are party-category case files.
+      const candidateCaseFileIds = candidateCourtDocuments
+        .map((d) => d.caseFileId)
+        .filter((id): id is string => Boolean(id))
+
+      const excludedCaseFileIds = new Set<string>()
+      if (candidateCaseFileIds.length > 0) {
+        const caseFiles = await this.caseFileModel.findAll({
+          attributes: ['id'],
+          where: {
+            id: candidateCaseFileIds,
+            category: CaseFileCategory.CASE_FILE,
+          },
+          transaction,
+        })
+        caseFiles.forEach((cf) => excludedCaseFileIds.add(cf.id))
+      }
+
+      const courtDocumentsToFile = candidateCourtDocuments.filter(
+        (d) => !d.caseFileId || !excludedCaseFileIds.has(d.caseFileId),
+      )
+
       if (courtDocumentsToFile.length === 0) {
-        this.logger.debug(`No filed documents to merge from case ${caseId}`)
+        this.logger.debug(`No available court documents to file in case ${caseId}`)
         return
       }
 
