@@ -24,14 +24,19 @@ import {
   CaseAppealDecision,
   CaseFileCategory,
   CourtSessionRulingType,
+  EventType,
   IndictmentCaseNotificationType,
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
+import { EventLogService } from '../event-log'
+import { FileService } from '../file'
 import {
+  AppealCase,
   AppealCaseRepositoryService,
   AppealDecision,
   AppealDecisionRepositoryService,
+  AppealEventLogRepositoryService,
   Case,
   CourtSession,
   CourtSessionRepositoryService,
@@ -42,12 +47,32 @@ import { CourtSessionAppealDecisionDto } from './dto/courtSessionAppealDecision.
 import { CourtSessionStringDto } from './dto/CourtSessionStringDto.dto'
 import { UpdateCourtSessionDto } from './dto/updateCourtSession.dto'
 
+// Appeal files parties upload for a ruling-order appeal (briefs, statements and
+// their attachments). Deleted alongside the appeal case when an in-court appeal
+// is corrected away. COA-produced files (court record, ruling) are excluded -
+// they only exist once an appeal has progressed, which blocks the correction.
+const APPEAL_PARTY_FILE_CATEGORIES = [
+  CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+  CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+  CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
+  CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+  CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+  CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+  CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
+  CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+  CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
+  CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
+]
+
 @Injectable()
 export class CourtSessionService {
   constructor(
     private readonly courtSessionRepositoryService: CourtSessionRepositoryService,
     private readonly appealDecisionRepositoryService: AppealDecisionRepositoryService,
     private readonly appealCaseRepositoryService: AppealCaseRepositoryService,
+    private readonly appealEventLogRepositoryService: AppealEventLogRepositoryService,
+    private readonly fileService: FileService,
+    private readonly eventLogService: EventLogService,
     // TODO: Move to a repository service - models should only be used in repository services
     // It would be best to hide the details of the court session model from all but the backend
     @InjectModel(CourtSessionString)
@@ -197,6 +222,36 @@ export class CourtSessionService {
         effectiveRulingFileId,
         transaction,
       )
+      await this.validateAppealCorrectionAllowed(
+        theCase,
+        effectiveRulingFileId,
+        transaction,
+      )
+    }
+
+    // A correction can swap the ruling order file or move the session away from
+    // ORDER. The previously pronounced ruling's in-court appeal is reconciled
+    // separately from the new ruling's (see reconcileRulingLinkChange after the
+    // write); both link changes need an up-front guard. A swap must target a
+    // clean ruling file (re-keying onto one that already carries appeal data
+    // would collide or merge two appeals); a removal must not orphan a progressed
+    // appeal. Gated on the link change rather than on confirmation, because the
+    // file can be swapped in a non-confirming correction save before the session
+    // is re-confirmed.
+    const previousRulingFileId = existingCourtSession.rulingFileId
+    const rulingLinkChanged =
+      !!previousRulingFileId && previousRulingFileId !== effectiveRulingFileId
+
+    if (rulingLinkChanged) {
+      if (effectiveRulingFileId) {
+        await this.validateRulingSwapAllowed(
+          theCase,
+          effectiveRulingFileId,
+          transaction,
+        )
+      } else {
+        this.validateRulingRemovalAllowed(theCase, previousRulingFileId)
+      }
     }
 
     const updatedCourtSession = await this.courtSessionRepositoryService.update(
@@ -224,6 +279,16 @@ export class CourtSessionService {
           transaction,
         )
       }
+    }
+
+    if (rulingLinkChanged) {
+      await this.reconcileRulingLinkChange(
+        theCase,
+        previousRulingFileId,
+        effectiveRulingFileId ?? null,
+        user,
+        transaction,
+      )
     }
 
     return updatedCourtSession
@@ -295,10 +360,109 @@ export class CourtSessionService {
     }
   }
 
-  // When a ruling order is confirmed with at least one in-court appeal
-  // (decision = APPEAL), create the appeal case it produces. The decision rows
-  // are themselves the record of who appealed, so no event or link is written.
-  // Idempotent: skips if an appeal case already exists for the ruling.
+  // Correcting a confirmed ruling order must not silently discard an appeal
+  // that has already moved past the district court. If the corrected decisions
+  // no longer contain an in-court appeal but the appeal case has progressed
+  // beyond APPEALED, reject the confirmation. (A still-APPEALED appeal is
+  // cleaned up by reconcileInCourtRulingOrderAppeal after the write.)
+  private async validateAppealCorrectionAllowed(
+    theCase: Case,
+    rulingFileId: string,
+    transaction: Transaction,
+  ): Promise<void> {
+    const existingAppealCase = theCase.rulingOrderAppealCases?.find(
+      (appealCase) => appealCase.rulingFileId === rulingFileId,
+    )
+    if (
+      !existingAppealCase ||
+      existingAppealCase.appealState === AppealCaseState.APPEALED
+    ) {
+      return
+    }
+
+    const decisions = await this.appealDecisionRepositoryService.findAll({
+      where: { caseId: theCase.id, rulingFileId },
+      transaction,
+    })
+    const someoneAppealedInCourt = decisions.some(
+      (d) => d.decision === CaseAppealDecision.APPEAL,
+    )
+
+    if (!someoneAppealedInCourt) {
+      throw new BadRequestException(
+        'The appeal of this ruling has progressed past the district court and cannot be removed by correcting the court record',
+      )
+    }
+  }
+
+  // The session's ruling is being removed (the ruling type moved away from
+  // ORDER), so its in-court appeal cannot be carried onto a new file. An appeal
+  // that has progressed past the district court must not be silently discarded,
+  // so reject the change. A still-APPEALED appeal is cleaned up afterwards by
+  // reconcileRulingLinkChange.
+  private validateRulingRemovalAllowed(
+    theCase: Case,
+    rulingFileId: string | null,
+  ): void {
+    if (!rulingFileId) {
+      return
+    }
+
+    const existingAppealCase = theCase.rulingOrderAppealCases?.find(
+      (appealCase) => appealCase.rulingFileId === rulingFileId,
+    )
+
+    if (
+      existingAppealCase &&
+      existingAppealCase.appealState !== AppealCaseState.APPEALED
+    ) {
+      throw new BadRequestException(
+        'The appeal of this ruling has progressed past the district court, so the ruling cannot be removed by correcting the court record',
+      )
+    }
+  }
+
+  // The session's ruling is being swapped onto a different file, which re-keys
+  // this ruling's decisions, appeal case and appeal party files onto it
+  // (reconcileRulingLinkChange). The file selector only validates existence and
+  // category, so the target could already be another session's appealed ruling.
+  // Re-keying onto it would violate the (case, ruling file) unique indexes or
+  // merge two separate appeals, so reject up front if the target already carries
+  // an appeal case or any recorded decisions.
+  private async validateRulingSwapAllowed(
+    theCase: Case,
+    nextRulingFileId: string,
+    transaction: Transaction,
+  ): Promise<void> {
+    const targetAppealCase = theCase.rulingOrderAppealCases?.find(
+      (appealCase) => appealCase.rulingFileId === nextRulingFileId,
+    )
+
+    if (targetAppealCase) {
+      throw new BadRequestException(
+        'The selected ruling file is already linked to another appeal',
+      )
+    }
+
+    const targetDecisions = await this.appealDecisionRepositoryService.findAll({
+      where: { caseId: theCase.id, rulingFileId: nextRulingFileId },
+      transaction,
+    })
+
+    if (targetDecisions.length > 0) {
+      throw new BadRequestException(
+        'The selected ruling file already has recorded appeal decisions',
+      )
+    }
+  }
+
+  // Reconciles the ruling order's appeal case with the confirmed decisions:
+  //  - at least one in-court appeal and no appeal case yet -> create it
+  //    (the decision rows are the record of who appealed, so no event/link);
+  //  - no in-court appeal and a still-APPEALED appeal case -> delete it
+  //    (a progressed appeal is rejected earlier by
+  //    validateAppealCorrectionAllowed).
+  // Idempotent, so re-confirming a corrected session converges.
   private async reconcileInCourtRulingOrderAppeal(
     theCase: Case,
     courtSession: CourtSession,
@@ -310,13 +474,6 @@ export class CourtSessionService {
       return
     }
 
-    const existingAppealCase = theCase.rulingOrderAppealCases?.find(
-      (appealCase) => appealCase.rulingFileId === rulingFileId,
-    )
-    if (existingAppealCase) {
-      return
-    }
-
     const decisions = await this.appealDecisionRepositoryService.findAll({
       where: { caseId: theCase.id, rulingFileId },
       transaction,
@@ -324,28 +481,165 @@ export class CourtSessionService {
     const someoneAppealedInCourt = decisions.some(
       (d) => d.decision === CaseAppealDecision.APPEAL,
     )
-    if (!someoneAppealedInCourt) {
+
+    const existingAppealCase = theCase.rulingOrderAppealCases?.find(
+      (appealCase) => appealCase.rulingFileId === rulingFileId,
+    )
+
+    if (!existingAppealCase) {
+      if (someoneAppealedInCourt) {
+        const appealCase = await this.appealCaseRepositoryService.create(
+          theCase.id,
+          {
+            appealState: AppealCaseState.APPEALED,
+            rulingFileId,
+            // The in-court appeal happened when the court session ended
+            appealDate: courtSession.endDate,
+          },
+          { transaction },
+        )
+
+        addMessagesToQueue({
+          type: MessageType.APPEAL_CASE_NOTIFICATION,
+          user,
+          caseId: theCase.id,
+          elementId: appealCase.id,
+          body: {
+            type: AppealCaseNotificationType.APPEAL_TO_COURT_OF_APPEALS,
+          },
+        })
+      }
+
       return
     }
 
-    const appealCase = await this.appealCaseRepositoryService.create(
-      theCase.id,
-      {
-        appealState: AppealCaseState.APPEALED,
-        rulingFileId,
-        // The in-court appeal happened when the court session ended
-        appealDate: courtSession.endDate,
-      },
+    if (
+      !someoneAppealedInCourt &&
+      existingAppealCase.appealState === AppealCaseState.APPEALED
+    ) {
+      await this.deleteInCourtRulingOrderAppeal(
+        theCase,
+        existingAppealCase,
+        user,
+        transaction,
+      )
+    }
+  }
+
+  // Reconciles the previously pronounced ruling after the session's ruling link
+  // is changed.
+  //  - Swap (the ruling order file is replaced by another): the same ruling is
+  //    now represented by a new file, so the decisions, the appeal case and any
+  //    appeal party files are re-pointed onto it - the in-court appeal continues
+  //    uninterrupted and nothing is lost.
+  //  - Removal (the ruling type moved away from ORDER, no new file): there is
+  //    nothing to re-point onto, so a still-APPEALED appeal case is deleted (a
+  //    progressed one was rejected up front by validateRulingRemovalAllowed).
+  //    The decisions are left dormant rather than deleted.
+  private async reconcileRulingLinkChange(
+    theCase: Case,
+    previousRulingFileId: string | null,
+    nextRulingFileId: string | null,
+    user: TUser,
+    transaction: Transaction,
+  ): Promise<void> {
+    if (!previousRulingFileId) {
+      return
+    }
+
+    const existingAppealCase = theCase.rulingOrderAppealCases?.find(
+      (appealCase) => appealCase.rulingFileId === previousRulingFileId,
+    )
+
+    if (nextRulingFileId) {
+      await this.appealDecisionRepositoryService.updateRulingFile(
+        theCase.id,
+        previousRulingFileId,
+        nextRulingFileId,
+        { transaction },
+      )
+
+      if (existingAppealCase) {
+        await this.appealCaseRepositoryService.update(
+          existingAppealCase.id,
+          { rulingFileId: nextRulingFileId },
+          { transaction },
+        )
+
+        const appealFiles = (theCase.caseFiles ?? []).filter(
+          (file) =>
+            file.rulingFileId === previousRulingFileId &&
+            file.category &&
+            APPEAL_PARTY_FILE_CATEGORIES.includes(file.category),
+        )
+
+        for (const file of appealFiles) {
+          await this.fileService.updateCaseFile(
+            theCase.id,
+            file.id,
+            { rulingFileId: nextRulingFileId },
+            transaction,
+          )
+        }
+      }
+
+      return
+    }
+
+    if (
+      existingAppealCase &&
+      existingAppealCase.appealState === AppealCaseState.APPEALED
+    ) {
+      await this.deleteInCourtRulingOrderAppeal(
+        theCase,
+        existingAppealCase,
+        user,
+        transaction,
+      )
+    }
+  }
+
+  // Hard-deletes an appeal case that was created from an in-court appeal that
+  // has since been corrected away, together with the appeal files parties had
+  // uploaded for it and its event logs. Only ever called for an APPEALED appeal
+  // case. The deletion is audited on the case event log.
+  private async deleteInCourtRulingOrderAppeal(
+    theCase: Case,
+    appealCase: AppealCase,
+    user: TUser,
+    transaction: Transaction,
+  ): Promise<void> {
+    const appealFiles = (theCase.caseFiles ?? []).filter(
+      (file) =>
+        file.rulingFileId === appealCase.rulingFileId &&
+        file.category &&
+        APPEAL_PARTY_FILE_CATEGORIES.includes(file.category),
+    )
+
+    for (const file of appealFiles) {
+      await this.fileService.deleteCaseFile(theCase, file, transaction)
+    }
+
+    // Event logs reference the appeal case, so they must go before it
+    await this.appealEventLogRepositoryService.deleteByAppealCaseId(
+      appealCase.id,
       { transaction },
     )
 
-    addMessagesToQueue({
-      type: MessageType.APPEAL_CASE_NOTIFICATION,
-      user,
-      caseId: theCase.id,
-      elementId: appealCase.id,
-      body: { type: AppealCaseNotificationType.APPEAL_TO_COURT_OF_APPEALS },
+    await this.appealCaseRepositoryService.delete(appealCase.id, {
+      transaction,
     })
+
+    await this.eventLogService.createWithUser(
+      EventType.APPEAL_DELETED,
+      theCase.id,
+      user,
+      transaction,
+    )
+
+    this.logger.debug(
+      `Deleted in-court ruling order appeal ${appealCase.id} of case ${theCase.id} after court record correction`,
+    )
   }
 
   private async validateAndNormalizeRulingFile(
