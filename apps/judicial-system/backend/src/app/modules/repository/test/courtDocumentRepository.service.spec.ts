@@ -4,6 +4,7 @@ import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import { CaseFileCategory } from '@island.is/judicial-system/types'
 
 import { CaseFile } from '../models/caseFile.model'
