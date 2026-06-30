@@ -145,7 +145,7 @@ describe('BFF PortalEnv serialization', () => {
   it('replica count', () => {
     expect(result.serviceDef[0].replicaCount).toStrictEqual({
       min: 1,
-      max: 3,
+      max: 2,
       default: 1,
     })
   })
@@ -223,7 +223,7 @@ describe('Env definition defaults', () => {
   it('replica max count', () => {
     expect(result.serviceDef[0].replicaCount).toStrictEqual({
       min: 1,
-      max: 3,
+      max: 2,
       default: 1,
     })
   })
