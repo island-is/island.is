@@ -241,6 +241,19 @@ export class CourtSessionService {
       transaction,
     })
 
+    // TEMPORARY — REMOVE WHEN THE RULING-ORDER APPEAL UI IS DEPLOYED.
+    // The court UI that records per-party "Ákvörðun um kæru" decisions is not in
+    // production yet, so no ORDER session can have any decisions and this check
+    // would block every ruling-order confirmation. While no decisions exist we
+    // skip the completeness check, restoring pre-appeal confirmation behaviour.
+    // Once the data-entry UI (in-court and out-of-court ruling-order appeals)
+    // ships, DELETE this early return so confirming an ORDER session again
+    // requires every party's decision — otherwise a session with no decisions
+    // entered could be confirmed and silently bypass the requirement.
+    if (decisions.length === 0) {
+      return
+    }
+
     const hasDecision = (
       predicate: (decision: AppealDecision) => boolean,
     ): boolean => decisions.some((d) => d.decision !== null && predicate(d))

@@ -268,4 +268,24 @@ describe('CourtSessionController - Confirm ruling order appeal', () => {
       expect(mockCourtSessionRepositoryService.update).not.toHaveBeenCalled()
     })
   })
+
+  // TEMPORARY — REMOVE WITH THE `decisions.length === 0` SKIP IN
+  // CourtSessionService.validateAppealDecisionsComplete (when the ruling-order
+  // appeal UI ships). Until the data-entry UI is deployed no ORDER session has
+  // any decisions, so confirmation must still succeed. When the skip is removed
+  // this case must flip to a rejection.
+  describe('no decisions recorded at all (temporary pre-UI behaviour)', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      decisions = []
+      then = await givenWhenThen(baseCase)
+    })
+
+    it('should confirm without creating an appeal case', () => {
+      expect(then.error).toBeUndefined()
+      expect(mockCourtSessionRepositoryService.update).toHaveBeenCalled()
+      expect(mockAppealCaseRepositoryService.create).not.toHaveBeenCalled()
+    })
+  })
 })
