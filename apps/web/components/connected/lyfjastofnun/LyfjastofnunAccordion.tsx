@@ -6,6 +6,7 @@ import {
   Accordion,
   AccordionItem,
   Box,
+  createColumnHelper,
   GridColumn,
   GridRow,
   Input,
@@ -15,7 +16,6 @@ import {
   Select,
   Stack,
   Text,
-  createColumnHelper,
 } from '@island.is/island-ui/core'
 import { isDefined } from '@island.is/shared/utils'
 import {
