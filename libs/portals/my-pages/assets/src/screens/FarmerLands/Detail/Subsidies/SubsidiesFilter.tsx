@@ -52,7 +52,7 @@ export const SubsidiesFilter = ({
 
   return (
     <Filter
-      variant="popover"
+      variant="dialog"
       align="left"
       reverse
       labelOpen={formatMessage(m.openFilter)}
@@ -113,8 +113,7 @@ export const SubsidiesFilter = ({
               id="subsidy-filter-date"
               label={formatMessage(m.datesLabel)}
               labelUse="h5"
-              labelVariant="h5"
-              iconVariant="small"
+              variant="mini"
               startExpanded={dateFrom != null || dateTo != null}
             >
               <Box

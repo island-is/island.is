@@ -230,23 +230,17 @@ export const Overview = () => {
             />
           </Box>
           <Box component="section">
-            <Accordion>
+            <Accordion variant="large">
               <AccordionItem
-                labelVariant="h3"
                 id="id_1"
                 label={formatMessage(lawsBrokenAccordion.heading)}
               >
                 <Text whiteSpace="breakSpaces">{workingCase.lawsBroken}</Text>
               </AccordionItem>
-              <AccordionItem
-                labelVariant="h3"
-                id="id_2"
-                label="Lagaákvæði sem krafan er byggð á"
-              >
+              <AccordionItem id="id_2" label="Lagaákvæði sem krafan er byggð á">
                 <Text>{workingCase.legalBasis}</Text>
               </AccordionItem>
               <AccordionItem
-                labelVariant="h3"
                 id="id_4"
                 label="Greinargerð um málsatvik og lagarök"
               >
@@ -273,7 +267,6 @@ export const Overview = () => {
               <AccordionItem
                 id="id_6"
                 label={`Rannsóknargögn ${`(${caseFiles.length})`}`}
-                labelVariant="h3"
               >
                 <Box marginY={3}>
                   <CaseFileList caseId={workingCase.id} files={caseFiles} />

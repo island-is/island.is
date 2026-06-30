@@ -198,7 +198,6 @@ export const Chart = ({ slice }: ChartProps) => {
           </>
         }
         labelUse="h2"
-        labelVariant="h3"
         expanded={expanded}
         visibleContent={slice['chartDescription']}
         onToggle={() => setExpanded(!expanded)}
