@@ -4,12 +4,9 @@
     "paths": {
       "@/*": [
         "${configDir}/src/*"
-<<<<<<< HEAD
-=======
       ],
       "@island.is/air-discount-scheme-web/*": [
         "apps/air-discount-scheme/web/*"
->>>>>>> 94d610e8a3 (Bootstrap doe jafnlaunavottun application)
       ],
       "@island.is/air-discount-scheme/consts": [
         "libs/air-discount-scheme/consts/src/index.ts"
