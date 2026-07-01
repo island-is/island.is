@@ -20,10 +20,12 @@ const SortButton: FC<Props> = (props) => {
   return (
     <Box
       component="button"
+      type="button"
       display="flex"
       alignItems="center"
       className={styles.thButton}
       onClick={onClick}
+      aria-label={`Raða eftir dálki: ${title}`}
       data-testid={dataTestid}
     >
       <Text fontWeight={isActive ? 'semiBold' : 'regular'}>{title}</Text>
@@ -36,10 +38,10 @@ const SortButton: FC<Props> = (props) => {
         component="span"
         display="flex"
         alignItems="center"
+        aria-hidden
       >
         <Icon icon="caretDown" size="small" />
       </Box>
-      <p className="visually-hidden">Sort button</p>
     </Box>
   )
 }

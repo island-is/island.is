@@ -1,3 +1,5 @@
+import { KeyboardEvent } from 'react'
+
 import { TagVariant } from '@island.is/island-ui/core'
 import {
   formatDate,
@@ -814,6 +816,16 @@ export const getDefaultDefendantGender = (defendants?: Defendant[] | null) =>
   defendants && defendants.length === 1
     ? defendants[0].gender ?? Gender.MALE
     : Gender.MALE
+
+// Lets an element with role="button" be activated with the keyboard
+// (Enter or Space) the same way a native button is.
+export const onEnterOrSpace =
+  (handler: () => void) => (event: KeyboardEvent) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      handler()
+    }
+  }
 
 export const isPartiallyVisible = (el: HTMLElement): boolean => {
   const rect = el.getBoundingClientRect()
