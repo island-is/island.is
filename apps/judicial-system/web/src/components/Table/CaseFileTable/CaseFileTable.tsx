@@ -29,6 +29,7 @@ import {
   useFiledCourtDocuments,
   useSort,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { onEnterOrSpace } from '@island.is/judicial-system-web/src/utils/utils'
 
 import ContextMenu from '../../ContextMenu/ContextMenu'
 import * as tableStyles from '../Table.css'
@@ -114,12 +115,24 @@ const CaseFileTable: FC<Props> = ({
             file.fileRepresentative ?? file.submittedBy,
           )
           const isRejected = file.state === CaseFileState.REJECTED
+          const fileName = prefixUploadedDocumentNameWithDocumentOrder(
+            file.id,
+            file.userGeneratedFilename ?? '',
+          )
 
           return (
             <tr key={file.id}>
               <td>
                 <Box
                   onClick={() => !isRejected && onOpenFile(file.id)}
+                  onKeyDown={
+                    isRejected
+                      ? undefined
+                      : onEnterOrSpace(() => onOpenFile(file.id))
+                  }
+                  role={isRejected ? undefined : 'button'}
+                  tabIndex={isRejected ? undefined : 0}
+                  aria-label={isRejected ? undefined : `Opna ${fileName}`}
                   className={!isRejected && styles.linkButton}
                   display="flex"
                   alignItems="center"
@@ -135,10 +148,7 @@ const CaseFileTable: FC<Props> = ({
                     }
                     variant="h5"
                   >
-                    {prefixUploadedDocumentNameWithDocumentOrder(
-                      file.id,
-                      file.userGeneratedFilename ?? '',
-                    )}
+                    {fileName}
                   </Text>
                 </Box>
               </td>
