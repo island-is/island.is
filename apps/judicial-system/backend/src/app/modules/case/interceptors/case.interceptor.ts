@@ -161,6 +161,7 @@ export const getCaseLevelAppealInfo = (theCase: Case): CaseLevelAppealInfo => {
 export interface AppealCaseInfo {
   appealedByRole?: UserRole
   appealedDate?: Date
+  appealedInCourt?: boolean
   statementDeadline?: Date
   isStatementDeadlineExpired?: boolean
 }
@@ -215,6 +216,18 @@ export const getAppealCaseInfo = (
         : undefined
   }
 
+  // True when the ruling order was appealed in court ("Kært í þinghaldi") -
+  // i.e. a party recorded a decision = APPEAL for it in the court record. The
+  // court of appeals shows this without naming who appealed.
+  const appealedInCourt = Boolean(
+    rulingFileId &&
+      theCase.appealDecisions?.some(
+        (decision) =>
+          decision.rulingFileId === rulingFileId &&
+          decision.decision === CaseAppealDecision.APPEAL,
+      ),
+  )
+
   let statementDeadline: Date | undefined
   let isStatementDeadlineExpired: boolean | undefined
   if (appealReceivedByCourtDate) {
@@ -225,6 +238,7 @@ export const getAppealCaseInfo = (
   return {
     appealedByRole,
     appealedDate,
+    appealedInCourt,
     statementDeadline,
     isStatementDeadlineExpired,
   }

@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common'
 
-import { LyfjastofnunPharmaciesClientModule } from '@island.is/clients/lyfjastofnun-pharmacies'
+import { LyfjastofnunHealthProvidersClientModule } from '@island.is/clients/lyfjastofnun-health-providers'
 
 import { IcelandicMedicinesAgencyResolver } from './icelandic-medicines-agency.resolver'
 import { IcelandicMedicinesAgencyService } from './icelandic-medicines-agency.service'
 
 @Module({
-  imports: [LyfjastofnunPharmaciesClientModule],
+  imports: [LyfjastofnunHealthProvidersClientModule],
   providers: [
     IcelandicMedicinesAgencyResolver,
     IcelandicMedicinesAgencyService,

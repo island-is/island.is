@@ -35,6 +35,16 @@ const env = {
   PAYMENTS_JWT_SIGNING_EXPIRES_IN_MINUTES: '5',
   PAYMENTS_APPLE_PAY_DOMAIN: 'island.is',
   PAYMENTS_APPLE_PAY_DISPLAY_NAME: 'island.is',
+  BLIKK_API_BASE_URL: {
+    dev: 'https://stage.blikk.tech',
+    staging: 'https://stage.blikk.tech',
+    prod: 'https://api.blikk.tech',
+  },
+  BLIKK_PAYMENT_TTL_SECONDS: {
+    dev: '300', // 5 minutes
+    staging: '300', // 5 minutes
+    prod: '600', // 10 minutes
+  },
 }
 
 // common database configuration
@@ -60,6 +70,9 @@ const secrets = {
   PAYMENTS_PREVIOUS_KEY_ID: '/k8s/services-payments/PAYMENTS_PREVIOUS_KEY_ID',
   PAYMENTS_PREVIOUS_PUBLIC_KEY:
     '/k8s/services-payments/PAYMENTS_PREVIOUS_PUBLIC_KEY',
+  // Shared by the service and the worker: the worker transitively loads the
+  // bank-transfer/Blikk modules via PaymentFlowModule, so BlikkClientConfig must resolve at boot.
+  BLIKK_API_KEY: '/k8s/services-payments/BLIKK_API_KEY',
 }
 
 // service setup
@@ -88,16 +101,6 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
         staging: 'XROAD:/IS-TEST/GOV/10000/island-is-protected/payments-v1',
         prod: 'XROAD:/IS/GOV/5501692829/island-is-protected/payments-v1',
       },
-      BLIKK_API_BASE_URL: {
-        dev: 'https://stage.blikk.tech',
-        staging: 'https://stage.blikk.tech',
-        prod: 'https://api.blikk.tech',
-      },
-      BLIKK_PAYMENT_TTL_SECONDS: {
-        dev: '300', // 5 minutes
-        staging: '300', // 5 minutes
-        prod: '600', // 10 minutes
-      },
     })
     .secrets({
       ...secrets,
@@ -123,7 +126,6 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
         '/k8s/services-payments/APPLE_PAY_MERCHANT_IDENTITY_KEY',
       APPLE_PAY_PAYMENT_PROCESSING_KEY:
         '/k8s/services-payments/APPLE_PAY_PAYMENT_PROCESSING_KEY',
-      BLIKK_API_KEY: '/k8s/services-payments/BLIKK_API_KEY',
     })
     .ingress({
       primary: {

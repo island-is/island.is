@@ -46,6 +46,10 @@ interface UpdateAppealDecisionOptions {
   transaction: Transaction
 }
 
+interface UpdateRulingFileOptions {
+  transaction: Transaction
+}
+
 @Injectable()
 export class AppealDecisionRepositoryService {
   constructor(
@@ -112,6 +116,44 @@ export class AppealDecisionRepositoryService {
     }
   }
 
+  // Re-points every party's decision for a ruling onto a different ruling file.
+  // Used when a court session is corrected to swap its ruling order file: the
+  // same ruling is now represented by a new file, so the recorded decisions
+  // move with it instead of being discarded.
+  async updateRulingFile(
+    caseId: string,
+    fromRulingFileId: string,
+    toRulingFileId: string,
+    options: UpdateRulingFileOptions,
+  ): Promise<number> {
+    try {
+      this.logger.debug(
+        `Re-pointing appeal decisions of case ${caseId} from ruling ${fromRulingFileId} to ${toRulingFileId}`,
+      )
+
+      const [numberOfAffectedRows] = await this.appealDecisionModel.update(
+        { rulingFileId: toRulingFileId },
+        {
+          where: { caseId, rulingFileId: fromRulingFileId },
+          transaction: options.transaction,
+        },
+      )
+
+      this.logger.debug(
+        `Re-pointed ${numberOfAffectedRows} appeal decisions of case ${caseId} to ruling ${toRulingFileId}`,
+      )
+
+      return numberOfAffectedRows
+    } catch (error) {
+      this.logger.error(
+        `Error re-pointing appeal decisions of case ${caseId} from ruling ${fromRulingFileId} to ${toRulingFileId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
   async upsert(
     party: AppealDecisionPartyKey,
     data: UpdateAppealDecision,
@@ -122,24 +164,22 @@ export class AppealDecisionRepositoryService {
         `Upserting appeal decision for ${party.partyRole} in case ${party.caseId}`,
       )
 
-      // Atomic upsert against the
-      // (case_id, ruling_file_id, party_role, defendant_id, civil_claimant_id)
-      // NULLS NOT DISTINCT unique index. A separate findOne + create would race:
-      // two concurrent requests for the same party (e.g. a decision and its
-      // autofilled announcement firing together) could both miss the lookup and
-      // then collide on the unique constraint. decision and announcement are
-      // always set together, so this replaces the party's recorded position.
+      const key = {
+        caseId: party.caseId,
+        rulingFileId: party.rulingFileId ?? null,
+        partyRole: party.partyRole,
+        defendantId: party.defendantId ?? null,
+        civilClaimantId: party.civilClaimantId ?? null,
+      }
+
+      // Atomic insert-or-update keyed on the party. A read-then-write would
+      // race two concurrent requests for the same party into a duplicate
+      // insert; conflictFields target the composite UNIQUE index (NULLS NOT
+      // DISTINCT) so Postgres resolves the conflict in a single statement.
       const [result] = await this.appealDecisionModel.upsert(
+        { ...key, ...data },
         {
-          caseId: party.caseId,
-          rulingFileId: party.rulingFileId ?? null,
-          partyRole: party.partyRole,
-          defendantId: party.defendantId ?? null,
-          civilClaimantId: party.civilClaimantId ?? null,
-          decision: data.decision ?? null,
-          announcement: data.announcement ?? null,
-        },
-        {
+          transaction: options.transaction,
           conflictFields: [
             'case_id',
             'ruling_file_id',
@@ -147,7 +187,6 @@ export class AppealDecisionRepositoryService {
             'defendant_id',
             'civil_claimant_id',
           ],
-          transaction: options.transaction,
         },
       )
 
