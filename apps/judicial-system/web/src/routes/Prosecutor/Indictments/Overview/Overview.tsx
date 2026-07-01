@@ -14,9 +14,10 @@ import {
 import {
   getStandardUserDashboardRoute,
   PROSECUTION_INDICTMENT_CASE_ADD_FILES_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_DEFENDANT_ROUTE,
   PROSECUTION_INDICTMENT_CASE_INDICTMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { isCompletedCase } from '@island.is/judicial-system/types'
+import { isCompletedCase, isProsecutionUser } from '@island.is/judicial-system/types'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   AllIndictmentCaseFiles,
@@ -61,6 +62,7 @@ const Overview: FC = () => {
     | 'caseSentForConfirmationModal'
     | 'caseDeniedModal'
     | 'askForCancellationModal'
+    | 'duplicateIndictmentModal'
     | 'editProsecutor'
   >('noModal')
   const [indictmentConfirmationDecision, setIndictmentConfirmationDecision] =
@@ -68,7 +70,12 @@ const Overview: FC = () => {
 
   const router = useRouter()
   const { formatMessage } = useIntl()
-  const { transitionCase, isTransitioningCase } = useCase()
+  const {
+    transitionCase,
+    isTransitioningCase,
+    duplicateIndictmentCase,
+    isDuplicatingIndictmentCase,
+  } = useCase()
 
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
 
@@ -88,6 +95,8 @@ const Overview: FC = () => {
   const userCanCancelIndictment =
     (isIndictmentSubmitted || isIndictmentReceived) &&
     !workingCase.indictmentDecision
+  const canDuplicateIndictment =
+    isProsecutionUser(user) && isIndictmentWaitingForCancellation
   const userCanAddDocuments =
     isIndictmentSubmitted ||
     (isIndictmentReceived &&
@@ -162,6 +171,16 @@ const Overview: FC = () => {
     }
 
     router.push(getStandardUserDashboardRoute(user))
+  }
+
+  const handleDuplicateIndictment = async () => {
+    const duplicatedCase = await duplicateIndictmentCase(workingCase.id)
+
+    if (duplicatedCase) {
+      router.push(
+        `${PROSECUTION_INDICTMENT_CASE_DEFENDANT_ROUTE}/${duplicatedCase.id}`,
+      )
+    }
   }
 
   return (
@@ -296,28 +315,38 @@ const Overview: FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
+          nextButtonIcon={canDuplicateIndictment ? undefined : 'arrowForward'}
           previousUrl={
             isIndictmentReceived || isIndictmentWaitingForCancellation
               ? getStandardUserDashboardRoute(user)
               : `${PROSECUTION_INDICTMENT_CASE_INDICTMENT_ROUTE}/${workingCase.id}`
           }
           nextButtonText={
-            userCanSendIndictmentToCourt
+            canDuplicateIndictment
+              ? 'Afrita mál í drög'
+              : userCanSendIndictmentToCourt
               ? undefined
               : formatMessage(strings.nextButtonText, {
                   isNewIndictment: isIndictmentNew,
                 })
           }
           hideNextButton={
-            isIndictmentReceived || isIndictmentWaitingForCancellation
+            isIndictmentReceived ||
+            (isIndictmentWaitingForCancellation && !canDuplicateIndictment)
+          }
+          nextIsLoading={
+            canDuplicateIndictment && isDuplicatingIndictmentCase
           }
           infoBoxText={
             isIndictmentReceived
               ? formatMessage(strings.indictmentSentToCourt)
               : undefined
           }
-          onNextButtonClick={handleNextButtonClick}
+          onNextButtonClick={
+            canDuplicateIndictment
+              ? () => setModal('duplicateIndictmentModal')
+              : handleNextButtonClick
+          }
           nextIsDisabled={
             userCanSendIndictmentToCourt && !indictmentConfirmationDecision
           }
@@ -378,6 +407,21 @@ const Overview: FC = () => {
                 strings.askForCancellationSecondaryButtonText,
               ),
               onClick: () => setModal('noModal'),
+            }}
+          />
+        ) : modal === 'duplicateIndictmentModal' ? (
+          <Modal
+            title="Viltu afrita mál í drög?"
+            text="Nýtt mál verður til í drögum. Innihald ákæru ásamt gögnum afritast yfir á nýja málið."
+            primaryButton={{
+              text: 'Afrita mál í drög',
+              onClick: handleDuplicateIndictment,
+              isLoading: isDuplicatingIndictmentCase,
+            }}
+            secondaryButton={{
+              text: 'Hætta við',
+              onClick: () => setModal('noModal'),
+              isDisabled: isDuplicatingIndictmentCase,
             }}
           />
         ) : modal === 'editProsecutor' ? (
