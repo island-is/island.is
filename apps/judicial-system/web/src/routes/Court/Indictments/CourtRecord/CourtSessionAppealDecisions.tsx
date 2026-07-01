@@ -152,7 +152,9 @@ const CourtSessionAppealDecisions: FC<Props> = ({
           ? appealAnnouncement
           : currentAnnouncement
       }
-      return currentAnnouncement === appealAnnouncement ? '' : currentAnnouncement
+      return currentAnnouncement === appealAnnouncement
+        ? ''
+        : currentAnnouncement
     }
 
     return (
