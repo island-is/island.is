@@ -94,7 +94,12 @@ describe('AppealCaseController - Transition', () => {
       (fn: (transaction: Transaction) => unknown) => fn(transaction),
     )
 
-    givenWhenThen = async (theCase, appealCase, transition, actingUser = user) => {
+    givenWhenThen = async (
+      theCase,
+      appealCase,
+      transition,
+      actingUser = user,
+    ) => {
       const then = {} as Then
 
       const dto: TransitionAppealCaseDto = { transition }
@@ -285,9 +290,7 @@ describe('AppealCaseController - Transition', () => {
     } as AppealCase
 
     // Both the prosecution and a defendant appealed this ruling in court.
-    const caseWithDecisions = (
-      decisions: Partial<AppealDecision>[],
-    ): Case =>
+    const caseWithDecisions = (decisions: Partial<AppealDecision>[]): Case =>
       ({
         id: caseId,
         type: CaseType.INDICTMENT,
@@ -332,9 +335,7 @@ describe('AppealCaseController - Transition', () => {
       })
 
       it('should stamp the withdrawing party with the server time', () => {
-        expect(
-          mockAppealDecisionRepositoryService.update,
-        ).toHaveBeenCalledWith(
+        expect(mockAppealDecisionRepositoryService.update).toHaveBeenCalledWith(
           prosecutorDecisionId,
           { withdrawnDate: now },
           { transaction },
@@ -342,9 +343,7 @@ describe('AppealCaseController - Transition', () => {
       })
 
       it('should record an APPEAL_WITHDRAWN event', () => {
-        expect(
-          mockAppealEventLogRepositoryService.create,
-        ).toHaveBeenCalledWith(
+        expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledWith(
           expect.objectContaining({
             appealCaseId,
             eventType: AppealEventType.APPEAL_WITHDRAWN,

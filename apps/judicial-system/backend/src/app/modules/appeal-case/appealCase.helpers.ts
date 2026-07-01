@@ -82,7 +82,11 @@ export const userHasActiveInCourtAppeal = (
   rulingFileId: string,
   user: User,
 ): boolean => {
-  const decision = findUserRulingOrderAppealDecision(theCase, rulingFileId, user)
+  const decision = findUserRulingOrderAppealDecision(
+    theCase,
+    rulingFileId,
+    user,
+  )
 
   return (
     decision?.decision === CaseAppealDecision.APPEAL && !decision.withdrawnDate
