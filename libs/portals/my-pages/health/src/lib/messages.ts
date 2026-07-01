@@ -1273,6 +1273,10 @@ export const messages = defineMessages({
     id: 'sp.health:quick-link-waitlists',
     defaultMessage: 'Biðlistar',
   },
+  quickLinkQuestionnaires: {
+    id: 'sp.health:quick-link-questionnaires',
+    defaultMessage: 'Spurningalistar',
+  },
   paymentDocument: {
     defaultMessage: 'Greiðsluskjal',
     id: 'sp.health:payment-document',

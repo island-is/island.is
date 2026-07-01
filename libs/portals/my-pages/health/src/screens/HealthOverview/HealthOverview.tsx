@@ -8,11 +8,11 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { LinkResolver } from '@island.is/portals/my-pages/core'
 import subYears from 'date-fns/subYears'
 import { useWindowSize } from 'react-use'
 import { HealthPaths } from '../../lib/paths'
 import { messages } from '../../lib/messages'
-import { LinkResolver } from '@island.is/portals/my-pages/core'
 import {
   CONTENT_GAP_LG,
   DEFAULT_APPOINTMENTS_STATUS,
@@ -136,6 +136,10 @@ export const HealthOverview = () => {
     {
       href: HealthPaths.HealthWaitlists,
       label: formatMessage(messages.quickLinkWaitlists),
+    },
+    {
+      href: HealthPaths.HealthQuestionnaires,
+      label: formatMessage(messages.quickLinkQuestionnaires),
     },
   ]
 
