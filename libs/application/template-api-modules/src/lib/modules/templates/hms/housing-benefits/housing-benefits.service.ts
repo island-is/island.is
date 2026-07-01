@@ -36,6 +36,7 @@ import {
   isLastAssigneeToComplete,
   mapApplicationToHousingBenefitsModel,
   normalizeNationalId,
+  resolveApplicationFilesForSubmission,
 } from './utils'
 import {
   applyMockAssigneeNationalRegistryAddress,
@@ -46,6 +47,7 @@ import {
   useMockRentalAgreements,
 } from './utils/mock'
 import { NationalRegistryV3Service } from '../../../shared/api/national-registry-v3/national-registry-v3.service'
+import { AttachmentS3Service } from '../../../shared/services'
 import { coreErrorMessages } from '@island.is/application/core'
 import {
   getAssigneeApproverDisplayName,
@@ -61,6 +63,7 @@ export class HousingBenefitsService extends BaseTemplateApiService {
     private readonly nationalRegistryV3Service: NationalRegistryV3Service,
     private readonly configService: ConfigService<SharedModuleConfig>,
     private readonly hmsHousingBenefitsClientService: HmsHousingBenefitsClientService,
+    private readonly attachmentService: AttachmentS3Service,
   ) {
     super(ApplicationTypes.HOUSING_BENEFITS)
   }
@@ -664,11 +667,22 @@ export class HousingBenefitsService extends BaseTemplateApiService {
     }
 
     try {
-      const model = mapApplicationToHousingBenefitsModel(application)
+      const applicantKennitala = normalizeNationalId(
+        getValueViaPath<string>(application.answers, 'applicant.nationalId') ??
+          application.applicant,
+      )
+      const files = await resolveApplicationFilesForSubmission(
+        application,
+        applicantKennitala,
+        (app, key, expiration) =>
+          this.attachmentService.getAttachmentUrl(app, key, expiration),
+      )
+      const model = mapApplicationToHousingBenefitsModel(application, files)
       console.log('--------------------------------')
       console.log('model')
       console.dir(model, { depth: null, colors: true })
       console.log('--------------------------------')
+
       const result =
         await this.hmsHousingBenefitsClientService.createHousingBenefitsApplication(
           auth,

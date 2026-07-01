@@ -7,6 +7,7 @@ import { ApplicationWithAttachments } from '@island.is/application/types'
 import { Contract } from '@island.is/clients/hms-rental-agreement'
 import {
   ApplicationFile,
+  ApplicationFileType,
   HouseholdMember,
   HousingBenefitsApplicationModel,
   PropertyType,
@@ -123,6 +124,69 @@ export const isLastAssigneeToComplete = (
 }
 
 type UploadedFile = { key: string; name: string }
+
+export type ApplicationFileEntry = {
+  key: string
+  name: string
+  kennitala: string
+  fileType?: ApplicationFileType
+}
+
+const EXEMPTION_REASON_TO_FILE_TYPE: Record<string, ApplicationFileType> = {
+  studies: ApplicationFileType.SchoolCertificate,
+  health: ApplicationFileType.MedicalCertificate,
+  work: ApplicationFileType.EmploymentContract,
+}
+
+const ATTACHMENT_URL_EXPIRY_SECONDS = 3600
+
+const addUploadedFiles = (
+  files: UploadedFile[] | undefined,
+  kennitala: string,
+  fileType: ApplicationFileType | undefined,
+  collected: Map<string, ApplicationFileEntry>,
+) => {
+  if (!Array.isArray(files)) {
+    return
+  }
+
+  for (const file of files) {
+    if (!file?.key || !file?.name) {
+      continue
+    }
+    collected.set(file.key, {
+      key: file.key,
+      name: file.name,
+      kennitala,
+      ...(fileType ? { fileType } : {}),
+    })
+  }
+}
+
+const addAccessAgreementRepeaterFiles = (
+  answers: ApplicationWithAttachments['answers'],
+  repeaterPath: string,
+  kennitala: string,
+  collected: Map<string, ApplicationFileEntry>,
+) => {
+  const rows = getValueViaPath<Array<{ file?: UploadedFile[] }> | undefined>(
+    answers,
+    repeaterPath,
+  )
+
+  if (!Array.isArray(rows)) {
+    return
+  }
+
+  for (const row of rows) {
+    addUploadedFiles(
+      row.file,
+      kennitala,
+      ApplicationFileType.VisitationAgreement,
+      collected,
+    )
+  }
+}
 
 const getOptionalDescription = (
   answers: ApplicationWithAttachments['answers'],
@@ -250,51 +314,149 @@ const getSelectedLandlordKennitala = (
     : undefined
 }
 
-/**
- * Collects uploaded files from the application into the HMS file shape.
- * Note: fileUrl/fileType are intentionally left undefined until the HMS
- * file-transfer contract (signed URLs vs. upload step) is confirmed.
- */
-const getApplicationFilesForSubmission = (
+/** Collects uploaded file metadata from application answers. */
+export const collectApplicationFileEntries = (
   application: ApplicationWithAttachments,
   applicantKennitala: string,
-): Array<ApplicationFile> => {
+): ApplicationFileEntry[] => {
   const { answers } = application
-  const collected: UploadedFile[] = []
+  const collected = new Map<string, ApplicationFileEntry>()
 
   const exemptionReason = getValueViaPath<string>(answers, 'exemptionReason')
   if (exemptionReason && exemptionReason !== 'housing') {
-    const exemptionFiles = getValueViaPath<UploadedFile[]>(
-      answers,
-      `exemptionDocuments.${exemptionReason}`,
+    addUploadedFiles(
+      getValueViaPath<UploadedFile[]>(
+        answers,
+        `exemptionDocuments.${exemptionReason}`,
+      ),
+      applicantKennitala,
+      EXEMPTION_REASON_TO_FILE_TYPE[exemptionReason],
+      collected,
     )
-    if (Array.isArray(exemptionFiles)) {
-      collected.push(...exemptionFiles)
+  }
+
+  addAccessAgreementRepeaterFiles(
+    answers,
+    'mainFormAccessAgreementRepeater',
+    applicantKennitala,
+    collected,
+  )
+
+  const householdRows = getValueViaPath<
+    Array<{
+      nationalIdWithName?: { nationalId?: string }
+      isRemoved?: boolean
+      file?: UploadedFile[]
+    }>
+  >(answers, 'householdMembersTableRepeater')
+  if (Array.isArray(householdRows)) {
+    for (const row of householdRows) {
+      if (row.isRemoved) {
+        continue
+      }
+      const rowKennitala = row.nationalIdWithName?.nationalId
+        ? normalizeNationalId(row.nationalIdWithName.nationalId)
+        : applicantKennitala
+      addUploadedFiles(
+        row.file,
+        rowKennitala,
+        ApplicationFileType.VisitationAgreement,
+        collected,
+      )
     }
   }
 
-  const householdRows = getValueViaPath<Array<{ file?: UploadedFile[] }>>(
-    answers,
-    'householdMembersTableRepeater',
-  )
-  if (Array.isArray(householdRows)) {
-    householdRows.forEach((row) => {
-      if (Array.isArray(row.file)) {
-        collected.push(...row.file)
-      }
-    })
+  for (const [nationalId, value] of Object.entries(answers)) {
+    if (!kennitala.isValid(nationalId) || typeof value !== 'object' || !value) {
+      continue
+    }
+
+    const assigneeKennitala = normalizeNationalId(nationalId)
+    const bucket = value as ApplicationWithAttachments['answers']
+
+    addAccessAgreementRepeaterFiles(
+      bucket,
+      'assigneeAccessAgreementRepeater',
+      assigneeKennitala,
+      collected,
+    )
+    addAccessAgreementRepeaterFiles(
+      bucket,
+      'applicantSubmitAccessAgreementRepeater',
+      assigneeKennitala,
+      collected,
+    )
+
+    const legacyFiles = getValueViaPath<UploadedFile[]>(
+      bucket,
+      'assigneeUmgengnissamningurFile',
+    )
+    addUploadedFiles(
+      legacyFiles,
+      assigneeKennitala,
+      ApplicationFileType.VisitationAgreement,
+      collected,
+    )
   }
 
-  return collected
-    .filter((file) => file?.name)
-    .map((file) => ({
-      kennitala: applicantKennitala,
-      fileName: file.name,
-    }))
+  const extraDataAttachments = getValueViaPath<
+    Partial<Record<string, UploadedFile[]>>
+  >(answers, 'extraDataAttachments')
+  if (extraDataAttachments) {
+    addUploadedFiles(
+      extraDataAttachments.custodyAgreement,
+      applicantKennitala,
+      ApplicationFileType.VisitationAgreement,
+      collected,
+    )
+    addUploadedFiles(
+      extraDataAttachments.exemptionReason,
+      applicantKennitala,
+      exemptionReason
+        ? EXEMPTION_REASON_TO_FILE_TYPE[exemptionReason]
+        : undefined,
+      collected,
+    )
+    addUploadedFiles(
+      extraDataAttachments.changedCircumstances,
+      applicantKennitala,
+      undefined,
+      collected,
+    )
+  }
+
+  return Array.from(collected.values())
+}
+
+/** Resolves presigned S3 URLs for collected files before HMS submission. */
+export const resolveApplicationFilesForSubmission = async (
+  application: ApplicationWithAttachments,
+  applicantKennitala: string,
+  getAttachmentUrl: (
+    application: ApplicationWithAttachments,
+    attachmentKey: string,
+    expiration: number,
+  ) => Promise<string>,
+): Promise<ApplicationFile[]> => {
+  const entries = collectApplicationFileEntries(application, applicantKennitala)
+
+  return Promise.all(
+    entries.map(async ({ key, name, kennitala: fileKennitala, fileType }) => ({
+      kennitala: fileKennitala,
+      fileName: name,
+      fileUrl: await getAttachmentUrl(
+        application,
+        key,
+        ATTACHMENT_URL_EXPIRY_SECONDS,
+      ),
+      ...(fileType ? { fileType } : {}),
+    })),
+  )
 }
 
 export const mapApplicationToHousingBenefitsModel = (
   application: ApplicationWithAttachments,
+  files: ApplicationFile[] = [],
 ): HousingBenefitsApplicationModel => {
   const { answers } = application
 
@@ -327,6 +489,15 @@ export const mapApplicationToHousingBenefitsModel = (
   const hasAssetsAndIncome = Boolean(
     getValueViaPath<string>(answers, 'assetsDeclarationTextField')?.trim(),
   )
+
+  const acceptedMunicipalityDataFetch =
+    getValueViaPath<string>(answers, 'confirmMunicipality[0]') === YES
+  const acceptedDataFetch =
+    getValueViaPath<boolean>(answers, 'approveExternalData') === true
+  const acceptedPrivacyPolicy =
+    getValueViaPath<string[]>(answers, 'confirmRead.privacyPolicy')?.includes(
+      YES,
+    ) ?? false
 
   return {
     kennitala: applicantKennitala,
@@ -366,8 +537,20 @@ export const mapApplicationToHousingBenefitsModel = (
       ? landlordBankAccount?.accountNumber
       : undefined,
     hasAssetsAndIncome: hasAssetsAndIncome ? 1 : 0,
-    householdMembers: getHouseholdMembersForSubmission(application),
-    files: getApplicationFilesForSubmission(application, applicantKennitala),
+    householdMembers: [
+      {
+        kennitala: applicantKennitala,
+        email: getValueViaPath<string>(answers, 'applicant.email') ?? '',
+        phoneNumber: normalizePhoneNumber(
+          getValueViaPath<string>(answers, 'applicant.phoneNumber') ?? '',
+        ),
+        acceptedPrivacyPolicy,
+        acceptedMunicipalityDataFetch,
+        acceptedDataFetch,
+      },
+      ...getHouseholdMembersForSubmission(application),
+    ],
+    files,
     propertyTypeNumber:
       getValueViaPath<PropertyType>(answers, 'propertyType') ?? undefined,
   }

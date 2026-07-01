@@ -14,6 +14,7 @@ import { HousingBenefitsService } from './housing-benefits.service'
 import { isLastAssigneeToComplete } from './utils'
 import { NotificationsService } from '../../../../notification/notifications.service'
 import { NationalRegistryV3Service } from '../../../shared/api/national-registry-v3/national-registry-v3.service'
+import { AttachmentS3Service } from '../../../shared/services'
 
 const APPLICANT_ID = '0101303019'
 const ASSIGNEE_A = '0101304929'
@@ -120,6 +121,14 @@ describe('HousingBenefitsService notifications', () => {
           useValue: {
             createHousingBenefitsApplication,
             hasTaxReturnForYear: jest.fn().mockResolvedValue(true),
+          },
+        },
+        {
+          provide: AttachmentS3Service,
+          useValue: {
+            getAttachmentUrl: jest
+              .fn()
+              .mockResolvedValue('https://example.com/presigned-url'),
           },
         },
       ],
