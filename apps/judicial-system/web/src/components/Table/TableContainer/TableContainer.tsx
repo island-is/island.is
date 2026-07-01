@@ -18,12 +18,14 @@ const TableContainer: FC<Props> = (props) => {
     return <TableSkeleton />
   } else {
     return (
-      <table className={styles.table} data-testid={testid}>
-        <thead className={styles.thead}>
-          <tr>{tableHeader}</tr>
-        </thead>
-        <tbody>{children}</tbody>
-      </table>
+      <div className={styles.tableWrapper}>
+        <table className={styles.table} data-testid={testid}>
+          <thead className={styles.thead}>
+            <tr>{tableHeader}</tr>
+          </thead>
+          <tbody>{children}</tbody>
+        </table>
+      </div>
     )
   }
 }
