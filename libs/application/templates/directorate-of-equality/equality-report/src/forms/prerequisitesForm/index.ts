@@ -7,7 +7,7 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import { DefaultEvents, FormModes } from '@island.is/application/types'
-import { CompanyRegistryApi, IdentityApi, UserProfileApi } from '../../dataProviders'
+import { ActiveEqualityReportApi, CompanyRegistryApi, DoeCompanyApi, IdentityApi, UserProfileApi } from '../../dataProviders'
 import { messages } from '../../lib/messages'
 
 export const Prerequisites = buildForm({
@@ -16,26 +16,14 @@ export const Prerequisites = buildForm({
   renderLastScreenButton: true,
   children: [
     buildSection({
-      id: 'conditions',
-      tabTitle: 'Forkröfur',
+      id: 'forsendur',
+      title: messages.prerequisites.section.sectionTitle,
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
-          title: 'External data',
-          dataProviders: [
-            buildDataProviderItem({
-              provider: UserProfileApi,
-              title: messages.dataProviders.userProfileTitle,
-            }),
-            buildDataProviderItem({
-              provider: IdentityApi,
-            }),
-            buildDataProviderItem({
-              provider: CompanyRegistryApi,
-              title: messages.dataProviders.companyDataTitle,
-              subTitle: messages.dataProviders.companyDataSubTitle,
-            }),
-          ],
+          title: messages.prerequisites.section.title,
+          description: messages.prerequisites.section.intro,
+          checkboxLabel: messages.prerequisites.section.checkboxLabel,
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
@@ -48,8 +36,48 @@ export const Prerequisites = buildForm({
               },
             ],
           }),
+          dataProviders: [
+            buildDataProviderItem({
+              provider: DoeCompanyApi,
+            }),
+            buildDataProviderItem({
+              provider: ActiveEqualityReportApi,
+              title: messages.prerequisites.activeEqualityReport.title,
+              subTitle: messages.prerequisites.activeEqualityReport.intro,
+            }),
+            buildDataProviderItem({
+              provider: CompanyRegistryApi,
+              title: messages.prerequisites.companyRegistry.title,
+              subTitle: messages.prerequisites.companyRegistry.intro,
+            }),
+            buildDataProviderItem({
+              provider: UserProfileApi,
+              title: messages.prerequisites.userProfile.title,
+              subTitle: messages.prerequisites.userProfile.intro,
+            }),
+            buildDataProviderItem({
+              provider: IdentityApi,
+              title: messages.prerequisites.nationalRegistry.title,
+              subTitle: messages.prerequisites.nationalRegistry.intro,
+            }),
+          ],
         }),
       ],
+    }),
+    buildSection({
+      id: 'aboutTheCompany',
+      title: messages.aboutTheCompany.section.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'equalityReport',
+      title: messages.equalityReport.section.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'overview',
+      title: messages.overview.sectionTitle,
+      children: [],
     }),
   ],
 })
