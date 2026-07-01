@@ -11,6 +11,7 @@ import {
   ApplicationConfigurations,
   IdentityApi,
 } from '@island.is/application/types'
+import { Features } from '@island.is/feature-flags'
 import { isCompany } from 'kennitala'
 import { ActiveEqualityReportApi, CompanyRegistryApi, DoeCompanyApi, EqualityReportTemplateDocxApi, EqualityReportTemplateHtmlApi } from '../dataProviders'
 import { Events, Roles, States } from '../utils/constants'
@@ -31,6 +32,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.EQUALITY_REPORT,
   name: messages.general.applicationName,
+  featureFlag: Features.isDirectorateOfEqualityApplicationsEnabled,
   codeOwner: CodeOwners.Hugsmidjan,
   institution: messages.general.institution,
   translationNamespaces: ApplicationConfigurations.EqualityReport.translation,
