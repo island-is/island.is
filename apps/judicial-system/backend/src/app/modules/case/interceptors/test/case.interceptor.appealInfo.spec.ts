@@ -209,6 +209,7 @@ describe('getAppealCaseInfo', () => {
       expect(getAppealCaseInfo(appealCase, theCase)).toEqual({
         appealedByRole: UserRole.PROSECUTOR,
         appealedDate: prosecutorPostponedAppealDate,
+        appealedInCourt: false,
         statementDeadline: undefined,
         isStatementDeadlineExpired: undefined,
       })
@@ -225,6 +226,7 @@ describe('getAppealCaseInfo', () => {
       expect(getAppealCaseInfo(appealCase, theCase)).toEqual({
         appealedByRole: UserRole.DEFENDER,
         appealedDate: accusedPostponedAppealDate,
+        appealedInCourt: false,
         statementDeadline: undefined,
         isStatementDeadlineExpired: undefined,
       })
@@ -305,6 +307,31 @@ describe('getAppealCaseInfo', () => {
       expect(getAppealCaseInfo(appealCase, theCase).statementDeadline).toEqual(
         new Date('2026-04-03T12:00:00.000Z'),
       )
+    })
+
+    it('is appealedInCourt when a decision = APPEAL exists for the ruling', () => {
+      const theCase = {
+        type: CaseType.INDICTMENT,
+        appealDecisions: [
+          { rulingFileId: 'file-id', decision: CaseAppealDecision.APPEAL },
+        ],
+      } as Case
+      const appealCase = { rulingFileId: 'file-id' } as AppealCase
+
+      expect(getAppealCaseInfo(appealCase, theCase).appealedInCourt).toBe(true)
+    })
+
+    it('is not appealedInCourt when only other rulings or non-APPEAL decisions exist', () => {
+      const theCase = {
+        type: CaseType.INDICTMENT,
+        appealDecisions: [
+          { rulingFileId: 'other-file', decision: CaseAppealDecision.APPEAL },
+          { rulingFileId: 'file-id', decision: CaseAppealDecision.ACCEPT },
+        ],
+      } as Case
+      const appealCase = { rulingFileId: 'file-id' } as AppealCase
+
+      expect(getAppealCaseInfo(appealCase, theCase).appealedInCourt).toBe(false)
     })
   })
 })

@@ -17,6 +17,7 @@ import {
 import {
   isCompletedCase,
   isDefenceUser,
+  isIndictmentCase,
   isRequestCase,
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
@@ -113,17 +114,8 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
                     displayVerdictViewDate={displayVerdictViewDate}
                     displaySentToPrisonAdminDate={displaySentToPrisonAdminDate}
                     displayOpenCaseReference={displayOpenCaseReference}
-                    isDismissalCase={
-                      workingCase.indictmentRulingDecision ===
-                      CaseIndictmentRulingDecision.DISMISSAL
-                    }
-                    isCancellationCase={
-                      workingCase.indictmentRulingDecision ===
-                      CaseIndictmentRulingDecision.CANCELLATION
-                    }
-                    isFineCase={
-                      workingCase.indictmentRulingDecision ===
-                      CaseIndictmentRulingDecision.FINE
+                    indictmentRulingDecision={
+                      workingCase.indictmentRulingDecision
                     }
                   />
                 </div>
@@ -183,7 +175,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const prosecutorsOffice: Item = {
     id: 'prosecutors-office-item',
-    title: formatMessage(core.prosecutor),
+    title: isIndictmentCase(workingCase.type) ? 'Ákæruvald' : 'Sóknaraðili',
     values: [workingCase.prosecutorsOffice?.name || ''],
   }
 
@@ -296,7 +288,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
 
   const mergedCaseProsecutor = (mergedCase: Case): Item => ({
     id: 'merged-case-prosecutor-item',
-    title: formatMessage(core.prosecutor),
+    title: isIndictmentCase(mergedCase.type) ? 'Ákæruvald' : 'Sóknaraðili',
     values: [mergedCase.prosecutorsOffice?.name],
   })
 

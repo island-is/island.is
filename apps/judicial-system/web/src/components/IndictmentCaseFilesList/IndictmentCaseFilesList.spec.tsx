@@ -18,7 +18,7 @@ import { UserContext } from '../UserProvider/UserProvider'
 import IndictmentCaseFilesList from './IndictmentCaseFilesList'
 
 describe('IndictmentCaseFilesList', () => {
-  it('should render court records if there are courtRecord case files', () => {
+  it('should render court records if there are courtRecord case files', async () => {
     render(
       <IntlProviderWrapper>
         <ApolloProviderWrapper>
@@ -32,10 +32,10 @@ describe('IndictmentCaseFilesList', () => {
       </IntlProviderWrapper>,
     )
 
-    expect(screen.queryByTestId('PDFButton')).not.toBeNull()
+    expect(await screen.findByTestId('PDFButton')).toBeInTheDocument()
   })
 
-  it('should only show defender-visible case file records', () => {
+  it('should only show defender-visible case file records', async () => {
     render(
       <IntlProviderWrapper>
         <ApolloProviderWrapper>
@@ -74,14 +74,16 @@ describe('IndictmentCaseFilesList', () => {
       </IntlProviderWrapper>,
     )
 
-    expect(screen.queryByText(/Skjalaskrá 007-2026-1\.pdf/)).toBeInTheDocument()
+    expect(
+      await screen.findByText(/Skjalaskrá 007-2026-1\.pdf/),
+    ).toBeInTheDocument()
     expect(screen.queryByText(/Skjalaskrá 007-2026-3\.pdf/)).toBeInTheDocument()
     expect(
       screen.queryByText(/Skjalaskrá 007-2026-2\.pdf/),
     ).not.toBeInTheDocument()
   })
 
-  it('should only show spokesperson-visible case file records', () => {
+  it('should only show spokesperson-visible case file records', async () => {
     render(
       <IntlProviderWrapper>
         <ApolloProviderWrapper>
@@ -124,14 +126,16 @@ describe('IndictmentCaseFilesList', () => {
       </IntlProviderWrapper>,
     )
 
-    expect(screen.queryByText(/Skjalaskrá 007-2026-1\.pdf/)).toBeInTheDocument()
+    expect(
+      await screen.findByText(/Skjalaskrá 007-2026-1\.pdf/),
+    ).toBeInTheDocument()
     expect(screen.queryByText(/Skjalaskrá 007-2026-3\.pdf/)).toBeInTheDocument()
     expect(
       screen.queryByText(/Skjalaskrá 007-2026-2\.pdf/),
     ).not.toBeInTheDocument()
   })
 
-  it('should show all case file records for spokesperson when civil claimant has no police case numbers', () => {
+  it('should show all case file records for spokesperson when civil claimant has no police case numbers', async () => {
     render(
       <IntlProviderWrapper>
         <ApolloProviderWrapper>
@@ -166,11 +170,13 @@ describe('IndictmentCaseFilesList', () => {
       </IntlProviderWrapper>,
     )
 
-    expect(screen.queryByText(/Skjalaskrá 007-2026-1\.pdf/)).toBeInTheDocument()
+    expect(
+      await screen.findByText(/Skjalaskrá 007-2026-1\.pdf/),
+    ).toBeInTheDocument()
     expect(screen.queryByText(/Skjalaskrá 007-2026-2\.pdf/)).toBeInTheDocument()
   })
 
-  it('should only show defender-visible subpoenas', () => {
+  it('should only show defender-visible subpoenas', async () => {
     render(
       <IntlProviderWrapper>
         <ApolloProviderWrapper>
@@ -220,7 +226,9 @@ describe('IndictmentCaseFilesList', () => {
       </IntlProviderWrapper>,
     )
 
-    expect(screen.queryByText(/Fyrirkall Defendant One/)).toBeInTheDocument()
+    expect(
+      await screen.findByText(/Fyrirkall Defendant One/),
+    ).toBeInTheDocument()
     expect(
       screen.queryByText(/Fyrirkall Defendant Two/),
     ).not.toBeInTheDocument()

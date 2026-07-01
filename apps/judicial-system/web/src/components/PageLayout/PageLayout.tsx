@@ -218,65 +218,69 @@ const PageLayout: FC<PropsWithChildren<PageProps>> = ({
   const { formatMessage } = useIntl()
   const hideBreadcrumbs = isDefenceUser(user) || isCreating
 
-  return isLoading ? (
-    <Skeleton />
-  ) : notFound ? (
-    <AlertBanner
-      title={
-        isDefenceUser(user)
-          ? formatMessage(pageLayout.defenderRole.alertTitle)
-          : formatMessage(pageLayout.otherRoles.alertTitle)
-      }
-      description={
-        isDefenceUser(user)
-          ? formatMessage(pageLayout.defenderRole.alertMessage)
-          : formatMessage(pageLayout.otherRoles.alertMessage)
-      }
-      variant="error"
-      link={{
-        href: getStandardUserDashboardRoute(user),
-        title: 'Fara á yfirlitssíðu',
-      }}
-    />
-  ) : children ? (
+  return (
     <>
-      <Box
-        paddingBottom={[0, 0, 3, 6]}
-        paddingX={[0, 0, 4]}
-        background="purple100"
-        className={styles.processContainer}
-      >
-        <GridContainer className={styles.container}>
-          <GridRow direction={['columnReverse', 'columnReverse', 'row']}>
-            <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
-              {!hideBreadcrumbs && (
-                <Box marginY={3} marginX={[3, 3, 0, 0]}>
-                  <BreadCrumbs />
+      {isLoading ? (
+        <Skeleton />
+      ) : notFound ? (
+        <AlertBanner
+          title={
+            isDefenceUser(user)
+              ? formatMessage(pageLayout.defenderRole.alertTitle)
+              : formatMessage(pageLayout.otherRoles.alertTitle)
+          }
+          description={
+            isDefenceUser(user)
+              ? formatMessage(pageLayout.defenderRole.alertMessage)
+              : formatMessage(pageLayout.otherRoles.alertMessage)
+          }
+          variant="error"
+          link={{
+            href: getStandardUserDashboardRoute(user),
+            title: 'Fara á yfirlitssíðu',
+          }}
+        />
+      ) : children ? (
+        <Box
+          paddingBottom={[0, 0, 3, 6]}
+          paddingX={[0, 0, 4]}
+          background="purple100"
+          className={styles.processContainer}
+        >
+          <GridContainer className={styles.container}>
+            <GridRow direction={['columnReverse', 'columnReverse', 'row']}>
+              <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
+                {!hideBreadcrumbs && (
+                  <Box marginY={3} marginX={[3, 3, 0, 0]}>
+                    <BreadCrumbs />
+                  </Box>
+                )}
+                <Box
+                  background="white"
+                  borderColor="white"
+                  paddingTop={[3, 3, 10, 10]}
+                  className={styles.processContent}
+                  marginTop={hideBreadcrumbs ? 10 : 0}
+                >
+                  {children}
                 </Box>
-              )}
-              <Box
-                background="white"
-                borderColor="white"
-                paddingTop={[3, 3, 10, 10]}
-                className={styles.processContent}
-                marginTop={hideBreadcrumbs ? 10 : 0}
-              >
-                {children}
-              </Box>
-            </GridColumn>
-            <SidePanel
-              user={user}
-              isValid={isValid}
-              onNavigationTo={onNavigationTo}
-              workingCase={workingCase}
-            />
-          </GridRow>
-        </GridContainer>
-      </Box>
-      {/* Here we will mount our modal portal */}
+              </GridColumn>
+              <SidePanel
+                user={user}
+                isValid={isValid}
+                onNavigationTo={onNavigationTo}
+                workingCase={workingCase}
+              />
+            </GridRow>
+          </GridContainer>
+        </Box>
+      ) : null}
+      {/* Modal portal target — rendered in every state so a modal mounted as a
+          sibling of PageLayout (e.g. the indictment cancellation modal) can
+          always portal here, even while loading or when the case is not found. */}
       <div id="modal" data-testid="modal" />
     </>
-  ) : null
+  )
 }
 
 export default PageLayout
