@@ -1,5 +1,5 @@
-import React, { useEffect, useId, useRef, useState } from 'react'
-import { useDebounce } from 'react-use'
+import React, { useEffect, useId, useMemo, useRef, useState } from 'react'
+import debounce from 'lodash/debounce'
 import { AnimatePresence } from 'motion/react'
 import type { Editor as TinyMCEEditor, Ui } from 'tinymce'
 import { Editor } from '@tinymce/tinymce-react'
@@ -58,8 +58,6 @@ const TinyMCE = ({
     left: 0,
   })
   const [selectedColor, setSelectedColor] = useState<string | null>(null)
-  const [content, setContent] = useState(defaultValue ?? '')
-  const hasEditedRef = useRef(false)
   const initialValueRef = useRef(defaultValue ?? '')
   const editorRef = useRef<TinyMCEEditor | null>(null)
   const highlightBtnApiRef = useRef<ToolbarToggleButtonInstanceApi | null>(null)
@@ -68,17 +66,25 @@ const TinyMCE = ({
 
   // Persist while the user types so content isn't lost on a refresh that
   // happens before the editor blurs (TinyMCE's iframe doesn't reliably fire
-  // blur on page unload).
-  useDebounce(
-    () => {
-      if (hasEditedRef.current && !disabled) {
-        onDebouncedChange?.(content)
-        hasEditedRef.current = false
-      }
-    },
-    500,
-    [content],
+  // blur on page unload). Passing the callback as an argument keeps the
+  // debounced function stable while still flushing with the latest handler.
+  const debouncedSave = useMemo(
+    () =>
+      debounce(
+        (html: string, callback: ((html: string) => void) | undefined) => {
+          callback?.(html)
+        },
+        500,
+      ),
+    [],
   )
+
+  // Flush any pending save on unmount so edits aren't lost on navigation.
+  useEffect(() => {
+    return () => {
+      debouncedSave.flush()
+    }
+  }, [debouncedSave])
 
   useEffect(() => {
     highlightBtnApiRef.current?.setActive(pickerOpen)
@@ -190,8 +196,8 @@ const TinyMCE = ({
               editor.on('blur', () => {
                 setFocused(false)
                 onBlur?.(editor.getContent())
-                // Blur already persisted; don't fire a redundant debounced save.
-                hasEditedRef.current = false
+                // Blur already persisted; drop any pending debounced save.
+                debouncedSave.cancel()
               })
               editor.on('NodeChange', handleNodeChange(editor))
               editor.on('PastePreProcess', (args) => {
@@ -217,9 +223,10 @@ const TinyMCE = ({
           }}
           initialValue={initialValueRef.current}
           onEditorChange={(newContent) => {
-            hasEditedRef.current = true
-            setContent(newContent)
             onChange?.(newContent)
+            if (!disabled) {
+              debouncedSave(newContent, onDebouncedChange)
+            }
           }}
           disabled={disabled}
         />
