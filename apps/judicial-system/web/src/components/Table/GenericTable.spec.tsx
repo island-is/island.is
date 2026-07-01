@@ -48,7 +48,9 @@ describe('GenericTable', () => {
   it('marks the sortable column header with aria-sort', async () => {
     renderTable()
 
-    const header = screen.getByRole('columnheader', { name: /Málsnúmer/ })
+    const header = await screen.findByRole('columnheader', {
+      name: /Málsnúmer/,
+    })
     expect(header).toHaveAttribute('aria-sort', 'none')
 
     await user.click(screen.getByRole('button', { name: /Raða eftir dálki/ }))
@@ -62,11 +64,11 @@ describe('GenericTable', () => {
     ).toHaveAttribute('aria-sort', 'descending')
   })
 
-  it('exposes a descriptive accessible name on the row', () => {
+  it('exposes a descriptive accessible name on the row', async () => {
     renderTable()
 
     expect(
-      screen.getByRole('button', { name: 'Opna mál R-123/2021' }),
+      await screen.findByRole('button', { name: 'Opna mál R-123/2021' }),
     ).toBeInTheDocument()
   })
 
@@ -74,7 +76,9 @@ describe('GenericTable', () => {
     const onClick = jest.fn()
     renderTable(onClick)
 
-    const row = screen.getByRole('button', { name: 'Opna mál R-123/2021' })
+    const row = await screen.findByRole('button', {
+      name: 'Opna mál R-123/2021',
+    })
     expect(row).toHaveAttribute('tabindex', '0')
 
     row.focus()
@@ -89,7 +93,9 @@ describe('GenericTable', () => {
     const onClick = jest.fn()
     renderTable(onClick, true)
 
-    const row = screen.getByRole('button', { name: 'Opna mál R-123/2021' })
+    const row = await screen.findByRole('button', {
+      name: 'Opna mál R-123/2021',
+    })
     expect(row).toHaveAttribute('tabindex', '-1')
     expect(row).toHaveAttribute('aria-disabled', 'true')
 
@@ -98,14 +104,14 @@ describe('GenericTable', () => {
     expect(onClick).not.toHaveBeenCalled()
   })
 
-  it('exposes the context menu as a single named trigger', () => {
+  it('exposes the context menu as a single named trigger', async () => {
     renderTable(jest.fn(), false, [{ title: 'Eyða', onClick: jest.fn() }])
 
     // A single, accessibly-named menu trigger — not a duplicate tab stop with
     // an empty-named wrapper plus a redundant inner button. The name is
     // descriptive (derived from the row label) so screen reader users can tell
     // each row's menu apart.
-    const triggers = screen.getAllByRole('button', {
+    const triggers = await screen.findAllByRole('button', {
       name: 'Frekari aðgerðir fyrir mál R-123/2021',
     })
     expect(triggers).toHaveLength(1)

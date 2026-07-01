@@ -48,7 +48,9 @@ describe('<CaseFileTable />', () => {
       } as CaseFile,
     ])
 
-    const button = screen.getByRole('button', { name: 'Opna document.pdf' })
+    const button = await screen.findByRole('button', {
+      name: 'Opna document.pdf',
+    })
     expect(button).toHaveAttribute('tabindex', '0')
 
     button.focus()
@@ -59,7 +61,7 @@ describe('<CaseFileTable />', () => {
     expect(onOpenFile).toHaveBeenCalledWith('file-1')
   })
 
-  test('should not render a button for a rejected file', () => {
+  test('should not render a button for a rejected file', async () => {
     renderTable([
       {
         id: 'file-1',
@@ -67,6 +69,9 @@ describe('<CaseFileTable />', () => {
         state: CaseFileState.REJECTED,
       } as CaseFile,
     ])
+
+    // Await the table to settle (lazy Icon load) before asserting absence.
+    await screen.findByRole('columnheader', { name: /Nafn skjals/ })
 
     expect(
       screen.queryByRole('button', { name: 'Opna document.pdf' }),
@@ -95,7 +100,7 @@ describe('<CaseFileTable />', () => {
 
     // The table is sorted by the received/created column by default.
     expect(
-      screen.getByRole('columnheader', { name: /Nafn skjals/ }),
+      await screen.findByRole('columnheader', { name: /Nafn skjals/ }),
     ).toHaveAttribute('aria-sort', 'none')
     expect(
       screen.getByRole('columnheader', { name: /Móttekið/ }),
