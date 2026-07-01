@@ -47,7 +47,7 @@ jest.mock(
 // Landsréttur. An in-court appeal creates the appeal case in APPEALED state
 // with no named appellant (appealedByRole/appealedByNationalId are null), so
 // the row must light up from appeal-case existence alone.
-describe('RulingOrderFileRow - send in-court appeal to Landsréttur', () => {
+describe('RulingOrderFileRow - send in-court appeal to Court of appeals', () => {
   const rulingFileId = 'ruling-file-1'
   const appealCaseId = 'appeal-1'
   const appealedDate = '2026-06-05T14:30:00.000Z'

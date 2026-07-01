@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, within } from '@testing-library/react'
 
 import {
+  AppealDecisionPartyRole,
   Case,
   CaseAppealDecision,
   CourtSessionResponse,
@@ -89,6 +90,108 @@ describe('CourtSessionAppealDecisions - radio group identity across sessions', (
         courtSessionId: 'session-b',
         defendantId,
         decision: CaseAppealDecision.APPEAL,
+      }),
+    )
+  })
+})
+
+// The announcement (yfirlýsing) is part of the court record, so switching a
+// decision must only manage the auto-filled default - never discard text the
+// judge typed.
+describe('CourtSessionAppealDecisions - announcement preservation', () => {
+  const defendantId = 'defendant-1'
+  const rulingFileId = 'file-a'
+  const appealDefault = 'Ákærði kærir úrskurðinn til Landsréttar.'
+
+  const renderWithDecision = (
+    decision?: CaseAppealDecision,
+    announcement?: string,
+  ) => {
+    const workingCase = {
+      id: 'case-1',
+      defendants: [{ id: defendantId, name: 'Jón Jónsson' }],
+      civilClaimants: [],
+      appealDecisions: decision
+        ? [
+            {
+              rulingFileId,
+              partyRole: AppealDecisionPartyRole.DEFENDANT,
+              defendantId,
+              decision,
+              announcement,
+            },
+          ]
+        : [],
+    } as unknown as Case
+
+    return render(
+      <IntlProviderWrapper>
+        <CourtSessionAppealDecisions
+          courtSession={
+            {
+              id: 'session-a',
+              rulingFileId,
+              isConfirmed: false,
+              rulingType: CourtSessionRulingType.ORDER,
+            } as unknown as CourtSessionResponse
+          }
+          workingCase={workingCase}
+          setWorkingCase={jest.fn()}
+        />
+      </IntlProviderWrapper>,
+    )
+  }
+
+  afterEach(() => jest.clearAllMocks())
+
+  it('auto-fills the default statement when appealing into an empty field', () => {
+    renderWithDecision()
+
+    fireEvent.click(screen.getByLabelText('Ákærði kærir úrskurðinn'))
+
+    expect(mockUpdateCourtSessionAppealDecision).toHaveBeenCalledWith(
+      expect.objectContaining({
+        decision: CaseAppealDecision.APPEAL,
+        announcement: appealDefault,
+      }),
+    )
+  })
+
+  it('clears the auto-filled default when moving off APPEAL', () => {
+    renderWithDecision(CaseAppealDecision.APPEAL, appealDefault)
+
+    fireEvent.click(screen.getByLabelText('Ákærði unir úrskurðinum'))
+
+    expect(mockUpdateCourtSessionAppealDecision).toHaveBeenCalledWith(
+      expect.objectContaining({
+        decision: CaseAppealDecision.ACCEPT,
+        announcement: '',
+      }),
+    )
+  })
+
+  it('preserves custom announcement text when moving off APPEAL', () => {
+    renderWithDecision(CaseAppealDecision.APPEAL, 'Sérstök yfirlýsing')
+
+    fireEvent.click(screen.getByLabelText('Ákærði unir úrskurðinum'))
+
+    expect(mockUpdateCourtSessionAppealDecision).toHaveBeenCalledWith(
+      expect.objectContaining({
+        decision: CaseAppealDecision.ACCEPT,
+        announcement: 'Sérstök yfirlýsing',
+      }),
+    )
+  })
+
+  it('preserves custom announcement text when switching to APPEAL', () => {
+    renderWithDecision(CaseAppealDecision.POSTPONE, 'Sérstök yfirlýsing')
+
+    fireEvent.click(screen.getByLabelText('Ákærði kærir úrskurðinn'))
+
+    expect(mockUpdateCourtSessionAppealDecision).toHaveBeenCalledWith(
+      expect.objectContaining({
+        decision: CaseAppealDecision.APPEAL,
+        announcement: 'Sérstök yfirlýsing',
       }),
     )
   })
