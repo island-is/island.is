@@ -89,6 +89,9 @@ const MedicinePrescriptionHistory = () => {
           mobileTitleKey="medicine"
           ellipsisLength={22}
           tableLoading={loading}
+          emptyTableMessage={formatMessage(messages.noDataFound, {
+            arg: formatMessage(messages.medicineTitle).toLowerCase(),
+          })}
           items={
             history?.map((item, i) => ({
               id: item?.id ?? `${i}`,
@@ -204,14 +207,6 @@ const MedicinePrescriptionHistory = () => {
         />
       )}
       {error && !loading && <Problem error={error} noBorder={false} />}
-
-      {!error && !loading && history && history.length === 0 && (
-        <EmptyTable
-          message={formatMessage(messages.noDataFound, {
-            arg: formatMessage(messages.medicineTitle).toLowerCase(),
-          })}
-        />
-      )}
     </IntroWrapper>
   )
 }
