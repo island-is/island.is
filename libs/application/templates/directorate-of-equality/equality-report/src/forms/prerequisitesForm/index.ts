@@ -6,8 +6,9 @@ import {
   buildSubmitField,
   coreMessages,
 } from '@island.is/application/core'
-import { DefaultEvents } from '@island.is/application/types'
-import { FormModes, UserProfileApi } from '@island.is/application/types'
+import { DefaultEvents, FormModes } from '@island.is/application/types'
+import { CompanyRegistryApi, IdentityApi, UserProfileApi } from '../../dataProviders'
+import { messages } from '../../lib/messages'
 
 export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',
@@ -24,10 +25,16 @@ export const Prerequisites = buildForm({
           dataProviders: [
             buildDataProviderItem({
               provider: UserProfileApi,
-              title: 'User profile',
-              subTitle: 'User profile',
+              title: messages.dataProviders.userProfileTitle,
             }),
-            // Add more data providers as needed
+            buildDataProviderItem({
+              provider: IdentityApi,
+            }),
+            buildDataProviderItem({
+              provider: CompanyRegistryApi,
+              title: messages.dataProviders.companyDataTitle,
+              subTitle: messages.dataProviders.companyDataSubTitle,
+            }),
           ],
           submitField: buildSubmitField({
             id: 'submit',
