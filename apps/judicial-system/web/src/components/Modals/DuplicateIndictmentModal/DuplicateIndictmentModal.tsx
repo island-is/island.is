@@ -28,9 +28,13 @@ const DuplicateIndictmentModal: FC<Props> = ({ onClose }) => {
       return
     }
 
-    await router.push(
-      `${PROSECUTION_INDICTMENT_CASE_DEFENDANT_ROUTE}/${duplicatedCase.id}`,
-    )
+    try {
+      await router.push(
+        `${PROSECUTION_INDICTMENT_CASE_DEFENDANT_ROUTE}/${duplicatedCase.id}`,
+      )
+    } catch {
+      setIsLoading(false)
+    }
   }
 
   return (
