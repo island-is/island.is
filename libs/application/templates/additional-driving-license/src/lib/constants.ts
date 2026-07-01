@@ -1,5 +1,4 @@
 import { YesOrNo } from '@island.is/application/core'
-import { DefaultEvents } from '@island.is/application/types'
 
 export enum ApiActions {
   submitApplication = 'submitApplication',
@@ -170,47 +169,10 @@ export const CHARGE_ITEM_CODES: Record<string, string> = {
   [B_FULL]: 'AY110',
   [BE]: 'AY148',
   [DELIVERY_FEE]: 'AY145',
+  [B_ADVANCED]: 'AY115',
 }
 
-export const otherLicenseCategories = ['C', 'C1', 'CE', 'D', 'D1', 'DE']
-
-export const codesExtendedLicenseCategories = [
-  'C1',
-  'C1E',
-  'C',
-  'CE',
-  'D1',
-  'D1E',
-  'D',
-  'DE',
-  'Bfar',
-  'Far',
-  'FAR',
-]
-
-export type DrivingLicenseApplicationFor =
-  | typeof B_FULL
-  | typeof B_TEMP
-  | typeof BE
-
-export type Events =
-  | { type: DefaultEvents.SUBMIT }
-  | { type: DefaultEvents.PAYMENT }
-  | { type: DefaultEvents.APPROVE }
-  | { type: DefaultEvents.REJECT }
-  | { type: DefaultEvents.ABORT }
-
-export enum Roles {
-  APPLICANT = 'applicant',
-}
-
-export enum States {
-  DRAFT = 'draft',
-  DONE = 'done',
-  PAYMENT = 'payment',
-  DECLINED = 'declined',
-  PREREQUISITES = 'prerequisites',
-}
+export type DrivingLicenseApplicationFor = typeof BE | typeof B_ADVANCED
 
 type FakeCurrentLicense = 'none' | 'temp' | 'B' | 'BE'
 
@@ -231,4 +193,6 @@ export interface DrivingLicenseFakeData {
   age: number
   hasThjodskraPhoto?: FakePhotoMode
   hasRLSPhoto?: FakePhotoMode
+  // Advanced categories the applicant already holds (e.g. 'C1', 'CE', 'D').
+  advancedCategories?: Array<keyof typeof MainAdvancedLicense>
 }

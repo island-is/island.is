@@ -1,6 +1,5 @@
 import { z } from 'zod'
-import { Pickup } from './types'
-import { AdvancedLicense, B_ADVANCED, BE } from './constants'
+import { AdvancedLicense, B_ADVANCED, BE, Pickup } from './constants'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -22,14 +21,14 @@ export const dataSchema = z.object({
       return deliveryMethod === Pickup.DISTRICT ? !!jurisdiction : true
     }),
   healthCertificate: z.array(FileSchema).nonempty(),
-  requirementsMet: z.boolean().refine((v) => v),
   applicationFor: z.enum([BE, B_ADVANCED]),
+  // Only relevant when `applicationFor === B_ADVANCED`. The field is rendered
+  // exclusively for that case (form condition) and blocks submit until at least
+  // one category is selected (setBeforeSubmitCallback in AdvancedLicenseSelection),
+  // so it stays optional here to avoid blocking BE applicants who never set it.
   advancedLicense: z
     .array(z.enum(Object.values(AdvancedLicense) as [string, ...string[]]))
-    .nonempty()
-    .refine((value) => {
-      return value.length > 0
-    }),
+    .optional(),
   email: z.string().email(),
   phone: z.string().refine((v) => isValidPhoneNumber(v)),
 })

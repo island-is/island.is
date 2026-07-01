@@ -6,7 +6,6 @@ import {
 import { m } from '../../lib/messages'
 import {
   NationalRegistryV3UserApi,
-  TeachersApi,
   UserProfileApi,
   CurrentLicenseApi,
   DrivingAssessmentApi,
@@ -14,7 +13,6 @@ import {
   QualityPhotoApi,
   QualityPhotoAndSignatureApi,
   AllPhotosFromThjodskraApi,
-  ExistingApplicationApi,
 } from '@island.is/application/types'
 import {
   MockableSyslumadurPaymentCatalogApi,
@@ -61,16 +59,10 @@ export const sectionExternalData = buildSubSection({
           provider: MockableSyslumadurPaymentCatalogApi,
         }),
         buildDataProviderItem({
-          provider: TeachersApi,
-        }),
-        buildDataProviderItem({
           provider: AllPhotosFromThjodskraApi,
         }),
         buildDataProviderItem({
           provider: QualityPhotoAndSignatureApi,
-        }),
-        buildDataProviderItem({
-          provider: ExistingApplicationApi,
         }),
       ],
     }),

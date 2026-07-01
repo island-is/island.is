@@ -5,14 +5,11 @@ import { m } from '../../lib/messages'
 import { sectionFakeData } from './sectionFakeData'
 import { sectionExternalData } from './sectionExternalData'
 import { sectionApplicationFor } from './sectionApplicationFor'
-import { sectionRequirements } from './sectionRequirements'
+import { sectionAdditionalSummary } from './sectionAdditionalSummary'
 import { sectionAdvancedLicenseSelection } from './sectionAdvancedLicenseSelection'
 
 interface DrivingLicenseFormConfig {
   allowFakeData?: boolean
-  allowPickLicense?: boolean
-  allowBELicense?: boolean
-  allowAdvanced?: boolean
 }
 
 export const getForm = ({
@@ -33,7 +30,7 @@ export const getForm = ({
           sectionExternalData,
           sectionApplicationFor,
           sectionAdvancedLicenseSelection,
-          sectionRequirements,
+          sectionAdditionalSummary,
         ],
       }),
       buildSection({

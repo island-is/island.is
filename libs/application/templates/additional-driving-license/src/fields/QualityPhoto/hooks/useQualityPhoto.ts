@@ -2,17 +2,12 @@ import { getValueViaPath, YES } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { QUALITY_PHOTO } from './queries.graphql'
 import { useQuery, ApolloError } from '@apollo/client'
+import { HasQualityPhotoData } from '../../../lib/types'
 
 export interface QualityPhotoType {
   qualityPhoto: string | null
   loading: boolean
   error: ApolloError | undefined
-}
-
-export type HasQualityPhotoData = {
-  data: {
-    hasQualityPhoto: boolean
-  }
 }
 
 const FAKE_QUALITY_PHOTO = {

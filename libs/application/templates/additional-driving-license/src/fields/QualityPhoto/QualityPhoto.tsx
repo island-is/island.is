@@ -39,8 +39,6 @@ const QualityPhoto: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 }) => {
   const { qualityPhoto, loading } = useQualityPhoto(application)
   const { formatMessage } = useLocale()
-  const img =
-    qualityPhoto !== 'fake' ? Photo({ qualityPhoto, application }) : null
 
   return (
     <Box marginBottom={4}>
@@ -50,7 +48,7 @@ const QualityPhoto: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         <Box>
           <Text>{formatMessage(m.qualityPhotoSubTitle)}</Text>
           <Box marginTop={4} style={{ width: '191px', height: '242px' }}>
-            {img}
+            <Photo qualityPhoto={qualityPhoto} application={application} />
           </Box>
         </Box>
       ) : (

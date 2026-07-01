@@ -1,43 +1,13 @@
-import { createApplication } from '@island.is/application/testing'
-import {
-  isVisible,
-  isApplicationForCondition,
-  allowFakeCondition,
-  hasCompletedPrerequisitesStep,
-  hasUsableRlsQualityPhoto,
-} from './formUtils'
+import { allowFakeCondition, getCodes, hasUsableRlsQualityPhoto } from './formUtils'
 import { NO, YES } from '@island.is/application/core'
-
-describe('isVisible', () => {
-  it('returns true when all functions return true', () => {
-    expect(
-      isVisible(
-        () => true,
-        () => true,
-      )({}),
-    ).toBe(true)
-  })
-})
-
-describe('isApplicationForCondition', () => {
-  describe('expecting B-full', () => {
-    it('returns true when it is not defined', () => {
-      expect(isApplicationForCondition('B-full')({}))
-    })
-
-    it('returns true when B-full is selected', () => {
-      expect(
-        isApplicationForCondition('B-full')({ applicationFor: 'B-full' }),
-      ).toBe(true)
-    })
-
-    it('returns false when B-temp is selected', () => {
-      expect(
-        isApplicationForCondition('B-full')({ applicationFor: 'B-temp' }),
-      ).toBe(false)
-    })
-  })
-})
+import { Application, ExternalData } from '@island.is/application/types'
+import {
+  B_ADVANCED,
+  BE,
+  CHARGE_ITEM_CODES,
+  DELIVERY_FEE,
+  Pickup,
+} from '../constants'
 
 describe('allowFakeCondition', () => {
   it('works', () => {
@@ -52,46 +22,15 @@ describe('allowFakeCondition', () => {
   })
 })
 
-describe('hasCompletedPrerequisitesStep', () => {
-  it('returns true for an application where the prerequisites have been completed', () => {
-    expect(
-      hasCompletedPrerequisitesStep(true)({
-        application: createApplication({
-          answers: {
-            requirementsMet: true,
-          },
-        }),
-      }),
-    ).toBe(true)
-  })
-
-  it('returns false for an empty application', () => {
-    expect(
-      hasCompletedPrerequisitesStep(true)({ application: createApplication() }),
-    ).toBe(false)
-  })
-  it('returns false for an empty application', () => {
-    expect(
-      hasCompletedPrerequisitesStep(true)({
-        application: createApplication({
-          answers: {
-            requirementsMet: false,
-          },
-        }),
-      }),
-    ).toBe(false)
-  })
-})
-
 describe('hasUsableRlsQualityPhoto', () => {
-  const wrap = (data: unknown) =>
+  const wrap = (data: unknown): ExternalData =>
     ({
       qualityPhotoAndSignature: {
         data,
         date: new Date(),
         status: 'success' as const,
       },
-    } as any)
+    } as ExternalData)
 
   it('returns true when RLS returns imageId + binary', () => {
     expect(
@@ -129,5 +68,56 @@ describe('hasUsableRlsQualityPhoto', () => {
 
   it('returns false when data is null', () => {
     expect(hasUsableRlsQualityPhoto(wrap(null))).toBe(false)
+  })
+})
+
+describe('getCodes', () => {
+  const buildApplication = (answers: Record<string, unknown>): Application =>
+    ({ answers } as Application)
+
+  it('returns the BE charge code for a BE application', () => {
+    expect(getCodes(buildApplication({ applicationFor: BE }))).toEqual([
+      { code: CHARGE_ITEM_CODES[BE] },
+    ])
+  })
+
+  it('returns the advanced charge code for a B-advanced application', () => {
+    expect(getCodes(buildApplication({ applicationFor: B_ADVANCED }))).toEqual([
+      { code: CHARGE_ITEM_CODES[B_ADVANCED] },
+    ])
+  })
+
+  it('appends the delivery fee when delivery method is POST', () => {
+    expect(
+      getCodes(
+        buildApplication({
+          applicationFor: BE,
+          delivery: { deliveryMethod: Pickup.POST },
+        }),
+      ),
+    ).toEqual([
+      { code: CHARGE_ITEM_CODES[BE] },
+      { code: CHARGE_ITEM_CODES[DELIVERY_FEE] },
+    ])
+  })
+
+  it('does not append the delivery fee for DISTRICT pickup', () => {
+    expect(
+      getCodes(
+        buildApplication({
+          applicationFor: B_ADVANCED,
+          delivery: { deliveryMethod: Pickup.DISTRICT },
+        }),
+      ),
+    ).toEqual([{ code: CHARGE_ITEM_CODES[B_ADVANCED] }])
+  })
+
+  // The summary price renderer relies on this throw being guarded; if it ever
+  // stops throwing, that guard becomes dead and an unpriced charge could slip
+  // through.
+  it('throws when applicationFor is missing', () => {
+    expect(() => getCodes(buildApplication({}))).toThrow(
+      'No selected charge item code',
+    )
   })
 })

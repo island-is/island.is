@@ -37,7 +37,7 @@ import {
   getApplicationFeatureFlags,
   DrivingLicenseFeatureFlags,
 } from './getApplicationFeatureFlags'
-import { getCodes, hasCompletedPrerequisitesStep } from './utils'
+import { getCodes } from './utils'
 import { buildPaymentState } from '@island.is/application/utils'
 
 const template: ApplicationTemplate<
@@ -95,7 +95,6 @@ const template: ApplicationTemplate<
                 CurrentLicenseApi.configure({
                   params: {
                     useLegacyVersion: true,
-                    validCategories: ['B'],
                   },
                 }),
                 DrivingAssessmentApi,
@@ -111,16 +110,11 @@ const template: ApplicationTemplate<
                 logMessage: coreHistoryMessages.applicationStarted,
                 onEvent: DefaultEvents.SUBMIT,
               },
-              {
-                logMessage: coreHistoryMessages.applicationRejected,
-                onEvent: DefaultEvents.REJECT,
-              },
             ],
           },
         },
         on: {
           [DefaultEvents.SUBMIT]: { target: States.DRAFT },
-          [DefaultEvents.REJECT]: { target: States.DECLINED },
         },
       },
       [States.DRAFT]: {
@@ -143,17 +137,7 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.PAYMENT]: [
-            {
-              target: States.PREREQUISITES,
-              cond: hasCompletedPrerequisitesStep(false),
-            },
-            {
-              target: States.PAYMENT,
-              cond: hasCompletedPrerequisitesStep(true),
-            },
-          ],
-          [DefaultEvents.REJECT]: { target: States.DECLINED },
+          [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
         },
       },
       [States.PAYMENT]: buildPaymentState({
@@ -175,24 +159,6 @@ const template: ApplicationTemplate<
                 ),
               read: 'all',
               delete: true,
-            },
-          ],
-        },
-      },
-      [States.DECLINED]: {
-        meta: {
-          name: 'Declined',
-          status: FormModes.REJECTED,
-          progress: 1,
-          lifecycle: DefaultStateLifeCycle,
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/declinedForm').then((module) =>
-                  Promise.resolve(module.declinedForm),
-                ),
-              read: 'all',
             },
           ],
         },

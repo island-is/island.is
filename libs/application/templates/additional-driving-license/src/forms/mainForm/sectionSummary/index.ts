@@ -3,26 +3,27 @@ import {
   buildMultiField,
   buildKeyValueField,
   buildSubmitField,
-  buildCheckboxField,
   buildDividerField,
   getValueViaPath,
-  YES,
   buildSection,
 } from '@island.is/application/core'
-import { DefaultEvents, StaticText } from '@island.is/application/types'
+import {
+  Application,
+  DefaultEvents,
+  StaticText,
+} from '@island.is/application/types'
 import { NationalRegistryUser } from '@island.is/api/schema'
+import { Jurisdiction } from '@island.is/clients/driving-license'
 import { m } from '../../../lib/messages'
 import { format as formatNationalId } from 'kennitala'
 import {
   advancedLicenseMap,
   B_ADVANCED,
-  B_FULL,
   BE,
-  CHARGE_ITEM_CODES,
-  DELIVERY_FEE,
+  Pickup,
 } from '../../../lib/constants'
+import { getCodes } from '../../../lib/utils'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
-import { Pickup } from '../../../lib/types'
 
 export const sectionSummary = buildSection({
   id: 'overview',
@@ -136,41 +137,13 @@ export const sectionSummary = buildSection({
             (nationalRegistry.data as NationalRegistryUser).address?.city,
         }),
 
-        // Health cert section — old "bring along" checkbox flow.
-        // Renders for non-BE applicants whose health declaration triggered
-        // a cert requirement. Redesigned 65+ uploads instead, so suppress
-        // this block for that case to avoid double-rendering.
-        buildDividerField({}),
-        buildDescriptionField({
-          id: 'bringalong',
-          title: m.overviewBringAlongTitle,
-          titleVariant: 'h4',
-          description: '',
-          condition: (answers, externalData) => answers.applicationFor !== BE,
-        }),
-        buildCheckboxField({
-          id: 'certificate',
-          large: false,
-          backgroundColor: 'white',
-          defaultValue: [],
-          options: [
-            {
-              value: YES,
-              label: m.overviewBringCertificateData,
-            },
-          ],
-          condition: (answers, externalData) => answers.applicationFor !== BE,
-        }),
         // Health cert section — uploaded-file display.
         // BE: gated on health-declaration triggering the upload.
         // Redesigned 65+: always shown (cert is mandatory regardless of
         // health questions, which 65+ doesn't have).
-        buildDividerField({
-          condition: (answers, externalData) => answers.applicationFor === BE,
-        }),
+        buildDividerField({}),
         buildKeyValueField({
           label: m.overviewHealthCertificateUploaded,
-          condition: (answers, externalData) => answers.applicationFor === BE,
           value: ({ answers }) => {
             const files = getValueViaPath<Array<{ name: string }>>(
               answers,
@@ -182,14 +155,26 @@ export const sectionSummary = buildSection({
         buildDividerField({}),
         buildKeyValueField({
           label: m.pickupLocationTitle,
-          value: ({ answers }) => {
-            return getValueViaPath(answers, 'delivery.deliveryMethod') ===
-              Pickup.POST
-              ? m.overviewPickupPost
-              : `${m.overviewPickupDistrict} ${getValueViaPath(
-                  answers,
-                  'delivery.jurisdiction',
-                )}`
+          value: ({ answers, externalData }) => {
+            if (
+              getValueViaPath(answers, 'delivery.deliveryMethod') === Pickup.POST
+            ) {
+              return m.overviewPickupPost
+            }
+
+            const jurisdictionId = getValueViaPath(
+              answers,
+              'delivery.jurisdiction',
+            )
+            const jurisdiction = getValueViaPath<Jurisdiction[]>(
+              externalData,
+              'jurisdictions.data',
+            )?.find(({ id }) => `${id}` === `${jurisdictionId}`)
+
+            return {
+              ...m.overviewPickupDistrictWithLocation,
+              values: { location: jurisdiction?.name ?? '' },
+            }
           },
           width: 'full',
         }),
@@ -200,42 +185,30 @@ export const sectionSummary = buildSection({
               ? m.overviewPaymentChargeWithDelivery
               : m.overviewPaymentCharge,
           value: ({ answers, externalData }) => {
-            const items = externalData.payment.data as {
-              priceAmount: number
-              chargeItemCode: string
-            }[]
-
-            const DEFAULT_ITEM_CODE = CHARGE_ITEM_CODES[B_FULL]
-
-            const targetCode =
-              typeof answers.applicationFor === 'string'
-                ? CHARGE_ITEM_CODES[answers.applicationFor]
-                  ? CHARGE_ITEM_CODES[answers.applicationFor]
-                  : DEFAULT_ITEM_CODE
-                : DEFAULT_ITEM_CODE
-
-            let pickupItem = null
-
-            if (
-              (answers.delivery as { deliveryMethod: string })
-                .deliveryMethod === Pickup.POST
-            ) {
-              pickupItem = items.find(
-                ({ chargeItemCode }) =>
-                  chargeItemCode === CHARGE_ITEM_CODES[DELIVERY_FEE],
-              )
+            // getCodes throws when applicationFor is unset; guard so a partial/
+            // corrupt answer state degrades to a blank price instead of crashing
+            // the whole summary render.
+            if (!getValueViaPath(answers, 'applicationFor')) {
+              return '' as StaticText
             }
 
-            const item = items.find(
-              ({ chargeItemCode }) => chargeItemCode === targetCode,
+            const items =
+              getValueViaPath<{ priceAmount: number; chargeItemCode: string }[]>(
+                externalData,
+                'payment.data',
+              ) ?? []
+
+            // Derive the total from the same charge codes that are actually
+            // billed (getCodes), so the displayed price can't drift from it.
+            const total = getCodes({ answers, externalData } as Application).reduce(
+              (sum, { code }) =>
+                sum +
+                (items.find(({ chargeItemCode }) => chargeItemCode === code)
+                  ?.priceAmount ?? 0),
+              0,
             )
 
-            const price = item?.priceAmount ?? 0
-            const deliveryPrice = pickupItem?.priceAmount ?? 0
-
-            const total = deliveryPrice + price
-
-            return (total?.toLocaleString('is-IS') + ' kr.') as StaticText
+            return (total.toLocaleString('is-IS') + ' kr.') as StaticText
           },
           width: 'full',
         }),

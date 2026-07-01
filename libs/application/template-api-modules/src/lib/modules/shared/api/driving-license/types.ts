@@ -21,6 +21,9 @@ export interface DrivingLicenseFakeData {
   remarks?: YesOrNo
   hasThjodskraPhoto?: FakePhotoMode
   hasRLSPhoto?: FakePhotoMode
+  // Advanced categories the applicant already holds (e.g. 'C1', 'CE', 'D').
+  // These are added to the `categories` array alongside the base license.
+  advancedCategories?: string[]
 }
 
 export type DrivingLicenseCategory = {

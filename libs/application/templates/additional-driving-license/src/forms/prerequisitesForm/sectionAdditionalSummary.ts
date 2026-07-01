@@ -7,8 +7,8 @@ import {
 import { DefaultEvents } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 
-export const sectionRequirements = buildSubSection({
-  id: 'requirements',
+export const sectionAdditionalSummary = buildSubSection({
+  id: 'additionalSummary',
   title: m.applicationEligibilityTitle,
   children: [
     buildMultiField({

@@ -29,17 +29,21 @@ export const buildFakeCurrentLicense = (fakeData: DrivingLicenseFakeData) => {
     }
   })()
 
+  const buildCategory = (code: string | null) => ({
+    id: Math.floor(Math.random() * 100000000),
+    nr: code,
+    name: code || '', // for useLegacyVersion
+    issued: getTodayDateWithMonthDiff(-12),
+    expires: getTodayDateWithMonthDiff(14 * 12), // license is valid for 15 years total
+    comments: '',
+  })
+
   return {
     currentLicense,
     categories: [
-      {
-        id: Math.floor(Math.random() * 100000000),
-        nr: currentLicense,
-        name: currentLicense || '', // for useLegacyVersion
-        issued: getTodayDateWithMonthDiff(-12),
-        expires: getTodayDateWithMonthDiff(14 * 12), // license is valid for 15 years total
-        comments: '',
-      },
+      buildCategory(currentLicense),
+      // Advanced categories the applicant already holds (e.g. 'C1', 'CE').
+      ...(fakeData.advancedCategories ?? []).map(buildCategory),
     ],
     remarks:
       fakeData.remarks === YES

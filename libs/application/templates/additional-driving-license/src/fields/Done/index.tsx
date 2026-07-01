@@ -1,1 +1,0 @@
-export { Declined } from './Declined'

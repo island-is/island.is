@@ -1,6 +1,4 @@
-export { Declined } from './Done'
 export { ApplicationSummary } from './ApplicationSummary'
-export { SubmitAndDecline } from './SubmitAndDecline'
 export { PaymentPending } from './PaymentPending'
 export { AdvancedLicenseSelection } from './AdvancedLicenseSelection'
 export { QualityPhoto } from './QualityPhoto'

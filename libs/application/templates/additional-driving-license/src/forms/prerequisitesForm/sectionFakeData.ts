@@ -1,4 +1,5 @@
 import {
+  buildCheckboxField,
   buildDescriptionField,
   buildMultiField,
   buildRadioField,
@@ -8,6 +9,7 @@ import {
   YES,
 } from '@island.is/application/core'
 import { allowFakeCondition } from '../../lib/utils'
+import { MainAdvancedLicense } from '../../lib/constants'
 
 export const sectionFakeData = buildSubSection({
   id: 'fakeData',
@@ -73,6 +75,7 @@ export const sectionFakeData = buildSubSection({
           title: 'Núverandi ökuréttindi umsækjanda',
           width: 'half',
           condition: allowFakeCondition(YES),
+          defaultValue: 'B',
           options: [
             {
               value: 'none',
@@ -91,6 +94,17 @@ export const sectionFakeData = buildSubSection({
               label: 'Kerruréttindi',
             },
           ],
+        }),
+        buildCheckboxField({
+          id: 'fakeData.advancedCategories',
+          title: 'B_ADVANCED: Aukin ökuréttindi sem umsækjandi hefur nú þegar',
+          description:
+            'Þessir flokkar bætast við „categories“ ásamt grunnréttindunum (B).',
+          condition: allowFakeCondition(YES),
+          options: Object.values(MainAdvancedLicense).map((code) => ({
+            value: code,
+            label: code,
+          })),
         }),
         buildRadioField({
           id: 'fakeData.hasThjodskraPhoto',

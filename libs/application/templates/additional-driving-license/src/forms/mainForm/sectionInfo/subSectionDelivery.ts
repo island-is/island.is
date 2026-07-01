@@ -50,7 +50,7 @@ export const subSectionDelivery = buildSubSection({
             return (data as Jurisdiction[]).map(({ id, name, zip }) => ({
               value: `${id}`,
               label: name,
-              tooltip: `Póstnúmer ${zip}`,
+              tooltip: { ...m.pickupPostalCodeTooltip, values: { zip } },
             }))
           },
         }),
