@@ -17,7 +17,10 @@ import {
   PROSECUTION_INDICTMENT_CASE_DEFENDANT_ROUTE,
   PROSECUTION_INDICTMENT_CASE_INDICTMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { isCompletedCase, isProsecutionUser } from '@island.is/judicial-system/types'
+import {
+  isCompletedCase,
+  isProsecutionUser,
+} from '@island.is/judicial-system/types'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   AllIndictmentCaseFiles,
@@ -334,9 +337,7 @@ const Overview: FC = () => {
             isIndictmentReceived ||
             (isIndictmentWaitingForCancellation && !canDuplicateIndictment)
           }
-          nextIsLoading={
-            canDuplicateIndictment && isDuplicatingIndictmentCase
-          }
+          nextIsLoading={canDuplicateIndictment && isDuplicatingIndictmentCase}
           infoBoxText={
             isIndictmentReceived
               ? formatMessage(strings.indictmentSentToCourt)
