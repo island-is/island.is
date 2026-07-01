@@ -241,3 +241,102 @@ describe('RulingOrderFileRow - hide appeal action for an accepted party', () => 
     expect(await screen.findByText('Senda inn kæru')).toBeInTheDocument()
   })
 })
+
+// Any party that appealed in court may withdraw its own appeal, but only while
+// it has not already withdrawn (mirrors the backend userHasActiveInCourtAppeal).
+describe('RulingOrderFileRow - withdraw an in-court appeal', () => {
+  const rulingFileId = 'ruling-file-withdraw'
+  const defendantId = 'defendant-withdraw'
+  const appealCaseId = 'appeal-withdraw'
+  const fileName = 'urskurdur-kaera.pdf'
+  const defenderNationalId = '1234567890'
+
+  const defenceUser = {
+    id: 'defender-user',
+    role: UserRole.DEFENDER,
+    nationalId: defenderNationalId,
+  } as User
+
+  const renderForWithdrawnState = (withdrawn: boolean) => {
+    const file = {
+      id: rulingFileId,
+      name: fileName,
+      category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
+      hasBeenAppealed: true,
+      isKeyAccessible: true,
+    } as CaseFile
+
+    const workingCase = {
+      ...mockCase(CaseType.INDICTMENT),
+      state: CaseState.RECEIVED,
+      defendants: [
+        {
+          id: defendantId,
+          isDefenderChoiceConfirmed: true,
+          defenderNationalId,
+        },
+      ],
+      appealDecisions: [
+        {
+          rulingFileId,
+          partyRole: AppealDecisionPartyRole.DEFENDANT,
+          defendantId,
+          decision: CaseAppealDecision.APPEAL,
+          ...(withdrawn ? { withdrawnDate: '2026-06-05T12:00:00.000Z' } : {}),
+        },
+      ],
+      rulingOrderAppealCases: [
+        {
+          id: appealCaseId,
+          rulingFileId,
+          appealState: AppealCaseState.APPEALED,
+          appealedInCourt: true,
+        },
+      ],
+    } as unknown as Case
+
+    return render(
+      <MockedProvider addTypename={false}>
+        <IntlProviderWrapper>
+          <UserContext.Provider value={{ user: defenceUser }}>
+            <FormContext.Provider
+              value={
+                {
+                  workingCase,
+                  setWorkingCase: jest.fn(),
+                  isLoadingWorkingCase: false,
+                  caseNotFound: false,
+                  isCaseUpToDate: true,
+                  refreshCase: jest.fn(),
+                  getCase: jest.fn(),
+                  isCreating: false,
+                } as unknown as React.ContextType<typeof FormContext>
+              }
+            >
+              <RulingOrderFileRow file={file} onOpenFile={jest.fn()} />
+            </FormContext.Provider>
+          </UserContext.Provider>
+        </IntlProviderWrapper>
+      </MockedProvider>,
+    )
+  }
+
+  afterEach(() => jest.clearAllMocks())
+
+  it('offers "Afturkalla kæru" to an active in-court appellant', async () => {
+    renderForWithdrawnState(false)
+
+    fireEvent.click(screen.getByLabelText(`Valmynd fyrir ${fileName}`))
+    expect(await screen.findByText('Afturkalla kæru')).toBeInTheDocument()
+  })
+
+  it('hides "Afturkalla kæru" once the party has withdrawn', async () => {
+    renderForWithdrawnState(true)
+
+    fireEvent.click(screen.getByLabelText(`Valmynd fyrir ${fileName}`))
+    // Still a defence party, so the menu exists (statement / add files) - just
+    // not the withdraw action.
+    expect(await screen.findByText('Bæta við gögnum')).toBeInTheDocument()
+    expect(screen.queryByText('Afturkalla kæru')).not.toBeInTheDocument()
+  })
+})
