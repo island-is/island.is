@@ -73,7 +73,7 @@ const Statement = () => {
     addUploadFiles,
     updateUploadFile,
     removeUploadFile,
-  } = useUploadFiles(workingCase.caseFiles)
+  } = useUploadFiles()
 
   const { onOpenFile } = useFileList({
     caseId: workingCase.id,
@@ -130,8 +130,6 @@ const Statement = () => {
       AppealEventType.APPEAL_STATEMENT_SENT,
     )
 
-    refreshCase()
-
     if (sent) {
       setVisibleModal('STATEMENT_SENT')
     }
@@ -142,7 +140,6 @@ const Statement = () => {
     targetAppealCaseId,
     createAppealEventLog,
     workingCase.id,
-    refreshCase,
   ])
 
   const handleRemoveFile = (file: UploadFile) => {
@@ -279,7 +276,10 @@ const Statement = () => {
           text="Tilkynning um greinargerð hefur verið send Landsrétti og aðilum máls."
           secondaryButton={{
             text: formatMessage(core.closeModal),
-            onClick: () => router.push(previousUrl),
+            onClick: () => {
+              refreshCase()
+              router.push(previousUrl)
+            },
           }}
         />
       )}
