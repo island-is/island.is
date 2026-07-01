@@ -12,7 +12,13 @@ import {
   IdentityApi,
 } from '@island.is/application/types'
 import { isCompany } from 'kennitala'
-import { ActiveEqualityReportApi, CompanyRegistryApi, DoeCompanyApi } from '../dataProviders'
+import {
+  ActiveEqualityReportApi,
+  BlankExcelTemplateApi,
+  CompanyRegistryApi,
+  DoeCompanyApi,
+  ParsedSalaryReportApi,
+} from '../dataProviders'
 import { Events, Roles, States } from '../utils/constants'
 import { hasActiveEqualityReport } from '../utils/eligibility'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -34,7 +40,8 @@ const template: ApplicationTemplate<
   name: messages.general.applicationName,
   codeOwner: CodeOwners.Hugsmidjan,
   institution: messages.general.institution,
-  translationNamespaces: ApplicationConfigurations[ApplicationTypes.SALARY_REPORT].translation,
+  translationNamespaces:
+    ApplicationConfigurations[ApplicationTypes.SALARY_REPORT].translation,
   dataSchema,
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   requiredScopes: [ApiScope.directorateOfEquality],
@@ -59,7 +66,14 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [UserProfileApi, IdentityApi, CompanyRegistryApi, DoeCompanyApi, ActiveEqualityReportApi],
+              api: [
+                UserProfileApi,
+                IdentityApi,
+                CompanyRegistryApi,
+                DoeCompanyApi,
+                ActiveEqualityReportApi,
+                BlankExcelTemplateApi,
+              ],
               delete: true,
             },
             {
@@ -119,6 +133,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
+              api: [ParsedSalaryReportApi],
               delete: true,
             },
           ],
@@ -154,7 +169,10 @@ const template: ApplicationTemplate<
     nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (isCompany(application.applicant) && nationalId === application.applicant) {
+    if (
+      isCompany(application.applicant) &&
+      nationalId === application.applicant
+    ) {
       return Roles.APPLICANT
     }
     return Roles.NOT_ALLOWED

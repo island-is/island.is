@@ -67,6 +67,38 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     return { base64: Buffer.from(arrayBuffer).toString('base64') }
   }
 
+  async getBlankExcelTemplate({ auth }: TemplateApiModuleActionProps) {
+    const blob = await this.directorateOfEqualityService.getBlankExcelTemplate(
+      auth,
+    )
+    const arrayBuffer = await blob.arrayBuffer()
+    return {
+      base64: Buffer.from(arrayBuffer).toString('base64'),
+      filename: 'launagreining-sniðmát.xlsx',
+    }
+  }
+
+  async parseSalaryReportWorkbook({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    const base64 = getValueViaPath<string>(
+      application.answers,
+      'dataEntry.excelFile',
+    )
+    if (!base64) {
+      throw new Error('No Excel file found in answers')
+    }
+    const buffer = Buffer.from(base64, 'base64')
+    const blob = new Blob([buffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    })
+    return this.directorateOfEqualityService.importSalaryReportWorkbook(
+      auth,
+      blob,
+    )
+  }
+
   async submitEqualityReport({
     auth,
     application,

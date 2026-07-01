@@ -14,33 +14,105 @@ const generalInformation = z.object({
 })
 
 const chiefExecutive = z.object({
-  name: z.string().refine((v) => v && v.length > 0, { params: messages.errors.required }),
-  email: z.string().refine((v) => EMAIL_REGEX.test(v), { params: messages.errors.invalidEmail }),
-  gender: z.string().refine((v) => v && v.length > 0, { params: messages.errors.required }),
+  name: z
+    .string()
+    .refine((v) => v && v.length > 0, { params: messages.errors.required }),
+  email: z
+    .string()
+    .refine((v) => EMAIL_REGEX.test(v), {
+      params: messages.errors.invalidEmail,
+    }),
+  gender: z
+    .string()
+    .refine((v) => v && v.length > 0, { params: messages.errors.required }),
 })
 
 const contactPerson = z.object({
-  name: z.string().refine((v) => v && v.length > 0, { params: messages.errors.required }),
-  email: z.string().refine((v) => EMAIL_REGEX.test(v), { params: messages.errors.invalidEmail }),
-  phone: z.string().refine((v) => v && v.length > 0, { params: messages.errors.required }),
+  name: z
+    .string()
+    .refine((v) => v && v.length > 0, { params: messages.errors.required }),
+  email: z
+    .string()
+    .refine((v) => EMAIL_REGEX.test(v), {
+      params: messages.errors.invalidEmail,
+    }),
+  phone: z
+    .string()
+    .refine((v) => v && v.length > 0, { params: messages.errors.required }),
 })
 
 const employeeCount = z.object({
-  women: z.string().refine((v) => v !== '' && Number(v) >= 0, { params: messages.errors.invalidNonNegativeNumber }),
-  men: z.string().refine((v) => v !== '' && Number(v) >= 0, { params: messages.errors.invalidNonNegativeNumber }),
-  nonBinary: z.string().refine((v) => v !== '' && Number(v) >= 0, { params: messages.errors.invalidNonNegativeNumber }),
+  women: z
+    .string()
+    .refine((v) => v !== '' && Number(v) >= 0, {
+      params: messages.errors.invalidNonNegativeNumber,
+    }),
+  men: z
+    .string()
+    .refine((v) => v !== '' && Number(v) >= 0, {
+      params: messages.errors.invalidNonNegativeNumber,
+    }),
+  nonBinary: z
+    .string()
+    .refine((v) => v !== '' && Number(v) >= 0, {
+      params: messages.errors.invalidNonNegativeNumber,
+    }),
 })
 
+const jobFactor = z.object({
+  type: z.string(),
+  title: z.string(),
+  description: z.string(),
+  weight: z.string().refine((v) => v !== '' && Number(v) >= 0, {
+    params: messages.errors.invalidNonNegativeNumber,
+  }),
+})
+
+const personalFactor = z.object({
+  title: z.string().min(1, { message: 'required' }),
+  description: z.string().optional(),
+  weight: z.string().refine((v) => v !== '' && Number(v) >= 0, {
+    params: messages.errors.invalidNonNegativeNumber,
+  }),
+})
+
+const criteria = z
+  .object({
+    jobFactors: z.array(jobFactor).min(1),
+    personalFactors: z.array(personalFactor).optional(),
+  })
+  .superRefine((val, ctx) => {
+    const jobTotal = (val.jobFactors ?? []).reduce(
+      (sum, f) => sum + (Number(f.weight) || 0),
+      0,
+    )
+    const personalTotal = (val.personalFactors ?? []).reduce(
+      (sum, f) => sum + (Number(f.weight) || 0),
+      0,
+    )
+    if (jobTotal + personalTotal !== 100) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['jobFactors'],
+        params: messages.report.criteria.weightSumError,
+      })
+    }
+  })
+
 const subsidiaries = z.object({
-  includesSubsidiaries: z.enum(['yes', 'no']).refine((v) => !!v, { params: messages.errors.required }),
+  includesSubsidiaries: z
+    .enum(['yes', 'no'])
+    .refine((v) => !!v, { params: messages.errors.required }),
   list: z
     .array(
       z.object({
         nationalIdWithName: z.object({
           name: z.string().min(1),
-          nationalId: z.string().refine((v) => kennitala.isValid(v) && kennitala.isCompany(v), {
-            params: messages.errors.required,
-          }),
+          nationalId: z
+            .string()
+            .refine((v) => kennitala.isValid(v) && kennitala.isCompany(v), {
+              params: messages.errors.required,
+            }),
         }),
       }),
     )
@@ -59,7 +131,64 @@ const subsidiaries = z.object({
         }
       })
     })
+    .optional(),
 })
+
+const subCriterionStep = z.object({
+  description: z.string(),
+})
+
+const subCriterion = z.object({
+  title: z.string(),
+  description: z.string().optional(),
+  weight: z.string(),
+  stepCount: z.string(),
+  steps: z.array(subCriterionStep),
+})
+
+const subCriteria = z
+  .object({
+    jobFactors: z.array(z.array(subCriterion)).optional(),
+    personalFactors: z.array(z.array(subCriterion)).optional(),
+  })
+  .optional()
+
+const employeeStepAssignment = z.object({
+  subTitle: z.string(),
+  stepOrder: z.number(),
+  criterionTitle: z.string(),
+})
+
+const employee = z.object({
+  ordinal: z.number(),
+  identifier: z.string().min(1),
+  roleTitle: z.string(),
+  education: z.string(),
+  gender: z.string(),
+  field: z.string(),
+  department: z.string(),
+  startDate: z.string(),
+  workRatio: z.number(),
+  baseSalary: z.number(),
+  additionalSalary: z.number(),
+  bonusSalary: z.number().nullish(),
+  personalStepAssignments: z.array(employeeStepAssignment).default([]),
+})
+
+const employees = z.array(employee).optional()
+
+const stepAssignment = z.object({
+  criterionTitle: z.string(),
+  subTitle: z.string(),
+  stepOrder: z.number(),
+})
+
+const role = z.object({
+  title: z.string(),
+  stepAssignments: z.array(stepAssignment),
+})
+
+const roles = z.array(role).optional()
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((value) => value === true, {
@@ -70,6 +199,10 @@ export const dataSchema = z.object({
   contactPerson: contactPerson.optional(),
   employeeCount: employeeCount.optional(),
   subsidiaries: subsidiaries.optional(),
+  criteria: criteria.optional(),
+  subCriteria: subCriteria,
+  employees: employees,
+  roles: roles,
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

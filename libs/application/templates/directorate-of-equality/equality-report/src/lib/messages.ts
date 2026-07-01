@@ -472,6 +472,18 @@ export const messages = {
         id: 'equalityReport.application:equalityReport.previousEqualityPlan.copied',
         defaultMessage: 'Afritað!',
       },
+      alertTitle: {
+        id: 'equalityReport.application:equalityReport.previousEqualityPlan.alertTitle',
+        defaultMessage: 'Gild jafnréttisáætlun',
+      },
+      approvedAt: {
+        id: 'equalityReport.application:equalityReport.previousEqualityPlan.approvedAt',
+        defaultMessage: 'Samþykkt',
+      },
+      validUntil: {
+        id: 'equalityReport.application:equalityReport.previousEqualityPlan.validUntil',
+        defaultMessage: 'Gildir til',
+      },
     }),
     goalsAndActions: defineMessages({
       sectionTitle: {

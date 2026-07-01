@@ -19,3 +19,16 @@ export const ActiveEqualityReportApi = defineTemplateApi({
   externalDataId: 'activeEqualityReport',
   namespace: 'DirectorateOfEquality',
 })
+
+export const BlankExcelTemplateApi = defineTemplateApi({
+  action: 'getBlankExcelTemplate',
+  externalDataId: 'blankExcelTemplate',
+  namespace: 'DirectorateOfEquality',
+})
+
+export const ParsedSalaryReportApi = defineTemplateApi({
+  action: 'parseSalaryReportWorkbook',
+  externalDataId: 'parsedSalaryReport',
+  namespace: 'DirectorateOfEquality',
+  throwOnError: false,
+})
