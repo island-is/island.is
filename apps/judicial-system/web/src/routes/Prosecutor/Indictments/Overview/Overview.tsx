@@ -16,7 +16,10 @@ import {
   PROSECUTION_INDICTMENT_CASE_ADD_FILES_ROUTE,
   PROSECUTION_INDICTMENT_CASE_INDICTMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { isCompletedCase, isProsecutionUser } from '@island.is/judicial-system/types'
+import {
+  isCompletedCase,
+  isProsecutionUser,
+} from '@island.is/judicial-system/types'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   AllIndictmentCaseFiles,
