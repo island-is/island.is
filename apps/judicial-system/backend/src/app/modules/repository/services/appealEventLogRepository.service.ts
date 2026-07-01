@@ -11,6 +11,10 @@ interface CreateAppealEventLogOptions {
   transaction: Transaction
 }
 
+interface DeleteAppealEventLogOptions {
+  transaction: Transaction
+}
+
 @Injectable()
 export class AppealEventLogRepositoryService {
   constructor(
@@ -38,6 +42,37 @@ export class AppealEventLogRepositoryService {
     } catch (error) {
       this.logger.error(
         `Error creating a new appeal event log for appeal case ${data.appealCaseId} with event type ${data.eventType}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  // Removes every event log of an appeal case - used before the appeal case
+  // itself is deleted (the event logs reference it via a foreign key).
+  async deleteByAppealCaseId(
+    appealCaseId: string,
+    options: DeleteAppealEventLogOptions,
+  ): Promise<number> {
+    try {
+      this.logger.debug(
+        `Deleting appeal event logs for appeal case ${appealCaseId}`,
+      )
+
+      const numberOfDeletedRows = await this.appealEventLogModel.destroy({
+        where: { appealCaseId },
+        transaction: options.transaction,
+      })
+
+      this.logger.debug(
+        `Deleted ${numberOfDeletedRows} appeal event log(s) for appeal case ${appealCaseId}`,
+      )
+
+      return numberOfDeletedRows
+    } catch (error) {
+      this.logger.error(
+        `Error deleting appeal event logs for appeal case ${appealCaseId}:`,
         { error },
       )
 
