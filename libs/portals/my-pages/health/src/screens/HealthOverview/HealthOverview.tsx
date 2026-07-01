@@ -156,7 +156,7 @@ export const HealthOverview = () => {
             </Text>
             {showQuickLinks && (
               <Box marginTop={3}>
-                <Inline space={1}>
+                <Inline space={[1, 2]}>
                   {quickLinks.map((link) => (
                     <LinkResolver key={link.href} href={link.href}>
                       <Tag variant="blue">{link.label}</Tag>
