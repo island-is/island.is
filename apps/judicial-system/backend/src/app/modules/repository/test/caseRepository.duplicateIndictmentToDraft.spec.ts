@@ -372,6 +372,7 @@ describe('CaseRepositoryService — duplicateIndictmentToDraft', () => {
   it('copies eligible case files to a new S3 key and resets them to a draft state', async () => {
     const caseId = uuid()
     const fileId = uuid()
+    const policeFileId = uuid()
 
     const sourceCase = { id: caseId, type: CaseType.INDICTMENT } as Case
 
@@ -382,13 +383,14 @@ describe('CaseRepositoryService — duplicateIndictmentToDraft', () => {
         id: fileId,
         key: `${caseId}/abc/document.pdf`,
         isKeyAccessible: true,
+        policeFileId,
         toJSON: () => ({
           id: fileId,
           caseId,
           category: CaseFileCategory.CASE_FILE,
           key: `${caseId}/abc/document.pdf`,
           state: CaseFileState.STORED_IN_COURT,
-          policeFileId: uuid(),
+          policeFileId,
           hash: 'some-hash',
           hashAlgorithm: 'sha256',
         }),
@@ -431,7 +433,8 @@ describe('CaseRepositoryService — duplicateIndictmentToDraft', () => {
     )
 
     // A new case file record is created pointing at the new case and key, reset
-    // to a draft state, with police/hash references cleared
+    // to a draft state, with the hash references cleared but the police file
+    // reference preserved so the file is not offered for re-upload from LÖKE
     expect(ctx.caseFileModel.create).toHaveBeenCalledTimes(1)
     const fileCreatedWith = ctx.caseFileModel.create.mock.calls[0][0]
     expect(fileCreatedWith).toEqual(
@@ -440,7 +443,7 @@ describe('CaseRepositoryService — duplicateIndictmentToDraft', () => {
         caseId: ctx.newCaseId,
         key: copyDestKey,
         state: CaseFileState.STORED_IN_RVG,
-        policeFileId: undefined,
+        policeFileId,
         hash: undefined,
         hashAlgorithm: undefined,
       }),

@@ -138,6 +138,7 @@ export const AlertBanner: FC<PropsWithChildren<AlertBannerProps>> = ({
         >
           <button
             className={alertBannerStyles.closeBtn}
+            aria-label="Loka"
             onClick={() => {
               setDismissed(true)
               if (onDismiss) {
