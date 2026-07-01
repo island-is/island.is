@@ -20,6 +20,7 @@ import {
 import {
   AppealCaseNotificationType,
   AppealCaseState,
+  AppealCaseTransition,
   AppealDecisionPartyRole,
   CaseAppealDecision,
   CaseFileCategory,
@@ -29,6 +30,7 @@ import {
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
+import { transitionAppealCase } from '../appeal-case/state/appealCase.state'
 import { EventLogService } from '../event-log'
 import { FileService } from '../file'
 import {
@@ -456,11 +458,14 @@ export class CourtSessionService {
     }
   }
 
-  // Reconciles the ruling order's appeal case with the confirmed decisions:
-  //  - at least one in-court appeal and no appeal case yet -> create it
-  //    (the decision rows are the record of who appealed, so no event/link);
-  //  - no in-court appeal and a still-APPEALED appeal case -> delete it
-  //    (a progressed appeal is rejected earlier by
+  // Reconciles the ruling order's appeal case with the confirmed decisions, by
+  // the state of the in-court appeals (decision = APPEAL):
+  //  - at least one still standing (not withdrawn) -> create the appeal case if
+  //    none exists yet (the decision rows are the record of who appealed);
+  //  - some appeals but all withdrawn -> withdraw the appeal case (the parties
+  //    withdrew; the appeal is discontinued, not erased - history is kept);
+  //  - none at all (all corrected away) -> delete a still-APPEALED appeal case
+  //    (a progressed appeal corrected away is rejected earlier by
   //    validateAppealCorrectionAllowed).
   // Idempotent, so re-confirming a corrected session converges.
   private async reconcileInCourtRulingOrderAppeal(
@@ -478,16 +483,18 @@ export class CourtSessionService {
       where: { caseId: theCase.id, rulingFileId },
       transaction,
     })
-    const someoneAppealedInCourt = decisions.some(
+    const appeals = decisions.filter(
       (d) => d.decision === CaseAppealDecision.APPEAL,
     )
+    const hasStandingAppeal = appeals.some((d) => !d.withdrawnDate)
 
     const existingAppealCase = theCase.rulingOrderAppealCases?.find(
       (appealCase) => appealCase.rulingFileId === rulingFileId,
     )
 
-    if (!existingAppealCase) {
-      if (someoneAppealedInCourt) {
+    // An appeal still stands - create the appeal case if it does not exist yet.
+    if (hasStandingAppeal) {
+      if (!existingAppealCase) {
         const appealCase = await this.appealCaseRepositoryService.create(
           theCase.id,
           {
@@ -513,10 +520,46 @@ export class CourtSessionService {
       return
     }
 
-    if (
-      !someoneAppealedInCourt &&
-      existingAppealCase.appealState === AppealCaseState.APPEALED
-    ) {
+    if (!existingAppealCase) {
+      return
+    }
+
+    // Some parties appealed in court but all have withdrawn -> withdraw the
+    // appeal case itself (unless it has already moved past where it can be
+    // withdrawn). Reuses the appeal-case state machine so a RECEIVED appeal is
+    // discontinued correctly.
+    if (appeals.length > 0) {
+      if (
+        existingAppealCase.appealState === AppealCaseState.APPEALED ||
+        existingAppealCase.appealState === AppealCaseState.RECEIVED
+      ) {
+        const { appealCaseUpdate } = transitionAppealCase(
+          AppealCaseTransition.WITHDRAW_APPEAL,
+          theCase,
+          existingAppealCase,
+        )
+
+        await this.appealCaseRepositoryService.update(
+          existingAppealCase.id,
+          appealCaseUpdate,
+          { transaction },
+        )
+
+        addMessagesToQueue({
+          type: MessageType.APPEAL_CASE_NOTIFICATION,
+          user,
+          caseId: theCase.id,
+          elementId: existingAppealCase.id,
+          body: { type: AppealCaseNotificationType.APPEAL_WITHDRAWN },
+        })
+      }
+
+      return
+    }
+
+    // No in-court appeals remain (all corrected away) -> delete a still-APPEALED
+    // appeal case.
+    if (existingAppealCase.appealState === AppealCaseState.APPEALED) {
       await this.deleteInCourtRulingOrderAppeal(
         theCase,
         existingAppealCase,

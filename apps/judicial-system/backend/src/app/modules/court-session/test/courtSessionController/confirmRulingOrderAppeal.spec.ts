@@ -9,6 +9,7 @@ import {
 } from '@island.is/judicial-system/message'
 import {
   AppealCaseNotificationType,
+  AppealCaseRulingDecision,
   AppealCaseState,
   AppealDecisionPartyRole,
   CaseAppealDecision,
@@ -217,6 +218,68 @@ describe('CourtSessionController - Confirm ruling order appeal', () => {
         expect.objectContaining({
           type: MessageType.APPEAL_CASE_NOTIFICATION,
         }),
+      )
+    })
+  })
+
+  describe('every in-court appeal has been withdrawn on confirmation', () => {
+    const withdrawnDate = new Date('2026-03-04T09:00:00Z')
+
+    const caseWithAppeal = (appealState: AppealCaseState) =>
+      ({
+        ...baseCase,
+        rulingOrderAppealCases: [{ id: appealCaseId, rulingFileId, appealState }],
+      } as unknown as Case)
+
+    beforeEach(() => {
+      decisions = [
+        {
+          partyRole: AppealDecisionPartyRole.PROSECUTOR,
+          decision: CaseAppealDecision.APPEAL,
+          withdrawnDate,
+        },
+        {
+          partyRole: AppealDecisionPartyRole.DEFENDANT,
+          defendantId,
+          decision: CaseAppealDecision.APPEAL,
+          withdrawnDate,
+        },
+        {
+          partyRole: AppealDecisionPartyRole.CIVIL_CLAIMANT,
+          civilClaimantId,
+          decision: CaseAppealDecision.APPEAL,
+          withdrawnDate,
+        },
+      ]
+    })
+
+    it('should withdraw a still-APPEALED appeal case and notify', async () => {
+      await givenWhenThen(caseWithAppeal(AppealCaseState.APPEALED))
+
+      expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
+        appealCaseId,
+        expect.objectContaining({ appealState: AppealCaseState.WITHDRAWN }),
+        { transaction },
+      )
+      expect(addMessagesToQueue).toHaveBeenCalledWith(
+        expect.objectContaining({
+          body: { type: AppealCaseNotificationType.APPEAL_WITHDRAWN },
+        }),
+      )
+      expect(mockAppealCaseRepositoryService.create).not.toHaveBeenCalled()
+      expect(mockAppealCaseRepositoryService.delete).not.toHaveBeenCalled()
+    })
+
+    it('should withdraw and discontinue a RECEIVED appeal case', async () => {
+      await givenWhenThen(caseWithAppeal(AppealCaseState.RECEIVED))
+
+      expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
+        appealCaseId,
+        expect.objectContaining({
+          appealState: AppealCaseState.WITHDRAWN,
+          appealRulingDecision: AppealCaseRulingDecision.DISCONTINUED,
+        }),
+        { transaction },
       )
     })
   })
