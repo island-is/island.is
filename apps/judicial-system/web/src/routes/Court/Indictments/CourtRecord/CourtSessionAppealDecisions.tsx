@@ -139,6 +139,22 @@ const CourtSessionAppealDecisions: FC<Props> = ({
       },
     ]
 
+    // The announcement (yfirlýsing) becomes part of the court record, so picking
+    // a decision must never silently discard text the judge typed. Only the
+    // auto-filled default is managed: fill it in when appealing into an empty
+    // field, clear it when moving off APPEAL if the field still holds that
+    // default, and otherwise keep whatever is there.
+    const appealAnnouncement = `${nominative} kærir úrskurðinn til Landsréttar.`
+    const currentAnnouncement = decision?.announcement ?? ''
+    const announcementFor = (value: CaseAppealDecision) => {
+      if (value === CaseAppealDecision.APPEAL) {
+        return currentAnnouncement === ''
+          ? appealAnnouncement
+          : currentAnnouncement
+      }
+      return currentAnnouncement === appealAnnouncement ? '' : currentAnnouncement
+    }
+
     return (
       <BlueBox key={groupName}>
         <SectionHeading
@@ -163,10 +179,7 @@ const CourtSessionAppealDecisions: FC<Props> = ({
                     party,
                     {
                       decision: radio.value,
-                      announcement:
-                        radio.value === CaseAppealDecision.APPEAL
-                          ? `${nominative} kærir úrskurðinn til Landsréttar.`
-                          : '',
+                      announcement: announcementFor(radio.value),
                     },
                     true,
                   )
