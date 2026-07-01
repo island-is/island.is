@@ -1,3 +1,5 @@
+import { KeyboardEvent } from 'react'
+
 import { TagVariant } from '@island.is/island-ui/core'
 import {
   formatDate,
@@ -268,10 +270,12 @@ export const getDefenceUserPartyIds = (
 /**
  * Returns a human-readable description of who appealed and when.
  *
- * Branches by case type, then by appeal kind for indictment cases:
+ * Branches by case type, then by appeal kind for indictment cases. The
+ * prosecutor term differs by case type: request (R) cases say "sækjandi",
+ * indictment (S) cases say "ákærandi".
  * - Request cases (case-level appeals only): in-court branch + "Kært af X"
  *   passive form.
- * - Indictment ruling-order appeals: subject-verb form ("Sækjandi kærði
+ * - Indictment ruling-order appeals: subject-verb form ("Ákærandi kærði
  *   úrskurðinn …").
  * - Indictment case-level appeals (dismissal): same passive form as request
  *   cases out-of-court — no in-court mechanic.
@@ -315,7 +319,7 @@ export const getAppealActorText = (
     const dateStr = formatDate(appealCase.appealedDate, 'PPPp')
 
     if (appealCase.appealedByRole === UserRole.PROSECUTOR) {
-      return `Sækjandi kærði úrskurðinn ${dateStr}`
+      return `Ákærandi kærði úrskurðinn ${dateStr}`
     }
 
     const party = getAppealingPartyInfo(
@@ -332,7 +336,7 @@ export const getAppealActorText = (
   const dateStr = formatDate(appealCase?.appealedDate, 'PPPp')
 
   if (appealCase?.appealedByRole === UserRole.PROSECUTOR) {
-    return `Kært af sækjanda ${dateStr}`
+    return `Kært af ákæranda ${dateStr}`
   }
 
   const party = getAppealingPartyInfo(
@@ -712,6 +716,16 @@ export const getDefaultDefendantGender = (defendants?: Defendant[] | null) =>
   defendants && defendants.length === 1
     ? defendants[0].gender ?? Gender.MALE
     : Gender.MALE
+
+// Lets an element with role="button" be activated with the keyboard
+// (Enter or Space) the same way a native button is.
+export const onEnterOrSpace =
+  (handler: () => void) => (event: KeyboardEvent) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      handler()
+    }
+  }
 
 export const isPartiallyVisible = (el: HTMLElement): boolean => {
   const rect = el.getBoundingClientRect()

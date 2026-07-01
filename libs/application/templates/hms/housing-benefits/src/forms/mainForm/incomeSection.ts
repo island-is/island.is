@@ -1,7 +1,6 @@
 import {
   buildCheckboxField,
   buildDescriptionField,
-  buildFileUploadField,
   buildMultiField,
   buildRadioField,
   buildSection,
@@ -10,7 +9,6 @@ import {
   YES,
 } from '@island.is/application/core'
 import * as m from '../../lib/messages'
-import { UPLOAD_ACCEPT } from '../../utils/constants'
 import {
   contractorIncomeSelected,
   foreignIncomeSelected,
@@ -58,10 +56,7 @@ export const incomeSection = buildSection({
         buildCheckboxField({
           id: 'incomeContractorCheckbox',
           condition: incomeOtherIncomeYes,
-          clearOnChange: [
-            'incomeContractorDescription',
-            'incomeContractorFiles',
-          ],
+          clearOnChange: ['incomeContractorDescription'],
           options: [
             {
               value: YES,
@@ -75,25 +70,15 @@ export const incomeSection = buildSection({
           title: m.draftMessages.incomeSection.contractorDescriptionTitle,
           description:
             m.draftMessages.incomeSection.contractorDescriptionDescription,
-          variant: 'textarea',
-          rows: 4,
+          variant: 'currency',
+          allowNegative: false,
           marginBottom: 2,
-          condition: contractorIncomeSelected,
-        }),
-        buildFileUploadField({
-          id: 'incomeContractorFiles',
-          title: m.draftMessages.incomeSection.contractorFilesTitle,
-          titleVariant: 'h3',
-          description: m.draftMessages.incomeSection.contractorFilesDescription,
-          uploadAccept: UPLOAD_ACCEPT,
-          uploadMultiple: true,
-          marginBottom: 4,
           condition: contractorIncomeSelected,
         }),
         buildCheckboxField({
           id: 'incomeForeignCheckbox',
           condition: incomeOtherIncomeYes,
-          clearOnChange: ['incomeForeignDescription', 'incomeForeignFiles'],
+          clearOnChange: ['incomeForeignDescription'],
           options: [
             {
               value: YES,
@@ -107,25 +92,15 @@ export const incomeSection = buildSection({
           title: m.draftMessages.incomeSection.foreignDescriptionTitle,
           description:
             m.draftMessages.incomeSection.foreignDescriptionDescription,
-          variant: 'textarea',
-          rows: 4,
+          variant: 'currency',
+          allowNegative: false,
           marginBottom: 2,
-          condition: foreignIncomeSelected,
-        }),
-        buildFileUploadField({
-          id: 'incomeForeignFiles',
-          title: m.draftMessages.incomeSection.foreignFilesTitle,
-          titleVariant: 'h3',
-          description: m.draftMessages.incomeSection.foreignFilesDescription,
-          uploadAccept: UPLOAD_ACCEPT,
-          uploadMultiple: true,
-          marginBottom: 4,
           condition: foreignIncomeSelected,
         }),
         buildCheckboxField({
           id: 'incomeOtherCheckbox',
           condition: incomeOtherIncomeYes,
-          clearOnChange: ['incomeOtherDescription', 'incomeOtherFiles'],
+          clearOnChange: ['incomeOtherDescription'],
           options: [
             {
               value: YES,
@@ -139,18 +114,8 @@ export const incomeSection = buildSection({
           title: m.draftMessages.incomeSection.otherDescriptionTitle,
           description:
             m.draftMessages.incomeSection.otherDescriptionDescription,
-          variant: 'textarea',
-          rows: 4,
-          marginBottom: 2,
-          condition: otherIncomeSelected,
-        }),
-        buildFileUploadField({
-          id: 'incomeOtherFiles',
-          title: m.draftMessages.incomeSection.otherFilesTitle,
-          titleVariant: 'h3',
-          description: m.draftMessages.incomeSection.otherFilesDescription,
-          uploadAccept: UPLOAD_ACCEPT,
-          uploadMultiple: true,
+          variant: 'currency',
+          allowNegative: false,
           condition: otherIncomeSelected,
         }),
       ],

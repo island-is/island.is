@@ -429,7 +429,7 @@ describe('Utils', () => {
             appealedByNationalId: '0202022020',
             appealedDate,
           } as AppealCase,
-        } as Case
+        } as unknown as Case
 
         expect(getAppealActorText(workingCase)).toBe(
           `Kært af verjanda ${dateStr}`,
@@ -448,7 +448,7 @@ describe('Utils', () => {
         } as Case
 
         expect(getAppealActorText(workingCase)).toBe(
-          `Kært af sækjanda ${dateStr}`,
+          `Kært af ákæranda ${dateStr}`,
         )
       })
 
@@ -461,7 +461,7 @@ describe('Utils', () => {
             appealedByNationalId: '0202022020',
             appealedDate,
           } as AppealCase,
-        } as Case
+        } as unknown as Case
 
         expect(getAppealActorText(workingCase)).toBe(
           `Kært af verjanda ${dateStr}`,
@@ -479,7 +479,7 @@ describe('Utils', () => {
         } as AppealCase
 
         expect(getAppealActorText(workingCase, appealCase)).toBe(
-          `Sækjandi kærði úrskurðinn ${dateStr}`,
+          `Ákærandi kærði úrskurðinn ${dateStr}`,
         )
       })
 

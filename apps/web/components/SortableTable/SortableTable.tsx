@@ -84,11 +84,28 @@ export const SortableTable = <T extends Record<string, any>>({
         {sorted.map((item, i) => (
           <tr
             key={i}
-            onClick={onRowClick ? () => onRowClick(item) : undefined}
-            style={onRowClick ? { cursor: 'pointer' } : undefined}
+            style={
+              onRowClick
+                ? { position: 'relative', cursor: 'pointer' }
+                : undefined
+            }
           >
-            {columns.map(({ key, render }) => (
+            {columns.map(({ key, render }, colIdx) => (
               <T.Data key={String(key)}>
+                {colIdx === 0 && onRowClick && (
+                  <button
+                    type="button"
+                    aria-label={String(item[key])}
+                    onClick={() => onRowClick(item)}
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'inherit',
+                    }}
+                  />
+                )}
                 {render ? render(item[key], item) : (item[key] as string)}
               </T.Data>
             ))}

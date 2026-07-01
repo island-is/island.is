@@ -92,7 +92,6 @@ export default function PersonalInfoScreen() {
                 ? intl.formatMessage(
                     { id: 'user.natreg.maritalStatusValue' },
                     {
-                      gender: natRegData?.gender ?? '',
                       maritalStatus: natRegData?.maritalStatus ?? '',
                     },
                   )

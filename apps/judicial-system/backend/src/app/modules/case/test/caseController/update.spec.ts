@@ -370,6 +370,192 @@ describe('CaseController - Update', () => {
         undefined,
       )
     })
+
+    it('should queue indictment conclusion messages only when ruling date is set', () => {
+      expect(mockQueuedMessages).toEqual([
+        {
+          type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CONCLUSION,
+          user,
+          caseId,
+          body: {
+            defendantId: defendantId1,
+            indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+            rulingDate,
+          },
+        },
+        {
+          type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+          caseId,
+          body: {
+            type: IndictmentCaseNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
+            concludedDecisions: [
+              {
+                defendantId: defendantId1,
+                rulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+              },
+              {
+                defendantId: defendantId2,
+                rulingDecision: CaseIndictmentRulingDecision.CANCELLATION,
+              },
+            ],
+          },
+        },
+      ])
+    })
+  })
+
+  describe('indictment case completed', () => {
+    const rulingDate = randomDate()
+    const indictmentCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+      state: CaseState.RECEIVED,
+      origin: CaseOrigin.LOKE,
+      indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+      rulingDate,
+    } as Case
+
+    const caseToUpdate = { state: CaseState.COMPLETED } as UpdateCaseDto
+    const updatedCase = {
+      ...indictmentCase,
+      state: CaseState.COMPLETED,
+    } as Case
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(caseId, user, indictmentCase, caseToUpdate)
+    })
+
+    it('should queue indictment conclusion message to court', () => {
+      expect(mockQueuedMessages).toEqual(
+        expect.arrayContaining([
+          {
+            type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CONCLUSION,
+            user,
+            caseId,
+          },
+        ]),
+      )
+    })
+  })
+
+  describe('indictment case completed after cancellation request', () => {
+    const rulingDate = randomDate()
+    const indictmentCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+      state: CaseState.WAITING_FOR_CANCELLATION,
+      indictmentRulingDecision: CaseIndictmentRulingDecision.CANCELLATION,
+      rulingDate,
+    } as Case
+
+    const caseToUpdate = { state: CaseState.COMPLETED } as UpdateCaseDto
+    const updatedCase = {
+      ...indictmentCase,
+      state: CaseState.COMPLETED,
+    } as Case
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(caseId, user, indictmentCase, caseToUpdate)
+    })
+
+    it('should queue only indictment conclusion message to court', () => {
+      expect(mockQueuedMessages).toEqual([
+        {
+          type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CONCLUSION,
+          user,
+          caseId,
+        },
+      ])
+    })
+  })
+
+  describe('indictment case completed without ruling date', () => {
+    const indictmentCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+      state: CaseState.RECEIVED,
+      origin: CaseOrigin.LOKE,
+      indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+    } as Case
+
+    const caseToUpdate = { state: CaseState.COMPLETED } as UpdateCaseDto
+    const updatedCase = {
+      ...indictmentCase,
+      state: CaseState.COMPLETED,
+    } as Case
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(caseId, user, indictmentCase, caseToUpdate)
+    })
+
+    it('should not queue indictment conclusion message to court', () => {
+      expect(
+        mockQueuedMessages.filter(
+          (message) =>
+            message.type ===
+            MessageType.DELIVERY_TO_COURT_INDICTMENT_CONCLUSION,
+        ),
+      ).toEqual([])
+    })
+  })
+
+  describe('split indictment case court case number assigned', () => {
+    const splitCaseId = uuid()
+    const splitDefendantId = uuid()
+    const newCourtCaseNumber = uuid()
+    const created = new Date('2026-01-15T10:00:00.000Z')
+
+    const indictmentCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+      courtCaseNumber: undefined,
+      splitCaseId,
+      defendants: [{ id: splitDefendantId }],
+      policeCaseNumbers: [policeCaseNumber],
+      caseFiles: [],
+    } as Case
+
+    const caseToUpdate = {
+      courtCaseNumber: newCourtCaseNumber,
+    } as UpdateCaseDto
+    const updatedCase = {
+      ...indictmentCase,
+      courtCaseNumber: newCourtCaseNumber,
+      created,
+    } as Case
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(caseId, user, indictmentCase, caseToUpdate)
+    })
+
+    it('should queue split-off conclusion message to parent case', () => {
+      expect(mockQueuedMessages).toEqual(
+        expect.arrayContaining([
+          {
+            type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CONCLUSION,
+            user,
+            caseId: splitCaseId,
+            body: {
+              defendantId: splitDefendantId,
+              splitCaseNumber: newCourtCaseNumber,
+              rulingDate: created.toISOString(),
+            },
+          },
+        ]),
+      )
+    })
   })
 
   describe('indictment completed for some defendants with invalid defendant id', () => {
@@ -1118,6 +1304,7 @@ describe('CaseController - Update', () => {
         isSentToPrisonAdmin: false,
         indictmentReviewDecision: null,
         publicProsecutorIsRegisteredInPoliceSystem: null,
+        isDrivingLicenseSuspended: null,
       }
       expect(mockDefendantService.updateDatabaseDefendant).toHaveBeenCalledWith(
         caseId,

@@ -146,9 +146,7 @@ export default function DocumentReplyScreen() {
       <StackScreen
         networkStatus={networkStatus}
         closeable
-        options={{
-          title: subject,
-        }}
+        options={{ title: '' }}
       />
       <Host>
         <ToastHost />
@@ -162,6 +160,11 @@ export default function DocumentReplyScreen() {
             keyboardShouldPersistTaps="handled"
           >
             <KeyboardAvoidingView behavior="padding">
+              <HeaderTitle>
+                <Typography variant="heading5" numberOfLines={2}>
+                  {subject}
+                </Typography>
+              </HeaderTitle>
               <Row>
                 <Typography
                   variant="body3"
@@ -217,6 +220,8 @@ export default function DocumentReplyScreen() {
                   })}
                   autoFocus
                   multiline
+                  numberOfLines={3}
+                  inputStyle={{ minHeight: 60 }}
                 />
               </Row>
             </KeyboardAvoidingView>

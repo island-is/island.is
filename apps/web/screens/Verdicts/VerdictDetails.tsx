@@ -214,7 +214,8 @@ const HtmlView = ({ item }: VerdictDetailsProps) => {
   const { format } = useDateUtils()
   const logoUrl = formatMessage(m.verdictPage.htmlVerdictLogoUrl)
 
-  const [a, b] = item.title.split('gegn')
+  const [a, ...rest] = item.title.split('gegn')
+  const b = rest.join('gegn')
 
   return (
     <>

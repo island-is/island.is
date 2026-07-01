@@ -484,9 +484,33 @@ export class FileService {
     user: User,
     transaction: Transaction,
   ): Promise<CaseFile> {
+    let finalOrderWithinChapter = createFile.orderWithinChapter
+    if (createFile.orderWithinChapter === undefined && !createFile.category) {
+      // Lock existing uncategorized files so concurrent creates cannot read the
+      // same max orderWithinChapter before either insert commits.
+      await this.fileModel.findAll({
+        where: { caseId: theCase.id, category: null },
+        attributes: ['id'],
+        lock: Transaction.LOCK.UPDATE,
+        transaction,
+      })
+
+      const maxOrder = await this.fileModel.max<number | null, CaseFile>(
+        'orderWithinChapter',
+        {
+          where: { caseId: theCase.id, category: null },
+          transaction,
+        },
+      )
+      if (maxOrder !== null) {
+        finalOrderWithinChapter = maxOrder + 1
+      }
+    }
+
     const file = await this.fileModel.create(
       {
         ...createFile,
+        orderWithinChapter: finalOrderWithinChapter,
         state: CaseFileState.STORED_IN_RVG,
         caseId: theCase.id,
         name: fileName,
