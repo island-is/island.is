@@ -3,6 +3,7 @@ import {
   buildMultiField,
   buildSection,
 } from '@island.is/application/core'
+import { sharedMessages } from '../../lib/messages'
 
 export const delegationSection = buildSection({
   id: 'delegationSection',
@@ -11,6 +12,7 @@ export const delegationSection = buildSection({
     buildMultiField({
       id: 'delegationSection',
       title: 'Þjónustuaðili',
+      nextButtonText: sharedMessages.nextButton,
       children: [
         buildDescriptionField({
           id: 'delegationDescription',
