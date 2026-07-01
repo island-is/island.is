@@ -11,6 +11,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     ),
   [ApplicationTypes.EXAMPLE_INPUTS]: () =>
     import('@island.is/application/templates/examples/example-inputs'),
+  [ApplicationTypes.EXAMPLE_INPUTS_SDF]: () =>
+    import('@island.is/application/templates/v2/examples/example-inputs'),
   [ApplicationTypes.EXAMPLE_NO_INPUTS]: () =>
     import('@island.is/application/templates/examples/example-no-inputs'),
   [ApplicationTypes.EXAMPLE_PAYMENT]: () =>
@@ -263,6 +265,10 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     ),
   [ApplicationTypes.FIRE_COMPENSATION_APPRAISAL]: () =>
     import('@island.is/application/templates/hms/fire-compensation-appraisal'),
+  [ApplicationTypes.FIRE_COMPENSATION_APPRAISAL_SDF]: () =>
+    import(
+      '@island.is/application/templates/v2/hms/fire-compensation-appraisal'
+    ),
   [ApplicationTypes.LEGAL_GAZETTE]: () =>
     import('@island.is/application/templates/legal-gazette'),
   [ApplicationTypes.EXEMPTION_FOR_TRANSPORTATION]: () =>

@@ -14,9 +14,11 @@ import {
   TemplateApi,
   defineTemplateApi,
 } from '@island.is/application/types'
+import type { User } from '@island.is/auth-nest-tools'
 
 describe('ApplicationActionService', () => {
   const application = createApplication()
+  const auth = { nationalId: application.applicant } as User
   let service: ApplicationActionService
   let mockIntlService: any
   let mockTemplateApiActionRunner: any
@@ -30,6 +32,18 @@ describe('ApplicationActionService', () => {
 
     mockTemplateApiActionRunner = {
       run: jest.fn().mockResolvedValue({
+        ...application,
+        externalData: {
+          ...application.externalData,
+          someDataId: {
+            data: {},
+            date: new Date(),
+            status: 200,
+          },
+        },
+        hasError: false,
+      }),
+      runEphemeral: jest.fn().mockResolvedValue({
         ...application,
         externalData: {
           ...application.externalData,
@@ -187,6 +201,62 @@ describe('ApplicationActionService', () => {
         updatedApplication: application,
         hasError: false,
       })
+    })
+  })
+
+  describe('performEphemeralActionOnApplication', () => {
+    const baseApi: TemplateApi = defineTemplateApi({
+      action: 'someAction',
+      externalDataId: 'someDataId',
+    })
+
+    const template = createApplicationTemplate()
+
+    beforeEach(() => {
+      mockTemplateApiActionRunner.run.mockClear()
+      mockTemplateApiActionRunner.runEphemeral.mockClear()
+    })
+
+    it('runs template APIs without persisting external data', async () => {
+      await service.performEphemeralActionOnApplication(
+        application,
+        template,
+        auth,
+        [baseApi],
+        'en',
+        'REFETCH',
+      )
+
+      expect(mockTemplateApiActionRunner.runEphemeral).toHaveBeenCalledWith(
+        expect.anything(),
+        [baseApi],
+        expect.anything(),
+        expect.anything(),
+        expect.anything(),
+      )
+      expect(mockTemplateApiActionRunner.run).not.toHaveBeenCalled()
+    })
+
+    it('does not run submit-only actions during refetch', async () => {
+      const submitApi = baseApi.configure({
+        triggerEvent: DefaultEvents.SUBMIT,
+      })
+
+      const result = await service.performEphemeralActionOnApplication(
+        application,
+        template,
+        auth,
+        [submitApi],
+        'en',
+        'REFETCH',
+      )
+
+      expect(result).toEqual({
+        updatedApplication: application,
+        hasError: false,
+      })
+      expect(mockTemplateApiActionRunner.runEphemeral).not.toHaveBeenCalled()
+      expect(mockTemplateApiActionRunner.run).not.toHaveBeenCalled()
     })
   })
 
