@@ -35,7 +35,7 @@ const BreadCrumbs: FC = () => {
 
   return (
     <Box display="flex" alignItems="center">
-      <Link href="/malalistar" className={styles.link}>
+      <Link href="/malalistar" className={styles.link} aria-label="Heim">
         <Icon icon="home" size="small" color="purple400" type="outline" />
       </Link>
       <Box marginX={1}>
