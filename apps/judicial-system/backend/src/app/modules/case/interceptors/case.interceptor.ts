@@ -170,23 +170,26 @@ export const getAppealCaseInfo = (
   appealCase: AppealCase,
   theCase: Case,
 ): AppealCaseInfo => {
-  const {
-    appealReceivedByCourtDate,
-    rulingFileId,
-    appealedByNationalId,
-    created,
-  } = appealCase
+  const { appealReceivedByCourtDate, rulingFileId, appealedByNationalId } =
+    appealCase
   const isRulingOrderAppeal = Boolean(rulingFileId)
 
+  // The time of appeal is now read straight from the appeal case's own
+  // appeal_date column (populated on every appeal-creation path + backfilled),
+  // rather than derived from the legacy per-side postponed-date columns
+  // (case-level) or the row's `created` timestamp (ruling-order). [Phase 3 read
+  // switch, slice 1]
+  const appealedDate = appealCase.appealDate
+
+  // appealedByRole is still derived from the legacy columns for now; it moves to
+  // the appeal_decision rows / APPEALED event log in a later Phase 3 slice.
   let appealedByRole: UserRole | undefined
-  let appealedDate: Date | undefined
 
   if (isRulingOrderAppeal) {
     // Ruling-order appeals record the appellant on the AppealCase row itself.
     appealedByRole = appealedByNationalId
       ? UserRole.DEFENDER
       : UserRole.PROSECUTOR
-    appealedDate = created
   } else {
     const { prosecutorPostponedAppealDate, accusedPostponedAppealDate } =
       theCase
@@ -208,12 +211,6 @@ export const getAppealCaseInfo = (
         ? UserRole.DEFENDER
         : undefined
     }
-    appealedDate =
-      appealedByRole === UserRole.PROSECUTOR
-        ? prosecutorPostponedAppealDate
-        : appealedByRole === UserRole.DEFENDER
-        ? accusedPostponedAppealDate
-        : undefined
   }
 
   // True when the ruling order was appealed in court ("Kært í þinghaldi") -
