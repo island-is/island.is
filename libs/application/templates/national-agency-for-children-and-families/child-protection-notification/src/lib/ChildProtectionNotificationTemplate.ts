@@ -12,8 +12,8 @@ import {
   ApplicationTypes,
   DefaultEvents,
   FormModes,
-  UserProfileApi,
 } from '@island.is/application/types'
+import { UserProfileApi } from '@island.is/application/types'
 import { CodeOwners } from '@island.is/shared/constants'
 import { AuthDelegationType } from '@island.is/shared/types'
 
