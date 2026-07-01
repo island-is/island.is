@@ -50,7 +50,6 @@ import { icHearingArrangements as m } from './HearingArrangements.strings'
 
 enum ModalButtonLoading {
   PRIMARY = 'PRIMARY',
-  SECONDARY = 'SECONDARY',
 }
 
 const HearingArrangements = () => {
@@ -123,12 +122,11 @@ const HearingArrangements = () => {
   const isCorrectingRuling = Boolean(workingCase.requestCompletedDate)
 
   const handleNavigationTo = async (destination: keyof stepValidationsType) => {
-    await sendCourtDateToServer()
-
     if (
       isCorrectingRuling ||
       (courtDateNotification.hasSent && !courtDateHasChanged)
     ) {
+      await sendCourtDateToServer()
       router.push(`${destination}/${workingCase.id}`)
     } else {
       setNavigateTo(destination)
@@ -357,26 +355,33 @@ const HearingArrangements = () => {
             handleNavigationTo(DISTRICT_COURT_INVESTIGATION_CASE_RULING_ROUTE)
           }
           nextIsDisabled={!stepIsValid}
-          nextButtonText={formatMessage(m.continueButton.label)}
+          nextButtonText="Halda áfram"
         />
       </FormContentContainer>
       {navigateTo !== undefined && (
         <Modal
-          title={formatMessage(m.modal.heading)}
+          title="Viltu staðfesta fyrirtökutíma?"
           onClose={handleCloseModal}
-          text={formatMessage(
-            workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT
-              ? m.modal.allPresentText
-              : workingCase.sessionArrangements ===
-                SessionArrangements.ALL_PRESENT_SPOKESPERSON
-              ? m.modal.allPresentSpokespersonText
-              : m.modal.prosecutorPresentText,
-            { courtDateHasChanged },
-          )}
+          text={(() => {
+            const recipients =
+              workingCase.sessionArrangements ===
+              SessionArrangements.ALL_PRESENT
+                ? 'saksóknara og verjanda, hafi verjandi verið skráður'
+                : workingCase.sessionArrangements ===
+                  SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                ? 'saksóknara og talsmann, hafi talsmaður verið skráður'
+                : 'saksóknara'
+
+            return courtDateHasChanged
+              ? `Fyrirtökutíma hefur verið breytt. Tilkynning um fyrirtöku verður send á ${recipients}.`
+              : `Málið fer á dagskrá og tilkynning um fyrirtöku verður send á ${recipients}.`
+          })()}
           primaryButton={{
-            text: formatMessage(m.modal.primaryButtonText),
+            text: 'Já, staðfesta',
             onClick: async () => {
               setModalButtonLoading(ModalButtonLoading.PRIMARY)
+
+              await sendCourtDateToServer()
 
               const notificationSent = await sendNotification(
                 workingCase.id,
@@ -392,23 +397,10 @@ const HearingArrangements = () => {
               modalButtonLoading === ModalButtonLoading.PRIMARY,
           }}
           secondaryButton={{
-            text: formatMessage(m.modal.secondaryButtonText, {
-              courtDateHasChanged,
-            }),
-            onClick: async () => {
-              setModalButtonLoading(ModalButtonLoading.SECONDARY)
-
-              await sendNotification(
-                workingCase.id,
-                TrackedNotificationType.COURT_DATE,
-                true,
-              )
-
+            text: 'Nei, staðfesta seinna',
+            onClick: () => {
               router.push(`${navigateTo}/${workingCase.id}`)
             },
-            isLoading:
-              isSendingNotification &&
-              modalButtonLoading === ModalButtonLoading.SECONDARY,
           }}
           errorMessage={
             modalButtonLoading && sendNotificationError
