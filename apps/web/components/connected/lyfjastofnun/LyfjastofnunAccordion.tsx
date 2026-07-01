@@ -1,4 +1,4 @@
-import { useId, useMemo, useState } from 'react'
+import { useId, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
 
@@ -6,11 +6,9 @@ import {
   Accordion,
   AccordionItem,
   Box,
-  createColumnHelper,
   GridColumn,
   GridRow,
   Input,
-  InteractiveTable,
   LinkV2,
   LoadingDots,
   Select,
@@ -29,8 +27,6 @@ import { GET_MEDICAL_CLINICS, GET_PHARMACIES, GET_WHOLESALERS } from './queries'
 import { m as pharmacyStrings } from './translation.strings'
 import { Datasource, isDatasource, Item, Props } from './types'
 import { m as wholesalerStrings } from './wholesalers.strings'
-
-const columnHelper = createColumnHelper<Item>()
 
 const LyfjastofnunAccordion = ({ slice }: Props) => {
   const { formatMessage } = useIntl()
@@ -71,46 +67,6 @@ const LyfjastofnunAccordion = ({ slice }: Props) => {
       ? clinicStrings
       : wholesalerStrings
 
-  const hasRegion = datasource !== 'wholesalers'
-
-  const columns = useMemo(
-    () => [
-      columnHelper.accessor('name', {
-        header: formatMessage(pharmacyStrings.search),
-      }),
-      columnHelper.display({
-        id: 'location',
-        header: formatMessage(pharmacyStrings.address),
-        enableSorting: false,
-        cell: ({ row }) => {
-          const { address, postalCode, city } = row.original
-          return [address, postalCode, city].filter(Boolean).join(', ') || '-'
-        },
-      }),
-      columnHelper.accessor('phone', {
-        header: formatMessage(pharmacyStrings.phone),
-        cell: ({ getValue }) => getValue() ?? '-',
-      }),
-      columnHelper.accessor('licenseHolder', {
-        header: formatMessage(pharmacyStrings.licenseHolder),
-        cell: ({ getValue }) => getValue() ?? '-',
-      }),
-      ...(hasRegion
-        ? [
-            columnHelper.accessor('region', {
-              header: formatMessage(pharmacyStrings.regionLabel),
-              cell: ({ getValue }) => {
-                const region = getValue()
-                return region ? formatMessage(REGION_LABEL_MAP[region]) : '-'
-              },
-            }),
-          ]
-        : []),
-    ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [formatMessage, hasRegion],
-  )
-
   if (loading) {
     return (
       <Box display="flex" marginTop={4} justifyContent="center">
@@ -130,6 +86,7 @@ const LyfjastofnunAccordion = ({ slice }: Props) => {
       ? clinicData?.icelandicMedicinesAgencyMedicalClinics?.data ?? []
       : wholesalerData?.icelandicMedicinesAgencyWholesalers?.data ?? []
 
+  const hasRegion = datasource !== 'wholesalers'
   const uniqueRegions = hasRegion
     ? [...new Set(items.map((i) => i.region).filter(isDefined))]
     : []
@@ -374,14 +331,6 @@ const LyfjastofnunAccordion = ({ slice }: Props) => {
           ))}
         </Accordion>
       )}
-
-      <InteractiveTable
-        columns={columns}
-        data={filtered}
-        emptyMessage={formatMessage(pharmacyStrings.noResults)}
-        getRowId={(row) => row.id}
-        srCaption={formatMessage(pharmacyStrings.search)}
-      />
     </Stack>
   )
 }
