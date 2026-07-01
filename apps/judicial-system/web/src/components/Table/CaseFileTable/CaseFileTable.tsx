@@ -2,7 +2,7 @@ import { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { motion } from 'motion/react'
 
-import { Box, Text, Tooltip } from '@island.is/island-ui/core'
+import { Box, Icon, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   capitalize,
   formatDate,
@@ -12,7 +12,6 @@ import {
 import { tables } from '@island.is/judicial-system-web/messages'
 import {
   FormContext,
-  IconButton,
   InfoBox,
   useRejectCaseFile,
 } from '@island.is/judicial-system-web/src/components'
@@ -90,13 +89,19 @@ const CaseFileTable: FC<Props> = ({
         loading={loading}
         tableHeader={
           <>
-            <th className={tableStyles.th}>
+            <th
+              className={tableStyles.th}
+              aria-sort={getClassNamesFor('name') ?? 'none'}
+            >
               <SortButton
                 {...createSortProps(formatMessage(tables.caseFileName), 'name')}
               />
             </th>
             <TableHeaderText title={formatMessage(tables.caseFileDate)} />
-            <th className={tableStyles.th}>
+            <th
+              className={tableStyles.th}
+              aria-sort={getClassNamesFor('created') ?? 'none'}
+            >
               <SortButton
                 {...createSortProps(formatMessage(tables.received), 'created')}
               />
@@ -174,17 +179,18 @@ const CaseFileTable: FC<Props> = ({
                       items={[rejectCaseFile(file)]}
                       render={
                         <motion.div
-                          className={tableStyles.smallContainer}
+                          className={tableStyles.contextMenuButton}
+                          aria-label={`Valmynd fyrir ${file.name}`}
                           key={file.id}
                           initial={{ opacity: 1 }}
                           animate={{ opacity: 1, y: 1 }}
                           exit={{ opacity: 0, y: 5 }}
                           onClick={(evt) => evt.stopPropagation()}
                         >
-                          <IconButton
+                          <Icon
                             icon="ellipsisVertical"
-                            colorScheme="transparent"
-                            ariaLabel={`Valmynd fyrir ${file.name}`}
+                            color="blue400"
+                            size="small"
                           />
                         </motion.div>
                       }

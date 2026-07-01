@@ -14,6 +14,12 @@ import {
 } from '../../../utils/testHelpers'
 import CaseFileTable from './CaseFileTable'
 
+jest.mock('next/router', () => ({
+  useRouter() {
+    return { pathname: '', query: { id: 'test_id' } }
+  },
+}))
+
 const renderTable = (caseFiles: CaseFile[], onOpenFile = jest.fn()) => {
   render(
     <IntlProviderWrapper>
@@ -65,5 +71,45 @@ describe('<CaseFileTable />', () => {
     expect(
       screen.queryByRole('button', { name: 'Opna document.pdf' }),
     ).not.toBeInTheDocument()
+  })
+
+  it('reflects the sort state on sortable headers via aria-sort', async () => {
+    const user = userEvent.setup()
+
+    renderTable([
+      {
+        id: '1',
+        name: 'Skjal A',
+        userGeneratedFilename: 'Skjal A',
+        submittedBy: 'Jon Jonsson',
+        created: '2021-01-01T00:00:00Z',
+      },
+      {
+        id: '2',
+        name: 'Skjal B',
+        userGeneratedFilename: 'Skjal B',
+        submittedBy: 'Anna Onnudottir',
+        created: '2021-01-02T00:00:00Z',
+      },
+    ] as CaseFile[])
+
+    // The table is sorted by the received/created column by default.
+    expect(
+      screen.getByRole('columnheader', { name: /Nafn skjals/ }),
+    ).toHaveAttribute('aria-sort', 'none')
+    expect(
+      screen.getByRole('columnheader', { name: /Móttekið/ }),
+    ).toHaveAttribute('aria-sort', 'descending')
+
+    await user.click(
+      screen.getByRole('button', { name: 'Raða eftir dálki: Nafn skjals' }),
+    )
+
+    expect(
+      screen.getByRole('columnheader', { name: /Nafn skjals/ }),
+    ).toHaveAttribute('aria-sort', 'ascending')
+    expect(
+      screen.getByRole('columnheader', { name: /Móttekið/ }),
+    ).toHaveAttribute('aria-sort', 'none')
   })
 })

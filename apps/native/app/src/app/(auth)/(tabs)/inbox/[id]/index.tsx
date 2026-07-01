@@ -68,7 +68,7 @@ export default function DocumentScreen() {
   }>()
   const intl = useIntl()
   const { openBrowser } = useBrowser()
-  const { getOrganizationLogoUrl } = useOrganizationsStore()
+  const { getSenderLogo } = useOrganizationsStore()
   const isFeature2WayMailboxEnabled = useFeatureFlag(
     'is2WayMailboxEnabled',
     false,
@@ -271,7 +271,7 @@ export default function DocumentScreen() {
           date={document.publicationDate ?? undefined}
           message={document.subject}
           isLoading={loading && !document.subject}
-          logo={getOrganizationLogoUrl(document.sender?.name ?? '', 75)}
+          logo={getSenderLogo(document.sender, 75)}
           label={isUrgent ? intl.formatMessage({ id: 'inbox.urgent' }) : ''}
         />
       </Host>
