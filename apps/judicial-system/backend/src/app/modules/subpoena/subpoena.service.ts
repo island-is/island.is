@@ -362,12 +362,7 @@ export class SubpoenaService {
       ].includes(serviceStatus)
 
     // File the service certificate as a court document
-    if (
-      wasSubpoenaSuccessfullyServed &&
-      theCase.withCourtSessions &&
-      theCase.courtSessions &&
-      theCase.courtSessions.length > 0
-    ) {
+    if (wasSubpoenaSuccessfullyServed && theCase.withCourtSessions) {
       const name = `Birtingarvottorð ${defendant.name}`
 
       await this.courtDocumentRepositoryService.create(

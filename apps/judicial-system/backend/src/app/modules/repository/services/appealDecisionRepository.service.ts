@@ -46,6 +46,10 @@ interface UpdateAppealDecisionOptions {
   transaction: Transaction
 }
 
+interface UpdateRulingFileOptions {
+  transaction: Transaction
+}
+
 @Injectable()
 export class AppealDecisionRepositoryService {
   constructor(
@@ -112,6 +116,44 @@ export class AppealDecisionRepositoryService {
     }
   }
 
+  // Re-points every party's decision for a ruling onto a different ruling file.
+  // Used when a court session is corrected to swap its ruling order file: the
+  // same ruling is now represented by a new file, so the recorded decisions
+  // move with it instead of being discarded.
+  async updateRulingFile(
+    caseId: string,
+    fromRulingFileId: string,
+    toRulingFileId: string,
+    options: UpdateRulingFileOptions,
+  ): Promise<number> {
+    try {
+      this.logger.debug(
+        `Re-pointing appeal decisions of case ${caseId} from ruling ${fromRulingFileId} to ${toRulingFileId}`,
+      )
+
+      const [numberOfAffectedRows] = await this.appealDecisionModel.update(
+        { rulingFileId: toRulingFileId },
+        {
+          where: { caseId, rulingFileId: fromRulingFileId },
+          transaction: options.transaction,
+        },
+      )
+
+      this.logger.debug(
+        `Re-pointed ${numberOfAffectedRows} appeal decisions of case ${caseId} to ruling ${toRulingFileId}`,
+      )
+
+      return numberOfAffectedRows
+    } catch (error) {
+      this.logger.error(
+        `Error re-pointing appeal decisions of case ${caseId} from ruling ${fromRulingFileId} to ${toRulingFileId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
   async upsert(
     party: AppealDecisionPartyKey,
     data: UpdateAppealDecision,
@@ -139,11 +181,11 @@ export class AppealDecisionRepositoryService {
         {
           transaction: options.transaction,
           conflictFields: [
-            'caseId',
-            'rulingFileId',
-            'partyRole',
-            'defendantId',
-            'civilClaimantId',
+            'case_id',
+            'ruling_file_id',
+            'party_role',
+            'defendant_id',
+            'civil_claimant_id',
           ],
         },
       )

@@ -10,6 +10,7 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 import { api } from '@island.is/judicial-system-web/src/services'
+import { onEnterOrSpace } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { UserContext } from '../UserProvider/UserProvider'
 import * as styles from './PdfButton.css'
@@ -76,6 +77,20 @@ const PdfButton: FC<PropsWithChildren<Props>> = ({
     window.open(url, '_blank')
   }
 
+  const handleRowClick = () => {
+    if (disabled) {
+      return
+    }
+
+    if (handleClick) {
+      return handleClick()
+    }
+
+    if (pdfType) {
+      return handlePdfClick()
+    }
+  }
+
   return renderAs === 'button' ? (
     <Button
       data-testid={`${pdfType || ''}PDFButton`}
@@ -94,19 +109,12 @@ const PdfButton: FC<PropsWithChildren<Props>> = ({
       className={`${styles.pdfRow} ${
         disabled ? styles.disabled : styles.cursor
       }`}
-      onClick={() => {
-        if (disabled) {
-          return
-        }
-
-        if (handleClick) {
-          return handleClick()
-        }
-
-        if (pdfType) {
-          return handlePdfClick()
-        }
-      }}
+      role="button"
+      tabIndex={disabled ? -1 : 0}
+      aria-disabled={disabled}
+      aria-label={title ?? undefined}
+      onClick={handleRowClick}
+      onKeyDown={onEnterOrSpace(handleRowClick)}
     >
       <Box className={styles.pdfRowMain}>
         <span
