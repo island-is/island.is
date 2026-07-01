@@ -1,4 +1,7 @@
-import { ServiceRequirement } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseIndictmentRulingDecision,
+  ServiceRequirement,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import {
   getAppealExpirationInfo,
@@ -203,13 +206,11 @@ describe('DefendantInfo', () => {
       })
     })
 
-    test('should return dismissal tag when there is no verdict and dismissal case is true', () => {
+    test('should return dismissal tag when there is no verdict and ruling decision is DISMISSAL', () => {
       const tag = getDefendantTagConfig({
         verdict: null,
         isPublicProsecutionOffice: false,
-        isDismissalCase: true,
-        isCancellationCase: true,
-        isFineCase: true,
+        indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
       })
 
       expect(tag).toStrictEqual({
@@ -218,11 +219,37 @@ describe('DefendantInfo', () => {
       })
     })
 
-    test('should return withdrawal tag when there is no verdict and withdrawal case is true', () => {
+    test('should return cancellation tag when there is no verdict and ruling decision is CANCELLATION', () => {
       const tag = getDefendantTagConfig({
         verdict: null,
         isPublicProsecutionOffice: false,
-        isWithdrawalCase: true,
+        indictmentRulingDecision: CaseIndictmentRulingDecision.CANCELLATION,
+      })
+
+      expect(tag).toStrictEqual({
+        label: 'Niðurfelling',
+        variant: 'rose',
+      })
+    })
+
+    test('should return fine tag when there is no verdict and ruling decision is FINE', () => {
+      const tag = getDefendantTagConfig({
+        verdict: null,
+        isPublicProsecutionOffice: false,
+        indictmentRulingDecision: CaseIndictmentRulingDecision.FINE,
+      })
+
+      expect(tag).toStrictEqual({
+        label: 'Viðurlagaákvörðun',
+        variant: 'mint',
+      })
+    })
+
+    test('should return withdrawal tag when there is no verdict and ruling decision is WITHDRAWAL', () => {
+      const tag = getDefendantTagConfig({
+        verdict: null,
+        isPublicProsecutionOffice: false,
+        indictmentRulingDecision: CaseIndictmentRulingDecision.WITHDRAWAL,
       })
 
       expect(tag).toStrictEqual({
@@ -231,11 +258,11 @@ describe('DefendantInfo', () => {
       })
     })
 
-    test('should return merge tag when there is no verdict and merge case is true', () => {
+    test('should return merge tag when there is no verdict and ruling decision is MERGE', () => {
       const tag = getDefendantTagConfig({
         verdict: null,
         isPublicProsecutionOffice: false,
-        isMergeCase: true,
+        indictmentRulingDecision: CaseIndictmentRulingDecision.MERGE,
       })
 
       expect(tag).toStrictEqual({

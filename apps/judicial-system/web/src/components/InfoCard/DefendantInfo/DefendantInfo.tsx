@@ -9,12 +9,10 @@ import {
   formatDate,
   formatDOB,
 } from '@island.is/judicial-system/formatters'
-import {
-  CaseIndictmentRulingDecision,
-  isPublicProsecutionOfficeUser,
-} from '@island.is/judicial-system/types'
+import { isPublicProsecutionOfficeUser } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
+  CaseIndictmentRulingDecision,
   Defendant,
   ServiceRequirement,
   SessionArrangements,
@@ -50,11 +48,7 @@ interface DefendantInfoProps {
   displaySentToPrisonAdminDate?: boolean
   defender?: Defender
   displayOpenCaseReference?: boolean
-  isDismissalCase?: boolean
-  isCancellationCase?: boolean
-  isFineCase?: boolean
-  isWithdrawalCase?: boolean
-  isMergeCase?: boolean
+  indictmentRulingDecision?: CaseIndictmentRulingDecision | null
 }
 
 const ConnectedCasesInfo = ({
@@ -120,11 +114,7 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
     displaySentToPrisonAdminDate = true,
     displayOpenCaseReference,
     defender,
-    isDismissalCase,
-    isCancellationCase,
-    isFineCase,
-    isWithdrawalCase,
-    isMergeCase,
+    indictmentRulingDecision,
   } = props
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
@@ -148,11 +138,7 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
   const defendantTagConfig = getDefendantTagConfig({
     verdict: defendant.verdict,
     isPublicProsecutionOffice: isPublicProsecutionOfficeUser(user),
-    isDismissalCase,
-    isCancellationCase,
-    isFineCase,
-    isWithdrawalCase,
-    isMergeCase,
+    indictmentRulingDecision,
   })
 
   return (

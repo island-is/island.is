@@ -109,25 +109,8 @@ const useInfoCardItems = () => {
                     displayVerdictViewDate={displayVerdictViewDate}
                     displaySentToPrisonAdminDate={displaySentToPrisonAdminDate}
                     displayOpenCaseReference={displayOpenCaseReference}
-                    isDismissalCase={
-                      workingCase.indictmentRulingDecision ===
-                      CaseIndictmentRulingDecision.DISMISSAL
-                    }
-                    isCancellationCase={
-                      workingCase.indictmentRulingDecision ===
-                      CaseIndictmentRulingDecision.CANCELLATION
-                    }
-                    isFineCase={
-                      workingCase.indictmentRulingDecision ===
-                      CaseIndictmentRulingDecision.FINE
-                    }
-                    isWithdrawalCase={
-                      workingCase.indictmentRulingDecision ===
-                      CaseIndictmentRulingDecision.WITHDRAWAL
-                    }
-                    isMergeCase={
-                      workingCase.indictmentRulingDecision ===
-                      CaseIndictmentRulingDecision.MERGE
+                    indictmentRulingDecision={
+                      workingCase.indictmentRulingDecision
                     }
                   />
                 </div>
