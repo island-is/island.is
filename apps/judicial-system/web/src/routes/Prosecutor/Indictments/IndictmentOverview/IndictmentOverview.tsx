@@ -12,7 +12,6 @@ import { useRouter } from 'next/router'
 import { Box, Text } from '@island.is/island-ui/core'
 import {
   getStandardUserDashboardRoute,
-  PROSECUTION_INDICTMENT_CASE_DEFENDANT_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
@@ -27,13 +26,13 @@ import {
   BlueBox,
   Conclusion,
   CourtCaseInfo,
+  DuplicateIndictmentModal,
   FormContentContainer,
   FormContext,
   FormFooter,
   IndictmentCaseScheduledCard,
   InfoCardActiveIndictment,
   InfoCardClosedIndictment,
-  Modal,
   PageHeader,
   PageLayout,
   PageTitle,
@@ -53,7 +52,6 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useAppealCaseBanner,
-  useCase,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
@@ -73,7 +71,6 @@ const IndictmentOverview: FC = () => {
 
   const { formatMessage } = useIntl()
   const router = useRouter()
-  const { duplicateIndictmentCase, isDuplicatingIndictmentCase } = useCase()
 
   const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
@@ -113,16 +110,6 @@ const IndictmentOverview: FC = () => {
       CaseIndictmentRulingDecision.WITHDRAWAL ||
       workingCase.indictmentRulingDecision ===
         CaseIndictmentRulingDecision.CANCELLATION)
-
-  const handleDuplicateIndictment = async () => {
-    const duplicatedCase = await duplicateIndictmentCase(workingCase.id)
-
-    if (duplicatedCase) {
-      router.push(
-        `${PROSECUTION_INDICTMENT_CASE_DEFENDANT_ROUTE}/${duplicatedCase.id}`,
-      )
-    }
-  }
 
   const { appealBanner, appealModals } = useAppealCaseBanner()
 
@@ -320,9 +307,6 @@ const IndictmentOverview: FC = () => {
               shouldDisplayReviewDecision &&
               (isReviewMissing || !hasReviewDecisionChanged)
             }
-            nextIsLoading={
-              canDuplicateIndictment && isDuplicatingIndictmentCase
-            }
             nextButtonText={
               canDuplicateIndictment
                 ? 'Afrita mál í drög'
@@ -341,19 +325,8 @@ const IndictmentOverview: FC = () => {
         </FormContentContainer>
         {appealModals}
         {isDuplicateIndictmentModal(modalVisible) && (
-          <Modal
-            title="Viltu afrita mál í drög?"
-            text="Nýtt mál verður til í drögum. Innihald ákæru ásamt gögnum afritast yfir á nýja málið."
-            primaryButton={{
-              text: 'Afrita mál í drög',
-              onClick: handleDuplicateIndictment,
-              isLoading: isDuplicatingIndictmentCase,
-            }}
-            secondaryButton={{
-              text: 'Hætta við',
-              onClick: () => setModalVisible(undefined),
-              isDisabled: isDuplicatingIndictmentCase,
-            }}
+          <DuplicateIndictmentModal
+            onClose={() => setModalVisible(undefined)}
           />
         )}
       </PageLayout>

@@ -14,7 +14,6 @@ import {
 import {
   getStandardUserDashboardRoute,
   PROSECUTION_INDICTMENT_CASE_ADD_FILES_ROUTE,
-  PROSECUTION_INDICTMENT_CASE_DEFENDANT_ROUTE,
   PROSECUTION_INDICTMENT_CASE_INDICTMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { isCompletedCase, isProsecutionUser } from '@island.is/judicial-system/types'
@@ -24,6 +23,7 @@ import {
   AppealRulingModifiedAlert,
   BlueBox,
   ChangeProsecutorModal,
+  DuplicateIndictmentModal,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -73,8 +73,6 @@ const Overview: FC = () => {
   const {
     transitionCase,
     isTransitioningCase,
-    duplicateIndictmentCase,
-    isDuplicatingIndictmentCase,
   } = useCase()
 
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
@@ -171,16 +169,6 @@ const Overview: FC = () => {
     }
 
     router.push(getStandardUserDashboardRoute(user))
-  }
-
-  const handleDuplicateIndictment = async () => {
-    const duplicatedCase = await duplicateIndictmentCase(workingCase.id)
-
-    if (duplicatedCase) {
-      router.push(
-        `${PROSECUTION_INDICTMENT_CASE_DEFENDANT_ROUTE}/${duplicatedCase.id}`,
-      )
-    }
   }
 
   return (
@@ -334,9 +322,7 @@ const Overview: FC = () => {
             isIndictmentReceived ||
             (isIndictmentWaitingForCancellation && !canDuplicateIndictment)
           }
-          nextIsLoading={
-            canDuplicateIndictment && isDuplicatingIndictmentCase
-          }
+          nextIsLoading={isTransitioningCase}
           infoBoxText={
             isIndictmentReceived
               ? formatMessage(strings.indictmentSentToCourt)
@@ -410,20 +396,7 @@ const Overview: FC = () => {
             }}
           />
         ) : modal === 'duplicateIndictmentModal' ? (
-          <Modal
-            title="Viltu afrita mál í drög?"
-            text="Nýtt mál verður til í drögum. Innihald ákæru ásamt gögnum afritast yfir á nýja málið."
-            primaryButton={{
-              text: 'Afrita mál í drög',
-              onClick: handleDuplicateIndictment,
-              isLoading: isDuplicatingIndictmentCase,
-            }}
-            secondaryButton={{
-              text: 'Hætta við',
-              onClick: () => setModal('noModal'),
-              isDisabled: isDuplicatingIndictmentCase,
-            }}
-          />
+          <DuplicateIndictmentModal onClose={() => setModal('noModal')} />
         ) : modal === 'editProsecutor' ? (
           <ChangeProsecutorModal onClose={() => setModal('noModal')} />
         ) : null}
