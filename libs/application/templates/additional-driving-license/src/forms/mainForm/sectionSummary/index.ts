@@ -157,7 +157,8 @@ export const sectionSummary = buildSection({
           label: m.pickupLocationTitle,
           value: ({ answers, externalData }) => {
             if (
-              getValueViaPath(answers, 'delivery.deliveryMethod') === Pickup.POST
+              getValueViaPath(answers, 'delivery.deliveryMethod') ===
+              Pickup.POST
             ) {
               return m.overviewPickupPost
             }
@@ -193,14 +194,16 @@ export const sectionSummary = buildSection({
             }
 
             const items =
-              getValueViaPath<{ priceAmount: number; chargeItemCode: string }[]>(
-                externalData,
-                'payment.data',
-              ) ?? []
+              getValueViaPath<
+                { priceAmount: number; chargeItemCode: string }[]
+              >(externalData, 'payment.data') ?? []
 
             // Derive the total from the same charge codes that are actually
             // billed (getCodes), so the displayed price can't drift from it.
-            const total = getCodes({ answers, externalData } as Application).reduce(
+            const total = getCodes({
+              answers,
+              externalData,
+            } as Application).reduce(
               (sum, { code }) =>
                 sum +
                 (items.find(({ chargeItemCode }) => chargeItemCode === code)

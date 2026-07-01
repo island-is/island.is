@@ -31,7 +31,8 @@ export const ApplicationSummary: FC<
   // so a user can navigate back, uncheck everything, and jump forward to here
   // with an empty selection. Re-check at the actual submit to block that.
   const isAdvancedApplication =
-    getValueViaPath<string>(application.answers, 'applicationFor') === B_ADVANCED
+    getValueViaPath<string>(application.answers, 'applicationFor') ===
+    B_ADVANCED
 
   useEffect(() => {
     if (!setBeforeSubmitCallback) return

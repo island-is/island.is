@@ -1,4 +1,8 @@
-import { allowFakeCondition, getCodes, hasUsableRlsQualityPhoto } from './formUtils'
+import {
+  allowFakeCondition,
+  getCodes,
+  hasUsableRlsQualityPhoto,
+} from './formUtils'
 import { NO, YES } from '@island.is/application/core'
 import { Application, ExternalData } from '@island.is/application/types'
 import {
