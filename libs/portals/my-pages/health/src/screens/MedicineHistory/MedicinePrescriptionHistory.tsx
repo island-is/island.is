@@ -2,7 +2,6 @@ import { HealthDirectorateMedicineHistoryDispensation } from '@island.is/api/sch
 import { Box, Button, Icon } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
-  EmptyTable,
   formatDate,
   HEALTH_DIRECTORATE_SLUG,
   IntroWrapper,
