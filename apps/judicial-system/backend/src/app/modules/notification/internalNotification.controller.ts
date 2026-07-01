@@ -140,7 +140,6 @@ export class InternalNotificationController {
       notificationDto.type,
       theCase,
       notificationDto.userDescriptor,
-      notificationDto.concludedDecisions,
     )
   }
 

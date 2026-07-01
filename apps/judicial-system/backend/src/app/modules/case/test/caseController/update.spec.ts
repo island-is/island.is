@@ -20,6 +20,7 @@ import {
   CaseType,
   DateType,
   DefendantEventType,
+  DefendantNotificationType,
   EventType,
   IndictmentCaseNotificationType,
   indictmentCases,
@@ -196,7 +197,7 @@ describe('CaseController - Update', () => {
         expect.arrayContaining([
           expect.objectContaining({
             body: {
-              type: IndictmentCaseNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
+              type: DefendantNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
             },
           }),
         ]),
@@ -266,14 +267,23 @@ describe('CaseController - Update', () => {
       )
     })
 
-    it('should enqueue the completed for some notification', () => {
+    it('should enqueue a completed for some notification per concluded defendant', () => {
       expect(mockQueuedMessages).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
-            type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+            type: MessageType.DEFENDANT_NOTIFICATION,
             caseId,
+            elementId: defendantId1,
             body: expect.objectContaining({
-              type: IndictmentCaseNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
+              type: DefendantNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
+            }),
+          }),
+          expect.objectContaining({
+            type: MessageType.DEFENDANT_NOTIFICATION,
+            caseId,
+            elementId: defendantId2,
+            body: expect.objectContaining({
+              type: DefendantNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
             }),
           }),
         ]),
@@ -305,10 +315,11 @@ describe('CaseController - Update', () => {
       expect(mockQueuedMessages).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
-            type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+            type: MessageType.DEFENDANT_NOTIFICATION,
             caseId,
+            elementId: defendantId1,
             body: expect.objectContaining({
-              type: IndictmentCaseNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
+              type: DefendantNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
             }),
           }),
         ]),
@@ -384,20 +395,19 @@ describe('CaseController - Update', () => {
           },
         },
         {
-          type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+          type: MessageType.DEFENDANT_NOTIFICATION,
           caseId,
+          elementId: defendantId1,
           body: {
-            type: IndictmentCaseNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
-            concludedDecisions: [
-              {
-                defendantId: defendantId1,
-                rulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
-              },
-              {
-                defendantId: defendantId2,
-                rulingDecision: CaseIndictmentRulingDecision.CANCELLATION,
-              },
-            ],
+            type: DefendantNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
+          },
+        },
+        {
+          type: MessageType.DEFENDANT_NOTIFICATION,
+          caseId,
+          elementId: defendantId2,
+          body: {
+            type: DefendantNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
           },
         },
       ])

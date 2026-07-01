@@ -58,7 +58,6 @@ export enum IndictmentCaseNotificationType {
   DISTRICT_COURT_JUDGE_ASSIGNED = TrackedNotificationType.DISTRICT_COURT_JUDGE_ASSIGNED,
   DISTRICT_COURT_REGISTRAR_ASSIGNED = TrackedNotificationType.DISTRICT_COURT_REGISTRAR_ASSIGNED,
   DRIVING_LICENSE_SUSPENSION = TrackedNotificationType.DRIVING_LICENSE_SUSPENSION,
-  INDICTMENT_COMPLETED_FOR_SOME = TrackedNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
   INDICTMENT_DENIED = TrackedNotificationType.INDICTMENT_DENIED,
   INDICTMENT_REOPENED = TrackedNotificationType.INDICTMENT_REOPENED,
   INDICTMENT_SPLIT_COMPLETED = TrackedNotificationType.INDICTMENT_SPLIT_COMPLETED,
@@ -83,6 +82,7 @@ export enum DefendantNotificationType {
   DEFENDER_ASSIGNED = TrackedNotificationType.DEFENDER_ASSIGNED,
   // court date is sometimes scheduled before defender is assigned, thus we send them notification to follow-up with court date session
   DEFENDER_COURT_DATE_FOLLOW_UP = TrackedNotificationType.DEFENDER_COURT_DATE_FOLLOW_UP,
+  INDICTMENT_COMPLETED_FOR_SOME = TrackedNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
   INDICTMENT_SENT_TO_PRISON_ADMIN = TrackedNotificationType.INDICTMENT_SENT_TO_PRISON_ADMIN,
   INDICTMENT_WITHDRAWN_FROM_PRISON_ADMIN = TrackedNotificationType.INDICTMENT_WITHDRAWN_FROM_PRISON_ADMIN,
 }
