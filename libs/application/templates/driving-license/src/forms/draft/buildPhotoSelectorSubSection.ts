@@ -41,11 +41,11 @@ interface PhotoSelectorSubSectionOptions {
 }
 
 /**
- * Shared builder for the redesign photo-selection step. BE, 65+ and B-temp all
- * render byte-identical pickers (Þjóðskrá facial photo + RLS quality photo),
- * differing only in id, product, redesign-flag gate and whether the warning
- * banner shows. Collapsing them here means the photo-resolution logic lives in
- * one place, and wiring B-full onto the new selector later is a one-line call.
+ * Shared builder for the redesign photo-selection step. BE, 65+, B-temp and
+ * B-full all render byte-identical pickers (Þjóðskrá facial photo + RLS quality
+ * photo), differing only in id, product, redesign-flag gate and whether the
+ * warning banner shows. Collapsing them here means the photo-resolution logic
+ * lives in one place.
  *
  * Note: this does not touch the legacy `subSectionQualityPhoto` step (the
  * `willBringQualityPhoto` flow), which remains the live path for B-full and for

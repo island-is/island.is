@@ -459,12 +459,16 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         signatureBiometricsId: renewalSignatureBiometricsId,
       })
     } else if (applicationFor === 'B-full') {
-      // Photo selection only applies to the redesigned B-full flow. Gate on the
-      // *persisted* flag (captured into answers during prerequisites) — not on
-      // the mere presence of `selectLicensePhoto` — so a draft created while the
-      // flag was on does not keep sending biometric IDs after it is turned off.
-      // Flag off → both IDs stay `undefined`, so the keys are omitted from the
-      // RLS request and the call is byte-identical to the pre-redesign flow.
+      // Photo selection only applies to the redesigned B-full flow. The
+      // submission service cannot read the live feature-flag client, so it
+      // branches on the flag value *frozen into answers* at prerequisites.
+      // This is intentionally sticky: a draft keeps the flow it started with
+      // even if the flag is flipped mid-lifecycle. A draft begun while the flag
+      // was ON therefore keeps sending biometric IDs even after a global
+      // rollback; only a NEW draft begun after rollback freezes the flag OFF.
+      // Flag frozen OFF → both IDs stay `undefined`, so the keys are omitted
+      // from the RLS request and the call is byte-identical to the pre-redesign
+      // flow.
       // NOTE: the health-certificate upload is intentionally not wired here yet
       // — the full-license RLS endpoint has no `contentList`, so only the photo
       // is redesigned for now (same as B-temp).
