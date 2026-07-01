@@ -228,7 +228,9 @@ describe('CourtSessionController - Confirm ruling order appeal', () => {
     const caseWithAppeal = (appealState: AppealCaseState) =>
       ({
         ...baseCase,
-        rulingOrderAppealCases: [{ id: appealCaseId, rulingFileId, appealState }],
+        rulingOrderAppealCases: [
+          { id: appealCaseId, rulingFileId, appealState },
+        ],
       } as unknown as Case)
 
     beforeEach(() => {
