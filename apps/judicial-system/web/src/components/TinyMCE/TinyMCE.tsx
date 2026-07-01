@@ -1,4 +1,5 @@
 import React, { useEffect, useId, useRef, useState } from 'react'
+import { useDebounce } from 'react-use'
 import { AnimatePresence } from 'motion/react'
 import type { Editor as TinyMCEEditor, Ui } from 'tinymce'
 import { Editor } from '@tinymce/tinymce-react'
@@ -29,6 +30,7 @@ interface Props {
   placeholder: string
   defaultValue?: string
   onChange?: (html: string) => void
+  onDebouncedChange?: (html: string) => void
   onBlur?: (html: string) => void
   disabled?: boolean
   errorMessage?: string
@@ -41,6 +43,7 @@ const TinyMCE = ({
   placeholder,
   defaultValue,
   onChange,
+  onDebouncedChange,
   onBlur,
   disabled,
   errorMessage,
@@ -55,11 +58,27 @@ const TinyMCE = ({
     left: 0,
   })
   const [selectedColor, setSelectedColor] = useState<string | null>(null)
+  const [content, setContent] = useState(defaultValue ?? '')
+  const hasEditedRef = useRef(false)
   const initialValueRef = useRef(defaultValue ?? '')
   const editorRef = useRef<TinyMCEEditor | null>(null)
   const highlightBtnApiRef = useRef<ToolbarToggleButtonInstanceApi | null>(null)
   const pickerRef = useRef<HTMLDivElement>(null)
   const highlightGroupRef = useRef<HTMLElement | null>(null)
+
+  // Persist while the user types so content isn't lost on a refresh that
+  // happens before the editor blurs (TinyMCE's iframe doesn't reliably fire
+  // blur on page unload).
+  useDebounce(
+    () => {
+      if (hasEditedRef.current && !disabled) {
+        onDebouncedChange?.(content)
+        hasEditedRef.current = false
+      }
+    },
+    500,
+    [content],
+  )
 
   useEffect(() => {
     highlightBtnApiRef.current?.setActive(pickerOpen)
@@ -171,6 +190,8 @@ const TinyMCE = ({
               editor.on('blur', () => {
                 setFocused(false)
                 onBlur?.(editor.getContent())
+                // Blur already persisted; don't fire a redundant debounced save.
+                hasEditedRef.current = false
               })
               editor.on('NodeChange', handleNodeChange(editor))
               editor.on('PastePreProcess', (args) => {
@@ -195,8 +216,10 @@ const TinyMCE = ({
             placeholder,
           }}
           initialValue={initialValueRef.current}
-          onEditorChange={(content) => {
-            onChange?.(content)
+          onEditorChange={(newContent) => {
+            hasEditedRef.current = true
+            setContent(newContent)
+            onChange?.(newContent)
           }}
           disabled={disabled}
         />

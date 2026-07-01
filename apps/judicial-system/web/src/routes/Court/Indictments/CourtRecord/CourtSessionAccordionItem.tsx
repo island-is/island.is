@@ -1447,6 +1447,13 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     setEntriesErrorMessage('')
                     patchSession(courtSession.id, { entries: html })
                   }}
+                  onDebouncedChange={(html) =>
+                    patchSession(
+                      courtSession.id,
+                      { entries: html },
+                      { persist: true },
+                    )
+                  }
                   onBlur={(html) => {
                     // Decode entities (e.g. &nbsp;) and strip tags so an
                     // otherwise-empty paragraph doesn't pass the required check.
