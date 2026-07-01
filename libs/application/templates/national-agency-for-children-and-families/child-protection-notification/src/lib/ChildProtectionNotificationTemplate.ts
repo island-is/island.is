@@ -17,6 +17,12 @@ import {
 import { CodeOwners } from '@island.is/shared/constants'
 import { AuthDelegationType } from '@island.is/shared/types'
 
+import { IdentityApiProvider } from '../dataProviders'
+import {
+  overviewMessages,
+  prerequisitesMessages,
+  sharedMessages,
+} from '../lib/messages'
 import { Events, Roles, States } from '../utils/constants'
 import { getApplicantRole } from '../utils/roleUtils'
 import { dataSchema } from './dataSchema'
@@ -27,9 +33,9 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.CHILD_PROTECTION_NOTIFICATION,
-  name: 'Tilkynning til barnaverndar',
+  name: sharedMessages.applicationName,
   codeOwner: CodeOwners.Deloitte,
-  institution: 'Barna- og fjölskyldustofa', // TODO: Confirm correct institution name
+  institution: sharedMessages.institution, // TODO: Confirm correct institution name
   translationNamespaces: [
     ApplicationConfigurations.ChildProtectionNotification.translation,
   ],
@@ -55,11 +61,15 @@ const template: ApplicationTemplate<
                 Promise.resolve(module.Prerequisites),
               ),
             actions: [
-              { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' as const },
+              {
+                event: DefaultEvents.SUBMIT,
+                name: prerequisitesMessages.child.startNotification,
+                type: 'primary',
+              },
             ],
-            write: 'all' as const,
-            read: 'all' as const,
-            api: [UserProfileApi],
+            write: 'all',
+            read: 'all',
+            api: [UserProfileApi, IdentityApiProvider],
             delete: true,
           })),
         },
@@ -83,7 +93,11 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.MinorForm),
                 ),
               actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: overviewMessages.submitButton,
+                  type: 'primary',
+                },
               ],
               write: 'all',
               read: 'all',
@@ -96,7 +110,11 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.AdultPersonalForm),
                 ),
               actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: overviewMessages.submitButton,
+                  type: 'primary',
+                },
               ],
               write: 'all',
               read: 'all',
@@ -109,7 +127,11 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.AdultProcurationForm),
                 ),
               actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: overviewMessages.submitButton,
+                  type: 'primary',
+                },
               ],
               write: 'all',
               read: 'all',
@@ -139,8 +161,7 @@ const template: ApplicationTemplate<
               import('../forms/completedForm').then((module) =>
                 Promise.resolve(module.completedForm),
               ),
-            read: 'all' as const,
-            delete: true,
+            read: 'all',
           })),
         },
       },
