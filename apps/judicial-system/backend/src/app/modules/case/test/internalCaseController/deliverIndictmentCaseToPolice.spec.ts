@@ -35,8 +35,7 @@ describe('InternalCaseController - Deliver indictment case to police', () => {
 
     mockPoliceService = policeService
 
-    const mockUpdatePoliceCase =
-      mockPoliceService.updatePoliceCase as jest.Mock
+    const mockUpdatePoliceCase = mockPoliceService.updatePoliceCase as jest.Mock
     mockUpdatePoliceCase.mockRejectedValue(new Error('Some error'))
 
     givenWhenThen = async (caseId: string, theCase: Case) => {
@@ -84,9 +83,9 @@ describe('InternalCaseController - Deliver indictment case to police', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockGetCaseFile = jest.fn().mockResolvedValue(
-        Buffer.from(courtRecordContent),
-      )
+      const mockGetCaseFile = jest
+        .fn()
+        .mockResolvedValue(Buffer.from(courtRecordContent))
 
       const { fileService, policeService, internalCaseController } =
         await createTestingCaseModule()
@@ -96,7 +95,6 @@ describe('InternalCaseController - Deliver indictment case to police', () => {
       const mockUpdatePoliceCase =
         mockPoliceService.updatePoliceCase as jest.Mock
       mockUpdatePoliceCase.mockResolvedValueOnce(true)
-
       ;(fileService.getCaseFileFromS3 as jest.Mock) = mockGetCaseFile
 
       givenWhenThen = async (caseId: string, theCase: Case) => {
