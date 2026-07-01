@@ -189,7 +189,7 @@ export class SubpoenaService {
       }
     }
 
-    // Queue messages for delivering subpoenas to police, court, and national commissioners office
+    // Queue messages for delivering subpoenas to court and national commissioners office
     await this.queueSubpoenaDeliveryMessages(
       theCase,
       defendantsToProcess,
