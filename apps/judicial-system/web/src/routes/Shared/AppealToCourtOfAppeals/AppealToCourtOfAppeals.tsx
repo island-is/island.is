@@ -51,7 +51,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/utils'
 
 const AppealToCourtOfAppeals = () => {
-  const { workingCase, refreshCase } = useContext(FormContext)
+  const { workingCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
@@ -68,7 +68,14 @@ const AppealToCourtOfAppeals = () => {
     addUploadFiles,
     removeUploadFile,
     updateUploadFile,
-  } = useUploadFiles()
+  } = useUploadFiles(workingCase.caseFiles)
+
+  const appealBriefType = !isDefenceUser(user)
+    ? CaseFileCategory.PROSECUTOR_APPEAL_BRIEF
+    : CaseFileCategory.DEFENDANT_APPEAL_BRIEF
+  const appealCaseFilesType = !isDefenceUser(user)
+    ? CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE
+    : CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE
   const { handleUpload, handleRemove } = useS3Upload(
     workingCase.id,
     defendantId,
@@ -80,12 +87,6 @@ const AppealToCourtOfAppeals = () => {
   })
   const { createAppealCase, isCreatingAppealCase } = useAppealCase()
 
-  const appealBriefType = !isDefenceUser(user)
-    ? CaseFileCategory.PROSECUTOR_APPEAL_BRIEF
-    : CaseFileCategory.DEFENDANT_APPEAL_BRIEF
-  const appealCaseFilesType = !isDefenceUser(user)
-    ? CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE
-    : CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE
   const previousUrl = `${
     isDefenceUser(user)
       ? isIndictmentCase(workingCase.type)
@@ -244,10 +245,7 @@ const AppealToCourtOfAppeals = () => {
           text="Tilkynning um móttöku kæru verður send á aðila máls."
           secondaryButton={{
             text: formatMessage(core.closeModal),
-            onClick: () => {
-              refreshCase()
-              router.push(previousUrl)
-            },
+            onClick: () => router.push(previousUrl),
           }}
         />
       )}
