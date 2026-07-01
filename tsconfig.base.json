@@ -824,6 +824,9 @@
         "libs/clients/fishing-license/src/index.ts"
       ],
       "@island.is/clients/fiskistofa": ["libs/clients/fiskistofa/src/index.ts"],
+      "@island.is/clients/national-agency-for-children-and-families": [
+        "libs/clients/national-agency-for-children-and-families/src/index.ts"
+      ],
       "@island.is/clients/fjs/bank-info": [
         "libs/clients/fjs/bank-info/src/index.ts"
       ],

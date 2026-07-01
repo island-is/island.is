@@ -1,5 +1,9 @@
 import { ApplicationTypes } from '@island.is/application/types'
 import { Injectable } from '@nestjs/common'
+import {
+  ExternalDropdownApi,
+  ExternalNotificationApi,
+} from '@island.is/clients/national-agency-for-children-and-families'
 
 import { NotificationsService } from '../../../../notification/notifications.service'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
@@ -10,10 +14,11 @@ export class ChildProtectionNotificationService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly notificationsService: NotificationsService,
+    private readonly dropdownApi: ExternalDropdownApi,
+    private readonly notificationApi: ExternalNotificationApi,
   ) {
     super(ApplicationTypes.CHILD_PROTECTION_NOTIFICATION)
   }
-  // TODO: Implement functions as needed
 
   async createApplication() {
     // TODO: Implement this
