@@ -1,6 +1,7 @@
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
+import { getOAuth2ErrorCode } from '../../services/error.service'
 import { hasTimestampExpiredInMS } from '../../utils/has-timestamp-expired-in-ms'
 import { CacheService } from '../cache/cache.service'
 import { IdsService } from '../ids/ids.service'
@@ -86,6 +87,18 @@ export class TokenRefreshService {
       )
       tokenResponse = await this.authService.updateTokenCache(newTokenCache)
     } catch (error) {
+      // A dead refresh token (OAuth2 error such as `invalid_grant`) means the
+      // session can no longer be recovered. Propagate it so the caller's
+      // ErrorService.handleAuthorizedError clears the session (deletes the cached
+      // token + clears the session cookie) and returns a 401 right away. Otherwise
+      // the stale token lingers in the cache until its TTL expires, leaving the
+      // user endpoint returning 200 while every API request fails with 401.
+      if (getOAuth2ErrorCode(error)) {
+        throw error
+      }
+
+      // Transient failures (network errors, identity server 5xx, ...) should not
+      // tear down a potentially valid session, so we swallow them and return null.
       this.logger.warn('Failed to refresh tokens: ', error)
     } finally {
       await this.cacheService.delete(refreshTokenKey)
@@ -118,7 +131,7 @@ export class TokenRefreshService {
         return true
       }
 
-      // Wait for for POLL_INTERVAL before next attempt
+      // Wait for POLL_INTERVAL before the next attempt
       await this.delay(TokenRefreshService.POLL_INTERVAL)
 
       attempts++
@@ -209,15 +222,23 @@ export class TokenRefreshService {
       this.logger.warn('Retrying token refresh after failed wait')
     }
 
-    const updatedTokenResponse = await this.executeTokenRefresh({
-      refreshTokenKey,
-      encryptedRefreshToken,
-    })
+    try {
+      return await this.executeTokenRefresh({
+        refreshTokenKey,
+        encryptedRefreshToken,
+      })
+    } catch (error) {
+      // The refresh failed with an OAuth2 error. Before treating the session as
+      // dead, re-check the cache: a concurrent request may have refreshed
+      // successfully in the meantime (refresh token rotation), in which case we
+      // return the fresh token instead of tearing down a valid session.
+      const cachedToken = await this.getTokenFromCache(tokenResponseKey)
 
-    if (!updatedTokenResponse) {
-      this.logger.warn('Token refresh failed')
+      if (cachedToken) {
+        return cachedToken
+      }
+
+      throw error
     }
-
-    return updatedTokenResponse
   }
 }

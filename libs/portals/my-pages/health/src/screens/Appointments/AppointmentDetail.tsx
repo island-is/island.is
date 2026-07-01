@@ -66,7 +66,15 @@ const AppointmentDetail = () => {
     >
       {error && !loading && <Problem error={error} noBorder={false} />}
       {loading && !appointment && <CardLoader />}
-      {!loading && !error && !appointment && <Problem type="no_data" />}
+      {!loading && !error && !appointment && (
+        <Problem
+          type="no_data"
+          title={formatMessage(messages.appointmentNotFound)}
+          message={formatMessage(messages.appointmentNotFoundDetail)}
+          imgSrc="./assets/images/nodata.svg"
+          noBorder={false}
+        />
+      )}
       {!error && appointment && (
         <Stack space={5}>
           <Box
