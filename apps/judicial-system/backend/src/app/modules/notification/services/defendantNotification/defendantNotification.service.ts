@@ -496,7 +496,10 @@ export class DefendantNotificationService extends BaseNotificationService {
       case DefendantNotificationType.INDICTMENT_WITHDRAWN_FROM_PRISON_ADMIN:
         return this.sendIndictmentWithdrawnFromPrisonAdminNotification(theCase)
       case DefendantNotificationType.INDICTMENT_COMPLETED_FOR_SOME:
-        return this.sendIndictmentCompletedForSomeNotification(theCase, defendant)
+        return this.sendIndictmentCompletedForSomeNotification(
+          theCase,
+          defendant,
+        )
       case DefendantNotificationType.DEFENDER_COURT_DATE_FOLLOW_UP:
         return this.sendDefenderCourtDateEmailNotification(
           theCase,
