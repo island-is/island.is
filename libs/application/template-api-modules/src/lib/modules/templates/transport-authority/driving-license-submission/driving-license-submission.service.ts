@@ -459,6 +459,78 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         signatureBiometricsId: renewalSignatureBiometricsId,
       })
     } else if (applicationFor === 'B-full') {
+      // Photo selection only applies to the redesigned B-full flow. Gate on the
+      // *persisted* flag (captured into answers during prerequisites) — not on
+      // the mere presence of `selectLicensePhoto` — so a draft created while the
+      // flag was on does not keep sending biometric IDs after it is turned off.
+      // Flag off → both IDs stay `undefined`, so the keys are omitted from the
+      // RLS request and the call is byte-identical to the pre-redesign flow.
+      // NOTE: the health-certificate upload is intentionally not wired here yet
+      // — the full-license RLS endpoint has no `contentList`, so only the photo
+      // is redesigned for now (same as B-temp).
+      const isBFullRedesignEnabled =
+        getValueViaPath<boolean>(answers, 'isBFullRedesignEnabled') === true
+
+      let photoBiometricsId: string | null | undefined
+      let signatureBiometricsId: string | null | undefined
+
+      if (isBFullRedesignEnabled) {
+        const selectedPhoto = getValueViaPath<string>(
+          answers,
+          'selectLicensePhoto',
+        )
+
+        if (selectedPhoto === 'qualityPhoto') {
+          // User selected the RLS quality photo — RLS already has it, so no
+          // biometric IDs are sent. Verify it actually exists for logging.
+          const qualityPhotoData = application.externalData
+            ?.qualityPhotoAndSignature?.data as {
+            pohto?: string | null
+          } | null
+
+          if (!qualityPhotoData?.pohto) {
+            this.log(
+              'error',
+              'User selected qualityPhoto but no quality photo exists in externalData',
+              {},
+            )
+          }
+
+          photoBiometricsId = null
+          signatureBiometricsId = null
+        } else if (selectedPhoto) {
+          // User selected a Thjodskra photo — validate against FACIAL entries.
+          const allThjodskraPhotos =
+            getValueViaPath<
+              Array<{ biometricId: string; contentSpecification: string }>
+            >(application.externalData, 'allPhotosFromThjodskra.data.images') ??
+            []
+
+          const facialPhotos = allThjodskraPhotos.filter(
+            (p) => p.contentSpecification === 'FACIAL',
+          )
+
+          const isValidFacial = facialPhotos.some(
+            (p) => p.biometricId === selectedPhoto,
+          )
+
+          if (!isValidFacial) {
+            this.log(
+              'error',
+              'Selected photo biometricId does not match any FACIAL Thjodskra photo',
+              { selectedPhoto },
+            )
+          }
+
+          photoBiometricsId = isValidFacial ? selectedPhoto : null
+          signatureBiometricsId = isValidFacial
+            ? allThjodskraPhotos.find(
+                (p) => p.contentSpecification === 'SIGNATURE',
+              )?.biometricId ?? null
+            : null
+        }
+      }
+
       return this.drivingLicenseService.newDrivingLicense(nationalId, {
         jurisdictionId: jurisdictionId
           ? jurisdictionId
@@ -466,10 +538,9 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         sendLicenseInMail: deliveryMethod === Pickup.POST ? 1 : 0,
         needsToPresentHealthCertificate: needsHealthCert || remarks,
         needsToPresentQualityPhoto: needsQualityPhoto,
-        licenseCategory:
-          applicationFor === 'B-full'
-            ? DrivingLicenseCategory.B
-            : DrivingLicenseCategory.BE,
+        licenseCategory: DrivingLicenseCategory.B,
+        photoBiometricsId,
+        signatureBiometricsId,
       })
     } else if (applicationFor === 'B-temp') {
       // Photo selection only applies to the redesigned B-temp flow. Gate on

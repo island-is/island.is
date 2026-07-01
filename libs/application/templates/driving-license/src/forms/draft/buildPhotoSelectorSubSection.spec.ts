@@ -2,6 +2,7 @@ import { FormValue } from '@island.is/application/types'
 import { subSectionQualityPhotoBE } from './subSectionQualityPhotoBE'
 import { subSectionQualityPhoto65 } from './subSectionQualityPhoto65'
 import { subSectionQualityPhotoTemp } from './subSectionQualityPhotoTemp'
+import { subSectionQualityPhotoBFull } from './subSectionQualityPhotoBFull'
 import { B_FULL, B_FULL_RENEWAL_65, B_TEMP, BE } from '../../lib/constants'
 
 // These three sub-sections are produced by the shared
@@ -40,6 +41,7 @@ describe('buildPhotoSelectorSubSection', () => {
       [subSectionQualityPhotoBE, 'photoStepBE'],
       [subSectionQualityPhoto65, 'photoStep65'],
       [subSectionQualityPhotoTemp, 'photoStepTemp'],
+      [subSectionQualityPhotoBFull, 'photoStepBFull'],
     ])('%#: has the expected id', (subSection, expectedId) => {
       expect(subSection.id).toBe(expectedId)
     })
@@ -100,17 +102,44 @@ describe('buildPhotoSelectorSubSection', () => {
     })
   })
 
+  describe('B-full — gated on isBFullRedesignEnabled', () => {
+    it('is hidden when the redesign flag is off (prod default)', () => {
+      expect(
+        evalCondition(subSectionQualityPhotoBFull, { applicationFor: B_FULL }),
+      ).toBe(false)
+    })
+    it('shows when the redesign flag is on', () => {
+      expect(
+        evalCondition(subSectionQualityPhotoBFull, {
+          applicationFor: B_FULL,
+          isBFullRedesignEnabled: true,
+        }),
+      ).toBe(true)
+    })
+    it('is hidden for the wrong product even with the flag on', () => {
+      expect(
+        evalCondition(subSectionQualityPhotoBFull, {
+          applicationFor: B_TEMP,
+          isBFullRedesignEnabled: true,
+        }),
+      ).toBe(false)
+    })
+  })
+
   describe('warning banner presence follows withNoPhotoAlert', () => {
     it('BE omits the noUsablePhotoAlert banner', () => {
       expect(collectIds(subSectionQualityPhotoBE)).not.toContain(
         'noUsablePhotoAlert',
       )
     })
-    it('65+ and B-temp include the noUsablePhotoAlert banner', () => {
+    it('65+, B-temp and B-full include the noUsablePhotoAlert banner', () => {
       expect(collectIds(subSectionQualityPhoto65)).toContain(
         'noUsablePhotoAlert',
       )
       expect(collectIds(subSectionQualityPhotoTemp)).toContain(
+        'noUsablePhotoAlert',
+      )
+      expect(collectIds(subSectionQualityPhotoBFull)).toContain(
         'noUsablePhotoAlert',
       )
     })
@@ -121,6 +150,7 @@ describe('buildPhotoSelectorSubSection', () => {
       subSectionQualityPhotoBE,
       subSectionQualityPhoto65,
       subSectionQualityPhotoTemp,
+      subSectionQualityPhotoBFull,
     ])('%#: keeps selectPhoto / selectLicensePhoto / photoDescription', (s) => {
       const ids = collectIds(s)
       expect(ids).toEqual(

@@ -32,7 +32,10 @@ interface PhotoSelectorSubSectionOptions {
   // Redesign feature-flag answer key that must be `true` for this step to show.
   // Omit for products where the new selector is unconditional (BE). 65+ and
   // B-temp gate on their redesign flags, which are off in prod.
-  redesignFlagKey?: 'is65RenewalRedesignEnabled' | 'isBTempRedesignEnabled'
+  redesignFlagKey?:
+    | 'is65RenewalRedesignEnabled'
+    | 'isBTempRedesignEnabled'
+    | 'isBFullRedesignEnabled'
   // Whether to show the "no usable photo" warning banner. BE omits it.
   withNoPhotoAlert: boolean
 }

@@ -66,4 +66,23 @@ describe('dataSchema — healthCertificate field-level refine (redesigned-65+ en
     expect(flagIssueOn).toBeUndefined()
     expect(flagIssueOff).toBeUndefined()
   })
+
+  it('accepts isBFullRedesignEnabled as an optional boolean (used by form conditions)', () => {
+    const onResult = dataSchema.safeParse({ isBFullRedesignEnabled: true })
+    const offResult = dataSchema.safeParse({
+      isBFullRedesignEnabled: false,
+    })
+    const flagIssueOn = !onResult.success
+      ? onResult.error.issues.find(
+          (i) => i.path[0] === 'isBFullRedesignEnabled',
+        )
+      : undefined
+    const flagIssueOff = !offResult.success
+      ? offResult.error.issues.find(
+          (i) => i.path[0] === 'isBFullRedesignEnabled',
+        )
+      : undefined
+    expect(flagIssueOn).toBeUndefined()
+    expect(flagIssueOff).toBeUndefined()
+  })
 })
