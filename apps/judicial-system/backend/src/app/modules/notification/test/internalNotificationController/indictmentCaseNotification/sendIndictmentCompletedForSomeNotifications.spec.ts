@@ -93,14 +93,14 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
           id: defendantAaId,
           isDefenderChoiceConfirmed: true,
           defenderName: 'Verjandi AA',
-          defenderEmail: 'aa@defender.is',
+          defenderEmail: 'aa@omnitrix.is',
           eventLogs: [],
         },
         {
           id: defendantBbId,
           isDefenderChoiceConfirmed: true,
           defenderName: 'Verjandi BB',
-          defenderEmail: 'bb@defender.is',
+          defenderEmail: 'bb@omnitrix.is',
           eventLogs: [],
         },
       ],
@@ -109,7 +109,7 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
           hasSpokesperson: true,
           isSpokespersonConfirmed: true,
           spokespersonName: 'Réttargæslumaður CC',
-          spokespersonEmail: 'cc@spokesperson.is',
+          spokespersonEmail: 'cc@omnitrix.is',
         },
       ],
     } as Case
@@ -136,14 +136,14 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
       expect.objectContaining({
         subject,
         html: defenderHtml,
-        to: [{ name: 'Verjandi AA', address: 'aa@defender.is' }],
+        to: [{ name: 'Verjandi AA', address: 'aa@omnitrix.is' }],
       }),
     )
     expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
       expect.objectContaining({
         subject,
         html: defenderHtml,
-        to: [{ name: 'Réttargæslumaður CC', address: 'cc@spokesperson.is' }],
+        to: [{ name: 'Réttargæslumaður CC', address: 'cc@omnitrix.is' }],
       }),
     )
     expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
@@ -156,7 +156,7 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
     // BB is not the concluded defendant — must not be notified
     expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
       expect.objectContaining({
-        to: [{ name: 'Verjandi BB', address: 'bb@defender.is' }],
+        to: [{ name: 'Verjandi BB', address: 'bb@omnitrix.is' }],
       }),
     )
     expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(3)
@@ -172,7 +172,7 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
           id: defendantAaId,
           isDefenderChoiceConfirmed: false,
           defenderName: 'Verjandi AA',
-          defenderEmail: 'aa@defender.is',
+          defenderEmail: 'aa@omnitrix.is',
           eventLogs: [],
         },
       ],
@@ -181,7 +181,7 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
           hasSpokesperson: true,
           isSpokespersonConfirmed: false,
           spokespersonName: 'Réttargæslumaður CC',
-          spokespersonEmail: 'cc@spokesperson.is',
+          spokespersonEmail: 'cc@omnitrix.is',
         },
       ],
     } as Case
@@ -204,14 +204,14 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
           id: defendantAaId,
           isDefenderChoiceConfirmed: true,
           defenderName: 'Verjandi AA',
-          defenderEmail: 'aa@defender.is',
+          defenderEmail: 'aa@omnitrix.is',
           eventLogs: [],
         },
         {
           id: defendantBbId,
           isDefenderChoiceConfirmed: true,
           defenderName: 'Verjandi BB',
-          defenderEmail: 'bb@defender.is',
+          defenderEmail: 'bb@omnitrix.is',
           eventLogs: [],
         },
       ],
@@ -234,13 +234,13 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
     expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
       expect.objectContaining({
         html: expect.stringContaining('Niðurstaða: Frávísun'),
-        to: [{ name: 'Verjandi AA', address: 'aa@defender.is' }],
+        to: [{ name: 'Verjandi AA', address: 'aa@omnitrix.is' }],
       }),
     )
     expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
       expect.objectContaining({
         html: expect.stringContaining('Niðurstaða: Niðurfelling máls'),
-        to: [{ name: 'Verjandi BB', address: 'bb@defender.is' }],
+        to: [{ name: 'Verjandi BB', address: 'bb@omnitrix.is' }],
       }),
     )
     expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
@@ -261,7 +261,7 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
           id: defendantAaId,
           isDefenderChoiceConfirmed: true,
           defenderName: 'Verjandi AA',
-          defenderEmail: 'aa@defender.is',
+          defenderEmail: 'aa@omnitrix.is',
           eventLogs: [
             {
               eventType: DefendantEventType.INDICTMENT_CANCELLED,
@@ -273,7 +273,7 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
           id: defendantBbId,
           isDefenderChoiceConfirmed: true,
           defenderName: 'Verjandi BB',
-          defenderEmail: 'bb@defender.is',
+          defenderEmail: 'bb@omnitrix.is',
           eventLogs: [],
         },
       ],
@@ -291,12 +291,12 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
     expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
       expect.objectContaining({
         html: expect.stringContaining('Niðurstaða: Frávísun'),
-        to: [{ name: 'Verjandi BB', address: 'bb@defender.is' }],
+        to: [{ name: 'Verjandi BB', address: 'bb@omnitrix.is' }],
       }),
     )
     expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
       expect.objectContaining({
-        to: [{ name: 'Verjandi AA', address: 'aa@defender.is' }],
+        to: [{ name: 'Verjandi AA', address: 'aa@omnitrix.is' }],
       }),
     )
   })
