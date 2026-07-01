@@ -28,6 +28,7 @@ import { ServiceRequirement } from '@island.is/judicial-system/types'
 
 import { InternalCaseService, PdfService } from '../case'
 import { DefendantService } from '../defendant'
+import { EventService } from '../event'
 import { FileService } from '../file'
 import { PoliceDocumentType, PoliceService } from '../police'
 import {
@@ -79,6 +80,7 @@ export class VerdictService {
     private readonly defendantService: DefendantService,
     @Inject(forwardRef(() => InternalCaseService))
     private readonly internalCaseService: InternalCaseService,
+    private readonly eventService: EventService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -496,6 +498,11 @@ export class VerdictService {
       },
       transaction,
     )
+
+    this.eventService.postEvent('VERDICT_DELIVERED_TO_POLICE', theCase, false, {
+      Varnaraðili: defendant.id,
+      'RLS auðkenni': createdDocument.externalPoliceDocumentId,
+    })
 
     return { delivered: true }
   }
