@@ -1,4 +1,4 @@
-import { FC, useContext } from 'react'
+import { FC, useContext, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import { PROSECUTION_INDICTMENT_CASE_DEFENDANT_ROUTE } from '@island.is/judicial-system/consts'
@@ -15,16 +15,22 @@ interface Props {
 const DuplicateIndictmentModal: FC<Props> = ({ onClose }) => {
   const { workingCase } = useContext(FormContext)
   const router = useRouter()
-  const { duplicateIndictmentCase, isDuplicatingIndictmentCase } = useCase()
+  const { duplicateIndictmentCase } = useCase()
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleDuplicateIndictment = async () => {
+    setIsLoading(true)
+
     const duplicatedCase = await duplicateIndictmentCase(workingCase.id)
 
-    if (duplicatedCase) {
-      router.push(
-        `${PROSECUTION_INDICTMENT_CASE_DEFENDANT_ROUTE}/${duplicatedCase.id}`,
-      )
+    if (!duplicatedCase) {
+      setIsLoading(false)
+      return
     }
+
+    await router.push(
+      `${PROSECUTION_INDICTMENT_CASE_DEFENDANT_ROUTE}/${duplicatedCase.id}`,
+    )
   }
 
   return (
@@ -32,15 +38,16 @@ const DuplicateIndictmentModal: FC<Props> = ({ onClose }) => {
       title="Viltu afrita mál í drög?"
       text="Nýtt mál verður til í drögum. Innihald ákæru ásamt gögnum afritast yfir á nýja málið."
       onClose={onClose}
+      loading={isLoading}
       primaryButton={{
         text: 'Afrita mál í drög',
         onClick: handleDuplicateIndictment,
-        isLoading: isDuplicatingIndictmentCase,
+        isLoading,
       }}
       secondaryButton={{
         text: 'Hætta við',
         onClick: onClose,
-        isDisabled: isDuplicatingIndictmentCase,
+        isDisabled: isLoading,
       }}
     />
   )
