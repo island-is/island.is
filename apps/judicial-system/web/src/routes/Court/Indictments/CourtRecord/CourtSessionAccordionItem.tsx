@@ -196,7 +196,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   } = useUsers(workingCase.court?.id)
 
   const patchSession = useCallback(
-    (
+    async (
       courtSessionId: string,
       updates: Partial<CourtSessionResponse>,
       { persist = false } = {},
@@ -225,11 +225,27 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
 
       if (persist) {
         const { courtSessionStrings, ...courtSessionUpdate } = updates
-        updateCourtSession({
+        const success = await updateCourtSession({
           ...courtSessionUpdate,
           courtSessionId,
           caseId: workingCase.id,
         })
+
+        // A failed confirm/unconfirm must not leave the UI in the new state
+        // (button re-labelled to "Leiðrétta", read-only mode). Roll the flag
+        // back to what it was. Only isConfirmed is reverted - other optimistic
+        // field edits keep their value so unsaved input is not lost on a
+        // transient failure. (Confirm/unconfirm always toggle the flag.)
+        if (!success && 'isConfirmed' in updates) {
+          setWorkingCase((prev) => ({
+            ...prev,
+            courtSessions: prev.courtSessions?.map((session) =>
+              session.id === courtSessionId
+                ? { ...session, isConfirmed: !updates.isConfirmed }
+                : session,
+            ),
+          }))
+        }
       }
     },
     [setWorkingCase, updateCourtSession, workingCase.id],
