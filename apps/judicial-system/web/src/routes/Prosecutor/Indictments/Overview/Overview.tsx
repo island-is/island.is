@@ -73,10 +73,7 @@ const Overview: FC = () => {
 
   const router = useRouter()
   const { formatMessage } = useIntl()
-  const {
-    transitionCase,
-    isTransitioningCase,
-  } = useCase()
+  const { transitionCase, isTransitioningCase } = useCase()
 
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
 
