@@ -22,6 +22,7 @@ import {
   AppealCaseNotificationType,
   AppealCaseState,
   AppealCaseTransition,
+  AppealDecisionPartyRole,
   AppealEventType,
   CaseAppealDecision,
   CaseFileCategory,
@@ -124,6 +125,35 @@ export class AppealCaseService {
       },
       { transaction },
     )
+  }
+
+  // True iff the user's party recorded an in-court ACCEPT ("unir úrskurðinum")
+  // for this ruling order. Such a party has waived its right to appeal it, so an
+  // out-of-court appeal from it must be rejected. The party is the prosecution,
+  // or the specific defendant / civil claimant the defence user represents.
+  private hasAcceptedRulingOrderInCourt(
+    theCase: Case,
+    rulingFileId: string,
+    user: User,
+  ): boolean {
+    const { defendantId, civilClaimantId } = isDefenceUser(user)
+      ? this.resolveDefencePartyIds(theCase, user)
+      : {}
+    const partyRole = isProsecutionUser(user)
+      ? AppealDecisionPartyRole.PROSECUTOR
+      : civilClaimantId
+      ? AppealDecisionPartyRole.CIVIL_CLAIMANT
+      : AppealDecisionPartyRole.DEFENDANT
+
+    const decision = theCase.appealDecisions?.find(
+      (appealDecision) =>
+        appealDecision.rulingFileId === rulingFileId &&
+        appealDecision.partyRole === partyRole &&
+        (appealDecision.defendantId ?? null) === (defendantId ?? null) &&
+        (appealDecision.civilClaimantId ?? null) === (civilClaimantId ?? null),
+    )
+
+    return decision?.decision === CaseAppealDecision.ACCEPT
   }
 
   // Dual-write: records an APPEALED event for an out-of-court appeal. In-court
@@ -542,6 +572,12 @@ export class AppealCaseService {
     if (!isProsecutionUser(user) && !isDefenceUser(user)) {
       throw new ForbiddenException(
         `Current user cannot appeal a ruling order on a ${theCase.type} case`,
+      )
+    }
+
+    if (this.hasAcceptedRulingOrderInCourt(theCase, rulingFileId, user)) {
+      throw new ForbiddenException(
+        'A party that accepted the ruling order in court cannot appeal it',
       )
     }
 

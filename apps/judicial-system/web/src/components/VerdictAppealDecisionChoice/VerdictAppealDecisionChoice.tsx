@@ -6,6 +6,7 @@ import { getDefendantVerdictAppealDecisionLabel } from '@island.is/judicial-syst
 import { Defendant, Verdict, VerdictAppealDecision } from '../../graphql/schema'
 import useVerdict from '../../utils/hooks/useVerdict'
 import { FormContext } from '../FormProvider/FormProvider'
+import RadioGroup from '../RadioGroup/RadioGroup'
 import * as styles from './VerdictAppealDecisionChoice.css'
 
 interface Props {
@@ -20,7 +21,11 @@ const VerdictAppealDecisionChoice: FC<Props> = (props) => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
 
   return (
-    <div className={styles.gridRow}>
+    <RadioGroup
+      legend="Afstaða dómfellda til dóms"
+      hideLegend
+      className={styles.gridRow}
+    >
       <RadioButton
         id={`defendant-${defendant.id}-verdict-appeal-decision-postpone`}
         name={`defendant-${defendant.id}-verdict-appeal-decision`}
@@ -63,7 +68,7 @@ const VerdictAppealDecisionChoice: FC<Props> = (props) => {
         )}
         disabled={disabled}
       />
-    </div>
+    </RadioGroup>
   )
 }
 
