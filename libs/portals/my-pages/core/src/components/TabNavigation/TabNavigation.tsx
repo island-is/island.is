@@ -81,7 +81,7 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
         />
       )}
       {activePath.path && showSelect && (
-        <Box className={styles.select}>
+        <Box className={styles.select} marginBottom={2}>
           <Select
             size="xs"
             backgroundColor="blue"
