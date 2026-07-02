@@ -81,6 +81,14 @@ export class CourtDocumentRepositoryService {
         { data: Object.keys(data) },
       )
 
+      // "Önnur gögn" documents (CaseFileCategory.CASE_FILE) must never be
+      // auto-filed onto the court record, not even into an open court session.
+      // Court users file them manually via "Leggja fram".
+      const isOtherDocument = await this.isOtherDocumentsCaseFile(
+        data.caseFileId,
+        options.transaction,
+      )
+
       // Find the last court session for the case, if any
       const lastCourtSession = await this.courtSessionModel.findOne({
         where: { caseId },
@@ -89,7 +97,7 @@ export class CourtDocumentRepositoryService {
       })
 
       const courtSessionId =
-        lastCourtSession && !lastCourtSession.isConfirmed
+        !isOtherDocument && lastCourtSession && !lastCourtSession.isConfirmed
           ? lastCourtSession.id
           : undefined
 
@@ -155,6 +163,22 @@ export class CourtDocumentRepositoryService {
 
       throw error
     }
+  }
+
+  private async isOtherDocumentsCaseFile(
+    caseFileId: string | undefined,
+    transaction: Transaction,
+  ): Promise<boolean> {
+    if (!caseFileId) {
+      return false
+    }
+
+    const caseFile = await this.caseFileModel.findByPk(caseFileId, {
+      attributes: ['category'],
+      transaction,
+    })
+
+    return caseFile?.category === CaseFileCategory.CASE_FILE
   }
 
   private async updateFiledDocumentsOrder({
@@ -502,40 +526,30 @@ export class CourtDocumentRepositoryService {
 
       const transaction = options.transaction
 
-      // Get all court documents that are not yet filed in a court session
-      const candidateCourtDocuments = await this.courtDocumentModel.findAll({
-        attributes: ['id', 'created', 'caseFileId'],
-        where: { caseId, courtSessionId: null, documentOrder: 0 },
-        order: [['created', 'ASC']],
-        transaction,
-      })
-
+      // Get all court documents that are not yet filed in a court session.
       // Court documents backed by an "Önnur gögn" case file
       // (CaseFileCategory.CASE_FILE) must NOT be auto-filed onto the court
       // record. They stay unfiled so court users can file them manually.
       // Generated documents (indictment, skjalaskrá, subpoenas) have no
       // backing case file (caseFileId == null) and are always auto-filed, as
       // are party-category case files.
-      const candidateCaseFileIds = candidateCourtDocuments
-        .map((d) => d.caseFileId)
-        .filter((id): id is string => Boolean(id))
-
-      const excludedCaseFileIds = new Set<string>()
-      if (candidateCaseFileIds.length > 0) {
-        const caseFiles = await this.caseFileModel.findAll({
-          attributes: ['id'],
-          where: {
-            id: candidateCaseFileIds,
-            category: CaseFileCategory.CASE_FILE,
-          },
-          transaction,
-        })
-        caseFiles.forEach((cf) => excludedCaseFileIds.add(cf.id))
-      }
-
-      const courtDocumentsToFile = candidateCourtDocuments.filter(
-        (d) => !d.caseFileId || !excludedCaseFileIds.has(d.caseFileId),
-      )
+      const courtDocumentsToFile = await this.courtDocumentModel.findAll({
+        attributes: ['id', 'created'],
+        where: {
+          caseId,
+          courtSessionId: null,
+          documentOrder: 0,
+          [Op.or]: [
+            { caseFileId: null },
+            { '$caseFile.category$': { [Op.ne]: CaseFileCategory.CASE_FILE } },
+          ],
+        },
+        include: [
+          { model: CaseFile, as: 'caseFile', attributes: [], required: false },
+        ],
+        order: [['created', 'ASC']],
+        transaction,
+      })
 
       if (courtDocumentsToFile.length === 0) {
         this.logger.debug(

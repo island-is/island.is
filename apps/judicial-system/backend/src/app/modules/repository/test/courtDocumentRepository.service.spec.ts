@@ -1,11 +1,14 @@
-import { Transaction } from 'sequelize'
+import { Op, Transaction } from 'sequelize'
 
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { CaseFileCategory } from '@island.is/judicial-system/types'
+import {
+  CaseFileCategory,
+  CourtDocumentType,
+} from '@island.is/judicial-system/types'
 
 import { CaseFile } from '../models/caseFile.model'
 import { CourtDocument } from '../models/courtDocument.model'
@@ -18,24 +21,32 @@ describe('CourtDocumentRepositoryService', () => {
   } as unknown as Transaction
 
   let service: CourtDocumentRepositoryService
-  let courtDocumentModel: { findAll: jest.Mock; update: jest.Mock }
-  let courtSessionModel: { findAll: jest.Mock }
-  let caseFileModel: { findAll: jest.Mock }
+  let courtDocumentModel: {
+    findAll: jest.Mock
+    update: jest.Mock
+    create: jest.Mock
+  }
+  let courtSessionModel: { findAll: jest.Mock; findOne: jest.Mock }
+  let caseFileModel: { findByPk: jest.Mock }
 
   beforeEach(async () => {
     courtDocumentModel = {
       findAll: jest.fn().mockResolvedValue([]),
       update: jest.fn().mockResolvedValue([1, []]),
+      create: jest.fn().mockImplementation((values) =>
+        Promise.resolve({ id: 'new-doc', ...values }),
+      ),
     }
 
     // No existing court sessions, so the next document order resolves to 1
     // and no merged-document bookkeeping is triggered.
     courtSessionModel = {
       findAll: jest.fn().mockResolvedValue([]),
+      findOne: jest.fn().mockResolvedValue(null),
     }
 
     caseFileModel = {
-      findAll: jest.fn().mockResolvedValue([]),
+      findByPk: jest.fn().mockResolvedValue(null),
     }
 
     const moduleRef = await Test.createTestingModule({
@@ -62,14 +73,13 @@ describe('CourtDocumentRepositoryService', () => {
         .filter(([values]) => values.courtSessionId !== undefined)
         .map(([, options]) => options.where.id)
 
-    it('does not auto-file "Önnur gögn" (CASE_FILE) documents but files generated and party-category documents', async () => {
+    it('excludes "Önnur gögn" (CASE_FILE) documents in the query and files the returned documents', async () => {
+      // The DB query already excludes CASE_FILE-backed documents, so it only
+      // returns the generated and party-category documents.
       courtDocumentModel.findAll.mockResolvedValueOnce([
-        { id: 'doc-gen', created: 1, caseFileId: null },
-        { id: 'doc-party', created: 2, caseFileId: 'cf-party' },
-        { id: 'doc-other', created: 3, caseFileId: 'cf-other' },
+        { id: 'doc-gen', created: 1 },
+        { id: 'doc-party', created: 2 },
       ])
-      // Only the CASE_FILE-backed case file is returned by the exclusion lookup
-      caseFileModel.findAll.mockResolvedValue([{ id: 'cf-other' }])
 
       await service.fileAllAvailableCourtDocumentsInCourtSession(
         'case-1',
@@ -77,39 +87,34 @@ describe('CourtDocumentRepositoryService', () => {
         { transaction },
       )
 
-      // The exclusion lookup only considers candidates with a backing case file
-      expect(caseFileModel.findAll).toHaveBeenCalledWith(
+      // The unfiled-documents query filters out CASE_FILE case files via a
+      // left join on the backing case file.
+      const [queryArg] = courtDocumentModel.findAll.mock.calls[0]
+      expect(queryArg.where).toEqual(
         expect.objectContaining({
-          where: {
-            id: ['cf-party', 'cf-other'],
-            category: CaseFileCategory.CASE_FILE,
-          },
+          caseId: 'case-1',
+          courtSessionId: null,
+          documentOrder: 0,
+          [Op.or]: [
+            { caseFileId: null },
+            { '$caseFile.category$': { [Op.ne]: CaseFileCategory.CASE_FILE } },
+          ],
         }),
       )
+      expect(queryArg.include).toEqual([
+        expect.objectContaining({
+          model: CaseFile,
+          as: 'caseFile',
+          required: false,
+        }),
+      ])
 
       const filed = filedDocumentIds()
       expect(filed).toContain('doc-gen')
       expect(filed).toContain('doc-party')
-      expect(filed).not.toContain('doc-other')
     })
 
-    it('files nothing when every available document is an "Önnur gögn" (CASE_FILE) document', async () => {
-      courtDocumentModel.findAll.mockResolvedValueOnce([
-        { id: 'doc-other', created: 1, caseFileId: 'cf-other' },
-      ])
-      caseFileModel.findAll.mockResolvedValue([{ id: 'cf-other' }])
-
-      await service.fileAllAvailableCourtDocumentsInCourtSession(
-        'case-1',
-        'session-1',
-        { transaction },
-      )
-
-      // Early return after filtering: no document is filed
-      expect(courtDocumentModel.update).not.toHaveBeenCalled()
-    })
-
-    it('skips the case file lookup and files nothing when there are no available documents', async () => {
+    it('files nothing when the query returns no available documents', async () => {
       courtDocumentModel.findAll.mockResolvedValueOnce([])
 
       await service.fileAllAvailableCourtDocumentsInCourtSession(
@@ -118,8 +123,54 @@ describe('CourtDocumentRepositoryService', () => {
         { transaction },
       )
 
-      expect(caseFileModel.findAll).not.toHaveBeenCalled()
       expect(courtDocumentModel.update).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('create', () => {
+    const unconfirmedSession = { id: 'session-1', isConfirmed: false }
+
+    it('does not file an "Önnur gögn" (CASE_FILE) document into an open court session', async () => {
+      courtSessionModel.findOne.mockResolvedValue(unconfirmedSession)
+      caseFileModel.findByPk.mockResolvedValue({
+        category: CaseFileCategory.CASE_FILE,
+      })
+
+      await service.create(
+        'case-1',
+        {
+          documentType: CourtDocumentType.UPLOADED_DOCUMENT,
+          name: 'Önnur gögn',
+          caseFileId: 'cf-other',
+        },
+        { transaction },
+      )
+
+      expect(courtDocumentModel.create).toHaveBeenCalledTimes(1)
+      const [values] = courtDocumentModel.create.mock.calls[0]
+      expect(values.courtSessionId).toBeUndefined()
+      expect(values.documentOrder).toBe(0)
+    })
+
+    it('files a party-category document into an open court session', async () => {
+      courtSessionModel.findOne.mockResolvedValue(unconfirmedSession)
+      caseFileModel.findByPk.mockResolvedValue({
+        category: CaseFileCategory.PROSECUTOR_CASE_FILE,
+      })
+
+      await service.create(
+        'case-1',
+        {
+          documentType: CourtDocumentType.UPLOADED_DOCUMENT,
+          name: 'Sakskjal',
+          caseFileId: 'cf-party',
+        },
+        { transaction },
+      )
+
+      expect(courtDocumentModel.create).toHaveBeenCalledTimes(1)
+      const [values] = courtDocumentModel.create.mock.calls[0]
+      expect(values.courtSessionId).toBe('session-1')
     })
   })
 })
