@@ -36,6 +36,8 @@ interface UpdateAppealDecision {
 
 interface FindAllOptions {
   where?: FindOptions['where']
+  order?: FindOptions['order']
+  lock?: FindOptions['lock']
   transaction?: Transaction
 }
 
@@ -71,6 +73,14 @@ export class AppealDecisionRepositoryService {
 
       if (options?.where) {
         findOptions.where = options.where
+      }
+
+      if (options?.order) {
+        findOptions.order = options.order
+      }
+
+      if (options?.lock) {
+        findOptions.lock = options.lock
       }
 
       if (options?.transaction) {
