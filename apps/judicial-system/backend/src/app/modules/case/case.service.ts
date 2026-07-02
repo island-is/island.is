@@ -72,6 +72,10 @@ import {
   getCourtRecordPdfAsString,
   getRulingPdfAsString,
 } from '../../formatters'
+import {
+  buildInCourtAppealedEvent,
+  InCourtAppellant,
+} from '../appeal-case/appealCase.helpers'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
 import { DefendantService } from '../defendant'
@@ -83,6 +87,7 @@ import {
   AppealCase,
   AppealCaseRepositoryService,
   AppealDecisionRepositoryService,
+  AppealEventLogRepositoryService,
   Case,
   caseInclude,
   CaseRepositoryService,
@@ -242,6 +247,7 @@ export class CaseService {
     private readonly caseRepositoryService: CaseRepositoryService,
     private readonly appealCaseRepositoryService: AppealCaseRepositoryService,
     private readonly appealDecisionRepositoryService: AppealDecisionRepositoryService,
+    private readonly appealEventLogRepositoryService: AppealEventLogRepositoryService,
     private readonly defendantEventLogRepositoryService: DefendantEventLogRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -2020,8 +2026,11 @@ export class CaseService {
 
         // The in-court appeal itself is recorded by decision = APPEAL on the
         // appeal_decision rows (written when the decision was set); here we
-        // only create the appeal case it produces.
-        await this.appealCaseRepositoryService.create(
+        // create the appeal case it produces and register each appealing side
+        // as an APPEALED event, so the appellant is read from the event log
+        // uniformly with out-of-court appeals. Request-case defence is
+        // collective, so no defendant/civilClaimant party is attached.
+        const appealCase = await this.appealCaseRepositoryService.create(
           theCase.id,
           {
             appealState: AppealCaseState.APPEALED,
@@ -2029,6 +2038,28 @@ export class CaseService {
             appealDate: caseUpdate.rulingDate ?? theCase.rulingDate,
           },
           { transaction },
+        )
+
+        const appellants: InCourtAppellant[] = []
+        if (prosecutorAppealedInCourt) {
+          appellants.push({ appellantRole: UserRole.PROSECUTOR })
+        }
+        if (accusedAppealedInCourt) {
+          appellants.push({ appellantRole: UserRole.DEFENDER })
+        }
+
+        await Promise.all(
+          appellants.map((appellant) =>
+            this.appealEventLogRepositoryService.create(
+              buildInCourtAppealedEvent({
+                theCase,
+                appealCase,
+                appellant,
+                actor: user,
+              }),
+              { transaction },
+            ),
+          ),
         )
       }
     }

@@ -90,6 +90,10 @@ export const createTestingCourtSessionModule = async () => {
     CourtSessionController,
   )
 
+  // Event convergence reads existing APPEALED events; default to none so tests
+  // that don't set it up don't blow up on the returned undefined.
+  ;(appealEventLogRepositoryService.findAll as jest.Mock).mockResolvedValue([])
+
   courtSessionModule.close()
 
   return {

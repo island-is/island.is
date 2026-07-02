@@ -336,6 +336,88 @@ describe('getAppealCaseInfo', () => {
       expect(getAppealCaseInfo(appealCase, theCase).appealedInCourt).toBe(false)
     })
   })
+
+  describe('appellant read from the APPEALED event log', () => {
+    const appealedEvent = (userRole: UserRole) =>
+      ({
+        eventType: AppealEventType.APPEALED,
+        userRole,
+      } as AppealEventLog)
+
+    it('reads the appellant side from the APPEALED event', () => {
+      const theCase = { type: CaseType.INDICTMENT } as Case
+      const appealCase = {
+        rulingFileId: 'file-id',
+        appealEventLogs: [appealedEvent(UserRole.DEFENDER)],
+      } as AppealCase
+
+      expect(getAppealCaseInfo(appealCase, theCase).appealedByRole).toBe(
+        UserRole.DEFENDER,
+      )
+    })
+
+    it('maps prosecution roles on the event to the prosecutor side', () => {
+      const theCase = { type: CaseType.INDICTMENT } as Case
+      const appealCase = {
+        rulingFileId: 'file-id',
+        appealEventLogs: [appealedEvent(UserRole.PROSECUTOR_REPRESENTATIVE)],
+      } as AppealCase
+
+      expect(getAppealCaseInfo(appealCase, theCase).appealedByRole).toBe(
+        UserRole.PROSECUTOR,
+      )
+    })
+
+    it('prefers the event over the legacy columns', () => {
+      // Legacy columns would attribute this to the prosecutor; the event wins.
+      const theCase = {
+        type: CaseType.CUSTODY,
+        prosecutorPostponedAppealDate: new Date('2022-06-15T19:50:08.033Z'),
+      } as Case
+      const appealCase = {
+        appealDate: new Date('2022-06-16T10:00:00.000Z'),
+        appealEventLogs: [appealedEvent(UserRole.DEFENDER)],
+      } as AppealCase
+
+      expect(getAppealCaseInfo(appealCase, theCase).appealedByRole).toBe(
+        UserRole.DEFENDER,
+      )
+    })
+
+    it('uses prosecutor precedence when several parties appealed in court', () => {
+      const theCase = { type: CaseType.INDICTMENT } as Case
+      const appealCase = {
+        rulingFileId: 'file-id',
+        appealEventLogs: [
+          appealedEvent(UserRole.DEFENDER),
+          appealedEvent(UserRole.PROSECUTOR),
+        ],
+      } as AppealCase
+
+      expect(getAppealCaseInfo(appealCase, theCase).appealedByRole).toBe(
+        UserRole.PROSECUTOR,
+      )
+    })
+
+    it('falls back to the legacy columns when there is no APPEALED event', () => {
+      const theCase = {
+        type: CaseType.CUSTODY,
+        accusedPostponedAppealDate: new Date('2022-06-15T19:50:08.033Z'),
+      } as Case
+      const appealCase = {
+        // Only an unrelated event - not an APPEALED one.
+        appealEventLogs: [
+          {
+            eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+          } as AppealEventLog,
+        ],
+      } as AppealCase
+
+      expect(getAppealCaseInfo(appealCase, theCase).appealedByRole).toBe(
+        UserRole.DEFENDER,
+      )
+    })
+  })
 })
 
 describe('getRulingOrderAppealInfo', () => {
