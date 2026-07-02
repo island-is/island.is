@@ -10,7 +10,6 @@ import {
   ApplicationFileType,
   HouseholdMember,
   HousingBenefitsApplicationModel,
-  PropertyType,
 } from '@island.is/clients/hms-housing-benefits'
 import { getCompletedAssigneeNationalIdSet } from '@island.is/application/templates/hms/housing-benefits'
 import * as kennitala from 'kennitala'
@@ -551,7 +550,5 @@ export const mapApplicationToHousingBenefitsModel = (
       ...getHouseholdMembersForSubmission(application),
     ],
     files,
-    propertyTypeNumber:
-      getValueViaPath<PropertyType>(answers, 'propertyType') ?? undefined,
   }
 }

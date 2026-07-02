@@ -11,7 +11,6 @@ import { incomeSection } from './incomeSection'
 import { incomeNoTaxReturnSection } from './incomeNoTaxReturnSection'
 import { assetsDeclarationSection } from './assetsDeclarationSection'
 import { accessAgreementSection } from './accessAgreementSection'
-import { propertyTypeSection } from './propertyTypeForm'
 
 export const MainForm = buildForm({
   id: 'MainForm',
@@ -22,7 +21,6 @@ export const MainForm = buildForm({
   children: [
     personalInformationSection,
     rentalAgreementSection,
-    propertyTypeSection,
     exemptionSection,
     householdMembersSection,
     accessAgreementSection,
