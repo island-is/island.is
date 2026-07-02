@@ -1,0 +1,961 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Elfur API - Open Invoices",
+    "description": "<h2>Open Invoices</h2><p>Status: Available</p><h3>Authentication</h3>\r\n<ul>\r\n <li><strong>Authorization:</strong> <code>Bearer &lt;access_token&gt;</code> is required.</li>\r\n <li><strong>Required scopes:</strong> <code>@fjs.is/elfur_openinvoices_read</code></li>\r\n \r\n</ul>",
+    "version": "1.0"
+  },
+  "paths": {
+    "/v1/openinvoices/suppliers": {
+      "get": {
+        "tags": ["OpenInvoices"],
+        "summary": "Returns a paginated list of suppliers.",
+        "description": "\nUse the returned supplier IDs as filter values on the `/invoices` endpoint.",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum number of suppliers to return (default: 50, max: 100).",
+            "schema": { "type": "integer", "format": "int32", "default": 50 }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Optional search string for supplier name.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "description": "Cursor for next page.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "before",
+            "in": "query",
+            "description": "Cursor for previous page.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupplierPaginatedResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "408": {
+            "description": "Request Timeout",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+    "/v1/openinvoices/debtors": {
+      "get": {
+        "tags": ["OpenInvoices"],
+        "summary": "Returns a paginated list of debtors.",
+        "description": "\nUse the returned debtor `erpLegalEntityId` values as filter values on the `/invoices` endpoint.",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum number of debtors to return (default: 50, max: 100).",
+            "schema": { "type": "integer", "format": "int32", "default": 50 }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Optional search string for debtor name.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "description": "Cursor for next page.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "before",
+            "in": "query",
+            "description": "Cursor for previous page.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DebtorListPaginatedResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "408": {
+            "description": "Request Timeout",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+    "/v1/openinvoices/ministries": {
+      "get": {
+        "tags": ["OpenInvoices"],
+        "summary": "Returns a paginated list of ministries.",
+        "description": "\nUse the returned codes as filter values on the `/invoices` endpoint.",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32", "default": 50 }
+          },
+          { "name": "search", "in": "query", "schema": { "type": "string" } },
+          { "name": "after", "in": "query", "schema": { "type": "string" } },
+          { "name": "before", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MinistryListPaginatedResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "408": {
+            "description": "Request Timeout",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+    "/v1/openinvoices/paymenttypes": {
+      "get": {
+        "tags": ["OpenInvoices"],
+        "summary": "Returns a paginated list of invoice payment types.",
+        "description": "\nUse the returned payment type codes as `paymentTypeIds` filter values on the `/invoices` endpoint.",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum number of invoice payment types to return (default: 50, max: 100).",
+            "schema": { "type": "integer", "format": "int32", "default": 50 }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Optional search string for invoice payment type name.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "description": "Cursor for next page.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "before",
+            "in": "query",
+            "description": "Cursor for previous page.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentTypeListPaginatedResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "408": {
+            "description": "Request Timeout",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+    "/v1/openinvoices/invoices": {
+      "get": {
+        "tags": ["OpenInvoices"],
+        "summary": "Returns a paginated list of invoice groups (debtor-supplier pairs) with aggregated payment totals.",
+        "description": "\nDate defaults: `dateFrom` = one month ago, `dateTo` = today.\r\n\nRepeat filter params for multiple values: `?suppliers=x&suppliers=y`.\r\n\nUse `/suppliers`, `/debtors`, `/ministries`, `/paymenttypes` to discover filter values.",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32", "default": 50 }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32", "default": 1 }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "schema": { "type": "string", "format": "date" }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "schema": { "type": "string", "format": "date" }
+          },
+          {
+            "name": "suppliers",
+            "in": "query",
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
+            "name": "debtors",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": { "type": "integer", "format": "int32" }
+            }
+          },
+          {
+            "name": "ministries",
+            "in": "query",
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
+            "name": "paymentTypeIds",
+            "in": "query",
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          { "name": "sortBy", "in": "query", "schema": { "type": "string" } },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenInvoicesGroupCollectionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "408": {
+            "description": "Request Timeout",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+    "/v1/openinvoices/invoices/{supplierLegalId}/{erpLegalEntityId}": {
+      "get": {
+        "tags": ["OpenInvoices"],
+        "summary": "Returns a single invoice group for a specific supplier-debtor pair with all invoices.",
+        "parameters": [
+          {
+            "name": "supplierLegalId",
+            "in": "path",
+            "description": "Supplier legal ID (required).",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "erpLegalEntityId",
+            "in": "path",
+            "description": "Debtor ERP legal entity ID (required).",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Optional inclusive start date filter. Omit for the full unbounded history.",
+            "schema": { "type": "string", "format": "date" }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Optional inclusive end date filter. Omit for the full unbounded history.",
+            "schema": { "type": "string", "format": "date" }
+          },
+          {
+            "name": "paymentTypeIds",
+            "in": "query",
+            "description": "Optional payment type filter. Repeat for multiple values.",
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
+            "name": "ministries",
+            "in": "query",
+            "description": "Optional ministry filter. Repeat for multiple values.",
+            "schema": { "type": "array", "items": { "type": "string" } }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenInvoiceGroupResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "408": {
+            "description": "Request Timeout",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DebtorListPaginatedResponseDto": {
+        "type": "object",
+        "properties": {
+          "debtors": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/DebtorResponseDto" },
+            "description": "Gets or sets paginated debtor items.",
+            "nullable": true
+          },
+          "pageInfo": { "$ref": "#/components/schemas/PageInfo" },
+          "totalCount": {
+            "type": "integer",
+            "description": "Gets or sets total item count.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "API response model for a paginated list of debtors."
+      },
+      "DebtorResponseDto": {
+        "type": "object",
+        "properties": {
+          "erpLegalEntityId": {
+            "type": "integer",
+            "description": "Gets or sets the ERP legal entity ID. Use this (not Elfur.Core.Domain.OpenInvoices.InvoiceEntityDto.LegalId) to filter\r\nor look up a debtor, since the legal ID may be hidden for confidential debtors.",
+            "format": "int32"
+          },
+          "legalId": {
+            "type": "string",
+            "description": "Gets the invoice entity legal ID.",
+            "nullable": true,
+            "example": "string"
+          },
+          "name": {
+            "type": "string",
+            "description": "Gets the invoice entity name.",
+            "nullable": true,
+            "example": "string"
+          }
+        },
+        "additionalProperties": false,
+        "description": "API response model for a debtor."
+      },
+      "InvoiceDebtorDto": {
+        "type": "object",
+        "properties": {
+          "legalId": {
+            "type": "string",
+            "nullable": true,
+            "example": "string"
+          },
+          "name": { "type": "string", "nullable": true, "example": "string" }
+        },
+        "additionalProperties": false,
+        "description": "Debtor information embedded in an invoice payment response."
+      },
+      "InvoiceGLTypeDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Gets or sets the invoice type code",
+            "nullable": true,
+            "example": "string"
+          },
+          "name": {
+            "type": "string",
+            "description": "Gets or sets the invoice type name.",
+            "nullable": true,
+            "example": "string"
+          },
+          "isConfidential": {
+            "type": "boolean",
+            "description": "Gets or sets whether the invoice type is confidential.",
+            "nullable": true,
+            "example": false
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents a comprehensive data transfer object for the invoice type."
+      },
+      "InvoiceGlLineResponseDto": {
+        "type": "object",
+        "properties": {
+          "type": { "$ref": "#/components/schemas/InvoiceGLTypeDto" },
+          "accountType": {
+            "type": "string",
+            "description": "Gets or sets the Account Type.",
+            "nullable": true,
+            "example": "string"
+          },
+          "glDate": {
+            "type": "string",
+            "description": "Gets or sets the GL Date.",
+            "format": "date",
+            "nullable": true,
+            "example": "2026-07-01"
+          },
+          "accountedAmount": {
+            "type": "number",
+            "description": "Gets or sets the Accounted Amount.",
+            "format": "double",
+            "nullable": true,
+            "example": 0
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents a single GL line item for an invoice."
+      },
+      "InvoicePaymentDetailResponseDto": {
+        "type": "object",
+        "properties": {
+          "erpInvoiceId": {
+            "type": "number",
+            "description": "Gets or sets the ERP Invoice ID.",
+            "format": "double"
+          },
+          "erpInvoicePaymentId": {
+            "type": "number",
+            "description": "Gets or sets the ERP Invoice Payment ID.",
+            "format": "double"
+          },
+          "sourceErpId": {
+            "type": "integer",
+            "description": "Gets or sets the Source ERP ID.",
+            "format": "int32"
+          },
+          "paymentAccountingDate": {
+            "type": "string",
+            "description": "Gets or sets the Payment Accounting Date.",
+            "format": "date"
+          },
+          "paymentAmount": {
+            "type": "number",
+            "description": "Gets or sets the Payment Amount.",
+            "format": "double",
+            "nullable": true,
+            "example": 0
+          },
+          "paymentCurrencyCode": {
+            "type": "string",
+            "description": "Gets or sets the Payment Currency Code.",
+            "nullable": true,
+            "example": "string"
+          },
+          "paymentAmountISK": {
+            "type": "number",
+            "description": "Gets or sets the Payment Amount in ISK.",
+            "format": "double",
+            "nullable": true,
+            "example": 0
+          },
+          "invoicePaymentNumber": {
+            "type": "integer",
+            "description": "Gets or sets the Invoice Payment Number.",
+            "format": "int32"
+          },
+          "supplier": { "$ref": "#/components/schemas/InvoiceSupplierDto" },
+          "debtor": { "$ref": "#/components/schemas/InvoiceDebtorDto" },
+          "invoiceNum": {
+            "type": "string",
+            "description": "Gets or sets the Invoice Number.",
+            "nullable": true,
+            "example": "string"
+          },
+          "invoiceTotalBaseAmount": {
+            "type": "number",
+            "description": "Gets or sets the Invoice Total Base Amount.",
+            "format": "double",
+            "nullable": true,
+            "example": 0
+          },
+          "invoiceTotalBaseAmountISK": {
+            "type": "number",
+            "description": "Gets or sets the Invoice Total Base Amount in ISK.",
+            "format": "double",
+            "nullable": true,
+            "example": 0
+          },
+          "invoiceCurrencyCode": {
+            "type": "string",
+            "description": "Gets or sets the Invoice Currency Code.",
+            "nullable": true,
+            "example": "string"
+          },
+          "invoiceIsConfidential": {
+            "type": "boolean",
+            "description": "Gets or sets whether the Invoice is Confidential."
+          },
+          "glLines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InvoiceGlLineResponseDto"
+            },
+            "description": "Gets or sets the collection of GL line items associated with this invoice.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents a comprehensive data transfer object for invoice payment details with associated invoice and GL line data.\r\nData is mapped from v_InvoicePayments with LEFT JOINs to v_Invoice and v_InvoiceGL tables.\r\nGL line items are grouped as a nested collection to avoid data duplication."
+      },
+      "InvoiceSupplierDto": {
+        "type": "object",
+        "properties": {
+          "legalId": {
+            "type": "string",
+            "nullable": true,
+            "example": "string"
+          },
+          "name": { "type": "string", "nullable": true, "example": "string" },
+          "isPrivatePersonProxy": {
+            "type": "boolean",
+            "nullable": true,
+            "example": false
+          },
+          "isConfidential": {
+            "type": "boolean",
+            "nullable": true,
+            "example": false
+          }
+        },
+        "additionalProperties": false,
+        "description": "Supplier information embedded in an invoice payment response."
+      },
+      "MinistryListPaginatedResponseDto": {
+        "type": "object",
+        "properties": {
+          "ministries": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/MinistryResponseDto" },
+            "nullable": true
+          },
+          "pageInfo": { "$ref": "#/components/schemas/PageInfo" },
+          "totalCount": { "type": "integer", "format": "int32" }
+        },
+        "additionalProperties": false,
+        "description": "API response model for a paginated list of ministries."
+      },
+      "MinistryResponseDto": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "string", "nullable": true, "example": "string" },
+          "name": { "type": "string", "nullable": true, "example": "string" }
+        },
+        "additionalProperties": false,
+        "description": "API response model for a ministry."
+      },
+      "OffsetPageInfo": {
+        "type": "object",
+        "properties": {
+          "currentPage": { "type": "integer", "format": "int32" },
+          "pageSize": { "type": "integer", "format": "int32" },
+          "totalPages": { "type": "integer", "format": "int32" },
+          "hasPreviousPage": { "type": "boolean" },
+          "hasNextPage": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
+      "OpenInvoiceGroupResponseDto": {
+        "type": "object",
+        "properties": {
+          "supplier": { "$ref": "#/components/schemas/SupplierResponseDto" },
+          "debtor": { "$ref": "#/components/schemas/DebtorResponseDto" },
+          "totalPaymentsSum": {
+            "type": "number",
+            "description": "Gets or sets the total sum of each invoice group invoices",
+            "format": "double"
+          },
+          "totalPaymentCount": {
+            "type": "integer",
+            "description": "Gets or sets the total count invoice group invoices",
+            "format": "int32"
+          },
+          "invoices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InvoicePaymentDetailResponseDto"
+            },
+            "description": "Gets or sets the detailed invoices for this group (optional, only when includeInvoices is true)",
+            "nullable": true
+          },
+          "invoicesPageInfo": { "$ref": "#/components/schemas/PageInfo" }
+        },
+        "additionalProperties": false,
+        "description": "Represents all invoices between a specified supplier-customer relationship"
+      },
+      "OpenInvoicesGroupCollectionResponseDto": {
+        "type": "object",
+        "properties": {
+          "totalCount": {
+            "type": "integer",
+            "description": "Gets or sets the number invoice groups",
+            "format": "int32"
+          },
+          "totalPaymentsSum": {
+            "type": "number",
+            "description": "Gets or sets the total payment sum for all groups",
+            "format": "double"
+          },
+          "totalPaymentsCount": {
+            "type": "integer",
+            "description": "Gets or sets the total payment count for all groups",
+            "format": "int32"
+          },
+          "invoiceGroups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OpenInvoiceGroupResponseDto"
+            },
+            "description": "Gets or sets the customer information",
+            "nullable": true
+          },
+          "pageInfo": { "$ref": "#/components/schemas/OffsetPageInfo" }
+        },
+        "additionalProperties": false,
+        "description": "Represents a collection of invoices between a specified supplier-customer relationship"
+      },
+      "PageInfo": {
+        "type": "object",
+        "properties": {
+          "hasPreviousPage": {
+            "type": "boolean",
+            "description": "Gets or sets a value indicating whether there is a previous page.",
+            "nullable": true,
+            "example": false
+          },
+          "hasNextPage": {
+            "type": "boolean",
+            "description": "Gets or sets a value indicating whether there is a next page."
+          },
+          "startCursor": {
+            "type": "string",
+            "description": "Gets or sets the cursor pointing to the start of the current page.",
+            "nullable": true,
+            "example": "string"
+          },
+          "endCursor": {
+            "type": "string",
+            "description": "Gets or sets the cursor pointing to the end of the current page.",
+            "nullable": true,
+            "example": "string"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Contains pagination information for cursor-based pagination."
+      },
+      "PaymentTypeListPaginatedResponseDto": {
+        "type": "object",
+        "properties": {
+          "paymentTypes": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/PaymentTypeResponseDto" },
+            "nullable": true
+          },
+          "pageInfo": { "$ref": "#/components/schemas/PageInfo" },
+          "totalCount": { "type": "integer", "format": "int32" }
+        },
+        "additionalProperties": false,
+        "description": "API response model for a paginated list of payment types."
+      },
+      "PaymentTypeResponseDto": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "string", "nullable": true, "example": "string" },
+          "name": { "type": "string", "nullable": true, "example": "string" }
+        },
+        "additionalProperties": false,
+        "description": "API response model for a payment type."
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "nullable": true, "example": "string" },
+          "title": { "type": "string", "nullable": true, "example": "string" },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "example": 0
+          },
+          "detail": { "type": "string", "nullable": true, "example": "string" },
+          "instance": {
+            "type": "string",
+            "nullable": true,
+            "example": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SupplierPaginatedResponseDto": {
+        "type": "object",
+        "properties": {
+          "suppliers": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/SupplierResponseDto" },
+            "description": "Gets or sets paginated supplier items.",
+            "nullable": true
+          },
+          "pageInfo": { "$ref": "#/components/schemas/PageInfo" },
+          "totalCount": {
+            "type": "integer",
+            "description": "Gets or sets total item count.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "API response model for a paginated list of suppliers."
+      },
+      "SupplierResponseDto": {
+        "type": "object",
+        "properties": {
+          "isPrivateProxy": {
+            "type": "boolean",
+            "description": "Gets or sets if the supplier is a private entity."
+          },
+          "isConfidential": {
+            "type": "boolean",
+            "description": "Gets or sets if the supplier information is confidential."
+          },
+          "legalId": {
+            "type": "string",
+            "description": "Gets the invoice entity legal ID.",
+            "nullable": true,
+            "example": "string"
+          },
+          "name": {
+            "type": "string",
+            "description": "Gets the invoice entity name.",
+            "nullable": true,
+            "example": "string"
+          }
+        },
+        "additionalProperties": false,
+        "description": "API response model for a supplier."
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "apiKey",
+        "description": "Enter: Bearer {JWT token}.",
+        "name": "Authorization",
+        "in": "header"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "OpenInvoices",
+      "description": "Controller for querying open invoices data."
+    }
+  ]
+}

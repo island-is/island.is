@@ -150,6 +150,9 @@
       "@island.is/api/domains/icelandic-government-institution-vacancies": [
         "libs/api/domains/icelandic-government-institution-vacancies/src/index.ts"
       ],
+      "@island.is/api/domains/icelandic-government-institutions": [
+        "libs/api/domains/icelandic-government-institutions/src/index.ts"
+      ],
       "@island.is/api/domains/icelandic-medicines-agency": [
         "libs/api/domains/icelandic-medicines-agency/src/index.ts"
       ],
@@ -831,6 +834,9 @@
       ],
       "@island.is/clients/form-system": [
         "libs/clients/form-system/src/index.ts"
+      ],
+      "@island.is/clients/government-invoices": [
+        "libs/clients/government-invoices/src/index.ts"
       ],
       "@island.is/clients/grants": ["libs/clients/grants/src/index.ts"],
       "@island.is/clients/health-directorate": [
