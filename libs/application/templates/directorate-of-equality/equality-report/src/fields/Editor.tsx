@@ -166,8 +166,10 @@ export const Editor = ({ application, errors }: FieldBaseProps) => {
   }
 
   const base64 =
-    getValueViaPath<string>(application.answers, 'goalsAndActions.customField') ??
-    ''
+    getValueViaPath<string>(
+      application.answers,
+      'goalsAndActions.customField',
+    ) ?? ''
 
   const defaultHtml =
     editorHtml ?? (Buffer.from(base64, 'base64').toString('utf-8') as HTMLText)
