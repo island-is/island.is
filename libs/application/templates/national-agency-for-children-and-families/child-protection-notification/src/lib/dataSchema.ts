@@ -8,11 +8,9 @@ const isValidPhone = (value: string) => {
   return phone ? phone.isValid() : false
 }
 
-const phoneNumberSchema = z
-  .string()
-  .refine((value) => isValidPhone(value), {
-    params: errorMessages.phoneNumber,
-  })
+const phoneNumberSchema = z.string().refine((value) => isValidPhone(value), {
+  params: errorMessages.phoneNumber,
+})
 
 const serviceProviderSchema = z.object({
   service: z.string(),
