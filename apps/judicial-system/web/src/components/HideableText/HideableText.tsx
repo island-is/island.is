@@ -21,6 +21,7 @@ const HideableText: FC<Props> = ({
   const renderVisibilityButton = () => (
     <button
       className={styles.eyeButton}
+      aria-label={isHidden ? 'Sýna texta' : 'Fela texta'}
       onClick={() => {
         onToggleVisibility(!isHidden)
       }}

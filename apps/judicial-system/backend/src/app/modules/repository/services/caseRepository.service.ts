@@ -1096,8 +1096,10 @@ export class CaseRepositoryService {
               civilClaimantId: file.civilClaimantId
                 ? civilClaimantIdMap.get(file.civilClaimantId)
                 : undefined,
-              // Don't carry over the police system reference
-              policeFileId: undefined,
+              // Keep the police system reference so already-uploaded LÖKE
+              // files are not offered for re-upload on the draft (parentCaseId
+              // resolves to the same ancestor, so the police file ids match)
+              policeFileId: file.policeFileId,
               // The hash was computed for the original key and is no longer valid
               hash: undefined,
               hashAlgorithm: undefined,
