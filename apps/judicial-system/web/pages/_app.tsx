@@ -4,7 +4,7 @@ import Head from 'next/head'
 import { ApolloProvider } from '@apollo/client'
 
 import { Query, QueryGetTranslationsArgs } from '@island.is/api/schema'
-import { Box, ToastContainer } from '@island.is/island-ui/core'
+import { ToastContainer } from '@island.is/island-ui/core'
 import { GET_TRANSLATIONS, LocaleProvider } from '@island.is/localization'
 import { userMonitoring } from '@island.is/user-monitoring'
 
@@ -104,9 +104,7 @@ class JudicialSystemApplication extends App<Props> {
                     <ServiceInterruptionBanner />
                     <FormProvider>
                       <HeaderContainer />
-                      <Box component="main">
-                        <Component {...pageProps} />
-                      </Box>
+                      <Component {...pageProps} />
                       <ToastContainer />
                     </FormProvider>
                     <style jsx global>{`

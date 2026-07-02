@@ -50,10 +50,6 @@ interface UpdateRulingFileOptions {
   transaction: Transaction
 }
 
-interface DeleteAllForRulingOptions {
-  transaction: Transaction
-}
-
 @Injectable()
 export class AppealDecisionRepositoryService {
   constructor(
@@ -151,39 +147,6 @@ export class AppealDecisionRepositoryService {
     } catch (error) {
       this.logger.error(
         `Error re-pointing appeal decisions of case ${caseId} from ruling ${fromRulingFileId} to ${toRulingFileId}:`,
-        { error },
-      )
-
-      throw error
-    }
-  }
-
-  // Removes every party's decision for a ruling. Used when a court session stops
-  // being a ruling order (its ruling type moves away from ORDER): there is no
-  // file to carry the decisions onto, so they must not be left orphaned.
-  async deleteAllForRuling(
-    caseId: string,
-    rulingFileId: string,
-    options: DeleteAllForRulingOptions,
-  ): Promise<number> {
-    try {
-      this.logger.debug(
-        `Deleting appeal decisions of case ${caseId} for ruling ${rulingFileId}`,
-      )
-
-      const numberOfDeletedRows = await this.appealDecisionModel.destroy({
-        where: { caseId, rulingFileId },
-        transaction: options.transaction,
-      })
-
-      this.logger.debug(
-        `Deleted ${numberOfDeletedRows} appeal decisions of case ${caseId} for ruling ${rulingFileId}`,
-      )
-
-      return numberOfDeletedRows
-    } catch (error) {
-      this.logger.error(
-        `Error deleting appeal decisions of case ${caseId} for ruling ${rulingFileId}:`,
         { error },
       )
 

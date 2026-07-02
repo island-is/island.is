@@ -258,7 +258,7 @@ const Overview: FC = () => {
             </Box>
           )}
           {userCanSendIndictmentToCourt && (
-            <Box component="section">
+            <>
               <SectionHeading
                 title={formatMessage(strings.indictmentConfirmationTitle)}
                 required
@@ -287,7 +287,7 @@ const Overview: FC = () => {
                   />
                 </div>
               </BlueBox>
-            </Box>
+            </>
           )}
           <Box component="section">
             <InputPenalties />

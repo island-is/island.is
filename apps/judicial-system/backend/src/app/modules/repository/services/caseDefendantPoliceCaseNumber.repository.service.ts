@@ -146,28 +146,24 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
 
     const rows = await this.model.findAll({
       where: { caseId: caseIds },
-      attributes: ['caseId', 'policeCaseNumber', 'created'],
-      order: [
-        ['created', 'ASC'],
-        ['policeCaseNumber', 'ASC'],
-      ],
+      attributes: ['caseId', 'policeCaseNumber'],
       transaction: options?.transaction,
     })
 
-    const seenByCase = new Map<string, Set<string>>()
+    const byCase = new Map<string, Set<string>>()
     for (const id of caseIds) {
-      seenByCase.set(id, new Set())
+      byCase.set(id, new Set())
     }
 
     for (const row of rows) {
-      const seen = seenByCase.get(row.caseId)
+      byCase.get(row.caseId)?.add(row.policeCaseNumber)
+    }
 
-      if (!seen || seen.has(row.policeCaseNumber)) {
-        continue
-      }
-
-      seen.add(row.policeCaseNumber)
-      result.get(row.caseId)?.push(row.policeCaseNumber)
+    for (const [caseId, set] of byCase) {
+      result.set(
+        caseId,
+        [...set].sort((a, b) => a.localeCompare(b)),
+      )
     }
 
     return result

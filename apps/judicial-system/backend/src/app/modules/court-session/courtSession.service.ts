@@ -597,16 +597,6 @@ export class CourtSessionService {
         transaction,
       )
     }
-
-    // The session no longer pronounces a ruling order, so there is no file to
-    // carry its decisions onto (unlike a swap). Discard them - leaving them
-    // orphaned would let them resurface if the session is later pointed back at
-    // the same ruling file (stale confirm validation / a resurrected appeal).
-    await this.appealDecisionRepositoryService.deleteAllForRuling(
-      theCase.id,
-      previousRulingFileId,
-      { transaction },
-    )
   }
 
   // Hard-deletes an appeal case that was created from an in-court appeal that

@@ -11,7 +11,7 @@ import {
   CardLoader,
   NestedLines,
   NestedTable,
-  PortalTable,
+  Table,
   createColumnHelper,
   formatDate,
   useIsMobile,
@@ -247,7 +247,7 @@ export const SeagoingTime = () => {
       )}
       {!loading && !error && called && entries.length > 0 && (
         <>
-          <PortalTable
+          <Table
             columns={columns}
             data={entries}
             emptyMessage={om.sailorSeaServiceEmpty}

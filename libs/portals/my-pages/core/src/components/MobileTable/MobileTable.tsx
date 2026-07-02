@@ -1,5 +1,5 @@
 /**
- * @deprecated Use `PortalTable` from `@island.is/portals/my-pages/core` with the `mobileTitleKey` prop instead.
+ * @deprecated Use `Table` from `@island.is/portals/my-pages/core` with the `mobileTitleKey` prop instead.
  */
 import { Box, LoadingDots, Text } from '@island.is/island-ui/core'
 import React from 'react'

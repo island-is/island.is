@@ -47,16 +47,13 @@ interface Props {
   textProps?: TextProps
 }
 
-// Keep the visual size consistent (h4) but preserve the semantic heading level
-// so the markdown's heading hierarchy is exposed to assistive technology.
-const headingOverride = (as: 'h1' | 'h2' | 'h3' | 'h4') => ({
+const headingOverride = {
   component: Text,
   props: {
-    as,
     variant: 'h4',
     marginBottom: 1,
   },
-})
+}
 
 const DescriptionText = ({ markdown, textProps }: Props) => {
   // markdown-to-jsx is able to handle this in most cases but when using 'formatMessage'
@@ -76,10 +73,10 @@ const DescriptionText = ({ markdown, textProps }: Props) => {
             component: TextComponent,
             props: textProps,
           },
-          h1: headingOverride('h1'),
-          h2: headingOverride('h2'),
-          h3: headingOverride('h3'),
-          h4: headingOverride('h4'),
+          h1: headingOverride,
+          h2: headingOverride,
+          h3: headingOverride,
+          h4: headingOverride,
           a: { component: LinkComponent },
           ul: {
             component: BulletListBox,

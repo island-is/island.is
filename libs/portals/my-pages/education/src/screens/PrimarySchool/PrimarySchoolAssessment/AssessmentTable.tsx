@@ -4,7 +4,7 @@ import { Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   PdfModal,
-  PortalTable,
+  Table,
   createColumnHelper,
   formSubmit,
   m,
@@ -113,7 +113,7 @@ export const AssessmentTable = ({ results, loading }: Props) => {
 
   return (
     <>
-      <PortalTable
+      <Table
         columns={columns}
         data={results}
         loading={loading}

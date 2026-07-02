@@ -11,12 +11,8 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import {
-  CaseFileCategory,
-  CourtDocumentType,
-} from '@island.is/judicial-system/types'
+import { CourtDocumentType } from '@island.is/judicial-system/types'
 
-import { CaseFile } from '../models/caseFile.model'
 import { CourtDocument } from '../models/courtDocument.model'
 import { CourtSession } from '../models/courtSession.model'
 
@@ -500,35 +496,16 @@ export class CourtDocumentRepositoryService {
 
       const transaction = options.transaction
 
-      // Get all court documents that are not yet filed in a court session.
-      // Court documents backed by an "Önnur gögn" case file
-      // (CaseFileCategory.CASE_FILE) must NOT be auto-filed onto the court
-      // record. They stay unfiled so court users can file them manually.
-      // Generated documents (indictment, skjalaskrá, subpoenas) have no
-      // backing case file (caseFileId == null) and are always auto-filed, as
-      // are party-category case files.
+      // Get all court documents that are not yet filed in a court session
       const courtDocumentsToFile = await this.courtDocumentModel.findAll({
         attributes: ['id', 'created'],
-        where: {
-          caseId,
-          courtSessionId: null,
-          documentOrder: 0,
-          [Op.or]: [
-            { caseFileId: null },
-            { '$caseFile.category$': { [Op.ne]: CaseFileCategory.CASE_FILE } },
-          ],
-        },
-        include: [
-          { model: CaseFile, as: 'caseFile', attributes: [], required: false },
-        ],
+        where: { caseId, courtSessionId: null, documentOrder: 0 },
         order: [['created', 'ASC']],
         transaction,
       })
 
       if (courtDocumentsToFile.length === 0) {
-        this.logger.debug(
-          `No available court documents to file in case ${caseId}`,
-        )
+        this.logger.debug(`No filed documents to merge from case ${caseId}`)
         return
       }
 

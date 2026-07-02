@@ -15,7 +15,6 @@ import {
 import {
   AppealCase,
   AppealCaseState,
-  AppealDecisionPartyRole,
   Case,
   CaseAppealDecision,
   CaseCustodyRestrictions,
@@ -319,12 +318,6 @@ export const getAppealActorText = (
   if (appealCase?.rulingFileId) {
     const dateStr = formatDate(appealCase.appealedDate, 'PPPp')
 
-    // In-court ruling-order appeal: any number of parties may have appealed in
-    // the þingbók, so the court of appeals shows it without naming who appealed.
-    if (appealCase.appealedInCourt) {
-      return `Kært í þinghaldi ${dateStr}`
-    }
-
     if (appealCase.appealedByRole === UserRole.PROSECUTOR) {
       return `Ákærandi kærði úrskurðinn ${dateStr}`
     }
@@ -406,99 +399,6 @@ export const getAppealingPartyInfo = (
   }
 
   return undefined
-}
-
-/**
- * True iff the current user's party recorded an in-court ACCEPT ("unir
- * úrskurðinum") for this ruling order. Such a party has waived its right to
- * appeal it, so the appeal action is hidden. Mirrors the backend guard
- * (appealCase.service.hasAcceptedRulingOrderInCourt), including its party
- * resolution: the prosecution, or the defendant / civil claimant the defence
- * user is the confirmed representative of.
- */
-export const hasAcceptedRulingOrderInCourt = (
-  workingCase: Case,
-  user: User | undefined,
-  rulingFileId: string,
-): boolean => {
-  if (!user) {
-    return false
-  }
-
-  let partyRole: AppealDecisionPartyRole
-  let defendantId: string | undefined
-  let civilClaimantId: string | undefined
-
-  if (isProsecutionUser(user)) {
-    partyRole = AppealDecisionPartyRole.PROSECUTOR
-  } else if (isDefenceUser(user)) {
-    const defendant = workingCase.defendants?.find(
-      (d) =>
-        d.isDefenderChoiceConfirmed &&
-        d.defenderNationalId &&
-        d.defenderNationalId === user.nationalId,
-    )
-    const civilClaimant = workingCase.civilClaimants?.find(
-      (c) =>
-        c.isSpokespersonConfirmed &&
-        c.spokespersonNationalId &&
-        c.spokespersonNationalId === user.nationalId,
-    )
-
-    if (defendant) {
-      partyRole = AppealDecisionPartyRole.DEFENDANT
-      defendantId = defendant.id
-    } else if (civilClaimant) {
-      partyRole = AppealDecisionPartyRole.CIVIL_CLAIMANT
-      civilClaimantId = civilClaimant.id
-    } else {
-      return false
-    }
-  } else {
-    return false
-  }
-
-  const decision = workingCase.appealDecisions?.find(
-    (appealDecision) =>
-      appealDecision.rulingFileId === rulingFileId &&
-      appealDecision.partyRole === partyRole &&
-      (appealDecision.defendantId ?? null) === (defendantId ?? null) &&
-      (appealDecision.civilClaimantId ?? null) === (civilClaimantId ?? null),
-  )
-
-  return decision?.decision === CaseAppealDecision.ACCEPT
-}
-
-/**
- * Mirrors the backend's ruling-link reconciliation on the working case so the
- * in-court appeal decision cards stay in sync when a court session's ruling
- * order file changes:
- * - swap (old -> new file): re-key the ruling's decisions onto the new file;
- * - removal (old -> none, ruling type left ORDER): drop the ruling's decisions.
- * Decisions are matched on `rulingFileId`, so without this the cards would look
- * empty after a change even though the rows still exist (under the new file) or
- * were deleted on the server.
- */
-export const reconcileAppealDecisionsForRulingFileChange = (
-  appealDecisions: Case['appealDecisions'],
-  previousRulingFileId: string | null | undefined,
-  nextRulingFileId: string | null | undefined,
-): Case['appealDecisions'] => {
-  if (!previousRulingFileId || previousRulingFileId === nextRulingFileId) {
-    return appealDecisions
-  }
-
-  if (nextRulingFileId) {
-    return appealDecisions?.map((decision) =>
-      decision.rulingFileId === previousRulingFileId
-        ? { ...decision, rulingFileId: nextRulingFileId }
-        : decision,
-    )
-  }
-
-  return appealDecisions?.filter(
-    (decision) => decision.rulingFileId !== previousRulingFileId,
-  )
 }
 
 /**

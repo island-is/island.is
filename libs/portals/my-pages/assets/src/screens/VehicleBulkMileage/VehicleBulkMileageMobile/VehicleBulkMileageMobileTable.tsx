@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
-  PortalTable,
+  Table,
   createColumnHelper,
   useIsMobile,
   type Row,
@@ -141,7 +141,7 @@ const VehicleBulkMileageMobileTable = ({
   return (
     <Box>
       <form aria-label={formatMessage(vehicleMessage.vehicleMileageInputTitle)}>
-        <PortalTable
+        <Table
           columns={columns}
           data={vehicles}
           loading={loading}

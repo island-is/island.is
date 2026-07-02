@@ -390,32 +390,6 @@ describe('CourtSessionController - Reconcile ruling link change', () => {
       ).not.toHaveBeenCalled()
       expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
     })
-
-    it('should discard the decisions of the removed ruling', () => {
-      expect(
-        mockAppealDecisionRepositoryService.deleteAllForRuling,
-      ).toHaveBeenCalledWith(caseId, previousRulingFileId, { transaction })
-    })
-  })
-
-  describe('removing the ruling (ORDER -> NONE) with decisions but no appeal case', () => {
-    let then: Then
-
-    beforeEach(async () => {
-      then = await givenWhenThen(
-        caseWith({}),
-        { rulingType: CourtSessionRulingType.NONE } as UpdateCourtSessionDto,
-        { rulingType: CourtSessionRulingType.NONE, rulingFileId: null },
-      )
-    })
-
-    it('should discard the decisions and delete no appeal case', () => {
-      expect(then.error).toBeUndefined()
-      expect(
-        mockAppealDecisionRepositoryService.deleteAllForRuling,
-      ).toHaveBeenCalledWith(caseId, previousRulingFileId, { transaction })
-      expect(mockAppealCaseRepositoryService.delete).not.toHaveBeenCalled()
-    })
   })
 
   describe('removing the ruling (ORDER -> NONE) of a progressed appeal', () => {
@@ -438,9 +412,6 @@ describe('CourtSessionController - Reconcile ruling link change', () => {
       expect(mockAppealCaseRepositoryService.delete).not.toHaveBeenCalled()
       expect(
         mockAppealDecisionRepositoryService.updateRulingFile,
-      ).not.toHaveBeenCalled()
-      expect(
-        mockAppealDecisionRepositoryService.deleteAllForRuling,
       ).not.toHaveBeenCalled()
     })
   })

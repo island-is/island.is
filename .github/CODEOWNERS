@@ -211,7 +211,7 @@ codemagic.yaml                                                                  
 /libs/clients/smart-solutions-v2/                                                                                            @island-is/hugsmidjan
 /libs/clients/license-client/                                                                                                @island-is/hugsmidjan @island-is/aranja
 /libs/clients/lsh/                                                                                                           @island-is/hugsmidjan
-/libs/clients/lyfjastofnun-health-providers/                                                                                 @island-is/hugsmidjan
+/libs/clients/lyfjastofnun-pharmacies/                                                                                       @island-is/hugsmidjan
 /libs/clients/intellectual-properties/                                                                                       @island-is/hugsmidjan
 /libs/clients/national-registry/v3/                                                                                          @island-is/hugsmidjan
 /libs/clients/national-registry/v3-applications/                                                                             @island-is/juni
@@ -538,7 +538,7 @@ codemagic.yaml                                                                  
 /libs/application/template-api-modules/src/lib/modules/templates/vmst/edit-unemployment-information                          @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/vmst/submit-documents                                       @island-is/origo
 
-libs/portals/my-pages/social-benefits/src/screens/unemployment-benefits/                                                     @island-is/origo
+libs/portals/my-pages/social-benefits/src/screens/unemployment-benefits/                                                     @island-is/origo 
 
 # DevOps
 /.github/                                                                                                                    @island-is/devops

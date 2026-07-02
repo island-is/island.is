@@ -15,7 +15,6 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { UpdateCase, useCase } from '../../utils/hooks'
-import RadioGroup from '../RadioGroup/RadioGroup'
 import { UserContext } from '../UserProvider/UserProvider'
 import { BlueBox, InputAdvocate, SectionHeading } from '..'
 import { defenderInfo } from './DefenderInfo.strings'
@@ -29,12 +28,6 @@ const DefenderInfo: FC<Props> = ({ workingCase, setWorkingCase }) => {
   const { formatMessage } = useIntl()
   const { updateCase, setAndSendCaseToServer } = useCase()
   const { user } = useContext(UserContext)
-
-  const requestAccessTitle = formatMessage(
-    isRestrictionCase(workingCase.type)
-      ? defenderInfo.restrictionCases.sections.defenderRequestAccess.title
-      : defenderInfo.investigationCases.sections.defenderRequestAccess.title,
-  )
 
   const getSectionTitle = () => {
     if (isRestrictionCase(workingCase.type)) {
@@ -153,95 +146,99 @@ const DefenderInfo: FC<Props> = ({ workingCase, setWorkingCase }) => {
         {isProsecutionUser(user) && (
           <>
             <SectionHeading
-              title={requestAccessTitle}
+              title={formatMessage(
+                isRestrictionCase(workingCase.type)
+                  ? defenderInfo.restrictionCases.sections.defenderRequestAccess
+                      .title
+                  : defenderInfo.investigationCases.sections
+                      .defenderRequestAccess.title,
+              )}
               heading="h4"
               marginTop={2}
               marginBottom={2}
               required={!!workingCase.defenderName}
             />
-            <RadioGroup legend={requestAccessTitle} hideLegend>
-              <Box>
-                <RadioButton
-                  name="defender-access"
-                  id="defender-access-ready-for-court"
-                  label={formatMessage(
-                    isRestrictionCase(workingCase.type)
-                      ? defenderInfo.restrictionCases.sections
-                          .defenderRequestAccess.labelReadyForCourt
-                      : defenderInfo.investigationCases.sections
-                          .defenderRequestAccess.labelReadyForCourt,
-                  )}
-                  checked={
-                    workingCase.requestSharedWithDefender ===
-                    RequestSharedWithDefender.READY_FOR_COURT
-                  }
-                  onChange={() => {
-                    handleSetAndSendCaseToServer({
-                      requestSharedWithDefender:
-                        RequestSharedWithDefender.READY_FOR_COURT,
-                      force: true,
-                    })
-                  }}
-                  large
-                  backgroundColor="white"
-                  disabled={!workingCase.defenderName}
-                />
-              </Box>
-              <Box marginTop={2}>
-                <RadioButton
-                  name="defender-access"
-                  id="defender-access-court-date"
-                  label={formatMessage(
-                    isRestrictionCase(workingCase.type)
-                      ? defenderInfo.restrictionCases.sections
-                          .defenderRequestAccess.labelCourtDate
-                      : defenderInfo.investigationCases.sections
-                          .defenderRequestAccess.labelCourtDate,
-                  )}
-                  checked={
-                    workingCase.requestSharedWithDefender ===
-                    RequestSharedWithDefender.COURT_DATE
-                  }
-                  onChange={() => {
-                    handleSetAndSendCaseToServer({
-                      requestSharedWithDefender:
-                        RequestSharedWithDefender.COURT_DATE,
-                      force: true,
-                    })
-                  }}
-                  large
-                  backgroundColor="white"
-                  disabled={!workingCase.defenderName}
-                />
-              </Box>
-              <Box marginTop={2}>
-                <RadioButton
-                  name="defender-access"
-                  id="defender-access-no"
-                  label={formatMessage(
-                    isRestrictionCase(workingCase.type)
-                      ? defenderInfo.restrictionCases.sections
-                          .defenderRequestAccess.labelNoAccess
-                      : defenderInfo.investigationCases.sections
-                          .defenderRequestAccess.labelNoAccess,
-                  )}
-                  checked={
-                    workingCase.requestSharedWithDefender ===
-                    RequestSharedWithDefender.NOT_SHARED
-                  }
-                  onChange={() => {
-                    handleSetAndSendCaseToServer({
-                      requestSharedWithDefender:
-                        RequestSharedWithDefender.NOT_SHARED,
-                      force: true,
-                    })
-                  }}
-                  large
-                  backgroundColor="white"
-                  disabled={!workingCase.defenderName}
-                />
-              </Box>
-            </RadioGroup>
+            <Box>
+              <RadioButton
+                name="defender-access"
+                id="defender-access-ready-for-court"
+                label={formatMessage(
+                  isRestrictionCase(workingCase.type)
+                    ? defenderInfo.restrictionCases.sections
+                        .defenderRequestAccess.labelReadyForCourt
+                    : defenderInfo.investigationCases.sections
+                        .defenderRequestAccess.labelReadyForCourt,
+                )}
+                checked={
+                  workingCase.requestSharedWithDefender ===
+                  RequestSharedWithDefender.READY_FOR_COURT
+                }
+                onChange={() => {
+                  handleSetAndSendCaseToServer({
+                    requestSharedWithDefender:
+                      RequestSharedWithDefender.READY_FOR_COURT,
+                    force: true,
+                  })
+                }}
+                large
+                backgroundColor="white"
+                disabled={!workingCase.defenderName}
+              />
+            </Box>
+            <Box marginTop={2}>
+              <RadioButton
+                name="defender-access"
+                id="defender-access-court-date"
+                label={formatMessage(
+                  isRestrictionCase(workingCase.type)
+                    ? defenderInfo.restrictionCases.sections
+                        .defenderRequestAccess.labelCourtDate
+                    : defenderInfo.investigationCases.sections
+                        .defenderRequestAccess.labelCourtDate,
+                )}
+                checked={
+                  workingCase.requestSharedWithDefender ===
+                  RequestSharedWithDefender.COURT_DATE
+                }
+                onChange={() => {
+                  handleSetAndSendCaseToServer({
+                    requestSharedWithDefender:
+                      RequestSharedWithDefender.COURT_DATE,
+                    force: true,
+                  })
+                }}
+                large
+                backgroundColor="white"
+                disabled={!workingCase.defenderName}
+              />
+            </Box>
+            <Box marginTop={2}>
+              <RadioButton
+                name="defender-access-no"
+                id="defender-access-no"
+                label={formatMessage(
+                  isRestrictionCase(workingCase.type)
+                    ? defenderInfo.restrictionCases.sections
+                        .defenderRequestAccess.labelNoAccess
+                    : defenderInfo.investigationCases.sections
+                        .defenderRequestAccess.labelNoAccess,
+                )}
+                checked={
+                  workingCase.requestSharedWithDefender ===
+                  RequestSharedWithDefender.NOT_SHARED
+                }
+                onChange={() => {
+                  handleSetAndSendCaseToServer({
+                    requestSharedWithDefender:
+                      RequestSharedWithDefender.NOT_SHARED,
+                    force: true,
+                  })
+                }}
+                large
+                backgroundColor="white"
+                disabled={!workingCase.defenderName}
+              />
+            </Box>
           </>
         )}
       </BlueBox>

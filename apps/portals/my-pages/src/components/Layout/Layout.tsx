@@ -14,6 +14,9 @@ import { checkDelegation } from '@island.is/shared/utils'
 import React, { FC, useEffect, useState } from 'react'
 import { matchPath, useLocation } from 'react-router-dom'
 import { useMeasure } from 'react-use'
+import { Features } from '@island.is/feature-flags'
+import { SidebarContactBox } from '@island.is/portals/my-pages/core'
+import { HealthPaths } from '@island.is/portals/my-pages/health'
 import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
 import { GlobalAlertBannerSection } from '../AlertBanners/GlobalAlertBannerSection'
 import Header from '../Header/Header'
@@ -50,6 +53,8 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   const totalBannerOffset = alertBannerHeight + delegationBannerHeight
 
   const [showSearch, setShowSearch] = useState<boolean>(false)
+  const [showHealthContactBox, setShowHealthContactBox] =
+    useState<boolean>(false)
   const [headerVisible, setHeaderVisible] = useState<boolean>(true)
 
   const featureFlagClient = useFeatureFlagClient()
@@ -62,6 +67,11 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
       if (ffEnabled) {
         setShowSearch(ffEnabled as boolean)
       }
+      const healthOverviewEnabled = await featureFlagClient.getValue(
+        Features.isNewHealthOverviewPageEnabled,
+        false,
+      )
+      setShowHealthContactBox(healthOverviewEnabled as boolean)
     }
     isFlagEnabled()
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -93,6 +103,12 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
             activeParent={activeParent}
             height={totalBannerOffset}
             pathname={pathname}
+            sidebarFooter={
+              showHealthContactBox &&
+              activeParent.path === HealthPaths.HealthRoot ? (
+                <SidebarContactBox />
+              ) : undefined
+            }
           >
             {children}
           </NarrowLayout>

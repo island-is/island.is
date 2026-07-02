@@ -101,8 +101,8 @@ describe('CaseDefendantPoliceCaseNumberRepositoryService', () => {
   describe('resolvePoliceCaseNumbersForCases', () => {
     it('sets policeCaseNumbers from junction when rows exist', async () => {
       mockModel.findAll.mockResolvedValue([
-        { caseId: 'case-a', policeCaseNumber: '007-1', created: new Date(1) },
-        { caseId: 'case-a', policeCaseNumber: '007-2', created: new Date(2) },
+        { caseId: 'case-a', policeCaseNumber: '007-2' },
+        { caseId: 'case-a', policeCaseNumber: '007-1' },
       ])
 
       let numbers = ['legacy']
@@ -186,12 +186,12 @@ describe('CaseDefendantPoliceCaseNumberRepositoryService', () => {
   })
 
   describe('findDistinctPoliceCaseNumbersByCaseIds', () => {
-    it('returns distinct numbers per case id in created order', async () => {
+    it('returns sorted distinct numbers per case id', async () => {
       mockModel.findAll.mockResolvedValue([
-        { caseId: 'case-a', policeCaseNumber: '007-1', created: new Date(1) },
-        { caseId: 'case-a', policeCaseNumber: '007-2', created: new Date(2) },
-        { caseId: 'case-a', policeCaseNumber: '007-1', created: new Date(1) },
-        { caseId: 'case-b', policeCaseNumber: '008', created: new Date(3) },
+        { caseId: 'case-a', policeCaseNumber: '007-2' },
+        { caseId: 'case-a', policeCaseNumber: '007-1' },
+        { caseId: 'case-a', policeCaseNumber: '007-1' },
+        { caseId: 'case-b', policeCaseNumber: '008' },
       ])
 
       const map = await service.findDistinctPoliceCaseNumbersByCaseIds(
@@ -201,11 +201,7 @@ describe('CaseDefendantPoliceCaseNumberRepositoryService', () => {
 
       expect(mockModel.findAll).toHaveBeenCalledWith({
         where: { caseId: ['case-a', 'case-b', 'case-c'] },
-        attributes: ['caseId', 'policeCaseNumber', 'created'],
-        order: [
-          ['created', 'ASC'],
-          ['policeCaseNumber', 'ASC'],
-        ],
+        attributes: ['caseId', 'policeCaseNumber'],
         transaction,
       })
       expect(map.get('case-a')).toEqual(['007-1', '007-2'])

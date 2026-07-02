@@ -3,7 +3,7 @@ import { ApolloError } from '@apollo/client'
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
-  PortalTable,
+  Table,
   createColumnHelper,
   m,
   formatNationalId,
@@ -92,7 +92,7 @@ export const LandRegistry = ({ landRegistry, loading, error }: Props) => {
 
   return (
     <Box marginTop={4}>
-      <PortalTable
+      <Table
         columns={columns}
         data={landRegistry}
         loading={loading}

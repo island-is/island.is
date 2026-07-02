@@ -38,11 +38,9 @@ import {
   lowercase,
   Word,
 } from '@island.is/judicial-system/formatters'
-import { Feature } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   DateTime,
-  FeatureContext,
   FileNotFoundModal,
   FormContext,
   Modal,
@@ -74,11 +72,9 @@ import {
   useOnceOn,
   useUsers,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { reconcileAppealDecisionsForRulingFileChange } from '@island.is/judicial-system-web/src/utils/utils'
 import { isCourtSessionValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { SelectRepresentative } from '../../../Shared/AddFiles/SelectCaseFileRepresentative'
-import CourtSessionAppealDecisions from './CourtSessionAppealDecisions'
 import { CourtSessionMergedCaseEntries } from './CourtSessionMergedCaseEntries'
 import * as styles from './CourtRecord.css'
 
@@ -168,9 +164,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   const ref = useRef<HTMLDivElement>(null)
   const { workingCase, setWorkingCase, isCaseUpToDate } =
     useContext(FormContext)
-  const { features } = useContext(FeatureContext)
-  // The in-court appeal decision UI is behind a flag until it's ready for prod.
-  const showAppealDecisions = features.includes(Feature.APPEAL_RULING_ORDER)
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
   })
@@ -201,27 +194,12 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       updates: Partial<CourtSessionResponse>,
       { persist = false } = {},
     ) => {
-      setWorkingCase((prev) => {
-        const courtSessions = prev.courtSessions?.map((session) =>
+      setWorkingCase((prev) => ({
+        ...prev,
+        courtSessions: prev.courtSessions?.map((session) =>
           session.id === courtSessionId ? { ...session, ...updates } : session,
-        )
-
-        // Changing a session's ruling order file re-keys (swap) or discards
-        // (removal) that ruling's appeal decisions on the backend. Mirror it on
-        // the working case so the decision cards keep their selections.
-        const appealDecisions =
-          'rulingFileId' in updates
-            ? reconcileAppealDecisionsForRulingFileChange(
-                prev.appealDecisions,
-                prev.courtSessions?.find(
-                  (session) => session.id === courtSessionId,
-                )?.rulingFileId,
-                updates.rulingFileId,
-              )
-            : prev.appealDecisions
-
-        return { ...prev, courtSessions, appealDecisions }
-      })
+        ),
+      }))
 
       if (persist) {
         const { courtSessionStrings, ...courtSessionUpdate } = updates
@@ -1469,13 +1447,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     setEntriesErrorMessage('')
                     patchSession(courtSession.id, { entries: html })
                   }}
-                  onDebouncedChange={(html) =>
-                    patchSession(
-                      courtSession.id,
-                      { entries: html },
-                      { persist: true },
-                    )
-                  }
                   onBlur={(html) => {
                     // Decode entities (e.g. &nbsp;) and strip tags so an
                     // otherwise-empty paragraph doesn't pass the required check.
@@ -1697,15 +1668,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                       required
                     />
                   </Box>
-                  {showAppealDecisions &&
-                    courtSession.rulingType ===
-                      CourtSessionRulingType.ORDER && (
-                      <CourtSessionAppealDecisions
-                        courtSession={courtSession}
-                        workingCase={workingCase}
-                        setWorkingCase={setWorkingCase}
-                      />
-                    )}
                   <Box>
                     <SectionHeading title="Bókanir í lok þinghalds" />
                     <Input
@@ -1835,13 +1797,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                           )
                         }
                         size="small"
-                        disabled={
-                          !isCourtSessionValid(
-                            courtSession,
-                            workingCase,
-                            showAppealDecisions,
-                          )
-                        }
+                        disabled={!isCourtSessionValid(courtSession)}
                       >
                         Staðfesta þingbók
                       </Button>

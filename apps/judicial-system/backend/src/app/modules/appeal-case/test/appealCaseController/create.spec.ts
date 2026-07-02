@@ -10,9 +10,7 @@ import {
 import {
   AppealCaseNotificationType,
   AppealCaseState,
-  AppealDecisionPartyRole,
   AppealEventType,
-  CaseAppealDecision,
   CaseFileCategory,
   CaseFileState,
   CaseIndictmentRulingDecision,
@@ -43,11 +41,7 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (
-  theCase: Case,
-  user: User,
-  rulingFileId?: string,
-) => Promise<Then>
+type GivenWhenThen = (theCase: Case, user: User) => Promise<Then>
 
 describe('AppealCaseController - Create', () => {
   const caseId = uuid()
@@ -106,10 +100,10 @@ describe('AppealCaseController - Create', () => {
     const mockCreate = mockAppealCaseRepositoryService.create as jest.Mock
     mockCreate.mockResolvedValue(createdAppealCase)
 
-    givenWhenThen = async (theCase, user, rulingFileId) => {
+    givenWhenThen = async (theCase, user) => {
       const then = {} as Then
 
-      const dto: CreateAppealCaseDto = { rulingFileId }
+      const dto: CreateAppealCaseDto = {}
 
       await appealCaseController
         .create(caseId, user, theCase, dto)
@@ -226,79 +220,6 @@ describe('AppealCaseController - Create', () => {
         'Only dismissed indictment cases can be appealed',
       )
       expect(mockAppealCaseRepositoryService.create).not.toHaveBeenCalled()
-    })
-  })
-
-  describe('defence user appeals a ruling order', () => {
-    const rulingFileId = uuid()
-    const defendantId = uuid()
-
-    const caseWithDecision = (decision: CaseAppealDecision) =>
-      ({
-        id: caseId,
-        type: CaseType.INDICTMENT,
-        caseFiles: [
-          {
-            id: rulingFileId,
-            category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
-          },
-        ],
-        defendants: [
-          {
-            id: defendantId,
-            isDefenderChoiceConfirmed: true,
-            defenderNationalId: defender.nationalId,
-          },
-        ],
-        appealDecisions: [
-          {
-            rulingFileId,
-            partyRole: AppealDecisionPartyRole.DEFENDANT,
-            defendantId,
-            decision,
-          },
-        ],
-      } as unknown as Case)
-
-    describe('that the defendant accepted in court', () => {
-      let then: Then
-
-      beforeEach(async () => {
-        then = await givenWhenThen(
-          caseWithDecision(CaseAppealDecision.ACCEPT),
-          defender,
-          rulingFileId,
-        )
-      })
-
-      it('should reject the appeal and create nothing', () => {
-        expect(then.error).toBeInstanceOf(ForbiddenException)
-        expect(mockAppealCaseRepositoryService.create).not.toHaveBeenCalled()
-      })
-    })
-
-    describe('that the defendant took the deadline on in court (POSTPONE)', () => {
-      let then: Then
-
-      beforeEach(async () => {
-        then = await givenWhenThen(
-          caseWithDecision(CaseAppealDecision.POSTPONE),
-          defender,
-          rulingFileId,
-        )
-      })
-
-      it('should create the ruling order appeal case', () => {
-        expect(then.error).toBeUndefined()
-        expect(mockAppealCaseRepositoryService.create).toHaveBeenCalledWith(
-          caseId,
-          expect.objectContaining({
-            appealState: AppealCaseState.APPEALED,
-            rulingFileId,
-          }),
-          { transaction },
-        )
-      })
     })
   })
 

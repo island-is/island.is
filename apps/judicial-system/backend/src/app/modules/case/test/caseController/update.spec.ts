@@ -20,7 +20,6 @@ import {
   CaseType,
   DateType,
   DefendantEventType,
-  DefendantNotificationType,
   EventType,
   IndictmentCaseNotificationType,
   indictmentCases,
@@ -192,18 +191,6 @@ describe('CaseController - Update', () => {
       )
     })
 
-    it('should not enqueue the completed for some notification', () => {
-      expect(mockQueuedMessages).not.toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
-            body: {
-              type: DefendantNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
-            },
-          }),
-        ]),
-      )
-    })
-
     it('should return the updated case', () => {
       expect(then.result).toEqual(updatedCase)
     })
@@ -267,63 +254,8 @@ describe('CaseController - Update', () => {
       )
     })
 
-    it('should enqueue a completed for some notification per concluded defendant', () => {
-      expect(mockQueuedMessages).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
-            type: MessageType.DEFENDANT_NOTIFICATION,
-            caseId,
-            elementId: defendantId1,
-            body: expect.objectContaining({
-              type: DefendantNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
-            }),
-          }),
-          expect.objectContaining({
-            type: MessageType.DEFENDANT_NOTIFICATION,
-            caseId,
-            elementId: defendantId2,
-            body: expect.objectContaining({
-              type: DefendantNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
-            }),
-          }),
-        ]),
-      )
-    })
-  })
-
-  describe('indictment completed for some — last remaining defendant (indictmentDecision set to null by frontend)', () => {
-    const indictmentCase = {
-      ...theCase,
-      type: CaseType.INDICTMENT,
-    } as Case
-
-    const caseToUpdate = {
-      indictmentDecision: null,
-      defendantEventLogDecisions: [
-        {
-          defendantId: defendantId1,
-          rulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
-        },
-      ],
-    } as unknown as UpdateCaseDto
-
-    beforeEach(async () => {
-      await givenWhenThen(caseId, user, indictmentCase, caseToUpdate)
-    })
-
-    it('should enqueue the completed for some notification even when indictmentDecision is null', () => {
-      expect(mockQueuedMessages).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
-            type: MessageType.DEFENDANT_NOTIFICATION,
-            caseId,
-            elementId: defendantId1,
-            body: expect.objectContaining({
-              type: DefendantNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
-            }),
-          }),
-        ]),
-      )
+    it('should not queue indictment conclusion messages without ruling dates', () => {
+      expect(mockQueuedMessages).toEqual([])
     })
   })
 
@@ -392,22 +324,6 @@ describe('CaseController - Update', () => {
             defendantId: defendantId1,
             indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
             rulingDate,
-          },
-        },
-        {
-          type: MessageType.DEFENDANT_NOTIFICATION,
-          caseId,
-          elementId: defendantId1,
-          body: {
-            type: DefendantNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
-          },
-        },
-        {
-          type: MessageType.DEFENDANT_NOTIFICATION,
-          caseId,
-          elementId: defendantId2,
-          body: {
-            type: DefendantNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
           },
         },
       ])

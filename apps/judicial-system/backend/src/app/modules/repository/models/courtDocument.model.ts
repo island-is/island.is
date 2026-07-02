@@ -1,5 +1,4 @@
 import {
-  BelongsTo,
   Column,
   CreatedAt,
   DataType,
@@ -78,10 +77,6 @@ export class CourtDocument extends Model {
   @Column({ type: DataType.UUID, allowNull: true })
   @ApiPropertyOptional({ type: String })
   caseFileId?: string
-
-  @BelongsTo(() => CaseFile, 'caseFileId')
-  @ApiPropertyOptional({ type: () => CaseFile })
-  caseFile?: CaseFile
 
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })

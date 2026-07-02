@@ -7,7 +7,6 @@ import {
   AppealCase,
   AppealCaseRulingDecision,
   AppealCaseState,
-  AppealDecisionPartyRole,
   Case,
   CaseFileCategory,
   CaseIndictmentRulingDecision,
@@ -646,13 +645,7 @@ export const isDefenderStepValid = (workingCase: Case): boolean => {
   return Boolean(workingCase.prosecutor && defendantsAreValid())
 }
 
-export const isCourtSessionValid = (
-  courtSession: CourtSessionResponse,
-  workingCase: Case,
-  // Appeal decisions are only required once the (flagged) in-court appeal UI is
-  // live; while it is hidden, an ORDER session can be confirmed without them.
-  appealRulingOrderEnabled: boolean,
-) => {
+export const isCourtSessionValid = (courtSession: CourtSessionResponse) => {
   return (
     (courtSession.isClosed
       ? courtSession.closedLegalProvisions &&
@@ -666,10 +659,6 @@ export const isCourtSessionValid = (
     (courtSession.rulingType === CourtSessionRulingType.ORDER
       ? !!courtSession.rulingFileId
       : true) &&
-    (courtSession.rulingType === CourtSessionRulingType.ORDER &&
-    appealRulingOrderEnabled
-      ? areAppealDecisionsComplete(courtSession, workingCase)
-      : true) &&
     (courtSession.isAttestingWitness
       ? courtSession.attestingWitnessId
       : true) &&
@@ -682,47 +671,6 @@ export const isCourtSessionValid = (
       [courtSession.endDate, ['empty', 'date-format']],
     ]).isValid
   )
-}
-
-// An ORDER court session can only be confirmed once every party - the
-// prosecution, each defendant and each civil claimant - has recorded a
-// decision on the ruling. Mirrors the backend confirm-time validation.
-export const areAppealDecisionsComplete = (
-  courtSession: CourtSessionResponse,
-  workingCase: Case,
-): boolean => {
-  const { rulingFileId } = courtSession
-  if (!rulingFileId) {
-    return false
-  }
-
-  const decided =
-    workingCase.appealDecisions?.filter(
-      (decision) => decision.rulingFileId === rulingFileId && decision.decision,
-    ) ?? []
-
-  const prosecutorDecided = decided.some(
-    (decision) => decision.partyRole === AppealDecisionPartyRole.PROSECUTOR,
-  )
-
-  const defendantsDecided = (workingCase.defendants ?? []).every((defendant) =>
-    decided.some(
-      (decision) =>
-        decision.partyRole === AppealDecisionPartyRole.DEFENDANT &&
-        decision.defendantId === defendant.id,
-    ),
-  )
-
-  const civilClaimantsDecided = (workingCase.civilClaimants ?? []).every(
-    (civilClaimant) =>
-      decided.some(
-        (decision) =>
-          decision.partyRole === AppealDecisionPartyRole.CIVIL_CLAIMANT &&
-          decision.civilClaimantId === civilClaimant.id,
-      ),
-  )
-
-  return prosecutorDecided && defendantsDecided && civilClaimantsDecided
 }
 
 export const isGeneratedIndictmentCourtRecordValid = (workingCase: Case) => {

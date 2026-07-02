@@ -22,7 +22,6 @@ import {
 import { useVictim } from '@island.is/judicial-system-web/src/utils/hooks'
 import { useNationalRegistry } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import RadioGroup from '../RadioGroup/RadioGroup'
 import { LegalRightsProtectorInputFields } from './LegalRightsProtectorInputFields'
 
 interface Props {
@@ -168,81 +167,78 @@ export const VictimInfo: React.FC<Props> = ({
               Aðgangur réttargæslumanns að kröfu
               <RequiredStar />
             </Text>
-            <RadioGroup legend="Aðgangur réttargæslumanns að kröfu" hideLegend>
-              <Box>
-                <RadioButton
-                  name={`lawyer-access-${victim.id}`}
-                  id={`lawyer-access-${victim.id}-ready-for-court`}
-                  label="Gefa réttargæslumanni aðgang að kröfu þegar krafa er send á dómstól"
-                  checked={
-                    victim.lawyerAccessToRequest ===
-                    RequestSharedWhen.READY_FOR_COURT
-                  }
-                  onChange={() =>
-                    updateVictimAndSetState(
-                      {
-                        caseId: workingCase.id,
-                        victimId: victim.id,
-                        lawyerAccessToRequest:
-                          RequestSharedWhen.READY_FOR_COURT,
-                      },
-                      setWorkingCase,
-                    )
-                  }
-                  large
-                  backgroundColor="white"
-                  disabled={!victim.lawyerName}
-                />
-              </Box>
-              <Box marginTop={2}>
-                <RadioButton
-                  name={`lawyer-access-${victim.id}`}
-                  id={`lawyer-access-${victim.id}-arraignment-date`}
-                  label="Gefa réttargæslumanni aðgang að kröfu við úthlutun fyrirtökutíma"
-                  checked={
-                    victim.lawyerAccessToRequest ===
-                    RequestSharedWhen.ARRAIGNMENT_DATE_ASSIGNED
-                  }
-                  onChange={() =>
-                    updateVictimAndSetState(
-                      {
-                        caseId: workingCase.id,
-                        victimId: victim.id,
-                        lawyerAccessToRequest:
-                          RequestSharedWhen.ARRAIGNMENT_DATE_ASSIGNED,
-                      },
-                      setWorkingCase,
-                    )
-                  }
-                  large
-                  backgroundColor="white"
-                  disabled={!victim.lawyerName}
-                />
-              </Box>
-              <Box marginTop={2}>
-                <RadioButton
-                  name={`lawyer-access-${victim.id}`}
-                  id={`lawyer-access-${victim.id}-when-obligated`}
-                  label="Ekki gefa réttargæslumanni aðgang að kröfu"
-                  checked={
-                    victim.lawyerAccessToRequest === RequestSharedWhen.OBLIGATED
-                  }
-                  onChange={() =>
-                    updateVictimAndSetState(
-                      {
-                        caseId: workingCase.id,
-                        victimId: victim.id,
-                        lawyerAccessToRequest: RequestSharedWhen.OBLIGATED,
-                      },
-                      setWorkingCase,
-                    )
-                  }
-                  large
-                  backgroundColor="white"
-                  disabled={!victim.lawyerName}
-                />
-              </Box>
-            </RadioGroup>
+            <Box>
+              <RadioButton
+                name={`lawyer-access-${victim.id}`}
+                id={`lawyer-access-${victim.id}-ready-for-court`}
+                label="Gefa réttargæslumanni aðgang að kröfu þegar krafa er send á dómstól"
+                checked={
+                  victim.lawyerAccessToRequest ===
+                  RequestSharedWhen.READY_FOR_COURT
+                }
+                onChange={() =>
+                  updateVictimAndSetState(
+                    {
+                      caseId: workingCase.id,
+                      victimId: victim.id,
+                      lawyerAccessToRequest: RequestSharedWhen.READY_FOR_COURT,
+                    },
+                    setWorkingCase,
+                  )
+                }
+                large
+                backgroundColor="white"
+                disabled={!victim.lawyerName}
+              />
+            </Box>
+            <Box marginTop={2}>
+              <RadioButton
+                name={`lawyer-access-${victim.id}`}
+                id={`lawyer-access-${victim.id}-arraignment-date`}
+                label="Gefa réttargæslumanni aðgang að kröfu við úthlutun fyrirtökutíma"
+                checked={
+                  victim.lawyerAccessToRequest ===
+                  RequestSharedWhen.ARRAIGNMENT_DATE_ASSIGNED
+                }
+                onChange={() =>
+                  updateVictimAndSetState(
+                    {
+                      caseId: workingCase.id,
+                      victimId: victim.id,
+                      lawyerAccessToRequest:
+                        RequestSharedWhen.ARRAIGNMENT_DATE_ASSIGNED,
+                    },
+                    setWorkingCase,
+                  )
+                }
+                large
+                backgroundColor="white"
+                disabled={!victim.lawyerName}
+              />
+            </Box>
+            <Box marginTop={2}>
+              <RadioButton
+                name={`lawyer-access-${victim.id}`}
+                id={`lawyer-access-${victim.id}-when-obligated`}
+                label="Ekki gefa réttargæslumanni aðgang að kröfu"
+                checked={
+                  victim.lawyerAccessToRequest === RequestSharedWhen.OBLIGATED
+                }
+                onChange={() =>
+                  updateVictimAndSetState(
+                    {
+                      caseId: workingCase.id,
+                      victimId: victim.id,
+                      lawyerAccessToRequest: RequestSharedWhen.OBLIGATED,
+                    },
+                    setWorkingCase,
+                  )
+                }
+                large
+                backgroundColor="white"
+                disabled={!victim.lawyerName}
+              />
+            </Box>
           </>
         </Box>
       </BlueBox>

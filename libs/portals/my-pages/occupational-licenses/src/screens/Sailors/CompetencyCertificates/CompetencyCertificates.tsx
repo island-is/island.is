@@ -12,7 +12,7 @@ import {
   CardLoader,
   IntroWrapper,
   NestedTable,
-  PortalTable,
+  Table,
   createColumnHelper,
   formatDate,
   m,
@@ -133,7 +133,7 @@ const CompetencyCertificates = () => {
             {filtered.length === 0 ? (
               <Problem type="no_data" noBorder={false} />
             ) : (
-              <PortalTable
+              <Table
                 columns={columns}
                 data={filtered}
                 emptyMessage={om.sailorSchoolCertificatesEmpty}

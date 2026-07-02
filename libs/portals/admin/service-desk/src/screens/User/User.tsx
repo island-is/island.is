@@ -18,7 +18,7 @@ import { BackButton } from '@island.is/portals/admin/core'
 import {
   createColumnHelper,
   IntroHeader,
-  PortalTable,
+  Table,
   formatNationalId,
   m as coreMessages,
 } from '@island.is/portals/core'
@@ -620,12 +620,11 @@ const User = () => {
                         </Box>
                       }
                     >
-                      <PortalTable<AdminNotificationRow>
+                      <Table<AdminNotificationRow>
                         columns={userNotificationColumns}
                         data={notifications?.adminNotifications?.data ?? []}
                         emptyMessage={formatMessage(m.notificationsEmpty)}
                         getRowId={(row) => String(row.id)}
-                        mobileTitleKey="id"
                         renderExpandedRow={(row) => (
                           <NotificationDeliveriesPanel
                             notificationId={row.original.id}
@@ -666,7 +665,7 @@ const User = () => {
                         </Box>
                       }
                     >
-                      <PortalTable<ActorNotificationRow>
+                      <Table<ActorNotificationRow>
                         columns={actorNotificationColumns}
                         data={
                           actorNotifications?.adminActorNotifications?.data ??
@@ -674,7 +673,6 @@ const User = () => {
                         }
                         emptyMessage={formatMessage(m.notificationsEmpty)}
                         getRowId={(row) => String(row.id)}
-                        mobileTitleKey="id"
                         renderExpandedRow={(row) => (
                           <NotificationDeliveriesPanel
                             notificationId={row.original.id}

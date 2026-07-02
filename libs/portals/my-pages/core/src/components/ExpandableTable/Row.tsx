@@ -1,5 +1,5 @@
 /**
- * @deprecated Use `PortalTable` from `@island.is/portals/my-pages/core` with the `renderExpandedRow` prop instead.
+ * @deprecated Use `Table` from `@island.is/portals/my-pages/core` with the `renderExpandedRow` prop instead.
  */
 import React, { useState, useCallback, FC } from 'react'
 import { useLocale } from '@island.is/localization'
