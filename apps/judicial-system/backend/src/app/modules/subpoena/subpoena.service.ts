@@ -501,12 +501,6 @@ export class SubpoenaService {
         civilClaims: civilClaimPdfs,
       })
 
-      if (!createdSubpoena) {
-        this.logger.error('Failed to create subpoena file for police')
-
-        return { delivered: false }
-      }
-
       await this.subpoenaRepositoryService.update(
         theCase.id,
         defendant.id,
@@ -524,6 +518,20 @@ export class SubpoenaService {
       this.logger.error(
         'Error delivering subpoena to the police centralized file service',
         error,
+      )
+
+      // Report every failed attempt to the Slack error channel (the delivery is
+      // retried by the message-handler, so this fires once per retry) - this is
+      // the single place that catches all causes: PDF/S3, the police call, and
+      // the database update.
+      void this.eventService.postErrorEvent(
+        'Villa við að senda fyrirkall til RLS',
+        {
+          caseId: theCase.id,
+          defendantId: defendant.id,
+          subpoenaId: subpoena.id,
+        },
+        error instanceof Error ? error : new Error(String(error)),
       )
 
       return { delivered: false }
