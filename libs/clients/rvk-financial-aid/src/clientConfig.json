@@ -1,0 +1,1365 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "Veita API",
+    "version": "v1"
+  },
+  "paths": {
+    "/applications": {
+      "get": {
+        "tags": ["Applications"],
+        "operationId": "GetApplications",
+        "parameters": [
+          {
+            "name": "searchTerm",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "kennitala",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortColumn",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "unassignedOnly",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "ApplicationMonthFrom",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "ApplicationMonthTo",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "AppliedDateFrom",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "AppliedDateTo",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "X-Tenant-Identifier",
+            "in": "header",
+            "description": "Tenant identifier for multi-tenant support",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-User-Permissions",
+            "in": "header",
+            "description": "User permission header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Applications"],
+        "operationId": "CreateApplication",
+        "parameters": [
+          {
+            "name": "X-Tenant-Identifier",
+            "in": "header",
+            "description": "Tenant identifier for multi-tenant support",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-User-Permissions",
+            "in": "header",
+            "description": "User permission header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateApplicationRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateApplicationRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateApplicationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/applications/{id}": {
+      "get": {
+        "tags": ["Applications"],
+        "operationId": "GetApplicationDetail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "X-Tenant-Identifier",
+            "in": "header",
+            "description": "Tenant identifier for multi-tenant support",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-User-Permissions",
+            "in": "header",
+            "description": "User permission header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/applications/summary": {
+      "get": {
+        "tags": ["Applications"],
+        "operationId": "GetApplicationSummary",
+        "parameters": [
+          {
+            "name": "X-Tenant-Identifier",
+            "in": "header",
+            "description": "Tenant identifier for multi-tenant support",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-User-Permissions",
+            "in": "header",
+            "description": "User permission header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/applications/{id}/status": {
+      "patch": {
+        "tags": ["Applications"],
+        "operationId": "UpdateStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "X-Tenant-Identifier",
+            "in": "header",
+            "description": "Tenant identifier for multi-tenant support",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-User-Permissions",
+            "in": "header",
+            "description": "User permission header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StatusUpdateRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StatusUpdateRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/StatusUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/applications/{id}/comments": {
+      "post": {
+        "tags": ["Applications"],
+        "operationId": "CreateComment",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "X-Tenant-Identifier",
+            "in": "header",
+            "description": "Tenant identifier for multi-tenant support",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-User-Permissions",
+            "in": "header",
+            "description": "User permission header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommentRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommentRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/applications/{id}/assignment": {
+      "patch": {
+        "tags": ["Applications"],
+        "operationId": "Assign",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "X-Tenant-Identifier",
+            "in": "header",
+            "description": "Tenant identifier for multi-tenant support",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-User-Permissions",
+            "in": "header",
+            "description": "User permission header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StatusUpdateRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StatusUpdateRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/StatusUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Applications"],
+        "operationId": "Unassign",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "X-Tenant-Identifier",
+            "in": "header",
+            "description": "Tenant identifier for multi-tenant support",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-User-Permissions",
+            "in": "header",
+            "description": "User permission header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/applications/{id}/period": {
+      "patch": {
+        "tags": ["Applications"],
+        "operationId": "UpdateApplicationPeriod",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "newMonth",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "X-Tenant-Identifier",
+            "in": "header",
+            "description": "Tenant identifier for multi-tenant support",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-User-Permissions",
+            "in": "header",
+            "description": "User permission header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/applications/{applicationId}/documents": {
+      "get": {
+        "tags": ["Documents"],
+        "operationId": "GetDocumentList",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "X-Tenant-Identifier",
+            "in": "header",
+            "description": "Tenant identifier for multi-tenant support",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-User-Permissions",
+            "in": "header",
+            "description": "User permission header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Documents"],
+        "operationId": "UploadDocument",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "UploadedByUser",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Origin",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Description",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Tenant-Identifier",
+            "in": "header",
+            "description": "Tenant identifier for multi-tenant support",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-User-Permissions",
+            "in": "header",
+            "description": "User permission header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "File": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "File": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/applications/{applicationId}/documents/batch": {
+      "post": {
+        "tags": ["Documents"],
+        "operationId": "UploadMultipleDocuments",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "X-Tenant-Identifier",
+            "in": "header",
+            "description": "Tenant identifier for multi-tenant support",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-User-Permissions",
+            "in": "header",
+            "description": "User permission header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "requests": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/UploadSingleDocumentRequest"
+                    }
+                  }
+                }
+              },
+              "encoding": {
+                "requests": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/applications/{applicationId}/documents/{id}/content": {
+      "get": {
+        "tags": ["Documents"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "X-Tenant-Identifier",
+            "in": "header",
+            "description": "Tenant identifier for multi-tenant support",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-User-Permissions",
+            "in": "header",
+            "description": "User permission header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/applications/{applicationId}/documents/{id}/metadata": {
+      "get": {
+        "tags": ["Documents"],
+        "operationId": "GetDocumentData",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "X-Tenant-Identifier",
+            "in": "header",
+            "description": "Tenant identifier for multi-tenant support",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-User-Permissions",
+            "in": "header",
+            "description": "User permission header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/applications/{applicationId}/documents/{id}": {
+      "delete": {
+        "tags": ["Documents"],
+        "operationId": "DeleteDocument",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "X-Tenant-Identifier",
+            "in": "header",
+            "description": "Tenant identifier for multi-tenant support",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-User-Permissions",
+            "in": "header",
+            "description": "User permission header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/notifications/email": {
+      "post": {
+        "tags": ["Notifications"],
+        "operationId": "SendMessage",
+        "parameters": [
+          {
+            "name": "X-Tenant-Identifier",
+            "in": "header",
+            "description": "Tenant identifier for multi-tenant support",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-User-Permissions",
+            "in": "header",
+            "description": "User permission header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendMessageRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendMessageRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendMessageRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/settings": {
+      "get": {
+        "tags": ["Settings"],
+        "operationId": "GetFinaidServiceSettings",
+        "parameters": [
+          {
+            "name": "tenantIdentifier",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Tenant-Identifier",
+            "in": "header",
+            "description": "Tenant identifier for multi-tenant support",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-User-Permissions",
+            "in": "header",
+            "description": "User permission header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Settings"],
+        "operationId": "PatchFinaidServiceSettings",
+        "parameters": [
+          {
+            "name": "X-Tenant-Identifier",
+            "in": "header",
+            "description": "Tenant identifier for multi-tenant support",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-User-Permissions",
+            "in": "header",
+            "description": "User permission header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FinaidServiceSettingsRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FinaidServiceSettingsRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FinaidServiceSettingsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ChildDto": {
+        "required": ["kennitala"],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "kennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "age": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "school": {
+            "type": "string",
+            "nullable": true
+          },
+          "livesWithApplicant": {
+            "type": "boolean"
+          },
+          "livesWithBothParents": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CommentRequest": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateApplicationDocument": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "key": {
+            "type": "string",
+            "nullable": true
+          },
+          "size": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateApplicationRequest": {
+        "required": ["applicationSystemId"],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "nationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "homeCircumstances": {
+            "type": "string",
+            "nullable": true
+          },
+          "homeCircumstancesCustom": {
+            "type": "string",
+            "nullable": true
+          },
+          "employment": {
+            "type": "string",
+            "nullable": true
+          },
+          "employmentCustom": {
+            "type": "string",
+            "nullable": true
+          },
+          "student": {
+            "type": "boolean"
+          },
+          "studentCustom": {
+            "type": "string",
+            "nullable": true
+          },
+          "usePersonalTaxCredit": {
+            "type": "boolean"
+          },
+          "bankNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "ledger": {
+            "type": "string",
+            "nullable": true
+          },
+          "accountNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "hasIncome": {
+            "type": "boolean"
+          },
+          "formComment": {
+            "type": "string",
+            "nullable": true
+          },
+          "childrenComment": {
+            "type": "string",
+            "nullable": true
+          },
+          "state": {
+            "type": "string",
+            "nullable": true
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateApplicationDocument"
+            },
+            "nullable": true
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "spouseName": {
+            "type": "string",
+            "nullable": true
+          },
+          "spouseNationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "spouseEmail": {
+            "type": "string",
+            "nullable": true
+          },
+          "spousePhoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "spouseEmployment": {
+            "type": "string",
+            "nullable": true
+          },
+          "spouseFormComment": {
+            "type": "string",
+            "nullable": true
+          },
+          "familyStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "postalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "nationality": {
+            "type": "string",
+            "nullable": true
+          },
+          "streetName": {
+            "type": "string",
+            "nullable": true
+          },
+          "directTaxPayments": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChildDto"
+            },
+            "nullable": true
+          },
+          "applicationSystemId": {
+            "type": "string",
+            "nullable": true
+          },
+          "audkenniId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FinaidServiceSettingsRequest": {
+        "type": "object",
+        "properties": {
+          "decBonusPercentage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "childBonusToApplicant": {
+            "type": "boolean"
+          },
+          "personalTaxAllowance": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "singleOwnHouseholdAidAmount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "singleRentRegisteredLeaseAidAmount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "singleRentUnregisteredLeaseAidAmount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "singleRentOtherAidAmount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "singleLivingWithParentsAidAmount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "singleOtherLivingArrangementAidAmount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cohabitingOwnHouseholdAidAmount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cohabitingRentRegisteredLeaseAidAmount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cohabitingRentUnregisteredLeaseAidAmount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cohabitingRentOtherAidAmount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cohabitingLivingWithParentsAidAmount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cohabitingOtherLivingArrangementAidAmount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SendMessageRequest": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "nullable": true
+          },
+          "toName": {
+            "type": "string",
+            "nullable": true
+          },
+          "subject": {
+            "type": "string",
+            "nullable": true
+          },
+          "body": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "StatusUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "newStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "notifyApplicant": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UploadSingleDocumentRequest": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "nullable": true
+          },
+          "uploadedByUser": {
+            "type": "string",
+            "nullable": true
+          },
+          "origin": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "oauth2": {
+        "type": "oauth2",
+        "description": "OAuth2.0",
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "https://login.microsoftonline.com/6aed0be3-a6ff-4c6c-83b5-bb72bdd10088/oauth2/v2.0/authorize",
+            "tokenUrl": "https://login.microsoftonline.com/6aed0be3-a6ff-4c6c-83b5-bb72bdd10088/oauth2/v2.0/token",
+            "scopes": {
+              "api://veita-api.test.reykjavik.is/Veita.Employee.Access": "read the api"
+            }
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "oauth2": ["api://veita-api.test.reykjavik.is/Veita.Employee.Access"]
+    }
+  ]
+}

@@ -17,6 +17,7 @@ import { NationalRegistryV3ApplicationsClientConfig } from '@island.is/clients/n
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
 import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalities-financial-aid'
+import { RvkFinancialAidConfig } from '@island.is/clients/rvk-financial-aid'
 import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
 import { signingModuleConfig } from '@island.is/dokobit-signing'
 import { ApplicationFilesConfig } from '@island.is/application/api/files'
@@ -99,6 +100,7 @@ import { RecyclingFundClientConfig } from '@island.is/clients/recycling-fund'
         NationalRegistryV3ApplicationsClientConfig,
         FeatureFlagConfig,
         MunicipalitiesFinancialAidConfig,
+        RvkFinancialAidConfig,
         FishingLicenseClientConfig,
         signingModuleConfig,
         ApplicationFilesConfig,

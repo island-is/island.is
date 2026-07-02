@@ -41,6 +41,23 @@ export const hasChildren = (
   return Boolean(childWithInfo?.length)
 }
 
+export const isRVKresident = (
+  _answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const municipalityCode = getValueViaPath<string>(
+    externalData,
+    'nationalRegistry.data.address.municipalityCode',
+  )
+  return municipalityCode === '0000' || municipalityCode === '1400'
+}
+
+export const taxSuccess = (_answers: FormValue, externalData: ExternalData) =>
+  getValueViaPath<boolean>(
+    externalData,
+    'taxData.data.municipalitiesDirectTaxPayments.success',
+  ) === true
+
 export const hasOtherHomeCircumstances = (answers: FormValue) =>
   getValueViaPath<HomeCircumstances>(answers, 'homeCircumstances.type') ===
   HomeCircumstances.OTHER
