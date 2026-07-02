@@ -45,8 +45,10 @@ export const overviewSection = buildSection({
               width: 'half',
               keyText: messages.aboutTheCompany.generalInformation.address,
               valueText:
-                getValueViaPath<string>(answers, 'generalInformation.address') ??
-                '',
+                getValueViaPath<string>(
+                  answers,
+                  'generalInformation.address',
+                ) ?? '',
             },
             {
               width: 'half',
@@ -117,7 +119,8 @@ export const overviewSection = buildSection({
                 width: 'half',
                 keyText: messages.aboutTheCompany.chiefExecutive.email,
                 valueText:
-                  getValueViaPath<string>(answers, 'chiefExecutive.email') ?? '',
+                  getValueViaPath<string>(answers, 'chiefExecutive.email') ??
+                  '',
               },
               {
                 width: 'half',

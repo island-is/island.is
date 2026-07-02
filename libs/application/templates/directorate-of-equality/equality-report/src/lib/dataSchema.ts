@@ -114,7 +114,9 @@ const decodeHtmlEntities = (value: string) =>
 
 const decodeEditorHtml = (base64: string) => {
   try {
-    return decodeHtmlEntities(atob(base64).replace(/<[^>]*>/g, '')).trim()
+    return atob(base64)
+      .replace(/<[^>]*>/g, '')
+      .trim()
   } catch {
     return ''
   }
