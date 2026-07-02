@@ -18,7 +18,9 @@ import {
   PageTitle,
   ProsecutorCaseInfo,
   SectionHeading,
+  TinyMCE,
 } from '@island.is/judicial-system-web/src/components'
+import { getTextContentFromHtml } from '@island.is/judicial-system-web/src/utils/formatters'
 import { useDebouncedInput } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isPoliceReportStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
@@ -73,21 +75,19 @@ export const PoliceReport = () => {
               title={formatMessage(rcReportForm.sections.caseFacts.heading)}
               tooltip={formatMessage(rcReportForm.sections.caseFacts.tooltip)}
             />
-            <Input
+            <TinyMCE
               data-testid="caseFacts"
-              name="caseFacts"
               label={formatMessage(rcReportForm.sections.caseFacts.label)}
               placeholder={formatMessage(
                 rcReportForm.sections.caseFacts.placeholder,
               )}
+              defaultValue={caseFactsInput.value}
               errorMessage={caseFactsInput.errorMessage}
-              hasError={caseFactsInput.hasError}
-              value={caseFactsInput.value}
-              onChange={(evt) => caseFactsInput.onChange(evt.target.value)}
-              onBlur={(evt) => caseFactsInput.onBlur(evt.target.value)}
+              onChange={(html) => caseFactsInput.onChange(html)}
+              onBlur={(html) =>
+                caseFactsInput.onBlur(getTextContentFromHtml(html))
+              }
               required
-              rows={14}
-              textarea
             />
           </Box>
           <Box component="section">

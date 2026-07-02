@@ -33,6 +33,7 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  HtmlContent,
   InfoCard,
   Modal,
   PageHeader,
@@ -283,9 +284,7 @@ export const Overview = () => {
               >
                 {workingCase.caseFacts && (
                   <AccordionListItem title="Málsatvik">
-                    <Text whiteSpace="breakSpaces">
-                      {workingCase.caseFacts}
-                    </Text>
+                    <HtmlContent html={workingCase.caseFacts} />
                   </AccordionListItem>
                 )}
                 {workingCase.legalArguments && (
