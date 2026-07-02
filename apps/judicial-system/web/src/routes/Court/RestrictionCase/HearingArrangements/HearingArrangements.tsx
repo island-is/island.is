@@ -39,7 +39,6 @@ import { rcHearingArrangements as m } from './HearingArrangements.strings'
 
 enum ModalButtonLoading {
   PRIMARY = 'PRIMARY',
-  SECONDARY = 'SECONDARY',
 }
 
 export const HearingArrangements = () => {
@@ -58,6 +57,7 @@ export const HearingArrangements = () => {
   const {
     setAndSendCaseToServer,
     sendNotification,
+    isUpdatingCase,
     isSendingNotification,
     sendNotificationError,
   } = useCase()
@@ -120,12 +120,11 @@ export const HearingArrangements = () => {
   const isCorrectingRuling = Boolean(workingCase.requestCompletedDate)
 
   const handleNavigationTo = async (destination: keyof stepValidationsType) => {
-    await sendCourtDateToServer()
-
     if (
       isCorrectingRuling ||
       (courtDateNotification.hasSent && !courtDateHasChanged)
     ) {
+      await sendCourtDateToServer()
       router.push(`${destination}/${workingCase.id}`)
     } else {
       setNavigateTo(DISTRICT_COURT_RESTRICTION_CASE_RULING_ROUTE)
@@ -136,6 +135,10 @@ export const HearingArrangements = () => {
     workingCase,
     courtDate,
   )
+
+  const isModalConfirming = modalButtonLoading === ModalButtonLoading.PRIMARY
+  const isModalLoading =
+    isModalConfirming && (isUpdatingCase || isSendingNotification)
 
   return (
     <PageLayout
@@ -182,31 +185,30 @@ export const HearingArrangements = () => {
           onNextButtonClick={() =>
             handleNavigationTo(DISTRICT_COURT_RESTRICTION_CASE_RULING_ROUTE)
           }
-          nextButtonText={formatMessage(m.continueButton.label)}
+          nextButtonText="Halda áfram"
           nextIsDisabled={!stepIsValid}
         />
       </FormContentContainer>
       {navigateTo !== undefined && (
         <Modal
-          title={formatMessage(
-            workingCase.type === CaseType.CUSTODY ||
-              workingCase.type === CaseType.ADMISSION_TO_FACILITY
-              ? m.modal.custodyCases.heading
-              : m.modal.travelBanCases.heading,
-          )}
-          text={formatMessage(
-            workingCase.type === CaseType.CUSTODY ||
-              workingCase.type === CaseType.ADMISSION_TO_FACILITY
-              ? m.modal.custodyCases.text
-              : m.modal.travelBanCases.text,
-            {
-              courtDateHasChanged,
-            },
-          )}
+          title="Viltu staðfesta fyrirtökutíma?"
+          loading={isModalConfirming}
+          text={
+            courtDateHasChanged
+              ? 'Fyrirtökutíma hefur verið breytt. Tilkynning verður send á sækjanda, fangelsi og verjanda hafi verjandi verið skráður.'
+              : 'Málið fer á dagskrá og tilkynning verður send á sækjanda, fangelsi og verjanda hafi verjandi verið skráður.'
+          }
           primaryButton={{
-            text: formatMessage(m.modal.shared.primaryButtonText),
+            text: 'Já, staðfesta',
             onClick: async () => {
               setModalButtonLoading(ModalButtonLoading.PRIMARY)
+
+              const courtDateSaved = await sendCourtDateToServer()
+
+              if (!courtDateSaved) {
+                setModalButtonLoading(undefined)
+                return
+              }
 
               const notificationSent = await sendNotification(
                 workingCase.id,
@@ -215,30 +217,18 @@ export const HearingArrangements = () => {
 
               if (notificationSent) {
                 router.push(`${navigateTo}/${workingCase.id}`)
+              } else {
+                setModalButtonLoading(undefined)
               }
             },
-            isLoading:
-              isSendingNotification &&
-              modalButtonLoading === ModalButtonLoading.PRIMARY,
+            isLoading: isModalLoading,
           }}
           secondaryButton={{
-            text: formatMessage(m.modal.shared.secondaryButtonText, {
-              courtDateHasChanged,
-            }),
-            onClick: async () => {
-              setModalButtonLoading(ModalButtonLoading.SECONDARY)
-
-              await sendNotification(
-                workingCase.id,
-                TrackedNotificationType.COURT_DATE,
-                true,
-              )
-
+            text: 'Nei, staðfesta seinna',
+            isDisabled: isModalConfirming,
+            onClick: () => {
               router.push(`${navigateTo}/${workingCase.id}`)
             },
-            isLoading:
-              isSendingNotification &&
-              modalButtonLoading === ModalButtonLoading.SECONDARY,
           }}
           errorMessage={
             sendNotificationError
