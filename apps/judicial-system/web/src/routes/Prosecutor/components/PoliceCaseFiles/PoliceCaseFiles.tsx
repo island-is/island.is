@@ -91,7 +91,7 @@ const PoliceCaseFiles: FC<Props> = ({
           : undefined
       }
       warningMessage={
-        policeCaseFiles?.files.length === 0
+        !policeCaseFiles?.isLoading && policeCaseFiles?.files.length === 0
           ? formatMessage(strings.noFilesFoundInLOKEMessage, {
               isIndictmentCase: isIndictmentCase(workingCase.type),
             })
