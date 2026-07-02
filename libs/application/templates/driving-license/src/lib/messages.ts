@@ -102,8 +102,14 @@ export const m = defineMessages({
   pickupLocationDescription: {
     id: 'dl.application:pickupLocationDescription',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.',
+      'Veldu hvort þú vilt fá ökuskírteinið sent á lögheimili með pósti eða sækja það hjá völdu sýslumannsembætti.',
     description: 'location for pickup',
+  },
+  postalCodeTooltip: {
+    id: 'dl.application:postalCodeTooltip',
+    defaultMessage: 'Póstnúmer {zip}',
+    description:
+      'Postal code tooltip shown on a jurisdiction (sýslumaður) option',
   },
   deliveryMethodHeader: {
     id: 'dl.application:deliveryMethodHeader',
@@ -472,38 +478,18 @@ export const m = defineMessages({
     description:
       'Your application for a full driving license has been received. Before a full driving license can be applied for, you must bring the following to the district commissioner.',
   },
-  digitalLicenseInfoTitle: {
-    id: 'dl.application:digitalLicenseInfoTitle',
-    defaultMessage: 'Stafrænt ökuskírteini',
-    description: 'Digital driving license',
-  },
-  digitalLicenseInfoDescription: {
-    id: 'dl.application:digitalLicenseInfoDescription',
-    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    description: 'Digital driving license',
-  },
-  digitalLicenseInfoAlertTitle: {
-    id: 'dl.application:digitalLicenseInfoAlertTitle',
-    defaultMessage: 'Athugið',
-    description: 'Digital driving license',
-  },
-  digitalLicenseInfoAlertMessageBTemp: {
-    id: 'dl.application:digitalLicenseInfoAlertMessageBTemp#markdown',
+  localResidencyDaysSpent: {
+    id: 'dl.application:localResidencyDaysSpent',
     defaultMessage:
-      'Þú ert að sækja um bráðabirgðaökuskírteini. Ökuskírteini þitt verður einungis gefið út sem stafrænt ökuskírteini og verður aðgengilegt fyrir þig um leið og öll skilyrði fyrir bráðabirgðaökuskírteini eru uppfyllt.',
-    description: 'Digital driving license',
+      '{days, plural, one {Þú hefur aðeins búið á Íslandi í # dag.} other {Þú hefur aðeins búið á Íslandi í # daga.}}',
+    description:
+      'Shown under the residency requirement: number of days the applicant has lived in Iceland (ICU plural)',
   },
-  digitalLicenseInfoAlertMessageBFull: {
-    id: 'dl.application:digitalLicenseInfoAlertMessageBFull#markdown',
-    defaultMessage:
-      'Þú ert að sækja um fullnaðarökuskírteini. Ökuskírteini þitt verður núna einungis gefið út sem stafrænt ökuskírteini og verður aðgengilegt fyrir þig þegar þú hefur lokið þessari pöntun um fullnaðarökuskírteini. Fullnaðarökuskírteini þitt verður framleitt í plasti í byrjun febrúar 2025 og sent til þín með Póstinum, á skráð lögheimili þitt um leið og plastökuskírteinið er tilbúið.',
-    description: 'Digital driving license',
-  },
-  digitalLicenseInfoAlertMessageExtraInfo: {
-    id: 'dl.application:digitalLicenseInfoAlertMessageExtraInfo#markdown',
-    defaultMessage:
-      'Upplýsingar um stafrænt ökuskírteini, hvernig þú sækir það og hleður því í símannn þinn eru aðgengilegar hér [https://island.is/okuskirteini](https://island.is/okuskirteini)',
-    description: 'Digital driving license',
+  loadingEligibility: {
+    id: 'dl.application:loadingEligibility',
+    defaultMessage: 'Sæki upplýsingar',
+    description:
+      'Screen-reader label for the loading spinner while eligibility is being fetched',
   },
   congratulationsTempHelpText: {
     id: 'dl.application:congratulationsTempHelpText',

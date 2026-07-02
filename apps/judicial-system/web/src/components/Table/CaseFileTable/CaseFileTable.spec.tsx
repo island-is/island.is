@@ -1,15 +1,18 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  Case,
+  CaseFile,
+  CaseFileState,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+
 import {
   ApolloProviderWrapper,
+  FormContextWrapper,
   IntlProviderWrapper,
-} from '@island.is/judicial-system-web/src/utils/testHelpers'
-
+} from '../../../utils/testHelpers'
 import CaseFileTable from './CaseFileTable'
-
-import '@testing-library/react'
 
 jest.mock('next/router', () => ({
   useRouter() {
@@ -17,49 +20,87 @@ jest.mock('next/router', () => ({
   },
 }))
 
-describe('CaseFileTable', () => {
-  let user: ReturnType<typeof userEvent.setup>
-
-  const caseFiles = [
-    {
-      id: '1',
-      name: 'Skjal A',
-      userGeneratedFilename: 'Skjal A',
-      submittedBy: 'Jon Jonsson',
-      created: '2021-01-01T00:00:00Z',
-    },
-    {
-      id: '2',
-      name: 'Skjal B',
-      userGeneratedFilename: 'Skjal B',
-      submittedBy: 'Anna Onnudottir',
-      created: '2021-01-02T00:00:00Z',
-    },
-  ] as CaseFile[]
-
-  const renderTable = () =>
-    render(
-      <IntlProviderWrapper>
-        <ApolloProviderWrapper>
+const renderTable = (caseFiles: CaseFile[], onOpenFile = jest.fn()) => {
+  render(
+    <IntlProviderWrapper>
+      <ApolloProviderWrapper>
+        <FormContextWrapper theCase={{ id: 'case-1' } as Case}>
           <CaseFileTable
             caseFiles={caseFiles}
-            onOpenFile={jest.fn()}
+            onOpenFile={onOpenFile}
             canRejectFiles={false}
           />
-        </ApolloProviderWrapper>
-      </IntlProviderWrapper>,
-    )
+        </FormContextWrapper>
+      </ApolloProviderWrapper>
+    </IntlProviderWrapper>,
+  )
 
-  beforeEach(() => {
-    user = userEvent.setup()
+  return onOpenFile
+}
+
+describe('<CaseFileTable />', () => {
+  test('should expose a keyboard accessible button for an accepted file', async () => {
+    const onOpenFile = renderTable([
+      {
+        id: 'file-1',
+        userGeneratedFilename: 'document.pdf',
+        state: CaseFileState.STORED_IN_RVG,
+      } as CaseFile,
+    ])
+
+    const button = await screen.findByRole('button', {
+      name: 'Opna document.pdf',
+    })
+    expect(button).toHaveAttribute('tabindex', '0')
+
+    button.focus()
+    await userEvent.keyboard('{Enter}')
+    await userEvent.keyboard(' ')
+
+    expect(onOpenFile).toHaveBeenCalledTimes(2)
+    expect(onOpenFile).toHaveBeenCalledWith('file-1')
+  })
+
+  test('should not render a button for a rejected file', async () => {
+    renderTable([
+      {
+        id: 'file-1',
+        userGeneratedFilename: 'document.pdf',
+        state: CaseFileState.REJECTED,
+      } as CaseFile,
+    ])
+
+    // Await the table to settle (lazy Icon load) before asserting absence.
+    await screen.findByRole('columnheader', { name: /Nafn skjals/ })
+
+    expect(
+      screen.queryByRole('button', { name: 'Opna document.pdf' }),
+    ).not.toBeInTheDocument()
   })
 
   it('reflects the sort state on sortable headers via aria-sort', async () => {
-    renderTable()
+    const user = userEvent.setup()
+
+    renderTable([
+      {
+        id: '1',
+        name: 'Skjal A',
+        userGeneratedFilename: 'Skjal A',
+        submittedBy: 'Jon Jonsson',
+        created: '2021-01-01T00:00:00Z',
+      },
+      {
+        id: '2',
+        name: 'Skjal B',
+        userGeneratedFilename: 'Skjal B',
+        submittedBy: 'Anna Onnudottir',
+        created: '2021-01-02T00:00:00Z',
+      },
+    ] as CaseFile[])
 
     // The table is sorted by the received/created column by default.
     expect(
-      screen.getByRole('columnheader', { name: /Nafn skjals/ }),
+      await screen.findByRole('columnheader', { name: /Nafn skjals/ }),
     ).toHaveAttribute('aria-sort', 'none')
     expect(
       screen.getByRole('columnheader', { name: /Móttekið/ }),
