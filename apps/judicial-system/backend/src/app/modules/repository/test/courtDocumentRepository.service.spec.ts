@@ -33,9 +33,11 @@ describe('CourtDocumentRepositoryService', () => {
     courtDocumentModel = {
       findAll: jest.fn().mockResolvedValue([]),
       update: jest.fn().mockResolvedValue([1, []]),
-      create: jest.fn().mockImplementation((values) =>
-        Promise.resolve({ id: 'new-doc', ...values }),
-      ),
+      create: jest
+        .fn()
+        .mockImplementation((values) =>
+          Promise.resolve({ id: 'new-doc', ...values }),
+        ),
     }
 
     // No existing court sessions, so the next document order resolves to 1
