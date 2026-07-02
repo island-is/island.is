@@ -4,7 +4,6 @@ import {
   buildRadioField,
   buildSection,
 } from '@island.is/application/core'
-
 export const minorFirstSection = buildSection({
   id: 'minorFirstSection',
   title: 'Hvað veldur þér áhyggjum?',
