@@ -28,7 +28,7 @@ const DetailPanel: React.FC<DetailPanelProps> = ({
   const router = useRouter()
 
   const status = useMemo(
-    () => parseStatus(grant, formatMessage, locale),
+    () => parseStatus(grant, formatMessage, locale, true),
     [grant, formatMessage, locale],
   )
 
@@ -117,6 +117,11 @@ const DetailPanel: React.FC<DetailPanelProps> = ({
           </Button>
         </Box>
       )}
+      <Box marginTop={2}>
+        <Text variant="small" color="dark400">
+          {formatMessage(m.single.icelandicTimeNote)}
+        </Text>
+      </Box>
     </Box>
   )
 }
