@@ -1,6 +1,6 @@
 export interface InvoiceGroupRequestDto {
   suppliers?: string[]
-  debtors?: string[]
+  debtors?: number[]
   ministries?: string[]
   paymentTypeIds?: string[]
   dateFrom?: Date

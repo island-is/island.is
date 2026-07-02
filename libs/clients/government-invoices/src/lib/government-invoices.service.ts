@@ -2,7 +2,7 @@ import format from 'date-fns/format'
 import { Injectable } from '@nestjs/common'
 import {
   getV1OpeninvoicesInvoices,
-  getV1OpeninvoicesInvoicesBySupplierLegalIdByDebtorLegalId,
+  getV1OpeninvoicesInvoicesBySupplierLegalIdByErpLegalEntityId,
   getV1OpeninvoicesSuppliers,
   getV1OpeninvoicesDebtors,
   getV1OpeninvoicesMinistries,
@@ -66,10 +66,20 @@ export class GovernmentInvoicesClientService {
     requestParams: InvoiceRequestDto,
   ): Promise<InvoiceGroupDto | null> {
     const { data } =
-      await getV1OpeninvoicesInvoicesBySupplierLegalIdByDebtorLegalId({
+      await getV1OpeninvoicesInvoicesBySupplierLegalIdByErpLegalEntityId({
         path: {
           supplierLegalId: requestParams.supplierLegalId,
-          debtorLegalId: requestParams.debtorLegalId,
+          erpLegalEntityId: requestParams.erpLegalEntityId,
+        },
+        query: {
+          dateFrom: requestParams.dateFrom
+            ? format(requestParams.dateFrom, 'yyyy-MM-dd')
+            : undefined,
+          dateTo: requestParams.dateTo
+            ? format(requestParams.dateTo, 'yyyy-MM-dd')
+            : undefined,
+          paymentTypeIds: requestParams.paymentTypeIds,
+          ministries: requestParams.ministries,
         },
       })
 

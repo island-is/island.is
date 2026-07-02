@@ -7,7 +7,7 @@ import { MOCK_SUPPLIERS } from '../../mocks/SUPPLIERS'
 import { MOCK_INVOICE_GROUPS } from '../../mocks/INVOICE_GROUPS'
 import { MOCK_INVOICE_PAYMENT_TYPES } from '../../mocks/INVOICE_PAYMENT_TYPES'
 import { DebtorsInput } from '../../dtos/getDebtors.input'
-import { InvoicesInput } from '../../dtos/getInvoices.input'
+import { InvoiceGroupInput } from '../../dtos/getInvoiceGroup.input'
 import { MinistriesInput } from '../../dtos/getMinistries.input'
 import { SuppliersInput } from '../../dtos/getSuppliers.input'
 import { Debtors } from '../../models/debtors.model'
@@ -26,7 +26,7 @@ export class MockInvoicesService implements IInvoicesService {
   }
 
   async getOpenInvoicesGroup(
-    _input?: InvoicesInput,
+    _input?: InvoiceGroupInput,
   ): Promise<InvoiceGroup | null> {
     return MOCK_INVOICE_GROUPS.data[0] ?? null
   }

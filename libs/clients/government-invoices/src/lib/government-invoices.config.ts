@@ -19,10 +19,7 @@ export const GovernmentInvoicesClientConfig = defineConfig<
         'ELFUR_BASE_IDS_URL',
         'https://identity-server.staging01.devland.is',
       ),
-      basePath: env.required(
-        'ELFUR_BASE_PATH',
-        'https://fjs-cdn-endpoint-elfur-test-hhesbzhxabbwbqen.a03.azurefd.net',
-      ),
+      basePath: 'http://localhost:5000',
       clientId: env.required(
         'ELFUR_CLIENT_ID',
         '@fjs.is/stafraent-island-api-elfur',

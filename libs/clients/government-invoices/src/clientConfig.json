@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Elfur API - Open Invoices",
-    "description": "<h2>Open Invoices</h2><p>Status: Available</p><h3>Authentication</h3>\n<ul>\n <li><strong>Authorization:</strong> <code>Bearer &lt;access_token&gt;</code> is required.</li>\n <li><strong>Required scopes:</strong> <code>@fjs.is/elfur_openinvoices_read</code></li>\n \n</ul>",
+    "description": "<h2>Open Invoices</h2><p>Status: Available</p><h3>Authentication</h3>\r\n<ul>\r\n <li><strong>Authorization:</strong> <code>Bearer &lt;access_token&gt;</code> is required.</li>\r\n <li><strong>Required scopes:</strong> <code>@fjs.is/elfur_openinvoices_read</code></li>\r\n \r\n</ul>",
     "version": "1.0"
   },
   "paths": {
@@ -88,7 +88,7 @@
       "get": {
         "tags": ["OpenInvoices"],
         "summary": "Returns a paginated list of debtors.",
-        "description": "\nUse the returned debtor legal IDs as filter values on the `/invoices` endpoint.",
+        "description": "\nUse the returned debtor `erpLegalEntityId` values as filter values on the `/invoices` endpoint.",
         "parameters": [
           {
             "name": "limit",
@@ -336,7 +336,10 @@
           {
             "name": "debtors",
             "in": "query",
-            "schema": { "type": "array", "items": { "type": "string" } }
+            "schema": {
+              "type": "array",
+              "items": { "type": "integer", "format": "int32" }
+            }
           },
           {
             "name": "ministries",
@@ -410,22 +413,48 @@
         "security": [{ "Bearer": [] }]
       }
     },
-    "/v1/openinvoices/invoices/{supplierLegalId}/{debtorLegalId}": {
+    "/v1/openinvoices/invoices/{supplierLegalId}/{erpLegalEntityId}": {
       "get": {
         "tags": ["OpenInvoices"],
-        "summary": "Returns a single invoice group for a specific supplier-customer pair with all invoices.",
+        "summary": "Returns a single invoice group for a specific supplier-debtor pair with all invoices.",
         "parameters": [
           {
             "name": "supplierLegalId",
             "in": "path",
+            "description": "Supplier legal ID (required).",
             "required": true,
             "schema": { "type": "string" }
           },
           {
-            "name": "debtorLegalId",
+            "name": "erpLegalEntityId",
             "in": "path",
+            "description": "Debtor ERP legal entity ID (required).",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Optional inclusive start date filter. Omit for the full unbounded history.",
+            "schema": { "type": "string", "format": "date" }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Optional inclusive end date filter. Omit for the full unbounded history.",
+            "schema": { "type": "string", "format": "date" }
+          },
+          {
+            "name": "paymentTypeIds",
+            "in": "query",
+            "description": "Optional payment type filter. Repeat for multiple values.",
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
+            "name": "ministries",
+            "in": "query",
+            "description": "Optional ministry filter. Repeat for multiple values.",
+            "schema": { "type": "array", "items": { "type": "string" } }
           }
         ],
         "responses": {
@@ -500,6 +529,11 @@
       "DebtorResponseDto": {
         "type": "object",
         "properties": {
+          "erpLegalEntityId": {
+            "type": "integer",
+            "description": "Gets or sets the ERP legal entity ID. Use this (not Elfur.Core.Domain.OpenInvoices.InvoiceEntityDto.LegalId) to filter\r\nor look up a debtor, since the legal ID may be hidden for confidential debtors.",
+            "format": "int32"
+          },
           "legalId": {
             "type": "string",
             "description": "Gets the invoice entity legal ID.",
@@ -569,7 +603,7 @@
             "description": "Gets or sets the GL Date.",
             "format": "date",
             "nullable": true,
-            "example": "2026-06-26"
+            "example": "2026-07-01"
           },
           "accountedAmount": {
             "type": "number",

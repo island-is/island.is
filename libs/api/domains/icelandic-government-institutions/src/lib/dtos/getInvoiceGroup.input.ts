@@ -1,5 +1,5 @@
-import { Field, InputType } from '@nestjs/graphql'
-import { IsDate, IsOptional, IsString } from 'class-validator'
+import { Field, InputType, Int } from '@nestjs/graphql'
+import { IsDate, IsInt, IsOptional, IsString } from 'class-validator'
 
 @InputType('IcelandicGovernmentInstitutionsInvoiceGroupInput')
 export class InvoiceGroupInput {
@@ -7,9 +7,9 @@ export class InvoiceGroupInput {
   @IsString()
   supplierLegalId!: string
 
-  @Field()
-  @IsString()
-  debtorLegalId!: string
+  @Field(() => Int)
+  @IsInt()
+  erpLegalEntityId!: number
 
   @Field({ nullable: true })
   @IsDate()
@@ -20,4 +20,12 @@ export class InvoiceGroupInput {
   @IsDate()
   @IsOptional()
   dateTo?: Date
+
+  @Field(() => [String], { nullable: true })
+  @IsOptional()
+  paymentTypeIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  @IsOptional()
+  ministries?: string[]
 }

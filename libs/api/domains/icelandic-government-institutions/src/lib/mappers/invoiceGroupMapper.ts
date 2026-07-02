@@ -5,14 +5,18 @@ import { isDefined } from '@island.is/shared/utils'
 
 export const mapInvoiceGroup = (data: InvoiceGroupDto): InvoiceGroup => {
   return {
-    id: `${data.debtor.legalId}-${data.supplier.legalId}`,
+    id: `${data.debtor.erpLegalEntityId}-${data.supplier.legalId}`,
     supplier: {
       id: data.supplier.legalId,
       name: data.supplier.name,
       isConfidential: data.supplier.isConfidential,
       isPrivateProxy: data.supplier.isPrivateProxy,
     },
-    debtor: { id: data.debtor.legalId, name: data.debtor.name },
+    debtor: {
+      erpLegalEntityId: data.debtor.erpLegalEntityId,
+      legalId: data.debtor.legalId,
+      name: data.debtor.name,
+    },
     totalSum: data.paymentsSum,
     totalCount: data.paymentsCount,
     invoices: data.invoices?.map(mapInvoice).filter(isDefined),

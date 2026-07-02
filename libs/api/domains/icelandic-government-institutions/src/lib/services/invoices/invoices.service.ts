@@ -1,7 +1,7 @@
 import { GovernmentInvoicesClientService } from '@island.is/clients/government-invoices'
 import { Injectable } from '@nestjs/common'
 import { type IInvoicesService } from './invoices.service.interface'
-import { InvoicesInput } from '../../dtos/getInvoices.input'
+import { InvoiceGroupInput } from '../../dtos/getInvoiceGroup.input'
 import { DebtorsInput } from '../../dtos/getDebtors.input'
 import { MinistriesInput } from '../../dtos/getMinistries.input'
 import { SuppliersInput } from '../../dtos/getSuppliers.input'
@@ -24,7 +24,7 @@ export class InvoicesService implements IInvoicesService {
   constructor(private govInvoicesService: GovernmentInvoicesClientService) {}
 
   async getOpenInvoicesGroup(
-    input: InvoicesInput,
+    input: InvoiceGroupInput,
   ): Promise<InvoiceGroup | null> {
     const data = await this.govInvoicesService.getOpenInvoiceGroup(input)
 

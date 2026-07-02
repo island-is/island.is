@@ -12,7 +12,7 @@ import * as styles from './Overview.css'
 
 interface Props {
   supplierLegalId: string
-  debtorLegalId: string
+  erpLegalEntityId: number
   total: number
   dateFrom?: Date
   dateTo?: Date
@@ -20,7 +20,7 @@ interface Props {
 
 export const NestedLines = ({
   supplierLegalId,
-  debtorLegalId,
+  erpLegalEntityId,
   dateFrom,
   dateTo,
   total,
@@ -33,7 +33,7 @@ export const NestedLines = ({
       variables: {
         input: {
           supplierLegalId,
-          debtorLegalId,
+          erpLegalEntityId,
           dateFrom: dateFrom,
           dateTo: dateTo,
         },

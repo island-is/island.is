@@ -4,7 +4,8 @@ import { Debtor } from '../models/debtor.model'
 
 export const mapDebtors = (data: DebtorsDto): Debtors => {
   const debtors: Debtor[] = data.debtors.map((debtor) => ({
-    id: debtor.legalId,
+    erpLegalEntityId: debtor.erpLegalEntityId,
+    legalId: debtor.legalId,
     name: debtor.name,
   }))
 

@@ -6,7 +6,8 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES_FILTERS = gql`
       debtors {
         totalCount
         data {
-          id
+          erpLegalEntityId
+          legalId
           name
         }
         pageInfo {
@@ -65,7 +66,8 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUP = gql`
         isPrivateProxy
       }
       debtor {
-        id
+        erpLegalEntityId
+        legalId
         name
       }
       invoices {
@@ -102,7 +104,8 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS = gql`
           isPrivateProxy
         }
         debtor {
-          id
+          erpLegalEntityId
+          legalId
           name
         }
         totalSum

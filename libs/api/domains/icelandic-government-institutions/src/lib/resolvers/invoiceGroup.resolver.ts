@@ -29,7 +29,7 @@ export class InvoiceGroupResolver {
     if (!group) return null
 
     return {
-      id: `${group.debtor.id}-${group.supplier.id}`,
+      id: `${group.debtor.erpLegalEntityId}-${group.supplier.id}`,
       supplier: group.supplier,
       debtor: group.debtor,
       totalCount: group.totalCount,

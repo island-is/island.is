@@ -1,7 +1,7 @@
 import { DebtorsInput } from '../../dtos/getDebtors.input'
+import { InvoiceGroupInput } from '../../dtos/getInvoiceGroup.input'
 import { InvoiceGroupsInput } from '../../dtos/getInvoiceGroups.input'
 import { InvoicePaymentTypesInput } from '../../dtos/getInvoicePaymentTypes.input'
-import { InvoicesInput } from '../../dtos/getInvoices.input'
 import { MinistriesInput } from '../../dtos/getMinistries.input'
 import { SuppliersInput } from '../../dtos/getSuppliers.input'
 import { Debtors } from '../../models/debtors.model'
@@ -12,7 +12,7 @@ import { Ministries } from '../../models/ministries.model'
 import { Suppliers } from '../../models/suppliers.model'
 
 export interface IInvoicesService {
-  getOpenInvoicesGroup(input?: InvoicesInput): Promise<InvoiceGroup | null>
+  getOpenInvoicesGroup(input?: InvoiceGroupInput): Promise<InvoiceGroup | null>
   getOpenInvoiceGroups(
     input?: InvoiceGroupsInput,
   ): Promise<InvoiceGroupCollection | null>

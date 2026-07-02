@@ -44,6 +44,9 @@ import { OverviewTable } from './OverviewTable'
 
 const PAGE_SIZE = 12
 
+const toDebtorIds = (debtors?: string[] | null) =>
+  debtors?.map(Number).filter((id): id is number => Number.isInteger(id))
+
 const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   locale,
   filters,
@@ -133,7 +136,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     getInvoiceGroups({
       variables: {
         input: {
-          debtors,
+          debtors: toDebtorIds(debtors),
           suppliers,
           paymentTypeIds: invoicePaymentTypes,
           dateFrom: dateRangeStart ?? initialDates.dateFrom,
@@ -178,7 +181,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     getInvoiceGroups({
       variables: {
         input: {
-          debtors,
+          debtors: toDebtorIds(debtors),
           suppliers,
           paymentTypeIds: invoicePaymentTypes,
           dateFrom: dateRangeStart ?? initialDates.dateFrom,
@@ -199,29 +202,37 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   }
 
   const hitsMessage = useMemo(() => {
-    if (!totalHits) {
-      return
-    }
     const dateRangeStartArg = format(dateRangeStart, dateFormat.is)
     const dateRangeEndArg = format(dateRangeEnd, dateFormat.is)
     const totalPaymentsSum =
       invoiceGroupsData?.icelandicGovernmentInstitutionsInvoiceGroups
         ?.totalPaymentsSum ?? initialInvoiceGroups?.totalPaymentsSum
-    const sumArg = totalPaymentsSum ? formatCurrency(totalPaymentsSum) : 0
 
     if (totalHits === 1) {
-      return formatMessage(m.search.resultFound, {
-        dateRangeStart: dateRangeStartArg,
-        dateRangeEnd: dateRangeEndArg,
-        sum: sumArg,
-      })
+      return totalPaymentsSum
+        ? formatMessage(m.search.resultFound, {
+            dateRangeStart: dateRangeStartArg,
+            dateRangeEnd: dateRangeEndArg,
+            sum: formatCurrency(totalPaymentsSum),
+          })
+        : formatMessage(m.search.resultFoundNoSum, {
+            dateRangeStart: dateRangeStartArg,
+            dateRangeEnd: dateRangeEndArg,
+          })
     }
-    return formatMessage(m.search.resultsFound, {
-      records: totalHits,
-      dateRangeStart: dateRangeStartArg,
-      dateRangeEnd: dateRangeEndArg,
-      sum: sumArg,
-    })
+
+    return totalPaymentsSum
+      ? formatMessage(m.search.resultsFound, {
+          records: totalHits,
+          dateRangeStart: dateRangeStartArg,
+          dateRangeEnd: dateRangeEndArg,
+          sum: formatCurrency(totalPaymentsSum),
+        })
+      : formatMessage(m.search.resultsFoundNoSum, {
+          records: totalHits,
+          dateRangeStart: dateRangeStartArg,
+          dateRangeEnd: dateRangeEndArg,
+        })
   }, [
     dateRangeEnd,
     dateRangeStart,
@@ -451,7 +462,7 @@ OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
             icelandicGovernmentInstitutionsInvoicesFilters.debtors?.data?.map(
               (debtor) => ({
                 name: debtor.name,
-                value: debtor.id,
+                value: String(debtor.erpLegalEntityId),
               }),
             ) ?? [],
           invoicePaymentTypes:
@@ -507,7 +518,7 @@ OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
       input: {
         dateFrom: dateFromInput,
         dateTo: dateToInput,
-        debtors: debtorsInput,
+        debtors: toDebtorIds(debtorsInput),
         suppliers: suppliersInput,
         paymentTypeIds: invoicePaymentTypesInput,
         limit: PAGE_SIZE,

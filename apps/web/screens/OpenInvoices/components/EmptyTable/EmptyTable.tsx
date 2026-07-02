@@ -26,6 +26,7 @@ export const EmptyTable: React.FC<Props> = ({
 
   return (
     <Box className={styles.emptyTable} background={background}>
+      <Box className={styles.divider} />
       <Box className={styles.emptyTableText}>
         {loading && <LoadingDots />}
         {!loading && message && (
@@ -34,6 +35,7 @@ export const EmptyTable: React.FC<Props> = ({
           </Text>
         )}
       </Box>
+      <Box className={styles.divider} />
     </Box>
   )
 }

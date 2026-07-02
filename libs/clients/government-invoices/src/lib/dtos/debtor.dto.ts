@@ -1,17 +1,19 @@
 import { DebtorResponseDto } from '../../../gen/fetch'
 
 export interface DebtorDto {
-  legalId: string
+  erpLegalEntityId: number
+  legalId?: string
   name: string
 }
 
 export const mapDebtorDto = (debtor: DebtorResponseDto): DebtorDto | null => {
-  if (!debtor.legalId || !debtor.name) {
+  if (debtor.erpLegalEntityId === undefined || !debtor.name) {
     return null
   }
 
   return {
-    legalId: debtor.legalId,
+    erpLegalEntityId: debtor.erpLegalEntityId,
+    legalId: debtor.legalId ?? undefined,
     name: debtor.name,
   }
 }

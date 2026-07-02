@@ -20,9 +20,10 @@ export class InvoiceGroupsInput {
   @IsOptional()
   suppliers?: string[]
 
-  @Field(() => [String], { nullable: true })
+  @Field(() => [Int], { nullable: true })
   @IsOptional()
-  debtors?: string[]
+  @IsInt({ each: true })
+  debtors?: number[]
 
   @Field(() => [String], { nullable: true })
   @IsOptional()
