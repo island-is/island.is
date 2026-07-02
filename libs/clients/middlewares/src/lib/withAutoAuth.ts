@@ -75,11 +75,6 @@ export interface AutoAuthOptions {
   tokenEndpoint?: string
 
   audience?: string
-
-  /**
-   * Additional headers to include in the token request. Useful when the token endpoint is behind a WAF that requires specific headers.
-   */
-  tokenRequestHeaders?: Record<string, string>
 }
 
 export interface AuthMiddlewareOptions {
@@ -215,7 +210,6 @@ export const withAutoAuth = ({
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        ...options.tokenRequestHeaders,
       },
       body: params,
       auth,
