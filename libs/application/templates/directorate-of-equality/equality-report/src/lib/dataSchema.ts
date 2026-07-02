@@ -14,34 +14,66 @@ const generalInformation = z.object({
 })
 
 const chiefExecutive = z.object({
-  name: z.string().refine((v) => v && v.length > 0, { params: messages.errors.required }),
-  email: z.string().refine((v) => EMAIL_REGEX.test(v), { params: messages.errors.invalidEmail }),
-  gender: z.string().refine((v) => v && v.length > 0, { params: messages.errors.required }),
+  name: z
+    .string()
+    .refine((v) => v && v.length > 0, { params: messages.errors.required }),
+  email: z
+    .string()
+    .refine((v) => EMAIL_REGEX.test(v), {
+      params: messages.errors.invalidEmail,
+    }),
+  gender: z
+    .string()
+    .refine((v) => v && v.length > 0, { params: messages.errors.required }),
 })
 
 const contactPerson = z.object({
-  name: z.string().refine((v) => v && v.length > 0, { params: messages.errors.required }),
-  email: z.string().refine((v) => EMAIL_REGEX.test(v), { params: messages.errors.invalidEmail }),
-  phone: z.string().refine((v) => v && v.length > 0, { params: messages.errors.required }),
+  name: z
+    .string()
+    .refine((v) => v && v.length > 0, { params: messages.errors.required }),
+  email: z
+    .string()
+    .refine((v) => EMAIL_REGEX.test(v), {
+      params: messages.errors.invalidEmail,
+    }),
+  phone: z
+    .string()
+    .refine((v) => v && v.length > 0, { params: messages.errors.required }),
 })
 
 const employeeCount = z.object({
-  women: z.string().refine((v) => v !== '' && Number(v) >= 0, { params: messages.errors.invalidNonNegativeNumber }),
-  men: z.string().refine((v) => v !== '' && Number(v) >= 0, { params: messages.errors.invalidNonNegativeNumber }),
-  nonBinary: z.string().refine((v) => v !== '' && Number(v) >= 0, { params: messages.errors.invalidNonNegativeNumber }),
+  women: z
+    .string()
+    .refine((v) => v !== '' && Number(v) >= 0, {
+      params: messages.errors.invalidNonNegativeNumber,
+    }),
+  men: z
+    .string()
+    .refine((v) => v !== '' && Number(v) >= 0, {
+      params: messages.errors.invalidNonNegativeNumber,
+    }),
+  nonBinary: z
+    .string()
+    .refine((v) => v !== '' && Number(v) >= 0, {
+      params: messages.errors.invalidNonNegativeNumber,
+    }),
 })
 
 const subsidiaries = z.object({
-  includesSubsidiaries: z.enum(['yes', 'no']).refine((v) => !!v, { params: messages.errors.required }),
+  includesSubsidiaries: z
+    .enum(['yes', 'no'])
+    .refine((v) => !!v, { params: messages.errors.required }),
   list: z.optional(
     z
       .array(
         z.object({
           nationalIdWithName: z.object({
             name: z.string().min(1),
-            nationalId: z.string().refine((v) => kennitala.isValid(v) && kennitala.isCompany(v), {
-              params: messages.errors.required,
-            }),
+            nationalId: z
+              .string()
+              .refine((v) => kennitala.isValid(v) && kennitala.isCompany(v), {
+                params: messages.errors.required,
+              }),
           }),
         }),
       )
@@ -60,12 +92,14 @@ const subsidiaries = z.object({
           }
         })
       }),
-  )
+  ),
 })
 
 const decodeEditorHtml = (base64: string) => {
   try {
-    return atob(base64).replace(/<[^>]*>/g, '').trim()
+    return atob(base64)
+      .replace(/<[^>]*>/g, '')
+      .trim()
   } catch {
     return ''
   }

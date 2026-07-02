@@ -131,14 +131,16 @@ export const aboutTheCompanySection = buildSection({
             buildTextField({
               id: 'chiefExecutive.name',
               title: messages.aboutTheCompany.chiefExecutive.name,
-              placeholder: messages.aboutTheCompany.chiefExecutive.namePlaceholder,
+              placeholder:
+                messages.aboutTheCompany.chiefExecutive.namePlaceholder,
               width: 'full',
               required: true,
             }),
             buildTextField({
               id: 'chiefExecutive.email',
               title: messages.aboutTheCompany.chiefExecutive.email,
-              placeholder: messages.aboutTheCompany.chiefExecutive.emailPlaceholder,
+              placeholder:
+                messages.aboutTheCompany.chiefExecutive.emailPlaceholder,
               width: 'full',
               variant: 'email',
               required: true,
@@ -159,7 +161,8 @@ export const aboutTheCompanySection = buildSection({
                 },
                 {
                   value: 'NON_BINARY',
-                  label: messages.aboutTheCompany.chiefExecutive.genderNonBinary,
+                  label:
+                    messages.aboutTheCompany.chiefExecutive.genderNonBinary,
                 },
               ],
             }),
@@ -185,7 +188,8 @@ export const aboutTheCompanySection = buildSection({
             buildTextField({
               id: 'contactPerson.name',
               title: messages.aboutTheCompany.contactPerson.name,
-              placeholder: messages.aboutTheCompany.contactPerson.namePlaceholder,
+              placeholder:
+                messages.aboutTheCompany.contactPerson.namePlaceholder,
               width: 'full',
               required: true,
               defaultValue: (application: Application) =>
@@ -194,21 +198,29 @@ export const aboutTheCompanySection = buildSection({
             buildTextField({
               id: 'contactPerson.email',
               title: messages.aboutTheCompany.contactPerson.email,
-              placeholder: messages.aboutTheCompany.contactPerson.emailPlaceholder,
+              placeholder:
+                messages.aboutTheCompany.contactPerson.emailPlaceholder,
               width: 'full',
               variant: 'email',
               required: true,
               defaultValue: (application: Application) =>
-                getValueViaPath(application.externalData, 'userProfile.data.email'),
+                getValueViaPath(
+                  application.externalData,
+                  'userProfile.data.email',
+                ),
             }),
             buildPhoneField({
               id: 'contactPerson.phone',
               title: messages.aboutTheCompany.contactPerson.phone,
-              placeholder: messages.aboutTheCompany.contactPerson.phonePlaceholder,
+              placeholder:
+                messages.aboutTheCompany.contactPerson.phonePlaceholder,
               width: 'half',
               required: true,
               defaultValue: (application: Application) =>
-                getValueViaPath(application.externalData, 'userProfile.data.mobilePhoneNumber'),
+                getValueViaPath(
+                  application.externalData,
+                  'userProfile.data.mobilePhoneNumber',
+                ),
             }),
           ],
         }),
@@ -259,7 +271,8 @@ export const aboutTheCompanySection = buildSection({
           children: [
             buildDescriptionField({
               id: 'subsidiaries.includesSubsidiariesTitle',
-              title: messages.aboutTheCompany.subsidiaries.includesSubsidiariesTitle,
+              title:
+                messages.aboutTheCompany.subsidiaries.includesSubsidiariesTitle,
               description: '',
               titleVariant: 'h4',
             }),
@@ -270,7 +283,10 @@ export const aboutTheCompanySection = buildSection({
               width: 'half',
               required: true,
               options: [
-                { value: YES, label: messages.aboutTheCompany.subsidiaries.yes },
+                {
+                  value: YES,
+                  label: messages.aboutTheCompany.subsidiaries.yes,
+                },
                 { value: NO, label: messages.aboutTheCompany.subsidiaries.no },
               ],
             }),
@@ -279,17 +295,23 @@ export const aboutTheCompanySection = buildSection({
               title: '',
               marginTop: 0,
               formTitle: messages.aboutTheCompany.subsidiaries.tableFormTitle,
-              addItemButtonText: messages.aboutTheCompany.subsidiaries.tableAddButton,
-              saveItemButtonText: messages.aboutTheCompany.subsidiaries.tableSaveButton,
-              removeButtonTooltipText: messages.aboutTheCompany.subsidiaries.tableRemoveButton,
-              editButtonTooltipText: messages.aboutTheCompany.subsidiaries.tableEditButton,
+              addItemButtonText:
+                messages.aboutTheCompany.subsidiaries.tableAddButton,
+              saveItemButtonText:
+                messages.aboutTheCompany.subsidiaries.tableSaveButton,
+              removeButtonTooltipText:
+                messages.aboutTheCompany.subsidiaries.tableRemoveButton,
+              editButtonTooltipText:
+                messages.aboutTheCompany.subsidiaries.tableEditButton,
               editField: true,
               fields: {
                 nationalIdWithName: {
                   component: 'nationalIdWithName',
                   searchCompanies: true,
-                  customNationalIdLabel: messages.aboutTheCompany.subsidiaries.tableHeaderNationalId,
-                  customNameLabel: messages.aboutTheCompany.subsidiaries.tableHeaderName,
+                  customNationalIdLabel:
+                    messages.aboutTheCompany.subsidiaries.tableHeaderNationalId,
+                  customNameLabel:
+                    messages.aboutTheCompany.subsidiaries.tableHeaderName,
                 },
               },
               table: {
@@ -300,7 +322,10 @@ export const aboutTheCompanySection = buildSection({
                 rows: ['name', 'nationalId'],
               },
               condition: (answers) =>
-                getValueViaPath(answers, 'subsidiaries.includesSubsidiaries') === YES,
+                getValueViaPath(
+                  answers,
+                  'subsidiaries.includesSubsidiaries',
+                ) === YES,
             }),
           ],
         }),

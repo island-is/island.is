@@ -14,7 +14,14 @@ import {
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { isCompany } from 'kennitala'
-import { ActiveEqualityReportApi, CompanyRegistryApi, DoeCompanyApi, EqualityReportTemplateDocxApi, EqualityReportTemplateHtmlApi, PreviousEqualityReportContentApi } from '../dataProviders'
+import {
+  ActiveEqualityReportApi,
+  CompanyRegistryApi,
+  DoeCompanyApi,
+  EqualityReportTemplateDocxApi,
+  EqualityReportTemplateHtmlApi,
+  PreviousEqualityReportContentApi,
+} from '../dataProviders'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
@@ -61,7 +68,13 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [UserProfileApi, IdentityApi, CompanyRegistryApi, ActiveEqualityReportApi, DoeCompanyApi],
+              api: [
+                UserProfileApi,
+                IdentityApi,
+                CompanyRegistryApi,
+                ActiveEqualityReportApi,
+                DoeCompanyApi,
+              ],
               delete: true,
             },
             {
@@ -98,7 +111,11 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [EqualityReportTemplateHtmlApi, EqualityReportTemplateDocxApi, PreviousEqualityReportContentApi],
+              api: [
+                EqualityReportTemplateHtmlApi,
+                EqualityReportTemplateDocxApi,
+                PreviousEqualityReportContentApi,
+              ],
               delete: true,
             },
           ],
@@ -138,7 +155,10 @@ const template: ApplicationTemplate<
     nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (isCompany(application.applicant) && nationalId === application.applicant) {
+    if (
+      isCompany(application.applicant) &&
+      nationalId === application.applicant
+    ) {
       return Roles.APPLICANT
     }
     return Roles.NOT_ALLOWED

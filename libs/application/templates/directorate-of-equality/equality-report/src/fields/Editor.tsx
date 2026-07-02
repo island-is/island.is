@@ -170,8 +170,7 @@ export const Editor = ({ application, errors }: FieldBaseProps) => {
     ''
 
   const defaultHtml =
-    editorHtml ??
-    (Buffer.from(base64, 'base64').toString('utf-8') as HTMLText)
+    editorHtml ?? (Buffer.from(base64, 'base64').toString('utf-8') as HTMLText)
 
   return (
     <>
