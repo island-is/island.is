@@ -33,6 +33,8 @@ on:
         value: ${{ jobs.install.outputs.MQ_GIT_BRANCH }}
       MQ_SHOULD_RUN_BUILD:
         value: ${{ jobs.install.outputs.MQ_SHOULD_RUN_BUILD}}
+      MQ_REUSED_DOCKER_DATA:
+        value: ${{ jobs.install.outputs.MQ_REUSED_DOCKER_DATA }}
       TEST_CHUNKS:
         value: ${{ jobs.install.outputs.TEST_CHUNKS }}
       E2E_CHUNKS:
@@ -91,7 +93,8 @@ jobs:
       TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
       E2E_CHUNKS: ${{ steps.e2e_projects.outputs.CHUNKS }}
       BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
-      DOCKER_CHUNKS: ${{ steps.docker_projects.outputs.BUILD_CHUNKS }}
+      DOCKER_CHUNKS: ${{ steps.release-docker-reuse.outputs.BUILD_CHUNKS || steps.docker_projects.outputs.BUILD_CHUNKS }}
+      MQ_REUSED_DOCKER_DATA: ${{ steps.release-docker-reuse.outputs.REUSED_DOCKER_DATA || '[]' }}
       E2E_BUILD_ID: ${{ steps.e2e_projects.outputs.E2E_BUILD_ID }}
       NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
@@ -274,6 +277,18 @@ jobs:
             echo "BUILD_CHUNKS=$(echo "$CHUNKS" | jq -cM '. | map("\(.|tostring)")')" >> "$GITHUB_OUTPUT"
             echo "CHUNKS='$CHUNKS'" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Reuse pre-release docker images
+        id: release-docker-reuse
+        if: ${{ inputs.run_merge_queue == true && startsWith(steps.get-branch.outputs.MAIN_BRANCH, 'release/') && steps.docker_projects.outputs.CHUNKS }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          RELEASE_BRANCH: ${{ steps.get-branch.outputs.MAIN_BRANCH }}
+          DOCKER_TAG: ${{ steps.prepare-merge-queue.outputs.DOCKER_TAG }}
+          DOCKER_CHUNKS: ${{ steps.docker_projects.outputs.CHUNKS }}
+        run: |
+          node scripts/ci/docker/reuse-release-images.mjs
 
       - name: License audit Node modules
         run: ./scripts/ci/20_license-audit.sh
