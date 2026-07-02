@@ -79,12 +79,17 @@ export const ZendeskChatPanel = ({
 
   useEffect(() => {
     const queryParam = new URLSearchParams(window.location.search).get('wa_lid')
-    if (queryParam === 't10') openChat()
+    if (queryParam === 't10') {
+      setTimeout(() => {
+        openChat()
+      }, 100)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(
     () => () => {
+      console.log('cleanup')
       window.zE?.('messenger', 'hide')
       document.getElementById(SCRIPT_ID)?.remove()
       delete window.zEACLoaded
