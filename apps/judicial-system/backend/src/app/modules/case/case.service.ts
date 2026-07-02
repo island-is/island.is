@@ -50,6 +50,7 @@ import {
   dateTypes,
   DefendantEventType,
   defendantEventTypes,
+  DefendantNotificationType,
   EventType,
   eventTypes,
   IndictmentCaseNotificationType,
@@ -2183,6 +2184,30 @@ export class CaseService {
       user,
       transaction,
     )
+
+    // When an indictment is concluded for some defendants (dismissal/
+    // cancellation) the case state does not change, so notify each newly
+    // concluded defendant's defender, the civil claimant spokespersons and the
+    // prosecutor that conclusions were recorded. One notification is enqueued
+    // per newly concluded defendant so previously concluded defendants are not
+    // re-notified on sequential partial completions.
+    if (
+      isIndictmentCase(theCase.type) &&
+      defendantEventLogDecisions &&
+      defendantEventLogDecisions.length > 0
+    ) {
+      defendantEventLogDecisions.forEach(({ defendantId }) => {
+        addMessagesToQueue({
+          type: MessageType.DEFENDANT_NOTIFICATION,
+          caseId: updatedCase.id,
+          elementId: defendantId,
+          body: {
+            type: DefendantNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
+          },
+        })
+      })
+    }
+
     this.addMessagesForUpdatedCaseToQueue(theCase, updatedCase, user)
 
     if (isReceivingCase) {
