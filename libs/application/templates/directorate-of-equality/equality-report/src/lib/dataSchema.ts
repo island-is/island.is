@@ -14,34 +14,62 @@ const generalInformation = z.object({
 })
 
 const chiefExecutive = z.object({
-  name: z.string().refine((v) => v && v.length > 0, { params: messages.errors.required }),
-  email: z.string().refine((v) => EMAIL_REGEX.test(v), { params: messages.errors.invalidEmail }),
-  gender: z.string().refine((v) => v && v.length > 0, { params: messages.errors.required }),
+  name: z
+    .string()
+    .refine((v) => v && v.length > 0, { params: messages.errors.required }),
+  email: z
+    .string()
+    .refine((v) => v && v.length > 0, { params: messages.errors.required })
+    .refine((v) => EMAIL_REGEX.test(v), {
+      params: messages.errors.invalidEmail,
+    }),
+  gender: z
+    .string()
+    .refine((v) => v && v.length > 0, { params: messages.errors.required }),
 })
 
 const contactPerson = z.object({
-  name: z.string().refine((v) => v && v.length > 0, { params: messages.errors.required }),
-  email: z.string().refine((v) => EMAIL_REGEX.test(v), { params: messages.errors.invalidEmail }),
-  phone: z.string().refine((v) => v && v.length > 0, { params: messages.errors.required }),
+  name: z
+    .string()
+    .refine((v) => v && v.length > 0, { params: messages.errors.required }),
+  email: z
+    .string()
+    .refine((v) => v && v.length > 0, { params: messages.errors.required })
+    .refine((v) => EMAIL_REGEX.test(v), {
+      params: messages.errors.invalidEmail,
+    }),
+  phone: z
+    .string()
+    .refine((v) => v && v.length > 0, { params: messages.errors.required }),
 })
 
 const employeeCount = z.object({
-  women: z.string().refine((v) => v !== '' && Number(v) >= 0, { params: messages.errors.invalidNonNegativeNumber }),
-  men: z.string().refine((v) => v !== '' && Number(v) >= 0, { params: messages.errors.invalidNonNegativeNumber }),
-  nonBinary: z.string().refine((v) => v !== '' && Number(v) >= 0, { params: messages.errors.invalidNonNegativeNumber }),
+  women: z.string().refine((v) => v !== '' && Number(v) >= 0, {
+    params: messages.errors.invalidNonNegativeNumber,
+  }),
+  men: z.string().refine((v) => v !== '' && Number(v) >= 0, {
+    params: messages.errors.invalidNonNegativeNumber,
+  }),
+  nonBinary: z.string().refine((v) => v !== '' && Number(v) >= 0, {
+    params: messages.errors.invalidNonNegativeNumber,
+  }),
 })
 
 const subsidiaries = z.object({
-  includesSubsidiaries: z.enum(['yes', 'no']).refine((v) => !!v, { params: messages.errors.required }),
+  includesSubsidiaries: z
+    .enum(['yes', 'no'])
+    .refine((v) => !!v, { params: messages.errors.required }),
   list: z.optional(
     z
       .array(
         z.object({
           nationalIdWithName: z.object({
             name: z.string().min(1),
-            nationalId: z.string().refine((v) => kennitala.isValid(v) && kennitala.isCompany(v), {
-              params: messages.errors.required,
-            }),
+            nationalId: z
+              .string()
+              .refine((v) => kennitala.isValid(v) && kennitala.isCompany(v), {
+                params: messages.errors.invalidCompanyNationalId,
+              }),
           }),
         }),
       )
@@ -60,12 +88,33 @@ const subsidiaries = z.object({
           }
         })
       }),
-  )
+  ),
 })
+
+const HTML_NAMED_ENTITIES: Record<string, string> = {
+  nbsp: ' ',
+  amp: '&',
+  lt: '<',
+  gt: '>',
+  quot: '"',
+  apos: "'",
+}
+
+const decodeHtmlEntities = (value: string) =>
+  value.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (match, entity: string) => {
+    if (entity[0] === '#') {
+      const codePoint =
+        entity[1].toLowerCase() === 'x'
+          ? parseInt(entity.slice(2), 16)
+          : parseInt(entity.slice(1), 10)
+      return Number.isNaN(codePoint) ? match : String.fromCodePoint(codePoint)
+    }
+    return HTML_NAMED_ENTITIES[entity.toLowerCase()] ?? match
+  })
 
 const decodeEditorHtml = (base64: string) => {
   try {
-    return atob(base64).replace(/<[^>]*>/g, '').trim()
+    return decodeHtmlEntities(atob(base64).replace(/<[^>]*>/g, '')).trim()
   } catch {
     return ''
   }
@@ -78,15 +127,13 @@ const information = z.object({
     .refine((v) => v == null || v.includes('agree'), {
       params: messages.errors.required,
     }),
-  customField: z
-    .string()
-    .refine((v) => decodeEditorHtml(v).length > 0, {
-      params: messages.errors.required,
-    })
-    .optional(),
 })
 
-const goalsAndActions = z.object({})
+const goalsAndActions = z.object({
+  customField: z.string().refine((v) => decodeEditorHtml(v).length > 0, {
+    params: messages.errors.required,
+  }),
+})
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((value) => value === true, {

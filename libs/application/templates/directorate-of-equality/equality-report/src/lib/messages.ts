@@ -28,6 +28,10 @@ export const messages = {
       id: 'equalityReport.application:errors.duplicateSubsidiary',
       defaultMessage: 'Þetta dótturfélag er þegar á listanum',
     },
+    invalidCompanyNationalId: {
+      id: 'equalityReport.application:errors.invalidCompanyNationalId',
+      defaultMessage: 'Kennitala er ekki gild kennitala fyrirtækis',
+    },
   }),
 
   general: defineMessages({
@@ -37,7 +41,7 @@ export const messages = {
     },
     institution: {
       id: 'equalityReport.application:general.institution',
-      defaultMessage: 'Dómsmálaráðuneytið',
+      defaultMessage: 'Jafnréttisstofa',
     },
   }),
 
@@ -249,7 +253,7 @@ export const messages = {
       },
       genderNonBinary: {
         id: 'equalityReport.application:aboutTheCompany.chiefExecutive.genderNonBinary',
-        defaultMessage: 'Hlutlægt',
+        defaultMessage: 'Hlutlæg skráning kyns í þjóðskrá',
       },
     }),
     contactPerson: defineMessages({
@@ -550,6 +554,10 @@ export const messages = {
     noSubsidiaries: {
       id: 'equalityReport.application:overview.noSubsidiaries',
       defaultMessage: 'Nei',
+    },
+    yesSubsidiaries: {
+      id: 'equalityReport.application:overview.yesSubsidiaries',
+      defaultMessage: 'Já',
     },
   }),
 

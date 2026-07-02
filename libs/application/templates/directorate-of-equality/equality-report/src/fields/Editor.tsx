@@ -28,12 +28,12 @@ export const Editor = ({ application, errors }: FieldBaseProps) => {
 
   const handleChange = (val: HTMLText) => {
     const base64 = Buffer.from(val).toString('base64')
-    setValue('information.customField', base64)
+    setValue('goalsAndActions.customField', base64)
   }
 
   const handleBlur = (val: HTMLText) => {
     const base64 = Buffer.from(val).toString('base64')
-    setValue('information.customField', base64, { shouldValidate: true })
+    setValue('goalsAndActions.customField', base64, { shouldValidate: true })
   }
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,8 +65,8 @@ export const Editor = ({ application, errors }: FieldBaseProps) => {
       }
 
       const base64 = Buffer.from(html).toString('base64')
-      setValue('information.customField', base64)
-      clearErrors('information.customField')
+      setValue('goalsAndActions.customField', base64)
+      clearErrors('goalsAndActions.customField')
       setEditorHtml(html as HTMLText)
       setEditorKey((k) => k + 1)
     } catch {
@@ -97,8 +97,8 @@ export const Editor = ({ application, errors }: FieldBaseProps) => {
 
       if (typeof html === 'string') {
         const base64 = Buffer.from(html).toString('base64')
-        setValue('information.customField', base64)
-        clearErrors('information.customField')
+        setValue('goalsAndActions.customField', base64)
+        clearErrors('goalsAndActions.customField')
         setEditorHtml(html as HTMLText)
         setEditorKey((k) => k + 1)
       } else {
@@ -166,7 +166,7 @@ export const Editor = ({ application, errors }: FieldBaseProps) => {
   }
 
   const base64 =
-    getValueViaPath<string>(application.answers, 'information.customField') ??
+    getValueViaPath<string>(application.answers, 'goalsAndActions.customField') ??
     ''
 
   const defaultHtml =
@@ -185,7 +185,7 @@ export const Editor = ({ application, errors }: FieldBaseProps) => {
       <HTMLEditor
         key={editorKey}
         title={formatMessage(messages.equalityReport.information.editorTitle)}
-        error={errors && getErrorViaPath(errors, 'information.customField')}
+        error={errors && getErrorViaPath(errors, 'goalsAndActions.customField')}
         value={defaultHtml}
         onChange={handleChange}
         onBlur={handleBlur}

@@ -442,7 +442,7 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
     tr:not(:first-child) > td
     `,
     {
-      borderTop: '0 !imporant', // Override TinyMCE
+      borderTop: '0 !important', // Override TinyMCE
     },
   )
   global(
@@ -458,7 +458,7 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
   global(
     `
     .layout > * > * > th,
-    .layout > * > * > td,
+    .layout > * > * > td
     `,
     {
       border: `2px dashed ${border.color.standard} !important`, // Override TinyMCE
@@ -726,7 +726,7 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
     `
     .footnote,
     .footnote-reference,
-    .footnote__marker,
+    .footnote__marker
     `,
     { position: 'relative' },
   )

@@ -97,7 +97,7 @@ export const equalityReportSection = buildSection({
               description: '',
             }),
             buildCustomField({
-              id: 'information.customField',
+              id: 'goalsAndActions.customField',
               title: '',
               component: 'Editor',
             }),

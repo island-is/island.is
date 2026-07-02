@@ -78,16 +78,16 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     )
     if (!hasActiveReport) return null
 
-    const reportId = getValueViaPath<string>(
+    const providerId = getValueViaPath<string>(
       application.externalData,
-      'activeEqualityReport.data.id',
+      'doeCompany.data.id',
     )
-    if (!reportId) return null
+    if (!providerId) return null
 
     try {
       const report = await this.directorateOfEqualityService.getReport(
         auth,
-        reportId,
+        providerId,
       )
       return { equalityReportContent: report.equalityReportContent ?? '' }
     } catch {

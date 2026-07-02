@@ -1609,8 +1609,7 @@
       ],
       "my-pages": [
         "libs/api/domains/my-pages/src/index.ts"
-      ],
-
+      ]
     },
     "resolveJsonModule": true
   }
