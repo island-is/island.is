@@ -57,6 +57,7 @@ export const HearingArrangements = () => {
   const {
     setAndSendCaseToServer,
     sendNotification,
+    isUpdatingCase,
     isSendingNotification,
     sendNotificationError,
   } = useCase()
@@ -135,6 +136,10 @@ export const HearingArrangements = () => {
     courtDate,
   )
 
+  const isModalConfirming = modalButtonLoading === ModalButtonLoading.PRIMARY
+  const isModalLoading =
+    isModalConfirming && (isUpdatingCase || isSendingNotification)
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -187,6 +192,7 @@ export const HearingArrangements = () => {
       {navigateTo !== undefined && (
         <Modal
           title="Viltu staðfesta fyrirtökutíma?"
+          loading={isModalConfirming}
           text={
             courtDateHasChanged
               ? 'Fyrirtökutíma hefur verið breytt. Tilkynning verður send á sækjanda, fangelsi og verjanda hafi verjandi verið skráður.'
@@ -197,7 +203,12 @@ export const HearingArrangements = () => {
             onClick: async () => {
               setModalButtonLoading(ModalButtonLoading.PRIMARY)
 
-              await sendCourtDateToServer()
+              const courtDateSaved = await sendCourtDateToServer()
+
+              if (!courtDateSaved) {
+                setModalButtonLoading(undefined)
+                return
+              }
 
               const notificationSent = await sendNotification(
                 workingCase.id,
@@ -206,14 +217,15 @@ export const HearingArrangements = () => {
 
               if (notificationSent) {
                 router.push(`${navigateTo}/${workingCase.id}`)
+              } else {
+                setModalButtonLoading(undefined)
               }
             },
-            isLoading:
-              isSendingNotification &&
-              modalButtonLoading === ModalButtonLoading.PRIMARY,
+            isLoading: isModalLoading,
           }}
           secondaryButton={{
             text: 'Nei, staðfesta seinna',
+            isDisabled: isModalConfirming,
             onClick: () => {
               router.push(`${navigateTo}/${workingCase.id}`)
             },

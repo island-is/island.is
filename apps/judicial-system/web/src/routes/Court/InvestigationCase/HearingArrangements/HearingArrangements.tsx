@@ -66,6 +66,7 @@ const HearingArrangements = () => {
   const {
     setAndSendCaseToServer,
     sendNotification,
+    isUpdatingCase,
     isSendingNotification,
     sendNotificationError,
   } = useCase()
@@ -137,6 +138,10 @@ const HearingArrangements = () => {
     workingCase,
     courtDate,
   )
+
+  const isModalConfirming = modalButtonLoading === ModalButtonLoading.PRIMARY
+  const isModalLoading =
+    isModalConfirming && (isUpdatingCase || isSendingNotification)
 
   return (
     <PageLayout
@@ -362,6 +367,7 @@ const HearingArrangements = () => {
         <Modal
           title="Viltu staðfesta fyrirtökutíma?"
           onClose={handleCloseModal}
+          loading={isModalConfirming}
           text={(() => {
             const recipients =
               workingCase.sessionArrangements ===
@@ -381,7 +387,12 @@ const HearingArrangements = () => {
             onClick: async () => {
               setModalButtonLoading(ModalButtonLoading.PRIMARY)
 
-              await sendCourtDateToServer()
+              const courtDateSaved = await sendCourtDateToServer()
+
+              if (!courtDateSaved) {
+                setModalButtonLoading(undefined)
+                return
+              }
 
               const notificationSent = await sendNotification(
                 workingCase.id,
@@ -390,14 +401,15 @@ const HearingArrangements = () => {
 
               if (notificationSent) {
                 router.push(`${navigateTo}/${workingCase.id}`)
+              } else {
+                setModalButtonLoading(undefined)
               }
             },
-            isLoading:
-              isSendingNotification &&
-              modalButtonLoading === ModalButtonLoading.PRIMARY,
+            isLoading: isModalLoading,
           }}
           secondaryButton={{
             text: 'Nei, staðfesta seinna',
+            isDisabled: isModalConfirming,
             onClick: () => {
               router.push(`${navigateTo}/${workingCase.id}`)
             },
