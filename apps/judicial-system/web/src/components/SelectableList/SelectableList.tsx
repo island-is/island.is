@@ -150,7 +150,7 @@ const SelectableList: FC<Props> = (props) => {
             strong
           />
         </Box>
-        <AnimatePresence>
+        <AnimatePresence mode="wait">
           {isLoading ? (
             <Box
               textAlign="center"
@@ -162,7 +162,7 @@ const SelectableList: FC<Props> = (props) => {
               <LoadingDots />
             </Box>
           ) : errorMessage ? (
-            <AnimateChildren id="error-message">
+            <AnimateChildren id="error-message" key="error-message">
               <IconAndText
                 icon="close"
                 iconColor="red400"
@@ -170,15 +170,15 @@ const SelectableList: FC<Props> = (props) => {
               />
             </AnimateChildren>
           ) : warningMessage ? (
-            <AnimateChildren id="warning-message">
+            <AnimateChildren id="warning-message" key="warning-message">
               <IconAndText
                 icon="warning"
                 iconColor="yellow400"
                 message={warningMessage}
               />
             </AnimateChildren>
-          ) : !isLoading && successMessage ? (
-            <AnimateChildren id="success-message">
+          ) : successMessage ? (
+            <AnimateChildren id="success-message" key="success-message">
               <IconAndText
                 icon="checkmark"
                 iconColor="blue400"
@@ -186,7 +186,7 @@ const SelectableList: FC<Props> = (props) => {
               />
             </AnimateChildren>
           ) : (
-            <ul className={styles.grid}>
+            <ul className={styles.grid} key="list">
               {selectableItems.map((item, index) => (
                 <motion.li
                   custom={index}

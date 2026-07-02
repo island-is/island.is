@@ -4,6 +4,7 @@ import { toast } from '@island.is/island-ui/core'
 import {
   CreateCourtSessionInput,
   DeleteCourtSessionInput,
+  UpdateCourtSessionAppealDecisionInput,
   UpdateCourtSessionInput,
   UpdateCourtSessionStringInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -11,6 +12,7 @@ import {
 import { useCreateCourtSessionMutation } from './createCourtSession.generated'
 import { useDeleteCourtSessionMutation } from './deleteCourtSession.generated'
 import { useUpdateCourtSessionMutation } from './updateCourtSession.generated'
+import { useUpdateCourtSessionAppealDecisionMutation } from './updateCourtSessionAppealDecision.generated'
 import { useUpdateCourtSessionStringMutation } from './updateCourtSessionString.generated'
 
 const useCourtSessions = () => {
@@ -19,6 +21,8 @@ const useCourtSessions = () => {
   const [deleteCourtSessionMutation] = useDeleteCourtSessionMutation()
   const [updateCourtSessionStringMutation] =
     useUpdateCourtSessionStringMutation()
+  const [updateCourtSessionAppealDecisionMutation] =
+    useUpdateCourtSessionAppealDecisionMutation()
 
   const createCourtSession = useCallback(
     async (createCourtSessionInput: CreateCourtSessionInput) => {
@@ -84,6 +88,27 @@ const useCourtSessions = () => {
     [updateCourtSessionStringMutation],
   )
 
+  const updateCourtSessionAppealDecision = useCallback(
+    async (
+      updateCourtSessionAppealDecision: UpdateCourtSessionAppealDecisionInput,
+    ) => {
+      try {
+        const { data } = await updateCourtSessionAppealDecisionMutation({
+          variables: {
+            input: updateCourtSessionAppealDecision,
+          },
+        })
+
+        return data?.updateCourtSessionAppealDecision
+      } catch (error) {
+        toast.error('Upp kom villa við að uppfæra ákvörðun um kæru')
+
+        return undefined
+      }
+    },
+    [updateCourtSessionAppealDecisionMutation],
+  )
+
   const deleteCourtSession = useCallback(
     async (deleteCourtSession: DeleteCourtSessionInput) => {
       try {
@@ -107,6 +132,7 @@ const useCourtSessions = () => {
     createCourtSession,
     updateCourtSession,
     updateCourtSessionString,
+    updateCourtSessionAppealDecision,
     deleteCourtSession,
   }
 }
