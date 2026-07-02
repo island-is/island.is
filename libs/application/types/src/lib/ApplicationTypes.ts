@@ -104,6 +104,7 @@ export enum ApplicationTypes {
   DEREGISTER_UNEMPLOYMENT_BENEFITS = 'DeregisterUnemploymentBenefits',
   VMST_SUBMIT_DOCUMENTS = 'VmstSubmitDocuments',
   UNEMPLOYMENT_CONFIRM_TRAVEL = 'UnemploymentConfirmTravel',
+  EQUALITY_REPORT = 'EqualityReport',
 }
 
 export const ApplicationConfigurations = {
@@ -530,5 +531,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.UNEMPLOYMENT_CONFIRM_TRAVEL]: {
     slug: 'atvinnuleysisbaetur-stadfesting-ferda',
     translation: ['vmst.ct.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.EQUALITY_REPORT]: {
+    slug: 'jafnrettisaetlun',
+    translation: ['doe.er.application', 'uiForms.application'],
   },
 }
