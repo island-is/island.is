@@ -6,7 +6,11 @@ import {
   CaseType,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { mockCase } from '@island.is/judicial-system-web/src/utils/mocks'
+import {
+  mockCase,
+  mockCaseTableMembershipQuery,
+  mockProsecutorSelectionUsersQuery,
+} from '@island.is/judicial-system-web/src/utils/mocks'
 import {
   FormContextWrapper,
   IntlProviderWrapper,
@@ -29,7 +33,13 @@ window.scrollTo = jest.fn()
 describe('PublicProsecutor Overview', () => {
   it('should not render a verdict timeline card for a defendant whose indictment was cancelled or dismissed (completed for some)', async () => {
     render(
-      <MockedProvider mocks={[]} addTypename={false}>
+      <MockedProvider
+        mocks={[
+          ...mockCaseTableMembershipQuery('test_id'),
+          ...mockProsecutorSelectionUsersQuery,
+        ]}
+        addTypename={false}
+      >
         <UserContextWrapper userRole={UserRole.PUBLIC_PROSECUTOR_STAFF}>
           <IntlProviderWrapper>
             <FormContextWrapper

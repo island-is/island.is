@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   ExecutionContext,
   ForbiddenException,
   InternalServerErrorException,
@@ -8,6 +9,7 @@ import {
   CaseIndictmentRulingDecision,
   CaseTransition,
   CaseType,
+  IndictmentDecision,
 } from '@island.is/judicial-system/types'
 
 import { CaseTransitionGuard } from '../caseTransition.guard'
@@ -33,9 +35,11 @@ describe('CaseTransitionGuard', () => {
     type: CaseType,
     rulingDecision: unknown,
     judgeId: string,
+    indictmentDecision?: unknown,
   ) => ({
     type,
     indictmentRulingDecision: rulingDecision,
+    indictmentDecision,
     judgeId,
   })
 
@@ -69,6 +73,86 @@ describe('CaseTransitionGuard', () => {
     })
 
     expect(() => guard.canActivate(context)).toThrow(ForbiddenException)
+  })
+
+  it('should activate when the completing decisions match the persisted case', () => {
+    const mockCase = createMockCase(
+      CaseType.INDICTMENT,
+      CaseIndictmentRulingDecision.FINE,
+      'judgeId',
+      IndictmentDecision.COMPLETING,
+    )
+    const context = mockExecutionContext({
+      body: {
+        transition: CaseTransition.COMPLETE,
+        indictmentDecision: IndictmentDecision.COMPLETING,
+        indictmentRulingDecision: CaseIndictmentRulingDecision.FINE,
+      },
+      case: mockCase,
+      user: { currentUser: { id: 'judgeId' } },
+    })
+
+    const result = guard.canActivate(context)
+
+    expect(result).toBe(true)
+  })
+
+  it('should throw ConflictException when the indictment decision has changed', () => {
+    const mockCase = createMockCase(
+      CaseType.INDICTMENT,
+      CaseIndictmentRulingDecision.FINE,
+      'judgeId',
+      IndictmentDecision.COMPLETING,
+    )
+    const context = mockExecutionContext({
+      body: {
+        transition: CaseTransition.COMPLETE,
+        indictmentDecision: IndictmentDecision.POSTPONING,
+        indictmentRulingDecision: CaseIndictmentRulingDecision.FINE,
+      },
+      case: mockCase,
+      user: { currentUser: { id: 'judgeId' } },
+    })
+
+    expect(() => guard.canActivate(context)).toThrow(ConflictException)
+  })
+
+  it('should throw ConflictException when the indictment ruling decision has changed', () => {
+    const mockCase = createMockCase(
+      CaseType.INDICTMENT,
+      CaseIndictmentRulingDecision.FINE,
+      'judgeId',
+      IndictmentDecision.COMPLETING,
+    )
+    const context = mockExecutionContext({
+      body: {
+        transition: CaseTransition.COMPLETE,
+        indictmentDecision: IndictmentDecision.COMPLETING,
+        indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+      },
+      case: mockCase,
+      user: { currentUser: { id: 'judgeId' } },
+    })
+
+    expect(() => guard.canActivate(context)).toThrow(ConflictException)
+  })
+
+  it('should activate when completing decisions are omitted from the body', () => {
+    const mockCase = createMockCase(
+      CaseType.INDICTMENT,
+      CaseIndictmentRulingDecision.FINE,
+      'judgeId',
+      IndictmentDecision.COMPLETING,
+    )
+    const context = mockExecutionContext({
+      body: { transition: CaseTransition.COMPLETE },
+      case: mockCase,
+      user: { currentUser: { id: 'judgeId' } },
+    })
+
+    const result = guard.canActivate(context)
+
+    expect(result).toBe(true)
   })
 
   it('should activate using the default rule for transitions not in the rule map', () => {
