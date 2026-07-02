@@ -55,9 +55,7 @@ export const OverviewTable = ({
       data={data}
       loading={loading}
       errorTitle={formatMessage(m.overview.errorTitle)}
-      errorMessage={
-        error ? formatMessage(m.overview.errorLoading) : undefined
-      }
+      errorMessage={error ? formatMessage(m.overview.errorLoading) : undefined}
       emptyMessage={formatMessage(m.overview.noResults)}
       srCaption={formatMessage(m.overview.srCaption)}
       sortHint={formatMessage(m.overview.sortHint)}
