@@ -1,5 +1,6 @@
 import faker from 'faker'
 
+import { ProsecutorSelectionUsersDocument } from '@island.is/judicial-system-web/src/components/ProsecutorSelection/prosecutorSelectionUsers.generated'
 import { CurrentUserDocument } from '@island.is/judicial-system-web/src/components/UserProvider/currentUser.generated'
 import {
   AppealCaseState,
@@ -169,6 +170,22 @@ export const mockCaseTableMembershipQuery = (caseId: string) => [
         caseTableMembership: {
           caseTableTypes: [],
         },
+      },
+    },
+  },
+]
+
+// IndictmentReviewerSelector (rendered for public prosecutor staff) fires this
+// query to populate the reviewer dropdown. Include it in MockedProvider mocks
+// to avoid unmocked-query warnings.
+export const mockProsecutorSelectionUsersQuery = [
+  {
+    request: {
+      query: ProsecutorSelectionUsersDocument,
+    },
+    result: {
+      data: {
+        users: [],
       },
     },
   },
