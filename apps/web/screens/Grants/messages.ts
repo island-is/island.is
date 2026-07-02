@@ -202,6 +202,16 @@ export const m = {
       id: 'web.grants:single.answeringQuestions',
       defaultMessage: 'Svör við spurningum',
     },
+    utcSuffix: {
+      id: 'web.grants:single.utcSuffix',
+      // react-intl treats an empty defaultMessage as falsy and falls back to
+      // printing the raw message id when no Contentful override exists either
+      defaultMessage: ' ',
+    },
+    icelandicTimeNote: {
+      id: 'web.grants:single.icelandicTimeNote',
+      defaultMessage: 'Miðast við íslenskan tíma',
+    },
   }),
   home: defineMessages({
     title: {

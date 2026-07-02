@@ -1,7 +1,7 @@
 import { Locale } from '@island.is/shared/types'
 import { Grant, GrantStatus } from '@island.is/web/graphql/schema'
 import { containsTimePart } from '@island.is/web/utils/containsTimePart'
-import { formatDate } from '@island.is/web/utils/formatDate'
+import { formatDate, toIcelandTime } from '@island.is/web/utils/formatDate'
 
 import { OPEN_GRANT_STATUSES, TranslationKeys } from './types'
 
@@ -35,7 +35,7 @@ export const parseGrantStatus = (
   switch (grant.status) {
     case GrantStatus.Closed: {
       const date = grant.dateTo
-        ? formatDate(new Date(grant.dateTo), locale)
+        ? formatDate(toIcelandTime(new Date(grant.dateTo)), locale)
         : undefined
       return date
         ? translationFunction(
@@ -48,7 +48,7 @@ export const parseGrantStatus = (
     }
     case GrantStatus.ClosedOpeningSoon: {
       const date = grant.dateFrom
-        ? formatDate(new Date(grant.dateFrom), locale)
+        ? formatDate(toIcelandTime(new Date(grant.dateFrom)), locale)
         : undefined
       return date
         ? translationFunction('applicationOpensAt', date)
@@ -56,7 +56,11 @@ export const parseGrantStatus = (
     }
     case GrantStatus.ClosedOpeningSoonWithEstimation: {
       const date = grant.dateFrom
-        ? formatDate(new Date(grant.dateFrom), locale, 'MMMM yyyy')
+        ? formatDate(
+            toIcelandTime(new Date(grant.dateFrom)),
+            locale,
+            'MMMM yyyy',
+          )
         : undefined
       return date
         ? translationFunction('applicationEstimatedOpensAt', date)
@@ -79,7 +83,7 @@ export const parseGrantStatus = (
         ? 'dd MMMM'
         : 'dd. MMMM'
 
-      const date = formatDate(new Date(dateVal), locale, dateFormat)
+      const date = formatDate(toIcelandTime(new Date(dateVal)), locale, dateFormat)
 
       return date
         ? translationFunction(
