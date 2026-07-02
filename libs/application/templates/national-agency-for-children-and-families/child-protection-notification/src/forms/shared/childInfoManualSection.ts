@@ -13,10 +13,8 @@ import {
   getAllLanguageCodes,
 } from '@island.is/shared/utils'
 import { childMessages } from '../../lib/messages'
-import { Gender, KnowsNationalId, Pronoun } from '../../utils/constants'
-
-const isNoNationalId = (answers: Record<string, unknown>) =>
-  getValueViaPath(answers, 'child.knowsNationalId') === KnowsNationalId.NO
+import { Gender, Pronoun } from '../../utils/constants'
+import { isNoNationalId } from '../../utils/conditionUtils'
 
 export const childInfoManualSection = buildSection({
   id: 'childInfoManualSection',
@@ -31,12 +29,8 @@ export const childInfoManualSection = buildSection({
         buildDescriptionField({
           id: 'childInfoManual.nameAgeGenderTitle',
           title: childMessages.manualInfo.nameAgeGenderTitle,
-          titleVariant: 'h4',
-          space: 2,
-        }),
-        buildDescriptionField({
-          id: 'childInfoManual.nameAgeGenderDescription',
           description: childMessages.manualInfo.nameAgeGenderDescription,
+          titleVariant: 'h4',
           space: 2,
         }),
         buildTextField({
@@ -54,6 +48,7 @@ export const childInfoManualSection = buildSection({
         buildSelectField({
           id: 'child.manualInfo.gender',
           title: childMessages.manualInfo.gender,
+          placeholder: childMessages.manualInfo.genderPlaceholder,
           width: 'half',
           doesNotRequireAnswer: true,
           options: [
@@ -81,7 +76,6 @@ export const childInfoManualSection = buildSection({
         buildTextField({
           id: 'child.manualInfo.preferredName',
           title: childMessages.nationalIdLookup.preferredName,
-          placeholder: childMessages.nationalIdLookup.preferredNamePlaceholder,
           doesNotRequireAnswer: true,
           condition: (answers) =>
             isNoNationalId(answers) &&
@@ -124,17 +118,14 @@ export const childInfoManualSection = buildSection({
         buildDescriptionField({
           id: 'childInfoManual.addressTitle',
           title: childMessages.manualInfo.addressTitle,
+          description: childMessages.manualInfo.addressDescription,
           titleVariant: 'h4',
           space: 4,
-        }),
-        buildDescriptionField({
-          id: 'childInfoManual.addressDescription',
-          description: childMessages.manualInfo.addressDescription,
-          space: 2,
         }),
         buildSelectField({
           id: 'child.manualInfo.country',
           title: childMessages.manualInfo.country,
+          placeholder: childMessages.manualInfo.countryPlaceholder,
           width: 'half',
           doesNotRequireAnswer: true,
           options: getAllCountryCodes().map((c) => ({
@@ -157,6 +148,7 @@ export const childInfoManualSection = buildSection({
         buildSelectField({
           id: 'child.manualInfo.municipality',
           title: childMessages.manualInfo.municipality,
+          placeholder: childMessages.manualInfo.municipalityPlaceholder,
           width: 'half',
           doesNotRequireAnswer: true,
           // TODO: replace with real municipality data when API is wired up
@@ -176,6 +168,7 @@ export const childInfoManualSection = buildSection({
         buildSelectField({
           id: 'child.manualInfo.language',
           title: childMessages.manualInfo.language,
+          placeholder: childMessages.manualInfo.languagePlaceholder,
           doesNotRequireAnswer: true,
           options: getAllLanguageCodes().map((l) => ({
             value: l.code,

@@ -7,18 +7,11 @@ export const expectantParentsMessages = {
       defaultMessage: 'Verðandi foreldrar',
       description: 'Expectant parents section title',
     },
-    intro1: {
-      id: 'cpn.application:expectantParents.shared.intro1',
+    description: {
+      id: 'cpn.application:expectantParents.shared.description',
       defaultMessage:
-        'Vinsamlegar fylltu út upplýsingar beggja verðandi foreldra. Skráðu barnshafandi móður sem verðandi foreldri 1 og verðandi faðir sem foreldra 2.',
-      description: 'First intro paragraph for expectant parents section',
-    },
-    intro2: {
-      id: 'cpn.application:expectantParents.shared.intro2',
-      defaultMessage:
-        'Með því að skrá kennitölu verðandi foreldra getum við sótt upplýsingarnar með sjálfvirkum hætti í Þjóðskrá. Ef kennitölur verðandi foreldra er ekki við höndina þá biðjum við þig að skrá umbeðnar upplýsingar eftir bestu getu og vitneskju.',
-      description:
-        'Second intro paragraph explaining the benefit of providing SSN',
+        'Vinsamlegar fylltu út upplýsingar beggja verðandi foreldra. Skráðu barnshafandi móður sem verðandi foreldri 1 og verðandi faðir sem foreldra 2.\n\nMeð því að skrá kennitölu verðandi foreldra getum við sótt upplýsingarnar með sjálfvirkum hætti í Þjóðskrá. Ef kennitölur verðandi foreldra er ekki við höndina þá biðjum við þig að skrá umbeðnar upplýsingar eftir bestu getu og vitneskju.',
+      description: 'Intro description for the expectant parents section',
     },
     radioLabel: {
       id: 'cpn.application:expectantParents.shared.radioLabel',
@@ -55,6 +48,26 @@ export const expectantParentsMessages = {
       id: 'cpn.application:expectantParents.shared.citizenship',
       defaultMessage: 'Ríkisfang',
       description: 'Label for citizenship/nationality select field',
+    },
+    genderPlaceholder: {
+      id: 'cpn.application:expectantParents.shared.genderPlaceholder',
+      defaultMessage: 'Veldu kyn',
+      description: 'Placeholder for gender select field',
+    },
+    countryPlaceholder: {
+      id: 'cpn.application:expectantParents.shared.countryPlaceholder',
+      defaultMessage: 'Veldu land',
+      description: 'Placeholder for country select field',
+    },
+    citizenshipPlaceholder: {
+      id: 'cpn.application:expectantParents.shared.citizenshipPlaceholder',
+      defaultMessage: 'Veldu ríkisfang',
+      description: 'Placeholder for citizenship select field',
+    },
+    municipalityPlaceholder: {
+      id: 'cpn.application:expectantParents.shared.municipalityPlaceholder',
+      defaultMessage: 'Veldu sveitarfélag',
+      description: 'Placeholder for municipality select field',
     },
     genderMale: {
       id: 'cpn.application:expectantParents.shared.genderMale',

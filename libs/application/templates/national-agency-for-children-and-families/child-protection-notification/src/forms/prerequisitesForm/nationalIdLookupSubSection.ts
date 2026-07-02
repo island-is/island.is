@@ -91,7 +91,6 @@ export const nationalIdLookupSubSection = buildSubSection({
         buildTextField({
           id: 'child.nationalIdInfo.email',
           title: childMessages.nationalIdLookup.email,
-          placeholder: childMessages.nationalIdLookup.emailPlaceholder,
           variant: 'email',
           width: 'half',
           doesNotRequireAnswer: true,
@@ -122,7 +121,6 @@ export const nationalIdLookupSubSection = buildSubSection({
         buildTextField({
           id: 'child.nationalIdInfo.preferredName',
           title: childMessages.nationalIdLookup.preferredName,
-          placeholder: childMessages.nationalIdLookup.preferredNamePlaceholder,
           doesNotRequireAnswer: true,
           condition: (answers) =>
             knowsNationalId(answers) &&

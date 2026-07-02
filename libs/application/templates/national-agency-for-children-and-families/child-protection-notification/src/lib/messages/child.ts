@@ -68,11 +68,6 @@ export const childMessages = {
       defaultMessage: 'Netfang',
       description: 'Label for email field',
     },
-    emailPlaceholder: {
-      id: 'cpn.application:child.nationalIdLookup.emailPlaceholder',
-      defaultMessage: 'Sláðu inn netfang',
-      description: 'Placeholder for email field',
-    },
     phone: {
       id: 'cpn.application:child.nationalIdLookup.phone',
       defaultMessage: 'Símanúmer',
@@ -82,11 +77,6 @@ export const childMessages = {
       id: 'cpn.application:child.nationalIdLookup.preferredName',
       defaultMessage: 'Valið nafn',
       description: 'Label for preferred name field',
-    },
-    preferredNamePlaceholder: {
-      id: 'cpn.application:child.nationalIdLookup.preferredNamePlaceholder',
-      defaultMessage: 'Sláðu inn nafn',
-      description: 'Placeholder for preferred name field',
     },
     preferredPronoun: {
       id: 'cpn.application:child.nationalIdLookup.preferredPronoun',
@@ -180,6 +170,11 @@ export const childMessages = {
       defaultMessage: 'Kyn',
       description: 'Label for gender select field',
     },
+    genderPlaceholder: {
+      id: 'cpn.application:child.manualInfo.genderPlaceholder',
+      defaultMessage: 'Veldu kyn',
+      description: 'Placeholder for gender select field',
+    },
     genderGirl: {
       id: 'cpn.application:child.manualInfo.genderGirl',
       defaultMessage: 'Stúlka',
@@ -210,6 +205,11 @@ export const childMessages = {
       defaultMessage: 'Land',
       description: 'Label for country select field',
     },
+    countryPlaceholder: {
+      id: 'cpn.application:child.manualInfo.countryPlaceholder',
+      defaultMessage: 'Veldu land',
+      description: 'Placeholder for country select field',
+    },
     address: {
       id: 'cpn.application:child.manualInfo.address',
       defaultMessage: 'Heimilisfang',
@@ -225,6 +225,11 @@ export const childMessages = {
       defaultMessage: 'Sveitarfélag',
       description: 'Label for municipality select field',
     },
+    municipalityPlaceholder: {
+      id: 'cpn.application:child.manualInfo.municipalityPlaceholder',
+      defaultMessage: 'Veldu sveitarfélag',
+      description: 'Placeholder for municipality select field',
+    },
     languageTitle: {
       id: 'cpn.application:child.manualInfo.languageTitle',
       defaultMessage: 'Á hvaða tungumáli finnst barninu best að tjá sig?',
@@ -234,6 +239,11 @@ export const childMessages = {
       id: 'cpn.application:child.manualInfo.language',
       defaultMessage: 'Tungumál',
       description: 'Label for language select field',
+    },
+    languagePlaceholder: {
+      id: 'cpn.application:child.manualInfo.languagePlaceholder',
+      defaultMessage: 'Veldu tungumál',
+      description: 'Placeholder for language select field',
     },
     needsInterpreter: {
       id: 'cpn.application:child.manualInfo.needsInterpreter',

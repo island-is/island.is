@@ -1,6 +1,7 @@
+import { NO, YES } from '@island.is/application/core'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import { KnowsNationalId, KnowsParentNationalId } from '../utils/constants'
+import { KnowsNationalId } from '../utils/constants'
 import { errorMessages } from './messages'
 
 const isValidPhone = (value: string) => {
@@ -111,9 +112,7 @@ const parentSchema = z.object({
 
 const expectantParentsSchema = z
   .object({
-    knowsParentNationalIds: z
-      .enum([KnowsParentNationalId.YES, KnowsParentNationalId.NO])
-      .optional(),
+    knowsParentNationalIds: z.enum([YES, NO]).optional(),
     parent1: parentSchema.optional(),
     parent2: parentSchema.optional(),
   })
@@ -127,7 +126,7 @@ const expectantParentsSchema = z
       return
     }
 
-    if (data.knowsParentNationalIds !== KnowsParentNationalId.YES) return
+    if (data.knowsParentNationalIds !== YES) return
 
     for (const key of ['parent1', 'parent2'] as const) {
       const nationalId = data[key]?.nationalIdInfo?.nationalId
