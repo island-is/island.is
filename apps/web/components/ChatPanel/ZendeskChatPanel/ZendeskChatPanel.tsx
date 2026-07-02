@@ -74,6 +74,12 @@ export const ZendeskChatPanel = ({
     }
   }, [activeLocale, snippetUrl, urlTrackingTicketId])
 
+  useEffect(() => {
+    const queryParam = new URLSearchParams(window.location.search).get('wa_lid')
+    if (queryParam === 't10') loadScript()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   useEffect(
     () => () => {
       window.zE?.('messenger', 'hide')
