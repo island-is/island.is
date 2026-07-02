@@ -89,7 +89,6 @@ export const ZendeskChatPanel = ({
 
   useEffect(
     () => () => {
-      console.log('cleanup')
       window.zE?.('messenger', 'hide')
       document.getElementById(SCRIPT_ID)?.remove()
       delete window.zEACLoaded
