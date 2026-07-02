@@ -1,4 +1,4 @@
-import { Box, Icon, NavigationItem } from '@island.is/island-ui/core'
+import { Box, Hidden, Icon, NavigationItem } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { PortalNavigationItem } from '@island.is/portals/core'
@@ -18,13 +18,13 @@ import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBread
 import Sticky from '../Sticky/Sticky'
 import * as styles from './Layout.css'
 import SidebarLayout from './SidebarLayout'
-import cn from 'classnames'
 
 interface NarrowLayoutProps {
   activeParent?: PortalNavigationItem
   pathname: string
   height: number
   children: ReactNode
+  sidebarFooter?: ReactNode
 }
 
 export type SubNavItemType = NavigationItem & { enabled?: boolean }
@@ -34,6 +34,7 @@ export const NarrowLayout = ({
   pathname,
   height,
   activeParent,
+  sidebarFooter,
 }: NarrowLayoutProps) => {
   const { formatMessage } = useLocale()
 
@@ -78,7 +79,7 @@ export const NarrowLayout = ({
       isSticky={true}
       sidebarContent={
         <Sticky>
-          <Box style={{ marginTop: height }}>
+          <Box style={{ marginTop: height }} paddingBottom={4}>
             <GoBack />
 
             {subNavItems && subNavItems.length > 0 && (
@@ -111,6 +112,7 @@ export const NarrowLayout = ({
                 />
               </Box>
             )}
+            {sidebarFooter}
           </Box>
         </Sticky>
       }
@@ -126,9 +128,7 @@ export const NarrowLayout = ({
           <Box
             paddingBottom={3}
             width="full"
-            className={cn(styles.mobileNav, {
-              [styles.mobileNavHidden]: !headerVisible,
-            })}
+            className={styles.mobileNav}
             style={{ top: stickyHeight }}
           >
             <Navigation
@@ -154,6 +154,7 @@ export const NarrowLayout = ({
         )}
         <ModuleAlertBannerSection />
         {children}
+        {sidebarFooter && <Hidden above="sm">{sidebarFooter}</Hidden>}
       </Box>
     </SidebarLayout>
   )
