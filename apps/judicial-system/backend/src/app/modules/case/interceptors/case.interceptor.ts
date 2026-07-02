@@ -192,7 +192,7 @@ const getAppealedByRoleFromEvents = (
 
 // Legacy appellant-side derivation from the case columns. Kept as a fallback for
 // any appeal not yet represented by an APPEALED event (e.g. a backfill row that
-// could not be resolved); removed in Phase 4 with the columns themselves.
+// could not be resolved); removed later with the columns themselves.
 const getLegacyAppealedByRole = (
   appealCase: AppealCase,
   theCase: Case,
@@ -233,12 +233,12 @@ export const getAppealCaseInfo = (
   // The time of appeal is read straight from the appeal case's own appeal_date
   // column (populated on every appeal-creation path + backfilled), rather than
   // derived from the legacy per-side postponed-date columns (case-level) or the
-  // row's `created` timestamp (ruling-order). [Phase 3 read switch, slice 1]
+  // row's `created` timestamp (ruling-order).
   const appealedDate = appealCase.appealDate
 
   // The appellant's side is read from the APPEALED event log, falling back to
   // the legacy columns for any appeal not yet represented there - so the switch
-  // stays correct even where the backfill could not resolve a row. [Phase 3]
+  // stays correct even where the backfill could not resolve a row.
   const appealedByRole =
     getAppealedByRoleFromEvents(appealCase) ??
     getLegacyAppealedByRole(appealCase, theCase)
