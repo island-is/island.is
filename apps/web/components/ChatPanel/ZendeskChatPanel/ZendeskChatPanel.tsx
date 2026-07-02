@@ -76,10 +76,9 @@ export const ZendeskChatPanel = ({
 
   useEffect(() => {
     const queryParam = new URLSearchParams(window.location.search).get('wa_lid')
-    if (queryParam === 't10') {
-      loadScript()
-    }
-  }, [loadScript])
+    if (queryParam === 't10') loadScript()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(
     () => () => {
