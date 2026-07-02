@@ -773,6 +773,22 @@ export class AppealCaseService {
       )
     }
 
+    // Serialize concurrent withdrawals for this ruling. Two parties withdrawing
+    // at once would otherwise each stamp only their own row and, under READ
+    // COMMITTED, read a set that still shows the other party as not-withdrawn -
+    // so both skip WITHDRAW_APPEAL and the appeal stands even though everyone
+    // has withdrawn. Locking every party's row up front (in a consistent order,
+    // before we write our own) forces the second transaction to block here and
+    // then re-read the freshly committed set. The lock must precede the update:
+    // taking it after would let each transaction hold a lock on its own updated
+    // row and deadlock on the other's.
+    await this.appealDecisionRepositoryService.findAll({
+      where: { caseId: theCase.id, rulingFileId },
+      order: [['id', 'ASC']],
+      lock: Transaction.LOCK.UPDATE,
+      transaction,
+    })
+
     await this.appealDecisionRepositoryService.update(
       decision.id,
       { withdrawnDate: nowFactory() },
