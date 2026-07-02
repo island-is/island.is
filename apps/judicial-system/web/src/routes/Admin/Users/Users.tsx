@@ -23,7 +23,7 @@ import {
 import { getAdminUserInstitutionScope } from '@island.is/judicial-system/types'
 import { errors, titles } from '@island.is/judicial-system-web/messages'
 import {
-  Loading,
+  LoadingDots,
   PageHeader,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
@@ -240,7 +240,7 @@ export const Users = () => {
       )}
       {(institutionsLoading || usersLoading) && (
         <Box width="full">
-          <Loading />
+          <LoadingDots />
         </Box>
       )}
       {usersError && (

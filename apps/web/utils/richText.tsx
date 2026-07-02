@@ -131,7 +131,7 @@ import { MemorialCard } from '../components/connected/landspitali/MemorialCards/
 import { LandspitaliMenu } from '../components/connected/LandspitaliMenu'
 import { LandsretturCourtOfAppealAppeals } from '../components/connected/LandsretturCourtOfAppealAppeals'
 import { LatestVerdicts } from '../components/connected/LatestVerdicts'
-import PharmaciesAccordion from '../components/connected/lyfjastofnun/PharmaciesAccordion'
+import LyfjastofnunAccordion from '../components/connected/lyfjastofnun/LyfjastofnunAccordion'
 import { BurningPermitList } from '../components/connected/syslumenn/CardLists/BurningPermitList/BurningPermitList'
 import { ReligiousOrganizationList } from '../components/connected/syslumenn/CardLists/ReligiousOrganizationList/ReligiousOrganizationList'
 import SyslumennDrivingInstructorList from '../components/connected/syslumenn/DrivingInstructorList/DrivingInstructorList'
@@ -302,8 +302,8 @@ export const webRenderConnectedComponent = (
     case 'VERAnnouncementCalculator':
       connectedComponent = <VerAnnouncementCalculator />
       break
-    case 'Lyfjastofnun/Pharmacies':
-      connectedComponent = <PharmaciesAccordion />
+    case 'Lyfjastofnun/LicensedOperations':
+      connectedComponent = <LyfjastofnunAccordion slice={slice} />
       break
     case 'Landspitali/Menu':
       connectedComponent = <LandspitaliMenu slice={slice} />

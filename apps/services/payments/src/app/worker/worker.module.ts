@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { SequelizeModule } from '@nestjs/sequelize'
 
+import { BlikkClientConfig } from '@island.is/clients/blikk'
 import { ChargeFjsV2ClientConfig } from '@island.is/clients/charge-fjs-v2'
 import { LoggingModule } from '@island.is/logging'
 
@@ -43,6 +44,7 @@ import { WorkerService } from './worker.service'
         XRoadConfig,
         FeatureFlagConfig,
         ChargeFjsV2ClientConfig,
+        BlikkClientConfig,
         PaymentFlowModuleConfig,
         JwksConfig,
         WorkerModuleConfig,

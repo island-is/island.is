@@ -10877,7 +10877,7 @@ __metadata:
     "@apollo/client": "npm:3.7.15"
     "@datadog/mobile-react-native": "npm:3.0.2"
     "@expo-google-fonts/ibm-plex-sans": "npm:0.4.1"
-    "@kishannareshpal/expo-pdf": "npm:0.3.1"
+    "@kishannareshpal/expo-pdf": "patch:@kishannareshpal/expo-pdf@npm%3A0.3.1#~/.yarn/patches/@kishannareshpal-expo-pdf-npm-0.3.1-80a31e2db8.patch"
     "@react-native-async-storage/async-storage": "npm:2.2.0"
     "@react-native-community/datetimepicker": "npm:8.6.0"
     "@react-native-community/netinfo": "npm:11.5.2"
@@ -11439,6 +11439,17 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 10/675ef96553c5d9391ab9c8ac7e05792bf370b17ae021272b9c0c0eebe8a6792715b99120d919747aaeda57b70b0d84b5553bb5c14018ae80677d6f13b2e240bd
+  languageName: node
+  linkType: hard
+
+"@kishannareshpal/expo-pdf@patch:@kishannareshpal/expo-pdf@npm%3A0.3.1#~/.yarn/patches/@kishannareshpal-expo-pdf-npm-0.3.1-80a31e2db8.patch":
+  version: 0.3.1
+  resolution: "@kishannareshpal/expo-pdf@patch:@kishannareshpal/expo-pdf@npm%3A0.3.1#~/.yarn/patches/@kishannareshpal-expo-pdf-npm-0.3.1-80a31e2db8.patch::version=0.3.1&hash=3d74dc"
+  peerDependencies:
+    expo: "*"
+    react: "*"
+    react-native: "*"
+  checksum: 10/d0fe2b1f04dc75ef05487658c3f33e97af182961298c761cb607a517b75c4aa979b3b89517987b25fddf03f66c8fdbc2f0d192f3f46d170a9735e5456cbfce96
   languageName: node
   linkType: hard
 

@@ -4,7 +4,7 @@ import { useLocalStorage } from 'react-use'
 import parseISO from 'date-fns/parseISO'
 import { AnimatePresence, motion } from 'motion/react'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Icon, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import {
   formatDate,
@@ -17,7 +17,6 @@ import {
 import {
   ContextMenu,
   ContextMenuItem,
-  IconButton,
 } from '@island.is/judicial-system-web/src/components'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 
@@ -31,7 +30,10 @@ import {
 } from '../../types'
 import { useCase, useCaseList, useViewport } from '../../utils/hooks'
 import { compareLocaleIS } from '../../utils/sortHelper'
-import { areAllDefenderDefendantsCancelledOrDismissed } from '../../utils/utils'
+import {
+  areAllDefenderDefendantsCancelledOrDismissed,
+  onEnterOrSpace,
+} from '../../utils/utils'
 import { mapCaseStateToTagVariant } from '../Tags/TagCaseState/TagCaseState.logic'
 import DurationDate, { getDurationDate } from './DurationDate/DurationDate'
 import SortButton from './SortButton/SortButton'
@@ -263,101 +265,133 @@ const Table: FC<TableProps> = (props) => {
       ))}
     </>
   ) : (
-    <table className={styles.table}>
-      <thead className={styles.thead}>
-        <tr>
-          {thead.map((th) => (
-            <th key={`${th}-${thead.indexOf(th)}`} className={styles.th}>
-              {th.sortBy && data.length > 1 ? (
-                <SortButton
-                  title={th.title}
-                  onClick={() => {
-                    th.sortBy && requestSort(th.sortBy, th.sortFn)
-                  }}
-                  sortAsc={getClassNamesFor(th.sortBy) === 'ascending'}
-                  sortDes={getClassNamesFor(th.sortBy) === 'descending'}
-                  isActive={sortConfig?.column === th.sortBy}
-                  dataTestid={`${th.sortBy}SortButton`}
-                />
-              ) : (
-                <Text as="span" fontWeight="regular">
-                  {th.title}
-                </Text>
-              )}
-            </th>
-          ))}
-          {generateContextMenuItems && <th className={styles.th} />}
-        </tr>
-      </thead>
-      <tbody>
-        {data.map((row) => (
-          <tr
-            key={row.id}
-            role="button"
-            aria-label="Opna kröfu"
-            aria-disabled={isOpeningCaseId === row.id || isTransitioningCase}
-            className={styles.tableRowContainer}
-            onClick={() => {
-              handleCaseClick(row)
-            }}
-            data-testid="tableRow"
-          >
-            {columns.map((td) => (
-              <td key={`${td}-${columns.indexOf(td)}`}>{td.cell(row)}</td>
-            ))}
-            {generateContextMenuItems && (
-              <td width="4%">
-                {generateContextMenuItems(row).length > 0 && (
-                  <AnimatePresence initial={false} mode="popLayout">
-                    {isOpeningCaseId === row.id && showLoading ? (
-                      <motion.div
-                        className={styles.smallContainer}
-                        key={row.id}
-                        initial={{ opacity: 0, y: 5 }}
-                        animate={{ opacity: 1, y: 1 }}
-                        exit={{
-                          opacity: 0,
-                          y: 5,
-                        }}
-                        transition={{ type: 'spring' }}
-                      >
-                        <LoadingIndicator />
-                      </motion.div>
-                    ) : (
-                      <ContextMenu
-                        items={generateContextMenuItems(row)}
-                        render={
+    <div className={styles.tableWrapper}>
+      <table className={styles.table}>
+        <thead className={styles.thead}>
+          <tr>
+            {thead.map((th) => {
+              const isSortable = Boolean(th.sortBy) && data.length > 1
+
+              return (
+                <th
+                  key={`${th}-${thead.indexOf(th)}`}
+                  className={styles.th}
+                  aria-sort={
+                    isSortable && th.sortBy
+                      ? getClassNamesFor(th.sortBy) ?? 'none'
+                      : undefined
+                  }
+                >
+                  {isSortable && th.sortBy ? (
+                    <SortButton
+                      title={th.title}
+                      onClick={() => {
+                        th.sortBy && requestSort(th.sortBy, th.sortFn)
+                      }}
+                      sortAsc={getClassNamesFor(th.sortBy) === 'ascending'}
+                      sortDes={getClassNamesFor(th.sortBy) === 'descending'}
+                      isActive={sortConfig?.column === th.sortBy}
+                      dataTestid={`${th.sortBy}SortButton`}
+                    />
+                  ) : (
+                    <Text as="span" fontWeight="regular">
+                      {th.title}
+                    </Text>
+                  )}
+                </th>
+              )
+            })}
+            {generateContextMenuItems && <th className={styles.th} />}
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((row) => {
+            const isRowDisabled =
+              isOpeningCaseId === row.id || isTransitioningCase
+            const caseIdentifier =
+              row.courtCaseNumber || row.policeCaseNumbers?.[0] || ''
+
+            return (
+              <tr
+                key={row.id}
+                role="button"
+                tabIndex={isRowDisabled ? -1 : 0}
+                aria-label={
+                  caseIdentifier ? `Opna mál ${caseIdentifier}` : 'Opna mál'
+                }
+                aria-disabled={isRowDisabled}
+                className={styles.tableRowContainer}
+                onClick={() => {
+                  if (!isRowDisabled) {
+                    handleCaseClick(row)
+                  }
+                }}
+                onKeyDown={onEnterOrSpace(() => {
+                  if (!isRowDisabled) {
+                    handleCaseClick(row)
+                  }
+                })}
+                data-testid="tableRow"
+              >
+                {columns.map((td) => (
+                  <td key={`${td}-${columns.indexOf(td)}`}>{td.cell(row)}</td>
+                ))}
+                {generateContextMenuItems && (
+                  <td width="4%">
+                    {generateContextMenuItems(row).length > 0 && (
+                      <AnimatePresence initial={false} mode="popLayout">
+                        {isOpeningCaseId === row.id && showLoading ? (
                           <motion.div
                             className={styles.smallContainer}
                             key={row.id}
-                            initial={{ opacity: 1 }}
+                            initial={{ opacity: 0, y: 5 }}
                             animate={{ opacity: 1, y: 1 }}
-                            exit={{ opacity: 0, y: 5 }}
-                            onClick={(evt) => {
-                              evt.stopPropagation()
+                            exit={{
+                              opacity: 0,
+                              y: 5,
                             }}
+                            transition={{ type: 'spring' }}
                           >
-                            <IconButton
-                              icon="ellipsisVertical"
-                              colorScheme="transparent"
-                              ariaLabel={`Valmynd fyrir mál ${
-                                row.courtCaseNumber ??
-                                row.policeCaseNumbers?.[0] ??
-                                row.id
-                              }`}
-                            />
+                            <LoadingIndicator />
                           </motion.div>
-                        }
-                      />
+                        ) : (
+                          <ContextMenu
+                            items={generateContextMenuItems(row)}
+                            render={
+                              <motion.div
+                                className={styles.contextMenuButton}
+                                aria-label={`Valmynd fyrir mál ${
+                                  row.courtCaseNumber ??
+                                  row.policeCaseNumbers?.[0] ??
+                                  row.id
+                                }`}
+                                key={row.id}
+                                initial={{ opacity: 1 }}
+                                animate={{ opacity: 1, y: 1 }}
+                                exit={{ opacity: 0, y: 5 }}
+                                onClick={(evt) => {
+                                  evt.stopPropagation()
+                                }}
+                              >
+                                <Icon
+                                  icon="ellipsisVertical"
+                                  color="blue400"
+                                  size="small"
+                                />
+                              </motion.div>
+                            }
+                          />
+                        )}
+                      </AnimatePresence>
                     )}
-                  </AnimatePresence>
+                  </td>
                 )}
-              </td>
-            )}
-          </tr>
-        ))}
-      </tbody>
-    </table>
+              </tr>
+            )
+          })}
+        </tbody>
+      </table>
+    </div>
   )
 }
 
