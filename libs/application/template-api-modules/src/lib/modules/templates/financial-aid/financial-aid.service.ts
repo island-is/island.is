@@ -340,12 +340,10 @@ export class FinancialAidService extends BaseTemplateApiService {
       nationalId: externalData.nationalRegistry.data.nationalId,
       phoneNumber: answers.contactInfo.phone,
       email: answers.contactInfo.email,
-      homeCircumstances:
-        answers.homeCircumstances.type || 'fakeHomeCircumstances',
-      homeCircumstancesCustom:
-        answers.homeCircumstances.custom || 'fakeHomeCircumstancesCustom',
+      homeCircumstances: answers.homeCircumstances.type,
+      homeCircumstancesCustom: answers.homeCircumstances.custom,
       student: Boolean(answers.student.isStudent === ApproveOptions.Yes),
-      studentCustom: answers.student.custom || 'fakeStudentCustom',
+      studentCustom: answers.student.custom,
       hasIncome: Boolean(answers.income === ApproveOptions.Yes),
       usePersonalTaxCredit: Boolean(
         answers.personalTaxCredit === ApproveOptions.Yes,
@@ -354,28 +352,23 @@ export class FinancialAidService extends BaseTemplateApiService {
       ledger: answers.bankInfo.ledger,
       accountNumber: answers.bankInfo.accountNumber,
       employment: answers.employment.type,
-      employmentCustom: answers.employment.custom || 'fakeEmploymentCustom',
-      formComment: answers.formComment || 'fakeFormComment',
+      employmentCustom: answers.employment.custom,
+      formComment: answers.formComment,
       state: ApplicationState.NEW,
-      files: files, // attachments
+      files: files,
       children: children,
-      childrenComment: answers.childrenComment || 'fakeChildrenComment',
+      childrenComment: answers.childrenComment,
       spouseNationalId:
         externalData.nationalRegistrySpouse.data?.nationalId ||
-        answers.relationshipStatus?.spouseNationalId ||
-        'fakeSpouseNationalId',
+        answers.relationshipStatus?.spouseNationalId,
       spouseEmail:
         answers.spouseContactInfo?.email ||
         answers.spouse?.email ||
-        answers.relationshipStatus?.spouseEmail ||
-        'fakeSpouseEmail',
-      spousePhoneNumber:
-        answers.spouseContactInfo?.phone || 'fakeSpousePhoneNumber',
+        answers.relationshipStatus?.spouseEmail,
+      spousePhoneNumber: answers.spouseContactInfo?.phone,
       spouseName:
-        externalData.nationalRegistrySpouse.data?.name ||
-        answers.spouseName ||
-        'fakeName',
-      spouseFormComment: answers.spouseFormComment || 'fakeSpouseFormComment',
+        externalData.nationalRegistrySpouse.data?.name || answers.spouseName,
+      spouseFormComment: answers.spouseFormComment,
       familyStatus: findFamilyStatus(answers, externalData),
       streetName: externalData.nationalRegistry.data.address?.streetAddress,
       postalCode: externalData.nationalRegistry.data.address?.postalCode,
@@ -390,69 +383,65 @@ export class FinancialAidService extends BaseTemplateApiService {
       applicationSystemId: id,
     }
 
-    console.log('newApplication', JSON.stringify(newApplication, null, 2))
-
     if (this.municipalityCodeCheck(municipalityCode)) {
       console.log('--------------------------------')
       console.log('createApplication municipalityCode', municipalityCode)
       console.log('--------------------------------')
 
+      const rvkRequest = {
+        createApplicationRequest: {
+          name: externalData.nationalRegistry.data.fullName,
+          nationalId: externalData.nationalRegistry.data.nationalId,
+          phoneNumber: answers.contactInfo.phone,
+          email: answers.contactInfo.email,
+          homeCircumstances: answers.homeCircumstances.type,
+          homeCircumstancesCustom: answers.homeCircumstances.custom,
+          student: Boolean(answers.student.isStudent === ApproveOptions.Yes),
+          studentCustom: answers.student.custom,
+          hasIncome: Boolean(answers.income === ApproveOptions.Yes),
+          usePersonalTaxCredit: Boolean(
+            answers.personalTaxCredit === ApproveOptions.Yes,
+          ),
+          bankNumber: answers.bankInfo.bankNumber,
+          ledger: answers.bankInfo.ledger,
+          accountNumber: answers.bankInfo.accountNumber,
+          employment: answers.employment.type,
+          employmentCustom: answers.employment.custom,
+          formComment: answers.formComment,
+          state: ApplicationState.NEW,
+          files: files, // attachments
+          children: childrenRvk,
+          childrenComment: answers.childrenComment,
+          spouseNationalId:
+            externalData.nationalRegistrySpouse.data?.nationalId ||
+            answers.relationshipStatus?.spouseNationalId,
+          spouseEmail:
+            answers.spouseContactInfo?.email ||
+            answers.spouse?.email ||
+            answers.relationshipStatus?.spouseEmail,
+          spousePhoneNumber: answers.spouseContactInfo?.phone,
+          spouseName:
+            externalData.nationalRegistrySpouse.data?.name ||
+            answers.spouseName,
+          spouseFormComment: answers.spouseFormComment,
+          familyStatus: findFamilyStatus(answers, externalData),
+          streetName: externalData.nationalRegistry.data.address?.streetAddress,
+          postalCode: externalData.nationalRegistry.data.address?.postalCode,
+          city: externalData.nationalRegistry.data.address?.locality,
+          directTaxPayments: [JSON.stringify(directTaxPayments())],
+          applicationSystemId: id,
+        },
+        xTenantIdentifier: 'reykjavik',
+        xUserPermissions: 'finaid:write',
+      } as CreateApplicationOperationRequest
+
+      console.log('--------------------------------')
+      console.log('rvkRequest')
+      console.dir(rvkRequest, { depth: null, colors: true })
+      console.log('--------------------------------')
+
       return await this.rvkApplicationsApiWithAuth(auth)
-        .createApplication({
-          createApplicationRequest: {
-            name: externalData.nationalRegistry.data.fullName,
-            nationalId: externalData.nationalRegistry.data.nationalId,
-            phoneNumber: answers.contactInfo.phone,
-            email: answers.contactInfo.email,
-            homeCircumstances:
-              answers.homeCircumstances.type || 'fakeHomeCircumstances',
-            homeCircumstancesCustom:
-              answers.homeCircumstances.custom || 'fakeHomeCircumstancesCustom',
-            student: Boolean(answers.student.isStudent === ApproveOptions.Yes),
-            studentCustom: answers.student.custom || 'fakeStudentCustom',
-            hasIncome: Boolean(answers.income === ApproveOptions.Yes),
-            usePersonalTaxCredit: Boolean(
-              answers.personalTaxCredit === ApproveOptions.Yes,
-            ),
-            bankNumber: answers.bankInfo.bankNumber,
-            ledger: answers.bankInfo.ledger,
-            accountNumber: answers.bankInfo.accountNumber,
-            employment: answers.employment.type,
-            employmentCustom:
-              answers.employment.custom || 'fakeEmploymentCustom',
-            formComment: answers.formComment || 'fakeFormComment',
-            state: ApplicationState.NEW,
-            files: files, // attachments
-            children: childrenRvk,
-            childrenComment: answers.childrenComment || 'fakeChildrenComment',
-            spouseNationalId:
-              externalData.nationalRegistrySpouse.data?.nationalId ||
-              answers.relationshipStatus?.spouseNationalId ||
-              'fakeSpouseNationalId',
-            spouseEmail:
-              answers.spouseContactInfo?.email ||
-              answers.spouse?.email ||
-              answers.relationshipStatus?.spouseEmail ||
-              'fakeSpouseEmail',
-            spousePhoneNumber:
-              answers.spouseContactInfo?.phone || 'fakeSpousePhoneNumber',
-            spouseName:
-              externalData.nationalRegistrySpouse.data?.name ||
-              answers.spouseName ||
-              'fakeName',
-            spouseFormComment:
-              answers.spouseFormComment || 'fakeSpouseFormComment',
-            familyStatus: findFamilyStatus(answers, externalData),
-            streetName:
-              externalData.nationalRegistry.data.address?.streetAddress,
-            postalCode: externalData.nationalRegistry.data.address?.postalCode,
-            city: externalData.nationalRegistry.data.address?.locality,
-            directTaxPayments: [JSON.stringify(directTaxPayments())],
-            applicationSystemId: id,
-          },
-          xTenantIdentifier: 'reykjavik',
-          xUserPermissions: 'finaid:write',
-        } as CreateApplicationOperationRequest)
+        .createApplication(rvkRequest)
         .then(() => {
           return { currentApplicationId: newApplication.applicationSystemId }
         })
