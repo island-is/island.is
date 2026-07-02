@@ -338,6 +338,7 @@ export class FinancialAidService extends BaseTemplateApiService {
     const newApplication = {
       name: externalData.nationalRegistry.data.fullName,
       nationalId: externalData.nationalRegistry.data.nationalId,
+      nationality: externalData.nationalRegistry.data.citizenship?.code,
       phoneNumber: answers.contactInfo.phone,
       email: answers.contactInfo.email,
       homeCircumstances: answers.homeCircumstances.type,
