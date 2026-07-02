@@ -4,8 +4,6 @@ import {
   buildRadioField,
   buildSection,
 } from '@island.is/application/core'
-import { sharedMessages } from '../../lib/messages'
-
 export const secondSection = buildSection({
   id: 'secondSection',
   title: 'Second section',
@@ -13,7 +11,6 @@ export const secondSection = buildSection({
     buildMultiField({
       id: 'secondSection',
       title: 'Second section',
-      nextButtonText: sharedMessages.nextButton,
       children: [
         buildDescriptionField({
           id: 'description',

@@ -12,7 +12,7 @@ import {
   getAllCountryCodes,
   getAllLanguageCodes,
 } from '@island.is/shared/utils'
-import { childMessages, sharedMessages } from '../../lib/messages'
+import { childMessages } from '../../lib/messages'
 import { Gender, KnowsNationalId, Pronoun } from '../../utils/constants'
 
 const isNoNationalId = (answers: Record<string, unknown>) =>
@@ -27,7 +27,6 @@ export const childInfoManualSubSection = buildSubSection({
       id: 'childInfoManual',
       title: childMessages.manualInfo.sectionTitle,
       description: childMessages.manualInfo.intro,
-      nextButtonText: sharedMessages.nextButton,
       children: [
         buildDescriptionField({
           id: 'childInfoManual.nameAgeGenderTitle',

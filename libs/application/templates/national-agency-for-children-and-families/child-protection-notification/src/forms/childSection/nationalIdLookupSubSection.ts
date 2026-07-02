@@ -8,11 +8,13 @@ import {
   buildRadioField,
   buildSelectField,
   buildSubSection,
+  buildSubmitField,
   buildTextField,
   getValueViaPath,
   YES,
 } from '@island.is/application/core'
-import { childMessages, sharedMessages } from '../../lib/messages'
+import { DefaultEvents } from '@island.is/application/types'
+import { childMessages, prerequisitesMessages } from '../../lib/messages'
 import {
   KnowsNationalId,
   NoNationalIdReason,
@@ -29,7 +31,6 @@ export const nationalIdLookupSubSection = buildSubSection({
     buildMultiField({
       id: 'nationalIdLookup',
       title: childMessages.shared.sectionTitle,
-      nextButtonText: sharedMessages.nextButton,
       children: [
         buildDescriptionField({
           id: 'nationalIdLookup.intro',
@@ -183,6 +184,17 @@ export const nationalIdLookupSubSection = buildSubSection({
           condition: (answers) =>
             knowsNationalId(answers) &&
             !!getValueViaPath(answers, 'child.nationalIdInfo.name'),
+        }),
+        buildSubmitField({
+          id: 'submit',
+          refetchApplicationAfterSubmit: true,
+          actions: [
+            {
+              event: DefaultEvents.SUBMIT,
+              name: prerequisitesMessages.child.startNotification,
+              type: 'primary',
+            },
+          ],
         }),
       ],
     }),

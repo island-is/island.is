@@ -11,11 +11,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { getAllCountryCodes } from '@island.is/shared/utils'
-import {
-  childMessages,
-  expectantParentsMessages,
-  sharedMessages,
-} from '../../lib/messages'
+import { childMessages, expectantParentsMessages } from '../../lib/messages'
 import {
   KnowsNationalId,
   KnowsParentNationalId,
@@ -185,7 +181,6 @@ export const expectantParentsSubSection = buildSubSection({
     buildMultiField({
       id: 'expectantParents',
       title: expectantParentsMessages.shared.sectionTitle,
-      nextButtonText: sharedMessages.nextButton,
       children: [
         buildDescriptionField({
           id: 'expectantParents.intro1',
