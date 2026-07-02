@@ -79,10 +79,16 @@ export const ZendeskChatPanel = ({
 
   useEffect(() => {
     const queryParam = new URLSearchParams(window.location.search).get('wa_lid')
+
+    let timeout: NodeJS.Timeout | null = null
     if (queryParam === 't10') {
-      setTimeout(() => {
+      timeout = setTimeout(() => {
         openChat()
       }, 100)
+    }
+
+    return () => {
+      if (timeout) window.clearTimeout(timeout)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
