@@ -31,6 +31,11 @@ export interface NewDrivingLicenseInput {
   needsToPresentQualityPhoto: boolean
   licenseCategory: DrivingLicenseCategory
   sendLicenseInMail: number
+  // Biometric photo/signature references from Þjóðskrá temporary storage,
+  // used by the redesigned B-full photo selector. Omitted when the redesign
+  // flag is off, keeping the RLS request byte-identical to the legacy flow.
+  photoBiometricsId?: string | null
+  signatureBiometricsId?: string | null
 }
 
 export interface NewTemporaryDrivingLicenseInput {
