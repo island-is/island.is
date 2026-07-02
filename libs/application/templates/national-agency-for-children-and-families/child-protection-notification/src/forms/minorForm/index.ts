@@ -1,7 +1,7 @@
 import { buildForm } from '@island.is/application/core'
 import { FormModes } from '@island.is/application/types'
 
-import { overviewSection } from '../overview'
+import { overviewSection } from './overviewSection'
 import { minorFirstSection } from './firstSection'
 
 export const MinorForm = buildForm({

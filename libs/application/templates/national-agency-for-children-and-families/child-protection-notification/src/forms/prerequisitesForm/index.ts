@@ -1,46 +1,23 @@
-import {
-  buildDataProviderItem,
-  buildExternalDataProvider,
-  buildForm,
-  buildSection,
-  buildSubmitField,
-  coreMessages,
-} from '@island.is/application/core'
-import { DefaultEvents, FormModes } from '@island.is/application/types'
-import { UserProfileApi } from '@island.is/application/types'
+import { buildForm, buildSection } from '@island.is/application/core'
+import { FormModes } from '@island.is/application/types'
+import { prerequisitesMessages } from '../../lib/messages'
+import { childSubSection } from './childSubSection'
+import { externalDataSubSection } from './externalDataSubSection'
+import { serviceProviderSubSection } from './serviceProviderSubSection'
 
 export const Prerequisites = buildForm({
-  id: 'PrerequisitesDraft',
+  id: 'prerequisites',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
+  renderLastScreenBackButton: true,
   children: [
     buildSection({
-      id: 'conditions',
-      tabTitle: 'Forkröfur',
+      id: 'prerequisites',
+      title: prerequisitesMessages.shared.sectionTitle,
       children: [
-        buildExternalDataProvider({
-          id: 'approveExternalData',
-          title: 'External data',
-          dataProviders: [
-            buildDataProviderItem({
-              provider: UserProfileApi,
-              title: 'User profile',
-              subTitle: 'User profile',
-            }),
-          ],
-          submitField: buildSubmitField({
-            id: 'submit',
-            placement: 'footer',
-            refetchApplicationAfterSubmit: true,
-            actions: [
-              {
-                event: DefaultEvents.SUBMIT,
-                name: coreMessages.buttonNext,
-                type: 'primary',
-              },
-            ],
-          }),
-        }),
+        externalDataSubSection,
+        serviceProviderSubSection,
+        childSubSection,
       ],
     }),
   ],
