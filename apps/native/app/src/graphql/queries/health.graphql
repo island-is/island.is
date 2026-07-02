@@ -281,3 +281,122 @@ query getAppointmentDetail($id: String!) {
     }
   }
 }
+
+query GetHealthConversations(
+  $input: HealthDirectorateHealthConversationsFilterInput
+) {
+  healthDirectorateHealthConversations(input: $input) {
+    id
+    title
+    status
+    messageCount
+    lastMessageSentAt
+    lastSenderGroupName
+    hasAttachment
+    isStarred
+    isArchived
+    isRead
+  }
+}
+
+query GetHealthConversation($id: ID!) {
+  healthDirectorateHealthConversation(id: $id) {
+    id
+    title
+    status
+    startDate
+    lastMessageSentAt
+    lastSenderGroupName
+    isStarred
+    isArchived
+    isRead
+    patientCanReply
+    messages {
+      id
+      direction
+      messageSentAt
+      messageTextContent
+      senderGroupName
+      attachments {
+        id
+        fileName
+        description
+        downloadServiceURL
+      }
+    }
+  }
+}
+
+query GetHealthConversationRecipients($locale: LocaleEnum) {
+  healthDirectorateHealthConversationRecipients(locale: $locale) {
+    nodeId
+    groupId
+    name
+    allowsMessaging
+    isCurrentlyWithinWindow
+    patientReplyWindowDays
+    allowedMessageTypes {
+      patientInitiatedTypeCode
+      title
+      description
+      isCertificate
+    }
+  }
+}
+
+mutation CreateHealthConversation(
+  $input: HealthDirectorateCreateConversationInput!
+) {
+  healthDirectorateCreateHealthConversation(input: $input) {
+    id
+  }
+}
+
+mutation ReplyToHealthConversation(
+  $input: HealthDirectorateReplyToConversationInput!
+) {
+  healthDirectorateReplyToHealthConversation(input: $input) {
+    id
+    messages {
+      id
+      direction
+      messageSentAt
+      messageTextContent
+      senderGroupName
+      attachments {
+        id
+        fileName
+        description
+        downloadServiceURL
+      }
+    }
+  }
+}
+
+mutation MarkHealthConversationAsRead(
+  $input: HealthDirectorateConversationIdInput!
+) {
+  healthDirectorateMarkHealthConversationAsRead(input: $input)
+}
+
+mutation StarHealthConversation($input: HealthDirectorateConversationIdInput!) {
+  healthDirectorateStarHealthConversation(input: $input)
+}
+
+mutation UnstarHealthConversation(
+  $input: HealthDirectorateConversationIdInput!
+) {
+  healthDirectorateUnstarHealthConversation(input: $input)
+}
+
+mutation ArchiveHealthConversation(
+  $input: HealthDirectorateConversationIdInput!
+) {
+  healthDirectorateArchiveHealthConversation(input: $input)
+}
+
+mutation UnarchiveHealthConversation(
+  $input: HealthDirectorateConversationIdInput!
+) {
+  healthDirectorateUnarchiveHealthConversation(input: $input)
+}
