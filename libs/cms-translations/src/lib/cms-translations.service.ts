@@ -1,13 +1,20 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable, Optional } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 
 import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { Cache as CacheManager } from 'cache-manager'
 import { CmsTranslationConfig } from './cms-translations.config'
 import { ConfigType } from '@nestjs/config'
+import { Features } from '@island.is/feature-flags'
 import { logger } from '@island.is/logging'
 import { ContentfulRepository } from '@island.is/cms'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { Locale } from '@island.is/shared/types'
+import {
+  ApplicationTranslationProvider,
+  APPLICATION_TRANSLATION_PROVIDER,
+  getApplicationTranslationCacheKey,
+} from '@island.is/islandis-translations'
 
 export type TranslationsDict = Record<string, string>
 
@@ -48,9 +55,69 @@ export class CmsTranslationsService {
     private readonly config: ConfigType<typeof CmsTranslationConfig>,
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: CacheManager,
+    private readonly featureFlagService: FeatureFlagService,
+    @Optional()
+    @Inject(APPLICATION_TRANSLATION_PROVIDER)
+    private readonly appTranslationProvider?: ApplicationTranslationProvider,
   ) {}
 
+  private shouldUseApplicationTranslationWorkspace = async (
+    namespace: string,
+  ): Promise<boolean> => {
+    if (
+      !this.appTranslationProvider ||
+      !this.appTranslationProvider.isApplicationNamespace(namespace)
+    ) {
+      return false
+    }
+
+    return this.featureFlagService.getValue(
+      Features.applicationTranslationsFromWorkspace,
+      false,
+    )
+  }
+
+  private getNamespaceMessagesFromDb = async (
+    namespace: string,
+    lang: Locale,
+  ): Promise<Messages> => {
+    const cacheKey = getApplicationTranslationCacheKey(namespace)
+    const cache = await this.cacheManager.get(cacheKey)
+    if (cache) {
+      return cache as Messages
+    }
+
+    const isStrings =
+      await this.appTranslationProvider!.getTranslationsForNamespace(
+        namespace,
+        'is',
+      )
+    const enStrings =
+      await this.appTranslationProvider!.getTranslationsForNamespace(
+        namespace,
+        'en',
+      )
+
+    const messages: Messages = {
+      id: namespace,
+      is: isStrings,
+      en: enStrings,
+    }
+
+    await this.cacheManager.set(
+      cacheKey,
+      messages,
+      this.config.memCacheExpiryMilliseconds + 120000 * Math.random(),
+    )
+
+    return messages
+  }
+
   getNamespaceMessages = async (namespace: string) => {
+    if (await this.shouldUseApplicationTranslationWorkspace(namespace)) {
+      return this.getNamespaceMessagesFromDb(namespace, 'is')
+    }
+
     const cache = await this.cacheManager.get(namespace)
     if (cache) {
       return cache as Messages
@@ -82,7 +149,7 @@ export class CmsTranslationsService {
       await this.cacheManager.set(
         namespace,
         messages,
-        this.config.memCacheExpiryMilliseconds + 120000 * Math.random(), // Add a random delay to avoid cache stampede
+        this.config.memCacheExpiryMilliseconds + 120000 * Math.random(),
       )
 
       return messages

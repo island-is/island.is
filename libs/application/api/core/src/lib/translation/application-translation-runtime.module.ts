@@ -1,0 +1,32 @@
+import { Global, Module } from '@nestjs/common'
+import { SequelizeModule } from '@nestjs/sequelize'
+
+import { APPLICATION_TRANSLATION_PROVIDER } from '@island.is/islandis-translations'
+
+import { ApplicationTranslation } from './application-translation.model'
+import { ApplicationTranslationLog } from './application-translation-log.model'
+import { ApplicationTranslationPublish } from './application-translation-publish.model'
+import { ApplicationTranslationPublishSnapshot } from './application-translation-publish-snapshot.model'
+import { ApplicationTranslationService } from './application-translation.service'
+import { ApplicationTranslationProviderImpl } from './application-translation.provider'
+
+@Global()
+@Module({
+  imports: [
+    SequelizeModule.forFeature([
+      ApplicationTranslation,
+      ApplicationTranslationLog,
+      ApplicationTranslationPublish,
+      ApplicationTranslationPublishSnapshot,
+    ]),
+  ],
+  providers: [
+    ApplicationTranslationService,
+    {
+      provide: APPLICATION_TRANSLATION_PROVIDER,
+      useClass: ApplicationTranslationProviderImpl,
+    },
+  ],
+  exports: [ApplicationTranslationService, APPLICATION_TRANSLATION_PROVIDER],
+})
+export class ApplicationTranslationRuntimeModule {}

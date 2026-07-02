@@ -78,6 +78,8 @@ import { HmsRentalAgreementClientConfig } from '@island.is/clients/hms-rental-ag
 import { HousingBenefitsConfig } from '@island.is/clients/hms-housing-benefits'
 import { ExemptionForTransportationClientConfig } from '@island.is/clients/transport-authority/exemption-for-transportation'
 import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
+import { TranslationModule } from './modules/translation/translation.module'
+import { ApplicationTranslationRuntimeModule } from '@island.is/application/api/core'
 import { RecyclingFundClientConfig } from '@island.is/clients/recycling-fund'
 
 @Module({
@@ -85,7 +87,9 @@ import { RecyclingFundClientConfig } from '@island.is/clients/recycling-fund'
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
+    ApplicationTranslationRuntimeModule,
     ApplicationModule,
+    TranslationModule,
     ProblemModule,
     ConfigModule.forRoot({
       isGlobal: true,

@@ -20,5 +20,10 @@ export const applicationSystemNavigation: PortalNavigationItem = {
       path: ApplicationSystemPaths.Statistics,
       activeIfExact: true,
     },
+    {
+      name: m.translations,
+      path: ApplicationSystemPaths.Translations,
+      activeIfExact: true,
+    },
   ],
 }

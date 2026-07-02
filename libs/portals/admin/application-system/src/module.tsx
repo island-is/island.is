@@ -6,6 +6,18 @@ import { ApplicationSystemPaths } from './lib/paths'
 import { Navigate } from 'react-router-dom'
 
 const Root = lazy(() => import('./screens/Root/Root'))
+const TranslationWorkspace = lazy(() =>
+  import('./screens/TranslationWorkspace/TranslationWorkspace').then((m) => ({
+    default: m.TranslationWorkspace,
+  })),
+)
+const SharedNamespaceTranslationWorkspace = lazy(() =>
+  import(
+    './screens/SharedNamespaceTranslationWorkspace/SharedNamespaceTranslationWorkspace'
+  ).then((m) => ({
+    default: m.SharedNamespaceTranslationWorkspace,
+  })),
+)
 
 const allowedScopes: string[] = [
   AdminPortalScope.applicationSystemAdmin,
@@ -36,6 +48,21 @@ export const applicationSystemAdminModule: PortalModule = {
           element: <Navigate to={ApplicationSystemPaths.Overview} />,
         },
       ],
+    },
+    {
+      name: m.translations,
+      path: '/umsoknakerfi/thydingar/shared/:namespace',
+      element: <SharedNamespaceTranslationWorkspace />,
+    },
+    {
+      name: m.translations,
+      path: ApplicationSystemPaths.SharedNamespaceTranslationWorkspace,
+      element: <SharedNamespaceTranslationWorkspace />,
+    },
+    {
+      name: m.translations,
+      path: ApplicationSystemPaths.TranslationWorkspace,
+      element: <TranslationWorkspace />,
     },
   ],
 }

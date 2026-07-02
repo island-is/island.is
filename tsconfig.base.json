@@ -699,6 +699,9 @@
       "@island.is/application/ui-components": [
         "libs/application/ui-components/src/index.ts"
       ],
+      "@island.is/application/ui-components/utilities/formatters": [
+        "libs/application/ui-components/src/utilities/formatters.ts"
+      ],
       "@island.is/application/ui-fields": [
         "libs/application/ui-fields/src/index.ts"
       ],
@@ -1064,6 +1067,9 @@
       "@island.is/cms-translations": ["libs/cms-translations/src/index.ts"],
       "@island.is/cms-translations/test": [
         "libs/cms-translations/src/test/index.ts"
+      ],
+      "@island.is/islandis-translations": [
+        "libs/islandis-translations/src/index.ts"
       ],
       "@island.is/consultation-portal/*": ["apps/consultation-portal/*"],
       "@island.is/content-search-index-manager": [

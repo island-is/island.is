@@ -22,7 +22,7 @@ export const GridContainer: FC<React.PropsWithChildren<Props>> = ({
     pos.position = position
   }
   return (
-    <Box {...pos} className={cn(className, styles.root)} id={id}>
+    <Box {...pos} className={cn(styles.root, className)} id={id}>
       {children}
     </Box>
   )
