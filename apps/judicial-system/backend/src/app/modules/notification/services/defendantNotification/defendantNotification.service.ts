@@ -28,7 +28,6 @@ import { CourtService } from '../../../court'
 import { EventService } from '../../../event'
 import {
   Case,
-  DateLog,
   Defendant,
   InstitutionContactRepositoryService,
   Notification,
@@ -197,22 +196,25 @@ export class DefendantNotificationService extends BaseNotificationService {
       defendant,
       TrackedNotificationType.DEFENDER_COURT_DATE_FOLLOW_UP,
     )
-    const arraignmentDateLog = DateLog.arraignmentDate(theCase.dateLogs)
-    const hasFutureArraignmentDate =
-      arraignmentDateLog && arraignmentDateLog.date.getTime() > Date.now()
 
-    if (!shouldSendCourtDateFollowUp || !hasFutureArraignmentDate || !user) {
+    if (!shouldSendCourtDateFollowUp || !user) {
       // Nothing should be sent so we return a successful response
       return { delivered: true }
     }
 
-    const recipient = await this.sendArraignmentDateEmailNotification({
+    const recipient = await this.sendCourtDateFollowUpEmailNotification({
       theCase,
       user,
-      arraignmentDateLog,
       recipientName: defendant.defenderName ?? '',
       recipientEmail: defendant.defenderEmail ?? '',
+      recipientHasAccessToRVG: Boolean(defendant.defenderNationalId),
     })
+
+    if (!recipient) {
+      // Neither a court session nor an arraignment is scheduled in the future,
+      // so there is nothing to invite the defender to
+      return { delivered: true }
+    }
 
     const result = await this.recordNotification(
       theCase.id,
