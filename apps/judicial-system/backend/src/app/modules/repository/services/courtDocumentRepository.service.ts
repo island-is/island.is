@@ -65,8 +65,6 @@ export class CourtDocumentRepositoryService {
     private readonly courtDocumentModel: typeof CourtDocument,
     @InjectModel(CourtSession)
     private readonly courtSessionModel: typeof CourtSession,
-    @InjectModel(CaseFile)
-    private readonly caseFileModel: typeof CaseFile,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -81,14 +79,6 @@ export class CourtDocumentRepositoryService {
         { data: Object.keys(data) },
       )
 
-      // "Önnur gögn" documents (CaseFileCategory.CASE_FILE) must never be
-      // auto-filed onto the court record, not even into an open court session.
-      // Court users file them manually via "Leggja fram".
-      const isOtherDocument = await this.isOtherDocumentsCaseFile(
-        data.caseFileId,
-        options.transaction,
-      )
-
       // Find the last court session for the case, if any
       const lastCourtSession = await this.courtSessionModel.findOne({
         where: { caseId },
@@ -97,7 +87,7 @@ export class CourtDocumentRepositoryService {
       })
 
       const courtSessionId =
-        !isOtherDocument && lastCourtSession && !lastCourtSession.isConfirmed
+        lastCourtSession && !lastCourtSession.isConfirmed
           ? lastCourtSession.id
           : undefined
 
@@ -163,22 +153,6 @@ export class CourtDocumentRepositoryService {
 
       throw error
     }
-  }
-
-  private async isOtherDocumentsCaseFile(
-    caseFileId: string | undefined,
-    transaction: Transaction,
-  ): Promise<boolean> {
-    if (!caseFileId) {
-      return false
-    }
-
-    const caseFile = await this.caseFileModel.findByPk(caseFileId, {
-      attributes: ['category'],
-      transaction,
-    })
-
-    return caseFile?.category === CaseFileCategory.CASE_FILE
   }
 
   private async updateFiledDocumentsOrder({

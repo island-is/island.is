@@ -5,10 +5,7 @@ import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import {
-  CaseFileCategory,
-  CourtDocumentType,
-} from '@island.is/judicial-system/types'
+import { CaseFileCategory } from '@island.is/judicial-system/types'
 
 import { CaseFile } from '../models/caseFile.model'
 import { CourtDocument } from '../models/courtDocument.model'
@@ -21,32 +18,19 @@ describe('CourtDocumentRepositoryService', () => {
   } as unknown as Transaction
 
   let service: CourtDocumentRepositoryService
-  let courtDocumentModel: {
-    findAll: jest.Mock
-    update: jest.Mock
-    create: jest.Mock
-  }
-  let courtSessionModel: { findAll: jest.Mock; findOne: jest.Mock }
-  let caseFileModel: { findByPk: jest.Mock }
+  let courtDocumentModel: { findAll: jest.Mock; update: jest.Mock }
+  let courtSessionModel: { findAll: jest.Mock }
 
   beforeEach(async () => {
     courtDocumentModel = {
       findAll: jest.fn().mockResolvedValue([]),
       update: jest.fn().mockResolvedValue([1, []]),
-      create: jest.fn().mockImplementation((values) =>
-        Promise.resolve({ id: 'new-doc', ...values }),
-      ),
     }
 
     // No existing court sessions, so the next document order resolves to 1
     // and no merged-document bookkeeping is triggered.
     courtSessionModel = {
       findAll: jest.fn().mockResolvedValue([]),
-      findOne: jest.fn().mockResolvedValue(null),
-    }
-
-    caseFileModel = {
-      findByPk: jest.fn().mockResolvedValue(null),
     }
 
     const moduleRef = await Test.createTestingModule({
@@ -57,7 +41,6 @@ describe('CourtDocumentRepositoryService', () => {
         },
         { provide: getModelToken(CourtDocument), useValue: courtDocumentModel },
         { provide: getModelToken(CourtSession), useValue: courtSessionModel },
-        { provide: getModelToken(CaseFile), useValue: caseFileModel },
         CourtDocumentRepositoryService,
       ],
     }).compile()
@@ -124,53 +107,6 @@ describe('CourtDocumentRepositoryService', () => {
       )
 
       expect(courtDocumentModel.update).not.toHaveBeenCalled()
-    })
-  })
-
-  describe('create', () => {
-    const unconfirmedSession = { id: 'session-1', isConfirmed: false }
-
-    it('does not file an "Önnur gögn" (CASE_FILE) document into an open court session', async () => {
-      courtSessionModel.findOne.mockResolvedValue(unconfirmedSession)
-      caseFileModel.findByPk.mockResolvedValue({
-        category: CaseFileCategory.CASE_FILE,
-      })
-
-      await service.create(
-        'case-1',
-        {
-          documentType: CourtDocumentType.UPLOADED_DOCUMENT,
-          name: 'Önnur gögn',
-          caseFileId: 'cf-other',
-        },
-        { transaction },
-      )
-
-      expect(courtDocumentModel.create).toHaveBeenCalledTimes(1)
-      const [values] = courtDocumentModel.create.mock.calls[0]
-      expect(values.courtSessionId).toBeUndefined()
-      expect(values.documentOrder).toBe(0)
-    })
-
-    it('files a party-category document into an open court session', async () => {
-      courtSessionModel.findOne.mockResolvedValue(unconfirmedSession)
-      caseFileModel.findByPk.mockResolvedValue({
-        category: CaseFileCategory.PROSECUTOR_CASE_FILE,
-      })
-
-      await service.create(
-        'case-1',
-        {
-          documentType: CourtDocumentType.UPLOADED_DOCUMENT,
-          name: 'Sakskjal',
-          caseFileId: 'cf-party',
-        },
-        { transaction },
-      )
-
-      expect(courtDocumentModel.create).toHaveBeenCalledTimes(1)
-      const [values] = courtDocumentModel.create.mock.calls[0]
-      expect(values.courtSessionId).toBe('session-1')
     })
   })
 })
