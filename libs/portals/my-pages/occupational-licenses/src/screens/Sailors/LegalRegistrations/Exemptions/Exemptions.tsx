@@ -13,7 +13,7 @@ import {
   LinkButton,
   NestedLines,
   NestedTable,
-  Table,
+  PortalTable,
   createColumnHelper,
   formatDate,
   m,
@@ -147,7 +147,7 @@ export const Exemptions = () => {
             {filtered.length === 0 ? (
               <Problem type="no_data" noBorder={false} />
             ) : (
-              <Table
+              <PortalTable
                 columns={columns}
                 data={filtered}
                 emptyMessage={om.sailorCrewRegistrationsExemptionsEmpty}
