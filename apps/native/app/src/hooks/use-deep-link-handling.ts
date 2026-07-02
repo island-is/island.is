@@ -43,6 +43,7 @@ export function useDeepLinkHandling() {
   const lockScreenActivatedAt = useAuthStore(
     ({ lockScreenActivatedAt }) => lockScreenActivatedAt,
   )
+  const { openBrowser } = useBrowser()
 
   const lastUrl = useRef<string | null>(null)
 
@@ -66,11 +67,11 @@ export function useDeepLinkHandling() {
         return true
       }
 
-      navigateToUniversalLink({ link: url })
+      navigateToUniversalLink({ link: url, openBrowser })
 
       return true
     },
-    [lastUrl, lockScreenActivatedAt],
+    [lastUrl, lockScreenActivatedAt, openBrowser],
   )
 
   useEffect(() => {
