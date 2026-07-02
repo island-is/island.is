@@ -14,12 +14,7 @@ import {
   createTestUsers,
 } from '../../createTestingNotificationModule'
 
-import {
-  Case,
-  DateLog,
-  Defendant,
-  Notification,
-} from '../../../../repository'
+import { Case, DateLog, Defendant, Notification } from '../../../../repository'
 import { DefendantNotificationDto } from '../../../dto/defendantNotification.dto'
 import { DeliverResponse } from '../../../models/deliver.response'
 
@@ -74,11 +69,8 @@ describe('InternalNotificationController - Send defender court date follow up no
   } as Defendant
 
   beforeEach(async () => {
-    const {
-      emailService,
-      internalNotificationController,
-      notificationModel,
-    } = await createTestingNotificationModule()
+    const { emailService, internalNotificationController, notificationModel } =
+      await createTestingNotificationModule()
 
     defendantNotificationDTO = {
       type: DefendantNotificationType.DEFENDER_COURT_DATE_FOLLOW_UP,
@@ -140,7 +132,9 @@ describe('InternalNotificationController - Send defender court date follow up no
             },
           ],
           subject: 'Nýtt þinghald í máli R-123-456/2024',
-          attachments: [expect.objectContaining({ filename: 'court-date.ics' })],
+          attachments: [
+            expect.objectContaining({ filename: 'court-date.ics' }),
+          ],
         }),
       )
     })
@@ -150,7 +144,9 @@ describe('InternalNotificationController - Send defender court date follow up no
       expect(mockNotificationModel.create).toHaveBeenCalledWith({
         caseId,
         type: DefendantNotificationType.DEFENDER_COURT_DATE_FOLLOW_UP,
-        recipients: [{ address: confirmedDefendant.defenderEmail, success: true }],
+        recipients: [
+          { address: confirmedDefendant.defenderEmail, success: true },
+        ],
       })
     })
   })
@@ -189,7 +185,9 @@ describe('InternalNotificationController - Send defender court date follow up no
       expect(mockNotificationModel.create).toHaveBeenCalledWith({
         caseId,
         type: DefendantNotificationType.DEFENDER_COURT_DATE_FOLLOW_UP,
-        recipients: [{ address: confirmedDefendant.defenderEmail, success: true }],
+        recipients: [
+          { address: confirmedDefendant.defenderEmail, success: true },
+        ],
       })
     })
   })

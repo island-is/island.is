@@ -79,11 +79,8 @@ describe('InternalNotificationController - Send spokesperson court date follow u
   } as CivilClaimant
 
   beforeEach(async () => {
-    const {
-      emailService,
-      internalNotificationController,
-      notificationModel,
-    } = await createTestingNotificationModule()
+    const { emailService, internalNotificationController, notificationModel } =
+      await createTestingNotificationModule()
 
     civilClaimantNotificationDTO = {
       type: CivilClaimantNotificationType.SPOKESPERSON_COURT_DATE_FOLLOW_UP,
@@ -145,7 +142,9 @@ describe('InternalNotificationController - Send spokesperson court date follow u
             },
           ],
           subject: 'Nýtt þinghald í máli R-123-456/2024',
-          attachments: [expect.objectContaining({ filename: 'court-date.ics' })],
+          attachments: [
+            expect.objectContaining({ filename: 'court-date.ics' }),
+          ],
         }),
       )
     })
