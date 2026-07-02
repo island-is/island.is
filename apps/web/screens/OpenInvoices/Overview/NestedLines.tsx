@@ -43,11 +43,9 @@ export const NestedLines = ({
 
   if (error) {
     return (
-      <T.Row>
-        <T.Data box={{ background: 'blue100' }} colSpan={4}>
-          <EmptyTable message={formatMessage(m.overview.errorLoading)} />
-        </T.Data>
-      </T.Row>
+      <Box background="blue100">
+        <EmptyTable message={formatMessage(m.overview.errorLoading)} />
+      </Box>
     )
   }
 
@@ -56,113 +54,109 @@ export const NestedLines = ({
 
   if (loading || (!invoices.length && !error)) {
     return (
-      <T.Row>
-        <T.Data box={{ background: 'blue100' }} colSpan={4}>
-          <EmptyTable
-            loading={loading}
-            message={formatMessage(m.overview.emptyTable)}
-          />
-        </T.Data>
-      </T.Row>
+      <Box background="blue100">
+        <EmptyTable
+          loading={loading}
+          message={formatMessage(m.overview.emptyTable)}
+        />
+      </Box>
     )
   }
 
   return (
-    <T.Row>
-      <T.Data box={{ background: 'blue100' }} colSpan={4}>
-        {invoices.map((invoice) => (
-          <Box
-            paddingBottom={3}
-            paddingLeft={2}
-            key={invoice.id}
-            background="blue100"
-          >
-            <Box marginBottom={2} display="flex">
-              <Box marginRight={2}>
-                <Text variant="small" fontWeight="semiBold">
-                  {formatDate(new Date(invoice.date), {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </Text>
-              </Box>
-              <Text variant="small">{invoice.id}</Text>
-            </Box>
-            <T.Table>
-              <T.Body>
-                {invoice.itemizations?.map((invoiceItem, i) => {
-                  const background = i % 2 === 0 ? 'white' : undefined
-                  return (
-                    <T.Row key={invoiceItem.id}>
-                      <T.Data
-                        box={{
-                          textAlign: 'left',
-                          background,
-                          className: styles.noBorder,
-                        }}
-                      >
-                        <Text variant="small">{invoiceItem.label}</Text>
-                      </T.Data>
-                      <T.Data
-                        box={{
-                          textAlign: 'right',
-                          background,
-                          className: styles.noBorder,
-                        }}
-                      >
-                        <Text variant="small">
-                          {formatCurrency(invoiceItem.amount)}
-                        </Text>
-                      </T.Data>
-                    </T.Row>
-                  )
+    <Box background="blue100">
+      {invoices.map((invoice) => (
+        <Box
+          paddingBottom={3}
+          paddingLeft={2}
+          key={invoice.id}
+          background="blue100"
+        >
+          <Box marginBottom={2} display="flex">
+            <Box marginRight={2}>
+              <Text variant="small" fontWeight="semiBold">
+                {formatDate(new Date(invoice.date), {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
                 })}
-                <T.Row>
-                  <T.Data
-                    box={{
-                      background:
-                        (invoice.itemizations?.length ?? 0) % 2 === 0
-                          ? 'white'
-                          : undefined,
-                      className: styles.noBorder,
-                    }}
-                  />
-                  <T.Data
-                    box={{
-                      textAlign: 'right',
-                      background:
-                        (invoice.itemizations?.length ?? 0) % 2 === 0
-                          ? 'white'
-                          : undefined,
-                      className: styles.noBorder,
-                    }}
-                  >
-                    <Text fontWeight="semiBold" variant="small">
-                      {formatCurrency(invoice.totalItemizationAmount)}
-                    </Text>
-                  </T.Data>
-                </T.Row>
-              </T.Body>
-            </T.Table>
+              </Text>
+            </Box>
+            <Text variant="small">{invoice.id}</Text>
           </Box>
-        ))}
-        <Box paddingY={3} paddingLeft={2} background="blue100">
-          <Box
-            marginRight={2}
-            marginBottom={2}
-            display="flex"
-            justifyContent="spaceBetween"
-          >
-            <Text variant="small" fontWeight="semiBold">
-              {`${formatMessage(m.totals.total)}: `}
-            </Text>
-            <Text variant="small" fontWeight="semiBold">
-              {formatCurrency(total)}
-            </Text>
-          </Box>
+          <T.Table>
+            <T.Body>
+              {invoice.itemizations?.map((invoiceItem, i) => {
+                const background = i % 2 === 0 ? 'white' : undefined
+                return (
+                  <T.Row key={invoiceItem.id}>
+                    <T.Data
+                      box={{
+                        textAlign: 'left',
+                        background,
+                        className: styles.noBorder,
+                      }}
+                    >
+                      <Text variant="small">{invoiceItem.label}</Text>
+                    </T.Data>
+                    <T.Data
+                      box={{
+                        textAlign: 'right',
+                        background,
+                        className: styles.noBorder,
+                      }}
+                    >
+                      <Text variant="small">
+                        {formatCurrency(invoiceItem.amount)}
+                      </Text>
+                    </T.Data>
+                  </T.Row>
+                )
+              })}
+              <T.Row>
+                <T.Data
+                  box={{
+                    background:
+                      (invoice.itemizations?.length ?? 0) % 2 === 0
+                        ? 'white'
+                        : undefined,
+                    className: styles.noBorder,
+                  }}
+                />
+                <T.Data
+                  box={{
+                    textAlign: 'right',
+                    background:
+                      (invoice.itemizations?.length ?? 0) % 2 === 0
+                        ? 'white'
+                        : undefined,
+                    className: styles.noBorder,
+                  }}
+                >
+                  <Text fontWeight="semiBold" variant="small">
+                    {formatCurrency(invoice.totalItemizationAmount)}
+                  </Text>
+                </T.Data>
+              </T.Row>
+            </T.Body>
+          </T.Table>
         </Box>
-      </T.Data>
-    </T.Row>
+      ))}
+      <Box paddingY={3} paddingLeft={2} background="blue100">
+        <Box
+          marginRight={2}
+          marginBottom={2}
+          display="flex"
+          justifyContent="spaceBetween"
+        >
+          <Text variant="small" fontWeight="semiBold">
+            {`${formatMessage(m.totals.total)}: `}
+          </Text>
+          <Text variant="small" fontWeight="semiBold">
+            {formatCurrency(total)}
+          </Text>
+        </Box>
+      </Box>
+    </Box>
   )
 }

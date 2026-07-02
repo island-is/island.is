@@ -49,6 +49,22 @@ export const m = {
       id: 'web.openinvoices:overview.errorLoading',
       defaultMessage: 'Villa kom upp við að sækja gögn',
     },
+    errorTitle: {
+      id: 'web.openinvoices:overview.errorTitle',
+      defaultMessage: 'Villa kom upp',
+    },
+    expandRow: {
+      id: 'web.openinvoices:overview.expandRow',
+      defaultMessage: 'Skoða nánar',
+    },
+    srCaption: {
+      id: 'web.openinvoices:overview.srCaption',
+      defaultMessage: 'Tafla með yfirliti reikninga',
+    },
+    sortHint: {
+      id: 'web.openinvoices:overview.sortHint',
+      defaultMessage: 'Takkar í dálkahausum stýra röðun þess dálks',
+    },
     headerLink1Title: {
       id: 'web.openinvoices:overview.link1Title',
       defaultMessage: 'Um vefinn',
