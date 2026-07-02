@@ -53,9 +53,8 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   const totalBannerOffset = alertBannerHeight + delegationBannerHeight
 
   const [showSearch, setShowSearch] = useState<boolean>(false)
-  const [showHealthContactBox, setShowHealthContactBox] = useState<boolean>(
-    false,
-  )
+  const [showHealthContactBox, setShowHealthContactBox] =
+    useState<boolean>(false)
   const [headerVisible, setHeaderVisible] = useState<boolean>(true)
 
   const featureFlagClient = useFeatureFlagClient()
