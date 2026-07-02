@@ -507,6 +507,7 @@ query Case($input: CaseQueryInput!) {
       civilClaimantId
       decision
       announcement
+      withdrawnDate
     }
     indictmentDeniedExplanation
     arraignmentDate {

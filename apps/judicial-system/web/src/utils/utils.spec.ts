@@ -29,6 +29,7 @@ import {
   isAppealFileCategoryVisible,
   mapStringToGender,
   reconcileAppealDecisionsForRulingFileChange,
+  userHasActiveInCourtAppeal,
 } from './utils'
 
 describe('Utils', () => {
@@ -735,6 +736,100 @@ describe('Utils', () => {
 
       expect(
         hasAcceptedRulingOrderInCourt(workingCase, undefined, rulingFileId),
+      ).toBe(false)
+    })
+  })
+
+  describe('userHasActiveInCourtAppeal', () => {
+    const rulingFileId = 'ruling-file-1'
+    const defendantId = 'defendant-1'
+    const defenderNationalId = '1234567890'
+
+    const defenceUser = {
+      role: UserRole.DEFENDER,
+      nationalId: defenderNationalId,
+    } as User
+
+    const prosecutionUser = {
+      role: UserRole.PROSECUTOR,
+      nationalId: '0000000000',
+      institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
+    } as User
+
+    const caseWith = (decision: {
+      partyRole: AppealDecisionPartyRole
+      defendantId?: string
+      decision: CaseAppealDecision
+      withdrawnDate?: string
+    }) =>
+      ({
+        defendants: [
+          {
+            id: defendantId,
+            isDefenderChoiceConfirmed: true,
+            defenderNationalId,
+          },
+        ],
+        civilClaimants: [],
+        appealDecisions: [{ ...decision, rulingFileId }],
+      } as unknown as Case)
+
+    it('is true when the defendant appealed in court and has not withdrawn', () => {
+      const workingCase = caseWith({
+        partyRole: AppealDecisionPartyRole.DEFENDANT,
+        defendantId,
+        decision: CaseAppealDecision.APPEAL,
+      })
+
+      expect(
+        userHasActiveInCourtAppeal(workingCase, defenceUser, rulingFileId),
+      ).toBe(true)
+    })
+
+    it('is false once the defendant has withdrawn', () => {
+      const workingCase = caseWith({
+        partyRole: AppealDecisionPartyRole.DEFENDANT,
+        defendantId,
+        decision: CaseAppealDecision.APPEAL,
+        withdrawnDate: '2026-06-05T12:00:00.000Z',
+      })
+
+      expect(
+        userHasActiveInCourtAppeal(workingCase, defenceUser, rulingFileId),
+      ).toBe(false)
+    })
+
+    it('is false when the party did not appeal (ACCEPT)', () => {
+      const workingCase = caseWith({
+        partyRole: AppealDecisionPartyRole.DEFENDANT,
+        defendantId,
+        decision: CaseAppealDecision.ACCEPT,
+      })
+
+      expect(
+        userHasActiveInCourtAppeal(workingCase, defenceUser, rulingFileId),
+      ).toBe(false)
+    })
+
+    it('is true when the prosecution appealed in court', () => {
+      const workingCase = caseWith({
+        partyRole: AppealDecisionPartyRole.PROSECUTOR,
+        decision: CaseAppealDecision.APPEAL,
+      })
+
+      expect(
+        userHasActiveInCourtAppeal(workingCase, prosecutionUser, rulingFileId),
+      ).toBe(true)
+    })
+
+    it('is false when there is no user', () => {
+      const workingCase = caseWith({
+        partyRole: AppealDecisionPartyRole.PROSECUTOR,
+        decision: CaseAppealDecision.APPEAL,
+      })
+
+      expect(
+        userHasActiveInCourtAppeal(workingCase, undefined, rulingFileId),
       ).toBe(false)
     })
   })
