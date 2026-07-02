@@ -83,7 +83,11 @@ export const parseGrantStatus = (
         ? 'dd MMMM'
         : 'dd. MMMM'
 
-      const date = formatDate(toIcelandTime(new Date(dateVal)), locale, dateFormat)
+      const date = formatDate(
+        toIcelandTime(new Date(dateVal)),
+        locale,
+        dateFormat,
+      )
 
       return date
         ? translationFunction(
