@@ -4,6 +4,7 @@ import {
   buildRadioField,
   buildSection,
 } from '@island.is/application/core'
+
 export const secondSection = buildSection({
   id: 'secondSection',
   title: 'Second section',

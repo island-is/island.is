@@ -15,25 +15,12 @@ export const childMessages = {
       description:
         'Title for the child info fields shown when user knows national ID',
     },
-    intro: {
-      id: 'cpn.application:child.nationalIdLookup.intro',
+    description: {
+      id: 'cpn.application:child.nationalIdLookup.description',
       defaultMessage:
-        'Hjálpaðu okkur að tryggja að réttu barni sé veittur réttur stuðningur á réttum tíma.',
+        'Hjálpaðu okkur að tryggja að réttu barni sé veittur réttur stuðningur á réttum tíma. \n\nMeð því að finna til og skrá kennitölu eða kerfiskennitölu barnsins hér í fyrsta skrefi gerir þú okkur kleift að sækja fyrir þig allar upplýsingar sem nauðsynlegar eru til að auðkenna barnið með sjálfvirkum hætti. Með því sparar þú þér einnig fjölmörg skref sem á eftir koma hér í tilkynningunni. \n\nEf kennitala barnsins er ekki við höndina, biðjum við þig að skrá umbeðnar upplýsingar eftir bestu getu og vitneskju.',
       description:
-        'Introductory sentence for the child national ID lookup page',
-    },
-    benefitDescription: {
-      id: 'cpn.application:child.nationalIdLookup.benefitDescription',
-      defaultMessage:
-        'Með því að finna til og skrá kennitölu eða kerfiskennitölu barnsins hér í fyrsta skrefi gerir þú okkur kleift að sækja fyrir þig allar upplýsingar sem nauðsynlegar eru til að auðkenna barnið með sjálfvirkum hætti. Með því sparar þú þér einnig fjölmörg skref sem á eftir koma hér í tilkynningunni.',
-      description:
-        'Explains the benefit of providing the national ID for automatic lookup',
-    },
-    fallbackDescription: {
-      id: 'cpn.application:child.nationalIdLookup.fallbackDescription',
-      defaultMessage:
-        'Ef kennitala barnsins er ekki við höndina, biðjum við þig að skrá umbeðnar upplýsingar eftir bestu getu og vitneskju.',
-      description: 'Instruction for when the national ID is not available',
+        'Combined intro description for the child national ID lookup page',
     },
     radioLabel: {
       id: 'cpn.application:child.nationalIdLookup.radioLabel',

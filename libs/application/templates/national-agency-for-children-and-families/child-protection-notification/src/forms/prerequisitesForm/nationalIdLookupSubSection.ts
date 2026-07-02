@@ -31,22 +31,8 @@ export const nationalIdLookupSubSection = buildSubSection({
     buildMultiField({
       id: 'nationalIdLookup',
       title: childMessages.shared.sectionTitle,
+      description: childMessages.nationalIdLookup.description,
       children: [
-        buildDescriptionField({
-          id: 'nationalIdLookup.intro',
-          description: childMessages.nationalIdLookup.intro,
-          space: 0,
-        }),
-        buildDescriptionField({
-          id: 'nationalIdLookup.benefitDescription',
-          description: childMessages.nationalIdLookup.benefitDescription,
-          space: 2,
-        }),
-        buildDescriptionField({
-          id: 'nationalIdLookup.fallbackDescription',
-          description: childMessages.nationalIdLookup.fallbackDescription,
-          space: 2,
-        }),
         buildRadioField({
           id: 'child.knowsNationalId',
           title: childMessages.nationalIdLookup.radioLabel,
@@ -71,7 +57,6 @@ export const nationalIdLookupSubSection = buildSubSection({
           id: 'child.noNationalIdReason',
           title: childMessages.noNationalId.reasonLabel,
           placeholder: childMessages.noNationalId.reasonPlaceholder,
-          doesNotRequireAnswer: true,
           condition: (answers) =>
             getValueViaPath(answers, 'child.knowsNationalId') ===
             KnowsNationalId.NO,

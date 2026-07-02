@@ -26,16 +26,6 @@ export const expectantParentsMessages = {
         'Þekkir þú kennitölu eða kerfiskennitölu verðandi foreldra barnsins?',
       description: 'Radio label asking whether the user knows the parents SSN',
     },
-    radioYes: {
-      id: 'cpn.application:expectantParents.shared.radioYes',
-      defaultMessage: 'Já',
-      description: 'Yes option for parent SSN radio',
-    },
-    radioNo: {
-      id: 'cpn.application:expectantParents.shared.radioNo',
-      defaultMessage: 'Nei',
-      description: 'No option for parent SSN radio',
-    },
     parent1Title: {
       id: 'cpn.application:expectantParents.shared.parent1Title',
       defaultMessage: 'Verðandi foreldri 1',

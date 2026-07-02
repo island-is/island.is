@@ -4,6 +4,7 @@ import {
   buildSection,
   buildTextField,
 } from '@island.is/application/core'
+
 export const firstSection = buildSection({
   id: 'firstSection',
   title: 'First section',

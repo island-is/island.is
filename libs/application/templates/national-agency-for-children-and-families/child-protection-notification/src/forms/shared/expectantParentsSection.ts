@@ -5,13 +5,17 @@ import {
   buildNationalIdWithNameField,
   buildPhoneField,
   buildRadioField,
+  buildSection,
   buildSelectField,
-  buildSubSection,
   buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { getAllCountryCodes } from '@island.is/shared/utils'
-import { childMessages, expectantParentsMessages } from '../../lib/messages'
+import {
+  childMessages,
+  expectantParentsMessages,
+  sharedMessages,
+} from '../../lib/messages'
 import {
   KnowsNationalId,
   KnowsParentNationalId,
@@ -173,8 +177,8 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
   ]
 }
 
-export const expectantParentsSubSection = buildSubSection({
-  id: 'expectantParentsSubSection',
+export const expectantParentsSection = buildSection({
+  id: 'expectantParentsSection',
   title: expectantParentsMessages.shared.sectionTitle,
   condition: isUnborn,
   children: [
@@ -195,16 +199,16 @@ export const expectantParentsSubSection = buildSubSection({
         buildRadioField({
           id: 'expectantParents.knowsParentNationalIds',
           title: expectantParentsMessages.shared.radioLabel,
-          required: false,
+          required: true,
           width: 'half',
           options: [
             {
               value: KnowsParentNationalId.YES,
-              label: expectantParentsMessages.shared.radioYes,
+              label: sharedMessages.radioYes,
             },
             {
               value: KnowsParentNationalId.NO,
-              label: expectantParentsMessages.shared.radioNo,
+              label: sharedMessages.radioNo,
             },
           ],
         }),

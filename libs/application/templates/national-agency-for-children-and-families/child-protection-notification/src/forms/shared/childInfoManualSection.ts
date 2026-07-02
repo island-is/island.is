@@ -2,8 +2,8 @@ import {
   buildCheckboxField,
   buildDescriptionField,
   buildMultiField,
+  buildSection,
   buildSelectField,
-  buildSubSection,
   buildTextField,
   getValueViaPath,
   YES,
@@ -18,8 +18,8 @@ import { Gender, KnowsNationalId, Pronoun } from '../../utils/constants'
 const isNoNationalId = (answers: Record<string, unknown>) =>
   getValueViaPath(answers, 'child.knowsNationalId') === KnowsNationalId.NO
 
-export const childInfoManualSubSection = buildSubSection({
-  id: 'childInfoManualSubSection',
+export const childInfoManualSection = buildSection({
+  id: 'childInfoManualSection',
   title: childMessages.manualInfo.sectionTitle,
   condition: isNoNationalId,
   children: [

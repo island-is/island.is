@@ -3,7 +3,6 @@ import {
   buildOverviewField,
   buildSection,
   buildSubmitField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 
@@ -14,8 +13,10 @@ import {
   prerequisitesMessages,
 } from '../../lib/messages'
 import { KnowsNationalId } from '../../utils/constants'
+import { getApplicationAnswers } from '../../utils/getApplicationAnswers'
 import {
   getChildManualItems,
+  getChildUnbornRadioItems,
   getChildWithNationalIdItems,
   getExpectantParent1Items,
   getExpectantParent2Items,
@@ -49,31 +50,42 @@ export const overviewSection = buildSection({
           title: childMessages.shared.sectionTitle,
           items: getChildWithNationalIdItems,
           condition: (answers) =>
-            getValueViaPath(answers, 'child.knowsNationalId') ===
+            getApplicationAnswers(answers).childKnowsNationalId ===
             KnowsNationalId.YES,
         }),
         buildOverviewField({
           id: 'overview.childManual',
+          backId: 'childInfoManual',
           title: childMessages.shared.sectionTitle,
           items: getChildManualItems,
           condition: (answers) =>
-            getValueViaPath(answers, 'child.knowsNationalId') ===
+            getApplicationAnswers(answers).childKnowsNationalId ===
             KnowsNationalId.NO,
         }),
         buildOverviewField({
+          id: 'overview.childUnbornRadio',
+          title: childMessages.shared.sectionTitle,
+          items: getChildUnbornRadioItems,
+          condition: (answers) =>
+            getApplicationAnswers(answers).childKnowsNationalId ===
+            KnowsNationalId.UNBORN,
+        }),
+        buildOverviewField({
           id: 'overview.expectantParent1',
+          backId: 'expectantParents',
           title: expectantParentsMessages.shared.parent1Title,
           items: getExpectantParent1Items,
           condition: (answers) =>
-            getValueViaPath(answers, 'child.knowsNationalId') ===
+            getApplicationAnswers(answers).childKnowsNationalId ===
             KnowsNationalId.UNBORN,
         }),
         buildOverviewField({
           id: 'overview.expectantParent2',
+          backId: 'expectantParents',
           title: expectantParentsMessages.shared.parent2Title,
           items: getExpectantParent2Items,
           condition: (answers) =>
-            getValueViaPath(answers, 'child.knowsNationalId') ===
+            getApplicationAnswers(answers).childKnowsNationalId ===
             KnowsNationalId.UNBORN,
         }),
         buildSubmitField({

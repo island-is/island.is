@@ -3,6 +3,7 @@ import {
   buildMultiField,
   buildSection,
 } from '@island.is/application/core'
+
 export const delegationSection = buildSection({
   id: 'delegationSection',
   title: 'Þjónustuaðili',

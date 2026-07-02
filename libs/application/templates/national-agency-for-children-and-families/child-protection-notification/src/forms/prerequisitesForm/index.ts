@@ -1,7 +1,7 @@
 import { buildForm, buildSection } from '@island.is/application/core'
 import { FormModes } from '@island.is/application/types'
 import { prerequisitesMessages } from '../../lib/messages'
-import { nationalIdLookupSubSection } from '../childSection/nationalIdLookupSubSection'
+import { nationalIdLookupSubSection } from './nationalIdLookupSubSection'
 import { externalDataSubSection } from './externalDataSubSection'
 import { serviceProviderSubSection } from './serviceProviderSubSection'
 
