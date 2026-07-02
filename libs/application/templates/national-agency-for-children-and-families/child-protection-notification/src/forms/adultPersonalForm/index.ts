@@ -1,7 +1,7 @@
 import { buildForm } from '@island.is/application/core'
 import { FormModes } from '@island.is/application/types'
 
-import { overviewSection } from '../overview'
+import { overviewSection } from './overviewSection'
 import { firstSection } from './firstSection'
 import { secondSection } from './secondSection'
 
