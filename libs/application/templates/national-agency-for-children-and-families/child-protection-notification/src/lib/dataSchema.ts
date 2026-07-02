@@ -1,11 +1,25 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
 import { KnowsNationalId, KnowsParentNationalId } from '../utils/constants'
+import { errorMessages } from './messages'
 
 const isValidPhone = (value: string) => {
   const phone = parsePhoneNumberFromString(value, 'IS')
   return phone ? phone.isValid() : false
 }
+
+const phoneNumberSchema = z
+  .string()
+  .refine((value) => isValidPhone(value), {
+    params: errorMessages.phoneNumber,
+  })
+
+const serviceProviderSchema = z.object({
+  service: z.string(),
+  serviceType: z.string(),
+  contactPersonWorkEmail: z.string().email(),
+  contactPersonWorkPhone: phoneNumberSchema,
+})
 
 const childSchema = z.object({
   knowsNationalId: z
@@ -77,6 +91,8 @@ const expectantParentsSchema = z.object({
 })
 
 export const dataSchema = z.object({
+  approveExternalData: z.boolean().refine((v) => v),
+  serviceProvider: serviceProviderSchema,
   child: childSchema.optional(),
   expectantParents: expectantParentsSchema.optional(),
 })

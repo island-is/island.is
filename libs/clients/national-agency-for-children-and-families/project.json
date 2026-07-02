@@ -1,0 +1,37 @@
+{
+  "name": "clients-national-agency-for-children-and-families",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/national-agency-for-children-and-families/src",
+  "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/national-agency-for-children-and-families"],
+      "options": {
+        "jestConfig": "libs/clients/national-agency-for-children-and-families/jest.config.ts"
+      }
+    },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl https://api.dev.barnaverndargatt.is/swagger/v1/swagger.json -H 'Accept: application/json' > src/clientConfig.json",
+          "prettier --write src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/national-agency-for-children-and-families"
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/national-agency-for-children-and-families/gen/fetch -i libs/clients/national-agency-for-children-and-families/src/clientConfig.json"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
+    }
+  }
+}
