@@ -8,5 +8,6 @@ export const AdultProcurationForm = buildForm({
   id: 'AdultProcurationForm',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
+  renderLastScreenBackButton: true,
   children: [delegationSection, overviewSection],
 })

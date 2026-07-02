@@ -407,7 +407,7 @@ codemagic.yaml                                                                  
 /libs/application/template-api-modules/src/lib/modules/templates/new-primary-school/                                         @island-is/deloitte
 /libs/clients/mms/frigg                                                                                                      @island-is/deloitte
 /libs/application/templates/national-agency-for-children-and-families/child-protection-notification/                         @island-is/deloitte
-/libs/application/template-api-modules/src/lib/modules/templates/national-agency-for-children-and-families/child-protection-notification/ @island-is/deloitte
+/libs/application/template-api-modules/src/lib/modules/templates/national-agency-for-children-and-families/                  @island-is/deloitte
 
 /apps/services/auth/                                                                                                         @island-is/fuglar @island-is/aranja
 /apps/services/sessions/                                                                                                     @island-is/fuglar @island-is/aranja
