@@ -38,7 +38,7 @@ import {
 import cn from 'classnames'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { useWindowSize } from 'react-use'
+import { useMeasure, useWindowSize } from 'react-use'
 import NotificationButton from '../Notifications/NotificationButton'
 import { SearchInput } from '../SearchInput/SearchInput'
 import Sidemenu from '../Sidemenu/Sidemenu'
@@ -70,15 +70,21 @@ interface Props {
   position: number
   includeSearchInHeader?: boolean
   onHeaderVisibilityChange?: (visible: boolean) => void
+  onHeaderHeightChange?: (height: number) => void
 }
 export const Header = ({
   position,
   includeSearchInHeader = false,
   onHeaderVisibilityChange,
+  onHeaderHeightChange,
 }: Props) => {
   const { formatMessage } = useLocale()
   const [menuOpen, setMenuOpen] = useState<MenuTypes>()
   const ref = useRef<HTMLButtonElement>(null)
+  const [
+    measureRef,
+    { height: measuredHeaderHeight },
+  ] = useMeasure<HTMLElement>()
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
 
@@ -99,6 +105,13 @@ export const Header = ({
     },
     [isMobile, onHeaderVisibilityChange],
   )
+
+  // Report the measured header height (includes the delegation banner when present)
+  useEffect(() => {
+    if (measuredHeaderHeight > 0) {
+      onHeaderHeightChange?.(measuredHeaderHeight)
+    }
+  }, [measuredHeaderHeight, onHeaderHeightChange])
 
   // Reset header state when pathname changes to ensure header is visible on navigation
   useEffect(() => {
@@ -165,6 +178,7 @@ export const Header = ({
       <PortalPageLoader />
       {/*  Inline style to dynamicly change position of header because of alert banners */}
       <header
+        ref={measureRef}
         className={cn(styles.header, {
           [styles.headerHidden]: !headerVisible && isMobile,
         })}

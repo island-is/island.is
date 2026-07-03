@@ -2,7 +2,10 @@ import { Features } from '@island.is/feature-flags'
 import { ToastContainer } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
 import { useActiveModule } from '@island.is/portals/core'
-import { DELEGATION_BANNER_HEIGHT } from '@island.is/portals/my-pages/constants'
+import {
+  DELEGATION_BANNER_HEIGHT,
+  SERVICE_PORTAL_HEADER_HEIGHT_SM,
+} from '@island.is/portals/my-pages/constants'
 import {
   SearchPaths,
   ServicePortalPaths,
@@ -57,6 +60,9 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
 
   const [showSearch, setShowSearch] = useState<boolean>(false)
   const [headerVisible, setHeaderVisible] = useState<boolean>(true)
+  const [headerHeight, setHeaderHeight] = useState<number>(
+    SERVICE_PORTAL_HEADER_HEIGHT_SM,
+  )
 
   const { value: showHealthContactBox } = useFeatureFlag(
     Features.isNewHealthOverviewPageEnabled,
@@ -85,7 +91,7 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
 
   return (
     <HeaderVisibilityContext.Provider
-      value={{ headerVisible, setHeaderVisible }}
+      value={{ headerVisible, setHeaderVisible, headerHeight }}
     >
       <div>
         <AuthOverlay />
@@ -97,6 +103,7 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
           position={alertBannerHeight}
           includeSearchInHeader={!disableSearch && showSearch}
           onHeaderVisibilityChange={setHeaderVisible}
+          onHeaderHeightChange={setHeaderHeight}
         />
 
         {!isFullwidth && activeParent && (

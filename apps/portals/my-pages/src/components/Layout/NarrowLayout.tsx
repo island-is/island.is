@@ -2,12 +2,6 @@ import { Box, Hidden, Icon, NavigationItem } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { PortalNavigationItem } from '@island.is/portals/core'
-import {
-  DELEGATION_BANNER_HEIGHT,
-  SERVICE_PORTAL_HEADER_HEIGHT_SM,
-} from '@island.is/portals/my-pages/constants'
-import { useUserInfo } from '@island.is/react-spa/bff'
-import { checkDelegation } from '@island.is/shared/utils'
 import { useHeaderVisibility } from '../../context/HeaderVisibilityContext'
 import {
   GoBack,
@@ -45,18 +39,11 @@ export const NarrowLayout = ({
 
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
-  const { headerVisible } = useHeaderVisibility()
+  const { headerVisible, headerHeight } = useHeaderVisibility()
 
-  const user = useUserInfo()
-  // The delegation banner is rendered inside the fixed header, below the nav,
-  // so the sticky menu must clear it while the header is visible
-  const delegationBannerHeight = checkDelegation(user)
-    ? DELEGATION_BANNER_HEIGHT
-    : 0
-
-  const stickyHeight = headerVisible
-    ? SERVICE_PORTAL_HEADER_HEIGHT_SM + delegationBannerHeight - 1
-    : -1 // -1 to hide the shadow
+  // headerHeight is the measured height of the fixed header, so the sticky
+  // menu clears whatever it contains (e.g. the delegation banner)
+  const stickyHeight = headerVisible ? headerHeight - 1 : -1 // -1 to hide the shadow
 
   const mapChildren = (item: ServicePortalNavigationItem): SubNavItemType => {
     if (item.children) {
