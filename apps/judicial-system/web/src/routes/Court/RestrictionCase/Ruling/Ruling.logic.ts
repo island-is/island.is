@@ -9,7 +9,24 @@ import {
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { ruling } from '@island.is/judicial-system-web/messages'
+
 import { strings } from './Ruling.strings'
+
+export const getCourtCaseFactsPrefill = (
+  formatMessage: IntlShape['formatMessage'],
+  caseFacts?: string | null,
+): string | undefined => {
+  if (!caseFacts) {
+    return undefined
+  }
+
+  const prefix = formatMessage(ruling.sections.courtCaseFacts.prefill, {
+    caseFacts: '',
+  }).trimEnd()
+
+  return `<p>${prefix}</p>${caseFacts}`
+}
 
 export const getConclusionAutofill = (
   formatMessage: IntlShape['formatMessage'],

@@ -536,7 +536,10 @@ export const isCourtHearingArrangementsStepValidIC = (
 export const isRulingValidRC = (workingCase: Case): boolean => {
   return validate([
     [workingCase.prosecutorDemands, ['empty']],
-    [workingCase.courtCaseFacts, ['empty']],
+    [
+      getTextContentFromHtml(workingCase.courtCaseFacts ?? ''),
+      ['empty'],
+    ],
     [workingCase.courtLegalArguments, ['empty']],
   ]).isValid
 }

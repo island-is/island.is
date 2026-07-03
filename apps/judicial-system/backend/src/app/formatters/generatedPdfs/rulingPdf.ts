@@ -3,6 +3,7 @@ import PDFDocument from 'pdfkit'
 import { FormatMessage } from '@island.is/cms-translations'
 
 import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
+import { isRestrictionCase } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { ruling } from '../../messages'
@@ -16,6 +17,7 @@ import {
   addNormalCenteredText,
   addNormalJustifiedText,
   addNormalText,
+  addRichText,
   setLineGap,
   setTitle,
 } from '../pdfHelpers'
@@ -111,11 +113,18 @@ const constructRulingPdf = (
   addEmptyLines(doc)
   addNormalText(doc, formatMessage(ruling.courtCaseFactsHeading), 'Times-Bold')
   addEmptyLines(doc)
-  addNormalJustifiedText(
-    doc,
-    theCase.courtCaseFacts ?? formatMessage(ruling.missingCourtCaseFacts),
-    'Times-Roman',
-  )
+  if (isRestrictionCase(theCase.type)) {
+    addRichText(
+      doc,
+      theCase.courtCaseFacts ?? formatMessage(ruling.missingCourtCaseFacts),
+    )
+  } else {
+    addNormalJustifiedText(
+      doc,
+      theCase.courtCaseFacts ?? formatMessage(ruling.missingCourtCaseFacts),
+      'Times-Roman',
+    )
+  }
   addEmptyLines(doc)
   addNormalText(
     doc,
