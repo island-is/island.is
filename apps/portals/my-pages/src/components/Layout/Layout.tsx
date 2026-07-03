@@ -8,7 +8,10 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { DELEGATION_BANNER_HEIGHT } from '@island.is/portals/my-pages/constants'
 import { useAlertBanners } from '@island.is/portals/my-pages/graphql'
-import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+import {
+  useFeatureFlag,
+  useFeatureFlagClient,
+} from '@island.is/react/feature-flags'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { checkDelegation } from '@island.is/shared/utils'
 import React, { FC, useEffect, useState } from 'react'
@@ -53,10 +56,12 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   const totalBannerOffset = alertBannerHeight + delegationBannerHeight
 
   const [showSearch, setShowSearch] = useState<boolean>(false)
-  const [showHealthContactBox, setShowHealthContactBox] = useState<boolean>(
+  const [headerVisible, setHeaderVisible] = useState<boolean>(true)
+
+  const { value: showHealthContactBox } = useFeatureFlag(
+    Features.isNewHealthOverviewPageEnabled,
     false,
   )
-  const [headerVisible, setHeaderVisible] = useState<boolean>(true)
 
   const featureFlagClient = useFeatureFlagClient()
   useEffect(() => {
@@ -68,11 +73,6 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
       if (ffEnabled) {
         setShowSearch(ffEnabled as boolean)
       }
-      const healthOverviewEnabled = await featureFlagClient.getValue(
-        Features.isNewHealthOverviewPageEnabled,
-        false,
-      )
-      setShowHealthContactBox(healthOverviewEnabled as boolean)
     }
     isFlagEnabled()
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -106,6 +106,8 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
             pathname={pathname}
             sidebarFooter={
               showHealthContactBox &&
+              // If more pages end up needing to display the contact box in the future,
+              // we should consider moving this decision in to navigation metadata
               activeParent.path === HealthPaths.HealthRoot ? (
                 <SidebarContactBox />
               ) : undefined
