@@ -12,7 +12,26 @@ import {
 } from '../../lib/constants'
 import { m } from '../../lib/messages'
 
-const messages = m as unknown as Record<string, MessageDescriptor>
+const messages = m as unknown as Record<string, MessageDescriptor | undefined>
+
+// Dynamic, code-based message lookup (e.g. `applicationForAdvancedLicenseTitle${code}`).
+// Returns the first candidate key that exists. If none resolve, throw in
+// development to surface the missing translation key immediately, and fall back
+// to an empty descriptor in production so rendering never receives undefined.
+const resolveMessage = (...keys: string[]): MessageDescriptor => {
+  for (const key of keys) {
+    const descriptor = messages[key]
+    if (descriptor) return descriptor
+  }
+
+  if (process.env.NODE_ENV === 'development') {
+    throw new Error(
+      `ApplicationSummary: missing translation key(s): ${keys.join(', ')}`,
+    )
+  }
+
+  return { id: keys[0], defaultMessage: '' }
+}
 
 export const ApplicationSummary: FC<
   React.PropsWithChildren<FieldBaseProps>
@@ -56,7 +75,7 @@ export const ApplicationSummary: FC<
         {applicationFor.map((group, i) => (
           <Box key={`group-${group.group}`} marginTop={i === 0 ? 0 : 5}>
             <Text variant="default" marginBottom={2}>
-              {formatMessage(messages[`groupTitle${group.group}`])}{' '}
+              {formatMessage(resolveMessage(`groupTitle${group.group}`))}{' '}
             </Text>
             <Box paddingLeft={[0, 0, 2]}>
               {group.codes.map((code, j) => (
@@ -65,11 +84,13 @@ export const ApplicationSummary: FC<
                   application={application}
                   index={j + 1}
                   step={{
-                    title:
-                      messages[`applicationForAdvancedLicenseTitle${code}`] ??
-                      messages[`applicationForAdvancedLicenseLabel${code}`],
-                    description:
-                      messages[`applicationForAdvancedLicenseLabel${code}`],
+                    title: resolveMessage(
+                      `applicationForAdvancedLicenseTitle${code}`,
+                      `applicationForAdvancedLicenseLabel${code}`,
+                    ),
+                    description: resolveMessage(
+                      `applicationForAdvancedLicenseLabel${code}`,
+                    ),
                     group: group.group,
                     subGroup: code,
                   }}

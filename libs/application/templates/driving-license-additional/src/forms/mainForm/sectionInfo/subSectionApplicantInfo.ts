@@ -10,6 +10,7 @@ import {
 import { Application, NationalRegistryUser } from '@island.is/api/schema'
 import { m } from '../../../lib/messages'
 import { BE, B_ADVANCED } from '../../../lib/constants'
+import { formatRegisteredAddress } from '../../../lib/utils'
 
 export const subSectionApplicantInfo = buildSubSection({
   id: 'infoStep',
@@ -40,20 +41,10 @@ export const subSectionApplicantInfo = buildSubSection({
         }),
         buildKeyValueField({
           label: m.informationStreetAddress,
-          value: ({ externalData: { nationalRegistry } }) => {
-            const address = (nationalRegistry.data as NationalRegistryUser)
-              .address
-
-            if (!address) {
-              return ''
-            }
-
-            const { streetAddress, postalCode, city } = address
-
-            return `${streetAddress}${
-              city ? ', ' + postalCode + ' ' + city : ''
-            }`
-          },
+          value: ({ externalData: { nationalRegistry } }) =>
+            formatRegisteredAddress(
+              (nationalRegistry.data as NationalRegistryUser).address,
+            ),
           width: 'half',
         }),
         buildPhoneField({

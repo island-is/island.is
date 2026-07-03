@@ -22,7 +22,7 @@ import {
   BE,
   Pickup,
 } from '../../../lib/constants'
-import { getCodes } from '../../../lib/utils'
+import { formatRegisteredAddress, getCodes } from '../../../lib/utils'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 
 export const sectionSummary = buildSection({
@@ -127,12 +127,10 @@ export const sectionSummary = buildSection({
         buildKeyValueField({
           label: m.overviewStreetAddress,
           width: 'half',
-          value: ({ externalData: { nationalRegistry } }) => {
-            const address = (nationalRegistry.data as NationalRegistryUser)
-              .address
-            if (!address) return ''
-            return `${address.streetAddress}, ${address.postalCode} ${address.city}`
-          },
+          value: ({ externalData: { nationalRegistry } }) =>
+            formatRegisteredAddress(
+              (nationalRegistry.data as NationalRegistryUser).address,
+            ),
         }),
 
         // Health cert section — uploaded-file display.

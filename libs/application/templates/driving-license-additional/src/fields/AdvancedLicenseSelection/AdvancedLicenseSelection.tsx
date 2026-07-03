@@ -212,9 +212,10 @@ const AdvancedLicenseSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                             ],
                           )}
                           labelVariant="small"
-                          disabled={alreadyHasCategory(
-                            option.professional.code,
-                          )}
+                          disabled={
+                            alreadyHasCategory(option.professional.code) ||
+                            age < option.professional.minAge
+                          }
                           checked={
                             selectedLicenses.includes(
                               option.professional.code,

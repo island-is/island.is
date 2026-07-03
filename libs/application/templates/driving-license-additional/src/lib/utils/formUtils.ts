@@ -5,6 +5,7 @@ import {
   BasicChargeItem,
   Application,
 } from '@island.is/application/types'
+import { NationalRegistryUser } from '@island.is/api/schema'
 import {
   advancedLicenseMap,
   CHARGE_ITEM_CODES,
@@ -44,6 +45,21 @@ export const hasSelectableAdvancedCategories = (
       !held(item.professional.code)
     return mainSelectable || proSelectable
   })
+
+// Formats a national-registry address, appending postal code and city only when
+// present so summaries never render `undefined`. Shared by the applicant-info
+// and summary sections to keep the formatting consistent.
+export const formatRegisteredAddress = (
+  address: NationalRegistryUser['address'],
+): string => {
+  if (!address) {
+    return ''
+  }
+
+  const { streetAddress, postalCode, city } = address
+
+  return `${streetAddress}${city ? ', ' + postalCode + ' ' + city : ''}`
+}
 
 export const getCodes = (application: Application): BasicChargeItem[] => {
   const applicationFor = getValueViaPath<'BE' | 'B-advanced'>(
