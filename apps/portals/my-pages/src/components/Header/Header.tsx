@@ -36,9 +36,10 @@ import {
   UserMenu,
 } from '@island.is/shared/components'
 import cn from 'classnames'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useMeasure, useWindowSize } from 'react-use'
+import { useHeaderVisibility } from '../../context/HeaderVisibilityContext'
 import NotificationButton from '../Notifications/NotificationButton'
 import { SearchInput } from '../SearchInput/SearchInput'
 import Sidemenu from '../Sidemenu/Sidemenu'
@@ -69,49 +70,33 @@ export type MenuTypes = 'side' | 'user' | 'notifications' | undefined
 interface Props {
   position: number
   includeSearchInHeader?: boolean
-  onHeaderVisibilityChange?: (visible: boolean) => void
-  onHeaderHeightChange?: (height: number) => void
 }
-export const Header = ({
-  position,
-  includeSearchInHeader = false,
-  onHeaderVisibilityChange,
-  onHeaderHeightChange,
-}: Props) => {
+export const Header = ({ position, includeSearchInHeader = false }: Props) => {
   const { formatMessage } = useLocale()
   const [menuOpen, setMenuOpen] = useState<MenuTypes>()
   const ref = useRef<HTMLButtonElement>(null)
-  const [
-    measureRef,
-    { height: measuredHeaderHeight },
-  ] = useMeasure<HTMLElement>()
+  const [measureRef, { height: measuredHeaderHeight }] =
+    useMeasure<HTMLElement>()
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
 
   const user = useUserInfo()
 
   const hasNotificationsDelegationAccess = hasNotificationScopes(user?.scopes)
-  const [headerVisible, setHeaderVisible] = useState<boolean>(true)
+  const { headerVisible, setHeaderVisible, setHeaderHeight } =
+    useHeaderVisibility()
   const headerVisibleRef = useRef<boolean>(true)
   const lastScrollYRef = useRef<number>(0)
   const [disableTransition, setDisableTransition] = useState<boolean>(false)
   const location = useLocation()
   const isNavigatingRef = useRef<boolean>(false)
 
-  // Memoize the visibility callback to prevent unnecessary re-renders
-  const notifyVisibilityChange = useCallback(
-    (visible: boolean) => {
-      isMobile && onHeaderVisibilityChange?.(visible)
-    },
-    [isMobile, onHeaderVisibilityChange],
-  )
-
   // Report the measured header height (includes the delegation banner when present)
   useEffect(() => {
     if (measuredHeaderHeight > 0) {
-      onHeaderHeightChange?.(measuredHeaderHeight)
+      setHeaderHeight(measuredHeaderHeight)
     }
-  }, [measuredHeaderHeight, onHeaderHeightChange])
+  }, [measuredHeaderHeight, setHeaderHeight])
 
   // Reset header state when pathname changes to ensure header is visible on navigation
   useEffect(() => {
@@ -121,7 +106,6 @@ export const Header = ({
     setHeaderVisible(true)
     headerVisibleRef.current = true
     lastScrollYRef.current = 0
-    notifyVisibilityChange(true)
 
     // Re-enable transitions after a brief delay
     const timeout = setTimeout(() => {
@@ -133,7 +117,7 @@ export const Header = ({
       clearTimeout(timeout)
       isNavigatingRef.current = false
     }
-  }, [isMobile, location.pathname, notifyVisibilityChange])
+  }, [isMobile, location.pathname, setHeaderVisible])
 
   // Scrolling logic to show/hide header based on scroll direction and position
   useScrollPosition(
@@ -151,7 +135,6 @@ export const Header = ({
         if (!headerVisibleRef.current) {
           headerVisibleRef.current = true
           setHeaderVisible(true)
-          notifyVisibilityChange(true)
         }
       }
       // Hide header when scrolling down and past threshold
@@ -159,13 +142,12 @@ export const Header = ({
         if (headerVisibleRef.current) {
           headerVisibleRef.current = false
           setHeaderVisible(false)
-          notifyVisibilityChange(false)
         }
       }
 
       lastScrollYRef.current = currentScrollY
     },
-    [isMobile, notifyVisibilityChange],
+    [isMobile, setHeaderVisible],
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore make web strict
     null,

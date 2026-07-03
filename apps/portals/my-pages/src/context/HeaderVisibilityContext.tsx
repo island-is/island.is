@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react'
+import { ReactNode, createContext, useContext, useMemo, useState } from 'react'
 import { SERVICE_PORTAL_HEADER_HEIGHT_SM } from '@island.is/portals/my-pages/constants'
 
 interface HeaderVisibilityContextType {
@@ -9,16 +9,34 @@ interface HeaderVisibilityContextType {
    * rendered inside it (e.g. the delegation banner).
    */
   headerHeight: number
+  setHeaderHeight: (height: number) => void
 }
 
-export const HeaderVisibilityContext =
-  createContext<HeaderVisibilityContextType>({
-    headerVisible: true,
-    setHeaderVisible: () => {
-      // Default implementation - will be overridden by provider
-    },
-    headerHeight: SERVICE_PORTAL_HEADER_HEIGHT_SM,
-  })
+const HeaderVisibilityContext = createContext<
+  HeaderVisibilityContextType | undefined
+>(undefined)
+
+export const HeaderVisibilityProvider = ({
+  children,
+}: {
+  children: ReactNode
+}) => {
+  const [headerVisible, setHeaderVisible] = useState<boolean>(true)
+  const [headerHeight, setHeaderHeight] = useState<number>(
+    SERVICE_PORTAL_HEADER_HEIGHT_SM,
+  )
+
+  const value = useMemo(
+    () => ({ headerVisible, setHeaderVisible, headerHeight, setHeaderHeight }),
+    [headerVisible, headerHeight],
+  )
+
+  return (
+    <HeaderVisibilityContext.Provider value={value}>
+      {children}
+    </HeaderVisibilityContext.Provider>
+  )
+}
 
 export const useHeaderVisibility = () => {
   const context = useContext(HeaderVisibilityContext)

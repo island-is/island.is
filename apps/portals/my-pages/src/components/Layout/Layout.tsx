@@ -2,10 +2,7 @@ import { Features } from '@island.is/feature-flags'
 import { ToastContainer } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
 import { useActiveModule } from '@island.is/portals/core'
-import {
-  DELEGATION_BANNER_HEIGHT,
-  SERVICE_PORTAL_HEADER_HEIGHT_SM,
-} from '@island.is/portals/my-pages/constants'
+import { DELEGATION_BANNER_HEIGHT } from '@island.is/portals/my-pages/constants'
 import {
   SearchPaths,
   ServicePortalPaths,
@@ -29,7 +26,7 @@ import Header from '../Header/Header'
 import AuthOverlay from '../Loaders/AuthOverlay/AuthOverlay'
 import FullWidthLayout from './FullWidthLayout'
 import { NarrowLayout } from './NarrowLayout'
-import { HeaderVisibilityContext } from '../../context/HeaderVisibilityContext'
+import { HeaderVisibilityProvider } from '../../context/HeaderVisibilityContext'
 
 export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   useNamespaces(['service.portal', 'global', 'portals', 'sp.search.tags'])
@@ -59,10 +56,6 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   const totalBannerOffset = alertBannerHeight + delegationBannerHeight
 
   const [showSearch, setShowSearch] = useState<boolean>(false)
-  const [headerVisible, setHeaderVisible] = useState<boolean>(true)
-  const [headerHeight, setHeaderHeight] = useState<number>(
-    SERVICE_PORTAL_HEADER_HEIGHT_SM,
-  )
 
   const { value: showHealthContactBox } = useFeatureFlag(
     Features.isNewHealthOverviewPageEnabled,
@@ -90,9 +83,7 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   ].find((route) => matchPath(route, pathname))
 
   return (
-    <HeaderVisibilityContext.Provider
-      value={{ headerVisible, setHeaderVisible, headerHeight }}
-    >
+    <HeaderVisibilityProvider>
       <div>
         <AuthOverlay />
         <ToastContainer useKeyframeStyles={false} />
@@ -102,8 +93,6 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
         <Header
           position={alertBannerHeight}
           includeSearchInHeader={!disableSearch && showSearch}
-          onHeaderVisibilityChange={setHeaderVisible}
-          onHeaderHeightChange={setHeaderHeight}
         />
 
         {!isFullwidth && activeParent && (
@@ -133,6 +122,6 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
           </FullWidthLayout>
         )}
       </div>
-    </HeaderVisibilityContext.Provider>
+    </HeaderVisibilityProvider>
   )
 }
