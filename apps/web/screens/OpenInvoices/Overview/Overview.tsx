@@ -440,40 +440,39 @@ OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
     }),
   ])
 
-  const filters:
-    | OverviewFilters
-    | undefined = icelandicGovernmentInstitutionsInvoicesFilters
-    ? {
-        suppliers:
-          icelandicGovernmentInstitutionsInvoicesFilters.suppliers?.data?.map(
-            (supplier) => ({
-              name: supplier.name,
-              value: supplier.id,
-            }),
-          ) ?? [],
-        debtors:
-          icelandicGovernmentInstitutionsInvoicesFilters.debtors?.data?.map(
-            (debtor) => ({
-              name: debtor.name,
-              value: String(debtor.erpLegalEntityId),
-            }),
-          ) ?? [],
-        invoicePaymentTypes:
-          icelandicGovernmentInstitutionsInvoicesFilters?.invoicePaymentTypes?.data?.map(
-            (invoiceType) => ({
-              name: invoiceType.name,
-              value: invoiceType.code,
-            }),
-          ) ?? undefined,
-        ministries:
-          icelandicGovernmentInstitutionsInvoicesFilters?.ministries?.data?.map(
-            (ministry) => ({
-              name: ministry.name,
-              value: ministry.code,
-            }),
-          ) ?? undefined,
-      }
-    : undefined
+  const filters: OverviewFilters | undefined =
+    icelandicGovernmentInstitutionsInvoicesFilters
+      ? {
+          suppliers:
+            icelandicGovernmentInstitutionsInvoicesFilters.suppliers?.data?.map(
+              (supplier) => ({
+                name: supplier.name,
+                value: supplier.id,
+              }),
+            ) ?? [],
+          debtors:
+            icelandicGovernmentInstitutionsInvoicesFilters.debtors?.data?.map(
+              (debtor) => ({
+                name: debtor.name,
+                value: String(debtor.erpLegalEntityId),
+              }),
+            ) ?? [],
+          invoicePaymentTypes:
+            icelandicGovernmentInstitutionsInvoicesFilters?.invoicePaymentTypes?.data?.map(
+              (invoiceType) => ({
+                name: invoiceType.name,
+                value: invoiceType.code,
+              }),
+            ) ?? undefined,
+          ministries:
+            icelandicGovernmentInstitutionsInvoicesFilters?.ministries?.data?.map(
+              (ministry) => ({
+                name: ministry.name,
+                value: ministry.code,
+              }),
+            ) ?? undefined,
+        }
+      : undefined
 
   const arrayParser = parseAsArrayOf<string>(parseAsString)
   const filterArray = <T,>(array: Array<T> | null | undefined) => {
