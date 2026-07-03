@@ -19,8 +19,8 @@ import {
   isCompletedCase,
   isDistrictCourtUser,
 } from '@island.is/judicial-system/types'
-import { commentsInput } from '@island.is/judicial-system-web/messages/Core/commentsInput'
 import { core, titles } from '@island.is/judicial-system-web/messages'
+import { commentsInput } from '@island.is/judicial-system-web/messages/Core/commentsInput'
 import {
   AppealRulingModifiedAlert,
   ConnectedCaseFilesAccordionItem,
