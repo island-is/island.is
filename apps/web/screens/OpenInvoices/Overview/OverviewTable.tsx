@@ -3,9 +3,14 @@ import { useIntl } from 'react-intl'
 import { ApolloError } from '@apollo/client'
 
 import { IcelandicGovernmentInstitutionsInvoiceGroup } from '@island.is/api/schema'
-import { createColumnHelper, InteractiveTable } from '@island.is/island-ui/core'
+import {
+  Box,
+  createColumnHelper,
+  InteractiveTable,
+} from '@island.is/island-ui/core'
 import { formatCurrency } from '@island.is/shared/utils'
 
+import { NoResults } from '../components/NoResults/NoResults'
 import { m } from '../messages'
 import { NestedLines } from './NestedLines'
 
@@ -49,27 +54,34 @@ export const OverviewTable = ({
     [formatMessage],
   )
 
+  if (!loading && !error && !data.length) {
+    return <NoResults />
+  }
+
   return (
-    <InteractiveTable
-      columns={columns}
-      data={data}
-      loading={loading}
-      errorTitle={formatMessage(m.overview.errorTitle)}
-      errorMessage={error ? formatMessage(m.overview.errorLoading) : undefined}
-      emptyMessage={formatMessage(m.overview.noResults)}
-      srCaption={formatMessage(m.overview.srCaption)}
-      sortHint={formatMessage(m.overview.sortHint)}
-      mobileTitleKey="supplier"
-      expanderLabel={formatMessage(m.overview.expandRow)}
-      renderExpandedRow={(row) => (
-        <NestedLines
-          supplierLegalId={row.original.supplier.id}
-          erpLegalEntityId={row.original.debtor.erpLegalEntityId}
-          total={row.original.totalSum}
-          dateFrom={dateFrom}
-          dateTo={dateTo}
-        />
-      )}
-    />
+    <Box marginLeft={2} background="white">
+      <InteractiveTable
+        columns={columns}
+        data={data}
+        loading={loading}
+        errorTitle={formatMessage(m.overview.errorTitle)}
+        errorMessage={
+          error ? formatMessage(m.overview.errorLoading) : undefined
+        }
+        srCaption={formatMessage(m.overview.srCaption)}
+        sortHint={formatMessage(m.overview.sortHint)}
+        mobileTitleKey="supplier"
+        expanderLabel={formatMessage(m.overview.expandRow)}
+        renderExpandedRow={(row) => (
+          <NestedLines
+            supplierLegalId={row.original.supplier.id}
+            erpLegalEntityId={row.original.debtor.erpLegalEntityId}
+            total={row.original.totalSum}
+            dateFrom={dateFrom}
+            dateTo={dateTo}
+          />
+        )}
+      />
+    </Box>
   )
 }

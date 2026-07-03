@@ -25,9 +25,8 @@ import { Button } from '../Button/Button'
 import { FocusableBox } from '../FocusableBox/FocusableBox'
 import { Hidden } from '../Hidden/Hidden'
 import { Icon } from '../IconRC/Icon'
+import { LoadingDots } from '../LoadingDots/LoadingDots'
 import { ProblemTemplate } from '../ProblemTemplate/ProblemTemplate'
-import { SkeletonLoader } from '../SkeletonLoader/SkeletonLoader'
-import { Stack } from '../Stack/Stack'
 import { Table as T } from '../Table'
 import { Text } from '../Text/Text'
 import * as styles from './InteractiveTable.css'
@@ -72,8 +71,9 @@ type BaseInteractiveTableProps<TData extends object> = {
   meta?: TableMeta<TData>
 }
 
-export type InteractiveTableProps<TData extends object> =
-  BaseInteractiveTableProps<TData> & (WithExpander<TData> | WithoutExpander)
+export type InteractiveTableProps<
+  TData extends object
+> = BaseInteractiveTableProps<TData> & (WithExpander<TData> | WithoutExpander)
 
 export const InteractiveTable = <TData extends object>({
   columns: providedColumns,
@@ -144,15 +144,6 @@ export const InteractiveTable = <TData extends object>({
         message={errorMessage}
         noBorder
       />
-    )
-  }
-
-  if (loading) {
-    return (
-      <Stack space={1}>
-        <SkeletonLoader height="52px" />
-        <SkeletonLoader repeat={5} height="44px" space={1} />
-      </Stack>
     )
   }
 
@@ -246,338 +237,370 @@ export const InteractiveTable = <TData extends object>({
         ))}
       </T.Head>
       <T.Body>
-        {!data.length && emptyMessage && (
+        {loading ? (
           <tr>
             <td colSpan={columns.length}>
               <Box padding={4} display="flex" justifyContent="center">
-                <Text color="dark400">{emptyMessage}</Text>
+                <LoadingDots />
               </Box>
             </td>
           </tr>
-        )}
-        {table.getRowModel().rows.map((row) => {
-          const isExpanded = row.getIsExpanded()
-          const isCollapsing = collapsingRows.has(row.id)
-          const rowBackground =
-            isExpanded || isCollapsing ? 'blue100' : undefined
+        ) : (
+          <>
+            {!data.length && emptyMessage && (
+              <tr>
+                <td colSpan={columns.length}>
+                  <Box padding={4} display="flex" justifyContent="center">
+                    <Text color="dark400">{emptyMessage}</Text>
+                  </Box>
+                </td>
+              </tr>
+            )}
+            {table.getRowModel().rows.map((row) => {
+              const isExpanded = row.getIsExpanded()
+              const isCollapsing = collapsingRows.has(row.id)
+              const rowBackground =
+                isExpanded || isCollapsing ? 'blue100' : undefined
 
-          return (
-            <Fragment key={row.id}>
-              <T.Row>
-                {row.getVisibleCells().map((cell, i) =>
-                  i === 0 && renderExpandedRow ? (
-                    <T.Data
-                      key={cell.id}
-                      style={{ padding: theme.spacing[2] + 'px' }}
-                      box={{
-                        position: 'relative',
-                        background: rowBackground,
-                        borderBottomWidth:
-                          isExpanded || isCollapsing ? undefined : 'standard',
-                      }}
-                    >
-                      {(isExpanded || isCollapsing) && (
-                        <div className={styles.line} />
-                      )}
-                      <Box
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                      >
-                        <Button
-                          circle
-                          colorScheme="light"
-                          icon={isExpanded ? 'remove' : 'add'}
-                          iconType="filled"
-                          size="small"
-                          type="button"
-                          variant="primary"
-                          aria-labelledby={
-                            mobileTitleKey
-                              ? `${tableId}-row-title-${row.id}`
-                              : undefined
-                          }
-                          aria-label={
-                            mobileTitleKey ? undefined : resolvedExpanderLabel
-                          }
-                          aria-expanded={isExpanded}
-                          aria-controls={`${tableId}-row-expanded-${row.id}`}
-                          onClick={() => {
-                            if (isExpanded) {
-                              setCollapsingRows((prev) =>
-                                new Set(prev).add(row.id),
-                              )
-                            }
-                            row.toggleExpanded()
+              return (
+                <Fragment key={row.id}>
+                  <T.Row>
+                    {row.getVisibleCells().map((cell, i) =>
+                      i === 0 && renderExpandedRow ? (
+                        <T.Data
+                          key={cell.id}
+                          style={{ padding: theme.spacing[2] + 'px' }}
+                          box={{
+                            position: 'relative',
+                            background: rowBackground,
+                            borderBottomWidth:
+                              isExpanded || isCollapsing
+                                ? undefined
+                                : 'standard',
                           }}
-                        />
-                      </Box>
-                    </T.Data>
-                  ) : (
-                    <T.Data
-                      key={cell.id}
-                      style={{
-                        padding: theme.spacing[2] + 'px',
-                        background: rowBackground,
-                      }}
-                      box={{
-                        background: rowBackground,
-                        borderBottomWidth:
-                          isExpanded || isCollapsing ? undefined : 'standard',
-                      }}
-                    >
-                      {cell.column.columnDef.meta?.type === 'interactive' ? (
-                        mobileTitleKey && cell.column.id === mobileTitleKey ? (
-                          <Box id={`${tableId}-row-title-${row.id}`}>
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext(),
-                            )}
-                          </Box>
-                        ) : (
-                          flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                          )
-                        )
-                      ) : (
-                        <Text
-                          variant="medium"
-                          id={
-                            mobileTitleKey && cell.column.id === mobileTitleKey
-                              ? `${tableId}-row-title-${row.id}`
-                              : undefined
-                          }
-                          textAlign={cell.column.columnDef.meta?.align}
                         >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
+                          {(isExpanded || isCollapsing) && (
+                            <div className={styles.line} />
                           )}
-                        </Text>
-                      )}
-                    </T.Data>
-                  ),
-                )}
-              </T.Row>
-              {renderExpandedRow && (
-                <tr aria-hidden={!isExpanded && !isCollapsing}>
-                  <T.Data
-                    colSpan={columns.length}
-                    style={{ padding: 0 }}
-                    box={{
-                      position: 'relative',
-                      background:
-                        isExpanded || isCollapsing ? 'blue100' : undefined,
-                      borderBottomWidth:
-                        isExpanded || isCollapsing ? 'standard' : undefined,
-                    }}
-                  >
-                    <AnimateHeight
-                      id={`${tableId}-row-expanded-${row.id}`}
-                      duration={300}
-                      height={isExpanded ? 'auto' : 0}
-                      onHeightAnimationEnd={(newHeight) => {
-                        if (newHeight === 0) {
-                          setCollapsingRows((prev) => {
-                            const next = new Set(prev)
-                            next.delete(row.id)
-                            return next
-                          })
-                        }
-                      }}
-                    >
-                      {(isExpanded || isCollapsing) && (
-                        <>
-                          <div className={styles.line} />
-                          <Box marginLeft={3} marginBottom={3}>
-                            {renderExpandedRow(row)}
+                          <Box
+                            display="flex"
+                            alignItems="center"
+                            justifyContent="center"
+                          >
+                            <Button
+                              circle
+                              colorScheme="light"
+                              icon={isExpanded ? 'remove' : 'add'}
+                              iconType="filled"
+                              size="small"
+                              type="button"
+                              variant="primary"
+                              aria-labelledby={
+                                mobileTitleKey
+                                  ? `${tableId}-row-title-${row.id}`
+                                  : undefined
+                              }
+                              aria-label={
+                                mobileTitleKey
+                                  ? undefined
+                                  : resolvedExpanderLabel
+                              }
+                              aria-expanded={isExpanded}
+                              aria-controls={`${tableId}-row-expanded-${row.id}`}
+                              onClick={() => {
+                                if (isExpanded) {
+                                  setCollapsingRows((prev) =>
+                                    new Set(prev).add(row.id),
+                                  )
+                                }
+                                row.toggleExpanded()
+                              }}
+                            />
                           </Box>
-                        </>
-                      )}
-                    </AnimateHeight>
-                  </T.Data>
-                </tr>
-              )}
-            </Fragment>
-          )
-        })}
+                        </T.Data>
+                      ) : (
+                        <T.Data
+                          key={cell.id}
+                          style={{
+                            padding: theme.spacing[2] + 'px',
+                            background: rowBackground,
+                          }}
+                          box={{
+                            background: rowBackground,
+                            borderBottomWidth:
+                              isExpanded || isCollapsing
+                                ? undefined
+                                : 'standard',
+                          }}
+                        >
+                          {cell.column.columnDef.meta?.type ===
+                          'interactive' ? (
+                            mobileTitleKey &&
+                            cell.column.id === mobileTitleKey ? (
+                              <Box id={`${tableId}-row-title-${row.id}`}>
+                                {flexRender(
+                                  cell.column.columnDef.cell,
+                                  cell.getContext(),
+                                )}
+                              </Box>
+                            ) : (
+                              flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext(),
+                              )
+                            )
+                          ) : (
+                            <Text
+                              variant="medium"
+                              id={
+                                mobileTitleKey &&
+                                cell.column.id === mobileTitleKey
+                                  ? `${tableId}-row-title-${row.id}`
+                                  : undefined
+                              }
+                              textAlign={cell.column.columnDef.meta?.align}
+                            >
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext(),
+                              )}
+                            </Text>
+                          )}
+                        </T.Data>
+                      ),
+                    )}
+                  </T.Row>
+                  {renderExpandedRow && (
+                    <tr aria-hidden={!isExpanded && !isCollapsing}>
+                      <T.Data
+                        colSpan={columns.length}
+                        style={{ padding: 0 }}
+                        box={{
+                          position: 'relative',
+                          background:
+                            isExpanded || isCollapsing ? 'blue100' : undefined,
+                          borderBottomWidth:
+                            isExpanded || isCollapsing ? 'standard' : undefined,
+                        }}
+                      >
+                        <AnimateHeight
+                          id={`${tableId}-row-expanded-${row.id}`}
+                          duration={300}
+                          height={isExpanded ? 'auto' : 0}
+                          onHeightAnimationEnd={(newHeight) => {
+                            if (newHeight === 0) {
+                              setCollapsingRows((prev) => {
+                                const next = new Set(prev)
+                                next.delete(row.id)
+                                return next
+                              })
+                            }
+                          }}
+                        >
+                          {(isExpanded || isCollapsing) && (
+                            <>
+                              <div className={styles.line} />
+                              <Box marginLeft={3} marginBottom={3}>
+                                {renderExpandedRow(row)}
+                              </Box>
+                            </>
+                          )}
+                        </AnimateHeight>
+                      </T.Data>
+                    </tr>
+                  )}
+                </Fragment>
+              )
+            })}
+          </>
+        )}
       </T.Body>
     </T.Table>
   )
 
   const mobileView = (
     <Box>
-      {!data.length && emptyMessage && (
+      {loading ? (
         <Box padding={4} display="flex" justifyContent="center">
-          <Text color="dark400">{emptyMessage}</Text>
+          <LoadingDots />
         </Box>
-      )}
-      {table.getRowModel().rows.map((row, rowIndex) => {
-        const titleCell = row
-          .getVisibleCells()
-          .find((c) => c.column.id === mobileTitleKey)
-        const dataCells = row
-          .getVisibleCells()
-          .filter(
-            (c) => c.column.id !== mobileTitleKey && c.column.id !== 'expander',
-          )
-        const isExpanded = row.getIsExpanded()
-        const isCollapsing = collapsingRows.has(row.id)
+      ) : (
+        <>
+          {!data.length && emptyMessage && (
+            <Box padding={4} display="flex" justifyContent="center">
+              <Text color="dark400">{emptyMessage}</Text>
+            </Box>
+          )}
+          {table.getRowModel().rows.map((row, rowIndex) => {
+            const titleCell = row
+              .getVisibleCells()
+              .find((c) => c.column.id === mobileTitleKey)
+            const dataCells = row
+              .getVisibleCells()
+              .filter(
+                (c) =>
+                  c.column.id !== mobileTitleKey && c.column.id !== 'expander',
+              )
+            const isExpanded = row.getIsExpanded()
+            const isCollapsing = collapsingRows.has(row.id)
 
-        return (
-          <Box
-            key={row.id}
-            background={isExpanded || isCollapsing ? 'blue100' : undefined}
-            className={cn(styles.mobileRow, {
-              [styles.container]: isExpanded || isCollapsing,
-            })}
-            position="relative"
-            paddingTop={rowIndex > 0 ? 5 : 3}
-            paddingBottom={3}
-          >
-            <Box
-              marginBottom={1}
-              display="flex"
-              flexDirection="row"
-              justifyContent="spaceBetween"
-            >
-              {titleCell?.column.columnDef.meta?.type === 'interactive' ? (
+            return (
+              <Box
+                key={row.id}
+                background={isExpanded || isCollapsing ? 'blue100' : undefined}
+                className={cn(styles.mobileRow, {
+                  [styles.container]: isExpanded || isCollapsing,
+                })}
+                position="relative"
+                paddingTop={rowIndex > 0 ? 5 : 3}
+                paddingBottom={3}
+              >
                 <Box
-                  id={
-                    mobileTitleKey
-                      ? `${tableId}-row-title-${row.id}`
-                      : undefined
-                  }
+                  marginBottom={1}
+                  display="flex"
+                  flexDirection="row"
+                  justifyContent="spaceBetween"
                 >
-                  {flexRender(
-                    titleCell.column.columnDef.cell,
-                    titleCell.getContext(),
-                  )}
-                </Box>
-              ) : (
-                <Text
-                  variant="h4"
-                  as="h2"
-                  color="blue400"
-                  id={
-                    mobileTitleKey
-                      ? `${tableId}-row-title-${row.id}`
-                      : undefined
-                  }
-                >
-                  {titleCell
-                    ? flexRender(
+                  {titleCell?.column.columnDef.meta?.type === 'interactive' ? (
+                    <Box
+                      id={
+                        mobileTitleKey
+                          ? `${tableId}-row-title-${row.id}`
+                          : undefined
+                      }
+                    >
+                      {flexRender(
                         titleCell.column.columnDef.cell,
                         titleCell.getContext(),
-                      )
-                    : null}
-                </Text>
-              )}
-              {renderExpandedRow && (
-                <Box marginLeft={1}>
-                  <Button
-                    circle
-                    colorScheme="light"
-                    icon={isExpanded ? 'remove' : 'add'}
-                    iconType="filled"
-                    size="small"
-                    type="button"
-                    variant="primary"
-                    aria-labelledby={
-                      mobileTitleKey
-                        ? `${tableId}-row-title-${row.id}`
-                        : undefined
-                    }
-                    aria-label={
-                      mobileTitleKey ? undefined : resolvedExpanderLabel
-                    }
-                    aria-expanded={isExpanded}
-                    aria-controls={`${tableId}-row-expanded-${row.id}`}
-                    onClick={() => {
-                      if (isExpanded) {
-                        setCollapsingRows((prev) => new Set(prev).add(row.id))
-                      }
-                      row.toggleExpanded()
-                    }}
-                  />
-                </Box>
-              )}
-            </Box>
-            <Box>
-              {dataCells.map((cell) => {
-                const headerGroup = table.getHeaderGroups()[0]
-                const header = headerGroup?.headers.find(
-                  (h) => h.column.id === cell.column.id,
-                )
-                const cellMeta = cell.column.columnDef.meta
-                if (cellMeta?.span === 2) {
-                  return (
-                    <Box key={cell.id} marginBottom={1}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
                       )}
                     </Box>
-                  )
-                }
-                return (
-                  <Box
-                    key={cell.id}
-                    display="flex"
-                    flexDirection="row"
-                    marginBottom={1}
-                  >
-                    <Box width="half" display="flex" alignItems="center">
-                      <Text fontWeight="semiBold">
-                        {header
-                          ? flexRender(
-                              header.column.columnDef.header,
-                              header.getContext(),
+                  ) : (
+                    <Text
+                      variant="h4"
+                      as="h2"
+                      color="blue400"
+                      id={
+                        mobileTitleKey
+                          ? `${tableId}-row-title-${row.id}`
+                          : undefined
+                      }
+                    >
+                      {titleCell
+                        ? flexRender(
+                            titleCell.column.columnDef.cell,
+                            titleCell.getContext(),
+                          )
+                        : null}
+                    </Text>
+                  )}
+                  {renderExpandedRow && (
+                    <Box marginLeft={1}>
+                      <Button
+                        circle
+                        colorScheme="light"
+                        icon={isExpanded ? 'remove' : 'add'}
+                        iconType="filled"
+                        size="small"
+                        type="button"
+                        variant="primary"
+                        aria-labelledby={
+                          mobileTitleKey
+                            ? `${tableId}-row-title-${row.id}`
+                            : undefined
+                        }
+                        aria-label={
+                          mobileTitleKey ? undefined : resolvedExpanderLabel
+                        }
+                        aria-expanded={isExpanded}
+                        aria-controls={`${tableId}-row-expanded-${row.id}`}
+                        onClick={() => {
+                          if (isExpanded) {
+                            setCollapsingRows((prev) =>
+                              new Set(prev).add(row.id),
                             )
-                          : null}
-                      </Text>
+                          }
+                          row.toggleExpanded()
+                        }}
+                      />
                     </Box>
-                    <Box width="half">
-                      {cellMeta?.type === 'interactive' ? (
-                        flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )
-                      ) : (
-                        <Text textAlign="right">
+                  )}
+                </Box>
+                <Box>
+                  {dataCells.map((cell) => {
+                    const headerGroup = table.getHeaderGroups()[0]
+                    const header = headerGroup?.headers.find(
+                      (h) => h.column.id === cell.column.id,
+                    )
+                    const cellMeta = cell.column.columnDef.meta
+                    if (cellMeta?.span === 2) {
+                      return (
+                        <Box key={cell.id} marginBottom={1}>
                           {flexRender(
                             cell.column.columnDef.cell,
                             cell.getContext(),
                           )}
-                        </Text>
-                      )}
-                    </Box>
-                  </Box>
-                )
-              })}
-            </Box>
-            {renderExpandedRow && (
-              <AnimateHeight
-                id={`${tableId}-row-expanded-${row.id}`}
-                duration={300}
-                height={isExpanded ? 'auto' : 0}
-                onHeightAnimationEnd={(newHeight) => {
-                  if (newHeight === 0) {
-                    setCollapsingRows((prev) => {
-                      const next = new Set(prev)
-                      next.delete(row.id)
-                      return next
-                    })
-                  }
-                }}
-              >
-                {(isExpanded || isCollapsing) && renderExpandedRow(row)}
-              </AnimateHeight>
-            )}
-          </Box>
-        )
-      })}
+                        </Box>
+                      )
+                    }
+                    return (
+                      <Box
+                        key={cell.id}
+                        display="flex"
+                        flexDirection="row"
+                        marginBottom={1}
+                      >
+                        <Box width="half" display="flex" alignItems="center">
+                          <Text fontWeight="semiBold">
+                            {header
+                              ? flexRender(
+                                  header.column.columnDef.header,
+                                  header.getContext(),
+                                )
+                              : null}
+                          </Text>
+                        </Box>
+                        <Box width="half">
+                          {cellMeta?.type === 'interactive' ? (
+                            flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext(),
+                            )
+                          ) : (
+                            <Text textAlign="right">
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext(),
+                              )}
+                            </Text>
+                          )}
+                        </Box>
+                      </Box>
+                    )
+                  })}
+                </Box>
+                {renderExpandedRow && (
+                  <AnimateHeight
+                    id={`${tableId}-row-expanded-${row.id}`}
+                    duration={300}
+                    height={isExpanded ? 'auto' : 0}
+                    onHeightAnimationEnd={(newHeight) => {
+                      if (newHeight === 0) {
+                        setCollapsingRows((prev) => {
+                          const next = new Set(prev)
+                          next.delete(row.id)
+                          return next
+                        })
+                      }
+                    }}
+                  >
+                    {(isExpanded || isCollapsing) && renderExpandedRow(row)}
+                  </AnimateHeight>
+                )}
+              </Box>
+            )
+          })}
+        </>
+      )}
     </Box>
   )
 

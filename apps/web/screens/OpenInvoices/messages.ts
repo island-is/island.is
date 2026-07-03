@@ -41,9 +41,18 @@ export const m = {
       id: 'web.openinvoices:overview.emptyTable',
       defaultMessage: 'Engar upplýsingar til að birta',
     },
-    noResults: {
-      id: 'web.openinvoices:overview.noResults',
-      defaultMessage: 'Ekkert fannst. Prófaðu að breyta skilyrðum',
+    noResultsTitle: {
+      id: 'web.openinvoices:overview.noResultsTitle',
+      defaultMessage: 'Engir reikningar fundust',
+    },
+    noResultsDescription: {
+      id: 'web.openinvoices:overview.noResultsDescription',
+      defaultMessage:
+        'Þau skilyrði sem leitað er eftir skiluðu engum niðurstöðum.',
+    },
+    noResultsIllustrationAlt: {
+      id: 'web.openinvoices:overview.noResultsIllustrationAlt',
+      defaultMessage: '',
     },
     errorLoading: {
       id: 'web.openinvoices:overview.errorLoading',

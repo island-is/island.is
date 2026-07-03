@@ -94,14 +94,14 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   }, [today])
 
   const [initialRender, setInitialRender] = useState<boolean>(true)
-
-  const [displayGroups, setDisplayGroups] = useState<
-    IcelandicGovernmentInstitutionsInvoiceGroup[]
-  >(initialInvoiceGroups?.data ?? [])
   const [currentPage, setCurrentPage] = useState<number>(1)
-  const [totalCount, setTotalCount] = useState<number>(
-    initialInvoiceGroups?.totalCount ?? 0,
-  )
+
+  const fetchedResult =
+    invoiceGroupsData?.icelandicGovernmentInstitutionsInvoiceGroups
+  const displayGroups: IcelandicGovernmentInstitutionsInvoiceGroup[] =
+    fetchedResult?.data ?? initialInvoiceGroups?.data ?? []
+  const totalCount =
+    fetchedResult?.totalCount ?? initialInvoiceGroups?.totalCount ?? 0
 
   const [dateRangeEnd, setDateRangeEnd] = useQueryState(
     'dateRangeEnd',
@@ -167,14 +167,6 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     dateRangeStart,
     dateRangeEnd,
   ])
-
-  useEffect(() => {
-    if (!invoiceGroupsData) return
-    const result =
-      invoiceGroupsData.icelandicGovernmentInstitutionsInvoiceGroups
-    setDisplayGroups(result?.data ?? [])
-    setTotalCount(result?.totalCount ?? 0)
-  }, [invoiceGroupsData])
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
@@ -379,7 +371,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
           }
         >
           <MarkdownText>{hitsMessage ?? ''}</MarkdownText>
-          <Box marginLeft={2} background="white">
+          <Box marginTop={3}>
             <OverviewTable
               invoiceGroups={displayGroups}
               dateFrom={dateRangeStart}
@@ -389,7 +381,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
             />
           </Box>
 
-          {totalHits > PAGE_SIZE && (
+          {totalHits > PAGE_SIZE && !invoiceGroupsLoading && (
             <Box marginTop={2}>
               <Pagination
                 variant="blue"
@@ -448,39 +440,40 @@ OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
     }),
   ])
 
-  const filters: OverviewFilters | undefined =
-    icelandicGovernmentInstitutionsInvoicesFilters
-      ? {
-          suppliers:
-            icelandicGovernmentInstitutionsInvoicesFilters.suppliers?.data?.map(
-              (supplier) => ({
-                name: supplier.name,
-                value: supplier.id,
-              }),
-            ) ?? [],
-          debtors:
-            icelandicGovernmentInstitutionsInvoicesFilters.debtors?.data?.map(
-              (debtor) => ({
-                name: debtor.name,
-                value: String(debtor.erpLegalEntityId),
-              }),
-            ) ?? [],
-          invoicePaymentTypes:
-            icelandicGovernmentInstitutionsInvoicesFilters?.invoicePaymentTypes?.data?.map(
-              (invoiceType) => ({
-                name: invoiceType.name,
-                value: invoiceType.code,
-              }),
-            ) ?? undefined,
-          ministries:
-            icelandicGovernmentInstitutionsInvoicesFilters?.ministries?.data?.map(
-              (ministry) => ({
-                name: ministry.name,
-                value: ministry.code,
-              }),
-            ) ?? undefined,
-        }
-      : undefined
+  const filters:
+    | OverviewFilters
+    | undefined = icelandicGovernmentInstitutionsInvoicesFilters
+    ? {
+        suppliers:
+          icelandicGovernmentInstitutionsInvoicesFilters.suppliers?.data?.map(
+            (supplier) => ({
+              name: supplier.name,
+              value: supplier.id,
+            }),
+          ) ?? [],
+        debtors:
+          icelandicGovernmentInstitutionsInvoicesFilters.debtors?.data?.map(
+            (debtor) => ({
+              name: debtor.name,
+              value: String(debtor.erpLegalEntityId),
+            }),
+          ) ?? [],
+        invoicePaymentTypes:
+          icelandicGovernmentInstitutionsInvoicesFilters?.invoicePaymentTypes?.data?.map(
+            (invoiceType) => ({
+              name: invoiceType.name,
+              value: invoiceType.code,
+            }),
+          ) ?? undefined,
+        ministries:
+          icelandicGovernmentInstitutionsInvoicesFilters?.ministries?.data?.map(
+            (ministry) => ({
+              name: ministry.name,
+              value: ministry.code,
+            }),
+          ) ?? undefined,
+      }
+    : undefined
 
   const arrayParser = parseAsArrayOf<string>(parseAsString)
   const filterArray = <T,>(array: Array<T> | null | undefined) => {
