@@ -158,7 +158,12 @@ const SelectableList: FC<Props> = (props) => {
               animate={{ y: 0 }}
               exit={{ y: 10 }}
             >
-              <Box textAlign="center" paddingTop={1} paddingBottom={2} paddingX={3}>
+              <Box
+                textAlign="center"
+                paddingTop={1}
+                paddingBottom={2}
+                paddingX={3}
+              >
                 <LoadingDots />
               </Box>
             </motion.div>
