@@ -19,6 +19,7 @@ import {
   isCompletedCase,
   isDistrictCourtUser,
 } from '@island.is/judicial-system/types'
+import { commentsInput } from '@island.is/judicial-system-web/messages/Core/commentsInput'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   AppealRulingModifiedAlert,
@@ -74,6 +75,13 @@ const OverviewBody = ({
         <CourtCaseInfo workingCase={workingCase} />
         <ServiceAnnouncements defendants={workingCase.defendants} />
         <div className={grid({ gap: 5, marginBottom: 10 })}>
+          {workingCase.comments && (
+            <AlertMessage
+              title={formatMessage(commentsInput.heading)}
+              message={workingCase.comments}
+              type="warning"
+            />
+          )}
           <AppealRulingModifiedAlert />
           {workingCase.reopenReason && !isCompletedCase(workingCase.state) && (
             <AlertMessage
