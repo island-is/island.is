@@ -152,15 +152,16 @@ const SelectableList: FC<Props> = (props) => {
         </Box>
         <AnimatePresence mode="wait">
           {isLoading ? (
-            <Box
-              textAlign="center"
-              paddingTop={1}
-              paddingBottom={2}
-              paddingX={3}
+            <motion.div
               key="loading-dots"
+              initial={{ y: 10 }}
+              animate={{ y: 0 }}
+              exit={{ y: 10 }}
             >
-              <LoadingDots />
-            </Box>
+              <Box textAlign="center" paddingTop={1} paddingBottom={2} paddingX={3}>
+                <LoadingDots />
+              </Box>
+            </motion.div>
           ) : errorMessage ? (
             <AnimateChildren id="error-message" key="error-message">
               <IconAndText
@@ -186,7 +187,13 @@ const SelectableList: FC<Props> = (props) => {
               />
             </AnimateChildren>
           ) : (
-            <ul className={styles.grid} key="list">
+            <motion.ul
+              className={styles.grid}
+              key="list"
+              initial={{ y: 10 }}
+              animate={{ y: 0 }}
+              exit={{ y: 10 }}
+            >
               {selectableItems.map((item, index) => (
                 <motion.li
                   custom={index}
@@ -245,7 +252,7 @@ const SelectableList: FC<Props> = (props) => {
                   </Box>
                 </motion.li>
               ))}
-            </ul>
+            </motion.ul>
           )}
         </AnimatePresence>
       </Box>
