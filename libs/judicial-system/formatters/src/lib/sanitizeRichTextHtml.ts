@@ -12,10 +12,7 @@ const RICH_TEXT_SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
       'padding-left': [/^\d+(?:\.\d+)?px$/],
     },
     span: {
-      'background-color': [
-        /^#[0-9a-fA-F]{3,8}$/,
-        /^rgb\(\d+,\s*\d+,\s*\d+\)$/,
-      ],
+      'background-color': [/^#[0-9a-fA-F]{3,8}$/, /^rgb\(\d+,\s*\d+,\s*\d+\)$/],
     },
     li: {
       'list-style-type': [/^none$/],
