@@ -15,8 +15,15 @@ export const checkboxGrid = style({
   },
 })
 
+// Declared after checkboxGrid and overriding inside the same media query:
+// a plain rule would lose to checkboxGrid's lg rule since vanilla-extract
+// emits all @media rules after the base rules.
 export const fullWidth = style({
-  gridTemplateColumns: 'minmax(0, 1fr)',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
+      gridTemplateColumns: 'minmax(0, 1fr)',
+    },
+  },
 })
 
 export const checkboxItem = style({})
