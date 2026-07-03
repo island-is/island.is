@@ -41,6 +41,7 @@ import {
 import { Feature } from '@island.is/judicial-system/types'
 import {
   BlueBox,
+  CheckboxList,
   DateTime,
   FeatureContext,
   FileNotFoundModal,
@@ -940,31 +941,31 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                         initial="hidden"
                         animate="visible"
                         exit="exit"
-                        className={styles.twoColGrid}
                         key="grid"
                       >
-                        {CLOSURE_GROUNDS.map(
-                          ([label, tooltip, legalProvision]) => (
-                            <motion.div
-                              variants={itemVariants}
-                              initial="hidden"
-                              animate="visible"
-                              exit="exit"
-                              key={label}
-                            >
-                              <Checkbox
-                                label={label}
-                                name={`${label}-${courtSession.id}`}
-                                tooltip={tooltip}
-                                checked={courtSession.closedLegalProvisions?.includes(
-                                  legalProvision,
-                                )}
-                                onChange={(evt) => {
+                        <motion.div
+                          variants={itemVariants}
+                          initial="hidden"
+                          animate="visible"
+                          exit="exit"
+                        >
+                          <CheckboxList
+                            blueBox={false}
+                            checkboxes={CLOSURE_GROUNDS.map(
+                              ([label, tooltip, legalProvision]) => ({
+                                id: `${legalProvision}-${courtSession.id}`,
+                                title: label,
+                                info: tooltip,
+                                checked:
+                                  courtSession.closedLegalProvisions?.includes(
+                                    legalProvision,
+                                  ) ?? false,
+                                disabled: courtSession.isConfirmed || false,
+                                onChange: (checked) => {
                                   const initialValue =
                                     courtSession.closedLegalProvisions || []
 
-                                  const closedLegalProvisions = evt.target
-                                    .checked
+                                  const closedLegalProvisions = checked
                                     ? [...initialValue, legalProvision]
                                     : initialValue.filter(
                                         (v) => v !== legalProvision,
@@ -975,14 +976,11 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                                     { closedLegalProvisions },
                                     { persist: true },
                                   )
-                                }}
-                                disabled={courtSession.isConfirmed || false}
-                                large
-                                filled
-                              />
-                            </motion.div>
-                          ),
-                        )}
+                                },
+                              }),
+                            )}
+                          />
+                        </motion.div>
                       </motion.div>
                     </>
                   )}
