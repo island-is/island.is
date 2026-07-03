@@ -51,7 +51,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/utils'
 
 const AppealToCourtOfAppeals = () => {
-  const { workingCase } = useContext(FormContext)
+  const { workingCase, refreshCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
@@ -245,7 +245,10 @@ const AppealToCourtOfAppeals = () => {
           text="Tilkynning um móttöku kæru verður send á aðila máls."
           secondaryButton={{
             text: formatMessage(core.closeModal),
-            onClick: () => router.push(previousUrl),
+            onClick: () => {
+              refreshCase()
+              router.push(previousUrl)
+            },
           }}
         />
       )}
