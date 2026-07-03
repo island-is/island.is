@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 
 import { theme } from '@island.is/island-ui/theme'
 
@@ -36,4 +36,8 @@ export const userManagementContainer = style({
   gridTemplateColumns: '.6fr auto',
   justifyContent: 'center',
   padding: '48px 0',
+})
+
+globalStyle(`${thead} th`, {
+  whiteSpace: 'nowrap',
 })

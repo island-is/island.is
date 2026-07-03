@@ -38,7 +38,7 @@ auth-admin-web:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -52,19 +52,6 @@ auth-admin-web:
             - pathPrefix: '/admin'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/auth-admin-web'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '16k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/proxy-buffers-number: '4'
-        nginx.ingress.kubernetes.io/server-snippet: 'client_header_buffer_size 16k; large_client_header_buffers 4 16k;'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'identity-server.staging01.devland.is'
-          paths:
-            - '/admin'
   namespace: 'identity-server-admin'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -75,7 +62,7 @@ auth-admin-web:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -171,7 +158,7 @@ identity-server:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -185,18 +172,6 @@ identity-server:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/identity-server'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'identity-server.staging01.devland.is'
-          paths:
-            - '/'
   namespace: 'identity-server'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -212,7 +187,7 @@ identity-server:
       useExisting: false
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -310,7 +285,7 @@ services-auth-admin-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -324,16 +299,6 @@ services-auth-admin-api:
             - pathPrefix: '/backend'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-admin-api'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'identity-server.staging01.devland.is'
-          paths:
-            - '/backend'
   namespace: 'identity-server-admin'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -343,7 +308,7 @@ services-auth-admin-api:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -435,7 +400,7 @@ services-auth-delegation-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     internal-gw:
@@ -449,15 +414,6 @@ services-auth-delegation-api:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-delegation-api'
-  ingress:
-    internal-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'auth-delegation-api.internal.staging01.devland.is'
-          paths:
-            - '/'
   namespace: 'identity-server-delegation'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -467,7 +423,7 @@ services-auth-delegation-api:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -562,7 +518,7 @@ services-auth-ids-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-ids-api'
@@ -612,7 +568,7 @@ services-auth-ids-api:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -680,7 +636,7 @@ services-auth-ids-api-cleanup:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-ids-api'
@@ -693,7 +649,7 @@ services-auth-ids-api-cleanup:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -765,7 +721,7 @@ services-auth-personal-representative:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -779,15 +735,6 @@ services-auth-personal-representative:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-personal-representative'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'personal-representative-xrd.internal.staging01.devland.is'
-          paths:
-            - '/'
   namespace: 'personal-representative'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -797,7 +744,7 @@ services-auth-personal-representative:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -854,7 +801,7 @@ services-auth-personal-representative-public:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -868,15 +815,6 @@ services-auth-personal-representative-public:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-personal-representative-public'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'personal-representative-public-xrd.internal.staging01.devland.is'
-          paths:
-            - '/'
   namespace: 'personal-representative'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -886,7 +824,7 @@ services-auth-personal-representative-public:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -969,7 +907,7 @@ services-auth-public-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -984,20 +922,6 @@ services-auth-public-api:
           rewritePrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-public-api'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/rewrite-target: '/$2'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'identity-server.staging01.devland.is'
-          pathTypeOverride: 'ImplementationSpecific'
-          paths:
-            - '/api(/|$)(.*)'
   namespace: 'identity-server-admin'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -1007,7 +931,7 @@ services-auth-public-api:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:

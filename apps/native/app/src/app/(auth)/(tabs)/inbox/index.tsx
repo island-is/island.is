@@ -10,7 +10,6 @@ import {
   Platform,
   Pressable,
   RefreshControl,
-  ToastAndroid,
   TouchableNativeFeedback,
   useWindowDimensions,
   View,
@@ -50,13 +49,12 @@ import { isAndroid } from '@/utils/devices'
 import { testIDs } from '@/utils/test-ids'
 import { ActionBar } from '../../../../components/action-bar'
 import { PressableListItem } from '../../../../components/pressable-list-item'
-import { Toast, ToastVariant } from '../../../../components/toast'
+import { toast } from '@/components/toast'
 import { normalizesFilters } from '../../../../utils/inbox-filters'
 import { Text } from 'react-native'
 import { StackScreen } from '../../../../components/stack-screen'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { uiStore } from '../../../../stores/ui-store'
-import * as Burnt from 'burnt'
 
 type ListItem =
   | { id: string; type: 'skeleton' | 'empty' }
@@ -150,16 +148,6 @@ export default function InboxScreen() {
     dateTo,
   } = useInboxFilterStore()
 
-  const [toastInfo, setToastInfo] = useState<{
-    variant: ToastVariant
-    title: string
-    message?: string
-  }>({
-    variant: 'success',
-    title: '',
-  })
-  const [toastVisible, setToastVisible] = useState(false)
-
   const pageRef = useRef(1)
   const loadingTimeout = useRef<ReturnType<typeof setTimeout>>()
 
@@ -198,6 +186,7 @@ export default function InboxScreen() {
 
   const [selectState, setSelectedState] = useState(false)
   const [selectedItems, setSelectedItems] = useState<string[]>([])
+  const [selectAllMode, setSelectAllMode] = useState(false)
 
   const res = useListDocumentsQuery({
     variables: {
@@ -218,6 +207,24 @@ export default function InboxScreen() {
   const availableCategories = useMemo(() => {
     return res.data?.documentsV2?.categories ?? []
   }, [res.data])
+
+  // Remember sender/category names across query refetches so the active filter
+  // tags keep showing the name (never the ID) while the next response loads
+  // after a filter is removed.
+  const filterNamesRef = useRef({
+    senders: new Map<string, string>(),
+    categories: new Map<string, string>(),
+  })
+  for (const sender of availableSenders) {
+    if (sender.id && sender.name) {
+      filterNamesRef.current.senders.set(sender.id, sender.name.trim())
+    }
+  }
+  for (const category of availableCategories) {
+    if (category.id && category.name) {
+      filterNamesRef.current.categories.set(category.id, category.name)
+    }
+  }
 
   const allDocumentsSelected =
     selectedItems.length === res.data?.documentsV2?.data?.length
@@ -258,7 +265,17 @@ export default function InboxScreen() {
   const resetSelectState = () => {
     setSelectedItems([])
     setSelectedState(false)
+    setSelectAllMode(false)
   }
+
+  // Wrap the selectedItems setter passed to individual rows so any manual
+  // toggle disables select-all mode (the user is taking over control).
+  const handleItemSelectionChange = useCallback<
+    React.Dispatch<React.SetStateAction<string[]>>
+  >((updater) => {
+    setSelectAllMode(false)
+    setSelectedItems(updater)
+  }, [])
 
   const onRefresh = useCallback(async () => {
     try {
@@ -280,6 +297,13 @@ export default function InboxScreen() {
 
   const items = useMemo(() => res.data?.documentsV2?.data ?? [], [res.data])
   const isSearch = query.length > 2
+
+  // While select-all mode is on, keep selectedItems in sync with every loaded
+  // document so newly loaded items are also selected by default.
+  useEffect(() => {
+    if (!selectAllMode) return
+    setSelectedItems(items.map((item) => item.id))
+  }, [items, selectAllMode])
 
   const loadMore = async () => {
     if (res.loading || loadingMore) {
@@ -331,37 +355,12 @@ export default function InboxScreen() {
   const handleBulkActionError = (
     actionType: 'star' | 'archive' | 'markAsRead',
   ) => {
-    showToastForBulkSelectAction({
-      variant: 'error',
-      title: `${intl.formatMessage({
-        id: `inbox.bulkSelect.${actionType}Error`,
-      })}: ${intl.formatMessage({
-        id: 'inbox.bulkSelect.pleaseTryAgain',
-      })}`,
-    })
-  }
-
-  const showToastForBulkSelectAction = ({
-    variant,
-    title,
-  }: {
-    variant: ToastVariant
-    title: string
-  }) => {
-    if (Platform.OS === 'android') {
-      ToastAndroid.show(title, ToastAndroid.SHORT)
-    } else {
-      Burnt.toast({
-        title,
-        preset:
-          variant === 'success'
-            ? 'done'
-            : variant === 'error'
-            ? 'error'
-            : 'none',
-        from: 'bottom',
-      })
-    }
+    toast.error(
+      intl.formatMessage({ id: `inbox.bulkSelect.${actionType}Error` }),
+      {
+        message: intl.formatMessage({ id: 'inbox.bulkSelect.pleaseTryAgain' }),
+      },
+    )
   }
 
   const renderItem = useCallback(
@@ -399,7 +398,7 @@ export default function InboxScreen() {
           item={document}
           selectable={selectState}
           selectedItems={selectedItems}
-          setSelectedItems={setSelectedItems}
+          setSelectedItems={handleItemSelectionChange}
           setSelectedState={setSelectedState}
           listParams={{
             ...filters,
@@ -413,7 +412,7 @@ export default function InboxScreen() {
       filters,
       selectState,
       selectedItems,
-      setSelectedItems,
+      handleItemSelectionChange,
       availableCategories,
       isFeature2WayMailboxEnabled,
     ],
@@ -478,12 +477,7 @@ export default function InboxScreen() {
         })
       })
       resetSelectState()
-      showToastForBulkSelectAction({
-        variant: 'success',
-        title: intl.formatMessage({
-          id: 'inbox.bulkSelect.starSuccess',
-        }),
-      })
+      toast.success(intl.formatMessage({ id: 'inbox.bulkSelect.starSuccess' }))
     } else {
       handleBulkActionError('star')
     }
@@ -498,12 +492,9 @@ export default function InboxScreen() {
     if (result.data?.postMailActionV2?.success) {
       resetSelectState()
       res.refetch()
-      showToastForBulkSelectAction({
-        variant: 'success',
-        title: intl.formatMessage({
-          id: 'inbox.bulkSelect.archiveSuccess',
-        }),
-      })
+      toast.success(
+        intl.formatMessage({ id: 'inbox.bulkSelect.archiveSuccess' }),
+      )
     } else {
       handleBulkActionError('archive')
     }
@@ -526,12 +517,9 @@ export default function InboxScreen() {
         })
       })
       resetSelectState()
-      showToastForBulkSelectAction({
-        variant: 'success',
-        title: intl.formatMessage({
-          id: 'inbox.bulkSelect.markAsReadSuccess',
-        }),
-      })
+      toast.success(
+        intl.formatMessage({ id: 'inbox.bulkSelect.markAsReadSuccess' }),
+      )
     } else {
       handleBulkActionError('markAsRead')
     }
@@ -562,12 +550,15 @@ export default function InboxScreen() {
                     fontFamily: fontByWeight('400'),
                   },
                   onPress() {
-                    allDocumentsSelected
-                      ? setSelectedItems([])
-                      : setSelectedItems(
-                          res.data?.documentsV2?.data.map((doc) => doc.id) ??
-                            [],
-                        )
+                    if (allDocumentsSelected) {
+                      setSelectAllMode(false)
+                      setSelectedItems([])
+                    } else {
+                      setSelectAllMode(true)
+                      setSelectedItems(
+                        res.data?.documentsV2?.data.map((doc) => doc.id) ?? [],
+                      )
+                    }
                   },
                 },
               ]
@@ -733,13 +724,16 @@ export default function InboxScreen() {
                 )}
                 {!!senderNationalId.length &&
                   senderNationalId.map((senderId) => {
-                    const name = availableSenders.find(
-                      (sender) => sender.id === senderId,
-                    )
+                    const name =
+                      filterNamesRef.current.senders.get(senderId) ??
+                      availableSenders
+                        .find((sender) => sender.id === senderId)
+                        ?.name?.trim() ??
+                      senderId
                     return (
                       <Tag
                         key={senderId}
-                        title={name?.name?.trim() ?? senderId}
+                        title={name}
                         closable
                         onClose={() =>
                           inboxFilterStore.setState((state) => ({
@@ -753,13 +747,16 @@ export default function InboxScreen() {
                   })}
                 {!!categoryIds.length &&
                   categoryIds.map((categoryId) => {
-                    const name = availableCategories.find(
-                      (category) => category.id === categoryId,
-                    )
+                    const name =
+                      filterNamesRef.current.categories.get(categoryId) ??
+                      availableCategories.find(
+                        (category) => category.id === categoryId,
+                      )?.name ??
+                      categoryId
                     return (
                       <Tag
                         key={categoryId}
-                        title={name?.name ?? categoryId}
+                        title={name}
                         closable
                         onClose={() =>
                           inboxFilterStore.setState((state) => ({

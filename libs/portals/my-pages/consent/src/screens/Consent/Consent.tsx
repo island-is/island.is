@@ -13,7 +13,7 @@ import {
   toast,
   ToggleSwitchButton,
 } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
 
 import { m } from '../../lib/messages'
@@ -29,7 +29,8 @@ import type {
   ConsentGroupProps,
 } from './types'
 
-function Consent() {
+const Consent = () => {
+  useNamespaces('portals-my-pages.consent')
   const { formatMessage } = useLocale()
 
   const { data, loading } = useGetConsentListQuery()
@@ -153,12 +154,12 @@ function Consent() {
   )
 }
 
-function ConsentSection({
+const ConsentSection = ({
   clientId,
   tenant,
   scopes = [],
   isLast = false,
-}: ConsentSectionProps) {
+}: ConsentSectionProps) => {
   if (!scopes?.length || !tenant) {
     return null
   }
@@ -221,11 +222,11 @@ function ConsentSection({
   )
 }
 
-function ConsentGroup({
+const ConsentGroup = ({
   displayName,
   description,
   children,
-}: ConsentGroupProps) {
+}: ConsentGroupProps) => {
   return (
     <Box marginY={2} component="li">
       <Box marginBottom={2}>
@@ -244,14 +245,14 @@ function ConsentGroup({
   )
 }
 
-function ConsentLine({
+const ConsentLine = ({
   name,
   displayName,
   description,
   hasConsent,
   clientId,
   isLast,
-}: ConsentLineProps) {
+}: ConsentLineProps) => {
   const { formatMessage } = useLocale()
   const [patchConsent, { loading }] = usePatchConsentMutation({
     onError: (_) => toast.error(formatMessage(m.consentUpdateError)),

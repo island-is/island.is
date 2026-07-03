@@ -100,7 +100,7 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
             <Text>
               {' '}
               {ReactHtmlParser(
-                (programme.description || '')
+                (programme.structureDescription || '')
                   .replaceAll('\n', '<br/>')
                   .replace(/<(\/?)p>/g, '<$1span>'),
               )}

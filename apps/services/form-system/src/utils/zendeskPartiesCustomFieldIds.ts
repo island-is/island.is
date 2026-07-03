@@ -4,22 +4,24 @@ export type Instance = keyof typeof fieldMappings
 
 const fieldMappings = {
   haskoliislands: {
-    name: 111,
-    email: 222,
-    address: 333,
-    nationalId: 444,
-    postalCode: 555,
-    phoneNumber: 666,
-    municipality: 777,
+    name: 51015877611291,
+    email: 51016152728859,
+    address: 51015867401371,
+    nationalId: 51015855616795,
+    postalCode: 51015920921755,
+    phoneNumber: 51016234676763,
+    municipality: 51015942835227,
+    subject: 51470027594267,
   },
   heilsa: {
-    name: 111,
-    email: 222,
-    address: 333,
-    nationalId: 444,
-    postalCode: 555,
-    phoneNumber: 666,
-    municipality: 777,
+    name: 51216152741531,
+    email: 51216169546267,
+    address: 51216186383515,
+    nationalId: 51216171879451,
+    postalCode: 51216189258139,
+    phoneNumber: 51216190788891,
+    municipality: 51216236329371,
+    subject: 51469962354843,
   },
   digitaliceland: {
     name: 29423576358418,
@@ -29,15 +31,17 @@ const fieldMappings = {
     postalCode: 15524096374162,
     phoneNumber: 15359010264850,
     municipality: 35764490214930,
+    subject: 36266941221778,
   },
   digitaliceland1715002531: {
-    name: 1,
-    email: 2,
-    address: 3,
-    nationalId: 4,
-    postalCode: 5,
-    phoneNumber: 6,
-    municipality: 7,
+    name: 36033208873618,
+    email: 36033206372114,
+    address: 36033213472786,
+    nationalId: 27740279016466,
+    postalCode: 36033229111442,
+    phoneNumber: 36033299365010,
+    municipality: 36033312019346,
+    subject: 123,
   },
 } as const
 
@@ -49,6 +53,7 @@ type Input = {
   postalCode?: string | null
   phoneNumber?: string | null
   municipality?: string | null
+  subject?: string | null
 }
 
 export const mapToCustomFields = (

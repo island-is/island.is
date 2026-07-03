@@ -6,8 +6,9 @@ import {
 } from '@island.is/application/types'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Slider } from '@island.is/application/ui-components'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, resolveFieldId } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { formatText } from '@island.is/application/core'
 import { Text, Box } from '@island.is/island-ui/core'
 import { getDefaultValue } from '../../getDefaultValue'
@@ -45,6 +46,8 @@ export const SliderFormField: FC<
   } = field
   const { clearErrors, setValue } = useFormContext()
   const { formatMessage, lang: locale } = useLocale()
+  const user = useUserInfo()
+  const resolvedId = resolveFieldId({ id }, application, user)
   const computeMax = (
     maybeMax: MaybeWithApplicationAndField<number>,
     memoApplication: Application,
@@ -69,9 +72,9 @@ export const SliderFormField: FC<
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
       <Controller
-        name={field.id}
+        name={resolvedId}
         defaultValue={
-          Number(getValueViaPath(application.answers, id)) ||
+          Number(getValueViaPath(application.answers, resolvedId)) ||
           getDefaultValue(field, application, locale) ||
           min
         }
@@ -101,10 +104,10 @@ export const SliderFormField: FC<
             rangeDates={rangeDates}
             currentIndex={Number(value)}
             onChange={(val) => {
-              clearErrors(id)
+              clearErrors(resolvedId)
               const value = saveAsString ? String(val) : val
               onChange(value)
-              setValue(id, value)
+              setValue(resolvedId, value)
             }}
             onChangeEnd={onChangeEnd}
             labelMultiplier={labelMultiplier}

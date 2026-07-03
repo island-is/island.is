@@ -64,7 +64,6 @@ export class LimitedAccessAppealCaseController {
       ...indictmentCases,
     ]),
     CaseWriteGuard,
-    CaseCompletedGuard,
   )
   @RolesRules(defenderRule)
   @Post('case/:caseId/limitedAccess/appealCase')
@@ -139,7 +138,6 @@ export class LimitedAccessAppealCaseController {
       ...indictmentCases,
     ]),
     CaseWriteGuard,
-    CaseCompletedGuard,
   )
   @RolesRules(defenderTransitionRule)
   @Patch('case/:caseId/limitedAccess/appealCase/:appealCaseId/state')

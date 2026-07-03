@@ -44,7 +44,7 @@ import {
 import { CaseFilesOverview, CaseOverviewHeader } from '../components'
 import { overview as strings } from './Overview.strings'
 
-const CourtOfAppealOverview = () => {
+const Overview = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
@@ -54,7 +54,7 @@ const CourtOfAppealOverview = () => {
   const router = useRouter()
   const { user } = useContext(UserContext)
   const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
-    usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
+    usePoliceDigitalCaseFile()
   const {
     defendants,
     policeCaseNumbers,
@@ -66,7 +66,6 @@ const CourtOfAppealOverview = () => {
     registrar,
     caseType,
     victims,
-    showItem,
   } = useInfoCardItems()
 
   const handleNavigationTo = (destination: string) =>
@@ -113,14 +112,10 @@ const CourtOfAppealOverview = () => {
                     id: 'defendants-section',
                     items: [defendants({ caseType: workingCase.type })],
                   },
-                  ...(showItem(victims)
-                    ? [
-                        {
-                          id: 'victims-section',
-                          items: [victims],
-                        },
-                      ]
-                    : []),
+                  {
+                    id: 'victims-section',
+                    items: [victims],
+                  },
                   {
                     id: 'case-info-section',
                     items: [
@@ -201,4 +196,4 @@ const CourtOfAppealOverview = () => {
   )
 }
 
-export default CourtOfAppealOverview
+export default Overview

@@ -25,9 +25,9 @@ import { CourtService } from '../../../court'
 import { EventService } from '../../../event'
 import { Notification, type User } from '../../../repository'
 import { UserService } from '../../../user'
-import { BaseNotificationService } from '../../baseNotification.service'
 import { DeliverResponse } from '../../models/deliver.response'
 import { notificationModuleConfig } from '../../notification.config'
+import { BaseNotificationService } from '../baseNotification.service'
 import { strings } from './institutionNotification.strings'
 
 @Injectable()

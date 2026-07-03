@@ -142,7 +142,7 @@ export const mapIcelandicGovernmentInstitutionVacanciesFromElfur = async (
       applicationDeadlineFrom: formatDate(item.publishDate),
       applicationDeadlineTo: formatDate(item.openTo),
       intro: '',
-      fieldOfWork: item.jobTitle ?? undefined,
+      fieldOfWork: item.jobCategory ?? undefined,
       institutionName: item.orgName ?? undefined,
       institutionReferenceIdentifier: (() => {
         const orgNrStr =
@@ -166,10 +166,9 @@ export const mapIcelandicGovernmentInstitutionVacanciesFromElfur = async (
       // Display fields
       creationDate: formatDate(item.creationDate),
       updatedDate: formatDate(item.updatedDate),
-      // Internal field for sorting
-      _creationDate: item.creationDate
-        ? new Date(item.creationDate)
-        : undefined,
+      // Internal field for sorting — listings are ordered by the publish/display
+      // date (birtingardagsetning), which Elfur exposes as `publishDate`.
+      _creationDate: item.publishDate ? new Date(item.publishDate) : undefined,
     })
   }
 
@@ -262,7 +261,7 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromElfur =
       applicationDeadlineFrom: formatDate(vacancy.publishDate),
       applicationDeadlineTo: formatDate(vacancy.openTo),
       intro,
-      fieldOfWork: vacancy.jobTitle ?? undefined,
+      fieldOfWork: vacancy.jobCategory ?? undefined,
       institutionName: vacancy.orgName ?? undefined,
       institutionReferenceIdentifier: (() => {
         const orgNrStr =

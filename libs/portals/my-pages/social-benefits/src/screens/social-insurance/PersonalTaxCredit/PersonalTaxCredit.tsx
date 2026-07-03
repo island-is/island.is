@@ -1,11 +1,4 @@
-import {
-  Box,
-  Button,
-  Inline,
-  Stack,
-  Text,
-  toast,
-} from '@island.is/island-ui/core'
+import { Box, Button, Inline, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
@@ -14,166 +7,69 @@ import {
   m as coreMessages,
   TRYGGINGASTOFNUN_SLUG,
 } from '@island.is/portals/my-pages/core'
-import { SocialInsuranceTaxCardType } from '@island.is/api/schema'
 import { Problem } from '@island.is/react-spa/shared'
 import { m } from '../../../lib/messages'
 import {
   useGetPersonalTaxCreditQuery,
   useGetPersonalTaxCreditSpouseInfoQuery,
 } from './PersonalTaxCredit.generated'
-import { useTaxCardAllowance } from './useTaxCardAllowance'
-import { MyTaxCreditForm } from './MyTaxCreditForm'
+import { PersonalTaxCreditForm } from './PersonalTaxCreditForm'
 import { SpouseTaxCreditForm } from './SpouseTaxCreditForm'
 import { PersonalTaxCreditTable } from './PersonalTaxCreditTable'
-import { useState } from 'react'
-
-const INITIAL_MY_TAX_CREDIT: MyTaxCreditState = { action: null }
-const INITIAL_SPOUSE_TAX_CREDIT: SpouseTaxCreditState = { action: null }
-
-export type MyTaxCreditState =
-  | {
-      action: 'register'
-      data: { year: number | null; month: number | null; percentage: string }
-    }
-  | { action: 'update'; data: { percentage: string } }
-  | {
-      action: 'discontinue'
-      data: { year: number | null; month: number | null }
-    }
-  | { action: null }
-
-export type SpouseTaxCreditState =
-  | {
-      action: 'grant'
-      data: { year: number | null; month: number | null; percentage: string }
-    }
-  | {
-      action: 'deceased'
-      data: { year: number | null; month: number | null; percentage: string }
-    }
-  | { action: null }
-
-const isMyTaxCreditValid = (state: MyTaxCreditState): boolean => {
-  if (state.action === 'register') {
-    return !!(state.data.year && state.data.month && state.data.percentage)
-  }
-  if (state.action === 'update') {
-    return !!state.data.percentage
-  }
-  if (state.action === 'discontinue') {
-    return !!(state.data.year && state.data.month)
-  }
-  return true
-}
-
-const isSpouseTaxCreditValid = (state: SpouseTaxCreditState): boolean => {
-  if (state.action === 'grant' || state.action === 'deceased') {
-    return !!(state.data.year && state.data.month && state.data.percentage)
-  }
-  return true
-}
-
-const hasAnyChanges = (
-  myState: MyTaxCreditState,
-  spouseState: SpouseTaxCreditState,
-) => myState.action !== null || spouseState.action !== null
-
-const SpouseSummaryCard = ({
-  heading,
-  body,
-  onEdit,
-  editLabel,
-}: {
-  heading: string
-  body?: string | null
-  onEdit: () => void
-  editLabel: string
-}) => (
-  <Box
-    border="standard"
-    borderRadius="large"
-    padding={4}
-    display="flex"
-    justifyContent="spaceBetween"
-    alignItems="center"
-  >
-    <Stack space={1}>
-      <Text fontWeight="semiBold">{heading}</Text>
-      {body && <Text>{body}</Text>}
-    </Stack>
-    <Button variant="text" size="small" icon="arrowForward" onClick={onEdit}>
-      {editLabel}
-    </Button>
-  </Box>
-)
+import { usePersonalTaxCreditForm } from './usePersonalTaxCreditForm'
 
 const PersonalTaxCredit = () => {
   useNamespaces('sp.social-insurance-maintenance')
   const { formatMessage } = useLocale()
 
-  const [myTaxCredit, setMyTaxCredit] = useState<MyTaxCreditState>(
-    INITIAL_MY_TAX_CREDIT,
-  )
-  const [spouseTaxCredit, setSpouseTaxCredit] = useState<SpouseTaxCreditState>(
-    INITIAL_SPOUSE_TAX_CREDIT,
-  )
-
-  const { data, loading, error, refetch } = useGetPersonalTaxCreditQuery({
+  const { data, loading, error } = useGetPersonalTaxCreditQuery({
     errorPolicy: 'all',
   })
   const { data: spouseInfoData } = useGetPersonalTaxCreditSpouseInfoQuery({
     errorPolicy: 'all',
   })
-  const [refetching, setRefetching] = useState(false)
-  const [isEditingSpouse, setIsEditingSpouse] = useState(false)
-
-  const taxCardAllowance = useTaxCardAllowance()
 
   const page = data?.socialInsurancePersonalTaxCredit
   const spouseInfo = spouseInfoData?.socialInsurancePersonalTaxCreditSpouseInfo
   const isAlreadyRegistered = page?.canEdit ?? false
   const hasRegistrations = !!page?.taxCards?.length
 
-  const handleEditSpouse = () => {
-    setIsEditingSpouse(true)
-  }
+  const form = usePersonalTaxCreditForm()
+  const { personalAction, spouseAction } = form
 
-  const handleCancel = () => {
-    setIsEditingSpouse(false)
-    setMyTaxCredit(INITIAL_MY_TAX_CREDIT)
-    setSpouseTaxCredit(INITIAL_SPOUSE_TAX_CREDIT)
-  }
+  // If personal form is standalone (not yet registered), bottom buttons handle both personal + spouse
+  // If personal is edited via inline table row, bottom buttons handle spouse only
+  const personalIsStandalone = !isAlreadyRegistered
+  const showBottomButtons = personalIsStandalone
+    ? personalAction !== null || spouseAction !== null
+    : spouseAction !== null
 
-  const handleSave = async (): Promise<boolean> => {
-    try {
-      await taxCardAllowance.save(myTaxCredit, spouseTaxCredit)
-      setRefetching(true)
-      await refetch()
-      setRefetching(false)
-      setMyTaxCredit(INITIAL_MY_TAX_CREDIT)
-      setSpouseTaxCredit(INITIAL_SPOUSE_TAX_CREDIT)
-      setIsEditingSpouse(false)
-      toast.success(formatMessage(m.personalTaxCreditSaveSuccess))
-      return true
-    } catch (e) {
-      setRefetching(false)
-      toast.error(formatMessage(m.personalTaxCreditSaveError))
-      return false
+  const isSpouseBlocked =
+    (spouseAction === 'grant' &&
+      (spouseInfo?.isDeceased === true ||
+        (!spouseInfo?.name && !spouseInfo?.nationalId))) ||
+    (spouseAction === 'deceased' &&
+      (!!spouseInfo?.deceasedReasonNotAllowedCode ||
+        !spouseInfo?.deceasedMonthsAndYears?.length))
+
+  const handleBottomCancel = personalIsStandalone
+    ? form.handleCancelAll
+    : form.handleCancelSpouse
+  const handleBottomSave = () => {
+    if (personalIsStandalone && spouseAction !== null) {
+      void form.handleSaveAll()
+    } else if (personalIsStandalone) {
+      void form.handleSavePersonal()
+    } else {
+      void form.handleSaveSpouse()
     }
   }
-
-  const saving = taxCardAllowance.loading || refetching
-  const canSubmit =
-    hasAnyChanges(myTaxCredit, spouseTaxCredit) &&
-    isMyTaxCreditValid(myTaxCredit) &&
-    isSpouseTaxCreditValid(spouseTaxCredit)
-
-  const spouseHasGrantedCard = page?.taxCards?.some(
-    (c) => c.type === SocialInsuranceTaxCardType.SPOUSE_TAX_ALLOWANCE_GRANTED,
-  )
-  const userIsUsingSpouseCard = page?.taxCards?.some(
-    (c) => c.type === SocialInsuranceTaxCardType.SPOUSE_TAX_ALLOWANCE,
-  )
+  const bottomDisabled = personalIsStandalone
+    ? !form.canSubmitAll || form.savingAll || isSpouseBlocked
+    : !form.canSubmitSpouse || form.savingSpouse || isSpouseBlocked
+  const bottomLoading = personalIsStandalone
+    ? form.savingAll
+    : form.savingSpouse
 
   return (
     <IntroWrapper
@@ -208,126 +104,104 @@ const PersonalTaxCredit = () => {
               {formatMessage(m.myTaxCreditUsage)}
             </Text>
 
-            <>
-              {hasRegistrations && (
-                <PersonalTaxCreditTable
-                  taxCards={page?.taxCards ?? []}
-                  renderExpandedRow={({ close }) => (
-                    <Box paddingY={4} paddingX={4} background="blue100">
-                      <Stack space={3}>
-                        <MyTaxCreditForm
-                          state={myTaxCredit}
-                          setState={setMyTaxCredit}
-                          monthsAndYears={page?.registrationMonthsAndYears}
-                          discontinuingMonthsAndYears={
-                            page?.discontinuingMonthsAndYears
-                          }
-                          isAlreadyRegistered={isAlreadyRegistered}
-                          canDiscontinue={page?.canDiscontinue ?? false}
-                        />
-                        <Inline space={2}>
-                          <Button
-                            variant="primary"
-                            colorScheme="negative"
-                            size="small"
-                            onClick={() => {
-                              handleCancel()
-                              close()
-                            }}
-                          >
-                            {formatMessage(coreMessages.buttonCancel)}
-                          </Button>
-                          <Button
-                            variant="primary"
-                            size="small"
-                            onClick={async () => {
-                              const saved = await handleSave()
-                              if (saved) close()
-                            }}
-                            disabled={!canSubmit || saving}
-                            loading={saving}
-                          >
-                            {formatMessage(coreMessages.submit)}
-                          </Button>
-                        </Inline>
-                      </Stack>
-                    </Box>
-                  )}
-                />
-              )}
+            {hasRegistrations && (
+              <PersonalTaxCreditTable
+                taxCards={page?.taxCards ?? []}
+                renderExpandedRow={
+                  isAlreadyRegistered
+                    ? ({ close }) => (
+                        <Box paddingY={4} paddingX={4} background="blue100">
+                          <Stack space={3}>
+                            <PersonalTaxCreditForm
+                              form={form.personalForm}
+                              monthsAndYears={page?.registrationMonthsAndYears}
+                              discontinuingMonthsAndYears={
+                                page?.discontinuingMonthsAndYears
+                              }
+                              isAlreadyRegistered={isAlreadyRegistered}
+                              canDiscontinue={page?.canDiscontinue ?? false}
+                            />
+                            <Inline space={2}>
+                              <Button
+                                variant="primary"
+                                colorScheme="negative"
+                                size="small"
+                                onClick={() => {
+                                  form.handleCancelPersonal()
+                                  close()
+                                }}
+                              >
+                                {formatMessage(coreMessages.buttonCancel)}
+                              </Button>
+                              <Button
+                                variant="primary"
+                                size="small"
+                                onClick={async () => {
+                                  const saved = await form.handleSavePersonal()
+                                  if (saved) close()
+                                }}
+                                disabled={
+                                  !form.canSubmitPersonal || form.savingPersonal
+                                }
+                                loading={form.savingPersonal}
+                              >
+                                {formatMessage(coreMessages.submit)}
+                              </Button>
+                            </Inline>
+                          </Stack>
+                        </Box>
+                      )
+                    : undefined
+                }
+              />
+            )}
 
-              {!isAlreadyRegistered && (
-                <Box marginTop={hasRegistrations ? 5 : 0}>
-                  <MyTaxCreditForm
-                    state={myTaxCredit}
-                    setState={setMyTaxCredit}
-                    monthsAndYears={page?.registrationMonthsAndYears}
-                    discontinuingMonthsAndYears={
-                      page?.discontinuingMonthsAndYears
-                    }
-                    isAlreadyRegistered={isAlreadyRegistered}
-                    canDiscontinue={page?.canDiscontinue ?? false}
-                  />
-                </Box>
-              )}
-            </>
+            {!isAlreadyRegistered && (
+              <Box marginTop={hasRegistrations ? 5 : 0}>
+                <PersonalTaxCreditForm
+                  form={form.personalForm}
+                  monthsAndYears={page?.registrationMonthsAndYears}
+                  discontinuingMonthsAndYears={
+                    page?.discontinuingMonthsAndYears
+                  }
+                  isAlreadyRegistered={isAlreadyRegistered}
+                  canDiscontinue={page?.canDiscontinue ?? false}
+                />
+              </Box>
+            )}
           </Box>
 
           <Box>
             <Text variant="h4" marginBottom={2}>
               {formatMessage(m.spousePersonalTaxCredit)}
             </Text>
-            {(!hasRegistrations || isEditingSpouse) && (
-              <Text marginBottom={3}>
-                {formatMessage(m.spousePersonalTaxCreditDescription)}
-              </Text>
-            )}
+            <Text marginBottom={3}>
+              {formatMessage(m.spousePersonalTaxCreditDescription)}
+            </Text>
 
-            {hasRegistrations && !isEditingSpouse && (
-              <SpouseSummaryCard
-                heading={formatMessage(
-                  spouseHasGrantedCard
-                    ? m.spouseTaxCreditUsingSummaryTitle
-                    : userIsUsingSpouseCard
-                    ? m.youAreUsingSpouseTaxCreditTitle
-                    : m.spousePersonalTaxCredit,
-                )}
-                body={
-                  spouseHasGrantedCard
-                    ? formatMessage(m.spouseTaxCreditUsingSummaryBody)
-                    : userIsUsingSpouseCard
-                    ? spouseInfo?.name
-                    : formatMessage(m.spouseNoUsage)
-                }
-                onEdit={handleEditSpouse}
-                editLabel={formatMessage(coreMessages.buttonEdit)}
-              />
-            )}
-
-            {(isEditingSpouse || !hasRegistrations) && (
-              <SpouseTaxCreditForm
-                state={spouseTaxCredit}
-                setState={setSpouseTaxCredit}
-                monthsAndYears={page?.registrationMonthsAndYears}
-                spouseName={spouseInfo?.name}
-                spouseNationalId={spouseInfo?.nationalId}
-                spouseIsDeceased={spouseInfo?.isDeceased}
-              />
-            )}
+            <SpouseTaxCreditForm
+              form={form.spouseForm}
+              monthsAndYears={page?.registrationMonthsAndYears}
+              deceasedMonthsAndYears={spouseInfo?.deceasedMonthsAndYears}
+              deceasedReasonNotAllowedCode={
+                spouseInfo?.deceasedReasonNotAllowedCode
+              }
+              spouseName={spouseInfo?.name}
+              spouseNationalId={spouseInfo?.nationalId}
+              spouseIsDeceased={spouseInfo?.isDeceased}
+            />
           </Box>
 
-          {(!hasRegistrations ||
-            isEditingSpouse ||
-            spouseTaxCredit.action !== null) && (
+          {showBottomButtons && (
             <Inline space={2} justifyContent="flexEnd">
-              <Button variant="ghost" size="small" onClick={handleCancel}>
+              <Button variant="ghost" size="small" onClick={handleBottomCancel}>
                 {formatMessage(coreMessages.buttonCancel)}
               </Button>
               <Button
                 size="small"
-                onClick={handleSave}
-                disabled={!canSubmit || saving}
-                loading={saving}
+                onClick={handleBottomSave}
+                disabled={bottomDisabled}
+                loading={bottomLoading}
               >
                 {formatMessage(coreMessages.submit)}
               </Button>

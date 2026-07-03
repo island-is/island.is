@@ -9,6 +9,7 @@ import {
 import { FormModes } from '@island.is/application/types'
 import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 import { mainForm } from '../../lib/messages'
+import { dateToMaxDate } from '../../utils/dateUtils'
 
 export const MainForm = buildForm({
   id: 'MainForm',
@@ -33,6 +34,7 @@ export const MainForm = buildForm({
           placeholder: mainForm.datePlaceholder,
           width: 'half',
           required: true,
+          clearOnChange: ['date.to'],
           minDate: (application) => {
             const minFromDate =
               getValueViaPath<string>(
@@ -41,6 +43,13 @@ export const MainForm = buildForm({
               ) || new Date().toISOString()
             return new Date(minFromDate)
           },
+          maxDate: (application) => {
+            const maxDateTo = getValueViaPath<string>(
+              application.externalData,
+              'eligibilityData.data.maxDateTo',
+            )
+            return maxDateTo ? new Date(maxDateTo) : undefined
+          },
         }),
         buildDateField({
           id: 'date.to',
@@ -48,6 +57,14 @@ export const MainForm = buildForm({
           placeholder: mainForm.datePlaceholder,
           width: 'half',
           required: true,
+          defaultValue: '',
+          tempDisabled: (application) => {
+            const fromDate = getValueViaPath<string>(
+              application.answers,
+              'date.from',
+            )
+            return !fromDate || fromDate === ''
+          },
           minDate: (application) => {
             const fromDate = getValueViaPath<string>(
               application.answers,
@@ -55,35 +72,7 @@ export const MainForm = buildForm({
             )
             return fromDate ? new Date(fromDate) : undefined
           },
-          maxDate: (application) => {
-            const fromDate = getValueViaPath<string>(
-              application.answers,
-              'date.from',
-            )
-            const maxDateTo = getValueViaPath<string>(
-              application.externalData,
-              'eligibilityData.data.maxDateTo',
-            )
-            if (fromDate) {
-              const maxDays =
-                getValueViaPath<string>(
-                  application.externalData,
-                  'eligibilityData.data.maxDaysPerRequest',
-                ) || '30' // Default to 30 days if not provided
-
-              const date = new Date(fromDate)
-              date.setDate(date.getDate() + parseInt(maxDays, 10) - 1)
-
-              if (maxDateTo && date > new Date(maxDateTo)) {
-                return new Date(maxDateTo)
-              }
-              return date
-            }
-            if (maxDateTo) {
-              return new Date(maxDateTo)
-            }
-            return undefined
-          },
+          maxDate: (application) => dateToMaxDate(application),
         }),
         buildSubmitField({
           id: 'submit',

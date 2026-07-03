@@ -40,6 +40,19 @@ export const BaseInput = () => {
     (s) => s && s.id === currentItem.screenId,
   )
 
+  const hasAssetLookupPermission = fieldTypes?.some(
+    (fieldType) =>
+      fieldType?.id === FieldTypesEnum.REAL_ESTATE ||
+      fieldType?.id === FieldTypesEnum.VEHICLE,
+  )
+
+  const excludedFieldTypes = [
+    FieldTypesEnum.NATIONAL_ID_WITH_ADDRESS,
+    FieldTypesEnum.VEHICLE,
+    FieldTypesEnum.REAL_ESTATE,
+    ...(!hasAssetLookupPermission ? [FieldTypesEnum.ASSETS] : []),
+  ]
+
   const selectList =
     fieldTypes
       ?.filter((fieldType): fieldType is NonNullable<typeof fieldType> =>
@@ -49,6 +62,12 @@ export const BaseInput = () => {
         (fieldType) =>
           form.hasPayment || fieldType.id !== FieldTypesEnum.PAYMENT_QUANTITY,
       )
+      .filter(
+        (fieldType) =>
+          fieldType.id !== FieldTypesEnum.NATIONAL_ID_WITH_ADDRESS &&
+          fieldType.id !== FieldTypesEnum.PAYMENT,
+      )
+      .filter((fieldType) => !excludedFieldTypes.includes(fieldType.id))
       .map((fieldType) => ({
         value: fieldType.id ?? '',
         label: fieldType.name?.is ?? fieldType.id ?? '',
@@ -59,12 +78,6 @@ export const BaseInput = () => {
 
   const renderDescription = () => {
     if (currentItem.fieldType === FieldTypesEnum.MESSAGE) {
-      return true
-    }
-    if (
-      currentItem.fieldType === FieldTypesEnum.CHECKBOX &&
-      currentItem.fieldSettings?.hasDescription
-    ) {
       return true
     }
     if (

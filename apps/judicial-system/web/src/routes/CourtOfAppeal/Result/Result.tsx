@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Accordion, AlertMessage } from '@island.is/island-ui/core'
+import { Accordion } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   isIndictmentCase,
@@ -17,7 +17,6 @@ import {
   FormFooter,
   InfoCard,
   InfoCardClosedIndictment,
-  MarkdownWrapper,
   PageHeader,
   PageLayout,
   PoliceDigitalCaseFilesAccordionItem,
@@ -39,7 +38,7 @@ import { result as strings } from './Result.strings'
 
 type modalTypes = 'reopenCase' | 'none'
 
-const CourtOfAppealResult = () => {
+const Result = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const [modalVisible, setModalVisible] = useState<modalTypes>('none')
@@ -50,7 +49,7 @@ const CourtOfAppealResult = () => {
   const { appealBanner } = useAppealCaseBanner()
   const targetAppealCase = useTargetAppealCaseByAppealCaseId()
   const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
-    usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
+    usePoliceDigitalCaseFile()
 
   const {
     defendants,
@@ -66,7 +65,6 @@ const CourtOfAppealResult = () => {
     appealAssistant,
     appealJudges,
     victims,
-    showItem,
   } = useInfoCardItems()
 
   const isIndictment = isIndictmentCase(workingCase.type)
@@ -104,14 +102,10 @@ const CourtOfAppealResult = () => {
                     id: 'defendants-section',
                     items: [defendants({ caseType: workingCase.type })],
                   },
-                  ...(showItem(victims)
-                    ? [
-                        {
-                          id: 'victims-section',
-                          items: [victims],
-                        },
-                      ]
-                    : []),
+                  {
+                    id: 'victims-section',
+                    items: [victims],
+                  },
                   {
                     id: 'case-info-section',
                     items: [
@@ -202,4 +196,4 @@ const CourtOfAppealResult = () => {
   )
 }
 
-export default CourtOfAppealResult
+export default Result

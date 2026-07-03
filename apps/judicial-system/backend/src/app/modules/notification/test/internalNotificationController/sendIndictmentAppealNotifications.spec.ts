@@ -10,7 +10,6 @@ import {
   CaseIndictmentRulingDecision,
   CaseType,
   InstitutionType,
-  RequestCaseNotificationType,
   TrackedNotificationType,
   User,
   UserRole,
@@ -21,7 +20,7 @@ import {
   createTestUsers,
 } from '../createTestingNotificationModule'
 
-import { Case } from '../../../repository'
+import { AppealCase, Case } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 
 interface Then {
@@ -71,6 +70,7 @@ describe('InternalNotificationController - Send indictment appeal to court of ap
   ])
 
   const caseId = uuid()
+  const appealCaseId = uuid()
   const courtCaseNumber = uuid()
 
   let mockEmailService: EmailService
@@ -92,9 +92,15 @@ describe('InternalNotificationController - Send indictment appeal to court of ap
     givenWhenThen = async (user: User) => {
       const then = {} as Then
 
+      const appealCase = {
+        appealedByNationalId: defender1NationalId,
+        appealState: AppealCaseState.APPEALED,
+      } as AppealCase
+
       await internalNotificationController
-        .sendCaseNotification(
+        .sendAppealCaseNotification(
           caseId,
+          appealCaseId,
           {
             id: caseId,
             type: CaseType.INDICTMENT,
@@ -111,14 +117,12 @@ describe('InternalNotificationController - Send indictment appeal to court of ap
             courtId: court.id,
             defendants,
             civilClaimants,
-            appealCase: {
-              appealedByNationalId: defender1NationalId,
-              appealState: AppealCaseState.APPEALED,
-            },
+            appealCase,
           } as Case,
+          appealCase,
           {
             user,
-            type: AppealCaseNotificationType.APPEAL_TO_COURT_OF_APPEALS as unknown as RequestCaseNotificationType,
+            type: AppealCaseNotificationType.APPEAL_TO_COURT_OF_APPEALS,
           },
         )
         .then((result) => (then.result = result))
@@ -295,6 +299,7 @@ describe('InternalNotificationController - Send indictment appeal received by co
   ])
 
   const caseId = uuid()
+  const appealCaseId = uuid()
   const courtCaseNumber = uuid()
   const receivedDate = new Date()
 
@@ -317,9 +322,15 @@ describe('InternalNotificationController - Send indictment appeal received by co
     givenWhenThen = async () => {
       const then = {} as Then
 
+      const appealCase = {
+        appealReceivedByCourtDate: receivedDate,
+        appealState: AppealCaseState.RECEIVED,
+      } as AppealCase
+
       await internalNotificationController
-        .sendCaseNotification(
+        .sendAppealCaseNotification(
           caseId,
+          appealCaseId,
           {
             id: caseId,
             type: CaseType.INDICTMENT,
@@ -333,14 +344,12 @@ describe('InternalNotificationController - Send indictment appeal received by co
             courtCaseNumber,
             defendants,
             civilClaimants,
-            appealCase: {
-              appealReceivedByCourtDate: receivedDate,
-              appealState: AppealCaseState.RECEIVED,
-            },
+            appealCase,
           } as Case,
+          appealCase,
           {
             user: { id: uuid() } as User,
-            type: TrackedNotificationType.APPEAL_RECEIVED_BY_COURT as unknown as RequestCaseNotificationType,
+            type: TrackedNotificationType.APPEAL_RECEIVED_BY_COURT,
           },
         )
         .then((result) => (then.result = result))
@@ -444,6 +453,7 @@ describe('InternalNotificationController - Send indictment appeal statement noti
   ])
 
   const caseId = uuid()
+  const appealCaseId = uuid()
   const courtCaseNumber = uuid()
   const appealCaseNumber = 'L-123/2026'
 
@@ -461,9 +471,21 @@ describe('InternalNotificationController - Send indictment appeal statement noti
     givenWhenThen = async (user: User) => {
       const then = {} as Then
 
+      const appealCase = {
+        appealCaseNumber,
+        appealAssistant: {
+          name: assistant.name,
+          email: assistant.email,
+        },
+        appealJudge1: { name: judge1.name, email: judge1.email },
+        appealJudge2: { name: judge2.name, email: judge2.email },
+        appealJudge3: { name: judge3.name, email: judge3.email },
+      } as AppealCase
+
       await internalNotificationController
-        .sendCaseNotification(
+        .sendAppealCaseNotification(
           caseId,
+          appealCaseId,
           {
             id: caseId,
             type: CaseType.INDICTMENT,
@@ -473,20 +495,12 @@ describe('InternalNotificationController - Send indictment appeal statement noti
             courtCaseNumber,
             defendants,
             civilClaimants,
-            appealCase: {
-              appealCaseNumber,
-              appealAssistant: {
-                name: assistant.name,
-                email: assistant.email,
-              },
-              appealJudge1: { name: judge1.name, email: judge1.email },
-              appealJudge2: { name: judge2.name, email: judge2.email },
-              appealJudge3: { name: judge3.name, email: judge3.email },
-            },
+            appealCase,
           } as Case,
+          appealCase,
           {
             user,
-            type: AppealCaseNotificationType.APPEAL_STATEMENT as unknown as RequestCaseNotificationType,
+            type: AppealCaseNotificationType.APPEAL_STATEMENT,
           },
         )
         .then((result) => (then.result = result))
@@ -641,6 +655,7 @@ describe('InternalNotificationController - Send indictment appeal completed noti
   const { prosecutor, judge } = createTestUsers(['prosecutor', 'judge'])
 
   const caseId = uuid()
+  const appealCaseId = uuid()
   const courtCaseNumber = uuid()
   const appealCaseNumber = uuid()
 
@@ -658,9 +673,16 @@ describe('InternalNotificationController - Send indictment appeal completed noti
     givenWhenThen = async () => {
       const then = {} as Then
 
+      const appealCase = {
+        appealState: AppealCaseState.COMPLETED,
+        appealCaseNumber,
+        appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
+      } as AppealCase
+
       await internalNotificationController
-        .sendCaseNotification(
+        .sendAppealCaseNotification(
           caseId,
+          appealCaseId,
           {
             id: caseId,
             type: CaseType.INDICTMENT,
@@ -671,15 +693,12 @@ describe('InternalNotificationController - Send indictment appeal completed noti
             courtCaseNumber,
             defendants,
             civilClaimants,
-            appealCase: {
-              appealState: AppealCaseState.COMPLETED,
-              appealCaseNumber,
-              appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
-            },
+            appealCase,
           } as Case,
+          appealCase,
           {
             user: { id: uuid() } as User,
-            type: AppealCaseNotificationType.APPEAL_COMPLETED as unknown as RequestCaseNotificationType,
+            type: AppealCaseNotificationType.APPEAL_COMPLETED,
           },
         )
         .then((result) => (then.result = result))
@@ -759,6 +778,7 @@ describe('InternalNotificationController - Send indictment appeal withdrawn noti
   ])
 
   const caseId = uuid()
+  const appealCaseId = uuid()
   const courtCaseNumber = uuid()
 
   let mockEmailService: EmailService
@@ -789,9 +809,15 @@ describe('InternalNotificationController - Send indictment appeal withdrawn noti
               role: UserRole.DEFENDER,
             } as User)
 
+      const appealCase = {
+        appealedByNationalId: defender1NationalId,
+        appealState: AppealCaseState.APPEALED,
+      } as AppealCase
+
       await internalNotificationController
-        .sendCaseNotification(
+        .sendAppealCaseNotification(
           caseId,
+          appealCaseId,
           {
             id: caseId,
             type: CaseType.INDICTMENT,
@@ -807,14 +833,12 @@ describe('InternalNotificationController - Send indictment appeal withdrawn noti
             courtId: court.id,
             defendants,
             civilClaimants,
-            appealCase: {
-              appealedByNationalId: defender1NationalId,
-              appealState: AppealCaseState.APPEALED,
-            },
+            appealCase,
           } as Case,
+          appealCase,
           {
             user,
-            type: AppealCaseNotificationType.APPEAL_WITHDRAWN as unknown as RequestCaseNotificationType,
+            type: AppealCaseNotificationType.APPEAL_WITHDRAWN,
           },
         )
         .then((result) => (then.result = result))
@@ -952,6 +976,7 @@ describe('InternalNotificationController - Send indictment appeal discontinued n
   const { prosecutor } = createTestUsers(['prosecutor'])
 
   const caseId = uuid()
+  const appealCaseId = uuid()
   const courtCaseNumber = uuid()
   const appealCaseNumber = uuid()
 
@@ -969,9 +994,15 @@ describe('InternalNotificationController - Send indictment appeal discontinued n
     givenWhenThen = async () => {
       const then = {} as Then
 
+      const appealCase = {
+        appealCaseNumber,
+        appealRulingDecision: AppealCaseRulingDecision.DISCONTINUED,
+      } as AppealCase
+
       await internalNotificationController
-        .sendCaseNotification(
+        .sendAppealCaseNotification(
           caseId,
+          appealCaseId,
           {
             id: caseId,
             type: CaseType.INDICTMENT,
@@ -981,14 +1012,12 @@ describe('InternalNotificationController - Send indictment appeal discontinued n
             courtCaseNumber,
             defendants,
             civilClaimants,
-            appealCase: {
-              appealCaseNumber,
-              appealRulingDecision: AppealCaseRulingDecision.DISCONTINUED,
-            },
+            appealCase,
           } as Case,
+          appealCase,
           {
             user: { id: uuid() } as User,
-            type: AppealCaseNotificationType.APPEAL_COMPLETED as unknown as RequestCaseNotificationType,
+            type: AppealCaseNotificationType.APPEAL_COMPLETED,
           },
         )
         .then((result) => (then.result = result))
@@ -1042,5 +1071,182 @@ describe('InternalNotificationController - Send indictment appeal discontinued n
       expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(4)
       expect(then.result).toEqual({ delivered: true })
     })
+  })
+})
+
+// ─── 7. Ruling-order appeals identify the case by the ruling order file name ─
+
+describe('InternalNotificationController - Ruling-order appeal uses the ruling order file name instead of the court case number', () => {
+  const { judge } = createTestUsers(['judge'])
+  // A court is an Institution, not a user, so createTestUsers is unsuitable here.
+  const court = {
+    id: uuid(),
+    name: 'Héraðsdómur Reykjavíkur',
+    email: 'court@omnitrix.is',
+  }
+
+  const caseId = uuid()
+  const appealCaseId = uuid()
+  const courtCaseNumber = uuid()
+  const rulingFileId = uuid()
+  const rulingOrderFileName = 'Úrskurður 15-2026'
+
+  let mockEmailService: EmailService
+
+  type GivenWhenThen = () => Promise<Then>
+  let givenWhenThen: GivenWhenThen
+
+  beforeEach(async () => {
+    process.env.COURTS_EMAILS = `{"${court.id}": "${court.email}"}`
+
+    const { emailService, internalNotificationController } =
+      await createTestingNotificationModule()
+
+    mockEmailService = emailService
+
+    givenWhenThen = async () => {
+      const then = {} as Then
+
+      // A ruling-order appeal: the appeal case points at a specific ruling
+      // order file rather than being a case-level appeal.
+      const appealCase = {
+        appealState: AppealCaseState.APPEALED,
+        rulingFileId,
+      } as AppealCase
+
+      await internalNotificationController
+        .sendAppealCaseNotification(
+          caseId,
+          appealCaseId,
+          {
+            id: caseId,
+            type: CaseType.INDICTMENT,
+            indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+            judge: { name: judge.name, email: judge.email },
+            court: { id: court.id, name: court.name },
+            courtCaseNumber,
+            defendants,
+            civilClaimants,
+            caseFiles: [
+              { id: rulingFileId, userGeneratedFilename: rulingOrderFileName },
+            ],
+            rulingOrderAppealCases: [appealCase],
+          } as Case,
+          appealCase,
+          {
+            user: {
+              role: UserRole.PROSECUTOR,
+              institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
+            } as User,
+            type: AppealCaseNotificationType.APPEAL_TO_COURT_OF_APPEALS,
+          },
+        )
+        .then((result) => (then.result = result))
+        .catch((error) => (then.error = error))
+      return then
+    }
+  })
+
+  it('should render the ruling order file name in the subject, not the court case number', async () => {
+    await givenWhenThen()
+
+    expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: [{ name: judge.name, address: judge.email }],
+        subject: `Kæra í máli ${rulingOrderFileName}`,
+      }),
+    )
+
+    // The district court case number must NOT appear for a ruling-order appeal
+    expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        subject: `Kæra í máli ${courtCaseNumber}`,
+      }),
+    )
+  })
+})
+
+describe('InternalNotificationController - Corrected ruling-order appeal sends the corrected-ruling email identified by file name', () => {
+  const { prosecutor, judge } = createTestUsers(['prosecutor', 'judge'])
+
+  const caseId = uuid()
+  const appealCaseId = uuid()
+  const appealCaseNumber = uuid()
+  const courtCaseNumber = uuid()
+  const rulingFileId = uuid()
+  const rulingOrderFileName = 'Úrskurður 15-2026'
+
+  let mockEmailService: EmailService
+
+  type GivenWhenThen = () => Promise<Then>
+  let givenWhenThen: GivenWhenThen
+
+  beforeEach(async () => {
+    const { emailService, internalNotificationController } =
+      await createTestingNotificationModule()
+
+    mockEmailService = emailService
+
+    givenWhenThen = async () => {
+      const then = {} as Then
+
+      const appealCase = {
+        appealState: AppealCaseState.COMPLETED,
+        appealCaseNumber,
+        appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
+        appealRulingModifiedHistory: 'Leiðrétting á úrskurði',
+        rulingFileId,
+      } as AppealCase
+
+      await internalNotificationController
+        .sendAppealCaseNotification(
+          caseId,
+          appealCaseId,
+          {
+            id: caseId,
+            type: CaseType.INDICTMENT,
+            indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+            prosecutor: { name: prosecutor.name, email: prosecutor.email },
+            judge: { name: judge.name, email: judge.email },
+            court: { name: 'Héraðsdómur Reykjavíkur' },
+            courtCaseNumber,
+            defendants,
+            civilClaimants,
+            caseFiles: [
+              { id: rulingFileId, userGeneratedFilename: rulingOrderFileName },
+            ],
+            appealCase,
+            rulingOrderAppealCases: [appealCase],
+          } as Case,
+          appealCase,
+          {
+            user: { id: uuid() } as User,
+            type: AppealCaseNotificationType.APPEAL_COMPLETED,
+          },
+        )
+        .then((result) => (then.result = result))
+        .catch((error) => (then.error = error))
+
+      return then
+    }
+  })
+
+  it('sends the corrected-ruling email with the ruling order file name in the subject', async () => {
+    const then = await givenWhenThen()
+
+    expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: [{ name: judge.name, address: judge.email }],
+        subject: `Leiðréttur úrskurður í landsréttarmáli ${appealCaseNumber} (${rulingOrderFileName})`,
+      }),
+    )
+
+    expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        subject: `Leiðréttur úrskurður í landsréttarmáli ${appealCaseNumber} (${courtCaseNumber})`,
+      }),
+    )
+
+    expect(then.result).toEqual({ delivered: true })
   })
 })

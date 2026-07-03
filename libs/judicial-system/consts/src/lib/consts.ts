@@ -12,7 +12,7 @@ export const ACCESS_TOKEN_COOKIE_NAME = 'judicial-system.token'
 export const CODE_VERIFIER_COOKIE_NAME = 'judicial-system.code_verifier'
 export const IDS_ID_TOKEN_NAME = 'judicial-system.ids.id_token'
 export const IDS_ACCESS_TOKEN_NAME = 'judicial-system.ids.access_token'
-export const IDS_REFRESH_TOKEN_NAME = 'judicial-system.ids.refresh_token'
+export const IDS_SESSION_COOKIE_NAME = 'judicial-system.ids.session'
 
 export const InvestigationCaseTypes = [
   {
@@ -242,6 +242,7 @@ export const ADMIN_USERS_ROUTE = '/notendur'
 export const ADMIN_CREATE_USER_ROUTE = '/notendur/nyr'
 export const ADMIN_CHANGE_USER_ROUTE = '/notendur/breyta'
 export const ADMIN_STATISTICS_ROUTE = '/notendur/tolfraedi'
+export const ADMIN_MESSAGE_SUSPENSION_ROUTE = '/notendur/bidrod'
 
 //#endregion Admin user routes
 

@@ -19,6 +19,13 @@ import { DrivingLicenseService } from '@island.is/api/domains/driving-license'
 import { ConfigService } from '@nestjs/config'
 import { ConfigModule } from '@island.is/nest/config'
 import { createApplication } from '@island.is/application/testing'
+import {
+  coreErrorMessages,
+  getErrorReasonIfPresent,
+} from '@island.is/application/core'
+import { TemplateApiError } from '@island.is/nest/problem'
+import type { ProviderErrorReason } from '@island.is/shared/problem'
+import type { Locale } from '@island.is/shared/types'
 
 describe('DrivingLicenseSubmissionService', () => {
   let drivingLicenseSubmissionService: DrivingLicenseSubmissionService
@@ -607,6 +614,345 @@ describe('DrivingLicenseSubmissionService', () => {
         photoBiometricsId: 'facial-1',
         signatureBiometricsId: 'sig-1',
       })
+    })
+  })
+
+  describe('BE branch', () => {
+    let service: DrivingLicenseSubmissionService
+    let applyForBELicense: jest.Mock
+
+    const baseAnswers = {
+      applicationFor: 'BE',
+      email: 'mock@email.com',
+      phone: '9999999',
+    }
+
+    beforeEach(async () => {
+      applyForBELicense = jest.fn(async () => ({
+        success: true,
+        errorMessage: null,
+      }))
+
+      const module = await Test.createTestingModule({
+        imports: [
+          ConfigModule.forRoot({
+            isGlobal: true,
+            load: [emailModuleConfig],
+          }),
+        ],
+        providers: [
+          DrivingLicenseSubmissionService,
+          EmailService,
+          AdapterService,
+          {
+            provide: DrivingLicenseService,
+            useValue: { applyForBELicense },
+          },
+          { provide: LOGGER_PROVIDER, useValue: logger },
+          {
+            provide: ConfigService,
+            useClass: jest.fn(() => ({ get: () => 'http://localhost' })),
+          },
+          {
+            provide: AttachmentS3Service,
+            useValue: { getFiles: jest.fn(async () => []) },
+          },
+          {
+            provide: SharedTemplateApiService,
+            useClass: jest.fn(() => ({
+              async getPaymentStatus() {
+                return { fulfilled: true }
+              },
+              async sendEmail() {
+                return 'messageId'
+              },
+            })),
+          },
+        ],
+      }).compile()
+
+      service = module.get(DrivingLicenseSubmissionService)
+    })
+
+    it('forwards sendPlasticToPerson: true when the delivery method is post (home delivery)', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          delivery: { deliveryMethod: 'post', jurisdiction: '37' },
+        },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      const res = await service.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
+      })
+
+      expect(res).toEqual({ success: true })
+      expect(applyForBELicense).toHaveBeenCalledTimes(1)
+      const [, , input] = applyForBELicense.mock.calls[0]
+      expect(input).toMatchObject({
+        jurisdiction: 37,
+        sendPlasticToPerson: true,
+      })
+    })
+
+    it('forwards sendPlasticToPerson: false when the delivery method is district (pickup)', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          delivery: { deliveryMethod: 'district', jurisdiction: '37' },
+        },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      await service.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
+      })
+
+      expect(applyForBELicense).toHaveBeenCalledTimes(1)
+      const [, , input] = applyForBELicense.mock.calls[0]
+      expect(input.sendPlasticToPerson).toBe(false)
+    })
+
+    it('defaults sendPlasticToPerson to false (pickup) when no delivery method is set', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+        },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      await service.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
+      })
+
+      expect(applyForBELicense).toHaveBeenCalledTimes(1)
+      const [, , input] = applyForBELicense.mock.calls[0]
+      expect(input.sendPlasticToPerson).toBe(false)
+    })
+  })
+
+  describe('submitApplication — RLS error-code messages', () => {
+    let service: DrivingLicenseSubmissionService
+    let newDrivingLicense: jest.Mock
+    let describeErrorCode: jest.Mock
+
+    // A FetchError as the submission catch recognises it: name === 'FetchError'
+    // with RLS's `problem` (code in `title`) and an http `status`.
+    const makeFetchError = (
+      problem: { title?: string; detail?: string },
+      status = 400,
+    ) => {
+      const err = new Error('rls submission failed') as Error & {
+        problem?: unknown
+        status?: number
+      }
+      err.name = 'FetchError'
+      err.problem = problem
+      err.status = status
+      return err
+    }
+
+    // No applicationFor → defaults to B-full → newDrivingLicense is the create call.
+    const buildApplication = () =>
+      createApplication({
+        answers: { email: 'mock@email.com', phone: '9999999' },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+    beforeEach(async () => {
+      newDrivingLicense = jest.fn()
+      describeErrorCode = jest.fn()
+
+      const module = await Test.createTestingModule({
+        imports: [
+          ConfigModule.forRoot({ isGlobal: true, load: [emailModuleConfig] }),
+        ],
+        providers: [
+          DrivingLicenseSubmissionService,
+          EmailService,
+          AdapterService,
+          {
+            provide: DrivingLicenseService,
+            useValue: { newDrivingLicense, describeErrorCode },
+          },
+          { provide: LOGGER_PROVIDER, useValue: logger },
+          {
+            provide: ConfigService,
+            useClass: jest.fn(() => ({ get: () => 'http://localhost' })),
+          },
+          {
+            provide: AttachmentS3Service,
+            useValue: { getFiles: jest.fn(async () => []) },
+          },
+          {
+            provide: SharedTemplateApiService,
+            useClass: jest.fn(() => ({
+              async getPaymentStatus() {
+                return { fulfilled: true }
+              },
+              async sendEmail() {
+                return 'messageId'
+              },
+            })),
+          },
+        ],
+      }).compile()
+
+      service = module.get(DrivingLicenseSubmissionService)
+    })
+
+    const reasonOf = (thrown: TemplateApiError) =>
+      (thrown.problem as unknown as { errorReason: ProviderErrorReason })
+        .errorReason
+
+    // Capture the rejected TemplateApiError so we can run its reason through the
+    // same helper the payment screen uses to decide what to render.
+    const submitAndCatch = (locale: Locale): Promise<TemplateApiError> =>
+      service
+        .submitApplication({
+          application: buildApplication(),
+          auth: createCurrentUser(),
+          currentUserLocale: locale,
+        })
+        .then(
+          () =>
+            Promise.reject(new Error('expected submitApplication to reject')),
+          (e: TemplateApiError) => e,
+        )
+
+    it('renders the Icelandic RLS description on the payment screen, even with no problem.detail', async () => {
+      // No `detail` is exactly the shape that used to be dropped to generic copy.
+      newDrivingLicense.mockRejectedValue(
+        makeFetchError({ title: 'HAS_POINTS' }),
+      )
+      describeErrorCode.mockResolvedValue({
+        is: 'Einstaklingur hefur punkta á skírteini',
+        en: 'Person has points on their license',
+      })
+
+      const thrown = await submitAndCatch('is')
+
+      expect(describeErrorCode).toHaveBeenCalledWith('HAS_POINTS')
+      // getErrorReasonIfPresent keeps a reason only when title AND summary are
+      // non-empty; our text rides in `summary`, so the screen shows it instead
+      // of the generic fallback.
+      expect(getErrorReasonIfPresent(reasonOf(thrown)).summary).toBe(
+        'Einstaklingur hefur punkta á skírteini',
+      )
+    })
+
+    it('renders the English RLS description for an en user', async () => {
+      newDrivingLicense.mockRejectedValue(
+        makeFetchError({ title: 'HAS_POINTS' }),
+      )
+      describeErrorCode.mockResolvedValue({
+        is: 'Einstaklingur hefur punkta á skírteini',
+        en: 'Person has points on their license',
+      })
+
+      const thrown = await submitAndCatch('en')
+
+      expect(getErrorReasonIfPresent(reasonOf(thrown)).summary).toBe(
+        'Person has points on their license',
+      )
+    })
+
+    it('uses the generic title (never the raw code) when the code is not in the table', async () => {
+      newDrivingLicense.mockRejectedValue(
+        makeFetchError({ title: 'SOME_UNMAPPED_CODE', detail: 'raw detail' }),
+      )
+      describeErrorCode.mockResolvedValue(null)
+
+      const thrown = await submitAndCatch('is')
+
+      // The raw RLS code must never reach the UI — generic title, detail as body.
+      expect(reasonOf(thrown)).toMatchObject({
+        title: coreErrorMessages.failedDataProviderSubmit,
+        summary: 'raw detail',
+      })
+      expect(reasonOf(thrown).title).not.toBe('SOME_UNMAPPED_CODE')
+      expect(thrown.problem.status).toBe(400)
+    })
+
+    it('falls back to the generic title (best-effort) when the codetable lookup itself throws', async () => {
+      newDrivingLicense.mockRejectedValue(
+        makeFetchError({ title: 'HAS_POINTS', detail: 'raw detail' }),
+      )
+      describeErrorCode.mockRejectedValue(new Error('codetable down'))
+
+      const thrown = await submitAndCatch('is')
+
+      expect(reasonOf(thrown)).toMatchObject({
+        title: coreErrorMessages.failedDataProviderSubmit,
+        summary: 'raw detail',
+      })
+      expect(reasonOf(thrown).title).not.toBe('HAS_POINTS')
+    })
+
+    it('does not look up a description when the error carries no code', async () => {
+      newDrivingLicense.mockRejectedValue(
+        makeFetchError({ detail: 'raw detail' }),
+      )
+
+      const thrown = await submitAndCatch('is')
+
+      expect(describeErrorCode).not.toHaveBeenCalled()
+      // No code → generic title with the raw detail as summary (unchanged).
+      expect(reasonOf(thrown)).toMatchObject({
+        title: coreErrorMessages.failedDataProviderSubmit,
+        summary: 'raw detail',
+      })
+    })
+
+    it('simulates a submission failure from fakeData.submitErrorCode without calling RLS', async () => {
+      describeErrorCode.mockResolvedValue({
+        is: 'Einstaklingur hefur punkta á skírteini',
+        en: 'Person has points on their license',
+      })
+
+      const application = createApplication({
+        answers: {
+          email: 'mock@email.com',
+          phone: '9999999',
+          fakeData: { useFakeData: 'yes', submitErrorCode: 'HAS_POINTS' },
+        },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      const thrown = await service
+        .submitApplication({
+          application,
+          auth: createCurrentUser(),
+          currentUserLocale: 'is',
+        })
+        .then(
+          () =>
+            Promise.reject(new Error('expected submitApplication to reject')),
+          (e: TemplateApiError) => e,
+        )
+
+      // The fake path short-circuits before any real RLS create call...
+      expect(newDrivingLicense).not.toHaveBeenCalled()
+      // ...but still resolves + renders the chosen code's message.
+      expect(describeErrorCode).toHaveBeenCalledWith('HAS_POINTS')
+      expect(getErrorReasonIfPresent(reasonOf(thrown)).summary).toBe(
+        'Einstaklingur hefur punkta á skírteini',
+      )
     })
   })
 })

@@ -276,6 +276,11 @@ export const m = defineMessages({
     defaultMessage: 'Fjarlægja',
     description: '',
   },
+  deleteAsset: {
+    id: 'es.application:deleteAsset',
+    defaultMessage: 'Eyða',
+    description: 'Label for delete button on user-added asset rows',
+  },
 
   // Applicant
   announcer: {
@@ -1065,6 +1070,11 @@ export const m = defineMessages({
     defaultMessage: 'Halda áfram',
     description: 'Button label to continue',
   },
+  saveAndContinue: {
+    id: 'es.application:saveAndContinue',
+    defaultMessage: 'Vista og halda áfram',
+    description: 'Save-and-continue navigation button label',
+  },
   paymentTitle: {
     id: 'es.application:paymentTitle',
     defaultMessage: 'Greiðsla',
@@ -1185,6 +1195,11 @@ export const m = defineMessages({
     id: 'es.application:error.errorPropertyNumber',
     defaultMessage: 'Verður að innihalda L og 6 tölustafi eða F og 7 tölustafi',
     description: 'Property number is invalid',
+  },
+  errorMarketValue: {
+    id: 'es.application:error.errorMarketValue',
+    defaultMessage: 'Markaðsverð þarf að vera hærra en 0 kr.',
+    description: 'Asset market value must be greater than 0',
   },
 
   // Inheritance step
@@ -1381,158 +1396,25 @@ export const m = defineMessages({
     description: 'Overdraft debt type',
   },
 
-  // InReview state messages
-  inReviewGeneralTitle: {
-    id: 'es.application:inReview.general.title',
-    defaultMessage: 'Staða yfirferðar',
-    description: 'InReview state title',
-  },
-  applicantInReviewTitle: {
-    id: 'es.application:applicantInReview.title',
-    defaultMessage: 'Staða yfirferðar',
-    description: 'Applicant in review title',
-  },
-  applicantInReviewDescription: {
-    id: 'es.application:applicantInReview.description',
-    defaultMessage:
-      'Umsóknin hefur verið send til erfingja til yfirferðar. Yfirferð erfingja er valkvæð og hægt er að senda umsóknina til sýslumanns án samþykkis allra.',
-    description: 'Applicant in review description',
-  },
-  applicantInReviewTableTitle: {
-    id: 'es.application:applicantInReview.tableTitle',
-    defaultMessage: 'Erfingjar sem þurfa að samþykkja',
-    description: 'Applicant in review table title',
-  },
-  applicantInReviewStatusLabel: {
-    id: 'es.application:applicantInReview.statusLabel',
-    defaultMessage: 'Staða samþykkis',
-    description: 'Approval status label',
-  },
-  applicantInReviewStatusApproved: {
-    id: 'es.application:applicantInReview.status.approved',
-    defaultMessage: 'Samþykkt',
-    description: 'Approved status',
-  },
-  applicantInReviewStatusPending: {
-    id: 'es.application:applicantInReview.status.pending',
-    defaultMessage: 'Í bið',
-    description: 'Pending status',
-  },
-  applicantInReviewInfoTitle: {
-    id: 'es.application:applicantInReview.infoTitle',
-    defaultMessage: 'Næstu skref',
-    description: 'Next steps title',
-  },
-  applicantInReviewInfoDescription: {
-    id: 'es.application:applicantInReview.infoDescription',
-    defaultMessage:
-      'Yfirferð erfingja er valkvæð. Þú getur haldið áfram og sent umsóknina til sýslumanns núna eða beðið eftir að allir erfingjar samþykki. Ef þú vilt breyta gögnum í umsókninni velur þú "Breyta gögnum".',
-    description: 'Next steps description',
-  },
-  applicantInReviewNextStepToSigning: {
-    id: 'es.application:applicantInReview.nextStepToSigning',
-    defaultMessage: 'Halda áfram og senda til sýslumanns',
-    description: 'Radio option to continue to syslumenn',
-  },
-  applicantInReviewPreSignatureTitle: {
-    id: 'es.application:applicantInReview.preSignatureTitle',
-    defaultMessage: 'Senda til sýslumanns',
-    description: 'Title of the pre-signature confirmation screen',
-  },
-  applicantInReviewPreSignatureInfo: {
-    id: 'es.application:applicantInReview.preSignatureInfo#markdown',
-    defaultMessage:
-      '- Ekki er hægt að gera breytingar á umsókninni eftir að hún hefur verið send til sýslumanns.\n- Ef nauðsynlegt þykir að gera breytingu þarf að útbúa nýja umsókn.',
-    description: 'Info bullets shown before sending to syslumenn',
-  },
-  applicantInReviewDirectWarning: {
-    id: 'es.application:applicantInReview.directWarning#markdown',
-    defaultMessage:
-      'Ekki hafa allir erfingjar samþykkt umsóknina. Með því að halda áfram sendir þú hana beint til sýslumanns án samþykkis allra.',
-    description: 'Warning shown when not all estate members have approved',
-  },
-  applicantInReviewStatementLabel: {
-    id: 'es.application:applicantInReview.statementLabel',
-    defaultMessage:
-      'Ég skil að ekki er hægt að gera breytingar á umsókninni eftir að hún hefur verið send til sýslumanns.',
-    description: 'Acknowledgement checkbox label before sending to syslumenn',
-  },
-  applicantInReviewStatementError: {
-    id: 'es.application:applicantInReview.statementError',
-    defaultMessage: 'Þú þarft að samþykkja skilyrði til að halda áfram.',
-    description: 'Error shown when the acknowledgement is not checked',
-  },
-  applicantInReviewSubmit: {
-    id: 'es.application:applicantInReview.submit',
-    defaultMessage: 'Senda til sýslumanns',
-    description: 'Submit to syslumenn button when all parties have approved',
-  },
-  applicantInReviewSubmitDirect: {
-    id: 'es.application:applicantInReview.submitDirect',
-    defaultMessage: 'Senda beint til sýslumanns',
+  // Send a copy of the application to the parties (málsaðilar)
+  sendCopyToPartiesLabel: {
+    id: 'es.application:sendCopyToParties.label',
+    defaultMessage: 'Senda afrit af umsókn til málsaðila',
     description:
-      'Send directly to syslumenn/signing without waiting for all approvals',
-  },
-  applicantInReviewTitleAllApproved: {
-    id: 'es.application:applicantInReview.titleAllApproved',
-    defaultMessage: 'Allir erfingjar hafa samþykkt',
-    description: 'All approved title',
-  },
-  applicantInReviewDescriptionAllApproved: {
-    id: 'es.application:applicantInReview.descriptionAllApproved',
-    defaultMessage:
-      'Allir erfingjar hafa samþykkt gögnin. Þú getur nú sent umsóknina til sýslumanns.',
-    description: 'All approved description',
-  },
-  inReviewActionsBackToEdit: {
-    id: 'es.application:inReview.actions.backToEdit',
-    defaultMessage: 'Breyta gögnum',
-    description: 'Back to edit button',
-  },
-  inReviewNameLabel: {
-    id: 'es.application:inReview.nameLabel',
-    defaultMessage: 'Nafn',
-    description: 'Name label',
-  },
-  inReviewNationalIdLabel: {
-    id: 'es.application:inReview.nationalIdLabel',
-    defaultMessage: 'Kennitala',
-    description: 'National ID label',
-  },
-  assigneeInReviewDescription: {
-    id: 'es.application:assigneeInReview.description',
-    defaultMessage:
-      'Vinsamlegast farðu yfir gögnin í umsókninni og samþykktu ef þú ert samþykk/ur.',
-    description: 'Assignee in review description',
-  },
-  assigneeInReviewInfoTitle: {
-    id: 'es.application:assigneeInReview.infoTitle',
-    defaultMessage: 'Samþykkja umsókn',
-    description: 'Assignee info title',
-  },
-  assigneeReviewApprove: {
-    id: 'es.application:assigneeReview.approve',
-    defaultMessage: 'Samþykkja',
-    description: 'Approve button',
-  },
-  assigneeReviewReject: {
-    id: 'es.application:assigneeReview.reject',
-    defaultMessage: 'Hafna',
-    description: 'Reject button',
-  },
-  assigneeApprovedTitle: {
-    id: 'es.application:assigneeApproved.title',
-    defaultMessage: 'Þú hefur samþykkt umsóknina',
-    description: 'Assignee approved title',
-  },
-  assigneeApprovedDescription: {
-    id: 'es.application:assigneeApproved.description',
-    defaultMessage:
-      'Þú hefur samþykkt gögnin í umsókninni. Umsóknin verður send til sýslumanns þegar allir erfingjar hafa samþykkt.',
-    description: 'Assignee approved description',
+      'Checkbox label to email a copy of the application to the parties',
   },
 
-  // Signing state messages
+  // Signing / signature-status state messages
+  applicationSubmittedTitle: {
+    id: 'es.application:application.submittedTitle',
+    defaultMessage: 'Umsókn send til sýslumanns',
+    description: 'Title shown after the application has been submitted',
+  },
+  applicationSubmittedDescription: {
+    id: 'es.application:application.submittedDescription',
+    defaultMessage: 'Umsóknin hefur verið send til sýslumanns.',
+    description: 'Description shown after the application has been submitted',
+  },
   signingTitle: {
     id: 'es.application:signing.title',
     defaultMessage: 'Undirritun',
@@ -1548,6 +1430,16 @@ export const m = defineMessages({
     id: 'es.application:signing.tableTitle',
     defaultMessage: 'Aðilar sem þurfa að undirrita',
     description: 'Signing table title',
+  },
+  signingNameLabel: {
+    id: 'es.application:signing.nameLabel',
+    defaultMessage: 'Nafn',
+    description: 'Signatory name column label',
+  },
+  signingNationalIdLabel: {
+    id: 'es.application:signing.nationalIdLabel',
+    defaultMessage: 'Kennitala',
+    description: 'Signatory national ID column label',
   },
   signingStatusLabel: {
     id: 'es.application:signing.statusLabel',

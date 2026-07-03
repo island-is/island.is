@@ -3,6 +3,9 @@ export const removeTypename = (obj: any): any => {
   if (typeof obj !== 'object' || obj == null) {
     return obj
   }
+  if (obj instanceof Date) {
+    return obj
+  }
   if (Array.isArray(obj)) {
     return obj.map(removeTypename)
   }

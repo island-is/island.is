@@ -16,6 +16,14 @@ import { mockCaseFile } from '../../utils/mocks'
 import { FormContextWrapper, UserContextWrapper } from '../../utils/testHelpers'
 import AppealCaseFilesOverview from './AppealCaseFilesOverview'
 
+jest.mock('next/router', () => ({
+  useRouter() {
+    return {
+      pathname: '',
+    }
+  },
+}))
+
 describe('<AppealCaseFilesOverview />', () => {
   test('should display a context menu for all files', async () => {
     const theCase = {
@@ -44,7 +52,9 @@ describe('<AppealCaseFilesOverview />', () => {
       </IntlProvider>,
     )
 
-    expect(await screen.findAllByRole('button')).toHaveLength(2)
+    expect(
+      await screen.findAllByRole('button', { name: /^Valmynd fyrir / }),
+    ).toHaveLength(2)
   })
 
   test('should not have an option to delete file if the file is of category APPEAL_RULING', async () => {
@@ -70,7 +80,9 @@ describe('<AppealCaseFilesOverview />', () => {
         </ApolloProvider>
       </IntlProvider>,
     )
-    const button = await screen.findByRole('button')
+    const button = await screen.findByRole('button', {
+      name: /^Valmynd fyrir /,
+    })
     await userEvent.click(button)
     expect(await screen.findAllByRole('menuitem')).toHaveLength(1)
   })
@@ -102,7 +114,9 @@ describe('<AppealCaseFilesOverview />', () => {
       </IntlProvider>,
     )
 
-    const button = await screen.findByRole('button')
+    const button = await screen.findByRole('button', {
+      name: /^Valmynd fyrir /,
+    })
     await userEvent.click(button)
     expect(await screen.findAllByRole('menuitem')).toHaveLength(1)
   })
@@ -133,7 +147,9 @@ describe('<AppealCaseFilesOverview />', () => {
       </IntlProvider>,
     )
 
-    const button = await screen.findByRole('button')
+    const button = await screen.findByRole('button', {
+      name: /^Valmynd fyrir /,
+    })
     await userEvent.click(button)
     expect(await screen.findAllByRole('menuitem')).toHaveLength(1)
   })
@@ -164,7 +180,9 @@ describe('<AppealCaseFilesOverview />', () => {
       </IntlProvider>,
     )
 
-    const button = await screen.findByRole('button')
+    const button = await screen.findByRole('button', {
+      name: /^Valmynd fyrir /,
+    })
     await userEvent.click(button)
     expect(await screen.findAllByRole('menuitem')).toHaveLength(2)
   })

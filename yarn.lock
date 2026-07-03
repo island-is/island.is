@@ -5217,6 +5217,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@configcat/sdk@npm:1.0.2":
+  version: 1.0.2
+  resolution: "@configcat/sdk@npm:1.0.2"
+  checksum: 10/6ca2b93857923516b76b6a7278230e4b6f1b7c8bc85a14bb74e07810c7ab655b88ef496b37a10d97b9d1e3f84887ca5c104c566cd0eadf6ced284fa924570087
+  languageName: node
+  linkType: hard
+
 "@contentful/app-sdk@npm:4.16.0":
   version: 4.16.0
   resolution: "@contentful/app-sdk@npm:4.16.0"
@@ -10688,7 +10695,7 @@ __metadata:
     "@apollo/client": "npm:3.7.15"
     "@datadog/mobile-react-native": "npm:3.0.2"
     "@expo-google-fonts/ibm-plex-sans": "npm:0.4.1"
-    "@kishannareshpal/expo-pdf": "npm:0.3.1"
+    "@kishannareshpal/expo-pdf": "patch:@kishannareshpal/expo-pdf@npm%3A0.3.1#~/.yarn/patches/@kishannareshpal-expo-pdf-npm-0.3.1-80a31e2db8.patch"
     "@react-native-async-storage/async-storage": "npm:2.2.0"
     "@react-native-community/datetimepicker": "npm:8.6.0"
     "@react-native-community/netinfo": "npm:11.5.2"
@@ -11250,6 +11257,17 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 10/675ef96553c5d9391ab9c8ac7e05792bf370b17ae021272b9c0c0eebe8a6792715b99120d919747aaeda57b70b0d84b5553bb5c14018ae80677d6f13b2e240bd
+  languageName: node
+  linkType: hard
+
+"@kishannareshpal/expo-pdf@patch:@kishannareshpal/expo-pdf@npm%3A0.3.1#~/.yarn/patches/@kishannareshpal-expo-pdf-npm-0.3.1-80a31e2db8.patch":
+  version: 0.3.1
+  resolution: "@kishannareshpal/expo-pdf@patch:@kishannareshpal/expo-pdf@npm%3A0.3.1#~/.yarn/patches/@kishannareshpal-expo-pdf-npm-0.3.1-80a31e2db8.patch::version=0.3.1&hash=3d74dc"
+  peerDependencies:
+    expo: "*"
+    react: "*"
+    react-native: "*"
+  checksum: 10/d0fe2b1f04dc75ef05487658c3f33e97af182961298c761cb607a517b75c4aa979b3b89517987b25fddf03f66c8fdbc2f0d192f3f46d170a9735e5456cbfce96
   languageName: node
   linkType: hard
 
@@ -25433,17 +25451,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"configcat-node@npm:11.3.0":
-  version: 11.3.0
-  resolution: "configcat-node@npm:11.3.0"
-  dependencies:
-    configcat-common: "npm:9.3.0"
-    tslib: "npm:^2.4.1"
-    tunnel: "npm:0.0.6"
-  checksum: 10/27e46a0fd7d72e1a3cf34b7a869be71e00dbf74e42986c0658a0d84d6b80cbd3f39d03621e92f8dc809bb61219f80dbcafdff6a2db16e9b17d2bf333d4473440
-  languageName: node
-  linkType: hard
-
 "confusing-browser-globals@npm:^1.0.9":
   version: 1.0.11
   resolution: "confusing-browser-globals@npm:1.0.11"
@@ -35173,6 +35180,7 @@ __metadata:
     "@babel/preset-env": "npm:7.22.5"
     "@babel/preset-react": "npm:7.22.5"
     "@babel/preset-typescript": "npm:7.22.5"
+    "@configcat/sdk": "npm:1.0.2"
     "@contentful/app-sdk": "npm:4.16.0"
     "@contentful/default-field-editors": "npm:1.6.34"
     "@contentful/field-editor-json": "npm:3.1.4"
@@ -35371,8 +35379,6 @@ __metadata:
     class-transformer: "npm:0.5.1"
     class-validator: "npm:0.14.0"
     classnames: "npm:2.2.6"
-    configcat-js: "npm:9.5.0"
-    configcat-node: "npm:11.3.0"
     contentful: "npm:8.2.0"
     contentful-cli: "npm:1.5.14"
     contentful-management: "npm:10.12.0"
@@ -35562,7 +35568,6 @@ __metadata:
     styled-components: "npm:5.3.6"
     supertest: "npm:4.0.2"
     swagger-ui-express: "npm:4.3.0"
-    swr: "npm:1.2.0"
     testcontainers: "npm:7.23.2"
     tinymce: "npm:5.10.9"
     to-querystring: "npm:1.1.1"
@@ -49968,15 +49973,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"swr@npm:1.2.0":
-  version: 1.2.0
-  resolution: "swr@npm:1.2.0"
-  peerDependencies:
-    react: ^16.11.0 || ^17.0.0 || ^18.0.0
-  checksum: 10/acef78b10722fd8ac9451bfef35b79e812d933cf5a7ea03acdb25beddacf9e2fc47afdf12c2ec4c09abdd83b62d2ad10faeed34bc0abc4fa7057cdf29e0c241f
-  languageName: node
-  linkType: hard
-
 "symbol-observable@npm:^1.0.4, symbol-observable@npm:^1.1.0":
   version: 1.2.0
   resolution: "symbol-observable@npm:1.2.0"
@@ -51042,7 +51038,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tunnel@npm:0.0.6, tunnel@npm:^0.0.6":
+"tunnel@npm:^0.0.6":
   version: 0.0.6
   resolution: "tunnel@npm:0.0.6"
   checksum: 10/cf1ffed5e67159b901a924dbf94c989f20b2b3b65649cfbbe4b6abb35955ce2cf7433b23498bdb2c5530ab185b82190fce531597b3b4a649f06a907fc8702405

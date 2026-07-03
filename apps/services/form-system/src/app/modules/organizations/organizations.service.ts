@@ -117,8 +117,8 @@ export class OrganizationsService {
       throw new UnauthorizedException(`User does not have admin privileges`)
     }
 
-    organization.zendeskInstance = zendeskInstance
-    organization.zendeskBrandId = zendeskBrandId
+    organization.zendeskInstance = zendeskInstance ? zendeskInstance : ''
+    organization.zendeskBrandId = zendeskBrandId ? zendeskBrandId : ''
 
     await organization.save()
   }

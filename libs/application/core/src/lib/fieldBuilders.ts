@@ -204,6 +204,7 @@ export const buildRadioField = (
     required,
     widthWithIllustration,
     hasIllustration,
+    titleVariant,
   } = data
 
   return {
@@ -216,6 +217,7 @@ export const buildRadioField = (
     required,
     widthWithIllustration,
     hasIllustration,
+    titleVariant,
     type: FieldTypes.RADIO,
     component: FieldComponents.RADIO,
   }
@@ -442,11 +444,13 @@ export const buildFileUploadField = (
     totalMaxSize,
     maxFileCount,
     forImageUpload,
+    titleVariant,
   } = data
   return {
     ...extractCommonFields(data),
     children: undefined,
     introduction: introduction,
+    titleVariant,
     uploadHeader:
       uploadHeader || coreDefaultFieldMessages.defaultFileUploadHeader,
     uploadDescription:
@@ -679,12 +683,14 @@ export const buildRedirectToServicePortalField = (data: {
 export const buildPaymentPendingField = (data: {
   id: string
   title: FormText
+  showSubmitErrorReason?: boolean
 }): PaymentPendingField => {
-  const { id, title } = data
+  const { id, title, showSubmitErrorReason } = data
   return {
     children: undefined,
     id,
     title,
+    showSubmitErrorReason,
     type: FieldTypes.PAYMENT_PENDING,
     component: FieldComponents.PAYMENT_PENDING,
   }

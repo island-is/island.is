@@ -54,7 +54,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/utils'
 
 const AppealFiles = () => {
-  const { workingCase } = useContext(FormContext)
+  const { workingCase, refreshCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
@@ -81,7 +81,7 @@ const AppealFiles = () => {
   const { onOpenFile } = useFileList({
     caseId: workingCase.id,
   })
-  const { sendNotification } = useCase()
+  const { sendAppealNotification } = useCase()
 
   const appealCaseFilesType = isDefenceUser(user)
     ? CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE
@@ -109,17 +109,24 @@ const AppealFiles = () => {
       return
     }
 
-    sendNotification(
-      workingCase.id,
-      TrackedNotificationType.APPEAL_CASE_FILES_UPDATED,
-    )
+    if (targetAppealCase) {
+      await sendAppealNotification(
+        workingCase.id,
+        TrackedNotificationType.APPEAL_CASE_FILES_UPDATED,
+        targetAppealCase.id,
+      )
+    }
+
+    refreshCase()
 
     setVisibleModal(true)
   }, [
     handleUpload,
     uploadFiles,
-    sendNotification,
     updateUploadFile,
+    targetAppealCase,
+    refreshCase,
+    sendAppealNotification,
     workingCase.id,
   ])
 

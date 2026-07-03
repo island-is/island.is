@@ -19,7 +19,6 @@ import {
   GaldurXRoadAPIModelsUnemploymentApplicationOverviewResponse,
   GaldurXRoadAPIModelsApplicationApplicationOverviewItem,
   GaldurXRoadAPIModelsApplicantApplicantOverviewResponse,
-  ApplicantInfoApi,
   GaldurXRoadAPIModelsApplicantInfoResponse,
   GaldurXRoadAPIModelsApplicantInfoSupportDataResponse,
   UnemploymentApplicationWithdrawApplicationRequest,
@@ -29,14 +28,16 @@ import {
   GaldurExternalDomainRequestsApplicantCreateForeignStayRequest,
   GaldurExternalDomainModelsAttachmentAttachmentRequestDTO,
   GaldurExternalDomainModelsAttachmentAttachmentDTO,
-  GaldurExternalDomainModelsAttachmentAttachmentListItem,
   GaldurXRoadAPIModelsAvailableActions,
   ApplicantUpdateApplicantRequest,
   ApplicantGetApplicantInfoRequest,
   GaldurXRoadAPIModelsJobSearchConfirmationCreateJobSearchConfirmationRequest,
   GaldurXRoadAPIModelsJobSearchConfirmationJobSearchConfirmationEligibilityResponse,
+  ApplicantCreateApplicantRequestedAttachmentRequest,
   GaldurXRoadAPIModelsApplicantForeignTravelEligibilityResponse,
+  GaldurXRoadAPIModelsApplicantCreateAttachmentEligibilityResponse,
   GaldurDomainModelsBaseViewModel,
+  GaldurXRoadAPIModelsApplicantApplicantAttachmentsResponse,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
@@ -56,7 +57,6 @@ type VmstApis =
   | UnemploymentApplicationApi
   | ActivationGrantApi
   | AttachmentApi
-  | ApplicantInfoApi
   | ApplicantApi
   | ApplicationApi
   | SupportDataApi
@@ -398,7 +398,7 @@ export class VmstUnemploymentClientService {
 
   async getApplicantAttachments(
     applicantId: string,
-  ): Promise<Array<GaldurExternalDomainModelsAttachmentAttachmentListItem>> {
+  ): Promise<GaldurXRoadAPIModelsApplicantApplicantAttachmentsResponse> {
     const api = await this.createApiClient(
       ApplicantApi,
       'clients-vmst-unemployment',
@@ -468,6 +468,29 @@ export class VmstUnemploymentClientService {
     })
   }
 
+  async checkCreateAttachmentEligibility(auth: User): Promise<
+    GaldurXRoadAPIModelsApplicantCreateAttachmentEligibilityResponse & {
+      applicantId: string
+    }
+  > {
+    const { applicantId } = await this.resolveApplicant(auth)
+
+    if (!applicantId) {
+      throw new Error('Failed to resolve applicantId')
+    }
+
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+    )
+
+    const result = await api.applicantGetCreateAttachmentEligibility({
+      id: applicantId,
+    })
+
+    return { ...result, applicantId }
+  }
+
   async submitTravelConfirmation(
     auth: User,
     request: GaldurExternalDomainRequestsApplicantCreateForeignStayRequest,
@@ -514,6 +537,18 @@ export class VmstUnemploymentClientService {
       'clients-vmst-unemployment',
     )
     return await api.applicantUpdateApplicant(requestParameters)
+  }
+
+  async createApplicantRequestedAttachments(
+    requestParameters: ApplicantCreateApplicantRequestedAttachmentRequest,
+  ): Promise<GaldurDomainModelsBaseViewModel> {
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+    )
+    return await api.applicantCreateApplicantRequestedAttachment(
+      requestParameters,
+    )
   }
 
   async getAttachment(

@@ -97,7 +97,7 @@ const CaseFileList: FC<Props> = (props) => {
             key={file.id}
           >
             <CaseFile
-              name={file.name}
+              name={file.userGeneratedFilename ?? file.name}
               size={file.size}
               color={getBackgroundColor(file)}
               icon={

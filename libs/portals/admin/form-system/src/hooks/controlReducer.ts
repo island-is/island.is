@@ -125,6 +125,12 @@ type DndActions =
         update: (updatedForm: FormSystemForm) => void
       }
     }
+  | {
+      type: 'SET_FORM'
+      payload: {
+        form: FormSystemForm
+      }
+    }
 
 type ChangeActions =
   | {
@@ -302,6 +308,10 @@ type InputSettingsActions =
     }
   | { type: 'ADD_LIST_ITEM'; payload: { newListItem: FormSystemListItem } }
   | {
+      type: 'SET_LIST_ITEMS'
+      payload: { listItems: FormSystemListItem[] }
+    }
+  | {
       type: 'SET_LIST_TYPE'
       payload: {
         listType: string
@@ -431,11 +441,27 @@ export const controlReducer = (
       }
     }
     case 'REMOVE_SECTION': {
-      const newSections = state.form.sections?.filter(
+      const oldSections = state.form.sections ?? []
+      const removedIndex = oldSections.findIndex(
+        (section) => section?.id === action.payload.id,
+      )
+      const newSections = oldSections.filter(
         (section) => section?.id !== action.payload.id,
       )
+      const isInput = (section: typeof oldSections[number]) =>
+        section?.sectionType === SectionTypes.INPUT
+      const previousInput = oldSections
+        .slice(0, removedIndex)
+        .filter(isInput)
+        .at(-1)
+      const nextInput = oldSections.slice(removedIndex + 1).find(isInput)
+      const newActiveSection = previousInput ?? nextInput ?? undefined
       return {
         ...state,
+        activeItem: {
+          type: 'Section',
+          data: newActiveSection ?? undefined,
+        },
         form: {
           ...form,
           sections: newSections,
@@ -1475,6 +1501,25 @@ export const controlReducer = (
         },
       }
     }
+    case 'SET_LIST_ITEMS': {
+      const field = activeItem.data as FormSystemField
+      const newField = {
+        ...field,
+        list: action.payload.listItems,
+      }
+
+      return {
+        ...state,
+        activeItem: {
+          type: 'Field',
+          data: newField,
+        },
+        form: {
+          ...form,
+          fields: fields?.map((i) => (i?.id === field.id ? newField : i)),
+        },
+      }
+    }
     case 'CHANGE_LIST_ITEM': {
       const field = activeItem.data as FormSystemField
       const list = field.list as FormSystemListItem[]
@@ -1730,6 +1775,12 @@ export const controlReducer = (
       }
       update(updatedForm)
       return { ...state, form: updatedForm }
+    }
+    case 'SET_FORM': {
+      return {
+        ...state,
+        form: action.payload.form,
+      }
     }
     case 'SET_COMPLETED_TITLE': {
       const { lang, newValue } = action.payload

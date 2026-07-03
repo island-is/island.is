@@ -56,7 +56,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/utils'
 
 const Statement = () => {
-  const { workingCase } = useContext(FormContext)
+  const { workingCase, refreshCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const { createAppealEventLog, isCreatingAppealEventLog } = useAppealCase()
   const { formatMessage } = useIntl()
@@ -135,10 +135,10 @@ const Statement = () => {
     }
   }, [
     handleUpload,
-    createAppealEventLog,
-    updateUploadFile,
     uploadFiles,
+    updateUploadFile,
     targetAppealCaseId,
+    createAppealEventLog,
     workingCase.id,
   ])
 
@@ -276,7 +276,10 @@ const Statement = () => {
           text="Tilkynning um greinargerð hefur verið send Landsrétti og aðilum máls."
           secondaryButton={{
             text: formatMessage(core.closeModal),
-            onClick: () => router.push(previousUrl),
+            onClick: () => {
+              refreshCase()
+              router.push(previousUrl)
+            },
           }}
         />
       )}

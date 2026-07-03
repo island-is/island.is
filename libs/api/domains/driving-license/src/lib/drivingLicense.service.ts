@@ -277,6 +277,18 @@ export class DrivingLicenseService {
 
     const canApply = await this.canApplyFor(type, token)
 
+    // For an unmet can-apply denial, resolve RLS's own description for the raw
+    // error code (both languages) so the UI can surface it instead of the
+    // generic fallback for codes we don't curate ourselves. Applies to all
+    // license types: it's best-effort fallback only — curated frontend copy
+    // still wins where it exists, and an unknown/unmatched code still falls back
+    // to the generic message. Both languages are attached; the frontend renders
+    // the one matching its locale.
+    const canApplyMessages =
+      !canApply.result && canApply.errorCode
+        ? await this.describeErrorCode(canApply.errorCode)
+        : null
+
     const requirements: ApplicationEligibilityRequirement[] = [
       ...(type === 'B-full'
         ? [
@@ -309,6 +321,9 @@ export class DrivingLicenseService {
       {
         key: this.canApplyErrorCodeToRequirementKey(canApply.errorCode),
         requirementMet: canApply.result,
+        ...(canApply.errorCode ? { errorCode: canApply.errorCode } : {}),
+        ...(canApplyMessages?.is ? { messageIs: canApplyMessages.is } : {}),
+        ...(canApplyMessages?.en ? { messageEn: canApplyMessages.en } : {}),
       },
     ]
 
@@ -353,6 +368,39 @@ export class DrivingLicenseService {
         this.logger.warn(`${LOGTAG} unhandled can apply error code`, errorCode)
 
         return RequirementKey.deniedByService
+    }
+  }
+
+  /**
+   * Resolve RLS's own human-readable descriptions (both languages) for an error
+   * code, from the cached error-code catalogue. Returns null for an unknown
+   * code. The caller attaches both and the frontend picks by locale. Best-effort
+   * — never throws. Used by the eligibility resolver here and by the submission
+   * template-api-module, which injects this service.
+   */
+  async describeErrorCode(
+    code: string,
+  ): Promise<{ is: string | null; en: string | null } | null> {
+    try {
+      const descriptions =
+        await this.drivingLicenseApi.getErrorCodeDescriptions()
+      const match = descriptions.find((d) => d.code === code)
+      if (!match) {
+        return null
+      }
+      return {
+        is: match.descriptionIs ?? null,
+        en: match.descriptionEn ?? null,
+      }
+    } catch (e) {
+      // Best-effort fallback copy: a codetable outage must never fail the
+      // caller (e.g. the whole eligibility query). Log and fall through so the
+      // curated/generic message still renders.
+      this.logger.warn(
+        `${LOGTAG} failed to resolve RLS error-code description`,
+        e,
+      )
+      return null
     }
   }
 
@@ -587,6 +635,7 @@ export class DrivingLicenseService {
       contentList: input.contentList,
       photoBiometricsId: input.photoBiometricsId,
       signatureBiometricsId: input.signatureBiometricsId,
+      sendPlasticToPerson: input.sendPlasticToPerson,
       healthDeclarationModel: input.healthDeclarationModel,
     })
 

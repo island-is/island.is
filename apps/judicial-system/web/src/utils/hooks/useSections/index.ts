@@ -82,7 +82,10 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { stepValidations, stepValidationsType } from '../../formHelper'
-import { shouldUseAppealWithdrawnRoutes } from '../../utils'
+import {
+  appendAppealCaseIdQuery,
+  shouldUseAppealWithdrawnRoutes,
+} from '../../utils'
 import useTargetAppealCaseByAppealCaseId from '../useTargetAppealCaseByAppealCaseId'
 
 const useSections = (
@@ -1380,7 +1383,10 @@ const useSections = (
               {
                 name: formatMessage(sections.courtOfAppealSection.overview),
                 isActive: isActive(COURT_OF_APPEAL_OVERVIEW_ROUTE),
-                href: `${COURT_OF_APPEAL_OVERVIEW_ROUTE}/${id}`,
+                href: appendAppealCaseIdQuery(
+                  `${COURT_OF_APPEAL_OVERVIEW_ROUTE}/${id}`,
+                  targetAppealCase?.id,
+                ),
               },
               ...(!useAppealWithdrawnSections
                 ? [
@@ -1389,7 +1395,10 @@ const useSections = (
                         sections.courtOfAppealSection.reception,
                       ),
                       isActive: isActive(COURT_OF_APPEAL_CASE_ROUTE),
-                      href: `${COURT_OF_APPEAL_CASE_ROUTE}/${id}`,
+                      href: appendAppealCaseIdQuery(
+                        `${COURT_OF_APPEAL_CASE_ROUTE}/${id}`,
+                        targetAppealCase?.id,
+                      ),
                       onClick:
                         !isActive(COURT_OF_APPEAL_CASE_ROUTE) &&
                         validateFormStepper(
@@ -1405,7 +1414,10 @@ const useSections = (
                     {
                       name: formatMessage(sections.courtOfAppealSection.ruling),
                       isActive: isActive(COURT_OF_APPEAL_RULING_ROUTE),
-                      href: `${COURT_OF_APPEAL_RULING_ROUTE}/${id}`,
+                      href: appendAppealCaseIdQuery(
+                        `${COURT_OF_APPEAL_RULING_ROUTE}/${id}`,
+                        targetAppealCase?.id,
+                      ),
                       onClick:
                         !isActive(COURT_OF_APPEAL_RULING_ROUTE) &&
                         validateFormStepper(
@@ -1430,7 +1442,10 @@ const useSections = (
                         sections.courtOfAppealSection.withdrawal,
                       ),
                       isActive: isActive(COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE),
-                      href: `${COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE}/${id}`,
+                      href: appendAppealCaseIdQuery(
+                        `${COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE}/${id}`,
+                        targetAppealCase?.id,
+                      ),
                       onClick:
                         !isActive(COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE) &&
                         validateFormStepper(
@@ -1450,7 +1465,10 @@ const useSections = (
               {
                 name: formatMessage(sections.courtOfAppealSection.summary),
                 isActive: isActive(COURT_OF_APPEAL_SUMMARY_ROUTE),
-                href: `${COURT_OF_APPEAL_SUMMARY_ROUTE}/${id}`,
+                href: appendAppealCaseIdQuery(
+                  `${COURT_OF_APPEAL_SUMMARY_ROUTE}/${id}`,
+                  targetAppealCase?.id,
+                ),
                 onClick:
                   !isActive(COURT_OF_APPEAL_SUMMARY_ROUTE) &&
                   validateFormStepper(
@@ -1504,6 +1522,9 @@ const useSections = (
   }
 
   const getSections = (workingCase: Case, user?: User): RouteSection[] => {
+    const isExtensionCase =
+      Boolean(workingCase.parentCase) && !isIndictmentCase(workingCase.type)
+
     return [
       isRestrictionCase(workingCase.type)
         ? getRestrictionCaseProsecutorSection(workingCase, user)
@@ -1519,20 +1540,20 @@ const useSections = (
         name: formatCaseResult(
           formatMessage,
           workingCase,
-          workingCase.parentCase
+          isExtensionCase && workingCase.parentCase
             ? workingCase.parentCase.state
             : workingCase.state,
         ),
         isActive:
           (workingCase.appealCase?.appealState === AppealCaseState.WITHDRAWN &&
             !workingCase.appealCase?.appealReceivedByCourtDate) ||
-          (!workingCase.parentCase &&
+          (!isExtensionCase &&
             isCompletedCase(workingCase.state) &&
             !workingCase.hasBeenAppealed &&
             workingCase.appealCase?.appealState !== AppealCaseState.COMPLETED),
         children: [],
       },
-      ...(workingCase.parentCase
+      ...(isExtensionCase
         ? [
             isRestrictionCase(workingCase.type)
               ? getRestrictionCaseExtensionSections(workingCase, user)

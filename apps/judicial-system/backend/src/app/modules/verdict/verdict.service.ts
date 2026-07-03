@@ -11,7 +11,6 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   addMessagesToQueue,
   MessageType,
@@ -29,6 +28,7 @@ import { ServiceRequirement } from '@island.is/judicial-system/types'
 
 import { InternalCaseService, PdfService } from '../case'
 import { DefendantService } from '../defendant'
+import { EventService } from '../event'
 import { FileService } from '../file'
 import { PoliceDocumentType, PoliceService } from '../police'
 import {
@@ -48,6 +48,7 @@ type UpdateVerdict = {
   isAcquittedByPublicProsecutionOffice?: boolean | null
   defendantHasRequestedAppeal?: boolean | null
   serviceRequirement?: ServiceRequirement | null
+  isDefaultJudgement?: boolean | null
 } & Pick<
   Verdict,
   | 'externalPoliceDocumentId'
@@ -57,7 +58,6 @@ type UpdateVerdict = {
   | 'appealDecision'
   | 'appealDate'
   | 'serviceInformationForDefendant'
-  | 'isDefaultJudgement'
   | 'hash'
   | 'hashAlgorithm'
 >
@@ -80,6 +80,7 @@ export class VerdictService {
     private readonly defendantService: DefendantService,
     @Inject(forwardRef(() => InternalCaseService))
     private readonly internalCaseService: InternalCaseService,
+    private readonly eventService: EventService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -298,6 +299,7 @@ export class VerdictService {
         isAcquittedByPublicProsecutionOffice: null,
         defendantHasRequestedAppeal: null,
         serviceRequirement: null,
+        isDefaultJudgement: null,
       },
       transaction,
     )
@@ -321,9 +323,7 @@ export class VerdictService {
     defendant: Defendant,
     verdict: Verdict,
   ): { code: string; value: string }[] {
-    const receiverSsn =
-      defendant.nationalId &&
-      normalizeAndFormatNationalId(defendant.nationalId)[0]
+    const receiverSsn = defendant.nationalId ?? ''
     const policeNumbers = theCase.policeCaseNumbers?.filter(Boolean) ?? []
     const ruling =
       theCase.courtSessions?.find(
@@ -498,6 +498,11 @@ export class VerdictService {
       },
       transaction,
     )
+
+    this.eventService.postEvent('VERDICT_DELIVERED_TO_POLICE', theCase, false, {
+      Varnaraðili: defendant.id,
+      'RLS auðkenni': createdDocument.externalPoliceDocumentId,
+    })
 
     return { delivered: true }
   }

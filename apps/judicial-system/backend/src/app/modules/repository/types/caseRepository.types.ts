@@ -20,6 +20,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { AppealCase } from '../models/appealCase.model'
+import { AppealDecision } from '../models/appealDecision.model'
 import { AppealEventLog } from '../models/appealEventLog.model'
 import { Case } from '../models/case.model'
 import { CaseDefendantPoliceCaseNumber } from '../models/caseDefendantPoliceCaseNumber.model'
@@ -116,6 +117,12 @@ export const caseInclude: Includeable[] = [
     ],
   },
   {
+    model: AppealDecision,
+    as: 'appealDecisions',
+    required: false,
+    separate: true,
+  },
+  {
     model: User,
     as: 'creatingProsecutor',
     include: [{ model: Institution, as: 'institution' }],
@@ -153,6 +160,10 @@ export const caseInclude: Includeable[] = [
         model: CaseFile,
         as: 'caseFiles',
         required: false,
+        order: [
+          ['orderWithinChapter', 'ASC NULLS LAST'],
+          ['created', 'ASC'],
+        ],
         where: { state: { [Op.not]: CaseFileState.DELETED }, category: null },
         separate: true,
       },
@@ -207,7 +218,10 @@ export const caseInclude: Includeable[] = [
     model: IndictmentCount,
     as: 'indictmentCounts',
     required: false,
-    order: [['created', 'ASC']],
+    order: [
+      ['displayOrder', 'ASC'],
+      ['created', 'ASC'],
+    ],
     include: [
       {
         model: Offense,
@@ -281,7 +295,10 @@ export const caseInclude: Includeable[] = [
     model: CaseFile,
     as: 'caseFiles',
     required: false,
-    order: [['created', 'DESC']],
+    order: [
+      ['orderWithinChapter', 'ASC NULLS LAST'],
+      ['created', 'ASC'],
+    ],
     where: { state: { [Op.not]: CaseFileState.DELETED } },
     separate: true,
   },
@@ -605,6 +622,7 @@ export interface UpdateAppealCase
     | 'appealIsolationToDate'
     | 'appealedByNationalId'
     | 'rulingFileId'
+    | 'appealDate'
   > {
   appealState?: AppealCase['appealState']
 }
@@ -635,4 +653,5 @@ export interface UpdateDefendant {
   alternativeServiceDescription?: string
   indictmentReviewDecision?: IndictmentCaseReviewDecision | null
   publicProsecutorIsRegisteredInPoliceSystem?: boolean | null
+  isDrivingLicenseSuspended?: boolean | null
 }

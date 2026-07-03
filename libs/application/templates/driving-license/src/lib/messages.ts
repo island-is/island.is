@@ -1,17 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
-  existingApplicationTitle: {
-    id: 'dl.application:error.existingApplication',
-    defaultMessage: 'Fyrri umsóknir um ökuskírteini',
-    description: 'Title of the data needed to fetch existing applications',
-  },
-  existingApplicationExists: {
-    id: 'dl.application:error.existingApplicationExists',
-    defaultMessage: 'Þú átt nú þegar umsókn í vinnslu',
-    description:
-      'Message letting the applicant know they already have an application in progress',
-  },
   externalDataAgreement: {
     id: 'dl.application:externalData.agreement',
     defaultMessage: 'Ég hef kynnt mér ofangreint',
@@ -112,8 +101,15 @@ export const m = defineMessages({
   },
   pickupLocationDescription: {
     id: 'dl.application:pickupLocationDescription',
-    defaultMessage: 'Veldu þá afhendingu sem þú vilt fá fyrir ökuskírteinið.',
-    description: 'Choose the delivery method for your driving license',
+    defaultMessage:
+      'Veldu hvort þú vilt fá ökuskírteinið sent á lögheimili með pósti eða sækja það hjá völdu sýslumannsembætti.',
+    description: 'location for pickup',
+  },
+  postalCodeTooltip: {
+    id: 'dl.application:postalCodeTooltip',
+    defaultMessage: 'Póstnúmer {zip}',
+    description:
+      'Postal code tooltip shown on a jurisdiction (sýslumaður) option',
   },
   deliveryMethodHeader: {
     id: 'dl.application:deliveryMethodHeader',
@@ -482,38 +478,18 @@ export const m = defineMessages({
     description:
       'Your application for a full driving license has been received. Before a full driving license can be applied for, you must bring the following to the district commissioner.',
   },
-  digitalLicenseInfoTitle: {
-    id: 'dl.application:digitalLicenseInfoTitle',
-    defaultMessage: 'Stafrænt ökuskírteini',
-    description: 'Digital driving license',
-  },
-  digitalLicenseInfoDescription: {
-    id: 'dl.application:digitalLicenseInfoDescription',
-    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    description: 'Digital driving license',
-  },
-  digitalLicenseInfoAlertTitle: {
-    id: 'dl.application:digitalLicenseInfoAlertTitle',
-    defaultMessage: 'Athugið',
-    description: 'Digital driving license',
-  },
-  digitalLicenseInfoAlertMessageBTemp: {
-    id: 'dl.application:digitalLicenseInfoAlertMessageBTemp#markdown',
+  localResidencyDaysSpent: {
+    id: 'dl.application:localResidencyDaysSpent',
     defaultMessage:
-      'Þú ert að sækja um bráðabirgðaökuskírteini. Ökuskírteini þitt verður einungis gefið út sem stafrænt ökuskírteini og verður aðgengilegt fyrir þig um leið og öll skilyrði fyrir bráðabirgðaökuskírteini eru uppfyllt.',
-    description: 'Digital driving license',
+      '{days, plural, one {Þú hefur aðeins búið á Íslandi í # dag.} other {Þú hefur aðeins búið á Íslandi í # daga.}}',
+    description:
+      'Shown under the residency requirement: number of days the applicant has lived in Iceland (ICU plural)',
   },
-  digitalLicenseInfoAlertMessageBFull: {
-    id: 'dl.application:digitalLicenseInfoAlertMessageBFull#markdown',
-    defaultMessage:
-      'Þú ert að sækja um fullnaðarökuskírteini. Ökuskírteini þitt verður núna einungis gefið út sem stafrænt ökuskírteini og verður aðgengilegt fyrir þig þegar þú hefur lokið þessari pöntun um fullnaðarökuskírteini. Fullnaðarökuskírteini þitt verður framleitt í plasti í byrjun febrúar 2025 og sent til þín með Póstinum, á skráð lögheimili þitt um leið og plastökuskírteinið er tilbúið.',
-    description: 'Digital driving license',
-  },
-  digitalLicenseInfoAlertMessageExtraInfo: {
-    id: 'dl.application:digitalLicenseInfoAlertMessageExtraInfo#markdown',
-    defaultMessage:
-      'Upplýsingar um stafrænt ökuskírteini, hvernig þú sækir það og hleður því í símannn þinn eru aðgengilegar hér [https://island.is/okuskirteini](https://island.is/okuskirteini)',
-    description: 'Digital driving license',
+  loadingEligibility: {
+    id: 'dl.application:loadingEligibility',
+    defaultMessage: 'Sæki upplýsingar',
+    description:
+      'Screen-reader label for the loading spinner while eligibility is being fetched',
   },
   congratulationsTempHelpText: {
     id: 'dl.application:congratulationsTempHelpText',
@@ -869,11 +845,6 @@ export const m = defineMessages({
     defaultMessage: 'Umsókn um fullnaðarréttindi í B flokki (fólksbifreið)',
     description: 'Option description for selecting to renew driving license',
   },
-  applicationForBAdvancedDescription: {
-    id: 'dl.application:applicationForBAdvancedDescription',
-    defaultMessage: 'Umsókn um aukin ökurétindi / meirapróf',
-    description: 'Option description for selecting to renew driving license',
-  },
   applicationForBELicenseTitle: {
     id: 'dl.application:applicationForBELicenseTitle',
     defaultMessage: 'Eftirvagn BE',
@@ -953,164 +924,6 @@ export const m = defineMessages({
       'Athugaðu að þar sem þú þarft að skila inn læknisvottorði getur þú ekki haldið áfram með umsóknina. Þú þarft þú að mæta í þitt sýslumanns embætti með læknisvottorð og leggja inn umsókn á staðnum',
     description:
       'Health declaration answers indicate that health certificate is required and BE application does not support health certificate requirement',
-  },
-  applicationForAdvancedLicenseTitle: {
-    id: 'dl.application:applicationForAdvancedLicenseTitle',
-    defaultMessage: 'Aukin ökuréttindi / meirapróf',
-    description: 'Option title for selecting advanced driving license',
-  },
-  applicationForAdvancedLicenseDescription: {
-    id: 'dl.application:applicationForAdvancedLicenseDescription',
-    defaultMessage: 'Texti kemur hér',
-    description: 'Option description for selecting advanced driving license',
-  },
-  applicationForAdvancedLicenseSectionTitle: {
-    id: 'dl.application:applicationForAdvancedLicenseSectionTitle',
-    defaultMessage: 'Veldu réttindi',
-    description: 'Option title for selecting advanced driving license',
-  },
-  applicationForAdvancedLicenseSectionDescription: {
-    id: 'dl.application:applicationForAdvancedLicenseSectionDescription',
-    defaultMessage: 'Í þessari umsókn er verið að sækja um:',
-    description: 'Option description for selecting advanced driving license',
-  },
-  applicationForAdvancedAgeRequired: {
-    id: 'dl.application:applicationForAdvancedAgeFor',
-    defaultMessage: 'Réttindaaldur er {age} ára.',
-    description: 'Required age for {licenses} is {age} years',
-  },
-  groupTitleC1: {
-    id: 'dl.application:groupTitleC1',
-    defaultMessage: 'Minni vörubíll og eftirvagn (C1 og C1E)',
-    description: 'C1 group title',
-  },
-  groupTitleC: {
-    id: 'dl.application:groupTitleC',
-    defaultMessage: 'Vörubíll og eftirvagn (C og CE)',
-    description: 'C1 group title',
-  },
-  groupTitleD1: {
-    id: 'dl.application:groupTitleD1',
-    defaultMessage: 'Lítil rúta og eftirvagn (D1 og D1E)',
-    description: 'C1 group title',
-  },
-  groupTitleD: {
-    id: 'dl.application:groupTitleD',
-    defaultMessage: 'Stór rúta og eftirvagn (D og DE)',
-    description: 'C1 group title',
-  },
-  applicationForAdvancedLicenseTitleC1: {
-    id: 'dl.application:applicationForAdvancedLicenseTitleC1',
-    defaultMessage: 'Minni vörubíll (C1)',
-    description: 'C1 title',
-  },
-  applicationForAdvancedLicenseLabelC1: {
-    id: 'dl.application:applicationForAdvancedLicenseLabelC1',
-    defaultMessage:
-      'Gefur réttindi til að aka bifreið fyrir 8 farþega eða færri, sem er þyngri en 3.500 kg en þó ekki þyngri en 7.500 kg. Sá sem hefur C1 réttindi má tengja eftirvagn/tengitæki sem er 750 kg eða minna af leyfðri heildarþyngd. Til þess að mega draga þyngri eftirvagna/tengitæki þarf að taka C1E réttindi.',
-    description: 'C1 description',
-  },
-  applicationForAdvancedLicenseLabelC1A: {
-    id: 'dl.application:applicationForAdvancedLicenseLabelC1A',
-    defaultMessage: 'Sækja um leyfi í atvinnuskyni',
-    description: 'C1A description',
-  },
-  applicationForAdvancedLicenseTitleD1: {
-    id: 'dl.application:applicationForAdvancedLicenseTitleD1',
-    defaultMessage: 'Lítil rúta (D1)',
-    description: 'D1 title',
-  },
-  applicationForAdvancedLicenseLabelD1: {
-    id: 'dl.application:applicationForAdvancedLicenseLabelD1',
-    defaultMessage:
-      'Gefur réttindi til að aka hópbifreið sem er gerð fyrir að hámarki 16 farþega. Sá sem hefur D1 réttindi má tengja eftirvagn/tengitæki sem er 750 kg eða minna að leyfðri heildarþyngd.',
-    description: 'D1 description',
-  },
-  applicationForAdvancedLicenseLabelD1A: {
-    id: 'dl.application:applicationForAdvancedLicenseLabelD1A',
-    defaultMessage: 'Sækja um leyfi í atvinnuskyni',
-    description: 'D1A description',
-  },
-  applicationForAdvancedLicenseTitleC: {
-    id: 'dl.application:applicationForAdvancedLicenseTitleC',
-    defaultMessage: 'Vörubíll (C)',
-    description: 'C title',
-  },
-  applicationForAdvancedLicenseLabelC: {
-    id: 'dl.application:applicationForAdvancedLicenseLabelC',
-    defaultMessage:
-      'Gefur réttindi til að aka vörubifreið fyrir 8 farþega eða færri, sem er þyngri en 7.500 kg. C flokkur gefur einnig réttindi til að aka bifreiðinni með eftirvagni sem er 750 kg eða minna af leyfðri heildarþyngd.',
-    description: 'C description',
-  },
-  applicationForAdvancedLicenseLabelCA: {
-    id: 'dl.application:applicationForAdvancedLicenseLabelCA',
-    defaultMessage: 'Sækja um leyfi í atvinnuskyni',
-    description: 'CA description',
-  },
-  applicationForAdvancedLicenseTitleD: {
-    id: 'dl.application:applicationForAdvancedLicenseTitleD',
-    defaultMessage: 'Stór rúta (D)',
-    description: 'D title',
-  },
-  applicationForAdvancedLicenseLabelD: {
-    id: 'dl.application:applicationForAdvancedLicenseLabelD',
-    defaultMessage:
-      'Gefur réttindi til að aka bifreið sem gerð er fyrir fleiri en 8 farþega auk ökumanns. Sá sem hefur D réttindi má tengja eftirvagn/tengitæki sem er 750 kg eða minna af leyfðri heildarþyngd.',
-    description: 'D description',
-  },
-  applicationForAdvancedLicenseLabelDA: {
-    id: 'dl.application:applicationForAdvancedLicenseLabelDA',
-    defaultMessage: 'Sækja um leyfi í atvinnuskyni',
-    description: 'DA description',
-  },
-  applicationForAdvancedLicenseTitleC1E: {
-    id: 'dl.application:applicationForAdvancedLicenseTitleC1E',
-    defaultMessage: 'Minni vörubíll og eftirvagn (C1E)',
-    description: 'C1E title',
-  },
-  applicationForAdvancedLicenseLabelC1E: {
-    id: 'dl.application:applicationForAdvancedLicenseLabelC1E',
-    defaultMessage:
-      'Gefur réttindi til að aka vörubifreið/stórum pallbíl í flokki C1 með eftirvagni sem er þyngri en 750 kg að heildarþunga. Þó má sameiginlegur heildarþungi beggja ökutækja ekki fara yfir 12.000 kg. ',
-    description: 'C1E description',
-  },
-  applicationForAdvancedLicenseTitleD1E: {
-    id: 'dl.application:applicationForAdvancedLicenseTitleD1E',
-    defaultMessage: 'Lítil rúta og eftirvagn (D1)',
-    description: 'D1E title',
-  },
-  applicationForAdvancedLicenseLabelD1E: {
-    id: 'dl.application:applicationForAdvancedLicenseLabelD1E',
-    defaultMessage:
-      'Gefur réttindi til að aka bifreið í B-flokki með eftirvagn í BE-flokki og hópbifreið í D1 flokki með eftirvagn sem er þyngri en 750 kg að heildarþunga. Þó má sameiginlegur heildarþungi beggja ökutækja ekki fara yfir 12.000 kg.',
-    description: 'D1E description',
-  },
-  applicationForAdvancedLicenseTitleCE: {
-    id: 'dl.application:applicationForAdvancedLicenseTitleCE',
-    defaultMessage: 'Vörubíll og eftirvagn (CE)',
-    description: 'CE title',
-  },
-  applicationForAdvancedLicenseLabelCE: {
-    id: 'dl.application:applicationForAdvancedLicenseLabelCE',
-    defaultMessage:
-      'Gefur réttindi til að aka vörubifreið í flokki C með eftirvagni sem er þyngri en 750 kg að heildarþunga.',
-    description: 'CE description',
-  },
-  applicationForAdvancedLicenseTitleDE: {
-    id: 'dl.application:applicationForAdvancedLicenseTitleDE',
-    defaultMessage: 'Stór rúta og eftirvagn (DE)',
-    description: 'DE title',
-  },
-  applicationForAdvancedLicenseLabelDE: {
-    id: 'dl.application:applicationForAdvancedLicenseLabelDE',
-    defaultMessage:
-      'Að loknum D réttindum, er hægt að taka að auki DE, sem gefur réttindi til að aka hópbifreið í flokki D með eftirvagni sem er þyngri en 750 kg að heildarþunga. Þeir nemendur sem taka eftirvagnaréttindi í flokki DE og gilda þau réttindi einnig fyrir CE.',
-    description: 'DE description',
-  },
-  applicationForAdvancedRequiredError: {
-    id: 'dl.application:applicationForAdvancedRequiredError',
-    defaultMessage: 'Þú verður að velja að minnsta kosti einn valmöguleika',
-    description: 'You must select at least one option',
   },
   photoSelectionTitle: {
     id: 'dl.application:photoSelection.title',

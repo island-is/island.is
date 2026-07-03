@@ -379,6 +379,14 @@ const ArticleScreen: Screen<ArticleProps> = ({
     return sub.slug.split('/').pop() === query.subSlug
   })
 
+  // On a sub article (Baby Article) page, prefer the sub article's own "last
+  // reviewed" date when it has one; otherwise fall back to the main article's
+  // date so existing parent-level dates keep rendering (no regression).
+  const reviewedContent =
+    subArticle?.showDateOfTheMostRecentReview && subArticle.contentLastReviewed
+      ? subArticle
+      : article
+
   useContentfulId(article?.id ?? '', subArticle?.id)
 
   usePlausiblePageview(article?.organization?.[0]?.trackingDomain ?? undefined)
@@ -564,15 +572,15 @@ const ArticleScreen: Screen<ArticleProps> = ({
             activeLocale,
           )}
           <AppendedArticleComponents article={article} />
-          {article?.showDateOfTheMostRecentReview &&
-            article?.contentLastReviewed && (
+          {reviewedContent?.showDateOfTheMostRecentReview &&
+            reviewedContent?.contentLastReviewed && (
               <Box paddingTop={2}>
                 <Text variant="small">
                   {`${n(
                     'contentLastReviewedLabel',
                     activeLocale === 'is' ? 'Síðast uppfært' : 'Last updated',
                   )}: ${format(
-                    new Date(article.contentLastReviewed),
+                    new Date(reviewedContent.contentLastReviewed),
                     'do MMMM yyyy',
                   )}`}
                 </Text>

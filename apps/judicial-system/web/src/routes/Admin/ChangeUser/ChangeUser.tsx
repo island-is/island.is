@@ -1,3 +1,4 @@
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -7,8 +8,12 @@ import { titles } from '@island.is/judicial-system-web/messages'
 import {
   PageHeader,
   Skeleton,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { User } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  User,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import UserForm from '../UserForm/UserForm'
@@ -21,6 +26,7 @@ export const ChangeUser = () => {
   const router = useRouter()
   const id = router.query.id as string // We know it is a string
   const { formatMessage } = useIntl()
+  const { user: currentUser } = useContext(UserContext)
   const {
     allInstitutions,
     loading: institutionsLoading,
@@ -43,6 +49,10 @@ export const ChangeUser = () => {
 
   const saveUser = async (user: User) => {
     if (!userUpdating && user.institution) {
+      // Only the super admin may set this flag - the backend rejects the field
+      // from anyone else, so we omit it entirely for other admins.
+      const isSuperAdmin = currentUser?.role === UserRole.ADMIN
+
       await updateUserMutation({
         variables: {
           input: {
@@ -53,6 +63,11 @@ export const ChangeUser = () => {
             email: user.email,
             active: user.active,
             canConfirmIndictment: user.canConfirmIndictment,
+            ...(isSuperAdmin
+              ? {
+                  canManageMessageSuspension: user.canManageMessageSuspension,
+                }
+              : {}),
           },
         },
       })

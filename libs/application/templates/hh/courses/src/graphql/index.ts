@@ -6,6 +6,7 @@ export const GET_COURSE_SELECT_OPTIONS_QUERY = gql`
       items {
         id
         title
+        courseListPageId
       }
     }
   }

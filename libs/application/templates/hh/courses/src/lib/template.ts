@@ -31,6 +31,7 @@ import {
 import { m } from './messages'
 import { getChargeItems } from '../utils/getChargeItems'
 import { hasCourseBeenFullyBooked } from '../utils/hasCourseBeenFullyBooked'
+import { isCourseForProfessionals } from '../utils/isCourseForProfessionals'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -45,9 +46,13 @@ const template: ApplicationTemplate<
     )
     return courseTitle
       ? {
-          name: m.general.applicationTitleWithCourse,
+          name: isCourseForProfessionals(application.answers)
+            ? m.general.applicationTitleWithCourseForProfessionals
+            : m.general.applicationTitleWithCourse,
           value: courseTitle,
         }
+      : isCourseForProfessionals(application.answers)
+      ? m.general.applicationTitleForProfessionals
       : m.general.applicationTitle
   },
   codeOwner: CodeOwners.Stefna,

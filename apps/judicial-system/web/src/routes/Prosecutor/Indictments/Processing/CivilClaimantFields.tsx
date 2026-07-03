@@ -14,6 +14,7 @@ import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
+  CheckboxList,
   FormContext,
   InputAdvocate,
   InputName,
@@ -27,6 +28,10 @@ import {
   Defendant,
   UpdateCivilClaimantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  getAvailableDefendantsForCivilClaimant,
+  isCivilClaimantDefendantSelectionValid,
+} from '@island.is/judicial-system-web/src/utils/civilClaimantUtils'
 import {
   useCivilClaimants,
   useNationalRegistry,
@@ -204,16 +209,15 @@ export const CivilClaimantFields = ({
   const legalProtectorCheckboxId = `defender_type_legal_rights_protector-${civilClaimant.id}`
   const lawyerCheckboxId = `defender_type_lawyer-${civilClaimant.id}`
 
-  const availableDefendants = useMemo(() => {
-    if (!civilClaimant.policeCaseNumbers?.length) {
-      return []
-    }
-    return defendants.filter((defendant) =>
-      defendant.policeCaseNumbers?.some((pcn) =>
-        civilClaimant.policeCaseNumbers?.includes(pcn),
-      ),
-    )
-  }, [civilClaimant.policeCaseNumbers, defendants])
+  const availableDefendants = useMemo(
+    () => getAvailableDefendantsForCivilClaimant(civilClaimant, defendants),
+    [civilClaimant, defendants],
+  )
+
+  const isDefendantSelectionInvalid = !isCivilClaimantDefendantSelectionValid(
+    civilClaimant,
+    defendants,
+  )
 
   const handlePoliceCaseNumbersChange = (newPoliceCaseNumbers: string[]) => {
     const newAvailableDefendantIds = new Set(
@@ -511,21 +515,25 @@ export const CivilClaimantFields = ({
                 title="Hverjum beinist krafan gegn?"
                 heading="h4"
                 marginBottom={2}
+                required
               />
-              {availableDefendants.map((defendant) => (
-                <Box marginBottom={1} key={defendant.id}>
-                  <Checkbox
-                    name={`civilClaimant-${civilClaimant.id}-defendant-${defendant.id}`}
-                    label={defendant.name ?? ''}
-                    checked={(civilClaimant.defendantIds ?? []).includes(
-                      defendant.id,
-                    )}
-                    onChange={() => handleDefendantToggle(defendant.id)}
-                    large
-                    filled
-                  />
-                </Box>
-              ))}
+              <CheckboxList
+                blueBox={false}
+                fullWidth
+                checkboxes={availableDefendants.map((defendant) => ({
+                  id: `civilClaimant-${civilClaimant.id}-defendant-${defendant.id}`,
+                  title: defendant.name ?? '',
+                  checked: (civilClaimant.defendantIds ?? []).includes(
+                    defendant.id,
+                  ),
+                  onChange: () => handleDefendantToggle(defendant.id),
+                }))}
+              />
+              {isDefendantSelectionInvalid && (
+                <Text color="red600" variant="eyebrow" marginTop={2}>
+                  Veldu að minnsta kosti einn ákærða
+                </Text>
+              )}
             </Box>
           )}
         </BlueBox>

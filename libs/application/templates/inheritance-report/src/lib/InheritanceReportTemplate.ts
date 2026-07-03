@@ -1,9 +1,6 @@
-import set from 'lodash/set'
-import { assign } from 'xstate'
 import {
   coreHistoryMessages,
   pruneAfterDays,
-  getValueViaPath,
 } from '@island.is/application/core'
 import {
   ApplicationTemplate,
@@ -36,26 +33,50 @@ import {
   InheritanceReportFeatureFlags,
 } from './getApplicationFeatureFlags'
 import { CodeOwners } from '@island.is/shared/constants'
-import { getAssigneesNationalIdList } from './utils/getAssigneesNationalIdList'
-import { allPartiesHaveApproved } from './utils/allPartiesHaveApproved'
-import { nationalIdsMatch } from './utils/helpers'
-import { EstateMember, InheritanceReportExternalData } from '../types'
+import { InheritanceReportExternalData } from '../types'
 
 const configuration =
   ApplicationConfigurations[ApplicationTypes.INHERITANCE_REPORT]
 
-const isReviewEnabled = (context: ApplicationContext) => {
-  const externalData = context.application
-    .externalData as InheritanceReportExternalData
-  return externalData?.checkReviewFlag?.data?.reviewEnabled === true
-}
-
 const haveAllSignatoriesSigned = (context: ApplicationContext) => {
   const externalData = context.application
     .externalData as InheritanceReportExternalData
-  const signatories = externalData?.getSignatories?.data?.signatories || []
-  return signatories.length > 0 && signatories.every((s) => s.signed)
+  const signatoriesResult = externalData?.getSignatories?.data
+  // Only allow completion once the signatory list has been fetched
+  // successfully. A successful fetch with no signatories is a valid
+  // completion case — every() is vacuously true — so those applications
+  // don't get stuck in signing until they are pruned. A failed fetch
+  // (success falsy) keeps the application in signing so it retries.
+  if (!signatoriesResult?.success) {
+    return false
+  }
+  return (signatoriesResult.signatories ?? []).every((s) => s.signed)
 }
+
+const submitApplicationAndFetchSignatories = [
+  defineTemplateApi({
+    action: ApiActions.submitToSyslumenn,
+    throwOnError: true,
+    triggerEvent: DefaultEvents.SUBMIT,
+    order: 0,
+  }),
+  defineTemplateApi({
+    action: ApiActions.sendApplicationCopyToParties,
+    shouldPersistToExternalData: true,
+    externalDataId: 'sendApplicationCopyToParties',
+    throwOnError: false,
+    triggerEvent: DefaultEvents.SUBMIT,
+    order: 1,
+  }),
+  defineTemplateApi({
+    action: ApiActions.getSignatories,
+    shouldPersistToExternalData: true,
+    externalDataId: 'getSignatories',
+    throwOnError: false,
+    triggerEvent: DefaultEvents.SUBMIT,
+    order: 2,
+  }),
+]
 
 const InheritanceReportTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -137,15 +158,18 @@ const InheritanceReportTemplate: ApplicationTemplate<
           status: 'draft',
           progress: 0.15,
           lifecycle: pruneAfterDays(DRAFT_PRUNE_DAYS),
-          onEntry: defineTemplateApi({
-            action: ApiActions.checkReviewFlag,
-            shouldPersistToExternalData: true,
-            externalDataId: 'checkReviewFlag',
-            throwOnError: false,
-          }),
           actionCard: {
             displayPruneAt: true,
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationSent,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
           },
+          // Submit before resolving the SUBMIT target so cases with no
+          // required signatories skip the signing/status state entirely.
+          onExit: submitApplicationAndFetchSignatories,
           roles: [
             {
               id: Roles.ESTATE_INHERITANCE_APPLICANT,
@@ -183,144 +207,11 @@ const InheritanceReportTemplate: ApplicationTemplate<
         on: {
           SUBMIT: [
             {
-              target: States.inReview,
-              cond: isReviewEnabled,
-              actions: 'setApplicantAsApproved',
-            },
-            {
               target: States.done,
+              cond: haveAllSignatoriesSigned,
             },
+            { target: States.signing },
           ],
-        },
-      },
-      [States.inReview]: {
-        entry: 'assignEstateMembers',
-        exit: 'clearAssignees',
-        meta: {
-          name: 'InReview',
-          status: 'inprogress',
-          progress: 0.6,
-          lifecycle: pruneAfterDays(30),
-          onEntry: defineTemplateApi({
-            action: ApiActions.notifyAssignees,
-            shouldPersistToExternalData: true,
-            externalDataId: 'notifyAssignees',
-            throwOnError: false,
-          }),
-          onExit: defineTemplateApi({
-            action: ApiActions.approveByAssignee,
-            shouldPersistToExternalData: false,
-            throwOnError: true,
-            triggerEvent: DefaultEvents.APPROVE,
-          }),
-          actionCard: {
-            pendingAction: (application, role, nationalId) => {
-              if (role === Roles.ASSIGNEE) {
-                const heirs = getValueViaPath<EstateMember[]>(
-                  application.answers,
-                  'heirs.data',
-                  [],
-                )
-                const currentUserHeir = heirs?.find((heir) =>
-                  nationalIdsMatch(heir.nationalId, nationalId),
-                )
-
-                if (currentUserHeir?.approved) {
-                  return {
-                    title: m.assigneeApprovedTitle,
-                    content: m.assigneeApprovedDescription,
-                    displayStatus: 'success',
-                  }
-                }
-
-                return {
-                  title: m.assigneeInReviewInfoTitle,
-                  content: m.assigneeInReviewDescription,
-                  displayStatus: 'warning',
-                }
-              }
-              // Check if all parties have approved
-              const allApproved = allPartiesHaveApproved(application.answers)
-
-              if (allApproved) {
-                return {
-                  title: m.applicantInReviewTitleAllApproved,
-                  content: m.applicantInReviewDescriptionAllApproved,
-                  displayStatus: 'success',
-                }
-              }
-
-              return {
-                title: m.applicantInReviewTitle,
-                content: m.applicantInReviewDescription,
-                displayStatus: 'info',
-              }
-            },
-            historyLogs: [
-              {
-                logMessage: coreHistoryMessages.applicationSent,
-                onEvent: DefaultEvents.SUBMIT,
-              },
-            ],
-          },
-          roles: [
-            {
-              id: Roles.ESTATE_INHERITANCE_APPLICANT,
-              formLoader: () =>
-                import('../forms/inReview').then((val) =>
-                  Promise.resolve(val.applicantInReviewForm),
-                ),
-              actions: [
-                { event: DefaultEvents.EDIT, name: '', type: 'subtle' },
-                { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
-              ],
-              write: 'all',
-              read: 'all',
-            },
-            {
-              id: Roles.PREPAID_INHERITANCE_APPLICANT,
-              formLoader: () =>
-                import('../forms/inReview').then((val) =>
-                  Promise.resolve(val.applicantInReviewForm),
-                ),
-              actions: [
-                { event: DefaultEvents.EDIT, name: '', type: 'subtle' },
-                { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
-              ],
-              write: 'all',
-              read: 'all',
-            },
-            {
-              id: Roles.ASSIGNEE,
-              formLoader: () =>
-                import('../forms/inReview').then((val) =>
-                  Promise.resolve(val.assigneeInReviewForm),
-                ),
-              actions: [
-                { event: DefaultEvents.APPROVE, name: '', type: 'primary' },
-                { event: DefaultEvents.REJECT, name: '', type: 'reject' },
-              ],
-              write: 'all',
-              read: 'all',
-            },
-          ],
-        },
-        on: {
-          EDIT: {
-            target: States.draft,
-          },
-          // SUBMIT sends the application to signing. The applicant can do this
-          // directly without waiting for all heirs to approve; the
-          // irreversibility is acknowledged on the pre-signature screen.
-          SUBMIT: {
-            target: States.signing,
-          },
-          APPROVE: {
-            target: States.inReview,
-          },
-          REJECT: {
-            target: States.draft,
-          },
         },
       },
       [States.signing]: {
@@ -328,25 +219,42 @@ const InheritanceReportTemplate: ApplicationTemplate<
           name: 'Signing',
           status: 'inprogress',
           progress: 0.85,
-          lifecycle: pruneAfterDays(30),
-          onEntry: [
-            defineTemplateApi({
-              action: ApiActions.submitToSyslumenn,
-              throwOnError: true,
-              order: 0,
-            }),
-          ],
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 90 * 24 * 3600 * 1000, // 90 days
+          },
           actionCard: {
             pendingAction: (application) => {
-              // Check if all signatories have signed
               const externalData =
                 application.externalData as InheritanceReportExternalData
-              const signatories =
-                externalData?.getSignatories?.data?.signatories || []
+              const signatoriesResult = externalData?.getSignatories?.data
+              const signatories = signatoriesResult?.signatories ?? []
+
+              // Signatory list not yet fetched successfully (submission still
+              // processing or a transient syslumenn failure): show a pending
+              // "still working" state rather than a misleading confirmation.
+              if (!signatoriesResult?.success) {
+                return {
+                  title: m.signingPendingTitle,
+                  content: m.signingPendingDescription,
+                  displayStatus: 'info',
+                }
+              }
+
+              // Fetched successfully with no signatories: nothing to sign at
+              // syslumenn, show a neutral "submitted" confirmation.
+              if (signatories.length === 0) {
+                return {
+                  title: m.applicationSubmittedTitle,
+                  content: m.applicationSubmittedDescription,
+                  displayStatus: 'info',
+                }
+              }
 
               const allSigned = signatories.every((s) => s.signed)
 
-              if (allSigned && signatories.length > 0) {
+              if (allSigned) {
                 return {
                   title: m.signingCompleteTitle,
                   content: m.signingCompleteDescription,
@@ -360,73 +268,39 @@ const InheritanceReportTemplate: ApplicationTemplate<
                 displayStatus: 'info',
               }
             },
-            historyLogs: [
-              {
-                logMessage: coreHistoryMessages.applicationSent,
-                onEvent: DefaultEvents.SUBMIT,
-              },
-            ],
           },
           roles: [
-            {
-              id: Roles.ESTATE_INHERITANCE_APPLICANT,
-              formLoader: () =>
-                import('../forms/signing').then((val) =>
-                  Promise.resolve(val.signingForm),
-                ),
-              actions: [
-                { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
-              ],
-              write: 'all',
-              read: 'all',
-              api: [
-                defineTemplateApi({
-                  action: ApiActions.getSignatories,
-                  shouldPersistToExternalData: true,
-                  externalDataId: 'getSignatories',
-                }),
-              ],
-            },
-            {
-              id: Roles.PREPAID_INHERITANCE_APPLICANT,
-              formLoader: () =>
-                import('../forms/signing').then((val) =>
-                  Promise.resolve(val.signingForm),
-                ),
-              actions: [
-                { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
-              ],
-              write: 'all',
-              read: 'all',
-              api: [
-                defineTemplateApi({
-                  action: ApiActions.getSignatories,
-                  shouldPersistToExternalData: true,
-                  externalDataId: 'getSignatories',
-                }),
-              ],
-            },
-            {
-              id: Roles.ASSIGNEE,
-              formLoader: () =>
-                import('../forms/signing').then((val) =>
-                  Promise.resolve(val.signingForm),
-                ),
-              read: 'all',
-              write: {
-                externalData: ['getSignatories'],
+            Roles.ESTATE_INHERITANCE_APPLICANT,
+            Roles.PREPAID_INHERITANCE_APPLICANT,
+          ].map((roleId) => ({
+            id: roleId,
+            formLoader: () =>
+              import('../forms/signing').then((val) =>
+                Promise.resolve(val.signingForm),
+              ),
+            actions: [
+              {
+                event: DefaultEvents.SUBMIT,
+                name: '',
+                type: 'primary' as const,
               },
-              api: [
-                defineTemplateApi({
-                  action: ApiActions.getSignatories,
-                  shouldPersistToExternalData: true,
-                  externalDataId: 'getSignatories',
-                }),
-              ],
-            },
-          ],
+            ],
+            write: 'all' as const,
+            read: 'all' as const,
+            api: [
+              defineTemplateApi({
+                action: ApiActions.getSignatories,
+                shouldPersistToExternalData: true,
+                externalDataId: 'getSignatories',
+                throwOnError: false,
+              }),
+            ],
+          })),
         },
         on: {
+          // Finalize only once all parties have signed at syslumenn. The signing
+          // form only surfaces the finish button when this condition is met,
+          // so this acts as an auto-completion on the applicant's next visit.
           SUBMIT: {
             target: States.done,
             cond: haveAllSignatoriesSigned,
@@ -436,134 +310,36 @@ const InheritanceReportTemplate: ApplicationTemplate<
       [States.done]: {
         meta: {
           name: 'Done',
-          status: 'approved',
+          status: 'completed',
           progress: 1,
           lifecycle: pruneAfterDays(60),
           actionCard: {
             displayPruneAt: true,
           },
-          onEntry: defineTemplateApi({
-            action: ApiActions.completeApplication,
-            throwOnError: true,
-          }),
           roles: [
-            {
-              id: Roles.ESTATE_INHERITANCE_APPLICANT,
-              formLoader: () =>
-                import('../forms/done').then((val) =>
-                  Promise.resolve(val.done),
-                ),
-              read: 'all',
-            },
-            {
-              id: Roles.PREPAID_INHERITANCE_APPLICANT,
-              formLoader: () =>
-                import('../forms/done').then((val) =>
-                  Promise.resolve(val.done),
-                ),
-              read: 'all',
-            },
-          ],
+            Roles.ESTATE_INHERITANCE_APPLICANT,
+            Roles.PREPAID_INHERITANCE_APPLICANT,
+          ].map((roleId) => ({
+            id: roleId,
+            formLoader: () =>
+              import('../forms/done').then((val) => Promise.resolve(val.done)),
+            read: 'all' as const,
+          })),
         },
       },
-    },
-  },
-  stateMachineOptions: {
-    actions: {
-      assignEstateMembers: assign((context) => {
-        const { application } = context
-        const assigneesNationalIds = getAssigneesNationalIdList(application)
-
-        if (assigneesNationalIds && assigneesNationalIds.length > 0) {
-          set(application, 'assignees', assigneesNationalIds)
-        }
-
-        return context
-      }),
-      clearAssignees: assign((context, event) => {
-        // Only clear assignees when the applicant chooses to edit.
-        // A rejection also returns to draft, but assignees must keep visibility
-        // so they can see the application status after acting on it.
-        // Keep assignees when progressing forward (SUBMIT) or staying in review (APPROVE)
-        const shouldClearAssignees = event.type === DefaultEvents.EDIT
-
-        if (!shouldClearAssignees) {
-          return context
-        }
-
-        const { application } = context
-        set(application, 'assignees', [])
-        return context
-      }),
-      setApplicantAsApproved: assign((context) => {
-        const { application } = context
-        const heirs = getValueViaPath<EstateMember[]>(
-          application.answers,
-          'heirs.data',
-          [],
-        )
-        const applicantNationalId = application.applicant
-
-        if (heirs && heirs.length > 0) {
-          const updatedHeirs = heirs.map((heir) => {
-            if (nationalIdsMatch(heir.nationalId, applicantNationalId)) {
-              return {
-                ...heir,
-                approved: true,
-                approvedDate: new Date().toISOString(),
-              }
-            }
-            return heir
-          })
-          set(application.answers, 'heirs.data', updatedHeirs)
-        }
-        return context
-      }),
     },
   },
   mapUserToRole(
     nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    const { applicant, assignees } = application
+    const { applicant } = application
 
     if (applicant === nationalId) {
       if (application.answers.applicationFor === PREPAID_INHERITANCE) {
         return Roles.PREPAID_INHERITANCE_APPLICANT
       }
       return Roles.ESTATE_INHERITANCE_APPLICANT
-    }
-
-    // Only assign ASSIGNEE role when review feature flag is enabled
-    const externalData =
-      application.externalData as InheritanceReportExternalData
-    const reviewEnabled =
-      externalData?.checkReviewFlag?.data?.reviewEnabled === true
-
-    if (reviewEnabled) {
-      // Check if user is in assignees (for pending approvals)
-      if (assignees && assignees.includes(nationalId)) {
-        return Roles.ASSIGNEE
-      }
-
-      // Check if user is a heir in the application (including approved heirs)
-      const heirs = getValueViaPath<EstateMember[]>(
-        application.answers,
-        'heirs.data',
-        [],
-      )
-      const isHeir =
-        heirs &&
-        heirs.some(
-          (heir) =>
-            nationalIdsMatch(heir.nationalId, nationalId) &&
-            heir.enabled !== false &&
-            !nationalIdsMatch(heir.nationalId, applicant),
-        )
-
-      if (isHeir) {
-        return Roles.ASSIGNEE
-      }
     }
 
     return undefined

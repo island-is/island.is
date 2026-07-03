@@ -8,6 +8,7 @@ import { StackScreen } from '@/components/stack-screen'
 
 import { LoadingIcon } from '@/components/nav-loading-spinner/loading-icon'
 import { Pressable } from '@/components/pressable/pressable'
+import { toast, ToastHost } from '@/components/toast'
 import {
   GetDocumentDocument,
   useDocumentReplyMutation,
@@ -97,6 +98,15 @@ export default function DocumentReplyScreen() {
         if (data.documentsV2Reply?.id) {
           setMessage('')
           router.back()
+        } else {
+          toast.error(
+            intl.formatMessage({ id: 'documentReply.sendMessageError' }),
+            {
+              message: intl.formatMessage({
+                id: 'documentReply.pleaseTryAgain',
+              }),
+            },
+          )
         }
       },
     })
@@ -136,11 +146,10 @@ export default function DocumentReplyScreen() {
       <StackScreen
         networkStatus={networkStatus}
         closeable
-        options={{
-          title: subject,
-        }}
+        options={{ title: '' }}
       />
       <Host>
+        <ToastHost />
         {loading ? (
           <LoadingIcon />
         ) : error ? (
@@ -151,6 +160,11 @@ export default function DocumentReplyScreen() {
             keyboardShouldPersistTaps="handled"
           >
             <KeyboardAvoidingView behavior="padding">
+              <HeaderTitle>
+                <Typography variant="heading5" numberOfLines={2}>
+                  {subject}
+                </Typography>
+              </HeaderTitle>
               <Row>
                 <Typography
                   variant="body3"
@@ -206,6 +220,8 @@ export default function DocumentReplyScreen() {
                   })}
                   autoFocus
                   multiline
+                  numberOfLines={3}
+                  inputStyle={{ minHeight: 60 }}
                 />
               </Row>
             </KeyboardAvoidingView>

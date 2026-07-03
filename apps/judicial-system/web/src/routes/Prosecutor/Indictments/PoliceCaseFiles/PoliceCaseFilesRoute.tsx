@@ -91,7 +91,7 @@ const PoliceUploadListMemo: FC<PoliceUploadListMenuProps> = memo(
       digitalCaseFilesLoading,
       digitalCaseFilesError,
       deletePoliceDigitalCaseFile,
-    } = usePoliceDigitalCaseFile(caseId, caseOrigin)
+    } = usePoliceDigitalCaseFile()
 
     const [policeCaseFilesData, setPoliceCaseFiles] =
       useState<PoliceCaseFilesData>()
@@ -214,7 +214,9 @@ const PoliceUploadListMemo: FC<PoliceUploadListMenuProps> = memo(
                     policeCaseFilesData?.files?.filter(
                       (file) => file.policeCaseNumber === policeCaseNumber,
                     ) ?? [],
-                  isLoading: !!policeCaseFilesData?.isLoading,
+                  isLoading:
+                    policeCaseFilesData?.isLoading ??
+                    caseOrigin === CaseOrigin.LOKE,
                   hasError: !!policeCaseFilesData?.hasError,
                   errorCode: policeCaseFilesData?.errorCode,
                 }}

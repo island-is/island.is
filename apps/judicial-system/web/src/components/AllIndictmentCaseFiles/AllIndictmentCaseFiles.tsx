@@ -9,9 +9,13 @@ import IndictmentCaseFilesList from '../IndictmentCaseFilesList/IndictmentCaseFi
 
 interface Props {
   displayGeneratedPDFs?: boolean
+  forceDisplayAdditionalFiles?: boolean
 }
 
-const AllIndictmentCaseFiles: FC<Props> = ({ displayGeneratedPDFs }) => {
+const AllIndictmentCaseFiles: FC<Props> = ({
+  displayGeneratedPDFs,
+  forceDisplayAdditionalFiles,
+}) => {
   const { workingCase } = useContext(FormContext)
 
   const hasMergeCases =
@@ -37,6 +41,7 @@ const AllIndictmentCaseFiles: FC<Props> = ({ displayGeneratedPDFs }) => {
         <IndictmentCaseFilesList
           workingCase={workingCase}
           displayGeneratedPDFs={displayGeneratedPDFs}
+          forceDisplayAdditionalFiles={forceDisplayAdditionalFiles}
         />
       </Box>
     </>

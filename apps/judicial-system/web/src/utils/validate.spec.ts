@@ -1,4 +1,148 @@
-import { validate } from './validate'
+import {
+  AppealDecisionPartyRole,
+  Case,
+  CaseAppealDecision,
+  CourtSessionResponse,
+  IndictmentCount,
+  IndictmentCountOffense,
+  IndictmentSubtype,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+
+import {
+  areAppealDecisionsComplete,
+  getIndictmentCountWarningMessage,
+  isIndictmentCountComplete,
+  validate,
+} from './validate'
+
+const POLICE_CASE_NUMBER = '012-3456-7890'
+
+const createWorkingCase = (
+  indictmentSubtypes: Record<string, IndictmentSubtype[]>,
+): Case =>
+  ({
+    indictmentSubtypes,
+  } as Case)
+
+describe('isIndictmentCountComplete', () => {
+  test('returns true for a complete non-traffic count', () => {
+    const workingCase = createWorkingCase({
+      [POLICE_CASE_NUMBER]: [IndictmentSubtype.THEFT],
+    })
+    const indictmentCount = {
+      policeCaseNumber: POLICE_CASE_NUMBER,
+      incidentDescription: 'Incident description',
+      legalArguments: 'Legal arguments',
+    } as IndictmentCount
+
+    expect(isIndictmentCountComplete(indictmentCount, workingCase)).toBe(true)
+  })
+
+  test('returns false for an incomplete non-traffic count missing incidentDescription', () => {
+    const workingCase = createWorkingCase({
+      [POLICE_CASE_NUMBER]: [IndictmentSubtype.THEFT],
+    })
+    const indictmentCount = {
+      policeCaseNumber: POLICE_CASE_NUMBER,
+      legalArguments: 'Legal arguments',
+    } as IndictmentCount
+
+    expect(isIndictmentCountComplete(indictmentCount, workingCase)).toBe(false)
+  })
+
+  test('returns true for a complete traffic count', () => {
+    const workingCase = createWorkingCase({
+      [POLICE_CASE_NUMBER]: [IndictmentSubtype.TRAFFIC_VIOLATION],
+    })
+    const indictmentCount = {
+      policeCaseNumber: POLICE_CASE_NUMBER,
+      vehicleRegistrationNumber: 'ABC123',
+      lawsBroken: [[1]],
+      incidentDescription: 'Incident description',
+      legalArguments: 'Legal arguments',
+      offenses: [{ offense: IndictmentCountOffense.DRUNK_DRIVING }],
+    } as IndictmentCount
+
+    expect(isIndictmentCountComplete(indictmentCount, workingCase)).toBe(true)
+  })
+
+  test('returns false for an incomplete traffic count missing vehicleRegistrationNumber', () => {
+    const workingCase = createWorkingCase({
+      [POLICE_CASE_NUMBER]: [IndictmentSubtype.TRAFFIC_VIOLATION],
+    })
+    const indictmentCount = {
+      policeCaseNumber: POLICE_CASE_NUMBER,
+      lawsBroken: [[1]],
+      incidentDescription: 'Incident description',
+      legalArguments: 'Legal arguments',
+      offenses: [{ offense: IndictmentCountOffense.DRUNK_DRIVING }],
+    } as IndictmentCount
+
+    expect(isIndictmentCountComplete(indictmentCount, workingCase)).toBe(false)
+  })
+})
+
+describe('getIndictmentCountWarningMessage', () => {
+  test('returns first missing field for non-traffic count', () => {
+    const workingCase = createWorkingCase({
+      [POLICE_CASE_NUMBER]: [IndictmentSubtype.THEFT],
+    })
+    const indictmentCount = {
+      policeCaseNumber: POLICE_CASE_NUMBER,
+      legalArguments: 'Legal arguments',
+    } as IndictmentCount
+
+    expect(getIndictmentCountWarningMessage(indictmentCount, workingCase)).toBe(
+      'Vantar atvikalýsingu',
+    )
+  })
+
+  test('returns legal arguments when incident description is filled', () => {
+    const workingCase = createWorkingCase({
+      [POLICE_CASE_NUMBER]: [IndictmentSubtype.THEFT],
+    })
+    const indictmentCount = {
+      policeCaseNumber: POLICE_CASE_NUMBER,
+      incidentDescription: 'Incident description',
+    } as IndictmentCount
+
+    expect(getIndictmentCountWarningMessage(indictmentCount, workingCase)).toBe(
+      'Vantar heimfærslu',
+    )
+  })
+
+  test('returns first missing field for traffic count', () => {
+    const workingCase = createWorkingCase({
+      [POLICE_CASE_NUMBER]: [IndictmentSubtype.TRAFFIC_VIOLATION],
+    })
+    const indictmentCount = {
+      policeCaseNumber: POLICE_CASE_NUMBER,
+      lawsBroken: [[1]],
+      incidentDescription: 'Incident description',
+      legalArguments: 'Legal arguments',
+      offenses: [{ offense: IndictmentCountOffense.DRUNK_DRIVING }],
+    } as IndictmentCount
+
+    expect(getIndictmentCountWarningMessage(indictmentCount, workingCase)).toBe(
+      'Vantar skráningarnúmer ökutækis',
+    )
+  })
+
+  test('returns undefined for a complete count', () => {
+    const workingCase = createWorkingCase({
+      [POLICE_CASE_NUMBER]: [IndictmentSubtype.THEFT],
+    })
+    const indictmentCount = {
+      policeCaseNumber: POLICE_CASE_NUMBER,
+      incidentDescription: 'Incident description',
+      legalArguments: 'Legal arguments',
+    } as IndictmentCount
+
+    expect(
+      getIndictmentCountWarningMessage(indictmentCount, workingCase),
+    ).toBeUndefined()
+  })
+})
 
 describe('Validate police casenumber format', () => {
   test('should fail if not in correct form', () => {
@@ -270,4 +414,82 @@ describe('Validate court case number', () => {
       expect(result.errorMessage).toEqual('Dæmi: S-1234/2020')
     },
   )
+})
+
+describe('areAppealDecisionsComplete', () => {
+  const rulingFileId = 'ruling-file-id'
+  const courtSession = { rulingFileId } as CourtSessionResponse
+
+  const decisionFor = (
+    party: {
+      partyRole: AppealDecisionPartyRole
+      defendantId?: string
+      civilClaimantId?: string
+    },
+    decision: CaseAppealDecision | null = CaseAppealDecision.ACCEPT,
+  ) => ({ rulingFileId, decision, ...party })
+
+  const baseCase = {
+    defendants: [{ id: 'd1' }],
+    civilClaimants: [{ id: 'c1' }],
+  } as Case
+
+  it('is true when every party has a decision', () => {
+    const workingCase = {
+      ...baseCase,
+      appealDecisions: [
+        decisionFor({ partyRole: AppealDecisionPartyRole.PROSECUTOR }),
+        decisionFor({
+          partyRole: AppealDecisionPartyRole.DEFENDANT,
+          defendantId: 'd1',
+        }),
+        decisionFor({
+          partyRole: AppealDecisionPartyRole.CIVIL_CLAIMANT,
+          civilClaimantId: 'c1',
+        }),
+      ],
+    } as Case
+
+    expect(areAppealDecisionsComplete(courtSession, workingCase)).toBe(true)
+  })
+
+  it('is false when a defendant has no decision', () => {
+    const workingCase = {
+      ...baseCase,
+      appealDecisions: [
+        decisionFor({ partyRole: AppealDecisionPartyRole.PROSECUTOR }),
+        decisionFor({
+          partyRole: AppealDecisionPartyRole.CIVIL_CLAIMANT,
+          civilClaimantId: 'c1',
+        }),
+      ],
+    } as Case
+
+    expect(areAppealDecisionsComplete(courtSession, workingCase)).toBe(false)
+  })
+
+  it('is false when a party has an announcement but no decision', () => {
+    const workingCase = {
+      ...baseCase,
+      appealDecisions: [
+        decisionFor({ partyRole: AppealDecisionPartyRole.PROSECUTOR }, null),
+        decisionFor({
+          partyRole: AppealDecisionPartyRole.DEFENDANT,
+          defendantId: 'd1',
+        }),
+        decisionFor({
+          partyRole: AppealDecisionPartyRole.CIVIL_CLAIMANT,
+          civilClaimantId: 'c1',
+        }),
+      ],
+    } as Case
+
+    expect(areAppealDecisionsComplete(courtSession, workingCase)).toBe(false)
+  })
+
+  it('is false when the session has no ruling file', () => {
+    expect(
+      areAppealDecisionsComplete({} as CourtSessionResponse, baseCase),
+    ).toBe(false)
+  })
 })

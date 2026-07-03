@@ -51,7 +51,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/utils'
 
 const AppealToCourtOfAppeals = () => {
-  const { workingCase } = useContext(FormContext)
+  const { workingCase, refreshCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
@@ -69,6 +69,13 @@ const AppealToCourtOfAppeals = () => {
     removeUploadFile,
     updateUploadFile,
   } = useUploadFiles(workingCase.caseFiles)
+
+  const appealBriefType = !isDefenceUser(user)
+    ? CaseFileCategory.PROSECUTOR_APPEAL_BRIEF
+    : CaseFileCategory.DEFENDANT_APPEAL_BRIEF
+  const appealCaseFilesType = !isDefenceUser(user)
+    ? CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE
+    : CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE
   const { handleUpload, handleRemove } = useS3Upload(
     workingCase.id,
     defendantId,
@@ -80,12 +87,6 @@ const AppealToCourtOfAppeals = () => {
   })
   const { createAppealCase, isCreatingAppealCase } = useAppealCase()
 
-  const appealBriefType = !isDefenceUser(user)
-    ? CaseFileCategory.PROSECUTOR_APPEAL_BRIEF
-    : CaseFileCategory.DEFENDANT_APPEAL_BRIEF
-  const appealCaseFilesType = !isDefenceUser(user)
-    ? CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE
-    : CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE
   const previousUrl = `${
     isDefenceUser(user)
       ? isIndictmentCase(workingCase.type)
@@ -115,9 +116,9 @@ const AppealToCourtOfAppeals = () => {
     }
   }, [
     handleUpload,
-    createAppealCase,
-    updateUploadFile,
     uploadFiles,
+    updateUploadFile,
+    createAppealCase,
     workingCase.id,
     rulingFileId,
   ])
@@ -244,7 +245,10 @@ const AppealToCourtOfAppeals = () => {
           text="Tilkynning um móttöku kæru verður send á aðila máls."
           secondaryButton={{
             text: formatMessage(core.closeModal),
-            onClick: () => router.push(previousUrl),
+            onClick: () => {
+              refreshCase()
+              router.push(previousUrl)
+            },
           }}
         />
       )}

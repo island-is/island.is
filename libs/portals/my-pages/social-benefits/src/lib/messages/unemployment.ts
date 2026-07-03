@@ -200,6 +200,10 @@ export const unemploymentBenefitsMessages = defineMessages({
     id: 'sp.social-benefits-unemployment:myDataSubmittedAttachmentsHeading',
     defaultMessage: 'Gögn sem þú hefur skilað',
   },
+  myDataLettersHeading: {
+    id: 'sp.social-benefits-unemployment:myDataLettersHeading',
+    defaultMessage: 'Bréf frá Vinnumálastofnun',
+  },
   myDataMissingTag: {
     id: 'sp.social-benefits-unemployment:myDataMissingTag',
     defaultMessage: 'Vantar gögn',
@@ -216,6 +220,10 @@ export const unemploymentBenefitsMessages = defineMessages({
   myDataViewDocument: {
     id: 'sp.social-benefits-unemployment:myDataViewDocument',
     defaultMessage: 'Skoða',
+  },
+  myDataDownloadDocument: {
+    id: 'sp.social-benefits-unemployment:myDataDownloadDocument',
+    defaultMessage: 'Sækja',
   },
   myDataAttachmentError: {
     id: 'sp.social-benefits-unemployment:myDataAttachmentError',
