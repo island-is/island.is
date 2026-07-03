@@ -106,7 +106,12 @@ const AdvancedLicenseSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       }
       return [true, null]
     })
-  }, [setBeforeSubmitCallback, selectedLicenses, canSelectSomething, formatMessage])
+  }, [
+    setBeforeSubmitCallback,
+    selectedLicenses,
+    canSelectSomething,
+    formatMessage,
+  ])
 
   return (
     <Box className={styles.root}>
