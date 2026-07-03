@@ -245,3 +245,42 @@ export const userIsAppellant = (
     return false
   })
 }
+
+// The national ids of the *current* representatives (defender / spokesperson) of
+// the defence parties that appealed, taken from the APPEALED event log. Used to
+// exclude the appellant from appeal notifications - the same "don't notify who
+// just appealed" rule as before, but resolved to the current representative
+// rather than a frozen national id, and covering every appellant when several
+// parties appealed in court.
+export const appellantRepresentativeNationalIds = (
+  theCase: Case,
+  appealCase: AppealCase,
+): Set<string> => {
+  const nationalIds = new Set<string>()
+
+  for (const eventLog of appealCase.appealEventLogs ?? []) {
+    if (eventLog.eventType !== AppealEventType.APPEALED) {
+      continue
+    }
+
+    if (eventLog.defendantId) {
+      const defendant = theCase.defendants?.find(
+        (d) => d.id === eventLog.defendantId,
+      )
+      if (defendant?.defenderNationalId) {
+        nationalIds.add(defendant.defenderNationalId)
+      }
+    }
+
+    if (eventLog.civilClaimantId) {
+      const civilClaimant = theCase.civilClaimants?.find(
+        (c) => c.id === eventLog.civilClaimantId,
+      )
+      if (civilClaimant?.spokespersonNationalId) {
+        nationalIds.add(civilClaimant.spokespersonNationalId)
+      }
+    }
+  }
+
+  return nationalIds
+}

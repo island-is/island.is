@@ -6,7 +6,10 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { AppealCase, AppealEventLog, Case, User } from '../../repository'
-import { userIsAppellant } from '../appealCase.helpers'
+import {
+  appellantRepresentativeNationalIds,
+  userIsAppellant,
+} from '../appealCase.helpers'
 
 const appealed = (fields: Partial<AppealEventLog> = {}): AppealEventLog =>
   ({ eventType: AppealEventType.APPEALED, ...fields } as AppealEventLog)
@@ -164,5 +167,65 @@ describe('userIsAppellant', () => {
         false,
       )
     })
+  })
+})
+
+describe('appellantRepresentativeNationalIds', () => {
+  it('resolves to the current defender of the appellant defendant (survives a swap)', () => {
+    const theCase = {
+      type: CaseType.INDICTMENT,
+      // defendant appealed via an earlier defender, now represented by a new one
+      defendants: [{ id: 'defendant-id', defenderNationalId: 'new-defender' }],
+    } as Case
+    const appealCase = appealCaseWith([
+      appealed({ userRole: UserRole.DEFENDER, defendantId: 'defendant-id' }),
+    ])
+
+    expect([
+      ...appellantRepresentativeNationalIds(theCase, appealCase),
+    ]).toEqual(['new-defender'])
+  })
+
+  it('resolves to the current spokesperson of the appellant civil claimant', () => {
+    const theCase = {
+      type: CaseType.INDICTMENT,
+      civilClaimants: [
+        { id: 'claimant-id', spokespersonNationalId: 'spokesperson' },
+      ],
+    } as Case
+    const appealCase = appealCaseWith([
+      appealed({ userRole: UserRole.DEFENDER, civilClaimantId: 'claimant-id' }),
+    ])
+
+    expect([
+      ...appellantRepresentativeNationalIds(theCase, appealCase),
+    ]).toEqual(['spokesperson'])
+  })
+
+  it('is empty for a prosecution appeal (no defence party on the event)', () => {
+    const theCase = { type: CaseType.INDICTMENT, defendants: [] } as Case
+    const appealCase = appealCaseWith([
+      appealed({ userRole: UserRole.PROSECUTOR }),
+    ])
+
+    expect(appellantRepresentativeNationalIds(theCase, appealCase).size).toBe(0)
+  })
+
+  it('collects every appellant when several parties appealed', () => {
+    const theCase = {
+      type: CaseType.INDICTMENT,
+      defendants: [
+        { id: 'd1', defenderNationalId: 'defender-1' },
+        { id: 'd2', defenderNationalId: 'defender-2' },
+      ],
+    } as Case
+    const appealCase = appealCaseWith([
+      appealed({ userRole: UserRole.DEFENDER, defendantId: 'd1' }),
+      appealed({ userRole: UserRole.DEFENDER, defendantId: 'd2' }),
+    ])
+
+    expect(
+      [...appellantRepresentativeNationalIds(theCase, appealCase)].sort(),
+    ).toEqual(['defender-1', 'defender-2'])
   })
 })
