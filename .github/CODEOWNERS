@@ -22,6 +22,7 @@
 
 # Subfolders containing application templates and template-api-modules
 /libs/application/templates/aosh/                                                                                            @island-is/norda
+/libs/application/templates/driving-license-additional/                                                                      @island-is/juni
 /libs/application/templates/examples/                                                                                        @island-is/norda
 /libs/application/templates/family-matters/                                                                                  @island-is/norda
 /libs/application/templates/hms/                                                                                             @island-is/norda
@@ -40,6 +41,7 @@
 /libs/application/template-api-modules/src/lib/modules/templates/signature-collection/                                       @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/transport-authority/                                        @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/vmst/                                                       @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/driving-license-additional/                                 @island-is/juni
 
 /*                                                                                                                           @island-is/core
 /libs/api/domains/identity/                                                                                                  @island-is/core
