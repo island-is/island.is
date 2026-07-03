@@ -143,4 +143,5 @@ export { default as RulingModifiedAlert } from './Alerts/RulingModifiedAlert/Rul
 export { default as AppealRulingModifiedAlert } from './Alerts/AppealRulingModifiedAlert/AppealRulingModifiedAlert'
 export { default as ChangeProsecutorModal } from './Modals/ChangeProsecutorModal/ChangeProsecutorModal'
 export { default as HtmlContent } from './HtmlContent/HtmlContent'
+export { default as DuplicateIndictmentModal } from './Modals/DuplicateIndictmentModal/DuplicateIndictmentModal'
 export { default as TinyMCE } from './TinyMCE/TinyMCE'
