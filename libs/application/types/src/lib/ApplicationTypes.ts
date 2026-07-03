@@ -40,7 +40,7 @@ export enum ApplicationTypes {
   OPERATING_LICENSE = 'OperatingLicense',
   ESTATE = 'Estate',
   DRIVING_LICENSE_DUPLICATE = 'DrivingLicenseDuplicate',
-  ADDITIONAL_DRIVING_LICENSE = 'AdditionalDrivingLicense',
+  DRIVING_LICENSE_ADDITIONAL = 'DrivingLicenseAdditional',
   ANONYMITY_IN_VEHICLE_REGISTRY = 'AnonymityInVehicleRegistry',
   CHANGE_CO_OWNER_OF_VEHICLE = 'ChangeCoOwnerOfVehicle',
   CHANGE_OPERATOR_OF_VEHICLE = 'ChangeOperatorOfVehicle',
@@ -271,9 +271,9 @@ export const ApplicationConfigurations = {
     slug: 'samrit',
     translation: ['dld.application', 'uiForms.application'],
   },
-  [ApplicationTypes.ADDITIONAL_DRIVING_LICENSE]: {
+  [ApplicationTypes.DRIVING_LICENSE_ADDITIONAL]: {
     slug: 'aukin-okurettindi',
-    translation: 'adl.application',
+    translation: 'dla.application',
   },
   [ApplicationTypes.ANONYMITY_IN_VEHICLE_REGISTRY]: {
     slug: 'nafnleynd-i-okutaekjaskra',

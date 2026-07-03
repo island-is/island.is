@@ -11,12 +11,12 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
-export class AdditionalDrivingLicenseService extends BaseTemplateApiService {
+export class DrivingLicenseAdditionalService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {
-    super(ApplicationTypes.ADDITIONAL_DRIVING_LICENSE)
+    super(ApplicationTypes.DRIVING_LICENSE_ADDITIONAL)
   }
 
   /**
@@ -54,7 +54,7 @@ export class AdditionalDrivingLicenseService extends BaseTemplateApiService {
 
     if (!isPayment?.fulfilled) {
       this.logger.error(
-        '[additional-driving-license] reached DONE with unfulfilled payment',
+        '[driving-license-additional] reached DONE with unfulfilled payment',
         { applicationId: application.id },
       )
       throw new TemplateApiError(
@@ -74,7 +74,7 @@ export class AdditionalDrivingLicenseService extends BaseTemplateApiService {
     )
     if (useFakeData === YES) {
       this.logger.info(
-        '[additional-driving-license] fake data — skipping RLS submission',
+        '[driving-license-additional] fake data — skipping RLS submission',
       )
       return { success: true }
     }
@@ -83,7 +83,7 @@ export class AdditionalDrivingLicenseService extends BaseTemplateApiService {
     // Guarded by `readyForProduction: false` on the template, so no real
     // applicant reaches this today.
     this.logger.error(
-      '[additional-driving-license] RLS submission not implemented',
+      '[driving-license-additional] RLS submission not implemented',
       { applicationFor: getValueViaPath(answers, 'applicationFor') },
     )
     throw new TemplateApiError(

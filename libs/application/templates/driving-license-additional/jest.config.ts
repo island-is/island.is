@@ -1,5 +1,5 @@
 export default {
-  displayName: 'additional-driving-license',
+  displayName: 'driving-license-additional',
   preset: '../../../../jest.preset.js',
   transform: {
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',
@@ -7,5 +7,5 @@ export default {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
-    '../../../../coverage/libs/application/templates/additional-driving-license',
+    '../../../../coverage/libs/application/templates/driving-license-additional',
 }

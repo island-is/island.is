@@ -46,7 +46,7 @@ const template: ApplicationTemplate<
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.ADDITIONAL_DRIVING_LICENSE,
+  type: ApplicationTypes.DRIVING_LICENSE_ADDITIONAL,
   readyForProduction: false,
   name: (application) =>
     application.answers.applicationFor === BE
@@ -57,7 +57,7 @@ const template: ApplicationTemplate<
   codeOwner: CodeOwners.Juni,
   institution: m.nationalCommissionerOfPolice,
   translationNamespaces: [
-    ApplicationConfigurations.AdditionalDrivingLicense.translation,
+    ApplicationConfigurations.DrivingLicenseAdditional.translation,
   ],
   dataSchema,
   stateMachineConfig: {

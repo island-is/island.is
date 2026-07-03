@@ -1,6 +1,6 @@
-# additional-driving-license
+# driving-license-additional
 
-This template for an application was generated with the `nx generate-template additional-driving-license` command.
+This template for an application was generated with the `nx generate-template driving-license-additional` command.
 
 Write documentation here.
 
@@ -12,4 +12,4 @@ Write documentation here.
 
 ## Running unit tests
 
-Run `nx test additional-driving-license` to execute the unit tests via [Jest](https://jestjs.io).
+Run `nx test driving-license-additional` to execute the unit tests via [Jest](https://jestjs.io).

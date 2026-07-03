@@ -216,7 +216,7 @@ export const institutionMapper = {
     slug: InstitutionTypes.RIKISLOGREGLUSTJORI,
     contentfulId: InstitutionContentfulIds.RIKISLOGREGLUSTJORI,
   },
-  [ApplicationTypes.ADDITIONAL_DRIVING_LICENSE]: {
+  [ApplicationTypes.DRIVING_LICENSE_ADDITIONAL]: {
     nationalId: InstitutionNationalIds.RIKISLOGREGLUSTJORI,
     slug: InstitutionTypes.RIKISLOGREGLUSTJORI,
     contentfulId: InstitutionContentfulIds.RIKISLOGREGLUSTJORI,

@@ -112,9 +112,8 @@ export const m = defineMessages({
   },
   pickupLocationDescription: {
     id: 'dl.application:pickupLocationDescription',
-    defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.',
-    description: 'location for pickup',
+    defaultMessage: 'Veldu þá afhendingu sem þú vilt fá fyrir ökuskírteinið.',
+    description: 'Choose the delivery method for your driving license',
   },
   deliveryMethodHeader: {
     id: 'dl.application:deliveryMethodHeader',
