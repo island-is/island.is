@@ -28,6 +28,12 @@ export const ruling = {
         description:
           'Notaður sem sjálfgefinn texti í málsatvik textaboxi á úrskurðar skrefi í öllum málstegundum.',
       },
+      prefillPrefix: {
+        id: 'judicial.system.core:ruling.sections.court_case_facts.prefill_prefix',
+        defaultMessage: 'Í greinargerð sóknaraðila er atvikum lýst svo:',
+        description:
+          'Notaður sem forskeyti í málsatvik textaboxi á úrskurðar skrefi í öllum málstegundum.',
+      },
     }),
     courtLegalArguments: defineMessages({
       prefill: {

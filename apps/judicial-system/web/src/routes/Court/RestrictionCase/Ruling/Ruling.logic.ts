@@ -21,9 +21,7 @@ export const getCourtCaseFactsPrefill = (
     return undefined
   }
 
-  const prefix = formatMessage(ruling.sections.courtCaseFacts.prefill, {
-    caseFacts: '',
-  }).trimEnd()
+  const prefix = formatMessage(ruling.sections.courtCaseFacts.prefillPrefix)
 
   return `<p>${prefix}</p>${caseFacts}`
 }

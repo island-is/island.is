@@ -8,6 +8,7 @@ import {
   AccordionItem,
   Box,
   Input,
+  SkeletonLoader,
   Text,
   Tooltip,
 } from '@island.is/island-ui/core'
@@ -349,7 +350,7 @@ export const Ruling = () => {
             </Text>
           </Box>
           <Box marginBottom={5}>
-            {courtCaseFactsEditorReady && (
+            {courtCaseFactsEditorReady ? (
               <TinyMCE
                 key={`${workingCase.id}-courtCaseFacts`}
                 data-testid="courtCaseFacts"
@@ -365,6 +366,8 @@ export const Ruling = () => {
                 }
                 required
               />
+            ) : (
+              <SkeletonLoader display="block" height={450} />
             )}
           </Box>
         </Box>
