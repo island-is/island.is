@@ -1,5 +1,6 @@
 import {
   buildCustomField,
+  buildDescriptionField,
   buildMultiField,
   buildSection,
   buildSubSection,
@@ -20,6 +21,10 @@ export const skyrslaSection = buildSection({
           title: messages.report.dataEntry.title,
           description: messages.report.dataEntry.intro,
           children: [
+            // buildDescriptionField({
+            //   id: 'dataEntryDescription',
+            //   description: messages.report.dataEntry.instructions,
+            // }),
             buildCustomField({
               id: 'dataEntry.excelTemplateDownload',
               component: 'ExcelTemplateDownload',

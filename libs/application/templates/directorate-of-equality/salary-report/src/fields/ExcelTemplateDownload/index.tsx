@@ -5,10 +5,10 @@ import {
 } from '@island.is/application/graphql'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
+  ActionCard,
   AlertMessage,
   Box,
   Button,
-  LoadingDots,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useMutation } from '@apollo/client'
@@ -24,7 +24,7 @@ import { messages } from '../../lib/messages'
 
 export const ExcelTemplateDownload: FC<
   React.PropsWithChildren<FieldBaseProps>
-> = ({ application }) => {
+> = ({ application, goToScreen }) => {
   const { formatMessage, lang: locale } = useLocale()
   const { setValue } = useFormContext()
   const [isImporting, setIsImporting] = useState(false)
@@ -238,17 +238,36 @@ export const ExcelTemplateDownload: FC<
 
   return (
     <Box>
-      <Box display="flex" columnGap={3} alignItems="center">
-        {base64Template && (
+      {base64Template && (
+        <Box display="flex" justifyContent="flexEnd" marginBottom={3}>
           <Button
             variant="utility"
-            icon="document"
+            icon="download"
             iconType="outline"
             onClick={handleDownload}
           >
             {formatMessage(messages.report.dataEntry.downloadTemplateButton)}
           </Button>
-        )}
+        </Box>
+      )}
+
+      <Box marginBottom={3}>
+        <ActionCard
+          heading={formatMessage(messages.report.dataEntry.uploadCardTitle)}
+          text={formatMessage(messages.report.dataEntry.uploadCardIntro)}
+          subText={
+            isImporting
+              ? formatMessage(messages.report.dataEntry.importingLabel)
+              : undefined
+          }
+          cta={{
+            label: formatMessage(messages.report.dataEntry.uploadButtonLabel),
+            icon: 'attach',
+            iconType: 'outline',
+            disabled: isImporting,
+            onClick: () => fileInputRef.current?.click(),
+          }}
+        />
         <input
           ref={fileInputRef}
           type="file"
@@ -256,19 +275,20 @@ export const ExcelTemplateDownload: FC<
           style={{ display: 'none' }}
           onChange={handleFileSelected}
         />
-        {isImporting ? (
-          <LoadingDots />
-        ) : (
-          <Button
-            variant="utility"
-            icon="attach"
-            iconType="outline"
-            onClick={() => fileInputRef.current?.click()}
-          >
-            {formatMessage(messages.report.dataEntry.uploadButtonLabel)}
-          </Button>
-        )}
       </Box>
+
+      <ActionCard
+        heading={formatMessage(messages.report.dataEntry.manualEntryCardTitle)}
+        text={formatMessage(messages.report.dataEntry.manualEntryCardIntro)}
+        cta={{
+          label: formatMessage(
+            messages.report.dataEntry.manualEntryButtonLabel,
+          ),
+          icon: 'arrowForward',
+          onClick: () => goToScreen?.('criteriaMultiField'),
+        }}
+      />
+
       {importStatus && (
         <Box marginTop={3}>
           <AlertMessage

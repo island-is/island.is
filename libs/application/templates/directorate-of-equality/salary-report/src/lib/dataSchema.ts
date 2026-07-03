@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { messages } from './messages'
+import { PERIOD_ONE_MONTH, PERIOD_TWELVE_MONTHS } from './constants'
 import { EMAIL_REGEX } from '@island.is/application/core'
 
 const generalInformation = z.object({
@@ -17,11 +18,12 @@ const chiefExecutive = z.object({
   name: z
     .string()
     .refine((v) => v && v.length > 0, { params: messages.errors.required }),
-  email: z
+  email: z.string().refine((v) => EMAIL_REGEX.test(v), {
+    params: messages.errors.invalidEmail,
+  }),
+  jobTitle: z
     .string()
-    .refine((v) => EMAIL_REGEX.test(v), {
-      params: messages.errors.invalidEmail,
-    }),
+    .refine((v) => v && v.length > 0, { params: messages.errors.required }),
   gender: z
     .string()
     .refine((v) => v && v.length > 0, { params: messages.errors.required }),
@@ -31,32 +33,24 @@ const contactPerson = z.object({
   name: z
     .string()
     .refine((v) => v && v.length > 0, { params: messages.errors.required }),
-  email: z
-    .string()
-    .refine((v) => EMAIL_REGEX.test(v), {
-      params: messages.errors.invalidEmail,
-    }),
+  email: z.string().refine((v) => EMAIL_REGEX.test(v), {
+    params: messages.errors.invalidEmail,
+  }),
   phone: z
     .string()
     .refine((v) => v && v.length > 0, { params: messages.errors.required }),
 })
 
 const employeeCount = z.object({
-  women: z
-    .string()
-    .refine((v) => v !== '' && Number(v) >= 0, {
-      params: messages.errors.invalidNonNegativeNumber,
-    }),
-  men: z
-    .string()
-    .refine((v) => v !== '' && Number(v) >= 0, {
-      params: messages.errors.invalidNonNegativeNumber,
-    }),
-  nonBinary: z
-    .string()
-    .refine((v) => v !== '' && Number(v) >= 0, {
-      params: messages.errors.invalidNonNegativeNumber,
-    }),
+  women: z.string().refine((v) => v !== '' && Number(v) >= 0, {
+    params: messages.errors.invalidNonNegativeNumber,
+  }),
+  men: z.string().refine((v) => v !== '' && Number(v) >= 0, {
+    params: messages.errors.invalidNonNegativeNumber,
+  }),
+  nonBinary: z.string().refine((v) => v !== '' && Number(v) >= 0, {
+    params: messages.errors.invalidNonNegativeNumber,
+  }),
 })
 
 const jobFactor = z.object({
@@ -98,6 +92,12 @@ const criteria = z
       })
     }
   })
+
+const period = z.object({
+  period: z
+    .enum([PERIOD_TWELVE_MONTHS, PERIOD_ONE_MONTH])
+    .refine((v) => !!v, { params: messages.errors.required }),
+})
 
 const subsidiaries = z.object({
   includesSubsidiaries: z
@@ -199,6 +199,7 @@ export const dataSchema = z.object({
   contactPerson: contactPerson.optional(),
   employeeCount: employeeCount.optional(),
   subsidiaries: subsidiaries.optional(),
+  period: period.optional(),
   criteria: criteria.optional(),
   subCriteria: subCriteria,
   employees: employees,
