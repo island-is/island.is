@@ -16,7 +16,7 @@ import { Application } from '@island.is/application/types'
 import { messages } from '../../lib/messages'
 import { getEmployeeCountDisplay } from '../../utils/employeeCountCategory'
 import { getIsatClassification } from '../../utils/isatClassification'
-import { UNKNOWN_DISPLAY_VALUE } from '../../utils/constants'
+import { Gender, UNKNOWN_DISPLAY_VALUE } from '../../utils/constants'
 
 export const aboutTheCompanySection = buildSection({
   id: 'aboutTheCompany',
@@ -153,15 +153,15 @@ export const aboutTheCompanySection = buildSection({
               required: true,
               options: [
                 {
-                  value: 'MALE',
+                  value: Gender.MALE,
                   label: messages.aboutTheCompany.chiefExecutive.genderMale,
                 },
                 {
-                  value: 'FEMALE',
+                  value: Gender.FEMALE,
                   label: messages.aboutTheCompany.chiefExecutive.genderFemale,
                 },
                 {
-                  value: 'NON_BINARY',
+                  value: Gender.NON_BINARY,
                   label:
                     messages.aboutTheCompany.chiefExecutive.genderNonBinary,
                 },

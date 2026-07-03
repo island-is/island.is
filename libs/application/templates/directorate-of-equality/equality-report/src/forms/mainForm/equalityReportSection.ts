@@ -91,11 +91,6 @@ export const equalityReportSection = buildSection({
               link: messages.equalityReport.information.detailLink,
               variant: 'text',
             }),
-            buildDescriptionField({
-              id: 'goalsAndActions.placeholder',
-              title: '',
-              description: '',
-            }),
             buildCustomField({
               id: 'goalsAndActions.customField',
               title: '',

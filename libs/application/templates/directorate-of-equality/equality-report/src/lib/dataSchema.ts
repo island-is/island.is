@@ -2,6 +2,7 @@ import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { messages } from './messages'
 import { EMAIL_REGEX } from '@island.is/application/core'
+import { Gender } from '../utils/constants'
 
 const generalInformation = z.object({
   companyName: z.string().optional(),
@@ -23,9 +24,7 @@ const chiefExecutive = z.object({
     .refine((v) => EMAIL_REGEX.test(v), {
       params: messages.errors.invalidEmail,
     }),
-  gender: z
-    .string()
-    .refine((v) => v && v.length > 0, { params: messages.errors.required }),
+  gender: z.nativeEnum(Gender),
 })
 
 const contactPerson = z.object({

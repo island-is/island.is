@@ -7,6 +7,10 @@ import {
   DirectorateOfEqualityClientService,
   type CompanyDto,
 } from '@island.is/clients/directorate-of-equality'
+import {
+  Gender,
+  type ApplicationAnswers,
+} from '@island.is/application/templates/directorate-of-equality/equality-report'
 import { FetchError } from '@island.is/clients/middlewares'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
@@ -141,20 +145,20 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     auth,
     application,
   }: TemplateApiModuleActionProps) {
-    const answers = application.answers as Record<string, any>
+    const answers = application.answers as ApplicationAnswers
     const doeCompany = getValueViaPath<CompanyDto>(
       application.externalData,
       'doeCompany.data',
     )
 
-    const genderMap: Record<string, 'MALE' | 'FEMALE' | 'NEUTRAL'> = {
-      MALE: 'MALE',
-      FEMALE: 'FEMALE',
-      NON_BINARY: 'NEUTRAL',
+    const genderMap: Record<Gender, 'MALE' | 'FEMALE' | 'NEUTRAL'> = {
+      [Gender.MALE]: 'MALE',
+      [Gender.FEMALE]: 'FEMALE',
+      [Gender.NON_BINARY]: 'NEUTRAL',
     }
 
     const equalityReportContent = (() => {
-      const base64 = answers.information?.customField ?? ''
+      const base64 = answers.goalsAndActions?.customField ?? ''
       try {
         return Buffer.from(base64, 'base64').toString('utf-8')
       } catch {
@@ -162,9 +166,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
       }
     })()
 
-    const subsidiaryList: {
-      nationalIdWithName: { name: string; nationalId: string }
-    }[] = answers.subsidiaries?.list ?? []
+    const subsidiaryList = answers.subsidiaries?.list ?? []
 
     try {
       return await this.directorateOfEqualityService.submitEqualityReport(
@@ -174,8 +176,9 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
           providerId: doeCompany?.id ?? '',
           companyAdminName: answers.chiefExecutive?.name ?? '',
           companyAdminEmail: answers.chiefExecutive?.email ?? '',
-          companyAdminGender:
-            genderMap[answers.chiefExecutive?.gender] ?? 'NEUTRAL',
+          companyAdminGender: answers.chiefExecutive?.gender
+            ? genderMap[answers.chiefExecutive.gender]
+            : 'NEUTRAL',
           contactName: answers.contactPerson?.name ?? '',
           contactEmail: answers.contactPerson?.email ?? '',
           contactPhone: answers.contactPerson?.phone ?? '',

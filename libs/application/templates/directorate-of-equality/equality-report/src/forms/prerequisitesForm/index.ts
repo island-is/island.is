@@ -7,6 +7,7 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import { DefaultEvents, FormModes } from '@island.is/application/types'
+import { CoatOfArms } from '@island.is/application/assets/institution-logos'
 import {
   ActiveEqualityReportApi,
   CompanyRegistryApi,
@@ -18,6 +19,8 @@ import { messages } from '../../lib/messages'
 
 export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',
+  title: messages.general.applicationName,
+  logo: CoatOfArms,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   children: [

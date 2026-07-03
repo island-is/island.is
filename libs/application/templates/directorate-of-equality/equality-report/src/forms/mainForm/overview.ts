@@ -8,6 +8,7 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { messages } from '../../lib/messages'
+import { Gender } from '../../utils/constants'
 
 export const overviewSection = buildSection({
   id: 'overview',
@@ -97,16 +98,16 @@ export const overviewSection = buildSection({
           titleVariant: 'h3',
           backId: 'chiefExecutiveMultiField',
           items: (answers) => {
-            const gender = getValueViaPath<string>(
+            const gender = getValueViaPath<Gender>(
               answers,
               'chiefExecutive.gender',
             )
             const genderText =
-              gender === 'MALE'
+              gender === Gender.MALE
                 ? messages.aboutTheCompany.chiefExecutive.genderMale
-                : gender === 'FEMALE'
+                : gender === Gender.FEMALE
                 ? messages.aboutTheCompany.chiefExecutive.genderFemale
-                : gender === 'NON_BINARY'
+                : gender === Gender.NON_BINARY
                 ? messages.aboutTheCompany.chiefExecutive.genderNonBinary
                 : '—'
             return [

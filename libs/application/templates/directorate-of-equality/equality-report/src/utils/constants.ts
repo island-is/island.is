@@ -15,6 +15,12 @@ export enum Roles {
   NOT_ALLOWED = 'notAllowed',
 }
 
+export enum Gender {
+  MALE = 'MALE',
+  FEMALE = 'FEMALE',
+  NON_BINARY = 'NON_BINARY',
+}
+
 // InputField.defaultValue is typed as (application, activeField?, index?) with
 // no locale param, so this display fallback can't be run through formatMessage
 // from buildTextField. (Runtime actually passes locale as the 3rd arg per
