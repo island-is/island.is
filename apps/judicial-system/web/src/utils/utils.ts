@@ -409,20 +409,18 @@ export const getAppealingPartyInfo = (
 }
 
 /**
- * True iff the current user's party recorded an in-court ACCEPT ("unir
- * úrskurðinum") for this ruling order. Such a party has waived its right to
- * appeal it, so the appeal action is hidden. Mirrors the backend guard
- * (appealCase.service.hasAcceptedRulingOrderInCourt), including its party
- * resolution: the prosecution, or the defendant / civil claimant the defence
- * user is the confirmed representative of.
+ * Resolves the in-court appeal decision (Ákvörðun um kæru) recorded for the
+ * party the current user acts for - the prosecution, or the defendant / civil
+ * claimant the defence user is the confirmed representative of. Mirrors the
+ * backend helper (appealCase.helpers.findUserRulingOrderAppealDecision).
  */
-export const hasAcceptedRulingOrderInCourt = (
+const findUserRulingOrderAppealDecision = (
   workingCase: Case,
   user: User | undefined,
   rulingFileId: string,
-): boolean => {
+) => {
   if (!user) {
-    return false
+    return undefined
   }
 
   let partyRole: AppealDecisionPartyRole
@@ -452,21 +450,54 @@ export const hasAcceptedRulingOrderInCourt = (
       partyRole = AppealDecisionPartyRole.CIVIL_CLAIMANT
       civilClaimantId = civilClaimant.id
     } else {
-      return false
+      return undefined
     }
   } else {
-    return false
+    return undefined
   }
 
-  const decision = workingCase.appealDecisions?.find(
+  return workingCase.appealDecisions?.find(
     (appealDecision) =>
       appealDecision.rulingFileId === rulingFileId &&
       appealDecision.partyRole === partyRole &&
       (appealDecision.defendantId ?? null) === (defendantId ?? null) &&
       (appealDecision.civilClaimantId ?? null) === (civilClaimantId ?? null),
   )
+}
 
-  return decision?.decision === CaseAppealDecision.ACCEPT
+/**
+ * True iff the current user's party recorded an in-court ACCEPT ("unir
+ * úrskurðinum") for this ruling order. Such a party has waived its right to
+ * appeal it, so the appeal action is hidden. Mirrors the backend
+ * (appealCase.service.hasAcceptedRulingOrderInCourt).
+ */
+export const hasAcceptedRulingOrderInCourt = (
+  workingCase: Case,
+  user: User | undefined,
+  rulingFileId: string,
+): boolean =>
+  findUserRulingOrderAppealDecision(workingCase, user, rulingFileId)
+    ?.decision === CaseAppealDecision.ACCEPT
+
+/**
+ * True iff the current user's party appealed this ruling order in court and has
+ * not yet withdrawn - i.e. the user may withdraw its appeal. Mirrors the backend
+ * (appealCase.helpers.userHasActiveInCourtAppeal).
+ */
+export const userHasActiveInCourtAppeal = (
+  workingCase: Case,
+  user: User | undefined,
+  rulingFileId: string,
+): boolean => {
+  const decision = findUserRulingOrderAppealDecision(
+    workingCase,
+    user,
+    rulingFileId,
+  )
+
+  return (
+    decision?.decision === CaseAppealDecision.APPEAL && !decision.withdrawnDate
+  )
 }
 
 /**
