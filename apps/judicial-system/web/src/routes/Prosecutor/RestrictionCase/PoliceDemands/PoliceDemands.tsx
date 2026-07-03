@@ -265,7 +265,8 @@ export const PoliceDemands = () => {
                     {
                       id: 'isAdmissionToFacility',
                       title:
-                        rcDemands.sections.demands.admissionToAppropriateFacility,
+                        rcDemands.sections.demands
+                          .admissionToAppropriateFacility,
                       info: rcDemands.sections.demands
                         .admissionToAppropriateFacilityTooltip,
                       checked:
