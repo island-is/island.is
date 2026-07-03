@@ -1,13 +1,16 @@
+import { Features } from '@island.is/feature-flags'
 import { ToastContainer } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
 import { useActiveModule } from '@island.is/portals/core'
+import { DELEGATION_BANNER_HEIGHT } from '@island.is/portals/my-pages/constants'
 import {
   SearchPaths,
   ServicePortalPaths,
+  SidebarContactBox,
   useDynamicRoutesWithNavigation,
 } from '@island.is/portals/my-pages/core'
-import { DELEGATION_BANNER_HEIGHT } from '@island.is/portals/my-pages/constants'
 import { useAlertBanners } from '@island.is/portals/my-pages/graphql'
+import { HealthPaths } from '@island.is/portals/my-pages/health'
 import {
   useFeatureFlag,
   useFeatureFlagClient,
@@ -17,9 +20,6 @@ import { checkDelegation } from '@island.is/shared/utils'
 import React, { FC, useEffect, useState } from 'react'
 import { matchPath, useLocation } from 'react-router-dom'
 import { useMeasure } from 'react-use'
-import { Features } from '@island.is/feature-flags'
-import { SidebarContactBox } from '@island.is/portals/my-pages/core'
-import { HealthPaths } from '@island.is/portals/my-pages/health'
 import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
 import { GlobalAlertBannerSection } from '../AlertBanners/GlobalAlertBannerSection'
 import Header from '../Header/Header'
