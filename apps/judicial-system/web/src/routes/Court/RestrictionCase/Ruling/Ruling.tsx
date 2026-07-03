@@ -35,8 +35,8 @@ import {
   RulingInput,
   TinyMCE,
 } from '@island.is/judicial-system-web/src/components'
-import { getTextContentFromHtml } from '@island.is/judicial-system-web/src/utils/formatters'
 import { CaseDecision } from '@island.is/judicial-system-web/src/graphql/schema'
+import { getTextContentFromHtml } from '@island.is/judicial-system-web/src/utils/formatters'
 import {
   useCase,
   useDebouncedInput,
@@ -48,12 +48,8 @@ import { getConclusionAutofill, getCourtCaseFactsPrefill } from './Ruling.logic'
 import { strings } from './Ruling.strings'
 
 export const Ruling = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
 
   const router = useRouter()
 
@@ -80,9 +76,12 @@ export const Ruling = () => {
       await setAndSendCaseToServer(
         [
           {
-            introduction: formatMessage(strings.sections.introduction.autofill, {
-              date: formatDate(workingCase.arraignmentDate?.date, 'PPP'),
-            }),
+            introduction: formatMessage(
+              strings.sections.introduction.autofill,
+              {
+                date: formatDate(workingCase.arraignmentDate?.date, 'PPP'),
+              },
+            ),
             prosecutorDemands: workingCase.demands,
             courtCaseFacts: getCourtCaseFactsPrefill(
               formatMessage,
