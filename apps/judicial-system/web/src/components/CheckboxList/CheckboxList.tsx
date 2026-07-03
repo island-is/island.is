@@ -1,15 +1,10 @@
 import { FC } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
+import cn from 'classnames'
 
-import {
-  Box,
-  Checkbox,
-  GridColumn,
-  GridColumns,
-  GridContainer,
-  GridRow,
-  ResponsiveProp,
-} from '@island.is/island-ui/core'
+import { Checkbox } from '@island.is/island-ui/core'
+
+import * as styles from './CheckboxList.css'
 
 export interface CheckboxInfo {
   title: MessageDescriptor
@@ -31,42 +26,28 @@ const CheckboxList: FC<Props> = ({
   fullWidth,
 }: Props) => {
   const { formatMessage } = useIntl()
+
   return (
-    <GridContainer>
-      <GridRow>
-        {checkboxes.map((checkbox, index) => {
-          return (
-            <GridColumn
-              span={
-                `${fullWidth ? '12' : '6'}/12` as ResponsiveProp<GridColumns>
-              }
-              key={index}
-            >
-              <Box
-                data-testid="checkbox"
-                marginBottom={
-                  // Do not add margins to the last two items
-                  index < checkboxes.length - 2 ? 2 : 0
-                }
-              >
-                <Checkbox
-                  name={formatMessage(checkbox.title)}
-                  label={formatMessage(checkbox.title)}
-                  value={checkbox.id}
-                  checked={Boolean(
-                    selected && selected.indexOf(checkbox.id) > -1,
-                  )}
-                  tooltip={formatMessage(checkbox.info)}
-                  onChange={({ target }) => onChange(target.value)}
-                  large
-                  filled
-                />
-              </Box>
-            </GridColumn>
-          )
-        })}
-      </GridRow>
-    </GridContainer>
+    <div
+      className={cn(styles.checkboxGrid, {
+        [styles.fullWidth]: fullWidth,
+      })}
+    >
+      {checkboxes.map((checkbox) => (
+        <div data-testid="checkbox" key={checkbox.id}>
+          <Checkbox
+            name={formatMessage(checkbox.title)}
+            label={formatMessage(checkbox.title)}
+            value={checkbox.id}
+            checked={Boolean(selected && selected.indexOf(checkbox.id) > -1)}
+            tooltip={formatMessage(checkbox.info)}
+            onChange={({ target }) => onChange(target.value)}
+            large
+            filled
+          />
+        </div>
+      ))}
+    </div>
   )
 }
 
