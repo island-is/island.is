@@ -9,7 +9,7 @@ import {
 } from '@island.is/island-ui/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { useFormContext } from 'react-hook-form'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 import {
   organizedAdvancedLicenseMap,
   AdvancedLicense as AdvancedLicenseEnum,
@@ -17,6 +17,7 @@ import {
 } from '../../lib/constants'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
+import { hasSelectableAdvancedCategories } from '../../lib/utils'
 import * as styles from './AdvancedLicenseSelection.css'
 
 const AdvancedLicenseSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
@@ -36,7 +37,7 @@ const AdvancedLicenseSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   const fakeData = watch('fakeData') as DrivingLicenseFakeData | undefined
   const rawAge =
-    fakeData?.useFakeData === 'yes'
+    fakeData?.useFakeData === YES
       ? fakeData.age
       : getValueViaPath<number>(
           application.externalData,
@@ -50,7 +51,7 @@ const AdvancedLicenseSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   // currentLicense data provider (or fakeData when faking) and are tagged
   // in the list so the applicant can see what they already have.
   const heldCategories: string[] =
-    fakeData?.useFakeData === 'yes'
+    fakeData?.useFakeData === YES
       ? fakeData.advancedCategories ?? []
       : (
           getValueViaPath<Array<{ nr?: string | null; name?: string | null }>>(
@@ -88,17 +89,24 @@ const AdvancedLicenseSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   }, [selectedLicenses, setValue])
 
   // Block moving past this screen until at least one *new* license (one the
-  // applicant doesn't already hold) has been selected.
+  // applicant doesn't already hold) has been selected — but only when there is
+  // actually something selectable, so an applicant who already holds every
+  // age-reachable category isn't stuck with an unclearable required error.
+  const canSelectSomething = hasSelectableAdvancedCategories(
+    age,
+    heldCategories,
+  )
+
   useEffect(() => {
     if (!setBeforeSubmitCallback) return
 
     setBeforeSubmitCallback(async () => {
-      if (selectedLicenses.length === 0) {
+      if (canSelectSomething && selectedLicenses.length === 0) {
         return [false, formatMessage(m.applicationForAdvancedRequiredError)]
       }
       return [true, null]
     })
-  }, [setBeforeSubmitCallback, selectedLicenses, formatMessage])
+  }, [setBeforeSubmitCallback, selectedLicenses, canSelectSomething, formatMessage])
 
   return (
     <Box className={styles.root}>

@@ -127,14 +127,12 @@ export const sectionSummary = buildSection({
         buildKeyValueField({
           label: m.overviewStreetAddress,
           width: 'half',
-          value: ({ externalData: { nationalRegistry } }) =>
-            (nationalRegistry.data as NationalRegistryUser).address
-              ?.streetAddress +
-            ', ' +
-            (nationalRegistry.data as NationalRegistryUser).address
-              ?.postalCode +
-            ' ' +
-            (nationalRegistry.data as NationalRegistryUser).address?.city,
+          value: ({ externalData: { nationalRegistry } }) => {
+            const address = (nationalRegistry.data as NationalRegistryUser)
+              .address
+            if (!address) return ''
+            return `${address.streetAddress}, ${address.postalCode} ${address.city}`
+          },
         }),
 
         // Health cert section — uploaded-file display.

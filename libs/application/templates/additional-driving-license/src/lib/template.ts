@@ -17,6 +17,7 @@ import {
   QualityPhotoAndSignatureApi,
   AllPhotosFromThjodskraApi,
   InstitutionNationalIds,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -28,7 +29,7 @@ import {
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import { m } from './messages'
-import { BE, B_ADVANCED } from './constants'
+import { BE, B_ADVANCED, ApiActions } from './constants'
 import {
   MockableSyslumadurPaymentCatalogApi,
   SyslumadurPaymentCatalogApi,
@@ -46,6 +47,7 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.ADDITIONAL_DRIVING_LICENSE,
+  readyForProduction: false,
   name: (application) =>
     application.answers.applicationFor === BE
       ? m.applicationForBELicenseTitle.defaultMessage
@@ -150,6 +152,9 @@ const template: ApplicationTemplate<
           progress: 1,
           status: FormModes.COMPLETED,
           lifecycle: DefaultStateLifeCycle,
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

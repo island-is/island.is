@@ -17,8 +17,11 @@ export const getFakeData = (
 export const buildFakeCurrentLicense = (fakeData: DrivingLicenseFakeData) => {
   const currentLicense = (() => {
     switch (fakeData.currentLicense) {
+      // Real RLS models a temporary license as category B (nr: 'B', validToCode 8).
       case 'temp':
+        return 'B'
       case 'B':
+      case 'BE':
       case 'C':
       case 'C1':
       case 'D':

@@ -7,26 +7,10 @@ export enum DrivingLicenseFeatureFlags {
 export const getApplicationFeatureFlags = async (
   client: FeatureFlagClient,
 ): Promise<Record<DrivingLicenseFeatureFlags, boolean>> => {
-  const featureFlags: DrivingLicenseFeatureFlags[] = [
-    DrivingLicenseFeatureFlags.ALLOW_FAKE,
-  ]
-
-  return (
-    await Promise.all(
-      featureFlags.map(async (key: DrivingLicenseFeatureFlags) => {
-        return { key, value: !!(await client.getValue(key, false)) }
-      }),
-    )
-  ).reduce(
-    (
-      acc,
-      { key, value }: { key: DrivingLicenseFeatureFlags; value: boolean },
-    ) => {
-      return {
-        ...acc,
-        [key]: value,
-      }
-    },
-    {} as Record<DrivingLicenseFeatureFlags, boolean>,
-  )
+  return {
+    [DrivingLicenseFeatureFlags.ALLOW_FAKE]: !!(await client.getValue(
+      DrivingLicenseFeatureFlags.ALLOW_FAKE,
+      false,
+    )),
+  }
 }

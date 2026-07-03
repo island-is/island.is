@@ -79,11 +79,12 @@ export const subSectionQualityPhotoBE = buildSubSection({
             }
 
             // Quality photo from getqualityphotoandsignature. The binary
-            // (`photo`) may be null for legacy records — createPhotoComponent
-            // falls back to a placeholder, and submission resolves the photo
-            // by reference, so offer the option whenever a record exists.
+            // (`pohto` — the provider's misspelled key) may be null for legacy
+            // records — createPhotoComponent falls back to a placeholder, and
+            // submission resolves the photo by reference, so offer the option
+            // whenever a record exists.
             if (hasUsableRlsQualityPhoto(externalData)) {
-              const photoAndSig = getValueViaPath<{ photo?: string | null }>(
+              const photoAndSig = getValueViaPath<{ pohto?: string | null }>(
                 externalData,
                 'qualityPhotoAndSignature.data',
               )
@@ -91,7 +92,7 @@ export const subSectionQualityPhotoBE = buildSubSection({
                 value: 'qualityPhoto',
                 label: m.useDriversLicenseImage,
                 illustration: createPhotoComponent(
-                  photoAndSig?.photo ?? undefined,
+                  photoAndSig?.pohto ?? undefined,
                 ),
               })
             }

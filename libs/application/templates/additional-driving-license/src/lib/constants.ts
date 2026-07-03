@@ -2,14 +2,17 @@ import { YesOrNo } from '@island.is/application/core'
 
 export enum ApiActions {
   submitApplication = 'submitApplication',
-  createCharge = 'createCharge',
+  // Note: the FJS charge is created by the PAYMENT state's `buildPaymentState`
+  // (CreateChargeApi), so no separate createCharge action is needed here.
 }
 
-export const B_FULL = 'B-full'
-export const B_TEMP = 'B-temp'
 export const B_ADVANCED = 'B-advanced'
 export const BE = 'BE'
 export const DELIVERY_FEE = 'deliveryFee'
+
+// RLS category `validToCode` for a temporary (bráðabirgða) B licence. A holder
+// of a temporary licence is not eligible to apply for BE or advanced rights.
+export const TEMPORARY_LICENSE_VALIDTO_CODE = 8
 
 export enum LicenseTypes {
   'B_FULL' = 'B-full',
@@ -165,8 +168,6 @@ export const groupAdvancedLicenses = (
     .filter((group) => group.codes.length > 0)
 
 export const CHARGE_ITEM_CODES: Record<string, string> = {
-  [B_TEMP]: 'AY114',
-  [B_FULL]: 'AY110',
   [BE]: 'AY148',
   [DELIVERY_FEE]: 'AY145',
   [B_ADVANCED]: 'AY115',

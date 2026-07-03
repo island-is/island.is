@@ -1,9 +1,3 @@
-export type HasQualityPhotoData = {
-  data: {
-    hasQualityPhoto: boolean
-  }
-}
-
 export type DrivingLicenseCategory = {
   nr: string
   validToCode: number

@@ -34,11 +34,6 @@ export const m = defineMessages({
     defaultMessage: 'Skilyrði sem umsækjandi þarf að uppfylla:',
     description: 'title for requirement component',
   },
-  paymentCapital: {
-    id: 'adl.application:awaitingPayment',
-    defaultMessage: 'Staðfesting á greiðslu',
-    description: 'Payment',
-  },
   applicationEligibilityTitle: {
     id: 'adl.application:applicationEligibilityTitle',
     defaultMessage: 'Skilyrði umsóknar',
@@ -792,40 +787,6 @@ export const m = defineMessages({
     defaultMessage:
       'Núverandi ljósmynd þín í ökuskírteinaskrá stenst ekki gæðakröfur og þarf því að koma með nýja ljósmynd.',
     description: 'Description for quality photo warning',
-  },
-  examplePaymentPendingFieldError: {
-    id: 'adl.application:example.waitingForPaymentError',
-    defaultMessage: 'Villa kom upp við að sækja upplýsingar um greiðslu',
-    description: 'An error came up while getting payment information',
-  },
-  forwardingToPayment: {
-    id: 'adl.application:forwardingToPayment',
-    defaultMessage: 'Sendi þig áfram á greiðsluveitu...',
-    description: 'Forwarding you to payment handler...',
-  },
-  paymentPendingDescription: {
-    id: 'adl.application:paymentPendingDescription',
-    defaultMessage: 'Augnablik meðan beðið er eftir staðfestingu',
-    description: 'Please wait until the payment is confirmed',
-  },
-  submitErrorButtonCaption: {
-    id: 'adl.application:submitErrorButtonCaption',
-    defaultMessage: 'Reyna aftur',
-    description:
-      'Button that shows up when submitting the application fails, allowing you to retry',
-  },
-  submitErrorTitle: {
-    id: 'adl.application:submitErrorTitle',
-    defaultMessage: 'Móttaka umsóknar tókst ekki',
-    description:
-      'title that shows up when an error occurs while submitting the application',
-  },
-  submitErrorMessage: {
-    id: 'adl.application:submitErrorMessage',
-    defaultMessage:
-      'Eitthvað fór úrskeiðis við að senda inn umsókn. Reyndu aftur síðar.',
-    description:
-      'Text that shows up when an error occurs while submitting the application',
   },
   healthRemarksTitle: {
     id: 'adl.application:healthRemarksTitle',
