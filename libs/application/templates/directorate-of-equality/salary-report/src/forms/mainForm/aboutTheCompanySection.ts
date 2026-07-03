@@ -14,6 +14,7 @@ import {
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { messages } from '../../lib/messages'
+import { PERIOD_ONE_MONTH, PERIOD_TWELVE_MONTHS } from '../../lib/constants'
 import { getEmployeeCountDisplay } from '../../utils/employeeCountCategory'
 import { getIsatClassification } from '../../utils/isatClassification'
 
@@ -143,6 +144,14 @@ export const aboutTheCompanySection = buildSection({
                 messages.aboutTheCompany.chiefExecutive.emailPlaceholder,
               width: 'full',
               variant: 'email',
+              required: true,
+            }),
+            buildTextField({
+              id: 'chiefExecutive.jobTitle',
+              title: messages.aboutTheCompany.chiefExecutive.jobTitle,
+              placeholder:
+                messages.aboutTheCompany.chiefExecutive.jobTitlePlaceholder,
+              width: 'full',
               required: true,
             }),
             buildSelectField({
@@ -326,6 +335,42 @@ export const aboutTheCompanySection = buildSection({
                   answers,
                   'subsidiaries.includesSubsidiaries',
                 ) === YES,
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSubSection({
+      id: 'period',
+      title: messages.aboutTheCompany.period.sectionTitle,
+      children: [
+        buildMultiField({
+          id: 'periodMultiField',
+          title: messages.aboutTheCompany.period.title,
+          description: messages.aboutTheCompany.period.intro,
+          children: [
+            buildDescriptionField({
+              id: 'period.title',
+              title: messages.aboutTheCompany.period.label,
+              description: '',
+              titleVariant: 'h4',
+            }),
+            buildRadioField({
+              id: 'period.period',
+              title: '',
+              largeButtons: true,
+              width: 'full',
+              required: true,
+              options: [
+                {
+                  value: PERIOD_TWELVE_MONTHS,
+                  label: messages.aboutTheCompany.period.medium12months,
+                },
+                {
+                  value: PERIOD_ONE_MONTH,
+                  label: messages.aboutTheCompany.period.oneMonth,
+                },
+              ],
             }),
           ],
         }),

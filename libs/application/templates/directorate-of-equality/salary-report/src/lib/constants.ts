@@ -131,6 +131,9 @@ export type Role = {
   stepAssignments: StepAssignment[]
 }
 
+export const PERIOD_TWELVE_MONTHS = '12months'
+export const PERIOD_ONE_MONTH = '1month'
+
 export const EMPTY_EMPLOYEE: Employee = {
   ordinal: 0,
   identifier: '',
