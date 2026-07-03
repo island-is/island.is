@@ -955,6 +955,9 @@ export class CaseNotificationService extends BaseNotificationService {
           getHumanReadableCaseIndictmentRulingDecision(
             theCase.indictmentRulingDecision,
           ),
+        isDismissal:
+          theCase.indictmentRulingDecision ===
+          CaseIndictmentRulingDecision.DISMISSAL,
         linkStart: `<a href="${this.config.clientUrl}${PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE}/${theCase.id}">`,
         linkEnd: '</a>',
       }),
@@ -1064,6 +1067,9 @@ export class CaseNotificationService extends BaseNotificationService {
               getHumanReadableCaseIndictmentRulingDecision(
                 theCase.indictmentRulingDecision,
               ),
+            isDismissal:
+              theCase.indictmentRulingDecision ===
+              CaseIndictmentRulingDecision.DISMISSAL,
             ...sharedHtmlProps,
           })
         : this.formatMessage(rulingMessage.body, {

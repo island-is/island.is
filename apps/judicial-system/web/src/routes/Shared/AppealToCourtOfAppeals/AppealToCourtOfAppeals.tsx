@@ -69,6 +69,13 @@ const AppealToCourtOfAppeals = () => {
     removeUploadFile,
     updateUploadFile,
   } = useUploadFiles(workingCase.caseFiles)
+
+  const appealBriefType = !isDefenceUser(user)
+    ? CaseFileCategory.PROSECUTOR_APPEAL_BRIEF
+    : CaseFileCategory.DEFENDANT_APPEAL_BRIEF
+  const appealCaseFilesType = !isDefenceUser(user)
+    ? CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE
+    : CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE
   const { handleUpload, handleRemove } = useS3Upload(
     workingCase.id,
     defendantId,
@@ -80,12 +87,6 @@ const AppealToCourtOfAppeals = () => {
   })
   const { createAppealCase, isCreatingAppealCase } = useAppealCase()
 
-  const appealBriefType = !isDefenceUser(user)
-    ? CaseFileCategory.PROSECUTOR_APPEAL_BRIEF
-    : CaseFileCategory.DEFENDANT_APPEAL_BRIEF
-  const appealCaseFilesType = !isDefenceUser(user)
-    ? CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE
-    : CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE
   const previousUrl = `${
     isDefenceUser(user)
       ? isIndictmentCase(workingCase.type)
@@ -110,8 +111,6 @@ const AppealToCourtOfAppeals = () => {
 
     const appealCase = await createAppealCase(workingCase.id, rulingFileId)
 
-    refreshCase()
-
     if (appealCase) {
       setVisibleModal('APPEAL_SENT')
     }
@@ -122,7 +121,6 @@ const AppealToCourtOfAppeals = () => {
     createAppealCase,
     workingCase.id,
     rulingFileId,
-    refreshCase,
   ])
 
   const handleRemoveFile = (file: UploadFile) => {
@@ -247,7 +245,10 @@ const AppealToCourtOfAppeals = () => {
           text="Tilkynning um móttöku kæru verður send á aðila máls."
           secondaryButton={{
             text: formatMessage(core.closeModal),
-            onClick: () => router.push(previousUrl),
+            onClick: () => {
+              refreshCase()
+              router.push(previousUrl)
+            },
           }}
         />
       )}
