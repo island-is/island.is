@@ -238,7 +238,9 @@ export class CaseController {
         // We want to overwrite certain fields that the court sees so they're always seeing
         // the correct information post resend
         update.courtCaseFacts = isRestrictionCase(theCase.type)
-          ? `<p>Í greinargerð sóknaraðila er atvikum lýst svo:</p>${theCase.caseFacts ?? ''}`
+          ? `<p>Í greinargerð sóknaraðila er atvikum lýst svo:</p>${
+              theCase.caseFacts ?? ''
+            }`
           : `Í greinargerð sóknaraðila er atvikum lýst svo: ${theCase.caseFacts}`
         update.courtLegalArguments = `Í greinargerð er krafa sóknaraðila rökstudd þannig: ${theCase.legalArguments}`
         update.prosecutorDemands = update.demands ?? theCase.demands
