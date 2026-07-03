@@ -22,6 +22,7 @@ import {
   AppealCaseNotificationType,
   AppealCaseState,
   AppealCaseTransition,
+  AppealDecisionPartyRole,
   AppealEventType,
   CaseAppealDecision,
   CaseFileCategory,
@@ -94,6 +95,87 @@ export class AppealCaseService {
     }
 
     return {}
+  }
+
+  // Writes an appeal event-log row with an actor snapshot of who performed it.
+  // Defenders are not system users, so userId is null and national_id/name
+  // identify them (plus the defence party); for prosecution/court users the
+  // system user id is stored. Shared by registerAppellant and createEventLog.
+  private async writeEventLog(
+    theCase: Case,
+    appealCase: AppealCase,
+    eventType: AppealEventType,
+    user: User,
+    transaction: Transaction,
+  ): Promise<void> {
+    const isDefence = isDefenceUser(user)
+
+    await this.appealEventLogRepositoryService.create(
+      {
+        caseId: theCase.id,
+        appealCaseId: appealCase.id,
+        eventType,
+        userRole: user.role,
+        userId: isDefence ? undefined : user.id,
+        ...(isDefence ? this.resolveDefencePartyIds(theCase, user) : {}),
+        nationalId: user.nationalId,
+        userName: user.name,
+        userTitle: user.title,
+        institutionName: user.institution?.name,
+      },
+      { transaction },
+    )
+  }
+
+  // True iff the user's party recorded an in-court ACCEPT ("unir úrskurðinum")
+  // for this ruling order. Such a party has waived its right to appeal it, so an
+  // out-of-court appeal from it must be rejected. The party is the prosecution,
+  // or the specific defendant / civil claimant the defence user represents.
+  private hasAcceptedRulingOrderInCourt(
+    theCase: Case,
+    rulingFileId: string,
+    user: User,
+  ): boolean {
+    const { defendantId, civilClaimantId } = isDefenceUser(user)
+      ? this.resolveDefencePartyIds(theCase, user)
+      : {}
+    const partyRole = isProsecutionUser(user)
+      ? AppealDecisionPartyRole.PROSECUTOR
+      : civilClaimantId
+      ? AppealDecisionPartyRole.CIVIL_CLAIMANT
+      : AppealDecisionPartyRole.DEFENDANT
+
+    const decision = theCase.appealDecisions?.find(
+      (appealDecision) =>
+        appealDecision.rulingFileId === rulingFileId &&
+        appealDecision.partyRole === partyRole &&
+        (appealDecision.defendantId ?? null) === (defendantId ?? null) &&
+        (appealDecision.civilClaimantId ?? null) === (civilClaimantId ?? null),
+    )
+
+    return decision?.decision === CaseAppealDecision.ACCEPT
+  }
+
+  // Dual-write: records an APPEALED event for an out-of-court appeal. In-court
+  // appeals are recorded by the appeal_decision rows instead and never reach
+  // here. Unlike createEventLog it dispatches no notification - the appeal
+  // notification is queued separately by the caller
+  // (addMessagesFor[RulingOrder]AppealedCaseToQueue). The legacy columns
+  // (postponed appeal dates, appealedByNationalId) remain the source of truth
+  // for now.
+  private registerAppellant(
+    theCase: Case,
+    appealCase: AppealCase,
+    user: User,
+    transaction: Transaction,
+  ): Promise<void> {
+    return this.writeEventLog(
+      theCase,
+      appealCase,
+      AppealEventType.APPEALED,
+      user,
+      transaction,
+    )
   }
 
   private allAppealRolesAssigned(appealRoles: {
@@ -403,6 +485,9 @@ export class AppealCaseService {
     const caseUpdate: UpdateCase = {}
     const appealCaseData: UpdateAppealCase = {
       appealState: AppealCaseState.APPEALED,
+      // An appeal filed out-of-court happens now - in-court appeals get
+      // the ruling date instead (see case.service update on completion)
+      appealDate: nowFactory(),
     }
 
     let fileCategories: CaseFileCategory[]
@@ -439,6 +524,8 @@ export class AppealCaseService {
         transaction,
       })
     }
+
+    await this.registerAppellant(theCase, appealCase, user, transaction)
 
     this.addMessagesForAppealedCaseToQueue(
       theCase,
@@ -488,9 +575,18 @@ export class AppealCaseService {
       )
     }
 
+    if (this.hasAcceptedRulingOrderInCourt(theCase, rulingFileId, user)) {
+      throw new ForbiddenException(
+        'A party that accepted the ruling order in court cannot appeal it',
+      )
+    }
+
     const appealCaseData: UpdateAppealCase = {
       appealState: AppealCaseState.APPEALED,
       rulingFileId,
+      // An appeal filed out-of-court happens now - in-court appeals get
+      // the court session end time instead
+      appealDate: nowFactory(),
     }
 
     if (isDefenceUser(user)) {
@@ -504,6 +600,8 @@ export class AppealCaseService {
         transaction,
       },
     )
+
+    await this.registerAppellant(theCase, appealCase, user, transaction)
 
     this.addMessagesForRulingOrderAppealedCaseToQueue(theCase, appealCase, user)
 
@@ -603,18 +701,7 @@ export class AppealCaseService {
       `Recording appeal event ${eventType} for appeal case ${appealCase.id} of case ${theCase.id}`,
     )
 
-    await this.appealEventLogRepositoryService.create(
-      {
-        caseId: theCase.id,
-        appealCaseId: appealCase.id,
-        eventType,
-        userRole: user.role,
-        ...(isDefenceUser(user)
-          ? this.resolveDefencePartyIds(theCase, user)
-          : {}),
-      },
-      { transaction },
-    )
+    await this.writeEventLog(theCase, appealCase, eventType, user, transaction)
 
     this.dispatchEventNotifications(eventType, theCase, appealCase, user)
 

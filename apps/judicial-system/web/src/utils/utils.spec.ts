@@ -4,6 +4,7 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   AppealCase,
   AppealCaseState,
+  AppealDecisionPartyRole,
   Case,
   CaseAppealDecision,
   CaseFile,
@@ -23,9 +24,11 @@ import * as formatters from './formatters'
 import {
   getAppealActorText,
   getDefaultDefendantGender,
+  hasAcceptedRulingOrderInCourt,
   hasSentNotification,
   isAppealFileCategoryVisible,
   mapStringToGender,
+  reconcileAppealDecisionsForRulingFileChange,
 } from './utils'
 
 describe('Utils', () => {
@@ -429,7 +432,7 @@ describe('Utils', () => {
             appealedByNationalId: '0202022020',
             appealedDate,
           } as AppealCase,
-        } as Case
+        } as unknown as Case
 
         expect(getAppealActorText(workingCase)).toBe(
           `Kært af verjanda ${dateStr}`,
@@ -448,7 +451,7 @@ describe('Utils', () => {
         } as Case
 
         expect(getAppealActorText(workingCase)).toBe(
-          `Kært af sækjanda ${dateStr}`,
+          `Kært af ákæranda ${dateStr}`,
         )
       })
 
@@ -461,7 +464,7 @@ describe('Utils', () => {
             appealedByNationalId: '0202022020',
             appealedDate,
           } as AppealCase,
-        } as Case
+        } as unknown as Case
 
         expect(getAppealActorText(workingCase)).toBe(
           `Kært af verjanda ${dateStr}`,
@@ -470,6 +473,19 @@ describe('Utils', () => {
     })
 
     describe('indictment ruling-order appeals', () => {
+      test('returns "Kært í þinghaldi {date}" when appealed in court', () => {
+        const workingCase = { type: CaseType.INDICTMENT } as Case
+        const appealCase = {
+          rulingFileId: 'file-1',
+          appealedInCourt: true,
+          appealedDate,
+        } as AppealCase
+
+        expect(getAppealActorText(workingCase, appealCase)).toBe(
+          `Kært í þinghaldi ${dateStr}`,
+        )
+      })
+
       test('uses subject-verb form for prosecutor', () => {
         const workingCase = { type: CaseType.INDICTMENT } as Case
         const appealCase = {
@@ -479,7 +495,7 @@ describe('Utils', () => {
         } as AppealCase
 
         expect(getAppealActorText(workingCase, appealCase)).toBe(
-          `Sækjandi kærði úrskurðinn ${dateStr}`,
+          `Ákærandi kærði úrskurðinn ${dateStr}`,
         )
       })
 
@@ -551,6 +567,175 @@ describe('Utils', () => {
           `Verjandi kærði úrskurðinn ${dateStr}`,
         )
       })
+    })
+  })
+
+  describe('reconcileAppealDecisionsForRulingFileChange', () => {
+    const decisions = [
+      { id: 'd1', rulingFileId: 'file-a' },
+      { id: 'd2', rulingFileId: 'file-a' },
+      { id: 'd3', rulingFileId: 'other-file' },
+    ] as unknown as Case['appealDecisions']
+
+    it('re-keys the ruling decisions onto the new file on a swap', () => {
+      expect(
+        reconcileAppealDecisionsForRulingFileChange(
+          decisions,
+          'file-a',
+          'file-b',
+        ),
+      ).toEqual([
+        { id: 'd1', rulingFileId: 'file-b' },
+        { id: 'd2', rulingFileId: 'file-b' },
+        { id: 'd3', rulingFileId: 'other-file' },
+      ])
+    })
+
+    it('drops the ruling decisions on removal (no new file)', () => {
+      expect(
+        reconcileAppealDecisionsForRulingFileChange(decisions, 'file-a', null),
+      ).toEqual([{ id: 'd3', rulingFileId: 'other-file' }])
+    })
+
+    it('is a no-op when the ruling file is unchanged', () => {
+      expect(
+        reconcileAppealDecisionsForRulingFileChange(
+          decisions,
+          'file-a',
+          'file-a',
+        ),
+      ).toBe(decisions)
+    })
+
+    it('is a no-op when there was no previous ruling file', () => {
+      expect(
+        reconcileAppealDecisionsForRulingFileChange(decisions, null, 'file-b'),
+      ).toBe(decisions)
+    })
+
+    it('handles missing appeal decisions', () => {
+      expect(
+        reconcileAppealDecisionsForRulingFileChange(
+          undefined,
+          'file-a',
+          'file-b',
+        ),
+      ).toBeUndefined()
+    })
+  })
+
+  describe('hasAcceptedRulingOrderInCourt', () => {
+    const rulingFileId = 'ruling-file-1'
+    const defendantId = 'defendant-1'
+    const defenderNationalId = '1234567890'
+
+    const defenceUser = {
+      role: UserRole.DEFENDER,
+      nationalId: defenderNationalId,
+    } as User
+
+    const prosecutionUser = {
+      role: UserRole.PROSECUTOR,
+      nationalId: '0000000000',
+      institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
+    } as User
+
+    const caseWith = (
+      decisions: {
+        partyRole: AppealDecisionPartyRole
+        defendantId?: string
+        decision: CaseAppealDecision
+      }[],
+    ) =>
+      ({
+        defendants: [
+          {
+            id: defendantId,
+            isDefenderChoiceConfirmed: true,
+            defenderNationalId,
+          },
+        ],
+        civilClaimants: [],
+        appealDecisions: decisions.map((decision) => ({
+          ...decision,
+          rulingFileId,
+        })),
+      } as unknown as Case)
+
+    it("is true when the defence user's defendant accepted in court", () => {
+      const workingCase = caseWith([
+        {
+          partyRole: AppealDecisionPartyRole.DEFENDANT,
+          defendantId,
+          decision: CaseAppealDecision.ACCEPT,
+        },
+      ])
+
+      expect(
+        hasAcceptedRulingOrderInCourt(workingCase, defenceUser, rulingFileId),
+      ).toBe(true)
+    })
+
+    it('is false when the defendant took the deadline (POSTPONE)', () => {
+      const workingCase = caseWith([
+        {
+          partyRole: AppealDecisionPartyRole.DEFENDANT,
+          defendantId,
+          decision: CaseAppealDecision.POSTPONE,
+        },
+      ])
+
+      expect(
+        hasAcceptedRulingOrderInCourt(workingCase, defenceUser, rulingFileId),
+      ).toBe(false)
+    })
+
+    it('is true when the prosecution accepted in court', () => {
+      const workingCase = caseWith([
+        {
+          partyRole: AppealDecisionPartyRole.PROSECUTOR,
+          decision: CaseAppealDecision.ACCEPT,
+        },
+      ])
+
+      expect(
+        hasAcceptedRulingOrderInCourt(
+          workingCase,
+          prosecutionUser,
+          rulingFileId,
+        ),
+      ).toBe(true)
+    })
+
+    it('is false when the user represents no party on the case', () => {
+      const workingCase = caseWith([
+        {
+          partyRole: AppealDecisionPartyRole.DEFENDANT,
+          defendantId,
+          decision: CaseAppealDecision.ACCEPT,
+        },
+      ])
+      const otherDefender = {
+        role: UserRole.DEFENDER,
+        nationalId: '9999999999',
+      } as User
+
+      expect(
+        hasAcceptedRulingOrderInCourt(workingCase, otherDefender, rulingFileId),
+      ).toBe(false)
+    })
+
+    it('is false when there is no user', () => {
+      const workingCase = caseWith([
+        {
+          partyRole: AppealDecisionPartyRole.PROSECUTOR,
+          decision: CaseAppealDecision.ACCEPT,
+        },
+      ])
+
+      expect(
+        hasAcceptedRulingOrderInCourt(workingCase, undefined, rulingFileId),
+      ).toBe(false)
     })
   })
 

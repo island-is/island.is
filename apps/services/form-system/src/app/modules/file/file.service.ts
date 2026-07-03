@@ -1,7 +1,7 @@
 import { FileStorageService } from '@island.is/file-storage'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { S3Service } from '@island.is/nest/aws'
-import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 import { InjectModel } from '@nestjs/sequelize'
 import { Value } from '../applications/models/value.model'
@@ -105,8 +105,10 @@ export class FileService {
   }
 
   async getFile(key: string): Promise<string | undefined> {
+    this.logger.info(`Fetching file ${key}`)
+
     if (!key) {
-      throw new Error('Key and valueId must be provided for fetching file')
+      throw new Error('Key must be provided for fetching file')
     }
 
     const bucket = this.config.bucket
@@ -114,10 +116,16 @@ export class FileService {
       throw new Error('S3 bucket not configured')
     }
 
-    this.logger.info(`Fetching file ${key}`)
-
     try {
-      return await this.s3Service.getFileContent({ bucket, key }, 'base64')
+      const file = await this.s3Service.getFileContent(
+        { bucket, key },
+        'base64',
+      )
+      if (file === null || file === undefined) {
+        this.logger.warn(`File ${key} not found in bucket ${bucket}`)
+        throw new NotFoundException(`File with key ${key} not found`)
+      }
+      return file
     } catch (error) {
       this.logger.error('Error fetching file content from S3', error)
       throw error

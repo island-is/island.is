@@ -2,9 +2,8 @@
   "extends": "./tsconfig.shared.json",
   "compilerOptions": {
     "paths": {
-      "@/*": ["${configDir}/src/*"],
-      "@island.is/air-discount-scheme-web/*": [
-        "apps/air-discount-scheme/web/*"
+      "@/*": [
+        "${configDir}/src/*"
       ],
       "@island.is/air-discount-scheme/consts": [
         "libs/air-discount-scheme/consts/src/index.ts"
@@ -50,6 +49,9 @@
       ],
       "@island.is/api/domains/company-registry": [
         "libs/api/domains/company-registry/src/index.ts"
+      ],
+      "@island.is/api/domains/customs-calculator": [
+        "libs/api/domains/customs-calculator/src/index.ts"
       ],
       "@island.is/api/domains/consultation-portal": [
         "libs/api/domains/consultation-portal/src/index.ts"
@@ -715,6 +717,9 @@
       "@island.is/clients-rental-day-rate": [
         "libs/clients/rsk/rental-day-rate/src/index.ts"
       ],
+      "@island.is/clients-rsk-customs-calculator": [
+        "libs/clients/rsk/customs-calculator/src/index.ts"
+      ],
       "@island.is/clients-rsk-relationships": [
         "libs/clients/rsk/relationships/src/index.ts"
       ],
@@ -749,6 +754,7 @@
       "@island.is/clients/auth/public-api": [
         "libs/clients/auth/public-api/src/index.ts"
       ],
+      "@island.is/clients/blikk": ["libs/clients/blikk/src/index.ts"],
       "@island.is/clients/car-recycling": [
         "libs/clients/car-recycling/src/index.ts"
       ],
@@ -871,8 +877,8 @@
         "libs/clients/license-client/src/index.ts"
       ],
       "@island.is/clients/lsh": ["libs/clients/lsh/src/index.ts"],
-      "@island.is/clients/lyfjastofnun-pharmacies": [
-        "libs/clients/lyfjastofnun-pharmacies/src/index.ts"
+      "@island.is/clients/lyfjastofnun-health-providers": [
+        "libs/clients/lyfjastofnun-health-providers/src/index.ts"
       ],
       "@island.is/clients/matilda": ["libs/clients/matilda/src/index.ts"],
       "@island.is/clients/middlewares": [

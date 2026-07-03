@@ -29,6 +29,7 @@ import {
   SearchCasesResponse,
 } from '../case-table'
 import {
+  AppealDecisionResponse,
   CourtDocumentResponse,
   CourtSessionResponse,
   CourtSessionString,
@@ -418,6 +419,14 @@ export class BackendService extends DataSource<{ req: Request }> {
     )
   }
 
+  duplicateIndictmentCase(caseId: string): Promise<Case> {
+    return this.post<unknown, Case>(
+      `case/${caseId}/duplicate`,
+      undefined,
+      caseTransformer,
+    )
+  }
+
   splitDefendantFromCase(caseId: string, defendantId: string): Promise<Case> {
     return this.post<unknown, Case>(
       `case/${caseId}/defendant/${defendantId}/split`,
@@ -747,6 +756,17 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.patch(
       `case/${caseId}/courtSession/${courtSessionId}/courtSessionString`,
       updateCourtSessionString,
+    )
+  }
+
+  updateCourtSessionAppealDecision(
+    caseId: string,
+    courtSessionId: string,
+    updateAppealDecision: unknown,
+  ): Promise<AppealDecisionResponse> {
+    return this.patch(
+      `case/${caseId}/courtSession/${courtSessionId}/appealDecision`,
+      updateAppealDecision,
     )
   }
 

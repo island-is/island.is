@@ -27,9 +27,6 @@ export const incomeRadioClearChildren = [
   'incomeForeignCheckbox',
   'incomeOtherCheckbox',
   'incomeContractorDescription',
-  'incomeContractorFiles',
   'incomeForeignDescription',
-  'incomeForeignFiles',
   'incomeOtherDescription',
-  'incomeOtherFiles',
 ] as const

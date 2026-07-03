@@ -193,25 +193,10 @@ const baseSchema = z
       .optional()
       .transform((v) => (v === '' ? undefined : v)),
     incomeContractorDescription: z.string().optional(),
-    incomeContractorFiles: z
-      .union([z.array(fileSchema), z.literal('')])
-      .optional()
-      .transform((v) => (v === '' ? undefined : v)),
     incomeForeignDescription: z.string().optional(),
-    incomeForeignFiles: z
-      .union([z.array(fileSchema), z.literal('')])
-      .optional()
-      .transform((v) => (v === '' ? undefined : v)),
     incomeOtherDescription: z.string().optional(),
-    incomeOtherFiles: z
-      .union([z.array(fileSchema), z.literal('')])
-      .optional()
-      .transform((v) => (v === '' ? undefined : v)),
     incomeNoTaxReturnDescription: z.string().optional(),
-    incomeNoTaxReturnFiles: z
-      .union([z.array(fileSchema), z.literal('')])
-      .optional()
-      .transform((v) => (v === '' ? undefined : v)),
+    assetsDeclarationTextField: z.string().optional(),
     payment: z
       .object({
         paymentRadio: z.enum(['me', 'landlord']).optional(),
@@ -310,6 +295,8 @@ export const dataSchema = baseSchema
       })
       return
     }
+
+    if (data.exemptionReason === 'housing') return
 
     const reasonFiles = data.exemptionDocuments?.[data.exemptionReason]
     if (
@@ -476,32 +463,91 @@ export const dataSchema = baseSchema
   .superRefine((data, ctx) => {
     if (data.incomeHasOtherIncome !== YES) return
 
+    const parseIncomeAmount = (value?: string) => {
+      const numeric = value?.replace(/[^\d]/g, '') ?? ''
+      return numeric ? Number(numeric) : undefined
+    }
+
     const categories = [
       {
         checked: !!data.incomeContractorCheckbox?.includes(YES),
-        text: data.incomeContractorDescription?.trim() ?? '',
+        amount: parseIncomeAmount(data.incomeContractorDescription),
         descPath: ['incomeContractorDescription'] as const,
       },
       {
         checked: !!data.incomeForeignCheckbox?.includes(YES),
-        text: data.incomeForeignDescription?.trim() ?? '',
+        amount: parseIncomeAmount(data.incomeForeignDescription),
         descPath: ['incomeForeignDescription'] as const,
       },
       {
         checked: !!data.incomeOtherCheckbox?.includes(YES),
-        text: data.incomeOtherDescription?.trim() ?? '',
+        amount: parseIncomeAmount(data.incomeOtherDescription),
         descPath: ['incomeOtherDescription'] as const,
       },
     ]
 
     for (const c of categories) {
       if (!c.checked) continue
-      if (!c.text) {
+      if (!c.amount || c.amount <= 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: [...c.descPath],
           params:
-            m.draftMessages.incomeSection.validationCategoryDescriptionRequired,
+            m.draftMessages.incomeSection.validationCategoryAmountRequired,
+        })
+      }
+    }
+  })
+  .superRefine((data, ctx) => {
+    if (data.incomeNoTaxReturnDescription === undefined) return
+
+    if (!data.incomeNoTaxReturnDescription.trim()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['incomeNoTaxReturnDescription'],
+        params:
+          m.draftMessages.incomeNoTaxReturnSection
+            .validationDescriptionRequired,
+      })
+    }
+  })
+  .superRefine((data, ctx) => {
+    if (data.assetsDeclarationTextField === undefined) return
+
+    if (!data.assetsDeclarationTextField.trim()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['assetsDeclarationTextField'],
+        params:
+          m.draftMessages.assetsDeclarationSection.validationTextFieldRequired,
+      })
+    }
+  })
+  .superRefine((data, ctx) => {
+    for (const [key, value] of Object.entries(data)) {
+      if (!kennitala.isValid(key) || typeof value !== 'object' || !value) {
+        continue
+      }
+
+      const bucket = value as Record<string, unknown>
+      if (!bucket.assigneeInfo || typeof bucket.assigneeInfo !== 'object') {
+        continue
+      }
+
+      if (bucket.assetDeclerationTextField === undefined) {
+        continue
+      }
+
+      const text =
+        typeof bucket.assetDeclerationTextField === 'string'
+          ? bucket.assetDeclerationTextField.trim()
+          : ''
+
+      if (!text) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [key, 'assetDeclerationTextField'],
+          params: m.assigneeDraft.validationAssetDeclerationTextFieldRequired,
         })
       }
     }
