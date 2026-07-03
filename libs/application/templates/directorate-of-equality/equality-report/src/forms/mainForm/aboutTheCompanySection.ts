@@ -16,6 +16,7 @@ import { Application } from '@island.is/application/types'
 import { messages } from '../../lib/messages'
 import { getEmployeeCountDisplay } from '../../utils/employeeCountCategory'
 import { getIsatClassification } from '../../utils/isatClassification'
+import { UNKNOWN_DISPLAY_VALUE } from '../../utils/constants'
 
 export const aboutTheCompanySection = buildSection({
   id: 'aboutTheCompany',
@@ -112,7 +113,7 @@ export const aboutTheCompanySection = buildSection({
                     classification?: { number?: string; name?: string }[]
                   }[]
                 >(application.externalData, 'companyData.data.vat')
-                return vat ? getIsatClassification(vat) : 'Óþekkt'
+                return vat ? getIsatClassification(vat) : UNKNOWN_DISPLAY_VALUE
               },
             }),
           ],

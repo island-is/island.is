@@ -6,6 +6,7 @@ import {
   buildSubmitField,
   getValueViaPath,
 } from '@island.is/application/core'
+import { DefaultEvents } from '@island.is/application/types'
 import { messages } from '../../lib/messages'
 
 export const overviewSection = buildSection({
@@ -194,7 +195,7 @@ export const overviewSection = buildSection({
           refetchApplicationAfterSubmit: true,
           actions: [
             {
-              event: 'SUBMIT',
+              event: DefaultEvents.SUBMIT,
               name: messages.overview.submitButton,
               type: 'primary',
             },

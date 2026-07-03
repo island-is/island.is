@@ -533,7 +533,7 @@ export const ApplicationConfigurations = {
     translation: ['vmst.ct.application', 'uiForms.application'],
   },
   [ApplicationTypes.EQUALITY_REPORT]: {
-    slug: 'jafnrettisaetlun',
+    slug: 'jafnrettisaaetlun',
     translation: ['doe.er.application', 'uiForms.application'],
   },
 }

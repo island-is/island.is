@@ -1,6 +1,8 @@
+import { UNKNOWN_DISPLAY_VALUE } from './constants'
+
 // UNKNOWN will be added to the API enum by the DOE team — handle it now
 export const employeeCountCategoryDisplay: Record<string, string> = {
-  UNKNOWN: 'Óþekkt',
+  UNKNOWN: UNKNOWN_DISPLAY_VALUE,
   SMALL: '1 - 24',
   MEDIUM: '25 - 49',
   LARGE: '50+',
