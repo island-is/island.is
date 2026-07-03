@@ -95,7 +95,44 @@ describe('CaseController - Duplicate', () => {
     })
   })
 
-  describe('non-revoked indictment', () => {
+  describe('waiting for cancellation indictment duplicated', () => {
+    const userId = uuid()
+    const prosecutorsOfficeId = uuid()
+    const user = {
+      id: userId,
+      institution: { id: prosecutorsOfficeId },
+    } as TUser
+    const caseId = uuid()
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      state: CaseState.WAITING_FOR_CANCELLATION,
+    } as Case
+    const duplicatedCaseId = uuid()
+    const duplicatedCase = { id: duplicatedCaseId } as Case
+    let then: Then
+
+    beforeEach(async () => {
+      const mockDuplicate =
+        mockCaseRepositoryService.duplicateIndictmentToDraft as jest.Mock
+      mockDuplicate.mockResolvedValueOnce(duplicatedCase)
+
+      then = await givenWhenThen(caseId, user, theCase)
+    })
+
+    it('should duplicate the case into a new draft', () => {
+      expect(
+        mockCaseRepositoryService.duplicateIndictmentToDraft,
+      ).toHaveBeenCalledWith(caseId, {
+        transaction,
+        prosecutorId: userId,
+        prosecutorsOfficeId,
+      })
+      expect(then.result).toBe(duplicatedCase)
+    })
+  })
+
+  describe('non-revoked completed indictment', () => {
     const user = { id: uuid(), institution: { id: uuid() } } as TUser
     const caseId = uuid()
     const theCase = {
@@ -103,6 +140,28 @@ describe('CaseController - Duplicate', () => {
       type: CaseType.INDICTMENT,
       state: CaseState.COMPLETED,
       indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+    } as Case
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(caseId, user, theCase)
+    })
+
+    it('should throw ForbiddenException and not duplicate', () => {
+      expect(then.error).toBeInstanceOf(ForbiddenException)
+      expect(
+        mockCaseRepositoryService.duplicateIndictmentToDraft,
+      ).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('non-revoked active indictment', () => {
+    const user = { id: uuid(), institution: { id: uuid() } } as TUser
+    const caseId = uuid()
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      state: CaseState.RECEIVED,
     } as Case
     let then: Then
 
