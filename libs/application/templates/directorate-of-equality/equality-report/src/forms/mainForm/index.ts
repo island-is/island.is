@@ -15,7 +15,7 @@ export const MainForm = buildForm({
   renderLastScreenBackButton: true,
   children: [
     buildSection({
-      id: 'forsendur',
+      id: 'prerequisitesSection',
       title: messages.prerequisites.section.sectionTitle,
       children: [],
     }),

@@ -83,7 +83,7 @@ export const messages = {
     },
   }),
 
-  // Forsendur
+  //
   prerequisites: {
     errors: defineMessages({
       approveExternalData: {

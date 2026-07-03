@@ -3,10 +3,7 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
-import {
-  DirectorateOfEqualityClientService,
-  type CompanyDto,
-} from '@island.is/clients/directorate-of-equality'
+import { DirectorateOfEqualityClientService } from '@island.is/clients/directorate-of-equality'
 import {
   Gender,
   type ApplicationAnswers,
@@ -81,14 +78,11 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
         await this.directorateOfEqualityService.getActiveEqualityReport(auth)
       return { hasActiveEqualityReport: true, ...report }
     } catch (error) {
-      this.logger.error(
-        'Failed to get active equality report, falling back',
-        {
-          applicationId: application.id,
-          context: LOGGING_CONTEXT,
-          ...this.extractFetchErrorDetails(error),
-        },
-      )
+      this.logger.error('Failed to get active equality report, falling back', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...this.extractFetchErrorDetails(error),
+      })
       return { hasActiveEqualityReport: false }
     }
   }
@@ -116,16 +110,10 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     )
     if (!hasActiveReport) return null
 
-    const providerId = getValueViaPath<string>(
-      application.externalData,
-      'doeCompany.data.id',
-    )
-    if (!providerId) return null
-
     try {
       const report = await this.directorateOfEqualityService.getReport(
         auth,
-        providerId,
+        application.id,
       )
       return { equalityReportContent: report.equalityReportContent ?? '' }
     } catch (error) {
@@ -146,10 +134,6 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     application,
   }: TemplateApiModuleActionProps) {
     const answers = application.answers as ApplicationAnswers
-    const doeCompany = getValueViaPath<CompanyDto>(
-      application.externalData,
-      'doeCompany.data',
-    )
 
     const genderMap: Record<Gender, 'MALE' | 'FEMALE' | 'NEUTRAL'> = {
       [Gender.MALE]: 'MALE',
@@ -173,7 +157,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
         auth,
         {
           identifier: application.id,
-          providerId: doeCompany?.id ?? '',
+          providerId: application.id,
           companyAdminName: answers.chiefExecutive?.name ?? '',
           companyAdminEmail: answers.chiefExecutive?.email ?? '',
           companyAdminGender: answers.chiefExecutive?.gender

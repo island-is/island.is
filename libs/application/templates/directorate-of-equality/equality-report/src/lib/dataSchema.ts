@@ -3,6 +3,7 @@ import * as kennitala from 'kennitala'
 import { messages } from './messages'
 import { EMAIL_REGEX } from '@island.is/application/core'
 import { Gender } from '../utils/constants'
+import { decodeEditorHtml } from '../utils/htmlHelpers'
 
 const generalInformation = z.object({
   companyName: z.string().optional(),
@@ -89,37 +90,6 @@ const subsidiaries = z.object({
       }),
   ),
 })
-
-const HTML_NAMED_ENTITIES: Record<string, string> = {
-  nbsp: ' ',
-  amp: '&',
-  lt: '<',
-  gt: '>',
-  quot: '"',
-  apos: "'",
-}
-
-const decodeHtmlEntities = (value: string) =>
-  value.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (match, entity: string) => {
-    if (entity[0] === '#') {
-      const codePoint =
-        entity[1].toLowerCase() === 'x'
-          ? parseInt(entity.slice(2), 16)
-          : parseInt(entity.slice(1), 10)
-      return Number.isNaN(codePoint) ? match : String.fromCodePoint(codePoint)
-    }
-    return HTML_NAMED_ENTITIES[entity.toLowerCase()] ?? match
-  })
-
-const decodeEditorHtml = (base64: string) => {
-  try {
-    return atob(base64)
-      .replace(/<[^>]*>/g, '')
-      .trim()
-  } catch {
-    return ''
-  }
-}
 
 const information = z.object({
   checkbox: z
