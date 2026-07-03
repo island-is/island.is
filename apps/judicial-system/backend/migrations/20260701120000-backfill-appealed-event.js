@@ -20,11 +20,13 @@
 //   3. In-court ruling-order appeals - one event per standing (not withdrawn)
 //      APPEAL decision, side and party taken straight from the decision row.
 //
-// created is set to the appeal date so the down migration can delete exactly
-// these rows without touching dual-write events (whose created is their own
-// insertion instant). Actor snapshots are left null - the historical actor is
-// unknown - except the appellant national id for out-of-court defence appeals,
-// where the actor is the appellant.
+// created is set to the appeal date so each backfilled event records when the
+// appeal actually happened (dual-write events carry their own insertion
+// instant). Actor snapshots are left null - the historical actor is unknown -
+// except the appellant national id for out-of-court defence appeals, where the
+// actor is the appellant. The down migration is a no-op: these rows are
+// indistinguishable from dual-write events on rollback, so history is left
+// intact.
 
 const APPEALED_GUARD = `
   NOT EXISTS (
@@ -80,11 +82,19 @@ module.exports = {
         )
         SELECT gen_random_uuid(), ac.appeal_date, ac.case_id, ac.id, 'APPEALED',
           CASE WHEN ac.appealed_by_national_id IS NULL THEN 'PROSECUTOR' ELSE 'DEFENDER' END,
+          -- Resolve the party only when the national id maps to a single
+          -- confirmed representative across both tables combined. A match in
+          -- one table plus any match in the other is ambiguous - leave both null.
           CASE WHEN (
               SELECT count(*) FROM defendant d
               WHERE d.case_id = ac.case_id AND d.is_defender_choice_confirmed
                 AND d.defender_national_id = ac.appealed_by_national_id
             ) = 1
+            AND (
+              SELECT count(*) FROM civil_claimant cc
+              WHERE cc.case_id = ac.case_id AND cc.is_spokesperson_confirmed
+                AND cc.spokesperson_national_id = ac.appealed_by_national_id
+            ) = 0
             THEN (
               SELECT d.id FROM defendant d
               WHERE d.case_id = ac.case_id AND d.is_defender_choice_confirmed
@@ -97,6 +107,11 @@ module.exports = {
               WHERE cc.case_id = ac.case_id AND cc.is_spokesperson_confirmed
                 AND cc.spokesperson_national_id = ac.appealed_by_national_id
             ) = 1
+            AND (
+              SELECT count(*) FROM defendant d
+              WHERE d.case_id = ac.case_id AND d.is_defender_choice_confirmed
+                AND d.defender_national_id = ac.appealed_by_national_id
+            ) = 0
             THEN (
               SELECT cc.id FROM civil_claimant cc
               WHERE cc.case_id = ac.case_id AND cc.is_spokesperson_confirmed
@@ -141,18 +156,10 @@ module.exports = {
     })
   },
 
-  down: async (queryInterface) => {
-    // Delete only backfilled rows - identified by created matching the appeal
-    // date exactly. Dual-write events carry their own insertion instant, so they
-    // are left untouched.
-    await queryInterface.sequelize.query(
-      `
-      DELETE FROM appeal_event_log e
-      USING appeal_case ac
-      WHERE e.appeal_case_id = ac.id
-        AND e.event_type = 'APPEALED'
-        AND e.created = ac.appeal_date
-      `,
-    )
+  down: async () => {
+    // Data-fix/backfill migrations are intentionally not reversed - the
+    // backfilled rows are indistinguishable from dual-write events on rollback,
+    // so leave historical data intact.
+    return Promise.resolve()
   },
 }
