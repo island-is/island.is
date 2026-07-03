@@ -61,7 +61,7 @@ the corresponding rights in the RLS staging database.
 
 ## State flow (high level)
 
-```
+```text
 prerequisites ──SUBMIT──▶ draft ──PAYMENT──▶ payment ──▶ done
  (ephemeral)              (main form)        (FJS charge)  (onEntry: submit)
 ```
@@ -117,7 +117,7 @@ Events are `SUBMIT`, `PAYMENT`, `APPROVE`, `ABORT` (see
 
 ## Structure
 
-```
+```text
 src/
 ├── dataProviders/           # Sýslumaður payment-catalog data providers
 ├── fields/                  # Custom React fields
