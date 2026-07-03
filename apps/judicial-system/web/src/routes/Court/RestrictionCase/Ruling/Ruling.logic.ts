@@ -2,14 +2,13 @@ import { IntlShape } from 'react-intl'
 
 import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
+import { ruling } from '@island.is/judicial-system-web/messages'
 import {
   Case,
   CaseDecision,
   CaseType,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-
-import { ruling } from '@island.is/judicial-system-web/messages'
 
 import { strings } from './Ruling.strings'
 

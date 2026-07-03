@@ -34,8 +34,8 @@ import {
   RulingInput,
   TinyMCE,
 } from '@island.is/judicial-system-web/src/components'
-import { getTextContentFromHtml } from '@island.is/judicial-system-web/src/utils/formatters'
 import { CaseDecision } from '@island.is/judicial-system-web/src/graphql/schema'
+import { getTextContentFromHtml } from '@island.is/judicial-system-web/src/utils/formatters'
 import {
   useCase,
   useDebouncedInput,
