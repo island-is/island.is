@@ -28,6 +28,7 @@ export {
   formatDefenderReadyForCourtEmailNotification,
   formatCourtOfAppealJudgeAssignedEmailNotification,
   formatPostponedCourtDateEmailNotification,
+  containsHtml,
   stripHtmlTags,
   filterWhitelistEmails,
   formatCustodyRestrictions,

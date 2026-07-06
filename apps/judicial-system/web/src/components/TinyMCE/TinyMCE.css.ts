@@ -31,6 +31,9 @@ export const wrapper = style({
   position: 'relative',
   borderRadius: theme.border.radius.large,
   overflow: 'hidden',
+  // Matches the island-ui Input background so the label row doesn't show the
+  // color of a tinted container (e.g. BlueBox) behind it.
+  backgroundColor: theme.color.white,
 
   '::before': {
     content: '""',
@@ -125,6 +128,21 @@ export const removeColor = style({
   ':hover': {
     background: theme.color.blue100,
   },
+})
+
+// TinyMCE's fullscreen mode keeps the editor in place in the DOM and positions
+// it fixed with z-index 1200. With no stacking-context ancestors that is
+// enough to cover the page, but an ancestor that forms one (e.g. the motion
+// reorder items around indictment counts) traps that z-index, letting
+// later-painted page chrome — the form stepper, sibling drag handles — draw on
+// top of the fullscreen editor. While fullscreen is active, promote every
+// ancestor of the editor so its chain wins at each stacking level. Position
+// relative makes z-index effective on ancestors that are otherwise static; it
+// is layout-neutral since no offsets are set, and the rule only applies while
+// the editor covers the viewport anyway.
+globalStyle('body.tox-fullscreen :has(.tox.tox-tinymce.tox-fullscreen)', {
+  position: 'relative',
+  zIndex: 1200,
 })
 
 globalStyle(`${wrapper} .tox-tinymce, ${wrapper} .tox-tinymce--focus`, {
