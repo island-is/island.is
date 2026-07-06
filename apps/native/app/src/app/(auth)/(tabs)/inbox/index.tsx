@@ -6,6 +6,7 @@ import {
   Animated,
   FlatList,
   Image,
+  ImageSourcePropType,
   ListRenderItemInfo,
   Platform,
   Pressable,
@@ -14,6 +15,7 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native'
+import { LiquidGlass } from 'react-native-platform-components'
 import styled, { useTheme } from 'styled-components/native'
 import starIcon from '@/assets/icons/star.png'
 import { useApolloClient } from '@apollo/client'
@@ -36,7 +38,6 @@ import {
 } from '@/stores/inbox-filter-store'
 import {
   blue400,
-  Button,
   EmptyList,
   fontByWeight,
   ListItemSkeleton,
@@ -529,6 +530,48 @@ export default function InboxScreen() {
     uiStore.setState({ tabsHidden: selectState && !!selectedItems.length })
   }, [selectState, selectedItems.length])
 
+  const renderHeaderIconButton = (
+    icon: ImageSourcePropType,
+    onPress: () => void,
+  ) => {
+    const iconImage = (
+      <Image
+        source={icon}
+        resizeMode="contain"
+        style={{ width: 20, height: 20, tintColor: theme.color.blue400 }}
+      />
+    )
+    return (
+      <Pressable onPress={onPress}>
+        {Platform.OS === 'ios' ? (
+          <LiquidGlass
+            cornerRadius={24}
+            ios={{ interactive: true, effect: 'regular' }}
+            style={{
+              width: 46,
+              height: 46,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            {iconImage}
+          </LiquidGlass>
+        ) : (
+          <View
+            style={{
+              width: 46,
+              height: 46,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            {iconImage}
+          </View>
+        )}
+      </Pressable>
+    )
+  }
+
   return (
     <>
       <StackScreen
@@ -598,7 +641,36 @@ export default function InboxScreen() {
                   tintColor: theme.color.blue400,
                 },
               ]
-            : [],
+            : [
+                {
+                  type: 'custom',
+                  hidesSharedBackground: true,
+                  element: (
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: 4,
+                        width: 96,
+                        height: 46,
+                      }}
+                    >
+                      {renderHeaderIconButton(filterIcon, () => {
+                        resetSelectState()
+                        inboxFilterStore.setState({
+                          availableSenders,
+                          availableCategories,
+                        })
+                        router.push('/inbox/filter')
+                      })}
+                      {renderHeaderIconButton(
+                        inboxReadIcon,
+                        onMarkAllAsReadPress,
+                      )}
+                    </View>
+                  ),
+                },
+              ],
         }}
       />
       {selectState && selectedItems.length ? (
@@ -654,41 +726,6 @@ export default function InboxScreen() {
                 })}
                 value={query}
                 onChangeText={(text) => setQuery(text)}
-              />
-              <Button
-                title={intl.formatMessage({
-                  id: 'inbox.filterButtonTitle',
-                })}
-                isOutlined
-                isUtilityButton
-                style={{
-                  marginLeft: 8,
-                  paddingTop: 0,
-                  paddingBottom: 0,
-                }}
-                icon={filterIcon}
-                iconStyle={{ tintColor: theme.color.blue400 }}
-                onPress={() => {
-                  resetSelectState()
-                  inboxFilterStore.setState({
-                    availableSenders,
-                    availableCategories,
-                  })
-                  router.push('/inbox/filter')
-                }}
-              />
-              <Button
-                icon={inboxReadIcon}
-                isUtilityButton
-                isOutlined
-                style={{
-                  paddingTop: 0,
-                  paddingBottom: 0,
-                  paddingLeft: 12,
-                  paddingRight: 12,
-                  minWidth: 40,
-                }}
-                onPress={onMarkAllAsReadPress}
               />
             </ListHeaderWrapper>
             {isFilterApplied ? (
