@@ -129,6 +129,13 @@ export const overviewSection = buildSection({
                 keyText: messages.aboutTheCompany.chiefExecutive.gender,
                 valueText: genderText,
               },
+              {
+                width: 'half',
+                keyText: messages.aboutTheCompany.chiefExecutive.jobTitle,
+                valueText:
+                  getValueViaPath<string>(answers, 'chiefExecutive.jobTitle') ??
+                  '',
+              },
             ]
           },
         }),

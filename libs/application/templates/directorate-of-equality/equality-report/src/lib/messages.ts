@@ -154,6 +154,17 @@ export const messages = {
           'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina.',
       },
     }),
+    personalData: defineMessages({
+      title: {
+        id: 'doe.er.application:prerequisites.personalData.title',
+        defaultMessage: 'Meðferð persónuupplýsinga',
+      },
+      intro: {
+        id: 'doe.er.application:prerequisites.personalData.intro',
+        defaultMessage:
+          'Vefsvæðið er öruggt og vinnur aðeins með auðkenni starfsmanna en ekki persónugreinanlegar upplýsingar, svo sem nöfn eða kennitölur. Skipulag vinnunnar skiptir því miklu máli og nauðsynlegt er að halda vel utan um öll gögn sem henni tengjast, auðkenni starfsmanna o.s.frv.. Ef það kemur til dæmis í ljós að þú þurfir að leiðrétta laun starfsmanns með auðkennið 10, þá viltu vita á auðveldan hátt hvaða starfsmann um ræðir.',
+      },
+    }),
   },
 
   // Upplýsingar um fyrirtækið
@@ -175,7 +186,8 @@ export const messages = {
       },
       intro: {
         id: 'doe.er.application:aboutTheCompany.generalInformation.intro',
-        defaultMessage: lorem,
+        defaultMessage:
+          'Eftirfarandi upplýsingar eru sóttar sjálfkrafa frá fyrirtækjaskrá Skattsins og úr kerfum Jafnréttisstofu. Ef upplýsingar um fjölda starfsmanna vantar, verður fjöldi útreiknaður útfrá skilum á þessari áætlun.',
       },
       companyName: {
         id: 'doe.er.application:aboutTheCompany.generalInformation.companyName',
@@ -217,7 +229,8 @@ export const messages = {
       },
       intro: {
         id: 'doe.er.application:aboutTheCompany.chiefExecutive.intro',
-        defaultMessage: lorem,
+        defaultMessage:
+          'Óskað er sérstaklega eftir upplýsingum um kyn æðsta stjórnanda til að fylgjast með kynjaskiptingu í æðstu stjórnendastöðum á vinnumarkaði. Þá er hægt að greina þróun yfir tíma, bera saman atvinnugreinar og meta hvort markmið jafnréttislaga um að jafna stöðu kynjanna séu að nást.',
       },
       name: {
         id: 'doe.er.application:aboutTheCompany.chiefExecutive.name',
@@ -234,6 +247,14 @@ export const messages = {
       emailPlaceholder: {
         id: 'doe.er.application:aboutTheCompany.chiefExecutive.emailPlaceholder',
         defaultMessage: 'Netfang æðsta stjórnanda',
+      },
+      jobTitle: {
+        id: 'doe.er.application:aboutTheCompany.chiefExecutive.jobTitle',
+        defaultMessage: 'Starfstitill',
+      },
+      jobTitlePlaceholder: {
+        id: 'doe.er.application:aboutTheCompany.chiefExecutive.jobTitlePlaceholder',
+        defaultMessage: 'Starfstitill æðsta stjórnanda',
       },
       gender: {
         id: 'doe.er.application:aboutTheCompany.chiefExecutive.gender',
@@ -263,7 +284,8 @@ export const messages = {
       },
       intro: {
         id: 'doe.er.application:aboutTheCompany.contactPerson.intro',
-        defaultMessage: lorem,
+        defaultMessage:
+          'Tengiliður er sá aðili sem ber ábyrgð á skýrslugjöfinni auk stjórnanda. Við höfum samskipti við tengiliðinn svo mikilvægt er að hann sé með á nótunum.',
       },
       contactInfoTitle: {
         id: 'doe.er.application:aboutTheCompany.contactPerson.contactInfoTitle',
@@ -297,15 +319,16 @@ export const messages = {
     employeeCount: defineMessages({
       sectionTitle: {
         id: 'doe.er.application:aboutTheCompany.employeeCount.sectionTitle',
-        defaultMessage: 'Meðalfjöldi starfsmanna',
+        defaultMessage: 'Fjöldi starfsmanna',
       },
       title: {
         id: 'doe.er.application:aboutTheCompany.employeeCount.title',
-        defaultMessage: 'Meðalfjöldi starfsmanna',
+        defaultMessage: 'Fjöldi starfsmanna',
       },
       intro: {
         id: 'doe.er.application:aboutTheCompany.employeeCount.intro',
-        defaultMessage: lorem,
+        defaultMessage:
+          'Forskráðar upplýsingar um starfsmannafjölda koma frá Skattinum í janúar ár hvert. Hér að neðan er hins vegar beðið um upplýsingar um þann núverandi fjölda starfsmanna.',
       },
       women: {
         id: 'doe.er.application:aboutTheCompany.employeeCount.women',
@@ -331,7 +354,8 @@ export const messages = {
       },
       intro: {
         id: 'doe.er.application:aboutTheCompany.subsidiaries.intro',
-        defaultMessage: lorem,
+        defaultMessage:
+          'Hægt er að skila inn einni áætlun fyrir móður- og dótturfyrirtæki.',
       },
       includesSubsidiariesTitle: {
         id: 'doe.er.application:aboutTheCompany.subsidiaries.includesSubsidiariesTitle',

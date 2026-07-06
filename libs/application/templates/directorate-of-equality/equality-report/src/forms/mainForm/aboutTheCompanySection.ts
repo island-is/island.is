@@ -146,6 +146,14 @@ export const aboutTheCompanySection = buildSection({
               variant: 'email',
               required: true,
             }),
+            buildTextField({
+              id: 'chiefExecutive.jobTitle',
+              title: messages.aboutTheCompany.chiefExecutive.jobTitle,
+              placeholder:
+                messages.aboutTheCompany.chiefExecutive.jobTitlePlaceholder,
+              width: 'full',
+              required: true,
+            }),
             buildSelectField({
               id: 'chiefExecutive.gender',
               title: messages.aboutTheCompany.chiefExecutive.gender,

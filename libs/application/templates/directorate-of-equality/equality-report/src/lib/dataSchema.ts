@@ -25,6 +25,9 @@ const chiefExecutive = z.object({
     .refine((v) => EMAIL_REGEX.test(v), {
       params: messages.errors.invalidEmail,
     }),
+  jobTitle: z
+    .string()
+    .refine((v) => v && v.length > 0, { params: messages.errors.required }),
   gender: z.nativeEnum(Gender),
 })
 
