@@ -4,7 +4,7 @@ import { Debtor } from '../models/debtor.model'
 
 export const mapDebtors = (data: DebtorsDto): Debtors => {
   const debtors: Debtor[] = data.debtors.map((debtor) => ({
-    erpLegalEntityId: debtor.erpLegalEntityId,
+    id: String(debtor.erpLegalEntityId),
     legalId: debtor.legalId,
     name: debtor.name,
   }))
@@ -12,6 +12,6 @@ export const mapDebtors = (data: DebtorsDto): Debtors => {
   return {
     totalCount: data.totalCount,
     pageInfo: data.pageInfo,
-    data: debtors.sort((a, b) => a.name.localeCompare(b.name)),
+    data: debtors,
   }
 }

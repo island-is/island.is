@@ -1,53 +1,116 @@
 import gql from 'graphql-tag'
 
-export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES_FILTERS = gql`
-  query IcelandicGovernmentInstitutionsInvoicesFilters {
-    icelandicGovernmentInstitutionsInvoicesFilters {
-      debtors {
-        totalCount
-        data {
-          erpLegalEntityId
-          legalId
-          name
-        }
-        pageInfo {
-          __typename
-          hasNextPage
-        }
+export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_MINISTRIES = gql`
+  query IcelandicGovernmentInstitutionsMinistries(
+    $search: String
+    $after: String
+    $lookup: [String!]
+    $sortDirection: IcelandicGovernmentInstitutionsSortDirection
+  ) {
+    icelandicGovernmentInstitutionsMinistries(
+      input: {
+        search: $search
+        after: $after
+        lookup: $lookup
+        sortDirection: $sortDirection
       }
-      suppliers {
-        totalCount
-        data {
-          id
-          name
-        }
-        pageInfo {
-          __typename
-          hasNextPage
-        }
+    ) {
+      data {
+        id
+        name
       }
-      invoicePaymentTypes {
-        totalCount
-        data {
-          code
-          name
-          isConfidential
-        }
-        pageInfo {
-          __typename
-          hasNextPage
-        }
+      totalCount
+      pageInfo {
+        __typename
+        hasNextPage
+        endCursor
       }
-      ministries {
-        totalCount
-        data {
-          code
-          name
-        }
-        pageInfo {
-          __typename
-          hasNextPage
-        }
+    }
+  }
+`
+
+export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_SUPPLIERS = gql`
+  query IcelandicGovernmentInstitutionsSuppliers(
+    $search: String
+    $after: String
+    $lookup: [String!]
+    $sortDirection: IcelandicGovernmentInstitutionsSortDirection
+  ) {
+    icelandicGovernmentInstitutionsSuppliers(
+      input: {
+        search: $search
+        after: $after
+        lookup: $lookup
+        sortDirection: $sortDirection
+      }
+    ) {
+      data {
+        id
+        name
+      }
+      totalCount
+      pageInfo {
+        __typename
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+`
+
+export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_DEBTORS = gql`
+  query IcelandicGovernmentInstitutionsDebtors(
+    $search: String
+    $after: String
+    $lookup: [String!]
+    $sortDirection: IcelandicGovernmentInstitutionsSortDirection
+  ) {
+    icelandicGovernmentInstitutionsDebtors(
+      input: {
+        search: $search
+        after: $after
+        lookup: $lookup
+        sortDirection: $sortDirection
+      }
+    ) {
+      data {
+        id
+        name
+      }
+      totalCount
+      pageInfo {
+        __typename
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+`
+
+export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_PAYMENT_TYPES = gql`
+  query IcelandicGovernmentInstitutionsInvoicePaymentTypes(
+    $search: String
+    $after: String
+    $lookup: [String!]
+    $sortDirection: IcelandicGovernmentInstitutionsSortDirection
+  ) {
+    icelandicGovernmentInstitutionsInvoicePaymentTypes(
+      input: {
+        search: $search
+        after: $after
+        lookup: $lookup
+        sortDirection: $sortDirection
+      }
+    ) {
+      data {
+        id
+        name
+      }
+      totalCount
+      pageInfo {
+        __typename
+        hasNextPage
+        endCursor
       }
     }
   }
@@ -66,7 +129,7 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUP = gql`
         isPrivateProxy
       }
       debtor {
-        erpLegalEntityId
+        id
         legalId
         name
       }
@@ -78,7 +141,7 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUP = gql`
           id
           label
           invoicePaymentType {
-            code
+            id
             name
           }
           amount
@@ -104,7 +167,7 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS = gql`
           isPrivateProxy
         }
         debtor {
-          erpLegalEntityId
+          id
           legalId
           name
         }

@@ -11,7 +11,7 @@ export const MOCK_INVOICE_GROUPS: InvoiceGroupCollection = {
         isConfidential: false,
       },
       debtor: {
-        erpLegalEntityId: 5012021885,
+        id: '5012021885',
         legalId: '5012021885',
         name: 'Íslenska Byggingafélagið hf.',
       },
@@ -27,7 +27,7 @@ export const MOCK_INVOICE_GROUPS: InvoiceGroupCollection = {
         isConfidential: false,
       },
       debtor: {
-        erpLegalEntityId: 5012021886,
+        id: '5012021886',
         legalId: '5012021886',
         name: 'Landspítali',
       },
@@ -43,7 +43,7 @@ export const MOCK_INVOICE_GROUPS: InvoiceGroupCollection = {
         isConfidential: false,
       },
       debtor: {
-        erpLegalEntityId: 5012021887,
+        id: '5012021887',
         legalId: '5012021887',
         name: 'Ferðamálastofa',
       },
@@ -59,7 +59,7 @@ export const MOCK_INVOICE_GROUPS: InvoiceGroupCollection = {
         isConfidential: false,
       },
       debtor: {
-        erpLegalEntityId: 5012021888,
+        id: '5012021888',
         legalId: '5012021888',
         name: 'Keflavíkurflugvöllur',
       },
@@ -75,7 +75,7 @@ export const MOCK_INVOICE_GROUPS: InvoiceGroupCollection = {
         isConfidential: false,
       },
       debtor: {
-        erpLegalEntityId: 5012021889,
+        id: '5012021889',
         legalId: '5012021889',
         name: 'Samskip hf.',
       },

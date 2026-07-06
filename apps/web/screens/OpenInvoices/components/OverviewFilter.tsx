@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 
 import {
   Box,
+  Button,
   Checkbox,
   Divider,
   Filter,
@@ -12,22 +13,13 @@ import { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 
 import { m } from '../messages'
+import {
+  AsyncFilterPage,
+  AsyncFilterSearchAccordion,
+} from './AsyncFilterSearchAccordion'
 import { FilterDateAccordion } from './FilterDateAccordion'
-import { FilterSearchAccordion } from './FilterSearchAccordion'
 
 export type SearchState = Record<string, Array<string> | undefined>
-
-interface MultiSelectProps {
-  type: 'multi'
-  sections: Array<{
-    id: string
-    label: string
-    items: Array<{
-      value: string
-      label: string
-    }>
-  }>
-}
 
 interface DateSelectProps {
   type: 'date'
@@ -45,15 +37,17 @@ interface CheckboxProps {
   checked?: boolean
 }
 
-interface SelectProps {
-  type: 'select'
+interface AsyncSelectProps {
+  type: 'asyncSelect'
   id: string
   label: string
-  placeholder: string
-  items: Array<{
-    value: string
-    label: string
-  }>
+  /** Fetches a page of items from the server, see `AsyncFilterSearchAccordion`. */
+  fetchPage: (args: {
+    search: string
+    after?: string | null
+  }) => Promise<AsyncFilterPage>
+  /** Labels for currently selected values not necessarily present in the loaded page. */
+  selectedLabels?: Record<string, string>
 }
 
 interface Props {
@@ -62,12 +56,12 @@ interface Props {
     values?: Array<string>,
   ) => void
   onReset: () => void
+  onApply: () => void
+  applyDisabled?: boolean
   searchState?: SearchState
   url: string
   locale: Locale
-  categories: Array<
-    MultiSelectProps | DateSelectProps | CheckboxProps | SelectProps
-  >
+  categories: Array<DateSelectProps | CheckboxProps | AsyncSelectProps>
   variant?: FilterProps['variant']
   hits?: number
 }
@@ -75,6 +69,8 @@ interface Props {
 export const OverviewFilter = ({
   onSearchUpdate,
   onReset,
+  onApply,
+  applyDisabled,
   searchState,
   categories,
   locale,
@@ -90,6 +86,7 @@ export const OverviewFilter = ({
       action={url}
       onSubmit={(e) => {
         e.preventDefault()
+        onApply()
       }}
     >
       <Filter
@@ -167,19 +164,19 @@ export const OverviewFilter = ({
               )
             }
 
-            if (category.type === 'select') {
+            if (category.type === 'asyncSelect') {
               return (
                 <React.Fragment key={category.id}>
                   {divider}
-                  <FilterSearchAccordion
+                  <AsyncFilterSearchAccordion
                     id={category.id}
                     title={category.label}
-                    items={category.items}
                     selected={searchState?.[category.id] ?? []}
-                    showOptionsWhenEmpty={false}
                     initiallyExpanded={
                       (searchState?.[category.id] ?? []).length > 0
                     }
+                    fetchPage={category.fetchPage}
+                    selectedLabels={category.selectedLabels}
                     onChange={(values) =>
                       onSearchUpdate(
                         category.id as keyof SearchState,
@@ -191,36 +188,25 @@ export const OverviewFilter = ({
               )
             }
 
-            return (
-              <React.Fragment key={index}>
-                {divider}
-                {category.sections.map((section, sectionIndex) => (
-                  <React.Fragment key={section.id}>
-                    {sectionIndex > 0 && (
-                      <Box paddingX={3}>
-                        <Divider />
-                      </Box>
-                    )}
-                    <FilterSearchAccordion
-                      id={section.id}
-                      title={section.label}
-                      items={section.items}
-                      selected={searchState?.[section.id] ?? []}
-                      initiallyExpanded={
-                        (searchState?.[section.id] ?? []).length > 0
-                      }
-                      onChange={(values) =>
-                        onSearchUpdate(
-                          section.id as keyof SearchState,
-                          values.length ? values : undefined,
-                        )
-                      }
-                    />
-                  </React.Fragment>
-                ))}
-              </React.Fragment>
-            )
+            return null
           })}
+          {categories.length > 0 && (
+            <Box paddingX={3}>
+              <Divider />
+            </Box>
+          )}
+          <Box paddingX={3} paddingY={3}>
+            <Button
+              type="submit"
+              variant="ghost"
+              size="small"
+              fluid
+              disabled={applyDisabled}
+              loading={applyDisabled}
+            >
+              {formatMessage(m.search.viewResults)}
+            </Button>
+          </Box>
         </Box>
       </Filter>
     </Box>

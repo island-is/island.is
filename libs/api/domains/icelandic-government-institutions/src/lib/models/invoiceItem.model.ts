@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, Float, ID, ObjectType } from '@nestjs/graphql'
 import { InvoicePaymentType } from './invoicePaymentType.model'
 
 @ObjectType('IcelandicGovernmentInstitutionsInvoiceItem')
@@ -9,7 +9,7 @@ export class InvoiceItem {
   @Field()
   label!: string
 
-  @Field()
+  @Field(() => Float)
   amount!: number
 
   @Field(() => InvoicePaymentType, { nullable: true })

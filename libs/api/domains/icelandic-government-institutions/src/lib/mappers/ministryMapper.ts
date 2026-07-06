@@ -4,13 +4,13 @@ import { Ministry } from '../models/ministry.model'
 
 export const mapMinistries = (data: MinistriesDto): Ministries => {
   const ministries: Ministry[] = data.ministries.map((ministry) => ({
-    code: ministry.code,
+    id: ministry.code,
     name: ministry.name,
   }))
 
   return {
     totalCount: data.totalCount,
     pageInfo: data.pageInfo,
-    data: ministries.sort((a, b) => a.name.localeCompare(b.name)),
+    data: ministries,
   }
 }

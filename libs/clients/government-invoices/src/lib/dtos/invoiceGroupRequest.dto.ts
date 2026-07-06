@@ -1,3 +1,7 @@
+import { OpenInvoiceSortFields, SortDirections } from '../../../gen/fetch'
+
+export { OpenInvoiceSortFields, SortDirections }
+
 export interface InvoiceGroupRequestDto {
   suppliers?: string[]
   debtors?: number[]
@@ -5,8 +9,8 @@ export interface InvoiceGroupRequestDto {
   paymentTypeIds?: string[]
   dateFrom?: Date
   dateTo?: Date
-  sortBy?: string
-  sortDirection?: string
+  sortBy?: OpenInvoiceSortFields
+  sortDirection?: SortDirections
   limit?: number
   page?: number
 }

@@ -8,7 +8,7 @@ import { InvoicePaymentTypes } from '../models/invoicePaymentTypes.model'
 export const mapInvoicePaymentType = (
   data: InvoicePaymentTypeDto,
 ): InvoicePaymentType => ({
-  code: data.code,
+  id: data.code,
   name: data.name,
   accountType: data.accountType,
   isConfidential: data.isConfidential,

@@ -1,11 +1,11 @@
-import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('IcelandicGovernmentInstitutionsDebtor')
 export class Debtor {
-  @Field(() => Int, {
+  @Field(() => ID, {
     description: 'ERP legal entity ID of the debtor, used to identify it',
   })
-  erpLegalEntityId!: number
+  id!: string
 
   @Field(() => ID, {
     nullable: true,

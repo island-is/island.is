@@ -37,21 +37,55 @@ export class MockInvoicesService implements IInvoicesService {
     return MOCK_INVOICE_GROUPS
   }
 
-  async getDebtors(_input?: DebtorsInput): Promise<Debtors | null> {
+  async getDebtors(input?: DebtorsInput): Promise<Debtors | null> {
+    if (input?.lookup?.length) {
+      const lookup = new Set(input.lookup)
+      return {
+        ...MOCK_DEBTORS,
+        data: MOCK_DEBTORS.data.filter((debtor) => lookup.has(debtor.id)),
+      }
+    }
     return MOCK_DEBTORS
   }
 
-  async getMinistries(_input?: MinistriesInput): Promise<Ministries | null> {
+  async getMinistries(input?: MinistriesInput): Promise<Ministries | null> {
+    if (input?.lookup?.length) {
+      const lookup = new Set(input.lookup)
+      return {
+        ...MOCK_MINISTRIES,
+        data: MOCK_MINISTRIES.data.filter((ministry) =>
+          lookup.has(ministry.id),
+        ),
+      }
+    }
     return MOCK_MINISTRIES
   }
 
-  async getSuppliers(_input?: SuppliersInput): Promise<Suppliers | null> {
+  async getSuppliers(input?: SuppliersInput): Promise<Suppliers | null> {
+    if (input?.lookup?.length) {
+      const lookup = new Set(input.lookup)
+      return {
+        ...MOCK_SUPPLIERS,
+        data: MOCK_SUPPLIERS.data.filter((supplier) =>
+          lookup.has(supplier.id),
+        ),
+      }
+    }
     return MOCK_SUPPLIERS
   }
 
   async getInvoicePaymentTypes(
-    _input?: InvoicePaymentTypesInput,
+    input?: InvoicePaymentTypesInput,
   ): Promise<InvoicePaymentTypes | null> {
+    if (input?.lookup?.length) {
+      const lookup = new Set(input.lookup)
+      return {
+        ...MOCK_INVOICE_PAYMENT_TYPES,
+        data: MOCK_INVOICE_PAYMENT_TYPES.data.filter((type) =>
+          lookup.has(type.id),
+        ),
+      }
+    }
     return MOCK_INVOICE_PAYMENT_TYPES
   }
 }

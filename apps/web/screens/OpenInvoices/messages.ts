@@ -138,6 +138,10 @@ export const m = {
       id: 'web.openinvoices:search.customers',
       defaultMessage: 'Kaupendur',
     },
+    ministries: {
+      id: 'web.openinvoices:search.ministries',
+      defaultMessage: 'Ráðuneyti',
+    },
     viewResults: {
       id: 'web.openinvoices:search.viewResults',
       defaultMessage: 'Skoða niðurstöður',
@@ -166,9 +170,9 @@ export const m = {
       id: 'web.openinvoices:search.filterSearch',
       defaultMessage: 'Leita...',
     },
-    loadMore: {
-      id: 'web.openinvoices:search.loadMore',
-      defaultMessage: 'Sækja fleiri',
+    loadingMore: {
+      id: 'web.openinvoices:search.loadingMore',
+      defaultMessage: 'Sæki fleiri niðurstöður',
     },
   }),
 }

@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Elfur API - Open Invoices",
-    "description": "<h2>Open Invoices</h2><p>Status: Available</p><h3>Authentication</h3>\r\n<ul>\r\n <li><strong>Authorization:</strong> <code>Bearer &lt;access_token&gt;</code> is required.</li>\r\n <li><strong>Required scopes:</strong> <code>@fjs.is/elfur_openinvoices_read</code></li>\r\n \r\n</ul>",
+    "description": "<h2>Open Invoices</h2><p>Status: Available</p><h3>Authentication</h3>\n<ul>\n <li><strong>Authorization:</strong> <code>Bearer &lt;access_token&gt;</code> is required.</li>\n <li><strong>Required scopes:</strong> <code>@fjs.is/elfur_openinvoices_read</code></li>\n \n</ul>",
     "version": "1.0"
   },
   "paths": {
@@ -25,6 +25,12 @@
             "schema": { "type": "string" }
           },
           {
+            "name": "lookup",
+            "in": "query",
+            "description": "Optional exact lookup by supplier legal ID (max 15 characters each). Repeat for multiple values: `?lookup=x&lookup=y` (e.g. to resolve labels for previously selected filter values).",
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
             "name": "after",
             "in": "query",
             "description": "Cursor for next page.",
@@ -35,6 +41,12 @@
             "in": "query",
             "description": "Cursor for previous page.",
             "schema": { "type": "string" }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction by supplier name (default: Elfur.Core.Domain.Enums.Sorting.SortDirections.Ascending).",
+            "schema": { "$ref": "#/components/schemas/SortDirections" }
           }
         ],
         "responses": {
@@ -103,6 +115,12 @@
             "schema": { "type": "string" }
           },
           {
+            "name": "lookup",
+            "in": "query",
+            "description": "Optional exact lookup by debtor `erpLegalEntityId` (max 15 characters each). Repeat for multiple values: `?lookup=x&lookup=y` (e.g. to resolve labels for previously selected filter values).",
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
             "name": "after",
             "in": "query",
             "description": "Cursor for next page.",
@@ -113,6 +131,12 @@
             "in": "query",
             "description": "Cursor for previous page.",
             "schema": { "type": "string" }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction by debtor name (default: Elfur.Core.Domain.Enums.Sorting.SortDirections.Ascending).",
+            "schema": { "$ref": "#/components/schemas/SortDirections" }
           }
         ],
         "responses": {
@@ -171,11 +195,39 @@
           {
             "name": "limit",
             "in": "query",
+            "description": "Maximum number of ministries to return (default: 50, max: 100).",
             "schema": { "type": "integer", "format": "int32", "default": 50 }
           },
-          { "name": "search", "in": "query", "schema": { "type": "string" } },
-          { "name": "after", "in": "query", "schema": { "type": "string" } },
-          { "name": "before", "in": "query", "schema": { "type": "string" } }
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Optional search string for ministry name.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "lookup",
+            "in": "query",
+            "description": "Optional exact lookup by ministry code (max 15 characters each). Repeat for multiple values: `?lookup=x&lookup=y` (e.g. to resolve labels for previously selected filter values).",
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "description": "Cursor for next page.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "before",
+            "in": "query",
+            "description": "Cursor for previous page.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction by ministry name (default: Elfur.Core.Domain.Enums.Sorting.SortDirections.Ascending).",
+            "schema": { "$ref": "#/components/schemas/SortDirections" }
+          }
         ],
         "responses": {
           "200": {
@@ -243,6 +295,12 @@
             "schema": { "type": "string" }
           },
           {
+            "name": "lookup",
+            "in": "query",
+            "description": "Optional exact lookup by payment type code (max 15 characters each). Repeat for multiple values: `?lookup=x&lookup=y` (e.g. to resolve labels for previously selected filter values).",
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
             "name": "after",
             "in": "query",
             "description": "Cursor for next page.",
@@ -253,6 +311,12 @@
             "in": "query",
             "description": "Cursor for previous page.",
             "schema": { "type": "string" }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction by payment type name (default: Elfur.Core.Domain.Enums.Sorting.SortDirections.Ascending).",
+            "schema": { "$ref": "#/components/schemas/SortDirections" }
           }
         ],
         "responses": {
@@ -311,31 +375,37 @@
           {
             "name": "limit",
             "in": "query",
+            "description": "Maximum number of invoice groups to return (default: 50, max: 100).",
             "schema": { "type": "integer", "format": "int32", "default": 50 }
           },
           {
             "name": "page",
             "in": "query",
+            "description": "Page number to return (1-based, default: 1).",
             "schema": { "type": "integer", "format": "int32", "default": 1 }
           },
           {
             "name": "dateFrom",
             "in": "query",
+            "description": "Optional inclusive start date filter (default: one month ago).",
             "schema": { "type": "string", "format": "date" }
           },
           {
             "name": "dateTo",
             "in": "query",
+            "description": "Optional inclusive end date filter (default: today).",
             "schema": { "type": "string", "format": "date" }
           },
           {
             "name": "suppliers",
             "in": "query",
+            "description": "Optional supplier legal ID filter. Repeat for multiple values.",
             "schema": { "type": "array", "items": { "type": "string" } }
           },
           {
             "name": "debtors",
             "in": "query",
+            "description": "Optional debtor `erpLegalEntityId` filter. Repeat for multiple values.",
             "schema": {
               "type": "array",
               "items": { "type": "integer", "format": "int32" }
@@ -344,18 +414,26 @@
           {
             "name": "ministries",
             "in": "query",
+            "description": "Optional ministry code filter. Repeat for multiple values.",
             "schema": { "type": "array", "items": { "type": "string" } }
           },
           {
             "name": "paymentTypeIds",
             "in": "query",
+            "description": "Optional payment type code filter. Repeat for multiple values.",
             "schema": { "type": "array", "items": { "type": "string" } }
           },
-          { "name": "sortBy", "in": "query", "schema": { "type": "string" } },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "Field to sort by (default: Elfur.Core.Domain.Enums.Sorting.OpenInvoiceSortFields.SupplierName).",
+            "schema": { "$ref": "#/components/schemas/OpenInvoiceSortFields" }
+          },
           {
             "name": "sortDirection",
             "in": "query",
-            "schema": { "type": "string" }
+            "description": "Sort direction (default: Elfur.Core.Domain.Enums.Sorting.SortDirections.Ascending).",
+            "schema": { "$ref": "#/components/schemas/SortDirections" }
           }
         ],
         "responses": {
@@ -603,7 +681,7 @@
             "description": "Gets or sets the GL Date.",
             "format": "date",
             "nullable": true,
-            "example": "2026-07-01"
+            "example": "2026-07-06"
           },
           "accountedAmount": {
             "type": "number",
@@ -793,6 +871,11 @@
         "additionalProperties": false,
         "description": "Represents all invoices between a specified supplier-customer relationship"
       },
+      "OpenInvoiceSortFields": {
+        "enum": ["None", "SupplierName", "DebtorName", "Amount"],
+        "type": "string",
+        "description": "Possible sort fields for the open invoice group list."
+      },
       "OpenInvoicesGroupCollectionResponseDto": {
         "type": "object",
         "properties": {
@@ -895,6 +978,11 @@
           }
         },
         "additionalProperties": false
+      },
+      "SortDirections": {
+        "enum": ["Unknown", "Ascending", "Descending"],
+        "type": "string",
+        "description": "Enum for sort directions."
       },
       "SupplierPaginatedResponseDto": {
         "type": "object",

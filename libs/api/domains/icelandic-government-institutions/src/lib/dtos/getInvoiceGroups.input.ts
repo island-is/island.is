@@ -1,5 +1,6 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
-import { IsDate, IsInt, IsOptional, IsString, Max, Min } from 'class-validator'
+import { IsDate, IsEnum, IsInt, IsOptional, Max, Min } from 'class-validator'
+import { OpenInvoiceSortFields, SortDirections } from './sortEnums'
 
 @InputType('IcelandicGovernmentInstitutionsInvoiceGroupsInput')
 export class InvoiceGroupsInput {
@@ -43,13 +44,13 @@ export class InvoiceGroupsInput {
   @IsOptional()
   dateTo?: Date
 
-  @Field({ nullable: true })
-  @IsString()
+  @Field(() => OpenInvoiceSortFields, { nullable: true })
   @IsOptional()
-  sortBy?: string
+  @IsEnum(OpenInvoiceSortFields)
+  sortBy?: OpenInvoiceSortFields
 
-  @Field({ nullable: true })
-  @IsString()
+  @Field(() => SortDirections, { nullable: true })
   @IsOptional()
-  sortDirection?: string
+  @IsEnum(SortDirections)
+  sortDirection?: SortDirections
 }

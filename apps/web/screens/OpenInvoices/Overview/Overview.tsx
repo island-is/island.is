@@ -10,7 +10,13 @@ import {
 } from 'next-usequerystate'
 import { useLazyQuery } from '@apollo/client'
 
-import { Box, Pagination, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Pagination,
+  SortingState,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import { dateFormat } from '@island.is/shared/constants'
 import { CustomPageUniqueIdentifier, Locale } from '@island.is/shared/types'
 import { formatCurrency, isDefined } from '@island.is/shared/utils'
@@ -18,6 +24,8 @@ import { MarkdownText } from '@island.is/web/components'
 import {
   IcelandicGovernmentInstitutionsInvoiceGroup,
   IcelandicGovernmentInstitutionsInvoiceGroups,
+  IcelandicGovernmentInstitutionsOpenInvoiceSortField,
+  IcelandicGovernmentInstitutionsSortDirection,
   Organization,
   Query,
   QueryGetOrganizationArgs,
@@ -34,22 +42,43 @@ import { GET_ORGANIZATION_QUERY } from '../../queries'
 import { OpenInvoicesWrapper } from '../components/OpenInvoicesWrapper'
 import { OverviewFilter } from '../components/OverviewFilter'
 import { ORGANIZATION_SLUG } from '../constants'
-import { m } from '../messages'
-import { OverviewFilters } from '../types'
 import {
+  extractDebtors,
+  extractInvoicePaymentTypes,
+  extractMinistries,
+  extractSuppliers,
+  mapDebtor,
+  mapInvoicePaymentType,
+  mapMinistry,
+  mapSupplier,
+} from '../hooks/asyncFilterSources'
+import { useAsyncFilterSource } from '../hooks/useAsyncFilterSource'
+import { m } from '../messages'
+import {
+  GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_DEBTORS,
   GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS,
-  GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES_FILTERS,
+  GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_PAYMENT_TYPES,
+  GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_MINISTRIES,
+  GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_SUPPLIERS,
 } from './Overview.graphql'
 import { OverviewTable } from './OverviewTable'
 
 const PAGE_SIZE = 12
+
+const SORT_FIELD_MAP: Record<
+  string,
+  IcelandicGovernmentInstitutionsOpenInvoiceSortField
+> = {
+  supplier: IcelandicGovernmentInstitutionsOpenInvoiceSortField.SupplierName,
+  customer: IcelandicGovernmentInstitutionsOpenInvoiceSortField.DebtorName,
+  totalSum: IcelandicGovernmentInstitutionsOpenInvoiceSortField.Amount,
+}
 
 const toDebtorIds = (debtors?: string[] | null) =>
   debtors?.map(Number).filter((id): id is number => Number.isInteger(id))
 
 const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   locale,
-  filters,
   initialInvoiceGroups,
   customPageData,
   organization,
@@ -123,8 +152,54 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     'debtors',
     parseAsArrayOf(parseAsString),
   )
+  const [ministries, setMinistries] = useQueryState(
+    'ministries',
+    parseAsArrayOf(parseAsString),
+  )
+
+  const { fetchPage: fetchMinistriesPage, selectedLabels: ministriesLabels } =
+    useAsyncFilterSource(
+      GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_MINISTRIES,
+      extractMinistries,
+      mapMinistry,
+      ministries,
+    )
+
+  const { fetchPage: fetchSuppliersPage, selectedLabels: suppliersLabels } =
+    useAsyncFilterSource(
+      GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_SUPPLIERS,
+      extractSuppliers,
+      mapSupplier,
+      suppliers,
+    )
+
+  const { fetchPage: fetchDebtorsPage, selectedLabels: debtorsLabels } =
+    useAsyncFilterSource(
+      GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_DEBTORS,
+      extractDebtors,
+      mapDebtor,
+      debtors,
+    )
+
+  const {
+    fetchPage: fetchInvoicePaymentTypesPage,
+    selectedLabels: invoicePaymentTypesLabels,
+  } = useAsyncFilterSource(
+    GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_PAYMENT_TYPES,
+    extractInvoicePaymentTypes,
+    mapInvoicePaymentType,
+    invoicePaymentTypes,
+  )
 
   const totalHits = totalCount
+
+  const [sorting, setSorting] = useState<SortingState>([])
+  const sortBy = sorting[0] ? SORT_FIELD_MAP[sorting[0].id] : undefined
+  const sortDirection = sorting[0]
+    ? sorting[0].desc
+      ? IcelandicGovernmentInstitutionsSortDirection.Descending
+      : IcelandicGovernmentInstitutionsSortDirection.Ascending
+    : undefined
 
   const fetchInvoiceGroups = useCallback(() => {
     if (initialRender) {
@@ -138,9 +213,12 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
         input: {
           debtors: toDebtorIds(debtors),
           suppliers,
+          ministries,
           paymentTypeIds: invoicePaymentTypes,
           dateFrom: dateRangeStart ?? initialDates.dateFrom,
           dateTo: dateRangeEnd ?? initialDates.dateTo,
+          sortBy,
+          sortDirection,
           limit: PAGE_SIZE,
           page: 1,
         },
@@ -151,22 +229,22 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     initialRender,
     debtors,
     suppliers,
+    ministries,
     invoicePaymentTypes,
     dateRangeStart,
     dateRangeEnd,
+    sortBy,
+    sortDirection,
   ])
 
+  // Filter fields (debtors/suppliers/ministries/invoicePaymentTypes/date
+  // range) intentionally don't trigger this effect — they're only applied
+  // when the filter panel's submit button is clicked (see `onApply` below),
+  // so rapid filter changes can't pile up/race requests against the server.
   useEffect(() => {
     fetchInvoiceGroups()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    debtors,
-    locale,
-    suppliers,
-    invoicePaymentTypes,
-    dateRangeStart,
-    dateRangeEnd,
-  ])
+  }, [locale, sortBy, sortDirection])
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
@@ -175,9 +253,12 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
         input: {
           debtors: toDebtorIds(debtors),
           suppliers,
+          ministries,
           paymentTypeIds: invoicePaymentTypes,
           dateFrom: dateRangeStart ?? initialDates.dateFrom,
           dateTo: dateRangeEnd ?? initialDates.dateTo,
+          sortBy,
+          sortDirection,
           limit: PAGE_SIZE,
           page,
         },
@@ -191,6 +272,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     setInvoiceTypes(null)
     setSuppliers(null)
     setDebtors(null)
+    setMinistries(null)
   }
 
   const hitsMessage = useMemo(() => {
@@ -260,6 +342,10 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
         setDebtors(filteredValues)
         break
       }
+      case 'ministries': {
+        setMinistries(filteredValues)
+        break
+      }
     }
   }
 
@@ -304,6 +390,8 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
               <OverviewFilter
                 onSearchUpdate={onSearchFilterUpdate}
                 onReset={onResetFilter}
+                onApply={fetchInvoiceGroups}
+                applyDisabled={invoiceGroupsLoading}
                 url={baseUrl}
                 hits={totalHits}
                 locale={locale}
@@ -312,6 +400,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
                     invoicePaymentTypes?.map((i) => i.toString()) ?? undefined,
                   suppliers: suppliers ?? undefined,
                   debtors: debtors ?? undefined,
+                  ministries: ministries ?? undefined,
                   dateRange: [
                     dateRangeStart.toISOString(),
                     dateRangeEnd.toISOString(),
@@ -330,55 +419,51 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
                     valueTo: dateRangeEnd,
                   },
                   {
-                    type: 'multi',
-                    sections: [
-                      {
-                        id: 'suppliers',
-                        label: formatMessage(m.search.suppliers),
-                        items:
-                          filters?.suppliers?.map((filter) => ({
-                            value: filter.value,
-                            label: filter.name,
-                          })) ?? [],
-                      },
-                      {
-                        id: 'debtors',
-                        label: formatMessage(m.search.customers),
-                        items:
-                          filters?.debtors?.map((filter) => ({
-                            value: filter.value,
-                            label: filter.name,
-                          })) ?? [],
-                      },
-                    ],
+                    type: 'asyncSelect',
+                    id: 'suppliers',
+                    label: formatMessage(m.search.suppliers),
+                    fetchPage: fetchSuppliersPage,
+                    selectedLabels: suppliersLabels,
                   },
                   {
-                    type: 'select',
+                    type: 'asyncSelect',
+                    id: 'debtors',
+                    label: formatMessage(m.search.customers),
+                    fetchPage: fetchDebtorsPage,
+                    selectedLabels: debtorsLabels,
+                  },
+                  {
+                    type: 'asyncSelect',
                     id: 'invoicePaymentTypes',
                     label: formatMessage(m.search.types),
-                    placeholder: '',
-                    items:
-                      filters?.invoicePaymentTypes
-                        ?.filter((f) => f.name && f.value)
-                        .map((filter) => ({
-                          value: filter.value,
-                          label: filter.name,
-                        })) ?? [],
+                    fetchPage: fetchInvoicePaymentTypesPage,
+                    selectedLabels: invoicePaymentTypesLabels,
+                  },
+                  {
+                    type: 'asyncSelect',
+                    id: 'ministries',
+                    label: formatMessage(m.search.ministries),
+                    fetchPage: fetchMinistriesPage,
+                    selectedLabels: ministriesLabels,
                   },
                 ]}
               />
             </Stack>
           }
         >
-          <MarkdownText>{hitsMessage ?? ''}</MarkdownText>
-          <Box marginTop={3}>
-            <OverviewTable
-              invoiceGroups={displayGroups}
-              dateFrom={dateRangeStart}
-              dateTo={dateRangeEnd}
-              loading={invoiceGroupsLoading}
-              error={invoiceGroupsError}
-            />
+          <Box marginLeft={2}>
+            <MarkdownText>{hitsMessage ?? ''}</MarkdownText>
+            <Box marginTop={3}>
+              <OverviewTable
+                invoiceGroups={displayGroups}
+                dateFrom={dateRangeStart}
+                dateTo={dateRangeEnd}
+                loading={invoiceGroupsLoading}
+                error={invoiceGroupsError}
+                sorting={sorting}
+                onSortingChange={setSorting}
+              />
+            </Box>
           </Box>
 
           {totalHits > PAGE_SIZE && !invoiceGroupsLoading && (
@@ -408,7 +493,6 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
 interface OpenInvoicesOverviewProps {
   organization?: Organization
   locale: Locale
-  filters?: OverviewFilters
   initialInvoiceGroups?: IcelandicGovernmentInstitutionsInvoiceGroups
   today: string
 }
@@ -417,62 +501,17 @@ OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
   const today = new Date()
   const todayIso = today.toISOString()
 
-  const [
-    {
-      data: { icelandicGovernmentInstitutionsInvoicesFilters },
-    },
-    {
-      data: { getOrganization },
-    },
-  ] = await Promise.all([
-    apolloClient.query<Query>({
-      query: GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES_FILTERS,
-    }),
-
-    apolloClient.query<Query, QueryGetOrganizationArgs>({
-      query: GET_ORGANIZATION_QUERY,
-      variables: {
-        input: {
-          slug: ORGANIZATION_SLUG,
-          lang: locale,
-        },
+  const {
+    data: { getOrganization },
+  } = await apolloClient.query<Query, QueryGetOrganizationArgs>({
+    query: GET_ORGANIZATION_QUERY,
+    variables: {
+      input: {
+        slug: ORGANIZATION_SLUG,
+        lang: locale,
       },
-    }),
-  ])
-
-  const filters: OverviewFilters | undefined =
-    icelandicGovernmentInstitutionsInvoicesFilters
-      ? {
-          suppliers:
-            icelandicGovernmentInstitutionsInvoicesFilters.suppliers?.data?.map(
-              (supplier) => ({
-                name: supplier.name,
-                value: supplier.id,
-              }),
-            ) ?? [],
-          debtors:
-            icelandicGovernmentInstitutionsInvoicesFilters.debtors?.data?.map(
-              (debtor) => ({
-                name: debtor.name,
-                value: String(debtor.erpLegalEntityId),
-              }),
-            ) ?? [],
-          invoicePaymentTypes:
-            icelandicGovernmentInstitutionsInvoicesFilters?.invoicePaymentTypes?.data?.map(
-              (invoiceType) => ({
-                name: invoiceType.name,
-                value: invoiceType.code,
-              }),
-            ) ?? undefined,
-          ministries:
-            icelandicGovernmentInstitutionsInvoicesFilters?.ministries?.data?.map(
-              (ministry) => ({
-                name: ministry.name,
-                value: ministry.code,
-              }),
-            ) ?? undefined,
-        }
-      : undefined
+    },
+  })
 
   const arrayParser = parseAsArrayOf<string>(parseAsString)
   const filterArray = <T,>(array: Array<T> | null | undefined) => {
@@ -483,15 +522,24 @@ OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
     return undefined
   }
 
-  const [debtorsFilter, suppliersFilter, invoicePaymentTypesFilter]: Array<
-    Array<string> | undefined
-  > = ['debtors', 'suppliers', 'invoicePaymentTypes'].map((resource) =>
+  const [
+    debtorsFilter,
+    suppliersFilter,
+    invoicePaymentTypesFilter,
+    ministriesFilter,
+  ]: Array<Array<string> | undefined> = [
+    'debtors',
+    'suppliers',
+    'invoicePaymentTypes',
+    'ministries',
+  ].map((resource) =>
     filterArray<string>(arrayParser.parseServerSide(query?.[resource])),
   )
 
   const debtorsInput = debtorsFilter?.filter(isDefined) || undefined
   const suppliersInput = suppliersFilter?.filter(isDefined) || undefined
   const invoicePaymentTypesInput = invoicePaymentTypesFilter?.filter(isDefined)
+  const ministriesInput = ministriesFilter?.filter(isDefined) || undefined
 
   const dateToInput =
     parseAsIsoDateTime.parseServerSide(query?.['dateRangeEnd']) ?? today
@@ -512,6 +560,7 @@ OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
         dateTo: dateToInput,
         debtors: toDebtorIds(debtorsInput),
         suppliers: suppliersInput,
+        ministries: ministriesInput,
         paymentTypeIds: invoicePaymentTypesInput,
         limit: PAGE_SIZE,
         page: 1,
@@ -521,7 +570,6 @@ OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
 
   return {
     locale: locale as Locale,
-    filters,
     initialInvoiceGroups:
       icelandicGovernmentInstitutionsInvoiceGroups ?? undefined,
     organization: getOrganization ?? undefined,

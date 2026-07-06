@@ -3,31 +3,31 @@ import { InvoicePaymentTypes } from '../models/invoicePaymentTypes.model'
 export const MOCK_INVOICE_PAYMENT_TYPES: InvoicePaymentTypes = {
   data: [
     {
-      code: 'BANK_TRANSFER',
+      id: 'BANK_TRANSFER',
       name: 'Millifrsla',
       accountType: 'CHECKING',
       isConfidential: false,
     },
     {
-      code: 'CREDIT_CARD',
+      id: 'CREDIT_CARD',
       name: 'Kreditkort',
       accountType: 'CREDIT',
       isConfidential: false,
     },
     {
-      code: 'DEBIT_CARD',
+      id: 'DEBIT_CARD',
       name: 'Debetkort',
       accountType: 'DEBIT',
       isConfidential: false,
     },
     {
-      code: 'DIRECT_DEBIT',
+      id: 'DIRECT_DEBIT',
       name: 'Bein skuldfrsla',
       accountType: 'CHECKING',
       isConfidential: false,
     },
     {
-      code: 'CASH',
+      id: 'CASH',
       name: 'Reif',
       isConfidential: false,
     },

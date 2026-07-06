@@ -15,4 +15,8 @@ export { SupplierDto } from './lib/dtos/supplier.dto'
 export { SuppliersDto } from './lib/dtos/suppliers.dto'
 export { InvoiceGroupInvoiceDto } from './lib/dtos/invoiceGroupInvoice.dto'
 export { InvoiceItemization } from './lib/dtos/invoiceGroupInvoiceItemization.dto'
-export { InvoiceGroupRequestDto } from './lib/dtos/invoiceGroupRequest.dto'
+export {
+  InvoiceGroupRequestDto,
+  OpenInvoiceSortFields,
+  SortDirections,
+} from './lib/dtos/invoiceGroupRequest.dto'

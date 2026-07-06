@@ -13,7 +13,7 @@ export const mapInvoiceGroup = (data: InvoiceGroupDto): InvoiceGroup => {
       isPrivateProxy: data.supplier.isPrivateProxy,
     },
     debtor: {
-      erpLegalEntityId: data.debtor.erpLegalEntityId,
+      id: String(data.debtor.erpLegalEntityId),
       legalId: data.debtor.legalId,
       name: data.debtor.name,
     },

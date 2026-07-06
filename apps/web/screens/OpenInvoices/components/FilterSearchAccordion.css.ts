@@ -25,3 +25,17 @@ export const scrollList = style({
   flexDirection: 'column',
   gap: theme.spacing[1],
 })
+
+// Zero-height marker element observed by the infinite-scroll
+// IntersectionObserver — it becomes visible just before the user reaches
+// the bottom of the scrollable list.
+export const sentinel = style({
+  height: 1,
+})
+
+export const loadingMoreRow = style({
+  display: 'flex',
+  justifyContent: 'center',
+  paddingTop: theme.spacing[1],
+  paddingBottom: theme.spacing[1],
+})

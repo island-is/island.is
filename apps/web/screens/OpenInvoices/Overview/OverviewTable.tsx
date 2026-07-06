@@ -7,6 +7,8 @@ import {
   Box,
   createColumnHelper,
   InteractiveTable,
+  OnChangeFn,
+  SortingState,
 } from '@island.is/island-ui/core'
 import { formatCurrency } from '@island.is/shared/utils'
 
@@ -20,6 +22,8 @@ interface Props {
   invoiceGroups: Array<IcelandicGovernmentInstitutionsInvoiceGroup>
   loading?: boolean
   error?: ApolloError
+  sorting: SortingState
+  onSortingChange: OnChangeFn<SortingState>
 }
 
 const columnHelper =
@@ -31,6 +35,8 @@ export const OverviewTable = ({
   invoiceGroups,
   loading,
   error,
+  sorting,
+  onSortingChange,
 }: Props) => {
   const { formatMessage } = useIntl()
   const data = useMemo(() => invoiceGroups ?? [], [invoiceGroups])
@@ -59,11 +65,14 @@ export const OverviewTable = ({
   }
 
   return (
-    <Box marginLeft={2} background="white">
+    <Box background="white">
       <InteractiveTable
         columns={columns}
         data={data}
         loading={loading}
+        manualSorting
+        sorting={sorting}
+        onSortingChange={onSortingChange}
         errorTitle={formatMessage(m.overview.errorTitle)}
         errorMessage={
           error ? formatMessage(m.overview.errorLoading) : undefined
@@ -75,7 +84,7 @@ export const OverviewTable = ({
         renderExpandedRow={(row) => (
           <NestedLines
             supplierLegalId={row.original.supplier.id}
-            erpLegalEntityId={row.original.debtor.erpLegalEntityId}
+            erpLegalEntityId={Number(row.original.debtor.id)}
             total={row.original.totalSum}
             dateFrom={dateFrom}
             dateTo={dateTo}

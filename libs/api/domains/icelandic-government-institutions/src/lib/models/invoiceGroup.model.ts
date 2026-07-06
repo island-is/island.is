@@ -1,4 +1,4 @@
-import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
+import { Field, Float, ID, Int, ObjectType } from '@nestjs/graphql'
 import { Invoice } from './invoice.model'
 import { Supplier } from './supplier.model'
 import { Debtor } from './debtor.model'
@@ -14,7 +14,7 @@ export class InvoiceGroup {
   @Field(() => Debtor)
   debtor!: Debtor
 
-  @Field(() => Int)
+  @Field(() => Float)
   totalSum!: number
 
   @Field(() => Int)

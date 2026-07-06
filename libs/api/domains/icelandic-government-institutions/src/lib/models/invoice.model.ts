@@ -1,4 +1,4 @@
-import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
+import { Field, Float, ID, ObjectType } from '@nestjs/graphql'
 import { InvoiceItem } from './invoiceItem.model'
 
 @ObjectType('IcelandicGovernmentInstitutionsInvoice')
@@ -9,7 +9,7 @@ export class Invoice {
   @Field({ description: 'ISO8601' })
   date!: string
 
-  @Field(() => Int)
+  @Field(() => Float)
   totalItemizationAmount!: number
 
   @Field(() => [InvoiceItem], { nullable: true })
