@@ -955,6 +955,9 @@ export class CaseNotificationService extends BaseNotificationService {
           getHumanReadableCaseIndictmentRulingDecision(
             theCase.indictmentRulingDecision,
           ),
+        isDismissal:
+          theCase.indictmentRulingDecision ===
+          CaseIndictmentRulingDecision.DISMISSAL,
         linkStart: `<a href="${this.config.clientUrl}${PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE}/${theCase.id}">`,
         linkEnd: '</a>',
       }),
@@ -1064,6 +1067,9 @@ export class CaseNotificationService extends BaseNotificationService {
               getHumanReadableCaseIndictmentRulingDecision(
                 theCase.indictmentRulingDecision,
               ),
+            isDismissal:
+              theCase.indictmentRulingDecision ===
+              CaseIndictmentRulingDecision.DISMISSAL,
             ...sharedHtmlProps,
           })
         : this.formatMessage(rulingMessage.body, {
@@ -2211,17 +2217,6 @@ export class CaseNotificationService extends BaseNotificationService {
   ): Promise<DeliverResponse> {
     const promises = []
 
-    if (theCase.registrar) {
-      promises.push(
-        this.sendRulingOrderAddedNotification({
-          courtCaseNumber: theCase.courtCaseNumber,
-          link: `${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}`,
-          name: theCase.registrar.name,
-          email: theCase.registrar.email,
-        }),
-      )
-    }
-
     const uniqueSpokespersons = _uniqBy(
       theCase.civilClaimants?.filter(
         (c) => c.hasSpokesperson && c.isSpokespersonConfirmed,
@@ -2301,7 +2296,6 @@ export class CaseNotificationService extends BaseNotificationService {
     theCase: Case,
     user: User,
     userDescriptor?: UserDescriptor,
-    userIds?: string[],
   ): Promise<DeliverResponse> {
     switch (type) {
       case RequestCaseNotificationType.HEADS_UP:
@@ -2354,18 +2348,11 @@ export class CaseNotificationService extends BaseNotificationService {
     theCase: Case,
     user: User,
     userDescriptor?: UserDescriptor,
-    userIds?: string[],
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
 
     try {
-      return await this.sendNotification(
-        type,
-        theCase,
-        user,
-        userDescriptor,
-        userIds,
-      )
+      return await this.sendNotification(type, theCase, user, userDescriptor)
     } catch (error) {
       this.logger.error('Failed to send notification', error)
 

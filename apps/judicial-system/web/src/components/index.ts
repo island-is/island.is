@@ -54,7 +54,6 @@ export { default as IndictmentCaseScheduledCard } from './Cards/IndictmentCaseSc
 export { default as InputAdvocate } from './Inputs/InputAdvocate'
 export { default as InputName } from './Inputs/InputName'
 export { default as InputNationalId } from './Inputs/InputNationalId'
-export { default as Loading } from './Loading/Loading'
 export { default as LoadingDots } from './LoadingDots/LoadingDots'
 export { default as Logo } from './Logo/Logo'
 export { default as MarkdownWrapper } from './MarkdownWrapper/MarkdownWrapper'
@@ -143,4 +142,5 @@ export { default as ArraignmentAlert } from './Alerts/ArraignmentAlert/Arraignme
 export { default as RulingModifiedAlert } from './Alerts/RulingModifiedAlert/RulingModifiedAlert'
 export { default as AppealRulingModifiedAlert } from './Alerts/AppealRulingModifiedAlert/AppealRulingModifiedAlert'
 export { default as ChangeProsecutorModal } from './Modals/ChangeProsecutorModal/ChangeProsecutorModal'
+export { default as DuplicateIndictmentModal } from './Modals/DuplicateIndictmentModal/DuplicateIndictmentModal'
 export { default as TinyMCE } from './TinyMCE/TinyMCE'

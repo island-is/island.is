@@ -35,7 +35,14 @@ const PersonalTaxCredit = () => {
   const hasRegistrations = !!page?.taxCards?.length
 
   const form = usePersonalTaxCreditForm()
-  const { spouseAction } = form
+  const { personalAction, spouseAction } = form
+
+  // If personal form is standalone (not yet registered), bottom buttons handle both personal + spouse
+  // If personal is edited via inline table row, bottom buttons handle spouse only
+  const personalIsStandalone = !isAlreadyRegistered
+  const showBottomButtons = personalIsStandalone
+    ? personalAction !== null || spouseAction !== null
+    : spouseAction !== null
 
   const isSpouseBlocked =
     (spouseAction === 'grant' &&
@@ -44,6 +51,25 @@ const PersonalTaxCredit = () => {
     (spouseAction === 'deceased' &&
       (!!spouseInfo?.deceasedReasonNotAllowedCode ||
         !spouseInfo?.deceasedMonthsAndYears?.length))
+
+  const handleBottomCancel = personalIsStandalone
+    ? form.handleCancelAll
+    : form.handleCancelSpouse
+  const handleBottomSave = () => {
+    if (personalIsStandalone && spouseAction !== null) {
+      void form.handleSaveAll()
+    } else if (personalIsStandalone) {
+      void form.handleSavePersonal()
+    } else {
+      void form.handleSaveSpouse()
+    }
+  }
+  const bottomDisabled = personalIsStandalone
+    ? !form.canSubmitAll || form.savingAll || isSpouseBlocked
+    : !form.canSubmitSpouse || form.savingSpouse || isSpouseBlocked
+  const bottomLoading = personalIsStandalone
+    ? form.savingAll
+    : form.savingSpouse
 
   return (
     <IntroWrapper
@@ -166,44 +192,16 @@ const PersonalTaxCredit = () => {
             />
           </Box>
 
-          {!hasRegistrations && (
+          {showBottomButtons && (
             <Inline space={2} justifyContent="flexEnd">
-              <Button
-                variant="ghost"
-                size="small"
-                onClick={form.handleCancelAll}
-              >
+              <Button variant="ghost" size="small" onClick={handleBottomCancel}>
                 {formatMessage(coreMessages.buttonCancel)}
               </Button>
               <Button
                 size="small"
-                onClick={() => void form.handleSaveAll()}
-                disabled={
-                  !form.canSubmitAll || form.savingAll || isSpouseBlocked
-                }
-                loading={form.savingAll}
-              >
-                {formatMessage(coreMessages.submit)}
-              </Button>
-            </Inline>
-          )}
-
-          {hasRegistrations && spouseAction !== null && (
-            <Inline space={2} justifyContent="flexEnd">
-              <Button
-                variant="ghost"
-                size="small"
-                onClick={form.handleCancelSpouse}
-              >
-                {formatMessage(coreMessages.buttonCancel)}
-              </Button>
-              <Button
-                size="small"
-                onClick={() => void form.handleSaveSpouse()}
-                disabled={
-                  !form.canSubmitSpouse || form.savingSpouse || isSpouseBlocked
-                }
-                loading={form.savingSpouse}
+                onClick={handleBottomSave}
+                disabled={bottomDisabled}
+                loading={bottomLoading}
               >
                 {formatMessage(coreMessages.submit)}
               </Button>

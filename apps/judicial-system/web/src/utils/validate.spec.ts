@@ -1,11 +1,15 @@
 import {
+  AppealDecisionPartyRole,
   Case,
+  CaseAppealDecision,
+  CourtSessionResponse,
   IndictmentCount,
   IndictmentCountOffense,
   IndictmentSubtype,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import {
+  areAppealDecisionsComplete,
   getIndictmentCountWarningMessage,
   isIndictmentCountComplete,
   validate,
@@ -410,4 +414,82 @@ describe('Validate court case number', () => {
       expect(result.errorMessage).toEqual('Dæmi: S-1234/2020')
     },
   )
+})
+
+describe('areAppealDecisionsComplete', () => {
+  const rulingFileId = 'ruling-file-id'
+  const courtSession = { rulingFileId } as CourtSessionResponse
+
+  const decisionFor = (
+    party: {
+      partyRole: AppealDecisionPartyRole
+      defendantId?: string
+      civilClaimantId?: string
+    },
+    decision: CaseAppealDecision | null = CaseAppealDecision.ACCEPT,
+  ) => ({ rulingFileId, decision, ...party })
+
+  const baseCase = {
+    defendants: [{ id: 'd1' }],
+    civilClaimants: [{ id: 'c1' }],
+  } as Case
+
+  it('is true when every party has a decision', () => {
+    const workingCase = {
+      ...baseCase,
+      appealDecisions: [
+        decisionFor({ partyRole: AppealDecisionPartyRole.PROSECUTOR }),
+        decisionFor({
+          partyRole: AppealDecisionPartyRole.DEFENDANT,
+          defendantId: 'd1',
+        }),
+        decisionFor({
+          partyRole: AppealDecisionPartyRole.CIVIL_CLAIMANT,
+          civilClaimantId: 'c1',
+        }),
+      ],
+    } as Case
+
+    expect(areAppealDecisionsComplete(courtSession, workingCase)).toBe(true)
+  })
+
+  it('is false when a defendant has no decision', () => {
+    const workingCase = {
+      ...baseCase,
+      appealDecisions: [
+        decisionFor({ partyRole: AppealDecisionPartyRole.PROSECUTOR }),
+        decisionFor({
+          partyRole: AppealDecisionPartyRole.CIVIL_CLAIMANT,
+          civilClaimantId: 'c1',
+        }),
+      ],
+    } as Case
+
+    expect(areAppealDecisionsComplete(courtSession, workingCase)).toBe(false)
+  })
+
+  it('is false when a party has an announcement but no decision', () => {
+    const workingCase = {
+      ...baseCase,
+      appealDecisions: [
+        decisionFor({ partyRole: AppealDecisionPartyRole.PROSECUTOR }, null),
+        decisionFor({
+          partyRole: AppealDecisionPartyRole.DEFENDANT,
+          defendantId: 'd1',
+        }),
+        decisionFor({
+          partyRole: AppealDecisionPartyRole.CIVIL_CLAIMANT,
+          civilClaimantId: 'c1',
+        }),
+      ],
+    } as Case
+
+    expect(areAppealDecisionsComplete(courtSession, workingCase)).toBe(false)
+  })
+
+  it('is false when the session has no ruling file', () => {
+    expect(
+      areAppealDecisionsComplete({} as CourtSessionResponse, baseCase),
+    ).toBe(false)
+  })
 })

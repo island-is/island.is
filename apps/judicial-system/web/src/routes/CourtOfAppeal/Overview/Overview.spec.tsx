@@ -1,3 +1,4 @@
+import faker from 'faker'
 import { MockedProvider } from '@apollo/client/testing'
 import { render, screen } from '@testing-library/react'
 
@@ -6,7 +7,10 @@ import {
   CaseType,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { mockCase } from '@island.is/judicial-system-web/src/utils/mocks'
+import {
+  mockCase,
+  mockCaseTableMembershipQuery,
+} from '@island.is/judicial-system-web/src/utils/mocks'
 import {
   FormContextWrapper,
   IntlProviderWrapper,
@@ -26,12 +30,18 @@ window.scrollTo = jest.fn()
 
 describe('Overview', () => {
   it('should show a warning alert that indicates that the prosecutor requests the court of appeal ruling be not published, if the prosecutor requested it', async () => {
+    const caseId = faker.datatype.uuid()
+
     render(
-      <MockedProvider addTypename={false}>
+      <MockedProvider
+        mocks={[...mockCaseTableMembershipQuery(caseId)]}
+        addTypename={false}
+      >
         <IntlProviderWrapper>
           <FormContextWrapper
             theCase={{
               ...mockCase(CaseType.CUSTODY),
+              id: caseId,
               appealCase: {
                 id: 'test_appeal_case_id',
                 appealState: AppealCaseState.RECEIVED,

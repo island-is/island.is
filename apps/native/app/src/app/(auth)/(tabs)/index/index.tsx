@@ -70,8 +70,10 @@ import * as Application from 'expo-application'
 import { compare, validate } from 'compare-versions'
 import { router, Stack } from 'expo-router'
 import { useIntl } from 'react-intl'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useTheme } from 'styled-components/native'
 import { StackScreen } from '../../../../components/stack-screen'
-import { blue400, red400, Typography } from '../../../../ui'
+import { Button, red400, Typography } from '../../../../ui'
 
 interface ListItem {
   id: string
@@ -80,6 +82,8 @@ interface ListItem {
 
 export default function HomeScreen() {
   const intl = useIntl()
+  const theme = useTheme()
+  const insets = useSafeAreaInsets()
   const userProfile = useGetProfileQuery({
     fetchPolicy: 'cache-first',
   })
@@ -449,18 +453,6 @@ export default function HomeScreen() {
           ],
           headerRightItems: [
             {
-              identifier: 'options',
-              type: 'button',
-              label: 'Options',
-              icon: {
-                type: 'image',
-                source: require('@/assets/icons/options.png'),
-              },
-              tintColor: blue400,
-              onPress: () => router.navigate('/homescreen-options'),
-              sharesBackground: false,
-            },
-            {
               type: 'custom',
               element: (
                 <Pressable onPress={() => router.navigate('/notifications')}>
@@ -524,9 +516,34 @@ export default function HomeScreen() {
         keyExtractor={keyExtractor}
         data={data}
         renderItem={renderItem}
-        style={{ flex: 1 }}
+        style={{
+          flex: 1,
+          backgroundColor:
+            Platform.OS === 'ios' ? theme.color.blue100 : undefined,
+        }}
+        contentContainerStyle={{
+          paddingBottom: insets.bottom + (Platform.OS === 'android' ? 0 : 30),
+          backgroundColor:
+            Platform.OS === 'ios' ? theme.color.white : undefined,
+          flexGrow: Platform.OS === 'ios' ? 1 : undefined,
+        }}
         refreshControl={
           <RefreshControl refreshing={refetching} onRefresh={refetch} />
+        }
+        ListFooterComponent={
+          <View
+            style={{
+              marginHorizontal: theme.spacing[2],
+              marginTop: theme.spacing[2],
+            }}
+          >
+            <Button
+              title={intl.formatMessage({ id: 'homeOptions.heading.title' })}
+              isOutlined
+              icon={require('@/assets/icons/options.png')}
+              onPress={() => router.navigate('/homescreen-options')}
+            />
+          </View>
         }
       />
     </>

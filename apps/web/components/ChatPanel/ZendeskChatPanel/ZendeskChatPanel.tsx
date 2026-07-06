@@ -17,6 +17,9 @@ const SCRIPT_ID = 'ze-snippet'
 declare global {
   interface Window {
     zE?: ZendeskMessengerAPI
+    zEACLoaded?: boolean
+    zEmbed?: ZendeskMessengerAPI
+    $zopim?: unknown
   }
 }
 
@@ -31,7 +34,7 @@ export const ZendeskChatPanel = ({
   const [isChatOpen, setIsChatOpen] = useState(false)
   const { activeLocale } = useI18n()
 
-  const loadScript = useCallback(() => {
+  const openChat = useCallback(() => {
     const setup = () => {
       setIsChatOpen(true)
       setIsLoading(false)
@@ -74,10 +77,30 @@ export const ZendeskChatPanel = ({
     }
   }, [activeLocale, snippetUrl, urlTrackingTicketId])
 
+  useEffect(() => {
+    const queryParam = new URLSearchParams(window.location.search).get('wa_lid')
+
+    let timeout: NodeJS.Timeout | null = null
+    if (queryParam === 't10') {
+      timeout = setTimeout(() => {
+        openChat()
+      }, 100)
+    }
+
+    return () => {
+      if (timeout) window.clearTimeout(timeout)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   useEffect(
     () => () => {
       window.zE?.('messenger', 'hide')
       document.getElementById(SCRIPT_ID)?.remove()
+      delete window.zEACLoaded
+      delete window.zE
+      delete window.zEmbed
+      delete window.$zopim
     },
     [],
   )
@@ -100,7 +123,7 @@ export const ZendeskChatPanel = ({
 
   return (
     <ChatBubble
-      onClick={loadScript}
+      onClick={openChat}
       text={n('chatBubbleText', 'Hæ, get ég aðstoðað?')}
       variant={chatBubbleVariant}
       pushUp={pushUp}
