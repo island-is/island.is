@@ -3,7 +3,12 @@ import {
   useEnvironmentStore,
 } from './stores/environment-store'
 
-export { bundleId, isTestingApp, config } from './config-constants'
+export {
+  bundleId,
+  isTestingApp,
+  disableAppLock,
+  config,
+} from './config-constants'
 export type { EnvironmentId } from './config-constants'
 import { config } from './config-constants'
 
