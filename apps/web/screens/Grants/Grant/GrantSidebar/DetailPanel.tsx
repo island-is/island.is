@@ -36,6 +36,7 @@ const DetailPanel: React.FC<DetailPanelProps> = ({
     () =>
       [
         generateLine(
+          'fund',
           formatMessage(m.single.fund),
           grant?.fund?.link?.slug ? (
             <LinkV2
@@ -54,6 +55,7 @@ const DetailPanel: React.FC<DetailPanelProps> = ({
           ) : undefined,
         ),
         generateLine(
+          'status',
           formatMessage(m.single.status),
           grant?.status ? (
             <>
@@ -68,12 +70,14 @@ const DetailPanel: React.FC<DetailPanelProps> = ({
           ) : undefined,
         ),
         generateLine(
+          'deadlinePeriod',
           formatMessage(m.single.deadlinePeriod),
           status.deadlinePeriod ? (
             <Text variant="medium">{status.deadlinePeriod}</Text>
           ) : undefined,
         ),
         generateLine(
+          'category',
           formatMessage(m.single.category),
           grant?.categoryTags ? (
             <Text variant="medium">
@@ -85,6 +89,7 @@ const DetailPanel: React.FC<DetailPanelProps> = ({
           ) : undefined,
         ),
         generateLine(
+          'type',
           formatMessage(m.single.type),
           grant?.typeTag?.title ? (
             <Text variant="medium">{grant.typeTag?.title}</Text>
@@ -117,11 +122,13 @@ const DetailPanel: React.FC<DetailPanelProps> = ({
           </Button>
         </Box>
       )}
-      <Box marginTop={2}>
-        <Text variant="small" color="dark400">
-          {formatMessage(m.single.icelandicTimeNote)}
-        </Text>
-      </Box>
+      {status.hasTime && (
+        <Box marginTop={2}>
+          <Text variant="small" color="dark400">
+            {formatMessage(m.single.icelandicTimeNote)}
+          </Text>
+        </Box>
+      )}
     </Box>
   )
 }

@@ -169,6 +169,7 @@ export const parseStatus = (
           grant.dateFrom && grant.dateTo
             ? formatDeadlinePeriod(grant.dateFrom, grant.dateTo)
             : undefined,
+        hasTime,
       }
     }
     case GrantStatus.OpenWithNote: {
