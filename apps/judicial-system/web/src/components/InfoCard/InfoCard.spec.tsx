@@ -9,16 +9,39 @@ import InfoCard from './InfoCard'
 
 const renderInfoCard = (
   sections: React.ComponentProps<typeof InfoCard>['sections'],
+  titleAs?: React.ComponentProps<typeof InfoCard>['titleAs'],
 ) =>
   render(
     <MockedProvider>
       <LocaleProvider locale="is" messages={{}}>
-        <InfoCard sections={sections} />
+        <InfoCard sections={sections} titleAs={titleAs} />
       </LocaleProvider>
     </MockedProvider>,
   )
 
 describe('InfoCard', () => {
+  describe('string title heading level', () => {
+    const sections = [
+      { id: 'sec', items: [{ id: 'itm', title: 'A title', values: ['v'] }] },
+    ]
+
+    test('renders string titles as an h4 heading by default', async () => {
+      renderInfoCard(sections)
+
+      expect(
+        await screen.findByRole('heading', { level: 4, name: 'A title' }),
+      ).toBeInTheDocument()
+    })
+
+    test('honors the configured heading level', async () => {
+      renderInfoCard(sections, 'h2')
+
+      expect(
+        await screen.findByRole('heading', { level: 2, name: 'A title' }),
+      ).toBeInTheDocument()
+    })
+  })
+
   describe('empty item filtering', () => {
     test('does not render an item with an empty values array', async () => {
       renderInfoCard([
