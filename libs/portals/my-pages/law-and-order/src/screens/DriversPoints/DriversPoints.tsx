@@ -18,8 +18,10 @@ const DriversPoints = () => {
 
   const { data, loading, error } = useGetDriversPenaltyPointsQuery()
 
-  const isPenaltyPointsOk = !(data?.driversPenaltyPoints?.isDeprived ?? false)
-  const details = data?.driversPenaltyPoints?.details ?? []
+  const isPenaltyPointsOk = !(
+    data?.drivingLicensePenaltyPoints?.isDeprived ?? false
+  )
+  const details = data?.drivingLicensePenaltyPoints?.details ?? []
 
   const totalPoints = details.reduce((sum, d) => sum + (d.points ?? 0), 0)
 

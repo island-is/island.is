@@ -1,5 +1,5 @@
 query GetDriversDeprivations {
-  driversDeprivations {
+  drivingLicenseDeprivations {
     dateFrom
     dateTo
     status

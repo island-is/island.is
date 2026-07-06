@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import {
   ApiV5,
   DRIVING_LICENSE_API_VERSION_V5,
@@ -6,13 +6,19 @@ import {
   DtoV5PenaltyPointDetailDto,
 } from '../../v5'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class PenaltyPointsClientService {
-  constructor(private readonly api: ApiV5) {}
+  constructor(
+    private readonly api: ApiV5,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+  ) {}
 
   private serviceWithAuth = (user: User) =>
     this.api.withMiddleware(new AuthMiddleware(user as Auth))
+
+  parseJwtToken = (user: User) => user.authorization.slice(7)
 
   //TODO: stop sending tokens around, it's not needed since its't in the request itself
   public async penaltyPointsDrivingLicenseApplicationIsBelowThreshold(
@@ -24,7 +30,7 @@ export class PenaltyPointsClientService {
     ).apiDrivinglicenseV5PenaltypointsGet({
       apiVersion: DRIVING_LICENSE_API_VERSION_V5,
       apiVersion2: DRIVING_LICENSE_API_VERSION_V5,
-      jwttoken: user.authorization,
+      jwttoken: this.parseJwtToken(user),
     })
 
     return ok
@@ -34,7 +40,7 @@ export class PenaltyPointsClientService {
     return this.serviceWithAuth(user).apiDrivinglicenseV5DeprivationsGet({
       apiVersion: DRIVING_LICENSE_API_VERSION_V5,
       apiVersion2: DRIVING_LICENSE_API_VERSION_V5,
-      jwttoken: user.authorization,
+      jwttoken: this.parseJwtToken(user),
     })
   }
 
@@ -46,7 +52,7 @@ export class PenaltyPointsClientService {
     ).apiDrivinglicenseV5PenaltypointsDetailsGet({
       apiVersion: DRIVING_LICENSE_API_VERSION_V5,
       apiVersion2: DRIVING_LICENSE_API_VERSION_V5,
-      jwttoken: user.authorization,
+      jwttoken: this.parseJwtToken(user),
     })
   }
 }

@@ -16,28 +16,26 @@ export class PenaltyPointsService {
 
   async getPenaltyPointDetails(
     user: User,
-  ): Promise<{ details: DrivingLicensePenaltyPointDetail[] }> {
+  ): Promise<DrivingLicensePenaltyPointDetail[]> {
     const details = await this.penaltyPointsClientService.penaltyPointDetails(
       user,
     )
 
-    return {
-      details: details
-        .map((d) => {
-          if (!d.caseNr) return undefined
-          return {
-            id: d.caseNr,
-            caseNumber: d.caseNr,
-            offenseDate: d.offenseDate ?? undefined,
-            penalty: d.penalty ?? undefined,
-            penaltyStatus: d.penaltyStatus ?? undefined,
-            points: d.points ?? undefined,
-            districtName: d.districtName ?? undefined,
-            statusCode: d.statusCode ?? undefined,
-          }
-        })
-        .filter(isDefined),
-    }
+    return details
+      .map((d) => {
+        if (!d.caseNr) return undefined
+        return {
+          id: d.caseNr,
+          caseNumber: d.caseNr,
+          offenseDate: d.offenseDate ?? undefined,
+          penalty: d.penalty ?? undefined,
+          penaltyStatus: d.penaltyStatus ?? undefined,
+          points: d.points ?? undefined,
+          districtName: d.districtName ?? undefined,
+          statusCode: d.statusCode ?? undefined,
+        }
+      })
+      .filter(isDefined)
   }
 
   async getIsDeprived(user: User): Promise<boolean> {

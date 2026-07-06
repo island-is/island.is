@@ -11,6 +11,7 @@ import {
 import { Problem } from '@island.is/react-spa/shared'
 import { messages } from '../../lib/messages'
 import { useGetDriversDeprivationsQuery } from './DriversDeprivations.generated'
+import { DrivingLicenseDeprivationStatus } from '@island.is/api/schema'
 
 const DriversDeprivations = () => {
   useNamespaces('sp.law-and-order')
@@ -18,7 +19,7 @@ const DriversDeprivations = () => {
 
   const { data, loading, error } = useGetDriversDeprivationsQuery()
 
-  const deprivations = data?.driversDeprivations ?? []
+  const deprivations = data?.drivingLicenseDeprivations ?? []
 
   const isEmpty = !loading && !error && deprivations.length === 0
 
