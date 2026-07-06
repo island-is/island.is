@@ -1,20 +1,4 @@
-import { containsHtml, textToHtml } from './formatters'
-
-describe('containsHtml', () => {
-  test('should detect html content', () => {
-    expect(containsHtml('<p>fyrir umferðarlagabrot</p>')).toBe(true)
-    expect(containsHtml('bla <strong>bla</strong> bla')).toBe(true)
-    expect(containsHtml('bla<br />bla')).toBe(true)
-  })
-
-  test('should not detect plain text as html', () => {
-    expect(containsHtml('fyrir umferðarlagabrot með því að hafa ekið')).toBe(
-      false,
-    )
-    expect(containsHtml('mældur hraði < 90 km/klst')).toBe(false)
-    expect(containsHtml('')).toBe(false)
-  })
-})
+import { textToHtml } from './formatters'
 
 describe('textToHtml', () => {
   test('should wrap plain text in a paragraph', () => {

@@ -673,9 +673,6 @@ export const formatPrisonRevokedEmailNotification = (
   })
 }
 
-export const containsHtml = (str: string): boolean =>
-  /<\/?[a-z][^>]*>/i.test(str)
-
 export const stripHtmlTags = (html: string): string => {
   return html
     .replace(/(?:<br( ?)\/>)/g, '\n')

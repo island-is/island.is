@@ -3,13 +3,16 @@ import PDFDocument from 'pdfkit'
 
 import { FormatMessage } from '@island.is/cms-translations'
 
-import { formatDate, lowercase } from '@island.is/judicial-system/formatters'
+import {
+  containsHtml,
+  formatDate,
+  lowercase,
+} from '@island.is/judicial-system/formatters'
 import { sortIndictmentCounts } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { indictment } from '../../messages'
 import { Case, CaseString } from '../../modules/repository'
-import { containsHtml } from '../formatters'
 import {
   addEmptyLines,
   addGiganticHeading,

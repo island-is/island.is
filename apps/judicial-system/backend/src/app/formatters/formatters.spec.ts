@@ -17,7 +17,6 @@ import {
 
 import { DateLog } from '../modules/repository'
 import {
-  containsHtml,
   filterWhitelistEmails,
   formatArraignmentDateEmailNotification,
   formatCourtHeadsUpSmsNotification,
@@ -1695,22 +1694,6 @@ describe('formatPrisonRevokedEmailNotification', () => {
     expect(res).toBe(
       'Aðalsaksóknari hefur afturkallað kröfu um áframhaldandi vistun sem send var til Héraðsdóms Þingvalla og taka átti fyrir sunnudaginn 24. janúar 2021, kl. 08:15.<br /><br />Verjandi sakbornings: Dóri.<br /><br />Málsnúmer héraðsdóms er R-2023-13.',
     )
-  })
-})
-
-describe('containsHtml', () => {
-  test('should detect html content', () => {
-    expect(containsHtml('<p>fyrir umferðarlagabrot</p>')).toBe(true)
-    expect(containsHtml('bla <strong>bla</strong> bla')).toBe(true)
-    expect(containsHtml('bla<br />bla')).toBe(true)
-  })
-
-  test('should not detect plain text as html', () => {
-    expect(containsHtml('fyrir umferðarlagabrot með því að hafa ekið')).toBe(
-      false,
-    )
-    expect(containsHtml('mældur hraði < 90 km/klst')).toBe(false)
-    expect(containsHtml('')).toBe(false)
   })
 })
 

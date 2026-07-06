@@ -632,3 +632,6 @@ export const getVerdictAppealDecision = (
       return 'Ekki skráð'
   }
 }
+
+export const containsHtml = (str: string): boolean =>
+  /<\/?[a-z][^>]*>/i.test(str)
