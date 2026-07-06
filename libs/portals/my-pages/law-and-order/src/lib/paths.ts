@@ -8,6 +8,6 @@ export enum LawAndOrderPaths {
   PoliceCases = '/log-og-reglur/logreglumal',
   PoliceCasesDetail = '/log-og-reglur/logreglumal/:id',
   VerdictDetail = '/log-og-reglur/domsmal/:id/nidurstada',
-  DriversPoints = '/log-og-reglur/okustig',
-  DriversDeprivations = '/log-og-reglur/svipting-okuretts',
+  DriversPoints = '/log-og-reglur/punktastada',
+  DriversDeprivations = '/log-og-reglur/sviptingar',
 }

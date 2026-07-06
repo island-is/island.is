@@ -1,9 +1,9 @@
-import { Field, ObjectType, Float } from '@nestjs/graphql'
+import { Field, ObjectType, Float, ID } from '@nestjs/graphql'
 import { GraphQLISODateTime } from '@nestjs/graphql'
 
 @ObjectType()
 export class DrivingLicensePenaltyPointDetail {
-  @Field()
+  @Field(() => ID)
   id!: string
 
   @Field()
