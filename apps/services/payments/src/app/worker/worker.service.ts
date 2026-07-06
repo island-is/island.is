@@ -8,11 +8,16 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { FjsErrorCode } from '@island.is/shared/constants'
 import { retry } from '@island.is/shared/utils/server'
 
+import { Charge } from '@island.is/clients/charge-fjs-v2'
+
 import { FJS_NETWORK_ERROR } from '../../utils/fjsCharge'
 import { environment } from '../../environments'
 import { ChargeItem } from '../../utils/chargeUtils'
+import { generateBankTransferChargeFJSPayload } from '../bankTransferPayment/bankTransfer.utils'
+import type { BankTransferPayment } from '../bankTransferPayment/models/bankTransferPayment.model'
 import { generateCardChargeFJSPayload } from '../cardPayment/cardPayment.utils'
 import type { CardPaymentDetails } from '../paymentFlow/models/cardPaymentDetails.model'
+import type { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
 import { PaymentFlow } from '../paymentFlow/models/paymentFlow.model'
 import type { PaymentWorkerEventAttributes } from '../paymentFlow/models/paymentWorkerEvent.model'
 import { PaymentWorkerEvent } from '../paymentFlow/models/paymentWorkerEvent.model'
@@ -20,13 +25,13 @@ import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { WorkerModuleConfig } from './worker.config'
 import { WorkerTaskType } from './workerTaskTypes'
 
-/** Flow with worker events preloaded (from findPaidFlowsWithoutFjsCharge). */
+/** Flow with associations preloaded (from findPaidFlowsWithoutFjsCharge). */
 type PaymentFlowWithWorkerEvents = InferAttributes<PaymentFlow> & {
   workerEvents?: PaymentWorkerEventAttributes[]
 }
 
 /**
- * Worker service that creates FJS charges for payment flows paid with card payments.
+ * Worker service that creates FJS charges for payment flows paid with card or bank transfer.
  */
 @Injectable()
 export class WorkerService {
@@ -143,34 +148,14 @@ export class WorkerService {
   private async createFjsChargeForPaymentFlow(
     paymentFlow: PaymentFlowWithWorkerEvents,
   ): Promise<{ receptionId: string }> {
-    const cardPaymentDetails = this.getLatestCardPaymentDetails(
-      paymentFlow.cardPaymentDetails as InferAttributes<CardPaymentDetails>[],
+    const fulfillment = this.getActiveFulfillment(
+      paymentFlow.paymentFulfillments as InferAttributes<PaymentFulfillment>[],
     )
 
-    const { catalogItems } =
-      await this.paymentFlowService.getPaymentFlowChargeDetails(
-        paymentFlow.organisationId,
-        paymentFlow.charges as ChargeItem[],
-      )
-
-    const chargePayload = generateCardChargeFJSPayload({
-      paymentFlow,
-      charges: catalogItems,
-      cardChargeInfo: {
-        authorizationCode: cardPaymentDetails.authorizationCode,
-        cardScheme: cardPaymentDetails.cardScheme,
-        maskedCardNumber: cardPaymentDetails.maskedCardNumber,
-        cardUsage: cardPaymentDetails.cardUsage,
-      },
-      totalPrice: cardPaymentDetails.totalPrice,
-      systemId: environment.chargeFjs.systemId,
-      merchantReferenceData: cardPaymentDetails.merchantReferenceData,
-      // CardPaymentDetails.id is the per-attempt correlationId (see createCardPaymentConfirmation).
-      correlationId: cardPaymentDetails.id,
-      // The card confirmation row is created when the payment succeeds — its `created` is the
-      // payment-completion date, not this (possibly later) worker run.
-      effectiveDate: new Date(cardPaymentDetails.created),
-    })
+    const chargePayload =
+      fulfillment.paymentMethod === 'bank_transfer'
+        ? await this.buildBankTransferChargePayload(paymentFlow, fulfillment)
+        : await this.buildCardChargePayload(paymentFlow)
 
     const newCharge = await retry(
       () =>
@@ -187,6 +172,74 @@ export class WorkerService {
 
     this.logger.info(`[${paymentFlow.id}] Successfully created FJS charge`)
     return newCharge
+  }
+
+  /** Builds the unpaid card FJS charge payload from the flow's latest card payment details. */
+  private async buildCardChargePayload(
+    paymentFlow: PaymentFlowWithWorkerEvents,
+  ): Promise<Charge> {
+    const cardPaymentDetails = this.getLatestCardPaymentDetails(
+      paymentFlow.cardPaymentDetails as InferAttributes<CardPaymentDetails>[],
+    )
+
+    const { catalogItems } =
+      await this.paymentFlowService.getPaymentFlowChargeDetails(
+        paymentFlow.organisationId,
+        paymentFlow.charges as ChargeItem[],
+      )
+
+    return generateCardChargeFJSPayload({
+      paymentFlow,
+      charges: catalogItems,
+      cardChargeInfo: {
+        authorizationCode: cardPaymentDetails.authorizationCode,
+        cardScheme: cardPaymentDetails.cardScheme,
+        maskedCardNumber: cardPaymentDetails.maskedCardNumber,
+        cardUsage: cardPaymentDetails.cardUsage,
+      },
+      totalPrice: cardPaymentDetails.totalPrice,
+      systemId: environment.chargeFjs.systemId,
+      merchantReferenceData: cardPaymentDetails.merchantReferenceData,
+      // CardPaymentDetails.id is the per-attempt correlationId (see createCardPaymentConfirmation).
+      correlationId: cardPaymentDetails.id,
+      // The card confirmation row is created when the payment succeeds — its `created` is the
+      // payment-completion date.
+      effectiveDate: new Date(cardPaymentDetails.created),
+    })
+  }
+
+  /** Builds the PAID bank-transfer FJS charge payload for a settled-but-uncharged fulfillment. */
+  private async buildBankTransferChargePayload(
+    paymentFlow: PaymentFlowWithWorkerEvents,
+    fulfillment: InferAttributes<PaymentFulfillment>,
+  ): Promise<Charge> {
+    // The fulfillment's confirmationRefId is the bank_transfer_payment row id (== FJS correlationId).
+    const bankTransferPayment = (
+      paymentFlow.bankTransferPayments as InferAttributes<BankTransferPayment>[]
+    )?.find((row) => row.id === fulfillment.confirmationRefId)
+
+    if (!bankTransferPayment) {
+      throw new BadRequestException(
+        'No bank transfer payment found for payment flow fulfillment',
+      )
+    }
+
+    const { catalogItems, totalPrice } =
+      await this.paymentFlowService.getPaymentFlowChargeDetails(
+        paymentFlow.organisationId,
+        paymentFlow.charges as ChargeItem[],
+      )
+
+    return generateBankTransferChargeFJSPayload({
+      paymentFlow,
+      charges: catalogItems,
+      totalPrice,
+      systemId: environment.chargeFjs.systemId,
+      providerPaymentId: bankTransferPayment.providerPaymentId,
+      correlationId: fulfillment.confirmationRefId,
+      // The fulfillment row is created at settlement — its `created` is the payment-completion date.
+      effectiveDate: new Date(fulfillment.created),
+    })
   }
 
   private async findPaymentFlowsToProcess(): Promise<
@@ -235,6 +288,16 @@ export class WorkerService {
       message: options?.message ?? null,
       metadata: options?.metadata ?? null,
     })
+  }
+
+  private getActiveFulfillment(
+    fulfillments: InferAttributes<PaymentFulfillment>[],
+  ): InferAttributes<PaymentFulfillment> {
+    // The db query filters to one non-deleted, unpaid fulfillment per flow.
+    if (!fulfillments || fulfillments.length === 0) {
+      throw new BadRequestException('No fulfillment found for payment flow')
+    }
+    return fulfillments[0]
   }
 
   private getLatestCardPaymentDetails(

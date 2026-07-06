@@ -63,6 +63,7 @@ import { PaymentFlowModuleConfig } from './paymentFlow.config'
 import { JwksConfig } from '../jwks/jwks.config'
 import { PaymentFulfillment } from './models/paymentFulfillment.model'
 import { PaymentWorkerEvent } from './models/paymentWorkerEvent.model'
+import { BankTransferPayment } from '../bankTransferPayment/models/bankTransferPayment.model'
 import { determinePaymentMethods } from './paymentFlow.utils'
 
 interface PaymentFlowUpdateConfig {
@@ -1033,7 +1034,7 @@ export class PaymentFlowService {
           model: PaymentFulfillment,
           required: true,
           where: {
-            paymentMethod: 'card',
+            paymentMethod: { [Op.in]: ['card', 'bank_transfer'] },
             fjsChargeId: null,
             created: { [Op.lt]: cutoffTime },
             isDeleted: false,
@@ -1041,8 +1042,15 @@ export class PaymentFlowService {
         },
         { model: PaymentFlowCharge },
         {
+          // Card flows only — left join so bank-transfer flows (no card details) are still returned.
           model: CardPaymentDetails,
-          required: true,
+          required: false,
+          where: { isDeleted: false },
+        },
+        {
+          // Bank-transfer flows only — carries the providerPaymentId needed to rebuild the FJS charge.
+          model: BankTransferPayment,
+          required: false,
           where: { isDeleted: false },
         },
         {

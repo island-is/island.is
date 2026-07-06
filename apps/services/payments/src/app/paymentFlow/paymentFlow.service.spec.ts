@@ -411,8 +411,8 @@ describe('PaymentFlowService', () => {
     })
   })
 
-  describe('findPaidFlowsWithoutFjsCharge — bank transfer exclusion', () => {
-    it('does not return a paid bank_transfer flow (no worker backfill for transfers)', async () => {
+  describe('findPaidFlowsWithoutFjsCharge — bank transfer backfill', () => {
+    it('returns a paid bank_transfer flow that is missing its FJS charge', async () => {
       const paymentFlowModel = app.get<typeof PaymentFlow>(
         getModelToken(PaymentFlow),
       )
@@ -439,7 +439,7 @@ describe('PaymentFlowService', () => {
         new Date(Date.now() + 60_000),
       )
 
-      expect(result.map((flow) => flow.id)).not.toContain(paymentFlowId)
+      expect(result.map((flow) => flow.id)).toContain(paymentFlowId)
     })
   })
 
