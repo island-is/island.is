@@ -91,7 +91,7 @@ export default function RootLayout() {
           // lock on cold start. Past grace forces auth (PIN/biometric) rather
           // than auto-unlock. Post-login mounts don't hit this path so the
           // stamp stays undefined → no lock right after login.
-          if (isOnboarded() && !config.disableAppLock) {
+          if (isOnboarded() && !config.isTestingApp) {
             authStore.setState({
               lockScreenActivatedAt: Date.now() - 24 * 60 * 60 * 1000,
               biometricAutoPromptedForCurrentLock: false,
@@ -124,7 +124,7 @@ export default function RootLayout() {
     // so the splash never hangs.
     const { authorizeResult } = authStore.getState()
     const willPushLockScreen =
-      !!authorizeResult && isOnboarded() && !config.disableAppLock
+      !!authorizeResult && isOnboarded() && !config.isTestingApp
 
     if (!willPushLockScreen) {
       SplashScreen.hideAsync().catch(() => {})

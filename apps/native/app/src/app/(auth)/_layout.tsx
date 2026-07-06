@@ -44,7 +44,7 @@ export default function AuthLayout() {
   // the auth layout mounts. Trust that stamp — pushing only when it's set
   // means post-login mounts (no stamp) don't re-lock the freshly-authed user.
   useEffect(() => {
-    if (!isOnboarded() || config.disableAppLock) {
+    if (!isOnboarded() || config.isTestingApp) {
       return
     }
     if (authStore.getState().lockScreenActivatedAt === undefined) {
@@ -62,7 +62,7 @@ export default function AuthLayout() {
         !state.lockScreenComponentId &&
         state.lockScreenActivatedAt !== undefined &&
         isOnboarded() &&
-        !config.disableAppLock
+        !config.isTestingApp
       ) {
         pushLockScreen()
       }
@@ -74,7 +74,7 @@ export default function AuthLayout() {
       const previousAppState = appStateRef.current
       appStateRef.current = nextAppState
 
-      if (!isOnboarded() || config.disableAppLock) {
+      if (!isOnboarded() || config.isTestingApp) {
         return
       }
       if (isLockScreenSuppressed()) return

@@ -6,14 +6,9 @@ export const bundleId = Application.applicationId ?? 'is.island.app'
 export const isTestingApp =
   bundleId.endsWith('.staging') || bundleId.endsWith('.dev')
 
-// Skips the app lock (PIN/biometric). Set to `false` locally to test the lock
-// in a dev build; revert to `isTestingApp` before merging (E2E has no PIN step).
-export const disableAppLock = false
-
 export const config = {
   bundleId,
   isTestingApp,
-  disableAppLock,
   idsClientId: '@island.is/app',
   idsScopes: [
     'openid',
