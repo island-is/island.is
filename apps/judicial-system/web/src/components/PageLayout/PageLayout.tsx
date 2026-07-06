@@ -146,7 +146,11 @@ const SidePanel: FC<SidePanelProps> = ({
 
   return (
     <GridColumn span={['12/12', '12/12', '4/12', '3/12']}>
-      <div className={styles.formStepperContainer}>
+      <Box
+        component="nav"
+        aria-labelledby="case-steps-heading"
+        className={styles.formStepperContainer}
+      >
         <Box marginLeft={[0, 0, 2]}>
           {!isDefenceUser(user) && (
             <Box marginBottom={7} display={['none', 'none', 'block']}>
@@ -158,7 +162,7 @@ const SidePanel: FC<SidePanelProps> = ({
             marginLeft={[3, 3, 0]}
             marginTop={[2, 2, 0]}
           >
-            <Text variant="h3" as="h3">
+            <Text variant="h3" as="h3" id="case-steps-heading">
               {formatMessage(
                 user?.institution?.type === InstitutionType.COURT_OF_APPEALS
                   ? formStepperSections.appealedCaseTitle
@@ -186,7 +190,7 @@ const SidePanel: FC<SidePanelProps> = ({
             ))}
           />
         </Box>
-      </div>
+      </Box>
     </GridColumn>
   )
 }

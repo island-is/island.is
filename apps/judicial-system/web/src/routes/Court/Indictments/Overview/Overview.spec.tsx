@@ -12,6 +12,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   mockCase,
+  mockCaseTableMembershipQuery,
   mockUser,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { IntlProviderWrapper } from '@island.is/judicial-system-web/src/utils/testHelpers'
@@ -38,7 +39,10 @@ const renderOverview = (
   isCaseUpToDate = true,
 ) => {
   const wrapInProviders = (children: ReactNode) => (
-    <MockedProvider addTypename={false}>
+    <MockedProvider
+      mocks={[...mockCaseTableMembershipQuery(theCase.id)]}
+      addTypename={false}
+    >
       <IntlProviderWrapper>
         <UserContext.Provider value={{ user: mockUser(userRole) }}>
           <FormContext.Provider

@@ -11,6 +11,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   mockCase,
+  mockCaseTableMembershipQuery,
   mockUser,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import {
@@ -45,7 +46,10 @@ window.scrollTo = jest.fn()
 describe('Prosecutor IndictmentOverview', () => {
   it('should not render a review decision for a defendant whose indictment was cancelled or dismissed (completed for some)', async () => {
     const { container } = render(
-      <MockedProvider mocks={[]} addTypename={false}>
+      <MockedProvider
+        mocks={[...mockCaseTableMembershipQuery('test_id')]}
+        addTypename={false}
+      >
         <UserContext.Provider value={{ user: reviewerUser }}>
           <IntlProviderWrapper>
             <FormContextWrapper
