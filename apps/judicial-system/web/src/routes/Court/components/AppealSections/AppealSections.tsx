@@ -17,8 +17,8 @@ import {
 import useCaseAppealDecision from '@island.is/judicial-system-web/src/utils/hooks/useCaseAppealDecision'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
-import { appealSections as m } from './AppealSections.strings'
 import useDebouncedAppealAnnouncement from './useDebouncedAppealAnnouncement'
+import { appealSections as m } from './AppealSections.strings'
 import * as styles from './AppealSections.css'
 
 interface Props {
