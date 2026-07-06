@@ -770,6 +770,13 @@ export class BackendService extends DataSource<{ req: Request }> {
     )
   }
 
+  updateCaseAppealDecision(
+    caseId: string,
+    updateAppealDecision: unknown,
+  ): Promise<AppealDecisionResponse> {
+    return this.patch(`case/${caseId}/appealDecision`, updateAppealDecision)
+  }
+
   deleteCourtSession(
     caseId: string,
     courtSessionId: string,

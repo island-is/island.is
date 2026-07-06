@@ -77,8 +77,9 @@ import {
   DefendantExistsGuard,
 } from '../defendant'
 import { EventService } from '../event'
-import { Case, Defendant } from '../repository'
+import { AppealDecision, Case, Defendant } from '../repository'
 import { UpdateCase } from '../repository'
+import { CaseAppealDecisionDto } from './dto/caseAppealDecision.dto'
 import { UserService } from '../user'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { TransitionCaseDto } from './dto/transitionCase.dto'
@@ -303,6 +304,33 @@ export class CaseController {
 
       throw error
     }
+  }
+
+  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @Patch('case/:caseId/appealDecision')
+  @ApiOkResponse({
+    type: AppealDecision,
+    description: 'Creates or updates a case-level party appeal decision',
+  })
+  upsertCaseAppealDecision(
+    @Param('caseId') caseId: string,
+    @Body() appealDecision: CaseAppealDecisionDto,
+    @CurrentCase() theCase: Case,
+  ): Promise<AppealDecision> {
+    this.logger.debug(`Upserting case-level appeal decision for case ${caseId}`)
+
+    return this.sequelize.transaction((transaction) =>
+      this.caseService.upsertCaseAppealDecision(
+        theCase,
+        appealDecision,
+        transaction,
+      ),
+    )
   }
 
   @UseGuards(CaseExistsGuard, RolesGuard, CaseWriteGuard, CaseTransitionGuard)

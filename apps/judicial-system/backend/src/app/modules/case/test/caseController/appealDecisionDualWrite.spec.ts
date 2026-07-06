@@ -181,13 +181,23 @@ describe('CaseController - Appeal decision dual-write', () => {
 
   describe('completing a request case where a party appealed in court', () => {
     const courtEndTime = randomDate()
+    // Completion reads the in-court stance from the case-level appeal_decision
+    // rows (rulingFileId null), not the legacy columns.
     const theCase = {
       id: caseId,
       type: CaseType.CUSTODY,
       state: CaseState.RECEIVED,
       courtEndTime,
-      prosecutorAppealDecision: CaseAppealDecision.APPEAL,
-      accusedAppealDecision: CaseAppealDecision.ACCEPT,
+      appealDecisions: [
+        {
+          partyRole: AppealDecisionPartyRole.PROSECUTOR,
+          decision: CaseAppealDecision.APPEAL,
+        },
+        {
+          partyRole: AppealDecisionPartyRole.DEFENDANT,
+          decision: CaseAppealDecision.ACCEPT,
+        },
+      ],
       defendants: [{ id: defendantId1 }, { id: defendantId2 }],
     } as Case
 
