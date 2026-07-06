@@ -256,6 +256,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       appealState
       appealedByNationalId
       appealedByRole
+      appealedInCourt
       appealedDate
       statementDeadline
       isStatementDeadlineExpired
@@ -296,6 +297,16 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       isAppealCustodyIsolation
       appealIsolationToDate
       rulingFileId
+    }
+    appealDecisions {
+      id
+      rulingFileId
+      partyRole
+      defendantId
+      civilClaimantId
+      decision
+      announcement
+      withdrawnDate
     }
     notifications {
       id
@@ -520,6 +531,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         appealState
         appealedByNationalId
         appealedByRole
+        appealedInCourt
         appealedDate
         statementDeadline
         isStatementDeadlineExpired
