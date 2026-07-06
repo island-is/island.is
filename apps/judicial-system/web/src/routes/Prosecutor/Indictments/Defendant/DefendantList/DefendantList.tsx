@@ -129,7 +129,7 @@ export const DefendantList = () => {
   }
 
   return (
-    <Box component="section" marginBottom={5}>
+    <>
       <Box
         display="flex"
         alignItems="center"
@@ -180,6 +180,6 @@ export const DefendantList = () => {
           {formatMessage(strings.addDefendantButtonText)}
         </Button>
       </Box>
-    </Box>
+    </>
   )
 }
