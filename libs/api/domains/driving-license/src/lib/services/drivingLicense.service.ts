@@ -584,7 +584,6 @@ export class DrivingLicenseService {
       districtId: input.jurisdiction,
       phoneNumber: input.primaryPhoneNumber,
       email: input.studentEmail,
-      pickupPlasticAtDistrict: input.pickupPlasticAtDistrict,
       sendPlasticToPerson: input.sendPlasticToPerson,
       contentList: input.contentList,
       photoBiometricsId: input.photoBiometricsId,
@@ -600,11 +599,16 @@ export class DrivingLicenseService {
   // Legacy 65+ submit, used when `is65RenewalRedesignEnabled` flag is OFF.
   // Removed alongside `postRenewLicenseOver65` in the wrapper once the flag
   // has been ON in prod long enough to retire the legacy submit path.
+  // Note: unlike the redesigned `applyForRenewal65` (V5 `postApplyForRenewal65`,
+  // which dropped `pickupPlasticAtDistrict` in favor of the single
+  // `sendPlasticToPerson` flag), the legacy `postRenewLicenseOver65` endpoint's
+  // schema still supports the old two-flag model, so `pickupPlasticAtDistrict`
+  // is defined locally here rather than picked from `NewRenewal65DrivingLicenseInput`.
   async renewDrivingLicense65AndOver(
     auth: User['authorization'],
-    input: { jurisdiction: number } & Pick<
+    input: { jurisdiction: number; pickupPlasticAtDistrict?: boolean } & Pick<
       NewRenewal65DrivingLicenseInput,
-      'pickupPlasticAtDistrict' | 'sendPlasticToPerson'
+      'sendPlasticToPerson'
     >,
   ): Promise<NewDrivingLicenseResult> {
     const response = await this.drivingLicenseApi.postRenewLicenseOver65({
