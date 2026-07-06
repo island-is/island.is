@@ -7,7 +7,7 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import { DefaultEvents, FormModes } from '@island.is/application/types'
-import { CoatOfArms } from '@island.is/application/assets/institution-logos'
+import { DirectorateOfEqualityLogo } from '@island.is/application/assets/institution-logos'
 import {
   ActiveEqualityReportApi,
   CompanyRegistryApi,
@@ -20,12 +20,12 @@ import { messages } from '../../lib/messages'
 export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',
   title: messages.general.applicationName,
-  logo: CoatOfArms,
+  logo: DirectorateOfEqualityLogo,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   children: [
     buildSection({
-      id: 'forsendur',
+      id: 'prerequisitesSection',
       title: messages.prerequisites.section.sectionTitle,
       children: [
         buildExternalDataProvider({

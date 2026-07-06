@@ -490,6 +490,8 @@ codemagic.yaml                                                                  
 
 /libs/application/templates/directorate-of-immigration/                                                                      @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/directorate-of-immigration/                                 @island-is/origo
+/libs/application/templates/directorate-of-equality/                                                                         @island-is/hugsmidjan
+/libs/application/template-api-modules/src/lib/modules/templates/directorate-of-equality/                                    @island-is/hugsmidjan
 /libs/clients/directorate-of-equality/                                                                                       @island-is/hugsmidjan
 /libs/clients/directorate-of-immigration/                                                                                    @island-is/origo
 
@@ -538,7 +540,7 @@ codemagic.yaml                                                                  
 /libs/application/template-api-modules/src/lib/modules/templates/vmst/edit-unemployment-information                          @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/vmst/submit-documents                                       @island-is/origo
 
-libs/portals/my-pages/social-benefits/src/screens/unemployment-benefits/                                                     @island-is/origo 
+libs/portals/my-pages/social-benefits/src/screens/unemployment-benefits/                                                     @island-is/origo
 
 # DevOps
 /.github/                                                                                                                    @island-is/devops

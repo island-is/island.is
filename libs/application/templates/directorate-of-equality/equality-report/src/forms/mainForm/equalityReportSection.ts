@@ -31,7 +31,6 @@ export const equalityReportSection = buildSection({
           children: [
             buildCustomField({
               id: 'previousEqualityPlan.content',
-              title: '',
               component: 'PreviousEqualityPlan',
             }),
           ],
@@ -93,7 +92,6 @@ export const equalityReportSection = buildSection({
             }),
             buildCustomField({
               id: 'goalsAndActions.customField',
-              title: '',
               component: 'Editor',
             }),
           ],

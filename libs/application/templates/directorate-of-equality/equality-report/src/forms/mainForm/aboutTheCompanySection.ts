@@ -279,7 +279,6 @@ export const aboutTheCompanySection = buildSection({
             }),
             buildRadioField({
               id: 'subsidiaries.includesSubsidiaries',
-              title: '',
               largeButtons: true,
               width: 'half',
               required: true,
@@ -293,7 +292,6 @@ export const aboutTheCompanySection = buildSection({
             }),
             buildTableRepeaterField({
               id: 'subsidiaries.list',
-              title: '',
               marginTop: 0,
               formTitle: messages.aboutTheCompany.subsidiaries.tableFormTitle,
               addItemButtonText:

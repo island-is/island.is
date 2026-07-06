@@ -187,7 +187,6 @@ export const overviewSection = buildSection({
         }),
         buildCustomField({
           id: 'overview.display',
-          title: '',
           component: 'Overview',
         }),
         buildSubmitField({

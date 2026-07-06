@@ -5,16 +5,15 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import { GuitarAndWheelchair } from '@island.is/application/assets/graphics'
-import { CoatOfArms } from '@island.is/application/assets/institution-logos'
+import { DirectorateOfEqualityLogo } from '@island.is/application/assets/institution-logos'
 import { messages } from '../../lib/messages'
 
 export const NotAllowedForm = buildForm({
   id: 'NotAllowedForm',
-  logo: CoatOfArms,
+  logo: DirectorateOfEqualityLogo,
   children: [
     buildSection({
       id: 'notAllowedSection',
-      title: '',
       tabTitle: messages.notAllowed.title,
       children: [
         buildMultiField({

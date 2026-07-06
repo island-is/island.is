@@ -3,7 +3,10 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
-import { DirectorateOfEqualityClientService } from '@island.is/clients/directorate-of-equality'
+import {
+  CompanyDto,
+  DirectorateOfEqualityClientService,
+} from '@island.is/clients/directorate-of-equality'
 import {
   Gender,
   type ApplicationAnswers,
@@ -110,10 +113,15 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     )
     if (!hasActiveReport) return null
 
+    const doeCompany = getValueViaPath<CompanyDto>(
+      application.externalData,
+      'doeCompany.data',
+    )
+    if (!doeCompany?.id) return null
     try {
       const report = await this.directorateOfEqualityService.getReport(
         auth,
-        application.id,
+        doeCompany.id,
       )
       return { equalityReportContent: report.equalityReportContent ?? '' }
     } catch (error) {
@@ -140,15 +148,16 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
       [Gender.FEMALE]: 'FEMALE',
       [Gender.NON_BINARY]: 'NEUTRAL',
     }
+    const doeCompany = getValueViaPath<CompanyDto>(
+      application.externalData,
+      'doeCompany.data',
+    )
 
-    const equalityReportContent = (() => {
-      const base64 = answers.goalsAndActions?.customField ?? ''
-      try {
-        return Buffer.from(base64, 'base64').toString('utf-8')
-      } catch {
-        return ''
-      }
-    })()
+    const equalityReportContent = getValueViaPath(
+      answers,
+      'goalsAndActions.customField',
+      '',
+    )
 
     const subsidiaryList = answers.subsidiaries?.list ?? []
 
@@ -157,7 +166,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
         auth,
         {
           identifier: application.id,
-          providerId: application.id,
+          providerId: doeCompany.id ?? application.id,
           companyAdminName: answers.chiefExecutive?.name ?? '',
           companyAdminEmail: answers.chiefExecutive?.email ?? '',
           companyAdminGender: answers.chiefExecutive?.gender
@@ -166,7 +175,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
           contactName: answers.contactPerson?.name ?? '',
           contactEmail: answers.contactPerson?.email ?? '',
           contactPhone: answers.contactPerson?.phone ?? '',
-          equalityReportContent,
+          equalityReportContent: equalityReportContent ?? '',
           company: {
             name: answers.generalInformation?.companyName ?? '',
             nationalId: answers.generalInformation?.nationalId ?? '',

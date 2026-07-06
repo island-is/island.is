@@ -48,7 +48,7 @@ const template: ApplicationTemplate<
   translationNamespaces: ApplicationConfigurations.EqualityReport.translation,
   dataSchema,
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
-  requiredScopes: [], //[ApiScope.directorateOfEquality],
+  requiredScopes: [ApiScope.directorateOfEquality],
   allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
