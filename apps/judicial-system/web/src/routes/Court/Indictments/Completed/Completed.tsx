@@ -46,12 +46,14 @@ import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.cs
 import { ConfirmationInformation } from './ConfirmationInformation'
 import { CriminalRecordUpdate } from './CriminalRecordUpdate'
 import { DefendantServiceRequirement } from './DefendantServiceRequirement'
+import ReopenCaseModal, { canReopenCase } from './ReopenCaseModal'
 import strings from './Completed.strings'
 
 type modal =
   | 'CONFIRM_AND_SEND_TO_PUBLIC_PROSECUTOR'
   | 'DELIVER_VERDICTS'
-  | 'REOPEN'
+  | 'CORRECT'
+  | 'REOPEN_CASE'
 
 const Completed: FC = () => {
   const { user } = useContext(UserContext)
@@ -305,13 +307,23 @@ const Completed: FC = () => {
           <FormFooter
             previousUrl={getStandardUserDashboardRoute(user)}
             actions={[
+              ...(canReopenCase(workingCase, user)
+                ? [
+                    {
+                      text: 'Enduropna mál',
+                      onClick: () => setModalVisible('REOPEN_CASE'),
+                      variant: 'ghost' as const,
+                      colorScheme: 'destructive' as const,
+                    },
+                  ]
+                : []),
               ...(workingCase.indictmentRulingDecision ===
               CaseIndictmentRulingDecision.WITHDRAWAL
                 ? []
                 : [
                     {
                       text: 'Leiðrétta mál',
-                      onClick: () => setModalVisible('REOPEN'),
+                      onClick: () => setModalVisible('CORRECT'),
                     },
                   ]),
               ...(!isRulingOrFine || isSentToPublicProsecutor
@@ -363,8 +375,14 @@ const Completed: FC = () => {
             }}
           />
         )}
-        {modalVisible === 'REOPEN' && (
+        {modalVisible === 'CORRECT' && (
           <ReopenModal onClose={() => setModalVisible(undefined)} />
+        )}
+        {modalVisible === 'REOPEN_CASE' && (
+          <ReopenCaseModal
+            workingCase={workingCase}
+            onClose={() => setModalVisible(undefined)}
+          />
         )}
         {appealModals}
       </PageLayout>
