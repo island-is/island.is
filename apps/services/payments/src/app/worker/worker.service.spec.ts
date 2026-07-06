@@ -78,7 +78,11 @@ const createBankTransferFlow = (
       },
     ],
     bankTransferPayments: [
-      { id: 'bt-correlation-id', providerPaymentId: 'provider-payment-id' },
+      {
+        id: 'bt-correlation-id',
+        providerPaymentId: 'provider-payment-id',
+        amount: 900,
+      },
     ],
     ...overrides,
   })
@@ -346,7 +350,9 @@ describe('WorkerService', () => {
       // PAID payload: RRN carries the provider id, correlationId is the fulfillment ref.
       expect(btChargePayload.payInfo?.RRN).toBe('provider-payment-id')
       expect(btChargePayload.payInfo?.correlationId).toBe('bt-correlation-id')
-      expect(btChargePayload.payInfo?.payableAmount).toBe(1000)
+      // payableAmount is the settled bank transfer amount, not the catalog total (1000)
+      // recomputed at worker-run time.
+      expect(btChargePayload.payInfo?.payableAmount).toBe(900)
       expect(paymentWorkerEventModel.create).toHaveBeenCalledWith(
         expect.objectContaining({
           paymentFlowId: 'bt-success',
@@ -357,6 +363,33 @@ describe('WorkerService', () => {
       )
       expect(mockLogger.info).toHaveBeenCalledWith(
         'Payment worker run complete — created: 1, failed: 0, skipped (manual intervention): 0',
+      )
+    })
+
+    it('should record a failure for a card flow with no active card payment details (e.g. interrupted refund)', async () => {
+      // The query left-joins card details, so a card flow whose details are all
+      // soft-deleted is returned and must surface as a failure — not be silently skipped.
+      const flow = createMockFlow({
+        id: 'card-orphan',
+        cardPaymentDetails: [],
+      })
+      paymentFlowService.findPaidFlowsWithoutFjsCharge.mockResolvedValue([
+        flow,
+      ] as never)
+
+      await service.run()
+
+      expect(paymentFlowService.createFjsCharge).not.toHaveBeenCalled()
+      expect(paymentWorkerEventModel.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          paymentFlowId: 'card-orphan',
+          taskType: WorkerTaskType.CreateFjsCharge,
+          status: 'failure',
+          errorCode: expect.stringContaining('No card payment details found'),
+        }),
+      )
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'Payment worker run complete — created: 0, failed: 1, skipped (manual intervention): 0',
       )
     })
 

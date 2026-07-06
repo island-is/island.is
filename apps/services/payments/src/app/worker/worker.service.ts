@@ -224,16 +224,24 @@ export class WorkerService {
       )
     }
 
-    const { catalogItems, totalPrice } =
+    const { catalogItems, totalPrice: catalogTotalPrice } =
       await this.paymentFlowService.getPaymentFlowChargeDetails(
         paymentFlow.organisationId,
         paymentFlow.charges as ChargeItem[],
       )
 
+    // The charge is PAID — payInfo must carry the amount that actually settled, not the
+    // catalog price at worker-run time (prices may have changed since settlement).
+    if (catalogTotalPrice !== bankTransferPayment.amount) {
+      this.logger.warn(
+        `[${paymentFlow.id}] Catalog total (${catalogTotalPrice}) differs from settled bank transfer amount (${bankTransferPayment.amount}) — charging the settled amount`,
+      )
+    }
+
     return generateBankTransferChargeFJSPayload({
       paymentFlow,
       charges: catalogItems,
-      totalPrice,
+      totalPrice: bankTransferPayment.amount,
       systemId: environment.chargeFjs.systemId,
       providerPaymentId: bankTransferPayment.providerPaymentId,
       correlationId: fulfillment.confirmationRefId,
@@ -303,10 +311,11 @@ export class WorkerService {
   private getLatestCardPaymentDetails(
     details: InferAttributes<CardPaymentDetails>[],
   ): InferAttributes<CardPaymentDetails> {
-    // should not happen because card payment details are required in the db query
+    // The db query left-joins card details (bank-transfer flows have none), so a card
+    // flow can reach here with zero rows — e.g. all its details soft-deleted.
     if (!details || details.length === 0) {
       throw new BadRequestException(
-        'No card payment details found for payment flow',
+        'No card payment details found for payment flow (possible interrupted refund — card confirmation deleted while fulfillment is active)',
       )
     }
 

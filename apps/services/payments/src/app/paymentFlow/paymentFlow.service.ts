@@ -1019,7 +1019,7 @@ export class PaymentFlowService {
   }
 
   /**
-   * Finds paid card payment flows that don't have an FJS charge yet.
+   * Finds paid card and bank-transfer payment flows that don't have an FJS charge yet.
    * Used by the FJS worker to backfill missing charges.
    *
    * @param cutoffTime - Only include flows whose fulfillment was created before this time (gives other systems time to finalize)
