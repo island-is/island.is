@@ -37,6 +37,7 @@ import { useLocale } from '@/hooks/use-locale'
 import { useBrowser } from '@/hooks/use-browser'
 import {
   Alert,
+  ChevronRight,
   GeneralCardSkeleton,
   Heading,
   Input,
@@ -80,6 +81,7 @@ interface HeadingSectionProps {
   linkTextId?: string
   onPress?: () => void
   showIcon?: boolean
+  chevron?: boolean
 }
 
 const HeadingSection: React.FC<HeadingSectionProps> = ({
@@ -87,6 +89,7 @@ const HeadingSection: React.FC<HeadingSectionProps> = ({
   onPress,
   linkTextId,
   showIcon = true,
+  chevron = false,
 }) => {
   const theme = useTheme()
 
@@ -97,7 +100,7 @@ const HeadingSection: React.FC<HeadingSectionProps> = ({
       disabled={!onPress}
     >
       <Heading
-        small
+        medium
         button={
           <TouchableOpacity
             onPress={onPress}
@@ -116,7 +119,11 @@ const HeadingSection: React.FC<HeadingSectionProps> = ({
                 >
                   <FormattedMessage id={linkTextId ?? 'button.seeAll'} />
                 </Typography>
-                {showIcon && <Image source={externalLinkIcon} />}
+                {chevron ? (
+                  <ChevronRight />
+                ) : (
+                  showIcon && <Image source={externalLinkIcon} />
+                )}
               </>
             )}
           </TouchableOpacity>
@@ -514,7 +521,7 @@ export default function HealthOverviewScreen() {
               title={intl.formatMessage({
                 id: 'health.appointments.screenTitle',
               })}
-              showIcon={false}
+              chevron
               onPress={() =>
                 router.navigate('/(auth)/(tabs)/health/appointments')
               }
@@ -573,7 +580,7 @@ export default function HealthOverviewScreen() {
               title={intl.formatMessage({
                 id: 'health.messages.screenTitle',
               })}
-              showIcon={false}
+              chevron
               onPress={() => router.navigate('/(auth)/(tabs)/health/messages')}
             />
             {(!hasBeenFocused || messagesRes.loading) && (
