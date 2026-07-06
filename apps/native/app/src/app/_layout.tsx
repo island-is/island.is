@@ -35,6 +35,7 @@ import { IBMPlexSans_500Medium_Italic } from '@expo-google-fonts/ibm-plex-sans/5
 import { IBMPlexSans_600SemiBold_Italic } from '@expo-google-fonts/ibm-plex-sans/600SemiBold_Italic'
 import { IBMPlexSans_700Bold_Italic } from '@expo-google-fonts/ibm-plex-sans/700Bold_Italic'
 import { setupEventHandlers } from '../utils/lifecycle/setup-event-handlers'
+import { ensureDeviceUnlockCanary } from '../utils/device-unlock-canary'
 import { useDatadogViewTracking } from '../hooks/use-datadog-view-tracking'
 
 export { ErrorBoundary } from 'expo-router'
@@ -74,6 +75,9 @@ export default function RootLayout() {
 
     async function init() {
       try {
+        // Seed the canary the lock screen uses to detect device unlocks.
+        void ensureDeviceUnlockCanary()
+
         // 1. Restore auth tokens from keychain
         await readAuthorizeResult()
 
