@@ -1,5 +1,15 @@
 # Judicial System — Agent Guide
 
+## Shared code
+
+**Code used across services must live in the shared libs**
+(`libs/judicial-system/*`), never be duplicated per app. If a function is
+needed by more than one project — e.g. both `web` and `backend` — put it in
+the appropriate lib (`@island.is/judicial-system/formatters`,
+`@island.is/judicial-system/types`, ...) and import it from there. When you
+find yourself copying an existing function into another project, move it to a
+lib instead.
+
 ## Localization strings
 
 We are moving away from Contentful. **Do not add new strings to `.strings.ts`
