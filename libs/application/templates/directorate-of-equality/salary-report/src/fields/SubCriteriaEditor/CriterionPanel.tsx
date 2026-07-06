@@ -126,7 +126,6 @@ export const CriterionPanel: FC<Props> = ({
           <SubCriterionItem
             key={field.id}
             fieldName={`${fieldName}.${i}`}
-            index={i}
             isLast={i === fields.length - 1}
             canRemove={fields.length > 1}
             onRemove={() => remove(i)}

@@ -56,6 +56,9 @@ export const PreviousEqualityPlan = ({ application }: FieldBaseProps) => {
         setContent('' as HTMLText)
       })
       .finally(() => setLoading(false))
+    // Only run once on mount - application.externalData is itself updated by
+    // this effect, so including it (or the mutation) as a dep would refetch in a loop.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleCopy = () => {

@@ -8,7 +8,6 @@ import type { SubCriterionStep } from '../../lib/constants'
 
 type Props = {
   fieldName: string
-  index: number
   isLast: boolean
   canRemove: boolean
   onRemove: () => void
@@ -16,7 +15,6 @@ type Props = {
 
 export const SubCriterionItem: FC<Props> = ({
   fieldName,
-  index,
   isLast,
   canRemove,
   onRemove,
