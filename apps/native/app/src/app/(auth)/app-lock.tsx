@@ -11,6 +11,7 @@ import {
   BackHandler,
   Image,
   InteractionManager,
+  Platform,
   SafeAreaView,
   View,
 } from 'react-native'
@@ -36,6 +37,10 @@ import {
 } from '@/stores/preferences-store'
 import { useUiStore } from '@/stores/ui-store'
 import { dynamicColor, font } from '@/ui'
+import {
+  ensureDeviceUnlockCanary,
+  isDeviceUnlocked,
+} from '@/utils/device-unlock-canary'
 import { testIDs } from '@/utils/test-ids'
 import { useBrowser } from '@/hooks/use-browser'
 
@@ -102,6 +107,8 @@ export default function AppLockScreen() {
   // settled — replaying with the lock still on top would push the link
   // above it, then back would pop the link instead of the lock.
   const unlockApp = () => {
+    // The user just authenticated, so the device is unlocked — refresh the canary.
+    void ensureDeviceUnlockCanary()
     authStore.setState({
       lockScreenActivatedAt: undefined,
       biometricAutoPromptedForCurrentLock: false,
@@ -229,7 +236,21 @@ export default function AppLockScreen() {
   // On mount and each → active: undefined → dismiss, within grace → unlock,
   // else → require auth (biometric prompted once per lock).
   useEffect(() => {
-    const tryUnlockOrPrompt = () => {
+    let unmounted = false
+    const tryUnlockOrPrompt = async () => {
+      // AppState can claim 'active' while the phone is locked (Always-On
+      // Display), but the keychain can't lie: WHEN_UNLOCKED items are only
+      // readable once the device is genuinely unlocked.
+      const deviceUnlocked = await isDeviceUnlocked()
+      // Re-check unmounted: the screen may have been dismissed during the
+      // await, and acting (e.g. router.back below) would hit a stale screen.
+      if (unmounted || !deviceUnlocked) {
+        return
+      }
+      if (AppState.currentState !== 'active') {
+        return
+      }
+
       const { lockScreenActivatedAt, biometricAutoPromptedForCurrentLock } =
         authStore.getState()
       const { appLockTimeout } = preferencesStore.getState()
@@ -254,18 +275,61 @@ export default function AppLockScreen() {
       void authenticateWithBiometrics()
     }
 
+    // With Always-On Display, iOS fires ghost 'active' events while the
+    // phone is locked and dark. Reacting to them pops/re-pushes the lock
+    // modal off-screen, corrupting the native stack (black screen on
+    // resume). Ghost events flip back to inactive within ~250ms, so require
+    // 500ms of uninterrupted 'active' plus a rendered frame before acting.
+    let pendingTimer: ReturnType<typeof setTimeout> | undefined
+    const confirmVisibleThenRun = () => {
+      // The ghost events are iOS-only; Android evaluates immediately.
+      if (Platform.OS !== 'ios') {
+        void tryUnlockOrPrompt()
+        return
+      }
+      if (pendingTimer) {
+        return
+      }
+      pendingTimer = setTimeout(() => {
+        pendingTimer = undefined
+        if (unmounted || AppState.currentState !== 'active') {
+          return
+        }
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            if (unmounted || AppState.currentState !== 'active') {
+              return
+            }
+            void tryUnlockOrPrompt()
+          })
+        })
+      }, 500)
+    }
+    const cancelPendingConfirm = () => {
+      if (pendingTimer) {
+        clearTimeout(pendingTimer)
+        pendingTimer = undefined
+      }
+    }
+
     if (AppState.currentState === 'active') {
-      tryUnlockOrPrompt()
+      confirmVisibleThenRun()
     }
 
     const subscription = AppState.addEventListener('change', (nextAppState) => {
       if (nextAppState === 'active') {
         isPromptRef.current = false
-        tryUnlockOrPrompt()
+        confirmVisibleThenRun()
+      } else {
+        cancelPendingConfirm()
       }
     })
 
-    return () => subscription.remove()
+    return () => {
+      unmounted = true
+      cancelPendingConfirm()
+      subscription.remove()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

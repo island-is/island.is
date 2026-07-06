@@ -12,7 +12,7 @@ import {
   CardLoader,
   IntroWrapper,
   NestedTable,
-  Table,
+  PortalTable,
   createColumnHelper,
   formatDate,
   m,
@@ -145,7 +145,7 @@ const RightCertificates = () => {
               {filtered.length === 0 ? (
                 <Problem type="no_data" noBorder={false} />
               ) : (
-                <Table
+                <PortalTable
                   columns={columns}
                   data={filtered}
                   emptyMessage={om.sailorRightCertificatesEmpty}

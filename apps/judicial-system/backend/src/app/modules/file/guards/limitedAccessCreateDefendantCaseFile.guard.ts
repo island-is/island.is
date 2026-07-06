@@ -37,9 +37,7 @@ export class LimitedAccessCreateDefendantCaseFileGuard implements CanActivate {
 
     // Verify the logged-in user is the confirmed defender for this defendant
     if (
-      !defendant.isDefenderChoiceConfirmed ||
-      !defendant.defenderNationalId ||
-      defendant.defenderNationalId !== user.nationalId
+      !Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [defendant])
     ) {
       return false
     }
