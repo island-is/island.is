@@ -22,7 +22,6 @@ import {
   AppealCaseNotificationType,
   AppealCaseState,
   AppealCaseTransition,
-  AppealDecisionPartyRole,
   AppealEventType,
   CaseAppealDecision,
   CaseFileCategory,
@@ -39,6 +38,7 @@ import { nowFactory } from '../../factories'
 import {
   AppealCase,
   AppealCaseRepositoryService,
+  AppealDecisionRepositoryService,
   AppealEventLogRepositoryService,
   Case,
   CaseRepositoryService,
@@ -51,6 +51,10 @@ import {
   transitionAppealCase,
 } from './state/appealCase.state'
 import { appealCaseModuleConfig } from './appealCase.config'
+import {
+  findUserRulingOrderAppealDecision,
+  isInCourtRulingOrderAppeal,
+} from './appealCase.helpers'
 
 @Injectable()
 export class AppealCaseService {
@@ -59,6 +63,7 @@ export class AppealCaseService {
     @Inject(forwardRef(() => CaseRepositoryService))
     private readonly caseRepositoryService: CaseRepositoryService,
     private readonly appealEventLogRepositoryService: AppealEventLogRepositoryService,
+    private readonly appealDecisionRepositoryService: AppealDecisionRepositoryService,
     @Inject(appealCaseModuleConfig.KEY)
     private readonly config: ConfigType<typeof appealCaseModuleConfig>,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -129,31 +134,16 @@ export class AppealCaseService {
 
   // True iff the user's party recorded an in-court ACCEPT ("unir úrskurðinum")
   // for this ruling order. Such a party has waived its right to appeal it, so an
-  // out-of-court appeal from it must be rejected. The party is the prosecution,
-  // or the specific defendant / civil claimant the defence user represents.
+  // out-of-court appeal from it must be rejected.
   private hasAcceptedRulingOrderInCourt(
     theCase: Case,
     rulingFileId: string,
     user: User,
   ): boolean {
-    const { defendantId, civilClaimantId } = isDefenceUser(user)
-      ? this.resolveDefencePartyIds(theCase, user)
-      : {}
-    const partyRole = isProsecutionUser(user)
-      ? AppealDecisionPartyRole.PROSECUTOR
-      : civilClaimantId
-      ? AppealDecisionPartyRole.CIVIL_CLAIMANT
-      : AppealDecisionPartyRole.DEFENDANT
-
-    const decision = theCase.appealDecisions?.find(
-      (appealDecision) =>
-        appealDecision.rulingFileId === rulingFileId &&
-        appealDecision.partyRole === partyRole &&
-        (appealDecision.defendantId ?? null) === (defendantId ?? null) &&
-        (appealDecision.civilClaimantId ?? null) === (civilClaimantId ?? null),
+    return (
+      findUserRulingOrderAppealDecision(theCase, rulingFileId, user)
+        ?.decision === CaseAppealDecision.ACCEPT
     )
-
-    return decision?.decision === CaseAppealDecision.ACCEPT
   }
 
   // Dual-write: records an APPEALED event for an out-of-court appeal. In-court
@@ -724,6 +714,119 @@ export class AppealCaseService {
   }
 
   async transition(
+    theCase: Case,
+    appealCase: AppealCase,
+    transition: AppealCaseTransition,
+    user: User,
+    transaction: Transaction,
+  ): Promise<AppealTransitionResult & { appealCase: AppealCase }> {
+    // Withdrawing an in-court ruling-order appeal is per party: only the
+    // withdrawing party's decision is marked, and the appeal case is not
+    // withdrawn until every appealing party has withdrawn.
+    if (
+      transition === AppealCaseTransition.WITHDRAW_APPEAL &&
+      appealCase.rulingFileId &&
+      isInCourtRulingOrderAppeal(theCase, appealCase.rulingFileId)
+    ) {
+      return this.withdrawInCourtRulingOrderAppeal(
+        theCase,
+        appealCase,
+        appealCase.rulingFileId,
+        user,
+        transaction,
+      )
+    }
+
+    return this.applyTransition(
+      theCase,
+      appealCase,
+      transition,
+      user,
+      transaction,
+    )
+  }
+
+  // A party withdraws its in-court ruling-order appeal. The party's decision row
+  // is stamped with the server's withdrawal time (never the client's) and an
+  // APPEAL_WITHDRAWN event records who did it. The appeal stands - and no party
+  // is notified - until every appealing party has withdrawn, at which point the
+  // appeal case itself is withdrawn (the existing WITHDRAW_APPEAL transition).
+  private async withdrawInCourtRulingOrderAppeal(
+    theCase: Case,
+    appealCase: AppealCase,
+    rulingFileId: string,
+    user: User,
+    transaction: Transaction,
+  ): Promise<AppealTransitionResult & { appealCase: AppealCase }> {
+    const decision = findUserRulingOrderAppealDecision(
+      theCase,
+      rulingFileId,
+      user,
+    )
+
+    if (
+      decision?.decision !== CaseAppealDecision.APPEAL ||
+      decision.withdrawnDate
+    ) {
+      throw new ForbiddenException(
+        'Only a party that appealed this ruling in court and has not already withdrawn can withdraw the appeal',
+      )
+    }
+
+    // Serialize concurrent withdrawals for this ruling. Two parties withdrawing
+    // at once would otherwise each stamp only their own row and, under READ
+    // COMMITTED, read a set that still shows the other party as not-withdrawn -
+    // so both skip WITHDRAW_APPEAL and the appeal stands even though everyone
+    // has withdrawn. Locking every party's row up front (in a consistent order,
+    // before we write our own) forces the second transaction to block here and
+    // then re-read the freshly committed set. The lock must precede the update:
+    // taking it after would let each transaction hold a lock on its own updated
+    // row and deadlock on the other's.
+    await this.appealDecisionRepositoryService.findAll({
+      where: { caseId: theCase.id, rulingFileId },
+      order: [['id', 'ASC']],
+      lock: Transaction.LOCK.UPDATE,
+      transaction,
+    })
+
+    await this.appealDecisionRepositoryService.update(
+      decision.id,
+      { withdrawnDate: nowFactory() },
+      { transaction },
+    )
+
+    await this.writeEventLog(
+      theCase,
+      appealCase,
+      AppealEventType.APPEAL_WITHDRAWN,
+      user,
+      transaction,
+    )
+
+    // The appeal stands until every party that appealed in court has withdrawn.
+    const appealDecisions = await this.appealDecisionRepositoryService.findAll({
+      where: { caseId: theCase.id, rulingFileId },
+      transaction,
+    })
+    const allWithdrawn = appealDecisions
+      .filter((d) => d.decision === CaseAppealDecision.APPEAL)
+      .every((d) => d.withdrawnDate)
+
+    if (allWithdrawn) {
+      return this.applyTransition(
+        theCase,
+        appealCase,
+        AppealCaseTransition.WITHDRAW_APPEAL,
+        user,
+        transaction,
+      )
+    }
+
+    // No state change and no notification - the appeal still stands.
+    return { caseUpdate: {}, appealCaseUpdate: {}, appealCase }
+  }
+
+  private async applyTransition(
     theCase: Case,
     appealCase: AppealCase,
     transition: AppealCaseTransition,
