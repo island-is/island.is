@@ -45,47 +45,62 @@ export function useDeepLinkHandling() {
   )
   const { openBrowser } = useBrowser()
 
-  const lastUrl = useRef<string | null>(null)
+  // Dedup keys, persisted across the lock cycle so each intent is handled once
+  // despite the re-render churn a replay triggers.
+  const lastLinkingUrl = useRef<string | null>(null)
+  const handledNotificationId = useRef<string | null>(null)
 
+  // Locked → stash for unlockApp to replay; unlocked → navigate now.
   const handleUrl = useCallback(
-    (url?: string | null) => {
-      if (!url || lastUrl.current === url) {
-        return false
-      }
-      lastUrl.current = url
-
-      // Wallet URLs are intentionally handled elsewhere — keep the bypass
-      // ahead of the lock-stash so locked-state doesn't change wallet flow.
+    (url: string) => {
+      // Wallet URLs are handled elsewhere.
       if (url.startsWith('is.island.app') && url.includes('wallet/')) {
         return false
       }
 
-      // Locked: stash so unlockApp replays it. Return true so notification
-      // callers still mark the notification as read — we acknowledged the URL.
       if (lockScreenActivatedAt) {
         stashPendingDeepLink(url)
         return true
       }
 
       navigateToUniversalLink({ link: url, openBrowser })
-
       return true
     },
-    [lastUrl, lockScreenActivatedAt, openBrowser],
+    [lockScreenActivatedAt, openBrowser],
   )
 
+  // Universal links: dedup by URL.
   useEffect(() => {
+    if (!url || lastLinkingUrl.current === url) {
+      return
+    }
+    lastLinkingUrl.current = url
     handleUrl(url)
   }, [url, handleUrl])
 
+  // Notification taps: dedup by notificationId so a lock re-arm mid-replay
+  // can't re-handle the same tap (which caused an infinite reopen loop).
   useEffect(() => {
     const url = notification?.data?.clickActionUrl
-    const wasHandled = isString(url) ? handleUrl(url) : false
+    const notificationId = notification?.data?.notificationId
+    if (!isString(url)) {
+      return
+    }
+    const id = notificationId != null ? String(notificationId) : null
+    if (id && handledNotificationId.current === id) {
+      return
+    }
 
-    if (wasHandled && notification?.data?.notificationId) {
-      // Mark notification as read and seen
+    const wasHandled = handleUrl(url)
+    if (!wasHandled) {
+      return
+    }
+
+    if (id) {
+      handledNotificationId.current = id
+      // Mark as read and seen
       void markUserNotificationAsRead({
-        variables: { id: Number(notification.data.notificationId) },
+        variables: { id: Number(id) },
       }).catch(() => void 0)
     }
   }, [notification, handleUrl, markUserNotificationAsRead])

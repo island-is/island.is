@@ -6,7 +6,14 @@ import {
 import { useRouter } from 'expo-router'
 import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { AppState, BackHandler, Image, SafeAreaView, View } from 'react-native'
+import {
+  AppState,
+  BackHandler,
+  Image,
+  InteractionManager,
+  SafeAreaView,
+  View,
+} from 'react-native'
 import Keychain from 'react-native-keychain'
 import styled from 'styled-components/native'
 
@@ -15,8 +22,14 @@ import { VisualizedPinCode } from '@/components/visualized-pin-code/visualized-p
 import {
   clearPendingDeepLink,
   consumePendingDeepLink,
+  hasPendingDeepLink,
 } from '@/app/+native-intent'
-import { authStore, useAuthStore } from '@/stores/auth-store'
+import {
+  authStore,
+  clearLockScreenSuppression,
+  suppressLockScreen,
+  useAuthStore,
+} from '@/stores/auth-store'
 import {
   preferencesStore,
   usePreferencesStore,
@@ -93,8 +106,26 @@ export default function AppLockScreen() {
       lockScreenActivatedAt: undefined,
       biometricAutoPromptedForCurrentLock: false,
     })
-    router.back()
-    setTimeout(() => void consumePendingDeepLink(openBrowser), 0)
+    // Suppress lock re-arming during the dismiss + replay: iOS fires a
+    // transient active→inactive that the auth layout would otherwise treat as
+    // backgrounding and re-push the lock. Re-armed once it settles.
+    suppressLockScreen()
+
+    // With a pending link, clear the lock AND any open modal so the replay
+    // lands on the tabs base — leaving a stale modal on top breaks its own
+    // back/close ("GO_BACK was not handled"). A plain unlock keeps it.
+    if (hasPendingDeepLink() && router.canDismiss()) {
+      router.dismissAll()
+    } else if (router.canGoBack()) {
+      router.back()
+    }
+    // Replay after the dismiss settles — on setTimeout(0) the navigate races
+    // the pop and gets dropped.
+    InteractionManager.runAfterInteractions(() => {
+      void consumePendingDeepLink(openBrowser)
+      // Buffer the clear past the replayed screen's present animation.
+      setTimeout(() => clearLockScreenSuppression(), 600)
+    })
   }
 
   const authenticateWithBiometrics = async () => {
@@ -204,7 +235,9 @@ export default function AppLockScreen() {
       const { appLockTimeout } = preferencesStore.getState()
 
       if (lockScreenActivatedAt === undefined) {
-        router.back()
+        if (router.canGoBack()) {
+          router.back()
+        }
         return
       }
 

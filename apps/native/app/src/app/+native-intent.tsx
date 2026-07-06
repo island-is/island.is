@@ -63,6 +63,11 @@ export function clearPendingDeepLink(): void {
   pendingDeepLink = null
 }
 
+// Peek without consuming — lets unlockApp clear open modals before a replay.
+export function hasPendingDeepLink(): boolean {
+  return pendingDeepLink !== null
+}
+
 export function redirectSystemPath({
   path,
   initial,
