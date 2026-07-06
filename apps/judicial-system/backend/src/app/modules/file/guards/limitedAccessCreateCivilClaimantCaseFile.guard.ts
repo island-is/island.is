@@ -39,10 +39,9 @@ export class LimitedAccessCreateCivilClaimantCaseFileGuard
 
     // Verify the logged-in user is the confirmed spokesperson for this civil claimant
     if (
-      !civilClaimant.hasSpokesperson ||
-      !civilClaimant.isSpokespersonConfirmed ||
-      !civilClaimant.spokespersonNationalId ||
-      civilClaimant.spokespersonNationalId !== user.nationalId
+      !CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(user.nationalId, [
+        civilClaimant,
+      ])
     ) {
       return false
     }

@@ -41,6 +41,7 @@ import {
   getAppealActorText,
   getCurrentUserStatementDate,
   hasAcceptedRulingOrderInCourt,
+  userHasActiveInCourtAppeal,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { ContextMenuItem } from '../ContextMenu/ContextMenu'
@@ -124,14 +125,20 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
     user,
   )
 
-  const isAppellant =
+  // Who may withdraw the appeal. In-court appeals are per party: any party that
+  // appealed in court and has not yet withdrawn (mirrors the backend
+  // userHasActiveInCourtAppeal). Out-of-court appeals: the single recorded
+  // appellant.
+  const canWithdrawAppeal =
     hasBeenAppealed &&
     user &&
-    ((appealCase.appealedByRole === UserRole.PROSECUTOR && isProsecution) ||
-      (appealCase.appealedByRole === UserRole.DEFENDER &&
-        isDefence &&
-        Boolean(user.nationalId) &&
-        user.nationalId === appealCase.appealedByNationalId))
+    (appealCase.appealedInCourt
+      ? userHasActiveInCourtAppeal(workingCase, user, file.id)
+      : (appealCase.appealedByRole === UserRole.PROSECUTOR && isProsecution) ||
+        (appealCase.appealedByRole === UserRole.DEFENDER &&
+          isDefence &&
+          Boolean(user.nationalId) &&
+          user.nationalId === appealCase.appealedByNationalId))
 
   const items: ContextMenuItem[] = []
 
@@ -170,7 +177,7 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
         icon: 'add',
         onClick: () => router.push(filesHref),
       })
-      if (isAppellant) {
+      if (canWithdrawAppeal) {
         items.push(withdrawAppeal(workingCase.id, appealCase.id))
       }
     } else if (
