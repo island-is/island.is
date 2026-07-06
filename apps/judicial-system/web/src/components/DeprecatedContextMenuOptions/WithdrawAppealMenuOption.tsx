@@ -57,11 +57,21 @@ export const useWithdrawAppealMenuOption = () => {
       return false
     }
 
-    // For indictment cases, only the specific defender who appealed can withdraw
+    // For indictment cases, only the current defender of the appellant
+    // defendant can withdraw (civil-claimant appellants withdraw from the case
+    // view, which carries their spokesperson).
     if (isIndictmentCase(caseEntry.type)) {
-      return (
-        Boolean(caseEntry.appealedByNationalId) &&
-        caseEntry.appealedByNationalId === userNationalId
+      if (!userNationalId || !caseEntry.appealedByDefendantId) {
+        return false
+      }
+
+      const defendant = caseEntry.defendants?.find(
+        (d) => d.id === caseEntry.appealedByDefendantId,
+      )
+
+      return Boolean(
+        defendant?.isDefenderChoiceConfirmed &&
+          defendant.defenderNationalId === userNationalId,
       )
     }
 

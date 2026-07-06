@@ -213,7 +213,8 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     appealCase {
       id
       appealState
-      appealedByNationalId
+      appealedByDefendantId
+      appealedByCivilClaimantId
       appealedByRole
       appealedDate
       statementDeadline
@@ -254,7 +255,8 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     rulingOrderAppealCases {
       id
       appealState
-      appealedByNationalId
+      appealedByDefendantId
+      appealedByCivilClaimantId
       appealedByRole
       appealedDate
       statementDeadline
@@ -518,7 +520,8 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       rulingOrderAppealCases {
         id
         appealState
-        appealedByNationalId
+        appealedByDefendantId
+        appealedByCivilClaimantId
         appealedByRole
         appealedDate
         statementDeadline

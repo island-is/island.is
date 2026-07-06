@@ -85,6 +85,7 @@ import {
   AppealCase,
   AppealCaseRepositoryService,
   AppealDecisionRepositoryService,
+  AppealEventLog,
   AppealEventLogRepositoryService,
   Case,
   caseInclude,
@@ -215,7 +216,19 @@ export const caseListInclude: Includeable[] = [
     where: { eventType: eventTypes },
     separate: true,
   },
-  { model: AppealCase, as: 'appealCase', required: false },
+  {
+    model: AppealCase,
+    as: 'appealCase',
+    required: false,
+    include: [
+      {
+        model: AppealEventLog,
+        as: 'appealEventLogs',
+        required: false,
+        separate: true,
+      },
+    ],
+  },
 ]
 
 @Injectable()

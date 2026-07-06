@@ -38,7 +38,8 @@ query DefenderCases($input: CaseListQueryInput) {
     appealState
     appealCaseNumber
     appealRulingDecision
-    appealedByNationalId
+    appealedByDefendantId
+    appealedByCivilClaimantId
     postponedIndefinitelyExplanation
     indictmentDecision
     indictmentRulingDecision

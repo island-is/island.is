@@ -10,7 +10,10 @@ import {
 import { EventType, IndictmentDecision } from '@island.is/judicial-system/types'
 
 import { Case, CaseString, DateLog, EventLog } from '../../repository'
-import { transformDefendants } from './case.interceptor'
+import {
+  getAppealedByPartyFromEvents,
+  transformDefendants,
+} from './case.interceptor'
 
 @Injectable()
 export class CaseListInterceptor implements NestInterceptor {
@@ -47,7 +50,9 @@ export class CaseListInterceptor implements NestInterceptor {
             appealState: theCase.appealCase?.appealState,
             appealCaseNumber: theCase.appealCase?.appealCaseNumber,
             appealRulingDecision: theCase.appealCase?.appealRulingDecision,
-            appealedByNationalId: theCase.appealCase?.appealedByNationalId,
+            ...(theCase.appealCase
+              ? getAppealedByPartyFromEvents(theCase.appealCase)
+              : {}),
             postponedIndefinitelyExplanation:
               CaseString.postponedIndefinitelyExplanation(theCase.caseStrings),
             indictmentDecision: theCase.indictmentDecision,

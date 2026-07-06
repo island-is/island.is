@@ -84,6 +84,9 @@ export class CaseListEntry {
   @Field(() => String, { nullable: true })
   readonly caseSentToCourtDate?: string
 
-  @Field(() => String, { nullable: true })
-  readonly appealedByNationalId?: string
+  @Field(() => ID, { nullable: true })
+  readonly appealedByDefendantId?: string
+
+  @Field(() => ID, { nullable: true })
+  readonly appealedByCivilClaimantId?: string
 }
