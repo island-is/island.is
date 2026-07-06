@@ -1,7 +1,7 @@
 import { buildForm, buildSection } from '@island.is/application/core'
 import { FormModes } from '@island.is/application/types'
 import { prerequisitesMessages } from '../../lib/messages'
-import { nationalIdLookupSubSection } from './nationalIdLookupSubSection'
+import { childSubSection } from './childSubSection'
 import { externalDataSubSection } from './externalDataSubSection'
 import { serviceProviderSubSection } from './serviceProviderSubSection'
 
@@ -31,7 +31,7 @@ export const Prerequisites = buildForm({
       children: [
         externalDataSubSection,
         serviceProviderSubSection,
-        nationalIdLookupSubSection,
+        childSubSection,
       ],
     }),
   ],

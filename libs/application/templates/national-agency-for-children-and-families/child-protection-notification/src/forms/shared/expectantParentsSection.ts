@@ -1,4 +1,6 @@
 import {
+  NO,
+  YES,
   buildAlertMessageField,
   buildDescriptionField,
   buildMultiField,
@@ -16,12 +18,11 @@ import {
   expectantParentsMessages,
   sharedMessages,
 } from '../../lib/messages'
-import { KnowsParentNationalId, ParentGender } from '../../utils/constants'
+import { ParentGender } from '../../utils/constants'
 import {
   doesNotKnowParentIds,
   isUnborn,
   knowsParentIds,
-  parentSectionVisible,
 } from '../../utils/conditionUtils'
 
 const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
@@ -55,7 +56,7 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
     // --- Nei path: manual name/age/gender ---
     buildDescriptionField({
       id: `${base}.nameAgeGenderTitle`,
-      title: expectantParentsMessages.shared.nameAgeGenderTitle,
+      title: expectantParentsMessages.nameAgeGenderTitle,
       titleVariant: 'h5',
       space: 4,
       condition: doesNotKnowParentIds,
@@ -77,21 +78,21 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
     buildSelectField({
       id: `${base}.gender`,
       title: childMessages.manualInfo.gender,
-      placeholder: expectantParentsMessages.shared.genderPlaceholder,
+      placeholder: expectantParentsMessages.genderPlaceholder,
       width: 'half',
       doesNotRequireAnswer: true,
       options: [
         {
           value: ParentGender.FEMALE,
-          label: expectantParentsMessages.shared.genderFemale,
+          label: expectantParentsMessages.genderFemale,
         },
         {
           value: ParentGender.MALE,
-          label: expectantParentsMessages.shared.genderMale,
+          label: expectantParentsMessages.genderMale,
         },
         {
           value: ParentGender.NON_BINARY,
-          label: expectantParentsMessages.shared.genderNonBinary,
+          label: expectantParentsMessages.genderNonBinary,
         },
       ],
       condition: doesNotKnowParentIds,
@@ -100,7 +101,7 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
     // --- Nei path: address ---
     buildDescriptionField({
       id: `${base}.addressTitle`,
-      title: expectantParentsMessages.shared.addressTitle,
+      title: expectantParentsMessages.addressTitle,
       titleVariant: 'h5',
       space: 4,
       condition: doesNotKnowParentIds,
@@ -108,7 +109,7 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
     buildSelectField({
       id: `${base}.country`,
       title: childMessages.manualInfo.country,
-      placeholder: expectantParentsMessages.shared.countryPlaceholder,
+      placeholder: expectantParentsMessages.countryPlaceholder,
       width: 'half',
       doesNotRequireAnswer: true,
       options: getAllCountryCodes().map((c) => ({
@@ -119,8 +120,8 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
     }),
     buildSelectField({
       id: `${base}.citizenship`,
-      title: expectantParentsMessages.shared.citizenship,
-      placeholder: expectantParentsMessages.shared.citizenshipPlaceholder,
+      title: expectantParentsMessages.citizenship,
+      placeholder: expectantParentsMessages.citizenshipPlaceholder,
       width: 'half',
       doesNotRequireAnswer: true,
       options: getAllCountryCodes().map((c) => ({
@@ -145,7 +146,7 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
     buildSelectField({
       id: `${base}.municipality`,
       title: childMessages.manualInfo.municipality,
-      placeholder: expectantParentsMessages.shared.municipalityPlaceholder,
+      placeholder: expectantParentsMessages.municipalityPlaceholder,
       width: 'half',
       doesNotRequireAnswer: true,
       // TODO: replace with real municipality data when API is wired up
@@ -162,41 +163,41 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
 
 export const expectantParentsSection = buildSection({
   id: 'expectantParentsSection',
-  title: expectantParentsMessages.shared.sectionTitle,
+  title: expectantParentsMessages.sectionTitle,
   condition: isUnborn,
   children: [
     buildMultiField({
       id: 'expectantParents',
-      title: expectantParentsMessages.shared.sectionTitle,
-      description: expectantParentsMessages.shared.description,
+      title: expectantParentsMessages.sectionTitle,
+      description: expectantParentsMessages.description,
       children: [
         buildRadioField({
           id: 'expectantParents.knowsParentNationalIds',
-          title: expectantParentsMessages.shared.radioLabel,
+          title: expectantParentsMessages.radioLabel,
           required: true,
           width: 'half',
           options: [
             {
-              value: KnowsParentNationalId.YES,
+              value: YES,
               label: sharedMessages.radioYes,
             },
             {
-              value: KnowsParentNationalId.NO,
+              value: NO,
               label: sharedMessages.radioNo,
             },
           ],
         }),
         buildDescriptionField({
           id: 'expectantParents.parent1Title',
-          title: expectantParentsMessages.shared.parent1Title,
+          title: expectantParentsMessages.parent1Title,
           titleVariant: 'h5',
           space: 4,
           condition: knowsParentIds,
         }),
         buildDescriptionField({
           id: 'expectantParents.parent1Description',
-          title: expectantParentsMessages.shared.parent1Title,
-          description: expectantParentsMessages.shared.parentDescription,
+          title: expectantParentsMessages.parent1Title,
+          description: expectantParentsMessages.parentDescription,
           titleVariant: 'h3',
           space: 4,
           condition: doesNotKnowParentIds,
@@ -204,15 +205,15 @@ export const expectantParentsSection = buildSection({
         ...buildParentFields('parent1'),
         buildDescriptionField({
           id: 'expectantParents.parent2Title',
-          title: expectantParentsMessages.shared.parent2Title,
+          title: expectantParentsMessages.parent2Title,
           titleVariant: 'h5',
           space: 4,
           condition: knowsParentIds,
         }),
         buildDescriptionField({
           id: 'expectantParents.parent2Description',
-          title: expectantParentsMessages.shared.parent2Title,
-          description: expectantParentsMessages.shared.parentDescription,
+          title: expectantParentsMessages.parent2Title,
+          description: expectantParentsMessages.parentDescription,
           titleVariant: 'h3',
           space: 4,
           condition: doesNotKnowParentIds,
@@ -221,7 +222,7 @@ export const expectantParentsSection = buildSection({
         buildAlertMessageField({
           id: 'expectantParents.fetchedDataInfo',
           alertType: 'info',
-          message: expectantParentsMessages.shared.fetchedDataInfo,
+          message: expectantParentsMessages.fetchedDataInfo,
           condition: (answers) =>
             !!getValueViaPath(
               answers,

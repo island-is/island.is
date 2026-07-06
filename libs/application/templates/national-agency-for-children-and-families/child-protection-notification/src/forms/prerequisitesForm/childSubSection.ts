@@ -20,11 +20,9 @@ import {
   NoNationalIdReason,
   Pronoun,
 } from '../../utils/constants'
+import { isKnowsNationalId, isNoNationalId } from '../../utils/conditionUtils'
 
-const knowsNationalId = (answers: Record<string, unknown>) =>
-  getValueViaPath(answers, 'child.knowsNationalId') === KnowsNationalId.YES
-
-export const nationalIdLookupSubSection = buildSubSection({
+export const childSubSection = buildSubSection({
   id: 'nationalIdLookupSubSection',
   title: childMessages.shared.sectionTitle,
   children: [
@@ -57,9 +55,7 @@ export const nationalIdLookupSubSection = buildSubSection({
           id: 'child.noNationalIdReason',
           title: childMessages.noNationalId.reasonLabel,
           placeholder: childMessages.noNationalId.reasonPlaceholder,
-          condition: (answers) =>
-            getValueViaPath(answers, 'child.knowsNationalId') ===
-            KnowsNationalId.NO,
+          condition: isNoNationalId,
           options: [
             {
               value: NoNationalIdReason.EXPECTED_BUT_UNKNOWN,
@@ -76,17 +72,17 @@ export const nationalIdLookupSubSection = buildSubSection({
           ],
         }),
         buildDescriptionField({
-          id: 'nationalIdLookup.childInfoTitle',
+          id: 'child.childInfoTitle',
           title: childMessages.nationalIdLookup.childInfoTitle,
           titleVariant: 'h4',
           space: 4,
-          condition: knowsNationalId,
+          condition: isKnowsNationalId,
         }),
         buildNationalIdWithNameField({
           id: 'child.nationalIdInfo',
           required: true,
           searchPersons: true,
-          condition: knowsNationalId,
+          condition: isKnowsNationalId,
         }),
         buildTextField({
           id: 'child.nationalIdInfo.email',
@@ -94,7 +90,7 @@ export const nationalIdLookupSubSection = buildSubSection({
           variant: 'email',
           width: 'half',
           doesNotRequireAnswer: true,
-          condition: knowsNationalId,
+          condition: isKnowsNationalId,
         }),
         buildPhoneField({
           id: 'child.nationalIdInfo.phone',
@@ -102,12 +98,12 @@ export const nationalIdLookupSubSection = buildSubSection({
           width: 'half',
           enableCountrySelector: true,
           doesNotRequireAnswer: true,
-          condition: knowsNationalId,
+          condition: isKnowsNationalId,
         }),
         buildCheckboxField({
           id: 'child.nationalIdInfo.usePronounAndPreferredName',
           spacing: 0,
-          condition: knowsNationalId,
+          condition: isKnowsNationalId,
           options: [
             {
               value: YES,
@@ -123,7 +119,7 @@ export const nationalIdLookupSubSection = buildSubSection({
           title: childMessages.nationalIdLookup.preferredName,
           doesNotRequireAnswer: true,
           condition: (answers) =>
-            knowsNationalId(answers) &&
+            isKnowsNationalId(answers) &&
             (
               getValueViaPath<string[]>(
                 answers,
@@ -152,7 +148,7 @@ export const nationalIdLookupSubSection = buildSubSection({
             },
           ],
           condition: (answers) =>
-            knowsNationalId(answers) &&
+            isKnowsNationalId(answers) &&
             (
               getValueViaPath<string[]>(
                 answers,
@@ -161,11 +157,11 @@ export const nationalIdLookupSubSection = buildSubSection({
             ).includes(YES),
         }),
         buildAlertMessageField({
-          id: 'nationalIdLookup.fetchedDataInfo',
+          id: 'child.fetchedDataInfo',
           alertType: 'info',
           message: childMessages.nationalIdLookup.fetchedDataInfo,
           condition: (answers) =>
-            knowsNationalId(answers) &&
+            isKnowsNationalId(answers) &&
             !!getValueViaPath(answers, 'child.nationalIdInfo.name'),
         }),
         buildSubmitField({

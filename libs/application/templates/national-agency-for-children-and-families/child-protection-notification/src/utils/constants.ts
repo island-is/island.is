@@ -42,11 +42,6 @@ export enum Gender {
   OTHER = 'other',
 }
 
-export enum KnowsParentNationalId {
-  YES = 'yes',
-  NO = 'no',
-}
-
 export enum ParentGender {
   MALE = 'male',
   FEMALE = 'female',

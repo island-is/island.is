@@ -1,5 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
+import { Parent } from './types'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const serviceProviderService = getValueViaPath<string>(
@@ -167,125 +168,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'expectantParents.knowsParentNationalIds',
   )
 
-  const parent1NationalId = getValueViaPath<string>(
-    answers,
-    'expectantParents.parent1.nationalIdInfo.nationalId',
-  )
+  const parent1 = getValueViaPath<Parent>(answers, 'expectantParents.parent1')
 
-  const parent1Name = getValueViaPath<string>(
-    answers,
-    'expectantParents.parent1.nationalIdInfo.name',
-  )
-
-  const parent1Email = getValueViaPath<string>(
-    answers,
-    'expectantParents.parent1.nationalIdInfo.email',
-  )
-
-  const parent1Phone = getValueViaPath<string>(
-    answers,
-    'expectantParents.parent1.nationalIdInfo.phone',
-  )
-
-  const parent1ManualName = getValueViaPath<string>(
-    answers,
-    'expectantParents.parent1.name',
-  )
-
-  const parent1ManualAge = getValueViaPath<string>(
-    answers,
-    'expectantParents.parent1.age',
-  )
-
-  const parent1ManualGender = getValueViaPath<string>(
-    answers,
-    'expectantParents.parent1.gender',
-  )
-
-  const parent1ManualCountry = getValueViaPath<string>(
-    answers,
-    'expectantParents.parent1.country',
-  )
-
-  const parent1ManualCitizenship = getValueViaPath<string>(
-    answers,
-    'expectantParents.parent1.citizenship',
-  )
-
-  const parent1ManualAddress = getValueViaPath<string>(
-    answers,
-    'expectantParents.parent1.address',
-  )
-
-  const parent1ManualPostalCode = getValueViaPath<string>(
-    answers,
-    'expectantParents.parent1.postalCode',
-  )
-
-  const parent1ManualMunicipality = getValueViaPath<string>(
-    answers,
-    'expectantParents.parent1.municipality',
-  )
-
-  const parent2NationalId = getValueViaPath<string>(
-    answers,
-    'expectantParents.parent2.nationalIdInfo.nationalId',
-  )
-
-  const parent2Name = getValueViaPath<string>(
-    answers,
-    'expectantParents.parent2.nationalIdInfo.name',
-  )
-
-  const parent2Email = getValueViaPath<string>(
-    answers,
-    'expectantParents.parent2.nationalIdInfo.email',
-  )
-
-  const parent2Phone = getValueViaPath<string>(
-    answers,
-    'expectantParents.parent2.nationalIdInfo.phone',
-  )
-
-  const parent2ManualName = getValueViaPath<string>(
-    answers,
-    'expectantParents.parent2.name',
-  )
-
-  const parent2ManualAge = getValueViaPath<string>(
-    answers,
-    'expectantParents.parent2.age',
-  )
-
-  const parent2ManualGender = getValueViaPath<string>(
-    answers,
-    'expectantParents.parent2.gender',
-  )
-
-  const parent2ManualCountry = getValueViaPath<string>(
-    answers,
-    'expectantParents.parent2.country',
-  )
-
-  const parent2ManualCitizenship = getValueViaPath<string>(
-    answers,
-    'expectantParents.parent2.citizenship',
-  )
-
-  const parent2ManualAddress = getValueViaPath<string>(
-    answers,
-    'expectantParents.parent2.address',
-  )
-
-  const parent2ManualPostalCode = getValueViaPath<string>(
-    answers,
-    'expectantParents.parent2.postalCode',
-  )
-
-  const parent2ManualMunicipality = getValueViaPath<string>(
-    answers,
-    'expectantParents.parent2.municipality',
-  )
+  const parent2 = getValueViaPath<Parent>(answers, 'expectantParents.parent2')
 
   return {
     serviceProviderService,
@@ -321,29 +206,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     childManualLanguage,
     childManualNeedsInterpreter,
     expectantParentsKnowsNationalIds,
-    parent1NationalId,
-    parent1Name,
-    parent1Email,
-    parent1Phone,
-    parent1ManualName,
-    parent1ManualAge,
-    parent1ManualGender,
-    parent1ManualCountry,
-    parent1ManualCitizenship,
-    parent1ManualAddress,
-    parent1ManualPostalCode,
-    parent1ManualMunicipality,
-    parent2NationalId,
-    parent2Name,
-    parent2Email,
-    parent2Phone,
-    parent2ManualName,
-    parent2ManualAge,
-    parent2ManualGender,
-    parent2ManualCountry,
-    parent2ManualCitizenship,
-    parent2ManualAddress,
-    parent2ManualPostalCode,
-    parent2ManualMunicipality,
+    parent1,
+    parent2,
   }
 }

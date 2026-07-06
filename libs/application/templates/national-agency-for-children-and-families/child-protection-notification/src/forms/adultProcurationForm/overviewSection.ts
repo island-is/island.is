@@ -14,12 +14,15 @@ import {
 } from '../../lib/messages'
 import { KnowsNationalId } from '../../utils/constants'
 import { getApplicationAnswers } from '../../utils/getApplicationAnswers'
+import { isNoNationalId, isUnborn } from '../../utils/conditionUtils'
 import {
   getChildManualItems,
+  getChildNoPreItems,
   getChildUnbornRadioItems,
   getChildWithNationalIdItems,
   getExpectantParent1Items,
   getExpectantParent2Items,
+  getExpectantParentsPreItems,
   getServiceProviderContactPersonItems,
   getServiceProviderItems,
 } from '../../utils/getOverviewItems'
@@ -54,39 +57,44 @@ export const overviewSection = buildSection({
             KnowsNationalId.YES,
         }),
         buildOverviewField({
+          id: 'overview.childNoPre',
+          title: childMessages.shared.sectionTitle,
+          items: getChildNoPreItems,
+          condition: isNoNationalId,
+        }),
+        buildOverviewField({
           id: 'overview.childManual',
           backId: 'childInfoManual',
-          title: childMessages.shared.sectionTitle,
+          title: childMessages.manualInfo.sectionTitle,
           items: getChildManualItems,
-          condition: (answers) =>
-            getApplicationAnswers(answers).childKnowsNationalId ===
-            KnowsNationalId.NO,
+          condition: isNoNationalId,
         }),
         buildOverviewField({
           id: 'overview.childUnbornRadio',
           title: childMessages.shared.sectionTitle,
           items: getChildUnbornRadioItems,
-          condition: (answers) =>
-            getApplicationAnswers(answers).childKnowsNationalId ===
-            KnowsNationalId.UNBORN,
+          condition: isUnborn,
+        }),
+        buildOverviewField({
+          id: 'overview.expectantParentsPre',
+          backId: 'expectantParents',
+          title: expectantParentsMessages.sectionTitle,
+          items: getExpectantParentsPreItems,
+          condition: isUnborn,
         }),
         buildOverviewField({
           id: 'overview.expectantParent1',
           backId: 'expectantParents',
-          title: expectantParentsMessages.shared.parent1Title,
+          title: expectantParentsMessages.parent1Title,
           items: getExpectantParent1Items,
-          condition: (answers) =>
-            getApplicationAnswers(answers).childKnowsNationalId ===
-            KnowsNationalId.UNBORN,
+          condition: isUnborn,
         }),
         buildOverviewField({
           id: 'overview.expectantParent2',
           backId: 'expectantParents',
-          title: expectantParentsMessages.shared.parent2Title,
+          title: expectantParentsMessages.parent2Title,
           items: getExpectantParent2Items,
-          condition: (answers) =>
-            getApplicationAnswers(answers).childKnowsNationalId ===
-            KnowsNationalId.UNBORN,
+          condition: isUnborn,
         }),
         buildSubmitField({
           id: 'submit',

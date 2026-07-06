@@ -1,4 +1,5 @@
-import { coreMessages, getValueViaPath } from '@island.is/application/core'
+import { YES, coreMessages, getValueViaPath } from '@island.is/application/core'
+import { Parent } from './types'
 import {
   ExternalData,
   FormValue,
@@ -8,6 +9,7 @@ import {
   formatPhoneNumber,
   removeCountryCode,
 } from '@island.is/application/ui-components'
+import { formatNumber } from 'libphonenumber-js'
 import {
   getAllCountryCodes,
   getAllLanguageCodes,
@@ -22,7 +24,6 @@ import {
 import {
   Gender,
   KnowsNationalId,
-  KnowsParentNationalId,
   NoNationalIdReason,
   ParentGender,
   Pronoun,
@@ -162,7 +163,7 @@ export const getChildWithNationalIdItems = (
   } = getApplicationAnswers(answers)
 
   const hasPronounPreference = (childUsePronounAndPreferredName ?? []).includes(
-    'yes',
+    YES,
   )
 
   return [
@@ -194,7 +195,7 @@ export const getChildWithNationalIdItems = (
     {
       width: 'half',
       keyText: childMessages.nationalIdLookup.phone,
-      valueText: formatPhoneNumber(removeCountryCode(childPhone ?? '')),
+      valueText: formatNumber(childPhone ?? '', 'International'),
       hideIfEmpty: true,
     },
     ...(hasPronounPreference
@@ -237,9 +238,9 @@ const genderLabelMap = {
 } as const
 
 const parentGenderLabelMap = {
-  [ParentGender.MALE]: expectantParentsMessages.shared.genderMale,
-  [ParentGender.FEMALE]: expectantParentsMessages.shared.genderFemale,
-  [ParentGender.NON_BINARY]: expectantParentsMessages.shared.genderNonBinary,
+  [ParentGender.MALE]: expectantParentsMessages.genderMale,
+  [ParentGender.FEMALE]: expectantParentsMessages.genderFemale,
+  [ParentGender.NON_BINARY]: expectantParentsMessages.genderNonBinary,
 } as const
 
 const pronounLabelMap = {
@@ -288,38 +289,12 @@ export const getChildUnbornRadioItems = (
   ]
 }
 
-export const getChildManualItems = (
+export const getChildNoPreItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const {
-    childKnowsNationalId,
-    childNoNationalIdReason,
-    childManualName,
-    childManualAge,
-    childManualGender,
-    childManualUsePronounAndPreferredName,
-    childManualPreferredName,
-    childManualPreferredPronoun,
-    childManualCountry,
-    childManualAddress,
-    childManualPostalCode,
-    childManualMunicipality,
-    childManualLanguage,
-    childManualNeedsInterpreter,
-  } = getApplicationAnswers(answers)
-
-  const hasPronounPreference = (
-    childManualUsePronounAndPreferredName ?? []
-  ).includes('yes')
-  const countryName =
-    getAllCountryCodes().find((c) => c.code === childManualCountry)?.name ??
-    childManualCountry ??
-    ''
-  const languageName =
-    getAllLanguageCodes().find((l) => l.code === childManualLanguage)?.name ??
-    childManualLanguage ??
-    ''
+  const { childKnowsNationalId, childNoNationalIdReason } =
+    getApplicationAnswers(answers)
 
   return [
     {
@@ -341,6 +316,41 @@ export const getChildManualItems = (
         : '',
       hideIfEmpty: true,
     },
+  ]
+}
+
+export const getChildManualItems = (
+  answers: FormValue,
+  _externalData: ExternalData,
+): Array<KeyValueItem> => {
+  const {
+    childManualName,
+    childManualAge,
+    childManualGender,
+    childManualUsePronounAndPreferredName,
+    childManualPreferredName,
+    childManualPreferredPronoun,
+    childManualCountry,
+    childManualAddress,
+    childManualPostalCode,
+    childManualMunicipality,
+    childManualLanguage,
+    childManualNeedsInterpreter,
+  } = getApplicationAnswers(answers)
+
+  const hasPronounPreference = (
+    childManualUsePronounAndPreferredName ?? []
+  ).includes(YES)
+  const countryName =
+    getAllCountryCodes().find((c) => c.code === childManualCountry)?.name ??
+    childManualCountry ??
+    ''
+  const languageName =
+    getAllLanguageCodes().find((l) => l.code === childManualLanguage)?.name ??
+    childManualLanguage ??
+    ''
+
+  return [
     {
       width: 'half',
       keyText: childMessages.manualInfo.name,
@@ -438,76 +448,68 @@ export const getChildManualItems = (
 }
 
 const buildParentItems = (
-  nationalId: string | undefined,
-  name: string | undefined,
-  email: string | undefined,
-  phone: string | undefined,
-  manualName: string | undefined,
-  manualAge: string | undefined,
-  manualGender: string | undefined,
-  manualCountry: string | undefined,
-  manualCitizenship: string | undefined,
-  manualAddress: string | undefined,
-  manualPostalCode: string | undefined,
-  manualMunicipality: string | undefined,
+  parent: Parent | undefined,
   knowsParentNationalIds: string | undefined,
 ): Array<KeyValueItem> => {
-  if (knowsParentNationalIds === KnowsParentNationalId.YES) {
+  if (knowsParentNationalIds === YES) {
     return [
       {
         width: 'half',
         keyText: coreMessages.nationalId,
-        valueText: formatKennitala(nationalId ?? ''),
+        valueText: formatKennitala(parent?.nationalIdInfo?.nationalId ?? ''),
       },
       {
         width: 'half',
         keyText: coreMessages.name,
-        valueText: name ?? '',
+        valueText: parent?.nationalIdInfo?.name ?? '',
       },
       {
         width: 'half',
         keyText: childMessages.nationalIdLookup.email,
-        valueText: email ?? '',
+        valueText: parent?.nationalIdInfo?.email ?? '',
         hideIfEmpty: true,
       },
       {
         width: 'half',
         keyText: childMessages.nationalIdLookup.phone,
-        valueText: formatPhoneNumber(removeCountryCode(phone ?? '')),
+        valueText: formatNumber(
+          parent?.nationalIdInfo?.phone ?? '',
+          'International',
+        ),
         hideIfEmpty: true,
       },
     ]
   }
 
   const countryName =
-    getAllCountryCodes().find((c) => c.code === manualCountry)?.name ??
-    manualCountry ??
+    getAllCountryCodes().find((c) => c.code === parent?.country)?.name ??
+    parent?.country ??
     ''
   const citizenshipName =
-    getAllCountryCodes().find((c) => c.code === manualCitizenship)?.name ??
-    manualCitizenship ??
+    getAllCountryCodes().find((c) => c.code === parent?.citizenship)?.name ??
+    parent?.citizenship ??
     ''
 
   return [
     {
       width: 'half',
       keyText: childMessages.manualInfo.name,
-      valueText: manualName ?? '',
+      valueText: parent?.name ?? '',
       hideIfEmpty: true,
     },
     {
       width: 'half',
       keyText: childMessages.manualInfo.age,
-      valueText: manualAge ?? '',
+      valueText: parent?.age ?? '',
       hideIfEmpty: true,
     },
     {
       width: 'half',
       keyText: childMessages.manualInfo.gender,
-      valueText: manualGender
+      valueText: parent?.gender
         ? parentGenderLabelMap[
-            manualGender as keyof typeof parentGenderLabelMap
-          ] ?? manualGender
+            parent.gender as keyof typeof parentGenderLabelMap
+          ] ?? parent.gender
         : '',
       hideIfEmpty: true,
     },
@@ -519,29 +521,52 @@ const buildParentItems = (
     },
     {
       width: 'half',
-      keyText: expectantParentsMessages.shared.citizenship,
+      keyText: expectantParentsMessages.citizenship,
       valueText: citizenshipName,
       hideIfEmpty: true,
     },
     {
       width: 'half',
       keyText: childMessages.manualInfo.address,
-      valueText: manualAddress ?? '',
+      valueText: parent?.address ?? '',
       hideIfEmpty: true,
     },
     {
       width: 'half',
       keyText: childMessages.manualInfo.postalCode,
-      valueText: manualPostalCode ?? '',
+      valueText: parent?.postalCode ?? '',
       hideIfEmpty: true,
     },
     {
       width: 'half',
       keyText: childMessages.manualInfo.municipality,
-      valueText: manualMunicipality
-        ? municipalityLabelMap[manualMunicipality] ?? manualMunicipality
+      valueText: parent?.municipality
+        ? municipalityLabelMap[parent.municipality] ?? parent.municipality
         : '',
       hideIfEmpty: true,
+    },
+  ]
+}
+
+const knowsParentNationalIdsLabelMap: Record<string, string> = {
+  yes: 'Já',
+  no: 'Nei',
+}
+
+export const getExpectantParentsPreItems = (
+  answers: FormValue,
+  _externalData: ExternalData,
+): Array<KeyValueItem> => {
+  const { expectantParentsKnowsNationalIds } = getApplicationAnswers(answers)
+
+  return [
+    {
+      width: 'full',
+      keyText: expectantParentsMessages.radioLabel,
+      valueText: expectantParentsKnowsNationalIds
+        ? knowsParentNationalIdsLabelMap[expectantParentsKnowsNationalIds] ??
+          expectantParentsKnowsNationalIds
+        : '',
     },
   ]
 }
@@ -550,74 +575,18 @@ export const getExpectantParent1Items = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const {
-    expectantParentsKnowsNationalIds,
-    parent1NationalId,
-    parent1Name,
-    parent1Email,
-    parent1Phone,
-    parent1ManualName,
-    parent1ManualAge,
-    parent1ManualGender,
-    parent1ManualCountry,
-    parent1ManualCitizenship,
-    parent1ManualAddress,
-    parent1ManualPostalCode,
-    parent1ManualMunicipality,
-  } = getApplicationAnswers(answers)
-
-  return buildParentItems(
-    parent1NationalId,
-    parent1Name,
-    parent1Email,
-    parent1Phone,
-    parent1ManualName,
-    parent1ManualAge,
-    parent1ManualGender,
-    parent1ManualCountry,
-    parent1ManualCitizenship,
-    parent1ManualAddress,
-    parent1ManualPostalCode,
-    parent1ManualMunicipality,
-    expectantParentsKnowsNationalIds,
-  )
+  const { parent1, expectantParentsKnowsNationalIds } =
+    getApplicationAnswers(answers)
+  return buildParentItems(parent1, expectantParentsKnowsNationalIds)
 }
 
 export const getExpectantParent2Items = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const {
-    expectantParentsKnowsNationalIds,
-    parent2NationalId,
-    parent2Name,
-    parent2Email,
-    parent2Phone,
-    parent2ManualName,
-    parent2ManualAge,
-    parent2ManualGender,
-    parent2ManualCountry,
-    parent2ManualCitizenship,
-    parent2ManualAddress,
-    parent2ManualPostalCode,
-    parent2ManualMunicipality,
-  } = getApplicationAnswers(answers)
-
-  return buildParentItems(
-    parent2NationalId,
-    parent2Name,
-    parent2Email,
-    parent2Phone,
-    parent2ManualName,
-    parent2ManualAge,
-    parent2ManualGender,
-    parent2ManualCountry,
-    parent2ManualCitizenship,
-    parent2ManualAddress,
-    parent2ManualPostalCode,
-    parent2ManualMunicipality,
-    expectantParentsKnowsNationalIds,
-  )
+  const { parent2, expectantParentsKnowsNationalIds } =
+    getApplicationAnswers(answers)
+  return buildParentItems(parent2, expectantParentsKnowsNationalIds)
 }
 
 export const getServiceProviderContactPersonItems = (

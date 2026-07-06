@@ -22,19 +22,13 @@ const serviceProviderSchema = z.object({
 
 const childSchema = z
   .object({
-    knowsNationalId: z
-      .enum([KnowsNationalId.YES, KnowsNationalId.NO, KnowsNationalId.UNBORN])
-      .optional(),
+    knowsNationalId: z.nativeEnum(KnowsNationalId).optional(),
     noNationalIdReason: z.string().optional(),
     nationalIdInfo: z
       .object({
         nationalId: z.string().optional(),
         name: z.string().optional(),
-        phone: z
-          .string()
-          .refine((v) => isValidPhone(v), { params: errorMessages.phoneNumber })
-          .optional()
-          .or(z.literal('')),
+        phone: phoneNumberSchema.optional().or(z.literal('')),
         email: z.string().email().optional().or(z.literal('')),
         usePronounAndPreferredName: z.array(z.string()).optional(),
         preferredName: z.string().optional(),
@@ -93,11 +87,7 @@ const parentSchema = z.object({
       nationalId: z.string().optional(),
       name: z.string().optional(),
       email: z.string().email().optional().or(z.literal('')),
-      phone: z
-        .string()
-        .refine((v) => isValidPhone(v), { params: errorMessages.phoneNumber })
-        .optional()
-        .or(z.literal('')),
+      phone: phoneNumberSchema.optional().or(z.literal('')),
     })
     .optional(),
   name: z.string().optional(),

@@ -1,0 +1,16 @@
+export interface Parent {
+  nationalIdInfo?: {
+    nationalId?: string
+    name?: string
+    email?: string
+    phone?: string
+  }
+  name?: string
+  age?: string
+  gender?: string
+  country?: string
+  citizenship?: string
+  address?: string
+  postalCode?: string
+  municipality?: string
+}
