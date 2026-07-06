@@ -16,6 +16,7 @@ import { Application } from '@island.is/application/types'
 import { messages } from '../../lib/messages'
 import { getEmployeeCountDisplay } from '../../utils/employeeCountCategory'
 import { getIsatClassification } from '../../utils/isatClassification'
+import { Gender, UNKNOWN_DISPLAY_VALUE } from '../../utils/constants'
 
 export const aboutTheCompanySection = buildSection({
   id: 'aboutTheCompany',
@@ -112,7 +113,7 @@ export const aboutTheCompanySection = buildSection({
                     classification?: { number?: string; name?: string }[]
                   }[]
                 >(application.externalData, 'companyData.data.vat')
-                return vat ? getIsatClassification(vat) : 'Óþekkt'
+                return vat ? getIsatClassification(vat) : UNKNOWN_DISPLAY_VALUE
               },
             }),
           ],
@@ -160,15 +161,15 @@ export const aboutTheCompanySection = buildSection({
               required: true,
               options: [
                 {
-                  value: 'MALE',
+                  value: Gender.MALE,
                   label: messages.aboutTheCompany.chiefExecutive.genderMale,
                 },
                 {
-                  value: 'FEMALE',
+                  value: Gender.FEMALE,
                   label: messages.aboutTheCompany.chiefExecutive.genderFemale,
                 },
                 {
-                  value: 'NON_BINARY',
+                  value: Gender.NON_BINARY,
                   label:
                     messages.aboutTheCompany.chiefExecutive.genderNonBinary,
                 },
@@ -286,7 +287,6 @@ export const aboutTheCompanySection = buildSection({
             }),
             buildRadioField({
               id: 'subsidiaries.includesSubsidiaries',
-              title: '',
               largeButtons: true,
               width: 'half',
               required: true,
@@ -300,7 +300,6 @@ export const aboutTheCompanySection = buildSection({
             }),
             buildTableRepeaterField({
               id: 'subsidiaries.list',
-              title: '',
               marginTop: 0,
               formTitle: messages.aboutTheCompany.subsidiaries.tableFormTitle,
               addItemButtonText:

@@ -11,6 +11,7 @@ import mammoth from 'mammoth'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
+import { ApiActions } from '../utils/constants'
 
 export const Editor = ({ application, errors }: FieldBaseProps) => {
   const { formatMessage } = useIntl()
@@ -84,7 +85,7 @@ export const Editor = ({ application, errors }: FieldBaseProps) => {
           input: {
             id: application.id,
             dataProviders: [
-              { actionId: 'getEqualityReportTemplateHtml', order: 0 },
+              { actionId: ApiActions.getEqualityReportTemplateHtml, order: 0 },
             ],
           },
           locale,
@@ -123,7 +124,7 @@ export const Editor = ({ application, errors }: FieldBaseProps) => {
           input: {
             id: application.id,
             dataProviders: [
-              { actionId: 'getEqualityReportTemplateDocx', order: 0 },
+              { actionId: ApiActions.getEqualityReportTemplateDocx, order: 0 },
             ],
           },
           locale,
