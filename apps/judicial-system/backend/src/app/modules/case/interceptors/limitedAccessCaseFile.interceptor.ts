@@ -7,19 +7,12 @@ import {
   NestInterceptor,
 } from '@nestjs/common'
 
-import {
-  CaseFileCategory,
-  isDefenceUser,
-  isIndictmentCase,
-  User,
-} from '@island.is/judicial-system/types'
+import { CaseFileCategory, User } from '@island.is/judicial-system/types'
 
 import {
   canLimitedAccessUserViewCaseFile,
-  getDefenceUserVisiblePoliceCaseNumbers,
   isRulingOrderInConfirmedCourtSession,
 } from '../../file'
-import { CivilClaimant, Defendant } from '../../repository'
 
 @Injectable()
 export class LimitedAccessCaseFileInterceptor implements NestInterceptor {
@@ -64,33 +57,9 @@ export class LimitedAccessCaseFileInterceptor implements NestInterceptor {
             }),
         )
 
-        let policeCaseNumbers = theCase.policeCaseNumbers
-
-        if (
-          isDefenceUser(user) &&
-          isIndictmentCase(theCase.type) &&
-          theCase.policeCaseNumbers &&
-          (Defendant.isConfirmedDefenderOfDefendant(
-            user.nationalId,
-            theCase.defendants,
-          ) ||
-            CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
-              user.nationalId,
-              theCase.civilClaimants,
-            ))
-        ) {
-          policeCaseNumbers = getDefenceUserVisiblePoliceCaseNumbers(
-            user.nationalId,
-            theCase.defendants,
-            theCase.civilClaimants,
-            theCase.policeCaseNumbers,
-          )
-        }
-
         return {
           ...theCase,
           caseFiles,
-          policeCaseNumbers,
         }
       }),
     )
