@@ -6,7 +6,6 @@ import { Locale } from '@island.is/shared/types'
 
 export const ICELAND_TIME_ZONE = 'Atlantic/Reykjavik'
 
-// Iceland never observes daylight saving time, so this is always equivalent to UTC+00
 export const toIcelandTime = (date: Date): Date => {
   const parts = new Intl.DateTimeFormat('en-US', {
     timeZone: ICELAND_TIME_ZONE,
