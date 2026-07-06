@@ -35,6 +35,7 @@ import { IBMPlexSans_500Medium_Italic } from '@expo-google-fonts/ibm-plex-sans/5
 import { IBMPlexSans_600SemiBold_Italic } from '@expo-google-fonts/ibm-plex-sans/600SemiBold_Italic'
 import { IBMPlexSans_700Bold_Italic } from '@expo-google-fonts/ibm-plex-sans/700Bold_Italic'
 import { setupEventHandlers } from '../utils/lifecycle/setup-event-handlers'
+import { useDatadogViewTracking } from '../hooks/use-datadog-view-tracking'
 
 export { ErrorBoundary } from 'expo-router'
 
@@ -184,6 +185,8 @@ function RootLayoutNav({
 }: {
   apolloClient: ApolloClient<NormalizedCacheObject>
 }) {
+  useDatadogViewTracking()
+
   return (
     <LocaleProvider>
       <AppThemeProvider>
