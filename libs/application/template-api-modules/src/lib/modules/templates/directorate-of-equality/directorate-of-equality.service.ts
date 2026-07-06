@@ -166,7 +166,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
         auth,
         {
           identifier: application.id,
-          providerId: doeCompany.id ?? application.id,
+          providerId: doeCompany?.id ?? application.id,
           companyAdminName: answers.chiefExecutive?.name ?? '',
           companyAdminEmail: answers.chiefExecutive?.email ?? '',
           companyAdminGender: answers.chiefExecutive?.gender
