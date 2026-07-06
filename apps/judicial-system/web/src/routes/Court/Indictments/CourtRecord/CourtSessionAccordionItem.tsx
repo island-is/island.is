@@ -41,6 +41,7 @@ import {
 import { Feature } from '@island.is/judicial-system/types'
 import {
   BlueBox,
+  CheckboxList,
   DateTime,
   FeatureContext,
   FileNotFoundModal,
@@ -196,7 +197,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   } = useUsers(workingCase.court?.id)
 
   const patchSession = useCallback(
-    (
+    async (
       courtSessionId: string,
       updates: Partial<CourtSessionResponse>,
       { persist = false } = {},
@@ -225,11 +226,27 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
 
       if (persist) {
         const { courtSessionStrings, ...courtSessionUpdate } = updates
-        updateCourtSession({
+        const success = await updateCourtSession({
           ...courtSessionUpdate,
           courtSessionId,
           caseId: workingCase.id,
         })
+
+        // A failed confirm/unconfirm must not leave the UI in the new state
+        // (button re-labelled to "Leiðrétta", read-only mode). Roll the flag
+        // back to what it was. Only isConfirmed is reverted - other optimistic
+        // field edits keep their value so unsaved input is not lost on a
+        // transient failure. (Confirm/unconfirm always toggle the flag.)
+        if (!success && 'isConfirmed' in updates) {
+          setWorkingCase((prev) => ({
+            ...prev,
+            courtSessions: prev.courtSessions?.map((session) =>
+              session.id === courtSessionId
+                ? { ...session, isConfirmed: !updates.isConfirmed }
+                : session,
+            ),
+          }))
+        }
       }
     },
     [setWorkingCase, updateCourtSession, workingCase.id],
@@ -940,31 +957,31 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                         initial="hidden"
                         animate="visible"
                         exit="exit"
-                        className={styles.twoColGrid}
                         key="grid"
                       >
-                        {CLOSURE_GROUNDS.map(
-                          ([label, tooltip, legalProvision]) => (
-                            <motion.div
-                              variants={itemVariants}
-                              initial="hidden"
-                              animate="visible"
-                              exit="exit"
-                              key={label}
-                            >
-                              <Checkbox
-                                label={label}
-                                name={`${label}-${courtSession.id}`}
-                                tooltip={tooltip}
-                                checked={courtSession.closedLegalProvisions?.includes(
-                                  legalProvision,
-                                )}
-                                onChange={(evt) => {
+                        <motion.div
+                          variants={itemVariants}
+                          initial="hidden"
+                          animate="visible"
+                          exit="exit"
+                        >
+                          <CheckboxList
+                            blueBox={false}
+                            checkboxes={CLOSURE_GROUNDS.map(
+                              ([label, tooltip, legalProvision]) => ({
+                                id: `${legalProvision}-${courtSession.id}`,
+                                title: label,
+                                info: tooltip,
+                                checked:
+                                  courtSession.closedLegalProvisions?.includes(
+                                    legalProvision,
+                                  ) ?? false,
+                                disabled: courtSession.isConfirmed || false,
+                                onChange: (checked) => {
                                   const initialValue =
                                     courtSession.closedLegalProvisions || []
 
-                                  const closedLegalProvisions = evt.target
-                                    .checked
+                                  const closedLegalProvisions = checked
                                     ? [...initialValue, legalProvision]
                                     : initialValue.filter(
                                         (v) => v !== legalProvision,
@@ -975,14 +992,11 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                                     { closedLegalProvisions },
                                     { persist: true },
                                   )
-                                }}
-                                disabled={courtSession.isConfirmed || false}
-                                large
-                                filled
-                              />
-                            </motion.div>
-                          ),
-                        )}
+                                },
+                              }),
+                            )}
+                          />
+                        </motion.div>
                       </motion.div>
                     </>
                   )}
