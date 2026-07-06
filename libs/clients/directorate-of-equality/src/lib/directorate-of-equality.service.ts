@@ -13,6 +13,7 @@ import {
   getApplicationReport,
   getApplicationReportOutliers,
   importApplicationSalaryReportWorkbook,
+  presignApplicationImportUpload,
   submitApplicationEqualityReport,
   submitApplicationReportComment,
   submitApplicationSalaryReport,
@@ -27,6 +28,7 @@ import type {
   EqualityReportSummaryDto,
   GetReportOutliersResponseDto,
   ParsedReportDto,
+  PresignUploadResponseDto,
   SalaryAnalysisRequestDto,
   SalaryAnalysisResponseDto,
   SubmitApplicationReportCommentDto,
@@ -129,13 +131,21 @@ export class DirectorateOfEqualityClientService {
     )
   }
 
+  async presignImportUpload(user: User): Promise<PresignUploadResponseDto> {
+    return this.unwrap(
+      user,
+      () => presignApplicationImportUpload(),
+      'Failed to presign salary report upload',
+    )
+  }
+
   async importSalaryReportWorkbook(
     user: User,
-    file: Blob | File,
+    key: string,
   ): Promise<ParsedReportDto> {
     return this.unwrap(
       user,
-      () => importApplicationSalaryReportWorkbook({ body: { file } }),
+      () => importApplicationSalaryReportWorkbook({ body: { key } }),
       'Failed to import salary report workbook',
     )
   }

@@ -57,13 +57,8 @@ export const ExcelTemplateDownload: FC<
     document.body.removeChild(link)
   }
 
-  const fileToBase64 = (file: File): Promise<string> =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader()
-      reader.onload = () => resolve((reader.result as string).split(',')[1])
-      reader.onerror = reject
-      reader.readAsDataURL(file)
-    })
+  const XLSX_CONTENT_TYPE =
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 
   const handleFileSelected = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -75,25 +70,49 @@ export const ExcelTemplateDownload: FC<
     setIsImporting(true)
     setImportStatus(null)
     try {
-      const base64 = await fileToBase64(file)
-
-      // Store file temporarily so the server action can read it
-      await updateApplication({
+      // 1. Ask the server (authenticated against DMR) for a presigned upload
+      //    URL. The resulting { url, key } lands in externalData.importPresign.
+      const presignResult = await updateApplicationExternalData({
         variables: {
           input: {
             id: application.id,
-            answers: {
-              ...application.answers,
-              dataEntry: {
-                ...((application.answers.dataEntry as object) ?? {}),
-                excelFile: base64,
+            dataProviders: [
+              {
+                actionId: 'DirectorateOfEquality.presignImportUpload',
+                order: 0,
               },
-            },
+            ],
           },
           locale,
         },
       })
 
+      const presign = presignResult.data?.updateApplicationExternalData
+        .externalData?.importPresign?.data as
+        | { url: string; key: string }
+        | undefined
+
+      if (!presign?.url) {
+        setImportStatus('error')
+        return
+      }
+
+      // 2. Upload the raw workbook bytes straight to the presigned URL. No auth
+      //    header — the URL itself is the capability. DMR decides the target
+      //    (local disk vs S3) and returns it, so never hardcode it here.
+      const uploadResponse = await fetch(presign.url, {
+        method: 'PUT',
+        body: file,
+        headers: { 'Content-Type': XLSX_CONTENT_TYPE },
+      })
+
+      if (!uploadResponse.ok) {
+        setImportStatus('error')
+        return
+      }
+
+      // 3. Trigger the import — the server reads the key from externalData and
+      //    calls DMR's import endpoint with { key }.
       const result = await updateApplicationExternalData({
         variables: {
           input: {
@@ -173,18 +192,13 @@ export const ExcelTemplateDownload: FC<
         const roles = (result.data.updateApplicationExternalData.externalData
           ?.parsedSalaryReport?.data?.roles ?? []) as ParsedRoleDto[]
 
-        // Remove the temporary file and write parsed criteria directly to answers
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { excelFile: _removed, ...dataEntryWithoutFile } = (application
-          .answers.dataEntry ?? {}) as Record<string, unknown>
-
+        // Write the parsed criteria directly to answers
         await updateApplication({
           variables: {
             input: {
               id: application.id,
               answers: {
                 ...application.answers,
-                dataEntry: dataEntryWithoutFile,
                 criteria: {
                   jobFactors,
                   personalFactors,

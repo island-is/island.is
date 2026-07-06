@@ -170,8 +170,12 @@ const employee = z.object({
   startDate: z.string(),
   workRatio: z.number(),
   baseSalary: z.number(),
-  additionalSalary: z.number(),
-  bonusSalary: z.number().nullish(),
+  additionalFixedOvertime: z.number().nullish(),
+  additionalFixedCarAllowance: z.number().nullish(),
+  bonusOccasionalCarAllowance: z.number().nullish(),
+  bonusOccasionalOvertime: z.number().nullish(),
+  bonusPayments: z.number().nullish(),
+  bonusOther: z.number().nullish(),
   personalStepAssignments: z.array(employeeStepAssignment).default([]),
 })
 

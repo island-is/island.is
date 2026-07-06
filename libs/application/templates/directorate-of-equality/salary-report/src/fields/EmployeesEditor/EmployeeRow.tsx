@@ -14,7 +14,9 @@ import { messages } from '../../lib/messages'
 import {
   EDUCATION_LABELS,
   GENDER_LABELS,
+  SALARY_COMPONENT_KEYS,
   type Employee,
+  type SalaryComponentKey,
 } from '../../lib/constants'
 import { formatCurrency, formatStartDate, formatWorkRatio } from './utils'
 import * as styles from './EmployeesEditor.css'
@@ -69,6 +71,19 @@ export const EmployeeRow: FC<Props> = ({ employee, onRemove }) => {
     },
   ]
 
+  const componentLabels: Record<SalaryComponentKey, string> = {
+    additionalFixedOvertime: formatMessage(m.additionalFixedOvertimeLabel),
+    additionalFixedCarAllowance: formatMessage(
+      m.additionalFixedCarAllowanceLabel,
+    ),
+    bonusOccasionalCarAllowance: formatMessage(
+      m.bonusOccasionalCarAllowanceLabel,
+    ),
+    bonusOccasionalOvertime: formatMessage(m.bonusOccasionalOvertimeLabel),
+    bonusPayments: formatMessage(m.bonusPaymentsLabel),
+    bonusOther: formatMessage(m.bonusOtherLabel),
+  }
+
   const rightItems = [
     {
       label: formatMessage(m.workRatioLabel),
@@ -78,14 +93,10 @@ export const EmployeeRow: FC<Props> = ({ employee, onRemove }) => {
       label: formatMessage(m.baseSalaryLabel),
       value: formatCurrency(employee.baseSalary),
     },
-    {
-      label: formatMessage(m.additionalSalaryLabel),
-      value: formatCurrency(employee.additionalSalary),
-    },
-    {
-      label: formatMessage(m.bonusSalaryLabel),
-      value: formatCurrency(employee.bonusSalary),
-    },
+    ...SALARY_COMPONENT_KEYS.map((key) => ({
+      label: componentLabels[key],
+      value: formatCurrency(employee[key]),
+    })),
   ]
 
   return (

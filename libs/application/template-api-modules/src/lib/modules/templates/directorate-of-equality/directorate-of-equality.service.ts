@@ -105,24 +105,24 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     }
   }
 
+  async presignImportUpload({ auth }: TemplateApiModuleActionProps) {
+    return this.directorateOfEqualityService.presignImportUpload(auth)
+  }
+
   async parseSalaryReportWorkbook({
     auth,
     application,
   }: TemplateApiModuleActionProps) {
-    const base64 = getValueViaPath<string>(
-      application.answers,
-      'dataEntry.excelFile',
+    const key = getValueViaPath<string>(
+      application.externalData,
+      'importPresign.data.key',
     )
-    if (!base64) {
-      throw new Error('No Excel file found in answers')
+    if (!key) {
+      throw new Error('No upload key found — presign the upload first')
     }
-    const buffer = Buffer.from(base64, 'base64')
-    const blob = new Blob([buffer], {
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    })
     return this.directorateOfEqualityService.importSalaryReportWorkbook(
       auth,
-      blob,
+      key,
     )
   }
 

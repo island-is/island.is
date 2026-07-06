@@ -26,6 +26,13 @@ export const BlankExcelTemplateApi = defineTemplateApi({
   namespace: 'DirectorateOfEquality',
 })
 
+export const ImportPresignApi = defineTemplateApi({
+  action: 'presignImportUpload',
+  externalDataId: 'importPresign',
+  namespace: 'DirectorateOfEquality',
+  throwOnError: false,
+})
+
 export const ParsedSalaryReportApi = defineTemplateApi({
   action: 'parseSalaryReportWorkbook',
   externalDataId: 'parsedSalaryReport',

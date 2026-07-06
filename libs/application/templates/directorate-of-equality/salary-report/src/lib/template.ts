@@ -17,6 +17,7 @@ import {
   BlankExcelTemplateApi,
   CompanyRegistryApi,
   DoeCompanyApi,
+  ImportPresignApi,
   ParsedSalaryReportApi,
 } from '../dataProviders'
 import { Events, Roles, States } from '../utils/constants'
@@ -133,7 +134,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [ParsedSalaryReportApi],
+              api: [ImportPresignApi, ParsedSalaryReportApi],
               delete: true,
             },
           ],

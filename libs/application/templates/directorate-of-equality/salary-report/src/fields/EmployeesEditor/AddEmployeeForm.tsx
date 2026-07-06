@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, Fragment } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import {
   Box,
@@ -18,7 +18,10 @@ import { messages } from '../../lib/messages'
 import {
   EDUCATION_OPTIONS,
   GENDER_OPTIONS,
+  SALARY_COMPONENT_GROUPS,
+  SALARY_COMPONENT_KEYS,
   type Employee,
+  type SalaryComponentKey,
 } from '../../lib/constants'
 import { computeIdentifier } from './utils'
 
@@ -38,9 +41,7 @@ type FormValues = {
   startDate: string
   workRatio: string
   baseSalary: string
-  additionalSalary: string
-  bonusSalary: string
-}
+} & Record<SalaryComponentKey, string>
 
 const DEFAULTS: FormValues = {
   roleTitle: '',
@@ -51,8 +52,9 @@ const DEFAULTS: FormValues = {
   startDate: '',
   workRatio: '100',
   baseSalary: '',
-  additionalSalary: '',
-  bonusSalary: '',
+  ...(Object.fromEntries(
+    SALARY_COMPONENT_KEYS.map((key) => [key, '']),
+  ) as Record<SalaryComponentKey, string>),
 }
 
 export const AddEmployeeForm: FC<Props> = ({
@@ -70,7 +72,33 @@ export const AddEmployeeForm: FC<Props> = ({
 
   const requiredMsg = formatMessage(messages.errors.required)
 
+  const componentLabels: Record<SalaryComponentKey, string> = {
+    additionalFixedOvertime: formatMessage(m.additionalFixedOvertimeLabel),
+    additionalFixedCarAllowance: formatMessage(
+      m.additionalFixedCarAllowanceLabel,
+    ),
+    bonusOccasionalCarAllowance: formatMessage(
+      m.bonusOccasionalCarAllowanceLabel,
+    ),
+    bonusOccasionalOvertime: formatMessage(m.bonusOccasionalOvertimeLabel),
+    bonusPayments: formatMessage(m.bonusPaymentsLabel),
+    bonusOther: formatMessage(m.bonusOtherLabel),
+  }
+
+  const groupHeadings: Record<'additional' | 'bonus', string> = {
+    additional: formatMessage(m.additionalSalaryLabel),
+    bonus: formatMessage(m.bonusSalaryLabel),
+  }
+
   const onValid = (data: FormValues) => {
+    // Empty component → null (the API treats each component as optional/nullable)
+    const components = Object.fromEntries(
+      SALARY_COMPONENT_KEYS.map((key) => [
+        key,
+        data[key] === '' ? null : Number(data[key]) || 0,
+      ]),
+    ) as Record<SalaryComponentKey, number | null>
+
     onAdd({
       ordinal: nextOrdinal,
       identifier: computeIdentifier(identifierPrefix, nextOrdinal),
@@ -82,8 +110,7 @@ export const AddEmployeeForm: FC<Props> = ({
       startDate: data.startDate,
       workRatio: (Number(data.workRatio) || 0) / 100,
       baseSalary: Number(data.baseSalary) || 0,
-      additionalSalary: Number(data.additionalSalary) || 0,
-      bonusSalary: data.bonusSalary === '' ? 0 : Number(data.bonusSalary) || 0,
+      ...components,
       personalStepAssignments: [],
     })
   }
@@ -196,26 +223,27 @@ export const AddEmployeeForm: FC<Props> = ({
               error={errors.baseSalary?.message}
             />
           </GridColumn>
-          <GridColumn span={['12/12', '6/12']}>
-            <InputController
-              id="additionalSalary"
-              name="additionalSalary"
-              label={formatMessage(m.additionalSalaryLabel)}
-              type="number"
-              backgroundColor="white"
-              size="sm"
-            />
-          </GridColumn>
-          <GridColumn span={['12/12', '6/12']}>
-            <InputController
-              id="bonusSalary"
-              name="bonusSalary"
-              label={formatMessage(m.bonusSalaryLabel)}
-              type="number"
-              backgroundColor="white"
-              size="sm"
-            />
-          </GridColumn>
+          {SALARY_COMPONENT_GROUPS.map(({ group, keys }) => (
+            <Fragment key={group}>
+              <GridColumn span="12/12">
+                <Text variant="h5" marginTop={2}>
+                  {groupHeadings[group]}
+                </Text>
+              </GridColumn>
+              {keys.map((key) => (
+                <GridColumn key={key} span={['12/12', '6/12']}>
+                  <InputController
+                    id={key}
+                    name={key}
+                    label={componentLabels[key]}
+                    type="number"
+                    backgroundColor="white"
+                    size="sm"
+                  />
+                </GridColumn>
+              ))}
+            </Fragment>
+          ))}
         </GridRow>
         <Box
           display="flex"

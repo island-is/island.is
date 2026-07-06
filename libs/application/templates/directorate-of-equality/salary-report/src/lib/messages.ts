@@ -577,6 +577,32 @@ export const messages = {
         id: 'salaryReport.application:report.employees.bonusSalaryLabel',
         defaultMessage: 'Hlunnindi',
       },
+      // Icelandic labels below are best-guess mappings of the API fields —
+      // adjust wording as needed.
+      additionalFixedOvertimeLabel: {
+        id: 'salaryReport.application:report.employees.additionalFixedOvertimeLabel',
+        defaultMessage: 'Föst yfirvinna',
+      },
+      additionalFixedCarAllowanceLabel: {
+        id: 'salaryReport.application:report.employees.additionalFixedCarAllowanceLabel',
+        defaultMessage: 'Föst bifreiðahlunnindi',
+      },
+      bonusOccasionalCarAllowanceLabel: {
+        id: 'salaryReport.application:report.employees.bonusOccasionalCarAllowanceLabel',
+        defaultMessage: 'Tilfallandi bifreiðahlunnindi',
+      },
+      bonusOccasionalOvertimeLabel: {
+        id: 'salaryReport.application:report.employees.bonusOccasionalOvertimeLabel',
+        defaultMessage: 'Tilfallandi yfirvinna',
+      },
+      bonusPaymentsLabel: {
+        id: 'salaryReport.application:report.employees.bonusPaymentsLabel',
+        defaultMessage: 'Bónusgreiðslur',
+      },
+      bonusOtherLabel: {
+        id: 'salaryReport.application:report.employees.bonusOtherLabel',
+        defaultMessage: 'Aðrar greiðslur',
+      },
       addButton: {
         id: 'salaryReport.application:report.employees.addButton',
         defaultMessage: 'Bæta við starfsmanni',

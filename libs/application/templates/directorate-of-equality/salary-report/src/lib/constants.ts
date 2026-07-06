@@ -73,6 +73,40 @@ export type EmployeeStepAssignment = {
   criterionTitle: string
 }
 
+// The API broke the flat `additionalSalary` / `bonusSalary` fields into these
+// components. Summing the two `additionalFixed*` values reproduces the old
+// additional salary; summing the four bonus/occasional values reproduces the
+// old bonus salary. We keep the breakdown in the UI and answers.
+export type SalaryComponentKey =
+  | 'additionalFixedOvertime'
+  | 'additionalFixedCarAllowance'
+  | 'bonusOccasionalCarAllowance'
+  | 'bonusOccasionalOvertime'
+  | 'bonusPayments'
+  | 'bonusOther'
+
+export const SALARY_COMPONENT_GROUPS: {
+  group: 'additional' | 'bonus'
+  keys: SalaryComponentKey[]
+}[] = [
+  {
+    group: 'additional',
+    keys: ['additionalFixedOvertime', 'additionalFixedCarAllowance'],
+  },
+  {
+    group: 'bonus',
+    keys: [
+      'bonusOccasionalCarAllowance',
+      'bonusOccasionalOvertime',
+      'bonusPayments',
+      'bonusOther',
+    ],
+  },
+]
+
+export const SALARY_COMPONENT_KEYS: SalaryComponentKey[] =
+  SALARY_COMPONENT_GROUPS.flatMap((g) => g.keys)
+
 // Mirrors ParsedEmployeeDto from @island.is/clients/directorate-of-equality.
 // The full object is stored in answers so the complete record is available at
 // submission, even though only a subset is shown on screen.
@@ -87,10 +121,8 @@ export type Employee = {
   startDate: string
   workRatio: number
   baseSalary: number
-  additionalSalary: number
-  bonusSalary?: number | null
   personalStepAssignments: EmployeeStepAssignment[]
-}
+} & { [K in SalaryComponentKey]?: number | null }
 
 // NOTE: Icelandic labels below are best-guess mappings of the API enums —
 // adjust wording as needed.
@@ -142,7 +174,11 @@ export const EMPTY_EMPLOYEE: Employee = {
   startDate: '',
   workRatio: 1,
   baseSalary: 0,
-  additionalSalary: 0,
-  bonusSalary: 0,
+  additionalFixedOvertime: null,
+  additionalFixedCarAllowance: null,
+  bonusOccasionalCarAllowance: null,
+  bonusOccasionalOvertime: null,
+  bonusPayments: null,
+  bonusOther: null,
   personalStepAssignments: [],
 }
