@@ -3,6 +3,7 @@ import { OfflineIcon } from '../offline/offline-icon'
 import { router } from 'expo-router'
 import { NativeStackHeaderItem } from '@react-navigation/native-stack'
 import { NetworkStatus } from '@apollo/client'
+import { theme } from '../../ui'
 
 export function navbarOfflineItem(
   networkStatus?: NetworkStatus | NetworkStatus[],
@@ -19,6 +20,7 @@ export function navbarCloseItem(): NativeStackHeaderItem {
     type: 'button',
     label: 'Close',
     icon: { type: 'sfSymbol', name: 'xmark' },
+    tintColor: theme.color.blue400,
     onPress: () => router.back(),
   }
 }
