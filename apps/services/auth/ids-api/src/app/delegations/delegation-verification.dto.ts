@@ -1,18 +1,20 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { buildMessage, IsArray, IsString, ValidateBy } from 'class-validator'
+import { IsArray, IsIn, IsString } from 'class-validator'
 
 import {
-  AuthDelegationType,
-  isPersonalRepresentativeDelegationType,
-} from '@island.is/shared/types'
+  DelegationRecordType,
+  PersonalRepresentativeDelegationType,
+} from '@island.is/auth-api-lib'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 // Delegations sourced from the district commissioners registry carry compound
-// personal representative types, e.g. PersonalRepresentative:postholf, which
-// are not members of the AuthDelegationType enum.
-const isValidDelegationType = (value: unknown): boolean =>
-  typeof value === 'string' &&
-  (Object.values(AuthDelegationType).includes(value as AuthDelegationType) ||
-    isPersonalRepresentativeDelegationType(value))
+// personal representative types, e.g. PersonalRepresentative:postholf, so the
+// accepted values are the DelegationRecordType union rather than the base
+// AuthDelegationType enum.
+const delegationRecordTypes: DelegationRecordType[] = [
+  ...Object.values(AuthDelegationType),
+  ...Object.values(PersonalRepresentativeDelegationType),
+]
 
 export class DelegationVerification {
   @IsString()
@@ -20,28 +22,11 @@ export class DelegationVerification {
   fromNationalId!: string
 
   @IsArray()
-  @ValidateBy(
-    {
-      name: 'isDelegationType',
-      validator: {
-        validate: isValidDelegationType,
-        defaultMessage: buildMessage(
-          (eachPrefix) =>
-            `${eachPrefix}$property must be an AuthDelegationType or a personal representative delegation type`,
-        ),
-      },
-    },
-    { each: true },
-  )
+  @IsIn(delegationRecordTypes, { each: true })
   @ApiProperty({
-    type: String,
+    enum: delegationRecordTypes,
+    enumName: 'DelegationRecordType',
     isArray: true,
-    description:
-      'AuthDelegationType values or compound personal representative delegation types, e.g. PersonalRepresentative:postholf',
-    example: [
-      AuthDelegationType.ProcurationHolder,
-      'PersonalRepresentative:postholf',
-    ],
   })
-  delegationTypes!: AuthDelegationType[]
+  delegationTypes!: DelegationRecordType[]
 }
