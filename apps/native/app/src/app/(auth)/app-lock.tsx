@@ -209,12 +209,15 @@ export default function AppLockScreen() {
   // On mount and each → active: undefined → dismiss, within grace → unlock,
   // else → require auth (biometric prompted once per lock).
   useEffect(() => {
+    let unmounted = false
     const tryUnlockOrPrompt = async () => {
       // AppState can claim 'active' while the phone is locked (Always-On
       // Display), but the keychain can't lie: WHEN_UNLOCKED items are only
       // readable once the device is genuinely unlocked.
       const deviceUnlocked = await isDeviceUnlocked()
-      if (!deviceUnlocked) {
+      // Re-check unmounted: the screen may have been dismissed during the
+      // await, and acting (e.g. router.back below) would hit a stale screen.
+      if (unmounted || !deviceUnlocked) {
         return
       }
       if (AppState.currentState !== 'active') {
@@ -248,7 +251,6 @@ export default function AppLockScreen() {
     // modal off-screen, corrupting the native stack (black screen on
     // resume). Ghost events flip back to inactive within ~250ms, so require
     // 500ms of uninterrupted 'active' plus a rendered frame before acting.
-    let unmounted = false
     let pendingTimer: ReturnType<typeof setTimeout> | undefined
     const confirmVisibleThenRun = () => {
       // The ghost events are iOS-only; Android evaluates immediately.
