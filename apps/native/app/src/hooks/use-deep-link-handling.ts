@@ -48,7 +48,7 @@ export function useDeepLinkHandling() {
   // Dedup keys, persisted across the lock cycle so each intent is handled once
   // despite the re-render churn a replay triggers.
   const lastLinkingUrl = useRef<string | null>(null)
-  const handledNotificationId = useRef<string | null>(null)
+  const handledNotificationKey = useRef<string | null>(null)
 
   // Locked → stash for unlockApp to replay; unlocked → navigate now.
   const handleUrl = useCallback(
@@ -78,8 +78,10 @@ export function useDeepLinkHandling() {
     handleUrl(url)
   }, [url, handleUrl])
 
-  // Notification taps: dedup by notificationId so a lock re-arm mid-replay
-  // can't re-handle the same tap (which caused an infinite reopen loop).
+  // Notification taps: dedup so a lock re-arm mid-replay can't re-handle the
+  // same tap (which caused an infinite reopen loop). Key on notificationId when
+  // present, else fall back to the URL — a tap with a clickActionUrl but no id
+  // would otherwise never be deduped and re-navigate on every lock cycle.
   useEffect(() => {
     const url = notification?.data?.clickActionUrl
     const notificationId = notification?.data?.notificationId
@@ -87,7 +89,8 @@ export function useDeepLinkHandling() {
       return
     }
     const id = notificationId != null ? String(notificationId) : null
-    if (id && handledNotificationId.current === id) {
+    const dedupKey = id ?? url
+    if (handledNotificationKey.current === dedupKey) {
       return
     }
 
@@ -95,9 +98,9 @@ export function useDeepLinkHandling() {
     if (!wasHandled) {
       return
     }
+    handledNotificationKey.current = dedupKey
 
     if (id) {
-      handledNotificationId.current = id
       // Mark as read and seen
       void markUserNotificationAsRead({
         variables: { id: Number(id) },
