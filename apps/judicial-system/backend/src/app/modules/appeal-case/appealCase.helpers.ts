@@ -71,6 +71,59 @@ export const findUserRulingOrderAppealDecision = (
   )
 }
 
+// Every in-court appeal decision for this ruling that belongs to a party the
+// user currently, and confirmedly, acts for: the prosecution's decision, or -
+// for a defence user - the decision of every defendant / civil claimant they are
+// the confirmed representative of. Unlike findUserRulingOrderAppealDecision
+// (which resolves a single party) this covers a lawyer with several clients, so
+// withdrawal can act on all of them at once, mirroring how an appeal is made for
+// all represented parties.
+export const userRulingOrderAppealDecisions = (
+  theCase: Case,
+  rulingFileId: string,
+  user: User,
+): AppealDecision[] => {
+  const decisions = (theCase.appealDecisions ?? []).filter(
+    (decision) => decision.rulingFileId === rulingFileId,
+  )
+
+  if (isProsecutionUser(user)) {
+    return decisions.filter(
+      (decision) => decision.partyRole === AppealDecisionPartyRole.PROSECUTOR,
+    )
+  }
+
+  if (!isDefenceUser(user)) {
+    return []
+  }
+
+  return decisions.filter((decision) => {
+    if (
+      decision.partyRole === AppealDecisionPartyRole.DEFENDANT &&
+      decision.defendantId
+    ) {
+      return Defendant.isConfirmedDefenderOfDefendant(
+        user.nationalId,
+        theCase.defendants?.filter((d) => d.id === decision.defendantId),
+      )
+    }
+
+    if (
+      decision.partyRole === AppealDecisionPartyRole.CIVIL_CLAIMANT &&
+      decision.civilClaimantId
+    ) {
+      return CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(
+        user.nationalId,
+        theCase.civilClaimants?.filter(
+          (c) => c.id === decision.civilClaimantId,
+        ),
+      )
+    }
+
+    return false
+  })
+}
+
 // True when the ruling order was appealed in court - i.e. some party recorded a
 // decision = APPEAL for it. Distinguishes in-court appeals (withdrawn per party)
 // from out-of-court ones (a single appellant on the appeal case).
@@ -86,23 +139,20 @@ export const isInCourtRulingOrderAppeal = (
     ),
   )
 
-// True when the user's party appealed this ruling order in court and has not yet
-// withdrawn - i.e. the user may withdraw it.
+// True when any party the user acts for appealed this ruling order in court and
+// has not yet withdrawn - i.e. the user may withdraw it. Resolves across every
+// represented party, so a lawyer with several clients may withdraw as long as at
+// least one of them still has a standing in-court appeal.
 export const userHasActiveInCourtAppeal = (
   theCase: Case,
   rulingFileId: string,
   user: User,
-): boolean => {
-  const decision = findUserRulingOrderAppealDecision(
-    theCase,
-    rulingFileId,
-    user,
+): boolean =>
+  userRulingOrderAppealDecisions(theCase, rulingFileId, user).some(
+    (decision) =>
+      decision.decision === CaseAppealDecision.APPEAL &&
+      !decision.withdrawnDate,
   )
-
-  return (
-    decision?.decision === CaseAppealDecision.APPEAL && !decision.withdrawnDate
-  )
-}
 
 // The party that appealed a ruling in court, as recorded on the APPEALED event:
 // the appellant's side (userRole) plus, for the defence, the specific party. The
