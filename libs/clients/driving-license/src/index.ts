@@ -9,6 +9,8 @@ export {
   DtoV5DriverLicenseDto,
   DtoV5CategoryDto,
   DtoErrorCodeDescriptionDto,
+  DtoV5DeprivationDto,
+  DtoV5PenaltyPointDetailDto,
   ModelsV5PostTemporaryLicenseWithHealthDeclaration,
   ModelsHealthDeclarationModel,
 } from './v5/index'
