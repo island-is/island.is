@@ -1,14 +1,5 @@
 import { registerEnumType } from '@nestjs/graphql'
 
-export enum LocaleEnum {
-  Is = 'is',
-  En = 'en',
-}
-
-registerEnumType(LocaleEnum, {
-  name: 'ShipRegistryLocale',
-})
-
 export enum ShipRegistryCertificateStatus {
   Valid = 'valid',
   Invalid = 'invalid',
@@ -19,4 +10,30 @@ export enum ShipRegistryCertificateStatus {
 
 registerEnumType(ShipRegistryCertificateStatus, {
   name: 'ShipRegistryCertificateStatus',
+})
+
+export enum ShipRegistrySailorCertificateStatus {
+  Valid = 'valid',
+  Invalid = 'invalid',
+  Unknown = 'unknown',
+}
+
+registerEnumType(ShipRegistrySailorCertificateStatus, {
+  name: 'ShipRegistrySailorCertificateStatus',
+})
+
+export enum ShipRegistrySailorCrewRegistrationField {
+  SHIP_NAME = 'shipName',
+  LENGTH = 'length',
+  GROSS_TONNAGE = 'grossTonnage',
+  MAIN_ENGINE = 'mainEngine',
+  SHIP_REGISTRATION_NUMBER = 'shipRegistrationNumber',
+  RANK = 'rank',
+  START_DATE = 'startDate',
+  END_DATE = 'endDate',
+  NUMBER_OF_DAYS = 'numberOfDays',
+}
+
+registerEnumType(ShipRegistrySailorCrewRegistrationField, {
+  name: 'ShipRegistrySailorCrewRegistrationField',
 })

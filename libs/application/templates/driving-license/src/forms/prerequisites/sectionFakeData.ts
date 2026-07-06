@@ -26,10 +26,11 @@ export const sectionFakeData = buildSubSection({
           // and so it will wrap the text in a <code> block when the double
           // spaces are not removed.
           description: `
-            Ath. gervigögn eru eingöngu notuð í stað þess að sækja
-            forsendugögn í staging umhverfi (dev x-road) hjá RLS, auk þess
-            sem hægt er að senda inn umsóknina í "þykjó" - þeas. allt hagar sér
-            eins nema að RLS tekur ekki við umsókninni.
+            Ath. gervigögn eru eingöngu notuð í stað þess að sækja forsendugögn
+            í staging umhverfi (dev x-road) hjá RLS. Sjálfgefið tekur RLS ekki
+            við umsókninni þegar gervigögn eru notuð, en hægt er að virkja
+            senda-til-RLS hér að neðan til að senda inn raunverulega umsókn í
+            dev x-road.
 
             Öll önnur gögn eru ekki gervigögn og er þetta eingöngu gert
             til að hægt sé að prófa ferlið án þess að vera með tilheyrandi
@@ -51,13 +52,41 @@ export const sectionFakeData = buildSubSection({
           ],
         }),
         buildRadioField({
+          id: 'fakeData.submitToRLS',
+          title: 'Senda umsóknina samt til RLS?',
+          width: 'half',
+          condition: allowFakeCondition(YES),
+          defaultValue: NO,
+          options: [
+            {
+              value: YES,
+              label: 'Já — kalla á raunverulegt RLS endapunkt',
+            },
+            {
+              value: NO,
+              label: 'Nei — skila gervisvari án RLS-kalls',
+            },
+          ],
+        }),
+        buildTextField({
+          id: 'fakeData.submitErrorCode',
+          title: 'Líkja eftir villu við innsendingu? (RLS villukóði)',
+          placeholder:
+            't.d. HAS_POINTS eða INSTRUCTOR_DOES_NOT_HAVE_BE_CATEGORY',
+          // Dev-only: only applies on the fake (non-RLS) submit path. Leave tómt
+          // til að senda inn eðlilega. Á innsendingu hendir þetta villu með
+          // þessum kóða svo hægt sé að sjá villuskjáinn á greiðsluþrepi.
+          condition: allowFakeCondition(YES),
+          width: 'half',
+        }),
+        buildRadioField({
           id: 'fakeData.currentLicense',
           title: 'Núverandi ökuréttindi umsækjanda',
           width: 'half',
           condition: allowFakeCondition(YES),
           options: [
             {
-              value: 'student',
+              value: 'none',
               label: 'Engin',
             },
             {
@@ -76,7 +105,7 @@ export const sectionFakeData = buildSubSection({
         }),
         buildRadioField({
           id: 'fakeData.qualityPhoto',
-          title: 'Gervimynd eða enga mynd?',
+          title: 'B-full / B-temp / 65+ gamla flæðið: Gervimynd eða enga mynd?',
           width: 'half',
           condition: allowFakeCondition(YES),
           options: [
@@ -108,35 +137,48 @@ export const sectionFakeData = buildSubSection({
         }),
         buildRadioField({
           id: 'fakeData.hasThjodskraPhoto',
-          title: 'BE: Mynd úr Þjóðskrá?',
+          title: 'BE / B-temp / 65+ endurnýjun: Mynd úr Þjóðskrá?',
           width: 'half',
           condition: allowFakeCondition(YES),
-          defaultValue: YES,
+          defaultValue: 'real',
           options: [
             {
               value: YES,
-              label: 'Já — mynd til staðar',
+              label: 'Já — gervi mynd til staðar',
             },
             {
               value: NO,
-              label: 'Nei — engin mynd',
+              label: 'Nei — gervi engin mynd',
+            },
+            {
+              value: 'real',
+              label: 'Raunveruleg gögn (sækja í Þjóðskrá)',
             },
           ],
         }),
         buildRadioField({
           id: 'fakeData.hasRLSPhoto',
-          title: 'BE: Gæðamynd úr ökuskírteinaskrá (RLS)?',
+          title:
+            'BE / B-temp / 65+ endurnýjun: Gæðamynd úr ökuskírteinaskrá (RLS)?',
           width: 'half',
           condition: allowFakeCondition(YES),
-          defaultValue: NO,
+          defaultValue: 'real',
           options: [
             {
               value: YES,
-              label: 'Já — gæðamynd til staðar',
+              label: 'Já — gervi gæðamynd til staðar',
             },
             {
               value: NO,
-              label: 'Nei — engin gæðamynd',
+              label: 'Nei — gervi engin gæðamynd',
+            },
+            {
+              value: 'metadata-only',
+              label: 'Já — gervi gæðamynd, en pohto-bita vantar (eldri skrá)',
+            },
+            {
+              value: 'real',
+              label: 'Raunveruleg gögn (sækja í RLS)',
             },
           ],
         }),

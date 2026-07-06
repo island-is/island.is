@@ -31,10 +31,11 @@ export const is = {
   'applock.attempt': 'tilraun eftir',
 
   // onboarding
-  'onboarding.notifications.title':
-    'Fáðu tilkynningar um ný rafræn skjöl um leið og þau berast.',
+  'onboarding.notifications.title': 'Leyfa tilkynningar',
+  'onboarding.notifications.body':
+    'Fáðu tilkynningar um ný skjöl eða annað mikilvægt.',
   'onboarding.notifications.allowNotificationsButtonText': 'Leyfa tilkynningar',
-  'onboarding.notifications.decideLaterButtonText': 'Ákveða seinna',
+  'onboarding.notifications.decideLaterButtonText': 'Sleppa því í bili',
   'onboarding.appLock.title':
     'Skjálæsing tryggir að enginn geti opnað appið nema þú.',
   'onboarding.appLock.choosePinButtonText': 'Velja PIN',
@@ -43,7 +44,8 @@ export const is = {
   'onboarding.pinCode.goBackButtonText': 'Til baka',
   'onboarding.pinCode.cancelButtonText': 'Hætta við',
   'onboarding.pinCode.nonMatchingPinCodes': 'Númerin pössuðu ekki saman',
-  'onboarding.biometrics.title':
+  'onboarding.biometrics.title': 'Leyfa lífkenni',
+  'onboarding.biometrics.body':
     'Þú getur einnig notað {biometricType} til að opna appið án þess að slá inn PIN.',
   'onboarding.biometrics.notEnrolled':
     'Tækið þitt styður {biometricType} en þú hefur ekki virkjað það.',
@@ -60,6 +62,11 @@ export const is = {
     'Nota fingrafarsauðkenningu',
   'onboarding.pinKeypad.accessibilityLabel.faceId': 'Nota andlitsauðkenningu',
   'onboarding.pinKeypad.accessibilityLabel.delete': 'Eyða staf',
+  'onboarding.privacy.title': 'Persónuvernd',
+  'onboarding.privacy.body':
+    'Hægt er að kynna sér stefnu Stafræns Íslands um meðferð persónuupplýsinga á Ísland.is',
+  'onboarding.privacy.linkText': 'Persónuverndastefna Ísland.is',
+  'onboarding.privacy.continueButtonText': 'Halda áfram',
   'pinCode.updated': 'PIN-númeri breytt',
 
   // personal info screen
@@ -160,15 +167,15 @@ export const is = {
   'user.natreg.maritalStatusValue': `{
     maritalStatus,
     select,
-    MARRIED {{gender, select, FEMALE {Gift} MALE {Giftur} other {Óupplýst}}}
-    UNMARRIED {{gender, select, FEMALE {Ógift} MALE {Ógiftur} other {Óupplýst}}}
-    WIDOWED {{gender, select, FEMALE {Ekkja} MALE {Ekkill} other {Óupplýst}}}
-    SEPARATED {{gender, select, FEMALE {Skilin að borði og sæng} MALE {Skilinn að borði og sæng} other {Óupplýst}}}
-    DIVORCED {{gender, select, FEMALE {Fráskilin} MALE {Fráskilinn} other {Óupplýst}}}
-    MARRIED_LIVING_SEPARATELY {{gender, select, FEMALE {Gift} MALE {Giftur} other {Óupplýst}}}
-    MARRIED_TO_FOREIGN_LAW_PERSON {{gender, select, FEMALE {Gift} MALE {Giftur} other {Óupplýst}}}
-    FOREIGN_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {{gender, select, FEMALE {Gift} MALE {Giftur} other {Óupplýst}}}
-    ICELANDIC_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {{gender, select, FEMALE {Gift} MALE {Giftur} other {Óupplýst}}}
+    MARRIED {Gift (kvæntur) eða staðfest samvist}
+    UNMARRIED {Ógift (ókvæntur)}
+    WIDOWED {Ekkill, ekkja}
+    SEPARATED {Skilin(n) að borði og sæng}
+    DIVORCED {Skilin(n) að lögum}
+    MARRIED_LIVING_SEPARATELY {Hjón ekki í samvistum}
+    MARRIED_TO_FOREIGN_LAW_PERSON {Íslendingur í hjúskap með útlendingi sem nýtur úrlendisréttar og verður því ekki skráður (t.d. varnarliðsmaður eða sendiráðsmaður)}
+    FOREIGN_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {Íslendingur með lögheimili erlendis; í hjúskap með útlendingi sem ekki er á skrá}
+    ICELANDIC_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {Íslendingur með lögheimili á Íslandi (t.d. námsmaður eða sendiráðsmaður); í hjúskap með útlendingi sem ekki er á skrá}
     other {Óupplýst}
   }`,
   'user.natreg.citizenship': 'Ríkisfang',
@@ -181,14 +188,6 @@ export const is = {
   'home.allApplications': 'Stafrænar umsóknir',
   'home.welcomeText': 'Hæ',
   'home.goodDay': 'Góðan dag,',
-  'home.onboardingModule.card1':
-    'Nú sérð þú upplýsingar um ökutæki, fasteignir og fjölskyldu þína í appinu til viðbótar við skjöl og skírteini.',
-  'home.onboardingModule.card2':
-    'Markmiðið með appinu er að þú hafir í hendi þér það sem þú þarfnast hverju sinni í samskiptum við hið opinbera.',
-  'home.onboardingModule.card3':
-    'Hafir þú athugasemdir eða ábendingar um eitthvað sem vantar eða sem má betur fara viljum við gjarnan fá frá þér línu á island@island.is',
-  'home.onboardingModule.card4':
-    'Notendum er bent á að kynna sér stefnu Stafræns Íslands um meðferð persónuupplýsinga á',
   'home.vehicleModule.summary':
     'Skrá kílómetrastöðu rafmagns- og tengiltvinnbíla',
   'home.vehicleModule.button': 'Mín ökutæki',
@@ -199,7 +198,7 @@ export const is = {
   'homeOptions.heading.title': 'Stilla heimaskjá',
   'homeOptions.heading.subtitle':
     'Hér er hægt að stilla hvað birtist á heimaskjá.',
-  'homeOptions.graphic': 'Birta myndskreytingu',
+  'homeOptions.notifications': 'Nýjustu tilkynningar',
   'homeOptions.inbox': 'Nýjast í pósthólfinu',
   'homeOptions.licenses': 'Skírteini',
   'homeOptions.applications': 'Umsóknir',
@@ -269,6 +268,15 @@ export const is = {
   'documentDetail.errorUnknown': 'Villa kom upp við að sækja skjal',
   'documentDetail.buttonReply': 'Svara pósti',
   'documentDetail.buttonCommunications': 'Samskipti',
+  'documentDetail.archiveSuccess': 'Skjal sett í geymslu',
+  'documentDetail.unarchiveSuccess': 'Skjal tekið úr geymslu',
+  'documentDetail.bookmarkSuccess': 'Skjal stjörnumerkt',
+  'documentDetail.unbookmarkSuccess': 'Stjörnumerking fjarlægð',
+  'documentDetail.archiveError': 'Ekki tókst að setja skjal í geymslu',
+  'documentDetail.unarchiveError': 'Ekki tókst að taka skjal úr geymslu',
+  'documentDetail.bookmarkError': 'Ekki tókst að stjörnumerkja skjal',
+  'documentDetail.unbookmarkError': 'Ekki tókst að fjarlægja stjörnumerkingu',
+  'documentDetail.pleaseTryAgain': 'Vinsamlegast prófaðu aftur síðar',
 
   // document reply
   'documentReply.to': 'Til',
@@ -277,11 +285,14 @@ export const is = {
   'documentReply.messagePlaceholder': 'Skrifaðu skilaboð hér',
   'documentReply.uploadAttachment': 'Hlaða upp skjali',
   'documentReply.sendMessage': 'Senda skilaboð',
+  'documentReply.sendMessageError': 'Ekki tókst að senda svar',
+  'documentReply.pleaseTryAgain': 'Vinsamlegast prófaðu aftur síðar',
 
   // document communications
-  'documentCommunications.caseNumber': 'Málsnúmer',
+  'documentCommunications.caseNumber': 'Málsnr.',
+  'documentCommunications.copyCaseNumber': 'Afrita málsnúmer',
   'documentCommunications.initialReply':
-    'Skilaboðin eru móttekin og mál hefur verið stofnað. Þú getur haldið áfram samskiptunum hér eða í gegnum þitt persónulega netfang {email}.',
+    'Skilaboðin eru móttekin og mál hefur verið stofnað. Þú getur haldið áfram samskiptunum hér eða í gegnum þitt persónulega netfang {email}. Málsnúmerið er: {caseNumber}',
   'documentCommunications.cannotReply':
     'Ekki er hægt að svara þessum skilaboðum því sendandi hefur lokað fyrir frekari svör í þessu samtali.',
 
@@ -295,7 +306,7 @@ export const is = {
   'profile.screenTitle': 'Meira',
   'profile.bottomTabText': 'Meira',
   'profile.seeInfo': 'Nánar',
-  'profile.family': 'Fjölskylda',
+  'profile.myData': 'Mín gögn',
   'profile.vehicles': 'Ökutæki',
   'profile.assets': 'Fasteignir',
   'profile.finance': 'Fjármál',
@@ -499,7 +510,7 @@ export const is = {
   'licenseDetail.pcard.alert.title': 'Mundu eftir stæðiskortinu!',
   'licenseDetail.pcard.alert.description':
     'Þetta yfirlit gildir ekki sem stæðiskort.',
-  'licenseDetail.driversLicense.alert.title': 'Ertu að fara erlendis?',
+  'licenseDetail.driversLicense.alert.title': 'Ertu að fara til útlanda?',
   'licenseDetail.driversLicense.alert.description':
     'Mundu eftir kortinu þar sem stafræna ökuskírteinið gildir ekki erlendis',
   'licenseDetail.ehic.alert.title': 'Mundu eftir kortinu!',
@@ -771,7 +782,7 @@ export const is = {
   'health.categories.moreOnMyPages': 'Meira á mínum síðum',
   'health.categories.referrals': 'Tilvísanir',
   'health.categories.paymentsAndRights': 'Greiðslur og réttindi',
-  'health.categories.waitingLists': 'Bíðlistar',
+  'health.categories.waitingLists': 'Biðlistar',
   'health.categories.medicalRecords': 'Sjúkraskrá',
 
   // health - questionnaires
@@ -790,6 +801,8 @@ export const is = {
   'health.questionnaires.action.answer': 'Svara lista',
   'health.questionnaires.action.continue-draft': 'Halda áfram',
   'health.questionnaires.action.view-answer': 'Skoða svör',
+  'health.questionnaires.action.show-expired': 'Sýna útrunna',
+  'health.questionnaires.action.hide-expired': 'Fela útrunna',
   'health.questionnaires.detail.description':
     'Hér má finna svör þín við spurningalistunum. Þú getur borið saman svörin.',
   'health.questionnaires.detail.status': 'Staða',
@@ -819,18 +832,23 @@ export const is = {
   'health.appointments.title': 'Tímabókanir',
   'health.appointments.description':
     'Hér getur þú séð tímabókanir þínar í heilbrigðiskerfinu.',
-  'health.appointments.detailTitle': 'Tímabókun hjá heilsugæslunni',
-  'health.appointments.dateAndTime': 'Dagsetning og tími',
-  'health.appointments.duration': 'Lengd',
-  'health.appointments.location': 'Staðsetning',
-  'health.appointments.address': 'Heimilisfang',
   'health.appointments.practitioners': 'Tími hjá: {practitioner}',
   'health.appointments.appointmentWith': 'Tími hjá',
-  'health.appointments.atTime': 'kl {time}',
-  'health.appointments.timePrefix': 'kl',
   'health.appointments.instructions': 'Leiðbeiningar',
-  'health.appointments.openMap': 'Sjá á korti',
-  'health.appointments.type': 'Tegund',
+  'health.appointments.openMap': 'Opna kort',
+  'health.appointments.locationInstructions': 'Nánar um staðsetningu',
+  'health.appointments.seeMore': 'Sjá nánar',
+  'health.appointments.openingHours': 'Opnunartímar',
+  'health.appointments.phoneNumber': 'Símanúmer',
+  'health.appointments.organization': 'Stofnun',
+  'health.appointments.videoCall': 'Myndsímtal',
+  'health.appointments.videoCallInfoWithLink':
+    'Hnappurinn fyrir myndsímtalið verður virkur 5 mínútum fyrir bókaðan tíma.',
+  'health.appointments.videoCallInfoWithLinkActive':
+    'Ýttu hnappinn til að hefja myndsímtalið.',
+  'health.appointments.videoCallInfoNoLink':
+    'Þessi tímabókun inniheldur myndsímtal. Þú færð sendan hlekk á myndsímtalið stuttu fyrir bókaðan tíma. Ef enginn hlekkur finnst, vinsamlegast hafðu samband við viðeigandi stofnun.',
+  'health.appointments.startVideoCall': 'Hefja myndsímtal',
   'health.appointments.noAppointmentsTitle': 'Engar tímabókanir',
   'health.appointments.noAppointmentsText':
     'Þú ert ekki með neinar komandi tímabókanir.',
@@ -839,6 +857,7 @@ export const is = {
   'health.appointments.notFoundMessage':
     'Tímabókun fannst ekki. Hún kann að hafa verið felld niður.',
   'health.appointments.minutesFormat': '{minutes} mínútur',
+  'health.appointments.moreInfo': 'Nánari upplýsingar',
 
   // health - organ donation
   'health.organDonation': 'Líffæragjöf',

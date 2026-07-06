@@ -2,8 +2,11 @@ import { useCallback, useContext } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Checkbox, Input, Text } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import { Box, Input, Text } from '@island.is/island-ui/core'
+import {
+  PROSECUTION_RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE,
+  PROSECUTION_RESTRICTION_CASE_POLICE_REPORT_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import {
@@ -51,8 +54,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/restrictions'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isPoliceDemandsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-
-import * as styles from './PoliceDemands.css'
 
 export interface DemandsAutofillProps {
   defendant: Defendant
@@ -232,68 +233,66 @@ export const PoliceDemands = () => {
                 defaultTime="16:00"
               />
               {workingCase.type !== CaseType.TRAVEL_BAN && (
-                <div className={styles.isIsolationGrid}>
-                  <Checkbox
-                    name="isIsolation"
-                    label={formatMessage(rcDemands.sections.demands.isolation)}
-                    tooltip={formatMessage(rcDemands.sections.demands.tooltip)}
-                    checked={workingCase.requestedCustodyRestrictions?.includes(
-                      CaseCustodyRestrictions.ISOLATION,
-                    )}
-                    onChange={() => {
-                      const nextRequestedCustodyRestrictions = toggleInArray(
-                        workingCase.requestedCustodyRestrictions,
-                        CaseCustodyRestrictions.ISOLATION,
-                      )
-                      onDemandsChange(
-                        {
-                          requestedCustodyRestrictions:
-                            nextRequestedCustodyRestrictions,
-                          force: true,
-                        },
-                        workingCase.type,
-                        workingCase.requestedValidToDate,
-                        nextRequestedCustodyRestrictions,
-                      )
-                    }}
-                    large
-                    filled
-                  />
-                  <Checkbox
-                    name="isAdmissionToFacility"
-                    tooltip={formatMessage(
-                      rcDemands.sections.demands
+                <CheckboxList
+                  blueBox={false}
+                  dataTestId="demandsCheckbox"
+                  checkboxes={[
+                    {
+                      id: 'isIsolation',
+                      title: rcDemands.sections.demands.isolation,
+                      info: rcDemands.sections.demands.tooltip,
+                      checked:
+                        workingCase.requestedCustodyRestrictions?.includes(
+                          CaseCustodyRestrictions.ISOLATION,
+                        ) ?? false,
+                      onChange: () => {
+                        const nextRequestedCustodyRestrictions = toggleInArray(
+                          workingCase.requestedCustodyRestrictions,
+                          CaseCustodyRestrictions.ISOLATION,
+                        )
+                        onDemandsChange(
+                          {
+                            requestedCustodyRestrictions:
+                              nextRequestedCustodyRestrictions,
+                            force: true,
+                          },
+                          workingCase.type,
+                          workingCase.requestedValidToDate,
+                          nextRequestedCustodyRestrictions,
+                        )
+                      },
+                    },
+                    {
+                      id: 'isAdmissionToFacility',
+                      title:
+                        rcDemands.sections.demands
+                          .admissionToAppropriateFacility,
+                      info: rcDemands.sections.demands
                         .admissionToAppropriateFacilityTooltip,
-                    )}
-                    label={formatMessage(
-                      rcDemands.sections.demands.admissionToAppropriateFacility,
-                    )}
-                    checked={
-                      workingCase.type === CaseType.ADMISSION_TO_FACILITY
-                    }
-                    onChange={(event) => {
-                      if (workingCase.parentCase) {
-                        return
-                      }
+                      checked:
+                        workingCase.type === CaseType.ADMISSION_TO_FACILITY,
+                      disabled: Boolean(workingCase.parentCase),
+                      onChange: (checked) => {
+                        if (workingCase.parentCase) {
+                          return
+                        }
 
-                      const nextCaseType = event.target.checked
-                        ? CaseType.ADMISSION_TO_FACILITY
-                        : CaseType.CUSTODY
-                      onDemandsChange(
-                        {
-                          type: nextCaseType,
-                          force: true,
-                        },
-                        nextCaseType,
-                        workingCase.requestedValidToDate,
-                        workingCase.requestedCustodyRestrictions,
-                      )
-                    }}
-                    large
-                    filled
-                    disabled={Boolean(workingCase.parentCase)}
-                  />
-                </div>
+                        const nextCaseType = checked
+                          ? CaseType.ADMISSION_TO_FACILITY
+                          : CaseType.CUSTODY
+                        onDemandsChange(
+                          {
+                            type: nextCaseType,
+                            force: true,
+                          },
+                          nextCaseType,
+                          workingCase.requestedValidToDate,
+                          workingCase.requestedCustodyRestrictions,
+                        )
+                      },
+                    },
+                  ]}
+                />
               )}
             </BlueBox>
           </Box>
@@ -327,6 +326,7 @@ export const PoliceDemands = () => {
             />
             <BlueBox className={grid({ gap: 2 })}>
               <CheckboxList
+                blueBox={false}
                 checkboxes={
                   workingCase.type === CaseType.CUSTODY ||
                   workingCase.type === CaseType.ADMISSION_TO_FACILITY
@@ -377,21 +377,19 @@ export const PoliceDemands = () => {
                   },
                 )}
               />
-              <BlueBox>
-                <CheckboxList
-                  checkboxes={restrictionsCheckboxes}
-                  selected={workingCase.requestedCustodyRestrictions}
-                  onChange={(id) =>
-                    setCheckboxAndSendToServer(
-                      'requestedCustodyRestrictions',
-                      id,
-                      workingCase,
-                      setWorkingCase,
-                      updateCase,
-                    )
-                  }
-                />
-              </BlueBox>
+              <CheckboxList
+                checkboxes={restrictionsCheckboxes}
+                selected={workingCase.requestedCustodyRestrictions}
+                onChange={(id) =>
+                  setCheckboxAndSendToServer(
+                    'requestedCustodyRestrictions',
+                    id,
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
+                }
+              />
             </Box>
           )}
           {workingCase.type === CaseType.TRAVEL_BAN && (
@@ -412,6 +410,7 @@ export const PoliceDemands = () => {
               />
               <BlueBox className={grid({ gap: 2 })}>
                 <CheckboxList
+                  blueBox={false}
                   checkboxes={travelBanRestrictionsCheckboxes}
                   selected={workingCase.requestedCustodyRestrictions}
                   onChange={(id) =>
@@ -449,9 +448,9 @@ export const PoliceDemands = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
+          previousUrl={`${PROSECUTION_RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            handleNavigationTo(constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE)
+            handleNavigationTo(PROSECUTION_RESTRICTION_CASE_POLICE_REPORT_ROUTE)
           }
           nextIsDisabled={!stepIsValid}
         />

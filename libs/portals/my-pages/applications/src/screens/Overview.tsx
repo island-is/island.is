@@ -116,6 +116,8 @@ const Overview = () => {
         return heading ? m.headingInProgress : m.introCopyInProgress
       case ApplicationOverViewStatus.incomplete:
         return heading ? m.headingIncomplete : m.introCopyIncomplete
+      case ApplicationOverViewStatus.older:
+        return heading ? m.headingOlder : m.introCopyOlder
       default:
         return heading ? m.heading : m.introCopy
     }
@@ -129,6 +131,8 @@ const Overview = () => {
         return m.noInProgressApplicationsAvailable
       case ApplicationOverViewStatus.incomplete:
         return m.noIncompleteApplicationsAvailable
+      case ApplicationOverViewStatus.older:
+        return m.noOlderApplicationsAvailable
       default:
         return m.noApplicationsAvailable
     }
@@ -141,7 +145,9 @@ const Overview = () => {
     (statusToShow === ApplicationOverViewStatus.inProgress &&
       applicationsSortedByStatus.inProgress.length === 0) ||
     (statusToShow === ApplicationOverViewStatus.completed &&
-      applicationsSortedByStatus.finished.length === 0)
+      applicationsSortedByStatus.finished.length === 0) ||
+    (statusToShow === ApplicationOverViewStatus.older &&
+      applicationsSortedByStatus.older.length === 0)
 
   return (
     <>
@@ -232,6 +238,16 @@ const Overview = () => {
                 <ApplicationGroup
                   applications={applicationsSortedByStatus.finished}
                   label={formatMessage(m.finishedApplications)}
+                  organizations={organizations}
+                  refetch={refetch}
+                />
+              )}
+            {applicationsSortedByStatus.older?.length > 0 &&
+              (statusToShow === ApplicationOverViewStatus.all ||
+                statusToShow === ApplicationOverViewStatus.older) && (
+                <ApplicationGroup
+                  applications={applicationsSortedByStatus.older}
+                  label={formatMessage(m.olderApplications)}
                   organizations={organizations}
                   refetch={refetch}
                 />

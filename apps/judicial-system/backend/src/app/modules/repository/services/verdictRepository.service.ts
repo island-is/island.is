@@ -41,15 +41,15 @@ interface DeleteVerdictOptions {
 interface UpdateVerdict {
   externalPoliceDocumentId?: string
   serviceStatus?: VerdictServiceStatus
-  serviceRequirement?: ServiceRequirement
+  serviceRequirement?: ServiceRequirement | null
   servedBy?: string
   deliveredToDefenderNationalId?: string
   appealDecision?: string
   appealDate?: Date
   serviceInformationForDefendant?: InformationForDefendant[]
-  isDefaultJudgement?: boolean
-  isAcquittedByPublicProsecutionOffice?: boolean
-  defendantHasRequestedAppeal?: boolean
+  isDefaultJudgement?: boolean | null
+  isAcquittedByPublicProsecutionOffice?: boolean | null
+  defendantHasRequestedAppeal?: boolean | null
   hash?: string
   hashAlgorithm?: HashAlgorithm
   serviceDate?: Date | null

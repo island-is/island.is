@@ -1,4 +1,6 @@
+import { setStringAsync } from 'expo-clipboard'
 import { useEffect } from 'react'
+import { Image, TouchableOpacity, View } from 'react-native'
 import Animated, {
   useAnimatedStyle,
   useDerivedValue,
@@ -8,10 +10,10 @@ import Animated, {
 import styled, { useTheme } from 'styled-components/native'
 import { PressableHighlight } from '@/components/pressable-highlight/pressable-highlight'
 import { useOrganizationsStore } from '@/stores/organizations-store'
-import { Container, Icon, Typography } from '@/ui'
+import { Avatar, Container, Icon, Typography } from '@/ui'
+import copyIcon from '@/ui/assets/icons/copy.png'
 import { Markdown } from '@/ui/lib/markdown/markdown'
 import { isAndroid } from '@/utils/devices'
-import { getInitials } from '@/utils/get-initials'
 
 export const TOGGLE_ANIMATION_DURATION = 300
 
@@ -43,8 +45,8 @@ const Body = styled(Container)`
 const IconBackground = styled.View`
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
   background-color: ${({ theme }) => theme.color.blue100};
   border-radius: ${({ theme }) => theme.border.radius.full};
 `
@@ -55,11 +57,26 @@ const Content = styled.View`
   row-gap: 2px;
 `
 
+const MetaRow = styled.View`
+  flex-direction: row;
+  align-items: center;
+  column-gap: ${({ theme }) => theme.spacing.smallGutter}px;
+`
+
+const MetaSeparator = styled.View`
+  width: 1px;
+  height: 12px;
+  background-color: ${({ theme }) => theme.color.blue200};
+`
+
 type DocumentListItemProps = {
   sender: string
   title: string
   body?: string
   date?: string
+  caseNumber?: string
+  caseNumberLabel?: string
+  caseNumberCopyLabel?: string
   isOpen?: boolean
   closeable?: boolean
   hasTopBorder?: boolean
@@ -71,6 +88,9 @@ export const DocumentListItem = ({
   title,
   body,
   date,
+  caseNumber,
+  caseNumberLabel,
+  caseNumberCopyLabel,
   closeable = false,
   isOpen = false,
   hasTopBorder = true,
@@ -128,25 +148,41 @@ export const DocumentListItem = ({
         highlightColor={closeable ? theme.shade.shade100 : theme.color.white}
         hasTopBorder={hasTopBorder}
       >
-        <>
+        <View>
           <Host>
-            <IconBackground>
-              {!source ? (
-                <Typography
-                  variant="body"
-                  weight="600"
-                  lineHeight={0}
-                  color={theme.color.blue400}
-                >
-                  {getInitials(sender)}
-                </Typography>
-              ) : (
+            {source ? (
+              <IconBackground>
                 <Icon source={source} width={24} height={24} />
-              )}
-            </IconBackground>
+              </IconBackground>
+            ) : (
+              <Avatar name={sender} isSmall />
+            )}
             <Content>
-              <Typography variant="eyebrow">{title}</Typography>
-              <Typography variant="body3">{date}</Typography>
+              <Typography variant="heading5">{title}</Typography>
+              <MetaRow>
+                {date ? <Typography variant="body3">{date}</Typography> : null}
+                {caseNumber ? (
+                  <>
+                    {date ? <MetaSeparator /> : null}
+                    <Typography variant="body3">
+                      {caseNumberLabel ? `${caseNumberLabel} ` : ''}
+                      {caseNumber}
+                    </Typography>
+                    <TouchableOpacity
+                      onPress={() => setStringAsync(`#${caseNumber}`)}
+                      hitSlop={8}
+                      accessibilityRole="button"
+                      accessibilityLabel={caseNumberCopyLabel}
+                    >
+                      <Image
+                        source={copyIcon}
+                        style={{ width: 16, height: 16 }}
+                        resizeMode="contain"
+                      />
+                    </TouchableOpacity>
+                  </>
+                ) : null}
+              </MetaRow>
             </Content>
           </Host>
           <Animated.View style={bodyStyle}>
@@ -158,7 +194,7 @@ export const DocumentListItem = ({
               {body ? <Markdown>{body}</Markdown> : null}
             </Body>
           </Animated.View>
-        </>
+        </View>
       </Wrapper>
     </Animated.View>
   )

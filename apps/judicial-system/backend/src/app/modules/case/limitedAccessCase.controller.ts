@@ -45,8 +45,8 @@ import {
 import { nowFactory } from '../../factories'
 import { defenderRule, prisonSystemStaffRule } from '../../guards'
 import { EventService } from '../event'
-import { Case, User } from '../repository'
-import { TransitionCaseDto } from './dto/transitionCase.dto'
+import { getDefenceUserVisiblePoliceCaseNumbers } from '../file'
+import { Case, CivilClaimant, Defendant, User } from '../repository'
 import { UpdateCaseDto } from './dto/updateCase.dto'
 import { CurrentCase } from './guards/case.decorator'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
@@ -59,19 +59,13 @@ import { MergedCaseExistsGuard } from './guards/mergedCaseExists.guard'
 import { RequestSharedWithDefenderGuard } from './guards/requestSharedWithDefender.guard'
 import {
   defenderGeneratedPdfRule,
-  defenderTransitionRule,
-  defenderUpdateRule,
   prisonSystemAdminRulingPdfRule,
   prisonSystemAdminUpdateRule,
 } from './guards/rolesRules'
 import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
 import { LimitedAccessCaseFileInterceptor } from './interceptors/limitedAccessCaseFile.interceptor'
-import { transitionCase } from './state/case.state'
-import {
-  LimitedAccessCaseService,
-  LimitedAccessUpdateCase,
-} from './limitedAccessCase.service'
+import { LimitedAccessCaseService } from './limitedAccessCase.service'
 import { PdfService } from './pdf.service'
 
 @Controller('api')
@@ -137,7 +131,7 @@ export class LimitedAccessCaseController {
     CaseWriteGuard,
     CaseCompletedGuard,
   )
-  @RolesRules(prisonSystemAdminUpdateRule, defenderUpdateRule)
+  @RolesRules(prisonSystemAdminUpdateRule)
   @UseInterceptors(CaseInterceptor)
   @Patch('case/:caseId/limitedAccess')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
@@ -148,56 +142,14 @@ export class LimitedAccessCaseController {
     @Body() updateDto: UpdateCaseDto,
   ): Promise<Case> {
     this.logger.debug(`Updating case ${caseId}`)
-
-    const update: LimitedAccessUpdateCase = updateDto
-
-    if (update.defendantStatementDate) {
-      update.defendantStatementDate = nowFactory()
-    }
-
     return this.sequelize.transaction((transaction) =>
-      this.limitedAccessCaseService.update(theCase, update, user, transaction),
+      this.limitedAccessCaseService.update(
+        theCase,
+        updateDto,
+        user,
+        transaction,
+      ),
     )
-  }
-
-  @UseGuards(
-    JwtAuthUserGuard,
-    LimitedAccessCaseExistsGuard,
-    RolesGuard,
-    new CaseTypeGuard([
-      ...restrictionCases,
-      ...investigationCases,
-      ...indictmentCases,
-    ]),
-    CaseWriteGuard,
-    CaseCompletedGuard,
-  )
-  @RolesRules(defenderTransitionRule)
-  @UseInterceptors(CaseInterceptor)
-  @Patch('case/:caseId/limitedAccess/state')
-  @ApiOkResponse({
-    type: Case,
-    description: 'Updates the state of a case',
-  })
-  async transition(
-    @Param('caseId') caseId: string,
-    @CurrentHttpUser() user: TUser,
-    @CurrentCase() theCase: Case,
-    @Body() transition: TransitionCaseDto,
-  ): Promise<Case> {
-    this.logger.debug(
-      `Transitioning case ${caseId} to ${transition.transition}`,
-    )
-
-    const update = transitionCase(transition.transition, theCase, user)
-
-    const updatedCase = await this.sequelize.transaction((transaction) =>
-      this.limitedAccessCaseService.update(theCase, update, user, transaction),
-    )
-
-    this.eventService.postEvent(transition.transition, updatedCase)
-
-    return updatedCase
   }
 
   @UseGuards(TokenGuard)
@@ -264,6 +216,7 @@ export class LimitedAccessCaseController {
   async getCaseFilesRecordPdf(
     @Param('caseId') caseId: string,
     @Param('policeCaseNumber') policeCaseNumber: string,
+    @CurrentHttpUser() user: TUser,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
   ): Promise<void> {
@@ -275,6 +228,30 @@ export class LimitedAccessCaseController {
       throw new BadRequestException(
         `Case ${caseId} does not include police case number ${policeCaseNumber}`,
       )
+    }
+
+    if (
+      Defendant.isConfirmedDefenderOfDefendant(
+        user.nationalId,
+        theCase.defendants,
+      ) ||
+      CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
+        user.nationalId,
+        theCase.civilClaimants,
+      )
+    ) {
+      const visiblePoliceCaseNumbers = getDefenceUserVisiblePoliceCaseNumbers(
+        user.nationalId,
+        theCase.defendants,
+        theCase.civilClaimants,
+        theCase.policeCaseNumbers,
+      )
+
+      if (!visiblePoliceCaseNumbers.includes(policeCaseNumber)) {
+        throw new ForbiddenException(
+          `Defence user does not have access to police case number ${policeCaseNumber}`,
+        )
+      }
     }
 
     const pdf = await this.pdfService.getCaseFilesRecordPdf(
@@ -504,7 +481,6 @@ export class LimitedAccessCaseController {
       ...indictmentCases,
     ]),
     CaseReadGuard,
-    CaseCompletedGuard,
   )
   @RolesRules(defenderRule)
   @Get('case/:caseId/limitedAccess/all')

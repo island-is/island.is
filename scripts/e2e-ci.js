@@ -68,9 +68,7 @@ const CMD = {
     argv['skip-cache'] ? ' --skip-nx-cache' : ''} ${process.env.E2E_BUILD_ID ? `--ciBuildId=${process.env.E2E_BUILD_ID}` : ''}`
 }
 
-const ENV = {
-  SI_PUBLIC_CONFIGCAT_SDK_KEY: 'asdf',
-}
+const ENV = {}
 
 const build = async () => {
   console.log(`Building ${target}...`)

@@ -1,6 +1,7 @@
 import { FormSystemField } from '@island.is/api/schema'
 import {
   ApplicantDisplay,
+  AssetDisplay,
   CheckBoxDisplay,
   DateDisplay,
   DefaultDisplay,
@@ -14,6 +15,7 @@ import { Box } from '@island.is/island-ui/core'
 interface Props {
   field: FormSystemField
   valueIndex?: number
+  requiredMissing?: boolean
 }
 
 const FIELD_COMPONENT_MAP = {
@@ -35,12 +37,18 @@ const FIELD_COMPONENT_MAP = {
   [FieldTypesEnum.MESSAGE]: DefaultDisplay,
   [FieldTypesEnum.APPLICANT]: ApplicantDisplay,
   [FieldTypesEnum.PAYMENT_QUANTITY]: DefaultDisplay,
+  [FieldTypesEnum.ASSETS]: AssetDisplay,
 } as const
 
-export const Display = ({ field, valueIndex = 0 }: Props) => {
+export const Display = ({
+  field,
+  valueIndex = 0,
+  requiredMissing = false,
+}: Props) => {
   const fieldItems = {
     item: field,
     valueIndex,
+    requiredMissing,
   }
 
   const FieldComponent =

@@ -8,12 +8,3 @@ globalStyle(`${purpleTags} a:hover, ${purpleTags} button:hover`, {
   backgroundColor: theme.color.purple400,
   color: theme.color.white,
 })
-
-export const truncatedTags = style({})
-
-globalStyle(`${truncatedTags} a, ${truncatedTags} button`, {
-  maxWidth: '100%',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  whiteSpace: 'nowrap',
-})

@@ -21,22 +21,39 @@ export class DeRegisterUnemploymentBenefitsService extends BaseTemplateApiServic
     super(ApplicationTypes.DEREGISTER_UNEMPLOYMENT_BENEFITS)
   }
 
-  async getSupportData({ auth }: TemplateApiModuleActionProps) {
+  async getSupportData({
+    auth,
+    currentUserLocale,
+  }: TemplateApiModuleActionProps) {
+    const resolvedApplicantId =
+      await this.vmstUnemploymentClientService.resolveApplicant(auth)
+
+    if (!resolvedApplicantId.applicantId) {
+      throw new TemplateApiError(
+        {
+          title: errorMsgs.cannotApplyErrorTitle,
+          summary: errorMsgs.cannotApplyErrorSummary,
+        },
+        400,
+      )
+    }
     const canWithdraw =
       await this.vmstUnemploymentClientService.canUserWithdrawUnemploymentApplication(
-        auth,
+        resolvedApplicantId.applicantId,
       )
 
-    if (!canWithdraw.success) {
+    if (!canWithdraw.isEligible) {
       this.logger.warn(
         '[VMST-Unemployment]: User cannot withdraw, creating application returned canWithdraw: False',
-        canWithdraw.errorMessage,
+        canWithdraw.reason,
       )
       throw new TemplateApiError(
         {
           title: errorMsgs.cannotApplyErrorTitle,
           summary:
-            canWithdraw.errorMessage || errorMsgs.cannotApplyErrorSummary,
+            (currentUserLocale === 'is'
+              ? canWithdraw.reason
+              : canWithdraw.reasonEN) || errorMsgs.cannotApplyErrorSummary,
         },
         400,
       )
@@ -46,8 +63,10 @@ export class DeRegisterUnemploymentBenefitsService extends BaseTemplateApiServic
       await this.vmstUnemploymentClientService.withdrawApplicationSupportData()
 
     return {
-      canWithdraw: canWithdraw.success,
+      canWithdraw: canWithdraw.isEligible,
       delistingReasons,
+      dateMin: canWithdraw.possibleDateFrom,
+      dateMax: canWithdraw.possibleDateTo,
     }
   }
 

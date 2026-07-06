@@ -1,5 +1,5 @@
 import { ArgsType, Field, GraphQLISODateTime } from '@nestjs/graphql'
-import { IsDate, IsEnum, IsOptional } from 'class-validator'
+import { IsDate, IsEnum, IsOptional, IsString } from 'class-validator'
 import { AppointmentStatusEnum } from '../models/enums'
 
 @ArgsType()
@@ -13,4 +13,11 @@ export class HealthDirectorateAppointmentsInput {
   @IsEnum(AppointmentStatusEnum, { each: true, always: false })
   @IsOptional()
   status?: AppointmentStatusEnum[]
+}
+
+@ArgsType()
+export class HealthDirectorateAppointmentInput {
+  @Field()
+  @IsString()
+  id!: string
 }

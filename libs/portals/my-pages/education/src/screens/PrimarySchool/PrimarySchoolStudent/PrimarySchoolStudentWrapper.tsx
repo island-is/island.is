@@ -7,15 +7,18 @@ import {
 } from 'react-router-dom'
 import { Hidden, Box } from '@island.is/island-ui/core'
 import {
-  IntroWrapperV2,
+  CardLoader,
+  IntroWrapper,
   m,
   MMS_SLUG,
   TabNavigation,
 } from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { Problem } from '@island.is/react-spa/shared'
 import { EducationPaths } from '../../../lib/paths'
 import { primarySchoolMessages as psm } from '../../../lib/messages'
 import type { PrimarySchoolStudentLoaderData } from './PrimarySchoolStudent.loader'
+import { usePrimarySchoolAssessmentDataQuery } from '../PrimarySchoolAssessment/PrimarySchoolAssessment.generated'
 
 export const PrimarySchoolStudentWrapper = ({
   children,
@@ -29,6 +32,14 @@ export const PrimarySchoolStudentWrapper = ({
   const loaderData = useLoaderData() as PrimarySchoolStudentLoaderData
   const title = loaderData?.studentName ?? psm.schoolLabel
 
+  const { data: assessmentData, loading: assessmentLoading } =
+    usePrimarySchoolAssessmentDataQuery({
+      variables: { studentId: studentId ?? '' },
+      skip: !studentId,
+    })
+  const hasAssessment =
+    (assessmentData?.primarySchoolStudent?.assessmentHistory?.length ?? 0) > 0
+
   const overviewPath = generatePath(EducationPaths.PrimarySchoolOverview, {
     studentId: studentId ?? '',
   })
@@ -36,34 +47,46 @@ export const PrimarySchoolStudentWrapper = ({
     studentId: studentId ?? '',
   })
 
-  const tabItems = [
-    {
-      name: m.overview,
-      path: overviewPath,
-      active: location.pathname === overviewPath,
-    },
-    {
-      name: psm.assessmentTitle,
-      path: assessmentPath,
-      active: location.pathname === assessmentPath,
-    },
-  ]
-
   return (
-    <IntroWrapperV2
+    <IntroWrapper
       title={title}
       intro={psm.studentHubIntro}
       serviceProvider={{ slug: MMS_SLUG, tooltip: formatMessage(m.mmsTooltip) }}
     >
-      <Hidden print>
-        <TabNavigation
-          label={formatMessage(psm.studentLabel)}
-          pathname={location.pathname}
-          items={tabItems}
+      {hasAssessment ? (
+        <>
+          <Hidden print>
+            <TabNavigation
+              label={formatMessage(m.menu)}
+              pathname={location.pathname}
+              items={[
+                {
+                  name: m.overview,
+                  path: overviewPath,
+                  active: location.pathname === overviewPath,
+                },
+                {
+                  name: psm.assessmentTitle,
+                  path: assessmentPath,
+                  active: location.pathname === assessmentPath,
+                },
+              ]}
+            />
+          </Hidden>
+          <Box paddingTop={2}>{children}</Box>
+        </>
+      ) : assessmentLoading ? (
+        <CardLoader />
+      ) : (
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(m.noData)}
+          message={formatMessage(psm.assessmentNoData)}
+          imgSrc="./assets/images/sofa.svg"
         />
-      </Hidden>
-      <Box paddingTop={2}>{children}</Box>
-    </IntroWrapperV2>
+      )}
+    </IntroWrapper>
   )
 }
 

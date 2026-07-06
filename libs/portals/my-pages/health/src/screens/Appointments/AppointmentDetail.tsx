@@ -1,132 +1,254 @@
-import { useLocale } from '@island.is/localization'
+import { Box, Icon, Stack, Text } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  HEALTH_DIRECTORATE_SLUG,
+  CardLoader,
   InfoLine,
   InfoLineStack,
   IntroWrapper,
+  LinkButton,
   formatDate,
   getTime,
   getWeekday,
-  m,
 } from '@island.is/portals/my-pages/core'
 
 import { Problem } from '@island.is/react-spa/shared'
 import { useParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 
-import { DEFAULT_APPOINTMENTS_STATUS } from '../../utils/constants'
 import { generateGoogleMapsLink } from '../../utils/googleMaps'
 import { mapWeekday } from '../../utils/mappers'
-import { useGetAppointmentsQuery } from './Appointments.generated'
+import { useGetAppointmentDetailQuery } from './AppointmentDetail.generated'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const AppointmentDetail = () => {
+  useNamespaces('sp.health')
   const { formatMessage } = useLocale()
   useHealthPlausibleSwap()
   const { id } = useParams<{ id: string }>()
 
-  const { data, loading, error } = useGetAppointmentsQuery({
-    variables: {
-      from: undefined,
-      status: DEFAULT_APPOINTMENTS_STATUS,
-    },
+  const { data, loading, error } = useGetAppointmentDetailQuery({
+    variables: { id: id ?? '' },
+    skip: !id,
   })
 
-  const appointment = data?.healthDirectorateAppointments.data?.find(
-    (appointment) => appointment.id === id,
+  const appointment = data?.healthDirectorateAppointment
+
+  const locationLink =
+    appointment?.location?.locationLinks?.find((l) => l.type === 'WEBSITE')
+      ?.url ??
+    appointment?.location?.link ??
+    undefined
+
+  const mapsLink = generateGoogleMapsLink(
+    appointment?.location?.latitude,
+    appointment?.location?.longitude,
   )
+
+  const fullAddress =
+    [
+      appointment?.location?.name,
+      appointment?.location?.address,
+      [appointment?.location?.postalCode, appointment?.location?.city]
+        .filter(Boolean)
+        .join(' '),
+    ]
+      .filter(Boolean)
+      .join(', ') || undefined
+
+  const weekday = mapWeekday(getWeekday(appointment?.date ?? ''), formatMessage)
 
   return (
     <IntroWrapper
       title={messages.appointmentDetail}
       intro={messages.appointmentsDetailIntro}
-      serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
-      serviceProviderTooltip={formatMessage(
-        messages.landlaeknirMedicineDelegationTooltip,
-      )}
+      desktopContentSpan="10/12"
       loading={loading}
     >
-      {!loading && !error && !appointment && <Problem type="no_data" />}
-      {!error && (
-        <InfoLineStack label={formatMessage(m.info)} space={1}>
-          <InfoLine
-            label={formatMessage(messages.dateAndTime)}
-            content={
-              appointment?.date
-                ? [
-                    mapWeekday(
-                      getWeekday(appointment?.date ?? ''),
-                      formatMessage,
-                    ),
-                    formatDate(appointment?.date ?? ''),
-                    formatMessage(messages.clockShortArg, {
-                      arg: getTime(appointment?.date ?? ''),
-                    }),
-                  ]
-                    .filter(Boolean)
-                    .join(', ')
-                : undefined
-            }
-            loading={loading}
-          />
-          <InfoLine
-            label={formatMessage(messages.type)}
-            content={appointment?.title ?? undefined}
-            loading={loading}
-          />
-          {appointment?.instruction && (
-            <InfoLine
-              label={formatMessage(messages.instructions)}
-              content={appointment?.instruction}
-              loading={loading}
-            />
+      {error && !loading && <Problem error={error} noBorder={false} />}
+      {loading && !appointment && <CardLoader />}
+      {!loading && !error && !appointment && (
+        <Problem
+          type="no_data"
+          title={formatMessage(messages.appointmentNotFound)}
+          message={formatMessage(messages.appointmentNotFoundDetail)}
+          imgSrc="./assets/images/nodata.svg"
+          noBorder={false}
+        />
+      )}
+      {!error && appointment && (
+        <Stack space={5}>
+          <Box
+            border="standard"
+            borderRadius="large"
+            padding={[2, 2, 3]}
+            display="flex"
+            justifyContent="spaceBetween"
+            alignItems="center"
+          >
+            <Stack space={3}>
+              <Text variant="h4" color="blue400">
+                {appointment.title}
+              </Text>
+              <Stack space={2}>
+                {appointment.date && (
+                  <Box display="flex" alignItems="center" columnGap={1}>
+                    <Icon
+                      icon="calendar"
+                      size="small"
+                      color="blue400"
+                      type="outline"
+                    />
+                    <Text>
+                      {weekday ? `${weekday}, ` : ''}
+                      {formatDate(appointment.date)}
+                    </Text>
+                  </Box>
+                )}
+                {appointment.date && (
+                  <Box display="flex" alignItems="center" columnGap={1}>
+                    <Icon
+                      icon="time"
+                      size="small"
+                      color="blue400"
+                      type="outline"
+                    />
+                    <Text>{getTime(appointment.date)}</Text>
+                  </Box>
+                )}
+                {appointment.duration && (
+                  <Box display="flex" alignItems="center" columnGap={1}>
+                    <Icon
+                      icon="hourglass"
+                      size="small"
+                      color="blue400"
+                      type="outline"
+                    />
+                    <Text>
+                      {formatMessage(messages.argWithMinutes, {
+                        arg: appointment.duration,
+                      })}
+                    </Text>
+                  </Box>
+                )}
+                {fullAddress && (
+                  <Box display="flex" alignItems="flexStart" columnGap={1}>
+                    <Box flexShrink={0}>
+                      <Icon
+                        icon="location"
+                        size="small"
+                        color="blue400"
+                        type="outline"
+                      />
+                    </Box>
+                    <Box
+                      display="flex"
+                      flexWrap="wrap"
+                      alignItems="center"
+                      columnGap={2}
+                    >
+                      <Text>{fullAddress}</Text>
+                      {mapsLink && (
+                        <LinkButton
+                          to={mapsLink}
+                          text={formatMessage(messages.openMap)}
+                          variant="text"
+                          size="small"
+                          icon="open"
+                        />
+                      )}
+                    </Box>
+                  </Box>
+                )}
+
+                {locationLink && (
+                  <Box display="flex" alignItems="flexStart" columnGap={1}>
+                    <Box flexShrink={0}>
+                      <Icon
+                        icon="informationCircle"
+                        size="small"
+                        color="blue400"
+                        type="outline"
+                      />
+                    </Box>
+                    <Box
+                      display="flex"
+                      flexWrap="wrap"
+                      alignItems="center"
+                      columnGap={2}
+                    >
+                      <Text>
+                        {formatMessage(messages.locationInstructions)}
+                      </Text>
+                      {locationLink && (
+                        <LinkButton
+                          to={locationLink}
+                          text={formatMessage(messages.seeMore)}
+                          variant="text"
+                          size="small"
+                          icon="open"
+                        />
+                      )}
+                    </Box>
+                  </Box>
+                )}
+              </Stack>
+            </Stack>
+            <Box
+              display={['none', 'none', 'block']}
+              flexShrink={0}
+              marginLeft={3}
+              marginRight={6}
+            >
+              <img src="./assets/images/appointment.svg" alt="" />
+            </Box>
+          </Box>
+
+          {((appointment.practitioners?.length ?? 0) > 0 ||
+            appointment.instruction ||
+            appointment.location?.phoneNumber ||
+            appointment.location?.openingHoursText) && (
+            <InfoLineStack
+              label={formatMessage(messages.appointmentMoreInfo)}
+              space={1}
+            >
+              {(appointment.practitioners?.length ?? 0) > 0 && (
+                <InfoLine
+                  loading={loading}
+                  label={formatMessage(messages.appointmentAtSimple)}
+                  content={appointment.practitioners.join(', ')}
+                />
+              )}
+              {appointment.instruction && (
+                <InfoLine
+                  loading={loading}
+                  label={formatMessage(messages.instructions)}
+                  content={appointment.instruction}
+                />
+              )}
+              {appointment.location?.phoneNumber && (
+                <InfoLine
+                  loading={loading}
+                  label={formatMessage(messages.phoneNumber)}
+                  content={appointment.location.phoneNumber}
+                />
+              )}
+              {appointment.location?.openingHoursText && (
+                <InfoLine
+                  loading={loading}
+                  label={formatMessage(messages.openingHours)}
+                  content={appointment.location.openingHoursText}
+                />
+              )}
+              {appointment.location?.organization && (
+                <InfoLine
+                  loading={loading}
+                  label={formatMessage(messages.organization)}
+                  content={appointment.location.organization}
+                />
+              )}
+            </InfoLineStack>
           )}
-          {appointment?.duration && (
-            <InfoLine
-              label={formatMessage(messages.duration)}
-              content={formatMessage(messages.argWithMinutes, {
-                arg: appointment?.duration,
-              })}
-              loading={loading}
-            />
-          )}
-          <InfoLine
-            loading={loading}
-            label={formatMessage(messages.locationAddress)}
-            content={appointment?.location?.name}
-          />
-          <InfoLine
-            loading={loading}
-            label={formatMessage(m.address)}
-            content={[
-              appointment?.location?.address,
-              [appointment?.location?.postalCode, appointment?.location?.city]
-                .filter(Boolean)
-                .join(' '),
-            ]
-              .filter(Boolean)
-              .join(', ')}
-            button={
-              appointment?.location?.address
-                ? {
-                    type: 'link',
-                    to: generateGoogleMapsLink(
-                      appointment.location?.address ?? '',
-                    ),
-                    icon: 'link',
-                    label: formatMessage(messages.openMap),
-                  }
-                : undefined
-            }
-          />
-          {(appointment?.practitioners?.length ?? 0) > 0 && (
-            <InfoLine
-              loading={loading}
-              label={formatMessage(messages.appointmentAtSimple)}
-              content={appointment?.practitioners.join(', ')}
-            />
-          )}
-        </InfoLineStack>
+        </Stack>
       )}
     </IntroWrapper>
   )

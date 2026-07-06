@@ -9,8 +9,15 @@ import {
   Text,
   UploadFile,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
 import {
+  DEFENDER_INDICTMENT_CASE_ROUTE,
+  DEFENDER_REQUEST_CASE_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE,
+  SIGNED_VERDICT_OVERVIEW_ROUTE,
+} from '@island.is/judicial-system/consts'
+import {
+  isCompletedCase,
   isDefenceUser,
   isIndictmentCase,
   isProsecutionUser,
@@ -26,17 +33,19 @@ import {
   PageTitle,
   RequestAppealRulingNotToBePublishedCheckbox,
   RulingDateLabel,
+  RulingFileLabel,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseFileCategory,
-  NotificationType,
+  TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,
   useFileList,
   useS3Upload,
+  useTargetAppealCaseByRulingFileId,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
@@ -45,11 +54,11 @@ import {
 } from '@island.is/judicial-system-web/src/utils/utils'
 
 const AppealFiles = () => {
-  const { workingCase } = useContext(FormContext)
+  const { workingCase, refreshCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
-  const { id } = router.query
+  const targetAppealCase = useTargetAppealCaseByRulingFileId()
   const [visibleModal, setVisibleModal] = useState<boolean>(false)
   const { defendantId, civilClaimantId } = getDefenceUserPartyIds(
     workingCase,
@@ -67,11 +76,12 @@ const AppealFiles = () => {
     workingCase.id,
     defendantId,
     civilClaimantId,
+    targetAppealCase?.rulingFileId,
   )
   const { onOpenFile } = useFileList({
     caseId: workingCase.id,
   })
-  const { sendNotification } = useCase()
+  const { sendAppealNotification } = useCase()
 
   const appealCaseFilesType = isDefenceUser(user)
     ? CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE
@@ -80,12 +90,14 @@ const AppealFiles = () => {
   const previousUrl = `${
     isDefenceUser(user)
       ? isIndictmentCase(workingCase.type)
-        ? constants.DEFENDER_INDICTMENT_ROUTE
-        : constants.DEFENDER_ROUTE
+        ? DEFENDER_INDICTMENT_CASE_ROUTE
+        : DEFENDER_REQUEST_CASE_ROUTE
       : isIndictmentCase(workingCase.type)
-      ? constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
-      : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
-  }/${id}`
+      ? isCompletedCase(workingCase.state)
+        ? PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE
+        : PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE
+      : SIGNED_VERDICT_OVERVIEW_ROUTE
+  }/${workingCase.id}`
 
   const handleNextButtonClick = useCallback(async () => {
     const uploadResult = await handleUpload(
@@ -97,14 +109,24 @@ const AppealFiles = () => {
       return
     }
 
-    sendNotification(workingCase.id, NotificationType.APPEAL_CASE_FILES_UPDATED)
+    if (targetAppealCase) {
+      await sendAppealNotification(
+        workingCase.id,
+        TrackedNotificationType.APPEAL_CASE_FILES_UPDATED,
+        targetAppealCase.id,
+      )
+    }
+
+    refreshCase()
 
     setVisibleModal(true)
   }, [
     handleUpload,
     uploadFiles,
-    sendNotification,
     updateUploadFile,
+    targetAppealCase,
+    refreshCase,
+    sendAppealNotification,
     workingCase.id,
   ])
 
@@ -127,17 +149,23 @@ const AppealFiles = () => {
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
       <PageHeader title={formatMessage(titles.shared.appealToCourtOfAppeals)} />
       <FormContentContainer>
-        <PageTitle previousUrl={previousUrl}>Gögn</PageTitle>
+        <PageTitle>Gögn</PageTitle>
         <Box marginBottom={7}>
+          {workingCase.courtCaseNumber && (
+            <Text as="h2" variant="h2" fontWeight="semiBold" marginBottom={1}>
+              Mál nr. {workingCase.courtCaseNumber}
+            </Text>
+          )}
           {workingCase.rulingDate && (
             <RulingDateLabel rulingDate={workingCase.rulingDate} />
           )}
-          {(workingCase.prosecutorPostponedAppealDate ||
-            workingCase.accusedPostponedAppealDate) && (
-            <Text variant="h5" as="h5">
-              {getAppealActorText(workingCase)}
-            </Text>
-          )}
+          <RulingFileLabel
+            caseFiles={workingCase.caseFiles}
+            rulingFileId={targetAppealCase?.rulingFileId}
+          />
+          <Text variant="h5" as="h5">
+            {getAppealActorText(workingCase, targetAppealCase)}
+          </Text>
         </Box>
         <Box
           component="section"

@@ -7,7 +7,6 @@ export const ESTATE_INHERITANCE = 'estateInheritance'
 export const States = {
   prerequisites: 'prerequisites',
   draft: 'draft',
-  inReview: 'inReview',
   signing: 'signing',
   done: 'done',
 }
@@ -53,17 +52,11 @@ export const PrePaidHeirsRelations = [
   },
 ]
 
-export type InheritanceReportEvent =
-  | { type: DefaultEvents.APPROVE }
-  | { type: DefaultEvents.REJECT }
-  | { type: DefaultEvents.SUBMIT }
-  | { type: DefaultEvents.ASSIGN }
-  | { type: DefaultEvents.EDIT }
+export type InheritanceReportEvent = { type: DefaultEvents.SUBMIT }
 
 export enum Roles {
   ESTATE_INHERITANCE_APPLICANT = 'estateInheritanceApplicant',
   PREPAID_INHERITANCE_APPLICANT = 'prepaidInheritanceApplicant',
-  ASSIGNEE = 'assignee',
 }
 
 export enum ApiActions {
@@ -71,8 +64,7 @@ export enum ApiActions {
   completeApplication = 'completeApplication',
   submitToSyslumenn = 'submitToSyslumenn',
   getSignatories = 'getSignatories',
-  approveByAssignee = 'approveByAssignee',
-  checkReviewFlag = 'checkReviewFlag',
+  sendApplicationCopyToParties = 'sendApplicationCopyToParties',
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

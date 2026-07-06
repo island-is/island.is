@@ -1,12 +1,6 @@
 export * from './occupational-license'
 export * from './vaccinations'
 export {
-  HealthDirectorateOrganDonationClientConfig,
-  HealthDirectorateOrganDonationService,
-  OrganDonorDto,
-  Locale as organLocale,
-} from './organ-donation'
-export {
   HealthDirectorateHealthClientConfig,
   HealthDirectorateHealthService,
   PrescribedItemCategory,
@@ -16,6 +10,13 @@ export {
   QuestionnaireDetailDto,
   QuestionType,
   QuestionGroupDto,
+  AttachmentReplyViewDto,
+  BooleanReplyViewDto,
+  DateReplyViewDto,
+  ListReplyDto,
+  NumberReplyViewDto,
+  StringReplyViewDto,
+  TableReplyViewDto,
   BooleanQuestionDto,
   StringQuestionDto,
   DateQuestionDto,

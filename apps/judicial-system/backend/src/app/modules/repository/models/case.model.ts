@@ -1,3 +1,4 @@
+import { Op } from 'sequelize'
 import {
   BelongsTo,
   Column,
@@ -34,6 +35,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { AppealCase } from './appealCase.model'
+import { AppealDecision } from './appealDecision.model'
 import { CaseDefendantPoliceCaseNumber } from './caseDefendantPoliceCaseNumber.model'
 import { CaseFile } from './caseFile.model'
 import { CaseString } from './caseString.model'
@@ -129,9 +131,11 @@ export class Case extends Model {
   state!: CaseState
 
   /**********
-   * A case number in LÖKE (police information system) connected to the case
+   * Police case numbers resolved from the case_defendant_police_case_number
+   * junction table. Not persisted as a column — set by
+   * CaseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases.
    **********/
-  @Column({ type: DataType.ARRAY(DataType.STRING), allowNull: false })
+  @Column({ type: DataType.VIRTUAL })
   @ApiProperty({ type: String, isArray: true })
   policeCaseNumbers!: string[]
 
@@ -1002,9 +1006,35 @@ export class Case extends Model {
   policeDefendantNationalId?: string
 
   /**********
-   * The case's appeal record
+   * The case's case-level appeal record (the appeal of the case as a whole).
+   * Scoped to rows with no ruling_file_id so ruling-order appeals don't
+   * collide with the HasOne cardinality.
    **********/
-  @HasOne(() => AppealCase, 'caseId')
+  @HasOne(() => AppealCase, {
+    foreignKey: 'caseId',
+    as: 'appealCase',
+    scope: { rulingFileId: null },
+  })
   @ApiPropertyOptional({ type: () => AppealCase })
   appealCase?: AppealCase
+
+  /**********
+   * Appeals of specific ruling orders (Úrskurður undir rekstri máls) filed
+   * against this case. Distinct from the case-level appeal above.
+   **********/
+  @HasMany(() => AppealCase, {
+    foreignKey: 'caseId',
+    as: 'rulingOrderAppealCases',
+    scope: { rulingFileId: { [Op.not]: null } },
+  })
+  @ApiPropertyOptional({ type: () => AppealCase, isArray: true })
+  rulingOrderAppealCases?: AppealCase[]
+
+  /**********
+   * Per-party appeal decisions (Ákvörðun um kæru) - one row per party per
+   * appealable ruling
+   **********/
+  @HasMany(() => AppealDecision, 'caseId')
+  @ApiPropertyOptional({ type: () => AppealDecision, isArray: true })
+  appealDecisions?: AppealDecision[]
 }

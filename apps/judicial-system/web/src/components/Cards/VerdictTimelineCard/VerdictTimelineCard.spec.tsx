@@ -151,7 +151,7 @@ describe('VerdictTimelineCard', () => {
     ).toBeInTheDocument()
   })
 
-  it('hides date pickers when defendant is sent to prison admin', () => {
+  it('hides date pickers when defendant is sent to prison admin', async () => {
     const defendant = {
       ...mockDefendant,
       isSentToPrisonAdmin: true,
@@ -162,6 +162,7 @@ describe('VerdictTimelineCard', () => {
 
     renderComponent(defendant)
 
+    expect(await screen.findByText(name)).toBeInTheDocument()
     expect(
       screen.queryByTestId('set-valid-defendantAppealDate'),
     ).not.toBeInTheDocument()
@@ -170,7 +171,7 @@ describe('VerdictTimelineCard', () => {
     ).not.toBeInTheDocument()
   })
 
-  it('renders verdict appeal decision choice only when verdict exists and appeal is allowed', () => {
+  it('renders verdict appeal decision choice only when verdict exists and appeal is allowed', async () => {
     const defendantWithoutVerdict = {
       ...mockDefendant,
       verdict: undefined,
@@ -178,6 +179,7 @@ describe('VerdictTimelineCard', () => {
 
     renderComponent(defendantWithoutVerdict, undefined, true)
 
+    expect(await screen.findByText(name)).toBeInTheDocument()
     expect(
       screen.queryByTestId('verdict-appeal-choice'),
     ).not.toBeInTheDocument()
@@ -191,10 +193,12 @@ describe('VerdictTimelineCard', () => {
 
     renderComponent(defendantWithVerdict, undefined, true)
 
-    expect(screen.getByTestId('verdict-appeal-choice')).toBeInTheDocument()
+    expect(
+      await screen.findByTestId('verdict-appeal-choice'),
+    ).toBeInTheDocument()
   })
 
-  it('passes disabled true to verdict appeal decision choice when sent to prison admin', () => {
+  it('passes disabled true to verdict appeal decision choice when sent to prison admin', async () => {
     const defendant = {
       ...mockDefendant,
       isSentToPrisonAdmin: true,
@@ -205,9 +209,9 @@ describe('VerdictTimelineCard', () => {
 
     renderComponent(defendant)
 
-    expect(screen.getByTestId('verdict-appeal-choice')).toHaveTextContent(
-      'disabled:true',
-    )
+    expect(
+      await screen.findByTestId('verdict-appeal-choice'),
+    ).toHaveTextContent('disabled:true')
   })
 
   it('shows error when invalid service date is selected', async () => {
@@ -221,7 +225,7 @@ describe('VerdictTimelineCard', () => {
     renderComponent(defendant)
 
     await userEvent.click(
-      screen.getByTestId('set-invalid-defendantServiceDate'),
+      await screen.findByTestId('set-invalid-defendantServiceDate'),
     )
 
     expect(toastErrorSpy).toHaveBeenCalledTimes(1)
@@ -237,7 +241,9 @@ describe('VerdictTimelineCard', () => {
 
     renderComponent(defendant)
 
-    const submitButton = screen.getByTestId('button-defendant-service-date')
+    const submitButton = await screen.findByTestId(
+      'button-defendant-service-date',
+    )
     expect(submitButton).toBeDisabled()
 
     await userEvent.click(screen.getByTestId('set-valid-defendantServiceDate'))

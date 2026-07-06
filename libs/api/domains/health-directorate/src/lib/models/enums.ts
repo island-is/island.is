@@ -24,6 +24,9 @@ export enum PrescribedItemRenewalBlockedReasonEnum {
   DismissedRequest = 'dismissedRequest',
   AlreadyRequested = 'alreadyRequested',
   MoreRecentPrescriptionExists = 'moreRecentPrescriptionExists',
+  NoRenewalTargets = 'noRenewalTargets',
+  InvalidRenewalTarget = 'invalidRenewalTarget',
+  RecipientExcludesAtc = 'recipientExcludesAtc',
   SpecialistOnlyPrescription = 'specialistOnlyPrescription',
   Unknown = 'unknown',
 }
@@ -37,6 +40,7 @@ export enum PrescribedItemRenewalStatusEnum {
   Approved = 'approved',
   Rejected = 'rejected',
   Dismissed = 'dismissed',
+  Unknown = 'unknown',
 }
 
 registerEnumType(PrescribedItemRenewalStatusEnum, {
@@ -86,6 +90,39 @@ registerEnumType(AppointmentStatusEnum, {
   name: 'HealthDirectorateAppointmentStatus',
 })
 
+export enum AppointmentModalityEnum {
+  IN_PERSON = 'IN_PERSON',
+  VIDEO = 'VIDEO',
+}
+
+registerEnumType(AppointmentModalityEnum, {
+  name: 'HealthDirectorateAppointmentModality',
+})
+
+export enum AppointmentAssigneeTypeEnum {
+  ROLE = 'ROLE',
+  ROOM = 'ROOM',
+  EQUIPMENT = 'EQUIPMENT',
+  SERVICE = 'SERVICE',
+  OTHER = 'OTHER',
+  TEAM = 'TEAM',
+}
+
+registerEnumType(AppointmentAssigneeTypeEnum, {
+  name: 'HealthDirectorateAppointmentAssigneeType',
+})
+
+export enum AppointmentLinkTypeEnum {
+  PATIENT_INSTRUCTIONS = 'PATIENT_INSTRUCTIONS',
+  PREPARATION = 'PREPARATION',
+  ORGANIZATION_INFO = 'ORGANIZATION_INFO',
+  VIDEO_CALL = 'VIDEO_CALL',
+}
+
+registerEnumType(AppointmentLinkTypeEnum, {
+  name: 'HealthDirectorateAppointmentLinkType',
+})
+
 export enum WaitlistStatusTagColorEnum {
   blue = 'blue',
   purple = 'purple',
@@ -109,4 +146,22 @@ export enum ReferralStatusEnum {
 }
 registerEnumType(ReferralStatusEnum, {
   name: 'HealthDirectorateReferralStatusEnum',
+})
+
+export enum HealthConversationDirectionEnum {
+  PATIENT = 'PATIENT',
+  STAFF = 'STAFF',
+  SYSTEM = 'SYSTEM',
+}
+registerEnumType(HealthConversationDirectionEnum, {
+  name: 'HealthDirectorateHealthConversationDirection',
+})
+
+export enum HealthConversationStatusFilterEnum {
+  ACTIVE = 'active',
+  ARCHIVED = 'archived',
+  ALL = 'all',
+}
+registerEnumType(HealthConversationStatusFilterEnum, {
+  name: 'HealthDirectorateHealthConversationStatusFilter',
 })

@@ -17,11 +17,10 @@ import { useContext } from 'react'
 import { ControlContext } from '../../../../context/ControlContext'
 import { PaymentItem } from './components/PaymentItem'
 
-const SYSLUMENNID = '6509142520' // Example organization ID, replace with actual ID as needed
-
 export const Payment = () => {
   const { control, controlDispatch, formUpdate } = useContext(ControlContext)
-  const { sections, screens, fields, hasPayment } = control.form
+  const { isReadOnly, form } = control
+  const { sections, screens, fields, hasPayment } = form
   const paymentSection = sections?.find(
     (s) => s?.sectionType === SectionTypes.PAYMENT,
   )
@@ -35,7 +34,7 @@ export const Payment = () => {
   const { data, loading } = useQuery(GET_PAYMENT_CATALOG, {
     variables: {
       input: {
-        performingOrganizationID: SYSLUMENNID,
+        performingOrganizationID: control.organizationNationalId,
       },
     },
   })
@@ -99,10 +98,20 @@ export const Payment = () => {
 
   return (
     <>
-      <Box paddingBottom={2}>
+      <Box
+        paddingBottom={2}
+        background="blue100"
+        padding={2}
+        borderRadius="large"
+      >
         <Column span="12/12">
           <Box width="full" justifyContent="flexEnd" display="flex">
-            <Button variant="primary" preTextIcon="add" onClick={addField}>
+            <Button
+              variant="primary"
+              icon="add"
+              disabled={isReadOnly}
+              onClick={addField}
+            >
               Bæta við greiðslu
             </Button>
           </Box>

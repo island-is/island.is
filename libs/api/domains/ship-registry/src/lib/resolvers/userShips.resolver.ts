@@ -18,9 +18,12 @@ import { UserShip } from '../models/userShip.model'
 import { UserShipsCollection } from '../models/userShipsCollection.model'
 import { UserShipsService } from '../services/userShips.service'
 import { UserShipInput } from '../dto/userShip.input'
+import { CodeOwner } from '@island.is/nest/core'
+import { CodeOwners } from '@island.is/shared/constants'
 
+@CodeOwner(CodeOwners.Hugsmidjan)
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@Scopes(ApiScope.internal)
+@Scopes(ApiScope.ships)
 @FeatureFlag(Features.isServicePortalUserShipsPageEnabled)
 @Audit({ namespace: '@island.is/api/ship-registry' })
 @Resolver(() => UserShip)
@@ -29,6 +32,7 @@ export class UserShipsResolver {
 
   @Query(() => UserShipsCollection, {
     name: 'shipRegistryUserShips',
+    nullable: true,
   })
   async userShips(@CurrentUser() user: User): Promise<UserShipsCollection> {
     return this.userShipsService.getUserShips(user)
@@ -42,10 +46,6 @@ export class UserShipsResolver {
     @Args('input') input: UserShipInput,
     @CurrentUser() user: User,
   ): Promise<UserShip | null> {
-    return this.userShipsService.getUserShip(
-      user,
-      input.registrationNumber,
-      input.locale,
-    )
+    return this.userShipsService.getUserShip(user, input)
   }
 }

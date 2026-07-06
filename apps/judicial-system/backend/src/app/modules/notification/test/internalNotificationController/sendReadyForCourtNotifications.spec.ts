@@ -5,18 +5,18 @@ import { ConfigType } from '@island.is/nest/config'
 import { SmsService } from '@island.is/nova-sms'
 
 import {
-  DEFENDER_ROUTE,
-  INDICTMENTS_COURT_OVERVIEW_ROUTE,
-  RESTRICTION_CASE_OVERVIEW_ROUTE,
+  DEFENDER_REQUEST_CASE_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
+  PROSECUTION_RESTRICTION_CASE_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
-  CaseNotificationType,
   CaseState,
   CaseType,
   DateType,
   IndictmentSubtype,
-  NotificationType,
+  RequestCaseNotificationType,
   RequestSharedWithDefender,
+  TrackedNotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -75,7 +75,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
   } as Case
   const notificationDto = {
     user: { id: userId } as User,
-    type: CaseNotificationType.READY_FOR_COURT,
+    type: RequestCaseNotificationType.READY_FOR_COURT,
   }
 
   let mockEmailService: EmailService
@@ -129,7 +129,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
         to: [{ name: prosecutor.name, address: prosecutor.email }],
         subject: 'Krafa um gæsluvarðhald send',
         text: `Þú hefur sent kröfu á Héraðsdóm Reykjavíkur vegna LÖKE máls ${policeCaseNumber}. Skjalið er aðgengilegt undir málinu í Réttarvörslugátt.`,
-        html: `Þú hefur sent kröfu á Héraðsdóm Reykjavíkur vegna LÖKE máls ${policeCaseNumber}. Skjalið er aðgengilegt undir <a href="${mockNotificationConfig.clientUrl}${RESTRICTION_CASE_OVERVIEW_ROUTE}/${caseId}">málinu í Réttarvörslugátt</a>.`,
+        html: `Þú hefur sent kröfu á Héraðsdóm Reykjavíkur vegna LÖKE máls ${policeCaseNumber}. Skjalið er aðgengilegt undir <a href="${mockNotificationConfig.clientUrl}${PROSECUTION_RESTRICTION_CASE_OVERVIEW_ROUTE}/${caseId}">málinu í Réttarvörslugátt</a>.`,
         attachments: undefined,
       })
     })
@@ -155,7 +155,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
           notifications: [
             {
               caseId,
-              type: NotificationType.READY_FOR_COURT,
+              type: TrackedNotificationType.READY_FOR_COURT,
               recipients: [
                 {
                   address:
@@ -185,7 +185,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
         to: [{ name: prosecutor.name, address: prosecutor.email }],
         subject: 'Krafa um gæsluvarðhald send',
         text: `Þú hefur sent kröfu á Héraðsdóm Reykjavíkur vegna LÖKE máls ${policeCaseNumber}. Skjalið er aðgengilegt undir málinu í Réttarvörslugátt.`,
-        html: `Þú hefur sent kröfu á Héraðsdóm Reykjavíkur vegna LÖKE máls ${policeCaseNumber}. Skjalið er aðgengilegt undir <a href="${mockNotificationConfig.clientUrl}${RESTRICTION_CASE_OVERVIEW_ROUTE}/${caseId}">málinu í Réttarvörslugátt</a>.`,
+        html: `Þú hefur sent kröfu á Héraðsdóm Reykjavíkur vegna LÖKE máls ${policeCaseNumber}. Skjalið er aðgengilegt undir <a href="${mockNotificationConfig.clientUrl}${PROSECUTION_RESTRICTION_CASE_OVERVIEW_ROUTE}/${caseId}">málinu í Réttarvörslugátt</a>.`,
         attachments: undefined,
       })
     })
@@ -218,7 +218,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
         2,
         expect.objectContaining({
           subject: `Krafa í máli ${policeCaseNumber}`,
-          html: `Sækjandi hefur valið að deila kröfu með þér sem verjanda varnaraðila í máli ${policeCaseNumber}.<br /><br />Þú getur nálgast málið á <a href="${mockNotificationConfig.clientUrl}${DEFENDER_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+          html: `Sækjandi hefur valið að deila kröfu með þér sem verjanda varnaraðila í máli ${policeCaseNumber}.<br /><br />Þú getur nálgast málið á <a href="${mockNotificationConfig.clientUrl}${DEFENDER_REQUEST_CASE_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
           attachments: undefined,
         }),
       )
@@ -233,7 +233,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
           ...theCase,
           notifications: [
             {
-              type: NotificationType.READY_FOR_COURT,
+              type: TrackedNotificationType.READY_FOR_COURT,
               recipients: [{ address: defender.email, success: true }],
             },
           ],
@@ -256,7 +256,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
           },
           to: [{ name: defender.name, address: defender.email }],
           subject: `Krafa í máli ${courtCaseNumber}`,
-          html: `Sækjandi í máli ${courtCaseNumber} hjá Héraðsdómi Reykjavíkur hefur breytt kröfunni og sent hana aftur á dóminn.<br /><br />Þú getur nálgast gögn málsins á <a href="${mockNotificationConfig.clientUrl}${DEFENDER_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+          html: `Sækjandi í máli ${courtCaseNumber} hjá Héraðsdómi Reykjavíkur hefur breytt kröfunni og sent hana aftur á dóminn.<br /><br />Þú getur nálgast gögn málsins á <a href="${mockNotificationConfig.clientUrl}${DEFENDER_REQUEST_CASE_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
           attachments: undefined,
         }),
       )
@@ -270,7 +270,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
 
   const notificationDto = {
     user: { id: userId } as User,
-    type: CaseNotificationType.READY_FOR_COURT,
+    type: RequestCaseNotificationType.READY_FOR_COURT,
   }
 
   let mockEmailService: EmailService
@@ -341,12 +341,12 @@ describe('InternalNotificationController - Send ready for court notifications fo
             },
           ],
           subject: 'Ákæra tilbúin til afgreiðslu',
-          html: `Lögreglan á höfuðborgarsvæðinu hefur sent inn nýja ákæru. Ákæran varðar eftirfarandi brot: manndráp. Ákæran og öll skjöl málsins eru <a href="${mockNotificationConfig.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${caseId}">aðgengileg í Réttarvörslugátt.</a>`,
+          html: `Lögreglan á höfuðborgarsvæðinu hefur sent inn nýja ákæru. Ákæran varðar eftirfarandi brot: manndráp. Ákæran og öll skjöl málsins eru <a href="${mockNotificationConfig.clientUrl}${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${caseId}">aðgengileg í Réttarvörslugátt.</a>`,
         }),
       )
       expect(mockNotificationModel.create).toHaveBeenCalledWith({
         caseId,
-        type: CaseNotificationType.READY_FOR_COURT,
+        type: RequestCaseNotificationType.READY_FOR_COURT,
         recipients: [
           { success: true, address: testCourt.email },
         ] as Recipient[],
@@ -397,12 +397,12 @@ describe('InternalNotificationController - Send ready for court notifications fo
             },
           ],
           subject: 'Ákæra tilbúin til afgreiðslu',
-          html: `Lögreglan á höfuðborgarsvæðinu hefur sent inn nýja ákæru. Ákæran varðar eftirfarandi brot: manndráp, gripdeild og þjófnaður. Ákæran og öll skjöl málsins eru <a href="${mockNotificationConfig.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${caseId}">aðgengileg í Réttarvörslugátt.</a>`,
+          html: `Lögreglan á höfuðborgarsvæðinu hefur sent inn nýja ákæru. Ákæran varðar eftirfarandi brot: manndráp, gripdeild og þjófnaður. Ákæran og öll skjöl málsins eru <a href="${mockNotificationConfig.clientUrl}${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${caseId}">aðgengileg í Réttarvörslugátt.</a>`,
         }),
       )
       expect(mockNotificationModel.create).toHaveBeenCalledWith({
         caseId,
-        type: CaseNotificationType.READY_FOR_COURT,
+        type: RequestCaseNotificationType.READY_FOR_COURT,
         recipients: [
           { success: true, address: testCourt.email },
         ] as Recipient[],

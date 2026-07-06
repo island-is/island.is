@@ -33,6 +33,7 @@ import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/fo
 import { useSections } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import BreadCrumbs from '../BreadCrumbs/BreadCrumbs'
+import { FormContext } from '../FormProvider/FormProvider'
 import Logo from '../Logo/Logo'
 import Skeleton from '../Skeleton/Skeleton'
 import { UserContext } from '../UserProvider/UserProvider'
@@ -145,7 +146,11 @@ const SidePanel: FC<SidePanelProps> = ({
 
   return (
     <GridColumn span={['12/12', '12/12', '4/12', '3/12']}>
-      <div className={styles.formStepperContainer}>
+      <Box
+        component="nav"
+        aria-labelledby="case-steps-heading"
+        className={styles.formStepperContainer}
+      >
         <Box marginLeft={[0, 0, 2]}>
           {!isDefenceUser(user) && (
             <Box marginBottom={7} display={['none', 'none', 'block']}>
@@ -157,7 +162,7 @@ const SidePanel: FC<SidePanelProps> = ({
             marginLeft={[3, 3, 0]}
             marginTop={[2, 2, 0]}
           >
-            <Text variant="h3" as="h3">
+            <Text variant="h3" as="h3" id="case-steps-heading">
               {formatMessage(
                 user?.institution?.type === InstitutionType.COURT_OF_APPEALS
                   ? formStepperSections.appealedCaseTitle
@@ -185,7 +190,7 @@ const SidePanel: FC<SidePanelProps> = ({
             ))}
           />
         </Box>
-      </div>
+      </Box>
     </GridColumn>
   )
 }
@@ -208,68 +213,74 @@ const PageLayout: FC<PropsWithChildren<PageProps>> = ({
   onNavigationTo,
   isValid,
 }) => {
+  const { isCreating } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
+  const hideBreadcrumbs = isDefenceUser(user) || isCreating
 
-  return isLoading ? (
-    <Skeleton />
-  ) : notFound ? (
-    <AlertBanner
-      title={
-        isDefenceUser(user)
-          ? formatMessage(pageLayout.defenderRole.alertTitle)
-          : formatMessage(pageLayout.otherRoles.alertTitle)
-      }
-      description={
-        isDefenceUser(user)
-          ? formatMessage(pageLayout.defenderRole.alertMessage)
-          : formatMessage(pageLayout.otherRoles.alertMessage)
-      }
-      variant="error"
-      link={{
-        href: getStandardUserDashboardRoute(user),
-        title: 'Fara á yfirlitssíðu',
-      }}
-    />
-  ) : children ? (
+  return (
     <>
-      <Box
-        paddingBottom={[0, 0, 3, 6]}
-        paddingX={[0, 0, 4]}
-        background="purple100"
-        className={styles.processContainer}
-      >
-        <GridContainer className={styles.container}>
-          <GridRow direction={['columnReverse', 'columnReverse', 'row']}>
-            <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
-              {!isDefenceUser(user) && (
-                <Box marginY={3} marginX={[3, 3, 0, 0]}>
-                  <BreadCrumbs />
+      {isLoading ? (
+        <Skeleton />
+      ) : notFound ? (
+        <AlertBanner
+          title={
+            isDefenceUser(user)
+              ? formatMessage(pageLayout.defenderRole.alertTitle)
+              : formatMessage(pageLayout.otherRoles.alertTitle)
+          }
+          description={
+            isDefenceUser(user)
+              ? formatMessage(pageLayout.defenderRole.alertMessage)
+              : formatMessage(pageLayout.otherRoles.alertMessage)
+          }
+          variant="error"
+          link={{
+            href: getStandardUserDashboardRoute(user),
+            title: 'Fara á yfirlitssíðu',
+          }}
+        />
+      ) : children ? (
+        <Box
+          paddingBottom={[0, 0, 3, 6]}
+          paddingX={[0, 0, 4]}
+          background="purple100"
+          className={styles.processContainer}
+        >
+          <GridContainer className={styles.container}>
+            <GridRow direction={['columnReverse', 'columnReverse', 'row']}>
+              <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
+                {!hideBreadcrumbs && (
+                  <Box marginY={3} marginX={[3, 3, 0, 0]}>
+                    <BreadCrumbs />
+                  </Box>
+                )}
+                <Box
+                  background="white"
+                  borderColor="white"
+                  paddingTop={[3, 3, 10, 10]}
+                  className={styles.processContent}
+                  marginTop={hideBreadcrumbs ? 10 : 0}
+                >
+                  {children}
                 </Box>
-              )}
-              <Box
-                background="white"
-                borderColor="white"
-                paddingTop={[3, 3, 10, 10]}
-                className={styles.processContent}
-                marginTop={isDefenceUser(user) ? 10 : 0}
-              >
-                {children}
-              </Box>
-            </GridColumn>
-            <SidePanel
-              user={user}
-              isValid={isValid}
-              onNavigationTo={onNavigationTo}
-              workingCase={workingCase}
-            />
-          </GridRow>
-        </GridContainer>
-      </Box>
-      {/* Here we will mount our modal portal */}
+              </GridColumn>
+              <SidePanel
+                user={user}
+                isValid={isValid}
+                onNavigationTo={onNavigationTo}
+                workingCase={workingCase}
+              />
+            </GridRow>
+          </GridContainer>
+        </Box>
+      ) : null}
+      {/* Modal portal target — rendered in every state so a modal mounted as a
+          sibling of PageLayout (e.g. the indictment cancellation modal) can
+          always portal here, even while loading or when the case is not found. */}
       <div id="modal" data-testid="modal" />
     </>
-  ) : null
+  )
 }
 
 export default PageLayout

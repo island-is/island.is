@@ -33,6 +33,9 @@ export const GetPaymentFlow = gql`
       invoiceReturnUrl
       redirectOnInvoiceCreation
       updatedAt
+      lastBankTransferFailure
+      bankTransferScaRedirectUrl
+      bankTransferExpiresAt
     }
   }
 `
@@ -56,14 +59,6 @@ export const GetJwks = gql`
         use
         alg
       }
-    }
-  }
-`
-
-export const GetApplePaySession = gql`
-  query getApplePaySession {
-    paymentsGetApplePaySession {
-      session
     }
   }
 `

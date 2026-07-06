@@ -146,12 +146,14 @@ const UniversitySubPage: Screen<UniversitySubPageProps> = ({
 
   return (
     <OrganizationWrapper
+      isSubpage={true}
       showExternalLinks={true}
       pageTitle={organizationPage?.title ?? ''}
       pageDescription={organizationPage?.description}
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore make web strict
       organizationPage={organizationPage}
+      organizationSubpageId={subpage?.id}
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore make web strict
       pageFeaturedImage={organizationPage?.featuredImage}

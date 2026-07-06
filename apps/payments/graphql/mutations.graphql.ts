@@ -48,11 +48,48 @@ export const CreateInvoiceMutation = gql`
   }
 `
 
+export const ValidateApplePayMerchantMutation = gql`
+  mutation validateApplePayMerchant(
+    $input: PaymentsValidateApplePayMerchantInput!
+  ) {
+    paymentsValidateApplePayMerchant(input: $input) {
+      session
+    }
+  }
+`
+
 export const ChargeApplePayMutation = gql`
   mutation chargeApplePay($input: PaymentsApplePayChargeInput!) {
     paymentsChargeApplePay(input: $input) {
       isSuccess
       responseCode
+    }
+  }
+`
+
+export const CreateBankTransferMutation = gql`
+  mutation createBankTransfer($input: PaymentsCreateBankTransferInput!) {
+    paymentsCreateBankTransfer(input: $input) {
+      providerPaymentId
+      scaRedirectUrl
+      expiresAt
+    }
+  }
+`
+
+export const VerifyBankTransferMutation = gql`
+  mutation verifyBankTransfer($input: PaymentsVerifyBankTransferInput!) {
+    paymentsVerifyBankTransfer(input: $input) {
+      status
+      message
+    }
+  }
+`
+
+export const CancelBankTransferMutation = gql`
+  mutation cancelBankTransfer($input: PaymentsCancelBankTransferInput!) {
+    paymentsCancelBankTransfer(input: $input) {
+      ok
     }
   }
 `

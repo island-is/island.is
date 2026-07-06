@@ -13,6 +13,7 @@ import { FjsCharge } from '../paymentFlow/models/fjsCharge.model'
 import { CardPaymentDetails } from '../paymentFlow/models/cardPaymentDetails.model'
 import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
 import { PaymentWorkerEvent } from '../paymentFlow/models/paymentWorkerEvent.model'
+import { BankTransferPaymentModule } from '../bankTransferPayment/bankTransferPayment.module'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { PaymentFlowModuleConfig } from '../paymentFlow/paymentFlow.config'
 import { JwksModule } from '../jwks/jwks.module'
@@ -39,6 +40,7 @@ import { RefundModuleConfig } from './refund.config'
     FeatureFlagModule,
     ChargeFjsV2ClientModule,
     JwksModule,
+    BankTransferPaymentModule,
   ],
   controllers: [RefundController],
   providers: [RefundService, PaymentFlowService],

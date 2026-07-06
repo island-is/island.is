@@ -10,6 +10,7 @@ export const GET_VEHICLE_PLATE_ORDER_CHECKS_BY_PERMNO = `
         make
         color
         role
+        regGroup
       }
     }
   } 
@@ -43,4 +44,30 @@ export const VALIDATE_VEHICLE_PLATE_ORDER = `
       }
     }
   } 
+`
+
+export const GET_VEHICLE_PLATE_ORDER_OPTIONS = `
+  query GetVehiclePlateOrderOptions($permno: String!) {
+    vehiclePlateOrderOptions(permno: $permno) {
+      plates {
+        plateTypeCode
+        plateTypeName
+        plateSizes {
+          plateSizeType
+          plateHeight
+          plateWidth
+        }
+      }
+    }
+  }
+`
+
+export const GET_VEHICLE_CURRENT_PLATES = `
+  query GetVehicleCurrentPlates($permno: String!) {
+    vehicleCurrentPlates(permno: $permno) {
+      permno
+      plateTypeCode
+      plateTypeName
+    }
+  }
 `

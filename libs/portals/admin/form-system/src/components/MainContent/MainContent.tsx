@@ -1,4 +1,8 @@
-import { FormSystemScreen, FormSystemSection } from '@island.is/api/schema'
+import {
+  FormSystemField,
+  FormSystemScreen,
+  FormSystemSection,
+} from '@island.is/api/schema'
 import { SectionTypes } from '@island.is/form-system/enums'
 import { m } from '@island.is/form-system/ui'
 import {
@@ -11,7 +15,7 @@ import {
   Select,
   Stack,
 } from '@island.is/island-ui/core'
-import { useContext, useState } from 'react'
+import { Dispatch, SetStateAction, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { ControlContext } from '../../context/ControlContext'
 import { BaseSettings } from './components/BaseSettings/BaseSettings'
@@ -24,7 +28,12 @@ import { PreviewStepOrGroup } from './components/PreviewStepOrGroup/PreviewStepO
 import { RelevantParties } from './components/RelevantParties/RelevantParties'
 import { Urls } from './components/Urls/Urls'
 
-export const MainContent = () => {
+interface Props {
+  openPreview: boolean
+  setOpenPreview: Dispatch<SetStateAction<boolean>>
+}
+
+export const MainContent = ({ openPreview, setOpenPreview }: Props) => {
   const {
     control,
     controlDispatch,
@@ -34,16 +43,38 @@ export const MainContent = () => {
     getTranslation,
   } = useContext(ControlContext)
   const { activeItem, form, isReadOnly } = control
-  const [openPreview, setOpenPreview] = useState(false)
   const { formatMessage } = useIntl()
 
   const showIdentifier =
-    (form.useValidate &&
-      (activeItem.data as FormSystemScreen)?.shouldValidate) ||
-    (form.usePopulate && (activeItem.data as FormSystemScreen)?.shouldPopulate)
+    form.submissionServiceUrl !== 'zendesk' && activeItem.type === 'Screen'
+
+  const activeScreen =
+    activeItem.type === 'Screen'
+      ? (activeItem.data as FormSystemScreen)
+      : undefined
+
+  const screenHasMultisetFields = useMemo(() => {
+    if (!activeScreen?.id) return false
+
+    return (
+      form.fields?.some(
+        (field) =>
+          field?.screenId === activeScreen.id &&
+          (field as FormSystemField)?.isPartOfMultiset === true,
+      ) ?? false
+    )
+  }, [form.fields, activeScreen?.id])
+
+  // 3) Disable only when checkbox is checked AND there are multiset fields
+  const disableAllowMultiple =
+    (activeScreen?.isMulti ?? false) && screenHasMultisetFields
+
+  if (!activeItem.data) {
+    return null
+  }
 
   return (
-    <Box>
+    <Box style={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
       {activeItem.type === 'Field' ? (
         <FieldContent />
       ) : activeItem.type === 'Section' &&
@@ -137,10 +168,15 @@ export const MainContent = () => {
           {activeItem.type === 'Screen' && (
             <>
               <Row>
-                <Column span="12/12">
+                <Column span="3/12">
                   <Checkbox
                     name="multi"
-                    disabled={isReadOnly}
+                    disabled={isReadOnly || disableAllowMultiple}
+                    tooltip={
+                      disableAllowMultiple
+                        ? 'Ekki er hægt að afmerkja skjá sem fjölval ef hann hefur reit sem er merktur sem hluti af fjölmenginu'
+                        : undefined
+                    }
                     label={formatMessage(m.allowMultiple)}
                     checked={
                       (activeItem.data as FormSystemScreen).isMulti ?? false
@@ -166,7 +202,7 @@ export const MainContent = () => {
                 </Column>
               </Row>
               <Row>
-                <Column span="6/12">
+                <Column span="7/12">
                   {(activeItem.data as FormSystemScreen).isMulti && (
                     <Box marginTop={2}>
                       <Select
@@ -216,27 +252,6 @@ export const MainContent = () => {
                             onChange={(e) =>
                               controlDispatch({
                                 type: 'TOGGLE_SHOULD_VALIDATE',
-                                payload: {
-                                  checked: e.target.checked,
-                                  update: updateActiveItem,
-                                },
-                              })
-                            }
-                          />
-                        </Box>
-                      )}
-                      {form.usePopulate && (
-                        <Box marginTop={2}>
-                          <Checkbox
-                            name="populate"
-                            label={formatMessage(m.screenPopulate)}
-                            checked={
-                              (activeItem.data as FormSystemScreen)
-                                .shouldPopulate ?? false
-                            }
-                            onChange={(e) =>
-                              controlDispatch({
-                                type: 'TOGGLE_SHOULD_POPULATE',
                                 payload: {
                                   checked: e.target.checked,
                                   update: updateActiveItem,

@@ -33,6 +33,18 @@ export const finalStep = buildSection({
             },
           ],
         }),
+        buildCheckboxField({
+          id: 'sendCopyToParties',
+          large: false,
+          backgroundColor: 'white',
+          defaultValue: [],
+          options: [
+            {
+              value: YES,
+              label: m.sendCopyToPartiesLabel,
+            },
+          ],
+        }),
         buildSubmitField({
           id: 'inheritanceReport.submit',
           refetchApplicationAfterSubmit: true,

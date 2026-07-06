@@ -37,7 +37,7 @@ const Host = styled(Animated.View)<{ emptyState?: boolean }>`
   min-height: 80px;
   padding-vertical: ${({ theme }) => theme.spacing[2]}px;
   padding-left: ${({ theme }) => theme.spacing.p2}px;
-  padding-right: ${({ theme }) => theme.spacing[1]}px;
+  padding-right: ${({ theme }) => theme.spacing[2]}px;
   row-gap: ${LICENSE_CARD_ROW_GAP}px;
   border-radius: ${({ theme }) => theme.border.radius.extraLarge};
   border-width: ${({ emptyState }) => (emptyState ? 1 : 0)}px;
@@ -48,8 +48,15 @@ const Host = styled(Animated.View)<{ emptyState?: boolean }>`
 
 const ContentContainer = styled.View`
   flex-direction: row;
-  justify-content: space-between;
   align-items: center;
+`
+
+const Trailing = styled.View<{ hasLink?: boolean }>`
+  flex-shrink: 0;
+  width: ${({ hasLink }) => (hasLink ? 'auto' : '24px')};
+  align-items: center;
+  justify-content: center;
+  margin-left: ${({ theme }) => theme.spacing[1]}px;
 `
 
 const BackgroundImage = styled.ImageBackground<{ color: string }>`
@@ -69,8 +76,11 @@ const Content = styled.View`
 `
 
 const TextContent = styled.View`
+  flex: 1;
+  min-width: 0;
   gap: ${({ theme }) => theme.spacing.p2}px;
   flex-direction: row;
+  align-items: center;
 `
 
 const Base64Image = styled.Image`
@@ -262,19 +272,21 @@ export function LicenseListCard({
             )}
           </Content>
         </TextContent>
-        {props.link ? (
-          props.link
-        ) : (
-          <Image
-            source={chevronForward}
-            style={{
-              height: 24,
-              width: 24,
-              tintColor: theme.color.dark400,
-              opacity: 0.3,
-            }}
-          />
-        )}
+        <Trailing hasLink={!!props.link}>
+          {props.link ? (
+            props.link
+          ) : (
+            <Image
+              source={chevronForward}
+              style={{
+                height: 24,
+                width: 24,
+                tintColor: theme.color.dark400,
+                opacity: 0.3,
+              }}
+            />
+          )}
+        </Trailing>
       </ContentContainer>
     </Host>
   )

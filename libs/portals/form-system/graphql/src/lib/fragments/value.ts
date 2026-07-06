@@ -24,13 +24,23 @@ export const ValueFragment = gql`
       amount
       days
     }
-    listValue
+    value
+    label {
+      is
+      en
+    }
     email
     iskNumber
     checkboxValue
     phoneNumber
     bankAccount
     time
+    registrationNumber
+    model
+    color {
+      is
+      en
+    }
     s3Key
     isLoggedInUser
   }

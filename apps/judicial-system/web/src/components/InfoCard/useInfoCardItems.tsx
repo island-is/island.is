@@ -3,25 +3,36 @@ import { useIntl } from 'react-intl'
 import cn from 'classnames'
 
 import { Text } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  ROUTE_HANDLER_ROUTE,
+  TIME_FORMAT,
+} from '@island.is/judicial-system/consts'
 import {
   capitalize,
   formatCaseType,
   formatDate,
+  getHumanReadableCaseIndictmentRulingDecision,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import { isRequestCase } from '@island.is/judicial-system/types'
+import {
+  isCompletedCase,
+  isDefenceUser,
+  isIndictmentCase,
+  isRequestCase,
+} from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import { requestCourtDate } from '@island.is/judicial-system-web/messages'
 import {
   Case,
   CaseIndictmentRulingDecision,
   CaseType,
+  Defendant,
   IndictmentCaseReviewDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { isNonEmptyArray } from '../../utils/arrayHelpers'
 import { sortByIcelandicAlphabet } from '../../utils/sortHelper'
+import { getDefaultDefendantGender } from '../../utils/utils'
 import { FormContext } from '../FormProvider/FormProvider'
 import { LinkComponent } from '../MarkdownWrapper/MarkdownWrapper'
 import { UserContext } from '../UserProvider/UserProvider'
@@ -34,14 +45,14 @@ import { strings } from './useInfoCardItems.strings'
 import { grid } from '../../utils/styles/recipes.css'
 import * as styles from './InfoCard.css'
 
-const useInfoCardItems = () => {
+type HeadingLevel = 'h2' | 'h3' | 'h4' | 'h5'
+
+// Semantic heading level for the item titles built here. The visual size stays
+// h4 so only the level exposed to assistive technology changes.
+const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
-  const { limitedAccess } = useContext(UserContext)
-
-  // helper for info card items. If items have no values they will have [{falsy value}]
-  const showItem = (item: Item) =>
-    isNonEmptyArray(item.values) && !!item.values[0]
+  const { limitedAccess, user } = useContext(UserContext)
 
   const defendants = ({
     caseType,
@@ -56,13 +67,17 @@ const useInfoCardItems = () => {
     displaySentToPrisonAdminDate?: boolean
     displayOpenCaseReference?: boolean
   }): Item => {
-    const defendants = workingCase.defendants
+    const defendants = workingCase.defendants?.filter((defendant) =>
+      isDefenceUser(user) && isCompletedCase(workingCase.state)
+        ? true
+        : !defendant.indictmentCancelledOrDismissedState,
+    )
     const isMultipleDefendants = defendants && defendants.length > 1
 
     return {
       id: 'defendant-item',
       title: (
-        <Text variant="h4" as="h4" marginBottom={2}>
+        <Text variant="h4" as={titleAs} marginBottom={2}>
           {capitalize(
             isRequestCase(caseType)
               ? formatMessage(core.defendant, {
@@ -71,7 +86,7 @@ const useInfoCardItems = () => {
               : isMultipleDefendants
               ? formatMessage(core.indictmentDefendants)
               : formatMessage(core.indictmentDefendant, {
-                  gender: defendants?.[0].gender,
+                  gender: getDefaultDefendantGender(defendants),
                 }),
           )}
         </Text>
@@ -88,7 +103,6 @@ const useInfoCardItems = () => {
                 >
                   <DefendantInfo
                     defendant={defendant}
-                    workingCaseId={workingCase.id}
                     courtId={workingCase.court?.id}
                     defender={{
                       name: workingCase.defenderName,
@@ -100,17 +114,8 @@ const useInfoCardItems = () => {
                     displayVerdictViewDate={displayVerdictViewDate}
                     displaySentToPrisonAdminDate={displaySentToPrisonAdminDate}
                     displayOpenCaseReference={displayOpenCaseReference}
-                    isDismissalCase={
-                      workingCase.indictmentRulingDecision ===
-                      CaseIndictmentRulingDecision.DISMISSAL
-                    }
-                    isCancellationCase={
-                      workingCase.indictmentRulingDecision ===
-                      CaseIndictmentRulingDecision.CANCELLATION
-                    }
-                    isFineCase={
-                      workingCase.indictmentRulingDecision ===
-                      CaseIndictmentRulingDecision.FINE
+                    indictmentRulingDecision={
+                      workingCase.indictmentRulingDecision
                     }
                   />
                 </div>
@@ -118,6 +123,30 @@ const useInfoCardItems = () => {
             </div>,
           ]
         : [],
+    }
+  }
+
+  const cancelledAndDismissedDefendants = (defendant: Defendant): Item => {
+    return {
+      id: `cancelled-and-dismissed-defendant-item-${defendant.id}`,
+      title: (
+        <Text variant="h4" as={titleAs}>
+          {getHumanReadableCaseIndictmentRulingDecision(
+            defendant.indictmentCancelledOrDismissedState?.type,
+          )}
+        </Text>
+      ),
+      values: [
+        <div key="cancelled-and-dismissed-defendants-grid">
+          <Text>{defendant.name}</Text>
+          <Text>
+            {formatDate(
+              defendant.indictmentCancelledOrDismissedState?.time,
+              'dd.MM.y',
+            )}
+          </Text>
+        </div>,
+      ],
     }
   }
 
@@ -146,7 +175,7 @@ const useInfoCardItems = () => {
 
   const prosecutorsOffice: Item = {
     id: 'prosecutors-office-item',
-    title: formatMessage(core.prosecutor),
+    title: isIndictmentCase(workingCase.type) ? 'Ákæruvald' : 'Sóknaraðili',
     values: [workingCase.prosecutorsOffice?.name || ''],
   }
 
@@ -218,10 +247,7 @@ const useInfoCardItems = () => {
     values: [
       `${capitalize(
         formatDate(workingCase.requestedCourtDate, 'PPPP', true) ?? '',
-      )} eftir kl. ${formatDate(
-        workingCase.requestedCourtDate,
-        constants.TIME_FORMAT,
-      )}`,
+      )} eftir kl. ${formatDate(workingCase.requestedCourtDate, TIME_FORMAT)}`,
     ],
   }
 
@@ -262,7 +288,7 @@ const useInfoCardItems = () => {
 
   const mergedCaseProsecutor = (mergedCase: Case): Item => ({
     id: 'merged-case-prosecutor-item',
-    title: formatMessage(core.prosecutor),
+    title: isIndictmentCase(mergedCase.type) ? 'Ákæruvald' : 'Sóknaraðili',
     values: [mergedCase.prosecutorsOffice?.name],
   })
 
@@ -294,9 +320,7 @@ const useInfoCardItems = () => {
             {splitCaseEntries.map(({ defendant, splitCase }) => (
               <div key={`split-cases-grid-${splitCase.id}-${defendant.id}`}>
                 <Text>{defendant.name}</Text>
-                <LinkComponent
-                  href={`/${constants.ROUTE_HANDLER_ROUTE}/${splitCase.id}`}
-                >
+                <LinkComponent href={`${ROUTE_HANDLER_ROUTE}/${splitCase.id}`}>
                   {splitCase.courtCaseNumber}
                 </LinkComponent>
               </div>
@@ -315,7 +339,7 @@ const useInfoCardItems = () => {
             workingCase.splitCase.courtCaseNumber
           ) : (
             <LinkComponent
-              href={`${constants.ROUTE_HANDLER_ROUTE}/${workingCase.splitCase.id}`}
+              href={`${ROUTE_HANDLER_ROUTE}/${workingCase.splitCase.id}`}
               key={workingCase.splitCase.id}
             >
               {workingCase.splitCase.courtCaseNumber}
@@ -400,14 +424,11 @@ const useInfoCardItems = () => {
       workingCase.parentCase
         ? `${capitalize(
             formatDate(workingCase.parentCase.validToDate, 'PPPP', true) ?? '',
-          )} kl. ${formatDate(
-            workingCase.parentCase.validToDate,
-            constants.TIME_FORMAT,
-          )}`
+          )} kl. ${formatDate(workingCase.parentCase.validToDate, TIME_FORMAT)}`
         : workingCase.arrestDate
         ? `${capitalize(
             formatDate(workingCase.arrestDate, 'PPPP', true) ?? '',
-          )} kl. ${formatDate(workingCase.arrestDate, constants.TIME_FORMAT)}`
+          )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`
         : 'Var ekki skráður',
     ],
   }
@@ -415,7 +436,7 @@ const useInfoCardItems = () => {
   const civilClaimants: Item = {
     id: 'civil-claimant-item',
     title: (
-      <Text variant="h4" as="h4" marginBottom={2}>
+      <Text variant="h4" as={titleAs} marginBottom={2}>
         {capitalize(
           isNonEmptyArray(workingCase.civilClaimants) &&
             workingCase.civilClaimants.length > 1
@@ -447,7 +468,7 @@ const useInfoCardItems = () => {
   const victims: Item = {
     id: 'victim-item',
     title: (
-      <Text variant="h4" as="h4" marginBottom={2}>
+      <Text variant="h4" as={titleAs} marginBottom={2}>
         {workingCase.victims && workingCase.victims.length > 1
           ? 'Brotaþolar'
           : 'Brotaþoli'}
@@ -474,8 +495,8 @@ const useInfoCardItems = () => {
   }
 
   return {
-    showItem,
     defendants,
+    cancelledAndDismissedDefendants,
     indictmentCreated,
     prosecutor,
     prosecutorsOffice,

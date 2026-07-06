@@ -31,6 +31,7 @@ interface Props {
   onMenuOpen?: () => void
   organizationSearchFilter?: string
   languageToggleQueryParams?: LayoutProps['languageToggleQueryParams']
+  searchInputPlaceholder?: string
 }
 
 const minarsidurLink = '/minarsidur/'
@@ -44,6 +45,7 @@ export const Menu = ({
   onMenuOpen,
   organizationSearchFilter,
   languageToggleQueryParams,
+  searchInputPlaceholder,
 }: Props) => {
   const searchInput = useRef<HTMLInputElement>()
   const { activeLocale, t } = useI18n()
@@ -147,7 +149,7 @@ export const Menu = ({
           // @ts-ignore make web strict
           ref={searchInput}
           activeLocale={activeLocale}
-          placeholder={t.searchPlaceholder}
+          placeholder={searchInputPlaceholder ?? t.searchPlaceholder}
           autocomplete={true}
           autosuggest={true}
           onRouting={closeModal}

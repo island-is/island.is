@@ -19,6 +19,8 @@ const BreadCrumbs: FC = () => {
       caseId: caseId || '',
     },
     skip: !caseId,
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
   })
 
   const caseTableGroups = getCaseTableGroups(user)
@@ -32,8 +34,13 @@ const BreadCrumbs: FC = () => {
   )
 
   return (
-    <Box display="flex" alignItems="center">
-      <Link href="/malalistar" className={styles.link}>
+    <Box
+      component="nav"
+      aria-label="Brauðmolaslóð"
+      display="flex"
+      alignItems="center"
+    >
+      <Link href="/malalistar" className={styles.link} aria-label="Heim">
         <Icon icon="home" size="small" color="purple400" type="outline" />
       </Link>
       <Box marginX={1}>

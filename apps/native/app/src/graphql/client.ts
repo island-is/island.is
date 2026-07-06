@@ -4,6 +4,7 @@ import {
   defaultDataIdFromObject,
   HttpLink,
   InMemoryCache,
+  ServerError,
   ServerParseError,
 } from '@apollo/client'
 import * as WebBrowser from 'expo-web-browser'
@@ -12,6 +13,8 @@ import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
 import { MMKVStorageWrapper, persistCache } from 'apollo3-cache-persist'
 import { config, getConfig } from '../config'
+import { LOCK_SCREEN_SUPPRESS_MAX_MS } from '../constants/auth'
+import { environments } from '../constants/environments'
 import { setInitializer } from './client-instance'
 import { getAuthStoreRef } from '../stores/auth-store-ref'
 import { environmentStore } from '../stores/environment-store'
@@ -61,6 +64,66 @@ const retryLink = new RetryLink({
 
 let cognitoBrowserOpen = false
 
+const triggerCognitoReauth = ({
+  clearStaleToken,
+}: {
+  clearStaleToken: boolean
+}) => {
+  if (clearStaleToken) {
+    environmentStore.setState({ cognito: null })
+  }
+  const redirectUrl = cognitoAuthUrl()
+  getAuthStoreRef().setState({ cognitoAuthUrl: redirectUrl })
+  if (
+    config.isTestingApp &&
+    getAuthStoreRef().getState().authorizeResult &&
+    !cognitoBrowserOpen
+  ) {
+    cognitoBrowserOpen = true
+    // Suppress app-lock: iOS Keychain autofill backgrounds the app and would
+    // otherwise dismiss the FORM_SHEET webview via the AppState listener.
+    getAuthStoreRef().setState({
+      lockScreenSuppressedUntil: Date.now() + LOCK_SCREEN_SUPPRESS_MAX_MS,
+    })
+    WebBrowser.openBrowserAsync(redirectUrl, {
+      presentationStyle: WebBrowser.WebBrowserPresentationStyle.FORM_SHEET,
+    })
+      .finally(() => {
+        cognitoBrowserOpen = false
+        getAuthStoreRef().setState({ lockScreenSuppressedUntil: undefined })
+      })
+      .catch(() => void 0)
+  }
+}
+
+// Tag each GenericUserLicense in the response with the locale used to fetch it.
+// Lets the cache key include the locale so entities for different locales don't
+// overwrite each other in normalised storage.
+const licenseLocaleTagLink = new ApolloLink((operation, forward) => {
+  const locale = (operation.variables as { locale?: string } | undefined)
+    ?.locale
+  return forward(operation).map((response) => {
+    const collection = response.data?.genericLicenseCollection
+    const licenses = collection?.licenses
+    if (!locale || !collection || !Array.isArray(licenses)) {
+      return response
+    }
+    return {
+      ...response,
+      data: {
+        ...response.data,
+        genericLicenseCollection: {
+          ...collection,
+          licenses: licenses.map((license: Record<string, unknown>) => ({
+            ...license,
+            __locale: locale,
+          })),
+        },
+      },
+    }
+  })
+})
+
 const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
   if (graphQLErrors) {
     graphQLErrors.map((graphQLError) =>
@@ -69,29 +132,28 @@ const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
   }
 
   if (networkError) {
-    // Detect possible OAuth needed
+    // Cognito proxy served the HTML login page
     if (networkError.name === 'ServerParseError') {
       const parseError = networkError as ServerParseError
       const isCognitoLogin = parseError.bodyText.includes('cognito-login.css')
       const isCognitoRedirect = parseError?.response?.url?.includes('cognito')
-      const redirectUrl = cognitoAuthUrl()
       if (isCognitoLogin || isCognitoRedirect) {
-        getAuthStoreRef().setState({ cognitoAuthUrl: redirectUrl })
-        if (
-          config.isTestingApp &&
-          getAuthStoreRef().getState().authorizeResult &&
-          !cognitoBrowserOpen
-        ) {
-          cognitoBrowserOpen = true
-          WebBrowser.openBrowserAsync(redirectUrl)
-            .finally(() => {
-              cognitoBrowserOpen = false
-            })
-            .catch(() => void 0)
-        }
+        triggerCognitoReauth({ clearStaleToken: false })
         return
       }
     }
+
+    // 401 from the Cognito proxy (non-prod only).
+    if (
+      networkError.name === 'ServerError' &&
+      (networkError as ServerError).statusCode === 401 &&
+      environmentStore.getState().environment.idsIssuer !==
+        environments.prod.idsIssuer
+    ) {
+      triggerCognitoReauth({ clearStaleToken: true })
+      return
+    }
+
     console.log(`[Network error]: ${networkError}`)
   }
 })
@@ -182,28 +244,31 @@ const cache = new InMemoryCache({
     },
     // Custom cache key for GenericUserLicense.
     // The backend does not expose a single stable id, so we synthesise one from
-    // license.type and payload.metadata.licenseId. This must stay in sync with
-    // the fields selected in GenericUserLicenseFragment so list and detail
-    // queries for the same license share the same cache entry.
+    // license.type and payload.metadata.licenseId. We also append the locale
+    // (injected by licenseLocaleTagLink) so entities fetched in different
+    // locales don't overwrite each other.
     GenericUserLicense: {
       keyFields: (object) => {
         const licenseType = (object as GenericUserLicense).license?.type
         const licenseId = (object as GenericUserLicense).payload?.metadata
           ?.licenseId
+        const locale = (object as { __locale?: string }).__locale
 
-        if (licenseType && licenseId) {
-          // Composite key ensures no collisions between different license types
-          // that might share the same licenseId.
-          return `${licenseType}:${licenseId}`
+        const baseKey =
+          licenseType && licenseId
+            ? // Composite key ensures no collisions between different license types
+              // that might share the same licenseId.
+              `${licenseType}:${licenseId}`
+            : // Fallback when type is missing but licenseId is still unique enough.
+              licenseId ??
+              // Last resort – let Apollo fall back to its default normalisation.
+              defaultDataIdFromObject(object) ??
+              undefined
+
+        if (!baseKey) {
+          return undefined
         }
-
-        if (licenseId) {
-          // Fallback when type is missing but licenseId is still unique enough.
-          return licenseId
-        }
-
-        // Last resort – let Apollo fall back to its default normalisation.
-        return defaultDataIdFromObject(object) ?? undefined
+        return locale ? `${baseKey}:${locale}` : baseKey
       },
     },
   },
@@ -232,7 +297,13 @@ const initializeApolloClient = async () => {
   })
 
   return new ApolloClient({
-    link: ApolloLink.from([retryLink, errorLink, authLink, httpLink]),
+    link: ApolloLink.from([
+      retryLink,
+      errorLink,
+      authLink,
+      licenseLocaleTagLink,
+      httpLink,
+    ]),
     defaultOptions: {
       watchQuery: {
         fetchPolicy: 'cache-and-network',

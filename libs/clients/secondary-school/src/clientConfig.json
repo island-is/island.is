@@ -1169,6 +1169,12 @@
             "items": { "$ref": "#/components/schemas/CountryAreaDto" },
             "description": "List of country areas to filter by.",
             "nullable": true
+          },
+          "isReferenceProgrammeFilterOption": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Filter options to filter if programme is a reference programme or not.",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1196,6 +1202,7 @@
             "description": "Title of the programme.",
             "nullable": true
           },
+          "status": { "$ref": "#/components/schemas/ProgrammeStatus" },
           "studyTrack": { "$ref": "#/components/schemas/StudyTrackReturnDto" },
           "qualification": {
             "$ref": "#/components/schemas/QualificationReturnDto"
@@ -1212,6 +1219,10 @@
             "type": "string",
             "description": "Description of the programme.",
             "nullable": true
+          },
+          "isReferenceProgramme": {
+            "type": "boolean",
+            "description": "Boolean describing if programme is a reference programme (IS: Er viðmiðunarbraut)."
           },
           "structureDescription": {
             "type": "string",
@@ -1327,6 +1338,10 @@
             "description": "Description of the programme.",
             "nullable": true
           },
+          "isReferenceProgramme": {
+            "type": "boolean",
+            "description": "Boolean describing if programme is a reference programme (IS: Er viðmiðunarbraut)."
+          },
           "school": { "$ref": "#/components/schemas/SchoolSimpleReturnDto" },
           "otherSchools": {
             "type": "array",
@@ -1363,6 +1378,10 @@
           }
         },
         "additionalProperties": false
+      },
+      "ProgrammeStatus": {
+        "enum": ["Draft", "Active", "Discontinued", "Outdated"],
+        "type": "string"
       },
       "ProgrammeStructureDto": {
         "type": "object",
@@ -1757,8 +1776,9 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Unique identifier for the subject.",
-            "format": "uuid"
+            "description": "Unique identifier for the subject. Null when using a custom subject name.",
+            "format": "uuid",
+            "nullable": true
           },
           "name": {
             "type": "string",

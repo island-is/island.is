@@ -9,15 +9,18 @@ import {
   CaseType,
 } from '@island.is/judicial-system/types'
 
+import { AwsS3Service } from '../../aws-s3/awsS3.service'
 import { AppealCase } from '../models/appealCase.model'
 import { Case } from '../models/case.model'
 import { CaseFile } from '../models/caseFile.model'
 import { CaseString } from '../models/caseString.model'
+import { CivilClaimant } from '../models/civilClaimant.model'
 import { DateLog } from '../models/dateLog.model'
 import { Defendant } from '../models/defendant.model'
 import { DefendantEventLog } from '../models/defendantEventLog.model'
 import { EventLog } from '../models/eventLog.model'
 import { IndictmentCount } from '../models/indictmentCount.model'
+import { Offense } from '../models/offense.model'
 import { Subpoena } from '../models/subpoena.model'
 import { Verdict } from '../models/verdict.model'
 import { Victim } from '../models/victim.model'
@@ -63,6 +66,9 @@ describe('CaseRepositoryService — police case number junction sync', () => {
     .mockResolvedValue(new Map())
 
   const resolvePoliceCaseNumbersForCases = jest.fn()
+  const findUnassignedPoliceCaseNumbersForSplit = jest
+    .fn()
+    .mockResolvedValue([])
 
   let caseRepositoryService: CaseRepositoryService
   let caseModel: ReturnType<typeof mockSequelizeModel>
@@ -94,9 +100,7 @@ describe('CaseRepositoryService — police case number junction sync', () => {
         )
         for (const c of cases) {
           const fromJunction = map.get(c.id) ?? []
-          if (fromJunction.length > 0) {
-            c.setDataValue('policeCaseNumbers', fromJunction)
-          }
+          c.setDataValue('policeCaseNumbers', fromJunction)
         }
       },
     )
@@ -148,6 +152,11 @@ describe('CaseRepositoryService — police case number junction sync', () => {
           provide: getModelToken(IndictmentCount),
           useValue: indictmentCountModel,
         },
+        { provide: getModelToken(Offense), useValue: mockSequelizeModel() },
+        {
+          provide: getModelToken(CivilClaimant),
+          useValue: mockSequelizeModel(),
+        },
         { provide: getModelToken(CaseFile), useValue: caseFileModel },
         { provide: getModelToken(AppealCase), useValue: mockSequelizeModel() },
         {
@@ -157,8 +166,10 @@ describe('CaseRepositoryService — police case number junction sync', () => {
             moveAssignedRowsToCaseForDefendant,
             findDistinctPoliceCaseNumbersByCaseIds,
             resolvePoliceCaseNumbersForCases,
+            findUnassignedPoliceCaseNumbersForSplit,
           },
         },
+        { provide: AwsS3Service, useValue: {} },
         CaseRepositoryService,
       ],
     }).compile()
@@ -186,6 +197,17 @@ describe('CaseRepositoryService — police case number junction sync', () => {
       )
       expect(res?.policeCaseNumbers).toEqual(['007-2024-a', '007-2024-z'])
     })
+
+    it('sets policeCaseNumbers to [] when junction has no rows', async () => {
+      const built = stubCase('c1', ['should-not-remain'])
+
+      caseModel.findByPk.mockResolvedValue(built)
+      findDistinctPoliceCaseNumbersByCaseIds.mockResolvedValue(new Map())
+
+      const res = await caseRepositoryService.findById('c1')
+
+      expect(res?.policeCaseNumbers).toEqual([])
+    })
   })
 
   describe('findOne', () => {
@@ -203,14 +225,38 @@ describe('CaseRepositoryService — police case number junction sync', () => {
       expect(findDistinctPoliceCaseNumbersByCaseIds).not.toHaveBeenCalled()
       expect(built.policeCaseNumbers).toEqual(['x'])
     })
+
+    it('resolves policeCaseNumbers for included merged cases', async () => {
+      const mergedCase = stubCase('merged-case-id', ['legacy-merged'])
+      const rootCase = stubCase('root-case-id', ['legacy-root'])
+      Object.assign(rootCase, {
+        mergedCases: [mergedCase],
+      })
+
+      caseModel.findOne.mockResolvedValue(rootCase)
+      findDistinctPoliceCaseNumbersByCaseIds.mockResolvedValue(
+        new Map([
+          ['root-case-id', ['007-2024-root']],
+          ['merged-case-id', ['007-2024-merged']],
+        ]),
+      )
+
+      await caseRepositoryService.findOne({
+        where: { id: 'root-case-id' },
+      })
+
+      expect(resolvePoliceCaseNumbersForCases).toHaveBeenCalledWith(
+        expect.arrayContaining([rootCase, mergedCase]),
+        { transaction: undefined },
+      )
+      expect(rootCase.policeCaseNumbers).toEqual(['007-2024-root'])
+      expect(mergedCase.policeCaseNumbers).toEqual(['007-2024-merged'])
+    })
   })
 
   describe('create', () => {
     it('calls replaceUnassigned with created case id and policeCaseNumbers', async () => {
-      const created = {
-        id: 'new-case-id',
-        policeCaseNumbers: ['007-2024-10', '007-2024-11'],
-      } as Case
+      const created = stubCase('new-case-id', [])
 
       caseModel.create.mockResolvedValue(created)
 
@@ -218,7 +264,7 @@ describe('CaseRepositoryService — police case number junction sync', () => {
         {
           type: CaseType.CUSTODY,
           origin: CaseOrigin.RVG,
-          policeCaseNumbers: created.policeCaseNumbers,
+          policeCaseNumbers: ['007-2024-10', '007-2024-11'],
           state: CaseState.NEW,
         } as Partial<Case>,
         { transaction },
@@ -231,8 +277,8 @@ describe('CaseRepositoryService — police case number junction sync', () => {
       )
     })
 
-    it('calls replaceUnassigned with empty array when result has no policeCaseNumbers', async () => {
-      const created = { id: 'new-case-id' } as Case
+    it('calls replaceUnassigned with empty array when data has no policeCaseNumbers', async () => {
+      const created = stubCase('new-case-id', [])
       caseModel.create.mockResolvedValue(created)
 
       await caseRepositoryService.create(
@@ -252,12 +298,9 @@ describe('CaseRepositoryService — police case number junction sync', () => {
 
   describe('update', () => {
     it('calls replaceUnassigned when update payload owns policeCaseNumbers', async () => {
-      const updatedRow = {
-        id: 'case-id',
-        policeCaseNumbers: ['007-2024-99'],
-      } as Case
+      const existing = stubCase('case-id', [])
 
-      caseModel.update.mockResolvedValue([1, [updatedRow]])
+      caseModel.findByPk.mockResolvedValue(existing)
 
       await caseRepositoryService.update(
         'case-id',
@@ -273,7 +316,7 @@ describe('CaseRepositoryService — police case number junction sync', () => {
     })
 
     it('does not call replaceUnassigned when policeCaseNumbers is not on the payload', async () => {
-      const updatedRow = { id: 'case-id' } as Case
+      const updatedRow = stubCase('case-id', [])
       caseModel.update.mockResolvedValue([1, [updatedRow]])
 
       await caseRepositoryService.update(
@@ -288,29 +331,36 @@ describe('CaseRepositoryService — police case number junction sync', () => {
 
   describe('split', () => {
     it('syncs unassigned rows for the new case and moves assigned rows for the split defendant', async () => {
-      const parentCase = {
-        id: 'parent-case-id',
-        policeCaseNumbers: ['007-2024-1', '007-2024-2'],
+      const parentCase = stubCase('parent-case-id', [])
+      Object.assign(parentCase, {
         courtCaseNumber: 'R-100',
         origin: CaseOrigin.LOKE,
         type: CaseType.INDICTMENT,
-      } as Case
+      })
 
-      const splitCase = {
-        id: 'split-case-id',
-        policeCaseNumbers: ['007-2024-1', '007-2024-2'],
-      } as Case
+      const splitCase = stubCase('split-case-id', [])
 
       caseModel.findByPk.mockResolvedValue(parentCase)
       caseModel.create.mockResolvedValue(splitCase)
+
+      findDistinctPoliceCaseNumbersByCaseIds.mockResolvedValue(
+        new Map([['parent-case-id', ['007-2024-1', '007-2024-2']]]),
+      )
+      findUnassignedPoliceCaseNumbersForSplit.mockResolvedValue(['007-2024-1'])
 
       await caseRepositoryService.split('parent-case-id', 'defendant-id', {
         transaction,
       })
 
+      expect(findUnassignedPoliceCaseNumbersForSplit).toHaveBeenCalledWith(
+        'parent-case-id',
+        'defendant-id',
+        { transaction },
+      )
+
       expect(replaceUnassigned).toHaveBeenCalledWith(
         'split-case-id',
-        ['007-2024-1', '007-2024-2'],
+        ['007-2024-1'],
         { transaction },
       )
 

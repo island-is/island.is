@@ -9,7 +9,7 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native'
-import { Href, useRouter } from 'expo-router'
+import { Href, useFocusEffect, useRouter } from 'expo-router'
 import styled, { useTheme } from 'styled-components/native'
 
 import categoriesIcon from '@/assets/icons/categories.png'
@@ -56,6 +56,10 @@ const Row = styled.View`
 `
 
 const AppointmentsContainer = styled.View`
+  row-gap: ${({ theme }) => theme.spacing[2]}px;
+`
+
+const AppointmentsSkeletonGroup = styled.View`
   row-gap: ${({ theme }) => theme.spacing[1]}px;
 `
 
@@ -163,6 +167,17 @@ const ExternalLink: React.FC<ExternalLinkProps> = ({
 
 const showErrorComponent = (error: ApolloError) => {
   return <Problem error={error} size="small" />
+}
+
+// We don't want to query health data unless the user opens the health tab
+function useHasBeenFocused() {
+  const [hasBeenFocused, setHasBeenFocused] = useState(false)
+  useFocusEffect(
+    useCallback(() => {
+      setHasBeenFocused(true)
+    }, []),
+  )
+  return hasBeenFocused
 }
 
 export default function HealthOverviewScreen() {
@@ -287,17 +302,29 @@ export default function HealthOverviewScreen() {
     itemsPerRow,
   ])
 
-  const medicinePurchaseRes = useGetMedicineDataQuery()
+  const hasBeenFocused = useHasBeenFocused()
+
+  const medicinePurchaseRes = useGetMedicineDataQuery({
+    skip: !hasBeenFocused,
+  })
   const organDonationRes = useGetOrganDonorStatusQuery({
     variables: {
       locale: useLocale(),
     },
-    skip: !isOrganDonationEnabled,
+    skip: !hasBeenFocused || !isOrganDonationEnabled,
   })
-  const healthInsuranceRes = useGetHealthInsuranceOverviewQuery()
-  const healthCenterRes = useGetHealthCenterQuery()
-  const paymentStatusRes = useGetPaymentStatusQuery()
-  const bloodTypeRes = useGetBloodTypeOverviewQuery()
+  const healthInsuranceRes = useGetHealthInsuranceOverviewQuery({
+    skip: !hasBeenFocused,
+  })
+  const healthCenterRes = useGetHealthCenterQuery({
+    skip: !hasBeenFocused,
+  })
+  const paymentStatusRes = useGetPaymentStatusQuery({
+    skip: !hasBeenFocused,
+  })
+  const bloodTypeRes = useGetBloodTypeOverviewQuery({
+    skip: !hasBeenFocused,
+  })
   const dentistRes = useGetDentistOverviewQuery({
     variables: {
       input: {
@@ -305,6 +332,7 @@ export default function HealthOverviewScreen() {
         dateTo: now,
       },
     },
+    skip: !hasBeenFocused,
   })
   const paymentOverviewRes = useGetPaymentOverviewQuery({
     variables: {
@@ -314,13 +342,14 @@ export default function HealthOverviewScreen() {
         serviceTypeCode: '',
       },
     },
+    skip: !hasBeenFocused,
   })
   const appointmentsRes = useGetAppointmentsQuery({
     variables: {
       from: undefined,
       status: BaseAppointmentStatuses,
     },
-    skip: !isAppointmentsEnabled,
+    skip: !hasBeenFocused || !isAppointmentsEnabled,
     notifyOnNetworkStatusChange: true,
   })
 
@@ -334,7 +363,7 @@ export default function HealthOverviewScreen() {
   const organDonationData =
     organDonationRes.data?.healthDirectorateOrganDonation.donor
   const appointments =
-    appointmentsRes.data?.healthDirectorateAppointments.data ?? []
+    appointmentsRes.data?.healthDirectorateAppointments?.data ?? []
 
   const isMedicinePeriodActive =
     medicinePurchaseData?.active ||
@@ -471,27 +500,36 @@ export default function HealthOverviewScreen() {
                 router.navigate('/(auth)/(tabs)/health/appointments')
               }
             />
-            {appointmentsRes.loading && (
-              <AppointmentsContainer>
+            {(!hasBeenFocused || appointmentsRes.loading) && (
+              <AppointmentsSkeletonGroup>
                 {Array.from({ length: 2 }).map((_, index) => (
-                  <GeneralCardSkeleton height={100} key={index} />
+                  <GeneralCardSkeleton height={140} key={index} />
                 ))}
-              </AppointmentsContainer>
+              </AppointmentsSkeletonGroup>
             )}
-            {appointmentsRes.error && !appointmentsRes.data && (
+            {appointmentsRes.error && appointments.length === 0 && (
               <AppointmentsContainer>
-                <Problem error={appointmentsRes.error} size="small" />
+                <Problem
+                  type="error"
+                  size="small"
+                  title={intl.formatMessage({ id: 'problem.error.title' })}
+                  message={intl.formatMessage({
+                    id: 'health.appointments.errorMessage',
+                  })}
+                  tag={appointmentsRes.error.message}
+                />
               </AppointmentsContainer>
             )}
-            {!appointmentsRes.loading &&
+            {hasBeenFocused &&
+              !appointmentsRes.loading &&
               !appointmentsRes.error &&
               appointments.length === 0 && (
                 <AppointmentsContainer>
                   <Problem type="no_data" size="small" />
                 </AppointmentsContainer>
               )}
-            {!appointmentsRes.loading &&
-              !appointmentsRes.error &&
+            {hasBeenFocused &&
+              !appointmentsRes.loading &&
               appointments.length > 0 && (
                 <AppointmentsContainer>
                   {appointments.slice(0, 2).map((appointment) => (
@@ -502,6 +540,7 @@ export default function HealthOverviewScreen() {
                       practitioners={appointment.practitioners}
                       date={appointment.date ?? ''}
                       location={appointment.location?.name ?? ''}
+                      modality={appointment.modality}
                       onPress={handleAppointmentPress}
                     />
                   ))}
@@ -725,7 +764,7 @@ export default function HealthOverviewScreen() {
                     id: 'health.overview.noHealthCenterRegistered',
                   })
             }
-            loading={healthCenterRes.loading}
+            loading={!hasBeenFocused || healthCenterRes.loading}
             fullWidthWarning
             allowEmptyValue={healthCenterRes.error ? true : false}
             warningText={
@@ -763,7 +802,7 @@ export default function HealthOverviewScreen() {
                     id: 'health.overview.noPhysicianRegistered',
                   })
             }
-            loading={healthCenterRes.loading}
+            loading={!hasBeenFocused || healthCenterRes.loading}
             fullWidthWarning
             allowEmptyValue={healthCenterRes.error ? true : false}
             warningText={
@@ -801,7 +840,7 @@ export default function HealthOverviewScreen() {
                   })
             }
             allowEmptyValue={dentistRes.error ? true : false}
-            loading={dentistRes.loading}
+            loading={!hasBeenFocused || dentistRes.loading}
             fullWidthWarning
             warningText={
               dentistRes.error
@@ -838,7 +877,10 @@ export default function HealthOverviewScreen() {
                         : 'health.organDonation.isNotDonorDescription',
                     }) ?? ''
               }`}
-              loading={organDonationRes.loading && !organDonationRes.data}
+              loading={
+                !hasBeenFocused ||
+                (organDonationRes.loading && !organDonationRes.data)
+              }
               fullWidthWarning
               warningText={
                 organDonationRes.error
@@ -884,7 +926,7 @@ export default function HealthOverviewScreen() {
                     id: 'health.overview.noBloodTypeRegistered',
                   })
             }
-            loading={bloodTypeRes.loading}
+            loading={!hasBeenFocused || bloodTypeRes.loading}
             fullWidthWarning
             warningText={
               bloodTypeRes.error

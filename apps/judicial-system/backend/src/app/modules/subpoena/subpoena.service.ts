@@ -43,6 +43,7 @@ import { FileService } from '../file/file.service'
 import { PoliceDocumentType, PoliceService } from '../police'
 import {
   Case,
+  CaseDefendantPoliceCaseNumberRepositoryService,
   CourtDocumentRepositoryService,
   CourtSession,
   Defendant,
@@ -90,6 +91,7 @@ export class SubpoenaService {
   constructor(
     private readonly courtDocumentRepositoryService: CourtDocumentRepositoryService,
     private readonly subpoenaRepositoryService: SubpoenaRepositoryService,
+    private readonly caseDefendantPoliceCaseNumberRepositoryService: CaseDefendantPoliceCaseNumberRepositoryService,
     private readonly pdfService: PdfService,
     @Inject(forwardRef(() => FileService))
     private readonly fileService: FileService,
@@ -199,6 +201,12 @@ export class SubpoenaService {
       user,
     )
 
+    this.eventService.postEvent('SUBPOENA_ISSUED', theCase, false, {
+      Varnaraðili: defendantsToProcess
+        .map((defendant) => defendant.id)
+        .join(', '),
+    })
+
     return subpoenas
   }
 
@@ -272,18 +280,14 @@ export class SubpoenaService {
           type: MessageType.SUBPOENA_NOTIFICATION,
           caseId: subpoena.caseId,
           elementId: [subpoena.defendantId, subpoena.id],
-          body: {
-            type: SubpoenaNotificationType.SERVICE_SUCCESSFUL,
-          },
+          body: { type: SubpoenaNotificationType.SERVICE_SUCCESSFUL },
         })
       } else if (isFailedServiceStatus(serviceStatus)) {
         addMessagesToQueue({
           type: MessageType.SUBPOENA_NOTIFICATION,
           caseId: subpoena.caseId,
           elementId: [subpoena.defendantId, subpoena.id],
-          body: {
-            type: SubpoenaNotificationType.SERVICE_FAILED,
-          },
+          body: { type: SubpoenaNotificationType.SERVICE_FAILED },
         })
       }
     }
@@ -296,6 +300,13 @@ export class SubpoenaService {
     update: UpdateSubpoenaDto,
     transaction: Transaction,
   ): Promise<Subpoena> {
+    // Case is often loaded via Sequelize include (e.g. internal LÖKE PATCH) and does not
+    // pass through CaseRepository, so the virtual policeCaseNumbers field is unset.
+    await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
+      [theCase],
+      { transaction },
+    )
+
     const {
       defenderChoice,
       defenderNationalId,
@@ -357,12 +368,7 @@ export class SubpoenaService {
       ].includes(serviceStatus)
 
     // File the service certificate as a court document
-    if (
-      wasSubpoenaSuccessfullyServed &&
-      theCase.withCourtSessions &&
-      theCase.courtSessions &&
-      theCase.courtSessions.length > 0
-    ) {
+    if (wasSubpoenaSuccessfullyServed && theCase.withCourtSessions) {
       const name = `Birtingarvottorð ${defendant.name}`
 
       await this.courtDocumentRepositoryService.create(
@@ -446,9 +452,25 @@ export class SubpoenaService {
     try {
       const civilClaimPdfs: string[] = []
       const civilClaimFiles =
-        theCase.caseFiles?.filter(
-          (caseFile) => caseFile.category === CaseFileCategory.CIVIL_CLAIM,
-        ) ?? []
+        theCase.caseFiles?.filter((caseFile) => {
+          if (caseFile.category !== CaseFileCategory.CIVIL_CLAIM) {
+            return false
+          }
+
+          if (!caseFile.civilClaimantId) {
+            return true
+          }
+
+          const claimant = theCase.civilClaimants?.find(
+            (c) => c.id === caseFile.civilClaimantId,
+          )
+
+          if (!claimant?.defendantIds?.length) {
+            return true
+          }
+
+          return claimant.defendantIds.includes(defendant.id)
+        }) ?? []
 
       for (const civilClaimFile of civilClaimFiles) {
         const civilClaimPdf = await this.fileService.getCaseFileFromS3(
@@ -501,6 +523,16 @@ export class SubpoenaService {
 
       this.logger.info(
         `Subpoena with police subpoena id ${createdSubpoena.policeSubpoenaId} delivered to the police centralized file service`,
+      )
+
+      this.eventService.postEvent(
+        'SUBPOENA_DELIVERED_TO_POLICE',
+        theCase,
+        false,
+        {
+          Varnaraðili: defendant.id,
+          'RLS auðkenni': createdSubpoena.policeSubpoenaId,
+        },
       )
 
       return { delivered: true }

@@ -42,6 +42,7 @@ export const mapAppSystemCards = (
     nationalId: institutionMapper[application.typeId]?.nationalId,
     actionCard: application.actionCard,
     pruneAt: application.pruneAt,
+    pruned: application.pruned,
   }
 }
 
@@ -131,8 +132,8 @@ export const mapFormSystemStatisticsAdmin = (
     typeid: statistics.formId,
     name: statistics.formName ?? '',
     count: statistics.totalCount,
-    draft: 0,
-    inprogress: statistics.inProgressCount,
+    draft: statistics.inProgressCount,
+    inprogress: 0,
     completed: statistics.completedCount,
     rejected: 0,
     approved: 0,

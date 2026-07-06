@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 
 import { Auth, withAuthContext } from '@island.is/auth-nest-tools'
-import { data } from '@island.is/clients/middlewares'
+import { data, dataOr404Null } from '@island.is/clients/middlewares'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
@@ -16,6 +16,18 @@ import {
   WaitingListEntryDto,
   donationExceptionControllerGetOrgansV1,
   meAppointmentControllerGetPatientAppointmentsV1,
+  meAppointmentControllerGetPatientAppointmentByIdV1,
+  meConversationControllerArchiveConversationV1,
+  meConversationControllerCreateConversationV1,
+  meConversationControllerGetConversationByIdV1,
+  meConversationControllerGetConversationsV1,
+  meConversationControllerGetMessageAttachmentV1,
+  meConversationControllerMarkConversationAsReadV1,
+  meConversationControllerReplyToConversationV1,
+  meConversationControllerStarConversationV1,
+  meConversationControllerUnarchiveConversationV1,
+  meConversationControllerUnstarConversationV1,
+  meMessagingRecipientControllerGetMessagingRecipientsV1,
   meDonorStatusControllerGetOrganDonorStatusV1,
   meDonorStatusControllerUpdateOrganDonorStatusV1,
   mePatientConcentEuControllerCreateEuPatientConsentForPatientV1,
@@ -26,6 +38,7 @@ import {
   mePrescriptionCommissionControllerGetPrescriptionCommissionsV1,
   mePrescriptionControllerGetPrescribedItemDocumentsV1,
   mePrescriptionControllerGetPrescriptionsV1,
+  mePrescriptionControllerGetRenewalTargetsV1,
   mePrescriptionControllerRenewPrescriptionV1,
   mePrescriptionDispensationControllerGetDispensationsForAtcCodeV1,
   mePrescriptionDispensationControllerGetGroupedDispensationsV1,
@@ -38,16 +51,25 @@ import {
 } from './gen/fetch'
 
 import {
-  AppointmentDto,
+  AppointmentBaseDto,
+  AppointmentDetailDto,
   ConsentCountryDto,
+  ConversationBaseDto,
+  ConversationDetailDto,
+  ConversationStatusFilter,
+  CreateConversationRequestDto,
   CreateEuPatientConsentDto,
   CreateOrUpdatePrescriptionCommissionDto,
+  CreateReplyRequestDto,
   EuPatientConsentResponseDto,
   Locale,
+  MessagingRecipientDto,
   PrescriptionCommissionDto,
   QuestionnaireBaseDto,
   QuestionnaireDetailDto,
   QuestionnaireSubmissionDetailDto,
+  RenewPrescriptionRequestDto,
+  RenewalTargetDto,
   SubmitQuestionnaireDto,
   SubmitQuestionnaireResponseDto,
   UserVisibleAppointmentStatuses,
@@ -133,16 +155,35 @@ export class HealthDirectorateHealthService {
   }
 
   /* Endurnýjun lyfseðils */
-  public async postRenewalPrescription(auth: Auth, id: string) {
+  public async postRenewalPrescription(
+    auth: Auth,
+    id: string,
+    body?: RenewPrescriptionRequestDto,
+  ) {
     return await withAuthContext(auth, () =>
       data(
         mePrescriptionControllerRenewPrescriptionV1({
-          path: {
-            id,
-          },
+          path: { id },
+          body: body ?? {},
         }),
       ),
     )
+  }
+
+  /* Endurnýjunarviðtakendur lyfseðils */
+  public async getRenewalTargets(
+    auth: Auth,
+    id: string,
+  ): Promise<Array<RenewalTargetDto> | null> {
+    const targets = await withAuthContext(auth, () =>
+      data(
+        mePrescriptionControllerGetRenewalTargetsV1({
+          path: { id },
+        }),
+      ),
+    )
+
+    return targets ?? null
   }
 
   /* Fylgiseðill */
@@ -213,13 +254,13 @@ export class HealthDirectorateHealthService {
 
   public async getOrganDonation(
     auth: Auth,
-    input: Locale,
+    locale: string,
   ): Promise<OrganDonorDto | null> {
     const organDonation = await withAuthContext(auth, () =>
       data(
         meDonorStatusControllerGetOrganDonorStatusV1({
           query: {
-            locale: this.mapLocale(input),
+            locale: this.mapLocale(locale),
           },
         }),
       ),
@@ -236,14 +277,14 @@ export class HealthDirectorateHealthService {
   public async updateOrganDonation(
     auth: Auth,
     input: UpdateOrganDonorDto,
-    locale: Locale,
+    locale: string,
   ): Promise<void> {
     await withAuthContext(auth, () =>
       data(
         meDonorStatusControllerUpdateOrganDonorStatusV1({
           body: input,
           query: {
-            locale: locale,
+            locale: this.mapLocale(locale),
           },
         }),
       ),
@@ -252,13 +293,13 @@ export class HealthDirectorateHealthService {
 
   public async getDonationExceptions(
     auth: Auth,
-    input: Locale,
+    locale: string,
   ): Promise<Array<OrganDto> | null> {
     const donationExceptions = await withAuthContext(auth, () =>
       data(
         donationExceptionControllerGetOrgansV1({
           query: {
-            locale: this.mapLocale(input),
+            locale: this.mapLocale(locale),
           },
         }),
       ),
@@ -500,8 +541,10 @@ export class HealthDirectorateHealthService {
     auth: Auth,
     from?: Date,
     statuses?: UserVisibleAppointmentStatuses[],
-  ): Promise<AppointmentDto[] | null> {
-    const defaultFrom = new Date()
+  ): Promise<AppointmentBaseDto[] | null> {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const defaultFrom = today
 
     const appointments = await withAuthContext(auth, () =>
       data(
@@ -515,5 +558,151 @@ export class HealthDirectorateHealthService {
     )
 
     return appointments ?? null
+  }
+
+  public async getAppointmentById(
+    auth: Auth,
+    id: string,
+  ): Promise<AppointmentDetailDto | null> {
+    const appointment = await withAuthContext(auth, () =>
+      dataOr404Null(
+        meAppointmentControllerGetPatientAppointmentByIdV1({
+          path: { id },
+        }),
+      ),
+    )
+
+    return appointment ?? null
+  }
+
+  /* Conversations (Health Messages) */
+
+  public async getConversations(
+    auth: Auth,
+    status?: ConversationStatusFilter,
+    starred?: boolean,
+  ): Promise<ConversationBaseDto[] | null> {
+    const conversations = await withAuthContext(auth, () =>
+      data(
+        meConversationControllerGetConversationsV1({
+          query: { status, starred },
+        }),
+      ),
+    )
+
+    return conversations ?? null
+  }
+
+  public async getConversation(
+    auth: Auth,
+    id: string,
+  ): Promise<ConversationDetailDto | null> {
+    const conversation = await withAuthContext(auth, () =>
+      data(
+        meConversationControllerGetConversationByIdV1({
+          path: { id },
+        }),
+      ),
+    )
+
+    return conversation ?? null
+  }
+
+  public async createConversation(
+    auth: Auth,
+    input: CreateConversationRequestDto,
+  ): Promise<ConversationDetailDto | null> {
+    const conversation = await withAuthContext(auth, () =>
+      data(
+        meConversationControllerCreateConversationV1({
+          body: input,
+        }),
+      ),
+    )
+
+    return conversation ?? null
+  }
+
+  public async replyToConversation(
+    auth: Auth,
+    id: string,
+    input: CreateReplyRequestDto,
+  ): Promise<ConversationDetailDto | null> {
+    const conversation = await withAuthContext(auth, () =>
+      data(
+        meConversationControllerReplyToConversationV1({
+          path: { id },
+          body: input,
+        }),
+      ),
+    )
+
+    return conversation ?? null
+  }
+
+  public async markConversationAsRead(auth: Auth, id: string): Promise<void> {
+    await withAuthContext(auth, () =>
+      data(meConversationControllerMarkConversationAsReadV1({ path: { id } })),
+    )
+  }
+
+  public async archiveConversation(auth: Auth, id: string): Promise<void> {
+    await withAuthContext(auth, () =>
+      data(meConversationControllerArchiveConversationV1({ path: { id } })),
+    )
+  }
+
+  public async unarchiveConversation(auth: Auth, id: string): Promise<void> {
+    await withAuthContext(auth, () =>
+      data(meConversationControllerUnarchiveConversationV1({ path: { id } })),
+    )
+  }
+
+  public async starConversation(auth: Auth, id: string): Promise<void> {
+    await withAuthContext(auth, () =>
+      data(meConversationControllerStarConversationV1({ path: { id } })),
+    )
+  }
+
+  public async unstarConversation(auth: Auth, id: string): Promise<void> {
+    await withAuthContext(auth, () =>
+      data(meConversationControllerUnstarConversationV1({ path: { id } })),
+    )
+  }
+
+  public async getMessageAttachment(
+    auth: Auth,
+    conversationId: string,
+    messageId: string,
+    attachmentId: number,
+  ): Promise<{ data: ArrayBuffer; contentType: string } | null> {
+    const result = await withAuthContext(auth, () =>
+      meConversationControllerGetMessageAttachmentV1({
+        path: { id: conversationId, messageId, attachmentId },
+        parseAs: 'arrayBuffer',
+      }),
+    )
+    if (!result.data) return null
+    return {
+      data: result.data as ArrayBuffer,
+      contentType:
+        result.response.headers.get('content-type') ??
+        'application/octet-stream',
+    }
+  }
+
+  public async getMessagingRecipients(
+    auth: Auth,
+    locale?: Locale,
+  ): Promise<MessagingRecipientDto[] | null> {
+    const recipients = await withAuthContext(auth, () =>
+      data(
+        meMessagingRecipientControllerGetMessagingRecipientsV1({
+          query: { locale },
+        }),
+      ),
+    )
+
+    return recipients ?? null
   }
 }

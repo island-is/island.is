@@ -33,13 +33,15 @@ import {
   type User,
 } from '@island.is/judicial-system/types'
 
+import { nowFactory } from '../../factories'
 import { createConfirmedPdf, getCaseFileHash } from '../../formatters'
-import { hasConfirmableCaseFileCategories } from '../../formatters/confirmedPdf'
+import { hasConfirmableCaseFileCategories } from '../../formatters/confirmation/confirmedPdf'
 import { AwsS3Service } from '../aws-s3'
 import { InternalCaseService } from '../case/internalCase.service'
 import { CourtDocumentFolder, CourtService } from '../court'
 import { PoliceDocumentType } from '../police'
 import {
+  AppealCase,
   Case,
   CaseFile,
   CourtDocumentRepositoryService,
@@ -372,7 +374,7 @@ export class FileService {
     user: User,
     transaction: Transaction,
   ): Promise<CaseFile> {
-    const { key } = createFile
+    const { key, rulingFileId } = createFile
 
     const regExp = new RegExp(`^${theCase.id}/.{36}/(.*)$`)
 
@@ -380,6 +382,22 @@ export class FileService {
       throw new BadRequestException(
         `${key} is not a valid key for case ${theCase.id}`,
       )
+    }
+
+    if (rulingFileId) {
+      const rulingFile = theCase.caseFiles?.find((f) => f.id === rulingFileId)
+      if (!rulingFile) {
+        throw new BadRequestException(
+          `Ruling file ${rulingFileId} does not belong to case ${theCase.id}`,
+        )
+      }
+      if (
+        rulingFile.category !== CaseFileCategory.COURT_INDICTMENT_RULING_ORDER
+      ) {
+        throw new BadRequestException(
+          `Ruling file ${rulingFileId} is not a court indictment ruling order`,
+        )
+      }
     }
 
     const fileName = createFile.key.slice(NAME_BEGINS_INDEX)
@@ -404,12 +422,25 @@ export class FileService {
         CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
       ].includes(file.category)
     ) {
-      addMessagesToQueue({
-        type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE,
-        user,
-        caseId: theCase.id,
-        elementId: file.id,
-      })
+      const appealCase = file.rulingFileId
+        ? theCase.rulingOrderAppealCases?.find(
+            (a) => a.rulingFileId === file.rulingFileId,
+          )
+        : theCase.appealCase
+
+      if (appealCase) {
+        addMessagesToQueue({
+          type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE,
+          user,
+          caseId: theCase.id,
+          elementId: [appealCase.id, file.id],
+        })
+      } else {
+        // This should never happen, but log an error just in case
+        this.logger.error(
+          `Could not find appeal case for appeal case file ${file.id} of case ${theCase.id}`,
+        )
+      }
     }
 
     if (
@@ -453,9 +484,33 @@ export class FileService {
     user: User,
     transaction: Transaction,
   ): Promise<CaseFile> {
+    let finalOrderWithinChapter = createFile.orderWithinChapter
+    if (createFile.orderWithinChapter === undefined && !createFile.category) {
+      // Lock existing uncategorized files so concurrent creates cannot read the
+      // same max orderWithinChapter before either insert commits.
+      await this.fileModel.findAll({
+        where: { caseId: theCase.id, category: null },
+        attributes: ['id'],
+        lock: Transaction.LOCK.UPDATE,
+        transaction,
+      })
+
+      const maxOrder = await this.fileModel.max<number | null, CaseFile>(
+        'orderWithinChapter',
+        {
+          where: { caseId: theCase.id, category: null },
+          transaction,
+        },
+      )
+      if (maxOrder !== null) {
+        finalOrderWithinChapter = maxOrder + 1
+      }
+    }
+
     const file = await this.fileModel.create(
       {
         ...createFile,
+        orderWithinChapter: finalOrderWithinChapter,
         state: CaseFileState.STORED_IN_RVG,
         caseId: theCase.id,
         name: fileName,
@@ -655,6 +710,32 @@ export class FileService {
     return updatedCaseFiles[0]
   }
 
+  async confirmRulingOrder(
+    theCase: Case,
+    caseFile: CaseFile,
+    transaction?: Transaction,
+  ): Promise<CaseFile> {
+    if (caseFile.category !== CaseFileCategory.COURT_INDICTMENT_RULING_ORDER) {
+      throw new BadRequestException(
+        'Only ruling orders uploaded during the course of a case can be confirmed',
+      )
+    }
+
+    if (caseFile.submissionDate) {
+      throw new BadRequestException('The ruling order is already confirmed')
+    }
+
+    // Setting the submission date marks the ruling order as confirmed by the
+    // registered judge. The RVG confirmation stamp is added lazily on download
+    // based on this date (see confirmIndictmentCaseFile).
+    return this.updateCaseFile(
+      theCase.id,
+      caseFile.id,
+      { submissionDate: nowFactory().toISOString() },
+      transaction,
+    )
+  }
+
   async updateFiles(
     caseId: string,
     caseFileUpdates: UpdateFileDto[],
@@ -686,6 +767,7 @@ export class FileService {
 
   async deliverCaseFileToCourtOfAppeals(
     theCase: Case,
+    appealCase: AppealCase,
     file: CaseFile,
     user: User,
   ): Promise<DeliverResponse> {
@@ -703,7 +785,7 @@ export class FileService {
         user,
         theCase.id,
         file.id,
-        theCase.appealCase?.appealCaseNumber,
+        appealCase.appealCaseNumber,
         file.category,
         file.name,
         url,
@@ -712,7 +794,7 @@ export class FileService {
       .then(() => ({ delivered: true }))
       .catch((reason) => {
         this.logger.error(
-          `Failed to update appeal case ${theCase.id} with file`,
+          `Failed to update appeal case ${appealCase.id} of case ${theCase.id} with file ${file.id}`,
           { reason },
         )
 

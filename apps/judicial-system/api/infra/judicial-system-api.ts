@@ -52,8 +52,8 @@ export const serviceSetup = (services: {
       },
       HIDDEN_FEATURES: {
         dev: '',
-        staging: 'INDICTMENT_APPEAL_RULING',
-        prod: 'INDICTMENT_APPEAL_RULING',
+        staging: 'APPEAL_RULING_ORDER',
+        prod: 'APPEAL_RULING_ORDER',
       },
       REDIS_NODES: {
         dev: json([
@@ -73,6 +73,7 @@ export const serviceSetup = (services: {
       CONTENTFUL_ACCESS_TOKEN: '/k8s/judicial-system/CONTENTFUL_ACCESS_TOKEN',
       AUTH_IDS_SECRET: '/k8s/judicial-system/AUTH_IDS_SECRET',
       LAWYERS_ICELAND_API_KEY: '/k8s/judicial-system/LAWYERS_ICELAND_API_KEY',
+      AUTH_TOKEN_SECRET_BASE64: '/k8s/judicial-system/AUTH_TOKEN_SECRET_BASE64',
     })
     .liveness('/liveness')
     .readiness('/liveness')

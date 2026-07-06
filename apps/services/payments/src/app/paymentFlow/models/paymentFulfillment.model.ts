@@ -51,11 +51,11 @@ export class PaymentFulfillment extends Model<
 
   @ApiProperty()
   @Column({
-    type: DataType.ENUM('card', 'invoice'),
+    type: DataType.ENUM('card', 'invoice', 'bank_transfer'),
     allowNull: false,
     field: 'payment_method',
   })
-  paymentMethod!: 'card' | 'invoice'
+  paymentMethod!: 'card' | 'invoice' | 'bank_transfer'
 
   @ApiProperty()
   @Column({

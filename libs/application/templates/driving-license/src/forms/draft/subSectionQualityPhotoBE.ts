@@ -8,8 +8,12 @@ import {
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { m } from '../../lib/messages'
-import { BE, QUALITY_IMAGE_TYPE_IDS } from '../../lib/constants'
-import { hasNoDrivingLicenseInOtherCountry, isVisible } from '../../lib/utils'
+import { BE } from '../../lib/constants'
+import {
+  hasNoDrivingLicenseInOtherCountry,
+  hasUsableRlsQualityPhoto,
+  isVisible,
+} from '../../lib/utils'
 
 const PLACEHOLDER_SRC =
   'data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjY2NjIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgdmlld0JveD0iMCAwIDY0IDY0Ij48Y2lyY2xlIGN4PSIzMiIgY3k9IjIwIiByPSIxMiIvPjxwYXRoIGQ9Ik0xMiA1MmMwLTExLjMgOS4yLTE2IDIwLTE2czIwIDQuNyAyMCAxNmgtNDB6Ii8+PC9zdmc+'
@@ -31,7 +35,6 @@ const toBase64DataUrl = (photoData?: string): string => {
 
   return isValidBase64 ? `data:image/jpeg;base64,${cleaned}` : PLACEHOLDER_SRC
 }
-
 interface ThjodskraImage {
   biometricId: string
   content: string
@@ -72,15 +75,7 @@ export const subSectionQualityPhotoBE = buildSubSection({
               return facialPhotos[0].biometricId
             }
 
-            const photoAndSig = getValueViaPath<{
-              imageTypeId?: number | null
-              pohto?: string | null
-            }>(externalData, 'qualityPhotoAndSignature.data')
-
-            if (
-              photoAndSig?.pohto &&
-              QUALITY_IMAGE_TYPE_IDS.includes(photoAndSig?.imageTypeId ?? 0)
-            ) {
+            if (hasUsableRlsQualityPhoto(externalData)) {
               return 'qualityPhoto'
             }
 
@@ -115,22 +110,21 @@ export const subSectionQualityPhotoBE = buildSubSection({
               })
             }
 
-            // Quality photo from getqualityphotoandsignature
-            const photoAndSig = getValueViaPath<{
-              imageTypeId?: number | null
-              pohto?: string | null
-            }>(externalData, 'qualityPhotoAndSignature.data')
-
-            if (
-              photoAndSig?.pohto &&
-              QUALITY_IMAGE_TYPE_IDS.includes(photoAndSig?.imageTypeId ?? 0)
-            ) {
+            // Quality photo from getqualityphotoandsignature. The binary
+            // (`pohto`) may be null for legacy records — createPhotoComponent
+            // falls back to a placeholder, and submission resolves the photo
+            // by reference, so offer the option whenever a record exists.
+            if (hasUsableRlsQualityPhoto(externalData)) {
+              const photoAndSig = getValueViaPath<{ pohto?: string | null }>(
+                externalData,
+                'qualityPhotoAndSignature.data',
+              )
               options.push({
                 value: 'qualityPhoto',
                 label: m.useDriversLicenseImage,
                 illustration: buildImageField({
                   id: 'qualityPhoto-illustration',
-                  image: toBase64DataUrl(photoAndSig.pohto ?? undefined),
+                  image: toBase64DataUrl(photoAndSig?.pohto ?? undefined),
                 }),
               })
             }

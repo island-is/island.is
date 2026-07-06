@@ -1,82 +1,96 @@
 // ATTENTION -> When adding or changing paths, please always make sure to redirect old paths. The app is using links to navigate
 const basicInformation = '/heilsa/grunnupplysingar'
+const therapiesAndAids = '/heilsa/thjalfun-og-hjalpartaeki'
+const medicine = '/heilsa/lyf'
+const patientData = '/heilsa/sjukraskra'
+const payments = '/heilsa/greidslur'
 export enum HealthPaths {
   HealthRoot = '/heilsa',
 
-  HealthBasicOld = '/heilsa/yfirlit',
   HealthBasicInformation = `${basicInformation}`,
-  HealthOverview = `${basicInformation}/yfirlit`,
-
+  HealthOverview = '/heilsa/yfirlit',
   HealthDentists = `${basicInformation}/tannlaeknar`,
   HealthDentistRegistration = `${basicInformation}/tannlaeknar/skraning`,
-
   HealthOrganDonation = `${basicInformation}/liffaeragjof`,
   HealthOrganDonationRegistration = `${basicInformation}/liffaeragjof/skraning`,
-
   HealthInsurance = `${basicInformation}/sjukratryggingar`,
-
   HealthCenter = `${basicInformation}/heilsugaesla`,
   HealthCenterRegistration = `${basicInformation}/heilsugaesla/skraning`,
+  HealthBloodtype = `${basicInformation}/blodflokkur`,
 
-  HealthDentistsOld = '/heilsa/tannlaeknar',
-  HealthDentistRegistrationOld = '/heilsa/tannlaeknar/skraning',
+  HealthTherapiesAndAids = `${therapiesAndAids}`,
+  HealthTherapies = `${therapiesAndAids}/thjalfun`,
+  HealthTherapiesPhysical = `${therapiesAndAids}/thjalfun/sjukrathjalfun`,
+  HealthTherapiesSpeech = `${therapiesAndAids}/thjalfun/talthjalfun`,
+  HealthTherapiesOccupational = `${therapiesAndAids}/thjalfun/idjuthjalfun`,
+  HealthAidsAndNutrition = `${therapiesAndAids}/hjalpartaeki-og-naering`,
 
-  HealthOrganDonationOld = '/heilsa/liffaeragjof',
-  HealthOrganDonationRegistrationOld = '/heilsa/liffaeragjof/skraning',
+  HealthPayments = `${payments}`,
+  HealthPaymentParticipation = `${payments}/greidsluthatttaka`,
+  HealthPaymentOverview = `${payments}/greidsluyfirlit`,
+  HealthPaymentOverviewInvoices = `${payments}/greidsluyfirlit/reikningar`,
+  HealthPaymentOverviewTotals = `${payments}/greidsluyfirlit/timabil`,
+  HealthPaymentRights = `${payments}/rettindi`,
 
-  HealthCenterOld = '/heilsa/heilsugaesla',
-  HealthCenterRegistrationOld = '/heilsa/heilsugaesla/skraning',
+  HealthMedicine = `${medicine}`,
+  HealthMedicinePaymentParticipation = `${medicine}/greidsluthatttaka`,
+  HealthMedicinePurchase = `${medicine}/greidsluthatttaka/lyfjakaup`,
+  HealthMedicineCalculator = `${medicine}/greidsluthatttaka/lyfjareiknivel`,
+  HealthMedicineCertificates = `${medicine}/lyfjaskirteini`,
+  HealthMedicineCertificate = `${medicine}/lyfjaskirteini/:name/:id`,
+  HealthMedicinePrescription = `${medicine}/lyfjaavisanir`,
+  HealthMedicinePrescriptionOverview = `${medicine}/lyfjaavisanir/yfirlit`,
+  HealthMedicinePrescriptionHistory = `${medicine}/lyfjasaga`,
+  HealthMedicineDelegation = `${medicine}/lyfjaumbod`,
+  HealthMedicineDelegationDetail = `${medicine}/lyfjaumbod/:id`,
+  HealthMedicineDelegationAdd = `${medicine}/lyfjaumbod/nytt-lyfjaumbod`,
 
-  HealthTherapies = '/heilsa/thjalfun',
-  HealthTherapiesPhysical = '/heilsa/thjalfun/sjukrathjalfun',
-  HealthTherapiesSpeech = '/heilsa/thjalfun/talthjalfun',
-  HealthTherapiesOccupational = '/heilsa/thjalfun/idjuthjalfun',
-
-  HealthPayments = '/heilsa/greidslur',
-  HealthPaymentParticipation = '/heilsa/greidslur/greidsluthatttaka',
-  HealthPaymentOverview = '/heilsa/greidslur/greidsluyfirlit',
-  HealthPaymentOverviewInvoices = '/heilsa/greidslur/greidsluyfirlit/reikningar',
-  HealthPaymentOverviewTotals = '/heilsa/greidslur/greidsluyfirlit/timabil',
-  HealthPaymentRights = '/heilsa/greidslur/rettindi',
-
-  HealthAidsAndNutrition = '/heilsa/hjalpartaeki-og-naering',
-
-  HealthMedicine = '/heilsa/lyf',
-  HealthMedicinePaymentParticipation = '/heilsa/lyf/greidsluthatttaka',
-  HealthMedicinePurchase = '/heilsa/lyf/greidsluthatttaka/lyfjakaup',
-  HealthMedicineCalculator = '/heilsa/lyf/greidsluthatttaka/lyfjareiknivel',
-  HealthMedicineCertificates = '/heilsa/lyf/lyfjaskirteini',
-  HealthMedicineCertificate = '/heilsa/lyf/lyfjaskirteini/:name/:id',
-  HealthMedicinePrescription = '/heilsa/lyf/lyfjaavisanir',
-  HealthMedicinePrescriptionOverview = '/heilsa/lyf/lyfjaavisanir/yfirlit',
-  HealthMedicinePrescriptionHistory = '/heilsa/lyf/lyfjasaga',
-  HealthMedicineDelegation = '/heilsa/lyf/lyfjaumbod',
-  HealthMedicineDelegationDetail = '/heilsa/lyf/lyfjaumbod/:id',
-  HealthMedicineDelegationAdd = '/heilsa/lyf/lyfjaumbod/nytt-lyfjaumbod',
-
-  HealthVaccinations = '/heilsa/bolusetningar',
-  HealthVaccinationsGeneral = '/heilsa/bolusetningar/almennar',
-  HealthVaccinationsOther = '/heilsa/bolusetningar/adrar',
-
-  HealthBloodtype = '/heilsa/blodflokkur',
-
-  HealthReferrals = '/heilsa/tilvisanir',
-  HealthReferralsDetail = '/heilsa/tilvisanir/:id',
-
-  HealthWaitlists = '/heilsa/bidlistar',
-  HealthWaitlistsDetail = '/heilsa/bidlistar/:id',
-
+  HealthVaccinations = `${patientData}/bolusetningar`,
+  HealthVaccinationsGeneral = `${patientData}/bolusetningar/almennar`,
+  HealthVaccinationsOther = `${patientData}/bolusetningar/adrar`,
+  HealthWaitlists = `${patientData}/bidlistar`,
+  HealthWaitlistsDetail = `${patientData}/bidlistar/:id`,
   HealthQuestionnaires = '/heilsa/spurningalistar',
   HealthQuestionnairesDetail = '/heilsa/spurningalistar/:org/:id',
   HealthQuestionnairesAnswer = '/heilsa/spurningalistar/:org/:id/svara',
   HealthQuestionnairesAnswered = '/heilsa/spurningalistar/:org/:id/skoda-svor/:submissionId',
+  HealthPatientData = `${patientData}`,
+  HealthPatientDataOverview = `${patientData}/yfirlit`,
+  HealthPatientDataPermits = `${patientData}/heimildir`,
+  HealthPatientDataPermitsDetail = `${patientData}/heimildir/heimild`,
+  HealthPatientDataPermitsAdd = `${patientData}/heimildir/ny-heimild`,
 
-  HealthPatientData = '/heilsa/sjukraskra',
-  HealthPatientDataOverview = '/heilsa/sjukraskra/yfirlit',
-  HealthPatientDataPermits = '/heilsa/sjukraskra/heimildir',
-  HealthPatientDataPermitsDetail = '/heilsa/sjukraskra/heimildir/heimild',
-  HealthPatientDataPermitsAdd = '/heilsa/sjukraskra/heimildir/ny-heimild',
+  HealthReferrals = '/heilsa/tilvisanir',
+  HealthReferralsDetail = '/heilsa/tilvisanir/:id',
 
   HealthAppointments = '/heilsa/timabokanir',
   HealthAppointmentDetail = '/heilsa/timabokanir/:id',
+
+  HealthConversations = '/heilsa/skilabod',
+  HealthConversationsNew = '/heilsa/skilabod/nytt',
+  HealthConversationsDetail = '/heilsa/skilabod/:id',
+
+  // Deprecated paths - kept for redirects
+  HealthOverviewOld = `${basicInformation}/yfirlit`,
+  HealthBloodtypeOld = '/heilsa/blodflokkur',
+  HealthDentistsOld = '/heilsa/tannlaeknar',
+  HealthDentistRegistrationOld = '/heilsa/tannlaeknar/skraning',
+  HealthOrganDonationOld = '/heilsa/liffaeragjof',
+  HealthOrganDonationRegistrationOld = '/heilsa/liffaeragjof/skraning',
+  HealthCenterOld = '/heilsa/heilsugaesla',
+  HealthCenterRegistrationOld = '/heilsa/heilsugaesla/skraning',
+  HealthTherapiesAndAidsOld = '/heilsa/thjalfun',
+  HealthTherapiesPhysicalOld = '/heilsa/thjalfun/sjukrathjalfun',
+  HealthTherapiesSpeechOld = '/heilsa/thjalfun/talthjalfun',
+  HealthTherapiesOccupationalOld = '/heilsa/thjalfun/idjuthjalfun',
+  HealthAidsAndNutritionOld = '/heilsa/hjalpartaeki-og-naering',
+  HealthVaccinationsOld = '/heilsa/bolusetningar',
+  HealthVaccinationsGeneralOld = '/heilsa/bolusetningar/almennar',
+  HealthVaccinationsOtherOld = '/heilsa/bolusetningar/adrar',
+  HealthWaitlistsOld = '/heilsa/bidlistar',
+  HealthWaitlistsDetailOld = '/heilsa/bidlistar/:id',
+  HealthQuestionnairesOld = `${patientData}/spurningalistar`,
+  HealthQuestionnairesDetailOld = `${patientData}/spurningalistar/:org/:id`,
+  HealthQuestionnairesAnswerOld = `${patientData}/spurningalistar/:org/:id/svara`,
+  HealthQuestionnairesAnsweredOld = `${patientData}/spurningalistar/:org/:id/skoda-svor/:submissionId`,
 }

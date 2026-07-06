@@ -1,19 +1,38 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
-import { IsArray, IsOptional, IsString, ValidateNested } from 'class-validator'
+import {
+  IsArray,
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator'
 
 class ChargeItemDto {
   @ApiProperty()
   @IsString()
-  code!: string
+  chargeItemCode!: string
+
+  @ApiProperty()
+  @IsString()
+  performingOrgID!: string
+
+  @ApiProperty()
+  @IsString()
+  chargeType!: string
+
+  @ApiProperty()
+  @IsString()
+  chargeItemName!: string
+
+  @ApiProperty({ required: false })
+  @IsNumber()
+  priceAmount!: number
 
   @ApiProperty({ required: false })
   @IsOptional()
+  @IsNumber()
   quantity?: number
-
-  @ApiProperty({ required: false })
-  @IsOptional()
-  amount?: number
 }
 
 export class CreateChargeRequestDto {

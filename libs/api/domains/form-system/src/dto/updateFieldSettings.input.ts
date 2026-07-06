@@ -76,6 +76,9 @@ export class UpdateFieldSettingsInput {
   @Field(() => String, { nullable: true })
   applicantType?: string
 
+  @Field(() => String, { nullable: true })
+  assetType?: string
+
   @Field(() => Boolean, { nullable: true })
   hasDescription?: boolean
 
@@ -84,6 +87,9 @@ export class UpdateFieldSettingsInput {
 
   @Field(() => Boolean, { nullable: true })
   isEmailRequired?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  fetchEmailFromMyPages?: boolean
 
   @Field(() => String, { nullable: true })
   chargeItemCode?: string
@@ -105,4 +111,13 @@ export class UpdateFieldSettingsInput {
 
   @Field(() => String, { nullable: true })
   paymentQuantityId?: string
+
+  @Field(() => String, { nullable: true })
+  zendeskTicketFieldId?: string
+
+  @Field(() => String, { nullable: true })
+  zendeskCustomObjectKey?: string
+
+  @Field(() => String, { nullable: true })
+  dataSourceUrl?: string
 }

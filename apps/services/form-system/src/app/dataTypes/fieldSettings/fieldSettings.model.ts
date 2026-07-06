@@ -1,4 +1,4 @@
-import { ListTypesEnum } from '@island.is/form-system/shared'
+import { ListTypesEnum, AssetTypes } from '@island.is/form-system/enums'
 import { ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import {
@@ -21,6 +21,11 @@ export class FieldSettings {
   @IsNumber()
   @ApiPropertyOptional({ type: Number })
   maxValue?: number
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  isDecimal?: boolean
 
   @IsOptional()
   @IsNumber()
@@ -129,6 +134,11 @@ export class FieldSettings {
   applicantType?: string
 
   @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ enum: AssetTypes })
+  assetType?: string
+
+  @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
   hasDescription?: boolean
@@ -142,6 +152,11 @@ export class FieldSettings {
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
   isEmailRequired?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  fetchEmailFromMyPages?: boolean
 
   @IsOptional()
   @IsString()
@@ -177,4 +192,24 @@ export class FieldSettings {
   @IsString()
   @ApiPropertyOptional({ type: String })
   paymentQuantityId?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  showAddress?: boolean
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  zendeskTicketFieldId?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  zendeskCustomObjectKey?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  dataSourceUrl?: string
 }

@@ -42,7 +42,10 @@ const OrganizationParentSubpagePagesField = () => {
       parameters={{
         instance: {
           showCreateEntityAction: true,
-          showLinkEntityAction: sdk.user.spaceMembership.admin,
+          // Link-existing is enforced by the entry picker (read) and the
+          // back-reference update below (update), both scoped by the editor's
+          // tag-based role policy. No need to gate the action on space admin.
+          showLinkEntityAction: true,
         },
       }}
       onAction={async (action) => {
@@ -80,7 +83,7 @@ const OrganizationParentSubpagePagesField = () => {
                 ?.sys?.id
 
             if (parentId) {
-              const parentExists = await cma.entry
+              const parentEntry = await cma.entry
                 .get({
                   entryId: parentId,
                 })
@@ -91,7 +94,12 @@ const OrganizationParentSubpagePagesField = () => {
                   }
                 })
 
-              if (parentExists) {
+              if (
+                parentEntry &&
+                parentEntry.fields?.pages?.[DEFAULT_LOCALE]?.some(
+                  (page) => page.sys.id === entries[0]?.sys.id,
+                )
+              ) {
                 sdk.notifier.warning(
                   'Subpage could not be linked since it is already linked to a parent page',
                 )
@@ -101,21 +109,29 @@ const OrganizationParentSubpagePagesField = () => {
 
             if (entries.length > 0) {
               const selectedEntry = entries[0]
-              const entry = await cma.entry.get({
-                entryId: selectedEntry.sys.id,
-              })
-              entry.fields.organizationParentSubpage = {
-                [DEFAULT_LOCALE]: {
-                  sys: { id: sdk.entry.getSys().id, linkType: 'Entry' },
-                },
+              try {
+                const entry = await cma.entry.get({
+                  entryId: selectedEntry.sys.id,
+                })
+                entry.fields.organizationParentSubpage = {
+                  [DEFAULT_LOCALE]: {
+                    sys: { id: sdk.entry.getSys().id, linkType: 'Entry' },
+                  },
+                }
+                await cma.entry.update(
+                  {
+                    entryId: entry.sys.id,
+                  },
+                  entry,
+                )
+                props.onLinkedExisting(entries)
+              } catch (error) {
+                sdk.notifier.warning(
+                  error instanceof Error
+                    ? error.message
+                    : 'Subpage could not be linked. You might not have permission to edit it.',
+                )
               }
-              await cma.entry.update(
-                {
-                  entryId: entry.sys.id,
-                },
-                entry,
-              )
-              props.onLinkedExisting(entries)
             }
           }}
           onCreate={(contentTypeId) => {

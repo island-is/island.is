@@ -3,6 +3,8 @@ import {
   json,
   service,
   ServiceBuilder,
+  scheduledJob,
+  ScheduledJobBuilder,
 } from '../../../../../infra/src/dsl/dsl'
 import {
   Base,
@@ -79,6 +81,8 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
       PASSKEY_CORE_ALLOWED_ORIGINS: json([
         // Origin for iOS app.
         'https://island.is',
+        // Origin for Android debug app
+        'android:apk-key-hash:JgPeo_F6KYk-ngRa26tO2SsAtMiTBQCc7WtSgN-jRX0',
         // Origin for Android test app
         'android:apk-key-hash:wrkMxD98Ii5lxgJdq7heBq_xTq38_s9GKLLgESObnMQ',
         // Origin for Android prod app
@@ -147,10 +151,10 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
 
 const cleanupId = 'services-auth-ids-api-cleanup'
 // run daily at 3am
-const schedule = { schedule: '0 3 * * *' }
+const schedule = '0 3 * * *'
 
-export const cleanupSetup = (): ServiceBuilder<typeof cleanupId> =>
-  service(cleanupId)
+export const cleanupSetup = (): ScheduledJobBuilder<typeof cleanupId> =>
+  scheduledJob(cleanupId)
     .namespace(namespace)
     .image(imageName)
     .serviceAccount('services-auth-ids-api-cleanup')
@@ -174,7 +178,7 @@ export const cleanupSetup = (): ServiceBuilder<typeof cleanupId> =>
         prod: 'https://innskra.island.is',
       },
     })
-    .extraAttributes({
+    .schedule({
       dev: schedule,
       staging: schedule,
       prod: schedule,

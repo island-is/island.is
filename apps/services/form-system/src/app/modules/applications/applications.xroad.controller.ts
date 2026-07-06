@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  Query,
   Req,
   VERSION_NEUTRAL,
 } from '@nestjs/common'
@@ -12,11 +13,12 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger'
 import { ApplicationsXRoadService } from './applications.xroad.service'
 import { FileResponseDto } from './models/dto/file.response.dto'
-import { ApplicationXroadDto } from './models/dto/application.xroad.dto'
+import { ApplicationJsonDto } from './models/dto/application.json.dto'
 
 @ApiTags('api')
 @Controller({ path: 'api', version: ['1', VERSION_NEUTRAL] })
@@ -56,7 +58,7 @@ export class ApplicationsXRoadController {
 
   @ApiOperation({ summary: 'Get application by id via X-Road' })
   @ApiOkResponse({
-    type: ApplicationXroadDto,
+    type: ApplicationJsonDto,
     description: 'Get application by id',
   })
   @ApiParam({ name: 'id', type: String })
@@ -69,25 +71,38 @@ export class ApplicationsXRoadController {
   async getApplication(
     @Param('id') id: string,
     @Req() req: Request,
-  ): Promise<ApplicationXroadDto> {
+  ): Promise<ApplicationJsonDto> {
     const xRoadClient = this.getValidatedXRoadClient(req)
     return await this.applicationsXRoadService.getApplication(id, xRoadClient)
   }
 
   @ApiOperation({ summary: 'Get file by id via X-Road' })
   @ApiOkResponse({ type: FileResponseDto, description: 'Get file by id' })
-  @ApiParam({ name: 'id', type: String })
+  @ApiQuery({
+    name: 's3Key',
+    type: String,
+    description: 'URL-encoded S3 key for the file',
+    required: true,
+  })
   @ApiHeader({
     name: 'X-Road-Client',
     description: 'X-Road client identifier',
     required: true,
   })
-  @Get('file/:id')
+  @Get('file')
   async getFile(
-    @Param('id') id: string,
+    @Query('s3Key') s3Key: string,
     @Req() req: Request,
   ): Promise<FileResponseDto> {
+    const trimmedS3Key = s3Key?.trim()
+    if (!trimmedS3Key) {
+      throw new BadRequestException('Missing required query parameter: s3Key')
+    }
     const xRoadClient = this.getValidatedXRoadClient(req)
-    return await this.applicationsXRoadService.getFile(id, xRoadClient)
+
+    return await this.applicationsXRoadService.getFile(
+      trimmedS3Key,
+      xRoadClient,
+    )
   }
 }

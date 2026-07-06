@@ -14,9 +14,9 @@ import { ApiActions, Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
 import { DeregisterUnemploymentBenefitsSchema } from './dataSchema'
 import {
-  coreHistoryMessages,
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
+  pruneAfterDays,
 } from '@island.is/application/core'
 import { Features } from '@island.is/feature-flags'
 import { applicationMessages } from './messages'
@@ -35,6 +35,7 @@ const DeregisterUnemploymentBenefitsTemplate: ApplicationTemplate<
     ApplicationConfigurations.DeregisterUnemploymentBenefits.translation,
   dataSchema: DeregisterUnemploymentBenefitsSchema,
   featureFlag: Features.isDeregisterUnemploymentBenefitsEnabled,
+  allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -49,12 +50,6 @@ const DeregisterUnemploymentBenefitsTemplate: ApplicationTemplate<
               label: applicationMessages.actionCardPrerequisites,
               variant: 'blue',
             },
-            historyLogs: [
-              {
-                logMessage: coreHistoryMessages.applicationStarted,
-                onEvent: DefaultEvents.SUBMIT,
-              },
-            ],
           },
           roles: [
             {
@@ -83,7 +78,7 @@ const DeregisterUnemploymentBenefitsTemplate: ApplicationTemplate<
           name: 'Main form',
           progress: 0.4,
           status: FormModes.DRAFT,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(2),
           actionCard: {
             tag: {
               label: applicationMessages.actionCardDraft,
@@ -91,7 +86,7 @@ const DeregisterUnemploymentBenefitsTemplate: ApplicationTemplate<
             },
             historyLogs: [
               {
-                logMessage: coreHistoryMessages.applicationSent,
+                logMessage: applicationMessages.applicationSent,
                 onEvent: DefaultEvents.SUBMIT,
               },
             ],

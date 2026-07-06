@@ -1,8 +1,16 @@
-import { FC, PropsWithChildren, useContext } from 'react'
+import { ComponentProps, FC, PropsWithChildren, useContext } from 'react'
 import cn from 'classnames'
 
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Icon,
+  IconMapIcon,
+  Text,
+  Tooltip,
+} from '@island.is/island-ui/core'
 import { api } from '@island.is/judicial-system-web/src/services'
+import { onEnterOrSpace } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { UserContext } from '../UserProvider/UserProvider'
 import * as styles from './PdfButton.css'
@@ -11,6 +19,10 @@ interface Props {
   caseId?: string
   connectedCaseParentId?: string
   title?: string | null
+  subtitle?: string | null
+  subtitleIcon?: IconMapIcon
+  subtitleIconColor?: ComponentProps<typeof Icon>['color']
+  subtitleIconTooltip?: string
   pdfType?:
     | 'ruling'
     | 'caseFilesRecord'
@@ -36,6 +48,10 @@ const PdfButton: FC<PropsWithChildren<Props>> = ({
   // For access control purposes, the data must be accessed through the parent case.
   connectedCaseParentId,
   title,
+  subtitle,
+  subtitleIcon,
+  subtitleIconColor,
+  subtitleIconTooltip,
   pdfType,
   disabled,
   renderAs = 'button',
@@ -61,6 +77,20 @@ const PdfButton: FC<PropsWithChildren<Props>> = ({
     window.open(url, '_blank')
   }
 
+  const handleRowClick = () => {
+    if (disabled) {
+      return
+    }
+
+    if (handleClick) {
+      return handleClick()
+    }
+
+    if (pdfType) {
+      return handlePdfClick()
+    }
+  }
+
   return renderAs === 'button' ? (
     <Button
       data-testid={`${pdfType || ''}PDFButton`}
@@ -79,30 +109,42 @@ const PdfButton: FC<PropsWithChildren<Props>> = ({
       className={`${styles.pdfRow} ${
         disabled ? styles.disabled : styles.cursor
       }`}
-      onClick={() => {
-        if (disabled) {
-          return
-        }
-
-        if (handleClick) {
-          return handleClick()
-        }
-
-        if (pdfType) {
-          return handlePdfClick()
-        }
-      }}
+      role="button"
+      tabIndex={disabled ? -1 : 0}
+      aria-disabled={disabled}
+      aria-label={title ?? undefined}
+      onClick={handleRowClick}
+      onKeyDown={onEnterOrSpace(handleRowClick)}
     >
-      <span
-        className={cn(styles.fileNameContainer, {
-          [styles.fileNameContainerWithChildren]: !!children,
-        })}
-      >
-        <Text color="blue400" variant="h4">
-          {title}
-        </Text>
-      </span>
-      {children}
+      <Box className={styles.pdfRowMain}>
+        <span
+          className={cn(styles.fileNameContainer, {
+            [styles.fileNameContainerWithChildren]: !!children,
+          })}
+        >
+          <Text color="blue400" variant="h4">
+            {title}
+          </Text>
+        </span>
+        {children}
+      </Box>
+      {subtitle && (
+        <Box marginTop={1} display="flex" alignItems="center" columnGap={1}>
+          {subtitleIcon &&
+            (subtitleIconTooltip ? (
+              <Tooltip text={subtitleIconTooltip} placement="top">
+                <span>
+                  <Icon icon={subtitleIcon} color={subtitleIconColor} />
+                </span>
+              </Tooltip>
+            ) : (
+              <Icon icon={subtitleIcon} color={subtitleIconColor} />
+            ))}
+          <Text variant="small" color="dark400">
+            {subtitle}
+          </Text>
+        </Box>
+      )}
     </Box>
   )
 }

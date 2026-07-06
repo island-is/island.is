@@ -3,7 +3,10 @@ import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  DISTRICT_COURT_RESTRICTION_CASE_COURT_OVERVIEW_ROUTE,
+  DISTRICT_COURT_RESTRICTION_CASE_RULING_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   ArraignmentAlert,
@@ -22,7 +25,7 @@ import {
 import {
   CaseCustodyRestrictions,
   CaseType,
-  NotificationType,
+  TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
@@ -108,7 +111,7 @@ export const HearingArrangements = () => {
   const courtDateNotification = useMemo(
     () =>
       hasSentNotification(
-        NotificationType.COURT_DATE,
+        TrackedNotificationType.COURT_DATE,
         workingCase.notifications,
       ),
     [workingCase.notifications],
@@ -125,7 +128,7 @@ export const HearingArrangements = () => {
     ) {
       router.push(`${destination}/${workingCase.id}`)
     } else {
-      setNavigateTo(constants.RESTRICTION_CASE_RULING_ROUTE)
+      setNavigateTo(DISTRICT_COURT_RESTRICTION_CASE_RULING_ROUTE)
     }
   }
 
@@ -175,9 +178,9 @@ export const HearingArrangements = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/${workingCase.id}`}
+          previousUrl={`${DISTRICT_COURT_RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            handleNavigationTo(constants.RESTRICTION_CASE_RULING_ROUTE)
+            handleNavigationTo(DISTRICT_COURT_RESTRICTION_CASE_RULING_ROUTE)
           }
           nextButtonText={formatMessage(m.continueButton.label)}
           nextIsDisabled={!stepIsValid}
@@ -207,7 +210,7 @@ export const HearingArrangements = () => {
 
               const notificationSent = await sendNotification(
                 workingCase.id,
-                NotificationType.COURT_DATE,
+                TrackedNotificationType.COURT_DATE,
               )
 
               if (notificationSent) {
@@ -222,14 +225,15 @@ export const HearingArrangements = () => {
             text: formatMessage(m.modal.shared.secondaryButtonText, {
               courtDateHasChanged,
             }),
-            onClick: () => {
+            onClick: async () => {
               setModalButtonLoading(ModalButtonLoading.SECONDARY)
 
-              sendNotification(
+              await sendNotification(
                 workingCase.id,
-                NotificationType.COURT_DATE,
+                TrackedNotificationType.COURT_DATE,
                 true,
               )
+
               router.push(`${navigateTo}/${workingCase.id}`)
             },
             isLoading:

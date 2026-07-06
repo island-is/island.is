@@ -99,6 +99,7 @@ export const LicensesOverview = () => {
       title={formatMessage(m.title)}
       intro={formatMessage(m.intro)}
       marginBottom={4}
+      desktopContentSpan="10/12"
     >
       {error && !loading && <Problem error={error} noBorder={false} />}{' '}
       {!error && !loading && !errors?.length && !licenses?.length && (

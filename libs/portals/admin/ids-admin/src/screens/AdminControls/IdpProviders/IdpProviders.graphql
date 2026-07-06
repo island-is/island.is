@@ -1,0 +1,77 @@
+query GetIdpProviders($input: AuthAdminIdpProvidersInput!) {
+  authAdminIdpProviders(input: $input) {
+    rows {
+      name
+      description
+      helptext
+      level
+      availableEnvironments
+    }
+    totalCount
+  }
+}
+
+query GetIdpProvider($name: String!) {
+  authAdminIdpProvider(name: $name) {
+    name
+    availableEnvironments
+    environments {
+      environment
+      name
+      description
+      helptext
+      level
+    }
+  }
+}
+
+query GetIdpProviderConfiguredEnvironments {
+  authAdminIdpProviderConfiguredEnvironments
+}
+
+mutation CreateIdpProvider($input: CreateAuthAdminIdpProviderInput!) {
+  createAuthAdminIdpProvider(input: $input) {
+    name
+    availableEnvironments
+    environments {
+      environment
+      name
+      description
+      helptext
+      level
+    }
+    failedEnvironments {
+      environment
+      message
+    }
+  }
+}
+
+mutation UpdateIdpProvider($input: UpdateAuthAdminIdpProviderInput!) {
+  updateAuthAdminIdpProvider(input: $input) {
+    name
+    availableEnvironments
+    environments {
+      environment
+      name
+      description
+      helptext
+      level
+    }
+    failedEnvironments {
+      environment
+      message
+    }
+  }
+}
+
+mutation DeleteIdpProvider($input: DeleteAuthAdminIdpProviderInput!) {
+  deleteAuthAdminIdpProvider(input: $input) {
+    success
+    affectedEnvironments
+    failedEnvironments {
+      environment
+      message
+    }
+  }
+}

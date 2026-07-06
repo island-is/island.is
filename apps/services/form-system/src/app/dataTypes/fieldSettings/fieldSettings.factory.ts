@@ -15,7 +15,7 @@ export class FieldSettingsFactory {
         keys = ['minLength', 'maxLength', 'isLarge', 'hasDescription', ...keys]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.NUMBERBOX:
-        keys = ['minValue', 'maxValue', 'hasDescription', ...keys]
+        keys = ['minValue', 'maxValue', 'hasDescription', 'isDecimal', ...keys]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.MESSAGE:
         keys = ['hasLink', 'url', 'buttonText', ...keys]
@@ -24,7 +24,13 @@ export class FieldSettingsFactory {
         keys = ['minDate', 'maxDate', ...keys]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.DROPDOWN_LIST:
-        keys = ['listType', ...keys]
+        keys = [
+          'listType',
+          'zendeskTicketFieldId',
+          'zendeskCustomObjectKey',
+          'dataSourceUrl',
+          ...keys,
+        ]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.ISK_NUMBERBOX:
         keys = ['minAmount', 'maxAmount', ...keys]
@@ -42,11 +48,21 @@ export class FieldSettingsFactory {
         keys = ['year', ...keys]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.APPLICANT:
-        keys = ['applicantType', 'isPhoneRequired', 'isEmailRequired', ...keys]
+        keys = [
+          'applicantType',
+          'isPhoneRequired',
+          'isEmailRequired',
+          'fetchEmailFromMyPages',
+          ...keys,
+        ]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.CHECKBOX:
         keys = ['isLarge', 'hasDescription', ...keys]
         return this.pickSettings(fieldSettings, keys)
+      case FieldTypesEnum.NATIONAL_ID: {
+        keys = ['showAddress', ...keys]
+        return this.pickSettings(fieldSettings, keys)
+      }
       case FieldTypesEnum.PAYMENT:
         keys = [
           'chargeItemCode',
@@ -58,7 +74,10 @@ export class FieldSettingsFactory {
         ]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.PAYMENT_QUANTITY:
-        keys = ['minValue', 'maxValue', 'isDropdown']
+        keys = ['minValue', 'maxValue', 'isDropdown', ...keys]
+        return this.pickSettings(fieldSettings, keys)
+      case FieldTypesEnum.ASSETS:
+        keys = ['assetType', 'isDropdown', ...keys]
         return this.pickSettings(fieldSettings, keys)
       default:
         return this.pickSettings(fieldSettings, keys)

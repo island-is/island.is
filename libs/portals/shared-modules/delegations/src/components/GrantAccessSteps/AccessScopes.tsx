@@ -1,3 +1,4 @@
+import { VIRTUAL_MUNICIPALITY_TAG_ID } from '../../constants/domain'
 import { useQuery } from '@apollo/client'
 import {
   AuthScopeCategoriesDocument,
@@ -10,7 +11,7 @@ import { ScopesCategoriesList } from '../ScopesCategoriesList'
 import { useMemo, useState } from 'react'
 import * as styles from './GrantAccessSteps.css'
 
-import { AuthApiScope } from '@island.is/api/schema'
+import { AuthApiScope, AuthDelegationDirection } from '@island.is/api/schema'
 import {
   Box,
   Filter,
@@ -44,12 +45,12 @@ export const AccessScopes = () => {
     loading: categoriesLoading,
     error: categoriesError,
   } = useQuery<AuthScopeCategoriesQuery>(AuthScopeCategoriesDocument, {
-    variables: { lang },
+    variables: { lang, direction: AuthDelegationDirection.outgoing },
   })
   const { data: tagsData } = useQuery<AuthScopeTagsQuery>(
     AuthScopeTagsDocument,
     {
-      variables: { lang },
+      variables: { lang, direction: AuthDelegationDirection.outgoing },
     },
   )
   const { selectedScopes, setSelectedScopes } = useDelegationForm()
@@ -126,36 +127,45 @@ export const AccessScopes = () => {
         })
     }
 
+    // Include virtual municipality tag scopes so they remain searchable/filterable
+    const virtualTagScopes =
+      tagsData?.authScopeTags
+        ?.filter((t) => t.id === VIRTUAL_MUNICIPALITY_TAG_ID)
+        .flatMap((t) => t.scopes) ?? []
+
     const seen = new Set<string>()
-    return (categoriesData?.authScopeCategories
-      ?.flatMap((category) => category.scopes)
-      .filter((scope) => {
-        if (seen.has(scope.name)) return false
+    return [
+      ...virtualTagScopes,
+      ...(categoriesData?.authScopeCategories?.flatMap(
+        (category) => category.scopes,
+      ) ?? []),
+    ].filter((scope) => {
+      if (seen.has(scope.name)) return false
 
-        // Search query filter
-        const displayName = scope.displayName.toLowerCase()
-        const description = scope.description?.toLowerCase()
-        const name = scope.name.toLowerCase()
-        const domain = scope.domain?.displayName?.toLowerCase()
-        const matchesSearch =
-          displayName.includes(searchQueryLower) ||
-          description?.includes(searchQueryLower) ||
-          name.includes(searchQueryLower) ||
-          domain?.includes(searchQueryLower)
+      // Search query filter
+      const displayName = scope.displayName.toLowerCase()
+      const description = scope.description?.toLowerCase()
+      const name = scope.name.toLowerCase()
+      const domain = scope.domain?.displayName?.toLowerCase()
+      const matchesSearch =
+        displayName.includes(searchQueryLower) ||
+        description?.includes(searchQueryLower) ||
+        name.includes(searchQueryLower) ||
+        domain?.includes(searchQueryLower)
 
-        // Tags filter - check if scope name is in selected tags
-        const matchesTags =
-          filter.tags.length === 0 || scopeNamesInSelectedTags.has(scope.name)
+      // Tags filter - check if scope name is in selected tags
+      const matchesTags =
+        filter.tags.length === 0 || scopeNamesInSelectedTags.has(scope.name)
 
-        // Domains filter
-        const matchesDomains =
-          filter.domains.length === 0 ||
-          (scope.domain?.name && filter.domains.includes(scope.domain.name))
+      // Domains filter
+      const matchesDomains =
+        filter.domains.length === 0 ||
+        (scope.domain?.name && filter.domains.includes(scope.domain.name))
 
-        const matches = matchesSearch && matchesTags && matchesDomains
-        if (matches) seen.add(scope.name)
-        return matches
-      }) || []) as AuthApiScope[]
+      const matches = matchesSearch && matchesTags && matchesDomains
+      if (matches) seen.add(scope.name)
+      return matches
+    }) as AuthApiScope[]
   }, [categoriesData, searchQuery, filter, tagsData])
 
   return (
@@ -164,7 +174,13 @@ export const AccessScopes = () => {
         {formatMessage(m.choosePermissionsTitle)}
       </Text>
       <RecipientsTag />
-      <Box display="flex" columnGap={[0, 2]} marginBottom={2}>
+      <Box
+        display="flex"
+        columnGap={[0, 2]}
+        justifyContent={['spaceBetween', 'spaceBetween', 'flexStart']}
+        marginBottom={2}
+        width="full"
+      >
         <div className={styles.input}>
           <Input
             name="search"
@@ -213,13 +229,19 @@ export const AccessScopes = () => {
         <ScopesTable
           scopes={filteredScopes}
           showCheckbox
+          showSelectAll
           onSelectScope={onSelectScope}
         />
       ) : (
         <ScopesCategoriesList
           loading={categoriesLoading}
           error={!!categoriesError}
-          categories={categoriesData?.authScopeCategories || []}
+          categories={[
+            ...(tagsData?.authScopeTags
+              ?.filter((t) => t.id === VIRTUAL_MUNICIPALITY_TAG_ID)
+              .map(({ __typename, showAsCard, ...tag }) => tag) ?? []),
+            ...(categoriesData?.authScopeCategories || []),
+          ]}
           onSelectScope={onSelectScope}
           selectedScopes={selectedScopes}
           onSelectCategory={onSelectCategory}

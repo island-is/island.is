@@ -54,7 +54,7 @@ const template: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.SUBMIT,
-                logMessage: 'Eitthvað message prerequsites',
+                logMessage: 'Umsókn úr prerequisites',
               },
             ],
           },
@@ -107,7 +107,7 @@ const template: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.SUBMIT,
-                logMessage: 'Eitthvað message draft',
+                logMessage: 'Umsókn úr draft',
               },
             ],
             tag: {
@@ -146,12 +146,6 @@ const template: ApplicationTemplate<
           actionCard: {
             title: 'Test titill completed.',
             description: 'Test title completed',
-            historyLogs: [
-              {
-                onEvent: DefaultEvents.SUBMIT,
-                logMessage: 'Eitthvað message completed',
-              },
-            ],
           },
           lifecycle: DefaultStateLifeCycle,
 

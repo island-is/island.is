@@ -55,6 +55,10 @@ export const assetsNavigation: PortalNavigationItem = {
           name: m.vehiclesRegisterMileage,
           description: m.vehiclesRegisterMileageIntro,
           path: AssetsPaths.AssetsVehiclesBulkMileage,
+          customShortcut: {
+            name: m.vehiclesRegisterMileage,
+            description: m.vehicleMileageDescription,
+          },
           children: [
             {
               name: m.vehiclesBulkMileageUpload,
@@ -131,6 +135,18 @@ export const assetsNavigation: PortalNavigationItem = {
           name: 'regNumber',
           navHide: true,
           path: AssetsPaths.AssetsWorkMachinesDetail,
+        },
+      ],
+    },
+    {
+      name: m.farmerLands,
+      description: m.farmerLandsIntro,
+      path: AssetsPaths.AssetsFarmerLands,
+      children: [
+        {
+          name: m.farmerLand,
+          navHide: true,
+          path: AssetsPaths.AssetsFarmerLandDetail,
         },
       ],
     },

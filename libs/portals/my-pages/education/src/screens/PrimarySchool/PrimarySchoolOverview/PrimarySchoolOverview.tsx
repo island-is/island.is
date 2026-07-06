@@ -33,18 +33,13 @@ export const PrimarySchoolOverview = () => {
             type="no_data"
             noBorder={false}
             title={formatMessage(m.noData)}
-            message={formatMessage(m.noDataFoundDetail)}
+            message={formatMessage(psm.assessmentNoData)}
             imgSrc="./assets/images/sofa.svg"
           />
         </Box>
       )}
       {!loading && !error && student && (
         <InfoLineStack label={formatMessage(m.baseInfo)}>
-          <InfoLine
-            label={psm.studentLabel}
-            content={student.name ?? undefined}
-            loading={loading}
-          />
           <InfoLine
             label={psm.schoolLabel}
             content={student.schoolName ?? undefined}

@@ -21,7 +21,10 @@ interface IdsAdminCardProps {
   eyebrow?: ReactNode
   tags?: TagProps[]
   text?: ReactNode
-  cta?: { label: string } & (ButtonAction | LinkAction)
+  cta?: {
+    label: string
+    icon?: ComponentPropsWithoutRef<typeof Button>['icon']
+  } & (ButtonAction | LinkAction)
 }
 
 export default function IdsAdminCard({
@@ -39,7 +42,7 @@ export default function IdsAdminCard({
 
     const renderButton = (isLink: boolean) => (
       <Button
-        icon="pencil"
+        icon={cta.icon ?? 'pencil'}
         variant="utility"
         onClick={cta.onClick}
         type="button"

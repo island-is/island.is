@@ -27,6 +27,7 @@ import { EventService } from '../../event'
 import { FileService } from '../../file'
 import { PoliceService } from '../../police'
 import {
+  CaseDefendantPoliceCaseNumberRepositoryService,
   CaseRepositoryService,
   CourtDocumentRepositoryService,
   Defendant,
@@ -51,6 +52,9 @@ jest.mock('../../case/internalCase.service')
 jest.mock('../../repository/services/courtDocumentRepository.service')
 jest.mock('../../repository/services/subpoenaRepository.service')
 jest.mock('../../repository/services/caseRepository.service')
+jest.mock(
+  '../../repository/services/caseDefendantPoliceCaseNumber.repository.service',
+)
 
 export const createTestingSubpoenaModule = async () => {
   const subpoenaModule = await Test.createTestingModule({
@@ -88,6 +92,7 @@ export const createTestingSubpoenaModule = async () => {
       },
       CourtDocumentRepositoryService,
       SubpoenaRepositoryService,
+      CaseDefendantPoliceCaseNumberRepositoryService,
       CaseRepositoryService,
       {
         provide: getModelToken(Defendant),

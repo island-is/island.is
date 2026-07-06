@@ -1,5 +1,6 @@
 import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
 import { CACHE_CONTROL_MAX_AGE } from '@island.is/shared/constants'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import {
   Args,
   Query,
@@ -105,6 +106,9 @@ import { GetSingleManualInput } from './dto/getSingleManual.input'
 import { GetSingleEntryTitleByIdInput } from './dto/getSingleEntryTitleById.input'
 import { EntryTitle } from './models/entryTitle.model'
 import { LifeEventPage } from './models/lifeEventPage.model'
+import { AnnualReport } from './models/annualReport.model'
+import { GetAnnualReportInput } from './dto/getAnnualReport.input'
+import { GetAnnualReportsInput } from './dto/getAnnualReports.input'
 import { GetLifeEventPageInput } from './dto/getLifeEventPage.input'
 import { GetLifeEventsInput } from './dto/getLifeEvents.input'
 import { GetLifeEventsInCategoryInput } from './dto/getLifeEventsInCategory.input'
@@ -155,6 +159,7 @@ import {
   BloodDonationRestrictionList,
 } from './models/bloodDonationRestriction.model'
 import { GenericList } from './models/genericList.model'
+import { LastCallsForGrants } from './models/lastCallsForGrants.model'
 import { FeaturedGenericListItems } from './models/featuredGenericListItems.model'
 import {
   CourseCategoriesResponse,
@@ -173,6 +178,7 @@ import { GetCourseSelectOptionsInput } from './dto/getCourseSelectOptions.input'
 import { WebChat } from './models/webChat.model'
 import { GetWebChatInput } from './dto/getWebChat.input'
 import { ServicePortalPage } from './models/servicePortalPage.model'
+import { FooterItem } from './models/footerItem.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -434,6 +440,22 @@ export class CmsResolver {
     @Args('input') input: GetLifeEventsInput,
   ): Promise<LifeEventPage[]> {
     return this.cmsContentfulService.getLifeEventsForOverview(input.lang)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => [AnnualReport])
+  getAnnualReports(
+    @Args('input') input: GetAnnualReportsInput,
+  ): Promise<AnnualReport[]> {
+    return this.cmsContentfulService.getAnnualReports(input)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => AnnualReport, { nullable: true })
+  getAnnualReport(
+    @Args('input') input: GetAnnualReportInput,
+  ): Promise<AnnualReport | null> {
+    return this.cmsContentfulService.getAnnualReport(input)
   }
 
   @CacheControl(defaultCache)
@@ -1024,6 +1046,48 @@ export class GrantCardsListResolver {
   }
 }
 
+@Resolver(() => LastCallsForGrants)
+@CacheControl(defaultCache)
+export class LastCallsForGrantsResolver {
+  constructor(
+    private cmsElasticsearchService: CmsElasticsearchService,
+    private cmsContentfulService: CmsContentfulService,
+  ) {}
+
+  @ResolveField(() => GrantList)
+  async resolvedGrantsList(
+    @Parent() grantList: LastCallsForGrants,
+  ): Promise<GrantList> {
+    const { resolvedGrantsList: input, maxNumberOfCards } = grantList
+    if (!input || input?.size === 0 || maxNumberOfCards === 0) {
+      return { total: 0, items: [] }
+    }
+
+    return this.cmsElasticsearchService.getGrants(
+      getElasticsearchIndex(input.lang),
+      {
+        ...input,
+        ...(maxNumberOfCards && {
+          size: maxNumberOfCards,
+        }),
+      },
+    )
+  }
+  @ResolveField(() => GraphQLJSONObject)
+  async namespace(@Parent() { resolvedGrantsList: input }: LastCallsForGrants) {
+    try {
+      const response = await this.cmsContentfulService.getNamespace(
+        'GrantsPlaza',
+        input?.lang ?? 'is',
+      )
+      return JSON.parse(response?.fields || '{}')
+    } catch {
+      // Fallback to empty object in case something goes wrong when fetching or parsing namespace
+      return {}
+    }
+  }
+}
+
 @Resolver(() => FeaturedEvents)
 @CacheControl(defaultCache)
 export class FeaturedEventsResolver {
@@ -1143,5 +1207,63 @@ export class FeaturedGenericListItemsResolver {
       input,
     )
     return response.items
+  }
+}
+
+@Resolver(() => Organization)
+@CacheControl(defaultCache)
+export class OrganizationResolver {
+  constructor(
+    private readonly cmsContentfulService: CmsContentfulService,
+    private readonly featureFlagService: FeatureFlagService,
+  ) {}
+
+  private getFooter(organization: Organization) {
+    const delimiter = ';'
+    const cacheKey = `${organization.id}-${
+      organization.lang ?? 'is'
+    }-${Date.now()}`
+    const org = organization as Organization & {
+      [cacheKey]?: ReturnType<CmsContentfulService['getOrganizationFooter']>
+    }
+
+    if (org[cacheKey]) {
+      const time = cacheKey.split(delimiter)[1]
+      const fiveMinutesInMilliseconds = 5 * 60 * 1000
+      if (
+        Boolean(time) &&
+        Number(time) < Date.now() - fiveMinutesInMilliseconds
+      )
+        delete org[cacheKey]
+    }
+
+    if (!org[cacheKey])
+      org[cacheKey] = this.featureFlagService
+        .getValue(Features.organizationFooterComesFromOrganizationPage, false)
+        .then((flag) =>
+          flag
+            ? this.cmsContentfulService.getOrganizationFooter(
+                org.id,
+                org.lang ?? 'is',
+              )
+            : {
+                footerItems: org?.footerItems ?? [],
+                footerConfig: org?.footerConfig ?? {},
+              },
+        )
+
+    return org[cacheKey]
+  }
+
+  @ResolveField(() => [FooterItem])
+  async footerItems(@Parent() organization: Organization) {
+    const footer = await this.getFooter(organization)
+    return footer?.footerItems ?? []
+  }
+
+  @ResolveField(() => GraphQLJSONObject)
+  async footerConfig(@Parent() organization: Organization) {
+    const footer = await this.getFooter(organization)
+    return footer?.footerConfig ?? {}
   }
 }

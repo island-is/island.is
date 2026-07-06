@@ -7,7 +7,7 @@ import {
   Modal,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  UpdateCase,
+  useAppealCase,
   useCase,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
@@ -20,10 +20,12 @@ interface Props {
   continueDisabled?: boolean
   description: string
   defaultExplanation: string
-  fieldToModify: keyof Pick<
-    UpdateCase,
-    'rulingModifiedHistory' | 'appealRulingModifiedHistory'
-  >
+  fieldToModify: 'rulingModifiedHistory' | 'appealRulingModifiedHistory'
+  // The appeal case to update when fieldToModify is
+  // 'appealRulingModifiedHistory'. Defaults to the case-level appeal so
+  // existing request-case behavior is preserved. Ruling-order appeals pass the
+  // resolved target appeal id here.
+  appealCaseId?: string
 }
 
 const RulingModifiedModal: FC<Props> = ({
@@ -33,21 +35,39 @@ const RulingModifiedModal: FC<Props> = ({
   description,
   defaultExplanation,
   fieldToModify,
+  appealCaseId,
 }) => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
   const { updateCase } = useCase()
+  const { updateAppealCase } = useAppealCase()
 
   const [explanation, setExplanation] = useState(defaultExplanation)
   const [errorMessage, setErrorMessage] = useState<string>('')
 
   const handleContinue = async () => {
-    const caseUpdate = await updateCase(workingCase.id, {
-      [fieldToModify]: explanation,
-    })
+    if (fieldToModify === 'appealRulingModifiedHistory') {
+      const targetAppealCaseId = appealCaseId ?? workingCase.appealCase?.id
 
-    if (caseUpdate) {
-      onContinue()
+      if (targetAppealCaseId) {
+        const result = await updateAppealCase(
+          workingCase.id,
+          targetAppealCaseId,
+          { [fieldToModify]: explanation },
+        )
+
+        if (result) {
+          onContinue()
+        }
+      }
+    } else {
+      const caseUpdate = await updateCase(workingCase.id, {
+        [fieldToModify]: explanation,
+      })
+
+      if (caseUpdate) {
+        onContinue()
+      }
     }
   }
 

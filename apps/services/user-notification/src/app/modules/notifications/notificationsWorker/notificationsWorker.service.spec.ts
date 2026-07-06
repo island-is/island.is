@@ -46,10 +46,16 @@ import {
   MockFeatureFlagService,
   MockNationalRegistryV3ClientService,
   MockUserNotificationsConfig,
+  childOver16,
+  childUnder16,
   companyUser,
   deceasedUser,
   delegationSubjectId,
   getMockHnippTemplate,
+  inactiveCompanyStatus,
+  inactiveCompanyUser,
+  legalGuardianOne,
+  legalGuardianTwo,
   mockTemplateId,
   userProfiles,
   userWithDelegations,
@@ -441,6 +447,25 @@ describe('NotificationsWorkerService', () => {
 
   it('should not send email or push notification if no profile is found for recipient', async () => {
     await addToQueue('1234567890')
+
+    expect(emailService.sendEmail).not.toHaveBeenCalled()
+    expect(notificationDispatch.sendPushNotification).not.toHaveBeenCalled()
+  })
+
+  it('should not send notification if company is inactive', async () => {
+    jest.spyOn(companyRegistryService, 'getCompany').mockReturnValue(
+      Promise.resolve<CompanyExtendedInfo>({
+        nationalId: inactiveCompanyUser.nationalId,
+        name: 'Inactive Company',
+        formOfOperation: [],
+        addresses: [],
+        relatedParty: [],
+        vat: [],
+        status: inactiveCompanyStatus,
+      }),
+    )
+
+    await addToQueue(inactiveCompanyUser.nationalId)
 
     expect(emailService.sendEmail).not.toHaveBeenCalled()
     expect(notificationDispatch.sendPushNotification).not.toHaveBeenCalled()
@@ -1099,6 +1124,111 @@ describe('NotificationsWorkerService', () => {
         (call) => call[0].nationalId === userWithNoDelegations.nationalId,
       )
       expect(actorPushNotificationCall).toBeUndefined()
+    })
+  })
+
+  describe('Health notifications to legal guardians', () => {
+    const healthScope = '@island.is/health'
+
+    const getActorMessages = (queueAddSpy: jest.SpyInstance) =>
+      queueAddSpy.mock.calls
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .map((call) => call[0] as any)
+        .filter((message) => message.onBehalfOf && message.rootMessageId)
+
+    it('forces SMS delivery for all legal guardians of a child under 16', async () => {
+      jest.clearAllMocks()
+      const queueAddSpy = jest.spyOn(queue, 'add')
+      jest
+        .spyOn(notificationsService, 'getTemplate')
+        .mockReturnValue(
+          Promise.resolve(getMockHnippTemplate({ scope: healthScope })),
+        )
+
+      await addToQueue(childUnder16.nationalId)
+      await wait(3)
+
+      const actorMessages = getActorMessages(queueAddSpy)
+
+      // Both legal guardians get their own queued message with the override set.
+      expect(actorMessages).toHaveLength(2)
+      expect(actorMessages.map((m) => m.recipient).sort()).toEqual(
+        [legalGuardianOne.nationalId, legalGuardianTwo.nationalId].sort(),
+      )
+      expect(
+        actorMessages.every((m) => m.forceSmsToMinorGuardian === true),
+      ).toBe(true)
+
+      queueAddSpy.mockRestore()
+    })
+
+    it('does not force SMS delivery for a plain LegalGuardian (non-minor) delegation', async () => {
+      jest.clearAllMocks()
+      const queueAddSpy = jest.spyOn(queue, 'add')
+      jest
+        .spyOn(notificationsService, 'getTemplate')
+        .mockReturnValue(
+          Promise.resolve(getMockHnippTemplate({ scope: healthScope })),
+        )
+
+      await addToQueue(childOver16.nationalId)
+      await wait(3)
+
+      const actorMessages = getActorMessages(queueAddSpy)
+
+      expect(actorMessages.length).toBeGreaterThan(0)
+      expect(
+        actorMessages.every((m) => m.forceSmsToMinorGuardian === false),
+      ).toBe(true)
+
+      queueAddSpy.mockRestore()
+    })
+
+    it('does not force SMS delivery for non-legal-guardian delegations', async () => {
+      jest.clearAllMocks()
+      const queueAddSpy = jest.spyOn(queue, 'add')
+      // Documents scope for the under-16 child resolves to a Custom delegation.
+      jest
+        .spyOn(notificationsService, 'getTemplate')
+        .mockReturnValue(
+          Promise.resolve(
+            getMockHnippTemplate({ scope: '@island.is/documents' }),
+          ),
+        )
+
+      await addToQueue(childUnder16.nationalId)
+      await wait(3)
+
+      const actorMessages = getActorMessages(queueAddSpy)
+
+      expect(actorMessages.length).toBeGreaterThan(0)
+      expect(
+        actorMessages.every((m) => m.forceSmsToMinorGuardian === false),
+      ).toBe(true)
+
+      queueAddSpy.mockRestore()
+    })
+
+    it('sends an SMS to legal guardians who have not opted in', async () => {
+      jest.clearAllMocks()
+      jest
+        .spyOn(notificationsService, 'getTemplate')
+        .mockReturnValue(
+          Promise.resolve(getMockHnippTemplate({ scope: healthScope })),
+        )
+
+      await addToQueue(childUnder16.nationalId)
+      await wait(5)
+
+      const calledNumbers = (smsService.sendSms as jest.Mock).mock.calls.map(
+        (call) => call[0],
+      )
+
+      // Both guardians (smsNotifications: false) still receive the SMS.
+      expect(calledNumbers).toContain(legalGuardianOne.mobilePhoneNumber)
+      expect(calledNumbers).toContain(legalGuardianTwo.mobilePhoneNumber)
+      // The child itself has not opted in and is not force-delivered, so no SMS.
+      expect(calledNumbers).not.toContain(childUnder16.mobilePhoneNumber)
     })
   })
 

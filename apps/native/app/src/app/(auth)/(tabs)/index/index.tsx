@@ -38,7 +38,6 @@ import {
   useListLicensesQuery,
   validateLicensesInitialData,
 } from '@/components/home/licenses-module'
-import { OnboardingModule } from '@/components/home/onboarding-module'
 import {
   useListVehiclesV2Query,
   validateVehiclesInitialData,
@@ -49,6 +48,11 @@ import {
   useGetAppointmentsQuery,
   validateAppointmentsInitialData,
 } from '@/components/home/appointments-module'
+import {
+  NotificationsModule,
+  useGetUserNotificationsQuery,
+  validateNotificationsInitialData,
+} from '@/components/home/notifications-module'
 import { BaseAppointmentStatuses } from '@/constants/base-appointment-statuses'
 import { useFeatureFlag } from '@/components/providers/feature-flag-provider'
 import { INCLUDED_LICENSE_TYPES } from '@/constants/wallet.constants'
@@ -61,12 +65,15 @@ import {
   preferencesStore,
   usePreferencesStore,
 } from '@/stores/preferences-store'
-import { needsToUpdateAppVersion } from '@/utils/minimum-app-version'
 import { testIDs } from '@/utils/test-ids'
+import * as Application from 'expo-application'
+import { compare, validate } from 'compare-versions'
 import { router, Stack } from 'expo-router'
 import { useIntl } from 'react-intl'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useTheme } from 'styled-components/native'
 import { StackScreen } from '../../../../components/stack-screen'
-import { blue400, red400, Typography } from '../../../../ui'
+import { Button, red400, Typography } from '../../../../ui'
 
 interface ListItem {
   id: string
@@ -75,6 +82,8 @@ interface ListItem {
 
 export default function HomeScreen() {
   const intl = useIntl()
+  const theme = useTheme()
+  const insets = useSafeAreaInsets()
   const userProfile = useGetProfileQuery({
     fetchPolicy: 'cache-first',
   })
@@ -95,6 +104,21 @@ export default function HomeScreen() {
     false,
     null,
   )
+  const isNotificationsWidgetEnabled = useFeatureFlag(
+    'isNotificationWidgetEnabled',
+    false,
+    null,
+  )
+  const isInboxWidgetDisabled = useFeatureFlag(
+    'isPostholfWidgetDisabled',
+    false,
+    null,
+  )
+  const minimumVersionSupported = useFeatureFlag(
+    'minimumSupportedAppVersion',
+    '1.0.0',
+  )
+
   const [refetching, setRefetching] = useState(false)
 
   const vehiclesWidgetEnabled = usePreferencesStore(
@@ -115,6 +139,9 @@ export default function HomeScreen() {
   const appointmentsWidgetEnabled = usePreferencesStore(
     ({ appointmentsWidgetEnabled }) => appointmentsWidgetEnabled,
   )
+  const notificationsWidgetEnabled = usePreferencesStore(
+    ({ notificationsWidgetEnabled }) => notificationsWidgetEnabled,
+  )
   const widgetsInitialised = usePreferencesStore(
     ({ widgetsInitialised }) => widgetsInitialised,
   )
@@ -129,7 +156,7 @@ export default function HomeScreen() {
     variables: {
       input: { page: 1, pageSize: 3 },
     },
-    skip: !inboxWidgetEnabled,
+    skip: !inboxWidgetEnabled || isInboxWidgetDisabled !== false,
   })
 
   const licensesRes = useListLicensesQuery({
@@ -174,6 +201,14 @@ export default function HomeScreen() {
     skip: !appointmentsWidgetEnabled || !isAppointmentsEnabled,
   })
 
+  const notificationsRes = useGetUserNotificationsQuery({
+    variables: {
+      input: { limit: 3 },
+      locale: useLocale(),
+    },
+    skip: !notificationsWidgetEnabled || !isNotificationsWidgetEnabled,
+  })
+
   useEffect(() => {
     // If widgets have not been initialized, validate data and set state accordingly
     if (!widgetsInitialised) {
@@ -196,14 +231,23 @@ export default function HomeScreen() {
       })
 
       preferencesStore.setState({
-        inboxWidgetEnabled: shouldShowInboxWidget,
         licensesWidgetEnabled: shouldShowLicensesWidget,
         applicationsWidgetEnabled: shouldShowApplicationsWidget,
         vehiclesWidgetEnabled: shouldShowVehiclesWidget,
         airDiscountWidgetEnabled: shouldShowAirDiscountWidget,
+        ...(isInboxWidgetDisabled !== null && {
+          inboxWidgetEnabled: isInboxWidgetDisabled
+            ? false
+            : shouldShowInboxWidget,
+        }),
         ...(isAppointmentsEnabled !== null && {
           appointmentsWidgetEnabled: isAppointmentsEnabled
             ? validateAppointmentsInitialData({ ...appointmentsRes })
+            : false,
+        }),
+        ...(isNotificationsWidgetEnabled !== null && {
+          notificationsWidgetEnabled: isNotificationsWidgetEnabled
+            ? validateNotificationsInitialData({ ...notificationsRes })
             : false,
         }),
       })
@@ -217,7 +261,10 @@ export default function HomeScreen() {
         airDiscountRes.loading ||
         vehiclesRes.loading ||
         appointmentsRes.loading ||
-        isAppointmentsEnabled === null
+        notificationsRes.loading ||
+        isAppointmentsEnabled === null ||
+        isNotificationsWidgetEnabled === null ||
+        isInboxWidgetDisabled === null
       ) {
         return
       }
@@ -231,6 +278,7 @@ export default function HomeScreen() {
     airDiscountRes.loading,
     vehiclesRes.loading,
     appointmentsRes.loading,
+    notificationsRes.loading,
     widgetsInitialised,
     inboxRes,
     licensesRes,
@@ -238,7 +286,10 @@ export default function HomeScreen() {
     vehiclesRes,
     airDiscountRes,
     appointmentsRes,
+    notificationsRes,
     isAppointmentsEnabled,
+    isNotificationsWidgetEnabled,
+    isInboxWidgetDisabled,
   ])
 
   const renderItem = useCallback(
@@ -247,23 +298,26 @@ export default function HomeScreen() {
   )
   const keyExtractor = useCallback((item: ListItem) => item.id, [])
 
-  const isAppUpdateRequired = useCallback(async () => {
-    const needsUpdate = await needsToUpdateAppVersion()
-    if (needsUpdate) {
+  useEffect(() => {
+    syncToken()
+    checkUnseen()
+  }, [])
+
+  // Check if the app version is below the minimum supported version and navigate to the update screen if so
+  useEffect(() => {
+    const currentVersion = Application.nativeApplicationVersion
+    if (
+      currentVersion &&
+      validate(minimumVersionSupported) &&
+      validate(currentVersion) &&
+      compare(minimumVersionSupported, currentVersion, '>')
+    ) {
       router.navigate({
         pathname: '/update-app',
         params: { closable: String(false) },
       })
     }
-  }, [])
-
-  useEffect(() => {
-    // Sync push tokens and unseen notifications
-    syncToken()
-    checkUnseen()
-    // Check if upgrade wall should be shown
-    isAppUpdateRequired()
-  }, [])
+  }, [minimumVersionSupported])
 
   useEffect(() => {
     if (!userProfileLocale) {
@@ -279,13 +333,18 @@ export default function HomeScreen() {
     try {
       const promises = [
         applicationsWidgetEnabled && applicationsRes.refetch(),
-        inboxWidgetEnabled && inboxRes.refetch(),
+        inboxWidgetEnabled &&
+          isInboxWidgetDisabled === false &&
+          inboxRes.refetch(),
         licensesWidgetEnabled && licensesRes.refetch(),
         airDiscountWidgetEnabled && airDiscountRes.refetch(),
         vehiclesWidgetEnabled && vehiclesRes.refetch(),
         appointmentsWidgetEnabled &&
           isAppointmentsEnabled &&
           appointmentsRes.refetch(),
+        notificationsWidgetEnabled &&
+          isNotificationsWidgetEnabled &&
+          notificationsRes.refetch(),
       ].filter(Boolean)
 
       await Promise.all(promises)
@@ -301,13 +360,17 @@ export default function HomeScreen() {
     airDiscountRes,
     vehiclesRes,
     appointmentsRes,
+    notificationsRes,
     vehiclesWidgetEnabled,
     airDiscountWidgetEnabled,
     applicationsWidgetEnabled,
     licensesWidgetEnabled,
     inboxWidgetEnabled,
     appointmentsWidgetEnabled,
+    notificationsWidgetEnabled,
     isAppointmentsEnabled,
+    isNotificationsWidgetEnabled,
+    isInboxWidgetDisabled,
   ])
 
   const data = [
@@ -316,12 +379,18 @@ export default function HomeScreen() {
       component: <HelloModule />,
     },
     {
-      id: 'onboarding',
-      component: <OnboardingModule />,
+      id: 'notifications',
+      component:
+        notificationsWidgetEnabled && isNotificationsWidgetEnabled ? (
+          <NotificationsModule {...notificationsRes} />
+        ) : null,
     },
     {
       id: 'inbox',
-      component: inboxWidgetEnabled ? <InboxModule {...inboxRes} /> : null,
+      component:
+        inboxWidgetEnabled && isInboxWidgetDisabled === false ? (
+          <InboxModule {...inboxRes} />
+        ) : null,
     },
     {
       id: 'appointments',
@@ -369,6 +438,7 @@ export default function HomeScreen() {
           airDiscountRes.networkStatus,
           vehiclesRes.networkStatus,
           appointmentsRes.networkStatus,
+          notificationsRes.networkStatus,
         ]}
         options={{
           headerTitle: '',
@@ -382,18 +452,6 @@ export default function HomeScreen() {
             },
           ],
           headerRightItems: [
-            {
-              identifier: 'options',
-              type: 'button',
-              label: 'Options',
-              icon: {
-                type: 'image',
-                source: require('@/assets/icons/options.png'),
-              },
-              tintColor: blue400,
-              onPress: () => router.navigate('/homescreen-options'),
-              sharesBackground: false,
-            },
             {
               type: 'custom',
               element: (
@@ -458,9 +516,34 @@ export default function HomeScreen() {
         keyExtractor={keyExtractor}
         data={data}
         renderItem={renderItem}
-        style={{ flex: 1 }}
+        style={{
+          flex: 1,
+          backgroundColor:
+            Platform.OS === 'ios' ? theme.color.blue100 : undefined,
+        }}
+        contentContainerStyle={{
+          paddingBottom: insets.bottom + (Platform.OS === 'android' ? 0 : 30),
+          backgroundColor:
+            Platform.OS === 'ios' ? theme.color.white : undefined,
+          flexGrow: Platform.OS === 'ios' ? 1 : undefined,
+        }}
         refreshControl={
           <RefreshControl refreshing={refetching} onRefresh={refetch} />
+        }
+        ListFooterComponent={
+          <View
+            style={{
+              marginHorizontal: theme.spacing[2],
+              marginTop: theme.spacing[2],
+            }}
+          >
+            <Button
+              title={intl.formatMessage({ id: 'homeOptions.heading.title' })}
+              isOutlined
+              icon={require('@/assets/icons/options.png')}
+              onPress={() => router.navigate('/homescreen-options')}
+            />
+          </View>
         }
       />
     </>

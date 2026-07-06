@@ -1,14 +1,21 @@
 import React, { useCallback, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { RefreshControl, SafeAreaView, ScrollView, View } from 'react-native'
+import {
+  Image,
+  RefreshControl,
+  SafeAreaView,
+  ScrollView,
+  View,
+} from 'react-native'
 import { useRouter } from 'expo-router'
 import styled from 'styled-components/native'
 
+import illustrationSrc from '@/assets/illustrations/le-company-s3.png'
 import { StackScreen } from '@/components/stack-screen'
 
 import { BaseAppointmentStatuses } from '@/constants/base-appointment-statuses'
 import { useGetAppointmentsQuery } from '@/graphql/types/schema'
-import { GeneralCardSkeleton, Problem, Typography } from '@/ui'
+import { EmptyList, GeneralCardSkeleton, Problem } from '@/ui'
 import { AppointmentCard } from '../../../../../components/appointment-card'
 
 const Host = styled(SafeAreaView)`
@@ -21,14 +28,13 @@ const Appointments = styled.View`
   row-gap: ${({ theme }) => theme.spacing[2]}px;
 `
 
-const ErrorWrapper = styled.View`
+const SkeletonGroup = styled.View`
   margin-top: ${({ theme }) => theme.spacing[3]}px;
+  row-gap: ${({ theme }) => theme.spacing[1]}px;
 `
 
-const EmptyState = styled.View`
+const ErrorWrapper = styled.View`
   margin-top: ${({ theme }) => theme.spacing[3]}px;
-  padding: ${({ theme }) => theme.spacing[3]}px;
-  align-items: center;
 `
 
 export default function AppointmentsScreen() {
@@ -45,7 +51,7 @@ export default function AppointmentsScreen() {
   })
 
   const appointments =
-    appointmentsRes.data?.healthDirectorateAppointments.data ?? []
+    appointmentsRes.data?.healthDirectorateAppointments?.data ?? []
 
   const onRefresh = useCallback(async () => {
     setRefetching(true)
@@ -86,15 +92,15 @@ export default function AppointmentsScreen() {
         style={{ flex: 1 }}
       >
         <Host>
-          {(appointmentsRes.loading || refetching) && (
-            <Appointments>
+          {appointmentsRes.loading && !appointmentsRes.data && (
+            <SkeletonGroup>
               {Array.from({ length: 3 }).map((_, index) => (
-                <GeneralCardSkeleton height={100} key={index} />
+                <GeneralCardSkeleton height={140} key={index} />
               ))}
-            </Appointments>
+            </SkeletonGroup>
           )}
 
-          {appointmentsRes.error && (
+          {appointmentsRes.error && appointments.length === 0 && (
             <ErrorWrapper>
               <Problem
                 type="error"
@@ -107,36 +113,42 @@ export default function AppointmentsScreen() {
             </ErrorWrapper>
           )}
 
-          {!appointmentsRes.loading &&
+          {!!appointmentsRes.data &&
             !appointmentsRes.error &&
             appointments.length === 0 && (
-              <EmptyState>
-                <Typography variant="heading3">
+              <EmptyList
+                title={
                   <FormattedMessage id="health.appointments.noAppointmentsTitle" />
-                </Typography>
-                <Typography>
+                }
+                description={
                   <FormattedMessage id="health.appointments.noAppointmentsText" />
-                </Typography>
-              </EmptyState>
+                }
+                image={
+                  <Image
+                    source={illustrationSrc}
+                    style={{ width: 134, height: 204 }}
+                    resizeMode="contain"
+                  />
+                }
+              />
             )}
 
-          {!appointmentsRes.loading &&
-            !appointmentsRes.error &&
-            appointments.length > 0 && (
-              <Appointments>
-                {appointments.map((appointment) => (
-                  <AppointmentCard
-                    key={appointment.id}
-                    id={appointment.id}
-                    title={appointment.title ?? ''}
-                    practitioners={appointment.practitioners}
-                    date={appointment.date ?? ''}
-                    location={appointment.location?.name ?? ''}
-                    onPress={handleAppointmentPress}
-                  />
-                ))}
-              </Appointments>
-            )}
+          {appointments.length > 0 && (
+            <Appointments>
+              {appointments.map((appointment) => (
+                <AppointmentCard
+                  key={appointment.id}
+                  id={appointment.id}
+                  title={appointment.title ?? ''}
+                  practitioners={appointment.practitioners}
+                  date={appointment.date ?? ''}
+                  location={appointment.location?.name ?? ''}
+                  modality={appointment.modality}
+                  onPress={handleAppointmentPress}
+                />
+              ))}
+            </Appointments>
+          )}
         </Host>
       </ScrollView>
     </View>

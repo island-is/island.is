@@ -10,6 +10,7 @@ import {
   VerificationStatusResponse,
   VerificationCallbackInput,
   GetPaymentFlowDTOPaymentStatusEnum,
+  CreateBankTransferInputLocaleEnum,
 } from '@island.is/clients/payments'
 
 import { VerifyCardInput } from './dto/verifyCard.input'
@@ -23,9 +24,15 @@ import { CreateInvoiceResponse } from './dto/createInvoice.response'
 import { CardVerificationResponse } from './dto/cardVerificationCallback.response'
 import { GetPaymentFlowsInput } from './dto/getPaymentFlows.input'
 import { GetPaymentFlowsResponse } from './dto/getPaymentFlows.response'
-import { GetApplePaySessionResponse } from './dto/getApplePaySession.response'
+import { ValidateApplePayMerchantResponse } from './dto/validateApplePayMerchant.response'
 import { ApplePayChargeResponse } from './dto/applePayCharge.response'
 import { ApplePayChargeInput } from './dto/applePayCharge.input'
+import { CreateBankTransferInput } from './dto/createBankTransfer.input'
+import { CreateBankTransferResponse } from './dto/createBankTransfer.response'
+import { VerifyBankTransferInput } from './dto/verifyBankTransfer.input'
+import { VerifyBankTransferResponse } from './dto/verifyBankTransfer.response'
+import { CancelBankTransferInput } from './dto/cancelBankTransfer.input'
+import { CancelBankTransferResponse } from './dto/cancelBankTransfer.response'
 
 @Injectable()
 export class PaymentsService {
@@ -119,6 +126,39 @@ export class PaymentsService {
     })
   }
 
+  async createBankTransfer(
+    createBankTransferInput: CreateBankTransferInput,
+  ): Promise<CreateBankTransferResponse> {
+    const locale = Object.values(CreateBankTransferInputLocaleEnum).includes(
+      createBankTransferInput.locale as CreateBankTransferInputLocaleEnum,
+    )
+      ? (createBankTransferInput.locale as CreateBankTransferInputLocaleEnum)
+      : CreateBankTransferInputLocaleEnum.is
+
+    return this.paymentsApi.bankTransferControllerCreate({
+      createBankTransferInput: {
+        ...createBankTransferInput,
+        locale,
+      },
+    })
+  }
+
+  async verifyBankTransfer(
+    verifyBankTransferInput: VerifyBankTransferInput,
+  ): Promise<VerifyBankTransferResponse> {
+    return this.paymentsApi.bankTransferControllerVerify({
+      verifyBankTransferInput,
+    })
+  }
+
+  async cancelBankTransfer(
+    cancelBankTransferInput: CancelBankTransferInput,
+  ): Promise<CancelBankTransferResponse> {
+    return this.paymentsApi.bankTransferControllerCancel({
+      cancelBankTransferInput,
+    })
+  }
+
   async getJwks() {
     return this.paymentsApi.jwksControllerServeJwks()
   }
@@ -148,8 +188,12 @@ export class PaymentsService {
     }
   }
 
-  async getApplePaySession(): Promise<GetApplePaySessionResponse> {
-    return this.paymentsApi.cardPaymentControllerGetApplePaySession()
+  async validateApplePayMerchant(
+    validationURL: string,
+  ): Promise<ValidateApplePayMerchantResponse> {
+    return this.paymentsApi.cardPaymentControllerValidateApplePayMerchant({
+      validateApplePayMerchantInput: { validationURL },
+    })
   }
 
   async chargeApplePay(

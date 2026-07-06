@@ -14,7 +14,6 @@ import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
 import { ControlContext } from '../../../../../context/ControlContext'
-import { fieldTypesSelectObject } from '../../../../../lib/utils/fieldTypes'
 import { NavbarSelectStatus } from '../../../../../lib/utils/interfaces'
 
 export const BaseInput = () => {
@@ -30,7 +29,6 @@ export const BaseInput = () => {
   } = useContext(ControlContext)
   const { activeItem, form, isReadOnly } = control
   const currentItem = activeItem.data as FormSystemField
-  const selectList = fieldTypesSelectObject(form.hasPayment ?? false)
   const defaultValue = fieldTypes?.find(
     (fieldType) => fieldType?.id === currentItem.fieldType,
   )
@@ -41,14 +39,45 @@ export const BaseInput = () => {
   const screen = control.form.screens?.find(
     (s) => s && s.id === currentItem.screenId,
   )
+
+  const hasAssetLookupPermission = fieldTypes?.some(
+    (fieldType) =>
+      fieldType?.id === FieldTypesEnum.REAL_ESTATE ||
+      fieldType?.id === FieldTypesEnum.VEHICLE,
+  )
+
+  const excludedFieldTypes = [
+    FieldTypesEnum.NATIONAL_ID_WITH_ADDRESS,
+    FieldTypesEnum.VEHICLE,
+    FieldTypesEnum.REAL_ESTATE,
+    ...(!hasAssetLookupPermission ? [FieldTypesEnum.ASSETS] : []),
+  ]
+
+  const selectList =
+    fieldTypes
+      ?.filter((fieldType): fieldType is NonNullable<typeof fieldType> =>
+        Boolean(fieldType?.id),
+      )
+      .filter(
+        (fieldType) =>
+          form.hasPayment || fieldType.id !== FieldTypesEnum.PAYMENT_QUANTITY,
+      )
+      .filter(
+        (fieldType) =>
+          fieldType.id !== FieldTypesEnum.NATIONAL_ID_WITH_ADDRESS &&
+          fieldType.id !== FieldTypesEnum.PAYMENT,
+      )
+      .filter((fieldType) => !excludedFieldTypes.includes(fieldType.id))
+      .map((fieldType) => ({
+        value: fieldType.id ?? '',
+        label: fieldType.name?.is ?? fieldType.id ?? '',
+      }))
+      .sort((a, b) =>
+        a.label.localeCompare(b.label, 'is', { sensitivity: 'base' }),
+      ) ?? []
+
   const renderDescription = () => {
     if (currentItem.fieldType === FieldTypesEnum.MESSAGE) {
-      return true
-    }
-    if (
-      currentItem.fieldType === FieldTypesEnum.CHECKBOX &&
-      currentItem.fieldSettings?.hasDescription
-    ) {
       return true
     }
     if (
@@ -60,10 +89,33 @@ export const BaseInput = () => {
     return false
   }
 
+  const listItemIds =
+    currentItem.list
+      ?.map((item) => item?.id)
+      .filter((id): id is string => Boolean(id)) ?? []
+
+  const isDependencyParent = (form.dependencies ?? []).some((dep) => {
+    const parent = dep?.parentProp
+    if (!parent) return false
+
+    if (currentItem.fieldType === FieldTypesEnum.CHECKBOX) {
+      return parent === currentItem.id
+    }
+
+    if (
+      currentItem.fieldType === FieldTypesEnum.RADIO_BUTTONS ||
+      currentItem.fieldType === FieldTypesEnum.DROPDOWN_LIST
+    ) {
+      return listItemIds.includes(parent)
+    }
+
+    return false
+  })
+
   return (
     <Stack space={2}>
       <Row>
-        <Column span="5/10">
+        <Column span={['10/10', '5/10']}>
           <Select
             label={formatMessage(m.type)}
             name="fieldTypeSelect"
@@ -226,7 +278,12 @@ export const BaseInput = () => {
               <Checkbox
                 label={formatMessage(m.isPartOfMulti)}
                 checked={currentItem.isPartOfMultiset ?? false}
-                disabled={isReadOnly}
+                disabled={isReadOnly || isDependencyParent}
+                tooltip={
+                  isDependencyParent
+                    ? 'Þetta stýrir tengingum og getur því ekki verið hluti af fjölmengi'
+                    : undefined
+                }
                 onChange={() =>
                   controlDispatch({
                     type: 'CHANGE_IS_PART_OF_MULTI',

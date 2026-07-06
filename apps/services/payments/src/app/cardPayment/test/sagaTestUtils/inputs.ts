@@ -9,6 +9,11 @@ export const getChargeCardInput = (): ChargeCardInput => ({
   cvc: '123',
 })
 
+// 64-char hex (32 bytes) — matches Apple's canonical transactionId format
+// enforced by the input DTO regex.
+const TEST_APPLE_PAY_TRANSACTION_ID =
+  'abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789'
+
 export const getApplePayChargeInput = (): ApplePayChargeInput => ({
   paymentFlowId: PAYMENT_FLOW_ID,
   paymentData: {
@@ -18,9 +23,8 @@ export const getApplePayChargeInput = (): ApplePayChargeInput => ({
     header: {
       ephemeralPublicKey: 'key',
       publicKeyHash: 'hash',
-      transactionId: 'tx-id',
+      transactionId: TEST_APPLE_PAY_TRANSACTION_ID,
     },
   },
-  paymentMethod: { displayName: 'Visa 1234', network: 'Visa' },
-  transactionIdentifier: 'tx-identifier',
+  transactionIdentifier: TEST_APPLE_PAY_TRANSACTION_ID,
 })

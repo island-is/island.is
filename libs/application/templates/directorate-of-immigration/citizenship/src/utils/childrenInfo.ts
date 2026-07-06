@@ -1,5 +1,5 @@
 import {
-  ApplicantChildCustodyInformation,
+  ApplicantChildCustodyInformationV3,
   ExternalData,
   FormValue,
 } from '@island.is/application/types'
@@ -11,7 +11,7 @@ export const hasChildren = (externalData: ExternalData): boolean => {
     externalData,
     'childrenCustodyInformation.data',
     [],
-  ) as ApplicantChildCustodyInformation[]
+  ) as ApplicantChildCustodyInformationV3[]
 
   return children && children.length > 0
 }
@@ -19,12 +19,12 @@ export const hasChildren = (externalData: ExternalData): boolean => {
 export const getSelectedCustodyChildren = (
   externalData: ExternalData,
   answers: FormValue,
-): ApplicantChildCustodyInformation[] | undefined => {
+): ApplicantChildCustodyInformationV3[] | undefined => {
   const custodyChildren = getValueViaPath(
     externalData,
     'childrenCustodyInformation.data',
     [],
-  ) as ApplicantChildCustodyInformation[]
+  ) as ApplicantChildCustodyInformationV3[]
 
   const selectedChildren = (answers as Citizenship).selectedChildren
 
@@ -46,12 +46,12 @@ export const getSelectedCustodyChild = (
   answers: FormValue,
   index: number,
   childNationalId?: string,
-): ApplicantChildCustodyInformation | undefined => {
+): ApplicantChildCustodyInformationV3 | undefined => {
   const custodyChildren = getValueViaPath(
     externalData,
     'childrenCustodyInformation.data',
     [],
-  ) as ApplicantChildCustodyInformation[]
+  ) as ApplicantChildCustodyInformationV3[]
 
   const childInfo = childNationalId
     ? custodyChildren?.find((x) => x.nationalId === childNationalId)

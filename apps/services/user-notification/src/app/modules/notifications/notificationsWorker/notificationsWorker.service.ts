@@ -22,6 +22,7 @@ import {
   WorkerService,
 } from '@island.is/message-queue'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
+import { AuthDelegationType } from '@island.is/shared/types'
 import type { Locale } from '@island.is/shared/types'
 
 import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
@@ -38,7 +39,7 @@ import { mapToLocale, SmsDelivery } from '../utils'
 import { EmailQueueMessage } from './emailWorker.service'
 import { SmsQueueMessage } from './smsWorker.service'
 import { PushQueueMessage } from './pushWorker.service'
-import { DECEASED_STATUS } from './helpers'
+import { DECEASED_STATUS, INACTIVE_COMPANY_STATUS } from './helpers'
 
 const getOnBehalfOfLabel = (
   onBehalfOf: string,
@@ -169,7 +170,9 @@ export class NotificationsWorkerService {
       { nationalId: args.onBehalfOf.nationalId } as User,
     )
 
-    if (!delegationsEnabled) {
+    // The email-to-delegations flag gates email only. A forced SMS (legal guardian
+    // of a child under 16) must still go out even when the flag is disabled.
+    if (!delegationsEnabled && !args.forceSmsToMinorGuardian) {
       this.logger.info(
         'Email notifications to delegations are disabled for user',
         { messageId, originalRecipient: args.onBehalfOf.nationalId },
@@ -210,19 +213,21 @@ export class NotificationsWorkerService {
 
     // Phase 1: collect all payloads (data fetching only, no queue side effects)
     const [emailPayload, smsPayload] = await Promise.all([
-      this.buildEmailPayload({
-        messageId,
-        nationalId: args.recipient,
-        email: actorProfile.email,
-        emailNotifications: actorProfile.emailNotifications,
-        fullName:
-          args.onBehalfOf?.name ||
-          onBehalfOfNames?.fullName ||
-          recipientNames.fullName,
-        formattedTemplate,
-        locale,
-        subjectId: args.onBehalfOf?.subjectId,
-      }),
+      delegationsEnabled
+        ? this.buildEmailPayload({
+            messageId,
+            nationalId: args.recipient,
+            email: actorProfile.email,
+            emailNotifications: actorProfile.emailNotifications,
+            fullName:
+              args.onBehalfOf?.name ||
+              onBehalfOfNames?.fullName ||
+              recipientNames.fullName,
+            formattedTemplate,
+            locale,
+            subjectId: args.onBehalfOf?.subjectId,
+          })
+        : Promise.resolve(null),
       this.buildSmsPayload({
         messageId,
         nationalId: args.recipient,
@@ -233,6 +238,7 @@ export class NotificationsWorkerService {
         onBehalfOf: onBehalfOfNames?.shortName,
         onBehalfOfNationalId: args.onBehalfOf?.nationalId,
         locale,
+        forceSmsToMinorGuardian: args.forceSmsToMinorGuardian,
       }),
     ])
 
@@ -347,6 +353,13 @@ export class NotificationsWorkerService {
 
       locale = userProfile.locale ? mapToLocale(userProfile.locale) : 'is'
     } else {
+      if (await this.isCompanyInactive(nationalId, messageId)) {
+        this.logger.info('Company is inactive, skipping notification', {
+          messageId,
+        })
+        return
+      }
+
       const allowCompanyEmails = await this.featureFlagService.getValue(
         Features.shouldSendEmailNotificationsToCompanyUserProfiles,
         false,
@@ -540,6 +553,7 @@ export class NotificationsWorkerService {
     onBehalfOf,
     onBehalfOfNationalId,
     locale,
+    forceSmsToMinorGuardian,
   }: {
     messageId: string
     nationalId: string
@@ -550,6 +564,7 @@ export class NotificationsWorkerService {
     onBehalfOf?: string
     onBehalfOfNationalId?: string
     locale: Locale
+    forceSmsToMinorGuardian?: boolean
   }): Promise<Omit<
     SmsQueueMessage,
     'userNotificationId' | 'actorNotificationId'
@@ -589,14 +604,23 @@ export class NotificationsWorkerService {
       return null
     }
 
+    // forceSmsToMinorGuardian overrides the opt-in check only: legal guardians of
+    // a child under 16 receive the SMS even when they have not opted in.
     if (
       formattedTemplate.smsDelivery === SmsDelivery.OPT_IN &&
       !smsNotifications
     ) {
-      this.logger.info('Skipping SMS notification: user has not opted in', {
-        messageId,
-      })
-      return null
+      if (!forceSmsToMinorGuardian) {
+        this.logger.info('Skipping SMS notification: user has not opted in', {
+          messageId,
+        })
+        return null
+      }
+
+      this.logger.info(
+        'Overriding SMS opt-in: sending to legal guardian of a child under 16',
+        { messageId },
+      )
     }
 
     return {
@@ -644,6 +668,15 @@ export class NotificationsWorkerService {
         recipientName = await this.getName(message.recipient)
       }
 
+      const minorGuardianNationalIds = new Set(
+        delegations.data
+          .filter(
+            (delegation) =>
+              delegation.type === AuthDelegationType.LegalGuardianMinor,
+          )
+          .map((delegation) => delegation.toNationalId),
+      )
+
       // Filter out duplicate delegations that have the same fromNationalId and toNationalId
       delegations.data = delegations.data.filter(
         (delegation, index, self) =>
@@ -667,6 +700,9 @@ export class NotificationsWorkerService {
             ...message,
             recipient: delegation.toNationalId,
             rootMessageId: messageId,
+            forceSmsToMinorGuardian: minorGuardianNationalIds.has(
+              delegation.toNationalId,
+            ),
             onBehalfOf: {
               nationalId: message.recipient,
               name: recipientName,
@@ -725,6 +761,16 @@ export class NotificationsWorkerService {
     nationalId: string,
     messageId: string,
   ): Promise<boolean> {
+    const enabled = await this.featureFlagService.getValue(
+      Features.isUserNotificationDeceasedCheckEnabled,
+      false,
+      { nationalId } as User,
+    )
+
+    if (!enabled) {
+      return false
+    }
+
     try {
       const individual =
         await this.nationalRegistryService.getAllDataIndividual(nationalId)
@@ -733,6 +779,32 @@ export class NotificationsWorkerService {
       this.logger.warn(
         'Failed to check deceased status from national registry, proceeding with notification',
         { messageId },
+      )
+      return false
+    }
+  }
+
+  private async isCompanyInactive(
+    nationalId: string,
+    messageId: string,
+  ): Promise<boolean> {
+    const enabled = await this.featureFlagService.getValue(
+      Features.isUserNotificationInactiveCompanyCheckEnabled,
+      false,
+      { nationalId } as User,
+    )
+
+    if (!enabled) {
+      return false
+    }
+
+    try {
+      const company = await this.companyRegistryService.getCompany(nationalId)
+      return company !== null && company.status === INACTIVE_COMPANY_STATUS
+    } catch (error) {
+      this.logger.warn(
+        'Failed to check company status from company registry, proceeding with notification',
+        { messageId, error },
       )
       return false
     }

@@ -11,8 +11,6 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
-
 import { Case } from './case.model'
 
 @Table({
@@ -28,10 +26,7 @@ export class CivilClaimant extends Model {
       (civilClaimant) =>
         civilClaimant.hasSpokesperson &&
         civilClaimant.isSpokespersonConfirmed &&
-        civilClaimant.spokespersonNationalId &&
-        normalizeAndFormatNationalId(spokespersonNationalId).includes(
-          civilClaimant.spokespersonNationalId,
-        ),
+        civilClaimant.spokespersonNationalId === spokespersonNationalId,
     )
   }
 
@@ -44,10 +39,7 @@ export class CivilClaimant extends Model {
         civilClaimant.hasSpokesperson &&
         civilClaimant.isSpokespersonConfirmed &&
         civilClaimant.caseFilesSharedWithSpokesperson &&
-        civilClaimant.spokespersonNationalId &&
-        normalizeAndFormatNationalId(spokespersonNationalId).includes(
-          civilClaimant.spokespersonNationalId,
-        ),
+        civilClaimant.spokespersonNationalId === spokespersonNationalId,
     )
   }
 
@@ -150,4 +142,12 @@ export class CivilClaimant extends Model {
   })
   @ApiPropertyOptional({ type: Boolean })
   isSpokespersonConfirmed?: boolean
+
+  @Column({ type: DataType.ARRAY(DataType.STRING), allowNull: true })
+  @ApiPropertyOptional({ type: String, isArray: true })
+  policeCaseNumbers?: string[]
+
+  @Column({ type: DataType.ARRAY(DataType.STRING), allowNull: true })
+  @ApiPropertyOptional({ type: String, isArray: true })
+  defendantIds?: string[]
 }

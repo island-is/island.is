@@ -18,7 +18,7 @@ import { BackButton } from '@island.is/portals/admin/core'
 import {
   createColumnHelper,
   IntroHeader,
-  Table,
+  PortalTable,
   formatNationalId,
   m as coreMessages,
 } from '@island.is/portals/core'
@@ -60,6 +60,9 @@ const User = () => {
     id: string
     email: string | null
   } | null>(null)
+  const [isDeletePhoneModalVisible, setIsDeletePhoneModalVisible] =
+    useState(false)
+  const [phoneToDelete, setPhoneToDelete] = useState<string | null>(null)
 
   const {
     data: notifications,
@@ -115,6 +118,16 @@ const User = () => {
       })
       setEmailToDelete(null)
       revalidate()
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  const handleDeletePhone = async () => {
+    setIsDeletePhoneModalVisible(false)
+    try {
+      await handleUpdateProfile({ mobilePhoneNumber: '' })
+      setPhoneToDelete(null)
     } catch (e) {
       console.error(e)
     }
@@ -367,9 +380,8 @@ const User = () => {
                 heading={formatMessage(m.phone)}
                 text={user.mobilePhoneNumber ?? ''}
                 cta={
-                  !user.mobilePhoneNumber || user.mobilePhoneNumberVerified
-                    ? undefined
-                    : {
+                  user.mobilePhoneNumber
+                    ? {
                         label: formatMessage(coreMessages.buttonDestroy),
                         buttonType: {
                           variant: 'text',
@@ -377,9 +389,12 @@ const User = () => {
                         },
                         size: 'small',
                         icon: 'trash',
-                        onClick: () =>
-                          handleUpdateProfile({ mobilePhoneNumber: '' }),
+                        onClick: () => {
+                          setPhoneToDelete(user.mobilePhoneNumber ?? null)
+                          setIsDeletePhoneModalVisible(true)
+                        },
                       }
+                    : undefined
                 }
                 tag={{
                   label: formatMessage(
@@ -464,13 +479,11 @@ const User = () => {
               {(() => {
                 const otherEmails = user.emails?.filter((e) => !e.primary) ?? []
 
-                if (!user.emails || user.emails.length <= 1) {
+                if (!user.emails || otherEmails.length === 0) {
                   return null
                 }
 
-                return user.emails &&
-                  user.emails.length > 1 &&
-                  otherEmails.length > 0 ? (
+                return user.emails && otherEmails.length > 0 ? (
                   <Box
                     borderColor="blue200"
                     borderWidth="standard"
@@ -607,11 +620,12 @@ const User = () => {
                         </Box>
                       }
                     >
-                      <Table<AdminNotificationRow>
+                      <PortalTable<AdminNotificationRow>
                         columns={userNotificationColumns}
                         data={notifications?.adminNotifications?.data ?? []}
                         emptyMessage={formatMessage(m.notificationsEmpty)}
                         getRowId={(row) => String(row.id)}
+                        mobileTitleKey="id"
                         renderExpandedRow={(row) => (
                           <NotificationDeliveriesPanel
                             notificationId={row.original.id}
@@ -652,7 +666,7 @@ const User = () => {
                         </Box>
                       }
                     >
-                      <Table<ActorNotificationRow>
+                      <PortalTable<ActorNotificationRow>
                         columns={actorNotificationColumns}
                         data={
                           actorNotifications?.adminActorNotifications?.data ??
@@ -660,6 +674,7 @@ const User = () => {
                         }
                         emptyMessage={formatMessage(m.notificationsEmpty)}
                         getRowId={(row) => String(row.id)}
+                        mobileTitleKey="id"
                         renderExpandedRow={(row) => (
                           <NotificationDeliveriesPanel
                             notificationId={row.original.id}
@@ -687,6 +702,21 @@ const User = () => {
         title={formatMessage(m.deleteEmailConfirmTitle)}
         message={formatMessage(m.deleteEmailConfirmMessage, {
           email: emailToDelete?.email ?? '',
+        })}
+        confirmMessage={formatMessage(coreMessages.buttonDestroy)}
+      />
+      <ConfirmModal
+        isVisible={isDeletePhoneModalVisible}
+        onConfirm={handleDeletePhone}
+        onVisibilityChange={(visibility) => {
+          setIsDeletePhoneModalVisible(visibility)
+          if (!visibility) {
+            setPhoneToDelete(null)
+          }
+        }}
+        title={formatMessage(m.deletePhoneConfirmTitle)}
+        message={formatMessage(m.deletePhoneConfirmMessage, {
+          phone: phoneToDelete ?? '',
         })}
         confirmMessage={formatMessage(coreMessages.buttonDestroy)}
       />

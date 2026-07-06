@@ -8,7 +8,7 @@ import {
 import { m } from '@island.is/form-system/ui'
 import { Box, DialogPrompt } from '@island.is/island-ui/core'
 import cn from 'classnames'
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { ControlContext } from '../../../context/ControlContext'
 import { MainContent } from '../../MainContent/MainContent'
@@ -16,7 +16,8 @@ import { DeleteButton } from './DeleteButton'
 import * as styles from './MainColumn.css'
 
 export const MainContentColumn = () => {
-  const { control, controlDispatch, inSettings } = useContext(ControlContext)
+  const { control, controlDispatch, inSettings, inListBuilder } =
+    useContext(ControlContext)
   const { activeItem, form, isReadOnly } = control
   const { sections, screens, fields } = form
   const { type } = activeItem
@@ -24,6 +25,7 @@ export const MainContentColumn = () => {
   const deleteScreen = useMutation(DELETE_SCREEN)
   const deleteField = useMutation(DELETE_FIELD)
   const deleteSection = useMutation(DELETE_SECTION)
+  const [openPreview, setOpenPreview] = useState(false)
   const staticSection =
     activeItem.type === 'Section' &&
     ((activeItem.data as { sectionType?: string })?.sectionType === 'PARTIES' ||
@@ -89,7 +91,12 @@ export const MainContentColumn = () => {
 
   return (
     <Box className={cn(styles.mainColumn)} padding={2}>
-      {!isReadOnly && !inSettings && !staticSection && !staticScreen ? (
+      {!openPreview &&
+      !isReadOnly &&
+      !inSettings &&
+      !staticSection &&
+      !staticScreen &&
+      !inListBuilder ? (
         containsGroupOrInput() ? (
           <DialogPrompt
             baseId="remove"
@@ -114,10 +121,16 @@ export const MainContentColumn = () => {
       <Box
         width="full"
         style={{
-          minHeight: '500px',
+          minHeight: 'clamp(300px, 50vh, 500px)',
+          display: 'flex',
+          flexDirection: 'column',
+          flexGrow: 1,
         }}
       >
-        <MainContent />
+        <MainContent
+          openPreview={openPreview}
+          setOpenPreview={setOpenPreview}
+        />
       </Box>
     </Box>
   )

@@ -12,12 +12,10 @@ export const Header = () => {
   return (
     <DefaultHeader
       title={formatMessage(m.home.title)}
-      underTitle={formatMessage(m.home.subtitle)}
       titleColor="white"
       image="/assets/framhaldsskolanamHeaderImage.svg"
       imagePadding="0"
       background={BACKGROUND_COLOR}
-      mobileBackground={BACKGROUND_COLOR}
       logo="/assets/skjaldarmerki.svg"
       logoAltText="Icelandic coat of arms"
       fullWidth={false}

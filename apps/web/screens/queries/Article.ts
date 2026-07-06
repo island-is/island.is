@@ -12,6 +12,8 @@ export const GET_ARTICLE_QUERY = gql`
       intro
       keywords
       importance
+      contentLastReviewed
+      showDateOfTheMostRecentReview
       showTableOfContents
       processEntryButtonText
       signLanguageVideo {
@@ -138,6 +140,8 @@ export const GET_ARTICLE_QUERY = gql`
           ${nestedFields}
         }
         showTableOfContents
+        contentLastReviewed
+        showDateOfTheMostRecentReview
         stepper {
           id
           title

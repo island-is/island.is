@@ -3,7 +3,10 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, InputFileUpload, Text } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  COURT_OF_APPEAL_OVERVIEW_ROUTE,
+  COURT_OF_APPEAL_SUMMARY_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
@@ -18,14 +21,17 @@ import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/sch
 import {
   useFileList,
   useS3Upload,
+  useTargetAppealCaseByAppealCaseId,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { appendAppealCaseIdQuery } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { CaseNumberInput } from '../components'
 import { strings } from './WithdrawnAppealCase.strings'
 
 const WithdrawnAppealCase = () => {
   const { workingCase } = useContext(FormContext)
+  const targetAppealCase = useTargetAppealCaseByAppealCaseId()
   const { formatMessage } = useIntl()
   const router = useRouter()
   const {
@@ -37,13 +43,15 @@ const WithdrawnAppealCase = () => {
   } = useUploadFiles(workingCase.caseFiles)
   const { handleUpload, handleRetry, handleRemove } = useS3Upload(
     workingCase.id,
+    undefined,
+    undefined,
+    targetAppealCase?.rulingFileId,
   )
   const { onOpenFile } = useFileList({
     caseId: workingCase.id,
   })
 
-  const isStepValid =
-    allFilesDoneOrError && workingCase.appealCase?.appealCaseNumber
+  const isStepValid = allFilesDoneOrError && targetAppealCase?.appealCaseNumber
 
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
@@ -90,10 +98,16 @@ const WithdrawnAppealCase = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.COURT_OF_APPEAL_OVERVIEW_ROUTE}/${workingCase.id}`}
+          previousUrl={appendAppealCaseIdQuery(
+            `${COURT_OF_APPEAL_OVERVIEW_ROUTE}/${workingCase.id}`,
+            targetAppealCase?.id,
+          )}
           onNextButtonClick={async () => {
             router.push(
-              `${constants.COURT_OF_APPEAL_SUMMARY_ROUTE}/${workingCase.id}`,
+              appendAppealCaseIdQuery(
+                `${COURT_OF_APPEAL_SUMMARY_ROUTE}/${workingCase.id}`,
+                targetAppealCase?.id,
+              ),
             )
           }}
           nextButtonText={formatMessage(strings.continueButton)}
