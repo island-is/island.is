@@ -867,6 +867,7 @@ export const en: TranslatedMessages = {
     'Failed to fetch messages. Please try again later.',
   'health.messages.noMessagesTitle': 'No messages',
   'health.messages.noMessagesText': 'You have no messages.',
+  'health.messages.searchPlaceholder': 'Search',
 
   // health - organ donation
   'health.organDonation': 'Organ Donation',

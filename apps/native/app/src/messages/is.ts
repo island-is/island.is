@@ -865,6 +865,7 @@ export const is = {
     'Ekki tókst að sækja skilaboð. Vinsamlegast reyndu aftur síðar.',
   'health.messages.noMessagesTitle': 'Engin skilaboð',
   'health.messages.noMessagesText': 'Þú ert ekki með nein skilaboð.',
+  'health.messages.searchPlaceholder': 'Leita',
 
   // health - organ donation
   'health.organDonation': 'Líffæragjöf',
