@@ -571,12 +571,10 @@ export class DrivingLicenseApi {
           districtId: params.districtId,
           primaryPhoneNumber: params.phoneNumber,
           email: params.email,
-          pickupPlasticAtDistrict: params.pickupPlasticAtDistrict,
           sendPlasticToPerson: params.sendPlasticToPerson,
           contentList: params.contentList,
           photoBiometricsId: params.photoBiometricsId,
           signatureBiometricsId: params.signatureBiometricsId,
-          renewalDate: new Date(),
           userId: v5.DRIVING_LICENSE_API_USER_ID,
         },
       })
