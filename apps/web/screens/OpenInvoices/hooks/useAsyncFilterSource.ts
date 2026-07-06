@@ -69,12 +69,10 @@ export const useAsyncFilterSource = <TData, TItem>(
 
   const fetchLookup = useCallback(
     async (lookup: string[]) => {
-      const { data } = await apolloClient.query<TData, { lookup?: string[] }>(
-        {
-          query,
-          variables: { lookup },
-        },
-      )
+      const { data } = await apolloClient.query<TData, { lookup?: string[] }>({
+        query,
+        variables: { lookup },
+      })
 
       return extractResult(data)?.data.map(mapItem) ?? []
     },

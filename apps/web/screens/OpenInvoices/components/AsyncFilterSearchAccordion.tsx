@@ -272,11 +272,7 @@ export const AsyncFilterSearchAccordion = ({
             </Box>
           )}
 
-          <Box
-            ref={scrollListRef}
-            className={styles.scrollList}
-            paddingX={1}
-          >
+          <Box ref={scrollListRef} className={styles.scrollList} paddingX={1}>
             {loading && items.length === 0 ? (
               <Box className={styles.loadingMoreRow}>
                 <LoadingDots />

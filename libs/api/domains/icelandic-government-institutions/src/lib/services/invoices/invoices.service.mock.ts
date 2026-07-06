@@ -66,9 +66,7 @@ export class MockInvoicesService implements IInvoicesService {
       const lookup = new Set(input.lookup)
       return {
         ...MOCK_SUPPLIERS,
-        data: MOCK_SUPPLIERS.data.filter((supplier) =>
-          lookup.has(supplier.id),
-        ),
+        data: MOCK_SUPPLIERS.data.filter((supplier) => lookup.has(supplier.id)),
       }
     }
     return MOCK_SUPPLIERS
