@@ -429,6 +429,11 @@ describe('containsHtml', () => {
     expect(containsHtml('mældur hraði < 90 km/klst')).toBe(false)
     expect(containsHtml('')).toBe(false)
   })
+
+  test('should not detect angle-bracket placeholders as html', () => {
+    expect(containsHtml('ökumaðurinn <nafn ökumanns> ók')).toBe(false)
+    expect(containsHtml('með kennitöluna <kennitala>')).toBe(false)
+  })
 })
 
 describe('applyDativeCaseToCourtName', () => {
