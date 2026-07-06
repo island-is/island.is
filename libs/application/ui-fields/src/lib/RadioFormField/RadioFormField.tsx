@@ -72,6 +72,26 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
     [options, application, locale],
   )
 
+  // Memoized so the illustration components keep a stable identity across
+  // renders; a new component type each render would remount the illustration.
+  const radioOptions = useMemo(
+    () =>
+      finalOptions.map(({ label, subLabel, tooltip, illustration, ...o }) => ({
+        ...o,
+        illustration: resolveIllustration(illustration),
+        label: (
+          <Markdown>{formatText(label, application, formatMessage)}</Markdown>
+        ),
+        subLabel:
+          subLabel &&
+          HtmlParser(formatText(subLabel, application, formatMessage)),
+        ...(tooltip && {
+          tooltip: HtmlParser(formatText(tooltip, application, formatMessage)),
+        }),
+      })),
+    [finalOptions, application, formatMessage],
+  )
+
   const paddingTop = field.space ?? 2
 
   return (
@@ -128,25 +148,7 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
               getDefaultValue(field, application, locale)) ||
             (required ? '' : undefined)
           }
-          options={finalOptions.map(
-            ({ label, subLabel, tooltip, illustration, ...o }) => ({
-              ...o,
-              illustration: resolveIllustration(illustration),
-              label: (
-                <Markdown>
-                  {formatText(label, application, formatMessage)}
-                </Markdown>
-              ),
-              subLabel:
-                subLabel &&
-                HtmlParser(formatText(subLabel, application, formatMessage)),
-              ...(tooltip && {
-                tooltip: HtmlParser(
-                  formatText(tooltip, application, formatMessage),
-                ),
-              }),
-            }),
-          )}
+          options={radioOptions}
           onSelect={field.onSelect}
           hasIllustration={hasIllustration}
           paddingBottom={0}
