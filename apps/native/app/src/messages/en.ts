@@ -861,6 +861,13 @@ export const en: TranslatedMessages = {
   'health.appointments.minutesFormat': '{minutes} minutes',
   'health.appointments.moreInfo': 'More information',
 
+  // health - messages
+  'health.messages.screenTitle': 'Messages',
+  'health.messages.errorMessage':
+    'Failed to fetch messages. Please try again later.',
+  'health.messages.noMessagesTitle': 'No messages',
+  'health.messages.noMessagesText': 'You have no messages.',
+
   // health - organ donation
   'health.organDonation': 'Organ Donation',
   'health.organDonation.change': 'Change selection',

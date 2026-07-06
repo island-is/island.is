@@ -859,6 +859,13 @@ export const is = {
   'health.appointments.minutesFormat': '{minutes} mínútur',
   'health.appointments.moreInfo': 'Nánari upplýsingar',
 
+  // health - messages
+  'health.messages.screenTitle': 'Skilaboð',
+  'health.messages.errorMessage':
+    'Ekki tókst að sækja skilaboð. Vinsamlegast reyndu aftur síðar.',
+  'health.messages.noMessagesTitle': 'Engin skilaboð',
+  'health.messages.noMessagesText': 'Þú ert ekki með nein skilaboð.',
+
   // health - organ donation
   'health.organDonation': 'Líffæragjöf',
   'health.organDonation.change': 'Breyta afstöðu',

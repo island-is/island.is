@@ -14,6 +14,7 @@ import styled, { useTheme } from 'styled-components/native'
 
 import categoriesIcon from '@/assets/icons/categories.png'
 import externalLinkIcon from '@/assets/icons/external-link.png'
+import heartIcon from '@/assets/icons/health.png'
 import medicineIcon from '@/assets/icons/medicine.png'
 import readerIcon from '@/assets/icons/reader.png'
 import vaccinationsIcon from '@/assets/icons/vaccinations.png'
@@ -25,6 +26,7 @@ import {
   useGetBloodTypeOverviewQuery,
   useGetDentistOverviewQuery,
   useGetHealthCenterQuery,
+  useGetHealthConversationsQuery,
   useGetHealthInsuranceOverviewQuery,
   useGetMedicineDataQuery,
   useGetOrganDonorStatusQuery,
@@ -39,6 +41,7 @@ import {
   Heading,
   Input,
   InputRow,
+  ListItem,
   MoreCard,
   Problem,
   Skeleton,
@@ -226,6 +229,11 @@ export default function HealthOverviewScreen() {
     false,
     null,
   )
+  const isHealthMessagesEnabled = useFeatureFlag(
+    'isAppHealthMessagesEnabled',
+    false,
+    null,
+  )
 
   const isLoadingFeatureFlags =
     isVaccinationsEnabled === null ||
@@ -233,7 +241,8 @@ export default function HealthOverviewScreen() {
     isPrescriptionsEnabled === null ||
     isOrganDonationEnabled === null ||
     isQuestionnaireFeatureEnabled === null ||
-    isAppointmentsEnabled === null
+    isAppointmentsEnabled === null ||
+    isHealthMessagesEnabled === null
 
   const now = useMemo(() => new Date().toISOString(), [])
 
@@ -352,6 +361,10 @@ export default function HealthOverviewScreen() {
     skip: !hasBeenFocused || !isAppointmentsEnabled,
     notifyOnNetworkStatusChange: true,
   })
+  const messagesRes = useGetHealthConversationsQuery({
+    skip: !hasBeenFocused || !isHealthMessagesEnabled,
+    notifyOnNetworkStatusChange: true,
+  })
 
   const medicinePurchaseData =
     medicinePurchaseRes.data?.rightsPortalDrugPeriods?.[0]
@@ -364,6 +377,8 @@ export default function HealthOverviewScreen() {
     organDonationRes.data?.healthDirectorateOrganDonation.donor
   const appointments =
     appointmentsRes.data?.healthDirectorateAppointments?.data ?? []
+  const messages =
+    messagesRes.data?.healthDirectorateHealthConversations ?? []
 
   const isMedicinePeriodActive =
     medicinePurchaseData?.active ||
@@ -386,6 +401,7 @@ export default function HealthOverviewScreen() {
         isOrganDonationEnabled && organDonationRes.refetch(),
         bloodTypeRes.refetch(),
         isAppointmentsEnabled && appointmentsRes.refetch(),
+        isHealthMessagesEnabled && messagesRes.refetch(),
       ].filter(Boolean)
       await Promise.all(promises)
     } catch (e) {
@@ -405,6 +421,8 @@ export default function HealthOverviewScreen() {
     bloodTypeRes,
     isAppointmentsEnabled,
     appointmentsRes,
+    isHealthMessagesEnabled,
+    messagesRes,
   ])
 
   const handleAppointmentPress = useCallback(
@@ -430,6 +448,7 @@ export default function HealthOverviewScreen() {
           dentistRes.networkStatus,
           bloodTypeRes.networkStatus,
           appointmentsRes.networkStatus,
+          messagesRes.networkStatus,
         ]}
       />
       <Animated.ScrollView
@@ -545,6 +564,62 @@ export default function HealthOverviewScreen() {
                     />
                   ))}
                 </AppointmentsContainer>
+              )}
+          </>
+        )}
+        {isHealthMessagesEnabled && (
+          <>
+            <HeadingSection
+              title={intl.formatMessage({
+                id: 'health.messages.screenTitle',
+              })}
+              showIcon={false}
+              onPress={() => router.navigate('/(auth)/(tabs)/health/messages')}
+            />
+            {(!hasBeenFocused || messagesRes.loading) && (
+              <AppointmentsSkeletonGroup>
+                {Array.from({ length: 3 }).map((_, index) => (
+                  <GeneralCardSkeleton height={72} key={index} />
+                ))}
+              </AppointmentsSkeletonGroup>
+            )}
+            {messagesRes.error && messages.length === 0 && (
+              <AppointmentsContainer>
+                <Problem
+                  type="error"
+                  size="small"
+                  title={intl.formatMessage({ id: 'problem.error.title' })}
+                  message={intl.formatMessage({
+                    id: 'health.messages.errorMessage',
+                  })}
+                  tag={messagesRes.error.message}
+                />
+              </AppointmentsContainer>
+            )}
+            {hasBeenFocused &&
+              !messagesRes.loading &&
+              !messagesRes.error &&
+              messages.length === 0 && (
+                <AppointmentsContainer>
+                  <Problem type="no_data" size="small" />
+                </AppointmentsContainer>
+              )}
+            {hasBeenFocused &&
+              !messagesRes.loading &&
+              messages.length > 0 && (
+                <View style={{ marginHorizontal: -theme.spacing[2] }}>
+                  {messages.slice(0, 3).map((message) => (
+                    <ListItem
+                      key={message.id}
+                      title={message.lastSenderGroupName ?? ''}
+                      subtitle={message.title ?? ''}
+                      date={message.lastMessageSentAt ?? undefined}
+                      unread={!message.isRead}
+                      starred={message.isStarred}
+                      icon={message.hasAttachment ? readerIcon : heartIcon}
+                    />
+                  ))}
+                </View>
               )}
           </>
         )}
