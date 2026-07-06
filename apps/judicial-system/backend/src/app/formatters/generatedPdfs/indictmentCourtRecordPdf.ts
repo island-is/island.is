@@ -224,10 +224,8 @@ export const createIndictmentCourtRecordPdf = (
     }
 
     addEmptyLines(doc)
-    addNormalText(doc, 'Mættir eru:', 'Times-Bold')
     addNormalText(
       doc,
-      // Must use || here as we want to display a default message if the file has no content
       courtSession.attendees?.trim() || 'Enginn er mættur í þinghaldið.',
       'Times-Roman',
     )
