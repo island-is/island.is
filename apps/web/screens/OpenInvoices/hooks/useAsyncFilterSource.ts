@@ -1,6 +1,5 @@
 import { useCallback } from 'react'
 import { DocumentNode } from 'graphql'
-
 import { useApolloClient } from '@apollo/client'
 
 import { IcelandicGovernmentInstitutionsSortDirection } from '@island.is/web/graphql/schema'
