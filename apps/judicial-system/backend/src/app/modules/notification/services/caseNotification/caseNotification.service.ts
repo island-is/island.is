@@ -1595,17 +1595,8 @@ export class CaseNotificationService extends BaseNotificationService {
     recipientName?: string,
     recipientEmail?: string,
   ): Promise<Recipient> {
-    const subject = this.formatMessage(
-      notifications.courtRevokedRequestCaseEmail.subject,
-      { courtCaseNumber: theCase.courtCaseNumber },
-    )
-    const body = this.formatMessage(
-      notifications.courtRevokedRequestCaseEmail.body,
-      {
-        prosecutorsOffice: theCase.creatingProsecutor?.institution?.name,
-        courtCaseNumber: theCase.courtCaseNumber,
-      },
-    )
+    const subject = `Krafa afturkölluð í máli ${theCase.courtCaseNumber}`
+    const body = `${theCase.creatingProsecutor?.institution?.name} hefur afturkallað kröfu í máli ${theCase.courtCaseNumber}.`
 
     return this.sendEmail({
       subject,

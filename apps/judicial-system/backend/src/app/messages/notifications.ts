@@ -698,21 +698,6 @@ export const notifications = {
       description: 'Texti í pósti til dómstóls þegar ákæra er afturkölluð',
     },
   }),
-  courtRevokedRequestCaseEmail: defineMessages({
-    subject: {
-      id: 'judicial.system.backend:notifications.court_revoked_request_case_email.subject',
-      defaultMessage: 'Krafa afturkölluð í máli {courtCaseNumber}',
-      description:
-        'Fyrirsögn í pósti til dómstóls þegar krafa í R-máli er afturkölluð',
-    },
-    body: {
-      id: 'judicial.system.backend:notifications.court_revoked_request_case_email.body',
-      defaultMessage:
-        '{prosecutorsOffice} hefur afturkallað kröfu í máli {courtCaseNumber}.',
-      description:
-        'Texti í pósti til dómstóls þegar krafa í R-máli er afturkölluð',
-    },
-  }),
   caseFilesUpdated: defineMessages({
     subject: {
       id: 'judicial.system.backend:notifications.case_files_updated.subject',
