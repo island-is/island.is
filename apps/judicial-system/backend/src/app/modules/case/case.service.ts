@@ -2,7 +2,7 @@ import { option } from 'fp-ts'
 import { filterMap } from 'fp-ts/lib/Array'
 import { pipe } from 'fp-ts/lib/function'
 import pick from 'lodash/pick'
-import { Includeable, literal, Op, Transaction } from 'sequelize'
+import { literal, Op, Transaction } from 'sequelize'
 
 import {
   BadRequestException,
@@ -47,12 +47,9 @@ import {
   CaseType,
   CourtDocumentType,
   DateType,
-  dateTypes,
   DefendantEventType,
-  defendantEventTypes,
   DefendantNotificationType,
   EventType,
-  eventTypes,
   IndictmentCaseNotificationType,
   IndictmentDecision,
   isCompletedCase,
@@ -63,7 +60,6 @@ import {
   RequestCaseNotificationType,
   ServiceStatus,
   StringType,
-  stringTypes,
   UserRole,
 } from '@island.is/judicial-system/types'
 import { sortCaseFiles } from '@island.is/judicial-system/types'
@@ -82,7 +78,6 @@ import { EventLogService } from '../event-log'
 import { FileService, PoliceDigitalCaseFileService } from '../file'
 import { IndictmentCountService } from '../indictment-count'
 import {
-  AppealCase,
   AppealCaseRepositoryService,
   AppealDecisionRepositoryService,
   AppealEventLogRepositoryService,
@@ -98,15 +93,11 @@ import {
   DefendantEventLogRepositoryService,
   EventLog,
   Institution,
-  Subpoena,
   UpdateCase,
-  User,
-  Verdict,
 } from '../repository'
 import { SubpoenaService } from '../subpoena'
 import { VerdictService } from '../verdict'
 import { CreateCaseDto } from './dto/createCase.dto'
-import { getCasesQueryFilter } from './filters/cases.filter'
 import { MinimalCase } from './models/case.types'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
@@ -134,89 +125,6 @@ const caseStringTypes: Record<CaseStringKeys, StringType> = {
   penalties: StringType.PENALTIES,
   reopenReason: StringType.REOPEN_REASON,
 }
-
-export const caseListInclude: Includeable[] = [
-  { model: Institution, as: 'court' },
-  { model: Institution, as: 'prosecutorsOffice' },
-  {
-    model: Defendant,
-    as: 'defendants',
-    required: false,
-    order: [['created', 'ASC']],
-    include: [
-      {
-        model: DefendantEventLog,
-        as: 'eventLogs',
-        required: false,
-        where: { eventType: defendantEventTypes },
-        separate: true,
-      },
-      {
-        model: Subpoena,
-        as: 'subpoenas',
-        required: false,
-        order: [['created', 'DESC']],
-        separate: true,
-      },
-      {
-        model: Verdict,
-        as: 'verdicts',
-        required: false,
-        order: [['created', 'DESC']],
-        separate: true,
-      },
-    ],
-    separate: true,
-  },
-  {
-    model: User,
-    as: 'creatingProsecutor',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'prosecutor',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'judge',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'registrar',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'indictmentReviewer',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: DateLog,
-    as: 'dateLogs',
-    required: false,
-    where: { dateType: dateTypes },
-    order: [['created', 'DESC']],
-    separate: true,
-  },
-  {
-    model: CaseString,
-    as: 'caseStrings',
-    required: false,
-    where: { stringType: stringTypes },
-    separate: true,
-  },
-  {
-    model: EventLog,
-    as: 'eventLogs',
-    required: false,
-    where: { eventType: eventTypes },
-    separate: true,
-  },
-  { model: AppealCase, as: 'appealCase', required: false },
-]
 
 @Injectable()
 export class CaseService {
@@ -1272,13 +1180,6 @@ export class CaseService {
     }
 
     return minimalCase
-  }
-
-  getAll(user: TUser): Promise<Case[]> {
-    return this.caseRepositoryService.findAll({
-      include: caseListInclude,
-      where: getCasesQueryFilter(user),
-    })
   }
 
   async getConnectedIndictmentCases(theCase: Case): Promise<Case[]> {

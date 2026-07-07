@@ -7,9 +7,9 @@ import {
 
 import { AppealCase, Case } from '../../repository'
 import {
+  canWithdrawCaseLevelAppeal,
   isInCourtRulingOrderAppeal,
   userHasActiveInCourtAppeal,
-  userIsAppellant,
 } from '../appealCase.helpers'
 import { UpdateAppealCaseDto } from '../dto/updateAppealCase.dto'
 
@@ -138,7 +138,10 @@ const userAppealedAppealCase = (request: {
 
   // Out-of-court and case-level appeals: the appellant is read from the APPEALED
   // event log, resolved to the current representative (survives a defender swap).
-  return userIsAppellant(theCase, appealCase, user)
+  // For request cases the defence cannot withdraw a shared appeal the prosecution
+  // also made (prosecution precedence), so authorize through canWithdraw... rather
+  // than plain userIsAppellant.
+  return canWithdrawCaseLevelAppeal(theCase, appealCase, user)
 }
 
 // Prosecutor transition rules
