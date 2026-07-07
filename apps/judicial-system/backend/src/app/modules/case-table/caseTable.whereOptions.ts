@@ -5,6 +5,7 @@ import { NotImplementedException } from '@nestjs/common'
 import {
   CaseTableType,
   isCourtOfAppealsUser,
+  isDefenceUser,
   isDistrictCourtUser,
   isPrisonAdminUser,
   isPrisonStaffUser,
@@ -17,6 +18,7 @@ import {
 
 import {
   courtOfAppealsCasesAccessWhereOptions,
+  defenceCasesAccessWhereOptions,
   districtCourtCasesAccessWhereOptions,
   prisonAdminCasesAccessWhereOptions,
   prisonStaffCasesAccessWhereOptions,
@@ -29,6 +31,14 @@ import {
   courtOfAppealsCasesCompletedWhereOptions,
   courtOfAppealsCasesInProgressWhereOptions,
 } from './whereOptions/courtOfAppeals'
+import {
+  defenceIndictmentsAppealedWhereOptions,
+  defenceIndictmentsCompletedWhereOptions,
+  defenceIndictmentsInProgressWhereOptions,
+  defenceRequestCasesAppealedWhereOptions,
+  defenceRequestCasesCompletedWhereOptions,
+  defenceRequestCasesInProgressWhereOptions,
+} from './whereOptions/defence'
 import {
   districtCourtIndictmentsAppealedWhereOptions,
   districtCourtIndictmentsCompletedWhereOptions,
@@ -110,6 +120,10 @@ export const userAccessWhereOptions = (user: User): WhereOptions => {
     return prosecutorRepresentativeCasesAccessWhereOptions(user)
   }
 
+  if (isDefenceUser(user)) {
+    return defenceCasesAccessWhereOptions(user)
+  }
+
   return { id: null }
 }
 
@@ -189,6 +203,18 @@ export const caseTableWhereOptions: Record<
     prosecutionIndictmentsAppealedWhereOptions,
   [CaseTableType.PROSECUTION_INDICTMENTS_COMPLETED]:
     prosecutionIndictmentsCompletedWhereOptions,
+  [CaseTableType.DEFENCE_REQUEST_CASES_IN_PROGRESS]:
+    defenceRequestCasesInProgressWhereOptions,
+  [CaseTableType.DEFENCE_REQUEST_CASES_APPEALED]:
+    defenceRequestCasesAppealedWhereOptions,
+  [CaseTableType.DEFENCE_REQUEST_CASES_COMPLETED]:
+    defenceRequestCasesCompletedWhereOptions,
+  [CaseTableType.DEFENCE_INDICTMENTS_IN_PROGRESS]:
+    defenceIndictmentsInProgressWhereOptions,
+  [CaseTableType.DEFENCE_INDICTMENTS_APPEALED]:
+    defenceIndictmentsAppealedWhereOptions,
+  [CaseTableType.DEFENCE_INDICTMENTS_COMPLETED]:
+    defenceIndictmentsCompletedWhereOptions,
   [CaseTableType.STATISTICS]: () => {
     throw new NotImplementedException('Case table type not implemented')
   },

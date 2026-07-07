@@ -22,7 +22,6 @@ import {
   SendNotificationResponse,
   SignatureConfirmationResponse,
 } from '../case'
-import { CaseListEntry } from '../case-list'
 import {
   CaseTableMembershipResponse,
   CaseTableResponse,
@@ -220,10 +219,6 @@ export class BackendService extends DataSource<{ req: Request }> {
     updateMessageSuspension: unknown,
   ): Promise<MessageSuspension> {
     return this.patch(`message-suspension/${category}`, updateMessageSuspension)
-  }
-
-  getCases(): Promise<CaseListEntry[]> {
-    return this.get('cases')
   }
 
   getCase(caseId: string): Promise<Case> {
