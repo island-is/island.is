@@ -2,9 +2,11 @@
 
 ## Localization strings
 
-We are moving away from Contentful. **Do not add new strings to `.strings.ts`
-files.** New user-facing text should be hardcoded directly in code rather than
-introducing new entries in `.strings.ts` (and therefore Contentful).
+We are moving away from Contentful. **Do not add new Contentful-backed
+localization strings** — whether in `.strings.ts` files, `messages/` modules,
+`notifications.ts`, or anywhere else using `defineMessage` / `defineMessages`.
+New user-facing text should be hardcoded directly where it is used (e.g. template
+literals in the calling code). Existing strings may stay as-is until migrated.
 
 ## Async style
 
