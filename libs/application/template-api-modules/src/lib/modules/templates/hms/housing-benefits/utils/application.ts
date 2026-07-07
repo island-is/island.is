@@ -547,6 +547,11 @@ export const mapApplicationToHousingBenefitsModel = (
         acceptedPrivacyPolicy,
         acceptedMunicipalityDataFetch,
         acceptedDataFetch,
+        assetDeclaration:
+          getValueViaPath<string>(
+            answers,
+            'assetsDeclarationTextField',
+          )?.trim() ?? undefined,
       },
       ...getHouseholdMembersForSubmission(application),
     ],
