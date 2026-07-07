@@ -6,6 +6,7 @@ import {
   DtoV5PenaltyPointDetailDto,
 } from '../../v5'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { handle204 } from '@island.is/clients/middlewares'
 
 @Injectable()
 export class PenaltyPointsClientService {
@@ -19,17 +20,17 @@ export class PenaltyPointsClientService {
   //TODO: stop sending tokens around, it's not needed since its't in the request itself
   public async penaltyPointsDrivingLicenseApplicationIsBelowThreshold(
     user: User,
-  ): Promise<boolean> {
+  ): Promise<boolean | undefined> {
     //TODO: Fix this, shouldnt be sending tokens as a request parameter
-    const { ok } = await this.serviceWithAuth(
-      user,
-    ).apiDrivinglicenseV5PenaltypointsGet({
-      apiVersion: DRIVING_LICENSE_API_VERSION_V5,
-      apiVersion2: DRIVING_LICENSE_API_VERSION_V5,
-      jwttoken: this.parseJwtToken(user),
-    })
+    const result = await handle204(
+      this.serviceWithAuth(user).apiDrivinglicenseV5PenaltypointsGetRaw({
+        apiVersion: DRIVING_LICENSE_API_VERSION_V5,
+        apiVersion2: DRIVING_LICENSE_API_VERSION_V5,
+        jwttoken: this.parseJwtToken(user),
+      }),
+    )
 
-    return ok
+    return result?.ok
   }
 
   public async deprivations(user: User): Promise<Array<DtoV5DeprivationDto>> {
