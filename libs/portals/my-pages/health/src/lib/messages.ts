@@ -1265,6 +1265,22 @@ export const messages = defineMessages({
     defaultMessage:
       'Hér getur þú séð yfirlit yfir grunnupplýsingar þínar í Heilsu, tímabókanir, skráningar, stöðu á listum og mælingar.',
   },
+  quickLinkMedicinePrescription: {
+    id: 'sp.health:quick-link-medicine-prescription',
+    defaultMessage: 'Endurnýja lyf',
+  },
+  quickLinkMedicineDelegation: {
+    id: 'sp.health:quick-link-medicine-delegation',
+    defaultMessage: 'Umboðsstillingar',
+  },
+  quickLinkWaitlists: {
+    id: 'sp.health:quick-link-waitlists',
+    defaultMessage: 'Biðlistar',
+  },
+  quickLinkQuestionnaires: {
+    id: 'sp.health:quick-link-questionnaires',
+    defaultMessage: 'Spurningalistar',
+  },
   paymentDocument: {
     defaultMessage: 'Greiðsluskjal',
     id: 'sp.health:payment-document',
