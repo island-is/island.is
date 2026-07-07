@@ -263,6 +263,11 @@ export const m = defineMessages({
     defaultMessage:
       'Hér fyrir neðan eru upplýsingar um tegundir greiðslna sem hafa borist þér frá TR.',
   },
+  paymentTypesOverviewIntro: {
+    id: 'sp.social-insurance-maintenance:payment-type-overview-intro',
+    defaultMessage:
+      'Hér fyrir neðan eru upplýsingar um tegundir greiðslna sem þér hafa borist frá TR. Þú getur notað <href>reiknivél TR</href> til að setja inn mismunandi forsendur og sjá hvernig það hefur áhrif á greiðslur þínar á tilteknu ári.',
+  },
   paymentTypesSectionTitle: {
     id: 'sp.social-insurance-maintenance:payment-types-section-title',
     defaultMessage: 'Greiðslur til þín og gildistími þeirra',
@@ -279,10 +284,6 @@ export const m = defineMessages({
     id: 'sp.social-insurance-maintenance:name',
     defaultMessage: 'Nafn',
   },
-  calculateMyRights: {
-    id: 'sp.social-insurance-maintenance:calculate-my-rights',
-    defaultMessage: 'Reikna mín réttindi',
-  },
   calculateMyRightsLink: {
     id: 'sp.social-insurance-maintenance:calculate-my-rights-link',
     defaultMessage: 'https://island.is/s/tryggingastofnun/reiknivel',
@@ -294,14 +295,6 @@ export const m = defineMessages({
   myTaxCreditUsage: {
     id: 'sp.social-insurance-maintenance:my-tax-credit-usage',
     defaultMessage: 'Nýting persónuafsláttar',
-  },
-  spouseNoUsage: {
-    id: 'sp.social-insurance-maintenance:spouse-no-usage',
-    defaultMessage: 'Engin nýting',
-  },
-  youAreUsingSpouseTaxCreditTitle: {
-    id: 'sp.social-insurance-maintenance:you-are-using-spouse-tax-credit-title',
-    defaultMessage: 'Þú nýtir persónuafslátt maka',
   },
   spousePersonalTaxCreditDescription: {
     id: 'sp.social-insurance-maintenance:spouse-personal-tax-credit-description',

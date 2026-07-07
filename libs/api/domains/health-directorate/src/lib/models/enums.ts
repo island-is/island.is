@@ -40,6 +40,7 @@ export enum PrescribedItemRenewalStatusEnum {
   Approved = 'approved',
   Rejected = 'rejected',
   Dismissed = 'dismissed',
+  Unknown = 'unknown',
 }
 
 registerEnumType(PrescribedItemRenewalStatusEnum, {
@@ -104,6 +105,7 @@ export enum AppointmentAssigneeTypeEnum {
   EQUIPMENT = 'EQUIPMENT',
   SERVICE = 'SERVICE',
   OTHER = 'OTHER',
+  TEAM = 'TEAM',
 }
 
 registerEnumType(AppointmentAssigneeTypeEnum, {
@@ -144,4 +146,22 @@ export enum ReferralStatusEnum {
 }
 registerEnumType(ReferralStatusEnum, {
   name: 'HealthDirectorateReferralStatusEnum',
+})
+
+export enum HealthConversationDirectionEnum {
+  PATIENT = 'PATIENT',
+  STAFF = 'STAFF',
+  SYSTEM = 'SYSTEM',
+}
+registerEnumType(HealthConversationDirectionEnum, {
+  name: 'HealthDirectorateHealthConversationDirection',
+})
+
+export enum HealthConversationStatusFilterEnum {
+  ACTIVE = 'active',
+  ARCHIVED = 'archived',
+  ALL = 'all',
+}
+registerEnumType(HealthConversationStatusFilterEnum, {
+  name: 'HealthDirectorateHealthConversationStatusFilter',
 })

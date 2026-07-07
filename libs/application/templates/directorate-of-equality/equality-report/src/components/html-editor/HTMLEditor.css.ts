@@ -726,7 +726,7 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
     `
     .footnote,
     .footnote-reference,
-    .footnote__marker,
+    .footnote__marker
     `,
     { position: 'relative' },
   )

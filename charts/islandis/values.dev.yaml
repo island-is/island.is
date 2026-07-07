@@ -5,97 +5,6 @@
 #
 #####################################################################
 
-air-discount-scheme-api:
-  enabled: true
-  env:
-    AUTH_AUDIENCE: 'loftbru.dev01.devland.is'
-    BACKEND_URL: 'http://air-discount-scheme-backend'
-    CONTENTFUL_HOST: 'preview.contentful.com'
-    ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
-    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
-    LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
-    SERVERSIDE_FEATURES_ON: ''
-  grantNamespaces:
-    - 'nginx-ingress-external'
-    - 'islandis'
-    - 'envoy-gateway-external'
-  grantNamespacesEnabled: true
-  healthCheck:
-    liveness:
-      initialDelaySeconds: 3
-      path: '/liveness'
-      timeoutSeconds: 3
-    readiness:
-      initialDelaySeconds: 3
-      path: '/liveness'
-      timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: 90
-        nginxRequestsIrate: 20
-      replicas:
-        max: 3
-        min: 1
-  httpRoute:
-    primary-gw:
-      hostnames:
-        - 'loftbru.dev01.devland.is'
-        - 'loftbru-cf.dev01.devland.is'
-      parentRefs:
-        - name: 'gateway-external'
-          namespace: 'envoy-gateway-external'
-      rules:
-        - matches:
-            - pathPrefix: '/api/graphql'
-  image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-api'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'loftbru.dev01.devland.is'
-          paths:
-            - '/api/graphql'
-        - host: 'loftbru-cf.dev01.devland.is'
-          paths:
-            - '/api/graphql'
-  namespace: 'air-discount-scheme'
-  podDisruptionBudget:
-    minAvailable: '50%'
-    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
-  podSecurityContext:
-    fsGroup: 65534
-  pvcs: []
-  replicaCount:
-    default: 1
-    max: 3
-    min: 1
-  resources:
-    limits:
-      cpu: '400m'
-      memory: '512Mi'
-    requests:
-      cpu: '50m'
-      memory: '256Mi'
-  secrets:
-    ADMINS: '/k8s/air-discount-scheme/api/ADMINS'
-    AUTH_JWT_SECRET: '/k8s/air-discount-scheme/api/AUTH_JWT_SECRET'
-    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    CONTENTFUL_ACCESS_TOKEN: '/k8s/air-discount-scheme/api/CONTENTFUL_ACCESS_TOKEN'
-    DEVELOPERS: '/k8s/air-discount-scheme/api/DEVELOPERS'
-    NEXTAUTH_SECRET: '/k8s/air-discount-scheme/web/NEXTAUTH_SECRET'
-  securityContext:
-    allowPrivilegeEscalation: false
-    privileged: false
-  serviceAccount:
-    annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/air-discount-scheme-api'
-    create: true
-    name: 'air-discount-scheme-api'
 air-discount-scheme-backend:
   enabled: true
   env:
@@ -121,6 +30,7 @@ air-discount-scheme-backend:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
   grantNamespaces:
     - 'islandis'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -137,7 +47,7 @@ air-discount-scheme-backend:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 20
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -153,21 +63,6 @@ air-discount-scheme-backend:
             - pathPrefix: '/api/public'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-backend'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'loftbru.dev01.devland.is'
-          paths:
-            - '/api/swagger'
-            - '/api/public'
-        - host: 'loftbru-cf.dev01.devland.is'
-          paths:
-            - '/api/swagger'
-            - '/api/public'
   initContainer:
     containers:
       - args:
@@ -200,7 +95,7 @@ air-discount-scheme-backend:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -229,92 +124,6 @@ air-discount-scheme-backend:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/air-discount-scheme-backend'
     create: true
     name: 'air-discount-scheme-backend'
-air-discount-scheme-web:
-  enabled: true
-  env:
-    API_URL: 'http://air-discount-scheme-api'
-    ENVIRONMENT: 'dev'
-    IDENTITY_SERVER_ISSUER_DOMAIN: 'identity-server.dev01.devland.is'
-    LOG_LEVEL: 'info'
-    NEXTAUTH_URL: 'https://loftbru.dev01.devland.is'
-    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
-    SERVERSIDE_FEATURES_ON: ''
-  grantNamespaces:
-    - 'nginx-ingress-external'
-    - 'islandis'
-    - 'envoy-gateway-external'
-  grantNamespacesEnabled: true
-  healthCheck:
-    liveness:
-      initialDelaySeconds: 3
-      path: '/liveness'
-      timeoutSeconds: 3
-    readiness:
-      initialDelaySeconds: 3
-      path: '/readiness'
-      timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: 90
-        nginxRequestsIrate: 20
-      replicas:
-        max: 3
-        min: 1
-  httpRoute:
-    primary-gw:
-      hostnames:
-        - 'loftbru.dev01.devland.is'
-        - 'loftbru-cf.dev01.devland.is'
-      parentRefs:
-        - name: 'gateway-external'
-          namespace: 'envoy-gateway-external'
-      rules:
-        - matches:
-            - pathPrefix: '/'
-  image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-web'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/configuration-snippet: 'rewrite /$ https://beta.dev01.devland.is/loftbru; rewrite /en$ https://beta.dev01.devland.is/en/lower-airfares-for-residents-in-rural-areas;'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '16k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/proxy-buffers-number: '4'
-        nginx.ingress.kubernetes.io/server-snippet: 'client_header_buffer_size 16k; large_client_header_buffers 4 16k;'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'loftbru.dev01.devland.is'
-          paths:
-            - '/'
-        - host: 'loftbru-cf.dev01.devland.is'
-          paths:
-            - '/'
-  namespace: 'air-discount-scheme'
-  podDisruptionBudget:
-    minAvailable: '50%'
-    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
-  pvcs: []
-  replicaCount:
-    default: 1
-    max: 3
-    min: 1
-  resources:
-    limits:
-      cpu: '200m'
-      memory: '256Mi'
-    requests:
-      cpu: '100m'
-      memory: '128Mi'
-  secrets:
-    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
-    IDENTITY_SERVER_SECRET: '/k8s/air-discount-scheme/web/IDENTITY_SERVER_SECRET'
-    NEXTAUTH_SECRET: '/k8s/air-discount-scheme/web/NEXTAUTH_SECRET'
-  securityContext:
-    allowPrivilegeEscalation: false
-    privileged: false
 api:
   args:
     - '--tls-min-v1.0'
@@ -526,7 +335,7 @@ api:
         cpuAverageUtilization: 70
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -541,18 +350,6 @@ api:
             - pathPrefix: '/api'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/api'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'beta.dev01.devland.is'
-          paths:
-            - '/api'
-        - host: 'api-catalogue.dev01.devland.is'
-          paths:
-            - '/api'
   namespace: 'islandis'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -562,7 +359,7 @@ api:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -663,6 +460,14 @@ api:
     REGULATIONS_FILE_UPLOAD_KEY_PUBLISH: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH'
     RLS_CASES_API_KEY: '/k8s/api/RLS_CASES_API_KEY'
     RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY'
+    SKATTUR_TOLLUR_ALMENNT_API_KEY: '/k8s/api/SKATTUR_TOLLUR_ALMENNT_API_KEY'
+    SKATTUR_TOLLUR_ALMENNT_BASE_URL: '/k8s/api/SKATTUR_TOLLUR_ALMENNT_BASE_URL'
+    SKATTUR_TOLLUR_ALMENNT_PASSWORD: '/k8s/api/SKATTUR_TOLLUR_ALMENNT_PASSWORD'
+    SKATTUR_TOLLUR_ALMENNT_USERNAME: '/k8s/api/SKATTUR_TOLLUR_ALMENNT_USERNAME'
+    SKATTUR_TOLLUR_REIKNIVEL_API_KEY: '/k8s/api/SKATTUR_TOLLUR_REIKNIVEL_API_KEY'
+    SKATTUR_TOLLUR_REIKNIVEL_BASE_URL: '/k8s/api/SKATTUR_TOLLUR_REIKNIVEL_BASE_URL'
+    SKATTUR_TOLLUR_REIKNIVEL_PASSWORD: '/k8s/api/SKATTUR_TOLLUR_REIKNIVEL_PASSWORD'
+    SKATTUR_TOLLUR_REIKNIVEL_USERNAME: '/k8s/api/SKATTUR_TOLLUR_REIKNIVEL_USERNAME'
     SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL'
     SYSLUMENN_HOST: '/k8s/api/SYSLUMENN_HOST'
     SYSLUMENN_PASSWORD: '/k8s/api/SYSLUMENN_PASSWORD'
@@ -866,7 +671,7 @@ application-system-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -882,22 +687,6 @@ application-system-api:
             - pathPrefix: '/applications'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'application-payment-callback-xrd.internal.dev01.devland.is'
-          paths:
-            - '/application-payment'
-            - '/applications'
-        - host: 'application-callback-xrd.internal.dev01.devland.is'
-          paths:
-            - '/application-payment'
-            - '/applications'
   initContainer:
     containers:
       - args:
@@ -930,7 +719,7 @@ application-system-api:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1069,7 +858,7 @@ application-system-api-worker:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
@@ -1082,7 +871,7 @@ application-system-api-worker:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1148,7 +937,7 @@ application-system-form:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -1162,17 +951,6 @@ application-system-form:
             - pathPrefix: '/umsoknir'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-form'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'beta.dev01.devland.is'
-          paths:
-            - '/umsoknir'
   namespace: 'application-system'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -1182,7 +960,7 @@ application-system-form:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1231,7 +1009,7 @@ cms-importer-cms-cleanup:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-cms-importer'
@@ -1242,7 +1020,7 @@ cms-importer-cms-cleanup:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1286,7 +1064,7 @@ cms-importer-energy-fund-import:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-cms-importer'
@@ -1297,7 +1075,7 @@ cms-importer-energy-fund-import:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1341,7 +1119,7 @@ cms-importer-fsre-buildings-import:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-cms-importer'
@@ -1352,7 +1130,7 @@ cms-importer-fsre-buildings-import:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1398,7 +1176,7 @@ cms-importer-web-sitemap:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-cms-importer'
@@ -1411,7 +1189,7 @@ cms-importer-web-sitemap:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1462,7 +1240,7 @@ cms-importer-worker:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-cms-importer'
@@ -1473,7 +1251,7 @@ cms-importer-worker:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1521,7 +1299,7 @@ consultation-portal:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -1535,17 +1313,6 @@ consultation-portal:
             - pathPrefix: '/samradsgatt'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/consultation-portal'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'beta.dev01.devland.is'
-          paths:
-            - '/samradsgatt'
   namespace: 'consultation-portal'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -1555,7 +1322,7 @@ consultation-portal:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1604,7 +1371,7 @@ contentful-apps:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -1618,15 +1385,6 @@ contentful-apps:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/contentful-apps'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'contentful-apps.dev01.devland.is'
-          paths:
-            - '/'
   namespace: 'contentful-apps'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -1636,7 +1394,7 @@ contentful-apps:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1680,7 +1438,7 @@ contentful-entry-tagger-service:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -1694,15 +1452,6 @@ contentful-entry-tagger-service:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-contentful-entry-tagger'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'contentful-entry-tagger-service.dev01.devland.is'
-          paths:
-            - '/'
   namespace: 'contentful-entry-tagger'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -1712,7 +1461,7 @@ contentful-entry-tagger-service:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1756,6 +1505,7 @@ download-service:
     XROAD_FINANCES_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeIsland'
     XROAD_FINANCES_V2_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeServicesFJS_v2'
     XROAD_FINANCES_V3_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeServicesFJS_v3'
+    XROAD_HEALTH_DIRECTORATE_HEALTH_PATH: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/health-service-v1'
     XROAD_HEALTH_INSURANCE_ID: 'IS-DEV/GOV/10007/SJUKRA-Protected'
     XROAD_HEALTH_INSURANCE_MY_PAGES_PATH: 'IS-DEV/GOV/10007/SJUKRA-Protected/minarsidur'
     XROAD_HEALTH_INSURANCE_WSDLURL: 'https://test-huld.sjukra.is/islandrg?wsdl'
@@ -1795,7 +1545,7 @@ download-service:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -1809,16 +1559,6 @@ download-service:
             - pathPrefix: '/download'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/download-service'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'api.dev01.devland.is'
-          paths:
-            - '/download'
   namespace: 'download-service'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -1828,7 +1568,7 @@ download-service:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1919,7 +1659,7 @@ endorsement-system-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-endorsements-api'
@@ -1955,7 +1695,7 @@ endorsement-system-api:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -2005,7 +1745,7 @@ form-system-web:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -2019,17 +1759,6 @@ form-system-web:
             - pathPrefix: '/form'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/form-system-web'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'beta.dev01.devland.is'
-          paths:
-            - '/form'
   namespace: 'form-system-web'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -2039,7 +1768,7 @@ form-system-web:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -2089,7 +1818,7 @@ github-actions-cache:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -2103,16 +1832,6 @@ github-actions-cache:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/github-actions-cache'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'cache.dev01.devland.is'
-          paths:
-            - '/'
   namespace: 'github-actions-cache'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -2122,7 +1841,7 @@ github-actions-cache:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -2181,7 +1900,7 @@ icelandic-names-registry-backend:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/icelandic-names-registry-backend'
@@ -2230,7 +1949,7 @@ icelandic-names-registry-backend:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -2275,7 +1994,7 @@ island-ui-storybook:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -2289,15 +2008,6 @@ island-ui-storybook:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/island-ui-storybook'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'ui.dev01.devland.is'
-          paths:
-            - '/'
   namespace: 'storybook'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -2305,7 +2015,7 @@ island-ui-storybook:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -2360,7 +2070,7 @@ license-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -2374,15 +2084,6 @@ license-api:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/license-api'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'license-api-xrd.internal.dev01.devland.is'
-          paths:
-            - '/'
   namespace: 'license-api'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -2392,7 +2093,7 @@ license-api:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -2498,7 +2199,7 @@ payments:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -2512,18 +2213,6 @@ payments:
             - pathPrefix: '/greida'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/payments'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'beta.dev01.devland.is'
-          paths:
-            - '/greida'
   namespace: 'payments'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -2533,7 +2222,7 @@ payments:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -2584,7 +2273,7 @@ portals-admin:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 8
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -2598,17 +2287,6 @@ portals-admin:
             - pathPrefix: '/stjornbord'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/portals-admin'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'beta.dev01.devland.is'
-          paths:
-            - '/stjornbord'
   namespace: 'portals-admin'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -2618,7 +2296,7 @@ portals-admin:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -2683,7 +2361,7 @@ regulations-admin-backend:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -2697,15 +2375,6 @@ regulations-admin-backend:
             - pathPrefix: '/api'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/regulations-admin-backend'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'regulations-admin-backend-xrd.internal.dev01.devland.is'
-          paths:
-            - '/api'
   initContainer:
     containers:
       - args:
@@ -2738,7 +2407,7 @@ regulations-admin-backend:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -2813,16 +2482,6 @@ search-indexer-service:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-search-indexer'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'search-indexer-service.dev01.devland.is'
-          paths:
-            - '/'
   initContainer:
     containers:
       - args:
@@ -2943,7 +2602,7 @@ service-portal:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -2957,17 +2616,6 @@ service-portal:
             - pathPrefix: '/minarsidur'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/service-portal'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'beta.dev01.devland.is'
-          paths:
-            - '/minarsidur'
   namespace: 'service-portal'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -2977,7 +2625,7 @@ service-portal:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -3048,7 +2696,7 @@ service-portal-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     internal-gw:
@@ -3062,15 +2710,6 @@ service-portal-api:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-profile'
-  ingress:
-    internal-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'service-portal-api.internal.dev01.devland.is'
-          paths:
-            - '/'
   initContainer:
     containers:
       - args:
@@ -3103,7 +2742,7 @@ service-portal-api:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -3176,7 +2815,7 @@ services-bff-portals-admin:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -3190,18 +2829,6 @@ services-bff-portals-admin:
             - pathPrefix: '/stjornbord/bff'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-bff'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'beta.dev01.devland.is'
-          paths:
-            - '/stjornbord/bff'
   namespace: 'portals-admin'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -3211,7 +2838,7 @@ services-bff-portals-admin:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -3248,7 +2875,7 @@ services-bff-portals-my-pages:
     BFF_PAR_SUPPORT_ENABLED: 'false'
     BFF_PROXY_API_ENDPOINT: 'http://api.islandis.svc.cluster.local/api/graphql'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/web'
-    IDENTITY_SERVER_CLIENT_SCOPES: '["api_resource.scope","@island.is/applications:read","@island.is/applications:write","@island.is/user-profile:read","@island.is/user-profile:write","@island.is/auth/actor-delegations","@island.is/auth/delegations:write","@island.is/auth/consents","@skra.is/individuals","@island.is/documents","@island.is/endorsements","@admin.island.is/petitions","@island.is/assets/ip","@island.is/assets","@island.is/education","@island.is/education-license","@island.is/finance:overview","@island.is/finance/salary","@island.is/finance/schedule:read","@island.is/finance/loans","@island.is/internal","@island.is/internal:procuring","@island.is/me:details","@island.is/law-and-order","@island.is/licenses","@island.is/licenses:verify","@island.is/company","@island.is/ships","@island.is/vehicles","@island.is/work-machines","@island.is/health","@island.is/health/payments","@island.is/health/medicines","@island.is/health/assistive-devices-and-nutrition","@island.is/health/therapies","@island.is/health/healthcare","@island.is/health/rights-status","@island.is/health/dentists","@island.is/health/organ-donation","@island.is/health/vaccinations","@island.is/signature-collection","@island.is/applications/urvinnslusjodur","@island.is/applications/orkusjodur","@island.is/fishing-license","@island.is/applications/iceland-health","@island.is/applications/samgongustofa-vehicles","@island.is/applications/social-insurance-administration","@island.is/applications/rsk","@island.is/applications/ver","@island.is/applications/ver:accidents","@island.is/applications/mms","@island.is/applications/dmr:stjornartidindi","@island.is/applications/hms","@samband.is/financial-aid/applicant","@samband.is/financial-aid:read","@samband.is/financial-aid:write"]'
+    IDENTITY_SERVER_CLIENT_SCOPES: '["api_resource.scope","@island.is/applications:read","@island.is/applications:write","@island.is/user-profile:read","@island.is/user-profile:write","@island.is/auth/actor-delegations","@island.is/auth/delegations:write","@island.is/auth/consents","@skra.is/individuals","@island.is/documents","@island.is/endorsements","@admin.island.is/petitions","@island.is/assets/ip","@island.is/assets","@island.is/education","@island.is/education-license","@island.is/finance:overview","@island.is/finance/salary","@island.is/finance/schedule:read","@island.is/finance/loans","@island.is/internal","@island.is/internal:procuring","@island.is/me:details","@island.is/law-and-order","@island.is/licenses","@island.is/licenses:verify","@island.is/company","@island.is/ships","@island.is/vehicles","@island.is/work-machines","@island.is/health","@island.is/health/payments","@island.is/health/medicines","@island.is/health/assistive-devices-and-nutrition","@island.is/health/therapies","@island.is/health/healthcare","@island.is/health/rights-status","@island.is/health/dentists","@island.is/health/organ-donation","@island.is/health/vaccinations","@island.is/signature-collection","@island.is/applications/urvinnslusjodur","@island.is/applications/orkusjodur","@island.is/fishing-license","@island.is/applications/iceland-health","@island.is/applications/samgongustofa-vehicles","@island.is/applications/social-insurance-administration","@island.is/applications/rsk","@island.is/applications/ver","@island.is/applications/ver:accidents","@island.is/applications/mms","@island.is/applications/dmr:stjornartidindi","@island.is/applications/hms","@island.is/applications/directorate-of-equality","@samband.is/financial-aid/applicant","@samband.is/financial-aid:read","@samband.is/financial-aid:write"]'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -3274,7 +2901,7 @@ services-bff-portals-my-pages:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -3288,18 +2915,6 @@ services-bff-portals-my-pages:
             - pathPrefix: '/bff'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-bff'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'beta.dev01.devland.is'
-          paths:
-            - '/bff'
   namespace: 'portals-my-pages'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -3309,7 +2924,7 @@ services-bff-portals-my-pages:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -3360,7 +2975,7 @@ services-documents:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-documents'
@@ -3396,7 +3011,7 @@ services-documents:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -3476,7 +3091,7 @@ services-form-system-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -3490,15 +3105,6 @@ services-form-system-api:
             - pathPrefix: '/api'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-form-system-api'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'services-form-system-api.internal.dev01.devland.is'
-          paths:
-            - '/api'
   initContainer:
     containers:
       - args:
@@ -3531,7 +3137,7 @@ services-form-system-api:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -3611,7 +3217,7 @@ services-form-system-api-worker:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-form-system-api'
@@ -3624,7 +3230,7 @@ services-form-system-api-worker:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -3677,7 +3283,7 @@ services-payment-flow-update-handler:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     internal-gw:
@@ -3691,15 +3297,6 @@ services-payment-flow-update-handler:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-payment-flow-update-handler'
-  ingress:
-    internal-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'services-payment-flow-update-handler.internal.dev01.devland.is'
-          paths:
-            - '/'
   namespace: 'services-payment-flow-update-handler'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -3709,7 +3306,7 @@ services-payment-flow-update-handler:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -3732,6 +3329,8 @@ services-payment-flow-update-handler:
 services-payments:
   enabled: true
   env:
+    BLIKK_API_BASE_URL: 'https://stage.blikk.tech'
+    BLIKK_PAYMENT_TTL_SECONDS: '300'
     DB_EXTENSIONS: 'uuid-ossp'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_payments'
@@ -3776,7 +3375,7 @@ services-payments:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     internal-gw:
@@ -3799,25 +3398,6 @@ services-payments:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-payments'
-  ingress:
-    internal-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'services-payments.internal.dev01.devland.is'
-          paths:
-            - '/'
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'services-payments-xrd.internal.dev01.devland.is'
-          paths:
-            - '/'
   initContainer:
     containers:
       - args:
@@ -3851,7 +3431,7 @@ services-payments:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -3865,6 +3445,7 @@ services-payments:
     APPLE_PAY_MERCHANT_IDENTITY_CERT: '/k8s/services-payments/APPLE_PAY_MERCHANT_IDENTITY_CERT'
     APPLE_PAY_MERCHANT_IDENTITY_KEY: '/k8s/services-payments/APPLE_PAY_MERCHANT_IDENTITY_KEY'
     APPLE_PAY_PAYMENT_PROCESSING_KEY: '/k8s/services-payments/APPLE_PAY_PAYMENT_PROCESSING_KEY'
+    BLIKK_API_KEY: '/k8s/services-payments/BLIKK_API_KEY'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-payments/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-payments/IDENTITY_SERVER_CLIENT_SECRET'
@@ -3899,6 +3480,8 @@ services-payments-worker:
     - 'node'
   enabled: true
   env:
+    BLIKK_API_BASE_URL: 'https://stage.blikk.tech'
+    BLIKK_PAYMENT_TTL_SECONDS: '300'
     CODE_OWNER: 'aranja'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_payments'
@@ -3941,7 +3524,7 @@ services-payments-worker:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-payments'
@@ -3954,7 +3537,7 @@ services-payments-worker:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -3965,6 +3548,7 @@ services-payments-worker:
       memory: '128Mi'
   schedule: '*/5 * * * *'
   secrets:
+    BLIKK_API_KEY: '/k8s/services-payments/BLIKK_API_KEY'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-payments/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-payments/IDENTITY_SERVER_CLIENT_SECRET'
@@ -4018,7 +3602,7 @@ services-sessions:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     internal-gw:
@@ -4032,15 +3616,6 @@ services-sessions:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
-  ingress:
-    internal-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'sessions-api.internal.dev01.devland.is'
-          paths:
-            - '/'
   namespace: 'services-sessions'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -4050,7 +3625,7 @@ services-sessions:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -4107,7 +3682,7 @@ services-sessions-cleanup:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
@@ -4118,7 +3693,7 @@ services-sessions-cleanup:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -4175,7 +3750,7 @@ services-sessions-worker:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
@@ -4212,7 +3787,7 @@ services-sessions-worker:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -4283,7 +3858,7 @@ services-university-gateway:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -4297,15 +3872,6 @@ services-university-gateway:
             - pathPrefix: '/api'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'services-university-gateway.internal.dev01.devland.is'
-          paths:
-            - '/api'
   initContainer:
     containers:
       - args:
@@ -4351,7 +3917,7 @@ services-university-gateway:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -4425,7 +3991,7 @@ services-university-gateway-worker:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway'
@@ -4438,7 +4004,7 @@ services-university-gateway-worker:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -4487,7 +4053,7 @@ skilavottord-web:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 8
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -4501,17 +4067,6 @@ skilavottord-web:
             - pathPrefix: '/app/skilavottord/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-web'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'beta.dev01.devland.is'
-          paths:
-            - '/app/skilavottord/'
   namespace: 'skilavottord'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -4521,7 +4076,7 @@ skilavottord-web:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -4575,7 +4130,7 @@ skilavottord-ws:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -4589,15 +4144,6 @@ skilavottord-ws:
             - pathPrefix: '/app/skilavottord/api/graphql'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-ws'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'beta.dev01.devland.is'
-          paths:
-            - '/app/skilavottord/api/graphql'
   initContainer:
     containers:
       - args:
@@ -4630,7 +4176,7 @@ skilavottord-ws:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -4729,7 +4275,7 @@ user-notification:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     internal-gw:
@@ -4752,25 +4298,6 @@ user-notification:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
-  ingress:
-    internal-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'user-notification.internal.dev01.devland.is'
-          paths:
-            - '/'
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'user-notification-xrd.internal.dev01.devland.is'
-          paths:
-            - '/'
   namespace: 'user-notification'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -4780,7 +4307,7 @@ user-notification:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -4880,7 +4407,7 @@ user-notification-birthday-worker:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
@@ -4893,7 +4420,7 @@ user-notification-birthday-worker:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -4962,7 +4489,7 @@ user-notification-cleanup-worker:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
@@ -4998,7 +4525,7 @@ user-notification-cleanup-worker:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -5090,7 +4617,7 @@ user-notification-worker:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
@@ -5126,7 +4653,7 @@ user-notification-worker:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -5195,7 +4722,7 @@ web:
         cpuAverageUtilization: 70
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -5209,17 +4736,6 @@ web:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/web'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'beta.dev01.devland.is'
-          paths:
-            - '/'
   namespace: 'islandis'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -5229,7 +4745,7 @@ web:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -5283,7 +4799,7 @@ xroad-collector:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-xroad-collector'
@@ -5296,7 +4812,7 @@ xroad-collector:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:

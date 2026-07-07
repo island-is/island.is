@@ -84,7 +84,7 @@ hpa:
       cpuAverageUtilization: 90
       nginxRequestsIrate: 5
     replicas:
-      max: 3
+      max: 2
       min: 1
 httpRoute:
   internal-gw:
@@ -107,25 +107,6 @@ httpRoute:
           - pathPrefix: '/'
 image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
-ingress:
-  internal-alb:
-    annotations:
-      kubernetes.io/ingress.class: 'nginx-internal-alb'
-      nginx.ingress.kubernetes.io/service-upstream: 'true'
-    hosts:
-      - host: 'user-notification.internal.staging01.devland.is'
-        paths:
-          - '/'
-  primary-alb:
-    annotations:
-      kubernetes.io/ingress.class: 'nginx-internal-alb'
-      nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-      nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-      nginx.ingress.kubernetes.io/service-upstream: 'true'
-    hosts:
-      - host: 'user-notification-xrd.internal.staging01.devland.is'
-        paths:
-          - '/'
 namespace: 'user-notification'
 podDisruptionBudget:
   minAvailable: '50%'
@@ -135,7 +116,7 @@ podSecurityContext:
 pvcs: []
 replicaCount:
   default: 1
-  max: 3
+  max: 2
   min: 1
 resources:
   limits:

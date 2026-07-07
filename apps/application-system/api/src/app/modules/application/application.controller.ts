@@ -1023,7 +1023,7 @@ export class ApplicationController {
     }
 
     this.logger.info(
-      `Running onDelete actions for application ${id} with template ${template.name}`,
+      `Running onDelete actions for application ${id} with template ${template.type}`,
     )
 
     let onDeleteActions = new ApplicationTemplateHelper(
@@ -1048,12 +1048,15 @@ export class ApplicationController {
       )
 
       for (const api of onDeleteActions) {
-        const result =
-          deletingApplication.externalData[api.externalDataId || api.action]
+        const resolvedId = api.resolveExternalDataId(
+          deletingApplication,
+          user.nationalId,
+        )
+        const result = deletingApplication.externalData[resolvedId]
 
         this.logger.debug(
           `Performing action ${api.action} on ${JSON.stringify(
-            template.name,
+            template.type,
           )} ended with ${result.status}`,
         )
 

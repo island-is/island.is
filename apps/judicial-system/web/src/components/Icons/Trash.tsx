@@ -9,7 +9,7 @@ const Trash = ({ ...props }: SVGProps<SVGSVGElement>) => {
       aria-labelledby="trash_svg__trash-icon-title"
       {...props}
     >
-      {<title id="trash_svg">Trash icon</title>}
+      <title id="trash_svg__trash-icon-title">Trash icon</title>
       <path
         d="M112 112l20 320c.95 18.49 14.4 32 32 32h184c17.67 0 30.87-13.51 32-32l20-320"
         fill="none"

@@ -1522,6 +1522,9 @@ const useSections = (
   }
 
   const getSections = (workingCase: Case, user?: User): RouteSection[] => {
+    const isExtensionCase =
+      Boolean(workingCase.parentCase) && !isIndictmentCase(workingCase.type)
+
     return [
       isRestrictionCase(workingCase.type)
         ? getRestrictionCaseProsecutorSection(workingCase, user)
@@ -1537,20 +1540,20 @@ const useSections = (
         name: formatCaseResult(
           formatMessage,
           workingCase,
-          workingCase.parentCase
+          isExtensionCase && workingCase.parentCase
             ? workingCase.parentCase.state
             : workingCase.state,
         ),
         isActive:
           (workingCase.appealCase?.appealState === AppealCaseState.WITHDRAWN &&
             !workingCase.appealCase?.appealReceivedByCourtDate) ||
-          (!workingCase.parentCase &&
+          (!isExtensionCase &&
             isCompletedCase(workingCase.state) &&
             !workingCase.hasBeenAppealed &&
             workingCase.appealCase?.appealState !== AppealCaseState.COMPLETED),
         children: [],
       },
-      ...(workingCase.parentCase
+      ...(isExtensionCase
         ? [
             isRestrictionCase(workingCase.type)
               ? getRestrictionCaseExtensionSections(workingCase, user)

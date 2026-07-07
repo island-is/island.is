@@ -1,4 +1,5 @@
 import {
+  ConversationStatusFilter,
   DiseaseVaccinationDtoVaccinationStatusEnum,
   UserVisibleAppointmentStatuses,
 } from '@island.is/clients/health-directorate'
@@ -7,9 +8,11 @@ import {
   AppointmentLinkTypeEnum,
   AppointmentModalityEnum,
   AppointmentStatusEnum,
+  HealthConversationDirectionEnum,
+  HealthConversationStatusFilterEnum,
+  ReferralStatusEnum,
   VaccinationStatusEnum,
   WaitlistStatusTagColorEnum,
-  ReferralStatusEnum,
 } from '../models/enums'
 
 export const mapVaccinationStatus = (
@@ -71,6 +74,8 @@ export const toAppointmentAssigneeTypeEnum = (
       return AppointmentAssigneeTypeEnum.EQUIPMENT
     case 'OTHER':
       return AppointmentAssigneeTypeEnum.OTHER
+    case 'TEAM':
+      return AppointmentAssigneeTypeEnum.TEAM
     default:
       return undefined
   }
@@ -159,5 +164,33 @@ export const mapReferralStatusValueToStatus = (
     default:
       // Unknown status values if new ones get added without letting us know
       return ReferralStatusEnum.Unknown
+  }
+}
+
+export const toConversationDirectionEnum = (
+  direction: string,
+): HealthConversationDirectionEnum => {
+  switch (direction) {
+    case 'PATIENT':
+      return HealthConversationDirectionEnum.PATIENT
+    case 'STAFF':
+      return HealthConversationDirectionEnum.STAFF
+    case 'SYSTEM':
+      return HealthConversationDirectionEnum.SYSTEM
+    default:
+      return HealthConversationDirectionEnum.SYSTEM
+  }
+}
+
+export const toConversationStatusFilter = (
+  status: HealthConversationStatusFilterEnum,
+): ConversationStatusFilter => {
+  switch (status) {
+    case HealthConversationStatusFilterEnum.ACTIVE:
+      return ConversationStatusFilter.ACTIVE
+    case HealthConversationStatusFilterEnum.ARCHIVED:
+      return ConversationStatusFilter.ARCHIVED
+    case HealthConversationStatusFilterEnum.ALL:
+      return ConversationStatusFilter.ALL
   }
 }

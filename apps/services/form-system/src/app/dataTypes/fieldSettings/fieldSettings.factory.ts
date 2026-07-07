@@ -74,7 +74,10 @@ export class FieldSettingsFactory {
         ]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.PAYMENT_QUANTITY:
-        keys = ['minValue', 'maxValue', 'isDropdown']
+        keys = ['minValue', 'maxValue', 'isDropdown', ...keys]
+        return this.pickSettings(fieldSettings, keys)
+      case FieldTypesEnum.ASSETS:
+        keys = ['assetType', 'isDropdown', ...keys]
         return this.pickSettings(fieldSettings, keys)
       default:
         return this.pickSettings(fieldSettings, keys)

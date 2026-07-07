@@ -1,8 +1,17 @@
-import { GridColumn, GridRow, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  GridColumn,
+  GridRow,
+  Inline,
+  Tag,
+  Text,
+} from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { LinkResolver } from '@island.is/portals/my-pages/core'
 import subYears from 'date-fns/subYears'
 import { useWindowSize } from 'react-use'
+import { HealthPaths } from '../../lib/paths'
 import { messages } from '../../lib/messages'
 import {
   CONTENT_GAP_LG,
@@ -19,8 +28,7 @@ import {
   useGetPaymentsOverviewQuery,
 } from './HealthOverview.generated'
 
-import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
-import { useEffect, useState } from 'react'
+import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import Appointments from './components/Appointments'
 import BasicInformation from './components/BasicInformation'
 import PaymentsAndRights from './components/PaymentsAndRights'
@@ -35,22 +43,14 @@ export const HealthOverview = () => {
   const { formatMessage, locale } = useLocale()
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
-  const [showAppointments, setShowAppointments] = useState(false)
-
-  const featureFlagClient = useFeatureFlagClient()
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        Features.isServicePortalHealthAppointmentsPageEnabled,
-        false,
-      )
-      if (ffEnabled) {
-        setShowAppointments(ffEnabled as boolean)
-      }
-    }
-    isFlagEnabled()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const { value: showAppointments } = useFeatureFlag(
+    Features.isServicePortalHealthAppointmentsPageEnabled,
+    false,
+  )
+  const { value: showQuickLinks } = useFeatureFlag(
+    Features.servicePortalHealthMedicineLandlaeknirPageEnabled,
+    false,
+  )
 
   const { data, error, loading } = useGetInsuranceOverviewQuery()
   const {
@@ -124,6 +124,25 @@ export const HealthOverview = () => {
   const firstTwoAppointments =
     appointmentsData?.healthDirectorateAppointments?.data?.slice(0, 2) || []
 
+  const quickLinks = [
+    {
+      href: HealthPaths.HealthMedicinePrescription,
+      label: formatMessage(messages.quickLinkMedicinePrescription),
+    },
+    {
+      href: HealthPaths.HealthMedicineDelegation,
+      label: formatMessage(messages.quickLinkMedicineDelegation),
+    },
+    {
+      href: HealthPaths.HealthWaitlists,
+      label: formatMessage(messages.quickLinkWaitlists),
+    },
+    {
+      href: HealthPaths.HealthQuestionnaires,
+      label: formatMessage(messages.quickLinkQuestionnaires),
+    },
+  ]
+
   return (
     <>
       <GridRow marginBottom={CONTENT_GAP_LG}>
@@ -132,10 +151,20 @@ export const HealthOverview = () => {
             <Text variant="h3" as={'h1'}>
               {formatMessage(messages.healthOverview)}
             </Text>
-
             <Text variant="default" paddingTop={1}>
               {formatMessage(messages.healthOverviewIntro)}
             </Text>
+            {showQuickLinks && (
+              <Box marginTop={3}>
+                <Inline space={[1, 2]}>
+                  {quickLinks.map((link) => (
+                    <LinkResolver key={link.href} href={link.href}>
+                      <Tag variant="blue">{link.label}</Tag>
+                    </LinkResolver>
+                  ))}
+                </Inline>
+              </Box>
+            )}
           </>
         </GridColumn>
       </GridRow>

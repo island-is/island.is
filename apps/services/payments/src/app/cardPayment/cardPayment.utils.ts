@@ -216,6 +216,8 @@ export const generateCardChargeFJSPayload = ({
   totalPrice,
   systemId,
   merchantReferenceData,
+  correlationId,
+  effectiveDate,
 }: {
   paymentFlow: PaymentFlowAttributes
   charges: CatalogItemWithQuantity[]
@@ -223,11 +225,14 @@ export const generateCardChargeFJSPayload = ({
   totalPrice: number
   systemId: string
   merchantReferenceData: string
+  correlationId: string
+  effectiveDate?: Date
 }): Charge => {
   return generateChargeFJSPayload({
     paymentFlow,
     charges,
     systemId,
+    effectiveDate,
     payInfo: {
       PAN: cardChargeInfo.maskedCardNumber,
       RRN: merchantReferenceData,
@@ -237,6 +242,7 @@ export const generateCardChargeFJSPayload = ({
       paymentMeans: cardChargeInfo.cardUsage?.toLowerCase()?.startsWith('d')
         ? PayInfoPaymentMeansEnum.Debetkort
         : PayInfoPaymentMeansEnum.Kreditkort,
+      correlationId,
     },
   })
 }

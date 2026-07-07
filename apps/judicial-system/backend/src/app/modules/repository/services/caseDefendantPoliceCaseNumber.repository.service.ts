@@ -110,6 +110,27 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
       .filter((n, i) => i === 0 || n !== unassigned[i - 1])
   }
 
+  /**
+   * Returns the defendant-assigned (case_id, defendant_id, police_case_number)
+   * links for a case, used when duplicating a case so the same per-defendant
+   * police case number assignments can be recreated against the new defendants.
+   */
+  async findAssignedLinksByCaseId(
+    caseId: string,
+    options?: { transaction?: Transaction },
+  ): Promise<{ defendantId: string; policeCaseNumber: string }[]> {
+    const rows = await this.model.findAll({
+      where: { caseId, defendantId: { [Op.not]: null } },
+      attributes: ['defendantId', 'policeCaseNumber'],
+      transaction: options?.transaction,
+    })
+
+    return rows.map((row) => ({
+      defendantId: row.defendantId as string,
+      policeCaseNumber: row.policeCaseNumber,
+    }))
+  }
+
   async findDistinctPoliceCaseNumbersByCaseIds(
     caseIds: string[],
     options?: { transaction?: Transaction },
@@ -125,24 +146,28 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
 
     const rows = await this.model.findAll({
       where: { caseId: caseIds },
-      attributes: ['caseId', 'policeCaseNumber'],
+      attributes: ['caseId', 'policeCaseNumber', 'created'],
+      order: [
+        ['created', 'ASC'],
+        ['policeCaseNumber', 'ASC'],
+      ],
       transaction: options?.transaction,
     })
 
-    const byCase = new Map<string, Set<string>>()
+    const seenByCase = new Map<string, Set<string>>()
     for (const id of caseIds) {
-      byCase.set(id, new Set())
+      seenByCase.set(id, new Set())
     }
 
     for (const row of rows) {
-      byCase.get(row.caseId)?.add(row.policeCaseNumber)
-    }
+      const seen = seenByCase.get(row.caseId)
 
-    for (const [caseId, set] of byCase) {
-      result.set(
-        caseId,
-        [...set].sort((a, b) => a.localeCompare(b)),
-      )
+      if (!seen || seen.has(row.policeCaseNumber)) {
+        continue
+      }
+
+      seen.add(row.policeCaseNumber)
+      result.get(row.caseId)?.push(row.policeCaseNumber)
     }
 
     return result

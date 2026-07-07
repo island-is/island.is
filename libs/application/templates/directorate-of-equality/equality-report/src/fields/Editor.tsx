@@ -11,6 +11,7 @@ import mammoth from 'mammoth'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
+import { ApiActions } from '../utils/constants'
 
 export const Editor = ({ application, errors }: FieldBaseProps) => {
   const { formatMessage } = useIntl()
@@ -28,12 +29,12 @@ export const Editor = ({ application, errors }: FieldBaseProps) => {
 
   const handleChange = (val: HTMLText) => {
     const base64 = Buffer.from(val).toString('base64')
-    setValue('information.customField', base64)
+    setValue('goalsAndActions.customField', base64)
   }
 
   const handleBlur = (val: HTMLText) => {
     const base64 = Buffer.from(val).toString('base64')
-    setValue('information.customField', base64, { shouldValidate: true })
+    setValue('goalsAndActions.customField', base64, { shouldValidate: true })
   }
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,8 +66,8 @@ export const Editor = ({ application, errors }: FieldBaseProps) => {
       }
 
       const base64 = Buffer.from(html).toString('base64')
-      setValue('information.customField', base64)
-      clearErrors('information.customField')
+      setValue('goalsAndActions.customField', base64)
+      clearErrors('goalsAndActions.customField')
       setEditorHtml(html as HTMLText)
       setEditorKey((k) => k + 1)
     } catch {
@@ -84,7 +85,7 @@ export const Editor = ({ application, errors }: FieldBaseProps) => {
           input: {
             id: application.id,
             dataProviders: [
-              { actionId: 'getEqualityReportTemplateHtml', order: 0 },
+              { actionId: ApiActions.getEqualityReportTemplateHtml, order: 0 },
             ],
           },
           locale,
@@ -97,8 +98,8 @@ export const Editor = ({ application, errors }: FieldBaseProps) => {
 
       if (typeof html === 'string') {
         const base64 = Buffer.from(html).toString('base64')
-        setValue('information.customField', base64)
-        clearErrors('information.customField')
+        setValue('goalsAndActions.customField', base64)
+        clearErrors('goalsAndActions.customField')
         setEditorHtml(html as HTMLText)
         setEditorKey((k) => k + 1)
       } else {
@@ -123,7 +124,7 @@ export const Editor = ({ application, errors }: FieldBaseProps) => {
           input: {
             id: application.id,
             dataProviders: [
-              { actionId: 'getEqualityReportTemplateDocx', order: 0 },
+              { actionId: ApiActions.getEqualityReportTemplateDocx, order: 0 },
             ],
           },
           locale,
@@ -166,12 +167,13 @@ export const Editor = ({ application, errors }: FieldBaseProps) => {
   }
 
   const base64 =
-    getValueViaPath<string>(application.answers, 'information.customField') ??
-    ''
+    getValueViaPath<string>(
+      application.answers,
+      'goalsAndActions.customField',
+    ) ?? ''
 
   const defaultHtml =
-    editorHtml ??
-    (Buffer.from(base64, 'base64').toString('utf-8') as HTMLText)
+    editorHtml ?? (Buffer.from(base64, 'base64').toString('utf-8') as HTMLText)
 
   return (
     <>
@@ -185,7 +187,7 @@ export const Editor = ({ application, errors }: FieldBaseProps) => {
       <HTMLEditor
         key={editorKey}
         title={formatMessage(messages.equalityReport.information.editorTitle)}
-        error={errors && getErrorViaPath(errors, 'information.customField')}
+        error={errors && getErrorViaPath(errors, 'goalsAndActions.customField')}
         value={defaultHtml}
         onChange={handleChange}
         onBlur={handleBlur}

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
@@ -8,14 +8,36 @@ import {
 } from '@island.is/clients/directorate-of-equality'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import {
+  Gender,
+  type ApplicationAnswers,
+} from '@island.is/application/templates/directorate-of-equality/equality-report'
+import { FetchError } from '@island.is/clients/middlewares'
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
+
+const LOGGING_CONTEXT = 'DirectorateOfEqualityService'
 
 @Injectable()
 export class DirectorateOfEqualityService extends BaseTemplateApiService {
   constructor(
     private readonly companyRegistryService: CompanyRegistryClientService,
     private readonly directorateOfEqualityService: DirectorateOfEqualityClientService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     super('DirectorateOfEquality')
+  }
+
+  private extractFetchErrorDetails(error: unknown): Record<string, unknown> {
+    if (error instanceof FetchError) {
+      return {
+        status: error.status,
+        statusText: error.statusText,
+        problem: error.problem,
+      }
+    }
+    return {
+      message: error instanceof Error ? error.message : String(error),
+    }
   }
 
   async getCompanyData({ auth }: TemplateApiModuleActionProps) {
@@ -36,20 +58,33 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     return company
   }
 
-  async getDoeCompany({ auth }: TemplateApiModuleActionProps) {
+  async getDoeCompany({ auth, application }: TemplateApiModuleActionProps) {
     try {
       return await this.directorateOfEqualityService.getCompany(auth)
-    } catch {
+    } catch (error) {
+      this.logger.error('Failed to get company data from DOE, falling back', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...this.extractFetchErrorDetails(error),
+      })
       return { employeeCountCategory: 'UNKNOWN' }
     }
   }
 
-  async getActiveEqualityReport({ auth }: TemplateApiModuleActionProps) {
+  async getActiveEqualityReport({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
     try {
       const report =
         await this.directorateOfEqualityService.getActiveEqualityReport(auth)
       return { hasActiveEqualityReport: true, ...report }
-    } catch {
+    } catch (error) {
+      this.logger.error('Failed to get active equality report, falling back', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...this.extractFetchErrorDetails(error),
+      })
       return { hasActiveEqualityReport: false }
     }
   }
@@ -77,19 +112,27 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     )
     if (!hasActiveReport) return null
 
-    const reportId = getValueViaPath<string>(
+    const doeCompany = getValueViaPath<CompanyDto>(
       application.externalData,
-      'activeEqualityReport.data.id',
+      'doeCompany.data',
     )
-    if (!reportId) return null
-
+    if (!doeCompany?.id) return null
     try {
+      // TODO: PROVIDER ID VS COMPANY ID.
       const report = await this.directorateOfEqualityService.getReport(
         auth,
-        reportId,
+        doeCompany.id,
       )
       return { equalityReportContent: report.equalityReportContent ?? '' }
-    } catch {
+    } catch (error) {
+      this.logger.error(
+        'Failed to get previous equality report content, falling back',
+        {
+          applicationId: application.id,
+          context: LOGGING_CONTEXT,
+          ...this.extractFetchErrorDetails(error),
+        },
+      )
       return null
     }
   }
@@ -130,57 +173,73 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     auth,
     application,
   }: TemplateApiModuleActionProps) {
-    const answers = application.answers as Record<string, any>
+    const answers = application.answers as ApplicationAnswers
+
+    const genderMap: Record<Gender, 'MALE' | 'FEMALE' | 'NEUTRAL'> = {
+      [Gender.MALE]: 'MALE',
+      [Gender.FEMALE]: 'FEMALE',
+      [Gender.NON_BINARY]: 'NEUTRAL',
+    }
     const doeCompany = getValueViaPath<CompanyDto>(
       application.externalData,
       'doeCompany.data',
     )
 
-    const genderMap: Record<string, 'MALE' | 'FEMALE' | 'NEUTRAL'> = {
-      MALE: 'MALE',
-      FEMALE: 'FEMALE',
-      NON_BINARY: 'NEUTRAL',
+    const equalityReportContent = getValueViaPath(
+      answers,
+      'goalsAndActions.customField',
+      '',
+    )
+
+    const subsidiaryList = answers.subsidiaries?.list ?? []
+
+    try {
+      return await this.directorateOfEqualityService.submitEqualityReport(
+        auth,
+        {
+          identifier: application.id,
+          providerId: doeCompany?.id ?? application.id,
+          companyAdminName: answers.chiefExecutive?.name ?? '',
+          companyAdminEmail: answers.chiefExecutive?.email ?? '',
+          companyAdminGender: answers.chiefExecutive?.gender
+            ? genderMap[answers.chiefExecutive.gender]
+            : 'NEUTRAL',
+          contactName: answers.contactPerson?.name ?? '',
+          contactEmail: answers.contactPerson?.email ?? '',
+          contactPhone: answers.contactPerson?.phone ?? '',
+          equalityReportContent: equalityReportContent ?? '',
+          company: {
+            name: answers.generalInformation?.companyName ?? '',
+            nationalId: answers.generalInformation?.nationalId ?? '',
+            address: answers.generalInformation?.address ?? '',
+            city: answers.generalInformation?.municipality ?? '',
+            postcode: answers.generalInformation?.postalCode ?? '',
+            isatCategory: answers.generalInformation?.isatClassification ?? '',
+          },
+          subsidiaries:
+            answers.subsidiaries?.includesSubsidiaries === 'yes'
+              ? subsidiaryList.map((s) => ({
+                  name: s.nationalIdWithName.name,
+                  nationalId: s.nationalIdWithName.nationalId,
+                }))
+              : [],
+        },
+      )
+    } catch (error) {
+      const errorDetails = this.extractFetchErrorDetails(error)
+      this.logger.error('Failed to submit equality report', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...errorDetails,
+      })
+
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary: coreErrorMessages.defaultTemplateApiError,
+        },
+        (errorDetails.status as number) ?? 500,
+      )
     }
-
-    const equalityReportContent = (() => {
-      const base64 = answers.information?.customField ?? ''
-      try {
-        return Buffer.from(base64, 'base64').toString('utf-8')
-      } catch {
-        return ''
-      }
-    })()
-
-    const subsidiaryList: {
-      nationalIdWithName: { name: string; nationalId: string }
-    }[] = answers.subsidiaries?.list ?? []
-
-    return this.directorateOfEqualityService.submitEqualityReport(auth, {
-      identifier: application.id,
-      providerId: doeCompany?.id ?? '',
-      companyAdminName: answers.chiefExecutive?.name ?? '',
-      companyAdminEmail: answers.chiefExecutive?.email ?? '',
-      companyAdminGender:
-        genderMap[answers.chiefExecutive?.gender] ?? 'NEUTRAL',
-      contactName: answers.contactPerson?.name ?? '',
-      contactEmail: answers.contactPerson?.email ?? '',
-      contactPhone: answers.contactPerson?.phone ?? '',
-      equalityReportContent,
-      company: {
-        name: answers.generalInformation?.companyName ?? '',
-        nationalId: answers.generalInformation?.nationalId ?? '',
-        address: answers.generalInformation?.address ?? '',
-        city: answers.generalInformation?.municipality ?? '',
-        postcode: answers.generalInformation?.postalCode ?? '',
-        isatCategory: answers.generalInformation?.isatClassification ?? '',
-      },
-      subsidiaries:
-        answers.subsidiaries?.includesSubsidiaries === 'yes'
-          ? subsidiaryList.map((s) => ({
-              name: s.nationalIdWithName.name,
-              nationalId: s.nationalIdWithName.nationalId,
-            }))
-          : [],
-    })
   }
 }

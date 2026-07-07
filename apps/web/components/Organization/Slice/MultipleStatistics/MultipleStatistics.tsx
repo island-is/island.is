@@ -37,15 +37,19 @@ export const MultipleStatistics: React.FC<
             {slice.title}
           </Text>
         )}
-        {slice.statistics.map((statistics) => (
-          <Box>
+        {slice.statistics.map((statistics, index) => (
+          <Box key={`statistics-${index}`}>
             <Text as="h3" variant="h3" marginBottom={4}>
               {statistics.title}
             </Text>
             <GridContainer>
               <GridRow marginBottom={4}>
-                {statistics.statistics.map((s) => (
-                  <GridColumn span="1/5" paddingBottom={4}>
+                {statistics.statistics.map((s, sIndex) => (
+                  <GridColumn
+                    key={`stat-${index}-${sIndex}`}
+                    span={['1/2', '1/2', '1/2', '1/3', '1/5']}
+                    paddingBottom={4}
+                  >
                     <Text variant="h1" color="blue400">
                       {s.value}
                     </Text>

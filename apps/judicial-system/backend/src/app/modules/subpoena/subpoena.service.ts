@@ -201,6 +201,12 @@ export class SubpoenaService {
       user,
     )
 
+    this.eventService.postEvent('SUBPOENA_ISSUED', theCase, false, {
+      Varnaraðili: defendantsToProcess
+        .map((defendant) => defendant.id)
+        .join(', '),
+    })
+
     return subpoenas
   }
 
@@ -362,12 +368,7 @@ export class SubpoenaService {
       ].includes(serviceStatus)
 
     // File the service certificate as a court document
-    if (
-      wasSubpoenaSuccessfullyServed &&
-      theCase.withCourtSessions &&
-      theCase.courtSessions &&
-      theCase.courtSessions.length > 0
-    ) {
+    if (wasSubpoenaSuccessfullyServed && theCase.withCourtSessions) {
       const name = `Birtingarvottorð ${defendant.name}`
 
       await this.courtDocumentRepositoryService.create(
@@ -522,6 +523,16 @@ export class SubpoenaService {
 
       this.logger.info(
         `Subpoena with police subpoena id ${createdSubpoena.policeSubpoenaId} delivered to the police centralized file service`,
+      )
+
+      this.eventService.postEvent(
+        'SUBPOENA_DELIVERED_TO_POLICE',
+        theCase,
+        false,
+        {
+          Varnaraðili: defendant.id,
+          'RLS auðkenni': createdSubpoena.policeSubpoenaId,
+        },
       )
 
       return { delivered: true }

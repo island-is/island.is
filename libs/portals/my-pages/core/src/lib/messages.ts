@@ -1656,6 +1656,22 @@ export const m = defineMessages({
     id: 'service.portal:my-ships-intro',
     defaultMessage: 'Hér getur þú skoðað upplýsingar um skip í þinni eigu',
   },
+  sailorsSectionTitle: {
+    id: 'service.portal:sailors-section-title',
+    defaultMessage: 'Starfsleyfi sjómanna',
+  },
+  sailorsSchoolCertificatesTitle: {
+    id: 'service.portal:sailors-school-certificates-title',
+    defaultMessage: 'Próf, nám og frestir',
+  },
+  sailorsRightCertificatesTitle: {
+    id: 'service.portal:sailors-right-certificates-title',
+    defaultMessage: 'Atvinnuskírteini',
+  },
+  sailorsCrewRegistrationsTitle: {
+    id: 'service.portal:sailors-crew-registrations-title',
+    defaultMessage: 'Lögskráningar',
+  },
   health: {
     id: 'service.portal:health',
     defaultMessage: 'Heilsa',
@@ -1735,6 +1751,11 @@ export const m = defineMessages({
   shipsTooltip: {
     id: 'service.portal:ships-tooltip',
     defaultMessage: 'Samgöngustofa hefur umsjón með gögnum um skip.',
+  },
+  sailorsTooltip: {
+    id: 'service.portal:sailors-tooltip',
+    defaultMessage:
+      'Samgöngustofa hefur umsjón með gögnum um starfsleyfi sjómanna.',
   },
   drivingLessonTooltip: {
     id: 'service.portal:driving-lessons-tooltip',

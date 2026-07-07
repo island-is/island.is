@@ -11,7 +11,6 @@ import {
 } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  isCompletedCase,
   isDefenceUser,
   isIndictmentCase,
   isProsecutionUser,
@@ -68,7 +67,9 @@ const getFileSubmittedByText = (file: CaseFile, workingCase: Case): string => {
   const prosecutorSubmitted = isProsecutorCategory(file.category)
 
   if (prosecutorSubmitted) {
-    return 'Sækjandi lagði fram'
+    return isIndictmentCase(workingCase.type)
+      ? 'Ákærandi lagði fram'
+      : 'Sækjandi lagði fram'
   }
 
   // For indictment cases, try to resolve the defender/spokesperson name
@@ -208,6 +209,7 @@ const AppealCaseFilesOverview = () => {
                         <IconButton
                           icon="ellipsisVertical"
                           colorScheme="transparent"
+                          ariaLabel={`Valmynd fyrir ${file.name}`}
                           onClick={(evt) => {
                             evt.stopPropagation()
                           }}

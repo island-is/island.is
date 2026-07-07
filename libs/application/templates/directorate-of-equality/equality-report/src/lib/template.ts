@@ -14,11 +14,20 @@ import {
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { isCompany } from 'kennitala'
-import { ActiveEqualityReportApi, CompanyRegistryApi, DoeCompanyApi, EqualityReportTemplateDocxApi, EqualityReportTemplateHtmlApi, PreviousEqualityReportContentApi } from '../dataProviders'
-import { Events, Roles, States } from '../utils/constants'
+import {
+  ActiveEqualityReportApi,
+  CompanyRegistryApi,
+  DoeCompanyApi,
+  EqualityReportTemplateDocxApi,
+  EqualityReportTemplateHtmlApi,
+  PreviousEqualityReportContentApi,
+} from '../dataProviders'
+import { ApiActions, Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
 import {
+  coreHistoryMessages,
+  coreMessages,
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
@@ -40,6 +49,7 @@ const template: ApplicationTemplate<
   dataSchema,
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   requiredScopes: [ApiScope.directorateOfEquality],
+  allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -49,6 +59,12 @@ const template: ApplicationTemplate<
           progress: 0,
           status: FormModes.DRAFT,
           lifecycle: EphemeralStateLifeCycle,
+          actionCard: {
+            tag: {
+              label: coreMessages.tagsDraft,
+              variant: 'blue',
+            },
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -57,11 +73,21 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.Prerequisites),
                 ),
               actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
               ],
               write: 'all',
               read: 'all',
-              api: [UserProfileApi, IdentityApi, CompanyRegistryApi, ActiveEqualityReportApi, DoeCompanyApi],
+              api: [
+                UserProfileApi,
+                IdentityApi,
+                CompanyRegistryApi,
+                ActiveEqualityReportApi,
+                DoeCompanyApi,
+              ],
               delete: true,
             },
             {
@@ -86,6 +112,18 @@ const template: ApplicationTemplate<
           progress: 0.4,
           status: FormModes.DRAFT,
           lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            tag: {
+              label: coreMessages.tagsDraft,
+              variant: 'blue',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: coreHistoryMessages.applicationSent,
+              },
+            ],
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -94,11 +132,19 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.MainForm),
                 ),
               actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
               ],
               write: 'all',
               read: 'all',
-              api: [EqualityReportTemplateHtmlApi, EqualityReportTemplateDocxApi, PreviousEqualityReportContentApi],
+              api: [
+                EqualityReportTemplateHtmlApi,
+                EqualityReportTemplateDocxApi,
+                PreviousEqualityReportContentApi,
+              ],
               delete: true,
             },
           ],
@@ -115,9 +161,16 @@ const template: ApplicationTemplate<
           progress: 1,
           status: FormModes.COMPLETED,
           lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            tag: {
+              label: coreMessages.tagsDone,
+              variant: 'mint',
+            },
+          },
           onEntry: defineTemplateApi({
-            action: 'submitEqualityReport',
+            action: ApiActions.submitEqualityReport,
             shouldPersistToExternalData: true,
+            throwOnError: true,
           }),
           roles: [
             {
@@ -138,7 +191,10 @@ const template: ApplicationTemplate<
     nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (isCompany(application.applicant) && nationalId === application.applicant) {
+    if (
+      isCompany(application.applicant) &&
+      nationalId === application.applicant
+    ) {
       return Roles.APPLICANT
     }
     return Roles.NOT_ALLOWED

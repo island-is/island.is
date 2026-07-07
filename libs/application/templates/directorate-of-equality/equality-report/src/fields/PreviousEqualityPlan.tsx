@@ -10,6 +10,7 @@ import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { useIntl } from 'react-intl'
 import { toast } from '@island.is/island-ui/core'
+import { ApiActions } from '../utils/constants'
 
 export const PreviousEqualityPlan = ({ application }: FieldBaseProps) => {
   const { locale } = useLocale()
@@ -37,7 +38,10 @@ export const PreviousEqualityPlan = ({ application }: FieldBaseProps) => {
         input: {
           id: application.id,
           dataProviders: [
-            { actionId: 'getPreviousEqualityReportContent', order: 0 },
+            {
+              actionId: ApiActions.getPreviousEqualityReportContent,
+              order: 0,
+            },
           ],
         },
         locale,

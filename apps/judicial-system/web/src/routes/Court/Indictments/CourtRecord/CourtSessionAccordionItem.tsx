@@ -41,6 +41,7 @@ import {
 import { Feature } from '@island.is/judicial-system/types'
 import {
   BlueBox,
+  CheckboxList,
   DateTime,
   FeatureContext,
   FileNotFoundModal,
@@ -74,9 +75,11 @@ import {
   useOnceOn,
   useUsers,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { reconcileAppealDecisionsForRulingFileChange } from '@island.is/judicial-system-web/src/utils/utils'
 import { isCourtSessionValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { SelectRepresentative } from '../../../Shared/AddFiles/SelectCaseFileRepresentative'
+import CourtSessionAppealDecisions from './CourtSessionAppealDecisions'
 import { CourtSessionMergedCaseEntries } from './CourtSessionMergedCaseEntries'
 import * as styles from './CourtRecord.css'
 
@@ -164,10 +167,11 @@ const CourtSessionLabel = forwardRef(
 const CourtSessionAccordionItem: FC<Props> = (props) => {
   const { index, courtSession, isExpanded, onToggle } = props
   const ref = useRef<HTMLDivElement>(null)
-  const { features } = useContext(FeatureContext)
-  const useTinyMCE = features.includes(Feature.TINY_MCE)
   const { workingCase, setWorkingCase, isCaseUpToDate } =
     useContext(FormContext)
+  const { features } = useContext(FeatureContext)
+  // The in-court appeal decision UI is behind a flag until it's ready for prod.
+  const showAppealDecisions = features.includes(Feature.APPEAL_RULING_ORDER)
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
   })
@@ -193,25 +197,56 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   } = useUsers(workingCase.court?.id)
 
   const patchSession = useCallback(
-    (
+    async (
       courtSessionId: string,
       updates: Partial<CourtSessionResponse>,
       { persist = false } = {},
     ) => {
-      setWorkingCase((prev) => ({
-        ...prev,
-        courtSessions: prev.courtSessions?.map((session) =>
+      setWorkingCase((prev) => {
+        const courtSessions = prev.courtSessions?.map((session) =>
           session.id === courtSessionId ? { ...session, ...updates } : session,
-        ),
-      }))
+        )
+
+        // Changing a session's ruling order file re-keys (swap) or discards
+        // (removal) that ruling's appeal decisions on the backend. Mirror it on
+        // the working case so the decision cards keep their selections.
+        const appealDecisions =
+          'rulingFileId' in updates
+            ? reconcileAppealDecisionsForRulingFileChange(
+                prev.appealDecisions,
+                prev.courtSessions?.find(
+                  (session) => session.id === courtSessionId,
+                )?.rulingFileId,
+                updates.rulingFileId,
+              )
+            : prev.appealDecisions
+
+        return { ...prev, courtSessions, appealDecisions }
+      })
 
       if (persist) {
         const { courtSessionStrings, ...courtSessionUpdate } = updates
-        updateCourtSession({
+        const success = await updateCourtSession({
           ...courtSessionUpdate,
           courtSessionId,
           caseId: workingCase.id,
         })
+
+        // A failed confirm/unconfirm must not leave the UI in the new state
+        // (button re-labelled to "Leiðrétta", read-only mode). Roll the flag
+        // back to what it was. Only isConfirmed is reverted - other optimistic
+        // field edits keep their value so unsaved input is not lost on a
+        // transient failure. (Confirm/unconfirm always toggle the flag.)
+        if (!success && 'isConfirmed' in updates) {
+          setWorkingCase((prev) => ({
+            ...prev,
+            courtSessions: prev.courtSessions?.map((session) =>
+              session.id === courtSessionId
+                ? { ...session, isConfirmed: !updates.isConfirmed }
+                : session,
+            ),
+          }))
+        }
       }
     },
     [setWorkingCase, updateCourtSession, workingCase.id],
@@ -922,31 +957,31 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                         initial="hidden"
                         animate="visible"
                         exit="exit"
-                        className={styles.twoColGrid}
                         key="grid"
                       >
-                        {CLOSURE_GROUNDS.map(
-                          ([label, tooltip, legalProvision]) => (
-                            <motion.div
-                              variants={itemVariants}
-                              initial="hidden"
-                              animate="visible"
-                              exit="exit"
-                              key={label}
-                            >
-                              <Checkbox
-                                label={label}
-                                name={`${label}-${courtSession.id}`}
-                                tooltip={tooltip}
-                                checked={courtSession.closedLegalProvisions?.includes(
-                                  legalProvision,
-                                )}
-                                onChange={(evt) => {
+                        <motion.div
+                          variants={itemVariants}
+                          initial="hidden"
+                          animate="visible"
+                          exit="exit"
+                        >
+                          <CheckboxList
+                            blueBox={false}
+                            checkboxes={CLOSURE_GROUNDS.map(
+                              ([label, tooltip, legalProvision]) => ({
+                                id: `${legalProvision}-${courtSession.id}`,
+                                title: label,
+                                info: tooltip,
+                                checked:
+                                  courtSession.closedLegalProvisions?.includes(
+                                    legalProvision,
+                                  ) ?? false,
+                                disabled: courtSession.isConfirmed || false,
+                                onChange: (checked) => {
                                   const initialValue =
                                     courtSession.closedLegalProvisions || []
 
-                                  const closedLegalProvisions = evt.target
-                                    .checked
+                                  const closedLegalProvisions = checked
                                     ? [...initialValue, legalProvision]
                                     : initialValue.filter(
                                         (v) => v !== legalProvision,
@@ -957,14 +992,11 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                                     { closedLegalProvisions },
                                     { persist: true },
                                   )
-                                }}
-                                disabled={courtSession.isConfirmed || false}
-                                large
-                                filled
-                              />
-                            </motion.div>
-                          ),
-                        )}
+                                },
+                              }),
+                            )}
+                          />
+                        </motion.div>
                       </motion.div>
                     </>
                   )}
@@ -1442,71 +1474,44 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
               )}
               <Box>
                 <SectionHeading title="Bókanir" />
-                {useTinyMCE ? (
-                  <TinyMCE
-                    data-testid="entries"
-                    label="Afstaða ákærða, málflutningur og aðrar bókanir"
-                    placeholder="Nánari útlistun á afstöðu ákærða, málflutningsræður og annað sem fram kom í þinghaldi er skráð hér."
-                    defaultValue={courtSession.entries || ''}
-                    onChange={(html) => {
-                      setEntriesErrorMessage('')
-                      patchSession(courtSession.id, { entries: html })
-                    }}
-                    onBlur={(html) => {
-                      // Decode entities (e.g. &nbsp;) and strip tags so an
-                      // otherwise-empty paragraph doesn't pass the required check.
-                      const decodedText =
-                        new DOMParser()
-                          .parseFromString(html, 'text/html')
-                          .body.textContent?.trim() ?? ''
-                      validateAndSetErrorMessage(
-                        ['empty'],
-                        decodedText,
-                        setEntriesErrorMessage,
-                      )
-                      patchSession(
-                        courtSession.id,
-                        { entries: html },
-                        { persist: true },
-                      )
-                    }}
-                    errorMessage={entriesErrorMessage || undefined}
-                    disabled={courtSession.isConfirmed || false}
-                    required
-                  />
-                ) : (
-                  <Input
-                    data-testid="entries"
-                    name="entries"
-                    label="Afstaða ákærða, málflutningur og aðrar bókanir"
-                    value={courtSession.entries || ''}
-                    placeholder="Nánari útlistun á afstöðu ákærða, málflutningsræður og annað sem fram kom í þinghaldi er skráð hér."
-                    onChange={(event) => {
-                      setEntriesErrorMessage('')
-                      patchSession(courtSession.id, {
-                        entries: event.target.value,
-                      })
-                    }}
-                    onBlur={(event) => {
-                      validateAndSetErrorMessage(
-                        ['empty'],
-                        event.target.value,
-                        setEntriesErrorMessage,
-                      )
-                      patchSession(
-                        courtSession.id,
-                        { entries: event.target.value },
-                        { persist: true },
-                      )
-                    }}
-                    hasError={entriesErrorMessage !== ''}
-                    errorMessage={entriesErrorMessage}
-                    rows={15}
-                    disabled={courtSession.isConfirmed || false}
-                    textarea
-                    required
-                  />
-                )}
+                <TinyMCE
+                  data-testid="entries"
+                  label="Afstaða ákærða, málflutningur og aðrar bókanir"
+                  placeholder="Nánari útlistun á afstöðu ákærða, málflutningsræður og annað sem fram kom í þinghaldi er skráð hér."
+                  defaultValue={courtSession.entries || ''}
+                  onChange={(html) => {
+                    setEntriesErrorMessage('')
+                    patchSession(courtSession.id, { entries: html })
+                  }}
+                  onDebouncedChange={(html) =>
+                    patchSession(
+                      courtSession.id,
+                      { entries: html },
+                      { persist: true },
+                    )
+                  }
+                  onBlur={(html) => {
+                    // Decode entities (e.g. &nbsp;) and strip tags so an
+                    // otherwise-empty paragraph doesn't pass the required check.
+                    const decodedText =
+                      new DOMParser()
+                        .parseFromString(html, 'text/html')
+                        .body.textContent?.trim() ?? ''
+                    validateAndSetErrorMessage(
+                      ['empty'],
+                      decodedText,
+                      setEntriesErrorMessage,
+                    )
+                    patchSession(
+                      courtSession.id,
+                      { entries: html },
+                      { persist: true },
+                    )
+                  }}
+                  errorMessage={entriesErrorMessage || undefined}
+                  disabled={courtSession.isConfirmed || false}
+                  required
+                />
               </Box>
               <Box>
                 <SectionHeading
@@ -1706,6 +1711,15 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                       required
                     />
                   </Box>
+                  {showAppealDecisions &&
+                    courtSession.rulingType ===
+                      CourtSessionRulingType.ORDER && (
+                      <CourtSessionAppealDecisions
+                        courtSession={courtSession}
+                        workingCase={workingCase}
+                        setWorkingCase={setWorkingCase}
+                      />
+                    )}
                   <Box>
                     <SectionHeading title="Bókanir í lok þinghalds" />
                     <Input
@@ -1835,7 +1849,13 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                           )
                         }
                         size="small"
-                        disabled={!isCourtSessionValid(courtSession)}
+                        disabled={
+                          !isCourtSessionValid(
+                            courtSession,
+                            workingCase,
+                            showAppealDecisions,
+                          )
+                        }
                       >
                         Staðfesta þingbók
                       </Button>
