@@ -9,7 +9,7 @@ import {
   buildRadioField,
   buildSection,
   buildSelectField,
-  buildTextField
+  buildTextField,
 } from '@island.is/application/core'
 import { getAllCountryCodes } from '@island.is/shared/utils'
 import {
