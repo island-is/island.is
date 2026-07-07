@@ -89,7 +89,7 @@ const HeaderContainer = () => {
   const { lawyers } = useContext(LawyerRegistryContext)
 
   const isLawyerInLawyersRegistry = isDefenceUser(user) && lawyer
-  const canUseSearch = !!user && !isDefenceUser(user) && !isAdminUser(user)
+  const canUseSearch = !!user && !isAdminUser(user)
 
   useKeyboardCombo('Meta + k', () => {
     if (canUseSearch) setIsSearchOpen(!isSearchOpen)

@@ -63,7 +63,6 @@ import {
   courtOfAppealsAssistantRule,
   courtOfAppealsJudgeRule,
   courtOfAppealsRegistrarRule,
-  defenderRule,
   districtCourtAssistantRule,
   districtCourtJudgeRule,
   districtCourtRegistrarRule,
@@ -109,7 +108,6 @@ import {
   CaseInterceptor,
   CasesInterceptor,
 } from './interceptors/case.interceptor'
-import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
@@ -343,21 +341,6 @@ export class CaseController {
     this.eventService.postEvent(transition.transition, updatedCase ?? theCase)
 
     return updatedCase ?? theCase
-  }
-
-  @UseGuards(RolesGuard)
-  @RolesRules(defenderRule)
-  @UseInterceptors(CaseListInterceptor)
-  @Get('cases')
-  @ApiOkResponse({
-    type: Case,
-    isArray: true,
-    description: 'Gets all existing cases',
-  })
-  getAll(@CurrentHttpUser() user: User): Promise<Case[]> {
-    this.logger.debug('Getting all cases')
-
-    return this.caseService.getAll(user)
   }
 
   @UseGuards(RolesGuard, CaseExistsGuard, CaseReadGuard)

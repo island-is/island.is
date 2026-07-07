@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import { AlertMessage } from '@island.is/island-ui/core'
 import {
   getCaseTableGroups,
+  isDefenceUser,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import {
@@ -40,7 +41,17 @@ const CaseTableGroups: FC = () => {
         </div>
       ) : (
         <div className={grid({ gap: 6 })}>
-          <Logo />
+          {isDefenceUser(user) ? (
+            <SectionHeading
+              heading="h1"
+              variant="h1"
+              marginBottom={0}
+              title="Málin þín"
+              description="Hér er yfirlit yfir mál sem þú átt aðild að og afgreidd eru í gegnum Réttarvörslugátt."
+            />
+          ) : (
+            <Logo />
+          )}
           {groups.map((group, idx) => (
             <CasesDashboardLayout title={group.title} key={idx}>
               {group.tables.map((t, idx) => (
