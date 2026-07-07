@@ -7,6 +7,7 @@ import {
   CaseTableColumnKey,
   ContextMenuCaseActionType,
   isCourtOfAppealsUser,
+  isDefenceUser,
   isDistrictCourtUser,
   isIndictmentCase,
   isProsecutionUser,
@@ -39,6 +40,10 @@ const getAvailableActionsAttributes = (user: User): string[] => {
     return ['type', 'state']
   }
 
+  if (isDefenceUser(user)) {
+    return ['type', 'accusedPostponedAppealDate', 'defenderNationalId']
+  }
+
   return []
 }
 
@@ -59,6 +64,14 @@ export const getAttributes = (
 const getAvailableActionsIncludes = (user: User): CaseIncludes => {
   if (isProsecutionUser(user)) {
     return { appealCase: { attributes: ['id', 'appealState'] } }
+  }
+
+  if (isDefenceUser(user)) {
+    return {
+      appealCase: {
+        attributes: ['id', 'appealState', 'appealedByNationalId'],
+      },
+    }
   }
 
   return {}
@@ -301,20 +314,56 @@ export const canDeleteCase = (
   return false
 }
 
+// Mirrors the appeal-case module's withdrawal authorization (see
+// prosecutionAppealedAppealCase and defenderAppealedAppealCase in
+// appeal-case/guards/rolesRules.ts) for the appeals shown in the case tables.
+// The tables' appealCase slot only ever holds the case-level appeal (request
+// case and dismissed indictment appeals) - ruling-order appeals are withdrawn
+// from the ruling order's context menu on the case screen instead.
 export const canCancelAppeal = (
-  theCase: Pick<Case, 'type' | 'appealCase' | 'prosecutorPostponedAppealDate'>,
+  theCase: Pick<
+    Case,
+    | 'type'
+    | 'appealCase'
+    | 'prosecutorPostponedAppealDate'
+    | 'accusedPostponedAppealDate'
+    | 'defenderNationalId'
+  >,
   user: User,
 ): boolean => {
-  if (!isProsecutionUser(user)) {
+  // An appeal can only be withdrawn before the court of appeals has ruled
+  if (
+    theCase.appealCase?.appealState !== AppealCaseState.APPEALED &&
+    theCase.appealCase?.appealState !== AppealCaseState.RECEIVED
+  ) {
     return false
   }
 
-  if (
-    (theCase.appealCase?.appealState === AppealCaseState.APPEALED ||
-      theCase.appealCase?.appealState === AppealCaseState.RECEIVED) &&
-    theCase.prosecutorPostponedAppealDate
-  ) {
-    return true
+  if (isProsecutionUser(user)) {
+    // The prosecution appealed iff the postponed appeal date was set on the case
+    return Boolean(theCase.prosecutorPostponedAppealDate)
+  }
+
+  if (isDefenceUser(user) && user.nationalId) {
+    // The defence appealed iff the postponed appeal date was set on the case
+    if (!theCase.accusedPostponedAppealDate) {
+      return false
+    }
+
+    // Request cases are also listed for victims' lawyers, so only the
+    // assigned defender gets to withdraw the collective defence appeal.
+    // The prosecution's appeal takes precedence, so the defence cannot
+    // withdraw the shared appeal if the prosecution also appealed.
+    if (isRequestCase(theCase.type)) {
+      return (
+        !theCase.prosecutorPostponedAppealDate &&
+        theCase.defenderNationalId === user.nationalId
+      )
+    }
+
+    // For dismissed indictment appeals, only the defender who appealed
+    // (recorded on the appeal case) can withdraw
+    return theCase.appealCase?.appealedByNationalId === user.nationalId
   }
 
   return false
@@ -323,7 +372,12 @@ export const canCancelAppeal = (
 export const getContextMenuActions = (
   theCase: Pick<
     Case,
-    'type' | 'state' | 'appealCase' | 'prosecutorPostponedAppealDate'
+    | 'type'
+    | 'state'
+    | 'appealCase'
+    | 'prosecutorPostponedAppealDate'
+    | 'accusedPostponedAppealDate'
+    | 'defenderNationalId'
   >,
   user: User,
 ): ContextMenuCaseActionType[] => {
