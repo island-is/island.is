@@ -204,8 +204,6 @@ export const m = {
     },
     utcSuffix: {
       id: 'web.grants:single.utcSuffix',
-      // react-intl treats an empty defaultMessage as falsy and falls back to
-      // printing the raw message id when no Contentful override exists either
       defaultMessage: ' ',
     },
     icelandicTimeNote: {
