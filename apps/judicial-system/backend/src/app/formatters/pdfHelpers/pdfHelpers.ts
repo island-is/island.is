@@ -857,4 +857,9 @@ export const addRichText = (
     doc.x = doc.page.margins.left
     doc.y = y + lineAdvance + paragraphGap
   }
+
+  // Fragment drawing leaves the document font on whatever the last run used
+  // (e.g. Times-Bold), and the plain-text helpers only set a font when given
+  // one explicitly — restore the default so it doesn't leak into them.
+  doc.font('Times-Roman')
 }
