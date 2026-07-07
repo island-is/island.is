@@ -198,7 +198,9 @@ export const ExcelTemplateDownload: FC<
             const parsed = parsedCriteria.find(
               (c) => c.type === defaultFactor.type,
             )
-            return parsed && Array.isArray(parsed.subCriteria) && parsed.subCriteria.length > 0
+            return parsed &&
+              Array.isArray(parsed.subCriteria) &&
+              parsed.subCriteria.length > 0
               ? parsed.subCriteria.map(mapSubCriteria)
               : [{ ...DEFAULT_SUB_CRITERION }]
           },
