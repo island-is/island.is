@@ -65,6 +65,7 @@ const TinyMCE = ({
     left: 0,
   })
   const [selectedColor, setSelectedColor] = useState<string | null>(null)
+  const [editorReady, setEditorReady] = useState<boolean>(false)
   const initialValueRef = useRef(defaultValue ?? '')
   const editorRef = useRef<TinyMCEEditor | null>(null)
   const highlightBtnApiRef = useRef<ToolbarToggleButtonInstanceApi | null>(null)
@@ -97,9 +98,12 @@ const TinyMCE = ({
   // the editor. Editor-originated changes round-trip through onChange and
   // match getContent(), so this only writes on genuinely external updates.
   // A focused editor is left alone so the user's typing isn't clobbered.
+  // The editor loads asynchronously, so depend on editorReady to replay a
+  // value change that arrived before init — otherwise it would be lost.
   useEffect(() => {
     const editor = editorRef.current
     if (
+      !editorReady ||
       value === undefined ||
       !editor ||
       editor.hasFocus() ||
@@ -108,7 +112,7 @@ const TinyMCE = ({
       return
     }
     editor.setContent(value)
-  }, [value])
+  }, [value, editorReady])
 
   useEffect(() => {
     highlightBtnApiRef.current?.setActive(pickerOpen)
@@ -207,6 +211,7 @@ const TinyMCE = ({
           tinymceScriptSrc="/tinymce/tinymce.min.js"
           onInit={(_, editor) => {
             editorRef.current = editor
+            setEditorReady(true)
           }}
           init={{
             height,
