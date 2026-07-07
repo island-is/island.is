@@ -1,16 +1,7 @@
 # equality-report
 
-This template for an application was generated with the `nx generate-template equality-report` command.
-
-Write documentation here.
-
-- What gervimenn can use this template
-- What is this application for
-- Which organization is this application for
-- Describe the stateflow of the application on a high level
-- And more...
-  Application template for submitting a company equality report (jafnréttisáætlun) to
-  the Directorate of Equality (Jafnréttisstofa).
+Application template for submitting a company equality report (jafnréttisáætlun) to
+the Directorate of Equality (Jafnréttisstofa).
 
 - **Applicants:** procuration holders of a company (`isCompany` national ID), delegated via `AuthDelegationType.ProcurationHolder`.
 - **Purpose:** collects general company information, chief executive and contact
