@@ -20,8 +20,7 @@ export class DirectorateOfEqualityClientModule {
     idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) {
     client.setConfig({
-      baseUrl: 'http://localhost:5100',
-      // baseUrl: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
+      baseUrl: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
       headers: {
         'X-Road-Client': xroadConfig.xRoadClient,
         Accept: 'application/json',
