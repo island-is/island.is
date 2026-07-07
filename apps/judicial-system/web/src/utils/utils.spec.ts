@@ -833,7 +833,7 @@ describe('Utils', () => {
             defenderNationalId: '0101011010',
           },
         ],
-      } as unknown as Case
+      } as Case
       const appealCase = { appealedByDefendantId: 'd-1' } as AppealCase
 
       expect(
