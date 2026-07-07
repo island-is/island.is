@@ -202,6 +202,14 @@ export const m = {
       id: 'web.grants:single.answeringQuestions',
       defaultMessage: 'Svör við spurningum',
     },
+    utcSuffix: {
+      id: 'web.grants:single.utcSuffix',
+      defaultMessage: ' ',
+    },
+    icelandicTimeNote: {
+      id: 'web.grants:single.icelandicTimeNote',
+      defaultMessage: 'Miðast við íslenskan tíma',
+    },
   }),
   home: defineMessages({
     title: {
