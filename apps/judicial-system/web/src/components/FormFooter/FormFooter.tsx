@@ -57,7 +57,9 @@ const FormFooter: FC<Props> = ({
             variant="ghost"
             data-testid="previousButton"
             onClick={() => {
-              router.push(previousUrl ?? '')
+              if (previousUrl) {
+                router.push(previousUrl)
+              }
             }}
             fluid
           >

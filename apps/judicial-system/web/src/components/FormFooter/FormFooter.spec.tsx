@@ -85,6 +85,14 @@ describe('FormFooter', () => {
     expect(router.push).toHaveBeenCalledWith('/prev')
   })
 
+  it('should not navigate when previousUrl is missing', async () => {
+    renderFooter({})
+
+    await userEvent.click(screen.getByTestId('previousButton'))
+
+    expect(router.push).not.toHaveBeenCalled()
+  })
+
   it('should hide the back button when hidePreviousButton is set', () => {
     renderFooter({ previousUrl: '/prev', hidePreviousButton: true })
 
