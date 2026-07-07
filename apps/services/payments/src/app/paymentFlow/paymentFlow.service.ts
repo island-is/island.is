@@ -1019,13 +1019,19 @@ export class PaymentFlowService {
   }
 
   /**
-   * Finds paid card and bank-transfer payment flows that don't have an FJS charge yet.
+   * Finds paid payment flows of the given method that don't have an FJS charge yet.
    * Used by the FJS worker to backfill missing charges.
    *
+   * The details include is a left join on purpose: an orphaned flow (active fulfillment,
+   * details row soft-deleted — e.g. an interrupted refund) must still be returned so the
+   * worker can surface it as a failure instead of it staying invisible.
+   *
    * @param cutoffTime - Only include flows whose fulfillment was created before this time (gives other systems time to finalize)
+   * @param paymentMethod - Which payment method's fulfillments to sweep
    */
   async findPaidFlowsWithoutFjsCharge(
     cutoffTime: Date,
+    paymentMethod: 'card' | 'bank_transfer',
   ): Promise<InferAttributes<PaymentFlow>[]> {
     const paymentFlows = await this.paymentFlowModel.findAll({
       where: { isDeleted: false },
@@ -1034,30 +1040,33 @@ export class PaymentFlowService {
           model: PaymentFulfillment,
           required: true,
           where: {
-            paymentMethod: { [Op.in]: ['card', 'bank_transfer'] },
+            paymentMethod,
             fjsChargeId: null,
             created: { [Op.lt]: cutoffTime },
             isDeleted: false,
           },
         },
-        { model: PaymentFlowCharge },
-        {
-          // Card flows only — left join so bank-transfer flows (no card details) are still returned.
-          model: CardPaymentDetails,
-          required: false,
-          where: { isDeleted: false },
-        },
-        {
-          // Bank-transfer flows only — carries the providerPaymentId needed to rebuild the FJS charge.
-          model: BankTransferPayment,
-          required: false,
-          where: { isDeleted: false },
-        },
+        { model: PaymentFlowCharge, separate: true },
+        paymentMethod === 'card'
+          ? {
+              model: CardPaymentDetails,
+              required: false,
+              where: { isDeleted: false },
+              separate: true,
+            }
+          : {
+              // Carries the providerPaymentId needed to rebuild the FJS charge.
+              model: BankTransferPayment,
+              required: false,
+              where: { isDeleted: false },
+              separate: true,
+            },
         {
           model: PaymentWorkerEvent,
           required: false,
           where: { taskType: 'create_fjs_charge' },
           order: [['created', 'DESC']],
+          separate: true,
         },
       ],
     })

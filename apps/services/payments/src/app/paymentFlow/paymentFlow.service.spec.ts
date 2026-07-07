@@ -454,6 +454,7 @@ describe('PaymentFlowService', () => {
 
       const result = await service.findPaidFlowsWithoutFjsCharge(
         new Date(Date.now() + 60_000),
+        'bank_transfer',
       )
 
       const flow = result.find((f) => f.id === paymentFlowId)
@@ -466,6 +467,13 @@ describe('PaymentFlowService', () => {
         providerPaymentId: 'provider-payment-id',
         amount: 900,
       })
+
+      // The sweeps are per-method: the card sweep must not pick up this flow.
+      const cardResult = await service.findPaidFlowsWithoutFjsCharge(
+        new Date(Date.now() + 60_000),
+        'card',
+      )
+      expect(cardResult.find((f) => f.id === paymentFlowId)).toBeUndefined()
     })
   })
 

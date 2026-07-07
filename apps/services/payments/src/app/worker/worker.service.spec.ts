@@ -139,9 +139,23 @@ describe('WorkerService', () => {
     jest.clearAllMocks()
   })
 
+  /** The worker sweeps each payment method separately — mock the per-method results. */
+  const mockFlowSweep = (flows: {
+    card?: unknown[]
+    bankTransfer?: unknown[]
+  }) => {
+    paymentFlowService.findPaidFlowsWithoutFjsCharge.mockImplementation(((
+      _cutoffTime: Date,
+      paymentMethod: 'card' | 'bank_transfer',
+    ) =>
+      Promise.resolve(
+        paymentMethod === 'card' ? flows.card ?? [] : flows.bankTransfer ?? [],
+      )) as never)
+  }
+
   describe('run', () => {
     it('should log summary with created: 0, failed: 0 when no flows to process', async () => {
-      paymentFlowService.findPaidFlowsWithoutFjsCharge.mockResolvedValue([])
+      mockFlowSweep({})
 
       await service.run()
 
@@ -154,9 +168,7 @@ describe('WorkerService', () => {
 
     it('should create FJS charge, record success event, and log created: 1 when one flow succeeds', async () => {
       const flow = createMockFlow({ id: 'flow-success' })
-      paymentFlowService.findPaidFlowsWithoutFjsCharge.mockResolvedValue([
-        flow,
-      ] as never)
+      mockFlowSweep({ card: [flow] })
       paymentFlowService.createFjsCharge.mockResolvedValue({
         receptionId: 'rec-123',
         id: 'charge-id',
@@ -186,9 +198,7 @@ describe('WorkerService', () => {
 
     it('should record failure event and log failed: 1 when createFjsCharge throws FJS error', async () => {
       const flow = createMockFlow({ id: 'flow-fail' })
-      paymentFlowService.findPaidFlowsWithoutFjsCharge.mockResolvedValue([
-        flow,
-      ] as never)
+      mockFlowSweep({ card: [flow] })
       paymentFlowService.createFjsCharge.mockRejectedValue(
         new Error(FjsErrorCode.FailedToCreateCharge),
       )
@@ -210,9 +220,7 @@ describe('WorkerService', () => {
 
     it('should not record event but still count failure when createFjsCharge throws FJS_NETWORK_ERROR', async () => {
       const flow = createMockFlow({ id: 'flow-network' })
-      paymentFlowService.findPaidFlowsWithoutFjsCharge.mockResolvedValue([
-        flow,
-      ] as never)
+      mockFlowSweep({ card: [flow] })
       paymentFlowService.createFjsCharge.mockRejectedValue(
         new Error(FJS_NETWORK_ERROR),
       )
@@ -230,9 +238,7 @@ describe('WorkerService', () => {
 
     it('should record failure event when createFjsCharge throws AlreadyCreatedCharge', async () => {
       const flow = createMockFlow({ id: 'flow-already' })
-      paymentFlowService.findPaidFlowsWithoutFjsCharge.mockResolvedValue([
-        flow,
-      ] as never)
+      mockFlowSweep({ card: [flow] })
       paymentFlowService.createFjsCharge.mockRejectedValue(
         new Error(FjsErrorCode.AlreadyCreatedCharge),
       )
@@ -267,14 +273,17 @@ describe('WorkerService', () => {
           { status: 'failure' },
         ],
       })
-      paymentFlowService.findPaidFlowsWithoutFjsCharge.mockResolvedValue([
-        flowWithFiveFailures,
-      ] as never)
+      mockFlowSweep({ card: [flowWithFiveFailures] })
 
       await service.run()
 
       expect(paymentFlowService.createFjsCharge).not.toHaveBeenCalled()
       expect(paymentWorkerEventModel.create).not.toHaveBeenCalled()
+      // One aggregate info line per run instead of a per-flow warn on every tick.
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'Skipping 1 payment flow(s) that exceeded the failure limit (5) and require manual intervention: flow-skipped',
+      )
+      expect(mockLogger.warn).not.toHaveBeenCalled()
       expect(mockLogger.info).toHaveBeenCalledWith(
         'Payment worker run complete — created: 0, failed: 0, skipped (manual intervention): 1',
       )
@@ -285,9 +294,7 @@ describe('WorkerService', () => {
         id: 'flow-retry',
         workerEvents: [{ status: 'failure' }, { status: 'failure' }],
       })
-      paymentFlowService.findPaidFlowsWithoutFjsCharge.mockResolvedValue([
-        flowWithTwoFailures,
-      ] as never)
+      mockFlowSweep({ card: [flowWithTwoFailures] })
       paymentFlowService.createFjsCharge.mockResolvedValue({
         receptionId: 'rec-456',
         id: 'charge-id',
@@ -313,10 +320,7 @@ describe('WorkerService', () => {
         id: 'flow-b',
         workerEvents: Array.from({ length: 5 }, () => ({ status: 'failure' })),
       })
-      paymentFlowService.findPaidFlowsWithoutFjsCharge.mockResolvedValue([
-        flowEligible,
-        flowSkipped,
-      ] as never)
+      mockFlowSweep({ card: [flowEligible, flowSkipped] })
       paymentFlowService.createFjsCharge.mockResolvedValue({
         receptionId: 'rec-a',
         id: 'charge-a',
@@ -334,9 +338,7 @@ describe('WorkerService', () => {
 
     it('should build a PAID bank-transfer FJS charge from the fulfillment and bank transfer row', async () => {
       const flow = createBankTransferFlow({ id: 'bt-success' })
-      paymentFlowService.findPaidFlowsWithoutFjsCharge.mockResolvedValue([
-        flow,
-      ] as never)
+      mockFlowSweep({ bankTransfer: [flow] })
       paymentFlowService.createFjsCharge.mockResolvedValue({
         receptionId: 'rec-bt',
         id: 'charge-bt',
@@ -373,9 +375,7 @@ describe('WorkerService', () => {
         id: 'card-orphan',
         cardPaymentDetails: [],
       })
-      paymentFlowService.findPaidFlowsWithoutFjsCharge.mockResolvedValue([
-        flow,
-      ] as never)
+      mockFlowSweep({ card: [flow] })
 
       await service.run()
 
@@ -398,9 +398,7 @@ describe('WorkerService', () => {
         id: 'bt-orphan',
         bankTransferPayments: [],
       })
-      paymentFlowService.findPaidFlowsWithoutFjsCharge.mockResolvedValue([
-        flow,
-      ] as never)
+      mockFlowSweep({ bankTransfer: [flow] })
 
       await service.run()
 
@@ -414,6 +412,31 @@ describe('WorkerService', () => {
       )
       expect(mockLogger.info).toHaveBeenCalledWith(
         'Payment worker run complete — created: 0, failed: 1, skipped (manual intervention): 0',
+      )
+    })
+
+    it('should process card and bank-transfer flows with their own builders in the same run', async () => {
+      const cardFlow = createMockFlow({ id: 'card-flow' })
+      const bankFlow = createBankTransferFlow({ id: 'bank-flow' })
+      mockFlowSweep({ card: [cardFlow], bankTransfer: [bankFlow] })
+      paymentFlowService.createFjsCharge.mockResolvedValue({
+        receptionId: 'rec-both',
+        id: 'charge-both',
+      } as never)
+
+      await service.run()
+
+      expect(paymentFlowService.createFjsCharge).toHaveBeenCalledTimes(2)
+      const payloads = paymentFlowService.createFjsCharge.mock.calls.map(
+        ([, payload]) => payload,
+      )
+      // Card payload carries card payInfo, bank payload carries the provider id in RRN.
+      expect(payloads[0].payInfo?.correlationId).toBe(
+        'card-details-correlation-id',
+      )
+      expect(payloads[1].payInfo?.RRN).toBe('provider-payment-id')
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'Payment worker run complete — created: 2, failed: 0, skipped (manual intervention): 0',
       )
     })
   })

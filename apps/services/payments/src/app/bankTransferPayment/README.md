@@ -207,10 +207,10 @@ stateDiagram-v2
    worker retries the charge on its next run.
 
 > **Worker backstop (FJS charge only).** The payment worker sweeps paid flows without an FJS
-> charge (`paymentMethod: 'card' | 'bank_transfer'`,
-> [`findPaidFlowsWithoutFjsCharge`](../paymentFlow/paymentFlow.service.ts)) and rebuilds the PAID
-> charge from the persisted `bank_transfer_payment` row — using its settled `amount`, not the
-> live catalog price. Settlement detection itself is still inline-only — hence the dual
+> charge — once per payment method
+> ([`findPaidFlowsWithoutFjsCharge`](../paymentFlow/paymentFlow.service.ts)) — and rebuilds the
+> PAID charge from the persisted `bank_transfer_payment` row — using its settled `amount`, not
+> the live catalog price. Settlement detection itself is still inline-only — hence the dual
 > webhook/poll paths, the inline FJS retry, and the orphan-recovery checks below.
 
 ## Polling & webhooks (dual settlement)
