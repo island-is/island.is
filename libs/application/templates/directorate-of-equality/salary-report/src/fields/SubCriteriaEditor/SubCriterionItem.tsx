@@ -16,7 +16,6 @@ type Props = {
 
 export const SubCriterionItem: FC<Props> = ({
   fieldName,
-  index,
   isLast,
   canRemove,
   onRemove,
