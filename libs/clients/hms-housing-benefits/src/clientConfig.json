@@ -68,24 +68,57 @@
               "text/plain": {
                 "schema": {
                   "type": "object",
-                  "additionalProperties": {
-                    "$ref": "#/components/schemas/ModelStateEntry"
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "errors": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
                   }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "additionalProperties": {
-                    "$ref": "#/components/schemas/ModelStateEntry"
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "errors": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
                   }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "object",
-                  "additionalProperties": {
-                    "$ref": "#/components/schemas/ModelStateEntry"
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "errors": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
                   }
                 }
               }
@@ -101,19 +134,9 @@
       "get": {
         "tags": ["Tax"],
         "summary": "Check if a tax return exists for a specific year",
-        "description": "Queries RSK to determine whether the individual identified by kennitala has filed a tax return (skattframtal) for the given income year (tekjuár).",
+        "description": "Queries RSK to determine whether the authenticated user has filed a tax return (skattframtal) for the given income year (tekjuár).",
         "operationId": "HasTaxReturnForYear",
         "parameters": [
-          {
-            "name": "kennitala",
-            "in": "query",
-            "description": "The national ID (kennitala) of the individual.",
-            "required": true,
-            "style": "form",
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "name": "year",
             "in": "query",
@@ -157,7 +180,7 @@
             }
           },
           "400": {
-            "description": "Kennitala or year is missing or invalid."
+            "description": "Year is missing or invalid."
           },
           "500": {
             "description": "An unexpected error occurred while querying RSK."
@@ -169,19 +192,9 @@
       "get": {
         "tags": ["Tax"],
         "summary": "Check if a tax return exists in the last 5 years",
-        "description": "Queries RSK to determine whether the individual identified by kennitala has filed a tax return (skattframtal) in any of the last 5 income years (tekjuár). Returns true on the first year found.",
+        "description": "Queries RSK to determine whether the authenticated user has filed a tax return (skattframtal) in any of the last 5 income years (tekjuár). Returns true on the first year found.",
         "operationId": "HasTaxReturnLastFiveYears",
         "parameters": [
-          {
-            "name": "kennitala",
-            "in": "query",
-            "description": "The national ID (kennitala) of the individual.",
-            "required": true,
-            "style": "form",
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "name": "version",
             "in": "path",
@@ -214,7 +227,7 @@
             }
           },
           "400": {
-            "description": "Kennitala is missing or invalid."
+            "description": "Unable to resolve kennitala from token."
           },
           "500": {
             "description": "An unexpected error occurred while querying RSK."
@@ -430,7 +443,7 @@
           {
             "name": "paymentOrigin",
             "in": "query",
-            "description": "Origin of payment, e.g.standard payments(Húsbót) or special payments(Sérstakar). 0= Both, 1= Almennar, 2=Sérstakar",
+            "description": "Origin of payment, e.g.standard payments(H�sb�t) or special payments(S�rstakar). 0= Both, 1= Almennar, 2=S�rstakar",
             "style": "form",
             "schema": {
               "type": "integer",
@@ -506,26 +519,6 @@
               }
             }
           },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/BadRequest"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BadRequest"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BadRequest"
-                }
-              }
-            }
-          },
           "404": {
             "description": "Not Found",
             "content": {
@@ -542,6 +535,26 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -665,13 +678,13 @@
           },
           "assetDeclaration": {
             "type": "string",
-            "description": "The asset declaration.",
-            "nullable": false
+            "description": "Asset declaration (Eignayfirlýsing).",
+            "nullable": true
           },
           "incomeDeclaration": {
             "type": "string",
-            "description": "The income declaration.",
-            "nullable": false
+            "description": "Income declaration (Tekjuyfirlýsing).",
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -843,58 +856,6 @@
         },
         "additionalProperties": false,
         "description": "from Housing benefit System."
-      },
-      "ModelError": {
-        "type": "object",
-        "properties": {
-          "errorMessage": {
-            "type": "string",
-            "nullable": true,
-            "readOnly": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "ModelStateEntry": {
-        "type": "object",
-        "properties": {
-          "rawValue": {
-            "type": "object",
-            "nullable": true
-          },
-          "attemptedValue": {
-            "type": "string",
-            "nullable": true
-          },
-          "errors": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ModelError"
-            },
-            "nullable": true,
-            "readOnly": true
-          },
-          "validationState": {
-            "$ref": "#/components/schemas/ModelValidationState"
-          },
-          "isContainerNode": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "children": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ModelStateEntry"
-            },
-            "nullable": true,
-            "readOnly": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "ModelValidationState": {
-        "enum": ["unvalidated", "invalid", "valid", "skipped"],
-        "type": "string"
       },
       "NoContent": {
         "type": "object",

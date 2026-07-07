@@ -38,7 +38,6 @@ export class HmsHousingBenefitsClientService {
       .withMiddleware(new AuthMiddleware(auth))
       .hasTaxReturnForYear({
         version: '1',
-        kennitala: nationalId,
         year,
       })
   }
@@ -48,7 +47,6 @@ export class HmsHousingBenefitsClientService {
       .withMiddleware(new AuthMiddleware(auth))
       .hasTaxReturnLastFiveYears({
         version: '1',
-        kennitala: nationalId,
       })
   }
 
