@@ -12,7 +12,7 @@ export const NotAllowedForm = buildForm({
   children: [
     buildSection({
       id: 'notAllowedSection',
-      title: '',
+      tabTitle: messages.notAllowed.title,
       children: [
         buildMultiField({
           id: 'notAllowedMultiField',
