@@ -101,6 +101,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import(
       '@island.is/application/templates/transport-authority/driving-license-duplicate'
     ),
+  [ApplicationTypes.DRIVING_LICENSE_ADDITIONAL]: () =>
+    import('@island.is/application/templates/driving-license-additional'),
   [ApplicationTypes.ANONYMITY_IN_VEHICLE_REGISTRY]: () =>
     import(
       '@island.is/application/templates/transport-authority/anonymity-in-vehicle-registry'
