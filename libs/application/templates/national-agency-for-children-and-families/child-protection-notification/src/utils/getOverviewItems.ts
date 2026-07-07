@@ -13,7 +13,7 @@ import { format as formatKennitala } from 'kennitala'
 import { formatNumber } from 'libphonenumber-js'
 import {
   childMessages,
-  expectantParentsMessages,
+  parentsMessages,
   prerequisitesMessages,
   sharedMessages,
 } from '../lib/messages'
@@ -35,9 +35,9 @@ const genderLabelMap = {
 } as const
 
 const parentGenderLabelMap = {
-  [ParentGender.MALE]: expectantParentsMessages.genderMale,
-  [ParentGender.FEMALE]: expectantParentsMessages.genderFemale,
-  [ParentGender.NON_BINARY]: expectantParentsMessages.genderNonBinary,
+  [ParentGender.MALE]: parentsMessages.shared.genderMale,
+  [ParentGender.FEMALE]: parentsMessages.shared.genderFemale,
+  [ParentGender.NON_BINARY]: parentsMessages.shared.genderNonBinary,
 } as const
 
 const pronounLabelMap = {
@@ -491,7 +491,7 @@ const buildParentItems = (
     },
     {
       width: 'half',
-      keyText: expectantParentsMessages.citizenship,
+      keyText: parentsMessages.shared.citizenship,
       valueText: getCountryByCode(parent?.citizenship ?? '')?.code,
       hideIfEmpty: true,
     },
@@ -518,38 +518,36 @@ const buildParentItems = (
   ]
 }
 
-export const getExpectantParentsPreItems = (
+export const getParentsPreItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const { expectantParentsKnowsNationalIds } = getApplicationAnswers(answers)
+  const { parentsKnowsNationalIds } = getApplicationAnswers(answers)
 
   return [
     {
       width: 'full',
-      keyText: expectantParentsMessages.radioLabel,
+      keyText: parentsMessages.expectantParents.radioLabel,
       valueText:
-        expectantParentsKnowsNationalIds === YES
+        parentsKnowsNationalIds === YES
           ? sharedMessages.radioYes
           : sharedMessages.radioNo,
     },
   ]
 }
 
-export const getExpectantParent1Items = (
+export const getParent1Items = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const { parent1, expectantParentsKnowsNationalIds } =
-    getApplicationAnswers(answers)
-  return buildParentItems(parent1, expectantParentsKnowsNationalIds)
+  const { parent1, parentsKnowsNationalIds } = getApplicationAnswers(answers)
+  return buildParentItems(parent1, parentsKnowsNationalIds)
 }
 
-export const getExpectantParent2Items = (
+export const getParent2Items = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const { parent2, expectantParentsKnowsNationalIds } =
-    getApplicationAnswers(answers)
-  return buildParentItems(parent2, expectantParentsKnowsNationalIds)
+  const { parent2, parentsKnowsNationalIds } = getApplicationAnswers(answers)
+  return buildParentItems(parent2, parentsKnowsNationalIds)
 }

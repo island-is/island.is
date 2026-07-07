@@ -8,17 +8,21 @@ import { DefaultEvents } from '@island.is/application/types'
 
 import {
   childMessages,
-  expectantParentsMessages,
+  parentsMessages,
   overviewMessages,
   prerequisitesMessages,
 } from '../../lib/messages'
-import { isNoNationalId, isUnborn } from '../../utils/conditionUtils'
+import {
+  isNoNationalId,
+  isUnborn,
+  isKnowsNationalId,
+} from '../../utils/conditionUtils'
 import {
   getChildManualItems,
   getChildWithNationalIdItems,
-  getExpectantParent1Items,
-  getExpectantParent2Items,
-  getExpectantParentsPreItems,
+  getParent1Items,
+  getParent2Items,
+  getParentsPreItems,
   getServiceProviderContactPersonItems,
   getServiceProviderItems,
 } from '../../utils/getOverviewItems'
@@ -55,25 +59,39 @@ export const overviewSection = buildSection({
           condition: isNoNationalId,
         }),
         buildOverviewField({
-          id: 'overview.expectantParentsPre',
-          title: expectantParentsMessages.sectionTitle,
-          backId: 'expectantParents',
-          items: getExpectantParentsPreItems,
-          condition: isUnborn,
+          id: 'overview.parentsPre',
+          title: ({ answers }) =>
+            isUnborn(answers)
+              ? parentsMessages.expectantParents.sectionTitle
+              : isKnowsNationalId(answers) // TODO: Need to check if kerfiskennitala!
+              ? parentsMessages.custodians.sectionTitle
+              : parentsMessages.guardians.sectionTitle,
+          backId: 'parents',
+          items: getParentsPreItems,
         }),
         buildOverviewField({
-          id: 'overview.expectantParent1',
-          title: expectantParentsMessages.parent1Title,
-          backId: 'expectantParents',
-          items: getExpectantParent1Items,
-          condition: isUnborn,
+          id: 'overview.parent1',
+          title: ({ answers }) =>
+            isUnborn(answers)
+              ? parentsMessages.expectantParents.parent1Title
+              : isKnowsNationalId(answers) // TODO: Need to check if kerfiskennitala!
+              ? parentsMessages.custodians.parent1Title
+              : parentsMessages.guardians.parent1Title,
+          backId: 'parents',
+          items: getParent1Items,
+          hideIfEmpty: true,
         }),
         buildOverviewField({
-          id: 'overview.expectantParent2',
-          title: expectantParentsMessages.parent2Title,
-          backId: 'expectantParents',
-          items: getExpectantParent2Items,
-          condition: isUnborn,
+          id: 'overview.parent2',
+          title: ({ answers }) =>
+            isUnborn(answers)
+              ? parentsMessages.expectantParents.parent2Title
+              : isKnowsNationalId(answers) // TODO: Need to check if kerfiskennitala!
+              ? parentsMessages.custodians.parent2Title
+              : parentsMessages.guardians.parent2Title,
+          backId: 'parents',
+          items: getParent2Items,
+          hideIfEmpty: true,
         }),
         buildSubmitField({
           id: 'submit',

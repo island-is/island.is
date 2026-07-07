@@ -13,4 +13,6 @@ export interface Parent {
   address?: string
   postalCode?: string
   municipality?: string
+  needsInterpreter?: string[]
+  preferredLanguage?: string
 }

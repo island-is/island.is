@@ -1,5 +1,5 @@
 export * from './child'
-export * from './expectantParents'
+export * from './parents'
 export * from './shared'
 export * from './prerequisites'
 export * from './error'

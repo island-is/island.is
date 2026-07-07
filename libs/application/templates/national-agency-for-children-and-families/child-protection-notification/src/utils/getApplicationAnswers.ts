@@ -165,14 +165,14 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     getValueViaPath<string[]>(answers, 'child.manualInfo.needsInterpreter') ??
     []
 
-  const expectantParentsKnowsNationalIds = getValueViaPath<YesOrNo>(
+  const parentsKnowsNationalIds = getValueViaPath<YesOrNo>(
     answers,
-    'expectantParents.knowsParentNationalIds',
+    'parents.knowsParentNationalIds',
   )
 
-  const parent1 = getValueViaPath<Parent>(answers, 'expectantParents.parent1')
+  const parent1 = getValueViaPath<Parent>(answers, 'parents.parent1')
 
-  const parent2 = getValueViaPath<Parent>(answers, 'expectantParents.parent2')
+  const parent2 = getValueViaPath<Parent>(answers, 'parents.parent2')
 
   return {
     serviceProviderService,
@@ -207,7 +207,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     childManualMunicipality,
     childManualLanguage,
     childManualNeedsInterpreter,
-    expectantParentsKnowsNationalIds,
+    parentsKnowsNationalIds,
     parent1,
     parent2,
   }

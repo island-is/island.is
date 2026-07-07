@@ -131,9 +131,11 @@ const parentSchema = z.object({
   address: z.string().optional(),
   postalCode: z.string().optional(),
   municipality: z.string().optional(),
+  needsInterpreter: z.array(z.string()).optional(),
+  preferredLanguage: z.string().optional(),
 })
 
-const expectantParentsSchema = z
+const parentsSchema = z
   .object({
     knowsParentNationalIds: z.enum([YES, NO]).optional(),
     parent1: parentSchema.optional(),
@@ -149,24 +151,42 @@ const expectantParentsSchema = z
       return
     }
 
-    if (data.knowsParentNationalIds !== YES) return
+    if (data.knowsParentNationalIds === YES) {
+      for (const key of ['parent1', 'parent2'] as const) {
+        const nationalId = data[key]?.nationalIdInfo?.nationalId
+        const name = data[key]?.nationalIdInfo?.name
 
-    for (const key of ['parent1', 'parent2'] as const) {
-      const nationalId = data[key]?.nationalIdInfo?.nationalId
-      const name = data[key]?.nationalIdInfo?.name
+        if (!nationalId) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: [key, 'nationalIdInfo', 'nationalId'],
+            params: errorMessages.required,
+          })
+        } else if (!name) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: [key, 'nationalIdInfo', 'nationalId'],
+            params: errorMessages.invalidNationalId,
+          })
+        }
+      }
+    }
 
-      if (!nationalId) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: [key, 'nationalIdInfo', 'nationalId'],
-          params: errorMessages.required,
-        })
-      } else if (!name) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: [key, 'nationalIdInfo', 'nationalId'],
-          params: errorMessages.invalidNationalId,
-        })
+    if (data.knowsParentNationalIds === NO) {
+      for (const key of ['parent1', 'parent2'] as const) {
+        const parent = data[key]
+        const needsPreferredLanguage =
+          parent?.citizenship !== 'IS' &&
+          parent?.needsInterpreter?.includes(YES)
+
+        // If parent is non-Icelandic and interpreter is requested, preferred language is required.
+        if (needsPreferredLanguage && !parent?.preferredLanguage) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: [key, 'preferredLanguage'],
+            params: errorMessages.required,
+          })
+        }
       }
     }
   })
@@ -175,7 +195,7 @@ export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   serviceProvider: serviceProviderSchema,
   child: childSchema.optional(),
-  expectantParents: expectantParentsSchema.optional(),
+  parents: parentsSchema.optional(),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>
