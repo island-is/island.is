@@ -130,27 +130,18 @@ export class NotificationDispatchService {
     const isFine =
       theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
 
-    addMessagesToQueue(
-      {
+    if (
+      hasDrivingLicenseSuspension &&
+      (isFine || hasServiceRequirementNotApplicable)
+    ) {
+      addMessagesToQueue({
         type: MessageType.INDICTMENT_CASE_NOTIFICATION,
         caseId: theCase.id,
         body: {
-          type: IndictmentCaseNotificationType.INDICTMENT_VERDICT_INFO,
+          type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
         },
-      },
-      ...(hasDrivingLicenseSuspension &&
-      (isFine || hasServiceRequirementNotApplicable)
-        ? [
-            {
-              type: MessageType.INDICTMENT_CASE_NOTIFICATION,
-              caseId: theCase.id,
-              body: {
-                type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
-              },
-            },
-          ]
-        : []),
-    )
+      })
+    }
 
     this.addMessagesForCriminalRecordFileUpdateToQueue(theCase)
   }
