@@ -12,6 +12,7 @@ import {
   assigneeWaitingApprovedDescription,
   assigneeWaitingPendingDescription,
   assigneeWaitingRejectedDescription,
+  assigneeWaitingIntroDescription,
 } from '../../../utils/assigneeWaitingUtils'
 import { hasRejectedAssigneesInAnswers } from '../../../utils/assigneeRejectionUtils'
 import * as m from '../../../lib/messages'
@@ -31,7 +32,7 @@ export const AssigneeWaitingForm = buildForm({
           children: [
             buildDescriptionField({
               id: 'assigneeWaitingDescription',
-              description: m.assigneeWaiting.introDescription,
+              description: assigneeWaitingIntroDescription,
               marginBottom: 2,
             }),
             buildDescriptionField({

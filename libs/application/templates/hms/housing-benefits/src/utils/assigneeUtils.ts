@@ -401,10 +401,7 @@ export const shouldShowAssigneeUmgengnissamningurScreen = (
   )
 }
 
-/**
- * Gets names of people who have approved (applicant + signed assignees).
- */
-export const getSignedApprovalNames = (application: Application): string[] => {
+export const getApplicantName = (application: Application): string => {
   const applicantName =
     getValueViaPath<string>(application.answers, 'applicant.name') ??
     getValueViaPath<string>(
@@ -412,6 +409,14 @@ export const getSignedApprovalNames = (application: Application): string[] => {
       'nationalRegistry.data.fullName',
     ) ??
     ''
+  return applicantName
+}
+
+/**
+ * Gets names of people who have approved (applicant + signed assignees).
+ */
+export const getSignedApprovalNames = (application: Application): string[] => {
+  const applicantName = getApplicantName(application)
   const assigneeMembers =
     getHouseholdMembersOver18ExcludingApplicant(application)
   const signed = (getValueViaPath<string[]>(
