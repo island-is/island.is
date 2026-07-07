@@ -74,25 +74,6 @@ export const Prerequisites = buildForm({
         }),
       ],
     }),
-    buildSection({
-      id: 'aboutTheCompany',
-      title: messages.aboutTheCompany.section.sectionTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'report',
-      title: messages.report.section.sectionTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'salaryAnalysis',
-      title: messages.salaryAnalysis.section.sectionTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'overview',
-      title: messages.overview.sectionTitle,
-      children: [],
     }),
   ],
 })
