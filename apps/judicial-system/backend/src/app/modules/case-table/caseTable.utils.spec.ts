@@ -16,6 +16,7 @@ import {
   canDeleteIndictmentCase,
   canDeleteRequestCase,
   getActionOnRowClick,
+  getAttributes,
   getContextMenuActions,
   isMyCase,
 } from './caseTable.utils'
@@ -43,6 +44,29 @@ const defenceUser = (nationalId: string): User =>
   } as User)
 
 describe('caseTable.utils', () => {
+  describe('getAttributes', () => {
+    // canCancelAppeal only sees the attributes fetched for the user's role,
+    // so every case column it reads must be listed here
+    it('fetches all case attributes canCancelAppeal reads for prosecution users', () => {
+      const attributes = getAttributes([], prosecutionUser('p-1'))
+      expect(attributes).toEqual(
+        expect.arrayContaining(['type', 'prosecutorPostponedAppealDate']),
+      )
+    })
+
+    it('fetches all case attributes canCancelAppeal reads for defence users', () => {
+      const attributes = getAttributes([], defenceUser('1111111111'))
+      expect(attributes).toEqual(
+        expect.arrayContaining([
+          'type',
+          'accusedPostponedAppealDate',
+          'prosecutorPostponedAppealDate',
+          'defenderNationalId',
+        ]),
+      )
+    })
+  })
+
   describe('isMyCase', () => {
     it('returns true for prosecution user when they are creating prosecutor', () => {
       const user = prosecutionUser('user-1')

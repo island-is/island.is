@@ -41,7 +41,14 @@ const getAvailableActionsAttributes = (user: User): string[] => {
   }
 
   if (isDefenceUser(user)) {
-    return ['type', 'accusedPostponedAppealDate', 'defenderNationalId']
+    // prosecutorPostponedAppealDate is needed to deny the defence withdrawal
+    // of a shared request case appeal the prosecution is also a party to
+    return [
+      'type',
+      'accusedPostponedAppealDate',
+      'prosecutorPostponedAppealDate',
+      'defenderNationalId',
+    ]
   }
 
   return []
