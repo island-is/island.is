@@ -378,9 +378,31 @@ export const messages = {
         id: 'salaryReport.application:report.dataEntry.downloadTemplateButton',
         defaultMessage: 'Sækja sniðmát',
       },
+      uploadCardTitle: {
+        id: 'salaryReport.application:report.dataEntry.uploadCardTitle',
+        defaultMessage: 'Hlaða upp skjali',
+      },
+      uploadCardDescription: {
+        id: 'salaryReport.application:report.dataEntry.uploadCardDescription',
+        defaultMessage:
+          'Hladdu upp útfylltu Excel-sniðmáti til að flytja öll gögnin inn sjálfkrafa.',
+      },
       uploadButtonLabel: {
         id: 'salaryReport.application:report.dataEntry.uploadButtonLabel',
-        defaultMessage: 'Hlaða upp skjali',
+        defaultMessage: 'Hlaða upp',
+      },
+      manualCardTitle: {
+        id: 'salaryReport.application:report.dataEntry.manualCardTitle',
+        defaultMessage: 'Handvirkur innsláttur',
+      },
+      manualCardDescription: {
+        id: 'salaryReport.application:report.dataEntry.manualCardDescription',
+        defaultMessage:
+          'Sláðu gögnin inn handvirkt. Sjálfgefin viðmið eru forútfyllt og hægt er að breyta þeim.',
+      },
+      manualButtonLabel: {
+        id: 'salaryReport.application:report.dataEntry.manualButtonLabel',
+        defaultMessage: 'Byrja innslátt',
       },
       importSuccess: {
         id: 'salaryReport.application:report.dataEntry.importSuccess',

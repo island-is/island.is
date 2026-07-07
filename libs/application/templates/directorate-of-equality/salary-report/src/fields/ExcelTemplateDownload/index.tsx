@@ -5,26 +5,35 @@ import {
 } from '@island.is/application/graphql'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
+  ActionCard,
   AlertMessage,
   Box,
   Button,
   LoadingDots,
+  Stack,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useMutation } from '@apollo/client'
-import { FC, useRef, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import type {
   ParsedCriterionDto,
   ParsedEmployeeDto,
   ParsedRoleDto,
 } from '@island.is/clients/directorate-of-equality'
-import { DEFAULT_JOB_FACTORS, DEFAULT_SUB_CRITERION } from '../../lib/constants'
+import {
+  DEFAULT_CRITERIA_ANSWERS,
+  DEFAULT_JOB_FACTORS,
+  DEFAULT_SUB_CRITERION,
+} from '../../lib/constants'
 import { messages } from '../../lib/messages'
+
+// The next screen in the flow — both upload and manual entry advance here.
+const NEXT_SCREEN_ID = 'criteriaMultiField'
 
 export const ExcelTemplateDownload: FC<
   React.PropsWithChildren<FieldBaseProps>
-> = ({ application }) => {
+> = ({ application, goToScreen, setBeforeSubmitCallback }) => {
   const { formatMessage, lang: locale } = useLocale()
   const { setValue } = useFormContext()
   const [isImporting, setIsImporting] = useState(false)
@@ -240,6 +249,9 @@ export const ExcelTemplateDownload: FC<
         setValue('employees', employees, { shouldDirty: true })
         setValue('roles', roles, { shouldDirty: true })
         setImportStatus('success')
+
+        // Parsing succeeded — move straight on to the criteria screen.
+        goToScreen?.(NEXT_SCREEN_ID)
       } else {
         setImportStatus('error')
       }
@@ -250,48 +262,106 @@ export const ExcelTemplateDownload: FC<
     }
   }
 
+  // Seed the default job factors so the criteria screen starts populated
+  // instead of empty. Only when there's no data yet — a prior import or manual
+  // entry is left untouched.
+  const seedDefaultCriteriaIfEmpty = async () => {
+    const existingCriteria = getValueViaPath(application.answers, 'criteria')
+    if (existingCriteria) return
+    await updateApplication({
+      variables: {
+        input: {
+          id: application.id,
+          answers: {
+            ...application.answers,
+            criteria: DEFAULT_CRITERIA_ANSWERS,
+          },
+        },
+        locale,
+      },
+    })
+    setValue('criteria', DEFAULT_CRITERIA_ANSWERS)
+  }
+
+  // Manual entry mirrors "continue without a workbook": seed defaults and move on.
+  const handleManualEntry = async () => {
+    await seedDefaultCriteriaIfEmpty()
+    goToScreen?.(NEXT_SCREEN_ID)
+  }
+
+  // Pressing the footer "Halda áfram" behaves the same as manual entry: if the
+  // user has no data yet, seed the defaults before advancing; existing data
+  // (imported or manually entered) is preserved.
+  useEffect(() => {
+    if (!setBeforeSubmitCallback) return
+    setBeforeSubmitCallback(async () => {
+      await seedDefaultCriteriaIfEmpty()
+      return [true, null]
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setBeforeSubmitCallback, application.answers])
+
+  const m = messages.report.dataEntry
+
   return (
     <Box>
-      <Box display="flex" columnGap={3} alignItems="center">
-        {base64Template && (
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".xlsx"
+        style={{ display: 'none' }}
+        onChange={handleFileSelected}
+      />
+
+      {base64Template && (
+        <Box display="flex" justifyContent="flexEnd" marginBottom={3}>
           <Button
             variant="utility"
-            icon="document"
+            icon="download"
             iconType="outline"
             onClick={handleDownload}
           >
-            {formatMessage(messages.report.dataEntry.downloadTemplateButton)}
+            {formatMessage(m.downloadTemplateButton)}
           </Button>
-        )}
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".xlsx"
-          style={{ display: 'none' }}
-          onChange={handleFileSelected}
-        />
-        {isImporting ? (
+        </Box>
+      )}
+
+      {isImporting ? (
+        <Box display="flex" justifyContent="center" paddingY={5}>
           <LoadingDots />
-        ) : (
-          <Button
-            variant="utility"
-            icon="attach"
-            iconType="outline"
-            onClick={() => fileInputRef.current?.click()}
-          >
-            {formatMessage(messages.report.dataEntry.uploadButtonLabel)}
-          </Button>
-        )}
-      </Box>
-      {importStatus && (
+        </Box>
+      ) : (
+        <Stack space={2}>
+          <ActionCard
+            backgroundColor="white"
+            heading={formatMessage(m.uploadCardTitle)}
+            text={formatMessage(m.uploadCardDescription)}
+            cta={{
+              label: formatMessage(m.uploadButtonLabel),
+              variant: 'primary',
+              icon: 'attach',
+              onClick: () => fileInputRef.current?.click(),
+            }}
+          />
+          <ActionCard
+            backgroundColor="white"
+            heading={formatMessage(m.manualCardTitle)}
+            text={formatMessage(m.manualCardDescription)}
+            cta={{
+              label: formatMessage(m.manualButtonLabel),
+              variant: 'primary',
+              icon: 'arrowForward',
+              onClick: handleManualEntry,
+            }}
+          />
+        </Stack>
+      )}
+
+      {importStatus === 'error' && (
         <Box marginTop={3}>
           <AlertMessage
-            type={importStatus === 'success' ? 'success' : 'error'}
-            message={formatMessage(
-              importStatus === 'success'
-                ? messages.report.dataEntry.importSuccess
-                : messages.report.dataEntry.importError,
-            )}
+            type="error"
+            message={formatMessage(m.importError)}
           />
         </Box>
       )}
