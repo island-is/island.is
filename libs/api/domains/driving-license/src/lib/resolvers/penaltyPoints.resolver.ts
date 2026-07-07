@@ -29,8 +29,10 @@ export class PenaltyPointsResolver {
     return this.penaltyPointsService.getPenaltyPointDetails(user)
   }
 
-  @ResolveField('isDeprived', () => Boolean)
-  async resolveIsDeprived(@CurrentUser() user: User): Promise<boolean> {
+  @ResolveField('isDeprived', () => Boolean, { nullable: true })
+  async resolveIsDeprived(
+    @CurrentUser() user: User,
+  ): Promise<boolean | undefined> {
     return this.penaltyPointsService.getIsDeprived(user)
   }
 }

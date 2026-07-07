@@ -36,11 +36,11 @@ export class PenaltyPointsService {
     }
   }
 
-  async getIsDeprived(user: User): Promise<boolean> {
+  async getIsDeprived(user: User): Promise<boolean | undefined> {
     const isBelowThreshold =
       await this.penaltyPointsClientService.penaltyPointsDrivingLicenseApplicationIsBelowThreshold(
         user,
       )
-    return !isBelowThreshold
+    return isBelowThreshold === undefined ? undefined : !isBelowThreshold
   }
 }
