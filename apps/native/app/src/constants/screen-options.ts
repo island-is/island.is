@@ -1,7 +1,25 @@
-import { StackScreenProps } from 'expo-router'
+import { router, StackScreenProps } from 'expo-router'
+import { NativeStackHeaderItem } from '@react-navigation/native-stack'
 import { Platform } from 'react-native'
 import { navbarCloseItem, spacingItem } from '../components/navbar/navbar-items'
 import { theme } from '../ui'
+
+export const blueBackItem = ({
+  canGoBack,
+}: {
+  canGoBack?: boolean
+}): NativeStackHeaderItem[] =>
+  canGoBack
+    ? [
+        {
+          type: 'button',
+          label: '',
+          icon: { type: 'sfSymbol', name: 'chevron.backward' },
+          tintColor: theme.color.blue400,
+          onPress: () => router.back(),
+        },
+      ]
+    : []
 
 export const tabScreenOptions: StackScreenProps['options'] = {
   headerShown: true,
@@ -12,6 +30,8 @@ export const tabScreenOptions: StackScreenProps['options'] = {
       : undefined,
   headerShadowVisible: false,
   headerBackButtonDisplayMode: 'minimal',
+  headerBackVisible: false,
+  unstable_headerLeftItems: blueBackItem,
 }
 
 export const modalScreenOptions: StackScreenProps['options'] = {
