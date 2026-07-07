@@ -8,7 +8,10 @@ import { AdministrationOfOccupationalSafetyAndHealthModule } from '@island.is/ap
 import { AirDiscountSchemeModule } from '@island.is/api/domains/air-discount-scheme'
 import { AircraftRegistryModule } from '@island.is/api/domains/aircraft-registry'
 import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
-import { ApplicationModule } from '@island.is/api/domains/application'
+import {
+  ApplicationModule,
+  ApplicationTranslationConfig,
+} from '@island.is/api/domains/application'
 import { AssetsModule } from '@island.is/api/domains/assets'
 import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { AuthAdminModule } from '@island.is/api/domains/auth-admin'
@@ -172,6 +175,10 @@ import { WorkMachinesClientConfig } from '@island.is/clients/work-machines'
 import { SeminarsClientConfig } from '@island.is/clients/seminars-ver'
 import { CmsModule, PowerBiConfig } from '@island.is/cms'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
+import {
+  ApplicationTranslationHttpConfig,
+  ApplicationTranslationHttpModule,
+} from '@island.is/islandis-translations'
 import { FileStorageConfig } from '@island.is/file-storage'
 import { AuditModule } from '@island.is/nest/audit'
 import { DocumentsClientV2Config } from '@island.is/clients/documents-v2'
@@ -340,6 +347,7 @@ const environment = getConfig
       documentProviderAdmins: environment.documentProviderService
         .documentProviderAdmins as string,
     }),
+    ApplicationTranslationHttpModule,
     CmsTranslationsModule,
     TerminusModule,
     HealthInsuranceModule,
@@ -550,6 +558,8 @@ const environment = getConfig
         BankInfoClientConfig,
         LandspitaliApiModuleConfig,
         CourseChargesConfig,
+        ApplicationTranslationConfig,
+        ApplicationTranslationHttpConfig,
         RecyclingFundClientConfig,
         CustomsGeneralClientConfig,
       ],

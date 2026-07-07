@@ -1,0 +1,341 @@
+# Full node selection without `children` (nested via fragment spreads) so `MULTI_FIELD` →
+# `TABLE_REPEATER` / `FIELDS_REPEATER` / `EXTERNAL_DATA_PROVIDER` can resolve deeper than one level.
+fragment ScreenIntrospectionNodeFields on ScreenIntrospectionGql {
+  id
+  type
+  component
+  title
+  description
+  pageTitle
+  subTitle
+  subDescription
+  checkboxLabel
+  width
+  space
+  marginTop
+  marginBottom
+  paddingTop
+  titleVariant
+  displayLabelMessageId
+  displaySuffixMessageId
+  displayLabelStatic
+  displaySuffixStatic
+  messageDescriptors {
+    id
+    defaultMessage
+    description
+  }
+  radioOptions {
+    value
+    labelMessageId
+    labelDefaultMessage
+  }
+  radioLargeButtons
+  radioBackgroundColor
+  checkboxOptions {
+    value
+    labelMessageId
+    labelDefaultMessage
+  }
+  checkboxLarge
+  checkboxStrong
+  checkboxBackgroundColor
+  checkboxSpacing
+  inputBackgroundColor
+  textFieldVariant
+  textFieldRows
+  inputPlaceholder
+  imageUrl
+  imageSvgComponentName
+  imageAlt
+  imageWidth
+  imagePosition
+  tableRepeaterColumnHeaders {
+    id
+    defaultMessage
+    description
+  }
+  tableRepeaterFormTitle
+  tableRepeaterAddItemButtonText
+  tableRepeaterCancelButtonText
+  tableRepeaterSaveItemButtonText
+  fieldsRepeaterFormTitle
+  fieldsRepeaterAddItemButtonText
+  fieldsRepeaterRemoveItemButtonText
+  nationalIdWithNameCustomNationalIdLabelText
+  nationalIdWithNameCustomNameLabelText
+  nationalIdWithNameShowPhoneField
+  nationalIdWithNameShowEmailField
+  nationalIdWithNamePhoneLabelText
+  nationalIdWithNameEmailLabelText
+  staticTableHeaderDescriptors {
+    id
+    defaultMessage
+    description
+  }
+  staticTableRowCellDescriptors {
+    id
+    defaultMessage
+    description
+  }
+  staticTableColumnCount
+  staticTableRowCount
+  staticTableHeaderFromFunction
+  staticTableRowsFromFunction
+  staticTableTitleVariant
+  staticTableSummary {
+    label {
+      id
+      defaultMessage
+      description
+    }
+    value {
+      id
+      defaultMessage
+      description
+    }
+  }
+  alertType
+  alertMessage
+  fileUploadHeader
+  fileUploadDescription
+  fileUploadButtonLabel
+  fileUploadIntroduction
+  linkFieldLinkText
+  linkFieldLinkMessageId
+  linkFieldS3KeyText
+  linkFieldS3KeyMessageId
+  linkFieldTitleMessageId
+  linkFieldVariant
+  linkFieldJustifyContent
+  linkFieldIcon
+  linkFieldIconType
+  messageWithLinkUrl
+  messageWithLinkMessageStatic
+  messageWithLinkMessageId
+  messageWithLinkButtonTitleStatic
+  messageWithLinkButtonTitleMessageId
+  messageWithLinkMessageColor
+  submitPlacement
+  submitActions {
+    event
+    labelMessageId
+    labelDefaultMessage
+    buttonType
+  }
+}
+
+query getApplicationTemplateList {
+  applicationTemplateList {
+    typeId
+    name
+    slug
+    translationNamespaces
+  }
+}
+
+query getApplicationSharedNamespaceList {
+  applicationSharedNamespaceList {
+    namespace
+    usedByCount
+    usedByTypeIds
+  }
+}
+
+query getApplicationSharedNamespaceIntrospection($namespace: String!) {
+  applicationSharedNamespaceIntrospection(namespace: $namespace) {
+    namespace
+    messageDescriptors {
+      id
+      defaultMessage
+      description
+    }
+  }
+}
+
+query getApplicationTranslationAllStatus {
+  applicationTranslationAllStatus {
+    namespace
+    total
+    translatedEn
+    untranslatedEn
+    reviewed
+  }
+}
+
+query getApplicationTranslations($namespace: String!) {
+  applicationTranslations(namespace: $namespace) {
+    id
+    namespace
+    messageKey
+    valueIs
+    valueEn
+    draftValueIs
+    draftValueEn
+    defaultMessage
+    isReviewed
+    translatedBy
+    reviewedBy
+    created
+    modified
+  }
+}
+
+query getApplicationTemplateRoleForm(
+  $typeId: String!
+  $stateKey: String!
+  $roleId: String!
+) {
+  applicationTemplateRoleForm(
+    typeId: $typeId
+    stateKey: $stateKey
+    roleId: $roleId
+  )
+}
+
+query getApplicationTemplateIntrospection($typeId: String!) {
+  applicationTemplateIntrospection(typeId: $typeId) {
+    typeId
+    name
+    slug
+    translationNamespaces
+    states {
+      stateKey
+      stateName
+      status
+      roles {
+        roleId
+        form {
+          id
+          title
+          logoKey
+          sections {
+            id
+            title
+            titleMessageDescriptor {
+              id
+              defaultMessage
+              description
+            }
+            subSections {
+              id
+              title
+              titleMessageDescriptor {
+                id
+                defaultMessage
+                description
+              }
+              screens {
+                ...ScreenIntrospectionNodeFields
+                children {
+                  ...ScreenIntrospectionNodeFields
+                  children {
+                    ...ScreenIntrospectionNodeFields
+                    children {
+                      ...ScreenIntrospectionNodeFields
+                    }
+                  }
+                }
+              }
+            }
+            screens {
+              ...ScreenIntrospectionNodeFields
+              children {
+                ...ScreenIntrospectionNodeFields
+                children {
+                  ...ScreenIntrospectionNodeFields
+                  children {
+                    ...ScreenIntrospectionNodeFields
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    allMessageDescriptors {
+      id
+      defaultMessage
+      description
+    }
+    validationMessageDescriptors {
+      id
+      defaultMessage
+      description
+      fieldPath
+    }
+  }
+}
+
+mutation updateApplicationTranslation(
+  $input: UpdateApplicationTranslationInput!
+) {
+  updateApplicationTranslation(input: $input) {
+    id
+    namespace
+    messageKey
+    valueIs
+    valueEn
+    isReviewed
+  }
+}
+
+mutation bulkUpdateApplicationTranslations(
+  $input: BulkUpdateApplicationTranslationsInput!
+) {
+  bulkUpdateApplicationTranslations(input: $input) {
+    id
+    namespace
+    messageKey
+    valueIs
+    valueEn
+    isReviewed
+  }
+}
+
+mutation reviewApplicationTranslation($id: String!) {
+  reviewApplicationTranslation(id: $id) {
+    id
+    isReviewed
+  }
+}
+
+mutation googleTranslateStrings($input: GoogleTranslateStringsInput!) {
+  googleTranslateStrings(input: $input) {
+    translations
+  }
+}
+
+mutation publishApplicationTranslations($input: PublishTranslationsInput!) {
+  publishApplicationTranslations(input: $input) {
+    id
+    namespace
+    publishedBy
+    actorNationalId
+    publishedAt
+    note
+  }
+}
+
+query getApplicationTranslationPublishHistory($namespace: String!) {
+  applicationTranslationPublishHistory(namespace: $namespace) {
+    id
+    namespace
+    publishedBy
+    actorNationalId
+    publishedAt
+    note
+  }
+}
+
+mutation rollbackApplicationTranslations($input: RollbackTranslationsInput!) {
+  rollbackApplicationTranslations(input: $input) {
+    id
+    namespace
+    publishedBy
+    actorNationalId
+    publishedAt
+    note
+  }
+}

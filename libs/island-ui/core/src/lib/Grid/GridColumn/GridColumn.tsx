@@ -60,7 +60,6 @@ export const GridColumn: FC<React.PropsWithChildren<GridColumnProps>> = ({
         hiddenOnXl ? 'none' : 'block',
       ]}
       className={cn(
-        className,
         styles.base,
         span !== undefined &&
           resolveResponsiveProp(
@@ -89,6 +88,7 @@ export const GridColumn: FC<React.PropsWithChildren<GridColumnProps>> = ({
             styles.orderLg,
             styles.orderXl,
           ),
+        className,
       )}
     >
       {children}
