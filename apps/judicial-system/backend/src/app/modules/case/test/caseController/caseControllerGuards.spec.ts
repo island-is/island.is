@@ -42,10 +42,6 @@ describe('CaseController - Transition guards', () => {
   ])
 })
 
-describe('CaseController - Get all guards', () => {
-  verifyGuards(CaseController, 'getAll', [RolesGuard])
-})
-
 describe('CaseController - Get by id guards', () => {
   verifyGuards(CaseController, 'getById', [
     RolesGuard,

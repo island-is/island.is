@@ -28,6 +28,7 @@ import {
   IndictmentDecision,
   IndictmentSubtypeMap,
   isCourtOfAppealsUser,
+  isDefenceUser,
   isDistrictCourtUser,
   isPrisonSystemUser,
   isProsecutionUser,
@@ -219,6 +220,7 @@ const generateRequestCaseStateTag = (
 const generateIndictmentRulingDecisionTag = (
   c: Case,
   user: TUser,
+  includeAppealState = true,
 ): CaseTableCell<TagValue | TagGroupValue> => {
   const createCell = (
     tag: TagValue,
@@ -257,6 +259,10 @@ const generateIndictmentRulingDecisionTag = (
     case CaseIndictmentRulingDecision.MERGE:
       return createCell({ color: 'rose', text: 'Sameinað' }, 'I')
     case CaseIndictmentRulingDecision.DISMISSAL: {
+      if (!includeAppealState) {
+        return createCell({ color: 'blue', text: 'Frávísun' }, 'J')
+      }
+
       const appealCell = generateAppealStateTag(c, user)
 
       return createCell(
@@ -439,7 +445,7 @@ const generateCaseNumberSortValue = (
   if (isProsecutionUser(user)) {
     return getPoliceCaseNumberSortValue(policeCaseNumber)
   }
-  if (isDistrictCourtUser(user)) {
+  if (isDistrictCourtUser(user) || isDefenceUser(user)) {
     return `${getCourtCaseNumberSortValue(
       courtCaseNumber,
     )}${getPoliceCaseNumberSortValue(policeCaseNumber)}`
@@ -1100,6 +1106,24 @@ const indictmentRulingDecision: CaseTableCellGenerator<
       : generateCell(),
 }
 
+// Used on tables with a separate appeal state column to avoid showing the
+// appeal state twice
+const indictmentRulingDecisionWithoutAppealState: CaseTableCellGenerator<
+  TagValue | TagGroupValue
+> = {
+  attributes: ['state', 'indictmentRulingDecision'],
+  includes: {
+    defendants: {
+      attributes: [],
+      includes: { verdicts: { attributes: ['isDefaultJudgement'] } },
+    },
+  },
+  generate: (c: Case, user: TUser): CaseTableCell<TagValue | TagGroupValue> =>
+    completedIndictmentCaseStates.includes(c.state)
+      ? generateIndictmentRulingDecisionTag(c, user, false)
+      : generateCell(),
+}
+
 const indictmentReviewDecision: CaseTableCellGenerator<TagGroupValue> = {
   attributes: ['indictmentRulingDecision'],
   includes: {
@@ -1176,4 +1200,5 @@ export const caseTableCellGenerators: Record<
   indictmentCaseState,
   indictmentArraignmentDate,
   indictmentRulingDecision,
+  indictmentRulingDecisionWithoutAppealState,
 }
