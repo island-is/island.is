@@ -9,8 +9,11 @@ import type {
   ParsedEmployeeDto,
 } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
-import { type Employee } from '../../lib/constants'
-import { buildStepMetaByTitle } from '../JobClassificationEditor/utils'
+import { type Employee, type SubCriterion } from '../../lib/constants'
+import {
+  buildStepMetaByTitle,
+  buildStepMetaFromSubCriteria,
+} from '../JobClassificationEditor/utils'
 import { EmployeeClassificationRow } from './EmployeeClassificationRow'
 
 const FIELD_NAME = 'employees'
@@ -28,7 +31,13 @@ export const EmployeeClassificationEditor: FC<
       'parsedSalaryReport.data.criteria',
       [],
     ) ?? []) as ParsedCriterionDto[]
-    return buildStepMetaByTitle(criteria)
+    const fromExternal = buildStepMetaByTitle(criteria)
+    if (Object.keys(fromExternal).length > 0) return fromExternal
+    // External data unavailable (stale right after import) — fall back to the
+    // sub-criteria in answers so the step dropdowns still render options.
+    const subCriteria = (getValueViaPath(application.answers, 'subCriteria', {}) ??
+      {}) as { jobFactors?: SubCriterion[][]; personalFactors?: SubCriterion[][] }
+    return buildStepMetaFromSubCriteria(subCriteria)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
