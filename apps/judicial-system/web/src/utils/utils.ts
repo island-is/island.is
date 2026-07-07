@@ -507,25 +507,87 @@ export const hasAcceptedRulingOrderInCourt = (
     ?.decision === CaseAppealDecision.ACCEPT
 
 /**
- * True iff the current user's party appealed this ruling order in court and has
- * not yet withdrawn - i.e. the user may withdraw its appeal. Mirrors the backend
- * (appealCase.helpers.userHasActiveInCourtAppeal).
+ * Every in-court appeal decision for this ruling that belongs to a party the
+ * current user confirmedly acts for: the prosecution's decision, or - for a
+ * defence user - the decision of every defendant / civil claimant they are the
+ * confirmed representative of. Unlike findUserRulingOrderAppealDecision (a single
+ * party) this covers a lawyer with several clients. Mirrors the backend helper
+ * (appealCase.helpers.userRulingOrderAppealDecisions).
+ */
+const userRulingOrderAppealDecisions = (
+  workingCase: Case,
+  user: User | undefined,
+  rulingFileId: string,
+) => {
+  if (!user) {
+    return []
+  }
+
+  const decisions = (workingCase.appealDecisions ?? []).filter(
+    (decision) => decision.rulingFileId === rulingFileId,
+  )
+
+  if (isProsecutionUser(user)) {
+    return decisions.filter(
+      (decision) => decision.partyRole === AppealDecisionPartyRole.PROSECUTOR,
+    )
+  }
+
+  if (!isDefenceUser(user)) {
+    return []
+  }
+
+  return decisions.filter((decision) => {
+    if (
+      decision.partyRole === AppealDecisionPartyRole.DEFENDANT &&
+      decision.defendantId
+    ) {
+      return Boolean(
+        workingCase.defendants?.some(
+          (d) =>
+            d.id === decision.defendantId &&
+            d.isDefenderChoiceConfirmed &&
+            d.defenderNationalId === user.nationalId,
+        ),
+      )
+    }
+
+    if (
+      decision.partyRole === AppealDecisionPartyRole.CIVIL_CLAIMANT &&
+      decision.civilClaimantId
+    ) {
+      return Boolean(
+        workingCase.civilClaimants?.some(
+          (c) =>
+            c.id === decision.civilClaimantId &&
+            c.hasSpokesperson &&
+            c.isSpokespersonConfirmed &&
+            c.spokespersonNationalId === user.nationalId,
+        ),
+      )
+    }
+
+    return false
+  })
+}
+
+/**
+ * True iff any party the current user acts for appealed this ruling order in
+ * court and has not yet withdrawn - i.e. the user may withdraw its appeal.
+ * Resolves across every represented party, so a lawyer with several clients may
+ * withdraw as long as at least one of them still has a standing in-court appeal.
+ * Mirrors the backend (appealCase.helpers.userHasActiveInCourtAppeal).
  */
 export const userHasActiveInCourtAppeal = (
   workingCase: Case,
   user: User | undefined,
   rulingFileId: string,
-): boolean => {
-  const decision = findUserRulingOrderAppealDecision(
-    workingCase,
-    user,
-    rulingFileId,
+): boolean =>
+  userRulingOrderAppealDecisions(workingCase, user, rulingFileId).some(
+    (decision) =>
+      decision.decision === CaseAppealDecision.APPEAL &&
+      !decision.withdrawnDate,
   )
-
-  return (
-    decision?.decision === CaseAppealDecision.APPEAL && !decision.withdrawnDate
-  )
-}
 
 /**
  * Mirrors the backend's ruling-link reconciliation on the working case so the

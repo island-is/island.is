@@ -821,6 +821,46 @@ describe('Utils', () => {
         userHasActiveInCourtAppeal(workingCase, undefined, rulingFileId),
       ).toBe(false)
     })
+
+    it('is true when one of several represented clients still has a standing appeal', () => {
+      const otherDefendantId = 'defendant-2'
+      // The defender represents two defendants: the first accepted in court, the
+      // second appealed and has not withdrawn. Resolving across all represented
+      // parties, the defender may still withdraw.
+      const workingCase = {
+        defendants: [
+          {
+            id: defendantId,
+            isDefenderChoiceConfirmed: true,
+            defenderNationalId,
+          },
+          {
+            id: otherDefendantId,
+            isDefenderChoiceConfirmed: true,
+            defenderNationalId,
+          },
+        ],
+        civilClaimants: [],
+        appealDecisions: [
+          {
+            partyRole: AppealDecisionPartyRole.DEFENDANT,
+            defendantId,
+            decision: CaseAppealDecision.ACCEPT,
+            rulingFileId,
+          },
+          {
+            partyRole: AppealDecisionPartyRole.DEFENDANT,
+            defendantId: otherDefendantId,
+            decision: CaseAppealDecision.APPEAL,
+            rulingFileId,
+          },
+        ],
+      } as unknown as Case
+
+      expect(
+        userHasActiveInCourtAppeal(workingCase, defenceUser, rulingFileId),
+      ).toBe(true)
+    })
   })
 
   describe('isCurrentAppellantRepresentative', () => {
