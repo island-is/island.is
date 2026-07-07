@@ -869,6 +869,9 @@ export const en: TranslatedMessages = {
   'health.messages.noMessagesText': 'You have no messages.',
   'health.messages.searchPlaceholder': 'Search',
   'health.messages.filter.screenTitle': 'Filter messages',
+  'health.messages.replyButton': 'Reply to message',
+  'health.messages.cannotReply':
+    'You cannot reply to this message because the sender has closed further replies in this conversation.',
 
   // health - organ donation
   'health.organDonation': 'Organ Donation',

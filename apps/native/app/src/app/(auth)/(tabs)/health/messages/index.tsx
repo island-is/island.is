@@ -152,14 +152,23 @@ export default function HealthMessagesScreen() {
           ) : null
         }
         renderItem={({ item }) => (
-          <ListItem
-            title={item.lastSenderGroupName ?? ''}
-            subtitle={item.title ?? ''}
-            date={item.lastMessageSentAt ?? undefined}
-            unread={!item.isRead}
-            starred={item.isStarred}
-            icon={item.hasAttachment ? documentIcon : heartIcon}
-          />
+          <Pressable
+            onPress={() =>
+              router.push({
+                pathname: '/health/messages/[id]',
+                params: { id: item.id },
+              })
+            }
+          >
+            <ListItem
+              title={item.lastSenderGroupName ?? ''}
+              subtitle={item.title ?? ''}
+              date={item.lastMessageSentAt ?? undefined}
+              unread={!item.isRead}
+              starred={item.isStarred}
+              icon={item.hasAttachment ? documentIcon : heartIcon}
+            />
+          </Pressable>
         )}
         ListEmptyComponent={
           messagesRes.loading && !messagesRes.data ? (

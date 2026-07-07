@@ -616,15 +616,24 @@ export default function HealthOverviewScreen() {
               messages.length > 0 && (
                 <View style={{ marginHorizontal: -theme.spacing[2] }}>
                   {messages.slice(0, 3).map((message) => (
-                    <ListItem
+                    <TouchableOpacity
                       key={message.id}
-                      title={message.lastSenderGroupName ?? ''}
-                      subtitle={message.title ?? ''}
-                      date={message.lastMessageSentAt ?? undefined}
-                      unread={!message.isRead}
-                      starred={message.isStarred}
-                      icon={message.hasAttachment ? readerIcon : heartIcon}
-                    />
+                      onPress={() =>
+                        router.navigate({
+                          pathname: '/health/messages/[id]',
+                          params: { id: message.id },
+                        })
+                      }
+                    >
+                      <ListItem
+                        title={message.lastSenderGroupName ?? ''}
+                        subtitle={message.title ?? ''}
+                        date={message.lastMessageSentAt ?? undefined}
+                        unread={!message.isRead}
+                        starred={message.isStarred}
+                        icon={message.hasAttachment ? readerIcon : heartIcon}
+                      />
+                    </TouchableOpacity>
                   ))}
                 </View>
               )}

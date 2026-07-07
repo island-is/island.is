@@ -55,6 +55,13 @@ export default function HealthLayout() {
         }}
       />
       <Stack.Screen
+        name="messages/[id]"
+        options={{
+          title: intl.formatMessage({ id: 'health.messages.screenTitle' }),
+          headerTitleAlign: 'center',
+        }}
+      />
+      <Stack.Screen
         name="questionnaires/index"
         options={{
           title: intl.formatMessage({
