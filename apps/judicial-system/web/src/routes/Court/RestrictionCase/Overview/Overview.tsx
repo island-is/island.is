@@ -285,15 +285,19 @@ export const JudgeOverview = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${DISTRICT_COURT_RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() =>
-            handleNavigationTo(
-              DISTRICT_COURT_RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
-            )
-          }
-          nextIsDisabled={uploadState === UploadState.UPLOADING}
-          nextButtonText={formatMessage(rcCourtOverview.continueButton.label)}
+          actions={[
+            {
+              text: formatMessage(rcCourtOverview.continueButton.label),
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  DISTRICT_COURT_RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+                ),
+              disabled: uploadState === UploadState.UPLOADING,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

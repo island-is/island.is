@@ -11,7 +11,7 @@ import {
   PROSECUTION_RESTRICTION_CASE_POLICE_REPORT_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { isRestrictionCase } from '@island.is/judicial-system/types'
-import { errors } from '@island.is/judicial-system-web/messages'
+import { core, errors } from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
   FormContext,
@@ -330,20 +330,25 @@ export const CaseFiles = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${
             isRestrictionCase(workingCase.type)
               ? PROSECUTION_RESTRICTION_CASE_POLICE_REPORT_ROUTE
               : PROSECUTION_INVESTIGATION_CASE_POLICE_REPORT_ROUTE
           }/${workingCase.id}`}
-          onNextButtonClick={() =>
-            handleNavigationTo(
-              isRestrictionCase(workingCase.type)
-                ? PROSECUTION_RESTRICTION_CASE_OVERVIEW_ROUTE
-                : PROSECUTION_INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
-            )
-          }
-          nextIsDisabled={!stepIsValid}
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  isRestrictionCase(workingCase.type)
+                    ? PROSECUTION_RESTRICTION_CASE_OVERVIEW_ROUTE
+                    : PROSECUTION_INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
+                ),
+              disabled: !stepIsValid,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

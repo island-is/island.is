@@ -501,18 +501,24 @@ export const CourtRecord: FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${DISTRICT_COURT_RESTRICTION_CASE_RULING_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() =>
-            handleNavigationTo(
-              DISTRICT_COURT_RESTRICTION_CASE_CONFIRMATION_ROUTE,
-            )
-          }
-          nextIsDisabled={!stepIsValid}
-          hideNextButton={
+          actions={
             !workingCase.decision ||
             !workingCase.conclusion ||
             !workingCase.ruling
+              ? []
+              : [
+                  {
+                    text: formatMessage(core.continue),
+                    icon: 'arrowForward',
+                    onClick: () =>
+                      handleNavigationTo(
+                        DISTRICT_COURT_RESTRICTION_CASE_CONFIRMATION_ROUTE,
+                      ),
+                    disabled: !stepIsValid,
+                    testId: 'continueButton',
+                  },
+                ]
           }
           infoBoxText={
             !workingCase.decision ||

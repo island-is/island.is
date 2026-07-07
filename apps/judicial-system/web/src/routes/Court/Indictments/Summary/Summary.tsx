@@ -307,10 +307,18 @@ const Summary: FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE}/${workingCase.id}`}
-          nextButtonIcon="checkmark"
-          nextButtonText={formatMessage(strings.nextButtonText)}
-          onNextButtonClick={handleNextButtonClick}
-          hideNextButton={!canUserCompleteCase}
+          actions={
+            !canUserCompleteCase
+              ? []
+              : [
+                  {
+                    text: formatMessage(strings.nextButtonText),
+                    icon: 'checkmark',
+                    onClick: handleNextButtonClick,
+                    testId: 'continueButton',
+                  },
+                ]
+          }
           infoBoxText={
             canUserCompleteCase
               ? ''

@@ -351,13 +351,19 @@ const HearingArrangements = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${DISTRICT_COURT_INVESTIGATION_CASE_OVERVIEW_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() =>
-            handleNavigationTo(DISTRICT_COURT_INVESTIGATION_CASE_RULING_ROUTE)
-          }
-          nextIsDisabled={!stepIsValid}
-          nextButtonText={formatMessage(m.continueButton.label)}
+          actions={[
+            {
+              text: formatMessage(m.continueButton.label),
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  DISTRICT_COURT_INVESTIGATION_CASE_RULING_ROUTE,
+                ),
+              disabled: !stepIsValid,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
       {navigateTo !== undefined && (

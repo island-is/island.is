@@ -140,10 +140,15 @@ const Summary: FC = () => {
                 : `${COURT_OF_APPEAL_RULING_ROUTE}/${workingCase.id}`,
               targetAppealCase?.id,
             )}
-            nextButtonIcon="checkmark"
-            nextButtonText={formatMessage(strings.nextButtonFooter)}
-            onNextButtonClick={async () => await handleNextButtonClick()}
-            nextIsDisabled={isTransitioningAppealCase}
+            actions={[
+              {
+                text: formatMessage(strings.nextButtonFooter),
+                icon: 'checkmark',
+                onClick: async () => await handleNextButtonClick(),
+                disabled: isTransitioningAppealCase,
+                testId: 'continueButton',
+              },
+            ]}
           />
         </FormContentContainer>
         {visibleModal === 'AppealCompleted' && (

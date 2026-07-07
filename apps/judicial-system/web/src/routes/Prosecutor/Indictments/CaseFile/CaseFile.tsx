@@ -8,7 +8,7 @@ import {
   PROSECUTION_INDICTMENT_CASE_CASE_FILES_ROUTE,
   PROSECUTION_INDICTMENT_CASE_POLICE_CASE_FILES_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { titles } from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
   FormContext,
@@ -131,13 +131,20 @@ const CaseFile = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${PROSECUTION_INDICTMENT_CASE_POLICE_CASE_FILES_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() =>
-            handleNavigationTo(PROSECUTION_INDICTMENT_CASE_CASE_FILES_ROUTE)
-          }
-          nextIsLoading={isLoadingWorkingCase}
-          nextIsDisabled={editCount > 0}
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  PROSECUTION_INDICTMENT_CASE_CASE_FILES_ROUTE,
+                ),
+              disabled: editCount > 0,
+              loading: isLoadingWorkingCase,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

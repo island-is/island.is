@@ -173,15 +173,19 @@ const OverviewBody = ({
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={getStandardUserDashboardRoute(user)}
-          nextIsLoading={isLoadingWorkingCase}
-          onNextButtonClick={() =>
-            handleNavigationTo(
-              DISTRICT_COURT_INDICTMENT_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
-            )
-          }
-          nextButtonText={formatMessage(core.continue)}
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  DISTRICT_COURT_INDICTMENT_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
+                ),
+              loading: isLoadingWorkingCase,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </>

@@ -3,48 +3,29 @@ import { style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
 export const formFooter = style({
-  display: 'grid',
-  gap: theme.spacing[2],
-  gridTemplateColumns: '1fr auto',
-
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
-      alignItems: 'center',
-    },
-  },
-})
-
-export const continueButton = style({
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
-      gridColumn: '2',
-      justifySelf: 'end',
-    },
-  },
-})
-
-export const actionButton = style({
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
-      gridColumn: '2',
-    },
-  },
-})
-
-export const buttonContainer = style({
   display: 'flex',
-  gap: theme.spacing[2],
   flexDirection: 'column',
+  gap: theme.spacing[2],
 
   '@media': {
-    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
-      gridColumn: '2',
-      justifyContent: 'flexEnd',
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       flexDirection: 'row',
+      flexWrap: 'wrap',
       alignItems: 'center',
+      justifyContent: 'flex-end',
     },
   },
 })
+
+export const previousButtonContainer = style({
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      marginRight: 'auto',
+    },
+  },
+})
+
+export const actionContainer = style({})
 
 export const infoBoxContainer = style({
   maxWidth: '304px',

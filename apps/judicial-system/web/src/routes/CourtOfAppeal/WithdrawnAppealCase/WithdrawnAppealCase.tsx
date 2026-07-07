@@ -102,17 +102,22 @@ const WithdrawnAppealCase = () => {
             `${COURT_OF_APPEAL_OVERVIEW_ROUTE}/${workingCase.id}`,
             targetAppealCase?.id,
           )}
-          onNextButtonClick={async () => {
-            router.push(
-              appendAppealCaseIdQuery(
-                `${COURT_OF_APPEAL_SUMMARY_ROUTE}/${workingCase.id}`,
-                targetAppealCase?.id,
-              ),
-            )
-          }}
-          nextButtonText={formatMessage(strings.continueButton)}
-          nextIsDisabled={!isStepValid}
-          nextButtonIcon="arrowForward"
+          actions={[
+            {
+              text: formatMessage(strings.continueButton),
+              icon: 'arrowForward',
+              onClick: async () => {
+                router.push(
+                  appendAppealCaseIdQuery(
+                    `${COURT_OF_APPEAL_SUMMARY_ROUTE}/${workingCase.id}`,
+                    targetAppealCase?.id,
+                  ),
+                )
+              },
+              disabled: !isStepValid,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

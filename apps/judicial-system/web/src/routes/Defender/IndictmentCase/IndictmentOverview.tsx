@@ -296,10 +296,7 @@ const IndictmentOverview: FC = () => {
           </div>
         </FormContentContainer>
         <FormContentContainer isFooter>
-          <FormFooter
-            previousUrl={getStandardUserDashboardRoute(user)}
-            hideNextButton
-          />
+          <FormFooter previousUrl={getStandardUserDashboardRoute(user)} />
         </FormContentContainer>
         {appealModals}
       </PageLayout>

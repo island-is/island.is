@@ -325,13 +325,18 @@ const AppealCase: FC = () => {
         <FormContentContainer isFooter>
           <FormFooter
             previousUrl={previousUrl}
-            nextButtonIcon="arrowForward"
-            onNextButtonClick={() => {
-              handleNavigationTo(COURT_OF_APPEAL_RULING_ROUTE)
-            }}
-            nextButtonText={nextButtonText}
-            nextIsLoading={isUpdatingAppealCase}
-            nextIsDisabled={!isCourtOfAppealCaseStepValid(previewAppealCase)}
+            actions={[
+              {
+                text: nextButtonText,
+                icon: 'arrowForward',
+                onClick: () => {
+                  handleNavigationTo(COURT_OF_APPEAL_RULING_ROUTE)
+                },
+                disabled: !isCourtOfAppealCaseStepValid(previewAppealCase),
+                loading: isUpdatingAppealCase,
+                testId: 'continueButton',
+              },
+            ]}
           />
         </FormContentContainer>
       </PageLayout>
