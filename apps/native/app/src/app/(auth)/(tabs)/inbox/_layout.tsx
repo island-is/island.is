@@ -32,6 +32,7 @@ export default function InboxLayout() {
         name="index"
         options={{
           title: intl.formatMessage({ id: 'inbox.screenTitle' }),
+          headerTitleAlign: 'center',
         }}
       />
       <Stack.Screen

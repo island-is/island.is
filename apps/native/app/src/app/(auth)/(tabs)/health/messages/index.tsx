@@ -3,15 +3,15 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import {
   FlatList,
   Image,
-  Platform,
+  ImageSourcePropType,
   Pressable,
   RefreshControl,
   View,
 } from 'react-native'
-import { LiquidGlass } from 'react-native-platform-components'
 import { router } from 'expo-router'
 import { useTheme } from 'styled-components/native'
 
+import composeIcon from '@/assets/icons/compose.png'
 import filterIcon from '@/assets/icons/filter-icon.png'
 import heartIcon from '@/assets/icons/health.png'
 import documentIcon from '@/assets/icons/reader.png'
@@ -78,42 +78,38 @@ export default function HealthMessagesScreen() {
     }
   }, [messagesRes])
 
-  const filterIconImage = (
-    <Image
-      source={filterIcon}
-      resizeMode="contain"
-      style={{ width: 20, height: 20, tintColor: theme.color.blue400 }}
-    />
+  // A single icon segment within the shared header pill.
+  const renderHeaderIconSegment = (
+    icon: ImageSourcePropType,
+    onPress: () => void,
+  ) => (
+    <Pressable
+      onPress={onPress}
+      style={{
+        width: 46,
+        height: 46,
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <Image
+        source={icon}
+        resizeMode="contain"
+        style={{ width: 20, height: 20, tintColor: theme.color.blue400 }}
+      />
+    </Pressable>
   )
-  const filterButton = (
-    <View style={{ width: 46, height: 46 }}>
-      <Pressable onPress={() => router.push('/health/messages/filter')}>
-        {Platform.OS === 'ios' ? (
-          <LiquidGlass
-            cornerRadius={24}
-            ios={{ interactive: true, effect: 'regular' }}
-            style={{
-              width: 46,
-              height: 46,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            {filterIconImage}
-          </LiquidGlass>
-        ) : (
-          <View
-            style={{
-              width: 46,
-              height: 46,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            {filterIconImage}
-          </View>
-        )}
-      </Pressable>
+
+  // The header applies its own (glass on iOS 26) background, so the icons are
+  // rendered plain here to avoid a doubled-up background.
+  const headerActions = (
+    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      {renderHeaderIconSegment(filterIcon, () =>
+        router.push('/health/messages/filter'),
+      )}
+      {renderHeaderIconSegment(composeIcon, () => {
+        // TODO: navigate to the new-message / compose flow once it exists.
+      })}
     </View>
   )
 
@@ -123,13 +119,8 @@ export default function HealthMessagesScreen() {
         networkStatus={messagesRes.networkStatus}
         options={{
           title: intl.formatMessage({ id: 'health.messages.screenTitle' }),
-          headerRightItems: [
-            {
-              type: 'custom',
-              hidesSharedBackground: true,
-              element: filterButton,
-            },
-          ],
+          headerTitleAlign: 'center',
+          headerRight: () => headerActions,
         }}
       />
       <FlatList
