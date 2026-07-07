@@ -530,47 +530,58 @@ export default function InboxScreen() {
     uiStore.setState({ tabsHidden: selectState && !!selectedItems.length })
   }, [selectState, selectedItems.length])
 
-  const renderHeaderIconButton = (
+  const renderHeaderIconSegment = (
     icon: ImageSourcePropType,
     onPress: () => void,
-  ) => {
-    const iconImage = (
+  ) => (
+    <Pressable
+      onPress={onPress}
+      style={{
+        width: 46,
+        height: 46,
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
       <Image
         source={icon}
         resizeMode="contain"
         style={{ width: 20, height: 20, tintColor: theme.color.blue400 }}
       />
-    )
-    return (
-      <Pressable onPress={onPress}>
-        {Platform.OS === 'ios' ? (
-          <LiquidGlass
-            cornerRadius={24}
-            ios={{ interactive: true, effect: 'regular' }}
-            style={{
-              width: 46,
-              height: 46,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            {iconImage}
-          </LiquidGlass>
-        ) : (
-          <View
-            style={{
-              width: 46,
-              height: 46,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            {iconImage}
-          </View>
-        )}
-      </Pressable>
-    )
-  }
+    </Pressable>
+  )
+
+  const renderHeaderActions = (children: React.ReactNode) => (
+    <View style={{ width: 92, height: 46 }}>
+      {Platform.OS === 'ios' ? (
+        <LiquidGlass
+          cornerRadius={24}
+          ios={{ interactive: true, effect: 'regular' }}
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            width: 92,
+            height: 46,
+          }}
+        >
+          {children}
+        </LiquidGlass>
+      ) : (
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            width: 92,
+            height: 46,
+            borderRadius: 24,
+            backgroundColor: theme.color.white,
+          }}
+        >
+          {children}
+        </View>
+      )}
+    </View>
+  )
 
   return (
     <>
@@ -645,17 +656,9 @@ export default function InboxScreen() {
                 {
                   type: 'custom',
                   hidesSharedBackground: true,
-                  element: (
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        gap: 4,
-                        width: 96,
-                        height: 46,
-                      }}
-                    >
-                      {renderHeaderIconButton(filterIcon, () => {
+                  element: renderHeaderActions(
+                    <>
+                      {renderHeaderIconSegment(filterIcon, () => {
                         resetSelectState()
                         inboxFilterStore.setState({
                           availableSenders,
@@ -663,11 +666,11 @@ export default function InboxScreen() {
                         })
                         router.push('/inbox/filter')
                       })}
-                      {renderHeaderIconButton(
+                      {renderHeaderIconSegment(
                         inboxReadIcon,
                         onMarkAllAsReadPress,
                       )}
-                    </View>
+                    </>,
                   ),
                 },
               ],
