@@ -13,14 +13,5 @@ export const MainForm = buildForm({
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  children: [
-    buildSection({
-      id: 'prerequisitesSection',
-      title: messages.prerequisites.section.sectionTitle,
-      children: [],
-    }),
-    aboutTheCompanySection,
-    equalityReportSection,
-    overviewSection,
-  ],
+  children: [aboutTheCompanySection, equalityReportSection, overviewSection],
 })
