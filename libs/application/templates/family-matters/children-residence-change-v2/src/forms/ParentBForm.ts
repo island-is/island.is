@@ -2,6 +2,7 @@ import {
   buildForm,
   buildSection,
   buildCustomField,
+  buildHiddenInput,
   buildMultiField,
   buildSubmitField,
   buildSubSection,
@@ -28,6 +29,15 @@ export const ParentBForm: Form = buildForm({
           component: 'ParentBIntro',
         }),
       ],
+    }),
+    // Keeps numberOfScreens >= 2 while acceptContract is unanswered, so ScreenFooter
+    // doesn't treat parentBIntro as the last screen and hide its continue button.
+    // Drops out of the screen list the moment acceptContract is answered.
+    buildSection({
+      condition: (answers) => answers.acceptContract === undefined,
+      id: 'parentBIntroBridge',
+      title: '',
+      children: [buildHiddenInput({ id: 'parentBIntroBridge' })],
     }),
     buildSection({
       condition: (answers) => answers.acceptContract === YesOrNoEnum.YES,
