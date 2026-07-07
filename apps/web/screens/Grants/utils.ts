@@ -32,11 +32,6 @@ const formatDeadlinePeriod = (
   }
 }
 
-// includeUtcSuffix: only the single grant detail page appends the
-// Contentful-controlled "UTC" suffix — search results / cards must not.
-// The suffix itself only ever attaches to a rendered clock time (hasTime
-// below) — a bare date carries no timezone ambiguity, so it never applies
-// to deadlinePeriod or the date-only status branches.
 export const parseStatus = (
   grant: Grant,
   formatMessage: IntlShape['formatMessage'],
