@@ -25,8 +25,6 @@ export const previousButtonContainer = style({
   },
 })
 
-export const actionContainer = style({})
-
 export const infoBoxContainer = style({
   maxWidth: '304px',
   width: '100%',

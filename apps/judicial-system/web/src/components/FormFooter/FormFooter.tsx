@@ -68,7 +68,7 @@ const FormFooter: FC<Props> = ({
         </Box>
       )}
       {actions?.map((action, index) => (
-        <Box key={index} className={styles.actionContainer}>
+        <Box key={index}>
           <Button
             data-testid={action.testId}
             variant={action.variant ?? 'primary'}
