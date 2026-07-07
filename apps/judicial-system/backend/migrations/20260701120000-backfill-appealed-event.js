@@ -8,9 +8,11 @@
 //
 // The appellant's side is reproduced exactly from the same legacy sources the
 // read still falls back to, so no appeal changes how it is displayed:
-//   1. Case-level appeals (request cases, no ruling file) - side from the
-//      postponed-appeal dates, prosecutor first, voided by an in-court ACCEPT.
-//      Request defence is collective, so no party is attached.
+//   1. Case-level appeals (request cases, no ruling file) - a side appealed if
+//      its postponed-appeal date is set (appealed out of court) or its in-court
+//      decision is APPEAL (appealed in court, where the postponed date is not
+//      set); prosecutor first, voided by an in-court ACCEPT. Request defence is
+//      collective, so no party is attached.
 //   2. Out-of-court ruling-order appeals (a ruling file, no in-court APPEAL
 //      decision) - DEFENDER when appealed_by_national_id is set, else PROSECUTOR.
 //      The defence party (defendant / civil claimant) is resolved from that
@@ -46,7 +48,10 @@ module.exports = {
         FROM appeal_case ac
         JOIN "case" c ON c.id = ac.case_id
         WHERE ac.ruling_file_id IS NULL
-          AND c.prosecutor_postponed_appeal_date IS NOT NULL
+          AND (
+            c.prosecutor_postponed_appeal_date IS NOT NULL
+            OR c.prosecutor_appeal_decision = 'APPEAL'
+          )
           AND c.prosecutor_appeal_decision IS DISTINCT FROM 'ACCEPT'
           AND ${APPEALED_GUARD}
         `,
@@ -63,10 +68,16 @@ module.exports = {
         JOIN "case" c ON c.id = ac.case_id
         WHERE ac.ruling_file_id IS NULL
           AND NOT (
-            c.prosecutor_postponed_appeal_date IS NOT NULL
+            (
+              c.prosecutor_postponed_appeal_date IS NOT NULL
+              OR c.prosecutor_appeal_decision = 'APPEAL'
+            )
             AND c.prosecutor_appeal_decision IS DISTINCT FROM 'ACCEPT'
           )
-          AND c.accused_postponed_appeal_date IS NOT NULL
+          AND (
+            c.accused_postponed_appeal_date IS NOT NULL
+            OR c.accused_appeal_decision = 'APPEAL'
+          )
           AND c.accused_appeal_decision IS DISTINCT FROM 'ACCEPT'
           AND ${APPEALED_GUARD}
         `,
