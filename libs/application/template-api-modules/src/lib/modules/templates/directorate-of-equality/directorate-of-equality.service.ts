@@ -169,6 +169,11 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     )
   }
 
+  // For now this lets the application reach the COMPLETED state.
+  async submitSalaryReport(_props: TemplateApiModuleActionProps) {
+    return { submitted: true }
+  }
+
   async submitEqualityReport({
     auth,
     application,

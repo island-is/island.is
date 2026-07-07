@@ -751,5 +751,40 @@ export const messages = {
       id: 'salaryReport.application:overview.intro',
       defaultMessage: lorem,
     },
+    companyInfo: {
+      id: 'salaryReport.application:overview.companyInfo',
+      defaultMessage: 'Fyrirtæki',
+    },
+    chiefExecutive: {
+      id: 'salaryReport.application:overview.chiefExecutive',
+      defaultMessage: 'Æðsti stjórnandi',
+    },
+    contactPerson: {
+      id: 'salaryReport.application:overview.contactPerson',
+      defaultMessage: 'Tengiliður',
+    },
+    employeeCount: {
+      id: 'salaryReport.application:overview.employeeCount',
+      defaultMessage: 'Fjöldi starfsmanna',
+    },
+    submitButton: {
+      id: 'salaryReport.application:overview.submitButton',
+      defaultMessage: 'Senda inn umsókn',
+    },
+  }),
+
+  completed: defineMessages({
+    sectionTitle: {
+      id: 'salaryReport.application:completed.sectionTitle',
+      defaultMessage: 'Umsókn móttekin',
+    },
+    alertTitle: {
+      id: 'salaryReport.application:completed.alertTitle',
+      defaultMessage: 'Umsókn hefur verið send til Jafnréttisstofu',
+    },
+    alertDescription: {
+      id: 'salaryReport.application:completed.alertDescription',
+      defaultMessage: lorem,
+    },
   }),
 }

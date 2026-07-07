@@ -39,3 +39,11 @@ export const ParsedSalaryReportApi = defineTemplateApi({
   namespace: 'DirectorateOfEquality',
   throwOnError: false,
 })
+
+export const SubmitSalaryReportApi = defineTemplateApi({
+  action: 'submitSalaryReport',
+  externalDataId: 'submitSalaryReport',
+  namespace: 'DirectorateOfEquality',
+  shouldPersistToExternalData: true,
+  throwOnError: true,
+})

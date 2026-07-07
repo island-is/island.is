@@ -8,4 +8,5 @@ export const bootstrapServer = () =>
     appModule: AppModule,
     name: 'application-system-api',
     openApi,
+    jsonBodyLimit: '10mb',
   })

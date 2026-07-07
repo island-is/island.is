@@ -20,6 +20,7 @@ import {
   DoeCompanyApi,
   ImportPresignApi,
   ParsedSalaryReportApi,
+  SubmitSalaryReportApi,
 } from '../dataProviders'
 import { Events, Roles, States } from '../utils/constants'
 import { hasActiveEqualityReport } from '../utils/eligibility'
@@ -153,6 +154,7 @@ const template: ApplicationTemplate<
           progress: 1,
           status: FormModes.COMPLETED,
           lifecycle: DefaultStateLifeCycle,
+          onEntry: SubmitSalaryReportApi,
           roles: [
             {
               id: Roles.APPLICANT,
