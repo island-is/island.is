@@ -46,6 +46,14 @@ export default function HealthLayout() {
         }}
       />
       <Stack.Screen
+        name="messages/filter"
+        options={{
+          title: intl.formatMessage({
+            id: 'health.messages.filter.screenTitle',
+          }),
+        }}
+      />
+      <Stack.Screen
         name="questionnaires/index"
         options={{
           title: intl.formatMessage({

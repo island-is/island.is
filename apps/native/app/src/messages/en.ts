@@ -868,6 +868,7 @@ export const en: TranslatedMessages = {
   'health.messages.noMessagesTitle': 'No messages',
   'health.messages.noMessagesText': 'You have no messages.',
   'health.messages.searchPlaceholder': 'Search',
+  'health.messages.filter.screenTitle': 'Filter messages',
 
   // health - organ donation
   'health.organDonation': 'Organ Donation',

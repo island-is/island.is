@@ -866,6 +866,7 @@ export const is = {
   'health.messages.noMessagesTitle': 'Engin skilaboð',
   'health.messages.noMessagesText': 'Þú ert ekki með nein skilaboð.',
   'health.messages.searchPlaceholder': 'Leita',
+  'health.messages.filter.screenTitle': 'Sía skilaboð',
 
   // health - organ donation
   'health.organDonation': 'Líffæragjöf',
