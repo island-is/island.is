@@ -7,27 +7,27 @@ import {
   buildPhoneField,
   buildRadioField,
   buildSelectField,
-  buildSubSection,
   buildSubmitField,
+  buildSubSection,
   buildTextField,
-  getValueViaPath,
   YES,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { childMessages, prerequisitesMessages } from '../../lib/messages'
+import { isKnowsNationalId, isNoNationalId } from '../../utils/conditionUtils'
 import {
   KnowsNationalId,
   NoNationalIdReason,
   Pronoun,
 } from '../../utils/constants'
-import { isKnowsNationalId, isNoNationalId } from '../../utils/conditionUtils'
+import { getApplicationAnswers } from '../../utils/getApplicationAnswers'
 
 export const childSubSection = buildSubSection({
-  id: 'nationalIdLookupSubSection',
+  id: 'childSubSection',
   title: childMessages.shared.sectionTitle,
   children: [
     buildMultiField({
-      id: 'nationalIdLookup',
+      id: 'child',
       title: childMessages.shared.sectionTitle,
       description: childMessages.nationalIdLookup.description,
       children: [
@@ -120,12 +120,9 @@ export const childSubSection = buildSubSection({
           doesNotRequireAnswer: true,
           condition: (answers) =>
             isKnowsNationalId(answers) &&
-            (
-              getValueViaPath<string[]>(
-                answers,
-                'child.nationalIdInfo.usePronounAndPreferredName',
-              ) ?? []
-            ).includes(YES),
+            getApplicationAnswers(
+              answers,
+            ).childUsePronounAndPreferredName?.includes(YES),
         }),
         buildSelectField({
           id: 'child.nationalIdInfo.preferredPronoun',
@@ -133,6 +130,7 @@ export const childSubSection = buildSubSection({
           placeholder:
             childMessages.nationalIdLookup.preferredPronounPlaceholder,
           doesNotRequireAnswer: true,
+          isMulti: true,
           options: [
             {
               value: Pronoun.HANN,
@@ -149,12 +147,9 @@ export const childSubSection = buildSubSection({
           ],
           condition: (answers) =>
             isKnowsNationalId(answers) &&
-            (
-              getValueViaPath<string[]>(
-                answers,
-                'child.nationalIdInfo.usePronounAndPreferredName',
-              ) ?? []
-            ).includes(YES),
+            getApplicationAnswers(
+              answers,
+            ).childUsePronounAndPreferredName?.includes(YES),
         }),
         buildAlertMessageField({
           id: 'child.fetchedDataInfo',
@@ -162,7 +157,7 @@ export const childSubSection = buildSubSection({
           message: childMessages.nationalIdLookup.fetchedDataInfo,
           condition: (answers) =>
             isKnowsNationalId(answers) &&
-            !!getValueViaPath(answers, 'child.nationalIdInfo.name'),
+            !!getApplicationAnswers(answers).childName,
         }),
         buildSubmitField({
           id: 'submit',

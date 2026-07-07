@@ -5,7 +5,6 @@ import {
   buildSection,
   buildSelectField,
   buildTextField,
-  getValueViaPath,
   YES,
 } from '@island.is/application/core'
 import {
@@ -13,8 +12,9 @@ import {
   getAllLanguageCodes,
 } from '@island.is/shared/utils'
 import { childMessages } from '../../lib/messages'
-import { Gender, Pronoun } from '../../utils/constants'
 import { isNoNationalId } from '../../utils/conditionUtils'
+import { Gender, Pronoun } from '../../utils/constants'
+import { getApplicationAnswers } from '../../utils/getApplicationAnswers'
 
 export const childInfoManualSection = buildSection({
   id: 'childInfoManualSection',
@@ -79,12 +79,9 @@ export const childInfoManualSection = buildSection({
           doesNotRequireAnswer: true,
           condition: (answers) =>
             isNoNationalId(answers) &&
-            (
-              getValueViaPath<string[]>(
-                answers,
-                'child.manualInfo.usePronounAndPreferredName',
-              ) ?? []
-            ).includes(YES),
+            getApplicationAnswers(
+              answers,
+            ).childManualUsePronounAndPreferredName?.includes(YES),
         }),
         buildSelectField({
           id: 'child.manualInfo.preferredPronoun',
@@ -92,6 +89,7 @@ export const childInfoManualSection = buildSection({
           placeholder:
             childMessages.nationalIdLookup.preferredPronounPlaceholder,
           doesNotRequireAnswer: true,
+          isMulti: true,
           options: [
             {
               value: Pronoun.HANN,
@@ -108,12 +106,9 @@ export const childInfoManualSection = buildSection({
           ],
           condition: (answers) =>
             isNoNationalId(answers) &&
-            (
-              getValueViaPath<string[]>(
-                answers,
-                'child.manualInfo.usePronounAndPreferredName',
-              ) ?? []
-            ).includes(YES),
+            getApplicationAnswers(
+              answers,
+            ).childManualUsePronounAndPreferredName?.includes(YES),
         }),
         buildDescriptionField({
           id: 'childInfoManual.addressTitle',

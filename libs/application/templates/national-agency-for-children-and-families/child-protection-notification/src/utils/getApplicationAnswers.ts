@@ -1,6 +1,7 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YesOrNo } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { Parent } from './types'
+import { KnowsNationalId } from './constants'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const serviceProviderService = getValueViaPath<string>(
@@ -58,7 +59,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'serviceProvider.contactPersonWorkPhone',
   )
 
-  const childKnowsNationalId = getValueViaPath<string>(
+  const childKnowsNationalId = getValueViaPath<KnowsNationalId>(
     answers,
     'child.knowsNationalId',
   )
@@ -88,20 +89,22 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'child.nationalIdInfo.email',
   )
 
-  const childUsePronounAndPreferredName = getValueViaPath<string[]>(
-    answers,
-    'child.nationalIdInfo.usePronounAndPreferredName',
-  )
+  const childUsePronounAndPreferredName =
+    getValueViaPath<string[]>(
+      answers,
+      'child.nationalIdInfo.usePronounAndPreferredName',
+    ) ?? []
 
   const childPreferredName = getValueViaPath<string>(
     answers,
     'child.nationalIdInfo.preferredName',
   )
 
-  const childPreferredPronoun = getValueViaPath<string>(
-    answers,
-    'child.nationalIdInfo.preferredPronoun',
-  )
+  const childPreferredPronoun =
+    getValueViaPath<string[]>(
+      answers,
+      'child.nationalIdInfo.preferredPronoun',
+    ) ?? []
 
   const childManualName = getValueViaPath<string>(
     answers,
@@ -118,20 +121,20 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'child.manualInfo.gender',
   )
 
-  const childManualUsePronounAndPreferredName = getValueViaPath<string[]>(
-    answers,
-    'child.manualInfo.usePronounAndPreferredName',
-  )
+  const childManualUsePronounAndPreferredName =
+    getValueViaPath<string[]>(
+      answers,
+      'child.manualInfo.usePronounAndPreferredName',
+    ) ?? []
 
   const childManualPreferredName = getValueViaPath<string>(
     answers,
     'child.manualInfo.preferredName',
   )
 
-  const childManualPreferredPronoun = getValueViaPath<string>(
-    answers,
-    'child.manualInfo.preferredPronoun',
-  )
+  const childManualPreferredPronoun =
+    getValueViaPath<string[]>(answers, 'child.manualInfo.preferredPronoun') ??
+    []
 
   const childManualCountry = getValueViaPath<string>(
     answers,
@@ -158,12 +161,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'child.manualInfo.language',
   )
 
-  const childManualNeedsInterpreter = getValueViaPath<string[]>(
-    answers,
-    'child.manualInfo.needsInterpreter',
-  )
+  const childManualNeedsInterpreter =
+    getValueViaPath<string[]>(answers, 'child.manualInfo.needsInterpreter') ??
+    []
 
-  const expectantParentsKnowsNationalIds = getValueViaPath<string>(
+  const expectantParentsKnowsNationalIds = getValueViaPath<YesOrNo>(
     answers,
     'expectantParents.knowsParentNationalIds',
   )

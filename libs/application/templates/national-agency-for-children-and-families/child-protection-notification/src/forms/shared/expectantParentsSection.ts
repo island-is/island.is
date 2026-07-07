@@ -9,8 +9,7 @@ import {
   buildRadioField,
   buildSection,
   buildSelectField,
-  buildTextField,
-  getValueViaPath,
+  buildTextField
 } from '@island.is/application/core'
 import { getAllCountryCodes } from '@island.is/shared/utils'
 import {
@@ -18,12 +17,13 @@ import {
   expectantParentsMessages,
   sharedMessages,
 } from '../../lib/messages'
-import { ParentGender } from '../../utils/constants'
 import {
   doesNotKnowParentIds,
   isUnborn,
   knowsParentIds,
 } from '../../utils/conditionUtils'
+import { ParentGender } from '../../utils/constants'
+import { getApplicationAnswers } from '../../utils/getApplicationAnswers'
 
 const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
   const base = `expectantParents.${parentKey}`
@@ -223,15 +223,14 @@ export const expectantParentsSection = buildSection({
           id: 'expectantParents.fetchedDataInfo',
           alertType: 'info',
           message: expectantParentsMessages.fetchedDataInfo,
-          condition: (answers) =>
-            !!getValueViaPath(
-              answers,
-              'expectantParents.parent1.nationalIdInfo.name',
-            ) ||
-            !!getValueViaPath(
-              answers,
-              'expectantParents.parent2.nationalIdInfo.name',
-            ),
+          condition: (answers) => {
+            const { parent1, parent2 } = getApplicationAnswers(answers)
+            return (
+              knowsParentIds(answers) &&
+              (!!parent1?.nationalIdInfo?.name ||
+                !!parent2?.nationalIdInfo?.name)
+            )
+          },
         }),
       ],
     }),
