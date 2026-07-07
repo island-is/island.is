@@ -182,8 +182,11 @@ export const buildInCourtAppealedEvent = (params: {
 // withdrawal state is on the decision row (see userHasActiveInCourtAppeal), which
 // the event log only catches up to on session confirmation.
 export const userIsAppellant = (
-  theCase: Case,
-  appealCase: AppealCase,
+  theCase: Pick<
+    Case,
+    'type' | 'defenderNationalId' | 'defendants' | 'civilClaimants'
+  >,
+  appealCase: Pick<AppealCase, 'appealEventLogs'>,
   user: User,
 ): boolean => {
   const appealedEvents = (appealCase.appealEventLogs ?? []).filter(
@@ -244,4 +247,40 @@ export const userIsAppellant = (
 
     return false
   })
+}
+
+// Whether the user may withdraw a case-level appeal (request case or dismissed
+// indictment). Being an appellant (userIsAppellant) is necessary but not
+// sufficient for the defence on a request case: a request case has a single
+// collective appeal, and the prosecution's appeal takes precedence, so the
+// defence cannot withdraw a shared appeal the prosecution also made - only the
+// prosecution can. This precedence is specific to withdrawal (the defence is
+// still a full appellant for everything else, e.g. file access), so it lives
+// here rather than in userIsAppellant, and is used by both the withdrawal guard
+// and the case tables' cancel-appeal action so they stay in sync.
+export const canWithdrawCaseLevelAppeal = (
+  theCase: Pick<
+    Case,
+    'type' | 'defenderNationalId' | 'defendants' | 'civilClaimants'
+  >,
+  appealCase: Pick<AppealCase, 'appealEventLogs'>,
+  user: User,
+): boolean => {
+  if (!userIsAppellant(theCase, appealCase, user)) {
+    return false
+  }
+
+  if (isRequestCase(theCase.type) && isDefenceUser(user)) {
+    const prosecutionAppealed = (appealCase.appealEventLogs ?? []).some(
+      (eventLog) =>
+        eventLog.eventType === AppealEventType.APPEALED &&
+        prosecutionRoles.includes(eventLog.userRole),
+    )
+
+    if (prosecutionAppealed) {
+      return false
+    }
+  }
+
+  return true
 }
