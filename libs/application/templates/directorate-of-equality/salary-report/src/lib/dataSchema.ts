@@ -59,7 +59,9 @@ const jobFactor = z.object({
 })
 
 const personalFactor = z.object({
-  title: z.string().min(1, { message: 'required' }),
+  title: z
+    .string()
+    .refine((v) => v && v.length > 0, { params: messages.errors.required }),
   description: z.string().optional(),
   weight: z.string().refine((v) => v !== '' && Number(v) >= 0, {
     params: messages.errors.invalidNonNegativeNumber,
@@ -80,7 +82,9 @@ const criteria = z
       (sum, f) => sum + (Number(f.weight) || 0),
       0,
     )
-    if (jobTotal + personalTotal !== 100) {
+    // Allow a small tolerance so valid decimal weights (e.g. 33.33 + 33.33 +
+    // 33.34) aren't rejected by floating-point rounding.
+    if (Math.abs(jobTotal + personalTotal - 100) > 0.001) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['jobFactors'],
@@ -89,40 +93,54 @@ const criteria = z
     }
   })
 
-const subsidiaries = z.object({
-  includesSubsidiaries: z
-    .enum(['yes', 'no'])
-    .refine((v) => !!v, { params: messages.errors.required }),
-  list: z
-    .array(
-      z.object({
-        nationalIdWithName: z.object({
-          name: z.string().min(1),
-          nationalId: z
-            .string()
-            .refine((v) => kennitala.isValid(v) && kennitala.isCompany(v), {
-              params: messages.errors.required,
-            }),
+const subsidiaries = z
+  .object({
+    includesSubsidiaries: z
+      .enum(['yes', 'no'])
+      .refine((v) => !!v, { params: messages.errors.required }),
+    list: z
+      .array(
+        z.object({
+          nationalIdWithName: z.object({
+            name: z.string().min(1),
+            nationalId: z
+              .string()
+              .refine((v) => kennitala.isValid(v) && kennitala.isCompany(v), {
+                params: messages.errors.required,
+              }),
+          }),
         }),
-      }),
-    )
-    .superRefine((items, ctx) => {
-      const seen = new Set<string>()
-      items.forEach((item, i) => {
-        const id = item.nationalIdWithName?.nationalId
-        if (id && seen.has(id)) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: [i, 'nationalIdWithName', 'nationalId'],
-            params: messages.errors.duplicateSubsidiary,
-          })
-        } else if (id) {
-          seen.add(id)
-        }
+      )
+      .superRefine((items, ctx) => {
+        const seen = new Set<string>()
+        items.forEach((item, i) => {
+          const id = item.nationalIdWithName?.nationalId
+          if (id && seen.has(id)) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              path: [i, 'nationalIdWithName', 'nationalId'],
+              params: messages.errors.duplicateSubsidiary,
+            })
+          } else if (id) {
+            seen.add(id)
+          }
+        })
       })
-    })
-    .optional(),
-})
+      .optional(),
+  })
+  .superRefine((val, ctx) => {
+    // If the applicant says they have subsidiaries, the list can't be empty.
+    if (
+      val.includesSubsidiaries === 'yes' &&
+      (!val.list || val.list.length === 0)
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['list'],
+        params: messages.errors.required,
+      })
+    }
+  })
 
 const subCriterionStep = z.object({
   description: z.string(),

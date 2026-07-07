@@ -91,6 +91,13 @@ export const AddEmployeeForm: FC<Props> = ({
   }
 
   const onValid = (data: FormValues) => {
+    // startDate uses the shared DatePickerController, which doesn't accept RHF
+    // `rules`, so enforce the requirement here (the `required` prop is UI-only).
+    if (!data.startDate) {
+      methods.setError('startDate', { type: 'required', message: requiredMsg })
+      return
+    }
+
     // Empty component → null (the API treats each component as optional/nullable)
     const components = Object.fromEntries(
       SALARY_COMPONENT_KEYS.map((key) => [

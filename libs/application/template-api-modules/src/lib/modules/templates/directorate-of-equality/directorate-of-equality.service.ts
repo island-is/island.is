@@ -137,19 +137,56 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     }
   }
 
-  async getBlankExcelTemplate({ auth }: TemplateApiModuleActionProps) {
-    const blob = await this.directorateOfEqualityService.getBlankExcelTemplate(
-      auth,
-    )
-    const arrayBuffer = await blob.arrayBuffer()
-    return {
-      base64: Buffer.from(arrayBuffer).toString('base64'),
-      filename: 'launagreining-sniðmát.xlsx',
+  async getBlankExcelTemplate({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    try {
+      const blob =
+        await this.directorateOfEqualityService.getBlankExcelTemplate(auth)
+      const arrayBuffer = await blob.arrayBuffer()
+      return {
+        base64: Buffer.from(arrayBuffer).toString('base64'),
+        filename: 'launagreining-sniðmát.xlsx',
+      }
+    } catch (error) {
+      const errorDetails = this.extractFetchErrorDetails(error)
+      this.logger.error('Failed to get blank Excel template', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...errorDetails,
+      })
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary: coreErrorMessages.defaultTemplateApiError,
+        },
+        (errorDetails.status as number) ?? 500,
+      )
     }
   }
 
-  async presignImportUpload({ auth }: TemplateApiModuleActionProps) {
-    return this.directorateOfEqualityService.presignImportUpload(auth)
+  async presignImportUpload({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    try {
+      return await this.directorateOfEqualityService.presignImportUpload(auth)
+    } catch (error) {
+      const errorDetails = this.extractFetchErrorDetails(error)
+      this.logger.error('Failed to presign import upload', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...errorDetails,
+      })
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary: coreErrorMessages.defaultTemplateApiError,
+        },
+        (errorDetails.status as number) ?? 500,
+      )
+    }
   }
 
   async parseSalaryReportWorkbook({
@@ -161,12 +198,34 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
       'importPresign.data.key',
     )
     if (!key) {
-      throw new Error('No upload key found — presign the upload first')
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary: coreErrorMessages.defaultTemplateApiError,
+        },
+        400,
+      )
     }
-    return this.directorateOfEqualityService.importSalaryReportWorkbook(
-      auth,
-      key,
-    )
+    try {
+      return await this.directorateOfEqualityService.importSalaryReportWorkbook(
+        auth,
+        key,
+      )
+    } catch (error) {
+      const errorDetails = this.extractFetchErrorDetails(error)
+      this.logger.error('Failed to parse salary report workbook', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...errorDetails,
+      })
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary: coreErrorMessages.defaultTemplateApiError,
+        },
+        (errorDetails.status as number) ?? 500,
+      )
+    }
   }
 
   // For now this lets the application reach the COMPLETED state.

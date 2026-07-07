@@ -69,6 +69,9 @@ export const ExcelTemplateDownload: FC<
   const XLSX_CONTENT_TYPE =
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 
+  // Cap the presigned upload so a stalled request can't leave isImporting stuck.
+  const UPLOAD_TIMEOUT_MS = 60_000
+
   const handleFileSelected = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
@@ -109,11 +112,22 @@ export const ExcelTemplateDownload: FC<
       // 2. Upload the raw workbook bytes straight to the presigned URL. No auth
       //    header — the URL itself is the capability. DMR decides the target
       //    (local disk vs S3) and returns it, so never hardcode it here.
-      const uploadResponse = await fetch(presign.url, {
-        method: 'PUT',
-        body: file,
-        headers: { 'Content-Type': XLSX_CONTENT_TYPE },
-      })
+      const controller = new AbortController()
+      const uploadTimeout = setTimeout(
+        () => controller.abort(),
+        UPLOAD_TIMEOUT_MS,
+      )
+      let uploadResponse: Response
+      try {
+        uploadResponse = await fetch(presign.url, {
+          method: 'PUT',
+          body: file,
+          headers: { 'Content-Type': XLSX_CONTENT_TYPE },
+          signal: controller.signal,
+        })
+      } finally {
+        clearTimeout(uploadTimeout)
+      }
 
       if (!uploadResponse.ok) {
         setImportStatus('error')
@@ -165,20 +179,26 @@ export const ExcelTemplateDownload: FC<
             weight: String(c.weight),
           }))
 
-        const mapSubCriteria = (sc: ParsedCriterionDto['subCriteria'][0]) => ({
-          title: sc.title,
-          description: sc.description,
-          weight: String(sc.weight),
-          stepCount: String(sc.steps.length),
-          steps: sc.steps.map((s) => ({ description: s.description })),
-        })
+        // parsedCriteria is a runtime cast of externalData — the nested arrays
+        // aren't guaranteed, so guard each level and fall back to defaults so a
+        // partial parse doesn't fail the whole import.
+        const mapSubCriteria = (sc: ParsedCriterionDto['subCriteria'][0]) =>
+          Array.isArray(sc?.steps)
+            ? {
+                title: sc.title,
+                description: sc.description,
+                weight: String(sc.weight),
+                stepCount: String(sc.steps.length),
+                steps: sc.steps.map((s) => ({ description: s.description })),
+              }
+            : { ...DEFAULT_SUB_CRITERION }
 
         const subCriteriaJobFactors = DEFAULT_JOB_FACTORS.map(
           (defaultFactor) => {
             const parsed = parsedCriteria.find(
               (c) => c.type === defaultFactor.type,
             )
-            return parsed && parsed.subCriteria.length > 0
+            return parsed && Array.isArray(parsed.subCriteria) && parsed.subCriteria.length > 0
               ? parsed.subCriteria.map(mapSubCriteria)
               : [{ ...DEFAULT_SUB_CRITERION }]
           },
@@ -187,7 +207,7 @@ export const ExcelTemplateDownload: FC<
         const subCriteriaPersonalFactors = parsedCriteria
           .filter((c) => c.type === 'PERSONAL')
           .map((c) =>
-            c.subCriteria.length > 0
+            Array.isArray(c.subCriteria) && c.subCriteria.length > 0
               ? c.subCriteria.map(mapSubCriteria)
               : [{ ...DEFAULT_SUB_CRITERION }],
           )

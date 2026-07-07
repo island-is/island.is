@@ -36,7 +36,9 @@ export const SubCriterionItem: FC<Props> = ({
     if (count === currentSteps.length) return
 
     if (count > currentSteps.length) {
-      const extra = Array(count - currentSteps.length).fill({ description: '' })
+      const extra = Array.from({ length: count - currentSteps.length }, () => ({
+        description: '',
+      }))
       setValue(`${fieldName}.steps`, [...currentSteps, ...extra])
     } else {
       setValue(`${fieldName}.steps`, currentSteps.slice(0, count))
