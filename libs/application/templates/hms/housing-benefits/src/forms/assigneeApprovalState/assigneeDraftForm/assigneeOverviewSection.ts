@@ -11,6 +11,7 @@ import {
   assigneeAssetDeclarationOverviewItems,
   assigneeAccessAgreementOverviewAttachments,
   assigneeAddressMatchOverviewItems,
+  assigneeIncomeDeclarationOverviewItems,
 } from '../../../utils/getOverviewItems'
 import { doesAssigneeAddressMatchRentalContract } from '../../../utils/rentalAgreementUtils'
 
@@ -36,6 +37,12 @@ export const assigneeOverviewSection = buildSection({
           title: m.assigneeDraftOverview.assetDeclarationTitle,
           backId: 'assetDecleration',
           items: assigneeAssetDeclarationOverviewItems,
+        }),
+        buildOverviewField({
+          id: 'assigneeIncomeDeclarationOverview',
+          title: m.assigneeDraftOverview.incomeDeclarationTitle,
+          backId: 'incomeDeclaration',
+          items: assigneeIncomeDeclarationOverviewItems,
         }),
         buildOverviewField({
           id: 'assigneeAccessAgreementOverview',

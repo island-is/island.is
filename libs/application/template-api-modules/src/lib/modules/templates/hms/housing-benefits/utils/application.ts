@@ -209,6 +209,7 @@ const getAssigneeHouseholdMemberFieldsFromAnswers = (
   | 'acceptedDataFetch'
   | 'acceptedPrivacyPolicy'
   | 'assetDeclaration'
+  | 'incomeDeclaration'
 > => {
   const normalizedId = normalizeNationalId(nationalId)
   const email = getValueViaPath<string>(
@@ -241,6 +242,10 @@ const getAssigneeHouseholdMemberFieldsFromAnswers = (
     answers,
     `${normalizedId}.assetDeclerationTextField`,
   )?.trim()
+  const incomeDeclaration = getValueViaPath<string>(
+    answers,
+    `${normalizedId}.incomeDeclarationTextField`,
+  )?.trim()
   return {
     ...(email ? { email } : {}),
     ...(phoneNumber ? { phoneNumber } : {}),
@@ -252,6 +257,7 @@ const getAssigneeHouseholdMemberFieldsFromAnswers = (
     ...(approvedExternalData === true ? { acceptedDataFetch: true } : {}),
     acceptedPrivacyPolicy: true,
     ...(assetDeclaration ? { assetDeclaration } : {}),
+    ...(incomeDeclaration ? { incomeDeclaration } : {}),
   }
 }
 
@@ -551,6 +557,11 @@ export const mapApplicationToHousingBenefitsModel = (
           getValueViaPath<string>(
             answers,
             'assetsDeclarationTextField',
+          )?.trim() ?? undefined,
+        incomeDeclaration:
+          getValueViaPath<string>(
+            answers,
+            'incomeNoTaxReturnDescription',
           )?.trim() ?? undefined,
       },
       ...getHouseholdMembersForSubmission(application),
