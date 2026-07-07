@@ -27,12 +27,69 @@ import {
   hasAcceptedRulingOrderInCourt,
   hasSentNotification,
   isAppealFileCategoryVisible,
+  isSentToPublicProsecutor,
   mapStringToGender,
   reconcileAppealDecisionsForRulingFileChange,
   userHasActiveInCourtAppeal,
 } from './utils'
 
 describe('Utils', () => {
+  describe('isSentToPublicProsecutor', () => {
+    test('should be true when the case was sent to the public prosecutor after completion', () => {
+      // Arrange
+      const workingCase = {
+        indictmentCompletedDate: '2024-01-01',
+        indictmentSentToPublicProsecutorDate: '2024-01-02',
+      } as Case
+
+      // Act
+      const res = isSentToPublicProsecutor(workingCase)
+
+      // Assert
+      expect(res).toBe(true)
+    })
+
+    test('should be false when the case was sent to the public prosecutor before completion', () => {
+      // Arrange
+      const workingCase = {
+        indictmentCompletedDate: '2024-01-02',
+        indictmentSentToPublicProsecutorDate: '2024-01-01',
+      } as Case
+
+      // Act
+      const res = isSentToPublicProsecutor(workingCase)
+
+      // Assert
+      expect(res).toBe(false)
+    })
+
+    test('should be false when the case has not been sent to the public prosecutor', () => {
+      // Arrange
+      const workingCase = {
+        indictmentCompletedDate: '2024-01-01',
+      } as Case
+
+      // Act
+      const res = isSentToPublicProsecutor(workingCase)
+
+      // Assert
+      expect(res).toBe(false)
+    })
+
+    test('should be false when the case has no completed date', () => {
+      // Arrange
+      const workingCase = {
+        indictmentSentToPublicProsecutorDate: '2024-01-02',
+      } as Case
+
+      // Act
+      const res = isSentToPublicProsecutor(workingCase)
+
+      // Assert
+      expect(res).toBe(false)
+    })
+  })
+
   describe('removeTabs', () => {
     test('should replace a single tab with a single space', () => {
       // Arrange

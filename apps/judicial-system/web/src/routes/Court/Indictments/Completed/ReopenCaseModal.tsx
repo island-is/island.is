@@ -16,6 +16,7 @@ import {
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { isSentToPublicProsecutor } from '@island.is/judicial-system-web/src/utils/utils'
 
 export const canReopenCase = (workingCase: Case, user?: User) => {
   if (
@@ -34,19 +35,13 @@ export const canReopenCase = (workingCase: Case, user?: User) => {
       CaseIndictmentRulingDecision.RULING ||
     workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
 
-  const hasBeenSentToPublicProsecutor = Boolean(
-    workingCase.indictmentCompletedDate &&
-      workingCase.indictmentSentToPublicProsecutorDate &&
-      workingCase.indictmentSentToPublicProsecutorDate >
-        workingCase.indictmentCompletedDate,
-  )
-
   return (
     isDistrictCourtUser(user) &&
     !workingCase.mergeCase &&
     workingCase.indictmentRulingDecision !==
       CaseIndictmentRulingDecision.WITHDRAWAL &&
-    (!requiresPublicProsecutorReview || hasBeenSentToPublicProsecutor) &&
+    (!requiresPublicProsecutorReview ||
+      isSentToPublicProsecutor(workingCase)) &&
     (!workingCase.appealCase ||
       workingCase.appealCase.appealState === AppealCaseState.COMPLETED ||
       workingCase.appealCase.appealState === AppealCaseState.WITHDRAWN)

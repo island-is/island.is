@@ -42,6 +42,7 @@ import {
 import useEventLog from '@island.is/judicial-system-web/src/utils/hooks/useEventLog'
 import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { isSentToPublicProsecutor } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { ConfirmationInformation } from './ConfirmationInformation'
 import { CriminalRecordUpdate } from './CriminalRecordUpdate'
@@ -79,12 +80,7 @@ const Completed: FC = () => {
 
   // If the case has not been sent to the public prosecutor after completion/correction
   // then show the send to public prosecutor button
-  const isSentToPublicProsecutor = Boolean(
-    workingCase.indictmentCompletedDate &&
-      workingCase.indictmentSentToPublicProsecutorDate &&
-      workingCase.indictmentSentToPublicProsecutorDate >
-        workingCase.indictmentCompletedDate,
-  )
+  const sentToPublicProsecutor = isSentToPublicProsecutor(workingCase)
 
   const completeCaseConfirmation = useCallback(async () => {
     setIsLoading(true)
@@ -326,7 +322,7 @@ const Completed: FC = () => {
                       onClick: () => setModalVisible('CORRECT'),
                     },
                   ]),
-              ...(!isRulingOrFine || isSentToPublicProsecutor
+              ...(!isRulingOrFine || sentToPublicProsecutor
                 ? []
                 : [
                     {
