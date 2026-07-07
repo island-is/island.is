@@ -17,11 +17,9 @@ const chiefExecutive = z.object({
   name: z
     .string()
     .refine((v) => v && v.length > 0, { params: messages.errors.required }),
-  email: z
-    .string()
-    .refine((v) => EMAIL_REGEX.test(v), {
-      params: messages.errors.invalidEmail,
-    }),
+  email: z.string().refine((v) => EMAIL_REGEX.test(v), {
+    params: messages.errors.invalidEmail,
+  }),
   gender: z
     .string()
     .refine((v) => v && v.length > 0, { params: messages.errors.required }),
@@ -31,32 +29,24 @@ const contactPerson = z.object({
   name: z
     .string()
     .refine((v) => v && v.length > 0, { params: messages.errors.required }),
-  email: z
-    .string()
-    .refine((v) => EMAIL_REGEX.test(v), {
-      params: messages.errors.invalidEmail,
-    }),
+  email: z.string().refine((v) => EMAIL_REGEX.test(v), {
+    params: messages.errors.invalidEmail,
+  }),
   phone: z
     .string()
     .refine((v) => v && v.length > 0, { params: messages.errors.required }),
 })
 
 const employeeCount = z.object({
-  women: z
-    .string()
-    .refine((v) => v !== '' && Number(v) >= 0, {
-      params: messages.errors.invalidNonNegativeNumber,
-    }),
-  men: z
-    .string()
-    .refine((v) => v !== '' && Number(v) >= 0, {
-      params: messages.errors.invalidNonNegativeNumber,
-    }),
-  nonBinary: z
-    .string()
-    .refine((v) => v !== '' && Number(v) >= 0, {
-      params: messages.errors.invalidNonNegativeNumber,
-    }),
+  women: z.string().refine((v) => v !== '' && Number(v) >= 0, {
+    params: messages.errors.invalidNonNegativeNumber,
+  }),
+  men: z.string().refine((v) => v !== '' && Number(v) >= 0, {
+    params: messages.errors.invalidNonNegativeNumber,
+  }),
+  nonBinary: z.string().refine((v) => v !== '' && Number(v) >= 0, {
+    params: messages.errors.invalidNonNegativeNumber,
+  }),
 })
 
 const jobFactor = z.object({

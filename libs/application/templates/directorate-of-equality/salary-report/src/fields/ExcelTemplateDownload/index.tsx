@@ -359,10 +359,7 @@ export const ExcelTemplateDownload: FC<
 
       {importStatus === 'error' && (
         <Box marginTop={3}>
-          <AlertMessage
-            type="error"
-            message={formatMessage(m.importError)}
-          />
+          <AlertMessage type="error" message={formatMessage(m.importError)} />
         </Box>
       )}
     </Box>
