@@ -23,7 +23,6 @@ export const launagreiningSection = buildSection({
             buildDescriptionField({
               id: 'salaryAnalysis.overview.placeholder',
               title: '',
-              description: '',
             }),
           ],
         }),
@@ -44,7 +43,6 @@ export const launagreiningSection = buildSection({
             buildDescriptionField({
               id: 'improvementPlan.placeholder',
               title: '',
-              description: '',
             }),
           ],
         }),
