@@ -8,7 +8,7 @@ export const formFooter = style({
   gap: theme.spacing[2],
 
   '@media': {
-    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
       flexDirection: 'row',
       flexWrap: 'wrap',
       alignItems: 'center',
@@ -19,7 +19,7 @@ export const formFooter = style({
 
 export const previousButtonContainer = style({
   '@media': {
-    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
       marginRight: 'auto',
     },
   },
