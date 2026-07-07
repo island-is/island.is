@@ -11,6 +11,7 @@ import {
   ApplicationConfigurations,
   IdentityApi,
 } from '@island.is/application/types'
+import { Features } from '@island.is/feature-flags'
 import { isCompany } from 'kennitala'
 import {
   ActiveEqualityReportApi,
@@ -39,6 +40,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.SALARY_REPORT,
   name: messages.general.applicationName,
+  featureFlag: Features.isDirectorateOfEqualityApplicationsEnabled,
   codeOwner: CodeOwners.Hugsmidjan,
   institution: messages.general.institution,
   translationNamespaces:
