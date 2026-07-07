@@ -16,6 +16,7 @@ import {
 import { ServiceRequirement } from '@island.is/judicial-system-web/src/graphql/schema'
 import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { isSentToPublicProsecutor } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { InformationForDefendant } from './InformationForDefendant'
 import strings from './Completed.strings'
@@ -74,12 +75,7 @@ export const DefendantServiceRequirement = ({
 
   // If the case has been sent to the public prosecutor after completion/correction
   // then lock the service requirement choices
-  const isSentToPublicProsecutor = Boolean(
-    workingCase.indictmentCompletedDate &&
-      workingCase.indictmentSentToPublicProsecutorDate &&
-      workingCase.indictmentSentToPublicProsecutorDate >
-        workingCase.indictmentCompletedDate,
-  )
+  const sentToPublicProsecutor = isSentToPublicProsecutor(workingCase)
 
   return (
     <Box component="section">
@@ -97,7 +93,7 @@ export const DefendantServiceRequirement = ({
             checked={
               verdict.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
             }
-            disabled={isSentToPublicProsecutor}
+            disabled={sentToPublicProsecutor}
             onChange={() => {
               setAndSendVerdictToServer(
                 {
@@ -117,7 +113,7 @@ export const DefendantServiceRequirement = ({
             id={`defendant-${defendant.id}-service-requirement-required`}
             name={`defendant-${defendant.id}-service-requirement`}
             checked={verdict.serviceRequirement === ServiceRequirement.REQUIRED}
-            disabled={isSentToPublicProsecutor}
+            disabled={sentToPublicProsecutor}
             onChange={() => {
               const serviceInfo = new Set([
                 ...(verdict.serviceInformationForDefendant || []),
@@ -156,7 +152,7 @@ export const DefendantServiceRequirement = ({
             checked={
               verdict.serviceRequirement === ServiceRequirement.NOT_REQUIRED
             }
-            disabled={isSentToPublicProsecutor}
+            disabled={sentToPublicProsecutor}
             onChange={() => {
               setAndSendVerdictToServer(
                 {
