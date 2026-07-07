@@ -9,7 +9,7 @@
 // APPEALED (no appeal case number, no received-by-court date, no judges, no
 // ruling, no appeal files).
 //
-// Slice 9 authorizes appeal withdrawal from the APPEALED event log, so this row
+// This PR authorizes appeal withdrawal from the APPEALED event log, so this row
 // would sit un-withdrawable and unresolvable forever. The backfill cannot infer
 // an appellant for it (no signal exists), so we delete the stale appeal case
 // instead. The two case-level ACCEPT appeal_decision rows correctly reflect the
