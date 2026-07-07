@@ -56,6 +56,7 @@ import {
   FireCompensation,
   VMSTUnemployment,
   RecyclingFund,
+  DirectorateOfEquality,
 } from '../../../../infra/src/dsl/xroad'
 
 export const GRAPHQL_API_URL_ENV_VAR_NAME = 'GRAPHQL_API_URL' // This property is a part of a circular dependency that is treated specially in certain deployment types
@@ -432,6 +433,7 @@ export const serviceSetup = (services: {
       RentalService,
       VMSTUnemployment,
       RecyclingFund,
+      DirectorateOfEquality,
     )
     .secrets({
       NOVA_URL: '/k8s/NOVA_URL_V1',
