@@ -527,7 +527,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
         return this.sendCourtDateNotifications(theCase, user)
       case IndictmentCaseNotificationType.INDICTMENT_VERDICT_INFO:
         // Notification removed — no-op for any messages still in the queue
-        return { delivered: true }
+        return Promise.resolve({ delivered: true })
       case IndictmentCaseNotificationType.CRIMINAL_RECORD_FILES_UPLOADED:
         return this.sendCriminalRecordFilesUploadedNotification(theCase)
       case IndictmentCaseNotificationType.INDICTMENT_SPLIT_COMPLETED:
