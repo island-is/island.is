@@ -15,7 +15,6 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native'
-import { LiquidGlass } from 'react-native-platform-components'
 import styled, { useTheme } from 'styled-components/native'
 import starIcon from '@/assets/icons/star.png'
 import { useApolloClient } from '@apollo/client'
@@ -551,35 +550,11 @@ export default function InboxScreen() {
     </Pressable>
   )
 
+  // The header applies its own (glass on iOS 26) background, so the icons are
+  // rendered plain here to avoid a doubled-up background.
   const renderHeaderActions = (children: React.ReactNode) => (
-    <View style={{ width: 92, height: 46 }}>
-      {Platform.OS === 'ios' ? (
-        <LiquidGlass
-          cornerRadius={24}
-          ios={{ interactive: true, effect: 'regular' }}
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            width: 92,
-            height: 46,
-          }}
-        >
-          {children}
-        </LiquidGlass>
-      ) : (
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            width: 92,
-            height: 46,
-            borderRadius: 24,
-            backgroundColor: theme.color.white,
-          }}
-        >
-          {children}
-        </View>
-      )}
+    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      {children}
     </View>
   )
 
@@ -634,29 +609,32 @@ export default function InboxScreen() {
                   tintColor: theme.color.blue400,
                 },
               ],
-          headerRightItems: selectState
-            ? [
-                {
-                  type: 'button',
-                  label: intl.formatMessage({
-                    id: 'inbox.bulkSelectCancelButton',
-                  }),
-                  labelStyle: {
-                    fontSize: 15,
-                    fontWeight: '400',
-                    fontFamily: fontByWeight('400'),
+          // In select mode the Cancel button uses the native items API (it
+          // centers fine). Otherwise the custom glass pill is rendered via
+          // `headerRight` so the native title stays centered on iOS.
+          ...(selectState
+            ? {
+                headerRightItems: [
+                  {
+                    type: 'button',
+                    label: intl.formatMessage({
+                      id: 'inbox.bulkSelectCancelButton',
+                    }),
+                    labelStyle: {
+                      fontSize: 15,
+                      fontWeight: '400',
+                      fontFamily: fontByWeight('400'),
+                    },
+                    onPress() {
+                      resetSelectState()
+                    },
+                    tintColor: theme.color.blue400,
                   },
-                  onPress() {
-                    resetSelectState()
-                  },
-                  tintColor: theme.color.blue400,
-                },
-              ]
-            : [
-                {
-                  type: 'custom',
-                  hidesSharedBackground: true,
-                  element: renderHeaderActions(
+                ],
+              }
+            : {
+                headerRight: () =>
+                  renderHeaderActions(
                     <>
                       {renderHeaderIconSegment(filterIcon, () => {
                         resetSelectState()
@@ -672,8 +650,7 @@ export default function InboxScreen() {
                       )}
                     </>,
                   ),
-                },
-              ],
+              }),
         }}
       />
       {selectState && selectedItems.length ? (
