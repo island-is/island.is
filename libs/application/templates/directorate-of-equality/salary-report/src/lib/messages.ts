@@ -21,6 +21,10 @@ export const messages = {
       id: 'salaryReport.application:errors.duplicateSubsidiary',
       defaultMessage: 'Þetta dótturfélag er þegar á listanum',
     },
+    invalidCompany: {
+      id: 'salaryReport.application:errors.invalidCompany',
+      defaultMessage: 'Kennitala fyrirtækis er ekki gild',
+    },
   }),
 
   general: defineMessages({

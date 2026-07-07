@@ -102,11 +102,13 @@ const subsidiaries = z
       .array(
         z.object({
           nationalIdWithName: z.object({
-            name: z.string().min(1),
+            name: z.string().refine((v) => v && v.length > 0, {
+              params: messages.errors.required,
+            }),
             nationalId: z
               .string()
               .refine((v) => kennitala.isValid(v) && kennitala.isCompany(v), {
-                params: messages.errors.required,
+                params: messages.errors.invalidCompany,
               }),
           }),
         }),
