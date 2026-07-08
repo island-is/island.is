@@ -167,21 +167,21 @@ registerEnumType(HealthConversationStatusFilterEnum, {
 })
 
 export enum HealthConversationReplyBlockedReasonEnum {
-  MISSING_RECIPIENT = 'MISSING_RECIPIENT',
-  REPLIES_DISABLED = 'REPLIES_DISABLED',
-  NO_REPLY_GROUP = 'NO_REPLY_GROUP',
-  MESSAGING_NOT_ALLOWED = 'MESSAGING_NOT_ALLOWED',
-  OUTSIDE_MESSAGING_WINDOW = 'OUTSIDE_MESSAGING_WINDOW',
-  REPLY_WINDOW_EXPIRED = 'REPLY_WINDOW_EXPIRED',
+  MISSING_RECIPIENT = 'missingRecipient',
+  REPLIES_DISABLED = 'repliesDisabled',
+  NO_REPLY_GROUP = 'noReplyGroup',
+  MESSAGING_NOT_ALLOWED = 'messagingNotAllowed',
+  OUTSIDE_MESSAGING_WINDOW = 'outsideMessagingWindow',
+  REPLY_WINDOW_EXPIRED = 'replyWindowExpired',
 }
 registerEnumType(HealthConversationReplyBlockedReasonEnum, {
   name: 'HealthDirectorateHealthConversationReplyBlockedReason',
 })
 
 export enum HealthConversationRecipientBlockedReasonEnum {
-  MESSAGING_NOT_ALLOWED = 'MESSAGING_NOT_ALLOWED',
-  OUTSIDE_MESSAGING_WINDOW = 'OUTSIDE_MESSAGING_WINDOW',
-  NO_ALLOWED_TYPES = 'NO_ALLOWED_TYPES',
+  MESSAGING_NOT_ALLOWED = 'messagingNotAllowed',
+  OUTSIDE_MESSAGING_WINDOW = 'outsideMessagingWindow',
+  NO_ALLOWED_TYPES = 'noAllowedTypes',
 }
 registerEnumType(HealthConversationRecipientBlockedReasonEnum, {
   name: 'HealthDirectorateHealthConversationRecipientBlockedReason',
