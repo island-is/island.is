@@ -62,7 +62,10 @@ import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
 import { GET_GROUPED_MENU_QUERY } from '../screens/queries/Menu'
 import { GET_ORGANIZATION_LOGOS_QUERY } from '../screens/queries/Organization'
 import { Screen, ScreenContext } from '../types'
-import { extractOrganizationSlugFromPathname } from '../utils/organization'
+import {
+  extractOrganizationSlugFromPathname,
+  pathIsProjectPage,
+} from '../utils/organization'
 import Illustration from './Illustration'
 import * as styles from './main.css'
 
@@ -253,6 +256,14 @@ const Layout: Screen<LayoutProps> = ({
     organizationSearchFilterOverride ??
     extractOrganizationSlugFromPathname(router.asPath, activeLocale)
 
+  // Institution sites (stofnanavefir) and project pages (/verkefni) get the
+  // simplified header: logo, search, My Pages and language toggle stay, but
+  // the burger menu and navigation links are hidden. `organizationSearchFilter`
+  // is truthy whenever we're within a specific organization's site, and the
+  // project routes all resolve to a `project*` link type.
+  const showHeaderNavigation =
+    !organizationSearchFilter && !pathIsProjectPage(router.asPath)
+
   return (
     <GlobalContextProvider namespace={namespace} isServiceWeb={isServiceWeb}>
       <Page component="div">
@@ -406,6 +417,7 @@ const Layout: Screen<LayoutProps> = ({
                 buttonColorScheme={headerButtonColorScheme}
                 showSearchInHeader={showSearchInHeader}
                 headerNavData={headerNavData}
+                showNavigation={showHeaderNavigation}
                 languageToggleQueryParams={languageToggleQueryParams}
                 organizationSearchFilter={organizationSearchFilter}
                 searchPlaceholder={

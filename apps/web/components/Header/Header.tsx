@@ -44,6 +44,13 @@ interface HeaderProps {
   buttonColorScheme?: ButtonTypes['colorScheme']
   languageToggleQueryParams?: LayoutProps['languageToggleQueryParams']
   headerNavData?: HeaderNavData | null
+  /**
+   * Whether the main navigation (desktop nav links + mobile burger menu)
+   * is shown. Set to `false` on institution sites (stofnanavefir) and
+   * project pages (/verkefni) to render the simplified header — logo,
+   * search, My Pages and language toggle stay, nav is hidden.
+   */
+  showNavigation?: boolean
   organizationSearchFilter?: string
   searchPlaceholder?: string
   customTopLoginButtonItem?: LayoutProps['customTopLoginButtonItem']
@@ -57,6 +64,7 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
   showSearchInHeader = true,
   buttonColorScheme = 'default',
   headerNavData,
+  showNavigation = true,
   languageToggleQueryParams,
   organizationSearchFilter,
   searchPlaceholder,
@@ -144,12 +152,14 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
                   </Column>
                   <Column width="content">
                     <Hidden below="lg">
-                      <Box marginLeft={3}>
-                        <DesktopNav
-                          data={headerNavData ?? undefined}
-                          onOpenChange={handleDesktopNavOpenChange}
-                        />
-                      </Box>
+                      {showNavigation && (
+                        <Box marginLeft={3}>
+                          <DesktopNav
+                            data={headerNavData ?? undefined}
+                            onOpenChange={handleDesktopNavOpenChange}
+                          />
+                        </Box>
+                      )}
                     </Hidden>
                   </Column>
                   <Column>
@@ -197,7 +207,7 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
                             </Box>
                           )}
                           <Box marginLeft={marginLeft}>{languageToggler}</Box>
-                          {headerNavData && (
+                          {headerNavData && showNavigation && (
                             <Box marginLeft={marginLeft}>
                               <MobileNavMenuButton
                                 ref={mobileMenuBtnRef}
@@ -224,6 +234,7 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
         <MobileNavPanel
           ref={mobileNavRef}
           data={headerNavData ?? undefined}
+          showNavigation={showNavigation}
           organizationSearchFilter={organizationSearchFilter}
           searchPlaceholder={searchPlaceholder}
           onOpenChange={handleMobileNavOpenChange}

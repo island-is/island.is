@@ -73,6 +73,10 @@ interface MobileNavPanelProps {
   // close (they have their own onClick that toggles the panel). Typically
   // the Search and Menu buttons.
   triggerRefs?: React.RefObject<HTMLElement>[]
+  // When false the panel is search-only: the nav sections (drilldown rows)
+  // are hidden, leaving just the search input. Used on institution sites
+  // and project pages so mobile search keeps working with nav hidden.
+  showNavigation?: boolean
 }
 
 export const MobileNavPanel = forwardRef<
@@ -86,6 +90,7 @@ export const MobileNavPanel = forwardRef<
       searchPlaceholder,
       onOpenChange,
       triggerRefs,
+      showNavigation = true,
     },
     ref,
   ) => {
@@ -263,9 +268,12 @@ export const MobileNavPanel = forwardRef<
 
     // No Contentful-driven nav data yet: render nothing rather than fall back
     // to stale hardcoded links. Hooks above still run so hook order is stable.
-    if (!data) return null
+    // When navigation is hidden the panel is search-only, so it still renders
+    // even without nav data.
+    if (!data && showNavigation) return null
     const navData = data
-    const drilldownSection = drilldownKey ? navData[drilldownKey] : null
+    const drilldownSection =
+      showNavigation && navData && drilldownKey ? navData[drilldownKey] : null
 
     return (
       <>
@@ -308,7 +316,9 @@ export const MobileNavPanel = forwardRef<
             />
           </Box>
 
-          {drilldownSection && drilldownKey ? (
+          {showNavigation &&
+            navData &&
+            (drilldownSection && drilldownKey ? (
             <>
               <Box className={styles.panelHeader}>
                 <button
@@ -429,7 +439,7 @@ export const MobileNavPanel = forwardRef<
                 )
               })}
             </ul>
-          )}
+            ))}
         </div>
       </>
     )
