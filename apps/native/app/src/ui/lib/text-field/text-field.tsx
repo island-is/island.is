@@ -110,6 +110,7 @@ export const TextField = ({
             value={value}
             ref={inputRef}
             readOnly={readOnly}
+            placeholderTextColor={theme.color.dark300}
             {...rest}
             style={inputStyle}
           />
