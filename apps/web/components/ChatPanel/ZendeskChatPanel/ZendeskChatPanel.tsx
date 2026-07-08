@@ -35,7 +35,6 @@ export const ZendeskChatPanel = ({
   const [isChatOpen, setIsChatOpen] = useState(false)
   const { activeLocale } = useI18n()
   const router = useRouter()
-  const hasOpenedChatViaQueryParams = useRef(false)
 
   const openChat = useCallback(() => {
     const setup = () => {
@@ -84,10 +83,14 @@ export const ZendeskChatPanel = ({
     const queryParam = new URLSearchParams(window.location.search).get('wa_lid')
 
     let timeout: NodeJS.Timeout | null = null
-    if (queryParam === 't10' && !hasOpenedChatViaQueryParams.current) {
-      hasOpenedChatViaQueryParams.current = true
+    if (queryParam === 't10') {
       timeout = setTimeout(() => {
         openChat()
+        const query = { ...router.query }
+        delete query['wa_lid']
+        router.replace({ pathname: router.pathname, query }, undefined, {
+          shallow: true,
+        })
       }, 100)
     }
 
