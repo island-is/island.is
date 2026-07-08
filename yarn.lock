@@ -12935,16 +12935,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/cache-manager@npm:2.0.1":
-  version: 2.0.1
-  resolution: "@nestjs/cache-manager@npm:2.0.1"
+"@nestjs/cache-manager@npm:3.1.3":
+  version: 3.1.3
+  resolution: "@nestjs/cache-manager@npm:3.1.3"
   peerDependencies:
-    "@nestjs/common": ^9.0.0 || ^10.0.0
-    "@nestjs/core": ^9.0.0 || ^10.0.0
-    cache-manager: <=5
-    reflect-metadata: ^0.1.12
-    rxjs: ^7.0.0
-  checksum: 10/22f7b8b975286ebb65447e4d43f13317e1b9e46ad747bf235d467ecd5dc5ceaa77ef795f93df76399a510b868072bc4acf3d37dd502c38860c05072737422083
+    "@nestjs/common": ^9.0.0 || ^10.0.0 || ^11.0.0
+    "@nestjs/core": ^9.0.0 || ^10.0.0 || ^11.0.0
+    cache-manager: ">=6"
+    keyv: ">=5"
+    rxjs: ^7.8.1
+  checksum: 10/34c3772f8c0d0e5c9cc3f5b4763f47e7d5f3a66f885cdbf89926523c22c2079b742202d20e4bdd059bec9d1be45821f3b5c6d80d7bbabf650f4631d523691d1e
   languageName: node
   linkType: hard
 
@@ -25708,45 +25708,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cache-manager-ioredis-yet@npm:1.1.0":
-  version: 1.1.0
-  resolution: "cache-manager-ioredis-yet@npm:1.1.0"
+"cache-manager@npm:6.4.3":
+  version: 6.4.3
+  resolution: "cache-manager@npm:6.4.3"
   dependencies:
-    cache-manager: "npm:^5.1.0"
-    ioredis: "npm:^5.2.3"
-  checksum: 10/af5586ccec266935580ee728d138c1cca30ef3bd248f872efd7fa3b3883aec91a145865c87c5ebe2fd173475f65639abe0674ec2fd5c42956f9374f285d8fb3a
-  languageName: node
-  linkType: hard
-
-"cache-manager-ioredis-yet@patch:cache-manager-ioredis-yet@npm%3A1.1.0#./.yarn/patches/cache-manager-ioredis-yet-npm-1.1.0-da7d1a9865.patch::locator=island.is%40workspace%3A.":
-  version: 1.1.0
-  resolution: "cache-manager-ioredis-yet@patch:cache-manager-ioredis-yet@npm%3A1.1.0#./.yarn/patches/cache-manager-ioredis-yet-npm-1.1.0-da7d1a9865.patch::version=1.1.0&hash=86c26d&locator=island.is%40workspace%3A."
-  dependencies:
-    cache-manager: "npm:^5.1.0"
-    ioredis: "npm:^5.2.3"
-  checksum: 10/7ffd0d18f223fe266cd2c06f089963bbb49978197d42793f2b30c2f49355a474880b14ac336a3c3356f4261e9fe276d52b0e07f88c9298b387d3f1c8783a1259
-  languageName: node
-  linkType: hard
-
-"cache-manager@npm:5.2.3":
-  version: 5.2.3
-  resolution: "cache-manager@npm:5.2.3"
-  dependencies:
-    lodash.clonedeep: "npm:^4.5.0"
-    lru-cache: "npm:^9.1.2"
-  checksum: 10/456eb0dcc220492f92d992dbd6bc8f07be37c8d0ef74353df2ea1398df1a2455f4011012270b56c35ea3346adad6d0625765c9fde15217285de5cae4673caca5
-  languageName: node
-  linkType: hard
-
-"cache-manager@npm:^5.1.0":
-  version: 5.7.6
-  resolution: "cache-manager@npm:5.7.6"
-  dependencies:
-    eventemitter3: "npm:^5.0.1"
-    lodash.clonedeep: "npm:^4.5.0"
-    lru-cache: "npm:^10.2.2"
-    promise-coalesce: "npm:^1.1.2"
-  checksum: 10/e8cc65a289aa4136255db2349dd15fa7acca398a233b560cba18f691d9cce39d8058531707d1358c67029e2d36f5b5b209e64339ffdb80a25d26d0682399a9b8
+    keyv: "npm:^5.3.3"
+  checksum: 10/446db8f936b3b07b8564f175d109715ef7664702bd636ac972ebd2f37ce25e4c583947529496b7a1a104fe6dba3a83498ec3bb441d33994a68fddfe67dc0bd95
   languageName: node
   linkType: hard
 
@@ -31513,13 +31480,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eventemitter3@npm:^5.0.1":
-  version: 5.0.1
-  resolution: "eventemitter3@npm:5.0.1"
-  checksum: 10/ac6423ec31124629c84c7077eed1e6987f6d66c31cf43c6fcbf6c87791d56317ce808d9ead483652436df171b526fc7220eccdc9f3225df334e81582c3cf7dd5
-  languageName: node
-  linkType: hard
-
 "eventid@npm:^2.0.0":
   version: 2.0.1
   resolution: "eventid@npm:2.0.1"
@@ -36127,7 +36087,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ioredis@npm:5.8.2, ioredis@npm:^5.0.0, ioredis@npm:^5.2.3, ioredis@npm:^5.4.1":
+"ioredis@npm:5.8.2, ioredis@npm:^5.0.0, ioredis@npm:^5.4.1":
   version: 5.8.2
   resolution: "ioredis@npm:5.8.2"
   dependencies:
@@ -37101,7 +37061,7 @@ __metadata:
     "@nestjs/apollo": "npm:13.4.2"
     "@nestjs/axios": "npm:4.0.1"
     "@nestjs/bull": "npm:11.0.4"
-    "@nestjs/cache-manager": "npm:2.0.1"
+    "@nestjs/cache-manager": "npm:3.1.3"
     "@nestjs/common": "npm:11.1.28"
     "@nestjs/config": "npm:4.0.2"
     "@nestjs/core": "npm:11.1.28"
@@ -37241,8 +37201,7 @@ __metadata:
     beygla: "npm:1.5.2"
     bottleneck: "npm:2.19.5"
     bull: "npm:4.10.4"
-    cache-manager: "npm:5.2.3"
-    cache-manager-ioredis-yet: "npm:1.1.0"
+    cache-manager: "npm:6.4.3"
     canvas: "npm:3.1.0"
     chalk: "npm:4.1.2"
     class-transformer: "npm:0.5.1"
@@ -39665,6 +39624,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"keyv@npm:^5.3.3":
+  version: 5.6.0
+  resolution: "keyv@npm:5.6.0"
+  dependencies:
+    "@keyv/serialize": "npm:^1.1.1"
+  checksum: 10/f1de999fdf635d703d091981a0a3844fb20081e01d45c6743ada7d01f3a6570dc47d1882e10d0a98d31075b342db8e62b4ebe4f5bf473dcd0903064d718709c1
+  languageName: node
+  linkType: hard
+
 "kill-port@npm:^1.6.1":
   version: 1.6.1
   resolution: "kill-port@npm:1.6.1"
@@ -40759,7 +40727,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lru-cache@npm:^10.0.1, lru-cache@npm:^10.2.0, lru-cache@npm:^10.2.2, lru-cache@npm:^10.4.3":
+"lru-cache@npm:^10.0.1, lru-cache@npm:^10.2.0, lru-cache@npm:^10.4.3":
   version: 10.4.3
   resolution: "lru-cache@npm:10.4.3"
   checksum: 10/e6e90267360476720fa8e83cc168aa2bf0311f3f2eea20a6ba78b90a885ae72071d9db132f40fda4129c803e7dcec3a6b6a6fbb44ca90b081630b810b5d6a41a
@@ -40793,13 +40761,6 @@ __metadata:
   version: 7.18.3
   resolution: "lru-cache@npm:7.18.3"
   checksum: 10/6029ca5aba3aacb554e919d7ef804fffd4adfc4c83db00fac8248c7c78811fb6d4b6f70f7fd9d55032b3823446546a007edaa66ad1f2377ae833bd983fac5d98
-  languageName: node
-  linkType: hard
-
-"lru-cache@npm:^9.1.2":
-  version: 9.1.2
-  resolution: "lru-cache@npm:9.1.2"
-  checksum: 10/8830ad333f5202656e712d40df16a4dbd373a489821c1f22d5dc2b3cf49820734cf814e7fd89bbda80ecb32e1bfd716e2dc2d78fae0dd7b55fe65ffd0158edd7
   languageName: node
   linkType: hard
 
@@ -46911,13 +46872,6 @@ __metadata:
   dependencies:
     tdigest: "npm:^0.1.1"
   checksum: 10/96dd4c8e5f30cbd3021cfb7f6b1ee3f8e28ef618cf8e37a45e4cb598f0ec607d96feaa97ae45c19f370cdc34341a6afe6d790ce954dd237e1686cd61190f697b
-  languageName: node
-  linkType: hard
-
-"promise-coalesce@npm:^1.1.2":
-  version: 1.1.2
-  resolution: "promise-coalesce@npm:1.1.2"
-  checksum: 10/6f951b5db40ca78d09ad0f72adea0a2e9c5bdb0fc5b3ef218c611e2191c6ce2e9f752f815630fd07875dd1c9f04cc7327d6bada04b662dce986ce86ab88c2d5e
   languageName: node
   linkType: hard
 

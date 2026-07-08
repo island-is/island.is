@@ -1,8 +1,7 @@
 import { KeyvAdapter } from '@apollo/utils.keyvadapter'
 import KeyvRedis from '@keyv/redis'
-import { caching } from 'cache-manager'
-import type { Config } from 'cache-manager'
-import { redisInsStore } from 'cache-manager-ioredis-yet'
+import { createCache as createCacheManager } from 'cache-manager'
+import type { CreateCacheOptions } from 'cache-manager'
 import {
   Cluster,
   ClusterNode,
@@ -21,7 +20,6 @@ type Options = {
   noPrefix?: boolean
 }
 
-// Type that works with both KeyvRedis and redisInsStore
 type RedisClient = Cluster | Redis
 
 const DEFAULT_PORT = 6379
@@ -160,6 +158,31 @@ export const createRedisCluster = (options: Options): Cluster => {
   return new Cluster(nodes, getRedisClusterOptions(options))
 }
 
-export const createRedisCacheManager = (options: Options & Config) => {
-  return caching(() => redisInsStore(createRedisCluster(options), options))
+/**
+ * Creates a cache-manager (v6) cache backed by the Redis cluster.
+ *
+ * Note: cache-manager v6 is Keyv-based. Keys get a Keyv namespace prefix, so
+ * existing cache entries from the v5/ioredis-store era are simply cold after
+ * upgrade — safe for caches, but do not use this for durable storage.
+ *
+ * Kept async for backwards compatibility with the v5 `caching()` signature.
+ */
+export const createRedisCacheManager = async (
+  options: Options & { ttl?: number },
+) => {
+  return createCacheManager({
+    // Cast because the repo hoists two structurally-identical keyv versions
+    // (top-level vs. the one bundled under cache-manager); they only differ by
+    // a private type field, so the Keyv instance is runtime-compatible.
+    stores: [createRedisKeyv(options)] as unknown as CreateCacheOptions['stores'],
+    // v5 treated ttl: 0 as "no expiry"; v6/Keyv expects undefined for that.
+    ttl: options.ttl || undefined,
+  })
 }
+
+export const createRedisKeyv = (options: Options) =>
+  new Keyv({
+    store: new KeyvRedis(createRedisCluster(options) as any, {
+      useRedisSets: false,
+    }),
+  })

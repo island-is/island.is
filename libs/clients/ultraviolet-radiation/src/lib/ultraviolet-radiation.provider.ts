@@ -5,7 +5,7 @@ import {
 } from '@island.is/clients/middlewares'
 import { Configuration, DefaultApi } from '../../gen/fetch'
 import { UltravioletRadiationClientConfig } from './ultraviolet-radiation.config'
-import { caching } from 'cache-manager'
+import { createCache } from 'cache-manager'
 import { createRedisCacheManager } from '@island.is/cache'
 
 const getCacheManager = (
@@ -13,9 +13,7 @@ const getCacheManager = (
   ttl: number,
 ) => {
   if (config.redis.nodes.length === 0) {
-    return caching('memory', {
-      ttl,
-    })
+    return createCache({ ttl })
   }
 
   return createRedisCacheManager({

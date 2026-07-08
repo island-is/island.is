@@ -1,4 +1,4 @@
-import { caching } from 'cache-manager'
+import { createCache } from 'cache-manager'
 
 import { ConfigType, LazyDuringDevScope } from '@island.is/nest/config'
 import {
@@ -17,7 +17,7 @@ const getCacheManager = async (
   config: ConfigType<typeof CourseChargesConfig>,
 ) => {
   if (config.redis.nodes.length === 0) {
-    return caching('memory', { ttl: CACHE_TTL })
+    return createCache({ ttl: CACHE_TTL })
   }
 
   return createRedisCacheManager({

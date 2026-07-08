@@ -5,7 +5,7 @@
 jest.useFakeTimers()
 jest.advanceTimersByTime(10)
 
-import { caching } from 'cache-manager'
+import { createCache } from 'cache-manager'
 
 import { createCurrentUser } from '@island.is/testing/fixtures'
 
@@ -154,7 +154,7 @@ describe('EnhancedFetch#withAutoAuth', () => {
 
   it('should cache token exchange in private cache if requested', async () => {
     // Arrange
-    const cacheManager = await caching('memory', { ttl: 0 })
+    const cacheManager = createCache({ ttl: 0 })
     env = setupTestEnv({
       autoAuth: {
         ...autoAuth,
@@ -174,7 +174,7 @@ describe('EnhancedFetch#withAutoAuth', () => {
 
   it('should not cache token exchange forever', async () => {
     // Arrange
-    const cacheManager = await caching('memory', { ttl: 0 })
+    const cacheManager = createCache({ ttl: 0 })
     env = setupTestEnv({
       autoAuth: {
         ...autoAuth,
