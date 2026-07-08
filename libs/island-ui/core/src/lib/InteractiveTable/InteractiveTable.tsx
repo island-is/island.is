@@ -619,7 +619,7 @@ export const InteractiveTable = <TData extends object>({
           paddingTop={3}
         >
           {footerHeaders.map((header) => (
-            <Text key={header.id} variant="medium" fontWeight="semiBold">
+            <Text key={header.id} fontWeight="semiBold">
               {flexRender(header.column.columnDef.footer, header.getContext())}
             </Text>
           ))}

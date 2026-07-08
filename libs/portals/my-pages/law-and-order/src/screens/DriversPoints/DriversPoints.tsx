@@ -59,7 +59,7 @@ const DriversPoints = () => {
         id: 'expiresDate',
         header: formatMessage(messages.driversPointsColumnExpiresDate),
         // TODO: implement when API exposes expiry date field on PenaltyPointDetail
-        cell: () => '—',
+        cell: () => '-',
       }),
     ],
     [formatMessage, totalPoints],
