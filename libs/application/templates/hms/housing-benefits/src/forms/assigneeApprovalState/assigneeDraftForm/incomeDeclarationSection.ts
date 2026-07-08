@@ -6,11 +6,10 @@ import {
 } from '@island.is/application/core'
 import * as m from '../../../lib/messages'
 import { nationalIdPreface } from '../../../utils/assigneeUtils'
-import { doesAssigneeAddressMatchRentalContract } from '../../../utils/rentalAgreementUtils'
+import { isAssigneeTaxReturnNotFiled } from '../../../utils/utils'
 
 export const incomeDeclarationSection = buildSection({
-  condition: (answers, externalData, user) =>
-    doesAssigneeAddressMatchRentalContract(answers, externalData, user),
+  condition: isAssigneeTaxReturnNotFiled,
   id: 'incomeDeclarationSection',
   title: m.assigneeDraft.incomeDeclarationTitle,
   children: [
