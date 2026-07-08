@@ -4,6 +4,7 @@ import { v4 as uuid } from 'uuid'
 import {
   AppealCaseState,
   AppealDecisionPartyRole,
+  AppealEventType,
   CaseAppealDecision,
   CaseState,
   CaseTransition,
@@ -206,8 +207,36 @@ describe('CaseController - Appeal decision dual-write', () => {
       expect(mockAppealDecisionRepositoryService.upsert).not.toHaveBeenCalled()
     })
 
-    it('should not write an APPEALED event for an in-court appeal', () => {
-      expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
+    it('should register an APPEALED event for the prosecutor who appealed, with the judge as the recording actor', () => {
+      expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledTimes(
+        1,
+      )
+      expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          caseId,
+          appealCaseId,
+          eventType: AppealEventType.APPEALED,
+          // The appellant's side, not the recording judge's role.
+          userRole: UserRole.PROSECUTOR,
+          // No party - request-case defence is collective, and this is the
+          // prosecutor anyway.
+          defendantId: undefined,
+          civilClaimantId: undefined,
+          // Actor snapshot = the confirming judge.
+          userId: user.id,
+          nationalId: user.nationalId,
+        }),
+        { transaction },
+      )
+    })
+
+    it('should not register an APPEALED event for the accused who accepted', () => {
+      expect(
+        mockAppealEventLogRepositoryService.create,
+      ).not.toHaveBeenCalledWith(
+        expect.objectContaining({ userRole: UserRole.DEFENDER }),
+        expect.anything(),
+      )
     })
 
     it('should still stamp the legacy prosecutor postponed appeal date', () => {

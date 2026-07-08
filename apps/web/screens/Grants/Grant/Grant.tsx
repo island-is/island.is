@@ -75,7 +75,7 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({
   ]
 
   const status = useMemo(
-    () => (grant ? parseStatus(grant, formatMessage, locale) : null),
+    () => (grant ? parseStatus(grant, formatMessage, locale, true) : null),
     [grant, formatMessage, locale],
   )
 

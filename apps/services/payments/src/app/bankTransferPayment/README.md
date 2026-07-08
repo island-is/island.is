@@ -185,7 +185,9 @@ stateDiagram-v2
         is still finalized — by getBankTransferStatus
         (Blikk re-check before any expiry soft-delete)
         and by handleExistingActiveBankTransferRow on
-        a re-create. Bank transfers have no worker backstop.
+        a re-create. Settlement detection has no worker
+        backstop — the payment worker only backfills the
+        FJS charge for already-settled flows.
     end note
 ```
 
@@ -201,13 +203,15 @@ stateDiagram-v2
    ([`generateBankTransferChargeFJSPayload`](./bankTransfer.utils.ts)).
 4. If FJS reports `AlreadyCreatedCharge`, [`reconcileExistingFjsCharge`](../paymentFlow/paymentFlow.service.ts)
    adopts the already-persisted local charge row and links it. If the charge keeps failing after
-   retries, the fulfillment is kept (we don't un-settle) and a CRITICAL log flags it for manual
-   reconciliation.
+   retries, the fulfillment is kept (we don't un-settle) and a warning is logged — the payment
+   worker retries the charge on its next run.
 
-> **No worker backstop.** The payment worker only sweeps `paymentMethod: 'card'`
-> ([`findPaidFlowsWithoutFjsCharge`](../paymentFlow/paymentFlow.service.ts)). Bank-transfer
-> settlement therefore has to be robust inline — hence the dual webhook/poll paths, the inline
-> FJS retry, and the orphan-recovery checks below.
+> **Worker backstop (FJS charge only).** The payment worker sweeps paid flows without an FJS
+> charge — once per payment method
+> ([`findPaidFlowsWithoutFjsCharge`](../paymentFlow/paymentFlow.service.ts)) — and rebuilds the
+> PAID charge from the persisted `bank_transfer_payment` row — using its settled `amount`, not
+> the live catalog price. Settlement detection itself is still inline-only — hence the dual
+> webhook/poll paths, the inline FJS retry, and the orphan-recovery checks below.
 
 ## Polling & webhooks (dual settlement)
 
@@ -228,8 +232,9 @@ SSR. It exits silently on `BankTransferNotFound`.
 On `create` we compute `expiresAt = now + BLIKK_PAYMENT_TTL_SECONDS`, send it to Blikk, and
 mirror it on the row. After this point the attempt is considered stale.
 
-Because there is no worker backstop, a SUCCESS whose webhook was lost must not be silently
-discarded. Two paths guard against it:
+Because settlement detection has no worker backstop (the worker only backfills FJS charges for
+already-settled flows), a SUCCESS whose webhook was lost must not be silently discarded. Two
+paths guard against it:
 
 - [`getBankTransferStatus`](./bankTransfer.service.ts) refreshes any `pending` row from Blikk —
   **including an expired one** — _before_ soft-deleting it. Only a confirmed non-success is
