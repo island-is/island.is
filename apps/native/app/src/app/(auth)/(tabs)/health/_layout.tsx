@@ -52,6 +52,7 @@ export default function HealthLayout() {
           title: intl.formatMessage({
             id: 'health.messages.filter.screenTitle',
           }),
+          headerTitleAlign: 'center',
         }}
       />
       <Stack.Screen

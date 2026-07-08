@@ -1,10 +1,10 @@
 import { useCallback, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { SafeAreaView, ScrollView, View } from 'react-native'
+import { Pressable, SafeAreaView, ScrollView, View } from 'react-native'
 import { router } from 'expo-router'
 import styled from 'styled-components'
 
-import { Button, theme } from '@/ui'
+import { Button, theme, Typography } from '@/ui'
 import { FilteringCheckbox } from '@/components/filtering-checkbox'
 import {
   healthMessagesFilterStore,
@@ -53,14 +53,28 @@ export default function HealthMessagesFilterScreen() {
           title: intl.formatMessage({
             id: 'health.messages.filter.screenTitle',
           }),
-          headerRightItems: [
-            {
-              type: 'button',
-              label: intl.formatMessage({ id: 'inbox.filterClearButton' }),
-              onPress: clearAllFilters,
-              disabled: !isSelected,
-            },
-          ],
+          headerTitleAlign: 'center',
+          // Rendered via `headerRight` instead of `headerRightItems`: the
+          // native items API breaks title centering on iOS.
+          headerRight: () => (
+            <Pressable
+              onPress={clearAllFilters}
+              disabled={!isSelected}
+              style={{
+                height: 46,
+                justifyContent: 'center',
+                paddingHorizontal: theme.spacing[1],
+              }}
+            >
+              <Typography
+                size={15}
+                weight="400"
+                color={isSelected ? theme.color.blue400 : theme.color.dark300}
+              >
+                {intl.formatMessage({ id: 'inbox.filterClearButton' })}
+              </Typography>
+            </Pressable>
+          ),
         }}
       />
       <ScrollView style={{ flex: 1, marginBottom: theme.spacing[3] }}>
