@@ -1,17 +1,28 @@
+import { useMemo } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { AlertMessage, Box, Table as T } from '@island.is/island-ui/core'
+import { AlertMessage, Box } from '@island.is/island-ui/core'
 import {
   CardLoader,
+  createColumnHelper,
   formatDate,
   IntroWrapper,
   LinkButton,
   m as coreMessages,
+  PortalTable,
   RIKISLOGREGLUSTJORI_SLUG,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { messages } from '../../lib/messages'
 import { useGetDriversDeprivationsQuery } from './DriversDeprivations.generated'
-import { DrivingLicenseDeprivationStatus } from '@island.is/api/schema'
+import {
+  DrivingLicenseDeprivation,
+  DrivingLicenseDeprivationStatus,
+} from '@island.is/api/schema'
+
+const columnHelper =
+  createColumnHelper<
+    Pick<DrivingLicenseDeprivation, 'name' | 'dateFrom' | 'dateTo'>
+  >()
 
 const DriversDeprivations = () => {
   useNamespaces('sp.law-and-order')
@@ -33,6 +44,35 @@ const DriversDeprivations = () => {
     (d) =>
       d.status === DrivingLicenseDeprivationStatus.LOST ||
       d.status === DrivingLicenseDeprivationStatus.LOSTANDEXPIRED,
+  )
+
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor('name', {
+        header: formatMessage(messages.driversDeprivationsColumnType),
+      }),
+      columnHelper.display({
+        id: 'reason',
+        header: formatMessage(messages.driversDeprivationsColumnReason),
+        // TODO: implement when API exposes a human-readable reason string on Deprivation (currently only deprivationType: Int is available)
+        cell: () => '-',
+      }),
+      columnHelper.accessor('dateFrom', {
+        header: formatMessage(messages.driversDeprivationsColumnDateFrom),
+        cell: ({ getValue }) => {
+          const value = getValue()
+          return value ? formatDate(value) : undefined
+        },
+      }),
+      columnHelper.accessor('dateTo', {
+        header: formatMessage(messages.driversDeprivationsColumnDateTo),
+        cell: ({ getValue }) => {
+          const value = getValue()
+          return value ? formatDate(value) : undefined
+        },
+      }),
+    ],
+    [formatMessage],
   )
 
   return (
@@ -102,46 +142,14 @@ const DriversDeprivations = () => {
             </Box>
           )}
 
-          <T.Table>
-            <T.Head>
-              <T.Row>
-                <T.HeadData>
-                  {formatMessage(messages.driversDeprivationsColumnType)}
-                </T.HeadData>
-                <T.HeadData>
-                  {/* TODO: implement when API exposes a human-readable reason string on Deprivation (currently only deprivationType: Int is available) */}
-                  {formatMessage(messages.driversDeprivationsColumnReason)}
-                </T.HeadData>
-                <T.HeadData>
-                  {formatMessage(messages.driversDeprivationsColumnDateFrom)}
-                </T.HeadData>
-                <T.HeadData>
-                  {formatMessage(messages.driversDeprivationsColumnDateTo)}
-                </T.HeadData>
-              </T.Row>
-            </T.Head>
-            <T.Body>
-              {deprivations.map((deprivation, index) => (
-                <T.Row key={index}>
-                  <T.Data>{deprivation.name ?? undefined}</T.Data>
-                  <T.Data>
-                    {/* TODO: implement when API exposes a human-readable reason string on Deprivation */}
-                    —
-                  </T.Data>
-                  <T.Data>
-                    {deprivation.dateFrom
-                      ? formatDate(deprivation.dateFrom)
-                      : undefined}
-                  </T.Data>
-                  <T.Data>
-                    {deprivation.dateTo
-                      ? formatDate(deprivation.dateTo)
-                      : undefined}
-                  </T.Data>
-                </T.Row>
-              ))}
-            </T.Body>
-          </T.Table>
+          <PortalTable
+            columns={columns}
+            data={deprivations}
+            emptyMessage={formatMessage(
+              messages.driversDeprivationsEmptyDescription,
+            )}
+            mobileTitleKey="name"
+          />
         </Box>
       )}
     </IntroWrapper>
