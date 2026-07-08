@@ -1,16 +1,25 @@
+import { useMemo } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { AlertMessage, Box, Table as T, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box } from '@island.is/island-ui/core'
 import {
   CardLoader,
+  createColumnHelper,
   formatDate,
   IntroWrapper,
   LinkButton,
   m as coreMessages,
+  PortalTable,
   RIKISLOGREGLUSTJORI_SLUG,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
+import { DrivingLicensePenaltyPointDetail } from '@island.is/api/schema'
 import { messages } from '../../lib/messages'
 import { useGetDriversPenaltyPointsQuery } from './DriversPoints.generated'
+
+const columnHelper =
+  createColumnHelper<
+    Pick<DrivingLicensePenaltyPointDetail, 'offenseDate' | 'penalty' | 'points'>
+  >()
 
 const DriversPoints = () => {
   useNamespaces('sp.law-and-order')
@@ -26,6 +35,35 @@ const DriversPoints = () => {
   const totalPoints = details.reduce((sum, d) => sum + (d.points ?? 0), 0)
 
   const isEmpty = !loading && !error && details.length === 0
+
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor('offenseDate', {
+        header: formatMessage(messages.driversPointsColumnOffenseDate),
+        cell: ({ getValue }) => {
+          const value = getValue()
+          return value ? formatDate(value) : undefined
+        },
+        footer: () => formatMessage(messages.driversPointsTotalPoints),
+      }),
+      columnHelper.accessor('penalty', {
+        header: formatMessage(messages.driversPointsColumnPenalty),
+        cell: ({ getValue }) => getValue() ?? undefined,
+      }),
+      columnHelper.accessor('points', {
+        header: formatMessage(messages.driversPointsColumnPoints),
+        cell: ({ getValue }) => getValue()?.toString() ?? undefined,
+        footer: () => totalPoints.toString(),
+      }),
+      columnHelper.display({
+        id: 'expiresDate',
+        header: formatMessage(messages.driversPointsColumnExpiresDate),
+        // TODO: implement when API exposes expiry date field on PenaltyPointDetail
+        cell: () => '—',
+      }),
+    ],
+    [formatMessage, totalPoints],
+  )
 
   return (
     <IntroWrapper
@@ -81,56 +119,12 @@ const DriversPoints = () => {
             </Box>
           )}
 
-          <T.Table>
-            <T.Head>
-              <T.Row>
-                <T.HeadData>
-                  {formatMessage(messages.driversPointsColumnOffenseDate)}
-                </T.HeadData>
-                <T.HeadData>
-                  {formatMessage(messages.driversPointsColumnPenalty)}
-                </T.HeadData>
-                <T.HeadData>
-                  {formatMessage(messages.driversPointsColumnPoints)}
-                </T.HeadData>
-                <T.HeadData>
-                  {/* TODO: implement when API exposes expiry date field on PenaltyPointDetail */}
-                  {formatMessage(messages.driversPointsColumnExpiresDate)}
-                </T.HeadData>
-              </T.Row>
-            </T.Head>
-            <T.Body>
-              {details.map((detail, index) => (
-                <T.Row key={index}>
-                  <T.Data>
-                    {detail.offenseDate
-                      ? formatDate(detail.offenseDate)
-                      : undefined}
-                  </T.Data>
-                  <T.Data>{detail.penalty ?? undefined}</T.Data>
-                  <T.Data>{detail.points?.toString() ?? undefined}</T.Data>
-                  <T.Data>
-                    {/* TODO: implement when API exposes expiry date field on PenaltyPointDetail */}
-                    —
-                  </T.Data>
-                </T.Row>
-              ))}
-            </T.Body>
-            <T.Foot>
-              <T.Row>
-                <T.Data>
-                  <Text fontWeight="semiBold">
-                    {formatMessage(messages.driversPointsTotalPoints)}
-                  </Text>
-                </T.Data>
-                <T.Data />
-                <T.Data>
-                  <Text fontWeight="semiBold">{totalPoints.toString()}</Text>
-                </T.Data>
-                <T.Data />
-              </T.Row>
-            </T.Foot>
-          </T.Table>
+          <PortalTable
+            columns={columns}
+            data={details}
+            emptyMessage={formatMessage(messages.driversPointsEmptyDescription)}
+            mobileTitleKey="offenseDate"
+          />
         </Box>
       )}
     </IntroWrapper>
