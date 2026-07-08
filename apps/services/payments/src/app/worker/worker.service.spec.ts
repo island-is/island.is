@@ -369,8 +369,8 @@ describe('WorkerService', () => {
     })
 
     it('should record a failure for a card flow with no active card payment details (e.g. interrupted refund)', async () => {
-      // The query left-joins card details, so a card flow whose details are all
-      // soft-deleted is returned and must surface as a failure — not be silently skipped.
+      // The card sweep inner-joins card details so such flows are normally excluded;
+      // if one slips through anyway it must surface as a failure — not crash the run.
       const flow = createMockFlow({
         id: 'card-orphan',
         cardPaymentDetails: [],
