@@ -4,6 +4,7 @@ import { data } from '@island.is/clients/middlewares'
 import {
   editApplicationEqualityContent,
   getApplicationActiveEqualityReport,
+  getApplicationCompany,
   getApplicationEqualityReportTemplateDocx,
   getApplicationEqualityReportTemplateHtml,
   getApplicationReport,
@@ -11,6 +12,7 @@ import {
 } from '../../gen/fetch'
 import type {
   ApplicationReportDetailDto,
+  CompanyDto,
   CreateReportResponseDto,
   EditEqualityContentDto,
   EqualityReportSummaryDto,
@@ -36,6 +38,14 @@ export class DirectorateOfEqualityClientService {
       this.logger.error(errorLogMessage, { context: LOGGING_CONTEXT, error })
       throw error
     }
+  }
+
+  async getCompany(user: User): Promise<CompanyDto> {
+    return this.unwrap(
+      user,
+      () => getApplicationCompany(),
+      'Failed to get company data from DOE',
+    )
   }
 
   async getActiveEqualityReport(user: User): Promise<EqualityReportSummaryDto> {
