@@ -30,8 +30,12 @@ export const tabScreenOptions: StackScreenProps['options'] = {
       : undefined,
   headerShadowVisible: false,
   headerBackButtonDisplayMode: 'minimal',
-  headerBackVisible: false,
-  unstable_headerLeftItems: blueBackItem,
+  // The blue chevron back item uses an SF Symbol, which is iOS-only. On
+  // Android we keep the default native back arrow (black) instead.
+  ...(Platform.OS === 'ios' && {
+    headerBackVisible: false,
+    unstable_headerLeftItems: blueBackItem,
+  }),
 }
 
 export const modalScreenOptions: StackScreenProps['options'] = {
