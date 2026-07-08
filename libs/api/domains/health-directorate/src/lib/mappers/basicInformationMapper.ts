@@ -104,9 +104,11 @@ export const toAppointmentLinkTypeEnum = (
   }
 }
 
-// Only the video call link is currently time-gated. The window is computed here,
-// so web and native both read the same activatesAt/expiresAt instead of each
-// hardcoding the rules independently.
+/*
+ * Only the video call link is currently time-gated. The window is computed
+ * here, so web and native both read the same activatesAt/expiresAt instead
+ * of each hardcoding the rules independently.
+ */
 export const getAppointmentLinkActivationWindow = (
   type: AppointmentLinkTypeEnum | undefined,
   appointmentDate: Date,

@@ -10,14 +10,25 @@ import * as styles from './AppointmentVideoCallAlert.css'
 
 type VideoCallPhase = 'before' | 'active' | 'expired'
 
+/*
+ * A missing or unparseable timestamp yields undefined, which downstream
+ * treats as "not time-gated" — a bad value degrades to an always-usable
+ * link rather than permanently blocking the call.
+ */
+const toTimeMs = (value?: string | null): number | undefined => {
+  if (!value) return undefined
+  const ms = new Date(value).getTime()
+  return Number.isNaN(ms) ? undefined : ms
+}
+
 const getVideoCallPhase = (
-  activatesAt?: string | Date | null,
-  expiresAt?: string | Date | null,
+  activatesAtMs?: number,
+  expiresAtMs?: number,
 ): VideoCallPhase => {
-  if (!activatesAt || !expiresAt) return 'active'
+  if (activatesAtMs === undefined || expiresAtMs === undefined) return 'active'
   const now = Date.now()
-  if (now >= new Date(expiresAt).getTime()) return 'expired'
-  if (now >= new Date(activatesAt).getTime()) return 'active'
+  if (now >= expiresAtMs) return 'expired'
+  if (now >= activatesAtMs) return 'active'
   return 'before'
 }
 
@@ -38,28 +49,25 @@ export const AppointmentVideoCallAlert = ({ links }: Props) => {
   const videoCall = links?.find(
     (l) => l.type === HealthDirectorateAppointmentLinkType.VIDEO_CALL,
   )
-  const { activatesAt, expiresAt } = videoCall ?? {}
+  const activatesAtMs = toTimeMs(videoCall?.activatesAt)
+  const expiresAtMs = toTimeMs(videoCall?.expiresAt)
 
   const [, rerender] = useReducer((c) => c + 1, 0)
-  // Pure derivation each render — always correct at render time, so the very
-  // first render with a resolved activatesAt/expiresAt already reflects the
-  // correct phase.
-  const videoCallPhase = getVideoCallPhase(activatesAt, expiresAt)
+  const videoCallPhase = getVideoCallPhase(activatesAtMs, expiresAtMs)
 
-  // Arm a single timer for the next phase boundary. No dep array: it re-arms
-  // after every render, so a capped long wait chains itself, and a timer that
-  // was delayed by tab throttling or laptop sleep self-corrects on the next
-  // render instead of getting stuck.
+  /* Arm a single timer for the next phase boundary. No dep array: it re-arms 
+  after every render, so a capped long wait chains itself, and a timer that
+  was delayed by tab throttling or laptop sleep self-corrects on the next
+  render instead of getting stuck.  */
   useEffect(() => {
-    if (videoCallPhase === 'expired' || !activatesAt || !expiresAt) {
+    if (
+      videoCallPhase === 'expired' ||
+      activatesAtMs === undefined ||
+      expiresAtMs === undefined
+    ) {
       return
     }
-    const boundary =
-      videoCallPhase === 'before'
-        ? new Date(activatesAt).getTime()
-        : new Date(expiresAt).getTime()
-    // The cap keeps the delay well under the browser's 32-bit setTimeout
-    // The floor prevents a tight re-arm loop if a timer fires early.
+    const boundary = videoCallPhase === 'before' ? activatesAtMs : expiresAtMs
     const delay = Math.min(boundary - Date.now(), 60 * 60 * 1000)
     const timeout = setTimeout(rerender, Math.max(delay, 1000))
     return () => clearTimeout(timeout)
