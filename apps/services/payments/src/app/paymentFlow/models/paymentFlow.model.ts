@@ -16,6 +16,7 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
+import { BankTransferPayment } from '../../bankTransferPayment/models/bankTransferPayment.model'
 import { CardPaymentDetails } from './cardPaymentDetails.model'
 import { FjsCharge } from './fjsCharge.model'
 import { PaymentFlowEvent } from './paymentFlowEvent.model'
@@ -161,6 +162,9 @@ export class PaymentFlow extends Model<
 
   @HasMany(() => PaymentFulfillment, 'paymentFlowId')
   paymentFulfillments?: PaymentFulfillment[]
+
+  @HasMany(() => BankTransferPayment, 'paymentFlowId')
+  bankTransferPayments?: BankTransferPayment[]
 
   @HasMany(() => PaymentWorkerEvent, 'paymentFlowId')
   workerEvents?: PaymentWorkerEvent[]
