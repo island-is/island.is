@@ -1,6 +1,8 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
+import { BadRequestException } from '@nestjs/common'
+
 import {
   AppealCaseState,
   AppealDecisionPartyRole,
@@ -260,13 +262,113 @@ describe('CaseController - Appeal decision dual-write', () => {
     })
   })
 
-  describe('completing a request case that was already appealed', () => {
+  describe('re-completing a corrected request case where the appeal still stands', () => {
     const theCase = {
       id: caseId,
       type: CaseType.CUSTODY,
       state: CaseState.RECEIVED,
-      appealCase: { id: appealCaseId },
-      prosecutorAppealDecision: CaseAppealDecision.APPEAL,
+      appealCase: { id: appealCaseId, appealState: AppealCaseState.APPEALED },
+      appealDecisions: [
+        {
+          partyRole: AppealDecisionPartyRole.PROSECUTOR,
+          decision: CaseAppealDecision.APPEAL,
+        },
+        {
+          partyRole: AppealDecisionPartyRole.DEFENDANT,
+          decision: CaseAppealDecision.ACCEPT,
+        },
+      ],
+      defendants: [{ id: defendantId1 }],
+    } as Case
+
+    beforeEach(async () => {
+      ;(
+        mockAppealEventLogRepositoryService.findAll as jest.Mock
+      ).mockResolvedValue([{ id: uuid(), userRole: UserRole.PROSECUTOR }])
+
+      await accept(theCase)
+    })
+
+    it('should not create or delete the appeal case', () => {
+      expect(mockAppealCaseRepositoryService.create).not.toHaveBeenCalled()
+      expect(mockAppealCaseRepositoryService.delete).not.toHaveBeenCalled()
+    })
+
+    it('should leave the already-registered appellant event untouched', () => {
+      expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('re-completing a request case where the correction changed who appeals', () => {
+    const prosecutorEventId = uuid()
+    const theCase = {
+      id: caseId,
+      type: CaseType.CUSTODY,
+      state: CaseState.RECEIVED,
+      appealCase: { id: appealCaseId, appealState: AppealCaseState.APPEALED },
+      // Corrected: the prosecutor no longer appeals, the accused now does.
+      appealDecisions: [
+        {
+          partyRole: AppealDecisionPartyRole.PROSECUTOR,
+          decision: CaseAppealDecision.ACCEPT,
+        },
+        {
+          partyRole: AppealDecisionPartyRole.DEFENDANT,
+          decision: CaseAppealDecision.APPEAL,
+        },
+      ],
+      defendants: [{ id: defendantId1 }],
+    } as Case
+
+    beforeEach(async () => {
+      ;(
+        mockAppealEventLogRepositoryService.findAll as jest.Mock
+      ).mockResolvedValue([
+        { id: prosecutorEventId, userRole: UserRole.PROSECUTOR },
+      ])
+
+      await accept(theCase)
+    })
+
+    it('should register an APPEALED event for the newly appealing defence', () => {
+      expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          appealCaseId,
+          eventType: AppealEventType.APPEALED,
+          userRole: UserRole.DEFENDER,
+        }),
+        { transaction },
+      )
+    })
+
+    it('should remove the appellant event of the side corrected away', () => {
+      expect(
+        mockAppealEventLogRepositoryService.deleteByIds,
+      ).toHaveBeenCalledWith([prosecutorEventId], { transaction })
+    })
+
+    it('should not create or delete the appeal case itself', () => {
+      expect(mockAppealCaseRepositoryService.create).not.toHaveBeenCalled()
+      expect(mockAppealCaseRepositoryService.delete).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('re-completing a request case whose appeal was corrected away entirely', () => {
+    const theCase = {
+      id: caseId,
+      type: CaseType.CUSTODY,
+      state: CaseState.RECEIVED,
+      appealCase: { id: appealCaseId, appealState: AppealCaseState.APPEALED },
+      appealDecisions: [
+        {
+          partyRole: AppealDecisionPartyRole.PROSECUTOR,
+          decision: CaseAppealDecision.ACCEPT,
+        },
+        {
+          partyRole: AppealDecisionPartyRole.DEFENDANT,
+          decision: CaseAppealDecision.ACCEPT,
+        },
+      ],
       defendants: [{ id: defendantId1 }],
     } as Case
 
@@ -274,9 +376,51 @@ describe('CaseController - Appeal decision dual-write', () => {
       await accept(theCase)
     })
 
-    it('should not create another appeal case', () => {
-      expect(mockAppealCaseRepositoryService.create).not.toHaveBeenCalled()
-      expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
+    it('should delete the stranded appeal case and its events', () => {
+      expect(
+        mockAppealEventLogRepositoryService.deleteByAppealCaseId,
+      ).toHaveBeenCalledWith(appealCaseId, { transaction })
+      expect(mockAppealCaseRepositoryService.delete).toHaveBeenCalledWith(
+        appealCaseId,
+        { transaction },
+      )
+    })
+
+    it('should clear the legacy postponed appeal dates', () => {
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        expect.objectContaining({
+          prosecutorPostponedAppealDate: null,
+          accusedPostponedAppealDate: null,
+        }),
+        { transaction },
+      )
+    })
+  })
+
+  describe('re-completing a request case whose appeal has progressed past the district court', () => {
+    const theCase = {
+      id: caseId,
+      type: CaseType.CUSTODY,
+      state: CaseState.RECEIVED,
+      // The appeal has been received by the court of appeals.
+      appealCase: { id: appealCaseId, appealState: AppealCaseState.RECEIVED },
+      appealDecisions: [
+        {
+          partyRole: AppealDecisionPartyRole.PROSECUTOR,
+          decision: CaseAppealDecision.ACCEPT,
+        },
+        {
+          partyRole: AppealDecisionPartyRole.DEFENDANT,
+          decision: CaseAppealDecision.ACCEPT,
+        },
+      ],
+      defendants: [{ id: defendantId1 }],
+    } as Case
+
+    it('should reject the correction and delete nothing', async () => {
+      await expect(accept(theCase)).rejects.toBeInstanceOf(BadRequestException)
+      expect(mockAppealCaseRepositoryService.delete).not.toHaveBeenCalled()
     })
   })
 })
