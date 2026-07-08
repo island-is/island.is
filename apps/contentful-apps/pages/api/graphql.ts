@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
+
 import { getServerRuntimeEnv } from '../../environments/runtimeEnvironment'
 
 const { graphqlEndpoint } = getServerRuntimeEnv()

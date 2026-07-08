@@ -4,9 +4,9 @@ import Head from 'next/head'
 import { globalStyles } from '@island.is/island-ui/core'
 import { MatomoTracker } from '@island.is/matomo'
 
-import '@island.is/api/mocks'
-
 import { getPublicRuntimeEnv } from '../environments/runtimeEnvironment'
+
+import '@island.is/api/mocks'
 
 globalStyles()
 

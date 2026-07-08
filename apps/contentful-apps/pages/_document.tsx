@@ -1,9 +1,11 @@
 import React from 'react'
-import Document, { Html, Head, Main, NextScript } from 'next/document'
+import Document, { Head, Html, Main, NextScript } from 'next/document'
+
 import {
   NEXT_RUNTIME_ENV_SCRIPT_ID,
   serializeRuntimeEnv,
 } from '@island.is/shared/utils'
+
 import { buildPublicRuntimeEnv } from '../environments/runtimeEnvironment'
 
 class MyDocument extends Document {

@@ -4,6 +4,7 @@ import {
   InMemoryCache,
   type NormalizedCacheObject,
 } from '@apollo/client'
+
 import {
   getPublicRuntimeEnv,
   getServerRuntimeEnv,

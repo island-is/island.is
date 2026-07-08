@@ -28,9 +28,9 @@ import {
 
 import { OrganizationIslandFooter } from '../components/Organization/OrganizationIslandFooter'
 import { PRELOADED_FONTS } from '../constants'
-import { getPublicRuntimeEnv } from '../environments/runtimeEnvironment'
 import { GlobalContextProvider } from '../context'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
+import { getPublicRuntimeEnv } from '../environments/runtimeEnvironment'
 import {
   ContentLanguage,
   GetAlertBannerQuery,
