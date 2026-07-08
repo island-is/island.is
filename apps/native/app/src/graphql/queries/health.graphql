@@ -352,6 +352,12 @@ mutation CreateHealthConversation(
   }
 }
 
+mutation MarkHealthConversationAsRead(
+  $input: HealthDirectorateConversationIdInput!
+) {
+  healthDirectorateMarkHealthConversationAsRead(input: $input)
+}
+
 mutation ReplyToHealthConversation(
   $input: HealthDirectorateReplyToConversationInput!
 ) {

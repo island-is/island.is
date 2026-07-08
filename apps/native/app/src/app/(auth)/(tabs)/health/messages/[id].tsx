@@ -1,4 +1,5 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useApolloClient } from '@apollo/client'
 import { useIntl } from 'react-intl'
 import {
   FlatList,
@@ -15,6 +16,7 @@ import {
   GetHealthConversationQuery,
   HealthDirectorateHealthConversationDirection,
   useGetHealthConversationQuery,
+  useMarkHealthConversationAsReadMutation,
 } from '@/graphql/types/schema'
 import { useAuthStore } from '@/stores/auth-store'
 import { uiStore } from '@/stores/ui-store'
@@ -40,6 +42,7 @@ export default function HealthMessageDetailScreen() {
     justCreated?: string
   }>()
   const intl = useIntl()
+  const client = useApolloClient()
   const userName = useAuthStore((s) => s.userInfo?.name)
   const [refetching, setRefetching] = useState(false)
 
@@ -51,6 +54,27 @@ export default function HealthMessageDetailScreen() {
   const conversation = res.data?.healthDirectorateHealthConversation
   const messages = useMemo(() => conversation?.messages ?? [], [conversation])
   const isSkeleton = res.loading && !res.data
+
+  const [markAsRead] = useMarkHealthConversationAsReadMutation({
+    // Fire-and-forget: the server state self-corrects on the next load.
+    onError: () => undefined,
+  })
+
+  // Once the thread has rendered the user has seen it, so clear the unread
+  // state on the list's cache entry right away — rather than waiting for the mutation.
+  useEffect(() => {
+    if (conversation?.isRead === false) {
+      const cacheId = client.cache.identify({
+        __typename: 'HealthDirectorateHealthConversation',
+        id,
+      })
+      if (cacheId) {
+        client.cache.modify({ id: cacheId, fields: { isRead: () => true } })
+      }
+      markAsRead({ variables: { input: { id } } })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [conversation?.id])
 
   const handleRefresh = () => {
     setRefetching(true)
