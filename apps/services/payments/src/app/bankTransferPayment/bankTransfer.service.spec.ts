@@ -1625,7 +1625,7 @@ describe('BankTransferService', () => {
       ).rejects.toThrow('connection reset')
     })
 
-    it('logs critically and keeps the fulfillment when the FJS charge keeps failing', async () => {
+    it('warns that the worker will retry and keeps the fulfillment when the FJS charge keeps failing', async () => {
       paymentFlowService.createFjsCharge.mockRejectedValue(
         new Error('FJS down'),
       )
@@ -1635,8 +1635,8 @@ describe('BankTransferService', () => {
       ).resolves.toBeUndefined()
 
       expect(paymentFlowService.createFjsCharge).toHaveBeenCalledTimes(3)
-      expect(logger.error).toHaveBeenCalledWith(
-        expect.stringContaining('manual reconciliation required'),
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining('the payment worker will retry'),
         expect.any(Object),
       )
     })

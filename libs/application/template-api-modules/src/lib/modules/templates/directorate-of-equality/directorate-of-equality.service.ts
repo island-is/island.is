@@ -3,10 +3,7 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
-import {
-  CompanyDto,
-  DirectorateOfEqualityClientService,
-} from '@island.is/clients/directorate-of-equality'
+import { DirectorateOfEqualityClientService } from '@island.is/clients/directorate-of-equality'
 import {
   Gender,
   type ApplicationAnswers,
@@ -113,15 +110,18 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     )
     if (!hasActiveReport) return null
 
-    const doeCompany = getValueViaPath<CompanyDto>(
+    // `identifier` is set to the submitting application's id at submit time
+    // (see submitEqualityReport below), the same value stored as `providerId`
+    // — which is what getReport() looks up by.
+    const providerId = getValueViaPath<string>(
       application.externalData,
-      'doeCompany.data',
+      'activeEqualityReport.data.identifier',
     )
-    if (!doeCompany?.id) return null
+    if (!providerId) return null
     try {
       const report = await this.directorateOfEqualityService.getReport(
         auth,
-        doeCompany.id,
+        providerId,
       )
       return { equalityReportContent: report.equalityReportContent ?? '' }
     } catch (error) {
@@ -148,11 +148,6 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
       [Gender.FEMALE]: 'FEMALE',
       [Gender.NON_BINARY]: 'NEUTRAL',
     }
-    const doeCompany = getValueViaPath<CompanyDto>(
-      application.externalData,
-      'doeCompany.data',
-    )
-
     const equalityReportContent = getValueViaPath(
       answers,
       'goalsAndActions.customField',
@@ -166,7 +161,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
         auth,
         {
           identifier: application.id,
-          providerId: doeCompany?.id ?? application.id,
+          providerId: application.id,
           companyAdminName: answers.chiefExecutive?.name ?? '',
           companyAdminEmail: answers.chiefExecutive?.email ?? '',
           companyAdminGender: answers.chiefExecutive?.gender
