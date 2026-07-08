@@ -938,7 +938,6 @@ describe('BankTransferService', () => {
       expect(result.status).toBe(BankTransferStatus.ERROR)
       expect(result.failureReason).toBe(BankTransferFailureReason.EXPIRED)
     })
-
   })
 
   describe('cancel', () => {

@@ -80,9 +80,9 @@ describe('isOnboardingRequired', () => {
   })
 
   it('is false for an unparsable SCA URL', () => {
-    expect(
-      isOnboardingRequired('DRAFT', 'not a url', onboardingOrigin),
-    ).toBe(false)
+    expect(isOnboardingRequired('DRAFT', 'not a url', onboardingOrigin)).toBe(
+      false,
+    )
   })
 
   it('is false for a DRAFT payment without an SCA URL (back-channel)', () => {
