@@ -42,6 +42,7 @@ export const assigneeOverviewSection = buildSection({
           id: 'assigneeIncomeDeclarationOverview',
           title: m.assigneeDraftOverview.incomeDeclarationTitle,
           backId: 'incomeDeclaration',
+          hideIfEmpty: true,
           items: assigneeIncomeDeclarationOverviewItems,
         }),
         buildOverviewField({

@@ -678,10 +678,6 @@ export class HousingBenefitsService extends BaseTemplateApiService {
           this.attachmentService.getAttachmentUrl(app, key, expiration),
       )
       const model = mapApplicationToHousingBenefitsModel(application, files)
-      console.log('--------------------------------')
-      console.log('model')
-      console.dir(model, { depth: null, colors: true })
-      console.log('--------------------------------')
 
       const result =
         await this.hmsHousingBenefitsClientService.createHousingBenefitsApplication(
