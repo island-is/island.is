@@ -18,6 +18,8 @@ export const EXPIRATION = 2 * LIFE_TIME
 
 const ZENDESK_CUSTOM_FIELDS = {
   Link: 24596286118546,
+  // TODO: Replace with the actual custom field id for the national id field
+  NationalId: 0,
 }
 
 const ZENDESK_AUTHOR_ID = 372464383959
@@ -170,6 +172,12 @@ export class IdentityConfirmationService {
           `,
         public: false,
       },
+      custom_fields: [
+        {
+          id: ZENDESK_CUSTOM_FIELDS.NationalId,
+          value: user.nationalId,
+        },
+      ],
     })
 
     await identityConfirmation.destroy()
