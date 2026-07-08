@@ -61,6 +61,7 @@ export default function HealthLayout() {
           headerTitleAlign: 'center',
         }}
       />
+      <Stack.Screen name="messages/new" options={modalScreenOptions} />
       <Stack.Screen
         name="questionnaires/index"
         options={{

@@ -872,6 +872,19 @@ export const en: TranslatedMessages = {
   'health.messages.replyButton': 'Reply to message',
   'health.messages.cannotReply':
     'You cannot reply to this message because the sender has closed further replies in this conversation.',
+  'health.messages.compose.newTitle': 'New message',
+  'health.messages.compose.selectRecipient': 'Select recipient',
+  'health.messages.compose.selectService': 'Select service',
+  'health.messages.compose.selectServicePlaceholder':
+    'Select a service from the dropdown',
+  'health.messages.compose.to': 'To: {name}',
+  'health.messages.compose.messageLabel': 'Message',
+  'health.messages.compose.messagePlaceholder': 'Write your message here',
+  'health.messages.compose.send': 'Send message',
+  'health.messages.compose.sendError':
+    'Failed to send message. Please try again later.',
+  'health.messages.compose.noRecipient':
+    'It is not possible to send messages at the moment',
 
   // health - organ donation
   'health.organDonation': 'Organ Donation',

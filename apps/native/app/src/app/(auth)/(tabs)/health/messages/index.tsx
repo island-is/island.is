@@ -107,9 +107,9 @@ export default function HealthMessagesScreen() {
       {renderHeaderIconSegment(filterIcon, () =>
         router.push('/health/messages/filter'),
       )}
-      {renderHeaderIconSegment(composeIcon, () => {
-        // TODO: navigate to the new-message / compose flow once it exists.
-      })}
+      {renderHeaderIconSegment(composeIcon, () =>
+        router.push('/health/messages/new'),
+      )}
     </View>
   )
 
@@ -185,7 +185,6 @@ export default function HealthMessagesScreen() {
                 message={intl.formatMessage({
                   id: 'health.messages.errorMessage',
                 })}
-                tag={messagesRes.error.message}
               />
             </View>
           ) : (

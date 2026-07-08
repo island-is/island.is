@@ -870,6 +870,19 @@ export const is = {
   'health.messages.replyButton': 'Svara skilaboðum',
   'health.messages.cannotReply':
     'Ekki er hægt að svara þessum skilaboðum því sendandi hefur lokað fyrir frekari svör í þessu samtali.',
+  'health.messages.compose.newTitle': 'Ný skilaboð',
+  'health.messages.compose.selectRecipient': 'Veldu viðtakanda',
+  'health.messages.compose.selectService': 'Veldu þjónustu',
+  'health.messages.compose.selectServicePlaceholder':
+    'Veldu þjónustu úr fellilistanum',
+  'health.messages.compose.to': 'Til: {name}',
+  'health.messages.compose.messageLabel': 'Skilaboð',
+  'health.messages.compose.messagePlaceholder': 'Skrifaðu skilaboð hér',
+  'health.messages.compose.send': 'Senda skilaboð',
+  'health.messages.compose.sendError':
+    'Ekki tókst að senda skilaboð. Vinsamlegast reyndu aftur síðar.',
+  'health.messages.compose.noRecipient':
+    'Ekki er hægt að senda skilaboð eins og er',
 
   // health - organ donation
   'health.organDonation': 'Líffæragjöf',

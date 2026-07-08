@@ -7,7 +7,7 @@ import {
   SafeAreaView,
   View,
 } from 'react-native'
-import { useFocusEffect, useLocalSearchParams } from 'expo-router'
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router'
 
 import { StackScreen } from '@/components/stack-screen'
 import { ButtonDrawer } from '@/components/button-drawer'
@@ -18,7 +18,7 @@ import {
 } from '@/graphql/types/schema'
 import { useAuthStore } from '@/stores/auth-store'
 import { uiStore } from '@/stores/ui-store'
-import { Alert, Button, ListItemSkeleton, theme } from '@/ui'
+import { Alert, Button, GeneralCardSkeleton, ListItemSkeleton } from '@/ui'
 import { createSkeletonArr } from '@/utils/create-skeleton-arr'
 import { DocumentListItem } from '@/components/document-list-item'
 
@@ -141,40 +141,42 @@ export default function HealthMessageDetailScreen() {
             />
           }
         />
-        {conversation?.patientCanReply ? (
+        {isSkeleton || conversation ? (
           <ButtonDrawer>
             <SafeAreaView>
-              <Button
-                title={intl.formatMessage({
-                  id: 'health.messages.replyButton',
-                })}
-                isTransparent
-                isOutlined
-                iconPosition="start"
-                icon={require('@/assets/icons/reply.png')}
-                onPress={() => {
-                  // TODO: navigate to the reply flow once it exists.
-                }}
-              />
+              {isSkeleton ? (
+                <GeneralCardSkeleton height={48} />
+              ) : conversation?.patientCanReply ? (
+                <Button
+                  title={intl.formatMessage({
+                    id: 'health.messages.replyButton',
+                  })}
+                  isTransparent
+                  isOutlined
+                  iconPosition="start"
+                  icon={require('@/assets/icons/reply.png')}
+                  onPress={() =>
+                    router.push({
+                      pathname: '/health/messages/new',
+                      params: {
+                        conversationId: id,
+                        recipientName: conversation?.lastSenderGroupName ?? '',
+                        subject: conversation?.title ?? '',
+                      },
+                    })
+                  }
+                />
+              ) : (
+                <Alert
+                  type="info"
+                  message={intl.formatMessage({
+                    id: 'health.messages.cannotReply',
+                  })}
+                  hasBorder
+                />
+              )}
             </SafeAreaView>
           </ButtonDrawer>
-        ) : conversation ? (
-          <SafeAreaView>
-            <View
-              style={{
-                paddingHorizontal: theme.spacing[2],
-                paddingBottom: theme.spacing[2],
-              }}
-            >
-              <Alert
-                type="info"
-                message={intl.formatMessage({
-                  id: 'health.messages.cannotReply',
-                })}
-                hasBorder
-              />
-            </View>
-          </SafeAreaView>
         ) : null}
       </View>
     </>
