@@ -20,12 +20,20 @@ interface DesktopSearchPanelProps {
   organizationSearchFilter?: string
   searchPlaceholder?: string
   onOpenChange?: (isOpen: boolean) => void
+  /**
+   * When true the search input is rendered permanently expanded and the
+   * collapse toggle is dropped — used on the simplified header (institution
+   * sites and project pages) where search is a primary, always-available
+   * action rather than a global-nav affordance tucked behind an icon.
+   */
+  alwaysOpen?: boolean
 }
 
 export const DesktopSearchPanel = ({
   organizationSearchFilter,
   searchPlaceholder,
   onOpenChange,
+  alwaysOpen = false,
 }: DesktopSearchPanelProps) => {
   const { activeLocale, t } = useI18n()
   const { globalNamespace } = useContext(GlobalContext)
@@ -110,29 +118,35 @@ export const DesktopSearchPanel = ({
     activeLocale === 'is' ? 'Leit' : 'Search',
   )
 
+  // `alwaysOpen` keeps the input permanently visible; otherwise it tracks
+  // the transient open state driven by the toggle button.
+  const expanded = alwaysOpen || isOpen
+
   return (
     <div ref={containerRef} className={styles.root}>
-      <button
-        ref={buttonRef}
-        type="button"
-        className={`${styles.iconButton} ${
-          isOpen ? styles.iconButtonHidden : ''
-        }`}
-        aria-label={searchLabel}
-        aria-expanded={isOpen}
-        aria-controls={overlayId}
-        onClick={() => (isOpen ? close() : open())}
-      >
-        <Icon icon="search" type="outline" size="small" color="blue400" />
-      </button>
+      {!alwaysOpen && (
+        <button
+          ref={buttonRef}
+          type="button"
+          className={`${styles.iconButton} ${
+            isOpen ? styles.iconButtonHidden : ''
+          }`}
+          aria-label={searchLabel}
+          aria-expanded={isOpen}
+          aria-controls={overlayId}
+          onClick={() => (isOpen ? close() : open())}
+        >
+          <Icon icon="search" type="outline" size="small" color="blue400" />
+        </button>
+      )}
 
       <div
         id={overlayId}
         role="search"
         aria-label={searchLabel}
-        aria-hidden={!isOpen}
+        aria-hidden={!expanded}
         className={`${styles.inputOverlay} ${
-          isOpen ? styles.inputOverlayOpen : ''
+          expanded ? styles.inputOverlayOpen : ''
         }`}
       >
         <SearchInput

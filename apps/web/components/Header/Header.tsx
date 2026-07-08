@@ -180,6 +180,12 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
                               }
                               searchPlaceholder={searchPlaceholder}
                               onOpenChange={handleDesktopSearchOpenChange}
+                              // The simplified header (institution sites and
+                              // project pages, where nav is hidden) surfaces
+                              // search as a primary action, so it stays
+                              // permanently expanded instead of collapsing
+                              // behind the toggle.
+                              alwaysOpen={!showNavigation}
                             />
                           )}
                           <Box marginLeft={marginLeft}>{languageToggler}</Box>
