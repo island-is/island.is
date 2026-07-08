@@ -1,16 +1,5 @@
-import { useEffect, useReducer } from 'react'
-import {
-  HealthDirectorateAppointmentLinkType,
-  HealthDirectorateAppointmentModality,
-} from '@island.is/api/schema'
-import {
-  AlertMessage,
-  Box,
-  Button,
-  Icon,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { HealthDirectorateAppointmentModality } from '@island.is/api/schema'
+import { Box, Icon, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
@@ -18,43 +7,25 @@ import {
   InfoLineStack,
   IntroWrapper,
   LinkButton,
-  LinkResolver,
   formatDate,
   getTime,
   getWeekday,
 } from '@island.is/portals/my-pages/core'
-import { theme } from '@island.is/island-ui/theme'
 
 import { Problem } from '@island.is/react-spa/shared'
 import { useParams } from 'react-router-dom'
-import { useWindowSize } from 'react-use'
 import { messages } from '../../lib/messages'
 
 import { generateGoogleMapsLink } from '../../utils/googleMaps'
 import { mapWeekday } from '../../utils/mappers'
 import { useGetAppointmentDetailQuery } from './AppointmentDetail.generated'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
-import * as styles from './AppointmentDetail.css'
-
-type VideoCallPhase = 'before' | 'active' | 'expired'
-
-const getVideoCallPhase = (
-  activatesAt?: string | Date | null,
-  expiresAt?: string | Date | null,
-): VideoCallPhase => {
-  if (!activatesAt || !expiresAt) return 'active'
-  const now = Date.now()
-  if (now >= new Date(expiresAt).getTime()) return 'expired'
-  if (now >= new Date(activatesAt).getTime()) return 'active'
-  return 'before'
-}
+import { AppointmentVideoCallAlert } from './AppointmentVideoCallAlert'
 
 const AppointmentDetail = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
   useHealthPlausibleSwap()
-  const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.sm
   const { id } = useParams<{ id: string }>()
 
   const { data, loading, error } = useGetAppointmentDetailQuery({
@@ -74,40 +45,6 @@ const AppointmentDetail = () => {
     appointment?.location?.latitude,
     appointment?.location?.longitude,
   )
-
-  const videoCall = appointment?.links?.find(
-    (l) => l.type === HealthDirectorateAppointmentLinkType.VIDEO_CALL,
-  )
-  const { activatesAt, expiresAt } = videoCall ?? {}
-
-  const [, rerender] = useReducer((c) => c + 1, 0)
-  // Pure derivation each render — always correct at render time, so the very
-  // first render with a resolved activatesAt/expiresAt already reflects the
-  // correct phase.
-  const videoCallPhase = getVideoCallPhase(activatesAt, expiresAt)
-
-  // Arm a single timer for the next phase boundary. No dep array: it re-arms
-  // after every render, so a capped long wait chains itself, and a timer that
-  // was delayed by tab throttling or laptop sleep self-corrects on the next
-  // render instead of getting stuck.
-  useEffect(() => {
-    if (videoCallPhase === 'expired' || !activatesAt || !expiresAt) {
-      return
-    }
-    const boundary =
-      videoCallPhase === 'before'
-        ? new Date(activatesAt).getTime()
-        : new Date(expiresAt).getTime()
-    // The cap keeps the delay well under the browser's 32-bit setTimeout
-    // The floor prevents a tight re-arm loop if a timer fires early.
-    const delay = Math.min(boundary - Date.now(), 60 * 60 * 1000)
-    const timeout = setTimeout(rerender, Math.max(delay, 1000))
-    return () => clearTimeout(timeout)
-  })
-
-  const videoCallLink = videoCall?.url
-  const isVideoCallActive = videoCallPhase === 'active'
-  const isVideoCallExpired = videoCallPhase === 'expired'
 
   const fullAddress =
     [
@@ -285,54 +222,9 @@ const AppointmentDetail = () => {
             </Box>
 
             {appointment.modality ===
-              HealthDirectorateAppointmentModality.VIDEO &&
-              !isVideoCallExpired && (
-                <Box marginTop={3}>
-                  <AlertMessage
-                    type="info"
-                    message={
-                      videoCallLink ? (
-                        <Box className={styles.videoCallMessageRow}>
-                          <Text variant="small">
-                            {formatMessage(
-                              isVideoCallActive
-                                ? messages.appointmentVideoCallInfoWithLinkActive
-                                : messages.appointmentVideoCallInfoWithLink,
-                            )}
-                          </Text>
-                          {isVideoCallActive ? (
-                            <LinkResolver
-                              href={videoCallLink}
-                              className={styles.videoCallLink}
-                            >
-                              <Button
-                                as="span"
-                                size="small"
-                                fluid={isMobile}
-                                unfocusable
-                              >
-                                {formatMessage(
-                                  messages.appointmentVideoCallLink,
-                                )}
-                              </Button>
-                            </LinkResolver>
-                          ) : (
-                            <Box className={styles.videoCallLink}>
-                              <Button size="small" fluid={isMobile} disabled>
-                                {formatMessage(
-                                  messages.appointmentVideoCallLink,
-                                )}
-                              </Button>
-                            </Box>
-                          )}
-                        </Box>
-                      ) : (
-                        formatMessage(messages.appointmentVideoCallInfoNoLink)
-                      )
-                    }
-                  />
-                </Box>
-              )}
+              HealthDirectorateAppointmentModality.VIDEO && (
+              <AppointmentVideoCallAlert links={appointment.links} />
+            )}
           </Box>
 
           {((appointment.practitioners?.length ?? 0) > 0 ||
