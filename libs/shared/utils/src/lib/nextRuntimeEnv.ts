@@ -27,10 +27,7 @@
 
 export const NEXT_RUNTIME_ENV_SCRIPT_ID = '__NEXT_RUNTIME_ENV__'
 
-export type RuntimeEnv = Record<
-  string,
-  string | number | boolean | undefined
->
+export type RuntimeEnv = Record<string, string | number | boolean | undefined>
 
 export const isServerSide = () => typeof window === 'undefined'
 
