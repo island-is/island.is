@@ -1,4 +1,4 @@
-import { Context, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import { Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
@@ -19,6 +19,7 @@ export class UserResolver {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly backendApi: BackendAPI,
   ) {}
 
   private async handleNotFoundException<T>(callback: () => Promise<T>) {
@@ -40,27 +41,21 @@ export class UserResolver {
   }
 
   @ResolveField('spouse', () => SpouseModel)
-  async spouse(
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<SpouseModel> {
-    return await backendApi.getSpouse()
+  async spouse(): Promise<SpouseModel> {
+    return await this.backendApi.getSpouse()
   }
 
   @ResolveField('currentApplicationId', () => String)
-  async currentApplicationId(
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<string | undefined> {
+  async currentApplicationId(): Promise<string | undefined> {
     this.logger.debug('Getting current application for nationalId')
     return await this.handleNotFoundException(() =>
-      backendApi.getCurrentApplicationId(),
+      this.backendApi.getCurrentApplicationId(),
     )
   }
 
   @ResolveField('staff', () => StaffModel, { name: 'staff', nullable: true })
-  async staff(
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<Staff | undefined> {
+  async staff(): Promise<Staff | undefined> {
     this.logger.debug('Getting staff for nationalId')
-    return await backendApi.getStaff()
+    return await this.backendApi.getStaff()
   }
 }

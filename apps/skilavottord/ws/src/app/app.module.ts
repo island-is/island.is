@@ -30,7 +30,6 @@ const autoSchemaFile = environment.production
 @Module({
   imports: [
     GraphQLModule.forRoot({
-      debug,
       playground,
       autoSchemaFile,
       path: `${BASE_PATH}/api/graphql`,

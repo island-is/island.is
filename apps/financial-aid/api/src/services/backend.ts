@@ -1,6 +1,5 @@
-import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
-
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable, Scope } from '@nestjs/common'
+import { CONTEXT } from '@nestjs/graphql'
 
 import {
   Application,
@@ -38,13 +37,84 @@ import {
 import { FilterApplicationsInput } from '../app/modules/application/dto'
 import { DeleteApiKeyResponse } from '../app/modules/apiKeys/models'
 
-@Injectable()
-class BackendAPI extends RESTDataSource {
-  baseURL = `${environment.backend.url}/${apiBasePath}`
+interface RequestHeaders {
+  authorization?: string
+  cookie?: string
+}
 
-  willSendRequest(req: RequestOptions) {
-    req.headers.set('authorization', this.context.req.headers.authorization)
-    req.headers.set('cookie', this.context.req.headers.cookie)
+// The GraphQL context for this app is the express request itself
+// (`context: ({ req }) => req`), so headers live directly on the context.
+interface GqlContext {
+  headers?: RequestHeaders
+  req?: { headers?: RequestHeaders }
+}
+
+@Injectable({ scope: Scope.REQUEST })
+class BackendAPI {
+  private readonly baseURL = `${environment.backend.url}/${apiBasePath}`
+
+  constructor(@Inject(CONTEXT) private readonly context: GqlContext) {}
+
+  private get authHeaders() {
+    const { authorization, cookie } =
+      this.context?.req?.headers ?? this.context?.headers ?? {}
+
+    return {
+      ...(authorization ? { authorization } : {}),
+      ...(cookie ? { cookie } : {}),
+    }
+  }
+
+  private async request<TResult>(
+    path: string,
+    init?: RequestInit,
+  ): Promise<TResult> {
+    const res = await fetch(`${this.baseURL}/${path}`, {
+      ...init,
+      headers: {
+        ...this.authHeaders,
+        ...(init?.headers ?? {}),
+      },
+    })
+
+    const body = await res.text()
+    const data = body ? JSON.parse(body) : undefined
+
+    if (!res.ok) {
+      // Preserve the error shape thrown by the previous RESTDataSource
+      // implementation so consumers reading `error.extensions.response.status`
+      // keep working.
+      throw Object.assign(
+        new Error(`Request to ${path} failed with status ${res.status}`),
+        { extensions: { response: { status: res.status, body: data } } },
+      )
+    }
+
+    return data as TResult
+  }
+
+  private get<TResult>(path: string): Promise<TResult> {
+    return this.request<TResult>(path)
+  }
+
+  private post<TResult>(path: string, body?: unknown): Promise<TResult> {
+    return this.request<TResult>(path, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body ?? {}),
+    })
+  }
+
+  private put<TResult>(path: string, body?: unknown): Promise<TResult> {
+    return this.request<TResult>(path, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body ?? {}),
+    })
+  }
+
+  private delete<TResult>(path: string): Promise<TResult> {
+    return this.request<TResult>(path, { method: 'DELETE' })
   }
 
   getApplications(stateUrl: ApplicationStateUrl): Promise<Application[]> {

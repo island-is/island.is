@@ -1,6 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { DataSourceConfig } from 'apollo-datasource'
-import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
 import type { IcelandicNamesRegistryOptions } from '@island.is/icelandic-names-registry-types'
 import {
   IcelandicName,
@@ -10,34 +8,55 @@ import {
 import { CreateIcelandicNameInput } from '../dto/icelandic-name.input.dto'
 
 @Injectable()
-class BackendAPI extends RESTDataSource {
+class BackendAPI {
+  private readonly baseURL: string
+
   constructor(
     @Inject(ICELANDIC_NAMES_REGISTRY_OPTIONS)
     private readonly options: IcelandicNamesRegistryOptions,
   ) {
-    super()
-    this.initialize({} as DataSourceConfig<void>)
     this.baseURL = `${this.options.backendUrl}/api/icelandic-names-registry`
   }
 
-  willSendRequest(_request: RequestOptions) {
-    this.memoizedResults.clear()
+  private async request<TResult>(
+    path: string,
+    init?: RequestInit,
+  ): Promise<TResult> {
+    const res = await fetch(`${this.baseURL}${path}`, {
+      ...init,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(init?.headers ?? {}),
+      },
+    })
+
+    const body = await res.text()
+    const data = body ? JSON.parse(body) : undefined
+
+    if (!res.ok) {
+      throw Object.assign(
+        new Error(`Request to ${path} failed with status ${res.status}`),
+        { extensions: { response: { status: res.status, body: data } } },
+      )
+    }
+
+    return data as TResult
   }
 
   getAll(): Promise<IcelandicName[]> {
-    return this.get(`/names`)
+    return this.request(`/names`)
   }
 
   getById(id: number): Promise<IcelandicName> {
-    return this.get(`/names/${id}`, undefined, { cacheOptions: { ttl: 0 } })
+    return this.request(`/names/${id}`)
   }
 
   getByInitialLetter(initialLetter: string): Promise<IcelandicName[]> {
-    return this.get(`/names/initial-letter/${initialLetter}`)
+    return this.request(`/names/initial-letter/${initialLetter}`)
   }
 
   getBySearch(q: string): Promise<IcelandicName[]> {
-    return this.get(`/names/search/${q}`)
+    return this.request(`/names/search/${q}`)
   }
 
   updateById(
@@ -45,18 +64,27 @@ class BackendAPI extends RESTDataSource {
     body: CreateIcelandicNameInput,
     authorization: string,
   ): Promise<IcelandicName> {
-    return this.patch(`/names/${id}`, body, { headers: { authorization } })
+    return this.request(`/names/${id}`, {
+      method: 'PATCH',
+      headers: { authorization },
+      body: JSON.stringify(body),
+    })
   }
 
   create(
     body: CreateIcelandicNameInput,
     authorization: string,
   ): Promise<IcelandicName> {
-    return this.post(`/names/`, body, { headers: { authorization } })
+    return this.request(`/names/`, {
+      method: 'POST',
+      headers: { authorization },
+      body: JSON.stringify(body),
+    })
   }
 
   deleteById(id: number, authorization: string): Promise<number> {
-    return this.delete(`/names/${id}`, undefined, {
+    return this.request(`/names/${id}`, {
+      method: 'DELETE',
       headers: { authorization },
     })
   }

@@ -21,7 +21,6 @@ import {
   authModuleConfig,
   BackendModule,
   backendModuleConfig,
-  BackendService,
   CaseListModule,
   CaseModule,
   CaseTableModule,
@@ -53,20 +52,15 @@ const autoSchemaFile = production
 
 @Module({
   imports: [
-    GraphQLModule.forRootAsync({
+    GraphQLModule.forRoot({
       driver: ApolloDriver,
-      imports: [BackendModule],
-      useFactory: (backendService: BackendService) => ({
-        debug,
-        playground,
-        autoSchemaFile,
-        cache: 'bounded',
-        path: '/api/graphql',
-        context: ({ req }: never) => ({ req }),
-        dataSources: () => ({ backendService }),
-      }),
-      inject: [BackendService],
+      playground,
+      autoSchemaFile,
+      cache: 'bounded',
+      path: '/api/graphql',
+      context: ({ req }: never) => ({ req }),
     }),
+    BackendModule,
     SharedAuthModule,
     AuditTrailModule,
     AuthModule,

@@ -1,4 +1,4 @@
-import { Query, Resolver, Context, Mutation, Args } from '@nestjs/graphql'
+import { Query, Resolver, Mutation, Args } from '@nestjs/graphql'
 
 import { Inject, UseGuards } from '@nestjs/common'
 
@@ -19,45 +19,41 @@ export class ApiKeysResolver {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly backendApi: BackendAPI,
   ) {}
 
   @Query(() => [ApiKeysModel], { nullable: false })
-  apiKeysForMunicipality(
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<ApiKeysForMunicipality[]> {
+  apiKeysForMunicipality(): Promise<ApiKeysForMunicipality[]> {
     this.logger.debug(`Getting municipalities by ids`)
-    return backendApi.getApiKeys()
+    return this.backendApi.getApiKeys()
   }
 
   @Mutation(() => ApiKeysModel, { nullable: false })
   createApiKey(
     @Args('input', { type: () => CreateApiKeyInput })
     input: CreateApiKeyInput,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<ApiKeysForMunicipality> {
     this.logger.debug('Creating api key for municipality')
-    return backendApi.createApiKey(input)
+    return this.backendApi.createApiKey(input)
   }
 
   @Mutation(() => ApiKeysModel, { nullable: false })
   updateApiKey(
     @Args('input', { type: () => UpdateApiKeyInput })
     input: UpdateApiKeyInput,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<ApiKeysModel> {
     this.logger.debug('Updating api key name')
 
-    return backendApi.updateApiKey(input)
+    return this.backendApi.updateApiKey(input)
   }
 
   @Mutation(() => DeleteApiKeyResponse, { nullable: false })
   deleteApiKey(
     @Args('input', { type: () => DeleteApiKeyInput })
     input: DeleteApiKeyInput,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<DeleteApiKeyResponse> {
     this.logger.debug(`delete api key ${input.id}`)
 
-    return backendApi.deleteApiKey(input.id)
+    return this.backendApi.deleteApiKey(input.id)
   }
 }

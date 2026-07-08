@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { ApolloError } from 'apollo-server-express'
+import { GraphQLError } from 'graphql'
 
 import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { Cache as CacheManager } from 'cache-manager'
@@ -36,7 +36,7 @@ const locales = [
 const errorHandler = (name: string) => {
   return (error: Error) => {
     logger.error(error)
-    throw new ApolloError(`Failed to resolve request in ${name}`)
+    throw new GraphQLError(`Failed to resolve request in ${name}`)
   }
 }
 

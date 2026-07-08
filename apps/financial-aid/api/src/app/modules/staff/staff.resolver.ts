@@ -1,4 +1,4 @@
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -15,66 +15,55 @@ export class StaffResolver {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly backendApi: BackendAPI,
   ) {}
 
   @Query(() => [StaffModel], { nullable: false })
-  users(
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<Staff[]> {
+  users(  ): Promise<Staff[]> {
     this.logger.debug('Getting all staff for municipality')
 
-    return backendApi.getStaffForMunicipality()
+    return this.backendApi.getStaffForMunicipality()
   }
 
   @Query(() => StaffModel, { nullable: false })
   user(
     @Args('input', { type: () => StaffInput })
-    input: StaffInput,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<Staff> {
+    input: StaffInput,  ): Promise<Staff> {
     this.logger.debug(`Getting staff from ${input.id}`)
 
-    return backendApi.getStaffById(input.id)
+    return this.backendApi.getStaffById(input.id)
   }
 
   @Query(() => [StaffModel])
-  admins(
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<Staff[]> {
+  admins(  ): Promise<Staff[]> {
     this.logger.debug(`Getting all admins`)
-    return backendApi.getAdmins()
+    return this.backendApi.getAdmins()
   }
 
   @Query(() => [StaffModel])
-  supervisors(
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<Staff[]> {
+  supervisors(  ): Promise<Staff[]> {
     this.logger.debug(`Getting supervisors`)
 
-    return backendApi.getSupervisors()
+    return this.backendApi.getSupervisors()
   }
 
   @Mutation(() => StaffModel, { nullable: true })
   updateStaff(
     @Args('input', { type: () => UpdateStaffInput })
-    input: UpdateStaffInput,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<Staff> {
+    input: UpdateStaffInput,  ): Promise<Staff> {
     const { id, ...updateStaff } = input
 
     this.logger.debug(`updating staff ${id}`)
 
-    return backendApi.updateStaff(id, updateStaff)
+    return this.backendApi.updateStaff(id, updateStaff)
   }
 
   @Mutation(() => StaffModel, { nullable: false })
   createStaff(
     @Args('input', { type: () => CreateStaffInput })
-    input: CreateStaffInput,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<Staff> {
+    input: CreateStaffInput,  ): Promise<Staff> {
     this.logger.debug('Creating staff')
 
-    return backendApi.createStaff(input)
+    return this.backendApi.createStaff(input)
   }
 }

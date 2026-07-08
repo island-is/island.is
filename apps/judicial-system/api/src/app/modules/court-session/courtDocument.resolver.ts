@@ -1,5 +1,5 @@
 import { Inject, UseGuards } from '@nestjs/common'
-import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Resolver } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -29,6 +29,7 @@ export class CourtDocumentResolver {
     private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly backendService: BackendService,
   ) {}
 
   @Mutation(() => CourtDocumentResponse, { nullable: true })
@@ -36,8 +37,6 @@ export class CourtDocumentResolver {
     @Args('input', { type: () => CreateCourtDocumentInput })
     input: CreateCourtDocumentInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<CourtDocumentResponse> {
     const { caseId, courtSessionId, ...createCourtDocument } = input
 
@@ -48,7 +47,7 @@ export class CourtDocumentResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_COURT_DOCUMENT,
-      backendService.createCourtDocument(
+      this.backendService.createCourtDocument(
         caseId,
         courtSessionId,
         createCourtDocument,
@@ -62,8 +61,6 @@ export class CourtDocumentResolver {
     @Args('input', { type: () => UpdateCourtDocumentInput })
     input: UpdateCourtDocumentInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<CourtDocumentResponse> {
     const { caseId, courtSessionId, courtDocumentId, ...updateCourtDocument } =
       input
@@ -75,7 +72,7 @@ export class CourtDocumentResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_COURT_DOCUMENT,
-      backendService.updateCourtDocument(
+      this.backendService.updateCourtDocument(
         caseId,
         courtSessionId,
         courtDocumentId,
@@ -90,8 +87,6 @@ export class CourtDocumentResolver {
     @Args('input', { type: () => FileCourtDocumentInCourtSessionInput })
     input: FileCourtDocumentInCourtSessionInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<CourtDocumentResponse> {
     const { caseId, courtSessionId, courtDocumentId } = input
 
@@ -102,7 +97,7 @@ export class CourtDocumentResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.FILE_COURT_DOCUMENT,
-      backendService.fileCourtDocumentInCourtSession(
+      this.backendService.fileCourtDocumentInCourtSession(
         caseId,
         courtSessionId,
         courtDocumentId,
@@ -116,8 +111,6 @@ export class CourtDocumentResolver {
     @Args('input', { type: () => DeleteCourtDocumentInput })
     input: DeleteCourtDocumentInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<DeleteCourtDocumentResponse> {
     const { caseId, courtSessionId, courtDocumentId } = input
 
@@ -128,7 +121,7 @@ export class CourtDocumentResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.DELETE_COURT_DOCUMENT,
-      backendService.deleteCourtDocument(
+      this.backendService.deleteCourtDocument(
         caseId,
         courtSessionId,
         courtDocumentId,

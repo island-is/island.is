@@ -1,5 +1,5 @@
 import { Catch } from '@nestjs/common'
-import { ApolloError } from 'apollo-server-express'
+import { GraphQLError } from 'graphql'
 import { HttpProblem } from '@island.is/shared/problem'
 import { BaseProblemFilter } from './base-problem.filter'
 
@@ -10,10 +10,14 @@ const errorInfo: Record<string, { title: string; status: number }> = {
   BAD_USER_INPUT: { title: 'Bad Request', status: 400 },
 }
 
-@Catch(ApolloError)
+// Apollo Server 4+ removed the ApolloError class hierarchy. GraphQL errors
+// (including the ones our guards throw) are GraphQLError with a code in
+// extensions.
+@Catch(GraphQLError)
 export class ApolloErrorFilter extends BaseProblemFilter {
-  getProblem(error: ApolloError) {
-    const info = errorInfo[error.extensions.code] ?? errorInfo.BAD_USER_INPUT
+  getProblem(error: GraphQLError) {
+    const info =
+      errorInfo[error.extensions?.code as string] ?? errorInfo.BAD_USER_INPUT
     return {
       ...info,
       type: `https://httpstatuses.org/${info.status}`,

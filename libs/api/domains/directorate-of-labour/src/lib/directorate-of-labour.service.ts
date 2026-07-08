@@ -1,7 +1,7 @@
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
-import { ApolloError } from 'apollo-server-express'
+import { GraphQLError } from 'graphql'
 import { Union, PensionFund } from '@island.is/clients/vmst'
 
 import { ApplicationInformation } from '../models/applicationInformation.model'
@@ -22,10 +22,9 @@ export class DirectorateOfLabourService {
   handleError(error: any): any {
     this.logger.error(error)
 
-    throw new ApolloError(
-      'Failed to resolve request',
-      error?.message ?? error?.response?.message,
-    )
+    throw new GraphQLError('Failed to resolve request', {
+      extensions: { code: error?.message ?? error?.response?.message },
+    })
   }
 
   async getApplicationInfo(

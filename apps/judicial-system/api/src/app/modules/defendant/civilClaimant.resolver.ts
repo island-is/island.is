@@ -1,5 +1,5 @@
 import { Inject, Logger, UseGuards } from '@nestjs/common'
-import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Resolver } from '@nestjs/graphql'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -27,6 +27,7 @@ export class CivilClaimantResolver {
     private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly backendService: BackendService,
   ) {}
 
   @Mutation(() => CivilClaimant)
@@ -34,15 +35,13 @@ export class CivilClaimantResolver {
     @Args('input', { type: () => CreateCivilClaimantInput })
     input: CreateCivilClaimantInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<CivilClaimant> {
     const { caseId, ...createCivilClaimant } = input
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_CIVIL_CLAIMANT,
-      backendService.createCivilClaimant(caseId, createCivilClaimant),
+      this.backendService.createCivilClaimant(caseId, createCivilClaimant),
       (civilClaimant) => civilClaimant.id,
     )
   }
@@ -52,15 +51,13 @@ export class CivilClaimantResolver {
     @Args('input', { type: () => UpdateCivilClaimantInput })
     input: UpdateCivilClaimantInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<CivilClaimant> {
     const { caseId, civilClaimantId, ...updateCivilClaimant } = input
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_CIVIL_CLAIMANT,
-      backendService.updateCivilClaimant(
+      this.backendService.updateCivilClaimant(
         caseId,
         civilClaimantId,
         updateCivilClaimant,
@@ -74,15 +71,13 @@ export class CivilClaimantResolver {
     @Args('input', { type: () => DeleteCivilClaimantInput })
     input: DeleteCivilClaimantInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<DeleteCivilClaimantResponse> {
     const { caseId, civilClaimantId } = input
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.DELETE_CIVIL_CLAIMANT,
-      backendService.deleteCivilClaimant(caseId, civilClaimantId),
+      this.backendService.deleteCivilClaimant(caseId, civilClaimantId),
       civilClaimantId,
     )
   }

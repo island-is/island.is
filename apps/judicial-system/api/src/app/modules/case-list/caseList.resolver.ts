@@ -1,5 +1,5 @@
 import { Inject, UseGuards, UseInterceptors } from '@nestjs/common'
-import { Args, Context, Query, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -26,6 +26,7 @@ export class CaseListResolver {
     private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly backendService: BackendService,
   ) {}
 
   @Query(() => [CaseListEntry], { nullable: true })
@@ -35,15 +36,13 @@ export class CaseListResolver {
     input: CaseListQueryInput,
     @CurrentGraphQlUser()
     user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<CaseListEntry[]> {
     this.logger.debug('Getting all cases')
 
     let result = this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_CASES,
-      backendService.getCases(),
+      this.backendService.getCases(),
       (cases: CaseListEntry[]) => cases.map((aCase) => aCase.id),
     )
 

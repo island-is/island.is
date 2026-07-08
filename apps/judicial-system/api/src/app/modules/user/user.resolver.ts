@@ -1,5 +1,5 @@
 import { Inject, UseGuards } from '@nestjs/common'
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -30,14 +30,13 @@ export class UserResolver {
     private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly backendService: BackendService,
   ) {}
 
   @UseGuards(JwtGraphQlAuthUserGuard)
   @Query(() => [User], { nullable: true })
   users(
     @CurrentGraphQlUser() user: TUser,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
     @Args('input', { type: () => UsersQueryInput, nullable: true })
     input?: UsersQueryInput,
   ): Promise<User[]> {
@@ -46,7 +45,7 @@ export class UserResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_USERS,
-      backendService.getUsers().then((users) => {
+      this.backendService.getUsers().then((users) => {
         if (!input?.role) {
           return users
         }
@@ -63,15 +62,13 @@ export class UserResolver {
     @Args('input', { type: () => UserQueryInput })
     input: UserQueryInput,
     @CurrentGraphQlUser() user: TUser,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<User | undefined> {
     this.logger.debug(`Getting user ${input.id}`)
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_USER,
-      backendService.getUser(input.id),
+      this.backendService.getUser(input.id),
       (user: User) => user.id,
     )
   }
@@ -79,8 +76,6 @@ export class UserResolver {
   @UseGuards(JwtGraphQlAuthGuard)
   @Query(() => CurrentUserResponse, { nullable: true })
   async currentUser(
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
     @CurrentGraphQlUserNationalId() nationalId: string,
     @CurrentGraphQlUser() user?: TUser,
   ): Promise<CurrentUserResponse | undefined> {
@@ -89,7 +84,7 @@ export class UserResolver {
     let eligibleUsers: User[]
 
     try {
-      eligibleUsers = await backendService.findUsersByNationalId(nationalId)
+      eligibleUsers = await this.backendService.findUsersByNationalId(nationalId)
     } catch (error) {
       if (!(error?.problem?.status === 404 && user)) {
         this.logger.error('No eligible users', { error })
@@ -109,15 +104,13 @@ export class UserResolver {
     @Args('input', { type: () => CreateUserInput })
     input: CreateUserInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<User> {
     this.logger.debug('Creating user')
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_USER,
-      backendService.createUser(input),
+      this.backendService.createUser(input),
       (theUser) => theUser.id,
     )
   }
@@ -128,8 +121,6 @@ export class UserResolver {
     @Args('input', { type: () => UpdateUserInput })
     input: UpdateUserInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<User> {
     const { id, ...updateUser } = input
 
@@ -138,7 +129,7 @@ export class UserResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_USER,
-      backendService.updateUser(id, updateUser),
+      this.backendService.updateUser(id, updateUser),
       id,
     )
   }
