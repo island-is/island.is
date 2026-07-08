@@ -1,5 +1,9 @@
 {
-  "extends": ["plugin:@nx/react-typescript", "../../../.eslintrc.json", "next"],
+  "extends": [
+    "plugin:@nx/react-typescript",
+    "../../../.eslintrc.json",
+    "plugin:@next/next/recommended-legacy"
+  ],
   "ignorePatterns": ["!**/*"],
   "plugins": ["simple-import-sort"],
   "overrides": [
