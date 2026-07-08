@@ -9,13 +9,15 @@ export class HealthDirectorateHealthConversationDetail extends HealthDirectorate
   startDate?: Date
 
   @Field({
-    description: 'Whether the patient can reply to this conversation right now.',
+    description:
+      'Whether the patient can reply to this conversation right now.',
   })
   patientCanReply!: boolean
 
   @Field(() => HealthConversationReplyBlockedReasonEnum, {
     nullable: true,
-    description: 'Why replying is blocked. Only set when patientCanReply is false.',
+    description:
+      'Why replying is blocked. Only set when patientCanReply is false.',
   })
   replyBlockedReason?: HealthConversationReplyBlockedReasonEnum
 
