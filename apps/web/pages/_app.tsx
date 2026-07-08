@@ -21,8 +21,8 @@ const IslandWebApp = ({ Component, pageProps }: AppProps) => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <MatomoTracker
-        matomoDomain={matomoDomain}
-        matomoSiteId={matomoSiteId}
+        matomoDomain={matomoDomain ?? ''}
+        matomoSiteId={matomoSiteId ?? ''}
         enabled={isMatomoEnabled}
       />
       <Component {...pageProps} />
