@@ -1,6 +1,8 @@
 import {
+  ConversationReplyBlockedReason,
   ConversationStatusFilter,
   DiseaseVaccinationDtoVaccinationStatusEnum,
+  RecipientCreateBlockedReason,
   UserVisibleAppointmentStatuses,
 } from '@island.is/clients/health-directorate'
 import {
@@ -9,6 +11,8 @@ import {
   AppointmentModalityEnum,
   AppointmentStatusEnum,
   HealthConversationDirectionEnum,
+  HealthConversationRecipientBlockedReasonEnum,
+  HealthConversationReplyBlockedReasonEnum,
   HealthConversationStatusFilterEnum,
   ReferralStatusEnum,
   VaccinationStatusEnum,
@@ -192,5 +196,41 @@ export const toConversationStatusFilter = (
       return ConversationStatusFilter.ARCHIVED
     case HealthConversationStatusFilterEnum.ALL:
       return ConversationStatusFilter.ALL
+  }
+}
+
+export const toConversationReplyBlockedReasonEnum = (
+  reason?: ConversationReplyBlockedReason,
+): HealthConversationReplyBlockedReasonEnum | undefined => {
+  switch (reason) {
+    case ConversationReplyBlockedReason.MISSING_RECIPIENT:
+      return HealthConversationReplyBlockedReasonEnum.MISSING_RECIPIENT
+    case ConversationReplyBlockedReason.REPLIES_DISABLED:
+      return HealthConversationReplyBlockedReasonEnum.REPLIES_DISABLED
+    case ConversationReplyBlockedReason.NO_REPLY_GROUP:
+      return HealthConversationReplyBlockedReasonEnum.NO_REPLY_GROUP
+    case ConversationReplyBlockedReason.MESSAGING_NOT_ALLOWED:
+      return HealthConversationReplyBlockedReasonEnum.MESSAGING_NOT_ALLOWED
+    case ConversationReplyBlockedReason.OUTSIDE_MESSAGING_WINDOW:
+      return HealthConversationReplyBlockedReasonEnum.OUTSIDE_MESSAGING_WINDOW
+    case ConversationReplyBlockedReason.REPLY_WINDOW_EXPIRED:
+      return HealthConversationReplyBlockedReasonEnum.REPLY_WINDOW_EXPIRED
+    default:
+      return undefined
+  }
+}
+
+export const toConversationRecipientBlockedReasonEnum = (
+  reason?: RecipientCreateBlockedReason,
+): HealthConversationRecipientBlockedReasonEnum | undefined => {
+  switch (reason) {
+    case RecipientCreateBlockedReason.MESSAGING_NOT_ALLOWED:
+      return HealthConversationRecipientBlockedReasonEnum.MESSAGING_NOT_ALLOWED
+    case RecipientCreateBlockedReason.OUTSIDE_MESSAGING_WINDOW:
+      return HealthConversationRecipientBlockedReasonEnum.OUTSIDE_MESSAGING_WINDOW
+    case RecipientCreateBlockedReason.NO_ALLOWED_TYPES:
+      return HealthConversationRecipientBlockedReasonEnum.NO_ALLOWED_TYPES
+    default:
+      return undefined
   }
 }

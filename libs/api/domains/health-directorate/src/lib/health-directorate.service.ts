@@ -42,6 +42,8 @@ import {
   mapReferralStatusValueToStatus,
   mapVaccinationStatus,
   toConversationDirectionEnum,
+  toConversationRecipientBlockedReasonEnum,
+  toConversationReplyBlockedReasonEnum,
   toConversationStatusFilter,
 } from './mappers/basicInformationMapper'
 import {
@@ -755,6 +757,9 @@ export class HealthDirectorateService {
       isStarred: c.isStarred,
       isArchived: c.isArchived,
       patientCanReply: c.patientCanReply,
+      replyBlockedReason: toConversationReplyBlockedReasonEnum(
+        c.replyBlockedReason,
+      ),
       isRead: !c.unread,
       messages: c.messages.map((m) => this.mapConversationEntry(m, c.id)),
     }
@@ -878,6 +883,14 @@ export class HealthDirectorateService {
             description: t.description,
             isCertificate: t.isCertificate,
           }),
+        ),
+        canCreateConversation: r.canCreateConversation,
+        conversationBlockedReason: toConversationRecipientBlockedReasonEnum(
+          r.conversationBlockedReason,
+        ),
+        canRequestCertificate: r.canRequestCertificate,
+        certificateBlockedReason: toConversationRecipientBlockedReasonEnum(
+          r.certificateBlockedReason,
         ),
       }),
     )

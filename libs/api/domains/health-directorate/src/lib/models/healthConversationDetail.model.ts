@@ -1,4 +1,5 @@
 import { Field, GraphQLISODateTime, ObjectType } from '@nestjs/graphql'
+import { HealthConversationReplyBlockedReasonEnum } from './enums'
 import { HealthDirectorateHealthConversation } from './healthConversation.model'
 import { HealthDirectorateHealthConversationEntry } from './healthConversationEntry.model'
 
@@ -8,11 +9,15 @@ export class HealthDirectorateHealthConversationDetail extends HealthDirectorate
   startDate?: Date
 
   @Field({
-    nullable: true,
-    description:
-      'Whether the patient can reply. Null means no staff decision yet — replies are allowed unless explicitly false.',
+    description: 'Whether the patient can reply to this conversation right now.',
   })
-  patientCanReply?: boolean
+  patientCanReply!: boolean
+
+  @Field(() => HealthConversationReplyBlockedReasonEnum, {
+    nullable: true,
+    description: 'Why replying is blocked. Only set when patientCanReply is false.',
+  })
+  replyBlockedReason?: HealthConversationReplyBlockedReasonEnum
 
   @Field(() => [HealthDirectorateHealthConversationEntry])
   messages!: HealthDirectorateHealthConversationEntry[]
