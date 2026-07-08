@@ -109,16 +109,15 @@ export const toAppointmentLinkTypeEnum = (
 // hardcoding the rules independently.
 export const getAppointmentLinkActivationWindow = (
   type: AppointmentLinkTypeEnum | undefined,
-  appointmentDate?: string | Date,
+  appointmentDate?: Date,
 ): { activatesAt?: Date; expiresAt?: Date } => {
   if (type !== AppointmentLinkTypeEnum.VIDEO_CALL || !appointmentDate) {
     return {}
   }
 
-  const date = new Date(appointmentDate)
   return {
-    activatesAt: subMinutes(date, VIDEO_CALL_ACTIVATES_MINUTES_BEFORE),
-    expiresAt: addMinutes(date, VIDEO_CALL_EXPIRES_MINUTES_AFTER),
+    activatesAt: subMinutes(appointmentDate, VIDEO_CALL_ACTIVATES_MINUTES_BEFORE),
+    expiresAt: addMinutes(appointmentDate, VIDEO_CALL_EXPIRES_MINUTES_AFTER),
   }
 }
 
