@@ -5,10 +5,7 @@ const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 const withVanillaExtract = createVanillaExtractPlugin()
 
 const graphqlPath = '/api/graphql'
-const {
-  API_URL = 'http://localhost:4444',
-  PUBLIC_API_URL = 'https://island.is',
-} = process.env
+const { PUBLIC_API_URL = 'https://island.is' } = process.env
 
 /**
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
@@ -29,14 +26,8 @@ const nextConfig = {
     }
     return config
   },
-  serverRuntimeConfig: {
-    // Will only be available on the server side
-    graphqlEndpoint: `${API_URL}${graphqlPath}`,
-  },
-  publicRuntimeConfig: {
-    // Will be available on both server and client
-    graphqlEndpoint: graphqlPath,
-  },
+  // Runtime configuration lives in environments/runtimeEnvironment.ts
+  // (serverRuntimeConfig/publicRuntimeConfig were removed in Next.js 16)
 }
 
 const plugins = [

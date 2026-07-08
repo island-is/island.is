@@ -6,18 +6,7 @@ const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 
 const withVanillaExtract = createVanillaExtractPlugin()
 
-const {
-  PAYMENTS_API_URL,
-  API_INTERNAL_BASEPATH = 'http://localhost:4444',
-  API_EXTERNAL_BASEPATH = 'http://localhost:4444',
-  APP_EXTERNAL_BASEPATH = 'http://localhost:4200',
-  BASEPATH = '/greida',
-  PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET,
-  ALLOW_APPLE_PAY,
-} = process.env
-
-const apiPath = '/api'
-const graphqlPath = `${apiPath}/graphql`
+const { BASEPATH = '/greida' } = process.env
 
 /**
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
@@ -37,19 +26,8 @@ const nextConfig = {
     }
     return config
   },
-  serverRuntimeConfig: {
-    apiUrl: `${API_INTERNAL_BASEPATH}${apiPath}`,
-    graphqlEndpoint: `${API_INTERNAL_BASEPATH}${graphqlPath}`,
-    paymentApiEndpoint: PAYMENTS_API_URL,
-    verificationCallbackSigningSecret:
-      PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET,
-    appExternalUrl: `${APP_EXTERNAL_BASEPATH}${BASEPATH}`,
-  },
-  publicRuntimeConfig: {
-    graphqlEndpoint: `${API_EXTERNAL_BASEPATH}${graphqlPath}`,
-    basepath: BASEPATH,
-    allowApplePay: ALLOW_APPLE_PAY || 'false',
-  },
+  // Runtime configuration lives in environments/runtimeEnvironment.ts
+  // (serverRuntimeConfig/publicRuntimeConfig were removed in Next.js 16)
   basePath: `${BASEPATH}`,
 }
 

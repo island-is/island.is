@@ -1,32 +1,15 @@
 import React from 'react'
-import Document, {
-  Html,
-  Head,
-  Main,
-  NextScript,
-  DocumentContext,
-} from 'next/document'
+import Document, { Html, Head, Main, NextScript } from 'next/document'
 import {
   NEXT_RUNTIME_ENV_SCRIPT_ID,
   serializeRuntimeEnv,
 } from '@island.is/shared/utils'
 import { buildPublicRuntimeEnv } from '../environments/runtimeEnvironment'
 
-interface Props {
-  lang: Locale
-  domain: string
-}
-
-class MyDocument extends Document<Props> {
-  static async getInitialProps(ctx: DocumentContext) {
-    const initialProps = await Document.getInitialProps(ctx)
-
-    return { ...initialProps }
-  }
-
+class MyDocument extends Document {
   render() {
     return (
-      <Html lang="is">
+      <Html lang="en">
         <Head>
           <script
             id={NEXT_RUNTIME_ENV_SCRIPT_ID}
@@ -34,11 +17,6 @@ class MyDocument extends Document<Props> {
             dangerouslySetInnerHTML={{
               __html: serializeRuntimeEnv(buildPublicRuntimeEnv()),
             }}
-          />
-          <script
-            defer
-            data-domain="island.is/samradsgatt"
-            src="https://plausible.io/js/script.js"
           />
         </Head>
         <body>

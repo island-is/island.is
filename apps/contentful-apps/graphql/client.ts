@@ -1,12 +1,13 @@
-import getConfig from 'next/config'
 import {
   ApolloClient,
   HttpLink,
   InMemoryCache,
   type NormalizedCacheObject,
 } from '@apollo/client'
-
-const { publicRuntimeConfig = {}, serverRuntimeConfig = {} } = getConfig() ?? {}
+import {
+  getPublicRuntimeEnv,
+  getServerRuntimeEnv,
+} from '../environments/runtimeEnvironment'
 
 const isBrowser = typeof window !== 'undefined'
 
@@ -18,9 +19,9 @@ export const createApolloClient = () =>
     version: '0.1',
     ssrMode: !isBrowser,
     link: new HttpLink({
-      uri:
-        serverRuntimeConfig.graphqlEndpoint ||
-        publicRuntimeConfig.graphqlEndpoint,
+      uri: isBrowser
+        ? getPublicRuntimeEnv().graphqlEndpoint
+        : getServerRuntimeEnv().graphqlEndpoint,
     }),
     cache: new InMemoryCache(),
   })

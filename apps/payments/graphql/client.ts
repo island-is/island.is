@@ -1,4 +1,3 @@
-import getConfig from 'next/config'
 import fetch from 'cross-fetch'
 import {
   ApolloClient,
@@ -10,8 +9,11 @@ import {
 import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
 import { setContext } from '@apollo/client/link/context'
+import {
+  getPublicRuntimeEnv,
+  getServerRuntimeEnv,
+} from '../environments/runtimeEnvironment'
 
-const { publicRuntimeConfig, serverRuntimeConfig } = getConfig()
 const isBrowser: boolean = process.browser
 
 let apolloClient: ApolloClient<NormalizedCacheObject> | null = null
@@ -23,9 +25,9 @@ if (!isBrowser) {
 }
 
 function create(initialState?: any) {
-  const { graphqlEndpoint: graphqlServerEndpoint } = serverRuntimeConfig
-  const { graphqlEndpoint: graphqlClientEndpoint } = publicRuntimeConfig
-  const graphqlEndpoint = graphqlServerEndpoint || graphqlClientEndpoint
+  const graphqlEndpoint = isBrowser
+    ? getPublicRuntimeEnv().graphqlEndpoint
+    : getServerRuntimeEnv().graphqlEndpoint
   const httpLink = new HttpLink({
     uri: graphqlEndpoint,
     fetch,

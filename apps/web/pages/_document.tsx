@@ -7,7 +7,13 @@ import Document, {
   NextScript,
 } from 'next/document'
 
+import {
+  NEXT_RUNTIME_ENV_SCRIPT_ID,
+  serializeRuntimeEnv,
+} from '@island.is/shared/utils'
+
 import { PLAUSIBLE_SCRIPT_SRC } from '../constants'
+import { buildPublicRuntimeEnv } from '../environments/runtimeEnvironment'
 import { getLocaleFromPath } from '../i18n/withLocale'
 
 interface Props {
@@ -30,6 +36,13 @@ class MyDocument extends Document<Props> {
     return (
       <Html lang={String(lang)}>
         <Head>
+          <script
+            id={NEXT_RUNTIME_ENV_SCRIPT_ID}
+            type="application/json"
+            dangerouslySetInnerHTML={{
+              __html: serializeRuntimeEnv(buildPublicRuntimeEnv()),
+            }}
+          />
           {Boolean(domain) && (
             <script
               defer

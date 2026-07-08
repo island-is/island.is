@@ -3,20 +3,14 @@ const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 const withVanillaExtract = createVanillaExtractPlugin()
 const { createSecureHeaders } = require('next-secure-headers')
 
-const { NEXT_PUBLIC_BACKEND_URL } = 'http://localhost:4200/backend'
-
 module.exports = withNx(
   withVanillaExtract({
     basePath: '/admin',
     cssModules: false,
-    serverRuntimeConfig: {
-      // Will only be available on the server side
-      // Requests made by the server are internal request made directly to the api hostname
-      backendUrl: NEXT_PUBLIC_BACKEND_URL,
-    },
-    publicRuntimeConfig: {
-      backendUrl: '',
-    },
+    // serverRuntimeConfig/publicRuntimeConfig were removed in Next.js 16.
+    // This app read neither block at runtime (the backend base URL is the
+    // static '/backend' path in services/api.ts), so no runtime-env module
+    // is needed here — unlike the other migrated apps.
     webpack: (config, { isServer, dev }) => {
       if (!dev && isServer) {
         config.devtool = 'source-map'
