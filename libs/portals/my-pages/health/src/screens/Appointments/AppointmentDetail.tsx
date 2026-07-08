@@ -99,7 +99,7 @@ const AppointmentDetail = () => {
         ? new Date(activatesAt).getTime()
         : new Date(expiresAt).getTime()
     // The cap keeps the delay well under the browser's 32-bit setTimeout
-    // clamp; the floor prevents a tight re-arm loop if a timer fires early.
+    // The floor prevents a tight re-arm loop if a timer fires early.
     const delay = Math.min(boundary - Date.now(), 60 * 60 * 1000)
     const timeout = setTimeout(rerender, Math.max(delay, 1000))
     return () => clearTimeout(timeout)
