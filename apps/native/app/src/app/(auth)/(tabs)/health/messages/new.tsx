@@ -90,30 +90,34 @@ export default function HealthMessageComposeScreen() {
     toast.error(intl.formatMessage({ id: 'health.messages.compose.sendError' }))
   }
 
-  const [replyToConversation, { loading: replying }] =
-    useReplyToHealthConversationMutation({
-      refetchQueries: ['GetHealthConversation', 'GetHealthConversations'],
-      onCompleted: () => router.back(),
-      onError,
-    })
+  const [
+    replyToConversation,
+    { loading: replying },
+  ] = useReplyToHealthConversationMutation({
+    refetchQueries: ['GetHealthConversation', 'GetHealthConversations'],
+    onCompleted: () => router.back(),
+    onError,
+  })
 
-  const [createConversation, { loading: creating }] =
-    useCreateHealthConversationMutation({
-      refetchQueries: ['GetHealthConversations'],
-      onCompleted: (data) => {
-        const id = data.healthDirectorateCreateHealthConversation?.id
-        if (id) {
-          // Replace the compose screen so back returns to the inbox.
-          router.replace({
-            pathname: '/health/messages/[id]',
-            params: { id },
-          })
-        } else {
-          router.back()
-        }
-      },
-      onError,
-    })
+  const [
+    createConversation,
+    { loading: creating },
+  ] = useCreateHealthConversationMutation({
+    refetchQueries: ['GetHealthConversations'],
+    onCompleted: (data) => {
+      const id = data.healthDirectorateCreateHealthConversation?.id
+      if (id) {
+        // Replace the compose screen so back returns to the inbox.
+        router.replace({
+          pathname: '/health/messages/[id]',
+          params: { id, justCreated: 'true' },
+        })
+      } else {
+        router.back()
+      }
+    },
+    onError,
+  })
 
   const sending = replying || creating
 

@@ -885,6 +885,9 @@ export const en: TranslatedMessages = {
     'Failed to send message. Please try again later.',
   'health.messages.compose.noRecipient':
     'It is not possible to send messages at the moment',
+  'health.messages.sentTitle': 'Message received',
+  'health.messages.sentText':
+    'We reply during office hours, usually within three working days. If your inquiry is urgent and needs an answer today, call 1700. In case of an emergency, call 112 immediately.',
 
   // health - organ donation
   'health.organDonation': 'Organ Donation',

@@ -18,7 +18,13 @@ import {
 } from '@/graphql/types/schema'
 import { useAuthStore } from '@/stores/auth-store'
 import { uiStore } from '@/stores/ui-store'
-import { Alert, Button, GeneralCardSkeleton, ListItemSkeleton } from '@/ui'
+import {
+  Alert,
+  Button,
+  GeneralCardSkeleton,
+  ListItemSkeleton,
+  theme,
+} from '@/ui'
 import { createSkeletonArr } from '@/utils/create-skeleton-arr'
 import { DocumentListItem } from '@/components/document-list-item'
 
@@ -29,7 +35,10 @@ type ConversationMessage = NonNullable<
 type FlatListItem = ConversationMessage | { __typename: 'Skeleton'; id: string }
 
 export default function HealthMessageDetailScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>()
+  const { id, justCreated } = useLocalSearchParams<{
+    id: string
+    justCreated?: string
+  }>()
   const intl = useIntl()
   const userName = useAuthStore((s) => s.userInfo?.name)
   const [refetching, setRefetching] = useState(false)
@@ -135,6 +144,27 @@ export default function HealthMessageDetailScreen() {
           contentContainerStyle={{ flexGrow: 1 }}
           contentInsetAdjustmentBehavior="automatic"
           automaticallyAdjustContentInsets
+          ListHeaderComponent={
+            justCreated === 'true' && conversation ? (
+              <View
+                style={{
+                  paddingHorizontal: theme.spacing[2],
+                  paddingTop: theme.spacing[2],
+                }}
+              >
+                <Alert
+                  type="success"
+                  title={intl.formatMessage({
+                    id: 'health.messages.sentTitle',
+                  })}
+                  message={intl.formatMessage({
+                    id: 'health.messages.sentText',
+                  })}
+                  hasBorder
+                />
+              </View>
+            ) : null
+          }
           ListFooterComponent={
             <SafeAreaView
               style={{ height: conversation?.patientCanReply ? 160 : 24 }}
