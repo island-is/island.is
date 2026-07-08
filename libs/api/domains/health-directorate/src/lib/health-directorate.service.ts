@@ -3,12 +3,12 @@ import {
   ConversationAttachmentDto,
   ConversationDetailDto,
   ConversationMessageDto,
-  ConversationStatusFilter,
   CreateConversationRequestDto,
   CreateEuPatientConsentDto,
   CreateReplyRequestDto,
   HealthDirectorateHealthService,
   HealthDirectorateVaccinationsService,
+  MessagingRecipientDto,
   OrganDonorDto,
   VaccinationDto,
 } from '@island.is/clients/health-directorate'
@@ -859,6 +859,37 @@ export class HealthDirectorateService {
     return true
   }
 
+  private mapMessagingRecipient(
+    r: MessagingRecipientDto,
+  ): HealthDirectorateHealthConversationRecipient {
+    return {
+      nodeId: r.nodeId,
+      groupId: r.groupId,
+      name: r.name,
+      allowsMessaging: r.allowsMessaging,
+      messagingWindowOpen: r.messagingWindowOpen,
+      messagingWindowClose: r.messagingWindowClose,
+      isCurrentlyWithinWindow: r.isCurrentlyWithinWindow,
+      patientReplyWindowDays: r.patientReplyWindowDays,
+      allowedMessageTypes: r.allowedConversationTypes.map(
+        (t): HealthDirectorateHealthConversationType => ({
+          patientInitiatedTypeCode: t.patientInitiatedTypeCode,
+          title: t.title,
+          description: t.description,
+          isCertificate: t.isCertificate,
+        }),
+      ),
+      canCreateConversation: r.canCreateConversation,
+      conversationBlockedReason: toConversationRecipientBlockedReasonEnum(
+        r.conversationBlockedReason,
+      ),
+      canRequestCertificate: r.canRequestCertificate,
+      certificateBlockedReason: toConversationRecipientBlockedReasonEnum(
+        r.certificateBlockedReason,
+      ),
+    }
+  }
+
   async getHealthConversationRecipients(
     auth: Auth,
     locale: Locale = 'is',
@@ -866,33 +897,6 @@ export class HealthDirectorateService {
     const items = await this.healthApi.getMessagingRecipients(auth, locale)
     if (!items) return null
 
-    return items.map(
-      (r): HealthDirectorateHealthConversationRecipient => ({
-        nodeId: r.nodeId,
-        groupId: r.groupId,
-        name: r.name,
-        allowsMessaging: r.allowsMessaging,
-        messagingWindowOpen: r.messagingWindowOpen,
-        messagingWindowClose: r.messagingWindowClose,
-        isCurrentlyWithinWindow: r.isCurrentlyWithinWindow,
-        patientReplyWindowDays: r.patientReplyWindowDays,
-        allowedMessageTypes: r.allowedConversationTypes.map(
-          (t): HealthDirectorateHealthConversationType => ({
-            patientInitiatedTypeCode: t.patientInitiatedTypeCode,
-            title: t.title,
-            description: t.description,
-            isCertificate: t.isCertificate,
-          }),
-        ),
-        canCreateConversation: r.canCreateConversation,
-        conversationBlockedReason: toConversationRecipientBlockedReasonEnum(
-          r.conversationBlockedReason,
-        ),
-        canRequestCertificate: r.canRequestCertificate,
-        certificateBlockedReason: toConversationRecipientBlockedReasonEnum(
-          r.certificateBlockedReason,
-        ),
-      }),
-    )
+    return items.map((r) => this.mapMessagingRecipient(r))
   }
 }
