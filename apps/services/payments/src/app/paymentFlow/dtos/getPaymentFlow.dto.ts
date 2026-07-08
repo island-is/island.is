@@ -13,7 +13,10 @@ import {
   PaymentFlowEventType,
   PaymentFlowEventReason,
 } from '../../../types'
-import { BankTransferFailureReason } from '../../bankTransferPayment/bankTransfer.types'
+import {
+  BankTransferFailureReason,
+  BankTransferPendingStatus,
+} from '../../bankTransferPayment/bankTransfer.types'
 import { PageInfoDto } from '@island.is/nest/pagination'
 
 export class PaymentFlowEventDTO {
@@ -238,6 +241,14 @@ export class GetPaymentFlowDTO {
   @IsOptional()
   @IsDate()
   bankTransferExpiresAt?: Date
+
+  @ApiPropertyOptional({
+    description: 'Populated only when paymentStatus is bank_transfer_pending',
+    enum: BankTransferPendingStatus,
+  })
+  @IsOptional()
+  @IsEnum(BankTransferPendingStatus)
+  bankTransferPendingStatus?: BankTransferPendingStatus
 }
 
 export class GetPaymentFlowsPaginatedDTO {

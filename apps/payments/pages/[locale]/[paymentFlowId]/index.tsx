@@ -31,6 +31,7 @@ import {
 import { CardPayment } from '../../../components/CardPayment/CardPayment'
 import { InvoicePayment } from '../../../components/InvoicePayment/InvoicePayment'
 import { BankTransferPayment } from '../../../components/BankTransferPayment/BankTransferPayment'
+import { BankTransferPendingScreen } from '../../../components/BankTransferPendingScreen/BankTransferPendingScreen'
 import { ALLOWED_LOCALES, Locale, isHttpsUrl } from '../../../utils'
 import { getConfigcatClient } from '../../../clients/configcat'
 import {
@@ -58,7 +59,10 @@ import { PaymentReceipt } from '../../../components/PaymentReceipt'
 import { ThreeDSecure } from '../../../components/ThreeDSecure/ThreeDSecure'
 import { InvoiceReceipt } from '../../../components/InvoiceReceipt'
 import { usePaymentOrchestration } from '../../../hooks/usePaymentOrchestration'
-import { useBankTransferStatusPolling } from '../../../hooks/useBankTransferStatusPolling'
+import {
+  BankTransferStatusUpdate,
+  useBankTransferStatusPolling,
+} from '../../../hooks/useBankTransferStatusPolling'
 import { useCancelBankTransfer } from '../../../hooks/useCancelBankTransfer'
 import { withLocale } from '../../../i18n/withLocale'
 
@@ -275,6 +279,10 @@ function PaymentPage({
   })
   const router = useRouter()
 
+  // Sub-status updates observed while polling, overrides the SSR snapshot from paymentsGetFlow.
+  const [liveBankTransfer, setLiveBankTransfer] =
+    useState<BankTransferStatusUpdate | null>(null)
+
   // Bank-transfer polling runs only on the dedicated waiting screen (reached via SSR after submit).
   useBankTransferStatusPolling({
     paymentFlowId: paymentFlow?.id,
@@ -285,6 +293,7 @@ function PaymentPage({
     // Success needs a reload to land on the receipt screen
     onSuccess: () => router.reload(),
     onFailure: (error) => setPaymentError(error),
+    onStatusUpdate: setLiveBankTransfer,
   })
 
   const { cancelBankTransfer, isCancelling } = useCancelBankTransfer({
@@ -383,11 +392,13 @@ function PaymentPage({
   )
 
   const paymentStatus = paymentFlow?.paymentStatus
-  const bankTransferScaRedirectUrl = isHttpsUrl(
-    paymentFlow?.bankTransferScaRedirectUrl,
-  )
-    ? paymentFlow?.bankTransferScaRedirectUrl ?? undefined
+  const rawScaRedirectUrl =
+    liveBankTransfer?.scaRedirectUrl ?? paymentFlow?.bankTransferScaRedirectUrl
+  const bankTransferScaRedirectUrl = isHttpsUrl(rawScaRedirectUrl)
+    ? rawScaRedirectUrl ?? undefined
     : undefined
+  const bankTransferPendingStatus =
+    liveBankTransfer?.pendingStatus ?? paymentFlow?.bankTransferPendingStatus
 
   const isPaid = paymentStatus === PaymentsGetFlowPaymentStatus.paid
   const isInvoicePending =
@@ -410,37 +421,12 @@ function PaymentPage({
           />
         }
         bodySlot={
-          <Box display="flex" flexDirection="column" rowGap={[2, 3]}>
-            <AlertMessage
-              type="warning"
-              message={formatMessage(
-                bankTransferScaRedirectUrl
-                  ? bankTransfer.waiting
-                  : bankTransfer.finishInBankApp,
-              )}
-            />
-            {bankTransferScaRedirectUrl && (
-              <Button
-                fluid
-                unfocusable
-                onClick={() =>
-                  window.location.assign(bankTransferScaRedirectUrl)
-                }
-              >
-                {formatMessage(bankTransfer.continuePayment)}
-              </Button>
-            )}
-            <Box display="flex" justifyContent="center">
-              <Button
-                unfocusable
-                variant="text"
-                loading={isCancelling}
-                onClick={handleCancelBankTransfer}
-              >
-                {formatMessage(generic.buttonCancel)}
-              </Button>
-            </Box>
-          </Box>
+          <BankTransferPendingScreen
+            pendingStatus={bankTransferPendingStatus}
+            scaRedirectUrl={bankTransferScaRedirectUrl}
+            isCancelling={isCancelling}
+            onCancel={handleCancelBankTransfer}
+          />
         }
       />
     )

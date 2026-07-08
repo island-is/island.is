@@ -19,4 +19,5 @@ export {
   CreateBankTransferInputLocaleEnum,
   VerifyBankTransferResponseStatusEnum,
   GetPaymentFlowDTOLastBankTransferFailureEnum,
+  GetPaymentFlowDTOBankTransferPendingStatusEnum,
 } from '../gen/fetch'

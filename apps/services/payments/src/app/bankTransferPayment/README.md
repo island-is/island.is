@@ -61,14 +61,21 @@ sequenceDiagram
     SVC->>B: POST /ecom/v3/payments/direct-debtor (amount, items, expiresAt, callbackUrl, debtorExternalId, debtorBban)
     B-->>SVC: { id, status, scaRedirectUrl? }
     SVC->>SVC: persist row (PENDING), emit payment_started
-    SVC-->>FE: { providerPaymentId, scaRedirectUrl, expiresAt }
+    SVC-->>FE: { providerPaymentId, scaRedirectUrl, expiresAt, onboardingRequired }
 
-    alt Interactive SCA (scaRedirectUrl present)
-        FE->>U: redirect to scaRedirectUrl
-        U->>Bank: authenticate & approve
-        Bank-->>FE: redirect back to flow page (SSR → waiting screen)
-    else Back-channel SCA (scaRedirectUrl empty)
-        FE->>FE: reload → SSR waiting screen ("Finish the payment with your bank app")
+    alt Onboarding required (DRAFT + onboarding URL)
+        FE->>U: redirect to scaRedirectUrl (provider onboarding)
+    else Everything else
+        FE->>FE: reload → SSR pending screen (bankTransferPendingStatus drives the UI)
+    end
+
+    alt sca_required + URL (incl. DRAFT with a non-onboarding URL)
+        FE->>U: desktop: QR code of scaRedirectUrl / mobile: "Opna bankaapp" button
+        U->>Bank: scan / open link, authenticate & approve
+    else sca_required without URL (back-channel)
+        FE->>U: "check your phone for a banking-app notification"
+    else processing (PENDING / SCA_COMPLETE / DRAFT without URL)
+        FE->>U: loading dots + "Beðið eftir heimild..."
     end
 
     par Webhook (primary)
@@ -141,20 +148,35 @@ local hook state.
    banner normally, swapping to a **`default` waiting** banner while polling is in flight
    (`isWaiting`). Submit button label is `bankTransfer.confirm`; it is disabled/loading while
    polling so the payer can't double-submit.
-2. **Interactive SCA redirect.** On submit, if `create` returned a non-empty `scaRedirectUrl`,
-   the FE does `window.location.assign(scaRedirectUrl)`. An empty URL means back-channel SCA
-   (approve in the bank app) — the FE `router.reload()`s so SSR lands on the waiting screen.
-3. **Waiting screen** (`paymentStatus === bank_transfer_pending`). A dedicated page-card with a
-   waiting alert and a **Cancel** button. The FE polls `verify` in the background and reloads on a
-   terminal result. The alert depends on whether a redirect URL is present:
+2. **Submit → pending screen (no SCA redirect).** On submit, the FE `router.reload()`s so SSR
+   lands on the pending screen — SCA is rendered **inline** there, not via redirect. The single
+   exception is provider **onboarding**: when `create` returns `onboardingRequired: true`
+   (a `DRAFT` payment whose `scaRedirectUrl` points at the provider onboarding app), the FE does
+   `window.location.assign(scaRedirectUrl)`.
+3. **Pending screen** (`paymentStatus === bank_transfer_pending`), rendered by
+   [`BankTransferPendingScreen`](../../../../../../apps/payments/components/BankTransferPendingScreen/BankTransferPendingScreen.tsx).
+   The FE polls `verify` in the background and reloads on a terminal result. What renders is
+   driven by the provider-neutral `bankTransferPendingStatus` sub-status (from the `getPaymentFlow`
+   overlay at SSR, live-updated by the `verify` poll response) **combined with** the SCA URL —
+   never by the URL alone:
 
-   - **Interactive** (`bankTransferScaRedirectUrl` present): `default` alert + a **Continue payment**
-     button that re-opens the SCA URL (for a payer who bounced).
-   - **Back-channel** (no redirect URL): `warning` alert "Finish the payment with your bank app",
-     **no** Continue button — only Cancel.
+   - **`sca_required` + URL**: desktop (≥ `md`) shows a QR code encoding the raw SCA URL
+     ([`BankTransferQrCode`](../../../../../../apps/payments/components/BankTransferQrCode/BankTransferQrCode.tsx));
+     mobile shows an **"Opna bankaapp"** button that opens the URL directly. `DRAFT` with a
+     non-onboarding SCA URL also maps here — a DRAFT only advances once the payer initiates,
+     so the QR shows immediately after create instead of flickering dots→QR.
+   - **`sca_required` without URL** (back-channel): "check your phone for a banking-app
+     notification" message.
+   - **`processing`** (`PENDING`/`SCA_COMPLETE`/`DRAFT` without a usable URL): loading dots +
+     "Beðið eftir heimild..."
+   - A **Cancel** button on all variants.
 
-   This screen is reached via **SSR**: returning from an interactive SCA redirect, or — for
-   back-channel — the `router.reload()` the FE issues right after a redirect-less `create`.
+   A back-channel create has no SCA URL at first; when Blikk mints one on the
+   `DRAFT → SCA_REQUIRED` transition, `verify`/`getBankTransferStatus` persist it on the row and
+   the poll response carries it to the FE, so the QR/deep link appears mid-poll without a reload.
+
+   This screen is reached via **SSR**: the `router.reload()` the FE issues right after `create`
+   (or returning from the onboarding redirect).
 
 4. **Error screen** (`paymentError` set to a bank-transfer code). Title/message come from
    [`paymentErrorToTitleAndMessage`](../../../../../../apps/payments/utils/error/error.ts). The
@@ -257,10 +279,19 @@ payments with no matching `bank_transfer_payment` row that outlive the TTL.
 (failed screen) buttons.
 
 - A **settled** attempt cannot be cancelled → `PaymentFlowAlreadyPaid`.
-- For a still-`pending`, non-expired attempt we ask Blikk to cancel **first**. Blikk only honours
-  a cancel while the payment is in `DRAFT`; a payment the payer already took to the bank (past
-  `DRAFT`) makes the Blikk cancel throw, and we **refuse to soft-delete** rather than orphan a
-  possibly-live settlement. A `404` from Blikk is tolerated (nothing live to orphan).
+- For a still-`pending`, non-expired attempt, what happens depends on the (refreshed) raw status —
+  Blikk only honours a cancel while the payment is in `DRAFT`:
+  - **`DRAFT`**: best-effort Blikk cancel, then soft-delete. A `DRAFT` cannot settle, so any
+    failure of the Blikk cancel (404 gone, 405 refused, network) is swallowed — the payment
+    lapses via the TTL we sent Blikk on create.
+  - **`SCA_REQUIRED`**: the payer has **not approved yet** and Blikk cannot cancel past `DRAFT` —
+    abandon locally (soft-delete) and let the provider payment lapse via its TTL. _Known window:_
+    a payer who already scanned the QR could still approve in their banking app before the TTL;
+    that settlement's webhook/verify would find no active row (same bounded window as the
+    expired-row lazy discard).
+  - **`PENDING` / `SCA_COMPLETE`** (payer initiated/approved — settlement may be in flight):
+    **refuse** with `BankTransferAlreadyInProgress` rather than orphan a possibly-live
+    settlement; verify/webhook/TTL keep tracking it.
 - The local soft-delete is conditional on `lastKnownStatus`, so a concurrent finalize that flips
   the row to SUCCESS wins the race (and we surface `PaymentFlowAlreadyPaid`).
 - `payment_cancelled` is emitted **only** for an active-`pending` user cancel; terminal-failed

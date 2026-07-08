@@ -9,6 +9,8 @@ import {
   PaymentsApi,
   VerificationStatusResponse,
   VerificationCallbackInput,
+  GetPaymentFlowDTOBankTransferPendingStatusEnum,
+  GetPaymentFlowDTOLastBankTransferFailureEnum,
   GetPaymentFlowDTOPaymentStatusEnum,
   CreateBankTransferInputLocaleEnum,
 } from '@island.is/clients/payments'
@@ -146,9 +148,19 @@ export class PaymentsService {
   async verifyBankTransfer(
     verifyBankTransferInput: VerifyBankTransferInput,
   ): Promise<VerifyBankTransferResponse> {
-    return this.paymentsApi.bankTransferControllerVerify({
+    const response = await this.paymentsApi.bankTransferControllerVerify({
       verifyBankTransferInput,
     })
+
+    return {
+      ...response,
+      pendingStatus: response.pendingStatus as unknown as
+        | GetPaymentFlowDTOBankTransferPendingStatusEnum
+        | undefined,
+      failureReason: response.failureReason as unknown as
+        | GetPaymentFlowDTOLastBankTransferFailureEnum
+        | undefined,
+    }
   }
 
   async cancelBankTransfer(

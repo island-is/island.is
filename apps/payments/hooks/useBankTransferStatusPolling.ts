@@ -1,12 +1,21 @@
 import type { ApolloError } from '@apollo/client'
 import { useEffect, useRef } from 'react'
 
-import { PaymentsBankTransferStatus } from '@island.is/api/schema'
+import {
+  PaymentsBankTransferFailureReason,
+  PaymentsBankTransferStatus,
+  PaymentsBankTransferPendingStatus,
+} from '@island.is/api/schema'
 import { BankTransferErrorCode } from '@island.is/shared/constants'
 import { findProblemInApolloError } from '@island.is/shared/problem'
 
 import { useVerifyBankTransferMutation } from '../graphql/mutations.graphql.generated'
 import { PaymentError } from '../utils/error/error'
+
+export interface BankTransferStatusUpdate {
+  pendingStatus?: PaymentsBankTransferPendingStatus | null
+  scaRedirectUrl?: string | null
+}
 
 /**
  * Polls `paymentsVerifyBankTransfer` until the attempt reaches a terminal state.
@@ -19,9 +28,11 @@ interface UseBankTransferStatusPollingProps {
   expiresAt?: Date | string | null
   onSuccess: () => void
   onFailure: (error: PaymentError) => void
+  // Non-terminal sub-status updates..
+  onStatusUpdate?: (update: BankTransferStatusUpdate) => void
 }
 
-const POLL_INTERVALS_MS = [1000, 2000, 4000, 8000, 15000]
+const POLL_INTERVALS_MS = [500, 1000, 2000, 3000, 5000]
 const TIMEOUT_GRACE_MS = 30 * 1000 // 30 seconds
 // Matches the prod Blikk TTL (600s). Used only when `expiresAt` is missing.
 const FALLBACK_HARD_TIMEOUT_MS = 10 * 60 * 1000 // 10 minutes
@@ -39,6 +50,22 @@ const terminalStatusToErrorCode = (
       return BankTransferErrorCode.BankTransferCancelled
     default:
       return BankTransferErrorCode.BankTransferGenericError
+  }
+}
+
+const terminalFailureToErrorCode = (
+  status: PaymentsBankTransferStatus,
+  failureReason?: PaymentsBankTransferFailureReason | null,
+): BankTransferErrorCode => {
+  switch (failureReason) {
+    case PaymentsBankTransferFailureReason.expired:
+      return BankTransferErrorCode.BankTransferExpired
+    case PaymentsBankTransferFailureReason.rejected:
+      return BankTransferErrorCode.BankTransferRejected
+    case PaymentsBankTransferFailureReason.cancelled:
+      return BankTransferErrorCode.BankTransferCancelled
+    default:
+      return terminalStatusToErrorCode(status)
   }
 }
 
@@ -64,18 +91,23 @@ export const useBankTransferStatusPolling = ({
   expiresAt,
   onSuccess,
   onFailure,
+  onStatusUpdate,
 }: UseBankTransferStatusPollingProps) => {
   const [verifyBankTransferMutation] = useVerifyBankTransferMutation()
 
   // Latest-value refs so callback identity changes don't restart the effect.
   const onSuccessRef = useRef(onSuccess)
   const onFailureRef = useRef(onFailure)
+  const onStatusUpdateRef = useRef(onStatusUpdate)
   useEffect(() => {
     onSuccessRef.current = onSuccess
   }, [onSuccess])
   useEffect(() => {
     onFailureRef.current = onFailure
   }, [onFailure])
+  useEffect(() => {
+    onStatusUpdateRef.current = onStatusUpdate
+  }, [onStatusUpdate])
 
   useEffect(() => {
     if (!enabled || !paymentFlowId) {
@@ -114,13 +146,13 @@ export const useBankTransferStatusPolling = ({
         const result = await verifyBankTransferMutation({
           variables: { input: { paymentFlowId } },
         })
-
         // if the request was cancelled, stop polling
         if (cancelled) {
           return
         }
 
-        const status = result.data?.paymentsVerifyBankTransfer?.status
+        const verifyResult = result.data?.paymentsVerifyBankTransfer
+        const status = verifyResult?.status
         if (status === PaymentsBankTransferStatus.success) {
           stop()
           onSuccessRef.current()
@@ -132,10 +164,19 @@ export const useBankTransferStatusPolling = ({
           status === PaymentsBankTransferStatus.cancelled
         ) {
           stop()
-          onFailureRef.current({ code: terminalStatusToErrorCode(status) })
+          onFailureRef.current({
+            code: terminalFailureToErrorCode(
+              status,
+              verifyResult?.failureReason,
+            ),
+          })
           return
         }
-        // PENDING — schedule the next poll.
+        // PENDING — surface sub-status changes (e.g. a fresh SCA URL) and schedule the next poll.
+        onStatusUpdateRef.current?.({
+          pendingStatus: verifyResult?.pendingStatus,
+          scaRedirectUrl: verifyResult?.scaRedirectUrl,
+        })
         timeoutId = setTimeout(poll, nextInterval(attempt))
         attempt++
       } catch (e) {
