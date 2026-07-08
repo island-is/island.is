@@ -169,7 +169,8 @@ local hook state.
      notification" message.
    - **`processing`** (`PENDING`/`SCA_COMPLETE`/`DRAFT` without a usable URL): loading dots +
      "Beðið eftir heimild..."
-   - A **Cancel** button on all variants.
+   - A **Cancel** button on all variants — the backend refuses once the payer has
+     initiated/approved (`BankTransferAlreadyInProgress`), surfaced as a dedicated toast.
 
    A back-channel create has no SCA URL at first; when Blikk mints one on the
    `DRAFT → SCA_REQUIRED` transition, `verify`/`getBankTransferStatus` persist it on the row and
@@ -279,19 +280,21 @@ payments with no matching `bank_transfer_payment` row that outlive the TTL.
 (failed screen) buttons.
 
 - A **settled** attempt cannot be cancelled → `PaymentFlowAlreadyPaid`.
-- For a still-`pending`, non-expired attempt, what happens depends on the (refreshed) raw status —
-  Blikk only honours a cancel while the payment is in `DRAFT`:
-  - **`DRAFT`**: best-effort Blikk cancel, then soft-delete. A `DRAFT` cannot settle, so any
-    failure of the Blikk cancel (404 gone, 405 refused, network) is swallowed — the payment
-    lapses via the TTL we sent Blikk on create.
-  - **`SCA_REQUIRED`**: the payer has **not approved yet** and Blikk cannot cancel past `DRAFT` —
-    abandon locally (soft-delete) and let the provider payment lapse via its TTL. _Known window:_
-    a payer who already scanned the QR could still approve in their banking app before the TTL;
-    that settlement's webhook/verify would find no active row (same bounded window as the
-    expired-row lazy discard).
-  - **`PENDING` / `SCA_COMPLETE`** (payer initiated/approved — settlement may be in flight):
-    **refuse** with `BankTransferAlreadyInProgress` rather than orphan a possibly-live
-    settlement; verify/webhook/TTL keep tracking it.
+- Cancelling a still-`pending` attempt requires a **fresh** Blikk status — never the cached one,
+  which could be a stale `DRAFT` the payer has since taken to the bank. If the refresh fails,
+  the cancel throws `FailedToFetchBankTransfer` (retryable; the FE shows the cancel-failed
+  toast). With the fresh status in hand, two rules (skipped for an expired row — its TTL already
+  elapsed, nothing to cancel):
+  - **`DRAFT` / `SCA_REQUIRED`** (payer has **not approved**): one best-effort Blikk cancel —
+    Blikk only honours it for `DRAFT`, so any failure (404 gone, 405 refused, network) is
+    swallowed — then soft-delete; the provider payment lapses via the TTL we sent Blikk on
+    create. _Known window:_ a payer who already scanned the QR could still approve in their
+    banking app before the TTL; that settlement's webhook/verify would find no active row (same
+    bounded window as the expired-row lazy discard).
+  - **`PENDING` / `SCA_COMPLETE` / unknown** (payer initiated/approved — settlement may be in
+    flight): **refuse** with `BankTransferAlreadyInProgress` rather than orphan a possibly-live
+    settlement; verify/webhook/TTL keep tracking it. The FE surfaces this as a dedicated
+    "the bank is already processing it" toast.
 - The local soft-delete is conditional on `lastKnownStatus`, so a concurrent finalize that flips
   the row to SUCCESS wins the race (and we surface `PaymentFlowAlreadyPaid`).
 - `payment_cancelled` is emitted **only** for an active-`pending` user cancel; terminal-failed

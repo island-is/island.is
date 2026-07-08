@@ -36,7 +36,8 @@ export const BankTransferPendingScreen = ({
   const { formatMessage } = useLocale()
 
   const showSca =
-    pendingStatus === PaymentsBankTransferPendingStatus.sca_required && !!scaRedirectUrl
+    pendingStatus === PaymentsBankTransferPendingStatus.sca_required &&
+    !!scaRedirectUrl
 
   return (
     <Box
@@ -79,24 +80,22 @@ export const BankTransferPendingScreen = ({
             {formatMessage(
               pendingStatus === PaymentsBankTransferPendingStatus.sca_required
                 ? bankTransfer.checkPhone
-                : bankTransfer.waitingForAuthorization,
+                : bankTransfer.waitingForAuthorisation,
             )}
           </Text>
         </Box>
       )}
-      {/* No cancel while processing: the payer has initiated/approved payment, so settlement may be in flight */}
-      {pendingStatus !== PaymentsBankTransferPendingStatus.processing && (
-        <Box display="flex" justifyContent="center">
-          <Button
-            unfocusable
-            variant="text"
-            loading={isCancelling}
-            onClick={onCancel}
-          >
-            {formatMessage(generic.buttonCancel)}
-          </Button>
-        </Box>
-      )}
+
+      <Box display="flex" justifyContent="center">
+        <Button
+          unfocusable
+          variant="text"
+          loading={isCancelling}
+          onClick={onCancel}
+        >
+          {formatMessage(generic.buttonCancel)}
+        </Button>
+      </Box>
     </Box>
   )
 }

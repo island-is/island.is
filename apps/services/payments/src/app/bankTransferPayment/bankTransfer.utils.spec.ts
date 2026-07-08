@@ -9,6 +9,8 @@ import {
   mapRawStatusToBankTransferPendingStatus,
 } from './bankTransfer.utils'
 
+const onboardingOrigin = 'https://light.blikk.tech'
+
 describe('mapRawStatusToBankTransferPendingStatus', () => {
   const scaUrl = 'https://stage.blikk.tech/sca/p-1'
 
@@ -20,31 +22,73 @@ describe('mapRawStatusToBankTransferPendingStatus', () => {
     ['DRAFT', scaUrl, BankTransferPendingStatus.SCA_REQUIRED],
     ['DRAFT', undefined, BankTransferPendingStatus.PROCESSING],
     // …but an onboarding URL is handled via redirect, not the SCA UI.
-    ['DRAFT', 'https://light.blikk.tech/onboarding/p-1', BankTransferPendingStatus.PROCESSING],
+    [
+      'DRAFT',
+      'https://light.blikk.tech/onboarding/p-1',
+      BankTransferPendingStatus.PROCESSING,
+    ],
     ['PENDING', scaUrl, BankTransferPendingStatus.PROCESSING],
     ['SCA_COMPLETE', scaUrl, BankTransferPendingStatus.PROCESSING],
     // Unknown statuses fall back to processing (keep polling, no SCA UI).
     ['WAT', scaUrl, BankTransferPendingStatus.PROCESSING],
   ])('maps %s (url: %s) to %s', (rawStatus, url, expected) => {
-    expect(mapRawStatusToBankTransferPendingStatus(rawStatus, url)).toBe(expected)
+    expect(
+      mapRawStatusToBankTransferPendingStatus(rawStatus, url, onboardingOrigin),
+    ).toBe(expected)
   })
 })
 
 describe('isOnboardingRequired', () => {
-  it('is true for a DRAFT payment whose SCA URL points at the onboarding app', () => {
+  it('is true for a DRAFT payment whose SCA URL points at the onboarding origin', () => {
     expect(
-      isOnboardingRequired('DRAFT', 'https://light.blikk.tech/onboarding/p-1'),
+      isOnboardingRequired(
+        'DRAFT',
+        'https://light.blikk.tech/onboarding/p-1',
+        onboardingOrigin,
+      ),
     ).toBe(true)
   })
 
   it('is false for a DRAFT payment with a regular SCA URL', () => {
     expect(
-      isOnboardingRequired('DRAFT', 'https://stage.blikk.tech/sca/p-1'),
+      isOnboardingRequired(
+        'DRAFT',
+        'https://stage.blikk.tech/sca/p-1',
+        onboardingOrigin,
+      ),
+    ).toBe(false)
+  })
+
+  it('compares origins, not substrings — the onboarding host elsewhere in the URL must not match', () => {
+    expect(
+      isOnboardingRequired(
+        'DRAFT',
+        'https://stage.blikk.tech/sca/p-1?return=light.blikk.tech',
+        onboardingOrigin,
+      ),
+    ).toBe(false)
+  })
+
+  it('follows the configured origin, not a hardcoded host', () => {
+    expect(
+      isOnboardingRequired(
+        'DRAFT',
+        'https://onboarding.example.is/p-1',
+        'https://onboarding.example.is',
+      ),
+    ).toBe(true)
+  })
+
+  it('is false for an unparsable SCA URL', () => {
+    expect(
+      isOnboardingRequired('DRAFT', 'not a url', onboardingOrigin),
     ).toBe(false)
   })
 
   it('is false for a DRAFT payment without an SCA URL (back-channel)', () => {
-    expect(isOnboardingRequired('DRAFT', undefined)).toBe(false)
+    expect(isOnboardingRequired('DRAFT', undefined, onboardingOrigin)).toBe(
+      false,
+    )
   })
 
   it('is false for non-DRAFT statuses regardless of the URL', () => {
@@ -52,6 +96,7 @@ describe('isOnboardingRequired', () => {
       isOnboardingRequired(
         'SCA_REQUIRED',
         'https://light.blikk.tech/onboarding/p-1',
+        onboardingOrigin,
       ),
     ).toBe(false)
   })

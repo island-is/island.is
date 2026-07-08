@@ -33,12 +33,16 @@ interface UseBankTransferStatusPollingProps {
 }
 
 const POLL_INTERVALS_MS = [500, 1000, 2000, 3000, 5000]
+// Slower steady state once the SCA URL is on screen.
+const SCA_WAIT_POLL_MS = 15 * 1000
 const TIMEOUT_GRACE_MS = 30 * 1000 // 30 seconds
 // Matches the prod Blikk TTL (600s). Used only when `expiresAt` is missing.
 const FALLBACK_HARD_TIMEOUT_MS = 10 * 60 * 1000 // 10 minutes
 
-const nextInterval = (attempt: number) =>
-  POLL_INTERVALS_MS[Math.min(attempt, POLL_INTERVALS_MS.length - 1)]
+const nextInterval = (attempt: number, isAwaitingSca: boolean) =>
+  isAwaitingSca
+    ? SCA_WAIT_POLL_MS
+    : POLL_INTERVALS_MS[Math.min(attempt, POLL_INTERVALS_MS.length - 1)]
 
 const terminalStatusToErrorCode = (
   status: PaymentsBankTransferStatus,
@@ -117,6 +121,7 @@ export const useBankTransferStatusPolling = ({
     let cancelled = false
     let timeoutId: ReturnType<typeof setTimeout> | null = null
     let attempt = 0
+    let isAwaitingSca = false
     const startedAt = Date.now()
     const hardTimeoutMs = computeHardTimeoutMs(expiresAt)
 
@@ -177,7 +182,13 @@ export const useBankTransferStatusPolling = ({
           pendingStatus: verifyResult?.pendingStatus,
           scaRedirectUrl: verifyResult?.scaRedirectUrl,
         })
-        timeoutId = setTimeout(poll, nextInterval(attempt))
+        // Decay to the slow interval while the payer acts on the SCA UI; back to fast once the
+        // status moves on (processing — settlement typically resolves within seconds).
+        isAwaitingSca =
+          verifyResult?.pendingStatus ===
+            PaymentsBankTransferPendingStatus.sca_required &&
+          !!verifyResult?.scaRedirectUrl
+        timeoutId = setTimeout(poll, nextInterval(attempt, isAwaitingSca))
         attempt++
       } catch (e) {
         if (cancelled) {
@@ -190,7 +201,7 @@ export const useBankTransferStatusPolling = ({
           return
         }
         // Transient network/server hiccup — retry with backoff.
-        timeoutId = setTimeout(poll, nextInterval(attempt))
+        timeoutId = setTimeout(poll, nextInterval(attempt, isAwaitingSca))
         attempt++
       }
     }

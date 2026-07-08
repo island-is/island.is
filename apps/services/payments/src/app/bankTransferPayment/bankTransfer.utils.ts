@@ -51,17 +51,27 @@ export const mapBlikkStatusToBankTransferStatus = (
   }
 }
 
-/** True when Blikk signals the payer must complete onboarding first. */
+/** True when Blikk signals the payer must complete onboarding first: a DRAFT payment whose SCA URL points at the configured onboarding app. Compares parsed origins — an unparsable URL is never onboarding. */
 export const isOnboardingRequired = (
   rawStatus: string,
-  scaRedirectUrl?: string,
-): boolean =>
-  rawStatus === 'DRAFT' && !!scaRedirectUrl?.includes('light.blikk.tech')
+  scaRedirectUrl: string | undefined,
+  onboardingOrigin: string,
+): boolean => {
+  if (rawStatus !== 'DRAFT' || !scaRedirectUrl) {
+    return false
+  }
+  try {
+    return new URL(scaRedirectUrl).origin === new URL(onboardingOrigin).origin
+  } catch {
+    return false
+  }
+}
 
 /** Map a raw Blikk status onto the pending sub-status. */
 export const mapRawStatusToBankTransferPendingStatus = (
   status: string,
-  scaRedirectUrl?: string,
+  scaRedirectUrl: string | undefined,
+  onboardingOrigin: string,
 ): BankTransferPendingStatus => {
   if (status === 'SCA_REQUIRED') {
     return BankTransferPendingStatus.SCA_REQUIRED
@@ -71,7 +81,7 @@ export const mapRawStatusToBankTransferPendingStatus = (
   if (
     status === 'DRAFT' &&
     scaRedirectUrl &&
-    !isOnboardingRequired(status, scaRedirectUrl)
+    !isOnboardingRequired(status, scaRedirectUrl, onboardingOrigin)
   ) {
     return BankTransferPendingStatus.SCA_REQUIRED
   }

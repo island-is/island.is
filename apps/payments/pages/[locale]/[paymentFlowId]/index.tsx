@@ -315,7 +315,18 @@ function PaymentPage({
         router.reload()
         return
       }
-      toast.error(formatMessage(bankTransfer.cancelFailedToast))
+      // The backend refuses the cancel once the payer has initiated/approved the payment —
+      // settlement may be in flight, so tell them the bank is processing rather than "retry".
+      const isRefusedInProgress =
+        findProblemInApolloError(e)?.detail ===
+        BankTransferErrorCode.BankTransferAlreadyInProgress
+      toast.error(
+        formatMessage(
+          isRefusedInProgress
+            ? bankTransfer.cancelRefusedProcessingToast
+            : bankTransfer.cancelFailedToast,
+        ),
+      )
     }
   }
 

@@ -68,6 +68,13 @@ export const bankTransfer = defineMessages({
     description:
       'Error toast shown when the cancel-bank-transfer mutation fails (non-already-paid)',
   },
+  cancelRefusedProcessingToast: {
+    id: 'payments:bankTransfer.cancelRefusedProcessingToast',
+    defaultMessage:
+      'Ekki er hægt að hætta við — greiðslan er þegar í vinnslu hjá bankanum.',
+    description:
+      'Error toast shown when the cancel is refused because the payer has already initiated/approved the payment and settlement may be in flight. EN: "The payment cannot be cancelled — your bank is already processing it."',
+  },
   scanQrInstruction: {
     id: 'payments:bankTransfer.scanQrInstruction',
     defaultMessage: 'Skannaðu þennan QR-kóða með símanum þínum.',
@@ -86,11 +93,11 @@ export const bankTransfer = defineMessages({
     description:
       'Supporting text under the open-banking-app button on the mobile pending screen. EN: "Open your banking app to approve payment."',
   },
-  waitingForAuthorization: {
-    id: 'payments:bankTransfer.waitingForAuthorization',
+  waitingForAuthorisation: {
+    id: 'payments:bankTransfer.waitingForAuthorisation',
     defaultMessage: 'Beðið eftir heimild',
     description:
-      'Waiting message under the loading dots while SCA is complete/not yet required and we poll for terminal status. EN: "Waiting for authorization..."',
+      'Waiting message under the loading dots while SCA is complete/not yet required and we poll for terminal status. EN: "Waiting for authorisation..."',
   },
   checkPhone: {
     id: 'payments:bankTransfer.checkPhone',
