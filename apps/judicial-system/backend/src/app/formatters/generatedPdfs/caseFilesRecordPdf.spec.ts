@@ -178,8 +178,18 @@ const collectLinkTargets = (document: PDFDocument): Set<string> => {
     }
 
     for (let index = 0; index < annots.size(); index++) {
-      const annot = document.context.lookup(annots.get(index), PDFDict)
-      const dest = annot.lookup(PDFName.of('Dest'), PDFArray)
+      const annot = document.context.lookup(annots.get(index))
+
+      if (!(annot instanceof PDFDict)) {
+        continue
+      }
+
+      const dest = annot.lookup(PDFName.of('Dest'))
+
+      if (!(dest instanceof PDFArray)) {
+        continue
+      }
+
       const target = dest.get(0)
 
       if (target instanceof PDFRef) {
