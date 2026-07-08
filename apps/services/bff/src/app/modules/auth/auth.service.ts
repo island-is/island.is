@@ -559,7 +559,9 @@ export class AuthService {
   }
 
   async callbackLogout(res: Response, body: CallbackLogoutDto) {
-    const logoutToken = body.logout_token
+    // Express 5 no longer defaults an empty POST body to {}, so `body` can be
+    // undefined here.
+    const logoutToken = body?.logout_token
 
     if (!logoutToken) {
       const errorMessage = 'No param "logout_token" provided!'

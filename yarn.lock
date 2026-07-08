@@ -725,6 +725,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@as-integrations/express5@npm:1.1.2":
+  version: 1.1.2
+  resolution: "@as-integrations/express5@npm:1.1.2"
+  peerDependencies:
+    "@apollo/server": ^4.0.0 || ^5.0.0
+    express: ^5.0.0
+  checksum: 10/6a414d523306d6f614f20b106cf8dec8d8f282c7bc6e47a2661186554a4275983ce5fea9a29e50eda4600fe3a22564534bffcdee134c3057adbe8096bf5a78eb
+  languageName: node
+  linkType: hard
+
 "@asamuzakjp/css-color@npm:^3.2.0":
   version: 3.2.0
   resolution: "@asamuzakjp/css-color@npm:3.2.0"
@@ -36997,6 +37007,7 @@ __metadata:
     "@apollo/subgraph": "npm:2.14.2"
     "@apollo/utils.keyvadapter": "npm:4.0.1"
     "@ariakit/react": "npm:0.4.17"
+    "@as-integrations/express5": "npm:1.1.2"
     "@aws-sdk/client-s3": "npm:3.662.0"
     "@aws-sdk/client-ses": "npm:3.145.0"
     "@aws-sdk/client-sqs": "npm:3.662.0"

@@ -78,6 +78,7 @@
     "@apollo/subgraph": "2.14.2",
     "@apollo/utils.keyvadapter": "4.0.1",
     "@ariakit/react": "0.4.17",
+    "@as-integrations/express5": "1.1.2",
     "@aws-sdk/client-s3": "3.662.0",
     "@aws-sdk/client-sqs": "3.662.0",
     "@aws-sdk/credential-provider-node": "3.662.0",
