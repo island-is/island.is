@@ -118,7 +118,10 @@ export const getAppointmentLinkActivationWindow = (
   }
 
   return {
-    activatesAt: subMinutes(appointmentDate, VIDEO_CALL_ACTIVATES_MINUTES_BEFORE),
+    activatesAt: subMinutes(
+      appointmentDate,
+      VIDEO_CALL_ACTIVATES_MINUTES_BEFORE,
+    ),
     expiresAt: addMinutes(appointmentDate, VIDEO_CALL_EXPIRES_MINUTES_AFTER),
   }
 }

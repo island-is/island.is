@@ -74,8 +74,8 @@ describe('ProverController', () => {
       factory = new FixtureFactory(app)
 
       for (const { id: dpId, delegationTypes } of delegationProviderTypesData) {
-        for (const _ of delegationTypes) {
-          await factory.createDelegationType({ providerId: dpId })
+        for (const { id, name } of delegationTypes) {
+          await factory.createDelegationType({ id, name, providerId: dpId })
         }
       }
     })
