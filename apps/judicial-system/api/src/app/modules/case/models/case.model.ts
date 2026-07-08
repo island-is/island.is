@@ -20,11 +20,11 @@ import {
   IndictmentDecision,
   RequestSharedWithDefender,
   SessionArrangements,
-  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { AppealCase } from '../../appeal-case'
 import {
+  AppealDecisionResponse,
   CourtDocumentResponse,
   CourtSessionResponse,
 } from '../../court-session'
@@ -336,12 +336,6 @@ export class Case {
   readonly requestDriversLicenseSuspension?: boolean
 
   @Field(() => Boolean, { nullable: true })
-  readonly isStatementDeadlineExpired?: boolean
-
-  @Field(() => String, { nullable: true })
-  readonly statementDeadline?: string
-
-  @Field(() => Boolean, { nullable: true })
   readonly canBeAppealed?: boolean
 
   @Field(() => Boolean, { nullable: true })
@@ -353,17 +347,8 @@ export class Case {
   @Field(() => Boolean, { nullable: true })
   readonly hasBeenAppealed?: boolean
 
-  @Field(() => String, {
-    nullable: true,
-    description: 'appeal deadline in R cases',
-  })
-  readonly appealDeadline?: string
-
-  @Field(() => UserRole, { nullable: true })
-  readonly appealedByRole?: UserRole
-
   @Field(() => String, { nullable: true })
-  readonly appealedDate?: string
+  readonly appealDeadline?: string
 
   @Field(() => Institution, { nullable: true })
   readonly prosecutorsOffice?: Institution
@@ -452,6 +437,9 @@ export class Case {
   @Field(() => String, { nullable: true })
   readonly penalties?: string
 
+  @Field(() => String, { nullable: true })
+  readonly reopenReason?: string
+
   @Field(() => Case, { nullable: true })
   readonly splitCase?: Case
 
@@ -463,4 +451,10 @@ export class Case {
 
   @Field(() => [AppealCase], { nullable: true })
   readonly rulingOrderAppealCases?: AppealCase[]
+
+  @Field(() => [AppealDecisionResponse], { nullable: true })
+  readonly appealDecisions?: AppealDecisionResponse[]
+
+  @Field(() => ID, { nullable: true })
+  readonly originalAncestorId?: string
 }

@@ -6,14 +6,23 @@ import { m } from '../../../lib/messages'
 interface Props {
   item: FormSystemField
   valueIndex: number
+  requiredMissing?: boolean
 }
 
-export const NationalIdDisplay = ({ item, valueIndex }: Props) => {
+export const NationalIdDisplay = ({
+  item,
+  valueIndex,
+  requiredMissing = false,
+}: Props) => {
   const { lang, formatMessage } = useLocale()
 
   const value = item.values?.[valueIndex]
   const nationalId = value?.json?.nationalId ?? undefined
   const name = value?.json?.name ?? undefined
+  const showAddress = item.fieldSettings?.showAddress ?? false
+  const address = value?.json?.address ?? undefined
+  const postalCode = value?.json?.postalCode ?? undefined
+  const municipality = value?.json?.municipality ?? undefined
 
   return (
     <Box
@@ -26,12 +35,30 @@ export const NationalIdDisplay = ({ item, valueIndex }: Props) => {
       <Stack space={0}>
         <Text as="p" fontWeight="semiBold" lineHeight="sm">
           {item.name?.[lang]}
+          {requiredMissing && (
+            <>
+              {' '}
+              <Text as="span" fontWeight="medium" color="red600">
+                *
+              </Text>
+            </>
+          )}
         </Text>
         <Box marginLeft={2}>
-          <>
-            <Text fontWeight="medium" color="dark350" lineHeight="sm">
+          <Stack space={1}>
+            <Text fontWeight="medium" lineHeight="sm">
               {`${formatMessage(m.nationalId)}:`}
               {'\u00A0\u00A0\u00A0'}
+              {!nationalId && requiredMissing && (
+                <Text
+                  as="span"
+                  fontWeight="light"
+                  color="red600"
+                  lineHeight="sm"
+                >
+                  {formatMessage(m.missingValue)}
+                </Text>
+              )}
               {nationalId && (
                 <Text
                   as="span"
@@ -43,9 +70,19 @@ export const NationalIdDisplay = ({ item, valueIndex }: Props) => {
                 </Text>
               )}
             </Text>
-            <Text fontWeight="medium" color="dark350" lineHeight="sm">
+            <Text fontWeight="medium" lineHeight="sm">
               {`${formatMessage(m.individualName)}:`}
               {'\u00A0\u00A0\u00A0'}
+              {!name && requiredMissing && (
+                <Text
+                  as="span"
+                  fontWeight="light"
+                  color="red600"
+                  lineHeight="sm"
+                >
+                  {formatMessage(m.missingValue)}
+                </Text>
+              )}
               {name && (
                 <Text
                   as="span"
@@ -57,7 +94,85 @@ export const NationalIdDisplay = ({ item, valueIndex }: Props) => {
                 </Text>
               )}
             </Text>
-          </>
+            {showAddress && (
+              <Text fontWeight="medium" lineHeight="sm">
+                {`${formatMessage(m.address)}:`}
+                {'\u00A0\u00A0\u00A0'}
+                {!address && requiredMissing && (
+                  <Text
+                    as="span"
+                    fontWeight="light"
+                    color="red600"
+                    lineHeight="sm"
+                  >
+                    {formatMessage(m.missingValue)}
+                  </Text>
+                )}
+                {address && (
+                  <Text
+                    as="span"
+                    fontWeight="light"
+                    color="dark400"
+                    lineHeight="sm"
+                  >
+                    {address}
+                  </Text>
+                )}
+              </Text>
+            )}
+            {showAddress && (
+              <Text fontWeight="medium" lineHeight="sm">
+                {`${formatMessage(m.postalCode)}:`}
+                {'\u00A0\u00A0\u00A0'}
+                {!postalCode && requiredMissing && (
+                  <Text
+                    as="span"
+                    fontWeight="light"
+                    color="red600"
+                    lineHeight="sm"
+                  >
+                    {formatMessage(m.missingValue)}
+                  </Text>
+                )}
+                {postalCode && (
+                  <Text
+                    as="span"
+                    fontWeight="light"
+                    color="dark400"
+                    lineHeight="sm"
+                  >
+                    {postalCode}
+                  </Text>
+                )}
+              </Text>
+            )}
+            {showAddress && (
+              <Text fontWeight="medium" lineHeight="sm">
+                {`${formatMessage(m.city)}:`}
+                {'\u00A0\u00A0\u00A0'}
+                {!municipality && requiredMissing && (
+                  <Text
+                    as="span"
+                    fontWeight="light"
+                    color="red600"
+                    lineHeight="sm"
+                  >
+                    {formatMessage(m.missingValue)}
+                  </Text>
+                )}
+                {municipality && (
+                  <Text
+                    as="span"
+                    fontWeight="light"
+                    color="dark400"
+                    lineHeight="sm"
+                  >
+                    {municipality}
+                  </Text>
+                )}
+              </Text>
+            )}
+          </Stack>
         </Box>
       </Stack>
     </Box>

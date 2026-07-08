@@ -515,6 +515,9 @@ export const NavigationTree: FC<
             const activeAccordion = activeAccordions.includes(accordionId)
             const labelId = `${baseId}-title-${accordionId}`
             const ariaId = `${baseId}-tree-${accordionId}`
+            const titleId = `navigation-title-${accordionId}${
+              id ? `-${id}` : ''
+            }`
 
             const nextLevelTree = (
               <NavigationTree
@@ -560,9 +563,7 @@ export const NavigationTree: FC<
                       })}
                     >
                       <Text
-                        id={`navigation-title-${accordionId}${
-                          id ? `-${id}` : ''
-                        }`}
+                        id={titleId}
                         as="span"
                         color={textColor}
                         variant={isChildren ? 'h5' : 'h4'}
@@ -593,6 +594,7 @@ export const NavigationTree: FC<
                     marginRight={2}
                     aria-expanded={activeAccordion}
                     aria-controls={ariaId}
+                    aria-labelledby={titleId}
                     className={cn(
                       styles.accordionIcon,
                       styles.largerClickableArea,
@@ -627,7 +629,7 @@ export const NavigationTree: FC<
                     id={ariaId}
                     duration={300}
                     height={activeAccordion ? 'auto' : 0}
-                    aria-labelledby={labelId}
+                    aria-labelledby={titleId}
                   >
                     {nextLevelTree}
                   </AnimateHeight>

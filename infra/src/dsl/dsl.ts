@@ -2,18 +2,22 @@ import { merge } from 'lodash'
 import { CodeOwners } from '../../../libs/shared/constants/src/lib/codeOwners'
 import type {
   Context,
+  ConcurrencyPolicy,
+  CronSchedule,
   EnvironmentVariables,
   ExtraValues,
   Features,
   HealthProbe,
   InitContainers,
   MountedFile,
+  OpsEnv,
   PersistentVolumeClaim,
   PostgresInfo,
   RedisInfo,
   ReplicaCount,
   Resources,
   Secrets,
+  ScheduledJobConfig,
   ServiceDefinition,
   XroadConfig,
   PodDisruptionBudget,
@@ -92,6 +96,24 @@ export class ServiceBuilder<ServiceType extends string> {
     }
   }
 
+  /**
+   * Adds arbitrary top-level keys to the generated Helm values for this service.
+   * This is an escape hatch for values not natively supported by the DSL.
+   *
+   * **If you are using this solely to set a `schedule` field (CronJob), prefer
+   * the dedicated `scheduledJob()` builder instead — it is type-safe, discoverable,
+   * and supports all CronJob-specific fields (`concurrencyPolicy`, `startingDeadlineSeconds`, etc.).**
+   *
+   * @example
+   * ```ts
+   * // Prefer this:
+   * import { scheduledJob } from '../dsl'
+   * scheduledJob('my-job').schedule('0 3 * * *').command('node').args('main.cjs')
+   *
+   * // Over this for scheduled jobs:
+   * service('my-job').extraAttributes({ dev: { schedule: '0 3 * * *' }, staging: ..., prod: ... })
+   * ```
+   */
   extraAttributes(attr: ExtraValues) {
     this.serviceDef.extraAttributes = attr
     return this
@@ -571,6 +593,173 @@ export const service = <Service extends string>(
 }
 
 export const json = (value: unknown): string => JSON.stringify(value)
+
+/**
+ * Methods from ServiceBuilder that are not applicable to scheduled/cron jobs.
+ * These are hidden from the ScheduledJobBuilder return type to prevent misuse.
+ */
+export type ScheduledJobOmittedMethods =
+  | 'ingress'
+  | 'liveness'
+  | 'readiness'
+  | 'healthPort'
+  | 'targetPort'
+  | 'replicaCount'
+  | 'podDisruption'
+
+/**
+ * A builder for scheduled (CronJob) services. Extends ServiceBuilder with cron-specific
+ * configuration methods and hides methods that do not apply to CronJobs.
+ *
+ * Use the `scheduledJob()` factory function to create instances.
+ *
+ * @example
+ * ```ts
+ * export default scheduledJob('services-cleanup')
+ *   .image('services-cleanup')
+ *   .schedule({
+ *     dev: '0 3 * * *',
+ *     staging: '0 3 * * *',
+ *     prod: '0 1 * * *',
+ *   })
+ *   .concurrencyPolicy('Forbid')
+ *   .namespace('islandis')
+ *   .command('node')
+ *   .args('main.cjs')
+ * ```
+ */
+export class ScheduledJobBuilder<
+  ServiceType extends string,
+> extends ServiceBuilder<ServiceType> {
+  /**
+   * Sets the cron schedule for this job.
+   *
+   * Accepts either a single schedule string applied to all environments,
+   * or an object with per-environment schedules.
+   *
+   * @example
+   * ```ts
+   * // Same schedule for all envs
+   * .schedule('0 3 * * *')
+   *
+   * // Per-environment schedules
+   * .schedule({ dev: '* * * * *', staging: '0 * * * *', prod: '0 3 * * *' })
+   * ```
+   */
+  schedule(s: CronSchedule): this {
+    if (!this.serviceDef.scheduledJob) {
+      this.serviceDef.scheduledJob = { schedule: s }
+    } else {
+      this.serviceDef.scheduledJob.schedule = s
+    }
+    return this
+  }
+
+  /**
+   * How to handle concurrent job executions.
+   * - `'Allow'` — allows CronJobs to run concurrently
+   * - `'Forbid'` — prevents concurrent runs; skips a new run if the previous is still running
+   * - `'Replace'` — cancels the running job and starts a new one
+   *
+   * Omitted from output unless explicitly set.
+   */
+  concurrencyPolicy(policy: ConcurrencyPolicy): this {
+    this.ensureScheduledJobConfig()
+    this.serviceDef.scheduledJob!.concurrencyPolicy = policy
+    return this
+  }
+
+  /**
+   * Deadline in seconds for starting the job if it misses its scheduled time
+   * due to any reason (controller downtime, etc.).
+   */
+  startingDeadlineSeconds(seconds: number): this {
+    this.ensureScheduledJobConfig()
+    this.serviceDef.scheduledJob!.startingDeadlineSeconds = seconds
+    return this
+  }
+
+  /**
+   * Number of successfully completed job pods to keep in history.
+   * Defaults to 3 (Helm chart default).
+   */
+  successfulJobsHistoryLimit(limit: number): this {
+    this.ensureScheduledJobConfig()
+    this.serviceDef.scheduledJob!.successfulJobsHistoryLimit = limit
+    return this
+  }
+
+  /**
+   * Number of failed job pods to keep in history.
+   * Defaults to 1 (Helm chart default).
+   */
+  failedJobsHistoryLimit(limit: number): this {
+    this.ensureScheduledJobConfig()
+    this.serviceDef.scheduledJob!.failedJobsHistoryLimit = limit
+    return this
+  }
+
+  private ensureScheduledJobConfig() {
+    if (!this.serviceDef.scheduledJob) {
+      // schedule will be validated at serialization time
+      this.serviceDef.scheduledJob = {} as ScheduledJobConfig
+    }
+  }
+}
+
+/**
+ * The public return type of `scheduledJob()`.
+ *
+ * Use this in explicit type annotations instead of spelling out the full
+ * `Omit<ScheduledJobBuilder<S>, ...>` form.
+ *
+ * @example
+ * ```ts
+ * import { scheduledJob, ScheduledJob } from '../../../../infra/src/dsl/dsl'
+ *
+ * export const cleanupSetup = (): ScheduledJob<'services-sessions-cleanup'> =>
+ *   scheduledJob('services-sessions-cleanup')
+ *     .schedule('0 3 * * *')
+ *     .command('node')
+ *     .args('main.cjs', '--job=cleanup')
+ * ```
+ */
+export type ScheduledJob<S extends string> = Omit<
+  ScheduledJobBuilder<S>,
+  ScheduledJobOmittedMethods
+>
+
+/**
+ * Creates a new scheduled job (Kubernetes CronJob) builder.
+ *
+ * The returned builder extends ServiceBuilder with cron-specific methods
+ * (`.schedule()`, `.concurrencyPolicy()`, `.startingDeadlineSeconds()`, etc.) and
+ * hides methods that do not apply to CronJobs (`.ingress()`, `.liveness()`,
+ * `.readiness()`, `.healthPort()`, `.targetPort()`, `.replicaCount()`, `.podDisruption()`).
+ *
+ * You **must** call `.schedule()` — omitting it will cause a validation error
+ * when the chart is generated.
+ *
+ * @param name - The service/job name (used as the Kubernetes resource name)
+ *
+ * @example
+ * ```ts
+ * import { scheduledJob } from '../../../../infra/src/dsl/dsl'
+ *
+ * export default scheduledJob('services-cleanup')
+ *   .image('services-cleanup')
+ *   .schedule({ dev: '* * * * *', staging: '0 3 * * *', prod: '0 3 * * *' })
+ *   .concurrencyPolicy('Forbid')
+ *   .namespace('islandis')
+ *   .command('node')
+ *   .args('cleanup.js')
+ * ```
+ */
+export const scheduledJob = <Service extends string>(
+  name: Service,
+): ScheduledJob<Service> => {
+  return new ScheduledJobBuilder<Service>(name)
+}
 
 export { CodeOwners }
 export type { Context }

@@ -162,7 +162,9 @@ export const ApplicationsPreview = ({
         items
       ) : (
         <View style={{ marginHorizontal: theme.spacing[2] }}>
-          <ViewPager>{items}</ViewPager>
+          <ViewPager itemWidth={screenWidth - theme.spacing[2] * 3}>
+            {items}
+          </ViewPager>
         </View>
       )}
     </>

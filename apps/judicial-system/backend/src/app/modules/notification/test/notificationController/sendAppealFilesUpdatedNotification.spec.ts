@@ -1,11 +1,15 @@
 import { v4 as uuid } from 'uuid'
 
 import { Message, MessageType } from '@island.is/judicial-system/message'
-import { CaseNotificationType, User } from '@island.is/judicial-system/types'
+import {
+  AppealCaseNotificationType,
+  User,
+} from '@island.is/judicial-system/types'
 
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
-import { Case } from '../../../repository'
+import { AppealCase, Case } from '../../../repository'
+import { UserInitiatedAppealNotificationType } from '../../dto/appealNotification.dto'
 import { SendNotificationResponse } from '../../models/sendNotification.response'
 
 jest.mock('../../../../factories')
@@ -20,6 +24,7 @@ type GivenWhenThen = (caseId: string) => Promise<Then>
 describe('NotificationController - Send appeal files updated notifications', () => {
   const userId = uuid()
   const user = { id: userId } as User
+  const appealCaseId = uuid()
 
   let mockQueuedMessages: Message[]
   let givenWhenThen: GivenWhenThen
@@ -34,9 +39,15 @@ describe('NotificationController - Send appeal files updated notifications', () 
       const then = {} as Then
 
       await notificationController
-        .sendCaseNotification(caseId, user, { id: caseId } as Case, {
-          type: CaseNotificationType.APPEAL_CASE_FILES_UPDATED,
-        })
+        .sendAppealNotification(
+          caseId,
+          user,
+          { id: caseId, appealCase: { id: appealCaseId } } as Case,
+          { id: appealCaseId } as AppealCase,
+          {
+            type: UserInitiatedAppealNotificationType.APPEAL_CASE_FILES_UPDATED,
+          },
+        )
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -54,10 +65,11 @@ describe('NotificationController - Send appeal files updated notifications', () 
     it('should queue message for delivery', () => {
       expect(mockQueuedMessages).toEqual([
         {
-          type: MessageType.NOTIFICATION,
+          type: MessageType.APPEAL_CASE_NOTIFICATION,
           user,
           caseId,
-          body: { type: CaseNotificationType.APPEAL_CASE_FILES_UPDATED },
+          elementId: appealCaseId,
+          body: { type: AppealCaseNotificationType.APPEAL_CASE_FILES_UPDATED },
         },
       ])
       expect(then.result).toEqual({ notificationSent: true })

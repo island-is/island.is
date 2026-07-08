@@ -132,6 +132,7 @@ import {
   mapServicePortalPage,
   ServicePortalPage,
 } from './models/servicePortalPage.model'
+import { mapFooterItem } from './models/footerItem.model'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -152,6 +153,7 @@ const ArticleFields = (
     'fields.alertBanner',
     'fields.category',
     'fields.content',
+    'fields.contentLastReviewed',
     'fields.contentStatus',
     'fields.featuredImage',
     'fields.group',
@@ -167,6 +169,7 @@ const ArticleFields = (
     'fields.relatedOrganization',
     'fields.responsibleParty',
     'fields.shortTitle',
+    'fields.showDateOfTheMostRecentReview',
     'fields.showTableOfContents',
     'fields.signLanguageVideo',
     'fields.slug',
@@ -241,6 +244,34 @@ export class CmsContentfulService {
           : null
 
         return image?.url ? image.url : null
+      }
+    })
+  }
+
+  async getOrganizationZendeskInstance(
+    organizationKeys: string[],
+    searchByField: keyof types.IOrganizationFields,
+    locale?: 'en' | 'is',
+  ): Promise<Array<string | null>> {
+    const params = {
+      ['content_type']: 'organization',
+      select: `fields.serviceSystemInstance,fields.serviceSystemBrandID,fields.${searchByField}`,
+      [`fields.${searchByField}[in]`]: organizationKeys.join(','),
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IOrganizationFields>(locale, params)
+      .catch(errorHandler('getOrganizationZendeskInstance'))
+
+    return organizationKeys.map((key) => {
+      if (!result.items) {
+        return null
+      } else {
+        const organization = result.items.find(
+          (item) => item.fields[searchByField] === key,
+        )
+
+        return JSON.stringify(organization?.fields) ?? null
       }
     })
   }
@@ -1837,8 +1868,8 @@ export class CmsContentfulService {
     const params = {
       content_type: 'course',
       limit: 1000,
-      include: 0,
-      select: 'fields.title,sys',
+      include: 1,
+      select: 'fields.title,sys,fields.courseListPage',
       'fields.courseListPage.sys.contentType.sys.id': 'courseListPage',
       'fields.courseListPage.fields.organization.sys.id': input.organizationId,
     }
@@ -1847,12 +1878,13 @@ export class CmsContentfulService {
       await this.contentfulRepository.getLocalizedEntries<types.ICourseFields>(
         input.lang,
         params,
-        0,
+        1,
       )
 
     const items = response.items.map((item) => ({
       id: item.sys.id,
       title: item.fields.title,
+      courseListPageId: item.fields.courseListPage?.sys?.id,
     }))
 
     items.sort(sortAlpha('title'))
@@ -1910,5 +1942,32 @@ export class CmsContentfulService {
 
     return response?.fields?.courseListPage?.fields?.organization?.fields
       ?.kennitala
+  }
+
+  async getOrganizationFooter(organizationId: string, lang: string) {
+    const response = await this.contentfulRepository
+      .getLocalizedEntries<types.IOrganizationPageFields>(lang, {
+        content_type: 'organizationPage',
+        'fields.organization.sys.id': organizationId,
+        select: 'fields.footerItems,fields.footerConfig,fields.slug',
+        limit: 1,
+      })
+      .catch((error) => {
+        logger.error(
+          'cms.contentful.service getOrganizationFooter error',
+          error,
+        )
+        return { items: [] }
+      })
+
+    if (!response?.items?.length) return null
+
+    const organizationPage = response.items[0]
+
+    return {
+      footerItems:
+        organizationPage?.fields?.footerItems?.map(mapFooterItem) ?? [],
+      footerConfig: organizationPage?.fields?.footerConfig ?? {},
+    }
   }
 }

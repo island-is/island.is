@@ -12,10 +12,15 @@ import { EmailService } from '@island.is/email-service'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
-import { DEFENDER_INDICTMENT_ROUTE } from '@island.is/judicial-system/consts'
+import { DEFENDER_INDICTMENT_CASE_ROUTE } from '@island.is/judicial-system/consts'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import { CivilClaimantNotificationType } from '@island.is/judicial-system/types'
+import {
+  CivilClaimantNotificationType,
+  TrackedNotificationType,
+  type User,
+} from '@island.is/judicial-system/types'
 
+import { CourtService } from '../../../court'
 import { EventService } from '../../../event'
 import {
   Case,
@@ -23,9 +28,9 @@ import {
   Notification,
   Recipient,
 } from '../../../repository'
-import { BaseNotificationService } from '../../baseNotification.service'
 import { DeliverResponse } from '../../models/deliver.response'
 import { notificationModuleConfig } from '../../notification.config'
+import { BaseNotificationService } from '../baseNotification.service'
 import { strings } from './civilClaimantNotification.strings'
 
 @Injectable()
@@ -39,11 +44,13 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
     intlService: IntlService,
     emailService: EmailService,
     eventService: EventService,
+    courtService: CourtService,
   ) {
     super(
       notificationModel,
       emailService,
       intlService,
+      courtService,
       config,
       eventService,
       logger,
@@ -53,7 +60,7 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
   private async sendEmails(
     civilClaimant: CivilClaimant,
     theCase: Case,
-    notificationType: CivilClaimantNotificationType,
+    notificationType: TrackedNotificationType,
     subject: MessageDescriptor,
     body: MessageDescriptor,
   ) {
@@ -71,7 +78,7 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
       courtCaseNumber,
       spokespersonHasAccessToRVG,
       spokespersonIsLawyer: civilClaimant.spokespersonIsLawyer,
-      linkStart: `<a href="${this.config.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${theCase.id}">`,
+      linkStart: `<a href="${this.config.clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${theCase.id}">`,
       linkEnd: '</a>',
     })
     const promises: Promise<Recipient>[] = []
@@ -94,9 +101,10 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
     return this.recordNotification(theCase.id, notificationType, recipients)
   }
 
-  private shouldSendSpokespersonAssignedNotification(
+  private shouldSendSpokespersonNotification(
     theCase: Case,
     civilClaimant: CivilClaimant,
+    notificationType: TrackedNotificationType,
   ): boolean {
     if (
       !civilClaimant.spokespersonEmail ||
@@ -106,7 +114,7 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
     }
 
     const hasSentNotificationBefore = this.hasReceivedNotification(
-      CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED,
+      notificationType,
       civilClaimant.spokespersonEmail,
       theCase.notifications,
     )
@@ -118,20 +126,60 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
     return false
   }
 
+  private async sendSpokespersonCourtDateEmailNotification(
+    theCase: Case,
+    civilClaimant: CivilClaimant,
+    user?: User,
+  ): Promise<DeliverResponse> {
+    const shouldSendCourtDateFollowUp = this.shouldSendSpokespersonNotification(
+      theCase,
+      civilClaimant,
+      TrackedNotificationType.SPOKESPERSON_COURT_DATE_FOLLOW_UP,
+    )
+
+    if (!shouldSendCourtDateFollowUp || !user) {
+      // Nothing should be sent so we return a successful response
+      return { delivered: true }
+    }
+
+    const recipient = await this.sendCourtDateFollowUpEmailNotification({
+      theCase,
+      user,
+      recipientName: civilClaimant.spokespersonName ?? '',
+      recipientEmail: civilClaimant.spokespersonEmail ?? '',
+      recipientHasAccessToRVG: Boolean(civilClaimant.spokespersonNationalId),
+    })
+
+    if (!recipient) {
+      // Neither a court session nor an arraignment is scheduled in the future,
+      // so there is nothing to invite the spokesperson to
+      return { delivered: true }
+    }
+
+    const result = await this.recordNotification(
+      theCase.id,
+      TrackedNotificationType.SPOKESPERSON_COURT_DATE_FOLLOW_UP,
+      [recipient],
+    )
+
+    return result
+  }
+
   private async sendSpokespersonAssignedNotification(
     civilClaimant: CivilClaimant,
     theCase: Case,
   ): Promise<DeliverResponse> {
-    const shouldSend = this.shouldSendSpokespersonAssignedNotification(
+    const shouldSend = this.shouldSendSpokespersonNotification(
       theCase,
       civilClaimant,
+      TrackedNotificationType.SPOKESPERSON_ASSIGNED,
     )
 
     if (shouldSend) {
       return this.sendEmails(
         civilClaimant,
         theCase,
-        CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED,
+        TrackedNotificationType.SPOKESPERSON_ASSIGNED,
         strings.civilClaimantSpokespersonAssignedSubject,
         strings.civilClaimantSpokespersonAssignedBody,
       )
@@ -145,10 +193,17 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
     notificationType: CivilClaimantNotificationType,
     civilClaimant: CivilClaimant,
     theCase: Case,
+    user?: User,
   ): Promise<DeliverResponse> {
     switch (notificationType) {
       case CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED:
         return this.sendSpokespersonAssignedNotification(civilClaimant, theCase)
+      case CivilClaimantNotificationType.SPOKESPERSON_COURT_DATE_FOLLOW_UP:
+        return this.sendSpokespersonCourtDateEmailNotification(
+          theCase,
+          civilClaimant,
+          user,
+        )
       default:
         throw new InternalServerErrorException(
           `Invalid notification type: ${notificationType}`,
@@ -160,11 +215,12 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
     type: CivilClaimantNotificationType,
     civilClaimant: CivilClaimant,
     theCase: Case,
+    user?: User,
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
 
     try {
-      return await this.sendNotification(type, civilClaimant, theCase)
+      return await this.sendNotification(type, civilClaimant, theCase, user)
     } catch (error) {
       this.logger.error('Failed to send notification', error)
 

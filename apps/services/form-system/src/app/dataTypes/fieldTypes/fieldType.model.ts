@@ -83,33 +83,6 @@ export const FieldTypes: FieldType[] = [
     isCommon: true,
   },
   {
-    id: FieldTypesEnum.HOMESTAY_NUMBER,
-    name: { is: 'Heimagistingarnúmer', en: 'Homestay number' },
-    description: {
-      is: 'Notandi slær inn heimagistingarnúmer sitt',
-      en: 'User enters their homestay number',
-    },
-    isCommon: false,
-  },
-  {
-    id: FieldTypesEnum.HOMESTAY_OVERVIEW,
-    name: { is: 'Heimagistingaryfirlit', en: 'Homestay overview' },
-    description: {
-      is: 'Notandi fyllir út nýtingaryfirlit fyrir almanaksár',
-      en: 'Users fills out their homestay overview for the calendar year',
-    },
-    isCommon: false,
-  },
-  {
-    id: FieldTypesEnum.PROPERTY_NUMBER,
-    name: { is: 'Fasteignanúmer', en: 'Property number' },
-    description: {
-      is: 'Notandi velur fasteign úr lista eða slær inn fasteignanúmer',
-      en: 'User chooses property from a list or enters their property number',
-    },
-    isCommon: true,
-  },
-  {
     id: FieldTypesEnum.BANK_ACCOUNT,
     name: { is: 'Bankareikningsnúmer', en: 'Bank account' },
     description: {
@@ -124,15 +97,6 @@ export const FieldTypes: FieldType[] = [
     description: {
       is: 'Notandi slær inn kennitölu sína',
       en: 'User enters their national Id',
-    },
-    isCommon: true,
-  },
-  {
-    id: FieldTypesEnum.PAYER,
-    name: { is: 'Greiðandi', en: 'Payer' },
-    description: {
-      is: 'Notandi slær inn kennitölu greiðanda',
-      en: 'User enters the national Id of the payer',
     },
     isCommon: true,
   },
@@ -179,15 +143,6 @@ export const FieldTypes: FieldType[] = [
     isCommon: true,
   },
   {
-    id: FieldTypesEnum.CANDIDATE,
-    name: { is: 'Frambjóðandi', en: 'Candidate' },
-    description: {
-      is: 'Frambjóðandi í kosningum',
-      en: 'Candidate in an election',
-    },
-    isCommon: false,
-  },
-  {
     id: FieldTypesEnum.FILE,
     name: { is: 'Skjal', en: 'Document' },
     description: {
@@ -203,30 +158,120 @@ export const FieldTypes: FieldType[] = [
     isCommon: true,
   },
   {
-    id: FieldTypesEnum.NATIONAL_ID_ESTATE,
-    name: { is: 'Kennitala dánarbús', en: 'National Id estate' },
-    description: {
-      is: 'Notandi slær inn kennitölu sem við flettum upp í gagnagrunni látinna',
-      en: 'User enters national Id that we look up in database of deceaced',
-    },
-    isCommon: false,
-  },
-  {
-    id: FieldTypesEnum.NATIONAL_ID_ALL,
-    name: { is: 'Kennitala allt', en: 'National Id all' },
-    description: {
-      is: 'Notandi slær inn kennitölu sem við flettum upp í öllum gagnagrunnum',
-      en: 'User enters national Id that we look up in all databases',
-    },
-    isCommon: false,
-  },
-  {
     id: FieldTypesEnum.PAYMENT_QUANTITY,
-    name: { is: 'Greiðslu magn', en: 'Payment quantity' },
+    name: { is: 'Magngreiðslur', en: 'Payment quantity' },
     description: {
       is: 'Notandi slær inn magn sem tengist greiðslu',
       en: 'User enters quantity related to a payment',
     },
     isCommon: true,
   },
+  {
+    id: FieldTypesEnum.ASSETS,
+    name: {
+      is: 'Eignir',
+      en: 'Assets',
+    },
+    description: {
+      is: 'Notandi velur eign úr lista yfir ökutæki, fasteignir eða skip.',
+      en: 'The user selects an asset from vehicles, real estate, or ships.',
+    },
+    isCommon: true,
+  },
+  {
+    id: FieldTypesEnum.VEHICLE,
+    name: {
+      is: 'Ökutæki',
+      en: 'Vehicle',
+    },
+    description: {
+      is: 'Notandi velur ökutæki úr lista yfir ökutæki tengd kennitölu eða slær inn skráningarnúmer ökutækisins',
+      en: 'The user selects a vehicle from a list of vehicles related to their national Id or enters the registration number of the vehicle',
+    },
+    isCommon: false,
+  },
+  {
+    id: FieldTypesEnum.REAL_ESTATE,
+    name: {
+      is: 'Fasteignir',
+      en: 'Real estates',
+    },
+    description: {
+      is: 'Notandi velur fasteign úr lista yfir fasteignir tengdar kennitölu eða slær inn fasteignanúmer',
+      en: 'The user selects a real estate property from a list of properties related to their national Id or enters the property number',
+    },
+    isCommon: false,
+  },
+  {
+    id: FieldTypesEnum.NATIONAL_ID_WITH_ADDRESS,
+    name: { is: 'Kennitala með heimilisfangi', en: 'National Id with address' },
+    description: {
+      is: 'Notandi slær inn kennitölu sína og við flettum upp heimilisfangi í gagnagrunni',
+      en: 'User enters their national Id and we look up their address in a database',
+    },
+    isCommon: false,
+  },
+  // {
+  //   id: FieldTypesEnum.NATIONAL_ID_ESTATE,
+  //   name: { is: 'Kennitala dánarbús', en: 'National Id estate' },
+  //   description: {
+  //     is: 'Notandi slær inn kennitölu sem við flettum upp í gagnagrunni látinna',
+  //     en: 'User enters national Id that we look up in database of deceaced',
+  //   },
+  //   isCommon: false,
+  // },
+  // {
+  //   id: FieldTypesEnum.NATIONAL_ID_ALL,
+  //   name: { is: 'Kennitala allt', en: 'National Id all' },
+  //   description: {
+  //     is: 'Notandi slær inn kennitölu sem við flettum upp í öllum gagnagrunnum',
+  //     en: 'User enters national Id that we look up in all databases',
+  //   },
+  //   isCommon: false,
+  // },
+  // {
+  //   id: FieldTypesEnum.CANDIDATE,
+  //   name: { is: 'Frambjóðandi', en: 'Candidate' },
+  //   description: {
+  //     is: 'Frambjóðandi í kosningum',
+  //     en: 'Candidate in an election',
+  //   },
+  //   isCommon: false,
+  // },
+  // {
+  //   id: FieldTypesEnum.PAYER,
+  //   name: { is: 'Greiðandi', en: 'Payer' },
+  //   description: {
+  //     is: 'Notandi slær inn kennitölu greiðanda',
+  //     en: 'User enters the national Id of the payer',
+  //   },
+  //   isCommon: true,
+  // },
+  // {
+  //   id: FieldTypesEnum.HOMESTAY_NUMBER,
+  //   name: { is: 'Heimagistingarnúmer', en: 'Homestay number' },
+  //   description: {
+  //     is: 'Notandi slær inn heimagistingarnúmer sitt',
+  //     en: 'User enters their homestay number',
+  //   },
+  //   isCommon: false,
+  // },
+  // {
+  //   id: FieldTypesEnum.HOMESTAY_OVERVIEW,
+  //   name: { is: 'Heimagistingaryfirlit', en: 'Homestay overview' },
+  //   description: {
+  //     is: 'Notandi fyllir út nýtingaryfirlit fyrir almanaksár',
+  //     en: 'Users fills out their homestay overview for the calendar year',
+  //   },
+  //   isCommon: false,
+  // },
+  // {
+  //   id: FieldTypesEnum.PROPERTY_NUMBER,
+  //   name: { is: 'Fasteignanúmer', en: 'Property number' },
+  //   description: {
+  //     is: 'Notandi velur fasteign úr lista eða slær inn fasteignanúmer',
+  //     en: 'User chooses property from a list or enters their property number',
+  //   },
+  //   isCommon: true,
+  // },
 ]

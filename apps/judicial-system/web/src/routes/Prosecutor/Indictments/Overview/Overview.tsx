@@ -8,15 +8,25 @@ import {
   Box,
   Button,
   RadioButton,
+  Text,
   toast,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
+import {
+  getStandardUserDashboardRoute,
+  PROSECUTION_INDICTMENT_CASE_ADD_FILES_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_INDICTMENT_ROUTE,
+} from '@island.is/judicial-system/consts'
+import {
+  isCompletedCase,
+  isProsecutionUser,
+} from '@island.is/judicial-system/types'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   AllIndictmentCaseFiles,
+  AppealRulingModifiedAlert,
   BlueBox,
   ChangeProsecutorModal,
+  DuplicateIndictmentModal,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -55,6 +65,7 @@ const Overview: FC = () => {
     | 'caseSentForConfirmationModal'
     | 'caseDeniedModal'
     | 'askForCancellationModal'
+    | 'duplicateIndictmentModal'
     | 'editProsecutor'
   >('noModal')
   const [indictmentConfirmationDecision, setIndictmentConfirmationDecision] =
@@ -82,6 +93,8 @@ const Overview: FC = () => {
   const userCanCancelIndictment =
     (isIndictmentSubmitted || isIndictmentReceived) &&
     !workingCase.indictmentDecision
+  const canDuplicateIndictment =
+    isProsecutionUser(user) && isIndictmentWaitingForCancellation
   const userCanAddDocuments =
     isIndictmentSubmitted ||
     (isIndictmentReceived &&
@@ -190,6 +203,19 @@ const Overview: FC = () => {
             />
           </Box>
         )}
+        {workingCase.reopenReason && !isCompletedCase(workingCase.state) && (
+          <Box marginBottom={2}>
+            <AlertMessage
+              title="Mál enduropnað"
+              message={
+                <Text variant="small" whiteSpace="preWrap">
+                  {workingCase.reopenReason}
+                </Text>
+              }
+              type="info"
+            />
+          </Box>
+        )}
         <ServiceAnnouncements defendants={workingCase.defendants} />
         {workingCase.court &&
           latestDate?.date &&
@@ -211,6 +237,7 @@ const Overview: FC = () => {
             </Box>
           )}
         <div className={grid({ gap: 5, marginBottom: 10 })}>
+          <AppealRulingModifiedAlert />
           <Box component="section">
             <InfoCardActiveIndictment
               displayVerdictViewDate
@@ -219,7 +246,9 @@ const Overview: FC = () => {
               }}
             />
           </Box>
-          <AllIndictmentCaseFiles />
+          <AllIndictmentCaseFiles
+            forceDisplayAdditionalFiles={userCanAddDocuments}
+          />
           {userCanAddDocuments && (
             <Box display="flex" justifyContent="flexEnd">
               <Button
@@ -227,7 +256,7 @@ const Overview: FC = () => {
                 icon="add"
                 onClick={() =>
                   router.push(
-                    `${constants.INDICTMENTS_ADD_FILES_ROUTE}/${workingCase.id}`,
+                    `${PROSECUTION_INDICTMENT_CASE_ADD_FILES_ROUTE}/${workingCase.id}`,
                   )
                 }
               >
@@ -236,7 +265,7 @@ const Overview: FC = () => {
             </Box>
           )}
           {userCanSendIndictmentToCourt && (
-            <>
+            <Box component="section">
               <SectionHeading
                 title={formatMessage(strings.indictmentConfirmationTitle)}
                 required
@@ -265,7 +294,7 @@ const Overview: FC = () => {
                   />
                 </div>
               </BlueBox>
-            </>
+            </Box>
           )}
           <Box component="section">
             <InputPenalties />
@@ -274,28 +303,36 @@ const Overview: FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
+          nextButtonIcon={canDuplicateIndictment ? undefined : 'arrowForward'}
           previousUrl={
             isIndictmentReceived || isIndictmentWaitingForCancellation
               ? getStandardUserDashboardRoute(user)
-              : `${constants.INDICTMENTS_INDICTMENT_ROUTE}/${workingCase.id}`
+              : `${PROSECUTION_INDICTMENT_CASE_INDICTMENT_ROUTE}/${workingCase.id}`
           }
           nextButtonText={
-            userCanSendIndictmentToCourt
+            canDuplicateIndictment
+              ? 'Afrita mál í drög'
+              : userCanSendIndictmentToCourt
               ? undefined
               : formatMessage(strings.nextButtonText, {
                   isNewIndictment: isIndictmentNew,
                 })
           }
           hideNextButton={
-            isIndictmentReceived || isIndictmentWaitingForCancellation
+            isIndictmentReceived ||
+            (isIndictmentWaitingForCancellation && !canDuplicateIndictment)
           }
+          nextIsLoading={isTransitioningCase}
           infoBoxText={
             isIndictmentReceived
               ? formatMessage(strings.indictmentSentToCourt)
               : undefined
           }
-          onNextButtonClick={handleNextButtonClick}
+          onNextButtonClick={
+            canDuplicateIndictment
+              ? () => setModal('duplicateIndictmentModal')
+              : handleNextButtonClick
+          }
           nextIsDisabled={
             userCanSendIndictmentToCourt && !indictmentConfirmationDecision
           }
@@ -358,6 +395,8 @@ const Overview: FC = () => {
               onClick: () => setModal('noModal'),
             }}
           />
+        ) : modal === 'duplicateIndictmentModal' ? (
+          <DuplicateIndictmentModal onClose={() => setModal('noModal')} />
         ) : modal === 'editProsecutor' ? (
           <ChangeProsecutorModal onClose={() => setModal('noModal')} />
         ) : null}

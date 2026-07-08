@@ -3,14 +3,19 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 
 import {
+  Accordion,
   AlertMessage,
   Box,
   Icon,
   LoadingDots,
   Text,
 } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import {
+  formatDate,
+  normalizeAndFormatNationalId,
+} from '@island.is/judicial-system/formatters'
+import {
+  Feature,
   hasGeneratedCourtRecordPdf,
   isCompletedCase,
   isCourtOfAppealsUser,
@@ -23,6 +28,7 @@ import {
   isSuccessfulServiceStatus,
 } from '@island.is/judicial-system/types'
 import {
+  FeatureContext,
   FileNotFoundModal,
   PdfButton,
   SectionHeading,
@@ -44,15 +50,173 @@ import {
 
 import { isNonEmptyArray } from '../../utils/arrayHelpers'
 import { CaseFileTable } from '../Table'
+import RulingOrderAppealFilesAccordion from './RulingOrderAppealFilesAccordion'
+import RulingOrderConfirmation from './RulingOrderConfirmation'
+import RulingOrderFileRow from './RulingOrderFileRow'
 import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
 import { strings } from './IndictmentCaseFilesList.strings'
 import { grid } from '../../utils/styles/recipes.css'
 import * as styles from './IndictmentCaseFilesList.css'
 
+const getDefenderVisiblePoliceCaseNumbers = (
+  userNationalId: string | undefined,
+  defendants: Case['defendants'] | undefined | null,
+  allPoliceCaseNumbers: string[] | null | undefined,
+) => {
+  if (!userNationalId || !allPoliceCaseNumbers) {
+    return []
+  }
+
+  const allAssigned = new Set(
+    (defendants ?? []).flatMap(
+      (defendant) => defendant.policeCaseNumbers ?? [],
+    ),
+  )
+
+  if (allAssigned.size === 0) {
+    return allPoliceCaseNumbers
+  }
+
+  const normalizedUserNationalId = normalizeAndFormatNationalId(userNationalId)
+  const myDefendants = (defendants ?? []).filter(
+    (defendant) =>
+      defendant.isDefenderChoiceConfirmed &&
+      defendant.defenderNationalId &&
+      normalizedUserNationalId.includes(defendant.defenderNationalId),
+  )
+
+  const assignedToMe = new Set(
+    myDefendants.flatMap((defendant) => defendant.policeCaseNumbers ?? []),
+  )
+
+  return allPoliceCaseNumbers.filter(
+    (policeCaseNumber) =>
+      assignedToMe.has(policeCaseNumber) || !allAssigned.has(policeCaseNumber),
+  )
+}
+
+const getSpokespersonVisiblePoliceCaseNumbers = (
+  userNationalId: string | undefined,
+  civilClaimants: Case['civilClaimants'] | undefined | null,
+  defendants: Case['defendants'] | undefined | null,
+  allPoliceCaseNumbers: string[] | null | undefined,
+) => {
+  if (!userNationalId || !allPoliceCaseNumbers) {
+    return []
+  }
+
+  const normalizedUserNationalId = normalizeAndFormatNationalId(userNationalId)
+  const myClaimants = (civilClaimants ?? []).filter(
+    (civilClaimant) =>
+      civilClaimant.hasSpokesperson &&
+      civilClaimant.isSpokespersonConfirmed &&
+      civilClaimant.caseFilesSharedWithSpokesperson &&
+      civilClaimant.spokespersonNationalId &&
+      normalizedUserNationalId.includes(civilClaimant.spokespersonNationalId),
+  )
+
+  if (myClaimants.length === 0) {
+    return []
+  }
+
+  if (
+    myClaimants.some(
+      (civilClaimant) => !civilClaimant.policeCaseNumbers?.length,
+    )
+  ) {
+    return allPoliceCaseNumbers
+  }
+
+  const assignedToMe = new Set(
+    myClaimants.flatMap(
+      (civilClaimant) => civilClaimant.policeCaseNumbers ?? [],
+    ),
+  )
+
+  const allAssignedToDefendants = new Set(
+    (defendants ?? []).flatMap(
+      (defendant) => defendant.policeCaseNumbers ?? [],
+    ),
+  )
+
+  if (allAssignedToDefendants.size === 0) {
+    return allPoliceCaseNumbers
+  }
+
+  return allPoliceCaseNumbers.filter(
+    (policeCaseNumber) =>
+      assignedToMe.has(policeCaseNumber) ||
+      !allAssignedToDefendants.has(policeCaseNumber),
+  )
+}
+
+const getDefenceUserVisiblePoliceCaseNumbers = (
+  userNationalId: string | undefined,
+  defendants: Case['defendants'] | undefined | null,
+  civilClaimants: Case['civilClaimants'] | undefined | null,
+  allPoliceCaseNumbers: string[] | null | undefined,
+) => {
+  if (!userNationalId || !allPoliceCaseNumbers) {
+    return []
+  }
+
+  const normalizedUserNationalId = normalizeAndFormatNationalId(userNationalId)
+  const isDefender = (defendants ?? []).some(
+    (defendant) =>
+      defendant.isDefenderChoiceConfirmed &&
+      defendant.defenderNationalId &&
+      normalizedUserNationalId.includes(defendant.defenderNationalId),
+  )
+  const isSpokesperson = (civilClaimants ?? []).some(
+    (civilClaimant) =>
+      civilClaimant.hasSpokesperson &&
+      civilClaimant.isSpokespersonConfirmed &&
+      civilClaimant.caseFilesSharedWithSpokesperson &&
+      civilClaimant.spokespersonNationalId &&
+      normalizedUserNationalId.includes(civilClaimant.spokespersonNationalId),
+  )
+
+  if (!isDefender && !isSpokesperson) {
+    return getDefenderVisiblePoliceCaseNumbers(
+      userNationalId,
+      defendants,
+      allPoliceCaseNumbers,
+    )
+  }
+
+  const visibleNumbers = new Set<string>()
+
+  if (isDefender) {
+    for (const policeCaseNumber of getDefenderVisiblePoliceCaseNumbers(
+      userNationalId,
+      defendants,
+      allPoliceCaseNumbers,
+    )) {
+      visibleNumbers.add(policeCaseNumber)
+    }
+  }
+
+  if (isSpokesperson) {
+    for (const policeCaseNumber of getSpokespersonVisiblePoliceCaseNumbers(
+      userNationalId,
+      civilClaimants,
+      defendants,
+      allPoliceCaseNumbers,
+    )) {
+      visibleNumbers.add(policeCaseNumber)
+    }
+  }
+
+  return allPoliceCaseNumbers.filter((policeCaseNumber) =>
+    visibleNumbers.has(policeCaseNumber),
+  )
+}
+
 interface Props {
   workingCase: Case
   displayGeneratedPDFs?: boolean
   displayHeading?: boolean
+  forceDisplayAdditionalFiles?: boolean
   connectedCaseParentId?: string
 }
 
@@ -154,6 +318,7 @@ const useFilteredCaseFiles = (
       costBreakdowns: filterByCategories(CaseFileCategory.COST_BREAKDOWN),
       others: filterByCategories(CaseFileCategory.CASE_FILE),
       rulings: filterByCategories(CaseFileCategory.RULING),
+      defendantRulings: filterByCategories(CaseFileCategory.DEFENDANT_RULING),
       rulingOrders: filterByCategories(
         CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
       ),
@@ -192,6 +357,7 @@ const useFilePermissions = (workingCase: Case, user?: User) => {
         isPrisonAdminUser(user) || isPublicProsecutionOfficeUser(user),
       canViewRulings:
         isDistrictCourtUser(user) || isCompletedCase(workingCase.state),
+      canViewDefendantRulings: !isDefenceUser(user),
       canViewVerdictServiceCertificate:
         isPublicProsecutionOfficeUser(user) || isPrisonAdminUser(user),
     }),
@@ -235,11 +401,15 @@ const IndictmentCaseFilesList: FC<Props> = ({
   workingCase,
   displayGeneratedPDFs = true,
   displayHeading = true,
+  forceDisplayAdditionalFiles = false,
   connectedCaseParentId,
 }) => {
   const { formatMessage } = useIntl()
   const { user, limitedAccess } = useContext(UserContext)
-
+  const { features } = useContext(FeatureContext)
+  const showRulingOrderAppealMenu = features.includes(
+    Feature.APPEAL_RULING_ORDER,
+  )
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
     connectedCaseParentId,
@@ -269,14 +439,33 @@ const IndictmentCaseFilesList: FC<Props> = ({
     [workingCase],
   )
 
-  const showSubpoenaPdf = displayGeneratedPDFs && allSubpoenas.length > 0
+  const visibleSubpoenas = useMemo(() => {
+    if (!isDefenceUser(user)) {
+      return allSubpoenas
+    }
+
+    const normalizedUserNationalId = normalizeAndFormatNationalId(
+      user?.nationalId ?? '',
+    )
+
+    return allSubpoenas.filter(
+      ({ defendant }) =>
+        defendant.isDefenderChoiceConfirmed &&
+        defendant.defenderNationalId &&
+        normalizedUserNationalId.includes(defendant.defenderNationalId),
+    )
+  }, [allSubpoenas, user])
+
+  const showSubpoenaPdf = displayGeneratedPDFs && visibleSubpoenas.length > 0
 
   const filteredFiles = useFilteredCaseFiles(
     workingCase.caseFiles,
     workingCase.splitCases,
   )
   const permissions = useFilePermissions(workingCase, user)
-  const showFiles = Object.values(filteredFiles).some((f) => f.length > 0)
+  const showFiles =
+    forceDisplayAdditionalFiles ||
+    Object.values(filteredFiles).some((f) => f.length > 0)
   const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
     workingCase.state,
     workingCase.indictmentRulingDecision,
@@ -286,6 +475,23 @@ const IndictmentCaseFilesList: FC<Props> = ({
   )
 
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
+  const visiblePoliceCaseNumbers = useMemo(
+    () =>
+      isDefenceUser(user)
+        ? getDefenceUserVisiblePoliceCaseNumbers(
+            user?.nationalId ?? undefined,
+            workingCase.defendants,
+            workingCase.civilClaimants,
+            workingCase.policeCaseNumbers,
+          )
+        : workingCase.policeCaseNumbers ?? [],
+    [
+      user,
+      workingCase.defendants,
+      workingCase.civilClaimants,
+      workingCase.policeCaseNumbers,
+    ],
+  )
 
   const defendantsForCurrentDefender = isDefenceUser(user)
     ? workingCase.defendants?.filter(
@@ -311,7 +517,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
     )
 
   const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
-    usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
+    usePoliceDigitalCaseFile()
 
   const showDigitalCaseFilesSection =
     (isDistrictCourtUser(user) || isCourtOfAppealsUser(user)) &&
@@ -323,7 +529,13 @@ const IndictmentCaseFilesList: FC<Props> = ({
   return (
     <>
       {displayHeading && (
-        <SectionHeading title={formatMessage(strings.title)} />
+        <SectionHeading
+          title={
+            isCourtOfAppealsUser(user)
+              ? 'Skjöl héraðsdómsmáls'
+              : formatMessage(strings.title)
+          }
+        />
       )}
       <div className={grid({ gap: 5 })}>
         {displayGeneratedPDFs && (
@@ -376,7 +588,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
               heading="h4"
               variant="h4"
             />
-            {workingCase.policeCaseNumbers?.map((policeCaseNumber, index) => {
+            {visiblePoliceCaseNumbers.map((policeCaseNumber, index) => {
               const caseFilesRecordFileName = formatMessage(
                 strings.caseFileButtonText,
                 {
@@ -417,7 +629,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
               heading="h4"
               variant="h4"
             />
-            {allSubpoenas.map(({ defendant, subpoena, caseId }) => {
+            {visibleSubpoenas.map(({ defendant, subpoena, caseId }) => {
               const subpoenaFileName = formatMessage(
                 strings.subpoenaButtonText,
                 {
@@ -549,6 +761,8 @@ const IndictmentCaseFilesList: FC<Props> = ({
               hasGeneratedCourtRecord ||
               (permissions.canViewRulings &&
                 filteredFiles.rulings.length > 0) ||
+              (permissions.canViewDefendantRulings &&
+                filteredFiles.defendantRulings.length > 0) ||
               permissions.canViewVerdictServiceCertificate ||
               filteredFiles.rulingOrders.length > 0) && (
               <div>
@@ -561,7 +775,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 {hideCourtRecord ? (
                   <AlertMessage
                     type="info"
-                    message="Hægt er að nálgast þingbók hjá héraðsdómi"
+                    message="Hægt er að nálgast þingbók og dómsúrlausn hjá héraðsdómi"
                   />
                 ) : (
                   <>
@@ -587,10 +801,27 @@ const IndictmentCaseFilesList: FC<Props> = ({
                     onOpenFile={onOpen}
                   />
                 )}
-                <RenderFiles
-                  caseFiles={filteredFiles.rulingOrders}
-                  onOpenFile={onOpen}
-                />
+                {permissions.canViewDefendantRulings && (
+                  <RenderFiles
+                    caseFiles={filteredFiles.defendantRulings}
+                    onOpenFile={onOpen}
+                  />
+                )}
+                {showRulingOrderAppealMenu
+                  ? filteredFiles.rulingOrders.map((file) => (
+                      <RulingOrderFileRow
+                        key={file.id}
+                        file={file}
+                        onOpenFile={onOpen}
+                      />
+                    ))
+                  : filteredFiles.rulingOrders.map((file) => (
+                      <RulingOrderConfirmation
+                        key={file.id}
+                        file={file}
+                        onOpenFile={onOpen}
+                      />
+                    ))}
                 {permissions.canViewVerdictServiceCertificate &&
                   workingCase.defendants?.map((defendant) => {
                     if (
@@ -620,6 +851,29 @@ const IndictmentCaseFilesList: FC<Props> = ({
                   })}
               </div>
             )}
+            {showRulingOrderAppealMenu &&
+              (workingCase.rulingOrderAppealCases?.length ?? 0) > 0 && (
+                <Box>
+                  <Accordion dividerOnBottom={false} dividerOnTop={false}>
+                    {workingCase.rulingOrderAppealCases?.map((appealCase) => {
+                      const rulingFile = workingCase.caseFiles?.find(
+                        (f) => f.id === appealCase.rulingFileId,
+                      )
+                      if (!rulingFile) {
+                        return null
+                      }
+                      return (
+                        <RulingOrderAppealFilesAccordion
+                          key={appealCase.id}
+                          appealCase={appealCase}
+                          rulingFile={rulingFile}
+                          onOpenFile={onOpen}
+                        />
+                      )
+                    })}
+                  </Accordion>
+                </Box>
+              )}
             <FileSection
               title={formatMessage(caseFiles.criminalRecordUpdateSection)}
               files={filteredFiles.criminalRecordUpdate}
@@ -642,25 +896,23 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 />
               )}
             </FileSection>
-            {filteredFiles.uploadedCaseFiles.length > 0 && (
-              <Box>
-                <SectionHeading
-                  title={formatMessage(strings.uploadedCaseFiles)}
-                  marginBottom={3}
-                  heading="h4"
-                  variant="h4"
-                />
-                <CaseFileTable
-                  caseFiles={filteredFiles.uploadedCaseFiles}
-                  onOpenFile={onOpen}
-                  canRejectFiles={
-                    isDistrictCourtUser(user) &&
-                    !connectedCaseParentId &&
-                    workingCase.state !== CaseState.CORRECTING
-                  }
-                />
-              </Box>
-            )}
+            <Box>
+              <SectionHeading
+                title={formatMessage(strings.uploadedCaseFiles)}
+                marginBottom={3}
+                heading="h4"
+                variant="h4"
+              />
+              <CaseFileTable
+                caseFiles={filteredFiles.uploadedCaseFiles}
+                onOpenFile={onOpen}
+                canRejectFiles={
+                  isDistrictCourtUser(user) &&
+                  !connectedCaseParentId &&
+                  workingCase.state !== CaseState.CORRECTING
+                }
+              />
+            </Box>
             <AnimatePresence>
               {fileNotFound && (
                 <FileNotFoundModal dismiss={dismissFileNotFound} />

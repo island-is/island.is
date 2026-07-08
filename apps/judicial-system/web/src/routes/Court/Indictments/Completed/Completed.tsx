@@ -3,12 +3,13 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { AlertMessage, Box } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { isRulingOrDismissalCase } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   AllIndictmentCaseFiles,
+  AppealRulingModifiedAlert,
   Conclusion,
   CourtCaseInfo,
   FormContentContainer,
@@ -16,13 +17,13 @@ import {
   FormFooter,
   // IndictmentsLawsBrokenAccordionItem, NOTE: Temporarily hidden while list of laws broken is not complete
   InfoCardClosedIndictment,
-  MarkdownWrapper,
   Modal,
   PageHeader,
   PageLayout,
   PageTitle,
   ReopenModal,
   RulingInput,
+  RulingModifiedAlert,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
@@ -34,7 +35,7 @@ import {
   ServiceRequirement,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  useAppealCaseUI,
+  useAppealCaseBanner,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -63,10 +64,16 @@ const Completed: FC = () => {
     useUploadFiles(workingCase.caseFiles)
   const { handleUpload } = useS3Upload(workingCase.id)
   const { createEventLog } = useEventLog()
-  const { appealBanner, appealModals } = useAppealCaseUI()
+  const { appealBanner, appealModals } = useAppealCaseBanner()
 
   const [isLoading, setIsLoading] = useState(false)
   const [modalVisible, setModalVisible] = useState<modal>()
+
+  // Defendants whose indictment was cancelled or dismissed (completed for some)
+  // do not get a verdict and therefore no service requirement
+  const defendantsWithVerdict = workingCase.defendants?.filter(
+    (defendant) => !defendant.indictmentCancelledOrDismissedState,
+  )
 
   // If the case has not been sent to the public prosecutor after completion/correction
   // then show the send to public prosecutor button
@@ -125,7 +132,7 @@ const Completed: FC = () => {
     }
 
     // The verdict needs to be delivered to some defendants
-    const requiresVerdictDeliveryToDefendants = workingCase.defendants?.some(
+    const requiresVerdictDeliveryToDefendants = defendantsWithVerdict?.some(
       ({ verdict }) =>
         verdict?.serviceRequirement === ServiceRequirement.REQUIRED,
     )
@@ -147,7 +154,7 @@ const Completed: FC = () => {
     handleUpload,
     uploadFiles,
     updateUploadFile,
-    workingCase.defendants,
+    defendantsWithVerdict,
     workingCase.indictmentSentToPublicProsecutorDate,
     completeCaseConfirmation,
     completeCaseConfirmationWithVerdictDelivery,
@@ -171,7 +178,7 @@ const Completed: FC = () => {
 
   const stepIsValid = () => {
     const isValidDefendants = isRuling
-      ? workingCase.defendants?.every((defendant) =>
+      ? defendantsWithVerdict?.every((defendant) =>
           defendant.verdict?.serviceRequirement ===
           ServiceRequirement.NOT_APPLICABLE
             ? Boolean(defendant.verdict?.appealDecision)
@@ -180,7 +187,7 @@ const Completed: FC = () => {
       : true
     const isValidRuling =
       includeRulingText &&
-      workingCase.defendants?.some(
+      defendantsWithVerdict?.some(
         (defendant) =>
           defendant.verdict?.serviceRequirement === ServiceRequirement.REQUIRED,
       )
@@ -210,21 +217,7 @@ const Completed: FC = () => {
         <FormContentContainer>
           <PageTitle>{formatMessage(strings.heading)}</PageTitle>
           <CourtCaseInfo workingCase={workingCase} />
-          {workingCase.rulingModifiedHistory && (
-            <Box marginBottom={5}>
-              <AlertMessage
-                type="info"
-                title="Mál leiðrétt"
-                message={
-                  <MarkdownWrapper
-                    markdown={workingCase.rulingModifiedHistory}
-                    textProps={{ variant: 'small' }}
-                  />
-                }
-              />
-            </Box>
-          )}
-          {workingCase.defendants?.map(
+          {defendantsWithVerdict?.map(
             (defendant) =>
               defendant.verdict && (
                 <Box
@@ -239,6 +232,8 @@ const Completed: FC = () => {
               ),
           )}
           <div className={grid({ gap: 5, marginBottom: 10 })}>
+            <AppealRulingModifiedAlert />
+            <RulingModifiedAlert />
             <Box component="section">
               <InfoCardClosedIndictment />
             </Box>
@@ -254,6 +249,14 @@ const Completed: FC = () => {
                 judgeName={workingCase.judge?.name}
               />
             )}
+            {workingCase.appealCase?.appealState ===
+              AppealCaseState.COMPLETED &&
+              workingCase.appealCase?.appealConclusion && (
+                <Conclusion
+                  title="Úrskurðarorð Landsréttar"
+                  conclusionText={workingCase.appealCase?.appealConclusion}
+                />
+              )}
             <AllIndictmentCaseFiles />
             {isRulingOrFine && (
               <Box component="section">
@@ -283,7 +286,7 @@ const Completed: FC = () => {
                   title={formatMessage(strings.serviceRequirementTitle)}
                 />
                 <div className={grid({ gap: 4 })}>
-                  {workingCase.defendants?.map((defendant) => {
+                  {defendantsWithVerdict?.map((defendant) => {
                     const { verdict } = defendant
                     if (!verdict) return null
 

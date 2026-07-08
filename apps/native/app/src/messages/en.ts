@@ -168,15 +168,15 @@ export const en: TranslatedMessages = {
   'user.natreg.maritalStatusValue': `{
     maritalStatus,
     select,
-    MARRIED {Married}
+    MARRIED {Married or registered partnership}
     UNMARRIED {Unmarried}
     WIDOWED {Widowed}
     SEPARATED {Separated}
     DIVORCED {Divorced}
-    MARRIED_LIVING_SEPARATELY {Married}
-    MARRIED_TO_FOREIGN_LAW_PERSON {Married}
-    FOREIGN_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {Married}
-    ICELANDIC_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {Married}
+    MARRIED_LIVING_SEPARATELY {Married, living separately}
+    MARRIED_TO_FOREIGN_LAW_PERSON {Icelandic citizen married to a foreign citizen that does not fulfil registration requirements}
+    FOREIGN_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {Icelandic citizen with legal residence in foreign country; married to a non-registered foreign citizen}
+    ICELANDIC_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {Icelandic citizen with legal residence in Iceland; relations with a foreigner not on record}
     other {Unknown}
   }`,
   'user.natreg.citizenship': 'Citizenship',
@@ -199,7 +199,7 @@ export const en: TranslatedMessages = {
   'homeOptions.heading.title': 'Configure home screen',
   'homeOptions.heading.subtitle':
     'Here you can configure what is displayed on the home screen.',
-  'homeOptions.graphic': 'Display graphic',
+  'homeOptions.notifications': 'Latest notifications',
   'homeOptions.inbox': 'Latest in inbox',
   'homeOptions.licenses': 'Licenses',
   'homeOptions.applications': 'Applications',
@@ -229,14 +229,14 @@ export const en: TranslatedMessages = {
 
   // inbox filters
   'inboxFilters.screenTitle': 'Filter documents',
-  'inboxFilters.unreadOnly': 'Show only unread',
+  'inboxFilters.unreadOnly': 'Show unread only',
   'inboxFilters.starred': 'Starred',
   'inboxFilters.archived': 'Archived',
   'inbox.filterButtonTitle': 'Filter',
   'inbox.filterOpenedTagTitle': 'Unread',
   'inbox.filterArchivedTagTitle': 'Archived',
   'inbox.filterStarredTagTitle': 'Starred',
-  'inbox.filterOrganizationTitle': 'Organization',
+  'inbox.filterOrganizationTitle': 'Institution',
   'inbox.filterCategoryTitle': 'Category',
   'inbox.filterDatesTitle': 'Dates',
   'inbox.filterClearButton': 'Clear',
@@ -269,6 +269,15 @@ export const en: TranslatedMessages = {
   'documentDetail.errorUnknown': 'Error occurred while loading document',
   'documentDetail.buttonReply': 'Reply',
   'documentDetail.buttonCommunications': 'Communications',
+  'documentDetail.archiveSuccess': 'Document archived',
+  'documentDetail.unarchiveSuccess': 'Document unarchived',
+  'documentDetail.bookmarkSuccess': 'Document starred',
+  'documentDetail.unbookmarkSuccess': 'Star removed',
+  'documentDetail.archiveError': 'Could not archive document',
+  'documentDetail.unarchiveError': 'Could not unarchive document',
+  'documentDetail.bookmarkError': 'Could not star document',
+  'documentDetail.unbookmarkError': 'Could not unstar document',
+  'documentDetail.pleaseTryAgain': 'Please try again later',
 
   // document reply
   'documentReply.to': 'To',
@@ -277,9 +286,12 @@ export const en: TranslatedMessages = {
   'documentReply.messagePlaceholder': 'Write message here',
   'documentReply.uploadAttachment': 'Upload document',
   'documentReply.sendMessage': 'Send message',
+  'documentReply.sendMessageError': 'Could not send reply',
+  'documentReply.pleaseTryAgain': 'Please try again later',
 
   // document communications
   'documentCommunications.caseNumber': 'Case number',
+  'documentCommunications.copyCaseNumber': 'Copy case number',
   'documentCommunications.initialReply':
     'The message has been received and a case has been created. You can continue the conversation here or via your personal email {email}.',
   'documentCommunications.cannotReply':
@@ -750,7 +762,7 @@ export const en: TranslatedMessages = {
   'health.overview.questionnaires': 'Questionnaires',
   'health.overview.aidsAndNutrition': 'Aids and nutrition',
   'health.overview.medicinePurchase': 'Medicine purchase',
-  'health.overview.medicineDelegation': 'Medicine delegation',
+  'health.overview.medicineDelegation': 'Prescription Commissions',
   'health.overview.period': 'Period',
   'health.overview.levelStatus': 'Medicine step',
   'health.overview.levelStatusValue': 'Level {level}, you pay {percentage}%',
@@ -763,7 +775,7 @@ export const en: TranslatedMessages = {
   'health.overview.dentist': 'Dentist',
   'health.overview.noDentistRegistered': 'No dentist registered',
   'health.overview.prescriptions': 'Prescriptions',
-  'health.overview.medicine': 'My medicine',
+  'health.overview.medicine': 'Medicine',
   'health.overview.seeAllCategories': 'See all categories',
 
   // health: categories
@@ -791,6 +803,8 @@ export const en: TranslatedMessages = {
   'health.questionnaires.action.answer': 'Answer questionnaire',
   'health.questionnaires.action.continue-draft': 'Continue',
   'health.questionnaires.action.view-answer': 'View answers',
+  'health.questionnaires.action.show-expired': 'Show expired',
+  'health.questionnaires.action.hide-expired': 'Hide expired',
   'health.questionnaires.detail.description':
     'Here you can find your answers to questionnaires. You can compare your answers.',
   'health.questionnaires.detail.status': 'Status',
@@ -820,18 +834,23 @@ export const en: TranslatedMessages = {
   'health.appointments.title': 'Appointments',
   'health.appointments.description':
     'Here you can see your appointments in the healthcare system.',
-  'health.appointments.detailTitle': 'Healthcare appointment',
-  'health.appointments.dateAndTime': 'Date and time',
-  'health.appointments.duration': 'Duration',
-  'health.appointments.location': 'Location',
-  'health.appointments.address': 'Address',
   'health.appointments.practitioners': 'Appointment with: {practitioner}',
   'health.appointments.appointmentWith': 'Appointment with',
-  'health.appointments.atTime': 'at {time}',
-  'health.appointments.timePrefix': 'at',
   'health.appointments.instructions': 'Instructions',
   'health.appointments.openMap': 'Open map',
-  'health.appointments.type': 'Type',
+  'health.appointments.locationInstructions': 'More about location',
+  'health.appointments.seeMore': 'See more',
+  'health.appointments.openingHours': 'Opening hours',
+  'health.appointments.phoneNumber': 'Phone number',
+  'health.appointments.organization': 'Organization',
+  'health.appointments.videoCall': 'Video call',
+  'health.appointments.videoCallInfoWithLink':
+    'The video call button becomes active 5 minutes before the booked time.',
+  'health.appointments.videoCallInfoWithLinkActive':
+    'Tap the button to start the video call.',
+  'health.appointments.videoCallInfoNoLink':
+    'This appointment includes a video call. You will receive a link to the video call shortly before the booked time. If no link is found, please contact the relevant institution.',
+  'health.appointments.startVideoCall': 'Start video call',
   'health.appointments.noAppointmentsTitle': 'No appointments',
   'health.appointments.noAppointmentsText':
     'You do not have any upcoming appointments.',
@@ -840,6 +859,7 @@ export const en: TranslatedMessages = {
   'health.appointments.notFoundMessage':
     'Appointment not found. It may have been cancelled.',
   'health.appointments.minutesFormat': '{minutes} minutes',
+  'health.appointments.moreInfo': 'More information',
 
   // health - organ donation
   'health.organDonation': 'Organ Donation',
@@ -856,11 +876,11 @@ export const en: TranslatedMessages = {
     'All organs can be used for transplantation except: {limitations}.',
 
   // health - medicine delegation
-  'health.medicineDelegation.screenTitle': 'Medicine authorizations',
-  'health.medicineDelegation.title': 'Medicine authorizations',
+  'health.medicineDelegation.screenTitle': 'Prescription Commissions',
+  'health.medicineDelegation.title': 'Prescription Commissions',
   'health.medicineDelegation.description':
     'Only you can collect your medicines at the pharmacy unless you grant someone a special authorization. Here you can register people who are allowed to collect medicines at the pharmacy on your behalf.',
-  'health.medicineDelegation.readMore': 'Read about medicine authorizations',
+  'health.medicineDelegation.readMore': 'Read about prescription commissions',
   'health.medicineDelegation.addButton': 'Add authorization',
   'health.medicineDelegation.emptyTitle': 'No authorizations',
   'health.medicineDelegation.emptyDescription':
@@ -895,12 +915,12 @@ export const en: TranslatedMessages = {
     'Pick up medicine at the pharmacy and view prescriptions.',
   'health.medicineDelegation.detail.revoke': 'Revoke delegation',
   'health.medicineDelegation.detail.revokeError':
-    'Failed to revoke medicine authorization. Please try again later.',
+    'Failed to revoke prescription commission. Please try again later.',
   'health.medicineDelegation.detail.revokePromptTitle':
     'Do you want to revoke this authorization?',
   'health.medicineDelegation.detail.revokePromptCancel': 'Cancel',
   'health.medicineDelegation.detail.revokePromptConfirm': 'Revoke',
-  'health.medicineDelegation.form.title': 'Add medicine authorization',
+  'health.medicineDelegation.form.title': 'Add prescription commission',
   'health.medicineDelegation.form.subtitle':
     'Choose a person who may collect your medicine at the pharmacy.',
   'health.medicineDelegation.form.nationalIdLabel': 'National ID',
@@ -913,7 +933,7 @@ export const en: TranslatedMessages = {
   'health.medicineDelegation.form.dateToPlaceholder': 'Choose a date to',
   'health.medicineDelegation.form.submit': 'Add authorization',
   'health.medicineDelegation.form.delegateMedicineDelegationError':
-    'Failed to create medicine authorization. Please try again later.',
+    'Failed to create prescription commission. Please try again later.',
   'health.medicineDelegation.form.nameNotFound':
     'Could not find a name for this national ID.',
   'health.medicineDelegation.form.nameError':
@@ -925,7 +945,7 @@ export const en: TranslatedMessages = {
   'health.medicineDelegation.form.xMonths': '{months} months',
 
   // health - prescriptions & drug certificates
-  'health.prescriptionsAndCertificates.screenTitle': 'My medicine',
+  'health.prescriptionsAndCertificates.screenTitle': 'Medicine',
   'health.prescriptionsAndCertificates.validTo': 'Valid to: {date}',
   'health.prescriptionsAndCertificates.expired': 'Expired',
   'health.prescriptionsAndCertificates.rejected': 'Rejected',
@@ -935,7 +955,7 @@ export const en: TranslatedMessages = {
     'Further information',
   'health.prescriptionsAndCertificates.status': 'Status',
   'health.prescriptionsAndCertificates.description':
-    'Doctors request medication certificates for individuals who are issued by the National Health Insurance Fund under certain conditions according to working regulations.',
+    'A doctor applies for a medication certificate for an individual, which is issued by the National Health Insurance upon fulfillment of certain conditions according to established guidelines.',
 
   'health.drugCertificates.title': 'Medication certificate',
   'health.drugCertificates.drugName': 'Drug name',
@@ -949,7 +969,7 @@ export const en: TranslatedMessages = {
 
   'health.prescriptions.title': 'Prescriptions',
   'health.prescriptions.description':
-    'Here you can find an overview of your prescriptions and medication certificates.',
+    'Here you will find an overview of your prescriptions. You can apply for drug renewal when applicable.',
   'health.prescriptions.drug': 'Medication',
   'health.prescriptions.strength': 'Strength',
   'health.prescriptions.indication': 'Used for',
@@ -974,7 +994,7 @@ export const en: TranslatedMessages = {
   'health.prescriptions.history.table.drug': 'Medicine',
   'health.prescriptions.history.table.quantity': 'Quantity',
   'health.prescriptions.history.table.moreInfo': 'More',
-  'health.medicineHistory.title': 'Medicine history',
+  'health.medicineHistory.title': 'Prescription history',
   'health.prescriptions.noDispensations': 'No dispensations recorded',
   'health.prescriptions.noDispensationsDescription':
     'If you believe you have data that should appear here, please contact service provider.',

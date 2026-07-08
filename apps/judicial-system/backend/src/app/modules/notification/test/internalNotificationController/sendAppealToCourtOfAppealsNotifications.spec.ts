@@ -4,7 +4,7 @@ import { EmailService } from '@island.is/email-service'
 import { SmsService } from '@island.is/nova-sms'
 
 import {
-  CaseNotificationType,
+  AppealCaseNotificationType,
   InstitutionType,
   User,
   UserRole,
@@ -15,7 +15,7 @@ import {
   createTestUsers,
 } from '../createTestingNotificationModule'
 
-import { Case } from '../../../repository'
+import { AppealCase, Case } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 
 interface Then {
@@ -35,6 +35,8 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
   ])
 
   const caseId = uuid()
+
+  const appealCaseId = uuid()
 
   const courtCaseNumber = uuid()
 
@@ -57,8 +59,9 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
       const then = {} as Then
 
       await internalNotificationController
-        .sendCaseNotification(
+        .sendAppealCaseNotification(
           caseId,
+          appealCaseId,
           {
             id: caseId,
             prosecutor: {
@@ -75,9 +78,10 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
             courtCaseNumber,
             courtId: court.id,
           } as Case,
+          { id: appealCaseId } as AppealCase,
           {
             user,
-            type: CaseNotificationType.APPEAL_TO_COURT_OF_APPEALS,
+            type: AppealCaseNotificationType.APPEAL_TO_COURT_OF_APPEALS,
           },
         )
         .then((result) => (then.result = result))

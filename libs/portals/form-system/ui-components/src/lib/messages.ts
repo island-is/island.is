@@ -159,8 +159,8 @@ export const m = defineMessages({
   },
   summaryScreen: {
     id: 'form.system:summary-screen',
-    defaultMessage: 'Yfirlit',
-    description: 'Summary',
+    defaultMessage: 'Birta yfirlit áður en umsókn er send inn',
+    description: 'Display summary before submission',
   },
   payment: {
     id: 'form.system:payment',
@@ -253,6 +253,11 @@ export const m = defineMessages({
     id: 'form.system:individual-on-behalf-legal-entity',
     defaultMessage: 'Einstaklingur í umboði lögaðila',
     description: 'Individual on behalf of a legal entity',
+  },
+  legalGuardianOnBehalfOfIndividual: {
+    id: 'form.system:legal-guardian-on-behalf-of-individual',
+    defaultMessage: 'Forsjáraðili í umboði einstaklings',
+    description: 'Legal guardian on behalf of an individual',
   },
   individualWithPowerOfAttorney: {
     id: 'form.system:individual-with-power-of-attorney',
@@ -364,6 +369,21 @@ export const m = defineMessages({
     id: 'form.system:list-builder',
     defaultMessage: 'Listasmiður',
     description: 'List builder',
+  },
+  listBuilderSubtitle: {
+    id: 'form.system:list-builder-subtitle',
+    defaultMessage: 'Veldu lista til að skoða og breyta gildum.',
+    description: 'List builder subtitle',
+  },
+  noListSelected: {
+    id: 'form.system:no-list-selected',
+    defaultMessage: 'Enginn listi',
+    description: 'Empty-state heading when no list is selected',
+  },
+  noListSelectedDescription: {
+    id: 'form.system:no-list-selected-description',
+    defaultMessage: 'Veldu lista eða bættu við gildum',
+    description: 'Empty-state helper text when no list is selected',
   },
   homestayNumber: {
     id: 'form.system:homestay-number',
@@ -486,6 +506,13 @@ export const m = defineMessages({
     defaultMessage: 'Veldu lista',
     description: 'Choose list',
   },
+  overwriteListConfirm: {
+    id: 'form.system:overwrite-list-confirm',
+    defaultMessage:
+      'Núverandi listi verður yfirskrifaður. Ertu viss um að þú viljir halda áfram?',
+    description:
+      'The existing list will be overwritten. Are you sure you want to continue?',
+  },
   addLink: {
     id: 'form.system:add-link',
     defaultMessage: 'Bæta við hlekk',
@@ -565,6 +592,11 @@ export const m = defineMessages({
     id: 'form.system:required',
     defaultMessage: 'Krafist',
     description: 'Required',
+  },
+  listFetchFailed: {
+    id: 'form.system:list-fetch-failed',
+    defaultMessage: 'Ekki tókst að hlaða lista',
+    description: 'Failed to load list',
   },
   select: {
     id: 'form.system:select',
@@ -653,8 +685,8 @@ export const m = defineMessages({
   },
   getJson: {
     id: 'form.system:get-json',
-    defaultMessage: 'Sækja JSON',
-    description: 'Get JSON',
+    defaultMessage: 'Niðurhala JSON',
+    description: 'Download JSON',
   },
   address: {
     id: 'form.system:address',
@@ -1158,29 +1190,20 @@ export const m = defineMessages({
   },
   zendeskPrivate: {
     id: 'form.system:zendesk-private',
-    defaultMessage: 'Umsóknirnar skulu vera merktar internal/private í Zendesk',
-    description: 'Applications should be marked as internal/private in Zendesk',
+    defaultMessage:
+      'Merkja umsóknirnar sem internal/private í Zendesk. Þá fer innihald umsókna ekki með í samskiptum við umsækjanda frá Zendesk.',
+    description:
+      'Mark applications as internal/private in Zendesk. This way, the content of the applications will not be included in communication with the applicant from Zendesk.',
   },
   useValidate: {
     id: 'form.system:use-validate',
     defaultMessage: 'Nota þjónustuna til að yfirfara (e. validate) gögnin',
     description: 'Use the service to validate the data',
   },
-  usePopulate: {
-    id: 'form.system:use-populate',
-    defaultMessage: 'Nota þjónustuna til að fylla út (e. populate) gögn',
-    description: 'Use the service to populate data',
-  },
   screenValidate: {
     id: 'form.system:screen-validate',
     defaultMessage: 'Senda skjá/umsókn til yfirferðar (e. validation)',
     description: 'Send the screen for validation',
-  },
-  screenPopulate: {
-    id: 'form.system:screen-populate',
-    defaultMessage:
-      'Senda skjá í sjálfvirka útfyllingu gagna (e. data population)',
-    description: 'Send the screen for automatic data population',
   },
   completedMessage: {
     id: 'form.system:completed-message',
@@ -1265,5 +1288,40 @@ export const m = defineMessages({
       'Ekki er hægt að gefa út formið. Allir reitir með íslensku þurfa enska þýðingu.',
     description:
       'The form cannot be published. All name fields with Icelandic text require an English translation.',
+  },
+  copyFieldHover: {
+    id: 'form.system:copy-field-hover',
+    defaultMessage: 'Afrita innslátt',
+    description: 'Copy field',
+  },
+  missingValue: {
+    id: 'form.system:missing-value',
+    defaultMessage: 'Vantar gildi',
+    description: 'Missing value',
+  },
+  registrationNumber: {
+    id: 'form.system:registration-number',
+    defaultMessage: 'Skráningarnúmer',
+    description: 'Registration number',
+  },
+  model: {
+    id: 'form.system:model',
+    defaultMessage: 'Tegund',
+    description: 'Model',
+  },
+  color: {
+    id: 'form.system:color',
+    defaultMessage: 'Litur',
+    description: 'Color',
+  },
+  vehicleNotFoundError: {
+    id: 'form.system:vehicle-not-found-error',
+    defaultMessage: 'Ekkert ökutæki fannst með þessu skráningarnúmeri',
+    description: 'No vehicle found with this registration number',
+  },
+  vehiclePlaceholder: {
+    id: 'form.system:vehicle-placeholder',
+    defaultMessage: 'Sláðu inn skráningarnúmer',
+    description: 'Enter registration number',
   },
 })

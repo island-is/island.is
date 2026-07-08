@@ -273,10 +273,7 @@ export class VerdictsClientService {
           court: goproItem.court?.name ?? '',
           caseNumber: goproItem.caseNumber ?? '',
           verdictDate: goproItem.verdictDate,
-          verdictJudges:
-            goproItem.court?.code !== 'landsrettur'
-              ? goproItem.judges ?? []
-              : [],
+          verdictJudges: [],
           keywords: goproItem.keywords ?? [],
           presentings: goproItem.presentings ?? '',
         })
@@ -386,7 +383,9 @@ export class VerdictsClientService {
           courts: [COURT_OF_APPEAL],
         },
       }),
-      this.supremeCourtApi.apiV2VerdictGetCaseTypesGet(),
+      this.supremeCourtApi.apiV2VerdictGetCaseTypesGet({
+        akvardanir: 0,
+      }),
       goproVerdictApi.getCaseTypesV2({
         requestData: {
           courts: ALL_DISTRICT_COURTS,
@@ -565,6 +564,19 @@ export class VerdictsClientService {
 
     const { goproCourtAgendasApi } = await this.getAuthenticatedGoproApis()
 
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    const parsedInputDateFrom = input.dateFrom
+      ? safelyConvertStringToDate(input.dateFrom, 'dateFrom', this.logger)
+      : undefined
+    const effectiveGoproDateFrom =
+      parsedInputDateFrom && parsedInputDateFrom >= today
+        ? parsedInputDateFrom
+        : today
+    const goproDateFrom = effectiveGoproDateFrom.toISOString()
+    const goproDateTo = input.dateTo || undefined
+
     const [supremeCourtResponse, goproResponse] = await Promise.allSettled([
       shouldFetchSupremeCourtAgendas
         ? this.supremeCourtApi.apiV2VerdictGetAgendasPost({
@@ -596,12 +608,8 @@ export class VerdictsClientService {
             pageNumber: pageNumber,
             courts: goproCourtsForApi,
             itemsPerPage,
-            dateFrom: input.dateFrom
-              ? input.dateFrom
-              : !input.dateTo
-              ? this.getDefaultDateFrom().dateString
-              : undefined,
-            dateTo: input.dateTo ? input.dateTo : undefined,
+            dateFrom: goproDateFrom,
+            dateTo: goproDateTo,
             lawyer: input.lawyer ? input.lawyer : undefined,
             orderBy: 'StartDateTime',
             orderDirection: 'ASC',
@@ -654,7 +662,9 @@ export class VerdictsClientService {
           type: agenda.bookingType ?? '',
           title: agenda.caseTitle?.raw ? agenda.caseTitle.raw : '',
           caseSubType: agenda.caseSubType ?? '',
-          hearingTime: sanitizeHtml(agenda.length ?? ''),
+          hearingTime: !agenda.court?.code?.startsWith('hd')
+            ? sanitizeHtml(agenda.length ?? '')
+            : undefined,
         })
       }
     } else {
@@ -745,11 +755,17 @@ export class VerdictsClientService {
     return lawyers
   }
 
-  async getSupremeCourtDeterminations(input: { page: number }) {
+  async getSupremeCourtDeterminations(input: {
+    page: number
+    caseTypes?: string[]
+    searchTerm?: string
+  }) {
     const response =
       await this.supremeCourtApi.apiV2VerdictGetDeterminationsGet({
         page: input.page ?? 1,
         limit: 10,
+        caseTypes: input.caseTypes ? input.caseTypes : undefined,
+        searchTerm: input.searchTerm ? input.searchTerm : undefined,
       })
 
     return {
@@ -848,42 +864,35 @@ export class VerdictsClientService {
       ])
 
     const mapOfAll = new Map<string, { id: string; label: string }>()
+    const courtOfAppealMap = new Map<string, { id: string; label: string }>()
+    const districtCourtMap = new Map<string, { id: string; label: string }>()
 
-    const courtOfAppealSet = new Set<string>()
-    const courtOfAppealItems: Array<{ id: string; label: string }> = []
     if (courtOfAppealResponse.status === 'fulfilled')
       for (const scheduleType of courtOfAppealResponse.value.items ?? [])
         if (scheduleType.label && scheduleType.id !== undefined) {
-          const id = String(scheduleType.id)
-          const item = { id, label: scheduleType.label }
-          if (!mapOfAll.has(scheduleType.label)) {
-            mapOfAll.set(scheduleType.label, item)
+          const item = {
+            id: String(scheduleType.id),
+            label: scheduleType.label,
           }
-          if (!courtOfAppealSet.has(scheduleType.label)) {
-            courtOfAppealSet.add(scheduleType.label)
-            courtOfAppealItems.push(item)
-          }
+          courtOfAppealMap.set(scheduleType.label, item)
+          mapOfAll.set(scheduleType.label, item)
         }
 
-    const supremeCourtItems: Array<{ id: string; label: string }> = []
-
-    const districtCourtSet = new Set<string>()
-    const districtCourtItems: Array<{ id: string; label: string }> = []
     if (districtCourtResponse.status === 'fulfilled')
       for (const scheduleType of districtCourtResponse.value.items ?? [])
         if (scheduleType.label && scheduleType.id !== undefined) {
-          const id = String(scheduleType.id)
-          const item = { id, label: scheduleType.label }
-          if (!mapOfAll.has(scheduleType.label)) {
-            mapOfAll.set(scheduleType.label, item)
+          const item = {
+            id: String(scheduleType.id),
+            label: scheduleType.label,
           }
-          if (!districtCourtSet.has(scheduleType.label)) {
-            districtCourtSet.add(scheduleType.label)
-            districtCourtItems.push(item)
-          }
+          districtCourtMap.set(scheduleType.label, item)
+          mapOfAll.set(scheduleType.label, item)
         }
 
+    const courtOfAppealItems = Array.from(courtOfAppealMap.values())
     courtOfAppealItems.sort(sortAlpha('label'))
+
+    const districtCourtItems = Array.from(districtCourtMap.values())
     districtCourtItems.sort(sortAlpha('label'))
 
     const allItems = Array.from(mapOfAll.values())
@@ -894,7 +903,7 @@ export class VerdictsClientService {
         items: courtOfAppealItems,
       },
       supremeCourt: {
-        items: supremeCourtItems,
+        items: [],
       },
       districtCourt: {
         items: districtCourtItems,
@@ -913,5 +922,12 @@ export class VerdictsClientService {
     return {
       items: response.items ?? [],
     }
+  }
+
+  async getSupremeCourtDeterminationCaseTypes() {
+    const response = await this.supremeCourtApi.apiV2VerdictGetCaseTypesGet({
+      akvardanir: 1,
+    })
+    return response.items ?? []
   }
 }

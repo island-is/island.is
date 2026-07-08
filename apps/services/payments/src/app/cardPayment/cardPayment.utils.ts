@@ -216,6 +216,8 @@ export const generateCardChargeFJSPayload = ({
   totalPrice,
   systemId,
   merchantReferenceData,
+  correlationId,
+  effectiveDate,
 }: {
   paymentFlow: PaymentFlowAttributes
   charges: CatalogItemWithQuantity[]
@@ -223,11 +225,14 @@ export const generateCardChargeFJSPayload = ({
   totalPrice: number
   systemId: string
   merchantReferenceData: string
+  correlationId: string
+  effectiveDate?: Date
 }): Charge => {
   return generateChargeFJSPayload({
     paymentFlow,
     charges,
     systemId,
+    effectiveDate,
     payInfo: {
       PAN: cardChargeInfo.maskedCardNumber,
       RRN: merchantReferenceData,
@@ -237,6 +242,7 @@ export const generateCardChargeFJSPayload = ({
       paymentMeans: cardChargeInfo.cardUsage?.toLowerCase()?.startsWith('d')
         ? PayInfoPaymentMeansEnum.Debetkort
         : PayInfoPaymentMeansEnum.Kreditkort,
+      correlationId,
     },
   })
 }
@@ -565,10 +571,4 @@ export const generateApplePayDecryptedChargeRequestOptions = ({
     headers: generateApplePayRequestHeaders(paymentApiConfig),
     body: JSON.stringify(body),
   }
-}
-
-/** Masks all but the last 4 digits for safe logging */
-export const redactCardNumber = (cardNumber: string): string => {
-  if (cardNumber.length <= 4) return '****'
-  return '*'.repeat(cardNumber.length - 4) + cardNumber.slice(-4)
 }

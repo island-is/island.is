@@ -30,7 +30,9 @@ import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { FetchError } from '@island.is/clients/middlewares'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { User } from '@island.is/auth-nest-tools'
+import type { Locale } from '@island.is/shared/types'
 import { DriverLicenseWithoutImages } from '@island.is/clients/driving-license'
+import { messages as drivingLicenseMessages } from '@island.is/application/templates/driving-license'
 import {
   PostTemporaryLicenseWithHealthDeclarationMapper,
   DrivingLicenseSchema,
@@ -102,6 +104,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
   async submitApplication({
     application,
     auth,
+    currentUserLocale,
   }: TemplateApiModuleActionProps): Promise<{ success: boolean }> {
     const { answers } = application
     const nationalId = application.applicant
@@ -127,26 +130,9 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       })
 
       if (e instanceof Error && e.name === 'FetchError') {
-        const err = e as unknown as FetchError
-
-        if (err.problem?.title === 'INSTRUCTOR_DOES_NOT_HAVE_BE_CATEGORY') {
-          throw new TemplateApiError(
-            {
-              title: coreErrorMessages.failedDataProviderSubmit,
-              summary:
-                'Ökukennari er ekki með BE réttindi á ökuskírteini sínu. Vinsamlegast veldu annan ökukennara.',
-            },
-            400,
-          )
-        }
-
-        throw new TemplateApiError(
-          {
-            title:
-              err.problem?.title || coreErrorMessages.failedDataProviderSubmit,
-            summary: err.problem?.detail || '',
-          },
-          err.status || 400,
+        throw await this.toSubmissionError(
+          e as unknown as FetchError,
+          currentUserLocale,
         )
       }
 
@@ -179,18 +165,104 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     this.logger.log(lvl, `[driving-license-submission] ${message}`, meta)
   }
 
+  /**
+   * Turn a failed RLS submission into the error the applicant sees. RLS puts its
+   * error code in `problem.title`; if that code exists in the RLS error-code
+   * table we surface the table's own human-readable text in the user's language
+   * instead of leaking the raw code. Anything we can't resolve (no code, code
+   * not in the table, or a best-effort lookup failure) keeps the previous
+   * behaviour: raw `problem.title` / generic message, with `problem.detail` as
+   * the summary. `describeErrorCode` is best-effort and never throws.
+   */
+  private async toSubmissionError(
+    err: FetchError,
+    locale: Locale,
+  ): Promise<TemplateApiError> {
+    const code = err.problem?.title
+    if (code) {
+      try {
+        const described = await this.drivingLicenseService.describeErrorCode(
+          code,
+        )
+        // The table carries both languages for every code; pick the user's. For
+        // an `en` user with no English text we fall through rather than show
+        // Icelandic (mirrors the eligibility screen).
+        const localized = locale === 'en' ? described?.en : described?.is
+        if (localized) {
+          // Generic header + the RLS text as the body. Both fields must be
+          // non-empty: the payment screen's getErrorReasonIfPresent only treats
+          // a reason as a real provider error (and renders our text) when title
+          // AND summary are set — and RLS often sends a code with no
+          // `problem.detail`, so the text must go in `summary`, not `title`.
+          return new TemplateApiError(
+            {
+              title: coreErrorMessages.failedDataProviderSubmit,
+              summary: localized,
+            },
+            err.status || 400,
+          )
+        }
+      } catch (lookupError) {
+        // describeErrorCode is best-effort; never let resolving the nicer copy
+        // turn a handled submission error into an unhandled 500.
+        this.log('error', 'Failed to resolve RLS error-code description', {
+          lookupError,
+          code,
+        })
+      }
+    }
+
+    // `problem.title` is RLS's raw error *code* (not human text), so it must
+    // never become the user-facing title — always fall back to the generic
+    // message. (An unresolved code with a non-empty `summary` would otherwise
+    // leak the raw code into the opt-in submit-error toast.)
+    return new TemplateApiError(
+      {
+        title: coreErrorMessages.failedDataProviderSubmit,
+        summary: err.problem?.detail || '',
+      },
+      err.status || 400,
+    )
+  }
+
   private async createLicense(
     nationalId: string,
     answers: FormValue,
     auth: User,
     application: ApplicationWithAttachments,
   ): Promise<NewDrivingLicenseResult> {
-    // If using fake data, skip calling RLS and pretend submission succeeded
+    // If using fake data, skip calling RLS and pretend submission succeeded.
+    // Opt-in escape hatch: fakeData.submitToRLS = 'yes' bypasses this
+    // short-circuit so devs can still exercise the real RLS submission path
+    // (with whatever fake-derived biometric IDs etc. are in externalData) for
+    // integration testing.
     const useFakeData = getValueViaPath<'yes' | 'no'>(
       answers,
       'fakeData.useFakeData',
     )
-    if (useFakeData === YES) {
+    const fakeDataSubmitToRLS = getValueViaPath<'yes' | 'no'>(
+      answers,
+      'fakeData.submitToRLS',
+    )
+    if (useFakeData === YES && fakeDataSubmitToRLS !== YES) {
+      // Dev-only: simulate a failed RLS submission with a chosen error code so
+      // the payment-step error UI can be exercised end-to-end without calling
+      // RLS. The thrown shape matches a real RLS FetchError, so it flows through
+      // the same `submitApplication` catch → `toSubmissionError` path (and the
+      // code is still resolved against the real error-code table).
+      const fakeSubmitErrorCode = getValueViaPath<string>(
+        answers,
+        'fakeData.submitErrorCode',
+      )
+      if (fakeSubmitErrorCode) {
+        const fakeError = new Error(
+          'Simulated RLS submission failure',
+        ) as Error & { problem?: { title: string }; status?: number }
+        fakeError.name = 'FetchError'
+        fakeError.problem = { title: fakeSubmitErrorCode }
+        fakeError.status = 400
+        throw fakeError
+      }
       return {
         success: true,
         errorMessage: null,
@@ -219,13 +291,19 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       nationalId: string,
       answers: FormValue,
       auth: User,
+      photoBiometricsId?: string | null,
+      signatureBiometricsId?: string | null,
     ) => {
       await this.drivingLicenseService
         .postHealthDeclaration(
           nationalId,
-          PostTemporaryLicenseWithHealthDeclarationMapper(
-            answers as DrivingLicenseSchema,
-          ),
+          {
+            ...PostTemporaryLicenseWithHealthDeclarationMapper(
+              answers as DrivingLicenseSchema,
+            ),
+            photoBiometricsId,
+            signatureBiometricsId,
+          },
           auth.authorization.split(' ')[1] ?? '',
         )
         .catch((e) => {
@@ -236,20 +314,150 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     }
 
     if (applicationFor === 'B-full-renewal-65') {
-      return this.drivingLicenseService.renewDrivingLicense65AndOver(
-        auth.authorization.replace('Bearer ', ''),
-        {
-          districtId: jurisdictionId
-            ? jurisdictionId
-            : setJurisdictionToKopavogur,
-          ...(deliveryMethod
-            ? {
-                pickupPlasticAtDistrict: deliveryMethod === Pickup.DISTRICT,
-                sendPlasticToPerson: deliveryMethod === Pickup.POST,
-              }
-            : {}),
-        },
+      const is65RenewalRedesignEnabled = getValueViaPath<boolean>(
+        answers,
+        'is65RenewalRedesignEnabled',
       )
+
+      if (!is65RenewalRedesignEnabled) {
+        // Legacy 65+ submit path. Used while the redesign flag is OFF in
+        // prod and during the post-deploy rollout window. Removed once the
+        // flag has been ON in prod long enough that no flag-OFF submissions
+        // reach this branch.
+        return this.drivingLicenseService.renewDrivingLicense65AndOver(
+          auth.authorization,
+          {
+            jurisdiction: jurisdictionId
+              ? jurisdictionId
+              : setJurisdictionToKopavogur,
+            ...(deliveryMethod
+              ? {
+                  pickupPlasticAtDistrict: deliveryMethod === Pickup.DISTRICT,
+                  sendPlasticToPerson: deliveryMethod === Pickup.POST,
+                }
+              : {}),
+          },
+        )
+      }
+
+      const renewalEmail = getValueViaPath<string>(answers, 'email')
+      const renewalPhone = formatPhoneNumber(
+        getValueViaPath<string>(answers, 'phone') ?? '',
+      )
+      const selectedRenewalPhoto = getValueViaPath<string>(
+        answers,
+        'selectLicensePhoto',
+      )
+
+      let renewalPhotoBiometricsId: string | null = null
+      let renewalSignatureBiometricsId: string | null = null
+
+      if (selectedRenewalPhoto === 'qualityPhoto') {
+        const qualityPhotoData = application.externalData
+          ?.qualityPhotoAndSignature?.data as {
+          pohto?: string | null
+          imageTypeId?: number | null
+        } | null
+
+        if (!qualityPhotoData?.pohto) {
+          this.log(
+            'error',
+            'User selected qualityPhoto but no quality photo exists in externalData',
+            {},
+          )
+        }
+      } else if (selectedRenewalPhoto) {
+        const allThjodskraPhotos =
+          getValueViaPath<
+            Array<{ biometricId: string; contentSpecification: string }>
+          >(application.externalData, 'allPhotosFromThjodskra.data.images') ??
+          []
+
+        const facialPhotos = allThjodskraPhotos.filter(
+          (p) => p.contentSpecification === 'FACIAL',
+        )
+
+        const isValidFacial = facialPhotos.some(
+          (p) => p.biometricId === selectedRenewalPhoto,
+        )
+
+        if (!isValidFacial) {
+          this.log(
+            'error',
+            'Selected photo biometricId does not match any FACIAL Thjodskra photo',
+            { selectedPhoto: selectedRenewalPhoto },
+          )
+        }
+
+        renewalPhotoBiometricsId = isValidFacial ? selectedRenewalPhoto : null
+        renewalSignatureBiometricsId = isValidFacial
+          ? allThjodskraPhotos.find(
+              (p) => p.contentSpecification === 'SIGNATURE',
+            )?.biometricId ?? null
+          : null
+      }
+
+      let renewalContentList:
+        | Array<{
+            fileName: string
+            fileExtension: string
+            contentType: string
+            content: string
+            description: string
+          }>
+        | undefined
+
+      try {
+        const files = await this.attachmentS3Service.getFiles(application, [
+          'healthCertificate',
+        ])
+
+        renewalContentList = files
+          .filter((f) => f.fileContent)
+          .map((f) => {
+            const rawExt = f.fileName.split('.').pop()?.toLowerCase() ?? ''
+            const ext = rawExt === 'jpg' ? 'jpeg' : rawExt
+            return {
+              fileName: f.fileName,
+              fileExtension: ext,
+              contentType: getContentType(f.fileName),
+              content: f.fileContent,
+              description: 'Laeknisvottord',
+            }
+          })
+      } catch (e) {
+        this.log('error', 'Failed to read health certificate files from S3', {
+          e,
+        })
+        throw e
+      }
+
+      if (!renewalContentList || renewalContentList.length === 0) {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.failedDataProviderSubmit,
+            summary: drivingLicenseMessages.healthCertificateRequired,
+          },
+          400,
+        )
+      }
+
+      return this.drivingLicenseService.applyForRenewal65(auth.authorization, {
+        jurisdiction: jurisdictionId
+          ? jurisdictionId
+          : setJurisdictionToKopavogur,
+        primaryPhoneNumber: renewalPhone,
+        studentEmail: renewalEmail ?? '',
+        ...(deliveryMethod
+          ? {
+              pickupPlasticAtDistrict: deliveryMethod === Pickup.DISTRICT,
+              sendPlasticToPerson: deliveryMethod === Pickup.POST,
+            }
+          : {}),
+        contentList: renewalContentList,
+        photoBiometricsId: renewalPhotoBiometricsId,
+        signatureBiometricsId: renewalSignatureBiometricsId,
+      })
     } else if (applicationFor === 'B-full') {
       return this.drivingLicenseService.newDrivingLicense(nationalId, {
         jurisdictionId: jurisdictionId
@@ -264,8 +472,84 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
             : DrivingLicenseCategory.BE,
       })
     } else if (applicationFor === 'B-temp') {
+      // Photo selection only applies to the redesigned B-temp flow. Gate on
+      // the *persisted* flag (captured into answers by a hidden input during
+      // prerequisites) — not on the mere presence of `selectLicensePhoto` —
+      // so a draft created while the flag was on does not keep sending
+      // biometric IDs after the flag is turned off. Flag off → both IDs stay
+      // `undefined`, so the keys are omitted from the RLS request bodies
+      // entirely and the calls are byte-identical to the pre-redesign flow.
+      const isBTempRedesignEnabled =
+        getValueViaPath<boolean>(answers, 'isBTempRedesignEnabled') === true
+
+      let photoBiometricsId: string | null | undefined
+      let signatureBiometricsId: string | null | undefined
+
+      if (isBTempRedesignEnabled) {
+        const selectedPhoto = getValueViaPath<string>(
+          answers,
+          'selectLicensePhoto',
+        )
+
+        if (selectedPhoto === 'qualityPhoto') {
+          // User selected the RLS quality photo — RLS already has it, so no
+          // biometric IDs are sent. Verify it actually exists for logging.
+          const qualityPhotoData = application.externalData
+            ?.qualityPhotoAndSignature?.data as {
+            pohto?: string | null
+          } | null
+
+          if (!qualityPhotoData?.pohto) {
+            this.log(
+              'error',
+              'User selected qualityPhoto but no quality photo exists in externalData',
+              {},
+            )
+          }
+
+          photoBiometricsId = null
+          signatureBiometricsId = null
+        } else if (selectedPhoto) {
+          // User selected a Thjodskra photo — validate against FACIAL entries.
+          const allThjodskraPhotos =
+            getValueViaPath<
+              Array<{ biometricId: string; contentSpecification: string }>
+            >(application.externalData, 'allPhotosFromThjodskra.data.images') ??
+            []
+
+          const facialPhotos = allThjodskraPhotos.filter(
+            (p) => p.contentSpecification === 'FACIAL',
+          )
+
+          const isValidFacial = facialPhotos.some(
+            (p) => p.biometricId === selectedPhoto,
+          )
+
+          if (!isValidFacial) {
+            this.log(
+              'error',
+              'Selected photo biometricId does not match any FACIAL Thjodskra photo',
+              { selectedPhoto },
+            )
+          }
+
+          photoBiometricsId = isValidFacial ? selectedPhoto : null
+          signatureBiometricsId = isValidFacial
+            ? allThjodskraPhotos.find(
+                (p) => p.contentSpecification === 'SIGNATURE',
+              )?.biometricId ?? null
+            : null
+        }
+      }
+
       if (needsHealthCert) {
-        await postHealthDeclaration(nationalId, answers, auth)
+        await postHealthDeclaration(
+          nationalId,
+          answers,
+          auth,
+          photoBiometricsId,
+          signatureBiometricsId,
+        )
       }
       return this.drivingLicenseService.newTemporaryDrivingLicense(
         nationalId,
@@ -280,6 +564,8 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           teacherNationalId: teacher,
           email: email,
           phone: phone,
+          photoBiometricsId,
+          signatureBiometricsId,
         },
       )
     } else if (applicationFor === 'BE') {
@@ -403,8 +689,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           throw new TemplateApiError(
             {
               title: coreErrorMessages.failedDataProviderSubmit,
-              summary:
-                'Health certificate is required but no valid files were found',
+              summary: drivingLicenseMessages.healthCertificateRequired,
             },
             400,
           )
@@ -439,6 +724,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           contentList,
           photoBiometricsId,
           signatureBiometricsId,
+          sendPlasticToPerson: deliveryMethod === Pickup.POST,
           healthDeclarationModel,
         },
       )

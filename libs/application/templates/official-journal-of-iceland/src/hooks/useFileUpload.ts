@@ -108,7 +108,7 @@ export const useFileUpload = ({
    */
   const onChange = (newFiles: UploadFileDeprecated[]) => {
     newFiles.forEach(async (file) => {
-      const type = file?.type?.split('/')[1]
+      const type = file?.name?.split('.').pop()
       const name = file?.name?.split('.').slice(0, -1).join('.')
 
       if (!type || !name) {
@@ -198,7 +198,7 @@ export const useFileUpload = ({
     url: string,
     file: UploadFileDeprecated,
   ) => {
-    const type = file?.type?.split('/')[1]
+    const type = file?.name?.split('.').pop()
     const name = file?.name?.split('.').slice(0, -1).join('.')
     if (!type || !name) {
       return

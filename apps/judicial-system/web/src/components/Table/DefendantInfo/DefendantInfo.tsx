@@ -8,6 +8,7 @@ import {
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { areAllDefenderDefendantsCancelledOrDismissed } from '../../../utils/utils'
 import * as styles from './DefendantInfo.css'
 
 interface Props {
@@ -27,13 +28,7 @@ const DefendantInfo: FC<Props> = ({ defendants }) => {
   )
 
   const allDefenderDefendantsAreCancelledOrDismissed =
-    defenderDefendants &&
-    defenderDefendants.length > 0 &&
-    defenderDefendants.every(
-      (d) =>
-        d.indictmentCancelledOrDismissedState !== null &&
-        d.indictmentCancelledOrDismissedState !== undefined,
-    )
+    areAllDefenderDefendantsCancelledOrDismissed(user?.nationalId, defendants)
 
   const visibleDefendants = defendants?.filter((defendant) => {
     if (allDefenderDefendantsAreCancelledOrDismissed) {

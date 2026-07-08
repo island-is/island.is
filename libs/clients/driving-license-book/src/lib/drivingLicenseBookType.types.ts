@@ -1,4 +1,5 @@
 export const LICENSE_CATEGORY_B = 'B'
+export const LICENSE_CATEGORY_BE = 'BE'
 
 export interface CreatePracticalDrivingLessonInput {
   bookId: string

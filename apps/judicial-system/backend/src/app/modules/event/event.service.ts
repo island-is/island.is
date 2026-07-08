@@ -45,12 +45,16 @@ type CaseEvent =
   | 'ARCHIVE'
   | 'CREATE'
   | 'CREATE_XRD'
+  | 'DUPLICATE'
   | 'EXTEND'
   | 'RESUBMIT'
   | 'SCHEDULE_ARRAIGNMENT_DATE'
   | 'SCHEDULE_COURT_DATE'
   | 'SPLIT'
+  | 'SUBPOENA_ISSUED'
+  | 'SUBPOENA_DELIVERED_TO_POLICE'
   | 'SUBPOENA_SERVICE_STATUS'
+  | 'VERDICT_DELIVERED_TO_POLICE'
   | 'VERDICT_SERVICE_STATUS'
 
 type AppealCaseEvent = AppealCaseTransition | 'CREATE_APPEAL'
@@ -59,15 +63,16 @@ type Event = CaseEvent | AppealCaseEvent
 
 const eventHeading: Record<Event, string> = {
   [CaseTransition.ACCEPT]: ':white_check_mark: Samþykkt',
-  [CaseTransition.APPEAL]: ':judge: Kæra',
   ARCHIVE: ':file_cabinet: Sett í geymslu',
   [CaseTransition.ASK_FOR_CANCELLATION]: ':interrobang: Beðið um afturköllun',
   [CaseTransition.ASK_FOR_CONFIRMATION]: ':question: Beðið um staðfestingu',
   [CaseTransition.COMPLETE]: ':white_check_mark: Lokið',
-  [CaseTransition.COMPLETE_APPEAL]: ':white_check_mark: Kæru lokið',
+  [AppealCaseTransition.COMPLETE_APPEAL]: ':white_check_mark: Kæru lokið',
+  [CaseTransition.CORRECT]: ':construction: Opnað til leiðréttingar',
   CREATE: ':new: Mál stofnað',
   CREATE_APPEAL: ':judge: Kæra',
   CREATE_XRD: ':new: Mál stofnað í gegnum Strauminn',
+  DUPLICATE: ':recycle: Mál afritað í drög',
   [CaseTransition.DELETE]: ':fire: Afturkallað',
   [CaseTransition.DENY_INDICTMENT]: ':no_entry_sign: Ákæru hafnað',
   [CaseTransition.DISMISS]: ':woman-shrugging: Vísað frá',
@@ -75,19 +80,23 @@ const eventHeading: Record<Event, string> = {
   [CaseTransition.MOVE]: ':flying_disc: Máli úthlutað á nýjan dómstól',
   [CaseTransition.OPEN]: ':unlock: Opnað fyrir dómstól',
   [CaseTransition.RECEIVE]: ':eyes: Móttekið',
-  [CaseTransition.RECEIVE_APPEAL]: ':eyes: Kæra móttekin',
+  [AppealCaseTransition.RECEIVE_APPEAL]: ':eyes: Kæra móttekin',
   [CaseTransition.REJECT]: ':negative_squared_cross_mark: Hafnað',
-  [CaseTransition.REOPEN]: ':construction: Opnað til leiðréttingar',
-  [CaseTransition.REOPEN_APPEAL]: ':building_construction: Kæra opnuð aftur',
+  [CaseTransition.REOPEN]: ':recycle: Mál enduropnað',
+  [AppealCaseTransition.REOPEN_APPEAL]:
+    ':building_construction: Kæra opnuð aftur',
   RESUBMIT: ':mailbox_with_mail: Sent aftur',
   SCHEDULE_ARRAIGNMENT_DATE: ':calendar: Þingfestingartíma úthlutað',
   SCHEDULE_COURT_DATE: ':timer_clock: Fyrirtökutíma úthlutað',
   SPLIT: ':scissors: Mál klofið',
   [CaseTransition.SUBMIT]: ':mailbox_with_mail: Sent',
+  SUBPOENA_ISSUED: ':envelope_with_arrow: Fyrirkall gefið út',
+  SUBPOENA_DELIVERED_TO_POLICE: ':oncoming_police_car: Fyrirkall sent til RLS',
   SUBPOENA_SERVICE_STATUS: ':page_with_curl: Staða fyrirkalls uppfærð',
+  VERDICT_DELIVERED_TO_POLICE: ':oncoming_police_car: Dómur sendur til RLS',
   VERDICT_SERVICE_STATUS:
     ':mailbox_with_no_mail: Birtingarstaða á dómi uppfærð',
-  [CaseTransition.WITHDRAW_APPEAL]:
+  [AppealCaseTransition.WITHDRAW_APPEAL]:
     ':leftwards_arrow_with_hook: Kæra afturkölluð',
 }
 
@@ -100,7 +109,10 @@ const caseEventsToLog = [
   'REJECT',
   'SCHEDULE_ARRAIGNMENT_DATE',
   'SCHEDULE_COURT_DATE',
+  'SUBPOENA_ISSUED',
+  'SUBPOENA_DELIVERED_TO_POLICE',
   'SUBPOENA_SERVICE_STATUS',
+  'VERDICT_DELIVERED_TO_POLICE',
   'VERDICT_SERVICE_STATUS',
 ]
 
@@ -135,9 +147,12 @@ export class EventService {
             ).join(', ')})`
           : ''
       } *${theCase.id}*`
+      const policeCaseNumbersText = theCase.policeCaseNumbers?.length
+        ? theCase.policeCaseNumbers.join(', ')
+        : 'LÖKE númer ekki skráð'
       const prosecutionText = `${
         theCase.prosecutorsOffice ? `${theCase.prosecutorsOffice.name} ` : ''
-      }*${theCase.policeCaseNumbers.join(', ')}*`
+      }*${policeCaseNumbersText}*`
       const courtText = theCase.court
         ? `\n>${theCase.court.name} ${
             theCase.courtCaseNumber ? `*${theCase.courtCaseNumber}*` : ''
@@ -156,7 +171,7 @@ export class EventService {
               formatDate(
                 DateLog.courtDate(theCase.dateLogs)?.date ??
                   DateLog.arraignmentDate(theCase.dateLogs)?.date,
-                'Pp',
+                'dd.MM.y HH:mm',
               ) ?? 'er ekki skráð'
             }`
           : ''
@@ -386,7 +401,7 @@ export class EventService {
         extraInfo = `courtDate: ${formatDate(
           DateLog.courtDate(theCase.dateLogs)?.date ??
             DateLog.arraignmentDate(theCase.dateLogs)?.date,
-          'Pp',
+          'dd.MM.y HH:mm',
         )}`
         break
       default:

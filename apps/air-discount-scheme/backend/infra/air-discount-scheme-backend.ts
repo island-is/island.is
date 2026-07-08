@@ -76,4 +76,4 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
       default: 2,
       scalingMagicNumber: 20,
     })
-    .grantNamespaces('islandis')
+    .grantNamespaces('islandis', 'envoy-gateway-external')

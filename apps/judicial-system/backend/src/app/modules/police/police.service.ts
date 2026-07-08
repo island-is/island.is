@@ -1,6 +1,7 @@
 import { Agent } from 'https'
 import fetch from 'isomorphic-fetch'
 import { Base64 } from 'js-base64'
+import { Sequelize, Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 import { z } from 'zod'
 
@@ -13,7 +14,7 @@ import {
   NotFoundException,
   ServiceUnavailableException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
+import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -23,12 +24,6 @@ import {
   XRoadMemberClass,
 } from '@island.is/shared/utils/server'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
-import type {
-  SubpoenaPoliceDocumentInfo,
-  User,
-  VerdictPoliceDocumentInfo,
-} from '@island.is/judicial-system/types'
 import {
   CaseState,
   CaseType,
@@ -37,15 +32,21 @@ import {
   mapPoliceVerdictDeliveryStatus,
   PoliceFileTypeCode,
   ServiceStatus,
+  type SubpoenaPoliceDocumentInfo,
+  type User,
+  type VerdictPoliceDocumentInfo,
   VerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
+import { nationalIdTransformer } from '../../transformers'
 import { AwsS3Service } from '../aws-s3'
 import { EventService } from '../event'
+import { IndictmentCountService } from '../indictment-count/indictmentCount.service'
 import {
   Case,
   CaseDefendantPoliceCaseNumberRepositoryService,
+  CaseRepositoryService,
   DateLog,
   Defendant,
   IndictmentSubtype,
@@ -168,6 +169,7 @@ export class PoliceService {
   private policeDigitalCaseFileStructure = z.object({
     id: z.string(),
     rvMalID: z.number(),
+    fullName: z.string().nullish(),
     externalVendorFileName: z.string(),
     externalVendorID: z.string(),
     registeredAt: z.string().nullish(),
@@ -204,6 +206,19 @@ export class PoliceService {
       gogn: z.optional(z.array(this.policeDigitalCaseFileStructure)),
     }),
   )
+
+  private buildDigitalCaseFileName(
+    file: z.infer<typeof this.policeDigitalCaseFileStructure>,
+    policeCaseNumber: string,
+  ): string {
+    return [
+      policeCaseNumber.trim(),
+      file.fullName?.trim(),
+      file.externalVendorFileName.trim(),
+    ]
+      .filter((part): part is string => Boolean(part))
+      .join(', ')
+  }
 
   private subpoenaStructure = z.object({
     acknowledged: z.boolean().nullish(),
@@ -250,6 +265,7 @@ export class PoliceService {
   private defendantsResponseSchema = z.array(this.defendantSchema)
 
   constructor(
+    @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(IndictmentSubtype)
     private readonly indictmentSubtypeModel: typeof IndictmentSubtype,
     @Inject(policeModuleConfig.KEY)
@@ -260,6 +276,10 @@ export class PoliceService {
     private readonly awsS3Service: AwsS3Service,
     @Inject(forwardRef(() => CaseDefendantPoliceCaseNumberRepositoryService))
     private readonly caseDefendantPoliceCaseNumberRepositoryService: CaseDefendantPoliceCaseNumberRepositoryService,
+    @Inject(forwardRef(() => CaseRepositoryService))
+    private readonly caseRepositoryService: CaseRepositoryService,
+    @Inject(forwardRef(() => IndictmentCountService))
+    private readonly indictmentCountService: IndictmentCountService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     this.xRoadPath = createXRoadAPIPath(
@@ -492,9 +512,7 @@ export class PoliceService {
       const response: z.infer<typeof this.digitalCaseFilesStructure> =
         await res.json()
 
-      this.digitalCaseFilesStructure.parse(response)
-
-      return response
+      return this.digitalCaseFilesStructure.parse(response)
     } catch (reason) {
       if (reason instanceof NotFoundException) {
         throw reason
@@ -667,7 +685,10 @@ export class PoliceService {
       filesPerCaseNumber.gogn?.forEach((file) => {
         files.push({
           id: file.id.toString(),
-          name: file.externalVendorFileName,
+          name: this.buildDigitalCaseFileName(
+            file,
+            filesPerCaseNumber.malsnumer,
+          ),
           policeCaseNumber: filesPerCaseNumber.malsnumer,
           policeExternalVendorId: file.externalVendorID,
           displayDate: file.registeredAt
@@ -1076,10 +1097,28 @@ export class PoliceService {
         )
 
       if (defendantPoliceCaseNumberLinks.length > 0) {
-        await this.caseDefendantPoliceCaseNumberRepositoryService.assignDefendantPoliceCaseNumbers(
-          caseId,
-          defendantPoliceCaseNumberLinks,
-        )
+        await this.sequelize.transaction(async (transaction: Transaction) => {
+          const existingPcnMap =
+            await this.caseDefendantPoliceCaseNumberRepositoryService.findDistinctPoliceCaseNumbersByCaseIds(
+              [caseId],
+              { transaction },
+            )
+          const existingPoliceCaseNumbers = new Set(
+            existingPcnMap.get(caseId) ?? [],
+          )
+
+          const linksForExistingNumbers = defendantPoliceCaseNumberLinks.filter(
+            (link) => existingPoliceCaseNumbers.has(link.policeCaseNumber),
+          )
+
+          if (linksForExistingNumbers.length > 0) {
+            await this.caseDefendantPoliceCaseNumberRepositoryService.assignDefendantPoliceCaseNumbers(
+              caseId,
+              linksForExistingNumbers,
+              { transaction },
+            )
+          }
+        })
       }
 
       return cases
@@ -1135,30 +1174,36 @@ export class PoliceService {
     caseConclusion: string,
     courtDocuments: PoliceDocument[],
   ): Promise<boolean> {
-    return this.fetchPoliceCaseApi(
-      `${this.xRoadPath}/V2/UpdateRVCase/${caseId}`,
-      {
-        method: 'PUT',
-        headers: {
-          accept: '*/*',
-          'Content-Type': 'application/json',
-          'X-Road-Client': this.config.clientId,
-          'X-API-KEY': this.config.policeApiKey,
-        },
-        agent: this.agent,
-        body: JSON.stringify({
-          rvMal_ID: caseId,
-          caseNumber: policeCaseNumber,
-          courtCaseNumber,
-          ssn: defendantNationalId,
-          type: caseType,
-          courtVerdict: caseState,
-          expiringDate: validToDate?.toISOString(),
-          courtVerdictString: caseConclusion,
-          courtDocuments,
-        }),
-      } as RequestInit,
-    )
+    const usesLegacyPoliceCaseUpdate = Boolean(defendantNationalId)
+    const url = usesLegacyPoliceCaseUpdate
+      ? `${this.xRoadPath}/V2/UpdateRVCase/${caseId}`
+      : `${this.xRoadPath}/V4/case/${caseId}`
+
+    const body = {
+      rvMal_ID: caseId,
+      caseNumber: policeCaseNumber,
+      courtCaseNumber,
+      ...(usesLegacyPoliceCaseUpdate
+        ? { ssn: defendantNationalId }
+        : undefined),
+      type: caseType,
+      courtVerdict: caseState,
+      expiringDate: validToDate?.toISOString(),
+      courtVerdictString: caseConclusion,
+      courtDocuments,
+    }
+
+    return this.fetchPoliceCaseApi(url, {
+      method: 'PUT',
+      headers: {
+        accept: '*/*',
+        'Content-Type': 'application/json',
+        'X-Road-Client': this.config.clientId,
+        'X-API-KEY': this.config.policeApiKey,
+      },
+      agent: this.agent,
+      body: JSON.stringify(body),
+    } as RequestInit)
       .then(async (res) => {
         if (res.ok) {
           return true
@@ -1295,7 +1340,8 @@ export class PoliceService {
           return {
             serviceStatus: serviceStatus,
             deliveredToDefenderNationalId:
-              response.defenderNationalId ?? undefined,
+              nationalIdTransformer({ value: response.defenderNationalId }) ??
+              undefined,
             comment: response.comment ?? undefined,
             servedBy: response.servedBy ?? undefined,
             serviceDate: legalPaperServiceDate ?? servedAt,
@@ -1369,8 +1415,7 @@ export class PoliceService {
     const { nationalId: defendantNationalId } = defendant
     const { name: actor } = user
 
-    const normalizedNationalId =
-      normalizeAndFormatNationalId(defendantNationalId)[0]
+    const normalizedNationalId = defendantNationalId ?? ''
 
     const documentName = `Fyrirkall í máli ${courtCaseNumber}`
     const arraignmentInfo = DateLog.arraignmentDate(dateLogs)

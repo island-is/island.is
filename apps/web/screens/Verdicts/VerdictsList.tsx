@@ -1171,7 +1171,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
       tags.push({
         label: `${formatMessage(m.listPage.dateFromLabel)}: ${format(
           queryState[QueryParam.DATE_FROM],
-          'P',
+          'dd.MM.yyyy',
         )}`,
         onClick: () => {
           updateQueryState(QueryParam.DATE_FROM, null)
@@ -1184,7 +1184,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
       tags.push({
         label: `${formatMessage(m.listPage.dateToLabel)}: ${format(
           queryState[QueryParam.DATE_TO],
-          'P',
+          'dd.MM.yyyy',
         )}`,
         onClick: () => {
           updateQueryState(QueryParam.DATE_TO, null)
@@ -1827,7 +1827,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                     onFilterClear={resetQueryState}
                     usePopoverDiscloureButtonStyling
                   >
-                    <Box paddingY={3}>
+                    <Box paddingX={[3, 3, 0]} paddingY={3}>
                       <Filters
                         selectedCourtLevel={mapCourtsToTopLevelCourt(
                           selectedCourts,

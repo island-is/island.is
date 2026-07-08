@@ -1,0 +1,167 @@
+import type { ApolloError } from '@apollo/client'
+import { useEffect, useRef } from 'react'
+
+import { PaymentsBankTransferStatus } from '@island.is/api/schema'
+import { BankTransferErrorCode } from '@island.is/shared/constants'
+import { findProblemInApolloError } from '@island.is/shared/problem'
+
+import { useVerifyBankTransferMutation } from '../graphql/mutations.graphql.generated'
+import { PaymentError } from '../utils/error/error'
+
+/**
+ * Polls `paymentsVerifyBankTransfer` until the attempt reaches a terminal state.
+ */
+interface UseBankTransferStatusPollingProps {
+  paymentFlowId: string | undefined
+  // Gate the loop.
+  enabled: boolean
+  // Bank transfer payment `expires_at` (matches the TTL we shared with Blikk). Drives the hard timeout
+  expiresAt?: Date | string | null
+  onSuccess: () => void
+  onFailure: (error: PaymentError) => void
+}
+
+const POLL_INTERVALS_MS = [1000, 2000, 4000, 8000, 15000]
+const TIMEOUT_GRACE_MS = 30 * 1000 // 30 seconds
+// Matches the prod Blikk TTL (600s). Used only when `expiresAt` is missing.
+const FALLBACK_HARD_TIMEOUT_MS = 10 * 60 * 1000 // 10 minutes
+
+const nextInterval = (attempt: number) =>
+  POLL_INTERVALS_MS[Math.min(attempt, POLL_INTERVALS_MS.length - 1)]
+
+const terminalStatusToErrorCode = (
+  status: PaymentsBankTransferStatus,
+): BankTransferErrorCode => {
+  switch (status) {
+    case PaymentsBankTransferStatus.rejected:
+      return BankTransferErrorCode.BankTransferRejected
+    case PaymentsBankTransferStatus.cancelled:
+      return BankTransferErrorCode.BankTransferCancelled
+    default:
+      return BankTransferErrorCode.BankTransferGenericError
+  }
+}
+
+const computeHardTimeoutMs = (
+  expiresAt: Date | string | null | undefined,
+): number => {
+  if (!expiresAt) {
+    return FALLBACK_HARD_TIMEOUT_MS
+  }
+
+  const expiry = new Date(expiresAt).getTime()
+  if (Number.isNaN(expiry)) {
+    return FALLBACK_HARD_TIMEOUT_MS
+  }
+
+  // Clamp to a minimum positive value so at least one poll runs.
+  return Math.max(1000, expiry - Date.now() + TIMEOUT_GRACE_MS)
+}
+
+export const useBankTransferStatusPolling = ({
+  paymentFlowId,
+  enabled,
+  expiresAt,
+  onSuccess,
+  onFailure,
+}: UseBankTransferStatusPollingProps) => {
+  const [verifyBankTransferMutation] = useVerifyBankTransferMutation()
+
+  // Latest-value refs so callback identity changes don't restart the effect.
+  const onSuccessRef = useRef(onSuccess)
+  const onFailureRef = useRef(onFailure)
+  useEffect(() => {
+    onSuccessRef.current = onSuccess
+  }, [onSuccess])
+  useEffect(() => {
+    onFailureRef.current = onFailure
+  }, [onFailure])
+
+  useEffect(() => {
+    if (!enabled || !paymentFlowId) {
+      return
+    }
+
+    let cancelled = false
+    let timeoutId: ReturnType<typeof setTimeout> | null = null
+    let attempt = 0
+    const startedAt = Date.now()
+    const hardTimeoutMs = computeHardTimeoutMs(expiresAt)
+
+    const stop = () => {
+      cancelled = true
+
+      if (timeoutId) {
+        clearTimeout(timeoutId)
+      }
+    }
+
+    const poll = async () => {
+      if (cancelled) {
+        return
+      }
+
+      // hard timeout reached
+      if (Date.now() - startedAt > hardTimeoutMs) {
+        stop()
+        onFailureRef.current({
+          code: BankTransferErrorCode.BankTransferExpired,
+        })
+        return
+      }
+
+      try {
+        const result = await verifyBankTransferMutation({
+          variables: { input: { paymentFlowId } },
+        })
+
+        // if the request was cancelled, stop polling
+        if (cancelled) {
+          return
+        }
+
+        const status = result.data?.paymentsVerifyBankTransfer?.status
+        if (status === PaymentsBankTransferStatus.success) {
+          stop()
+          onSuccessRef.current()
+          return
+        }
+        if (
+          status === PaymentsBankTransferStatus.error ||
+          status === PaymentsBankTransferStatus.rejected ||
+          status === PaymentsBankTransferStatus.cancelled
+        ) {
+          stop()
+          onFailureRef.current({ code: terminalStatusToErrorCode(status) })
+          return
+        }
+        // PENDING — schedule the next poll.
+        timeoutId = setTimeout(poll, nextInterval(attempt))
+        attempt++
+      } catch (e) {
+        if (cancelled) {
+          return
+        }
+        const problemDetail = findProblemInApolloError(e as ApolloError)?.detail
+        if (problemDetail === BankTransferErrorCode.BankTransferNotFound) {
+          // No active attempt — exit silently.
+          stop()
+          return
+        }
+        // Transient network/server hiccup — retry with backoff.
+        timeoutId = setTimeout(poll, nextInterval(attempt))
+        attempt++
+      }
+    }
+
+    poll()
+
+    return () => {
+      cancelled = true
+      if (timeoutId) {
+        clearTimeout(timeoutId)
+      }
+    }
+    // `expiresAt` is in deps so a value arriving after mount updates the hard timeout.
+  }, [paymentFlowId, enabled, expiresAt, verifyBankTransferMutation])
+}

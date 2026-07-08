@@ -69,6 +69,12 @@ export interface FilterProps {
 
   /** Remove left margin from filter button */
   removeLeftMargin?: boolean
+
+  /** Called when the user confirms the filter selection in the mobile drawer */
+  onFilterResult?: () => void
+
+  /** Make the disclosure button fluid, filling its container */
+  fluidDisclosure?: boolean
 }
 
 /**
@@ -104,6 +110,8 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
   mobileWrap = true,
   removeLeftMargin = false,
   usePopoverDiscloureButtonStyling,
+  onFilterResult,
+  fluidDisclosure = false,
 }) => {
   const dialog = useDialogState({ modal: true })
   const popover = usePopoverState({
@@ -125,6 +133,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
   const popoverContent = (component: boolean) => (
     <Box
       component={component ? Popover : undefined}
+      aria-label={component ? labelOpen : undefined}
       background="white"
       borderRadius="large"
       boxShadow="subtle"
@@ -198,6 +207,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
               background="white"
               display="inlineBlock"
               borderRadius="large"
+              width={fluidDisclosure ? 'full' : undefined}
               tabIndex={-1}
               {...popover}
               className={filterCount ? styles.filterCountButton : undefined}
@@ -250,7 +260,11 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
         }
       >
         {usePopoverDiscloureButtonStyling ? (
-          <Box background="white" borderRadius="large">
+          <Box
+            background="white"
+            borderRadius="large"
+            width={fluidDisclosure ? 'full' : undefined}
+          >
             <Button
               unfocusable
               as="span"
@@ -270,6 +284,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
             background="white"
             padding={2}
             borderRadius="large"
+            width={fluidDisclosure ? 'full' : undefined}
           >
             <Text variant="h5" as="h5">
               {labelOpen}
@@ -286,7 +301,11 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
           </Box>
         )}
       </DialogDisclosure>
-      <Dialog {...dialog} preventBodyScroll={false}>
+      <Dialog
+        {...dialog}
+        preventBodyScroll={false}
+        aria-label={labelTitle ?? labelOpen}
+      >
         <Box
           background="white"
           position="fixed"
@@ -384,11 +403,13 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
           labelClearAll={labelClearAll}
           labelTitle={labelTitle}
           onFilterClear={onFilterClear}
+          onFilterResult={onFilterResult}
           disclosure={
             <Box
               background="white"
               marginTop={'auto'}
               borderRadius="large"
+              width={fluidDisclosure ? 'full' : undefined}
               tabIndex={-1}
               className={filterCount ? styles.filterCountButton : undefined}
             >

@@ -4,6 +4,7 @@ import { AuthAdminEnvironment } from '@island.is/api/schema'
 import {
   Box,
   Button,
+  LoadingDots,
   Pagination,
   Stack,
   Table as T,
@@ -21,10 +22,13 @@ interface GrantTypesTableProps {
   currentPage: number
   totalPages: number
   configuredEnvironments: AuthAdminEnvironment[]
+  search?: string
+  loading?: boolean
   onEdit: (grantType: GrantTypeRow) => void
   onDelete: (name: string, environments: AuthAdminEnvironment[]) => void
   onRestore: (name: string, environments: AuthAdminEnvironment[]) => void
   onPageChange: (page: number) => void
+  onClearSearch?: () => void
 }
 
 export const GrantTypesTable = ({
@@ -32,10 +36,13 @@ export const GrantTypesTable = ({
   currentPage,
   totalPages,
   configuredEnvironments,
+  search,
+  loading,
   onEdit,
   onDelete,
   onRestore,
   onPageChange,
+  onClearSearch,
 }: GrantTypesTableProps) => {
   const { formatMessage } = useLocale()
 
@@ -66,11 +73,26 @@ export const GrantTypesTable = ({
         border="standard"
         borderRadius="large"
       >
-        <Problem
-          type="no_data"
-          title={formatMessage(m.grantTypesNoResults)}
-          titleSize="h3"
-        />
+        {loading ? (
+          <LoadingDots />
+        ) : (
+          <Problem
+            type="no_data"
+            title={formatMessage(
+              search ? m.noResultsForSearch : m.grantTypesNoResults,
+            )}
+            message={
+              search && onClearSearch ? (
+                <Box marginTop={2}>
+                  <Button variant="ghost" size="small" onClick={onClearSearch}>
+                    {formatMessage(m.clearFilter)}
+                  </Button>
+                </Box>
+              ) : undefined
+            }
+            titleSize="h3"
+          />
+        )}
       </Box>
     )
   }
@@ -82,7 +104,7 @@ export const GrantTypesTable = ({
           <T.Row>
             <T.HeadData>{formatMessage(m.grantTypesName)}</T.HeadData>
             <T.HeadData>{formatMessage(m.grantTypesDescription)}</T.HeadData>
-            <T.HeadData>{formatMessage(m.grantTypesEnvironments)}</T.HeadData>
+            <T.HeadData>{formatMessage(m.environments)}</T.HeadData>
             <T.HeadData>{/* Actions/Archived */}</T.HeadData>
           </T.Row>
         </T.Head>

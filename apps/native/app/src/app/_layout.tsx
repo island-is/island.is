@@ -1,5 +1,6 @@
 import { ThemeProvider as AppThemeProvider } from '@/components/providers/theme-provider'
 import { PromptModal } from '@/components/prompt-modal'
+import { ToastHost } from '@/components/toast'
 import { Stack } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { useEffect, useState } from 'react'
@@ -10,8 +11,13 @@ import { OfflineProvider } from '../components/providers/offline-provider'
 import { getApolloClientAsync } from '../graphql/client'
 import { FeatureFlagProvider } from '../components/providers/feature-flag-provider'
 import { ApolloProvider } from '@apollo/client'
-import { checkIsAuthenticated, readAuthorizeResult } from '../stores/auth-store'
-import { getNextOnboardingStep } from '../utils/onboarding'
+import {
+  authStore,
+  checkIsAuthenticated,
+  readAuthorizeResult,
+} from '../stores/auth-store'
+import { getNextOnboardingStep, isOnboarded } from '../utils/onboarding'
+import { config } from '../config'
 import type { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { useFonts } from '@expo-google-fonts/ibm-plex-sans/useFonts'
 import { IBMPlexSans_100Thin } from '@expo-google-fonts/ibm-plex-sans/100Thin'
@@ -29,6 +35,8 @@ import { IBMPlexSans_500Medium_Italic } from '@expo-google-fonts/ibm-plex-sans/5
 import { IBMPlexSans_600SemiBold_Italic } from '@expo-google-fonts/ibm-plex-sans/600SemiBold_Italic'
 import { IBMPlexSans_700Bold_Italic } from '@expo-google-fonts/ibm-plex-sans/700Bold_Italic'
 import { setupEventHandlers } from '../utils/lifecycle/setup-event-handlers'
+import { ensureDeviceUnlockCanary } from '../utils/device-unlock-canary'
+import { useDatadogViewTracking } from '../hooks/use-datadog-view-tracking'
 
 export { ErrorBoundary } from 'expo-router'
 
@@ -67,6 +75,9 @@ export default function RootLayout() {
 
     async function init() {
       try {
+        // Seed the canary the lock screen uses to detect device unlocks.
+        void ensureDeviceUnlockCanary()
+
         // 1. Restore auth tokens from keychain
         await readAuthorizeResult()
 
@@ -81,6 +92,16 @@ export default function RootLayout() {
         //    The reactive Redirect in (tabs)/_layout then drives routing.
         if (isAuthenticated) {
           await getNextOnboardingStep()
+          // Stamp a past timestamp so the auth-layout mount effect pushes the
+          // lock on cold start. Past grace forces auth (PIN/biometric) rather
+          // than auto-unlock. Post-login mounts don't hit this path so the
+          // stamp stays undefined → no lock right after login.
+          if (isOnboarded() && !config.isTestingApp) {
+            authStore.setState({
+              lockScreenActivatedAt: Date.now() - 24 * 60 * 60 * 1000,
+              biometricAutoPromptedForCurrentLock: false,
+            })
+          }
         }
 
         // 4. Initialize Apollo client (with persisted cache)
@@ -100,8 +121,59 @@ export default function RootLayout() {
   }, [fontsError])
 
   useEffect(() => {
-    if (fontsLoaded && appReady) {
-      SplashScreen.hideAsync()
+    if (!fontsLoaded || !appReady) {
+      return
+    }
+
+    // Defer splash hide until the lock mounts (avoids tab flash); 2s fallback
+    // so the splash never hangs.
+    const { authorizeResult } = authStore.getState()
+    const willPushLockScreen =
+      !!authorizeResult && isOnboarded() && !config.isTestingApp
+
+    if (!willPushLockScreen) {
+      SplashScreen.hideAsync().catch(() => {})
+      return
+    }
+
+    let cancelled = false
+    let deferredId: ReturnType<typeof setTimeout> | undefined
+    const hide = () => {
+      if (cancelled) {
+        return
+      }
+      cancelled = true
+      SplashScreen.hideAsync().catch(() => {})
+    }
+    // componentId is set at React-commit time, before iOS finishes
+    // presentViewController — wait a beat so the modal is on screen before
+    // the splash drops.
+    const hideAfterPresent = () => {
+      deferredId = setTimeout(hide, 100)
+    }
+
+    if (authStore.getState().lockScreenComponentId) {
+      hideAfterPresent()
+      return () => {
+        if (deferredId) {
+          clearTimeout(deferredId)
+        }
+      }
+    }
+
+    const unsub = authStore.subscribe((state) => {
+      if (state.lockScreenComponentId) {
+        hideAfterPresent()
+      }
+    })
+    const timeoutId = setTimeout(hide, 2000)
+
+    return () => {
+      clearTimeout(timeoutId)
+      if (deferredId) {
+        clearTimeout(deferredId)
+      }
+      unsub()
     }
   }, [fontsLoaded, appReady])
 
@@ -117,11 +189,13 @@ function RootLayoutNav({
 }: {
   apolloClient: ApolloClient<NormalizedCacheObject>
 }) {
+  useDatadogViewTracking()
+
   return (
     <LocaleProvider>
       <AppThemeProvider>
-        <FeatureFlagProvider>
-          <ApolloProvider client={apolloClient}>
+        <ApolloProvider client={apolloClient}>
+          <FeatureFlagProvider>
             <OfflineProvider>
               <Stack>
                 <Stack.Screen name="(auth)" options={{ headerShown: false }} />
@@ -131,9 +205,10 @@ function RootLayoutNav({
                 />
               </Stack>
               <PromptModal />
+              <ToastHost />
             </OfflineProvider>
-          </ApolloProvider>
-        </FeatureFlagProvider>
+          </FeatureFlagProvider>
+        </ApolloProvider>
       </AppThemeProvider>
     </LocaleProvider>
   )

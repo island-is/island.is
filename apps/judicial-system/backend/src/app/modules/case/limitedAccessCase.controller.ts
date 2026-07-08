@@ -45,8 +45,8 @@ import {
 import { nowFactory } from '../../factories'
 import { defenderRule, prisonSystemStaffRule } from '../../guards'
 import { EventService } from '../event'
-import { getDefenderVisiblePoliceCaseNumbers } from '../file'
-import { Case, Defendant, User } from '../repository'
+import { getDefenceUserVisiblePoliceCaseNumbers } from '../file'
+import { Case, CivilClaimant, Defendant, User } from '../repository'
 import { UpdateCaseDto } from './dto/updateCase.dto'
 import { CurrentCase } from './guards/case.decorator'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
@@ -234,17 +234,22 @@ export class LimitedAccessCaseController {
       Defendant.isConfirmedDefenderOfDefendant(
         user.nationalId,
         theCase.defendants,
+      ) ||
+      CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
+        user.nationalId,
+        theCase.civilClaimants,
       )
     ) {
-      const visiblePoliceCaseNumbers = getDefenderVisiblePoliceCaseNumbers(
+      const visiblePoliceCaseNumbers = getDefenceUserVisiblePoliceCaseNumbers(
         user.nationalId,
         theCase.defendants,
+        theCase.civilClaimants,
         theCase.policeCaseNumbers,
       )
 
       if (!visiblePoliceCaseNumbers.includes(policeCaseNumber)) {
         throw new ForbiddenException(
-          `Defender does not have access to police case number ${policeCaseNumber}`,
+          `Defence user does not have access to police case number ${policeCaseNumber}`,
         )
       }
     }
@@ -476,7 +481,6 @@ export class LimitedAccessCaseController {
       ...indictmentCases,
     ]),
     CaseReadGuard,
-    CaseCompletedGuard,
   )
   @RolesRules(defenderRule)
   @Get('case/:caseId/limitedAccess/all')

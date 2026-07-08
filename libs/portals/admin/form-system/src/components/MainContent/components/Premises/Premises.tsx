@@ -1,139 +1,243 @@
-import { useMutation } from '@apollo/client'
-import {
-  FormSystemFormCertificationType,
-  FormSystemFormCertificationTypeDto,
-  Maybe,
-} from '@island.is/api/schema'
-import {
-  CREATE_CERTIFICATION,
-  DELETE_CERTIFICATION,
-} from '@island.is/form-system/graphql'
-import { m } from '@island.is/form-system/ui'
-import { Box, Checkbox, Stack, Text } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { FormSystemLanguageType } from '@island.is/api/schema'
+import { Box, Button, Input, Stack, Text } from '@island.is/island-ui/core'
 import { useContext, useState } from 'react'
 import { ControlContext } from '../../../../context/ControlContext'
-import { removeTypename } from '../../../../lib/utils/removeTypename'
+
+type PremisesProps = {
+  title: FormSystemLanguageType
+  description: FormSystemLanguageType
+}
+
+type AdditionalPremises = PremisesProps[]
+type PremiseField = keyof PremisesProps
+type PremiseLanguage = keyof FormSystemLanguageType
+
+const defaultPremises: PremisesProps = {
+  title: {
+    is: '',
+    en: '',
+  },
+  description: {
+    is: '',
+    en: '',
+  },
+}
 
 export const Premises = () => {
   const {
     control,
     controlDispatch,
-    certificationTypes: certTypes,
+    formUpdate,
+    focus,
+    setFocus,
+    getTranslation,
   } = useContext(ControlContext)
   const { isReadOnly } = control
-  const { certificationTypes } = control.form
-  const [formCertificationTypes, setFormCertificationTypes] = useState<
-    FormSystemFormCertificationTypeDto[]
-  >(
-    (certificationTypes ?? []).filter(
-      (type): type is FormSystemFormCertificationTypeDto => type !== null,
-    ),
+  const [premises, setPremises] = useState<AdditionalPremises>(
+    (control.form.sectionInfo?.additionalPremises as AdditionalPremises) ?? [],
   )
-  const [createCertification] = useMutation(CREATE_CERTIFICATION)
-  const [deleteCertification] = useMutation(DELETE_CERTIFICATION)
 
-  const handleCheckboxChange = async (
-    certificationTemplate: FormSystemFormCertificationType,
-    checked: boolean,
+  const updatePremises = (
+    newPremises: AdditionalPremises,
+    shouldUpdateForm = false,
   ) => {
-    if (checked) {
-      try {
-        const newCertificate = await createCertification({
-          variables: {
-            input: {
-              createFormCertificationTypeDto: {
-                formId: control.form.id,
-                certificationTypeId: certificationTemplate.id as string,
-              },
-            },
-          },
-        }).then((res) => {
-          return removeTypename(res.data?.createFormSystemCertification)
-        })
-        controlDispatch({
-          type: 'CHANGE_CERTIFICATION',
-          payload: {
-            certificate: newCertificate as FormSystemFormCertificationTypeDto,
-            checked: true,
-          },
-        })
-        setFormCertificationTypes([...formCertificationTypes, newCertificate])
-      } catch (e) {
-        console.error(e)
-      }
-    } else {
-      const certificationToDelete = formCertificationTypes.find(
-        (certification) =>
-          certification.certificationTypeId === certificationTemplate.id,
-      )
-      try {
-        await deleteCertification({
-          variables: {
-            input: {
-              id: certificationToDelete?.id,
-            },
-          },
-        })
-        controlDispatch({
-          type: 'CHANGE_CERTIFICATION',
-          payload: {
-            certificate:
-              certificationToDelete as FormSystemFormCertificationTypeDto,
-            checked: false,
-          },
-        })
-        setFormCertificationTypes(
-          formCertificationTypes.filter(
-            (certification) => certification.id !== certificationToDelete?.id,
-          ),
-        )
-      } catch (e) {
-        console.error(e)
-      }
-    }
-  }
-  const { formatMessage, lang } = useLocale()
+    setPremises(newPremises)
 
-  const isChecked = (
-    certificationTypeId?: Maybe<string> | undefined,
-  ): boolean => {
-    if (!certificationTypeId) return false
-    return formCertificationTypes.some(
-      (certification) =>
-        certification?.certificationTypeId === certificationTypeId,
+    controlDispatch({
+      type: 'SET_ADDITIONAL_PREMISES',
+      payload: {
+        newValue: newPremises,
+        update: shouldUpdateForm ? formUpdate : undefined,
+      },
+    })
+  }
+
+  const getUpdatedPremises = (
+    index: number,
+    field: PremiseField,
+    value: string,
+    lang: PremiseLanguage,
+  ) =>
+    premises.map((premise, premiseIndex) =>
+      premiseIndex === index
+        ? {
+            ...premise,
+            [field]: {
+              ...premise[field],
+              [lang]: value,
+            },
+          }
+        : premise,
     )
+
+  const add = () => {
+    updatePremises([...premises, defaultPremises], true)
+  }
+
+  const remove = (index: number) => {
+    const newPremises = premises.filter(
+      (_, premiseIndex) => premiseIndex !== index,
+    )
+
+    updatePremises(newPremises, true)
+  }
+
+  const onChange = (
+    index: number,
+    field: PremiseField,
+    value: string,
+    lang: PremiseLanguage,
+  ) => {
+    updatePremises(getUpdatedPremises(index, field, value, lang))
+  }
+
+  const onBlur = (
+    index: number,
+    field: PremiseField,
+    lang: PremiseLanguage,
+  ) => {
+    const value = premises[index]?.[field]?.[lang] ?? ''
+
+    if (focus !== value) {
+      updatePremises(premises, true)
+    }
+
+    setFocus('')
+  }
+
+  const onEnglishFocus = async (
+    index: number,
+    field: PremiseField,
+    englishValue: string,
+    icelandicValue?: string | null,
+  ) => {
+    if (icelandicValue && !englishValue) {
+      const translation = await getTranslation(icelandicValue)
+      const translatedValue = translation.translation
+
+      const newPremises = getUpdatedPremises(
+        index,
+        field,
+        translatedValue,
+        'en',
+      )
+
+      updatePremises(newPremises, true)
+      setFocus(translatedValue)
+
+      return
+    }
+
+    setFocus(englishValue)
   }
 
   return (
-    <div>
-      <Box padding={2} marginBottom={2}>
-        <Text variant="h4">{formatMessage(m.premisesTitle)}</Text>
+    <>
+      <Box
+        background="blue100"
+        padding={2}
+        borderRadius="large"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        columnGap={2}
+      >
+        <Text variant="default" as="h2">
+          Hér er hægt að bæta við skilaboðum til umsækjenda ef þarf að afla
+          frekari gagna
+        </Text>
+
+        <Box flexShrink={0} alignSelf="center">
+          <Button
+            variant="primary"
+            icon="add"
+            onClick={add}
+            disabled={isReadOnly}
+          >
+            Bæta við
+          </Button>
+        </Box>
       </Box>
-      <Stack space={2}>
-        {certTypes?.map((d, i) => {
-          if (!d) return null
-          return (
-            <Checkbox
-              key={i}
-              label={d?.name?.[lang] ?? ''}
-              name={d?.name?.is ?? ''}
-              subLabel={d?.description?.[lang]}
-              rightContent={d?.description?.is}
+
+      {premises.map((premise, index) => (
+        <Box padding={2} key={index}>
+          <Box
+            display="flex"
+            justifyContent="flexEnd"
+            marginBottom={2}
+            width="full"
+          >
+            <Button
+              name={`remove-${index}`}
+              variant="ghost"
+              colorScheme="destructive"
+              onClick={() => remove(index)}
+              size="small"
+              icon="trash"
               disabled={isReadOnly}
-              value={d?.id ?? ''}
-              large
-              checked={isChecked(d?.id)}
+            />
+          </Box>
+
+          <Stack space={2}>
+            <Input
+              name={`title-is-${index}`}
+              label="Titill"
+              value={premise.title.is ?? ''}
+              onChange={(e) => onChange(index, 'title', e.target.value, 'is')}
+              onFocus={(e) => setFocus(e.target.value)}
+              onBlur={() => onBlur(index, 'title', 'is')}
+              backgroundColor="blue"
+              disabled={isReadOnly}
+            />
+
+            <Input
+              name={`title-en-${index}`}
+              label="Titill á ensku"
+              value={premise.title.en ?? ''}
+              onChange={(e) => onChange(index, 'title', e.target.value, 'en')}
+              onFocus={(e) =>
+                onEnglishFocus(index, 'title', e.target.value, premise.title.is)
+              }
+              onBlur={() => onBlur(index, 'title', 'en')}
+              backgroundColor="blue"
+              disabled={isReadOnly}
+            />
+
+            <Input
+              name={`description-is-${index}`}
+              label="Lýsing"
+              value={premise.description.is ?? ''}
               onChange={(e) =>
-                handleCheckboxChange(
-                  d as FormSystemFormCertificationType,
-                  e.target.checked,
+                onChange(index, 'description', e.target.value, 'is')
+              }
+              onFocus={(e) => setFocus(e.target.value)}
+              onBlur={() => onBlur(index, 'description', 'is')}
+              backgroundColor="blue"
+              disabled={isReadOnly}
+            />
+
+            <Input
+              name={`description-en-${index}`}
+              label="Lýsing á ensku"
+              value={premise.description.en ?? ''}
+              onChange={(e) =>
+                onChange(index, 'description', e.target.value, 'en')
+              }
+              onFocus={(e) =>
+                onEnglishFocus(
+                  index,
+                  'description',
+                  e.target.value,
+                  premise.description.is,
                 )
               }
+              onBlur={() => onBlur(index, 'description', 'en')}
+              backgroundColor="blue"
+              disabled={isReadOnly}
             />
-          )
-        })}
-      </Stack>
-    </div>
+          </Stack>
+        </Box>
+      ))}
+    </>
   )
 }

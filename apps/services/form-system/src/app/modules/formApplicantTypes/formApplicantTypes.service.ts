@@ -83,11 +83,21 @@ export class FormApplicantTypesService {
 
     let screenDto = new ScreenDto()
 
+    const displayOrder =
+      applicantType.id === ApplicantTypesEnum.LEGAL_ENTITY ||
+      applicantType.id ===
+        ApplicantTypesEnum.LEGAL_ENTITY_OF_PROCURATION_HOLDER ||
+      applicantType.id === ApplicantTypesEnum.INDIVIDUAL_GIVING_DELEGATION ||
+      applicantType.id === ApplicantTypesEnum.WARD_OF_LEGAL_GUARDIAN
+        ? 1
+        : 0
+
     await this.sequelize.transaction(async (transaction) => {
       const newScreen = await this.screenModel.create(
         {
           sectionId: form.sections[0].id, // PARTIES is the only section
           name: applicantType.description,
+          displayOrder: displayOrder,
         } as Screen,
         { transaction },
       )
@@ -96,8 +106,14 @@ export class FormApplicantTypesService {
         applicantType: applicantType.id,
         ...(applicantType.id !== ApplicantTypesEnum.LEGAL_ENTITY &&
         applicantType.id !==
-          ApplicantTypesEnum.LEGAL_ENTITY_OF_PROCURATION_HOLDER
-          ? { isPhoneRequired: true, isEmailRequired: true }
+          ApplicantTypesEnum.LEGAL_ENTITY_OF_PROCURATION_HOLDER &&
+        applicantType.id !== ApplicantTypesEnum.INDIVIDUAL_GIVING_DELEGATION &&
+        applicantType.id !== ApplicantTypesEnum.WARD_OF_LEGAL_GUARDIAN
+          ? {
+              isPhoneRequired: true,
+              isEmailRequired: true,
+              fetchEmailFromMyPages: true,
+            }
           : {}),
       }
 
@@ -214,7 +230,6 @@ export class FormApplicantTypesService {
       'displayOrder',
       'isCompleted',
       'shouldValidate',
-      'shouldPopulate',
       'isHidden',
       'multiMax',
       'isMulti',

@@ -22,7 +22,7 @@ import { ApiActions } from '../shared'
 import { UniversitySchema } from './dataSchema'
 import {
   UserProfileApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UniversityApi,
   ProgramApi,
   InnaApi,
@@ -80,7 +80,7 @@ const template: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 UserProfileApi,
                 UniversityApi,
                 ProgramApi,

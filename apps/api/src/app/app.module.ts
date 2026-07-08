@@ -19,6 +19,7 @@ import {
   CourseChargesModule,
   CourseChargesConfig,
 } from '@island.is/api/domains/course-charges'
+import { ApiDomainsCustomsCalculatorModule } from '@island.is/api/domains/customs-calculator'
 import { DirectorateOfLabourModule } from '@island.is/api/domains/directorate-of-labour'
 import { DisabilityLicenseModule } from '@island.is/api/domains/disability-license'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
@@ -36,6 +37,7 @@ import {
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { EnergyFundsServiceModule } from '@island.is/api/domains/energy-funds'
 import { FarmersModule } from '@island.is/api/domains/farmers'
+import { FeatureFlagsApiModule } from '@island.is/api/domains/feature-flags'
 import { FileUploadModule } from '@island.is/api/domains/file-upload'
 import { FinanceModule } from '@island.is/api/domains/finance'
 import { FinancialStatementsInaoModule } from '@island.is/api/domains/financial-statements-inao'
@@ -105,6 +107,10 @@ import { ChargeFjsV2ClientConfig } from '@island.is/clients/charge-fjs-v2'
 import { ConsultationPortalClientConfig } from '@island.is/clients/consultation-portal'
 import { DisabilityLicenseClientConfig } from '@island.is/clients/disability-license'
 import { DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
+import {
+  DirectorateOfEqualityClientModule,
+  DirectorateOfEqualityClientConfig,
+} from '@island.is/clients/directorate-of-equality'
 import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
 import { EnergyFundsClientConfig } from '@island.is/clients/energy-funds'
 import { FinanceClientConfig } from '@island.is/clients/finance'
@@ -249,7 +255,8 @@ import {
 import { SecondarySchoolApiModule } from '@island.is/api/domains/secondary-school'
 import { NationalRegistryV3ApplicationsClientConfig } from '@island.is/clients/national-registry-v3-applications'
 import { LshClientConfig } from '@island.is/clients/lsh'
-import { LyfjastofnunPharmaciesClientConfig } from '@island.is/clients/lyfjastofnun-pharmacies'
+import { MatildaClientConfig } from '@island.is/clients/matilda'
+import { LyfjastofnunHealthProvidersClientConfig } from '@island.is/clients/lyfjastofnun-health-providers'
 import { HmsConfig } from '@island.is/clients/hms'
 import { NvsPermitsClientConfig } from '@island.is/clients/nvs-permits'
 import { HmsApplicationSystemConfig } from '@island.is/clients/hms-application-system'
@@ -261,6 +268,8 @@ import {
   LandspitaliModule,
   LandspitaliApiModuleConfig,
 } from '@island.is/api/domains/landspitali'
+import { CustomsGeneralDomainModule } from '@island.is/api/domains/customs-general'
+import { CustomsGeneralClientConfig } from '@island.is/clients/rsk/customs/general'
 
 const environment = getConfig
 
@@ -286,6 +295,7 @@ const environment = getConfig
     ContentSearchModule,
     ConsultationPortalModule,
     CourseChargesModule,
+    ApiDomainsCustomsCalculatorModule,
     FormSystemModule,
     CmsModule,
     DrivingLicenseModule,
@@ -307,7 +317,9 @@ const environment = getConfig
       formSystemBaseApiUrl: environment.formSystem.baseApiUrl as string,
     }),
     LicenseServiceModule,
+    DirectorateOfEqualityClientModule,
     DirectorateOfLabourModule,
+    FeatureFlagsApiModule,
     FileUploadModule,
     DocumentModule,
     DocumentProviderModule.register({
@@ -409,6 +421,7 @@ const environment = getConfig
     PracticalExamsModule,
     VmstApplicationsModule,
     LandspitaliModule,
+    CustomsGeneralDomainModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -420,6 +433,7 @@ const environment = getConfig
         ConsultationPortalClientConfig,
         AssetsClientConfig,
         PCardClientConfig,
+        DirectorateOfEqualityClientConfig,
         DistrictCommissionersLicensesClientConfig,
         AdrAndMachineLicenseClientConfig,
         ShipRegistryClientV2Config,
@@ -445,7 +459,8 @@ const environment = getConfig
         AuthDelegationApiClientConfig,
         DownloadServiceConfig,
         LshClientConfig,
-        LyfjastofnunPharmaciesClientConfig,
+        MatildaClientConfig,
+        LyfjastofnunHealthProvidersClientConfig,
         FeatureFlagConfig,
         HmsConfig,
         HmsApplicationSystemConfig,
@@ -536,6 +551,7 @@ const environment = getConfig
         LandspitaliApiModuleConfig,
         CourseChargesConfig,
         RecyclingFundClientConfig,
+        CustomsGeneralClientConfig,
       ],
     }),
   ],

@@ -4,6 +4,8 @@ import {
   ServiceBuilder,
   json,
   ref,
+  scheduledJob,
+  ScheduledJobBuilder,
 } from '../../../../infra/src/dsl/dsl'
 import { Base, Client, ChargeFjsV2 } from '../../../../infra/src/dsl/xroad'
 
@@ -33,6 +35,16 @@ const env = {
   PAYMENTS_JWT_SIGNING_EXPIRES_IN_MINUTES: '5',
   PAYMENTS_APPLE_PAY_DOMAIN: 'island.is',
   PAYMENTS_APPLE_PAY_DISPLAY_NAME: 'island.is',
+  BLIKK_API_BASE_URL: {
+    dev: 'https://stage.blikk.tech',
+    staging: 'https://stage.blikk.tech',
+    prod: 'https://api.blikk.tech',
+  },
+  BLIKK_PAYMENT_TTL_SECONDS: {
+    dev: '300', // 5 minutes
+    staging: '300', // 5 minutes
+    prod: '600', // 10 minutes
+  },
 }
 
 // common database configuration
@@ -58,6 +70,9 @@ const secrets = {
   PAYMENTS_PREVIOUS_KEY_ID: '/k8s/services-payments/PAYMENTS_PREVIOUS_KEY_ID',
   PAYMENTS_PREVIOUS_PUBLIC_KEY:
     '/k8s/services-payments/PAYMENTS_PREVIOUS_PUBLIC_KEY',
+  // Shared by the service and the worker: the worker transitively loads the
+  // bank-transfer/Blikk modules via PaymentFlowModule, so BlikkClientConfig must resolve at boot.
+  BLIKK_API_KEY: '/k8s/services-payments/BLIKK_API_KEY',
 }
 
 // service setup
@@ -158,8 +173,8 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
 
 // worker setup
 export const serviceSetupForWorker =
-  (): ServiceBuilder<'services-payments-worker'> =>
-    service(workerName)
+  (): ScheduledJobBuilder<'services-payments-worker'> =>
+    scheduledJob(workerName)
       .namespace(namespace)
       .image(imageName)
       .serviceAccount(workerName)
@@ -170,8 +185,8 @@ export const serviceSetupForWorker =
       .xroad(Base, Client, ChargeFjsV2)
       .command('node')
       .args('main.cjs', '--job', 'worker')
-      .extraAttributes({
-        dev: { schedule: '*/5 * * * *' },
-        staging: { schedule: '*/5 * * * *' },
-        prod: { schedule: '*/5 * * * *' },
+      .schedule({
+        dev: '*/5 * * * *',
+        staging: '*/5 * * * *',
+        prod: '*/5 * * * *',
       })

@@ -1,19 +1,41 @@
-import { FormSystemField, FormSystemListItem } from '@island.is/api/schema'
-import { Select } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
-import { Dispatch, useEffect } from 'react'
-import { getValue } from '../../../lib/getValue'
-import { Action } from '../../../lib/reducerTypes'
-import { Controller, useFormContext } from 'react-hook-form'
-import { m } from '../../../lib/messages'
-import { countriesAsListItems } from '../../../lib/lists/countries.list'
+import {
+  FormSystemField,
+  FormSystemLanguageType,
+  FormSystemListItem,
+} from '@island.is/api/schema'
 import { ListTypesEnum } from '@island.is/form-system/enums'
+import {
+  Box,
+  Select,
+  SkeletonLoader,
+  LoadingDots,
+} from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { Dispatch, useEffect, useMemo, useState } from 'react'
+import { Controller, useFormContext } from 'react-hook-form'
+import { getValue } from '../../../lib/getValue'
+import { countriesAsListItems } from '../../../lib/lists/countries.list'
+import { getCurrenciesList } from '../../../lib/lists/currencies.list'
+import { getMunicipalitiesList } from '../../../lib/lists/municipalities.list'
+import { getPostalCodesList } from '../../../lib/lists/postalCodes.list'
+import { m } from '../../../lib/messages'
+import { Action, ApplicationState } from '../../../lib'
+import {
+  DATA_FROM_URL,
+  GET_ORGANIZATIONS,
+  removeTypename,
+} from '@island.is/form-system/graphql'
+import { useMutation, useQuery } from '@apollo/client'
 
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
   hasError?: boolean
   valueIndex?: number
+  slug?: string
+  isTest?: boolean
+  orgNationalId?: string
+  state?: ApplicationState
 }
 
 type ListItem = {
@@ -22,14 +44,163 @@ type ListItem = {
 }
 
 const listTypePlaceholder = {
-  lond: 'Veldu land',
-  sveitarfelog: 'Veldu sveitarfélag',
-  postnumer: 'Veldu póstnúmer',
-}
+  [ListTypesEnum.COUNTRIES]: {
+    is: 'Veldu land',
+    en: 'Select country',
+  },
+  [ListTypesEnum.MUNICIPALITIES]: {
+    is: 'Veldu sveitarfélag',
+    en: 'Select municipality',
+  },
+  [ListTypesEnum.POSTAL_CODES]: {
+    is: 'Veldu póstnúmer',
+    en: 'Select postal code',
+  },
+  [ListTypesEnum.CURRENCIES]: {
+    is: 'Veldu gjaldmiðil',
+    en: 'Select currency',
+  },
+  [ListTypesEnum.ORGANIZATIONS]: {
+    is: 'Veldu stofnun',
+    en: 'Select organization',
+  },
+} as const
 
-export const List = ({ item, dispatch, valueIndex = 0 }: Props) => {
+export const List = ({
+  item,
+  dispatch,
+  valueIndex = 0,
+  slug,
+  isTest,
+  orgNationalId,
+  state,
+}: Props) => {
   const { lang, formatMessage } = useLocale()
-  const { control, trigger } = useFormContext()
+  const { control, trigger, setValue, getValues } = useFormContext()
+  const [dataFromUrl] = useMutation(DATA_FROM_URL)
+  const [urlList, setUrlList] = useState<(FormSystemListItem | null)[]>([])
+  const [dataFromUrlHasError, setDataFromUrlHasError] = useState(false)
+
+  const fieldName = `${item.id}.${valueIndex}`
+
+  let listType = item.fieldSettings?.listType
+  if (!listType) {
+    listType = ListTypesEnum.CUSTOM
+  }
+
+  const shouldFetch =
+    listType === ListTypesEnum.LIST_FROM_URL ||
+    listType === ListTypesEnum.ZENDESK_FIELD_OPTIONS ||
+    listType === ListTypesEnum.ZENDESK_CUSTOM_OBJECT
+
+  const isOrganizations = listType === ListTypesEnum.ORGANIZATIONS
+
+  const {
+    data: organizationsData,
+    loading: organizationsLoading,
+    error: organizationsError,
+  } = useQuery(GET_ORGANIZATIONS, { skip: !isOrganizations })
+
+  const organizationsList = useMemo<FormSystemListItem[]>(
+    () =>
+      [...(organizationsData?.getOrganizations?.items ?? [])]
+        .sort((a: { title: string }, b: { title: string }) =>
+          a.title.localeCompare(b.title, 'is'),
+        )
+        .map((org: { id: string; title: string }, index: number) => ({
+          id: org.id,
+          label: { is: org.title, en: org.title },
+          value: org.title,
+          displayOrder: index,
+          isSelected: false,
+        })),
+    [organizationsData],
+  )
+
+  const cached = (item.list?.length ?? 0) > 0
+
+  const [isLoading, setIsLoading] = useState(shouldFetch && !cached)
+
+  // Covers every list type whose options are loaded asynchronously
+  const isFetching =
+    (shouldFetch && isLoading) || (isOrganizations && organizationsLoading)
+  const fetchHasError =
+    (shouldFetch && dataFromUrlHasError) ||
+    (isOrganizations && Boolean(organizationsError))
+
+  const handleFetchListFromUrl = async (): Promise<{
+    list: (FormSystemListItem | null)[]
+    placeholderFromUrl: FormSystemLanguageType | null
+  }> => {
+    if (!shouldFetch || !slug) return { list: [], placeholderFromUrl: null }
+
+    try {
+      const { data } = await dataFromUrl({
+        variables: {
+          input: {
+            slug,
+            isTest: Boolean(isTest),
+            fieldId: item.id,
+            orgNationalId,
+          },
+        },
+      })
+
+      const placeholderFromUrl =
+        data?.formSystemDataFromUrl?.placeholder ?? null
+      const list: (FormSystemListItem | null)[] =
+        data?.formSystemDataFromUrl?.list ?? []
+      setDataFromUrlHasError(Boolean(data?.formSystemDataFromUrl?.isError))
+
+      return { list, placeholderFromUrl }
+    } catch (e) {
+      setDataFromUrlHasError(true)
+      return { list: [], placeholderFromUrl: null }
+    }
+  }
+
+  useEffect(() => {
+    let cancelled = false
+    if (!shouldFetch) {
+      setIsLoading(false)
+      return
+    }
+
+    if (cached) {
+      setUrlList(item.list ?? [])
+      setIsLoading(false)
+      return
+    }
+
+    setIsLoading(true)
+    ;(async () => {
+      try {
+        const { list, placeholderFromUrl } = await handleFetchListFromUrl()
+
+        dispatch?.({
+          type: 'SET_FIELD_LIST',
+          payload: {
+            id: item.id,
+            list: removeTypename(list),
+            placeholder: removeTypename(placeholderFromUrl),
+          },
+        })
+
+        if (!cancelled) setUrlList(list)
+      } catch (e) {
+        if (!cancelled) setUrlList([])
+      } finally {
+        if (!cancelled) setIsLoading(false)
+      }
+    })()
+
+    return () => {
+      cancelled = true
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const listFromUrl = () => urlList
 
   const mapToListItems = (items: (FormSystemListItem | null)[]): ListItem[] =>
     items
@@ -57,9 +228,19 @@ export const List = ({ item, dispatch, valueIndex = 0 }: Props) => {
   }
 
   const listByType = () => {
-    switch (item.fieldSettings?.listType) {
+    switch (listType) {
       case ListTypesEnum.COUNTRIES:
         return countriesAsListItems()
+      case ListTypesEnum.MUNICIPALITIES:
+        return getMunicipalitiesList()
+      case ListTypesEnum.POSTAL_CODES:
+        return getPostalCodesList()
+      case ListTypesEnum.CURRENCIES:
+        return getCurrenciesList()
+      case ListTypesEnum.ORGANIZATIONS:
+        return organizationsList
+      case ListTypesEnum.LIST_FROM_URL:
+        return listFromUrl()
       default:
         return item.list ?? []
     }
@@ -71,72 +252,117 @@ export const List = ({ item, dispatch, valueIndex = 0 }: Props) => {
     (listItem) => listItem?.isSelected === true,
   )
 
+  const selectedLabel = selected?.label?.[lang] ?? ''
+
   useEffect(() => {
-    if (selected && dispatch) {
+    if (!selected) return
+
+    if (dispatch) {
       if (!getValue(item, 'label', valueIndex)) {
         dispatch({
           type: 'SET_LIST_VALUE',
           payload: {
             id: item.id,
-            value: { label: selected.label, value: selected.value },
+            value: {
+              label: removeTypename(selected.label),
+              value: removeTypename(selected.value),
+            },
             valueIndex,
           },
         })
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+
+    const current = getValues(fieldName)
+    if (!current) {
+      setValue(fieldName, selectedLabel, { shouldValidate: true })
+    }
+  }, [
+    selected,
+    dispatch,
+    item,
+    valueIndex,
+    getValues,
+    fieldName,
+    setValue,
+    selectedLabel,
+  ])
+
+  useEffect(() => {
+    if (isFetching) return
+    if (fetchHasError) trigger(fieldName)
+  }, [isFetching, fetchHasError, trigger, fieldName])
+
+  const externalPlaceholder = state?.externalListPlaceholders?.find(
+    (p) => p.fieldId === item.id,
+  )?.placeholder
+
+  const placeholder =
+    externalPlaceholder?.[lang] ||
+    listTypePlaceholder[listType]?.[lang] ||
+    formatMessage(m.select)
 
   return (
     <Controller
-      key={item.id}
-      name={item.id}
+      key={`${item.id}-${valueIndex}`}
+      name={fieldName}
       control={control}
-      defaultValue={getValue(item, 'label', valueIndex)?.[lang] ?? ''}
+      defaultValue={
+        getValue(item, 'label', valueIndex)?.[lang] ?? selectedLabel
+      }
       rules={{
-        required: {
-          value: item.isRequired ?? false,
-          message: formatMessage(m.required),
+        required:
+          item.isRequired && !isFetching && !fetchHasError
+            ? { value: true, message: formatMessage(m.required) }
+            : false,
+        validate: () => {
+          if (fetchHasError) return formatMessage(m.listFetchFailed)
+          return true
         },
       }}
-      render={({ field, fieldState }) => (
-        <Select
-          name="list"
-          label={item.name?.[lang] ?? ''}
-          options={mapToListItems(resolvedList)}
-          required={item.isRequired ?? false}
-          defaultValue={
-            selected
-              ? {
-                  label: selected.label?.[lang] ?? '',
-                  value: { label: selected.label, value: selected.value },
-                }
-              : undefined
-          }
-          placeholder={
-            listTypePlaceholder[
-              item.fieldSettings?.listType as keyof typeof listTypePlaceholder
-            ] ?? formatMessage(m.select)
-          }
-          backgroundColor="blue"
-          onChange={(e) => {
-            field.onChange(e)
-            trigger(field.name)
-            if (!dispatch) return
-            dispatch({
-              type: 'SET_LIST_VALUE',
-              payload: {
-                id: item.id,
-                value: e?.value,
-                valueIndex,
-              },
-            })
-          }}
-          value={value()}
-          hasError={!!fieldState.error}
-          errorMessage={fieldState.error?.message}
-        />
-      )}
+      render={({ field, fieldState }) =>
+        isFetching ? (
+          <Box>
+            <SkeletonLoader height={48} display="block" borderRadius="large" />
+            <Box marginLeft={1}>
+              <LoadingDots />
+            </Box>
+          </Box>
+        ) : (
+          <Select
+            name="list"
+            label={item.name?.[lang] ?? ''}
+            options={mapToListItems(resolvedList)}
+            required={item.isRequired ?? false}
+            defaultValue={
+              selected
+                ? {
+                    label: selected.label?.[lang] ?? '',
+                    value: { label: selected.label, value: selected.value },
+                  }
+                : undefined
+            }
+            placeholder={placeholder}
+            backgroundColor="blue"
+            onChange={(e) => {
+              field.onChange(e?.label ?? '')
+              trigger(field.name)
+              if (!dispatch) return
+              dispatch({
+                type: 'SET_LIST_VALUE',
+                payload: {
+                  id: item.id,
+                  value: e?.value,
+                  valueIndex,
+                },
+              })
+            }}
+            value={value()}
+            hasError={!!fieldState.error}
+            errorMessage={fieldState.error?.message}
+          />
+        )
+      }
     />
   )
 }

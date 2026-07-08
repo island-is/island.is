@@ -866,6 +866,7 @@ export class CmsElasticsearchService {
       types,
       organizations,
       funds,
+      filterOutDateToPassed = false,
     }: GetGrantsInput,
   ): Promise<GrantList> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -886,15 +887,31 @@ export class CmsElasticsearchService {
     }
 
     let sortRules: ('_score' | sortRule)[] = []
-    if (!sort || sort === GrantsSortBy.RECENTLY_UPDATED) {
-      sortRules = [
-        { dateUpdated: { order: SortDirection.ASC } },
-        { 'title.sort': { order: SortDirection.ASC } },
-      ]
-    } else if (sort === GrantsSortBy.ALPHABETICAL) {
+
+    if (sort === GrantsSortBy.ALPHABETICAL) {
       sortRules = [
         { 'title.sort': { order: SortDirection.ASC } },
         { dateUpdated: { order: SortDirection.DESC } },
+      ]
+    } else if (sort === GrantsSortBy.DEADLINE) {
+      if (!filterOutDateToPassed) {
+        // dateCreated = dateTo ?? entry.sys.createdAt (grants.service.ts:151)
+        // DEADLINE sort is only valid when past-deadline entries are filtered out;
+        // without that filter, grants with no dateTo sort by createdAt and appear first.
+        sortRules = [
+          { dateUpdated: { order: SortDirection.DESC } },
+          { 'title.sort': { order: SortDirection.ASC } },
+        ]
+      } else {
+        sortRules = [
+          { dateCreated: { order: SortDirection.ASC } },
+          { 'title.sort': { order: SortDirection.ASC } },
+        ]
+      }
+    } else {
+      sortRules = [
+        { dateUpdated: { order: SortDirection.DESC } },
+        { 'title.sort': { order: SortDirection.ASC } },
       ]
     }
 
@@ -945,6 +962,16 @@ export class CmsElasticsearchService {
         },
       })
     })
+
+    if (filterOutDateToPassed) {
+      must.push({
+        range: {
+          dateCreated: {
+            gt: 'now',
+          },
+        },
+      })
+    }
 
     if (status !== undefined) {
       if (status === GrantsAvailabilityStatus.CLOSED) {

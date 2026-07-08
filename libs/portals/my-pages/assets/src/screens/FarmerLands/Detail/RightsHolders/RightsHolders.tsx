@@ -3,7 +3,7 @@ import { ApolloError } from '@apollo/client'
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
-  Table,
+  PortalTable,
   createColumnHelper,
   m,
   formatNationalId,
@@ -66,19 +66,34 @@ export const RightsHolders = ({ beneficiaries, loading, error }: Props) => {
       <T.Table>
         <T.Head>
           <T.Row>
-            <T.HeadData text={{ variant: 'small', fontWeight: 'semiBold' }}>
+            <T.HeadData
+              scope="col"
+              text={{ variant: 'small', fontWeight: 'semiBold' }}
+            >
               {formatMessage(fm.paymentType)}
             </T.HeadData>
-            <T.HeadData text={{ variant: 'small', fontWeight: 'semiBold' }}>
+            <T.HeadData
+              scope="col"
+              text={{ variant: 'small', fontWeight: 'semiBold' }}
+            >
               {formatMessage(fm.share)}
             </T.HeadData>
-            <T.HeadData text={{ variant: 'small', fontWeight: 'semiBold' }}>
+            <T.HeadData
+              scope="col"
+              text={{ variant: 'small', fontWeight: 'semiBold' }}
+            >
               {formatMessage(fm.pendingPayments)}
             </T.HeadData>
-            <T.HeadData text={{ variant: 'small', fontWeight: 'semiBold' }}>
+            <T.HeadData
+              scope="col"
+              text={{ variant: 'small', fontWeight: 'semiBold' }}
+            >
               {formatMessage(fm.operation)}
             </T.HeadData>
-            <T.HeadData text={{ variant: 'small', fontWeight: 'semiBold' }}>
+            <T.HeadData
+              scope="col"
+              text={{ variant: 'small', fontWeight: 'semiBold' }}
+            >
               {formatMessage(m.date)}
             </T.HeadData>
           </T.Row>
@@ -120,7 +135,7 @@ export const RightsHolders = ({ beneficiaries, loading, error }: Props) => {
 
   return (
     <Box marginTop={4}>
-      <Table
+      <PortalTable
         columns={columns}
         data={beneficiaries}
         loading={loading}

@@ -14,7 +14,6 @@ query Case($input: CaseQueryInput!) {
         subpoenas {
           id
           created
-          modified
           serviceStatus
           serviceDate
           servedBy
@@ -41,15 +40,16 @@ query Case($input: CaseQueryInput!) {
         isKeyAccessible
         defendantId
         civilClaimantId
+        rulingFileId
       }
     }
     splitCase {
       id
       courtCaseNumber
     }
+    state
     indictmentSubtypes
     description
-    state
     policeCaseNumbers
     defendants {
       id
@@ -82,7 +82,6 @@ query Case($input: CaseQueryInput!) {
       alternativeServiceDescription
       indictmentReviewDecision
       isDrivingLicenseSuspended
-      appealStatementDate
       policeCaseNumbers
       indictmentCancelledOrDismissedState {
         type
@@ -121,6 +120,14 @@ query Case($input: CaseQueryInput!) {
         isDefaultJudgement
         isAcquittedByPublicProsecutionOffice
         defendantHasRequestedAppeal
+      }
+      connectedCases {
+        id
+        courtCaseNumber
+        court {
+          id
+          name
+        }
       }
     }
     defenderName
@@ -277,12 +284,18 @@ query Case($input: CaseQueryInput!) {
       isKeyAccessible
       defendantId
       civilClaimantId
+      rulingFileId
+      hasBeenAppealed
+      canBeAppealed
+      appealDeadline
+      isAppealDeadlineExpired
     }
     isAppealDeadlineExpired
     caseModifiedExplanation
     rulingModifiedHistory
     caseResentExplanation
     origin
+    originalAncestorId
     openedByDefender
     defendantWaivesRightToCounsel
     crimeScenes
@@ -290,6 +303,7 @@ query Case($input: CaseQueryInput!) {
     indictmentReviewedDate
     indictmentCounts {
       id
+      displayOrder
       caseId
       policeCaseNumber
       created
@@ -389,22 +403,31 @@ query Case($input: CaseQueryInput!) {
       generatedPdfUri
     }
     requestDriversLicenseSuspension
-    isStatementDeadlineExpired
-    statementDeadline
     canBeAppealed
     canProsecutorAppeal
     hasBeenAppealed
-    appealedByRole
-    appealedDate
     appealDeadline
     appealCase {
       id
       appealState
       appealedByNationalId
+      appealedByRole
+      appealedDate
+      statementDeadline
+      isStatementDeadlineExpired
       appealCaseNumber
       appealReceivedByCourtDate
+      appealRulingDate
       prosecutorStatementDate
       defendantStatementDate
+      defendantStatementDates {
+        defendantId
+        statementDate
+      }
+      civilClaimantStatementDates {
+        civilClaimantId
+        statementDate
+      }
       appealAssistant {
         id
         name
@@ -428,6 +451,63 @@ query Case($input: CaseQueryInput!) {
       appealValidToDate
       isAppealCustodyIsolation
       appealIsolationToDate
+    }
+    rulingOrderAppealCases {
+      id
+      appealState
+      appealedByNationalId
+      appealedByRole
+      appealedDate
+      appealedInCourt
+      statementDeadline
+      isStatementDeadlineExpired
+      appealCaseNumber
+      appealReceivedByCourtDate
+      appealRulingDate
+      prosecutorStatementDate
+      defendantStatementDate
+      defendantStatementDates {
+        defendantId
+        statementDate
+      }
+      civilClaimantStatementDates {
+        civilClaimantId
+        statementDate
+      }
+      appealAssistant {
+        id
+        name
+      }
+      appealJudge1 {
+        id
+        name
+      }
+      appealJudge2 {
+        id
+        name
+      }
+      appealJudge3 {
+        id
+        name
+      }
+      appealRulingDecision
+      appealConclusion
+      appealRulingModifiedHistory
+      requestAppealRulingNotToBePublished
+      appealValidToDate
+      isAppealCustodyIsolation
+      appealIsolationToDate
+      rulingFileId
+    }
+    appealDecisions {
+      id
+      rulingFileId
+      partyRole
+      defendantId
+      civilClaimantId
+      decision
+      announcement
+      withdrawnDate
     }
     indictmentDeniedExplanation
     arraignmentDate {
@@ -587,9 +667,56 @@ query Case($input: CaseQueryInput!) {
         isKeyAccessible
         defendantId
         civilClaimantId
+        rulingFileId
       }
       policeCaseNumbers
       indictmentSubtypes
+      rulingOrderAppealCases {
+        id
+        appealState
+        appealedByNationalId
+        appealedByRole
+        appealedDate
+        statementDeadline
+        isStatementDeadlineExpired
+        appealCaseNumber
+        appealReceivedByCourtDate
+        appealRulingDate
+        prosecutorStatementDate
+        defendantStatementDate
+        defendantStatementDates {
+          defendantId
+          statementDate
+        }
+        civilClaimantStatementDates {
+          civilClaimantId
+          statementDate
+        }
+        appealAssistant {
+          id
+          name
+        }
+        appealJudge1 {
+          id
+          name
+        }
+        appealJudge2 {
+          id
+          name
+        }
+        appealJudge3 {
+          id
+          name
+        }
+        appealRulingDecision
+        appealConclusion
+        appealRulingModifiedHistory
+        requestAppealRulingNotToBePublished
+        appealValidToDate
+        isAppealCustodyIsolation
+        appealIsolationToDate
+        rulingFileId
+      }
     }
     civilClaimants {
       id
@@ -605,7 +732,8 @@ query Case($input: CaseQueryInput!) {
       spokespersonPhoneNumber
       caseFilesSharedWithSpokesperson
       isSpokespersonConfirmed
-      appealStatementDate
+      policeCaseNumbers
+      defendantIds
     }
     victims {
       id
@@ -622,6 +750,7 @@ query Case($input: CaseQueryInput!) {
     mergeCaseNumber
     civilDemands
     penalties
+    reopenReason
     hasCivilClaims
     isCompletedWithoutRuling
     caseSentToCourtDate

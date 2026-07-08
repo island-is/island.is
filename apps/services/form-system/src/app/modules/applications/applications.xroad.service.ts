@@ -10,7 +10,7 @@ import { Application } from './models/application.model'
 import { ApplicationMapper } from './models/application.mapper'
 import { ApplicationsService } from './applications.service'
 import { FileResponseDto } from './models/dto/file.response.dto'
-import { ApplicationXroadDto } from './models/dto/application.xroad.dto'
+import { ApplicationJsonDto } from './models/dto/application.json.dto'
 import { FileService } from '../file/file.service'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { ApplicationEvent } from './models/applicationEvent.model'
@@ -32,7 +32,7 @@ export class ApplicationsXRoadService {
   async getApplication(
     id: string,
     xRoadClient: string,
-  ): Promise<ApplicationXroadDto> {
+  ): Promise<ApplicationJsonDto> {
     const application = await this.applicationModel.findByPk(id)
 
     if (!application) {
@@ -72,8 +72,8 @@ export class ApplicationsXRoadService {
       application,
     )
 
-    const applicationXroadDto =
-      this.applicationMapper.mapApplicationDtoToApplicationXroadDto(
+    const applicationJsonDto =
+      this.applicationMapper.mapApplicationDtoToApplicationJsonDto(
         applicationDto,
       )
 
@@ -93,10 +93,14 @@ export class ApplicationsXRoadService {
       )
     }
 
-    return applicationXroadDto
+    return applicationJsonDto
   }
 
   async getFile(id: string, xRoadClient: string): Promise<FileResponseDto> {
+    this.logger.info(
+      `Fetching file with id ${id} for X-Road client ${xRoadClient}`,
+    )
+
     const applicationId = id.split('/')[0]
     const application = await this.applicationModel.findByPk(applicationId)
 

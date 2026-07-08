@@ -330,6 +330,8 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
         ...AllSlices
       }
       showTableOfContents
+      contentLastReviewed
+      showDateOfTheMostRecentReview
       sliceCustomRenderer
       sliceExtraText
       featuredImage {
@@ -369,6 +371,8 @@ export const GET_ORGANIZATION_SUBPAGE_BY_ID_QUERY = gql`
         ...AllSlices
       }
       showTableOfContents
+      contentLastReviewed
+      showDateOfTheMostRecentReview
       sliceCustomRenderer
       sliceExtraText
       featuredImage {

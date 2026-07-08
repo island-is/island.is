@@ -1,25 +1,43 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback, useContext, useEffect } from 'react'
 
 import { toast } from '@island.is/island-ui/core'
 import { CaseOrigin } from '@island.is/judicial-system/types'
 
+import { FormContext } from '../../../components'
 import { useDeletePoliceDigitalCaseFileMutation } from './deletePoliceDigitalCaseFile.generated'
 import { usePoliceDigitalCaseFilesQuery } from './policeDigitalCaseFiles.generated'
 
-const usePoliceDigitalCaseFile = (
-  caseId: string,
-  caseOrigin: CaseOrigin | null | undefined,
-) => {
+const usePoliceDigitalCaseFile = () => {
+  const { workingCase, isLoadingWorkingCase, refreshCase } =
+    useContext(FormContext)
+  const { id: caseId, origin: caseOrigin, originalAncestorId } = workingCase
+  // originalAncestorId is resolved server-side (split case id for indictments,
+  // the extension's original ancestor for request cases). Fall back to caseId
+  // only to satisfy the nullable GraphQL type — the backend always sets it.
+  const effectiveCaseId = originalAncestorId ?? caseId
+
+  const handleCompleted = useCallback(
+    (completedData: {
+      policeDigitalCaseFiles?: { isNew?: boolean | null }[] | null
+    }) => {
+      if (completedData.policeDigitalCaseFiles?.some((file) => file.isNew)) {
+        refreshCase()
+      }
+    },
+    [refreshCase],
+  )
+
   const {
     data,
     loading: digitalCaseFilesLoading,
     error: digitalCaseFilesError,
     refetch,
   } = usePoliceDigitalCaseFilesQuery({
-    variables: { input: { caseId } },
-    skip: caseOrigin !== CaseOrigin.LOKE,
+    variables: { input: { caseId: effectiveCaseId } },
+    skip: isLoadingWorkingCase || caseOrigin !== CaseOrigin.LOKE,
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
+    onCompleted: handleCompleted,
   })
 
   const [deleteMutation, { loading: isDeleting }] =
@@ -38,19 +56,19 @@ const usePoliceDigitalCaseFile = (
   const openDigitalCaseFileUrl = useCallback(
     (policeDigitalFileId: string) => {
       window.open(
-        `/akaera/rafraen-gogn?caseId=${caseId}&fileId=${policeDigitalFileId}`,
+        `/akaera/rafraen-gogn?caseId=${effectiveCaseId}&fileId=${policeDigitalFileId}`,
         '_blank',
         'noopener',
       )
     },
-    [caseId],
+    [effectiveCaseId],
   )
 
   const deletePoliceDigitalCaseFile = useCallback(
     async (fileId: string) => {
       try {
         const { data } = await deleteMutation({
-          variables: { input: { caseId, fileId } },
+          variables: { input: { caseId: effectiveCaseId, fileId } },
         })
 
         if (data?.deletePoliceDigitalCaseFile) {
@@ -63,7 +81,7 @@ const usePoliceDigitalCaseFile = (
         return false
       }
     },
-    [caseId, deleteMutation, refetch],
+    [effectiveCaseId, deleteMutation, refetch],
   )
 
   return {

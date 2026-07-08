@@ -2,6 +2,7 @@ import { FormSystemField } from '@island.is/api/schema'
 import { FieldTypesEnum } from '@island.is/form-system/enums'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { m } from '../../../lib/messages'
 
 const TEXTBOX_COMPONENT_MAP = {
   BANK_ACCOUNT: 'bankAccount',
@@ -22,10 +23,15 @@ const TEXTBOX_COMPONENT_MAP = {
 interface Props {
   item: FormSystemField
   valueIndex: number
+  requiredMissing?: boolean
 }
 
-export const DefaultDisplay = ({ item, valueIndex }: Props) => {
-  const { lang } = useLocale()
+export const DefaultDisplay = ({
+  item,
+  valueIndex,
+  requiredMissing = false,
+}: Props) => {
+  const { lang, formatMessage } = useLocale()
 
   const valueKey = TEXTBOX_COMPONENT_MAP[
     item.fieldType as keyof typeof TEXTBOX_COMPONENT_MAP
@@ -61,12 +67,30 @@ export const DefaultDisplay = ({ item, valueIndex }: Props) => {
     >
       <Text as="p" fontWeight="semiBold" lineHeight="sm">
         {item.name?.[lang]}
+        {requiredMissing && (
+          <>
+            {' '}
+            <Text as="span" fontWeight="medium" color="red600">
+              *
+            </Text>
+          </>
+        )}
       </Text>
 
       <Box marginLeft={2}>
-        <Text fontWeight="light" whiteSpace="breakSpaces" lineHeight="sm">
-          {displayValue}
-        </Text>
+        {requiredMissing && (
+          <>
+            {' '}
+            <Text as="span" fontWeight="light" color="red600">
+              {formatMessage(m.missingValue)}
+            </Text>
+          </>
+        )}
+        {!requiredMissing && (
+          <Text fontWeight="light" whiteSpace="breakSpaces" lineHeight="sm">
+            {displayValue}
+          </Text>
+        )}
       </Box>
     </Box>
   )

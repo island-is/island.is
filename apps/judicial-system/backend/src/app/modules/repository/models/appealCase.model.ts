@@ -103,6 +103,13 @@ export class AppealCase extends Model {
   appealReceivedByCourtDate?: Date
 
   /**********
+   * The time and date that the court of appeals completed the appeal ruling
+   **********/
+  @Column({ type: DataType.DATE, allowNull: true })
+  @ApiPropertyOptional({ type: Date })
+  appealRulingDate?: Date
+
+  /**********
    * The surrogate key of the assistant assigned to the appeal case
    **********/
   @ForeignKey(() => User)
@@ -232,6 +239,15 @@ export class AppealCase extends Model {
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
   appealedByNationalId?: string
+
+  /**********
+   * The time of appeal - the court session end time for in-court appeals
+   * (case-level court end time in request cases), the appeal creation time
+   * for appeals filed later
+   **********/
+  @Column({ type: DataType.DATE, allowNull: true })
+  @ApiPropertyOptional({ type: Date })
+  appealDate?: Date
 
   /**********
    * Appeal lifecycle events (statement sent, etc.) anchored to this appeal case

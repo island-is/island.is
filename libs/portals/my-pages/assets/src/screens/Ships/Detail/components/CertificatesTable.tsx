@@ -5,9 +5,10 @@ import {
 } from '@island.is/api/schema'
 import { Box, Input, Tag } from '@island.is/island-ui/core'
 import {
-  Table,
+  PortalTable,
   createColumnHelper,
   formatDate,
+  m,
   type Row,
 } from '@island.is/portals/my-pages/core'
 import { useLocale } from '@island.is/localization'
@@ -22,7 +23,7 @@ interface Props {
 const columnHelper = createColumnHelper<ShipRegistryCertificate>()
 
 export const CertificatesTable = ({ certificates, loading }: Props) => {
-  const { formatMessage, locale } = useLocale()
+  const { formatMessage } = useLocale()
   const [search, setSearch] = useState('')
 
   const columns = useMemo(
@@ -70,8 +71,7 @@ export const CertificatesTable = ({ certificates, loading }: Props) => {
         },
       }),
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [locale],
+    [formatMessage],
   )
 
   const filteredCertificates = useMemo(
@@ -96,9 +96,7 @@ export const CertificatesTable = ({ certificates, loading }: Props) => {
       <Box marginBottom={3} style={{ maxWidth: 318 }}>
         <Input
           name="cert-search"
-          aria-label={formatMessage(
-            shipsMessages.certificatesSearchPlaceholder,
-          )}
+          label={formatMessage(m.searchLabel)}
           placeholder={formatMessage(
             shipsMessages.certificatesSearchPlaceholder,
           )}
@@ -109,13 +107,14 @@ export const CertificatesTable = ({ certificates, loading }: Props) => {
           icon={{ name: 'search' }}
         />
       </Box>
-      <Table
+      <PortalTable
         columns={columns}
         data={filteredCertificates}
         loading={loading}
         emptyMessage={formatMessage(shipsMessages.certificatesEmpty)}
         mobileTitleKey="name"
         renderExpandedRow={renderExpandedRow}
+        srCaption={formatMessage(shipsMessages.certificatesTab)}
       />
     </Box>
   )

@@ -43,15 +43,17 @@ interface Props {
 
 interface ResultsProps {
   caseId: string
+  appealCaseId: string | null | undefined
   caseType: CaseType
   descriptor: string
-  caseNumber?: string | null
-  caseTableTitles?: string[]
+  caseNumber: string | null | undefined
+  caseTableTitles: string[]
   onClick: () => void
 }
 
 const SearchResultButton: FC<ResultsProps> = ({
   caseId,
+  appealCaseId,
   caseType,
   descriptor,
   caseNumber,
@@ -65,7 +67,7 @@ const SearchResultButton: FC<ResultsProps> = ({
     <button
       className={styles.resultButton}
       onClick={() => {
-        handleOpenCase(caseId)
+        handleOpenCase(caseId, false, undefined, appealCaseId)
         onClick()
       }}
     >
@@ -88,7 +90,7 @@ const SearchResultButton: FC<ResultsProps> = ({
                   {`Málsnúmer: ${caseNumber}`}
                 </Text>
               )}
-              {caseTableTitles && caseTableTitles.length > 0 && (
+              {caseTableTitles.length > 0 && (
                 <Text variant="small" color="dark300">
                   {`Málalistar: ${caseTableTitles.join(', ')}`}
                 </Text>
@@ -238,7 +240,13 @@ const SearchModal: FC<Props> = ({ onClose }) => {
         <Text variant="h3" marginBottom={1}>
           Leit
         </Text>
-        <Box marginBottom={3} columnGap={1} display="flex" flexWrap="wrap">
+        <Box
+          marginBottom={3}
+          columnGap={1}
+          rowGap={1}
+          display="flex"
+          flexWrap="wrap"
+        >
           <Tag outlined disabled>
             Málsnúmer
           </Tag>
@@ -305,19 +313,18 @@ const SearchModal: FC<Props> = ({ onClose }) => {
                         >
                           <SearchResultButton
                             caseId={row.caseId}
+                            appealCaseId={row.appealCaseId}
                             caseType={row.caseType}
                             caseNumber={caseNumber}
-                            caseTableTitles={
-                              caseTableTitles.length > 0
-                                ? caseTableTitles
-                                : undefined
-                            }
-                            descriptor={`${row.matchedValue}${
+                            caseTableTitles={caseTableTitles}
+                            descriptor={
                               row.matchedField === 'defendantName' ||
                               !row.defendantName
-                                ? ''
-                                : ` - ${row.defendantName}`
-                            }`}
+                                ? row.matchedValue
+                                : row.matchedValue
+                                ? `${row.matchedValue} - ${row.defendantName}`
+                                : row.defendantName
+                            }
                             onClick={onClose}
                           />
                         </li>

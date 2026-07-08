@@ -3,7 +3,6 @@ import { Sequelize } from 'sequelize-typescript'
 
 import { ForbiddenException } from '@nestjs/common'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import type { User } from '@island.is/judicial-system/types'
 import {
   CaseState,
@@ -17,8 +16,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
-  const [normalizedNationalId, formattedNationalId] =
-    normalizeAndFormatNationalId(user.nationalId)
+  const userNationalId = user.nationalId ?? ''
 
   const options: WhereOptions = [
     { is_archived: false },
@@ -28,9 +26,7 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
           // defender per case
           [Op.and]: [
             { type: [...restrictionCases, ...investigationCases] },
-            {
-              defender_national_id: [normalizedNationalId, formattedNationalId],
-            },
+            { defender_national_id: userNationalId },
             {
               [Op.or]: [
                 {
@@ -81,7 +77,7 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
                         [Op.in]: Sequelize.literal(`
                         (SELECT case_id
                           FROM victim
-                          WHERE lawyer_national_id in ('${normalizedNationalId}', '${formattedNationalId}') 
+                          WHERE lawyer_national_id = '${userNationalId}'
                           AND lawyer_access_to_request = '${RequestSharedWhen.READY_FOR_COURT}')
                       `),
                       },
@@ -97,7 +93,7 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
                         [Op.in]: Sequelize.literal(`
                           (SELECT case_id
                             FROM victim
-                            WHERE lawyer_national_id in ('${normalizedNationalId}', '${formattedNationalId}') 
+                            WHERE lawyer_national_id = '${userNationalId}'
                             AND lawyer_access_to_request != '${RequestSharedWhen.OBLIGATED}')
                         `),
                       },
@@ -152,7 +148,7 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
                     [Op.in]: Sequelize.literal(`
                       (SELECT case_id
                         FROM defendant
-                        WHERE defender_national_id in ('${normalizedNationalId}', '${formattedNationalId}')
+                        WHERE defender_national_id = '${userNationalId}'
                           AND is_defender_choice_confirmed = true)
                     `),
                   },
@@ -163,7 +159,7 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
                       (SELECT case_id
                         FROM civil_claimant
                         WHERE has_spokesperson = true
-                          AND spokesperson_national_id in ('${normalizedNationalId}', '${formattedNationalId}')
+                          AND spokesperson_national_id = '${userNationalId}'
                           AND is_spokesperson_confirmed = true)
                     `),
                   },

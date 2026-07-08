@@ -4,15 +4,15 @@ import { EmailService } from '@island.is/email-service'
 import { ConfigType } from '@island.is/nest/config'
 
 import {
-  CLOSED_INDICTMENT_OVERVIEW_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE,
   SIGNED_VERDICT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
   CaseDecision,
   CaseIndictmentRulingDecision,
-  CaseNotificationType,
   CaseState,
   CaseType,
+  RequestCaseNotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -44,7 +44,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
   const userId = uuid()
   const notificationDto: CaseNotificationDto = {
     user: { id: userId } as User,
-    type: CaseNotificationType.RULING,
+    type: RequestCaseNotificationType.RULING,
   }
   const { testProsecutor } = createTestUsers(['testProsecutor'])
 
@@ -106,13 +106,46 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     })
 
     it('should send email to prosecutor', () => {
-      const expectedLink = `<a href="${mockConfig.clientUrl}${CLOSED_INDICTMENT_OVERVIEW_ROUTE}/${caseId}">`
+      const expectedLink = `<a href="${mockConfig.clientUrl}${PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE}/${caseId}">`
       expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(1)
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: 'Máli lokið 007-2022-07',
           html: `Máli 007-2022-07 hjá Héraðsdómi Reykjavíkur hefur verið lokið.<br /><br />Niðurstaða: Sameinað<br /><br />Skjöl málsins eru aðgengileg á ${expectedLink}yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+        }),
+      )
+    })
+  })
+
+  describe('email to prosecutor for dismissed indictment case', () => {
+    const caseId = uuid()
+
+    const prosecutor = {
+      name: testProsecutor.name,
+      email: testProsecutor.email,
+    }
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      courtCaseNumber: '007-2022-07',
+      court: { name: 'Héraðsdómur Reykjavíkur' },
+      indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+      prosecutor,
+    } as Case
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, theCase, notificationDto)
+    })
+
+    it('should send email with appeal information to prosecutor', () => {
+      const expectedLink = `<a href="${mockConfig.clientUrl}${PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE}/${caseId}">`
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(1)
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: prosecutor.name, address: prosecutor.email }],
+          subject: 'Máli lokið 007-2022-07',
+          html: `Máli 007-2022-07 hjá Héraðsdómi Reykjavíkur hefur verið lokið.<br /><br />Niðurstaða: Frávísun<br /><br />Skjöl málsins eru aðgengileg á ${expectedLink}yfirlitssíðu málsins í Réttarvörslugátt</a>.<br /><br />Hægt er að kæra úrskurðinn og senda greinargerðir og gögn í gegnum Réttarvörslugátt ef við á.`,
         }),
       )
     })

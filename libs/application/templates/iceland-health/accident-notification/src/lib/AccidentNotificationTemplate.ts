@@ -242,6 +242,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
                   Promise.resolve(val.ApplicantReview),
                 ),
               read: 'all',
+              write: 'all',
             },
           ],
         },
@@ -321,6 +322,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
                   Promise.resolve(val.ApplicantReview),
                 ),
               read: 'all',
+              write: 'all',
             },
           ],
         },
@@ -355,7 +357,9 @@ const AccidentNotificationTemplate: ApplicationTemplate<
               notificationTemplateId:
                 NotificationConfig[NotificationType.AccidentNotificationPruned]
                   .templateId,
-              ...(nationalId && { internalBody: nationalId }),
+              ...(nationalId && {
+                args: [{ key: 'internalBody', value: nationalId }],
+              }),
             }
           }),
           onEntry: defineTemplateApi({

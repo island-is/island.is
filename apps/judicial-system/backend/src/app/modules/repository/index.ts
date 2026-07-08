@@ -1,4 +1,5 @@
 export { AppealCase } from './models/appealCase.model'
+export { AppealDecision } from './models/appealDecision.model'
 export { AppealEventLog } from './models/appealEventLog.model'
 export { Case } from './models/case.model'
 export { CaseArchive } from './models/caseArchive.model'
@@ -18,6 +19,7 @@ export { IndictmentSubtype } from './models/indictmentSubtype.model'
 export { Institution } from './models/institution.model'
 export { InstitutionContact } from './models/institutionContact.model'
 export { LawyerRegistry } from './models/lawyerRegistry.model'
+export { MessageSuspension } from './models/messageSuspension.model'
 export { Notification, Recipient } from './models/notification.model'
 export { Offense } from './models/offense.model'
 export { PoliceDigitalCaseFile } from './models/policeDigitalCaseFile.model'
@@ -27,8 +29,12 @@ export { User } from './models/user.model'
 export { Verdict } from './models/verdict.model'
 export { Victim } from './models/victim.model'
 
-export { AppealEventLogRepositoryService } from './services/appealEventLogRepository.service'
 export { AppealCaseRepositoryService } from './services/appealCaseRepository.service'
+export {
+  AppealDecisionRepositoryService,
+  AppealDecisionPartyKey,
+} from './services/appealDecisionRepository.service'
+export { AppealEventLogRepositoryService } from './services/appealEventLogRepository.service'
 export { CaseRepositoryService } from './services/caseRepository.service'
 export { CaseArchiveRepositoryService } from './services/caseArchiveRepository.service'
 export { CaseDefendantPoliceCaseNumberRepositoryService } from './services/caseDefendantPoliceCaseNumber.repository.service'
@@ -40,12 +46,14 @@ export { CourtDocumentRepositoryService } from './services/courtDocumentReposito
 export { DefendantRepositoryService } from './services/defendantRepository.service'
 export { DefendantEventLogRepositoryService } from './services/defendantEventLogRepository.service'
 export { InstitutionContactRepositoryService } from './services/institutionContactRepository.service'
+export { MessageSuspensionRepositoryService } from './services/messageSuspensionRepository.service'
 export { PoliceDigitalCaseFileRepositoryService } from './services/policeDigitalCaseFileRepository.service'
 export { SubpoenaRepositoryService } from './services/subpoenaRepository.service'
 export { VerdictRepositoryService } from './services/verdictRepository.service'
 
 export {
   caseInclude,
-  UpdateCase,
   UpdateAppealCase,
+  UpdateCase,
+  UpdateDefendant,
 } from './types/caseRepository.types'

@@ -11,6 +11,9 @@ interface Props {
   description?: MessageDescriptor
 }
 
+/**
+ * @deprecated Use `<Problem type="no_data" noBorder={false} />` from `@island.is/react-spa/shared` instead.
+ */
 export const EmptyState = ({ title, description }: Props) => {
   const { formatMessage } = useLocale()
   return (

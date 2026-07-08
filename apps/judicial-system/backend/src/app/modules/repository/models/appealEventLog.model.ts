@@ -15,6 +15,7 @@ import { AppealCase } from './appealCase.model'
 import { Case } from './case.model'
 import { CivilClaimant } from './civilClaimant.model'
 import { Defendant } from './defendant.model'
+import { User } from './user.model'
 
 @Table({
   tableName: 'appeal_event_log',
@@ -66,56 +67,50 @@ export class AppealEventLog extends Model {
     )
   }
 
-  static getEarliestDateByRole(
+  static groupLatestByDefendant(
     eventType: AppealEventType,
-    userRole: UserRole | UserRole[],
     eventLogs: AppealEventLog[] | undefined,
-  ): Date | undefined {
+  ): { defendantId: string; statementDate: Date }[] {
     if (!eventLogs) {
-      return undefined
+      return []
     }
 
-    const roles = Array.isArray(userRole) ? userRole : [userRole]
-    const relevantLogs = eventLogs
-      .filter(
-        (eventLog) =>
-          eventLog.eventType === eventType && roles.includes(eventLog.userRole),
-      )
-      .sort((a, b) => a.created.getTime() - b.created.getTime())
+    const latest = new Map<string, Date>()
+    for (const log of eventLogs) {
+      if (log.eventType !== eventType || !log.defendantId) continue
+      const current = latest.get(log.defendantId)
+      if (!current || log.created > current) {
+        latest.set(log.defendantId, log.created)
+      }
+    }
 
-    return relevantLogs[0]?.created
+    return Array.from(latest, ([defendantId, statementDate]) => ({
+      defendantId,
+      statementDate,
+    }))
   }
 
-  static getDateForDefendant(
+  static groupLatestByCivilClaimant(
     eventType: AppealEventType,
-    defendantId: string,
     eventLogs: AppealEventLog[] | undefined,
-  ): Date | undefined {
+  ): { civilClaimantId: string; statementDate: Date }[] {
     if (!eventLogs) {
-      return undefined
+      return []
     }
 
-    return AppealEventLog.getEventLogDateByEventType(
-      eventType,
-      eventLogs.filter((eventLog) => eventLog.defendantId === defendantId),
-    )
-  }
-
-  static getDateForCivilClaimant(
-    eventType: AppealEventType,
-    civilClaimantId: string,
-    eventLogs: AppealEventLog[] | undefined,
-  ): Date | undefined {
-    if (!eventLogs) {
-      return undefined
+    const latest = new Map<string, Date>()
+    for (const log of eventLogs) {
+      if (log.eventType !== eventType || !log.civilClaimantId) continue
+      const current = latest.get(log.civilClaimantId)
+      if (!current || log.created > current) {
+        latest.set(log.civilClaimantId, log.created)
+      }
     }
 
-    return AppealEventLog.getEventLogDateByEventType(
-      eventType,
-      eventLogs.filter(
-        (eventLog) => eventLog.civilClaimantId === civilClaimantId,
-      ),
-    )
+    return Array.from(latest, ([civilClaimantId, statementDate]) => ({
+      civilClaimantId,
+      statementDate,
+    }))
   }
 
   @Column({
@@ -150,14 +145,6 @@ export class AppealEventLog extends Model {
   @ApiProperty({ enum: AppealEventType })
   eventType!: AppealEventType
 
-  @Column({
-    type: DataType.ENUM,
-    allowNull: false,
-    values: Object.values(UserRole),
-  })
-  @ApiProperty({ enum: UserRole })
-  userRole!: UserRole
-
   @ForeignKey(() => Defendant)
   @Column({ type: DataType.UUID, allowNull: true })
   @ApiPropertyOptional({ type: String })
@@ -167,4 +154,45 @@ export class AppealEventLog extends Model {
   @Column({ type: DataType.UUID, allowNull: true })
   @ApiPropertyOptional({ type: String })
   civilClaimantId?: string
+
+  /**********
+   * Actor snapshot - the human who performed the event, captured at event
+   * time so the record survives prosecutor/defender reassignment. userId is the
+   * acting system user (null for defenders, who are not system users -
+   * national_id/user_name identify them instead).
+   *
+   * userRole is the appellant's side, not necessarily the actor's role. For an
+   * out-of-court appeal the two coincide (the appellant performs it). For an
+   * in-court APPEALED event the party appeals but the court records it, so the
+   * actor snapshot is the confirming judge while userRole + defendantId /
+   * civilClaimantId identify who appealed.
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: false,
+    values: Object.values(UserRole),
+  })
+  @ApiProperty({ enum: UserRole })
+  userRole!: UserRole
+
+  @ForeignKey(() => User)
+  @Column({ type: DataType.UUID, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  userId?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  nationalId?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  userName?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  userTitle?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  institutionName?: string
 }

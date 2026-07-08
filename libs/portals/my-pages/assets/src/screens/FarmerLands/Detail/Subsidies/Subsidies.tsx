@@ -1,8 +1,8 @@
 import { useCallback, useMemo, useState } from 'react'
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text, getTextStyles } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
-  Table,
+  PortalTable,
   createColumnHelper,
   m,
   formatNationalId,
@@ -48,16 +48,17 @@ const DetailCell = ({
   span?: number
 }) => (
   <Box
+    component="span"
     style={{ gridColumn: `span ${span}`, marginLeft: gap ? 16 : undefined }}
     background={white ? 'white' : undefined}
     paddingX={3}
     paddingY={2}
+    className={getTextStyles({
+      variant: 'small',
+      fontWeight: label ? 'semiBold' : 'regular',
+    })}
   >
-    {children && (
-      <Text variant="small" fontWeight={label ? 'semiBold' : 'regular'}>
-        {children}
-      </Text>
-    )}
+    {children}
   </Box>
 )
 
@@ -254,12 +255,13 @@ export const Subsidies = ({ farmId }: Props) => {
           }}
         />
       </Box>
-      <Table
+      <PortalTable
         columns={columns}
         data={subsidies}
         loading={loading}
         error={error}
         emptyMessage={formatMessage(m.noData)}
+        srCaption={formatMessage(fm.tabSubsidies)}
         mobileTitleKey="paymentDate"
         renderExpandedRow={renderExpandedRow}
         getRowId={(row) => row.id}

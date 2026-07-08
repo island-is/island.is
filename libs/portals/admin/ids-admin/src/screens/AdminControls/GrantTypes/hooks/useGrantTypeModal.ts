@@ -8,7 +8,10 @@ import { useLocale } from '@island.is/localization'
 
 import { m } from '../../../../lib/messages'
 import { useEnvironmentQuery } from '../../../../hooks/useEnvironmentQuery'
-import { authAdminEnvironments } from '../../../../utils/environments'
+import {
+  authAdminEnvironments,
+  pickBestEnvironment,
+} from '../../../../utils/environments'
 import {
   GrantTypeIntent,
   type GrantTypesActionResult,
@@ -48,6 +51,7 @@ export const useGrantTypeModal = ({
   >([])
   const [loadingGrantType, setLoadingGrantType] = useState(false)
   const [formErrors, setFormErrors] = useState<FormErrors>({})
+  const [saveOnAllEnvs, setSaveOnAllEnvs] = useState(false)
   const lastHandledFetcherData = useRef<GrantTypesActionResult | null>(null)
 
   const [fetchGrantType] = useLazyQuery<
@@ -72,6 +76,11 @@ export const useGrantTypeModal = ({
     setSelectedEnvironments([])
     setUserAvailableEnvironments([])
     setFormErrors({})
+    setSaveOnAllEnvs(false)
+  }, [])
+
+  const toggleSaveOnAllEnvs = useCallback(() => {
+    setSaveOnAllEnvs((prev) => !prev)
   }, [])
 
   useEffect(() => {
@@ -81,6 +90,12 @@ export const useGrantTypeModal = ({
     lastHandledFetcherData.current = fetcher.data
 
     if (!fetcher.data.globalError) {
+      const data = fetcher.data.data as {
+        failedEnvironments?: { environment: string; message: string }[]
+      } | null
+
+      const failedEnvs = data?.failedEnvironments
+
       switch (fetcher.data.intent) {
         case GrantTypeIntent.create:
           toast.success(formatMessage(m.grantTypesCreateSuccess))
@@ -95,6 +110,16 @@ export const useGrantTypeModal = ({
           toast.success(formatMessage(m.grantTypesRestoreSuccess))
           break
       }
+
+      if (failedEnvs && failedEnvs.length > 0) {
+        const envNames = failedEnvs.map((f) => f.environment).join(', ')
+        toast.warning(
+          formatMessage(m.grantTypesPartialFailure, {
+            environments: envNames,
+          }),
+        )
+      }
+
       resetModalState()
     } else {
       toast.error(formatMessage(m.grantTypesError))
@@ -126,19 +151,31 @@ export const useGrantTypeModal = ({
         variables: { name: grantType.name },
       })
       const gtData = result.data?.authAdminGrantType
-      if (gtData?.availableEnvironments) {
-        setUserAvailableEnvironments(gtData.availableEnvironments)
-      }
-      // Update description from fetched data if available
-      const fetchedFirstEnv = gtData?.environments?.[0]
-      if (fetchedFirstEnv) {
-        setFormData((prev) => ({
-          ...prev,
-          description: fetchedFirstEnv.description,
-        }))
+      const availableEnvironments = gtData?.availableEnvironments
+      if (availableEnvironments) {
+        setUserAvailableEnvironments(availableEnvironments)
+        const bestEnv = pickBestEnvironment(
+          selectedEnvResult.environment,
+          availableEnvironments,
+        )
+
+        if (bestEnv) {
+          updateEnvironment(bestEnv)
+        }
+
+        // Load form data from the selected environment
+        const targetEnvData = gtData.environments?.find(
+          (e) => e.environment === bestEnv,
+        )
+        if (targetEnvData) {
+          setFormData((prev) => ({
+            ...prev,
+            description: targetEnvData.description,
+          }))
+        }
       }
     } catch {
-      setModalVisible(false)
+      toast.error(formatMessage(m.grantTypesError))
     } finally {
       setLoadingGrantType(false)
     }
@@ -182,8 +219,12 @@ export const useGrantTypeModal = ({
 
     if (!isEditing && selectedEnvironments.length > 0) {
       submitData.set('environments', JSON.stringify(selectedEnvironments))
-    } else if (isEditing && userAvailableEnvironments.length > 0) {
-      submitData.set('environments', JSON.stringify(userAvailableEnvironments))
+    } else if (isEditing) {
+      const targets =
+        saveOnAllEnvs && userAvailableEnvironments.length > 1
+          ? userAvailableEnvironments
+          : [selectedEnvResult.environment]
+      submitData.set('environments', JSON.stringify(targets))
     }
 
     fetcher.submit(submitData, { method: 'post' })
@@ -286,6 +327,8 @@ export const useGrantTypeModal = ({
     environmentOptions,
     selectedEnvResult,
     configuredEnvironments,
+    userAvailableEnvironments,
+    saveOnAllEnvs,
     openCreateModal,
     openEditModal,
     resetModalState,
@@ -295,6 +338,7 @@ export const useGrantTypeModal = ({
     handleEnvironmentCheckboxChange,
     handleEnvironmentSwitch,
     setFormField,
+    toggleSaveOnAllEnvs,
   }
 }
 

@@ -11,6 +11,7 @@ import {
   Case,
   UpdateAppealCaseInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { applyAppealCaseUpdate } from '@island.is/judicial-system-web/src/utils/utils'
 
 import {
   CreateAppealCaseMutation,
@@ -63,6 +64,7 @@ const useAppealCase = () => {
     () =>
       async (
         caseId: string,
+        rulingFileId?: string,
         setWorkingCase?: Dispatch<SetStateAction<Case>>,
       ): Promise<AppealCase | undefined> => {
         const mutation = limitedAccess
@@ -75,7 +77,7 @@ const useAppealCase = () => {
 
         try {
           const { data } = await mutation({
-            variables: { input: { caseId } },
+            variables: { input: { caseId, rulingFileId } },
           })
 
           const res = data as CreateAppealCaseMutation &
@@ -144,13 +146,13 @@ const useAppealCase = () => {
           }
 
           if (setWorkingCase) {
-            setWorkingCase((prevWorkingCase) => ({
-              ...prevWorkingCase,
-              appealCase: {
-                ...prevWorkingCase.appealCase,
-                ...appealCase,
-              } as AppealCase,
-            }))
+            setWorkingCase((prevWorkingCase) =>
+              applyAppealCaseUpdate(
+                prevWorkingCase,
+                appealCaseId,
+                appealCase as Partial<AppealCase>,
+              ),
+            )
           }
 
           return true

@@ -8,6 +8,8 @@ import { IDSAdminPaths } from './lib/paths'
 import { m } from './lib/messages'
 import { createClientAction } from './screens/Client/CreateClient/CreateClient.action'
 import { tenantsLoader } from './screens/Tenants/Tenants.loader'
+import { editTenantLoader } from './screens/Tenants/EditTenant/EditTenant.loader'
+import { editTenantAction } from './screens/Tenants/EditTenant/EditTenant.action'
 import { tenantLoader, tenantLoaderId } from './screens/Tenant/Tenant.loader'
 import { clientsLoader } from './screens/Clients/Clients.loader'
 import { clientLoader } from './screens/Client/Client.loader'
@@ -20,12 +22,15 @@ import { apiScopeUsersLoader } from './screens/AdminControls/ApiScopeUsers/ApiSc
 import { apiScopeUsersAction } from './screens/AdminControls/ApiScopeUsers/ApiScopeUsers.action'
 import { grantTypesLoader } from './screens/AdminControls/GrantTypes/GrantTypes.loader'
 import { grantTypesAction } from './screens/AdminControls/GrantTypes/GrantTypes.action'
+import { idpProvidersLoader } from './screens/AdminControls/IdpProviders/IdpProviders.loader'
+import { idpProvidersAction } from './screens/AdminControls/IdpProviders/IdpProviders.action'
 
 const IDSAdmin = lazy(() => import('./screens/IDSAdmin'))
 
 // Tenant
 const Tenant = lazy(() => import('./screens/Tenant/Tenant'))
 const Tenants = lazy(() => import('./screens/Tenants/Tenants'))
+const EditTenant = lazy(() => import('./screens/Tenants/EditTenant'))
 
 // Client
 const ClientsScreen = lazy(() => import('./screens/Clients/Clients'))
@@ -51,7 +56,9 @@ const ApiScopeUsers = lazy(() =>
 const GrantTypes = lazy(() =>
   import('./screens/AdminControls/GrantTypes/GrantTypes'),
 )
-const IdpProviders = lazy(() => import('./screens/AdminControls/IdpProviders'))
+const IdpProviders = lazy(() =>
+  import('./screens/AdminControls/IdpProviders/IdpProviders'),
+)
 
 const allowedScopes: string[] = [
   AdminPortalScope.idsAdmin,
@@ -75,10 +82,7 @@ export const idsAdminModule: PortalModule = {
     )
     const showAdminControls =
       isSuperUser &&
-      (await featureFlagClient.getValue(Features.showIdsAdminControls, false, {
-        id: userInfo.profile.nationalId,
-        attributes: {},
-      }))
+      (await featureFlagClient.getValue(Features.showIdsAdminControls, false))
 
     return [
       {
@@ -127,14 +131,16 @@ export const idsAdminModule: PortalModule = {
                         backPath: IDSAdminPaths.IDSAdmin,
                       },
                     },
-                    // {
-                    //   name: m.idpProviders,
-                    //   path: IDSAdminPaths.IDSAdminControlsIdpProviders,
-                    //   element: <IdpProviders />,
-                    //   handle: {
-                    //     backPath: IDSAdminPaths.IDSAdmin,
-                    //   },
-                    // },
+                    {
+                      name: m.idpProviders,
+                      path: IDSAdminPaths.IDSAdminControlsIdpProviders,
+                      element: <IdpProviders />,
+                      loader: idpProvidersLoader(props),
+                      action: idpProvidersAction(props),
+                      handle: {
+                        backPath: IDSAdminPaths.IDSAdmin,
+                      },
+                    },
                   ],
                 },
               ]
@@ -160,6 +166,18 @@ export const idsAdminModule: PortalModule = {
               backPath: IDSAdminPaths.IDSAdmin,
             },
             children: [
+              {
+                name: m.editTenant,
+                path: IDSAdminPaths.IDSAdminTenantEdit,
+                enabled: showAdminControls,
+                navHide: !showAdminControls,
+                element: <EditTenant />,
+                loader: editTenantLoader(props),
+                action: editTenantAction(props),
+                handle: {
+                  backPath: IDSAdminPaths.IDSAdminClients,
+                },
+              },
               {
                 name: m.clients,
                 path: IDSAdminPaths.IDSAdminClients,

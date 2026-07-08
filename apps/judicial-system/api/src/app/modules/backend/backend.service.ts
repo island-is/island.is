@@ -29,6 +29,7 @@ import {
   SearchCasesResponse,
 } from '../case-table'
 import {
+  AppealDecisionResponse,
   CourtDocumentResponse,
   CourtSessionResponse,
   CourtSessionString,
@@ -53,6 +54,7 @@ import {
 } from '../file'
 import { DeleteResponse, IndictmentCount, Offense } from '../indictment-count'
 import { Institution } from '../institution'
+import { MessageSuspension } from '../message-suspension'
 import {
   PoliceCaseFile,
   PoliceCaseInfo,
@@ -209,6 +211,17 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.put(`user/${userId}`, updateUser)
   }
 
+  getMessageSuspensions(): Promise<MessageSuspension[]> {
+    return this.get('message-suspension')
+  }
+
+  updateMessageSuspension(
+    category: string,
+    updateMessageSuspension: unknown,
+  ): Promise<MessageSuspension> {
+    return this.patch(`message-suspension/${category}`, updateMessageSuspension)
+  }
+
   getCases(): Promise<CaseListEntry[]> {
     return this.get('cases')
   }
@@ -281,10 +294,6 @@ export class BackendService extends DataSource<{ req: Request }> {
   ): Promise<SignedUrl> {
     const searchParams = this.serializeNestedObject(query)
     return this.get(`cases/statistics/export-csv?${searchParams}`)
-  }
-
-  getConnectedCases(caseId: string): Promise<Case[]> {
-    return this.get(`case/${caseId}/connectedCases`)
   }
 
   getCandidateMergeCases(caseId: string): Promise<Case[]> {
@@ -391,9 +400,28 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.post(`case/${caseId}/notification`, sendNotification)
   }
 
+  sendAppealNotification(
+    caseId: string,
+    appealCaseId: string,
+    sendAppealNotification: unknown,
+  ): Promise<SendNotificationResponse> {
+    return this.post(
+      `case/${caseId}/appeal/${appealCaseId}/notification`,
+      sendAppealNotification,
+    )
+  }
+
   extendCase(caseId: string): Promise<Case> {
     return this.post<unknown, Case>(
       `case/${caseId}/extend`,
+      undefined,
+      caseTransformer,
+    )
+  }
+
+  duplicateIndictmentCase(caseId: string): Promise<Case> {
+    return this.post<unknown, Case>(
+      `case/${caseId}/duplicate`,
       undefined,
       caseTransformer,
     )
@@ -474,6 +502,10 @@ export class BackendService extends DataSource<{ req: Request }> {
 
   rejectCaseFile(caseId: string, fileId: string): Promise<CaseFile> {
     return this.post(`case/${caseId}/file/${fileId}/reject`)
+  }
+
+  confirmRulingOrder(caseId: string, fileId: string): Promise<CaseFile> {
+    return this.post(`case/${caseId}/file/${fileId}/confirm`)
   }
 
   deleteCaseFile(caseId: string, fileId: string): Promise<DeleteFileResponse> {
@@ -691,6 +723,13 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.delete(`case/${caseId}/indictmentCount/${indictmentCountId}`)
   }
 
+  reorderIndictmentCounts(
+    caseId: string,
+    body: unknown,
+  ): Promise<IndictmentCount[]> {
+    return this.patch(`case/${caseId}/indictmentCounts/reorder`, body)
+  }
+
   createCourtSession(
     caseId: string,
     createCourtSession: unknown,
@@ -717,6 +756,17 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.patch(
       `case/${caseId}/courtSession/${courtSessionId}/courtSessionString`,
       updateCourtSessionString,
+    )
+  }
+
+  updateCourtSessionAppealDecision(
+    caseId: string,
+    courtSessionId: string,
+    updateAppealDecision: unknown,
+  ): Promise<AppealDecisionResponse> {
+    return this.patch(
+      `case/${caseId}/courtSession/${courtSessionId}/appealDecision`,
+      updateAppealDecision,
     )
   }
 

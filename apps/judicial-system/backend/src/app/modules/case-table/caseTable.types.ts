@@ -1,8 +1,11 @@
 import { WhereOptions } from 'sequelize'
 
+import { DefendantEventType } from '@island.is/judicial-system/types'
+
 import {
   AppealCase,
   Case,
+  CaseFile,
   DateLog,
   Defendant,
   DefendantEventLog,
@@ -62,6 +65,7 @@ export const modelMap: {
   prosecutor: ModelDef<typeof User>
   registrar: ModelDef<typeof User>
   appealCase: ModelDef<typeof AppealCase>
+  rulingOrderAppealCases: ModelDef<typeof AppealCase>
 } = {
   dateLogs: { model: DateLog, separate: true, order: [['created', 'DESC']] },
   defendants: {
@@ -76,16 +80,19 @@ export const modelMap: {
   prosecutor: { model: User, separate: false },
   registrar: { model: User, separate: false },
   appealCase: { model: AppealCase, separate: false },
+  rulingOrderAppealCases: { model: AppealCase, separate: false },
 }
 
 export const subModelMap: {
   appealJudge1: ModelDef<typeof User>
   eventLogs: ModelDef<typeof DefendantEventLog>
+  rulingFile: ModelDef<typeof CaseFile>
   subpoenas: ModelDef<typeof Subpoena>
   verdicts: ModelDef<typeof Verdict>
 } = {
   appealJudge1: { model: User, separate: false },
   eventLogs: { model: DefendantEventLog, separate: true },
+  rulingFile: { model: CaseFile, separate: false },
   subpoenas: { model: Subpoena, separate: false, order: [['created', 'DESC']] },
   verdicts: { model: Verdict, separate: false, order: [['created', 'DESC']] },
 }
@@ -100,5 +107,35 @@ export const expandCasesWithDefendants = (cs: Case[]) =>
   cs.flatMap((c) => {
     const jsonCase = c.toJSON()
 
-    return (c.defendants ?? []).map((d) => ({ ...jsonCase, defendants: [d] }))
+    return (c.defendants ?? [])
+      .filter(
+        // Defendants whose indictment was cancelled or dismissed (completed for
+        // some) do not receive a verdict or a review decision, so they should
+        // not get their own row in these per-defendant case tables.
+        (d) =>
+          !DefendantEventLog.getEventLogByEventType(
+            [
+              DefendantEventType.INDICTMENT_CANCELLED,
+              DefendantEventType.INDICTMENT_DISMISSED,
+            ],
+            d.eventLogs,
+          ),
+      )
+      .map((d) => ({ ...jsonCase, defendants: [d] }))
+  })
+
+// Emits one synthetic case per qualifying appeal — the case-level appeal in
+// `appealCase` (when present) and each entry in `rulingOrderAppealCases`. Each
+// emitted case has the relevant appeal slotted into `appealCase`, so cell
+// generators reading `c.appealCase.X` work without modification. The
+// `rulingOrderAppealCases` array is dropped to prevent re-iteration downstream.
+export const expandCasesWithAppeals = (cs: Case[]) =>
+  cs.flatMap((c) => {
+    const jsonCase = c.toJSON()
+    const { rulingOrderAppealCases: _drop, ...rest } = jsonCase
+    const rulingOrderRows = (c.rulingOrderAppealCases ?? []).map(
+      (roa: AppealCase) => ({ ...rest, appealCase: roa }),
+    )
+
+    return rest.appealCase ? [rest, ...rulingOrderRows] : rulingOrderRows
   })

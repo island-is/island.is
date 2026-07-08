@@ -25,7 +25,9 @@ export type SitemapUrl = {
 }
 
 export const generateSitemapUrlString = (url: SitemapUrl) => {
-  const lastmod = url.lastmod ? `<lastmod>${url.lastmod}</lastmod>` : ''
+  const lastmod = url.lastmod
+    ? `<lastmod>${url.lastmod.split('.')[0]}+00:00</lastmod>`
+    : ''
   const xhtmlLinks =
     Boolean(url.loc[LOCALE]) && Boolean(url.loc[EN_LOCALE])
       ? `

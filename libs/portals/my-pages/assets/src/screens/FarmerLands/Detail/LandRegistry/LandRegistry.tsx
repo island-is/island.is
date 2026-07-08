@@ -3,7 +3,7 @@ import { ApolloError } from '@apollo/client'
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
-  Table,
+  PortalTable,
   createColumnHelper,
   m,
   formatNationalId,
@@ -49,13 +49,22 @@ export const LandRegistry = ({ landRegistry, loading, error }: Props) => {
       <T.Table>
         <T.Head>
           <T.Row>
-            <T.HeadData text={{ variant: 'small', fontWeight: 'semiBold' }}>
+            <T.HeadData
+              scope="col"
+              text={{ variant: 'small', fontWeight: 'semiBold' }}
+            >
               {formatMessage(fm.ownershipType)}
             </T.HeadData>
-            <T.HeadData text={{ variant: 'small', fontWeight: 'semiBold' }}>
+            <T.HeadData
+              scope="col"
+              text={{ variant: 'small', fontWeight: 'semiBold' }}
+            >
               {formatMessage(fm.usage)}
             </T.HeadData>
-            <T.HeadData text={{ variant: 'small', fontWeight: 'semiBold' }}>
+            <T.HeadData
+              scope="col"
+              text={{ variant: 'small', fontWeight: 'semiBold' }}
+            >
               {formatMessage(fm.share)}
             </T.HeadData>
           </T.Row>
@@ -83,7 +92,7 @@ export const LandRegistry = ({ landRegistry, loading, error }: Props) => {
 
   return (
     <Box marginTop={4}>
-      <Table
+      <PortalTable
         columns={columns}
         data={landRegistry}
         loading={loading}

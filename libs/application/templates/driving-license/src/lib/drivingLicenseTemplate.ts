@@ -4,6 +4,7 @@ import {
   coreHistoryMessages,
 } from '@island.is/application/core'
 import {
+  Application,
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
@@ -19,7 +20,6 @@ import {
   QualityPhotoAndSignatureApi,
   AllPhotosFromThjodskraApi,
   TeachersApi,
-  ExistingApplicationApi,
   InstitutionNationalIds,
   ApplicationConfigurations,
 } from '@island.is/application/types'
@@ -110,8 +110,14 @@ const DrivingLicenseTemplate: ApplicationTemplate<
                     featureFlags[DrivingLicenseFeatureFlags.ALLOW_BE_LICENSE],
                   allow65Renewal:
                     featureFlags[DrivingLicenseFeatureFlags.ALLOW_65_RENEWAL],
-                  allowAdvanced:
-                    featureFlags[DrivingLicenseFeatureFlags.ALLOW_ADVANCED],
+                  allow65RenewalRedesign:
+                    featureFlags[
+                      DrivingLicenseFeatureFlags.ALLOW_65_RENEWAL_REDESIGN
+                    ],
+                  allowBTempRedesign:
+                    featureFlags[
+                      DrivingLicenseFeatureFlags.ALLOW_B_TEMP_REDESIGN
+                    ],
                 })
               },
               write: 'all',
@@ -133,14 +139,6 @@ const DrivingLicenseTemplate: ApplicationTemplate<
                 QualityPhotoApi,
                 QualityPhotoAndSignatureApi,
                 AllPhotosFromThjodskraApi,
-                ExistingApplicationApi.configure({
-                  params: {
-                    states: [States.PAYMENT, States.DRAFT],
-                    where: {
-                      applicant: 'applicant',
-                    },
-                  },
-                }),
               ],
             },
           ],
@@ -167,7 +165,20 @@ const DrivingLicenseTemplate: ApplicationTemplate<
           name: m.applicationForDrivingLicense.defaultMessage,
           status: 'draft',
           progress: 0.4,
-          lifecycle: DefaultStateLifeCycle,
+          // BE drafts are short-lived (24h); all other license types keep the
+          // default 30 day lifecycle.
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: (application: Application) =>
+              new Date(
+                Date.now() +
+                  (application.answers.applicationFor === BE ? 1 : 30) *
+                    24 *
+                    3600 *
+                    1000,
+              ),
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -203,6 +214,9 @@ const DrivingLicenseTemplate: ApplicationTemplate<
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
         chargeItems: getCodes,
+        // Surface RLS's resolved submit-failure reason as a toast on the payment
+        // screen (the generic error screen is unchanged). Opt-in per template.
+        showSubmitErrorReason: true,
       }),
       [States.DONE]: {
         meta: {

@@ -8,14 +8,17 @@ import { useUpdateUserProfileMutation } from '../../../gen/schema'
 
 export const UserLanguageSwitcher = ({
   dropdown = false,
+  onButtonClick,
 }: {
   dropdown?: boolean
+  onButtonClick?: () => void
 }) => {
   const user = useUserInfo()
   const { lang, formatMessage, changeLanguage } = useLocale()
   const [updateUserProfileMutation] = useUpdateUserProfileMutation()
 
   const handleLanguageChange = async () => {
+    if (!dropdown) onButtonClick?.()
     const locale = lang === 'en' ? 'is' : 'en'
     const isDelegation = checkDelegation(user)
 

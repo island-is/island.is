@@ -9,15 +9,18 @@ import {
   CaseType,
 } from '@island.is/judicial-system/types'
 
+import { AwsS3Service } from '../../aws-s3/awsS3.service'
 import { AppealCase } from '../models/appealCase.model'
 import { Case } from '../models/case.model'
 import { CaseFile } from '../models/caseFile.model'
 import { CaseString } from '../models/caseString.model'
+import { CivilClaimant } from '../models/civilClaimant.model'
 import { DateLog } from '../models/dateLog.model'
 import { Defendant } from '../models/defendant.model'
 import { DefendantEventLog } from '../models/defendantEventLog.model'
 import { EventLog } from '../models/eventLog.model'
 import { IndictmentCount } from '../models/indictmentCount.model'
+import { Offense } from '../models/offense.model'
 import { Subpoena } from '../models/subpoena.model'
 import { Verdict } from '../models/verdict.model'
 import { Victim } from '../models/victim.model'
@@ -149,6 +152,11 @@ describe('CaseRepositoryService — police case number junction sync', () => {
           provide: getModelToken(IndictmentCount),
           useValue: indictmentCountModel,
         },
+        { provide: getModelToken(Offense), useValue: mockSequelizeModel() },
+        {
+          provide: getModelToken(CivilClaimant),
+          useValue: mockSequelizeModel(),
+        },
         { provide: getModelToken(CaseFile), useValue: caseFileModel },
         { provide: getModelToken(AppealCase), useValue: mockSequelizeModel() },
         {
@@ -161,6 +169,7 @@ describe('CaseRepositoryService — police case number junction sync', () => {
             findUnassignedPoliceCaseNumbersForSplit,
           },
         },
+        { provide: AwsS3Service, useValue: {} },
         CaseRepositoryService,
       ],
     }).compile()
@@ -215,6 +224,33 @@ describe('CaseRepositoryService — police case number junction sync', () => {
       expect(resolvePoliceCaseNumbersForCases).not.toHaveBeenCalled()
       expect(findDistinctPoliceCaseNumbersByCaseIds).not.toHaveBeenCalled()
       expect(built.policeCaseNumbers).toEqual(['x'])
+    })
+
+    it('resolves policeCaseNumbers for included merged cases', async () => {
+      const mergedCase = stubCase('merged-case-id', ['legacy-merged'])
+      const rootCase = stubCase('root-case-id', ['legacy-root'])
+      Object.assign(rootCase, {
+        mergedCases: [mergedCase],
+      })
+
+      caseModel.findOne.mockResolvedValue(rootCase)
+      findDistinctPoliceCaseNumbersByCaseIds.mockResolvedValue(
+        new Map([
+          ['root-case-id', ['007-2024-root']],
+          ['merged-case-id', ['007-2024-merged']],
+        ]),
+      )
+
+      await caseRepositoryService.findOne({
+        where: { id: 'root-case-id' },
+      })
+
+      expect(resolvePoliceCaseNumbersForCases).toHaveBeenCalledWith(
+        expect.arrayContaining([rootCase, mergedCase]),
+        { transaction: undefined },
+      )
+      expect(rootCase.policeCaseNumbers).toEqual(['007-2024-root'])
+      expect(mergedCase.policeCaseNumbers).toEqual(['007-2024-merged'])
     })
   })
 

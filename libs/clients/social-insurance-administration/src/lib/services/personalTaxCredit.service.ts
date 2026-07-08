@@ -1,17 +1,21 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { handle404 } from '@island.is/clients/middlewares'
+import { FetchError, handle404 } from '@island.is/clients/middlewares'
 import { Injectable } from '@nestjs/common'
+
 import {
   PersonalTaxCreditApi,
-  TrWebApiServicesCommonClientsEnumsPersonalTaxAllowanceAction,
-  TrWebApiServicesCommonClientsModelsDiscontinuePersonalTaxUsageInput,
-  TrWebApiServicesCommonClientsModelsEditPersonalTaxAllowanceInput,
-  TrWebApiServicesCommonClientsModelsYearWithMonthsDto,
-  TrWebApiServicesCommonClientsModelsGetTaxCardsReturn,
-  TrWebApiServicesCommonClientsModelsSetPersonalTaxAllowanceInput,
-  TrWebApiServicesCommonClientsModelsSpousalTaxCardUsageYearMonthResult,
-  TrWebApiServicesCommonClientsModelsSpouseTaxCardUsageDueToDeathInput,
-  TrWebApiServicesCommonClientsModelsSpouseTaxCardUsageInput,
+  TrWebApiServicesCommonClientsModelsGetTaxBracketReturn,
+  TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceDiscontinuePersonalTaxUsageInput,
+  TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceEditPersonalTaxAllowanceInput,
+  TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceGetTaxCardsReturn,
+  TrWebContractsExternalDigitalIcelandPersonalTaxAllowancePersonalTaxAllowanceAction,
+  TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSetPersonalTaxAllowanceInput,
+  TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpousalTaxCardUsageYearMonthResult,
+  TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseInfoResult,
+  TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageDueToDeathInput,
+  TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageInput,
+  TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceTaxBracketAction,
+  TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceYearWithMonthsDto,
 } from '../../../gen/fetch/v1'
 import { PersonalTaxCreditWriteApi } from '../socialInsuranceAdministrationClient.type'
 
@@ -30,9 +34,19 @@ export class SocialInsuranceAdministrationPersonalTaxCreditService {
       new AuthMiddleware(user as Auth),
     )
 
+  private extractErrorCode(error: unknown): string | null {
+    if (error instanceof FetchError) {
+      const errorBody = (error.problem ?? error.body) as
+        | { detail?: string }
+        | undefined
+      return errorBody?.detail ?? null
+    }
+    return null
+  }
+
   async getTaxAllowanceActions(
     user: User,
-  ): Promise<TrWebApiServicesCommonClientsEnumsPersonalTaxAllowanceAction> {
+  ): Promise<TrWebContractsExternalDigitalIcelandPersonalTaxAllowancePersonalTaxAllowanceAction> {
     return this.personalTaxCreditApiWithAuth(
       user,
     ).apiProtectedV1PersonalTaxCreditTaxAllowanceActionsGet()
@@ -40,7 +54,10 @@ export class SocialInsuranceAdministrationPersonalTaxCreditService {
 
   async getTaxCardMonthsAndYearsWhenDiscontinuing(
     user: User,
-  ): Promise<TrWebApiServicesCommonClientsModelsYearWithMonthsDto[] | null> {
+  ): Promise<
+    | TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceYearWithMonthsDto[]
+    | null
+  > {
     return this.personalTaxCreditApiWithAuth(user)
       .apiProtectedV1PersonalTaxCreditTaxCardMonthsAndYearsWhenDiscontinuingGet()
       .catch(handle404)
@@ -48,7 +65,7 @@ export class SocialInsuranceAdministrationPersonalTaxCreditService {
 
   async getTaxCards(
     user: User,
-  ): Promise<TrWebApiServicesCommonClientsModelsGetTaxCardsReturn | null> {
+  ): Promise<TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceGetTaxCardsReturn | null> {
     return this.personalTaxCreditApiWithAuth(user)
       .apiProtectedV1PersonalTaxCreditTaxCardsGet()
       .catch(handle404)
@@ -56,7 +73,10 @@ export class SocialInsuranceAdministrationPersonalTaxCreditService {
 
   async getTaxCardMonthsAndYears(
     user: User,
-  ): Promise<TrWebApiServicesCommonClientsModelsYearWithMonthsDto[] | null> {
+  ): Promise<
+    | TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceYearWithMonthsDto[]
+    | null
+  > {
     return this.personalTaxCreditApiWithAuth(user)
       .apiProtectedV1PersonalTaxCreditTaxCardMonthsAndYearsGet()
       .catch(handle404)
@@ -64,66 +84,117 @@ export class SocialInsuranceAdministrationPersonalTaxCreditService {
 
   async getSpouseDeceasedTaxAllowanceValidMonthsAndYears(
     user: User,
-  ): Promise<TrWebApiServicesCommonClientsModelsSpousalTaxCardUsageYearMonthResult | null> {
+  ): Promise<TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpousalTaxCardUsageYearMonthResult | null> {
     return this.personalTaxCreditApiWithAuth(user)
       .apiProtectedV1PersonalTaxCreditSpouseDeceasedTaxAllowanceValidMonthsAndYearsGet()
       .catch(handle404)
+      .catch((e) => {
+        // We need to be able to extract and return the reasonNotAllowed code
+        // for the frontend to display the correct error message
+        if (!(e instanceof FetchError)) throw e
+        const code = this.extractErrorCode(e)
+        if (!code) throw e
+        return {
+          canApply: false,
+          reasonNotAllowed: code,
+          allowedYearMonths: [],
+        } as TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpousalTaxCardUsageYearMonthResult
+      })
   }
 
   async setTaxCardAllowance(
     user: User,
-    input: TrWebApiServicesCommonClientsModelsSetPersonalTaxAllowanceInput,
+    input: TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSetPersonalTaxAllowanceInput,
   ): Promise<void> {
     await this.personalTaxCreditWriteApiWithAuth(
       user,
     ).apiProtectedV1PersonalTaxCreditSetTaxCardAllowancePost({
-      trWebApiServicesCommonClientsModelsSetPersonalTaxAllowanceInput: input,
+      trWebContractsExternalDigitalIcelandPersonalTaxAllowanceSetPersonalTaxAllowanceInput:
+        input,
     })
   }
 
   async editTaxCardAllowance(
     user: User,
-    input: TrWebApiServicesCommonClientsModelsEditPersonalTaxAllowanceInput,
+    input: TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceEditPersonalTaxAllowanceInput,
   ): Promise<void> {
     await this.personalTaxCreditWriteApiWithAuth(
       user,
     ).apiProtectedV1PersonalTaxCreditEditTaxCardAllowancePut({
-      trWebApiServicesCommonClientsModelsEditPersonalTaxAllowanceInput: input,
+      trWebContractsExternalDigitalIcelandPersonalTaxAllowanceEditPersonalTaxAllowanceInput:
+        input,
     })
   }
 
   async discontinueTaxCardAllowance(
     user: User,
-    input: TrWebApiServicesCommonClientsModelsDiscontinuePersonalTaxUsageInput,
+    input: TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceDiscontinuePersonalTaxUsageInput,
   ): Promise<void> {
     await this.personalTaxCreditWriteApiWithAuth(
       user,
     ).apiProtectedV1PersonalTaxCreditDiscontinueTaxCardAllowancePost({
-      trWebApiServicesCommonClientsModelsDiscontinuePersonalTaxUsageInput:
+      trWebContractsExternalDigitalIcelandPersonalTaxAllowanceDiscontinuePersonalTaxUsageInput:
         input,
     })
   }
 
   async setSpouseTaxCard(
     user: User,
-    input: TrWebApiServicesCommonClientsModelsSpouseTaxCardUsageInput,
+    input: TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageInput,
   ): Promise<void> {
-    await this.personalTaxCreditWriteApiWithAuth(
+    const result = await this.personalTaxCreditWriteApiWithAuth(
       user,
     ).apiProtectedV1PersonalTaxCreditSpouseTaxCardPost({
-      trWebApiServicesCommonClientsModelsSpouseTaxCardUsageInput: input,
+      trWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageInput:
+        input,
     })
+    if (result.success === false) {
+      throw new Error('spouse tax card update failed')
+    }
   }
 
   async setSpouseTaxCardDueToDeath(
     user: User,
-    input: TrWebApiServicesCommonClientsModelsSpouseTaxCardUsageDueToDeathInput,
+    input: TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageDueToDeathInput,
   ): Promise<void> {
-    await this.personalTaxCreditWriteApiWithAuth(
+    const result = await this.personalTaxCreditWriteApiWithAuth(
       user,
     ).apiProtectedV1PersonalTaxCreditSpouseTaxCardDueToDeathPost({
-      trWebApiServicesCommonClientsModelsSpouseTaxCardUsageDueToDeathInput:
+      trWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageDueToDeathInput:
         input,
     })
+    if (result.success === false) {
+      throw new Error('spouse tax card due to death update failed')
+    }
+  }
+
+  async getSpouseInfo(
+    user: User,
+  ): Promise<TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseInfoResult | null> {
+    return this.personalTaxCreditApiWithAuth(user)
+      .apiProtectedV1PersonalTaxCreditSpouseInfoGet()
+      .catch(handle404)
+  }
+
+  async getTaxBracketActions(
+    user: User,
+  ): Promise<TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceTaxBracketAction> {
+    return this.personalTaxCreditApiWithAuth(
+      user,
+    ).apiProtectedV1PersonalTaxCreditTaxBracketActionsGet()
+  }
+
+  async getTaxBracket(
+    user: User,
+  ): Promise<TrWebApiServicesCommonClientsModelsGetTaxBracketReturn> {
+    return this.personalTaxCreditApiWithAuth(
+      user,
+    ).apiProtectedV1PersonalTaxCreditTaxBracketGet()
+  }
+
+  async setTaxBracket(user: User, taxBracket: string): Promise<void> {
+    await this.personalTaxCreditApiWithAuth(
+      user,
+    ).apiProtectedV1PersonalTaxCreditTaxBracketPost({ body: taxBracket })
   }
 }

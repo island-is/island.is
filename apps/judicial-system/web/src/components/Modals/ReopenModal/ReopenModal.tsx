@@ -3,9 +3,9 @@ import { useRouter } from 'next/router'
 
 import {
   COURT_OF_APPEAL_CASE_ROUTE,
-  INDICTMENTS_COURT_OVERVIEW_ROUTE,
-  INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
-  RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
+  DISTRICT_COURT_INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
+  DISTRICT_COURT_RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
   isCourtOfAppealsUser,
@@ -25,7 +25,9 @@ import {
 import {
   useAppealCase,
   useCase,
+  useTargetAppealCaseByAppealCaseId,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { appendAppealCaseIdQuery } from '@island.is/judicial-system-web/src/utils/utils'
 
 interface Props {
   onClose: () => void
@@ -37,25 +39,31 @@ const ReopenModal: FC<Props> = ({ onClose }) => {
   const { user } = useContext(UserContext)
   const { transitionCase, isTransitioningCase } = useCase()
   const { transitionAppealCase, isTransitioningAppealCase } = useAppealCase()
+  const targetAppealCase = useTargetAppealCaseByAppealCaseId()
 
   const handlePrimaryButtonClick = async () => {
     const caseTransitioned = isCourtOfAppealsUser(user)
       ? await transitionAppealCase(
           workingCase.id,
-          workingCase.appealCase?.id ?? '',
+          targetAppealCase?.id ?? workingCase.appealCase?.id ?? '',
           AppealCaseTransition.REOPEN_APPEAL,
         )
-      : await transitionCase(workingCase.id, CaseTransition.REOPEN)
+      : isRequestCase(workingCase.type)
+      ? await transitionCase(workingCase.id, CaseTransition.REOPEN)
+      : await transitionCase(workingCase.id, CaseTransition.CORRECT)
 
     if (caseTransitioned) {
       router.push(
         isCourtOfAppealsUser(user)
-          ? `${COURT_OF_APPEAL_CASE_ROUTE}/${workingCase.id}`
+          ? appendAppealCaseIdQuery(
+              `${COURT_OF_APPEAL_CASE_ROUTE}/${workingCase.id}`,
+              targetAppealCase?.id,
+            )
           : isRestrictionCase(workingCase.type)
-          ? `${RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`
+          ? `${DISTRICT_COURT_RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`
           : isInvestigationCase(workingCase.type)
-          ? `${INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`
-          : `${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${workingCase.id}`,
+          ? `${DISTRICT_COURT_INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`
+          : `${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${workingCase.id}`,
       )
     }
   }
