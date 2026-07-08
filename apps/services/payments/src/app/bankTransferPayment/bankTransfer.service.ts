@@ -513,9 +513,10 @@ export class BankTransferService {
         },
       )
     } catch (error) {
-      // Fulfillment is committed; we don't un-pay. Missing FJS charge needs manual reconciliation.
-      this.logger.error(
-        `[${paymentFlowId}] CRITICAL: bank transfer settled but FJS charge failed after retries — manual reconciliation required`,
+      // Fulfillment is committed; we don't un-pay. The payment worker reconciles fulfillments
+      // that lack an FJS charge, so this inline failure is retried automatically — not critical.
+      this.logger.warn(
+        `[${paymentFlowId}] Bank transfer settled but inline FJS charge failed after retries — the payment worker will retry`,
         {
           errorName: (error as Error)?.name,
           error: (error as Error)?.message,
