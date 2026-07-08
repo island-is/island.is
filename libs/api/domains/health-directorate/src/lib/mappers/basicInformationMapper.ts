@@ -109,9 +109,9 @@ export const toAppointmentLinkTypeEnum = (
 // hardcoding the rules independently.
 export const getAppointmentLinkActivationWindow = (
   type: AppointmentLinkTypeEnum | undefined,
-  appointmentDate?: Date,
+  appointmentDate: Date,
 ): { activatesAt?: Date; expiresAt?: Date } => {
-  if (type !== AppointmentLinkTypeEnum.VIDEO_CALL || !appointmentDate) {
+  if (type !== AppointmentLinkTypeEnum.VIDEO_CALL) {
     return {}
   }
 
