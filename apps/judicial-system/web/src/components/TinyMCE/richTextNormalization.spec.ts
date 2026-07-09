@@ -190,15 +190,15 @@ describe('normalizeRichTextHtml', () => {
 
   describe('indentation', () => {
     it('converts a one-level Word indent (36pt) to an indent class', () => {
-      expect(normalizeRichTextHtml('<p style="margin-left:36.0pt;">x</p>')).toBe(
-        '<p class="indent-1">x</p>',
-      )
+      expect(
+        normalizeRichTextHtml('<p style="margin-left:36.0pt;">x</p>'),
+      ).toBe('<p class="indent-1">x</p>')
     })
 
     it('converts a two-level Word indent (72pt) to an indent class', () => {
-      expect(normalizeRichTextHtml('<p style="margin-left:72.0pt;">x</p>')).toBe(
-        '<p class="indent-2">x</p>',
-      )
+      expect(
+        normalizeRichTextHtml('<p style="margin-left:72.0pt;">x</p>'),
+      ).toBe('<p class="indent-2">x</p>')
     })
 
     it('rounds px margins to the nearest indent step', () => {
@@ -210,9 +210,9 @@ describe('normalizeRichTextHtml', () => {
     it('converts a legacy inline padding-left indent', () => {
       // Content saved before the switch to classes stored indentation as
       // padding-left inline styles.
-      expect(normalizeRichTextHtml('<p style="padding-left: 40px;">x</p>')).toBe(
-        '<p class="indent-1">x</p>',
-      )
+      expect(
+        normalizeRichTextHtml('<p style="padding-left: 40px;">x</p>'),
+      ).toBe('<p class="indent-1">x</p>')
     })
 
     it('removes margins smaller than half an indent step', () => {
@@ -277,7 +277,8 @@ describe('normalizeRichTextHtml', () => {
   })
 
   it('does not change already-normalized class-based content', () => {
-    const html = '<p class="indent-1"><span class="hl-ffff00">a</span> and b</p>'
+    const html =
+      '<p class="indent-1"><span class="hl-ffff00">a</span> and b</p>'
     expect(normalizeRichTextHtml(html)).toBe(html)
   })
 

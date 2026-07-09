@@ -208,10 +208,7 @@ const TinyMCE = ({
       editor.undoManager.transact(() => {
         blocks.forEach((block) => {
           const current = getIndentLevel(block)
-          const next = Math.min(
-            MAX_INDENT_LEVEL,
-            Math.max(0, current + delta),
-          )
+          const next = Math.min(MAX_INDENT_LEVEL, Math.max(0, current + delta))
           if (next === current) return
           if (current > 0) {
             editor.dom.removeClass(block, indentClassFromLevel(current))
