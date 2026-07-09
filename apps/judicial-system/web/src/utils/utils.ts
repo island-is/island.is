@@ -356,8 +356,10 @@ export const getAppealActorText = (
         workingCase,
         AppealDecisionPartyRole.PROSECUTOR,
       ) === CaseAppealDecision.APPEAL ||
-      caseLevelAppealDecision(workingCase, AppealDecisionPartyRole.DEFENDANT) ===
-        CaseAppealDecision.APPEAL
+      caseLevelAppealDecision(
+        workingCase,
+        AppealDecisionPartyRole.DEFENDANT,
+      ) === CaseAppealDecision.APPEAL
 
     if (appealedInCourt) {
       return appealCase?.appealedByRole === UserRole.PROSECUTOR
