@@ -15,9 +15,9 @@ describe('pathIsProjectPage', () => {
   })
 
   it('strips query and hash before resolving', () => {
-    expect(
-      pathIsProjectPage('/v/thjodaratkvaedagreidsla-2026?foo=bar#x'),
-    ).toBe(true)
+    expect(pathIsProjectPage('/v/thjodaratkvaedagreidsla-2026?foo=bar#x')).toBe(
+      true,
+    )
   })
 
   it('detects project subpaths', () => {
@@ -45,9 +45,9 @@ describe('extractOrganizationSlugFromPathname', () => {
   })
 
   it('extracts the slug from an English org page under /en/o/', () => {
-    expect(
-      extractOrganizationSlugFromPathname('/en/o/blodbankinn', 'en'),
-    ).toBe('blodbankinn')
+    expect(extractOrganizationSlugFromPathname('/en/o/blodbankinn', 'en')).toBe(
+      'blodbankinn',
+    )
   })
 
   it('returns an empty string for the front page', () => {
@@ -78,9 +78,9 @@ describe('header simplified-header rule', () => {
   })
 
   it('hides navigation on project (verkefni) pages', () => {
-    expect(
-      showHeaderNavigation('/v/thjodaratkvaedagreidsla-2026', 'is'),
-    ).toBe(false)
+    expect(showHeaderNavigation('/v/thjodaratkvaedagreidsla-2026', 'is')).toBe(
+      false,
+    )
   })
 
   it('shows navigation on the front page', () => {
