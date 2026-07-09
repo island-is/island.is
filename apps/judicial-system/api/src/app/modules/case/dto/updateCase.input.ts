@@ -335,26 +335,6 @@ export class UpdateCaseInput {
 
   @Allow()
   @IsOptional()
-  @Field(() => CaseAppealDecision, { nullable: true })
-  readonly accusedAppealDecision?: CaseAppealDecision
-
-  @Allow()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  readonly accusedAppealAnnouncement?: string
-
-  @Allow()
-  @IsOptional()
-  @Field(() => CaseAppealDecision, { nullable: true })
-  readonly prosecutorAppealDecision?: CaseAppealDecision
-
-  @Allow()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  readonly prosecutorAppealAnnouncement?: string
-
-  @Allow()
-  @IsOptional()
   @Field(() => String, { nullable: true })
   readonly rulingSignatureDate?: string
 

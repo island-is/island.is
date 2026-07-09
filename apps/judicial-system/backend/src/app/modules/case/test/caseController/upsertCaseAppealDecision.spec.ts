@@ -51,7 +51,7 @@ describe('CaseController - Upsert case appeal decision', () => {
 
   const requestCase = { id: caseId, type: CaseType.CUSTODY } as Case
 
-  it('writes the prosecutor row and reverse-mirrors the prosecutor columns', async () => {
+  it('writes the prosecutor row', async () => {
     await upsert(requestCase, {
       partyRole: AppealDecisionPartyRole.PROSECUTOR,
       decision: CaseAppealDecision.APPEAL,
@@ -67,17 +67,9 @@ describe('CaseController - Upsert case appeal decision', () => {
       { decision: CaseAppealDecision.APPEAL, announcement: 'Sækjandi kærir' },
       { transaction },
     )
-    expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
-      caseId,
-      {
-        prosecutorAppealDecision: CaseAppealDecision.APPEAL,
-        prosecutorAppealAnnouncement: 'Sækjandi kærir',
-      },
-      { transaction },
-    )
   })
 
-  it('writes the collective defendant row and reverse-mirrors the accused columns', async () => {
+  it('writes the collective defendant row', async () => {
     await upsert(requestCase, {
       partyRole: AppealDecisionPartyRole.DEFENDANT,
       decision: CaseAppealDecision.ACCEPT,
@@ -92,22 +84,21 @@ describe('CaseController - Upsert case appeal decision', () => {
       { decision: CaseAppealDecision.ACCEPT },
       { transaction },
     )
-    expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
-      caseId,
-      { accusedAppealDecision: CaseAppealDecision.ACCEPT },
-      { transaction },
-    )
   })
 
-  it('mirrors only the announcement when no decision is provided', async () => {
+  it('writes only the announcement when no decision is provided', async () => {
     await upsert(requestCase, {
       partyRole: AppealDecisionPartyRole.PROSECUTOR,
       announcement: 'Bókun',
     })
 
-    expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
-      caseId,
-      { prosecutorAppealAnnouncement: 'Bókun' },
+    expect(mockAppealDecisionRepositoryService.upsert).toHaveBeenCalledWith(
+      {
+        caseId,
+        rulingFileId: null,
+        partyRole: AppealDecisionPartyRole.PROSECUTOR,
+      },
+      { announcement: 'Bókun' },
       { transaction },
     )
   })

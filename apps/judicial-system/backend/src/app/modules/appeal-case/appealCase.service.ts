@@ -228,11 +228,15 @@ export class AppealCaseService {
     user: User,
     fileCategories: CaseFileCategory[],
   ): void {
-    // If case was appealed in court we don't need to send these messages
-    if (
-      theCase.accusedAppealDecision === CaseAppealDecision.APPEAL ||
-      theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL
-    ) {
+    // If case was appealed in court we don't need to send these messages. The
+    // in-court stance is on the case-level appeal_decision rows (ruling_file_id
+    // null) now that the accused/prosecutor appeal decision columns are gone.
+    const appealedInCourt = theCase.appealDecisions?.some(
+      (decision) =>
+        !decision.rulingFileId &&
+        decision.decision === CaseAppealDecision.APPEAL,
+    )
+    if (appealedInCourt) {
       return
     }
 
