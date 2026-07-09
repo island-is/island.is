@@ -16,3 +16,9 @@ export interface Parent {
   needsInterpreter?: string[]
   preferredLanguage?: string
 }
+
+export type Category = {
+  code: string
+  label: string
+  subCategories?: Category[]
+}

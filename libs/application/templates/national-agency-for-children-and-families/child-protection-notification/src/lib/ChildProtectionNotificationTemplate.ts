@@ -17,7 +17,7 @@ import {
 import { CodeOwners } from '@island.is/shared/constants'
 import { AuthDelegationType } from '@island.is/shared/types'
 
-import { IdentityApiProvider } from '../dataProviders'
+import { CategoriesApi, IdentityApiProvider } from '../dataProviders'
 import {
   overviewMessages,
   prerequisitesMessages,
@@ -67,7 +67,7 @@ const template: ApplicationTemplate<
                 ],
                 write: 'all' as const,
                 read: 'all' as const,
-                api: [UserProfileApi, IdentityApiProvider],
+                api: [UserProfileApi, IdentityApiProvider, CategoriesApi],
                 delete: true,
               }),
             ),
@@ -86,7 +86,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all' as const,
               read: 'all' as const,
-              api: [UserProfileApi, IdentityApiProvider],
+              api: [UserProfileApi, IdentityApiProvider, CategoriesApi],
               delete: true,
             },
           ],
