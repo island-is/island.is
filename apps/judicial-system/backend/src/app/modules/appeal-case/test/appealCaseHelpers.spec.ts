@@ -2,10 +2,11 @@ import {
   AppealEventType,
   CaseType,
   InstitutionType,
+  User,
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { AppealCase, AppealEventLog, Case, User } from '../../repository'
+import { AppealCase, AppealEventLog, Case } from '../../repository'
 import {
   appellantRepresentativeNationalIds,
   userIsAppellant,
