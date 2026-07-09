@@ -1,5 +1,5 @@
 import { PortalModule } from '@island.is/portals/core'
-import { lazy } from 'react'
+import { lazy, type JSX } from 'react'
 import { useNamespaces } from '@island.is/localization'
 import { m } from './lib/messages'
 import { SignatureCollectionPaths } from './lib/paths'

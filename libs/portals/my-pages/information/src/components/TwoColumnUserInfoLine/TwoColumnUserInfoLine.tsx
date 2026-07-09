@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, type JSX } from 'react'
 import {
   Box,
   Text,

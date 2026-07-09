@@ -8,6 +8,8 @@ import { BE } from '../lib/constants'
 import { needsHealthCertificateCondition } from '../lib/utils/formUtils'
 import { useFormContext } from 'react-hook-form'
 
+import type { JSX } from 'react'
+
 interface PropTypes extends FieldBaseProps {
   field: CustomField
 }

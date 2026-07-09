@@ -85,9 +85,13 @@ export const Tooltip: FC<React.PropsWithChildren<TooltipProps>> = ({
   return (
     <>
       {children ? (
-        <TooltipReference {...tooltip} {...children.props}>
-          {(referenceProps: any) =>
-            React.cloneElement(children, referenceProps)
+        // reakit's render-prop types predate React 19's stricter ReactElement typing
+        // (runtime unaffected); the `as any` casts keep the unknown-props spread and the
+        // function child compiling. Remove when this migrates to ariakit.
+        <TooltipReference {...tooltip} {...(children.props as any)}>
+          {
+            ((referenceProps: any) =>
+              React.cloneElement(children, referenceProps)) as any
           }
         </TooltipReference>
       ) : (
