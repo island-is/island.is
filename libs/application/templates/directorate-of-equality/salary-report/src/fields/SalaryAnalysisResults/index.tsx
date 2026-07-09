@@ -6,7 +6,6 @@ import { FieldBaseProps } from '@island.is/application/types'
 import {
   AlertMessage,
   Box,
-  Button,
   GridColumn,
   GridRow,
   LoadingDots,
@@ -82,21 +81,6 @@ export const SalaryAnalysisResults: FC<
 
   return (
     <Box>
-      <Box marginBottom={3}>
-        <Button
-          onClick={handleAnalyze}
-          disabled={isAnalyzing}
-          variant={result ? 'ghost' : 'primary'}
-          size="small"
-        >
-          {formatMessage(
-            result
-              ? messages.salaryAnalysis.results.recalculateButton
-              : messages.salaryAnalysis.results.analyzeButton,
-          )}
-        </Button>
-      </Box>
-
       {isAnalyzing && (
         <Box display="flex" justifyContent="center" paddingY={5}>
           <LoadingDots />
