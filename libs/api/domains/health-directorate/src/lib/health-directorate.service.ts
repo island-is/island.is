@@ -33,6 +33,7 @@ import {
 import { PermitInput } from './dto/permit.input'
 import { HealthDirectorateResponse } from './dto/response.dto'
 import {
+  getAppointmentLinkActivationWindow,
   mapAppointmentStatus,
   toAppointmentAssigneeTypeEnum,
   toAppointmentLinkTypeEnum,
@@ -703,7 +704,14 @@ export class HealthDirectorateService {
       links: item.links
         ?.map((l) => {
           const type = toAppointmentLinkTypeEnum(l.type)
-          return type ? { type, url: l.url } : null
+          if (!type) {
+            return null
+          }
+          return {
+            type,
+            url: l.url,
+            ...getAppointmentLinkActivationWindow(type, item.startTime),
+          }
         })
         .filter(isDefined),
     }
