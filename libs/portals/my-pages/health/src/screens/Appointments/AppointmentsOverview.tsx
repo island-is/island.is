@@ -1,21 +1,30 @@
 import { HealthDirectorateAppointmentStatus } from '@island.is/api/schema'
-import { Box, DatePicker, Filter, Input } from '@island.is/island-ui/core'
+import {
+  Box,
+  DatePicker,
+  Filter,
+  Input,
+  Pagination,
+} from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
-  formatDate,
   HEALTH_DIRECTORATE_SLUG,
   IntroWrapper,
   m,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
-import { useState } from 'react'
+import { debounceTime } from '@island.is/shared/constants'
+import { useEffect, useState } from 'react'
+import { useDebounce } from 'react-use'
 import { messages } from '../../lib/messages'
 import { DEFAULT_APPOINTMENTS_STATUS } from '../../utils/constants'
 import Appointments from '../HealthOverview/components/Appointments'
 import { useGetAppointmentsQuery } from './Appointments.generated'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 import * as styles from './AppointmentsOverview.css'
+
+const DEFAULT_PAGE_SIZE = 10
 
 interface Filter {
   statuses: HealthDirectorateAppointmentStatus[]
@@ -29,11 +38,26 @@ const AppointmentsOverview = () => {
   const { formatMessage } = useLocale()
   useHealthPlausibleSwap()
 
+  const [page, setPage] = useState(1)
   const [filter, setFilter] = useState<Filter>({
     statuses: [],
     dates: {},
   })
   const [searchTerm, setSearchTerm] = useState<string>('')
+  const [activeSearch, setActiveSearch] = useState<string>('')
+
+  useDebounce(
+    () => {
+      setActiveSearch(searchTerm)
+    },
+    debounceTime.search,
+    [searchTerm],
+  )
+
+  useEffect(() => {
+    setPage(1)
+  }, [filter, activeSearch])
+
   const { data, loading, error } = useGetAppointmentsQuery({
     variables: {
       from: filter.dates?.from,
@@ -41,29 +65,20 @@ const AppointmentsOverview = () => {
         filter.statuses.length > 0
           ? filter.statuses
           : DEFAULT_APPOINTMENTS_STATUS,
+      page,
+      pageSize: DEFAULT_PAGE_SIZE,
+      search: activeSearch || undefined,
     },
   })
 
   const appointments = data?.healthDirectorateAppointments
   const hasAppointments = (appointments?.data?.length ?? 0) > 0
 
-  const filteredData = (() => {
-    if (!appointments?.data || !searchTerm) return appointments?.data ?? []
-
-    const search = searchTerm.trim().toLowerCase()
-
-    return appointments.data.filter((a) =>
-      [
-        a.title,
-        formatDate(a.date ?? ''),
-        a.location?.address,
-        a.location?.name,
-        ...(a.practitioners ?? []),
-      ]
-        .filter(Boolean)
-        .some((value) => value?.toLowerCase().includes(search)),
-    )
-  })()
+  const totalCount = appointments?.totalCount ?? 0
+  const totalPages =
+    totalCount > DEFAULT_PAGE_SIZE
+      ? Math.ceil(totalCount / DEFAULT_PAGE_SIZE)
+      : 0
 
   return (
     <IntroWrapper
@@ -86,7 +101,8 @@ const AppointmentsOverview = () => {
           !error &&
           (hasAppointments ||
             filter.statuses.length > 0 ||
-            filter.dates?.from) && (
+            filter.dates?.from ||
+            searchTerm !== '') && (
             <Box marginBottom={[1, 1, 3]}>
               <Filter
                 labelClearAll={formatMessage(m.clearAllFilters)}
@@ -198,13 +214,31 @@ const AppointmentsOverview = () => {
       {!error && !loading && hasAppointments && (
         <Appointments
           data={{
-            data: { data: filteredData },
+            data: appointments,
             loading,
             error: error ? true : false,
           }}
           showLinkButton={false}
         />
       )}
+      {totalPages > 0 ? (
+        <Box paddingTop={8}>
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            renderLink={(page, className, children) => (
+              <Box
+                cursor="pointer"
+                className={className}
+                onClick={() => setPage(page)}
+                component="button"
+              >
+                {children}
+              </Box>
+            )}
+          />
+        </Box>
+      ) : null}
     </IntroWrapper>
   )
 }
