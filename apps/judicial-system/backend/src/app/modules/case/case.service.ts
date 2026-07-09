@@ -84,6 +84,7 @@ import {
   AppealCaseRepositoryService,
   AppealDecision,
   AppealDecisionRepositoryService,
+  AppealEventLog,
   AppealEventLogRepositoryService,
   Case,
   caseInclude,
