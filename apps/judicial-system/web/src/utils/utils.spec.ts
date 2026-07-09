@@ -821,6 +821,127 @@ describe('Utils', () => {
         userHasActiveInCourtAppeal(workingCase, undefined, rulingFileId),
       ).toBe(false)
     })
+
+    it('is true when one of several represented clients still has a standing appeal', () => {
+      const otherDefendantId = 'defendant-2'
+      // The defender represents two defendants: the first accepted in court, the
+      // second appealed and has not withdrawn. Resolving across all represented
+      // parties, the defender may still withdraw.
+      const workingCase = {
+        defendants: [
+          {
+            id: defendantId,
+            isDefenderChoiceConfirmed: true,
+            defenderNationalId,
+          },
+          {
+            id: otherDefendantId,
+            isDefenderChoiceConfirmed: true,
+            defenderNationalId,
+          },
+        ],
+        civilClaimants: [],
+        appealDecisions: [
+          {
+            partyRole: AppealDecisionPartyRole.DEFENDANT,
+            defendantId,
+            decision: CaseAppealDecision.ACCEPT,
+            rulingFileId,
+          },
+          {
+            partyRole: AppealDecisionPartyRole.DEFENDANT,
+            defendantId: otherDefendantId,
+            decision: CaseAppealDecision.APPEAL,
+            rulingFileId,
+          },
+        ],
+      } as unknown as Case
+
+      expect(
+        userHasActiveInCourtAppeal(workingCase, defenceUser, rulingFileId),
+      ).toBe(true)
+    })
+  })
+
+  describe('isCurrentAppellantRepresentative', () => {
+    it('is true for the current confirmed defender of the appellant defendant', () => {
+      const workingCase = {
+        defendants: [
+          {
+            id: 'd-1',
+            isDefenderChoiceConfirmed: true,
+            defenderNationalId: '0101011010',
+          },
+        ],
+      } as Case
+      const appealCase = { appealedByDefendantId: 'd-1' } as AppealCase
+
+      expect(
+        isCurrentAppellantRepresentative(workingCase, appealCase, '0101011010'),
+      ).toBe(true)
+    })
+
+    it('is false for a different national id (survives a defender swap)', () => {
+      const workingCase = {
+        defendants: [
+          {
+            id: 'd-1',
+            isDefenderChoiceConfirmed: true,
+            defenderNationalId: 'new-defender',
+          },
+        ],
+      } as unknown as Case
+      const appealCase = { appealedByDefendantId: 'd-1' } as AppealCase
+
+      // The old (frozen) defender no longer matches; only the current one does.
+      expect(
+        isCurrentAppellantRepresentative(
+          workingCase,
+          appealCase,
+          'old-defender',
+        ),
+      ).toBe(false)
+      expect(
+        isCurrentAppellantRepresentative(
+          workingCase,
+          appealCase,
+          'new-defender',
+        ),
+      ).toBe(true)
+    })
+
+    it('is true for the current confirmed spokesperson of the appellant civil claimant', () => {
+      const workingCase = {
+        civilClaimants: [
+          {
+            id: 'cc-1',
+            hasSpokesperson: true,
+            isSpokespersonConfirmed: true,
+            spokespersonNationalId: '0303033030',
+          },
+        ],
+      } as unknown as Case
+      const appealCase = { appealedByCivilClaimantId: 'cc-1' } as AppealCase
+
+      expect(
+        isCurrentAppellantRepresentative(workingCase, appealCase, '0303033030'),
+      ).toBe(true)
+    })
+
+    it('is false when there is no appellant party or no user', () => {
+      const workingCase = { defendants: [] } as unknown as Case
+
+      expect(
+        isCurrentAppellantRepresentative(workingCase, {} as AppealCase, '123'),
+      ).toBe(false)
+      expect(
+        isCurrentAppellantRepresentative(
+          workingCase,
+          { appealedByDefendantId: 'd-1' } as AppealCase,
+          undefined,
+        ),
+      ).toBe(false)
+    })
   })
 
   describe('isCurrentAppellantRepresentative', () => {
