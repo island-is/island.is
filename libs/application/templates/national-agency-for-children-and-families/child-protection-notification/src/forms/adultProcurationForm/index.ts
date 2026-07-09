@@ -1,13 +1,13 @@
 import { buildForm } from '@island.is/application/core'
 import { FormModes } from '@island.is/application/types'
-
+import { childInfoManualSection } from '../shared/childInfoManualSection'
+import { parentsSection } from '../shared/parentsSection'
 import { overviewSection } from './overviewSection'
-import { delegationSection } from './delegationSection'
 
 export const AdultProcurationForm = buildForm({
   id: 'AdultProcurationForm',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  children: [delegationSection, overviewSection],
+  children: [childInfoManualSection, parentsSection, overviewSection],
 })
