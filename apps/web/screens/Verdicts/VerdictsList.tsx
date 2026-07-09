@@ -1000,7 +1000,7 @@ const Filters = ({
   )
 }
 
-const VerdictsWebsiteLinks = ({
+const CourtWebsiteLinks = ({
   links,
   layout = 'grid',
   showEyebrow = true,
@@ -1056,7 +1056,7 @@ const VerdictsWebsiteLinks = ({
   )
 }
 
-const VerdictsWebsiteLinksDropdown = ({
+const CourtWebsiteLinksDropdown = ({
   links,
 }: {
   links: { label: string; href: string }[]
@@ -1088,7 +1088,7 @@ const VerdictsWebsiteLinksDropdown = ({
         </Box>
         {isOpen && (
           <Box className={styles.verdictsWebsiteLinksDropdown} padding={3}>
-            <VerdictsWebsiteLinks
+            <CourtWebsiteLinks
               links={links}
               layout="stack"
               showEyebrow={false}
@@ -1320,8 +1320,8 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
 
   const description = formatMessage(m.listPage.description)
 
-  const verdictsWebsiteLinks: { label: string; href: string }[] = customPageData
-    ?.configJson?.verdictsWebsiteLinks ?? [
+  const courtWebsiteLinks: { label: string; href: string }[] = customPageData
+    ?.configJson?.courtWebsiteLinks ?? [
     {
       label: 'Hæstiréttur',
       href: '/s/haestirettur',
@@ -1334,13 +1334,18 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
       label: 'Landsréttur',
       href: '/s/landsrettur',
     },
+
+    {
+      label: 'Héraðsdómstólar',
+      href: '/s/haeradsdomstolar',
+    },
     {
       label: 'Dómstólasýslan',
       href: '/s/domstolasyslan',
     },
     {
-      label: 'Héraðsdómstólar',
-      href: '/s/haeradsdomstolar',
+      label: 'Dómstólar',
+      href: '/s/domstolar',
     },
   ]
 
@@ -1362,9 +1367,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                 >
                   <Stack space={2}>
                     <Stack space={1}>
-                      <VerdictsWebsiteLinksDropdown
-                        links={verdictsWebsiteLinks}
-                      />
+                      <CourtWebsiteLinksDropdown links={courtWebsiteLinks} />
                       <Text variant="h1" as="h1">
                         {heading}
                       </Text>
@@ -1924,7 +1927,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                       span={['0', '0', '0', '3/12', '3/12']}
                       hiddenBelow="lg"
                     >
-                      <VerdictsWebsiteLinks links={verdictsWebsiteLinks} />
+                      <CourtWebsiteLinks links={courtWebsiteLinks} />
                     </GridColumn>
                   </GridRow>
                 </GridColumn>
