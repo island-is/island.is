@@ -24,6 +24,7 @@ import {
   Hidden,
   type IconMapIcon,
   Inline,
+  LinkV2,
   Select,
   Stack,
   Tag,
@@ -46,6 +47,7 @@ import {
   type WebVerdictKeyword,
   type WebVerdictsInput,
 } from '@island.is/web/graphql/schema'
+import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -1218,6 +1220,30 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
 
   const description = formatMessage(m.listPage.description)
 
+  const verdictsWebsiteLinks: { label: string; href: string }[] = customPageData
+    ?.configJson?.verdictsWebsiteLinks ?? [
+    {
+      label: 'Hæstiréttur',
+      href: '/s/haestirettur',
+    },
+    {
+      label: 'Endurupptökudómar',
+      href: '/s/endurupptokudomar',
+    },
+    {
+      label: 'Landsréttur',
+      href: '/s/landsrettur',
+    },
+    {
+      label: 'Dómstólasýslan',
+      href: '/s/domstolasyslan',
+    },
+    {
+      label: 'Héraðsdómstólar',
+      href: '/s/haeradsdomstolar',
+    },
+  ]
+
   return (
     <Box>
       <HeadWithSocialSharing title={customPageData?.ogTitle ?? heading}>
@@ -1238,11 +1264,33 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                     <Text variant="h1" as="h1">
                       {heading}
                     </Text>
-                    <Webreader
-                      readClass="rs_read"
-                      marginBottom={0}
-                      marginTop={0}
-                    />
+                    <Inline space={4}>
+                      <Webreader
+                        readClass="rs_read"
+                        marginBottom={0}
+                        marginTop={0}
+                      />
+                      {formatMessage(m.listPage.downloadGuideUrl).trim()
+                        .length > 0 && (
+                        <Button
+                          size="small"
+                          variant="text"
+                          icon="download"
+                          iconType="outline"
+                          colorScheme="light"
+                          onClick={() => {
+                            const fileUrl = formatMessage(
+                              m.listPage.downloadGuideUrl,
+                            )
+                            const link = document.createElement('a')
+                            link.href = fileUrl
+                            link.click()
+                          }}
+                        >
+                          {formatMessage(m.listPage.downloadGuide)}
+                        </Button>
+                      )}
+                    </Inline>
                     {Boolean(description?.trim()) && (
                       <Text variant="intro">{description}</Text>
                     )}
@@ -1273,198 +1321,67 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                   offset={['0', '0', '0', '1/12', '1/12']}
                   span={['1/1', '1/1', '1/1', '11/12', '11/12']}
                 >
-                  <Stack space={3}>
-                    <Box className={styles.searchInput}>
-                      <DebouncedInput
-                        debounceTimeInMs={DEBOUNCE_TIME_IN_MS}
-                        key={renderKey}
-                        value={queryState[QueryParam.SEARCH_TERM]}
-                        loading={loading}
-                        onChange={(value) => {
-                          updateQueryState(QueryParam.SEARCH_TERM, value)
-                        }}
-                        name="verdict-search-input"
-                        icon={{ name: 'search', type: 'outline' }}
-                        backgroundColor="blue"
-                        tooltip={formatMessage(m.listPage.searchInputTooltip)}
-                        label={formatMessage(m.listPage.searchInputLabel)}
-                        placeholder={formatMessage(
-                          m.listPage.searchInputPlaceholder,
-                        )}
-                        size="md"
-                      />
-                    </Box>
-                    <Hidden above="xs">
-                      <Select
-                        key={renderKey}
-                        options={courtTags}
-                        value={courtTags.filter((tag) => {
-                          if (tag.value === ALL_COURTS_TAG) {
-                            return (
-                              selectedCourts.length === 0 &&
-                              selectedDistrictCourts.length === 0
-                            )
-                          }
-                          if (tag.value === DEFAULT_DISTRICT_COURT_TAG) {
-                            return isDistrictCourtPanelVisible
-                          }
-                          return selectedCourts.includes(tag.value)
-                        })}
-                        isSearchable={false}
-                        isClearable={false}
-                        isMulti={true}
-                        label={formatMessage(m.listPage.courtSelectLabel)}
-                        onChange={(options) => {
-                          const prevCourts = queryState[QueryParam.COURT] ?? []
-                          const prevDistrict =
-                            queryState[QueryParam.DISTRICT_COURTS] ?? []
-                          const lastOption = options[options.length - 1]
-                          if (
-                            !lastOption ||
-                            lastOption.value === ALL_COURTS_TAG
-                          ) {
-                            if (
-                              shouldResetCaseFiltersOnCourtsChange(
-                                prevCourts,
-                                prevDistrict,
-                                [],
-                                [],
-                              )
-                            ) {
-                              updateQueryState(QueryParam.CASE_CATEGORIES, null)
-                              updateQueryState(QueryParam.CASE_TYPES, null)
-                              updateRenderKey()
-                            }
-                            updateQueryState(QueryParam.COURT, [])
-                            updateQueryState(QueryParam.DISTRICT_COURTS, null)
-                            return
-                          }
-                          const nextValues = options
-                            .map((option) => option.value)
-                            .filter((value) => value !== ALL_COURTS_TAG)
-                          const resolved = resolveExclusiveMainCourtSelection(
-                            nextValues,
-                            lastOption,
-                            prevDistrict.length,
-                          )
-                          const nextDistrictCourts =
-                            resolved.clearDistrictCourts
-                              ? []
-                              : resolved.courts.includes(
-                                  DEFAULT_DISTRICT_COURT_TAG,
+                  <GridRow rowGap={2}>
+                    <GridColumn span={['1/1', '1/1', '1/1', '8/12', '8/12']}>
+                      <Stack space={3}>
+                        <Box className={styles.searchInput}>
+                          <DebouncedInput
+                            debounceTimeInMs={DEBOUNCE_TIME_IN_MS}
+                            key={renderKey}
+                            value={queryState[QueryParam.SEARCH_TERM]}
+                            loading={loading}
+                            onChange={(value) => {
+                              updateQueryState(QueryParam.SEARCH_TERM, value)
+                            }}
+                            name="verdict-search-input"
+                            icon={{ name: 'search', type: 'outline' }}
+                            backgroundColor="blue"
+                            tooltip={formatMessage(
+                              m.listPage.searchInputTooltip,
+                            )}
+                            label={formatMessage(m.listPage.searchInputLabel)}
+                            placeholder={formatMessage(
+                              m.listPage.searchInputPlaceholder,
+                            )}
+                            size="md"
+                          />
+                        </Box>
+                        <Hidden above="xs">
+                          <Select
+                            key={renderKey}
+                            options={courtTags}
+                            value={courtTags.filter((tag) => {
+                              if (tag.value === ALL_COURTS_TAG) {
+                                return (
+                                  selectedCourts.length === 0 &&
+                                  selectedDistrictCourts.length === 0
                                 )
-                              ? prevDistrict
-                              : []
-                          if (
-                            shouldResetCaseFiltersOnCourtsChange(
-                              prevCourts,
-                              prevDistrict,
-                              resolved.courts,
-                              nextDistrictCourts,
-                            )
-                          ) {
-                            updateQueryState(QueryParam.CASE_CATEGORIES, null)
-                            updateQueryState(QueryParam.CASE_TYPES, null)
-                            updateRenderKey()
-                          }
-                          updateQueryState(
-                            QueryParam.COURT,
-                            (previousState) => ({
-                              ...previousState,
-                              [QueryParam.COURT]: resolved.courts,
-                              [QueryParam.DISTRICT_COURTS]: nextDistrictCourts,
-                            }),
-                          )
-                        }}
-                        size="sm"
-                        backgroundColor="blue"
-                      />
-                    </Hidden>
-                    <Hidden below="sm">
-                      <Inline alignY="center" space={2}>
-                        {courtTags.map((tag) => {
-                          const isActive =
-                            tag.value === ALL_COURTS_TAG
-                              ? selectedCourts.length === 0 &&
-                                selectedDistrictCourts.length === 0
-                              : tag.value === DEFAULT_DISTRICT_COURT_TAG
-                              ? isDistrictCourtPanelVisible
-                              : selectedCourts.includes(tag.value)
-                          return (
-                            <Tag
-                              key={tag.value}
-                              active={isActive}
-                              focusVisibleOnly={true}
-                              onClick={() => {
-                                const prevCourts =
-                                  queryState[QueryParam.COURT] ?? []
-                                const prevDistrict =
-                                  queryState[QueryParam.DISTRICT_COURTS] ?? []
-                                if (tag.value === ALL_COURTS_TAG) {
-                                  if (
-                                    shouldResetCaseFiltersOnCourtsChange(
-                                      prevCourts,
-                                      prevDistrict,
-                                      [],
-                                      [],
-                                    )
-                                  ) {
-                                    updateQueryState(
-                                      QueryParam.CASE_CATEGORIES,
-                                      null,
-                                    )
-                                    updateQueryState(
-                                      QueryParam.CASE_TYPES,
-                                      null,
-                                    )
-                                    updateRenderKey()
-                                  }
-                                  updateQueryState(QueryParam.COURT, [])
-                                  updateQueryState(
-                                    QueryParam.DISTRICT_COURTS,
-                                    null,
-                                  )
-                                  return
-                                }
-                                const nextCourtsState = (() => {
-                                  const isSelected = prevCourts.includes(
-                                    tag.value,
-                                  )
-                                  let nextCourts = isSelected
-                                    ? prevCourts.filter(
-                                        (court) => court !== tag.value,
-                                      )
-                                    : [...prevCourts, tag.value]
-                                  let nextDistrictCourts =
-                                    isSelected &&
-                                    tag.value === DEFAULT_DISTRICT_COURT_TAG
-                                      ? []
-                                      : prevDistrict
-
-                                  if (!isSelected) {
-                                    if (
-                                      tag.value === DEFAULT_DISTRICT_COURT_TAG
-                                    ) {
-                                      nextCourts =
-                                        stripHigherCourtTags(nextCourts)
-                                    } else if (isHigherCourtTag(tag.value)) {
-                                      nextCourts =
-                                        stripDistrictCourtTag(nextCourts)
-                                      nextDistrictCourts = []
-                                    }
-                                  }
-
-                                  return {
-                                    nextCourts,
-                                    nextDistrictCourts,
-                                  }
-                                })()
+                              }
+                              if (tag.value === DEFAULT_DISTRICT_COURT_TAG) {
+                                return isDistrictCourtPanelVisible
+                              }
+                              return selectedCourts.includes(tag.value)
+                            })}
+                            isSearchable={false}
+                            isClearable={false}
+                            isMulti={true}
+                            label={formatMessage(m.listPage.courtSelectLabel)}
+                            onChange={(options) => {
+                              const prevCourts =
+                                queryState[QueryParam.COURT] ?? []
+                              const prevDistrict =
+                                queryState[QueryParam.DISTRICT_COURTS] ?? []
+                              const lastOption = options[options.length - 1]
+                              if (
+                                !lastOption ||
+                                lastOption.value === ALL_COURTS_TAG
+                              ) {
                                 if (
                                   shouldResetCaseFiltersOnCourtsChange(
                                     prevCourts,
                                     prevDistrict,
-                                    nextCourtsState.nextCourts,
-                                    nextCourtsState.nextDistrictCourts,
+                                    [],
+                                    [],
                                   )
                                 ) {
                                   updateQueryState(
@@ -1474,137 +1391,169 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                                   updateQueryState(QueryParam.CASE_TYPES, null)
                                   updateRenderKey()
                                 }
+                                updateQueryState(QueryParam.COURT, [])
                                 updateQueryState(
-                                  QueryParam.COURT,
-                                  (previousState) => ({
-                                    ...previousState,
-                                    [QueryParam.COURT]:
-                                      nextCourtsState.nextCourts,
-                                    [QueryParam.DISTRICT_COURTS]:
-                                      nextCourtsState.nextDistrictCourts,
-                                  }),
+                                  QueryParam.DISTRICT_COURTS,
+                                  null,
                                 )
-                              }}
-                            >
-                              <Box
-                                flexDirection="row"
-                                alignItems="center"
-                                justifyContent="center"
-                              >
-                                {tag.label}
-                                {isActive && tag.value !== ALL_COURTS_TAG && (
-                                  <span
-                                    className={styles.crossmark}
-                                    aria-hidden="true"
-                                  >
-                                    &#10005;
-                                  </span>
-                                )}
-                              </Box>
-                            </Tag>
-                          )
-                        })}
-                      </Inline>
-                    </Hidden>
-                    {isDistrictCourtPanelVisible && (
-                      <>
-                        <Hidden below="sm">
-                          <Inline alignY="center" space={2}>
-                            <Tag
-                              key={DEFAULT_DISTRICT_COURT_TAG}
-                              focusVisibleOnly={true}
-                              active={
-                                selectedCourts.includes(
-                                  DEFAULT_DISTRICT_COURT_TAG,
-                                ) && selectedDistrictCourts.length === 0
+                                return
                               }
-                              onClick={() => {
-                                if (selectedDistrictCourts.length === 0) return
-                                updateQueryState(
-                                  QueryParam.COURT,
-                                  (previousState) => {
-                                    const previousCourts =
-                                      previousState[QueryParam.COURT]
-                                    const baseCourts = previousCourts.includes(
+                              const nextValues = options
+                                .map((option) => option.value)
+                                .filter((value) => value !== ALL_COURTS_TAG)
+                              const resolved =
+                                resolveExclusiveMainCourtSelection(
+                                  nextValues,
+                                  lastOption,
+                                  prevDistrict.length,
+                                )
+                              const nextDistrictCourts =
+                                resolved.clearDistrictCourts
+                                  ? []
+                                  : resolved.courts.includes(
                                       DEFAULT_DISTRICT_COURT_TAG,
                                     )
-                                      ? previousCourts
-                                      : [
-                                          ...previousCourts,
-                                          DEFAULT_DISTRICT_COURT_TAG,
-                                        ]
-                                    const nextCourts =
-                                      stripHigherCourtTags(baseCourts)
-                                    return {
-                                      ...previousState,
-                                      [QueryParam.COURT]: nextCourts,
-                                      [QueryParam.DISTRICT_COURTS]: [],
-                                    }
-                                  },
+                                  ? prevDistrict
+                                  : []
+                              if (
+                                shouldResetCaseFiltersOnCourtsChange(
+                                  prevCourts,
+                                  prevDistrict,
+                                  resolved.courts,
+                                  nextDistrictCourts,
                                 )
-                              }}
-                            >
-                              {formatMessage(m.listPage.showAllDistrictCourts)}
-                            </Tag>
-                            {districtCourtTags.map((tag) => {
-                              const isActive = selectedDistrictCourts.includes(
-                                tag.value,
+                              ) {
+                                updateQueryState(
+                                  QueryParam.CASE_CATEGORIES,
+                                  null,
+                                )
+                                updateQueryState(QueryParam.CASE_TYPES, null)
+                                updateRenderKey()
+                              }
+                              updateQueryState(
+                                QueryParam.COURT,
+                                (previousState) => ({
+                                  ...previousState,
+                                  [QueryParam.COURT]: resolved.courts,
+                                  [QueryParam.DISTRICT_COURTS]:
+                                    nextDistrictCourts,
+                                }),
                               )
+                            }}
+                            size="sm"
+                            backgroundColor="blue"
+                          />
+                        </Hidden>
+                        <Hidden below="sm">
+                          <Inline alignY="center" space={2}>
+                            {courtTags.map((tag) => {
+                              const isActive =
+                                tag.value === ALL_COURTS_TAG
+                                  ? selectedCourts.length === 0 &&
+                                    selectedDistrictCourts.length === 0
+                                  : tag.value === DEFAULT_DISTRICT_COURT_TAG
+                                  ? isDistrictCourtPanelVisible
+                                  : selectedCourts.includes(tag.value)
                               return (
                                 <Tag
                                   key={tag.value}
                                   active={isActive}
                                   focusVisibleOnly={true}
                                   onClick={() => {
-                                    updateQueryState(
-                                      QueryParam.DISTRICT_COURTS,
-                                      (previousState) => {
-                                        const previousDistrictCourts =
-                                          previousState[
-                                            QueryParam.DISTRICT_COURTS
-                                          ]
-                                        const previousCourts =
-                                          previousState[QueryParam.COURT]
-                                        const withDistrictTag =
-                                          previousCourts.includes(
-                                            DEFAULT_DISTRICT_COURT_TAG,
+                                    const prevCourts =
+                                      queryState[QueryParam.COURT] ?? []
+                                    const prevDistrict =
+                                      queryState[QueryParam.DISTRICT_COURTS] ??
+                                      []
+                                    if (tag.value === ALL_COURTS_TAG) {
+                                      if (
+                                        shouldResetCaseFiltersOnCourtsChange(
+                                          prevCourts,
+                                          prevDistrict,
+                                          [],
+                                          [],
+                                        )
+                                      ) {
+                                        updateQueryState(
+                                          QueryParam.CASE_CATEGORIES,
+                                          null,
+                                        )
+                                        updateQueryState(
+                                          QueryParam.CASE_TYPES,
+                                          null,
+                                        )
+                                        updateRenderKey()
+                                      }
+                                      updateQueryState(QueryParam.COURT, [])
+                                      updateQueryState(
+                                        QueryParam.DISTRICT_COURTS,
+                                        null,
+                                      )
+                                      return
+                                    }
+                                    const nextCourtsState = (() => {
+                                      const isSelected = prevCourts.includes(
+                                        tag.value,
+                                      )
+                                      let nextCourts = isSelected
+                                        ? prevCourts.filter(
+                                            (court) => court !== tag.value,
                                           )
-                                            ? previousCourts
-                                            : [
-                                                ...previousCourts,
-                                                DEFAULT_DISTRICT_COURT_TAG,
-                                              ]
-                                        const nextCourts =
-                                          stripHigherCourtTags(withDistrictTag)
+                                        : [...prevCourts, tag.value]
+                                      let nextDistrictCourts =
+                                        isSelected &&
+                                        tag.value === DEFAULT_DISTRICT_COURT_TAG
+                                          ? []
+                                          : prevDistrict
 
+                                      if (!isSelected) {
                                         if (
-                                          previousDistrictCourts.includes(
-                                            tag.value,
-                                          )
+                                          tag.value ===
+                                          DEFAULT_DISTRICT_COURT_TAG
                                         ) {
-                                          const updatedDistrictCourts =
-                                            previousDistrictCourts.filter(
-                                              (districtCourt) =>
-                                                districtCourt !== tag.value,
-                                            )
-
-                                          return {
-                                            ...previousState,
-                                            [QueryParam.COURT]: nextCourts,
-                                            [QueryParam.DISTRICT_COURTS]:
-                                              updatedDistrictCourts,
-                                          }
+                                          nextCourts =
+                                            stripHigherCourtTags(nextCourts)
+                                        } else if (
+                                          isHigherCourtTag(tag.value)
+                                        ) {
+                                          nextCourts =
+                                            stripDistrictCourtTag(nextCourts)
+                                          nextDistrictCourts = []
                                         }
+                                      }
 
-                                        return {
-                                          ...previousState,
-                                          [QueryParam.COURT]: nextCourts,
-                                          [QueryParam.DISTRICT_COURTS]:
-                                            previousDistrictCourts.concat(
-                                              tag.value,
-                                            ),
-                                        }
-                                      },
+                                      return {
+                                        nextCourts,
+                                        nextDistrictCourts,
+                                      }
+                                    })()
+                                    if (
+                                      shouldResetCaseFiltersOnCourtsChange(
+                                        prevCourts,
+                                        prevDistrict,
+                                        nextCourtsState.nextCourts,
+                                        nextCourtsState.nextDistrictCourts,
+                                      )
+                                    ) {
+                                      updateQueryState(
+                                        QueryParam.CASE_CATEGORIES,
+                                        null,
+                                      )
+                                      updateQueryState(
+                                        QueryParam.CASE_TYPES,
+                                        null,
+                                      )
+                                      updateRenderKey()
+                                    }
+                                    updateQueryState(
+                                      QueryParam.COURT,
+                                      (previousState) => ({
+                                        ...previousState,
+                                        [QueryParam.COURT]:
+                                          nextCourtsState.nextCourts,
+                                        [QueryParam.DISTRICT_COURTS]:
+                                          nextCourtsState.nextDistrictCourts,
+                                      }),
                                     )
                                   }}
                                 >
@@ -1614,7 +1563,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                                     justifyContent="center"
                                   >
                                     {tag.label}
-                                    {isActive && (
+                                    {isActive && tag.value !== ALL_COURTS_TAG && (
                                       <span
                                         className={styles.crossmark}
                                         aria-hidden="true"
@@ -1628,110 +1577,273 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                             })}
                           </Inline>
                         </Hidden>
-                        <Hidden above="xs">
-                          <Select
-                            key={renderKey}
-                            options={districtCourtTagsForSelect}
-                            label={formatMessage(
-                              m.listPage.districtCourtSelectLabel,
-                            )}
-                            isSearchable={false}
-                            isClearable={false}
-                            value={districtCourtTagsForSelect.filter((tag) => {
-                              if (selectedDistrictCourts.length > 0) {
-                                return selectedDistrictCourts.includes(
-                                  tag.value,
-                                )
-                              }
-                              return (
-                                selectedCourts.includes(
-                                  DEFAULT_DISTRICT_COURT_TAG,
-                                ) && tag.value === DEFAULT_DISTRICT_COURT_TAG
-                              )
-                            })}
-                            onChange={(options) => {
-                              if (options.length === 0) {
-                                updateQueryState(
-                                  QueryParam.COURT,
-                                  (previousState) => ({
-                                    ...previousState,
-                                    [QueryParam.COURT]: previousState[
-                                      QueryParam.COURT
-                                    ].filter(
-                                      (court) =>
-                                        court !== DEFAULT_DISTRICT_COURT_TAG,
-                                    ),
-                                    [QueryParam.DISTRICT_COURTS]: [],
-                                  }),
-                                )
-                                return
-                              }
-                              if (
-                                options[options.length - 1]?.value ===
-                                DEFAULT_DISTRICT_COURT_TAG
-                              ) {
-                                updateQueryState(
-                                  QueryParam.COURT,
-                                  (previousState) => {
-                                    const previousCourts =
-                                      previousState[QueryParam.COURT]
-                                    const baseCourts = previousCourts.includes(
+                        {isDistrictCourtPanelVisible && (
+                          <>
+                            <Hidden below="sm">
+                              <Inline alignY="center" space={2}>
+                                <Tag
+                                  key={DEFAULT_DISTRICT_COURT_TAG}
+                                  focusVisibleOnly={true}
+                                  active={
+                                    selectedCourts.includes(
                                       DEFAULT_DISTRICT_COURT_TAG,
-                                    )
-                                      ? previousCourts
-                                      : [
-                                          ...previousCourts,
-                                          DEFAULT_DISTRICT_COURT_TAG,
-                                        ]
-                                    const nextCourts =
-                                      stripHigherCourtTags(baseCourts)
-                                    return {
-                                      ...previousState,
-                                      [QueryParam.COURT]: nextCourts,
-                                      [QueryParam.DISTRICT_COURTS]: [],
-                                    }
-                                  },
-                                )
-                              } else {
-                                updateQueryState(
-                                  QueryParam.DISTRICT_COURTS,
-                                  (previousState) => {
-                                    const previousCourts =
-                                      previousState[QueryParam.COURT]
-                                    const withDistrictTag =
-                                      previousCourts.includes(
-                                        DEFAULT_DISTRICT_COURT_TAG,
-                                      )
-                                        ? previousCourts
-                                        : [
-                                            ...previousCourts,
+                                    ) && selectedDistrictCourts.length === 0
+                                  }
+                                  onClick={() => {
+                                    if (selectedDistrictCourts.length === 0)
+                                      return
+                                    updateQueryState(
+                                      QueryParam.COURT,
+                                      (previousState) => {
+                                        const previousCourts =
+                                          previousState[QueryParam.COURT]
+                                        const baseCourts =
+                                          previousCourts.includes(
                                             DEFAULT_DISTRICT_COURT_TAG,
-                                          ]
-                                    const nextCourts =
-                                      stripHigherCourtTags(withDistrictTag)
-                                    return {
-                                      ...previousState,
-                                      [QueryParam.COURT]: nextCourts,
-                                      [QueryParam.DISTRICT_COURTS]: options
-                                        .map((option) => option.value)
-                                        .filter(
-                                          (value) =>
-                                            value !==
+                                          )
+                                            ? previousCourts
+                                            : [
+                                                ...previousCourts,
+                                                DEFAULT_DISTRICT_COURT_TAG,
+                                              ]
+                                        const nextCourts =
+                                          stripHigherCourtTags(baseCourts)
+                                        return {
+                                          ...previousState,
+                                          [QueryParam.COURT]: nextCourts,
+                                          [QueryParam.DISTRICT_COURTS]: [],
+                                        }
+                                      },
+                                    )
+                                  }}
+                                >
+                                  {formatMessage(
+                                    m.listPage.showAllDistrictCourts,
+                                  )}
+                                </Tag>
+                                {districtCourtTags.map((tag) => {
+                                  const isActive =
+                                    selectedDistrictCourts.includes(tag.value)
+                                  return (
+                                    <Tag
+                                      key={tag.value}
+                                      active={isActive}
+                                      focusVisibleOnly={true}
+                                      onClick={() => {
+                                        updateQueryState(
+                                          QueryParam.DISTRICT_COURTS,
+                                          (previousState) => {
+                                            const previousDistrictCourts =
+                                              previousState[
+                                                QueryParam.DISTRICT_COURTS
+                                              ]
+                                            const previousCourts =
+                                              previousState[QueryParam.COURT]
+                                            const withDistrictTag =
+                                              previousCourts.includes(
+                                                DEFAULT_DISTRICT_COURT_TAG,
+                                              )
+                                                ? previousCourts
+                                                : [
+                                                    ...previousCourts,
+                                                    DEFAULT_DISTRICT_COURT_TAG,
+                                                  ]
+                                            const nextCourts =
+                                              stripHigherCourtTags(
+                                                withDistrictTag,
+                                              )
+
+                                            if (
+                                              previousDistrictCourts.includes(
+                                                tag.value,
+                                              )
+                                            ) {
+                                              const updatedDistrictCourts =
+                                                previousDistrictCourts.filter(
+                                                  (districtCourt) =>
+                                                    districtCourt !== tag.value,
+                                                )
+
+                                              return {
+                                                ...previousState,
+                                                [QueryParam.COURT]: nextCourts,
+                                                [QueryParam.DISTRICT_COURTS]:
+                                                  updatedDistrictCourts,
+                                              }
+                                            }
+
+                                            return {
+                                              ...previousState,
+                                              [QueryParam.COURT]: nextCourts,
+                                              [QueryParam.DISTRICT_COURTS]:
+                                                previousDistrictCourts.concat(
+                                                  tag.value,
+                                                ),
+                                            }
+                                          },
+                                        )
+                                      }}
+                                    >
+                                      <Box
+                                        flexDirection="row"
+                                        alignItems="center"
+                                        justifyContent="center"
+                                      >
+                                        {tag.label}
+                                        {isActive && (
+                                          <span
+                                            className={styles.crossmark}
+                                            aria-hidden="true"
+                                          >
+                                            &#10005;
+                                          </span>
+                                        )}
+                                      </Box>
+                                    </Tag>
+                                  )
+                                })}
+                              </Inline>
+                            </Hidden>
+                            <Hidden above="xs">
+                              <Select
+                                key={renderKey}
+                                options={districtCourtTagsForSelect}
+                                label={formatMessage(
+                                  m.listPage.districtCourtSelectLabel,
+                                )}
+                                isSearchable={false}
+                                isClearable={false}
+                                value={districtCourtTagsForSelect.filter(
+                                  (tag) => {
+                                    if (selectedDistrictCourts.length > 0) {
+                                      return selectedDistrictCourts.includes(
+                                        tag.value,
+                                      )
+                                    }
+                                    return (
+                                      selectedCourts.includes(
+                                        DEFAULT_DISTRICT_COURT_TAG,
+                                      ) &&
+                                      tag.value === DEFAULT_DISTRICT_COURT_TAG
+                                    )
+                                  },
+                                )}
+                                onChange={(options) => {
+                                  if (options.length === 0) {
+                                    updateQueryState(
+                                      QueryParam.COURT,
+                                      (previousState) => ({
+                                        ...previousState,
+                                        [QueryParam.COURT]: previousState[
+                                          QueryParam.COURT
+                                        ].filter(
+                                          (court) =>
+                                            court !==
                                             DEFAULT_DISTRICT_COURT_TAG,
                                         ),
-                                    }
-                                  },
-                                )
-                              }
-                            }}
-                            size="sm"
-                            backgroundColor="blue"
-                            isMulti={true}
-                          />
-                        </Hidden>
-                      </>
-                    )}
-                  </Stack>
+                                        [QueryParam.DISTRICT_COURTS]: [],
+                                      }),
+                                    )
+                                    return
+                                  }
+                                  if (
+                                    options[options.length - 1]?.value ===
+                                    DEFAULT_DISTRICT_COURT_TAG
+                                  ) {
+                                    updateQueryState(
+                                      QueryParam.COURT,
+                                      (previousState) => {
+                                        const previousCourts =
+                                          previousState[QueryParam.COURT]
+                                        const baseCourts =
+                                          previousCourts.includes(
+                                            DEFAULT_DISTRICT_COURT_TAG,
+                                          )
+                                            ? previousCourts
+                                            : [
+                                                ...previousCourts,
+                                                DEFAULT_DISTRICT_COURT_TAG,
+                                              ]
+                                        const nextCourts =
+                                          stripHigherCourtTags(baseCourts)
+                                        return {
+                                          ...previousState,
+                                          [QueryParam.COURT]: nextCourts,
+                                          [QueryParam.DISTRICT_COURTS]: [],
+                                        }
+                                      },
+                                    )
+                                  } else {
+                                    updateQueryState(
+                                      QueryParam.DISTRICT_COURTS,
+                                      (previousState) => {
+                                        const previousCourts =
+                                          previousState[QueryParam.COURT]
+                                        const withDistrictTag =
+                                          previousCourts.includes(
+                                            DEFAULT_DISTRICT_COURT_TAG,
+                                          )
+                                            ? previousCourts
+                                            : [
+                                                ...previousCourts,
+                                                DEFAULT_DISTRICT_COURT_TAG,
+                                              ]
+                                        const nextCourts =
+                                          stripHigherCourtTags(withDistrictTag)
+                                        return {
+                                          ...previousState,
+                                          [QueryParam.COURT]: nextCourts,
+                                          [QueryParam.DISTRICT_COURTS]: options
+                                            .map((option) => option.value)
+                                            .filter(
+                                              (value) =>
+                                                value !==
+                                                DEFAULT_DISTRICT_COURT_TAG,
+                                            ),
+                                        }
+                                      },
+                                    )
+                                  }
+                                }}
+                                size="sm"
+                                backgroundColor="blue"
+                                isMulti={true}
+                              />
+                            </Hidden>
+                          </>
+                        )}
+                      </Stack>
+                    </GridColumn>
+                    <GridColumn
+                      offset={['0', '0', '0', '1/12', '1/12']}
+                      span={['0', '0', '0', '3/12', '3/12']}
+                      hiddenBelow="lg"
+                    >
+                      {verdictsWebsiteLinks.length > 0 && (
+                        <Stack space={1}>
+                          <Text variant="eyebrow">
+                            {formatMessage(m.listPage.verdictsWebsiteEyebrow)}
+                          </Text>
+                          <GridRow rowGap={2}>
+                            {verdictsWebsiteLinks.map((link) => (
+                              <GridColumn key={link.href}>
+                                <LinkV2
+                                  underlineVisibility="always"
+                                  underline="small"
+                                  color="blue400"
+                                  href={link.href}
+                                >
+                                  <span className={styles.verdictsWebsiteLink}>
+                                    {link.label}
+                                  </span>
+                                </LinkV2>
+                              </GridColumn>
+                            ))}
+                          </GridRow>
+                        </Stack>
+                      )}
+                    </GridColumn>
+                  </GridRow>
                 </GridColumn>
               </GridRow>
             </Stack>

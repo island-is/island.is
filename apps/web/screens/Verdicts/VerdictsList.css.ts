@@ -18,3 +18,7 @@ export const logo = style({
   height: '162px',
   width: 'auto',
 })
+
+export const verdictsWebsiteLink = style({
+  fontSize: '14px',
+})
