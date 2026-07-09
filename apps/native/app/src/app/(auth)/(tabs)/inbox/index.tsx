@@ -199,8 +199,10 @@ export default function InboxScreen() {
     },
   })
 
-  const [bulkSelectActionMutation, { loading: bulkSelectActionLoading }] =
-    usePostMailActionMutationMutation()
+  const [
+    bulkSelectActionMutation,
+    { loading: bulkSelectActionLoading },
+  ] = usePostMailActionMutationMutation()
 
   const availableSenders = res.data?.documentsV2?.senders ?? []
 
@@ -229,34 +231,36 @@ export default function InboxScreen() {
   const allDocumentsSelected =
     selectedItems.length === res.data?.documentsV2?.data?.length
 
-  const [markAllAsRead, { loading: markAllAsReadLoading }] =
-    useMarkAllDocumentsAsReadMutation({
-      onCompleted: (result) => {
-        if (result.documentsV2MarkAllAsRead?.success) {
-          // If all documents are successfully marked as read, update cache to reflect that
-          for (const document of res.data?.documentsV2?.data || []) {
-            client.cache.modify({
-              id: client.cache.identify(document),
-              fields: {
-                opened: () => true,
-              },
-            })
-          }
-
-          // Set unread count to 0 so red badge disappears
+  const [
+    markAllAsRead,
+    { loading: markAllAsReadLoading },
+  ] = useMarkAllDocumentsAsReadMutation({
+    onCompleted: (result) => {
+      if (result.documentsV2MarkAllAsRead?.success) {
+        // If all documents are successfully marked as read, update cache to reflect that
+        for (const document of res.data?.documentsV2?.data || []) {
           client.cache.modify({
+            id: client.cache.identify(document),
             fields: {
-              documentsV2: (existing) => {
-                return {
-                  ...existing,
-                  unreadCount: 0,
-                }
-              },
+              opened: () => true,
             },
           })
         }
-      },
-    })
+
+        // Set unread count to 0 so red badge disappears
+        client.cache.modify({
+          fields: {
+            documentsV2: (existing) => {
+              return {
+                ...existing,
+                unreadCount: 0,
+              }
+            },
+          },
+        })
+      }
+    },
+  })
 
   const keyExtractor = useCallback((item: ListItem) => {
     return item.id.toString()
@@ -609,48 +613,42 @@ export default function InboxScreen() {
                   tintColor: theme.color.blue400,
                 },
               ],
-          // In select mode the Cancel button uses the native items API (it
-          // centers fine). Otherwise the custom glass pill is rendered via
-          // `headerRight` so the native title stays centered on iOS.
-          ...(selectState
-            ? {
-                headerRightItems: [
-                  {
-                    type: 'button',
-                    label: intl.formatMessage({
-                      id: 'inbox.bulkSelectCancelButton',
-                    }),
-                    labelStyle: {
-                      fontSize: 15,
-                      fontWeight: '400',
-                      fontFamily: fontByWeight('400'),
-                    },
-                    onPress() {
-                      resetSelectState()
-                    },
-                    tintColor: theme.color.blue400,
-                  },
-                ],
-              }
-            : {
-                headerRight: () =>
-                  renderHeaderActions(
-                    <>
-                      {renderHeaderIconSegment(filterIcon, () => {
-                        resetSelectState()
-                        inboxFilterStore.setState({
-                          availableSenders,
-                          availableCategories,
-                        })
-                        router.push('/inbox/filter')
-                      })}
-                      {renderHeaderIconSegment(
-                        inboxReadIcon,
-                        onMarkAllAsReadPress,
-                      )}
-                    </>,
-                  ),
-              }),
+          // Always rendered via `headerRight`: the native items API breaks
+          // title centering on iOS (StackScreen prepends the offline
+          // indicator as a custom item there).
+          headerRight: () =>
+            renderHeaderActions(
+              selectState ? (
+                <Pressable
+                  onPress={resetSelectState}
+                  style={{
+                    height: 46,
+                    justifyContent: 'center',
+                    paddingHorizontal: theme.spacing[1],
+                  }}
+                >
+                  <Typography
+                    size={15}
+                    weight="400"
+                    color={theme.color.blue400}
+                  >
+                    {intl.formatMessage({ id: 'inbox.bulkSelectCancelButton' })}
+                  </Typography>
+                </Pressable>
+              ) : (
+                <>
+                  {renderHeaderIconSegment(filterIcon, () => {
+                    resetSelectState()
+                    inboxFilterStore.setState({
+                      availableSenders,
+                      availableCategories,
+                    })
+                    router.push('/inbox/filter')
+                  })}
+                  {renderHeaderIconSegment(inboxReadIcon, onMarkAllAsReadPress)}
+                </>
+              ),
+            ),
         }}
       />
       {selectState && selectedItems.length ? (

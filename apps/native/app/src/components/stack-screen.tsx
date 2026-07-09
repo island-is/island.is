@@ -144,8 +144,13 @@ export function StackScreen({
         // A screen that supplies its own `headerRight` render opts out of the
         // native `unstable_headerRightItems` API. A wide custom item in that API
         // breaks native title centering on iOS; `headerRight` keeps it centered.
+        // The items are explicitly cleared (not just omitted) because these
+        // options are applied with `navigation.setOptions`, which merges per
+        // key: when a screen toggles from items to `headerRight` (e.g. inbox
+        // leaving select mode), an omitted key would leave the stale items in
+        // place, and the items API overrides `headerRight`.
         ...(options?.headerRight
-          ? {}
+          ? { unstable_headerRightItems: undefined }
           : { unstable_headerRightItems: headerRightItems }),
         headerRight,
         ...options,
