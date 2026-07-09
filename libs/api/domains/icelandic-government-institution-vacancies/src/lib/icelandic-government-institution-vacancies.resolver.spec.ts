@@ -99,7 +99,8 @@ describe('IcelandicGovernmentInstitutionVacanciesResolver', () => {
 
   it('passes client IP from x-forwarded-for to feature flag evaluation', async () => {
     await request(app.getHttpServer())
-      .get('/graphql').set('apollo-require-preflight', 'true')
+      .get('/graphql')
+      .set('apollo-require-preflight', 'true')
       .set('x-forwarded-for', '192.168.1.100')
       .query({ query: listQuery })
 
@@ -117,7 +118,8 @@ describe('IcelandicGovernmentInstitutionVacanciesResolver', () => {
 
   it('uses first client IP when x-forwarded-for has multiple values', async () => {
     await request(app.getHttpServer())
-      .get('/graphql').set('apollo-require-preflight', 'true')
+      .get('/graphql')
+      .set('apollo-require-preflight', 'true')
       .set('x-forwarded-for', '10.0.0.50, 10.0.0.10, 10.0.0.1')
       .query({ query: listQuery })
 
@@ -135,7 +137,8 @@ describe('IcelandicGovernmentInstitutionVacanciesResolver', () => {
 
   it('falls back to request IP when x-forwarded-for is missing', async () => {
     await request(app.getHttpServer())
-      .get('/graphql').set('apollo-require-preflight', 'true')
+      .get('/graphql')
+      .set('apollo-require-preflight', 'true')
       .query({ query: listQuery })
 
     const [, , user] = featureFlagClient.getValue.mock.calls[0]
@@ -155,7 +158,8 @@ describe('IcelandicGovernmentInstitutionVacanciesResolver', () => {
     featureFlagClient.getValue.mockResolvedValue(false)
 
     await request(app.getHttpServer())
-      .get('/graphql').set('apollo-require-preflight', 'true')
+      .get('/graphql')
+      .set('apollo-require-preflight', 'true')
       .query({ query: listQuery })
 
     expect(mockXRoadApi.vacanciesGet).toHaveBeenCalledTimes(1)
@@ -166,7 +170,8 @@ describe('IcelandicGovernmentInstitutionVacanciesResolver', () => {
     featureFlagClient.getValue.mockResolvedValue(true)
 
     await request(app.getHttpServer())
-      .get('/graphql').set('apollo-require-preflight', 'true')
+      .get('/graphql')
+      .set('apollo-require-preflight', 'true')
       .query({ query: listQuery })
 
     expect(mockElfurApi.v1VacancyGetVacancyListGet).toHaveBeenCalledTimes(1)
@@ -177,7 +182,8 @@ describe('IcelandicGovernmentInstitutionVacanciesResolver', () => {
     featureFlagClient.getValue.mockResolvedValue(false)
 
     await request(app.getHttpServer())
-      .get('/graphql').set('apollo-require-preflight', 'true')
+      .get('/graphql')
+      .set('apollo-require-preflight', 'true')
       .query({ query: byIdQuery })
 
     expect(mockXRoadApi.vacanciesVacancyIdGet).toHaveBeenCalledWith(
@@ -192,7 +198,8 @@ describe('IcelandicGovernmentInstitutionVacanciesResolver', () => {
     featureFlagClient.getValue.mockResolvedValue(true)
 
     await request(app.getHttpServer())
-      .get('/graphql').set('apollo-require-preflight', 'true')
+      .get('/graphql')
+      .set('apollo-require-preflight', 'true')
       .query({ query: byIdQuery })
 
     expect(mockElfurApi.v1VacancyGetVacancyGet).toHaveBeenCalledWith({
@@ -204,10 +211,13 @@ describe('IcelandicGovernmentInstitutionVacanciesResolver', () => {
   it('forces the new list API via override even when the feature flag is disabled', async () => {
     featureFlagClient.getValue.mockResolvedValue(false)
 
-    await request(app.getHttpServer()).get('/graphql').set('apollo-require-preflight', 'true').query({
-      query:
-        '{ icelandicGovernmentInstitutionVacancies(input: { useNewApiOverride: true }) { vacancies { id } } }',
-    })
+    await request(app.getHttpServer())
+      .get('/graphql')
+      .set('apollo-require-preflight', 'true')
+      .query({
+        query:
+          '{ icelandicGovernmentInstitutionVacancies(input: { useNewApiOverride: true }) { vacancies { id } } }',
+      })
 
     expect(mockElfurApi.v1VacancyGetVacancyListGet).toHaveBeenCalledTimes(1)
     expect(mockXRoadApi.vacanciesGet).not.toHaveBeenCalled()
@@ -216,10 +226,13 @@ describe('IcelandicGovernmentInstitutionVacanciesResolver', () => {
   it('forces the xroad list API via override even when the feature flag is enabled', async () => {
     featureFlagClient.getValue.mockResolvedValue(true)
 
-    await request(app.getHttpServer()).get('/graphql').set('apollo-require-preflight', 'true').query({
-      query:
-        '{ icelandicGovernmentInstitutionVacancies(input: { useOldApiOverride: true }) { vacancies { id } } }',
-    })
+    await request(app.getHttpServer())
+      .get('/graphql')
+      .set('apollo-require-preflight', 'true')
+      .query({
+        query:
+          '{ icelandicGovernmentInstitutionVacancies(input: { useOldApiOverride: true }) { vacancies { id } } }',
+      })
 
     expect(mockXRoadApi.vacanciesGet).toHaveBeenCalledTimes(1)
     expect(mockElfurApi.v1VacancyGetVacancyListGet).not.toHaveBeenCalled()
@@ -228,10 +241,13 @@ describe('IcelandicGovernmentInstitutionVacanciesResolver', () => {
   it('lets the old API override win when both overrides are set', async () => {
     featureFlagClient.getValue.mockResolvedValue(true)
 
-    await request(app.getHttpServer()).get('/graphql').set('apollo-require-preflight', 'true').query({
-      query:
-        '{ icelandicGovernmentInstitutionVacancies(input: { useNewApiOverride: true, useOldApiOverride: true }) { vacancies { id } } }',
-    })
+    await request(app.getHttpServer())
+      .get('/graphql')
+      .set('apollo-require-preflight', 'true')
+      .query({
+        query:
+          '{ icelandicGovernmentInstitutionVacancies(input: { useNewApiOverride: true, useOldApiOverride: true }) { vacancies { id } } }',
+      })
 
     expect(mockXRoadApi.vacanciesGet).toHaveBeenCalledTimes(1)
     expect(mockElfurApi.v1VacancyGetVacancyListGet).not.toHaveBeenCalled()
@@ -240,10 +256,13 @@ describe('IcelandicGovernmentInstitutionVacanciesResolver', () => {
   it('forces the xroad detail API via override even when the feature flag is enabled', async () => {
     featureFlagClient.getValue.mockResolvedValue(true)
 
-    await request(app.getHttpServer()).get('/graphql').set('apollo-require-preflight', 'true').query({
-      query:
-        '{ icelandicGovernmentInstitutionVacancyById(input: { id: "123", useOldApiOverride: true }) { vacancy { id } } }',
-    })
+    await request(app.getHttpServer())
+      .get('/graphql')
+      .set('apollo-require-preflight', 'true')
+      .query({
+        query:
+          '{ icelandicGovernmentInstitutionVacancyById(input: { id: "123", useOldApiOverride: true }) { vacancy { id } } }',
+      })
 
     expect(mockXRoadApi.vacanciesVacancyIdGet).toHaveBeenCalledWith(
       expect.objectContaining({ vacancyId: 123 }),
