@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import {
   FlatList,
@@ -61,17 +61,25 @@ export default function HealthMessagesScreen() {
   const showSearch = conversations.length > 0 || query.length > 0
 
   const [refetching, setRefetching] = useState(false)
+  const loadingTimeout = useRef<ReturnType<typeof setTimeout>>()
 
   const onRefresh = useCallback(async () => {
-    setRefetching(true)
     try {
+      if (loadingTimeout.current) {
+        clearTimeout(loadingTimeout.current)
+      }
+      setRefetching(true)
       await messagesRes.refetch()
-    } catch (e) {
-      // noop
-    } finally {
+      // Keep the spinner visible a moment after the (often instant) refetch
+      // resolves so the refresh feels real — matches the inbox.
+      loadingTimeout.current = setTimeout(() => {
+        setRefetching(false)
+      }, 1331)
+    } catch (err) {
       setRefetching(false)
     }
-  }, [messagesRes])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // A single icon segment within the shared header pill.
   const renderHeaderIconSegment = (

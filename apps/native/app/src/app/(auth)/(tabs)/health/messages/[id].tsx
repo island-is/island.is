@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useApolloClient } from '@apollo/client'
 import { useIntl } from 'react-intl'
 import {
@@ -78,9 +78,23 @@ export default function HealthMessageDetailScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversation?.id])
 
-  const handleRefresh = () => {
-    setRefetching(true)
-    res.refetch().finally(() => setRefetching(false))
+  const loadingTimeout = useRef<ReturnType<typeof setTimeout>>()
+
+  const handleRefresh = async () => {
+    try {
+      if (loadingTimeout.current) {
+        clearTimeout(loadingTimeout.current)
+      }
+      setRefetching(true)
+      await res.refetch()
+      // Keep the spinner visible a moment after the (often instant) refetch
+      // resolves so the refresh feels real — matches the inbox.
+      loadingTimeout.current = setTimeout(() => {
+        setRefetching(false)
+      }, 1331)
+    } catch (err) {
+      setRefetching(false)
+    }
   }
 
   const [downloadingAttachmentId, setDownloadingAttachmentId] = useState<
