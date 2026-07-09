@@ -2743,12 +2743,12 @@ export const messages = defineMessages({
     id: 'sp.health:health-notifications-title',
     defaultMessage: 'Tilkynningar í Heilsu',
   },
-  contactNetspjall: {
-    id: 'sp.health:contact-netspjall',
+  contactChat: {
+    id: 'sp.health:contact-chat',
     defaultMessage: 'Netspjall Heilsuveru',
   },
-  contactNetspjallDesc: {
-    id: 'sp.health:contact-netspjall-desc',
+  contactChatDesc: {
+    id: 'sp.health:contact-chat-desc',
     defaultMessage: 'Opið frá kl. 8-16 alla virka daga',
   },
   heilsuveraChatLink: {
@@ -2758,6 +2758,10 @@ export const messages = defineMessages({
   contactPhone: {
     id: 'sp.health:contact-phone',
     defaultMessage: 'Símaráðgjöf 1700 / 513 1700',
+  },
+  contactPhoneNumber: {
+    id: 'sp.health:contact-phone-number',
+    defaultMessage: '5131700',
   },
   contactPhoneDesc: {
     id: 'sp.health:contact-phone-desc',

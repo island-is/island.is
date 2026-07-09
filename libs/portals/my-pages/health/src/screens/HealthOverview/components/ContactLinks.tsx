@@ -17,15 +17,15 @@ const ContactLinks = () => {
 
   const links: ContactLinkItem[] = [
     {
-      title: formatMessage(messages.contactNetspjall),
-      description: formatMessage(messages.contactNetspjallDesc),
+      title: formatMessage(messages.contactChat),
+      description: formatMessage(messages.contactChatDesc),
       href: formatMessage(messages.heilsuveraChatLink),
     },
     {
       title: formatMessage(messages.contactPhone),
       description: formatMessage(messages.contactPhoneDesc),
       emergencyDescription: formatMessage(messages.contactPhoneEmergencyDesc),
-      href: 'tel:5131700',
+      href: `tel:${formatMessage(messages.contactPhoneNumber)}`,
     },
     {
       title: formatMessage(messages.contactSendMessage),

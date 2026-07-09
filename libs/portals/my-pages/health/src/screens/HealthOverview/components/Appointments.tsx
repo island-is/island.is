@@ -1,10 +1,4 @@
-import {
-  Box,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import {
@@ -80,35 +74,31 @@ const Appointments: React.FC<Props> = ({ data, showLinkButton }) => {
 
   return (
     <Box marginBottom={2}>
-      <GridContainer>
-        <GridRow>
-          <GridColumn span={isNarrow ? '6/12' : '12/12'}>
-            <Box
-              display={'flex'}
-              justifyContent="spaceBetween"
-              alignItems="center"
-              marginBottom={2}
-            >
-              <Box>
-                <Text variant="eyebrow" color="foregroundBrandSecondary">
-                  {formatMessage(messages.myAppointments)}
-                </Text>
-              </Box>
-              {showLinkButton && (
-                <Box>
-                  <LinkButton
-                    to={HealthPaths.HealthAppointments}
-                    text={formatMessage(messages.allAppointments)}
-                    variant="text"
-                    size="small"
-                    icon="arrowForward"
-                  />
-                </Box>
-              )}
+      <Box width={isNarrow ? 'half' : 'full'}>
+        <Box
+          display={'flex'}
+          justifyContent="spaceBetween"
+          alignItems="center"
+          marginBottom={2}
+        >
+          <Box>
+            <Text variant="eyebrow" color="foregroundBrandSecondary">
+              {formatMessage(messages.myAppointments)}
+            </Text>
+          </Box>
+          {showLinkButton && (
+            <Box>
+              <LinkButton
+                to={HealthPaths.HealthAppointments}
+                text={formatMessage(messages.allAppointments)}
+                variant="text"
+                size="small"
+                icon="arrowForward"
+              />
             </Box>
-          </GridColumn>
-        </GridRow>
-      </GridContainer>
+          )}
+        </Box>
+      </Box>
       <InfoCardGrid
         cards={cards}
         size={isEmpty ? 'small' : undefined}
