@@ -167,9 +167,7 @@ export const getMapper = (
 
   const apolloImports =
     imports.apollo.length > 0
-      ? `import { ${imports.apollo.map(
-          (item) => item,
-        )} } from 'graphql'`
+      ? `import { ${imports.apollo.map((item) => item)} } from 'graphql'`
       : ''
 
   // We don't import the model within itself

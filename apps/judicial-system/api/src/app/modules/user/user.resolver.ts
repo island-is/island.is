@@ -84,7 +84,9 @@ export class UserResolver {
     let eligibleUsers: User[]
 
     try {
-      eligibleUsers = await this.backendService.findUsersByNationalId(nationalId)
+      eligibleUsers = await this.backendService.findUsersByNationalId(
+        nationalId,
+      )
     } catch (error) {
       if (!(error?.problem?.status === 404 && user)) {
         this.logger.error('No eligible users', { error })

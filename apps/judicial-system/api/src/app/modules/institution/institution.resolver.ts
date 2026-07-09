@@ -28,9 +28,7 @@ export class InstitutionResolver {
   ) {}
 
   @Query(() => [Institution], { nullable: true })
-  institutions(
-    @CurrentGraphQlUser() user: User,
-  ): Promise<Institution[]> {
+  institutions(@CurrentGraphQlUser() user: User): Promise<Institution[]> {
     this.logger.debug('Getting all institutions')
 
     return this.auditTrailService.audit(

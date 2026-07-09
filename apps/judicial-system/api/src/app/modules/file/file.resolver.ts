@@ -95,7 +95,11 @@ export class FileResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_FILE,
-      this.backendService.createDefendantCaseFile(caseId, createFile, defendantId),
+      this.backendService.createDefendantCaseFile(
+        caseId,
+        createFile,
+        defendantId,
+      ),
       (file) => file.id,
     )
   }

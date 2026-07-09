@@ -174,7 +174,9 @@ export const createRedisCacheManager = async (
     // Cast because the repo hoists two structurally-identical keyv versions
     // (top-level vs. the one bundled under cache-manager); they only differ by
     // a private type field, so the Keyv instance is runtime-compatible.
-    stores: [createRedisKeyv(options)] as unknown as CreateCacheOptions['stores'],
+    stores: [
+      createRedisKeyv(options),
+    ] as unknown as CreateCacheOptions['stores'],
     // v5 treated ttl: 0 as "no expiry"; v6/Keyv expects undefined for that.
     ttl: options.ttl || undefined,
   })

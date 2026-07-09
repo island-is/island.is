@@ -57,7 +57,10 @@ export class MessageSuspensionResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_MESSAGE_SUSPENSION,
-      this.backendService.updateMessageSuspension(category, updateMessageSuspension),
+      this.backendService.updateMessageSuspension(
+        category,
+        updateMessageSuspension,
+      ),
       category,
     )
   }

@@ -36,14 +36,15 @@ export class MunicipalityResolver {
   @Query(() => MunicipalityModel, { nullable: false })
   municipality(
     @Args('input', { type: () => MunicipalityQueryInput })
-    input: MunicipalityQueryInput,  ): Promise<Municipality> {
+    input: MunicipalityQueryInput,
+  ): Promise<Municipality> {
     this.logger.debug(`Getting municipality ${input.id}`)
 
     return this.backendApi.getMunicipality(input.id)
   }
 
   @Query(() => [MunicipalityModel], { nullable: false })
-  municipalityByIds(  ): Promise<Municipality[]> {
+  municipalityByIds(): Promise<Municipality[]> {
     this.logger.debug(`Getting municipalities by ids`)
     return this.backendApi.getMunicipalitiesById()
   }
@@ -51,7 +52,8 @@ export class MunicipalityResolver {
   @Mutation(() => MunicipalityModel, { nullable: false })
   municipalityActivity(
     @Args('input', { type: () => MunicipalityActivityInput })
-    input: MunicipalityActivityInput,  ): Promise<Municipality> {
+    input: MunicipalityActivityInput,
+  ): Promise<Municipality> {
     const { id, ...municipalityActivity } = input
 
     this.logger.debug('Updating municipality activity')
@@ -62,7 +64,8 @@ export class MunicipalityResolver {
   @Mutation(() => MunicipalityModel, { nullable: false })
   createMunicipality(
     @Args('input', { type: () => CreateMunicipalityInput })
-    input: CreateMunicipalityInput,  ): Promise<Municipality> {
+    input: CreateMunicipalityInput,
+  ): Promise<Municipality> {
     const { admin, ...createMunicipality } = input
     this.logger.debug('Creating municipality')
     return this.backendApi.createMunicipality(createMunicipality, admin)
@@ -71,21 +74,21 @@ export class MunicipalityResolver {
   @Mutation(() => [MunicipalityModel], { nullable: false })
   updateMunicipality(
     @Args('input', { type: () => UpdateMunicipalityInput })
-    input: UpdateMunicipalityInput,  ): Promise<Municipality[]> {
+    input: UpdateMunicipalityInput,
+  ): Promise<Municipality[]> {
     this.logger.debug('Updating municipality')
     return this.backendApi.updateMunicipality(input)
   }
 
   @Query(() => [MunicipalityModel], { nullable: false })
-  municipalities(  ): Promise<Municipality[]> {
+  municipalities(): Promise<Municipality[]> {
     this.logger.debug(`Getting municipalities`)
 
     return this.backendApi.getMunicipalities()
   }
 
   @ResolveField('numberOfUsers', () => Number)
-  numberOfUsers(
-    @Parent() municipality: MunicipalityModel,  ): Promise<number> {
+  numberOfUsers(@Parent() municipality: MunicipalityModel): Promise<number> {
     this.logger.debug(
       `Getting number of users for ${municipality.municipalityId}`,
     )
@@ -95,15 +98,13 @@ export class MunicipalityResolver {
   }
 
   @ResolveField('adminUsers')
-  adminUsers(
-    @Parent() municipality: MunicipalityModel,  ): Promise<Staff[]> {
+  adminUsers(@Parent() municipality: MunicipalityModel): Promise<Staff[]> {
     this.logger.debug(`Getting admin users for ${municipality.municipalityId}`)
     return this.backendApi.getAdminUsers(municipality.municipalityId)
   }
 
   @ResolveField('allAdminUsers')
-  allAdminUsers(
-    @Parent() municipality: MunicipalityModel,  ): Promise<Staff[]> {
+  allAdminUsers(@Parent() municipality: MunicipalityModel): Promise<Staff[]> {
     this.logger.debug(`Getting admin users for ${municipality.municipalityId}`)
     return this.backendApi.getAllAdminUsers(municipality.municipalityId)
   }

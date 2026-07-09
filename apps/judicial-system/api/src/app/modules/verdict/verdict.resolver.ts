@@ -43,7 +43,10 @@ export class VerdictResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_VERDICTS,
-      this.backendService.createVerdicts(caseId, createVerdictInputs.verdicts ?? []),
+      this.backendService.createVerdicts(
+        caseId,
+        createVerdictInputs.verdicts ?? [],
+      ),
       caseId,
     )
   }

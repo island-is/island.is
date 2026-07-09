@@ -62,7 +62,11 @@ export class AppealCaseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_APPEAL_CASE,
-      this.backendService.updateAppealCase(caseId, appealCaseId, updateAppealCase),
+      this.backendService.updateAppealCase(
+        caseId,
+        appealCaseId,
+        updateAppealCase,
+      ),
       caseId,
     )
   }
@@ -78,7 +82,11 @@ export class AppealCaseResolver {
       `Creating appeal event log ${eventType} on appeal case ${appealCaseId} of case ${caseId}`,
     )
 
-    return this.backendService.createAppealEventLog(caseId, appealCaseId, eventType)
+    return this.backendService.createAppealEventLog(
+      caseId,
+      appealCaseId,
+      eventType,
+    )
   }
 
   @Mutation(() => AppealCase, { nullable: true })

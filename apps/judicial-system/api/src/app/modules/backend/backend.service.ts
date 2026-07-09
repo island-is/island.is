@@ -116,8 +116,7 @@ export class BackendService {
       authorization: `Bearer ${this.config.secretToken}`,
     }
 
-    const req =
-      (context as GqlContext)?.req ?? (context as Request | undefined)
+    const req = (context as GqlContext)?.req ?? (context as Request | undefined)
 
     this.headers = {
       'Content-Type': 'application/json',

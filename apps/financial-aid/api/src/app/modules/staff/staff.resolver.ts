@@ -19,7 +19,7 @@ export class StaffResolver {
   ) {}
 
   @Query(() => [StaffModel], { nullable: false })
-  users(  ): Promise<Staff[]> {
+  users(): Promise<Staff[]> {
     this.logger.debug('Getting all staff for municipality')
 
     return this.backendApi.getStaffForMunicipality()
@@ -28,20 +28,21 @@ export class StaffResolver {
   @Query(() => StaffModel, { nullable: false })
   user(
     @Args('input', { type: () => StaffInput })
-    input: StaffInput,  ): Promise<Staff> {
+    input: StaffInput,
+  ): Promise<Staff> {
     this.logger.debug(`Getting staff from ${input.id}`)
 
     return this.backendApi.getStaffById(input.id)
   }
 
   @Query(() => [StaffModel])
-  admins(  ): Promise<Staff[]> {
+  admins(): Promise<Staff[]> {
     this.logger.debug(`Getting all admins`)
     return this.backendApi.getAdmins()
   }
 
   @Query(() => [StaffModel])
-  supervisors(  ): Promise<Staff[]> {
+  supervisors(): Promise<Staff[]> {
     this.logger.debug(`Getting supervisors`)
 
     return this.backendApi.getSupervisors()
@@ -50,7 +51,8 @@ export class StaffResolver {
   @Mutation(() => StaffModel, { nullable: true })
   updateStaff(
     @Args('input', { type: () => UpdateStaffInput })
-    input: UpdateStaffInput,  ): Promise<Staff> {
+    input: UpdateStaffInput,
+  ): Promise<Staff> {
     const { id, ...updateStaff } = input
 
     this.logger.debug(`updating staff ${id}`)
@@ -61,7 +63,8 @@ export class StaffResolver {
   @Mutation(() => StaffModel, { nullable: false })
   createStaff(
     @Args('input', { type: () => CreateStaffInput })
-    input: CreateStaffInput,  ): Promise<Staff> {
+    input: CreateStaffInput,
+  ): Promise<Staff> {
     this.logger.debug('Creating staff')
 
     return this.backendApi.createStaff(input)
