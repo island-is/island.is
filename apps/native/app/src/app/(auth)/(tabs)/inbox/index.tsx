@@ -48,6 +48,7 @@ import {
 import { isAndroid } from '@/utils/devices'
 import { testIDs } from '@/utils/test-ids'
 import { ActionBar } from '../../../../components/action-bar'
+import { OfflineIcon } from '@/components/offline/offline-icon'
 import { PressableListItem } from '../../../../components/pressable-list-item'
 import { toast } from '@/components/toast'
 import { normalizesFilters } from '../../../../utils/inbox-filters'
@@ -558,6 +559,9 @@ export default function InboxScreen() {
   // rendered plain here to avoid a doubled-up background.
   const renderHeaderActions = (children: React.ReactNode) => (
     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      {/* The custom `headerRight` opts out of the native header items, so the
+          loading/offline indicator is rendered here instead. */}
+      <OfflineIcon networkStatus={res.networkStatus} />
       {children}
     </View>
   )

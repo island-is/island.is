@@ -16,6 +16,7 @@ import filterIcon from '@/assets/icons/filter-icon.png'
 import heartIcon from '@/assets/icons/health.png'
 import documentIcon from '@/assets/icons/reader.png'
 import illustrationSrc from '@/assets/illustrations/le-company-s3.png'
+import { OfflineIcon } from '@/components/offline/offline-icon'
 import { StackScreen } from '@/components/stack-screen'
 import {
   HealthDirectorateHealthConversationStatusFilter,
@@ -98,6 +99,9 @@ export default function HealthMessagesScreen() {
   // rendered plain here to avoid a doubled-up background.
   const headerActions = (
     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      {/* The custom `headerRight` opts out of the native header items, so the
+          loading/offline indicator is rendered here instead. */}
+      <OfflineIcon networkStatus={messagesRes.networkStatus} />
       {renderHeaderIconSegment(filterIcon, () =>
         router.push('/health/messages/filter'),
       )}
