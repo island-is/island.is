@@ -676,6 +676,7 @@ query Case($input: CaseQueryInput!) {
         appealState
         appealedByNationalId
         appealedByRole
+        appealedInCourt
         appealedDate
         statementDeadline
         isStatementDeadlineExpired

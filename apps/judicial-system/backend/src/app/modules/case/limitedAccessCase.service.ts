@@ -42,6 +42,7 @@ import {
 } from '../file'
 import {
   AppealCase,
+  AppealDecision,
   AppealEventLog,
   Case,
   CaseDefendantPoliceCaseNumber,
@@ -223,6 +224,12 @@ export const include: Includeable[] = [
         separate: true,
       },
     ],
+  },
+  {
+    model: AppealDecision,
+    as: 'appealDecisions',
+    required: false,
+    separate: true,
   },
   { model: Case, as: 'parentCase', attributes },
   { model: Case, as: 'childCase', attributes },
