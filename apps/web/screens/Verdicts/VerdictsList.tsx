@@ -1078,7 +1078,16 @@ const CourtWebsiteLinksDropdown = ({
           display="flex"
           alignItems="flexStart"
           cursor="pointer"
+          tabIndex={0}
+          role="button"
+          aria-expanded={isOpen}
           onClick={() => setIsOpen((open) => !open)}
+          onKeyDown={(ev) => {
+            if (ev.key === 'Enter' || ev.key === ' ') {
+              ev.preventDefault()
+              setIsOpen((open) => !open)
+            }
+          }}
           className={styles.verdictsWebsiteLinksDropdownToggle}
         >
           <Text variant="eyebrow">
