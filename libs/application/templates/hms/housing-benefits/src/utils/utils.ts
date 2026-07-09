@@ -384,3 +384,7 @@ export const mustFileTaxReturnBeforeApplying = (
   if (!data) return false
   return data.handedInLastFiveYears === true && data.handedInLastYear === false
 }
+
+export const hasHouseholdMembers = (answers: FormValue): boolean =>
+  (getValueViaPath<number>(answers, 'householdMembersTableRepeater.length') ??
+    0) > 0
