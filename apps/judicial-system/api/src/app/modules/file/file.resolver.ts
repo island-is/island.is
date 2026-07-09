@@ -188,8 +188,6 @@ export class FileResolver {
     @Args('input', { type: () => ConfirmRulingOrderInput })
     input: ConfirmRulingOrderInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<CaseFile> {
     const { caseId, id } = input
 
@@ -198,7 +196,7 @@ export class FileResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CONFIRM_RULING_ORDER,
-      backendService.confirmRulingOrder(caseId, id),
+      this.backendService.confirmRulingOrder(caseId, id),
       id,
     )
   }

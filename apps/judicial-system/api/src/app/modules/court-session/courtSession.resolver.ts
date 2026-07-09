@@ -106,8 +106,6 @@ export class CourtSessionResolver {
     @Args('input', { type: () => UpdateCourtSessionAppealDecisionInput })
     input: UpdateCourtSessionAppealDecisionInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<AppealDecisionResponse> {
     const { caseId, courtSessionId, ...updateAppealDecision } = input
 
@@ -118,7 +116,7 @@ export class CourtSessionResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_COURT_SESSION,
-      backendService.updateCourtSessionAppealDecision(
+      this.backendService.updateCourtSessionAppealDecision(
         caseId,
         courtSessionId,
         updateAppealDecision,

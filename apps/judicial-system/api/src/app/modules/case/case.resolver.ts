@@ -239,8 +239,6 @@ export class CaseResolver {
     @Args('input', { type: () => SendAppealNotificationInput })
     input: SendAppealNotificationInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<SendNotificationResponse> {
     const { caseId, appealCaseId, ...sendAppealNotification } = input
 
@@ -249,7 +247,7 @@ export class CaseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.SEND_NOTIFICATION,
-      backendService.sendAppealNotification(
+      this.backendService.sendAppealNotification(
         caseId,
         appealCaseId,
         sendAppealNotification,
@@ -281,8 +279,6 @@ export class CaseResolver {
     @Args('input', { type: () => DuplicateIndictmentCaseInput })
     input: DuplicateIndictmentCaseInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<Case> {
     this.logger.debug(
       `Duplicating indictment case ${input.id} into a new draft`,
@@ -291,7 +287,7 @@ export class CaseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.DUPLICATE_INDICTMENT_CASE,
-      backendService.duplicateIndictmentCase(input.id),
+      this.backendService.duplicateIndictmentCase(input.id),
       (theCase) => theCase.id,
     )
   }
