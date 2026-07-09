@@ -17,9 +17,14 @@ import * as styles from './NotificationsBox.css'
 interface Props {
   limit: number
   title?: string
+  showViewAllArrow?: boolean
 }
 
-export const NotificationsBox = ({ limit, title }: Props) => {
+export const NotificationsBox = ({
+  limit,
+  title,
+  showViewAllArrow = true,
+}: Props) => {
   const { formatMessage, lang } = useLocale()
   const userInfo = useUserInfo()
   const hasDelegationAccess = hasNotificationScopes(userInfo?.scopes)
@@ -81,7 +86,7 @@ export const NotificationsBox = ({ limit, title }: Props) => {
             </Text>
           </Box>
         </LinkResolver>
-        {hasDelegationAccess && (
+        {hasDelegationAccess && showViewAllArrow && (
           <LinkResolver
             href={InformationPaths.Notifications}
             aria-label={formatMessage(m.notificationsViewAll)}

@@ -76,7 +76,7 @@ const Appointments: React.FC<Props> = ({ data, showLinkButton }) => {
         },
       })) ?? []
 
-  const isNarrow = cards.length <= 1 && !isMobile && !isTablet
+  const isNarrow = (appointments?.length ?? 0) <= 1 && !isMobile && !isTablet
 
   return (
     <Box marginBottom={2}>

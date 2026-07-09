@@ -182,6 +182,7 @@ export const HealthOverview = () => {
               <NotificationsBox
                 limit={3}
                 title={formatMessage(messages.healthNotificationsTitle)}
+                showViewAllArrow={false}
               />
             </Box>
           </GridColumn>
