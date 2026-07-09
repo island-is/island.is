@@ -305,13 +305,9 @@ export const getAppealActorText = (
       return `Kært af sækjanda ${dateStr}`
     }
 
-    const party = getAppealingPartyInfo(
-      workingCase,
-      appealCase?.appealedByNationalId,
-    )
-
-    return party
-      ? `${party.role} ${party.name} kærði úrskurðinn ${dateStr}`
+    // Request-case defence is collective - name the case's current defender.
+    return workingCase.defenderName
+      ? `Verjandi ${workingCase.defenderName} kærði úrskurðinn ${dateStr}`
       : `Kært af verjanda ${dateStr}`
   }
 
@@ -331,7 +327,8 @@ export const getAppealActorText = (
 
     const party = getAppealingPartyInfo(
       workingCase,
-      appealCase.appealedByNationalId,
+      appealCase.appealedByDefendantId,
+      appealCase.appealedByCivilClaimantId,
     )
 
     return party
@@ -348,7 +345,8 @@ export const getAppealActorText = (
 
   const party = getAppealingPartyInfo(
     workingCase,
-    appealCase?.appealedByNationalId,
+    appealCase?.appealedByDefendantId,
+    appealCase?.appealedByCivilClaimantId,
   )
 
   return party
@@ -357,55 +355,84 @@ export const getAppealActorText = (
 }
 
 /**
- * Given an appealedByNationalId, find the appealing party among confirmed
- * defenders and civil claimant spokespersons.
+ * Given the appealing party (defendant or civil claimant, as recorded on the
+ * appeal case's event log), return its role label and *current* representative's
+ * name - so it follows a defender / spokesperson reassignment.
  *
- * Search order: confirmed defenders first, then confirmed civil claimant
- * spokespersons.
- *
- * Returns the role label and name, or undefined if not found.
+ * Returns the role label and name, or undefined if the party is not found.
  */
 export const getAppealingPartyInfo = (
   workingCase: Case,
-  appealedByNationalId?: string | null,
+  appealedByDefendantId?: string | null,
+  appealedByCivilClaimantId?: string | null,
 ): { role: string; name: string } | undefined => {
-  if (!appealedByNationalId) {
-    return undefined
+  if (appealedByDefendantId) {
+    const defendant = workingCase.defendants?.find(
+      (d) => d.id === appealedByDefendantId,
+    )
+
+    if (defendant) {
+      return { role: 'Verjandi', name: defendant.defenderName ?? '' }
+    }
   }
 
-  const normalizedId = normalizeAndFormatNationalId(appealedByNationalId)
+  if (appealedByCivilClaimantId) {
+    const civilClaimant = workingCase.civilClaimants?.find(
+      (cc) => cc.id === appealedByCivilClaimantId,
+    )
 
-  // Check confirmed defenders first
-  const defender = workingCase.defendants?.find(
-    (defendant) =>
-      defendant.isDefenderChoiceConfirmed &&
-      defendant.defenderNationalId &&
-      normalizedId.includes(defendant.defenderNationalId),
-  )
-
-  if (defender) {
-    return { role: 'Verjandi', name: defender.defenderName ?? '' }
-  }
-
-  // Then check confirmed civil claimant spokespersons
-  const civilClaimant = workingCase.civilClaimants?.find(
-    (cc) =>
-      cc.hasSpokesperson &&
-      cc.isSpokespersonConfirmed &&
-      cc.spokespersonNationalId &&
-      normalizedId.includes(cc.spokespersonNationalId),
-  )
-
-  if (civilClaimant) {
-    return {
-      role: civilClaimant.spokespersonIsLawyer
-        ? 'Lögmaður'
-        : 'Réttargæslumaður',
-      name: civilClaimant.spokespersonName ?? '',
+    if (civilClaimant) {
+      return {
+        role: civilClaimant.spokespersonIsLawyer
+          ? 'Lögmaður'
+          : 'Réttargæslumaður',
+        name: civilClaimant.spokespersonName ?? '',
+      }
     }
   }
 
   return undefined
+}
+
+/**
+ * True when the user is the *current* confirmed representative (defender /
+ * spokesperson) of the out-of-court appellant party - the web mirror of the
+ * backend `userIsAppellant` indictment-defence check, so it follows a
+ * defender / spokesperson reassignment.
+ */
+export const isCurrentAppellantRepresentative = (
+  workingCase: Case,
+  appealCase: AppealCase,
+  userNationalId?: string | null,
+): boolean => {
+  if (!userNationalId) {
+    return false
+  }
+
+  if (appealCase.appealedByDefendantId) {
+    const defendant = workingCase.defendants?.find(
+      (d) => d.id === appealCase.appealedByDefendantId,
+    )
+
+    return Boolean(
+      defendant?.isDefenderChoiceConfirmed &&
+        defendant.defenderNationalId === userNationalId,
+    )
+  }
+
+  if (appealCase.appealedByCivilClaimantId) {
+    const civilClaimant = workingCase.civilClaimants?.find(
+      (cc) => cc.id === appealCase.appealedByCivilClaimantId,
+    )
+
+    return Boolean(
+      civilClaimant?.hasSpokesperson &&
+        civilClaimant.isSpokespersonConfirmed &&
+        civilClaimant.spokespersonNationalId === userNationalId,
+    )
+  }
+
+  return false
 }
 
 /**
@@ -581,37 +608,12 @@ export const isAppealFileCategoryVisible = (
       if (isRequestCase(workingCase.type)) {
         return true
       }
-      // Indictment: the appellant's national id must match the confirmed
-      // defender of the file's defendant, or the confirmed spokesperson of
-      // the file's civil claimant.
-      if (!appealCase.appealedByNationalId) {
-        return false
-      }
-      const normalizedAppellantId = normalizeAndFormatNationalId(
-        appealCase.appealedByNationalId,
-      )
+      // Indictment: the file's party must be the party that appealed.
       if (file.defendantId) {
-        const defendant = workingCase.defendants?.find(
-          (d) => d.id === file.defendantId,
-        )
-        return Boolean(
-          defendant?.isDefenderChoiceConfirmed &&
-            defendant.defenderNationalId &&
-            normalizedAppellantId.includes(defendant.defenderNationalId),
-        )
+        return file.defendantId === appealCase.appealedByDefendantId
       }
       if (file.civilClaimantId) {
-        const civilClaimant = workingCase.civilClaimants?.find(
-          (cc) => cc.id === file.civilClaimantId,
-        )
-        return Boolean(
-          civilClaimant?.hasSpokesperson &&
-            civilClaimant.isSpokespersonConfirmed &&
-            civilClaimant.spokespersonNationalId &&
-            normalizedAppellantId.includes(
-              civilClaimant.spokespersonNationalId,
-            ),
-        )
+        return file.civilClaimantId === appealCase.appealedByCivilClaimantId
       }
       return false
     }

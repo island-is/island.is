@@ -45,7 +45,7 @@ jest.mock(
 
 // District court sending an in-court ruling-order appeal straight to
 // Landsréttur. An in-court appeal creates the appeal case in APPEALED state
-// with no named appellant (appealedByRole/appealedByNationalId are null), so
+// with no named appellant (appealedByRole/appealedByDefendantId are null), so
 // the row must light up from appeal-case existence alone.
 describe('RulingOrderFileRow - send in-court appeal to Court of appeals', () => {
   const rulingFileId = 'ruling-file-1'

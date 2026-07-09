@@ -80,6 +80,7 @@ import { IndictmentCountService } from '../indictment-count'
 import {
   AppealCaseRepositoryService,
   AppealDecisionRepositoryService,
+  AppealEventLog,
   AppealEventLogRepositoryService,
   Case,
   caseInclude,
