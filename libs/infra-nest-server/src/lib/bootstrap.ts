@@ -120,7 +120,12 @@ function setupOpenApi(
 ) {
   app.use(swaggerPath, swaggerRedirectMiddleware(swaggerPath))
 
-  const document = SwaggerModule.createDocument(app, openApi)
+  const document = SwaggerModule.createDocument(app, openApi, {
+    // Keep pre-@nestjs/swagger-11 operationId naming (no version suffix) so
+    // the runtime swagger doc matches the generated clients. See buildOpenApi.
+    operationIdFactory: (controllerKey, methodKey) =>
+      `${controllerKey}_${methodKey}`,
+  })
   SwaggerModule.setup(swaggerPath, app, document)
 
   return document
