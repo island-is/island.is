@@ -1,7 +1,6 @@
 import { Box, Icon, SkeletonLoader, Text } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
-import { LinkResolver, m } from '@island.is/portals/my-pages/core'
+import { AvatarImage, LinkResolver, m } from '@island.is/portals/my-pages/core'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { hasNotificationScopes } from '@island.is/auth/scopes'
@@ -187,23 +186,12 @@ export const NotificationsBox = ({
               borderColor="blue200"
               className={unread ? styles.unreadRow : undefined}
             >
-              <Box
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
+              <AvatarImage
+                img={item.sender?.logoUrl ?? COAT_OF_ARMS}
                 background={unread ? 'white' : 'blue100'}
-                style={
-                  unread ? undefined : { background: theme.color.blueberry100 }
-                }
-                borderRadius="full"
-                className={styles.avatarContainer}
-              >
-                <img
-                  className={styles.notificationSenderLogoImage}
-                  src={item.sender?.logoUrl ?? COAT_OF_ARMS}
-                  alt=""
-                />
-              </Box>
+                imageClass={styles.notificationSenderLogoImage}
+                as="div"
+              />
               <Box flexGrow={1} overflow="hidden">
                 <Box
                   display="flex"

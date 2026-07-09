@@ -24,14 +24,6 @@ export const notificationSenderLogoImage = style({
   maxWidth: 28,
 })
 
-export const avatarContainer = style({
-  minWidth: 48,
-  minHeight: 48,
-  maxHeight: 48,
-  maxWidth: 48,
-  transition: 'background-color .25s',
-})
-
 export const notificationLink = style({
   display: 'block',
   textDecoration: 'none',
