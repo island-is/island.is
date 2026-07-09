@@ -880,6 +880,8 @@ export const en: TranslatedMessages = {
   'health.messages.compose.to': 'To: {name}',
   'health.messages.compose.messageLabel': 'Message',
   'health.messages.compose.messagePlaceholder': 'Write your message here',
+  'health.messages.compose.termsAccept': 'I accept the',
+  'health.messages.compose.termsLink': 'terms',
   'health.messages.compose.send': 'Send message',
   'health.messages.compose.sendError':
     'Failed to send message. Please try again later.',

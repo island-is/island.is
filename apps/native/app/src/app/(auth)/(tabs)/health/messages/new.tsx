@@ -15,6 +15,7 @@ import {
 import { useLocale } from '@/hooks/use-locale'
 import {
   Button,
+  Checkbox,
   GeneralCardSkeleton,
   Problem,
   Select,
@@ -36,6 +37,7 @@ export default function HealthMessageComposeScreen() {
   const [message, setMessage] = useState('')
   const [recipientNodeId, setRecipientNodeId] = useState<string>()
   const [typeCode, setTypeCode] = useState<string>()
+  const [termsAccepted, setTermsAccepted] = useState(false)
 
   const recipientsRes = useGetHealthConversationRecipientsQuery({
     variables: { locale: locale === 'is' ? LocaleEnum.Is : LocaleEnum.En },
@@ -123,7 +125,7 @@ export default function HealthMessageComposeScreen() {
 
   const canSend = isReply
     ? !!message.trim()
-    : !!message.trim() && !!selectedRecipient && !!typeCode
+    : !!message.trim() && !!selectedRecipient && !!typeCode && termsAccepted
 
   const onSend = () => {
     if (isReply && conversationId) {
@@ -267,6 +269,32 @@ export default function HealthMessageComposeScreen() {
                 numberOfLines={6}
                 inputStyle={{ minHeight: 120 }}
               />
+
+              {!isReply && (
+                <Checkbox
+                  checked={termsAccepted}
+                  onPress={() => setTermsAccepted(!termsAccepted)}
+                  label={
+                    <>
+                      {intl.formatMessage({
+                        id: 'health.messages.compose.termsAccept',
+                      })}{' '}
+                      <Typography
+                        weight="600"
+                        color={theme.color.blue400}
+                        style={{ textDecorationLine: 'underline' }}
+                        // TODO: Open the terms and conditions link once we
+                        // have the URL.
+                        onPress={() => undefined}
+                      >
+                        {intl.formatMessage({
+                          id: 'health.messages.compose.termsLink',
+                        })}
+                      </Typography>
+                    </>
+                  }
+                />
+              )}
             </>
           )}
         </ScrollView>

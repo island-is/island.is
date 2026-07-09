@@ -878,6 +878,8 @@ export const is = {
   'health.messages.compose.to': 'Til: {name}',
   'health.messages.compose.messageLabel': 'Skilaboð',
   'health.messages.compose.messagePlaceholder': 'Skrifaðu skilaboð hér',
+  'health.messages.compose.termsAccept': 'Ég samþykki',
+  'health.messages.compose.termsLink': 'skilmála',
   'health.messages.compose.send': 'Senda skilaboð',
   'health.messages.compose.sendError':
     'Ekki tókst að senda skilaboð. Vinsamlegast reyndu aftur síðar.',
