@@ -13,7 +13,7 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
-import { Case, CaseFile } from '../../repository'
+import { Case, CaseFile, CivilClaimant, Defendant } from '../../repository'
 
 @Injectable()
 export class LimitedAccessDeleteCaseFileGuard implements CanActivate {
@@ -68,18 +68,16 @@ export class LimitedAccessDeleteCaseFileGuard implements CanActivate {
 
     if (
       (defendantId &&
-        theCase.defendants?.find(
-          (d) =>
-            d.id === caseFile.defendantId &&
-            d.isDefenderChoiceConfirmed &&
-            d.defenderNationalId === user.nationalId,
+        Defendant.isConfirmedDefenderOfDefendant(
+          user.nationalId,
+          theCase.defendants?.filter((d) => d.id === caseFile.defendantId),
         )) ||
       (civilClaimantId &&
-        theCase.civilClaimants?.find(
-          (c) =>
-            c.id === caseFile.civilClaimantId &&
-            c.isSpokespersonConfirmed &&
-            c.spokespersonNationalId === user.nationalId,
+        CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(
+          user.nationalId,
+          theCase.civilClaimants?.filter(
+            (c) => c.id === caseFile.civilClaimantId,
+          ),
         ))
     ) {
       // The user controls this case file

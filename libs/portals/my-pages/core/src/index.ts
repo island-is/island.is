@@ -12,7 +12,11 @@ export * from './components/EducationCard/EducationCard'
 export * from './components/EmptyState/EmptyImage'
 export * from './components/EmptyState/EmptyImgSmall'
 export * from './components/EmptyState/EmptyState'
-export { EmptyTable, Table, createColumnHelper } from '@island.is/portals/core'
+export {
+  EmptyTable,
+  PortalTable,
+  createColumnHelper,
+} from '@island.is/portals/core'
 export type {
   ColumnDef,
   Row,
@@ -45,6 +49,7 @@ export * from './components/NestedLines/NestedLines'
 export * from './components/NestedTable/NestedFullTable'
 export * from './components/NestedTable/NestedTable'
 export * from './components/ProgressBar/ProgressBar'
+export * from './components/SidebarContactBox/SidebarContactBox'
 export * from './components/SortableTable/SortableTable'
 export * from './components/StackOrTableBlock/StackOrTableBlock'
 export * from './components/StackWithBottomDivider/StackWithBottomDivider'

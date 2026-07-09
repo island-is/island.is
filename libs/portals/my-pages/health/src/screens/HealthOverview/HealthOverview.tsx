@@ -1,9 +1,18 @@
-import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  GridColumn,
+  GridRow,
+  Inline,
+  Tag,
+  Text,
+} from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { LinkResolver } from '@island.is/portals/my-pages/core'
 import { NotificationsBox } from '@island.is/portals/my-pages/information'
 import subYears from 'date-fns/subYears'
 import { useWindowSize } from 'react-use'
+import { HealthPaths } from '../../lib/paths'
 import { messages } from '../../lib/messages'
 import {
   CONTENT_GAP_LG,
@@ -42,6 +51,10 @@ export const HealthOverview = () => {
   )
   const { value: isNewHealthOverviewPageEnabled } = useFeatureFlag(
     Features.isNewHealthOverviewPageEnabled,
+    false,
+  )
+  const { value: showQuickLinks } = useFeatureFlag(
+    Features.servicePortalHealthMedicineLandlaeknirPageEnabled,
     false,
   )
 
@@ -117,6 +130,25 @@ export const HealthOverview = () => {
   const firstTwoAppointments =
     appointmentsData?.healthDirectorateAppointments?.data?.slice(0, 2) || []
 
+  const quickLinks = [
+    {
+      href: HealthPaths.HealthMedicinePrescription,
+      label: formatMessage(messages.quickLinkMedicinePrescription),
+    },
+    {
+      href: HealthPaths.HealthMedicineDelegation,
+      label: formatMessage(messages.quickLinkMedicineDelegation),
+    },
+    {
+      href: HealthPaths.HealthWaitlists,
+      label: formatMessage(messages.quickLinkWaitlists),
+    },
+    {
+      href: HealthPaths.HealthQuestionnaires,
+      label: formatMessage(messages.quickLinkQuestionnaires),
+    },
+  ]
+
   return (
     <>
       <GridRow marginBottom={CONTENT_GAP_LG}>
@@ -125,10 +157,20 @@ export const HealthOverview = () => {
             <Text variant="h3" as={'h1'}>
               {formatMessage(messages.healthOverview)}
             </Text>
-
             <Text variant="default" paddingTop={1}>
               {formatMessage(messages.healthOverviewIntro)}
             </Text>
+            {showQuickLinks && (
+              <Box marginTop={3}>
+                <Inline space={[1, 2]}>
+                  {quickLinks.map((link) => (
+                    <LinkResolver key={link.href} href={link.href}>
+                      <Tag variant="blue">{link.label}</Tag>
+                    </LinkResolver>
+                  ))}
+                </Inline>
+              </Box>
+            )}
           </>
         </GridColumn>
       </GridRow>

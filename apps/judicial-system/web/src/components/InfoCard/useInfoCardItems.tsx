@@ -45,7 +45,11 @@ import { strings } from './useInfoCardItems.strings'
 import { grid } from '../../utils/styles/recipes.css'
 import * as styles from './InfoCard.css'
 
-const useInfoCardItems = () => {
+type HeadingLevel = 'h2' | 'h3' | 'h4' | 'h5'
+
+// Semantic heading level for the item titles built here. The visual size stays
+// h4 so only the level exposed to assistive technology changes.
+const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
   const { limitedAccess, user } = useContext(UserContext)
@@ -73,7 +77,7 @@ const useInfoCardItems = () => {
     return {
       id: 'defendant-item',
       title: (
-        <Text variant="h4" as="h4" marginBottom={2}>
+        <Text variant="h4" as={titleAs} marginBottom={2}>
           {capitalize(
             isRequestCase(caseType)
               ? formatMessage(core.defendant, {
@@ -126,7 +130,7 @@ const useInfoCardItems = () => {
     return {
       id: `cancelled-and-dismissed-defendant-item-${defendant.id}`,
       title: (
-        <Text variant="h4" as="h4">
+        <Text variant="h4" as={titleAs}>
           {getHumanReadableCaseIndictmentRulingDecision(
             defendant.indictmentCancelledOrDismissedState?.type,
           )}
@@ -432,7 +436,7 @@ const useInfoCardItems = () => {
   const civilClaimants: Item = {
     id: 'civil-claimant-item',
     title: (
-      <Text variant="h4" as="h4" marginBottom={2}>
+      <Text variant="h4" as={titleAs} marginBottom={2}>
         {capitalize(
           isNonEmptyArray(workingCase.civilClaimants) &&
             workingCase.civilClaimants.length > 1
@@ -464,7 +468,7 @@ const useInfoCardItems = () => {
   const victims: Item = {
     id: 'victim-item',
     title: (
-      <Text variant="h4" as="h4" marginBottom={2}>
+      <Text variant="h4" as={titleAs} marginBottom={2}>
         {workingCase.victims && workingCase.victims.length > 1
           ? 'Brotaþolar'
           : 'Brotaþoli'}
