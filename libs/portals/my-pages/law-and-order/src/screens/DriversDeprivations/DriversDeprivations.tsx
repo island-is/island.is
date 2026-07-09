@@ -164,9 +164,7 @@ const DriversDeprivations = () => {
                 }
               />
               <InfoLine
-                label={formatMessage(
-                  messages.driversDeprivationsColumnDateTo,
-                )}
+                label={formatMessage(messages.driversDeprivationsColumnDateTo)}
                 labelColumnSpan="5/12"
                 content={
                   current.dateTo ? formatDate(current.dateTo) : undefined

@@ -42,7 +42,8 @@ const DriversPoints = () => {
 
   const isEmpty = !loading && !error && details.length === 0
 
-  const currentDeprivation = deprivationsData?.drivingLicenseDeprivations?.current
+  const currentDeprivation =
+    deprivationsData?.drivingLicenseDeprivations?.current
 
   const deprivationAlert =
     !deprivationsLoading && !deprivationsError && currentDeprivation

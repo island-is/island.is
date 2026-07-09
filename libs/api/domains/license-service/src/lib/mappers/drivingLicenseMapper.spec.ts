@@ -44,8 +44,10 @@ describe('DrivingLicensePayloadMapper', () => {
     mapper = new DrivingLicensePayloadMapper(createIntlService())
   })
 
-  const findEntry = <T extends { label?: string }>(data: Array<T>, label: string) =>
-    data.find((entry) => entry.label === label)
+  const findEntry = <T extends { label?: string }>(
+    data: Array<T>,
+    label: string,
+  ) => data.find((entry) => entry.label === label)
 
   type ValueEntry = {
     label?: string
