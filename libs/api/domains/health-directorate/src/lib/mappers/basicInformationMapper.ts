@@ -1,15 +1,18 @@
+import addMinutes from 'date-fns/addMinutes'
+import subMinutes from 'date-fns/subMinutes'
 import {
-  ConversationStatusFilter,
   DiseaseVaccinationDtoVaccinationStatusEnum,
   UserVisibleAppointmentStatuses,
 } from '@island.is/clients/health-directorate'
+import {
+  VIDEO_CALL_ACTIVATES_MINUTES_BEFORE,
+  VIDEO_CALL_EXPIRES_MINUTES_AFTER,
+} from '../constants'
 import {
   AppointmentAssigneeTypeEnum,
   AppointmentLinkTypeEnum,
   AppointmentModalityEnum,
   AppointmentStatusEnum,
-  HealthConversationDirectionEnum,
-  HealthConversationStatusFilterEnum,
   ReferralStatusEnum,
   VaccinationStatusEnum,
   WaitlistStatusTagColorEnum,
@@ -98,6 +101,28 @@ export const toAppointmentLinkTypeEnum = (
   }
 }
 
+/*
+ * Only the video call link is currently time-gated. The window is computed
+ * here, so web and native both read the same activatesAt/expiresAt instead
+ * of each hardcoding the rules independently.
+ */
+export const getAppointmentLinkActivationWindow = (
+  type: AppointmentLinkTypeEnum | undefined,
+  appointmentDate: Date,
+): { activatesAt?: Date; expiresAt?: Date } => {
+  if (type !== AppointmentLinkTypeEnum.VIDEO_CALL) {
+    return {}
+  }
+
+  return {
+    activatesAt: subMinutes(
+      appointmentDate,
+      VIDEO_CALL_ACTIVATES_MINUTES_BEFORE,
+    ),
+    expiresAt: addMinutes(appointmentDate, VIDEO_CALL_EXPIRES_MINUTES_AFTER),
+  }
+}
+
 export const mapAppointmentStatus = (
   status: AppointmentStatusEnum,
 ): UserVisibleAppointmentStatuses | null => {
@@ -164,33 +189,5 @@ export const mapReferralStatusValueToStatus = (
     default:
       // Unknown status values if new ones get added without letting us know
       return ReferralStatusEnum.Unknown
-  }
-}
-
-export const toConversationDirectionEnum = (
-  direction: string,
-): HealthConversationDirectionEnum => {
-  switch (direction) {
-    case 'PATIENT':
-      return HealthConversationDirectionEnum.PATIENT
-    case 'STAFF':
-      return HealthConversationDirectionEnum.STAFF
-    case 'SYSTEM':
-      return HealthConversationDirectionEnum.SYSTEM
-    default:
-      return HealthConversationDirectionEnum.SYSTEM
-  }
-}
-
-export const toConversationStatusFilter = (
-  status: HealthConversationStatusFilterEnum,
-): ConversationStatusFilter => {
-  switch (status) {
-    case HealthConversationStatusFilterEnum.ACTIVE:
-      return ConversationStatusFilter.ACTIVE
-    case HealthConversationStatusFilterEnum.ARCHIVED:
-      return ConversationStatusFilter.ARCHIVED
-    case HealthConversationStatusFilterEnum.ALL:
-      return ConversationStatusFilter.ALL
   }
 }
