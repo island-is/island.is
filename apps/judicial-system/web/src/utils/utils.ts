@@ -269,6 +269,68 @@ export const getDefenceUserPartyIds = (
 }
 
 /**
+ * The in-court appeal decision (Ákvörðun um kæru) recorded for a case-level
+ * party - the collective defence (DEFENDANT) or the prosecution (PROSECUTOR).
+ * Case-level decisions are the appeal_decision rows with no rulingFileId.
+ */
+export const caseLevelAppealDecision = (
+  workingCase: Case,
+  partyRole: AppealDecisionPartyRole,
+): CaseAppealDecision | undefined =>
+  workingCase.appealDecisions?.find(
+    (decision) => !decision.rulingFileId && decision.partyRole === partyRole,
+  )?.decision ?? undefined
+
+/**
+ * The in-court appeal announcement (free text) recorded for a case-level party.
+ * Same case-level row (no rulingFileId) as caseLevelAppealDecision.
+ */
+export const caseLevelAppealAnnouncement = (
+  workingCase: Case,
+  partyRole: AppealDecisionPartyRole,
+): string | undefined =>
+  workingCase.appealDecisions?.find(
+    (decision) => !decision.rulingFileId && decision.partyRole === partyRole,
+  )?.announcement ?? undefined
+
+/**
+ * Returns a new appeal-decisions array where the case-level (no rulingFileId)
+ * row for `partyRole` has the provided `decision` / `announcement` applied -
+ * appending a fresh case-level row when none exists yet. Only the keys present
+ * on `update` are overwritten, so an announcement-only update leaves the
+ * decision intact and vice versa. Used for optimistic local updates while the
+ * mutation persists the rows server-side.
+ */
+export const withCaseLevelAppealDecision = (
+  appealDecisions: Case['appealDecisions'],
+  partyRole: AppealDecisionPartyRole,
+  update: { decision?: CaseAppealDecision; announcement?: string },
+): Case['appealDecisions'] => {
+  const decisions = appealDecisions ?? []
+  const patch = {
+    ...('decision' in update ? { decision: update.decision } : {}),
+    ...('announcement' in update ? { announcement: update.announcement } : {}),
+  }
+
+  const index = decisions.findIndex(
+    (decision) => !decision.rulingFileId && decision.partyRole === partyRole,
+  )
+
+  if (index === -1) {
+    return [
+      ...decisions,
+      { partyRole, rulingFileId: null, ...patch } as NonNullable<
+        Case['appealDecisions']
+      >[number],
+    ]
+  }
+
+  return decisions.map((decision, i) =>
+    i === index ? { ...decision, ...patch } : decision,
+  )
+}
+
+/**
  * Returns a human-readable description of who appealed and when.
  *
  * Branches by case type, then by appeal kind for indictment cases. The
@@ -290,8 +352,14 @@ export const getAppealActorText = (
 ): string => {
   if (isRequestCase(workingCase.type)) {
     const appealedInCourt =
-      workingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
-      workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
+      caseLevelAppealDecision(
+        workingCase,
+        AppealDecisionPartyRole.PROSECUTOR,
+      ) === CaseAppealDecision.APPEAL ||
+      caseLevelAppealDecision(
+        workingCase,
+        AppealDecisionPartyRole.DEFENDANT,
+      ) === CaseAppealDecision.APPEAL
 
     if (appealedInCourt) {
       return appealCase?.appealedByRole === UserRole.PROSECUTOR

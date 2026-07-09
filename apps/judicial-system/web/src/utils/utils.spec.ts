@@ -362,9 +362,15 @@ describe('Utils', () => {
       test('returns "Sækjandi kærði í þinghaldi" when prosecutor appealed in court', () => {
         const workingCase = {
           type: CaseType.CUSTODY,
-          prosecutorAppealDecision: CaseAppealDecision.APPEAL,
+          appealDecisions: [
+            {
+              rulingFileId: null,
+              partyRole: AppealDecisionPartyRole.PROSECUTOR,
+              decision: CaseAppealDecision.APPEAL,
+            },
+          ],
           appealCase: { appealedByRole: UserRole.PROSECUTOR } as AppealCase,
-        } as Case
+        } as unknown as Case
 
         expect(getAppealActorText(workingCase)).toBe(
           'Sækjandi kærði í þinghaldi',
@@ -374,9 +380,15 @@ describe('Utils', () => {
       test('returns "Varnaraðili kærði í þinghaldi" when defender appealed in court', () => {
         const workingCase = {
           type: CaseType.CUSTODY,
-          accusedAppealDecision: CaseAppealDecision.APPEAL,
+          appealDecisions: [
+            {
+              rulingFileId: null,
+              partyRole: AppealDecisionPartyRole.DEFENDANT,
+              decision: CaseAppealDecision.APPEAL,
+            },
+          ],
           appealCase: { appealedByRole: UserRole.DEFENDER } as AppealCase,
-        } as Case
+        } as unknown as Case
 
         expect(getAppealActorText(workingCase)).toBe(
           'Varnaraðili kærði í þinghaldi',
@@ -386,12 +398,18 @@ describe('Utils', () => {
       test('returns "Kært af sækjanda {date}" for out-of-court prosecutor appeal', () => {
         const workingCase = {
           type: CaseType.CUSTODY,
-          prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
+          appealDecisions: [
+            {
+              rulingFileId: null,
+              partyRole: AppealDecisionPartyRole.PROSECUTOR,
+              decision: CaseAppealDecision.POSTPONE,
+            },
+          ],
           appealCase: {
             appealedByRole: UserRole.PROSECUTOR,
             appealedDate,
           } as AppealCase,
-        } as Case
+        } as unknown as Case
 
         expect(getAppealActorText(workingCase)).toBe(
           `Kært af sækjanda ${dateStr}`,
@@ -401,13 +419,19 @@ describe('Utils', () => {
       test('returns "Verjandi {name} kærði úrskurðinn {date}" for the case defender', () => {
         const workingCase = {
           type: CaseType.CUSTODY,
-          accusedAppealDecision: CaseAppealDecision.POSTPONE,
+          appealDecisions: [
+            {
+              rulingFileId: null,
+              partyRole: AppealDecisionPartyRole.DEFENDANT,
+              decision: CaseAppealDecision.POSTPONE,
+            },
+          ],
           defenderName: 'Jón Jónsson',
           appealCase: {
             appealedByRole: UserRole.DEFENDER,
             appealedDate,
           } as AppealCase,
-        } as Case
+        } as unknown as Case
 
         expect(getAppealActorText(workingCase)).toBe(
           `Verjandi Jón Jónsson kærði úrskurðinn ${dateStr}`,
@@ -417,7 +441,13 @@ describe('Utils', () => {
       test('falls back to "Kært af verjanda {date}" when the case has no defender name', () => {
         const workingCase = {
           type: CaseType.CUSTODY,
-          accusedAppealDecision: CaseAppealDecision.POSTPONE,
+          appealDecisions: [
+            {
+              rulingFileId: null,
+              partyRole: AppealDecisionPartyRole.DEFENDANT,
+              decision: CaseAppealDecision.POSTPONE,
+            },
+          ],
           defendants: [],
           civilClaimants: [],
           appealCase: {

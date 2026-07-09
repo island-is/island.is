@@ -195,10 +195,6 @@ query Case($input: CaseQueryInput!) {
     isolationToDate
     conclusion
     endOfSessionBookings
-    accusedAppealDecision
-    accusedAppealAnnouncement
-    prosecutorAppealDecision
-    prosecutorAppealAnnouncement
     rulingDate
     rulingSignatureDate
     judge {
