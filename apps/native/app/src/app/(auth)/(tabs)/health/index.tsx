@@ -43,6 +43,7 @@ import {
   Input,
   InputRow,
   ListItem,
+  ListItemSkeleton,
   MoreCard,
   Problem,
   Skeleton,
@@ -384,8 +385,7 @@ export default function HealthOverviewScreen() {
     organDonationRes.data?.healthDirectorateOrganDonation.donor
   const appointments =
     appointmentsRes.data?.healthDirectorateAppointments?.data ?? []
-  const messages =
-    messagesRes.data?.healthDirectorateHealthConversations ?? []
+  const messages = messagesRes.data?.healthDirectorateHealthConversations ?? []
 
   const isMedicinePeriodActive =
     medicinePurchaseData?.active ||
@@ -584,11 +584,11 @@ export default function HealthOverviewScreen() {
               onPress={() => router.navigate('/(auth)/(tabs)/health/messages')}
             />
             {(!hasBeenFocused || messagesRes.loading) && (
-              <AppointmentsSkeletonGroup>
+              <View style={{ marginHorizontal: -theme.spacing[2] }}>
                 {Array.from({ length: 3 }).map((_, index) => (
-                  <GeneralCardSkeleton height={72} key={index} />
+                  <ListItemSkeleton key={index} />
                 ))}
-              </AppointmentsSkeletonGroup>
+              </View>
             )}
             {messagesRes.error && messages.length === 0 && (
               <AppointmentsContainer>
@@ -599,7 +599,6 @@ export default function HealthOverviewScreen() {
                   message={intl.formatMessage({
                     id: 'health.messages.errorMessage',
                   })}
-                  tag={messagesRes.error.message}
                 />
               </AppointmentsContainer>
             )}
@@ -611,32 +610,30 @@ export default function HealthOverviewScreen() {
                   <Problem type="no_data" size="small" />
                 </AppointmentsContainer>
               )}
-            {hasBeenFocused &&
-              !messagesRes.loading &&
-              messages.length > 0 && (
-                <View style={{ marginHorizontal: -theme.spacing[2] }}>
-                  {messages.slice(0, 3).map((message) => (
-                    <TouchableOpacity
-                      key={message.id}
-                      onPress={() =>
-                        router.navigate({
-                          pathname: '/health/messages/[id]',
-                          params: { id: message.id },
-                        })
-                      }
-                    >
-                      <ListItem
-                        title={message.lastSenderGroupName ?? ''}
-                        subtitle={message.title ?? ''}
-                        date={message.lastMessageSentAt ?? undefined}
-                        unread={!message.isRead}
-                        starred={message.isStarred}
-                        icon={message.hasAttachment ? readerIcon : heartIcon}
-                      />
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              )}
+            {hasBeenFocused && !messagesRes.loading && messages.length > 0 && (
+              <View style={{ marginHorizontal: -theme.spacing[2] }}>
+                {messages.slice(0, 3).map((message) => (
+                  <TouchableOpacity
+                    key={message.id}
+                    onPress={() =>
+                      router.navigate({
+                        pathname: '/health/messages/[id]',
+                        params: { id: message.id },
+                      })
+                    }
+                  >
+                    <ListItem
+                      title={message.lastSenderGroupName ?? ''}
+                      subtitle={message.title ?? ''}
+                      date={message.lastMessageSentAt ?? undefined}
+                      unread={!message.isRead}
+                      starred={message.isStarred}
+                      icon={message.hasAttachment ? readerIcon : heartIcon}
+                    />
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
           </>
         )}
         <HeadingSection
@@ -776,7 +773,8 @@ export default function HealthOverviewScreen() {
                 warningText={
                   !isMedicinePeriodActive
                     ? intl.formatMessage({
-                        id: 'health.overview.medicinePurchaseNoActivePeriodWarning',
+                        id:
+                          'health.overview.medicinePurchaseNoActivePeriodWarning',
                       })
                     : ''
                 }

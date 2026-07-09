@@ -22,13 +22,7 @@ import {
   useGetHealthConversationsQuery,
 } from '@/graphql/types/schema'
 import { useHealthMessagesFilterStore } from '@/stores/health-messages-filter-store'
-import {
-  EmptyList,
-  GeneralCardSkeleton,
-  ListItem,
-  Problem,
-  SearchBar,
-} from '@/ui'
+import { EmptyList, ListItem, ListItemSkeleton, Problem, SearchBar } from '@/ui'
 
 export default function HealthMessagesScreen() {
   const intl = useIntl()
@@ -173,8 +167,8 @@ export default function HealthMessagesScreen() {
         ListEmptyComponent={
           messagesRes.loading && !messagesRes.data ? (
             <View>
-              {Array.from({ length: 6 }).map((_, index) => (
-                <GeneralCardSkeleton height={72} key={index} />
+              {Array.from({ length: 8 }).map((_, index) => (
+                <ListItemSkeleton key={index} />
               ))}
             </View>
           ) : messagesRes.error ? (
