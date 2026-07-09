@@ -85,6 +85,14 @@ export const createApp = async ({
     app.use(bodyParser.json({ limit: options.jsonBodyLimit }))
   }
 
+  // Express 5 leaves req.body undefined for requests without a body, where
+  // Express 4 defaulted it to {}. Restore the old behavior so handlers
+  // reading optional body fields keep working across all services.
+  app.use((req: { body?: unknown }, _res: unknown, next: () => void) => {
+    req.body = req.body ?? {}
+    next()
+  })
+
   return app
 }
 
