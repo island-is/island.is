@@ -54,7 +54,7 @@ export const uploadChunk = async (
   res: express.Response,
   next: express.NextFunction,
 ) => {
-  const { cacheId } = req.params
+  const cacheId = req.params.cacheId as string
   logger.debug(`Uploading chunk for ${cacheId}`)
   const uploadId = await cache.getKey(cacheId, 'uploadId')
   if (!uploadId) {
@@ -100,7 +100,7 @@ export const commitCache = async (
   res: express.Response,
   next: express.NextFunction,
 ) => {
-  const { cacheId } = req.params
+  const cacheId = req.params.cacheId as string
   logger.debug(`Finalizing cache upload for ${cacheId}`)
   const uploadInfo = await cache.getMap(cacheId)
   const uploadId = uploadInfo.uploadId
