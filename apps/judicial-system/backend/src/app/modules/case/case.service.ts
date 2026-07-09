@@ -1391,67 +1391,9 @@ export class CaseService {
     }
   }
 
-  // Dual-write: mirrors the legacy request-case appeal decision fields into
-  // the in-court appeal_decision rows - one prosecution row and one collective
-  // defence row (no defendantId). Indictment decisions are not stored here.
-  // The legacy columns remain the source of truth until later.
-  private async handleAppealDecisionUpdates(
-    theCase: Case,
-    update: UpdateCase,
-    transaction: Transaction,
-  ): Promise<void> {
-    if (!isRequestCase(theCase.type)) {
-      return
-    }
-
-    // Mirror whenever a decision or announcement is touched. decision is
-    // nullable, so an announcement entered before a decision is picked is
-    // still persisted (and not lost on refresh / column drop).
-    if (
-      update.prosecutorAppealDecision !== undefined ||
-      update.prosecutorAppealAnnouncement !== undefined
-    ) {
-      await this.appealDecisionRepositoryService.upsert(
-        { caseId: theCase.id, partyRole: AppealDecisionPartyRole.PROSECUTOR },
-        {
-          decision:
-            update.prosecutorAppealDecision ??
-            theCase.prosecutorAppealDecision ??
-            null,
-          announcement:
-            update.prosecutorAppealAnnouncement ??
-            theCase.prosecutorAppealAnnouncement ??
-            null,
-        },
-        { transaction },
-      )
-    }
-
-    if (
-      update.accusedAppealDecision !== undefined ||
-      update.accusedAppealAnnouncement !== undefined
-    ) {
-      await this.appealDecisionRepositoryService.upsert(
-        { caseId: theCase.id, partyRole: AppealDecisionPartyRole.DEFENDANT },
-        {
-          decision:
-            update.accusedAppealDecision ??
-            theCase.accusedAppealDecision ??
-            null,
-          announcement:
-            update.accusedAppealAnnouncement ??
-            theCase.accusedAppealAnnouncement ??
-            null,
-        },
-        { transaction },
-      )
-    }
-  }
-
-  // Records a case-level (request-case) appeal decision directly on the
-  // appeal_decision rows - the write switch away from the accused/prosecutor
-  // case columns. A reverse dual-write keeps those legacy columns in sync so
-  // not-yet-migrated paths still read them and they can be dropped in Phase 4.
+  // Records a case-level (request-case) appeal decision on the appeal_decision
+  // rows - the source of truth now that the accused/prosecutor appeal decision
+  // and announcement case columns have been dropped.
   async upsertCaseAppealDecision(
     theCase: Case,
     update: CaseAppealDecisionDto,
@@ -1483,38 +1425,11 @@ export class CaseService {
       data.announcement = update.announcement ?? null
     }
 
-    const appealDecision = await this.appealDecisionRepositoryService.upsert(
+    return this.appealDecisionRepositoryService.upsert(
       { caseId: theCase.id, rulingFileId: null, partyRole: update.partyRole },
       data,
       { transaction },
     )
-
-    // Reverse dual-write into the legacy case columns.
-    const isProsecutor = update.partyRole === AppealDecisionPartyRole.PROSECUTOR
-    const caseUpdate: UpdateCase = {}
-    if (update.decision !== undefined) {
-      const decision = update.decision ?? null
-      if (isProsecutor) {
-        caseUpdate.prosecutorAppealDecision = decision
-      } else {
-        caseUpdate.accusedAppealDecision = decision
-      }
-    }
-    if (update.announcement !== undefined) {
-      const announcement = update.announcement ?? null
-      if (isProsecutor) {
-        caseUpdate.prosecutorAppealAnnouncement = announcement
-      } else {
-        caseUpdate.accusedAppealAnnouncement = announcement
-      }
-    }
-    if (Object.keys(caseUpdate).length > 0) {
-      await this.caseRepositoryService.update(theCase.id, caseUpdate, {
-        transaction,
-      })
-    }
-
-    return appealDecision
   }
 
   // Converges a request-case (case-level) appeal case's APPEALED events with the
@@ -2092,7 +2007,6 @@ export class CaseService {
 
     await this.handleDateLogUpdates(theCase, caseUpdate, transaction)
     await this.handleCaseStringUpdates(theCase, caseUpdate, transaction)
-    await this.handleAppealDecisionUpdates(theCase, caseUpdate, transaction)
 
     // Handle appealed in court
     if (isCompletingRequestCase) {
