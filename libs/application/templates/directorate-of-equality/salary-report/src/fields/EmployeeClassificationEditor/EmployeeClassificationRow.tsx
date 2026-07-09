@@ -3,7 +3,8 @@ import AnimateHeight from 'react-animate-height'
 import { Box, Button, Stack, Table as T, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
-import { GENDER_LABELS, type Employee } from '../../lib/constants'
+import { GENDER_LABELS } from '../../utils/constants'
+import type { Employee } from '../../utils/types'
 import {
   groupAssignmentsByCriterion,
   type StepMeta,

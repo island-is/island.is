@@ -9,7 +9,7 @@ import type {
   ParsedEmployeeDto,
 } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
-import { type Employee, type SubCriterion } from '../../lib/constants'
+import { type Employee, type SubCriterion } from '../../utils/types'
 import {
   buildStepMetaByTitle,
   buildStepMetaFromSubCriteria,

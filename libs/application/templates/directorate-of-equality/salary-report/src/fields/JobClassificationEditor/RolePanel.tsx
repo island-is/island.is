@@ -3,7 +3,7 @@ import { useWatch } from 'react-hook-form'
 import { AccordionCard, Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
-import type { Role, StepAssignment } from '../../lib/constants'
+import type { Role, StepAssignment } from '../../utils/types'
 import {
   computeRoleScore,
   groupAssignmentsByCriterion,

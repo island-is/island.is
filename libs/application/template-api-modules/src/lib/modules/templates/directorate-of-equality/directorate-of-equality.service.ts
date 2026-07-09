@@ -27,7 +27,12 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     super('DirectorateOfEquality')
   }
 
-  private extractFetchErrorDetails(error: unknown): Record<string, unknown> {
+  private extractFetchErrorDetails(error: unknown): {
+    status?: number
+    statusText?: string
+    problem?: unknown
+    message?: string
+  } {
     if (error instanceof FetchError) {
       return {
         status: error.status,
@@ -161,7 +166,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
           title: coreErrorMessages.defaultTemplateApiError,
           summary: coreErrorMessages.defaultTemplateApiError,
         },
-        (errorDetails.status as number) ?? 500,
+        errorDetails.status ?? 500,
       )
     }
   }
@@ -184,7 +189,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
           title: coreErrorMessages.defaultTemplateApiError,
           summary: coreErrorMessages.defaultTemplateApiError,
         },
-        (errorDetails.status as number) ?? 500,
+        errorDetails.status ?? 500,
       )
     }
   }
@@ -223,7 +228,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
           title: coreErrorMessages.defaultTemplateApiError,
           summary: coreErrorMessages.defaultTemplateApiError,
         },
-        (errorDetails.status as number) ?? 500,
+        errorDetails.status ?? 500,
       )
     }
   }
@@ -302,7 +307,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
           title: coreErrorMessages.defaultTemplateApiError,
           summary: coreErrorMessages.defaultTemplateApiError,
         },
-        (errorDetails.status as number) ?? 500,
+        errorDetails.status ?? 500,
       )
     }
   }

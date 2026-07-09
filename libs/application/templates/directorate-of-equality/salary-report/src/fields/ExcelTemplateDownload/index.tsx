@@ -25,7 +25,7 @@ import {
   DEFAULT_CRITERIA_ANSWERS,
   DEFAULT_JOB_FACTORS,
   DEFAULT_SUB_CRITERION,
-} from '../../lib/constants'
+} from '../../utils/constants'
 import { messages } from '../../lib/messages'
 
 // The next screen in the flow — both upload and manual entry advance here.

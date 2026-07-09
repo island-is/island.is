@@ -20,9 +20,8 @@ import {
   GENDER_OPTIONS,
   SALARY_COMPONENT_GROUPS,
   SALARY_COMPONENT_KEYS,
-  type Employee,
-  type SalaryComponentKey,
-} from '../../lib/constants'
+} from '../../utils/constants'
+import type { Employee, SalaryComponentKey } from '../../utils/types'
 import { computeIdentifier } from './utils'
 
 type Props = {

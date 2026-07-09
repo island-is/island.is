@@ -1,5 +1,4 @@
 import {
-  buildDescriptionField,
   buildMultiField,
   buildSection,
   buildSubSection,
@@ -7,7 +6,7 @@ import {
 } from '@island.is/application/core'
 import { messages } from '../../lib/messages'
 
-export const launagreiningSection = buildSection({
+export const salaryAnalysisSection = buildSection({
   id: 'salaryAnalysis',
   title: messages.salaryAnalysis.section.sectionTitle,
   children: [
@@ -19,12 +18,7 @@ export const launagreiningSection = buildSection({
           id: 'salaryAnalysisOverviewMultiField',
           title: messages.salaryAnalysis.overview.title,
           description: messages.salaryAnalysis.overview.intro,
-          children: [
-            buildDescriptionField({
-              id: 'salaryAnalysis.overview.placeholder',
-              title: '',
-            }),
-          ],
+          children: [],
         }),
       ],
     }),
@@ -39,12 +33,7 @@ export const launagreiningSection = buildSection({
           id: 'improvementPlanMultiField',
           title: messages.salaryAnalysis.improvementPlan.title,
           description: messages.salaryAnalysis.improvementPlan.intro,
-          children: [
-            buildDescriptionField({
-              id: 'improvementPlan.placeholder',
-              title: '',
-            }),
-          ],
+          children: [],
         }),
       ],
     }),

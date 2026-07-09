@@ -15,9 +15,8 @@ import {
   EDUCATION_LABELS,
   GENDER_LABELS,
   SALARY_COMPONENT_KEYS,
-  type Employee,
-  type SalaryComponentKey,
-} from '../../lib/constants'
+} from '../../utils/constants'
+import type { Employee, SalaryComponentKey } from '../../utils/types'
 import { formatCurrency, formatStartDate, formatWorkRatio } from './utils'
 import * as styles from './EmployeesEditor.css'
 

@@ -157,7 +157,8 @@ export const messages = {
       },
       intro: {
         id: 'salaryReport.application:aboutTheCompany.generalInformation.intro',
-        defaultMessage: lorem,
+        defaultMessage:
+          'Eftirfarandi upplýsingar eru sóttar sjálfkrafa frá fyrirtækjaskrá Skattsins og úr kerfum Jafnréttisstofu. Ef upplýsingar um fjölda starfsmanna vantar, verður fjöldi útreiknaður útfrá skilum á þessari skýrslu.',
       },
       companyName: {
         id: 'salaryReport.application:aboutTheCompany.generalInformation.companyName',
@@ -199,7 +200,8 @@ export const messages = {
       },
       intro: {
         id: 'salaryReport.application:aboutTheCompany.chiefExecutive.intro',
-        defaultMessage: lorem,
+        defaultMessage:
+          'Óskað er sérstaklega eftir upplýsingum um kyn æðsta stjórnanda til að fylgjast með kynjaskiptingu í æðstu stjórnendastöðum á vinnumarkaði. Þá er hægt að greina þróun yfir tíma, bera saman atvinnugreinar og meta hvort markmið jafnréttislaga um að jafna stöðu kynjanna séu að nást.',
       },
       name: {
         id: 'salaryReport.application:aboutTheCompany.chiefExecutive.name',
@@ -245,7 +247,8 @@ export const messages = {
       },
       intro: {
         id: 'salaryReport.application:aboutTheCompany.contactPerson.intro',
-        defaultMessage: lorem,
+        defaultMessage:
+          'Tengiliður er sá aðili sem ber ábyrgð á skýrslugjöfinni auk stjórnanda. Við höfum samskipti við tengiliðinn svo mikilvægt er að hann sé með á nótunum.',
       },
       contactInfoTitle: {
         id: 'salaryReport.application:aboutTheCompany.contactPerson.contactInfoTitle',
@@ -287,7 +290,8 @@ export const messages = {
       },
       intro: {
         id: 'salaryReport.application:aboutTheCompany.employeeCount.intro',
-        defaultMessage: lorem,
+        defaultMessage:
+          'Forskráðar upplýsingar um starfsmannafjölda koma frá Skattinum í janúar ár hvert. Hér að neðan er hins vegar beðið um upplýsingar um þann fjölda starfsmanna sem skýrslugjöfin nær utan um, þ.e. þann fjölda sem fékk útborguð laun á tímabili launagreiningar.',
       },
       women: {
         id: 'salaryReport.application:aboutTheCompany.employeeCount.women',
@@ -313,7 +317,8 @@ export const messages = {
       },
       intro: {
         id: 'salaryReport.application:aboutTheCompany.subsidiaries.intro',
-        defaultMessage: lorem,
+        defaultMessage:
+          'Hægt er að skila inn einni áætlun fyrir móður- og dótturfyrirtæki.',
       },
       includesSubsidiariesTitle: {
         id: 'salaryReport.application:aboutTheCompany.subsidiaries.includesSubsidiariesTitle',
@@ -376,7 +381,8 @@ export const messages = {
       },
       intro: {
         id: 'salaryReport.application:report.dataEntry.intro',
-        defaultMessage: lorem,
+        defaultMessage:
+          'Nú ertu í skýrslugjafarhluta kerfisins. Hér fyrir neðan velurðu þá leið sem þú vilt fara til að skila inn starfaflokkun. Óháð því hvaða leið þú velur þá er góður undirbúningur grundvallaratriði starfaflokkunar.',
       },
       downloadTemplateButton: {
         id: 'salaryReport.application:report.dataEntry.downloadTemplateButton',
@@ -487,7 +493,8 @@ export const messages = {
       },
       intro: {
         id: 'salaryReport.application:report.subCriteria.intro',
-        defaultMessage: lorem,
+        defaultMessage:
+          'Nú er komið að því að velja undirviðmið fyrir starfs- og einstaklingsbundna þætti.\n\nHér að neðan færðu dæmi um valkvæð undirviðmið sem eru algeng á vinnumarkaði en þú getur bætt við eigin viðmiðum eftir því sem við á. Öll viðmiðin sem valin eru þurfa að vera málefnaleg og í samræmi við starfsemina sem um ræðir.\n\nEinnig þarf að ákveða hve mörg þrep eru í boði fyrir hvert þeirra undirviðmiða sem valin eru. Velja þarf þrep fyrir bæði starfsbundin og einstaklingsbundin undirviðmið.\n\n Við val á fjölda þrepa er gott að horfa yfir sviðið og velta því fyrir sér hve mikil dreifing á hinum völdu þáttum er nauðsynleg til að gegna störfunum og ná fram markmiðunum með kjarnastarfseminni. Ef til dæmis undirviðmiðið menntun hefur verið valið undir hæfni, þá er gott að hugsa á hvaða skala menntunin þarf að vera.\n\n**Dæmi 1:** frá grunnskólaprófi og upp í doktorsgráðu.\n\n**Dæmi 2:** frá stúdentsprófi og til iðnmenntunar/grunnháskólagráðu.',
       },
       criterionWeightLabel: {
         id: 'salaryReport.application:report.subCriteria.criterionWeightLabel',
@@ -531,7 +538,8 @@ export const messages = {
       },
       jobFactorGroupIntro: {
         id: 'salaryReport.application:report.subCriteria.jobFactorGroupIntro',
-        defaultMessage: lorem,
+        defaultMessage:
+          'Gott er að gæta þess að jafnvægi sé milli ólíkra hæfniþátta þar sem við á; til dæmis að meta andlegt álag ef líkamlegt álag er metið. Mat á ábyrgð getur að sama skapi reynst snúið en störf í umönnun eða þjónustu geta til að mynda falið í sér vanmetna ábyrgð ef eingöngu er horft til ábyrgðar á fjármunum.',
       },
       personalFactorGroupTitle: {
         id: 'salaryReport.application:report.subCriteria.personalFactorGroupTitle',
@@ -539,7 +547,8 @@ export const messages = {
       },
       personalFactorGroupIntro: {
         id: 'salaryReport.application:report.subCriteria.personalFactorGroupIntro',
-        defaultMessage: lorem,
+        defaultMessage:
+          'Mikilvægt er að einstaklingsbundnu viðmiðin séu hlutlæg, gagnsæ og sanngjörn. Illa skilgreind viðmið geta leitt til ómeðvitaðrar mismununar og óútskýrðs launamunar. Gott er að velja fá og skýr viðmið sem byggð eru á sannreynanlegum þáttum sem styðja markmið um jafnræði og samræmi í ákvörðunum um laun.',
       },
     }),
     employees: defineMessages({
@@ -553,7 +562,8 @@ export const messages = {
       },
       intro: {
         id: 'salaryReport.application:report.employees.intro',
-        defaultMessage: lorem,
+        defaultMessage:
+          'Hér þarf að fylla inn upplýsingar um starfsmenn fyrirtækisins sem skýrslugjöfin nær yfir. Athugið að fjöldi starfsmanna sem skráðir eru hér þarf að vera í samræmi við fjölda starfsmanna sem gefinn er upp í fyrra skrefi umsóknarinnar.',
       },
       nameColumn: {
         id: 'salaryReport.application:report.employees.nameColumn',
@@ -601,7 +611,7 @@ export const messages = {
       },
       bonusSalaryLabel: {
         id: 'salaryReport.application:report.employees.bonusSalaryLabel',
-        defaultMessage: 'Hlunnindi',
+        defaultMessage: 'Aukagreiðslur',
       },
       // Icelandic labels below are best-guess mappings of the API fields —
       // adjust wording as needed.
@@ -673,7 +683,8 @@ export const messages = {
       },
       intro: {
         id: 'salaryReport.application:report.jobClassification.intro',
-        defaultMessage: lorem,
+        defaultMessage:
+          'Hér að neðan þarf að skilgreina stig fyrir hvert starf (ekki starfsmann). Farðu vel yfir upplýsingarnar til þess að vera viss um að ekkert starf vanti.\n\nHvert undirviðmið hefur vægi (%) sem breytist í stig. Veldu næst þrep fyrir hvert undirviðmið fyrir öll störf og stig verða reiknuð sjálfkrafa.',
       },
       stigLabel: {
         id: 'salaryReport.application:report.jobClassification.stigLabel',
@@ -687,6 +698,11 @@ export const messages = {
         id: 'salaryReport.application:report.jobClassification.subCriterionInfo',
         defaultMessage: '{description} {weight}% = {max} stig',
       },
+      noRolesMessage: {
+        id: 'salaryReport.application:report.jobClassification.noRolesMessage',
+        defaultMessage:
+          'Engin störf til flokkunar. Þessi skjár er fyllt út sjálfkrafa út frá innsendu Excel-skjali — settu inn skjal á fyrsta skrefi til að flokka störf.',
+      },
     }),
     employeeClassification: defineMessages({
       sectionTitle: {
@@ -699,7 +715,8 @@ export const messages = {
       },
       intro: {
         id: 'salaryReport.application:report.employeeClassification.intro',
-        defaultMessage: lorem,
+        defaultMessage:
+          'Hér að neðan þarf að skilgreina stig fyrir hvern starfsmann útfrá einstaklingsbundnum þáttum. Veldu næst þrep fyrir hvert undirviðmið fyrir alla starfsmenn og stig verða reiknuð sjálfkrafa.',
       },
     }),
   },
@@ -723,7 +740,8 @@ export const messages = {
       },
       intro: {
         id: 'salaryReport.application:salaryAnalysis.overview.intro',
-        defaultMessage: lorem,
+        defaultMessage:
+          'Hér að neðan sérðu launagreiningu byggða á starfaflokkun og launaupplýsingum.',
       },
     }),
     improvementPlan: defineMessages({
@@ -737,7 +755,8 @@ export const messages = {
       },
       intro: {
         id: 'salaryReport.application:salaryAnalysis.improvementPlan.intro',
-        defaultMessage: lorem,
+        defaultMessage:
+          'Hér fyrir neðan færðu lista yfir frávik sem eru yfir útgefið viðmið Hagstofunnar.\n\nNú er tækifærið til að fara vel yfir starfaflokkunina og að öll innslegin gögn til þess að kanna hvort þú þurfir að breyta einhverju.',
       },
     }),
   },
@@ -753,7 +772,8 @@ export const messages = {
     },
     intro: {
       id: 'salaryReport.application:overview.intro',
-      defaultMessage: lorem,
+      defaultMessage:
+        'Hér að neðan sérðu yfirlit yfir skýrslugjöfina sem þú hefur fyllt út. Vinsamlegast farðu vel yfir gögnin og athugaðu hvort þau séu rétt áður en þú sendir inn skýrsluna.',
     },
     companyInfo: {
       id: 'salaryReport.application:overview.companyInfo',

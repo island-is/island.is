@@ -4,7 +4,7 @@ import { useLocale } from '@island.is/localization'
 import { FC, useEffect, useState } from 'react'
 import { useFormContext, useWatch } from 'react-hook-form'
 import { messages } from '../../lib/messages'
-import type { SubCriterionStep } from '../../lib/constants'
+import type { SubCriterionStep } from '../../utils/types'
 
 type Props = {
   fieldName: string

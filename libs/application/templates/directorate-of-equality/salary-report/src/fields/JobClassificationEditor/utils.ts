@@ -1,5 +1,5 @@
 import type { ParsedCriterionDto } from '@island.is/clients/directorate-of-equality'
-import type { StepAssignment, SubCriterion } from '../../lib/constants'
+import type { StepAssignment, SubCriterion } from '../../utils/types'
 
 export type StepMeta = {
   steps: { order: number; score: number }[]

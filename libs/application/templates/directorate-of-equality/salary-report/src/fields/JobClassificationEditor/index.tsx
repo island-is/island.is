@@ -1,13 +1,15 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, Stack } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Stack } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { FC, useEffect, useMemo } from 'react'
 import { useFormContext } from 'react-hook-form'
 import type {
   ParsedCriterionDto,
   ParsedRoleDto,
 } from '@island.is/clients/directorate-of-equality'
-import { type Role, type SubCriterion } from '../../lib/constants'
+import { messages } from '../../lib/messages'
+import { type Role, type SubCriterion } from '../../utils/types'
 import { RolePanel } from './RolePanel'
 import { buildStepMetaByTitle, buildStepMetaFromSubCriteria } from './utils'
 
@@ -16,6 +18,7 @@ const FIELD_NAME = 'roles'
 export const JobClassificationEditor: FC<
   React.PropsWithChildren<FieldBaseProps>
 > = ({ application }) => {
+  const { formatMessage } = useLocale()
   const { getValues, setValue } = useFormContext()
 
   const stepMetaByTitle = useMemo(() => {
@@ -76,6 +79,19 @@ export const JobClassificationEditor: FC<
     setValue(FIELD_NAME, merged)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  if (roles.length === 0) {
+    return (
+      <Box>
+        <AlertMessage
+          type="info"
+          message={formatMessage(
+            messages.report.jobClassification.noRolesMessage,
+          )}
+        />
+      </Box>
+    )
+  }
 
   return (
     <Box>
