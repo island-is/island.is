@@ -296,7 +296,9 @@ function PaymentPage({
     onStatusUpdate: setLiveBankTransfer,
   })
 
-  const { cancelBankTransfer, isCancelling } = useCancelBankTransfer({
+  // Retained for the error screen's "start again" flow (onErrorBack); the pending screen no longer
+  // exposes a cancel control — see BankTransferPendingScreen.
+  const { cancelBankTransfer } = useCancelBankTransfer({
     paymentFlowId: paymentFlow?.id,
   })
 
@@ -305,30 +307,6 @@ function PaymentPage({
   const isAlreadyPaidError = (e: ApolloError | undefined) =>
     findProblemInApolloError(e)?.detail ===
     PaymentServiceCode.PaymentFlowAlreadyPaid
-
-  const handleCancelBankTransfer = async () => {
-    try {
-      await cancelBankTransfer()
-      router.reload()
-    } catch (e) {
-      if (isAlreadyPaidError(e)) {
-        router.reload()
-        return
-      }
-      // The backend refuses the cancel once the payer has initiated/approved the payment —
-      // settlement may be in flight, so tell them the bank is processing rather than "retry".
-      const isRefusedInProgress =
-        findProblemInApolloError(e)?.detail ===
-        BankTransferErrorCode.BankTransferAlreadyInProgress
-      toast.error(
-        formatMessage(
-          isRefusedInProgress
-            ? bankTransfer.cancelRefusedProcessingToast
-            : bankTransfer.cancelFailedToast,
-        ),
-      )
-    }
-  }
 
   const [isStartingAgain, setIsStartingAgain] = useState(false)
 
@@ -435,8 +413,6 @@ function PaymentPage({
           <BankTransferPendingScreen
             pendingStatus={bankTransferPendingStatus}
             scaRedirectUrl={bankTransferScaRedirectUrl}
-            isCancelling={isCancelling}
-            onCancel={handleCancelBankTransfer}
           />
         }
       />

@@ -9,15 +9,13 @@ import { useLocale } from '@island.is/localization'
 import { PaymentsBankTransferPendingStatus } from '@island.is/api/schema'
 
 import { BankTransferQrCode } from '../BankTransferQrCode/BankTransferQrCode'
-import { bankTransfer, generic } from '../../messages'
+import { bankTransfer } from '../../messages'
 
 interface BankTransferPendingScreenProps {
   // Pending sub-status; SCA_REQUIRED renders the QR/deep-link UI, anything else the waiting UI.
   pendingStatus?: PaymentsBankTransferPendingStatus | null
   // The provider SCA URL. May be absent — arrives later via polling if at all.
   scaRedirectUrl?: string
-  isCancelling: boolean
-  onCancel: () => void
 }
 
 /**
@@ -26,18 +24,21 @@ interface BankTransferPendingScreenProps {
  * sca_required + URL → desktop: QR code; mobile: open-banking-app button.
  * sca_required without URL → "check your phone" message.
  * processing (SCA complete / not yet required) → waiting message.
+ *
+ * Payments that enter this screen can not be cancelled by Blikk. User must do it in their banking app.
  */
 export const BankTransferPendingScreen = ({
   pendingStatus,
   scaRedirectUrl,
-  isCancelling,
-  onCancel,
 }: BankTransferPendingScreenProps) => {
   const { formatMessage } = useLocale()
 
   const showSca =
     pendingStatus === PaymentsBankTransferPendingStatus.sca_required &&
     !!scaRedirectUrl
+
+  const isScaOutstanding =
+    pendingStatus === PaymentsBankTransferPendingStatus.sca_required
 
   return (
     <Box
@@ -86,16 +87,11 @@ export const BankTransferPendingScreen = ({
         </Box>
       )}
 
-      <Box display="flex" justifyContent="center">
-        <Button
-          unfocusable
-          variant="text"
-          loading={isCancelling}
-          onClick={onCancel}
-        >
-          {formatMessage(generic.buttonCancel)}
-        </Button>
-      </Box>
+      {isScaOutstanding && (
+        <Text variant="small" color="dark400" textAlign="center">
+          {formatMessage(bankTransfer.cancelInBankAppNote)}
+        </Text>
+      )}
     </Box>
   )
 }

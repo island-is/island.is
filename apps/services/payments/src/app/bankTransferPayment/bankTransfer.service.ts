@@ -275,9 +275,10 @@ export class BankTransferService {
       lastKnownStatus = refreshed.rawStatus
 
       // Skipped entirely for an expired row — its TTL already elapsed, nothing to cancel:
-      // - DRAFT/SCA_REQUIRED: the payer has not approved. Best-effort provider cancel (Blikk
-      //   only honours it for DRAFT), then abandon locally — an unapproved payment cannot
-      //   settle and lapses via the TTL we sent Blikk on create.
+      // - DRAFT/SCA_REQUIRED: the payer has not approved. Ask Blikk to cancel and let its response
+      //   decide — we only discard locally if Blikk confirms the cancel (Blikk only honours it for
+      //   DRAFT). If Blikk refuses, the SCA session is still live and could settle, so we keep the
+      //   row and tell the payer to decline it in their banking app.
       // - Anything else (PENDING, SCA_COMPLETE, unknown): the payer has initiated/approved, so
       //   settlement may be in flight — refuse, and let verify/webhook/TTL keep tracking it.
       if (mappedStatus === BankTransferStatus.PENDING && !isRowExpired(row)) {
@@ -290,7 +291,16 @@ export class BankTransferService {
             BankTransferErrorCode.BankTransferAlreadyInProgress,
           )
         }
-        await this.cancelBlikkPayment(row.providerPaymentId, logPrefix)
+
+        const cancelled = await this.cancelBlikkPayment(
+          row.providerPaymentId,
+          logPrefix,
+        )
+        if (!cancelled) {
+          throw new BadRequestException(
+            BankTransferErrorCode.BankTransferCannotCancel,
+          )
+        }
       }
     }
 
@@ -851,25 +861,38 @@ export class BankTransferService {
   }
 
   /**
-   * Best-effort Blikk cancel — only ever called for a freshly confirmed DRAFT/SCA_REQUIRED
-   * payment (past-approval statuses are refused in `cancel` before this point). An unapproved
-   * payment cannot settle, so any failure here (404 gone, refused — Blikk only honours cancels
-   * for DRAFT, network) is safe to swallow: the payment simply lapses via the TTL we sent
-   * Blikk on create.
+   * Asks Blikk to cancel the payment and reports whether the attempt may be safely discarded
+   * locally. Blikk's response is authoritative — we never soft-delete a live SCA session it still
+   * holds, because the payer can still approve it and settle. Only called for a freshly confirmed
+   * DRAFT/SCA_REQUIRED payment (past-approval statuses are refused in `cancel` before this point).
    */
   private async cancelBlikkPayment(
     providerPaymentId: string,
     logPrefix: string,
-  ): Promise<void> {
+  ): Promise<boolean> {
     try {
       await this.blikkClient.cancelPayment(providerPaymentId)
+      return true
     } catch (e) {
+      if (e instanceof BlikkClientError) {
+        if (e.status === 404) {
+          return true
+        }
+        if (e.status !== undefined) {
+          this.logger.warn(
+            `${logPrefix}Blikk refused to cancel — SCA session still live`,
+            { providerPaymentId, status: e.status },
+          )
+          return false
+        }
+      }
+
       this.logger.warn(
-        `${logPrefix}Best-effort Blikk cancel failed — payment lapses via its TTL`,
-        {
-          providerPaymentId,
-          status: e instanceof BlikkClientError ? e.status : undefined,
-        },
+        `${logPrefix}Could not reach Blikk to cancel — leaving attempt live`,
+        { providerPaymentId },
+      )
+      throw new BadRequestException(
+        BankTransferErrorCode.FailedToFetchBankTransfer,
       )
     }
   }

@@ -68,12 +68,11 @@ export const bankTransfer = defineMessages({
     description:
       'Error toast shown when the cancel-bank-transfer mutation fails (non-already-paid)',
   },
-  cancelRefusedProcessingToast: {
-    id: 'payments:bankTransfer.cancelRefusedProcessingToast',
-    defaultMessage:
-      'Ekki er hægt að hætta við — greiðslan er þegar í vinnslu hjá bankanum.',
+  cancelInBankAppNote: {
+    id: 'payments:bankTransfer.cancelInBankAppNote',
+    defaultMessage: 'Þú getur hafnað greiðslubeiðninni í bankaappinu þínu.',
     description:
-      'Error toast shown when the cancel is refused because the payer has already initiated/approved the payment and settlement may be in flight. EN: "The payment cannot be cancelled — your bank is already processing it."',
+      'Static note under the SCA QR / open-banking-app screen telling the payer how to back out, since the payment cannot be cancelled from here once SCA is under way. EN: "Changed your mind? You can decline the payment request in your banking app."',
   },
   scanQrInstruction: {
     id: 'payments:bankTransfer.scanQrInstruction',

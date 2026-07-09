@@ -34,7 +34,7 @@ interface UseBankTransferStatusPollingProps {
 
 const POLL_INTERVALS_MS = [500, 1000, 2000, 3000, 5000]
 // Slower steady state once the SCA URL is on screen.
-const SCA_WAIT_POLL_MS = 15 * 1000
+const SCA_WAIT_POLL_MS = 10 * 1000
 const TIMEOUT_GRACE_MS = 30 * 1000 // 30 seconds
 // Matches the prod Blikk TTL (600s). Used only when `expiresAt` is missing.
 const FALLBACK_HARD_TIMEOUT_MS = 10 * 60 * 1000 // 10 minutes
