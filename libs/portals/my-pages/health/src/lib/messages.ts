@@ -2785,7 +2785,7 @@ export const messages = defineMessages({
   },
   appointmentModalityVideo: {
     id: 'sp.health:appointment-modality-video',
-    defaultMessage: 'Fjarfundur',
+    defaultMessage: 'Myndsímtal',
   },
   appointmentAssignees: {
     id: 'sp.health:appointment-assignees',
@@ -2793,7 +2793,21 @@ export const messages = defineMessages({
   },
   appointmentVideoCallLink: {
     id: 'sp.health:appointment-video-call-link',
-    defaultMessage: 'Opna fjarfund',
+    defaultMessage: 'Hefja myndsímtal',
+  },
+  appointmentVideoCallInfoWithLink: {
+    id: 'sp.health:appointment-video-call-info-with-link',
+    defaultMessage:
+      'Hnappurinn fyrir myndsímtalið verður virkur 5 mínútum fyrir bókaðan tíma. Smelltu á hann til að hefja símtalið.',
+  },
+  appointmentVideoCallInfoWithLinkActive: {
+    id: 'sp.health:appointment-video-call-info-with-link-active',
+    defaultMessage: 'Smelltu á hnappinn til að hefja myndsímtalið.',
+  },
+  appointmentVideoCallInfoNoLink: {
+    id: 'sp.health:appointment-video-call-info-no-link',
+    defaultMessage:
+      'Myndsamtalið fer fram í gegnum hlekk sem þú færð sendan í skilaboðum. Hlekkurinn virkjast 5 mínútum áður en tíminn hefst. Leiðbeiningar um hvernig þú tengist fylgja einnig með skilaboðunum.',
   },
   appointmentPreparation: {
     id: 'sp.health:appointment-preparation',
