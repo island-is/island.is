@@ -3,7 +3,7 @@ import type { User } from '@island.is/auth-nest-tools'
 import { PenaltyPointsClientService } from '@island.is/clients/driving-license'
 import { isDefined } from '@island.is/shared/utils'
 import {
-  DrivingLicenseDeprivation,
+  DrivingLicenseDeprivations,
   DrivingLicenseDeprivationStatus,
 } from '../models'
 
@@ -13,12 +13,12 @@ export class DeprivationsService {
     private readonly penaltyPointsClientService: PenaltyPointsClientService,
   ) {}
 
-  async getDeprivations(user: User): Promise<DrivingLicenseDeprivation[]> {
+  async getDeprivations(user: User): Promise<DrivingLicenseDeprivations> {
     const deprivations = await this.penaltyPointsClientService.deprivations(
       user,
     )
 
-    return deprivations
+    const mapped = deprivations
       .map((d) => {
         if (!d.dateFrom) return undefined
 
@@ -33,15 +33,24 @@ export class DeprivationsService {
             ? DrivingLicenseDeprivationStatus.EXPIRED
             : undefined
 
+        const dateTo = d.dateTo ?? undefined
+        const active = !dateTo || dateTo >= new Date()
+
         return {
           dateFrom: d.dateFrom,
-          dateTo: d.dateTo ?? undefined,
+          dateTo,
           status,
           name: d.deprivationName ?? undefined,
           type: d.deprivationType ?? undefined,
-          retakeLicense: d.retakeLicense ?? undefined,
+          retakeRequired: d.retakeLicense ?? undefined,
+          active,
         }
       })
       .filter(isDefined)
+      .sort((a, b) => b.dateFrom.getTime() - a.dateFrom.getTime())
+
+    const [current, ...history] = mapped
+
+    return { current, history }
   }
 }

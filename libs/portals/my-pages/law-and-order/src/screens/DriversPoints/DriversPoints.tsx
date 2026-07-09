@@ -15,6 +15,7 @@ import { Problem } from '@island.is/react-spa/shared'
 import { DrivingLicensePenaltyPointDetail } from '@island.is/api/schema'
 import { messages } from '../../lib/messages'
 import { useGetDriversPenaltyPointsQuery } from './DriversPoints.generated'
+import { useGetDriversDeprivationsQuery } from '../DriversDeprivations/DriversDeprivations.generated'
 
 const columnHelper =
   createColumnHelper<
@@ -26,6 +27,11 @@ const DriversPoints = () => {
   const { formatMessage } = useLocale()
 
   const { data, loading, error } = useGetDriversPenaltyPointsQuery()
+  const {
+    data: deprivationsData,
+    loading: deprivationsLoading,
+    error: deprivationsError,
+  } = useGetDriversDeprivationsQuery()
 
   const isPenaltyPointsOk = !(
     data?.drivingLicensePenaltyPoints?.isDeprived ?? false
@@ -35,6 +41,34 @@ const DriversPoints = () => {
   const totalPoints = details.reduce((sum, d) => sum + (d.points ?? 0), 0)
 
   const isEmpty = !loading && !error && details.length === 0
+
+  const currentDeprivation = deprivationsData?.drivingLicenseDeprivations?.current
+
+  const deprivationAlert =
+    !deprivationsLoading && !deprivationsError && currentDeprivation
+      ? currentDeprivation.active === true
+        ? {
+            type: 'error' as const,
+            title: formatMessage(messages.driversDeprivationsActiveTitle),
+            message: currentDeprivation.dateTo
+              ? formatMessage(messages.driversDeprivationsActiveDescription, {
+                  dateTo: formatDate(currentDeprivation.dateTo),
+                })
+              : undefined,
+          }
+        : currentDeprivation.active === false &&
+          currentDeprivation.retakeRequired === true
+        ? {
+            type: 'warning' as const,
+            title: formatMessage(
+              messages.driversDeprivationsRetakeRequiredTitle,
+            ),
+            message: formatMessage(
+              messages.driversDeprivationsRetakeRequiredDescription,
+            ),
+          }
+        : undefined
+      : undefined
 
   const columns = useMemo(
     () => [
@@ -86,7 +120,7 @@ const DriversPoints = () => {
       }}
       desktopContentSpan="10/12"
     >
-      {loading && !error && (
+      {(loading || deprivationsLoading) && !error && (
         <Box width="full">
           <CardLoader />
         </Box>
@@ -94,38 +128,52 @@ const DriversPoints = () => {
 
       {error && !loading && <Problem error={error} noBorder={false} />}
 
-      {isEmpty && (
-        <Problem
-          type="no_data"
-          noBorder={false}
-          title={formatMessage(messages.driversPointsEmptyTitle)}
-          message={formatMessage(messages.driversPointsEmptyDescription)}
-          imgSrc="./assets/images/sofa.svg"
-        />
-      )}
-
-      {!loading && !error && details.length > 0 && (
-        <Box>
-          {!isPenaltyPointsOk && (
+      {!loading && !deprivationsLoading && !error && (
+        <>
+          {deprivationAlert && (
             <Box marginBottom={3}>
-              {/* TODO: confirm alert type and message copy with business — isDeprived means threshold crossed, not approaching */}
               <AlertMessage
-                type="warning"
-                title={formatMessage(messages.driversPointsWarningTitle)}
-                message={formatMessage(
-                  messages.driversPointsWarningDescription,
-                )}
+                type={deprivationAlert.type}
+                title={deprivationAlert.title}
+                message={deprivationAlert.message}
               />
             </Box>
           )}
 
-          <PortalTable
-            columns={columns}
-            data={details}
-            emptyMessage={formatMessage(messages.driversPointsEmptyDescription)}
-            mobileTitleKey="offenseDate"
-          />
-        </Box>
+          {isEmpty ? (
+            <Problem
+              type="no_data"
+              noBorder={false}
+              title={formatMessage(messages.driversPointsEmptyTitle)}
+              message={formatMessage(messages.driversPointsEmptyDescription)}
+              imgSrc="./assets/images/sofa.svg"
+            />
+          ) : (
+            <Box>
+              {!isPenaltyPointsOk && (
+                <Box marginBottom={3}>
+                  {/* TODO: confirm alert type and message copy with business — isDeprived means threshold crossed, not approaching */}
+                  <AlertMessage
+                    type="warning"
+                    title={formatMessage(messages.driversPointsWarningTitle)}
+                    message={formatMessage(
+                      messages.driversPointsWarningDescription,
+                    )}
+                  />
+                </Box>
+              )}
+
+              <PortalTable
+                columns={columns}
+                data={details}
+                emptyMessage={formatMessage(
+                  messages.driversPointsEmptyDescription,
+                )}
+                mobileTitleKey="offenseDate"
+              />
+            </Box>
+          )}
+        </>
       )}
     </IntroWrapper>
   )

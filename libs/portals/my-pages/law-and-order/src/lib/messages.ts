@@ -382,6 +382,14 @@ export const messages = defineMessages({
     id: 'sp.law-and-order:drivers-deprivations-active-description',
     defaultMessage: 'Svipting gildir til {dateTo}',
   },
+  driversDeprivationsRetakeRequiredTitle: {
+    id: 'sp.law-and-order:drivers-deprivations-retake-required-title',
+    defaultMessage: 'Svipting liðin án gildra ökuréttinda',
+  },
+  driversDeprivationsRetakeRequiredDescription: {
+    id: 'sp.law-and-order:drivers-deprivations-retake-required-description',
+    defaultMessage: 'Þú þarft að sækja um ökuréttindi á ný',
+  },
   driversDeprivationsColumnType: {
     id: 'sp.law-and-order:drivers-deprivations-column-type',
     defaultMessage: 'Tegund sviptingar',

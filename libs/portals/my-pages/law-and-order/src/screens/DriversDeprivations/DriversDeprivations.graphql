@@ -1,10 +1,22 @@
 query GetDriversDeprivations {
   drivingLicenseDeprivations {
-    dateFrom
-    dateTo
-    status
-    name
-    type
-    retakeLicense
+    current {
+      dateFrom
+      dateTo
+      status
+      name
+      type
+      active
+      retakeRequired
+    }
+    history {
+      dateFrom
+      dateTo
+      status
+      name
+      type
+      active
+      retakeRequired
+    }
   }
 }

@@ -12,20 +12,20 @@ import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
 import { Audit } from '@island.is/nest/audit'
 import { DeprivationsService } from '../services/deprivations.service'
-import { DrivingLicenseDeprivation } from '../models/penalty/drivingLicenseDeprivation.model'
+import { DrivingLicenseDeprivations } from '../models/penalty/drivingLicenseDeprivations.model'
 
 @CodeOwner(CodeOwners.Hugsmidjan)
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Resolver(() => DrivingLicenseDeprivation)
+@Resolver(() => DrivingLicenseDeprivations)
 export class DeprivationsResolver {
   constructor(private readonly deprivationsService: DeprivationsService) {}
 
   @Scopes(ApiScope.internal)
   @Audit()
-  @Query(() => [DrivingLicenseDeprivation], { nullable: true })
+  @Query(() => DrivingLicenseDeprivations)
   drivingLicenseDeprivations(
     @CurrentUser() user: User,
-  ): Promise<Array<DrivingLicenseDeprivation>> {
+  ): Promise<DrivingLicenseDeprivations> {
     return this.deprivationsService.getDeprivations(user)
   }
 }
