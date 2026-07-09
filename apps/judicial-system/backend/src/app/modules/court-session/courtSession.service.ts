@@ -34,8 +34,8 @@ import {
 import {
   buildInCourtAppealedEvent,
   inCourtAppellantsFromDecisions,
-} from '../appeal-case/appealCase.helpers'
-import { transitionAppealCase } from '../appeal-case/state/appealCase.state'
+} from '../appeal-case'
+import { transitionAppealCase } from '../appeal-case'
 import { EventLogService } from '../event-log'
 import { FileService } from '../file'
 import {

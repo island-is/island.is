@@ -69,10 +69,7 @@ import {
   getCourtRecordPdfAsString,
   getRulingPdfAsString,
 } from '../../formatters'
-import {
-  buildInCourtAppealedEvent,
-  InCourtAppellant,
-} from '../appeal-case/appealCase.helpers'
+import { buildInCourtAppealedEvent, InCourtAppellant } from '../appeal-case'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
 import { DefendantService } from '../defendant'
