@@ -132,8 +132,8 @@ describe('InternalNotificationController - Send spokesperson court date follow u
     })
 
     it('should send a court session invitation with a calendar invite', () => {
-      expect(mockEmailService.sendEmail).toBeCalledTimes(1)
-      expect(mockEmailService.sendEmail).toBeCalledWith(
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(1)
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [
             {
@@ -177,8 +177,8 @@ describe('InternalNotificationController - Send spokesperson court date follow u
     })
 
     it('should send an arraignment invitation', () => {
-      expect(mockEmailService.sendEmail).toBeCalledTimes(1)
-      expect(mockEmailService.sendEmail).toBeCalledWith(
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(1)
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [
             {
@@ -209,8 +209,8 @@ describe('InternalNotificationController - Send spokesperson court date follow u
     })
 
     it('should prefer the arraignment invitation', () => {
-      expect(mockEmailService.sendEmail).toBeCalledTimes(1)
-      expect(mockEmailService.sendEmail).toBeCalledWith(
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(1)
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           subject: 'Þingfesting í máli: R-123-456/2024',
         }),
@@ -234,7 +234,7 @@ describe('InternalNotificationController - Send spokesperson court date follow u
     })
 
     it('should not send a notification', () => {
-      expect(mockEmailService.sendEmail).not.toBeCalled()
+      expect(mockEmailService.sendEmail).not.toHaveBeenCalled()
     })
 
     it('should not record a notification', () => {
@@ -263,7 +263,7 @@ describe('InternalNotificationController - Send spokesperson court date follow u
     })
 
     it('should not send a notification', () => {
-      expect(mockEmailService.sendEmail).not.toBeCalled()
+      expect(mockEmailService.sendEmail).not.toHaveBeenCalled()
     })
   })
 })
