@@ -3,7 +3,6 @@ import {
   ConversationAttachmentDto,
   ConversationDetailDto,
   ConversationMessageDto,
-  ConversationStatusFilter,
   CreateConversationRequestDto,
   CreateEuPatientConsentDto,
   CreateReplyRequestDto,
@@ -42,9 +41,13 @@ import {
   mapStatusIdToColor,
   mapReferralStatusValueToStatus,
   mapVaccinationStatus,
-  toConversationDirectionEnum,
-  toConversationStatusFilter,
 } from './mappers/basicInformationMapper'
+import {
+  mapMessagingRecipient,
+  toConversationDirectionEnum,
+  toConversationReplyBlockedReasonEnum,
+  toConversationStatusFilter,
+} from './mappers/conversationMapper'
 import {
   mapDelegationStatus,
   mapDispensationItem,
@@ -87,7 +90,6 @@ import { HealthDirectorateHealthConversation } from './models/healthConversation
 import { HealthDirectorateHealthConversationAttachment } from './models/healthConversationAttachment.model'
 import { HealthDirectorateHealthConversationDetail } from './models/healthConversationDetail.model'
 import { HealthDirectorateHealthConversationEntry } from './models/healthConversationEntry.model'
-import { HealthDirectorateHealthConversationType } from './models/healthConversationType.model'
 import { HealthDirectorateHealthConversationRecipient } from './models/healthConversationRecipient.model'
 
 @Injectable()
@@ -763,6 +765,9 @@ export class HealthDirectorateService {
       isStarred: c.isStarred,
       isArchived: c.isArchived,
       patientCanReply: c.patientCanReply,
+      replyBlockedReason: toConversationReplyBlockedReasonEnum(
+        c.replyBlockedReason,
+      ),
       isRead: !c.unread,
       messages: c.messages.map((m) => this.mapConversationEntry(m, c.id)),
     }
@@ -869,25 +874,6 @@ export class HealthDirectorateService {
     const items = await this.healthApi.getMessagingRecipients(auth, locale)
     if (!items) return null
 
-    return items.map(
-      (r): HealthDirectorateHealthConversationRecipient => ({
-        nodeId: r.nodeId,
-        groupId: r.groupId,
-        name: r.name,
-        allowsMessaging: r.allowsMessaging,
-        messagingWindowOpen: r.messagingWindowOpen,
-        messagingWindowClose: r.messagingWindowClose,
-        isCurrentlyWithinWindow: r.isCurrentlyWithinWindow,
-        patientReplyWindowDays: r.patientReplyWindowDays,
-        allowedMessageTypes: r.allowedConversationTypes.map(
-          (t): HealthDirectorateHealthConversationType => ({
-            patientInitiatedTypeCode: t.patientInitiatedTypeCode,
-            title: t.title,
-            description: t.description,
-            isCertificate: t.isCertificate,
-          }),
-        ),
-      }),
-    )
+    return items.map(mapMessagingRecipient)
   }
 }
