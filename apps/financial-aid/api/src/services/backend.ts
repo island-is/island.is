@@ -78,7 +78,12 @@ class BackendAPI {
     })
 
     const body = await res.text()
-    const data = body ? JSON.parse(body) : undefined
+    let data: unknown
+    try {
+      data = body ? JSON.parse(body) : undefined
+    } catch {
+      data = body
+    }
 
     if (!res.ok) {
       // Preserve the error shape thrown by the previous RESTDataSource

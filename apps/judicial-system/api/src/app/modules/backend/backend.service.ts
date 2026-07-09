@@ -120,8 +120,12 @@ export class BackendService {
 
     this.headers = {
       'Content-Type': 'application/json',
-      authorization: req?.headers?.authorization as string,
-      cookie: req?.headers?.cookie as string,
+      ...(req?.headers?.authorization
+        ? { authorization: req.headers.authorization as string }
+        : {}),
+      ...(req?.headers?.cookie
+        ? { cookie: req.headers.cookie as string }
+        : {}),
     }
   }
 

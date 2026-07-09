@@ -8,7 +8,7 @@ import { UltravioletRadiationClientConfig } from './ultraviolet-radiation.config
 import { createCache } from 'cache-manager'
 import { createRedisCacheManager } from '@island.is/cache'
 
-const getCacheManager = (
+const getCacheManager = async (
   config: ConfigType<typeof UltravioletRadiationClientConfig>,
   ttl: number,
 ) => {
