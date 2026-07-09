@@ -52,6 +52,7 @@ export {
   ConversationBaseDto,
   ConversationDetailDto,
   ConversationMessageDto,
+  ConversationReplyBlockedReason,
   ConversationStatusFilter,
   CreateConversationRequestDto,
   CreateReplyRequestDto,
@@ -59,6 +60,7 @@ export {
   MessagingRecipientDto,
   PaginatedAppointmentsDto,
   PaginationDto,
+  RecipientCreateBlockedReason,
   UserVisibleAppointmentStatuses,
   OrganDonorDto,
 } from './lib/clients/health'
