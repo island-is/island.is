@@ -13,7 +13,6 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import type { User } from '@island.is/judicial-system/types'
 import {
-  AppealCaseNotificationType,
   CaseState,
   CaseType,
   DataGroups,
@@ -29,6 +28,7 @@ import {
 import { AwsS3Service } from '../aws-s3'
 import {
   AppealCase,
+  AppealEventLog,
   Case,
   CaseRepositoryService,
   DateLog,
@@ -37,7 +37,6 @@ import {
   EventLog,
   IndictmentCount,
   Institution,
-  Notification,
   Offense,
   Subpoena,
   SubpoenaRepositoryService,
@@ -374,6 +373,15 @@ export class StatisticsService {
           model: AppealCase,
           as: 'appealCase',
           required: false,
+          include: [
+            {
+              model: AppealEventLog,
+              as: 'appealEventLogs',
+              required: false,
+              attributes: ['eventType', 'userRole'],
+              separate: true,
+            },
+          ],
         },
       ],
     })
