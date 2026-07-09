@@ -85,7 +85,6 @@ export enum Features {
   isServicePortalHealthAppointmentsPageEnabled = 'isServicePortalHealthAppointmentsPageEnabled',
   isServicePortalHealthMessagesPageEnabled = 'isServicePortalHealthMessagesPageEnabled',
   isServicePortalHealthPaymentOverviewTotalPageEnabled = 'isServicePortalHealthPaymentOverviewTotalPageEnabled',
-  isNewHealthOverviewPageEnabled = 'isNewHealthOverviewPageEnabled',
   //New License service fetch enabled
   licensesV2 = 'isLicensesV2Enabled',
   pkPassV2 = 'isPkPassV2Enabled',
@@ -205,6 +204,8 @@ export enum Features {
   isServicePortalPrimarySchoolPageEnabled = 'isServicePortalPrimarySchoolPageEnabled',
   // Primary school PDF viewer modal
   isServicePortalPrimarySchoolPdfViewerEnabled = 'isServicePortalPrimarySchoolPdfViewerEnabled',
+  // New health overview page (incl. sidebar contact box)
+  isNewHealthOverviewPageEnabled = 'isNewHealthOverviewPageEnabled',
   // University micro-credentials (örnám)
   servicePortalUniversityMicroCredentialsEnabled = 'isServicePortalUniversityMicroCredentialsPageEnabled',
   // Car recycling
