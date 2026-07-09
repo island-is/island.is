@@ -196,6 +196,7 @@ export const dataSchema = z.object({
   serviceProvider: serviceProviderSchema,
   child: childSchema.optional(),
   parents: parentsSchema.optional(),
+  protectiveFactors: z.record(z.unknown()).optional(),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>
