@@ -45,7 +45,7 @@ export const HealthOverview = () => {
   useHealthPlausibleSwap()
   const { formatMessage, locale } = useLocale()
   const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
+  const isStackedLayout = width < theme.breakpoints.lg
   const { value: showAppointments } = useFeatureFlag(
     Features.isServicePortalHealthAppointmentsPageEnabled,
     false,
@@ -153,7 +153,7 @@ export const HealthOverview = () => {
   return (
     <>
       <GridRow marginBottom={CONTENT_GAP_LG}>
-        <GridColumn span={isMobile ? '8/8' : '5/8'}>
+        <GridColumn span={isStackedLayout ? '8/8' : '5/8'}>
           <>
             <Text variant="h3" as={'h1'}>
               {formatMessage(messages.healthOverview)}
@@ -177,8 +177,10 @@ export const HealthOverview = () => {
       </GridRow>
       {isNewHealthOverviewPageEnabled && (
         <GridRow marginBottom={SECTION_GAP}>
-          <GridColumn span={isMobile ? '8/8' : '5/8'}>
-            <Box marginBottom={isMobile ? CONTENT_GAP_LG : 0}>
+          <GridColumn span={isStackedLayout ? '8/8' : '5/8'}>
+            <Box
+              marginBottom={isStackedLayout ? CONTENT_GAP_LG : 0}
+            >
               <NotificationsBox
                 limit={3}
                 title={formatMessage(messages.healthNotificationsTitle)}
@@ -186,7 +188,7 @@ export const HealthOverview = () => {
               />
             </Box>
           </GridColumn>
-          <GridColumn span={isMobile ? '8/8' : '3/8'}>
+          <GridColumn span={isStackedLayout ? '8/8' : '3/8'}>
             <ContactLinks />
           </GridColumn>
         </GridRow>
@@ -228,8 +230,8 @@ export const HealthOverview = () => {
           error: !!healthCenterError,
         }}
         dentists={{
-          data: dentistsData?.rightsPortalUserDentistRegistration?.dentist
-            ?.name,
+          data:
+            dentistsData?.rightsPortalUserDentistRegistration?.dentist?.name,
           loading: dentistsLoading,
           error: !!dentistsError,
         }}
