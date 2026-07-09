@@ -5,6 +5,8 @@ import {
   CardLoader,
   createColumnHelper,
   formatDate,
+  InfoLine,
+  InfoLineStack,
   IntroWrapper,
   LinkButton,
   m as coreMessages,
@@ -12,12 +14,10 @@ import {
   RIKISLOGREGLUSTJORI_SLUG,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
+import { isDefined } from '@island.is/shared/utils'
 import { messages } from '../../lib/messages'
 import { useGetDriversDeprivationsQuery } from './DriversDeprivations.generated'
-import {
-  DrivingLicenseDeprivation,
-  DrivingLicenseDeprivationStatus,
-} from '@island.is/api/schema'
+import { DrivingLicenseDeprivation } from '@island.is/api/schema'
 
 const columnHelper =
   createColumnHelper<
@@ -30,21 +30,12 @@ const DriversDeprivations = () => {
 
   const { data, loading, error } = useGetDriversDeprivationsQuery()
 
-  const deprivations = data?.drivingLicenseDeprivations ?? []
+  const current = data?.drivingLicenseDeprivations?.current
+  const history = data?.drivingLicenseDeprivations?.history ?? []
 
-  const isEmpty = !loading && !error && deprivations.length === 0
+  const total = (current ? 1 : 0) + history.length
 
-  // Find the most recent active deprivation (license lost) to show in alert
-  const sortedDeprivations = [...deprivations].sort((a, b) => {
-    const aDate = a.dateTo ?? a.dateFrom
-    const bDate = b.dateTo ?? b.dateFrom
-    return new Date(bDate ?? 0).getTime() - new Date(aDate ?? 0).getTime()
-  })
-  const activeDeprivation = sortedDeprivations.find(
-    (d) =>
-      d.status === DrivingLicenseDeprivationStatus.LOST ||
-      d.status === DrivingLicenseDeprivationStatus.LOSTANDEXPIRED,
-  )
+  const isEmpty = !loading && !error && total === 0
 
   const columns = useMemo(
     () => [
@@ -121,19 +112,19 @@ const DriversDeprivations = () => {
         />
       )}
 
-      {!loading && !error && deprivations.length > 0 && (
+      {!loading && !error && total > 0 && (
         <Box>
-          {activeDeprivation && (
+          {current?.active === true && (
             <Box marginBottom={3}>
               <AlertMessage
                 type="error"
                 title={formatMessage(messages.driversDeprivationsActiveTitle)}
                 message={
-                  activeDeprivation.dateTo
+                  current.dateTo
                     ? formatMessage(
                         messages.driversDeprivationsActiveDescription,
                         {
-                          dateTo: formatDate(activeDeprivation.dateTo),
+                          dateTo: formatDate(current.dateTo),
                         },
                       )
                     : undefined
@@ -142,14 +133,56 @@ const DriversDeprivations = () => {
             </Box>
           )}
 
-          <PortalTable
-            columns={columns}
-            data={deprivations}
-            emptyMessage={formatMessage(
-              messages.driversDeprivationsEmptyDescription,
-            )}
-            mobileTitleKey="name"
-          />
+          {current?.active === false && current.retakeRequired === true && (
+            <Box marginBottom={3}>
+              <AlertMessage
+                type="warning"
+                title={formatMessage(
+                  messages.driversDeprivationsRetakeRequiredTitle,
+                )}
+                message={formatMessage(
+                  messages.driversDeprivationsRetakeRequiredDescription,
+                )}
+              />
+            </Box>
+          )}
+
+          {total === 1 && current ? (
+            <InfoLineStack space={1} marginBottom={0}>
+              <InfoLine
+                label={formatMessage(messages.driversDeprivationsColumnType)}
+                labelColumnSpan="5/12"
+                content={current.name ?? undefined}
+              />
+              <InfoLine
+                label={formatMessage(
+                  messages.driversDeprivationsColumnDateFrom,
+                )}
+                labelColumnSpan="5/12"
+                content={
+                  current.dateFrom ? formatDate(current.dateFrom) : undefined
+                }
+              />
+              <InfoLine
+                label={formatMessage(
+                  messages.driversDeprivationsColumnDateTo,
+                )}
+                labelColumnSpan="5/12"
+                content={
+                  current.dateTo ? formatDate(current.dateTo) : undefined
+                }
+              />
+            </InfoLineStack>
+          ) : (
+            <PortalTable
+              columns={columns}
+              data={[current, ...history].filter(isDefined)}
+              emptyMessage={formatMessage(
+                messages.driversDeprivationsEmptyDescription,
+              )}
+              mobileTitleKey="name"
+            />
+          )}
         </Box>
       )}
     </IntroWrapper>
