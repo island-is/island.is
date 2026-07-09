@@ -163,7 +163,7 @@ describe('FeatureFlagGuard', () => {
 
     // Act
     const response = await request(app.getHttpServer())
-      .get('/graphql')
+      .get('/graphql').set('apollo-require-preflight', 'true')
       .query({ query: '{ getSomethingElse }' })
 
     // Assert
@@ -179,7 +179,7 @@ describe('FeatureFlagGuard', () => {
 
     // Act
     const response = await request(app.getHttpServer())
-      .get('/graphql')
+      .get('/graphql').set('apollo-require-preflight', 'true')
       .query({ query: '{ getSomething }' })
 
     // Assert
@@ -195,7 +195,7 @@ describe('FeatureFlagGuard', () => {
 
     // Act
     return request(app.getHttpServer())
-      .get('/graphql')
+      .get('/graphql').set('apollo-require-preflight', 'true')
       .query({ query: '{ getSomething }' })
       .expect(200)
   })

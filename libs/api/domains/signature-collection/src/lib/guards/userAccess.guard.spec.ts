@@ -225,9 +225,14 @@ describe('UserAccessGuard', () => {
   })
 
   const gqlQuery = (query: string) =>
-    request(app.getHttpServer()).get('/graphql').query({
-      query,
-    })
+    request(app.getHttpServer())
+      // Apollo Server 4+ enables CSRF prevention by default; GET requests need
+      // a preflight header (as a browser would send).
+      .get('/graphql')
+      .set('apollo-require-preflight', 'true')
+      .query({
+        query,
+      })
 
   it('Should allow owner to access IsOwner decorated paths', async () => {
     setupMockForUser(userIsOwnerNotDelegated)
