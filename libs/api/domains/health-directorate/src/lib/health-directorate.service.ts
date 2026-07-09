@@ -8,7 +8,6 @@ import {
   CreateReplyRequestDto,
   HealthDirectorateHealthService,
   HealthDirectorateVaccinationsService,
-  MessagingRecipientDto,
   OrganDonorDto,
   VaccinationDto,
 } from '@island.is/clients/health-directorate'
@@ -34,6 +33,7 @@ import { PermitInput } from './dto/permit.input'
 import { HealthDirectorateResponse } from './dto/response.dto'
 import {
   mapAppointmentStatus,
+  mapMessagingRecipient,
   toAppointmentAssigneeTypeEnum,
   toAppointmentLinkTypeEnum,
   toAppointmentModalityEnum,
@@ -42,7 +42,6 @@ import {
   mapReferralStatusValueToStatus,
   mapVaccinationStatus,
   toConversationDirectionEnum,
-  toConversationRecipientBlockedReasonEnum,
   toConversationReplyBlockedReasonEnum,
   toConversationStatusFilter,
 } from './mappers/basicInformationMapper'
@@ -88,7 +87,6 @@ import { HealthDirectorateHealthConversation } from './models/healthConversation
 import { HealthDirectorateHealthConversationAttachment } from './models/healthConversationAttachment.model'
 import { HealthDirectorateHealthConversationDetail } from './models/healthConversationDetail.model'
 import { HealthDirectorateHealthConversationEntry } from './models/healthConversationEntry.model'
-import { HealthDirectorateHealthConversationType } from './models/healthConversationType.model'
 import { HealthDirectorateHealthConversationRecipient } from './models/healthConversationRecipient.model'
 
 @Injectable()
@@ -859,37 +857,6 @@ export class HealthDirectorateService {
     return true
   }
 
-  private mapMessagingRecipient(
-    r: MessagingRecipientDto,
-  ): HealthDirectorateHealthConversationRecipient {
-    return {
-      nodeId: r.nodeId,
-      groupId: r.groupId,
-      name: r.name,
-      allowsMessaging: r.allowsMessaging,
-      messagingWindowOpen: r.messagingWindowOpen,
-      messagingWindowClose: r.messagingWindowClose,
-      isCurrentlyWithinWindow: r.isCurrentlyWithinWindow,
-      patientReplyWindowDays: r.patientReplyWindowDays,
-      allowedMessageTypes: r.allowedConversationTypes.map(
-        (t): HealthDirectorateHealthConversationType => ({
-          patientInitiatedTypeCode: t.patientInitiatedTypeCode,
-          title: t.title,
-          description: t.description,
-          isCertificate: t.isCertificate,
-        }),
-      ),
-      canCreateConversation: r.canCreateConversation,
-      conversationBlockedReason: toConversationRecipientBlockedReasonEnum(
-        r.conversationBlockedReason,
-      ),
-      canRequestCertificate: r.canRequestCertificate,
-      certificateBlockedReason: toConversationRecipientBlockedReasonEnum(
-        r.certificateBlockedReason,
-      ),
-    }
-  }
-
   async getHealthConversationRecipients(
     auth: Auth,
     locale: Locale = 'is',
@@ -897,6 +864,6 @@ export class HealthDirectorateService {
     const items = await this.healthApi.getMessagingRecipients(auth, locale)
     if (!items) return null
 
-    return items.map((r) => this.mapMessagingRecipient(r))
+    return items.map(mapMessagingRecipient)
   }
 }

@@ -2,9 +2,12 @@ import {
   ConversationReplyBlockedReason,
   ConversationStatusFilter,
   DiseaseVaccinationDtoVaccinationStatusEnum,
+  MessagingRecipientDto,
   RecipientCreateBlockedReason,
   UserVisibleAppointmentStatuses,
 } from '@island.is/clients/health-directorate'
+import { HealthDirectorateHealthConversationRecipient } from '../models/healthConversationRecipient.model'
+import { HealthDirectorateHealthConversationType } from '../models/healthConversationType.model'
 import {
   AppointmentAssigneeTypeEnum,
   AppointmentLinkTypeEnum,
@@ -219,6 +222,35 @@ export const toConversationReplyBlockedReasonEnum = (
       return undefined
   }
 }
+
+export const mapMessagingRecipient = (
+  r: MessagingRecipientDto,
+): HealthDirectorateHealthConversationRecipient => ({
+  nodeId: r.nodeId,
+  groupId: r.groupId,
+  name: r.name,
+  allowsMessaging: r.allowsMessaging,
+  messagingWindowOpen: r.messagingWindowOpen,
+  messagingWindowClose: r.messagingWindowClose,
+  isCurrentlyWithinWindow: r.isCurrentlyWithinWindow,
+  patientReplyWindowDays: r.patientReplyWindowDays,
+  allowedMessageTypes: r.allowedConversationTypes.map(
+    (t): HealthDirectorateHealthConversationType => ({
+      patientInitiatedTypeCode: t.patientInitiatedTypeCode,
+      title: t.title,
+      description: t.description,
+      isCertificate: t.isCertificate,
+    }),
+  ),
+  canCreateConversation: r.canCreateConversation,
+  conversationBlockedReason: toConversationRecipientBlockedReasonEnum(
+    r.conversationBlockedReason,
+  ),
+  canRequestCertificate: r.canRequestCertificate,
+  certificateBlockedReason: toConversationRecipientBlockedReasonEnum(
+    r.certificateBlockedReason,
+  ),
+})
 
 export const toConversationRecipientBlockedReasonEnum = (
   reason?: RecipientCreateBlockedReason,
