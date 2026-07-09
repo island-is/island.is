@@ -47,7 +47,6 @@ import {
   type WebVerdictKeyword,
   type WebVerdictsInput,
 } from '@island.is/web/graphql/schema'
-import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
