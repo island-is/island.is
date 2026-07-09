@@ -1217,7 +1217,10 @@ describe('BankTransferService', () => {
         ...baseRow,
         lastKnownStatus: 'DRAFT',
       })
-      blikkClient.getPayment.mockResolvedValue({ id: 'prov-1', status: 'DRAFT' })
+      blikkClient.getPayment.mockResolvedValue({
+        id: 'prov-1',
+        status: 'DRAFT',
+      })
       blikkClient.cancelPayment.mockRejectedValue(
         new BlikkClientError('gone', 404),
       )
@@ -1272,7 +1275,10 @@ describe('BankTransferService', () => {
         ...baseRow,
         lastKnownStatus: 'DRAFT',
       })
-      blikkClient.getPayment.mockResolvedValue({ id: 'prov-1', status: 'DRAFT' })
+      blikkClient.getPayment.mockResolvedValue({
+        id: 'prov-1',
+        status: 'DRAFT',
+      })
       blikkClient.cancelPayment.mockRejectedValue(
         new BlikkClientError('network down', undefined),
       )
