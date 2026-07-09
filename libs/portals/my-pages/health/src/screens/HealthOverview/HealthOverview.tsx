@@ -178,9 +178,7 @@ export const HealthOverview = () => {
       {isNewHealthOverviewPageEnabled && (
         <GridRow marginBottom={SECTION_GAP}>
           <GridColumn span={isStackedLayout ? '8/8' : '5/8'}>
-            <Box
-              marginBottom={isStackedLayout ? CONTENT_GAP_LG : 0}
-            >
+            <Box marginBottom={isStackedLayout ? CONTENT_GAP_LG : 0}>
               <NotificationsBox
                 limit={3}
                 title={formatMessage(messages.healthNotificationsTitle)}
@@ -230,8 +228,8 @@ export const HealthOverview = () => {
           error: !!healthCenterError,
         }}
         dentists={{
-          data:
-            dentistsData?.rightsPortalUserDentistRegistration?.dentist?.name,
+          data: dentistsData?.rightsPortalUserDentistRegistration?.dentist
+            ?.name,
           loading: dentistsLoading,
           error: !!dentistsError,
         }}
