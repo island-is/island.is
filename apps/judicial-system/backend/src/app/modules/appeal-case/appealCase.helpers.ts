@@ -4,11 +4,20 @@ import {
   CaseAppealDecision,
   isDefenceUser,
   isProsecutionUser,
+  isRequestCase,
+  prosecutionRoles,
   type User,
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { AppealCase, AppealDecision, AppealEventLog, Case } from '../repository'
+import {
+  AppealCase,
+  AppealDecision,
+  AppealEventLog,
+  Case,
+  CivilClaimant,
+  Defendant,
+} from '../repository'
 
 // Resolves the appeal decision (Ákvörðun um kæru) recorded in court for the
 // party the user acts for - the prosecution, or the specific defendant / civil
@@ -158,4 +167,120 @@ export const buildInCourtAppealedEvent = (params: {
     userTitle: actor.title,
     institutionName: actor.institution?.name,
   }
+}
+
+// Whether the user is an appellant of this appeal case, read from the APPEALED
+// event log rather than the frozen appealed_by_national_id. Authorization keys
+// on the *current* representative, so an appeal survives a defender swap:
+//   - prosecution: a prosecution-side APPEALED event exists;
+//   - indictment defence: the user is the current confirmed defender /
+//     spokesperson of a party (defendant / civil claimant) that has an APPEALED
+//     event;
+//   - request-case defence is collective (no party on the event), so it resolves
+//     to the case's *current* registered defender.
+// This does not cover in-court ruling-order appeals - their live per-party
+// withdrawal state is on the decision row (see userHasActiveInCourtAppeal), which
+// the event log only catches up to on session confirmation.
+export const userIsAppellant = (
+  theCase: Pick<
+    Case,
+    'type' | 'defenderNationalId' | 'defendants' | 'civilClaimants'
+  >,
+  appealCase: Pick<AppealCase, 'appealEventLogs'>,
+  user: User,
+): boolean => {
+  const appealedEvents = (appealCase.appealEventLogs ?? []).filter(
+    (eventLog) => eventLog.eventType === AppealEventType.APPEALED,
+  )
+
+  if (appealedEvents.length === 0) {
+    return false
+  }
+
+  if (isProsecutionUser(user)) {
+    return appealedEvents.some((eventLog) =>
+      prosecutionRoles.includes(eventLog.userRole),
+    )
+  }
+
+  if (!isDefenceUser(user)) {
+    return false
+  }
+
+  const defenceAppealed = appealedEvents.some(
+    (eventLog) => !prosecutionRoles.includes(eventLog.userRole),
+  )
+
+  if (isRequestCase(theCase.type)) {
+    // Collective defence: no party on the event, so authorize the case's current
+    // registered defender.
+    return (
+      defenceAppealed &&
+      Boolean(theCase.defenderNationalId) &&
+      theCase.defenderNationalId === user.nationalId
+    )
+  }
+
+  // Indictment defence: the user must be the current confirmed representative of
+  // a party (defendant / civil claimant) that appealed. Resolving live against
+  // the case follows defender / spokesperson reassignment.
+  return appealedEvents.some((eventLog) => {
+    if (eventLog.defendantId) {
+      return Boolean(
+        Defendant.isConfirmedDefenderOfDefendant(
+          user.nationalId,
+          theCase.defendants?.filter((d) => d.id === eventLog.defendantId),
+        ),
+      )
+    }
+
+    if (eventLog.civilClaimantId) {
+      return Boolean(
+        CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(
+          user.nationalId,
+          theCase.civilClaimants?.filter(
+            (c) => c.id === eventLog.civilClaimantId,
+          ),
+        ),
+      )
+    }
+
+    return false
+  })
+}
+
+// Whether the user may withdraw a case-level appeal (request case or dismissed
+// indictment). Being an appellant (userIsAppellant) is necessary but not
+// sufficient for the defence on a request case: a request case has a single
+// collective appeal, and the prosecution's appeal takes precedence, so the
+// defence cannot withdraw a shared appeal the prosecution also made - only the
+// prosecution can. This precedence is specific to withdrawal (the defence is
+// still a full appellant for everything else, e.g. file access), so it lives
+// here rather than in userIsAppellant, and is used by both the withdrawal guard
+// and the case tables' cancel-appeal action so they stay in sync.
+export const canWithdrawCaseLevelAppeal = (
+  theCase: Pick<
+    Case,
+    'type' | 'defenderNationalId' | 'defendants' | 'civilClaimants'
+  >,
+  appealCase: Pick<AppealCase, 'appealEventLogs'>,
+  user: User,
+): boolean => {
+  if (!userIsAppellant(theCase, appealCase, user)) {
+    return false
+  }
+
+  if (isRequestCase(theCase.type) && isDefenceUser(user)) {
+    const prosecutionAppealed = (appealCase.appealEventLogs ?? []).some(
+      (eventLog) =>
+        eventLog.eventType === AppealEventType.APPEALED &&
+        prosecutionRoles.includes(eventLog.userRole),
+    )
+
+    if (prosecutionAppealed) {
+      return false
+    }
+  }
+
+  return true
 }

@@ -1,6 +1,7 @@
 import type { User } from '@island.is/judicial-system/types'
 import {
   AppealCaseState,
+  AppealEventType,
   CaseActionType,
   CaseState,
   CaseType,
@@ -45,24 +46,17 @@ const defenceUser = (nationalId: string): User =>
 
 describe('caseTable.utils', () => {
   describe('getAttributes', () => {
-    // canCancelAppeal only sees the attributes fetched for the user's role,
-    // so every case column it reads must be listed here
-    it('fetches all case attributes canCancelAppeal reads for prosecution users', () => {
+    // canCancelAppeal (via userIsAppellant) only sees the attributes fetched for
+    // the user's role, so every case column it reads must be listed here
+    it('fetches the case attributes canCancelAppeal reads for prosecution users', () => {
       const attributes = getAttributes([], prosecutionUser('p-1'))
-      expect(attributes).toEqual(
-        expect.arrayContaining(['type', 'prosecutorPostponedAppealDate']),
-      )
+      expect(attributes).toEqual(expect.arrayContaining(['type']))
     })
 
-    it('fetches all case attributes canCancelAppeal reads for defence users', () => {
+    it('fetches the case attributes canCancelAppeal reads for defence users', () => {
       const attributes = getAttributes([], defenceUser('1111111111'))
       expect(attributes).toEqual(
-        expect.arrayContaining([
-          'type',
-          'accusedPostponedAppealDate',
-          'prosecutorPostponedAppealDate',
-          'defenderNationalId',
-        ]),
+        expect.arrayContaining(['type', 'defenderNationalId']),
       )
     })
   })
@@ -241,183 +235,257 @@ describe('caseTable.utils', () => {
   })
 
   describe('canCancelAppeal', () => {
-    it('returns false for court user', () => {
-      const user = districtCourtJudge('judge-1')
+    const prosecutorAppealed = {
+      eventType: AppealEventType.APPEALED,
+      userRole: UserRole.PROSECUTOR,
+    }
+    const defenderAppealed = {
+      eventType: AppealEventType.APPEALED,
+      userRole: UserRole.DEFENDER,
+    }
+
+    it('returns false for a court user even when the case was appealed', () => {
       expect(
         canCancelAppeal(
           {
             type: CaseType.CUSTODY,
-            appealCase: { appealState: AppealCaseState.APPEALED },
-            prosecutorPostponedAppealDate: new Date('2024-01-01'),
+            appealCase: {
+              appealState: AppealCaseState.APPEALED,
+              appealEventLogs: [prosecutorAppealed],
+            },
           } as unknown as Case,
-          user,
+          districtCourtJudge('judge-1'),
         ),
       ).toBe(false)
     })
 
-    it('returns true for indictment case when prosecution appealed', () => {
-      const user = prosecutionUser('p-1')
+    it('returns true for prosecution when a prosecution APPEALED event exists', () => {
       expect(
         canCancelAppeal(
           {
             type: CaseType.INDICTMENT,
-            appealCase: { appealState: AppealCaseState.APPEALED },
-            prosecutorPostponedAppealDate: new Date('2024-01-01'),
+            appealCase: {
+              appealState: AppealCaseState.APPEALED,
+              appealEventLogs: [prosecutorAppealed],
+            },
           } as unknown as Case,
-          user,
+          prosecutionUser('p-1'),
         ),
       ).toBe(true)
     })
 
-    it('returns true when prosecution, request case, appealed and has postponed date', () => {
-      const user = prosecutionUser('p-1')
+    it('returns true for prosecution on a RECEIVED appeal', () => {
       expect(
         canCancelAppeal(
           {
             type: CaseType.CUSTODY,
-            appealCase: { appealState: AppealCaseState.APPEALED },
-            prosecutorPostponedAppealDate: new Date('2024-01-01'),
+            appealCase: {
+              appealState: AppealCaseState.RECEIVED,
+              appealEventLogs: [prosecutorAppealed],
+            },
           } as unknown as Case,
-          user,
+          prosecutionUser('p-1'),
         ),
       ).toBe(true)
     })
 
-    it('returns true for RECEIVED appeal state', () => {
-      const user = prosecutionUser('p-1')
+    it('returns false for prosecution when only the defence appealed', () => {
       expect(
         canCancelAppeal(
           {
             type: CaseType.CUSTODY,
-            appealCase: { appealState: AppealCaseState.RECEIVED },
-            prosecutorPostponedAppealDate: new Date('2024-01-01'),
+            appealCase: {
+              appealState: AppealCaseState.APPEALED,
+              appealEventLogs: [defenderAppealed],
+            },
           } as unknown as Case,
-          user,
+          prosecutionUser('p-1'),
         ),
-      ).toBe(true)
+      ).toBe(false)
     })
 
-    it('returns false when no prosecutorPostponedAppealDate', () => {
-      const user = prosecutionUser('p-1')
+    it('returns false when there are no APPEALED events', () => {
       expect(
         canCancelAppeal(
           {
             type: CaseType.CUSTODY,
-            appealCase: { appealState: AppealCaseState.APPEALED },
-            prosecutorPostponedAppealDate: undefined,
+            appealCase: {
+              appealState: AppealCaseState.APPEALED,
+              appealEventLogs: [],
+            },
           } as unknown as Case,
-          user,
+          prosecutionUser('p-1'),
         ),
       ).toBe(false)
     })
 
     it('returns true for the assigned defender when the defence appealed a request case', () => {
-      const user = defenceUser('1111111111')
       expect(
         canCancelAppeal(
           {
             type: CaseType.CUSTODY,
-            appealCase: { appealState: AppealCaseState.APPEALED },
-            accusedPostponedAppealDate: new Date('2024-01-01'),
             defenderNationalId: '1111111111',
+            appealCase: {
+              appealState: AppealCaseState.APPEALED,
+              appealEventLogs: [defenderAppealed],
+            },
           } as unknown as Case,
-          user,
+          defenceUser('1111111111'),
         ),
       ).toBe(true)
     })
 
     it('returns false for a defence user who is not the assigned defender of a request case', () => {
-      const user = defenceUser('2222222222')
       expect(
         canCancelAppeal(
           {
             type: CaseType.CUSTODY,
-            appealCase: { appealState: AppealCaseState.APPEALED },
-            accusedPostponedAppealDate: new Date('2024-01-01'),
             defenderNationalId: '1111111111',
+            appealCase: {
+              appealState: AppealCaseState.APPEALED,
+              appealEventLogs: [defenderAppealed],
+            },
           } as unknown as Case,
-          user,
+          defenceUser('2222222222'),
         ),
       ).toBe(false)
     })
 
-    it('returns false for the defender when the prosecution also appealed a request case', () => {
-      const user = defenceUser('1111111111')
+    it('returns false for the defender when only the prosecution appealed a request case', () => {
       expect(
         canCancelAppeal(
           {
             type: CaseType.CUSTODY,
-            appealCase: { appealState: AppealCaseState.APPEALED },
-            prosecutorPostponedAppealDate: new Date('2024-01-02'),
-            accusedPostponedAppealDate: new Date('2024-01-01'),
             defenderNationalId: '1111111111',
+            appealCase: {
+              appealState: AppealCaseState.APPEALED,
+              appealEventLogs: [prosecutorAppealed],
+            },
           } as unknown as Case,
-          user,
+          defenceUser('1111111111'),
         ),
       ).toBe(false)
     })
 
-    it('returns false for the defender when the defence did not appeal', () => {
-      const user = defenceUser('1111111111')
+    // Request cases have one collective appeal and the prosecution's appeal takes
+    // precedence, so the defender cannot withdraw when the prosecution also
+    // appealed - only the prosecution can.
+    it('returns false for the defender of a request case when the prosecution also appealed', () => {
       expect(
         canCancelAppeal(
           {
             type: CaseType.CUSTODY,
-            appealCase: { appealState: AppealCaseState.APPEALED },
-            prosecutorPostponedAppealDate: new Date('2024-01-01'),
-            accusedPostponedAppealDate: undefined,
             defenderNationalId: '1111111111',
+            appealCase: {
+              appealState: AppealCaseState.APPEALED,
+              appealEventLogs: [prosecutorAppealed, defenderAppealed],
+            },
           } as unknown as Case,
-          user,
+          defenceUser('1111111111'),
         ),
       ).toBe(false)
     })
 
-    it('returns true for the defender who appealed a dismissed indictment case', () => {
-      const user = defenceUser('1111111111')
+    // Prosecution precedence is request-case only: a dismissed indictment appeal
+    // is per party, so the defender of an appealing defendant may withdraw even
+    // when the prosecution also appealed.
+    it('returns true for the confirmed defender of a dismissed indictment even when the prosecution also appealed', () => {
       expect(
         canCancelAppeal(
           {
             type: CaseType.INDICTMENT,
+            defendants: [
+              {
+                id: 'd-1',
+                isDefenderChoiceConfirmed: true,
+                defenderNationalId: '1111111111',
+              },
+            ],
             appealCase: {
               appealState: AppealCaseState.RECEIVED,
-              appealedByNationalId: '1111111111',
+              appealEventLogs: [
+                prosecutorAppealed,
+                {
+                  eventType: AppealEventType.APPEALED,
+                  userRole: UserRole.DEFENDER,
+                  defendantId: 'd-1',
+                },
+              ],
             },
-            accusedPostponedAppealDate: new Date('2024-01-01'),
           } as unknown as Case,
-          user,
+          defenceUser('1111111111'),
         ),
       ).toBe(true)
     })
 
-    it('returns false for a defender who did not file the dismissed indictment appeal', () => {
-      const user = defenceUser('2222222222')
+    it('returns true for the confirmed defender of a defendant who appealed a dismissed indictment', () => {
       expect(
         canCancelAppeal(
           {
             type: CaseType.INDICTMENT,
+            defendants: [
+              {
+                id: 'd-1',
+                isDefenderChoiceConfirmed: true,
+                defenderNationalId: '1111111111',
+              },
+            ],
             appealCase: {
               appealState: AppealCaseState.RECEIVED,
-              appealedByNationalId: '1111111111',
+              appealEventLogs: [
+                {
+                  eventType: AppealEventType.APPEALED,
+                  userRole: UserRole.DEFENDER,
+                  defendantId: 'd-1',
+                },
+              ],
             },
-            accusedPostponedAppealDate: new Date('2024-01-01'),
           } as unknown as Case,
-          user,
+          defenceUser('1111111111'),
+        ),
+      ).toBe(true)
+    })
+
+    it('returns false for a defender who is not the confirmed defender of the appealing defendant', () => {
+      expect(
+        canCancelAppeal(
+          {
+            type: CaseType.INDICTMENT,
+            defendants: [
+              {
+                id: 'd-1',
+                isDefenderChoiceConfirmed: true,
+                defenderNationalId: '1111111111',
+              },
+            ],
+            appealCase: {
+              appealState: AppealCaseState.RECEIVED,
+              appealEventLogs: [
+                {
+                  eventType: AppealEventType.APPEALED,
+                  userRole: UserRole.DEFENDER,
+                  defendantId: 'd-1',
+                },
+              ],
+            },
+          } as unknown as Case,
+          defenceUser('2222222222'),
         ),
       ).toBe(false)
     })
 
-    it('returns false for the defender when the appeal has been concluded', () => {
-      const user = defenceUser('1111111111')
+    it('returns false once the appeal has been concluded', () => {
       expect(
         canCancelAppeal(
           {
             type: CaseType.CUSTODY,
-            appealCase: { appealState: AppealCaseState.COMPLETED },
-            accusedPostponedAppealDate: new Date('2024-01-01'),
             defenderNationalId: '1111111111',
+            appealCase: {
+              appealState: AppealCaseState.COMPLETED,
+              appealEventLogs: [defenderAppealed],
+            },
           } as unknown as Case,
-          user,
+          defenceUser('1111111111'),
         ),
       ).toBe(false)
     })
@@ -449,8 +517,15 @@ describe('caseTable.utils', () => {
       const theCase = {
         type: CaseType.CUSTODY,
         state: CaseState.ACCEPTED,
-        appealCase: { appealState: AppealCaseState.APPEALED },
-        prosecutorPostponedAppealDate: new Date('2024-01-01'),
+        appealCase: {
+          appealState: AppealCaseState.APPEALED,
+          appealEventLogs: [
+            {
+              eventType: AppealEventType.APPEALED,
+              userRole: UserRole.PROSECUTOR,
+            },
+          ],
+        },
       } as unknown as Case
       expect(getContextMenuActions(theCase, user)).toContain(
         ContextMenuCaseActionType.WITHDRAW_APPEAL,
@@ -462,9 +537,16 @@ describe('caseTable.utils', () => {
       const theCase = {
         type: CaseType.CUSTODY,
         state: CaseState.ACCEPTED,
-        appealCase: { appealState: AppealCaseState.APPEALED },
-        accusedPostponedAppealDate: new Date('2024-01-01'),
         defenderNationalId: '1111111111',
+        appealCase: {
+          appealState: AppealCaseState.APPEALED,
+          appealEventLogs: [
+            {
+              eventType: AppealEventType.APPEALED,
+              userRole: UserRole.DEFENDER,
+            },
+          ],
+        },
       } as unknown as Case
       expect(getContextMenuActions(theCase, user)).toContain(
         ContextMenuCaseActionType.WITHDRAW_APPEAL,
