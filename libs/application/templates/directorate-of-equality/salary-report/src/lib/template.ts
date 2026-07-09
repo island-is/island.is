@@ -20,6 +20,7 @@ import {
   DoeCompanyApi,
   ImportPresignApi,
   ParsedSalaryReportApi,
+  SalaryAnalysisApi,
   SubmitSalaryReportApi,
 } from '../dataProviders'
 import { Events, Roles, States } from '../utils/constants'
@@ -137,7 +138,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [ImportPresignApi, ParsedSalaryReportApi],
+              api: [ImportPresignApi, ParsedSalaryReportApi, SalaryAnalysisApi],
               delete: true,
             },
           ],

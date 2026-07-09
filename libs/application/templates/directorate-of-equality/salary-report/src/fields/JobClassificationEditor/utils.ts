@@ -1,5 +1,5 @@
 import type { ParsedCriterionDto } from '@island.is/clients/directorate-of-equality'
-import type { StepAssignment, SubCriterion } from '../../utils/types'
+import type { Role, StepAssignment, SubCriterion } from '../../utils/types'
 
 export type StepMeta = {
   steps: { order: number; score: number }[]
@@ -70,6 +70,42 @@ export const buildStepMetaByTitle = (
     })
   })
   return map
+}
+
+// Builds step assignments (one per sub-criterion, defaulted to the first step)
+// from the manually-entered criteria/sub-criteria answers. Used both for
+// deriving default roles and for seeding an employee's personal step
+// assignments when no import ever populated them.
+export const buildStepAssignmentsFromSubCriteria = (
+  factorTitles: string[],
+  subCriteriaGroups: SubCriterion[][],
+): StepAssignment[] =>
+  subCriteriaGroups.flatMap((group, i) =>
+    (group ?? []).map((sc) => ({
+      criterionTitle: factorTitles[i] ?? '',
+      subTitle: sc.title,
+      stepOrder: 1,
+    })),
+  )
+
+// Fully manual entry never gets a "roles" answer from an Excel import — there
+// is no dedicated UI for creating roles either, so derive them from the
+// distinct job titles already entered on the employees screen, paired with
+// the manually-entered job-factor sub-criteria.
+export const buildRolesFromEmployees = (
+  roleTitles: string[],
+  jobFactorTitles: string[],
+  subCriteriaJobFactors: SubCriterion[][],
+): Role[] => {
+  const stepAssignments = buildStepAssignmentsFromSubCriteria(
+    jobFactorTitles,
+    subCriteriaJobFactors,
+  )
+  const uniqueTitles = Array.from(new Set(roleTitles.filter(Boolean)))
+  return uniqueTitles.map((title) => ({
+    title,
+    stepAssignments: stepAssignments.map((a) => ({ ...a })),
+  }))
 }
 
 export const computeRoleScore = (

@@ -47,3 +47,10 @@ export const SubmitSalaryReportApi = defineTemplateApi({
   shouldPersistToExternalData: true,
   throwOnError: true,
 })
+
+export const SalaryAnalysisApi = defineTemplateApi({
+  action: 'analyzeSalaryReport',
+  externalDataId: 'salaryAnalysisResult',
+  namespace: 'DirectorateOfEquality',
+  throwOnError: false,
+})

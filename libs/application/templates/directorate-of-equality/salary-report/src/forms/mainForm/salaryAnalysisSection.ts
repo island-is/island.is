@@ -1,8 +1,8 @@
 import {
+  buildCustomField,
   buildMultiField,
   buildSection,
   buildSubSection,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { messages } from '../../lib/messages'
 
@@ -18,22 +18,13 @@ export const salaryAnalysisSection = buildSection({
           id: 'salaryAnalysisOverviewMultiField',
           title: messages.salaryAnalysis.overview.title,
           description: messages.salaryAnalysis.overview.intro,
-          children: [],
-        }),
-      ],
-    }),
-    buildSubSection({
-      id: 'improvementPlan',
-      title: messages.salaryAnalysis.improvementPlan.sectionTitle,
-      condition: (answers) =>
-        getValueViaPath(answers, 'salaryAnalysis.requiresImprovementPlan') ===
-        'yes',
-      children: [
-        buildMultiField({
-          id: 'improvementPlanMultiField',
-          title: messages.salaryAnalysis.improvementPlan.title,
-          description: messages.salaryAnalysis.improvementPlan.intro,
-          children: [],
+          children: [
+            buildCustomField({
+              id: 'salaryAnalysis',
+              component: 'SalaryAnalysisResults',
+              doesNotRequireAnswer: true,
+            }),
+          ],
         }),
       ],
     }),

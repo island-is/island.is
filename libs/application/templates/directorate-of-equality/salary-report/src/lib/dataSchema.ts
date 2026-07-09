@@ -204,6 +204,60 @@ const role = z.object({
 
 const roles = z.array(role).optional()
 
+const outlierGroup = z.object({
+  name: z.string().optional(),
+  reason: z.string().optional(),
+  action: z.string().optional(),
+  signatureName: z.string().optional(),
+  signatureRole: z.string().optional(),
+  employeeOrdinals: z.array(z.number()),
+})
+
+const salaryAnalysis = z
+  .object({
+    postponed: z.array(z.string()).optional(),
+    outlierGroups: z.array(outlierGroup).optional(),
+  })
+  .superRefine((val, ctx) => {
+    // Explanations are only required when there's something to explain (a
+    // group with detected outliers) and the applicant hasn't postponed the
+    // improvement plan — the form hides these inputs in both other cases, so
+    // requiring them unconditionally would silently block submission.
+    if (val.postponed?.includes('yes')) return
+    val.outlierGroups?.forEach((group, i) => {
+      if (group.employeeOrdinals.length === 0) return
+      if (!group.reason) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['outlierGroups', i, 'reason'],
+          params: messages.errors.required,
+        })
+      }
+      if (!group.action) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['outlierGroups', i, 'action'],
+          params: messages.errors.required,
+        })
+      }
+      if (!group.signatureName) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['outlierGroups', i, 'signatureName'],
+          params: messages.errors.required,
+        })
+      }
+      if (!group.signatureRole) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['outlierGroups', i, 'signatureRole'],
+          params: messages.errors.required,
+        })
+      }
+    })
+  })
+  .optional()
+
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((value) => value === true, {
     params: messages.prerequisites.errors.approveExternalData,
@@ -217,6 +271,7 @@ export const dataSchema = z.object({
   subCriteria: subCriteria,
   employees: employees,
   roles: roles,
+  salaryAnalysis: salaryAnalysis,
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

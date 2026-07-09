@@ -759,6 +759,126 @@ export const messages = {
           'Hér fyrir neðan færðu lista yfir frávik sem eru yfir útgefið viðmið Hagstofunnar.\n\nNú er tækifærið til að fara vel yfir starfaflokkunina og að öll innslegin gögn til þess að kanna hvort þú þurfir að breyta einhverju.',
       },
     }),
+    results: defineMessages({
+      analyzeButton: {
+        id: 'salaryReport.application:salaryAnalysis.results.analyzeButton',
+        defaultMessage: 'Reikna út',
+      },
+      recalculateButton: {
+        id: 'salaryReport.application:salaryAnalysis.results.recalculateButton',
+        defaultMessage: 'Reikna aftur',
+      },
+      analyzing: {
+        id: 'salaryReport.application:salaryAnalysis.results.analyzing',
+        defaultMessage: 'Reikna út launagreiningu...',
+      },
+      analyzeError: {
+        id: 'salaryReport.application:salaryAnalysis.results.analyzeError',
+        defaultMessage:
+          'Villa kom upp við útreikning. Vinsamlegast reyndu aftur.',
+      },
+      totalsTitle: {
+        id: 'salaryReport.application:salaryAnalysis.results.totalsTitle',
+        defaultMessage: 'Meðaltal grunnlauna',
+      },
+
+      maleLabel: {
+        id: 'salaryReport.application:salaryAnalysis.results.maleLabel',
+        defaultMessage: 'Meðallaun karla',
+      },
+      femaleLabel: {
+        id: 'salaryReport.application:salaryAnalysis.results.femaleLabel',
+        defaultMessage: 'Meðallaun kvenna',
+      },
+      wageGapLabel: {
+        id: 'salaryReport.application:salaryAnalysis.results.wageGapLabel',
+        defaultMessage: 'Launamunur',
+      },
+      outliersFoundTitle: {
+        id: 'salaryReport.application:salaryAnalysis.results.outliersFoundTitle',
+        defaultMessage: '{count} frávik fundust',
+      },
+      outliersFoundDescription: {
+        id: 'salaryReport.application:salaryAnalysis.results.outliersFoundDescription',
+        defaultMessage:
+          'Farið er nánar yfir frávikin og skýringar á næsta skrefi, Úrbótaáætlun.',
+      },
+      noOutliersFound: {
+        id: 'salaryReport.application:salaryAnalysis.results.noOutliersFound',
+        defaultMessage: 'Engin frávik fundust í launagreiningunni.',
+      },
+    }),
+    outlierGroup: defineMessages({
+      listTitle: {
+        id: 'salaryReport.application:salaryAnalysis.outlierGroup.listTitle',
+        defaultMessage: 'Frávik',
+      },
+      employeeColumn: {
+        id: 'salaryReport.application:salaryAnalysis.outlierGroup.employeeColumn',
+        defaultMessage: 'Nafn',
+      },
+      roleColumn: {
+        id: 'salaryReport.application:salaryAnalysis.outlierGroup.roleColumn',
+        defaultMessage: 'Starf',
+      },
+      genderColumn: {
+        id: 'salaryReport.application:salaryAnalysis.outlierGroup.genderColumn',
+        defaultMessage: 'Kyn',
+      },
+      directionColumn: {
+        id: 'salaryReport.application:salaryAnalysis.outlierGroup.directionColumn',
+        defaultMessage: 'Átt',
+      },
+      differenceColumn: {
+        id: 'salaryReport.application:salaryAnalysis.outlierGroup.differenceColumn',
+        defaultMessage: 'Launamunur',
+      },
+      postponeCardTitle: {
+        id: 'salaryReport.application:salaryAnalysis.outlierGroup.postponeCardTitle',
+        defaultMessage: 'Fresta skilum á úrbótaáætlun',
+      },
+      postponeCardDescription: {
+        id: 'salaryReport.application:salaryAnalysis.outlierGroup.postponeCardDescription',
+        defaultMessage:
+          'Hægt er að skila úrbótaáætlun innan sex mánaða frá því að skýrslan er send inn.',
+      },
+      postponeCheckboxLabel: {
+        id: 'salaryReport.application:salaryAnalysis.outlierGroup.postponeCheckboxLabel',
+        defaultMessage: 'Ég vil skila úrbótaáætlun seinna',
+      },
+      directionAbove: {
+        id: 'salaryReport.application:salaryAnalysis.outlierGroup.directionAbove',
+        defaultMessage: 'Yfir viðmiði',
+      },
+      directionBelow: {
+        id: 'salaryReport.application:salaryAnalysis.outlierGroup.directionBelow',
+        defaultMessage: 'Undir viðmiði',
+      },
+      directionEqual: {
+        id: 'salaryReport.application:salaryAnalysis.outlierGroup.directionEqual',
+        defaultMessage: 'Á viðmiði',
+      },
+      formTitle: {
+        id: 'salaryReport.application:salaryAnalysis.outlierGroup.formTitle',
+        defaultMessage: 'Skýring á frávikum',
+      },
+      reasonLabel: {
+        id: 'salaryReport.application:salaryAnalysis.outlierGroup.reasonLabel',
+        defaultMessage: 'Ástæða frávika',
+      },
+      actionLabel: {
+        id: 'salaryReport.application:salaryAnalysis.outlierGroup.actionLabel',
+        defaultMessage: 'Fyrirhugaðar úrbætur',
+      },
+      signatureNameLabel: {
+        id: 'salaryReport.application:salaryAnalysis.outlierGroup.signatureNameLabel',
+        defaultMessage: 'Nafn ábyrgðaraðila',
+      },
+      signatureRoleLabel: {
+        id: 'salaryReport.application:salaryAnalysis.outlierGroup.signatureRoleLabel',
+        defaultMessage: 'Starfstitill ábyrgðaraðila',
+      },
+    }),
   },
 
   overview: defineMessages({

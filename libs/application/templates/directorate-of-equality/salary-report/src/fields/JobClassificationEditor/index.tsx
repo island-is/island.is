@@ -9,9 +9,18 @@ import type {
   ParsedRoleDto,
 } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
-import { type Role, type SubCriterion } from '../../utils/types'
+import {
+  type Employee,
+  type JobFactor,
+  type Role,
+  type SubCriterion,
+} from '../../utils/types'
 import { RolePanel } from './RolePanel'
-import { buildStepMetaByTitle, buildStepMetaFromSubCriteria } from './utils'
+import {
+  buildRolesFromEmployees,
+  buildStepMetaByTitle,
+  buildStepMetaFromSubCriteria,
+} from './utils'
 
 const FIELD_NAME = 'roles'
 
@@ -43,15 +52,41 @@ export const JobClassificationEditor: FC<
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Structure (titles + assignments) for rendering: answers > external > empty.
+  // Structure (titles + assignments) for rendering: answers > external > derived.
   const roles = useMemo(() => {
     const saved = getValueViaPath<Role[]>(application.answers, FIELD_NAME)
     if (saved && saved.length > 0) return saved
-    return (getValueViaPath<ParsedRoleDto[]>(
+    const external = (getValueViaPath<ParsedRoleDto[]>(
       application.externalData,
       'parsedSalaryReport.data.roles',
       [],
     ) ?? []) as Role[]
+    if (external.length > 0) return external
+
+    // No import ever ran (fully manual entry) — there's no dedicated UI for
+    // creating roles, so derive them from the job titles already entered on
+    // the employees screen, paired with the manually-entered job-factor
+    // sub-criteria.
+    const employees = (getValueViaPath<Employee[]>(
+      application.answers,
+      'employees',
+      [],
+    ) ?? []) as Employee[]
+    const jobFactors = (getValueViaPath<JobFactor[]>(
+      application.answers,
+      'criteria.jobFactors',
+      [],
+    ) ?? []) as JobFactor[]
+    const subCriteriaJobFactors = (getValueViaPath<SubCriterion[][]>(
+      application.answers,
+      'subCriteria.jobFactors',
+      [],
+    ) ?? []) as SubCriterion[][]
+    return buildRolesFromEmployees(
+      employees.map((e) => e.roleTitle),
+      jobFactors.map((f) => f.title),
+      subCriteriaJobFactors,
+    )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
