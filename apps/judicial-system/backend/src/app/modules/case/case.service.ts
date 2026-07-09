@@ -2135,13 +2135,6 @@ export class CaseService {
         // read from the event log uniformly with out-of-court appeals.
         // Request-case defence is collective, so no defendant/civilClaimant party
         // is attached.
-        // TODO: Decide if we should set both appeal dates if both appeal
-        if (prosecutorAppealedInCourt) {
-          caseUpdate.prosecutorPostponedAppealDate = update.rulingDate
-        } else {
-          caseUpdate.accusedPostponedAppealDate = update.rulingDate
-        }
-
         const appealCase = await this.appealCaseRepositoryService.create(
           theCase.id,
           {
@@ -2197,8 +2190,6 @@ export class CaseService {
           user,
           transaction,
         )
-        caseUpdate.prosecutorPostponedAppealDate = null
-        caseUpdate.accusedPostponedAppealDate = null
       }
     }
 

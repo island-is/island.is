@@ -581,22 +581,6 @@ export class Case extends Model {
   prosecutorAppealAnnouncement?: string
 
   /**********
-   * The date and time of the accused's postponed appeal - only used if the accused postponed
-   * her appeal decision and later appealed within the allowed time frame
-   **********/
-  @Column({ type: DataType.DATE, allowNull: true })
-  @ApiPropertyOptional({ type: Date })
-  accusedPostponedAppealDate?: Date
-
-  /**********
-   * The date and time of the prosecutor's postponed appeal - only used if the prosecutor
-   * postponed his appeal decision and later appealed within the allowed time frame
-   **********/
-  @Column({ type: DataType.DATE, allowNull: true })
-  @ApiPropertyOptional({ type: Date })
-  prosecutorPostponedAppealDate?: Date
-
-  /**********
    * The date and time of the judge's ruling (when the case is completed)
    **********/
   @Column({ type: DataType.DATE, allowNull: true })

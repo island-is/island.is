@@ -30,7 +30,6 @@ import {
 
 import { defenderRule } from '../../guards'
 import { CurrentCase } from '../case/guards/case.decorator'
-import { CaseCompletedGuard } from '../case/guards/caseCompleted.guard'
 import { CaseTypeGuard } from '../case/guards/caseType.guard'
 import { CaseWriteGuard } from '../case/guards/caseWrite.guard'
 import { LimitedAccessCaseExistsGuard } from '../case/guards/limitedAccessCaseExists.guard'
