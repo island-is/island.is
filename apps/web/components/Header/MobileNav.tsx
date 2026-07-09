@@ -432,7 +432,6 @@ export const MobileNavPanel = forwardRef<
                       icon="arrowForward"
                       iconType="filled"
                       variant="text"
-                      size="small"
                       as="span"
                     >
                       {n(

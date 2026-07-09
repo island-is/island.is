@@ -325,8 +325,18 @@ export const searchWrapper = style({
 
 // "Skoða allar …" row lives inside the drilldown view, just below the
 // list. Figma groups it into the same column as the list at spacing/28.
+//
+// The generous bottom buffer is deliberate: the panel is a fixed
+// `height: calc(100vh - 80px)` scroll container, and this row is its last
+// child. Absolutely-positioned UI can overlap the row's resting position —
+// the search autosuggest Menu (position:absolute, max-height 455) and, on
+// mobile, the browser's dynamic bottom toolbar covering the 100vh bottom
+// edge. Without trailing space the row sits flush at the bottom and can be
+// permanently occluded. The buffer adds scroll travel so the link can be
+// scrolled up the page, clear of anything overlapping the bottom edge.
 export const seeAllRow = style({
   marginTop: 28,
+  paddingBottom: '50vh',
 })
 
 // Dormant — the JSX consumer is commented out in MobileNav.tsx. Kept here so
