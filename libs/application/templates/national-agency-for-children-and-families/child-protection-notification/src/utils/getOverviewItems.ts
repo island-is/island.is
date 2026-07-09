@@ -4,7 +4,6 @@ import {
   FormValue,
   KeyValueItem,
 } from '@island.is/application/types'
-import { ProtectiveFactorSectionDto } from '@island.is/clients/national-agency-for-children-and-families'
 import {
   formatPhoneNumber,
   removeCountryCode,
@@ -27,6 +26,7 @@ import {
 } from '../utils/constants'
 import { isKnowsNationalId, isNoNationalId } from './conditionUtils'
 import { getApplicationAnswers } from './getApplicationAnswers'
+import { getApplicationExternalData } from './getApplicationExternalData'
 import { Parent } from './types'
 
 const genderLabelMap = {
@@ -558,12 +558,8 @@ export const getProtectiveFactorsItems = (
   externalData: ExternalData,
 ): Array<KeyValueItem> => {
   const { protectiveFactors } = getApplicationAnswers(answers)
-  const sections =
-    (
-      externalData['protectiveFactors'] as
-        | { data?: ProtectiveFactorSectionDto[] }
-        | undefined
-    )?.data ?? []
+  const { protectiveFactorSections: sections } =
+    getApplicationExternalData(externalData)
 
   const items: Array<KeyValueItem> = []
 
@@ -572,7 +568,7 @@ export const getProtectiveFactorsItems = (
     const sectionItems: Array<KeyValueItem> = []
 
     section.subCategories?.forEach((subCategory, subIndex) => {
-      if (!sectionAnswers?.[`sub${subIndex}`]?.includes('yes')) return
+      if (!sectionAnswers?.[`sub${subIndex}`]?.includes(YES)) return
 
       const selectedItemDescriptions = (
         sectionAnswers[`sub${subIndex}Items`] ?? []

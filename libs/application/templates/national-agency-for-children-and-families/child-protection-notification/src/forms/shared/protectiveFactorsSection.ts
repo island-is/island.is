@@ -1,4 +1,5 @@
 import {
+  YES,
   buildAccordionField,
   buildCheckboxField,
   buildDescriptionField,
@@ -6,10 +7,10 @@ import {
   buildSection,
   buildSelectField,
 } from '@island.is/application/core'
-import { ProtectiveFactorSectionDto } from '@island.is/clients/national-agency-for-children-and-families'
 import { FormValue } from '@island.is/application/types'
 import { protectiveFactorsMessages } from '../../lib/messages'
 import { getApplicationAnswers } from '../../utils/getApplicationAnswers'
+import { getApplicationExternalData } from '../../utils/getApplicationExternalData'
 import { isUnborn } from '../../utils/conditionUtils'
 
 export const protectiveFactorsSection = buildSection({
@@ -18,7 +19,7 @@ export const protectiveFactorsSection = buildSection({
   children: [
     buildMultiField({
       id: 'protectiveFactors',
-      title: protectiveFactorsMessages.shared.title,
+      title: protectiveFactorsMessages.shared.sectionTitle,
       children: [
         buildDescriptionField({
           id: 'protectiveFactors.description',
@@ -26,35 +27,17 @@ export const protectiveFactorsSection = buildSection({
             isUnborn(answers)
               ? protectiveFactorsMessages.unborn.description
               : protectiveFactorsMessages.shared.description,
-          marginBottom: 2,
-        }),
-        buildDescriptionField({
-          id: 'protectiveFactors.selectionPrompt',
-          description: ({ answers }) =>
-            isUnborn(answers)
-              ? protectiveFactorsMessages.unborn.selectionPrompt
-              : protectiveFactorsMessages.shared.selectionPrompt,
-          marginBottom: 2,
-        }),
-        buildDescriptionField({
-          id: 'protectiveFactors.dontKnowInstruction',
-          description: protectiveFactorsMessages.shared.dontKnowInstruction,
-          marginBottom: 4,
-          condition: (answers) => !isUnborn(answers),
         }),
         // TODO: When the API exposes unborn-specific questions, filter sections by child type here and remove the condition below.
         buildAccordionField({
-          id: 'protectiveFactors.sections',
+          id: 'protectiveFactors',
           condition: (answers) => !isUnborn(answers),
           accordionItems: (application) => {
-            const sections =
-              (
-                application.externalData['protectiveFactors'] as
-                  | { data?: ProtectiveFactorSectionDto[] }
-                  | undefined
-              )?.data ?? []
+            const { protectiveFactorSections } = getApplicationExternalData(
+              application.externalData,
+            )
 
-            return sections.map((section) => ({
+            return protectiveFactorSections.map((section) => ({
               itemTitle: section.name ?? '',
               children: [
                 ...(section.subCategories?.flatMap((subCategory, subIndex) => [
@@ -62,7 +45,7 @@ export const protectiveFactorsSection = buildSection({
                     id: `protectiveFactors.${section.code}.sub${subIndex}`,
                     large: true,
                     doesNotRequireAnswer: true,
-                    options: [{ value: 'yes', label: subCategory.name ?? '' }],
+                    options: [{ value: YES, label: subCategory.name ?? '' }],
                     spacing: 0,
                   }),
                   buildSelectField({
@@ -75,7 +58,7 @@ export const protectiveFactorsSection = buildSection({
                         getApplicationAnswers(answers)
                       return !!protectiveFactors?.[section.code ?? '']?.[
                         `sub${subIndex}`
-                      ]?.includes('yes')
+                      ]?.includes(YES)
                     },
                     options: (subCategory.items ?? []).map((item) => ({
                       value: item.code ?? '',
