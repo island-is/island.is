@@ -7,6 +7,7 @@ import { BlikkItem } from '@island.is/clients/blikk'
 import {
   BankTransferFailureReason,
   BankTransferStatus,
+  BankTransferPendingStatus,
 } from './bankTransfer.types'
 import { BankTransferPayment } from './models/bankTransferPayment.model'
 import { CatalogItemWithQuantity } from '../../types/charges'
@@ -48,6 +49,44 @@ export const mapBlikkStatusToBankTransferStatus = (
     default:
       return BankTransferStatus.PENDING
   }
+}
+
+/** True when Blikk signals the payer must complete onboarding first: a DRAFT payment whose SCA URL points at the configured onboarding app. Compares parsed origins — an unparsable URL is never onboarding. */
+export const isOnboardingRequired = (
+  rawStatus: string,
+  scaRedirectUrl: string | undefined,
+  onboardingOrigin: string,
+): boolean => {
+  if (rawStatus !== 'DRAFT' || !scaRedirectUrl) {
+    return false
+  }
+  try {
+    return new URL(scaRedirectUrl).origin === new URL(onboardingOrigin).origin
+  } catch {
+    return false
+  }
+}
+
+/** Map a raw Blikk status onto the pending sub-status. */
+export const mapRawStatusToBankTransferPendingStatus = (
+  status: string,
+  scaRedirectUrl: string | undefined,
+  onboardingOrigin: string,
+): BankTransferPendingStatus => {
+  if (status === 'SCA_REQUIRED') {
+    return BankTransferPendingStatus.SCA_REQUIRED
+  }
+
+  // If the payment is a DRAFT and has a non-onboarding SCA URL, return SCA_REQUIRED.
+  if (
+    status === 'DRAFT' &&
+    scaRedirectUrl &&
+    !isOnboardingRequired(status, scaRedirectUrl, onboardingOrigin)
+  ) {
+    return BankTransferPendingStatus.SCA_REQUIRED
+  }
+
+  return BankTransferPendingStatus.PROCESSING
 }
 
 export const toBlikkItem = (item: CatalogItemWithQuantity): BlikkItem => ({
@@ -111,6 +150,15 @@ export const toBankTransferFailureReason = (
       return null
   }
 }
+
+export const deriveBankTransferFailureReason = (
+  status: BankTransferStatus,
+  row: Pick<BankTransferPayment, 'expiresAt'>,
+): BankTransferFailureReason | null =>
+  // Blikk reports a lapsed TTL as a plain ERROR — expiry is derived from the row.
+  status === BankTransferStatus.ERROR && isRowExpired(row)
+    ? BankTransferFailureReason.EXPIRED
+    : toBankTransferFailureReason(status)
 
 /** Builds a PAID FJS charge payload for a settled bank transfer; carries the provider id in `RRN`. */
 export const generateBankTransferChargeFJSPayload = ({

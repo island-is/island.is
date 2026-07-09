@@ -40,6 +40,8 @@ const deriveInitialBankTransferError = (
       return { code: BankTransferErrorCode.BankTransferRejected }
     case PaymentsBankTransferFailureReason.cancelled:
       return { code: BankTransferErrorCode.BankTransferCancelled }
+    case PaymentsBankTransferFailureReason.expired:
+      return { code: BankTransferErrorCode.BankTransferExpired }
     default:
       return { code: BankTransferErrorCode.BankTransferGenericError }
   }

@@ -47,13 +47,15 @@ import {
 } from './dtos'
 import { BankTransferPayment } from './models/bankTransferPayment.model'
 import {
+  deriveBankTransferFailureReason,
   generateBankTransferChargeFJSPayload,
   isBankTransferFailureStatus,
   isBlikkStatus,
+  isOnboardingRequired,
   isRowExpired,
   mapBlikkStatusToBankTransferStatus,
+  mapRawStatusToBankTransferPendingStatus,
   rowLogPrefix,
-  toBankTransferFailureReason,
   toBlikkItem,
 } from './bankTransfer.utils'
 
@@ -180,6 +182,7 @@ export class BankTransferService {
       providerPaymentId: providerResult.providerPaymentId,
       scaRedirectUrl: providerResult.scaRedirectUrl,
       expiresAt,
+      onboardingRequired: providerResult.onboardingRequired,
     }
   }
 
@@ -205,15 +208,32 @@ export class BankTransferService {
     const result = await this.getPayment(row.providerPaymentId)
     await this.finalizeFromBlikkResult(row, result)
 
-    return { status: result.status, message: result.message }
+    const isPending = result.status === BankTransferStatus.PENDING
+    const scaRedirectUrl =
+      result.scaRedirectUrl ?? row.scaRedirectUrl ?? undefined
+
+    return {
+      status: result.status,
+      message: result.message,
+      pendingStatus: isPending
+        ? mapRawStatusToBankTransferPendingStatus(
+            result.rawStatus,
+            scaRedirectUrl,
+            this.config.onboardingOrigin,
+          )
+        : undefined,
+      scaRedirectUrl: isPending ? scaRedirectUrl : undefined,
+      failureReason:
+        deriveBankTransferFailureReason(result.status, row) ?? undefined,
+    }
   }
 
   /**
-   * Cancels the active bank-transfer attempt for a flow. For a still-PENDING attempt we ask Blikk to
-   * cancel first; Blikk only honours this while the payment is in DRAFT, so a payment the user already
-   * took to the bank makes the Blikk cancel throw and we refuse the cancel. Soft-deletes the local row only once the
-   * payment is confirmed cancelled / already terminal / expired.
-   * Idempotent.
+   * Cancels the active bank-transfer attempt for a flow. Two rules, applied to a *fresh* provider
+   * status (throws retryably when Blikk is unreachable — we never cancel on cached state):
+   * payer initiated/approved (PENDING/SCA_COMPLETE — settlement may be in flight) → refuse;
+   * payer has not approved (DRAFT/SCA_REQUIRED) → best-effort provider cancel, abandon locally.
+   * The local row is soft-deleted for not-approved / terminal / expired attempts. Idempotent.
    */
   async cancel(
     input: CancelBankTransferInput,
@@ -244,23 +264,43 @@ export class BankTransferService {
       // Authoritative refresh BEFORE any destructive action — including for an expired row. A
       // transfer that settled just before expiry whose callback was lost must be finalized, not
       // discarded, or the payer could pay a second time. (Same refresh-before-discard guard as
-      // getBankTransferStatus.)
-      const refreshed = await this.refreshFromBlikkOrWarn(row)
-      if (refreshed) {
-        await this.finalizeFromBlikkResult(row, refreshed)
-        if (refreshed.status === BankTransferStatus.SUCCESS) {
+      // getBankTransferStatus.) Throws FailedToFetchBankTransfer when Blikk is unreachable —
+      // cancelling on cached state could soft-delete a payment that has since gone live.
+      const refreshed = await this.getPayment(row.providerPaymentId)
+      await this.finalizeFromBlikkResult(row, refreshed)
+      if (refreshed.status === BankTransferStatus.SUCCESS) {
+        throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
+      }
+      mappedStatus = refreshed.status
+      lastKnownStatus = refreshed.rawStatus
+
+      // Skipped entirely for an expired row — its TTL already elapsed, nothing to cancel:
+      // - DRAFT/SCA_REQUIRED: the payer has not approved. Ask Blikk to cancel and let its response
+      //   decide — we only discard locally if Blikk confirms the cancel (Blikk only honours it for
+      //   DRAFT). If Blikk refuses, the SCA session is still live and could settle, so we keep the
+      //   row and tell the payer to decline it in their banking app.
+      // - Anything else (PENDING, SCA_COMPLETE, unknown): the payer has initiated/approved, so
+      //   settlement may be in flight — refuse, and let verify/webhook/TTL keep tracking it.
+      if (mappedStatus === BankTransferStatus.PENDING && !isRowExpired(row)) {
+        if (lastKnownStatus !== 'DRAFT' && lastKnownStatus !== 'SCA_REQUIRED') {
+          this.logger.warn(
+            `${logPrefix}Cancel refused — payment may be settling`,
+            { lastKnownStatus },
+          )
           throw new BadRequestException(
-            PaymentServiceCode.PaymentFlowAlreadyPaid,
+            BankTransferErrorCode.BankTransferAlreadyInProgress,
           )
         }
-        mappedStatus = refreshed.status
-        lastKnownStatus = refreshed.rawStatus
-      }
-      // Only DELETE on Blikk while the attempt is still PENDING and not expired. Throws if Blikk
-      // refuses to cancel (payment past DRAFT / live) — we let that propagate so we never soft-delete
-      // a live payment. An expired row is past its TTL, so there is nothing to cancel Blikk-side.
-      if (mappedStatus === BankTransferStatus.PENDING && !isRowExpired(row)) {
-        await this.cancelBlikkPayment(row.providerPaymentId, logPrefix)
+
+        const cancelled = await this.cancelBlikkPayment(
+          row.providerPaymentId,
+          logPrefix,
+        )
+        if (!cancelled) {
+          throw new BadRequestException(
+            BankTransferErrorCode.BankTransferCannotCancel,
+          )
+        }
       }
     }
 
@@ -327,10 +367,11 @@ export class BankTransferService {
 
     const isExpired = isRowExpired(row)
     let mapped = mapBlikkStatusToBankTransferStatus(row.lastKnownStatus)
+    let refreshed: BankTransferPaymentResult | null = null
 
     // PENDING → ask Blikk for the authoritative state.
     if (mapped === BankTransferStatus.PENDING) {
-      const refreshed = await this.refreshFromBlikkOrWarn(row)
+      refreshed = await this.refreshFromBlikkOrWarn(row)
 
       if (refreshed) {
         await this.finalizeFromBlikkResult(row, refreshed)
@@ -346,7 +387,8 @@ export class BankTransferService {
             paymentStatus: PaymentStatus.BANK_TRANSFER_FAILED,
             updatedAt: row.modified,
             lastBankTransferFailure:
-              toBankTransferFailureReason(refreshed.status) ?? undefined,
+              deriveBankTransferFailureReason(refreshed.status, row) ??
+              undefined,
           }
         }
 
@@ -384,18 +426,27 @@ export class BankTransferService {
     }
 
     if (mapped === BankTransferStatus.PENDING) {
+      // Prefer the just-refreshed URL — the in-memory row predates any persist above.
+      const scaRedirectUrl =
+        refreshed?.scaRedirectUrl ?? row.scaRedirectUrl ?? undefined
       return {
         paymentStatus: PaymentStatus.BANK_TRANSFER_PENDING,
         updatedAt: row.modified,
-        bankTransferScaRedirectUrl: row.scaRedirectUrl ?? undefined,
+        bankTransferScaRedirectUrl: scaRedirectUrl,
         bankTransferExpiresAt: row.expiresAt,
+        bankTransferPendingStatus: mapRawStatusToBankTransferPendingStatus(
+          refreshed?.rawStatus ?? row.lastKnownStatus,
+          scaRedirectUrl,
+          this.config.onboardingOrigin,
+        ),
       }
     }
 
     return {
       paymentStatus: PaymentStatus.BANK_TRANSFER_FAILED,
       updatedAt: row.modified,
-      lastBankTransferFailure: toBankTransferFailureReason(mapped) ?? undefined,
+      lastBankTransferFailure:
+        deriveBankTransferFailureReason(mapped, row) ?? undefined,
     }
   }
 
@@ -717,10 +768,18 @@ export class BankTransferService {
       // On failure, finalize the bank transfer failure.
     } else if (isBankTransferFailureStatus(refreshed.status)) {
       await this.finalizeBankTransferFailure(row, refreshed)
-      // On PENDING with raw-status drift, update the lastKnownStatus.
-    } else if (refreshed.rawStatus !== row.lastKnownStatus) {
+      // On PENDING with raw-status drift (or a newly minted SCA URL), update the row.
+    } else if (
+      refreshed.rawStatus !== row.lastKnownStatus ||
+      (refreshed.scaRedirectUrl && !row.scaRedirectUrl)
+    ) {
       await this.bankTransferPaymentModel.update(
-        { lastKnownStatus: refreshed.rawStatus },
+        {
+          lastKnownStatus: refreshed.rawStatus,
+          ...(refreshed.scaRedirectUrl && !row.scaRedirectUrl
+            ? { scaRedirectUrl: refreshed.scaRedirectUrl }
+            : {}),
+        },
         {
           where: {
             id: row.id,
@@ -802,30 +861,38 @@ export class BankTransferService {
   }
 
   /**
-   * Cancels the Blikk payment. Blikk only cancels payments still in DRAFT; a payment the user has
-   * already taken to the bank (past DRAFT) yields a non-2xx, surfaced as a `BlikkClientError`. We
-   * tolerate a 404 (nothing live to orphan) but otherwise refuse to soft-delete so the still-live
-   * payment stays trackable by verify/webhook/TTL.
+   * Asks Blikk to cancel the payment and reports whether the attempt may be safely discarded
+   * locally. Blikk's response is authoritative — we never soft-delete a live SCA session it still
+   * holds, because the payer can still approve it and settle. Only called for a freshly confirmed
+   * DRAFT/SCA_REQUIRED payment (past-approval statuses are refused in `cancel` before this point).
    */
   private async cancelBlikkPayment(
     providerPaymentId: string,
     logPrefix: string,
-  ): Promise<void> {
+  ): Promise<boolean> {
     try {
       await this.blikkClient.cancelPayment(providerPaymentId)
+      return true
     } catch (e) {
-      if (e instanceof BlikkClientError && e.status === 404) {
-        this.logger.warn(`${logPrefix}Blikk cancel target not found (404)`, {
-          providerPaymentId,
-        })
-        return
+      if (e instanceof BlikkClientError) {
+        if (e.status === 404) {
+          return true
+        }
+        if (e.status !== undefined) {
+          this.logger.warn(
+            `${logPrefix}Blikk refused to cancel — SCA session still live`,
+            { providerPaymentId, status: e.status },
+          )
+          return false
+        }
       }
-      this.logger.warn(`${logPrefix}Blikk cancel refused — payment is live`, {
-        providerPaymentId,
-        status: e instanceof BlikkClientError ? e.status : undefined,
-      })
+
+      this.logger.warn(
+        `${logPrefix}Could not reach Blikk to cancel — leaving attempt live`,
+        { providerPaymentId },
+      )
       throw new BadRequestException(
-        BankTransferErrorCode.BankTransferAlreadyInProgress,
+        BankTransferErrorCode.FailedToFetchBankTransfer,
       )
     }
   }
@@ -876,6 +943,11 @@ export class BankTransferService {
       // Empty string means back-channel SCA (no redirect) — surface as undefined.
       scaRedirectUrl: data.scaRedirectUrl || undefined,
       message: data.message || undefined,
+      onboardingRequired: isOnboardingRequired(
+        data.status,
+        data.scaRedirectUrl || undefined,
+        this.config.onboardingOrigin,
+      ),
     }
   }
 }
