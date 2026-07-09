@@ -79,6 +79,7 @@ import { FileService, PoliceDigitalCaseFileService } from '../file'
 import { IndictmentCountService } from '../indictment-count'
 import {
   AppealCaseRepositoryService,
+  AppealDecision,
   AppealDecisionRepositoryService,
   AppealEventLog,
   AppealEventLogRepositoryService,
@@ -98,6 +99,7 @@ import {
 } from '../repository'
 import { SubpoenaService } from '../subpoena'
 import { VerdictService } from '../verdict'
+import { CaseAppealDecisionDto } from './dto/caseAppealDecision.dto'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { MinimalCase } from './models/case.types'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
@@ -1428,6 +1430,75 @@ export class CaseService {
     }
   }
 
+  // Records a case-level (request-case) appeal decision directly on the
+  // appeal_decision rows - the write switch away from the accused/prosecutor
+  // case columns. A reverse dual-write keeps those legacy columns in sync so
+  // not-yet-migrated paths still read them and they can be dropped in Phase 4.
+  async upsertCaseAppealDecision(
+    theCase: Case,
+    update: CaseAppealDecisionDto,
+    transaction: Transaction,
+  ): Promise<AppealDecision> {
+    if (!isRequestCase(theCase.type)) {
+      throw new BadRequestException(
+        'Case-level appeal decisions can only be recorded on request cases',
+      )
+    }
+
+    if (
+      update.partyRole !== AppealDecisionPartyRole.PROSECUTOR &&
+      update.partyRole !== AppealDecisionPartyRole.DEFENDANT
+    ) {
+      throw new BadRequestException(
+        'A case-level appeal decision must belong to the prosecutor or the accused',
+      )
+    }
+
+    const data: {
+      decision?: CaseAppealDecision | null
+      announcement?: string | null
+    } = {}
+    if (update.decision !== undefined) {
+      data.decision = update.decision ?? null
+    }
+    if (update.announcement !== undefined) {
+      data.announcement = update.announcement ?? null
+    }
+
+    const appealDecision = await this.appealDecisionRepositoryService.upsert(
+      { caseId: theCase.id, rulingFileId: null, partyRole: update.partyRole },
+      data,
+      { transaction },
+    )
+
+    // Reverse dual-write into the legacy case columns.
+    const isProsecutor = update.partyRole === AppealDecisionPartyRole.PROSECUTOR
+    const caseUpdate: UpdateCase = {}
+    if (update.decision !== undefined) {
+      const decision = update.decision ?? null
+      if (isProsecutor) {
+        caseUpdate.prosecutorAppealDecision = decision
+      } else {
+        caseUpdate.accusedAppealDecision = decision
+      }
+    }
+    if (update.announcement !== undefined) {
+      const announcement = update.announcement ?? null
+      if (isProsecutor) {
+        caseUpdate.prosecutorAppealAnnouncement = announcement
+      } else {
+        caseUpdate.accusedAppealAnnouncement = announcement
+      }
+    }
+    if (Object.keys(caseUpdate).length > 0) {
+      await this.caseRepositoryService.update(theCase.id, caseUpdate, {
+        transaction,
+      })
+    }
+
+    return appealDecision
+  }
+
   private handleStateChangeEventLogUpdatesForIndictments(
     theCase: Case,
     updatedCase: Case,
@@ -1907,10 +1978,19 @@ export class CaseService {
     // Handle appealed in court
     if (isCompletingRequestCase) {
       const hasBeenAppealed = Boolean(theCase.appealCase)
+      // Read the in-court appeal stance from the case-level appeal_decision rows
+      // (the new write source) rather than the legacy case columns.
+      const caseLevelDecision = (partyRole: AppealDecisionPartyRole) =>
+        theCase.appealDecisions?.find(
+          (decision) =>
+            !decision.rulingFileId && decision.partyRole === partyRole,
+        )?.decision
       const prosecutorAppealedInCourt =
-        theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL
+        caseLevelDecision(AppealDecisionPartyRole.PROSECUTOR) ===
+        CaseAppealDecision.APPEAL
       const accusedAppealedInCourt =
-        theCase.accusedAppealDecision === CaseAppealDecision.APPEAL
+        caseLevelDecision(AppealDecisionPartyRole.DEFENDANT) ===
+        CaseAppealDecision.APPEAL
 
       if (
         // TODO: Decide what to do if correcting case

@@ -1,0 +1,10 @@
+mutation UpdateCaseAppealDecision($input: UpdateCaseAppealDecisionInput!) {
+  updateCaseAppealDecision(input: $input) {
+    id
+    caseId
+    rulingFileId
+    partyRole
+    decision
+    announcement
+  }
+}
