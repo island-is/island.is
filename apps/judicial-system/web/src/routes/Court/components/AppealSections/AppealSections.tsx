@@ -174,8 +174,7 @@ const AppealSections: FC<Props> = ({
                 checked={
                   checkedAccusedRadio === CaseAppealDecision.APPEAL ||
                   (!checkedAccusedRadio &&
-                    accusedAppealDecision ===
-                      CaseAppealDecision.APPEAL)
+                    accusedAppealDecision === CaseAppealDecision.APPEAL)
                 }
                 onChange={() => {
                   const update = {
@@ -205,8 +204,7 @@ const AppealSections: FC<Props> = ({
                 checked={
                   checkedAccusedRadio === CaseAppealDecision.ACCEPT ||
                   (!checkedAccusedRadio &&
-                    accusedAppealDecision ===
-                      CaseAppealDecision.ACCEPT)
+                    accusedAppealDecision === CaseAppealDecision.ACCEPT)
                 }
                 onChange={() => {
                   const update = {
@@ -229,8 +227,7 @@ const AppealSections: FC<Props> = ({
                 checked={
                   checkedAccusedRadio === CaseAppealDecision.POSTPONE ||
                   (!checkedAccusedRadio &&
-                    accusedAppealDecision ===
-                      CaseAppealDecision.POSTPONE)
+                    accusedAppealDecision === CaseAppealDecision.POSTPONE)
                 }
                 onChange={() => {
                   const update = {
@@ -251,8 +248,7 @@ const AppealSections: FC<Props> = ({
                 checked={
                   checkedAccusedRadio === CaseAppealDecision.NOT_APPLICABLE ||
                   (!checkedAccusedRadio &&
-                    accusedAppealDecision ===
-                      CaseAppealDecision.NOT_APPLICABLE)
+                    accusedAppealDecision === CaseAppealDecision.NOT_APPLICABLE)
                 }
                 onChange={() => {
                   const update = {
@@ -304,8 +300,7 @@ const AppealSections: FC<Props> = ({
               checked={
                 checkedProsecutorRadio === CaseAppealDecision.APPEAL ||
                 (!checkedProsecutorRadio &&
-                  prosecutorAppealDecision ===
-                    CaseAppealDecision.APPEAL)
+                  prosecutorAppealDecision === CaseAppealDecision.APPEAL)
               }
               onChange={() => {
                 const update = {
@@ -328,8 +323,7 @@ const AppealSections: FC<Props> = ({
               checked={
                 checkedProsecutorRadio === CaseAppealDecision.ACCEPT ||
                 (!checkedProsecutorRadio &&
-                  prosecutorAppealDecision ===
-                    CaseAppealDecision.ACCEPT)
+                  prosecutorAppealDecision === CaseAppealDecision.ACCEPT)
               }
               onChange={() => {
                 const update = {
@@ -352,8 +346,7 @@ const AppealSections: FC<Props> = ({
               checked={
                 checkedProsecutorRadio === CaseAppealDecision.POSTPONE ||
                 (!checkedProsecutorRadio &&
-                  prosecutorAppealDecision ===
-                    CaseAppealDecision.POSTPONE)
+                  prosecutorAppealDecision === CaseAppealDecision.POSTPONE)
               }
               onChange={() => {
                 const update = {

@@ -68,8 +68,10 @@ export const populateEndOfCourtSessionBookingsIntro = (
     (workingCase.defendants && workingCase.defendants.length > 1) || false
 
   const accusedAppealAnnouncement =
-    caseLevelAppealAnnouncement(workingCase, AppealDecisionPartyRole.DEFENDANT) ??
-    ''
+    caseLevelAppealAnnouncement(
+      workingCase,
+      AppealDecisionPartyRole.DEFENDANT,
+    ) ?? ''
   let accusedAppeal = formatAppeal(
     caseLevelAppealDecision(workingCase, AppealDecisionPartyRole.DEFENDANT),
     hasMultipleDefendants ? 'Varnaraðilar' : 'Varnaraðili',
