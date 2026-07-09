@@ -1,6 +1,16 @@
 import { defineMessages } from 'react-intl'
 
 export const sharedMessages = defineMessages({
+  radioYes: {
+    id: 'cpn.application:shared.radioYes',
+    defaultMessage: 'Já',
+    description: 'Yes option for radio fields',
+  },
+  radioNo: {
+    id: 'cpn.application:shared.radioNo',
+    defaultMessage: 'Nei',
+    description: 'No option for radio fields',
+  },
   applicationName: {
     id: 'cpn.application:shared.applicationName',
     defaultMessage: 'Tilkynning til barnaverndar',

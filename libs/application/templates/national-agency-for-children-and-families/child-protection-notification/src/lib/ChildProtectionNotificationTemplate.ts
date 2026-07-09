@@ -51,27 +51,45 @@ const template: ApplicationTemplate<
           status: FormModes.DRAFT,
           lifecycle: EphemeralStateLifeCycle,
           roles: [
-            Roles.MINOR_APPLICANT,
-            Roles.ADULT_PERSONAL_APPLICANT,
-            Roles.ADULT_PROCURATION_APPLICANT,
-          ].map((roleId) => ({
-            id: roleId,
-            formLoader: () =>
-              import('../forms/prerequisitesForm').then((module) =>
-                Promise.resolve(module.Prerequisites),
-              ),
-            actions: [
-              {
-                event: DefaultEvents.SUBMIT,
-                name: prerequisitesMessages.child.startNotification,
-                type: 'primary',
-              },
-            ],
-            write: 'all',
-            read: 'all',
-            api: [UserProfileApi, IdentityApiProvider, CategoriesApi],
-            delete: true,
-          })),
+            ...[Roles.MINOR_APPLICANT, Roles.ADULT_PERSONAL_APPLICANT].map(
+              (roleId) => ({
+                id: roleId,
+                formLoader: () =>
+                  import('../forms/prerequisitesForm').then((module) =>
+                    Promise.resolve(module.PersonalPrerequisites),
+                  ),
+                actions: [
+                  {
+                    event: DefaultEvents.SUBMIT,
+                    name: overviewMessages.submitButton,
+                    type: 'primary' as const,
+                  },
+                ],
+                write: 'all' as const,
+                read: 'all' as const,
+                api: [UserProfileApi, IdentityApiProvider, CategoriesApi],
+                delete: true,
+              }),
+            ),
+            {
+              id: Roles.ADULT_PROCURATION_APPLICANT,
+              formLoader: () =>
+                import('../forms/prerequisitesForm').then((module) =>
+                  Promise.resolve(module.Prerequisites),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: prerequisitesMessages.child.startNotification,
+                  type: 'primary' as const,
+                },
+              ],
+              write: 'all' as const,
+              read: 'all' as const,
+              api: [UserProfileApi, IdentityApiProvider, CategoriesApi],
+              delete: true,
+            },
+          ],
         },
         on: {
           [DefaultEvents.SUBMIT]: {

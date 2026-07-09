@@ -17,3 +17,33 @@ export enum Roles {
   ADULT_PERSONAL_APPLICANT = 'adultPersonalApplicant',
   ADULT_PROCURATION_APPLICANT = 'adultProcurationApplicant',
 }
+
+export enum KnowsNationalId {
+  YES = 'yes',
+  NO = 'no',
+  UNBORN = 'unborn',
+}
+
+export enum Pronoun {
+  HANN = 'hann',
+  HUN = 'hún',
+  HAN = 'hán',
+}
+
+export enum NoNationalIdReason {
+  EXPECTED_BUT_UNKNOWN = 'expectedButUnknown',
+  TRAVELER = 'traveler',
+  BORDER_RECEPTION = 'borderReception',
+}
+
+export enum Gender {
+  GIRL = 'girl',
+  BOY = 'boy',
+  OTHER = 'other',
+}
+
+export enum ParentGender {
+  MALE = 'male',
+  FEMALE = 'female',
+  NON_BINARY = 'nonBinary',
+}

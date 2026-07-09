@@ -1,4 +1,4 @@
-import { coreMessages, getValueViaPath } from '@island.is/application/core'
+import { YES, coreMessages, getValueViaPath } from '@island.is/application/core'
 import {
   ExternalData,
   FormValue,
@@ -8,9 +8,64 @@ import {
   formatPhoneNumber,
   removeCountryCode,
 } from '@island.is/application/ui-components'
+import { getCountryByCode, getLanguageByCode } from '@island.is/shared/utils'
 import { format as formatKennitala } from 'kennitala'
-import { prerequisitesMessages, sharedMessages } from '../lib/messages'
+import { formatNumber } from 'libphonenumber-js'
+import {
+  childMessages,
+  parentsMessages,
+  prerequisitesMessages,
+  sharedMessages,
+} from '../lib/messages'
+import {
+  Gender,
+  KnowsNationalId,
+  NoNationalIdReason,
+  ParentGender,
+  Pronoun,
+} from '../utils/constants'
+import { isKnowsNationalId, isNoNationalId } from './conditionUtils'
 import { getApplicationAnswers } from './getApplicationAnswers'
+import { Parent } from './types'
+
+const genderLabelMap = {
+  [Gender.GIRL]: childMessages.manualInfo.genderGirl,
+  [Gender.BOY]: childMessages.manualInfo.genderBoy,
+  [Gender.OTHER]: childMessages.manualInfo.genderOther,
+} as const
+
+const parentGenderLabelMap = {
+  [ParentGender.MALE]: parentsMessages.shared.genderMale,
+  [ParentGender.FEMALE]: parentsMessages.shared.genderFemale,
+  [ParentGender.NON_BINARY]: parentsMessages.shared.genderNonBinary,
+} as const
+
+const pronounLabelMap = {
+  [Pronoun.HANN]: childMessages.nationalIdLookup.pronounHann,
+  [Pronoun.HUN]: childMessages.nationalIdLookup.pronounHun,
+  [Pronoun.HAN]: childMessages.nationalIdLookup.pronounHan,
+} as const
+
+const knowsNationalIdLabelMap = {
+  [KnowsNationalId.YES]: childMessages.nationalIdLookup.radioOptionYes,
+  [KnowsNationalId.NO]: childMessages.nationalIdLookup.radioOptionNo,
+  [KnowsNationalId.UNBORN]: childMessages.nationalIdLookup.radioOptionUnborn,
+} as const
+
+const noNationalIdReasonLabelMap = {
+  [NoNationalIdReason.EXPECTED_BUT_UNKNOWN]:
+    childMessages.noNationalId.reasonExpectedButUnknown,
+  [NoNationalIdReason.TRAVELER]: childMessages.noNationalId.reasonTraveler,
+  [NoNationalIdReason.BORDER_RECEPTION]:
+    childMessages.noNationalId.reasonBorderReception,
+} as const
+
+const municipalityLabelMap: Record<string, string> = {
+  reykjavik: 'Reykjavík',
+  kopavogur: 'Kópavogur',
+  hafnarfjordur: 'Hafnarfjörður',
+  akureyri: 'Akureyri',
+}
 
 export const getOverviewItems = (
   answers: FormValue,
@@ -164,4 +219,335 @@ export const getServiceProviderContactPersonItems = (
       ),
     },
   ]
+}
+
+export const getChildWithNationalIdItems = (
+  answers: FormValue,
+  _externalData: ExternalData,
+): Array<KeyValueItem> => {
+  const {
+    childKnowsNationalId,
+    childNoNationalIdReason,
+    childNationalId,
+    childName,
+    childEmail,
+    childPhone,
+    childUsePronounAndPreferredName,
+    childPreferredName,
+    childPreferredPronoun,
+  } = getApplicationAnswers(answers)
+
+  return [
+    {
+      width: 'half',
+      keyText: childMessages.nationalIdLookup.radioLabel,
+      valueText: childKnowsNationalId
+        ? knowsNationalIdLabelMap[
+            childKnowsNationalId as keyof typeof knowsNationalIdLabelMap
+          ] ?? childKnowsNationalId
+        : '',
+    },
+    ...(isKnowsNationalId(answers)
+      ? [
+          {
+            width: 'half' as const,
+            keyText: coreMessages.nationalId,
+            valueText: formatKennitala(childNationalId ?? ''),
+          },
+          {
+            width: 'half' as const,
+            keyText: coreMessages.name,
+            valueText: childName ?? '',
+          },
+          {
+            width: 'half' as const,
+            keyText: childMessages.nationalIdLookup.email,
+            valueText: childEmail ?? '',
+            hideIfEmpty: true,
+          },
+          {
+            width: 'half' as const,
+            keyText: childMessages.nationalIdLookup.phone,
+            valueText: formatNumber(childPhone ?? '', 'International'),
+            hideIfEmpty: true,
+          },
+          ...(childUsePronounAndPreferredName.includes(YES)
+            ? [
+                {
+                  width: 'full' as const,
+                  keyText:
+                    childMessages.nationalIdLookup.usePronounAndPreferredName,
+                  valueText: sharedMessages.radioYes,
+                },
+                {
+                  width: 'half' as const,
+                  keyText: childMessages.nationalIdLookup.preferredName,
+                  valueText: childPreferredName,
+                  hideIfEmpty: true,
+                },
+                {
+                  width: 'half' as const,
+                  keyText: childMessages.nationalIdLookup.preferredPronoun,
+                  valueText: childPreferredPronoun.map(
+                    (pronoun) =>
+                      pronounLabelMap[
+                        pronoun as keyof typeof pronounLabelMap
+                      ] ?? pronoun,
+                  ),
+                  hideIfEmpty: true,
+                },
+              ]
+            : []),
+        ]
+      : []),
+    ...(isNoNationalId(answers)
+      ? [
+          {
+            width: 'half' as const,
+            keyText: childMessages.noNationalId.reasonLabel,
+            valueText: childNoNationalIdReason
+              ? noNationalIdReasonLabelMap[
+                  childNoNationalIdReason as keyof typeof noNationalIdReasonLabelMap
+                ] ?? childNoNationalIdReason
+              : '',
+            hideIfEmpty: true,
+          },
+        ]
+      : []),
+  ]
+}
+
+export const getChildManualItems = (
+  answers: FormValue,
+  _externalData: ExternalData,
+): Array<KeyValueItem> => {
+  const {
+    childManualName,
+    childManualAge,
+    childManualGender,
+    childManualUsePronounAndPreferredName,
+    childManualPreferredName,
+    childManualPreferredPronoun,
+    childManualCountry,
+    childManualAddress,
+    childManualPostalCode,
+    childManualMunicipality,
+    childManualLanguage,
+    childManualNeedsInterpreter,
+  } = getApplicationAnswers(answers)
+
+  return [
+    {
+      width: 'half',
+      keyText: childMessages.manualInfo.name,
+      valueText: childManualName ?? '',
+      hideIfEmpty: true,
+    },
+    {
+      width: 'half',
+      keyText: childMessages.manualInfo.age,
+      valueText: childManualAge ?? '',
+      hideIfEmpty: true,
+    },
+    {
+      width: 'half',
+      keyText: childMessages.manualInfo.gender,
+      valueText: childManualGender
+        ? genderLabelMap[childManualGender as keyof typeof genderLabelMap] ??
+          childManualGender
+        : '',
+      hideIfEmpty: true,
+    },
+    ...(childManualUsePronounAndPreferredName.includes(YES)
+      ? [
+          {
+            width: 'full' as const,
+            keyText: childMessages.nationalIdLookup.usePronounAndPreferredName,
+            valueText: sharedMessages.radioYes,
+          },
+          {
+            width: 'half' as const,
+            keyText: childMessages.nationalIdLookup.preferredName,
+            valueText: childManualPreferredName,
+            hideIfEmpty: true,
+          },
+          {
+            width: 'half' as const,
+            keyText: childMessages.nationalIdLookup.preferredPronoun,
+            valueText: childManualPreferredPronoun.map(
+              (pronoun) =>
+                pronounLabelMap[pronoun as keyof typeof pronounLabelMap] ??
+                pronoun,
+            ),
+            hideIfEmpty: true,
+          },
+        ]
+      : []),
+    {
+      width: 'half',
+      keyText: childMessages.manualInfo.country,
+      valueText: getCountryByCode(childManualCountry ?? '')?.name,
+      hideIfEmpty: true,
+    },
+    {
+      width: 'half',
+      keyText: childMessages.manualInfo.address,
+      valueText: childManualAddress ?? '',
+      hideIfEmpty: true,
+    },
+    {
+      width: 'half',
+      keyText: childMessages.manualInfo.postalCode,
+      valueText: childManualPostalCode ?? '',
+      hideIfEmpty: true,
+    },
+    {
+      width: 'half',
+      keyText: childMessages.manualInfo.municipality,
+      valueText: childManualMunicipality
+        ? municipalityLabelMap[childManualMunicipality] ??
+          childManualMunicipality
+        : '',
+      hideIfEmpty: true,
+    },
+    {
+      width: 'half',
+      keyText: childMessages.manualInfo.language,
+      valueText: getLanguageByCode(childManualLanguage ?? '')?.name,
+      hideIfEmpty: true,
+    },
+    {
+      width: 'half',
+      keyText: childMessages.manualInfo.needsInterpreter,
+      valueText: childManualNeedsInterpreter.includes(YES)
+        ? sharedMessages.radioYes
+        : sharedMessages.radioNo,
+    },
+  ]
+}
+
+const buildParentItems = (
+  parent: Parent | undefined,
+  knowsParentNationalIds: string | undefined,
+): Array<KeyValueItem> => {
+  if (knowsParentNationalIds === YES) {
+    return [
+      {
+        width: 'half',
+        keyText: coreMessages.nationalId,
+        valueText: formatKennitala(parent?.nationalIdInfo?.nationalId ?? ''),
+      },
+      {
+        width: 'half',
+        keyText: coreMessages.name,
+        valueText: parent?.nationalIdInfo?.name ?? '',
+      },
+      {
+        width: 'half',
+        keyText: childMessages.nationalIdLookup.email,
+        valueText: parent?.nationalIdInfo?.email ?? '',
+        hideIfEmpty: true,
+      },
+      {
+        width: 'half',
+        keyText: childMessages.nationalIdLookup.phone,
+        valueText: formatNumber(
+          parent?.nationalIdInfo?.phone ?? '',
+          'International',
+        ),
+        hideIfEmpty: true,
+      },
+    ]
+  }
+
+  return [
+    {
+      width: 'half',
+      keyText: childMessages.manualInfo.name,
+      valueText: parent?.name ?? '',
+      hideIfEmpty: true,
+    },
+    {
+      width: 'half',
+      keyText: childMessages.manualInfo.age,
+      valueText: parent?.age ?? '',
+      hideIfEmpty: true,
+    },
+    {
+      width: 'half',
+      keyText: childMessages.manualInfo.gender,
+      valueText: parent?.gender
+        ? parentGenderLabelMap[
+            parent.gender as keyof typeof parentGenderLabelMap
+          ] ?? parent.gender
+        : '',
+      hideIfEmpty: true,
+    },
+    {
+      width: 'half',
+      keyText: childMessages.manualInfo.country,
+      valueText: getCountryByCode(parent?.country ?? '')?.name,
+      hideIfEmpty: true,
+    },
+    {
+      width: 'half',
+      keyText: parentsMessages.shared.citizenship,
+      valueText: getCountryByCode(parent?.citizenship ?? '')?.code,
+      hideIfEmpty: true,
+    },
+    {
+      width: 'half',
+      keyText: childMessages.manualInfo.address,
+      valueText: parent?.address ?? '',
+      hideIfEmpty: true,
+    },
+    {
+      width: 'half',
+      keyText: childMessages.manualInfo.postalCode,
+      valueText: parent?.postalCode ?? '',
+      hideIfEmpty: true,
+    },
+    {
+      width: 'half',
+      keyText: childMessages.manualInfo.municipality,
+      valueText: parent?.municipality
+        ? municipalityLabelMap[parent.municipality] ?? parent.municipality
+        : '',
+      hideIfEmpty: true,
+    },
+  ]
+}
+
+export const getParentsPreItems = (
+  answers: FormValue,
+  _externalData: ExternalData,
+): Array<KeyValueItem> => {
+  const { parentsKnowsNationalIds } = getApplicationAnswers(answers)
+
+  return [
+    {
+      width: 'full',
+      keyText: parentsMessages.expectantParents.radioLabel,
+      valueText:
+        parentsKnowsNationalIds === YES
+          ? sharedMessages.radioYes
+          : sharedMessages.radioNo,
+    },
+  ]
+}
+
+export const getParent1Items = (
+  answers: FormValue,
+  _externalData: ExternalData,
+): Array<KeyValueItem> => {
+  const { parent1, parentsKnowsNationalIds } = getApplicationAnswers(answers)
+  return buildParentItems(parent1, parentsKnowsNationalIds)
+}
+
+export const getParent2Items = (
+  answers: FormValue,
+  _externalData: ExternalData,
+): Array<KeyValueItem> => {
+  const { parent2, parentsKnowsNationalIds } = getApplicationAnswers(answers)
+  return buildParentItems(parent2, parentsKnowsNationalIds)
 }
