@@ -30,9 +30,9 @@ export const ParentBForm: Form = buildForm({
         }),
       ],
     }),
-    // Keeps numberOfScreens >= 2 while acceptContract is unanswered, so ScreenFooter
-    // doesn't treat parentBIntro as the last screen and hide its continue button.
-    // Drops out of the screen list the moment acceptContract is answered.
+    // HACK, do not copy: empty section only to keep numberOfScreens >= 2 while
+    // acceptContract is unanswered, so parentBIntro isn't misidentified as the last
+    // screen.
     buildSection({
       condition: (answers) => answers.acceptContract === undefined,
       id: 'parentBIntroBridge',
