@@ -3,7 +3,6 @@ import { useLocale } from '@island.is/localization'
 import { LinkResolver } from '@island.is/portals/my-pages/core'
 import { messages } from '../../..'
 import { HealthPaths } from '../../../lib/paths'
-import { HEILSUVERA_URL } from '../../../utils/constants'
 import * as styles from './ContactLinks.css'
 
 type ContactLinkItem = {
@@ -20,7 +19,7 @@ const ContactLinks = () => {
     {
       title: formatMessage(messages.contactNetspjall),
       description: formatMessage(messages.contactNetspjallDesc),
-      href: HEILSUVERA_URL,
+      href: formatMessage(messages.heilsuveraChatLink),
     },
     {
       title: formatMessage(messages.contactPhone),

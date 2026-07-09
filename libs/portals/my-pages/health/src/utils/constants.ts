@@ -27,7 +27,6 @@ export const DATE_FORMAT = 'dd.MM.yyyy'
 export const DATE_FORMAT_SHORT = 'd.M.yyyy'
 
 export const ATC_URL_BASE = 'https://www.serlyfjaskra.is/atc?category='
-export const HEILSUVERA_URL = 'https://www.heilsuvera.is/'
 
 export const DEFAULT_APPOINTMENTS_STATUS = [
   HealthDirectorateAppointmentStatus.BOOKED,

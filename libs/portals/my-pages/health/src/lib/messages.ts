@@ -2751,6 +2751,10 @@ export const messages = defineMessages({
     id: 'sp.health:contact-netspjall-desc',
     defaultMessage: 'Opið frá kl. 8-16 alla virka daga',
   },
+  heilsuveraChatLink: {
+    id: 'sp.health:heilsuvera-chat-link',
+    defaultMessage: 'https://direct.lc.chat/15092154',
+  },
   contactPhone: {
     id: 'sp.health:contact-phone',
     defaultMessage: 'Símaráðgjöf 1700 / 513 1700',
