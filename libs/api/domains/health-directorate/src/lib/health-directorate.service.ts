@@ -33,7 +33,6 @@ import { PermitInput } from './dto/permit.input'
 import { HealthDirectorateResponse } from './dto/response.dto'
 import {
   mapAppointmentStatus,
-  mapMessagingRecipient,
   toAppointmentAssigneeTypeEnum,
   toAppointmentLinkTypeEnum,
   toAppointmentModalityEnum,
@@ -41,10 +40,13 @@ import {
   mapStatusIdToColor,
   mapReferralStatusValueToStatus,
   mapVaccinationStatus,
+} from './mappers/basicInformationMapper'
+import {
+  mapMessagingRecipient,
   toConversationDirectionEnum,
   toConversationReplyBlockedReasonEnum,
   toConversationStatusFilter,
-} from './mappers/basicInformationMapper'
+} from './mappers/conversationMapper'
 import {
   mapDelegationStatus,
   mapDispensationItem,
