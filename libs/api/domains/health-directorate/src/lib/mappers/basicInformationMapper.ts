@@ -163,4 +163,3 @@ export const mapReferralStatusValueToStatus = (
       return ReferralStatusEnum.Unknown
   }
 }
-
