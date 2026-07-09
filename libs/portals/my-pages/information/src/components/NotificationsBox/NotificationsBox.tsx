@@ -47,7 +47,7 @@ export const NotificationsBox = ({ limit, title }: Props) => {
       borderWidth="standard"
       borderColor="blue200"
       paddingTop={3}
-      paddingBottom={1}
+      paddingBottom={3}
       paddingX={[0, 0, 4]}
     >
       {!loading && !hasDelegationAccess && (
