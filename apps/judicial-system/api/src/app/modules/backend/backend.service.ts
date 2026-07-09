@@ -123,9 +123,7 @@ export class BackendService {
       ...(req?.headers?.authorization
         ? { authorization: req.headers.authorization as string }
         : {}),
-      ...(req?.headers?.cookie
-        ? { cookie: req.headers.cookie as string }
-        : {}),
+      ...(req?.headers?.cookie ? { cookie: req.headers.cookie as string } : {}),
     }
   }
 
