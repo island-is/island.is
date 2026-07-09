@@ -275,6 +275,21 @@ export const MobileNavPanel = forwardRef<
     const drilldownSection =
       showNavigation && navData && drilldownKey ? navData[drilldownKey] : null
 
+    // Rendered in both layouts. Medium (40px, 16px placeholder) matches the
+    // Figma Mobile_Search overlay; the no-nav pages just present it full-width.
+    const searchEl = (
+      <SearchInput
+        ref={searchInputRef}
+        id="mobile-nav-search"
+        size="medium"
+        activeLocale={activeLocale}
+        placeholder={searchPlaceholder ?? t.searchPlaceholder}
+        autocomplete={true}
+        autosuggest={true}
+        organization={organizationSearchFilter}
+      />
+    )
+
     return (
       <>
         {/* Top-mask disabled for now: covers the header-shadow bleed nicely
@@ -292,153 +307,167 @@ export const MobileNavPanel = forwardRef<
           role="region"
           aria-label={menuLabel}
           aria-hidden={!isOpen}
-          className={`${styles.panel} ${isOpen ? styles.panelOpen : ''}`}
+          className={
+            showNavigation
+              ? `${styles.panel} ${isOpen ? styles.panelOpen : ''}`
+              : `${styles.panelSearch} ${isOpen ? styles.panelSearchOpen : ''}`
+          }
           onScroll={(event) =>
             setIsPanelScrolled(event.currentTarget.scrollTop > 10)
           }
         >
-          <div
-            aria-hidden="true"
-            className={`${styles.scrollShadow} ${
-              isPanelScrolled ? styles.scrollShadowVisible : ''
-            }`}
-          />
-          <Box className={styles.searchWrapper}>
-            <SearchInput
-              ref={searchInputRef}
-              id="mobile-nav-search"
-              size="medium"
-              activeLocale={activeLocale}
-              placeholder={searchPlaceholder ?? t.searchPlaceholder}
-              autocomplete={true}
-              autosuggest={true}
-              organization={organizationSearchFilter}
+          {showNavigation && (
+            <div
+              aria-hidden="true"
+              className={`${styles.scrollShadow} ${
+                isPanelScrolled ? styles.scrollShadowVisible : ''
+              }`}
             />
-          </Box>
+          )}
+          {showNavigation ? (
+            <Box className={styles.searchWrapper}>{searchEl}</Box>
+          ) : (
+            // Grid 0fr→1fr drives the "grow from the top down" reveal. The
+            // inner clips only mid-transition (isTransitioning); once settled
+            // it goes overflow:visible so the absolutely-positioned autosuggest
+            // dropdown can escape the hug-content panel instead of being cut.
+            <div
+              className={`${styles.panelSearchInner} ${
+                isOpen && !isTransitioning ? styles.panelSearchInnerOpen : ''
+              }`}
+            >
+              <Box className={styles.searchWrapper}>{searchEl}</Box>
+            </div>
+          )}
 
           {showNavigation &&
             navData &&
             (drilldownSection && drilldownKey ? (
-            <>
-              <Box className={styles.panelHeader}>
-                <button
-                  type="button"
-                  className={styles.backButton}
-                  aria-label={backLabel}
-                  onClick={() => setDrilldownKey(null)}
-                >
-                  <Icon
-                    icon="chevronBack"
-                    type="outline"
-                    size="small"
-                    color="dark400"
-                  />
-                </button>
-                <h2 className={styles.panelTitle}>{drilldownSection.label}</h2>
-              </Box>
-              <ul className={styles.drilldownList}>
-                {drilldownSection.items
-                  .slice(0, HEADER_NAV_MAX_ITEMS)
-                  .map((item) => (
-                    <li key={item.href}>
-                      <Link
-                        href={withEnPrefix(item.href, activeLocale)}
-                        className={styles.drillLink}
-                      >
-                        {item.logoUrl && (
-                          <img
-                            aria-hidden="true"
-                            alt=""
-                            src={item.logoUrl}
-                            width={20}
-                            height={20}
-                            className={styles.drillLinkLogo}
-                          />
-                        )}
-                        {item.title}
-                      </Link>
-                    </li>
-                  ))}
-              </ul>
-              <div
-                className={styles.seeAllRow}
-                onFocus={(event) => {
-                  if (!(event.target instanceof HTMLAnchorElement)) return
-                  if (!seeAllButtonRef.current) return
-                  // Shift+Tab from the Button lands focus back on the Link;
-                  // forwarding to Button again would trap focus, so jump to
-                  // the previous tabbable element inside the panel instead.
-                  if (
-                    event.relatedTarget === seeAllButtonRef.current &&
-                    panelRef.current
-                  ) {
-                    focusPreviousTabbableIn(panelRef.current, event.target)
-                    return
-                  }
-                  // Otherwise this is a forward tab onto the Link — forward
-                  // focus to the Button so its mint `:focus` style shows.
-                  seeAllButtonRef.current.focus()
-                }}
-                onKeyDown={(event) => {
-                  // Focus is forwarded to the Button (a <span>), so Enter /
-                  // Space on the forwarded focus wouldn't reach the wrapping
-                  // anchor. Click it explicitly to navigate.
-                  if (event.key !== 'Enter' && event.key !== ' ') return
-                  if (event.target !== seeAllButtonRef.current) return
-                  event.preventDefault()
-                  const anchor = (
-                    event.currentTarget as HTMLElement
-                  ).querySelector('a')
-                  anchor?.click()
-                }}
-              >
-                <Link
-                  href={withEnPrefix(drilldownSection.seeAllHref, activeLocale)}
-                >
-                  <Button
-                    ref={(node) => {
-                      seeAllButtonRef.current = node
-                      if (node) node.tabIndex = -1
-                    }}
-                    icon="arrowForward"
-                    iconType="filled"
-                    variant="text"
-                    size="small"
-                    as="span"
+              <>
+                <Box className={styles.panelHeader}>
+                  <button
+                    type="button"
+                    className={styles.backButton}
+                    aria-label={backLabel}
+                    onClick={() => setDrilldownKey(null)}
                   >
-                    {n(
-                      HEADER_NAV_SEE_ALL_LABEL_KEYS[drilldownKey],
-                      drilldownSection.seeAllLabel,
+                    <Icon
+                      icon="chevronBack"
+                      type="outline"
+                      size="small"
+                      color="dark400"
+                    />
+                  </button>
+                  <h2 className={styles.panelTitle}>
+                    {drilldownSection.label}
+                  </h2>
+                </Box>
+                <ul className={styles.drilldownList}>
+                  {drilldownSection.items
+                    .slice(0, HEADER_NAV_MAX_ITEMS)
+                    .map((item) => (
+                      <li key={item.href}>
+                        <Link
+                          href={withEnPrefix(item.href, activeLocale)}
+                          className={styles.drillLink}
+                        >
+                          {item.logoUrl && (
+                            <img
+                              aria-hidden="true"
+                              alt=""
+                              src={item.logoUrl}
+                              width={20}
+                              height={20}
+                              className={styles.drillLinkLogo}
+                            />
+                          )}
+                          {item.title}
+                        </Link>
+                      </li>
+                    ))}
+                </ul>
+                <div
+                  className={styles.seeAllRow}
+                  onFocus={(event) => {
+                    if (!(event.target instanceof HTMLAnchorElement)) return
+                    if (!seeAllButtonRef.current) return
+                    // Shift+Tab from the Button lands focus back on the Link;
+                    // forwarding to Button again would trap focus, so jump to
+                    // the previous tabbable element inside the panel instead.
+                    if (
+                      event.relatedTarget === seeAllButtonRef.current &&
+                      panelRef.current
+                    ) {
+                      focusPreviousTabbableIn(panelRef.current, event.target)
+                      return
+                    }
+                    // Otherwise this is a forward tab onto the Link — forward
+                    // focus to the Button so its mint `:focus` style shows.
+                    seeAllButtonRef.current.focus()
+                  }}
+                  onKeyDown={(event) => {
+                    // Focus is forwarded to the Button (a <span>), so Enter /
+                    // Space on the forwarded focus wouldn't reach the wrapping
+                    // anchor. Click it explicitly to navigate.
+                    if (event.key !== 'Enter' && event.key !== ' ') return
+                    if (event.target !== seeAllButtonRef.current) return
+                    event.preventDefault()
+                    const anchor = (
+                      event.currentTarget as HTMLElement
+                    ).querySelector('a')
+                    anchor?.click()
+                  }}
+                >
+                  <Link
+                    href={withEnPrefix(
+                      drilldownSection.seeAllHref,
+                      activeLocale,
                     )}
-                  </Button>
-                </Link>
-              </div>
-            </>
-          ) : (
-            <ul className={styles.panelList}>
-              {HEADER_NAV_KEYS.map((key) => {
-                const section = navData[key]
-                return (
-                  <li key={key}>
-                    <button
-                      type="button"
-                      className={styles.drillRow}
-                      onClick={() => setDrilldownKey(key)}
+                  >
+                    <Button
+                      ref={(node) => {
+                        seeAllButtonRef.current = node
+                        if (node) node.tabIndex = -1
+                      }}
+                      icon="arrowForward"
+                      iconType="filled"
+                      variant="text"
+                      size="small"
+                      as="span"
                     >
-                      <span className={styles.drillRowLabel}>
-                        {section.label}
-                      </span>
-                      <Icon
-                        icon="chevronForward"
-                        type="outline"
-                        size="small"
-                        color="blue400"
-                      />
-                    </button>
-                  </li>
-                )
-              })}
-            </ul>
+                      {n(
+                        HEADER_NAV_SEE_ALL_LABEL_KEYS[drilldownKey],
+                        drilldownSection.seeAllLabel,
+                      )}
+                    </Button>
+                  </Link>
+                </div>
+              </>
+            ) : (
+              <ul className={styles.panelList}>
+                {HEADER_NAV_KEYS.map((key) => {
+                  const section = navData[key]
+                  return (
+                    <li key={key}>
+                      <button
+                        type="button"
+                        className={styles.drillRow}
+                        onClick={() => setDrilldownKey(key)}
+                      >
+                        <span className={styles.drillRowLabel}>
+                          {section.label}
+                        </span>
+                        <Icon
+                          icon="chevronForward"
+                          type="outline"
+                          size="small"
+                          color="blue400"
+                        />
+                      </button>
+                    </li>
+                  )
+                })}
+              </ul>
             ))}
         </div>
       </>
@@ -452,12 +481,16 @@ interface MobileNavSearchButtonProps {
   // trigger doesn't disclose a sibling popup (pressing it opens the same
   // panel the menu button does), so no `aria-expanded` is needed.
   isOpen?: boolean
+  // On no-nav pages there is no separate menu button, so the open panel is
+  // dismissed via this same trigger. When true it renders as the Figma
+  // "Loka" close button (label + X) instead of the search icon.
+  asClose?: boolean
 }
 
 export const MobileNavSearchButton = forwardRef<
   HTMLButtonElement,
   MobileNavSearchButtonProps
->(({ onClick, isOpen }, ref) => {
+>(({ onClick, isOpen, asClose = false }, ref) => {
   const { activeLocale } = useI18n()
   const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(globalNamespace)
@@ -465,22 +498,28 @@ export const MobileNavSearchButton = forwardRef<
     'headerNavSearchLabel',
     activeLocale === 'is' ? 'Leit' : 'Search',
   )
+  const closeLabel = n(
+    'headerNavCloseLabel',
+    activeLocale === 'is' ? 'Loka' : 'Close',
+  )
   return (
     <Button
       ref={ref}
       variant="utility"
-      icon="search"
+      icon={asClose ? 'close' : 'search'}
       iconType="outline"
-      title={searchLabel}
+      title={asClose ? closeLabel : searchLabel}
       onClick={() => {
         // When the panel is already open the search trigger just focuses
-        // the input — don't count that as a fresh open.
+        // the input (or closes, on no-nav pages) — not a fresh open.
         if (!isOpen) {
           webMenuButtonClicked({ surface: 'mobile', trigger: 'search' })
         }
         onClick()
       }}
-    />
+    >
+      {asClose ? closeLabel : undefined}
+    </Button>
   )
 })
 

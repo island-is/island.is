@@ -60,6 +60,64 @@ export const panelOpen = style({
   },
 })
 
+// Search-only variant (no-nav pages: institution sites + project pages).
+// Full-bleed bar anchored under the header that grows straight down instead
+// of the right-anchored drilldown drawer. Matches Figma "Mobile_Search":
+// 24px side gutters -> a 342-wide search box on a 390 viewport.
+export const panelSearch = style({
+  position: 'fixed',
+  top: 80,
+  left: 0,
+  right: 0,
+  width: '100%',
+  background: theme.color.white,
+  boxShadow: NAV_SHADOW,
+  zIndex: NAV_OVERLAY_Z_INDEX,
+  // 0fr -> 1fr animates the panel height to its (auto) content size, so it
+  // literally grows from the top down. See panelSearchInner for the clip.
+  display: 'grid',
+  gridTemplateRows: '0fr',
+  opacity: 0,
+  visibility: 'hidden',
+  padding: '0 24px',
+  // Clip the upward shadow bleed over the header; the huge negative bottom
+  // inset leaves the drop shadow AND the autosuggest dropdown free to
+  // overflow downward.
+  clipPath: 'inset(0px 0px -9999px 0px)',
+  transition: `grid-template-rows ${NAV_TRANSITION_DURATION} ${NAV_TRANSITION_EASING}, opacity ${NAV_TRANSITION_DURATION} ${NAV_TRANSITION_EASING}, visibility 0ms linear ${NAV_TRANSITION_DURATION}`,
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      transition: 'none',
+    },
+  },
+})
+
+export const panelSearchOpen = style({
+  gridTemplateRows: '1fr',
+  opacity: 1,
+  visibility: 'visible',
+  transition: `grid-template-rows ${NAV_TRANSITION_DURATION} ${NAV_TRANSITION_EASING}, opacity ${NAV_TRANSITION_DURATION} ${NAV_TRANSITION_EASING}, visibility 0ms linear 0ms`,
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      transition: 'none',
+    },
+  },
+})
+
+// Single grid child. overflow:hidden is what makes the 0fr row collapse the
+// content during the grow/collapse animation.
+export const panelSearchInner = style({
+  minHeight: 0,
+  overflow: 'hidden',
+  paddingBottom: 24,
+})
+
+// Applied once the panel has finished opening: stop clipping so the
+// absolutely-positioned autosuggest menu can overflow the hug-content panel.
+export const panelSearchInnerOpen = style({
+  overflow: 'visible',
+})
+
 // Sticky gradient overlay at the top of the panel that fades in when the
 // panel is scrolled past ~10px. Uses a linear-gradient instead of a
 // box-shadow because browsers render shadows on very thin elements

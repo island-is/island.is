@@ -201,18 +201,30 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
                       <Hidden above="md">
                         <Box display="flex" alignItems="center">
                           {loginButton}
-                          {headerNavData && showSearchInHeader && (
-                            <Box marginLeft={marginLeft}>
-                              <MobileNavSearchButton
-                                ref={mobileSearchBtnRef}
-                                isOpen={isMobileNavOpen}
-                                onClick={() =>
-                                  mobileNavRef.current?.openAndFocusSearch()
-                                }
-                              />
-                            </Box>
+                          {showSearchInHeader &&
+                            (headerNavData || !showNavigation) && (
+                              <Box marginLeft={marginLeft}>
+                                <MobileNavSearchButton
+                                  ref={mobileSearchBtnRef}
+                                  isOpen={isMobileNavOpen}
+                                  // No-nav pages have no menu button, so this
+                                  // trigger doubles as the "Loka" close button
+                                  // once the search panel is open.
+                                  asClose={!showNavigation && isMobileNavOpen}
+                                  onClick={() =>
+                                    !showNavigation && isMobileNavOpen
+                                      ? mobileNavRef.current?.close()
+                                      : mobileNavRef.current?.openAndFocusSearch()
+                                  }
+                                />
+                              </Box>
+                            )}
+                          {/* Hidden while the no-nav search panel is open so
+                              the header matches the Figma (logo + person +
+                              Loka only). */}
+                          {(showNavigation || !isMobileNavOpen) && (
+                            <Box marginLeft={marginLeft}>{languageToggler}</Box>
                           )}
-                          <Box marginLeft={marginLeft}>{languageToggler}</Box>
                           {headerNavData && showNavigation && (
                             <Box marginLeft={marginLeft}>
                               <MobileNavMenuButton
