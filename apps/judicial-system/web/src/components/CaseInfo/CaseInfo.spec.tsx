@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react'
 
 import {
   AppealCaseState,
+  Case,
   CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
@@ -74,7 +75,7 @@ describe('getDefendantLabel - RestrictionCase/InvestigationCase', () => {
 })
 
 describe('CourtCaseInfo - reopen button visibility', () => {
-  const completedIndictmentCase = {
+  const completedIndictmentCase: Case = {
     ...mockCase(CaseType.INDICTMENT),
     state: CaseState.COMPLETED,
     indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
