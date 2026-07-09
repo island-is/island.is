@@ -30,9 +30,9 @@ export const ParentBForm: Form = buildForm({
         }),
       ],
     }),
-    // HACK, do not copy: empty section only to keep numberOfScreens >= 2 while
-    // acceptContract is unanswered, so parentBIntro isn't misidentified as the last
-    // screen.
+    /* HACK, do not copy: empty section only to keep numberOfScreens >= 2 while
+       acceptContract is unanswered, so parentBIntro isn't misidentified as the last
+       screen. */
     buildSection({
       condition: (answers) => answers.acceptContract === undefined,
       id: 'parentBIntroBridge',
