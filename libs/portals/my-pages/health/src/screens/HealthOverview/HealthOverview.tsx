@@ -1,6 +1,7 @@
-import { GridColumn, GridRow, Text } from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { NotificationsBox } from '@island.is/portals/my-pages/information'
 import subYears from 'date-fns/subYears'
 import { useWindowSize } from 'react-use'
 import { messages } from '../../lib/messages'
@@ -22,6 +23,7 @@ import {
 import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import Appointments from './components/Appointments'
 import BasicInformation from './components/BasicInformation'
+import ContactLinks from './components/ContactLinks'
 import PaymentsAndRights from './components/PaymentsAndRights'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
@@ -36,6 +38,10 @@ export const HealthOverview = () => {
   const isMobile = width < theme.breakpoints.md
   const { value: showAppointments } = useFeatureFlag(
     Features.isServicePortalHealthAppointmentsPageEnabled,
+    false,
+  )
+  const { value: isNewHealthOverviewPageEnabled } = useFeatureFlag(
+    Features.isNewHealthOverviewPageEnabled,
     false,
   )
 
@@ -126,6 +132,21 @@ export const HealthOverview = () => {
           </>
         </GridColumn>
       </GridRow>
+      {isNewHealthOverviewPageEnabled && (
+        <GridRow marginBottom={CONTENT_GAP_LG}>
+          <GridColumn span={isMobile ? '8/8' : '5/8'}>
+            <Box marginBottom={isMobile ? CONTENT_GAP_LG : 0}>
+              <NotificationsBox
+                limit={3}
+                title={formatMessage(messages.healthNotificationsTitle)}
+              />
+            </Box>
+          </GridColumn>
+          <GridColumn span={isMobile ? '8/8' : '3/8'}>
+            <ContactLinks />
+          </GridColumn>
+        </GridRow>
+      )}
       {/* Appointments */}
       {showAppointments && (
         <Appointments

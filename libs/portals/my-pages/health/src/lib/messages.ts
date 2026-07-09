@@ -2723,6 +2723,38 @@ export const messages = defineMessages({
     id: 'sp.health:opening-hours',
     defaultMessage: 'Opnunartímar',
   },
+  healthNotificationsTitle: {
+    id: 'sp.health:health-notifications-title',
+    defaultMessage: 'Tilkynningar í Heilsu',
+  },
+  contactNetspjall: {
+    id: 'sp.health:contact-netspjall',
+    defaultMessage: 'Netspjall Heilsuveru',
+  },
+  contactNetspjallDesc: {
+    id: 'sp.health:contact-netspjall-desc',
+    defaultMessage: 'Opið frá kl. 8-16 alla virka daga',
+  },
+  contactPhone: {
+    id: 'sp.health:contact-phone',
+    defaultMessage: 'Símaráðgjöf 1700 / 513 1700',
+  },
+  contactPhoneDesc: {
+    id: 'sp.health:contact-phone-desc',
+    defaultMessage: 'Fyrir aðstoð samdægurs.',
+  },
+  contactPhoneEmergencyDesc: {
+    id: 'sp.health:contact-phone-emergency-desc',
+    defaultMessage: 'Ath. í neyð skal hringja í 112.',
+  },
+  contactSendMessage: {
+    id: 'sp.health:contact-send-message',
+    defaultMessage: 'Senda skilaboð á heilsugæslu',
+  },
+  contactSendMessageDesc: {
+    id: 'sp.health:contact-send-message-desc',
+    defaultMessage: 'Heilsugæslan svarar oftast innan 3. virkra daga.',
+  },
   appointmentMoreInfo: {
     id: 'sp.health:appointment-more-info',
     defaultMessage: 'Nánari upplýsingar',
