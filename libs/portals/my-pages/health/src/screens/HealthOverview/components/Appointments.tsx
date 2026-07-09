@@ -25,8 +25,7 @@ interface Props {
 const Appointments: React.FC<Props> = ({ data, showLinkButton }) => {
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
-  const isTablet = width < theme.breakpoints.lg && !isMobile
+  const isDesktop = width >= theme.breakpoints.lg
   const appointments = data?.data?.data
   const isEmpty = !appointments || appointments?.length === 0
 
@@ -70,7 +69,7 @@ const Appointments: React.FC<Props> = ({ data, showLinkButton }) => {
         },
       })) ?? []
 
-  const isNarrow = (appointments?.length ?? 0) <= 1 && !isMobile && !isTablet
+  const isNarrow = (appointments?.length ?? 0) <= 1 && isDesktop
 
   return (
     <Box marginBottom={2}>
