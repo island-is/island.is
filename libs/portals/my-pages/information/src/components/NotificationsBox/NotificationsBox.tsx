@@ -187,7 +187,9 @@ export const NotificationsBox = ({ limit, title }: Props) => {
                 alignItems="center"
                 justifyContent="center"
                 background={unread ? 'white' : 'blue100'}
-                style={unread ? undefined : { background: theme.color.blueberry100 }}
+                style={
+                  unread ? undefined : { background: theme.color.blueberry100 }
+                }
                 borderRadius="full"
                 className={styles.avatarContainer}
               >
