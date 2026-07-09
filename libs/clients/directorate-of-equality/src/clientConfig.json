@@ -103,6 +103,59 @@
         "tags": ["Application"]
       }
     },
+    "/api/v1/application/reports/excel/presign": {
+      "post": {
+        "operationId": "presignApplicationImportUpload",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PresignUploadResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
     "/api/v1/application/reports/excel/import": {
       "post": {
         "operationId": "importApplicationSalaryReportWorkbook",
@@ -110,14 +163,8 @@
         "requestBody": {
           "required": true,
           "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "file": { "type": "string", "format": "binary" }
-                },
-                "required": ["file"]
-              }
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ImportKeyDto" }
             }
           }
         },
@@ -280,6 +327,60 @@
             }
           },
           "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/reports/salary/eligibility": {
+      "get": {
+        "description": "Pre-flight check of whether the resolved company may submit a salary report right now, with a machine-readable `reason` when blocked so the application portal can gate entry into the flow. Two preconditions are checked: (1) the company must have an APPROVED, in-force equality report (`MISSING_EQUALITY_REPORT`, checked first — a salary report must reference one); and (2) the 3-year renewal window must be open, i.e. the current report is due in 6 months or less (`RENEWAL_WINDOW_NOT_OPEN`). The renewal rule is also enforced as a 409 on `POST reports/salary`, and the equality precondition as a 404.",
+        "operationId": "getApplicationSalaryReportEligibility",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SalaryReportEligibilityDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
             "description": "",
             "content": {
               "application/json": {
@@ -555,6 +656,65 @@
               }
             }
           },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      },
+      "delete": {
+        "description": "Withdraws the report tied to an island.is application the applicant deleted upstream. Sets status to `WITHDRAWN` and emits `STATUS_CHANGED`. Allowed only before the report reaches a terminal state (`APPROVED`/`DENIED`/`SUPERSEDED`); idempotent on an already-`WITHDRAWN` report.",
+        "operationId": "withdrawApplicationReport",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "description": "Upstream submission ID (e.g. the island.is application UUID).",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "204": { "description": "" },
           "400": {
             "description": "",
             "content": {
@@ -935,7 +1095,39 @@
     "schemas": {
       "CompanySizeEnum": {
         "type": "string",
-        "enum": ["SMALL", "MEDIUM", "LARGE"]
+        "enum": ["UNKNOWN", "SMALL", "MEDIUM", "LARGE"]
+      },
+      "CompanyStatusEnum": { "type": "string", "enum": ["ACTIVE", "INACTIVE"] },
+      "IsatCategoryDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Normalized ÍSAT2008 leaf code, e.g. \"01110\"."
+          },
+          "codeDotted": {
+            "type": "string",
+            "description": "Display (dotted) form, e.g. \"01.11.0\"."
+          },
+          "description": {
+            "type": "string",
+            "description": "Icelandic description."
+          },
+          "descriptionEn": {
+            "type": "string",
+            "description": "English description."
+          }
+        },
+        "required": ["code", "codeDotted", "description", "descriptionEn"]
+      },
+      "CompanyReportStatusEnum": {
+        "type": "string",
+        "enum": [
+          "MISSING_EQUALITY_REPORT",
+          "MISSING_SALARY_REPORT",
+          "MISSING_ACTION_PLAN",
+          "SATISFACTORY"
+        ]
       },
       "CompanyDto": {
         "type": "object",
@@ -946,16 +1138,78 @@
             "allOf": [{ "$ref": "#/components/schemas/CompanySizeEnum" }]
           },
           "nationalId": { "type": "string" },
+          "status": {
+            "allOf": [{ "$ref": "#/components/schemas/CompanyStatusEnum" }]
+          },
+          "email": {
+            "type": "string",
+            "nullable": true,
+            "description": "Contact email for the company. Used by the deadline-reminder task."
+          },
+          "address": { "type": "string", "nullable": true },
+          "postcodeId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
           "salaryReportRequired": { "type": "boolean" },
-          "salaryReportRequiredOverride": { "type": "boolean" }
+          "salaryReportRequiredOverride": { "type": "boolean" },
+          "finesStarted": {
+            "type": "boolean",
+            "description": "Daily-fines flag. `true` means the company is in the daily-fines process, handled outside this system."
+          },
+          "quarantined": {
+            "type": "boolean",
+            "description": "Admin halt switch. `true` means all outbound activity (scheduled jobs, emails, notifications) for the company is suspended."
+          },
+          "nextEqualityReportDueAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z",
+            "nullable": true
+          },
+          "nextSalaryReportDueAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z",
+            "nullable": true
+          },
+          "isatCategoryCode": {
+            "type": "string",
+            "nullable": true,
+            "description": "Normalized ÍSAT2008 leaf code (admin-owned statistics field), e.g. \"01110\"."
+          },
+          "isatCategory": {
+            "nullable": true,
+            "allOf": [{ "$ref": "#/components/schemas/IsatCategoryDto" }]
+          },
+          "reportStatus": {
+            "allOf": [
+              { "$ref": "#/components/schemas/CompanyReportStatusEnum" }
+            ]
+          },
+          "equalityReportOverdue": {
+            "type": "boolean",
+            "description": "Derived: the company's next equality-report due date has passed."
+          },
+          "salaryReportOverdue": {
+            "type": "boolean",
+            "description": "Derived: the company's next salary-report due date has passed."
+          }
         },
         "required": [
           "id",
           "name",
           "employeeCountCategory",
           "nationalId",
+          "status",
           "salaryReportRequired",
-          "salaryReportRequiredOverride"
+          "salaryReportRequiredOverride",
+          "finesStarted",
+          "quarantined",
+          "reportStatus",
+          "equalityReportOverdue",
+          "salaryReportOverdue"
         ]
       },
       "ApiErrorDto": {
@@ -993,9 +1247,38 @@
             ]
           },
           "message": { "type": "string" },
+          "translatedMessage": {
+            "type": "string",
+            "description": "User-facing, localized message safe to display directly in the client. Absent when the error has no curated translation."
+          },
           "details": { "type": "array", "items": { "type": "string" } }
         },
         "required": ["statusCode", "timestamp"]
+      },
+      "PresignUploadResponseDto": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "Presigned S3 PUT URL the client uploads the .xlsx to. Expires in 1h."
+          },
+          "key": {
+            "type": "string",
+            "description": "Object key the upload lands at. Pass this back to the import endpoint."
+          }
+        },
+        "required": ["url", "key"]
+      },
+      "ImportKeyDto": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "maxLength": 256,
+            "description": "S3 object key returned by the presign endpoint."
+          }
+        },
+        "required": ["key"]
       },
       "ParsedSubCriterionStepDto": {
         "type": "object",
@@ -1088,8 +1371,12 @@
           "startDate": { "type": "string" },
           "workRatio": { "type": "number" },
           "baseSalary": { "type": "number" },
-          "additionalSalary": { "type": "number" },
-          "bonusSalary": { "type": "number", "nullable": true },
+          "additionalFixedOvertime": { "type": "number", "nullable": true },
+          "additionalFixedCarAllowance": { "type": "number", "nullable": true },
+          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
+          "bonusOccasionalOvertime": { "type": "number", "nullable": true },
+          "bonusPayments": { "type": "number", "nullable": true },
+          "bonusOther": { "type": "number", "nullable": true },
           "personalStepAssignments": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/ParsedStepAssignmentDto" }
@@ -1106,7 +1393,6 @@
           "startDate",
           "workRatio",
           "baseSalary",
-          "additionalSalary",
           "personalStepAssignments"
         ]
       },
@@ -1243,7 +1529,8 @@
             "type": "array",
             "items": { "$ref": "#/components/schemas/ScoreBucketDto" }
           },
-          "totals": { "$ref": "#/components/schemas/SalaryTotalsDto" }
+          "totals": { "$ref": "#/components/schemas/SalaryTotalsDto" },
+          "allowedDifferencePercent": { "type": "number", "nullable": true }
         },
         "required": ["dataPoints", "regressionLine", "scoreBuckets", "totals"]
       },
@@ -1280,6 +1567,36 @@
         },
         "required": ["id"]
       },
+      "SalaryReportEligibilityDto": {
+        "type": "object",
+        "properties": {
+          "eligible": {
+            "type": "boolean",
+            "description": "Whether the company may submit a salary report right now."
+          },
+          "reason": {
+            "type": "string",
+            "enum": ["RENEWAL_WINDOW_NOT_OPEN", "MISSING_EQUALITY_REPORT"],
+            "nullable": true,
+            "description": "Machine-readable reason when `eligible` is false; null when eligible. `MISSING_EQUALITY_REPORT` (no approved, in-force equality report — takes priority) or `RENEWAL_WINDOW_NOT_OPEN` (current report due more than 6 months out)."
+          },
+          "dueAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z",
+            "nullable": true,
+            "description": "The company's next salary-report due date (`next_salary_report_due_at`). Null when no obligation is on record."
+          },
+          "earliestSubmissionDate": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z",
+            "nullable": true,
+            "description": "Earliest moment the company may submit (due date minus the 6-month window). Null when there is no due date to anchor on."
+          }
+        },
+        "required": ["eligible"]
+      },
       "SubmitReportCompanyDto": {
         "type": "object",
         "properties": {
@@ -1307,31 +1624,30 @@
         },
         "required": ["name", "nationalId"]
       },
-      "CreateReportOutlierDto": {
+      "CreateReportOutlierGroupDto": {
         "type": "object",
         "properties": {
-          "employeeOrdinal": {
-            "type": "number",
-            "description": "Ordinal of the employee in `parsed.employees[]` this outlier justification applies to."
-          },
-          "reason": {
+          "name": {
             "type": "string",
-            "description": "Required when the parent report is not postponed; ignored when it is."
+            "description": "Applicant-supplied label for the group. Not required to be unique. When omitted (the implicit single-group case) the server assigns a default name."
           },
-          "action": {
-            "type": "string",
-            "description": "Required when the parent report is not postponed; ignored when it is."
-          },
-          "signatureName": {
-            "type": "string",
-            "description": "Required when the parent report is not postponed; ignored when it is."
-          },
-          "signatureRole": {
-            "type": "string",
-            "description": "Required when the parent report is not postponed; ignored when it is."
+          "reason": { "type": "string", "minLength": 1 },
+          "action": { "type": "string", "minLength": 1 },
+          "signatureName": { "type": "string", "minLength": 1 },
+          "signatureRole": { "type": "string", "minLength": 1 },
+          "employeeOrdinals": {
+            "description": "Ordinals of the employees in `parsed.employees[]` this group covers.",
+            "type": "array",
+            "items": { "type": "number" }
           }
         },
-        "required": ["employeeOrdinal"]
+        "required": [
+          "reason",
+          "action",
+          "signatureName",
+          "signatureRole",
+          "employeeOrdinals"
+        ]
       },
       "SubmitSalaryReportDto": {
         "type": "object",
@@ -1371,9 +1687,11 @@
             "type": "boolean",
             "description": "When true, defers every outlier explanation on this report. Defaults to false. All-or-none — postponement applies to the whole report, not individual rows."
           },
-          "outliers": {
+          "outlierGroups": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/CreateReportOutlierDto" }
+            "items": {
+              "$ref": "#/components/schemas/CreateReportOutlierGroupDto"
+            }
           }
         },
         "required": [
@@ -1424,6 +1742,9 @@
             "minLength": 1,
             "description": "Narrative gender-equality plan. Persisted as `report.equality_report_content`."
           },
+          "averageEmployeeMaleCount": { "type": "number", "nullable": true },
+          "averageEmployeeFemaleCount": { "type": "number", "nullable": true },
+          "averageEmployeeNeutralCount": { "type": "number", "nullable": true },
           "company": { "$ref": "#/components/schemas/SubmitReportCompanyDto" },
           "subsidiaries": {
             "type": "array",
@@ -1791,10 +2112,21 @@
             "allOf": [{ "$ref": "#/components/schemas/GenderEnum" }]
           },
           "roleTitle": { "type": "string", "nullable": true },
+          "score": { "type": "number", "nullable": true },
+          "groupId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Id of the outlier group this outlier belongs to. Every outlier always belongs to exactly one group."
+          },
+          "groupName": {
+            "type": "string",
+            "nullable": true,
+            "description": "Name of the outlier group this outlier belongs to. Denormalized from the group for convenient client-side grouping/labeling."
+          },
           "reason": {
             "type": "string",
             "nullable": true,
-            "description": "Null only when the parent report has `status = POSTPONED`. Otherwise required and non-empty."
+            "description": "Explanation shared by the group. Denormalized from the outlier group — every outlier in the same group carries the same value. Null only while the parent report has `status = POSTPONED`."
           },
           "action": { "type": "string", "nullable": true },
           "signatureName": { "type": "string", "nullable": true },
@@ -1827,7 +2159,7 @@
             "description": "Half-threshold band (in percent) used to flag this row as an outlier — i.e. the report-wide allowed deviation at submission time."
           }
         },
-        "required": ["id", "reportEmployeeId"]
+        "required": ["id", "reportEmployeeId", "groupId"]
       },
       "Paging": {
         "type": "object",
@@ -1885,36 +2217,41 @@
         },
         "required": ["equalityReportContent"]
       },
-      "EditOutlierDto": {
+      "EditOutlierGroupDto": {
         "type": "object",
         "properties": {
-          "employeeOrdinal": {
-            "type": "number",
-            "description": "Ordinal of the outlier employee within the parent report's parsed payload (1-indexed, matches the `report_employee.ordinal` snapshot). Resolved against the canonical detected set from `report_result.outlier_analysis_snapshot`."
+          "name": {
+            "type": "string",
+            "description": "Applicant-supplied label for the group. Not required to be unique. When omitted (the implicit single-group case) the server assigns a default name."
           },
           "reason": { "type": "string", "minLength": 1 },
           "action": { "type": "string", "minLength": 1 },
           "signatureName": { "type": "string", "minLength": 1 },
-          "signatureRole": { "type": "string", "minLength": 1 }
+          "signatureRole": { "type": "string", "minLength": 1 },
+          "employeeOrdinals": {
+            "description": "Ordinals of the outlier employees in this group (1-indexed, matches the `report_employee.ordinal` snapshot). Resolved against the canonical detected set from `report_result.outlier_analysis_snapshot`.",
+            "type": "array",
+            "items": { "type": "number" }
+          }
         },
         "required": [
-          "employeeOrdinal",
           "reason",
           "action",
           "signatureName",
-          "signatureRole"
+          "signatureRole",
+          "employeeOrdinals"
         ]
       },
       "EditOutliersDto": {
         "type": "object",
         "properties": {
-          "outliers": {
-            "description": "One row per outlier on the report. Must include every detected outlier and nothing else.",
+          "groups": {
+            "description": "Outlier groups for the report. The union of their employee ordinals must cover every detected outlier exactly once.",
             "type": "array",
-            "items": { "$ref": "#/components/schemas/EditOutlierDto" }
+            "items": { "$ref": "#/components/schemas/EditOutlierGroupDto" }
           }
         },
-        "required": ["outliers"]
+        "required": ["groups"]
       }
     }
   }

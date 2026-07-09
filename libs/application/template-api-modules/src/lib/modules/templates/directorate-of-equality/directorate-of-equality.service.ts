@@ -142,6 +142,10 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     application,
   }: TemplateApiModuleActionProps) {
     const answers = application.answers as ApplicationAnswers
+    const toNumberOrZero = (value: string | number | null | undefined) => {
+      const parsed = Number(value)
+      return Number.isFinite(parsed) ? parsed : 0
+    }
 
     const genderMap: Record<Gender, 'MALE' | 'FEMALE' | 'NEUTRAL'> = {
       [Gender.MALE]: 'MALE',
@@ -179,6 +183,14 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
             postcode: answers.generalInformation?.postalCode ?? '',
             isatCategory: answers.generalInformation?.isatClassification ?? '',
           },
+          averageEmployeeFemaleCount: toNumberOrZero(
+            answers.employeeCount?.women,
+          ),
+          averageEmployeeMaleCount: toNumberOrZero(answers.employeeCount?.men),
+          averageEmployeeNeutralCount: toNumberOrZero(
+            answers.employeeCount?.nonBinary,
+          ),
+
           subsidiaries:
             answers.subsidiaries?.includesSubsidiaries === 'yes'
               ? subsidiaryList.map((s) => ({
