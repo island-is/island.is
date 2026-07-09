@@ -883,6 +883,8 @@ export const is = {
     'Ekki tókst að senda skilaboð. Vinsamlegast reyndu aftur síðar.',
   'health.messages.compose.noRecipient':
     'Ekki er hægt að senda skilaboð eins og er',
+  'health.messages.attachmentError':
+    'Ekki tókst að sækja skjalið. Vinsamlegast reyndu aftur síðar.',
   'health.messages.sentTitle': 'Skilaboð móttekin',
   'health.messages.sentText':
     'Við svörum á dagvinnutíma, yfirleitt innan þriggja virkra daga. Ef erindið er brátt og þarfnast svars í dag, hringdu í 1700. Ef um neyðartilfelli er að ræða, hringdu strax í 112.',

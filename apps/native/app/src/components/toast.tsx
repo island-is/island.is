@@ -68,7 +68,7 @@ const Host = styled(Animated.View)<{
   borderColor: string
   bottomOffset: number
 }>`
-  height: 52px;
+  min-height: 52px;
   position: absolute;
   bottom: ${({ theme, bottomOffset }) =>
     (bottomOffset > 0 ? theme.spacing[2] : theme.spacing[3]) + bottomOffset}px;
@@ -83,6 +83,7 @@ const Host = styled(Animated.View)<{
 `
 
 const Content = styled.View`
+  flex: 1;
   flex-direction: row;
   align-items: center;
   gap: ${({ theme }) => theme.spacing[1]}px;
@@ -141,7 +142,7 @@ export const Toast = ({
           }}
           resizeMode="contain"
         />
-        <View>
+        <View style={{ flex: 1 }}>
           {title && <Typography variant={'eyebrow'}>{title}</Typography>}
           {message && <Typography variant={'body3'}>{message}</Typography>}
         </View>
@@ -200,10 +201,10 @@ const hide = (id?: number) => {
   toastStore.setState({ current: null })
 }
 
-const variantShortcut =
-  (variant: ToastVariant) =>
-  (title: string, options?: ShowOptions): number =>
-    show({ variant, title, ...options })
+const variantShortcut = (variant: ToastVariant) => (
+  title: string,
+  options?: ShowOptions,
+): number => show({ variant, title, ...options })
 
 export const toast = {
   show,

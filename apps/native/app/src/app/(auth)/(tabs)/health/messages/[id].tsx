@@ -28,7 +28,9 @@ import {
   theme,
 } from '@/ui'
 import { createSkeletonArr } from '@/utils/create-skeleton-arr'
+import { downloadHealthAttachment } from '@/utils/download-health-attachment'
 import { DocumentListItem } from '@/components/document-list-item'
+import { toast } from '@/components/toast'
 
 type ConversationMessage = NonNullable<
   GetHealthConversationQuery['healthDirectorateHealthConversation']
@@ -80,6 +82,30 @@ export default function HealthMessageDetailScreen() {
     setRefetching(true)
     res.refetch().finally(() => setRefetching(false))
   }
+
+  const [downloadingAttachmentId, setDownloadingAttachmentId] = useState<
+    string | null
+  >(null)
+
+  const handleAttachmentPress = useCallback(
+    async (attachment: { id: string; fileName: string; url: string }) => {
+      setDownloadingAttachmentId(attachment.id)
+      try {
+        await downloadHealthAttachment({
+          url: attachment.url,
+          fileName: attachment.fileName,
+        })
+      } catch (error) {
+        console.error('Failed to download health attachment', error)
+        toast.error(
+          intl.formatMessage({ id: 'health.messages.attachmentError' }),
+        )
+      } finally {
+        setDownloadingAttachmentId(null)
+      }
+    },
+    [intl],
+  )
 
   // Hide the tab bar while viewing a conversation (matches the inbox
   // communications screen).
@@ -134,10 +160,28 @@ export default function HealthMessageDetailScreen() {
           body={item.messageTextContent ?? undefined}
           date={dateTime}
           hasTopBorder={index !== 0}
+          attachments={item.attachments.map((attachment) => ({
+            id: attachment.id,
+            label: attachment.fileName,
+            loading: downloadingAttachmentId === attachment.id,
+            onPress: () =>
+              handleAttachmentPress({
+                id: attachment.id,
+                fileName: attachment.fileName,
+                url: attachment.downloadServiceURL,
+              }),
+          }))}
         />
       )
     },
-    [messages.length, intl, userName, conversation?.lastSenderGroupName],
+    [
+      messages.length,
+      intl,
+      userName,
+      conversation?.lastSenderGroupName,
+      downloadingAttachmentId,
+      handleAttachmentPress,
+    ],
   )
 
   const data = useMemo(
