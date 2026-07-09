@@ -4,19 +4,23 @@ import { useDebounce } from 'react-use'
 import { FormContext } from '@island.is/judicial-system-web/src/components'
 import { AppealDecisionPartyRole } from '@island.is/judicial-system-web/src/graphql/schema'
 import useCaseAppealDecision from '@island.is/judicial-system-web/src/utils/hooks/useCaseAppealDecision'
+import {
+  caseLevelAppealAnnouncement,
+  withCaseLevelAppealDecision,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
 // Debounced free-text appeal-announcement input that persists through the
-// case-level appeal-decision mutation (the new write source) rather than the
-// legacy case column, while keeping an optimistic local update for the UI.
+// case-level appeal-decision mutation, reading and optimistically updating the
+// case-level appeal_decision row for the given party role.
 const useDebouncedAppealAnnouncement = (
   partyRole: AppealDecisionPartyRole,
-  fieldName: 'accusedAppealAnnouncement' | 'prosecutorAppealAnnouncement',
   delay = 500,
 ) => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { updateCaseAppealDecision } = useCaseAppealDecision()
 
-  const initialValue = (workingCase[fieldName] as string | undefined) ?? ''
+  const initialValue =
+    caseLevelAppealAnnouncement(workingCase, partyRole) ?? ''
   const [value, setValue] = useState(initialValue)
   const [hasUserEdited, setHasUserEdited] = useState(false)
 
@@ -45,9 +49,16 @@ const useDebouncedAppealAnnouncement = (
     (newValue: string) => {
       setValue(newValue)
       setHasUserEdited(true)
-      setWorkingCase((prev) => ({ ...prev, [fieldName]: newValue }))
+      setWorkingCase((prev) => ({
+        ...prev,
+        appealDecisions: withCaseLevelAppealDecision(
+          prev.appealDecisions,
+          partyRole,
+          { announcement: newValue },
+        ),
+      }))
     },
-    [fieldName, setWorkingCase],
+    [partyRole, setWorkingCase],
   )
 
   return { value, onChange }

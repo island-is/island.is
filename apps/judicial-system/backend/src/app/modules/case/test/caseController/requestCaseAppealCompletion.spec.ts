@@ -27,11 +27,10 @@ import {
   Case,
   CaseRepositoryService,
 } from '../../../repository'
-import { UpdateCaseDto } from '../../dto/updateCase.dto'
 
 jest.mock('../../../../factories')
 
-describe('CaseController - Appeal decision dual-write', () => {
+describe('CaseController - Request-case appeal on (re-)completion', () => {
   const date = randomDate()
   const user = {
     id: uuid(),
@@ -55,7 +54,6 @@ describe('CaseController - Appeal decision dual-write', () => {
   let mockAppealDecisionRepositoryService: AppealDecisionRepositoryService
   let mockAppealEventLogRepositoryService: AppealEventLogRepositoryService
   let mockCaseRepositoryService: CaseRepositoryService
-  let update: (theCase: Case, caseToUpdate: UpdateCaseDto) => Promise<void>
   let accept: (theCase: Case) => Promise<void>
 
   beforeEach(async () => {
@@ -92,34 +90,11 @@ describe('CaseController - Appeal decision dual-write', () => {
     const mockCreate = mockAppealCaseRepositoryService.create as jest.Mock
     mockCreate.mockResolvedValue(createdAppealCase)
 
-    update = async (theCase: Case, caseToUpdate: UpdateCaseDto) => {
-      await caseController.update(caseId, user, theCase, caseToUpdate)
-    }
-
     accept = async (theCase: Case) => {
       await caseController.transition(caseId, user, theCase, {
         transition: CaseTransition.ACCEPT,
       })
     }
-  })
-
-  describe('appeal decision fields on an indictment case are not mirrored', () => {
-    const theCase = {
-      id: caseId,
-      type: CaseType.INDICTMENT,
-      state: CaseState.RECEIVED,
-      defendants: [{ id: defendantId1 }],
-    } as Case
-
-    beforeEach(async () => {
-      await update(theCase, {
-        prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
-      } as UpdateCaseDto)
-    })
-
-    it('should not upsert any appeal decision rows', () => {
-      expect(mockAppealDecisionRepositoryService.upsert).not.toHaveBeenCalled()
-    })
   })
 
   describe('completing a request case where a party appealed in court', () => {

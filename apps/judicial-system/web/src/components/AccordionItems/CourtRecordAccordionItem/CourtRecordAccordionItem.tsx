@@ -13,9 +13,14 @@ import {
 import { isRestrictionCase } from '@island.is/judicial-system/types'
 import { closedCourt, core } from '@island.is/judicial-system-web/messages'
 import {
+  AppealDecisionPartyRole,
   Case,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  caseLevelAppealAnnouncement,
+  caseLevelAppealDecision,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import { courtRecordAccordion as m } from './CourtRecordAccordion.strings'
@@ -27,13 +32,22 @@ interface Props {
 const CourtRecordAccordionItem: FC<Props> = ({ workingCase }: Props) => {
   const { formatMessage } = useIntl()
 
+  const prosecutorAppealAnnouncement = caseLevelAppealAnnouncement(
+    workingCase,
+    AppealDecisionPartyRole.PROSECUTOR,
+  )
+  const accusedAppealAnnouncement = caseLevelAppealAnnouncement(
+    workingCase,
+    AppealDecisionPartyRole.DEFENDANT,
+  )
+
   const prosecutorAppeal = formatAppeal(
-    workingCase.prosecutorAppealDecision,
+    caseLevelAppealDecision(workingCase, AppealDecisionPartyRole.PROSECUTOR),
     'Sækjandi',
   )
 
   const accusedAppeal = formatAppeal(
-    workingCase.accusedAppealDecision,
+    caseLevelAppealDecision(workingCase, AppealDecisionPartyRole.DEFENDANT),
     capitalize(
       formatMessage(core.defendant, {
         suffix:
@@ -145,17 +159,15 @@ const CourtRecordAccordionItem: FC<Props> = ({ workingCase }: Props) => {
             <Box marginBottom={2}>
               <Text>
                 {`${prosecutorAppeal}${
-                  workingCase.prosecutorAppealAnnouncement
-                    ? ` ${workingCase.prosecutorAppealAnnouncement}`
+                  prosecutorAppealAnnouncement
+                    ? ` ${prosecutorAppealAnnouncement}`
                     : ''
                 }`}
               </Text>
             </Box>
             <Text>
               {`${accusedAppeal}${
-                workingCase.accusedAppealAnnouncement
-                  ? ` ${workingCase.accusedAppealAnnouncement}`
-                  : ''
+                accusedAppealAnnouncement ? ` ${accusedAppealAnnouncement}` : ''
               }`}
             </Text>
           </AccordionListItem>

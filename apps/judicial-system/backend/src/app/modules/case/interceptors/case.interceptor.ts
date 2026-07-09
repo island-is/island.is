@@ -615,25 +615,6 @@ const transformCase = (
     ...theCase.toJSON(),
     ...stateOverride,
     ...caseLevelAppealInfo,
-    // The in-court appeal decision + announcement columns were dropped; project
-    // them from the case-level appeal_decision rows so the court record and
-    // appeal-sections UI keep reading the same fields.
-    accusedAppealDecision: caseLevelAppealDecisionRow(
-      theCase,
-      AppealDecisionPartyRole.DEFENDANT,
-    )?.decision,
-    prosecutorAppealDecision: caseLevelAppealDecisionRow(
-      theCase,
-      AppealDecisionPartyRole.PROSECUTOR,
-    )?.decision,
-    accusedAppealAnnouncement: caseLevelAppealDecisionRow(
-      theCase,
-      AppealDecisionPartyRole.DEFENDANT,
-    )?.announcement,
-    prosecutorAppealAnnouncement: caseLevelAppealDecisionRow(
-      theCase,
-      AppealDecisionPartyRole.PROSECUTOR,
-    )?.announcement,
     ...appealCaseOverride,
     ...rulingOrderAppealCasesOverride,
     defendants: transformDefendants({

@@ -33,6 +33,7 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  AppealDecisionPartyRole,
   Case,
   CaseAppealDecision,
   CaseType,
@@ -45,6 +46,7 @@ import {
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { withCaseLevelAppealDecision } from '@island.is/judicial-system-web/src/utils/utils'
 import {
   isCourtRecordStepValidIC,
   isNullOrUndefined,
@@ -238,20 +240,44 @@ const CourtRecord: FC = () => {
     prosecutorAppealAnnouncement?: string
   }) => {
     const endOfSessionBookings: string[] = []
+    let appealDecisions = workingCase.appealDecisions
+    if (
+      !isNullOrUndefined(accusedAppealDecision) ||
+      !isNullOrUndefined(accusedAppealAnnouncement)
+    ) {
+      appealDecisions = withCaseLevelAppealDecision(
+        appealDecisions,
+        AppealDecisionPartyRole.DEFENDANT,
+        {
+          ...(!isNullOrUndefined(accusedAppealDecision)
+            ? { decision: accusedAppealDecision }
+            : {}),
+          ...(!isNullOrUndefined(accusedAppealAnnouncement)
+            ? { announcement: accusedAppealAnnouncement }
+            : {}),
+        },
+      )
+    }
+    if (
+      !isNullOrUndefined(prosecutorAppealDecision) ||
+      !isNullOrUndefined(prosecutorAppealAnnouncement)
+    ) {
+      appealDecisions = withCaseLevelAppealDecision(
+        appealDecisions,
+        AppealDecisionPartyRole.PROSECUTOR,
+        {
+          ...(!isNullOrUndefined(prosecutorAppealDecision)
+            ? { decision: prosecutorAppealDecision }
+            : {}),
+          ...(!isNullOrUndefined(prosecutorAppealAnnouncement)
+            ? { announcement: prosecutorAppealAnnouncement }
+            : {}),
+        },
+      )
+    }
     const updatedCase = {
       ...workingCase,
-      ...(!isNullOrUndefined(accusedAppealDecision)
-        ? { accusedAppealDecision }
-        : {}),
-      ...(!isNullOrUndefined(accusedAppealAnnouncement)
-        ? { accusedAppealAnnouncement }
-        : {}),
-      ...(!isNullOrUndefined(prosecutorAppealDecision)
-        ? { prosecutorAppealDecision }
-        : {}),
-      ...(!isNullOrUndefined(prosecutorAppealAnnouncement)
-        ? { prosecutorAppealAnnouncement }
-        : {}),
+      appealDecisions,
     }
     populateEndOfCourtSessionBookingsIntro(updatedCase, endOfSessionBookings)
 
