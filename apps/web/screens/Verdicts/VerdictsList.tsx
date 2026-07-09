@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useDebounce } from 'react-use'
+import { useClickAway, useDebounce } from 'react-use'
 import cn from 'classnames'
 import isEqual from 'lodash/isEqual'
 import {
@@ -22,6 +22,7 @@ import {
   GridContainer,
   GridRow,
   Hidden,
+  Icon,
   type IconMapIcon,
   Inline,
   LinkV2,
@@ -999,6 +1000,106 @@ const Filters = ({
   )
 }
 
+const VerdictsWebsiteLinks = ({
+  links,
+  layout = 'grid',
+  showEyebrow = true,
+}: {
+  links: { label: string; href: string }[]
+  layout?: 'grid' | 'stack'
+  showEyebrow?: boolean
+}) => {
+  const { formatMessage } = useIntl()
+
+  if (links.length === 0) {
+    return null
+  }
+
+  return (
+    <Stack space={1}>
+      {showEyebrow && (
+        <Text variant="eyebrow">
+          {formatMessage(m.listPage.verdictsWebsiteEyebrow)}
+        </Text>
+      )}
+      {layout === 'grid' ? (
+        <GridRow rowGap={2}>
+          {links.map((link) => (
+            <GridColumn key={link.href}>
+              <LinkV2
+                underlineVisibility="always"
+                underline="small"
+                color="blue400"
+                href={link.href}
+              >
+                <span className={styles.verdictsWebsiteLink}>{link.label}</span>
+              </LinkV2>
+            </GridColumn>
+          ))}
+        </GridRow>
+      ) : (
+        <Stack space={2}>
+          {links.map((link) => (
+            <LinkV2
+              key={link.href}
+              underlineVisibility="always"
+              underline="small"
+              color="blue400"
+              href={link.href}
+            >
+              <span className={styles.verdictsWebsiteLink}>{link.label}</span>
+            </LinkV2>
+          ))}
+        </Stack>
+      )}
+    </Stack>
+  )
+}
+
+const VerdictsWebsiteLinksDropdown = ({
+  links,
+}: {
+  links: { label: string; href: string }[]
+}) => {
+  const { formatMessage } = useIntl()
+  const [isOpen, setIsOpen] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useClickAway(containerRef, (ev) => {
+    if (ev.type !== 'touchstart') setIsOpen(false)
+  })
+
+  if (links.length === 0) return null
+
+  return (
+    <Hidden above="md">
+      <div ref={containerRef} style={{ position: 'relative' }}>
+        <Box
+          display="flex"
+          alignItems="flexStart"
+          cursor="pointer"
+          onClick={() => setIsOpen((open) => !open)}
+          className={styles.verdictsWebsiteLinksDropdownToggle}
+        >
+          <Text variant="eyebrow">
+            {formatMessage(m.listPage.verdictsWebsiteEyebrow)}
+          </Text>
+          <Icon size="small" icon={isOpen ? 'chevronUp' : 'chevronDown'} />
+        </Box>
+        {isOpen && (
+          <Box className={styles.verdictsWebsiteLinksDropdown} padding={3}>
+            <VerdictsWebsiteLinks
+              links={links}
+              layout="stack"
+              showEyebrow={false}
+            />
+          </Box>
+        )}
+      </div>
+    </Hidden>
+  )
+}
+
 const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
   const {
     queryState,
@@ -1260,9 +1361,14 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                   span={['1/1', '1/1', '1/1', '8/12', '8/12']}
                 >
                   <Stack space={2}>
-                    <Text variant="h1" as="h1">
-                      {heading}
-                    </Text>
+                    <Stack space={1}>
+                      <VerdictsWebsiteLinksDropdown
+                        links={verdictsWebsiteLinks}
+                      />
+                      <Text variant="h1" as="h1">
+                        {heading}
+                      </Text>
+                    </Stack>
                     <Inline space={4}>
                       <Webreader
                         readClass="rs_read"
@@ -1818,29 +1924,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                       span={['0', '0', '0', '3/12', '3/12']}
                       hiddenBelow="lg"
                     >
-                      {verdictsWebsiteLinks.length > 0 && (
-                        <Stack space={1}>
-                          <Text variant="eyebrow">
-                            {formatMessage(m.listPage.verdictsWebsiteEyebrow)}
-                          </Text>
-                          <GridRow rowGap={2}>
-                            {verdictsWebsiteLinks.map((link) => (
-                              <GridColumn key={link.href}>
-                                <LinkV2
-                                  underlineVisibility="always"
-                                  underline="small"
-                                  color="blue400"
-                                  href={link.href}
-                                >
-                                  <span className={styles.verdictsWebsiteLink}>
-                                    {link.label}
-                                  </span>
-                                </LinkV2>
-                              </GridColumn>
-                            ))}
-                          </GridRow>
-                        </Stack>
-                      )}
+                      <VerdictsWebsiteLinks links={verdictsWebsiteLinks} />
                     </GridColumn>
                   </GridRow>
                 </GridColumn>
