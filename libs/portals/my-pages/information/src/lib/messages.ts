@@ -161,6 +161,10 @@ export const mInformationNotifications = defineMessages({
     id: 'sp.information-notifications:all-marked-as-read',
     defaultMessage: 'Allar tilkynningar merktar lesnar',
   },
+  fetchErrorTitle: {
+    id: 'sp.information-notifications:fetch-error-title',
+    defaultMessage: 'Engar tilkynningar fundust',
+  },
 })
 
 export const msg = defineMessages({

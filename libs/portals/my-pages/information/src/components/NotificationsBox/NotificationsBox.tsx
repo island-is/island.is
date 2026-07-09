@@ -10,6 +10,7 @@ import {
   useMarkUserNotificationAsReadMutation,
 } from '../../screens/Notifications/Notifications.generated'
 import { InformationPaths } from '../../lib/paths'
+import { mInformationNotifications } from '../../lib/messages'
 import { COAT_OF_ARMS, resolveLink } from '../../utils/notificationLinkResolver'
 import * as styles from './NotificationsBox.css'
 
@@ -126,14 +127,33 @@ export const NotificationsBox = ({ limit, title }: Props) => {
             <img
               src="./assets/images/jobsGrid.svg"
               alt=""
-              className={styles.accessDeniedImage}
+              className={styles.stateImage}
             />
           </Box>
         </Box>
       )}
 
       {!loading && hasDelegationAccess && error && (
-        <Problem error={error} size="small" noBorder />
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          paddingTop={2}
+          paddingBottom={2}
+          rowGap={2}
+          paddingX={[4, 4, 0]}
+        >
+          <Text variant="h4" textAlign="center">
+            {formatMessage(mInformationNotifications.fetchErrorTitle)}
+          </Text>
+          <Box paddingTop={2}>
+            <img
+              src="./assets/images/nodata.svg"
+              alt=""
+              className={styles.stateImage}
+            />
+          </Box>
+        </Box>
       )}
 
       {!loading &&
