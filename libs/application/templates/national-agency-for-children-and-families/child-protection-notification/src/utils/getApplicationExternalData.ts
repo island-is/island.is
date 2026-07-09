@@ -1,5 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
+import { Category } from './types'
 
 export const getApplicationExternalData = (
   externalData: Application['externalData'],
@@ -39,6 +40,9 @@ export const getApplicationExternalData = (
     'identity.data.actor.nationalId',
   )
 
+  const categories =
+    getValueViaPath<Category[]>(externalData, 'categories.data') ?? []
+
   return {
     applicantName,
     applicantNationalId,
@@ -47,5 +51,6 @@ export const getApplicationExternalData = (
     applicantCity,
     actorName,
     actorNationalId,
+    categories,
   }
 }

@@ -1,11 +1,9 @@
 import { ApplicationTypes } from '@island.is/application/types'
+import { NationalAgencyForChildrenAndFamiliesClientService } from '@island.is/clients/national-agency-for-children-and-families'
 import { Injectable } from '@nestjs/common'
-import {
-  ExternalDropdownApi,
-  ExternalNotificationApi,
-} from '@island.is/clients/national-agency-for-children-and-families'
 
 import { NotificationsService } from '../../../../notification/notifications.service'
+import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { SharedTemplateApiService } from '../../../shared'
 
@@ -14,10 +12,15 @@ export class ChildProtectionNotificationService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly notificationsService: NotificationsService,
-    private readonly dropdownApi: ExternalDropdownApi,
-    private readonly notificationApi: ExternalNotificationApi,
+    private readonly nationalAgencyForChildrenAndFamiliesClientService: NationalAgencyForChildrenAndFamiliesClientService,
   ) {
     super(ApplicationTypes.CHILD_PROTECTION_NOTIFICATION)
+  }
+
+  async getCategories({ auth }: TemplateApiModuleActionProps) {
+    return await this.nationalAgencyForChildrenAndFamiliesClientService.getCategories(
+      auth,
+    )
   }
 
   async createApplication() {
