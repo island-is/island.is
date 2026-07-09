@@ -20,6 +20,7 @@ name: 'services-payments'
 enabled: true
 env:
   BLIKK_API_BASE_URL: 'https://stage.blikk.tech'
+  BLIKK_ONBOARDING_URL: 'https://light.blikk.tech'
   BLIKK_PAYMENT_TTL_SECONDS: '300'
   DB_EXTENSIONS: 'uuid-ossp'
   DB_HOST: 'postgres-applications.internal'
