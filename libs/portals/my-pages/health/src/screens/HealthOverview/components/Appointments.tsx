@@ -1,4 +1,11 @@
-import { Box, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Text,
+} from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import {
   formatDate,
@@ -8,6 +15,7 @@ import {
   LinkButton,
 } from '@island.is/portals/my-pages/core'
 import React from 'react'
+import { useWindowSize } from 'react-use'
 import { messages } from '../../..'
 import { HealthPaths } from '../../../lib/paths'
 import { generateGoogleMapsLink } from '../../../utils/googleMaps'
@@ -22,6 +30,9 @@ interface Props {
 
 const Appointments: React.FC<Props> = ({ data, showLinkButton }) => {
   const { formatMessage } = useLocale()
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.md
+  const isTablet = width < theme.breakpoints.lg && !isMobile
   const appointments = data?.data?.data
   const isEmpty = !appointments || appointments?.length === 0
 
@@ -65,31 +76,39 @@ const Appointments: React.FC<Props> = ({ data, showLinkButton }) => {
         },
       })) ?? []
 
+  const isNarrow = cards.length <= 1 && !isMobile && !isTablet
+
   return (
     <Box marginBottom={2}>
-      <Box
-        display={'flex'}
-        justifyContent="spaceBetween"
-        alignItems="center"
-        marginBottom={2}
-      >
-        <Box>
-          <Text variant="eyebrow" color="foregroundBrandSecondary">
-            {formatMessage(messages.myAppointments)}
-          </Text>
-        </Box>
-        {showLinkButton && (
-          <Box>
-            <LinkButton
-              to={HealthPaths.HealthAppointments}
-              text={formatMessage(messages.allAppointments)}
-              variant="text"
-              size="small"
-              icon="arrowForward"
-            />
-          </Box>
-        )}
-      </Box>
+      <GridContainer>
+        <GridRow>
+          <GridColumn span={isNarrow ? '6/12' : '12/12'}>
+            <Box
+              display={'flex'}
+              justifyContent="spaceBetween"
+              alignItems="center"
+              marginBottom={2}
+            >
+              <Box>
+                <Text variant="eyebrow" color="foregroundBrandSecondary">
+                  {formatMessage(messages.myAppointments)}
+                </Text>
+              </Box>
+              {showLinkButton && (
+                <Box>
+                  <LinkButton
+                    to={HealthPaths.HealthAppointments}
+                    text={formatMessage(messages.allAppointments)}
+                    variant="text"
+                    size="small"
+                    icon="arrowForward"
+                  />
+                </Box>
+              )}
+            </Box>
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
       <InfoCardGrid
         cards={cards}
         size={isEmpty ? 'small' : undefined}

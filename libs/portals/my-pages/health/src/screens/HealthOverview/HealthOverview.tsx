@@ -17,6 +17,7 @@ import { messages } from '../../lib/messages'
 import {
   CONTENT_GAP_LG,
   DEFAULT_APPOINTMENTS_STATUS,
+  SECTION_GAP,
 } from '../../utils/constants'
 import {
   useGetAppointmentsOverviewQuery,
@@ -175,7 +176,7 @@ export const HealthOverview = () => {
         </GridColumn>
       </GridRow>
       {isNewHealthOverviewPageEnabled && (
-        <GridRow marginBottom={CONTENT_GAP_LG}>
+        <GridRow marginBottom={SECTION_GAP}>
           <GridColumn span={isMobile ? '8/8' : '5/8'}>
             <Box marginBottom={isMobile ? CONTENT_GAP_LG : 0}>
               <NotificationsBox
