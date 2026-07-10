@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import addMonths from 'date-fns/addMonths'
 import format from 'date-fns/format'
@@ -122,7 +122,6 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     return { dateTo, dateFrom: addMonths(dateTo, -1) }
   }, [today])
 
-  const [initialRender, setInitialRender] = useState<boolean>(true)
   const [currentPage, setCurrentPage] = useState<number>(1)
 
   const fetchedResult =
@@ -202,11 +201,6 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     : undefined
 
   const fetchInvoiceGroups = useCallback(() => {
-    if (initialRender) {
-      setInitialRender(false)
-      return
-    }
-
     setCurrentPage(1)
     getInvoiceGroups({
       variables: {
@@ -226,7 +220,6 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     })
   }, [
     getInvoiceGroups,
-    initialRender,
     debtors,
     suppliers,
     ministries,
@@ -237,11 +230,12 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     sortDirection,
   ])
 
-  // Filter fields (debtors/suppliers/ministries/invoicePaymentTypes/date
-  // range) intentionally don't trigger this effect — they're only applied
-  // when the filter panel's submit button is clicked (see `onApply` below),
-  // so rapid filter changes can't pile up/race requests against the server.
+  const isInitialMount = useRef(true)
   useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false
+      return
+    }
     fetchInvoiceGroups()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locale, sortBy, sortDirection])
@@ -317,6 +311,40 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     totalHits,
   ])
 
+  // Mobile shows the same information as `hitsMessage` split across three
+  // short lines instead of one long sentence (matches the Grants Plaza
+  // pattern) — the full sentence doesn't fit comfortably on small screens.
+  const hitsSummary = useMemo(() => {
+    const dateRangeStartArg = format(dateRangeStart, dateFormat.is)
+    const dateRangeEndArg = format(dateRangeEnd, dateFormat.is)
+    const totalPaymentsSum =
+      invoiceGroupsData?.icelandicGovernmentInstitutionsInvoiceGroups
+        ?.totalPaymentsSum ?? initialInvoiceGroups?.totalPaymentsSum
+
+    return {
+      recordsLine: formatMessage(m.search.recordsFoundShort, {
+        records: totalHits,
+      }),
+      dateRangeLine: formatMessage(m.search.dateRangeLineShort, {
+        dateRangeStart: dateRangeStartArg,
+        dateRangeEnd: dateRangeEndArg,
+      }),
+      totalLine: totalPaymentsSum
+        ? formatMessage(m.search.totalLineShort, {
+            sum: formatCurrency(totalPaymentsSum),
+          })
+        : undefined,
+    }
+  }, [
+    dateRangeEnd,
+    dateRangeStart,
+    formatMessage,
+    initialInvoiceGroups?.totalPaymentsSum,
+    invoiceGroupsData?.icelandicGovernmentInstitutionsInvoiceGroups
+      ?.totalPaymentsSum,
+    totalHits,
+  ])
+
   const onSearchFilterUpdate = (categoryId: string, values?: Array<string>) => {
     const filteredValues = values?.length ? [...values] : null
     switch (categoryId) {
@@ -349,6 +377,95 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     }
   }
 
+  const filterSearchState = {
+    invoicePaymentTypes:
+      invoicePaymentTypes?.map((i) => i.toString()) ?? undefined,
+    suppliers: suppliers ?? undefined,
+    debtors: debtors ?? undefined,
+    ministries: ministries ?? undefined,
+    dateRange: [dateRangeStart.toISOString(), dateRangeEnd.toISOString()],
+  }
+
+  const filterCategories = [
+    {
+      type: 'date' as const,
+      id: 'dateRange',
+      label: formatMessage(m.search.range),
+      placeholder: `${format(dateRangeStart, dateFormat.is)}-${format(
+        dateRangeEnd,
+        dateFormat.is,
+      )}`,
+      valueFrom: dateRangeStart,
+      valueTo: dateRangeEnd,
+      isActive:
+        dateRangeStart.getTime() !== initialDates.dateFrom.getTime() ||
+        dateRangeEnd.getTime() !== initialDates.dateTo.getTime(),
+    },
+    {
+      type: 'asyncSelect' as const,
+      id: 'suppliers',
+      label: formatMessage(m.search.suppliers),
+      fetchPage: fetchSuppliersPage,
+      selectedLabels: suppliersLabels,
+    },
+    {
+      type: 'asyncSelect' as const,
+      id: 'debtors',
+      label: formatMessage(m.search.customers),
+      fetchPage: fetchDebtorsPage,
+      selectedLabels: debtorsLabels,
+    },
+    {
+      type: 'asyncSelect' as const,
+      id: 'invoicePaymentTypes',
+      label: formatMessage(m.search.types),
+      fetchPage: fetchInvoicePaymentTypesPage,
+      selectedLabels: invoicePaymentTypesLabels,
+    },
+    {
+      type: 'asyncSelect' as const,
+      id: 'ministries',
+      label: formatMessage(m.search.ministries),
+      fetchPage: fetchMinistriesPage,
+      selectedLabels: ministriesLabels,
+    },
+  ]
+
+  const invoiceTable = (
+    <>
+      <Box marginTop={3}>
+        <OverviewTable
+          invoiceGroups={displayGroups}
+          dateFrom={dateRangeStart}
+          dateTo={dateRangeEnd}
+          loading={invoiceGroupsLoading}
+          error={invoiceGroupsError}
+          sorting={sorting}
+          onSortingChange={setSorting}
+        />
+      </Box>
+
+      {totalHits > PAGE_SIZE && !invoiceGroupsLoading && (
+        <Box marginTop={2}>
+          <Pagination
+            variant="blue"
+            page={currentPage}
+            totalItems={totalHits}
+            itemsPerPage={PAGE_SIZE}
+            renderLink={(page, className, children) => (
+              <button
+                onClick={() => handlePageChange(page)}
+                disabled={invoiceGroupsLoading}
+              >
+                <span className={className}>{children}</span>
+              </button>
+            )}
+          />
+        </Box>
+      )}
+    </>
+  )
+
   return (
     <OpenInvoicesWrapper
       title={formatMessage(m.overview.title)}
@@ -379,9 +496,10 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
         organization,
       }}
     >
-      <Box marginTop={12} background="blue100">
+      <Box marginTop={[6, 6, 12]} background="blue100">
         <SidebarLayout
           fullWidthContent={true}
+          paddingTop={[3, 3, 8]}
           sidebarContent={
             <Stack space={3}>
               <Text variant="h4" as="h4" paddingY={1}>
@@ -395,95 +513,45 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
                 url={baseUrl}
                 hits={totalHits}
                 locale={locale}
-                searchState={{
-                  invoicePaymentTypes:
-                    invoicePaymentTypes?.map((i) => i.toString()) ?? undefined,
-                  suppliers: suppliers ?? undefined,
-                  debtors: debtors ?? undefined,
-                  ministries: ministries ?? undefined,
-                  dateRange: [
-                    dateRangeStart.toISOString(),
-                    dateRangeEnd.toISOString(),
-                  ],
-                }}
-                categories={[
-                  {
-                    type: 'date',
-                    id: 'dateRange',
-                    label: formatMessage(m.search.range),
-                    placeholder: `${format(
-                      dateRangeStart,
-                      dateFormat.is,
-                    )}-${format(dateRangeEnd, dateFormat.is)}`,
-                    valueFrom: dateRangeStart,
-                    valueTo: dateRangeEnd,
-                  },
-                  {
-                    type: 'asyncSelect',
-                    id: 'suppliers',
-                    label: formatMessage(m.search.suppliers),
-                    fetchPage: fetchSuppliersPage,
-                    selectedLabels: suppliersLabels,
-                  },
-                  {
-                    type: 'asyncSelect',
-                    id: 'debtors',
-                    label: formatMessage(m.search.customers),
-                    fetchPage: fetchDebtorsPage,
-                    selectedLabels: debtorsLabels,
-                  },
-                  {
-                    type: 'asyncSelect',
-                    id: 'invoicePaymentTypes',
-                    label: formatMessage(m.search.types),
-                    fetchPage: fetchInvoicePaymentTypesPage,
-                    selectedLabels: invoicePaymentTypesLabels,
-                  },
-                  {
-                    type: 'asyncSelect',
-                    id: 'ministries',
-                    label: formatMessage(m.search.ministries),
-                    fetchPage: fetchMinistriesPage,
-                    selectedLabels: ministriesLabels,
-                  },
-                ]}
+                searchState={filterSearchState}
+                categories={filterCategories}
               />
             </Stack>
           }
         >
-          <Box marginLeft={2}>
-            <MarkdownText>{hitsMessage ?? ''}</MarkdownText>
-            <Box marginTop={3}>
-              <OverviewTable
-                invoiceGroups={displayGroups}
-                dateFrom={dateRangeStart}
-                dateTo={dateRangeEnd}
-                loading={invoiceGroupsLoading}
-                error={invoiceGroupsError}
-                sorting={sorting}
-                onSortingChange={setSorting}
-              />
-            </Box>
-          </Box>
-
-          {totalHits > PAGE_SIZE && !invoiceGroupsLoading && (
-            <Box marginTop={2}>
-              <Pagination
-                variant="blue"
-                page={currentPage}
-                totalItems={totalHits}
-                itemsPerPage={PAGE_SIZE}
-                renderLink={(page, className, children) => (
-                  <button
-                    onClick={() => handlePageChange(page)}
-                    disabled={invoiceGroupsLoading}
-                  >
-                    <span className={className}>{children}</span>
-                  </button>
+          <Box marginLeft={[2, 2, 2]} marginRight={[2, 2, 0]}>
+            <Box
+              display="flex"
+              justifyContent="spaceBetween"
+              alignItems="flexEnd"
+              marginBottom={2}
+            >
+              <Box display={['none', 'none', 'block']}>
+                <MarkdownText>{hitsMessage ?? ''}</MarkdownText>
+              </Box>
+              <Box display={['block', 'block', 'none']}>
+                <MarkdownText>{hitsSummary.recordsLine}</MarkdownText>
+                <MarkdownText>{hitsSummary.dateRangeLine}</MarkdownText>
+                {hitsSummary.totalLine && (
+                  <MarkdownText>{hitsSummary.totalLine}</MarkdownText>
                 )}
+              </Box>
+              <OverviewFilter
+                onSearchUpdate={onSearchFilterUpdate}
+                onReset={onResetFilter}
+                onApply={fetchInvoiceGroups}
+                applyDisabled={invoiceGroupsLoading}
+                url={baseUrl}
+                hits={totalHits}
+                locale={locale}
+                searchState={filterSearchState}
+                categories={filterCategories}
+                variant="dialog"
+                mobileOnly
               />
             </Box>
-          )}
+            {invoiceTable}
+          </Box>
         </SidebarLayout>
       </Box>
     </OpenInvoicesWrapper>

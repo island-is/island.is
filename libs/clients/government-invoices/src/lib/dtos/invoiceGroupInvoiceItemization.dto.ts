@@ -12,7 +12,7 @@ export interface InvoiceItemization {
 export const mapInvoiceGroupInvoiceItemization = (
   data: InvoiceGlLineResponseDto,
 ): InvoiceItemization | null => {
-  if (!data.type?.code || !data.type?.name || !data.accountedAmount) {
+  if (!data.type?.code || !data.type?.name || data.accountedAmount == null) {
     return null
   }
 

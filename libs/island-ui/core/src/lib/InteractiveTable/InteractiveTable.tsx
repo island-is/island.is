@@ -69,6 +69,7 @@ type BaseInteractiveTableProps<TData extends object> = {
   srCaption?: string
   sortHint?: string
   meta?: TableMeta<TData>
+  colorScheme?: 'default' | 'negative'
 }
 
 export type InteractiveTableProps<TData extends object> =
@@ -92,6 +93,7 @@ export const InteractiveTable = <TData extends object>({
   srCaption = 'Table with sortable columns.',
   sortHint = 'Activate to sort.',
   meta,
+  colorScheme = 'default',
 }: InteractiveTableProps<TData>) => {
   const resolvedExpanderLabel = expanderLabel ?? ''
   const [internalSorting, setInternalSorting] = useState<SortingState>(
@@ -446,7 +448,15 @@ export const InteractiveTable = <TData extends object>({
             return (
               <Box
                 key={row.id}
-                background={isExpanded || isCollapsing ? 'blue100' : undefined}
+                background={
+                  isExpanded || isCollapsing
+                    ? colorScheme === 'negative'
+                      ? 'white'
+                      : 'blue100'
+                    : colorScheme === 'negative'
+                    ? 'blue100'
+                    : undefined
+                }
                 className={cn(styles.mobileRow, {
                   [styles.container]: isExpanded || isCollapsing,
                 })}

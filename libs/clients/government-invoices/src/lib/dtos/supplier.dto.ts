@@ -3,7 +3,8 @@ import { SupplierResponseDto } from '../../../gen/fetch'
 export interface SupplierDto {
   legalId: string
   name: string
-  isPrivateProxy: boolean
+  isPrivatePerson: boolean
+  isPrivatePersonProxy: boolean
   isConfidential: boolean
 }
 
@@ -13,7 +14,8 @@ export const mapSupplierDto = (
   if (
     !supplier.legalId ||
     !supplier.name ||
-    supplier.isPrivateProxy === undefined ||
+    supplier.isPrivatePerson === undefined ||
+    supplier.isPrivatePersonProxy === undefined ||
     supplier.isConfidential === undefined
   ) {
     return null
@@ -22,7 +24,8 @@ export const mapSupplierDto = (
   return {
     legalId: supplier.legalId,
     name: supplier.name,
-    isPrivateProxy: supplier.isPrivateProxy,
+    isPrivatePerson: supplier.isPrivatePerson,
+    isPrivatePersonProxy: supplier.isPrivatePersonProxy,
     isConfidential: supplier.isConfidential,
   }
 }

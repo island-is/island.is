@@ -126,7 +126,8 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUP = gql`
         id
         name
         isConfidential
-        isPrivateProxy
+        isPrivatePerson
+        isPrivatePersonProxy
       }
       debtor {
         id
@@ -164,7 +165,8 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS = gql`
           id
           name
           isConfidential
-          isPrivateProxy
+          isPrivatePerson
+          isPrivatePersonProxy
         }
         debtor {
           id

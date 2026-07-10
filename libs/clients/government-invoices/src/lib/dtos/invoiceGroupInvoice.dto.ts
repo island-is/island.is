@@ -24,17 +24,10 @@ export const mapInvoiceGroupInvoice = (
     return null
   }
 
-  let amount: number | null | undefined
-  if (data.invoiceCurrencyCode === 'ISK') {
-    amount = data.paymentAmountISK ?? data.paymentAmount
-  } else {
-    amount = data.paymentAmount
-  }
-
   return {
     id: data.invoiceNum,
     timestamp: new Date(data.paymentAccountingDate),
-    amount: amount ?? 0,
+    amount: data.paymentAmountISK ?? 0,
     currencyCode: data.invoiceCurrencyCode,
     itemization: (data.glLines ?? [])
       .map(mapInvoiceGroupInvoiceItemization)

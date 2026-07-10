@@ -15,7 +15,11 @@ export interface InvoiceGroupCollectionDto {
 export const mapInvoiceGroupCollectionDto = (
   data: OpenInvoicesGroupCollectionResponseDto,
 ): InvoiceGroupCollectionDto | null => {
-  if (!data.totalCount || !data.totalPaymentsSum || !data.totalPaymentsCount) {
+  if (
+    data.totalCount == null ||
+    data.totalPaymentsSum == null ||
+    data.totalPaymentsCount == null
+  ) {
     return null
   }
   return {

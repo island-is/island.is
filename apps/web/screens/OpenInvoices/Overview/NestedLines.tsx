@@ -59,12 +59,7 @@ export const NestedLines = ({
     }
 
     return invoices.map((invoice) => (
-      <Box
-        paddingBottom={3}
-        paddingLeft={2}
-        key={invoice.id}
-        background="blue100"
-      >
+      <Box paddingBottom={3} paddingLeft={2} paddingRight={2} key={invoice.id}>
         <Box marginBottom={2} display="flex">
           <Box marginRight={2}>
             <Text variant="small" fontWeight="semiBold">

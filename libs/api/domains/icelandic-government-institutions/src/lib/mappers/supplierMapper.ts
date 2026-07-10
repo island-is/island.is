@@ -7,7 +7,8 @@ export const mapSuppliers = (data: SuppliersDto): Suppliers => {
     id: supplier.legalId,
     name: supplier.name,
     isConfidential: supplier.isConfidential,
-    isPrivateProxy: supplier.isPrivateProxy,
+    isPrivatePerson: supplier.isPrivatePerson,
+    isPrivatePersonProxy: supplier.isPrivatePersonProxy,
   }))
 
   return {

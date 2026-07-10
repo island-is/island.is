@@ -231,6 +231,7 @@ export const AsyncFilterSearchAccordion = ({
           label={title}
           labelUse="h5"
           labelVariant="h5"
+          labelColor={selected.length > 0 ? 'blue400' : 'currentColor'}
           iconVariant="small"
           startExpanded={initiallyExpanded}
         >

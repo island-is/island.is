@@ -100,7 +100,7 @@ export class GovernmentInvoicesClientService {
     if (
       !data?.pageInfo ||
       data.pageInfo.hasNextPage === undefined ||
-      !data.totalCount
+      data.totalCount == null
     ) {
       return null
     }
@@ -122,7 +122,7 @@ export class GovernmentInvoicesClientService {
     if (
       !data?.pageInfo ||
       data.pageInfo.hasNextPage === undefined ||
-      !data.totalCount
+      data.totalCount == null
     ) {
       return null
     }
@@ -144,7 +144,7 @@ export class GovernmentInvoicesClientService {
     if (
       !data?.pageInfo ||
       data.pageInfo.hasNextPage === undefined ||
-      !data.totalCount
+      data.totalCount == null
     ) {
       return null
     }
@@ -166,7 +166,7 @@ export class GovernmentInvoicesClientService {
     if (
       !data?.pageInfo ||
       data.pageInfo.hasNextPage === undefined ||
-      !data.totalCount
+      data.totalCount == null
     ) {
       return null
     }

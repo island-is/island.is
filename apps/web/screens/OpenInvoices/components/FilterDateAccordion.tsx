@@ -13,6 +13,7 @@ interface Props {
   placeholder: string
   valueFrom: Date
   valueTo: Date
+  isActive?: boolean
   onChange: (startDate: Date | undefined, endDate: Date | undefined) => void
   initiallyExpanded?: boolean
 }
@@ -23,6 +24,7 @@ export const FilterDateAccordion = ({
   locale,
   valueFrom,
   valueTo,
+  isActive,
   placeholder,
   onChange,
   initiallyExpanded = false,
@@ -41,6 +43,7 @@ export const FilterDateAccordion = ({
           label={title}
           labelUse="h5"
           labelVariant="h5"
+          labelColor={isActive ? 'blue400' : 'currentColor'}
           iconVariant="small"
           startExpanded={initiallyExpanded}
         >

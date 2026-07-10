@@ -1,5 +1,6 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
+import { useWindowSize } from 'react-use'
 
 import {
   Box,
@@ -9,6 +10,7 @@ import {
   Filter,
   FilterProps,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 
@@ -28,6 +30,7 @@ interface DateSelectProps {
   placeholder: string
   valueFrom: Date
   valueTo: Date
+  isActive?: boolean
 }
 
 interface CheckboxProps {
@@ -64,6 +67,8 @@ interface Props {
   categories: Array<DateSelectProps | CheckboxProps | AsyncSelectProps>
   variant?: FilterProps['variant']
   hits?: number
+  /** Only render below the `md` breakpoint — for a second instance placed in the normal content flow, since `SidebarLayout`'s `sidebarContent` slot is hidden there. */
+  mobileOnly?: boolean
 }
 
 export const OverviewFilter = ({
@@ -77,8 +82,16 @@ export const OverviewFilter = ({
   url,
   variant = 'default',
   hits,
+  mobileOnly,
 }: Props) => {
   const { formatMessage } = useIntl()
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.md
+
+  if (mobileOnly && !isMobile) {
+    return null
+  }
+
   return (
     <Box
       component="form"
@@ -98,6 +111,7 @@ export const OverviewFilter = ({
         labelResult={formatMessage(m.search.viewResults)}
         resultCount={hits}
         onFilterClear={onReset}
+        onFilterResult={onApply}
         variant={variant}
         align={'right'}
       >
@@ -146,6 +160,7 @@ export const OverviewFilter = ({
                     locale={locale}
                     valueFrom={category.valueFrom}
                     valueTo={category.valueTo}
+                    isActive={category.isActive}
                     placeholder={category.placeholder}
                     onChange={(valueFrom, valueTo) => {
                       const valueFromString = valueFrom
@@ -190,23 +205,27 @@ export const OverviewFilter = ({
 
             return null
           })}
-          {categories.length > 0 && (
-            <Box paddingX={3}>
-              <Divider />
-            </Box>
+          {variant === 'default' && (
+            <>
+              {categories.length > 0 && (
+                <Box paddingX={3}>
+                  <Divider />
+                </Box>
+              )}
+              <Box paddingX={3} paddingY={3}>
+                <Button
+                  type="submit"
+                  variant="ghost"
+                  size="small"
+                  fluid
+                  disabled={applyDisabled}
+                  loading={applyDisabled}
+                >
+                  {formatMessage(m.search.viewResults)}
+                </Button>
+              </Box>
+            </>
           )}
-          <Box paddingX={3} paddingY={3}>
-            <Button
-              type="submit"
-              variant="ghost"
-              size="small"
-              fluid
-              disabled={applyDisabled}
-              loading={applyDisabled}
-            >
-              {formatMessage(m.search.viewResults)}
-            </Button>
-          </Box>
         </Box>
       </Filter>
     </Box>

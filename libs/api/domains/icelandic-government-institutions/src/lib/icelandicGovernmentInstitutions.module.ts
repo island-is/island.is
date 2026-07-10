@@ -2,7 +2,6 @@ import { DynamicModule, Module } from '@nestjs/common'
 import { GovernmentInvoicesClientModule } from '@island.is/clients/government-invoices'
 import { EmployeesResolver } from './resolvers/employees.resolver'
 import { EmployeesService } from './services/employees/employees.service'
-import { MockInvoicesService } from './services/invoices/invoices.service.mock'
 import { InvoicesService } from './services/invoices/invoices.service'
 import { MockEmployeesService } from './services/employees/employees.service.mock'
 import { InvoiceGroupResolver } from './resolvers/invoiceGroup.resolver'
@@ -21,10 +20,7 @@ export class IcelandicGovernmentInstitutionsModule {
       module: IcelandicGovernmentInstitutionsModule,
       imports: [GovernmentInvoicesClientModule],
       providers: [
-        {
-          provide: 'IInvoicesService',
-          useClass: options.useMocks ? MockInvoicesService : InvoicesService,
-        },
+        InvoicesService,
         {
           provide: 'IEmployeesService',
           useClass: options.useMocks ? MockEmployeesService : EmployeesService,

@@ -9,7 +9,10 @@ export class Supplier {
   name!: string
 
   @Field()
-  isPrivateProxy!: boolean
+  isPrivatePerson!: boolean
+
+  @Field()
+  isPrivatePersonProxy!: boolean
 
   @Field()
   isConfidential!: boolean

@@ -1,8 +1,7 @@
 import { Audit } from '@island.is/nest/audit'
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { BypassAuth } from '@island.is/auth-nest-tools'
-import { type IInvoicesService } from '../services/invoices/invoices.service.interface'
-import { Inject } from '@nestjs/common'
+import { InvoicesService } from '../services/invoices/invoices.service'
 import { InvoiceGroupsInput } from '../dtos/getInvoiceGroups.input'
 import type { InvoiceGroupsWithFilters } from '../types'
 import { InvoiceGroupCollection } from '../models/invoiceGroups.model'
@@ -18,10 +17,7 @@ import { InvoicePaymentTypesInput } from '../dtos/getInvoicePaymentTypes.input'
 @Resolver(() => InvoiceGroupCollection)
 @Audit({ namespace: '@island.is/api/icelandic-government-institutions' })
 export class InvoiceGroupsResolver {
-  constructor(
-    @Inject('IInvoicesService')
-    private readonly invoiceService: IInvoicesService,
-  ) {}
+  constructor(private readonly invoiceService: InvoicesService) {}
 
   @Query(() => InvoiceGroupCollection, {
     name: 'icelandicGovernmentInstitutionsInvoiceGroups',

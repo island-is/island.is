@@ -166,6 +166,19 @@ export const m = {
       defaultMessage:
         '**{records}** færslur fundust fyrir tímabilið **{dateRangeStart}-{dateRangeEnd}**',
     },
+    recordsFoundShort: {
+      id: 'web.openinvoices:search.recordsFoundShort#markdown',
+      defaultMessage:
+        '**{records}** {records, plural, one {færsla fannst} other {færslur fundust}}',
+    },
+    dateRangeLineShort: {
+      id: 'web.openinvoices:search.dateRangeLineShort#markdown',
+      defaultMessage: 'Tímabil: **{dateRangeStart}-{dateRangeEnd}**',
+    },
+    totalLineShort: {
+      id: 'web.openinvoices:search.totalLineShort#markdown',
+      defaultMessage: 'Samtals: **{sum}**',
+    },
     filterSearch: {
       id: 'web.openinvoices:search.filterSearch',
       defaultMessage: 'Leita...',
