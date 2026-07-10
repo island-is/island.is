@@ -112,7 +112,12 @@ export const TextField = ({
             readOnly={readOnly}
             placeholderTextColor={theme.color.dark300}
             {...rest}
-            style={inputStyle}
+            // Android vertically centers multiline inputs by default; keep
+            // the text (and placeholder) at the top like iOS does.
+            style={[
+              rest.multiline ? { textAlignVertical: 'top' } : null,
+              inputStyle,
+            ]}
           />
         </View>
         {loading && (
