@@ -128,6 +128,9 @@ export function SearchBar(props: SearchBarProps) {
       {props.value?.length ? (
         <Pressable
           onPress={onRightIconPress}
+          // The visible icon is only ~16px, far below the recommended ~44px
+          // touch target, so grow the pressable area around it.
+          hitSlop={14}
           style={{
             position: 'absolute',
             top: 16,
