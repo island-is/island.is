@@ -37,14 +37,12 @@ const OutlierRow: FC<{
   const [expanded, setExpanded] = useState(false)
   const m = messages.salaryAnalysis.outlierGroup
 
-  const directionLabels: Record<
-    SalaryAnalysisOutlierDto['direction'],
-    string
-  > = {
-    ABOVE: formatMessage(m.directionAbove),
-    BELOW: formatMessage(m.directionBelow),
-    EQUAL: formatMessage(m.directionEqual),
-  }
+  const directionLabels: Record<SalaryAnalysisOutlierDto['direction'], string> =
+    {
+      ABOVE: formatMessage(m.directionAbove),
+      BELOW: formatMessage(m.directionBelow),
+      EQUAL: formatMessage(m.directionEqual),
+    }
   const directionLabel = directionLabels[outlier.direction]
 
   const background = expanded ? 'blue100' : 'transparent'
