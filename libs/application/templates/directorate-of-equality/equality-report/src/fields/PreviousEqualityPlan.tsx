@@ -39,7 +39,7 @@ export const PreviousEqualityPlan = ({ application }: FieldBaseProps) => {
           id: application.id,
           dataProviders: [
             {
-              actionId: ApiActions.getPreviousEqualityReportContent,
+              actionId: `DirectorateOfEquality.${ApiActions.getPreviousEqualityReportContent}`,
               order: 0,
             },
           ],

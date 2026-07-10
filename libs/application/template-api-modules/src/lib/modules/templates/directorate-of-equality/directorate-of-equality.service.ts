@@ -386,11 +386,6 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
       )
     }
 
-    const doeCompany = getValueViaPath<CompanyDto>(
-      application.externalData,
-      'doeCompany.data',
-    )
-
     const companyAdminGenderMap: Record<string, 'MALE' | 'FEMALE' | 'NEUTRAL'> =
       {
         MALE: 'MALE',
@@ -410,7 +405,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
         importedFromExcel: Boolean(
           getValueViaPath(application.externalData, 'parsedSalaryReport.date'),
         ),
-        providerId: doeCompany?.id ?? application.id,
+        providerId: application.id,
         companyAdminName: answers.chiefExecutive?.name ?? '',
         companyAdminEmail: answers.chiefExecutive?.email ?? '',
         companyAdminGender: answers.chiefExecutive?.gender
