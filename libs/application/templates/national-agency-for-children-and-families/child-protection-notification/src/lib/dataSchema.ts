@@ -196,7 +196,33 @@ export const dataSchema = z.object({
   serviceProvider: serviceProviderSchema,
   child: childSchema.optional(),
   parents: parentsSchema.optional(),
-  protectiveFactors: z.record(z.unknown()).optional(),
+  protectiveFactors: z
+    .record(z.unknown())
+    .optional()
+    .superRefine((data, ctx) => {
+      if (!data) return
+      for (const [sectionCode, sectionAnswers] of Object.entries(data)) {
+        if (!sectionAnswers || typeof sectionAnswers !== 'object') continue
+        const section = sectionAnswers as Record<string, unknown>
+        for (const [key, value] of Object.entries(section)) {
+          if (
+            /^sub\d+$/.test(key) &&
+            Array.isArray(value) &&
+            value.includes(YES)
+          ) {
+            const itemsKey = `${key}Items`
+            const items = section[itemsKey]
+            if (!Array.isArray(items) || items.length === 0) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: [sectionCode, itemsKey],
+                params: errorMessages.required,
+              })
+            }
+          }
+        }
+      }
+    }),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

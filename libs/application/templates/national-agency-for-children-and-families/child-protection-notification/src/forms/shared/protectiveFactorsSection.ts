@@ -51,8 +51,9 @@ export const protectiveFactorsSection = buildSection({
                   buildSelectField({
                     id: `protectiveFactors.${section.code}.sub${subIndex}Items`,
                     title: protectiveFactorsMessages.shared.itemsLabel,
+                    placeholder:
+                      protectiveFactorsMessages.shared.itemsPlaceholder,
                     isMulti: true,
-                    doesNotRequireAnswer: true,
                     condition: (answers: FormValue) => {
                       const { protectiveFactors } =
                         getApplicationAnswers(answers)

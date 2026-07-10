@@ -18,6 +18,11 @@ export const protectiveFactorsMessages = {
       defaultMessage: 'Eiginleikar',
       description: 'Label for the sub-category items multi-select',
     },
+    itemsPlaceholder: {
+      id: 'cpn.application:protectiveFactors.shared.itemsPlaceholder',
+      defaultMessage: 'Veldu þá eiginleika sem eiga við',
+      description: 'Placeholder for the sub-category items multi-select',
+    },
   }),
   unborn: defineMessages({
     description: {
