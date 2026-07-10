@@ -9,8 +9,12 @@ import {
   PaymentsApi,
   VerificationStatusResponse,
   VerificationCallbackInput,
+  GetPaymentFlowDTOBankTransferPendingStatusEnum,
+  GetPaymentFlowDTOLastBankTransferFailureEnum,
   GetPaymentFlowDTOPaymentStatusEnum,
   CreateBankTransferInputLocaleEnum,
+  VerifyBankTransferResponsePendingStatusEnum,
+  VerifyBankTransferResponseFailureReasonEnum,
 } from '@island.is/clients/payments'
 
 import { VerifyCardInput } from './dto/verifyCard.input'
@@ -33,6 +37,44 @@ import { VerifyBankTransferInput } from './dto/verifyBankTransfer.input'
 import { VerifyBankTransferResponse } from './dto/verifyBankTransfer.response'
 import { CancelBankTransferInput } from './dto/cancelBankTransfer.input'
 import { CancelBankTransferResponse } from './dto/cancelBankTransfer.response'
+
+const toRegisteredPendingStatus = (
+  pendingStatus?: VerifyBankTransferResponsePendingStatusEnum,
+): GetPaymentFlowDTOBankTransferPendingStatusEnum | undefined => {
+  switch (pendingStatus) {
+    case undefined:
+      return undefined
+    case VerifyBankTransferResponsePendingStatusEnum.sca_required:
+      return GetPaymentFlowDTOBankTransferPendingStatusEnum.sca_required
+    case VerifyBankTransferResponsePendingStatusEnum.processing:
+      return GetPaymentFlowDTOBankTransferPendingStatusEnum.processing
+    default: {
+      const exhaustive: never = pendingStatus
+      return exhaustive
+    }
+  }
+}
+
+const toRegisteredFailureReason = (
+  failureReason?: VerifyBankTransferResponseFailureReasonEnum,
+): GetPaymentFlowDTOLastBankTransferFailureEnum | undefined => {
+  switch (failureReason) {
+    case undefined:
+      return undefined
+    case VerifyBankTransferResponseFailureReasonEnum.rejected:
+      return GetPaymentFlowDTOLastBankTransferFailureEnum.rejected
+    case VerifyBankTransferResponseFailureReasonEnum.cancelled:
+      return GetPaymentFlowDTOLastBankTransferFailureEnum.cancelled
+    case VerifyBankTransferResponseFailureReasonEnum.error:
+      return GetPaymentFlowDTOLastBankTransferFailureEnum.error
+    case VerifyBankTransferResponseFailureReasonEnum.expired:
+      return GetPaymentFlowDTOLastBankTransferFailureEnum.expired
+    default: {
+      const exhaustive: never = failureReason
+      return exhaustive
+    }
+  }
+}
 
 @Injectable()
 export class PaymentsService {
@@ -146,9 +188,15 @@ export class PaymentsService {
   async verifyBankTransfer(
     verifyBankTransferInput: VerifyBankTransferInput,
   ): Promise<VerifyBankTransferResponse> {
-    return this.paymentsApi.bankTransferControllerVerify({
+    const response = await this.paymentsApi.bankTransferControllerVerify({
       verifyBankTransferInput,
     })
+
+    return {
+      ...response,
+      pendingStatus: toRegisteredPendingStatus(response.pendingStatus),
+      failureReason: toRegisteredFailureReason(response.failureReason),
+    }
   }
 
   async cancelBankTransfer(

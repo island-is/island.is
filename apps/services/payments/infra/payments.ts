@@ -45,6 +45,9 @@ const env = {
     staging: '300', // 5 minutes
     prod: '600', // 10 minutes
   },
+  // Origin of the Blikk onboarding app: a DRAFT payment whose scaRedirectUrl points here
+  // requires payer onboarding before SCA (the FE redirects there instead of rendering SCA).
+  BLIKK_ONBOARDING_URL: 'https://light.blikk.tech',
 }
 
 // common database configuration
