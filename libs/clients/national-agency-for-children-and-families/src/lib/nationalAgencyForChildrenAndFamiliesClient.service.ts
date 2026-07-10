@@ -1,6 +1,10 @@
 import { Auth, AuthMiddleware, type User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
-import { ExternalCategoryResponse, ExternalDropdownApi } from '../../gen/fetch'
+import {
+  ExternalCategoryResponse,
+  ExternalDropdownApi,
+  ProtectiveFactorSectionDto,
+} from '../../gen/fetch'
 
 @Injectable()
 export class NationalAgencyForChildrenAndFamiliesClientService {
@@ -11,5 +15,13 @@ export class NationalAgencyForChildrenAndFamiliesClientService {
 
   async getCategories(user: User): Promise<ExternalCategoryResponse[]> {
     return await this.externalDropdownApiWithAuth(user).externalCategories()
+  }
+
+  async getProtectiveFactors(
+    user: User,
+  ): Promise<ProtectiveFactorSectionDto[]> {
+    return await this.externalDropdownApiWithAuth(
+      user,
+    ).externalProtectiveFactors()
   }
 }

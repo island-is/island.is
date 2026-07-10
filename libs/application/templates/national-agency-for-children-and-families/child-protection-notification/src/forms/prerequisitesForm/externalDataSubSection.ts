@@ -4,7 +4,11 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { UserProfileApi } from '@island.is/application/types'
-import { CategoriesApi, IdentityApiProvider } from '../../dataProviders'
+import {
+  CategoriesApi,
+  IdentityApiProvider,
+  ProtectiveFactorsApi,
+} from '../../dataProviders'
 import { prerequisitesMessages } from '../../lib/messages'
 
 export const externalDataSubSection = buildSubSection({
@@ -31,7 +35,9 @@ export const externalDataSubSection = buildSubSection({
         buildDataProviderItem({
           provider: CategoriesApi,
         }),
-        // Add more data providers as needed
+        buildDataProviderItem({
+          provider: ProtectiveFactorsApi,
+        }),
       ],
     }),
   ],
