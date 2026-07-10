@@ -93,10 +93,12 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
       doesNotRequireAnswer: true,
       options: ({ externalData }) => {
         const { genders } = getApplicationExternalData(externalData)
-        return genders
-          // Exclude child genders (3=Drengur, 4=Stúlka) and unborn (5=Ófætt)
-          .filter((g) => !['3', '4', '5'].includes(g.value ?? ''))
-          .map((g) => ({ value: g.value ?? '', label: g.label ?? '' }))
+        return (
+          genders
+            // Exclude child genders (3=Drengur, 4=Stúlka) and unborn (5=Ófætt)
+            .filter((g) => !['3', '4', '5'].includes(g.value ?? ''))
+            .map((g) => ({ value: g.value ?? '', label: g.label ?? '' }))
+        )
       },
       condition: doesNotKnowParentIds,
     }),

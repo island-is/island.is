@@ -54,10 +54,12 @@ export const childInfoManualSection = buildSection({
           doesNotRequireAnswer: true,
           options: ({ externalData }) => {
             const { genders } = getApplicationExternalData(externalData)
-            return genders
-              // Exclude adult genders (1=Karlmaður, 2=Kona) and unborn (5=Ófætt)
-              .filter((g) => !['1', '2', '5'].includes(g.value ?? ''))
-              .map((g) => ({ value: g.value ?? '', label: g.label ?? '' }))
+            return (
+              genders
+                // Exclude adult genders (1=Karlmaður, 2=Kona) and unborn (5=Ófætt)
+                .filter((g) => !['1', '2', '5'].includes(g.value ?? ''))
+                .map((g) => ({ value: g.value ?? '', label: g.label ?? '' }))
+            )
           },
         }),
         buildCheckboxField({

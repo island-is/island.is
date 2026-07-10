@@ -35,4 +35,3 @@ export enum NoNationalIdReason {
   TRAVELER = 'traveler',
   BORDER_RECEPTION = 'borderReception',
 }
-
