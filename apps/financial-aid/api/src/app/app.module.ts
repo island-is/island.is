@@ -1,3 +1,7 @@
+// Loaded at runtime by @nestjs/apollo's Apollo driver via a dynamic require;
+// imported here so Nx keeps it in the generated production package.json.
+import '@as-integrations/express5'
+
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { Module } from '@nestjs/common'
 import { ApolloDriver } from '@nestjs/apollo'

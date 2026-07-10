@@ -1,3 +1,7 @@
+// Loaded at runtime by @nestjs/apollo's Apollo driver via a dynamic require;
+// imported here so Nx keeps it in the generated production package.json.
+import '@as-integrations/express5'
+
 import { ApolloDriver } from '@nestjs/apollo'
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
