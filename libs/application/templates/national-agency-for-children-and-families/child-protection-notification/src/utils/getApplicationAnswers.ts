@@ -174,6 +174,10 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const parent2 = getValueViaPath<Parent>(answers, 'parents.parent2')
 
+  const protectiveFactors = getValueViaPath<
+    Record<string, Record<string, string[]>>
+  >(answers, 'protectiveFactors')
+
   return {
     serviceProviderService,
     serviceProviderServiceType,
@@ -210,5 +214,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     parentsKnowsNationalIds,
     parent1,
     parent2,
+    protectiveFactors,
   }
 }

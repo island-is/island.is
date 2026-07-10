@@ -23,6 +23,12 @@ export class ChildProtectionNotificationService extends BaseTemplateApiService {
     )
   }
 
+  async getProtectiveFactors({ auth }: TemplateApiModuleActionProps) {
+    return await this.nationalAgencyForChildrenAndFamiliesClientService.getProtectiveFactors(
+      auth,
+    )
+  }
+
   async createApplication() {
     // TODO: Implement this
     await new Promise((resolve) => setTimeout(resolve, 2000))

@@ -11,6 +11,7 @@ import {
   parentsMessages,
   overviewMessages,
   prerequisitesMessages,
+  protectiveFactorsMessages,
 } from '../../lib/messages'
 import {
   isNoNationalId,
@@ -23,6 +24,7 @@ import {
   getParent1Items,
   getParent2Items,
   getParentsPreItems,
+  getProtectiveFactorsItems,
   getServiceProviderContactPersonItems,
   getServiceProviderItems,
 } from '../../utils/getOverviewItems'
@@ -91,6 +93,13 @@ export const overviewSection = buildSection({
               : parentsMessages.guardians.parent2Title,
           backId: 'parents',
           items: getParent2Items,
+          hideIfEmpty: true,
+        }),
+        buildOverviewField({
+          id: 'overview.protectiveFactors',
+          title: protectiveFactorsMessages.shared.sectionTitle,
+          backId: 'protectiveFactors',
+          items: getProtectiveFactorsItems,
           hideIfEmpty: true,
         }),
         buildSubmitField({

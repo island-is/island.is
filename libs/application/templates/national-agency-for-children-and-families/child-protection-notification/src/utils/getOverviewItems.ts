@@ -26,6 +26,7 @@ import {
 } from '../utils/constants'
 import { isKnowsNationalId, isNoNationalId } from './conditionUtils'
 import { getApplicationAnswers } from './getApplicationAnswers'
+import { getApplicationExternalData } from './getApplicationExternalData'
 import { Parent } from './types'
 
 const genderLabelMap = {
@@ -550,4 +551,53 @@ export const getParent2Items = (
 ): Array<KeyValueItem> => {
   const { parent2, parentsKnowsNationalIds } = getApplicationAnswers(answers)
   return buildParentItems(parent2, parentsKnowsNationalIds)
+}
+
+export const getProtectiveFactorsItems = (
+  answers: FormValue,
+  externalData: ExternalData,
+): Array<KeyValueItem> => {
+  const { protectiveFactors } = getApplicationAnswers(answers)
+  const { protectiveFactorSections: sections } =
+    getApplicationExternalData(externalData)
+
+  const items: Array<KeyValueItem> = []
+
+  for (const section of sections) {
+    const sectionAnswers = protectiveFactors?.[section.code ?? '']
+    const sectionItems: Array<KeyValueItem> = []
+
+    section.subCategories?.forEach((subCategory, subIndex) => {
+      if (!sectionAnswers?.[`sub${subIndex}`]?.includes(YES)) return
+
+      const selectedItemDescriptions = (
+        sectionAnswers[`sub${subIndex}Items`] ?? []
+      ).map(
+        (code) =>
+          subCategory.items?.find((i) => i.code === code)?.description ?? code,
+      )
+
+      sectionItems.push({
+        width: 'full',
+        keyText: subCategory.name ?? '',
+        valueText: selectedItemDescriptions,
+      })
+    })
+
+    if (sectionAnswers?.['dontKnow']?.length) {
+      sectionItems.push({
+        width: 'full',
+        keyText: section.dontKnowDescription ?? '',
+      })
+    }
+
+    if (sectionItems.length > 0) {
+      items.push(
+        { width: 'full', keyText: section.name ?? '' },
+        ...sectionItems,
+      )
+    }
+  }
+
+  return items
 }

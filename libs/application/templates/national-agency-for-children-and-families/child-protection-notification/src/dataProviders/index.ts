@@ -16,3 +16,9 @@ export const CategoriesApi = defineTemplateApi({
   externalDataId: 'categories',
   namespace: ApplicationTypes.CHILD_PROTECTION_NOTIFICATION,
 })
+
+export const ProtectiveFactorsApi = defineTemplateApi({
+  action: 'getProtectiveFactors',
+  externalDataId: 'protectiveFactors',
+  namespace: ApplicationTypes.CHILD_PROTECTION_NOTIFICATION,
+})
