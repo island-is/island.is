@@ -609,19 +609,23 @@ export class HealthDirectorateService {
     auth: Auth,
     input: HealthDirectorateAppointmentsInput,
   ): Promise<Appointments | null> {
-    const data = await this.healthApi.getAppointments(
+    const page = input.page ?? 1
+    const pageSize = input.pageSize ?? 10
+    const result = await this.healthApi.getPaginatedAppointments(
       auth,
+      page,
+      pageSize,
       input.from,
       input.status
         ?.map((status) => mapAppointmentStatus(status))
         .filter(isDefined),
     )
-    if (!data) {
+    if (!result) {
       return null
     }
 
     // Sort data by startTime before mapping
-    const sortedData = [...data].sort((a, b) => {
+    const sortedData = [...result.data].sort((a, b) => {
       if (!a.startTime || !b.startTime) return 0
       return new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
     })
@@ -653,7 +657,7 @@ export class HealthDirectorateService {
           })
           .filter(isDefined) ?? [],
     }))
-    return { data: appointments }
+    return { data: appointments, totalCount: result.pagination.totalResults }
   }
 
   public async getAppointmentById(

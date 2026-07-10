@@ -3,7 +3,6 @@ import {
   Box,
   DatePicker,
   Filter,
-  Input,
   Pagination,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -14,9 +13,7 @@ import {
   m,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
-import { debounceTime } from '@island.is/shared/constants'
 import { useEffect, useState } from 'react'
-import { useDebounce } from 'react-use'
 import { messages } from '../../lib/messages'
 import { DEFAULT_APPOINTMENTS_STATUS } from '../../utils/constants'
 import Appointments from '../HealthOverview/components/Appointments'
@@ -43,20 +40,9 @@ const AppointmentsOverview = () => {
     statuses: [],
     dates: {},
   })
-  const [searchTerm, setSearchTerm] = useState<string>('')
-  const [activeSearch, setActiveSearch] = useState<string>('')
-
-  useDebounce(
-    () => {
-      setActiveSearch(searchTerm)
-    },
-    debounceTime.search,
-    [searchTerm],
-  )
-
   useEffect(() => {
     setPage(1)
-  }, [filter, activeSearch])
+  }, [filter])
 
   const { data, loading, error } = useGetAppointmentsQuery({
     variables: {
@@ -67,7 +53,6 @@ const AppointmentsOverview = () => {
           : DEFAULT_APPOINTMENTS_STATUS,
       page,
       pageSize: DEFAULT_PAGE_SIZE,
-      search: activeSearch || undefined,
     },
   })
 
@@ -101,8 +86,7 @@ const AppointmentsOverview = () => {
           !error &&
           (hasAppointments ||
             filter.statuses.length > 0 ||
-            filter.dates?.from ||
-            searchTerm !== '') && (
+            filter.dates?.from) && (
             <Box marginBottom={[1, 1, 3]}>
               <Filter
                 labelClearAll={formatMessage(m.clearAllFilters)}
@@ -111,22 +95,8 @@ const AppointmentsOverview = () => {
                 reverse
                 variant="popover"
                 align="left"
-                filterInput={
-                  <Input
-                    name="nameSearch"
-                    placeholder={formatMessage(
-                      messages.appointmentSearchPlaceholder,
-                    )}
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    icon={{ type: 'outline', name: 'search' }}
-                    size="xs"
-                    backgroundColor="blue"
-                  />
-                }
                 onFilterClear={() => {
                   setFilter({ statuses: [], dates: undefined })
-                  setSearchTerm('')
                 }}
               >
                 {/* Hide until we decide to display more than booked (upcoming) appointments */}

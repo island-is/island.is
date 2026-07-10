@@ -3,14 +3,12 @@ query getAppointments(
   $status: [HealthDirectorateAppointmentStatus!]
   $page: Int
   $pageSize: Int
-  $search: String
 ) {
   healthDirectorateAppointments(
     from: $from
     status: $status
     page: $page
     pageSize: $pageSize
-    search: $search
   ) {
     data {
       __typename
