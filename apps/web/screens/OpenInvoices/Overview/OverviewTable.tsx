@@ -65,7 +65,7 @@ export const OverviewTable = ({
   }
 
   return (
-    <Box>
+    <Box background="white">
       <InteractiveTable
         columns={columns}
         data={data}
