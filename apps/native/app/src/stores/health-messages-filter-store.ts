@@ -10,10 +10,11 @@ const initialFilters: HealthMessagesFilterState = {
   archived: false,
 }
 
-export const healthMessagesFilterStore =
-  create<HealthMessagesFilterState>(() => ({
+export const healthMessagesFilterStore = create<HealthMessagesFilterState>(
+  () => ({
     ...initialFilters,
-  }))
+  }),
+)
 
 export const useHealthMessagesFilterStore = healthMessagesFilterStore
 

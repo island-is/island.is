@@ -201,10 +201,10 @@ const hide = (id?: number) => {
   toastStore.setState({ current: null })
 }
 
-const variantShortcut = (variant: ToastVariant) => (
-  title: string,
-  options?: ShowOptions,
-): number => show({ variant, title, ...options })
+const variantShortcut =
+  (variant: ToastVariant) =>
+  (title: string, options?: ShowOptions): number =>
+    show({ variant, title, ...options })
 
 export const toast = {
   show,

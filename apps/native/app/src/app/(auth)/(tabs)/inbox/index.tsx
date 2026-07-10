@@ -200,10 +200,8 @@ export default function InboxScreen() {
     },
   })
 
-  const [
-    bulkSelectActionMutation,
-    { loading: bulkSelectActionLoading },
-  ] = usePostMailActionMutationMutation()
+  const [bulkSelectActionMutation, { loading: bulkSelectActionLoading }] =
+    usePostMailActionMutationMutation()
 
   const availableSenders = res.data?.documentsV2?.senders ?? []
 
@@ -232,36 +230,34 @@ export default function InboxScreen() {
   const allDocumentsSelected =
     selectedItems.length === res.data?.documentsV2?.data?.length
 
-  const [
-    markAllAsRead,
-    { loading: markAllAsReadLoading },
-  ] = useMarkAllDocumentsAsReadMutation({
-    onCompleted: (result) => {
-      if (result.documentsV2MarkAllAsRead?.success) {
-        // If all documents are successfully marked as read, update cache to reflect that
-        for (const document of res.data?.documentsV2?.data || []) {
+  const [markAllAsRead, { loading: markAllAsReadLoading }] =
+    useMarkAllDocumentsAsReadMutation({
+      onCompleted: (result) => {
+        if (result.documentsV2MarkAllAsRead?.success) {
+          // If all documents are successfully marked as read, update cache to reflect that
+          for (const document of res.data?.documentsV2?.data || []) {
+            client.cache.modify({
+              id: client.cache.identify(document),
+              fields: {
+                opened: () => true,
+              },
+            })
+          }
+
+          // Set unread count to 0 so red badge disappears
           client.cache.modify({
-            id: client.cache.identify(document),
             fields: {
-              opened: () => true,
+              documentsV2: (existing) => {
+                return {
+                  ...existing,
+                  unreadCount: 0,
+                }
+              },
             },
           })
         }
-
-        // Set unread count to 0 so red badge disappears
-        client.cache.modify({
-          fields: {
-            documentsV2: (existing) => {
-              return {
-                ...existing,
-                unreadCount: 0,
-              }
-            },
-          },
-        })
-      }
-    },
-  })
+      },
+    })
 
   const keyExtractor = useCallback((item: ListItem) => {
     return item.id.toString()
