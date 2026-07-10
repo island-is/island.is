@@ -69,7 +69,9 @@ const Appointments: React.FC<Props> = ({ data, showLinkButton }) => {
         },
       })) ?? []
 
-  const isNarrow = (appointments?.length ?? 0) <= 1 && isDesktop
+  /* InfoCardGrid renders every card at half width on desktop, 
+  so the header only needs to match when a single card row is shown */
+  const isNarrow = isDesktop && cards.length <= 1
 
   return (
     <Box marginBottom={2}>

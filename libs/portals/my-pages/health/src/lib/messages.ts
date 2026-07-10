@@ -2761,7 +2761,7 @@ export const messages = defineMessages({
   },
   contactPhoneNumber: {
     id: 'sp.health:contact-phone-number',
-    defaultMessage: '5131700',
+    defaultMessage: '+3545131700',
   },
   contactPhoneDesc: {
     id: 'sp.health:contact-phone-desc',

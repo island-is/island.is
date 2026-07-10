@@ -54,10 +54,6 @@ export const HealthOverview = () => {
     Features.isNewHealthOverviewPageEnabled,
     false,
   )
-  const { value: showQuickLinks } = useFeatureFlag(
-    Features.servicePortalHealthMedicineLandlaeknirPageEnabled,
-    false,
-  )
 
   const { data, error, loading } = useGetInsuranceOverviewQuery()
   const {
@@ -161,7 +157,7 @@ export const HealthOverview = () => {
             <Text variant="default" paddingTop={1}>
               {formatMessage(messages.healthOverviewIntro)}
             </Text>
-            {showQuickLinks && (
+            {isNewHealthOverviewPageEnabled && (
               <Box marginTop={3}>
                 <Inline space={[1, 2]}>
                   {quickLinks.map((link) => (

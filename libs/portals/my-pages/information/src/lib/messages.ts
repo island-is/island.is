@@ -163,7 +163,7 @@ export const mInformationNotifications = defineMessages({
   },
   fetchErrorTitle: {
     id: 'sp.information-notifications:fetch-error-title',
-    defaultMessage: 'Engar tilkynningar fundust',
+    defaultMessage: 'Ekki tókst að sækja tilkynningar',
   },
 })
 

@@ -1,5 +1,5 @@
 import { Box, Icon, SkeletonLoader, Text } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { AvatarImage, LinkResolver, m } from '@island.is/portals/my-pages/core'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
@@ -19,11 +19,46 @@ interface Props {
   showViewAllArrow?: boolean
 }
 
+/* Problem doesn't fit here: its custom no_data layout renders
+   side-by-side (too wide for this card) and requires a body message.
+   This mirrors the empty-state styling of DocumentsEmpty instead. */
+const StateMessage = ({
+  title,
+  text,
+  imgSrc,
+}: {
+  title: string
+  text?: string
+  imgSrc: string
+}) => (
+  <Box
+    display="flex"
+    flexDirection="column"
+    alignItems="center"
+    paddingTop={2}
+    rowGap={2}
+    paddingX={[4, 4, 0]}
+  >
+    <Text variant="h4" textAlign="center">
+      {title}
+    </Text>
+    {text && (
+      <Text textAlign="center" whiteSpace="preLine">
+        {text}
+      </Text>
+    )}
+    <Box paddingTop={2}>
+      <img src={imgSrc} alt="" className={styles.stateImage} />
+    </Box>
+  </Box>
+)
+
 export const NotificationsBox = ({
   limit,
   title,
   showViewAllArrow = true,
 }: Props) => {
+  useNamespaces('sp.information-notifications')
   const { formatMessage, lang } = useLocale()
   const userInfo = useUserInfo()
   const hasDelegationAccess = hasNotificationScopes(userInfo?.scopes)
@@ -113,51 +148,18 @@ export const NotificationsBox = ({
       )}
 
       {!loading && !hasDelegationAccess && (
-        <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          paddingTop={2}
-          rowGap={2}
-          paddingX={[4, 4, 0]}
-        >
-          <Text variant="h4" textAlign="center">
-            {formatMessage(m.accessNeeded)}
-          </Text>
-          <Text textAlign="center" whiteSpace="preLine">
-            {formatMessage(m.accessDeniedText)}
-          </Text>
-          <Box paddingTop={2}>
-            <img
-              src="./assets/images/jobsGrid.svg"
-              alt=""
-              className={styles.stateImage}
-            />
-          </Box>
-        </Box>
+        <StateMessage
+          title={formatMessage(m.accessNeeded)}
+          text={formatMessage(m.accessDeniedText)}
+          imgSrc="./assets/images/jobsGrid.svg"
+        />
       )}
 
       {!loading && hasDelegationAccess && error && (
-        <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          paddingTop={2}
-          paddingBottom={2}
-          rowGap={2}
-          paddingX={[4, 4, 0]}
-        >
-          <Text variant="h4" textAlign="center">
-            {formatMessage(mInformationNotifications.fetchErrorTitle)}
-          </Text>
-          <Box paddingTop={2}>
-            <img
-              src="./assets/images/nodata.svg"
-              alt=""
-              className={styles.stateImage}
-            />
-          </Box>
-        </Box>
+        <StateMessage
+          title={formatMessage(mInformationNotifications.fetchErrorTitle)}
+          imgSrc="./assets/images/nodata.svg"
+        />
       )}
 
       {!loading &&

@@ -1,6 +1,6 @@
 import { Box, Icon, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { LinkResolver } from '@island.is/portals/my-pages/core'
+import { LinkResolver, parseFullNumber } from '@island.is/portals/my-pages/core'
 import { messages } from '../../..'
 import { HealthPaths } from '../../../lib/paths'
 import * as styles from './ContactLinks.css'
@@ -25,7 +25,9 @@ const ContactLinks = () => {
       title: formatMessage(messages.contactPhone),
       description: formatMessage(messages.contactPhoneDesc),
       emergencyDescription: formatMessage(messages.contactPhoneEmergencyDesc),
-      href: `tel:${formatMessage(messages.contactPhoneNumber)}`,
+      href: `tel:${parseFullNumber(
+        formatMessage(messages.contactPhoneNumber),
+      )}`,
     },
     {
       title: formatMessage(messages.contactSendMessage),
@@ -35,8 +37,10 @@ const ContactLinks = () => {
   ]
 
   const renderDescription = (link: ContactLinkItem) => (
-    <Text variant="medium" fontWeight="light" lineHeight="lg" color="dark400">
-      {link.description}{' '}
+    <>
+      <Text variant="medium" fontWeight="light" lineHeight="lg" color="dark400">
+        {link.description}
+      </Text>
       {link.emergencyDescription ? (
         <Text
           variant="medium"
@@ -47,7 +51,7 @@ const ContactLinks = () => {
           {link.emergencyDescription}
         </Text>
       ) : null}
-    </Text>
+    </>
   )
 
   const renderRowContent = (link: ContactLinkItem) => (
