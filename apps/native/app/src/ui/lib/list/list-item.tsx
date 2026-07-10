@@ -130,6 +130,16 @@ export function ListItem({
 }: ListItemProps) {
   const intl = useIntl()
   const hasTitle = !!title
+  const iconImage = (
+    <Image
+      source={
+        selectable && selected ? checkmarkIcon : (icon as ImageSourcePropType)
+      }
+      style={
+        selectable && selected ? styles.selectedIconImage : styles.iconImage
+      }
+    />
+  )
   return (
     <SafeAreaView style={[styles.host, unread && styles.hostUnread]}>
       <View
@@ -139,20 +149,15 @@ export function ListItem({
           selectable && !selected && styles.iconSelectable,
         ]}
       >
-        <Pressable hitSlop={24} onPress={onPressIcon}>
-          <Image
-            source={
-              selectable && selected
-                ? checkmarkIcon
-                : (icon as ImageSourcePropType)
-            }
-            style={
-              selectable && selected
-                ? styles.selectedIconImage
-                : styles.iconImage
-            }
-          />
-        </Pressable>
+        {/* Only wrap in a Pressable when the icon has its own action —
+            otherwise it would swallow taps meant for the whole row. */}
+        {onPressIcon ? (
+          <Pressable hitSlop={24} onPress={onPressIcon}>
+            {iconImage}
+          </Pressable>
+        ) : (
+          iconImage
+        )}
       </View>
       <View style={[styles.content, !hasTitle && styles.contentCentered]}>
         {hasTitle && (
