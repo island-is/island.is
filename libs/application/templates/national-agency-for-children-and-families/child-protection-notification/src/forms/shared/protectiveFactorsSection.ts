@@ -20,15 +20,19 @@ export const protectiveFactorsSection = buildSection({
     buildMultiField({
       id: 'protectiveFactors',
       title: protectiveFactorsMessages.shared.sectionTitle,
+      description: ({ answers }) =>
+        isUnborn(answers)
+          ? protectiveFactorsMessages.unborn.description
+          : protectiveFactorsMessages.shared.description,
       children: [
+        // TODO: Remove when the API exposes unborn-specific questions and the accordion below is extended to cover them.
         buildDescriptionField({
-          id: 'protectiveFactors.description',
-          description: ({ answers }) =>
-            isUnborn(answers)
-              ? protectiveFactorsMessages.unborn.description
-              : protectiveFactorsMessages.shared.description,
+          id: 'protectiveFactors.unbornPlaceholder',
+          title: '',
+          description: '',
+          doesNotRequireAnswer: true,
+          condition: isUnborn,
         }),
-        // TODO: When the API exposes unborn-specific questions, filter sections by child type here and remove the condition below.
         buildAccordionField({
           id: 'protectiveFactors',
           condition: (answers) => !isUnborn(answers),
