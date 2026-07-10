@@ -18,28 +18,14 @@ import {
   sharedMessages,
 } from '../lib/messages'
 import {
-  Gender,
   KnowsNationalId,
   NoNationalIdReason,
-  ParentGender,
   Pronoun,
 } from '../utils/constants'
 import { isKnowsNationalId, isNoNationalId } from './conditionUtils'
 import { getApplicationAnswers } from './getApplicationAnswers'
 import { getApplicationExternalData } from './getApplicationExternalData'
 import { Parent } from './types'
-
-const genderLabelMap = {
-  [Gender.GIRL]: childMessages.manualInfo.genderGirl,
-  [Gender.BOY]: childMessages.manualInfo.genderBoy,
-  [Gender.OTHER]: childMessages.manualInfo.genderOther,
-} as const
-
-const parentGenderLabelMap = {
-  [ParentGender.MALE]: parentsMessages.shared.genderMale,
-  [ParentGender.FEMALE]: parentsMessages.shared.genderFemale,
-  [ParentGender.NON_BINARY]: parentsMessages.shared.genderNonBinary,
-} as const
 
 const pronounLabelMap = {
   [Pronoun.HANN]: childMessages.nationalIdLookup.pronounHann,
@@ -320,8 +306,9 @@ export const getChildWithNationalIdItems = (
 
 export const getChildManualItems = (
   answers: FormValue,
-  _externalData: ExternalData,
+  externalData: ExternalData,
 ): Array<KeyValueItem> => {
+  const { genders } = getApplicationExternalData(externalData)
   const {
     childManualName,
     childManualAge,
@@ -353,10 +340,10 @@ export const getChildManualItems = (
     {
       width: 'half',
       keyText: childMessages.manualInfo.gender,
-      valueText: childManualGender
-        ? genderLabelMap[childManualGender as keyof typeof genderLabelMap] ??
-          childManualGender
-        : '',
+      valueText:
+        genders.find((g) => g.value === childManualGender)?.label ??
+        childManualGender ??
+        '',
       hideIfEmpty: true,
     },
     ...(childManualUsePronounAndPreferredName.includes(YES)
@@ -430,7 +417,9 @@ export const getChildManualItems = (
 const buildParentItems = (
   parent: Parent | undefined,
   knowsParentNationalIds: string | undefined,
+  externalData: ExternalData,
 ): Array<KeyValueItem> => {
+  const { genders } = getApplicationExternalData(externalData)
   if (knowsParentNationalIds === YES) {
     return [
       {
@@ -477,11 +466,10 @@ const buildParentItems = (
     {
       width: 'half',
       keyText: childMessages.manualInfo.gender,
-      valueText: parent?.gender
-        ? parentGenderLabelMap[
-            parent.gender as keyof typeof parentGenderLabelMap
-          ] ?? parent.gender
-        : '',
+      valueText:
+        genders.find((g) => g.value === parent?.gender)?.label ??
+        parent?.gender ??
+        '',
       hideIfEmpty: true,
     },
     {
@@ -539,18 +527,18 @@ export const getParentsPreItems = (
 
 export const getParent1Items = (
   answers: FormValue,
-  _externalData: ExternalData,
+  externalData: ExternalData,
 ): Array<KeyValueItem> => {
   const { parent1, parentsKnowsNationalIds } = getApplicationAnswers(answers)
-  return buildParentItems(parent1, parentsKnowsNationalIds)
+  return buildParentItems(parent1, parentsKnowsNationalIds, externalData)
 }
 
 export const getParent2Items = (
   answers: FormValue,
-  _externalData: ExternalData,
+  externalData: ExternalData,
 ): Array<KeyValueItem> => {
   const { parent2, parentsKnowsNationalIds } = getApplicationAnswers(answers)
-  return buildParentItems(parent2, parentsKnowsNationalIds)
+  return buildParentItems(parent2, parentsKnowsNationalIds, externalData)
 }
 
 export const getProtectiveFactorsItems = (
@@ -601,3 +589,4 @@ export const getProtectiveFactorsItems = (
 
   return items
 }
+

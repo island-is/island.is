@@ -27,8 +27,8 @@ import {
   knowsParentIds,
   isKnowsNationalId,
 } from '../../utils/conditionUtils'
-import { ParentGender } from '../../utils/constants'
 import { getApplicationAnswers } from '../../utils/getApplicationAnswers'
+import { getApplicationExternalData } from '../../utils/getApplicationExternalData'
 
 const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
   const base = `parents.${parentKey}`
@@ -91,20 +91,13 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
       placeholder: parentsMessages.shared.genderPlaceholder,
       width: 'half',
       doesNotRequireAnswer: true,
-      options: [
-        {
-          value: ParentGender.FEMALE,
-          label: parentsMessages.shared.genderFemale,
-        },
-        {
-          value: ParentGender.MALE,
-          label: parentsMessages.shared.genderMale,
-        },
-        {
-          value: ParentGender.NON_BINARY,
-          label: parentsMessages.shared.genderNonBinary,
-        },
-      ],
+      options: ({ externalData }) => {
+        const { genders } = getApplicationExternalData(externalData)
+        return genders
+          // Exclude child genders (3=Drengur, 4=Stúlka) and unborn (5=Ófætt)
+          .filter((g) => !['3', '4', '5'].includes(g.value ?? ''))
+          .map((g) => ({ value: g.value ?? '', label: g.label ?? '' }))
+      },
       condition: doesNotKnowParentIds,
     }),
 
