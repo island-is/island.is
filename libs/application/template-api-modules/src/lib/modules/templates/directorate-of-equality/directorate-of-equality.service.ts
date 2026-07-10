@@ -410,7 +410,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
         importedFromExcel: Boolean(
           getValueViaPath(application.externalData, 'parsedSalaryReport.date'),
         ),
-        providerId: doeCompany?.id ?? application.id,
+        providerId: application.id,
         companyAdminName: answers.chiefExecutive?.name ?? '',
         companyAdminEmail: answers.chiefExecutive?.email ?? '',
         companyAdminGender: answers.chiefExecutive?.gender
@@ -456,6 +456,45 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     } catch (error) {
       const errorDetails = this.extractFetchErrorDetails(error)
       this.logger.error('Failed to submit salary report', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...errorDetails,
+      })
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary: coreErrorMessages.defaultTemplateApiError,
+        },
+        errorDetails.status ?? 500,
+      )
+    }
+  }
+
+  async editOutliers({ auth, application }: TemplateApiModuleActionProps) {
+    const answers = application.answers as unknown as SalaryReportAnswers
+
+    const groups = (answers.salaryAnalysis?.outlierGroups ?? [])
+      .filter((g) => g.employeeOrdinals.length > 0)
+      .map((g) => ({
+        name: g.name,
+        reason: g.reason ?? '',
+        action: g.action ?? '',
+        signatureName: g.signatureName ?? '',
+        signatureRole: g.signatureRole ?? '',
+        employeeOrdinals: g.employeeOrdinals,
+      }))
+
+    try {
+      await this.directorateOfEqualityService.editOutliers(
+        auth,
+        application.id,
+        {
+          groups,
+        },
+      )
+    } catch (error) {
+      const errorDetails = this.extractFetchErrorDetails(error)
+      this.logger.error('Failed to edit outliers', {
         applicationId: application.id,
         context: LOGGING_CONTEXT,
         ...errorDetails,

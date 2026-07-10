@@ -148,7 +148,8 @@ export const messages = {
     }),
     generalInformation: defineMessages({
       sectionTitle: {
-        id: 'salaryReport.application:aboutTheCompany.generalInformation.sectionTitle',
+        id:
+          'salaryReport.application:aboutTheCompany.generalInformation.sectionTitle',
         defaultMessage: 'Almennar upplýsingar',
       },
       title: {
@@ -161,37 +162,45 @@ export const messages = {
           'Eftirfarandi upplýsingar eru sóttar sjálfkrafa frá fyrirtækjaskrá Skattsins og úr kerfum Jafnréttisstofu. Ef upplýsingar um fjölda starfsmanna vantar, verður fjöldi útreiknaður útfrá skilum á þessari skýrslu.',
       },
       companyName: {
-        id: 'salaryReport.application:aboutTheCompany.generalInformation.companyName',
+        id:
+          'salaryReport.application:aboutTheCompany.generalInformation.companyName',
         defaultMessage: 'Nafn fyrirtækis',
       },
       nationalId: {
-        id: 'salaryReport.application:aboutTheCompany.generalInformation.nationalId',
+        id:
+          'salaryReport.application:aboutTheCompany.generalInformation.nationalId',
         defaultMessage: 'Kennitala',
       },
       address: {
-        id: 'salaryReport.application:aboutTheCompany.generalInformation.address',
+        id:
+          'salaryReport.application:aboutTheCompany.generalInformation.address',
         defaultMessage: 'Heimilisfang',
       },
       postalCode: {
-        id: 'salaryReport.application:aboutTheCompany.generalInformation.postalCode',
+        id:
+          'salaryReport.application:aboutTheCompany.generalInformation.postalCode',
         defaultMessage: 'Póstnúmer',
       },
       municipality: {
-        id: 'salaryReport.application:aboutTheCompany.generalInformation.municipality',
+        id:
+          'salaryReport.application:aboutTheCompany.generalInformation.municipality',
         defaultMessage: 'Sveitarfélag',
       },
       numberOfEmployees: {
-        id: 'salaryReport.application:aboutTheCompany.generalInformation.numberOfEmployees',
+        id:
+          'salaryReport.application:aboutTheCompany.generalInformation.numberOfEmployees',
         defaultMessage: 'Fjöldi starfsmanna',
       },
       isatClassification: {
-        id: 'salaryReport.application:aboutTheCompany.generalInformation.isatClassification',
+        id:
+          'salaryReport.application:aboutTheCompany.generalInformation.isatClassification',
         defaultMessage: 'ÍSAT atvinnugreinarflokkun',
       },
     }),
     chiefExecutive: defineMessages({
       sectionTitle: {
-        id: 'salaryReport.application:aboutTheCompany.chiefExecutive.sectionTitle',
+        id:
+          'salaryReport.application:aboutTheCompany.chiefExecutive.sectionTitle',
         defaultMessage: 'Æðsti stjórnandi',
       },
       title: {
@@ -208,7 +217,8 @@ export const messages = {
         defaultMessage: 'Nafn',
       },
       namePlaceholder: {
-        id: 'salaryReport.application:aboutTheCompany.chiefExecutive.namePlaceholder',
+        id:
+          'salaryReport.application:aboutTheCompany.chiefExecutive.namePlaceholder',
         defaultMessage: 'Nafn æðsta stjórnanda',
       },
       email: {
@@ -216,7 +226,8 @@ export const messages = {
         defaultMessage: 'Netfang',
       },
       emailPlaceholder: {
-        id: 'salaryReport.application:aboutTheCompany.chiefExecutive.emailPlaceholder',
+        id:
+          'salaryReport.application:aboutTheCompany.chiefExecutive.emailPlaceholder',
         defaultMessage: 'Netfang æðsta stjórnanda',
       },
       gender: {
@@ -224,21 +235,25 @@ export const messages = {
         defaultMessage: 'Kyn',
       },
       genderMale: {
-        id: 'salaryReport.application:aboutTheCompany.chiefExecutive.genderMale',
+        id:
+          'salaryReport.application:aboutTheCompany.chiefExecutive.genderMale',
         defaultMessage: 'Karl',
       },
       genderFemale: {
-        id: 'salaryReport.application:aboutTheCompany.chiefExecutive.genderFemale',
+        id:
+          'salaryReport.application:aboutTheCompany.chiefExecutive.genderFemale',
         defaultMessage: 'Kona',
       },
       genderNonBinary: {
-        id: 'salaryReport.application:aboutTheCompany.chiefExecutive.genderNonBinary',
+        id:
+          'salaryReport.application:aboutTheCompany.chiefExecutive.genderNonBinary',
         defaultMessage: 'Hlutlægt',
       },
     }),
     contactPerson: defineMessages({
       sectionTitle: {
-        id: 'salaryReport.application:aboutTheCompany.contactPerson.sectionTitle',
+        id:
+          'salaryReport.application:aboutTheCompany.contactPerson.sectionTitle',
         defaultMessage: 'Tengiliður',
       },
       title: {
@@ -251,7 +266,8 @@ export const messages = {
           'Tengiliður er sá aðili sem ber ábyrgð á skýrslugjöfinni auk stjórnanda. Við höfum samskipti við tengiliðinn svo mikilvægt er að hann sé með á nótunum.',
       },
       contactInfoTitle: {
-        id: 'salaryReport.application:aboutTheCompany.contactPerson.contactInfoTitle',
+        id:
+          'salaryReport.application:aboutTheCompany.contactPerson.contactInfoTitle',
         defaultMessage: 'Upplýsingar um tengilið',
       },
       name: {
@@ -259,7 +275,8 @@ export const messages = {
         defaultMessage: 'Nafn',
       },
       namePlaceholder: {
-        id: 'salaryReport.application:aboutTheCompany.contactPerson.namePlaceholder',
+        id:
+          'salaryReport.application:aboutTheCompany.contactPerson.namePlaceholder',
         defaultMessage: 'Nafn tengiliðs',
       },
       email: {
@@ -267,7 +284,8 @@ export const messages = {
         defaultMessage: 'Netfang',
       },
       emailPlaceholder: {
-        id: 'salaryReport.application:aboutTheCompany.contactPerson.emailPlaceholder',
+        id:
+          'salaryReport.application:aboutTheCompany.contactPerson.emailPlaceholder',
         defaultMessage: 'Netfang tengiliðs',
       },
       phone: {
@@ -275,13 +293,15 @@ export const messages = {
         defaultMessage: 'Símanúmer',
       },
       phonePlaceholder: {
-        id: 'salaryReport.application:aboutTheCompany.contactPerson.phonePlaceholder',
+        id:
+          'salaryReport.application:aboutTheCompany.contactPerson.phonePlaceholder',
         defaultMessage: 'Símanúmer tengiliðs',
       },
     }),
     employeeCount: defineMessages({
       sectionTitle: {
-        id: 'salaryReport.application:aboutTheCompany.employeeCount.sectionTitle',
+        id:
+          'salaryReport.application:aboutTheCompany.employeeCount.sectionTitle',
         defaultMessage: 'Meðalfjöldi starfsmanna',
       },
       title: {
@@ -308,7 +328,8 @@ export const messages = {
     }),
     subsidiaries: defineMessages({
       sectionTitle: {
-        id: 'salaryReport.application:aboutTheCompany.subsidiaries.sectionTitle',
+        id:
+          'salaryReport.application:aboutTheCompany.subsidiaries.sectionTitle',
         defaultMessage: 'Dótturfyrirtæki',
       },
       title: {
@@ -321,7 +342,8 @@ export const messages = {
           'Hægt er að skila inn einni áætlun fyrir móður- og dótturfyrirtæki.',
       },
       includesSubsidiariesTitle: {
-        id: 'salaryReport.application:aboutTheCompany.subsidiaries.includesSubsidiariesTitle',
+        id:
+          'salaryReport.application:aboutTheCompany.subsidiaries.includesSubsidiariesTitle',
         defaultMessage: 'Nær launaskýrsla einnig til dótturfyrirtækja?',
       },
       yes: {
@@ -333,31 +355,38 @@ export const messages = {
         defaultMessage: 'Nei',
       },
       tableFormTitle: {
-        id: 'salaryReport.application:aboutTheCompany.subsidiaries.tableFormTitle',
+        id:
+          'salaryReport.application:aboutTheCompany.subsidiaries.tableFormTitle',
         defaultMessage: 'Upplýsingar um dótturfyrirtæki',
       },
       tableAddButton: {
-        id: 'salaryReport.application:aboutTheCompany.subsidiaries.tableAddButton',
+        id:
+          'salaryReport.application:aboutTheCompany.subsidiaries.tableAddButton',
         defaultMessage: 'Bæta við dótturfyrirtæki',
       },
       tableSaveButton: {
-        id: 'salaryReport.application:aboutTheCompany.subsidiaries.tableSaveButton',
+        id:
+          'salaryReport.application:aboutTheCompany.subsidiaries.tableSaveButton',
         defaultMessage: 'Vista dótturfyrirtæki',
       },
       tableRemoveButton: {
-        id: 'salaryReport.application:aboutTheCompany.subsidiaries.tableRemoveButton',
+        id:
+          'salaryReport.application:aboutTheCompany.subsidiaries.tableRemoveButton',
         defaultMessage: 'Eyða dótturfyrirtæki',
       },
       tableEditButton: {
-        id: 'salaryReport.application:aboutTheCompany.subsidiaries.tableEditButton',
+        id:
+          'salaryReport.application:aboutTheCompany.subsidiaries.tableEditButton',
         defaultMessage: 'Breyta dótturfyrirtæki',
       },
       tableHeaderName: {
-        id: 'salaryReport.application:aboutTheCompany.subsidiaries.tableHeaderName',
+        id:
+          'salaryReport.application:aboutTheCompany.subsidiaries.tableHeaderName',
         defaultMessage: 'Nafn fyrirtækis',
       },
       tableHeaderNationalId: {
-        id: 'salaryReport.application:aboutTheCompany.subsidiaries.tableHeaderNationalId',
+        id:
+          'salaryReport.application:aboutTheCompany.subsidiaries.tableHeaderNationalId',
         defaultMessage: 'Kennitala',
       },
     }),
@@ -542,11 +571,13 @@ export const messages = {
           'Gott er að gæta þess að jafnvægi sé milli ólíkra hæfniþátta þar sem við á; til dæmis að meta andlegt álag ef líkamlegt álag er metið. Mat á ábyrgð getur að sama skapi reynst snúið en störf í umönnun eða þjónustu geta til að mynda falið í sér vanmetna ábyrgð ef eingöngu er horft til ábyrgðar á fjármunum.',
       },
       personalFactorGroupTitle: {
-        id: 'salaryReport.application:report.subCriteria.personalFactorGroupTitle',
+        id:
+          'salaryReport.application:report.subCriteria.personalFactorGroupTitle',
         defaultMessage: 'Persónubundinn þáttur',
       },
       personalFactorGroupIntro: {
-        id: 'salaryReport.application:report.subCriteria.personalFactorGroupIntro',
+        id:
+          'salaryReport.application:report.subCriteria.personalFactorGroupIntro',
         defaultMessage:
           'Mikilvægt er að einstaklingsbundnu viðmiðin séu hlutlæg, gagnsæ og sanngjörn. Illa skilgreind viðmið geta leitt til ómeðvitaðrar mismununar og óútskýrðs launamunar. Gott er að velja fá og skýr viðmið sem byggð eru á sannreynanlegum þáttum sem styðja markmið um jafnræði og samræmi í ákvörðunum um laun.',
       },
@@ -616,19 +647,23 @@ export const messages = {
       // Icelandic labels below are best-guess mappings of the API fields —
       // adjust wording as needed.
       additionalFixedOvertimeLabel: {
-        id: 'salaryReport.application:report.employees.additionalFixedOvertimeLabel',
+        id:
+          'salaryReport.application:report.employees.additionalFixedOvertimeLabel',
         defaultMessage: 'Föst yfirvinna',
       },
       additionalFixedCarAllowanceLabel: {
-        id: 'salaryReport.application:report.employees.additionalFixedCarAllowanceLabel',
+        id:
+          'salaryReport.application:report.employees.additionalFixedCarAllowanceLabel',
         defaultMessage: 'Föst bifreiðahlunnindi',
       },
       bonusOccasionalCarAllowanceLabel: {
-        id: 'salaryReport.application:report.employees.bonusOccasionalCarAllowanceLabel',
+        id:
+          'salaryReport.application:report.employees.bonusOccasionalCarAllowanceLabel',
         defaultMessage: 'Tilfallandi bifreiðahlunnindi',
       },
       bonusOccasionalOvertimeLabel: {
-        id: 'salaryReport.application:report.employees.bonusOccasionalOvertimeLabel',
+        id:
+          'salaryReport.application:report.employees.bonusOccasionalOvertimeLabel',
         defaultMessage: 'Tilfallandi yfirvinna',
       },
       bonusPaymentsLabel: {
@@ -695,7 +730,8 @@ export const messages = {
         defaultMessage: '{score}/{max} stig',
       },
       subCriterionInfo: {
-        id: 'salaryReport.application:report.jobClassification.subCriterionInfo',
+        id:
+          'salaryReport.application:report.jobClassification.subCriterionInfo',
         defaultMessage: '{description} {weight}% = {max} stig',
       },
       noRolesMessage: {
@@ -706,7 +742,8 @@ export const messages = {
     }),
     employeeClassification: defineMessages({
       sectionTitle: {
-        id: 'salaryReport.application:report.employeeClassification.sectionTitle',
+        id:
+          'salaryReport.application:report.employeeClassification.sectionTitle',
         defaultMessage: 'Flokkun starfsmanna',
       },
       title: {
@@ -746,7 +783,8 @@ export const messages = {
     }),
     improvementPlan: defineMessages({
       sectionTitle: {
-        id: 'salaryReport.application:salaryAnalysis.improvementPlan.sectionTitle',
+        id:
+          'salaryReport.application:salaryAnalysis.improvementPlan.sectionTitle',
         defaultMessage: 'Úrbótaáætlun',
       },
       title: {
@@ -795,11 +833,13 @@ export const messages = {
         defaultMessage: 'Launamunur',
       },
       outliersFoundTitle: {
-        id: 'salaryReport.application:salaryAnalysis.results.outliersFoundTitle',
+        id:
+          'salaryReport.application:salaryAnalysis.results.outliersFoundTitle',
         defaultMessage: '{count} frávik fundust',
       },
       outliersFoundDescription: {
-        id: 'salaryReport.application:salaryAnalysis.results.outliersFoundDescription',
+        id:
+          'salaryReport.application:salaryAnalysis.results.outliersFoundDescription',
         defaultMessage:
           'Farið er nánar yfir frávikin og skýringar á næsta skrefi, Úrbótaáætlun.',
       },
@@ -814,7 +854,8 @@ export const messages = {
         defaultMessage: 'Frávik',
       },
       employeeColumn: {
-        id: 'salaryReport.application:salaryAnalysis.outlierGroup.employeeColumn',
+        id:
+          'salaryReport.application:salaryAnalysis.outlierGroup.employeeColumn',
         defaultMessage: 'Nafn',
       },
       roleColumn: {
@@ -826,36 +867,44 @@ export const messages = {
         defaultMessage: 'Kyn',
       },
       directionColumn: {
-        id: 'salaryReport.application:salaryAnalysis.outlierGroup.directionColumn',
+        id:
+          'salaryReport.application:salaryAnalysis.outlierGroup.directionColumn',
         defaultMessage: 'Átt',
       },
       differenceColumn: {
-        id: 'salaryReport.application:salaryAnalysis.outlierGroup.differenceColumn',
+        id:
+          'salaryReport.application:salaryAnalysis.outlierGroup.differenceColumn',
         defaultMessage: 'Launamunur',
       },
       postponeCardTitle: {
-        id: 'salaryReport.application:salaryAnalysis.outlierGroup.postponeCardTitle',
+        id:
+          'salaryReport.application:salaryAnalysis.outlierGroup.postponeCardTitle',
         defaultMessage: 'Fresta skilum á úrbótaáætlun',
       },
       postponeCardDescription: {
-        id: 'salaryReport.application:salaryAnalysis.outlierGroup.postponeCardDescription',
+        id:
+          'salaryReport.application:salaryAnalysis.outlierGroup.postponeCardDescription',
         defaultMessage:
-          'Hægt er að skila úrbótaáætlun innan sex mánaða frá því að skýrslan er send inn.',
+          'Hægt er að skila úrbótaáætlun innan þriggja mánaða frá því að skýrslan er send inn.',
       },
       postponeCheckboxLabel: {
-        id: 'salaryReport.application:salaryAnalysis.outlierGroup.postponeCheckboxLabel',
+        id:
+          'salaryReport.application:salaryAnalysis.outlierGroup.postponeCheckboxLabel',
         defaultMessage: 'Ég vil skila úrbótaáætlun seinna',
       },
       directionAbove: {
-        id: 'salaryReport.application:salaryAnalysis.outlierGroup.directionAbove',
+        id:
+          'salaryReport.application:salaryAnalysis.outlierGroup.directionAbove',
         defaultMessage: 'Yfir viðmiði',
       },
       directionBelow: {
-        id: 'salaryReport.application:salaryAnalysis.outlierGroup.directionBelow',
+        id:
+          'salaryReport.application:salaryAnalysis.outlierGroup.directionBelow',
         defaultMessage: 'Undir viðmiði',
       },
       directionEqual: {
-        id: 'salaryReport.application:salaryAnalysis.outlierGroup.directionEqual',
+        id:
+          'salaryReport.application:salaryAnalysis.outlierGroup.directionEqual',
         defaultMessage: 'Á viðmiði',
       },
       formTitle: {
@@ -871,12 +920,26 @@ export const messages = {
         defaultMessage: 'Fyrirhugaðar úrbætur',
       },
       signatureNameLabel: {
-        id: 'salaryReport.application:salaryAnalysis.outlierGroup.signatureNameLabel',
+        id:
+          'salaryReport.application:salaryAnalysis.outlierGroup.signatureNameLabel',
         defaultMessage: 'Nafn ábyrgðaraðila',
       },
       signatureRoleLabel: {
-        id: 'salaryReport.application:salaryAnalysis.outlierGroup.signatureRoleLabel',
+        id:
+          'salaryReport.application:salaryAnalysis.outlierGroup.signatureRoleLabel',
         defaultMessage: 'Starfstitill ábyrgðaraðila',
+      },
+      formErrorWithPostponeOption: {
+        id:
+          'salaryReport.application:salaryAnalysis.outlierGroup.formErrorWithPostponeOption',
+        defaultMessage:
+          'Veldu að fresta úrbótaáætlun eða fylltu út eyðublaðið að neðan.',
+      },
+      formErrorRequired: {
+        id:
+          'salaryReport.application:salaryAnalysis.outlierGroup.formErrorRequired',
+        defaultMessage:
+          'Eyðublaðið má ekki vera tómt. Vinsamlegast fylltu það út.',
       },
     }),
   },
@@ -929,6 +992,55 @@ export const messages = {
     alertDescription: {
       id: 'salaryReport.application:completed.alertDescription',
       defaultMessage: lorem,
+    },
+  }),
+
+  postponed: defineMessages({
+    tagLabel: {
+      id: 'salaryReport.application:postponed.tagLabel',
+      defaultMessage: 'Beðið eftir úrbótaáætlun',
+    },
+    introSectionTitle: {
+      id: 'salaryReport.application:postponed.introSectionTitle',
+      defaultMessage: 'Umsókn móttekin',
+    },
+    introTitle: {
+      id: 'salaryReport.application:postponed.introTitle',
+      defaultMessage: 'Launaskýrslu hefur verið skilað',
+    },
+    introDescription: {
+      id: 'salaryReport.application:postponed.introDescription',
+      defaultMessage:
+        'Takk fyrir að skila launaskýrslunni til Jafnréttisstofu. Þú valdir að fresta útskýringu á launamun sem greindist í frávikum. Þú hefur þrjá mánuði frá því að skýrslan var send inn til að skila úrbótaáætlun.',
+    },
+    reportSummarySectionTitle: {
+      id: 'salaryReport.application:postponed.reportSummarySectionTitle',
+      defaultMessage: 'Skýrsla',
+    },
+    reportSummaryTitle: {
+      id: 'salaryReport.application:postponed.reportSummaryTitle',
+      defaultMessage: 'Yfirlit innsendrar skýrslu',
+    },
+    sectionTitle: {
+      id: 'salaryReport.application:postponed.sectionTitle',
+      defaultMessage: 'Úrbótaáætlun',
+    },
+    title: {
+      id: 'salaryReport.application:postponed.title',
+      defaultMessage: 'Úrbótaáætlun',
+    },
+    reviewTitle: {
+      id: 'salaryReport.application:postponed.reviewTitle',
+      defaultMessage: 'Yfirlit úrbótaáætlunar',
+    },
+    intro: {
+      id: 'salaryReport.application:postponed.intro',
+      defaultMessage:
+        'Staðfestu að úrbótaáætlunin sé rétt útfyllt og sendu hana inn til Jafnréttisstofu.',
+    },
+    submitButton: {
+      id: 'salaryReport.application:postponed.submitButton',
+      defaultMessage: 'Senda inn úrbótaáætlun',
     },
   }),
 }
