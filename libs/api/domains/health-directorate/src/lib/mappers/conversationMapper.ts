@@ -57,6 +57,8 @@ export const toConversationReplyBlockedReasonEnum = (
       return HealthConversationReplyBlockedReasonEnum.OUTSIDE_MESSAGING_WINDOW
     case ConversationReplyBlockedReason.REPLY_WINDOW_EXPIRED:
       return HealthConversationReplyBlockedReasonEnum.REPLY_WINDOW_EXPIRED
+    case ConversationReplyBlockedReason.AWAITING_STAFF_REPLY:
+      return HealthConversationReplyBlockedReasonEnum.AWAITING_STAFF_REPLY
     default:
       return undefined
   }
