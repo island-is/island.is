@@ -553,6 +553,10 @@ export const getParent2Items = (
   return buildParentItems(parent2, parentsKnowsNationalIds)
 }
 
+// TODO: Add getChildSafetyItems once slider is implemented and API is ready
+// keyText: isUnborn ? childSafetyMessages.unborn.sliderQuestion : childSafetyMessages.shared.sliderQuestion
+// valueText: urgencyAssessments.find(a => a.value === childSafetyUrgencyLevel)?.label ?? childSafetyUrgencyLevel
+
 export const getProtectiveFactorsItems = (
   answers: FormValue,
   externalData: ExternalData,

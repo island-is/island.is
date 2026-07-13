@@ -1,6 +1,7 @@
 import { Auth, AuthMiddleware, type User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
+  DropDownDto,
   ExternalCategoryResponse,
   ExternalDropdownApi,
   ProtectiveFactorSectionDto,
@@ -23,5 +24,11 @@ export class NationalAgencyForChildrenAndFamiliesClientService {
     return await this.externalDropdownApiWithAuth(
       user,
     ).externalProtectiveFactors()
+  }
+
+  async getUrgencyAssessments(user: User): Promise<DropDownDto[]> {
+    return await this.externalDropdownApiWithAuth(
+      user,
+    ).externalUrgencyAssessments()
   }
 }

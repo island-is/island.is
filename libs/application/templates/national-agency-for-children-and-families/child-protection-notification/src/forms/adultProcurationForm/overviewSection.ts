@@ -102,6 +102,9 @@ export const overviewSection = buildSection({
           items: getProtectiveFactorsItems,
           hideIfEmpty: true,
         }),
+
+        // TODO: Add overview.childSafety field once slider is implemented and API is ready
+
         buildSubmitField({
           id: 'submit',
           refetchApplicationAfterSubmit: true,

@@ -29,6 +29,12 @@ export class ChildProtectionNotificationService extends BaseTemplateApiService {
     )
   }
 
+  async getUrgencyAssessments({ auth }: TemplateApiModuleActionProps) {
+    return await this.nationalAgencyForChildrenAndFamiliesClientService.getUrgencyAssessments(
+      auth,
+    )
+  }
+
   async createApplication() {
     // TODO: Implement this
     await new Promise((resolve) => setTimeout(resolve, 2000))

@@ -1,6 +1,7 @@
 export * from './child'
 export * from './parents'
 export * from './protectiveFactors'
+export * from './childSafety'
 export * from './shared'
 export * from './prerequisites'
 export * from './error'

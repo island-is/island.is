@@ -3,6 +3,7 @@ import { FormModes } from '@island.is/application/types'
 import { childInfoManualSection } from '../shared/childInfoManualSection'
 import { parentsSection } from '../shared/parentsSection'
 import { protectiveFactorsSection } from '../shared/protectiveFactorsSection'
+import { childSafetySection } from '../shared/childSafetySection'
 import { overviewSection } from './overviewSection'
 
 export const AdultProcurationForm = buildForm({
@@ -14,6 +15,7 @@ export const AdultProcurationForm = buildForm({
     childInfoManualSection,
     parentsSection,
     protectiveFactorsSection,
+    childSafetySection,
     overviewSection,
   ],
 })

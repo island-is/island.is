@@ -178,6 +178,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     Record<string, Record<string, string[]>>
   >(answers, 'protectiveFactors')
 
+  const childSafetyUrgencyLevel = getValueViaPath<string>(
+    answers,
+    'childSafetyUrgencyLevel',
+  )
+
   return {
     serviceProviderService,
     serviceProviderServiceType,
@@ -215,5 +220,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     parent1,
     parent2,
     protectiveFactors,
+    childSafetyUrgencyLevel,
   }
 }
