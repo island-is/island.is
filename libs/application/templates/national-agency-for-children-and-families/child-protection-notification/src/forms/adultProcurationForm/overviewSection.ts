@@ -8,15 +8,16 @@ import { DefaultEvents } from '@island.is/application/types'
 
 import {
   childMessages,
-  parentsMessages,
   overviewMessages,
+  parentsMessages,
   prerequisitesMessages,
   protectiveFactorsMessages,
+  reasonForNotificationMessages,
 } from '../../lib/messages'
 import {
+  isKnowsNationalId,
   isNoNationalId,
   isUnborn,
-  isKnowsNationalId,
 } from '../../utils/conditionUtils'
 import {
   getChildManualItems,
@@ -25,6 +26,9 @@ import {
   getParent2Items,
   getParentsPreItems,
   getProtectiveFactorsItems,
+  getReasonDescriptionItems,
+  getReasonForNotificationItems,
+  getReasonNotificationHistoryItems,
   getServiceProviderContactPersonItems,
   getServiceProviderItems,
 } from '../../utils/getOverviewItems'
@@ -94,6 +98,26 @@ export const overviewSection = buildSection({
           backId: 'parents',
           items: getParent2Items,
           hideIfEmpty: true,
+        }),
+        buildOverviewField({
+          id: 'overview.reasonDescription',
+          title: reasonForNotificationMessages.description.title,
+          backId: 'reasonDescription',
+          items: getReasonDescriptionItems,
+        }),
+        buildOverviewField({
+          id: 'overview.reasonForNotification',
+          title: reasonForNotificationMessages.shared.sectionTitle,
+          backId: 'reasonForNotification',
+          items: getReasonForNotificationItems,
+          hideIfEmpty: true,
+        }),
+        buildOverviewField({
+          id: 'overview.reasonNotificationHistory',
+          title:
+            reasonForNotificationMessages.notificationHistory.subSectionTitle,
+          backId: 'reasonNotificationHistory',
+          items: getReasonNotificationHistoryItems,
         }),
         buildOverviewField({
           id: 'overview.protectiveFactors',

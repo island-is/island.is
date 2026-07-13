@@ -1,4 +1,9 @@
-import { YES, coreMessages, getValueViaPath } from '@island.is/application/core'
+import {
+  coreMessages,
+  getValueViaPath,
+  NO,
+  YES,
+} from '@island.is/application/core'
 import {
   ExternalData,
   FormValue,
@@ -15,6 +20,7 @@ import {
   childMessages,
   parentsMessages,
   prerequisitesMessages,
+  reasonForNotificationMessages,
   sharedMessages,
 } from '../lib/messages'
 import {
@@ -23,7 +29,12 @@ import {
   NoNationalIdReason,
   ParentGender,
   Pronoun,
+  RISK_TO_UNBORN,
 } from '../utils/constants'
+import {
+  getAreParentsInformedTitle,
+  getHasDiscussedWithParentsTitle,
+} from './childProtectionNotificationUtils'
 import { isKnowsNationalId, isNoNationalId } from './conditionUtils'
 import { getApplicationAnswers } from './getApplicationAnswers'
 import { getApplicationExternalData } from './getApplicationExternalData'
@@ -551,6 +562,192 @@ export const getParent2Items = (
 ): Array<KeyValueItem> => {
   const { parent2, parentsKnowsNationalIds } = getApplicationAnswers(answers)
   return buildParentItems(parent2, parentsKnowsNationalIds)
+}
+
+export const getReasonDescriptionItems = (
+  answers: FormValue,
+  _externalData: ExternalData,
+): Array<KeyValueItem> => {
+  const { reasonDescription, additionalData } = getApplicationAnswers(answers)
+
+  return [
+    {
+      width: 'full',
+      keyText: reasonForNotificationMessages.description.subSectionTitle,
+      valueText: reasonDescription ?? '',
+      hideIfEmpty: true,
+    },
+    {
+      width: 'full',
+      keyText: reasonForNotificationMessages.description.additionalDataTitle,
+      valueText: additionalData.includes(YES)
+        ? sharedMessages.radioYes
+        : sharedMessages.radioNo,
+    },
+  ]
+}
+
+export const getReasonForNotificationItems = (
+  answers: FormValue,
+  externalData: ExternalData,
+): Array<KeyValueItem> => {
+  const {
+    reasonForNotification,
+    biggestConcernCategoryCode,
+    riskToUnbornSelections,
+  } = getApplicationAnswers(answers)
+  const { categories } = getApplicationExternalData(externalData)
+
+  const categoriesByCode = new Map(
+    categories.map((category) => [category.code, category]),
+  )
+
+  const reasonItems = Object.entries(reasonForNotification).reduce<
+    Array<KeyValueItem>
+  >((items, [categoryCode, categoryValue]) => {
+    if (
+      !categoryValue ||
+      typeof categoryValue !== 'object' ||
+      Array.isArray(categoryValue)
+    ) {
+      return items
+    }
+
+    const category = categoriesByCode.get(categoryCode)
+    if (!category) {
+      return items
+    }
+
+    // Only include sub-categories that were explicitly selected in this category.
+    const selectedSubCategoryValues = Object.entries(categoryValue).reduce<
+      Array<string>
+    >((values, [subCategoryCode, subCategoryValue]) => {
+      const selectedSubCategories = subCategoryValue?.subCategory ?? []
+
+      if (!selectedSubCategories.includes(subCategoryCode)) {
+        return values
+      }
+
+      const subCategory = (category.subCategories ?? []).find(
+        (item) => item.code === subCategoryCode,
+      )
+
+      const subCategoryLabel = subCategory?.label ?? subCategoryCode
+      const selectedSubSubCategories = subCategoryValue?.subSubCategories ?? []
+
+      const selectedSubSubCategoryLabels = selectedSubSubCategories.map(
+        (subSubCategoryCode) =>
+          (subCategory?.subCategories ?? []).find(
+            (subSubCategory) => subSubCategory.code === subSubCategoryCode,
+          )?.label ?? subSubCategoryCode,
+      )
+
+      // Nested selections are rendered as "SubCategory: SubSub1, SubSub2".
+      // If there are no nested selections, render only the sub-category label.
+      values.push(
+        selectedSubSubCategoryLabels.length > 0
+          ? `${subCategoryLabel}: ${selectedSubSubCategoryLabels.join(', ')}`
+          : subCategoryLabel,
+      )
+
+      return values
+    }, [])
+
+    if (selectedSubCategoryValues.length === 0) {
+      return items
+    }
+
+    // Keep valueText as string[] so the overview component can render each entry
+    // on a separate line/bullet instead of a single concatenated string.
+    items.push({
+      width: 'full',
+      keyText: category.label,
+      valueText: selectedSubCategoryValues,
+    })
+
+    return items
+  }, [])
+
+  // Add the single "biggest concern" choice as a separate row.
+  if (biggestConcernCategoryCode) {
+    const biggestConcernCategory = categoriesByCode.get(
+      biggestConcernCategoryCode,
+    )
+
+    reasonItems.push({
+      width: 'full',
+      keyText: reasonForNotificationMessages.reason.biggestConcern,
+      valueText: biggestConcernCategory?.label ?? biggestConcernCategoryCode,
+    })
+  }
+
+  // Add selected unborn-risk labels when that section is answered.
+  if (riskToUnbornSelections.length > 0) {
+    const unbornCategory = categoriesByCode.get(RISK_TO_UNBORN)
+    const unbornSelectionLabels = riskToUnbornSelections.map(
+      (selectionCode) =>
+        (unbornCategory?.subCategories ?? []).find(
+          (subCategory) => subCategory.code === selectionCode,
+        )?.label ?? selectionCode,
+    )
+
+    reasonItems.push({
+      width: 'full',
+      keyText: reasonForNotificationMessages.reason.unbornQuestion,
+      valueText: unbornSelectionLabels,
+    })
+  }
+
+  return reasonItems
+}
+
+export const getReasonNotificationHistoryItems = (
+  answers: FormValue,
+  _externalData: ExternalData,
+): Array<KeyValueItem> => {
+  const {
+    hasReportedBefore,
+    hasDiscussedWithParents,
+    areParentsInformed,
+    notificationHistoryBiggestConcern,
+  } = getApplicationAnswers(answers)
+
+  return [
+    {
+      width: 'full',
+      keyText:
+        reasonForNotificationMessages.notificationHistory.hasReportedBefore,
+      valueText:
+        hasReportedBefore === YES
+          ? sharedMessages.radioYes
+          : sharedMessages.radioNo,
+    },
+    {
+      width: 'full',
+      keyText: getHasDiscussedWithParentsTitle(answers),
+      valueText:
+        hasDiscussedWithParents === YES
+          ? sharedMessages.radioYes
+          : sharedMessages.radioNo,
+    },
+    {
+      width: 'full',
+      keyText: getAreParentsInformedTitle(answers),
+      valueText:
+        areParentsInformed === YES
+          ? sharedMessages.radioYes
+          : sharedMessages.radioNo,
+    },
+    ...(areParentsInformed === NO
+      ? [
+          {
+            width: 'full' as const,
+            keyText: reasonForNotificationMessages.description.subSectionTitle,
+            valueText: notificationHistoryBiggestConcern ?? '',
+          },
+        ]
+      : []),
+  ]
 }
 
 export const getProtectiveFactorsItems = (

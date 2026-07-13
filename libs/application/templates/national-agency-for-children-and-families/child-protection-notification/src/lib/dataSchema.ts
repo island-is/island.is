@@ -191,38 +191,138 @@ const parentsSchema = z
     }
   })
 
+const reasonForNotificationSchema = z
+  .record(z.unknown())
+  .optional()
+  .superRefine((data, ctx) => {
+    if (!data) return
+
+    let selectedCategoryCount = 0
+
+    for (const [categoryCode, categoryValue] of Object.entries(data)) {
+      // These are top-level helper fields under reasonForNotification, not category groups.
+      if (
+        categoryCode === 'biggestConcern' ||
+        categoryCode === 'riskToUnborn'
+      ) {
+        continue
+      }
+
+      if (
+        !categoryValue ||
+        typeof categoryValue !== 'object' ||
+        Array.isArray(categoryValue)
+      ) {
+        continue
+      }
+
+      const category = categoryValue as Record<string, unknown>
+      let hasCheckedSubCategory = false
+
+      for (const [subCategoryCode, subCategoryValue] of Object.entries(
+        category,
+      )) {
+        if (
+          !subCategoryValue ||
+          typeof subCategoryValue !== 'object' ||
+          Array.isArray(subCategoryValue)
+        ) {
+          continue
+        }
+
+        const subCategoryAnswers = subCategoryValue as Record<string, unknown>
+
+        if (
+          !Array.isArray(subCategoryAnswers.subCategory) ||
+          !subCategoryAnswers.subCategory.includes(subCategoryCode)
+        ) {
+          continue
+        }
+
+        hasCheckedSubCategory = true
+
+        // Rule 1: if a subCategory is checked, require subSubCategories when that field exists.
+        if (
+          'subSubCategories' in subCategoryAnswers &&
+          (!Array.isArray(subCategoryAnswers.subSubCategories) ||
+            subCategoryAnswers.subSubCategories.length === 0)
+        ) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: [categoryCode, subCategoryCode, 'subSubCategories'],
+            params: errorMessages.required,
+          })
+        }
+      }
+
+      if (hasCheckedSubCategory) {
+        selectedCategoryCount += 1
+      }
+    }
+
+    // Rule 2: biggestConcern is required when more than one category is selected.
+    if (selectedCategoryCount > 1 && !data.biggestConcern) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['biggestConcern'],
+        params: errorMessages.required,
+      })
+    }
+  })
+
+const reasonNotificationHistorySchema = z
+  .object({
+    hasReportedBefore: z.enum([YES, NO]),
+    hasDiscussedWithParents: z.enum([YES, NO]),
+    areParentsInformed: z.enum([YES, NO]),
+    biggestConcern: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.areParentsInformed === NO && !data.biggestConcern) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['biggestConcern'],
+        params: errorMessages.required,
+      })
+    }
+  })
+
+const protectiveFactorsSchema = z
+  .record(z.unknown())
+  .optional()
+  .superRefine((data, ctx) => {
+    if (!data) return
+    for (const [sectionCode, sectionAnswers] of Object.entries(data)) {
+      if (!sectionAnswers || typeof sectionAnswers !== 'object') continue
+      const section = sectionAnswers as Record<string, unknown>
+      for (const [key, value] of Object.entries(section)) {
+        if (
+          /^sub\d+$/.test(key) &&
+          Array.isArray(value) &&
+          value.includes(YES)
+        ) {
+          const itemsKey = `${key}Items`
+          const items = section[itemsKey]
+          if (!Array.isArray(items) || items.length === 0) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              path: [sectionCode, itemsKey],
+              params: errorMessages.required,
+            })
+          }
+        }
+      }
+    }
+  })
+
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   serviceProvider: serviceProviderSchema,
   child: childSchema.optional(),
   parents: parentsSchema.optional(),
-  protectiveFactors: z
-    .record(z.unknown())
-    .optional()
-    .superRefine((data, ctx) => {
-      if (!data) return
-      for (const [sectionCode, sectionAnswers] of Object.entries(data)) {
-        if (!sectionAnswers || typeof sectionAnswers !== 'object') continue
-        const section = sectionAnswers as Record<string, unknown>
-        for (const [key, value] of Object.entries(section)) {
-          if (
-            /^sub\d+$/.test(key) &&
-            Array.isArray(value) &&
-            value.includes(YES)
-          ) {
-            const itemsKey = `${key}Items`
-            const items = section[itemsKey]
-            if (!Array.isArray(items) || items.length === 0) {
-              ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                path: [sectionCode, itemsKey],
-                params: errorMessages.required,
-              })
-            }
-          }
-        }
-      }
-    }),
+  reasonForNotification: reasonForNotificationSchema,
+  reasonNotificationHistory: reasonNotificationHistorySchema,
+  protectiveFactors: protectiveFactorsSchema,
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

@@ -912,6 +912,7 @@ export interface AccordionField extends BaseField {
     | Array<AccordionItem>
     | ((application: Application) => Array<AccordionItem>)
   titleVariant?: TitleVariants
+  singleExpand?: boolean
 }
 export interface BankAccountField extends InputField {
   readonly type: FieldTypes.BANK_ACCOUNT
