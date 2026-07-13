@@ -7,6 +7,8 @@ export const cardBox = style({
 })
 
 export const seperator = style({
+  width: 0,
+  flexShrink: 0,
   height: 16,
   border: '1px solid #ccdfff',
 })
