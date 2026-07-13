@@ -1975,12 +1975,12 @@ export const messages = defineMessages({
     id: 'sp.health:health-messages-no-recipient',
   },
   healthConversationClosingSoonTitle: {
-    defaultMessage: 'Það styttist í lokun',
+    defaultMessage: 'Athugið: það lokar bráðlega fyrir skilaboð',
     id: 'sp.health:health-messages-closing-soon-title',
   },
   healthConversationClosingSoonText: {
     defaultMessage:
-      'Eftir kl. {closeTime} er ekki hægt að senda skilaboð og þú þarft að bíða til kl. {openTime} í fyrramálið.',
+      'Sendu skilaboðin þín áður en lokað er kl. {closeTime}. Eftir það er ekki hægt að senda skilaboð fyrr en kl. {openTime} á morgun.',
     id: 'sp.health:health-messages-closing-soon-text',
   },
   healthConversationClosedTitle: {
