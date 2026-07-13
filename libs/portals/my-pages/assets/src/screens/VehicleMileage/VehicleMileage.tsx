@@ -423,11 +423,7 @@ const VehicleMileage = () => {
                               {item.originCode}
                             </Table.Data>
                             <Table.Data align="right">
-                              {displayWithUnit(
-                                item.mileageNumber,
-                                unit,
-                                true,
-                              )}
+                              {displayWithUnit(item.mileageNumber, unit, true)}
                             </Table.Data>
                           </Table.Row>
                         ))}
