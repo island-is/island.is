@@ -6090,7 +6090,7 @@
         "properties": {
           "type": {
             "type": "string",
-            "enum": ["ROLE", "ROOM", "EQUIPMENT", "SERVICE", "OTHER"],
+            "enum": ["ROLE", "ROOM", "EQUIPMENT", "SERVICE", "OTHER", "TEAM"],
             "description": "Assignee type. PERSON assignees are surfaced under practitioners, not here."
           },
           "name": {
@@ -6612,6 +6612,18 @@
           "lastSenderGroupName": {
             "type": "string"
           },
+          "organizationNationalId": {
+            "type": "string",
+            "description": "National id of the organization that owns the HCP node/department this conversation belongs to."
+          },
+          "organizationName": {
+            "type": "string",
+            "description": "Display name of the organization."
+          },
+          "departmentName": {
+            "type": "string",
+            "description": "Name of the HCP department within the organization, when the resolved mapping row is group-specific."
+          },
           "hasAttachment": {
             "type": "boolean"
           },
@@ -6644,7 +6656,8 @@
           "NO_REPLY_GROUP",
           "MESSAGING_NOT_ALLOWED",
           "OUTSIDE_MESSAGING_WINDOW",
-          "REPLY_WINDOW_EXPIRED"
+          "REPLY_WINDOW_EXPIRED",
+          "AWAITING_STAFF_REPLY"
         ],
         "description": "Why replying is blocked. Only set when patientCanReply is false."
       },
@@ -6832,6 +6845,18 @@
           },
           "lastSenderGroupName": {
             "type": "string"
+          },
+          "organizationNationalId": {
+            "type": "string",
+            "description": "National id of the organization that owns the HCP node/department this conversation belongs to."
+          },
+          "organizationName": {
+            "type": "string",
+            "description": "Display name of the organization."
+          },
+          "departmentName": {
+            "type": "string",
+            "description": "Name of the HCP department within the organization, when the resolved mapping row is group-specific."
           },
           "hasAttachment": {
             "type": "boolean"
