@@ -7,9 +7,7 @@
   "paths": {
     "/api/Barnabaetur": {
       "get": {
-        "tags": [
-          "Barnabaetur"
-        ],
+        "tags": ["Barnabaetur"],
         "summary": "",
         "parameters": [
           {
@@ -115,9 +113,7 @@
     },
     "/api/Bifreidagjold": {
       "get": {
-        "tags": [
-          "Bifreidagjold"
-        ],
+        "tags": ["Bifreidagjold"],
         "summary": "",
         "parameters": [
           {
@@ -184,9 +180,7 @@
     },
     "/api/Bifreidahlunnindi": {
       "get": {
-        "tags": [
-          "Bifreidahlunnindi"
-        ],
+        "tags": ["Bifreidahlunnindi"],
         "summary": "",
         "parameters": [
           {
@@ -263,9 +257,7 @@
     },
     "/api/FyrningOkutaekja": {
       "get": {
-        "tags": [
-          "FyrningOkutaekja"
-        ],
+        "tags": ["FyrningOkutaekja"],
         "summary": "",
         "parameters": [
           {
@@ -345,9 +337,7 @@
     },
     "/api/Stadgreidsla": {
       "get": {
-        "tags": [
-          "Stadgreidsla"
-        ],
+        "tags": ["Stadgreidsla"],
         "summary": "",
         "parameters": [
           {
@@ -520,9 +510,7 @@
     },
     "/api/Vaxtabaetur": {
       "get": {
-        "tags": [
-          "Vaxtabaetur"
-        ],
+        "tags": ["Vaxtabaetur"],
         "summary": "",
         "parameters": [
           {

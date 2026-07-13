@@ -389,12 +389,9 @@ export const mapStadgreidslaResultToRows = (
     buildRow('totalDeductions', 'Frádráttur alls', result.fradratturAlls, {
       unit: 'ISK',
     }),
-    buildRow(
-      'personalTaxCredit',
-      'Persónuafsláttur',
-      result.personuafslattur,
-      { unit: 'ISK' },
-    ),
+    buildRow('personalTaxCredit', 'Persónuafsláttur', result.personuafslattur, {
+      unit: 'ISK',
+    }),
     buildRow(
       'personalTaxCreditFromSpouse',
       'Persónuafsláttur frá maka',
@@ -439,9 +436,14 @@ export const mapStadgreidslaResultToRows = (
       result.stadgreidsluhlutfall,
       { unit: '%' },
     ),
-    buildRow('employerPensionMatch', 'Mótframlag í lífeyrissjóð', result.motframlag, {
-      unit: 'ISK',
-    }),
+    buildRow(
+      'employerPensionMatch',
+      'Mótframlag í lífeyrissjóð',
+      result.motframlag,
+      {
+        unit: 'ISK',
+      },
+    ),
     buildRow(
       'socialSecurityTaxBase',
       'Tryggingagjaldsstofn',
@@ -490,15 +492,17 @@ export const mapBarnabaeturResultToRows = (
 
   const rows = [
     buildRow('benefitYear', 'Bótaár', result.botaAr),
-    buildRow('reductionRatio', 'Skerðingarhlutfall', result.skerdingarhlutfall, {
-      unit: '%',
-    }),
     buildRow(
-      'reductionThreshold',
-      'Skerðingarmörk',
-      result.skerdingarmork,
-      { unit: 'ISK' },
+      'reductionRatio',
+      'Skerðingarhlutfall',
+      result.skerdingarhlutfall,
+      {
+        unit: '%',
+      },
     ),
+    buildRow('reductionThreshold', 'Skerðingarmörk', result.skerdingarmork, {
+      unit: 'ISK',
+    }),
     buildRow(
       'upperReductionThreshold',
       'Efri skerðingarmörk',
@@ -581,9 +585,14 @@ export const mapBarnabaeturResultToRows = (
       result.vidbotPerBarnYngraEn7ara,
       { unit: 'ISK' },
     ),
-    buildRow('reductionUnder7', 'Skerðing undir 7 ára', result.skerdingUndir7ara, {
-      unit: 'ISK',
-    }),
+    buildRow(
+      'reductionUnder7',
+      'Skerðing undir 7 ára',
+      result.skerdingUndir7ara,
+      {
+        unit: 'ISK',
+      },
+    ),
     buildRow(
       'reductionRatioUnder7',
       'Skerðingarhlutfall undir 7 ára',
