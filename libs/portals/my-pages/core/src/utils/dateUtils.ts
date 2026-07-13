@@ -100,14 +100,3 @@ export const displayMonthOrYear = (date: string, l: Locale) => {
 
 export const getDateLocale = (locale: Locale) =>
   locale === 'en' ? 'en-US' : 'is-IS'
-
-const pad = (value: number) => value.toString().padStart(2, '0')
-
-export const formatMinutes = (minutes: number) =>
-  `${pad(Math.floor(minutes / 60))}:${pad(minutes % 60)}`
-
-export const parseTimeToMinutes = (time: string): number | undefined => {
-  const match = time.match(/^(\d{1,2}):(\d{2})/)
-  if (!match) return undefined
-  return Number(match[1]) * 60 + Number(match[2])
-}
