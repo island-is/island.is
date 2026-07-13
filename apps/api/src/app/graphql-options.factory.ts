@@ -27,6 +27,9 @@ export class GraphqlOptionsFactory implements GqlOptionsFactory {
       playground,
       autoSchemaFile,
       path: '/api/graphql',
+      // The web app sends batched GraphQL requests during SSR. Apollo Server 3
+      // accepted these by default; Apollo Server 4+ disables batching.
+      allowBatchedHttpRequests: true,
       cache:
         this.config.redis.nodes.length > 0
           ? createRedisApolloCache({
