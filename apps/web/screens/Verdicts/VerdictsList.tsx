@@ -1397,7 +1397,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                           <Button
                             size="small"
                             variant="text"
-                            icon="download"
+                            icon="open"
                             iconType="outline"
                             colorScheme="light"
                             unfocusable={true}
