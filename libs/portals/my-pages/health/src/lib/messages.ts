@@ -2739,6 +2739,46 @@ export const messages = defineMessages({
     id: 'sp.health:opening-hours',
     defaultMessage: 'Opnunartímar',
   },
+  healthNotificationsTitle: {
+    id: 'sp.health:health-notifications-title',
+    defaultMessage: 'Tilkynningar í Heilsu',
+  },
+  contactChat: {
+    id: 'sp.health:contact-chat',
+    defaultMessage: 'Netspjall Heilsuveru',
+  },
+  contactChatDesc: {
+    id: 'sp.health:contact-chat-desc',
+    defaultMessage: 'Opið frá kl. 8-16 alla virka daga',
+  },
+  heilsuveraChatLink: {
+    id: 'sp.health:heilsuvera-chat-link',
+    defaultMessage: 'https://direct.lc.chat/15092154',
+  },
+  contactPhone: {
+    id: 'sp.health:contact-phone',
+    defaultMessage: 'Símaráðgjöf 1700 / 513 1700',
+  },
+  contactPhoneNumber: {
+    id: 'sp.health:contact-phone-number',
+    defaultMessage: '+3545131700',
+  },
+  contactPhoneDesc: {
+    id: 'sp.health:contact-phone-desc',
+    defaultMessage: 'Fyrir aðstoð samdægurs.',
+  },
+  contactPhoneEmergencyDesc: {
+    id: 'sp.health:contact-phone-emergency-desc',
+    defaultMessage: 'Ath. í neyð skal hringja í 112.',
+  },
+  contactSendMessage: {
+    id: 'sp.health:contact-send-message',
+    defaultMessage: 'Senda skilaboð á heilsugæslu',
+  },
+  contactSendMessageDesc: {
+    id: 'sp.health:contact-send-message-desc',
+    defaultMessage: 'Heilsugæslan svarar oftast innan 3. virkra daga.',
+  },
   appointmentMoreInfo: {
     id: 'sp.health:appointment-more-info',
     defaultMessage: 'Nánari upplýsingar',
@@ -2749,7 +2789,7 @@ export const messages = defineMessages({
   },
   appointmentModalityVideo: {
     id: 'sp.health:appointment-modality-video',
-    defaultMessage: 'Fjarfundur',
+    defaultMessage: 'Myndsímtal',
   },
   appointmentAssignees: {
     id: 'sp.health:appointment-assignees',
@@ -2757,7 +2797,21 @@ export const messages = defineMessages({
   },
   appointmentVideoCallLink: {
     id: 'sp.health:appointment-video-call-link',
-    defaultMessage: 'Opna fjarfund',
+    defaultMessage: 'Hefja myndsímtal',
+  },
+  appointmentVideoCallInfoWithLink: {
+    id: 'sp.health:appointment-video-call-info-with-link',
+    defaultMessage:
+      'Hnappurinn fyrir myndsímtalið verður virkur 5 mínútum fyrir bókaðan tíma. Smelltu á hann til að hefja símtalið.',
+  },
+  appointmentVideoCallInfoWithLinkActive: {
+    id: 'sp.health:appointment-video-call-info-with-link-active',
+    defaultMessage: 'Smelltu á hnappinn til að hefja myndsímtalið.',
+  },
+  appointmentVideoCallInfoNoLink: {
+    id: 'sp.health:appointment-video-call-info-no-link',
+    defaultMessage:
+      'Myndsamtalið fer fram í gegnum hlekk sem þú færð sendan í skilaboðum. Hlekkurinn virkjast 5 mínútum áður en tíminn hefst. Leiðbeiningar um hvernig þú tengist fylgja einnig með skilaboðunum.',
   },
   appointmentPreparation: {
     id: 'sp.health:appointment-preparation',

@@ -91,6 +91,20 @@ export class AppointmentLink {
 
   @Field()
   url!: string
+
+  @Field(() => GraphQLISODateTime, {
+    nullable: true,
+    description:
+      'When this link becomes active, for links that are time-gated (e.g. video calls). Null if not time-gated.',
+  })
+  activatesAt?: Date
+
+  @Field(() => GraphQLISODateTime, {
+    nullable: true,
+    description:
+      'When this link expires, for links that are time-gated (e.g. video calls). Null if not time-gated.',
+  })
+  expiresAt?: Date
 }
 
 @ObjectType('HealthDirectorateAppointment')

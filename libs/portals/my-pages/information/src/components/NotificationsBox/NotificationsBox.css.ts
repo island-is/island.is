@@ -12,7 +12,7 @@ export const unreadRow = style({
   backgroundColor: theme.color.blueberry100,
 })
 
-export const accessDeniedImage = style({
+export const stateImage = style({
   height: 180,
 })
 
