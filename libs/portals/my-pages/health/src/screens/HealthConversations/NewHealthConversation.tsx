@@ -9,13 +9,9 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  CardLoader,
-  EmptyState,
-  IntroWrapper,
-  m,
-} from '@island.is/portals/my-pages/core'
+import { CardLoader, IntroWrapper, m } from '@island.is/portals/my-pages/core'
 import ConversationAvatar from './components/ConversationAvatar'
+import ConversationAvailabilityAlert from './components/ConversationAvailabilityAlert'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { useState } from 'react'
@@ -23,6 +19,7 @@ import { useNavigate } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { LocaleEnum } from '@island.is/portals/my-pages/graphql'
+import { getMessagingWindowInfo } from './utils/messagingWindow'
 import {
   useGetHealthConversationRecipientsForNewQuery,
   useCreateHealthConversationMutation,
@@ -48,9 +45,9 @@ const NewHealthConversation = () => {
       refetchQueries: ['GetHealthConversations'],
     })
 
-  const recipient = data?.healthDirectorateHealthConversationRecipients?.find(
-    (r) => r.allowsMessaging,
-  )
+  const recipients = data?.healthDirectorateHealthConversationRecipients
+  const recipient =
+    recipients?.find((r) => r.allowsMessaging) ?? recipients?.[0]
 
   const typeOptions =
     recipient?.allowedMessageTypes
@@ -60,8 +57,32 @@ const NewHealthConversation = () => {
   const selectedOption =
     typeOptions.find((o) => o.value === selectedTypeCode) ?? null
 
+  const windowInfo = getMessagingWindowInfo({
+    windowOpen: recipient?.messagingWindowOpen,
+    windowClose: recipient?.messagingWindowClose,
+  })
+
+  const hasWindowInfo =
+    !!windowInfo.windowOpenLabel &&
+    !!windowInfo.windowCloseLabel &&
+    !!recipient?.patientReplyWindowDays
+
+  const introText = hasWindowInfo
+    ? formatMessage(messages.healthConversationsNewIntroWithWindow, {
+        openTime: windowInfo.windowOpenLabel,
+        closeTime: windowInfo.windowCloseLabel,
+        days: recipient?.patientReplyWindowDays,
+      })
+    : formatMessage(messages.healthConversationsNewIntro)
+
+  const formLocked = recipient?.canCreateConversation === false
+
   const canSubmit =
-    !!selectedTypeCode && !!messageText.trim() && termsAccepted && !sending
+    !!selectedTypeCode &&
+    !!messageText.trim() &&
+    termsAccepted &&
+    !sending &&
+    !formLocked
 
   const handleSubmit = async () => {
     if (!canSubmit || !recipient || !selectedTypeCode) return
@@ -96,13 +117,20 @@ const NewHealthConversation = () => {
   return (
     <IntroWrapper
       title={messages.healthConversationsNewTitle}
-      intro={messages.healthConversationsNewIntro}
+      intro={introText}
       desktopContentSpan="10/12"
     >
       {loading && <CardLoader />}
       {error && <Problem error={error} noBorder={false} />}
       {!loading && !error && !recipient && (
-        <EmptyState title={messages.healthConversationsNoRecipient} />
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(messages.healthConversationsNoRecipient)}
+        />
+      )}
+      {!loading && !error && recipient && (
+        <ConversationAvailabilityAlert recipient={recipient} />
       )}
       {!loading && !error && recipient && (
         <Box
@@ -153,6 +181,7 @@ const NewHealthConversation = () => {
                 backgroundColor="blue"
                 size="sm"
                 required
+                isDisabled={formLocked}
               />
             </Box>
             <Box marginBottom={3}>
@@ -167,6 +196,7 @@ const NewHealthConversation = () => {
                 backgroundColor="blue"
                 value={messageText}
                 onChange={(e) => setMessageText(e.target.value)}
+                disabled={formLocked}
               />
             </Box>
 
@@ -181,6 +211,7 @@ const NewHealthConversation = () => {
                 )} ${formatMessage(
                   messages.healthConversationsNewTermsLinkText,
                 )}`}
+                disabled={formLocked}
               />
             </Box>
             <Box display="flex" justifyContent="flexEnd">

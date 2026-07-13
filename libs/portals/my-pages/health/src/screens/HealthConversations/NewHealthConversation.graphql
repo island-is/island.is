@@ -1,14 +1,23 @@
+fragment HealthConversationRecipient on HealthDirectorateHealthConversationRecipient {
+  nodeId
+  groupId
+  name
+  allowsMessaging
+  messagingWindowOpen
+  messagingWindowClose
+  patientReplyWindowDays
+  canCreateConversation
+  conversationBlockedReason
+  allowedMessageTypes {
+    patientInitiatedTypeCode
+    title
+    isCertificate
+  }
+}
+
 query GetHealthConversationRecipientsForNew($locale: LocaleEnum) {
   healthDirectorateHealthConversationRecipients(locale: $locale) {
-    nodeId
-    groupId
-    name
-    allowsMessaging
-    allowedMessageTypes {
-      patientInitiatedTypeCode
-      title
-      isCertificate
-    }
+    ...HealthConversationRecipient
   }
 }
 
