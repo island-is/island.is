@@ -46,19 +46,16 @@ export const overviewSection = buildSection({
         buildOverviewField({
           id: 'overview.serviceProvider',
           title: prerequisitesMessages.serviceProvider.subSectionTitle,
-          backId: 'serviceProvider',
           items: getServiceProviderItems,
         }),
         buildOverviewField({
           id: 'overview.serviceProviderContactPerson',
           title: prerequisitesMessages.serviceProvider.contactPerson,
-          backId: 'serviceProvider',
           items: getServiceProviderContactPersonItems,
         }),
         buildOverviewField({
           id: 'overview.childWithNationalId',
           title: childMessages.shared.sectionTitle,
-          backId: 'child',
           items: getChildWithNationalIdItems,
         }),
         buildOverviewField({
