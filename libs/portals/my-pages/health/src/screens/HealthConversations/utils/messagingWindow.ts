@@ -12,7 +12,6 @@ const parseTimeToMinutes = (time: string): number | undefined => {
   return Number(match[1]) * 60 + Number(match[2])
 }
 
-
 export const getMessagingWindowInfo = ({
   windowOpen,
   windowClose,
