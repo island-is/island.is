@@ -4,6 +4,7 @@ import { NestExpressApplication } from '@nestjs/platform-express'
 import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
+import cors from 'cors'
 import type { Server } from 'http'
 
 import {
@@ -51,7 +52,12 @@ export const createApp = async ({
   }
 
   if (options.enableCors) {
-    app.enableCors(options.enableCors)
+    const { path, ...corsOptions } = options.enableCors
+    if (path) {
+      app.use(path, cors(corsOptions))
+    } else {
+      app.enableCors(corsOptions)
+    }
   }
 
   // Configure "X-Requested-For" handling.

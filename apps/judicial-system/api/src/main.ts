@@ -7,6 +7,6 @@ bootstrap({
   name: 'judicial-system-api',
   // Apollo Server 3 applied CORS to the GraphQL endpoint by default; Apollo
   // Server 4+ removed that, so the same wildcard-origin CORS is applied here.
-  enableCors: { origin: '*' },
+  enableCors: { path: '/api/graphql', origin: '*' },
   port: 3333,
 })
