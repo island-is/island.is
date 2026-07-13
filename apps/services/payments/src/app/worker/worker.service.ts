@@ -339,11 +339,9 @@ export class WorkerService {
   private getLatestCardPaymentDetails(
     details?: InferAttributes<CardPaymentDetails>[],
   ): InferAttributes<CardPaymentDetails> {
-    // The db query left-joins card details (bank-transfer flows have none), so a card
-    // flow can reach here with zero rows — e.g. all its details soft-deleted.
     if (!details || details.length === 0) {
       throw new BadRequestException(
-        'No card payment details found for payment flow (possible interrupted refund — card confirmation deleted while fulfillment is active)',
+        'No card payment details found for payment flow',
       )
     }
 
