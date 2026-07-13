@@ -192,9 +192,11 @@ const template: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               read: 'all',
-              write: { answers: ['salaryAnalysis'] },
+              write: {
+                answers: ['salaryAnalysis'],
+                externalData: ['salaryAnalysisResult'],
+              },
               api: [SalaryAnalysisApi],
-              delete: true,
             },
           ],
         },

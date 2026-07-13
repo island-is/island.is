@@ -457,7 +457,11 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
   }
 
   async editOutliers({ auth, application }: TemplateApiModuleActionProps) {
-    const answers = application.answers as unknown as SalaryReportAnswers
+    const answers = this.parseAnswers(
+      salaryReportDataSchema,
+      application.answers,
+      application.id,
+    )
 
     const groups = (answers.salaryAnalysis?.outlierGroups ?? [])
       .filter((g) => g.employeeOrdinals.length > 0)
