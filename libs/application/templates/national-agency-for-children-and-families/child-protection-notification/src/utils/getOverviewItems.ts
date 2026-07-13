@@ -565,7 +565,7 @@ export const getProtectiveFactorsItems = (
 
   for (const section of sections) {
     const sectionAnswers = protectiveFactors?.[section.code ?? '']
-    const sectionItems: Array<KeyValueItem> = []
+    const valueLines: string[] = []
 
     section.subCategories?.forEach((subCategory, subIndex) => {
       if (!sectionAnswers?.[`sub${subIndex}`]?.includes(YES)) return
@@ -577,25 +577,24 @@ export const getProtectiveFactorsItems = (
           subCategory.items?.find((i) => i.code === code)?.description ?? code,
       )
 
-      sectionItems.push({
-        width: 'full',
-        keyText: subCategory.name ?? '',
-        valueText: selectedItemDescriptions,
-      })
+      const line =
+        selectedItemDescriptions.length > 0
+          ? `${subCategory.name}: ${selectedItemDescriptions.join(', ')}`
+          : subCategory.name ?? ''
+
+      valueLines.push(line)
     })
 
     if (sectionAnswers?.['dontKnow']?.length) {
-      sectionItems.push({
-        width: 'full',
-        keyText: section.dontKnowDescription ?? '',
-      })
+      valueLines.push(section.dontKnowDescription ?? '')
     }
 
-    if (sectionItems.length > 0) {
-      items.push(
-        { width: 'full', keyText: section.name ?? '' },
-        ...sectionItems,
-      )
+    if (valueLines.length > 0) {
+      items.push({
+        width: 'full',
+        keyText: section.name ?? '',
+        valueText: valueLines,
+      })
     }
   }
 
