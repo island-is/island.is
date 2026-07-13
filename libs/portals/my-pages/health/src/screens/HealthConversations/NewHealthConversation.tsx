@@ -75,14 +75,14 @@ const NewHealthConversation = () => {
       })
     : formatMessage(messages.healthConversationsNewIntro)
 
-  const formLocked = recipient?.canCreateConversation === false
+  const isFormLocked = recipient?.canCreateConversation === false
 
   const canSubmit =
     !!selectedTypeCode &&
     !!messageText.trim() &&
     termsAccepted &&
     !sending &&
-    !formLocked
+    !isFormLocked
 
   const handleSubmit = async () => {
     if (!canSubmit || !recipient || !selectedTypeCode) return
@@ -181,7 +181,7 @@ const NewHealthConversation = () => {
                 backgroundColor="blue"
                 size="sm"
                 required
-                isDisabled={formLocked}
+                isDisabled={isFormLocked}
               />
             </Box>
             <Box marginBottom={3}>
@@ -196,7 +196,7 @@ const NewHealthConversation = () => {
                 backgroundColor="blue"
                 value={messageText}
                 onChange={(e) => setMessageText(e.target.value)}
-                disabled={formLocked}
+                disabled={isFormLocked}
               />
             </Box>
 
@@ -211,7 +211,7 @@ const NewHealthConversation = () => {
                 )} ${formatMessage(
                   messages.healthConversationsNewTermsLinkText,
                 )}`}
-                disabled={formLocked}
+                disabled={isFormLocked}
               />
             </Box>
             <Box display="flex" justifyContent="flexEnd">
