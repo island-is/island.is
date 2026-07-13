@@ -169,6 +169,7 @@ const template: ApplicationTemplate<
           },
           onEntry: defineTemplateApi({
             action: ApiActions.submitEqualityReport,
+            namespace: 'DirectorateOfEquality',
             shouldPersistToExternalData: true,
             throwOnError: true,
           }),
