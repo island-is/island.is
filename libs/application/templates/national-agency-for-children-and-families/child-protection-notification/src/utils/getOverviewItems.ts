@@ -591,8 +591,11 @@ export const getMemmEducationItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const { memmEducationType, memmEducationSchoolName, memmEducationCaregiverName } =
-    getApplicationAnswers(answers)
+  const {
+    memmEducationType,
+    memmEducationSchoolName,
+    memmEducationCaregiverName,
+  } = getApplicationAnswers(answers)
 
   return [
     {
@@ -601,7 +604,9 @@ export const getMemmEducationItems = (
       valueText:
         educationTypeLabelMap[
           memmEducationType as keyof typeof educationTypeLabelMap
-        ] ?? memmEducationType ?? '',
+        ] ??
+        memmEducationType ??
+        '',
       hideIfEmpty: true,
     },
     {
@@ -633,7 +638,9 @@ export const getMemmReceptionItems = (
       valueText:
         receptionRadioLabelMap[
           memmReceptionSeekingAsylum as keyof typeof receptionRadioLabelMap
-        ] ?? memmReceptionSeekingAsylum ?? '',
+        ] ??
+        memmReceptionSeekingAsylum ??
+        '',
       hideIfEmpty: true,
     },
     {
@@ -642,7 +649,9 @@ export const getMemmReceptionItems = (
       valueText:
         receptionRadioLabelMap[
           memmReceptionRefugeeStatus as keyof typeof receptionRadioLabelMap
-        ] ?? memmReceptionRefugeeStatus ?? '',
+        ] ??
+        memmReceptionRefugeeStatus ??
+        '',
       hideIfEmpty: true,
     },
   ]
@@ -666,7 +675,9 @@ export const getMemmCultureItems = (
       valueText:
         languageUsageLabelMap[
           memmCultureLanguageUsage as keyof typeof languageUsageLabelMap
-        ] ?? memmCultureLanguageUsage ?? '',
+        ] ??
+        memmCultureLanguageUsage ??
+        '',
       hideIfEmpty: true,
     },
     {
@@ -680,7 +691,8 @@ export const getMemmCultureItems = (
     {
       width: 'half',
       keyText: memmMessages.culture.preferredLanguageTitle,
-      valueText: getLanguageByCode(memmCulturePreferredLanguage ?? '')?.name ?? '',
+      valueText:
+        getLanguageByCode(memmCulturePreferredLanguage ?? '')?.name ?? '',
       hideIfEmpty: true,
     },
     ...(memmCulturePreferredLanguage
@@ -720,7 +732,9 @@ export const getMemmWellbeingItems = (
       valueText:
         wellbeingRadioLabelMap[
           memmWellbeingIntegratedService as keyof typeof wellbeingRadioLabelMap
-        ] ?? memmWellbeingIntegratedService ?? '',
+        ] ??
+        memmWellbeingIntegratedService ??
+        '',
       hideIfEmpty: true,
     },
     {
@@ -729,7 +743,9 @@ export const getMemmWellbeingItems = (
       valueText:
         wellbeingRadioLabelMap[
           memmWellbeingWelfareContact as keyof typeof wellbeingRadioLabelMap
-        ] ?? memmWellbeingWelfareContact ?? '',
+        ] ??
+        memmWellbeingWelfareContact ??
+        '',
       hideIfEmpty: true,
     },
     {
@@ -750,7 +766,9 @@ export const getMemmWellbeingItems = (
       valueText:
         wellbeingRadioLabelMap[
           memmWellbeingWelfareManager as keyof typeof wellbeingRadioLabelMap
-        ] ?? memmWellbeingWelfareManager ?? '',
+        ] ??
+        memmWellbeingWelfareManager ??
+        '',
       hideIfEmpty: true,
     },
     {
@@ -771,7 +789,9 @@ export const getMemmWellbeingItems = (
       valueText:
         wellbeingRadioLabelMap[
           memmWellbeingDisability as keyof typeof wellbeingRadioLabelMap
-        ] ?? memmWellbeingDisability ?? '',
+        ] ??
+        memmWellbeingDisability ??
+        '',
       hideIfEmpty: true,
     },
     {
@@ -780,7 +800,9 @@ export const getMemmWellbeingItems = (
       valueText:
         disabilityServiceLabelMap[
           memmWellbeingDisabilityService as keyof typeof disabilityServiceLabelMap
-        ] ?? memmWellbeingDisabilityService ?? '',
+        ] ??
+        memmWellbeingDisabilityService ??
+        '',
       hideIfEmpty: true,
     },
   ]
