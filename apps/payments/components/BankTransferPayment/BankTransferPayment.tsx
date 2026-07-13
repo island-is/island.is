@@ -1,5 +1,5 @@
 import { useFormContext, Controller } from 'react-hook-form'
-import InputMask from 'react-input-mask'
+import { InputMask } from '@react-input/mask'
 
 import { AlertMessage, Box, Input } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -12,7 +12,8 @@ interface BankTransferPaymentInput {
   bankAccountNumber: string
 }
 
-const BANK_ACCOUNT_MASK = '9999-99-999999'
+const BANK_ACCOUNT_MASK = '____-__-______'
+const MASK_REPLACEMENT = { _: /\d/ }
 
 /**
  * The body shown between the {@link PaymentSelector} and the submit button when the user has
@@ -40,25 +41,20 @@ export const BankTransferPayment = () => {
           render={({ field }) => (
             <InputMask
               mask={BANK_ACCOUNT_MASK}
-              maskPlaceholder={null}
+              replacement={MASK_REPLACEMENT}
+              component={Input}
               {...field}
               onChange={(e) =>
                 // Strip dashes
                 field.onChange(e.target.value.replace(/\D/g, ''))
               }
-            >
-              <Input
-                name={field.name}
-                inputMode="numeric"
-                backgroundColor="blue"
-                label={formatMessage(bankTransfer.accountNumber)}
-                placeholder={formatMessage(
-                  bankTransfer.accountNumberPlaceholder,
-                )}
-                size="sm"
-                errorMessage={formState.errors.bankAccountNumber?.message}
-              />
-            </InputMask>
+              inputMode="numeric"
+              backgroundColor="blue"
+              label={formatMessage(bankTransfer.accountNumber)}
+              placeholder={formatMessage(bankTransfer.accountNumberPlaceholder)}
+              size="sm"
+              errorMessage={formState.errors.bankAccountNumber?.message}
+            />
           )}
         />
       </Box>
