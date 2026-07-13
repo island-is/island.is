@@ -49,7 +49,7 @@ export class VehiclesMainInfo {
   availableMileageRegistration?: boolean
 
   @Field({ nullable: true })
-  hasMilesOdometer?: boolean | null
+  hasMilesOdometer?: boolean
 }
 
 @ObjectType()
