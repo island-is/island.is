@@ -6,6 +6,7 @@ import {
 const MINUTES_IN_DAY = 24 * 60
 const CLOSING_SOON_THRESHOLD_MINUTES = 30
 
+
 export const getMessagingWindowInfo = ({
   windowOpen,
   windowClose,
