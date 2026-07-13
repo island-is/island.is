@@ -66,6 +66,7 @@ export const basicVehicleInformationMapper = (
       requiresMileageRegistration: data.requiresMileageRegistration,
       canRegisterMileage: data.canRegisterMileage,
       availableMileageRegistration: data.availableMileageRegistration,
+      hasMilesOdometer: data.vehicleHasMilesOdometer,
     },
     basicInfo: {
       model: data.make,

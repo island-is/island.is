@@ -156,6 +156,9 @@ const VehicleMileage = () => {
       },
     })
 
+  const hasMilesOdometer =
+    co2?.vehiclesListV3?.vehicleList?.[0]?.hasMilesOdometer
+
   const details = data?.vehicleMileageDetails?.data
   const hasData = details && details?.length > 0
   const isFormEditable = data?.vehicleMileageDetails?.editing
@@ -419,7 +422,11 @@ const VehicleMileage = () => {
                               {item.originCode}
                             </Table.Data>
                             <Table.Data align="right">
-                              {displayWithUnit(item.mileageNumber, 'km', true)}
+                              {displayWithUnit(
+                                item.mileageNumber,
+                                hasMilesOdometer ? 'mi' : 'km',
+                                true,
+                              )}
                             </Table.Data>
                           </Table.Row>
                         ))}
