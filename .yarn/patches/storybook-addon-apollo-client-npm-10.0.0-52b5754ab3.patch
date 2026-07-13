@@ -1,0 +1,9 @@
+diff --git a/preset.js b/preset.js
+index 4bd63d3240021d58a8eb61d58a3b44183be247ae..4e5870bac8a11f050261e4e2c6b6dd98e427be11 100644
+--- a/preset.js
++++ b/preset.js
+@@ -1 +1,3 @@
+-export * from './dist/preset.js';
++// Patched: upstream re-exports './dist/preset.js', which is not included in
++// the published 10.0.0 package and crashes Storybook's preset loader.
++export {}

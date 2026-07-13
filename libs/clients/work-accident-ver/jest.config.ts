@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-work-accident-ver',
   preset: '../../../jest.preset.js',
   testEnvironment: 'node',

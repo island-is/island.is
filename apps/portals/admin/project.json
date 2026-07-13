@@ -12,7 +12,7 @@
       "options": {
         "compiler": "babel",
         "outputPath": "dist/apps/portals/admin",
-        "index": "apps/portals/admin/src/index.src.html",
+        "index": "apps/portals/admin/src/index.html",
         "baseHref": "/stjornbord/",
         "main": "apps/portals/admin/src/main.tsx",
         "polyfills": "apps/portals/admin/src/polyfills.ts",
@@ -27,7 +27,9 @@
         "webpackConfig": "apps/portals/admin/webpack.config.js"
       },
       "configurations": {
+        "development": {},
         "production": {
+          "index": "apps/portals/admin/src/index.src.html",
           "optimization": true,
           "outputHashing": "all",
           "sourceMap": false,
@@ -54,7 +56,7 @@
     "serve": {
       "executor": "@nx/webpack:dev-server",
       "options": {
-        "buildTarget": "portals-admin:build",
+        "buildTarget": "portals-admin:build:development",
         "hmr": true
       },
       "configurations": {

@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName:
     'application-templates-transport-authority-transfer-of-vehicle-ownership',
   preset: './jest.preset.js',

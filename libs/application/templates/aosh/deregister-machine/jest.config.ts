@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'application-templates-aosh-deregister-machine',
   preset: '../../../../../jest.preset.js',
   transform: {

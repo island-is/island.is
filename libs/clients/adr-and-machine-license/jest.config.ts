@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-adr-and-machine-license',
   preset: './jest.preset.js',
   rootDir: '../../..',

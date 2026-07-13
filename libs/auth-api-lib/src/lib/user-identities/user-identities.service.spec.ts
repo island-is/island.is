@@ -205,7 +205,7 @@ describe('UserIdentitiesServices', () => {
         })
 
       // Assert
-      await expect(act()).rejects.toThrowError('Actor not found')
+      await expect(act()).rejects.toThrow('Actor not found')
     })
 
     it('should return subjectId if delegation exists', async () => {

@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-official-journal-of-iceland-application',
   preset: '../../../../jest.preset.js',
   testEnvironment: 'node',

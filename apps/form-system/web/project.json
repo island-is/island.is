@@ -12,7 +12,7 @@
       "options": {
         "compiler": "babel",
         "outputPath": "dist/apps/form-system/web",
-        "index": "apps/form-system/web/src/index.src.html",
+        "index": "apps/form-system/web/src/index.html",
         "baseHref": "/form/",
         "main": "apps/form-system/web/src/main.tsx",
         "tsConfig": "apps/form-system/web/tsconfig.app.json",
@@ -38,16 +38,22 @@
           "sourceMap": false,
           "namedChunks": false,
           "extractLicenses": true,
-          "vendorChunk": false
+          "vendorChunk": false,
+          "index": "apps/form-system/web/src/index.src.html"
         }
-      }
+      },
+      "dependsOn": [
+        {
+          "target": "generateDevIndexHTML"
+        }
+      ]
     },
     "serve": {
       "executor": "@nx/webpack:dev-server",
       "defaultConfiguration": "development",
       "options": {
         "port": 4242,
-        "buildTarget": "form-system-web:build",
+        "buildTarget": "form-system-web:build:development",
         "hmr": true
       },
       "configurations": {
@@ -58,7 +64,12 @@
           "buildTarget": "form-system-web:build:production",
           "hmr": false
         }
-      }
+      },
+      "dependsOn": [
+        {
+          "target": "generateDevIndexHTML"
+        }
+      ]
     },
     "lint": {
       "executor": "@nx/eslint:lint"
@@ -104,6 +115,15 @@
     },
     "docker-static": {
       "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-static`"
+    },
+    "generateDevIndexHTML": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "node scripts/dockerfile-assets/bash/extract-environment.js apps/form-system/web/src"
+        ]
+      },
+      "outputs": ["{workspaceRoot}/apps/form-system/web/src/index.html"]
     }
   }
 }

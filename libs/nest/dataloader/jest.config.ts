@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'nest-dataloader',
   preset: './jest.preset.js',
   rootDir: '../../..',
