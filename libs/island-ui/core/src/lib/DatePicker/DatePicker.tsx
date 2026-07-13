@@ -176,8 +176,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           if (
             start instanceof Date &&
             !isNaN(start.getTime()) &&
-            (end === null ||
-              (end instanceof Date && !isNaN(end.getTime())))
+            (end === null || (end instanceof Date && !isNaN(end.getTime())))
           ) {
             if (
               end === null &&
