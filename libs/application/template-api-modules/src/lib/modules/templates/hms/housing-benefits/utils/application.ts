@@ -12,7 +12,10 @@ import {
   HousingBenefitsApplicationModel,
   PropertyType,
 } from '@island.is/clients/hms-housing-benefits'
-import { getCompletedAssigneeNationalIdSet } from '@island.is/application/templates/hms/housing-benefits'
+import {
+  getCompletedAssigneeNationalIdSet,
+  getRejectedAssigneeNationalIdsFromAnswers,
+} from '@island.is/application/templates/hms/housing-benefits'
 import * as kennitala from 'kennitala'
 
 export const normalizePhoneNumber = (phoneNumber: string): string => {
@@ -275,10 +278,17 @@ const getHouseholdMembersForSubmission = (
     return []
   }
 
+  const rejected = new Set(
+    getRejectedAssigneeNationalIdsFromAnswers(application.answers).map(
+      normalizeNationalId,
+    ),
+  )
+
   return rows
     .filter((row) => !row.isRemoved)
     .map((row) => row.nationalIdWithName?.nationalId)
     .filter((id): id is string => Boolean(id))
+    .filter((id) => !rejected.has(normalizeNationalId(id)))
     .map((id) => ({
       kennitala: normalizeNationalId(id),
       ...getAssigneeHouseholdMemberFieldsFromAnswers(application.answers, id),
