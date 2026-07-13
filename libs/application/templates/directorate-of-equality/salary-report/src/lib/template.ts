@@ -18,18 +18,23 @@ import {
   BlankExcelTemplateApi,
   CompanyRegistryApi,
   DoeCompanyApi,
+  EditOutliersApi,
   ImportPresignApi,
   ParsedSalaryReportApi,
   SalaryAnalysisApi,
   SubmitSalaryReportApi,
 } from '../dataProviders'
 import { Events, Roles, States } from '../utils/constants'
-import { hasActiveEqualityReport } from '../utils/eligibility'
+import {
+  hasActiveEqualityReport,
+  hasPostponedOutlierPlan,
+} from '../utils/eligibility'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
+  pruneAfterDays,
 } from '@island.is/application/core'
 import { messages } from './messages'
 import { AuthDelegationType } from '@island.is/shared/types'
@@ -126,6 +131,10 @@ const template: ApplicationTemplate<
           progress: 0.4,
           status: FormModes.DRAFT,
           lifecycle: DefaultStateLifeCycle,
+          // onExit (not onEntry on the target states) so a failed submission
+          // blocks the transition instead of silently landing the applicant
+          // on POSTPONED/COMPLETED with a stale backend record.
+          onExit: SubmitSalaryReportApi,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -144,6 +153,54 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.POSTPONED,
+              cond: hasPostponedOutlierPlan,
+            },
+            {
+              target: States.COMPLETED,
+            },
+          ],
+        },
+      },
+      [States.POSTPONED]: {
+        meta: {
+          name: 'Úrbótaáætlun',
+          progress: 0.9,
+          status: FormModes.IN_PROGRESS,
+          lifecycle: pruneAfterDays(90),
+          // Fires on leaving POSTPONED (i.e. the final plan submit), PUTting
+          // just the outlier explanations rather than resubmitting the whole
+          // report — the report itself was already submitted via DRAFT's
+          // onExit.
+          onExit: EditOutliersApi,
+          actionCard: {
+            tag: {
+              label: messages.postponed.tagLabel,
+              variant: 'blueberry',
+            },
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/postponedForm').then((module) =>
+                  Promise.resolve(module.postponedForm),
+                ),
+              actions: [
+                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+              ],
+              read: 'all',
+              write: {
+                answers: ['salaryAnalysis'],
+                externalData: ['salaryAnalysisResult'],
+              },
+              api: [SalaryAnalysisApi],
+            },
+          ],
+        },
+        on: {
           [DefaultEvents.SUBMIT]: {
             target: States.COMPLETED,
           },
@@ -155,7 +212,6 @@ const template: ApplicationTemplate<
           progress: 1,
           status: FormModes.COMPLETED,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: SubmitSalaryReportApi,
           roles: [
             {
               id: Roles.APPLICANT,

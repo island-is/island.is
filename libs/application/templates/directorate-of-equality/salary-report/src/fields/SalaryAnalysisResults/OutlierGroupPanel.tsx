@@ -1,9 +1,14 @@
 import { FC, useEffect, useState } from 'react'
 import { useFormContext, useWatch } from 'react-hook-form'
-import { getValueViaPath, YES } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
+import {
+  getErrorViaPath,
+  getValueViaPath,
+  YES,
+} from '@island.is/application/core'
+import { Application, RecordObject } from '@island.is/application/types'
 import AnimateHeight from 'react-animate-height'
 import {
+  AlertMessage,
   Box,
   Button,
   GridColumn,
@@ -84,17 +89,39 @@ const OutlierRow: FC<{
 type Props = {
   application: Application
   outliers: SalaryAnalysisOutlierDto[]
+  // True on the POSTPONED-state review screen: the applicant already chose
+  // to postpone earlier and can't un-postpone here, so the checkbox is
+  // pointless — the form is dedicated to filling in the plan, and the
+  // "postponed" answer is force-cleared so it stops being reported to the
+  // backend as still postponed once this plan is submitted.
+  hidePostponeCheckbox?: boolean
+  errors?: RecordObject
 }
 
 // Rendered inline by SalaryAnalysisResults, sharing its already-fetched
 // analysis result — this must NOT independently re-read
 // application.externalData, since a sibling custom field reading that prop
 // can be stale relative to the mutation response the parent just received.
-export const OutlierGroupPanel: FC<Props> = ({ application, outliers }) => {
+export const OutlierGroupPanel: FC<Props> = ({
+  application,
+  outliers,
+  hidePostponeCheckbox,
+  errors,
+}) => {
   const { formatMessage } = useLocale()
   const { setValue, getValues } = useFormContext()
   const m = messages.salaryAnalysis.outlierGroup
   const improvementPlanMessages = messages.salaryAnalysis.improvementPlan
+
+  const fieldError = (suffix: string) =>
+    errors ? getErrorViaPath(errors, `${FIELD_NAME}.${suffix}`) : undefined
+  const reasonError = fieldError('reason')
+  const actionError = fieldError('action')
+  const signatureNameError = fieldError('signatureName')
+  const signatureRoleError = fieldError('signatureRole')
+  const hasMissingFieldError = Boolean(
+    reasonError || actionError || signatureNameError || signatureRoleError,
+  )
 
   const employees = (getValueViaPath<Employee[]>(
     application.answers,
@@ -106,6 +133,13 @@ export const OutlierGroupPanel: FC<Props> = ({ application, outliers }) => {
   const postponed: string[] =
     useWatch({ name: 'salaryAnalysis.postponed' }) ?? []
   const isPostponed = postponed.includes(YES)
+
+  useEffect(() => {
+    if (hidePostponeCheckbox && postponed.length > 0) {
+      setValue('salaryAnalysis.postponed', [])
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hidePostponeCheckbox])
 
   // The employee ordinals aren't user-editable — they're derived from the
   // detected outlier set and must cover every one of them for the DTO's
@@ -134,24 +168,28 @@ export const OutlierGroupPanel: FC<Props> = ({ application, outliers }) => {
         {formatMessage(improvementPlanMessages.intro)}
       </Text>
 
-      <Box
-        background="blue100"
-        borderRadius="large"
-        padding={4}
-        marginBottom={4}
-      >
-        <Text variant="h4" marginBottom={1}>
-          {formatMessage(m.postponeCardTitle)}
-        </Text>
-        <Text marginBottom={2}>{formatMessage(m.postponeCardDescription)}</Text>
-        <CheckboxController
-          id="salaryAnalysis.postponed"
-          name="salaryAnalysis.postponed"
-          options={[
-            { label: formatMessage(m.postponeCheckboxLabel), value: YES },
-          ]}
-        />
-      </Box>
+      {!hidePostponeCheckbox && (
+        <Box
+          background="blue100"
+          borderRadius="large"
+          padding={4}
+          marginBottom={4}
+        >
+          <Text variant="h4" marginBottom={1}>
+            {formatMessage(m.postponeCardTitle)}
+          </Text>
+          <Text marginBottom={2}>
+            {formatMessage(m.postponeCardDescription)}
+          </Text>
+          <CheckboxController
+            id="salaryAnalysis.postponed"
+            name="salaryAnalysis.postponed"
+            options={[
+              { label: formatMessage(m.postponeCheckboxLabel), value: YES },
+            ]}
+          />
+        </Box>
+      )}
 
       <Box marginBottom={4}>
         <Text variant="h4" marginBottom={2}>
@@ -179,6 +217,19 @@ export const OutlierGroupPanel: FC<Props> = ({ application, outliers }) => {
         </T.Table>
       </Box>
 
+      {hasMissingFieldError && (
+        <Box marginBottom={3}>
+          <AlertMessage
+            type="error"
+            message={formatMessage(
+              hidePostponeCheckbox
+                ? m.formErrorRequired
+                : m.formErrorWithPostponeOption,
+            )}
+          />
+        </Box>
+      )}
+
       {!isPostponed && (
         <Box>
           <Text variant="h4" marginBottom={2}>
@@ -191,6 +242,7 @@ export const OutlierGroupPanel: FC<Props> = ({ application, outliers }) => {
               label={formatMessage(m.reasonLabel)}
               textarea
               backgroundColor="blue"
+              error={reasonError}
             />
             <InputController
               id={`${FIELD_NAME}.action`}
@@ -198,6 +250,7 @@ export const OutlierGroupPanel: FC<Props> = ({ application, outliers }) => {
               label={formatMessage(m.actionLabel)}
               textarea
               backgroundColor="blue"
+              error={actionError}
             />
             <GridRow rowGap={2}>
               <GridColumn span={['12/12', '6/12']}>
@@ -206,6 +259,7 @@ export const OutlierGroupPanel: FC<Props> = ({ application, outliers }) => {
                   name={`${FIELD_NAME}.signatureName`}
                   label={formatMessage(m.signatureNameLabel)}
                   backgroundColor="blue"
+                  error={signatureNameError}
                 />
               </GridColumn>
               <GridColumn span={['12/12', '6/12']}>
@@ -214,6 +268,7 @@ export const OutlierGroupPanel: FC<Props> = ({ application, outliers }) => {
                   name={`${FIELD_NAME}.signatureRole`}
                   label={formatMessage(m.signatureRoleLabel)}
                   backgroundColor="blue"
+                  error={signatureRoleError}
                 />
               </GridColumn>
             </GridRow>

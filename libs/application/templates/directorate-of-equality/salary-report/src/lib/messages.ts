@@ -840,7 +840,7 @@ export const messages = {
       postponeCardDescription: {
         id: 'salaryReport.application:salaryAnalysis.outlierGroup.postponeCardDescription',
         defaultMessage:
-          'Hægt er að skila úrbótaáætlun innan sex mánaða frá því að skýrslan er send inn.',
+          'Hægt er að skila úrbótaáætlun innan þriggja mánaða frá því að skýrslan er send inn.',
       },
       postponeCheckboxLabel: {
         id: 'salaryReport.application:salaryAnalysis.outlierGroup.postponeCheckboxLabel',
@@ -877,6 +877,16 @@ export const messages = {
       signatureRoleLabel: {
         id: 'salaryReport.application:salaryAnalysis.outlierGroup.signatureRoleLabel',
         defaultMessage: 'Starfstitill ábyrgðaraðila',
+      },
+      formErrorWithPostponeOption: {
+        id: 'salaryReport.application:salaryAnalysis.outlierGroup.formErrorWithPostponeOption',
+        defaultMessage:
+          'Veldu að fresta úrbótaáætlun eða fylltu út eyðublaðið að neðan.',
+      },
+      formErrorRequired: {
+        id: 'salaryReport.application:salaryAnalysis.outlierGroup.formErrorRequired',
+        defaultMessage:
+          'Eyðublaðið má ekki vera tómt. Vinsamlegast fylltu það út.',
       },
     }),
   },
@@ -929,6 +939,55 @@ export const messages = {
     alertDescription: {
       id: 'salaryReport.application:completed.alertDescription',
       defaultMessage: lorem,
+    },
+  }),
+
+  postponed: defineMessages({
+    tagLabel: {
+      id: 'salaryReport.application:postponed.tagLabel',
+      defaultMessage: 'Beðið eftir úrbótaáætlun',
+    },
+    introSectionTitle: {
+      id: 'salaryReport.application:postponed.introSectionTitle',
+      defaultMessage: 'Umsókn móttekin',
+    },
+    introTitle: {
+      id: 'salaryReport.application:postponed.introTitle',
+      defaultMessage: 'Launaskýrslu hefur verið skilað',
+    },
+    introDescription: {
+      id: 'salaryReport.application:postponed.introDescription',
+      defaultMessage:
+        'Takk fyrir að skila launaskýrslunni til Jafnréttisstofu. Þú valdir að fresta útskýringu á launamun sem greindist í frávikum. Þú hefur þrjá mánuði frá því að skýrslan var send inn til að skila úrbótaáætlun.',
+    },
+    reportSummarySectionTitle: {
+      id: 'salaryReport.application:postponed.reportSummarySectionTitle',
+      defaultMessage: 'Skýrsla',
+    },
+    reportSummaryTitle: {
+      id: 'salaryReport.application:postponed.reportSummaryTitle',
+      defaultMessage: 'Yfirlit innsendrar skýrslu',
+    },
+    sectionTitle: {
+      id: 'salaryReport.application:postponed.sectionTitle',
+      defaultMessage: 'Úrbótaáætlun',
+    },
+    title: {
+      id: 'salaryReport.application:postponed.title',
+      defaultMessage: 'Úrbótaáætlun',
+    },
+    reviewTitle: {
+      id: 'salaryReport.application:postponed.reviewTitle',
+      defaultMessage: 'Yfirlit úrbótaáætlunar',
+    },
+    intro: {
+      id: 'salaryReport.application:postponed.intro',
+      defaultMessage:
+        'Staðfestu að úrbótaáætlunin sé rétt útfyllt og sendu hana inn til Jafnréttisstofu.',
+    },
+    submitButton: {
+      id: 'salaryReport.application:postponed.submitButton',
+      defaultMessage: 'Senda inn úrbótaáætlun',
     },
   }),
 }

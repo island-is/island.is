@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { getValueViaPath } from '@island.is/application/core'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
-import { FieldBaseProps } from '@island.is/application/types'
+import { CustomField, FieldBaseProps } from '@island.is/application/types'
 import {
   AlertMessage,
   Box,
@@ -17,9 +17,19 @@ import { messages } from '../../lib/messages'
 import { formatCurrency } from '../EmployeesEditor/utils'
 import { OutlierGroupPanel } from './OutlierGroupPanel'
 
-export const SalaryAnalysisResults: FC<
-  React.PropsWithChildren<FieldBaseProps>
-> = ({ application }) => {
+interface Props extends FieldBaseProps {
+  field: CustomField
+}
+
+export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
+  application,
+  field,
+  errors,
+}) => {
+  const hidePostponeCheckbox =
+    field?.props && typeof field.props['hidePostponeCheckbox'] === 'boolean'
+      ? (field.props['hidePostponeCheckbox'] as boolean)
+      : false
   const { formatMessage, lang: locale } = useLocale()
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [hasError, setHasError] = useState(false)
@@ -156,6 +166,8 @@ export const SalaryAnalysisResults: FC<
       <OutlierGroupPanel
         application={application}
         outliers={result?.outliers ?? []}
+        hidePostponeCheckbox={hidePostponeCheckbox}
+        errors={errors}
       />
     </Box>
   )
