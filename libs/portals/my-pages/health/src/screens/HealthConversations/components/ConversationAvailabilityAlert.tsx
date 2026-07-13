@@ -55,7 +55,8 @@ const ConversationAvailabilityAlert = ({ recipient }: Props) => {
           type: 'warning',
           title: formatMessage(messages.healthConversationClosingSoonTitle),
           message: formatMessage(messages.healthConversationClosingSoonText, {
-            openTime: windowInfo.windowOpenLabel,
+            hasOpenTime: windowInfo.windowOpenLabel ? 'true' : 'false',
+            openTime: windowInfo.windowOpenLabel ?? '',
             closeTime: windowInfo.windowCloseLabel,
           }),
         }
