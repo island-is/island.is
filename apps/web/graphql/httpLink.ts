@@ -48,7 +48,17 @@ export function createHttpLink(options: ClientOptions) {
       useGETForHashedQueries: true,
     })
       .concat(createBypassCacheLink(options))
-      .concat(new HttpLink({ uri: `${graphqlUrl}${graphqlEndpoint}`, fetch }))
+      .concat(
+        new HttpLink({
+          uri: `${graphqlUrl}${graphqlEndpoint}`,
+          fetch,
+          headers: {
+            // Apollo Server 4+ CSRF prevention rejects GET requests without a
+            // content-type unless they carry a preflight header.
+            'apollo-require-preflight': 'true',
+          },
+        }),
+      )
   } else {
     // Use batched POST requests on the server side to reduce the number of
     // outgoing requests and CPU needed for run-time hashing.
