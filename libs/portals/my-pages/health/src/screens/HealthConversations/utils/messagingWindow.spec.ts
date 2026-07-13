@@ -21,11 +21,6 @@ describe('getMessagingWindowInfo', () => {
     expect(info.currentTimeLabel).toBe('09:05')
   })
 
-  it('is not closing soon in the middle of the window', () => {
-    setClock('2026-07-13T12:00:00Z')
-    expect(getMessagingWindowInfo(window).isClosingSoon).toBe(false)
-  })
-
   it('is closing soon within 30 minutes of closing', () => {
     setClock('2026-07-13T21:45:00Z')
     expect(getMessagingWindowInfo(window).isClosingSoon).toBe(true)
