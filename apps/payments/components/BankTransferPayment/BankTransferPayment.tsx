@@ -1,5 +1,5 @@
 import { useFormContext, Controller } from 'react-hook-form'
-import { InputMask } from '@react-input/mask'
+import { format, InputMask } from '@react-input/mask'
 
 import { AlertMessage, Box, Input } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -14,6 +14,13 @@ interface BankTransferPaymentInput {
 
 const BANK_ACCOUNT_MASK = '____-__-______'
 const MASK_REPLACEMENT = { _: /\d/ }
+
+// The form stores unmasked digits; the input displays the masked value.
+const toMaskedValue = (value: string | undefined) =>
+  format((value ?? '').replace(/\D/g, ''), {
+    mask: BANK_ACCOUNT_MASK,
+    replacement: MASK_REPLACEMENT,
+  })
 
 /**
  * The body shown between the {@link PaymentSelector} and the submit button when the user has
@@ -44,6 +51,7 @@ export const BankTransferPayment = () => {
               replacement={MASK_REPLACEMENT}
               component={Input}
               {...field}
+              value={toMaskedValue(field.value)}
               onChange={(e) =>
                 // Strip dashes
                 field.onChange(e.target.value.replace(/\D/g, ''))
