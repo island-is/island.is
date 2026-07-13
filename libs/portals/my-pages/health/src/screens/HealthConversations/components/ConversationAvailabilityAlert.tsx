@@ -17,9 +17,7 @@ interface AvailabilityAlert {
 
 const ConversationAvailabilityAlert = ({ recipient }: Props) => {
   const { formatMessage } = useLocale()
-
   const blockedReason = recipient.conversationBlockedReason
-
   const windowInfo = getMessagingWindowInfo({
     windowOpen: recipient.messagingWindowOpen,
     windowClose: recipient.messagingWindowClose,
