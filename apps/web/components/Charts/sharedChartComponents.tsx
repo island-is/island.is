@@ -1,6 +1,6 @@
 import React from 'react'
 import cn from 'classnames'
-import { LegendProps, TooltipProps } from 'recharts'
+import { DefaultLegendContentProps, TooltipContentProps } from 'recharts'
 
 import { Box, Text } from '@island.is/island-ui/core'
 
@@ -17,7 +17,7 @@ export const CustomTooltip = ({
   payload,
   active,
   label,
-}: TooltipProps<string, number>) => {
+}: Partial<TooltipContentProps<string, number>>) => {
   if (active && payload && payload.length) {
     return (
       <div className={cn(styles.tooltip)}>
@@ -79,7 +79,7 @@ export const CustomizedRightAxisTick = ({ x, y, payload }: AxisTickProps) => {
     </g>
   )
 }
-interface CustomLegendProps extends LegendProps {
+interface CustomLegendProps extends DefaultLegendContentProps {
   title?: string
 }
 export const RenderLegend = (props: CustomLegendProps) => {
@@ -109,22 +109,22 @@ export const RenderLegend = (props: CustomLegendProps) => {
 
 // Define the type for the destructured props
 type CustomLabelProps = {
-  cx: number
-  cy: number
-  midAngle: number
-  outerRadius: number
-  innerRadius: number
-  percent: number
+  cx?: number
+  cy?: number
+  midAngle?: number
+  outerRadius?: number
+  innerRadius?: number
+  percent?: number
 }
 
 const RADIAN = Math.PI / 180
 export const renderCustomizedLabel = ({
-  cx,
-  cy,
-  midAngle,
-  outerRadius,
-  innerRadius,
-  percent,
+  cx = 0,
+  cy = 0,
+  midAngle = 0,
+  outerRadius = 0,
+  innerRadius = 0,
+  percent = 0,
 }: CustomLabelProps) => {
   const radius = innerRadius + (outerRadius - innerRadius) * 1.2
   const x = cx + radius * Math.cos(-midAngle * RADIAN)

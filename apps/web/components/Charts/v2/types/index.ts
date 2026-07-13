@@ -3,8 +3,8 @@ import type { VerticalAlignmentType } from 'recharts/types/component/DefaultLege
 import type {
   AxisDomain,
   AxisInterval,
-  BaseAxisProps,
   Margin,
+  RenderableAxisProps,
 } from 'recharts/types/util/types'
 
 import {
@@ -75,7 +75,7 @@ export interface CustomStyleConfig {
     fontSize?: number
     domain?: AxisDomain
     interval?: AxisInterval
-    tick?: BaseAxisProps['tick']
+    tick?: RenderableAxisProps<any, any>['tick']
     ticks?: (string | number)[]
   }
   xAxis?: {
@@ -84,7 +84,7 @@ export interface CustomStyleConfig {
     domain?: AxisDomain
     angle?: number
     interval?: AxisInterval
-    tick?: BaseAxisProps['tick']
+    tick?: RenderableAxisProps<any, any>['tick']
   }
   pie?: {
     innerRadius?: number

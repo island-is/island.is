@@ -1,7 +1,7 @@
 import React from 'react'
 import * as styles from './charts.css'
 import cn from 'classnames'
-import { LegendProps, TooltipProps } from 'recharts'
+import { DefaultLegendContentProps, TooltipContentProps } from 'recharts'
 import { Box, Text } from '@island.is/island-ui/core'
 import { isDefined } from '@island.is/shared/utils'
 
@@ -13,7 +13,7 @@ interface AxisTickProps {
   valueFormat?: (arg: number) => string
 }
 
-interface CustomTooltipProps extends TooltipProps<number, string> {
+type CustomTooltipProps = Partial<TooltipContentProps<number, string>> & {
   valueLabels?: Record<string, string>
   valueFormat?: (arg: number) => string
 }
@@ -42,10 +42,13 @@ export const CustomTooltip = ({
                   }}
                 />
                 <Text variant="small">
-                  {valueLabels && item.dataKey
+                  {valueLabels && typeof item.dataKey === 'string'
                     ? valueLabels[item.dataKey]
                     : item.name}
-                  : {valueFormat ? valueFormat(item.value) : item.value}
+                  :{' '}
+                  {valueFormat && typeof item.value === 'number'
+                    ? valueFormat(item.value)
+                    : item.value}
                 </Text>
               </Box>
             )
@@ -96,7 +99,7 @@ export const CustomizedRightAxisTick = ({ x, y, payload }: AxisTickProps) => {
     </g>
   )
 }
-interface CustomLegendProps extends LegendProps {
+interface CustomLegendProps extends DefaultLegendContentProps {
   title?: string
   labels?: Record<string, string>
 }
@@ -123,7 +126,9 @@ export const RenderLegend = ({ payload, title, labels }: CustomLegendProps) => {
               borderColor: item.color,
             }}
           />
-          <Text variant="small">{labels?.[item.value] ?? item.value}</Text>
+          <Text variant="small">
+            {(item.value ? labels?.[item.value] : undefined) ?? item.value}
+          </Text>
         </Box>
       ))}
     </Box>

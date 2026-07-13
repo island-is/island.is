@@ -6,7 +6,7 @@ import {
   PieChart,
   ResponsiveContainer,
   Tooltip,
-  TooltipProps,
+  TooltipContentProps,
 } from 'recharts'
 
 import { theme } from '@island.is/island-ui/theme'
@@ -19,7 +19,7 @@ import {
 } from '../sharedChartComponents'
 import * as styles from './SimplePieChart.css'
 
-interface CustomTooltipProps extends TooltipProps<string, number> {
+type CustomTooltipProps = Partial<TooltipContentProps<string, number>> & {
   sum: number
 }
 
