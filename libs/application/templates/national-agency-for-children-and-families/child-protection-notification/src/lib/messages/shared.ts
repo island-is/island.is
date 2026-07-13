@@ -11,6 +11,11 @@ export const sharedMessages = defineMessages({
     defaultMessage: 'Nei',
     description: 'No option for radio fields',
   },
+  radioDoNotKnow: {
+    id: 'cpn.application:shared.radioDoNotKnow',
+    defaultMessage: 'Þekki ekki til',
+    description: 'Unknown/do not know option for radio fields',
+  },
   applicationName: {
     id: 'cpn.application:shared.applicationName',
     defaultMessage: 'Tilkynning til barnaverndar',

@@ -8,19 +8,24 @@ import { DefaultEvents } from '@island.is/application/types'
 
 import {
   childMessages,
-  parentsMessages,
+  memmMessages,
   overviewMessages,
+  parentsMessages,
   prerequisitesMessages,
   protectiveFactorsMessages,
 } from '../../lib/messages'
 import {
+  isKnowsNationalId,
   isNoNationalId,
   isUnborn,
-  isKnowsNationalId,
 } from '../../utils/conditionUtils'
 import {
   getChildManualItems,
   getChildWithNationalIdItems,
+  getMemmCultureItems,
+  getMemmEducationItems,
+  getMemmReceptionItems,
+  getMemmWellbeingItems,
   getParent1Items,
   getParent2Items,
   getParentsPreItems,
@@ -41,16 +46,19 @@ export const overviewSection = buildSection({
         buildOverviewField({
           id: 'overview.serviceProvider',
           title: prerequisitesMessages.serviceProvider.subSectionTitle,
+          backId: 'serviceProvider',
           items: getServiceProviderItems,
         }),
         buildOverviewField({
           id: 'overview.serviceProviderContactPerson',
           title: prerequisitesMessages.serviceProvider.contactPerson,
+          backId: 'serviceProvider',
           items: getServiceProviderContactPersonItems,
         }),
         buildOverviewField({
           id: 'overview.childWithNationalId',
           title: childMessages.shared.sectionTitle,
+          backId: 'child',
           items: getChildWithNationalIdItems,
         }),
         buildOverviewField({
@@ -94,6 +102,38 @@ export const overviewSection = buildSection({
           backId: 'parents',
           items: getParent2Items,
           hideIfEmpty: true,
+        }),
+        buildOverviewField({
+          id: 'overview.memmEducation',
+          title: memmMessages.education.subSectionTitle,
+          backId: 'memm.education',
+          items: getMemmEducationItems,
+          hideIfEmpty: true,
+          condition: isKnowsNationalId,
+        }),
+        buildOverviewField({
+          id: 'overview.memmReception',
+          title: memmMessages.reception.subSectionTitle,
+          backId: 'memm.reception',
+          items: getMemmReceptionItems,
+          hideIfEmpty: true,
+          condition: isKnowsNationalId,
+        }),
+        buildOverviewField({
+          id: 'overview.memmCulture',
+          title: memmMessages.culture.subSectionTitle,
+          backId: 'memm.culture',
+          items: getMemmCultureItems,
+          hideIfEmpty: true,
+          condition: isKnowsNationalId,
+        }),
+        buildOverviewField({
+          id: 'overview.memmWellbeing',
+          title: memmMessages.wellbeing.subSectionTitle,
+          backId: 'memm.wellbeing',
+          items: getMemmWellbeingItems,
+          hideIfEmpty: true,
+          condition: isKnowsNationalId,
         }),
         buildOverviewField({
           id: 'overview.protectiveFactors',

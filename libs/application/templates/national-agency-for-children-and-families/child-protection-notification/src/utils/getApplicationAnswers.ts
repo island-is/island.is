@@ -178,6 +178,94 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     Record<string, Record<string, string[]>>
   >(answers, 'protectiveFactors')
 
+  const memmEducationType = getValueViaPath<string>(
+    answers,
+    'memm.education.type',
+  )
+
+  const memmEducationSchoolName = getValueViaPath<string>(
+    answers,
+    'memm.education.schoolName',
+  )
+
+  const memmEducationCaregiverName = getValueViaPath<string>(
+    answers,
+    'memm.education.caregiverName',
+  )
+
+  const memmReceptionSeekingAsylum = getValueViaPath<string>(
+    answers,
+    'memm.reception.seekingAsylum',
+  )
+
+  const memmReceptionRefugeeStatus = getValueViaPath<string>(
+    answers,
+    'memm.reception.refugeeStatus',
+  )
+
+  const memmCultureLanguageUsage = getValueViaPath<string>(
+    answers,
+    'memm.culture.languageUsage',
+  )
+
+  const memmCultureLanguages = getValueViaPath<string[]>(
+    answers,
+    'memm.culture.languages',
+  )
+
+  const memmCulturePreferredLanguage = getValueViaPath<string>(
+    answers,
+    'memm.culture.preferredLanguage',
+  )
+
+  const memmCultureNeedsInterpreter =
+    getValueViaPath<string[]>(answers, 'memm.culture.needsInterpreter') ?? []
+
+  const memmWellbeingIntegratedService = getValueViaPath<string>(
+    answers,
+    'memm.wellbeing.integratedService',
+  )
+
+  const memmWellbeingWelfareContact = getValueViaPath<string>(
+    answers,
+    'memm.wellbeing.welfareContact',
+  )
+
+  const memmWellbeingWelfareContactEmail = getValueViaPath<string>(
+    answers,
+    'memm.wellbeing.welfareContactEmail',
+  )
+
+  const memmWellbeingWelfareContactName = getValueViaPath<string>(
+    answers,
+    'memm.wellbeing.welfareContactName',
+  )
+
+  const memmWellbeingWelfareManager = getValueViaPath<string>(
+    answers,
+    'memm.wellbeing.welfareManager',
+  )
+
+  const memmWellbeingWelfareManagerEmail = getValueViaPath<string>(
+    answers,
+    'memm.wellbeing.welfareManagerEmail',
+  )
+
+  const memmWellbeingWelfareManagerName = getValueViaPath<string>(
+    answers,
+    'memm.wellbeing.welfareManagerName',
+  )
+
+  const memmWellbeingDisability = getValueViaPath<string>(
+    answers,
+    'memm.wellbeing.disability',
+  )
+
+  const memmWellbeingDisabilityService = getValueViaPath<string>(
+    answers,
+    'memm.wellbeing.disabilityService',
+  )
+
   return {
     serviceProviderService,
     serviceProviderServiceType,
@@ -215,5 +303,23 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     parent1,
     parent2,
     protectiveFactors,
+    memmEducationType,
+    memmEducationSchoolName,
+    memmEducationCaregiverName,
+    memmReceptionSeekingAsylum,
+    memmReceptionRefugeeStatus,
+    memmCultureLanguageUsage,
+    memmCultureLanguages,
+    memmCulturePreferredLanguage,
+    memmCultureNeedsInterpreter,
+    memmWellbeingIntegratedService,
+    memmWellbeingWelfareContact,
+    memmWellbeingWelfareContactEmail,
+    memmWellbeingWelfareContactName,
+    memmWellbeingWelfareManager,
+    memmWellbeingWelfareManagerEmail,
+    memmWellbeingWelfareManagerName,
+    memmWellbeingDisability,
+    memmWellbeingDisabilityService,
   }
 }

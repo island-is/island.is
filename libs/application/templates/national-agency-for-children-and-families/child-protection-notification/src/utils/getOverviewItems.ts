@@ -13,6 +13,7 @@ import { format as formatKennitala } from 'kennitala'
 import { formatNumber } from 'libphonenumber-js'
 import {
   childMessages,
+  memmMessages,
   parentsMessages,
   prerequisitesMessages,
   sharedMessages,
@@ -551,6 +552,238 @@ export const getParent2Items = (
 ): Array<KeyValueItem> => {
   const { parent2, parentsKnowsNationalIds } = getApplicationAnswers(answers)
   return buildParentItems(parent2, parentsKnowsNationalIds)
+}
+
+const educationTypeLabelMap = {
+  kindergarten: memmMessages.education.typeKindergarten,
+  elementarySchool: memmMessages.education.typeElementarySchool,
+  highSchool: memmMessages.education.typeHighSchool,
+  daycareProvider: memmMessages.education.typeDaycareProvider,
+} as const
+
+const receptionRadioLabelMap = {
+  [YES]: sharedMessages.radioYes,
+  no: sharedMessages.radioNo,
+  doNotKnow: sharedMessages.radioDoNotKnow,
+  notApplicable: memmMessages.reception.optionNotApplicable,
+} as const
+
+const wellbeingRadioLabelMap = {
+  [YES]: sharedMessages.radioYes,
+  no: sharedMessages.radioNo,
+  doNotKnow: sharedMessages.radioDoNotKnow,
+} as const
+
+const languageUsageLabelMap = {
+  onlyIcelandic: memmMessages.culture.languageUsageOnlyIcelandic,
+  icelandicAndOther: memmMessages.culture.languageUsageBoth,
+  onlyOther: memmMessages.culture.languageUsageOnlyOther,
+} as const
+
+const disabilityServiceLabelMap = {
+  municipal: memmMessages.wellbeing.disabilityServiceMunicipal,
+  sports: memmMessages.wellbeing.disabilityServiceSports,
+  health: memmMessages.wellbeing.disabilityServiceHealth,
+  emergency: memmMessages.wellbeing.disabilityServiceEmergency,
+} as const
+
+export const getMemmEducationItems = (
+  answers: FormValue,
+  _externalData: ExternalData,
+): Array<KeyValueItem> => {
+  const { memmEducationType, memmEducationSchoolName, memmEducationCaregiverName } =
+    getApplicationAnswers(answers)
+
+  return [
+    {
+      width: 'full',
+      keyText: memmMessages.education.typeLabel,
+      valueText:
+        educationTypeLabelMap[
+          memmEducationType as keyof typeof educationTypeLabelMap
+        ] ?? memmEducationType ?? '',
+      hideIfEmpty: true,
+    },
+    {
+      width: 'full',
+      keyText: memmMessages.education.schoolName,
+      valueText: memmEducationSchoolName ?? '',
+      hideIfEmpty: true,
+    },
+    {
+      width: 'full',
+      keyText: memmMessages.education.caregiverName,
+      valueText: memmEducationCaregiverName ?? '',
+      hideIfEmpty: true,
+    },
+  ]
+}
+
+export const getMemmReceptionItems = (
+  answers: FormValue,
+  _externalData: ExternalData,
+): Array<KeyValueItem> => {
+  const { memmReceptionSeekingAsylum, memmReceptionRefugeeStatus } =
+    getApplicationAnswers(answers)
+
+  return [
+    {
+      width: 'full',
+      keyText: memmMessages.reception.seekingAsylumLabel,
+      valueText:
+        receptionRadioLabelMap[
+          memmReceptionSeekingAsylum as keyof typeof receptionRadioLabelMap
+        ] ?? memmReceptionSeekingAsylum ?? '',
+      hideIfEmpty: true,
+    },
+    {
+      width: 'full',
+      keyText: memmMessages.reception.refugeeStatusLabel,
+      valueText:
+        receptionRadioLabelMap[
+          memmReceptionRefugeeStatus as keyof typeof receptionRadioLabelMap
+        ] ?? memmReceptionRefugeeStatus ?? '',
+      hideIfEmpty: true,
+    },
+  ]
+}
+
+export const getMemmCultureItems = (
+  answers: FormValue,
+  _externalData: ExternalData,
+): Array<KeyValueItem> => {
+  const {
+    memmCultureLanguageUsage,
+    memmCultureLanguages,
+    memmCulturePreferredLanguage,
+    memmCultureNeedsInterpreter,
+  } = getApplicationAnswers(answers)
+
+  return [
+    {
+      width: 'full',
+      keyText: memmMessages.culture.languageUsageLabel,
+      valueText:
+        languageUsageLabelMap[
+          memmCultureLanguageUsage as keyof typeof languageUsageLabelMap
+        ] ?? memmCultureLanguageUsage ?? '',
+      hideIfEmpty: true,
+    },
+    {
+      width: 'full',
+      keyText: memmMessages.culture.languagesSectionTitle,
+      valueText: (memmCultureLanguages ?? []).map(
+        (code) => getLanguageByCode(code)?.name ?? code,
+      ),
+      hideIfEmpty: true,
+    },
+    {
+      width: 'half',
+      keyText: memmMessages.culture.preferredLanguageTitle,
+      valueText: getLanguageByCode(memmCulturePreferredLanguage ?? '')?.name ?? '',
+      hideIfEmpty: true,
+    },
+    ...(memmCulturePreferredLanguage
+      ? [
+          {
+            width: 'half' as const,
+            keyText: memmMessages.culture.needsInterpreter,
+            valueText: memmCultureNeedsInterpreter.includes(YES)
+              ? sharedMessages.radioYes
+              : sharedMessages.radioNo,
+          },
+        ]
+      : []),
+  ]
+}
+
+export const getMemmWellbeingItems = (
+  answers: FormValue,
+  _externalData: ExternalData,
+): Array<KeyValueItem> => {
+  const {
+    memmWellbeingIntegratedService,
+    memmWellbeingWelfareContact,
+    memmWellbeingWelfareContactEmail,
+    memmWellbeingWelfareContactName,
+    memmWellbeingWelfareManager,
+    memmWellbeingWelfareManagerEmail,
+    memmWellbeingWelfareManagerName,
+    memmWellbeingDisability,
+    memmWellbeingDisabilityService,
+  } = getApplicationAnswers(answers)
+
+  return [
+    {
+      width: 'full',
+      keyText: memmMessages.wellbeing.integratedServiceLabel,
+      valueText:
+        wellbeingRadioLabelMap[
+          memmWellbeingIntegratedService as keyof typeof wellbeingRadioLabelMap
+        ] ?? memmWellbeingIntegratedService ?? '',
+      hideIfEmpty: true,
+    },
+    {
+      width: 'full',
+      keyText: memmMessages.wellbeing.welfareContactLabel,
+      valueText:
+        wellbeingRadioLabelMap[
+          memmWellbeingWelfareContact as keyof typeof wellbeingRadioLabelMap
+        ] ?? memmWellbeingWelfareContact ?? '',
+      hideIfEmpty: true,
+    },
+    {
+      width: 'half',
+      keyText: memmMessages.wellbeing.welfareContactEmail,
+      valueText: memmWellbeingWelfareContactEmail ?? '',
+      hideIfEmpty: true,
+    },
+    {
+      width: 'half',
+      keyText: memmMessages.wellbeing.welfareContactName,
+      valueText: memmWellbeingWelfareContactName ?? '',
+      hideIfEmpty: true,
+    },
+    {
+      width: 'full',
+      keyText: memmMessages.wellbeing.welfareManagerLabel,
+      valueText:
+        wellbeingRadioLabelMap[
+          memmWellbeingWelfareManager as keyof typeof wellbeingRadioLabelMap
+        ] ?? memmWellbeingWelfareManager ?? '',
+      hideIfEmpty: true,
+    },
+    {
+      width: 'half',
+      keyText: memmMessages.wellbeing.welfareManagerEmail,
+      valueText: memmWellbeingWelfareManagerEmail ?? '',
+      hideIfEmpty: true,
+    },
+    {
+      width: 'half',
+      keyText: memmMessages.wellbeing.welfareManagerName,
+      valueText: memmWellbeingWelfareManagerName ?? '',
+      hideIfEmpty: true,
+    },
+    {
+      width: 'full',
+      keyText: memmMessages.wellbeing.disabilityLabel,
+      valueText:
+        wellbeingRadioLabelMap[
+          memmWellbeingDisability as keyof typeof wellbeingRadioLabelMap
+        ] ?? memmWellbeingDisability ?? '',
+      hideIfEmpty: true,
+    },
+    {
+      width: 'full',
+      keyText: memmMessages.wellbeing.disabilityServiceLabel,
+      valueText:
+        disabilityServiceLabelMap[
+          memmWellbeingDisabilityService as keyof typeof disabilityServiceLabelMap
+        ] ?? memmWellbeingDisabilityService ?? '',
+      hideIfEmpty: true,
+    },
+  ]
 }
 
 export const getProtectiveFactorsItems = (

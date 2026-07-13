@@ -1,6 +1,10 @@
 import { NO, YES } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
-import { KnowsNationalId } from './constants'
+import {
+  KnowsNationalId,
+  SCHOOL_TYPES,
+  SHOW_LANGUAGE_SECTION_TYPES,
+} from './constants'
 import { getApplicationAnswers } from './getApplicationAnswers'
 
 export const isKnowsNationalId = (answers: FormValue) =>
@@ -17,3 +21,29 @@ export const knowsParentIds = (answers: FormValue) =>
 
 export const doesNotKnowParentIds = (answers: FormValue) =>
   getApplicationAnswers(answers).parentsKnowsNationalIds === NO
+
+export const isSchoolType = (answers: FormValue) =>
+  SCHOOL_TYPES.includes(getApplicationAnswers(answers).memmEducationType ?? '')
+
+export const isDayCareProvider = (answers: FormValue) =>
+  getApplicationAnswers(answers).memmEducationType === 'daycareProvider'
+
+export const showLanguageSection = (answers: FormValue) =>
+  SHOW_LANGUAGE_SECTION_TYPES.includes(
+    getApplicationAnswers(answers).memmCultureLanguageUsage ?? '',
+  )
+
+export const showPreferredLanguage = (answers: FormValue) => {
+  if (!showLanguageSection(answers)) return false
+  const languages = getApplicationAnswers(answers).memmCultureLanguages
+  return (languages?.length ?? 0) > 0
+}
+
+export const showWelfareContactFields = (answers: FormValue) =>
+  getApplicationAnswers(answers).memmWellbeingWelfareContact === YES
+
+export const showWelfareManagerFields = (answers: FormValue) =>
+  getApplicationAnswers(answers).memmWellbeingWelfareManager === YES
+
+export const showDisabilityService = (answers: FormValue) =>
+  getApplicationAnswers(answers).memmWellbeingDisability === YES

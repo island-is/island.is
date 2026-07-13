@@ -47,3 +47,7 @@ export enum ParentGender {
   FEMALE = 'female',
   NON_BINARY = 'nonBinary',
 }
+
+export const SCHOOL_TYPES = ['kindergarten', 'elementarySchool', 'highSchool']
+
+export const SHOW_LANGUAGE_SECTION_TYPES = ['icelandicAndOther', 'onlyOther']
