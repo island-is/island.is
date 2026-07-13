@@ -67,6 +67,11 @@ export const createApp = async ({
   // the X-Forwarded-For header before passing to internal services.
   app.set('trust proxy', JSON.parse(process.env.EXPRESS_TRUST_PROXY || 'false'))
 
+  // Express 5 changed the default query parser from 'extended' to 'simple',
+  // which no longer parses bracket syntax (?tags[]=a&tags[]=b, ?a[b]=c) into
+  // arrays/objects. Restore the Express 4 behavior.
+  app.set('query parser', 'extended')
+
   // Enable validation of request DTOs globally.
   app.useGlobalPipes(
     new ValidationPipe({
