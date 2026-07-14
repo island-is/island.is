@@ -68,7 +68,9 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/ExternalCategoryResponse" }
+                  "items": {
+                    "$ref": "#/components/schemas/ExternalCategoryResponse"
+                  }
                 }
               }
             }
@@ -90,7 +92,9 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/ProtectiveFactorSectionDto" }
+                  "items": {
+                    "$ref": "#/components/schemas/ProtectiveFactorSectionDto"
+                  }
                 }
               }
             }
@@ -218,7 +222,9 @@
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/NotificationGeneralPublicRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/NotificationGeneralPublicRequest"
+              }
             }
           }
         },
@@ -227,7 +233,9 @@
             "description": "Created",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/NotificationCreateResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationCreateResponse"
+                }
               }
             }
           },
@@ -270,7 +278,9 @@
           "label": { "type": "string", "nullable": true },
           "subCategories": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/ExternalCategoryItemResponse" },
+            "items": {
+              "$ref": "#/components/schemas/ExternalCategoryItemResponse"
+            },
             "nullable": true
           }
         },
@@ -283,7 +293,9 @@
           "label": { "type": "string", "nullable": true },
           "subCategories": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/ExternalSubCategoryResponse" },
+            "items": {
+              "$ref": "#/components/schemas/ExternalSubCategoryResponse"
+            },
             "nullable": true
           }
         },
@@ -316,7 +328,9 @@
           "name": { "type": "string", "nullable": true },
           "subCategories": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/ProtectiveFactorSubCategoryDto" },
+            "items": {
+              "$ref": "#/components/schemas/ProtectiveFactorSubCategoryDto"
+            },
             "nullable": true
           },
           "dontKnowCode": { "type": "string", "nullable": true },
@@ -326,85 +340,166 @@
       },
       "GenderEnum": {
         "enum": [
-          "Male", "Female", "Boy", "Girl", "Unborn",
-          "Unknown", "Nonbinary", "NonbinaryYoung"
+          "Male",
+          "Female",
+          "Boy",
+          "Girl",
+          "Unborn",
+          "Unknown",
+          "Nonbinary",
+          "NonbinaryYoung"
         ],
         "type": "string"
       },
       "PartyStateEnum": {
         "enum": [
-          "IcelandicNationalId", "InternationalProtection", "Tourist",
-          "Unborn", "Unknown", "Institution", "KerfisKennitala",
-          "IcelandicResidentWithoutId", "BorderReception"
+          "IcelandicNationalId",
+          "InternationalProtection",
+          "Tourist",
+          "Unborn",
+          "Unknown",
+          "Institution",
+          "KerfisKennitala",
+          "IcelandicResidentWithoutId",
+          "BorderReception"
         ],
         "type": "string"
       },
       "PronounEnum": {
         "enum": [
-          "HannHans", "HanHans", "HeHes", "HedHeds", "HinHins",
-          "HunHennar", "ThadTvi", "ThauTheirra"
+          "HannHans",
+          "HanHans",
+          "HeHes",
+          "HedHeds",
+          "HinHins",
+          "HunHennar",
+          "ThadTvi",
+          "ThauTheirra"
         ],
         "type": "string"
       },
       "NotifierRoleEnum": {
         "enum": [
-          "CHILD", "RELATIVE", "NEIGHBOUR", "OTHERS_NEAR", "CHILDSERVICE",
-          "POLICE", "SCHOOL", "PRESCHOOL", "SPORT_LEISURE", "HEALTHCARE",
-          "PARENT_W_CUSTODY", "PARENT_WO_CUSTODY", "OTHER", "SOCIALSERVICE",
+          "CHILD",
+          "RELATIVE",
+          "NEIGHBOUR",
+          "OTHERS_NEAR",
+          "CHILDSERVICE",
+          "POLICE",
+          "SCHOOL",
+          "PRESCHOOL",
+          "SPORT_LEISURE",
+          "HEALTHCARE",
+          "PARENT_W_CUSTODY",
+          "PARENT_WO_CUSTODY",
+          "OTHER",
+          "SOCIALSERVICE",
           "TEMPORARY_CARETAKER"
         ],
         "type": "string"
       },
       "NotificationUrgencyAssessmentEnum": {
         "enum": [
-          "ImmediateReaction", "NextWorkdayReaction",
-          "NotificationNotUrgent", "Undecided"
+          "ImmediateReaction",
+          "NextWorkdayReaction",
+          "NotificationNotUrgent",
+          "Undecided"
         ],
         "type": "string"
       },
       "NotificationCategoryCodeEnum": {
         "enum": [
-          "Neglect", "NeglectPhysical", "NeglectCareSupervision",
-          "NeglectCareSupervParentSubstanceAbuse", "NeglectEducation",
-          "NeglectEmotional", "Abused", "AbuseEmotional",
-          "AbuseEmotionalWitnessToAbuse", "AbusePhysical",
-          "AbusePhysicalByRelative", "AbuseSexual", "AbuseSexualByRelative",
-          "AbuseSexualDigital", "RiskToUnborn", "RiskToUnBornSubstanceAbuse",
-          "RiskyBehavior", "RiskyBehaviorSubstanceAbuse", "RiskyBehaviorSelfHarm",
-          "RiskyBehaviorCustodyRules", "RiskyBehaviorDelinquency",
-          "RiskyBehaviorViolent", "RiskyBehaviorSchool", "RiskToUnBornAbuse",
-          "RiskToUnBornOther", "ProtFactorChildSection", "ProtFactorParentSection",
-          "ProtFactorChildSchool", "ProtFactorChildSocial", "ProtFactorChildAttitude",
-          "ProtFactorChildInsight", "ProtFactorParentCapability",
-          "ProtFactorParentAttitude", "ProtFactorParentInsight",
-          "ProtFactorChildDontKnow", "ProtFactorParentDontKnow",
-          "ProtFactorChildSchoolItem1", "ProtFactorChildSchoolItem2",
-          "ProtFactorChildSchoolItem3", "ProtFactorChildSchoolItem4",
-          "ProtFactorChildSocialItem1", "ProtFactorChildSocialItem2",
-          "ProtFactorChildSocialItem3", "ProtFactorChildSocialItem4",
-          "ProtFactorChildAttitudeItem1", "ProtFactorChildAttitudeItem2",
-          "ProtFactorChildAttitudeItem3", "ProtFactorChildInsightItem1",
-          "ProtFactorChildInsightItem2", "ProtFactorChildInsightItem3",
-          "ProtFactorParentCapabilityItem1", "ProtFactorParentCapabilityItem2",
-          "ProtFactorParentCapabilityItem3", "ProtFactorParentCapabilityItem4",
-          "ProtFactorParentCapabilityItem5", "ProtFactorParentAttitudeItem1",
-          "ProtFactorParentAttitudeItem2", "ProtFactorParentAttitudeItem3",
-          "ProtFactorParentAttitudeItem4", "ProtFactorParentAttitudeItem5",
-          "ProtFactorParentInsightItem1", "ProtFactorParentInsightItem2",
-          "ProtFactorParentInsightItem3", "NeglectPhysicalFood",
-          "NeglectPhysicalClothing", "NeglectPhysicalHygiene",
-          "NeglectPhysicalHousing", "NeglectPhysicalHealthcare",
-          "NeglectCareSupervisionSupervision", "NeglectCareSupervisionLeftAlone",
-          "NeglectCareSupervisionLeftTooLong", "NeglectCareSupervisionLeftUnfit",
-          "NeglectCareSupervisionLeftAbusive", "NeglectCareSupervisionAbandonment",
-          "NeglectCareSupervisionNoGuardian", "NeglectCareSupervisionCarerState",
-          "NeglectCareSupervisionIllegalActivity", "NeglectEducationAbsence",
-          "NeglectEducationNotEnrolled", "NeglectEducationSpecialNeeds",
-          "NeglectEducationSupplies", "NeglectEmotionalNeeds",
-          "NeglectEmotionalCognitive", "NeglectEmotionalSocial",
-          "NeglectEmotionalBoundaries", "AbuseEmotionalNegativeAttitude",
-          "AbuseEmotionalUnrealisticDemands", "AbusePhysicalByParent",
-          "AbusePhysicalByOthers", "AbuseSexualByParent", "AbuseSexualByOthers"
+          "Neglect",
+          "NeglectPhysical",
+          "NeglectCareSupervision",
+          "NeglectCareSupervParentSubstanceAbuse",
+          "NeglectEducation",
+          "NeglectEmotional",
+          "Abused",
+          "AbuseEmotional",
+          "AbuseEmotionalWitnessToAbuse",
+          "AbusePhysical",
+          "AbusePhysicalByRelative",
+          "AbuseSexual",
+          "AbuseSexualByRelative",
+          "AbuseSexualDigital",
+          "RiskToUnborn",
+          "RiskToUnBornSubstanceAbuse",
+          "RiskyBehavior",
+          "RiskyBehaviorSubstanceAbuse",
+          "RiskyBehaviorSelfHarm",
+          "RiskyBehaviorCustodyRules",
+          "RiskyBehaviorDelinquency",
+          "RiskyBehaviorViolent",
+          "RiskyBehaviorSchool",
+          "RiskToUnBornAbuse",
+          "RiskToUnBornOther",
+          "ProtFactorChildSection",
+          "ProtFactorParentSection",
+          "ProtFactorChildSchool",
+          "ProtFactorChildSocial",
+          "ProtFactorChildAttitude",
+          "ProtFactorChildInsight",
+          "ProtFactorParentCapability",
+          "ProtFactorParentAttitude",
+          "ProtFactorParentInsight",
+          "ProtFactorChildDontKnow",
+          "ProtFactorParentDontKnow",
+          "ProtFactorChildSchoolItem1",
+          "ProtFactorChildSchoolItem2",
+          "ProtFactorChildSchoolItem3",
+          "ProtFactorChildSchoolItem4",
+          "ProtFactorChildSocialItem1",
+          "ProtFactorChildSocialItem2",
+          "ProtFactorChildSocialItem3",
+          "ProtFactorChildSocialItem4",
+          "ProtFactorChildAttitudeItem1",
+          "ProtFactorChildAttitudeItem2",
+          "ProtFactorChildAttitudeItem3",
+          "ProtFactorChildInsightItem1",
+          "ProtFactorChildInsightItem2",
+          "ProtFactorChildInsightItem3",
+          "ProtFactorParentCapabilityItem1",
+          "ProtFactorParentCapabilityItem2",
+          "ProtFactorParentCapabilityItem3",
+          "ProtFactorParentCapabilityItem4",
+          "ProtFactorParentCapabilityItem5",
+          "ProtFactorParentAttitudeItem1",
+          "ProtFactorParentAttitudeItem2",
+          "ProtFactorParentAttitudeItem3",
+          "ProtFactorParentAttitudeItem4",
+          "ProtFactorParentAttitudeItem5",
+          "ProtFactorParentInsightItem1",
+          "ProtFactorParentInsightItem2",
+          "ProtFactorParentInsightItem3",
+          "NeglectPhysicalFood",
+          "NeglectPhysicalClothing",
+          "NeglectPhysicalHygiene",
+          "NeglectPhysicalHousing",
+          "NeglectPhysicalHealthcare",
+          "NeglectCareSupervisionSupervision",
+          "NeglectCareSupervisionLeftAlone",
+          "NeglectCareSupervisionLeftTooLong",
+          "NeglectCareSupervisionLeftUnfit",
+          "NeglectCareSupervisionLeftAbusive",
+          "NeglectCareSupervisionAbandonment",
+          "NeglectCareSupervisionNoGuardian",
+          "NeglectCareSupervisionCarerState",
+          "NeglectCareSupervisionIllegalActivity",
+          "NeglectEducationAbsence",
+          "NeglectEducationNotEnrolled",
+          "NeglectEducationSpecialNeeds",
+          "NeglectEducationSupplies",
+          "NeglectEmotionalNeeds",
+          "NeglectEmotionalCognitive",
+          "NeglectEmotionalSocial",
+          "NeglectEmotionalBoundaries",
+          "AbuseEmotionalNegativeAttitude",
+          "AbuseEmotionalUnrealisticDemands",
+          "AbusePhysicalByParent",
+          "AbusePhysicalByOthers",
+          "AbuseSexualByParent",
+          "AbuseSexualByOthers"
         ],
         "type": "string"
       },
@@ -419,7 +514,10 @@
             "format": "int32",
             "nullable": true
           },
-          "additionalInformationAboutResidence": { "type": "string", "nullable": true },
+          "additionalInformationAboutResidence": {
+            "type": "string",
+            "nullable": true
+          },
           "commnue": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
@@ -497,7 +595,10 @@
       "NotifierNotes": {
         "type": "object",
         "properties": {
-          "discussionWithCustodianDescription": { "type": "string", "nullable": true },
+          "discussionWithCustodianDescription": {
+            "type": "string",
+            "nullable": true
+          },
           "subject": { "type": "string", "nullable": true },
           "concerns": { "type": "string", "nullable": true }
         },
@@ -520,7 +621,9 @@
           },
           "subSubNotificationCategoryCodeEnum": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/NotificationCategoryCodeEnum" },
+            "items": {
+              "$ref": "#/components/schemas/NotificationCategoryCodeEnum"
+            },
             "nullable": true
           }
         },
@@ -556,18 +659,29 @@
       },
       "NotificationGeneralPublicRequest": {
         "required": [
-          "child", "generalPublic", "notificationVia112",
-          "notifierRole", "urgencyAssessment"
+          "child",
+          "generalPublic",
+          "notificationVia112",
+          "notifierRole",
+          "urgencyAssessment"
         ],
         "type": "object",
         "properties": {
           "notificationDatetime": { "type": "string", "format": "date-time" },
           "notifierRole": { "$ref": "#/components/schemas/NotifierRoleInfo" },
           "child": { "$ref": "#/components/schemas/ChildRequest" },
-          "generalPublic": { "$ref": "#/components/schemas/GeneralPublicRequest" },
-          "expectantParent": { "$ref": "#/components/schemas/ExpectantParentRequest" },
-          "residenceOfEvent": { "$ref": "#/components/schemas/ResidenceOfEventRequest" },
-          "urgencyAssessment": { "$ref": "#/components/schemas/UrgencyAssessment" },
+          "generalPublic": {
+            "$ref": "#/components/schemas/GeneralPublicRequest"
+          },
+          "expectantParent": {
+            "$ref": "#/components/schemas/ExpectantParentRequest"
+          },
+          "residenceOfEvent": {
+            "$ref": "#/components/schemas/ResidenceOfEventRequest"
+          },
+          "urgencyAssessment": {
+            "$ref": "#/components/schemas/UrgencyAssessment"
+          },
           "notifierNotes": { "$ref": "#/components/schemas/NotifierNotes" },
           "categories": { "$ref": "#/components/schemas/CategoryRequest" },
           "notificationVia112": { "type": "boolean" }
