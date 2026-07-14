@@ -57,9 +57,14 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
 
   const [isUploadingPoliceCaseFiles, setIsUploadingPoliceCaseFiles] =
     useState<boolean>(false)
-  const [policeCaseFileList, setPoliceCaseFileList] = useState<
-    PoliceCaseFileCheck[]
-  >([])
+
+  const policeCaseFileList = useMemo(
+    () =>
+      policeCaseFilesData.files
+        .filter((file) => !uploadFiles.some((f) => f.policeFileId === file.id))
+        .map(mapPoliceCaseFileToPoliceCaseFileCheck),
+    [policeCaseFilesData.files, uploadFiles],
+  )
 
   const errorMessage = useMemo(() => {
     if (uploadFiles.some((file) => file.status === FileUploadStatus.error)) {
@@ -76,48 +81,10 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
     setAllUploaded(allFilesDoneOrError && !isUploadingPoliceCaseFiles)
   }, [allFilesDoneOrError, isUploadingPoliceCaseFiles, setAllUploaded])
 
-  useEffect(() => {
-    if (policeCaseFilesData.files?.length === 0) {
-      return
-    }
-
-    setPoliceCaseFileList(
-      policeCaseFilesData.files
-        ?.filter(
-          (file) =>
-            !caseFiles.some((caseFile) => caseFile.policeFileId === file.id),
-        )
-        .map(mapPoliceCaseFileToPoliceCaseFileCheck) ?? [],
-    )
-  }, [caseFiles, policeCaseFilesData.files, policeCaseNumber])
-
   const uploadPoliceCaseFileCallback = (file: TUploadFile, id?: string) => {
     if (id) {
-      addUploadFile({ ...file, id: id ?? file.id })
+      addUploadFile({ ...file, id })
     }
-
-    setPoliceCaseFileList((previous) =>
-      id
-        ? previous.filter((p) => p.id !== file.id)
-        : previous.map((p) =>
-            p.id === file.id ? { ...p, checked: false } : p,
-          ),
-    )
-  }
-
-  const removeFileCB = (file: TUploadFile) => {
-    const policeCaseFile = policeCaseFilesData.files.find(
-      (f) => f.id === file.policeFileId,
-    )
-
-    if (policeCaseFile) {
-      setPoliceCaseFileList((previous) => [
-        mapPoliceCaseFileToPoliceCaseFileCheck(policeCaseFile),
-        ...previous,
-      ])
-    }
-
-    removeUploadFile(file)
   }
 
   const onPoliceCaseFileUpload = async (selectedFiles: Item[]) => {
@@ -204,7 +171,7 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
           )
         }
         onOpenFile={(file) => onOpenFile(file)}
-        onRemove={(file) => handleRemove(file, removeFileCB)}
+        onRemove={(file) => handleRemove(file, removeUploadFile)}
         onRetry={(file) => handleRetry(file, updateUploadFile)}
         errorMessage={errorMessage}
       />

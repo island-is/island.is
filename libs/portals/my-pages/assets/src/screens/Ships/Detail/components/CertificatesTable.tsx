@@ -5,7 +5,7 @@ import {
 } from '@island.is/api/schema'
 import { Box, Input, Tag } from '@island.is/island-ui/core'
 import {
-  Table,
+  PortalTable,
   createColumnHelper,
   formatDate,
   m,
@@ -107,7 +107,7 @@ export const CertificatesTable = ({ certificates, loading }: Props) => {
           icon={{ name: 'search' }}
         />
       </Box>
-      <Table
+      <PortalTable
         columns={columns}
         data={filteredCertificates}
         loading={loading}

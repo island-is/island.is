@@ -16,6 +16,7 @@ query GetUsersVehiclesDetail($input: GetVehicleDetailInput!) {
       requiresMileageRegistration
       canRegisterMileage
       availableMileageRegistration
+      hasMilesOdometer
     }
     basicInfo {
       model

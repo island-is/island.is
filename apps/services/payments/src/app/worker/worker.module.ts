@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { SequelizeModule } from '@nestjs/sequelize'
 
+import { BlikkClientConfig } from '@island.is/clients/blikk'
 import { ChargeFjsV2ClientConfig } from '@island.is/clients/charge-fjs-v2'
 import { LoggingModule } from '@island.is/logging'
 
@@ -23,8 +24,8 @@ import { WorkerService } from './worker.service'
 /**
  * Standalone module for the FJS backfill worker.
  *
- * Runs outside the main payments API: finds paid card flows without FJS charges,
- * creates the charges, and saves receptionId to PaymentFlow and PaymentFulfillment.
+ * Runs outside the main payments API: finds paid card and bank-transfer flows without
+ * FJS charges, creates the charges, and saves receptionId to PaymentFlow and PaymentFulfillment.
  *
  * Uses PaymentFlowService for charge creation, catalog lookup, and flow queries.
  */
@@ -43,6 +44,7 @@ import { WorkerService } from './worker.service'
         XRoadConfig,
         FeatureFlagConfig,
         ChargeFjsV2ClientConfig,
+        BlikkClientConfig,
         PaymentFlowModuleConfig,
         JwksConfig,
         WorkerModuleConfig,
