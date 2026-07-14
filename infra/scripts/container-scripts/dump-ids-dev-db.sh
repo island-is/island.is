@@ -3,11 +3,15 @@ set -euo pipefail
 shopt -s inherit_errexit
 
 # Environment variables (set by CronJob)
-declare \
-  DATABASE \
-  DUMP_BUCKET \
-  DUMP_REGION \
-  SOURCE_DB_HOST
+ declare \
+   DATABASE \
+   DUMP_BUCKET \
+   DUMP_REGION \
+   SOURCE_DB_HOST
+: "${DATABASE:?DATABASE is required}"
+: "${DUMP_BUCKET:?DUMP_BUCKET is required}"
+: "${DUMP_REGION:?DUMP_REGION is required}"
+: "${SOURCE_DB_HOST:?SOURCE_DB_HOST is required}"
 
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 DUMP_DIR="/tmp/dumps"
@@ -54,9 +58,13 @@ if aws s3 cp "$COMPRESSED_FILE" \
 EOF
   
   # Upload metadata
-  aws s3 cp "$DUMP_DIR/metadata.json" \
+  if ! aws s3 cp "$DUMP_DIR/metadata.json" \
     "s3://$DUMP_BUCKET/${DATABASE}-metadata.json" \
-    --region "$DUMP_REGION"
+    --region "$DUMP_REGION"; then
+    echo "✗ Failed to upload metadata to S3"
+    rm -f "$COMPRESSED_FILE" "$DUMP_DIR/metadata.json"
+    exit 1
+  fi
   
   echo ""
   echo "========================================"
