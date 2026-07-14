@@ -22,3 +22,13 @@ export type Category = {
   label: string
   subCategories?: Category[]
 }
+
+export type ReasonForNotificationSubCategoryAnswers = {
+  subCategory?: string[]
+  subSubCategories?: string[]
+}
+
+export type ReasonForNotificationAnswers = Record<
+  string,
+  Record<string, ReasonForNotificationSubCategoryAnswers>
+>
