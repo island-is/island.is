@@ -1,5 +1,7 @@
 import { DefaultEvents } from '@island.is/application/types'
 
+export const RISK_TO_UNBORN = 'RiskToUnborn'
+
 export type Events = {
   type: DefaultEvents.SUBMIT | DefaultEvents.ABORT
 }

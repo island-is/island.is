@@ -1,7 +1,7 @@
 import { getValueViaPath, YesOrNo } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { Parent } from './types'
 import { KnowsNationalId } from './constants'
+import { Parent, ReasonForNotificationAnswers } from './types'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const serviceProviderService = getValueViaPath<string>(
@@ -174,6 +174,49 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const parent2 = getValueViaPath<Parent>(answers, 'parents.parent2')
 
+  const reasonDescription = getValueViaPath<string>(
+    answers,
+    'reasonDescription.description',
+  )
+
+  const additionalData =
+    getValueViaPath<string[]>(answers, 'reasonDescription.additionalData') ?? []
+
+  const reasonForNotification =
+    getValueViaPath<ReasonForNotificationAnswers>(
+      answers,
+      'reasonForNotification',
+    ) ?? {}
+
+  const biggestConcernCategoryCode = getValueViaPath<string>(
+    answers,
+    'reasonForNotification.biggestConcern',
+  )
+
+  const riskToUnbornSelections =
+    getValueViaPath<string[]>(answers, 'reasonForNotification.riskToUnborn') ??
+    []
+
+  const hasReportedBefore = getValueViaPath<YesOrNo>(
+    answers,
+    'reasonNotificationHistory.hasReportedBefore',
+  )
+
+  const hasDiscussedWithParents = getValueViaPath<YesOrNo>(
+    answers,
+    'reasonNotificationHistory.hasDiscussedWithParents',
+  )
+
+  const areParentsInformed = getValueViaPath<YesOrNo>(
+    answers,
+    'reasonNotificationHistory.areParentsInformed',
+  )
+
+  const notificationHistoryBiggestConcern = getValueViaPath<string>(
+    answers,
+    'reasonNotificationHistory.biggestConcern',
+  )
+
   const protectiveFactors = getValueViaPath<
     Record<string, Record<string, string[]>>
   >(answers, 'protectiveFactors')
@@ -214,6 +257,15 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     parentsKnowsNationalIds,
     parent1,
     parent2,
+    reasonDescription,
+    additionalData,
+    reasonForNotification,
+    biggestConcernCategoryCode,
+    riskToUnbornSelections,
+    hasReportedBefore,
+    hasDiscussedWithParents,
+    areParentsInformed,
+    notificationHistoryBiggestConcern,
     protectiveFactors,
   }
 }
