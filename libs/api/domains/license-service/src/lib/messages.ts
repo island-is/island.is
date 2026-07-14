@@ -65,6 +65,22 @@ export const m = defineMessages({
     id: 'api.license-service:valid-to',
     defaultMessage: 'Gildir til',
   },
+  penaltyPoints: {
+    id: 'api.license-service:penalty-points',
+    defaultMessage: 'Punktar',
+  },
+  activeDeprivationTag: {
+    id: 'api.license-service:active-deprivation-tag',
+    defaultMessage: 'Svipting í gildi',
+  },
+  viewPenaltyPoints: {
+    id: 'api.license-service:view-penalty-points',
+    defaultMessage: 'Skoða punktastöðu',
+  },
+  viewDeprivationDetails: {
+    id: 'api.license-service:view-deprivation-details',
+    defaultMessage: 'Nánar um sviptingu',
+  },
   extraCodes: {
     id: 'api.license-service:extra-codes',
     defaultMessage: 'Tákntölur',

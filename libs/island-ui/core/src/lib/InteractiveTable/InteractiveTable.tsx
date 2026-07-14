@@ -136,6 +136,12 @@ export const InteractiveTable = <TData extends object>({
     ...(meta ? { meta } : {}),
   })
 
+  const footerGroup = table.getFooterGroups()[0]
+  const footerHeaders =
+    footerGroup?.headers.filter((header) => header.column.columnDef.footer) ??
+    []
+  const hasFooter = footerHeaders.length > 0
+
   if (errorMessage) {
     return (
       <ProblemTemplate
@@ -403,6 +409,33 @@ export const InteractiveTable = <TData extends object>({
           )
         })}
       </T.Body>
+      {hasFooter && (
+        <T.Foot>
+          <T.Row>
+            {footerGroup.headers.map((header) => (
+              <T.Data
+                key={header.id}
+                box={{
+                  paddingLeft: 2,
+                  paddingRight: 2,
+                  paddingBottom: 2,
+                  paddingTop: 2,
+                }}
+                align={header.column.columnDef.meta?.align}
+              >
+                {header.column.columnDef.footer && (
+                  <Text variant="medium" fontWeight="semiBold">
+                    {flexRender(
+                      header.column.columnDef.footer,
+                      header.getContext(),
+                    )}
+                  </Text>
+                )}
+              </T.Data>
+            ))}
+          </T.Row>
+        </T.Foot>
+      )}
     </T.Table>
   )
 
@@ -578,6 +611,20 @@ export const InteractiveTable = <TData extends object>({
           </Box>
         )
       })}
+      {hasFooter && (
+        <Box
+          display="flex"
+          flexDirection="row"
+          justifyContent="spaceBetween"
+          paddingTop={3}
+        >
+          {footerHeaders.map((header) => (
+            <Text key={header.id} fontWeight="semiBold">
+              {flexRender(header.column.columnDef.footer, header.getContext())}
+            </Text>
+          ))}
+        </Box>
+      )}
     </Box>
   )
 

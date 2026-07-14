@@ -1,0 +1,10 @@
+query GetDriversPenaltyPoints {
+  drivingLicensePenaltyPoints {
+    isDeprived
+    details {
+      offenseDate
+      penalty
+      points
+    }
+  }
+}
