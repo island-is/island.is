@@ -469,7 +469,7 @@ export const addNumberedList = (
   const pageBottomY = doc.page.height - doc.page.margins.bottom
 
   for (const [i, item] of items.entries()) {
-    const label = `${start + i}.`
+    const label = `${start + i}`
     const textHeight = doc.heightOfString(label, {
       width: wrapWidth,
       height: 1.2,

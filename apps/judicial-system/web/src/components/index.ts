@@ -142,4 +142,5 @@ export { default as ArraignmentAlert } from './Alerts/ArraignmentAlert/Arraignme
 export { default as RulingModifiedAlert } from './Alerts/RulingModifiedAlert/RulingModifiedAlert'
 export { default as AppealRulingModifiedAlert } from './Alerts/AppealRulingModifiedAlert/AppealRulingModifiedAlert'
 export { default as ChangeProsecutorModal } from './Modals/ChangeProsecutorModal/ChangeProsecutorModal'
+export { default as DuplicateIndictmentModal } from './Modals/DuplicateIndictmentModal/DuplicateIndictmentModal'
 export { default as TinyMCE } from './TinyMCE/TinyMCE'

@@ -14,7 +14,6 @@ import {
   QualityPhotoApi,
   QualityPhotoAndSignatureApi,
   AllPhotosFromThjodskraApi,
-  ExistingApplicationApi,
 } from '@island.is/application/types'
 import {
   GlassesCheckApi,
@@ -72,9 +71,6 @@ export const sectionExternalData = buildSubSection({
         }),
         buildDataProviderItem({
           provider: QualityPhotoAndSignatureApi,
-        }),
-        buildDataProviderItem({
-          provider: ExistingApplicationApi,
         }),
       ],
     }),

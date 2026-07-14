@@ -10,7 +10,9 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/libs/clients/national-agency-for-children-and-families"],
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/clients/national-agency-for-children-and-families"
+      ],
       "options": {
         "jestConfig": "libs/clients/national-agency-for-children-and-families/jest.config.ts"
       }

@@ -6,6 +6,7 @@ import {
   SHOW_LANGUAGE_SECTION_TYPES,
 } from './constants'
 import { getApplicationAnswers } from './getApplicationAnswers'
+import { getSelectedReasonForNotificationCategoryCodes } from './childProtectionNotificationUtils'
 
 export const isKnowsNationalId = (answers: FormValue) =>
   getApplicationAnswers(answers).childKnowsNationalId === KnowsNationalId.YES
@@ -47,3 +48,33 @@ export const showWelfareManagerFields = (answers: FormValue) =>
 
 export const showDisabilityService = (answers: FormValue) =>
   getApplicationAnswers(answers).memmWellbeingDisability === YES
+
+export const isReasonForNotificationSubCategorySelected = (
+  answers: FormValue,
+  categoryCode: string,
+  subCategoryCode: string,
+) => {
+  const { reasonForNotification } = getApplicationAnswers(answers)
+
+  const selectedSubCategories =
+    reasonForNotification?.[categoryCode]?.[subCategoryCode]?.subCategory ?? []
+
+  return selectedSubCategories.includes(subCategoryCode)
+}
+
+export const shouldShowReasonForNotificationSubCategoryDetails = (
+  answers: FormValue,
+  categoryCode: string,
+  subCategoryCode: string,
+  hasSubSubCategories: boolean,
+) =>
+  hasSubSubCategories &&
+  isReasonForNotificationSubCategorySelected(
+    answers,
+    categoryCode,
+    subCategoryCode,
+  )
+
+export const shouldShowBiggestConcernField = (answers: FormValue) =>
+  !isUnborn(answers) &&
+  getSelectedReasonForNotificationCategoryCodes(answers).length > 1

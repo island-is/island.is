@@ -13,6 +13,7 @@ import {
   parentsMessages,
   prerequisitesMessages,
   protectiveFactorsMessages,
+  reasonForNotificationMessages,
 } from '../../lib/messages'
 import {
   isKnowsNationalId,
@@ -30,6 +31,9 @@ import {
   getParent2Items,
   getParentsPreItems,
   getProtectiveFactorsItems,
+  getReasonDescriptionItems,
+  getReasonForNotificationItems,
+  getReasonNotificationHistoryItems,
   getServiceProviderContactPersonItems,
   getServiceProviderItems,
 } from '../../utils/getOverviewItems'
@@ -131,6 +135,26 @@ export const overviewSection = buildSection({
           items: getMemmWellbeingItems,
           hideIfEmpty: true,
           condition: isKnowsNationalId,
+        }),
+        buildOverviewField({
+          id: 'overview.reasonDescription',
+          title: reasonForNotificationMessages.description.title,
+          backId: 'reasonDescription',
+          items: getReasonDescriptionItems,
+        }),
+        buildOverviewField({
+          id: 'overview.reasonForNotification',
+          title: reasonForNotificationMessages.shared.sectionTitle,
+          backId: 'reasonForNotification',
+          items: getReasonForNotificationItems,
+          hideIfEmpty: true,
+        }),
+        buildOverviewField({
+          id: 'overview.reasonNotificationHistory',
+          title:
+            reasonForNotificationMessages.notificationHistory.subSectionTitle,
+          backId: 'reasonNotificationHistory',
+          items: getReasonNotificationHistoryItems,
         }),
         buildOverviewField({
           id: 'overview.protectiveFactors',

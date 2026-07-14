@@ -86,12 +86,15 @@ const PoliceCaseFiles: FC<Props> = ({
           : policeCaseFiles?.isLoading
       }
       successMessage={
+        !policeCaseFiles?.isLoading &&
+        policeCaseFiles &&
+        policeCaseFiles.files.length > 0 &&
         policeCaseFileList?.length === 0
           ? formatMessage(strings.allFilesUploadedMessage)
           : undefined
       }
       warningMessage={
-        policeCaseFiles?.files.length === 0
+        !policeCaseFiles?.isLoading && policeCaseFiles?.files.length === 0
           ? formatMessage(strings.noFilesFoundInLOKEMessage, {
               isIndictmentCase: isIndictmentCase(workingCase.type),
             })
