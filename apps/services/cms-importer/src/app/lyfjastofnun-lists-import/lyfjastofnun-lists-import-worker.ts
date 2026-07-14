@@ -7,9 +7,7 @@ export const lyfjastofnunListsImportWorker = async () => {
   const publish = process.argv.includes('--publish')
   const limitArgIndex = process.argv.indexOf('--limit')
   const limit =
-    limitArgIndex !== -1
-      ? Number(process.argv[limitArgIndex + 1])
-      : undefined
+    limitArgIndex !== -1 ? Number(process.argv[limitArgIndex + 1]) : undefined
   try {
     logger.info('Lyfjastofnun lists import worker job initiating...', {
       publish,

@@ -5,7 +5,10 @@ import {
   Localized,
   RichTextParagraph,
 } from '../repositories/cms/cms.types'
-import { generateGenericListItem, mapLocalizedValue } from '../repositories/cms/mapper'
+import {
+  generateGenericListItem,
+  mapLocalizedValue,
+} from '../repositories/cms/mapper'
 import { LyfjastofnunListItem } from '../repositories/lyfjastofnun-lists/lyfjastofnun-lists.types'
 import { CATEGORY_TAG_IDS, OWNER_TAG } from './constants'
 
