@@ -1,1 +1,4 @@
-export type OldAgePensionApplicationType = 'halfOldAgePension' | 'oldAgePension'
+export type OldAgePensionApplicationType =
+  | 'halfOldAgePension'
+  | 'oldAgePension'
+  | 'sailorPension'
