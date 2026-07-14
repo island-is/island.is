@@ -693,6 +693,201 @@ describe('getAvailableRightsInDays', () => {
 
     expect(res).toBe(150)
   })
+
+  it('should return VMSTApplicationRights days when present and no give-days', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                transferredDays: 0,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+        VMSTApplicationRights: {
+          data: [
+            {
+              rightsUnit: 'M-L-GR',
+              rightsDescription: 'Grunnréttur móður',
+              months: '6.0',
+              days: '180',
+              daysLeft: '0',
+            },
+          ],
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailableRightsInDays(application)
+
+    expect(res).toBe(180)
+  })
+
+  it('should subtract give-days from VMSTApplicationRights when primary parent is giving days', () => {
+    // This is the scenario from the bug: primary parent declares giving 45 days
+    // but VMSTApplicationRights reports the full 180-day entitlement.
+    // getAvailableRightsInDays must return 180 - 45 = 135 so period validation
+    // catches that 136 days of periods exceed the available 135 days.
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        giveRights: {
+          isGivingRights: YES,
+          giveDays: 45,
+        },
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                transferredDays: -45,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+        VMSTApplicationRights: {
+          data: [
+            {
+              rightsUnit: 'M-L-GR',
+              rightsDescription: 'Grunnréttur móður',
+              months: '6.0',
+              days: '180',
+              daysLeft: '0',
+            },
+          ],
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailableRightsInDays(application)
+
+    expect(res).toBe(135)
+  })
+
+  it('should not double-subtract give-days when VMSTApplicationRights already accounts for them', () => {
+    // If VMST already subtracted the give-days (VMSTDays < remainingDays),
+    // we should not subtract again.
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        giveRights: {
+          isGivingRights: YES,
+          giveDays: 45,
+        },
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                transferredDays: -45,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+        VMSTApplicationRights: {
+          data: [
+            {
+              rightsUnit: 'M-L-GR',
+              rightsDescription: 'Grunnréttur móður',
+              months: '4.5',
+              days: '135',
+              daysLeft: '0',
+            },
+          ],
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailableRightsInDays(application)
+
+    // VMST reports 135 which is already 180 - 45, so no further subtraction
+    expect(res).toBe(135)
+  })
+
+  it('should return VMSTApplicationRights days as-is for secondary parent', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 210,
+                transferredDays: 30,
+                parentalRelation: ParentalRelations.secondary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+        VMSTApplicationRights: {
+          data: [
+            {
+              rightsUnit: 'F-L-GR',
+              rightsDescription: 'Grunnréttur föður',
+              months: '6.0',
+              days: '180',
+              daysLeft: '0',
+            },
+            {
+              rightsUnit: 'F-FS',
+              rightsDescription: 'Framsal',
+              months: '1.0',
+              days: '30',
+              daysLeft: '0',
+            },
+          ],
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailableRightsInDays(application)
+
+    // Secondary parent: 180 + 30 = 210 from VMST, returned as-is
+    expect(res).toBe(210)
+  })
 })
 
 describe('getAvailablePersonalRightsInDays', () => {
