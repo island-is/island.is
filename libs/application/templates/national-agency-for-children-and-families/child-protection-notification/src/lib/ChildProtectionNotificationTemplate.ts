@@ -19,6 +19,7 @@ import { AuthDelegationType } from '@island.is/shared/types'
 
 import {
   CategoriesApi,
+  GendersApi,
   IdentityApiProvider,
   ProtectiveFactorsApi,
 } from '../dataProviders'
@@ -76,6 +77,7 @@ const template: ApplicationTemplate<
                   IdentityApiProvider,
                   CategoriesApi,
                   ProtectiveFactorsApi,
+                  GendersApi,
                 ],
                 delete: true,
               }),
@@ -100,6 +102,7 @@ const template: ApplicationTemplate<
                 IdentityApiProvider,
                 CategoriesApi,
                 ProtectiveFactorsApi,
+                GendersApi,
               ],
               delete: true,
             },

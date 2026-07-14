@@ -1,6 +1,9 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { ProtectiveFactorSectionDto } from '@island.is/clients/national-agency-for-children-and-families'
+import {
+  DropDownDto,
+  ProtectiveFactorSectionDto,
+} from '@island.is/clients/national-agency-for-children-and-families'
 import { Category } from './types'
 
 export const getApplicationExternalData = (
@@ -50,6 +53,9 @@ export const getApplicationExternalData = (
       'protectiveFactors.data',
     ) ?? []
 
+  const genders =
+    getValueViaPath<DropDownDto[]>(externalData, 'genders.data') ?? []
+
   return {
     applicantName,
     applicantNationalId,
@@ -60,5 +66,6 @@ export const getApplicationExternalData = (
     actorNationalId,
     categories,
     protectiveFactorSections,
+    genders,
   }
 }
