@@ -1,17 +1,25 @@
 import {
+  ContentSegmentDto,
+  ContentSegmentType,
   ConversationReplyBlockedReason,
   ConversationStatusFilter,
+  MessageType,
   MessagingRecipientDto,
   RecipientCreateBlockedReason,
+  VideoConversationDto,
 } from '@island.is/clients/health-directorate'
 import {
   HealthConversationDirectionEnum,
+  HealthConversationMessageTypeEnum,
   HealthConversationRecipientBlockedReasonEnum,
   HealthConversationReplyBlockedReasonEnum,
+  HealthConversationSegmentTypeEnum,
   HealthConversationStatusFilterEnum,
 } from '../models/enums'
 import { HealthDirectorateHealthConversationRecipient } from '../models/healthConversationRecipient.model'
+import { HealthDirectorateHealthConversationSegment } from '../models/healthConversationSegment.model'
 import { HealthDirectorateHealthConversationType } from '../models/healthConversationType.model'
+import { HealthDirectorateHealthConversationVideo } from '../models/healthConversationVideo.model'
 
 export const toConversationDirectionEnum = (
   direction: string,
@@ -27,6 +35,73 @@ export const toConversationDirectionEnum = (
       return HealthConversationDirectionEnum.SYSTEM
   }
 }
+
+export const toConversationMessageTypeEnum = (
+  type: MessageType,
+): HealthConversationMessageTypeEnum => {
+  switch (type) {
+    case MessageType.VIDEO:
+      return HealthConversationMessageTypeEnum.VIDEO
+    case MessageType.SEGMENTED:
+      return HealthConversationMessageTypeEnum.SEGMENTED
+    case MessageType.TEXT:
+      return HealthConversationMessageTypeEnum.TEXT
+    default:
+      return HealthConversationMessageTypeEnum.TEXT
+  }
+}
+
+export const toConversationSegmentTypeEnum = (
+  type: ContentSegmentType,
+): HealthConversationSegmentTypeEnum => {
+  switch (type) {
+    case ContentSegmentType.LINK:
+      return HealthConversationSegmentTypeEnum.LINK
+    case ContentSegmentType.TEXT:
+      return HealthConversationSegmentTypeEnum.TEXT
+    default:
+      return HealthConversationSegmentTypeEnum.TEXT
+  }
+}
+
+/**
+ * The health service API currently returns local ISO datetimes with
+ * no timezone offset. This will be fixed and typed in following verions
+ * of the API, but for now we have to parse the date manually.
+ * Once it´s been changed, we can remove this.
+ */
+const parseUtcDate = (value?: string): Date | undefined => {
+  if (!value) {
+    return undefined
+  }
+  const hasZone = /(Z|[+-]\d{2}:?\d{2})$/.test(value)
+  const date = new Date(hasZone ? value : `${value}Z`)
+  return isNaN(date.getTime()) ? undefined : date
+}
+
+export const mapConversationSegments = (
+  segments?: Array<ContentSegmentDto>,
+): HealthDirectorateHealthConversationSegment[] | undefined =>
+  segments?.map((s) => ({
+    type: toConversationSegmentTypeEnum(s.type),
+    text: s.text,
+    label: s.label,
+    href: s.href,
+  }))
+
+export const mapConversationVideo = (
+  video?: VideoConversationDto,
+): HealthDirectorateHealthConversationVideo | undefined =>
+  video
+    ? {
+        url: video.url,
+        description: video.description,
+        appointmentDate: parseUtcDate(video.appointmentDate),
+        appointmentHostName: video.appointmentHostName,
+        isCanceled: video.isCanceled,
+        isEdited: video.isEdited,
+      }
+    : undefined
 
 export const toConversationStatusFilter = (
   status: HealthConversationStatusFilterEnum,
