@@ -567,6 +567,8 @@ export class DrivingLicenseService {
       willBringQualityPhoto: input.needsToPresentQualityPhoto,
       sendLicenseInMail: input.sendLicenseInMail,
       sendLicenseToAddress: '',
+      photoBiometricsId: input.photoBiometricsId,
+      signatureBiometricsId: input.signatureBiometricsId,
     })
 
     return {
