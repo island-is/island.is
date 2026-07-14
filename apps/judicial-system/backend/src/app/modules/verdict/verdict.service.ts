@@ -430,81 +430,108 @@ export class VerdictService {
       return { delivered: true }
     }
 
-    // get verdict file
-    const verdictFile = theCase.caseFiles?.find(
-      (caseFile) => caseFile.category === CaseFileCategory.RULING,
-    )
-
-    if (!verdictFile) {
-      throw new NotFoundException(
-        `Ruling file not found for case ${theCase.id}`,
+    try {
+      // get verdict file
+      const verdictFile = theCase.caseFiles?.find(
+        (caseFile) => caseFile.category === CaseFileCategory.RULING,
       )
-    }
 
-    const verdictPdf = await this.fileService.getCaseFileFromS3(
-      theCase,
-      verdictFile,
-    )
+      if (!verdictFile) {
+        throw new NotFoundException(
+          `Ruling file not found for case ${theCase.id}`,
+        )
+      }
 
-    const documentName = `Dómur í máli ${theCase.courtCaseNumber}`
-
-    const orderByDate = new Date(verdictFile.created)
-    // add two months because we don't want the order by date to be in the past when delivered to the police
-    orderByDate.setMonth(orderByDate.getMonth() + 2)
-
-    // deliver the verdict by creating the document at the police
-    const createdDocument = await this.policeService.createDocument({
-      caseId: theCase.id,
-      defendantId: defendant.id,
-      user,
-      documentName,
-      documentFiles: [
-        {
-          name: verdictFile.name,
-          documentBase64: Base64.btoa(verdictPdf.toString('binary')),
-        },
-      ],
-      documentDates: [
-        { code: 'ORDER_BY_DATE', value: orderByDate },
-        ...(theCase.rulingDate
-          ? [{ code: 'RULING_DATE', value: theCase.rulingDate }]
-          : []),
-      ],
-      fileTypeCode: PoliceFileTypeCode.VERDICT,
-      caseSupplements: this.mapToPoliceSupplementCodes(
+      const verdictPdf = await this.fileService.getCaseFileFromS3(
         theCase,
-        defendant,
-        verdict,
-      ),
-    })
+        verdictFile,
+      )
 
-    // update existing verdict with the external document id returned from the police
-    await this.updateVerdict(
-      verdict,
-      {
-        ...createdDocument,
-        hash: verdictFile.hash,
-        hashAlgorithm: verdictFile.hashAlgorithm,
-      },
-      transaction,
-    )
+      const documentName = `Dómur í máli ${theCase.courtCaseNumber}`
 
-    await this.defendantService.createDefendantEvent(
-      {
+      const orderByDate = new Date(verdictFile.created)
+      // add two months because we don't want the order by date to be in the past when delivered to the police
+      orderByDate.setMonth(orderByDate.getMonth() + 2)
+
+      // deliver the verdict by creating the document at the police
+      const createdDocument = await this.policeService.createDocument({
         caseId: theCase.id,
         defendantId: defendant.id,
-        eventType:
-          DefendantEventType.VERDICT_DELIVERED_TO_NATIONAL_COMMISSIONERS_OFFICE,
-      },
-      transaction,
-    )
+        user,
+        documentName,
+        documentFiles: [
+          {
+            name: verdictFile.name,
+            documentBase64: Base64.btoa(verdictPdf.toString('binary')),
+          },
+        ],
+        documentDates: [
+          { code: 'ORDER_BY_DATE', value: orderByDate },
+          ...(theCase.rulingDate
+            ? [{ code: 'RULING_DATE', value: theCase.rulingDate }]
+            : []),
+        ],
+        fileTypeCode: PoliceFileTypeCode.VERDICT,
+        caseSupplements: this.mapToPoliceSupplementCodes(
+          theCase,
+          defendant,
+          verdict,
+        ),
+      })
 
-    this.eventService.postEvent('VERDICT_DELIVERED_TO_POLICE', theCase, false, {
-      Varnaraðili: defendant.id,
-      'RLS auðkenni': createdDocument.externalPoliceDocumentId,
-    })
+      // update existing verdict with the external document id returned from the police
+      await this.updateVerdict(
+        verdict,
+        {
+          ...createdDocument,
+          hash: verdictFile.hash,
+          hashAlgorithm: verdictFile.hashAlgorithm,
+        },
+        transaction,
+      )
 
-    return { delivered: true }
+      await this.defendantService.createDefendantEvent(
+        {
+          caseId: theCase.id,
+          defendantId: defendant.id,
+          eventType:
+            DefendantEventType.VERDICT_DELIVERED_TO_NATIONAL_COMMISSIONERS_OFFICE,
+        },
+        transaction,
+      )
+
+      this.eventService.postEvent(
+        'VERDICT_DELIVERED_TO_POLICE',
+        theCase,
+        false,
+        {
+          Varnaraðili: defendant.id,
+          'RLS auðkenni': createdDocument.externalPoliceDocumentId,
+        },
+      )
+
+      return { delivered: true }
+    } catch (error) {
+      this.logger.error(
+        'Error delivering verdict to the national commissioners office',
+        error,
+      )
+
+      // Report every failed attempt to the Slack error channel (the delivery is
+      // retried by the message-handler, so this fires once per retry) - this is
+      // the single place that catches all causes: missing file, S3, the police
+      // call, and the database update.
+      void this.eventService.postErrorEvent(
+        'Villa við að senda dóm til RLS',
+        {
+          caseId: theCase.id,
+          defendantId: defendant.id,
+        },
+        error instanceof Error ? error : new Error(String(error)),
+      )
+
+      throw error
+    }
   }
 
   async deliverVerdictServiceCertificatesToPolice(

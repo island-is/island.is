@@ -335,6 +335,20 @@ export class PoliceService {
     }
   }
 
+  /** Winston error log only (no Slack). */
+  private logPoliceFailure(
+    logMessage: string,
+    info: { [key: string]: string | boolean | Date | undefined },
+    reason: unknown,
+  ): void {
+    this.logger.error(logMessage, {
+      ...info,
+      error: reason instanceof Error ? reason : undefined,
+      errorSummary:
+        reason instanceof Error ? undefined : String(reason).slice(0, 2000),
+    })
+  }
+
   /** Winston error log plus Slack error webhook (same payload shape as before). */
   private logPoliceFailureAndNotify(
     slackTitle: string,
@@ -342,14 +356,12 @@ export class PoliceService {
     info: { [key: string]: string | boolean | Date | undefined },
     reason: unknown,
   ): void {
-    const errorForSlack = this.reasonToError(reason)
-    this.logger.error(logMessage, {
-      ...info,
-      error: reason instanceof Error ? reason : undefined,
-      errorSummary:
-        reason instanceof Error ? undefined : String(reason).slice(0, 2000),
-    })
-    void this.eventService.postErrorEvent(slackTitle, info, errorForSlack)
+    this.logPoliceFailure(logMessage, info, reason)
+    void this.eventService.postErrorEvent(
+      slackTitle,
+      info,
+      this.reasonToError(reason),
+    )
   }
 
   private async throttleUploadPoliceCaseFile(
@@ -1291,8 +1303,10 @@ export class PoliceService {
 
       throw await res.text()
     } catch (error) {
-      this.logPoliceFailureAndNotify(
-        'Failed to create external police document file',
+      // Winston only - VerdictService.deliverVerdictToNationalCommissionersOffice
+      // posts the Slack error for a failed delivery, so notifying here too would
+      // double-post.
+      this.logPoliceFailure(
         `${createDocumentPath} - create external police document for file type code ${fileTypeCode} for case ${caseId}`,
         {
           caseId,
@@ -1457,8 +1471,10 @@ export class PoliceService {
 
       throw await res.text()
     } catch (error) {
-      this.logPoliceFailureAndNotify(
-        'Failed to create subpoena',
+      // Winston only - SubpoenaService.deliverSubpoenaToNationalCommissionersOffice
+      // posts the Slack error for a failed delivery, so notifying here too would
+      // double-post.
+      this.logPoliceFailure(
         `Failed create subpoena for case ${theCase.id}`,
         {
           caseId: theCase.id,
