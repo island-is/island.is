@@ -479,16 +479,24 @@ const CourtRecord: FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${DISTRICT_COURT_INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`}
-          nextIsLoading={isLoadingWorkingCase}
-          onNextButtonClick={() =>
-            handleNavigationTo(
-              DISTRICT_COURT_INVESTIGATION_CASE_CONFIRMATION_ROUTE,
-            )
+          actions={
+            hasMissingInfoInRulingStep
+              ? []
+              : [
+                  {
+                    text: formatMessage(core.continue),
+                    icon: 'arrowForward',
+                    onClick: () =>
+                      handleNavigationTo(
+                        DISTRICT_COURT_INVESTIGATION_CASE_CONFIRMATION_ROUTE,
+                      ),
+                    disabled: !stepIsValid,
+                    loading: isLoadingWorkingCase,
+                    testId: 'continueButton',
+                  },
+                ]
           }
-          nextIsDisabled={!stepIsValid}
-          hideNextButton={hasMissingInfoInRulingStep}
           infoBoxText={
             hasMissingInfoInRulingStep
               ? formatMessage(m.sections.nextButtonInfo.text, {

@@ -258,16 +258,19 @@ const Statement = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={previousUrl}
-          onNextButtonClick={handleNextButtonClick}
-          nextButtonText={someFilesError ? 'Reyna aftur' : 'Senda greinargerð'}
-          nextIsDisabled={
-            !targetAppealCaseId ||
-            appealStatementFiles.length === 0 ||
-            isCreatingAppealEventLog
-          }
-          nextIsLoading={!allFilesDoneOrError || isCreatingAppealEventLog}
-          nextButtonIcon={undefined}
-          nextButtonColorScheme={someFilesError ? 'destructive' : 'default'}
+          actions={[
+            {
+              text: someFilesError ? 'Reyna aftur' : 'Senda greinargerð',
+              colorScheme: someFilesError ? 'destructive' : 'default',
+              onClick: handleNextButtonClick,
+              disabled:
+                !targetAppealCaseId ||
+                appealStatementFiles.length === 0 ||
+                isCreatingAppealEventLog,
+              loading: !allFilesDoneOrError || isCreatingAppealEventLog,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
       {visibleModal === 'STATEMENT_SENT' && (

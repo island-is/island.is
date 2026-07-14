@@ -9,7 +9,7 @@ import {
   DISTRICT_COURT_INDICTMENT_CASE_COURT_RECORD_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_SUBPOENA_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { titles } from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   CourtCaseInfo,
   FormContentContainer,
@@ -123,16 +123,20 @@ const Advocates = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${DISTRICT_COURT_INDICTMENT_CASE_SUBPOENA_ROUTE}/${workingCase.id}`}
-          nextIsLoading={isLoadingWorkingCase}
-          nextUrl={`${DISTRICT_COURT_INDICTMENT_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!stepIsValid}
-          onNextButtonClick={() =>
-            handleNavigationTo(
-              DISTRICT_COURT_INDICTMENT_CASE_COURT_RECORD_ROUTE,
-            )
-          }
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  DISTRICT_COURT_INDICTMENT_CASE_COURT_RECORD_ROUTE,
+                ),
+              disabled: !stepIsValid,
+              loading: isLoadingWorkingCase,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

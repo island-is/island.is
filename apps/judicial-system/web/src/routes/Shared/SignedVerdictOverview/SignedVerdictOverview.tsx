@@ -546,10 +546,18 @@ export const SignedVerdictOverview: FC = () => {
         <FormContentContainer isFooter>
           <FormFooter
             previousUrl={getStandardUserDashboardRoute(user)}
-            hideNextButton={shouldHideNextButton(workingCase, user)}
-            nextButtonText={getNextButtonText(formatMessage, workingCase, user)}
-            onNextButtonClick={() => handleNextButtonClick()}
-            nextIsLoading={isExtendingCase}
+            actions={
+              shouldHideNextButton(workingCase, user)
+                ? []
+                : [
+                    {
+                      text: getNextButtonText(formatMessage, workingCase, user),
+                      onClick: () => handleNextButtonClick(),
+                      loading: isExtendingCase,
+                      testId: 'continueButton',
+                    },
+                  ]
+            }
             infoBoxText={getExtensionInfoText(formatMessage, workingCase, user)}
           />
         </FormContentContainer>

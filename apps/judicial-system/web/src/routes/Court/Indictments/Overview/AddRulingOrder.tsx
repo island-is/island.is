@@ -115,12 +115,18 @@ const AddRulingOrder: FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={previousRoute}
-          nextButtonText="Hlaða upp"
-          nextButtonColorScheme={someFilesError ? 'destructive' : 'default'}
-          nextIsDisabled={
-            uploadFiles.length === 0 || !allFilesDoneOrError || editCount > 0
-          }
-          onNextButtonClick={() => setVisibleModal('confirmation')}
+          actions={[
+            {
+              text: 'Hlaða upp',
+              colorScheme: someFilesError ? 'destructive' : 'default',
+              onClick: () => setVisibleModal('confirmation'),
+              disabled:
+                uploadFiles.length === 0 ||
+                !allFilesDoneOrError ||
+                editCount > 0,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
       {visibleModal === 'confirmation' && (

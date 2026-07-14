@@ -90,8 +90,13 @@ const Login = () => {
       <FormContentContainer isFooter>
         <FormFooter
           hidePreviousButton
-          nextButtonText={strings.general.buttonLabel}
-          onNextButtonClick={() => router.push('/api/auth/login')}
+          actions={[
+            {
+              text: strings.general.buttonLabel,
+              onClick: () => router.push('/api/auth/login'),
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </>

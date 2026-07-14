@@ -1,4 +1,5 @@
 import { FC, useCallback, useContext, useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import { Accordion, AlertMessage, Box, Button } from '@island.is/island-ui/core'
@@ -7,6 +8,7 @@ import {
   DISTRICT_COURT_INDICTMENT_CASE_DEFENDER_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { hasGeneratedCourtRecordPdf } from '@island.is/judicial-system/types'
+import { core } from '@island.is/judicial-system-web/messages'
 import {
   CourtCaseInfo,
   FormContentContainer,
@@ -28,6 +30,7 @@ import CourtSessionAccordionItem from './CourtSessionAccordionItem'
 import { alertContainer } from './CourtRecord.css'
 
 const CourtRecord: FC = () => {
+  const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const { workingCase, isLoadingWorkingCase, caseNotFound, refreshCase } =
     useContext(FormContext)
@@ -136,13 +139,19 @@ const CourtRecord: FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${DISTRICT_COURT_INDICTMENT_CASE_DEFENDER_ROUTE}/${workingCase.id}`}
-          nextIsLoading={isLoadingWorkingCase}
-          nextUrl={`${DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() =>
-            handleNavigationTo(DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE)
-          }
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE,
+                ),
+              loading: isLoadingWorkingCase,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>
