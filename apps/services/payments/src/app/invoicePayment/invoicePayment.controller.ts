@@ -198,6 +198,12 @@ export class InvoicePaymentController {
     callbackInput: { receptionID: string },
   ): Promise<void> {
     try {
+      await this.paymentFlowService.logChargeCodeDistribution(
+        paymentFlowId,
+        'paid',
+        'invoice',
+      )
+
       await this.paymentFlowService.logPaymentFlowUpdate(
         {
           paymentFlowId,

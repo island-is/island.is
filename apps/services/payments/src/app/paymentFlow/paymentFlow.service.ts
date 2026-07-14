@@ -156,7 +156,7 @@ export class PaymentFlowService {
         chargeDetails.catalogItems,
       )
 
-      return await this.sequelize.transaction(async (transaction) => {
+      const result = await this.sequelize.transaction(async (transaction) => {
         const paymentFlow = await this.paymentFlowModel.create(
           {
             ...paymentInfo,
@@ -190,6 +190,15 @@ export class PaymentFlowService {
           },
         }
       })
+
+      await this.logChargeCodeDistribution(
+        result.id,
+        'created',
+        undefined,
+        processedCharges,
+      )
+
+      return result
     } catch (e) {
       this.logger.error('Failed to create payment url', e)
 
@@ -203,6 +212,55 @@ export class PaymentFlowService {
           e instanceof Error ? e.message : String(e),
           PaymentServiceCode.CouldNotCreatePaymentFlow,
         ),
+      )
+    }
+  }
+
+  /**
+   * Emits a structured log line with the charge code + quantity distribution
+   * for a payment flow. Used to build a Datadog widget that shows which
+   * charge codes are being created vs. paid.
+   *
+   * Best-effort: any failure is logged and swallowed so it can never block
+   * the main flow. Titles are intentionally omitted to avoid an FJS catalog
+   * lookup on hot paths — the dashboard groups by `code`.
+   */
+  async logChargeCodeDistribution(
+    paymentFlowId: string,
+    state: 'created' | 'paid',
+    paymentMethod?: 'card' | 'apple_pay' | 'invoice',
+    preFetchedCharges?: { chargeItemCode: string; quantity: number }[],
+  ): Promise<void> {
+    try {
+      let charges = preFetchedCharges
+      if (!charges) {
+        const dbCharges = await this.paymentFlowChargeModel.findAll({
+          where: { paymentFlowId },
+          attributes: ['chargeItemCode', 'quantity'],
+        })
+        charges = dbCharges.map((c) => ({
+          chargeItemCode: c.chargeItemCode,
+          quantity: c.quantity,
+        }))
+      }
+
+      this.logger.info(
+        `[${paymentFlowId}] Charge code distribution: ${state}`,
+        {
+          chargeCodeDistribution: {
+            state,
+            paymentMethod: paymentMethod ?? null,
+            codes: charges.map((c) => ({
+              code: c.chargeItemCode,
+              count: c.quantity,
+            })),
+          },
+        },
+      )
+    } catch (error) {
+      this.logger.warn(
+        `[${paymentFlowId}] Failed to log charge code distribution`,
+        { error },
       )
     }
   }
