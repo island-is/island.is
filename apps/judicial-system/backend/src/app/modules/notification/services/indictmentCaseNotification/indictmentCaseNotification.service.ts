@@ -19,7 +19,6 @@ import {
 } from '@island.is/judicial-system/consts'
 import { applyDativeCaseToCourtName } from '@island.is/judicial-system/formatters'
 import {
-  CaseIndictmentRulingDecision,
   IndictmentCaseNotificationType,
   TrackedNotificationType,
   UserDescriptor,
@@ -103,61 +102,6 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     const recipients = await Promise.all(promises)
 
     return this.recordNotification(theCase.id, notificationType, recipients)
-  }
-
-  private async sendVerdictInfoNotification(
-    theCase: Case,
-  ): Promise<DeliverResponse> {
-    const institutionId = theCase.prosecutor?.institution?.id
-    const institutionEmail =
-      (institutionId &&
-        this.config.email.policeInstitutionEmails[institutionId]) ??
-      undefined
-
-    const hasRuling =
-      theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
-
-    if (!institutionEmail || !hasRuling) {
-      // institution does not want to receive these emails or the case does not have a ruling
-      return { delivered: true }
-    }
-
-    const formattedSubject = this.formatMessage(
-      strings.indictmentCompletedWithRuling.subject,
-      {
-        isCorrection: Boolean(theCase.rulingModifiedHistory),
-        courtCaseNumber: theCase.courtCaseNumber,
-      },
-    )
-
-    const formattedBody = this.formatMessage(
-      strings.indictmentCompletedWithRuling.body,
-      {
-        isCorrection: Boolean(theCase.rulingModifiedHistory),
-        courtCaseNumber: theCase.courtCaseNumber,
-        policeCaseNumber:
-          theCase.policeCaseNumbers.length > 0
-            ? theCase.policeCaseNumbers[0]
-            : '',
-        courtName: applyDativeCaseToCourtName(theCase.court?.name || ''),
-        serviceRequirement:
-          theCase.defendants?.[0]?.verdicts?.[0]?.serviceRequirement,
-        caseOrigin: theCase.origin,
-      },
-    )
-
-    return this.sendEmails(
-      theCase,
-      TrackedNotificationType.INDICTMENT_VERDICT_INFO,
-      formattedSubject,
-      formattedBody,
-      [
-        {
-          name: theCase.prosecutor?.institution?.name,
-          email: institutionEmail,
-        },
-      ],
-    )
   }
 
   private async sendCriminalRecordFilesUploadedNotification(
@@ -582,7 +526,8 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
       case IndictmentCaseNotificationType.COURT_DATE:
         return this.sendCourtDateNotifications(theCase, user)
       case IndictmentCaseNotificationType.INDICTMENT_VERDICT_INFO:
-        return this.sendVerdictInfoNotification(theCase)
+        // Notification removed — no-op for any messages still in the queue
+        return Promise.resolve({ delivered: true })
       case IndictmentCaseNotificationType.CRIMINAL_RECORD_FILES_UPLOADED:
         return this.sendCriminalRecordFilesUploadedNotification(theCase)
       case IndictmentCaseNotificationType.INDICTMENT_SPLIT_COMPLETED:
