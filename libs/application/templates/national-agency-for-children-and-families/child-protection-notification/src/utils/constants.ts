@@ -35,15 +35,3 @@ export enum NoNationalIdReason {
   TRAVELER = 'traveler',
   BORDER_RECEPTION = 'borderReception',
 }
-
-export enum Gender {
-  GIRL = 'girl',
-  BOY = 'boy',
-  OTHER = 'other',
-}
-
-export enum ParentGender {
-  MALE = 'male',
-  FEMALE = 'female',
-  NON_BINARY = 'nonBinary',
-}

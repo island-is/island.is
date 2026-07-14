@@ -32,21 +32,6 @@ export const parentsMessages = {
       defaultMessage: 'Veldu sveitarfélag',
       description: 'Placeholder for municipality select field',
     },
-    genderMale: {
-      id: 'cpn.application:parents.shared.genderMale',
-      defaultMessage: 'Karlmaður',
-      description: 'Gender option: male',
-    },
-    genderFemale: {
-      id: 'cpn.application:parents.shared.genderFemale',
-      defaultMessage: 'Kvennmaður',
-      description: 'Gender option: female',
-    },
-    genderNonBinary: {
-      id: 'cpn.application:parents.shared.genderNonBinary',
-      defaultMessage: 'Kynsegin',
-      description: 'Gender option: non-binary',
-    },
   }),
   expectantParents: defineMessages({
     sectionTitle: {

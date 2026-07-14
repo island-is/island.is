@@ -13,8 +13,9 @@ import {
 } from '@island.is/shared/utils'
 import { childMessages } from '../../lib/messages'
 import { isNoNationalId } from '../../utils/conditionUtils'
-import { Gender, Pronoun } from '../../utils/constants'
+import { Pronoun } from '../../utils/constants'
 import { getApplicationAnswers } from '../../utils/getApplicationAnswers'
+import { getApplicationExternalData } from '../../utils/getApplicationExternalData'
 
 export const childInfoManualSection = buildSection({
   id: 'childInfoManualSection',
@@ -51,14 +52,15 @@ export const childInfoManualSection = buildSection({
           placeholder: childMessages.manualInfo.genderPlaceholder,
           width: 'half',
           doesNotRequireAnswer: true,
-          options: [
-            { value: Gender.GIRL, label: childMessages.manualInfo.genderGirl },
-            { value: Gender.BOY, label: childMessages.manualInfo.genderBoy },
-            {
-              value: Gender.OTHER,
-              label: childMessages.manualInfo.genderOther,
-            },
-          ],
+          options: ({ externalData }) => {
+            const { genders } = getApplicationExternalData(externalData)
+            return (
+              genders
+                // Exclude adult genders (1=Karlmaður, 2=Kona) and unborn (5=Ófætt)
+                .filter((g) => !['1', '2', '5'].includes(g.value ?? ''))
+                .map((g) => ({ value: g.value ?? '', label: g.label ?? '' }))
+            )
+          },
         }),
         buildCheckboxField({
           id: 'child.manualInfo.usePronounAndPreferredName',

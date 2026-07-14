@@ -175,21 +175,6 @@ export const childMessages = {
       defaultMessage: 'Veldu kyn',
       description: 'Placeholder for gender select field',
     },
-    genderGirl: {
-      id: 'cpn.application:child.manualInfo.genderGirl',
-      defaultMessage: 'Stúlka',
-      description: 'Gender option: girl',
-    },
-    genderBoy: {
-      id: 'cpn.application:child.manualInfo.genderBoy',
-      defaultMessage: 'Drengur',
-      description: 'Gender option: boy',
-    },
-    genderOther: {
-      id: 'cpn.application:child.manualInfo.genderOther',
-      defaultMessage: 'Annað',
-      description: 'Gender option: other',
-    },
     addressTitle: {
       id: 'cpn.application:child.manualInfo.addressTitle',
       defaultMessage: 'Veistu hvar barnið býr?',
