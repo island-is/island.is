@@ -1360,21 +1360,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@octokit/request@npm:^5.3.0":
-  version: 5.6.0
-  resolution: "@octokit/request@npm:5.6.0"
-  dependencies:
-    "@octokit/endpoint": "npm:^6.0.1"
-    "@octokit/request-error": "npm:^2.1.0"
-    "@octokit/types": "npm:^6.16.1"
-    is-plain-object: "npm:^5.0.0"
-    node-fetch: "npm:^2.6.1"
-    universal-user-agent: "npm:^6.0.0"
-  checksum: 10/5a57676b0e0e14ee374990370f1caa97a4b0d1c6363b3a1faddc51c5f2c5b9dd067f8615a234c3dba830fa7d00ebb5fb5dd36cb21d5712d75083e1b5ae2a14a0
-  languageName: node
-  linkType: hard
-
-"@octokit/request@npm:^5.6.3":
+"@octokit/request@npm:^5.3.0, @octokit/request@npm:^5.6.3":
   version: 5.6.3
   resolution: "@octokit/request@npm:5.6.3"
   dependencies:
@@ -4372,7 +4358,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.7":
+"node-fetch@npm:^2.6.7":
   version: 2.6.7
   resolution: "node-fetch@npm:2.6.7"
   dependencies:
