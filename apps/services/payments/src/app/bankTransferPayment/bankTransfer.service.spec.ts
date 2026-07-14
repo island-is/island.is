@@ -1492,7 +1492,7 @@ describe('BankTransferService', () => {
       expect(result).toBeNull()
     })
 
-    it('refreshes from Blikk on fresh PENDING and surfaces BANK_TRANSFER_PENDING when still pending', async () => {
+    it('refreshes from Blikk on fresh PENDING; at SCA_REQUIRED it trusts Blikk and surfaces no redirect URL when Blikk omits one', async () => {
       bankTransferPaymentModel.findOne.mockResolvedValue(baseRow)
       const getPaymentSpy = mockGetPayment(
         BankTransferStatus.PENDING,
@@ -1513,10 +1513,12 @@ describe('BankTransferService', () => {
           },
         },
       )
+      // At SCA_REQUIRED Blikk is authoritative for the URL: it omitted one (back-channel SCA), so we
+      // surface none rather than resurrecting the row's creation-time URL.
       expect(result).toEqual({
         paymentStatus: PaymentStatus.BANK_TRANSFER_PENDING,
         updatedAt: baseRow.modified,
-        bankTransferScaRedirectUrl: 'https://blikk/sca',
+        bankTransferScaRedirectUrl: undefined,
         bankTransferExpiresAt: baseRow.expiresAt,
         bankTransferPendingStatus: BankTransferPendingStatus.SCA_REQUIRED,
       })
