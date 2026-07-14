@@ -34,8 +34,8 @@ import {
 import {
   buildInCourtAppealedEvent,
   inCourtAppellantsFromDecisions,
-} from '../appeal-case/appealCase.helpers'
-import { transitionAppealCase } from '../appeal-case/state/appealCase.state'
+} from '../appeal-case'
+import { transitionAppealCase } from '../appeal-case'
 import { EventLogService } from '../event-log'
 import { FileService } from '../file'
 import {
@@ -463,11 +463,13 @@ export class CourtSessionService {
     }
   }
 
-  // Converges the appeal case's APPEALED events with its current standing
-  // in-court appellants (Mirror semantics): adds an event for each standing
-  // appellant that has none yet, and removes events for parties that have since
-  // withdrawn or been corrected away. The decision rows remain the full history,
-  // so the event log always means one thing - who is appealing now. Idempotent.
+  // Converges the appeal case's APPEALED events with the parties that appealed
+  // this ruling in court. An APPEALED event records a real fact - the party
+  // appealed - so it is kept even after the party withdraws (the withdrawal is a
+  // new decision, recorded by an APPEAL_WITHDRAWN event). It is removed only when
+  // the decision is no longer APPEAL - i.e. a court employee corrected an
+  // erroneous entry, so the appeal never happened. Adds an event for each
+  // standing appellant that has none yet. Idempotent.
   private async reconcileInCourtAppealedEvents(
     theCase: Case,
     appealCase: AppealCase,
@@ -493,13 +495,16 @@ export class CourtSessionService {
     }): string => party.defendantId ?? party.civilClaimantId ?? 'PROSECUTOR'
 
     const existingKeys = new Set(existingEvents.map(partyKey))
-    const standingKeys = new Set(appellants.map(partyKey))
+    // Every party that appealed - standing or withdrawn. Only parties absent
+    // from this set (their decision was corrected away from APPEAL) lose their
+    // event.
+    const appealedKeys = new Set(appeals.map(partyKey))
 
     const eventsToAdd = appellants.filter(
       (appellant) => !existingKeys.has(partyKey(appellant)),
     )
     const eventsToRemove = existingEvents.filter(
-      (event) => !standingKeys.has(partyKey(event)),
+      (event) => !appealedKeys.has(partyKey(event)),
     )
 
     await Promise.all(
@@ -606,16 +611,9 @@ export class CourtSessionService {
         existingAppealCase.appealState === AppealCaseState.APPEALED ||
         existingAppealCase.appealState === AppealCaseState.RECEIVED
       ) {
-        // No appellant still stands, so drop their now non-standing APPEALED
-        // events before withdrawing the appeal case.
-        await this.reconcileInCourtAppealedEvents(
-          theCase,
-          existingAppealCase,
-          appeals,
-          user,
-          transaction,
-        )
-
+        // The parties all withdrew, but they did appeal, so their APPEALED
+        // events are kept (the withdrawal is recorded separately); only the
+        // appeal case itself is withdrawn.
         const { appealCaseUpdate } = transitionAppealCase(
           AppealCaseTransition.WITHDRAW_APPEAL,
           theCase,

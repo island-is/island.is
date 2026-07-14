@@ -302,6 +302,59 @@ describe('AppealCaseController - Create', () => {
     })
   })
 
+  describe('defence user representing multiple defendants appeals a dismissal', () => {
+    const defendantId1 = uuid()
+    const defendantId2 = uuid()
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(
+        {
+          id: caseId,
+          type: CaseType.INDICTMENT,
+          indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+          defendants: [
+            {
+              id: defendantId1,
+              isDefenderChoiceConfirmed: true,
+              defenderNationalId: defender.nationalId,
+            },
+            {
+              id: defendantId2,
+              isDefenderChoiceConfirmed: true,
+              defenderNationalId: defender.nationalId,
+            },
+          ],
+        } as unknown as Case,
+        defender,
+        undefined,
+      )
+    })
+
+    it('records an APPEALED event for each represented defendant', () => {
+      expect(then.error).toBeUndefined()
+      expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledTimes(
+        2,
+      )
+      expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          eventType: AppealEventType.APPEALED,
+          userRole: UserRole.DEFENDER,
+          defendantId: defendantId1,
+        }),
+        { transaction },
+      )
+      expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          eventType: AppealEventType.APPEALED,
+          userRole: UserRole.DEFENDER,
+          defendantId: defendantId2,
+        }),
+        { transaction },
+      )
+    })
+  })
+
   describe('appeal brief case files are delivered to court', () => {
     const rvgFileId = uuid()
     const theCase = {

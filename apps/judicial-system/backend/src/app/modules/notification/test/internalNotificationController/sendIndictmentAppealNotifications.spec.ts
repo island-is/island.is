@@ -7,6 +7,7 @@ import {
   AppealCaseNotificationType,
   AppealCaseRulingDecision,
   AppealCaseState,
+  AppealEventType,
   CaseIndictmentRulingDecision,
   CaseType,
   InstitutionType,
@@ -20,7 +21,7 @@ import {
   createTestUsers,
 } from '../createTestingNotificationModule'
 
-import { AppealCase, Case } from '../../../repository'
+import { AppealCase, AppealEventLog, Case } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 
 interface Then {
@@ -33,15 +34,26 @@ interface Then {
 const defender1NationalId = '1111111111'
 const defender2NationalId = '2222222222'
 const spokespersonNationalId = '3333333333'
+const defendant1Id = uuid()
+const defendant2Id = uuid()
+
+// The appellant is read from the APPEALED event log: defender1 represents
+// defendant1, whose party appealed.
+const defender1AppealedEvent = {
+  eventType: AppealEventType.APPEALED,
+  defendantId: defendant1Id,
+} as AppealEventLog
 
 const defendants = [
   {
+    id: defendant1Id,
     defenderName: 'Defender One',
     defenderEmail: 'defender1@omnitrix.is',
     defenderNationalId: defender1NationalId,
     isDefenderChoiceConfirmed: true,
   },
   {
+    id: defendant2Id,
     defenderName: 'Defender Two',
     defenderEmail: 'defender2@omnitrix.is',
     defenderNationalId: defender2NationalId,
@@ -93,7 +105,7 @@ describe('InternalNotificationController - Send indictment appeal to court of ap
       const then = {} as Then
 
       const appealCase = {
-        appealedByNationalId: defender1NationalId,
+        appealEventLogs: [defender1AppealedEvent],
         appealState: AppealCaseState.APPEALED,
       } as AppealCase
 
@@ -810,7 +822,7 @@ describe('InternalNotificationController - Send indictment appeal withdrawn noti
             } as User)
 
       const appealCase = {
-        appealedByNationalId: defender1NationalId,
+        appealEventLogs: [defender1AppealedEvent],
         appealState: AppealCaseState.APPEALED,
       } as AppealCase
 
@@ -944,7 +956,7 @@ describe('InternalNotificationController - Send indictment appeal withdrawn noti
           subject: expect.stringContaining(courtCaseNumber),
         }),
       )
-      // Defender 2 (defender1 excluded by appealedByNationalId)
+      // Defender 2 (defender1 excluded as the appellant's current defender)
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ name: 'Defender Two', address: 'defender2@omnitrix.is' }],

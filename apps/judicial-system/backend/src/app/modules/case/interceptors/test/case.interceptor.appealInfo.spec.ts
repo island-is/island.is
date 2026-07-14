@@ -356,6 +356,47 @@ describe('getAppealCaseInfo', () => {
       )
     })
 
+    it('exposes the defence appellant party from the event', () => {
+      const theCase = { type: CaseType.INDICTMENT } as Case
+      const appealCase = {
+        rulingFileId: 'file-id',
+        appealEventLogs: [
+          {
+            eventType: AppealEventType.APPEALED,
+            userRole: UserRole.DEFENDER,
+            defendantId: 'defendant-id',
+          } as AppealEventLog,
+        ],
+      } as AppealCase
+
+      const info = getAppealCaseInfo(appealCase, theCase)
+      expect(info.appealedByDefendantId).toBe('defendant-id')
+      expect(info.appealedByCivilClaimantId).toBeUndefined()
+    })
+
+    it('does not expose an appellant party for in-court appeals', () => {
+      const theCase = {
+        type: CaseType.INDICTMENT,
+        appealDecisions: [
+          { rulingFileId: 'file-id', decision: CaseAppealDecision.APPEAL },
+        ],
+      } as Case
+      const appealCase = {
+        rulingFileId: 'file-id',
+        appealEventLogs: [
+          {
+            eventType: AppealEventType.APPEALED,
+            userRole: UserRole.DEFENDER,
+            defendantId: 'defendant-id',
+          } as AppealEventLog,
+        ],
+      } as AppealCase
+
+      const info = getAppealCaseInfo(appealCase, theCase)
+      expect(info.appealedInCourt).toBe(true)
+      expect(info.appealedByDefendantId).toBeUndefined()
+    })
+
     it('maps prosecution roles on the event to the prosecutor side', () => {
       const theCase = { type: CaseType.INDICTMENT } as Case
       const appealCase = {

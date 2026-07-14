@@ -2,7 +2,7 @@ import { option } from 'fp-ts'
 import { filterMap } from 'fp-ts/lib/Array'
 import { pipe } from 'fp-ts/lib/function'
 import pick from 'lodash/pick'
-import { Includeable, literal, Op, Transaction } from 'sequelize'
+import { literal, Op, Transaction } from 'sequelize'
 
 import {
   BadRequestException,
@@ -37,6 +37,7 @@ import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   AppealCaseState,
   AppealDecisionPartyRole,
+  AppealEventType,
   CaseAppealDecision,
   CaseFileCategory,
   CaseFileState,
@@ -47,12 +48,9 @@ import {
   CaseType,
   CourtDocumentType,
   DateType,
-  dateTypes,
   DefendantEventType,
-  defendantEventTypes,
   DefendantNotificationType,
   EventType,
-  eventTypes,
   IndictmentCaseNotificationType,
   IndictmentDecision,
   isCompletedCase,
@@ -60,10 +58,10 @@ import {
   isInvestigationCase,
   isRequestCase,
   isRestrictionCase,
+  prosecutionRoles,
   RequestCaseNotificationType,
   ServiceStatus,
   StringType,
-  stringTypes,
   UserRole,
 } from '@island.is/judicial-system/types'
 import { sortCaseFiles } from '@island.is/judicial-system/types'
@@ -73,10 +71,7 @@ import {
   getCourtRecordPdfAsString,
   getRulingPdfAsString,
 } from '../../formatters'
-import {
-  buildInCourtAppealedEvent,
-  InCourtAppellant,
-} from '../appeal-case/appealCase.helpers'
+import { buildInCourtAppealedEvent, InCourtAppellant } from '../appeal-case'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
 import { DefendantService } from '../defendant'
@@ -87,7 +82,9 @@ import { IndictmentCountService } from '../indictment-count'
 import {
   AppealCase,
   AppealCaseRepositoryService,
+  AppealDecision,
   AppealDecisionRepositoryService,
+  AppealEventLog,
   AppealEventLogRepositoryService,
   Case,
   caseInclude,
@@ -101,15 +98,12 @@ import {
   DefendantEventLogRepositoryService,
   EventLog,
   Institution,
-  Subpoena,
   UpdateCase,
-  User,
-  Verdict,
 } from '../repository'
 import { SubpoenaService } from '../subpoena'
 import { VerdictService } from '../verdict'
+import { CaseAppealDecisionDto } from './dto/caseAppealDecision.dto'
 import { CreateCaseDto } from './dto/createCase.dto'
-import { getCasesQueryFilter } from './filters/cases.filter'
 import { MinimalCase } from './models/case.types'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
@@ -138,87 +132,20 @@ const caseStringTypes: Record<CaseStringKeys, StringType> = {
   reopenReason: StringType.REOPEN_REASON,
 }
 
-export const caseListInclude: Includeable[] = [
-  { model: Institution, as: 'court' },
-  { model: Institution, as: 'prosecutorsOffice' },
-  {
-    model: Defendant,
-    as: 'defendants',
-    required: false,
-    order: [['created', 'ASC']],
-    include: [
-      {
-        model: DefendantEventLog,
-        as: 'eventLogs',
-        required: false,
-        where: { eventType: defendantEventTypes },
-        separate: true,
-      },
-      {
-        model: Subpoena,
-        as: 'subpoenas',
-        required: false,
-        order: [['created', 'DESC']],
-        separate: true,
-      },
-      {
-        model: Verdict,
-        as: 'verdicts',
-        required: false,
-        order: [['created', 'DESC']],
-        separate: true,
-      },
-    ],
-    separate: true,
-  },
-  {
-    model: User,
-    as: 'creatingProsecutor',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'prosecutor',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'judge',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'registrar',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'indictmentReviewer',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: DateLog,
-    as: 'dateLogs',
-    required: false,
-    where: { dateType: dateTypes },
-    order: [['created', 'DESC']],
-    separate: true,
-  },
-  {
-    model: CaseString,
-    as: 'caseStrings',
-    required: false,
-    where: { stringType: stringTypes },
-    separate: true,
-  },
-  {
-    model: EventLog,
-    as: 'eventLogs',
-    required: false,
-    where: { eventType: eventTypes },
-    separate: true,
-  },
-  { model: AppealCase, as: 'appealCase', required: false },
+// Files parties upload for an appeal - removed when the appeal case they belong
+// to is deleted after a court-record correction. Mirrors the ruling-order list
+// in courtSession.service.
+const APPEAL_PARTY_FILE_CATEGORIES = [
+  CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+  CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+  CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
+  CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+  CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+  CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+  CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
+  CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+  CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
+  CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
 ]
 
 @Injectable()
@@ -1277,13 +1204,6 @@ export class CaseService {
     return minimalCase
   }
 
-  getAll(user: TUser): Promise<Case[]> {
-    return this.caseRepositoryService.findAll({
-      include: caseListInclude,
-      where: getCasesQueryFilter(user),
-    })
-  }
-
   async getConnectedIndictmentCases(theCase: Case): Promise<Case[]> {
     if (!theCase.defendants || theCase.defendants.length === 0) {
       return []
@@ -1527,6 +1447,176 @@ export class CaseService {
         { transaction },
       )
     }
+  }
+
+  // Records a case-level (request-case) appeal decision directly on the
+  // appeal_decision rows - the write switch away from the accused/prosecutor
+  // case columns. A reverse dual-write keeps those legacy columns in sync so
+  // not-yet-migrated paths still read them and they can be dropped in Phase 4.
+  async upsertCaseAppealDecision(
+    theCase: Case,
+    update: CaseAppealDecisionDto,
+    transaction: Transaction,
+  ): Promise<AppealDecision> {
+    if (!isRequestCase(theCase.type)) {
+      throw new BadRequestException(
+        'Case-level appeal decisions can only be recorded on request cases',
+      )
+    }
+
+    if (
+      update.partyRole !== AppealDecisionPartyRole.PROSECUTOR &&
+      update.partyRole !== AppealDecisionPartyRole.DEFENDANT
+    ) {
+      throw new BadRequestException(
+        'A case-level appeal decision must belong to the prosecutor or the accused',
+      )
+    }
+
+    const data: {
+      decision?: CaseAppealDecision | null
+      announcement?: string | null
+    } = {}
+    if (update.decision !== undefined) {
+      data.decision = update.decision ?? null
+    }
+    if (update.announcement !== undefined) {
+      data.announcement = update.announcement ?? null
+    }
+
+    const appealDecision = await this.appealDecisionRepositoryService.upsert(
+      { caseId: theCase.id, rulingFileId: null, partyRole: update.partyRole },
+      data,
+      { transaction },
+    )
+
+    // Reverse dual-write into the legacy case columns.
+    const isProsecutor = update.partyRole === AppealDecisionPartyRole.PROSECUTOR
+    const caseUpdate: UpdateCase = {}
+    if (update.decision !== undefined) {
+      const decision = update.decision ?? null
+      if (isProsecutor) {
+        caseUpdate.prosecutorAppealDecision = decision
+      } else {
+        caseUpdate.accusedAppealDecision = decision
+      }
+    }
+    if (update.announcement !== undefined) {
+      const announcement = update.announcement ?? null
+      if (isProsecutor) {
+        caseUpdate.prosecutorAppealAnnouncement = announcement
+      } else {
+        caseUpdate.accusedAppealAnnouncement = announcement
+      }
+    }
+    if (Object.keys(caseUpdate).length > 0) {
+      await this.caseRepositoryService.update(theCase.id, caseUpdate, {
+        transaction,
+      })
+    }
+
+    return appealDecision
+  }
+
+  // Converges a request-case (case-level) appeal case's APPEALED events with the
+  // current appellants after a court-record correction. Request-case defence is
+  // collective, so events are keyed on the side (prosecution vs defence) rather
+  // than a party id: the prosecution and the accused each get exactly one event
+  // while they appeal, and lose it when their decision is corrected away.
+  private async reconcileCaseLevelAppealedEvents(
+    theCase: Case,
+    appealCase: AppealCase,
+    appeals: { prosecutor: boolean; defence: boolean },
+    actor: TUser,
+    transaction: Transaction,
+  ): Promise<void> {
+    const existingEvents = await this.appealEventLogRepositoryService.findAll({
+      where: {
+        appealCaseId: appealCase.id,
+        eventType: AppealEventType.APPEALED,
+      },
+      transaction,
+    })
+
+    const hasProsecutionEvent = existingEvents.some((event) =>
+      prosecutionRoles.includes(event.userRole),
+    )
+    const hasDefenceEvent = existingEvents.some(
+      (event) => !prosecutionRoles.includes(event.userRole),
+    )
+
+    const appellantsToAdd: InCourtAppellant[] = []
+    if (appeals.prosecutor && !hasProsecutionEvent) {
+      appellantsToAdd.push({ appellantRole: UserRole.PROSECUTOR })
+    }
+    if (appeals.defence && !hasDefenceEvent) {
+      appellantsToAdd.push({ appellantRole: UserRole.DEFENDER })
+    }
+
+    const eventsToRemove = existingEvents.filter((event) =>
+      prosecutionRoles.includes(event.userRole)
+        ? !appeals.prosecutor
+        : !appeals.defence,
+    )
+
+    await Promise.all(
+      appellantsToAdd.map((appellant) =>
+        this.appealEventLogRepositoryService.create(
+          buildInCourtAppealedEvent({ theCase, appealCase, appellant, actor }),
+          { transaction },
+        ),
+      ),
+    )
+
+    await this.appealEventLogRepositoryService.deleteByIds(
+      eventsToRemove.map((event) => event.id),
+      { transaction },
+    )
+  }
+
+  // Hard-deletes a request-case (case-level) appeal case whose in-court appeal
+  // has been corrected away, together with the appeal files parties uploaded for
+  // it and its event logs. Only ever called for a still-APPEALED appeal case (a
+  // progressed one is rejected up front). Mirrors the ruling-order cleanup
+  // (courtSession.service.deleteInCourtRulingOrderAppeal); the deletion is
+  // audited on the case event log.
+  private async deleteCaseLevelAppeal(
+    theCase: Case,
+    appealCase: AppealCase,
+    user: TUser,
+    transaction: Transaction,
+  ): Promise<void> {
+    const appealFiles = (theCase.caseFiles ?? []).filter(
+      (file) =>
+        !file.rulingFileId &&
+        file.category &&
+        APPEAL_PARTY_FILE_CATEGORIES.includes(file.category),
+    )
+
+    for (const file of appealFiles) {
+      await this.fileService.deleteCaseFile(theCase, file, transaction)
+    }
+
+    // Event logs reference the appeal case, so they must go before it
+    await this.appealEventLogRepositoryService.deleteByAppealCaseId(
+      appealCase.id,
+      { transaction },
+    )
+
+    await this.appealCaseRepositoryService.delete(appealCase.id, {
+      transaction,
+    })
+
+    await this.eventLogService.createWithUser(
+      EventType.APPEAL_DELETED,
+      theCase.id,
+      user,
+      transaction,
+    )
+
+    this.logger.debug(
+      `Deleted case-level appeal ${appealCase.id} of case ${theCase.id} after court record correction`,
+    )
   }
 
   private handleStateChangeEventLogUpdatesForIndictments(
@@ -2007,17 +2097,45 @@ export class CaseService {
 
     // Handle appealed in court
     if (isCompletingRequestCase) {
-      const hasBeenAppealed = Boolean(theCase.appealCase)
+      // Read the in-court appeal stance from the case-level appeal_decision rows
+      // (the new write source) rather than the legacy case columns.
+      const caseLevelDecision = (partyRole: AppealDecisionPartyRole) =>
+        theCase.appealDecisions?.find(
+          (decision) =>
+            !decision.rulingFileId && decision.partyRole === partyRole,
+        )?.decision
       const prosecutorAppealedInCourt =
-        theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL
+        caseLevelDecision(AppealDecisionPartyRole.PROSECUTOR) ===
+        CaseAppealDecision.APPEAL
       const accusedAppealedInCourt =
-        theCase.accusedAppealDecision === CaseAppealDecision.APPEAL
+        caseLevelDecision(AppealDecisionPartyRole.DEFENDANT) ===
+        CaseAppealDecision.APPEAL
+      const someoneAppealedInCourt =
+        prosecutorAppealedInCourt || accusedAppealedInCourt
+      const existingAppealCase = theCase.appealCase
 
+      // Correcting a completed request case must not silently discard an appeal
+      // that has already moved past the district court: if the correction leaves
+      // no in-court appeal but the appeal case has progressed beyond APPEALED,
+      // reject the completion.
       if (
-        // TODO: Decide what to do if correcting case
-        !hasBeenAppealed && // don't appeal twice
-        (prosecutorAppealedInCourt || accusedAppealedInCourt)
+        existingAppealCase &&
+        !someoneAppealedInCourt &&
+        existingAppealCase.appealState !== AppealCaseState.APPEALED
       ) {
+        throw new BadRequestException(
+          'The appeal of this case has progressed past the district court and cannot be removed by correcting the court record',
+        )
+      }
+
+      if (someoneAppealedInCourt && !existingAppealCase) {
+        // First appeal on this case. The in-court appeal itself is recorded by
+        // decision = APPEAL on the appeal_decision rows (written when the
+        // decision was set); here we create the appeal case it produces and
+        // register each appealing side as an APPEALED event, so the appellant is
+        // read from the event log uniformly with out-of-court appeals.
+        // Request-case defence is collective, so no defendant/civilClaimant party
+        // is attached.
         // TODO: Decide if we should set both appeal dates if both appeal
         if (prosecutorAppealedInCourt) {
           caseUpdate.prosecutorPostponedAppealDate = update.rulingDate
@@ -2025,12 +2143,6 @@ export class CaseService {
           caseUpdate.accusedPostponedAppealDate = update.rulingDate
         }
 
-        // The in-court appeal itself is recorded by decision = APPEAL on the
-        // appeal_decision rows (written when the decision was set); here we
-        // create the appeal case it produces and register each appealing side
-        // as an APPEALED event, so the appellant is read from the event log
-        // uniformly with out-of-court appeals. Request-case defence is
-        // collective, so no defendant/civilClaimant party is attached.
         const appealCase = await this.appealCaseRepositoryService.create(
           theCase.id,
           {
@@ -2062,6 +2174,32 @@ export class CaseService {
             ),
           ),
         )
+      } else if (someoneAppealedInCourt && existingAppealCase) {
+        // Re-completion after a correction that changed who appeals - converge
+        // the appeal case's APPEALED events with the current appellants (a newly
+        // appealing side gains an event, a side corrected away loses it).
+        await this.reconcileCaseLevelAppealedEvents(
+          theCase,
+          existingAppealCase,
+          {
+            prosecutor: prosecutorAppealedInCourt,
+            defence: accusedAppealedInCourt,
+          },
+          user,
+          transaction,
+        )
+      } else if (existingAppealCase) {
+        // The in-court appeal was corrected away entirely - delete the
+        // still-APPEALED appeal case (a progressed one was rejected above),
+        // mirroring the ruling-order correction cleanup.
+        await this.deleteCaseLevelAppeal(
+          theCase,
+          existingAppealCase,
+          user,
+          transaction,
+        )
+        caseUpdate.prosecutorPostponedAppealDate = null
+        caseUpdate.accusedPostponedAppealDate = null
       }
     }
 

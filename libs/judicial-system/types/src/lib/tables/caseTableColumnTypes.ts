@@ -27,6 +27,11 @@ const caseSentToCourtDate: CaseTableColumn = { title: 'Útgáfudagur' }
 const arraignmentDate: CaseTableColumn = { title: 'Fyrirtaka' }
 const indictmentArraignmentDate: CaseTableColumn = { title: 'Fyrirtaka' }
 const indictmentRulingDecision: CaseTableColumn = { title: 'Niðurstaða' }
+// Used on tables with a separate appeal state column to avoid showing the
+// appeal state twice
+const indictmentRulingDecisionWithoutAppealState: CaseTableColumn = {
+  title: 'Niðurstaða',
+}
 const created: CaseTableColumn = { title: 'Stofnað' }
 const prosecutor: CaseTableColumn = { title: 'Ákærandi' }
 const prosecutorInitials: CaseTableColumn = { title: 'Ákærandi' }
@@ -56,6 +61,7 @@ export const caseTableColumns = {
   indictmentCaseState,
   indictmentArraignmentDate,
   indictmentRulingDecision,
+  indictmentRulingDecisionWithoutAppealState,
   created,
   prosecutor,
   prosecutorInitials,

@@ -9,17 +9,15 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  AppealDecisionPartyRole,
   Case,
   CaseAppealDecision,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  useCase,
-  useDebouncedInput,
-} from '@island.is/judicial-system-web/src/utils/hooks'
+import useCaseAppealDecision from '@island.is/judicial-system-web/src/utils/hooks/useCaseAppealDecision'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-import { isNullOrUndefined } from '@island.is/judicial-system-web/src/utils/validate'
 
+import useDebouncedAppealAnnouncement from './useDebouncedAppealAnnouncement'
 import { appealSections as m } from './AppealSections.strings'
 import * as styles from './AppealSections.css'
 
@@ -45,19 +43,19 @@ const AppealSections: FC<Props> = ({
   onChange,
 }) => {
   const { formatMessage } = useIntl()
-  const { setAndSendCaseToServer } = useCase()
+  const { updateCaseAppealDecision } = useCaseAppealDecision()
   const [checkedAccusedRadio, setCheckedAccusedRadio] =
     useState<CaseAppealDecision>()
   const [checkedProsecutorRadio, setCheckedProsecutorRadio] =
     useState<CaseAppealDecision>()
 
-  const accusedAppealAnnouncementInput = useDebouncedInput(
+  const accusedAppealAnnouncementInput = useDebouncedAppealAnnouncement(
+    AppealDecisionPartyRole.DEFENDANT,
     'accusedAppealAnnouncement',
-    [],
   )
-  const prosecutorAppealAnnouncementInput = useDebouncedInput(
+  const prosecutorAppealAnnouncementInput = useDebouncedAppealAnnouncement(
+    AppealDecisionPartyRole.PROSECUTOR,
     'prosecutorAppealAnnouncement',
-    [],
   )
 
   const handleChange = (update: {
@@ -66,45 +64,34 @@ const AppealSections: FC<Props> = ({
     prosecutorAppealDecision?: CaseAppealDecision
     prosecutorAppealAnnouncement?: string
   }) => {
-    setAndSendCaseToServer(
-      [
-        ...(!isNullOrUndefined(update.accusedAppealDecision)
-          ? [
-              {
-                accusedAppealDecision: update.accusedAppealDecision,
-                force: true,
-              },
-            ]
-          : []),
-        ...(!isNullOrUndefined(update.accusedAppealAnnouncement)
-          ? [
-              {
-                accusedAppealAnnouncement: update.accusedAppealAnnouncement,
-                force: true,
-              },
-            ]
-          : []),
-        ...(!isNullOrUndefined(update.prosecutorAppealDecision)
-          ? [
-              {
-                prosecutorAppealDecision: update.prosecutorAppealDecision,
-                force: true,
-              },
-            ]
-          : []),
-        ...(!isNullOrUndefined(update.prosecutorAppealAnnouncement)
-          ? [
-              {
-                prosecutorAppealAnnouncement:
-                  update.prosecutorAppealAnnouncement,
-                force: true,
-              },
-            ]
-          : []),
-      ],
-      workingCase,
-      setWorkingCase,
-    )
+    // Optimistically update the legacy columns the UI still reads; the mutation
+    // writes the appeal_decision rows and reverse-mirrors the columns server-side.
+    setWorkingCase((prev) => ({ ...prev, ...update }))
+
+    if (
+      update.accusedAppealDecision !== undefined ||
+      update.accusedAppealAnnouncement !== undefined
+    ) {
+      updateCaseAppealDecision({
+        caseId: workingCase.id,
+        partyRole: AppealDecisionPartyRole.DEFENDANT,
+        decision: update.accusedAppealDecision,
+        announcement: update.accusedAppealAnnouncement,
+      })
+    }
+
+    if (
+      update.prosecutorAppealDecision !== undefined ||
+      update.prosecutorAppealAnnouncement !== undefined
+    ) {
+      updateCaseAppealDecision({
+        caseId: workingCase.id,
+        partyRole: AppealDecisionPartyRole.PROSECUTOR,
+        decision: update.prosecutorAppealDecision,
+        announcement: update.prosecutorAppealAnnouncement,
+      })
+    }
+
     if (onChange) {
       onChange(update)
     }

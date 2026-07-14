@@ -11,6 +11,7 @@ import {
 import {
   getCaseTableGroups,
   isCourtOfAppealsUser,
+  isDefenceUser,
   isDistrictCourtUser,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
@@ -292,8 +293,8 @@ const SearchModal: FC<Props> = ({ onClose }) => {
                       const caseNumber = user
                         ? isProsecutionUser(user)
                           ? row.policeCaseNumbers[0]
-                          : isDistrictCourtUser(user)
-                          ? row.courtCaseNumber
+                          : isDistrictCourtUser(user) || isDefenceUser(user)
+                          ? row.courtCaseNumber ?? row.policeCaseNumbers[0]
                           : isCourtOfAppealsUser(user)
                           ? row.appealCaseNumber
                           : undefined
