@@ -209,10 +209,6 @@ export class BankTransferService {
     await this.finalizeFromBlikkResult(row, result)
 
     const isPending = result.status === BankTransferStatus.PENDING
-    // At SCA_REQUIRED, Blikk is authoritative for the SCA URL just as it is for status: an omitted URL
-    // is intentional (SCA moved to the bank-app back-channel), so we surface exactly what the fresh
-    // response carries and never resurrect a persisted one. Before SCA_REQUIRED (DRAFT/PENDING) Blikk's
-    // GET may simply not echo the creation-time URL, so we keep the row's URL to avoid a dots→QR flicker.
     const scaRedirectUrl =
       result.rawStatus === 'SCA_REQUIRED'
         ? result.scaRedirectUrl
@@ -441,9 +437,6 @@ export class BankTransferService {
     }
 
     if (mapped === BankTransferStatus.PENDING) {
-      // At SCA_REQUIRED, trust the fresh Blikk response — an omitted URL is intentional (back-channel
-      // SCA), so surface exactly what it carries. Before SCA_REQUIRED, or when Blikk was unreachable
-      // (no fresh response), keep the last-known row URL to avoid blanking the QR mid-DRAFT.
       const scaRedirectUrl =
         refreshed?.rawStatus === 'SCA_REQUIRED'
           ? refreshed.scaRedirectUrl
