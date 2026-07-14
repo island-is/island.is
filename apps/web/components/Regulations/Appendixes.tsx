@@ -26,7 +26,7 @@ export const Appendixes = memo((props: AppendixesProps) => {
 
   return (
     <Box marginTop={[6, 10]} marginBottom={[6, 6]} aria-label={props.legend}>
-      <Accordion singleExpand={false}>
+      <Accordion variant="large" singleExpand={false}>
         {appendixes.map((appendix, i) => {
           const id = `v${i + 1}`
           return (
@@ -34,7 +34,6 @@ export const Appendixes = memo((props: AppendixesProps) => {
               <div id={id} key={id}>
                 <AccordionItem
                   id={id + '-internals'}
-                  labelVariant="h3"
                   labelUse="h2"
                   label={
                     diffing ? (

@@ -39,7 +39,7 @@ export const RenderItem: React.FC<RenderItemProps> = ({
     case LawAndOrderItemType.Accordion:
       return (
         <div className={styles.htmlContainer}>
-          <Accordion space={2} dividerOnBottom={dividerOnBottom}>
+          <Accordion dividerOnBottom={dividerOnBottom}>
             <AccordionItem
               id={`accordion-${item.label ?? ''}`}
               label={item.label ?? ''}

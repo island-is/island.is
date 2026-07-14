@@ -87,6 +87,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
             </Button>
           </Box>
           <Accordion
+            variant="mini"
             singleExpand={false}
             dividerOnTop={false}
             dividerOnBottom={false}
@@ -99,8 +100,6 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                   key={filter.id || filter.field}
                   id={filter.field}
                   label={filter.label}
-                  labelVariant="h5"
-                  iconVariant="small"
                   expanded={isOpen[index] ?? false}
                   onToggle={(isOpenValue) => onToggleIsOpen(index, isOpenValue)}
                 >

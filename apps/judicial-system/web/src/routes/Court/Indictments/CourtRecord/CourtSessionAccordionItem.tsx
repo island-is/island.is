@@ -795,7 +795,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
             isConfirmed={courtSession.isConfirmed}
           />
         }
-        labelVariant="h3"
         expanded={isExpanded}
         onToggle={onToggle}
       >
@@ -1246,7 +1245,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                             ? `(${workingCase.unfiledCourtDocuments.length})`
                             : ''
                         }`}
-                        labelVariant="h5"
                       >
                         {workingCase.unfiledCourtDocuments?.length === 0 ? (
                           <AlertMessage
