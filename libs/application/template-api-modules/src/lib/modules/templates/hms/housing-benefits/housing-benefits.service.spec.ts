@@ -11,7 +11,10 @@ import { HomeApi } from '@island.is/clients/hms-rental-agreement'
 import { HmsHousingBenefitsClientService } from '@island.is/clients/hms-housing-benefits'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { HousingBenefitsService } from './housing-benefits.service'
-import { isLastAssigneeToComplete } from './utils'
+import {
+  isLastAssigneeToComplete,
+  mapApplicationToHousingBenefitsModel,
+} from './utils'
 import { NotificationsService } from '../../../../notification/notifications.service'
 import { NationalRegistryV3Service } from '../../../shared/api/national-registry-v3/national-registry-v3.service'
 import { AttachmentS3Service } from '../../../shared/services'
@@ -635,6 +638,41 @@ describe('HousingBenefitsService notifications', () => {
       })
 
       expect(isLastAssigneeToComplete(application, ASSIGNEE_B)).toBe(true)
+    })
+  })
+})
+
+describe('HousingBenefitsService', () => {
+  let service: HousingBenefitsService
+
+  it('excludes rejected assignees from householdMembers in submission model', () => {
+    const model = mapApplicationToHousingBenefitsModel(
+      createApplication({
+        answers: {
+          rejectedAssignees: [ASSIGNEE_A],
+          signedAssignees: [ASSIGNEE_B],
+          householdMembersTableRepeater: [
+            {
+              nationalIdWithName: { nationalId: ASSIGNEE_A, name: 'Rejected' },
+            },
+            { nationalIdWithName: { nationalId: ASSIGNEE_B, name: 'Signed' } },
+          ],
+          [ASSIGNEE_B]: {
+            approveExternalData: true,
+            assigneeInfo: { email: 'b@test.is' },
+          },
+        },
+      }),
+    )
+    expect(model.householdMembers?.map((m) => m.kennitala)).not.toContain(
+      ASSIGNEE_A,
+    )
+    expect(
+      model.householdMembers?.find((m) => m.kennitala === ASSIGNEE_B),
+    ).toMatchObject({
+      acceptedPrivacyPolicy: true,
+      acceptedDataFetch: true,
+      email: 'b@test.is',
     })
   })
 })
