@@ -203,7 +203,7 @@
       "options": {
         "commands": [
           "yarn nx run api:dev",
-          "yarn nx run services-user-profile:dev",
+          "yarn nx run services-user-profile:serve",
           "yarn start application-system-api"
         ],
         "parallel": true
