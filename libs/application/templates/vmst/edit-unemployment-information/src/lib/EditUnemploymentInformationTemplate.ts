@@ -125,6 +125,7 @@ const EditUnemploymentInformationTemplate: ApplicationTemplate<
                   Promise.resolve(module.completedForm),
                 ),
               read: 'all',
+              delete: false,
             },
           ],
         },
