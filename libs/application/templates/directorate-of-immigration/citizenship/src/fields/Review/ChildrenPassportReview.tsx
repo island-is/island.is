@@ -7,7 +7,7 @@ import { review, supportingDocuments } from '../../lib/messages'
 import { Citizenship } from '../../lib/dataSchema'
 import { useLocale } from '@island.is/localization'
 import { Routes } from '../../lib/constants'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, NO } from '@island.is/application/core'
 import { OptionSetItem } from '@island.is/clients/directorate-of-immigration'
 import { GenericReview } from '../../components/GenericReview'
 import { formatDate } from '../../utils'
@@ -40,7 +40,7 @@ export const ChildrenPassportReview: FC<Props> = ({
   ) as OptionSetItem[]
 
   const passport = answers.childrenPassport?.find(
-    (x) => x?.nationalId === child.nationalId,
+    (x) => x?.nationalId === child.nationalId && x.hasPassport !== NO,
   )
 
   if (passport) {
@@ -58,10 +58,10 @@ export const ChildrenPassportReview: FC<Props> = ({
         leftColumnItems={[
           `${formatMessage(
             supportingDocuments.labels.passport.publishDate,
-          )}: ${formatDate(new Date(publishDate))}`,
+          )}: ${formatDate(new Date(publishDate as string))}`,
           `${formatMessage(
             supportingDocuments.labels.passport.expirationDate,
-          )}: ${formatDate(new Date(expirationDate))}`,
+          )}: ${formatDate(new Date(expirationDate as string))}`,
           `${formatMessage(
             supportingDocuments.labels.passport.passportNumber,
           )}: ${passportNumber}`,
