@@ -506,6 +506,7 @@ export const IndictmentCount: FC<Props> = ({
           />
           <Box marginBottom={2}>
             <Input
+              id={`vehicleRegistrationNumber-${indictmentCount.id}`}
               name="vehicleRegistrationNumber"
               autoComplete="off"
               label={formatMessage(strings.vehicleRegistrationNumberLabel)}
@@ -559,6 +560,7 @@ export const IndictmentCount: FC<Props> = ({
                   marginBottom={2}
                 />
                 <Select
+                  id={`lawsBroken-${indictmentCount.id}`}
                   name="lawsBroken"
                   options={lawsBrokenOptions}
                   label={formatMessage(strings.lawsBrokenLabel)}
@@ -638,6 +640,7 @@ export const IndictmentCount: FC<Props> = ({
         />
         <Box marginBottom={2}>
           <Input
+            id={`incidentDescription-${indictmentCount.id}`}
             name="incidentDescription"
             autoComplete="off"
             label={formatMessage(strings.incidentDescriptionLabel)}
@@ -684,6 +687,7 @@ export const IndictmentCount: FC<Props> = ({
         />
 
         <Input
+          id={`legalArguments-${indictmentCount.id}`}
           name="legalArguments"
           autoComplete="off"
           label={formatMessage(strings.legalArgumentsLabel)}
