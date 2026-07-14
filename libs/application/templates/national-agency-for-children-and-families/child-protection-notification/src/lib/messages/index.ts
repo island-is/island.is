@@ -1,4 +1,5 @@
 export * from './child'
+export * from './completed'
 export * from './parents'
 export * from './protectiveFactors'
 export * from './shared'

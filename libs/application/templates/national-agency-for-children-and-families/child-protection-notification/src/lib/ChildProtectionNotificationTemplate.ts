@@ -187,17 +187,33 @@ const template: ApplicationTemplate<
           status: FormModes.COMPLETED,
           lifecycle: DefaultStateLifeCycle,
           roles: [
-            Roles.MINOR_APPLICANT,
-            Roles.ADULT_PERSONAL_APPLICANT,
-            Roles.ADULT_PROCURATION_APPLICANT,
-          ].map((roleId) => ({
-            id: roleId,
-            formLoader: () =>
-              import('../forms/completedForm').then((module) =>
-                Promise.resolve(module.completedForm),
-              ),
-            read: 'all',
-          })),
+            {
+              id: Roles.MINOR_APPLICANT,
+              formLoader: () =>
+                import('../forms/minorForm/completedForm').then((module) =>
+                  Promise.resolve(module.MinorCompletedForm),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ADULT_PERSONAL_APPLICANT,
+              formLoader: () =>
+                import('../forms/adultPersonalForm/completedForm').then(
+                  (module) =>
+                    Promise.resolve(module.AdultPersonalCompletedForm),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ADULT_PROCURATION_APPLICANT,
+              formLoader: () =>
+                import('../forms/adultProcurationForm/completedForm').then(
+                  (module) =>
+                    Promise.resolve(module.AdultProcurationCompletedForm),
+                ),
+              read: 'all',
+            },
+          ],
         },
       },
     },

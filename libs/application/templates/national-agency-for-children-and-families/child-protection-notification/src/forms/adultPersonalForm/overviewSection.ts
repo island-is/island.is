@@ -27,7 +27,6 @@ export const overviewSection = buildSection({
         }),
         buildSubmitField({
           id: 'submit',
-          refetchApplicationAfterSubmit: true,
           actions: [
             {
               event: DefaultEvents.SUBMIT,
