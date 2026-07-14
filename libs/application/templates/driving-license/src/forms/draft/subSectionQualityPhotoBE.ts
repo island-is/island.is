@@ -3,6 +3,7 @@ import {
   buildRadioField,
   buildSubSection,
   buildDescriptionField,
+  buildImageField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
@@ -12,8 +13,8 @@ import {
   hasNoDrivingLicenseInOtherCountry,
   hasUsableRlsQualityPhoto,
   isVisible,
+  toBase64DataUrl,
 } from '../../lib/utils'
-import { createPhotoComponent } from '../../fields/CreatePhoto'
 
 interface ThjodskraImage {
   biometricId: string
@@ -65,7 +66,7 @@ export const subSectionQualityPhotoBE = buildSubSection({
             const options: Array<{
               value: string
               label: typeof m.usePassportImage
-              illustration?: ReturnType<typeof createPhotoComponent>
+              illustration?: ReturnType<typeof buildImageField>
             }> = []
 
             // Thjodskra facial photos
@@ -83,12 +84,15 @@ export const subSectionQualityPhotoBE = buildSubSection({
               options.push({
                 value: photo.biometricId,
                 label: m.usePassportImage,
-                illustration: createPhotoComponent(photo.content),
+                illustration: buildImageField({
+                  id: `photo-${photo.biometricId}`,
+                  image: toBase64DataUrl(photo.content),
+                }),
               })
             }
 
             // Quality photo from getqualityphotoandsignature. The binary
-            // (`pohto`) may be null for legacy records — createPhotoComponent
+            // (`pohto`) may be null for legacy records — toBase64DataUrl
             // falls back to a placeholder, and submission resolves the photo
             // by reference, so offer the option whenever a record exists.
             if (hasUsableRlsQualityPhoto(externalData)) {
@@ -99,9 +103,10 @@ export const subSectionQualityPhotoBE = buildSubSection({
               options.push({
                 value: 'qualityPhoto',
                 label: m.useDriversLicenseImage,
-                illustration: createPhotoComponent(
-                  photoAndSig?.pohto ?? undefined,
-                ),
+                illustration: buildImageField({
+                  id: 'qualityPhoto-illustration',
+                  image: toBase64DataUrl(photoAndSig?.pohto ?? undefined),
+                }),
               })
             }
 
