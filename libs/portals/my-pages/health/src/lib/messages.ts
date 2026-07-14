@@ -1937,13 +1937,18 @@ export const messages = defineMessages({
     defaultMessage: 'Sláðu inn skilaboð',
     id: 'sp.health:health-messages-new-body-placeholder',
   },
-  healthConversationsNewTermsAccept: {
-    defaultMessage: 'Ég samþykki',
-    id: 'sp.health:health-messages-new-terms-accept',
+  healthConversationsNewTermsLabel: {
+    defaultMessage: 'Ég samþykki <link>skilmála</link>',
+    id: 'sp.health:health-messages-new-terms-label',
   },
-  healthConversationsNewTermsLinkText: {
-    defaultMessage: 'skilmála',
-    id: 'sp.health:health-messages-new-terms-link-text',
+  healthConversationsTermsModalTitle: {
+    defaultMessage: 'Skilmálar vegna skilaboða',
+    id: 'sp.health:health-messages-terms-modal-title',
+  },
+  healthConversationsTermsModalBody: {
+    defaultMessage:
+      '- Skilaboðum er svarað á opnunartíma, oftast innan þriggja virkra daga\n- Skilaboð og svör vistast sjálfkrafa í sjúkraskrá\n- Tegund skilaboða ræður hver svarar erindinu\n- Heilbrigðisstarfsmaður mun hafa aðgang að sjúkraskrá til að svara fyrirspurn',
+    id: 'sp.health:health-messages-terms-modal-body#markdown',
   },
   healthConversationNotFound: {
     defaultMessage: 'Skilaboð fundust ekki',
