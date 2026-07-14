@@ -70,22 +70,19 @@ describe('InternalCaseController - Deliver indictment case to police', () => {
     }
   })
 
-  describe('deliver case to police', () => {
+  describe('deliver indictment case to police', () => {
     const caseId = uuid()
-    const caseType = CaseType.INDICTMENT
-    const caseState = CaseState.COMPLETED
     const policeCaseNumber = uuid()
     const courtCaseNumber = uuid()
     const defendantNationalId = '0123456789'
     const courtRecordPdf = 'test court record'
-    const rulingPdf = 'test ruling'
-    const caseFile1 = {
+    const courtRecordFile = {
       id: uuid(),
       key: uuid(),
       isKeyAccessible: true,
       category: CaseFileCategory.COURT_RECORD,
     }
-    const caseFile2 = {
+    const rulingFile = {
       id: uuid(),
       key: uuid(),
       isKeyAccessible: true,
@@ -94,12 +91,12 @@ describe('InternalCaseController - Deliver indictment case to police', () => {
     const theCase = {
       id: caseId,
       origin: CaseOrigin.LOKE,
-      type: caseType,
-      state: caseState,
+      type: CaseType.INDICTMENT,
+      state: CaseState.COMPLETED,
       policeCaseNumbers: [policeCaseNumber],
       courtCaseNumber,
       defendants: [{ nationalId: uuid() }],
-      caseFiles: [caseFile1, caseFile2],
+      caseFiles: [courtRecordFile, rulingFile],
       policeDefendantNationalId: defendantNationalId,
     } as Case
 
@@ -109,7 +106,6 @@ describe('InternalCaseController - Deliver indictment case to police', () => {
       const mockGetCaseFileFromS3 =
         mockFileService.getCaseFileFromS3 as jest.Mock
       mockGetCaseFileFromS3.mockResolvedValueOnce(courtRecordPdf)
-      mockGetCaseFileFromS3.mockResolvedValueOnce(rulingPdf)
       const mockUpdatePoliceCase =
         mockPoliceService.updatePoliceCase as jest.Mock
       mockUpdatePoliceCase.mockResolvedValueOnce(true)
@@ -117,20 +113,20 @@ describe('InternalCaseController - Deliver indictment case to police', () => {
       then = await givenWhenThen(caseId, theCase)
     })
 
-    it('should update the police case', async () => {
+    it('should only deliver court record files, not ruling files', () => {
       expect(mockFileService.getCaseFileFromS3).toHaveBeenCalledWith(
         theCase,
-        caseFile1,
+        courtRecordFile,
       )
-      expect(mockFileService.getCaseFileFromS3).toHaveBeenCalledWith(
+      expect(mockFileService.getCaseFileFromS3).not.toHaveBeenCalledWith(
         theCase,
-        caseFile2,
+        rulingFile,
       )
       expect(mockPoliceService.updatePoliceCase).toHaveBeenCalledWith(
         user,
         caseId,
-        caseType,
-        caseState,
+        CaseType.INDICTMENT,
+        CaseState.COMPLETED,
         policeCaseNumber,
         courtCaseNumber,
         defendantNationalId,
@@ -140,10 +136,6 @@ describe('InternalCaseController - Deliver indictment case to police', () => {
           {
             type: PoliceDocumentType.RVTB,
             courtDocument: Base64.btoa(courtRecordPdf),
-          },
-          {
-            type: PoliceDocumentType.RVDO,
-            courtDocument: Base64.btoa(rulingPdf),
           },
         ],
       )
