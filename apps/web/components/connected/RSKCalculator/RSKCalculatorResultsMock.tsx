@@ -35,7 +35,11 @@ const MOCK_GROUPS: MockResultGroup[] = [
       { label: 'Skattþrep 1 (31,49%)', value: '-156.859 kr.' },
       { label: 'Skattþrep 2 (37,99%)', value: '-175.467 kr.' },
       { label: 'Skattþrep 3 (46,29%)', value: '0 kr.' },
-      { label: 'Samanlögð staðgreiðsla', value: '-324.728 kr.', emphasis: true },
+      {
+        label: 'Samanlögð staðgreiðsla',
+        value: '-324.728 kr.',
+        emphasis: true,
+      },
       { label: 'Eigin persónuafsláttur', value: '72.492 kr.' },
       { label: 'Persónuafsláttur maka', value: '14.498 kr.' },
       { label: 'Uppsafnaður persónuafsláttur nýttur', value: '100.000 kr.' },
