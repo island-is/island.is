@@ -8,6 +8,7 @@ import {
   InfoLineStack,
   InfoLine,
   formSubmit,
+  formatDate,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { contractsMessages as cm } from '../../../lib/messages'
@@ -15,10 +16,7 @@ import { mapStatusTypeToTag } from '../../../utils/mapStatusTypeToTag'
 import { useParams } from 'react-router-dom'
 import { useMemo } from 'react'
 import { useUserContractQuery } from './UserContract.generated'
-import {
-  HmsRentalAgreement,
-  HmsRentalAgreementStatusType,
-} from '@island.is/api/schema'
+import { HmsRentalAgreementStatusType } from '@island.is/api/schema'
 import { generateRentalAgreementAddress } from '../../../utils/mapAddress'
 import { getApplicationsBaseUrl } from '@island.is/portals/core'
 
@@ -34,8 +32,7 @@ const UserContract = () => {
     },
   })
 
-  const contract: HmsRentalAgreement | undefined =
-    data?.hmsRentalAgreement ?? undefined
+  const contract = data?.hmsRentalAgreement ?? undefined
 
   const address = useMemo(() => {
     if (data?.hmsRentalAgreement?.contractProperty) {
@@ -66,30 +63,27 @@ const UserContract = () => {
         actions: [
           <Button
             key="download-button"
-            title={formatMessage(cm.downloadAsPdf)}
             icon="download"
             iconType="outline"
+            variant="utility"
             disabled={
-              !!error || loading || !data?.hmsRentalAgreement?.downloadUrl
+              !!error || loading || !contract?.latestDocumentDownloadUrl
             }
             onClick={() =>
-              formSubmit(data?.hmsRentalAgreement?.downloadUrl ?? '')
+              contract?.latestDocumentDownloadUrl &&
+              formSubmit(contract.latestDocumentDownloadUrl)
             }
-            variant="utility"
           >
-            {formatMessage(cm.downloadAsPdf)}
+            {formatMessage(m.getDocument)}
           </Button>,
-          ...(contract?.status === HmsRentalAgreementStatusType.VALID
-            ? [
-                <LinkButton
-                  key="terminate-button"
-                  to={`${getApplicationsBaseUrl()}/uppsogn-eda-riftun-leigusamnings`}
-                  text={formatMessage(cm.terminateRentalAgreement)}
-                  icon="open"
-                  variant="utility"
-                />,
-              ]
-            : []),
+          <LinkButton
+            key="terminate-button"
+            to={`${getApplicationsBaseUrl()}/uppsogn-eda-riftun-leigusamnings`}
+            text={formatMessage(cm.terminateRentalAgreement)}
+            icon="open"
+            variant="utility"
+            disabled={!contract?.canTerminate || loading}
+          />,
         ],
       }}
       desktopContentSpan="10/12"
@@ -142,6 +136,13 @@ const UserContract = () => {
                   : undefined
               }
             />
+            {contract?.terminationDate && (
+              <InfoLine
+                loading={loading}
+                label={cm.terminationDate}
+                content={formatDate(contract.terminationDate)}
+              />
+            )}
             <InfoLine
               loading={loading}
               label={cm.status}

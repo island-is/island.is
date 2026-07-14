@@ -1,42 +1,50 @@
-import { Contract } from '../../gen/fetch'
-import { AgreementStatusType, TemporalType } from '../types'
-import { ContractPartyDto, mapContractPartyDto } from './contractParty.dto'
+import { type Contract } from '../../gen/fetch'
+import { type AgreementStatusType, type TemporalType } from '../types'
+import { isDefined } from '@island.is/shared/utils'
 import {
-  ContractPropertyDto,
+  type ContractDocumentMetadataDto,
+  mapContractDocumentMetadataDto,
+} from './contractDocumentMetadata.dto'
+import { type ContractPartyDto, mapContractPartyDto } from './contractParty.dto'
+import {
+  type ContractPropertyDto,
   mapContractPropertyDto,
 } from './contractProperty.dto'
-import { isDefined } from '@island.is/shared/utils'
 
 export interface RentalAgreementDto {
   id: number
   status: AgreementStatusType
   dateFrom?: Date
   dateTo?: Date
+  terminationDate?: Date
+  signatureDate?: Date
+  receivedDate?: Date
   contractType: TemporalType
   contractParty?: ContractPartyDto[]
   contractProperty?: ContractPropertyDto[]
+  documents?: ContractDocumentMetadataDto[]
+  infoAvailable?: boolean
 }
 
 export const mapRentalAgreementDto = (
   contract: Contract,
 ): RentalAgreementDto | null => {
-  if (!contract.contractId) {
-    return null
-  }
-
-  const status = mapAgreementStatus(contract.contractStatus ?? undefined)
-
+  if (!contract.contractId) return null
   return {
     id: contract.contractId,
-    status,
+    status: mapAgreementStatus(contract.contractStatus),
     dateFrom: contract.dateFrom ? new Date(contract.dateFrom) : undefined,
     dateTo: contract.dateTo ? new Date(contract.dateTo) : undefined,
-    contractType:
-      contract.contractTypeUseCode === 'TEMPORARYAGREEMENT'
-        ? 'temporary'
-        : contract.contractTypeUseCode === 'INDEFINETEAGREEMENT'
-        ? 'indefinite'
-        : 'unknown',
+    terminationDate: contract.dateManualEnd
+      ? new Date(contract.dateManualEnd)
+      : undefined,
+    signatureDate: contract.signatureDate
+      ? new Date(contract.signatureDate)
+      : undefined,
+    receivedDate: contract.receivedDate
+      ? new Date(contract.receivedDate)
+      : undefined,
+    contractType: mapTemporalType(contract.contractTypeUseCode),
     contractParty:
       contract.contractParty?.map(mapContractPartyDto).filter(isDefined) ??
       undefined,
@@ -44,10 +52,26 @@ export const mapRentalAgreementDto = (
       contract.contractProperty
         ?.map(mapContractPropertyDto)
         .filter(isDefined) ?? undefined,
+    documents:
+      contract.contractDocument
+        ?.map(mapContractDocumentMetadataDto)
+        .filter(isDefined) ?? undefined,
+    infoAvailable: contract.infoAvailable ?? undefined,
   }
 }
 
-const mapAgreementStatus = (status?: string): AgreementStatusType => {
+const mapTemporalType = (code?: string | null): TemporalType => {
+  switch (code) {
+    case 'TEMPORARYAGREEMENT':
+      return 'temporary'
+    case 'INDEFINETEAGREEMENT':
+      return 'indefinite'
+    default:
+      return 'unknown'
+  }
+}
+
+const mapAgreementStatus = (status?: string | null): AgreementStatusType => {
   switch (status) {
     case 'STATUSVALID':
       return 'valid'
