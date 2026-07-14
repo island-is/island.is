@@ -16,6 +16,8 @@ interface Props {
     tagIds?: string[]
     cardIntro?: Localized<Array<RichTextParagraph>>
     content?: Localized<Array<RichTextParagraph>>
+    assetId?: string
+    externalLinkId?: string
   }
   ownerTags: string[]
 }
@@ -25,7 +27,16 @@ export const generateGenericListItem = ({
   ownerTags,
   properties,
 }: Props): EntryCreationDto | undefined => {
-  const { internalTitle, title, slug, tagIds, cardIntro, content } = properties
+  const {
+    internalTitle,
+    title,
+    slug,
+    tagIds,
+    cardIntro,
+    content,
+    assetId,
+    externalLinkId,
+  } = properties
 
   const newEntry: EntryCreationDto['fields'] = {
     genericList: mapLocalizedValue<unknown>({
@@ -52,6 +63,16 @@ export const generateGenericListItem = ({
     slug,
     ...(content && {
       content: mapLocalizedRichTextDocument(content['is-IS'], content.en),
+    }),
+    ...(assetId && {
+      asset: mapLocalizedValue<unknown>({
+        sys: { id: assetId, linkType: 'Asset' },
+      }),
+    }),
+    ...(externalLinkId && {
+      externalLink: mapLocalizedValue<unknown>({
+        sys: { id: externalLinkId, linkType: 'Entry' },
+      }),
     }),
     fullWidthImageInContent: mapLocalizedValue(false),
   }

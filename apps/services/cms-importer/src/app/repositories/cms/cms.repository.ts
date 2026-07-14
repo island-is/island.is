@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { isDefined } from '@island.is/shared/utils'
 import {
+  Asset,
+  AssetProps,
   ContentFields,
   ContentType,
   Entry,
@@ -44,7 +46,7 @@ export class CmsRepository {
   }
 
   private getContentType = async (
-    contentType: 'grant' | 'genericListItem',
+    contentType: ContentTypeOptions,
   ): Promise<ContentType | null> => {
     const contentTypeResponse = await this.managementClient.getContentType(
       contentType,
@@ -80,6 +82,37 @@ export class CmsRepository {
     }
 
     return existingEntries.data.items.filter(isDefined)
+  }
+
+  // ── Assets ─────────────────────────────────────────────────────────────────
+
+  findAssetByFileName = async (fileName: string): Promise<Asset | null> => {
+    const response = await this.managementClient.getAssets({
+      [`fields.file.fileName[${LOCALE}]`]: fileName,
+      limit: 1,
+    })
+    if (!response.ok || response.data.items.length === 0) return null
+    return response.data.items[0]
+  }
+
+  createAsset = async (
+    data: Omit<AssetProps, 'sys'>,
+    publish = false,
+  ): Promise<Asset | null> => {
+    const createResult = await this.managementClient.createAsset(data)
+
+    if (!createResult.ok) {
+      logger.warn('Failed to create asset', { error: createResult.error })
+      return null
+    }
+
+    try {
+      const processed = await createResult.data.processForAllLocales()
+      return publish ? processed.publish() : processed
+    } catch (error) {
+      logger.error('Failed to process asset', { error })
+      return null
+    }
   }
 
   createEntries = async (
@@ -175,7 +208,7 @@ export class CmsRepository {
     let createdEntry: ContentfulFetchResponse<Entry> | undefined
     try {
       createdEntry = await this.managementClient.createEntry(
-        'genericListItem',
+        contentType.sys.id,
         input,
       )
     } catch (e) {

@@ -1,7 +1,7 @@
 import { Entry, EntryProps } from 'contentful-management'
 import { EN_LOCALE, LOCALE } from '../../constants'
 
-export type ContentTypeOptions = 'grant' | 'genericListItem'
+export type ContentTypeOptions = 'grant' | 'genericListItem' | 'linkUrl'
 
 export interface EntryUpdateDto {
   cmsEntry: Entry

@@ -59,6 +59,17 @@ switch (job) {
       })
     break
   }
+  case 'lyfjastofnun-lists-import': {
+    import('./app/lyfjastofnun-lists-import/lyfjastofnun-lists-import-worker')
+      .then((app) => app.lyfjastofnunListsImportWorker())
+      .catch((error) => {
+        console.error(
+          'Failed to import or execute the lyfjastofnun lists import worker:',
+          error,
+        )
+      })
+    break
+  }
   default: {
     console.debug('No argument provided, nothing executed')
   }

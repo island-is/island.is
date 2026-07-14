@@ -21,6 +21,7 @@ export const processJob = () =>
         'fsre-buildings-import',
         'web-sitemap',
         'cms-cleanup',
+        'lyfjastofnun-lists-import',
       ] as const,
       description: 'Indicate what import application should run',
     })
