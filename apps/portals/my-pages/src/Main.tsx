@@ -1,3 +1,4 @@
+/** Service portal (Mínar síður) entry point */
 import '@island.is/api/mocks'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
