@@ -833,9 +833,6 @@
         "libs/clients/fishing-license/src/index.ts"
       ],
       "@island.is/clients/fiskistofa": ["libs/clients/fiskistofa/src/index.ts"],
-      "@island.is/clients/national-agency-for-children-and-families": [
-        "libs/clients/national-agency-for-children-and-families/src/index.ts"
-      ],
       "@island.is/clients/fjs/bank-info": [
         "libs/clients/fjs/bank-info/src/index.ts"
       ],
@@ -903,6 +900,9 @@
       "@island.is/clients/municipalities-financial-aid": [
         "libs/clients/municipalities-financial-aid/src/index.ts"
       ],
+      "@island.is/clients/national-agency-for-children-and-families": [
+        "libs/clients/national-agency-for-children-and-families/src/index.ts"
+      ],
       "@island.is/clients/national-registry-v1": [
         "libs/clients/national-registry/v1/src/index.ts"
       ],
@@ -951,9 +951,6 @@
       ],
       "@island.is/clients/rsk/company-registry": [
         "libs/clients/rsk/company-registry/src/index.ts"
-      ],
-      "@island.is/clients/rsk/customs/general": [
-        "libs/clients/rsk/customs/general/src/index.ts"
       ],
       "@island.is/clients/rsk/personal-tax-return": [
         "libs/clients/rsk/personal-tax-return/src/index.ts"
