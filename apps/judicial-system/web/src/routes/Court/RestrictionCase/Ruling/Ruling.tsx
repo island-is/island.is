@@ -1,4 +1,4 @@
-import { useCallback, useContext } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import formatISO from 'date-fns/formatISO'
 import { useRouter } from 'next/router'
@@ -8,6 +8,7 @@ import {
   AccordionItem,
   Box,
   Input,
+  SkeletonLoader,
   Text,
   Tooltip,
 } from '@island.is/island-ui/core'
@@ -32,8 +33,10 @@ import {
   PoliceRequestAccordionItem,
   RestrictionLength,
   RulingInput,
+  TinyMCE,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseDecision } from '@island.is/judicial-system-web/src/graphql/schema'
+import { getTextContentFromHtml } from '@island.is/judicial-system-web/src/utils/formatters'
 import {
   useCase,
   useDebouncedInput,
@@ -41,17 +44,12 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isRulingValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { getConclusionAutofill } from './Ruling.logic'
+import { getConclusionAutofill, getCourtCaseFactsPrefill } from './Ruling.logic'
 import { strings } from './Ruling.strings'
 
 export const Ruling = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-    isCaseUpToDate,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
 
   const router = useRouter()
 
@@ -67,54 +65,66 @@ export const Ruling = () => {
     'empty',
   ])
   const introductionInput = useDebouncedInput('introduction', ['empty'])
+  const [courtCaseFactsEditorReady, setCourtCaseFactsEditorReady] =
+    useState(false)
 
-  const initialize = useCallback(() => {
-    setAndSendCaseToServer(
-      [
-        {
-          introduction: formatMessage(strings.sections.introduction.autofill, {
-            date: formatDate(workingCase.arraignmentDate?.date, 'PPP'),
-          }),
-          prosecutorDemands: workingCase.demands,
-          courtCaseFacts: formatMessage(
-            ruling.sections.courtCaseFacts.prefill,
-            {
-              caseFacts: workingCase.caseFacts,
-            },
-          ),
-          courtLegalArguments: formatMessage(
-            ruling.sections.courtLegalArguments.prefill,
-            { legalArguments: workingCase.legalArguments },
-          ),
-          ruling: !workingCase.parentCase
-            ? `\n${formatMessage(ruling.autofill, {
-                judgeName: workingCase.judge?.name,
-              })}`
-            : isAcceptingCaseDecision(workingCase.decision)
-            ? workingCase.parentCase.ruling
-            : undefined,
-          conclusion:
-            workingCase.decision &&
-            workingCase.defendants &&
-            workingCase.defendants.length > 0
-              ? getConclusionAutofill(
-                  formatMessage,
-                  workingCase,
-                  workingCase.decision,
-                  workingCase.defendants[0],
-                  workingCase.validToDate,
-                  workingCase.isCustodyIsolation,
-                  workingCase.isolationToDate,
-                )
+  const isCaseReady =
+    !isLoadingWorkingCase && !caseNotFound && Boolean(workingCase.id)
+
+  const initialize = useCallback(async () => {
+    try {
+      await setAndSendCaseToServer(
+        [
+          {
+            introduction: formatMessage(
+              strings.sections.introduction.autofill,
+              {
+                date: formatDate(workingCase.arraignmentDate?.date, 'PPP'),
+              },
+            ),
+            prosecutorDemands: workingCase.demands,
+            courtCaseFacts: getCourtCaseFactsPrefill(
+              formatMessage,
+              workingCase.caseFacts,
+            ),
+            courtLegalArguments: formatMessage(
+              ruling.sections.courtLegalArguments.prefill,
+              { legalArguments: workingCase.legalArguments },
+            ),
+            ruling: !workingCase.parentCase
+              ? `\n${formatMessage(ruling.autofill, {
+                  judgeName: workingCase.judge?.name,
+                })}`
+              : isAcceptingCaseDecision(workingCase.decision)
+              ? workingCase.parentCase.ruling
               : undefined,
-        },
-      ],
-      workingCase,
-      setWorkingCase,
-    )
+            conclusion:
+              workingCase.decision &&
+              workingCase.defendants &&
+              workingCase.defendants.length > 0
+                ? getConclusionAutofill(
+                    formatMessage,
+                    workingCase,
+                    workingCase.decision,
+                    workingCase.defendants[0],
+                    workingCase.validToDate,
+                    workingCase.isCustodyIsolation,
+                    workingCase.isolationToDate,
+                  )
+                : undefined,
+          },
+        ],
+        workingCase,
+        setWorkingCase,
+      )
+    } finally {
+      setCourtCaseFactsEditorReady(true)
+    }
   }, [formatMessage, setAndSendCaseToServer, setWorkingCase, workingCase])
 
-  useOnceOn(isCaseUpToDate, initialize)
+  useOnceOn(isCaseReady, () => {
+    void initialize()
+  })
 
   const handleNavigationTo = useCallback(
     async (destination: string) => {
@@ -339,22 +349,25 @@ export const Ruling = () => {
             </Text>
           </Box>
           <Box marginBottom={5}>
-            <Input
-              data-testid="courtCaseFacts"
-              name="courtCaseFacts"
-              label={formatMessage(strings.sections.courtCaseFacts.label)}
-              value={courtCaseFactsInput.value || ''}
-              placeholder={formatMessage(
-                strings.sections.courtCaseFacts.placeholder,
-              )}
-              onChange={(evt) => courtCaseFactsInput.onChange(evt.target.value)}
-              onBlur={(evt) => courtCaseFactsInput.onBlur(evt.target.value)}
-              errorMessage={courtCaseFactsInput.errorMessage}
-              hasError={courtCaseFactsInput.hasError}
-              textarea
-              rows={16}
-              required
-            />
+            {courtCaseFactsEditorReady ? (
+              <TinyMCE
+                key={`${workingCase.id}-courtCaseFacts`}
+                data-testid="courtCaseFacts"
+                label={formatMessage(strings.sections.courtCaseFacts.label)}
+                placeholder={formatMessage(
+                  strings.sections.courtCaseFacts.placeholder,
+                )}
+                defaultValue={workingCase.courtCaseFacts ?? ''}
+                errorMessage={courtCaseFactsInput.errorMessage}
+                onChange={(html) => courtCaseFactsInput.onChange(html)}
+                onBlur={(html) =>
+                  courtCaseFactsInput.onBlur(getTextContentFromHtml(html))
+                }
+                required
+              />
+            ) : (
+              <SkeletonLoader display="block" height={450} />
+            )}
           </Box>
         </Box>
         <Box component="section" marginBottom={5}>

@@ -27,6 +27,7 @@ import {
 
 import { isNonEmptyArray } from './arrayHelpers'
 import { isCivilClaimantDefendantSelectionValid } from './civilClaimantUtils'
+import { getTextContentFromHtml } from './formatters'
 import { isBusiness } from './utils'
 
 export type Validation =
@@ -466,7 +467,7 @@ export const isPoliceDemandsStepValidIC = (workingCase: Case): boolean => {
 export const isPoliceReportStepValidRC = (workingCase: Case): boolean => {
   return validate([
     [workingCase.demands, ['empty']],
-    [workingCase.caseFacts, ['empty']],
+    [getTextContentFromHtml(workingCase.caseFacts ?? ''), ['empty']],
     [workingCase.legalArguments, ['empty']],
   ]).isValid
 }
@@ -535,7 +536,7 @@ export const isCourtHearingArrangementsStepValidIC = (
 export const isRulingValidRC = (workingCase: Case): boolean => {
   return validate([
     [workingCase.prosecutorDemands, ['empty']],
-    [workingCase.courtCaseFacts, ['empty']],
+    [getTextContentFromHtml(workingCase.courtCaseFacts ?? ''), ['empty']],
     [workingCase.courtLegalArguments, ['empty']],
   ]).isValid
 }
