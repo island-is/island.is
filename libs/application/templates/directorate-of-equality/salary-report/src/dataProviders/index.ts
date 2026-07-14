@@ -54,3 +54,11 @@ export const SalaryAnalysisApi = defineTemplateApi({
   namespace: 'DirectorateOfEquality',
   throwOnError: false,
 })
+
+export const EditOutliersApi = defineTemplateApi({
+  action: 'editOutliers',
+  externalDataId: 'editOutliers',
+  namespace: 'DirectorateOfEquality',
+  shouldPersistToExternalData: true,
+  throwOnError: true,
+})

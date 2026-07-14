@@ -1920,6 +1920,11 @@ export const messages = defineMessages({
       'Heilsugæslan svarar skilaboðum yfirleitt innan þriggja virkra daga. Ef erindið er brátt og þarfnast svars í dag, hringdu í 1700. Ef um neyðartilfelli er að ræða, hringdu strax í 112.',
     id: 'sp.health:health-messages-new-intro',
   },
+  healthConversationsNewIntroWithWindow: {
+    defaultMessage:
+      'Heilsugæslan tekur við skilaboðum alla daga frá kl. {openTime} til {closeTime}. Venjulega er svarað innan {days, plural, one {eins virks dags} other {# virkra daga}}. Ef erindið er brýnt og þú þarft svar sama dag skaltu hringja í 1700. Ef um neyðartilvik er að ræða skaltu hringja strax í 112.',
+    id: 'sp.health:health-messages-new-intro-with-window',
+  },
   healthConversationsNewSelectService: {
     defaultMessage: 'Veldu þjónustu',
     id: 'sp.health:health-messages-new-select-service',
@@ -1932,13 +1937,18 @@ export const messages = defineMessages({
     defaultMessage: 'Sláðu inn skilaboð',
     id: 'sp.health:health-messages-new-body-placeholder',
   },
-  healthConversationsNewTermsAccept: {
-    defaultMessage: 'Ég samþykki',
-    id: 'sp.health:health-messages-new-terms-accept',
+  healthConversationsNewTermsLabel: {
+    defaultMessage: 'Ég samþykki <link>skilmála</link>',
+    id: 'sp.health:health-messages-new-terms-label',
   },
-  healthConversationsNewTermsLinkText: {
-    defaultMessage: 'skilmála',
-    id: 'sp.health:health-messages-new-terms-link-text',
+  healthConversationsTermsModalTitle: {
+    defaultMessage: 'Skilmálar vegna skilaboða',
+    id: 'sp.health:health-messages-terms-modal-title',
+  },
+  healthConversationsTermsModalBody: {
+    defaultMessage:
+      '- Skilaboðum er svarað á opnunartíma, oftast innan þriggja virkra daga\n- Skilaboð og svör vistast sjálfkrafa í sjúkraskrá\n- Tegund skilaboða ræður hver svarar erindinu\n- Heilbrigðisstarfsmaður mun hafa aðgang að sjúkraskrá til að svara fyrirspurn',
+    id: 'sp.health:health-messages-terms-modal-body#markdown',
   },
   healthConversationNotFound: {
     defaultMessage: 'Skilaboð fundust ekki',
@@ -1968,6 +1978,33 @@ export const messages = defineMessages({
   healthConversationsNoRecipient: {
     defaultMessage: 'Ekki er hægt að senda skilaboð eins og er',
     id: 'sp.health:health-messages-no-recipient',
+  },
+  healthConversationClosingSoonTitle: {
+    defaultMessage: 'Athugið: það lokar bráðlega fyrir skilaboð',
+    id: 'sp.health:health-messages-closing-soon-title',
+  },
+  healthConversationClosingSoonText: {
+    defaultMessage:
+      'Sendu skilaboðin þín áður en lokað er kl. {closeTime}. Eftir það er ekki hægt að senda skilaboð fyrr en {hasOpenTime, select, false {á morgun} other {kl. {openTime} á morgun}}.',
+    id: 'sp.health:health-messages-closing-soon-text',
+  },
+  healthConversationClosedTitle: {
+    defaultMessage: 'Lokað fyrir ný skilaboð núna',
+    id: 'sp.health:health-messages-closed-title',
+  },
+  healthConversationClosedText: {
+    defaultMessage:
+      'Klukkan er {currentTime}. Þjónustan tekur við skilaboðum frá kl. {openTime} til kl. {closeTime}. Þú getur sent skilaboð aftur kl. {openTime} í fyrramálið.',
+    id: 'sp.health:health-messages-closed-text',
+  },
+  healthConversationMessagingNotAllowedTitle: {
+    defaultMessage: 'Ekki hægt að senda skilaboð',
+    id: 'sp.health:health-messages-messaging-not-allowed-title',
+  },
+  healthConversationMessagingNotAllowedText: {
+    defaultMessage:
+      'Þessi þjónustuaðili býður ekki upp á skilaboð á Ísland.is.',
+    id: 'sp.health:health-messages-messaging-not-allowed-text',
   },
   myAppointments: {
     defaultMessage: 'Mínar tímabókanir',
