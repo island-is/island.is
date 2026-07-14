@@ -107,6 +107,9 @@
       "@island.is/api/domains/energy-funds": [
         "libs/api/domains/energy-funds/src/index.ts"
       ],
+      "@island.is/api/domains/estates": [
+        "libs/api/domains/estates/src/index.ts"
+      ],
       "@island.is/api/domains/farmers": [
         "libs/api/domains/farmers/src/index.ts"
       ],
@@ -858,6 +861,9 @@
       "@island.is/clients/energy-funds": [
         "libs/clients/energy-funds/src/index.ts"
       ],
+      "@island.is/clients/estates": [
+        "libs/clients/estates/src/index.ts"
+      ],
       "@island.is/clients/farmers": [
         "libs/clients/farmers/src/index.ts"
       ],
@@ -1435,6 +1441,9 @@
       ],
       "@island.is/portals/my-pages/eligibility": [
         "libs/portals/my-pages/eligibility/src/index.ts"
+      ],
+      "@island.is/portals/my-pages/estates": [
+        "libs/portals/my-pages/estates/src/index.ts"
       ],
       "@island.is/portals/my-pages/finance": [
         "libs/portals/my-pages/finance/src/index.ts"
