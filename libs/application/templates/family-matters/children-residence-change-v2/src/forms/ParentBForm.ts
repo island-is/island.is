@@ -2,6 +2,7 @@ import {
   buildForm,
   buildSection,
   buildCustomField,
+  buildHiddenInput,
   buildMultiField,
   buildSubmitField,
   buildSubSection,
@@ -28,6 +29,15 @@ export const ParentBForm: Form = buildForm({
           component: 'ParentBIntro',
         }),
       ],
+    }),
+    /* HACK, do not copy: empty section only to keep numberOfScreens >= 2 while
+       acceptContract is unanswered, so parentBIntro isn't misidentified as the last
+       screen. */
+    buildSection({
+      condition: (answers) => answers.acceptContract === undefined,
+      id: 'parentBIntroBridge',
+      title: '',
+      children: [buildHiddenInput({ id: 'parentBIntroBridge' })],
     }),
     buildSection({
       condition: (answers) => answers.acceptContract === YesOrNoEnum.YES,

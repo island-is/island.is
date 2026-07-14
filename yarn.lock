@@ -37432,6 +37432,7 @@ __metadata:
     prettier: "npm:2.6.2"
     prom-client: "npm:14.1.0"
     pubsub-js: "npm:1.8.0"
+    qrcode.react: "npm:4.2.0"
     react: "npm:19.2.7"
     react-alice-carousel: "npm:1.19.3"
     react-animate-height: "npm:3.1.2"
@@ -47340,6 +47341,15 @@ __metadata:
   version: 1.1.3
   resolution: "pvutils@npm:1.1.3"
   checksum: 10/e5201b8f78ece68eae414a938c844bc45fb3f0de298178eed1775a217eedfd897c4346e5e54f410bb4d7466e09ceb262e85f20fd64239b8bb2595f14c52fa95e
+  languageName: node
+  linkType: hard
+
+"qrcode.react@npm:4.2.0":
+  version: 4.2.0
+  resolution: "qrcode.react@npm:4.2.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 10/665036d88b160e6d5de4e24d101bc63bd2b76712802e874bbffe56c6b6e5fe50c63f02c3cba2975b2e2b555c1f1e112cbb42987f8cb3a626ce2d17023cfde6ac
   languageName: node
   linkType: hard
 

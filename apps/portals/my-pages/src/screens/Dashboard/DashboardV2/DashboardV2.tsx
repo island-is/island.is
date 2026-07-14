@@ -14,6 +14,7 @@ import {
   ServicePortalPaths,
   m,
 } from '@island.is/portals/my-pages/core'
+import { NotificationsBox } from '@island.is/portals/my-pages/information'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { isCompany } from '@island.is/shared/utils'
 import { useEffect } from 'react'
@@ -22,7 +23,6 @@ import { useWindowSize } from 'react-use'
 import Greeting from '../../../components/Greeting/Greeting'
 import { DashboardFeatured } from './DashboardFeatured'
 import { DashboardModules } from './DashboardModules'
-import { DashboardNotifications } from './DashboardNotifications'
 import { useDashboardNav } from './useDashboardNav'
 
 export const DashboardV2 = () => {
@@ -56,7 +56,7 @@ export const DashboardV2 = () => {
         <Box paddingBottom={[1, 2]}>
           <GridRow>
             <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-              <DashboardNotifications limit={4} />
+              <NotificationsBox limit={4} />
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
               <Box marginTop={[1, 2, 2, 0]}>

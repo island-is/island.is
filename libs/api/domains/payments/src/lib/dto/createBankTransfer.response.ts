@@ -19,4 +19,11 @@ export class CreateBankTransferResponse {
       'When this attempt expires (the TTL we shared with Blikk). The FE polling loop derives its hard timeout from this.',
   })
   expiresAt!: Date
+
+  @Field(() => Boolean, {
+    nullable: true,
+    description:
+      'True when the payer must complete onboarding before SCA can proceed. Redirect to scaRedirectUrl in this case only.',
+  })
+  onboardingRequired?: boolean
 }
