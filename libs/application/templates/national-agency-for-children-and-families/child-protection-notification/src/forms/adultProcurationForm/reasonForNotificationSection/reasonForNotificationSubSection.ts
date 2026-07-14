@@ -100,7 +100,7 @@ export const reasonForNotificationSubSection = buildSubSection({
         }),
         buildSelectField({
           id: 'reasonForNotification.biggestConcern',
-          title: reasonForNotificationMessages.reason.biggestConcern,
+          title: reasonForNotificationMessages.reason.concerns,
           placeholder: reasonForNotificationMessages.shared.selectPlaceholder,
           options: (application) => {
             const { categories } = getApplicationExternalData(

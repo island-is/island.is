@@ -8,7 +8,7 @@ export const reasonForNotificationMessages = {
       description: 'Reason for notification',
     },
     selectPlaceholder: {
-      id: 'cpn.application:reasonForNotification.reason.selectPlaceholder',
+      id: 'cpn.application:reasonForNotification.shared.selectPlaceholder',
       defaultMessage: 'Merktu við það sem veldur þér mestum áhyggjum',
       description: 'Placeholder',
     },
@@ -27,7 +27,7 @@ export const reasonForNotificationMessages = {
     description: {
       id: 'cpn.application:reasonForNotification.description.description',
       defaultMessage:
-        'Segðu okkur hvað þú sást, hvenær og hvar atvikiðeða aðstæður  á sér stað, hverjir voru viðstaddir. Ekki hika við að segja okkur frá hverju því öðru sem þér þykir mikilvægt að komi fram í þessu samhengi.',
+        'Segðu okkur hvað þú sást, hvenær og hvar atvikið eða aðstæðurnar áttu sér stað og hverjir voru viðstaddir. Ekki hika við að segja okkur frá hverju því öðru sem þér þykir mikilvægt að komi fram í þessu samhengi.',
       description: 'Description of the incident or circumstances',
     },
     placeholder: {
