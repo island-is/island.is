@@ -1744,7 +1744,8 @@
     },
     "/v1/me/appointments": {
       "get": {
-        "description": "Get user's appointments (summary)",
+        "deprecated": true,
+        "description": "Get user's appointments (summary). Deprecated – use v2, which returns a paginated envelope.",
         "operationId": "MeAppointmentController_getPatientAppointments_v1",
         "parameters": [
           {
@@ -1781,6 +1782,111 @@
                   "items": {
                     "$ref": "#/components/schemas/AppointmentBaseDto"
                   }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Appointments"]
+      }
+    },
+    "/v2/me/appointments": {
+      "get": {
+        "description": "Get user's appointments (summary), paginated",
+        "operationId": "MeAppointmentController_getPatientAppointmentsV2_v2",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filter appointments by status. Can include multiple statuses (comma-separated).",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/UserVisibleAppointmentStatuses"
+              }
+            }
+          },
+          {
+            "name": "fromStartTime",
+            "required": false,
+            "in": "query",
+            "description": "Filter appointments to only include those starting at or after this time.",
+            "schema": {
+              "format": "date-time",
+              "example": "2024-01-15T10:30:00.000Z",
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": true,
+            "in": "query",
+            "description": "1-based page number.",
+            "schema": {
+              "minimum": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": true,
+            "in": "query",
+            "description": "Number of items per page (max 100).",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedAppointmentsDto"
                 }
               }
             }
@@ -5984,7 +6090,7 @@
         "properties": {
           "type": {
             "type": "string",
-            "enum": ["ROLE", "ROOM", "EQUIPMENT", "SERVICE", "OTHER"],
+            "enum": ["ROLE", "ROOM", "EQUIPMENT", "SERVICE", "OTHER", "TEAM"],
             "description": "Assignee type. PERSON assignees are surfaced under practitioners, not here."
           },
           "name": {
@@ -6054,6 +6160,52 @@
           "practitioners",
           "assignees"
         ]
+      },
+      "PaginationDto": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "number"
+          },
+          "pageSize": {
+            "type": "number"
+          },
+          "totalResults": {
+            "type": "number"
+          },
+          "totalPages": {
+            "type": "number"
+          },
+          "hasNext": {
+            "type": "boolean"
+          },
+          "hasPrevious": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "page",
+          "pageSize",
+          "totalResults",
+          "totalPages",
+          "hasNext",
+          "hasPrevious"
+        ]
+      },
+      "PaginatedAppointmentsDto": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AppointmentBaseDto"
+            }
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationDto"
+          }
+        },
+        "required": ["data", "pagination"]
       },
       "OpeningHoursSlotDto": {
         "type": "object",
@@ -6236,7 +6388,7 @@
           },
           "duration": {
             "type": "number",
-            "description": "The duration of the appointment"
+            "description": "The duration of the appointment in whole minutes, only calculated when endTime is present"
           },
           "status": {
             "type": "string",
@@ -6282,8 +6434,6 @@
         "required": [
           "id",
           "startTime",
-          "endTime",
-          "duration",
           "status",
           "modality",
           "description",
@@ -6462,6 +6612,18 @@
           "lastSenderGroupName": {
             "type": "string"
           },
+          "organizationNationalId": {
+            "type": "string",
+            "description": "National id of the organization that owns the HCP node/department this conversation belongs to."
+          },
+          "organizationName": {
+            "type": "string",
+            "description": "Display name of the organization."
+          },
+          "departmentName": {
+            "type": "string",
+            "description": "Name of the HCP department within the organization, when the resolved mapping row is group-specific."
+          },
           "hasAttachment": {
             "type": "boolean"
           },
@@ -6485,6 +6647,81 @@
           "isArchived",
           "unread"
         ]
+      },
+      "ConversationReplyBlockedReason": {
+        "type": "string",
+        "enum": [
+          "MISSING_RECIPIENT",
+          "REPLIES_DISABLED",
+          "NO_REPLY_GROUP",
+          "MESSAGING_NOT_ALLOWED",
+          "OUTSIDE_MESSAGING_WINDOW",
+          "REPLY_WINDOW_EXPIRED",
+          "AWAITING_STAFF_REPLY"
+        ],
+        "description": "Why replying is blocked. Only set when patientCanReply is false."
+      },
+      "MessageType": {
+        "type": "string",
+        "enum": ["TEXT", "VIDEO", "SEGMENTED"],
+        "description": "What kind of message this is. VIDEO → use `videoConversation`; SEGMENTED → use `contentSegments`; TEXT → use `messageTextContent`."
+      },
+      "VideoConversationDto": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "Video-call join link. Carries a `pin` query param."
+          },
+          "description": {
+            "type": "string"
+          },
+          "appointmentDate": {
+            "type": "string",
+            "description": "Local ISO datetime with no timezone offset. Iceland is UTC year-round — interpret as UTC, do not shift."
+          },
+          "appointmentHostName": {
+            "type": "string"
+          },
+          "isCanceled": {
+            "type": "boolean"
+          },
+          "isEdited": {
+            "type": "boolean"
+          }
+        },
+        "required": ["url", "isCanceled", "isEdited"]
+      },
+      "ContentSegmentType": {
+        "type": "string",
+        "enum": ["TEXT", "LINK"],
+        "description": "Segment kind. `TEXT` carries `text`; `LINK` carries `label` + `href`."
+      },
+      "ContentSegmentDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "description": "Segment kind. `TEXT` carries `text`; `LINK` carries `label` + `href`.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ContentSegmentType"
+              }
+            ]
+          },
+          "text": {
+            "type": "string",
+            "description": "Set on `text` segments."
+          },
+          "label": {
+            "type": "string",
+            "description": "Anchor text; set on `link` segments."
+          },
+          "href": {
+            "type": "string",
+            "description": "Sanitized https href; set on `link` segments."
+          }
+        },
+        "required": ["type"]
       },
       "ConversationAttachmentDto": {
         "type": "object",
@@ -6517,8 +6754,31 @@
             "format": "date-time",
             "type": "string"
           },
+          "messageType": {
+            "description": "What kind of message this is. VIDEO → use `videoConversation`; SEGMENTED → use `contentSegments`; TEXT → use `messageTextContent`.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MessageType"
+              }
+            ]
+          },
           "messageTextContent": {
             "type": "string"
+          },
+          "videoConversation": {
+            "description": "Structured video-call card. Present when `messageType` is `VIDEO` and the payload parsed; `messageTextContent` is omitted for video messages.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VideoConversationDto"
+              }
+            ]
+          },
+          "contentSegments": {
+            "description": "Ordered text/link segments. Present when `messageType` is `SEGMENTED`.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContentSegmentDto"
+            }
           },
           "senderGroupName": {
             "type": "string"
@@ -6526,7 +6786,7 @@
           "certificateId": {
             "type": "string",
             "format": "uuid",
-            "description": "Set when this message has an issued certificate attached. FE follows this id to the certificate download endpoint."
+            "description": "Set when this message has an issued certificate attached."
           },
           "requiresPayment": {
             "type": "boolean",
@@ -6547,7 +6807,13 @@
             }
           }
         },
-        "required": ["id", "direction", "messageSentAt", "attachments"]
+        "required": [
+          "id",
+          "direction",
+          "messageSentAt",
+          "messageType",
+          "attachments"
+        ]
       },
       "ConversationDetailDto": {
         "type": "object",
@@ -6580,6 +6846,18 @@
           "lastSenderGroupName": {
             "type": "string"
           },
+          "organizationNationalId": {
+            "type": "string",
+            "description": "National id of the organization that owns the HCP node/department this conversation belongs to."
+          },
+          "organizationName": {
+            "type": "string",
+            "description": "Display name of the organization."
+          },
+          "departmentName": {
+            "type": "string",
+            "description": "Name of the HCP department within the organization, when the resolved mapping row is group-specific."
+          },
           "hasAttachment": {
             "type": "boolean"
           },
@@ -6592,7 +6870,15 @@
           },
           "patientCanReply": {
             "type": "boolean",
-            "description": "Whether the patient is allowed to reply on this conversation. Null when no staff has set it yet — replies are allowed unless explicitly false."
+            "description": "Whether the patient can reply to this conversation right now."
+          },
+          "replyBlockedReason": {
+            "description": "Why replying is blocked. Only set when patientCanReply is false.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ConversationReplyBlockedReason"
+              }
+            ]
           },
           "unread": {
             "type": "boolean",
@@ -6612,6 +6898,7 @@
           "hasAttachment",
           "isStarred",
           "isArchived",
+          "patientCanReply",
           "unread",
           "messages"
         ]
@@ -6715,6 +7002,15 @@
         },
         "required": ["patientInitiatedTypeCode", "title", "isCertificate"]
       },
+      "RecipientCreateBlockedReason": {
+        "type": "string",
+        "enum": [
+          "MESSAGING_NOT_ALLOWED",
+          "OUTSIDE_MESSAGING_WINDOW",
+          "NO_ALLOWED_TYPES"
+        ],
+        "description": "Why starting a conversation is blocked. Only set when canCreateConversation is false."
+      },
       "MessagingRecipientDto": {
         "type": "object",
         "properties": {
@@ -6751,6 +7047,30 @@
             "items": {
               "$ref": "#/components/schemas/AllowedConversationTypeDto"
             }
+          },
+          "canCreateConversation": {
+            "type": "boolean",
+            "description": "Whether the patient can start a new conversation with this recipient right now."
+          },
+          "conversationBlockedReason": {
+            "description": "Why starting a conversation is blocked. Only set when canCreateConversation is false.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RecipientCreateBlockedReason"
+              }
+            ]
+          },
+          "canRequestCertificate": {
+            "type": "boolean",
+            "description": "Whether the patient can request a certificate from this recipient right now."
+          },
+          "certificateBlockedReason": {
+            "description": "Why requesting a certificate is blocked. Only set when canRequestCertificate is false.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RecipientCreateBlockedReason"
+              }
+            ]
           }
         },
         "required": [
@@ -6762,7 +7082,9 @@
           "messagingWindowClose",
           "isCurrentlyWithinWindow",
           "patientReplyWindowDays",
-          "allowedConversationTypes"
+          "allowedConversationTypes",
+          "canCreateConversation",
+          "canRequestCertificate"
         ]
       },
       "PaymentDto": {
@@ -6796,7 +7118,7 @@
       },
       "CertificateTypeCode": {
         "type": "string",
-        "enum": ["work", "school"],
+        "enum": ["WORK", "SCHOOL"],
         "description": "Certificate type code."
       },
       "CreateCertificateRequestDto": {

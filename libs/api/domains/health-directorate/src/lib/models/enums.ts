@@ -105,6 +105,7 @@ export enum AppointmentAssigneeTypeEnum {
   EQUIPMENT = 'EQUIPMENT',
   SERVICE = 'SERVICE',
   OTHER = 'OTHER',
+  TEAM = 'TEAM',
 }
 
 registerEnumType(AppointmentAssigneeTypeEnum, {
@@ -163,4 +164,26 @@ export enum HealthConversationStatusFilterEnum {
 }
 registerEnumType(HealthConversationStatusFilterEnum, {
   name: 'HealthDirectorateHealthConversationStatusFilter',
+})
+
+export enum HealthConversationReplyBlockedReasonEnum {
+  MISSING_RECIPIENT = 'missingRecipient',
+  REPLIES_DISABLED = 'repliesDisabled',
+  NO_REPLY_GROUP = 'noReplyGroup',
+  MESSAGING_NOT_ALLOWED = 'messagingNotAllowed',
+  OUTSIDE_MESSAGING_WINDOW = 'outsideMessagingWindow',
+  REPLY_WINDOW_EXPIRED = 'replyWindowExpired',
+  AWAITING_STAFF_REPLY = 'awaitingStaffReply',
+}
+registerEnumType(HealthConversationReplyBlockedReasonEnum, {
+  name: 'HealthDirectorateHealthConversationReplyBlockedReason',
+})
+
+export enum HealthConversationRecipientBlockedReasonEnum {
+  MESSAGING_NOT_ALLOWED = 'messagingNotAllowed',
+  OUTSIDE_MESSAGING_WINDOW = 'outsideMessagingWindow',
+  NO_ALLOWED_TYPES = 'noAllowedTypes',
+}
+registerEnumType(HealthConversationRecipientBlockedReasonEnum, {
+  name: 'HealthDirectorateHealthConversationRecipientBlockedReason',
 })

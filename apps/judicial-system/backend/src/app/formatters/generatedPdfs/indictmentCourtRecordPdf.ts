@@ -35,8 +35,8 @@ import {
 } from '../pdfHelpers'
 
 const formatFiledBy = (submitterText: string, submittedBy?: string | null) => {
-  if (submitterText === 'Sækjandi') {
-    return 'Sækjandi lagði fram:'
+  if (submitterText === 'Ákærandi') {
+    return 'Ákærandi lagði fram:'
   }
 
   return [submitterText, submittedBy, 'lagði fram:'].filter(Boolean).join(' ')
@@ -51,7 +51,7 @@ export const getFiledBy = (
 
     if (split?.length === 2) {
       const submitterText = getRoleTitleFromCaseFileCategory(split[1], {
-        prosecutor: 'Sækjandi',
+        prosecutor: 'Ákærandi',
         notRegistered: '',
       })
 
@@ -72,7 +72,7 @@ export const getFiledBy = (
       ].includes(file.category)
     ) {
       const submitterText = getRoleTitleFromCaseFileCategory(file.category, {
-        prosecutor: 'Sækjandi',
+        prosecutor: 'Ákærandi',
         notRegistered: '',
       })
 
@@ -91,7 +91,6 @@ const lineGap = 2
 export const createIndictmentCourtRecordPdf = (
   theCase: Case,
   showOpenCourtSession: boolean,
-  useTinyMCE: boolean,
   confirmation: Confirmation | undefined,
 ): Promise<Buffer> => {
   const doc = new PDFDocument({
@@ -320,15 +319,11 @@ export const createIndictmentCourtRecordPdf = (
     }
 
     addEmptyLines(doc, 2)
-    if (useTinyMCE) {
-      addRichText(
-        doc,
-        courtSession.entries ?? '<p>Engar bókanir voru skráðar.</p>',
-        lineGap,
-      )
-    } else {
-      addNormalText(doc, courtSession.entries ?? 'Engar bókanir voru skráðar.')
-    }
+    addRichText(
+      doc,
+      courtSession.entries ?? '<p>Engar bókanir voru skráðar.</p>',
+      lineGap,
+    )
 
     if (courtSession.rulingType !== CourtSessionRulingType.NONE) {
       addEmptyLines(doc)

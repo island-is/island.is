@@ -1,5 +1,7 @@
 import { WhereOptions } from 'sequelize'
 
+import { DefendantEventType } from '@island.is/judicial-system/types'
+
 import {
   AppealCase,
   Case,
@@ -105,7 +107,21 @@ export const expandCasesWithDefendants = (cs: Case[]) =>
   cs.flatMap((c) => {
     const jsonCase = c.toJSON()
 
-    return (c.defendants ?? []).map((d) => ({ ...jsonCase, defendants: [d] }))
+    return (c.defendants ?? [])
+      .filter(
+        // Defendants whose indictment was cancelled or dismissed (completed for
+        // some) do not receive a verdict or a review decision, so they should
+        // not get their own row in these per-defendant case tables.
+        (d) =>
+          !DefendantEventLog.getEventLogByEventType(
+            [
+              DefendantEventType.INDICTMENT_CANCELLED,
+              DefendantEventType.INDICTMENT_DISMISSED,
+            ],
+            d.eventLogs,
+          ),
+      )
+      .map((d) => ({ ...jsonCase, defendants: [d] }))
   })
 
 // Emits one synthetic case per qualifying appeal — the case-level appeal in

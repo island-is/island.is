@@ -458,6 +458,7 @@ query Case($input: CaseQueryInput!) {
       appealedByNationalId
       appealedByRole
       appealedDate
+      appealedInCourt
       statementDeadline
       isStatementDeadlineExpired
       appealCaseNumber
@@ -497,6 +498,16 @@ query Case($input: CaseQueryInput!) {
       isAppealCustodyIsolation
       appealIsolationToDate
       rulingFileId
+    }
+    appealDecisions {
+      id
+      rulingFileId
+      partyRole
+      defendantId
+      civilClaimantId
+      decision
+      announcement
+      withdrawnDate
     }
     indictmentDeniedExplanation
     arraignmentDate {

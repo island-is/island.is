@@ -9,6 +9,7 @@ fragment QuestionnaireBaseInfo on QuestionnairesBaseItem {
   lastSubmissionId
   organization
   department
+  senderGroupName
 }
 
 fragment QuestionnaireSubmission on QuestionnaireSubmissionDetail {
@@ -96,6 +97,7 @@ query GetQuestionnaires($locale: String!) {
       lastSubmitted
       organization
       department
+      senderGroupName
     }
   }
 }

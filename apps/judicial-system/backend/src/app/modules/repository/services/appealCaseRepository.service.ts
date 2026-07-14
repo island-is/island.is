@@ -25,6 +25,10 @@ interface UpdateAppealCaseOptions {
   transaction: Transaction
 }
 
+interface DeleteAppealCaseOptions {
+  transaction: Transaction
+}
+
 @Injectable()
 export class AppealCaseRepositoryService {
   constructor(
@@ -127,6 +131,34 @@ export class AppealCaseRepositoryService {
         `Error updating appeal case ${appealCaseId} with data:`,
         { data: Object.keys(data), error },
       )
+
+      throw error
+    }
+  }
+
+  async delete(
+    appealCaseId: string,
+    options: DeleteAppealCaseOptions,
+  ): Promise<void> {
+    try {
+      this.logger.debug(`Deleting appeal case ${appealCaseId}`)
+
+      const numberOfAffectedRows = await this.appealCaseModel.destroy({
+        where: { id: appealCaseId },
+        transaction: options.transaction,
+      })
+
+      if (numberOfAffectedRows < 1) {
+        throw new InternalServerErrorException(
+          `Could not delete appeal case ${appealCaseId}`,
+        )
+      }
+
+      this.logger.debug(`Deleted appeal case ${appealCaseId}`)
+    } catch (error) {
+      this.logger.error(`Error deleting appeal case ${appealCaseId}:`, {
+        error,
+      })
 
       throw error
     }
