@@ -5,6 +5,9 @@
       "@/*": [
         "${configDir}/src/*"
       ],
+      "@island.is/air-discount-scheme-web/*": [
+        "apps/air-discount-scheme/web/*"
+      ],
       "@island.is/air-discount-scheme/consts": [
         "libs/air-discount-scheme/consts/src/index.ts"
       ],
@@ -55,6 +58,9 @@
       ],
       "@island.is/api/domains/company-registry": [
         "libs/api/domains/company-registry/src/index.ts"
+      ],
+      "@island.is/api/domains/customs-calculator": [
+        "libs/api/domains/customs-calculator/src/index.ts"
       ],
       "@island.is/api/domains/consultation-portal": [
         "libs/api/domains/consultation-portal/src/index.ts"
@@ -419,6 +425,12 @@
       "@island.is/application/templates/data-protection-complaint/messages": [
         "libs/application/templates/data-protection-complaint/src/lib/messages/index.ts"
       ],
+      "@island.is/application/templates/directorate-of-equality/equality-report": [
+        "libs/application/templates/directorate-of-equality/equality-report/src/index.ts"
+      ],
+      "@island.is/application/templates/directorate-of-equality/salary-report": [
+        "libs/application/templates/directorate-of-equality/salary-report/src/index.ts"
+      ],
       "@island.is/application/templates/directorate-of-immigration/citizenship": [
         "libs/application/templates/directorate-of-immigration/citizenship/src/index.ts"
       ],
@@ -749,6 +761,9 @@
       "@island.is/clients-rental-day-rate": [
         "libs/clients/rsk/rental-day-rate/src/index.ts"
       ],
+      "@island.is/clients-rsk-customs-calculator": [
+        "libs/clients/rsk/customs-calculator/src/index.ts"
+      ],
       "@island.is/clients-rsk-relationships": [
         "libs/clients/rsk/relationships/src/index.ts"
       ],
@@ -795,7 +810,9 @@
       "@island.is/clients/rsk/customs/general": [
         "libs/clients/rsk/customs/general/src/index.ts"
       ],
-      "@island.is/clients/cms": ["libs/clients/cms/src/index.ts"],
+      "@island.is/clients/cms": [
+        "libs/clients/cms/src/index.ts"
+      ],
       "@island.is/clients/consultation-portal": [
         "libs/clients/consultation-portal/src/index.ts"
       ],
@@ -935,8 +952,8 @@
         "libs/clients/license-client/src/index.ts"
       ],
       "@island.is/clients/lsh": ["libs/clients/lsh/src/index.ts"],
-      "@island.is/clients/lyfjastofnun-pharmacies": [
-        "libs/clients/lyfjastofnun-pharmacies/src/index.ts"
+      "@island.is/clients/lyfjastofnun-health-providers": [
+        "libs/clients/lyfjastofnun-health-providers/src/index.ts"
       ],
       "@island.is/clients/matilda": ["libs/clients/matilda/src/index.ts"],
       "@island.is/clients/middlewares": [

@@ -1,6 +1,6 @@
 import React, { useRef } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { Animated, Image, SafeAreaView, View } from 'react-native'
+import { Animated, SafeAreaView, View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import { testIDs } from '@/utils/test-ids'
@@ -187,12 +187,11 @@ export default function AirDiscountScreen() {
                 'https://island.is/loftbru/notendaskilmalar-vegagerdarinnar-fyrir-loftbru'
               }
             >
-              <LinkText>
+              <LinkText icon={externalLinkIcon}>
                 <FormattedMessage
                   id="airDiscount.tosLinkText"
                   defaultMessage="Notendaskilmálar"
-                />{' '}
-                <Image source={externalLinkIcon} />
+                />
               </LinkText>
             </Link>
           </TOSLink>

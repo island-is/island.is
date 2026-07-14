@@ -162,13 +162,19 @@ function adjustedAppRoute(dest: Href, source: Href | undefined): Href {
 /**
  * Navigate to a universal link. If our mapping returns a valid native screen,
  * navigate there directly. Otherwise, open in the in-app browser.
+ *
+ * Callers that can supply `openBrowser` from `useBrowser()` should — that path
+ * runs the passkey flow for supported URLs. The raw WebBrowser fallback exists
+ * for non-React callers and skips passkey.
  */
 export async function navigateToUniversalLink({
   link,
   fromScreen,
+  openBrowser,
 }: {
   link?: NotificationMessage['link']['url']
   fromScreen?: Href
+  openBrowser?: (url: string) => void | Promise<void>
 }) {
   if (!link) return
 
@@ -181,9 +187,13 @@ export async function navigateToUniversalLink({
   // No matching native route — open in browser
   try {
     if (link.startsWith('http')) {
-      await WebBrowser.openBrowserAsync(link, {
-        presentationStyle: WebBrowser.WebBrowserPresentationStyle.FORM_SHEET,
-      })
+      if (openBrowser) {
+        await openBrowser(link)
+      } else {
+        await WebBrowser.openBrowserAsync(link, {
+          presentationStyle: WebBrowser.WebBrowserPresentationStyle.FORM_SHEET,
+        })
+      }
     }
   } catch (error) {
     console.log('Failed to open link in browser', { link, error })

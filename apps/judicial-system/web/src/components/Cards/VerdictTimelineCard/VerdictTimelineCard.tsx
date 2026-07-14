@@ -277,6 +277,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
             </AnimatePresence>
           </Box>
         }
+        menuLabel={`Valmynd fyrir ${defendant.name}`}
         contextMenuItems={[
           {
             title: defendant.publicProsecutorIsRegisteredInPoliceSystem

@@ -6,15 +6,15 @@ import {
   GridRow as Row,
   Select,
 } from '@island.is/island-ui/core'
-import { useContext, useEffect } from 'react'
+import { useContext } from 'react'
 import { ControlContext } from '../../../../../../context/ControlContext'
 
 export const PaymentField = () => {
   const { control, controlDispatch, updateActiveItem } =
     useContext(ControlContext)
+  const { isReadOnly } = control
   const currentItem = control.activeItem.data as FormSystemField
-  const { fieldSettings } = currentItem
-  const { data, loading, error } = useQuery(GET_PAYMENT_CATALOG, {
+  const { data, loading } = useQuery(GET_PAYMENT_CATALOG, {
     variables: {
       input: {
         performingOrganizationID: control.organizationNationalId,
@@ -34,12 +34,6 @@ export const PaymentField = () => {
     }
   })
 
-  useEffect(() => {
-    console.log('Payment catalog data:', data)
-    console.log('Current item:', currentItem)
-    console.log('Field settings:', fieldSettings)
-  }, [data, currentItem, fieldSettings])
-
   return (
     <>
       <Row>
@@ -50,11 +44,11 @@ export const PaymentField = () => {
             placeholder="Veldu greiðsluvöru"
             isSearchable
             backgroundColor="blue"
+            isDisabled={isReadOnly}
             onChange={(e) => {
               const paymentSettings = data.paymentCatalog?.items.find(
                 (item: PaymentCatalogItem) => item.chargeItemCode === e?.value,
               )
-              console.log('Selected payment settings:', paymentSettings)
               controlDispatch({
                 type: 'SET_PAYMENT_SETTINGS',
                 payload: {

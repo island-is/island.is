@@ -2292,6 +2292,15 @@ export const m = defineMessages({
     defaultMessage:
       'Notaðu örvatakka til að fara á milli valkosta. Ýttu á Enter eða Space til að velja.',
   },
+  sidebarContactBoxTitle: {
+    id: 'service.portal:sidebar-contact-box-title',
+    defaultMessage: 'Ertu með spurningu?',
+  },
+  sidebarContactBoxBody: {
+    id: 'service.portal:sidebar-contact-box-body',
+    defaultMessage:
+      'Ef þú ert í vandræðum getur þú sent okkur fyrirspurn eða ábendingu á netfangið island@island.is',
+  },
   unemploymentHasConfirmedJobSearch: {
     id: 'service.portal:unemployment-has-confirmed-job-search',
     defaultMessage: 'Atvinnuleit þín er staðfest fyrir þetta tímabil',
