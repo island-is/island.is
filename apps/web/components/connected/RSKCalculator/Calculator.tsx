@@ -1,11 +1,14 @@
 import { Controller, useForm } from 'react-hook-form'
-import { useIntl } from 'react-intl'
+import { MessageDescriptor, useIntl } from 'react-intl'
 import { useLazyQuery, useQuery } from '@apollo/client'
 
 import {
   AlertMessage,
   Box,
   Button,
+  GridColumn,
+  GridColumnProps,
+  GridRow,
   Option,
   RadioButton,
   Select,
@@ -31,7 +34,7 @@ import {
 } from '@island.is/web/screens/queries/RSKCalculator'
 import { formatCurrency } from '@island.is/web/utils/currency'
 
-import { m } from './Calculator.strings'
+import { messages } from './messages'
 
 // The Contentful `configJson.calculatorType` value is locale-independent and
 // selects which calculator this slice instance calls. It is intentionally
@@ -41,37 +44,98 @@ const CALCULATOR_TYPE_BY_CONFIG_VALUE: Record<string, RskCalculatorType> = {
   childBenefit: RskCalculatorType.ChildBenefit,
 }
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null
-
 const getCalculatorType = (value: unknown): RskCalculatorType | undefined => {
   if (typeof value !== 'string') return undefined
   return CALCULATOR_TYPE_BY_CONFIG_VALUE[value]
 }
 
-// slice.json is localized and only ever carries bespoke, per-instance copy
-// overrides for this generic component -- never the field schema itself,
-// which is owned by the GraphQL response.
-const getLocalizedStringField = (
-  json: unknown,
-  key: string,
-): string | undefined => {
-  if (!isRecord(json)) return undefined
-  const value = json[key]
-  return typeof value === 'string' ? value : undefined
+// Fields not listed here (maritalStatus, paymentFrequency, payMonth) are
+// intentionally omitted from the withholdingTaxOnWages layout -- they are
+// still submitted with the calculation via `fields`, just never rendered.
+// Spans stack to full width below `lg` so the form never renders more than
+// one column on mobile/tablet, matching the Figma "2 col + 0 / 3 col + 2
+// gutter" desktop grid without producing a wall of tiny columns on mobile.
+const HALF_ROW_SPAN: NonNullable<GridColumnProps['span']> = [
+  '1/1',
+  '1/1',
+  '1/1',
+  '6/12',
+]
+const THIRD_ROW_SPAN: NonNullable<GridColumnProps['span']> = [
+  '1/1',
+  '1/1',
+  '6/12',
+  '4/12',
+]
+
+interface CalculatorSectionField {
+  key: string
+  span: NonNullable<GridColumnProps['span']>
 }
 
-const getFieldLabelOverride = (
-  json: unknown,
-  fieldKey: string,
-): string | undefined => {
-  if (!isRecord(json)) return undefined
-  const overrides = json.fieldOverrides
-  if (!isRecord(overrides)) return undefined
-  const entry = overrides[fieldKey]
-  if (!isRecord(entry)) return undefined
-  return typeof entry.label === 'string' ? entry.label : undefined
+interface CalculatorFieldSection {
+  titleMessage: MessageDescriptor
+  descriptionMessage?: MessageDescriptor
+  fields: CalculatorSectionField[]
 }
+
+const WITHHOLDING_TAX_ON_WAGES_SECTIONS: CalculatorFieldSection[] = [
+  {
+    titleMessage: messages.sectionPaymentsTitle,
+    fields: [
+      { key: 'salary', span: ['1/1', '1/1', '1/1', '7/12'] },
+      { key: 'incomeYear', span: ['1/1', '1/1', '1/1', '5/12'] },
+    ],
+  },
+  {
+    titleMessage: messages.sectionContributionsTitle,
+    fields: [
+      { key: 'pensionFundRatio', span: HALF_ROW_SPAN },
+      { key: 'privatePensionRatio', span: HALF_ROW_SPAN },
+    ],
+  },
+  {
+    titleMessage: messages.sectionPersonalTaxCreditTitle,
+    descriptionMessage: messages.sectionPersonalTaxCreditDescription,
+    fields: [
+      { key: 'taxCardUtilization', span: THIRD_ROW_SPAN },
+      { key: 'spouseTaxCardUtilization', span: THIRD_ROW_SPAN },
+      { key: 'accumulatedPersonalTaxCredit', span: THIRD_ROW_SPAN },
+    ],
+  },
+  {
+    titleMessage: messages.sectionDeductionsTitle,
+    descriptionMessage: messages.sectionDeductionsDescription,
+    fields: [
+      { key: 'vacationPay', span: THIRD_ROW_SPAN },
+      { key: 'unionDues', span: THIRD_ROW_SPAN },
+      { key: 'otherDeduction', span: THIRD_ROW_SPAN },
+    ],
+  },
+  {
+    titleMessage: messages.sectionEmployerPaymentsTitle,
+    descriptionMessage: messages.sectionEmployerPaymentsDescription,
+    fields: [
+      { key: 'employerPensionMatchRatio', span: THIRD_ROW_SPAN },
+      { key: 'vehicleAllowance', span: THIRD_ROW_SPAN },
+      { key: 'seamenAccidentInsurancePremium', span: THIRD_ROW_SPAN },
+    ],
+  },
+]
+
+const FIELD_SECTIONS_BY_CALCULATOR_TYPE: Partial<
+  Record<RskCalculatorType, CalculatorFieldSection[]>
+> = {
+  [RskCalculatorType.WithholdingTaxOnWages]: WITHHOLDING_TAX_ON_WAGES_SECTIONS,
+}
+
+// Field labels come from the GraphQL response, but the id is composed per
+// field key so editors can override an individual label through the
+// connected component's translation namespace.
+const getFieldLabelMessage = (field: RskCalculatorField) => ({
+  id: `web.rsk.calculator:field.${field.key}.label`,
+  defaultMessage: field.label,
+})
 
 const formatResultValue = (
   row: Pick<RskCalculatorResultRow, 'value' | 'unit'>,
@@ -111,7 +175,7 @@ const CalculatorFieldInput = ({
         render={({ field: { onChange, value } }) => (
           <Select
             label={label}
-            placeholder={formatMessage(m.selectPlaceholder)}
+            placeholder={formatMessage(messages.selectPlaceholder)}
             required={field.required}
             options={options}
             value={options.find((option) => option.value === value)}
@@ -138,14 +202,14 @@ const CalculatorFieldInput = ({
               <RadioButton
                 id={`${field.key}-true`}
                 name={field.key}
-                label={formatMessage(m.yes)}
+                label={formatMessage(messages.yes)}
                 checked={value === 'true'}
                 onChange={() => onChange('true')}
               />
               <RadioButton
                 id={`${field.key}-false`}
                 name={field.key}
-                label={formatMessage(m.no)}
+                label={formatMessage(messages.no)}
                 checked={value === 'false'}
                 onChange={() => onChange('false')}
               />
@@ -193,40 +257,43 @@ const CalculatorResults = ({ results }: CalculatorResultsProps) => {
   }
 
   return (
-    <Stack space={4}>
-      {groupKeys.map((groupKey) => (
-        <Stack key={groupKey || 'ungrouped'} space={1}>
-          {groupKey && (
-            <Text variant="h5" as="h4">
-              {groupKey}
-            </Text>
-          )}
-          <Stack space={1}>
-            {rowsByGroup[groupKey].map((row) => (
-              <Box
-                key={row.key}
-                display="flex"
-                justifyContent="spaceBetween"
-                columnGap={2}
-              >
-                <Text
-                  variant="medium"
-                  fontWeight={row.emphasis ? 'semiBold' : 'light'}
+    <Box background={'blue400'}>
+      <Stack space={4}>
+        {groupKeys.map((groupKey) => (
+          <Stack key={groupKey || 'ungrouped'} space={1}>
+            {groupKey && (
+              <Text variant="h5" as="h4">
+                {groupKey}
+                {'bingbong'}
+              </Text>
+            )}
+            <Stack space={1}>
+              {rowsByGroup[groupKey].map((row) => (
+                <Box
+                  key={row.key}
+                  display="flex"
+                  justifyContent="spaceBetween"
+                  columnGap={2}
                 >
-                  {row.label}
-                </Text>
-                <Text
-                  variant="medium"
-                  fontWeight={row.emphasis ? 'semiBold' : 'light'}
-                >
-                  {formatResultValue(row)}
-                </Text>
-              </Box>
-            ))}
+                  <Text
+                    variant="medium"
+                    fontWeight={row.emphasis ? 'semiBold' : 'light'}
+                  >
+                    {row.label}
+                  </Text>
+                  <Text
+                    variant="medium"
+                    fontWeight={row.emphasis ? 'semiBold' : 'light'}
+                  >
+                    {formatResultValue(row)}
+                  </Text>
+                </Box>
+              ))}
+            </Stack>
           </Stack>
-        </Stack>
-      ))}
-    </Stack>
+        ))}
+      </Stack>
+    </Box>
   )
 }
 
@@ -239,8 +306,8 @@ export const RSKCalculator = ({ slice }: RSKCalculatorProps) => {
   const { control, getValues } = useForm()
 
   const calculatorType = getCalculatorType(slice.configJson?.calculatorType)
-  const title = getLocalizedStringField(slice.json, 'title')
-  const disclaimer = getLocalizedStringField(slice.json, 'disclaimer')
+  const title = formatMessage(messages.title)
+  const disclaimer = formatMessage(messages.disclaimer)
 
   const fieldsResponse = useQuery<
     GetRskCalculatorFieldsQuery,
@@ -268,6 +335,10 @@ export const RSKCalculator = ({ slice }: RSKCalculatorProps) => {
   >(GET_RSK_CALCULATOR_CALCULATION)
 
   const fields = fieldsResponse.data?.rskCalculatorFields ?? []
+  const fieldsByKey = new Map(fields.map((field) => [field.key, field]))
+  const fieldSections = calculatorType
+    ? FIELD_SECTIONS_BY_CALCULATOR_TYPE[calculatorType]
+    : undefined
   const results = calculationData?.rskCalculatorCalculation ?? []
 
   const calculate = () => {
@@ -292,8 +363,8 @@ export const RSKCalculator = ({ slice }: RSKCalculatorProps) => {
     return (
       <AlertMessage
         type="error"
-        title={formatMessage(m.errorOccurredTitle)}
-        message={formatMessage(m.fieldsErrorMessage)}
+        title={formatMessage(messages.errorOccurredTitle)}
+        message={formatMessage(messages.fieldsErrorMessage)}
       />
     )
   }
@@ -309,16 +380,64 @@ export const RSKCalculator = ({ slice }: RSKCalculatorProps) => {
           {title}
         </Text>
       )}
-      <Stack space={3}>
-        {fields.map((field) => (
-          <CalculatorFieldInput
-            key={field.key}
-            field={field}
-            control={control}
-            label={getFieldLabelOverride(slice.json, field.key) ?? field.label}
-          />
-        ))}
-      </Stack>
+      {fieldSections ? (
+        <Stack space={6}>
+          {fieldSections.map((section) => {
+            const sectionFields = section.fields
+              .map(({ key, span }) => {
+                const field = fieldsByKey.get(key)
+                return field ? { field, span } : undefined
+              })
+              .filter(
+                (
+                  entry,
+                ): entry is {
+                  field: RskCalculatorField
+                  span: NonNullable<GridColumnProps['span']>
+                } => Boolean(entry),
+              )
+
+            if (!sectionFields.length) return null
+
+            return (
+              <Stack key={section.titleMessage.id} space={3}>
+                <Stack space={1}>
+                  <Text variant="h4" as="h4">
+                    {formatMessage(section.titleMessage)}
+                  </Text>
+                  {section.descriptionMessage && (
+                    <Text variant="medium">
+                      {formatMessage(section.descriptionMessage)}
+                    </Text>
+                  )}
+                </Stack>
+                <GridRow rowGap={3}>
+                  {sectionFields.map(({ field, span }) => (
+                    <GridColumn key={field.key} span={span}>
+                      <CalculatorFieldInput
+                        field={field}
+                        control={control}
+                        label={formatMessage(getFieldLabelMessage(field))}
+                      />
+                    </GridColumn>
+                  ))}
+                </GridRow>
+              </Stack>
+            )
+          })}
+        </Stack>
+      ) : (
+        <Stack space={3}>
+          {fields.map((field) => (
+            <CalculatorFieldInput
+              key={field.key}
+              field={field}
+              control={control}
+              label={formatMessage(getFieldLabelMessage(field))}
+            />
+          ))}
+        </Stack>
+      )}
       {disclaimer && (
         <Text variant="small" lineHeight="lg">
           {disclaimer}
@@ -326,7 +445,7 @@ export const RSKCalculator = ({ slice }: RSKCalculatorProps) => {
       )}
       <Box>
         <Button loading={calculating} onClick={calculate}>
-          {formatMessage(m.calculate)}
+          {formatMessage(messages.calculate)}
         </Button>
       </Box>
       {called && !calculationError && results.length > 0 && (
@@ -337,7 +456,7 @@ export const RSKCalculator = ({ slice }: RSKCalculatorProps) => {
         >
           <Stack space={3}>
             <Text variant="h4" as="h4">
-              {formatMessage(m.results)}
+              {formatMessage(messages.results)}
             </Text>
             <CalculatorResults results={results} />
           </Stack>
@@ -346,8 +465,8 @@ export const RSKCalculator = ({ slice }: RSKCalculatorProps) => {
       {!calculating && called && calculationError && (
         <AlertMessage
           type="error"
-          title={formatMessage(m.errorOccurredTitle)}
-          message={formatMessage(m.errorOccurredMessage)}
+          title={formatMessage(messages.errorOccurredTitle)}
+          message={formatMessage(messages.errorOccurredMessage)}
         />
       )}
     </Stack>
