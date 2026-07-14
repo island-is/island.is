@@ -9,9 +9,15 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { CardLoader, IntroWrapper, m } from '@island.is/portals/my-pages/core'
+import {
+  CardLoader,
+  InlineLink,
+  IntroWrapper,
+  m,
+} from '@island.is/portals/my-pages/core'
 import ConversationAvatar from './components/ConversationAvatar'
 import ConversationAvailabilityAlert from './components/ConversationAvailabilityAlert'
+import ConversationTermsModal from './components/ConversationTermsModal'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { useState } from 'react'
@@ -34,6 +40,7 @@ const NewHealthConversation = () => {
   const [selectedTypeCode, setSelectedTypeCode] = useState<string | null>(null)
   const [messageText, setMessageText] = useState('')
   const [termsAccepted, setTermsAccepted] = useState(false)
+  const [termsModalOpen, setTermsModalOpen] = useState(false)
 
   const { data, loading, error } =
     useGetHealthConversationRecipientsForNewQuery({
@@ -77,12 +84,10 @@ const NewHealthConversation = () => {
 
   const isFormLocked = recipient?.canCreateConversation === false
 
-  const canSubmit =
-    !!selectedTypeCode &&
-    !!messageText.trim() &&
-    termsAccepted &&
-    !sending &&
-    !isFormLocked
+  const isFormValid =
+    !!selectedTypeCode && !!messageText.trim() && termsAccepted
+
+  const canSubmit = isFormValid && !sending && !isFormLocked
 
   const handleSubmit = async () => {
     if (!canSubmit || !recipient || !selectedTypeCode) return
@@ -201,16 +206,20 @@ const NewHealthConversation = () => {
             </Box>
 
             <Box marginBottom={4}>
-              {/* TODO: Add terms and conditions link */}
               <Checkbox
                 id="terms-accept"
                 checked={termsAccepted}
                 onChange={(e) => setTermsAccepted(e.target.checked)}
-                label={`${formatMessage(
-                  messages.healthConversationsNewTermsAccept,
-                )} ${formatMessage(
-                  messages.healthConversationsNewTermsLinkText,
-                )}`}
+                label={formatMessage(
+                  messages.healthConversationsNewTermsLabel,
+                  {
+                    link: (str: React.ReactNode) => (
+                      <InlineLink onClick={() => setTermsModalOpen(true)}>
+                        {str}
+                      </InlineLink>
+                    ),
+                  },
+                )}
                 disabled={isFormLocked}
               />
             </Box>
@@ -226,6 +235,10 @@ const NewHealthConversation = () => {
           </Box>
         </Box>
       )}
+      <ConversationTermsModal
+        isOpen={termsModalOpen}
+        onClose={() => setTermsModalOpen(false)}
+      />
     </IntroWrapper>
   )
 }
