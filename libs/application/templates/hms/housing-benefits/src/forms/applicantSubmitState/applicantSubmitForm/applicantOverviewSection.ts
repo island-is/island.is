@@ -112,6 +112,7 @@ export const applicantOverviewSection = buildSection({
         buildRadioField({
           id: 'submitAddAssigneeRadio',
           title: 'Bæta við heimilismanni',
+          defaultValue: NO,
           options: [
             { label: m.miscMessages.yes, value: YES },
             { label: m.miscMessages.no, value: NO },
