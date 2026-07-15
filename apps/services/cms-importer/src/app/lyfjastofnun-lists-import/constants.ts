@@ -17,3 +17,21 @@ export const FILE_CONTENT_TYPE_MAP: Record<string, string> = {
   pdf: 'application/pdf',
   csv: 'text/csv',
 }
+
+export const FILE_TYPE_LABELS_IS: Record<string, string> = {
+  xlsx: 'Excel skrá',
+  xls: 'Excel skrá',
+  csv: 'Excel skrá',
+  docx: 'Word skrá',
+  doc: 'Word skrá',
+  pdf: 'PDF skrá',
+}
+
+export const FILE_TYPE_LABELS_EN: Record<string, string> = {
+  xlsx: 'Excel file',
+  xls: 'Excel file',
+  csv: 'Excel file',
+  docx: 'Word file',
+  doc: 'Word file',
+  pdf: 'PDF file',
+}
