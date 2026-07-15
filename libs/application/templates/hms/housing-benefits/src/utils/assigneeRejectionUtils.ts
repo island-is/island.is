@@ -7,7 +7,7 @@ import {
 import * as kennitala from 'kennitala'
 import { getAssigneeNationalIds } from './assigneeUtils'
 
-const normalizeNationalId = (id: string): string =>
+export const normalizeNationalId = (id: string): string =>
   kennitala.isValid(id) ? kennitala.sanitize(id) : id
 
 const normalizeNationalIdList = (ids: string[]): string[] =>

@@ -16,6 +16,7 @@ import {
 } from '../../../utils/assigneeWaitingUtils'
 import { hasRejectedAssigneesInAnswers } from '../../../utils/assigneeRejectionUtils'
 import * as m from '../../../lib/messages'
+import { hasUnsignedApprovalNames } from '../../../utils/assigneeUtils'
 
 export const AssigneeWaitingForm = buildForm({
   id: 'AssigneeWaiting',
@@ -53,6 +54,7 @@ export const AssigneeWaitingForm = buildForm({
             buildDescriptionField({
               id: 'assigneeWaitingPending',
               description: assigneeWaitingPendingDescription,
+              condition: hasUnsignedApprovalNames,
               marginBottom: 4,
             }),
             buildDescriptionField({

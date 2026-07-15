@@ -1,4 +1,4 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, NO, YES } from '@island.is/application/core'
 import {
   ApplicantChildCustodyInformationV3,
   Application,
@@ -17,13 +17,14 @@ import {
   minorHasAnyUmgengnissamningurUploadAttached,
 } from './utils'
 import {
-  getHouseholdMembersForTable,
-  getRentalAgreementTenantsFlat,
+  getHouseholdMembersForTableFromAnswersAndExternalData,
+  getRentalAgreementTenantsFlatFromAnswersAndExternalData,
 } from './rentalAgreementUtils'
 import { hasAssigneeRolePrereqOk } from './mapUserToRole'
 import {
   getRejectedAssigneeNationalIds,
   getRejectedAssigneeNationalIdsFromAnswers,
+  normalizeNationalId,
 } from './assigneeRejectionUtils'
 
 export {
@@ -105,26 +106,30 @@ const assigneeHasCustodyExternalDataKey = (
   )
 }
 
-/**
- * Gets household members over 18 (excluding applicant) who need to sign the application.
- * Contract tenants are always included; repeater rows add domicile/custody/extra people.
- * When the repeater has not been stored yet, falls back to the merged list from external data.
- */
-export const getHouseholdMembersOver18ExcludingApplicant = (
-  application: Application,
+const getHouseHoldMembersOver18ExcludingApplicantFromAnswersAndExternalData = (
+  answers: FormValue,
+  externalData: ExternalData,
 ): Array<{ nationalId: string; name: string }> => {
-  const applicantNationalId = application.applicant
   const tableRows = getValueViaPath<
     Array<{
       isRemoved?: boolean
       nationalIdWithName?: { nationalId?: string; name?: string }
     }>
-  >(application.answers, 'householdMembersTableRepeater')
+  >(answers, 'householdMembersTableRepeater')
+  const applicantNationalId =
+    getValueViaPath<string>(
+      externalData,
+      'nationalRegistry.data.nationalId',
+    )?.trim() ?? ''
 
   let allMembers: Array<{ nationalId: string; name: string }> = []
 
   if (Array.isArray(tableRows)) {
-    const contractTenants = getRentalAgreementTenantsFlat(application)
+    const contractTenants =
+      getRentalAgreementTenantsFlatFromAnswersAndExternalData(
+        answers,
+        externalData,
+      )
     const tenantKeySet = new Set(
       contractTenants
         .map((t) => comparableNationalId(t.nationalId))
@@ -143,7 +148,10 @@ export const getHouseholdMembersOver18ExcludingApplicant = (
       allMembers.push({ nationalId: natId, name })
     }
   } else {
-    allMembers = getHouseholdMembersForTable(application)
+    allMembers = getHouseholdMembersForTableFromAnswersAndExternalData(
+      answers,
+      externalData,
+    )
       .filter((m) => m.nationalId)
       .map((m) => ({ nationalId: m.nationalId, name: m.name ?? '' }))
   }
@@ -159,6 +167,55 @@ export const getHouseholdMembersOver18ExcludingApplicant = (
       return false
     }
   })
+}
+
+/**
+ * Gets household members over 18 (excluding applicant) who need to sign the application.
+ * Contract tenants are always included; repeater rows add domicile/custody/extra people.
+ * When the repeater has not been stored yet, falls back to the merged list from external data.
+ */
+export const getHouseholdMembersOver18ExcludingApplicant = (
+  application: Application,
+): Array<{ nationalId: string; name: string }> => {
+  return getHouseHoldMembersOver18ExcludingApplicantFromAnswersAndExternalData(
+    application.answers,
+    application.externalData,
+  )
+}
+
+/**
+ * Assignees who approved household membership (`approveBeingAHousholdMemberRadio` = yes).
+ * Merges `rejectedAssignees` with per-assignee answers so rejections survive re-approval prep.
+ */
+export const getApprovedAssigneeNationalIdsFromAnswers = (
+  answers: FormValue,
+): string[] => {
+  const fromRadio: string[] = []
+  const record = answers as Record<string, unknown>
+  for (const topKey of Object.keys(record)) {
+    if (!kennitala.isValid(topKey)) continue
+    const bucket = record[topKey]
+    if (!bucket || typeof bucket !== 'object') continue
+    const radio = (bucket as Record<string, unknown>)[
+      'approveBeingAHousholdMemberRadio'
+    ]
+    if (radio === YES) {
+      fromRadio.push(kennitala.sanitize(topKey))
+    }
+  }
+  return fromRadio.map((id) => normalizeNationalId(id))
+}
+
+export const hasApprovingAssignees = (
+  answers: FormValue,
+  externalData: ExternalData,
+): boolean => {
+  const assignees = getApprovedAssigneeNationalIdsFromAnswers(answers)
+  const applicant = getValueViaPath<string>(
+    externalData,
+    'nationalRegistry.data.nationalId',
+  )
+  return assignees.some((id) => id !== applicant)
 }
 
 /**
@@ -197,17 +254,23 @@ export const hasAssigneeCompletedPrereq = (
 const normalizeNationalIdList = (ids: string[]): string[] =>
   ids.map((id) => (kennitala.isValid(id) ? kennitala.sanitize(id) : id))
 
+export const getCompletedAssigneeNationalIdSetFromAnswers = (
+  answers: FormValue,
+): Set<string> => {
+  const signed = normalizeNationalIdList(
+    getValueViaPath<string[]>(answers, 'signedAssignees') ?? [],
+  )
+  const rejected = getRejectedAssigneeNationalIdsFromAnswers(answers)
+  return new Set([...signed, ...rejected].map((id) => comparableNationalId(id)))
+}
+
 /**
  * National IDs of assignees who finished approval (signed or rejected household membership).
  */
 export const getCompletedAssigneeNationalIdSet = (
   application: Application,
 ): Set<string> => {
-  const signed = normalizeNationalIdList(
-    getValueViaPath<string[]>(application.answers, 'signedAssignees') ?? [],
-  )
-  const rejected = getRejectedAssigneeNationalIds(application)
-  return new Set([...signed, ...rejected].map((id) => comparableNationalId(id)))
+  return getCompletedAssigneeNationalIdSetFromAnswers(application.answers)
 }
 
 /**
@@ -432,18 +495,41 @@ export const getSignedApprovalNames = (application: Application): string[] => {
   return applicantName ? [applicantName, ...signedNames] : signedNames
 }
 
+export const getUnsignedApprovalNamesFromAnswersAndExternalData = (
+  answers: FormValue,
+  externalData: ExternalData,
+): string[] => {
+  const assigneeMembers =
+    getHouseHoldMembersOver18ExcludingApplicantFromAnswersAndExternalData(
+      answers,
+      externalData,
+    )
+  const completed = getCompletedAssigneeNationalIdSetFromAnswers(answers)
+  return assigneeMembers
+    .filter((m) => !completed.has(comparableNationalId(m.nationalId)))
+    .map((m) => m.name || m.nationalId)
+}
+
+export const hasUnsignedApprovalNames = (
+  answers: FormValue,
+  externalData: ExternalData,
+): boolean => {
+  return (
+    getUnsignedApprovalNamesFromAnswersAndExternalData(answers, externalData)
+      .length > 0
+  )
+}
+
 /**
  * Gets names of assignees who have yet to approve.
  */
 export const getUnsignedApprovalNames = (
   application: Application,
 ): string[] => {
-  const assigneeMembers =
-    getHouseholdMembersOver18ExcludingApplicant(application)
-  const completed = getCompletedAssigneeNationalIdSet(application)
-  return assigneeMembers
-    .filter((m) => !completed.has(comparableNationalId(m.nationalId)))
-    .map((m) => m.name || m.nationalId)
+  return getUnsignedApprovalNamesFromAnswersAndExternalData(
+    application.answers,
+    application.externalData,
+  )
 }
 
 const assigneeNameFromNationalId = (
