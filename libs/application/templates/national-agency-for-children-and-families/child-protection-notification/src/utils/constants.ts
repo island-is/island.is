@@ -37,3 +37,19 @@ export enum NoNationalIdReason {
   TRAVELER = 'traveler',
   BORDER_RECEPTION = 'borderReception',
 }
+
+export const DO_NOT_KNOW = 'doNotKnow'
+export const NOT_APPLICABLE = 'notApplicable'
+
+export const SCHOOL_TYPES = ['kindergarten', 'elementarySchool', 'highSchool']
+
+export enum LanguageEnvironmentOptions {
+  ONLY_ICELANDIC = 'onlyIcelandic',
+  ICELANDIC_AND_OTHER = 'icelandicAndOther',
+  ONLY_OTHER = 'onlyOther',
+}
+
+export const SHOW_LANGUAGE_SECTION_TYPES = [
+  LanguageEnvironmentOptions.ICELANDIC_AND_OTHER,
+  LanguageEnvironmentOptions.ONLY_OTHER,
+]

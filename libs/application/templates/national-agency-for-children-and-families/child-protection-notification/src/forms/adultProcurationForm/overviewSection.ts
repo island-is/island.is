@@ -8,6 +8,7 @@ import { DefaultEvents } from '@island.is/application/types'
 
 import {
   childMessages,
+  memmMessages,
   overviewMessages,
   parentsMessages,
   prerequisitesMessages,
@@ -22,6 +23,10 @@ import {
 import {
   getChildManualItems,
   getChildWithNationalIdItems,
+  getMemmCultureItems,
+  getMemmEducationItems,
+  getMemmReceptionItems,
+  getMemmWellbeingItems,
   getParent1Items,
   getParent2Items,
   getParentsPreItems,
@@ -98,6 +103,38 @@ export const overviewSection = buildSection({
           backId: 'parents',
           items: getParent2Items,
           hideIfEmpty: true,
+        }),
+        buildOverviewField({
+          id: 'overview.memmEducation',
+          title: memmMessages.education.subSectionTitle,
+          backId: 'memm.education',
+          items: getMemmEducationItems,
+          hideIfEmpty: true,
+          condition: isKnowsNationalId,
+        }),
+        buildOverviewField({
+          id: 'overview.memmReception',
+          title: memmMessages.reception.subSectionTitle,
+          backId: 'memm.reception',
+          items: getMemmReceptionItems,
+          hideIfEmpty: true,
+          condition: isKnowsNationalId,
+        }),
+        buildOverviewField({
+          id: 'overview.memmCulture',
+          title: memmMessages.culture.subSectionTitle,
+          backId: 'memm.culture',
+          items: getMemmCultureItems,
+          hideIfEmpty: true,
+          condition: isKnowsNationalId,
+        }),
+        buildOverviewField({
+          id: 'overview.memmWellbeing',
+          title: memmMessages.wellbeing.subSectionTitle,
+          backId: 'memm.wellbeing',
+          items: getMemmWellbeingItems,
+          hideIfEmpty: true,
+          condition: isKnowsNationalId,
         }),
         buildOverviewField({
           id: 'overview.reasonDescription',
