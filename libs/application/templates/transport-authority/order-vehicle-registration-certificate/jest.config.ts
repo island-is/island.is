@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName:
     'application-templates-transport-authority-order-vehicle-registration-certificate',

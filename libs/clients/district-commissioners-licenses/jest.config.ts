@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'clients-district-commissioners-licenses',
   preset: '../../../jest.preset.js',

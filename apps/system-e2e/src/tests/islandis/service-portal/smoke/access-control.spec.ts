@@ -97,7 +97,7 @@ test.describe('Service portal, in access control', () => {
     await test.step('Create delegation', async () => {
       // Act
       await granterPage.locator('role=button[name="Skrá nýtt umboð"]').click()
-      // eslint-disable-next-line local-rules/disallow-kennitalas
+       
       await granterPage
         .getByRole('textbox', { name: 'Kennitala' })
         .fill('010130-2989')

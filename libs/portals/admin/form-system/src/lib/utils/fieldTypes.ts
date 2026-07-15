@@ -1,7 +1,7 @@
 import { FieldTypesEnum } from '@island.is/form-system/enums'
 import { Option } from '@island.is/island-ui/core'
 
-/* eslint-disable @typescript-eslint/naming-convention */
+ 
 enum FieldTypes {
   BANK_ACCOUNT = 'Bankareikningsnúmer',
   DATE_PICKER = 'Dagsetning',

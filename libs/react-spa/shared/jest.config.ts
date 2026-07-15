@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'react-spa-shared',
   preset: './jest.preset.js',

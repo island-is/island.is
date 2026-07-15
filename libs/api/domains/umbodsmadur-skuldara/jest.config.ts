@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'api-domains-umbodsmadur-skuldara',
   preset: '../../../../jest.preset.js',

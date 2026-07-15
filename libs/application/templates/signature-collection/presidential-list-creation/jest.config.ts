@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'application-templates-presidential-list-creation',
   preset: './jest.preset.js',

@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'api-domains-signature-collection',
   preset: '../../../../jest.preset.js',

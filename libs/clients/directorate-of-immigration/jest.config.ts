@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'clients-directorate-of-immigration',
   preset: '../../../jest.preset.js',

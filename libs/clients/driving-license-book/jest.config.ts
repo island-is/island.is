@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'clients-driving-license-book',
   preset: './jest.preset.js',

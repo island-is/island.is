@@ -1,11 +1,12 @@
-import { FlatCompat } from '@eslint/eslintrc'
-import { dirname } from 'path'
-import { fileURLToPath } from 'url'
-import js from '@eslint/js'
-import baseConfig from '../../../eslint.config.mjs'
-import nx from '@nx/eslint-plugin'
 import eslintPluginJsxA11y from 'eslint-plugin-jsx-a11y'
 import eslintPluginSimpleImportSort from 'eslint-plugin-simple-import-sort'
+import { dirname } from 'path'
+import { fileURLToPath } from 'url'
+import { FlatCompat } from '@eslint/eslintrc'
+import js from '@eslint/js'
+import nx from '@nx/eslint-plugin'
+
+import baseConfig from '../../../eslint.config.mjs'
 
 const compat = new FlatCompat({
   baseDirectory: dirname(fileURLToPath(import.meta.url)),
@@ -23,6 +24,7 @@ export default [
     },
   },
   {
+    files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
     rules: {
       eqeqeq: ['error', 'always'],
       'no-restricted-syntax': [

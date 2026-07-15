@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'user-monitoring',
   preset: './jest.preset.js',

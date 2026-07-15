@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'clients-mms-grade',
   preset: '../../../../jest.preset.js',

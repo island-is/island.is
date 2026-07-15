@@ -1,5 +1,5 @@
 /* tslint:disable */
-/* eslint-disable */
+ 
 /**
  * Notification Service
  * Creates and stores notifications AND sends as mobile push notifications and emails

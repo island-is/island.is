@@ -237,7 +237,7 @@ const useMakeDraftingState = (inputs: StateInputs) => {
        * Only implemented for action-interface compatilility with
        * impact appendix editing
        */
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+       
       revokeAppendix: (idx: number, revoked: boolean) => undefined,
 
       moveAppendixUp: (idx: number) => {

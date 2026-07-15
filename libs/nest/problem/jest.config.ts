@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'nest-problem',
   preset: './jest.preset.js',

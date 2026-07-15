@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'portals-admin-payments',
   preset: './jest.preset.js',

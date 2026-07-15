@@ -14,8 +14,7 @@ import {
 } from '@island.is/icelandic-names-registry-types'
 import { Optional } from 'sequelize/types'
 
-interface IcelandicNameCreationAttributes
-  extends Optional<TIcelandicName, 'id' | 'created' | 'modified'> {}
+type IcelandicNameCreationAttributes = Optional<TIcelandicName, 'id' | 'created' | 'modified'>
 
 @Table({
   tableName: 'icelandic_names',

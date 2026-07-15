@@ -1,5 +1,6 @@
-import baseConfig from '../../../eslint.config.mjs'
 import eslintPluginSimpleImportSort from 'eslint-plugin-simple-import-sort'
+
+import baseConfig from '../../../eslint.config.mjs'
 
 export default [
   ...baseConfig,
@@ -37,7 +38,7 @@ export default [
     },
   },
   {
-    files: ['migrations/*.js'],
+    files: ['**/migrations/*.js'],
     rules: {
       eqeqeq: 'off',
     },

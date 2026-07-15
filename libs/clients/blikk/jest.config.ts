@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'clients-blikk',
   preset: '../../../jest.preset.js',

@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'clients-user-notification',
   preset: '../../../jest.preset.js',

@@ -131,7 +131,7 @@ describe('isExistsCohabitantOlderThan25', () => {
           status: 'success',
         },
         nationalRegistryCohabitants: {
-          // eslint-disable-next-line local-rules/disallow-kennitalas
+           
           data: [generatePerson(birthday)],
           date: new Date(),
           status: 'success',
@@ -157,7 +157,7 @@ describe('isExistsCohabitantOlderThan25', () => {
           status: 'success',
         },
         nationalRegistryCohabitants: {
-          // eslint-disable-next-line local-rules/disallow-kennitalas
+           
           data: [generatePerson(birthday)],
           date: new Date(),
           status: 'success',
@@ -185,7 +185,7 @@ describe('isExistsCohabitantBetween18and25', () => {
           status: 'success',
         },
         nationalRegistryCohabitants: {
-          // eslint-disable-next-line local-rules/disallow-kennitalas
+           
           data: [generatePerson(birthday)],
           date: new Date(),
           status: 'success',
@@ -211,7 +211,7 @@ describe('isExistsCohabitantBetween18and25', () => {
           status: 'success',
         },
         nationalRegistryCohabitants: {
-          // eslint-disable-next-line local-rules/disallow-kennitalas
+           
           data: [generatePerson(birthday)],
           date: new Date(),
           status: 'success',

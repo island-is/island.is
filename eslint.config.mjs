@@ -13,7 +13,7 @@ const compat = new FlatCompat({
 export default [
   ...compat.extends('plugin:storybook/recommended'),
   ...nx.configs['flat/base'],
-  { plugins: { 'eslint-plugin-local-rules': eslintPluginLocalRules } },
+  { plugins: { 'local-rules': eslintPluginLocalRules } },
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
     rules: {
@@ -262,11 +262,18 @@ export default [
   {
     files: ['**/*.ts', '**/*.tsx'],
     rules: {
-      '@typescript-eslint/no-extra-semi': 'off',
       '@typescript-eslint/explicit-member-accessibility': 'off',
+      // not enabled by the pre-flat-config preset chain; keep parity
+      '@typescript-eslint/no-unused-expressions': 'off',
       '@typescript-eslint/explicit-function-return-type': 'off',
-      '@typescript-eslint/no-parameter-properties': 'off',
-      '@typescript-eslint/ban-types': 'warn',
+      // ban-types was split up in typescript-eslint 8; keep the pieces at the
+      // same severity the old rule ran at
+      '@typescript-eslint/no-empty-object-type': [
+        'warn',
+        { allowInterfaces: 'with-single-extends' },
+      ],
+      '@typescript-eslint/no-unsafe-function-type': 'warn',
+      '@typescript-eslint/no-wrapper-object-types': 'warn',
       '@typescript-eslint/no-unused-vars': [
         'warn',
         {
@@ -342,12 +349,6 @@ export default [
           format: ['camelCase', 'PascalCase'],
         },
       ],
-      '@typescript-eslint/no-empty-interface': [
-        'error',
-        {
-          allowSingleExtends: true,
-        },
-      ],
       'no-extra-semi': 'off',
     },
   },
@@ -355,17 +356,35 @@ export default [
   {
     files: ['**/*.js', '**/*.jsx'],
     rules: {
-      '@typescript-eslint/no-extra-semi': 'error',
-      'no-extra-semi': 'off',
+      'no-extra-semi': 'error',
+      // not enabled by the pre-flat-config preset chain; keep parity
+      '@typescript-eslint/no-unused-expressions': 'off',
     },
   },
   {
-    files: ['schema.d.ts'],
+    files: ['**/schema.d.ts'],
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
     },
   },
   {
-    ignores: ['**/*.generated.ts', '**/.next/**', '**/next-env.d.ts'],
+    // config files import the root config across project boundaries by design
+    files: ['**/eslint.config.mjs'],
+    rules: {
+      '@nx/enforce-module-boundaries': 'off',
+    },
+  },
+  {
+    ignores: [
+      '**/*.generated.ts',
+      '**/.next/**',
+      '**/next-env.d.ts',
+      // vendored/generated artifacts the old per-project lint patterns excluded
+      '**/gen/fetch/**',
+      '**/public/tinymce/**',
+      '**/playwright-report/**',
+      // gitignored graphql-codegen output; absent on CI at lint time
+      '**/graphql/schema.tsx',
+    ],
   },
 ]

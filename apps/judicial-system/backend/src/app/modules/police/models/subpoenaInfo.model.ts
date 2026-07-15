@@ -2,15 +2,14 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { ServiceStatus } from '@island.is/judicial-system/types'
 
-interface SubpoenaUpdate
-  extends Pick<
+type SubpoenaUpdate = Pick<
     SubpoenaInfo,
     | 'serviceStatus'
     | 'comment'
     | 'servedBy'
     | 'defenderNationalId'
     | 'serviceDate'
-  > {}
+  >
 
 const subpoenaUpdateKeys: Array<keyof SubpoenaUpdate> = [
   'serviceStatus',

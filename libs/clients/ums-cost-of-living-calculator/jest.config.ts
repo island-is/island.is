@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'clients-ums-cost-of-living-calculator',
   preset: '../../../jest.preset.js',

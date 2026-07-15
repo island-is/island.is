@@ -89,5 +89,5 @@ const options = {
   session: { strategy: 'jwt' },
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+ 
 export default (req, res) => NextAuth(req, res, options)

@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'nest-aws',
   preset: './jest.preset.js',

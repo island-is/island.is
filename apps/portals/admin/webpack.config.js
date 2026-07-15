@@ -1,4 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+ 
 const nrwlConfig = require('./../../../libs/shared/webpack/nrwl-config')
 const { composePlugins, withNx } = require('@nx/webpack')
 const { withReact } = require('@nx/react')

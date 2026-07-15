@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'application-templates-login-service',
   preset: './jest.preset.js',

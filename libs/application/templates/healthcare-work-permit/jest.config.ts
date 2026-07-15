@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'application-templates-healthcare-work-permit',
   preset: '../../../../jest.preset.js',

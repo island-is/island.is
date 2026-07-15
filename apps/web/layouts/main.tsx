@@ -67,7 +67,7 @@ import * as styles from './main.css'
 
 const IS_MOCK =
   process.env.NODE_ENV !== 'production' && process.env.API_MOCKS === 'true'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+ 
 // @ts-expect-error make web strict
 const absoluteUrl = (req, setLocalhost) => {
   let protocol = 'https:'
@@ -112,10 +112,10 @@ export interface LayoutProps {
     en: string
   }
   footerVersion?: 'default' | 'organization'
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+   
   // @ts-expect-error make web strict
   respOrigin
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+   
   // @ts-expect-error make web strict
   megaMenuData
   customTopLoginButtonItem: LayoutComponentProps['customTopLoginButtonItem']
@@ -133,7 +133,7 @@ if (typeof window !== 'undefined') {
     })
   }
 }
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+ 
 // @ts-expect-error make web strict
 const Layout: Screen<LayoutProps> = ({
   showSearchInHeader = true,
@@ -193,7 +193,7 @@ const Layout: Screen<LayoutProps> = ({
 
   useEffect(() => {
     setAlertBanners(
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+       
       // @ts-expect-error make web strict
       [
         {
@@ -340,50 +340,50 @@ const Layout: Screen<LayoutProps> = ({
         />
         {alertBanners.map((banner) => (
           <AlertBanner
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+             
             // @ts-expect-error make web strict
             key={banner.bannerId}
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+             
             // @ts-expect-error make web strict
             title={banner.title}
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+             
             // @ts-expect-error make web strict
             description={banner.description}
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+             
             // @ts-expect-error make web strict
             link={{
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+               
               // @ts-expect-error make web strict
               ...(!!banner.link &&
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                 
                 // @ts-expect-error make web strict
                 !!banner.linkTitle && {
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                   
                   // @ts-expect-error make web strict
                   href: linkResolver(banner.link.type as LinkType, [
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                     
                     // @ts-expect-error make web strict
                     banner.link.slug,
                   ]).href,
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                   
                   // @ts-expect-error make web strict
                   title: banner.linkTitle,
                 }),
             }}
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+             
             // @ts-expect-error make web strict
             variant={banner.bannerVariant as AlertBannerVariants}
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+             
             // @ts-expect-error make web strict
             dismissable={banner.isDismissable}
             onDismiss={() => {
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+               
               // @ts-expect-error make web strict
               if (banner.dismissedForDays !== 0) {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                 
                 // @ts-expect-error make web strict
                 Cookies.set(banner.bannerId, 'hide', {
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                   
                   // @ts-expect-error make web strict
                   expires: banner.dismissedForDays,
                 })
@@ -400,7 +400,7 @@ const Layout: Screen<LayoutProps> = ({
         >
           {showHeader && (
             <ColorSchemeContext.Provider
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+               
               // @ts-expect-error make web strict
               value={{ colorScheme: headerColorScheme }}
             >
@@ -529,7 +529,7 @@ const Layout: Screen<LayoutProps> = ({
     </GlobalContextProvider>
   )
 }
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+ 
 // @ts-expect-error make web strict
 Layout.getProps = async ({ apolloClient, locale, req }) => {
   const lang = locale ?? 'is' // Defaulting to is when locale is undefined
@@ -568,7 +568,7 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
         })
         .then((res) => {
           // map data here to reduce data processing in component
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+           
           // @ts-expect-error make web strict
           return JSON.parse(res.data.getNamespace.fields)
         }),
@@ -591,7 +591,7 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
     ])
 
   const alertBannerId = `alert-${stringHash(JSON.stringify(alertBanner))}`
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+   
   // @ts-expect-error make web strict
   const [asideTopLinksData, asideBottomLinksData] = megaMenuData.menus
 
@@ -624,13 +624,13 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
     footerTagsMenu: [],
     footerMiddleMenu: [],
   }
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+   
   // @ts-expect-error make web strict
   const footerMenu = footerMenuData.menus.reduce((menus, menu, idx) => {
     if (IS_MOCK) {
       const key = Object.keys(menus)[idx]
       if (key) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+         
         // @ts-expect-error make web strict
         menus[key] = mapLinks(menu as Menu)
       }
@@ -640,31 +640,31 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
     switch (menu.id) {
       // Footer lower
       case '5c2EheJw1r0QQGb2VDOJHU':
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+         
         // @ts-expect-error make web strict
         menus.footerLowerMenu = mapLinks(menu as Menu)
         break
       // Footer middle
       case '5Hh1PJAmyy9T9PaQd4qMVv':
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+         
         // @ts-expect-error make web strict
         menus.footerMiddleMenu = mapLinks(menu as Menu)
         break
       // Footer tags
       case '3w5wgyaJo2ZLp74bdm0A0B':
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+         
         // @ts-expect-error make web strict
         menus.footerTagsMenu = mapLinks(menu as Menu)
         break
       // Footer upper info
       case 'NtmV8H8sIEiXe6xdEKXsV':
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+         
         // @ts-expect-error make web strict
         menus.footerUpperInfo = mapLinks(menu as Menu)
         break
       // Footer upper contact
       case '12W37tLOmkxKDfUrw0X0h7':
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+         
         // @ts-expect-error make web strict
         menus.footerUpperContact = mapLinks(menu as Menu)
         break

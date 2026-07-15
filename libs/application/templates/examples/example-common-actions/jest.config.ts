@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'example-common-actions',
   preset: '../../../../../jest.preset.js',

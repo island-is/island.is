@@ -28,7 +28,7 @@ export const setupOneScreenWatsonChatBot = (
   }
   sessionStorage.setItem(categoryGroup, categoryTitle)
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const preSendhandler = (event: WatsonPreSendEvent) => {
     event.data.context.skills['main skill'].user_defined[
       `category_${categoryTitle}`

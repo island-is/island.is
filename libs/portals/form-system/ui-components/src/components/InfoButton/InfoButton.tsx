@@ -73,7 +73,7 @@ export const InfoButton = () => {
     if (!isVisible) return
     updatePosition()
     requestAnimationFrame(() => updatePosition())
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [isVisible, width, height])
 
   useEffect(() => {

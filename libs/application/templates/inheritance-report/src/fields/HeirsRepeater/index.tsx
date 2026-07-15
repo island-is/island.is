@@ -352,7 +352,7 @@ export const HeirsRepeater: FC<
     if (!hasHeirWithNationalIdSameAsExecutor) {
       clearErrors(heirNationalIdSameAsExecutorValidation)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [
     fields,
     hasEstateMemberUnder18withoutRep,

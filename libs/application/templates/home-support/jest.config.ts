@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'application-templates-home-support',
   preset: '../../../../jest.preset.js',

@@ -10,7 +10,7 @@ describe('isHttpsUrl', () => {
 
   it.each([
     'http://blikk.tech/sca',
-    // eslint-disable-next-line no-script-url
+     
     'javascript:alert(1)',
     'data:text/html,evil',
     'ftp://example.com',

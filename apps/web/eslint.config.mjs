@@ -1,12 +1,14 @@
-import baseConfig from '../../eslint.config.mjs'
-import nx from '@nx/eslint-plugin'
 import eslintPluginSimpleImportSort from 'eslint-plugin-simple-import-sort'
+import nx from '@nx/eslint-plugin'
+
+import baseConfig from '../../eslint.config.mjs'
 
 export default [
   ...baseConfig,
   ...nx.configs['flat/react'],
   { plugins: { 'simple-import-sort': eslintPluginSimpleImportSort } },
   {
+    files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
     rules: {
       '@nx/enforce-module-boundaries': [
         'error',

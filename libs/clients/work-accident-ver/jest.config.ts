@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'clients-work-accident-ver',
   preset: '../../../jest.preset.js',

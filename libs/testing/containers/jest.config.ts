@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'testing-containers',
   preset: './jest.preset.js',

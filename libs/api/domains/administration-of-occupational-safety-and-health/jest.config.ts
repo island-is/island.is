@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'api-domains-administration-of-occupational-safety-and-health',
   preset: '../../../../jest.preset.js',

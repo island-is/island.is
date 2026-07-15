@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'portals-my-pages-education-career',
   preset: './jest.preset.js',

@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'clients-university-application-iceland-university-of-the-arts',
   preset: '../../../../jest.preset.js',

@@ -1,4 +1,4 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
+ 
 import capitalize from 'lodash/capitalize'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
@@ -71,7 +71,7 @@ interface NewsListProps {
 
 const spacing: ResponsiveSpace = [3, 3, 4]
 const spacingMini: ResponsiveSpace = [0, 0, 4]
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+ 
 // @ts-expect-error make web strict
 const NewsListNew: Screen<NewsListProps> = ({
   newsItem,
@@ -87,7 +87,7 @@ const NewsListNew: Screen<NewsListProps> = ({
   const Router = useRouter()
   const { linkResolver } = useLinkResolver()
   const { format, getMonthByIndex } = useDateUtils()
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+   
   // @ts-expect-error make web strict
   const n = useNamespace(namespace)
   useContentfulId(newsItem?.id)
@@ -150,7 +150,7 @@ const NewsListNew: Screen<NewsListProps> = ({
       href: '/',
     },
   ]
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+   
   // @ts-expect-error make web strict
   const breadCrumbTags: BreadCrumbItem | BreadCrumbItem[] = newsItem
     ?.genericTags?.length
@@ -197,7 +197,7 @@ const NewsListNew: Screen<NewsListProps> = ({
         baseId="newsNav"
         title={navTitle}
         items={navItems}
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+         
         // @ts-expect-error make web strict
         renderLink={(link, { href }) => {
           return (
@@ -309,7 +309,7 @@ const NewsListNew: Screen<NewsListProps> = ({
             baseId="newsNav"
             title={navTitleMobile}
             items={navItems}
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+             
             // @ts-expect-error make web strict
             renderLink={(link, { href }) => {
               return (
@@ -328,7 +328,7 @@ const NewsListNew: Screen<NewsListProps> = ({
         )}
         {!newsItem && (
           <Webreader
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+             
             // @ts-expect-error make web strict
             readId={null}
             readClass="rs_read"
@@ -413,7 +413,7 @@ const createDatesMap = (datesList: string[]) => {
   )
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+ 
 // @ts-expect-error make web strict
 NewsListNew.getProps = async ({ apolloClient, locale, query }) => {
   const slug = query.slug as string
@@ -478,13 +478,13 @@ NewsListNew.getProps = async ({ apolloClient, locale, query }) => {
       }),
   ])
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+   
   // @ts-expect-error make web strict
   const newsItem = getSingleNewsResult?.data?.getSingleNews ?? null
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+   
   // @ts-expect-error make web strict
   const newsList = getNewsResults?.data?.getNews?.items ?? []
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+   
   // @ts-expect-error make web strict
   const total = getNewsResults?.data?.getNews?.total ?? 0
 
@@ -503,7 +503,7 @@ NewsListNew.getProps = async ({ apolloClient, locale, query }) => {
     tag?.slug !== FRONTPAGE_NEWS_TAG_SLUG
 
   return {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+     
     // @ts-expect-error make web strict
     newsList: newsList.map((item) => ({
       ...item,

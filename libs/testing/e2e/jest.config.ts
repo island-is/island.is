@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'libs/testing/e2e',
   preset: '../../../jest.preset.js',

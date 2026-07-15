@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'regulations-admin-backend',
   preset: '../../../jest.preset.js',

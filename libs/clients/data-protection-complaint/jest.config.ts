@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'clients-data-protection-complaint',
   preset: './jest.preset.js',

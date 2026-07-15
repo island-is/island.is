@@ -69,7 +69,7 @@ export const validateState = (state: DraftingState) => {
     validateFieldValue(appendix.title)
     validateFieldValue(appendix.text)
   })
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   Object.entries(draft.impacts).forEach(([key, impactsList]) => {
     impactsList.forEach((impact) => {
       validateImpact(impact, state)
@@ -93,7 +93,7 @@ export const isDraftErrorFree = (state: DraftingState): boolean => {
 
   let validImpacts = true
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   Object.entries(draft.impacts).forEach(([key, impactsList]) => {
     impactsList.forEach((impact) => {
       // skip checking 'repeal' impacts
@@ -211,7 +211,7 @@ const updateImpacts = (
     draft.mentioned = newMentions
 
     if (!isAmending) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+       
       Object.entries(impacts).forEach(([key, impactsList]) => {
         impactsList.forEach((impact) => {
           if (impact.name === 'self') return

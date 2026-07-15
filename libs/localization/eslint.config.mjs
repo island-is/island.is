@@ -23,7 +23,7 @@ export default [
     rules: {},
   },
   {
-    files: ['scripts/*'],
+    files: ['**/scripts/*'],
     rules: {
       '@nx/enforce-module-boundaries': 'off',
     },

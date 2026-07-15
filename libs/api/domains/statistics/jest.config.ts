@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'api-domains-statistics',
   preset: '../../../../jest.preset.js',

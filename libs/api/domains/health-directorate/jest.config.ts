@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'api-domains-health-directorate',
   preset: '../../../../jest.preset.js',

@@ -81,7 +81,7 @@ const mockConfig = {
 }
 
 let server: request.SuperTest<request.Test>
-// eslint-disable-next-line local-rules/disallow-kennitalas
+ 
 const nationalId = '1234564321'
 const mockAuthGuard = new MockAuthGuard({
   nationalId,

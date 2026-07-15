@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'clients-finance-v2',
   preset: '../../../jest.preset.js',

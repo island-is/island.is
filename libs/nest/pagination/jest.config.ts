@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'nest-pagination',
   preset: './jest.preset.js',

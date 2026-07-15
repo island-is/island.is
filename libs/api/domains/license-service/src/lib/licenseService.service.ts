@@ -13,7 +13,7 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-// eslint-disable-next-line @typescript-eslint/naming-convention
+ 
 import ShortUniqueId from 'short-unique-id'
 import { GenericUserLicense } from './dto/GenericUserLicense.dto'
 import {

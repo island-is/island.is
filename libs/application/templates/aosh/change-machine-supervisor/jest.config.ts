@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'application-templates-aosh-change-machine-supervisor',
   preset: '../../../../../jest.preset.js',

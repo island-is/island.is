@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'clients-official-journal-of-iceland',
   preset: '../../../../jest.preset.js',

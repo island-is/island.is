@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'api/domains/form-system',
   preset: '../../../../jest.preset.js',

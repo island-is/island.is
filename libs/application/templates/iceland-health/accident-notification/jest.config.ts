@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'application-templates-accident-notification',
   preset: '../../../../../jest.preset.js',

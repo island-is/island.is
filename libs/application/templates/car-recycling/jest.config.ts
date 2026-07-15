@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'car-recycling',
   preset: '../../../../jest.preset.js',
