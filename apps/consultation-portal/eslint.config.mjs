@@ -1,20 +1,12 @@
-import { FlatCompat } from '@eslint/eslintrc'
-import { dirname } from 'path'
-import { fileURLToPath } from 'url'
-import js from '@eslint/js'
+import nextPlugin from '@next/eslint-plugin-next'
 import baseConfig from '../../eslint.config.mjs'
 import nx from '@nx/eslint-plugin'
 import globals from 'globals'
 
-const compat = new FlatCompat({
-  baseDirectory: dirname(fileURLToPath(import.meta.url)),
-  recommendedConfig: js.configs.recommended,
-})
-
 export default [
   ...baseConfig,
   ...nx.configs['flat/react-typescript'],
-  ...compat.extends('plugin:@next/next/core-web-vitals-legacy'),
+  nextPlugin.configs['core-web-vitals'],
   { languageOptions: { globals: { ...globals.jest } } },
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],

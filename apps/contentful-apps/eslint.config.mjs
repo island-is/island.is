@@ -2,6 +2,7 @@ import { FlatCompat } from '@eslint/eslintrc'
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 import js from '@eslint/js'
+import nextPlugin from '@next/eslint-plugin-next'
 import baseConfig from '../../eslint.config.mjs'
 import nx from '@nx/eslint-plugin'
 import globals from 'globals'
@@ -14,7 +15,7 @@ const compat = new FlatCompat({
 export default [
   ...baseConfig,
   ...nx.configs['flat/react-typescript'],
-  ...compat.extends('plugin:@next/next/recommended-legacy'),
+  nextPlugin.configs.recommended,
   { languageOptions: { globals: { ...globals.jest } } },
   ...compat
     .config({
