@@ -61,7 +61,8 @@ export const messages = defineMessages({
   recalculate: {
     id: 'web.rsk.calculator:recalculate',
     defaultMessage: 'Endurreikna',
-    description: 'Texti á takka til að endurreikna eftir að niðurstöður birtast',
+    description:
+      'Texti á takka til að endurreikna eftir að niðurstöður birtast',
   },
   results: {
     id: 'web.rsk.calculator:results',
@@ -76,7 +77,8 @@ export const messages = defineMessages({
   groupWithholdingAndPersonalCreditTitle: {
     id: 'web.rsk.calculator:groupWithholdingAndPersonalCreditTitle',
     defaultMessage: 'Staðgreiðsla og persónuafsláttur',
-    description: 'Titill á niðurstöðuflokki fyrir staðgreiðslu og persónuafslátt',
+    description:
+      'Titill á niðurstöðuflokki fyrir staðgreiðslu og persónuafslátt',
   },
   groupEmployerCostsTitle: {
     id: 'web.rsk.calculator:groupEmployerCostsTitle',

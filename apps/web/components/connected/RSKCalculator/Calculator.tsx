@@ -240,9 +240,7 @@ const CalculatorFieldInput = ({
       type="number"
       currency={field.unit === 'ISK'}
       suffix={field.unit && field.unit !== 'ISK' ? ` ${field.unit}` : undefined}
-      placeholder={
-        field.unit === 'ISK' ? 'krónur' : field.unit ?? undefined
-      }
+      placeholder={field.unit === 'ISK' ? 'krónur' : field.unit ?? undefined}
       required={field.required}
       min={field.min ?? undefined}
       max={field.max ?? undefined}
