@@ -191,6 +191,42 @@ const parentsSchema = z
     }
   })
 
+const memmSchema = z.object({
+  education: z
+    .object({
+      type: z.string().optional(),
+      schoolName: z.string().optional(),
+      caregiverName: z.string().optional(),
+    })
+    .optional(),
+  reception: z
+    .object({
+      seekingAsylum: z.string().optional(),
+      refugeeStatus: z.string().optional(),
+    })
+    .optional(),
+  culture: z
+    .object({
+      languageUsage: z.string().optional(),
+      languages: z.array(z.string()).optional(),
+      preferredLanguage: z.string().optional(),
+      needsInterpreter: z.array(z.string()).nullish(),
+    })
+    .optional(),
+  wellbeing: z
+    .object({
+      integratedService: z.string().optional(),
+      wellbeingContact: z.string().optional(),
+      wellbeingContactEmail: z.string().email().optional().or(z.literal('')),
+      wellbeingContactName: z.string().optional(),
+      wellbeingManager: z.string().optional(),
+      wellbeingManagerEmail: z.string().email().optional().or(z.literal('')),
+      wellbeingManagerName: z.string().optional(),
+      disability: z.string().optional(),
+      disabilityService: z.string().optional(),
+    })
+    .optional(),
+})
 const reasonForNotificationSchema = z
   .record(z.unknown())
   .optional()
@@ -320,6 +356,7 @@ export const dataSchema = z.object({
   serviceProvider: serviceProviderSchema,
   child: childSchema.optional(),
   parents: parentsSchema.optional(),
+  memm: memmSchema.optional(),
   reasonForNotification: reasonForNotificationSchema,
   reasonNotificationHistory: reasonNotificationHistorySchema,
   protectiveFactors: protectiveFactorsSchema,

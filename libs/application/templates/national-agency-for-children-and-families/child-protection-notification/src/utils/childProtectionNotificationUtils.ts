@@ -1,11 +1,28 @@
+import { NO, YES } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
-import { reasonForNotificationMessages } from '../lib/messages'
+import {
+  memmMessages,
+  reasonForNotificationMessages,
+  sharedMessages,
+} from '../lib/messages'
+import { DO_NOT_KNOW, NOT_APPLICABLE } from './constants'
 import {
   isKnowsNationalId,
   isReasonForNotificationSubCategorySelected,
   isUnborn,
 } from './conditionUtils'
 import { getApplicationAnswers } from './getApplicationAnswers'
+
+export const getYesNoDoNotKnowOptions = () => [
+  { value: YES, label: sharedMessages.radioYes },
+  { value: NO, label: sharedMessages.radioNo },
+  { value: DO_NOT_KNOW, label: sharedMessages.radioDoNotKnow },
+]
+
+export const getYesNoDoNotKnowNotApplicableOptions = () => [
+  ...getYesNoDoNotKnowOptions(),
+  { value: NOT_APPLICABLE, label: memmMessages.reception.optionNotApplicable },
+]
 
 export const getSelectedReasonForNotificationCategoryCodes = (
   answers: FormValue,

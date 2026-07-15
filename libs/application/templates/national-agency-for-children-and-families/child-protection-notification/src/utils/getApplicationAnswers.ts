@@ -1,6 +1,6 @@
 import { getValueViaPath, YesOrNo } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { KnowsNationalId } from './constants'
+import { KnowsNationalId, LanguageEnvironmentOptions } from './constants'
 import { Parent, ReasonForNotificationAnswers } from './types'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
@@ -221,6 +221,94 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     Record<string, Record<string, string[]>>
   >(answers, 'protectiveFactors')
 
+  const memmEducationType = getValueViaPath<string>(
+    answers,
+    'memm.education.type',
+  )
+
+  const memmEducationSchoolName = getValueViaPath<string>(
+    answers,
+    'memm.education.schoolName',
+  )
+
+  const memmEducationCaregiverName = getValueViaPath<string>(
+    answers,
+    'memm.education.caregiverName',
+  )
+
+  const memmReceptionSeekingAsylum = getValueViaPath<string>(
+    answers,
+    'memm.reception.seekingAsylum',
+  )
+
+  const memmReceptionRefugeeStatus = getValueViaPath<string>(
+    answers,
+    'memm.reception.refugeeStatus',
+  )
+
+  const memmCultureLanguageUsage = getValueViaPath<LanguageEnvironmentOptions>(
+    answers,
+    'memm.culture.languageUsage',
+  )
+
+  const memmCultureLanguages = getValueViaPath<string[]>(
+    answers,
+    'memm.culture.languages',
+  )
+
+  const memmCulturePreferredLanguage = getValueViaPath<string>(
+    answers,
+    'memm.culture.preferredLanguage',
+  )
+
+  const memmCultureNeedsInterpreter =
+    getValueViaPath<string[]>(answers, 'memm.culture.needsInterpreter') ?? []
+
+  const memmWellbeingIntegratedService = getValueViaPath<string>(
+    answers,
+    'memm.wellbeing.integratedService',
+  )
+
+  const memmWellbeingWellbeingContact = getValueViaPath<string>(
+    answers,
+    'memm.wellbeing.wellbeingContact',
+  )
+
+  const memmWellbeingWellbeingContactEmail = getValueViaPath<string>(
+    answers,
+    'memm.wellbeing.wellbeingContactEmail',
+  )
+
+  const memmWellbeingWellbeingContactName = getValueViaPath<string>(
+    answers,
+    'memm.wellbeing.wellbeingContactName',
+  )
+
+  const memmWellbeingWellbeingManager = getValueViaPath<string>(
+    answers,
+    'memm.wellbeing.wellbeingManager',
+  )
+
+  const memmWellbeingWellbeingManagerEmail = getValueViaPath<string>(
+    answers,
+    'memm.wellbeing.wellbeingManagerEmail',
+  )
+
+  const memmWellbeingWellbeingManagerName = getValueViaPath<string>(
+    answers,
+    'memm.wellbeing.wellbeingManagerName',
+  )
+
+  const memmWellbeingDisability = getValueViaPath<string>(
+    answers,
+    'memm.wellbeing.disability',
+  )
+
+  const memmWellbeingDisabilityService = getValueViaPath<string>(
+    answers,
+    'memm.wellbeing.disabilityService',
+  )
+
   return {
     serviceProviderService,
     serviceProviderServiceType,
@@ -267,5 +355,23 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     areParentsInformed,
     notificationHistoryBiggestConcern,
     protectiveFactors,
+    memmEducationType,
+    memmEducationSchoolName,
+    memmEducationCaregiverName,
+    memmReceptionSeekingAsylum,
+    memmReceptionRefugeeStatus,
+    memmCultureLanguageUsage,
+    memmCultureLanguages,
+    memmCulturePreferredLanguage,
+    memmCultureNeedsInterpreter,
+    memmWellbeingIntegratedService,
+    memmWellbeingWellbeingContact,
+    memmWellbeingWellbeingContactEmail,
+    memmWellbeingWellbeingContactName,
+    memmWellbeingWellbeingManager,
+    memmWellbeingWellbeingManagerEmail,
+    memmWellbeingWellbeingManagerName,
+    memmWellbeingDisability,
+    memmWellbeingDisabilityService,
   }
 }
