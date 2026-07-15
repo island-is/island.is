@@ -725,8 +725,8 @@ export class HousingBenefitsService extends BaseTemplateApiService {
       this.logger.error('Failed to submit housing benefits application:', e)
       throw new TemplateApiError(
         {
-          title: 'Failed to submit housing benefits application',
-          summary: e instanceof Error ? e.message : String(e),
+          title: 'Villa kom upp',
+          summary: e.body?.message ? e.body.message : String(e),
         },
         500,
       )
