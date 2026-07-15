@@ -1,6 +1,10 @@
 import { NO, YES } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
-import { memmMessages, reasonForNotificationMessages, sharedMessages } from '../lib/messages'
+import {
+  memmMessages,
+  reasonForNotificationMessages,
+  sharedMessages,
+} from '../lib/messages'
 import { DO_NOT_KNOW, NOT_APPLICABLE } from './constants'
 import {
   isKnowsNationalId,
