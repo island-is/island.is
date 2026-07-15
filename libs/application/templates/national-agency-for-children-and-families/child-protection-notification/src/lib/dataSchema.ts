@@ -216,12 +216,12 @@ const memmSchema = z.object({
   wellbeing: z
     .object({
       integratedService: z.string().optional(),
-      welfareContact: z.string().optional(),
-      welfareContactEmail: z.string().email().optional().or(z.literal('')),
-      welfareContactName: z.string().optional(),
-      welfareManager: z.string().optional(),
-      welfareManagerEmail: z.string().email().optional().or(z.literal('')),
-      welfareManagerName: z.string().optional(),
+      wellbeingContact: z.string().optional(),
+      wellbeingContactEmail: z.string().email().optional().or(z.literal('')),
+      wellbeingContactName: z.string().optional(),
+      wellbeingManager: z.string().optional(),
+      wellbeingManagerEmail: z.string().email().optional().or(z.literal('')),
+      wellbeingManagerName: z.string().optional(),
       disability: z.string().optional(),
       disabilityService: z.string().optional(),
     })

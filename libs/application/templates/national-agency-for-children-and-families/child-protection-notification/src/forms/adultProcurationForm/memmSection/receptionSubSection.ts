@@ -1,21 +1,13 @@
 import {
-  NO,
-  YES,
   buildAlertMessageField,
   buildDescriptionField,
   buildMultiField,
   buildRadioField,
   buildSubSection,
 } from '@island.is/application/core'
-import { memmMessages, sharedMessages } from '../../../lib/messages'
+import { memmMessages } from '../../../lib/messages'
+import { getYesNoDoNotKnowNotApplicableOptions } from '../../../utils/childProtectionNotificationUtils'
 import { getApplicationAnswers } from '../../../utils/getApplicationAnswers'
-
-const MOTTAKA_OPTIONS = [
-  { value: YES, label: sharedMessages.radioYes },
-  { value: NO, label: sharedMessages.radioNo },
-  { value: 'doNotKnow', label: memmMessages.reception.optionDoNotKnow },
-  { value: 'notApplicable', label: memmMessages.reception.optionNotApplicable },
-]
 
 export const receptionSubSection = buildSubSection({
   id: 'memmReceptionSubSection',
@@ -30,8 +22,8 @@ export const receptionSubSection = buildSubSection({
           id: 'memm.reception.heading',
           title: memmMessages.reception.subSectionTitle,
           description: memmMessages.reception.description,
-          titleVariant: 'h4',
-          space: 2,
+          titleVariant: 'h3',
+          space: 0,
         }),
         buildDescriptionField({
           id: 'memm.reception.seekingAsylumLabel',
@@ -44,7 +36,8 @@ export const receptionSubSection = buildSubSection({
           id: 'memm.reception.seekingAsylum',
           width: 'half',
           doesNotRequireAnswer: true,
-          options: MOTTAKA_OPTIONS,
+          space: 0,
+          options: getYesNoDoNotKnowNotApplicableOptions(),
         }),
         buildDescriptionField({
           id: 'memm.reception.refugeeStatusLabel',
@@ -57,7 +50,8 @@ export const receptionSubSection = buildSubSection({
           id: 'memm.reception.refugeeStatus',
           width: 'half',
           doesNotRequireAnswer: true,
-          options: MOTTAKA_OPTIONS,
+          space: 0,
+          options: getYesNoDoNotKnowNotApplicableOptions(),
         }),
         buildAlertMessageField({
           id: 'memm.reception.fetchedDataInfo',

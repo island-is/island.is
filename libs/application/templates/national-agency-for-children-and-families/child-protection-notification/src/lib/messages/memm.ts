@@ -239,45 +239,45 @@ export const memmMessages = {
         'Með samþættri þjónustu er átt við að foreldri hefur óskað formlega eftir og gefið leyfi fyrir því að aðilar sem koma að stuðningi við barnið, tali sama og deili sín á milli upplýsingum sem geti hjálpað barninu',
       description: 'Tooltip for integrated service radio field',
     },
-    welfareContactLabel: {
-      id: 'cpn.application:memm.wellbeing.welfareContactLabel',
+    wellbeingContactLabel: {
+      id: 'cpn.application:memm.wellbeing.wellbeingContactLabel',
       defaultMessage: 'Er barnið með tengilið farsældar?',
       description: 'Label for welfare contact radio field',
     },
-    welfareContactTooltip: {
-      id: 'cpn.application:memm.wellbeing.welfareContactTooltip',
+    wellbeingContactTooltip: {
+      id: 'cpn.application:memm.wellbeing.wellbeingContactTooltip',
       defaultMessage:
         'Tengiliður farsældar er sá aðili sem veitir upplýsingar og leiðbeiningar og hefur verið foreldrum innan handar við að sækja um þjónustu fyrir barnið sitt.',
       description: 'Tooltip for welfare contact radio field',
     },
-    welfareContactEmail: {
-      id: 'cpn.application:memm.wellbeing.welfareContactEmail',
+    wellbeingContactEmail: {
+      id: 'cpn.application:memm.wellbeing.wellbeingContactEmail',
       defaultMessage: 'Netfang tengiliðar farsældar',
       description: 'Label for welfare contact email field',
     },
-    welfareContactName: {
-      id: 'cpn.application:memm.wellbeing.welfareContactName',
+    wellbeingContactName: {
+      id: 'cpn.application:memm.wellbeing.wellbeingContactName',
       defaultMessage: 'Nafn tengiliðar farsældar',
       description: 'Label for welfare contact name field',
     },
-    welfareManagerLabel: {
-      id: 'cpn.application:memm.wellbeing.welfareManagerLabel',
+    wellbeingManagerLabel: {
+      id: 'cpn.application:memm.wellbeing.wellbeingManagerLabel',
       defaultMessage: 'Er barnið með málastjóra farsældar?',
       description: 'Label for welfare manager radio field',
     },
-    welfareManagerTooltip: {
-      id: 'cpn.application:memm.wellbeing.welfareManagerTooltip',
+    wellbeingManagerTooltip: {
+      id: 'cpn.application:memm.wellbeing.wellbeingManagerTooltip',
       defaultMessage:
         'Málstjóri er sá aðili á vegum sveitarfélags sem tilnefndur hefur verið að stýra stuðningsteymi barns og styðja við fjölskyldu þess.',
       description: 'Tooltip for welfare manager radio field',
     },
-    welfareManagerEmail: {
-      id: 'cpn.application:memm.wellbeing.welfareManagerEmail',
+    wellbeingManagerEmail: {
+      id: 'cpn.application:memm.wellbeing.wellbeingManagerEmail',
       defaultMessage: 'Netfang málastjóra farsældar',
       description: 'Label for welfare manager email field',
     },
-    welfareManagerName: {
-      id: 'cpn.application:memm.wellbeing.welfareManagerName',
+    wellbeingManagerName: {
+      id: 'cpn.application:memm.wellbeing.wellbeingManagerName',
       defaultMessage: 'Nafn málastjóra farsældar',
       description: 'Label for welfare manager name field',
     },

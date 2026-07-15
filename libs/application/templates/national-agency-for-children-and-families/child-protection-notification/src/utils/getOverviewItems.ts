@@ -25,7 +25,9 @@ import {
   sharedMessages,
 } from '../lib/messages'
 import {
+  DO_NOT_KNOW,
   KnowsNationalId,
+  NOT_APPLICABLE,
   NoNationalIdReason,
   Pronoun,
   RISK_TO_UNBORN,
@@ -34,7 +36,15 @@ import {
   getAreParentsInformedTitle,
   getHasDiscussedWithParentsTitle,
 } from './childProtectionNotificationUtils'
-import { isKnowsNationalId, isNoNationalId } from './conditionUtils'
+import {
+  isDayCareProvider,
+  isKnowsNationalId,
+  isNoNationalId,
+  isSchoolType,
+  showDisabilityService,
+  showWellbeingContactFields,
+  showWellbeingManagerFields,
+} from './conditionUtils'
 import { getApplicationAnswers } from './getApplicationAnswers'
 import { getApplicationExternalData } from './getApplicationExternalData'
 import { Parent } from './types'
@@ -57,6 +67,39 @@ const noNationalIdReasonLabelMap = {
   [NoNationalIdReason.TRAVELER]: childMessages.noNationalId.reasonTraveler,
   [NoNationalIdReason.BORDER_RECEPTION]:
     childMessages.noNationalId.reasonBorderReception,
+} as const
+
+const educationTypeLabelMap = {
+  kindergarten: memmMessages.education.typeKindergarten,
+  elementarySchool: memmMessages.education.typeElementarySchool,
+  highSchool: memmMessages.education.typeHighSchool,
+  daycareProvider: memmMessages.education.typeDaycareProvider,
+} as const
+
+const receptionRadioLabelMap = {
+  [YES]: sharedMessages.radioYes,
+  no: sharedMessages.radioNo,
+  [DO_NOT_KNOW]: sharedMessages.radioDoNotKnow,
+  [NOT_APPLICABLE]: memmMessages.reception.optionNotApplicable,
+} as const
+
+const wellbeingRadioLabelMap = {
+  [YES]: sharedMessages.radioYes,
+  no: sharedMessages.radioNo,
+  [DO_NOT_KNOW]: sharedMessages.radioDoNotKnow,
+} as const
+
+const languageUsageLabelMap = {
+  onlyIcelandic: memmMessages.culture.languageUsageOnlyIcelandic,
+  icelandicAndOther: memmMessages.culture.languageUsageBoth,
+  onlyOther: memmMessages.culture.languageUsageOnlyOther,
+} as const
+
+const disabilityServiceLabelMap = {
+  municipal: memmMessages.wellbeing.disabilityServiceMunicipal,
+  sports: memmMessages.wellbeing.disabilityServiceSports,
+  health: memmMessages.wellbeing.disabilityServiceHealth,
+  emergency: memmMessages.wellbeing.disabilityServiceEmergency,
 } as const
 
 const municipalityLabelMap: Record<string, string> = {
@@ -553,39 +596,6 @@ export const getParent2Items = (
   return buildParentItems(parent2, parentsKnowsNationalIds, externalData)
 }
 
-const educationTypeLabelMap = {
-  kindergarten: memmMessages.education.typeKindergarten,
-  elementarySchool: memmMessages.education.typeElementarySchool,
-  highSchool: memmMessages.education.typeHighSchool,
-  daycareProvider: memmMessages.education.typeDaycareProvider,
-} as const
-
-const receptionRadioLabelMap = {
-  [YES]: sharedMessages.radioYes,
-  no: sharedMessages.radioNo,
-  doNotKnow: sharedMessages.radioDoNotKnow,
-  notApplicable: memmMessages.reception.optionNotApplicable,
-} as const
-
-const wellbeingRadioLabelMap = {
-  [YES]: sharedMessages.radioYes,
-  no: sharedMessages.radioNo,
-  doNotKnow: sharedMessages.radioDoNotKnow,
-} as const
-
-const languageUsageLabelMap = {
-  onlyIcelandic: memmMessages.culture.languageUsageOnlyIcelandic,
-  icelandicAndOther: memmMessages.culture.languageUsageBoth,
-  onlyOther: memmMessages.culture.languageUsageOnlyOther,
-} as const
-
-const disabilityServiceLabelMap = {
-  municipal: memmMessages.wellbeing.disabilityServiceMunicipal,
-  sports: memmMessages.wellbeing.disabilityServiceSports,
-  health: memmMessages.wellbeing.disabilityServiceHealth,
-  emergency: memmMessages.wellbeing.disabilityServiceEmergency,
-} as const
-
 export const getMemmEducationItems = (
   answers: FormValue,
   _externalData: ExternalData,
@@ -608,18 +618,26 @@ export const getMemmEducationItems = (
         '',
       hideIfEmpty: true,
     },
-    {
-      width: 'full',
-      keyText: memmMessages.education.schoolName,
-      valueText: memmEducationSchoolName ?? '',
-      hideIfEmpty: true,
-    },
-    {
-      width: 'full',
-      keyText: memmMessages.education.caregiverName,
-      valueText: memmEducationCaregiverName ?? '',
-      hideIfEmpty: true,
-    },
+    ...(isSchoolType(answers)
+      ? [
+          {
+            width: 'full' as const,
+            keyText: memmMessages.education.schoolName,
+            valueText: memmEducationSchoolName ?? '',
+            hideIfEmpty: true,
+          },
+        ]
+      : []),
+    ...(isDayCareProvider(answers)
+      ? [
+          {
+            width: 'full' as const,
+            keyText: memmMessages.education.caregiverName,
+            valueText: memmEducationCaregiverName ?? '',
+            hideIfEmpty: true,
+          },
+        ]
+      : []),
   ]
 }
 
@@ -688,7 +706,7 @@ export const getMemmCultureItems = (
       hideIfEmpty: true,
     },
     {
-      width: 'half',
+      width: 'full',
       keyText: memmMessages.culture.preferredLanguageTitle,
       valueText:
         getLanguageByCode(memmCulturePreferredLanguage ?? '')?.name ?? '',
@@ -697,7 +715,7 @@ export const getMemmCultureItems = (
     ...(memmCulturePreferredLanguage
       ? [
           {
-            width: 'half' as const,
+            width: 'full' as const,
             keyText: memmMessages.culture.needsInterpreter,
             valueText: memmCultureNeedsInterpreter.includes(YES)
               ? sharedMessages.radioYes
@@ -714,12 +732,12 @@ export const getMemmWellbeingItems = (
 ): Array<KeyValueItem> => {
   const {
     memmWellbeingIntegratedService,
-    memmWellbeingWelfareContact,
-    memmWellbeingWelfareContactEmail,
-    memmWellbeingWelfareContactName,
-    memmWellbeingWelfareManager,
-    memmWellbeingWelfareManagerEmail,
-    memmWellbeingWelfareManagerName,
+    memmWellbeingWellbeingContact,
+    memmWellbeingWellbeingContactEmail,
+    memmWellbeingWellbeingContactName,
+    memmWellbeingWellbeingManager,
+    memmWellbeingWellbeingManagerEmail,
+    memmWellbeingWellbeingManagerName,
     memmWellbeingDisability,
     memmWellbeingDisabilityService,
   } = getApplicationAnswers(answers)
@@ -738,50 +756,58 @@ export const getMemmWellbeingItems = (
     },
     {
       width: 'full',
-      keyText: memmMessages.wellbeing.welfareContactLabel,
+      keyText: memmMessages.wellbeing.wellbeingContactLabel,
       valueText:
         wellbeingRadioLabelMap[
-          memmWellbeingWelfareContact as keyof typeof wellbeingRadioLabelMap
+          memmWellbeingWellbeingContact as keyof typeof wellbeingRadioLabelMap
         ] ??
-        memmWellbeingWelfareContact ??
+        memmWellbeingWellbeingContact ??
         '',
       hideIfEmpty: true,
     },
-    {
-      width: 'half',
-      keyText: memmMessages.wellbeing.welfareContactEmail,
-      valueText: memmWellbeingWelfareContactEmail ?? '',
-      hideIfEmpty: true,
-    },
-    {
-      width: 'half',
-      keyText: memmMessages.wellbeing.welfareContactName,
-      valueText: memmWellbeingWelfareContactName ?? '',
-      hideIfEmpty: true,
-    },
+    ...(showWellbeingContactFields(answers)
+      ? [
+          {
+            width: 'half' as const,
+            keyText: memmMessages.wellbeing.wellbeingContactEmail,
+            valueText: memmWellbeingWellbeingContactEmail ?? '',
+            hideIfEmpty: true,
+          },
+          {
+            width: 'half' as const,
+            keyText: memmMessages.wellbeing.wellbeingContactName,
+            valueText: memmWellbeingWellbeingContactName ?? '',
+            hideIfEmpty: true,
+          },
+        ]
+      : []),
     {
       width: 'full',
-      keyText: memmMessages.wellbeing.welfareManagerLabel,
+      keyText: memmMessages.wellbeing.wellbeingManagerLabel,
       valueText:
         wellbeingRadioLabelMap[
-          memmWellbeingWelfareManager as keyof typeof wellbeingRadioLabelMap
+          memmWellbeingWellbeingManager as keyof typeof wellbeingRadioLabelMap
         ] ??
-        memmWellbeingWelfareManager ??
+        memmWellbeingWellbeingManager ??
         '',
       hideIfEmpty: true,
     },
-    {
-      width: 'half',
-      keyText: memmMessages.wellbeing.welfareManagerEmail,
-      valueText: memmWellbeingWelfareManagerEmail ?? '',
-      hideIfEmpty: true,
-    },
-    {
-      width: 'half',
-      keyText: memmMessages.wellbeing.welfareManagerName,
-      valueText: memmWellbeingWelfareManagerName ?? '',
-      hideIfEmpty: true,
-    },
+    ...(showWellbeingManagerFields(answers)
+      ? [
+          {
+            width: 'half' as const,
+            keyText: memmMessages.wellbeing.wellbeingManagerEmail,
+            valueText: memmWellbeingWellbeingManagerEmail ?? '',
+            hideIfEmpty: true,
+          },
+          {
+            width: 'half' as const,
+            keyText: memmMessages.wellbeing.wellbeingManagerName,
+            valueText: memmWellbeingWellbeingManagerName ?? '',
+            hideIfEmpty: true,
+          },
+        ]
+      : []),
     {
       width: 'full',
       keyText: memmMessages.wellbeing.disabilityLabel,
@@ -793,17 +819,21 @@ export const getMemmWellbeingItems = (
         '',
       hideIfEmpty: true,
     },
-    {
-      width: 'full',
-      keyText: memmMessages.wellbeing.disabilityServiceLabel,
-      valueText:
-        disabilityServiceLabelMap[
-          memmWellbeingDisabilityService as keyof typeof disabilityServiceLabelMap
-        ] ??
-        memmWellbeingDisabilityService ??
-        '',
-      hideIfEmpty: true,
-    },
+    ...(showDisabilityService(answers)
+      ? [
+          {
+            width: 'full' as const,
+            keyText: memmMessages.wellbeing.disabilityServiceLabel,
+            valueText:
+              disabilityServiceLabelMap[
+                memmWellbeingDisabilityService as keyof typeof disabilityServiceLabelMap
+              ] ??
+              memmWellbeingDisabilityService ??
+              '',
+            hideIfEmpty: true,
+          },
+        ]
+      : []),
   ]
 }
 

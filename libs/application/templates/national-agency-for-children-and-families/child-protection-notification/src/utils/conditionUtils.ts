@@ -40,11 +40,11 @@ export const showPreferredLanguage = (answers: FormValue) => {
   return (languages?.length ?? 0) > 0
 }
 
-export const showWelfareContactFields = (answers: FormValue) =>
-  getApplicationAnswers(answers).memmWellbeingWelfareContact === YES
+export const showWellbeingContactFields = (answers: FormValue) =>
+  getApplicationAnswers(answers).memmWellbeingWellbeingContact === YES
 
-export const showWelfareManagerFields = (answers: FormValue) =>
-  getApplicationAnswers(answers).memmWellbeingWelfareManager === YES
+export const showWellbeingManagerFields = (answers: FormValue) =>
+  getApplicationAnswers(answers).memmWellbeingWellbeingManager === YES
 
 export const showDisabilityService = (answers: FormValue) =>
   getApplicationAnswers(answers).memmWellbeingDisability === YES

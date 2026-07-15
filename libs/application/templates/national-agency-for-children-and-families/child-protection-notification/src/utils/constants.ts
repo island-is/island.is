@@ -38,18 +38,15 @@ export enum NoNationalIdReason {
   BORDER_RECEPTION = 'borderReception',
 }
 
-export enum Gender {
-  GIRL = 'girl',
-  BOY = 'boy',
-  OTHER = 'other',
-}
-
-export enum ParentGender {
-  MALE = 'male',
-  FEMALE = 'female',
-  NON_BINARY = 'nonBinary',
-}
+export const DO_NOT_KNOW = 'doNotKnow'
+export const NOT_APPLICABLE = 'notApplicable'
 
 export const SCHOOL_TYPES = ['kindergarten', 'elementarySchool', 'highSchool']
 
 export const SHOW_LANGUAGE_SECTION_TYPES = ['icelandicAndOther', 'onlyOther']
+
+export enum LanguageEnvironmentOptions {
+  ONLY_ICELANDIC = 'onlyIcelandic',
+  ICELANDIC_AND_OTHER = 'icelandicAndOther',
+  ONLY_OTHER = 'onlyOther',
+}

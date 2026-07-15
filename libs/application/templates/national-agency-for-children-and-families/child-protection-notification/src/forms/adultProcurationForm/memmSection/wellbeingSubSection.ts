@@ -1,6 +1,4 @@
 import {
-  NO,
-  YES,
   buildDescriptionField,
   buildMultiField,
   buildRadioField,
@@ -8,18 +6,13 @@ import {
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
-import { memmMessages, sharedMessages } from '../../../lib/messages'
+import { memmMessages } from '../../../lib/messages'
+import { getYesNoDoNotKnowOptions } from '../../../utils/childProtectionNotificationUtils'
 import {
   showDisabilityService,
-  showWelfareContactFields,
-  showWelfareManagerFields,
+  showWellbeingContactFields,
+  showWellbeingManagerFields,
 } from '../../../utils/conditionUtils'
-
-const FARSAELD_OPTIONS = [
-  { value: YES, label: sharedMessages.radioYes },
-  { value: NO, label: sharedMessages.radioNo },
-  { value: 'doNotKnow', label: sharedMessages.radioDoNotKnow },
-]
 
 export const wellbeingSubSection = buildSubSection({
   id: 'memmWellbeingSubSection',
@@ -34,8 +27,8 @@ export const wellbeingSubSection = buildSubSection({
           id: 'memm.wellbeing.heading',
           title: memmMessages.wellbeing.subSectionTitle,
           description: memmMessages.wellbeing.description,
-          titleVariant: 'h4',
-          space: 2,
+          titleVariant: 'h3',
+          space: 0,
         }),
         buildDescriptionField({
           id: 'memm.wellbeing.integratedServiceLabel',
@@ -48,59 +41,62 @@ export const wellbeingSubSection = buildSubSection({
           id: 'memm.wellbeing.integratedService',
           widthWithIllustration: '1/3',
           doesNotRequireAnswer: true,
-          options: FARSAELD_OPTIONS,
+          space: 0,
+          options: getYesNoDoNotKnowOptions(),
         }),
         buildDescriptionField({
-          id: 'memm.wellbeing.welfareContactLabel',
-          title: memmMessages.wellbeing.welfareContactLabel,
-          titleTooltip: memmMessages.wellbeing.welfareContactTooltip,
+          id: 'memm.wellbeing.wellbeingContactLabel',
+          title: memmMessages.wellbeing.wellbeingContactLabel,
+          titleTooltip: memmMessages.wellbeing.wellbeingContactTooltip,
           titleVariant: 'h5',
           space: 3,
         }),
         buildRadioField({
-          id: 'memm.wellbeing.welfareContact',
+          id: 'memm.wellbeing.wellbeingContact',
           widthWithIllustration: '1/3',
           doesNotRequireAnswer: true,
-          options: FARSAELD_OPTIONS,
+          space: 0,
+          options: getYesNoDoNotKnowOptions(),
         }),
         buildTextField({
-          id: 'memm.wellbeing.welfareContactEmail',
-          title: memmMessages.wellbeing.welfareContactEmail,
+          id: 'memm.wellbeing.wellbeingContactEmail',
+          title: memmMessages.wellbeing.wellbeingContactEmail,
           variant: 'email',
           doesNotRequireAnswer: true,
-          condition: showWelfareContactFields,
+          condition: showWellbeingContactFields,
         }),
         buildTextField({
-          id: 'memm.wellbeing.welfareContactName',
-          title: memmMessages.wellbeing.welfareContactName,
+          id: 'memm.wellbeing.wellbeingContactName',
+          title: memmMessages.wellbeing.wellbeingContactName,
           doesNotRequireAnswer: true,
-          condition: showWelfareContactFields,
+          condition: showWellbeingContactFields,
         }),
         buildDescriptionField({
-          id: 'memm.wellbeing.welfareManagerLabel',
-          title: memmMessages.wellbeing.welfareManagerLabel,
-          titleTooltip: memmMessages.wellbeing.welfareManagerTooltip,
+          id: 'memm.wellbeing.wellbeingManagerLabel',
+          title: memmMessages.wellbeing.wellbeingManagerLabel,
+          titleTooltip: memmMessages.wellbeing.wellbeingManagerTooltip,
           titleVariant: 'h5',
           space: 3,
         }),
         buildRadioField({
-          id: 'memm.wellbeing.welfareManager',
+          id: 'memm.wellbeing.wellbeingManager',
           widthWithIllustration: '1/3',
           doesNotRequireAnswer: true,
-          options: FARSAELD_OPTIONS,
+          space: 0,
+          options: getYesNoDoNotKnowOptions(),
         }),
         buildTextField({
-          id: 'memm.wellbeing.welfareManagerEmail',
-          title: memmMessages.wellbeing.welfareManagerEmail,
+          id: 'memm.wellbeing.wellbeingManagerEmail',
+          title: memmMessages.wellbeing.wellbeingManagerEmail,
           variant: 'email',
           doesNotRequireAnswer: true,
-          condition: showWelfareManagerFields,
+          condition: showWellbeingManagerFields,
         }),
         buildTextField({
-          id: 'memm.wellbeing.welfareManagerName',
-          title: memmMessages.wellbeing.welfareManagerName,
+          id: 'memm.wellbeing.wellbeingManagerName',
+          title: memmMessages.wellbeing.wellbeingManagerName,
           doesNotRequireAnswer: true,
-          condition: showWelfareManagerFields,
+          condition: showWellbeingManagerFields,
         }),
         buildDescriptionField({
           id: 'memm.wellbeing.disabilityLabel',
@@ -113,7 +109,8 @@ export const wellbeingSubSection = buildSubSection({
           id: 'memm.wellbeing.disability',
           widthWithIllustration: '1/3',
           doesNotRequireAnswer: true,
-          options: FARSAELD_OPTIONS,
+          space: 0,
+          options: getYesNoDoNotKnowOptions(),
         }),
         buildSelectField({
           id: 'memm.wellbeing.disabilityService',

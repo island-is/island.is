@@ -21,8 +21,8 @@ export const educationSubSection = buildSubSection({
           id: 'memm.education.heading',
           title: memmMessages.education.title,
           description: memmMessages.education.description,
-          titleVariant: 'h4',
-          space: 2,
+          titleVariant: 'h3',
+          space: 0,
         }),
         buildSelectField({
           id: 'memm.education.type',

@@ -8,6 +8,7 @@ import {
 } from '@island.is/application/core'
 import { getAllLanguageCodes } from '@island.is/shared/utils'
 import { memmMessages } from '../../../lib/messages'
+import { LanguageEnvironmentOptions } from '../../../utils/constants'
 import {
   showLanguageSection,
   showPreferredLanguage,
@@ -27,8 +28,8 @@ export const cultureSubSection = buildSubSection({
           id: 'memm.culture.heading',
           title: memmMessages.culture.subSectionTitle,
           description: memmMessages.culture.description,
-          titleVariant: 'h4',
-          space: 2,
+          titleVariant: 'h3',
+          space: 0,
         }),
         buildDescriptionField({
           id: 'memm.culture.languageUsageQuestion',
@@ -43,15 +44,15 @@ export const cultureSubSection = buildSubSection({
           doesNotRequireAnswer: true,
           options: [
             {
-              value: 'onlyIcelandic',
+              value: LanguageEnvironmentOptions.ONLY_ICELANDIC,
               label: memmMessages.culture.languageUsageOnlyIcelandic,
             },
             {
-              value: 'icelandicAndOther',
+              value: LanguageEnvironmentOptions.ICELANDIC_AND_OTHER,
               label: memmMessages.culture.languageUsageBoth,
             },
             {
-              value: 'onlyOther',
+              value: LanguageEnvironmentOptions.ONLY_OTHER,
               label: memmMessages.culture.languageUsageOnlyOther,
             },
           ],

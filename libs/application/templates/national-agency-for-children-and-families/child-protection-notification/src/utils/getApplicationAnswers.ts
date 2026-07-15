@@ -269,34 +269,34 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'memm.wellbeing.integratedService',
   )
 
-  const memmWellbeingWelfareContact = getValueViaPath<string>(
+  const memmWellbeingWellbeingContact = getValueViaPath<string>(
     answers,
-    'memm.wellbeing.welfareContact',
+    'memm.wellbeing.wellbeingContact',
   )
 
-  const memmWellbeingWelfareContactEmail = getValueViaPath<string>(
+  const memmWellbeingWellbeingContactEmail = getValueViaPath<string>(
     answers,
-    'memm.wellbeing.welfareContactEmail',
+    'memm.wellbeing.wellbeingContactEmail',
   )
 
-  const memmWellbeingWelfareContactName = getValueViaPath<string>(
+  const memmWellbeingWellbeingContactName = getValueViaPath<string>(
     answers,
-    'memm.wellbeing.welfareContactName',
+    'memm.wellbeing.wellbeingContactName',
   )
 
-  const memmWellbeingWelfareManager = getValueViaPath<string>(
+  const memmWellbeingWellbeingManager = getValueViaPath<string>(
     answers,
-    'memm.wellbeing.welfareManager',
+    'memm.wellbeing.wellbeingManager',
   )
 
-  const memmWellbeingWelfareManagerEmail = getValueViaPath<string>(
+  const memmWellbeingWellbeingManagerEmail = getValueViaPath<string>(
     answers,
-    'memm.wellbeing.welfareManagerEmail',
+    'memm.wellbeing.wellbeingManagerEmail',
   )
 
-  const memmWellbeingWelfareManagerName = getValueViaPath<string>(
+  const memmWellbeingWellbeingManagerName = getValueViaPath<string>(
     answers,
-    'memm.wellbeing.welfareManagerName',
+    'memm.wellbeing.wellbeingManagerName',
   )
 
   const memmWellbeingDisability = getValueViaPath<string>(
@@ -365,12 +365,12 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     memmCulturePreferredLanguage,
     memmCultureNeedsInterpreter,
     memmWellbeingIntegratedService,
-    memmWellbeingWelfareContact,
-    memmWellbeingWelfareContactEmail,
-    memmWellbeingWelfareContactName,
-    memmWellbeingWelfareManager,
-    memmWellbeingWelfareManagerEmail,
-    memmWellbeingWelfareManagerName,
+    memmWellbeingWellbeingContact,
+    memmWellbeingWellbeingContactEmail,
+    memmWellbeingWellbeingContactName,
+    memmWellbeingWellbeingManager,
+    memmWellbeingWellbeingManagerEmail,
+    memmWellbeingWellbeingManagerName,
     memmWellbeingDisability,
     memmWellbeingDisabilityService,
   }
