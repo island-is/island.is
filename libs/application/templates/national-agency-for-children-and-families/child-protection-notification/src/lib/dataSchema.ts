@@ -44,10 +44,10 @@ const addPreferredIdentityIssues = (
 }
 
 const serviceProviderSchema = z.object({
-  service: z.string(),
-  serviceType: z.string(),
-  contactPersonWorkEmail: z.string().email(),
-  contactPersonWorkPhone: phoneNumberSchema,
+  service: z.string().optional(),
+  serviceType: z.string().optional(),
+  contactPersonWorkEmail: z.string().email().optional().or(z.literal('')),
+  contactPersonWorkPhone: phoneNumberSchema.optional().or(z.literal('')),
 })
 
 const childSchema = z

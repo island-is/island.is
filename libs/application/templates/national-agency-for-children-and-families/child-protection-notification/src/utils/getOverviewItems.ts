@@ -200,12 +200,14 @@ export const getServiceProviderItems = (
       width: 'half',
       keyText: prerequisitesMessages.serviceProvider.service,
       valueText: serviceProviderService ?? '',
+      hideIfEmpty: true,
     },
     {
       // TODO: Need to update when data implementation is done (need to display the label, not the value)
       width: 'half',
       keyText: prerequisitesMessages.serviceProvider.serviceType,
       valueText: serviceProviderServiceType ?? '',
+      hideIfEmpty: true,
     },
     {
       width: 'half',
@@ -256,6 +258,7 @@ export const getServiceProviderContactPersonItems = (
       width: 'half',
       keyText: prerequisitesMessages.serviceProvider.workEmail,
       valueText: serviceProviderContactPersonWorkEmail ?? '',
+      hideIfEmpty: true,
     },
     {
       width: 'half',
@@ -263,6 +266,7 @@ export const getServiceProviderContactPersonItems = (
       valueText: formatPhoneNumber(
         removeCountryCode(serviceProviderContactPersonWorkPhone ?? ''),
       ),
+      hideIfEmpty: true,
     },
   ]
 }
