@@ -226,7 +226,7 @@ describe('CourtSessionController - Update', () => {
           caseId,
         },
         {
-          type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+          type: MessageType.NOTIFICATION,
           user: {},
           caseId,
           body: { type: IndictmentCaseNotificationType.RULING_ORDER_ADDED },

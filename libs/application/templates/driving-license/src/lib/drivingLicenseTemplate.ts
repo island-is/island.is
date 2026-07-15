@@ -20,7 +20,6 @@ import {
   QualityPhotoAndSignatureApi,
   AllPhotosFromThjodskraApi,
   TeachersApi,
-  ExistingApplicationApi,
   InstitutionNationalIds,
   ApplicationConfigurations,
 } from '@island.is/application/types'
@@ -119,8 +118,6 @@ const DrivingLicenseTemplate: ApplicationTemplate<
                     featureFlags[
                       DrivingLicenseFeatureFlags.ALLOW_B_TEMP_REDESIGN
                     ],
-                  allowAdvanced:
-                    featureFlags[DrivingLicenseFeatureFlags.ALLOW_ADVANCED],
                 })
               },
               write: 'all',
@@ -142,14 +139,6 @@ const DrivingLicenseTemplate: ApplicationTemplate<
                 QualityPhotoApi,
                 QualityPhotoAndSignatureApi,
                 AllPhotosFromThjodskraApi,
-                ExistingApplicationApi.configure({
-                  params: {
-                    states: [States.PAYMENT, States.DRAFT],
-                    where: {
-                      applicant: 'applicant',
-                    },
-                  },
-                }),
               ],
             },
           ],
