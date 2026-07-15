@@ -27,6 +27,7 @@ import {
 import {
   DO_NOT_KNOW,
   KnowsNationalId,
+  LanguageEnvironmentOptions,
   NOT_APPLICABLE,
   NoNationalIdReason,
   Pronoun,
@@ -78,21 +79,21 @@ const educationTypeLabelMap = {
 
 const receptionRadioLabelMap = {
   [YES]: sharedMessages.radioYes,
-  no: sharedMessages.radioNo,
+  [NO]: sharedMessages.radioNo,
   [DO_NOT_KNOW]: sharedMessages.radioDoNotKnow,
   [NOT_APPLICABLE]: memmMessages.reception.optionNotApplicable,
 } as const
 
 const wellbeingRadioLabelMap = {
   [YES]: sharedMessages.radioYes,
-  no: sharedMessages.radioNo,
+  [NO]: sharedMessages.radioNo,
   [DO_NOT_KNOW]: sharedMessages.radioDoNotKnow,
 } as const
 
 const languageUsageLabelMap = {
-  onlyIcelandic: memmMessages.culture.languageUsageOnlyIcelandic,
-  icelandicAndOther: memmMessages.culture.languageUsageBoth,
-  onlyOther: memmMessages.culture.languageUsageOnlyOther,
+  [LanguageEnvironmentOptions.ONLY_ICELANDIC]: memmMessages.culture.languageUsageOnlyIcelandic,
+  [LanguageEnvironmentOptions.ICELANDIC_AND_OTHER]: memmMessages.culture.languageUsageBoth,
+  [LanguageEnvironmentOptions.ONLY_OTHER]: memmMessages.culture.languageUsageOnlyOther,
 } as const
 
 const disabilityServiceLabelMap = {

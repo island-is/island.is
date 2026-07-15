@@ -2,6 +2,7 @@ import { NO, YES } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 import {
   KnowsNationalId,
+  LanguageEnvironmentOptions,
   SCHOOL_TYPES,
   SHOW_LANGUAGE_SECTION_TYPES,
 } from './constants'
@@ -31,7 +32,8 @@ export const isDayCareProvider = (answers: FormValue) =>
 
 export const showLanguageSection = (answers: FormValue) =>
   SHOW_LANGUAGE_SECTION_TYPES.includes(
-    getApplicationAnswers(answers).memmCultureLanguageUsage ?? '',
+    (getApplicationAnswers(answers).memmCultureLanguageUsage ??
+      '') as LanguageEnvironmentOptions,
   )
 
 export const showPreferredLanguage = (answers: FormValue) => {
