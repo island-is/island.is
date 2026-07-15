@@ -32,8 +32,8 @@ export const isDayCareProvider = (answers: FormValue) =>
 
 export const showLanguageSection = (answers: FormValue) =>
   SHOW_LANGUAGE_SECTION_TYPES.includes(
-    (getApplicationAnswers(answers).memmCultureLanguageUsage ??
-      '') as LanguageEnvironmentOptions,
+    getApplicationAnswers(answers).memmCultureLanguageUsage ??
+      LanguageEnvironmentOptions.ONLY_ICELANDIC,
   )
 
 export const showPreferredLanguage = (answers: FormValue) => {

@@ -1,6 +1,6 @@
 import { getValueViaPath, YesOrNo } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { KnowsNationalId } from './constants'
+import { KnowsNationalId, LanguageEnvironmentOptions } from './constants'
 import { Parent, ReasonForNotificationAnswers } from './types'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
@@ -246,7 +246,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'memm.reception.refugeeStatus',
   )
 
-  const memmCultureLanguageUsage = getValueViaPath<string>(
+  const memmCultureLanguageUsage = getValueViaPath<LanguageEnvironmentOptions>(
     answers,
     'memm.culture.languageUsage',
   )
