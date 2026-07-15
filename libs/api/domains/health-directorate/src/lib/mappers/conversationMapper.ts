@@ -19,8 +19,6 @@ import {
 import { HealthDirectorateHealthConversationMessageContent } from '../models/healthConversationMessageContent.model'
 import { HealthDirectorateHealthConversationRecipient } from '../models/healthConversationRecipient.model'
 import { HealthDirectorateHealthConversationSegment } from '../models/healthConversationSegment.model'
-import { HealthDirectorateHealthConversationSegmentedContent } from '../models/healthConversationSegmentedContent.model'
-import { HealthDirectorateHealthConversationTextContent } from '../models/healthConversationTextContent.model'
 import { HealthDirectorateHealthConversationType } from '../models/healthConversationType.model'
 import { HealthDirectorateHealthConversationVideoContent } from '../models/healthConversationVideoContent.model'
 
@@ -82,7 +80,6 @@ export const mapConversationVideo = (
 ): HealthDirectorateHealthConversationVideoContent | undefined =>
   video
     ? {
-        typename: HealthDirectorateHealthConversationVideoContent.name,
         url: video.url,
         description: video.description,
         appointmentDate: parseUtcDate(video.appointmentDate),
@@ -100,20 +97,12 @@ export const mapConversationMessageContent = (
       return mapConversationVideo(message.videoConversation)
     case MessageType.SEGMENTED: {
       const segments = mapConversationSegments(message.contentSegments)
-      return segments?.length
-        ? {
-            typename: HealthDirectorateHealthConversationSegmentedContent.name,
-            segments,
-          }
-        : undefined
+      return segments?.length ? { segments } : undefined
     }
     case MessageType.TEXT:
     default:
       return message.messageTextContent
-        ? {
-            typename: HealthDirectorateHealthConversationTextContent.name,
-            text: message.messageTextContent,
-          }
+        ? { text: message.messageTextContent }
         : undefined
   }
 }

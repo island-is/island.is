@@ -13,5 +13,16 @@ export const HealthDirectorateHealthConversationMessageContent =
         HealthDirectorateHealthConversationVideoContent,
       ] as const,
 
-    resolveType: (value) => value.typename ?? null,
+    resolveType: (value) => {
+      if ('segments' in value) {
+        return HealthDirectorateHealthConversationSegmentedContent
+      }
+      if ('url' in value) {
+        return HealthDirectorateHealthConversationVideoContent
+      }
+      if ('text' in value) {
+        return HealthDirectorateHealthConversationTextContent
+      }
+      return null
+    },
   })
