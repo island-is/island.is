@@ -91,9 +91,12 @@ const wellbeingRadioLabelMap = {
 } as const
 
 const languageUsageLabelMap = {
-  [LanguageEnvironmentOptions.ONLY_ICELANDIC]: memmMessages.culture.languageUsageOnlyIcelandic,
-  [LanguageEnvironmentOptions.ICELANDIC_AND_OTHER]: memmMessages.culture.languageUsageBoth,
-  [LanguageEnvironmentOptions.ONLY_OTHER]: memmMessages.culture.languageUsageOnlyOther,
+  [LanguageEnvironmentOptions.ONLY_ICELANDIC]:
+    memmMessages.culture.languageUsageOnlyIcelandic,
+  [LanguageEnvironmentOptions.ICELANDIC_AND_OTHER]:
+    memmMessages.culture.languageUsageBoth,
+  [LanguageEnvironmentOptions.ONLY_OTHER]:
+    memmMessages.culture.languageUsageOnlyOther,
 } as const
 
 const disabilityServiceLabelMap = {
