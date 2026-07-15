@@ -58,10 +58,30 @@ export const messages = defineMessages({
     defaultMessage: 'Reikna',
     description: 'Texti á takka til að reikna',
   },
+  recalculate: {
+    id: 'web.rsk.calculator:recalculate',
+    defaultMessage: 'Endurreikna',
+    description: 'Texti á takka til að endurreikna eftir að niðurstöður birtast',
+  },
   results: {
     id: 'web.rsk.calculator:results',
     defaultMessage: 'Niðurstöður',
     description: 'Titill á niðurstöðum',
+  },
+  groupTaxBaseCalculationTitle: {
+    id: 'web.rsk.calculator:groupTaxBaseCalculationTitle',
+    defaultMessage: 'Útreikningar skattstofns',
+    description: 'Titill á niðurstöðuflokki fyrir skattstofn',
+  },
+  groupWithholdingAndPersonalCreditTitle: {
+    id: 'web.rsk.calculator:groupWithholdingAndPersonalCreditTitle',
+    defaultMessage: 'Staðgreiðsla og persónuafsláttur',
+    description: 'Titill á niðurstöðuflokki fyrir staðgreiðslu og persónuafslátt',
+  },
+  groupEmployerCostsTitle: {
+    id: 'web.rsk.calculator:groupEmployerCostsTitle',
+    defaultMessage: 'Önnur gjöld launagreiðanda',
+    description: 'Titill á niðurstöðuflokki fyrir gjöld launagreiðanda',
   },
   yes: {
     id: 'web.rsk.calculator:yes',

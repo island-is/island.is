@@ -129,6 +129,14 @@ const FIELD_SECTIONS_BY_CALCULATOR_TYPE: Partial<
   [RskCalculatorType.WithholdingTaxOnWages]: WITHHOLDING_TAX_ON_WAGES_SECTIONS,
 }
 
+// Keyed by the domain's `RskCalculatorResultRow.group` string. Unknown group
+// keys (e.g. a future calculator type) fall back to rendering the raw key.
+const GROUP_TITLE_MESSAGES: Record<string, MessageDescriptor> = {
+  taxBaseCalculation: messages.groupTaxBaseCalculationTitle,
+  withholdingAndPersonalCredit: messages.groupWithholdingAndPersonalCreditTitle,
+  employerCosts: messages.groupEmployerCostsTitle,
+}
+
 // Field labels come from the GraphQL response, but the id is composed per
 // field key so editors can override an individual label through the
 // connected component's translation namespace.
@@ -166,11 +174,13 @@ const CalculatorFieldInput = ({
       label: option.label,
       value: option.value,
     }))
+    // The first option is the field's default value.
+    const defaultValue = options[0]?.value ?? ''
     return (
       <Controller
         control={control}
         name={field.key}
-        defaultValue=""
+        defaultValue={defaultValue}
         rules={{ required: field.required }}
         render={({ field: { onChange, value } }) => (
           <Select
@@ -230,6 +240,9 @@ const CalculatorFieldInput = ({
       type="number"
       currency={field.unit === 'ISK'}
       suffix={field.unit && field.unit !== 'ISK' ? ` ${field.unit}` : undefined}
+      placeholder={
+        field.unit === 'ISK' ? 'krónur' : field.unit ?? undefined
+      }
       required={field.required}
       min={field.min ?? undefined}
       max={field.max ?? undefined}
@@ -243,6 +256,7 @@ interface CalculatorResultsProps {
 }
 
 const CalculatorResults = ({ results }: CalculatorResultsProps) => {
+  const { formatMessage } = useIntl()
   const groupKeys: string[] = []
   const rowsByGroup: Record<string, RskCalculatorResultRow[]> = {}
   const UNGROUPED = ''
@@ -257,43 +271,42 @@ const CalculatorResults = ({ results }: CalculatorResultsProps) => {
   }
 
   return (
-    <Box background={'blue400'}>
-      <Stack space={4}>
-        {groupKeys.map((groupKey) => (
-          <Stack key={groupKey || 'ungrouped'} space={1}>
-            {groupKey && (
-              <Text variant="h5" as="h4">
-                {groupKey}
-                {'bingbong'}
-              </Text>
-            )}
-            <Stack space={1}>
-              {rowsByGroup[groupKey].map((row) => (
-                <Box
-                  key={row.key}
-                  display="flex"
-                  justifyContent="spaceBetween"
-                  columnGap={2}
+    <Stack space={4} dividers>
+      {groupKeys.map((groupKey) => (
+        <Stack key={groupKey || 'ungrouped'} space={1}>
+          {groupKey && (
+            <Text variant="h5" as="h4">
+              {GROUP_TITLE_MESSAGES[groupKey]
+                ? formatMessage(GROUP_TITLE_MESSAGES[groupKey])
+                : groupKey}
+            </Text>
+          )}
+          <Stack space={1}>
+            {rowsByGroup[groupKey].map((row) => (
+              <Box
+                key={row.key}
+                display="flex"
+                justifyContent="spaceBetween"
+                columnGap={2}
+              >
+                <Text
+                  variant="medium"
+                  fontWeight={row.emphasis ? 'semiBold' : 'light'}
                 >
-                  <Text
-                    variant="medium"
-                    fontWeight={row.emphasis ? 'semiBold' : 'light'}
-                  >
-                    {row.label}
-                  </Text>
-                  <Text
-                    variant="medium"
-                    fontWeight={row.emphasis ? 'semiBold' : 'light'}
-                  >
-                    {formatResultValue(row)}
-                  </Text>
-                </Box>
-              ))}
-            </Stack>
+                  {row.label}
+                </Text>
+                <Text
+                  variant="medium"
+                  fontWeight={row.emphasis ? 'semiBold' : 'light'}
+                >
+                  {formatResultValue(row)}
+                </Text>
+              </Box>
+            ))}
           </Stack>
-        ))}
-      </Stack>
-    </Box>
+        </Stack>
+      ))}
+    </Stack>
   )
 }
 
@@ -340,6 +353,13 @@ export const RSKCalculator = ({ slice }: RSKCalculatorProps) => {
     ? FIELD_SECTIONS_BY_CALCULATOR_TYPE[calculatorType]
     : undefined
   const results = calculationData?.rskCalculatorCalculation ?? []
+  // The ungrouped, emphasized row (if any) is the calculator's headline
+  // total (e.g. "Heildarlaun eftir frádrátt") -- rendered standalone above
+  // the grouped breakdown rather than inside it.
+  const headlineRow = results.find((row) => row.emphasis && !row.group)
+  const groupedResults = headlineRow
+    ? results.filter((row) => row !== headlineRow)
+    : results
 
   const calculate = () => {
     if (!calculatorType) return
@@ -373,92 +393,102 @@ export const RSKCalculator = ({ slice }: RSKCalculatorProps) => {
     return <SkeletonLoader height={40} repeat={4} space={2} />
   }
 
+  const hasCalculated = called && !calculationError
+
   return (
     <Stack space={5}>
-      {title && (
-        <Text variant="h3" as="h3">
-          {title}
-        </Text>
-      )}
-      {fieldSections ? (
-        <Stack space={6}>
-          {fieldSections.map((section) => {
-            const sectionFields = section.fields
-              .map(({ key, span }) => {
-                const field = fieldsByKey.get(key)
-                return field ? { field, span } : undefined
-              })
-              .filter(
-                (
-                  entry,
-                ): entry is {
-                  field: RskCalculatorField
-                  span: NonNullable<GridColumnProps['span']>
-                } => Boolean(entry),
-              )
-
-            if (!sectionFields.length) return null
-
-            return (
-              <Stack key={section.titleMessage.id} space={3}>
-                <Stack space={1}>
-                  <Text variant="h4" as="h4">
-                    {formatMessage(section.titleMessage)}
-                  </Text>
-                  {section.descriptionMessage && (
-                    <Text variant="medium">
-                      {formatMessage(section.descriptionMessage)}
-                    </Text>
-                  )}
-                </Stack>
-                <GridRow rowGap={3}>
-                  {sectionFields.map(({ field, span }) => (
-                    <GridColumn key={field.key} span={span}>
-                      <CalculatorFieldInput
-                        field={field}
-                        control={control}
-                        label={formatMessage(getFieldLabelMessage(field))}
-                      />
-                    </GridColumn>
-                  ))}
-                </GridRow>
-              </Stack>
-            )
-          })}
-        </Stack>
-      ) : (
-        <Stack space={3}>
-          {fields.map((field) => (
-            <CalculatorFieldInput
-              key={field.key}
-              field={field}
-              control={control}
-              label={formatMessage(getFieldLabelMessage(field))}
-            />
-          ))}
-        </Stack>
-      )}
-      {disclaimer && (
-        <Text variant="small" lineHeight="lg">
-          {disclaimer}
-        </Text>
-      )}
-      <Box>
-        <Button loading={calculating} onClick={calculate}>
-          {formatMessage(messages.calculate)}
-        </Button>
-      </Box>
-      {called && !calculationError && results.length > 0 && (
-        <Box
-          background="blue100"
-          paddingY={[3, 3, 5]}
-          paddingX={[3, 3, 3, 3, 6]}
-        >
-          <Stack space={3}>
-            <Text variant="h4" as="h4">
-              {formatMessage(messages.results)}
+      <Box background="overlay" borderRadius="large" padding={6}>
+        <Stack space={5}>
+          {title && (
+            <Text variant="h3" as="h3">
+              {title}
             </Text>
-            <CalculatorResults results={results} />
+          )}
+          {fieldSections ? (
+            <Stack space={6}>
+              {fieldSections.map((section) => {
+                const sectionFields = section.fields
+                  .map(({ key, span }) => {
+                    const field = fieldsByKey.get(key)
+                    return field ? { field, span } : undefined
+                  })
+                  .filter(
+                    (
+                      entry,
+                    ): entry is {
+                      field: RskCalculatorField
+                      span: NonNullable<GridColumnProps['span']>
+                    } => Boolean(entry),
+                  )
+
+                if (!sectionFields.length) return null
+
+                return (
+                  <Stack key={section.titleMessage.id} space={3}>
+                    <Stack space={1}>
+                      <Text variant="h4" as="h4">
+                        {formatMessage(section.titleMessage)}
+                      </Text>
+                      {section.descriptionMessage && (
+                        <Text variant="medium">
+                          {formatMessage(section.descriptionMessage)}
+                        </Text>
+                      )}
+                    </Stack>
+                    <GridRow rowGap={3}>
+                      {sectionFields.map(({ field, span }) => (
+                        <GridColumn key={field.key} span={span}>
+                          <CalculatorFieldInput
+                            field={field}
+                            control={control}
+                            label={formatMessage(getFieldLabelMessage(field))}
+                          />
+                        </GridColumn>
+                      ))}
+                    </GridRow>
+                  </Stack>
+                )
+              })}
+            </Stack>
+          ) : (
+            <Stack space={3}>
+              {fields.map((field) => (
+                <CalculatorFieldInput
+                  key={field.key}
+                  field={field}
+                  control={control}
+                  label={formatMessage(getFieldLabelMessage(field))}
+                />
+              ))}
+            </Stack>
+          )}
+          {disclaimer && (
+            <Text variant="small" lineHeight="lg">
+              {disclaimer}
+            </Text>
+          )}
+          <Box>
+            <Button
+              loading={calculating}
+              onClick={calculate}
+              icon={hasCalculated ? 'reload' : undefined}
+            >
+              {formatMessage(
+                hasCalculated ? messages.recalculate : messages.calculate,
+              )}
+            </Button>
+          </Box>
+        </Stack>
+      </Box>
+      {hasCalculated && results.length > 0 && (
+        <Box background="purple100" borderRadius="large" padding={6}>
+          <Stack space={3}>
+            <Text variant="h2" as="h2">
+              {headlineRow
+                ? `${headlineRow.label}: ${formatResultValue(headlineRow)}`
+                : formatMessage(messages.results)}
+            </Text>
+            <CalculatorResults results={groupedResults} />
           </Stack>
         </Box>
       )}
