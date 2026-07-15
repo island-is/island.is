@@ -53,9 +53,9 @@ export const toConversationSegmentTypeEnum = (
 }
 
 /**
- * The health service API currently returns local ISO datetimes with
+ * The health service API currently returns a local ISO datetime with
  * no timezone offset. This will be fixed and typed in following verions
- * of the API, but for now we have to parse the date manually.
+ * of the API, but for now we have to parse the date to UTC manually.
  * Once it´s been changed, we can remove this.
  */
 const parseUtcDate = (value?: string): Date | undefined => {
