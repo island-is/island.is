@@ -1,6 +1,7 @@
 import {
   ContentSegmentDto,
   ContentSegmentType,
+  ConversationMessageDto,
   ConversationReplyBlockedReason,
   ConversationStatusFilter,
   MessageType,
@@ -10,16 +11,18 @@ import {
 } from '@island.is/clients/health-directorate'
 import {
   HealthConversationDirectionEnum,
-  HealthConversationMessageTypeEnum,
   HealthConversationRecipientBlockedReasonEnum,
   HealthConversationReplyBlockedReasonEnum,
   HealthConversationSegmentTypeEnum,
   HealthConversationStatusFilterEnum,
 } from '../models/enums'
+import { HealthDirectorateHealthConversationMessageContent } from '../models/healthConversationMessageContent.model'
 import { HealthDirectorateHealthConversationRecipient } from '../models/healthConversationRecipient.model'
 import { HealthDirectorateHealthConversationSegment } from '../models/healthConversationSegment.model'
+import { HealthDirectorateHealthConversationSegmentedContent } from '../models/healthConversationSegmentedContent.model'
+import { HealthDirectorateHealthConversationTextContent } from '../models/healthConversationTextContent.model'
 import { HealthDirectorateHealthConversationType } from '../models/healthConversationType.model'
-import { HealthDirectorateHealthConversationVideo } from '../models/healthConversationVideo.model'
+import { HealthDirectorateHealthConversationVideoContent } from '../models/healthConversationVideoContent.model'
 
 export const toConversationDirectionEnum = (
   direction: string,
@@ -33,21 +36,6 @@ export const toConversationDirectionEnum = (
       return HealthConversationDirectionEnum.SYSTEM
     default:
       return HealthConversationDirectionEnum.SYSTEM
-  }
-}
-
-export const toConversationMessageTypeEnum = (
-  type: MessageType,
-): HealthConversationMessageTypeEnum => {
-  switch (type) {
-    case MessageType.VIDEO:
-      return HealthConversationMessageTypeEnum.VIDEO
-    case MessageType.SEGMENTED:
-      return HealthConversationMessageTypeEnum.SEGMENTED
-    case MessageType.TEXT:
-      return HealthConversationMessageTypeEnum.TEXT
-    default:
-      return HealthConversationMessageTypeEnum.TEXT
   }
 }
 
@@ -91,9 +79,10 @@ export const mapConversationSegments = (
 
 export const mapConversationVideo = (
   video?: VideoConversationDto,
-): HealthDirectorateHealthConversationVideo | undefined =>
+): HealthDirectorateHealthConversationVideoContent | undefined =>
   video
     ? {
+        typename: HealthDirectorateHealthConversationVideoContent.name,
         url: video.url,
         description: video.description,
         appointmentDate: parseUtcDate(video.appointmentDate),
@@ -102,6 +91,32 @@ export const mapConversationVideo = (
         isEdited: video.isEdited,
       }
     : undefined
+
+export const mapConversationMessageContent = (
+  message: ConversationMessageDto,
+): typeof HealthDirectorateHealthConversationMessageContent | undefined => {
+  switch (message.messageType) {
+    case MessageType.VIDEO:
+      return mapConversationVideo(message.videoConversation)
+    case MessageType.SEGMENTED: {
+      const segments = mapConversationSegments(message.contentSegments)
+      return segments?.length
+        ? {
+            typename: HealthDirectorateHealthConversationSegmentedContent.name,
+            segments,
+          }
+        : undefined
+    }
+    case MessageType.TEXT:
+    default:
+      return message.messageTextContent
+        ? {
+            typename: HealthDirectorateHealthConversationTextContent.name,
+            text: message.messageTextContent,
+          }
+        : undefined
+  }
+}
 
 export const toConversationStatusFilter = (
   status: HealthConversationStatusFilterEnum,

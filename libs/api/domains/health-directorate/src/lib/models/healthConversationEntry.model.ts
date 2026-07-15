@@ -1,11 +1,7 @@
 import { Field, GraphQLISODateTime, ID, ObjectType } from '@nestjs/graphql'
-import {
-  HealthConversationDirectionEnum,
-  HealthConversationMessageTypeEnum,
-} from './enums'
+import { HealthConversationDirectionEnum } from './enums'
 import { HealthDirectorateHealthConversationAttachment } from './healthConversationAttachment.model'
-import { HealthDirectorateHealthConversationSegment } from './healthConversationSegment.model'
-import { HealthDirectorateHealthConversationVideo } from './healthConversationVideo.model'
+import { HealthDirectorateHealthConversationMessageContent } from './healthConversationMessageContent.model'
 
 @ObjectType()
 export class HealthDirectorateHealthConversationEntry {
@@ -20,28 +16,18 @@ export class HealthDirectorateHealthConversationEntry {
   @Field(() => GraphQLISODateTime)
   messageSentAt!: Date
 
-  @Field(() => HealthConversationMessageTypeEnum, {
-    description:
-      'What kind of message this is. VIDEO: use videoConversation; SEGMENTED: use contentSegments; TEXT: use messageTextContent.',
+  @Field({
+    nullable: true,
+    deprecationReason: 'Use content instead.',
   })
-  messageType!: HealthConversationMessageTypeEnum
-
-  @Field({ nullable: true })
   messageTextContent?: string
 
-  @Field(() => [HealthDirectorateHealthConversationSegment], {
+  @Field(() => HealthDirectorateHealthConversationMessageContent, {
     nullable: true,
     description:
-      'Ordered text/link segments. Present when messageType is SEGMENTED.',
+      'Message body, one of text, segmented or video content. Null when the message has no renderable body.',
   })
-  contentSegments?: HealthDirectorateHealthConversationSegment[]
-
-  @Field(() => HealthDirectorateHealthConversationVideo, {
-    nullable: true,
-    description:
-      'Structured video-call card. Present when messageType is VIDEO; messageTextContent is omitted for video messages.',
-  })
-  videoConversation?: HealthDirectorateHealthConversationVideo
+  content?: typeof HealthDirectorateHealthConversationMessageContent
 
   @Field({ nullable: true })
   senderGroupName?: string

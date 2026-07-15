@@ -43,11 +43,9 @@ import {
   mapVaccinationStatus,
 } from './mappers/basicInformationMapper'
 import {
-  mapConversationSegments,
-  mapConversationVideo,
+  mapConversationMessageContent,
   mapMessagingRecipient,
   toConversationDirectionEnum,
-  toConversationMessageTypeEnum,
   toConversationReplyBlockedReasonEnum,
   toConversationStatusFilter,
 } from './mappers/conversationMapper'
@@ -745,10 +743,8 @@ export class HealthDirectorateService {
       id: m.id,
       direction: toConversationDirectionEnum(m.direction),
       messageSentAt: m.messageSentAt,
-      messageType: toConversationMessageTypeEnum(m.messageType),
       messageTextContent: m.messageTextContent,
-      contentSegments: mapConversationSegments(m.contentSegments),
-      videoConversation: mapConversationVideo(m.videoConversation),
+      content: mapConversationMessageContent(m),
       senderGroupName: m.senderGroupName,
       attachments: m.attachments.map((a) =>
         this.mapConversationAttachment(a, conversationId, m.id),
