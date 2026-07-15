@@ -34,11 +34,13 @@ export const StatisticsForm = ({
   return (
     <Box
       display="flex"
+      flexWrap="wrap"
       flexDirection={['column', 'column', 'row']}
       alignItems={['stretch', 'stretch', 'flexEnd']}
+      style={{ gap: '16px' }}
     >
       {organizations !== undefined && (
-        <Box flexGrow={1} marginRight={[0, 0, 2]} marginBottom={[2, 2, 0]}>
+        <Box flexGrow={1}>
           <Select
             id="statisticsInstitution"
             label={formatMessage(m.institution)}
@@ -65,7 +67,7 @@ export const StatisticsForm = ({
       )}
       <Box
         display="flex"
-        flexWrap="wrap"
+        flexWrap={['wrap', 'wrap', 'nowrap']}
         flexGrow={1}
         alignItems="flexEnd"
         style={{ gap: '8px' }}
