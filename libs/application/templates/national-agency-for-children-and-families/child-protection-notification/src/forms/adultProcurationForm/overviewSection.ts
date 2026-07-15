@@ -1,42 +1,12 @@
 import {
   buildMultiField,
-  buildOverviewField,
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 
-import {
-  childMessages,
-  memmMessages,
-  overviewMessages,
-  parentsMessages,
-  prerequisitesMessages,
-  protectiveFactorsMessages,
-  reasonForNotificationMessages,
-} from '../../lib/messages'
-import {
-  isKnowsNationalId,
-  isNoNationalId,
-  isUnborn,
-} from '../../utils/conditionUtils'
-import {
-  getChildManualItems,
-  getChildWithNationalIdItems,
-  getMemmCultureItems,
-  getMemmEducationItems,
-  getMemmReceptionItems,
-  getMemmWellbeingItems,
-  getParent1Items,
-  getParent2Items,
-  getParentsPreItems,
-  getProtectiveFactorsItems,
-  getReasonDescriptionItems,
-  getReasonForNotificationItems,
-  getReasonNotificationHistoryItems,
-  getServiceProviderContactPersonItems,
-  getServiceProviderItems,
-} from '../../utils/getOverviewItems'
+import { overviewMessages } from '../../lib/messages'
+import { adultProcurationOverviewFields } from '../../utils/adultProcurationOverviewFields'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
@@ -47,122 +17,7 @@ export const overviewSection = buildSection({
       title: overviewMessages.sectionTitle,
       description: overviewMessages.description,
       children: [
-        buildOverviewField({
-          id: 'overview.serviceProvider',
-          title: prerequisitesMessages.serviceProvider.subSectionTitle,
-          items: getServiceProviderItems,
-        }),
-        buildOverviewField({
-          id: 'overview.serviceProviderContactPerson',
-          title: prerequisitesMessages.serviceProvider.contactPerson,
-          items: getServiceProviderContactPersonItems,
-        }),
-        buildOverviewField({
-          id: 'overview.childWithNationalId',
-          title: childMessages.shared.sectionTitle,
-          items: getChildWithNationalIdItems,
-        }),
-        buildOverviewField({
-          id: 'overview.childManual',
-          title: childMessages.manualInfo.sectionTitle,
-          backId: 'childInfoManual',
-          items: getChildManualItems,
-          condition: isNoNationalId,
-        }),
-        buildOverviewField({
-          id: 'overview.parentsPre',
-          title: ({ answers }) =>
-            isUnborn(answers)
-              ? parentsMessages.expectantParents.sectionTitle
-              : isKnowsNationalId(answers)
-              ? parentsMessages.custodians.sectionTitle
-              : parentsMessages.guardians.sectionTitle,
-          backId: 'parents',
-          items: getParentsPreItems,
-        }),
-        buildOverviewField({
-          id: 'overview.parent1',
-          title: ({ answers }) =>
-            isUnborn(answers)
-              ? parentsMessages.expectantParents.parent1Title
-              : isKnowsNationalId(answers)
-              ? parentsMessages.custodians.parent1Title
-              : parentsMessages.guardians.parent1Title,
-          backId: 'parents',
-          items: getParent1Items,
-          hideIfEmpty: true,
-        }),
-        buildOverviewField({
-          id: 'overview.parent2',
-          title: ({ answers }) =>
-            isUnborn(answers)
-              ? parentsMessages.expectantParents.parent2Title
-              : isKnowsNationalId(answers)
-              ? parentsMessages.custodians.parent2Title
-              : parentsMessages.guardians.parent2Title,
-          backId: 'parents',
-          items: getParent2Items,
-          hideIfEmpty: true,
-        }),
-        buildOverviewField({
-          id: 'overview.memmEducation',
-          title: memmMessages.education.subSectionTitle,
-          backId: 'memm.education',
-          items: getMemmEducationItems,
-          hideIfEmpty: true,
-          condition: isKnowsNationalId,
-        }),
-        buildOverviewField({
-          id: 'overview.memmReception',
-          title: memmMessages.reception.subSectionTitle,
-          backId: 'memm.reception',
-          items: getMemmReceptionItems,
-          hideIfEmpty: true,
-          condition: isKnowsNationalId,
-        }),
-        buildOverviewField({
-          id: 'overview.memmCulture',
-          title: memmMessages.culture.subSectionTitle,
-          backId: 'memm.culture',
-          items: getMemmCultureItems,
-          hideIfEmpty: true,
-          condition: isKnowsNationalId,
-        }),
-        buildOverviewField({
-          id: 'overview.memmWellbeing',
-          title: memmMessages.wellbeing.subSectionTitle,
-          backId: 'memm.wellbeing',
-          items: getMemmWellbeingItems,
-          hideIfEmpty: true,
-          condition: isKnowsNationalId,
-        }),
-        buildOverviewField({
-          id: 'overview.reasonDescription',
-          title: reasonForNotificationMessages.description.title,
-          backId: 'reasonDescription',
-          items: getReasonDescriptionItems,
-        }),
-        buildOverviewField({
-          id: 'overview.reasonForNotification',
-          title: reasonForNotificationMessages.shared.sectionTitle,
-          backId: 'reasonForNotification',
-          items: getReasonForNotificationItems,
-          hideIfEmpty: true,
-        }),
-        buildOverviewField({
-          id: 'overview.reasonNotificationHistory',
-          title:
-            reasonForNotificationMessages.notificationHistory.subSectionTitle,
-          backId: 'reasonNotificationHistory',
-          items: getReasonNotificationHistoryItems,
-        }),
-        buildOverviewField({
-          id: 'overview.protectiveFactors',
-          title: protectiveFactorsMessages.shared.sectionTitle,
-          backId: 'protectiveFactors',
-          items: getProtectiveFactorsItems,
-          hideIfEmpty: true,
-        }),
+        ...adultProcurationOverviewFields(true),
         buildSubmitField({
           id: 'submit',
           actions: [
