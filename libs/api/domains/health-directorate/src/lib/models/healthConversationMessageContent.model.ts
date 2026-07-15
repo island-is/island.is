@@ -14,14 +14,14 @@ export const HealthDirectorateHealthConversationMessageContent =
       ] as const,
 
     resolveType: (value) => {
+      if ('text' in value) {
+        return HealthDirectorateHealthConversationTextContent
+      }
       if ('segments' in value) {
         return HealthDirectorateHealthConversationSegmentedContent
       }
       if ('url' in value) {
         return HealthDirectorateHealthConversationVideoContent
-      }
-      if ('text' in value) {
-        return HealthDirectorateHealthConversationTextContent
       }
       return null
     },
