@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'api-domains-watson-assistant-chat',
   preset: '../../../../jest.preset.js',

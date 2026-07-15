@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'portals-my-pages-consent',
   preset: './jest.preset.js',

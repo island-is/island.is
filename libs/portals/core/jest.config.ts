@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'portals-core',
   testEnvironment: 'jsdom',

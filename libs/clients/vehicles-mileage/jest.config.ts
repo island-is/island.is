@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'clients-vehicles-mileage',
   preset: '../../../jest.preset.js',

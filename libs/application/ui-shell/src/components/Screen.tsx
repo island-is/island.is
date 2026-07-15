@@ -154,7 +154,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
   const [fieldLoadingState, setFieldLoadingState] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const refetch = useContext<() => void>(RefetchContext)
-   
+
   const [updateApplication, { loading, error: updateApplicationError }] =
     useMutation(UPDATE_APPLICATION, {
       onError: (e) => {

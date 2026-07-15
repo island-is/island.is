@@ -78,7 +78,7 @@ import { GET_WEB_CHAT } from '../queries/WebChat'
 import { ArticleChatPanel } from './components/ArticleChatPanel'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
- 
+
 // @ts-expect-error make web strict
 type SubArticle = GetSingleArticleQuery['getSingleArticle']['subArticles'][0]
 
@@ -146,7 +146,7 @@ const createArticleNavigation = (
       )
     }
   }
-   
+
   // @ts-expect-error make web strict
   return nav
 }
@@ -236,7 +236,6 @@ const ArticleNavigation: FC<
               )?.title
         }
         isMenuDialog={isMenuDialog}
-         
         // @ts-expect-error make web strict
         renderLink={(link, { typename, slug }) => {
           return (
@@ -314,7 +313,6 @@ const ArticleSidebar: FC<React.PropsWithChildren<ArticleSidebarProps>> = ({
           institution={article.organization[0].title}
           locale={activeLocale}
           linkProps={{
-             
             // @ts-expect-error make web strict
             href: getOrganizationLink(article.organization[0], activeLocale),
           }}
@@ -363,10 +361,9 @@ const ArticleScreen: Screen<ArticleProps> = ({
   const [mounted, setMounted] = useState(false)
   const [isVisible, setIsVisible] = useState(true)
   useEffect(() => {
-     
     // @ts-expect-error make web strict
     portalRef.current = document.querySelector('#__next')
-     
+
     // @ts-expect-error make web strict
     processEntryRef.current = document.querySelector('#processRef')
     setMounted(true)
@@ -401,8 +398,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
 
       const elementPosition =
         processEntryRef && processEntryRef.current
-          ?  
-            // @ts-expect-error make web strict
+          ? // @ts-expect-error make web strict
             processEntryRef?.current.getBoundingClientRect().bottom +
             (px - currPos.y)
           : 0
@@ -411,7 +407,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
       setIsVisible(canShow)
     },
     [setIsVisible],
-     
+
     // @ts-expect-error make web strict
     null,
     false,
@@ -525,7 +521,6 @@ const ArticleScreen: Screen<ArticleProps> = ({
       {!inStepperView && (
         <Box className="rs_read">
           {webRichText(
-             
             // @ts-expect-error make web strict
             (subArticle ?? article).body as SliceType[],
             {
@@ -601,7 +596,6 @@ const ArticleScreen: Screen<ArticleProps> = ({
         {processEntry?.processLink && <ProcessEntry {...processEntry} />}
       </Box>
       {
-         
         // @ts-expect-error make web strict
         article.organization.length > 0 && (
           <Box
@@ -610,25 +604,21 @@ const ArticleScreen: Screen<ArticleProps> = ({
             printHidden
           >
             <InstitutionsPanel
-               
               // @ts-expect-error make web strict
               img={article.organization[0].logo?.url ?? ''}
               institution={{
-                 
                 // @ts-expect-error make web strict
                 title: article.organization[0].title,
                 label:
                   organizationNamespace?.['organization'] ?? n('organization'),
-                 
+
                 // @ts-expect-error make web strict
                 href: getOrganizationLink(
-                   
                   // @ts-expect-error make web strict
                   article.organization[0],
                   activeLocale,
                 ),
               }}
-               
               // @ts-expect-error make web strict
               responsibleParty={article.responsibleParty.map(
                 (responsibleParty) => ({
@@ -637,13 +627,12 @@ const ArticleScreen: Screen<ArticleProps> = ({
                   href: responsibleParty.link,
                 }),
               )}
-               
               // @ts-expect-error make web strict
               relatedInstitution={article.relatedOrganization.map(
                 (relatedOrganization) => ({
                   title: relatedOrganization.title,
                   label: n('relatedOrganization'),
-                   
+
                   // @ts-expect-error make web strict
                   href: getOrganizationLink(relatedOrganization, activeLocale),
                 }),
@@ -656,18 +645,14 @@ const ArticleScreen: Screen<ArticleProps> = ({
       }
       <Box display={['block', 'block', 'none']} printHidden>
         {
-           
           // @ts-expect-error make web strict
           (article.relatedArticles.length > 0 ||
-             
             // @ts-expect-error make web strict
             article.relatedContent.length > 0) && (
             <RelatedContent
               title={n('relatedMaterial')}
-               
               // @ts-expect-error make web strict
               articles={article.relatedArticles}
-               
               // @ts-expect-error make web strict
               otherContent={article.relatedContent}
             />
@@ -810,7 +795,6 @@ const ArticleScreen: Screen<ArticleProps> = ({
             >
               {!inStepperView && (
                 <Webreader
-                   
                   // @ts-expect-error make web strict
                   readId={null}
                   readClass="rs_read"
@@ -818,11 +802,9 @@ const ArticleScreen: Screen<ArticleProps> = ({
               )}
               {(subArticle
                 ? subArticle.signLanguageVideo?.url
-                :  
-                  // @ts-expect-error make web strict
+                : // @ts-expect-error make web strict
                   article.signLanguageVideo?.url) && (
                 <SignLanguageButton
-                   
                   // @ts-expect-error make web strict
                   videoUrl={(subArticle ?? article).signLanguageVideo.url}
                   videoThumbnailImageUrl={
@@ -834,13 +816,11 @@ const ArticleScreen: Screen<ArticleProps> = ({
                       {!inStepperView && (
                         <Text variant="h2">
                           <span
-                             
                             // @ts-expect-error make web strict
                             id={slugify((subArticle ?? article).title)}
                             className="rs_read"
                           >
                             {
-                               
                               // @ts-expect-error make web strict
                               (subArticle ?? article).title
                             }
@@ -884,7 +864,6 @@ const ArticleScreen: Screen<ArticleProps> = ({
             : article?.showTableOfContents) && (
             <GridRow>
               <GridColumn
-                 
                 // @ts-expect-error make web strict
                 span={[null, '4/7', '5/7', '4/7']}
               >
@@ -914,7 +893,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
                // @ts-expect-error make web strict */}
               <ProcessEntry fixed {...processEntry} />
             </Box>,
-             
+
             // @ts-expect-error make web strict
             portalRef.current,
           )}

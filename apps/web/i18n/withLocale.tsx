@@ -59,7 +59,7 @@ export const withLocale =
         translations,
       }
     }
-     
+
     // @ts-expect-error make web strict
     return NewComponent
   }

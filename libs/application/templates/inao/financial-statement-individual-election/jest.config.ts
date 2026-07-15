@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'application-templates-financial-statment-individual-election',
   preset: '../../../../../jest.preset.js',

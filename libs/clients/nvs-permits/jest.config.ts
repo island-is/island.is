@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'clients-nvs-permits',
   preset: '../../../jest.preset.js',

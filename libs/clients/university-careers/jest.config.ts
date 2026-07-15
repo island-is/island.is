@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'clients-university-careers',
   preset: '../../../jest.preset.js',

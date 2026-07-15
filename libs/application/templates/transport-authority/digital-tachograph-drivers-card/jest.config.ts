@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName:
     'application-templates-transport-authority-digital-tachograph-drivers-card',

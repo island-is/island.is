@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'clients-transport-authority-digital-tachograph-drivers-card',
   preset: './jest.preset.js',

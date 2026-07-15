@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'api-domains-financial-statements-inao',
   preset: './jest.preset.js',

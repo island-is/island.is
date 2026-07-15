@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'testing-fixtures',
   preset: './jest.preset.js',

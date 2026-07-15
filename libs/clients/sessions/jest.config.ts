@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'clients-sessions',
   preset: './jest.preset.js',

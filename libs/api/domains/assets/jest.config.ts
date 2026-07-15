@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'api-domains-assets',
   preset: './jest.preset.js',

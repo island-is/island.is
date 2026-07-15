@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'clients-smart-solutions-v2',
   preset: '../../../jest.preset.js',

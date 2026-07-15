@@ -31,7 +31,10 @@ interface Props {
   civilClaimant: CivilClaimant
 }
 
-type UpdateCivilClaimant = Omit<UpdateCivilClaimantInput, 'caseId' | 'civilClaimantId'>
+type UpdateCivilClaimant = Omit<
+  UpdateCivilClaimantInput,
+  'caseId' | 'civilClaimantId'
+>
 
 const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
   const { workingCase, setWorkingCase } = useContext(FormContext)

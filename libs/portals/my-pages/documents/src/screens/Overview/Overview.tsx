@@ -102,7 +102,6 @@ export const DocumentsOverview = () => {
         element.focus()
       }
     }
-     
   }, [focusId])
 
   const rowDirection = error ? 'column' : 'columnReverse'

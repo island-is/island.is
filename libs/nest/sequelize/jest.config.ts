@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'nest-sequelize',
   preset: './jest.preset.js',

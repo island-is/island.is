@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'clients-financial-management-authority',
   preset: '../../../jest.preset.js',

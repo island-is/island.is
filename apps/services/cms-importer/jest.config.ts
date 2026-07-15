@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'services-cms-importer',
   preset: '../../../jest.preset.js',

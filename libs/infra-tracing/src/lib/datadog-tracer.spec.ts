@@ -12,7 +12,7 @@ describe('datadogTrace', () => {
 
   describe('shouldMask', () => {
     it('should always be on when magic environment variable is not set', () => {
-      const ddtrace = require('./datadog-tracer')  
+      const ddtrace = require('./datadog-tracer')
 
       expect(ddtrace.shouldMask()).toBeTruthy()
       expect(ddtrace.shouldMask(200)).toBeTruthy()
@@ -22,7 +22,7 @@ describe('datadogTrace', () => {
     })
     it('should be off for http >= 400 when magic environment variable is set', () => {
       process.env.DD_PII_MASKING_DISABLED_ON_FAILURE = 'true'
-      const ddtrace = require('./datadog-tracer')  
+      const ddtrace = require('./datadog-tracer')
 
       expect(ddtrace.shouldMask()).toBeTruthy()
       expect(ddtrace.shouldMask(200)).toBeTruthy()

@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'application-templates-municipal-list-creation',
   preset: './jest.preset.js',

@@ -1,4 +1,3 @@
- 
 const figmaTokens = require('./figmaTokens.json')
 
 // Primitives

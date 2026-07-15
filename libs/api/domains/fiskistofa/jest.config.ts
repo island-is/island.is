@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'api-domains-fiskistofa',
   preset: './jest.preset.js',

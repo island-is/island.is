@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'clients-p-card',
   preset: '../../../jest.preset.js',

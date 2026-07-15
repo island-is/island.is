@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'clients-inna',
   preset: './jest.preset.js',

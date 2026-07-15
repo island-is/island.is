@@ -73,7 +73,6 @@ export const InfoButton = () => {
     if (!isVisible) return
     updatePosition()
     requestAnimationFrame(() => updatePosition())
-     
   }, [isVisible, width, height])
 
   useEffect(() => {

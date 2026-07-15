@@ -1,4 +1,3 @@
- 
 import { ReactNode, useEffect, useState } from 'react'
 import { useWindowSize } from 'react-use'
 import { useRouter } from 'next/router'

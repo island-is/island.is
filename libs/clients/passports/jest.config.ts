@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'clients-passports',
   preset: './jest.preset.js',

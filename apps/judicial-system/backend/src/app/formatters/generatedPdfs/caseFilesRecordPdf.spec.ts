@@ -105,7 +105,7 @@ describe('createCaseFilesRecord - table of contents', () => {
 
     const outPath = path.join(os.tmpdir(), 'caseFilesRecord.pdf')
     fs.writeFileSync(outPath, pdf)
-     
+
     console.log(`Case files record written to ${outPath}`)
 
     const document = await PDFDocument.load(new Uint8Array(pdf))
@@ -146,7 +146,7 @@ describe('createCaseFilesRecord - table of contents', () => {
 
     const outPath = path.join(os.tmpdir(), 'caseFilesRecord-digital.pdf')
     fs.writeFileSync(outPath, pdf)
-     
+
     console.log(`Case files record written to ${outPath}`)
 
     const document = await PDFDocument.load(new Uint8Array(pdf))

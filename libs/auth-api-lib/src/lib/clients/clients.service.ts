@@ -1,4 +1,3 @@
- 
 import type { Logger } from '@island.is/logging'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'

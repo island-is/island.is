@@ -237,7 +237,7 @@ const useMakeDraftingState = (inputs: StateInputs) => {
        * Only implemented for action-interface compatilility with
        * impact appendix editing
        */
-       
+
       revokeAppendix: (idx: number, revoked: boolean) => undefined,
 
       moveAppendixUp: (idx: number) => {

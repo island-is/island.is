@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'application-templates-parliamentary-list-signing',
   preset: './jest.preset.js',

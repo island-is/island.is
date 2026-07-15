@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'nest-dataloader',
   preset: './jest.preset.js',

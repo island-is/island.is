@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'services-user-notification',
   preset: './jest.preset.js',

@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'clients-hms-rental-agreement',
   preset: './jest.preset.js',

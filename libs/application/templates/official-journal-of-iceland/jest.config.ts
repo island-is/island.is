@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'application-templates-official-journal-of-iceland',
   preset: '../../../../jest.preset.js',

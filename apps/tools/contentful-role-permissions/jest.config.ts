@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'contentful-role-permissions',
   preset: './jest.preset.js',

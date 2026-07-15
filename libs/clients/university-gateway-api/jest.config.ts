@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'clients-university-gateway-api',
   preset: '../../../jest.preset.js',

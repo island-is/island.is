@@ -22,7 +22,7 @@ const extractUniqueKeyPath = (url: string) => {
 export const startMocking = (requestHandlers: RequestHandlersList) => {
   if (typeof window === 'undefined') {
     // https://github.com/webpack/webpack/issues/8826
-     
+
     const { setupServer } = eval('require')('msw/node')
     const server = setupServer(...requestHandlers)
     server.listen()
@@ -47,7 +47,6 @@ export const startMocking = (requestHandlers: RequestHandlersList) => {
       return
     }
 
-     
     const { setupWorker } = require('msw')
     const worker = setupWorker(...requestHandlers)
     const keyPath = extractUniqueKeyPath(location.href)

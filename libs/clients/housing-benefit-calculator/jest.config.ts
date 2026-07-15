@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'clients-housing-benefit-calculator',
   preset: '../../../jest.preset.js',

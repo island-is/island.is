@@ -5,7 +5,7 @@ import { deleteCookie } from '@island.is/judicial-system-web/src/utils/cookies'
 
 import 'isomorphic-fetch'
 
-const { API_URL = '' } = process.env  
+const { API_URL = '' } = process.env
 export const apiUrl = API_URL
 
 export const logout = () => {

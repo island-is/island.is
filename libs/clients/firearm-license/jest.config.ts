@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'clients-firearm-license',
   preset: './jest.preset.js',

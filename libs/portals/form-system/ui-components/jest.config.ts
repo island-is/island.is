@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'portals-form-system-ui-components',
   preset: '../../../../jest.preset.js',

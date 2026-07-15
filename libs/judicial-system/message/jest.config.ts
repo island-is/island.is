@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'judicial-system-message',
   preset: './jest.preset.js',

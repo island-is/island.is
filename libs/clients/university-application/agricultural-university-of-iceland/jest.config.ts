@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName:
     'clients-university-application-agricultural-university-of-iceland',

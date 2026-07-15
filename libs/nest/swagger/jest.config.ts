@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'nest-swagger',
   preset: './jest.preset.js',

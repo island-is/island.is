@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'clients-cms',
   preset: './jest.preset.js',

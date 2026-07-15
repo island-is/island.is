@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'clients-fjs-bankInfo',
   preset: '../../../../jest.preset.js',

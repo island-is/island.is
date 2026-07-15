@@ -10,7 +10,7 @@ describe('isHttpsUrl', () => {
 
   it.each([
     'http://blikk.tech/sca',
-     
+
     'javascript:alert(1)',
     'data:text/html,evil',
     'ftp://example.com',

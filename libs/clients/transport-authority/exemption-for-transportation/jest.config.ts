@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'clients-transport-authority-exemption-for-transportation',
   preset: '../../../../jest.preset.js',

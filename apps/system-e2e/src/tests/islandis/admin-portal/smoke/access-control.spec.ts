@@ -88,7 +88,7 @@ test.describe('Admin portal access control', () => {
     await test.step('Create admin delegation as company', async () => {
       // Act
       await granterPage.getByRole('button', { name: 'Skrá nýtt umboð' }).click()
-       
+
       await granterPage
         .getByRole('textbox', { name: 'Kennitala' })
         .fill('010130-3019')

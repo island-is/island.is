@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'clients-driving-license',
   preset: './jest.preset.js',

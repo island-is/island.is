@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'clients-aircraft-registry',
   preset: '../../../jest.preset.js',

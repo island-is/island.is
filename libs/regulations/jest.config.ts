@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'regulations',
   preset: './jest.preset.js',

@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'react-feature-flags',
   preset: './jest.preset.js',

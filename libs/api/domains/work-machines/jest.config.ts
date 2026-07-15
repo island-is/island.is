@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'api-domains-work-machines',
   preset: './jest.preset.js',

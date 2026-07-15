@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'libs/portals/form-system/graphql',
   preset: '../../../../jest.preset.js',

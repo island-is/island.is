@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'application-ui-forms',
   preset: './jest.preset.js',

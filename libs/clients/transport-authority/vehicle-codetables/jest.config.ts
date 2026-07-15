@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'clients-transport-authority-vehicle-codetables',
   preset: './jest.preset.js',

@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'portals-admin-regulations-admin',
   preset: '../../../../jest.preset.js',

@@ -162,7 +162,6 @@ export const EstateMembersRepeater: FC<
     if (!hasMultipleSpouses) {
       clearErrors(multipleSpousesValidation)
     }
-     
   }, [
     fields,
     hasMinorWithoutValidAdvocate,

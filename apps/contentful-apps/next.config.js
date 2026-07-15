@@ -1,4 +1,3 @@
- 
 const { composePlugins, withNx } = require('@nx/next')
 const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 

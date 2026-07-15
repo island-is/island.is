@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'shared-components',
   preset: './jest.preset.js',

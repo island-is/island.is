@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'api-domains-customs-calculator',
   preset: '../../../../jest.preset.js',

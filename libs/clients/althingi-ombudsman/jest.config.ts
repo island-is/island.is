@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'clients-althingi-ombudsman',
   preset: '../../../jest.preset.js',

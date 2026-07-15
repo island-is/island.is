@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'clients-statistics',
   preset: '../../../jest.preset.js',

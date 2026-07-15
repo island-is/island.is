@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'vmstUnemployment',
   preset: '../../../jest.preset.js',

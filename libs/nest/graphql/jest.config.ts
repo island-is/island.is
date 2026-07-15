@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'nest-graphql',
   preset: './jest.preset.js',

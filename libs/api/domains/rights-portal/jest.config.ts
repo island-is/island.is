@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'api-domains-rights-portal',
   preset: '../../../../jest.preset.js',

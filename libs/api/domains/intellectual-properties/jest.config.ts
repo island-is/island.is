@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'api-domains-intellectual-properties',
   preset: '../../../../jest.preset.js',

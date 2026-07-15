@@ -1,4 +1,3 @@
- 
 const withNx = require('@nx/next/plugins/with-nx')
 const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')

@@ -4,7 +4,6 @@ let configCatClient: IConfigCatClient | null = null
 
 export function getConfigcatClient(): IConfigCatClient {
   if (!configCatClient) {
-     
     const configcat = require('@configcat/sdk/node')
     const sdkKey = process.env.CONFIGCAT_SDK_KEY
     if (!sdkKey) {

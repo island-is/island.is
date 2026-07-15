@@ -3,7 +3,7 @@ import { MenuStateReturn } from 'reakit/Menu'
 
 interface HoverPropsRefState {
   hoverCount: number
-   
+
   hideTimeout?: ReturnType<typeof setTimeout>
 }
 

@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'clients-intellectual-properties',
   preset: '../../../jest.preset.js',

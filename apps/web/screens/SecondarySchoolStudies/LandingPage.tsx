@@ -136,7 +136,6 @@ const SecondarySchoolStudiesLandingPage: Screen<
   // Sync inputValue with searchTerm from URL on mount
   useEffect(() => {
     setInputValue(searchTerm)
-     
   }, [searchTerm])
 
   // Fuse.js configuration

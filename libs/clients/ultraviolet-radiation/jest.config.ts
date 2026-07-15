@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'clients-ultraviolet-radiation',
   preset: '../../../jest.preset.js',

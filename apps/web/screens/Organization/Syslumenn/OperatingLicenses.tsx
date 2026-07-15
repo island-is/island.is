@@ -1,4 +1,3 @@
- 
 import { useEffect, useReducer, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 import { ApolloClient } from '@apollo/client'
@@ -228,7 +227,6 @@ const useSearch = (
     }, DEBOUNCE_TIMER))
 
     return () => clearTimeout(thisTimerId)
-     
   }, [client, term, currentPageNumber, dispatch])
 
   return state

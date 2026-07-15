@@ -119,12 +119,12 @@ export const attributes: (keyof Case)[] = [
 ]
 
 export type LimitedAccessUpdateCase = Pick<
-    Case,
-    | 'caseModifiedExplanation'
-    | 'isolationToDate'
-    | 'validToDate'
-    | 'openedByDefender'
-  >
+  Case,
+  | 'caseModifiedExplanation'
+  | 'isolationToDate'
+  | 'validToDate'
+  | 'openedByDefender'
+>
 
 export const include: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },

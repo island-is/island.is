@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName:
     'application-templates-social-insurance-administration-death-benefits',

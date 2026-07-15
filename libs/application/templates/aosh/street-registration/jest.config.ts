@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'application-templates-aosh-street-registration',
   preset: '../../../../../jest.preset.js',

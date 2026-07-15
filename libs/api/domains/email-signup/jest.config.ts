@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'api-domains-email-signup',
   preset: './jest.preset.js',

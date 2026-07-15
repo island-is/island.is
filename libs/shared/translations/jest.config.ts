@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'shared-translations',
   preset: './jest.preset.js',

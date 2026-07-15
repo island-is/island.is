@@ -1,4 +1,3 @@
- 
 /**
  * Health Directorate Draft Mapper - Converts draft replies from Health Directorate API
  * into the answer format expected by the frontend questionnaire UI.

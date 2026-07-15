@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'clients-zendesk',
   preset: './jest.preset.js',

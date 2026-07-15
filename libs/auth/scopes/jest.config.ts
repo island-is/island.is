@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'auth-scopes',
   preset: './jest.preset.js',

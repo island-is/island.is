@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'api-domains-practical-exams',
   preset: '../../../../jest.preset.js',

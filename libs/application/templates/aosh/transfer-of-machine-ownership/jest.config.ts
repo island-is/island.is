@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'application-templates-aosh-transfer-of-machine-ownership',
   preset: '../../../../../jest.preset.js',

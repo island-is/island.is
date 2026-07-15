@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'form-system',
   preset: '../../../../jest.preset.js',

@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'clients-rights-portal',
   preset: './jest.preset.js',

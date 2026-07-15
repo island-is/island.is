@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'clients-workpoint-arborg',
   preset: '../../../../jest.preset.js',

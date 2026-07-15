@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'github-actions-cache',
   preset: './jest.preset.js',

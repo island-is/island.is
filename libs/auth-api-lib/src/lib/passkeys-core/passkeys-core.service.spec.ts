@@ -23,7 +23,7 @@ import { PasskeysCoreConfig } from './passkeys-core.config'
 const {
   verifyRegistrationResponse,
   verifyAuthenticationResponse,
-} = require('@simplewebauthn/server')  
+} = require('@simplewebauthn/server')
 
 jest.mock('@simplewebauthn/server', () => ({
   __esModule: true,

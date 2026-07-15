@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'application-templates-european-health-insurance-card',
   preset: '../../../../../jest.preset.js',

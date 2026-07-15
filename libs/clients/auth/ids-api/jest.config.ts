@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'clients-auth-ids-api',
   preset: './jest.preset.js',

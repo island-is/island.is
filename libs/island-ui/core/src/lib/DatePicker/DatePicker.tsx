@@ -188,7 +188,6 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
               setEndDate(startDate)
               hoverDateRef.current = null
               setIsOpen(false)
-               
               ;(datePickerRef.current as any)?.setState({
                 inputValue: null,
               })
@@ -347,7 +346,6 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
               setStartDate(s)
               setEndDate(end2)
               setIsOpen(false)
-               
               ;(datePickerRef.current as any)?.setState({ inputValue: null })
               handleChange && handleChange(s, end2)
             }

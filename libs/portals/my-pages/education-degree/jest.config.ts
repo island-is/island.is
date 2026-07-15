@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'portals-my-pages-education-degree',
   preset: './jest.preset.js',

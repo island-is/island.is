@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'application-templates-id-card',
   preset: '../../../../jest.preset.js',

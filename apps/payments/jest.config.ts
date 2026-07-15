@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'payments',
   preset: '../../jest.preset.js',

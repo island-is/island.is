@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'api-domains-payment-schedule',
   preset: './jest.preset.js',

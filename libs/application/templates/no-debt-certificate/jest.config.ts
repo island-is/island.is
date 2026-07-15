@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'application-templates-no-debt-certificate',
   preset: './jest.preset.js',

@@ -163,7 +163,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
         // Note: We are currently not applying any additional filters from input.
         // If filtering is added in the future, it should be included in the
         // request parameters inside this loop.
-         
+
         while (true) {
           const page = (await this.elfurApi.v1VacancyGetVacancyListGet({
             rowOffset,

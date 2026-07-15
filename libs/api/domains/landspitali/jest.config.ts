@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'api-domains-landspitali',
   preset: '../../../../jest.preset.js',

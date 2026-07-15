@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'portals-admin-service-desk',
   preset: './jest.preset.js',

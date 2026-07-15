@@ -121,7 +121,6 @@ const Determinations: CustomScreen<DeterminationsProps> = ({
         },
       },
     })
-     
   }, [page, fetchDeterminations, selectedCaseType, searchTerm])
 
   useDebounce(

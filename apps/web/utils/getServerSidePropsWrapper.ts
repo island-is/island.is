@@ -19,7 +19,7 @@ const deleteUndefined = (obj: Record<string, any> | undefined): void => {
       if (obj[key] && typeof obj[key] === 'object') {
         deleteUndefined(obj[key])
       } else if (typeof obj[key] === 'undefined') {
-        delete obj[key]  
+        delete obj[key]
       }
     })
   }

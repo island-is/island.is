@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'application-templates-financial-aid',
   preset: './jest.preset.js',

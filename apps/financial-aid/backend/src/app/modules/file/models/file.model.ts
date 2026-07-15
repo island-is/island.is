@@ -13,7 +13,10 @@ import { ApplicationFile, FileType } from '@island.is/financial-aid/shared/lib'
 
 import { ApplicationModel } from '../../application/models/application.model'
 
-type ApplicationFileCreationAttributes = Optional<ApplicationFile, 'id' | 'created'>
+type ApplicationFileCreationAttributes = Optional<
+  ApplicationFile,
+  'id' | 'created'
+>
 
 @Table({
   tableName: 'application_files',

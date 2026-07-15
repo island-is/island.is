@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'services-auth-personal-representative-public',
   preset: './jest.preset.js',

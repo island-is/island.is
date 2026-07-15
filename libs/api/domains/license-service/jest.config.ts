@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'api-domains-license-service',
   preset: './jest.preset.js',

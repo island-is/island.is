@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'application-templates-presidential-list-signing',
   preset: './jest.preset.js',

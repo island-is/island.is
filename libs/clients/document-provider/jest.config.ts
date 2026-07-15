@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'clients-document-provider',
   preset: './jest.preset.js',

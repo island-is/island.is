@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'portals-my-pages-sessions',
   preset: './jest.preset.js',

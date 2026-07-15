@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'clients-rental-day-rate',
   preset: './jest.preset.js',

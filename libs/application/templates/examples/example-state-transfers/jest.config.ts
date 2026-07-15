@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'example-state-transfers',
   preset: '../../../../../jest.preset.js',

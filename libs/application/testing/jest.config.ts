@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'application-testing',
   preset: './jest.preset.js',

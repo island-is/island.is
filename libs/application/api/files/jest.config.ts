@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'application-api-files',
   preset: './jest.preset.js',

@@ -314,7 +314,6 @@ const convertRepeaterToScreens = (
   const { id, children } = repeater
   const newScreens: FormScreen[] = []
 
-   
   const recursiveMap = (
     field: FormLeaf,
     fn: (l: FormLeaf) => FormLeaf,

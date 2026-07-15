@@ -90,7 +90,7 @@ export const PersonalTaxCreditTable = ({
 
   useEffect(() => {
     setCollapsingRows(new Set())
-  }, [taxCards])  
+  }, [taxCards])
 
   const columns = useMemo(
     () => [

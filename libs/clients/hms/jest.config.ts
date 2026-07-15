@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'hms',
   preset: '../../../jest.preset.js',

@@ -89,5 +89,4 @@ const options = {
   session: { strategy: 'jwt' },
 }
 
- 
 export default (req, res) => NextAuth(req, res, options)

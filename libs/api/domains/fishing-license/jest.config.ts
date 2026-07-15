@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'api-domains-fishing-license',
   preset: './jest.preset.js',

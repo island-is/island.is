@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'api-domains-finance',
   preset: './jest.preset.js',

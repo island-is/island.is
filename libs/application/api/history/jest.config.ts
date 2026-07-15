@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'application-api-history',
   preset: '../../../../jest.preset.js',

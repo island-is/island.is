@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'api-domains-hms',
   preset: '../../../../jest.preset.js',

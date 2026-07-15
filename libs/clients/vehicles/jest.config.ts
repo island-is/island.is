@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'clients-vehicles',
   preset: './jest.preset.js',

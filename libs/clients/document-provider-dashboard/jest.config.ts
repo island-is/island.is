@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'document-provider-dashboard',
   preset: '../../../jest.preset.js',

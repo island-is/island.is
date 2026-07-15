@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'application-templates-municipal-list-signing',
   preset: './jest.preset.js',

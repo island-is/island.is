@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'api-domains-official-journal-of-iceland-application',
   preset: '../../../../jest.preset.js',

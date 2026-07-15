@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'clients-administration-of-occupational-safety-and-health',
   preset: '../../../jest.preset.js',

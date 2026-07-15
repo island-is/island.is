@@ -352,7 +352,6 @@ export const HeirsRepeater: FC<
     if (!hasHeirWithNationalIdSameAsExecutor) {
       clearErrors(heirNationalIdSameAsExecutorValidation)
     }
-     
   }, [
     fields,
     hasEstateMemberUnder18withoutRep,

@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'nest-config',
   preset: './jest.preset.js',

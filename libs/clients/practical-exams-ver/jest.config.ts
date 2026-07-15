@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'clients-practical-exams-ver',
   preset: '../../../jest.preset.js',

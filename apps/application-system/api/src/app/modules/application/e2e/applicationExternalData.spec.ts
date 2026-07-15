@@ -50,7 +50,7 @@ class MockContentfulRepository {
 }
 
 let server: request.SuperTest<request.Test>
- 
+
 const nationalId = createNationalId('any')
 const mockAuthGuard = new MockAuthGuard({
   nationalId,

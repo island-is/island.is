@@ -1,4 +1,3 @@
- 
 import { DependencyList, MutableRefObject, useRef } from 'react'
 
 import { useIsomorphicLayoutEffect } from './useIsomorphicLayoutEffect'

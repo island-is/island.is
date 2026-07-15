@@ -64,7 +64,6 @@ export const AssignApplication = () => {
     }
 
     init()
-     
   })
 
   if (loading) {

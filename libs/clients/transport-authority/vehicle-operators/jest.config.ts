@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'clients-transport-authority-vehicle-operators',
   preset: './jest.preset.js',
