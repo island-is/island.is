@@ -11,6 +11,7 @@ import { ProblemModule } from '@island.is/nest/problem'
 
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { ApplicationModule } from './modules/application/application.module'
+import { SdfModule } from './modules/sdf/sdf.module'
 import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
 import { NationalRegistryV3ApplicationsClientConfig } from '@island.is/clients/national-registry-v3-applications'
@@ -74,6 +75,7 @@ import { WorkMachinesClientConfig } from '@island.is/clients/work-machines'
 import { BankInfoClientConfig } from '@island.is/clients/fjs/bank-info'
 import { PaymentsApiClientConfig } from '@island.is/clients/payments'
 import { VmstUnemploymentClientConfig } from '@island.is/clients/vmst-unemployment'
+import { HmsConfig } from '@island.is/clients/hms'
 import { HmsRentalAgreementClientConfig } from '@island.is/clients/hms-rental-agreement'
 import { HousingBenefitsConfig } from '@island.is/clients/hms-housing-benefits'
 import { ExemptionForTransportationClientConfig } from '@island.is/clients/transport-authority/exemption-for-transportation'
@@ -87,6 +89,7 @@ import { DirectorateOfEqualityClientConfig } from '@island.is/clients/directorat
       useClass: SequelizeConfigService,
     }),
     ApplicationModule,
+    SdfModule,
     ProblemModule,
     ConfigModule.forRoot({
       isGlobal: true,
@@ -151,6 +154,7 @@ import { DirectorateOfEqualityClientConfig } from '@island.is/clients/directorat
         BankInfoClientConfig,
         PaymentsApiClientConfig,
         VmstUnemploymentClientConfig,
+        HmsConfig,
         HmsRentalAgreementClientConfig,
         HousingBenefitsConfig,
         ExemptionForTransportationClientConfig,

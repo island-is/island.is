@@ -33,6 +33,7 @@ export enum Features {
   disabilityPensionLightweightModeEnabled = 'isDisabilityPensionLightweightModeEnabled',
   pensionSupplementEnabled = 'isPensionSupplementEnabled',
   fireCompensationAppraisalEnabled = 'isFireCompensationAppraisalEnabled',
+  fireCompensationAppraisalSdfRollout = 'isFireCompensationAppraisalSdfRolloutEnabled',
   ExemptionForTransportation = 'isExemptionForTransportationEnabled',
   TerminateRentalAgreementEnabled = 'isterminaterentalagreementsenabled',
   UnemploymentBenefitsEnabled = 'isUnemploymentBenefitsEnabled',

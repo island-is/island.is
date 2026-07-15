@@ -248,8 +248,16 @@ export class ApplicationTemplateHelper<
     const validatorPaths = Object.keys(validators)
 
     for (const validatorPath of validatorPaths) {
-      if (has(newAnswers, validatorPath)) {
-        const newAnswer = get(newAnswers, validatorPath)
+      const hasDirectAnswer = Object.prototype.hasOwnProperty.call(
+        newAnswers,
+        validatorPath,
+      )
+      const hasPathAnswer = has(newAnswers, validatorPath)
+
+      if (hasDirectAnswer || hasPathAnswer) {
+        const newAnswer = hasDirectAnswer
+          ? newAnswers[validatorPath]
+          : get(newAnswers, validatorPath)
 
         const result = await validators[validatorPath](
           newAnswer,
@@ -269,6 +277,8 @@ export class ApplicationTemplateHelper<
     if (hasError) {
       return errorMap
     }
+
+    return undefined
   }
 
   getApisFromRoleInState(role: ApplicationRole): TemplateApi[] {

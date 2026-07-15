@@ -338,11 +338,37 @@ export interface SelectOption<T = string | number> {
   value: T
 }
 
+export type DataTableInputType = 'text' | 'number'
+
+export type DataTableInput = {
+  key: string
+  label?: FormText
+  type: DataTableInputType
+  min?: number
+  max?: number
+  format?: string
+  suffix?: FormText
+}
+
+export type DataTableEditableRow = {
+  id: string
+  label: FormText
+  cells?: StaticText[]
+  hasCheckbox?: boolean
+  checkboxKey?: string
+  inputs?: DataTableInput[]
+  payload?: Record<string, unknown>
+  defaultValues?: Record<string, string | number | boolean | undefined>
+}
+
+export type DataTableRow = {
+  id: string
+  cells: StaticText[]
+  expandable?: {
+    rows: DataTableEditableRow[]
+  }
+}
 export interface BaseField extends Omit<FormItem, 'id'> {
-  /**
-   * Answer path in react-hook-form / `application.answers`. May be a function of `application`
-   * (e.g. per-assignee keys from `application.assignees` or answers).
-   */
   readonly id: MaybeWithApplicationAndUser<string>
   readonly component: FieldComponents | string
   readonly title?: FormTextWithLocale
@@ -351,6 +377,7 @@ export interface BaseField extends Omit<FormItem, 'id'> {
   disabled?: boolean
   width?: FieldWidth
   colSpan?: SpanType
+  clientShowWhen?: FormExpression
   condition?: Condition
   isPartOfRepeater?: boolean
   defaultValue?: MaybeWithApplicationAndActiveFieldAndIndexAndLocale<unknown>
@@ -386,9 +413,11 @@ export interface InputField extends BaseField {
 export enum FieldTypes {
   CHECKBOX = 'CHECKBOX',
   CUSTOM = 'CUSTOM',
+  DATA_TABLE = 'DATA_TABLE',
   DATE = 'DATE',
   DESCRIPTION = 'DESCRIPTION',
   RADIO = 'RADIO',
+  SEARCH = 'SEARCH',
   EMAIL = 'EMAIL',
   SELECT = 'SELECT',
   TEXT = 'TEXT',
@@ -432,10 +461,12 @@ export enum FieldTypes {
 
 export enum FieldComponents {
   CHECKBOX = 'CheckboxFormField',
+  DATA_TABLE = 'DataTableFormField',
   DATE = 'DateFormField',
   TEXT = 'TextFormField',
   DESCRIPTION = 'DescriptionFormField',
   RADIO = 'RadioFormField',
+  SEARCH = 'SearchFormField',
   SELECT = 'SelectFormField',
   FILEUPLOAD = 'FileUploadFormField',
   DIVIDER = 'DividerFormField',
@@ -533,6 +564,24 @@ export interface SelectField extends InputField {
   backgroundColor?: InputBackgroundColor
   isMulti?: boolean
   isClearable?: boolean
+}
+
+export interface SearchField extends InputField {
+  readonly type: FieldTypes.SEARCH
+  component: FieldComponents.SEARCH
+  placeholder?: FormText
+  searchAction: string
+  minQueryLength?: number
+  options: MaybeWithApplicationAndFieldAndLocale<Option[]>
+  onSelectRefetch?: string[]
+  inlineRefetchTemplateApis?: string[]
+}
+
+export interface DataTableField extends BaseField {
+  readonly type: FieldTypes.DATA_TABLE
+  component: FieldComponents.DATA_TABLE
+  header: StaticText[] | ((application: Application) => StaticText[])
+  rows: DataTableRow[] | ((application: Application) => DataTableRow[])
 }
 
 export interface CompanySearchField extends InputField {
@@ -1086,8 +1135,45 @@ export interface DisplayField extends BaseField {
   halfWidthOwnline?: boolean
   variant?: TextFieldVariant
   label?: MessageDescriptor | string
+  clientValueExpression?: DisplayFieldClientValueExpression
   value: (answers: FormValue, externalData: ExternalData) => string
 }
+
+/**
+ * `clientValueExpression` is normally a static expression tree. It may also be a
+ * resolver `(answers, externalData) => FormExpression` so an author can bake
+ * `externalData`-derived literals (which the client evaluator cannot read) into
+ * the tree at screen-build time. The SDF display mapper resolves the function
+ * to a static tree before it reaches the client.
+ */
+export type DisplayFieldClientValueExpression =
+  | FormExpression
+  | ((answers: FormValue, externalData: ExternalData) => FormExpression)
+
+export type FormExpressionOperator =
+  | 'GET'
+  | 'SUM'
+  | 'MULTIPLY'
+  | 'EQUALS'
+  | 'GT'
+  | 'GTE'
+  | 'LT'
+  | 'LTE'
+  | 'IS_EMPTY'
+  | 'NOT'
+  | 'OR'
+  | 'AND'
+  | 'IF'
+  | 'CONTAINS'
+
+export type FormExpression =
+  | string
+  | number
+  | boolean
+  | {
+      operator: FormExpressionOperator
+      args: FormExpression[]
+    }
 
 export type KeyValueItem = {
   width?: 'full' | 'half' | 'snug'
@@ -1175,9 +1261,11 @@ export interface VehiclePermnoWithInfoField extends InputField {
 export type Field =
   | CheckboxField
   | CustomField
+  | DataTableField
   | DateField
   | DescriptionField
   | RadioField
+  | SearchField
   | SelectField
   | TextField
   | FileUploadField
