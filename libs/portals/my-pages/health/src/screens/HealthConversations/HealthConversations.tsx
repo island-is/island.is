@@ -51,9 +51,8 @@ const HealthConversations = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
 
-  const [filterValues, setFilterValues] = useState<FilterValues>(
-    defaultFilterValues,
-  )
+  const [filterValues, setFilterValues] =
+    useState<FilterValues>(defaultFilterValues)
   const [searchInput, setSearchInput] = useState('')
 
   const { data, loading, error } = useGetHealthConversationsQuery({
