@@ -7,7 +7,7 @@ query GetHealthConversationDetail($id: ID!) {
     isArchived
     patientCanReply
     isRead
-    lastSenderGroupName
+    organizationName
     organizationLogoUrl
     messages {
       id

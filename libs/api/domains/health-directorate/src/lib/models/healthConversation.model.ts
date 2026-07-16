@@ -22,17 +22,14 @@ export class HealthDirectorateHealthConversation {
 
   @Field({
     nullable: true,
-    description: 'National id of the organization this conversation is with.',
   })
   organizationNationalId?: string
 
-  @Field({ nullable: true, description: 'Display name of the organization.' })
+  @Field({ nullable: true })
   organizationName?: string
 
   @Field({
     nullable: true,
-    description:
-      'Name of the department within the organization, when the resolved mapping row is group-specific.',
   })
   departmentName?: string
 

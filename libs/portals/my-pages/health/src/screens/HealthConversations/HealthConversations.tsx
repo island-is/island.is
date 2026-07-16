@@ -122,7 +122,7 @@ const HealthConversations = () => {
     return healthConversations.filter((message) => {
       return (
         message.title?.toLowerCase().includes(query) ||
-        message.lastSenderGroupName?.toLowerCase().includes(query)
+        message.organizationName?.toLowerCase().includes(query)
       )
     })
   }, [filterValues, healthConversations])
@@ -150,69 +150,75 @@ const HealthConversations = () => {
         alignItems="center"
         marginBottom={3}
       >
-        <Filter
-          labelClearAll={formatMessage(m.clearAllFilters)}
-          labelClear={formatMessage(m.clearFilter)}
-          labelOpen={formatMessage(m.openFilter)}
-          reverse
-          variant="popover"
-          align="left"
-          filterInput={
-            <Input
-              name="messageSearch"
-              placeholder={formatMessage(
-                messages.healthConversationsSearchPlaceholder,
-              )}
-              value={searchInput}
-              onChange={(e) => handleSearchChange(e.target.value)}
-              icon={{ type: 'outline', name: 'search' }}
-              size="xs"
-              backgroundColor="blue"
-            />
-          }
-          onFilterClear={() => {
-            debouncedSetSearchQuery.cancel()
-            setSearchInput('')
-            setFilterValues(defaultFilterValues)
-          }}
-        >
-          <Box paddingX={3} paddingY={3}>
-            <Text variant="h5" marginBottom={2}>
-              {formatMessage(m.filterBy)}
-            </Text>
-            <Box>
-              <Checkbox
-                id="filter-starred"
-                label={formatMessage(messages.healthConversationsFilterStarred)}
-                checked={filterValues.starred}
-                onChange={(e) =>
-                  setFilterValues((prev) => ({
-                    ...prev,
-                    starred: e.target.checked,
-                  }))
-                }
-              />
-            </Box>
-            <Box paddingTop={1}>
-              <Checkbox
-                id="filter-archived"
-                label={formatMessage(
-                  messages.healthConversationsFilterArchived,
+        <Box style={{ minWidth: 0 }}>
+          <Filter
+            labelClearAll={formatMessage(m.clearAllFilters)}
+            labelClear={formatMessage(m.clearFilter)}
+            labelOpen={formatMessage(m.openFilter)}
+            reverse
+            variant="popover"
+            align="left"
+            mobileWrap={false}
+            filterInput={
+              <Input
+                name="messageSearch"
+                placeholder={formatMessage(
+                  messages.healthConversationsSearchPlaceholder,
                 )}
-                checked={filterValues.archived}
-                onChange={(e) =>
-                  setFilterValues((prev) => ({
-                    ...prev,
-                    archived: e.target.checked,
-                  }))
-                }
+                value={searchInput}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                icon={{ type: 'outline', name: 'search' }}
+                size="xs"
+                backgroundColor="blue"
               />
+            }
+            onFilterClear={() => {
+              debouncedSetSearchQuery.cancel()
+              setSearchInput('')
+              setFilterValues(defaultFilterValues)
+            }}
+          >
+            <Box paddingX={3} paddingY={3}>
+              <Text variant="h5" marginBottom={2}>
+                {formatMessage(m.filterBy)}
+              </Text>
+              <Box>
+                <Checkbox
+                  id="filter-starred"
+                  label={formatMessage(
+                    messages.healthConversationsFilterStarred,
+                  )}
+                  checked={filterValues.starred}
+                  onChange={(e) =>
+                    setFilterValues((prev) => ({
+                      ...prev,
+                      starred: e.target.checked,
+                    }))
+                  }
+                />
+              </Box>
+              <Box paddingTop={1}>
+                <Checkbox
+                  id="filter-archived"
+                  label={formatMessage(
+                    messages.healthConversationsFilterArchived,
+                  )}
+                  checked={filterValues.archived}
+                  onChange={(e) =>
+                    setFilterValues((prev) => ({
+                      ...prev,
+                      archived: e.target.checked,
+                    }))
+                  }
+                />
+              </Box>
             </Box>
-          </Box>
-        </Filter>
+          </Filter>
+        </Box>
         <Box
           display={['none', 'none', 'none', 'block']}
-          style={{ whiteSpace: 'nowrap' }}
+          style={{ whiteSpace: 'nowrap', flexShrink: 0 }}
+          marginLeft={2}
         >
           <LinkButton
             to={HealthPaths.HealthConversationsNew}
@@ -280,7 +286,7 @@ const HealthConversations = () => {
                       logoUrl={item.organizationLogoUrl ?? undefined}
                     />
                     <Box minWidth={0}>
-                      <Text variant="medium">{item.lastSenderGroupName}</Text>
+                      <Text variant="medium">{item.organizationName}</Text>
                       <Text
                         color="blue400"
                         truncate
@@ -317,7 +323,9 @@ const HealthConversations = () => {
                             variables: { input: { id: item.id } },
                           })
                         } else {
-                          starMessage({ variables: { input: { id: item.id } } })
+                          starMessage({
+                            variables: { input: { id: item.id } },
+                          })
                         }
                       }}
                       onStash={() => {
