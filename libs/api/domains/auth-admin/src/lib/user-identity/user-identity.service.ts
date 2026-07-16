@@ -161,13 +161,16 @@ export class UserIdentityService extends MultiEnvironmentService {
     active: boolean,
     targetEnvironments: Environment[],
   ): Promise<DeleteEnvironmentResult> {
-    const isFallback = targetEnvironments.length === 0
-    const envsToUpdate = isFallback ? environments : targetEnvironments
+    if (targetEnvironments.length === 0) {
+      throw new Error(
+        'No target environments provided for user identity update',
+      )
+    }
 
     const affectedEnvironments: Environment[] = []
     const failedEnvironments: EnvironmentFailure[] = []
 
-    for (const environment of envsToUpdate) {
+    for (const environment of targetEnvironments) {
       try {
         const result = await this.makeRequest(user, environment, (api) =>
           api.meUserIdentitiesControllerSetActiveRaw({
@@ -177,8 +180,6 @@ export class UserIdentityService extends MultiEnvironmentService {
         )
         if (result) {
           affectedEnvironments.push(environment)
-        } else if (isFallback && !this.isEnvironmentConfigured(environment)) {
-          continue
         } else {
           failedEnvironments.push({
             environment,
@@ -190,8 +191,9 @@ export class UserIdentityService extends MultiEnvironmentService {
         this.logger.error(
           `Failed to ${
             active ? 'reactivate' : 'deactivate'
-          } user identity in ${environment}`,
-          error as Error,
+          } user identity in ${environment}: ${
+            error instanceof Error ? error.message : 'Unknown error'
+          }`,
         )
         failedEnvironments.push(toFailure(environment, error))
       }

@@ -6,6 +6,7 @@ import {
   GetUserIdentityConfiguredEnvironmentsDocument,
   GetUserIdentityConfiguredEnvironmentsQuery,
 } from './UserIdentities.generated'
+import { isValidSearch } from './UserIdentities.utils'
 
 export interface UserIdentitiesLoaderData {
   userIdentities: GetUserIdentitiesQuery['authAdminUserIdentities']
@@ -31,9 +32,9 @@ export const userIdentitiesLoader: WrappedLoaderFn = ({ client }) => {
         },
       )
 
-    // Empty search ⇒ skip the user query entirely, the screen renders an empty
-    // state until the user enters something.
-    if (!search) {
+    // Empty or invalid search (not a national id or subject id format) ⇒ skip
+    // the user query entirely, the screen renders an empty state.
+    if (!isValidSearch(search)) {
       const envsResult = await envsPromise
       if (envsResult.error) {
         console.error(
