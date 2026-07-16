@@ -2,7 +2,10 @@ import { HealthDirectorateClientModule } from '@island.is/clients/health-directo
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { Module } from '@nestjs/common'
 import { HealthDirectorateService } from './health-directorate.service'
-import { HealthConversationsResolver } from './resolvers/healthConversations.resolver'
+import {
+  HealthConversationDetailResolver,
+  HealthConversationsResolver,
+} from './resolvers/healthConversations.resolver'
 import { MedicineResolver } from './resolvers/medicine.resolver'
 import { PatientDataResolver } from './resolvers/patientData.resolver'
 import { BasicInformationResolver } from './resolvers/basicInformation.resolver'
@@ -11,6 +14,7 @@ import { BasicInformationResolver } from './resolvers/basicInformation.resolver'
   imports: [HealthDirectorateClientModule, FeatureFlagModule],
   providers: [
     HealthConversationsResolver,
+    HealthConversationDetailResolver,
     MedicineResolver,
     PatientDataResolver,
     BasicInformationResolver,

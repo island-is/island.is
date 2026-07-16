@@ -8,6 +8,7 @@ query GetHealthConversationDetail($id: ID!) {
     patientCanReply
     isRead
     lastSenderGroupName
+    organizationLogoUrl
     messages {
       id
       direction

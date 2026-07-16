@@ -1,4 +1,12 @@
-import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql'
+import {
+  Args,
+  ID,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql'
 
 import { UseGuards } from '@nestjs/common'
 
@@ -10,9 +18,15 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
+import type {
+  LogoUrl,
+  OrganizationLogoByNationalIdDataLoader,
+} from '@island.is/cms'
+import { OrganizationLogoByNationalIdLoader } from '@island.is/cms'
 import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
 import { Audit } from '@island.is/nest/audit'
+import { Loader } from '@island.is/nest/dataloader'
 import {
   FeatureFlag,
   FeatureFlagGuard,
@@ -28,6 +42,17 @@ import { HealthDirectorateReplyToConversationInput } from '../dto/replyToHealthC
 import { HealthDirectorateHealthConversation } from '../models/healthConversation.model'
 import { HealthDirectorateHealthConversationDetail } from '../models/healthConversationDetail.model'
 import { HealthDirectorateHealthConversationRecipient } from '../models/healthConversationRecipient.model'
+
+const loadOrganizationLogoUrl = (
+  loader: OrganizationLogoByNationalIdDataLoader,
+  conversation: Pick<
+    HealthDirectorateHealthConversation,
+    'organizationNationalId'
+  >,
+): Promise<LogoUrl | undefined> | undefined =>
+  conversation.organizationNationalId
+    ? loader.load(conversation.organizationNationalId)
+    : undefined
 
 @CodeOwner(CodeOwners.Hugsmidjan)
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
@@ -81,6 +106,15 @@ export class HealthConversationsResolver {
     @CurrentUser() user: User,
   ): Promise<HealthDirectorateHealthConversationRecipient[] | null> {
     return this.api.getHealthConversationRecipients(user, locale)
+  }
+
+  @ResolveField('organizationLogoUrl', () => String, { nullable: true })
+  resolveOrganizationLogoUrl(
+    @Loader(OrganizationLogoByNationalIdLoader)
+    organizationLogoLoader: OrganizationLogoByNationalIdDataLoader,
+    @Parent() conversation: HealthDirectorateHealthConversation,
+  ): Promise<LogoUrl | undefined> | undefined {
+    return loadOrganizationLogoUrl(organizationLogoLoader, conversation)
   }
 
   @Mutation(() => HealthDirectorateHealthConversationDetail, {
@@ -174,5 +208,19 @@ export class HealthConversationsResolver {
     @CurrentUser() user: User,
   ): Promise<boolean> {
     return this.api.unstarHealthConversation(user, input.id)
+  }
+}
+
+@CodeOwner(CodeOwners.Hugsmidjan)
+@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
+@Resolver(() => HealthDirectorateHealthConversationDetail)
+export class HealthConversationDetailResolver {
+  @ResolveField('organizationLogoUrl', () => String, { nullable: true })
+  resolveOrganizationLogoUrl(
+    @Loader(OrganizationLogoByNationalIdLoader)
+    organizationLogoLoader: OrganizationLogoByNationalIdDataLoader,
+    @Parent() conversation: HealthDirectorateHealthConversationDetail,
+  ): Promise<LogoUrl | undefined> | undefined {
+    return loadOrganizationLogoUrl(organizationLogoLoader, conversation)
   }
 }

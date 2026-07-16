@@ -276,7 +276,8 @@ const HealthConversations = () => {
                     }}
                   >
                     <ConversationAvatar
-                      icon={item.hasAttachment ? 'document' : 'heart'}
+                      variant="organization"
+                      logoUrl={item.organizationLogoUrl ?? undefined}
                     />
                     <Box minWidth={0}>
                       <Text variant="medium">{item.lastSenderGroupName}</Text>

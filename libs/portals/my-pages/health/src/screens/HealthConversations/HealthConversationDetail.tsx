@@ -237,7 +237,7 @@ const HealthConversationDetail = () => {
                     ) : (
                       <ConversationAvatar
                         variant="organization"
-                        name={senderName}
+                        logoUrl={item.organizationLogoUrl ?? undefined}
                       />
                     )}
                     <Box

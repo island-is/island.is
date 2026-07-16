@@ -20,6 +20,26 @@ export class HealthDirectorateHealthConversation {
   @Field({ nullable: true })
   lastSenderGroupName?: string
 
+  @Field({
+    nullable: true,
+    description:
+      'National id of the organization that owns the HCP node/department this conversation belongs to.',
+  })
+  organizationNationalId?: string
+
+  @Field({ nullable: true, description: 'Display name of the organization.' })
+  organizationName?: string
+
+  @Field({
+    nullable: true,
+    description:
+      'Name of the HCP department within the organization, when the resolved mapping row is group-specific.',
+  })
+  departmentName?: string
+
+  @Field({ nullable: true })
+  organizationLogoUrl?: string
+
   @Field()
   hasAttachment!: boolean
 
