@@ -16,9 +16,7 @@ const ConversationAvatar = ({ variant, name, logoUrl }: Props) => {
       <AvatarImage
         as="div"
         background="blue100"
-        img={
-          logoUrl ? logoUrl.concat(ORG_LOGO_PARAMS) : FALLBACK_ORG_LOGO_URL
-        }
+        img={logoUrl ? logoUrl.concat(ORG_LOGO_PARAMS) : FALLBACK_ORG_LOGO_URL}
       />
     )
   }
