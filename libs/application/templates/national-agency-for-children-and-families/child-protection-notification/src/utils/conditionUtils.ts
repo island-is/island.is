@@ -1,5 +1,5 @@
 import { NO, YES } from '@island.is/application/core'
-import { FormValue } from '@island.is/application/types'
+import { ExternalData, FormValue } from '@island.is/application/types'
 import {
   KnowsNationalId,
   LanguageEnvironmentOptions,
@@ -7,10 +7,18 @@ import {
   SHOW_LANGUAGE_SECTION_TYPES,
 } from './constants'
 import { getApplicationAnswers } from './getApplicationAnswers'
+import { getApplicationExternalData } from './getApplicationExternalData'
 import { getSelectedReasonForNotificationCategoryCodes } from './childProtectionNotificationUtils'
 
 export const isKnowsNationalId = (answers: FormValue) =>
   getApplicationAnswers(answers).childKnowsNationalId === KnowsNationalId.YES
+
+export const showMemmSection = (
+  answers: FormValue,
+  externalData: ExternalData,
+) =>
+  isKnowsNationalId(answers) &&
+  !getApplicationExternalData(externalData).childFoundInFrigg
 
 export const isUnborn = (answers: FormValue) =>
   getApplicationAnswers(answers).childKnowsNationalId === KnowsNationalId.UNBORN

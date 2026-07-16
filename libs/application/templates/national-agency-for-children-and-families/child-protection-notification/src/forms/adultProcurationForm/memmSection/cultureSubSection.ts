@@ -8,12 +8,12 @@ import {
 } from '@island.is/application/core'
 import { getAllLanguageCodes } from '@island.is/shared/utils'
 import { memmMessages } from '../../../lib/messages'
-import { LanguageEnvironmentOptions } from '../../../utils/constants'
 import {
   showLanguageSection,
   showPreferredLanguage,
 } from '../../../utils/conditionUtils'
 import { getApplicationAnswers } from '../../../utils/getApplicationAnswers'
+import { getApplicationExternalData } from '../../../utils/getApplicationExternalData'
 
 export const cultureSubSection = buildSubSection({
   id: 'memmCultureSubSection',
@@ -42,20 +42,16 @@ export const cultureSubSection = buildSubSection({
           title: memmMessages.culture.languageUsageLabel,
           placeholder: memmMessages.culture.languageUsagePlaceholder,
           doesNotRequireAnswer: true,
-          options: [
-            {
-              value: LanguageEnvironmentOptions.ONLY_ICELANDIC,
-              label: memmMessages.culture.languageUsageOnlyIcelandic,
-            },
-            {
-              value: LanguageEnvironmentOptions.ICELANDIC_AND_OTHER,
-              label: memmMessages.culture.languageUsageBoth,
-            },
-            {
-              value: LanguageEnvironmentOptions.ONLY_OTHER,
-              label: memmMessages.culture.languageUsageOnlyOther,
-            },
-          ],
+          options: ({ externalData }, _field, locale) => {
+            const { languageEnvironmentOptions } =
+              getApplicationExternalData(externalData)
+            return languageEnvironmentOptions.map((opt) => ({
+              value: opt.key,
+              label:
+                opt.value.find((v) => v.language === locale)?.content ??
+                opt.key,
+            }))
+          },
         }),
         buildDescriptionField({
           id: 'memm.culture.languagesSectionTitle',

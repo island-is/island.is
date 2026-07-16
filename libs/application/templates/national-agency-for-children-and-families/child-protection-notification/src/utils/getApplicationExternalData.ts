@@ -4,6 +4,7 @@ import {
   DropDownDto,
   ProtectiveFactorSectionDto,
 } from '@island.is/clients/national-agency-for-children-and-families'
+import { Option } from '@island.is/clients/mms/frigg'
 import { Category } from './types'
 
 export const getApplicationExternalData = (
@@ -56,6 +57,18 @@ export const getApplicationExternalData = (
   const genders =
     getValueViaPath<DropDownDto[]>(externalData, 'genders.data') ?? []
 
+  const childFoundInFrigg =
+    getValueViaPath<boolean>(
+      externalData,
+      'childInformation.data.childFoundInFrigg',
+    ) ?? false
+
+  const languageEnvironmentOptions =
+    getValueViaPath<Option[]>(
+      externalData,
+      'childInformation.data.languageEnvironmentOptions',
+    ) ?? []
+
   return {
     applicantName,
     applicantNationalId,
@@ -67,5 +80,7 @@ export const getApplicationExternalData = (
     categories,
     protectiveFactorSections,
     genders,
+    childFoundInFrigg,
+    languageEnvironmentOptions,
   }
 }

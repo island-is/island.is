@@ -13,6 +13,7 @@ import {
   DefaultEvents,
   FormModes,
   UserProfileApi,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { CodeOwners } from '@island.is/shared/constants'
 import { AuthDelegationType } from '@island.is/shared/types'
@@ -55,6 +56,14 @@ const template: ApplicationTemplate<
           progress: 0,
           status: FormModes.DRAFT,
           lifecycle: EphemeralStateLifeCycle,
+          onExit: [
+            defineTemplateApi({
+              action: 'getChildInformation',
+              externalDataId: 'childInformation',
+              namespace: ApplicationTypes.CHILD_PROTECTION_NOTIFICATION,
+              throwOnError: true,
+            }),
+          ],
           roles: [
             ...[Roles.MINOR_APPLICANT, Roles.ADULT_PERSONAL_APPLICANT].map(
               (roleId) => ({

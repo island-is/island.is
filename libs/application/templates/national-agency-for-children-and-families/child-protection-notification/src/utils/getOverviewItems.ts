@@ -9,6 +9,7 @@ import {
   FormValue,
   KeyValueItem,
 } from '@island.is/application/types'
+import { Locale } from '@island.is/shared/types'
 import {
   formatPhoneNumber,
   removeCountryCode,
@@ -27,7 +28,6 @@ import {
 import {
   DO_NOT_KNOW,
   KnowsNationalId,
-  LanguageEnvironmentOptions,
   NOT_APPLICABLE,
   NoNationalIdReason,
   Pronoun,
@@ -88,15 +88,6 @@ const wellbeingRadioLabelMap = {
   [YES]: sharedMessages.radioYes,
   [NO]: sharedMessages.radioNo,
   [DO_NOT_KNOW]: sharedMessages.radioDoNotKnow,
-} as const
-
-const languageUsageLabelMap = {
-  [LanguageEnvironmentOptions.ONLY_ICELANDIC]:
-    memmMessages.culture.languageUsageOnlyIcelandic,
-  [LanguageEnvironmentOptions.ICELANDIC_AND_OTHER]:
-    memmMessages.culture.languageUsageBoth,
-  [LanguageEnvironmentOptions.ONLY_OTHER]:
-    memmMessages.culture.languageUsageOnlyOther,
 } as const
 
 const disabilityServiceLabelMap = {
@@ -680,7 +671,9 @@ export const getMemmReceptionItems = (
 
 export const getMemmCultureItems = (
   answers: FormValue,
-  _externalData: ExternalData,
+  externalData: ExternalData,
+  _userNationalId: string,
+  locale: Locale,
 ): Array<KeyValueItem> => {
   const {
     memmCultureLanguageUsage,
@@ -689,14 +682,17 @@ export const getMemmCultureItems = (
     memmCultureNeedsInterpreter,
   } = getApplicationAnswers(answers)
 
+  const { languageEnvironmentOptions } =
+    getApplicationExternalData(externalData)
+
   return [
     {
       width: 'full',
       keyText: memmMessages.culture.languageUsageLabel,
       valueText:
-        languageUsageLabelMap[
-          memmCultureLanguageUsage as keyof typeof languageUsageLabelMap
-        ] ??
+        languageEnvironmentOptions
+          .find((opt) => opt.key === memmCultureLanguageUsage)
+          ?.value.find((v) => v.language === locale)?.content ??
         memmCultureLanguageUsage ??
         '',
       hideIfEmpty: true,

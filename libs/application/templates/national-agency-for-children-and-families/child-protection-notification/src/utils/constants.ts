@@ -46,7 +46,7 @@ export const SCHOOL_TYPES = ['kindergarten', 'elementarySchool', 'highSchool']
 export enum LanguageEnvironmentOptions {
   ONLY_ICELANDIC = 'onlyIcelandic',
   ICELANDIC_AND_OTHER = 'icelandicAndOther',
-  ONLY_OTHER = 'onlyOther',
+  ONLY_OTHER = 'onlyOtherThanIcelandic',
 }
 
 export const SHOW_LANGUAGE_SECTION_TYPES = [
