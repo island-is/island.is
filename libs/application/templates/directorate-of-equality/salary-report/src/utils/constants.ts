@@ -15,6 +15,7 @@ export enum States {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
   COMPLETED = 'completed',
+  POSTPONED = 'postponed',
   NOT_ALLOWED = 'notAllowed',
 }
 

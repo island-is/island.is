@@ -456,6 +456,49 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     }
   }
 
+  async editOutliers({ auth, application }: TemplateApiModuleActionProps) {
+    try {
+      const answers = this.parseAnswers(
+        salaryReportDataSchema,
+        application.answers,
+        application.id,
+      )
+
+      const groups = (answers.salaryAnalysis?.outlierGroups ?? [])
+        .filter((g) => g.employeeOrdinals.length > 0)
+        .map((g) => ({
+          name: g.name,
+          reason: g.reason ?? '',
+          action: g.action ?? '',
+          signatureName: g.signatureName ?? '',
+          signatureRole: g.signatureRole ?? '',
+          employeeOrdinals: g.employeeOrdinals,
+        }))
+
+      await this.directorateOfEqualityService.editOutliers(
+        auth,
+        application.id,
+        {
+          groups,
+        },
+      )
+    } catch (error) {
+      const errorDetails = this.extractFetchErrorDetails(error)
+      this.logger.error('Failed to edit outliers', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...errorDetails,
+      })
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary: coreErrorMessages.defaultTemplateApiError,
+        },
+        errorDetails.status ?? 500,
+      )
+    }
+  }
+
   async submitEqualityReport({
     auth,
     application,

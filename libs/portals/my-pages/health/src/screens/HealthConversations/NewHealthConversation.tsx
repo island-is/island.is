@@ -84,12 +84,10 @@ const NewHealthConversation = () => {
 
   const isFormLocked = recipient?.canCreateConversation === false
 
-  const canSubmit =
-    !!selectedTypeCode &&
-    !!messageText.trim() &&
-    termsAccepted &&
-    !sending &&
-    !isFormLocked
+  const isFormValid =
+    !!selectedTypeCode && !!messageText.trim() && termsAccepted
+
+  const canSubmit = isFormValid && !sending && !isFormLocked
 
   const handleSubmit = async () => {
     if (!canSubmit || !recipient || !selectedTypeCode) return

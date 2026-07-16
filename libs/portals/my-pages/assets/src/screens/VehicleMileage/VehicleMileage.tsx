@@ -156,6 +156,10 @@ const VehicleMileage = () => {
       },
     })
 
+  const hasMilesOdometer =
+    co2?.vehiclesListV3?.vehicleList?.[0]?.hasMilesOdometer
+  const unit: 'mi' | 'km' = hasMilesOdometer ? 'mi' : 'km'
+
   const details = data?.vehicleMileageDetails?.data
   const hasData = details && details?.length > 0
   const isFormEditable = data?.vehicleMileageDetails?.editing
@@ -282,7 +286,7 @@ const VehicleMileage = () => {
                     name="odometerStatus"
                     required
                     type="number"
-                    suffix=" km"
+                    suffix={' ' + unit}
                     thousandSeparator
                     decimalScale={0}
                     backgroundColor="blue"
@@ -419,7 +423,7 @@ const VehicleMileage = () => {
                               {item.originCode}
                             </Table.Data>
                             <Table.Data align="right">
-                              {displayWithUnit(item.mileageNumber, 'km', true)}
+                              {displayWithUnit(item.mileageNumber, unit, true)}
                             </Table.Data>
                           </Table.Row>
                         ))}
@@ -443,7 +447,7 @@ const VehicleMileage = () => {
                     }}
                     yAxis={{
                       datakey: 'mileage',
-                      label: 'Km.',
+                      label: unit === 'mi' ? 'Mi.' : 'Km.',
                     }}
                     tooltip={{
                       labels: {
