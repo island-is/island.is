@@ -11,6 +11,7 @@ import { validateCardCVC, validateCardExpiry } from './CardPayment.utils'
 const APPLE_PAY_BUTTON_ID = 'apple-pay-button'
 
 interface CardPaymentInput {
+  cardholderName: string
   card: string
   cardExpiry: string
   cardCVC: string
@@ -84,6 +85,30 @@ export const CardPayment = ({
         </>
       )}
       <Box display="flex" flexDirection="column" rowGap={[2, 3]}>
+        <Controller
+          name={'cardholderName'}
+          control={control}
+          rules={{
+            required: formatMessage(cardValidationError.cardholderName),
+            validate: (value) => {
+              if (value.trim().length < 2) {
+                return formatMessage(cardValidationError.cardholderNameTooShort)
+              }
+              return true
+            },
+          }}
+          render={({ field }) => (
+            <Input
+              {...field}
+              backgroundColor="blue"
+              label={formatMessage(card.cardholderName)}
+              placeholder={formatMessage(card.cardholderNamePlaceholder)}
+              size="sm"
+              maxLength={45}
+              errorMessage={formState.errors.cardholderName?.message}
+            />
+          )}
+        />
         <Controller
           name={'card'}
           control={control}
