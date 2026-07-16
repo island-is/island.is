@@ -1,3 +1,5 @@
+#import "./HealthConversationOrganization.graphql"
+
 query GetHealthConversationDetail($id: ID!) {
   healthDirectorateHealthConversation(id: $id) {
     id
@@ -7,8 +9,9 @@ query GetHealthConversationDetail($id: ID!) {
     isArchived
     patientCanReply
     isRead
-    organizationName
-    organizationLogoUrl
+    organization {
+      ...HealthConversationOrganizationFragment
+    }
     messages {
       id
       direction

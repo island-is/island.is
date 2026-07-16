@@ -51,8 +51,9 @@ const HealthConversations = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
 
-  const [filterValues, setFilterValues] =
-    useState<FilterValues>(defaultFilterValues)
+  const [filterValues, setFilterValues] = useState<FilterValues>(
+    defaultFilterValues,
+  )
   const [searchInput, setSearchInput] = useState('')
 
   const { data, loading, error } = useGetHealthConversationsQuery({
@@ -122,7 +123,7 @@ const HealthConversations = () => {
     return healthConversations.filter((message) => {
       return (
         message.title?.toLowerCase().includes(query) ||
-        message.organizationName?.toLowerCase().includes(query)
+        message.organization?.name?.toLowerCase().includes(query)
       )
     })
   }, [filterValues, healthConversations])
@@ -283,10 +284,10 @@ const HealthConversations = () => {
                   >
                     <ConversationAvatar
                       variant="organization"
-                      logoUrl={item.organizationLogoUrl ?? undefined}
+                      logoUrl={item.organization?.logoUrl ?? undefined}
                     />
                     <Box minWidth={0}>
-                      <Text variant="medium">{item.organizationName}</Text>
+                      <Text variant="medium">{item.organization?.name}</Text>
                       <Text
                         color="blue400"
                         truncate

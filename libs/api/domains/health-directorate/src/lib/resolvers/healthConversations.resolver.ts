@@ -42,17 +42,7 @@ import { HealthDirectorateReplyToConversationInput } from '../dto/replyToHealthC
 import { HealthDirectorateHealthConversation } from '../models/healthConversation.model'
 import { HealthDirectorateHealthConversationDetail } from '../models/healthConversationDetail.model'
 import { HealthDirectorateHealthConversationRecipient } from '../models/healthConversationRecipient.model'
-
-const loadOrganizationLogoUrl = async (
-  loader: OrganizationLogoByNationalIdDataLoader,
-  conversation: Pick<
-    HealthDirectorateHealthConversation,
-    'organizationNationalId'
-  >,
-): Promise<LogoUrl | undefined> =>
-  conversation.organizationNationalId
-    ? loader.load(conversation.organizationNationalId)
-    : undefined
+import { HealthDirectorateConversationOrganization } from '../models/healthConversationOrganization.model'
 
 @CodeOwner(CodeOwners.Hugsmidjan)
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
@@ -106,15 +96,6 @@ export class HealthConversationsResolver {
     @CurrentUser() user: User,
   ): Promise<HealthDirectorateHealthConversationRecipient[] | null> {
     return this.api.getHealthConversationRecipients(user, locale)
-  }
-
-  @ResolveField('organizationLogoUrl', () => String, { nullable: true })
-  resolveOrganizationLogoUrl(
-    @Loader(OrganizationLogoByNationalIdLoader)
-    organizationLogoLoader: OrganizationLogoByNationalIdDataLoader,
-    @Parent() conversation: HealthDirectorateHealthConversation,
-  ): Promise<LogoUrl | undefined> {
-    return loadOrganizationLogoUrl(organizationLogoLoader, conversation)
   }
 
   @Mutation(() => HealthDirectorateHealthConversationDetail, {
@@ -213,14 +194,14 @@ export class HealthConversationsResolver {
 
 @CodeOwner(CodeOwners.Hugsmidjan)
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@Resolver(() => HealthDirectorateHealthConversationDetail)
-export class HealthConversationDetailResolver {
-  @ResolveField('organizationLogoUrl', () => String, { nullable: true })
-  resolveOrganizationLogoUrl(
+@Resolver(() => HealthDirectorateConversationOrganization)
+export class HealthConversationOrganizationResolver {
+  @ResolveField('logoUrl', () => String, { nullable: true })
+  resolveLogoUrl(
     @Loader(OrganizationLogoByNationalIdLoader)
     organizationLogoLoader: OrganizationLogoByNationalIdDataLoader,
-    @Parent() conversation: HealthDirectorateHealthConversationDetail,
-  ): Promise<LogoUrl | undefined> {
-    return loadOrganizationLogoUrl(organizationLogoLoader, conversation)
+    @Parent() organization: HealthDirectorateConversationOrganization,
+  ): Promise<LogoUrl> {
+    return organizationLogoLoader.load(organization.nationalId)
   }
 }

@@ -3,7 +3,7 @@ import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { Module } from '@nestjs/common'
 import { HealthDirectorateService } from './health-directorate.service'
 import {
-  HealthConversationDetailResolver,
+  HealthConversationOrganizationResolver,
   HealthConversationsResolver,
 } from './resolvers/healthConversations.resolver'
 import { MedicineResolver } from './resolvers/medicine.resolver'
@@ -14,7 +14,7 @@ import { BasicInformationResolver } from './resolvers/basicInformation.resolver'
   imports: [HealthDirectorateClientModule, FeatureFlagModule],
   providers: [
     HealthConversationsResolver,
-    HealthConversationDetailResolver,
+    HealthConversationOrganizationResolver,
     MedicineResolver,
     PatientDataResolver,
     BasicInformationResolver,

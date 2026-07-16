@@ -1,12 +1,15 @@
+#import "./HealthConversationOrganization.graphql"
+
 query GetHealthConversations(
   $input: HealthDirectorateHealthConversationsFilterInput
 ) {
   healthDirectorateHealthConversations(input: $input) {
     id
     title
-    organizationName
+    organization {
+      ...HealthConversationOrganizationFragment
+    }
     lastMessageSentAt
-    organizationLogoUrl
     isStarred
     isArchived
     isRead

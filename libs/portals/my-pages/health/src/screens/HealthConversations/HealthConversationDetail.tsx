@@ -84,10 +84,12 @@ const HealthConversationDetail = () => {
     refetchQueries: ['GetHealthConversationDetail'],
     onError: onMutationError,
   })
-  const [replyToMessage, { loading: replySending }] =
-    useReplyToHealthConversationMutation({
-      refetchQueries: ['GetHealthConversationDetail'],
-    })
+  const [
+    replyToMessage,
+    { loading: replySending },
+  ] = useReplyToHealthConversationMutation({
+    refetchQueries: ['GetHealthConversationDetail'],
+  })
 
   const item = data?.healthDirectorateHealthConversation
 
@@ -212,7 +214,7 @@ const HealthConversationDetail = () => {
               const isPatient = msg.direction === 'PATIENT'
               const senderName = isPatient
                 ? userInfo.profile.name ?? ''
-                : item.organizationName ?? msg.senderGroupName ?? ''
+                : item.organization?.name ?? msg.senderGroupName ?? ''
 
               return (
                 <Box key={msg.id}>
@@ -237,7 +239,7 @@ const HealthConversationDetail = () => {
                     ) : (
                       <ConversationAvatar
                         variant="organization"
-                        logoUrl={item.organizationLogoUrl ?? undefined}
+                        logoUrl={item.organization?.logoUrl ?? undefined}
                       />
                     )}
                     <Box
@@ -344,7 +346,7 @@ const HealthConversationDetail = () => {
                       </Text>
                       <Text variant="medium">
                         {formatMessage(messages.healthConversationTo, {
-                          arg: item.organizationName ?? '',
+                          arg: item.organization?.name ?? '',
                         })}
                       </Text>
                     </Box>
