@@ -18,10 +18,10 @@ import {
  * and similar fields are collected in the payer's browser; ip, userAgent and
  * acceptHeader are derived server-side from the payer's request by the API layer.
  *
- * Validation here is deliberately looser than the gateway contract: values that
- * cannot be forwarded as-is (e.g. an unsupported colorDepth) are normalised or
- * omitted when the gateway request is built, so an odd browser value can never
- * fail the verification outright.
+ * Validation here mirrors what real browsers produce and is deliberately
+ * looser than the gateway contract: values a real browser can report but the
+ * gateway would reject (e.g. an unsupported colorDepth) are omitted when the
+ * gateway request is built rather than failing the verification.
  */
 export class VerifyCardBrowserInfo {
   @IsInt()
