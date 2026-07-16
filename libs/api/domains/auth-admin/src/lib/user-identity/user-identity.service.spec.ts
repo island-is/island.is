@@ -202,9 +202,7 @@ describe('UserIdentityService', () => {
 
       expect(result).toHaveLength(1)
       expect(result[0].subjectId).toBe('subject-1')
-      expect(result[0].availableEnvironments).toEqual([
-        Environment.Development,
-      ])
+      expect(result[0].availableEnvironments).toEqual([Environment.Development])
     })
 
     it('still returns results from healthy environments when one environment fails', async () => {
@@ -315,7 +313,9 @@ describe('UserIdentityService', () => {
           Environment.Development,
           Environment.Staging,
         ]),
-      ).rejects.toThrow('Failed to deactivate user identity in all environments')
+      ).rejects.toThrow(
+        'Failed to deactivate user identity in all environments',
+      )
     })
   })
 })
