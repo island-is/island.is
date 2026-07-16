@@ -63,69 +63,44 @@
             }
           },
           "400": {
-            "description": "Invalid model state",
+            "description": "Request validation or business rules failed.",
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string"
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/HousingBenefitsApplicationReturnModel"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string"
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/HousingBenefitsApplicationReturnModel"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string"
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/HousingBenefitsApplicationReturnModel"
                 }
               }
             }
           },
           "500": {
-            "description": "An internal server error occurred."
+            "description": "An internal server error occurred.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/HousingBenefitsApplicationReturnModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HousingBenefitsApplicationReturnModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HousingBenefitsApplicationReturnModel"
+                }
+              }
+            }
           }
         }
       }
@@ -690,6 +665,20 @@
         "additionalProperties": false,
         "description": "Contains information about a household member. Original Icelandic name: Heimilismadur."
       },
+      "HousingBenefitsApplicationErrorCode": {
+        "enum": [
+          "unknown",
+          "nullApplicationPayload",
+          "invalidModelState",
+          "propertyNotFound",
+          "leaseContractNotFound",
+          "activeApplicationAlreadyExists",
+          "invalidApplicationData",
+          "processingFailed"
+        ],
+        "type": "string",
+        "description": "Enumerates known error cases for CreateHousingBenefitsApplication.<br/><b>Members:</b><ul><li><i>0 - Unknown</i>: Unknown or uncategorized processing failure.</li><li><i>1 - NullApplicationPayload</i>: Request body could not be deserialized into an application model.</li><li><i>2 - InvalidModelState</i>: Request model failed validation checks.</li><li><i>3 - PropertyNotFound</i>: Property number was provided but the property was not found.</li><li><i>4 - LeaseContractNotFound</i>: Lease contract was not found for the provided contract number.</li><li><i>5 - ActiveApplicationAlreadyExists</i>: Applicant already has an active application and cannot create another one.</li><li><i>6 - InvalidApplicationData</i>: Business or input data is invalid for application creation.</li><li><i>7 - ProcessingFailed</i>: Unexpected server-side failure occurred while processing the application.</li></ul>"
+      },
       "HousingBenefitsApplicationModel": {
         "required": [
           "accountNumber",
@@ -852,6 +841,42 @@
           "success": {
             "type": "boolean",
             "description": "Specifies if the application was successful."
+          },
+          "errorCode": {
+            "$ref": "#/components/schemas/HousingBenefitsApplicationErrorCode"
+          },
+          "errorDescription": {
+            "type": "string",
+            "description": "Description of what the error code means.",
+            "nullable": true
+          },
+          "errorMessage": {
+            "type": "string",
+            "description": "Human-readable message describing the specific error instance.",
+            "nullable": true
+          },
+          "validationErrors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "description": "Validation details for invalid model-state requests.",
+            "nullable": true
+          },
+          "referenceNumber": {
+            "type": "integer",
+            "description": "Generic reference number related to the error, when available.\r\nFor example lease contract number or existing application number.",
+            "format": "int32",
+            "nullable": true
+          },
+          "referenceText": {
+            "type": "string",
+            "description": "Generic reference text related to the error, when available.\r\nFor example property number.",
+            "nullable": true
           }
         },
         "additionalProperties": false,
