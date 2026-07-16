@@ -20,17 +20,13 @@ export class HealthDirectorateHealthConversation {
   @Field({ nullable: true })
   lastSenderGroupName?: string
 
-  @Field({
-    nullable: true,
-  })
+  @Field({ nullable: true })
   organizationNationalId?: string
 
   @Field({ nullable: true })
   organizationName?: string
 
-  @Field({
-    nullable: true,
-  })
+  @Field({ nullable: true })
   departmentName?: string
 
   @Field({ nullable: true })
