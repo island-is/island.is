@@ -43,13 +43,13 @@ import { HealthDirectorateHealthConversation } from '../models/healthConversatio
 import { HealthDirectorateHealthConversationDetail } from '../models/healthConversationDetail.model'
 import { HealthDirectorateHealthConversationRecipient } from '../models/healthConversationRecipient.model'
 
-const loadOrganizationLogoUrl = (
+const loadOrganizationLogoUrl = async (
   loader: OrganizationLogoByNationalIdDataLoader,
   conversation: Pick<
     HealthDirectorateHealthConversation,
     'organizationNationalId'
   >,
-): Promise<LogoUrl | undefined> | undefined =>
+): Promise<LogoUrl | undefined> =>
   conversation.organizationNationalId
     ? loader.load(conversation.organizationNationalId)
     : undefined
@@ -113,7 +113,7 @@ export class HealthConversationsResolver {
     @Loader(OrganizationLogoByNationalIdLoader)
     organizationLogoLoader: OrganizationLogoByNationalIdDataLoader,
     @Parent() conversation: HealthDirectorateHealthConversation,
-  ): Promise<LogoUrl | undefined> | undefined {
+  ): Promise<LogoUrl | undefined> {
     return loadOrganizationLogoUrl(organizationLogoLoader, conversation)
   }
 
@@ -220,7 +220,7 @@ export class HealthConversationDetailResolver {
     @Loader(OrganizationLogoByNationalIdLoader)
     organizationLogoLoader: OrganizationLogoByNationalIdDataLoader,
     @Parent() conversation: HealthDirectorateHealthConversationDetail,
-  ): Promise<LogoUrl | undefined> | undefined {
+  ): Promise<LogoUrl | undefined> {
     return loadOrganizationLogoUrl(organizationLogoLoader, conversation)
   }
 }
