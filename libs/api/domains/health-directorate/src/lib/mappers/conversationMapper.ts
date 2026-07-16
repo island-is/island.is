@@ -68,14 +68,12 @@ const parseUtcDate = (value?: string): Date | undefined => {
 export const mapConversationSegments = (
   segments?: Array<ContentSegmentDto>,
 ): HealthDirectorateHealthConversationSegment[] | undefined =>
-  segments?.map(
-    (s): HealthDirectorateHealthConversationSegment => ({
-      type: toConversationSegmentTypeEnum(s.type),
-      text: s.text,
-      label: s.label,
-      href: s.href,
-    }),
-  )
+  segments?.map((s): HealthDirectorateHealthConversationSegment => {
+    const type = toConversationSegmentTypeEnum(s.type)
+    return type === HealthConversationSegmentTypeEnum.LINK
+      ? { type, label: s.label, href: s.href }
+      : { type, text: s.text }
+  })
 
 export const mapConversationVideo = (
   video?: VideoConversationDto,
