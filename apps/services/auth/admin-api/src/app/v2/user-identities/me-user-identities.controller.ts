@@ -10,6 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
+import * as kennitala from 'kennitala'
 
 import {
   ActiveDTO,
@@ -55,8 +56,8 @@ export class MeUserIdentitiesController {
   async findByNationalId(
     @Headers('X-Query-National-Id') nationalId: string,
   ): Promise<UserIdentity[]> {
-    if (!nationalId) {
-      throw new BadRequestException('nationalId must be provided')
+    if (!kennitala.isValid(nationalId)) {
+      throw new BadRequestException('A valid national id must be provided')
     }
 
     const userIdentities = await this.userIdentityService.findByNationalId(
