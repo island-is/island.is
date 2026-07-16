@@ -23,6 +23,12 @@ export class NotificationDto {
   @ApiProperty()
   nationalId!: string
 
+  @IsString()
+  @Type(() => String)
+  @Expose()
+  @ApiProperty()
+  organizationNationalId!: string
+
   @Type(() => String)
   @IsString()
   @Expose()

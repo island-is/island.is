@@ -27,7 +27,7 @@ import {
   addNormalCenteredText,
   addNormalText,
   addNumberedList,
-  // addRichText,
+  addRichText,
   Confirmation,
   drawConfirmation,
   setLineGap,
@@ -35,8 +35,8 @@ import {
 } from '../pdfHelpers'
 
 const formatFiledBy = (submitterText: string, submittedBy?: string | null) => {
-  if (submitterText === 'Sækjandi') {
-    return 'Sækjandi lagði fram:'
+  if (submitterText === 'Ákærandi') {
+    return 'Ákærandi lagði fram:'
   }
 
   return [submitterText, submittedBy, 'lagði fram:'].filter(Boolean).join(' ')
@@ -51,7 +51,7 @@ export const getFiledBy = (
 
     if (split?.length === 2) {
       const submitterText = getRoleTitleFromCaseFileCategory(split[1], {
-        prosecutor: 'Sækjandi',
+        prosecutor: 'Ákærandi',
         notRegistered: '',
       })
 
@@ -72,7 +72,7 @@ export const getFiledBy = (
       ].includes(file.category)
     ) {
       const submitterText = getRoleTitleFromCaseFileCategory(file.category, {
-        prosecutor: 'Sækjandi',
+        prosecutor: 'Ákærandi',
         notRegistered: '',
       })
 
@@ -85,6 +85,8 @@ export const getFiledBy = (
 
   return 'Lagt er fram:'
 }
+
+const lineGap = 2
 
 export const createIndictmentCourtRecordPdf = (
   theCase: Case,
@@ -127,7 +129,7 @@ export const createIndictmentCourtRecordPdf = (
 
   addCoatOfArms(doc)
   addEmptyLines(doc, confirmation ? 11 : 6, doc.page.margins.left)
-  setLineGap(doc, 2)
+  setLineGap(doc, lineGap)
   addLargeHeading(doc, theCase.court?.name ?? 'Héraðsdómur', 'Times-Roman')
   addMediumHeading(doc, 'Þingbók')
   addMediumHeading(doc, `Mál nr. ${theCase.courtCaseNumber}`)
@@ -317,12 +319,11 @@ export const createIndictmentCourtRecordPdf = (
     }
 
     addEmptyLines(doc, 2)
-    // TODO: uncomment when TinyMCE feature flag is lifted
-    // addRichText(
-    //   doc,
-    //   courtSession.entries ?? '<p>Engar bókanir voru skráðar.</p>',
-    // )
-    addNormalText(doc, courtSession.entries ?? 'Engar bókanir voru skráðar.')
+    addRichText(
+      doc,
+      courtSession.entries ?? '<p>Engar bókanir voru skráðar.</p>',
+      lineGap,
+    )
 
     if (courtSession.rulingType !== CourtSessionRulingType.NONE) {
       addEmptyLines(doc)

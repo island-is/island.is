@@ -1,0 +1,6 @@
+export * from './cancelBankTransfer.input'
+export * from './cancelBankTransfer.response'
+export * from './createBankTransfer.input'
+export * from './createBankTransfer.response'
+export * from './verifyBankTransfer.input'
+export * from './verifyBankTransfer.response'

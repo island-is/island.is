@@ -30,11 +30,6 @@ export const docLineButton = style({
 
 export const button = style({})
 
-export const image = style({
-  width: 28,
-  height: 28,
-})
-
 export const fakeBorder = style({
   height: '100%',
   width: 3,
@@ -43,25 +38,6 @@ export const fakeBorder = style({
   left: 0,
   top: 0,
   margin: 'auto',
-})
-
-export const imageContainer = style({
-  minWidth: 48,
-  minHeight: 48,
-  maxHeight: 48,
-  maxWidth: 48,
-  transition: 'background-color .25s',
-})
-
-export const largeAvatar = style({
-  ...themeUtils.responsiveStyle({
-    lg: {
-      minWidth: 56,
-      minHeight: 56,
-      maxHeight: 56,
-      maxWidth: 56,
-    },
-  }),
 })
 
 export const checkCircle = style({

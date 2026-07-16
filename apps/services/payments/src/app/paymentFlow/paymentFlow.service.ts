@@ -2,7 +2,7 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 import { InferAttributes, Sequelize, WhereOptions } from 'sequelize'
 import { ConfigType } from '@nestjs/config'
-import { isCompany, isValid } from 'kennitala'
+import { isCompany, isPerson, isValid } from 'kennitala'
 import { v4 as uuid } from 'uuid'
 
 import type { Logger } from '@island.is/logging'
@@ -14,6 +14,7 @@ import {
 import { Op } from 'sequelize'
 import { retry } from '@island.is/shared/utils/server'
 import { paginate } from '@island.is/nest/pagination'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import {
   FjsErrorCode,
   InvoiceErrorCode,
@@ -62,6 +63,7 @@ import { PaymentFlowModuleConfig } from './paymentFlow.config'
 import { JwksConfig } from '../jwks/jwks.config'
 import { PaymentFulfillment } from './models/paymentFulfillment.model'
 import { PaymentWorkerEvent } from './models/paymentWorkerEvent.model'
+import { BankTransferPayment } from '../bankTransferPayment/models/bankTransferPayment.model'
 import { determinePaymentMethods } from './paymentFlow.utils'
 
 interface PaymentFlowUpdateConfig {
@@ -104,6 +106,7 @@ export class PaymentFlowService {
     >,
     @Inject(JwksConfig.KEY)
     private readonly jwksConfig: ConfigType<typeof JwksConfig>,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async createPaymentUrl(
@@ -120,7 +123,25 @@ export class PaymentFlowService {
 
       const paymentMethods = determinePaymentMethods(chargeDetails.catalogItems)
 
-      if (paymentMethods.length === 0) {
+      // Bank transfer is gated behind the global feature flag and offered to
+      // individuals only — i.e. real persons. Companies and temporary kennitalas
+      // are excluded. The flag is the offer kill-switch: off → never listed, so
+      // the FE selector never shows a method whose endpoints the flag also guards.
+      let availableMethods = paymentMethods
+      if (paymentMethods.includes(PaymentMethod.BANK_TRANSFER)) {
+        const isBankTransferEnabled = await this.featureFlagService.getValue(
+          Features.isIslandisBankTransferPaymentEnabled,
+          false,
+        )
+
+        if (!isBankTransferEnabled || !isPerson(paymentInfo.payerNationalId)) {
+          availableMethods = paymentMethods.filter(
+            (m) => m !== PaymentMethod.BANK_TRANSFER,
+          )
+        }
+      }
+
+      if (availableMethods.length === 0) {
         throw new BadRequestException(PaymentServiceCode.InvalidPaymentMethods)
       }
 
@@ -139,7 +160,7 @@ export class PaymentFlowService {
         const paymentFlow = await this.paymentFlowModel.create(
           {
             ...paymentInfo,
-            availablePaymentMethods: paymentMethods,
+            availablePaymentMethods: availableMethods,
             id: paymentFlowId,
             charges: [],
           },
@@ -397,7 +418,7 @@ export class PaymentFlowService {
       })
     )?.toJSON()
 
-    // If a payment fulfillment exists, the payment flow is paid by card
+    // If a payment fulfillment exists, the payment flow is paid by card or bank transfer
     if (paymentFulfillment) {
       return {
         paymentStatus: PaymentStatus.PAID,
@@ -423,7 +444,6 @@ export class PaymentFlowService {
       }
     }
 
-    // If neither the payment fulfillment nor the fjs charge exist, the payment flow is unpaid
     return {
       paymentStatus: PaymentStatus.UNPAID,
       updatedAt: existingFjsCharge?.created ?? paymentFlow.modified,
@@ -924,8 +944,17 @@ export class PaymentFlowService {
 
       const code = mapFjsErrorToCode(e, true)
       if (code === FjsErrorCode.AlreadyCreatedCharge) {
+        // The charge already exists in FJS (idempotency key requestID == paymentFlowId) but a prior
+        // attempt failed to persist/link it locally. Reconcile instead of failing.
+        const reconciled = await this.reconcileExistingFjsCharge(
+          paymentFlowId,
+          chargePayload,
+        )
+        if (reconciled) {
+          return reconciled
+        }
         this.logger.error(
-          `[${paymentFlowId}] CRITICAL: FJS charge already exists but flow/fulfillment not updated. Manual reconciliation required.`,
+          `[${paymentFlowId}] CRITICAL: FJS reports the charge exists but it could not be found to reconcile. Manual reconciliation required.`,
           e,
         )
       } else {
@@ -936,6 +965,36 @@ export class PaymentFlowService {
       }
       throw new BadRequestException(mapFjsErrorToCode(e))
     }
+  }
+
+  /**
+   * Links a charge that already exists in FJS to our DB by adopting the already-persisted local `fjs_charge` row — which carries
+   * the real FJS reception id — and linking the fulfillment + flow.
+   */
+  private async reconcileExistingFjsCharge(
+    paymentFlowId: string,
+    chargePayload: Charge,
+  ): Promise<FjsCharge | null> {
+    const charge = await this.fjsChargeModel.findOne({
+      where: { paymentFlowId, isDeleted: false },
+    })
+
+    if (!charge) {
+      return null
+    }
+
+    await this.updateFlowAndFulfillmentWithFjsCharge(
+      paymentFlowId,
+      charge.receptionId,
+      charge.id,
+      !!chargePayload.payInfo,
+    )
+
+    this.logger.info(`[${paymentFlowId}] Reconciled pre-existing FJS charge`, {
+      fjsChargeId: charge.id,
+    })
+
+    return charge
   }
 
   private async updateFlowAndFulfillmentWithFjsCharge(
@@ -960,13 +1019,19 @@ export class PaymentFlowService {
   }
 
   /**
-   * Finds paid card payment flows that don't have an FJS charge yet.
+   * Finds paid payment flows of the given method that don't have an FJS charge yet.
    * Used by the FJS worker to backfill missing charges.
    *
+   * The details include is a left join on purpose: an orphaned flow (active fulfillment,
+   * details row soft-deleted — e.g. an interrupted refund) must still be returned so the
+   * worker can surface it as a failure instead of it staying invisible.
+   *
    * @param cutoffTime - Only include flows whose fulfillment was created before this time (gives other systems time to finalize)
+   * @param paymentMethod - Which payment method's fulfillments to sweep
    */
   async findPaidFlowsWithoutFjsCharge(
     cutoffTime: Date,
+    paymentMethod: 'card' | 'bank_transfer',
   ): Promise<InferAttributes<PaymentFlow>[]> {
     const paymentFlows = await this.paymentFlowModel.findAll({
       where: { isDeleted: false },
@@ -975,23 +1040,32 @@ export class PaymentFlowService {
           model: PaymentFulfillment,
           required: true,
           where: {
-            paymentMethod: 'card',
+            paymentMethod,
             fjsChargeId: null,
             created: { [Op.lt]: cutoffTime },
             isDeleted: false,
           },
         },
-        { model: PaymentFlowCharge },
-        {
-          model: CardPaymentDetails,
-          required: true,
-          where: { isDeleted: false },
-        },
+        { model: PaymentFlowCharge, separate: true },
+        paymentMethod === 'card'
+          ? {
+              model: CardPaymentDetails,
+              required: true,
+              where: { isDeleted: false },
+            }
+          : {
+              // Carries the providerPaymentId needed to rebuild the FJS charge.
+              model: BankTransferPayment,
+              required: false,
+              where: { isDeleted: false },
+              separate: true,
+            },
         {
           model: PaymentWorkerEvent,
           required: false,
           where: { taskType: 'create_fjs_charge' },
           order: [['created', 'DESC']],
+          separate: true,
         },
       ],
     })
@@ -999,15 +1073,31 @@ export class PaymentFlowService {
     return paymentFlows
   }
 
-  async deleteFjsCharge(paymentFlowId: string): Promise<void> {
+  async deleteFjsCharge(
+    paymentFlowId: string,
+    { throwOnError = true }: { throwOnError?: boolean } = {},
+  ): Promise<void> {
     this.logger.info(`[${paymentFlowId}] Attempting to delete FJS charge`)
-    try {
-      // Delete from FJS
-      await this.chargeFjsV2ClientService.deleteCharge(paymentFlowId)
-      this.logger.info(
-        `[${paymentFlowId}] Successfully requested deletion of FJS charge (or it was already deleted/cancelled)`,
-      )
 
+    // Deleting/cancelling the FJS charge IS the refund — it returns the money to the payer. If this
+    // fails the money was NOT returned, so surface it (when throwOnError) to let the saga roll back.
+    try {
+      await this.requestFjsChargeDeletion(paymentFlowId)
+    } catch (error) {
+      this.logger.error(`[${paymentFlowId}] Failed to delete FJS charge`, {
+        error: error.message,
+        stack: error.stack,
+      })
+      if (throwOnError) {
+        throw error
+      }
+      return
+    }
+
+    // FJS confirmed the deletion — the refund is committed and irreversible from our side. A failure
+    // to mark the local row deleted must NOT throw: rethrowing here would roll the saga back and
+    // resurrect the PAID state even though the money was already returned. Log for reconciliation.
+    try {
       const [updatedCount] = await this.fjsChargeModel.update(
         { isDeleted: true },
         { where: { paymentFlowId, isDeleted: false } },
@@ -1019,12 +1109,29 @@ export class PaymentFlowService {
       }
     } catch (error) {
       this.logger.error(
-        `[${paymentFlowId}] Failed to fully process FJS charge deletion or update local records`,
+        `[${paymentFlowId}] FJS charge deleted but failed to mark local FjsCharge row as deleted — needs reconciliation`,
         { error: error.message, stack: error.stack },
       )
-      // We don't rethrow here to allow the refund process to continue if possible,
-      // but the error is logged for monitoring. Manual cleanup might be needed if FJS delete failed.
-      // If FJS deletion fails critically, chargeFjsV2ClientService.deleteCharge should throw, which would be caught here.
+    }
+  }
+
+  /**
+   * Asks FJS to delete the charge. Resolves on a success response and on FJS's idempotent
+   * "already cancelled" response.
+   */
+  private async requestFjsChargeDeletion(paymentFlowId: string): Promise<void> {
+    try {
+      await this.chargeFjsV2ClientService.deleteCharge(paymentFlowId)
+      this.logger.info(
+        `[${paymentFlowId}] Successfully requested deletion of FJS charge`,
+      )
+    } catch (error) {
+      if (
+        mapFjsErrorToCode(error, true) !== FjsErrorCode.AlreadyDeletedCharge
+      ) {
+        throw error
+      }
+      this.logger.info(`[${paymentFlowId}] FJS charge was already cancelled`)
     }
   }
 
@@ -1077,7 +1184,7 @@ export class PaymentFlowService {
     }
 
     if (paymentFlowDetails.fjsCharge) {
-      await this.deleteFjsCharge(id)
+      await this.deleteFjsCharge(id, { throwOnError: false })
     }
 
     await this.paymentFlowModel.update(

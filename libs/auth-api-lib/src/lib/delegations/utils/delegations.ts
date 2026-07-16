@@ -81,7 +81,7 @@ export const validateToAndFromNationalId = ({
 export interface ValidateDistrictCommissionersDelegationsParams {
   user: User
   fromNationalId: string
-  delegationTypes: AuthDelegationType[]
+  delegationTypes: DelegationRecordType[]
   featureFlagService: FeatureFlagService
   syslumennService: SyslumennService
   delegationsIndexService: DelegationsIndexService

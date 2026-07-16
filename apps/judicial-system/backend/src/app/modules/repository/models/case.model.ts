@@ -35,6 +35,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { AppealCase } from './appealCase.model'
+import { AppealDecision } from './appealDecision.model'
 import { CaseDefendantPoliceCaseNumber } from './caseDefendantPoliceCaseNumber.model'
 import { CaseFile } from './caseFile.model'
 import { CaseString } from './caseString.model'
@@ -1028,4 +1029,12 @@ export class Case extends Model {
   })
   @ApiPropertyOptional({ type: () => AppealCase, isArray: true })
   rulingOrderAppealCases?: AppealCase[]
+
+  /**********
+   * Per-party appeal decisions (Ákvörðun um kæru) - one row per party per
+   * appealable ruling
+   **********/
+  @HasMany(() => AppealDecision, 'caseId')
+  @ApiPropertyOptional({ type: () => AppealDecision, isArray: true })
+  appealDecisions?: AppealDecision[]
 }

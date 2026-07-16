@@ -17,14 +17,13 @@ import { isAndroid } from '../utils/devices'
 import { offlineStore } from './offline-store'
 import { preferencesStore } from './preferences-store'
 import { notificationsStore } from './notifications-store'
-import { featureFlagClient } from '../lib/feature-flag-client'
+import { getFeatureFlagValue } from '../lib/feature-flag-client'
 import {
   DeletePasskeyDocument,
   DeletePasskeyMutation,
   DeletePasskeyMutationVariables,
 } from '../graphql/types/schema'
 import { deduplicatePromise } from '../utils/deduplicatePromise'
-import type { User } from 'configcat-js'
 import { clearWidgetData } from '../lib/widget-sync'
 import { setAuthStoreRef } from './auth-store-ref'
 import { create, useStore } from 'zustand'
@@ -52,7 +51,14 @@ interface AuthStore {
   authorizeResult: AuthorizeResult | RefreshResult | undefined
   userInfo: UserInfo | undefined
   lockScreenActivatedAt?: number
+  lockScreenComponentId: string | undefined
+  // Synchronously set when a push is dispatched, cleared when the lock route
+  // mounts (or times out). Prevents two pushers from racing before componentId
+  // can dedupe them.
+  lockScreenPushPending: boolean
   lockScreenSuppressedUntil: number | undefined
+  // Auto-prompt biometrics at most once per lock session (loop guard).
+  biometricAutoPromptedForCurrentLock: boolean
   isCogitoAuth: boolean
   cognitoDismissCount: number
   cognitoAuthUrl?: string
@@ -102,11 +108,7 @@ export async function prefetchAuthConfig() {
 
 const clearPasskey = async (userNationalId?: string) => {
   // Clear passkey if exists
-  const isPasskeyEnabled = await featureFlagClient?.getValueAsync(
-    'isPasskeyEnabled',
-    false,
-    userNationalId ? ({ identifier: userNationalId } as User) : undefined,
-  )
+  const isPasskeyEnabled = getFeatureFlagValue('isPasskeyEnabled', false)
 
   if (isPasskeyEnabled) {
     preferencesStore.setState({
@@ -141,7 +143,10 @@ export const authStore = create<AuthStore>((set, get) => ({
   authorizeResult: undefined,
   userInfo: undefined,
   lockScreenActivatedAt: undefined,
+  lockScreenComponentId: undefined,
+  lockScreenPushPending: false,
   lockScreenSuppressedUntil: undefined,
+  biometricAutoPromptedForCurrentLock: false,
   isCogitoAuth: false,
   cognitoDismissCount: 0,
   cognitoAuthUrl: undefined,
@@ -330,6 +335,11 @@ export function isLockScreenSuppressed() {
 
 export function clearLockScreenSuppression() {
   authStore.setState({ lockScreenSuppressedUntil: undefined })
+}
+
+// True if the lock screen is in an auth-required state (not just a mask).
+export function isLockScreenActive() {
+  return authStore.getState().lockScreenActivatedAt !== undefined
 }
 
 export async function readAuthorizeResult(): Promise<void> {

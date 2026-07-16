@@ -55,7 +55,7 @@ hpa:
       cpuAverageUtilization: 90
       nginxRequestsIrate: 8
     replicas:
-      max: 3
+      max: 2
       min: 1
 httpRoute:
   primary-gw:
@@ -73,21 +73,6 @@ httpRoute:
           - pathPrefix: '/api/defender'
 image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-api'
-ingress:
-  primary-alb:
-    annotations:
-      kubernetes.io/ingress.class: 'nginx-external-alb'
-      nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-      nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-      nginx.ingress.kubernetes.io/service-upstream: 'true'
-    hosts:
-      - host: 'judicial-system.dev01.devland.is'
-        paths:
-          - '/api/graphql'
-          - '/api/auth'
-          - '/api/case'
-          - '/api/feature'
-          - '/api/defender'
 namespace: 'judicial-system'
 podDisruptionBudget:
   minAvailable: '50%'
@@ -97,7 +82,7 @@ podSecurityContext:
 pvcs: []
 replicaCount:
   default: 1
-  max: 3
+  max: 2
   min: 1
 resources:
   limits:
@@ -109,6 +94,7 @@ resources:
 secrets:
   AUTH_IDS_SECRET: '/k8s/judicial-system/AUTH_IDS_SECRET'
   AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET'
+  AUTH_TOKEN_SECRET_BASE64: '/k8s/judicial-system/AUTH_TOKEN_SECRET_BASE64'
   BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   CONTENTFUL_ACCESS_TOKEN: '/k8s/judicial-system/CONTENTFUL_ACCESS_TOKEN'

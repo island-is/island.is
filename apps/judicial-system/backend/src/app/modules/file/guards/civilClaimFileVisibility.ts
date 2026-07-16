@@ -1,4 +1,3 @@
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import { CaseFileCategory } from '@island.is/judicial-system/types'
 
 import { CivilClaimant, Defendant } from '../../repository'
@@ -32,14 +31,23 @@ export const canDefenceUserViewCivilClaimCaseFile = (
     return true
   }
 
+  // The claimant's own confirmed spokesperson (lögmaður/réttargæslumaður) always
+  // has standing (aðild) to their own civil claim, so they may view it.
+  if (
+    CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(
+      defenderUserNationalId,
+      [claimant],
+    )
+  ) {
+    return true
+  }
+
   return (
     args.defendants?.some(
       (defendant) =>
         defendant.isDefenderChoiceConfirmed &&
         defendant.defenderNationalId &&
-        normalizeAndFormatNationalId(defenderUserNationalId).includes(
-          defendant.defenderNationalId,
-        ) &&
+        defendant.defenderNationalId === defenderUserNationalId &&
         defendant.policeCaseNumbers?.some((pcn) =>
           claimant.policeCaseNumbers?.includes(pcn),
         ),

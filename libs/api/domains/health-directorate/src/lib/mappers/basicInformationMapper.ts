@@ -1,15 +1,21 @@
+import addMinutes from 'date-fns/addMinutes'
+import subMinutes from 'date-fns/subMinutes'
 import {
   DiseaseVaccinationDtoVaccinationStatusEnum,
   UserVisibleAppointmentStatuses,
 } from '@island.is/clients/health-directorate'
 import {
+  VIDEO_CALL_ACTIVATES_MINUTES_BEFORE,
+  VIDEO_CALL_EXPIRES_MINUTES_AFTER,
+} from '../constants'
+import {
   AppointmentAssigneeTypeEnum,
   AppointmentLinkTypeEnum,
   AppointmentModalityEnum,
   AppointmentStatusEnum,
+  ReferralStatusEnum,
   VaccinationStatusEnum,
   WaitlistStatusTagColorEnum,
-  ReferralStatusEnum,
 } from '../models/enums'
 
 export const mapVaccinationStatus = (
@@ -71,6 +77,8 @@ export const toAppointmentAssigneeTypeEnum = (
       return AppointmentAssigneeTypeEnum.EQUIPMENT
     case 'OTHER':
       return AppointmentAssigneeTypeEnum.OTHER
+    case 'TEAM':
+      return AppointmentAssigneeTypeEnum.TEAM
     default:
       return undefined
   }
@@ -90,6 +98,28 @@ export const toAppointmentLinkTypeEnum = (
       return AppointmentLinkTypeEnum.VIDEO_CALL
     default:
       return undefined
+  }
+}
+
+/*
+ * Only the video call link is currently time-gated. The window is computed
+ * here, so web and native both read the same activatesAt/expiresAt instead
+ * of each hardcoding the rules independently.
+ */
+export const getAppointmentLinkActivationWindow = (
+  type: AppointmentLinkTypeEnum | undefined,
+  appointmentDate: Date,
+): { activatesAt?: Date; expiresAt?: Date } => {
+  if (type !== AppointmentLinkTypeEnum.VIDEO_CALL) {
+    return {}
+  }
+
+  return {
+    activatesAt: subMinutes(
+      appointmentDate,
+      VIDEO_CALL_ACTIVATES_MINUTES_BEFORE,
+    ),
+    expiresAt: addMinutes(appointmentDate, VIDEO_CALL_EXPIRES_MINUTES_AFTER),
   }
 }
 

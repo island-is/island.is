@@ -5,7 +5,11 @@ export {
   getConfirmedDefendantsForDefender,
   getDefenceUserCaseFileCategories,
   getDefenceUserCutoffDate,
+  getDefenceUserVisiblePoliceCaseNumbers,
   getDefenderVisiblePoliceCaseNumbers,
+  getSpokespersonVisiblePoliceCaseNumbers,
   isConfirmedDefenderOfSpecificDefendant,
+  isRulingOrderInConfirmedCourtSession,
 } from './guards/caseFileCategory'
 export { canDefenceUserViewCivilClaimCaseFile } from './guards/civilClaimFileVisibility'
+export { districtCourtJudgeConfirmRulingOrderRule } from './guards/rolesRules'

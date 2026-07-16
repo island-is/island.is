@@ -88,6 +88,7 @@ export const DefendantPrisonAdminCard = ({
             )}
           </Box>
         }
+        menuLabel={`Valmynd fyrir ${defendant.name}`}
         contextMenuItems={[
           isRegistered
             ? {

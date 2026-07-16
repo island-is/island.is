@@ -1,5 +1,4 @@
 import { useMutation } from '@apollo/client'
-import { FormSystemField } from '@island.is/api/schema'
 import { UPDATE_APPLICATION_SETTINGS } from '@island.is/form-system/graphql'
 import {
   ApplicationState,

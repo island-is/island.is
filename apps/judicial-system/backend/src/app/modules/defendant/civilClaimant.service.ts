@@ -10,7 +10,6 @@ import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   addMessagesToQueue,
   MessageType,
@@ -21,12 +20,14 @@ import {
   type User,
 } from '@island.is/judicial-system/types'
 
+import { CourtService } from '../court'
 import {
   Case,
   CaseDefendantPoliceCaseNumber,
   CivilClaimant,
 } from '../repository'
 import { UpdateCivilClaimantDto } from './dto/updateCivilClaimant.dto'
+import { DeliverResponse } from './models/deliver.response'
 
 @Injectable()
 export class CivilClaimantService {
@@ -35,6 +36,7 @@ export class CivilClaimantService {
     private readonly civilClaimantModel: typeof CivilClaimant,
     @InjectModel(CaseDefendantPoliceCaseNumber)
     private readonly caseDefendantPoliceCaseNumberModel: typeof CaseDefendantPoliceCaseNumber,
+    private readonly courtService: CourtService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -49,6 +51,7 @@ export class CivilClaimantService {
   }
 
   private addMessagesForUpdateCivilClaimantToQueue(
+    theCase: Case,
     oldCivilClaimant: CivilClaimant,
     updatedCivilClaimant: CivilClaimant,
     user: User,
@@ -57,6 +60,15 @@ export class CivilClaimantService {
       updatedCivilClaimant.isSpokespersonConfirmed &&
       !oldCivilClaimant.isSpokespersonConfirmed
     ) {
+      if (theCase.courtCaseNumber) {
+        addMessagesToQueue({
+          type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CIVIL_CLAIMANT,
+          user,
+          caseId: theCase.id,
+          elementId: updatedCivilClaimant.id,
+        })
+      }
+
       addMessagesToQueue({
         type: MessageType.CIVIL_CLAIMANT_NOTIFICATION,
         caseId: updatedCivilClaimant.caseId,
@@ -103,11 +115,12 @@ export class CivilClaimantService {
   }
 
   async update(
-    caseId: string,
+    theCase: Case,
     civilClaimant: CivilClaimant,
     update: UpdateCivilClaimantDto,
     user: User,
   ): Promise<CivilClaimant> {
+    const caseId = theCase.id
     let effectiveUpdate = { ...update }
 
     if (
@@ -143,12 +156,40 @@ export class CivilClaimantService {
     const updatedCivilClaimant = civilClaimants[0]
 
     this.addMessagesForUpdateCivilClaimantToQueue(
+      theCase,
       civilClaimant,
       updatedCivilClaimant,
       user,
     )
 
     return updatedCivilClaimant
+  }
+
+  async deliverIndictmentCivilClaimantToCourt(
+    theCase: Case,
+    civilClaimant: CivilClaimant,
+    user: User,
+  ): Promise<DeliverResponse> {
+    return this.courtService
+      .updateIndictmentCaseWithSpokespersonInfo(
+        user,
+        theCase.id,
+        theCase.court?.name,
+        theCase.courtCaseNumber,
+        civilClaimant.nationalId,
+        civilClaimant.name,
+        civilClaimant.spokespersonNationalId,
+        civilClaimant.spokespersonIsLawyer,
+      )
+      .then(() => ({ delivered: true }))
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to update civil claimant info for civil claimant ${civilClaimant.id} of indictment case ${theCase.id}`,
+          { reason },
+        )
+
+        return { delivered: false }
+      })
   }
 
   async delete(caseId: string, civilClaimantId: string): Promise<boolean> {
@@ -196,7 +237,7 @@ export class CivilClaimantService {
       ],
       where: {
         hasSpokesperson: true,
-        spokespersonNationalId: normalizeAndFormatNationalId(nationalId),
+        spokespersonNationalId: nationalId,
       },
       order: [['created', 'DESC']],
     })

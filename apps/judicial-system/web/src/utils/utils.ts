@@ -1,3 +1,5 @@
+import { KeyboardEvent } from 'react'
+
 import { TagVariant } from '@island.is/island-ui/core'
 import {
   formatDate,
@@ -13,6 +15,7 @@ import {
 import {
   AppealCase,
   AppealCaseState,
+  AppealDecisionPartyRole,
   Case,
   CaseAppealDecision,
   CaseCustodyRestrictions,
@@ -122,13 +125,11 @@ export const hasSentNotification = (
 }
 
 export const isReopenedCOACase = (
-  appealState?: AppealCaseState | null,
-  notifications?: Notification[] | null,
+  appealCase: AppealCase | undefined | null,
 ): boolean => {
   return (
-    appealState !== AppealCaseState.COMPLETED &&
-    hasSentNotification(TrackedNotificationType.APPEAL_COMPLETED, notifications)
-      .hasSent
+    appealCase?.appealState !== AppealCaseState.COMPLETED &&
+    Boolean(appealCase?.appealRulingDate)
   )
 }
 
@@ -270,10 +271,12 @@ export const getDefenceUserPartyIds = (
 /**
  * Returns a human-readable description of who appealed and when.
  *
- * Branches by case type, then by appeal kind for indictment cases:
+ * Branches by case type, then by appeal kind for indictment cases. The
+ * prosecutor term differs by case type: request (R) cases say "sækjandi",
+ * indictment (S) cases say "ákærandi".
  * - Request cases (case-level appeals only): in-court branch + "Kært af X"
  *   passive form.
- * - Indictment ruling-order appeals: subject-verb form ("Sækjandi kærði
+ * - Indictment ruling-order appeals: subject-verb form ("Ákærandi kærði
  *   úrskurðinn …").
  * - Indictment case-level appeals (dismissal): same passive form as request
  *   cases out-of-court — no in-court mechanic.
@@ -316,8 +319,14 @@ export const getAppealActorText = (
   if (appealCase?.rulingFileId) {
     const dateStr = formatDate(appealCase.appealedDate, 'PPPp')
 
+    // In-court ruling-order appeal: any number of parties may have appealed in
+    // the þingbók, so the court of appeals shows it without naming who appealed.
+    if (appealCase.appealedInCourt) {
+      return `Kært í þinghaldi ${dateStr}`
+    }
+
     if (appealCase.appealedByRole === UserRole.PROSECUTOR) {
-      return `Sækjandi kærði úrskurðinn ${dateStr}`
+      return `Ákærandi kærði úrskurðinn ${dateStr}`
     }
 
     const party = getAppealingPartyInfo(
@@ -334,7 +343,7 @@ export const getAppealActorText = (
   const dateStr = formatDate(appealCase?.appealedDate, 'PPPp')
 
   if (appealCase?.appealedByRole === UserRole.PROSECUTOR) {
-    return `Kært af sækjanda ${dateStr}`
+    return `Kært af ákæranda ${dateStr}`
   }
 
   const party = getAppealingPartyInfo(
@@ -397,6 +406,130 @@ export const getAppealingPartyInfo = (
   }
 
   return undefined
+}
+
+/**
+ * Resolves the in-court appeal decision (Ákvörðun um kæru) recorded for the
+ * party the current user acts for - the prosecution, or the defendant / civil
+ * claimant the defence user is the confirmed representative of. Mirrors the
+ * backend helper (appealCase.helpers.findUserRulingOrderAppealDecision).
+ */
+const findUserRulingOrderAppealDecision = (
+  workingCase: Case,
+  user: User | undefined,
+  rulingFileId: string,
+) => {
+  if (!user) {
+    return undefined
+  }
+
+  let partyRole: AppealDecisionPartyRole
+  let defendantId: string | undefined
+  let civilClaimantId: string | undefined
+
+  if (isProsecutionUser(user)) {
+    partyRole = AppealDecisionPartyRole.PROSECUTOR
+  } else if (isDefenceUser(user)) {
+    const defendant = workingCase.defendants?.find(
+      (d) =>
+        d.isDefenderChoiceConfirmed &&
+        d.defenderNationalId &&
+        d.defenderNationalId === user.nationalId,
+    )
+    const civilClaimant = workingCase.civilClaimants?.find(
+      (c) =>
+        c.isSpokespersonConfirmed &&
+        c.spokespersonNationalId &&
+        c.spokespersonNationalId === user.nationalId,
+    )
+
+    if (defendant) {
+      partyRole = AppealDecisionPartyRole.DEFENDANT
+      defendantId = defendant.id
+    } else if (civilClaimant) {
+      partyRole = AppealDecisionPartyRole.CIVIL_CLAIMANT
+      civilClaimantId = civilClaimant.id
+    } else {
+      return undefined
+    }
+  } else {
+    return undefined
+  }
+
+  return workingCase.appealDecisions?.find(
+    (appealDecision) =>
+      appealDecision.rulingFileId === rulingFileId &&
+      appealDecision.partyRole === partyRole &&
+      (appealDecision.defendantId ?? null) === (defendantId ?? null) &&
+      (appealDecision.civilClaimantId ?? null) === (civilClaimantId ?? null),
+  )
+}
+
+/**
+ * True iff the current user's party recorded an in-court ACCEPT ("unir
+ * úrskurðinum") for this ruling order. Such a party has waived its right to
+ * appeal it, so the appeal action is hidden. Mirrors the backend
+ * (appealCase.service.hasAcceptedRulingOrderInCourt).
+ */
+export const hasAcceptedRulingOrderInCourt = (
+  workingCase: Case,
+  user: User | undefined,
+  rulingFileId: string,
+): boolean =>
+  findUserRulingOrderAppealDecision(workingCase, user, rulingFileId)
+    ?.decision === CaseAppealDecision.ACCEPT
+
+/**
+ * True iff the current user's party appealed this ruling order in court and has
+ * not yet withdrawn - i.e. the user may withdraw its appeal. Mirrors the backend
+ * (appealCase.helpers.userHasActiveInCourtAppeal).
+ */
+export const userHasActiveInCourtAppeal = (
+  workingCase: Case,
+  user: User | undefined,
+  rulingFileId: string,
+): boolean => {
+  const decision = findUserRulingOrderAppealDecision(
+    workingCase,
+    user,
+    rulingFileId,
+  )
+
+  return (
+    decision?.decision === CaseAppealDecision.APPEAL && !decision.withdrawnDate
+  )
+}
+
+/**
+ * Mirrors the backend's ruling-link reconciliation on the working case so the
+ * in-court appeal decision cards stay in sync when a court session's ruling
+ * order file changes:
+ * - swap (old -> new file): re-key the ruling's decisions onto the new file;
+ * - removal (old -> none, ruling type left ORDER): drop the ruling's decisions.
+ * Decisions are matched on `rulingFileId`, so without this the cards would look
+ * empty after a change even though the rows still exist (under the new file) or
+ * were deleted on the server.
+ */
+export const reconcileAppealDecisionsForRulingFileChange = (
+  appealDecisions: Case['appealDecisions'],
+  previousRulingFileId: string | null | undefined,
+  nextRulingFileId: string | null | undefined,
+): Case['appealDecisions'] => {
+  if (!previousRulingFileId || previousRulingFileId === nextRulingFileId) {
+    return appealDecisions
+  }
+
+  if (nextRulingFileId) {
+    return appealDecisions?.map((decision) =>
+      decision.rulingFileId === previousRulingFileId
+        ? { ...decision, rulingFileId: nextRulingFileId }
+        : decision,
+    )
+  }
+
+  return appealDecisions?.filter(
+    (decision) => decision.rulingFileId !== previousRulingFileId,
+  )
 }
 
 /**
@@ -714,6 +847,16 @@ export const getDefaultDefendantGender = (defendants?: Defendant[] | null) =>
   defendants && defendants.length === 1
     ? defendants[0].gender ?? Gender.MALE
     : Gender.MALE
+
+// Lets an element with role="button" be activated with the keyboard
+// (Enter or Space) the same way a native button is.
+export const onEnterOrSpace =
+  (handler: () => void) => (event: KeyboardEvent) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      handler()
+    }
+  }
 
 export const isPartiallyVisible = (el: HTMLElement): boolean => {
   const rect = el.getBoundingClientRect()

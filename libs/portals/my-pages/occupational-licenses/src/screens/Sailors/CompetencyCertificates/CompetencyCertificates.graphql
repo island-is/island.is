@@ -1,0 +1,14 @@
+query ShipRegistrySailorSchoolCertificates {
+  shipRegistrySailor {
+    certificates {
+      schoolCertificates {
+        id
+        title
+        validToDate
+        status
+        school
+        issueDate
+      }
+    }
+  }
+}

@@ -1,12 +1,25 @@
+import type { ApolloError } from '@apollo/client'
 import { GetServerSideProps } from 'next'
+import { useRouter } from 'next/router'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 
-import { Box, Button, LinkV2 } from '@island.is/island-ui/core'
+import { PaymentsGetFlowPaymentStatus } from '@island.is/api/schema'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  LinkV2,
+  toast,
+} from '@island.is/island-ui/core'
 import { Features } from '@island.is/feature-flags'
 import { useLocale } from '@island.is/localization'
 import { findProblemInApolloError } from '@island.is/shared/problem'
-import { CardErrorCode } from '@island.is/shared/constants'
+import {
+  BankTransferErrorCode,
+  CardErrorCode,
+  PaymentServiceCode,
+} from '@island.is/shared/constants'
 
 import { PageCard } from '../../../components/PageCard/PageCard'
 import initApollo from '../../../graphql/client'
@@ -17,9 +30,12 @@ import {
 } from '../../../components/PaymentSelector/PaymentSelector'
 import { CardPayment } from '../../../components/CardPayment/CardPayment'
 import { InvoicePayment } from '../../../components/InvoicePayment/InvoicePayment'
-import { ALLOWED_LOCALES, Locale } from '../../../utils'
+import { BankTransferPayment } from '../../../components/BankTransferPayment/BankTransferPayment'
+import { BankTransferPendingScreen } from '../../../components/BankTransferPendingScreen/BankTransferPendingScreen'
+import { ALLOWED_LOCALES, Locale, isHttpsUrl } from '../../../utils'
 import { getConfigcatClient } from '../../../clients/configcat'
 import {
+  bankTransfer,
   card,
   cardSuccess,
   generic,
@@ -43,6 +59,11 @@ import { PaymentReceipt } from '../../../components/PaymentReceipt'
 import { ThreeDSecure } from '../../../components/ThreeDSecure/ThreeDSecure'
 import { InvoiceReceipt } from '../../../components/InvoiceReceipt'
 import { usePaymentOrchestration } from '../../../hooks/usePaymentOrchestration'
+import {
+  BankTransferStatusUpdate,
+  useBankTransferStatusPolling,
+} from '../../../hooks/useBankTransferStatusPolling'
+import { useCancelBankTransfer } from '../../../hooks/useCancelBankTransfer'
 import { withLocale } from '../../../i18n/withLocale'
 
 interface PaymentPageProps {
@@ -57,6 +78,7 @@ interface PaymentPageProps {
   }
   isInvoicePaymentEnabledForUser: boolean
   isApplePayPaymentEnabledForUser: boolean
+  isBankTransferPaymentEnabledForUser: boolean
 }
 
 export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
@@ -95,6 +117,7 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
   let organization: PaymentPageProps['organization'] = null
   let isInvoicePaymentEnabledForUser = false
   let isApplePayPaymentEnabledForUser = false
+  let isBankTransferPaymentEnabledForUser = false
 
   try {
     const { data } = await client.query<
@@ -186,6 +209,16 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
     } catch (e) {
       console.error('Error getting Apple Pay payment enabled for user', e)
     }
+
+    try {
+      isBankTransferPaymentEnabledForUser = await configCatClient.getValueAsync(
+        Features.isIslandisBankTransferPaymentAllowedForUser,
+        false,
+        userObj,
+      )
+    } catch (e) {
+      console.error('Error getting bank transfer payment enabled for user', e)
+    }
   }
 
   const productInformation = {
@@ -203,6 +236,7 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
       productInformation,
       isInvoicePaymentEnabledForUser,
       isApplePayPaymentEnabledForUser,
+      isBankTransferPaymentEnabledForUser,
     },
   }
 }
@@ -213,6 +247,7 @@ function PaymentPage({
   productInformation,
   isInvoicePaymentEnabledForUser,
   isApplePayPaymentEnabledForUser,
+  isBankTransferPaymentEnabledForUser,
 }: PaymentPageProps) {
   const methods = useForm({
     mode: 'onBlur',
@@ -221,10 +256,10 @@ function PaymentPage({
       card: '',
       cardExpiry: '',
       cardCVC: '',
+      bankAccountNumber: '',
     },
   })
   const { formatMessage } = useLocale()
-
   const {
     selectedPaymentMethod,
     changePaymentMethod,
@@ -242,6 +277,66 @@ function PaymentPage({
     productInformation,
     isApplePayPaymentEnabledForUser,
   })
+  const router = useRouter()
+
+  // Sub-status updates observed while polling, overrides the SSR snapshot from paymentsGetFlow.
+  const [liveBankTransfer, setLiveBankTransfer] =
+    useState<BankTransferStatusUpdate | null>(null)
+
+  // Bank-transfer polling runs only on the dedicated waiting screen (reached via SSR after submit).
+  useBankTransferStatusPolling({
+    paymentFlowId: paymentFlow?.id,
+    enabled:
+      paymentFlow?.paymentStatus ===
+      PaymentsGetFlowPaymentStatus.bank_transfer_pending,
+    expiresAt: paymentFlow?.bankTransferExpiresAt ?? undefined,
+    // Success needs a reload to land on the receipt screen
+    onSuccess: () => router.reload(),
+    onFailure: (error) => setPaymentError(error),
+    onStatusUpdate: setLiveBankTransfer,
+  })
+
+  // Retained for the error screen's "start again" flow (onErrorBack); the pending screen no longer
+  // exposes a cancel control — see BankTransferPendingScreen.
+  const { cancelBankTransfer } = useCancelBankTransfer({
+    paymentFlowId: paymentFlow?.id,
+  })
+
+  // PaymentFlowAlreadyPaid = we lost the race to finalizeBankTransferSuccess.
+  // The row settled; reload to land on the receipt.
+  const isAlreadyPaidError = (e: ApolloError | undefined) =>
+    findProblemInApolloError(e)?.detail ===
+    PaymentServiceCode.PaymentFlowAlreadyPaid
+
+  const [isStartingAgain, setIsStartingAgain] = useState(false)
+
+  const onErrorBack = async () => {
+    const code = paymentError?.code
+    const isBankTransferCode =
+      code === BankTransferErrorCode.BankTransferRejected ||
+      code === BankTransferErrorCode.BankTransferCancelled ||
+      code === BankTransferErrorCode.BankTransferGenericError ||
+      code === BankTransferErrorCode.BankTransferExpired
+
+    if (!isBankTransferCode) {
+      setPaymentError(null)
+      return
+    }
+
+    // for bank transfer errors, we need to cancel the bank transfer and reload
+    setIsStartingAgain(true)
+    try {
+      await cancelBankTransfer()
+      router.reload()
+    } catch (e) {
+      if (isAlreadyPaidError(e)) {
+        router.reload()
+        return
+      }
+      setIsStartingAgain(false)
+      toast.error(formatMessage(bankTransfer.cancelFailedToast))
+    }
+  }
 
   const availablePaymentMethods = useMemo(() => {
     const methods = [...(paymentFlow?.availablePaymentMethods ?? [])]
@@ -250,12 +345,26 @@ function PaymentPage({
       methods.push('invoice')
     }
 
-    return Array.from(new Set(methods)) as ('card' | 'invoice')[]
-  }, [paymentFlow?.availablePaymentMethods, isInvoicePaymentEnabledForUser])
+    // TEMPORARY (testing): force-surface bank transfer via the rollout flag.
+    // Once testing is done this flag is removed and the backend controls
+    // availability via availablePaymentMethods.
+    if (isBankTransferPaymentEnabledForUser) {
+      methods.push('bank_transfer')
+    }
 
-  // Invoice payment doesn't have any input fields, so we don't need to check if it's valid
+    return Array.from(new Set(methods)) as PaymentMethod[]
+  }, [
+    paymentFlow?.availablePaymentMethods,
+    isInvoicePaymentEnabledForUser,
+    isBankTransferPaymentEnabledForUser,
+  ])
+
+  // Card and bank transfer have input fields that must be valid before submitting; invoice has none.
   const isCardPaymentInvalid =
     selectedPaymentMethod === 'card' && !methods.formState.isValid
+
+  const isBankTransferPaymentInvalid =
+    selectedPaymentMethod === 'bank_transfer' && !methods.formState.isValid
 
   const invalidFlowSetup =
     !organization ||
@@ -271,8 +380,44 @@ function PaymentPage({
     paymentError,
   )
 
-  const isPaid = paymentFlow?.paymentStatus === 'paid'
-  const isInvoicePending = paymentFlow?.paymentStatus === 'invoice_pending'
+  const paymentStatus = paymentFlow?.paymentStatus
+  const rawScaRedirectUrl =
+    liveBankTransfer?.scaRedirectUrl ?? paymentFlow?.bankTransferScaRedirectUrl
+  const bankTransferScaRedirectUrl = isHttpsUrl(rawScaRedirectUrl)
+    ? rawScaRedirectUrl ?? undefined
+    : undefined
+  const bankTransferPendingStatus =
+    liveBankTransfer?.pendingStatus ?? paymentFlow?.bankTransferPendingStatus
+
+  const isPaid = paymentStatus === PaymentsGetFlowPaymentStatus.paid
+  const isInvoicePending =
+    paymentStatus === PaymentsGetFlowPaymentStatus.invoice_pending
+  const isBankTransferPending =
+    paymentStatus === PaymentsGetFlowPaymentStatus.bank_transfer_pending
+
+  if (canRenderMainFlow && isBankTransferPending) {
+    // Pending screen: polling reloads on terminal SUCCESS; the Cancel button cancels + reloads.
+    return (
+      <PageCard
+        headerSlot={
+          <PaymentHeader
+            title={organization?.title}
+            imageSrc={organization?.logo?.url}
+            imageAlt={organization?.logo?.title}
+            amount={productInformation.amount}
+            subTitle={productInformation.title}
+            type="primary"
+          />
+        }
+        bodySlot={
+          <BankTransferPendingScreen
+            pendingStatus={bankTransferPendingStatus}
+            scaRedirectUrl={bankTransferScaRedirectUrl}
+          />
+        }
+      />
+    )
+  }
 
   if (canRenderMainFlow && (isPaid || isInvoicePending)) {
     const title = isPaid ? cardSuccess.title : invoiceSuccess.title
@@ -363,14 +508,23 @@ function PaymentPage({
                       reference={paymentFlow?.payerName}
                     />
                   )}
+                  {selectedPaymentMethod === 'bank_transfer' && (
+                    <BankTransferPayment />
+                  )}
                   <Button
                     type="submit"
                     loading={overallIsSubmitting}
                     fluid
-                    disabled={overallIsSubmitting || isCardPaymentInvalid}
+                    disabled={
+                      overallIsSubmitting ||
+                      isCardPaymentInvalid ||
+                      isBankTransferPaymentInvalid
+                    }
                   >
                     {selectedPaymentMethod === 'card'
                       ? formatMessage(card.pay)
+                      : selectedPaymentMethod === 'bank_transfer'
+                      ? formatMessage(bankTransfer.confirm)
                       : formatMessage(invoice.create)}
                   </Button>
                   <Box display="flex" justifyContent="center">
@@ -398,7 +552,9 @@ function PaymentPage({
                 <Button
                   variant="ghost"
                   fluid
-                  onClick={() => setPaymentError(null)}
+                  loading={isStartingAgain}
+                  disabled={isStartingAgain}
+                  onClick={onErrorBack}
                 >
                   {formatMessage(generic.back)}
                 </Button>

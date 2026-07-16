@@ -47,9 +47,9 @@ query Case($input: CaseQueryInput!) {
       id
       courtCaseNumber
     }
+    state
     indictmentSubtypes
     description
-    state
     policeCaseNumbers
     defendants {
       id
@@ -295,6 +295,7 @@ query Case($input: CaseQueryInput!) {
     rulingModifiedHistory
     caseResentExplanation
     origin
+    originalAncestorId
     openedByDefender
     defendantWaivesRightToCounsel
     crimeScenes
@@ -457,6 +458,7 @@ query Case($input: CaseQueryInput!) {
       appealedByNationalId
       appealedByRole
       appealedDate
+      appealedInCourt
       statementDeadline
       isStatementDeadlineExpired
       appealCaseNumber
@@ -496,6 +498,16 @@ query Case($input: CaseQueryInput!) {
       isAppealCustodyIsolation
       appealIsolationToDate
       rulingFileId
+    }
+    appealDecisions {
+      id
+      rulingFileId
+      partyRole
+      defendantId
+      civilClaimantId
+      decision
+      announcement
+      withdrawnDate
     }
     indictmentDeniedExplanation
     arraignmentDate {

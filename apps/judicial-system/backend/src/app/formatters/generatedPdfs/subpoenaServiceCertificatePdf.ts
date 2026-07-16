@@ -51,6 +51,19 @@ const getRole = (userRole?: UserRole) => {
   }
 }
 
+export const getCivilClaimsServiceText = (
+  hasCivilClaims?: boolean,
+  civilClaimantsCount?: number,
+): string | undefined => {
+  if (!hasCivilClaims || !civilClaimantsCount) {
+    return undefined
+  }
+
+  return civilClaimantsCount > 1
+    ? 'Greinargerðir vegna bótakrafna í málinu hafa jafnframt verið birtar.'
+    : 'Greinargerð vegna bótakröfu í málinu hefur jafnframt verið birt.'
+}
+
 export const createSubpoenaServiceCertificate = (
   theCase: Case,
   defendant: Defendant,
@@ -172,7 +185,7 @@ export const createSubpoenaServiceCertificate = (
     doc,
     `${
       subpoena.arraignmentDate
-        ? formatDate(new Date(subpoena.arraignmentDate), 'Pp')
+        ? formatDate(new Date(subpoena.arraignmentDate), 'dd.MM.y HH:mm')
         : 'Ekki skráð'
     }`,
     'Times-Roman',
@@ -191,6 +204,16 @@ export const createSubpoenaServiceCertificate = (
 
   addNormalText(doc, 'Tegund fyrirkalls: ', 'Times-Bold', true)
   addNormalText(doc, getSubpoenaType(subpoena.type), 'Times-Roman')
+
+  const civilClaimsText = getCivilClaimsServiceText(
+    theCase.hasCivilClaims,
+    theCase.civilClaimants?.length,
+  )
+
+  if (civilClaimsText) {
+    addEmptyLines(doc, 2)
+    addNormalText(doc, civilClaimsText, 'Times-Bold')
+  }
 
   addEmptyLines(doc, 3)
 

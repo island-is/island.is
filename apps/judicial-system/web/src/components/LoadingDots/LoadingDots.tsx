@@ -7,15 +7,20 @@ interface LoadingDotsProps {
   single?: boolean
   color?: 'blue' | 'white' | 'black' | 'gradient'
   size?: 'small' | 'medium' | 'large'
+  ariaLabel?: string
 }
 
 export const LoadingDots = ({
   color = 'blue',
   size = 'medium',
   single,
+  ariaLabel = 'Hleður',
 }: LoadingDotsProps) => {
   return (
     <div
+      role="status"
+      aria-live="polite"
+      aria-label={ariaLabel}
       className={cn(styles.container, styles.colors[color], {
         [styles.single]: single,
         [styles.large]: size === 'large',

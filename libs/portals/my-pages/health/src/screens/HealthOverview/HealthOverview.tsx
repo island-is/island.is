@@ -1,12 +1,23 @@
-import { GridColumn, GridRow, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  GridColumn,
+  GridRow,
+  Inline,
+  Tag,
+  Text,
+} from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { LinkResolver } from '@island.is/portals/my-pages/core'
+import { NotificationsBox } from '@island.is/portals/my-pages/information'
 import subYears from 'date-fns/subYears'
 import { useWindowSize } from 'react-use'
+import { HealthPaths } from '../../lib/paths'
 import { messages } from '../../lib/messages'
 import {
   CONTENT_GAP_LG,
   DEFAULT_APPOINTMENTS_STATUS,
+  SECTION_GAP,
 } from '../../utils/constants'
 import {
   useGetAppointmentsOverviewQuery,
@@ -19,10 +30,10 @@ import {
   useGetPaymentsOverviewQuery,
 } from './HealthOverview.generated'
 
-import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
-import { useEffect, useState } from 'react'
+import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import Appointments from './components/Appointments'
 import BasicInformation from './components/BasicInformation'
+import ContactLinks from './components/ContactLinks'
 import PaymentsAndRights from './components/PaymentsAndRights'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
@@ -34,23 +45,15 @@ export const HealthOverview = () => {
   useHealthPlausibleSwap()
   const { formatMessage, locale } = useLocale()
   const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
-  const [showAppointments, setShowAppointments] = useState(false)
-
-  const featureFlagClient = useFeatureFlagClient()
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        Features.isServicePortalHealthAppointmentsPageEnabled,
-        false,
-      )
-      if (ffEnabled) {
-        setShowAppointments(ffEnabled as boolean)
-      }
-    }
-    isFlagEnabled()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const isStackedLayout = width < theme.breakpoints.lg
+  const { value: showAppointments } = useFeatureFlag(
+    Features.isServicePortalHealthAppointmentsPageEnabled,
+    false,
+  )
+  const { value: isNewHealthOverviewPageEnabled } = useFeatureFlag(
+    Features.isNewHealthOverviewPageEnabled,
+    false,
+  )
 
   const { data, error, loading } = useGetInsuranceOverviewQuery()
   const {
@@ -124,21 +127,66 @@ export const HealthOverview = () => {
   const firstTwoAppointments =
     appointmentsData?.healthDirectorateAppointments?.data?.slice(0, 2) || []
 
+  const quickLinks = [
+    {
+      href: HealthPaths.HealthMedicinePrescription,
+      label: formatMessage(messages.quickLinkMedicinePrescription),
+    },
+    {
+      href: HealthPaths.HealthMedicineDelegation,
+      label: formatMessage(messages.quickLinkMedicineDelegation),
+    },
+    {
+      href: HealthPaths.HealthWaitlists,
+      label: formatMessage(messages.quickLinkWaitlists),
+    },
+    {
+      href: HealthPaths.HealthQuestionnaires,
+      label: formatMessage(messages.quickLinkQuestionnaires),
+    },
+  ]
+
   return (
     <>
       <GridRow marginBottom={CONTENT_GAP_LG}>
-        <GridColumn span={isMobile ? '8/8' : '5/8'}>
+        <GridColumn span={isStackedLayout ? '8/8' : '5/8'}>
           <>
             <Text variant="h3" as={'h1'}>
               {formatMessage(messages.healthOverview)}
             </Text>
-
             <Text variant="default" paddingTop={1}>
               {formatMessage(messages.healthOverviewIntro)}
             </Text>
+            {isNewHealthOverviewPageEnabled && (
+              <Box marginTop={3}>
+                <Inline space={[1, 2]}>
+                  {quickLinks.map((link) => (
+                    <LinkResolver key={link.href} href={link.href}>
+                      <Tag variant="blue">{link.label}</Tag>
+                    </LinkResolver>
+                  ))}
+                </Inline>
+              </Box>
+            )}
           </>
         </GridColumn>
       </GridRow>
+      {isNewHealthOverviewPageEnabled && (
+        <GridRow marginBottom={SECTION_GAP}>
+          <GridColumn span={isStackedLayout ? '8/8' : '5/8'}>
+            <Box marginBottom={isStackedLayout ? CONTENT_GAP_LG : 0}>
+              <NotificationsBox
+                limit={3}
+                title={formatMessage(messages.healthNotificationsTitle)}
+                showViewAllArrow={false}
+              />
+            </Box>
+          </GridColumn>
+          <GridColumn span={isStackedLayout ? '8/8' : '3/8'}>
+            <ContactLinks />
+          </GridColumn>
+        </GridRow>
+      )}
       {/* Appointments */}
       {showAppointments && (
         <Appointments

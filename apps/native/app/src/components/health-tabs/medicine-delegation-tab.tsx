@@ -131,7 +131,11 @@ export function MedicineDelegationTab({ initial }: { initial?: boolean }) {
         <HeaderActions>
           <ReadMoreButton
             accessibilityRole="button"
-            onPress={() => openBrowser('https://island.is/s/landlaeknir/frett')}
+            onPress={() =>
+              openBrowser(
+                'https://island.is/heilbrigdisthjonusta-yfir-landamaeri',
+              )
+            }
           >
             <Typography
               variant="eyebrow"

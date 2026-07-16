@@ -13,7 +13,7 @@
     "@apollo/client": "3.7.15",
     "@datadog/mobile-react-native": "3.0.2",
     "@expo-google-fonts/ibm-plex-sans": "0.4.1",
-    "@kishannareshpal/expo-pdf": "0.3.1",
+    "@kishannareshpal/expo-pdf": "patch:@kishannareshpal/expo-pdf@npm%3A0.3.1#~/.yarn/patches/@kishannareshpal-expo-pdf-npm-0.3.1-80a31e2db8.patch",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-community/datetimepicker": "8.6.0",
     "@react-native-community/netinfo": "11.5.2",
