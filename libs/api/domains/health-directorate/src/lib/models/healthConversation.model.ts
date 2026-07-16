@@ -22,8 +22,7 @@ export class HealthDirectorateHealthConversation {
 
   @Field({
     nullable: true,
-    description:
-      'National id of the organization that owns the HCP node/department this conversation belongs to.',
+    description: 'National id of the organization this conversation is with.',
   })
   organizationNationalId?: string
 
@@ -33,7 +32,7 @@ export class HealthDirectorateHealthConversation {
   @Field({
     nullable: true,
     description:
-      'Name of the HCP department within the organization, when the resolved mapping row is group-specific.',
+      'Name of the department within the organization, when the resolved mapping row is group-specific.',
   })
   departmentName?: string
 
