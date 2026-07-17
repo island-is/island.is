@@ -90,7 +90,7 @@ export const PersonalTaxCreditTable = ({
 
   useEffect(() => {
     setCollapsingRows(new Set())
-  }, [taxCards]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [taxCards])
 
   const columns = useMemo(
     () => [

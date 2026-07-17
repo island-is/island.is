@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'portals-my-pages-licenses',
   preset: './jest.preset.js',

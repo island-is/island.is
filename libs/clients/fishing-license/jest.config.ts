@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'clients-fishing-license',
   preset: './jest.preset.js',

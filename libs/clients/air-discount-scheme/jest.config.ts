@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'clients-air-discount-scheme',
   preset: './jest.preset.js',

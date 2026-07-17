@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'api-domains-secondary-school',
   preset: '../../../../jest.preset.js',

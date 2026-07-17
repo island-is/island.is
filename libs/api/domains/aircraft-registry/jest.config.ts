@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'api-domains-aircraft-registry',
   preset: '../../../../jest.preset.js',

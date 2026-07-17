@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'application-templates-legal-gazette',
   preset: '../../../../jest.preset.js',

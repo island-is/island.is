@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'application-templates-directorate-of-immigration-citizenship',
   preset: '../../../../../jest.preset.js',

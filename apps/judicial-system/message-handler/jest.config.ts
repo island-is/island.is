@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'judicial-system-message-handler',
   preset: './jest.preset.js',

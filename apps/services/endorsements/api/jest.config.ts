@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'services-endorsements-api',
   preset: './jest.preset.js',

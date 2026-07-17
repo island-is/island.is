@@ -23,7 +23,7 @@ import { PasskeysCoreConfig } from './passkeys-core.config'
 const {
   verifyRegistrationResponse,
   verifyAuthenticationResponse,
-} = require('@simplewebauthn/server') // eslint-disable-line  @typescript-eslint/no-var-requires
+} = require('@simplewebauthn/server')
 
 jest.mock('@simplewebauthn/server', () => ({
   __esModule: true,

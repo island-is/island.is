@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { ReactNode, useEffect, useState } from 'react'
 import { useWindowSize } from 'react-use'
 import { useRouter } from 'next/router'
