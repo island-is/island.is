@@ -9,7 +9,6 @@ import { wellbeingSubSection } from './wellbeingSubSection'
 export const memmSection = buildSection({
   id: 'memmSection',
   title: memmMessages.shared.sectionTitle,
-  //TODO: also add in the condition to check if kerfiskennitala and child is not in school
   condition: showMemmSection,
   children: [
     educationSubSection,

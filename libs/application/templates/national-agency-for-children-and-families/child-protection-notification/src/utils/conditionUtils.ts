@@ -13,6 +13,7 @@ import { getSelectedReasonForNotificationCategoryCodes } from './childProtection
 export const isKnowsNationalId = (answers: FormValue) =>
   getApplicationAnswers(answers).childKnowsNationalId === KnowsNationalId.YES
 
+//TODO: Do we also need to add in the showMemmSection to check if kerfiskennitala?
 export const showMemmSection = (
   answers: FormValue,
   externalData: ExternalData,
