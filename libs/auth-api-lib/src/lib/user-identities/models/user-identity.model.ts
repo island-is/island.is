@@ -61,6 +61,6 @@ export class UserIdentity extends Model {
   readonly modified?: Date
 
   @HasMany(() => Claim)
-  @ApiProperty()
+  @ApiProperty({ type: () => [Claim], required: false })
   readonly claims?: Claim[]
 }

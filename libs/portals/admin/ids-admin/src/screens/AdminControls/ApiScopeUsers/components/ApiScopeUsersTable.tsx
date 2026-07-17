@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 import { AuthAdminEnvironment } from '@island.is/api/schema'
 import {
@@ -18,6 +18,7 @@ import { Modal } from '@island.is/react/components'
 import { Problem } from '@island.is/react-spa/shared'
 
 import { m } from '../../../../lib/messages'
+import { TableActionMenu } from '../../components/TableActionMenu'
 import { authAdminEnvironments } from '../../../../utils/environments'
 import type { ApiScopeUserRow } from '../ApiScopeUsers.types'
 import * as styles from '../ApiScopeUsers.css'
@@ -155,21 +156,21 @@ export const ApiScopeUsersTable = ({
                   </Box>
                 </T.Data>
                 <T.Data>
-                  <Box display="flex" columnGap={2} justifyContent="flexEnd">
-                    <Button
-                      variant="ghost"
-                      size="small"
-                      icon="pencil"
-                      onClick={() => onEdit(user)}
-                    />
-                    <Button
-                      variant="ghost"
-                      size="small"
-                      icon="trash"
-                      colorScheme="destructive"
-                      onClick={() => openDeleteModal(user)}
-                    />
-                  </Box>
+                  <TableActionMenu
+                    actions={[
+                      {
+                        title: m.edit,
+                        icon: 'pencil',
+                        onClick: () => onEdit(user),
+                      },
+                      {
+                        title: m.delete,
+                        icon: 'trash',
+                        color: 'red600',
+                        onClick: () => openDeleteModal(user),
+                      },
+                    ]}
+                  />
                 </T.Data>
               </T.Row>
             ))}

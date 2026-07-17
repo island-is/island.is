@@ -1,0 +1,49 @@
+query GetUserIdentities($input: AuthAdminUserIdentitiesInput!) {
+  authAdminUserIdentities(input: $input) {
+    subjectId
+    name
+    providerName
+    providerSubjectId
+    availableEnvironments
+    activeEnvironments
+    deactivatedEnvironments
+    claims {
+      type
+      value
+    }
+    environments {
+      environment
+      active
+      claims {
+        type
+        value
+      }
+    }
+  }
+}
+
+query GetUserIdentityConfiguredEnvironments {
+  authAdminUserIdentityConfiguredEnvironments
+}
+
+mutation DeactivateUserIdentity($input: DeactivateAuthAdminUserIdentityInput!) {
+  deactivateAuthAdminUserIdentity(input: $input) {
+    success
+    affectedEnvironments
+    failedEnvironments {
+      environment
+      message
+    }
+  }
+}
+
+mutation ReactivateUserIdentity($input: ReactivateAuthAdminUserIdentityInput!) {
+  reactivateAuthAdminUserIdentity(input: $input) {
+    success
+    affectedEnvironments
+    failedEnvironments {
+      environment
+      message
+    }
+  }
+}

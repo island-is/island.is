@@ -3,8 +3,8 @@ query GetGrantTypes($input: AuthAdminGrantTypesInput!) {
     rows {
       name
       description
-      archived
       availableEnvironments
+      archivedEnvironments
     }
     totalCount
   }

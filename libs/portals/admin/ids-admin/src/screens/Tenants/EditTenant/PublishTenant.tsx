@@ -1,4 +1,4 @@
-import React, { FormEvent, useCallback, useEffect, useState } from 'react'
+import { FormEvent, useCallback, useEffect, useState } from 'react'
 import { useParams, useRevalidator } from 'react-router-dom'
 
 import { AuthAdminEnvironment } from '@island.is/api/schema'
@@ -89,7 +89,8 @@ export const PublishTenant = () => {
       revalidate()
       onClose()
     }
-  }, [data, revalidate, changeEnvironment, onClose])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, revalidate])
 
   useEffect(() => {
     if (publishError) {

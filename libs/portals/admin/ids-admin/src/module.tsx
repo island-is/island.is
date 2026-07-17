@@ -24,6 +24,8 @@ import { grantTypesLoader } from './screens/AdminControls/GrantTypes/GrantTypes.
 import { grantTypesAction } from './screens/AdminControls/GrantTypes/GrantTypes.action'
 import { idpProvidersLoader } from './screens/AdminControls/IdpProviders/IdpProviders.loader'
 import { idpProvidersAction } from './screens/AdminControls/IdpProviders/IdpProviders.action'
+import { userIdentitiesLoader } from './screens/AdminControls/UserIdentities/UserIdentities.loader'
+import { userIdentitiesAction } from './screens/AdminControls/UserIdentities/UserIdentities.action'
 
 const IDSAdmin = lazy(() => import('./screens/IDSAdmin'))
 
@@ -58,6 +60,9 @@ const GrantTypes = lazy(() =>
 )
 const IdpProviders = lazy(() =>
   import('./screens/AdminControls/IdpProviders/IdpProviders'),
+)
+const UserIdentities = lazy(() =>
+  import('./screens/AdminControls/UserIdentities/UserIdentities'),
 )
 
 const allowedScopes: string[] = [
@@ -137,6 +142,16 @@ export const idsAdminModule: PortalModule = {
                       element: <IdpProviders />,
                       loader: idpProvidersLoader(props),
                       action: idpProvidersAction(props),
+                      handle: {
+                        backPath: IDSAdminPaths.IDSAdmin,
+                      },
+                    },
+                    {
+                      name: m.userIdentities,
+                      path: IDSAdminPaths.IDSAdminControlsUsers,
+                      element: <UserIdentities />,
+                      loader: userIdentitiesLoader(props),
+                      action: userIdentitiesAction(props),
                       handle: {
                         backPath: IDSAdminPaths.IDSAdmin,
                       },

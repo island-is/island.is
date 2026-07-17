@@ -309,54 +309,72 @@ describe('TenantsService', () => {
   describe('deleteTenant', () => {
     let app: TestApp
     let tenantsService: TenantsService
-    const deleteMockDevApi = {
-      withMiddleware: jest.fn().mockReturnThis(),
-      meTenantsControllerDeleteRaw: jest.fn(),
+
+    const mockDomain = {
+      name: 'tenant-1',
+      displayName: 'Tenant 1',
+      nationalId: '1234567890',
+      description: '',
+      organisationLogoKey: '',
+      contactEmail: '',
     }
 
-    beforeEach(() => {
-      deleteMockDevApi.meTenantsControllerDeleteRaw.mockReset()
+    const createDeleteMockApi = ({
+      tenantExists = true,
+      deleteResult,
+    }: {
+      tenantExists?: boolean
+      deleteResult: 'success' | Error
+    }) => ({
+      withMiddleware: jest.fn().mockReturnThis(),
+      meTenantsControllerFindByIdForAdminRaw: jest
+        .fn()
+        .mockImplementation(() =>
+          tenantExists
+            ? createMockApiResponse(mockDomain)
+            : Promise.reject(new Error('not found')),
+        ),
+      meTenantsControllerDeleteRaw: jest
+        .fn()
+        .mockImplementation(() =>
+          deleteResult === 'success'
+            ? createMockApiResponse(undefined)
+            : Promise.reject(deleteResult),
+        ),
     })
 
     afterEach(async () => {
       await app?.cleanUp()
     })
 
-    // Ensure unconfigured environments don't count as successes.
-    it('returns false when the only configured environment fails', async () => {
-      deleteMockDevApi.meTenantsControllerDeleteRaw.mockRejectedValue(
-        new Error('tenant has references'),
-      )
+    it('throws when the only configured environment delete fails', async () => {
+      const devMock = createDeleteMockApi({
+        deleteResult: new Error('tenant has references'),
+      })
 
       app = await testServer({
         appModule: TestModule,
         enableVersioning: true,
         override: (builder) =>
-          builder.overrideProvider(AdminDevApi.key).useValue(deleteMockDevApi),
+          builder.overrideProvider(AdminDevApi.key).useValue(devMock),
         hooks: [useAuth({ auth: currentUser })],
       })
       tenantsService = app.get(TenantsService)
 
-      const result = await tenantsService.deleteTenant(currentUser, {
-        tenantId: 'tenant-1',
-      })
-
-      expect(result).toBe(false)
-      expect(
-        deleteMockDevApi.meTenantsControllerDeleteRaw,
-      ).toHaveBeenCalledTimes(1)
+      await expect(
+        tenantsService.deleteTenant(currentUser, { tenantId: 'tenant-1' }),
+      ).rejects.toThrow('tenant has references')
+      expect(devMock.meTenantsControllerDeleteRaw).toHaveBeenCalledTimes(1)
     })
 
     it('returns true when the only configured environment succeeds', async () => {
-      deleteMockDevApi.meTenantsControllerDeleteRaw.mockResolvedValue(
-        createMockApiResponse(undefined),
-      )
+      const devMock = createDeleteMockApi({ deleteResult: 'success' })
 
       app = await testServer({
         appModule: TestModule,
         enableVersioning: true,
         override: (builder) =>
-          builder.overrideProvider(AdminDevApi.key).useValue(deleteMockDevApi),
+          builder.overrideProvider(AdminDevApi.key).useValue(devMock),
         hooks: [useAuth({ auth: currentUser })],
       })
       tenantsService = app.get(TenantsService)
@@ -366,21 +384,14 @@ describe('TenantsService', () => {
       })
 
       expect(result).toBe(true)
-      expect(
-        deleteMockDevApi.meTenantsControllerDeleteRaw,
-      ).toHaveBeenCalledTimes(1)
+      expect(devMock.meTenantsControllerDeleteRaw).toHaveBeenCalledTimes(1)
     })
 
-    it('returns true across multiple environments when at least one succeeds', async () => {
-      deleteMockDevApi.meTenantsControllerDeleteRaw.mockResolvedValue(
-        createMockApiResponse(undefined),
-      )
-      const stagingMock = {
-        withMiddleware: jest.fn().mockReturnThis(),
-        meTenantsControllerDeleteRaw: jest
-          .fn()
-          .mockRejectedValue(new Error('nope')),
-      }
+    it('throws when one of multiple environment deletes fails', async () => {
+      const devMock = createDeleteMockApi({ deleteResult: 'success' })
+      const stagingMock = createDeleteMockApi({
+        deleteResult: new Error('has references'),
+      })
 
       app = await testServer({
         appModule: TestModule,
@@ -388,7 +399,34 @@ describe('TenantsService', () => {
         override: (builder) =>
           builder
             .overrideProvider(AdminDevApi.key)
-            .useValue(deleteMockDevApi)
+            .useValue(devMock)
+            .overrideProvider(AdminStagingApi.key)
+            .useValue(stagingMock),
+        hooks: [useAuth({ auth: currentUser })],
+      })
+      tenantsService = app.get(TenantsService)
+
+      await expect(
+        tenantsService.deleteTenant(currentUser, { tenantId: 'tenant-1' }),
+      ).rejects.toThrow('has references')
+      expect(devMock.meTenantsControllerDeleteRaw).toHaveBeenCalledTimes(1)
+      expect(stagingMock.meTenantsControllerDeleteRaw).toHaveBeenCalledTimes(1)
+    })
+
+    it('only attempts deletion in environments where the tenant exists', async () => {
+      const devMock = createDeleteMockApi({ deleteResult: 'success' })
+      const stagingMock = createDeleteMockApi({
+        tenantExists: false,
+        deleteResult: 'success',
+      })
+
+      app = await testServer({
+        appModule: TestModule,
+        enableVersioning: true,
+        override: (builder) =>
+          builder
+            .overrideProvider(AdminDevApi.key)
+            .useValue(devMock)
             .overrideProvider(AdminStagingApi.key)
             .useValue(stagingMock),
         hooks: [useAuth({ auth: currentUser })],
@@ -400,45 +438,29 @@ describe('TenantsService', () => {
       })
 
       expect(result).toBe(true)
-      expect(
-        deleteMockDevApi.meTenantsControllerDeleteRaw,
-      ).toHaveBeenCalledTimes(1)
-      expect(stagingMock.meTenantsControllerDeleteRaw).toHaveBeenCalledTimes(1)
+      expect(devMock.meTenantsControllerDeleteRaw).toHaveBeenCalledTimes(1)
+      expect(stagingMock.meTenantsControllerDeleteRaw).not.toHaveBeenCalled()
     })
 
-    it('returns false when every configured environment fails', async () => {
-      deleteMockDevApi.meTenantsControllerDeleteRaw.mockRejectedValue(
-        new Error('has references'),
-      )
-      const stagingMock = {
-        withMiddleware: jest.fn().mockReturnThis(),
-        meTenantsControllerDeleteRaw: jest
-          .fn()
-          .mockRejectedValue(new Error('has references')),
-      }
+    it('throws when the tenant does not exist in any configured environment', async () => {
+      const devMock = createDeleteMockApi({
+        tenantExists: false,
+        deleteResult: 'success',
+      })
 
       app = await testServer({
         appModule: TestModule,
         enableVersioning: true,
         override: (builder) =>
-          builder
-            .overrideProvider(AdminDevApi.key)
-            .useValue(deleteMockDevApi)
-            .overrideProvider(AdminStagingApi.key)
-            .useValue(stagingMock),
+          builder.overrideProvider(AdminDevApi.key).useValue(devMock),
         hooks: [useAuth({ auth: currentUser })],
       })
       tenantsService = app.get(TenantsService)
 
-      const result = await tenantsService.deleteTenant(currentUser, {
-        tenantId: 'tenant-1',
-      })
-
-      expect(result).toBe(false)
-      expect(
-        deleteMockDevApi.meTenantsControllerDeleteRaw,
-      ).toHaveBeenCalledTimes(1)
-      expect(stagingMock.meTenantsControllerDeleteRaw).toHaveBeenCalledTimes(1)
+      await expect(
+        tenantsService.deleteTenant(currentUser, { tenantId: 'tenant-1' }),
+      ).rejects.toThrow()
+      expect(devMock.meTenantsControllerDeleteRaw).not.toHaveBeenCalled()
     })
   })
 
