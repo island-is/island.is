@@ -133,8 +133,8 @@ const template: ApplicationTemplate<
             {
               id: Roles.MINOR_APPLICANT,
               formLoader: () =>
-                import('../forms/minorForm').then((module) =>
-                  Promise.resolve(module.MinorForm),
+                import('../forms/minor/draftForm').then((module) =>
+                  Promise.resolve(module.MinorDraftForm),
                 ),
               actions: [
                 {
@@ -150,8 +150,8 @@ const template: ApplicationTemplate<
             {
               id: Roles.ADULT_PERSONAL_APPLICANT,
               formLoader: () =>
-                import('../forms/adultPersonalForm').then((module) =>
-                  Promise.resolve(module.AdultPersonalForm),
+                import('../forms/adultPersonal/draftForm').then((module) =>
+                  Promise.resolve(module.AdultPersonalDraftForm),
                 ),
               actions: [
                 {
@@ -167,8 +167,8 @@ const template: ApplicationTemplate<
             {
               id: Roles.ADULT_PROCURATION_APPLICANT,
               formLoader: () =>
-                import('../forms/adultProcurationForm').then((module) =>
-                  Promise.resolve(module.AdultProcurationForm),
+                import('../forms/adultProcuration/draftForm').then((module) =>
+                  Promise.resolve(module.AdultProcurationDraftForm),
                 ),
               actions: [
                 {
@@ -199,7 +199,7 @@ const template: ApplicationTemplate<
             {
               id: Roles.MINOR_APPLICANT,
               formLoader: () =>
-                import('../forms/minorForm/completedForm').then((module) =>
+                import('../forms/minor/completedForm').then((module) =>
                   Promise.resolve(module.MinorCompletedForm),
                 ),
               read: 'all',
@@ -207,16 +207,15 @@ const template: ApplicationTemplate<
             {
               id: Roles.ADULT_PERSONAL_APPLICANT,
               formLoader: () =>
-                import('../forms/adultPersonalForm/completedForm').then(
-                  (module) =>
-                    Promise.resolve(module.AdultPersonalCompletedForm),
+                import('../forms/adultPersonal/completedForm').then((module) =>
+                  Promise.resolve(module.AdultPersonalCompletedForm),
                 ),
               read: 'all',
             },
             {
               id: Roles.ADULT_PROCURATION_APPLICANT,
               formLoader: () =>
-                import('../forms/adultProcurationForm/completedForm').then(
+                import('../forms/adultProcuration/completedForm').then(
                   (module) =>
                     Promise.resolve(module.AdultProcurationCompletedForm),
                 ),
