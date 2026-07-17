@@ -424,7 +424,7 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.inReviewForm),
                 ),
               read: 'all',
-              delete: true,
+              delete: false,
             },
             {
               id: Roles.SIGNED_ASSIGNEE,
