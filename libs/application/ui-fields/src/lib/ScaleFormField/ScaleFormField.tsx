@@ -33,8 +33,8 @@ export const ScaleFormField: FC<React.PropsWithChildren<Props>> = ({
     min,
     max,
     step,
-    minLabel,
-    maxLabel,
+    minLabel = '',
+    maxLabel = '',
     showLabels,
     disabled,
     marginTop,
@@ -88,8 +88,18 @@ export const ScaleFormField: FC<React.PropsWithChildren<Props>> = ({
             min={min}
             max={finalMax}
             step={step}
-            minLabel={minLabel}
-            maxLabel={maxLabel}
+            minLabel={formatTextWithLocale(
+              minLabel,
+              application,
+              locale as Locale,
+              formatMessage,
+            )}
+            maxLabel={formatTextWithLocale(
+              maxLabel,
+              application,
+              locale as Locale,
+              formatMessage,
+            )}
             showLabels={showLabels}
             value={value}
             onChange={(val) => {

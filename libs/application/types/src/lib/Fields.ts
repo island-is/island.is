@@ -1181,8 +1181,8 @@ export interface ScaleField extends InputField {
   min: number | string
   max: MaybeWithApplicationAndFieldAndLocale<number | string>
   step?: number
-  minLabel?: string
-  maxLabel?: string
+  minLabel?: FormTextWithLocale
+  maxLabel?: FormTextWithLocale
   showLabels?: boolean
 }
 
