@@ -9,12 +9,9 @@ export const conclusionSection = buildFormConclusionSection({
   // TODO: Make alertTitle dynamic to append the actual service provider name from answers
   alertTitle: completedMessages.alertTitle,
   alertMessage: completedMessages.alertMessage,
-  alertType: 'success',
   accordion: false,
   descriptionFieldDescription: completedMessages.thankYouDescription,
-  bottomButtonLabel: completedMessages.closeButton,
   bottomButtonMessage: completedMessages.bottomButtonMessage,
-  bottomButtonLink: '/minarsidur/umsoknir',
   image: buildImageField({
     id: 'completedImage',
     image: FamilyIllustration,

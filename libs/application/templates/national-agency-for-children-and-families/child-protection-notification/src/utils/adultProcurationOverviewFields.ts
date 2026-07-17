@@ -55,7 +55,7 @@ export const adultProcurationOverviewFields = (editable?: boolean) => [
     title: ({ answers }) =>
       isUnborn(answers)
         ? parentsMessages.expectantParents.sectionTitle
-        : isKnowsNationalId(answers)
+        : isKnowsNationalId(answers) // TODO: Need to check if kerfiskennitala!
         ? parentsMessages.custodians.sectionTitle
         : parentsMessages.guardians.sectionTitle,
     backId: editable ? 'parents' : undefined,
@@ -66,7 +66,7 @@ export const adultProcurationOverviewFields = (editable?: boolean) => [
     title: ({ answers }) =>
       isUnborn(answers)
         ? parentsMessages.expectantParents.parent1Title
-        : isKnowsNationalId(answers)
+        : isKnowsNationalId(answers) // TODO: Need to check if kerfiskennitala!
         ? parentsMessages.custodians.parent1Title
         : parentsMessages.guardians.parent1Title,
     backId: editable ? 'parents' : undefined,
@@ -78,7 +78,7 @@ export const adultProcurationOverviewFields = (editable?: boolean) => [
     title: ({ answers }) =>
       isUnborn(answers)
         ? parentsMessages.expectantParents.parent2Title
-        : isKnowsNationalId(answers)
+        : isKnowsNationalId(answers) // TODO: Need to check if kerfiskennitala!
         ? parentsMessages.custodians.parent2Title
         : parentsMessages.guardians.parent2Title,
     backId: editable ? 'parents' : undefined,

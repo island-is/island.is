@@ -28,11 +28,6 @@ export const completedMessages = defineMessages({
       'Með tilkynningunni hjálparðu okkur að tryggja velferð barna.\n\nBarnaverndarþjónusta fær núna tilkynninguna senda til sín og metur upplýsingarnar sem þú sendir inn.\n\nÁður en afstaða er tekin í hvaða farveg málið fer kann að vera þörf á því að afla frekari gagna. Það er gert í þeim tilgangi að tryggja rétt viðbragð. Mun þá starfsmaður barnaverndar í því sveitarfélagi sem barnið á lögheimili setja sig í samband við þig, inna 7 daga frá því að tilkynningin er send.\n\nVið vekjum athygli á því að vegna trúnaðar við fjölskyldur er ekki hægt að veita upplýsingar um framvindu mála til þeirra sem tilkynna. Bent er þó á að hægt er að tilkynna að nýju ef aðstæður gefa tilefni til.\n\nÖll börn eiga rétt á öryggi, þau eiga alltaf að njóta vafans.',
     description: 'Body text on the completed page',
   },
-  closeButton: {
-    id: 'cpn.application:completed.closeButton',
-    defaultMessage: 'Loka',
-    description: 'Close button label on the completed page',
-  },
   bottomButtonMessage: {
     id: 'cpn.application:completed.bottomButtonMessage',
     defaultMessage:
