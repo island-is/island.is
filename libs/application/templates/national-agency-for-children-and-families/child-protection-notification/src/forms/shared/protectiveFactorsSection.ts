@@ -35,6 +35,7 @@ export const protectiveFactorsSection = buildSection({
         }),
         buildAccordionField({
           id: 'protectiveFactors',
+          singleExpand: false,
           condition: (answers) => !isUnborn(answers),
           accordionItems: (application) => {
             const { protectiveFactorSections } = getApplicationExternalData(

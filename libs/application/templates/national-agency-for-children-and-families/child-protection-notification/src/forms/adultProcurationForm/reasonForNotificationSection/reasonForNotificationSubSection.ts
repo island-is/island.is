@@ -35,11 +35,6 @@ export const reasonForNotificationSubSection = buildSubSection({
 
             return categories
               .filter((category) => category.code !== RISK_TO_UNBORN)
-              .filter(
-                (category) =>
-                  category.code !== 'ProtFactorChildSection' &&
-                  category.code !== 'ProtFactorParentSection',
-              ) // TODO: Remove filter? (Wait for confirmation)
               .map((category) => {
                 return {
                   itemTitle: category.label,

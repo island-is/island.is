@@ -35,7 +35,6 @@ export const receptionSubSection = buildSubSection({
         buildRadioField({
           id: 'memm.reception.seekingAsylum',
           width: 'half',
-          doesNotRequireAnswer: true,
           space: 0,
           options: getYesNoDoNotKnowNotApplicableOptions(),
         }),
@@ -49,7 +48,6 @@ export const receptionSubSection = buildSubSection({
         buildRadioField({
           id: 'memm.reception.refugeeStatus',
           width: 'half',
-          doesNotRequireAnswer: true,
           space: 0,
           options: getYesNoDoNotKnowNotApplicableOptions(),
         }),

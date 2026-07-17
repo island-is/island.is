@@ -44,10 +44,10 @@ const addPreferredIdentityIssues = (
 }
 
 const serviceProviderSchema = z.object({
-  service: z.string(),
-  serviceType: z.string(),
-  contactPersonWorkEmail: z.string().email(),
-  contactPersonWorkPhone: phoneNumberSchema,
+  service: z.string().optional(),
+  serviceType: z.string().optional(),
+  contactPersonWorkEmail: z.string().email().optional().or(z.literal('')),
+  contactPersonWorkPhone: phoneNumberSchema.optional().or(z.literal('')),
 })
 
 const childSchema = z
@@ -201,8 +201,8 @@ const memmSchema = z.object({
     .optional(),
   reception: z
     .object({
-      seekingAsylum: z.string().optional(),
-      refugeeStatus: z.string().optional(),
+      seekingAsylum: z.string(),
+      refugeeStatus: z.string(),
     })
     .optional(),
   culture: z
@@ -215,15 +215,56 @@ const memmSchema = z.object({
     .optional(),
   wellbeing: z
     .object({
-      integratedService: z.string().optional(),
-      wellbeingContact: z.string().optional(),
+      integratedService: z.string(),
+      wellbeingContact: z.string(),
       wellbeingContactEmail: z.string().email().optional().or(z.literal('')),
       wellbeingContactName: z.string().optional(),
-      wellbeingManager: z.string().optional(),
+      wellbeingManager: z.string(),
       wellbeingManagerEmail: z.string().email().optional().or(z.literal('')),
       wellbeingManagerName: z.string().optional(),
-      disability: z.string().optional(),
+      disability: z.string(),
       disabilityService: z.string().optional(),
+    })
+    .superRefine((data, ctx) => {
+      if (data.wellbeingContact === YES) {
+        if (!data.wellbeingContactEmail) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ['wellbeingContactEmail'],
+            params: errorMessages.required,
+          })
+        }
+        if (!data.wellbeingContactName) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ['wellbeingContactName'],
+            params: errorMessages.required,
+          })
+        }
+      }
+      if (data.wellbeingManager === YES) {
+        if (!data.wellbeingManagerEmail) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ['wellbeingManagerEmail'],
+            params: errorMessages.required,
+          })
+        }
+        if (!data.wellbeingManagerName) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ['wellbeingManagerName'],
+            params: errorMessages.required,
+          })
+        }
+      }
+      if (data.disability === YES && !data.disabilityService) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['disabilityService'],
+          params: errorMessages.required,
+        })
+      }
     })
     .optional(),
 })

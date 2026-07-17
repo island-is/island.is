@@ -1,6 +1,7 @@
 import { buildForm } from '@island.is/application/core'
 import { FormModes } from '@island.is/application/types'
 
+import { conclusionSection } from '../shared/conclusionSection'
 import { overviewSection } from './overviewSection'
 import { firstSection } from './firstSection'
 import { secondSection } from './secondSection'
@@ -8,6 +9,5 @@ import { secondSection } from './secondSection'
 export const AdultPersonalForm = buildForm({
   id: 'AdultPersonalForm',
   mode: FormModes.DRAFT,
-  renderLastScreenButton: true,
-  children: [firstSection, secondSection, overviewSection],
+  children: [firstSection, secondSection, overviewSection, conclusionSection],
 })
