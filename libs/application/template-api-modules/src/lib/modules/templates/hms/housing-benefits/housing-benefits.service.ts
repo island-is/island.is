@@ -16,7 +16,10 @@ import {
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Contract, HomeApi } from '@island.is/clients/hms-rental-agreement'
-import { HmsHousingBenefitsClientService } from '@island.is/clients/hms-housing-benefits'
+import {
+  HmsHousingBenefitsClientService,
+  HousingBenefitsApplicationReturnModel,
+} from '@island.is/clients/hms-housing-benefits'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { getValueViaPath } from '@island.is/application/core'
 import { format as formatKennitala } from 'kennitala'
@@ -53,6 +56,8 @@ import {
   getAssigneeApproverDisplayName,
   getAssigneeNationalIds,
 } from '@island.is/application/templates/hms/housing-benefits'
+import { FetchError } from '@island.is/clients/middlewares'
+import { toHousingBenefitsSubmissionTemplateApiError } from './utils'
 
 @Injectable()
 export class HousingBenefitsService extends BaseTemplateApiService {
@@ -679,11 +684,21 @@ export class HousingBenefitsService extends BaseTemplateApiService {
       )
       const model = mapApplicationToHousingBenefitsModel(application, files)
 
+      console.log('--------------------------------')
+      console.log('Model:')
+      console.dir(model, { depth: null, colors: true })
+      console.log('--------------------------------')
+
       const result =
         await this.hmsHousingBenefitsClientService.createHousingBenefitsApplication(
           auth,
           model,
         )
+
+      console.log('--------------------------------')
+      console.log('Result:')
+      console.dir(result, { depth: null, colors: true })
+      console.log('--------------------------------')
 
       if (!result.success) {
         throw new TemplateApiError(
@@ -722,14 +737,27 @@ export class HousingBenefitsService extends BaseTemplateApiService {
         )
       }
 
+      console.log('--------------------------------')
+      console.log('Error:')
+      console.dir(e, { depth: null, colors: true })
+      console.log('--------------------------------')
+
       this.logger.error('Failed to submit housing benefits application:', e)
-      throw new TemplateApiError(
-        {
-          title: 'Villa kom upp',
-          summary: e.body?.message ? e.body.message : String(e),
-        },
-        500,
-      )
+
+      if (e instanceof FetchError) {
+        throw toHousingBenefitsSubmissionTemplateApiError(
+          e.body as HousingBenefitsApplicationReturnModel,
+          e.status,
+        )
+      } else {
+        throw new TemplateApiError(
+          {
+            title: 'Villa kom upp',
+            summary: e.body?.message ? e.body.message : String(e),
+          },
+          500,
+        )
+      }
     }
   }
 }
