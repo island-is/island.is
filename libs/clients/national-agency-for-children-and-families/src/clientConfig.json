@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Barnaverndargátt API",
-    "description": "Gátt fyrir aðila til að skila inn tilkynningum vegna barnaverndarmála.<br>Build time(version): 2026-07-01 11:49:58",
+    "description": "Gátt fyrir aðila til að skila inn tilkynningum vegna barnaverndarmála.<br>Build time(version): 2026-07-16 13:18:58",
     "contact": {
       "name": "Apró ehf.",
       "url": "https://www.apro.is/",
@@ -11,6 +11,44 @@
     "version": "v1"
   },
   "paths": {
+    "/api/Admin/ProtectionServices": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Gets a paginated list of protection services.",
+        "description": "Gets a paginated list dto for protection services and their informations. **Required Roles:** Admin, Authority, SuperAdmin.",
+        "operationId": "GetProtectionServicesInformation",
+        "parameters": [
+          { "name": "sortBy", "in": "query", "schema": { "type": "string" } },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "schema": { "$ref": "#/components/schemas/SortOrder" }
+          },
+          {
+            "name": "pageIndex",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProtectionServiceInfoDtoPagedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/external/dropdown/notifier-roles": {
       "get": {
         "tags": ["ExternalDropdown"],
@@ -59,7 +97,7 @@
       "get": {
         "tags": ["ExternalDropdown"],
         "summary": "Get all notification categories with subcategories",
-        "description": "Returns the full hierarchical category tree. Each entry has a 'code' (submit to API) and a 'label' (display in UI). **Required Roles:** type:digital_iceland.",
+        "description": "Returns the full hierarchical category tree. **Required Roles:** type:digital_iceland.",
         "operationId": "ExternalCategories",
         "responses": {
           "200": {
@@ -107,7 +145,7 @@
       "get": {
         "tags": ["ExternalDropdown"],
         "summary": "Get all urgency assessment options",
-        "description": "Returns urgency assessment levels with integer code as value and Icelandic name as label. **Required Roles:** type:digital_iceland.",
+        "description": "Returns urgency assessment levels with integer code as value, Icelandic name as label, and a longer sentence-form description. **Required Roles:** type:digital_iceland.",
         "operationId": "ExternalUrgencyAssessments",
         "responses": {
           "200": {
@@ -116,7 +154,9 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/DropDownDto" }
+                  "items": {
+                    "$ref": "#/components/schemas/DetailedDropDownDto"
+                  }
                 }
               }
             }
@@ -151,7 +191,7 @@
       "get": {
         "tags": ["ExternalDropdown"],
         "summary": "Get all party state options",
-        "description": "Returns party state values (e.g. IcelandicNationalId, Tourist, Unknown) with integer code as value and Icelandic name as label. **Required Roles:** type:digital_iceland.",
+        "description": "Returns party state values with integer code as value and Icelandic name as label. **Required Roles:** type:digital_iceland.",
         "operationId": "ExternalPartyStates",
         "responses": {
           "200": {
@@ -217,7 +257,7 @@
       "post": {
         "tags": ["ExternalNotification"],
         "summary": "Submit a general public notification",
-        "description": "Creates a child protection notification on behalf of a member of the general public (16. gr.). Nemendagrunnur data is fetched automatically using the child's national ID. **Required Roles:** type:digital_iceland.",
+        "description": "Creates a child protection notification on behalf of a member of the general public (16. gr.). **Required Roles:** type:digital_iceland.",
         "operationId": "ExternalCreateNotificationGeneralPublic",
         "requestBody": {
           "content": {
@@ -254,6 +294,16 @@
   },
   "components": {
     "schemas": {
+      "DetailedDropDownDto": {
+        "required": ["description", "label", "value"],
+        "type": "object",
+        "properties": {
+          "value": { "type": "string", "nullable": true },
+          "label": { "type": "string", "nullable": true },
+          "description": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
       "DropDownDto": {
         "required": ["label", "value"],
         "type": "object",
@@ -268,21 +318,6 @@
         "properties": {
           "code": { "type": "string", "nullable": true },
           "label": { "type": "string", "nullable": true }
-        },
-        "additionalProperties": false
-      },
-      "ExternalSubCategoryResponse": {
-        "type": "object",
-        "properties": {
-          "code": { "type": "string", "nullable": true },
-          "label": { "type": "string", "nullable": true },
-          "subCategories": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ExternalCategoryItemResponse"
-            },
-            "nullable": true
-          }
         },
         "additionalProperties": false
       },
@@ -301,82 +336,58 @@
         },
         "additionalProperties": false
       },
-      "ProtectiveFactorItemDto": {
+      "ExternalSubCategoryResponse": {
         "type": "object",
         "properties": {
           "code": { "type": "string", "nullable": true },
-          "description": { "type": "string", "nullable": true }
-        },
-        "additionalProperties": false
-      },
-      "ProtectiveFactorSubCategoryDto": {
-        "type": "object",
-        "properties": {
-          "name": { "type": "string", "nullable": true },
-          "items": {
+          "label": { "type": "string", "nullable": true },
+          "subCategories": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/ProtectiveFactorItemDto" },
+            "items": {
+              "$ref": "#/components/schemas/ExternalCategoryItemResponse"
+            },
             "nullable": true
           }
         },
         "additionalProperties": false
       },
-      "ProtectiveFactorSectionDto": {
+      "NotificationCategoryCodeEnum": {
+        "enum": ["Neglect", "Abused", "RiskyBehavior", "RiskToUnborn"],
+        "type": "string"
+      },
+      "NotificationCreateResponse": {
         "type": "object",
         "properties": {
-          "code": { "type": "string", "nullable": true },
-          "name": { "type": "string", "nullable": true },
-          "subCategories": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ProtectiveFactorSubCategoryDto"
-            },
-            "nullable": true
-          },
-          "dontKnowCode": { "type": "string", "nullable": true },
-          "dontKnowDescription": { "type": "string", "nullable": true }
+          "notificationId": { "type": "string", "format": "uuid" },
+          "notificationKey": { "type": "string", "nullable": true },
+          "created": { "type": "string", "format": "date-time" }
         },
         "additionalProperties": false
       },
-      "GenderEnum": {
-        "enum": [
-          "Male",
-          "Female",
-          "Boy",
-          "Girl",
-          "Unborn",
-          "Unknown",
-          "Nonbinary",
-          "NonbinaryYoung"
+      "NotificationGeneralPublicRequest": {
+        "required": [
+          "child",
+          "generalPublic",
+          "notificationVia112",
+          "notifierRole",
+          "urgencyAssessment"
         ],
-        "type": "string"
-      },
-      "PartyStateEnum": {
-        "enum": [
-          "IcelandicNationalId",
-          "InternationalProtection",
-          "Tourist",
-          "Unborn",
-          "Unknown",
-          "Institution",
-          "KerfisKennitala",
-          "IcelandicResidentWithoutId",
-          "BorderReception"
-        ],
-        "type": "string"
-      },
-      "PronounEnum": {
-        "enum": [
-          "HannHans",
-          "HanHans",
-          "HeHes",
-          "HedHeds",
-          "HinHins",
-          "HunHennar",
-          "ThadTvi",
-          "ThauTheirra"
-        ],
-        "type": "string"
+        "type": "object",
+        "properties": {
+          "notificationDatetime": { "type": "string", "format": "date-time" },
+          "notifierRole": { "$ref": "#/components/schemas/NotifierRoleInfo" },
+          "child": { "$ref": "#/components/schemas/ChildRequest" },
+          "generalPublic": {
+            "$ref": "#/components/schemas/GeneralPublicRequest"
+          },
+          "urgencyAssessment": {
+            "$ref": "#/components/schemas/UrgencyAssessment"
+          },
+          "notifierNotes": { "$ref": "#/components/schemas/NotifierNotes" },
+          "categories": { "$ref": "#/components/schemas/CategoryRequest" },
+          "notificationVia112": { "type": "boolean" }
+        },
+        "additionalProperties": false
       },
       "NotifierRoleEnum": {
         "enum": [
@@ -398,6 +409,27 @@
         ],
         "type": "string"
       },
+      "NotifierRoleInfo": {
+        "required": ["role"],
+        "type": "object",
+        "properties": {
+          "role": { "$ref": "#/components/schemas/NotifierRoleEnum" },
+          "additionalDescription": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "NotifierNotes": {
+        "type": "object",
+        "properties": {
+          "discussionWithCustodianDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "subject": { "type": "string", "nullable": true },
+          "concerns": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
       "NotificationUrgencyAssessmentEnum": {
         "enum": [
           "ImmediateReaction",
@@ -407,99 +439,98 @@
         ],
         "type": "string"
       },
-      "NotificationCategoryCodeEnum": {
+      "UrgencyAssessment": {
+        "required": ["urgencyAssessmentEnum"],
+        "type": "object",
+        "properties": {
+          "urgencyAssessmentEnum": {
+            "$ref": "#/components/schemas/NotificationUrgencyAssessmentEnum"
+          },
+          "urgencyAssessmentReasoning": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "CategoryEnumDto": {
+        "type": "object",
+        "properties": {
+          "notificationCategoryCodeEnum": {
+            "$ref": "#/components/schemas/NotificationCategoryCodeEnum"
+          },
+          "subCategoryEnumList": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/SubCategoryEnum" },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SubCategoryEnum": {
+        "type": "object",
+        "properties": {
+          "subNotificationCategoryCodeEnum": {
+            "$ref": "#/components/schemas/NotificationCategoryCodeEnum"
+          },
+          "subSubNotificationCategoryCodeEnum": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NotificationCategoryCodeEnum"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CategoryRequest": {
+        "required": ["categoryList", "notificationCategoryCodeMainEnum"],
+        "type": "object",
+        "properties": {
+          "categoryList": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CategoryEnumDto" }
+          },
+          "notificationCategoryCodeMainEnum": {
+            "$ref": "#/components/schemas/NotificationCategoryCodeEnum"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PartyStateEnum": {
         "enum": [
-          "Neglect",
-          "NeglectPhysical",
-          "NeglectCareSupervision",
-          "NeglectCareSupervParentSubstanceAbuse",
-          "NeglectEducation",
-          "NeglectEmotional",
-          "Abused",
-          "AbuseEmotional",
-          "AbuseEmotionalWitnessToAbuse",
-          "AbusePhysical",
-          "AbusePhysicalByRelative",
-          "AbuseSexual",
-          "AbuseSexualByRelative",
-          "AbuseSexualDigital",
-          "RiskToUnborn",
-          "RiskToUnBornSubstanceAbuse",
-          "RiskyBehavior",
-          "RiskyBehaviorSubstanceAbuse",
-          "RiskyBehaviorSelfHarm",
-          "RiskyBehaviorCustodyRules",
-          "RiskyBehaviorDelinquency",
-          "RiskyBehaviorViolent",
-          "RiskyBehaviorSchool",
-          "RiskToUnBornAbuse",
-          "RiskToUnBornOther",
-          "ProtFactorChildSection",
-          "ProtFactorParentSection",
-          "ProtFactorChildSchool",
-          "ProtFactorChildSocial",
-          "ProtFactorChildAttitude",
-          "ProtFactorChildInsight",
-          "ProtFactorParentCapability",
-          "ProtFactorParentAttitude",
-          "ProtFactorParentInsight",
-          "ProtFactorChildDontKnow",
-          "ProtFactorParentDontKnow",
-          "ProtFactorChildSchoolItem1",
-          "ProtFactorChildSchoolItem2",
-          "ProtFactorChildSchoolItem3",
-          "ProtFactorChildSchoolItem4",
-          "ProtFactorChildSocialItem1",
-          "ProtFactorChildSocialItem2",
-          "ProtFactorChildSocialItem3",
-          "ProtFactorChildSocialItem4",
-          "ProtFactorChildAttitudeItem1",
-          "ProtFactorChildAttitudeItem2",
-          "ProtFactorChildAttitudeItem3",
-          "ProtFactorChildInsightItem1",
-          "ProtFactorChildInsightItem2",
-          "ProtFactorChildInsightItem3",
-          "ProtFactorParentCapabilityItem1",
-          "ProtFactorParentCapabilityItem2",
-          "ProtFactorParentCapabilityItem3",
-          "ProtFactorParentCapabilityItem4",
-          "ProtFactorParentCapabilityItem5",
-          "ProtFactorParentAttitudeItem1",
-          "ProtFactorParentAttitudeItem2",
-          "ProtFactorParentAttitudeItem3",
-          "ProtFactorParentAttitudeItem4",
-          "ProtFactorParentAttitudeItem5",
-          "ProtFactorParentInsightItem1",
-          "ProtFactorParentInsightItem2",
-          "ProtFactorParentInsightItem3",
-          "NeglectPhysicalFood",
-          "NeglectPhysicalClothing",
-          "NeglectPhysicalHygiene",
-          "NeglectPhysicalHousing",
-          "NeglectPhysicalHealthcare",
-          "NeglectCareSupervisionSupervision",
-          "NeglectCareSupervisionLeftAlone",
-          "NeglectCareSupervisionLeftTooLong",
-          "NeglectCareSupervisionLeftUnfit",
-          "NeglectCareSupervisionLeftAbusive",
-          "NeglectCareSupervisionAbandonment",
-          "NeglectCareSupervisionNoGuardian",
-          "NeglectCareSupervisionCarerState",
-          "NeglectCareSupervisionIllegalActivity",
-          "NeglectEducationAbsence",
-          "NeglectEducationNotEnrolled",
-          "NeglectEducationSpecialNeeds",
-          "NeglectEducationSupplies",
-          "NeglectEmotionalNeeds",
-          "NeglectEmotionalCognitive",
-          "NeglectEmotionalSocial",
-          "NeglectEmotionalBoundaries",
-          "AbuseEmotionalNegativeAttitude",
-          "AbuseEmotionalUnrealisticDemands",
-          "AbusePhysicalByParent",
-          "AbusePhysicalByOthers",
-          "AbuseSexualByParent",
-          "AbuseSexualByOthers"
+          "IcelandicNationalId",
+          "InternationalProtection",
+          "Tourist",
+          "Unborn",
+          "Unknown",
+          "Institution",
+          "KerfisKennitala",
+          "IcelandicResidentWithoutId",
+          "BorderReception"
+        ],
+        "type": "string"
+      },
+      "GenderEnum": {
+        "enum": [
+          "Male",
+          "Female",
+          "Boy",
+          "Girl",
+          "Unborn",
+          "Unknown",
+          "Nonbinary",
+          "NonbinaryYoung"
+        ],
+        "type": "string"
+      },
+      "PronounEnum": {
+        "enum": [
+          "HannHans",
+          "HanHans",
+          "HeHes",
+          "HedHeds",
+          "HinHins",
+          "HunHennar",
+          "ThadTvi",
+          "ThauTheirra"
         ],
         "type": "string"
       },
@@ -508,8 +539,6 @@
         "properties": {
           "address": { "type": "string", "nullable": true },
           "postalCode": {
-            "maximum": 999,
-            "minimum": 100,
             "type": "integer",
             "format": "int32",
             "nullable": true
@@ -554,146 +583,82 @@
         },
         "additionalProperties": false
       },
-      "ExpectantParentRequest": {
+      "ProtectiveFactorItemDto": {
         "type": "object",
         "properties": {
-          "nationalId": { "type": "string", "nullable": true },
-          "state": { "$ref": "#/components/schemas/PartyStateEnum" },
-          "name": { "type": "string", "nullable": true },
-          "phoneNumber": { "minLength": 7, "type": "string", "nullable": true },
-          "email": { "type": "string", "format": "email", "nullable": true },
-          "address": { "type": "string", "nullable": true },
-          "postalCode": { "type": "string", "nullable": true }
+          "code": { "type": "string", "nullable": true },
+          "description": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
-      "ResidenceOfEventRequest": {
+      "ProtectiveFactorSubCategoryDto": {
         "type": "object",
         "properties": {
+          "name": { "type": "string", "nullable": true },
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ProtectiveFactorItemDto" },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProtectiveFactorSectionDto": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "string", "nullable": true },
+          "name": { "type": "string", "nullable": true },
+          "subCategories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProtectiveFactorSubCategoryDto"
+            },
+            "nullable": true
+          },
+          "dontKnowCode": { "type": "string", "nullable": true },
+          "dontKnowDescription": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "SortOrder": {
+        "enum": ["Ascending", "Descending"],
+        "type": "string"
+      },
+      "ProtectionServiceInfoDto": {
+        "required": ["name"],
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "code": { "type": "integer", "format": "int32" },
+          "name": { "type": "string", "nullable": true },
           "address": { "type": "string", "nullable": true },
           "postalCode": {
-            "maximum": 999,
-            "minimum": 100,
             "type": "integer",
             "format": "int32",
             "nullable": true
+          },
+          "email": { "type": "string", "nullable": true },
+          "phoneNumber": { "type": "string", "nullable": true },
+          "modified": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
           }
         },
         "additionalProperties": false
       },
-      "UrgencyAssessment": {
-        "required": ["urgencyAssessmentEnum"],
+      "ProtectionServiceInfoDtoPagedResponse": {
+        "required": ["values"],
         "type": "object",
         "properties": {
-          "urgencyAssessmentEnum": {
-            "$ref": "#/components/schemas/NotificationUrgencyAssessmentEnum"
-          },
-          "urgencyAssessmentReasoning": { "type": "string", "nullable": true }
-        },
-        "additionalProperties": false
-      },
-      "NotifierNotes": {
-        "type": "object",
-        "properties": {
-          "discussionWithCustodianDescription": {
-            "type": "string",
-            "nullable": true
-          },
-          "subject": { "type": "string", "nullable": true },
-          "concerns": { "type": "string", "nullable": true }
-        },
-        "additionalProperties": false
-      },
-      "NotifierRoleInfo": {
-        "required": ["role"],
-        "type": "object",
-        "properties": {
-          "role": { "$ref": "#/components/schemas/NotifierRoleEnum" },
-          "additionalDescription": { "type": "string", "nullable": true }
-        },
-        "additionalProperties": false
-      },
-      "SubCategoryEnum": {
-        "type": "object",
-        "properties": {
-          "subNotificationCategoryCodeEnum": {
-            "$ref": "#/components/schemas/NotificationCategoryCodeEnum"
-          },
-          "subSubNotificationCategoryCodeEnum": {
+          "values": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/NotificationCategoryCodeEnum"
+              "$ref": "#/components/schemas/ProtectionServiceInfoDto"
             },
             "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "CategoryEnumDto": {
-        "type": "object",
-        "properties": {
-          "notificationCategoryCodeEnum": {
-            "$ref": "#/components/schemas/NotificationCategoryCodeEnum"
           },
-          "subCategoryEnumList": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/SubCategoryEnum" },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "CategoryRequest": {
-        "required": ["categoryList", "notificationCategoryCodeMainEnum"],
-        "type": "object",
-        "properties": {
-          "categoryList": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/CategoryEnumDto" }
-          },
-          "notificationCategoryCodeMainEnum": {
-            "$ref": "#/components/schemas/NotificationCategoryCodeEnum"
-          }
-        },
-        "additionalProperties": false
-      },
-      "NotificationGeneralPublicRequest": {
-        "required": [
-          "child",
-          "generalPublic",
-          "notificationVia112",
-          "notifierRole",
-          "urgencyAssessment"
-        ],
-        "type": "object",
-        "properties": {
-          "notificationDatetime": { "type": "string", "format": "date-time" },
-          "notifierRole": { "$ref": "#/components/schemas/NotifierRoleInfo" },
-          "child": { "$ref": "#/components/schemas/ChildRequest" },
-          "generalPublic": {
-            "$ref": "#/components/schemas/GeneralPublicRequest"
-          },
-          "expectantParent": {
-            "$ref": "#/components/schemas/ExpectantParentRequest"
-          },
-          "residenceOfEvent": {
-            "$ref": "#/components/schemas/ResidenceOfEventRequest"
-          },
-          "urgencyAssessment": {
-            "$ref": "#/components/schemas/UrgencyAssessment"
-          },
-          "notifierNotes": { "$ref": "#/components/schemas/NotifierNotes" },
-          "categories": { "$ref": "#/components/schemas/CategoryRequest" },
-          "notificationVia112": { "type": "boolean" }
-        },
-        "additionalProperties": false
-      },
-      "NotificationCreateResponse": {
-        "type": "object",
-        "properties": {
-          "notificationId": { "type": "string", "format": "uuid" },
-          "notificationKey": { "type": "string", "nullable": true },
-          "created": { "type": "string", "format": "date-time" }
+          "totalCount": { "type": "integer", "format": "int32" }
         },
         "additionalProperties": false
       },
@@ -706,7 +671,7 @@
           "detail": { "type": "string", "nullable": true },
           "instance": { "type": "string", "nullable": true }
         },
-        "additionalProperties": false
+        "additionalProperties": {}
       }
     },
     "securitySchemes": {

@@ -19,6 +19,7 @@ import { format as formatKennitala } from 'kennitala'
 import { formatNumber } from 'libphonenumber-js'
 import {
   childMessages,
+  childSafetyMessages,
   memmMessages,
   parentsMessages,
   prerequisitesMessages,
@@ -1073,4 +1074,25 @@ export const getProtectiveFactorsItems = (
   }
 
   return items
+}
+
+export const getChildSafetyItems = (
+  answers: FormValue,
+  externalData: ExternalData,
+): Array<KeyValueItem> => {
+  const { childSafetyUrgencyLevel } = getApplicationAnswers(answers)
+  const { urgencyAssessments } = getApplicationExternalData(externalData)
+
+  const selectedAssessment = urgencyAssessments.find(
+    (a) => a.value === childSafetyUrgencyLevel,
+  )
+
+  return [
+    {
+      width: 'full',
+      keyText: childSafetyMessages.shared.sliderQuestion,
+      valueText: selectedAssessment?.label ?? childSafetyUrgencyLevel ?? '',
+      hideIfEmpty: true,
+    },
+  ]
 }

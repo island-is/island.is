@@ -2,6 +2,7 @@ import { buildOverviewField } from '@island.is/application/core'
 
 import {
   childMessages,
+  childSafetyMessages,
   memmMessages,
   parentsMessages,
   prerequisitesMessages,
@@ -11,6 +12,7 @@ import {
 import { isKnowsNationalId, isNoNationalId, isUnborn } from './conditionUtils'
 import {
   getChildManualItems,
+  getChildSafetyItems,
   getChildWithNationalIdItems,
   getMemmCultureItems,
   getMemmEducationItems,
@@ -141,6 +143,13 @@ export const adultProcurationOverviewFields = (editable?: boolean) => [
     title: protectiveFactorsMessages.shared.sectionTitle,
     backId: editable ? 'protectiveFactors' : undefined,
     items: getProtectiveFactorsItems,
+    hideIfEmpty: true,
+  }),
+  buildOverviewField({
+    id: 'overview.childSafety',
+    title: childSafetyMessages.shared.sectionTitle,
+    backId: editable ? 'childSafety' : undefined,
+    items: getChildSafetyItems,
     hideIfEmpty: true,
   }),
 ]

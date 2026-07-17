@@ -89,3 +89,12 @@ export const shouldShowReasonForNotificationSubCategoryDetails = (
 export const shouldShowBiggestConcernField = (answers: FormValue) =>
   !isUnborn(answers) &&
   getSelectedReasonForNotificationCategoryCodes(answers).length > 1
+
+export const showEmergencyWarning = (answers: FormValue) => {
+  const { childSafetyUrgencyLevel } = getApplicationAnswers(answers)
+  return (
+    childSafetyUrgencyLevel !== null &&
+    childSafetyUrgencyLevel !== undefined &&
+    Number(childSafetyUrgencyLevel) <= 2
+  )
+}
