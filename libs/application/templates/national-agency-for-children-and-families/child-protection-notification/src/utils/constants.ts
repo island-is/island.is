@@ -14,6 +14,15 @@ export enum States {
   REVIEW = 'review',
 }
 
+export enum ApiModuleActions {
+  getCategories = 'getCategories',
+  getProtectiveFactors = 'getProtectiveFactors',
+  getGenders = 'getGenders',
+  getChildInformation = 'getChildInformation',
+  createNotification = 'createNotification',
+  completeNotification = 'completeNotification',
+}
+
 export enum Roles {
   MINOR_APPLICANT = 'minorApplicant',
   ADULT_PERSONAL_APPLICANT = 'adultPersonalApplicant',
@@ -46,7 +55,7 @@ export const SCHOOL_TYPES = ['kindergarten', 'elementarySchool', 'highSchool']
 export enum LanguageEnvironmentOptions {
   ONLY_ICELANDIC = 'onlyIcelandic',
   ICELANDIC_AND_OTHER = 'icelandicAndOther',
-  ONLY_OTHER = 'onlyOther',
+  ONLY_OTHER = 'onlyOtherThanIcelandic',
 }
 
 export const SHOW_LANGUAGE_SECTION_TYPES = [
