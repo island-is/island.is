@@ -9,6 +9,7 @@ import {
   assigneeAssetDeclarationOverviewItems,
   assigneeUmgengnissamningurOverviewItems,
   assigneeAddressMatchOverviewItems,
+  assigneeIncomeDeclarationOverviewItems,
 } from './getOverviewItems'
 import {
   format as formatKennitala,
@@ -44,6 +45,11 @@ export const getSignedAssigneeOverviewItems = (
       externalData,
       nationalId,
     )
+    const incomeItems = assigneeIncomeDeclarationOverviewItems(
+      answers,
+      externalData,
+      nationalId,
+    )
     const umgengnissamningurItems = assigneeUmgengnissamningurOverviewItems(
       answers,
       externalData,
@@ -64,6 +70,7 @@ export const getSignedAssigneeOverviewItems = (
       },
       ...filteredPersonalItems,
       ...assetItems,
+      ...incomeItems,
       ...umgengnissamningurItems,
       ...addressItems,
     )
