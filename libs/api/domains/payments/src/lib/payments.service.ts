@@ -9,11 +9,16 @@ import {
   PaymentsApi,
   VerificationStatusResponse,
   VerificationCallbackInput,
+  GetPaymentFlowDTOBankTransferPendingStatusEnum,
+  GetPaymentFlowDTOLastBankTransferFailureEnum,
   GetPaymentFlowDTOPaymentStatusEnum,
   CreateBankTransferInputLocaleEnum,
+  VerifyBankTransferResponsePendingStatusEnum,
+  VerifyBankTransferResponseFailureReasonEnum,
 } from '@island.is/clients/payments'
 
 import { VerifyCardInput } from './dto/verifyCard.input'
+import { PayerRequestInfo } from './payments.utils'
 import { VerifyCardResponse } from './dto/verifyCard.response'
 import { ChargeCardInput } from './dto/chargeCard.input'
 import { ChargeCardResponse } from './dto/chargeCard.response'
@@ -33,6 +38,44 @@ import { VerifyBankTransferInput } from './dto/verifyBankTransfer.input'
 import { VerifyBankTransferResponse } from './dto/verifyBankTransfer.response'
 import { CancelBankTransferInput } from './dto/cancelBankTransfer.input'
 import { CancelBankTransferResponse } from './dto/cancelBankTransfer.response'
+
+const toRegisteredPendingStatus = (
+  pendingStatus?: VerifyBankTransferResponsePendingStatusEnum,
+): GetPaymentFlowDTOBankTransferPendingStatusEnum | undefined => {
+  switch (pendingStatus) {
+    case undefined:
+      return undefined
+    case VerifyBankTransferResponsePendingStatusEnum.sca_required:
+      return GetPaymentFlowDTOBankTransferPendingStatusEnum.sca_required
+    case VerifyBankTransferResponsePendingStatusEnum.processing:
+      return GetPaymentFlowDTOBankTransferPendingStatusEnum.processing
+    default: {
+      const exhaustive: never = pendingStatus
+      return exhaustive
+    }
+  }
+}
+
+const toRegisteredFailureReason = (
+  failureReason?: VerifyBankTransferResponseFailureReasonEnum,
+): GetPaymentFlowDTOLastBankTransferFailureEnum | undefined => {
+  switch (failureReason) {
+    case undefined:
+      return undefined
+    case VerifyBankTransferResponseFailureReasonEnum.rejected:
+      return GetPaymentFlowDTOLastBankTransferFailureEnum.rejected
+    case VerifyBankTransferResponseFailureReasonEnum.cancelled:
+      return GetPaymentFlowDTOLastBankTransferFailureEnum.cancelled
+    case VerifyBankTransferResponseFailureReasonEnum.error:
+      return GetPaymentFlowDTOLastBankTransferFailureEnum.error
+    case VerifyBankTransferResponseFailureReasonEnum.expired:
+      return GetPaymentFlowDTOLastBankTransferFailureEnum.expired
+    default: {
+      const exhaustive: never = failureReason
+      return exhaustive
+    }
+  }
+}
 
 @Injectable()
 export class PaymentsService {
@@ -60,9 +103,23 @@ export class PaymentsService {
     })
   }
 
-  verifyCard(verifyCardInput: VerifyCardInput): Promise<VerifyCardResponse> {
+  verifyCard(
+    verifyCardInput: VerifyCardInput,
+    payerRequestInfo: PayerRequestInfo,
+  ): Promise<VerifyCardResponse> {
+    const { browserInfo, ...cardInput } = verifyCardInput
+
     return this.paymentsApi.cardPaymentControllerVerify({
-      verifyCardInput,
+      verifyCardInput: {
+        ...cardInput,
+        // ip, userAgent and acceptHeader describe the payer's request as
+        // observed by this API and are derived server-side, never trusted
+        // from client input.
+        browserInfo: browserInfo && {
+          ...browserInfo,
+          ...payerRequestInfo,
+        },
+      },
     })
   }
 
@@ -106,8 +163,13 @@ export class PaymentsService {
   async chargeCard(
     chargeCardInput: ChargeCardInput,
   ): Promise<ChargeCardResponse> {
+    // ChargeCardInput inherits the verification-only 3DS fields from
+    // VerifyCardInput in the GraphQL schema; the payments service charge
+    // endpoint does not accept them.
+    const { cardholderName, browserInfo, ...restInput } = chargeCardInput
+
     const response = await this.paymentsApi.cardPaymentControllerCharge({
-      chargeCardInput,
+      chargeCardInput: restInput,
     })
 
     const { isSuccess, responseCode } = response
@@ -146,9 +208,15 @@ export class PaymentsService {
   async verifyBankTransfer(
     verifyBankTransferInput: VerifyBankTransferInput,
   ): Promise<VerifyBankTransferResponse> {
-    return this.paymentsApi.bankTransferControllerVerify({
+    const response = await this.paymentsApi.bankTransferControllerVerify({
       verifyBankTransferInput,
     })
+
+    return {
+      ...response,
+      pendingStatus: toRegisteredPendingStatus(response.pendingStatus),
+      failureReason: toRegisteredFailureReason(response.failureReason),
+    }
   }
 
   async cancelBankTransfer(
