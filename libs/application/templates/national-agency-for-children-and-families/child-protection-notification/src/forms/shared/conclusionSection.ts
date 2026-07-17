@@ -6,7 +6,7 @@ import { completedMessages } from '../../lib/messages'
 export const conclusionSection = buildFormConclusionSection({
   sectionTitle: completedMessages.sectionTitle,
   multiFieldTitle: completedMessages.multiFieldTitle,
-  // TODO: Make alertTitle dynamic to append the actual service provider name from answers
+  // TODO: Think "X" should be the receiving barnaverndarþjónusta, unclear if this comes from /api/external/dropdown/protection-services (determined by child's sveitarfélag) or from the submission response. Needs clarification.
   alertTitle: completedMessages.alertTitle,
   alertMessage: completedMessages.alertMessage,
   accordion: false,
