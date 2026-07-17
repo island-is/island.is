@@ -3,6 +3,7 @@ import {
   defineTemplateApi,
   IdentityApi,
 } from '@island.is/application/types'
+import { ApiModuleActions } from '../utils/constants'
 export { NationalRegistryV3UserApi } from '@island.is/application/types'
 
 export const IdentityApiProvider = IdentityApi.configure({
@@ -12,25 +13,25 @@ export const IdentityApiProvider = IdentityApi.configure({
 })
 
 export const CategoriesApi = defineTemplateApi({
-  action: 'getCategories',
+  action: ApiModuleActions.getCategories,
   externalDataId: 'categories',
   namespace: ApplicationTypes.CHILD_PROTECTION_NOTIFICATION,
 })
 
 export const ProtectiveFactorsApi = defineTemplateApi({
-  action: 'getProtectiveFactors',
+  action: ApiModuleActions.getProtectiveFactors,
   externalDataId: 'protectiveFactors',
   namespace: ApplicationTypes.CHILD_PROTECTION_NOTIFICATION,
 })
 
 export const GendersApi = defineTemplateApi({
-  action: 'getGenders',
+  action: ApiModuleActions.getGenders,
   externalDataId: 'genders',
   namespace: ApplicationTypes.CHILD_PROTECTION_NOTIFICATION,
 })
 
 export const ChildInformationApi = defineTemplateApi({
-  action: 'getChildInformation',
+  action: ApiModuleActions.getChildInformation,
   externalDataId: 'childInformation',
   namespace: ApplicationTypes.CHILD_PROTECTION_NOTIFICATION,
 })

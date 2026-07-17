@@ -29,7 +29,7 @@ import {
   prerequisitesMessages,
   sharedMessages,
 } from '../lib/messages'
-import { Events, Roles, States } from '../utils/constants'
+import { ApiModuleActions, Events, Roles, States } from '../utils/constants'
 import { getApplicantRole } from '../utils/roleUtils'
 import { dataSchema } from './dataSchema'
 
@@ -58,7 +58,7 @@ const template: ApplicationTemplate<
           lifecycle: EphemeralStateLifeCycle,
           onExit: [
             defineTemplateApi({
-              action: 'getChildInformation',
+              action: ApiModuleActions.getChildInformation,
               externalDataId: 'childInformation',
               namespace: ApplicationTypes.CHILD_PROTECTION_NOTIFICATION,
               throwOnError: true,

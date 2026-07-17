@@ -14,6 +14,15 @@ export enum States {
   REVIEW = 'review',
 }
 
+export enum ApiModuleActions {
+  getCategories = 'getCategories',
+  getProtectiveFactors = 'getProtectiveFactors',
+  getGenders = 'getGenders',
+  getChildInformation = 'getChildInformation',
+  createApplication = 'createApplication',
+  completeApplication = 'completeApplication',
+}
+
 export enum Roles {
   MINOR_APPLICANT = 'minorApplicant',
   ADULT_PERSONAL_APPLICANT = 'adultPersonalApplicant',
