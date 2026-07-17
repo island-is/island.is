@@ -40,7 +40,6 @@ export const wellbeingSubSection = buildSubSection({
         buildRadioField({
           id: 'memm.wellbeing.integratedService',
           widthWithIllustration: '1/3',
-          doesNotRequireAnswer: true,
           space: 0,
           options: getYesNoDoNotKnowOptions(),
         }),
@@ -54,7 +53,6 @@ export const wellbeingSubSection = buildSubSection({
         buildRadioField({
           id: 'memm.wellbeing.wellbeingContact',
           widthWithIllustration: '1/3',
-          doesNotRequireAnswer: true,
           space: 0,
           options: getYesNoDoNotKnowOptions(),
         }),
@@ -62,13 +60,11 @@ export const wellbeingSubSection = buildSubSection({
           id: 'memm.wellbeing.wellbeingContactEmail',
           title: memmMessages.wellbeing.wellbeingContactEmail,
           variant: 'email',
-          doesNotRequireAnswer: true,
           condition: showWellbeingContactFields,
         }),
         buildTextField({
           id: 'memm.wellbeing.wellbeingContactName',
           title: memmMessages.wellbeing.wellbeingContactName,
-          doesNotRequireAnswer: true,
           condition: showWellbeingContactFields,
         }),
         buildDescriptionField({
@@ -81,7 +77,6 @@ export const wellbeingSubSection = buildSubSection({
         buildRadioField({
           id: 'memm.wellbeing.wellbeingManager',
           widthWithIllustration: '1/3',
-          doesNotRequireAnswer: true,
           space: 0,
           options: getYesNoDoNotKnowOptions(),
         }),
@@ -89,13 +84,11 @@ export const wellbeingSubSection = buildSubSection({
           id: 'memm.wellbeing.wellbeingManagerEmail',
           title: memmMessages.wellbeing.wellbeingManagerEmail,
           variant: 'email',
-          doesNotRequireAnswer: true,
           condition: showWellbeingManagerFields,
         }),
         buildTextField({
           id: 'memm.wellbeing.wellbeingManagerName',
           title: memmMessages.wellbeing.wellbeingManagerName,
-          doesNotRequireAnswer: true,
           condition: showWellbeingManagerFields,
         }),
         buildDescriptionField({
@@ -108,7 +101,6 @@ export const wellbeingSubSection = buildSubSection({
         buildRadioField({
           id: 'memm.wellbeing.disability',
           widthWithIllustration: '1/3',
-          doesNotRequireAnswer: true,
           space: 0,
           options: getYesNoDoNotKnowOptions(),
         }),
@@ -116,7 +108,6 @@ export const wellbeingSubSection = buildSubSection({
           id: 'memm.wellbeing.disabilityService',
           title: memmMessages.wellbeing.disabilityServiceLabel,
           placeholder: memmMessages.wellbeing.disabilityServicePlaceholder,
-          doesNotRequireAnswer: true,
           options: [
             {
               value: 'municipal',
