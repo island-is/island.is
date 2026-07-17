@@ -212,7 +212,7 @@ const HealthConversationDetail = () => {
               const isPatient = msg.direction === 'PATIENT'
               const senderName = isPatient
                 ? userInfo.profile.name ?? ''
-                : msg.senderGroupName ?? item.lastSenderGroupName ?? ''
+                : item.organization?.name ?? msg.senderGroupName ?? ''
 
               return (
                 <Box key={msg.id}>
@@ -237,7 +237,7 @@ const HealthConversationDetail = () => {
                     ) : (
                       <ConversationAvatar
                         variant="organization"
-                        name={senderName}
+                        logoUrl={item.organization?.logoUrl ?? undefined}
                       />
                     )}
                     <Box
@@ -344,7 +344,7 @@ const HealthConversationDetail = () => {
                       </Text>
                       <Text variant="medium">
                         {formatMessage(messages.healthConversationTo, {
-                          arg: item.lastSenderGroupName ?? '',
+                          arg: item.organization?.name ?? '',
                         })}
                       </Text>
                     </Box>
