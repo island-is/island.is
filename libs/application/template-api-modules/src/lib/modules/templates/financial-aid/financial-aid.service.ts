@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 
 import {
   ApproveOptions,
@@ -16,20 +16,40 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import {
   ApplicationApi,
+  ApplicationModel,
+  ApplicationModelEmploymentEnum,
+  ApplicationModelFamilyStatusEnum,
+  ApplicationModelHomeCircumstancesEnum,
+  ApplicationModelStateEnum,
   MunicipalityApi,
   MunicipalityModel,
   PersonalTaxReturnApi,
 } from '@island.is/clients/municipalities-financial-aid'
+
+import {
+  CreateApplicationOperationRequest,
+  CreateApplicationRequest,
+  ApplicationsApi as rvkApplicationsApi,
+} from '@island.is/clients/rvk-financial-aid'
 
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
   ApplicationAnswerFile,
   ApplicationTypes,
+  ApplicationWithAttachments,
 } from '@island.is/application/types'
 import { FetchError } from '@island.is/clients/middlewares'
 import { messages } from '@island.is/application/templates/financial-aid'
 import { TemplateApiError } from '@island.is/nest/problem'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import {
+  AidModelTypeEnum,
+  AidModel,
+  MunicipalityModelChildrenAidEnum,
+} from '@island.is/clients/municipalities-financial-aid'
+import { AttachmentS3Service } from '../../shared/services'
 
 type Props = Omit<TemplateApiModuleActionProps, 'application'> & {
   application: FAApplication
@@ -39,14 +59,42 @@ type Props = Omit<TemplateApiModuleActionProps, 'application'> & {
 export class FinancialAidService extends BaseTemplateApiService {
   constructor(
     private applicationApi: ApplicationApi,
+    private rvkApplicationsApi: rvkApplicationsApi,
     private municipalityApi: MunicipalityApi,
     private personalTaxReturnApi: PersonalTaxReturnApi,
+    private readonly attachmentService: AttachmentS3Service,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
   ) {
     super(ApplicationTypes.FINANCIAL_AID)
   }
 
+  // Mock data providers for testing
+  async getSpouse() {
+    return null // no spouse
+  }
+
+  async childrenCustodyInformation() {
+    return [] // no children
+  }
+
+  municipalityCodeCheck(municipalityCode: string | null | undefined) {
+    if (
+      municipalityCode &&
+      (municipalityCode === '0000' || municipalityCode === '1400')
+    ) {
+      return true
+    }
+    return false
+  }
+  // End of mock data providers for testing
+
   private applicationApiWithAuth(auth: Auth) {
     return this.applicationApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private rvkApplicationsApiWithAuth(auth: Auth) {
+    return this.rvkApplicationsApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   private municipalityApiWithAuth(auth: Auth) {
@@ -70,11 +118,75 @@ export class FinancialAidService extends BaseTemplateApiService {
     )
   }
 
+  private createMockAidModel = (
+    type: AidModelTypeEnum,
+    amounts: {
+      ownPlace: number
+      registeredRenting: number
+      unregisteredRenting: number
+      livesWithParents: number
+      withOthers: number
+      unknown: number
+    },
+  ): AidModel => {
+    const now = new Date()
+    return {
+      id: `mock-aid-${type.toLowerCase()}`,
+      municipalityId: '0000',
+      type,
+      created: now,
+      modified: now,
+      ...amounts,
+    }
+  }
+
+  private MOCK_RVK_MUNICIPALITY: MunicipalityModel = {
+    id: '0000',
+    name: 'Reykjavík',
+    municipalityId: '0000',
+    active: true,
+    homepage: 'https://reykjavik.is',
+    rulesHomepage: 'https://reykjavik.is',
+    email: 'borgarrettur@reykjavik.is',
+    usingNav: false,
+    navUrl: '',
+    navUsername: '',
+    navPassword: '',
+    childrenAid: MunicipalityModelChildrenAidEnum.NotDefined,
+    decemberCompensation: 0,
+    created: new Date(),
+    modified: new Date(),
+    individualAidId: 'mock-individual-aid',
+    cohabitationAidId: 'mock-cohabitation-aid',
+    individualAid: this.createMockAidModel(AidModelTypeEnum.Individual, {
+      ownPlace: 211_831,
+      registeredRenting: 175_121,
+      unregisteredRenting: 140_121,
+      livesWithParents: 105_121,
+      withOthers: 140_121,
+      unknown: 140_121,
+    }),
+    cohabitationAid: this.createMockAidModel(AidModelTypeEnum.Cohabitation, {
+      ownPlace: 317_747,
+      registeredRenting: 262_682,
+      unregisteredRenting: 210_182,
+      livesWithParents: 157_682,
+      withOthers: 210_182,
+      unknown: 210_182,
+    }),
+  }
+
   async createApplication({
     application,
     auth,
   }: Props): Promise<CurrentApplication> {
+    console.log('--------------------------------')
+    console.log('createApplication')
+    console.log('--------------------------------')
     const { id, answers, externalData } = application
+
+    const municipalityCode =
+      externalData.nationalRegistry.data.address?.municipalityCode
 
     if (externalData.currentApplication.data?.currentApplicationId) {
       return {
@@ -87,6 +199,17 @@ export class FinancialAidService extends BaseTemplateApiService {
           return {
             name: child.fullName,
             nationalId: child.nationalId,
+            school: child.school,
+            livesWithApplicant: child.livesWithApplicant,
+            livesWithBothParents: child.livesWithBothParents,
+          }
+        })
+      : []
+    const childrenRvk = answers.childrenSchoolInfo
+      ? answers.childrenSchoolInfo.map((child) => {
+          return {
+            name: child.fullName,
+            kennitala: child.nationalId,
             school: child.school,
             livesWithApplicant: child.livesWithApplicant,
             livesWithBothParents: child.livesWithBothParents,
@@ -106,6 +229,30 @@ export class FinancialAidService extends BaseTemplateApiService {
           type: type,
         }
       })
+    }
+
+    const formatFilesRvk = async (
+      files: ApplicationAnswerFile[],
+      type: FileType,
+    ) => {
+      if (!files || files.length <= 0) {
+        return []
+      }
+      return await Promise.all(
+        files.map(async (f) => {
+          return {
+            name: f.name ?? '',
+            key:
+              (await this.attachmentService.getAttachmentUrl(
+                application as unknown as ApplicationWithAttachments,
+                f.key!,
+                300_000,
+              )) ?? '',
+            size: 0,
+            type: type,
+          }
+        }),
+      )
     }
 
     const spouseTaxFiles = () => {
@@ -151,13 +298,42 @@ export class FinancialAidService extends BaseTemplateApiService {
       )
     }
 
-    const files = formatFiles(answers.taxReturnFiles, FileType.TAXRETURN)
-      .concat(formatFiles(answers.incomeFiles, FileType.INCOME))
-      .concat(formatFiles(answers.spouseIncomeFiles, FileType.SPOUSEFILES))
-      .concat(formatFiles(answers.spouseTaxReturnFiles, FileType.SPOUSEFILES))
-      .concat(formatFiles(spouseTaxFiles(), FileType.SPOUSEFILES))
-      .concat(formatFiles(applicantTaxFiles(), FileType.TAXRETURN))
-      .concat(formatFiles(answers.childrenFiles, FileType.CHILDRENFILES))
+    let files: ApplicationAnswerFile[] = []
+
+    if (this.municipalityCodeCheck(municipalityCode)) {
+      console.log('--------------------------------')
+      console.log('formatFilesRvk municipalityCode', municipalityCode)
+      console.log('--------------------------------')
+      files = (
+        await formatFilesRvk(answers.rvkTaxReturnFiles, FileType.TAXRETURN)
+      )
+        .concat(await formatFilesRvk(answers.rvkIncomeFiles, FileType.INCOME))
+        .concat(
+          await formatFilesRvk(
+            answers.rvkSpouseIncomeFiles,
+            FileType.SPOUSEFILES,
+          ),
+        )
+        .concat(
+          await formatFilesRvk(
+            answers.rvkSpouseTaxReturnFiles,
+            FileType.SPOUSEFILES,
+          ),
+        )
+        .concat(await formatFilesRvk(spouseTaxFiles(), FileType.SPOUSEFILES))
+        .concat(await formatFilesRvk(applicantTaxFiles(), FileType.TAXRETURN))
+        .concat(
+          await formatFilesRvk(answers.childrenFiles, FileType.CHILDRENFILES),
+        )
+    } else {
+      files = formatFiles(answers.taxReturnFiles, FileType.TAXRETURN)
+        .concat(formatFiles(answers.incomeFiles, FileType.INCOME))
+        .concat(formatFiles(answers.spouseIncomeFiles, FileType.SPOUSEFILES))
+        .concat(formatFiles(answers.spouseTaxReturnFiles, FileType.SPOUSEFILES))
+        .concat(formatFiles(spouseTaxFiles(), FileType.SPOUSEFILES))
+        .concat(formatFiles(applicantTaxFiles(), FileType.TAXRETURN))
+        .concat(formatFiles(answers.childrenFiles, FileType.CHILDRENFILES))
+    }
 
     const newApplication = {
       name: externalData.nationalRegistry.data.fullName,
@@ -197,8 +373,7 @@ export class FinancialAidService extends BaseTemplateApiService {
       streetName: externalData.nationalRegistry.data.address?.streetAddress,
       postalCode: externalData.nationalRegistry.data.address?.postalCode,
       city: externalData.nationalRegistry.data.address?.locality,
-      municipalityCode:
-        externalData.nationalRegistry.data.address?.municipalityCode,
+      municipalityCode,
       directTaxPayments: directTaxPayments(),
       hasFetchedDirectTaxPayment:
         externalData?.taxData?.data?.municipalitiesDirectTaxPayments?.success,
@@ -208,22 +383,98 @@ export class FinancialAidService extends BaseTemplateApiService {
       applicationSystemId: id,
     }
 
-    return await this.applicationApiWithAuth(auth)
-      .applicationControllerCreate({
-        createApplicationDto: newApplication as any,
-      })
-      .then((res) => {
-        return { currentApplicationId: res.id }
-      })
-      .catch(() => {
-        throw new TemplateApiError(
-          {
-            title: messages.serviceErrors.createApplication.title,
-            summary: messages.serviceErrors.createApplication.summary,
-          },
-          500,
-        )
-      })
+    if (this.municipalityCodeCheck(municipalityCode)) {
+      console.log('--------------------------------')
+      console.log('createApplication municipalityCode', municipalityCode)
+      console.log('--------------------------------')
+
+      const rvkRequest = {
+        createApplicationRequest: {
+          name: externalData.nationalRegistry.data.fullName,
+          nationalId: externalData.nationalRegistry.data.nationalId,
+          nationality: externalData.nationalRegistry.data.citizenship?.code,
+          phoneNumber: answers.contactInfo.phone,
+          email: answers.contactInfo.email,
+          homeCircumstances: answers.homeCircumstances.type,
+          homeCircumstancesCustom: answers.homeCircumstances.custom,
+          student: Boolean(answers.student.isStudent === ApproveOptions.Yes),
+          studentCustom: answers.student.custom,
+          hasIncome: Boolean(answers.income === ApproveOptions.Yes),
+          usePersonalTaxCredit: Boolean(
+            answers.personalTaxCredit === ApproveOptions.Yes,
+          ),
+          bankNumber: answers.bankInfo.bankNumber,
+          ledger: answers.bankInfo.ledger,
+          accountNumber: answers.bankInfo.accountNumber,
+          employment: answers.employment.type,
+          employmentCustom: answers.employment.custom,
+          formComment: answers.formComment,
+          state: ApplicationState.NEW,
+          files: files, // attachments
+          children: childrenRvk,
+          childrenComment: answers.childrenComment,
+          spouseNationalId:
+            externalData.nationalRegistrySpouse.data?.nationalId ||
+            answers.relationshipStatus?.spouseNationalId,
+          spouseEmail:
+            answers.spouseContactInfo?.email ||
+            answers.spouse?.email ||
+            answers.relationshipStatus?.spouseEmail,
+          spousePhoneNumber: answers.spouseContactInfo?.phone,
+          spouseName:
+            externalData.nationalRegistrySpouse.data?.name ||
+            answers.spouseName,
+          spouseFormComment: answers.spouseFormComment,
+          familyStatus: findFamilyStatus(answers, externalData),
+          streetName: externalData.nationalRegistry.data.address?.streetAddress,
+          postalCode: externalData.nationalRegistry.data.address?.postalCode,
+          city: externalData.nationalRegistry.data.address?.locality,
+          directTaxPayments: [JSON.stringify(directTaxPayments())],
+          applicationSystemId: id,
+        },
+        xTenantIdentifier: 'reykjavik',
+        xUserPermissions: 'finaid:write',
+      } as CreateApplicationOperationRequest
+
+      console.log('--------------------------------')
+      console.log('rvkRequest')
+      console.dir(rvkRequest, { depth: null, colors: true })
+      console.log('--------------------------------')
+
+      return await this.rvkApplicationsApiWithAuth(auth)
+        .createApplication(rvkRequest)
+        .then(() => {
+          return { currentApplicationId: newApplication.applicationSystemId }
+        })
+        .catch((e) => {
+          this.logger.error('Error creating application', { error: e })
+          throw new TemplateApiError(
+            {
+              title: messages.serviceErrors.createApplication.title,
+              summary: messages.serviceErrors.createApplication.summary,
+            },
+            500,
+          )
+        })
+    } else {
+      return await this.applicationApiWithAuth(auth)
+        .applicationControllerCreate({
+          createApplicationDto: newApplication as any,
+        })
+        .then((res) => {
+          return { currentApplicationId: res.id }
+        })
+        .catch((e) => {
+          this.logger.error('Error creating application', { error: e })
+          throw new TemplateApiError(
+            {
+              title: messages.serviceErrors.createApplication.title,
+              summary: messages.serviceErrors.createApplication.summary,
+            },
+            500,
+          )
+        })
+    }
   }
 
   async currentApplication({
@@ -243,14 +494,18 @@ export class FinancialAidService extends BaseTemplateApiService {
     auth,
     application,
   }: Props): Promise<MunicipalityModel | null> {
-    const municiplaityCode =
+    const municipalityCode =
       application.externalData.nationalRegistry.data.address?.municipalityCode
-    if (municiplaityCode == null) {
+
+    if (municipalityCode == null) {
       return null
+    }
+    if (this.municipalityCodeCheck(municipalityCode)) {
+      return this.MOCK_RVK_MUNICIPALITY
     }
 
     return await this.municipalityApiWithAuth(auth)
-      .municipalityControllerGetById({ id: municiplaityCode })
+      .municipalityControllerGetById({ id: municipalityCode })
       .catch(this.handle404)
   }
 
