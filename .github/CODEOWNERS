@@ -490,7 +490,8 @@ codemagic.yaml                                                                  
 
 /libs/application/templates/directorate-of-immigration/                                                                      @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/directorate-of-immigration/                                 @island-is/origo
-/libs/application/templates/directorate-of-equality/                                                                         @island-is/hugsmidjan
+/libs/application/templates/directorate-of-equality/                                                                         @island-is/hugsmidjan @island-is/norda
+/libs/application/templates/directorate-of-equality/equality-report                                                          @island-is/hugsmidjan
 /libs/application/template-api-modules/src/lib/modules/templates/directorate-of-equality/                                    @island-is/hugsmidjan
 /libs/clients/directorate-of-equality/                                                                                       @island-is/hugsmidjan
 /libs/clients/directorate-of-immigration/                                                                                    @island-is/origo
