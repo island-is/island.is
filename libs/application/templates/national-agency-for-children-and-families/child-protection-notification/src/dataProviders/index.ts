@@ -30,8 +30,3 @@ export const GendersApi = defineTemplateApi({
   namespace: ApplicationTypes.CHILD_PROTECTION_NOTIFICATION,
 })
 
-export const ChildInformationApi = defineTemplateApi({
-  action: ApiModuleActions.getChildInformation,
-  externalDataId: 'childInformation',
-  namespace: ApplicationTypes.CHILD_PROTECTION_NOTIFICATION,
-})

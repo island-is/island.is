@@ -19,8 +19,8 @@ export enum ApiModuleActions {
   getProtectiveFactors = 'getProtectiveFactors',
   getGenders = 'getGenders',
   getChildInformation = 'getChildInformation',
-  createApplication = 'createApplication',
-  completeApplication = 'completeApplication',
+  createNotification = 'createNotification',
+  completeNotification = 'completeNotification',
 }
 
 export enum Roles {

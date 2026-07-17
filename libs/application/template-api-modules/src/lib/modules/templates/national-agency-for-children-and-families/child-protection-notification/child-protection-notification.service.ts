@@ -68,8 +68,8 @@ export class ChildProtectionNotificationService extends BaseTemplateApiService {
     }
   }
 
-  async createApplication() {
-    // TODO: Implement this
+  // TODO: Submit the notification to the National Agency for Children and Families
+  async createNotification() {
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
     return {
@@ -77,8 +77,8 @@ export class ChildProtectionNotificationService extends BaseTemplateApiService {
     }
   }
 
-  async completeApplication() {
-    // TODO: Implement this
+  // TODO: Mark the notification as complete after submission
+  async completeNotification() {
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
     return {
