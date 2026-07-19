@@ -1590,6 +1590,23 @@ export class CaseNotificationService extends BaseNotificationService {
     })
   }
 
+  private sendRevokedEmailNotificationToCourtForRequestCase(
+    theCase: Case,
+    recipientName?: string,
+    recipientEmail?: string,
+  ): Promise<Recipient> {
+    const subject = `Krafa afturkölluð í máli ${theCase.courtCaseNumber}`
+    const body = `${theCase.creatingProsecutor?.institution?.name} hefur afturkallað kröfu í máli ${theCase.courtCaseNumber}.`
+
+    return this.sendEmail({
+      subject,
+      html: body,
+      recipientName,
+      recipientEmail,
+      skipTail: true,
+    })
+  }
+
   private async sendRevokedNotificationsForRequestCase(
     theCase: Case,
   ): Promise<DeliverResponse> {
@@ -1603,6 +1620,38 @@ export class CaseNotificationService extends BaseNotificationService {
 
     if (courtWasNotified) {
       promises.push(this.sendRevokedSmsNotificationToCourt(theCase))
+    }
+
+    if (theCase.courtCaseNumber) {
+      if (!theCase.judge && !theCase.registrar) {
+        promises.push(
+          this.sendRevokedEmailNotificationToCourtForRequestCase(
+            theCase,
+            theCase.court?.name,
+            this.getCourtEmail(theCase.courtId),
+          ),
+        )
+      } else {
+        if (theCase.judge) {
+          promises.push(
+            this.sendRevokedEmailNotificationToCourtForRequestCase(
+              theCase,
+              theCase.judge.name,
+              theCase.judge.email,
+            ),
+          )
+        }
+
+        if (theCase.registrar) {
+          promises.push(
+            this.sendRevokedEmailNotificationToCourtForRequestCase(
+              theCase,
+              theCase.registrar.name,
+              theCase.registrar.email,
+            ),
+          )
+        }
+      }
     }
 
     const prisonWasNotified = this.hasReceivedNotification(
@@ -1639,7 +1688,6 @@ export class CaseNotificationService extends BaseNotificationService {
     const recipients = await Promise.all(promises)
 
     if (recipients.length === 0) {
-      // Nothing to send
       return { delivered: true }
     }
 
