@@ -6,8 +6,8 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 
-import { overviewMessages } from '../../lib/messages'
-import { getOverviewItems } from '../../utils/getOverviewItems'
+import { overviewMessages } from '../../../lib/messages'
+import { getOverviewItems } from '../../../utils/getOverviewItems'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',

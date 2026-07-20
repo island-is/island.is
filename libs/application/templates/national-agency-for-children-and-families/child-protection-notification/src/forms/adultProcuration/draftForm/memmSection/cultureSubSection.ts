@@ -7,13 +7,13 @@ import {
   YES,
 } from '@island.is/application/core'
 import { getAllLanguageCodes } from '@island.is/shared/utils'
-import { memmMessages } from '../../../lib/messages'
+import { memmMessages } from '../../../../lib/messages'
 import {
   showLanguageSection,
   showPreferredLanguage,
-} from '../../../utils/conditionUtils'
-import { getApplicationAnswers } from '../../../utils/getApplicationAnswers'
-import { getApplicationExternalData } from '../../../utils/getApplicationExternalData'
+} from '../../../../utils/conditionUtils'
+import { getApplicationAnswers } from '../../../../utils/getApplicationAnswers'
+import { getApplicationExternalData } from '../../../../utils/getApplicationExternalData'
 
 export const cultureSubSection = buildSubSection({
   id: 'memmCultureSubSection',
