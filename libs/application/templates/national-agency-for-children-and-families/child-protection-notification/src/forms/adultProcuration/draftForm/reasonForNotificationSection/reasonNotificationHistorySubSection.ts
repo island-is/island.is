@@ -9,12 +9,12 @@ import {
 import {
   reasonForNotificationMessages,
   sharedMessages,
-} from '../../../lib/messages'
+} from '../../../../lib/messages'
 import {
   getAreParentsInformedTitle,
   getHasDiscussedWithParentsTitle,
-} from '../../../utils/childProtectionNotificationUtils'
-import { getApplicationAnswers } from '../../../utils/getApplicationAnswers'
+} from '../../../../utils/childProtectionNotificationUtils'
+import { getApplicationAnswers } from '../../../../utils/getApplicationAnswers'
 
 export const reasonNotificationHistorySubSection = buildSubSection({
   id: 'reasonNotificationHistorySubSection',

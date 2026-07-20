@@ -5,7 +5,7 @@ import {
   buildTextField,
   YES,
 } from '@island.is/application/core'
-import { reasonForNotificationMessages } from '../../../lib/messages'
+import { reasonForNotificationMessages } from '../../../../lib/messages'
 
 export const reasonDescriptionSubSection = buildSubSection({
   id: 'reasonDescriptionSubSection',

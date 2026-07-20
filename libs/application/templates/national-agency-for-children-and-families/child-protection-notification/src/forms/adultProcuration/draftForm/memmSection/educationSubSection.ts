@@ -5,8 +5,11 @@ import {
   buildTextField,
   buildDescriptionField,
 } from '@island.is/application/core'
-import { memmMessages } from '../../../lib/messages'
-import { isDayCareProvider, isSchoolType } from '../../../utils/conditionUtils'
+import { memmMessages } from '../../../../lib/messages'
+import {
+  isDayCareProvider,
+  isSchoolType,
+} from '../../../../utils/conditionUtils'
 
 export const educationSubSection = buildSubSection({
   id: 'memmEducationSubSection',

@@ -5,8 +5,8 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 
-import { overviewMessages } from '../../lib/messages'
-import { adultProcurationOverviewFields } from '../../utils/adultProcurationOverviewFields'
+import { overviewMessages } from '../../../lib/messages'
+import { adultProcurationOverviewFields } from '../../../utils/adultProcurationOverviewFields'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',

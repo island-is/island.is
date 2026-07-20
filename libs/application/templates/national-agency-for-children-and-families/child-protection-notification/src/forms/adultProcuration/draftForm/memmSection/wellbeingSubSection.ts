@@ -6,13 +6,13 @@ import {
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
-import { memmMessages } from '../../../lib/messages'
-import { getYesNoDoNotKnowOptions } from '../../../utils/childProtectionNotificationUtils'
+import { memmMessages } from '../../../../lib/messages'
+import { getYesNoDoNotKnowOptions } from '../../../../utils/childProtectionNotificationUtils'
 import {
   showDisabilityService,
   showWellbeingContactFields,
   showWellbeingManagerFields,
-} from '../../../utils/conditionUtils'
+} from '../../../../utils/conditionUtils'
 
 export const wellbeingSubSection = buildSubSection({
   id: 'memmWellbeingSubSection',

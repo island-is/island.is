@@ -5,9 +5,9 @@ import {
   buildRadioField,
   buildSubSection,
 } from '@island.is/application/core'
-import { memmMessages } from '../../../lib/messages'
-import { getYesNoDoNotKnowNotApplicableOptions } from '../../../utils/childProtectionNotificationUtils'
-import { getApplicationAnswers } from '../../../utils/getApplicationAnswers'
+import { memmMessages } from '../../../../lib/messages'
+import { getYesNoDoNotKnowNotApplicableOptions } from '../../../../utils/childProtectionNotificationUtils'
+import { getApplicationAnswers } from '../../../../utils/getApplicationAnswers'
 
 export const receptionSubSection = buildSubSection({
   id: 'memmReceptionSubSection',
