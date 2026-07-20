@@ -45,8 +45,9 @@ export const childSafetySection = buildSection({
             const { urgencyAssessments } =
               getApplicationExternalData(externalData)
             return (
-              urgencyAssessments.find((a) => a.value === childSafetyUrgencyLevel)
-                ?.label ?? ''
+              urgencyAssessments.find(
+                (a) => a.value === childSafetyUrgencyLevel,
+              )?.label ?? ''
             )
           },
           message: ({ answers, externalData }) => {
@@ -54,8 +55,9 @@ export const childSafetySection = buildSection({
             const { urgencyAssessments } =
               getApplicationExternalData(externalData)
             return (
-              urgencyAssessments.find((a) => a.value === childSafetyUrgencyLevel)
-                ?.description ?? ''
+              urgencyAssessments.find(
+                (a) => a.value === childSafetyUrgencyLevel,
+              )?.description ?? ''
             )
           },
         }),
