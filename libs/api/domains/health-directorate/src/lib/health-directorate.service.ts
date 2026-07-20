@@ -43,6 +43,7 @@ import {
   mapVaccinationStatus,
 } from './mappers/basicInformationMapper'
 import {
+  mapConversationMessageContent,
   mapMessagingRecipient,
   toConversationDirectionEnum,
   toConversationReplyBlockedReasonEnum,
@@ -743,6 +744,7 @@ export class HealthDirectorateService {
       direction: toConversationDirectionEnum(m.direction),
       messageSentAt: m.messageSentAt,
       messageTextContent: m.messageTextContent,
+      content: mapConversationMessageContent(m),
       senderGroupName: m.senderGroupName,
       attachments: m.attachments.map((a) =>
         this.mapConversationAttachment(a, conversationId, m.id),

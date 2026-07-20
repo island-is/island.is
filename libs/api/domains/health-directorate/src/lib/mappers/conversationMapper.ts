@@ -1,17 +1,26 @@
 import {
+  ContentSegmentDto,
+  ContentSegmentType,
+  ConversationMessageDto,
   ConversationReplyBlockedReason,
   ConversationStatusFilter,
+  MessageType,
   MessagingRecipientDto,
   RecipientCreateBlockedReason,
+  VideoConversationDto,
 } from '@island.is/clients/health-directorate'
 import {
   HealthConversationDirectionEnum,
   HealthConversationRecipientBlockedReasonEnum,
   HealthConversationReplyBlockedReasonEnum,
+  HealthConversationSegmentTypeEnum,
   HealthConversationStatusFilterEnum,
 } from '../models/enums'
+import { HealthDirectorateHealthConversationMessageContent } from '../models/healthConversationMessageContent.model'
 import { HealthDirectorateHealthConversationRecipient } from '../models/healthConversationRecipient.model'
+import { HealthDirectorateHealthConversationSegment } from '../models/healthConversationSegment.model'
 import { HealthDirectorateHealthConversationType } from '../models/healthConversationType.model'
+import { HealthDirectorateHealthConversationVideoContent } from '../models/healthConversationVideoContent.model'
 
 export const toConversationDirectionEnum = (
   direction: string,
@@ -25,6 +34,76 @@ export const toConversationDirectionEnum = (
       return HealthConversationDirectionEnum.SYSTEM
     default:
       return HealthConversationDirectionEnum.SYSTEM
+  }
+}
+
+export const toConversationSegmentTypeEnum = (
+  type: ContentSegmentType,
+): HealthConversationSegmentTypeEnum => {
+  switch (type) {
+    case ContentSegmentType.LINK:
+      return HealthConversationSegmentTypeEnum.LINK
+    case ContentSegmentType.TEXT:
+      return HealthConversationSegmentTypeEnum.TEXT
+    default:
+      return HealthConversationSegmentTypeEnum.TEXT
+  }
+}
+
+/**
+ * The health service API currently returns a local ISO datetime with
+ * no timezone offset. This will be fixed and typed in following verions
+ * of the API, but for now we have to parse the date to UTC manually.
+ * Once it´s been changed, we can remove this.
+ */
+const parseUtcDate = (value?: string): Date | undefined => {
+  if (!value) {
+    return undefined
+  }
+  const hasZone = /(Z|[+-]\d{2}:?\d{2})$/.test(value)
+  const date = new Date(hasZone ? value : `${value}Z`)
+  return isNaN(date.getTime()) ? undefined : date
+}
+
+export const mapConversationSegments = (
+  segments?: Array<ContentSegmentDto>,
+): HealthDirectorateHealthConversationSegment[] | undefined =>
+  segments?.map((s): HealthDirectorateHealthConversationSegment => {
+    const type = toConversationSegmentTypeEnum(s.type)
+    return type === HealthConversationSegmentTypeEnum.LINK
+      ? { type, label: s.label, href: s.href }
+      : { type, text: s.text }
+  })
+
+export const mapConversationVideo = (
+  video?: VideoConversationDto,
+): HealthDirectorateHealthConversationVideoContent | undefined =>
+  video
+    ? {
+        url: video.url,
+        description: video.description,
+        appointmentDate: parseUtcDate(video.appointmentDate),
+        appointmentHostName: video.appointmentHostName,
+        isCanceled: video.isCanceled,
+        isEdited: video.isEdited,
+      }
+    : undefined
+
+export const mapConversationMessageContent = (
+  message: ConversationMessageDto,
+): typeof HealthDirectorateHealthConversationMessageContent | undefined => {
+  switch (message.messageType) {
+    case MessageType.VIDEO:
+      return mapConversationVideo(message.videoConversation)
+    case MessageType.SEGMENTED: {
+      const segments = mapConversationSegments(message.contentSegments)
+      return segments?.length ? { segments } : undefined
+    }
+    case MessageType.TEXT:
+    default:
+      return message.messageTextContent
+        ? { text: message.messageTextContent }
+        : undefined
   }
 }
 

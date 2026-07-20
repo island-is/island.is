@@ -1,3 +1,43 @@
+fragment HealthConversationTextContent on HealthDirectorateHealthConversationTextContent {
+  text
+}
+
+fragment HealthConversationSegmentedContent on HealthDirectorateHealthConversationSegmentedContent {
+  segments {
+    type
+    text
+    label
+    href
+  }
+}
+
+fragment HealthConversationVideoContent on HealthDirectorateHealthConversationVideoContent {
+  url
+  description
+  appointmentDate
+  appointmentHostName
+  isCanceled
+}
+
+fragment HealthConversationMessage on HealthDirectorateHealthConversationEntry {
+  id
+  direction
+  messageSentAt
+  senderGroupName
+  content {
+    __typename
+    ...HealthConversationTextContent
+    ...HealthConversationSegmentedContent
+    ...HealthConversationVideoContent
+  }
+  attachments {
+    id
+    fileName
+    description
+    downloadServiceURL
+  }
+}
+
 query GetHealthConversationDetail($id: ID!) {
   healthDirectorateHealthConversation(id: $id) {
     id
@@ -9,17 +49,7 @@ query GetHealthConversationDetail($id: ID!) {
     isRead
     lastSenderGroupName
     messages {
-      id
-      direction
-      messageSentAt
-      messageTextContent
-      senderGroupName
-      attachments {
-        id
-        fileName
-        description
-        downloadServiceURL
-      }
+      ...HealthConversationMessage
     }
   }
 }
@@ -60,17 +90,7 @@ mutation ReplyToHealthConversation(
   healthDirectorateReplyToHealthConversation(input: $input) {
     id
     messages {
-      id
-      direction
-      messageSentAt
-      messageTextContent
-      senderGroupName
-      attachments {
-        id
-        fileName
-        description
-        downloadServiceURL
-      }
+      ...HealthConversationMessage
     }
   }
 }

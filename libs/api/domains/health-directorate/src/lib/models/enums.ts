@@ -179,6 +179,14 @@ registerEnumType(HealthConversationReplyBlockedReasonEnum, {
   name: 'HealthDirectorateHealthConversationReplyBlockedReason',
 })
 
+export enum HealthConversationSegmentTypeEnum {
+  TEXT = 'text',
+  LINK = 'link',
+}
+registerEnumType(HealthConversationSegmentTypeEnum, {
+  name: 'HealthDirectorateHealthConversationSegmentType',
+})
+
 export enum HealthConversationRecipientBlockedReasonEnum {
   MESSAGING_NOT_ALLOWED = 'messagingNotAllowed',
   OUTSIDE_MESSAGING_WINDOW = 'outsideMessagingWindow',
