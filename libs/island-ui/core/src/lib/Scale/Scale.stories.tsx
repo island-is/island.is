@@ -11,15 +11,39 @@ const config: Meta<typeof Scale> = {
   argTypes: {
     id: { description: 'Scale field id', control: { type: 'text' } },
     label: { description: 'Label text', control: { type: 'text' } },
-    min: { description: 'Minimum selectable value', control: { type: 'number' } },
-    max: { description: 'Maximum selectable value', control: { type: 'number' } },
+    min: {
+      description: 'Minimum selectable value',
+      control: { type: 'number' },
+    },
+    max: {
+      description: 'Maximum selectable value',
+      control: { type: 'number' },
+    },
     value: { description: 'Selected value', control: { type: 'text' } },
-    step: { description: 'Step interval between values', control: { type: 'number' } },
-    minLabel: { description: 'Text shown below minimum value', control: { type: 'text' } },
-    maxLabel: { description: 'Text shown below maximum value', control: { type: 'text' } },
-    showLabels: { description: 'Show min and max labels', control: { type: 'boolean' } },
-    required: { description: 'Is the field required', control: { type: 'boolean' } },
-    disabled: { description: 'Is the field disabled', control: { type: 'boolean' } },
+    step: {
+      description: 'Step interval between values',
+      control: { type: 'number' },
+    },
+    minLabel: {
+      description: 'Text shown below minimum value',
+      control: { type: 'text' },
+    },
+    maxLabel: {
+      description: 'Text shown below maximum value',
+      control: { type: 'text' },
+    },
+    showLabels: {
+      description: 'Show min and max labels',
+      control: { type: 'boolean' },
+    },
+    required: {
+      description: 'Is the field required',
+      control: { type: 'boolean' },
+    },
+    disabled: {
+      description: 'Is the field disabled',
+      control: { type: 'boolean' },
+    },
     error: { description: 'Error message', control: { type: 'text' } },
     onChange: { table: { disable: true } },
   },
