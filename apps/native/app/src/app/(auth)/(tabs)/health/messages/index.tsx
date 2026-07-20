@@ -1,0 +1,215 @@
+import React, { useCallback, useMemo, useRef, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
+import {
+  FlatList,
+  Image,
+  ImageSourcePropType,
+  Pressable,
+  RefreshControl,
+  View,
+} from 'react-native'
+import { router } from 'expo-router'
+import { useTheme } from 'styled-components/native'
+
+import composeIcon from '@/assets/icons/compose.png'
+import filterIcon from '@/assets/icons/filter-icon.png'
+import heartIcon from '@/assets/icons/health.png'
+import documentIcon from '@/assets/icons/reader.png'
+import illustrationSrc from '@/assets/illustrations/le-company-s3.png'
+import { OfflineIcon } from '@/components/offline/offline-icon'
+import { StackScreen } from '@/components/stack-screen'
+import {
+  HealthDirectorateHealthConversationStatusFilter,
+  useGetHealthConversationsQuery,
+} from '@/graphql/types/schema'
+import { useHealthMessagesFilterStore } from '@/stores/health-messages-filter-store'
+import { EmptyList, ListItem, ListItemSkeleton, Problem, SearchBar } from '@/ui'
+
+export default function HealthMessagesScreen() {
+  const intl = useIntl()
+  const theme = useTheme()
+  const [query, setQuery] = useState('')
+  const { starred, archived } = useHealthMessagesFilterStore()
+
+  const messagesRes = useGetHealthConversationsQuery({
+    notifyOnNetworkStatusChange: true,
+    variables: {
+      input: {
+        starred: starred || undefined,
+        status: archived
+          ? HealthDirectorateHealthConversationStatusFilter.Archived
+          : undefined,
+      },
+    },
+  })
+
+  const conversations =
+    messagesRes.data?.healthDirectorateHealthConversations ?? []
+
+  const filteredConversations = useMemo(() => {
+    const q = query.trim().toLowerCase()
+    if (!q) {
+      return conversations
+    }
+    return conversations.filter((conversation) => {
+      const title = conversation.title?.toLowerCase() ?? ''
+      const sender = conversation.lastSenderGroupName?.toLowerCase() ?? ''
+      return title.includes(q) || sender.includes(q)
+    })
+  }, [conversations, query])
+
+  const showSearch = conversations.length > 0 || query.length > 0
+
+  const [refetching, setRefetching] = useState(false)
+  const loadingTimeout = useRef<ReturnType<typeof setTimeout>>()
+
+  const onRefresh = useCallback(async () => {
+    try {
+      if (loadingTimeout.current) {
+        clearTimeout(loadingTimeout.current)
+      }
+      setRefetching(true)
+      await messagesRes.refetch()
+      // Keep the spinner visible a moment after the (often instant) refetch
+      // resolves so the refresh feels real — matches the inbox.
+      loadingTimeout.current = setTimeout(() => {
+        setRefetching(false)
+      }, 1331)
+    } catch (err) {
+      setRefetching(false)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // A single icon segment within the shared header pill.
+  const renderHeaderIconSegment = (
+    icon: ImageSourcePropType,
+    onPress: () => void,
+  ) => (
+    <Pressable
+      onPress={onPress}
+      style={{
+        width: 46,
+        height: 46,
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <Image
+        source={icon}
+        resizeMode="contain"
+        style={{ width: 20, height: 20, tintColor: theme.color.blue400 }}
+      />
+    </Pressable>
+  )
+
+  // The header applies its own (glass on iOS 26) background, so the icons are
+  // rendered plain here to avoid a doubled-up background.
+  const headerActions = (
+    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      {/* The custom `headerRight` opts out of the native header items, so the
+          loading/offline indicator is rendered here instead. */}
+      <OfflineIcon networkStatus={messagesRes.networkStatus} />
+      {renderHeaderIconSegment(filterIcon, () =>
+        router.push('/health/messages/filter'),
+      )}
+      {renderHeaderIconSegment(composeIcon, () =>
+        router.push('/health/messages/new'),
+      )}
+    </View>
+  )
+
+  return (
+    <View style={{ flex: 1 }}>
+      <StackScreen
+        networkStatus={messagesRes.networkStatus}
+        options={{
+          title: intl.formatMessage({ id: 'health.messages.screenTitle' }),
+          headerTitleAlign: 'center',
+          headerRight: () => headerActions,
+        }}
+      />
+      <FlatList
+        style={{ flex: 1 }}
+        data={filteredConversations}
+        keyExtractor={(item) => item.id}
+        contentInsetAdjustmentBehavior="automatic"
+        keyboardShouldPersistTaps="handled"
+        refreshControl={
+          <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
+        }
+        ListHeaderComponent={
+          showSearch ? (
+            <View
+              style={{
+                flexDirection: 'row',
+                paddingHorizontal: theme.spacing[2],
+                paddingVertical: theme.spacing[1],
+              }}
+            >
+              <SearchBar
+                placeholder={intl.formatMessage({
+                  id: 'health.messages.searchPlaceholder',
+                })}
+                value={query}
+                onChangeText={setQuery}
+              />
+            </View>
+          ) : null
+        }
+        renderItem={({ item }) => (
+          <Pressable
+            onPress={() =>
+              router.push({
+                pathname: '/health/messages/[id]',
+                params: { id: item.id },
+              })
+            }
+          >
+            <ListItem
+              title={item.lastSenderGroupName ?? ''}
+              subtitle={item.title ?? ''}
+              date={item.lastMessageSentAt ?? undefined}
+              unread={!item.isRead}
+              starred={item.isStarred}
+              icon={item.hasAttachment ? documentIcon : heartIcon}
+            />
+          </Pressable>
+        )}
+        ListEmptyComponent={
+          messagesRes.loading && !messagesRes.data ? (
+            <View>
+              {Array.from({ length: 8 }).map((_, index) => (
+                <ListItemSkeleton key={index} />
+              ))}
+            </View>
+          ) : messagesRes.error ? (
+            <View style={{ marginHorizontal: 16, marginTop: 24 }}>
+              <Problem
+                type="error"
+                title={intl.formatMessage({ id: 'problem.error.title' })}
+                message={intl.formatMessage({
+                  id: 'health.messages.errorMessage',
+                })}
+              />
+            </View>
+          ) : (
+            <EmptyList
+              title={<FormattedMessage id="health.messages.noMessagesTitle" />}
+              description={
+                <FormattedMessage id="health.messages.noMessagesText" />
+              }
+              image={
+                <Image
+                  source={illustrationSrc}
+                  style={{ width: 134, height: 204 }}
+                  resizeMode="contain"
+                />
+              }
+            />
+          )
+        }
+      />
+    </View>
+  )
+}

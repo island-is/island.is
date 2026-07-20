@@ -40,6 +40,30 @@ export default function HealthLayout() {
       />
       <Stack.Screen name="appointments/[id]" options={modalScreenOptions} />
       <Stack.Screen
+        name="messages/index"
+        options={{
+          title: intl.formatMessage({ id: 'health.messages.screenTitle' }),
+          headerTitleAlign: 'center',
+        }}
+      />
+      <Stack.Screen
+        name="messages/filter"
+        options={{
+          title: intl.formatMessage({
+            id: 'health.messages.filter.screenTitle',
+          }),
+          headerTitleAlign: 'center',
+        }}
+      />
+      <Stack.Screen
+        name="messages/[id]"
+        options={{
+          title: intl.formatMessage({ id: 'health.messages.screenTitle' }),
+          headerTitleAlign: 'center',
+        }}
+      />
+      <Stack.Screen name="messages/new" options={modalScreenOptions} />
+      <Stack.Screen
         name="questionnaires/index"
         options={{
           title: intl.formatMessage({

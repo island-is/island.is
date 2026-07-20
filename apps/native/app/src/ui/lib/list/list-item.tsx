@@ -59,6 +59,9 @@ const styles = StyleSheet.create({
     marginTop: theme.spacing[3],
     marginRight: theme.spacing[2],
   },
+  contentCentered: {
+    justifyContent: 'center',
+  },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -126,6 +129,17 @@ export function ListItem({
   onPressIcon,
 }: ListItemProps) {
   const intl = useIntl()
+  const hasTitle = !!title
+  const iconImage = (
+    <Image
+      source={
+        selectable && selected ? checkmarkIcon : (icon as ImageSourcePropType)
+      }
+      style={
+        selectable && selected ? styles.selectedIconImage : styles.iconImage
+      }
+    />
+  )
   return (
     <SafeAreaView style={[styles.host, unread && styles.hostUnread]}>
       <View
@@ -135,34 +149,35 @@ export function ListItem({
           selectable && !selected && styles.iconSelectable,
         ]}
       >
-        <Pressable hitSlop={24} onPress={onPressIcon}>
-          <Image
-            source={
-              selectable && selected
-                ? checkmarkIcon
-                : (icon as ImageSourcePropType)
-            }
-            style={
-              selectable && selected
-                ? styles.selectedIconImage
-                : styles.iconImage
-            }
-          />
-        </Pressable>
+        {/* Only wrap in a Pressable when the icon has its own action —
+            otherwise it would swallow taps meant for the whole row. */}
+        {onPressIcon ? (
+          <Pressable hitSlop={24} onPress={onPressIcon}>
+            {iconImage}
+          </Pressable>
+        ) : (
+          iconImage
+        )}
       </View>
-      <View style={styles.content}>
-        <View style={styles.row}>
-          <View style={styles.title}>
-            <Typography variant="body3" numberOfLines={1} ellipsizeMode="tail">
-              {title}
-            </Typography>
+      <View style={[styles.content, !hasTitle && styles.contentCentered]}>
+        {hasTitle && (
+          <View style={styles.row}>
+            <View style={styles.title}>
+              <Typography
+                variant="body3"
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {title}
+              </Typography>
+            </View>
+            {date && (
+              <Typography variant="body3">
+                <FormattedDate value={date} />
+              </Typography>
+            )}
           </View>
-          {date && (
-            <Typography variant="body3">
-              <FormattedDate value={date} />
-            </Typography>
-          )}
-        </View>
+        )}
         <View style={[styles.row, styles.lowerRow]}>
           <View style={styles.subtitleWrapper}>
             <Typography variant="heading5" numberOfLines={1}>
@@ -178,6 +193,11 @@ export function ListItem({
             />
           )}
           <View style={styles.spacer} />
+          {!hasTitle && date && (
+            <Typography variant="body3">
+              <FormattedDate value={date} />
+            </Typography>
+          )}
           {starred && (
             <Image source={starFilledIcon} style={styles.starImage} />
           )}
