@@ -54,6 +54,7 @@ import {
   OverviewField,
   CopyLinkField,
   VehiclePermnoWithInfoField,
+  ScaleField,
   MaybeWithAnswersAndExternalData,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
@@ -1376,5 +1377,25 @@ export const buildVehiclePermnoWithInfoField = (
     fallbackErrorMessage,
     validationFailedErrorMessage,
     isTrailer,
+  }
+}
+
+export const buildScaleField = (
+  data: Omit<ScaleField, 'type' | 'component' | 'children'>,
+): ScaleField => {
+  const { min, max, step, minLabel, maxLabel, showLabels, required } = data
+
+  return {
+    ...extractCommonFields(data),
+    children: undefined,
+    type: FieldTypes.SCALE,
+    component: FieldComponents.SCALE,
+    min,
+    max,
+    step,
+    minLabel,
+    maxLabel,
+    showLabels,
+    required,
   }
 }
