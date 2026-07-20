@@ -29,4 +29,8 @@ export class NationalAgencyForChildrenAndFamiliesClientService {
   async getGenders(user: User): Promise<DropDownDto[]> {
     return await this.externalDropdownApiWithAuth(user).externalGenders()
   }
+
+  async getPostalCodes(user: User): Promise<DropDownDto[]> {
+    return await this.externalDropdownApiWithAuth(user).externalPostalCodes()
+  }
 }

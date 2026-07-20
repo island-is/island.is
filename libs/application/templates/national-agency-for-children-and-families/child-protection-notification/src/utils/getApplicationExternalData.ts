@@ -69,6 +69,9 @@ export const getApplicationExternalData = (
       'childInformation.data.languageEnvironmentOptions',
     ) ?? []
 
+  const postalCodes =
+    getValueViaPath<DropDownDto[]>(externalData, 'postalCodes.data') ?? []
+
   return {
     applicantName,
     applicantNationalId,
@@ -82,5 +85,6 @@ export const getApplicationExternalData = (
     genders,
     childFoundInFrigg,
     languageEnvironmentOptions,
+    postalCodes,
   }
 }
