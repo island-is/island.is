@@ -124,6 +124,30 @@ describe('htmlToBlocks', () => {
     expect(blocks[0].runs[0]).toMatchObject({ highlight: '#fff066' })
   })
 
+  it('marks highlight for a span with a hl-xxxxxx class', () => {
+    // The editor stores highlights as classes — inline styles are blocked by
+    // the WAF in front of the API.
+    const blocks = htmlToBlocks(
+      '<p><span class="hl-ffff00">highlighted</span></p>',
+    )
+    expect(blocks[0].runs[0]).toMatchObject({ highlight: '#ffff00' })
+  })
+
+  it('finds the highlight class among other classes', () => {
+    const blocks = htmlToBlocks(
+      '<p><span class="other hl-008080 more">marked</span></p>',
+    )
+    expect(blocks[0].runs[0]).toMatchObject({ highlight: '#008080' })
+  })
+
+  it('does not highlight a span with an unrelated class', () => {
+    const blocks = htmlToBlocks('<p><span class="fancy">plain</span></p>')
+    expect(blocks[0].runs[0]).toMatchObject({
+      text: 'plain',
+      highlight: false,
+    })
+  })
+
   it('produces multiple runs within one paragraph', () => {
     const blocks = htmlToBlocks('<p>normal <strong>bold</strong> end</p>')
     expect(blocks[0].runs).toHaveLength(3)
@@ -135,6 +159,18 @@ describe('htmlToBlocks', () => {
   it('converts padding-left style to indent in points', () => {
     const blocks = htmlToBlocks('<p style="padding-left: 40px;">indented</p>')
     expect(blocks[0].indent).toBe(30)
+  })
+
+  it('converts an indent-N class to indent in points', () => {
+    // The editor stores indentation as classes — inline styles are blocked by
+    // the WAF in front of the API.
+    expect(htmlToBlocks('<p class="indent-1">x</p>')[0].indent).toBe(30)
+    expect(htmlToBlocks('<p class="indent-3">x</p>')[0].indent).toBe(90)
+  })
+
+  it('caps a class-based indent at the maximum level', () => {
+    const blocks = htmlToBlocks('<p class="indent-99">x</p>')
+    expect(blocks[0].indent).toBe(300)
   })
 
   it('emits an empty block for an empty paragraph', () => {

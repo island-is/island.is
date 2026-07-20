@@ -513,6 +513,18 @@ const NON_HIGHLIGHT_BG = new Set([
   '',
 ])
 
+// The editor stores highlights as hl-xxxxxx classes and indentation as
+// indent-N classes (see the web app's richTextNormalization.ts) — inline
+// styles cannot be used because the WAF in front of the API rejects request
+// bodies containing a style="..." attribute. Style parsing below is kept as a
+// fallback for legacy content saved before the switch to classes.
+const HIGHLIGHT_CLASS_REGEX = /(?:^|\s)hl-([0-9a-f]{6})(?:\s|$)/i
+const INDENT_CLASS_REGEX = /(?:^|\s)indent-(\d+)(?:\s|$)/
+
+// The editor indents 40px per level; 0.75 converts that to PDF points.
+const INDENT_LEVEL_PT = 30
+const MAX_INDENT_LEVEL = 10
+
 const extractBgColor = (style: string): string | null => {
   const m = style.match(/background-color:\s*([^;]+)/)
   if (!m) return null
@@ -562,11 +574,15 @@ const collectRuns = (
       collectRuns(children, bold, true, highlight, result)
     } else if (
       el.name === 'span' &&
-      el.attribs?.style?.includes('background-color')
+      (el.attribs?.class || el.attribs?.style?.includes('background-color'))
     ) {
-      // A transparent/invalid background means no highlight, so inherit the
-      // current highlight state rather than forcing a fill.
-      const color = extractBgColor(el.attribs.style) ?? highlight
+      // A span without a highlight class, or with a transparent/invalid
+      // background, means no highlight, so inherit the current highlight
+      // state rather than forcing a fill.
+      const classMatch = el.attribs?.class?.match(HIGHLIGHT_CLASS_REGEX)
+      const color = classMatch
+        ? `#${classMatch[1].toLowerCase()}`
+        : (el.attribs?.style && extractBgColor(el.attribs.style)) || highlight
       collectRuns(children, bold, italic, color, result)
     } else if (el.name === 'br') {
       result.push({ text: '\n', bold: false, italic: false, highlight: false })
@@ -598,9 +614,13 @@ const collectBlocksFromNodes = (
     const children = el.children ?? []
 
     if (el.name === 'p') {
+      const classMatch = el.attribs?.class?.match(INDENT_CLASS_REGEX)
       const style = el.attribs?.style ?? ''
       const paddingMatch = style.match(/padding-left:\s*(\d+(?:\.\d+)?)px/)
-      const pIndent = paddingMatch
+      const pIndent = classMatch
+        ? Math.min(MAX_INDENT_LEVEL, parseInt(classMatch[1], 10)) *
+          INDENT_LEVEL_PT
+        : paddingMatch
         ? Math.round(parseFloat(paddingMatch[1]) * 0.75)
         : 0
 

@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react'
 import { motion } from 'motion/react'
 
-import { WORD_HIGHLIGHT_COLORS } from './pasteNormalization'
+import { WORD_HIGHLIGHT_COLORS } from './richTextNormalization'
 import * as styles from './TinyMCE.css'
 
 const containerVariants = {
