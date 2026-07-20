@@ -1,3 +1,6 @@
+
+import { GovernmentDebtPaymentModule } from './government-debt-payment/government-debt-payment.module'
+import { GovernmentDebtPaymentService } from './government-debt-payment/government-debt-payment.service'
 import { HousingBenefitsModule } from './hms/housing-benefits/housing-benefits.module'
 import { HousingBenefitsService } from './hms/housing-benefits/housing-benefits.service'
 import { SubmitDocumentsModule } from './vmst/submit-documents/submit-documents.module'
@@ -291,7 +294,8 @@ export const modules = [
   DeRegisterUnemploymentBenefitsModule,
   SubmitDocumentsModule,
   ConfirmTravelModule,
-]
+  GovernmentDebtPaymentModule,
+            ]
 
 export const services = [
   ExampleCommonActionsService,
@@ -390,4 +394,5 @@ export const services = [
   DeRegisterUnemploymentBenefitsService,
   SubmitDocumentsService,
   ConfirmTravelService,
-]
+  GovernmentDebtPaymentService,
+            ]

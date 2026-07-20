@@ -1,10 +1,15 @@
 import { Injectable } from '@nestjs/common'
 import { User, withAuthContext } from '@island.is/auth-nest-tools'
 import { dataOr404Null } from '@island.is/clients/middlewares'
-import { customerRecordsnationalIdGet1 } from '../../gen/fetch'
+import {
+  customerRecordsnationalIdGet1,
+  customerDebtsnationalIdGet2,
+} from '../../gen/fetch'
 import type {
   CustomerRecordsnationalIdGet1Data,
   CustomerRercordsOutputDt,
+  CustomerDebtsnationalIdGet2Data,
+  CustomerDebtsOutput,
 } from '../../gen/fetch'
 
 @Injectable()
@@ -29,5 +34,22 @@ export class FinanceClientV3Service {
     )
 
     return response?.resultCustomerRecords ?? null
+  }
+
+  async getCustomerDebts(
+    user: User,
+    input: CustomerDebtsnationalIdGet2Data['path'] &
+      CustomerDebtsnationalIdGet2Data['query'],
+  ): Promise<CustomerDebtsOutput | null> {
+    const response = await withAuthContext(user, () =>
+      dataOr404Null(
+        customerDebtsnationalIdGet2({
+          path: { nationalID: input.nationalID },
+          query: { nextKey: input.nextKey },
+        }),
+      ),
+    )
+
+    return response?.customerDebtsResult ?? null
   }
 }

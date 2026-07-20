@@ -293,6 +293,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/vmst/submit-documents'),
   [ApplicationTypes.UNEMPLOYMENT_CONFIRM_TRAVEL]: () =>
     import('@island.is/application/templates/vmst/confirm-travel'),
+  [ApplicationTypes.GOVERNMENT_DEBT_PAYMENT]: () =>
+    import('@island.is/application/templates/government-debt-payment'),
 }
 
 export default templates

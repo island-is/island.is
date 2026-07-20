@@ -3,7 +3,7 @@
   "info": {
     "title": "Finance Service  v3",
     "description": "Finance Service v3,   get customer records  ....",
-    "version": "3.0"
+    "version": "3.1"
   },
   "servers": [{ "url": "/rad/TBRIslandis.api.v3:financeServiceApi_v3" }],
   "paths": {
@@ -59,6 +59,39 @@
           "401": { "description": "Access Denied", "content": {} }
         }
       }
+    },
+    "/customerDebts/{nationalID}": {
+      "get": {
+        "description": "Returns chargeItemSubjects/periods  for nationalid/ assessment Year/charge type",
+        "operationId": "customerDebtsnationalID_GET_2",
+        "parameters": [
+          {
+            "name": "nationalID",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "nextKey",
+            "in": "query",
+            "description": "next key if more data",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/customerDebtsnationalID_GET_response"
+                }
+              }
+            }
+          },
+          "401": { "description": "Access Denied", "content": {} }
+        }
+      }
     }
   },
   "components": {
@@ -72,6 +105,19 @@
           "detail": { "type": "string" },
           "param": { "type": "string" },
           "traceId": { "type": "string" }
+        }
+      },
+      "customerDebts_output": {
+        "required": ["debts", "message", "nextkey", "timestamp"],
+        "type": "object",
+        "properties": {
+          "message": { "type": "string" },
+          "timestamp": { "type": "string" },
+          "nextkey": { "type": "string" },
+          "debts": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/debts_details_dt" }
+          }
         }
       },
       "ProblemDetails_DT": {
@@ -163,6 +209,45 @@
           }
         }
       },
+      "debts_details_dt": {
+        "required": [
+          "chargeItemSubject",
+          "chargeTypeId",
+          "chargeTypeName",
+          "debts",
+          "dueDate",
+          "finalDueDate",
+          "payID",
+          "timePeriod"
+        ],
+        "type": "object",
+        "properties": {
+          "chargeTypeId": { "type": "string" },
+          "chargeTypeName": { "type": "string" },
+          "chargeItemSubject": {
+            "type": "string",
+            "description": "gjaldgrunnur"
+          },
+          "timePeriod": {
+            "type": "string",
+            "description": "Álagningartímabil"
+          },
+          "dueDate": { "type": "string" },
+          "finalDueDate": { "type": "string" },
+          "debts": { "type": "integer", "format": "int64" },
+          "payID": { "type": "string" }
+        }
+      },
+      "customerDebtsnationalID_GET_response": {
+        "required": ["customerDebtsResult"],
+        "type": "object",
+        "properties": {
+          "error": { "$ref": "#/components/schemas/ProblemDetails_DT" },
+          "customerDebtsResult": {
+            "$ref": "#/components/schemas/customerDebts_output"
+          }
+        }
+      },
       "customerRecordsnationalID_GET_response": {
         "required": ["resultCustomerRecords"],
         "type": "object",
@@ -174,7 +259,7 @@
         }
       },
       "customerRercords_output_dt": {
-        "required": ["message", "more", "nextKey", "pagesize", "records"],
+        "required": ["more", "pagesize"],
         "type": "object",
         "properties": {
           "more": { "type": "boolean", "description": "true more data" },
