@@ -632,3 +632,9 @@ export const getVerdictAppealDecision = (
       return 'Ekki skráð'
   }
 }
+
+// Recognizes only the tags the rich text editor produces, so plain text
+// containing angle-bracket placeholders (e.g. "<nafn ökumanns>") is not
+// mistaken for HTML.
+export const containsHtml = (str: string): boolean =>
+  /<\/?(?:p|strong|em|b|i|span|br)(?:[\s/>])/i.test(str)

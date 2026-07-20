@@ -55,7 +55,7 @@ describe('getIncidentDescription', () => {
     )
 
     expect(result).toBe(
-      'fyrir umferðarlagabrot með því að hafa, [Dagsetning], ekið bifreiðinni [Skráningarnúmer ökutækis] undir áhrifum áfengis um [Vettvangur], þar sem lögregla stöðvaði aksturinn.',
+      '<p>fyrir umferðarlagabrot með því að hafa, [Dagsetning], ekið bifreiðinni [Skráningarnúmer ökutækis] undir áhrifum áfengis um [Vettvangur], þar sem lögregla stöðvaði aksturinn.</p>',
     )
   })
 
@@ -71,7 +71,9 @@ describe('getIncidentDescription', () => {
       { '123-123-123': [IndictmentSubtype.CUSTOMS_VIOLATION] },
     )
 
-    expect(result).toBe('fyrir [tollalagabrot] með því að hafa, [Dagsetning]')
+    expect(result).toBe(
+      '<p>fyrir [tollalagabrot] með því að hafa, [Dagsetning]</p>',
+    )
   })
 
   test('should return a description when there are multiple subtypes but only traffic violation is selected', () => {
@@ -96,7 +98,7 @@ describe('getIncidentDescription', () => {
     )
 
     expect(result).toBe(
-      'fyrir umferðarlagabrot með því að hafa, [Dagsetning], ekið bifreiðinni [Skráningarnúmer ökutækis] undir áhrifum áfengis um [Vettvangur], þar sem lögregla stöðvaði aksturinn.',
+      '<p>fyrir umferðarlagabrot með því að hafa, [Dagsetning], ekið bifreiðinni [Skráningarnúmer ökutækis] undir áhrifum áfengis um [Vettvangur], þar sem lögregla stöðvaði aksturinn.</p>',
     )
   })
 
@@ -125,7 +127,7 @@ describe('getIncidentDescription', () => {
     )
 
     expect(result).toBe(
-      'fyrir [tollalagabrot, þjófnaður] með því að hafa, [Dagsetning]',
+      '<p>fyrir [tollalagabrot, þjófnaður] með því að hafa, [Dagsetning]</p>',
     )
   })
 
@@ -154,7 +156,7 @@ describe('getIncidentDescription', () => {
     )
 
     expect(result).toBe(
-      'fyrir umferðarlagabrot með því að hafa, [Dagsetning], ekið bifreiðinni [Skráningarnúmer ökutækis] undir áhrifum áfengis um [Vettvangur], þar sem lögregla stöðvaði aksturinn.',
+      '<p>fyrir umferðarlagabrot með því að hafa, [Dagsetning], ekið bifreiðinni [Skráningarnúmer ökutækis] undir áhrifum áfengis um [Vettvangur], þar sem lögregla stöðvaði aksturinn.</p>',
     )
   })
 })

@@ -29,12 +29,17 @@ interface Props {
   label: string
   placeholder: string
   defaultValue?: string
+  // The current content as held by the caller. Unlike defaultValue, changes
+  // to this prop are synced into a mounted editor (unless it has focus), so
+  // callers that regenerate content outside the editor can keep it in sync.
+  value?: string
   onChange?: (html: string) => void
   onDebouncedChange?: (html: string) => void
   onBlur?: (html: string) => void
   disabled?: boolean
   errorMessage?: string
   required?: boolean
+  height?: number
   'data-testid'?: string
 }
 
@@ -42,12 +47,14 @@ const TinyMCE = ({
   label,
   placeholder,
   defaultValue,
+  value,
   onChange,
   onDebouncedChange,
   onBlur,
   disabled,
   errorMessage,
   required,
+  height = 450,
   'data-testid': dataTestId,
 }: Props) => {
   const editorId = useId()
@@ -58,6 +65,7 @@ const TinyMCE = ({
     left: 0,
   })
   const [selectedColor, setSelectedColor] = useState<string | null>(null)
+  const [editorReady, setEditorReady] = useState<boolean>(false)
   const initialValueRef = useRef(defaultValue ?? '')
   const editorRef = useRef<TinyMCEEditor | null>(null)
   const highlightBtnApiRef = useRef<ToolbarToggleButtonInstanceApi | null>(null)
@@ -85,6 +93,26 @@ const TinyMCE = ({
       debouncedSave.flush()
     }
   }, [debouncedSave])
+
+  // Sync externally-driven value changes (e.g. autofill regeneration) into
+  // the editor. Editor-originated changes round-trip through onChange and
+  // match getContent(), so this only writes on genuinely external updates.
+  // A focused editor is left alone so the user's typing isn't clobbered.
+  // The editor loads asynchronously, so depend on editorReady to replay a
+  // value change that arrived before init — otherwise it would be lost.
+  useEffect(() => {
+    const editor = editorRef.current
+    if (
+      !editorReady ||
+      value === undefined ||
+      !editor ||
+      editor.hasFocus() ||
+      value === editor.getContent()
+    ) {
+      return
+    }
+    editor.setContent(value)
+  }, [value, editorReady])
 
   useEffect(() => {
     highlightBtnApiRef.current?.setActive(pickerOpen)
@@ -183,9 +211,10 @@ const TinyMCE = ({
           tinymceScriptSrc="/tinymce/tinymce.min.js"
           onInit={(_, editor) => {
             editorRef.current = editor
+            setEditorReady(true)
           }}
           init={{
-            height: 450,
+            height,
             plugins: 'lists fullscreen paste',
             toolbar: 'bold italic indent outdent highlightcolor fullscreen',
             indentation: `${INDENT_STEP_PX}px`,

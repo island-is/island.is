@@ -381,6 +381,18 @@ describe('addRichText highlight placement', () => {
     doc.end()
   })
 
+  it('restores the default font after a block ending in a formatted run', () => {
+    const { doc } = createInstrumentedDoc()
+
+    addRichText(doc, '<p>plain <strong>bold</strong></p>', 2)
+
+    // The document font must not be left on Times-Bold, or subsequent text
+    // added without an explicit font would render bold.
+    const font = (doc as unknown as { _font: { name: string } })._font
+    expect(font.name).toBe('Times-Roman')
+    doc.end()
+  })
+
   it('keeps rect and text together when the block moves to a new page', () => {
     const { doc, rects, frags } = createInstrumentedDoc()
 
