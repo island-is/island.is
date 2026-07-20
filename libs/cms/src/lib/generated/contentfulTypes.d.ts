@@ -4690,6 +4690,7 @@ export interface ISliceConnectedComponentFields {
     | 'VERAnnouncementCalculator'
     | 'Lyfjastofnun/Pharmacies'
     | 'ECOI/Calculator'
+    | 'RSK/Calculator'
     | undefined
 
   /** Localized JSON */
