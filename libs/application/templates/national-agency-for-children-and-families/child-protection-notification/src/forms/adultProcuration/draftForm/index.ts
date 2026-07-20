@@ -7,7 +7,7 @@ import { parentsSection } from '../../shared/parentsSection'
 import { protectiveFactorsSection } from '../../shared/protectiveFactorsSection'
 import { overviewSection } from './overviewSection'
 import { reasonForNotificationSection } from './reasonForNotificationSection'
-import { childSafetySection } from '../shared/childSafetySection'
+import { childSafetySection } from '../../shared/childSafetySection'
 
 export const AdultProcurationDraftForm = buildForm({
   id: 'AdultProcurationDraftForm',

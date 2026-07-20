@@ -12,19 +12,19 @@ import { getApplicationExternalData } from '../../utils/getApplicationExternalDa
 
 export const childSafetySection = buildSection({
   id: 'childSafetySection',
-  title: childSafetyMessages.shared.sectionTitle,
+  title: childSafetyMessages.sectionTitle,
   children: [
     buildMultiField({
       id: 'childSafety',
-      title: childSafetyMessages.shared.sectionTitle,
-      description: childSafetyMessages.shared.description,
+      title: childSafetyMessages.sectionTitle,
+      description: childSafetyMessages.description,
       children: [
         buildDescriptionField({
           id: 'childSafety.question',
           title: ({ answers }) =>
             isUnborn(answers)
-              ? childSafetyMessages.unborn.sliderQuestion
-              : childSafetyMessages.shared.sliderQuestion,
+              ? childSafetyMessages.sliderQuestionUnborn
+              : childSafetyMessages.sliderQuestion,
           titleVariant: 'h4',
           doesNotRequireAnswer: true,
           space: 2,
@@ -33,6 +33,7 @@ export const childSafetySection = buildSection({
           id: 'childSafety.urgencyDescription',
           alertType: 'info',
           doesNotRequireAnswer: true,
+          marginBottom: 0,
           condition: (answers) => {
             const { childSafetyUrgencyLevel } = getApplicationAnswers(answers)
             return (
@@ -92,8 +93,9 @@ export const childSafetySection = buildSection({
           id: 'childSafety.emergencyWarning',
           alertType: 'warning',
           doesNotRequireAnswer: true,
+          marginTop: 0,
           condition: showEmergencyWarning,
-          message: childSafetyMessages.shared.warningText,
+          message: childSafetyMessages.warningText,
         }),
       ],
     }),

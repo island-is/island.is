@@ -147,7 +147,7 @@ export const adultProcurationOverviewFields = (editable?: boolean) => [
   }),
   buildOverviewField({
     id: 'overview.childSafety',
-    title: childSafetyMessages.shared.sectionTitle,
+    title: childSafetyMessages.sectionTitle,
     backId: editable ? 'childSafety' : undefined,
     items: getChildSafetyItems,
     hideIfEmpty: true,
