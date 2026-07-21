@@ -30,3 +30,13 @@ export const getFeatureAffectedServices = async (
     throw new Error('Feature deployment with a feature name not defined')
   }
 }
+
+// Define what databases should be restored rather than 
+// created freshly in feature deployments.
+export const featureDbRestores = [
+  {
+    service: 'servicesauth',
+    bucket: 'island-is-ids-dev-feature-db-dumps',
+    key: 'servicesauth-latest.sql.gz'
+  }
+]
