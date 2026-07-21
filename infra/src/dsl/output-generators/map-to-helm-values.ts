@@ -222,11 +222,12 @@ const serializeService: SerializeMethod<HelmService> = async (
   // initContainers
   if (typeof serviceDef.initContainers !== 'undefined') {
     if (serviceDef.initContainers.containers.length > 0) {
-
-      const isFeatureDeploy = !!env1.feature;
-      const hasPostgres = !!serviceDef.initContainers.postgres;
-      const dbName = serviceDef.initContainers.postgres?.name;
-      const restores = featureDbRestores.find(service => dbName?.endsWith(`_${service.service}`));
+      const isFeatureDeploy = !!env1.feature
+      const hasPostgres = !!serviceDef.initContainers.postgres
+      const dbName = serviceDef.initContainers.postgres?.name
+      const restores = featureDbRestores.find((service) =>
+        dbName?.endsWith(`_${service.service}`),
+      )
 
       // Lets not run migrations and seeds for databases that are restored.
       if (!(isFeatureDeploy && hasPostgres && restores)) {
@@ -265,7 +266,6 @@ const serializeService: SerializeMethod<HelmService> = async (
           addToErrors(errors)
         }
       }
-
     } else {
       addToErrors(['No containers to run defined in initContainers'])
     }

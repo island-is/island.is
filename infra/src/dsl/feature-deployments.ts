@@ -31,12 +31,12 @@ export const getFeatureAffectedServices = async (
   }
 }
 
-// Define what databases should be restored rather than 
+// Define what databases should be restored rather than
 // created freshly in feature deployments.
 export const featureDbRestores = [
   {
     service: 'servicesauth',
     bucket: 'island-is-ids-dev-feature-db-dumps',
-    key: 'servicesauth-latest.sql.gz'
-  }
+    key: 'servicesauth-latest.sql.gz',
+  },
 ]
