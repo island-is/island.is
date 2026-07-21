@@ -31,6 +31,7 @@ const WebChat = ({ webChat, pushUp, renderFallback }: WebChatProps) => {
     let ticketId: string = urlTrackingTicketId ?? ''
     if (ticketId.length > 0 && ticketId.trim() === '') ticketId = ''
     else if (!ticketId.trim()) ticketId = '36130758325906'
+    else ticketId = ticketId.trim()
 
     return (
       <ZendeskChatPanel
