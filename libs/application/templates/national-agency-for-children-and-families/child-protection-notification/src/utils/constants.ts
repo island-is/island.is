@@ -1,6 +1,7 @@
 import { DefaultEvents } from '@island.is/application/types'
 
 export const RISK_TO_UNBORN = 'RiskToUnborn'
+export const IS = 'IS'
 
 export type Events = {
   type: DefaultEvents.SUBMIT | DefaultEvents.ABORT
@@ -20,6 +21,7 @@ export enum ApiModuleActions {
   getGenders = 'getGenders',
   getChildInformation = 'getChildInformation',
   getUrgencyAssessments = 'getUrgencyAssessments',
+  getPostalCodes = 'getPostalCodes',
   createNotification = 'createNotification',
   completeNotification = 'completeNotification',
 }

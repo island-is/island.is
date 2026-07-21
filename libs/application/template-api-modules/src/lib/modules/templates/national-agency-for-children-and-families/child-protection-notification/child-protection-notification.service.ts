@@ -38,6 +38,12 @@ export class ChildProtectionNotificationService extends BaseTemplateApiService {
     )
   }
 
+  async getPostalCodes({ auth }: TemplateApiModuleActionProps) {
+    return await this.nationalAgencyForChildrenAndFamiliesClientService.getPostalCodes(
+      auth,
+    )
+  }
+
   async getChildInformation({
     auth,
     application,

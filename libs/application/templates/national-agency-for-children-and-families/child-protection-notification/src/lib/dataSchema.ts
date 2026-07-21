@@ -1,11 +1,11 @@
 import { NO, YES } from '@island.is/application/core'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import { KnowsNationalId } from '../utils/constants'
+import { KnowsNationalId, IS } from '../utils/constants'
 import { errorMessages } from './messages'
 
 const isValidPhone = (value: string) => {
-  const phone = parsePhoneNumberFromString(value, 'IS')
+  const phone = parsePhoneNumberFromString(value, IS)
   return phone ? phone.isValid() : false
 }
 
@@ -77,6 +77,7 @@ const childSchema = z
         address: z.string().optional(),
         postalCode: z.string().optional(),
         municipality: z.string().optional(),
+        municipalityPostalCode: z.string().optional(),
         language: z.string().optional(),
         needsInterpreter: z.array(z.string()).optional(),
       })
@@ -131,6 +132,7 @@ const parentSchema = z.object({
   address: z.string().optional(),
   postalCode: z.string().optional(),
   municipality: z.string().optional(),
+  municipalityPostalCode: z.string().optional(),
   needsInterpreter: z.array(z.string()).optional(),
   preferredLanguage: z.string().optional(),
 })
@@ -176,8 +178,7 @@ const parentsSchema = z
       for (const key of ['parent1', 'parent2'] as const) {
         const parent = data[key]
         const needsPreferredLanguage =
-          parent?.citizenship !== 'IS' &&
-          parent?.needsInterpreter?.includes(YES)
+          parent?.citizenship !== IS && parent?.needsInterpreter?.includes(YES)
 
         // If parent is non-Icelandic and interpreter is requested, preferred language is required.
         if (needsPreferredLanguage && !parent?.preferredLanguage) {

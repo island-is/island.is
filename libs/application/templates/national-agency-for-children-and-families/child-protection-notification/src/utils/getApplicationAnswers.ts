@@ -156,6 +156,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'child.manualInfo.municipality',
   )
 
+  const childManualMunicipalityPostalCode = getValueViaPath<string>(
+    answers,
+    'child.manualInfo.municipalityPostalCode',
+  )
+
   const childManualLanguage = getValueViaPath<string>(
     answers,
     'child.manualInfo.language',
@@ -344,6 +349,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     childManualAddress,
     childManualPostalCode,
     childManualMunicipality,
+    childManualMunicipalityPostalCode,
     childManualLanguage,
     childManualNeedsInterpreter,
     parentsKnowsNationalIds,

@@ -35,3 +35,9 @@ export const UrgencyAssessmentsApi = defineTemplateApi({
   externalDataId: 'urgencyAssessments',
   namespace: ApplicationTypes.CHILD_PROTECTION_NOTIFICATION,
 })
+
+export const PostalCodesApi = defineTemplateApi({
+  action: ApiModuleActions.getPostalCodes,
+  externalDataId: 'postalCodes',
+  namespace: ApplicationTypes.CHILD_PROTECTION_NOTIFICATION,
+})
