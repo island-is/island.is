@@ -22,56 +22,62 @@ async function main() {
     )
   }
 
-  const namespacesToAdd = new Set()
-  const nsGrantsToAdd = new Set()
-  const directory = `charts/features/deployments/${featureName}`
+  const directories = [
+    `charts/features/deployments/${featureName}`,
+    `charts/ids-features/deployments/${featureName}`,
+  ]
 
-  const files = await glob(`${directory}/**/values.{yaml,cronjob.yaml}`)
+  for (const directory of directories) {
+    const namespacesToAdd = new Set()
+    const nsGrantsToAdd = new Set()
 
-  for (const file of files) {
-    const textContent = readFileSync(file, 'utf8')
-    const yamlContent = await jsyaml.load(textContent)
-    const namespaceToAdd =
-      yamlContent &&
-      typeof yamlContent === 'object' &&
-      'namespace' in yamlContent
-        ? yamlContent?.namespace
-        : null
+    const files = await glob(`${directory}/**/values.{yaml,cronjob.yaml}`)
 
-    const nsGrantToAdd =
-      yamlContent &&
-      typeof yamlContent === 'object' &&
-      'grantNamespaces' in yamlContent
-        ? yamlContent?.grantNamespaces
-        : null
+    for (const file of files) {
+      const textContent = readFileSync(file, 'utf8')
+      const yamlContent = await jsyaml.load(textContent)
+      const namespaceToAdd =
+        yamlContent &&
+        typeof yamlContent === 'object' &&
+        'namespace' in yamlContent
+          ? yamlContent?.namespace
+          : null
 
-    if (namespaceToAdd) {
-      namespacesToAdd.add(namespaceToAdd)
+      const nsGrantToAdd =
+        yamlContent &&
+        typeof yamlContent === 'object' &&
+        'grantNamespaces' in yamlContent
+          ? yamlContent?.grantNamespaces
+          : null
+
+      if (namespaceToAdd) {
+        namespacesToAdd.add(namespaceToAdd)
+      }
+
+      if (nsGrantToAdd && Array.isArray(nsGrantToAdd)) {
+        console.log(nsGrantToAdd)
+        nsGrantToAdd.forEach((nsGrant) => nsGrantsToAdd.add(nsGrant))
+      }
     }
 
-    if (nsGrantToAdd && Array.isArray(nsGrantToAdd)) {
-      console.log(nsGrantToAdd)
-      nsGrantToAdd.forEach((nsGrant) => nsGrantsToAdd.add(nsGrant))
+    console.log('Namespaces to add:', namespacesToAdd)
+    console.log('NS grants to add:', nsGrantsToAdd)
+
+    const directoryPath = path.join(directory, 'bootstrap')
+    mkdirSync(directoryPath, { recursive: true })
+
+    const content = {
+      namespaces: Array.from(namespacesToAdd),
+      namespaceLabels: {
+        namespaceType: 'feature',
+      },
+      grantNamespacesEnabled: true,
+      grantNamespaces: Array.from(nsGrantsToAdd),
     }
+    writeFileSync(
+      `${directoryPath}/values.bootstrap.yaml`,
+      jsyaml.dump(content),
+      { encoding: 'utf-8' },
+    )
   }
-
-  console.log('Namespaces to add:', namespacesToAdd)
-  console.log('NS grants to add:', nsGrantsToAdd)
-
-  const directoryPath = path.join(directory, 'bootstrap')
-  mkdirSync(directoryPath, { recursive: true })
-
-  const content = {
-    namespaces: Array.from(namespacesToAdd),
-    namespaceLabels: {
-      namespaceType: 'feature',
-    },
-    grantNamespacesEnabled: true,
-    grantNamespaces: Array.from(nsGrantsToAdd),
-  }
-  writeFileSync(
-    `${directoryPath}/values.bootstrap.yaml`,
-    jsyaml.dump(content),
-    { encoding: 'utf-8' },
-  )
 }
