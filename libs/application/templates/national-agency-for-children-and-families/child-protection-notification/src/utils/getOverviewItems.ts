@@ -575,6 +575,28 @@ const buildParentItems = (
             hideIfEmpty: true,
           },
         ]),
+    ...(parent?.citizenship && parent.citizenship !== IS
+      ? [
+          {
+            width: 'half' as const,
+            keyText: childMessages.manualInfo.needsInterpreter,
+            valueText: parent.needsInterpreter?.includes(YES)
+              ? sharedMessages.radioYes
+              : sharedMessages.radioNo,
+          },
+          ...(parent.needsInterpreter?.includes(YES)
+            ? [
+                {
+                  width: 'half' as const,
+                  keyText: childMessages.manualInfo.language,
+                  valueText: getLanguageByCode(parent.preferredLanguage ?? '')
+                    ?.name,
+                  hideIfEmpty: true,
+                },
+              ]
+            : []),
+        ]
+      : []),
   ]
 }
 
