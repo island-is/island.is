@@ -1091,3 +1091,24 @@ export const getProtectiveFactorsItems = (
 
   return items
 }
+
+export const getChildSafetyItems = (
+  answers: FormValue,
+  externalData: ExternalData,
+): Array<KeyValueItem> => {
+  const { childSafetyUrgencyLevel } = getApplicationAnswers(answers)
+  const { urgencyAssessments } = getApplicationExternalData(externalData)
+
+  const selectedAssessment = urgencyAssessments.find(
+    (a) => a.value === childSafetyUrgencyLevel,
+  )
+
+  return [
+    {
+      width: 'full',
+      keyText: selectedAssessment?.label ?? childSafetyUrgencyLevel ?? '',
+      valueText: selectedAssessment?.description ?? '',
+      hideIfEmpty: true,
+    },
+  ]
+}

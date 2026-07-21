@@ -313,6 +313,10 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     answers,
     'memm.wellbeing.disabilityService',
   )
+  const childSafetyUrgencyLevel = getValueViaPath<string>(
+    answers,
+    'childSafetyUrgencyLevel',
+  )
 
   return {
     serviceProviderService,
@@ -379,5 +383,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     memmWellbeingWellbeingManagerName,
     memmWellbeingDisability,
     memmWellbeingDisabilityService,
+    childSafetyUrgencyLevel,
   }
 }

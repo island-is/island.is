@@ -1,6 +1,7 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import {
+  DetailedDropDownDto,
   DropDownDto,
   ProtectiveFactorSectionDto,
 } from '@island.is/clients/national-agency-for-children-and-families'
@@ -69,6 +70,12 @@ export const getApplicationExternalData = (
       'childInformation.data.languageEnvironmentOptions',
     ) ?? []
 
+  const urgencyAssessments =
+    getValueViaPath<DetailedDropDownDto[]>(
+      externalData,
+      'urgencyAssessments.data',
+    ) ?? []
+
   const postalCodes =
     getValueViaPath<DropDownDto[]>(externalData, 'postalCodes.data') ?? []
 
@@ -85,6 +92,7 @@ export const getApplicationExternalData = (
     genders,
     childFoundInFrigg,
     languageEnvironmentOptions,
+    urgencyAssessments,
     postalCodes,
   }
 }

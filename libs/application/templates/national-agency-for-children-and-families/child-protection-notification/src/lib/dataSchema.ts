@@ -402,6 +402,7 @@ export const dataSchema = z.object({
   reasonForNotification: reasonForNotificationSchema,
   reasonNotificationHistory: reasonNotificationHistorySchema,
   protectiveFactors: protectiveFactorsSchema,
+  childSafetyUrgencyLevel: z.string().optional(),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>
