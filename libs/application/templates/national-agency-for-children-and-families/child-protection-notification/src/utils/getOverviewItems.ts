@@ -9,11 +9,11 @@ import {
   FormValue,
   KeyValueItem,
 } from '@island.is/application/types'
-import { Locale } from '@island.is/shared/types'
 import {
   formatPhoneNumber,
   removeCountryCode,
 } from '@island.is/application/ui-components'
+import { Locale } from '@island.is/shared/types'
 import { getCountryByCode, getLanguageByCode } from '@island.is/shared/utils'
 import { format as formatKennitala } from 'kennitala'
 import { formatNumber } from 'libphonenumber-js'
@@ -27,9 +27,10 @@ import {
 } from '../lib/messages'
 import {
   DO_NOT_KNOW,
+  IS,
   KnowsNationalId,
-  NOT_APPLICABLE,
   NoNationalIdReason,
+  NOT_APPLICABLE,
   Pronoun,
   RISK_TO_UNBORN,
 } from '../utils/constants'
@@ -96,13 +97,6 @@ const disabilityServiceLabelMap = {
   health: memmMessages.wellbeing.disabilityServiceHealth,
   emergency: memmMessages.wellbeing.disabilityServiceEmergency,
 } as const
-
-const municipalityLabelMap: Record<string, string> = {
-  reykjavik: 'Reykjavík',
-  kopavogur: 'Kópavogur',
-  hafnarfjordur: 'Hafnarfjörður',
-  akureyri: 'Akureyri',
-}
 
 export const getOverviewItems = (
   answers: FormValue,
@@ -362,7 +356,7 @@ export const getChildManualItems = (
   answers: FormValue,
   externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const { genders } = getApplicationExternalData(externalData)
+  const { genders, postalCodes } = getApplicationExternalData(externalData)
   const {
     childManualName,
     childManualAge,
@@ -374,6 +368,7 @@ export const getChildManualItems = (
     childManualAddress,
     childManualPostalCode,
     childManualMunicipality,
+    childManualMunicipalityPostalCode,
     childManualLanguage,
     childManualNeedsInterpreter,
   } = getApplicationAnswers(answers)
@@ -437,21 +432,32 @@ export const getChildManualItems = (
       valueText: childManualAddress ?? '',
       hideIfEmpty: true,
     },
-    {
-      width: 'half',
-      keyText: childMessages.manualInfo.postalCode,
-      valueText: childManualPostalCode ?? '',
-      hideIfEmpty: true,
-    },
-    {
-      width: 'half',
-      keyText: childMessages.manualInfo.municipality,
-      valueText: childManualMunicipality
-        ? municipalityLabelMap[childManualMunicipality] ??
-          childManualMunicipality
-        : '',
-      hideIfEmpty: true,
-    },
+    ...(childManualCountry === IS
+      ? [
+          {
+            width: 'half' as const,
+            keyText: childMessages.manualInfo.municipality,
+            valueText:
+              postalCodes.find(
+                (p) => p.value === childManualMunicipalityPostalCode,
+              )?.label ?? '',
+            hideIfEmpty: true,
+          },
+        ]
+      : [
+          {
+            width: 'half' as const,
+            keyText: childMessages.manualInfo.postalCode,
+            valueText: childManualPostalCode ?? '',
+            hideIfEmpty: true,
+          },
+          {
+            width: 'half' as const,
+            keyText: childMessages.manualInfo.municipality,
+            valueText: childManualMunicipality ?? '',
+            hideIfEmpty: true,
+          },
+        ]),
     {
       width: 'half',
       keyText: childMessages.manualInfo.language,
@@ -473,7 +479,7 @@ const buildParentItems = (
   knowsParentNationalIds: string | undefined,
   externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const { genders } = getApplicationExternalData(externalData)
+  const { genders, postalCodes } = getApplicationExternalData(externalData)
   if (knowsParentNationalIds === YES) {
     return [
       {
@@ -544,20 +550,31 @@ const buildParentItems = (
       valueText: parent?.address ?? '',
       hideIfEmpty: true,
     },
-    {
-      width: 'half',
-      keyText: childMessages.manualInfo.postalCode,
-      valueText: parent?.postalCode ?? '',
-      hideIfEmpty: true,
-    },
-    {
-      width: 'half',
-      keyText: childMessages.manualInfo.municipality,
-      valueText: parent?.municipality
-        ? municipalityLabelMap[parent.municipality] ?? parent.municipality
-        : '',
-      hideIfEmpty: true,
-    },
+    ...(parent?.country === IS
+      ? [
+          {
+            width: 'half' as const,
+            keyText: childMessages.manualInfo.municipality,
+            valueText:
+              postalCodes.find((p) => p.value === parent.municipalityPostalCode)
+                ?.label ?? '',
+            hideIfEmpty: true,
+          },
+        ]
+      : [
+          {
+            width: 'half' as const,
+            keyText: childMessages.manualInfo.postalCode,
+            valueText: parent?.postalCode ?? '',
+            hideIfEmpty: true,
+          },
+          {
+            width: 'half' as const,
+            keyText: childMessages.manualInfo.municipality,
+            valueText: parent?.municipality ?? '',
+            hideIfEmpty: true,
+          },
+        ]),
   ]
 }
 

@@ -4,15 +4,12 @@ import {
   buildSelectField,
   buildSubSection,
   NO,
-  YES,
 } from '@island.is/application/core'
-import {
-  reasonForNotificationMessages,
-  sharedMessages,
-} from '../../../../lib/messages'
+import { reasonForNotificationMessages } from '../../../../lib/messages'
 import {
   getAreParentsInformedTitle,
   getHasDiscussedWithParentsTitle,
+  getYesNoOptions,
 } from '../../../../utils/childProtectionNotificationUtils'
 import { getApplicationAnswers } from '../../../../utils/getApplicationAnswers'
 
@@ -30,16 +27,7 @@ export const reasonNotificationHistorySubSection = buildSubSection({
             reasonForNotificationMessages.notificationHistory.hasReportedBefore,
           required: true,
           width: 'half',
-          options: [
-            {
-              value: YES,
-              label: sharedMessages.radioYes,
-            },
-            {
-              value: NO,
-              label: sharedMessages.radioNo,
-            },
-          ],
+          options: getYesNoOptions(),
         }),
         buildRadioField({
           id: 'reasonNotificationHistory.hasDiscussedWithParents',
@@ -47,16 +35,7 @@ export const reasonNotificationHistorySubSection = buildSubSection({
           required: true,
           width: 'half',
           space: 4,
-          options: [
-            {
-              value: YES,
-              label: sharedMessages.radioYes,
-            },
-            {
-              value: NO,
-              label: sharedMessages.radioNo,
-            },
-          ],
+          options: getYesNoOptions(),
         }),
         buildRadioField({
           id: 'reasonNotificationHistory.areParentsInformed',
@@ -64,16 +43,7 @@ export const reasonNotificationHistorySubSection = buildSubSection({
           required: true,
           width: 'half',
           space: 4,
-          options: [
-            {
-              value: YES,
-              label: sharedMessages.radioYes,
-            },
-            {
-              value: NO,
-              label: sharedMessages.radioNo,
-            },
-          ],
+          options: getYesNoOptions(),
         }),
         buildSelectField({
           id: 'reasonNotificationHistory.biggestConcern',

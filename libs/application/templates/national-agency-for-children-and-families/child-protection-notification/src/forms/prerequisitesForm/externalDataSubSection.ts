@@ -8,6 +8,7 @@ import {
   CategoriesApi,
   GendersApi,
   IdentityApiProvider,
+  PostalCodesApi,
   ProtectiveFactorsApi,
   UrgencyAssessmentsApi,
 } from '../../dataProviders'
@@ -45,6 +46,9 @@ export const externalDataSubSection = buildSubSection({
         }),
         buildDataProviderItem({
           provider: UrgencyAssessmentsApi,
+        }),
+        buildDataProviderItem({
+          provider: PostalCodesApi,
         }),
       ],
     }),

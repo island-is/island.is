@@ -13,9 +13,13 @@ import {
 } from './conditionUtils'
 import { getApplicationAnswers } from './getApplicationAnswers'
 
-export const getYesNoDoNotKnowOptions = () => [
+export const getYesNoOptions = () => [
   { value: YES, label: sharedMessages.radioYes },
   { value: NO, label: sharedMessages.radioNo },
+]
+
+export const getYesNoDoNotKnowOptions = () => [
+  ...getYesNoOptions(),
   { value: DO_NOT_KNOW, label: sharedMessages.radioDoNotKnow },
 ]
 

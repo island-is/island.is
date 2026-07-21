@@ -36,4 +36,8 @@ export class NationalAgencyForChildrenAndFamiliesClientService {
       user,
     ).externalUrgencyAssessments()
   }
+
+  async getPostalCodes(user: User): Promise<DropDownDto[]> {
+    return await this.externalDropdownApiWithAuth(user).externalPostalCodes()
+  }
 }

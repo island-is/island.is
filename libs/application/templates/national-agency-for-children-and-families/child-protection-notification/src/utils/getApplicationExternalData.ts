@@ -76,6 +76,9 @@ export const getApplicationExternalData = (
       'urgencyAssessments.data',
     ) ?? []
 
+  const postalCodes =
+    getValueViaPath<DropDownDto[]>(externalData, 'postalCodes.data') ?? []
+
   return {
     applicantName,
     applicantNationalId,
@@ -90,5 +93,6 @@ export const getApplicationExternalData = (
     childFoundInFrigg,
     languageEnvironmentOptions,
     urgencyAssessments,
+    postalCodes,
   }
 }

@@ -1,7 +1,7 @@
 import {
-  NO,
   YES,
   buildAlertMessageField,
+  buildCheckboxField,
   buildDescriptionField,
   buildMultiField,
   buildNationalIdWithNameField,
@@ -9,24 +9,21 @@ import {
   buildRadioField,
   buildSection,
   buildSelectField,
-  buildCheckboxField,
   buildTextField,
 } from '@island.is/application/core'
 import {
   getAllCountryCodes,
   getAllLanguageCodes,
 } from '@island.is/shared/utils'
-import {
-  childMessages,
-  parentsMessages,
-  sharedMessages,
-} from '../../lib/messages'
+import { childMessages, parentsMessages } from '../../lib/messages'
+import { getYesNoOptions } from '../../utils/childProtectionNotificationUtils'
 import {
   doesNotKnowParentIds,
+  isKnowsNationalId,
   isUnborn,
   knowsParentIds,
-  isKnowsNationalId,
 } from '../../utils/conditionUtils'
+import { IS } from '../../utils/constants'
 import { getApplicationAnswers } from '../../utils/getApplicationAnswers'
 import { getApplicationExternalData } from '../../utils/getApplicationExternalData'
 
@@ -151,22 +148,52 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
       title: childMessages.manualInfo.postalCode,
       width: 'half',
       doesNotRequireAnswer: true,
-      condition: doesNotKnowParentIds,
+      condition: (answers) => {
+        const parent = getApplicationAnswers(answers)[`${parentKey}`]
+
+        return (
+          doesNotKnowParentIds(answers) &&
+          !!parent?.country &&
+          parent?.country !== IS
+        )
+      },
     }),
-    buildSelectField({
+    buildTextField({
       id: `${base}.municipality`,
       title: childMessages.manualInfo.municipality,
-      placeholder: parentsMessages.shared.municipalityPlaceholder,
       width: 'half',
       doesNotRequireAnswer: true,
-      // TODO: replace with real municipality data when API is wired up
-      options: [
-        { value: 'reykjavik', label: 'Reykjavík' },
-        { value: 'kopavogur', label: 'Kópavogur' },
-        { value: 'hafnarfjordur', label: 'Hafnarfjörður' },
-        { value: 'akureyri', label: 'Akureyri' },
-      ],
-      condition: doesNotKnowParentIds,
+      condition: (answers) => {
+        const parent = getApplicationAnswers(answers)[`${parentKey}`]
+
+        return (
+          doesNotKnowParentIds(answers) &&
+          !!parent?.country &&
+          parent?.country !== IS
+        )
+      },
+    }),
+    buildSelectField({
+      id: `${base}.municipalityPostalCode`,
+      title: childMessages.manualInfo.municipality,
+      placeholder: parentsMessages.shared.municipalityPlaceholder,
+      doesNotRequireAnswer: true,
+      options: ({ externalData }) => {
+        const { postalCodes } = getApplicationExternalData(externalData)
+        return postalCodes.map((p) => ({
+          value: p.value ?? '',
+          label: p.label ?? '',
+        }))
+      },
+      condition: (answers) => {
+        const parent = getApplicationAnswers(answers)[`${parentKey}`]
+
+        return (
+          doesNotKnowParentIds(answers) &&
+          !!parent?.country &&
+          parent?.country === IS
+        )
+      },
     }),
     buildCheckboxField({
       id: `${base}.needsInterpreter`,
@@ -185,7 +212,7 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
         return (
           doesNotKnowParentIds(answers) &&
           !!parent?.citizenship &&
-          parent?.citizenship !== 'IS'
+          parent?.citizenship !== IS
         )
       },
     }),
@@ -206,7 +233,7 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
         return (
           doesNotKnowParentIds(answers) &&
           !!parent?.citizenship &&
-          parent?.citizenship !== 'IS' &&
+          parent?.citizenship !== IS &&
           !!parent?.needsInterpreter?.includes(YES)
         )
       },
@@ -249,16 +276,7 @@ export const parentsSection = buildSection({
               : parentsMessages.guardians.radioLabel,
           required: true,
           width: 'half',
-          options: [
-            {
-              value: YES,
-              label: sharedMessages.radioYes,
-            },
-            {
-              value: NO,
-              label: sharedMessages.radioNo,
-            },
-          ],
+          options: getYesNoOptions(),
         }),
         buildDescriptionField({
           id: 'parents.parent1Title',

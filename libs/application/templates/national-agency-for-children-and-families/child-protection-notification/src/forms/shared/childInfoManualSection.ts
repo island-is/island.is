@@ -13,7 +13,7 @@ import {
 } from '@island.is/shared/utils'
 import { childMessages } from '../../lib/messages'
 import { isNoNationalId } from '../../utils/conditionUtils'
-import { Pronoun } from '../../utils/constants'
+import { IS, Pronoun } from '../../utils/constants'
 import { getApplicationAnswers } from '../../utils/getApplicationAnswers'
 import { getApplicationExternalData } from '../../utils/getApplicationExternalData'
 
@@ -141,20 +141,37 @@ export const childInfoManualSection = buildSection({
           title: childMessages.manualInfo.postalCode,
           width: 'half',
           doesNotRequireAnswer: true,
+          condition: (answers) => {
+            const { childManualCountry } = getApplicationAnswers(answers)
+            return !!childManualCountry && childManualCountry !== IS
+          },
         }),
-        buildSelectField({
+        buildTextField({
           id: 'child.manualInfo.municipality',
           title: childMessages.manualInfo.municipality,
-          placeholder: childMessages.manualInfo.municipalityPlaceholder,
           width: 'half',
           doesNotRequireAnswer: true,
-          // TODO: replace with real municipality data when API is wired up
-          options: [
-            { value: 'reykjavik', label: 'Reykjavík' },
-            { value: 'kopavogur', label: 'Kópavogur' },
-            { value: 'hafnarfjordur', label: 'Hafnarfjörður' },
-            { value: 'akureyri', label: 'Akureyri' },
-          ],
+          condition: (answers) => {
+            const { childManualCountry } = getApplicationAnswers(answers)
+            return !!childManualCountry && childManualCountry !== IS
+          },
+        }),
+        buildSelectField({
+          id: 'child.manualInfo.municipalityPostalCode',
+          title: childMessages.manualInfo.municipality,
+          placeholder: childMessages.manualInfo.municipalityPlaceholder,
+          doesNotRequireAnswer: true,
+          options: ({ externalData }) => {
+            const { postalCodes } = getApplicationExternalData(externalData)
+            return postalCodes.map((p) => ({
+              value: p.value ?? '',
+              label: p.label ?? '',
+            }))
+          },
+          condition: (answers) => {
+            const { childManualCountry } = getApplicationAnswers(answers)
+            return !!childManualCountry && childManualCountry === IS
+          },
         }),
         buildDescriptionField({
           id: 'childInfoManual.languageTitle',
