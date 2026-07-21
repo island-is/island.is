@@ -74,6 +74,11 @@ export const ZendeskSection = ({ sdk, value, updateValue }: SectionProps) => {
                       }))
                     }}
                   />
+                  <FormControl.HelpText>
+                    This is the ticket ID that will be used to track the chat
+                    url. If left blank, the chat will be tracked by the default
+                    ticket ID
+                  </FormControl.HelpText>
                 </Flex>
                 <Flex flexDirection="column">
                   <FormControl.Label>

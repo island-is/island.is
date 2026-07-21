@@ -27,12 +27,17 @@ const WebChat = ({ webChat, pushUp, renderFallback }: WebChatProps) => {
       chatBubbleTitle,
     } = webChat.webChatConfiguration.zendesk ?? {}
     if (!snippetUrl) return renderFallback?.() ?? null
+
+    let ticketId: string = urlTrackingTicketId ?? ''
+    if (ticketId.length > 0 && ticketId.trim() === '') ticketId = ''
+    else if (!ticketId.trim()) ticketId = '36130758325906'
+
     return (
       <ZendeskChatPanel
         snippetUrl={snippetUrl}
         pushUp={pushUp}
         chatBubbleVariant={chatBubbleVariant || 'circle'}
-        urlTrackingTicketId={urlTrackingTicketId}
+        urlTrackingTicketId={ticketId}
         chatBubbleTitle={chatBubbleTitle}
       />
     )
