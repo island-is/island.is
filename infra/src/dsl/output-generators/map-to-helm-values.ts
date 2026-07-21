@@ -24,8 +24,8 @@ import {
   resolveWithMaxLength,
   serializeEnvironmentVariables,
 } from './serialization-helpers'
-
 import { getScaledValue } from '../utils/scale-value'
+import { featureDbRestores } from '../feature-deployments'
 
 /**
  * Transforms our definition of a service to a Helm values object
@@ -222,40 +222,50 @@ const serializeService: SerializeMethod<HelmService> = async (
   // initContainers
   if (typeof serviceDef.initContainers !== 'undefined') {
     if (serviceDef.initContainers.containers.length > 0) {
-      result.initContainer = {
-        containers: serializeContainerRuns(
-          serviceDef.initContainers.containers,
-        ),
-        env: {
-          SERVERSIDE_FEATURES_ON: env1.featuresOn.join(','),
-        },
-        secrets: {},
-      }
-      if (typeof serviceDef.initContainers.envs !== 'undefined') {
-        const { envs } = serializeEnvironmentVariables(
-          service,
-          deployment,
-          serviceDef.initContainers.envs,
-          env1,
-        )
-        mergeObjects(result.initContainer.env, envs)
-      }
-      if (typeof serviceDef.initContainers.secrets !== 'undefined') {
-        result.initContainer.secrets = serviceDef.initContainers.secrets
-      }
-      if (serviceDef.initContainers.postgres) {
-        const { env, secrets, errors } = serializePostgres(
-          serviceDef,
-          deployment,
-          env1,
-          service,
-          serviceDef.initContainers.postgres,
-        )
 
-        mergeObjects(result.initContainer.env, env)
-        mergeObjects(result.initContainer.secrets, secrets)
-        addToErrors(errors)
+      const isFeatureDeploy = !!env1.feature;
+      const hasPostgres = !!serviceDef.initContainers.postgres;
+      const dbName = serviceDef.initContainers.postgres?.name;
+      const restores = featureDbRestores.find(service => dbName?.endsWith(`_${service.service}`));
+
+      // Lets not run migrations and seeds for databases that are restored.
+      if (!(isFeatureDeploy && hasPostgres && restores)) {
+        result.initContainer = {
+          containers: serializeContainerRuns(
+            serviceDef.initContainers.containers,
+          ),
+          env: {
+            SERVERSIDE_FEATURES_ON: env1.featuresOn.join(','),
+          },
+          secrets: {},
+        }
+        if (typeof serviceDef.initContainers.envs !== 'undefined') {
+          const { envs } = serializeEnvironmentVariables(
+            service,
+            deployment,
+            serviceDef.initContainers.envs,
+            env1,
+          )
+          mergeObjects(result.initContainer.env, envs)
+        }
+        if (typeof serviceDef.initContainers.secrets !== 'undefined') {
+          result.initContainer.secrets = serviceDef.initContainers.secrets
+        }
+        if (serviceDef.initContainers.postgres) {
+          const { env, secrets, errors } = serializePostgres(
+            serviceDef,
+            deployment,
+            env1,
+            service,
+            serviceDef.initContainers.postgres,
+          )
+
+          mergeObjects(result.initContainer.env, env)
+          mergeObjects(result.initContainer.secrets, secrets)
+          addToErrors(errors)
+        }
       }
+
     } else {
       addToErrors(['No containers to run defined in initContainers'])
     }
