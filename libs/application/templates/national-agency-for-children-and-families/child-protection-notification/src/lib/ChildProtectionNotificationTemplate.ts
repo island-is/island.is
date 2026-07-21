@@ -23,6 +23,7 @@ import {
   GendersApi,
   IdentityApiProvider,
   ProtectiveFactorsApi,
+  UrgencyAssessmentsApi,
 } from '../dataProviders'
 import {
   overviewMessages,
@@ -87,6 +88,7 @@ const template: ApplicationTemplate<
                   CategoriesApi,
                   ProtectiveFactorsApi,
                   GendersApi,
+                  UrgencyAssessmentsApi,
                 ],
                 delete: true,
               }),
@@ -112,6 +114,7 @@ const template: ApplicationTemplate<
                 CategoriesApi,
                 ProtectiveFactorsApi,
                 GendersApi,
+                UrgencyAssessmentsApi,
               ],
               delete: true,
             },

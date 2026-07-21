@@ -29,3 +29,9 @@ export const GendersApi = defineTemplateApi({
   externalDataId: 'genders',
   namespace: ApplicationTypes.CHILD_PROTECTION_NOTIFICATION,
 })
+
+export const UrgencyAssessmentsApi = defineTemplateApi({
+  action: ApiModuleActions.getUrgencyAssessments,
+  externalDataId: 'urgencyAssessments',
+  namespace: ApplicationTypes.CHILD_PROTECTION_NOTIFICATION,
+})
