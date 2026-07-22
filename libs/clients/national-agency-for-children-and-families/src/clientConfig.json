@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Barnaverndargátt API",
-    "description": "Gátt fyrir aðila til að skila inn tilkynningum vegna barnaverndarmála.<br>Build time(version): 2026-07-22 10:32:42",
+    "description": "Gátt fyrir aðila til að skila inn tilkynningum vegna barnaverndarmála.<br>Build time(version): 2026-07-22 11:19:28",
     "contact": {
       "name": "Apró ehf.",
       "url": "https://www.apro.is/",
@@ -2532,9 +2532,51 @@
     "/api/external/dropdown/protective-factors": {
       "get": {
         "tags": ["ExternalDropdown"],
-        "summary": "Get protective factor categories",
-        "description": "Returns the two protective factor sections with their subcategories and selectable items. **Required Roles:** type:digital_iceland.",
+        "summary": "Get child and parent protective factor categories",
+        "description": "Returns the child and parent protective factor sections with their subcategories and selectable items. **Required Roles:** type:digital_iceland.",
         "operationId": "ExternalProtectiveFactors",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProtectiveFactorSectionDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProtectiveFactorSectionDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProtectiveFactorSectionDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/external/dropdown/protective-factors-unborn": {
+      "get": {
+        "tags": ["ExternalDropdown"],
+        "summary": "Get unborn child protective factor categories",
+        "description": "Returns the unborn child protective factor section with its subcategories and selectable items. **Required Roles:** type:digital_iceland.",
+        "operationId": "ExternalProtectiveFactorsUnborn",
         "responses": {
           "200": {
             "description": "OK",
@@ -2697,6 +2739,48 @@
         }
       }
     },
+    "/api/external/dropdown/disability-statuses": {
+      "get": {
+        "tags": ["ExternalDropdown"],
+        "summary": "Get all disability status options",
+        "description": "Returns disability diagnosis status values with integer code as value and Icelandic name as label. **Required Roles:** type:digital_iceland.",
+        "operationId": "ExternalDisabilityStatuses",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DropDownDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DropDownDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DropDownDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/api/external/dropdown/pronouns": {
       "get": {
         "tags": ["ExternalDropdown"],
@@ -2745,6 +2829,48 @@
         "summary": "Get all postal codes",
         "description": "Returns all Icelandic postal codes with Guid as value and name as label. **Required Roles:** type:digital_iceland.",
         "operationId": "ExternalPostalCodes",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DropDownDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DropDownDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DropDownDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/external/dropdown/guardian-not-aware-reasons": {
+      "get": {
+        "tags": ["ExternalDropdown"],
+        "summary": "Get all guardian-not-aware reason options",
+        "description": "Returns the reasons a guardian was not informed a report would be sent to child protection, with the enum name as value and Icelandic name as label. **Required Roles:** type:digital_iceland.",
+        "operationId": "ExternalGuardianNotAwareReasons",
         "responses": {
           "200": {
             "description": "OK",
@@ -6212,6 +6338,10 @@
         },
         "additionalProperties": false
       },
+      "DisabilityStatusEnum": {
+        "enum": ["NotStarted", "Waiting", "InProgress", "Confirmed"],
+        "type": "string"
+      },
       "DocumentTemplateEnum": {
         "enum": ["ContinuousRegistration"],
         "type": "string"
@@ -6447,6 +6577,14 @@
           }
         },
         "additionalProperties": false
+      },
+      "GuardianAwareOfNotificationEnum": {
+        "enum": ["Yes", "No"],
+        "type": "string"
+      },
+      "GuardianNotAwareReasonEnum": {
+        "enum": ["AbuseSuspicion", "NotReached", "NoOpportunity"],
+        "type": "string"
       },
       "Institution": {
         "required": ["name", "type"],
@@ -6774,6 +6912,13 @@
           "refugeeStatusGranted": {
             "type": "string",
             "nullable": true
+          },
+          "disability": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "disabilityStatus": {
+            "$ref": "#/components/schemas/DisabilityStatusEnum"
           }
         },
         "additionalProperties": false
@@ -6844,20 +6989,20 @@
           "ProtFactorParentInsightItem2",
           "ProtFactorParentInsightItem3",
           "NeglectPhysicalFood",
-          "NeglectPhysicalClothing",
-          "NeglectPhysicalHygiene",
+          "ProtFactorUnbornCircumstances",
+          "ProtFactorUnbornBonding",
           "NeglectPhysicalHousing",
-          "NeglectPhysicalHealthcare",
-          "NeglectCareSupervisionSupervision",
-          "NeglectCareSupervisionLeftAlone",
-          "NeglectCareSupervisionLeftTooLong",
-          "NeglectCareSupervisionLeftUnfit",
+          "ProtFactorUnbornInsight",
+          "ProtFactorUnbornDontKnow",
+          "ProtFactorUnbornCircumstancesItem1",
+          "ProtFactorUnbornCircumstancesItem2",
+          "ProtFactorUnbornCircumstancesItem3",
           "NeglectCareSupervisionLeftAbusive",
           "NeglectCareSupervisionAbandonment",
           "NeglectCareSupervisionNoGuardian",
           "NeglectCareSupervisionCarerState",
-          "NeglectCareSupervisionIllegalActivity",
-          "NeglectEducationAbsence",
+          "ProtFactorUnbornInsightItem1",
+          "ProtFactorUnbornInsightItem2",
           "NeglectEducationNotEnrolled",
           "NeglectEducationSpecialNeeds",
           "NeglectEducationSupplies",
@@ -6968,6 +7113,13 @@
           },
           "notificationVia112": {
             "type": "boolean"
+          },
+          "disability": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "disabilityStatus": {
+            "$ref": "#/components/schemas/DisabilityStatusEnum"
           }
         },
         "additionalProperties": false
@@ -7431,6 +7583,12 @@
           "concerns": {
             "type": "string",
             "nullable": true
+          },
+          "guardianAwareOfNotification": {
+            "$ref": "#/components/schemas/GuardianAwareOfNotificationEnum"
+          },
+          "guardianNotAwareReason": {
+            "$ref": "#/components/schemas/GuardianNotAwareReasonEnum"
           }
         },
         "additionalProperties": false
@@ -7983,6 +8141,16 @@
           "parentDontKnow": {
             "type": "boolean"
           },
+          "unbornItemCodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "unbornDontKnow": {
+            "type": "boolean"
+          },
           "notes": {
             "type": "string",
             "nullable": true
@@ -8011,6 +8179,16 @@
             "nullable": true
           },
           "parentDontKnow": {
+            "type": "boolean"
+          },
+          "unbornItemCodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "unbornDontKnow": {
             "type": "boolean"
           },
           "notes": {
