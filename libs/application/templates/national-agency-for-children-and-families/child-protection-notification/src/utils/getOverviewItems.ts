@@ -1013,8 +1013,9 @@ export const getReasonForNotificationItems = (
 
 export const getReasonNotificationHistoryItems = (
   answers: FormValue,
-  _externalData: ExternalData,
+  externalData: ExternalData,
 ): Array<KeyValueItem> => {
+  const { guardianNotAwareReasons } = getApplicationExternalData(externalData)
   const {
     hasReportedBefore,
     hasDiscussedWithParents,
@@ -1053,7 +1054,10 @@ export const getReasonNotificationHistoryItems = (
           {
             width: 'full' as const,
             keyText: reasonForNotificationMessages.description.subSectionTitle,
-            valueText: notificationHistoryBiggestConcern ?? '',
+            valueText:
+              guardianNotAwareReasons.find(
+                (reason) => reason.value === notificationHistoryBiggestConcern,
+              )?.label ?? '',
           },
         ]
       : []),

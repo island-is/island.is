@@ -12,6 +12,7 @@ import {
   getYesNoOptions,
 } from '../../../../utils/childProtectionNotificationUtils'
 import { getApplicationAnswers } from '../../../../utils/getApplicationAnswers'
+import { getApplicationExternalData } from '../../../../utils/getApplicationExternalData'
 
 export const reasonNotificationHistorySubSection = buildSubSection({
   id: 'reasonNotificationHistorySubSection',
@@ -49,12 +50,14 @@ export const reasonNotificationHistorySubSection = buildSubSection({
           id: 'reasonNotificationHistory.biggestConcern',
           title: reasonForNotificationMessages.description.subSectionTitle,
           placeholder: reasonForNotificationMessages.shared.selectPlaceholder,
-          // TODO: Update to call endpoint for services when implemented
-          options: [
-            { value: '1', label: 'Valmöguleiki 1' },
-            { value: '2', label: 'Valmöguleiki 2' },
-            { value: '3', label: 'Valmöguleiki 3' },
-          ],
+          options: ({ externalData }) => {
+            const { guardianNotAwareReasons } =
+              getApplicationExternalData(externalData)
+            return guardianNotAwareReasons.map((reason) => ({
+              label: reason.label ?? '',
+              value: reason.value ?? '',
+            }))
+          },
           condition: (answers) => {
             const { areParentsInformed } = getApplicationAnswers(answers)
             return areParentsInformed === NO

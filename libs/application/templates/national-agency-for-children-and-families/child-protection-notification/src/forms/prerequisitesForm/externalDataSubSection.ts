@@ -7,10 +7,11 @@ import { UserProfileApi } from '@island.is/application/types'
 import {
   CategoriesApi,
   GendersApi,
+  GuardianNotAwareReasonsApi,
   IdentityApiProvider,
   PostalCodesApi,
-  ProtectiveFactorsApi,
   PronounsApi,
+  ProtectiveFactorsApi,
   UrgencyAssessmentsApi,
 } from '../../dataProviders'
 import { prerequisitesMessages } from '../../lib/messages'
@@ -53,6 +54,9 @@ export const externalDataSubSection = buildSubSection({
         }),
         buildDataProviderItem({
           provider: PostalCodesApi,
+        }),
+        buildDataProviderItem({
+          provider: GuardianNotAwareReasonsApi,
         }),
       ],
     }),
