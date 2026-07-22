@@ -13,7 +13,7 @@ import {
 } from '@island.is/shared/utils'
 import { childMessages } from '../../lib/messages'
 import { isNoNationalId } from '../../utils/conditionUtils'
-import { IS, Pronoun } from '../../utils/constants'
+import { IS } from '../../utils/constants'
 import { getApplicationAnswers } from '../../utils/getApplicationAnswers'
 import { getApplicationExternalData } from '../../utils/getApplicationExternalData'
 
@@ -92,20 +92,13 @@ export const childInfoManualSection = buildSection({
             childMessages.nationalIdLookup.preferredPronounPlaceholder,
           doesNotRequireAnswer: true,
           isMulti: true,
-          options: [
-            {
-              value: Pronoun.HANN,
-              label: childMessages.nationalIdLookup.pronounHann,
-            },
-            {
-              value: Pronoun.HUN,
-              label: childMessages.nationalIdLookup.pronounHun,
-            },
-            {
-              value: Pronoun.HAN,
-              label: childMessages.nationalIdLookup.pronounHan,
-            },
-          ],
+          options: ({ externalData }) => {
+            const { pronounOptions } = getApplicationExternalData(externalData)
+            return pronounOptions.map((p) => ({
+              value: p.value ?? '',
+              label: p.label ?? '',
+            }))
+          },
           condition: (answers) =>
             isNoNationalId(answers) &&
             getApplicationAnswers(

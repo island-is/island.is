@@ -80,6 +80,12 @@ export class ChildProtectionNotificationService extends BaseTemplateApiService {
     )
   }
 
+  async getPronouns({ auth }: TemplateApiModuleActionProps) {
+    return await this.nationalAgencyForChildrenAndFamiliesClientService.getPronouns(
+      auth,
+    )
+  }
+
   // TODO: Submit the notification to the National Agency for Children and Families
   async createNotification() {
     await new Promise((resolve) => setTimeout(resolve, 2000))
