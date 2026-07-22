@@ -84,13 +84,6 @@ const wellbeingRadioLabelMap = {
   [DO_NOT_KNOW]: sharedMessages.radioDoNotKnow,
 } as const
 
-const disabilityServiceLabelMap = {
-  municipal: memmMessages.wellbeing.disabilityServiceMunicipal,
-  sports: memmMessages.wellbeing.disabilityServiceSports,
-  health: memmMessages.wellbeing.disabilityServiceHealth,
-  emergency: memmMessages.wellbeing.disabilityServiceEmergency,
-} as const
-
 export const getOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
@@ -765,8 +758,9 @@ export const getMemmCultureItems = (
 
 export const getMemmWellbeingItems = (
   answers: FormValue,
-  _externalData: ExternalData,
+  externalData: ExternalData,
 ): Array<KeyValueItem> => {
+  const { disabilityStatusOptions } = getApplicationExternalData(externalData)
   const {
     memmWellbeingIntegratedService,
     memmWellbeingWellbeingContact,
@@ -862,9 +856,9 @@ export const getMemmWellbeingItems = (
             width: 'full' as const,
             keyText: memmMessages.wellbeing.disabilityServiceLabel,
             valueText:
-              disabilityServiceLabelMap[
-                memmWellbeingDisabilityService as keyof typeof disabilityServiceLabelMap
-              ] ??
+              disabilityStatusOptions.find(
+                (d) => d.value === memmWellbeingDisabilityService,
+              )?.label ??
               memmWellbeingDisabilityService ??
               '',
             hideIfEmpty: true,

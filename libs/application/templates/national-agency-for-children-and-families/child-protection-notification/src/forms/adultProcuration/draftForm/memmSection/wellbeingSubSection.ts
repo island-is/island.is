@@ -13,6 +13,7 @@ import {
   showWellbeingContactFields,
   showWellbeingManagerFields,
 } from '../../../../utils/conditionUtils'
+import { getApplicationExternalData } from '../../../../utils/getApplicationExternalData'
 
 export const wellbeingSubSection = buildSubSection({
   id: 'memmWellbeingSubSection',
@@ -108,24 +109,14 @@ export const wellbeingSubSection = buildSubSection({
           id: 'memm.wellbeing.disabilityService',
           title: memmMessages.wellbeing.disabilityServiceLabel,
           placeholder: memmMessages.wellbeing.disabilityServicePlaceholder,
-          options: [
-            {
-              value: 'municipal',
-              label: memmMessages.wellbeing.disabilityServiceMunicipal,
-            },
-            {
-              value: 'sports',
-              label: memmMessages.wellbeing.disabilityServiceSports,
-            },
-            {
-              value: 'health',
-              label: memmMessages.wellbeing.disabilityServiceHealth,
-            },
-            {
-              value: 'emergency',
-              label: memmMessages.wellbeing.disabilityServiceEmergency,
-            },
-          ],
+          options: ({ externalData }) => {
+            const { disabilityStatusOptions } =
+              getApplicationExternalData(externalData)
+            return disabilityStatusOptions.map((d) => ({
+              value: d.value ?? '',
+              label: d.label ?? '',
+            }))
+          },
           condition: showDisabilityService,
         }),
       ],
