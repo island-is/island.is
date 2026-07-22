@@ -287,25 +287,5 @@ export const memmMessages = {
       defaultMessage: 'Veldu þjónustu',
       description: 'Placeholder for disability service dropdown',
     },
-    disabilityServiceMunicipal: {
-      id: 'cpn.application:memm.wellbeing.disabilityServiceMunicipal',
-      defaultMessage: 'Þjónststofnun sveitarfélags',
-      description: 'Disability service option: municipal service institution',
-    },
-    disabilityServiceSports: {
-      id: 'cpn.application:memm.wellbeing.disabilityServiceSports',
-      defaultMessage: 'Íþrótta-, tómstunda- og æskulýðsstarf',
-      description: 'Disability service option: sports, leisure and youth work',
-    },
-    disabilityServiceHealth: {
-      id: 'cpn.application:memm.wellbeing.disabilityServiceHealth',
-      defaultMessage: 'Heilbrigðisaðili',
-      description: 'Disability service option: health professional',
-    },
-    disabilityServiceEmergency: {
-      id: 'cpn.application:memm.wellbeing.disabilityServiceEmergency',
-      defaultMessage: 'Viðbragðsaðilar',
-      description: 'Disability service option: emergency responders',
-    },
   }),
 }

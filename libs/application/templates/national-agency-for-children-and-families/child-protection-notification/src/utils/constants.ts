@@ -23,6 +23,7 @@ export enum ApiModuleActions {
   getUrgencyAssessments = 'getUrgencyAssessments',
   getPostalCodes = 'getPostalCodes',
   getPronouns = 'getPronouns',
+  getDisabilityStatuses = 'getDisabilityStatuses',
   createNotification = 'createNotification',
   completeNotification = 'completeNotification',
 }

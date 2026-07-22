@@ -20,6 +20,7 @@ import { AuthDelegationType } from '@island.is/shared/types'
 
 import {
   CategoriesApi,
+  DisabilityStatusesApi,
   GendersApi,
   IdentityApiProvider,
   PostalCodesApi,
@@ -91,6 +92,7 @@ const template: ApplicationTemplate<
                   ProtectiveFactorsApi,
                   GendersApi,
                   PronounsApi,
+                  DisabilityStatusesApi,
                   UrgencyAssessmentsApi,
                   PostalCodesApi,
                 ],
@@ -119,6 +121,7 @@ const template: ApplicationTemplate<
                 ProtectiveFactorsApi,
                 GendersApi,
                 PronounsApi,
+                DisabilityStatusesApi,
                 UrgencyAssessmentsApi,
                 PostalCodesApi,
               ],

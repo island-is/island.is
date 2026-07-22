@@ -44,4 +44,10 @@ export class NationalAgencyForChildrenAndFamiliesClientService {
   async getPronouns(user: User): Promise<DropDownDto[]> {
     return await this.externalDropdownApiWithAuth(user).externalPronouns()
   }
+
+  async getDisabilityStatuses(user: User): Promise<DropDownDto[]> {
+    return await this.externalDropdownApiWithAuth(
+      user,
+    ).externalDisabilityStatuses()
+  }
 }
