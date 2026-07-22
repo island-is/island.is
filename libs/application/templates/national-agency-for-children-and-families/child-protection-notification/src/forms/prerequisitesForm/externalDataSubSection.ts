@@ -6,6 +6,7 @@ import {
 import { UserProfileApi } from '@island.is/application/types'
 import {
   CategoriesApi,
+  DisabilityStatusesApi,
   GendersApi,
   GuardianNotAwareReasonsApi,
   IdentityApiProvider,
@@ -51,6 +52,9 @@ export const externalDataSubSection = buildSubSection({
         }),
         buildDataProviderItem({
           provider: PronounsApi,
+        }),
+        buildDataProviderItem({
+          provider: DisabilityStatusesApi,
         }),
         buildDataProviderItem({
           provider: PostalCodesApi,

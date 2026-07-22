@@ -82,6 +82,10 @@ export const getApplicationExternalData = (
   const pronounOptions =
     getValueViaPath<DropDownDto[]>(externalData, 'pronouns.data') ?? []
 
+  const disabilityStatusOptions =
+    getValueViaPath<DropDownDto[]>(externalData, 'disabilityStatuses.data') ??
+    []
+  
   const guardianNotAwareReasons =
     getValueViaPath<DropDownDto[]>(
       externalData,
@@ -104,6 +108,7 @@ export const getApplicationExternalData = (
     urgencyAssessments,
     postalCodes,
     pronounOptions,
+    disabilityStatusOptions,
     guardianNotAwareReasons,
   }
 }

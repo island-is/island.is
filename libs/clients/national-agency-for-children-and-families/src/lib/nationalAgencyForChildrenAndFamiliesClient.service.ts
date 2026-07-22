@@ -45,6 +45,12 @@ export class NationalAgencyForChildrenAndFamiliesClientService {
     return await this.externalDropdownApiWithAuth(user).externalPronouns()
   }
 
+  async getDisabilityStatuses(user: User): Promise<DropDownDto[]> {
+    return await this.externalDropdownApiWithAuth(
+      user,
+    ).externalDisabilityStatuses()
+  }
+    
   async getGuardianNotAwareReasons(user: User): Promise<DropDownDto[]> {
     return await this.externalDropdownApiWithAuth(
       user,
