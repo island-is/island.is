@@ -21,10 +21,11 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import {
   CategoriesApi,
   GendersApi,
+  GuardianNotAwareReasonsApi,
   IdentityApiProvider,
   PostalCodesApi,
-  ProtectiveFactorsApi,
   PronounsApi,
+  ProtectiveFactorsApi,
   UrgencyAssessmentsApi,
 } from '../dataProviders'
 import {
@@ -93,6 +94,7 @@ const template: ApplicationTemplate<
                   PronounsApi,
                   UrgencyAssessmentsApi,
                   PostalCodesApi,
+                  GuardianNotAwareReasonsApi,
                 ],
                 delete: true,
               }),
@@ -121,6 +123,7 @@ const template: ApplicationTemplate<
                 PronounsApi,
                 UrgencyAssessmentsApi,
                 PostalCodesApi,
+                GuardianNotAwareReasonsApi,
               ],
               delete: true,
             },
