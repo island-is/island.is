@@ -10,6 +10,7 @@ import {
   IdentityApiProvider,
   PostalCodesApi,
   ProtectiveFactorsApi,
+  PronounsApi,
   UrgencyAssessmentsApi,
 } from '../../dataProviders'
 import { prerequisitesMessages } from '../../lib/messages'
@@ -46,6 +47,9 @@ export const externalDataSubSection = buildSubSection({
         }),
         buildDataProviderItem({
           provider: UrgencyAssessmentsApi,
+        }),
+        buildDataProviderItem({
+          provider: PronounsApi,
         }),
         buildDataProviderItem({
           provider: PostalCodesApi,

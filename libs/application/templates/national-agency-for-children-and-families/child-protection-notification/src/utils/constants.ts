@@ -22,6 +22,7 @@ export enum ApiModuleActions {
   getChildInformation = 'getChildInformation',
   getUrgencyAssessments = 'getUrgencyAssessments',
   getPostalCodes = 'getPostalCodes',
+  getPronouns = 'getPronouns',
   createNotification = 'createNotification',
   completeNotification = 'completeNotification',
 }
@@ -36,12 +37,6 @@ export enum KnowsNationalId {
   YES = 'yes',
   NO = 'no',
   UNBORN = 'unborn',
-}
-
-export enum Pronoun {
-  HANN = 'hann',
-  HUN = 'hún',
-  HAN = 'hán',
 }
 
 export enum NoNationalIdReason {

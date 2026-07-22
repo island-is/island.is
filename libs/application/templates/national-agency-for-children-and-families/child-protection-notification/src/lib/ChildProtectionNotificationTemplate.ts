@@ -24,6 +24,7 @@ import {
   IdentityApiProvider,
   PostalCodesApi,
   ProtectiveFactorsApi,
+  PronounsApi,
   UrgencyAssessmentsApi,
 } from '../dataProviders'
 import {
@@ -89,6 +90,7 @@ const template: ApplicationTemplate<
                   CategoriesApi,
                   ProtectiveFactorsApi,
                   GendersApi,
+                  PronounsApi,
                   UrgencyAssessmentsApi,
                   PostalCodesApi,
                 ],
@@ -116,6 +118,7 @@ const template: ApplicationTemplate<
                 CategoriesApi,
                 ProtectiveFactorsApi,
                 GendersApi,
+                PronounsApi,
                 UrgencyAssessmentsApi,
                 PostalCodesApi,
               ],

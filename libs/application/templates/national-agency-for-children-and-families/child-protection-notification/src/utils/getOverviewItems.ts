@@ -31,7 +31,6 @@ import {
   KnowsNationalId,
   NoNationalIdReason,
   NOT_APPLICABLE,
-  Pronoun,
   RISK_TO_UNBORN,
 } from '../utils/constants'
 import {
@@ -50,12 +49,6 @@ import {
 import { getApplicationAnswers } from './getApplicationAnswers'
 import { getApplicationExternalData } from './getApplicationExternalData'
 import { Parent } from './types'
-
-const pronounLabelMap = {
-  [Pronoun.HANN]: childMessages.nationalIdLookup.pronounHann,
-  [Pronoun.HUN]: childMessages.nationalIdLookup.pronounHun,
-  [Pronoun.HAN]: childMessages.nationalIdLookup.pronounHan,
-} as const
 
 const knowsNationalIdLabelMap = {
   [KnowsNationalId.YES]: childMessages.nationalIdLookup.radioOptionYes,
@@ -258,8 +251,9 @@ export const getServiceProviderContactPersonItems = (
 
 export const getChildWithNationalIdItems = (
   answers: FormValue,
-  _externalData: ExternalData,
+  externalData: ExternalData,
 ): Array<KeyValueItem> => {
+  const { pronounOptions } = getApplicationExternalData(externalData)
   const {
     childKnowsNationalId,
     childNoNationalIdReason,
@@ -325,9 +319,8 @@ export const getChildWithNationalIdItems = (
                   keyText: childMessages.nationalIdLookup.preferredPronoun,
                   valueText: childPreferredPronoun.map(
                     (pronoun) =>
-                      pronounLabelMap[
-                        pronoun as keyof typeof pronounLabelMap
-                      ] ?? pronoun,
+                      pronounOptions.find((p) => p.value === pronoun)?.label ??
+                      pronoun,
                   ),
                   hideIfEmpty: true,
                 },
@@ -356,7 +349,8 @@ export const getChildManualItems = (
   answers: FormValue,
   externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const { genders, postalCodes } = getApplicationExternalData(externalData)
+  const { genders, postalCodes, pronounOptions } =
+    getApplicationExternalData(externalData)
   const {
     childManualName,
     childManualAge,
@@ -413,7 +407,7 @@ export const getChildManualItems = (
             keyText: childMessages.nationalIdLookup.preferredPronoun,
             valueText: childManualPreferredPronoun.map(
               (pronoun) =>
-                pronounLabelMap[pronoun as keyof typeof pronounLabelMap] ??
+                pronounOptions.find((p) => p.value === pronoun)?.label ??
                 pronoun,
             ),
             hideIfEmpty: true,
