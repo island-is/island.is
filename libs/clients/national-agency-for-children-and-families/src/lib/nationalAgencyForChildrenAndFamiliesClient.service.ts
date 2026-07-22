@@ -50,7 +50,7 @@ export class NationalAgencyForChildrenAndFamiliesClientService {
       user,
     ).externalDisabilityStatuses()
   }
-    
+
   async getGuardianNotAwareReasons(user: User): Promise<DropDownDto[]> {
     return await this.externalDropdownApiWithAuth(
       user,

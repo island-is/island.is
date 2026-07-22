@@ -85,7 +85,7 @@ export const getApplicationExternalData = (
   const disabilityStatusOptions =
     getValueViaPath<DropDownDto[]>(externalData, 'disabilityStatuses.data') ??
     []
-  
+
   const guardianNotAwareReasons =
     getValueViaPath<DropDownDto[]>(
       externalData,
