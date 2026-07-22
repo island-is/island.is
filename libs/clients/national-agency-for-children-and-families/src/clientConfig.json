@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Barnaverndargátt API",
-    "description": "Gátt fyrir aðila til að skila inn tilkynningum vegna barnaverndarmála.<br>Build time(version): 2026-07-20 10:42:30",
+    "description": "Gátt fyrir aðila til að skila inn tilkynningum vegna barnaverndarmála.<br>Build time(version): 2026-07-22 10:32:42",
     "contact": {
       "name": "Apró ehf.",
       "url": "https://www.apro.is/",
@@ -2661,6 +2661,48 @@
         "summary": "Get all party state options",
         "description": "Returns party state values (e.g. IcelandicNationalId, Tourist, Unknown) with integer code as value and Icelandic name as label. **Required Roles:** type:digital_iceland.",
         "operationId": "ExternalPartyStates",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DropDownDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DropDownDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DropDownDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/external/dropdown/pronouns": {
+      "get": {
+        "tags": ["ExternalDropdown"],
+        "summary": "Get all personal pronoun options",
+        "description": "Returns personal pronoun (persónufornafn) values with integer code as value and Icelandic name as label. **Required Roles:** type:digital_iceland.",
+        "operationId": "ExternalPronouns",
         "responses": {
           "200": {
             "description": "OK",

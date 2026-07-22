@@ -79,6 +79,9 @@ export const getApplicationExternalData = (
   const postalCodes =
     getValueViaPath<DropDownDto[]>(externalData, 'postalCodes.data') ?? []
 
+  const pronounOptions =
+    getValueViaPath<DropDownDto[]>(externalData, 'pronouns.data') ?? []
+
   return {
     applicantName,
     applicantNationalId,
@@ -94,5 +97,6 @@ export const getApplicationExternalData = (
     languageEnvironmentOptions,
     urgencyAssessments,
     postalCodes,
+    pronounOptions,
   }
 }
