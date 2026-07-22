@@ -90,6 +90,15 @@ export const shouldShowBiggestConcernField = (answers: FormValue) =>
   !isUnborn(answers) &&
   getSelectedReasonForNotificationCategoryCodes(answers).length > 1
 
+export const shouldShowProtectiveFactorSubItems = (
+  answers: FormValue,
+  sectionCode: string,
+  subIndex: number,
+) => {
+  const { protectiveFactors } = getApplicationAnswers(answers)
+  return !!protectiveFactors?.[sectionCode]?.[`sub${subIndex}`]?.includes(YES)
+}
+
 export const showEmergencyWarning = (answers: FormValue) => {
   const { childSafetyUrgencyLevel } = getApplicationAnswers(answers)
   return (

@@ -2,16 +2,17 @@ import {
   YES,
   buildAccordionField,
   buildCheckboxField,
-  buildDescriptionField,
   buildMultiField,
   buildSection,
   buildSelectField,
 } from '@island.is/application/core'
-import { FormValue } from '@island.is/application/types'
 import { protectiveFactorsMessages } from '../../lib/messages'
-import { getApplicationAnswers } from '../../utils/getApplicationAnswers'
 import { getApplicationExternalData } from '../../utils/getApplicationExternalData'
-import { isUnborn } from '../../utils/conditionUtils'
+import {
+  isUnborn,
+  shouldShowProtectiveFactorSubItems,
+} from '../../utils/conditionUtils'
+import { PROT_FACTOR_UNBORN_SECTION } from '../../utils/constants'
 
 export const protectiveFactorsSection = buildSection({
   id: 'protectiveFactorsSection',
@@ -25,24 +26,22 @@ export const protectiveFactorsSection = buildSection({
           ? protectiveFactorsMessages.unborn.description
           : protectiveFactorsMessages.shared.description,
       children: [
-        // TODO: Remove when the API exposes unborn-specific questions and the accordion below is extended to cover them.
-        buildDescriptionField({
-          id: 'protectiveFactors.unbornPlaceholder',
-          title: '',
-          description: '',
-          doesNotRequireAnswer: true,
-          condition: isUnborn,
-        }),
         buildAccordionField({
           id: 'protectiveFactors',
           singleExpand: false,
-          condition: (answers) => !isUnborn(answers),
           accordionItems: (application) => {
             const { protectiveFactorSections } = getApplicationExternalData(
               application.externalData,
             )
 
-            return protectiveFactorSections.map((section) => ({
+            const unborn = isUnborn(application.answers)
+            const visibleSections = protectiveFactorSections.filter((section) =>
+              unborn
+                ? section.code === PROT_FACTOR_UNBORN_SECTION
+                : section.code !== PROT_FACTOR_UNBORN_SECTION,
+            )
+
+            return visibleSections.map((section) => ({
               itemTitle: section.name ?? '',
               children: [
                 ...(section.subCategories?.flatMap((subCategory, subIndex) => [
@@ -59,13 +58,12 @@ export const protectiveFactorsSection = buildSection({
                     placeholder:
                       protectiveFactorsMessages.shared.itemsPlaceholder,
                     isMulti: true,
-                    condition: (answers: FormValue) => {
-                      const { protectiveFactors } =
-                        getApplicationAnswers(answers)
-                      return !!protectiveFactors?.[section.code ?? '']?.[
-                        `sub${subIndex}`
-                      ]?.includes(YES)
-                    },
+                    condition: (answers) =>
+                      shouldShowProtectiveFactorSubItems(
+                        answers,
+                        section.code ?? '',
+                        subIndex,
+                      ),
                     options: (subCategory.items ?? []).map((item) => ({
                       value: item.code ?? '',
                       label: item.description ?? '',
