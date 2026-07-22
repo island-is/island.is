@@ -22,10 +22,11 @@ import {
   CategoriesApi,
   DisabilityStatusesApi,
   GendersApi,
+  GuardianNotAwareReasonsApi,
   IdentityApiProvider,
   PostalCodesApi,
-  ProtectiveFactorsApi,
   PronounsApi,
+  ProtectiveFactorsApi,
   UrgencyAssessmentsApi,
 } from '../dataProviders'
 import {
@@ -95,6 +96,7 @@ const template: ApplicationTemplate<
                   DisabilityStatusesApi,
                   UrgencyAssessmentsApi,
                   PostalCodesApi,
+                  GuardianNotAwareReasonsApi,
                 ],
                 delete: true,
               }),
@@ -124,6 +126,7 @@ const template: ApplicationTemplate<
                 DisabilityStatusesApi,
                 UrgencyAssessmentsApi,
                 PostalCodesApi,
+                GuardianNotAwareReasonsApi,
               ],
               delete: true,
             },

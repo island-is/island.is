@@ -24,6 +24,7 @@ export enum ApiModuleActions {
   getPostalCodes = 'getPostalCodes',
   getPronouns = 'getPronouns',
   getDisabilityStatuses = 'getDisabilityStatuses',
+  getGuardianNotAwareReasons = 'getGuardianNotAwareReasons',
   createNotification = 'createNotification',
   completeNotification = 'completeNotification',
 }

@@ -53,3 +53,9 @@ export const PostalCodesApi = defineTemplateApi({
   externalDataId: 'postalCodes',
   namespace: ApplicationTypes.CHILD_PROTECTION_NOTIFICATION,
 })
+
+export const GuardianNotAwareReasonsApi = defineTemplateApi({
+  action: ApiModuleActions.getGuardianNotAwareReasons,
+  externalDataId: 'guardianNotAwareReasons',
+  namespace: ApplicationTypes.CHILD_PROTECTION_NOTIFICATION,
+})

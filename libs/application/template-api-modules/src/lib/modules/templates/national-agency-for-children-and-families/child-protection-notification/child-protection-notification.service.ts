@@ -44,6 +44,12 @@ export class ChildProtectionNotificationService extends BaseTemplateApiService {
     )
   }
 
+  async getGuardianNotAwareReasons({ auth }: TemplateApiModuleActionProps) {
+    return await this.nationalAgencyForChildrenAndFamiliesClientService.getGuardianNotAwareReasons(
+      auth,
+    )
+  }
+
   async getChildInformation({
     auth,
     application,
