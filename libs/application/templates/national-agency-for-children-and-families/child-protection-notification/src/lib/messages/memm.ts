@@ -279,12 +279,12 @@ export const memmMessages = {
     },
     disabilityServiceLabel: {
       id: 'cpn.application:memm.wellbeing.disabilityServiceLabel',
-      defaultMessage: 'Þjónusta',
+      defaultMessage: 'Lýsing',
       description: 'Label for disability service dropdown',
     },
     disabilityServicePlaceholder: {
       id: 'cpn.application:memm.wellbeing.disabilityServicePlaceholder',
-      defaultMessage: 'Veldu þjónustu',
+      defaultMessage: 'Veldu það sem best á við',
       description: 'Placeholder for disability service dropdown',
     },
   }),
