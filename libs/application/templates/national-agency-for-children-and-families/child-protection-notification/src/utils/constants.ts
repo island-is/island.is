@@ -49,6 +49,7 @@ export enum NoNationalIdReason {
 
 export const DO_NOT_KNOW = 'doNotKnow'
 export const NOT_APPLICABLE = 'notApplicable'
+export const PROT_FACTOR_UNBORN_SECTION = 'ProtFactorUnbornSection'
 
 export const SCHOOL_TYPES = ['kindergarten', 'elementarySchool', 'highSchool']
 
