@@ -2,35 +2,15 @@ import { defineMessages } from 'react-intl'
 
 export const parentsMessages = {
   shared: defineMessages({
-    parentDescription: {
-      id: 'cpn.application:parents.shared.parentDescription',
-      defaultMessage: 'Fylltu út upplýsingar eftir bestu vitneskju og getu.',
-      description: 'Description under each parent section title',
-    },
     citizenship: {
       id: 'cpn.application:parents.shared.citizenship',
       defaultMessage: 'Ríkisfang',
       description: 'Label for citizenship/nationality select field',
     },
-    genderPlaceholder: {
-      id: 'cpn.application:parents.shared.genderPlaceholder',
-      defaultMessage: 'Veldu kyn',
-      description: 'Placeholder for gender select field',
-    },
-    countryPlaceholder: {
-      id: 'cpn.application:parents.shared.countryPlaceholder',
-      defaultMessage: 'Veldu land',
-      description: 'Placeholder for country select field',
-    },
     citizenshipPlaceholder: {
       id: 'cpn.application:parents.shared.citizenshipPlaceholder',
       defaultMessage: 'Veldu ríkisfang',
       description: 'Placeholder for citizenship select field',
-    },
-    municipalityPlaceholder: {
-      id: 'cpn.application:parents.shared.municipalityPlaceholder',
-      defaultMessage: 'Veldu sveitarfélag',
-      description: 'Placeholder for municipality select field',
     },
   }),
   expectantParents: defineMessages({

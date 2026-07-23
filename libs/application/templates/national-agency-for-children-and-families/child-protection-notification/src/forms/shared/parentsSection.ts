@@ -10,12 +10,13 @@ import {
   buildSection,
   buildSelectField,
   buildTextField,
+  coreMessages,
 } from '@island.is/application/core'
 import {
   getAllCountryCodes,
   getAllLanguageCodes,
 } from '@island.is/shared/utils'
-import { childMessages, parentsMessages } from '../../lib/messages'
+import { parentsMessages, sharedMessages } from '../../lib/messages'
 import { getYesNoOptions } from '../../utils/childProtectionNotificationUtils'
 import {
   doesNotKnowParentIds,
@@ -40,7 +41,7 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
     }),
     buildTextField({
       id: `${base}.nationalIdInfo.email`,
-      title: childMessages.nationalIdLookup.email,
+      title: sharedMessages.email,
       variant: 'email',
       width: 'half',
       doesNotRequireAnswer: true,
@@ -48,7 +49,7 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
     }),
     buildPhoneField({
       id: `${base}.nationalIdInfo.phone`,
-      title: childMessages.nationalIdLookup.phone,
+      title: sharedMessages.phone,
       width: 'half',
       enableCountrySelector: true,
       doesNotRequireAnswer: true,
@@ -70,13 +71,13 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
     }),
     buildTextField({
       id: `${base}.name`,
-      title: childMessages.manualInfo.name,
+      title: coreMessages.name,
       doesNotRequireAnswer: true,
       condition: doesNotKnowParentIds,
     }),
     buildTextField({
       id: `${base}.age`,
-      title: childMessages.manualInfo.age,
+      title: sharedMessages.age,
       width: 'half',
       variant: 'number',
       doesNotRequireAnswer: true,
@@ -84,8 +85,8 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
     }),
     buildSelectField({
       id: `${base}.gender`,
-      title: childMessages.manualInfo.gender,
-      placeholder: parentsMessages.shared.genderPlaceholder,
+      title: sharedMessages.gender,
+      placeholder: sharedMessages.genderPlaceholder,
       width: 'half',
       doesNotRequireAnswer: true,
       options: ({ externalData }) => {
@@ -115,8 +116,8 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
     }),
     buildSelectField({
       id: `${base}.country`,
-      title: childMessages.manualInfo.country,
-      placeholder: parentsMessages.shared.countryPlaceholder,
+      title: sharedMessages.country,
+      placeholder: sharedMessages.countryPlaceholder,
       width: 'half',
       doesNotRequireAnswer: true,
       options: getAllCountryCodes().map((c) => ({
@@ -139,13 +140,13 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
     }),
     buildTextField({
       id: `${base}.address`,
-      title: childMessages.manualInfo.address,
+      title: sharedMessages.address,
       doesNotRequireAnswer: true,
       condition: doesNotKnowParentIds,
     }),
     buildTextField({
       id: `${base}.postalCode`,
-      title: childMessages.manualInfo.postalCode,
+      title: sharedMessages.postalCode,
       width: 'half',
       doesNotRequireAnswer: true,
       condition: (answers) => {
@@ -160,7 +161,7 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
     }),
     buildTextField({
       id: `${base}.municipality`,
-      title: childMessages.manualInfo.municipality,
+      title: sharedMessages.municipality,
       width: 'half',
       doesNotRequireAnswer: true,
       condition: (answers) => {
@@ -175,8 +176,8 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
     }),
     buildSelectField({
       id: `${base}.municipalityPostalCode`,
-      title: childMessages.manualInfo.municipality,
-      placeholder: parentsMessages.shared.municipalityPlaceholder,
+      title: sharedMessages.municipality,
+      placeholder: sharedMessages.municipalityPlaceholder,
       doesNotRequireAnswer: true,
       options: ({ externalData }) => {
         const { postalCodes } = getApplicationExternalData(externalData)
@@ -201,7 +202,7 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
       options: [
         {
           value: YES,
-          label: childMessages.manualInfo.needsInterpreter,
+          label: sharedMessages.needsInterpreter,
         },
       ],
       condition: (answers) => {
@@ -218,8 +219,8 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
     }),
     buildSelectField({
       id: `${base}.preferredLanguage`,
-      title: childMessages.manualInfo.language,
-      placeholder: childMessages.manualInfo.languagePlaceholder,
+      title: sharedMessages.language,
+      placeholder: sharedMessages.languagePlaceholder,
       doesNotRequireAnswer: true,
       options: getAllLanguageCodes().map((l) => ({
         value: l.code,
@@ -298,7 +299,7 @@ export const parentsSection = buildSection({
               : isKnowsNationalId(answers) // TODO: Need to check if kerfiskennitala!
               ? parentsMessages.custodians.parent1Title
               : parentsMessages.guardians.parent1Title,
-          description: parentsMessages.shared.parentDescription,
+          description: sharedMessages.fillByBestKnowledge,
           titleVariant: 'h3',
           space: 4,
           condition: doesNotKnowParentIds,
@@ -324,7 +325,7 @@ export const parentsSection = buildSection({
               : isKnowsNationalId(answers) // TODO: Need to check if kerfiskennitala!
               ? parentsMessages.custodians.parent2Title
               : parentsMessages.guardians.parent2Title,
-          description: parentsMessages.shared.parentDescription,
+          description: sharedMessages.fillByBestKnowledge,
           titleVariant: 'h3',
           space: 4,
           condition: doesNotKnowParentIds,

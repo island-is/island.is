@@ -7,7 +7,7 @@ import {
   YES,
 } from '@island.is/application/core'
 import { getAllLanguageCodes } from '@island.is/shared/utils'
-import { memmMessages } from '../../../../lib/messages'
+import { memmMessages, sharedMessages } from '../../../../lib/messages'
 import {
   showLanguageSection,
   showPreferredLanguage,
@@ -63,7 +63,7 @@ export const cultureSubSection = buildSubSection({
         }),
         buildSelectField({
           id: 'memm.culture.languages',
-          title: memmMessages.culture.languagesLabel,
+          title: sharedMessages.language,
           placeholder: memmMessages.culture.languagesPlaceholder,
           doesNotRequireAnswer: true,
           isMulti: true,
@@ -89,8 +89,8 @@ export const cultureSubSection = buildSubSection({
         }),
         buildSelectField({
           id: 'memm.culture.preferredLanguage',
-          title: memmMessages.culture.preferredLanguageLabel,
-          placeholder: memmMessages.culture.preferredLanguagePlaceholder,
+          title: sharedMessages.language,
+          placeholder: sharedMessages.languagePlaceholder,
           doesNotRequireAnswer: true,
           options: ({ answers }) => {
             const selectedCodes =
@@ -108,7 +108,7 @@ export const cultureSubSection = buildSubSection({
           options: [
             {
               value: YES,
-              label: memmMessages.culture.needsInterpreter,
+              label: sharedMessages.needsInterpreter,
             },
           ],
           condition: showPreferredLanguage,
