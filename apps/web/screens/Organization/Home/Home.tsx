@@ -23,8 +23,10 @@ import {
 import { SLICE_SPACING } from '@island.is/web/constants'
 import {
   ContentLanguage,
+  Organization,
   Query,
   QueryGetNamespaceArgs,
+  QueryGetOrganizationArgs,
   QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
@@ -41,7 +43,11 @@ import {
 } from '../../queries'
 import { LandingPage } from './LandingPage'
 
-const parseOrganizationLinkHref = (organization: Query['getOrganization']) => {
+type HomeOrganization =
+  | Query['getOrganization']
+  | NonNullable<Query['getOrganizationPage']>['organization']
+
+const parseOrganizationLinkHref = (organization: HomeOrganization) => {
   if (!organization?.link) return ''
   let link = organization.link
   if (link.includes('://')) {
@@ -58,6 +64,7 @@ const OrganizationHomePage = ({
   organization,
   namespace,
 }: HomeProps) => {
+  const organizationData = organizationPage?.organization ?? organization
   const n = useNamespace(namespace)
   useContentfulId(organizationPage?.id)
   const { linkResolver } = useLinkResolver()
@@ -79,7 +86,7 @@ const OrganizationHomePage = ({
       })),
     })) ?? []
 
-  const parsedLinkHref = parseOrganizationLinkHref(organization)
+  const parsedLinkHref = parseOrganizationLinkHref(organizationData)
   const linkTitle = parsedLinkHref
     ? `${n(
         'landingPageTitleCardHeading',
@@ -88,8 +95,8 @@ const OrganizationHomePage = ({
     : ''
 
   const organizationNamespace = useMemo(() => {
-    return JSON.parse(organization?.namespace?.fields || '{}')
-  }, [organization?.namespace?.fields])
+    return JSON.parse(organizationData?.namespace?.fields || '{}')
+  }, [organizationData?.namespace?.fields])
 
   const o = useNamespace(organizationNamespace)
 
@@ -143,16 +150,16 @@ const OrganizationHomePage = ({
               </Box>
               <Box marginBottom={5}>
                 <Inline space={1} alignY="center">
-                  {organization?.logo?.url && (
+                  {organizationData?.logo?.url && (
                     <img
                       width={70}
                       height={70}
-                      src={organization?.logo.url}
+                      src={organizationData?.logo?.url}
                       alt="organization-logo"
                     />
                   )}
                   <Text variant="h1" color="blueberry600">
-                    {organization?.title}
+                    {organizationData?.title}
                   </Text>
                 </Inline>
               </Box>
@@ -160,7 +167,7 @@ const OrganizationHomePage = ({
               <Box marginBottom={SLICE_SPACING}>
                 <IconTitleCard
                   heading={linkTitle}
-                  href={organization?.link}
+                  href={organizationData?.link}
                   imgSrc={o(
                     'landingPageTitleCardImageSrc',
                     'https://images.ctfassets.net/8k0h54kbe6bj/dMv61A2SII5Y6AACjOzFo/63d1627ccf2113ae137c401725b1b35b/T__lva_og_kaffibolli.svg',
@@ -168,13 +175,13 @@ const OrganizationHomePage = ({
                   alt={o('landingPageTitleCardImageAlt', '')}
                 />
               </Box>
-              {organization?.description && (
+              {organizationData?.description && (
                 <Box
                   paddingY={4}
                   borderTopWidth="standard"
                   borderColor="standard"
                 >
-                  <Text variant="default">{organization?.description}</Text>
+                  <Text variant="default">{organizationData.description}</Text>
                 </Box>
               )}
             </GridContainer>
@@ -255,7 +262,7 @@ const OrganizationHomePage = ({
 
 export interface HomeProps {
   organizationPage?: Query['getOrganizationPage']
-  organization?: Query['getOrganization']
+  organization?: HomeOrganization
   namespace: Record<string, string>
 }
 
@@ -304,9 +311,6 @@ Home.getProps = async ({ apolloClient, locale, query, organizationPage }) => {
     {
       data: { getOrganizationPage },
     },
-    {
-      data: { getOrganization },
-    },
     namespace,
   ] = await Promise.all([
     !organizationPage
@@ -320,15 +324,6 @@ Home.getProps = async ({ apolloClient, locale, query, organizationPage }) => {
           },
         })
       : { data: { getOrganizationPage: organizationPage } },
-    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
-      query: GET_ORGANIZATION_QUERY,
-      variables: {
-        input: {
-          slug,
-          lang: locale as ContentLanguage,
-        },
-      },
-    }),
     apolloClient
       .query<Query, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -346,7 +341,76 @@ Home.getProps = async ({ apolloClient, locale, query, organizationPage }) => {
       ),
   ])
 
-  if (!getOrganizationPage && !getOrganization?.hasALandingPage) {
+  if (getOrganizationPage) {
+    // Happy path: OrganizationPage entry has its nested organization
+    // reference populated. Use it directly — no second query — so the
+    // getProps payload stays small (saves ~271 kB vs. always fetching
+    // the full standalone Organization alongside).
+    if (getOrganizationPage.organization) {
+      const organizationNamespace = extractNamespaceFromOrganization(
+        getOrganizationPage.organization,
+      )
+
+      return {
+        organizationPage: getOrganizationPage,
+        namespace,
+        showSearchInHeader: false,
+        customTopLoginButtonItem:
+          organizationNamespace?.customTopLoginButtonItem,
+        ...getThemeConfig(
+          getOrganizationPage.theme ?? 'landing_page',
+          getOrganizationPage.organization as Organization | null | undefined,
+        ),
+      }
+    }
+
+    // Edge case: OrganizationPage exists but its nested `organization`
+    // reference is null — the CMS content model allows this (schema has
+    // `organization?: Maybe<Organization>`), so an editor can save a
+    // page without linking an org. Fall back to the slug-based query so
+    // the page still renders with logo/title/theme/namespace, matching
+    // the pre-a78da9a80c behaviour. The payload-size win above is kept
+    // on the happy path; this query only fires for incomplete CMS data.
+    const {
+      data: { getOrganization },
+    } = await apolloClient.query<Query, QueryGetOrganizationArgs>({
+      query: GET_ORGANIZATION_QUERY,
+      variables: {
+        input: {
+          slug,
+          lang: locale as ContentLanguage,
+        },
+      },
+    })
+    const organizationNamespace =
+      extractNamespaceFromOrganization(getOrganization)
+
+    return {
+      organizationPage: getOrganizationPage,
+      organization: getOrganization,
+      namespace,
+      showSearchInHeader: false,
+      customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
+      ...getThemeConfig(
+        getOrganizationPage.theme ?? 'landing_page',
+        getOrganization,
+      ),
+    }
+  }
+
+  const {
+    data: { getOrganization },
+  } = await apolloClient.query<Query, QueryGetOrganizationArgs>({
+    query: GET_ORGANIZATION_QUERY,
+    variables: {
+      input: {
+        slug,
+        lang: locale as ContentLanguage,
+      },
+    },
+  })
+
+  if (!getOrganization?.hasALandingPage) {
     throw new CustomNextError(404, 'Organization page not found')
   }
 
@@ -354,15 +418,11 @@ Home.getProps = async ({ apolloClient, locale, query, organizationPage }) => {
     extractNamespaceFromOrganization(getOrganization)
 
   return {
-    organizationPage: getOrganizationPage,
     organization: getOrganization,
     namespace,
     showSearchInHeader: false,
     customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
-    ...getThemeConfig(
-      getOrganizationPage?.theme ?? 'landing_page',
-      getOrganization ?? getOrganizationPage?.organization,
-    ),
+    ...getThemeConfig('landing_page', getOrganization),
   }
 }
 
