@@ -18,6 +18,9 @@
  *   const env = isServerSide() ? buildPublicEnvFromProcessEnv() : getClientRuntimeEnv()
  */
 
+import { createElement } from 'react'
+import type { ReactElement } from 'react'
+
 export const NEXT_RUNTIME_ENV_SCRIPT_ID = '__NEXT_RUNTIME_ENV__'
 
 export type RuntimeEnv = Record<string, string | number | boolean | undefined>
@@ -36,14 +39,16 @@ export const serializeRuntimeEnv = (publicEnv: RuntimeEnv): string =>
  * Renders the public runtime environment as a JSON script tag. Render inside
  * `<Head>` in `pages/_document.tsx`; the client reads the values back with
  * `getClientRuntimeEnv`.
+ *
+ * Built with createElement rather than JSX: this module is also bundled into
+ * the apps' custom-server builds, which do not process JSX.
  */
-export const RuntimeEnv = ({ env }: { env: RuntimeEnv }) => (
-  <script
-    id={NEXT_RUNTIME_ENV_SCRIPT_ID}
-    type="application/json"
-    dangerouslySetInnerHTML={{ __html: serializeRuntimeEnv(env) }}
-  />
-)
+export const RuntimeEnv = ({ env }: { env: RuntimeEnv }): ReactElement =>
+  createElement('script', {
+    id: NEXT_RUNTIME_ENV_SCRIPT_ID,
+    type: 'application/json',
+    dangerouslySetInnerHTML: { __html: serializeRuntimeEnv(env) },
+  })
 
 let clientRuntimeEnv: RuntimeEnv | undefined
 
