@@ -116,6 +116,7 @@ export const AccordionFormField = ({
               key={`accordion-item-${index}`}
               id={`accordion-item-${index}`}
               label={formatText(item.itemTitle, application, formatMessage)}
+              startExpanded={item.startExpanded}
             >
               {hasContent && (
                 <Markdown>
