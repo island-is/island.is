@@ -1,3 +1,6 @@
+
+import { U2CertificateModule } from './vmst/u2-certificate/u2-certificate.module'
+import { U2CertificateService } from './vmst/u2-certificate/u2-certificate.service'
 import { HousingBenefitsModule } from './hms/housing-benefits/housing-benefits.module'
 import { HousingBenefitsService } from './hms/housing-benefits/housing-benefits.service'
 import { SubmitDocumentsModule } from './vmst/submit-documents/submit-documents.module'
@@ -294,7 +297,8 @@ export const modules = [
   SubmitDocumentsModule,
   ConfirmTravelModule,
   DirectorateOfEqualityModule,
-]
+  U2CertificateModule,
+            ]
 
 export const services = [
   ExampleCommonActionsService,
@@ -394,4 +398,5 @@ export const services = [
   SubmitDocumentsService,
   ConfirmTravelService,
   DirectorateOfEqualityService,
-]
+  U2CertificateService,
+            ]

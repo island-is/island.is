@@ -541,4 +541,9 @@ export const institutionMapper = {
     slug: InstitutionTypes.JAFNRETTISSTOFA,
     contentfulId: InstitutionContentfulIds.JAFNRETTISSTOFA,
   },
+  [ApplicationTypes.U2_CERTIFICATE]: {
+    nationalId: InstitutionNationalIds.VINNUMALASTOFNUN,
+    slug: InstitutionTypes.VINNUMALASTOFNUN,
+    contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
+  },
 }
