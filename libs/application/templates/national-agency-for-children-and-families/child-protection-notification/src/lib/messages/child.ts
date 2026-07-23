@@ -107,12 +107,12 @@ export const childMessages = {
   noNationalId: defineMessages({
     reasonLabel: {
       id: 'cpn.application:child.noNationalId.reasonLabel',
-      defaultMessage: 'Nánari skýring',
+      defaultMessage: 'Skýring',
       description: 'Label for the reason dropdown when no national ID is known',
     },
     reasonPlaceholder: {
       id: 'cpn.application:child.noNationalId.reasonPlaceholder',
-      defaultMessage: 'Veldu nánari skýringu',
+      defaultMessage: 'Veldu menntun eða gæslu',
       description: 'Placeholder for the reason dropdown',
     },
     reasonExpectedButUnknown: {

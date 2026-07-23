@@ -43,6 +43,7 @@ export const protectiveFactorsSection = buildSection({
 
             return visibleSections.map((section) => ({
               itemTitle: section.name ?? '',
+              startExpanded: section.code === PROT_FACTOR_UNBORN_SECTION,
               children: [
                 ...(section.subCategories?.flatMap((subCategory, subIndex) => [
                   buildCheckboxField({
