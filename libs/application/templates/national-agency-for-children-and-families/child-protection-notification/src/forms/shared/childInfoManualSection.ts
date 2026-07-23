@@ -5,13 +5,14 @@ import {
   buildSection,
   buildSelectField,
   buildTextField,
+  coreMessages,
   YES,
 } from '@island.is/application/core'
 import {
   getAllCountryCodes,
   getAllLanguageCodes,
 } from '@island.is/shared/utils'
-import { childMessages } from '../../lib/messages'
+import { childMessages, sharedMessages } from '../../lib/messages'
 import { isNoNationalId } from '../../utils/conditionUtils'
 import { IS } from '../../utils/constants'
 import { getApplicationAnswers } from '../../utils/getApplicationAnswers'
@@ -30,26 +31,26 @@ export const childInfoManualSection = buildSection({
         buildDescriptionField({
           id: 'childInfoManual.nameAgeGenderTitle',
           title: childMessages.manualInfo.nameAgeGenderTitle,
-          description: childMessages.manualInfo.nameAgeGenderDescription,
+          description: sharedMessages.fillByBestKnowledge,
           titleVariant: 'h4',
           space: 2,
         }),
         buildTextField({
           id: 'child.manualInfo.name',
-          title: childMessages.manualInfo.name,
+          title: coreMessages.name,
           doesNotRequireAnswer: true,
         }),
         buildTextField({
           id: 'child.manualInfo.age',
-          title: childMessages.manualInfo.age,
+          title: sharedMessages.age,
           width: 'half',
           variant: 'number',
           doesNotRequireAnswer: true,
         }),
         buildSelectField({
           id: 'child.manualInfo.gender',
-          title: childMessages.manualInfo.gender,
-          placeholder: childMessages.manualInfo.genderPlaceholder,
+          title: sharedMessages.gender,
+          placeholder: sharedMessages.genderPlaceholder,
           width: 'half',
           doesNotRequireAnswer: true,
           options: ({ externalData }) => {
@@ -108,14 +109,14 @@ export const childInfoManualSection = buildSection({
         buildDescriptionField({
           id: 'childInfoManual.addressTitle',
           title: childMessages.manualInfo.addressTitle,
-          description: childMessages.manualInfo.addressDescription,
+          description: sharedMessages.fillByBestKnowledge,
           titleVariant: 'h4',
           space: 4,
         }),
         buildSelectField({
           id: 'child.manualInfo.country',
-          title: childMessages.manualInfo.country,
-          placeholder: childMessages.manualInfo.countryPlaceholder,
+          title: sharedMessages.country,
+          placeholder: sharedMessages.countryPlaceholder,
           width: 'half',
           doesNotRequireAnswer: true,
           options: getAllCountryCodes().map((c) => ({
@@ -125,13 +126,13 @@ export const childInfoManualSection = buildSection({
         }),
         buildTextField({
           id: 'child.manualInfo.address',
-          title: childMessages.manualInfo.address,
+          title: sharedMessages.address,
           width: 'half',
           doesNotRequireAnswer: true,
         }),
         buildTextField({
           id: 'child.manualInfo.postalCode',
-          title: childMessages.manualInfo.postalCode,
+          title: sharedMessages.postalCode,
           width: 'half',
           doesNotRequireAnswer: true,
           condition: (answers) => {
@@ -141,7 +142,7 @@ export const childInfoManualSection = buildSection({
         }),
         buildTextField({
           id: 'child.manualInfo.municipality',
-          title: childMessages.manualInfo.municipality,
+          title: sharedMessages.municipality,
           width: 'half',
           doesNotRequireAnswer: true,
           condition: (answers) => {
@@ -151,8 +152,8 @@ export const childInfoManualSection = buildSection({
         }),
         buildSelectField({
           id: 'child.manualInfo.municipalityPostalCode',
-          title: childMessages.manualInfo.municipality,
-          placeholder: childMessages.manualInfo.municipalityPlaceholder,
+          title: sharedMessages.municipality,
+          placeholder: sharedMessages.municipalityPlaceholder,
           doesNotRequireAnswer: true,
           options: ({ externalData }) => {
             const { postalCodes } = getApplicationExternalData(externalData)
@@ -174,8 +175,8 @@ export const childInfoManualSection = buildSection({
         }),
         buildSelectField({
           id: 'child.manualInfo.language',
-          title: childMessages.manualInfo.language,
-          placeholder: childMessages.manualInfo.languagePlaceholder,
+          title: sharedMessages.language,
+          placeholder: sharedMessages.languagePlaceholder,
           doesNotRequireAnswer: true,
           options: getAllLanguageCodes().map((l) => ({
             value: l.code,
@@ -188,7 +189,7 @@ export const childInfoManualSection = buildSection({
           options: [
             {
               value: YES,
-              label: childMessages.manualInfo.needsInterpreter,
+              label: sharedMessages.needsInterpreter,
             },
           ],
         }),

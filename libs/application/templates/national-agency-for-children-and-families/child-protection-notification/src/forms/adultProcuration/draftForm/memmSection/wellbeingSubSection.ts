@@ -6,7 +6,7 @@ import {
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
-import { memmMessages } from '../../../../lib/messages'
+import { memmMessages, sharedMessages } from '../../../../lib/messages'
 import { getYesNoDoNotKnowOptions } from '../../../../utils/childProtectionNotificationUtils'
 import {
   showDisabilityService,
@@ -108,7 +108,7 @@ export const wellbeingSubSection = buildSubSection({
         buildSelectField({
           id: 'memm.wellbeing.disabilityService',
           title: memmMessages.wellbeing.disabilityServiceLabel,
-          placeholder: memmMessages.wellbeing.disabilityServicePlaceholder,
+          placeholder: sharedMessages.chooseBestOptionPlaceholder,
           options: ({ externalData }) => {
             const { disabilityStatusOptions } =
               getApplicationExternalData(externalData)

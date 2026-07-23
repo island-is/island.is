@@ -28,16 +28,6 @@ export const childMessages = {
       description:
         "Radio label asking whether the user knows the child's national ID",
     },
-    radioOptionYes: {
-      id: 'cpn.application:child.nationalIdLookup.radioOptionYes',
-      defaultMessage: 'Já',
-      description: "Yes — user knows the child's national ID",
-    },
-    radioOptionNo: {
-      id: 'cpn.application:child.nationalIdLookup.radioOptionNo',
-      defaultMessage: 'Nei',
-      description: "No — user does not know the child's national ID",
-    },
     radioOptionUnborn: {
       id: 'cpn.application:child.nationalIdLookup.radioOptionUnborn',
       defaultMessage: 'Barnið er ófætt',
@@ -63,16 +53,6 @@ export const childMessages = {
       description:
         'Info alert shown after child data is fetched from national registry',
     },
-    email: {
-      id: 'cpn.application:child.nationalIdLookup.email',
-      defaultMessage: 'Netfang',
-      description: 'Label for email field',
-    },
-    phone: {
-      id: 'cpn.application:child.nationalIdLookup.phone',
-      defaultMessage: 'Símanúmer',
-      description: 'Label for phone field',
-    },
     preferredName: {
       id: 'cpn.application:child.nationalIdLookup.preferredName',
       defaultMessage: 'Valið nafn',
@@ -88,31 +68,16 @@ export const childMessages = {
       defaultMessage: 'Veldu persónufornafn',
       description: 'Placeholder for preferred pronoun select field',
     },
-    pronounHann: {
-      id: 'cpn.application:child.nationalIdLookup.pronounHann',
-      defaultMessage: 'Hann',
-      description: 'Pronoun option: he/him',
-    },
-    pronounHun: {
-      id: 'cpn.application:child.nationalIdLookup.pronounHun',
-      defaultMessage: 'Hún',
-      description: 'Pronoun option: she/her',
-    },
-    pronounHan: {
-      id: 'cpn.application:child.nationalIdLookup.pronounHan',
-      defaultMessage: 'Hán',
-      description: 'Pronoun option: they/them (gender neutral)',
-    },
   }),
   noNationalId: defineMessages({
     reasonLabel: {
       id: 'cpn.application:child.noNationalId.reasonLabel',
-      defaultMessage: 'Skýring',
+      defaultMessage: 'Nánari skýring',
       description: 'Label for the reason dropdown when no national ID is known',
     },
     reasonPlaceholder: {
       id: 'cpn.application:child.noNationalId.reasonPlaceholder',
-      defaultMessage: 'Veldu menntun eða gæslu',
+      defaultMessage: 'Veldu nánari skýringu',
       description: 'Placeholder for the reason dropdown',
     },
     reasonExpectedButUnknown: {
@@ -150,90 +115,15 @@ export const childMessages = {
       defaultMessage: 'Veistu nafn, aldur og/eða kyn barnsins?',
       description: 'Title for name/age/gender group',
     },
-    nameAgeGenderDescription: {
-      id: 'cpn.application:child.manualInfo.nameAgeGenderDescription',
-      defaultMessage: 'Fylltu út upplýsingar eftir bestu vitneskju og getu.',
-      description: 'Description under the name/age/gender group title',
-    },
-    name: {
-      id: 'cpn.application:child.manualInfo.name',
-      defaultMessage: 'Nafn',
-      description: 'Label for name field',
-    },
-    age: {
-      id: 'cpn.application:child.manualInfo.age',
-      defaultMessage: 'Aldur',
-      description: 'Label for age field',
-    },
-    gender: {
-      id: 'cpn.application:child.manualInfo.gender',
-      defaultMessage: 'Kyn',
-      description: 'Label for gender select field',
-    },
-    genderPlaceholder: {
-      id: 'cpn.application:child.manualInfo.genderPlaceholder',
-      defaultMessage: 'Veldu kyn',
-      description: 'Placeholder for gender select field',
-    },
     addressTitle: {
       id: 'cpn.application:child.manualInfo.addressTitle',
       defaultMessage: 'Veistu hvar barnið býr?',
       description: 'Title for address group',
     },
-    addressDescription: {
-      id: 'cpn.application:child.manualInfo.addressDescription',
-      defaultMessage: 'Fylltu út upplýsingar eftir bestu vitneskju og getu.',
-      description: 'Description under the address group title',
-    },
-    country: {
-      id: 'cpn.application:child.manualInfo.country',
-      defaultMessage: 'Land',
-      description: 'Label for country select field',
-    },
-    countryPlaceholder: {
-      id: 'cpn.application:child.manualInfo.countryPlaceholder',
-      defaultMessage: 'Veldu land',
-      description: 'Placeholder for country select field',
-    },
-    address: {
-      id: 'cpn.application:child.manualInfo.address',
-      defaultMessage: 'Heimilisfang',
-      description: 'Label for address field',
-    },
-    postalCode: {
-      id: 'cpn.application:child.manualInfo.postalCode',
-      defaultMessage: 'Póstnúmer',
-      description: 'Label for postal code field',
-    },
-    municipality: {
-      id: 'cpn.application:child.manualInfo.municipality',
-      defaultMessage: 'Sveitarfélag',
-      description: 'Label for municipality select field',
-    },
-    municipalityPlaceholder: {
-      id: 'cpn.application:child.manualInfo.municipalityPlaceholder',
-      defaultMessage: 'Veldu sveitarfélag',
-      description: 'Placeholder for municipality select field',
-    },
     languageTitle: {
       id: 'cpn.application:child.manualInfo.languageTitle',
       defaultMessage: 'Á hvaða tungumáli finnst barninu best að tjá sig?',
       description: 'Title for the language group',
-    },
-    language: {
-      id: 'cpn.application:child.manualInfo.language',
-      defaultMessage: 'Tungumál',
-      description: 'Label for language select field',
-    },
-    languagePlaceholder: {
-      id: 'cpn.application:child.manualInfo.languagePlaceholder',
-      defaultMessage: 'Veldu tungumál',
-      description: 'Placeholder for language select field',
-    },
-    needsInterpreter: {
-      id: 'cpn.application:child.manualInfo.needsInterpreter',
-      defaultMessage: 'Er þörf á túlkþjónustu?',
-      description: 'Checkbox label for interpreter need',
     },
   }),
 }
