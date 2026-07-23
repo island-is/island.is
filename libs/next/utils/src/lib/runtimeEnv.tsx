@@ -3,19 +3,15 @@
  * build-once/deploy-everywhere model:
  *
  * - Server code reads values from `process.env` when constructing its config.
- * - The app's `pages/_document.tsx` serializes the public config into a JSON
- *   script tag on every request (same idiom as the `__SI_ENVIRONMENT__` tag
- *   injected by scripts/dockerfile-assets/bash/extract-environment.js for
- *   static SPAs).
+ * - The app's `pages/_document.tsx` renders `<RuntimeEnv />` in `<Head>`,
+ *   serializing the public config into a JSON script tag on every request
+ *   (same idiom as the `__SI_ENVIRONMENT__` tag injected by
+ *   scripts/dockerfile-assets/bash/extract-environment.js for static SPAs).
  * - Client code reads the values back from that script tag.
  *
  * Usage in `pages/_document.tsx`:
  *
- *   <script
- *     id={NEXT_RUNTIME_ENV_SCRIPT_ID}
- *     type="application/json"
- *     dangerouslySetInnerHTML={{ __html: serializeRuntimeEnv(publicEnv) }}
- *   />
+ *   <RuntimeEnv env={buildPublicRuntimeEnv()} />
  *
  * Usage in isomorphic code (see each app's environment module):
  *
@@ -36,11 +32,25 @@ export const isServerSide = () => typeof window === 'undefined'
 export const serializeRuntimeEnv = (publicEnv: RuntimeEnv): string =>
   JSON.stringify(publicEnv).replace(/</g, '\\u003c')
 
+/**
+ * Renders the public runtime environment as a JSON script tag. Render inside
+ * `<Head>` in `pages/_document.tsx`; the client reads the values back with
+ * `getClientRuntimeEnv`.
+ */
+export const RuntimeEnv = ({ env }: { env: RuntimeEnv }) => (
+  <script
+    id={NEXT_RUNTIME_ENV_SCRIPT_ID}
+    type="application/json"
+    dangerouslySetInnerHTML={{ __html: serializeRuntimeEnv(env) }}
+  />
+)
+
 let clientRuntimeEnv: RuntimeEnv | undefined
 
 /**
  * Reads the public runtime environment from the script tag rendered by
- * `_document.tsx`. Client-side only; parsed once and memoized.
+ * `<RuntimeEnv />` in `_document.tsx`. Client-side only; parsed once and
+ * memoized.
  */
 export const getClientRuntimeEnv = (): RuntimeEnv => {
   if (isServerSide()) {
@@ -53,7 +63,7 @@ export const getClientRuntimeEnv = (): RuntimeEnv => {
     const script = document.getElementById(NEXT_RUNTIME_ENV_SCRIPT_ID)
     if (!script && process.env.NODE_ENV !== 'production') {
       console.warn(
-        `Runtime env script tag #${NEXT_RUNTIME_ENV_SCRIPT_ID} not found — is it rendered in this app's pages/_document.tsx?`,
+        `Runtime env script tag #${NEXT_RUNTIME_ENV_SCRIPT_ID} not found — is <RuntimeEnv /> rendered in this app's pages/_document.tsx?`,
       )
     }
     clientRuntimeEnv = JSON.parse(script?.textContent || '{}')

@@ -6,10 +6,7 @@ import Document, {
   NextScript,
   DocumentContext,
 } from 'next/document'
-import {
-  NEXT_RUNTIME_ENV_SCRIPT_ID,
-  serializeRuntimeEnv,
-} from '@island.is/shared/utils'
+import { RuntimeEnv } from '@island.is/next/utils'
 import { buildPublicRuntimeEnv } from '../environments/runtimeEnvironment'
 
 interface Props {
@@ -28,13 +25,7 @@ class MyDocument extends Document<Props> {
     return (
       <Html lang="is">
         <Head>
-          <script
-            id={NEXT_RUNTIME_ENV_SCRIPT_ID}
-            type="application/json"
-            dangerouslySetInnerHTML={{
-              __html: serializeRuntimeEnv(buildPublicRuntimeEnv()),
-            }}
-          />
+          <RuntimeEnv env={buildPublicRuntimeEnv()} />
           <script
             defer
             data-domain="island.is/samradsgatt"

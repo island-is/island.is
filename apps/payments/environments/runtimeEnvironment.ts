@@ -1,4 +1,4 @@
-import { getClientRuntimeEnv, isServerSide } from '@island.is/shared/utils'
+import { getClientRuntimeEnv, isServerSide } from '@island.is/next/utils'
 
 const apiPath = '/api'
 const graphqlPath = `${apiPath}/graphql`

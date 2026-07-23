@@ -5,7 +5,7 @@ import {
   NEXT_RUNTIME_ENV_SCRIPT_ID,
   getClientRuntimeEnv,
   serializeRuntimeEnv,
-} from './nextRuntimeEnv'
+} from './runtimeEnv'
 
 describe('serializeRuntimeEnv', () => {
   it('serializes values to JSON', () => {

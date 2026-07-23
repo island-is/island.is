@@ -7,10 +7,7 @@ import Document, {
   DocumentContext,
 } from 'next/document'
 import { defaultLanguage } from '@island.is/shared/constants'
-import {
-  NEXT_RUNTIME_ENV_SCRIPT_ID,
-  serializeRuntimeEnv,
-} from '@island.is/shared/utils'
+import { RuntimeEnv } from '@island.is/next/utils'
 import Script from 'next/script'
 import { buildPublicRuntimeEnv } from '../environments/runtimeEnvironment'
 
@@ -34,13 +31,7 @@ class MyDocument extends Document<Props> {
     return (
       <Html lang={lang}>
         <Head>
-          <script
-            id={NEXT_RUNTIME_ENV_SCRIPT_ID}
-            type="application/json"
-            dangerouslySetInnerHTML={{
-              __html: serializeRuntimeEnv(buildPublicRuntimeEnv()),
-            }}
-          />
+          <RuntimeEnv env={buildPublicRuntimeEnv()} />
           <Script
             src="https://applepay.cdn-apple.com/jsapi/1.latest/apple-pay-sdk.js"
             strategy="beforeInteractive"
