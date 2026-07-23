@@ -35,9 +35,12 @@ import {
   GaldurXRoadAPIModelsJobSearchConfirmationJobSearchConfirmationEligibilityResponse,
   ApplicantCreateApplicantRequestedAttachmentRequest,
   GaldurXRoadAPIModelsApplicantForeignTravelEligibilityResponse,
-  GaldurXRoadAPIModelsApplicantCreateAttachmentEligibilityResponse,
   GaldurDomainModelsBaseViewModel,
   GaldurXRoadAPIModelsApplicantApplicantAttachmentsResponse,
+  U2CertificateApi,
+  GaldurXRoadAPIModelsApplicantApplicantEligibilityResponse,
+  GaldurExternalDomainModelsSupportDataNationalityDTO,
+  GaldurDomainModelsApplicationsU2CertificateViewModelsU2CertificateValidationResponse,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
@@ -60,6 +63,7 @@ type VmstApis =
   | ApplicantApi
   | ApplicationApi
   | SupportDataApi
+  | U2CertificateApi
 
 @Injectable()
 export class VmstUnemploymentClientService {
@@ -469,7 +473,7 @@ export class VmstUnemploymentClientService {
   }
 
   async checkCreateAttachmentEligibility(auth: User): Promise<
-    GaldurXRoadAPIModelsApplicantCreateAttachmentEligibilityResponse & {
+    GaldurXRoadAPIModelsApplicantApplicantEligibilityResponse & {
       applicantId: string
     }
   > {
@@ -562,6 +566,85 @@ export class VmstUnemploymentClientService {
     return await api.attachmentGetAttachment({
       id: attachmentId,
       includeData: true,
+    })
+  }
+
+  async checkU2Eligibility(
+    auth: User,
+  ): Promise<GaldurXRoadAPIModelsApplicantApplicantEligibilityResponse> {
+    const { applicantId } = await this.resolveApplicant(auth)
+
+    if (!applicantId) {
+      throw new Error('Failed to resolve applicantId')
+    }
+
+    const api = await this.createApiClient(
+      U2CertificateApi,
+      'clients-vmst-unemployment',
+    )
+
+    return await api.u2CertificateCanCreateU2Certificate({
+      applicantId,
+    })
+  }
+
+  async getEESCountries(): Promise<
+    Array<GaldurExternalDomainModelsSupportDataNationalityDTO>
+  > {
+    const api = await this.createApiClient(
+      SupportDataApi,
+      'clients-vmst-unemployment',
+    )
+
+    return await api.supportDataGetAllNationalities({
+      onlyInEUAndOrEEA: true,
+    })
+  }
+
+  async validateU2(
+    auth: User,
+    dateWhenLeaving: Date,
+    destinationCountryId: string,
+  ): Promise<GaldurDomainModelsApplicationsU2CertificateViewModelsU2CertificateValidationResponse> {
+    const { applicantId } = await this.resolveApplicant(auth)
+
+    if (!applicantId) {
+      throw new Error('Failed to resolve applicantId')
+    }
+    const api = await this.createApiClient(
+      U2CertificateApi,
+      'clients-vmst-unemployment',
+    )
+
+    return await api.u2CertificateValidateU2Certificate({
+      applicantId,
+      galdurExternalDomainRequestsU2CertificateCreateU2CertificateRequest: {
+        dateWhenLeaving: dateWhenLeaving,
+        destinationCountryId: destinationCountryId,
+      },
+    })
+  }
+
+  async submitU2Application(
+    auth: User,
+    destinationCountryId: string,
+    departureDate: Date,
+  ): Promise<GaldurDomainModelsBaseViewModel> {
+    const { applicantId } = await this.resolveApplicant(auth)
+
+    if (!applicantId) {
+      throw new Error('Failed to resolve applicantId')
+    }
+    const api = await this.createApiClient(
+      U2CertificateApi,
+      'clients-vmst-unemployment',
+    )
+    return await api.u2CertificateCreateU2Certificate({
+      applicantId,
+      galdurExternalDomainRequestsU2CertificateCreateU2CertificateRequest: {
+        destinationCountryId,
+        dateWhenLeaving: departureDate,
+      },
     })
   }
 }
