@@ -1,14 +1,7 @@
 import { KeyvAdapter } from '@apollo/utils.keyvadapter'
 import KeyvRedis from '@keyv/redis'
 import { createCache as createCacheManager } from 'cache-manager'
-import type { CreateCacheOptions } from 'cache-manager'
-import {
-  Cluster,
-  ClusterNode,
-  RedisOptions,
-  ClusterOptions,
-  Redis,
-} from 'ioredis'
+import { Cluster, ClusterNode, RedisOptions, ClusterOptions } from 'ioredis'
 
 import { logger } from '@island.is/logging'
 import Keyv from 'keyv'
@@ -19,8 +12,6 @@ type Options = {
   ssl: boolean
   noPrefix?: boolean
 }
-
-type RedisClient = Cluster | Redis
 
 const DEFAULT_PORT = 6379
 
@@ -140,16 +131,9 @@ export const createCache = (options: Options) =>
   new Cache(createRedisCluster(options))
 
 export const createRedisApolloCache = (options: Options) => {
-  return new KeyvAdapter(
-    new Keyv({
-      store: new KeyvRedis(createRedisCluster(options) as any, {
-        useRedisSets: false,
-      }),
-    }) as any,
-    {
-      disableBatchReads: true,
-    },
-  )
+  return new KeyvAdapter(createRedisKeyv(options), {
+    disableBatchReads: true,
+  })
 }
 
 export const createRedisCluster = (options: Options): Cluster => {
@@ -159,32 +143,37 @@ export const createRedisCluster = (options: Options): Cluster => {
 }
 
 /**
- * Creates a cache-manager (v6) cache backed by the Redis cluster.
+ * Creates a cache-manager cache backed by the Redis cluster.
  *
- * Note: cache-manager v6 is Keyv-based. Keys get a Keyv namespace prefix, so
- * existing cache entries from the v5/ioredis-store era are simply cold after
- * upgrade — safe for caches, but do not use this for durable storage.
+ * Keys get a Keyv namespace prefix and values are wrapped by Keyv's
+ * serializer, so entries are not interoperable with clients reading or
+ * writing raw Redis keys — treat this strictly as a cache, never as durable
+ * storage.
  *
- * Kept async for backwards compatibility with the v5 `caching()` signature.
+ * Kept async for backwards compatibility with callers that await it.
  */
 export const createRedisCacheManager = async (
   options: Options & { ttl?: number },
 ) => {
   return createCacheManager({
-    // Cast because the repo hoists two structurally-identical keyv versions
-    // (top-level vs. the one bundled under cache-manager); they only differ by
-    // a private type field, so the Keyv instance is runtime-compatible.
-    stores: [
-      createRedisKeyv(options),
-    ] as unknown as CreateCacheOptions['stores'],
-    // v5 treated ttl: 0 as "no expiry"; v6/Keyv expects undefined for that.
+    stores: [createRedisKeyv(options)],
+    // Keyv expects undefined (not 0) for "no expiry".
     ttl: options.ttl || undefined,
   })
 }
 
-export const createRedisKeyv = (options: Options) =>
-  new Keyv({
-    store: new KeyvRedis(createRedisCluster(options) as any, {
+export const createRedisKeyv = (options: Options) => {
+  const keyv = new Keyv({
+    store: new KeyvRedis(createRedisCluster(options), {
       useRedisSets: false,
     }),
   })
+  // Keyv converts store errors into events plus cache-miss returns; without a
+  // listener a Redis outage is indistinguishable from a 100% miss rate.
+  keyv.on('error', (error) =>
+    logger.error(
+      `Redis cache error: ${error instanceof Error ? error.message : error}`,
+    ),
+  )
+  return keyv
+}

@@ -1,3 +1,5 @@
+import { GraphQLError } from 'graphql'
+
 import { Inject, Injectable, Scope } from '@nestjs/common'
 import { CONTEXT } from '@nestjs/graphql'
 
@@ -86,12 +88,17 @@ class BackendAPI {
     }
 
     if (!res.ok) {
-      // Preserve the error shape thrown by the previous RESTDataSource
-      // implementation so consumers reading `error.extensions.response.status`
-      // keep working.
-      throw Object.assign(
-        new Error(`Request to ${path} failed with status ${res.status}`),
-        { extensions: { response: { status: res.status, body: data } } },
+      // The web apps' error links redirect to sign-in on UNAUTHENTICATED, and
+      // admin modals read `extensions.response.status` — both shapes matter.
+      throw new GraphQLError(
+        `Request to ${path} failed with status ${res.status}`,
+        {
+          extensions: {
+            ...(res.status === 401 && { code: 'UNAUTHENTICATED' }),
+            ...(res.status === 403 && { code: 'FORBIDDEN' }),
+            response: { status: res.status, body: data },
+          },
+        },
       )
     }
 

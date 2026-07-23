@@ -35683,7 +35683,7 @@ __metadata:
     jwks-rsa: "npm:3.0.1"
     jwt-decode: "npm:4.0.0"
     kennitala: "npm:3.1.1"
-    keyv: "npm:5.5.3"
+    keyv: "npm:5.6.0"
     libphonenumber-js: "npm:1.7.53"
     license-checker: "npm:25.0.1"
     lodash: "npm:4.17.21"
@@ -37989,12 +37989,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"keyv@npm:5.5.3, keyv@npm:^5.1.0":
-  version: 5.5.3
-  resolution: "keyv@npm:5.5.3"
+"keyv@npm:5.6.0, keyv@npm:^5.1.0, keyv@npm:^5.3.3":
+  version: 5.6.0
+  resolution: "keyv@npm:5.6.0"
   dependencies:
     "@keyv/serialize": "npm:^1.1.1"
-  checksum: 10/b8d2c354dade07cb4cb6ccffe6495c1a32a67cf9f066a9660eeaea974ab9d8b94dd568b4e71b23f217f587d3e07b558fa6e48158baea1a0bc9514bb15c1de555
+  checksum: 10/f1de999fdf635d703d091981a0a3844fb20081e01d45c6743ada7d01f3a6570dc47d1882e10d0a98d31075b342db8e62b4ebe4f5bf473dcd0903064d718709c1
   languageName: node
   linkType: hard
 
@@ -38004,15 +38004,6 @@ __metadata:
   dependencies:
     json-buffer: "npm:3.0.1"
   checksum: 10/167eb6ef64cc84b6fa0780ee50c9de456b422a1e18802209234f7c2cf7eae648c7741f32e50d7e24ccb22b24c13154070b01563d642755b156c357431a191e75
-  languageName: node
-  linkType: hard
-
-"keyv@npm:^5.3.3":
-  version: 5.6.0
-  resolution: "keyv@npm:5.6.0"
-  dependencies:
-    "@keyv/serialize": "npm:^1.1.1"
-  checksum: 10/f1de999fdf635d703d091981a0a3844fb20081e01d45c6743ada7d01f3a6570dc47d1882e10d0a98d31075b342db8e62b4ebe4f5bf473dcd0903064d718709c1
   languageName: node
   linkType: hard
 

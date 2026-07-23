@@ -1,8 +1,5 @@
 /**
- * Runtime environment support for Next.js (pages router) apps.
- *
- * Replaces the removed `serverRuntimeConfig`/`publicRuntimeConfig` from
- * next.config.js (removed in Next.js 16) while preserving the
+ * Runtime environment support for Next.js (pages router) apps, preserving the
  * build-once/deploy-everywhere model:
  *
  * - Server code reads values from `process.env` when constructing its config.
@@ -53,9 +50,13 @@ export const getClientRuntimeEnv = (): RuntimeEnv => {
   }
 
   if (!clientRuntimeEnv) {
-    clientRuntimeEnv = JSON.parse(
-      document.getElementById(NEXT_RUNTIME_ENV_SCRIPT_ID)?.textContent || '{}',
-    )
+    const script = document.getElementById(NEXT_RUNTIME_ENV_SCRIPT_ID)
+    if (!script && process.env.NODE_ENV !== 'production') {
+      console.warn(
+        `Runtime env script tag #${NEXT_RUNTIME_ENV_SCRIPT_ID} not found — is it rendered in this app's pages/_document.tsx?`,
+      )
+    }
+    clientRuntimeEnv = JSON.parse(script?.textContent || '{}')
   }
 
   return clientRuntimeEnv as RuntimeEnv
