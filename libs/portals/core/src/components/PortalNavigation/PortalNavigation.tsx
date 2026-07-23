@@ -85,8 +85,6 @@ export function PortalNavigation({
       renderLink={(link, item) => {
         const href = item?.href ?? ''
         if (href && link.type === FocusableBox) {
-          // React 19 types ReactElement.props as `unknown`, so cloneElement rejects the
-          // extra props; widen the element to keep the clone-with-props compiling.
           return cloneElement(link as any, {
             component: Link,
             href: undefined,

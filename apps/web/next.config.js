@@ -215,7 +215,6 @@ const nextConfig = {
   },
 
   // Runtime configuration lives in environments/runtimeEnvironment.ts
-  // (serverRuntimeConfig/publicRuntimeConfig were removed in Next.js 16)
   env: {
     API_MOCKS: process.env.API_MOCKS || '',
   },

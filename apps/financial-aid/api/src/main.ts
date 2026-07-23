@@ -5,8 +5,8 @@ import { AppModule } from './app/app.module'
 bootstrap({
   appModule: AppModule,
   name: 'financial-aid-api',
-  // Apollo Server 3 applied CORS to the GraphQL endpoint by default; Apollo
-  // Server 4+ removed that, so the same wildcard-origin CORS is applied here.
+  // The GraphQL endpoint serves cross-origin browser clients, so it gets
+  // wildcard-origin CORS; other routes are same-origin only.
   enableCors: { path: '/api/graphql', origin: '*' },
   port: 3339,
 })

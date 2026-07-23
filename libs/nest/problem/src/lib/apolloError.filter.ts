@@ -10,9 +10,8 @@ const errorInfo: Record<string, { title: string; status: number }> = {
   BAD_USER_INPUT: { title: 'Bad Request', status: 400 },
 }
 
-// Apollo Server 4+ removed the ApolloError class hierarchy. GraphQL errors
-// (including the ones our guards throw) are GraphQLError with a code in
-// extensions.
+// GraphQL errors (including the ones our guards throw) are GraphQLError with
+// a code in extensions.
 @Catch(GraphQLError)
 export class ApolloErrorFilter extends BaseProblemFilter {
   getProblem(error: GraphQLError) {

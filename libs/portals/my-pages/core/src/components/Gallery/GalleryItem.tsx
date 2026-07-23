@@ -25,8 +25,6 @@ export const GalleryItem = ({
       })}
     >
       <Box>
-        {/* React 19 types ReactElement.props as `unknown`, so cloneElement rejects the
-            extra className; widen the element to keep it compiling. */}
         {cloneElement(children as any, {
           className: cn(styles.itemImage, {
             [styles.activeImage]: active || thumbnail,

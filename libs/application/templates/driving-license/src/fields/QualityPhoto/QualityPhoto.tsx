@@ -15,9 +15,8 @@ interface QualityPhotoData {
   application: Application
 }
 
-// Called as a plain function (`Photo({...})`), so it needs an explicit return type: under
-// @types/react 19 an FC's call signature returns promise-inclusive `ReactNode`, which no
-// longer fits the `ReactNode` slot where `img` is rendered.
+// Called as a plain function (`Photo({...})`), so it needs an explicit
+// ReactElement return type.
 const Photo = ({
   qualityPhoto,
 }: QualityPhotoData): React.ReactElement | null => {

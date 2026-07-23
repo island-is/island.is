@@ -53,7 +53,7 @@ export function createHttpLink(options: ClientOptions) {
           uri: `${graphqlUrl}${graphqlEndpoint}`,
           fetch,
           headers: {
-            // Apollo Server 4+ CSRF prevention rejects GET requests without a
+            // Apollo Server's CSRF prevention rejects GET requests without a
             // content-type unless they carry a preflight header.
             'apollo-require-preflight': 'true',
           },

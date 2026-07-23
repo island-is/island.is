@@ -3,11 +3,9 @@ import { getClientRuntimeEnv, isServerSide } from '@island.is/shared/utils'
 const graphqlPath = '/api/graphql'
 
 /**
- * Replaces `publicRuntimeConfig`/`serverRuntimeConfig` from next.config.js
- * (removed in Next.js 16), keeping the build-once/deploy-everywhere model:
- * values are resolved from process.env at request time on the server, and on
- * the client they are read from the JSON script tag rendered by
- * pages/_document.tsx.
+ * Runtime environment config (build-once/deploy-everywhere): values are
+ * resolved from process.env at request time on the server, and on the client
+ * they are read from the JSON script tag rendered by pages/_document.tsx.
  */
 
 export type PublicRuntimeEnv = ReturnType<typeof buildPublicRuntimeEnv>

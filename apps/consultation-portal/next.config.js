@@ -22,7 +22,6 @@ module.exports = withNx(
       return config
     },
     // Runtime configuration lives in environments/runtimeEnvironment.ts
-    // (serverRuntimeConfig/publicRuntimeConfig were removed in Next.js 16)
     basePath: `${BASE_PATH}`,
     env: {
       NEXTAUTH_URL: process.env.NEXTAUTH_URL,

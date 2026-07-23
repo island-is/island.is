@@ -27,8 +27,9 @@ export class GraphqlOptionsFactory implements GqlOptionsFactory {
       playground,
       autoSchemaFile,
       path: '/api/graphql',
-      // The web app sends batched GraphQL requests during SSR. Apollo Server 3
-      // accepted these by default; Apollo Server 4+ disables batching.
+      // The web app sends batched GraphQL requests during SSR (see
+      // apps/web/graphql/httpLink.ts). Apollo Server rejects batched requests
+      // unless this is enabled.
       allowBatchedHttpRequests: true,
       cache:
         this.config.redis.nodes.length > 0
@@ -73,7 +74,6 @@ function overrideCacheControlPlugin(): ApolloServerPlugin {
 
           const policyIfCacheable = overallCachePolicy.policyIfCacheable()
 
-          // Apollo Server 4+ wraps the result in a structured body.
           const hasErrors =
             response.body.kind === 'single' &&
             !!response.body.singleResult.errors?.length
