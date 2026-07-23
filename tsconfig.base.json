@@ -563,6 +563,9 @@
       "@island.is/application/templates/mortgage-certificate": [
         "libs/application/templates/mortgage-certificate/src/index.ts"
       ],
+      "@island.is/application/templates/national-agency-for-children-and-families/child-protection-notification": [
+        "libs/application/templates/national-agency-for-children-and-families/child-protection-notification/src/index.ts"
+      ],
       "@island.is/application/templates/new-primary-school": [
         "libs/application/templates/new-primary-school/src/index.ts"
       ],
@@ -881,6 +884,9 @@
       ],
       "@island.is/clients/fishing-license": [
         "libs/clients/fishing-license/src/index.ts"
+      ],
+      "@island.is/clients/national-agency-for-children-and-families": [
+        "libs/clients/national-agency-for-children-and-families/src/index.ts"
       ],
       "@island.is/clients/fiskistofa": [
         "libs/clients/fiskistofa/src/index.ts"
