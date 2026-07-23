@@ -13,7 +13,11 @@ import {
   YES,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
-import { childMessages, prerequisitesMessages } from '../../lib/messages'
+import {
+  childMessages,
+  prerequisitesMessages,
+  sharedMessages,
+} from '../../lib/messages'
 import { isKnowsNationalId, isNoNationalId } from '../../utils/conditionUtils'
 import { KnowsNationalId, NoNationalIdReason } from '../../utils/constants'
 import { getApplicationAnswers } from '../../utils/getApplicationAnswers'
@@ -36,11 +40,11 @@ export const childSubSection = buildSubSection({
           options: [
             {
               value: KnowsNationalId.YES,
-              label: childMessages.nationalIdLookup.radioOptionYes,
+              label: sharedMessages.radioYes,
             },
             {
               value: KnowsNationalId.NO,
-              label: childMessages.nationalIdLookup.radioOptionNo,
+              label: sharedMessages.radioNo,
             },
             {
               value: KnowsNationalId.UNBORN,
@@ -83,7 +87,7 @@ export const childSubSection = buildSubSection({
         }),
         buildTextField({
           id: 'child.nationalIdInfo.email',
-          title: childMessages.nationalIdLookup.email,
+          title: sharedMessages.email,
           variant: 'email',
           width: 'half',
           doesNotRequireAnswer: true,
@@ -91,7 +95,7 @@ export const childSubSection = buildSubSection({
         }),
         buildPhoneField({
           id: 'child.nationalIdInfo.phone',
-          title: childMessages.nationalIdLookup.phone,
+          title: sharedMessages.phone,
           width: 'half',
           enableCountrySelector: true,
           doesNotRequireAnswer: true,

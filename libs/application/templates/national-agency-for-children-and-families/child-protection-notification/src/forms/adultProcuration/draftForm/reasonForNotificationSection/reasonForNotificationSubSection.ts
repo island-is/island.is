@@ -6,7 +6,10 @@ import {
   buildSelectField,
   buildSubSection,
 } from '@island.is/application/core'
-import { reasonForNotificationMessages } from '../../../../lib/messages'
+import {
+  reasonForNotificationMessages,
+  sharedMessages,
+} from '../../../../lib/messages'
 import { getSelectedReasonForNotificationCategoryCodes } from '../../../../utils/childProtectionNotificationUtils'
 import {
   isUnborn,
@@ -56,8 +59,7 @@ export const reasonForNotificationSubSection = buildSubSection({
                           id: `${subCategoryId}.subSubCategories`,
                           title: subCategory.label,
                           placeholder:
-                            reasonForNotificationMessages.reason
-                              .selectPlaceholder,
+                            sharedMessages.chooseBestOptionPlaceholder,
                           doesNotRequireAnswer: true,
                           isMulti: true,
                           options:

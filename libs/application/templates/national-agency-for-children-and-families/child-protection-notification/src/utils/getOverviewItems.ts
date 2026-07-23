@@ -51,8 +51,8 @@ import { getApplicationExternalData } from './getApplicationExternalData'
 import { Parent } from './types'
 
 const knowsNationalIdLabelMap = {
-  [KnowsNationalId.YES]: childMessages.nationalIdLookup.radioOptionYes,
-  [KnowsNationalId.NO]: childMessages.nationalIdLookup.radioOptionNo,
+  [KnowsNationalId.YES]: sharedMessages.radioYes,
+  [KnowsNationalId.NO]: sharedMessages.radioNo,
   [KnowsNationalId.UNBORN]: childMessages.nationalIdLookup.radioOptionUnborn,
 } as const
 
@@ -283,13 +283,13 @@ export const getChildWithNationalIdItems = (
           },
           {
             width: 'half' as const,
-            keyText: childMessages.nationalIdLookup.email,
+            keyText: sharedMessages.email,
             valueText: childEmail ?? '',
             hideIfEmpty: true,
           },
           {
             width: 'half' as const,
-            keyText: childMessages.nationalIdLookup.phone,
+            keyText: sharedMessages.phone,
             valueText: formatNumber(childPhone ?? '', 'International'),
             hideIfEmpty: true,
           },
@@ -363,19 +363,19 @@ export const getChildManualItems = (
   return [
     {
       width: 'half',
-      keyText: childMessages.manualInfo.name,
+      keyText: coreMessages.name,
       valueText: childManualName ?? '',
       hideIfEmpty: true,
     },
     {
       width: 'half',
-      keyText: childMessages.manualInfo.age,
+      keyText: sharedMessages.age,
       valueText: childManualAge ?? '',
       hideIfEmpty: true,
     },
     {
       width: 'half',
-      keyText: childMessages.manualInfo.gender,
+      keyText: sharedMessages.gender,
       valueText:
         genders.find((g) => g.value === childManualGender)?.label ??
         childManualGender ??
@@ -409,13 +409,13 @@ export const getChildManualItems = (
       : []),
     {
       width: 'half',
-      keyText: childMessages.manualInfo.country,
+      keyText: sharedMessages.country,
       valueText: getCountryByCode(childManualCountry ?? '')?.name,
       hideIfEmpty: true,
     },
     {
       width: 'half',
-      keyText: childMessages.manualInfo.address,
+      keyText: sharedMessages.address,
       valueText: childManualAddress ?? '',
       hideIfEmpty: true,
     },
@@ -423,7 +423,7 @@ export const getChildManualItems = (
       ? [
           {
             width: 'half' as const,
-            keyText: childMessages.manualInfo.municipality,
+            keyText: sharedMessages.municipality,
             valueText:
               postalCodes.find(
                 (p) => p.value === childManualMunicipalityPostalCode,
@@ -434,26 +434,26 @@ export const getChildManualItems = (
       : [
           {
             width: 'half' as const,
-            keyText: childMessages.manualInfo.postalCode,
+            keyText: sharedMessages.postalCode,
             valueText: childManualPostalCode ?? '',
             hideIfEmpty: true,
           },
           {
             width: 'half' as const,
-            keyText: childMessages.manualInfo.municipality,
+            keyText: sharedMessages.municipality,
             valueText: childManualMunicipality ?? '',
             hideIfEmpty: true,
           },
         ]),
     {
       width: 'half',
-      keyText: childMessages.manualInfo.language,
+      keyText: sharedMessages.language,
       valueText: getLanguageByCode(childManualLanguage ?? '')?.name,
       hideIfEmpty: true,
     },
     {
       width: 'half',
-      keyText: childMessages.manualInfo.needsInterpreter,
+      keyText: sharedMessages.needsInterpreter,
       valueText: childManualNeedsInterpreter.includes(YES)
         ? sharedMessages.radioYes
         : sharedMessages.radioNo,
@@ -481,13 +481,13 @@ const buildParentItems = (
       },
       {
         width: 'half',
-        keyText: childMessages.nationalIdLookup.email,
+        keyText: sharedMessages.email,
         valueText: parent?.nationalIdInfo?.email ?? '',
         hideIfEmpty: true,
       },
       {
         width: 'half',
-        keyText: childMessages.nationalIdLookup.phone,
+        keyText: sharedMessages.phone,
         valueText: formatNumber(
           parent?.nationalIdInfo?.phone ?? '',
           'International',
@@ -500,19 +500,19 @@ const buildParentItems = (
   return [
     {
       width: 'half',
-      keyText: childMessages.manualInfo.name,
+      keyText: coreMessages.name,
       valueText: parent?.name ?? '',
       hideIfEmpty: true,
     },
     {
       width: 'half',
-      keyText: childMessages.manualInfo.age,
+      keyText: sharedMessages.age,
       valueText: parent?.age ?? '',
       hideIfEmpty: true,
     },
     {
       width: 'half',
-      keyText: childMessages.manualInfo.gender,
+      keyText: sharedMessages.gender,
       valueText:
         genders.find((g) => g.value === parent?.gender)?.label ??
         parent?.gender ??
@@ -521,7 +521,7 @@ const buildParentItems = (
     },
     {
       width: 'half',
-      keyText: childMessages.manualInfo.country,
+      keyText: sharedMessages.country,
       valueText: getCountryByCode(parent?.country ?? '')?.name,
       hideIfEmpty: true,
     },
@@ -533,7 +533,7 @@ const buildParentItems = (
     },
     {
       width: 'half',
-      keyText: childMessages.manualInfo.address,
+      keyText: sharedMessages.address,
       valueText: parent?.address ?? '',
       hideIfEmpty: true,
     },
@@ -541,7 +541,7 @@ const buildParentItems = (
       ? [
           {
             width: 'half' as const,
-            keyText: childMessages.manualInfo.municipality,
+            keyText: sharedMessages.municipality,
             valueText:
               postalCodes.find((p) => p.value === parent.municipalityPostalCode)
                 ?.label ?? '',
@@ -551,13 +551,13 @@ const buildParentItems = (
       : [
           {
             width: 'half' as const,
-            keyText: childMessages.manualInfo.postalCode,
+            keyText: sharedMessages.postalCode,
             valueText: parent?.postalCode ?? '',
             hideIfEmpty: true,
           },
           {
             width: 'half' as const,
-            keyText: childMessages.manualInfo.municipality,
+            keyText: sharedMessages.municipality,
             valueText: parent?.municipality ?? '',
             hideIfEmpty: true,
           },
@@ -566,7 +566,7 @@ const buildParentItems = (
       ? [
           {
             width: 'half' as const,
-            keyText: childMessages.manualInfo.needsInterpreter,
+            keyText: sharedMessages.needsInterpreter,
             valueText: parent.needsInterpreter?.includes(YES)
               ? sharedMessages.radioYes
               : sharedMessages.radioNo,
@@ -575,7 +575,7 @@ const buildParentItems = (
             ? [
                 {
                   width: 'half' as const,
-                  keyText: childMessages.manualInfo.language,
+                  keyText: sharedMessages.language,
                   valueText: getLanguageByCode(parent.preferredLanguage ?? '')
                     ?.name,
                   hideIfEmpty: true,
@@ -657,7 +657,7 @@ export const getMemmEducationItems = (
       ? [
           {
             width: 'full' as const,
-            keyText: memmMessages.education.caregiverName,
+            keyText: coreMessages.name,
             valueText: memmEducationCaregiverName ?? '',
             hideIfEmpty: true,
           },
@@ -746,7 +746,7 @@ export const getMemmCultureItems = (
       ? [
           {
             width: 'full' as const,
-            keyText: memmMessages.culture.needsInterpreter,
+            keyText: sharedMessages.needsInterpreter,
             valueText: memmCultureNeedsInterpreter.includes(YES)
               ? sharedMessages.radioYes
               : sharedMessages.radioNo,

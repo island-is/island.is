@@ -59,11 +59,6 @@ export const reasonForNotificationMessages = {
       defaultMessage: 'Hverskonar athæfi hefurðu áhyggjur af?',
       description: 'What kind of behavior are you concerned about?',
     },
-    selectPlaceholder: {
-      id: 'cpn.application:reasonForNotification.reason.selectPlaceholder',
-      defaultMessage: 'Veldu það sem á best við',
-      description: 'Placeholder for select fields',
-    },
     biggestConcern: {
       id: 'cpn.application:reasonForNotification.reason.biggestConcern',
       defaultMessage: 'Mestar áhyggjur',

@@ -71,11 +71,6 @@ export const memmMessages = {
       defaultMessage: 'Nafn á skóla',
       description: 'Label for school name text field',
     },
-    caregiverName: {
-      id: 'cpn.application:memm.education.caregiverName',
-      defaultMessage: 'Nafn',
-      description: 'Label for daycare provider name text field',
-    },
   }),
   reception: defineMessages({
     subSectionTitle: {
@@ -169,11 +164,6 @@ export const memmMessages = {
         'Þú getur valið allt að fjórum tungumálum. Raðaðu tungumálunum eftir því hvaða tungumál er mest notað. Það sem er mest notað er nr. 1 og svo koll af kolli.',
       description: 'Description for the language multi-select section',
     },
-    languagesLabel: {
-      id: 'cpn.application:memm.culture.languagesLabel',
-      defaultMessage: 'Tungumál',
-      description: 'Label for the language multi-select field',
-    },
     languagesPlaceholder: {
       id: 'cpn.application:memm.culture.languagesPlaceholder',
       defaultMessage: 'Veldu allt að fjögur tungumál',
@@ -184,21 +174,6 @@ export const memmMessages = {
       defaultMessage:
         'Af þeim tungumálum sem þú hefur valið, á hvaða tungumáli finnst barninu best að tjá sig á?',
       description: 'Question text above the preferred language dropdown',
-    },
-    preferredLanguageLabel: {
-      id: 'cpn.application:memm.culture.preferredLanguageLabel',
-      defaultMessage: 'Tungumál',
-      description: 'Label for the preferred language dropdown',
-    },
-    preferredLanguagePlaceholder: {
-      id: 'cpn.application:memm.culture.preferredLanguagePlaceholder',
-      defaultMessage: 'Veldu tungumál',
-      description: 'Placeholder for the preferred language dropdown',
-    },
-    needsInterpreter: {
-      id: 'cpn.application:memm.culture.needsInterpreter',
-      defaultMessage: 'Er þörf á túlkþjónustu?',
-      description: 'Label for the interpreter need checkbox',
     },
   }),
   wellbeing: defineMessages({
@@ -281,11 +256,6 @@ export const memmMessages = {
       id: 'cpn.application:memm.wellbeing.disabilityServiceLabel',
       defaultMessage: 'Lýsing',
       description: 'Label for disability service dropdown',
-    },
-    disabilityServicePlaceholder: {
-      id: 'cpn.application:memm.wellbeing.disabilityServicePlaceholder',
-      defaultMessage: 'Veldu það sem best á við',
-      description: 'Placeholder for disability service dropdown',
     },
   }),
 }

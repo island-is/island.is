@@ -4,6 +4,7 @@ import {
   buildSubSection,
   buildTextField,
   buildDescriptionField,
+  coreMessages,
 } from '@island.is/application/core'
 import { memmMessages } from '../../../../lib/messages'
 import {
@@ -60,7 +61,7 @@ export const educationSubSection = buildSubSection({
         }),
         buildTextField({
           id: 'memm.education.caregiverName',
-          title: memmMessages.education.caregiverName,
+          title: coreMessages.name,
           doesNotRequireAnswer: true,
           condition: isDayCareProvider,
         }),
