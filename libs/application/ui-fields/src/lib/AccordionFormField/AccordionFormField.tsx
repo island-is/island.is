@@ -37,7 +37,14 @@ export const AccordionFormField = ({
   const [items, setItems] = useState<Array<AccordionItemType>>()
   const { formatMessage, lang: locale } = useLocale()
   const user = useUserInfo()
-  const { accordionItems, marginBottom, marginTop, title, titleVariant } = field
+  const {
+    accordionItems,
+    marginBottom,
+    marginTop,
+    title,
+    titleVariant,
+    singleExpand,
+  } = field
   const formValues = useWatch({ defaultValue: application.answers })
   const prevVisibilityRef = useRef<Record<string, boolean>>({})
 
@@ -100,7 +107,7 @@ export const AccordionFormField = ({
           </Text>
         </Box>
       )}
-      <Accordion>
+      <Accordion singleExpand={singleExpand}>
         {items.map((item, index) => {
           const hasContent = !!item.itemContent
           const hasChildren = item.children && item.children.length > 0
@@ -109,6 +116,7 @@ export const AccordionFormField = ({
               key={`accordion-item-${index}`}
               id={`accordion-item-${index}`}
               label={formatText(item.itemTitle, application, formatMessage)}
+              startExpanded={item.startExpanded}
             >
               {hasContent && (
                 <Markdown>
