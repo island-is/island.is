@@ -1,4 +1,9 @@
-import { EMAIL_REGEX, NO, YES } from '@island.is/application/core'
+import {
+  coreErrorMessages,
+  EMAIL_REGEX,
+  NO,
+  YES,
+} from '@island.is/application/core'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
@@ -530,6 +535,14 @@ export const dataSchema = baseSchema
       }
 
       const bucket = value as Record<string, unknown>
+      if (!('approveExternalData' in bucket)) continue
+      if (bucket.approveExternalData !== true) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [key, 'approveExternalData'],
+          params: coreErrorMessages.defaultError,
+        })
+      }
       if (!bucket.assigneeInfo || typeof bucket.assigneeInfo !== 'object') {
         continue
       }

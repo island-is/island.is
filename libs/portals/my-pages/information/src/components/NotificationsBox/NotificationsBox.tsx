@@ -1,21 +1,64 @@
 import { Box, Icon, SkeletonLoader, Text } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
-import { LinkResolver, m } from '@island.is/portals/my-pages/core'
-import { AvatarImage } from '@island.is/portals/my-pages/documents'
-import {
-  COAT_OF_ARMS,
-  InformationPaths,
-  resolveLink,
-  useGetUserNotificationsOverviewQuery,
-  useMarkUserNotificationAsReadMutation,
-} from '@island.is/portals/my-pages/information'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import { AvatarImage, LinkResolver, m } from '@island.is/portals/my-pages/core'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { hasNotificationScopes } from '@island.is/auth/scopes'
-import { lock } from '../Dashboard.css'
-import * as styles from './DashboardNotifications.css'
+import {
+  useGetUserNotificationsOverviewQuery,
+  useMarkUserNotificationAsReadMutation,
+} from '../../screens/Notifications/Notifications.generated'
+import { InformationPaths } from '../../lib/paths'
+import { mInformationNotifications } from '../../lib/messages'
+import { COAT_OF_ARMS, resolveLink } from '../../utils/notificationLinkResolver'
+import * as styles from './NotificationsBox.css'
 
-export const DashboardNotifications = ({ limit }: { limit: number }) => {
+interface Props {
+  limit: number
+  title?: string
+  showViewAllArrow?: boolean
+}
+
+/* Problem doesn't fit here: its custom no_data layout renders
+   side-by-side (too wide for this card) and requires a body message.
+   This mirrors the empty-state styling of DocumentsEmpty instead. */
+const StateMessage = ({
+  title,
+  text,
+  imgSrc,
+}: {
+  title: string
+  text?: string
+  imgSrc: string
+}) => (
+  <Box
+    display="flex"
+    flexDirection="column"
+    alignItems="center"
+    paddingTop={2}
+    rowGap={2}
+    paddingX={[4, 4, 0]}
+  >
+    <Text variant="h4" textAlign="center">
+      {title}
+    </Text>
+    {text && (
+      <Text textAlign="center" whiteSpace="preLine">
+        {text}
+      </Text>
+    )}
+    <Box paddingTop={2}>
+      <img src={imgSrc} alt="" className={styles.stateImage} />
+    </Box>
+  </Box>
+)
+
+export const NotificationsBox = ({
+  limit,
+  title,
+  showViewAllArrow = true,
+}: Props) => {
+  useNamespaces('sp.information-notifications')
   const { formatMessage, lang } = useLocale()
   const userInfo = useUserInfo()
   const hasDelegationAccess = hasNotificationScopes(userInfo?.scopes)
@@ -43,11 +86,11 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
       borderWidth="standard"
       borderColor="blue200"
       paddingTop={3}
-      paddingBottom={1}
+      paddingBottom={3}
       paddingX={[0, 0, 4]}
     >
       {!loading && !hasDelegationAccess && (
-        <span className={lock} aria-hidden="true">
+        <span className={styles.lock} aria-hidden="true">
           <Icon icon="lockClosed" type="outline" color="blue600" size="small" />
         </span>
       )}
@@ -73,11 +116,11 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
               size="medium"
             />
             <Text variant="h4" as="h2" color="blue400" truncate>
-              {formatMessage(m.notifications)}
+              {title ?? formatMessage(m.notifications)}
             </Text>
           </Box>
         </LinkResolver>
-        {hasDelegationAccess && (
+        {hasDelegationAccess && showViewAllArrow && (
           <LinkResolver
             href={InformationPaths.Notifications}
             aria-label={formatMessage(m.notificationsViewAll)}
@@ -105,32 +148,18 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
       )}
 
       {!loading && !hasDelegationAccess && (
-        <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          paddingTop={2}
-          rowGap={2}
-          paddingX={[4, 4, 0]}
-        >
-          <Text variant="h4" textAlign="center">
-            {formatMessage(m.accessNeeded)}
-          </Text>
-          <Text textAlign="center" whiteSpace="preLine">
-            {formatMessage(m.accessDeniedText)}
-          </Text>
-          <Box paddingTop={2}>
-            <img
-              src="./assets/images/jobsGrid.svg"
-              alt=""
-              className={styles.accessDeniedImage}
-            />
-          </Box>
-        </Box>
+        <StateMessage
+          title={formatMessage(m.accessNeeded)}
+          text={formatMessage(m.accessDeniedText)}
+          imgSrc="./assets/images/jobsGrid.svg"
+        />
       )}
 
       {!loading && hasDelegationAccess && error && (
-        <Problem error={error} size="small" noBorder />
+        <StateMessage
+          title={formatMessage(mInformationNotifications.fetchErrorTitle)}
+          imgSrc="./assets/images/nodata.svg"
+        />
       )}
 
       {!loading &&
@@ -163,6 +192,7 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
                 img={item.sender?.logoUrl ?? COAT_OF_ARMS}
                 background={unread ? 'white' : 'blue100'}
                 imageClass={styles.notificationSenderLogoImage}
+                as="div"
               />
               <Box flexGrow={1} overflow="hidden">
                 <Box
@@ -215,4 +245,4 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
   )
 }
 
-export default DashboardNotifications
+export default NotificationsBox
