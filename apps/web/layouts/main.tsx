@@ -93,6 +93,7 @@ const absoluteUrl = (req, setLocalhost) => {
 
 export interface LayoutProps {
   showSearchInHeader?: boolean
+  showHeaderNavigation?: boolean
   organizationSearchFilter?: string
   wrapContent?: boolean
   showHeader?: boolean
@@ -162,6 +163,7 @@ const Layout: Screen<LayoutProps> = ({
   respOrigin,
   children,
   headerNavData,
+  showHeaderNavigation: showHeaderNavigationOverride,
   customTopLoginButtonItem,
   languageToggleHrefOverride,
 }) => {
@@ -260,9 +262,14 @@ const Layout: Screen<LayoutProps> = ({
   // simplified header: logo, search, My Pages and language toggle stay, but
   // the burger menu and navigation links are hidden. `organizationSearchFilter`
   // is truthy whenever we're within a specific organization's site, and the
-  // project routes all resolve to a `project*` link type.
+  // project routes all resolve to a `project*` link type. Individual screens
+  // can also force the simplified header from their `withMainLayout` config via
+  // `showHeaderNavigation: false` — an opt-out kill switch that hides the nav
+  // but can never force it onto an org/project page.
   const showHeaderNavigation =
-    !organizationSearchFilter && !pathIsProjectPage(router.asPath)
+    showHeaderNavigationOverride !== false &&
+    !organizationSearchFilter &&
+    !pathIsProjectPage(router.asPath)
 
   return (
     <GlobalContextProvider namespace={namespace} isServiceWeb={isServiceWeb}>
