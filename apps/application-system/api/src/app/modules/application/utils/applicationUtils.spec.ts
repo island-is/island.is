@@ -2,12 +2,17 @@ import {
   getApplicationNameTranslationString,
   getApplicationStatisticsNameTranslationString,
   getPaymentStatusForAdmin,
+  handleScheduledNotifications,
   removeObjectWithKeyFromAnswers,
 } from './application'
 import {
   createApplication,
   createApplicationTemplate,
 } from '@island.is/application/testing'
+import { ApplicationService } from '@island.is/application/api/core'
+import { ScheduledNotificationConfig } from '@island.is/application/types'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
+import { User } from '@island.is/auth-nest-tools'
 
 describe('Testing utility functions for applications', () => {
   describe('getPaymentStatusForAdmin', () => {
@@ -332,6 +337,201 @@ describe('Testing utility functions for applications', () => {
       )
 
       expect(result).toEqual(expectedAnswers)
+    })
+  })
+
+  describe('handleScheduledNotifications', () => {
+    const createMockApplicationService = () =>
+      ({
+        cancelScheduledNotifications: jest.fn(),
+        createScheduledNotifications: jest.fn(),
+      } as unknown as ApplicationService)
+
+    const createTemplateWithScheduledNotifications = (
+      scheduledNotifications: ScheduledNotificationConfig,
+    ) => {
+      const template = createApplicationTemplate()
+      const draftState = template.stateMachineConfig.states?.draft
+      if (draftState?.meta) {
+        draftState.meta = { ...draftState.meta, scheduledNotifications }
+      }
+      return template
+    }
+
+    it('Should append the applicationLink arg when includeApplicationLink is set', async () => {
+      const applicationService = createMockApplicationService()
+      const application = createApplication()
+      const template = createTemplateWithScheduledNotifications({
+        template: 'HNIPP.TEST',
+        date: new Date('2026-08-08T23:59:00.000Z'),
+        args: [{ key: 'expiryDate', value: '2026-08-10' }],
+        includeApplicationLink: true,
+      })
+
+      await handleScheduledNotifications(
+        applicationService,
+        application,
+        template,
+        'draft',
+      )
+
+      expect(
+        applicationService.createScheduledNotifications,
+      ).toHaveBeenCalledWith(application.id, 'draft', [
+        {
+          template: 'HNIPP.TEST',
+          schedule_time: new Date('2026-08-08T23:59:00.000Z'),
+          args: [
+            { key: 'expiryDate', value: '2026-08-10' },
+            {
+              key: 'applicationLink',
+              value: expect.stringMatching(
+                new RegExp(
+                  `/umsoknir/example-common-actions/${application.id}$`,
+                ),
+              ),
+            },
+          ],
+        },
+      ])
+    })
+
+    it('Should leave args untouched when includeApplicationLink is not set', async () => {
+      const applicationService = createMockApplicationService()
+      const application = createApplication()
+      const template = createTemplateWithScheduledNotifications({
+        template: 'HNIPP.TEST',
+        date: new Date('2026-08-08T23:59:00.000Z'),
+        args: [{ key: 'expiryDate', value: '2026-08-10' }],
+      })
+
+      await handleScheduledNotifications(
+        applicationService,
+        application,
+        template,
+        'draft',
+      )
+
+      expect(
+        applicationService.createScheduledNotifications,
+      ).toHaveBeenCalledWith(application.id, 'draft', [
+        {
+          template: 'HNIPP.TEST',
+          schedule_time: new Date('2026-08-08T23:59:00.000Z'),
+          args: [{ key: 'expiryDate', value: '2026-08-10' }],
+        },
+      ])
+    })
+
+    it('Should schedule a flag-gated config when the feature flag is enabled', async () => {
+      const applicationService = createMockApplicationService()
+      const application = createApplication()
+      const featureFlagService = {
+        getValue: jest.fn().mockResolvedValue(true),
+      } as unknown as FeatureFlagService
+      const template = createTemplateWithScheduledNotifications({
+        template: 'HNIPP.TEST',
+        date: new Date('2026-08-08T23:59:00.000Z'),
+        featureFlag: Features.applicationSystemHistory,
+      })
+
+      await handleScheduledNotifications(
+        applicationService,
+        application,
+        template,
+        'draft',
+        featureFlagService,
+      )
+
+      expect(featureFlagService.getValue).toHaveBeenCalledWith(
+        Features.applicationSystemHistory,
+        false,
+        undefined,
+      )
+      expect(
+        applicationService.createScheduledNotifications,
+      ).toHaveBeenCalledWith(application.id, 'draft', [
+        {
+          template: 'HNIPP.TEST',
+          schedule_time: new Date('2026-08-08T23:59:00.000Z'),
+          args: [],
+        },
+      ])
+    })
+
+    it('Should pass the current user through to the feature flag check, so percentage/targeted flags evaluate per-applicant rather than anonymously', async () => {
+      const applicationService = createMockApplicationService()
+      const application = createApplication()
+      const featureFlagService = {
+        getValue: jest.fn().mockResolvedValue(true),
+      } as unknown as FeatureFlagService
+      const user = { nationalId: '1234567890' } as User
+      const template = createTemplateWithScheduledNotifications({
+        template: 'HNIPP.TEST',
+        date: new Date('2026-08-08T23:59:00.000Z'),
+        featureFlag: Features.applicationSystemHistory,
+      })
+
+      await handleScheduledNotifications(
+        applicationService,
+        application,
+        template,
+        'draft',
+        featureFlagService,
+        user,
+      )
+
+      expect(featureFlagService.getValue).toHaveBeenCalledWith(
+        Features.applicationSystemHistory,
+        false,
+        user,
+      )
+    })
+
+    it('Should skip a flag-gated config when the feature flag is disabled', async () => {
+      const applicationService = createMockApplicationService()
+      const application = createApplication()
+      const featureFlagService = {
+        getValue: jest.fn().mockResolvedValue(false),
+      } as unknown as FeatureFlagService
+      const template = createTemplateWithScheduledNotifications({
+        template: 'HNIPP.TEST',
+        date: new Date('2026-08-08T23:59:00.000Z'),
+        featureFlag: Features.applicationSystemHistory,
+      })
+
+      await handleScheduledNotifications(
+        applicationService,
+        application,
+        template,
+        'draft',
+        featureFlagService,
+      )
+
+      expect(
+        applicationService.createScheduledNotifications,
+      ).not.toHaveBeenCalled()
+    })
+
+    it('Should skip a flag-gated config when no featureFlagService is provided', async () => {
+      const applicationService = createMockApplicationService()
+      const application = createApplication()
+      const template = createTemplateWithScheduledNotifications({
+        template: 'HNIPP.TEST',
+        date: new Date('2026-08-08T23:59:00.000Z'),
+        featureFlag: Features.applicationSystemHistory,
+      })
+
+      await handleScheduledNotifications(
+        applicationService,
+        application,
+        template,
+        'draft',
+      )
+
+      expect(
+        applicationService.createScheduledNotifications,
+      ).not.toHaveBeenCalled()
     })
   })
 })

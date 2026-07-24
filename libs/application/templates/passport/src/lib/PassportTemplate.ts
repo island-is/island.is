@@ -1,6 +1,7 @@
 import {
   coreHistoryMessages,
   getValueViaPath,
+  schedulePruneReminderAfterDays,
 } from '@island.is/application/core'
 import {
   Application,
@@ -173,6 +174,12 @@ const PassportTemplate: ApplicationTemplate<
               }
             },
           },
+          scheduledNotifications: () =>
+            schedulePruneReminderAfterDays(
+              sevenDays,
+              2,
+              Features.passportScheduledNotifications,
+            ),
           onEntry: defineTemplateApi({
             action: ApiActions.assignParentB,
           }),

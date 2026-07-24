@@ -214,6 +214,16 @@ export enum Features {
   isHousingBenefitsEnabled = 'isHousingBenefitsApplicationEnabled',
 
   organizationFooterComesFromOrganizationPage = 'organizationFooterComesFromOrganizationPage',
+
+  // Application scheduled notification flags
+  transferOfVehicleOwnershipScheduledNotifications = 'isTransferOfVehicleOwnershipScheduledNotificationsEnabled',
+  changeCoOwnerOfVehicleScheduledNotifications = 'isChangeCoOwnerOfVehicleScheduledNotificationsEnabled',
+  changeOperatorOfVehicleScheduledNotifications = 'isChangeOperatorOfVehicleScheduledNotificationsEnabled',
+  trainingLicenseOnWorkMachineScheduledNotifications = 'isTrainingLicenseOnWorkMachineScheduledNotificationsEnabled',
+  transferOfMachineOwnershipScheduledNotifications = 'isTransferOfMachineOwnershipScheduledNotificationsEnabled',
+  secondarySchoolScheduledNotifications = 'isSecondarySchoolScheduledNotificationsEnabled',
+  passportScheduledNotifications = 'isPassportScheduledNotificationsEnabled',
+  idCardScheduledNotifications = 'isIdCardScheduledNotificationsEnabled',
 }
 
 export enum ServerSideFeature {

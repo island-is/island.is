@@ -1,8 +1,4 @@
-import {
-  getSlugFromType,
-  getValueViaPath,
-  YES,
-} from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 import { ApplicationWithAttachments } from '@island.is/application/types'
 import { Contract } from '@island.is/clients/hms-rental-agreement'
 import {
@@ -64,14 +60,6 @@ export const getRentalAddress = (
     .filter(Boolean)
     .join(', ')
 }
-
-export const getApplicationLink = (
-  application: ApplicationWithAttachments,
-  clientLocationOrigin: string,
-): string =>
-  `${clientLocationOrigin}/${getSlugFromType(application.typeId)}/${
-    application.id
-  }`
 
 export const getRequestedExtraDataFiles = (
   application: ApplicationWithAttachments,
