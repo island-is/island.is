@@ -220,6 +220,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@apollo/datasource-rest@npm:6.4.1":
+  version: 6.4.1
+  resolution: "@apollo/datasource-rest@npm:6.4.1"
+  dependencies:
+    "@apollo/utils.fetcher": "npm:^3.0.0"
+    "@apollo/utils.keyvaluecache": "npm:^3.1.0"
+    "@apollo/utils.logger": "npm:^3.0.0"
+    "@apollo/utils.withrequired": "npm:^3.0.0"
+    "@types/http-cache-semantics": "npm:^4.0.1"
+    http-cache-semantics: "npm:^4.1.1"
+    lodash.clonedeep: "npm:^4.5.0"
+    lodash.isplainobject: "npm:^4.0.6"
+    node-fetch: "npm:^2.6.7"
+  peerDependencies:
+    graphql: ^16.5.0
+  checksum: 10/8fb932e632ded35be73ff8dc0a6d310b86e05d64414a6e1bee610fc632c02c6f16a76f4fd4f425d7e8a2c3466737e51c644a6670a2ebdbcbdb70297a4e54caed
+  languageName: node
+  linkType: hard
+
 "@apollo/federation-internals@npm:2.14.2":
   version: 2.14.2
   resolution: "@apollo/federation-internals@npm:2.14.2"
@@ -535,6 +554,16 @@ __metadata:
     "@apollo/utils.logger": "npm:^2.0.1"
     lru-cache: "npm:^7.14.1"
   checksum: 10/9a6bc7c4645415329a93e77861cb1a9874b2171b741a3a667c277c6339f2ba46fb40011982e7b0993b118af1cc02e59e58fcbe7033ca6216cefec01e7b8eeda6
+  languageName: node
+  linkType: hard
+
+"@apollo/utils.keyvaluecache@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "@apollo/utils.keyvaluecache@npm:3.1.0"
+  dependencies:
+    "@apollo/utils.logger": "npm:^3.0.0"
+    lru-cache: "npm:^10.0.0"
+  checksum: 10/a0e1a84f76374480c4cdfdd16bca8ebe4e2b26f6152ef593b1e4ace40336803e17bed1f1723133d87d1408258d63f2cd528ce775859f2abace05af5ef13ffee8
   languageName: node
   linkType: hard
 
@@ -18424,6 +18453,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/http-cache-semantics@npm:^4.0.1":
+  version: 4.2.0
+  resolution: "@types/http-cache-semantics@npm:4.2.0"
+  checksum: 10/01ea0dc9c1852267f5f9a0190846ac158707994b8e325bca190385ec97aa773d4a99cd333e22e838bde3c9aba59e2b5a6ac399b494c203587c6d8f28d21d6326
+  languageName: node
+  linkType: hard
+
 "@types/http-errors@npm:*":
   version: 2.0.5
   resolution: "@types/http-errors@npm:2.0.5"
@@ -35025,6 +35061,7 @@ __metadata:
     "@anatine/esbuild-decorators": "npm:0.2.4"
     "@anev/ts-mountebank": "npm:^1.6.0"
     "@apollo/client": "npm:3.7.15"
+    "@apollo/datasource-rest": "npm:6.4.1"
     "@apollo/gateway": "npm:2.14.2"
     "@apollo/server": "npm:5.5.1"
     "@apollo/server-plugin-response-cache": "npm:5.0.0"
@@ -38383,7 +38420,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lru-cache@npm:^10.0.1, lru-cache@npm:^10.2.0, lru-cache@npm:^10.4.3":
+"lru-cache@npm:^10.0.0, lru-cache@npm:^10.0.1, lru-cache@npm:^10.2.0, lru-cache@npm:^10.4.3":
   version: 10.4.3
   resolution: "lru-cache@npm:10.4.3"
   checksum: 10/e6e90267360476720fa8e83cc168aa2bf0311f3f2eea20a6ba78b90a885ae72071d9db132f40fda4129c803e7dcec3a6b6a6fbb44ca90b081630b810b5d6a41a

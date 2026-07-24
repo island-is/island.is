@@ -1,7 +1,4 @@
-import { GraphQLError } from 'graphql'
-
-import { Inject, Injectable, Scope } from '@nestjs/common'
-import { CONTEXT } from '@nestjs/graphql'
+import { AugmentedRequest, RESTDataSource } from '@apollo/datasource-rest'
 
 import {
   Application,
@@ -44,89 +41,25 @@ interface RequestHeaders {
   cookie?: string
 }
 
-// The GraphQL context for this app is the express request itself
-// (`context: ({ req }) => req`), so headers live directly on the context.
-interface GqlContext {
-  headers?: RequestHeaders
-  req?: { headers?: RequestHeaders }
-}
+// Constructed per request in the GraphQL context factory (see app.module.ts),
+// which is where the incoming request's auth headers come from.
+class BackendAPI extends RESTDataSource {
+  // Paths are resolved with `new URL(path, baseURL)`, so the trailing slash
+  // is load-bearing.
+  override baseURL = `${environment.backend.url}/${apiBasePath}/`
 
-@Injectable({ scope: Scope.REQUEST })
-class BackendAPI {
-  private readonly baseURL = `${environment.backend.url}/${apiBasePath}`
+  constructor(private readonly incomingHeaders: RequestHeaders) {
+    super()
+  }
 
-  constructor(@Inject(CONTEXT) private readonly context: GqlContext) {}
-
-  private get authHeaders() {
-    const { authorization, cookie } =
-      this.context?.req?.headers ?? this.context?.headers ?? {}
-
-    return {
-      ...(authorization ? { authorization } : {}),
-      ...(cookie ? { cookie } : {}),
+  override willSendRequest(_path: string, request: AugmentedRequest) {
+    const { authorization, cookie } = this.incomingHeaders
+    if (authorization) {
+      request.headers['authorization'] = authorization
     }
-  }
-
-  private async request<TResult>(
-    path: string,
-    init?: RequestInit,
-  ): Promise<TResult> {
-    const res = await fetch(`${this.baseURL}/${path}`, {
-      ...init,
-      headers: {
-        ...this.authHeaders,
-        ...(init?.headers ?? {}),
-      },
-    })
-
-    const body = await res.text()
-    let data: unknown
-    try {
-      data = body ? JSON.parse(body) : undefined
-    } catch {
-      data = body
+    if (cookie) {
+      request.headers['cookie'] = cookie
     }
-
-    if (!res.ok) {
-      // The web apps' error links redirect to sign-in on UNAUTHENTICATED, and
-      // admin modals read `extensions.response.status` — both shapes matter.
-      throw new GraphQLError(
-        `Request to ${path} failed with status ${res.status}`,
-        {
-          extensions: {
-            ...(res.status === 401 && { code: 'UNAUTHENTICATED' }),
-            ...(res.status === 403 && { code: 'FORBIDDEN' }),
-            response: { status: res.status, body: data },
-          },
-        },
-      )
-    }
-
-    return data as TResult
-  }
-
-  private get<TResult>(path: string): Promise<TResult> {
-    return this.request<TResult>(path)
-  }
-
-  private post<TResult>(path: string, body?: unknown): Promise<TResult> {
-    return this.request<TResult>(path, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body ?? {}),
-    })
-  }
-
-  private put<TResult>(path: string, body?: unknown): Promise<TResult> {
-    return this.request<TResult>(path, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body ?? {}),
-    })
-  }
-
-  private delete<TResult>(path: string): Promise<TResult> {
-    return this.request<TResult>(path, { method: 'DELETE' })
   }
 
   getApplications(stateUrl: ApplicationStateUrl): Promise<Application[]> {
@@ -164,7 +97,7 @@ class BackendAPI {
   updateApiKey(
     input: UpdatedApiKeysForMunicipality,
   ): Promise<ApiKeysForMunicipality> {
-    return this.put(`apiKeys/${input.id}`, { name: input.name })
+    return this.put(`apiKeys/${input.id}`, { body: { name: input.name } })
   }
 
   deleteApiKey(id: string): Promise<DeleteApiKeyResponse> {
@@ -174,7 +107,7 @@ class BackendAPI {
   createApiKey(
     createApiKey: CreateMunicipalityApiUser,
   ): Promise<ApiKeysForMunicipality> {
-    return this.post('apiKeys', createApiKey)
+    return this.post('apiKeys', { body: createApiKey })
   }
 
   createMunicipality(
@@ -182,35 +115,39 @@ class BackendAPI {
     createAdmin?: CreateStaff,
   ): Promise<Municipality> {
     return this.post('municipality', {
-      municipalityInput: createMunicipality,
-      adminInput: createAdmin,
+      body: {
+        municipalityInput: createMunicipality,
+        adminInput: createAdmin,
+      },
     })
   }
 
   updateMunicipality(
     updateMunicipality: UpdateMunicipalityInput,
   ): Promise<Municipality[]> {
-    return this.put('municipality', updateMunicipality)
+    return this.put('municipality', { body: updateMunicipality })
   }
 
   updateMunicipalityActivity(
     id: string,
     updateMunicipality: UpdateMunicipalityActivity,
   ): Promise<Municipality> {
-    return this.put(`municipality/activity/${id}`, updateMunicipality)
+    return this.put(`municipality/activity/${id}`, {
+      body: updateMunicipality,
+    })
   }
 
   createApplication(
     createApplication: CreateApplication,
   ): Promise<Application> {
-    return this.post('application', createApplication)
+    return this.post('application', { body: createApplication })
   }
 
   updateApplication(
     id: string,
     updateApplication: UpdateApplication,
   ): Promise<Application> {
-    return this.put(`application/id/${id}`, updateApplication)
+    return this.put(`application/id/${id}`, { body: updateApplication })
   }
 
   updateApplicationTable(
@@ -218,11 +155,13 @@ class BackendAPI {
     stateUrl: ApplicationStateUrl,
     updateApplication: UpdateApplication,
   ): Promise<UpdateApplicationTableResponseType> {
-    return this.put(`application/${id}/${stateUrl}`, updateApplication)
+    return this.put(`application/${id}/${stateUrl}`, {
+      body: updateApplication,
+    })
   }
 
   getSignedUrl(getSignedUrl: GetSignedUrl): Promise<SignedUrl> {
-    return this.post('file/url', getSignedUrl)
+    return this.post('file/url', { body: getSignedUrl })
   }
 
   getSignedUrlForId(id: string): Promise<SignedUrl> {
@@ -236,13 +175,13 @@ class BackendAPI {
   createApplicationEvent(
     createApplicationEvent: CreateApplicationEvent,
   ): Promise<Application> {
-    return this.post('application/event', createApplicationEvent)
+    return this.post('application/event', { body: createApplicationEvent })
   }
 
   createApplicationFiles(
     createApplicationFiles: CreateApplicationFilesInput,
   ): Promise<CreateFilesResponse> {
-    return this.post('file', createApplicationFiles)
+    return this.post('file', { body: createApplicationFiles })
   }
 
   getCurrentApplicationId(): Promise<string | undefined> {
@@ -264,6 +203,7 @@ class BackendAPI {
   getAdminUsers(municipalityId: string): Promise<Staff[]> {
     return this.get(`staff/users/${municipalityId}`)
   }
+
   getAllAdminUsers(municipalityId: string): Promise<Staff[]> {
     return this.get(`staff/allAdminUsers/${municipalityId}`)
   }
@@ -277,7 +217,7 @@ class BackendAPI {
   }
 
   updateStaff(id: string, updateStaff: UpdateStaff): Promise<Staff> {
-    return this.put(`staff/id/${id}`, updateStaff)
+    return this.put(`staff/id/${id}`, { body: updateStaff })
   }
 
   getStaffForMunicipality(): Promise<Staff[]> {
@@ -285,7 +225,7 @@ class BackendAPI {
   }
 
   createStaff(createStaff: CreateStaffInput): Promise<Staff> {
-    return this.post('staff', createStaff)
+    return this.post('staff', { body: createStaff })
   }
 
   getNumberOfStaffForMunicipality(municipalityId: string): Promise<number> {
@@ -303,7 +243,7 @@ class BackendAPI {
   getFilteredApplications(
     filters: FilterApplicationsInput,
   ): Promise<ApplicationPagination> {
-    return this.post('application/filter', filters)
+    return this.post('application/filter', { body: filters })
   }
 }
 

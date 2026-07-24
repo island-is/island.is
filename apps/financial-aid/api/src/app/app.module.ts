@@ -9,6 +9,7 @@ import { GraphQLModule } from '@nestjs/graphql'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 import { environment } from '../environments'
+import BackendAPI from '../services/backend'
 import {
   UserModule,
   ApplicationModule,
@@ -33,7 +34,10 @@ const autoSchemaFile = environment.production
       playground,
       autoSchemaFile,
       path: '/api/graphql',
-      context: ({ req }: any) => req,
+      context: ({ req }: any) =>
+        Object.assign(req, {
+          dataSources: { backendApi: new BackendAPI(req.headers) },
+        }),
     }),
     AuthModule.register(environment.identityServerAuth),
     UserModule,

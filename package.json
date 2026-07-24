@@ -72,6 +72,7 @@
     "@actions/core": "1.11.1",
     "@actions/github": "6.0.0",
     "@apollo/client": "3.7.15",
+    "@apollo/datasource-rest": "6.4.1",
     "@apollo/gateway": "2.14.2",
     "@apollo/server": "5.5.1",
     "@apollo/server-plugin-response-cache": "5.0.0",
