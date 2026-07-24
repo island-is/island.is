@@ -84,7 +84,7 @@
     "@aws-sdk/client-sns": "3.1087.0",
     "@aws-sdk/client-sqs": "3.1087.0",
     "@aws-sdk/cloudfront-signer": "3.1087.0",
-    "@aws-sdk/credential-provider-node": "3.972.68",
+    "@aws-sdk/credential-provider-node": "^3.972.68",
     "@aws-sdk/lib-storage": "3.1087.0",
     "@aws-sdk/s3-presigned-post": "3.1087.0",
     "@aws-sdk/s3-request-presigner": "3.1087.0",
@@ -240,7 +240,7 @@
     "mobx": "6.3.7",
     "motion": "12.23.12",
     "msw": "1.3.5",
-    "nest-winston": "1.4.0",
+    "nest-winston": "1.10.2",
     "next": "16.2.10",
     "next-auth": "4.24.13",
     "next-cookies": "2.0.3",
@@ -478,7 +478,7 @@
     "eslint-plugin-playwright": "0.15.3",
     "eslint-plugin-react": "7.32.2",
     "eslint-plugin-react-hooks": "5.0.0",
-    "eslint-plugin-storybook": "^0.6.12",
+    "eslint-plugin-storybook": "10.5.4",
     "fetch-mock": "9.10.7",
     "file-loader": "6.2.0",
     "history": "^5.3.0",
@@ -530,8 +530,7 @@
     "path-parse": "1.0.7",
     "@types/react": "19.2.17",
     "node-request-interceptor@^0.5.1": "patch:node-request-interceptor@npm%3A0.5.9#./.yarn/patches/node-request-interceptor-npm-0.5.9-77e9d9c058.patch",
-    "@types/node": "22.20.1",
-    "@smithy/types@^4.5.0": "4.16.1"
+    "@types/node": "22.20.1"
   },
   "volta": {
     "node": "22.22.3",
