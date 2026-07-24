@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { ApolloError } from 'apollo-server-express'
+import { GraphQLError } from 'graphql'
 import {
   EndorsementApi,
   EndorsementListApi,
@@ -41,10 +41,14 @@ export class EndorsementSystemService {
     if (error.json) {
       const json = await error.json()
       this.logger.error(json)
-      throw new ApolloError(JSON.stringify(json), error.status)
+      throw new GraphQLError(JSON.stringify(json), {
+        extensions: { code: error.status },
+      })
     }
 
-    throw new ApolloError('Failed to resolve request', error.status)
+    throw new GraphQLError('Failed to resolve request', {
+      extensions: { code: error.status },
+    })
   }
 
   endorsementApiWithAuth(auth: Auth) {

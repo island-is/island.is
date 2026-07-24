@@ -1,4 +1,3 @@
-import { DataSource } from 'apollo-datasource'
 import { createHash } from 'crypto'
 import FormData from 'form-data'
 import { Base64 } from 'js-base64'
@@ -54,16 +53,14 @@ interface DokobitStatusResponse {
   message: string
 }
 
-@Injectable() // extends RESTDataSource
-export class SigningService extends DataSource {
+@Injectable()
+export class SigningService {
   constructor(
     @Inject(signingModuleConfig.KEY)
     private readonly config: ConfigType<typeof signingModuleConfig>,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
-  ) {
-    super()
-  }
+  ) {}
 
   private getVerifiedDocument(
     documentName: string,

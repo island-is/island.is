@@ -3,15 +3,7 @@ const withNx = require('@nx/next/plugins/with-nx')
 const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 
-const {
-  API_URL = 'http://localhost:4444',
-  BASE_PATH = '/samradsgatt',
-  APP_VERSION,
-  ENVIRONMENT,
-  DD_LOGS_CLIENT_TOKEN,
-} = process.env
-const apiPath = '/api'
-const graphqlPath = '/api/graphql'
+const { BASE_PATH = '/samradsgatt' } = process.env
 const withVanillaExtract = createVanillaExtractPlugin()
 module.exports = withNx(
   withVanillaExtract({
@@ -29,19 +21,7 @@ module.exports = withNx(
       }
       return config
     },
-    publicRuntimeConfig: {
-      // Will be available on both server and client
-      graphqlUrl: '',
-      graphqlEndpoint: graphqlPath,
-      ddLogsClientToken: DD_LOGS_CLIENT_TOKEN,
-      appVersion: APP_VERSION,
-      environment: ENVIRONMENT,
-    },
-    serverRuntimeConfig: {
-      // Will only be available on the server side
-      apiUrl: `${API_URL}${apiPath}`,
-      graphqlEndpoint: `${API_URL}${graphqlPath}`,
-    },
+    // Runtime configuration lives in environments/runtimeEnvironment.ts
     basePath: `${BASE_PATH}`,
     env: {
       NEXTAUTH_URL: process.env.NEXTAUTH_URL,

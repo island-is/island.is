@@ -207,7 +207,13 @@ export const Chart = ({ slice }: ChartProps) => {
           <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
             <BaseChartComponent
               data={data}
-              layout={slice.flipAxis ? 'vertical' : 'horizontal'}
+              layout={
+                chartType === ChartType.pie
+                  ? undefined
+                  : slice.flipAxis
+                  ? 'vertical'
+                  : 'horizontal'
+              }
               margin={customStyleConfig.chart?.margin ?? undefined}
             >
               {cartesianGridComponents}

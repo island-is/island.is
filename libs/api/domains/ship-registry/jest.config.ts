@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'api-domains-ship-registry',
   preset: '../../../../jest.preset.js',
   testEnvironment: 'node',

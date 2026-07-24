@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'clients-rsk-customs-general',
   preset: '../../../../../jest.preset.js',
   testEnvironment: 'node',

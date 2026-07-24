@@ -1,6 +1,4 @@
-import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
-
-import { Injectable } from '@nestjs/common'
+import { AugmentedRequest, RESTDataSource } from '@apollo/datasource-rest'
 
 import {
   Application,
@@ -38,13 +36,30 @@ import {
 import { FilterApplicationsInput } from '../app/modules/application/dto'
 import { DeleteApiKeyResponse } from '../app/modules/apiKeys/models'
 
-@Injectable()
-class BackendAPI extends RESTDataSource {
-  baseURL = `${environment.backend.url}/${apiBasePath}`
+interface RequestHeaders {
+  authorization?: string
+  cookie?: string
+}
 
-  willSendRequest(req: RequestOptions) {
-    req.headers.set('authorization', this.context.req.headers.authorization)
-    req.headers.set('cookie', this.context.req.headers.cookie)
+// Constructed per request in the GraphQL context factory (see app.module.ts),
+// which is where the incoming request's auth headers come from.
+class BackendAPI extends RESTDataSource {
+  // Paths are resolved with `new URL(path, baseURL)`, so the trailing slash
+  // is load-bearing.
+  override baseURL = `${environment.backend.url}/${apiBasePath}/`
+
+  constructor(private readonly incomingHeaders: RequestHeaders) {
+    super()
+  }
+
+  override willSendRequest(_path: string, request: AugmentedRequest) {
+    const { authorization, cookie } = this.incomingHeaders
+    if (authorization) {
+      request.headers['authorization'] = authorization
+    }
+    if (cookie) {
+      request.headers['cookie'] = cookie
+    }
   }
 
   getApplications(stateUrl: ApplicationStateUrl): Promise<Application[]> {
@@ -82,7 +97,7 @@ class BackendAPI extends RESTDataSource {
   updateApiKey(
     input: UpdatedApiKeysForMunicipality,
   ): Promise<ApiKeysForMunicipality> {
-    return this.put(`apiKeys/${input.id}`, { name: input.name })
+    return this.put(`apiKeys/${input.id}`, { body: { name: input.name } })
   }
 
   deleteApiKey(id: string): Promise<DeleteApiKeyResponse> {
@@ -92,7 +107,7 @@ class BackendAPI extends RESTDataSource {
   createApiKey(
     createApiKey: CreateMunicipalityApiUser,
   ): Promise<ApiKeysForMunicipality> {
-    return this.post('apiKeys', createApiKey)
+    return this.post('apiKeys', { body: createApiKey })
   }
 
   createMunicipality(
@@ -100,35 +115,39 @@ class BackendAPI extends RESTDataSource {
     createAdmin?: CreateStaff,
   ): Promise<Municipality> {
     return this.post('municipality', {
-      municipalityInput: createMunicipality,
-      adminInput: createAdmin,
+      body: {
+        municipalityInput: createMunicipality,
+        adminInput: createAdmin,
+      },
     })
   }
 
   updateMunicipality(
     updateMunicipality: UpdateMunicipalityInput,
   ): Promise<Municipality[]> {
-    return this.put('municipality', updateMunicipality)
+    return this.put('municipality', { body: updateMunicipality })
   }
 
   updateMunicipalityActivity(
     id: string,
     updateMunicipality: UpdateMunicipalityActivity,
   ): Promise<Municipality> {
-    return this.put(`municipality/activity/${id}`, updateMunicipality)
+    return this.put(`municipality/activity/${id}`, {
+      body: updateMunicipality,
+    })
   }
 
   createApplication(
     createApplication: CreateApplication,
   ): Promise<Application> {
-    return this.post('application', createApplication)
+    return this.post('application', { body: createApplication })
   }
 
   updateApplication(
     id: string,
     updateApplication: UpdateApplication,
   ): Promise<Application> {
-    return this.put(`application/id/${id}`, updateApplication)
+    return this.put(`application/id/${id}`, { body: updateApplication })
   }
 
   updateApplicationTable(
@@ -136,11 +155,13 @@ class BackendAPI extends RESTDataSource {
     stateUrl: ApplicationStateUrl,
     updateApplication: UpdateApplication,
   ): Promise<UpdateApplicationTableResponseType> {
-    return this.put(`application/${id}/${stateUrl}`, updateApplication)
+    return this.put(`application/${id}/${stateUrl}`, {
+      body: updateApplication,
+    })
   }
 
   getSignedUrl(getSignedUrl: GetSignedUrl): Promise<SignedUrl> {
-    return this.post('file/url', getSignedUrl)
+    return this.post('file/url', { body: getSignedUrl })
   }
 
   getSignedUrlForId(id: string): Promise<SignedUrl> {
@@ -154,13 +175,13 @@ class BackendAPI extends RESTDataSource {
   createApplicationEvent(
     createApplicationEvent: CreateApplicationEvent,
   ): Promise<Application> {
-    return this.post('application/event', createApplicationEvent)
+    return this.post('application/event', { body: createApplicationEvent })
   }
 
   createApplicationFiles(
     createApplicationFiles: CreateApplicationFilesInput,
   ): Promise<CreateFilesResponse> {
-    return this.post('file', createApplicationFiles)
+    return this.post('file', { body: createApplicationFiles })
   }
 
   getCurrentApplicationId(): Promise<string | undefined> {
@@ -182,6 +203,7 @@ class BackendAPI extends RESTDataSource {
   getAdminUsers(municipalityId: string): Promise<Staff[]> {
     return this.get(`staff/users/${municipalityId}`)
   }
+
   getAllAdminUsers(municipalityId: string): Promise<Staff[]> {
     return this.get(`staff/allAdminUsers/${municipalityId}`)
   }
@@ -195,7 +217,7 @@ class BackendAPI extends RESTDataSource {
   }
 
   updateStaff(id: string, updateStaff: UpdateStaff): Promise<Staff> {
-    return this.put(`staff/id/${id}`, updateStaff)
+    return this.put(`staff/id/${id}`, { body: updateStaff })
   }
 
   getStaffForMunicipality(): Promise<Staff[]> {
@@ -203,7 +225,7 @@ class BackendAPI extends RESTDataSource {
   }
 
   createStaff(createStaff: CreateStaffInput): Promise<Staff> {
-    return this.post('staff', createStaff)
+    return this.post('staff', { body: createStaff })
   }
 
   getNumberOfStaffForMunicipality(municipalityId: string): Promise<number> {
@@ -221,7 +243,7 @@ class BackendAPI extends RESTDataSource {
   getFilteredApplications(
     filters: FilterApplicationsInput,
   ): Promise<ApplicationPagination> {
-    return this.post('application/filter', filters)
+    return this.post('application/filter', { body: filters })
   }
 }
 

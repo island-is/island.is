@@ -63,7 +63,7 @@ export default function AssetsOverviewScreen() {
   const intl = useIntl()
   const theme = useTheme()
   const scrollY = useRef(new Animated.Value(0)).current
-  const loadingTimeout = useRef<ReturnType<typeof setTimeout>>()
+  const loadingTimeout = useRef<ReturnType<typeof setTimeout>>(undefined)
 
   const assetsRes = useListAssetsQuery({
     variables: { input: { cursor: '1' } },

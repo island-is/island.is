@@ -51,8 +51,8 @@ export const DebouncedDatePicker = ({
         setState(date)
       }}
       selected={state}
-      maxDate={maxDate}
-      minDate={minDate}
+      maxDate={maxDate ?? undefined}
+      minDate={minDate ?? undefined}
       minYear={minDate ? minDate.getFullYear() : MIN_YEAR}
       maxYear={maxDate ? maxDate.getFullYear() : CURRENT_YEAR}
       locale={activeLocale}

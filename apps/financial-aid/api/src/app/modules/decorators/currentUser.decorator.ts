@@ -4,7 +4,7 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 
 import { createParamDecorator, ExecutionContext } from '@nestjs/common'
-import { AuthenticationError } from 'apollo-server-express'
+import { GraphQLError } from 'graphql'
 import { GqlExecutionContext } from '@nestjs/graphql'
 import { jwtDecrypt } from 'jose'
 import { hkdf } from '@panva/hkdf'
@@ -18,12 +18,16 @@ export const CurrentUser = createParamDecorator(
       : null
 
     if (!sessionToken) {
-      throw new AuthenticationError('Invalid user')
+      throw new GraphQLError('Invalid user', {
+        extensions: { code: 'UNAUTHENTICATED' },
+      })
     }
 
     const secret = process.env.NEXTAUTH_SECRET
     if (!secret) {
-      throw new AuthenticationError('NEXTAUTH_SECRET is not configured')
+      throw new GraphQLError('NEXTAUTH_SECRET is not configured', {
+        extensions: { code: 'UNAUTHENTICATED' },
+      })
     }
 
     const encryptionKey = await hkdf(

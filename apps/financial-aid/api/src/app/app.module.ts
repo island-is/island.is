@@ -1,3 +1,7 @@
+// Loaded at runtime by @nestjs/apollo's Apollo driver via a dynamic require;
+// imported here so Nx keeps it in the generated production package.json.
+import '@as-integrations/express5'
+
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { Module } from '@nestjs/common'
 import { ApolloDriver } from '@nestjs/apollo'
@@ -5,7 +9,7 @@ import { GraphQLModule } from '@nestjs/graphql'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 import { environment } from '../environments'
-import { BackendAPI } from '../services'
+import BackendAPI from '../services/backend'
 import {
   UserModule,
   ApplicationModule,
@@ -27,14 +31,13 @@ const autoSchemaFile = environment.production
   imports: [
     GraphQLModule.forRoot({
       driver: ApolloDriver,
-      debug,
       playground,
       autoSchemaFile,
       path: '/api/graphql',
-      context: ({ req }: any) => req,
-      dataSources: () => ({
-        backendApi: new BackendAPI(),
-      }),
+      context: ({ req }: any) =>
+        Object.assign(req, {
+          dataSources: { backendApi: new BackendAPI(req.headers) },
+        }),
     }),
     AuthModule.register(environment.identityServerAuth),
     UserModule,

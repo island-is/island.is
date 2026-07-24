@@ -29,3 +29,5 @@ gen/
 
 # Assets
 apps/web/public/assets/pdf.worker.min.mjs
+
+.nx/self-healing

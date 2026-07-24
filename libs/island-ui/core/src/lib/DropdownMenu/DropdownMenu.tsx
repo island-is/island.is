@@ -95,9 +95,12 @@ export const DropdownMenu = ({
   return (
     <>
       {disclosure ? (
-        <MenuButton {...menu} {...disclosure.props} {...hoverProps}>
-          {(disclosureProps: any) =>
-            React.cloneElement(disclosure, disclosureProps)
+        // reakit's types don't model this disclosure render-prop pattern; the
+        // `as any` casts keep it compiling. Remove when this migrates to ariakit.
+        <MenuButton {...menu} {...(disclosure.props as any)} {...hoverProps}>
+          {
+            ((disclosureProps: any) =>
+              React.cloneElement(disclosure, disclosureProps)) as any
           }
         </MenuButton>
       ) : (

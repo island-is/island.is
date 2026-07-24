@@ -1,4 +1,4 @@
-import React, { FC, Fragment } from 'react'
+import React, { FC, Fragment, type JSX } from 'react'
 import { Box } from '../Box/Box'
 import { Button } from '../Button/Button'
 import { Link } from '../Link/Link'

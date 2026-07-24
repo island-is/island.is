@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'api-domains-hms',
   preset: '../../../../jest.preset.js',
   testEnvironment: 'node',

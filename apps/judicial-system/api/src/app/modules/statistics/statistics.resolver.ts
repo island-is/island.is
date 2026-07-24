@@ -1,5 +1,5 @@
 import { Inject, UseGuards } from '@nestjs/common'
-import { Args, Context, Query, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -27,6 +27,7 @@ export class StatisticsResolver {
     private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly backendService: BackendService,
   ) {}
 
   @Query(() => CaseStatistics, { nullable: true })
@@ -35,15 +36,13 @@ export class StatisticsResolver {
     input: CaseStatisticsInput,
     @CurrentGraphQlUser()
     user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<CaseStatistics> {
     this.logger.debug('Getting case statistics')
 
     const result = this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_CASES_STATISTICS,
-      backendService.getCaseStatistics(
+      this.backendService.getCaseStatistics(
         input.fromDate,
         input.toDate,
         input.institutionId,
@@ -60,15 +59,13 @@ export class StatisticsResolver {
     input: CaseDataExportInput,
     @CurrentGraphQlUser()
     user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<SignedUrl> {
     this.logger.debug('Getting preprocessed data as csv for case statistics')
 
     const result = this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_CASES_STATISTICS,
-      backendService.getPreprocessedDataCsvSignedUrl(input),
+      this.backendService.getPreprocessedDataCsvSignedUrl(input),
       'export',
     )
 

@@ -122,7 +122,7 @@ export const GalleryModal: FC<Props> = ({
         >
           <Box className={styles.imageWrap}>
             {childArray.map((item, i) =>
-              cloneElement(item as React.ReactElement, {
+              cloneElement(item as React.ReactElement<{ active?: boolean }>, {
                 active: i === activeItem,
               }),
             )}

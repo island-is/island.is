@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-district-commissioners-licenses',
   preset: '../../../jest.preset.js',
   testEnvironment: 'node',

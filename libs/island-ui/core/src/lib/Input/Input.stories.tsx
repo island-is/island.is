@@ -2,7 +2,7 @@ import React from 'react'
 
 import { withFigma } from '../../utils/withFigma'
 import { Input } from './Input'
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-webpack5'
 
 const config: Meta<typeof Input> = {
   title: 'Form/Input',

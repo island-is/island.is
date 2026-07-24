@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import getConfig from 'next/config'
 
 import {
   Box,
@@ -9,6 +8,7 @@ import {
   Table as T,
   Text,
 } from '@island.is/island-ui/core'
+import { getPublicRuntimeEnv } from '@island.is/web/environments/runtimeEnvironment'
 import {
   GetNamespaceQuery,
   GetNamespaceQueryVariables,
@@ -29,8 +29,6 @@ import {
   GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
 } from '../queries/UniversityGateway'
 import { TranslationDefaults } from './TranslationDefaults'
-
-const { publicRuntimeConfig = {} } = getConfig() ?? {}
 
 interface UniversityComparisonProps {
   data: Array<UniversityGatewayProgramDetails>
@@ -275,9 +273,10 @@ Comparison.getProps = async ({ query, apolloClient, locale }) => {
 
   let showPagesFeatureFlag = false
 
-  if (publicRuntimeConfig?.environment === 'prod') {
+  const { environment } = getPublicRuntimeEnv()
+  if (environment === 'prod') {
     showPagesFeatureFlag = Boolean(namespace?.showPagesProdFeatureFlag)
-  } else if (publicRuntimeConfig?.environment === 'staging') {
+  } else if (environment === 'staging') {
     showPagesFeatureFlag = Boolean(namespace?.showPagesStagingFeatureFlag)
   } else {
     showPagesFeatureFlag = Boolean(namespace?.showPagesDevFeatureFlag)

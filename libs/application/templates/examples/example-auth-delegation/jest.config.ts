@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'example-auth-delegation',
   preset: '../../../../../jest.preset.js',
   transform: {

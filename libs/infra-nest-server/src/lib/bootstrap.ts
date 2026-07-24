@@ -4,6 +4,7 @@ import { NestExpressApplication } from '@nestjs/platform-express'
 import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
+import cors from 'cors'
 import type { Server } from 'http'
 
 import {
@@ -51,7 +52,12 @@ export const createApp = async ({
   }
 
   if (options.enableCors) {
-    app.enableCors(options.enableCors)
+    const { path, ...corsOptions } = options.enableCors
+    if (path) {
+      app.use(path, cors(corsOptions))
+    } else {
+      app.enableCors(corsOptions)
+    }
   }
 
   // Configure "X-Requested-For" handling.
@@ -60,6 +66,12 @@ export const createApp = async ({
   // (eg Elastic Load Balancer, Kubernetes Ingress, CloudFront CDN) and trim
   // the X-Forwarded-For header before passing to internal services.
   app.set('trust proxy', JSON.parse(process.env.EXPRESS_TRUST_PROXY || 'false'))
+
+  // The 'extended' query parser exists for backward compatibility with
+  // external REST clients: e.g. axios's default serializer emits bracket
+  // arrays (?ids[]=1&ids[]=2), which the 'simple' parser would leave as a
+  // literal "ids[]" key. Internal code doesn't rely on it.
+  app.set('query parser', 'extended')
 
   // Enable validation of request DTOs globally.
   app.useGlobalPipes(
@@ -84,6 +96,13 @@ export const createApp = async ({
   if (options.jsonBodyLimit) {
     app.use(bodyParser.json({ limit: options.jsonBodyLimit }))
   }
+
+  // Handlers and ValidationPipe assume req.body is always an object;
+  // default it for bodyless requests.
+  app.use((req: { body?: unknown }, _res: unknown, next: () => void) => {
+    req.body = req.body ?? {}
+    next()
+  })
 
   return app
 }
@@ -112,7 +131,12 @@ function setupOpenApi(
 ) {
   app.use(swaggerPath, swaggerRedirectMiddleware(swaggerPath))
 
-  const document = SwaggerModule.createDocument(app, openApi)
+  const document = SwaggerModule.createDocument(app, openApi, {
+    // Keep pre-@nestjs/swagger-11 operationId naming (no version suffix) so
+    // the runtime swagger doc matches the generated clients. See buildOpenApi.
+    operationIdFactory: (controllerKey, methodKey) =>
+      `${controllerKey}_${methodKey}`,
+  })
   SwaggerModule.setup(swaggerPath, app, document)
 
   return document

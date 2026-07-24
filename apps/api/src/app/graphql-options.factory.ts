@@ -1,6 +1,6 @@
-import { ApolloServerPluginCacheControl } from 'apollo-server-core'
-import { ApolloServerPlugin } from 'apollo-server-plugin-base'
-import responseCachePlugin from 'apollo-server-plugin-response-cache'
+import { ApolloServerPlugin } from '@apollo/server'
+import { ApolloServerPluginCacheControl } from '@apollo/server/plugin/cacheControl'
+import responseCachePlugin from '@apollo/server-plugin-response-cache'
 import { Inject, Injectable } from '@nestjs/common'
 import { GqlOptionsFactory } from '@nestjs/graphql'
 import { createRedisApolloCache } from '@island.is/cache'
@@ -24,10 +24,13 @@ export class GraphqlOptionsFactory implements GqlOptionsFactory {
       : 'apps/api/src/api.graphql'
     const bypassCacheSecret = this.config.bypassCacheSecret
     return {
-      debug,
       playground,
       autoSchemaFile,
       path: '/api/graphql',
+      // The web app sends batched GraphQL requests during SSR (see
+      // apps/web/graphql/httpLink.ts). Apollo Server rejects batched requests
+      // unless this is enabled.
+      allowBatchedHttpRequests: true,
       cache:
         this.config.redis.nodes.length > 0
           ? createRedisApolloCache({
@@ -42,7 +45,7 @@ export class GraphqlOptionsFactory implements GqlOptionsFactory {
       plugins: [
         // Cache responses in Redis.
         responseCachePlugin({
-          shouldReadFromCache: ({ request: { http } }) => {
+          shouldReadFromCache: async ({ request: { http } }) => {
             if (!bypassCacheSecret) {
               return true
             }
@@ -71,12 +74,16 @@ function overrideCacheControlPlugin(): ApolloServerPlugin {
 
           const policyIfCacheable = overallCachePolicy.policyIfCacheable()
 
+          const hasErrors =
+            response.body.kind === 'single' &&
+            !!response.body.singleResult.errors?.length
+
           // If there is a non-trivial cache policy, there are no errors, and
           // we actually can write headers, write the header.
           if (
             policyIfCacheable &&
             policyIfCacheable.maxAge > 0 &&
-            !response.errors &&
+            !hasErrors &&
             response.http
           ) {
             // Make sure X-Bypass-Cache gets past browser and CDN caches.

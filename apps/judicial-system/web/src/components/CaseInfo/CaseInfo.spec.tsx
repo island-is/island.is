@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react'
 
 import {
   AppealCaseState,
+  Case,
   CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
@@ -84,7 +85,7 @@ describe('CourtCaseInfo - reopen button visibility', () => {
 
   const renderComponent = (
     userRole: UserRole,
-    workingCase = completedIndictmentCase,
+    workingCase: Case = completedIndictmentCase,
   ) =>
     render(
       <IntlProviderWrapper>

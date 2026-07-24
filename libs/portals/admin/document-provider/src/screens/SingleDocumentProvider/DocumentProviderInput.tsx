@@ -12,8 +12,8 @@ import { PathValue } from 'react-hook-form'
 
 type ControllerRules = Partial<{
   required: string | boolean | ValidationValueMessage<boolean>
-  min: ValidationRule<React.ReactText>
-  max: ValidationRule<React.ReactText>
+  min: ValidationRule<number | string>
+  max: ValidationRule<number | string>
   maxLength: ValidationRule<number>
   minLength: ValidationRule<number>
   pattern: ValidationRule<RegExp>

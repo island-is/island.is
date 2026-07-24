@@ -1,7 +1,6 @@
 import { FC, PropsWithChildren, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
-import getConfig from 'next/config'
 import Link from 'next/link'
 import router from 'next/router'
 
@@ -34,6 +33,7 @@ import {
 import { SearchModal } from '@island.is/judicial-system-web/src/components'
 import { api } from '@island.is/judicial-system-web/src/services'
 
+import { getPublicRuntimeEnv } from '../../../environments/runtimeEnvironment'
 import { useGeoLocation } from '../../utils/hooks'
 import { useKeyboardCombo } from '../../utils/hooks/useKeyboardCombo/useKeyboardCombo'
 import { LawyerRegistryContext } from '../LawyerRegistryProvider/LawyerRegistryProvider'
@@ -42,7 +42,7 @@ import { UserContext } from '../UserProvider/UserProvider'
 import { header } from './Header.strings'
 import * as styles from './Header.css'
 
-const supportEmail = getConfig()?.publicRuntimeConfig?.supportEmail ?? ''
+const supportEmail = getPublicRuntimeEnv().supportEmail ?? ''
 
 const LogoIcon = () => (
   <>

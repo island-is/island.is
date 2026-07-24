@@ -1,5 +1,5 @@
 import { createUnionType } from '@nestjs/graphql'
-import { ApolloError } from 'apollo-server-express'
+import { GraphQLError } from 'graphql'
 import { Document, BLOCKS, Block } from '@contentful/rich-text-types'
 import { logger } from '@island.is/logging'
 import {
@@ -395,7 +395,7 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
     case 'featuredGenericListItems':
       return mapFeaturedGenericListItems(slice as IFeaturedGenericListItems)
     default:
-      throw new ApolloError(`Can not convert to slice: ${contentType}`)
+      throw new GraphQLError(`Can not convert to slice: ${contentType}`)
   }
 }
 

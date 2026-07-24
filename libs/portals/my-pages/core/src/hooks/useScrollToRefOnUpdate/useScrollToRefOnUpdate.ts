@@ -4,7 +4,7 @@ type DepType = string | number
 
 export const useScrollToRefOnUpdate = (
   deps: DepType[],
-): { scrollToRef: RefObject<HTMLDivElement> } => {
+): { scrollToRef: RefObject<HTMLDivElement | null> } => {
   const [isFirstRun, setIsFirstRun] = useState(true)
   const scrollToRef = createRef<HTMLDivElement>()
   useEffect(() => {

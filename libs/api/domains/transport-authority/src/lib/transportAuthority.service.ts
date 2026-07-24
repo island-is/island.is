@@ -33,7 +33,7 @@ import {
   BasicVehicleInformation,
   ExemptionValidation,
 } from './graphql/models'
-import { ApolloError } from 'apollo-server-express'
+import { GraphQLError } from 'graphql'
 import { CoOwnerChangeAnswers } from './graphql/dto/coOwnerChangeAnswers.input'
 import { MileageReadingApi } from '@island.is/clients/vehicles-mileage'
 import { ExemptionForTransportationClient } from '@island.is/clients/transport-authority/exemption-for-transportation'
@@ -110,7 +110,7 @@ export class TransportAuthorityApi {
   async getVehicleOwnerchangeChecksByPermno(
     auth: User,
     permno: string,
-  ): Promise<VehicleOwnerchangeChecksByPermno | null | ApolloError> {
+  ): Promise<VehicleOwnerchangeChecksByPermno | null | GraphQLError> {
     // Make sure user is only fetching information for vehicles where he is either owner or co-owner
     // (mainly debt status info that is sensitive)
     const { vehicle, mileageReadings } =
@@ -271,7 +271,7 @@ export class TransportAuthorityApi {
   async getVehicleOperatorChangeChecksByPermno(
     auth: User,
     permno: string,
-  ): Promise<VehicleOperatorChangeChecksByPermno | null | ApolloError> {
+  ): Promise<VehicleOperatorChangeChecksByPermno | null | GraphQLError> {
     // Make sure user is only fetching information for vehicles where he is either owner or co-owner
     // (mainly debt status info that is sensitive)
     const { vehicle, mileageReadings } =
@@ -345,7 +345,7 @@ export class TransportAuthorityApi {
   async getVehiclePlateOrderChecksByPermno(
     auth: User,
     permno: string,
-  ): Promise<VehiclePlateOrderChecksByPermno | null | ApolloError> {
+  ): Promise<VehiclePlateOrderChecksByPermno | null | GraphQLError> {
     // Get basic information about vehicle
     const vehicleInfo = await this.vehiclesApiWithAuth(
       auth,
@@ -445,7 +445,7 @@ export class TransportAuthorityApi {
   async getMyPlateOwnershipChecksByRegno(
     auth: User,
     regno: string,
-  ): Promise<VehicleOperatorChangeChecksByPermno | null | ApolloError> {
+  ): Promise<VehicleOperatorChangeChecksByPermno | null | GraphQLError> {
     // Get validation
     const validation =
       await this.vehiclePlateRenewalClient.validatePlateOwnership(auth, regno)
@@ -464,7 +464,7 @@ export class TransportAuthorityApi {
   async getMyBasicVehicleInfoByPermno(
     auth: User,
     permno: string,
-  ): Promise<BasicVehicleInformation | null | ApolloError> {
+  ): Promise<BasicVehicleInformation | null | GraphQLError> {
     const { vehicle } = await this.fetchVehicleDataForOwnerCoOwner(auth, permno)
 
     return {

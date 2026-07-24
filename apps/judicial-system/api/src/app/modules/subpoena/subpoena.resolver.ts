@@ -1,5 +1,5 @@
 import { Inject, UseGuards } from '@nestjs/common'
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -26,6 +26,7 @@ export class SubpoenaResolver {
     private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly backendService: BackendService,
   ) {}
 
   @Query(() => Subpoena, { nullable: true })
@@ -33,8 +34,6 @@ export class SubpoenaResolver {
     @Args('input', { type: () => SubpoenaQueryInput })
     input: SubpoenaQueryInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<Subpoena> {
     this.logger.debug(
       `Getting subpoena ${input.subpoenaId} for defendant ${input.defendantId} of case ${input.caseId}`,
@@ -43,7 +42,7 @@ export class SubpoenaResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_SUBPOENA,
-      backendService.getSubpoena(
+      this.backendService.getSubpoena(
         input.caseId,
         input.defendantId,
         input.subpoenaId,
@@ -58,8 +57,6 @@ export class SubpoenaResolver {
     @Args('input', { type: () => CreateSubpoenasInput })
     input: CreateSubpoenasInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<Subpoena[]> {
     this.logger.debug(
       `Creating subpoenas for defendants ${input.defendantIds.join(
@@ -70,7 +67,7 @@ export class SubpoenaResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_SUBPOENAS,
-      backendService.createSubpoenas(caseId, {
+      this.backendService.createSubpoenas(caseId, {
         defendantIds: input.defendantIds,
         arraignmentDate: input.arraignmentDate,
         location: input.location,

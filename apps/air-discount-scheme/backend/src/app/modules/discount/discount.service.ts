@@ -90,7 +90,7 @@ export class DiscountService {
     value: T,
     ttl: number = ONE_DAY,
   ): Promise<void> {
-    return this.cacheManager.set(key, value, ttl * 1000)
+    await this.cacheManager.set(key, value, ttl * 1000)
   }
 
   private async getCache<T>(cacheKey: string): Promise<T | undefined> {
@@ -99,7 +99,21 @@ export class DiscountService {
       return
     }
 
-    return this.cacheManager.get(cacheId)
+    return (await this.cacheManager.get<T>(cacheId)) ?? undefined
+  }
+
+  /**
+   * Remaining time-to-live for a cache key, in seconds.
+   *
+   * cache-manager's `ttl()` returns the absolute expiry timestamp (epoch ms),
+   * so the remaining time is computed here.
+   */
+  private async getRemainingTtl(cacheKey: string): Promise<number> {
+    const expiresAt = await this.cacheManager.ttl(cacheKey)
+    if (!expiresAt) {
+      return 0
+    }
+    return Math.max(0, Math.round((expiresAt - Date.now()) / 1000))
   }
 
   async createDiscountCode(
@@ -307,7 +321,7 @@ export class DiscountService {
       return null
     }
 
-    const ttl = (await this.cacheManager.store.ttl(cacheKey)) / 1000
+    const ttl = await this.getRemainingTtl(cacheKey)
 
     return new Discount(
       cacheValue.user,
@@ -328,7 +342,7 @@ export class DiscountService {
       return await this.getDiscountByConnectionDiscountCode(discountCode)
     }
 
-    const ttl = (await this.cacheManager.store.ttl(cacheKey)) / 1000
+    const ttl = await this.getRemainingTtl(cacheKey)
     return new Discount(
       cacheValue.user,
       discountCode,
@@ -356,7 +370,7 @@ export class DiscountService {
       return null
     }
 
-    const ttl = (await this.cacheManager.store.ttl(cacheKey)) / 1000
+    const ttl = await this.getRemainingTtl(cacheKey)
     return new Discount(
       cacheValue.user,
       cacheValue.discountCode,
@@ -443,7 +457,7 @@ export class DiscountService {
       }
 
       if (cacheId) {
-        const ttl = (await this.cacheManager.store.ttl(cacheId)) / 1000
+        const ttl = await this.getRemainingTtl(cacheId)
         await this.setCache<string>(CACHE_KEYS.flight(flightId), cacheId, ttl)
       }
     }
@@ -466,7 +480,7 @@ export class DiscountService {
       return
     }
 
-    const ttl = (await this.cacheManager.store.ttl(cacheId)) / 1000
+    const ttl = await this.getRemainingTtl(cacheId)
 
     // Point the discount code back to the old cache
     await this.setCache<CachedDiscount>(cacheId, cacheValue)

@@ -1,3 +1,7 @@
+// Loaded at runtime by @nestjs/apollo's Apollo driver via a dynamic require;
+// imported here so Nx keeps it in the generated production package.json.
+import '@as-integrations/express5'
+
 import { ApolloDriver } from '@nestjs/apollo'
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
@@ -21,7 +25,6 @@ import {
   authModuleConfig,
   BackendModule,
   backendModuleConfig,
-  BackendService,
   CaseListModule,
   CaseModule,
   CaseTableModule,
@@ -53,20 +56,15 @@ const autoSchemaFile = production
 
 @Module({
   imports: [
-    GraphQLModule.forRootAsync({
+    GraphQLModule.forRoot({
       driver: ApolloDriver,
-      imports: [BackendModule],
-      useFactory: (backendService: BackendService) => ({
-        debug,
-        playground,
-        autoSchemaFile,
-        cache: 'bounded',
-        path: '/api/graphql',
-        context: ({ req }: never) => ({ req }),
-        dataSources: () => ({ backendService }),
-      }),
-      inject: [BackendService],
+      playground,
+      autoSchemaFile,
+      cache: 'bounded',
+      path: '/api/graphql',
+      context: ({ req }: never) => ({ req }),
     }),
+    BackendModule,
     SharedAuthModule,
     AuditTrailModule,
     AuthModule,

@@ -4,7 +4,7 @@ import cn from 'classnames'
 import { Box, FocusableBox } from '@island.is/island-ui/core'
 
 export type GalleryItemProps = {
-  children: React.ReactElement
+  children: React.ReactElement<{ className?: string }>
   cover?: boolean // object fit, so images that arent product shots can be optionally full-width instead of contained
   active?: boolean
   thumbnail?: boolean
