@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { ComponentType, useMemo } from 'react'
 import {
   AreaChart,
   BarChart,
@@ -26,16 +26,9 @@ export const useGetChartComponentsWithRenderProps = ({
     [components],
   )
 
-type ChartBaseComponent =
-  | typeof AreaChart
-  | typeof BarChart
-  | typeof ComposedChart
-  | typeof LineChart
-  | typeof PieChart
-
 export const useGetChartBaseComponent = (
   chart: Chart,
-): ChartBaseComponent | null => {
+): ComponentType<any> | null => {
   const chartType = decideChartBase(chart.components)
 
   if (chartType === ChartType.bar) {
