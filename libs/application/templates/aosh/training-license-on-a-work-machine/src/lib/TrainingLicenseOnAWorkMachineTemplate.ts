@@ -15,10 +15,13 @@ import {
 import {
   EphemeralStateLifeCycle,
   coreHistoryMessages,
+  endOfDayFromCreation,
   getReviewStatePendingAction,
   getValueViaPath,
   pruneAfterDays,
+  schedulePruneReminderBefore,
 } from '@island.is/application/core'
+import { Features } from '@island.is/feature-flags'
 import { Events, States, Roles, ApiActions } from './constants'
 import { AuthDelegationType } from '@island.is/shared/types'
 import {
@@ -42,13 +45,8 @@ import set from 'lodash/set'
 import { CodeOwners } from '@island.is/shared/constants'
 import { getReviewers } from '../utils'
 
-const pruneInDaysAtMidnight = (application: Application, days: number) => {
-  const date = new Date(application.created)
-  date.setDate(date.getDate() + days)
-  const pruneDate = new Date(date)
-  pruneDate.setUTCHours(23, 59, 59)
-  return pruneDate
-}
+// days until application gets pruned when in review state
+const pruneLifeTimeInReview = 7
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -242,8 +240,15 @@ const template: ApplicationTemplate<
             },
             shouldBeListed: true,
             shouldBePruned: true,
-            whenToPrune: (application) => pruneInDaysAtMidnight(application, 7),
+            whenToPrune: (application: Application) =>
+              endOfDayFromCreation(application, pruneLifeTimeInReview),
           },
+          scheduledNotifications: (application) =>
+            schedulePruneReminderBefore(
+              endOfDayFromCreation(application, pruneLifeTimeInReview),
+              2,
+              Features.trainingLicenseOnWorkMachineScheduledNotifications,
+            ),
           roles: [
             {
               id: Roles.APPLICANT,
