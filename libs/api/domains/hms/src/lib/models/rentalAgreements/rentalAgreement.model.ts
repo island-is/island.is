@@ -1,6 +1,13 @@
-import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
+import {
+  Field,
+  GraphQLISODateTime,
+  ID,
+  ObjectType,
+  registerEnumType,
+} from '@nestjs/graphql'
 import { ContractParty } from './contractParty.model'
 import { ContractProperty } from './contractProperty.model'
+import { ContractDocument } from './contractDocument.model'
 
 export enum AgreementStatusType {
   VALID = 'valid',
@@ -53,17 +60,17 @@ export class RentalAgreement {
   @Field(() => TemporalType, { nullable: true })
   contractType?: TemporalType
 
-  @Field({ nullable: true, description: 'ISO8601' })
-  dateFrom?: string
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  dateFrom?: Date
 
-  @Field({ nullable: true, description: 'ISO8601' })
-  dateTo?: string
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  dateTo?: Date
 
-  @Field({ nullable: true, description: 'ISO8601' })
-  signatureDate?: string
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  signatureDate?: Date
 
-  @Field({ nullable: true, description: 'ISO8601' })
-  receivedDate?: string
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  receivedDate?: Date
 
   @Field(() => [ContractParty], { nullable: true })
   landlords?: ContractParty[]
@@ -74,6 +81,15 @@ export class RentalAgreement {
   @Field(() => ContractProperty, { nullable: true })
   contractProperty?: ContractProperty
 
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  terminationDate?: Date
+
+  @Field(() => [ContractDocument], { nullable: true })
+  documents?: ContractDocument[]
+
   @Field({ nullable: true })
-  downloadUrl?: string
+  latestDocumentDownloadUrl?: string
+
+  @Field({ nullable: true })
+  canTerminate?: boolean
 }

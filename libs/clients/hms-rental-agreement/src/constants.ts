@@ -36,3 +36,15 @@ export const INACTIVE_AGREEMENT_STATUSES: Array<AgreementStatusType> = [
   'invalid',
   'terminated',
 ]
+
+export const AGREEMENT_STATUS_ORDER: Array<AgreementStatusType> = [
+  'valid',
+  'cancellationRequested',
+  'pendingCancellation',
+  'pendingTermination',
+  'terminated',
+  'expired',
+  'cancelled',
+  'invalid',
+  'unknown',
+]

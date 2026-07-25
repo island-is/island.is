@@ -79,6 +79,7 @@ export const informationModule: PortalModule = {
         path: InformationPaths.MyContractsDetail,
         enabled: scopes.includes(ApiScope.meDetails),
         key: 'MyContracts',
+        breadcrumbHide: true,
         element: <UserContract />,
       },
       {
