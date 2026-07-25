@@ -39,6 +39,7 @@ import {
   capitalize,
   formatDate,
   lowercase,
+  sanitizeRichTextHtml,
 } from '@island.is/judicial-system/formatters'
 import type { User } from '@island.is/judicial-system/types'
 import {
@@ -54,6 +55,7 @@ import {
   isIndictmentCase,
   isPublicProsecutionOfficeUser,
   isRequestCase,
+  isRestrictionCase,
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -236,7 +238,11 @@ export class CaseController {
       if (update.caseResentExplanation) {
         // We want to overwrite certain fields that the court sees so they're always seeing
         // the correct information post resend
-        update.courtCaseFacts = `Í greinargerð sóknaraðila er atvikum lýst svo: ${theCase.caseFacts}`
+        update.courtCaseFacts = isRestrictionCase(theCase.type)
+          ? `<p>Í greinargerð sóknaraðila er atvikum lýst svo:</p>${sanitizeRichTextHtml(
+              theCase.caseFacts ?? '',
+            )}`
+          : `Í greinargerð sóknaraðila er atvikum lýst svo: ${theCase.caseFacts}`
         update.courtLegalArguments = `Í greinargerð er krafa sóknaraðila rökstudd þannig: ${theCase.legalArguments}`
         update.prosecutorDemands = update.demands ?? theCase.demands
         if (!theCase.decision) {

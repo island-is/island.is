@@ -24,6 +24,7 @@ import {
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
+import HtmlContent from '../../HtmlContent/HtmlContent'
 import * as styles from './PoliceRequestAccordionItem.css'
 
 interface Props {
@@ -157,7 +158,7 @@ const PoliceRequestAccordionItem: FC<Props> = ({ workingCase }: Props) => {
         </Text>
       </Box>
       <AccordionListItem title="Málsatvik" breakSpaces>
-        <Text>{workingCase.caseFacts}</Text>
+        <HtmlContent html={workingCase.caseFacts ?? ''} />
       </AccordionListItem>
       <AccordionListItem title="Lagarök" breakSpaces>
         <Text>{workingCase.legalArguments}</Text>
