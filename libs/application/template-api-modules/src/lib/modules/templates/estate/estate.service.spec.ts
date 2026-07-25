@@ -100,5 +100,24 @@ describe('EstateTemplateService', () => {
         mockSyslumennService.getInheritanceReportSignatories,
       ).toHaveBeenCalledWith('0101307789', SignatoryEstateTypes.Einkaskipti)
     })
+
+    it.each([
+      [EstateTypes.divisionOfEstateByHeirs, SignatoryEstateTypes.Einkaskipti],
+      [EstateTypes.permitForUndividedEstate, SignatoryEstateTypes.OskiptBu],
+    ])(
+      'returns no signatories from Syslumenn for signer-capable %s',
+      async (type, signatoryEstateType) => {
+        mockSyslumennService.getInheritanceReportSignatories.mockResolvedValue(
+          [],
+        )
+
+        const result = await service.getSignatories(createActionProps(type))
+
+        expect(result).toEqual({ success: true, signatories: [] })
+        expect(
+          mockSyslumennService.getInheritanceReportSignatories,
+        ).toHaveBeenCalledWith('0101307789', signatoryEstateType)
+      },
+    )
   })
 })
