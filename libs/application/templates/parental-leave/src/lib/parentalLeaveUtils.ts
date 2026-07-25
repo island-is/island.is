@@ -368,6 +368,26 @@ export const getAvailableRightsInDays = (application: Application) => {
       0,
     )
 
+    // VMSTApplicationRights may report the full entitlement without
+    // accounting for days the primary parent is giving away.
+    // Ensure give-days are subtracted so period validation is correct.
+    const selectedChild = getSelectedChild(
+      application.answers,
+      application.externalData,
+    )
+    if (selectedChild?.parentalRelation === ParentalRelations.primary) {
+      const transferredDays = getTransferredDays(application, selectedChild)
+      if (transferredDays < 0) {
+        // transferredDays is negative when giving days away
+        // Only subtract if VMSTDays doesn't already account for it
+        // (i.e., VMSTDays is close to the full entitlement)
+        const baseRemainingDays = selectedChild.remainingDays
+        if (VMSTDays >= baseRemainingDays) {
+          return VMSTDays + transferredDays
+        }
+      }
+    }
+
     return VMSTDays
   }
 
