@@ -11,8 +11,7 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/reference-next-app",
-        "webpack": true
+        "outputPath": "dist/apps/reference-next-app"
       },
       "configurations": {
         "development": {
@@ -50,8 +49,7 @@
       "options": {
         "buildTarget": "reference-next-app:build",
         "dev": true,
-        "customServerTarget": "reference-next-app:serve-custom-server",
-        "webpack": true
+        "customServerTarget": "reference-next-app:serve-custom-server"
       },
       "configurations": {
         "development": {
