@@ -38,6 +38,9 @@ export default defineConfig({
   define,
   server: {
     port: process.env.PORT ? Number(process.env.PORT) : 4200,
+    // Fail instead of drifting to another port while the browser still
+    // points at the old one.
+    strictPort: true,
     proxy: bffDevProxy,
   },
   build: {
