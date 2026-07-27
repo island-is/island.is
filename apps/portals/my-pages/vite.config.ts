@@ -1,0 +1,51 @@
+import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin'
+import react from '@vitejs/plugin-react-swc'
+import { join } from 'node:path'
+import { defineConfig } from 'vite'
+import svgr from 'vite-plugin-svgr'
+import tsconfigPaths from 'vite-tsconfig-paths'
+
+import {
+  bffDevProxy,
+  define,
+  injectDevSiEnvironment,
+  mainFields,
+  nodeBuiltinPolyfills,
+  spaAliases,
+  staticAssetsDir,
+} from '../../../libs/shared/vite/base'
+
+const workspaceRoot = join(__dirname, '../../..')
+
+export default defineConfig({
+  root: __dirname,
+  base: '/minarsidur/',
+  plugins: [
+    tsconfigPaths({ root: workspaceRoot }),
+    nodeBuiltinPolyfills(),
+    react(),
+    vanillaExtractPlugin(),
+    // Reproduce the webpack SVGR setup: named ReactComponent exports from
+    // plain .svg imports, default export stays the asset URL.
+    svgr({
+      include: '**/*.svg',
+      svgrOptions: { exportType: 'named', namedExport: 'ReactComponent' },
+    }),
+    injectDevSiEnvironment(),
+    staticAssetsDir(join(__dirname, 'src/assets'), '/minarsidur/assets/'),
+  ],
+  resolve: {
+    mainFields,
+    alias: spaAliases(workspaceRoot),
+  },
+  define,
+  server: {
+    port: process.env.PORT ? Number(process.env.PORT) : 4200,
+    proxy: bffDevProxy,
+  },
+  build: {
+    outDir: join(workspaceRoot, 'dist/apps/portals/my-pages'),
+    emptyOutDir: true,
+    sourcemap: false,
+  },
+})
