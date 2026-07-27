@@ -57,7 +57,7 @@ const LogoIcon = () => (
 
 const Container: FC<PropsWithChildren> = ({ children }) => {
   return (
-    <Box paddingX={[3, 3, 4]}>
+    <Box component="header" paddingX={[3, 3, 4]}>
       <GridContainer className={styles.gridContainer}>
         <GridRow>
           <GridColumn span="12/12">

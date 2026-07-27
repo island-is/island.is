@@ -21,6 +21,7 @@ interface Props {
   options: ReactSelectOption[]
   isLoading: boolean
   placeholder?: string
+  ariaLabel?: string
   value?: PropsValue<CoreOption<string | number | null>>
   onChange?: (
     newValue:
@@ -34,6 +35,7 @@ const BaseSelect: FC<Props> = (props) => {
     options,
     isLoading,
     placeholder = 'Hver lagði fram?',
+    ariaLabel,
     value,
     onChange,
   } = props
@@ -41,6 +43,7 @@ const BaseSelect: FC<Props> = (props) => {
   return (
     <Select
       classNamePrefix="court-documents-select"
+      aria-label={ariaLabel ?? placeholder}
       options={options}
       placeholder={placeholder}
       isLoading={isLoading}

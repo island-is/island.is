@@ -282,6 +282,15 @@ describe('CaseController - Split defendant from case guards', () => {
   )
 })
 
+describe('CaseController - Duplicate guards', () => {
+  verifyGuards(
+    CaseController,
+    'duplicate',
+    [RolesGuard, CaseExistsGuard, CaseTypeGuard, CaseReadGuard],
+    [{ guard: CaseTypeGuard, prop: { allowedCaseTypes: indictmentCases } }],
+  )
+})
+
 describe('CaseController - Create court case guards', () => {
   verifyGuards(CaseController, 'createCourtCase', [
     RolesGuard,

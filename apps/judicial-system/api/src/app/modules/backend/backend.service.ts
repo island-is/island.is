@@ -29,6 +29,7 @@ import {
   SearchCasesResponse,
 } from '../case-table'
 import {
+  AppealDecisionResponse,
   CourtDocumentResponse,
   CourtSessionResponse,
   CourtSessionString,
@@ -755,6 +756,17 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.patch(
       `case/${caseId}/courtSession/${courtSessionId}/courtSessionString`,
       updateCourtSessionString,
+    )
+  }
+
+  updateCourtSessionAppealDecision(
+    caseId: string,
+    courtSessionId: string,
+    updateAppealDecision: unknown,
+  ): Promise<AppealDecisionResponse> {
+    return this.patch(
+      `case/${caseId}/courtSession/${courtSessionId}/appealDecision`,
+      updateAppealDecision,
     )
   }
 

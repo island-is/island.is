@@ -78,6 +78,7 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
             <IconButton
               icon="pencil"
               colorScheme="blue"
+              ariaLabel={`Breyta talsmanni ${civilClaimant.name}`}
               disabled={
                 workingCase.state === CaseState.CORRECTING ||
                 !civilClaimant.isSpokespersonConfirmed
@@ -87,6 +88,7 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
             <IconButton
               icon="trash"
               colorScheme="blue"
+              ariaLabel={`Fjarlægja talsmann ${civilClaimant.name}`}
               disabled={workingCase.state === CaseState.CORRECTING}
               onClick={() =>
                 handleSetAndSendCivilClaimantToServer({

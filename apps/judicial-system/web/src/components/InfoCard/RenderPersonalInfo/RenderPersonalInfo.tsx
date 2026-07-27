@@ -39,6 +39,7 @@ const RenderPersonalData = ({
                 <IconButton
                   icon="pencil"
                   colorScheme="transparent"
+                  ariaLabel={`Breyta ${name}`}
                   onClick={onClick}
                 />
               </span>

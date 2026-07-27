@@ -161,59 +161,99 @@ export const getCaseLevelAppealInfo = (theCase: Case): CaseLevelAppealInfo => {
 export interface AppealCaseInfo {
   appealedByRole?: UserRole
   appealedDate?: Date
+  appealedInCourt?: boolean
   statementDeadline?: Date
   isStatementDeadlineExpired?: boolean
+}
+
+// The appellant's side as recorded on the APPEALED event log. Every appeal
+// registers one - out-of-court via registerAppellant, in-court via the
+// session-confirmation dual-write, historical rows via backfill. Prosecutor
+// precedence covers the case where several parties appealed in court; that only
+// affects in-court appeals, which are displayed as "Kært í þinghaldi" without
+// naming a side, so the single out-of-court appellant is always shown exactly.
+const getAppealedByRoleFromEvents = (
+  appealCase: AppealCase,
+): UserRole | undefined => {
+  const appealedEvents = (appealCase.appealEventLogs ?? []).filter(
+    (eventLog) => eventLog.eventType === AppealEventType.APPEALED,
+  )
+
+  if (appealedEvents.length === 0) {
+    return undefined
+  }
+
+  return appealedEvents.some((eventLog) =>
+    prosecutionRoles.includes(eventLog.userRole),
+  )
+    ? UserRole.PROSECUTOR
+    : UserRole.DEFENDER
+}
+
+// Legacy appellant-side derivation from the case columns. Kept as a fallback for
+// any appeal not yet represented by an APPEALED event (e.g. a backfill row that
+// could not be resolved); removed later with the columns themselves.
+const getLegacyAppealedByRole = (
+  appealCase: AppealCase,
+  theCase: Case,
+): UserRole | undefined => {
+  if (appealCase.rulingFileId) {
+    // Ruling-order appeals recorded the appellant on the AppealCase row itself.
+    return appealCase.appealedByNationalId
+      ? UserRole.DEFENDER
+      : UserRole.PROSECUTOR
+  }
+
+  const { prosecutorPostponedAppealDate, accusedPostponedAppealDate } = theCase
+  if (isRequestCase(theCase.type)) {
+    const didProsecutorAcceptInCourt =
+      theCase.prosecutorAppealDecision === CaseAppealDecision.ACCEPT
+    const didAccusedAcceptInCourt =
+      theCase.accusedAppealDecision === CaseAppealDecision.ACCEPT
+    return prosecutorPostponedAppealDate && !didProsecutorAcceptInCourt
+      ? UserRole.PROSECUTOR
+      : accusedPostponedAppealDate && !didAccusedAcceptInCourt
+      ? UserRole.DEFENDER
+      : undefined
+  }
+
+  return prosecutorPostponedAppealDate
+    ? UserRole.PROSECUTOR
+    : accusedPostponedAppealDate
+    ? UserRole.DEFENDER
+    : undefined
 }
 
 export const getAppealCaseInfo = (
   appealCase: AppealCase,
   theCase: Case,
 ): AppealCaseInfo => {
-  const {
-    appealReceivedByCourtDate,
-    rulingFileId,
-    appealedByNationalId,
-    created,
-  } = appealCase
-  const isRulingOrderAppeal = Boolean(rulingFileId)
+  const { appealReceivedByCourtDate, rulingFileId } = appealCase
 
-  let appealedByRole: UserRole | undefined
-  let appealedDate: Date | undefined
+  // The time of appeal is read straight from the appeal case's own appeal_date
+  // column (populated on every appeal-creation path + backfilled), rather than
+  // derived from the legacy per-side postponed-date columns (case-level) or the
+  // row's `created` timestamp (ruling-order).
+  const appealedDate = appealCase.appealDate
 
-  if (isRulingOrderAppeal) {
-    // Ruling-order appeals record the appellant on the AppealCase row itself.
-    appealedByRole = appealedByNationalId
-      ? UserRole.DEFENDER
-      : UserRole.PROSECUTOR
-    appealedDate = created
-  } else {
-    const { prosecutorPostponedAppealDate, accusedPostponedAppealDate } =
-      theCase
-    if (isRequestCase(theCase.type)) {
-      const didProsecutorAcceptInCourt =
-        theCase.prosecutorAppealDecision === CaseAppealDecision.ACCEPT
-      const didAccusedAcceptInCourt =
-        theCase.accusedAppealDecision === CaseAppealDecision.ACCEPT
-      appealedByRole =
-        prosecutorPostponedAppealDate && !didProsecutorAcceptInCourt
-          ? UserRole.PROSECUTOR
-          : accusedPostponedAppealDate && !didAccusedAcceptInCourt
-          ? UserRole.DEFENDER
-          : undefined
-    } else {
-      appealedByRole = prosecutorPostponedAppealDate
-        ? UserRole.PROSECUTOR
-        : accusedPostponedAppealDate
-        ? UserRole.DEFENDER
-        : undefined
-    }
-    appealedDate =
-      appealedByRole === UserRole.PROSECUTOR
-        ? prosecutorPostponedAppealDate
-        : appealedByRole === UserRole.DEFENDER
-        ? accusedPostponedAppealDate
-        : undefined
-  }
+  // The appellant's side is read from the APPEALED event log, falling back to
+  // the legacy columns for any appeal not yet represented there - so the switch
+  // stays correct even where the backfill could not resolve a row.
+  const appealedByRole =
+    getAppealedByRoleFromEvents(appealCase) ??
+    getLegacyAppealedByRole(appealCase, theCase)
+
+  // True when the ruling order was appealed in court ("Kært í þinghaldi") -
+  // i.e. a party recorded a decision = APPEAL for it in the court record. The
+  // court of appeals shows this without naming who appealed.
+  const appealedInCourt = Boolean(
+    rulingFileId &&
+      theCase.appealDecisions?.some(
+        (decision) =>
+          decision.rulingFileId === rulingFileId &&
+          decision.decision === CaseAppealDecision.APPEAL,
+      ),
+  )
 
   let statementDeadline: Date | undefined
   let isStatementDeadlineExpired: boolean | undefined
@@ -225,6 +265,7 @@ export const getAppealCaseInfo = (
   return {
     appealedByRole,
     appealedDate,
+    appealedInCourt,
     statementDeadline,
     isStatementDeadlineExpired,
   }

@@ -85,6 +85,14 @@ export * from './lib/Typography/Typography'
 export * from './lib/Text/Text'
 export * from './lib/Hyphen/Hyphen'
 export { Table } from './lib/Table'
+export { InteractiveTable, createColumnHelper } from './lib/InteractiveTable'
+export type {
+  InteractiveTableProps,
+  ColumnDef,
+  Row,
+  SortingState,
+  OnChangeFn,
+} from './lib/InteractiveTable'
 
 // Form
 export * from './lib/Checkbox/Checkbox'

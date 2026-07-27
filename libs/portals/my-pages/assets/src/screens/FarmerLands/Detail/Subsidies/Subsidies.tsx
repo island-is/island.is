@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from 'react'
 import { Box, Button, Text, getTextStyles } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
-  Table,
+  PortalTable,
   createColumnHelper,
   m,
   formatNationalId,
@@ -255,7 +255,7 @@ export const Subsidies = ({ farmId }: Props) => {
           }}
         />
       </Box>
-      <Table
+      <PortalTable
         columns={columns}
         data={subsidies}
         loading={loading}

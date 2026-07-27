@@ -7,7 +7,6 @@ import router from 'next/router'
 
 import {
   Box,
-  Checkbox,
   FileUploadStatus,
   Input,
   InputFileUpload,
@@ -29,6 +28,7 @@ import {
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
+  CheckboxList,
   CourtArrangements,
   CourtCaseInfo,
   FormContentContainer,
@@ -959,44 +959,46 @@ const Conclusion: FC = () => {
                       variant="h5"
                       marginBottom={0}
                     />
-                    {selectedDecision ===
-                      CaseIndictmentRulingDecision.RULING && (
-                      <Checkbox
-                        id={`default-judgment-${defendant.id}`}
-                        label="Útivistardómur"
-                        checked={defendant.verdict?.isDefaultJudgement || false}
-                        onChange={(evt) =>
-                          updateDefendantVerdictState(
-                            {
-                              caseId: workingCase.id,
-                              defendantId: defendant.id,
-                              isDefaultJudgement: evt.target.checked,
-                            },
-                            setWorkingCase,
-                          )
-                        }
-                        backgroundColor="white"
-                        large
-                        filled
-                      />
-                    )}
-                    <Checkbox
-                      id={`driving-license-revocation-${defendant.id}`}
-                      label="Svipting ökuréttar"
-                      checked={defendant.isDrivingLicenseSuspended || false}
-                      onChange={(evt) =>
-                        updateDefendantState(
-                          {
-                            caseId: workingCase.id,
-                            defendantId: defendant.id,
-                            isDrivingLicenseSuspended: evt.target.checked,
-                          },
-                          setWorkingCase,
-                        )
-                      }
-                      backgroundColor="white"
-                      large
-                      filled
+                    <CheckboxList
+                      blueBox={false}
+                      fullWidth
+                      checkboxes={[
+                        ...(selectedDecision ===
+                        CaseIndictmentRulingDecision.RULING
+                          ? [
+                              {
+                                id: `default-judgment-${defendant.id}`,
+                                title: 'Útivistardómur',
+                                checked:
+                                  defendant.verdict?.isDefaultJudgement ||
+                                  false,
+                                onChange: (checked: boolean) =>
+                                  updateDefendantVerdictState(
+                                    {
+                                      caseId: workingCase.id,
+                                      defendantId: defendant.id,
+                                      isDefaultJudgement: checked,
+                                    },
+                                    setWorkingCase,
+                                  ),
+                              },
+                            ]
+                          : []),
+                        {
+                          id: `driving-license-revocation-${defendant.id}`,
+                          title: 'Svipting ökuréttar',
+                          checked: defendant.isDrivingLicenseSuspended || false,
+                          onChange: (checked: boolean) =>
+                            updateDefendantState(
+                              {
+                                caseId: workingCase.id,
+                                defendantId: defendant.id,
+                                isDrivingLicenseSuspended: checked,
+                              },
+                              setWorkingCase,
+                            ),
+                        },
+                      ]}
                     />
                   </BlueBox>
                 ))}

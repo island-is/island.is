@@ -1,4 +1,5 @@
-import React, { useEffect, useId, useRef, useState } from 'react'
+import React, { useEffect, useId, useMemo, useRef, useState } from 'react'
+import debounce from 'lodash/debounce'
 import { AnimatePresence } from 'motion/react'
 import type { Editor as TinyMCEEditor, Ui } from 'tinymce'
 import { Editor } from '@tinymce/tinymce-react'
@@ -29,6 +30,7 @@ interface Props {
   placeholder: string
   defaultValue?: string
   onChange?: (html: string) => void
+  onDebouncedChange?: (html: string) => void
   onBlur?: (html: string) => void
   disabled?: boolean
   errorMessage?: string
@@ -41,6 +43,7 @@ const TinyMCE = ({
   placeholder,
   defaultValue,
   onChange,
+  onDebouncedChange,
   onBlur,
   disabled,
   errorMessage,
@@ -60,6 +63,28 @@ const TinyMCE = ({
   const highlightBtnApiRef = useRef<ToolbarToggleButtonInstanceApi | null>(null)
   const pickerRef = useRef<HTMLDivElement>(null)
   const highlightGroupRef = useRef<HTMLElement | null>(null)
+
+  // Persist while the user types so content isn't lost on a refresh that
+  // happens before the editor blurs (TinyMCE's iframe doesn't reliably fire
+  // blur on page unload). Passing the callback as an argument keeps the
+  // debounced function stable while still flushing with the latest handler.
+  const debouncedSave = useMemo(
+    () =>
+      debounce(
+        (html: string, callback: ((html: string) => void) | undefined) => {
+          callback?.(html)
+        },
+        500,
+      ),
+    [],
+  )
+
+  // Flush any pending save on unmount so edits aren't lost on navigation.
+  useEffect(() => {
+    return () => {
+      debouncedSave.flush()
+    }
+  }, [debouncedSave])
 
   useEffect(() => {
     highlightBtnApiRef.current?.setActive(pickerOpen)
@@ -171,6 +196,8 @@ const TinyMCE = ({
               editor.on('blur', () => {
                 setFocused(false)
                 onBlur?.(editor.getContent())
+                // Blur already persisted; drop any pending debounced save.
+                debouncedSave.cancel()
               })
               editor.on('NodeChange', handleNodeChange(editor))
               editor.on('PastePreProcess', (args) => {
@@ -195,8 +222,11 @@ const TinyMCE = ({
             placeholder,
           }}
           initialValue={initialValueRef.current}
-          onEditorChange={(content) => {
-            onChange?.(content)
+          onEditorChange={(newContent) => {
+            onChange?.(newContent)
+            if (!disabled) {
+              debouncedSave(newContent, onDebouncedChange)
+            }
           }}
           disabled={disabled}
         />

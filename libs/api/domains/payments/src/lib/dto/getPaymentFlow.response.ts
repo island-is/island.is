@@ -1,6 +1,7 @@
 import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
 import { GraphQLJSON } from 'graphql-type-json'
 import {
+  GetPaymentFlowDTOBankTransferPendingStatusEnum,
   GetPaymentFlowDTOLastBankTransferFailureEnum,
   GetPaymentFlowDTOPaymentStatusEnum,
 } from '@island.is/clients/payments'
@@ -12,6 +13,10 @@ registerEnumType(GetPaymentFlowDTOPaymentStatusEnum, {
 
 registerEnumType(GetPaymentFlowDTOLastBankTransferFailureEnum, {
   name: 'PaymentsBankTransferFailureReason',
+})
+
+registerEnumType(GetPaymentFlowDTOBankTransferPendingStatusEnum, {
+  name: 'PaymentsBankTransferPendingStatus',
 })
 
 @ObjectType('PaymentsGetPaymentFlowResponse')
@@ -88,6 +93,13 @@ export class GetPaymentFlowResponse {
       'Populated only when paymentStatus is bank_transfer_pending. Timestamp at which the in-flight attempt expires (matches the TTL we shared with Blikk on create). The FE polling loop derives its hard timeout from this.',
   })
   bankTransferExpiresAt?: Date
+
+  @Field(() => GetPaymentFlowDTOBankTransferPendingStatusEnum, {
+    nullable: true,
+    description:
+      'Populated only when paymentStatus is bank_transfer_pending. sca_required: the payer must complete SCA — render bankTransferScaRedirectUrl as a QR code (desktop) or deep link (mobile). processing: waiting for bank confirmation.',
+  })
+  bankTransferPendingStatus?: GetPaymentFlowDTOBankTransferPendingStatusEnum
 }
 
 @ObjectType('PaymentsGetPaymentFlowAdminResponse')

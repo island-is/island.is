@@ -6,6 +6,14 @@ We are moving away from Contentful. **Do not add new strings to `.strings.ts`
 files.** New user-facing text should be hardcoded directly in code rather than
 introducing new entries in `.strings.ts` (and therefore Contentful).
 
+## Async style
+
+**Prefer `async`/`await` over chained `.then()`/`.catch()`.** Await promises and
+handle their results with straight-line code rather than promise chains — it
+reads better and keeps error handling consistent. Make the enclosing function
+`async` when needed (a `Promise`-returning function is fine where a fire-and-
+forget callback is expected).
+
 ## Codegen
 
 Regenerate after changing GraphQL schema/resolvers, REST controllers/DTOs, or

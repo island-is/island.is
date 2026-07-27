@@ -101,14 +101,13 @@ const Defendants: FC<Props> = ({ workingCase }) => {
 }
 
 const Prosecutor: FC<Props> = ({ workingCase }) => {
-  const { formatMessage } = useIntl()
   if (!workingCase.prosecutorsOffice?.name) {
     return null
   }
 
   return (
     <Entry
-      label={formatMessage(core.prosecutor)}
+      label={isIndictmentCase(workingCase.type) ? 'Ákæruvald' : 'Sóknaraðili'}
       value={workingCase.prosecutorsOffice.name}
     />
   )

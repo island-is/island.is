@@ -1,125 +1,76 @@
-import './tanstack-table'
-import { Fragment, useEffect, useId, useMemo, useState } from 'react'
 import { ApolloError } from '@apollo/client'
 import {
-  ColumnDef,
-  ExpandedState,
-  OnChangeFn,
-  Row,
-  SortingState,
-  TableMeta,
-  flexRender,
-  getCoreRowModel,
-  getExpandedRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from '@tanstack/react-table'
-import AnimateHeight from 'react-animate-height'
-import {
-  Box,
-  Button,
-  FocusableBox,
-  Icon,
-  Table as T,
-  Text,
+  InteractiveTable,
+  type ColumnDef,
+  type OnChangeFn,
+  type Row,
+  type SortingState,
 } from '@island.is/island-ui/core'
-import { helperStyles } from '@island.is/island-ui/theme'
+import { TableMeta } from '@tanstack/react-table'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
 import { m } from '../../lib/messages'
 import { Problem } from '@island.is/react-spa/shared'
 import { EmptyTable } from '../EmptyTable/EmptyTable'
-import { useIsMobile } from '../../hooks/useIsMobile/useIsMobile'
-import * as styles from './Table.css'
-import cn from 'classnames'
-import { theme } from '@island.is/island-ui/theme'
 
-interface TableProps<TData extends object> {
+/**
+ * Portal-specific wrapper around `InteractiveTable` from `@island.is/island-ui/core`.
+ *
+ * Adds on top of `InteractiveTable`:
+ * - `error: ApolloError` → renders `<Problem>` (instead of a plain error string)
+ * - `loading` → renders `<EmptyTable loading />` skeleton
+ * - `emptyMessage` accepts `MessageDescriptor` in addition to `string`
+ * - Icelandic defaults for `srCaption` and `sortHint` via portal messages
+ *
+ * Prefer using `InteractiveTable` directly when you don't need these portal conveniences.
+ */
+type PortalWithExpander<TData extends object> = {
+  renderExpandedRow: (row: Row<TData>) => React.ReactNode
+  /** Accessible label for the expand/collapse button. Defaults to the Icelandic "Skoða nánar". */
+  expanderLabel?: string
+  mobileTitleKey: string
+}
+
+type PortalWithoutExpander = {
+  renderExpandedRow?: never
+  expanderLabel?: never
+  mobileTitleKey?: string
+}
+
+type PortalTableProps<TData extends object> = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   columns: ColumnDef<TData, any>[]
   data: TData[]
   loading?: boolean
   error?: ApolloError
   emptyMessage: string | MessageDescriptor
-  renderExpandedRow?: (row: Row<TData>) => React.ReactNode
   getRowId?: (originalRow: TData, index: number) => string
-  mobileTitleKey?: string
   manualSorting?: boolean
   sorting?: SortingState
   onSortingChange?: OnChangeFn<SortingState>
   defaultSorting?: SortingState
-  /** Screen-reader-only caption describing the table. Auto-included when the table has sortable columns. */
   srCaption?: string
   meta?: TableMeta<TData>
-}
+} & (PortalWithExpander<TData> | PortalWithoutExpander)
 
-export const Table = <TData extends object>({
-  columns: providedColumns,
+export const PortalTable = <TData extends object>({
+  columns,
   data,
   loading,
   error,
   emptyMessage,
   renderExpandedRow,
+  expanderLabel,
   getRowId,
   mobileTitleKey,
   manualSorting,
-  sorting: controlledSorting,
+  sorting,
   onSortingChange,
   defaultSorting,
   srCaption,
   meta,
-}: TableProps<TData>) => {
+}: PortalTableProps<TData>) => {
   const { formatMessage } = useLocale()
-  const { isMobile } = useIsMobile()
-  const [internalSorting, setInternalSorting] = useState<SortingState>(
-    defaultSorting ?? [],
-  )
-  const sorting = controlledSorting ?? internalSorting
-  const [expanded, setExpanded] = useState<ExpandedState>({})
-  const [collapsingRows, setCollapsingRows] = useState<Set<string>>(new Set())
-
-  // Clear stale collapsing rows when data changes (e.g. on pagination reload).
-  // Also clear expanded state when renderExpandedRow is used without a stable
-  // getRowId, since TanStack uses index-based row IDs by default and those
-  // become stale/mismatched after a data update.
-  useEffect(() => {
-    setCollapsingRows(new Set())
-    if (renderExpandedRow && !getRowId) {
-      setExpanded({})
-    }
-  }, [data]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  const columns = useMemo<ColumnDef<TData>[]>(() => {
-    if (!renderExpandedRow) return providedColumns
-    const expanderCol: ColumnDef<TData> = {
-      id: 'expander',
-      header: () => null,
-      // cell returns null — the expand/collapse button is rendered directly
-      // in the body loop when i === 0 and renderExpandedRow is set
-      cell: () => null,
-      enableSorting: false,
-    }
-    return [expanderCol, ...providedColumns]
-  }, [providedColumns, renderExpandedRow])
-
-  const tableId = useId()
-
-  const table = useReactTable<TData>({
-    data,
-    columns,
-    state: {
-      sorting,
-      expanded,
-    },
-    onSortingChange: onSortingChange ?? setInternalSorting,
-    onExpandedChange: setExpanded,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getExpandedRowModel: getExpandedRowModel(),
-    ...(getRowId ? { getRowId } : {}),
-    ...(manualSorting ? { manualSorting: true } : {}),
-    ...(meta ? { meta } : {}),
-  })
 
   if (error) {
     return <Problem error={error} noBorder={false} />
@@ -129,430 +80,40 @@ export const Table = <TData extends object>({
     return <EmptyTable loading />
   }
 
-  if (isMobile) {
-    if (!data.length) {
-      return <EmptyTable message={emptyMessage} />
-    }
-    return (
-      <Box>
-        {table.getRowModel().rows.map((row, rowIndex) => {
-          const titleCell = row
-            .getVisibleCells()
-            .find((c) => c.column.id === mobileTitleKey)
-          const dataCells = row
-            .getVisibleCells()
-            .filter(
-              (c) =>
-                c.column.id !== mobileTitleKey && c.column.id !== 'expander',
-            )
-          const isExpanded = row.getIsExpanded()
-          const isCollapsing = collapsingRows.has(row.id)
+  const resolvedEmpty =
+    typeof emptyMessage === 'string'
+      ? emptyMessage
+      : formatMessage(emptyMessage)
 
-          return (
-            <Box
-              key={row.id}
-              background={isExpanded || isCollapsing ? 'blue100' : undefined}
-              className={cn(styles.mobileRow, {
-                [styles.container]: isExpanded || isCollapsing,
-              })}
-              position="relative"
-              paddingTop={rowIndex > 0 ? 5 : 3}
-              paddingBottom={3}
-            >
-              <Box
-                marginBottom={1}
-                display="flex"
-                flexDirection="row"
-                justifyContent="spaceBetween"
-              >
-                {titleCell?.column.columnDef.meta?.type === 'interactive' ? (
-                  <Box
-                    id={
-                      mobileTitleKey
-                        ? `${tableId}-row-title-${row.id}`
-                        : undefined
-                    }
-                  >
-                    {flexRender(
-                      titleCell.column.columnDef.cell,
-                      titleCell.getContext(),
-                    )}
-                  </Box>
-                ) : (
-                  <Text
-                    variant="h4"
-                    as="h2"
-                    color="blue400"
-                    id={
-                      mobileTitleKey
-                        ? `${tableId}-row-title-${row.id}`
-                        : undefined
-                    }
-                  >
-                    {titleCell
-                      ? flexRender(
-                          titleCell.column.columnDef.cell,
-                          titleCell.getContext(),
-                        )
-                      : null}
-                  </Text>
-                )}
-                {renderExpandedRow && (
-                  <Box marginLeft={1}>
-                    <Button
-                      circle
-                      colorScheme="light"
-                      icon={isExpanded ? 'remove' : 'add'}
-                      iconType="filled"
-                      size="small"
-                      type="button"
-                      variant="primary"
-                      aria-labelledby={
-                        mobileTitleKey
-                          ? `${tableId}-row-title-${row.id}`
-                          : undefined
-                      }
-                      aria-expanded={isExpanded}
-                      aria-controls={`${tableId}-row-expanded-${row.id}`}
-                      onClick={() => {
-                        if (isExpanded) {
-                          setCollapsingRows((prev) => new Set(prev).add(row.id))
-                        }
-                        row.toggleExpanded()
-                      }}
-                    />
-                  </Box>
-                )}
-              </Box>
-              <Box>
-                {dataCells.map((cell) => {
-                  const headerGroup = table.getHeaderGroups()[0]
-                  const header = headerGroup?.headers.find(
-                    (h) => h.column.id === cell.column.id,
-                  )
-                  const cellMeta = cell.column.columnDef.meta
-                  if (cellMeta?.span === 2) {
-                    return (
-                      <Box key={cell.id} marginBottom={1}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </Box>
-                    )
-                  }
-                  return (
-                    <Box
-                      key={cell.id}
-                      display="flex"
-                      flexDirection="row"
-                      marginBottom={1}
-                    >
-                      <Box width="half" display="flex" alignItems="center">
-                        <Text fontWeight="semiBold">
-                          {header
-                            ? flexRender(
-                                header.column.columnDef.header,
-                                header.getContext(),
-                              )
-                            : null}
-                        </Text>
-                      </Box>
-                      <Box width="half">
-                        {cellMeta?.type === 'interactive' ? (
-                          flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                          )
-                        ) : (
-                          <Text textAlign="right">
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext(),
-                            )}
-                          </Text>
-                        )}
-                      </Box>
-                    </Box>
-                  )
-                })}
-              </Box>
-              {renderExpandedRow && (
-                <AnimateHeight
-                  id={`${tableId}-row-expanded-${row.id}`}
-                  duration={300}
-                  height={isExpanded ? 'auto' : 0}
-                  onHeightAnimationEnd={(newHeight) => {
-                    if (newHeight === 0) {
-                      setCollapsingRows((prev) => {
-                        const next = new Set(prev)
-                        next.delete(row.id)
-                        return next
-                      })
-                    }
-                  }}
-                >
-                  {(isExpanded || isCollapsing) && renderExpandedRow(row)}
-                </AnimateHeight>
-              )}
-            </Box>
-          )
-        })}
-      </Box>
+  const commonProps = {
+    columns,
+    data,
+    emptyMessage: resolvedEmpty,
+    getRowId,
+    manualSorting,
+    sorting,
+    onSortingChange,
+    defaultSorting,
+    srCaption: srCaption ?? formatMessage(m.tableCaption),
+    sortHint: formatMessage(m.tableSortHint),
+    meta,
+  }
+
+  if (renderExpandedRow && mobileTitleKey) {
+    return (
+      <InteractiveTable
+        {...commonProps}
+        mobileTitleKey={mobileTitleKey}
+        renderExpandedRow={renderExpandedRow}
+        expanderLabel={expanderLabel ?? formatMessage(m.tableExpandColumn)}
+      />
     )
   }
 
-  const hasSortableColumns = table
-    .getAllColumns()
-    .some((col) => col.getCanSort())
-
-  return (
-    <T.Table>
-      {hasSortableColumns && (
-        <caption>
-          <span className={helperStyles.srOnly}>
-            {srCaption ?? formatMessage(m.tableCaption)}{' '}
-            {formatMessage(m.tableSortHint)}
-          </span>
-        </caption>
-      )}
-      <T.Head>
-        {table.getHeaderGroups().map((headerGroup) => (
-          <T.Row key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
-              <T.HeadData
-                key={header.id}
-                scope="col"
-                aria-label={
-                  header.column.id === 'expander'
-                    ? formatMessage(m.tableExpandColumn)
-                    : undefined
-                }
-                aria-sort={
-                  header.column.getCanSort()
-                    ? header.column.getIsSorted() === 'asc'
-                      ? 'ascending'
-                      : header.column.getIsSorted() === 'desc'
-                      ? 'descending'
-                      : 'none'
-                    : undefined
-                }
-                style={{
-                  fontSize: '16px',
-                  ...(header.column.columnDef.meta?.align && {
-                    textAlign: header.column.columnDef.meta.align,
-                  }),
-                }}
-              >
-                {header.column.getCanSort() ? (
-                  <FocusableBox
-                    component="button"
-                    type="button"
-                    display="flex"
-                    alignItems="center"
-                    color="blue"
-                    className={styles.sortButton}
-                    onClick={header.column.getToggleSortingHandler()}
-                  >
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext(),
-                    )}
-                    <Box
-                      marginLeft={1}
-                      aria-hidden="true"
-                      style={{
-                        visibility: header.column.getIsSorted()
-                          ? 'visible'
-                          : 'hidden',
-                      }}
-                    >
-                      <Icon
-                        color="blue400"
-                        icon={
-                          header.column.getIsSorted() === 'desc'
-                            ? 'caretDown'
-                            : 'caretUp'
-                        }
-                        size="small"
-                      />
-                    </Box>
-                  </FocusableBox>
-                ) : (
-                  <Box display="flex" flexDirection="row" alignItems="center">
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext(),
-                    )}
-                  </Box>
-                )}
-              </T.HeadData>
-            ))}
-          </T.Row>
-        ))}
-      </T.Head>
-      <T.Body>
-        {!data.length && (
-          <tr>
-            <td colSpan={columns.length}>
-              <EmptyTable message={emptyMessage} />
-            </td>
-          </tr>
-        )}
-        {table.getRowModel().rows.map((row) => {
-          const isExpanded = row.getIsExpanded()
-          const isCollapsing = collapsingRows.has(row.id)
-
-          const rowBackground =
-            isExpanded || isCollapsing ? 'blue100' : undefined
-
-          return (
-            <Fragment key={row.id}>
-              <T.Row>
-                {row.getVisibleCells().map((cell, i) =>
-                  i === 0 && renderExpandedRow ? (
-                    <T.Data
-                      key={cell.id}
-                      style={{ padding: theme.spacing[2] + 'px' }}
-                      box={{
-                        position: 'relative',
-                        background: rowBackground,
-                        borderBottomWidth:
-                          isExpanded || isCollapsing ? undefined : 'standard',
-                      }}
-                    >
-                      {(isExpanded || isCollapsing) && (
-                        <div className={styles.line} />
-                      )}
-                      <Box
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                      >
-                        <Button
-                          circle
-                          colorScheme="light"
-                          icon={isExpanded ? 'remove' : 'add'}
-                          iconType="filled"
-                          size="small"
-                          type="button"
-                          variant="primary"
-                          aria-labelledby={
-                            mobileTitleKey
-                              ? `${tableId}-row-title-${row.id}`
-                              : undefined
-                          }
-                          aria-expanded={isExpanded}
-                          aria-controls={`${tableId}-row-expanded-${row.id}`}
-                          onClick={() => {
-                            if (isExpanded) {
-                              setCollapsingRows((prev) =>
-                                new Set(prev).add(row.id),
-                              )
-                            }
-                            row.toggleExpanded()
-                          }}
-                        />
-                      </Box>
-                    </T.Data>
-                  ) : (
-                    <T.Data
-                      key={cell.id}
-                      style={{
-                        padding: theme.spacing[2] + 'px',
-                        background: rowBackground,
-                      }}
-                      box={{
-                        background: rowBackground,
-                        borderBottomWidth:
-                          isExpanded || isCollapsing ? undefined : 'standard',
-                      }}
-                    >
-                      {cell.column.columnDef.meta?.type === 'interactive' ? (
-                        mobileTitleKey && cell.column.id === mobileTitleKey ? (
-                          <Box id={`${tableId}-row-title-${row.id}`}>
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext(),
-                            )}
-                          </Box>
-                        ) : (
-                          flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                          )
-                        )
-                      ) : (
-                        <Text
-                          variant="medium"
-                          id={
-                            mobileTitleKey && cell.column.id === mobileTitleKey
-                              ? `${tableId}-row-title-${row.id}`
-                              : undefined
-                          }
-                          textAlign={cell.column.columnDef.meta?.align}
-                        >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                          )}
-                        </Text>
-                      )}
-                    </T.Data>
-                  ),
-                )}
-              </T.Row>
-              {renderExpandedRow && (
-                // T.Row doesn't forward aria-hidden, so we use a native <tr>.
-                // Safe: content is not rendered when collapsed, so no focusable children exist when hidden.
-                <tr aria-hidden={!isExpanded && !isCollapsing}>
-                  <T.Data
-                    colSpan={columns.length}
-                    style={{ padding: 0 }}
-                    box={{
-                      position: 'relative',
-                      background:
-                        isExpanded || isCollapsing ? 'blue100' : undefined,
-                      borderBottomWidth:
-                        isExpanded || isCollapsing ? 'standard' : undefined,
-                    }}
-                  >
-                    <AnimateHeight
-                      id={`${tableId}-row-expanded-${row.id}`}
-                      duration={300}
-                      height={isExpanded ? 'auto' : 0}
-                      onHeightAnimationEnd={(newHeight) => {
-                        if (newHeight === 0) {
-                          setCollapsingRows((prev) => {
-                            const next = new Set(prev)
-                            next.delete(row.id)
-                            return next
-                          })
-                        }
-                      }}
-                    >
-                      {(isExpanded || isCollapsing) && (
-                        <>
-                          <div className={styles.line} />
-                          <Box marginLeft={3} marginBottom={3}>
-                            {renderExpandedRow(row)}
-                          </Box>
-                        </>
-                      )}
-                    </AnimateHeight>
-                  </T.Data>
-                </tr>
-              )}
-            </Fragment>
-          )
-        })}
-      </T.Body>
-    </T.Table>
-  )
+  return <InteractiveTable {...commonProps} mobileTitleKey={mobileTitleKey} />
 }
 
-//reexport for package types for simpler imports
-export default Table
+export default PortalTable
 export type {
   ColumnDef,
   Row,

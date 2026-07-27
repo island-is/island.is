@@ -14,6 +14,7 @@ fragment DocumentTicket on DocumentV2 {
       author
       body
       createdDate
+      isZendeskAgent
     }
   }
 }
@@ -47,6 +48,7 @@ fragment ListDocument on DocumentV2 {
   sender {
     id
     name
+    logoUrl
   }
   archived @client
 }

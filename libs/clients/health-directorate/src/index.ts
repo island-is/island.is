@@ -51,11 +51,13 @@ export {
   ConversationBaseDto,
   ConversationDetailDto,
   ConversationMessageDto,
+  ConversationReplyBlockedReason,
   ConversationStatusFilter,
   CreateConversationRequestDto,
   CreateReplyRequestDto,
   DispensationHistoryItemDto,
   MessagingRecipientDto,
+  RecipientCreateBlockedReason,
   UserVisibleAppointmentStatuses,
   OrganDonorDto,
 } from './lib/clients/health'

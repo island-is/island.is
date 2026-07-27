@@ -81,7 +81,7 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
         />
       )}
       {activePath.path && showSelect && (
-        <Box className={styles.select}>
+        <Box className={styles.select} marginBottom={2}>
           <Select
             size="xs"
             backgroundColor="blue"
@@ -106,24 +106,26 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
             {(!!activePath.description || !!activePath.children?.length) && (
               <GridColumn span="6/8">
                 <Box printHidden className={styles.description}>
-                  <TabBar
-                    label={formatMessage(activePath.name)}
-                    variant="alternative"
-                    tabs={
-                      activePath.children?.map((itemChild, ii) => {
-                        const activeChild = itemChild.path
-                          ? itemChild?.path === pathname
-                          : false
+                  {!showSelect && (
+                    <TabBar
+                      label={formatMessage(activePath.name)}
+                      variant="alternative"
+                      tabs={
+                        activePath.children?.map((itemChild, ii) => {
+                          const activeChild = itemChild.path
+                            ? itemChild?.path === pathname
+                            : false
 
-                        return {
-                          id: `subnav-item-${ii}`,
-                          active: activeChild,
-                          onClick: () => tabChangeHandler(itemChild.path),
-                          name: formatMessage(itemChild.name),
-                        }
-                      }) ?? []
-                    }
-                  />
+                          return {
+                            id: `subnav-item-${ii}`,
+                            active: activeChild,
+                            onClick: () => tabChangeHandler(itemChild.path),
+                            name: formatMessage(itemChild.name),
+                          }
+                        }) ?? []
+                      }
+                    />
+                  )}
                   {activePath.children && activePath.name && showSelect && (
                     <Box className={styles.select}>
                       <Select

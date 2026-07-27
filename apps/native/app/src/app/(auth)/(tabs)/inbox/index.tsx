@@ -560,6 +560,7 @@ export default function InboxScreen() {
                       )
                     }
                   },
+                  tintColor: theme.color.blue400,
                 },
               ]
             : [
@@ -576,6 +577,7 @@ export default function InboxScreen() {
                   onPress() {
                     setSelectedState((v) => !v)
                   },
+                  tintColor: theme.color.blue400,
                 },
               ],
           headerRightItems: selectState
@@ -593,7 +595,7 @@ export default function InboxScreen() {
                   onPress() {
                     resetSelectState()
                   },
-                  tintColor: theme.color.purple400,
+                  tintColor: theme.color.blue400,
                 },
               ]
             : [],

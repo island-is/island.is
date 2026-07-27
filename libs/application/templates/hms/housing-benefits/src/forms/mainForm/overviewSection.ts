@@ -27,6 +27,7 @@ import {
   hasNonCustodyMinorsInHousehold,
   isTaxReturnFiled,
   isTaxReturnNotFiled,
+  hasHouseholdMembers,
 } from '../../utils/utils'
 
 export const overviewSection = buildSection({
@@ -130,10 +131,27 @@ export const overviewSection = buildSection({
           id: 'submit',
           title: m.draftMessages.overviewSection.submit,
           refetchApplicationAfterSubmit: true,
+          condition: hasHouseholdMembers,
           actions: [
             {
               event: DefaultEvents.SUBMIT,
               name: m.draftMessages.overviewSection.submit,
+              type: 'primary',
+            },
+          ],
+        }),
+        /**
+         * If there are no household members, we show the applicant submit button.
+         */
+        buildSubmitField({
+          id: 'submit',
+          title: m.applicantSubmitMessages.submitButton,
+          refetchApplicationAfterSubmit: true,
+          condition: (answers) => !hasHouseholdMembers(answers),
+          actions: [
+            {
+              event: DefaultEvents.SUBMIT,
+              name: m.applicantSubmitMessages.submitButton,
               type: 'primary',
             },
           ],

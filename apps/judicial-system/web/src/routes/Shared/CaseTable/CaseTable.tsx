@@ -226,8 +226,24 @@ const CaseTable: FC = () => {
     const cells = r.cells
     const contextMenuItems = getContextMenuItems()
     const { onClick, isDisabled, isLoading } = getRowClickAction()
+    // Build a descriptive accessible name for the row from its leading
+    // cell values (e.g. case number and defendant) so screen reader users
+    // can tell rows apart.
+    const label = r.cells
+      .map((c) => c.sortValue)
+      .filter((v): v is string => Boolean(v))
+      .slice(0, 2)
+      .join(', ')
 
-    return { id, cells, contextMenuItems, onClick, isDisabled, isLoading }
+    return {
+      id,
+      cells,
+      contextMenuItems,
+      onClick,
+      isDisabled,
+      isLoading,
+      label,
+    }
   }
 
   const errorMessage = (

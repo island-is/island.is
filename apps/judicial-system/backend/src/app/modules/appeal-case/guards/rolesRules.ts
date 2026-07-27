@@ -2,10 +2,15 @@ import { RolesRule, RulesType } from '@island.is/judicial-system/auth'
 import {
   AppealCaseTransition,
   isIndictmentCase,
+  type User,
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { AppealCase, Case, User } from '../../repository'
+import { AppealCase, Case } from '../../repository'
+import {
+  isInCourtRulingOrderAppeal,
+  userHasActiveInCourtAppeal,
+} from '../appealCase.helpers'
 import { UpdateAppealCaseDto } from '../dto/updateAppealCase.dto'
 
 const prosecutorFields: (keyof UpdateAppealCaseDto)[] = [
@@ -108,9 +113,11 @@ export const prosecutorRepresentativeUpdateRule: RolesRule = {
 // transitioned. Considers the current appeal case so both case-level and
 // ruling-order appeals are handled.
 const prosecutionAppealedAppealCase = (request: {
+  user?: { currentUser?: User }
   case?: Case
   appealCase?: AppealCase
 }): boolean => {
+  const user = request.user?.currentUser
   const theCase = request.case
   const appealCase = request.appealCase
 
@@ -118,10 +125,19 @@ const prosecutionAppealedAppealCase = (request: {
     return false
   }
 
-  // Ruling-order appeals (indictment cases) record the appellant on the appeal
-  // case itself: a defence national id means the defence appealed, so the
-  // absence of one means the prosecution is the appellant.
   if (appealCase.rulingFileId) {
+    // In-court appeals are per party: the prosecution may withdraw only if it
+    // appealed this ruling in court and has not already withdrawn.
+    if (isInCourtRulingOrderAppeal(theCase, appealCase.rulingFileId)) {
+      return Boolean(
+        user &&
+          userHasActiveInCourtAppeal(theCase, appealCase.rulingFileId, user),
+      )
+    }
+
+    // Out-of-court ruling-order appeals record the appellant on the appeal case:
+    // a defence national id means the defence appealed, so the absence of one
+    // means the prosecution is the appellant.
     return !appealCase.appealedByNationalId
   }
 
@@ -146,9 +162,15 @@ const defenderAppealedAppealCase = (request: {
     return false
   }
 
-  // Ruling-order appeals are only available on indictment cases, so only the
-  // specific defender who appealed (recorded on the appeal case) can withdraw.
   if (appealCase.rulingFileId) {
+    // In-court appeals are per party: this defence party may withdraw only if it
+    // appealed this ruling in court and has not already withdrawn.
+    if (isInCourtRulingOrderAppeal(theCase, appealCase.rulingFileId)) {
+      return userHasActiveInCourtAppeal(theCase, appealCase.rulingFileId, user)
+    }
+
+    // Out-of-court ruling-order appeals: only the specific defender who appealed
+    // (recorded on the appeal case) can withdraw.
     return appealCase.appealedByNationalId === user.nationalId
   }
 

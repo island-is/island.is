@@ -1,8 +1,9 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import { ApolloError } from '@apollo/client'
 
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import type { GraphQLContext } from '@island.is/auth-nest-tools'
 import {
   FeatureFlag,
   FeatureFlagGuard,
@@ -18,6 +19,7 @@ import {
   PaymentFlowAdminResponse,
 } from './dto/getPaymentFlow.response'
 import { PaymentsService } from './payments.service'
+import { getPayerRequestInfo } from './payments.utils'
 import { VerifyCardResponse } from './dto/verifyCard.response'
 import { VerifyCardInput } from './dto/verifyCard.input'
 import { ChargeCardInput } from './dto/chargeCard.input'
@@ -98,9 +100,10 @@ export class PaymentsResolver {
   async verifyCard(
     @Args('input', { type: () => VerifyCardInput })
     input: VerifyCardInput,
+    @Context('req') req: GraphQLContext['req'],
   ): Promise<VerifyCardResponse> {
     try {
-      return this.paymentsService.verifyCard(input)
+      return this.paymentsService.verifyCard(input, getPayerRequestInfo(req))
     } catch (e) {
       throw new ApolloError(e.message)
     }

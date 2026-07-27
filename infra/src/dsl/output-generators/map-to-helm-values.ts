@@ -118,7 +118,7 @@ const serializeService: SerializeMethod<HelmService> = async (
   ) {
     result.replicaCount = {
       min: 1,
-      max: 3,
+      max: 2,
       default: 1,
     }
   } else {
@@ -601,7 +601,7 @@ export const HelmOutput: OutputFormat<HelmService> = {
     })
     s.replicaCount = {
       min: Math.min(1, s.replicaCount?.min ?? 1),
-      max: Math.min(2, s.replicaCount?.max ?? 1),
+      max: Math.min(1, s.replicaCount?.max ?? 1),
       default: Math.min(1, s.replicaCount?.default ?? 1),
     }
     s.namespace = getFeatureDeploymentNamespace(env)

@@ -1,3 +1,5 @@
+import _uniqBy from 'lodash/uniqBy'
+
 import {
   Inject,
   Injectable,
@@ -16,6 +18,12 @@ import {
   ROUTE_HANDLER_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
+  applyDativeCaseToCourtName,
+  getHumanReadableCaseIndictmentRulingDecision,
+} from '@island.is/judicial-system/formatters'
+import {
+  CaseIndictmentRulingDecision,
+  DefendantEventType,
   DefendantNotificationType,
   InstitutionType,
   isIndictmentCase,
@@ -24,12 +32,13 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { formatDefenderRoute } from '../../../../formatters'
 import { CourtService } from '../../../court'
 import { EventService } from '../../../event'
 import {
   Case,
-  DateLog,
   Defendant,
+  DefendantEventLog,
   InstitutionContactRepositoryService,
   Notification,
   Recipient,
@@ -197,22 +206,25 @@ export class DefendantNotificationService extends BaseNotificationService {
       defendant,
       TrackedNotificationType.DEFENDER_COURT_DATE_FOLLOW_UP,
     )
-    const arraignmentDateLog = DateLog.arraignmentDate(theCase.dateLogs)
-    const hasFutureArraignmentDate =
-      arraignmentDateLog && arraignmentDateLog.date.getTime() > Date.now()
 
-    if (!shouldSendCourtDateFollowUp || !hasFutureArraignmentDate || !user) {
+    if (!shouldSendCourtDateFollowUp || !user) {
       // Nothing should be sent so we return a successful response
       return { delivered: true }
     }
 
-    const recipient = await this.sendArraignmentDateEmailNotification({
+    const recipient = await this.sendCourtDateFollowUpEmailNotification({
       theCase,
       user,
-      arraignmentDateLog,
       recipientName: defendant.defenderName ?? '',
       recipientEmail: defendant.defenderEmail ?? '',
+      recipientHasAccessToRVG: Boolean(defendant.defenderNationalId),
     })
+
+    if (!recipient) {
+      // Neither a court session nor an arraignment is scheduled in the future,
+      // so there is nothing to invite the defender to
+      return { delivered: true }
+    }
 
     const result = await this.recordNotification(
       theCase.id,
@@ -363,6 +375,111 @@ export class DefendantNotificationService extends BaseNotificationService {
     )
   }
 
+  private async sendIndictmentCompletedForSomeNotification(
+    theCase: Case,
+    defendant: Defendant,
+  ): Promise<DeliverResponse> {
+    // The indictment was concluded for this defendant while the case continues
+    // for the rest. The decision is read directly from the defendant's own event
+    // log so only this defendant's conclusion is notified.
+    const eventLog = DefendantEventLog.getEventLogByEventType(
+      [
+        DefendantEventType.INDICTMENT_CANCELLED,
+        DefendantEventType.INDICTMENT_DISMISSED,
+      ],
+      defendant.eventLogs,
+    )
+
+    if (!eventLog) {
+      // No conclusion recorded for this defendant, nothing to notify
+      return { delivered: true }
+    }
+
+    const rulingDecision =
+      eventLog.eventType === DefendantEventType.INDICTMENT_CANCELLED
+        ? CaseIndictmentRulingDecision.CANCELLATION
+        : CaseIndictmentRulingDecision.DISMISSAL
+
+    const courtName = applyDativeCaseToCourtName(
+      theCase.court?.name || 'héraðsdómi',
+    )
+    const humanReadableDecision =
+      getHumanReadableCaseIndictmentRulingDecision(rulingDecision)
+
+    const subject = `Lyktir skráðar í máli ${theCase.courtCaseNumber}`
+    const baseBody = `Lyktir hafa verið skráðar á aðila í máli ${theCase.courtCaseNumber} hjá ${courtName}.<br>Niðurstaða: ${humanReadableDecision}`
+
+    const defenderUrl = formatDefenderRoute(
+      this.config.clientUrl,
+      theCase.type,
+      theCase.id,
+    )
+    const prosecutorUrl = `${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}`
+
+    const promises: Promise<Recipient>[] = []
+
+    // DEFENDER — only this defendant's own confirmed defender
+    if (
+      defendant.isDefenderChoiceConfirmed &&
+      defendant.defenderName &&
+      defendant.defenderEmail
+    ) {
+      promises.push(
+        this.sendEmail({
+          subject,
+          html: `${baseBody}<br>Sjá nánar á <a href="${defenderUrl}">yfirlitssíðu málsins í Réttarvörslugátt.</a>`,
+          recipientName: defendant.defenderName,
+          recipientEmail: defendant.defenderEmail,
+        }),
+      )
+    }
+
+    // CIVIL CLAIMANT SPOKESPERSONS — all confirmed spokespersons on the case
+    const spokespersons = _uniqBy(
+      theCase.civilClaimants?.filter(
+        ({ hasSpokesperson, isSpokespersonConfirmed }) =>
+          hasSpokesperson && isSpokespersonConfirmed,
+      ) ?? [],
+      (civilClaimant) => civilClaimant.spokespersonEmail,
+    )
+
+    spokespersons
+      .filter(
+        ({ spokespersonName, spokespersonEmail }) =>
+          spokespersonName && spokespersonEmail,
+      )
+      .forEach(({ spokespersonName, spokespersonEmail }) => {
+        promises.push(
+          this.sendEmail({
+            subject,
+            html: `${baseBody}<br>Sjá nánar á <a href="${defenderUrl}">yfirlitssíðu málsins í Réttarvörslugátt.</a>`,
+            recipientName: spokespersonName,
+            recipientEmail: spokespersonEmail,
+          }),
+        )
+      })
+
+    // PROSECUTOR
+    if (theCase.prosecutor?.name && theCase.prosecutor?.email) {
+      promises.push(
+        this.sendEmail({
+          subject,
+          html: `${baseBody}<br>Sjá nánar á <a href="${prosecutorUrl}">yfirlitssíðu málsins í Réttarvörslugátt.</a>`,
+          recipientName: theCase.prosecutor.name,
+          recipientEmail: theCase.prosecutor.email,
+        }),
+      )
+    }
+
+    const recipients = await Promise.all(promises)
+
+    return this.recordNotification(
+      theCase.id,
+      TrackedNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
+      recipients,
+    )
+  }
+
   private sendNotification(
     notificationType: DefendantNotificationType,
     theCase: Case,
@@ -380,6 +497,11 @@ export class DefendantNotificationService extends BaseNotificationService {
         return this.sendIndictmentSentToPrisonAdminNotification(theCase)
       case DefendantNotificationType.INDICTMENT_WITHDRAWN_FROM_PRISON_ADMIN:
         return this.sendIndictmentWithdrawnFromPrisonAdminNotification(theCase)
+      case DefendantNotificationType.INDICTMENT_COMPLETED_FOR_SOME:
+        return this.sendIndictmentCompletedForSomeNotification(
+          theCase,
+          defendant,
+        )
       case DefendantNotificationType.DEFENDER_COURT_DATE_FOLLOW_UP:
         return this.sendDefenderCourtDateEmailNotification(
           theCase,

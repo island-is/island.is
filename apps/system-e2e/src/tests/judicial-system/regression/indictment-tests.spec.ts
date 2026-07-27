@@ -107,8 +107,8 @@ test.describe.serial('Indictment tests', () => {
     ])
 
     // Indictment
-
-    await page.getByRole('button', { name: 'Opna alla' }).click()
+    // The auto-created indictment count is expanded by default (open state is
+    // persisted in local storage), so no "Opna alla" toggle is needed.
 
     await page.getByPlaceholder('AB123').fill('AB123')
 

@@ -49,6 +49,7 @@ import {
   hasGeneratedCourtRecordPdf,
   indictmentCases,
   investigationCases,
+  isCompletedCase,
   isDistrictCourtUser,
   isIndictmentCase,
   isPublicProsecutionOfficeUser,
@@ -1004,7 +1005,6 @@ export class CaseController {
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
     CaseReadGuard,
-    CaseCompletedGuard,
   )
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @UseInterceptors(CaseInterceptor)
@@ -1021,14 +1021,17 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug(`Duplicating indictment case ${caseId} into a new draft`)
 
-    // Only indictments that were revoked after being sent to court can be
-    // duplicated into a new draft case
-    if (
-      theCase.indictmentRulingDecision !==
-        CaseIndictmentRulingDecision.WITHDRAWAL &&
-      theCase.indictmentRulingDecision !==
-        CaseIndictmentRulingDecision.CANCELLATION
-    ) {
+    const isWaitingForCancellation =
+      theCase.state === CaseState.WAITING_FOR_CANCELLATION
+
+    const isCompletedRevocation =
+      isCompletedCase(theCase.state) &&
+      (theCase.indictmentRulingDecision ===
+        CaseIndictmentRulingDecision.WITHDRAWAL ||
+        theCase.indictmentRulingDecision ===
+          CaseIndictmentRulingDecision.CANCELLATION)
+
+    if (!isWaitingForCancellation && !isCompletedRevocation) {
       throw new ForbiddenException(
         `Cannot duplicate indictment case ${caseId} - it has not been revoked`,
       )
