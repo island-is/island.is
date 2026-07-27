@@ -4,6 +4,7 @@ import {
   keyframes,
   style,
   styleVariants,
+  type StyleRule,
 } from '@vanilla-extract/css'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

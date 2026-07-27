@@ -1,5 +1,6 @@
 import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin'
 import react from '@vitejs/plugin-react-swc'
+import browserslistToEsbuild from 'browserslist-to-esbuild'
 import { join } from 'node:path'
 import { defineConfig } from 'vite'
 import svgr from 'vite-plugin-svgr'
@@ -47,5 +48,8 @@ export default defineConfig({
     outDir: join(workspaceRoot, 'dist/apps/portals/my-pages'),
     emptyOutDir: true,
     sourcemap: false,
+    // Match the syntax support the webpack build derived from .browserslistrc
+    // (vite's default baseline is newer than our browser support policy).
+    target: browserslistToEsbuild(undefined, { path: __dirname }),
   },
 })
