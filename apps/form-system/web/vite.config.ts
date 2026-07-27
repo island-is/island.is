@@ -5,6 +5,7 @@ import { join } from 'node:path'
 import { defineConfig } from 'vite'
 import svgr from 'vite-plugin-svgr'
 
+// eslint-disable-next-line @nx/enforce-module-boundaries -- vite loads this config with plain node resolution, outside the tsconfig paths
 import {
   bffDevProxy,
   define,
