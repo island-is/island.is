@@ -608,9 +608,9 @@ export const HelmOutput: OutputFormat<HelmService> = {
         ingress.host.dev = ingress.host.dev.map((host) => {
           if (host.includes('.')) {
             const parts = host.split('.')
-            return `${env.feature}${parts
-              .slice(1)
-              .join('.')}.identity-server.${env.domain}`
+            return `${env.feature}${parts.slice(1).join('.')}.identity-server.${
+              env.domain
+            }`
           } else {
             return `${env.feature}.identity-server.${env.domain}`
           }
@@ -628,7 +628,7 @@ export const HelmOutput: OutputFormat<HelmService> = {
       if (typeof currentValue === 'object' && 'dev' in currentValue) {
         s.env.IDENTITY_SERVER_ISSUER_URL = {
           ...currentValue,
-          dev: `https://${env.feature}.identity-server.${env.domain}`
+          dev: `https://${env.feature}.identity-server.${env.domain}`,
         }
       }
     }
