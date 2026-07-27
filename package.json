@@ -452,7 +452,7 @@
     "@typescript-eslint/eslint-plugin": "7.18.0",
     "@typescript-eslint/parser": "7.18.0",
     "@vanilla-extract/vite-plugin": "5.2.6",
-    "@vitejs/plugin-react-swc": "4.3.2",
+    "@vitejs/plugin-react": "6.0.4",
     "assert": "2.1.0",
     "babel-jest": "30.4.1",
     "babel-loader": "8.2.5",
@@ -515,7 +515,6 @@
     "vite": "8.1.5",
     "vite-plugin-node-polyfills": "0.28.0",
     "vite-plugin-svgr": "5.2.0",
-    "vite-tsconfig-paths": "6.1.1",
     "webpack-bundle-analyzer": "4.5.0"
   },
   "resolutions": {

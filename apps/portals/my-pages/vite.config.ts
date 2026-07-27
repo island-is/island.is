@@ -1,10 +1,9 @@
 import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin'
-import react from '@vitejs/plugin-react-swc'
+import react from '@vitejs/plugin-react'
 import browserslistToEsbuild from 'browserslist-to-esbuild'
 import { join } from 'node:path'
 import { defineConfig } from 'vite'
 import svgr from 'vite-plugin-svgr'
-import tsconfigPaths from 'vite-tsconfig-paths'
 
 import {
   bffDevProxy,
@@ -22,7 +21,6 @@ export default defineConfig({
   root: __dirname,
   base: '/minarsidur/',
   plugins: [
-    tsconfigPaths({ root: workspaceRoot }),
     nodeBuiltinPolyfills(),
     react(),
     vanillaExtractPlugin(),
@@ -36,6 +34,7 @@ export default defineConfig({
     staticAssetsDir(join(__dirname, 'src/assets'), '/minarsidur/assets/'),
   ],
   resolve: {
+    tsconfigPaths: true,
     mainFields,
     alias: spaAliases(workspaceRoot),
   },
