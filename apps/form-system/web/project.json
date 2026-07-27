@@ -124,6 +124,18 @@
         ]
       },
       "outputs": ["{workspaceRoot}/apps/form-system/web/src/index.html"]
+    },
+    "serve-vite": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "vite serve --config apps/form-system/web/vite.config.ts"
+      }
+    },
+    "build-vite": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "vite build --config apps/form-system/web/vite.config.ts"
+      }
     }
   }
 }
