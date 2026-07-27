@@ -600,20 +600,19 @@ function getFeatureDeploymentNamespace(env: EnvironmentConfig) {
 
 export const HelmOutput: OutputFormat<HelmService> = {
   featureDeployment(s: ServiceDefinition, env): void {
-    // Set feature-deployment prefix for URLs
     Object.values(s.ingress).forEach((ingress) => {
       if (!Array.isArray(ingress.host.dev)) {
         ingress.host.dev = [ingress.host.dev]
       }
-      if (ingress.featureHostPrefix) {
+      if (ingress.idsFeature === true) {
         ingress.host.dev = ingress.host.dev.map((host) => {
           if (host.includes('.')) {
             const parts = host.split('.')
-            return `${ingress.featureHostPrefix}${env.feature}.${parts
+            return `${env.feature}${parts
               .slice(1)
-              .join('.')}`
+              .join('.')}.identity-server.${env.domain}`
           } else {
-            return `${ingress.featureHostPrefix}${env.feature}`
+            return `${env.feature}.identity-server.${env.domain}`
           }
         })
       } else {
@@ -622,6 +621,18 @@ export const HelmOutput: OutputFormat<HelmService> = {
         )
       }
     })
+
+    //TODO mark somewhere that the serice will be using ids features.
+    if (s.env.IDENTITY_SERVER_ISSUER_URL) {
+      const currentValue = s.env.IDENTITY_SERVER_ISSUER_URL
+      if (typeof currentValue === 'object' && 'dev' in currentValue) {
+        s.env.IDENTITY_SERVER_ISSUER_URL = {
+          ...currentValue,
+          dev: `https://${env.feature}.identity-server.${env.domain}`
+        }
+      }
+    }
+
     s.replicaCount = {
       min: Math.min(1, s.replicaCount?.min ?? 1),
       max: Math.min(1, s.replicaCount?.max ?? 1),
@@ -636,15 +647,6 @@ export const HelmOutput: OutputFormat<HelmService> = {
         env.feature!,
         s.initContainers.postgres,
       )
-    }
-    if (s.env.IDENTITY_SERVER_ISSUER_URL) {
-      const currentValue = s.env.IDENTITY_SERVER_ISSUER_URL
-      if (typeof currentValue === 'object' && 'dev' in currentValue) {
-        s.env.IDENTITY_SERVER_ISSUER_URL = {
-          ...currentValue,
-          dev: `https://identity-server-${env.feature}.${env.domain}`,
-        }
-      }
     }
   },
   serializeService(
