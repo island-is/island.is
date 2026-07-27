@@ -7,7 +7,6 @@ import {
   styleVariants,
 } from '@vanilla-extract/css'
 
-
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const wrapperAnimation = keyframes({
   '0%': {

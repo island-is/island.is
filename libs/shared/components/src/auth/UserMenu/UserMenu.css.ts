@@ -1,7 +1,6 @@
 import { globalStyle, style, StyleRule } from '@vanilla-extract/css'
 import { spacing, theme, themeUtils } from '@island.is/island-ui/theme'
 
-
 export const container = style({
   top: theme.headerHeight.small,
   zIndex: theme.zIndex.belowHeader,

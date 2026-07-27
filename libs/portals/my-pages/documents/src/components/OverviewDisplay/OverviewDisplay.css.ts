@@ -1,7 +1,6 @@
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 import { globalStyle, style, StyleRule } from '@vanilla-extract/css'
 
-
 export const modalBase = style({
   width: '100%',
   height: '100%',
