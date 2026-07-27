@@ -222,19 +222,25 @@ const serializeService: SerializeMethod<HelmService> = async (
   // initContainers
   if (typeof serviceDef.initContainers !== 'undefined') {
     if (serviceDef.initContainers.containers.length > 0) {
+
       const isFeatureDeploy = !!env1.feature
       const hasPostgres = !!serviceDef.initContainers.postgres
       const dbName = serviceDef.initContainers.postgres?.name
       const restores = featureDbRestores.find((service) =>
         dbName?.endsWith(`_${service.service}`),
       )
-
-      // Lets not run migrations and seeds for databases that are restored.
-      if (!(isFeatureDeploy && hasPostgres && restores)) {
+      
+      const hasDbRestore = isFeatureDeploy && !!restores
+      
+      const containersToRun = hasDbRestore
+        ? serviceDef.initContainers.containers.filter(
+            (container) => container.name !== 'seed'
+          )
+        : serviceDef.initContainers.containers
+    
+      if (containersToRun.length > 0) {
         result.initContainer = {
-          containers: serializeContainerRuns(
-            serviceDef.initContainers.containers,
-          ),
+          containers: serializeContainerRuns(containersToRun),
           env: {
             SERVERSIDE_FEATURES_ON: env1.featuresOn.join(','),
           },
@@ -265,7 +271,7 @@ const serializeService: SerializeMethod<HelmService> = async (
           mergeObjects(result.initContainer.secrets, secrets)
           addToErrors(errors)
         }
-      }
+      }  
     } else {
       addToErrors(['No containers to run defined in initContainers'])
     }
@@ -615,6 +621,7 @@ export const HelmOutput: OutputFormat<HelmService> = {
             return `${env.feature}.identity-server.${env.domain}`
           }
         })
+
       } else {
         ingress.host.dev = ingress.host.dev.map(
           (host) => `${env.feature}-${host}`,
