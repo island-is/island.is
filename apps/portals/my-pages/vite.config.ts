@@ -11,6 +11,7 @@ import {
   injectDevSiEnvironment,
   mainFields,
   nodeBuiltinPolyfills,
+  redirectToBase,
   spaAliases,
   staticAssetsDir,
 } from '../../../libs/shared/vite/base'
@@ -31,6 +32,7 @@ export default defineConfig({
       svgrOptions: { exportType: 'named', namedExport: 'ReactComponent' },
     }),
     injectDevSiEnvironment(),
+    redirectToBase('/minarsidur/'),
     staticAssetsDir(join(__dirname, 'src/assets'), '/minarsidur/assets/'),
   ],
   resolve: {

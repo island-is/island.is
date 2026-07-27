@@ -25,6 +25,8 @@ export const define = {
   global: 'globalThis',
   'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV ?? 'development'),
   'process.env.API_MOCKS': JSON.stringify(process.env.API_MOCKS ?? ''),
+  // @apollo/client 3.7 reads a bundler-defined __DEV__ global.
+  __DEV__: JSON.stringify(process.env.NODE_ENV !== 'production'),
 }
 
 /**
@@ -123,6 +125,29 @@ export const staticAssetsDir = (dir: string, urlPath: string): Plugin => {
     },
   }
 }
+
+/**
+ * Vite's dev server only responds under the exact base path and shows a hint
+ * page for anything else. Redirect the bare base (and the site root) to it,
+ * like the webpack dev server did.
+ */
+export const redirectToBase = (base: string): Plugin => ({
+  name: 'redirect-to-base',
+  apply: 'serve',
+  configureServer(server) {
+    const bare = base.replace(/\/$/, '')
+    server.middlewares.use((req, res, next) => {
+      const [path, query] = (req.url ?? '').split('?')
+      if (path === bare || path === '/') {
+        res.statusCode = 302
+        res.setHeader('Location', base + (query ? `?${query}` : ''))
+        res.end()
+        return
+      }
+      next()
+    })
+  },
+})
 
 /** The local BFF proxy used by the portal dev servers. */
 export const bffDevProxy = {
