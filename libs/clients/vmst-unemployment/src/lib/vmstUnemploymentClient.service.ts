@@ -41,6 +41,7 @@ import {
   GaldurXRoadAPIModelsApplicantApplicantEligibilityResponse,
   GaldurExternalDomainModelsSupportDataNationalityDTO,
   GaldurDomainModelsApplicationsU2CertificateViewModelsU2CertificateValidationResponse,
+  GaldurXRoadAPIModelsApplicantU2EligibilityResponse,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
@@ -571,7 +572,7 @@ export class VmstUnemploymentClientService {
 
   async checkU2Eligibility(
     auth: User,
-  ): Promise<GaldurXRoadAPIModelsApplicantApplicantEligibilityResponse> {
+  ): Promise<GaldurXRoadAPIModelsApplicantU2EligibilityResponse> {
     const { applicantId } = await this.resolveApplicant(auth)
 
     if (!applicantId) {

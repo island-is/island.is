@@ -9,6 +9,11 @@ import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { errorMessages } from '@island.is/application/templates/vmst/u2-certificate'
 import { FetchError } from '@island.is/clients/middlewares'
+import { U2ErrorCode } from './constants'
+
+const isU2ErrorCode = (code: unknown): code is U2ErrorCode =>
+  typeof code === 'string' &&
+  (Object.values(U2ErrorCode) as string[]).includes(code)
 
 export class U2CertificateService extends BaseTemplateApiService {
   constructor(
@@ -25,14 +30,7 @@ export class U2CertificateService extends BaseTemplateApiService {
     let result
     try {
       result = await this.vmstUnemploymentClientService.checkU2Eligibility(auth)
-      console.log('RESULT', result)
     } catch (e) {
-      const body =
-        e instanceof FetchError
-          ? (e.body as { message?: string; code?: string })
-          : undefined
-      const summary = body?.code
-      console.log(summary)
       this.logger.error('[VMST-U2-Certificate] - Error checking eligibility', e)
       throw new TemplateApiError(
         {
@@ -42,15 +40,29 @@ export class U2CertificateService extends BaseTemplateApiService {
         500,
       )
     }
-
+    console.log(result)
     if (!result.isEligible) {
+      const title =
+        (currentUserLocale === 'is'
+          ? result.reasonTitle
+          : result.reasonTitleEN) || errorMessages.eligibilityErrorTitle
+
+      const reasonText =
+        (currentUserLocale === 'is' ? result.reason : result.reasonEN) || ''
+
+      const shouldAddException = isU2ErrorCode(result.code)
+
+      const summary = shouldAddException
+        ? {
+            ...errorMessages.errorWithException,
+            values: { value: reasonText },
+          }
+        : reasonText || errorMessages.cannotApplyErrorSummary
+
       throw new TemplateApiError(
         {
-          title: errorMessages.eligibilityErrorTitle,
-          summary:
-            (currentUserLocale === 'is'
-              ? (result.reason || '') + errorMessages.cannotApplyErrorSummary
-              : result.reasonEN) || errorMessages.cannotApplyErrorSummary,
+          title,
+          summary,
         },
         400,
       )

@@ -229,4 +229,10 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Ekki tókst að sækja gögn, vinsamlegast reyndu aftur síðar',
     description: 'Generic error summary when data could not be fetched',
   },
+  errorWithException: {
+    id: 'vmst.u2c.application:error.errorWithException#markdown',
+    defaultMessage:
+      '{value}\n\n**Undanþága**\n\nVinnumálastofnun er heimilt að veita undanþágu fyrir atvinnuleit í ákveðnu landi ef:\n\n- foreldri, maki, sambúðarmaki eða samvistarmaki þinn er við nám eða störf í því landi.\n- þú átt börn undir 18 ára aldri sem eru búsett í landinu með hinu foreldri sínu.\n- þú hefur þegar fengið tilboð um starf í landinu.\n\nEf þú telur þig uppfylla þessi skilyrði getur þú sent okkur skilaboð í gegnum Mínar síður Vinnumálastofnunar.',
+    description: 'Error with exception',
+  },
 })

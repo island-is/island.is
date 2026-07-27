@@ -2968,7 +2968,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Galdur_XRoad_API_Models_Applicant_ApplicantEligibilityResponse"
+                  "$ref": "#/components/schemas/Galdur_XRoad_API_Models_Applicant_U2EligibilityResponse"
                 }
               }
             }
@@ -8965,6 +8965,35 @@
             }
           }
         ]
+      },
+      "Galdur_XRoad_API_Models_Applicant_U2EligibilityResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isEligible": {
+            "type": "boolean"
+          },
+          "reasonTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "reasonTitleEN": {
+            "type": "string",
+            "nullable": true
+          },
+          "reason": {
+            "type": "string",
+            "nullable": true
+          },
+          "reasonEN": {
+            "type": "string",
+            "nullable": true
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          }
+        }
       },
       "Galdur_External_Domain_Requests_U2Certificate_CreateU2CertificateRequest": {
         "type": "object",
