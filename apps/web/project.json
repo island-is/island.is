@@ -11,8 +11,7 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/web",
-        "webpack": true
+        "outputPath": "dist/apps/web"
       },
       "configurations": {
         "development": {
@@ -28,8 +27,7 @@
       "options": {
         "buildTarget": "web:build",
         "dev": true,
-        "customServerTarget": "web:serve-custom-server",
-        "webpack": true
+        "customServerTarget": "web:serve-custom-server"
       },
       "configurations": {
         "development": {
