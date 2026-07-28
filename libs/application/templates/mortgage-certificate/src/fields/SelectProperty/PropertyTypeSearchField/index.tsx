@@ -92,7 +92,7 @@ export const PropertyTypeSearchField: FC<
         placeholder={formatMessage(propertySearch.labels.searchPlaceholder)}
         id={`${field.id}.searchStr`}
         name={`${field.id}.searchStr`}
-        onChange={debounce((e) => setSearchStr(e.target.value), 300)}
+        onChange={debounce((e) => setSearchStr(e.target.value), 500)}
         icon="search"
         inputMode="search"
         disabled={propertyType === undefined}
