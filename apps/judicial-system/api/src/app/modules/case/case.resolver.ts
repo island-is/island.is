@@ -15,6 +15,7 @@ import {
 import { type User } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
+import { AppealDecisionResponse } from '../court-session/dto/appealDecision.response'
 import { CaseQueryInput } from './dto/case.input'
 import { CreateCaseInput } from './dto/createCase.input'
 import { CreateCourtCaseInput } from './dto/createCourtCase.input'
@@ -27,6 +28,7 @@ import { SignatureConfirmationQueryInput } from './dto/signatureConfirmation.inp
 import { SplitDefendantFromCaseInput } from './dto/splitDefendantFromCase.input'
 import { TransitionCaseInput } from './dto/transitionCase.input'
 import { UpdateCaseInput } from './dto/updateCase.input'
+import { UpdateCaseAppealDecisionInput } from './dto/updateCaseAppealDecision.input'
 import { CaseInterceptor } from './interceptors/case.interceptor'
 import { Case } from './models/case.model'
 import { RequestSignatureResponse } from './models/requestSignature.response'
@@ -117,6 +119,26 @@ export class CaseResolver {
       AuditedAction.UPDATE_CASE,
       backendService.updateCase(id, updateCase),
       id,
+    )
+  }
+
+  @Mutation(() => AppealDecisionResponse, { nullable: true })
+  updateCaseAppealDecision(
+    @Args('input', { type: () => UpdateCaseAppealDecisionInput })
+    input: UpdateCaseAppealDecisionInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<AppealDecisionResponse> {
+    const { caseId, ...updateAppealDecision } = input
+
+    this.logger.debug(`Updating case-level appeal decision for case ${caseId}`)
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.UPDATE_CASE,
+      backendService.updateCaseAppealDecision(caseId, updateAppealDecision),
+      caseId,
     )
   }
 
