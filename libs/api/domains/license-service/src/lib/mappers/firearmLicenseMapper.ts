@@ -168,7 +168,7 @@ export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
                     label: formatMessage(m.renewLicense, {
                       arg: formatMessage(m.firearmLicense).toLowerCase(),
                     }),
-                    value: 'https://island.is/skotvopnaleyfi',
+                    value: formatMessage(m.renewFirearmLicenseLink),
                     type: GenericUserLicenseMetaLinksType.External,
                   },
                 ],

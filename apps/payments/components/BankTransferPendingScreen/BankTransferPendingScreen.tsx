@@ -1,4 +1,5 @@
 import {
+  AlertMessage,
   Box,
   Button,
   Hidden,
@@ -88,9 +89,10 @@ export const BankTransferPendingScreen = ({
       )}
 
       {isScaOutstanding && (
-        <Text variant="small" color="dark400" textAlign="center">
-          {formatMessage(bankTransfer.cancelInBankAppNote)}
-        </Text>
+        <AlertMessage
+          type="info"
+          message={formatMessage(bankTransfer.cancelInBankAppNote)}
+        />
       )}
     </Box>
   )
