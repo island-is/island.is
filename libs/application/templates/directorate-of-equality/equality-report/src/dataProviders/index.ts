@@ -7,18 +7,21 @@ export { IdentityApi, UserProfileApi } from '@island.is/application/types'
 export const CompanyRegistryApi = defineTemplateApi({
   action: ApiActions.getCompanyData,
   externalDataId: 'companyData',
+  namespace: 'DirectorateOfEquality',
   order: 0,
 })
 
 export const ActiveEqualityReportApi = defineTemplateApi({
   action: ApiActions.getActiveEqualityReport,
   externalDataId: 'activeEqualityReport',
+  namespace: 'DirectorateOfEquality',
   order: 1,
 })
 
 export const DoeCompanyApi = defineTemplateApi({
   action: ApiActions.getDoeCompany,
   externalDataId: 'doeCompany',
+  namespace: 'DirectorateOfEquality',
   order: 2,
 })
 
@@ -27,17 +30,20 @@ export const DoeCompanyApi = defineTemplateApi({
 export const PreviousEqualityReportContentApi = defineTemplateApi({
   action: ApiActions.getPreviousEqualityReportContent,
   externalDataId: 'previousEqualityReportContent',
+  namespace: 'DirectorateOfEquality',
   order: 0,
 })
 
 export const EqualityReportTemplateHtmlApi = defineTemplateApi({
   action: ApiActions.getEqualityReportTemplateHtml,
   externalDataId: 'equalityReportTemplateHtml',
+  namespace: 'DirectorateOfEquality',
   order: 0,
 })
 
 export const EqualityReportTemplateDocxApi = defineTemplateApi({
   action: ApiActions.getEqualityReportTemplateDocx,
   externalDataId: 'equalityReportTemplateDocx',
+  namespace: 'DirectorateOfEquality',
   order: 0,
 })

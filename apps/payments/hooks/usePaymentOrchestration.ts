@@ -126,8 +126,9 @@ export const usePaymentOrchestration = ({
 
       try {
         if (selectedPaymentMethod === 'card') {
-          const { card, cardExpiry, cardCVC } = data
+          const { cardholderName, card, cardExpiry, cardCVC } = data
           if (
+            !cardholderName ||
             !card ||
             !cardExpiry ||
             typeof cardExpiry !== 'string' ||
@@ -139,6 +140,7 @@ export const usePaymentOrchestration = ({
           }
           const [month, year] = cardExpiry.split('/')
           await cardPayment.processCardPayment({
+            cardholderName,
             number: card,
             expiryMonth: Number(month),
             expiryYear: Number(year),

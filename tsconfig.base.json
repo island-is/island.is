@@ -425,6 +425,9 @@
       "@island.is/application/templates/directorate-of-equality/equality-report": [
         "libs/application/templates/directorate-of-equality/equality-report/src/index.ts"
       ],
+      "@island.is/application/templates/directorate-of-equality/salary-report": [
+        "libs/application/templates/directorate-of-equality/salary-report/src/index.ts"
+      ],
       "@island.is/application/templates/directorate-of-immigration/citizenship": [
         "libs/application/templates/directorate-of-immigration/citizenship/src/index.ts"
       ],

@@ -297,6 +297,10 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import(
       '@island.is/application/templates/directorate-of-equality/equality-report'
     ),
+  [ApplicationTypes.SALARY_REPORT]: () =>
+    import(
+      '@island.is/application/templates/directorate-of-equality/salary-report'
+    ),
 }
 
 export default templates
