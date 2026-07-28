@@ -32,6 +32,8 @@ import { SectionsResolver } from './sections/sections.resolver'
 import { SectionsService } from './sections/sections.service'
 import { TranslationsResolver } from './translations/translations.resolver'
 import { TranslationsService } from './translations/translations.service'
+import { OrganizationDelegationsResolver } from './organizationDelegations/organizationDelegations.resolver'
+import { OrganizationDelegationsService } from './organizationDelegations/organizationDelegations.service'
 
 @Module({
   providers: [
@@ -63,6 +65,8 @@ import { TranslationsService } from './translations/translations.service'
     FilesResolver,
     PaymentsResolver,
     PaymentsService,
+    OrganizationDelegationsResolver,
+    OrganizationDelegationsService,
   ],
   exports: [],
   imports: [

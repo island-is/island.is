@@ -960,8 +960,8 @@ export const m = defineMessages({
   },
   submitApplication: {
     id: 'form.system:submit-application',
-    defaultMessage: 'Senda inn umsókn',
-    description: 'Submit application',
+    defaultMessage: 'Senda inn',
+    description: 'Submit',
   },
   openMyPages: {
     id: 'form.system:open-my-pages',

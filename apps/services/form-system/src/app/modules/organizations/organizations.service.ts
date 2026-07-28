@@ -18,6 +18,7 @@ import {
 } from '@island.is/form-system/shared'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { OrganizationZendeskInstanceDto } from './models/dto/organizationZendeskInstance.dto'
+import { OrganizationDelegationDto } from './models/dto/organizationDelegation.dto'
 
 @Injectable()
 export class OrganizationsService {
@@ -80,6 +81,7 @@ export class OrganizationsService {
     organizationAdminDto.certificationTypes = CertificationTypes
     organizationAdminDto.ListTypes = ListTypes
     organizationAdminDto.FieldTypes = FieldTypes
+    organizationAdminDto.organizationDelegations = organization.delegations
 
     organizationAdminDto.organizations = await this.organizationModel
       .findAll({
@@ -121,5 +123,63 @@ export class OrganizationsService {
     organization.zendeskBrandId = zendeskBrandId ? zendeskBrandId : ''
 
     await organization.save()
+  }
+
+  async addDelegation(
+    user: User,
+    organizationDelegationDto: OrganizationDelegationDto,
+  ): Promise<void> {
+    const organization = await this.getOrganizationForUpdate(
+      user,
+      organizationDelegationDto.organizationNationalId,
+    )
+
+    if (
+      !organization.delegations.includes(organizationDelegationDto.delegation)
+    ) {
+      organization.delegations = [
+        ...organization.delegations,
+        organizationDelegationDto.delegation,
+      ]
+      await organization.save()
+    }
+  }
+
+  async deleteDelegation(
+    user: User,
+    organizationDelegationDto: OrganizationDelegationDto,
+  ): Promise<void> {
+    const organization = await this.getOrganizationForUpdate(
+      user,
+      organizationDelegationDto.organizationNationalId,
+    )
+
+    organization.delegations = organization.delegations.filter(
+      (delegation) => delegation !== organizationDelegationDto.delegation,
+    )
+
+    await organization.save()
+  }
+
+  private async getOrganizationForUpdate(
+    user: User,
+    organizationNationalId: string,
+  ): Promise<Organization> {
+    const organization = await this.organizationModel.findOne({
+      where: { nationalId: organizationNationalId },
+    })
+
+    if (!organization) {
+      throw new NotFoundException(
+        `Organization with nationalId ${organizationNationalId} not found`,
+      )
+    }
+
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+    if (!isAdmin) {
+      throw new UnauthorizedException(`User does not have admin privileges`)
+    }
+
+    return organization
   }
 }

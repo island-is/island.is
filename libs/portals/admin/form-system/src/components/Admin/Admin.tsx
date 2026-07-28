@@ -1,9 +1,14 @@
+import { useMutation } from '@apollo/client'
+import {
+  CREATE_ORGANIZATION_DELEGATION,
+  DELETE_ORGANIZATION_DELEGATION,
+} from '@island.is/form-system/graphql'
 import { Box, Button, GridRow, Select, Text } from '@island.is/island-ui/core'
-import { OrganizationSelect } from '../OrganizationSelect'
-import { useContext, useEffect, useMemo, useState } from 'react'
-import { FormsContext } from '../../context/FormsContext'
-import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
+import { useContext, useEffect, useMemo, useState } from 'react'
+import { useIntl } from 'react-intl'
+import { FormsContext } from '../../context/FormsContext'
+import { OrganizationSelect } from '../OrganizationSelect'
 import { Permissions } from './components/Permissions/Permissions'
 
 type OpenIdConfiguration = {
@@ -14,8 +19,6 @@ type ScopeOption = {
   label: string
   value: string
 }
-
-const selectedScopesStorageKey = 'form-system-admin-selected-scopes'
 
 const getIssuerUrl = () => {
   const hostname = window.location.hostname
@@ -31,28 +34,32 @@ const getIssuerUrl = () => {
   return 'https://innskra.island.is'
 }
 
-const getStoredSelectedScopes = (): Array<ScopeOption | null> => {
-  const selectedScopes = localStorage.getItem(selectedScopesStorageKey)
-
-  if (!selectedScopes) {
-    return [null]
-  }
-
-  return JSON.parse(selectedScopes).map((scope: string) => ({
-    label: scope,
-    value: scope,
+const getScopeOptions = (delegations: string[]): ScopeOption[] =>
+  delegations.map((delegation) => ({
+    label: delegation,
+    value: delegation,
   }))
-}
 
 export const Admin = () => {
-  const { isAdmin } = useContext(FormsContext)
+  const {
+    isAdmin,
+    organizationNationalId,
+    selectedDelegations,
+    setSelectedDelegations,
+  } = useContext(FormsContext)
   const { formatMessage } = useIntl()
   const [showScopes, setShowScopes] = useState(false)
   const [scopeOptions, setScopeOptions] = useState<ScopeOption[]>([])
   const [selectedScopes, setSelectedScopes] = useState<
     Array<ScopeOption | null>
-  >(getStoredSelectedScopes)
+  >(() => {
+    const options = getScopeOptions(selectedDelegations)
+    return options.length > 0 ? options : [null]
+  })
   const [isLoadingScopes, setIsLoadingScopes] = useState(false)
+
+  const [createDelegationMutation] = useMutation(CREATE_ORGANIZATION_DELEGATION)
+  const [deleteDelegationMutation] = useMutation(DELETE_ORGANIZATION_DELEGATION)
 
   const openIdConfigurationUrl = useMemo(
     () => `${getIssuerUrl()}/.well-known/openid-configuration`,
@@ -60,6 +67,11 @@ export const Admin = () => {
   )
 
   const hasEmptyScopeDropdown = selectedScopes.some((scope) => !scope)
+
+  useEffect(() => {
+    const options = getScopeOptions(selectedDelegations)
+    setSelectedScopes(options.length > 0 ? options : [null])
+  }, [selectedDelegations])
 
   useEffect(() => {
     if (!showScopes || !hasEmptyScopeDropdown || scopeOptions.length > 0) {
@@ -94,41 +106,74 @@ export const Admin = () => {
     showScopes,
   ])
 
-  const deleteSelectedScope = (index: number) => {
-    const updatedSelectedScopes = selectedScopes.filter(
-      (_, scopeIndex) => scopeIndex !== index,
-    )
+  const deleteSelectedScope = async (index: number) => {
+    const selectedScope = selectedScopes[index]
 
-    const nextSelectedScopes =
-      updatedSelectedScopes.length > 0 ? updatedSelectedScopes : [null]
+    if (!selectedScope) {
+      const updatedSelectedScopes = selectedScopes.filter(
+        (_, scopeIndex) => scopeIndex !== index,
+      )
 
-    setSelectedScopes(nextSelectedScopes)
+      setSelectedScopes(
+        updatedSelectedScopes.length > 0 ? updatedSelectedScopes : [null],
+      )
+      return
+    }
 
-    localStorage.setItem(
-      selectedScopesStorageKey,
-      JSON.stringify(
-        nextSelectedScopes
-          .filter((scope): scope is ScopeOption => Boolean(scope))
-          .map((scope) => scope.value),
-      ),
-    )
+    try {
+      await deleteDelegationMutation({
+        variables: {
+          input: {
+            updateOrganizationDelegationDto: {
+              delegation: selectedScope.value,
+              organizationNationalId: organizationNationalId,
+            },
+          },
+        },
+      })
+
+      setSelectedDelegations(
+        selectedDelegations.filter(
+          (delegation) => delegation !== selectedScope.value,
+        ),
+      )
+    } catch (error) {
+      throw new Error(`Failed to delete delegation: ${error}`)
+    }
   }
 
-  const updateSelectedScope = (index: number, selected: ScopeOption | null) => {
-    const updatedSelectedScopes = selectedScopes.map((scope, scopeIndex) =>
-      scopeIndex === index ? selected : scope,
-    )
+  const updateSelectedScope = async (
+    index: number,
+    selected: ScopeOption | null,
+  ) => {
+    if (!selected) {
+      return
+    }
 
-    setSelectedScopes(updatedSelectedScopes)
+    try {
+      await createDelegationMutation({
+        variables: {
+          input: {
+            updateOrganizationDelegationDto: {
+              delegation: selected.value,
+              organizationNationalId: organizationNationalId,
+            },
+          },
+        },
+      })
 
-    localStorage.setItem(
-      selectedScopesStorageKey,
-      JSON.stringify(
-        updatedSelectedScopes
-          .filter((scope): scope is ScopeOption => Boolean(scope))
-          .map((scope) => scope.value),
-      ),
-    )
+      const updatedSelectedScopes = selectedScopes.map((scope, scopeIndex) =>
+        scopeIndex === index ? selected : scope,
+      )
+
+      setSelectedScopes(updatedSelectedScopes)
+
+      if (!selectedDelegations.includes(selected.value)) {
+        setSelectedDelegations([...selectedDelegations, selected.value])
+      }
+    } catch (error) {
+      throw new Error(`Failed to create delegation: ${error}`)
+    }
   }
 
   return (
@@ -150,10 +195,18 @@ export const Admin = () => {
 
             {isAdmin && (
               <Box display="flex" alignItems="center" columnGap={3}>
-                <Button variant="text" onClick={() => setShowScopes(false)}>
+                <Button
+                  variant="utility"
+                  colorScheme={!showScopes ? 'blueberry' : 'default'}
+                  onClick={() => setShowScopes(false)}
+                >
                   {formatMessage(m.permissions)}
                 </Button>
-                <Button variant="text" onClick={() => setShowScopes(true)}>
+                <Button
+                  variant="utility"
+                  colorScheme={showScopes ? 'blueberry' : 'default'}
+                  onClick={() => setShowScopes(true)}
+                >
                   Umboð
                 </Button>
               </Box>
@@ -174,11 +227,11 @@ export const Admin = () => {
                     columnGap={2}
                   >
                     <Button
-                      variant="utility"
+                      variant="ghost"
                       colorScheme="destructive"
                       icon="trash"
                       size="small"
-                      onClick={() => deleteSelectedScope(index)}
+                      onClick={() => void deleteSelectedScope(index)}
                     />
                     <Text fontWeight="medium">{selectedScope.label}</Text>
                   </Box>
@@ -191,7 +244,7 @@ export const Admin = () => {
                     value={selectedScope}
                     placeholder={isLoadingScopes ? 'Sæki scopes...' : undefined}
                     onChange={(selected) =>
-                      updateSelectedScope(index, selected)
+                      void updateSelectedScope(index, selected)
                     }
                   />
                 ),
@@ -199,8 +252,14 @@ export const Admin = () => {
 
               <Box>
                 <Button
-                  variant="text"
-                  onClick={() => setSelectedScopes([...selectedScopes, null])}
+                  preTextIcon="add"
+                  onClick={() => {
+                    if (hasEmptyScopeDropdown) {
+                      return
+                    }
+
+                    setSelectedScopes([...selectedScopes, null])
+                  }}
                 >
                   Bæta við
                 </Button>
