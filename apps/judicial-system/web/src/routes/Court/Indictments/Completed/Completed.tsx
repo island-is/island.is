@@ -304,20 +304,30 @@ const Completed: FC = () => {
         <FormContentContainer isFooter>
           <FormFooter
             previousUrl={getStandardUserDashboardRoute(user)}
-            hideActionButton={
-              workingCase.indictmentRulingDecision ===
+            actions={[
+              ...(workingCase.indictmentRulingDecision ===
               CaseIndictmentRulingDecision.WITHDRAWAL
-            }
-            actionButtonText="Leiðrétta mál"
-            actionButtonColorScheme="default"
-            actionButtonVariant="primary"
-            onActionButtonClick={() => setModalVisible('REOPEN')}
-            hideNextButton={!isRulingOrFine || isSentToPublicProsecutor}
-            nextButtonText={formatMessage(strings.sendToPublicProsecutor)}
-            nextIsDisabled={!stepIsValid()}
-            onNextButtonClick={() => {
-              setModalVisible('CONFIRM_AND_SEND_TO_PUBLIC_PROSECUTOR')
-            }}
+                ? []
+                : [
+                    {
+                      text: 'Leiðrétta mál',
+                      onClick: () => setModalVisible('REOPEN'),
+                    },
+                  ]),
+              ...(!isRulingOrFine || isSentToPublicProsecutor
+                ? []
+                : [
+                    {
+                      text: formatMessage(strings.sendToPublicProsecutor),
+                      onClick: () =>
+                        setModalVisible(
+                          'CONFIRM_AND_SEND_TO_PUBLIC_PROSECUTOR',
+                        ),
+                      disabled: !stepIsValid(),
+                      testId: 'continueButton',
+                    },
+                  ]),
+            ]}
           />
         </FormContentContainer>
         {modalVisible === 'CONFIRM_AND_SEND_TO_PUBLIC_PROSECUTOR' && (
