@@ -1,5 +1,3 @@
-import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
-
 export type ReactSelectOption = {
   label: string
   value: string | number | null
@@ -13,16 +11,6 @@ export enum LoginErrorCodes {
   DEPRECATED_LOGIN = 'innskraning-gomul',
   INVALID_USER = 'innskraning-ogildur-notandi',
   LOGIN_ERROR = 'innskraning-villa',
-}
-
-export type directionType = 'ascending' | 'descending'
-export type sortableTableColumn = keyof CaseListEntry
-export type sortableFn = 'number'
-
-export interface SortConfig {
-  column: sortableTableColumn
-  direction: directionType
-  sortFn?: sortableFn
 }
 
 interface NationalRegistryPerson {
