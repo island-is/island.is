@@ -1,14 +1,20 @@
+import { Features } from '@island.is/feature-flags'
 import { ToastContainer } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
 import { useActiveModule } from '@island.is/portals/core'
+import { DELEGATION_BANNER_HEIGHT } from '@island.is/portals/my-pages/constants'
 import {
   SearchPaths,
   ServicePortalPaths,
+  SidebarContactBox,
   useDynamicRoutesWithNavigation,
 } from '@island.is/portals/my-pages/core'
-import { DELEGATION_BANNER_HEIGHT } from '@island.is/portals/my-pages/constants'
 import { useAlertBanners } from '@island.is/portals/my-pages/graphql'
-import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { HealthPaths } from '@island.is/portals/my-pages/health'
+import {
+  useFeatureFlag,
+  useFeatureFlagClient,
+} from '@island.is/react/feature-flags'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { checkDelegation } from '@island.is/shared/utils'
 import React, { FC, useEffect, useState } from 'react'
@@ -20,7 +26,7 @@ import Header from '../Header/Header'
 import AuthOverlay from '../Loaders/AuthOverlay/AuthOverlay'
 import FullWidthLayout from './FullWidthLayout'
 import { NarrowLayout } from './NarrowLayout'
-import { HeaderVisibilityContext } from '../../context/HeaderVisibilityContext'
+import { HeaderVisibilityProvider } from '../../context/HeaderVisibilityContext'
 
 export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   useNamespaces(['service.portal', 'global', 'portals', 'sp.search.tags'])
@@ -50,7 +56,11 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   const totalBannerOffset = alertBannerHeight + delegationBannerHeight
 
   const [showSearch, setShowSearch] = useState<boolean>(false)
-  const [headerVisible, setHeaderVisible] = useState<boolean>(true)
+
+  const { value: showHealthContactBox } = useFeatureFlag(
+    Features.isNewHealthOverviewPageEnabled,
+    false,
+  )
 
   const featureFlagClient = useFeatureFlagClient()
   useEffect(() => {
@@ -73,9 +83,7 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   ].find((route) => matchPath(route, pathname))
 
   return (
-    <HeaderVisibilityContext.Provider
-      value={{ headerVisible, setHeaderVisible }}
-    >
+    <HeaderVisibilityProvider>
       <div>
         <AuthOverlay />
         <ToastContainer useKeyframeStyles={false} />
@@ -85,7 +93,6 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
         <Header
           position={alertBannerHeight}
           includeSearchInHeader={!disableSearch && showSearch}
-          onHeaderVisibilityChange={setHeaderVisible}
         />
 
         {!isFullwidth && activeParent && (
@@ -93,6 +100,14 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
             activeParent={activeParent}
             height={totalBannerOffset}
             pathname={pathname}
+            sidebarFooter={
+              showHealthContactBox &&
+              // If more pages end up needing to display the contact box in the future,
+              // we should consider moving this decision in to navigation metadata
+              activeParent.path === HealthPaths.HealthRoot ? (
+                <SidebarContactBox />
+              ) : undefined
+            }
           >
             {children}
           </NarrowLayout>
@@ -107,6 +122,6 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
           </FullWidthLayout>
         )}
       </div>
-    </HeaderVisibilityContext.Provider>
+    </HeaderVisibilityProvider>
   )
 }
