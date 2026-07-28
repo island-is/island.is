@@ -105,6 +105,7 @@ export enum ApplicationTypes {
   VMST_SUBMIT_DOCUMENTS = 'VmstSubmitDocuments',
   UNEMPLOYMENT_CONFIRM_TRAVEL = 'UnemploymentConfirmTravel',
   EQUALITY_REPORT = 'EqualityReport',
+  SALARY_REPORT = 'SalaryReport',
 }
 
 export const ApplicationConfigurations = {
@@ -533,7 +534,11 @@ export const ApplicationConfigurations = {
     translation: ['vmst.ct.application', 'uiForms.application'],
   },
   [ApplicationTypes.EQUALITY_REPORT]: {
-    slug: 'jafnrettisaaetlun',
+    slug: 'jafnrettisstofa-jafnrettisaaetlun',
     translation: ['doe.er.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.SALARY_REPORT]: {
+    slug: 'jafnrettisstofa-skyrslugjof',
+    translation: ['doe.sr.application', 'uiForms.application'],
   },
 }

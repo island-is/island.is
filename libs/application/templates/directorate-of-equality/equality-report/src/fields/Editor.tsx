@@ -85,7 +85,10 @@ export const Editor = ({ application, errors }: FieldBaseProps) => {
           input: {
             id: application.id,
             dataProviders: [
-              { actionId: ApiActions.getEqualityReportTemplateHtml, order: 0 },
+              {
+                actionId: `DirectorateOfEquality.${ApiActions.getEqualityReportTemplateHtml}`,
+                order: 0,
+              },
             ],
           },
           locale,
@@ -124,7 +127,10 @@ export const Editor = ({ application, errors }: FieldBaseProps) => {
           input: {
             id: application.id,
             dataProviders: [
-              { actionId: ApiActions.getEqualityReportTemplateDocx, order: 0 },
+              {
+                actionId: `DirectorateOfEquality.${ApiActions.getEqualityReportTemplateDocx}`,
+                order: 0,
+              },
             ],
           },
           locale,
