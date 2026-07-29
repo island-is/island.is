@@ -202,18 +202,25 @@ export const Overview = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={getStandardUserDashboardRoute(user)}
-          hideNextButton={!isReviewMissing}
-          nextIsLoading={isLoadingWorkingCase}
-          nextIsDisabled={
-            !selectedIndictmentReviewer ||
-            selectedIndictmentReviewer.value ===
-              workingCase.indictmentReviewer?.id ||
-            isLoadingWorkingCase
+          actions={
+            !isReviewMissing
+              ? []
+              : [
+                  {
+                    text: fm(core.continue),
+                    icon: 'arrowForward',
+                    onClick: assignReviewer,
+                    disabled:
+                      !selectedIndictmentReviewer ||
+                      selectedIndictmentReviewer.value ===
+                        workingCase.indictmentReviewer?.id ||
+                      isLoadingWorkingCase,
+                    loading: isLoadingWorkingCase,
+                    testId: 'continueButton',
+                  },
+                ]
           }
-          onNextButtonClick={assignReviewer}
-          nextButtonText={fm(core.continue)}
         />
       </FormContentContainer>
       {isReviewerAssignedModal(confirmationModal) && (

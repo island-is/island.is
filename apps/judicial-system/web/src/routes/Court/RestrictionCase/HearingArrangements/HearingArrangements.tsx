@@ -180,13 +180,19 @@ export const HearingArrangements = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${DISTRICT_COURT_RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() =>
-            handleNavigationTo(DISTRICT_COURT_RESTRICTION_CASE_RULING_ROUTE)
-          }
-          nextButtonText="Halda áfram"
-          nextIsDisabled={!stepIsValid}
+          actions={[
+            {
+              text: 'Halda áfram',
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  DISTRICT_COURT_RESTRICTION_CASE_RULING_ROUTE,
+                ),
+              disabled: !stepIsValid,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
       {navigateTo !== undefined && (

@@ -93,6 +93,37 @@ describe('Court Indictment Overview', () => {
     )
   })
 
+  it('shows case handling comments when present', () => {
+    const caseWithComments: Case = {
+      ...mockCase(CaseType.INDICTMENT),
+      state: CaseState.RECEIVED,
+      comments: 'Flýtimeðferð',
+    }
+    const getCase = jest.fn()
+
+    renderOverview(caseWithComments, UserRole.DISTRICT_COURT_JUDGE, getCase)
+
+    expect(
+      screen.getByText('Athugasemdir vegna málsmeðferðar'),
+    ).toBeInTheDocument()
+    expect(screen.getByText('Flýtimeðferð')).toBeInTheDocument()
+  })
+
+  it('does not show case handling comments when absent', () => {
+    const receivedCase: Case = {
+      ...mockCase(CaseType.INDICTMENT),
+      state: CaseState.RECEIVED,
+      comments: null,
+    }
+    const getCase = jest.fn()
+
+    renderOverview(receivedCase, UserRole.DISTRICT_COURT_JUDGE, getCase)
+
+    expect(
+      screen.queryByText('Athugasemdir vegna málsmeðferðar'),
+    ).not.toBeInTheDocument()
+  })
+
   it('does not show the cancellation modal for a received indictment', async () => {
     const receivedCase: Case = {
       ...mockCase(CaseType.INDICTMENT),
