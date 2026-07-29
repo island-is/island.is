@@ -33,7 +33,16 @@ export const getSlugFromType = (type: ApplicationTypes) => {
 export const getApplicationLink = (
   application: Pick<Application, 'id' | 'typeId'>,
   clientLocationOrigin: string,
-): string =>
-  `${clientLocationOrigin.replace(/\/$/, '')}/${getSlugFromType(
-    application.typeId,
-  )}/${application.id}`
+): string => {
+  const slug = getSlugFromType(application.typeId)
+
+  if (!slug) {
+    throw new Error(
+      `getApplicationLink: no slug configured for application type "${application.typeId}"`,
+    )
+  }
+
+  return `${clientLocationOrigin.replace(/\/$/, '')}/${slug}/${
+    application.id
+  }`
+}

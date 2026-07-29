@@ -14,9 +14,9 @@ export const endOfDayFromCreation = (
   days: number,
 ): Date => {
   const date = new Date(application.created)
-  date.setDate(date.getDate() + days)
+  date.setUTCDate(date.getUTCDate() + days)
   const pruneDate = new Date(date)
-  pruneDate.setUTCHours(23, 59, 59)
+  pruneDate.setUTCHours(23, 59, 59, 999)
   return pruneDate
 }
 
@@ -49,7 +49,7 @@ export const schedulePruneReminderBefore = (
   featureFlag?: Features,
 ): ScheduledNotificationConfig => {
   const date = new Date(anchorDate)
-  date.setDate(date.getDate() - daysBefore)
+  date.setUTCDate(date.getUTCDate() - daysBefore)
   return pruneReminder({ date }, featureFlag)
 }
 

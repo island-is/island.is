@@ -4,9 +4,35 @@ import {
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import {
+  endOfDayFromCreation,
   schedulePruneReminderAfterDays,
   schedulePruneReminderBefore,
 } from './scheduledNotificationUtils'
+
+describe('endOfDayFromCreation', () => {
+  it('should return 23:59:59.999 UTC on the day `days` days after creation', () => {
+    const application = { created: new Date('2026-08-10T14:23:45.123Z') }
+
+    expect(
+      endOfDayFromCreation(application as any, 2),
+    ).toEqual(new Date('2026-08-12T23:59:59.999Z'))
+  })
+
+  it('should use UTC calendar arithmetic regardless of the process timezone', () => {
+    const originalTz = process.env.TZ
+    process.env.TZ = 'America/New_York'
+
+    try {
+      const application = { created: new Date('2026-08-10T14:23:45.123Z') }
+
+      expect(
+        endOfDayFromCreation(application as any, 2),
+      ).toEqual(new Date('2026-08-12T23:59:59.999Z'))
+    } finally {
+      process.env.TZ = originalTz
+    }
+  })
+})
 
 describe('schedulePruneReminderBefore', () => {
   it('should schedule the shared prune reminder daysBefore days before the anchor date', () => {
