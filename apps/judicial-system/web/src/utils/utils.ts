@@ -124,6 +124,16 @@ export const hasSentNotification = (
   }
 }
 
+// Whether the indictment has been sent to the public prosecutor after its
+// latest completion/correction
+export const isSentToPublicProsecutor = (workingCase: Case): boolean =>
+  Boolean(
+    workingCase.indictmentCompletedDate &&
+      workingCase.indictmentSentToPublicProsecutorDate &&
+      workingCase.indictmentSentToPublicProsecutorDate >
+        workingCase.indictmentCompletedDate,
+  )
+
 export const isReopenedCOACase = (
   appealCase: AppealCase | undefined | null,
 ): boolean => {
