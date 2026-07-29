@@ -253,6 +253,7 @@ function PaymentPage({
     mode: 'onBlur',
     reValidateMode: 'onChange',
     defaultValues: {
+      cardholderName: '',
       card: '',
       cardExpiry: '',
       cardCVC: '',

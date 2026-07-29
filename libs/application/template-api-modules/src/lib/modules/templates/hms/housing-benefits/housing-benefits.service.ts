@@ -38,6 +38,7 @@ import {
   isLastAssigneeToComplete,
   mapApplicationToHousingBenefitsModel,
   normalizeNationalId,
+  resolveApplicationFilesForSubmission,
 } from './utils'
 import {
   applyMockAssigneeNationalRegistryAddress,
@@ -48,6 +49,7 @@ import {
   useMockRentalAgreements,
 } from './utils/mock'
 import { NationalRegistryV3Service } from '../../../shared/api/national-registry-v3/national-registry-v3.service'
+import { AttachmentS3Service } from '../../../shared/services'
 import { coreErrorMessages } from '@island.is/application/core'
 import {
   getAssigneeApproverDisplayName,
@@ -63,6 +65,7 @@ export class HousingBenefitsService extends BaseTemplateApiService {
     private readonly nationalRegistryV3Service: NationalRegistryV3Service,
     private readonly configService: ConfigService<SharedModuleConfig>,
     private readonly hmsHousingBenefitsClientService: HmsHousingBenefitsClientService,
+    private readonly attachmentService: AttachmentS3Service,
   ) {
     super(ApplicationTypes.HOUSING_BENEFITS)
   }
@@ -413,6 +416,7 @@ export class HousingBenefitsService extends BaseTemplateApiService {
    *  - 'fiveYears': not filed for last year, filed for any earlier year
    */
   private async checkTaxReturnFiledForYear(
+    auth: Auth,
     taxMockMode: PersonalTaxMockMode,
     year: number,
     lastYear: number,
@@ -423,16 +427,27 @@ export class HousingBenefitsService extends BaseTemplateApiService {
       case 'fiveYears':
         return year < lastYear
       default:
-        return true
+        if (auth.nationalId === undefined || auth.nationalId === null) {
+          throw new TemplateApiError('National ID is not set', 500)
+        }
+        return await this.hmsHousingBenefitsClientService.hasTaxReturnForYear(
+          auth,
+          auth.nationalId,
+          year,
+        )
     }
   }
 
-  async getPersonalTaxReturn({ application }: TemplateApiModuleActionProps) {
+  async getPersonalTaxReturn({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps) {
     const lastYear = new Date().getFullYear() - 1
 
     const taxMockMode = getPersonalTaxMockMode(application)
 
     const handedInLastYear = await this.checkTaxReturnFiledForYear(
+      auth,
       taxMockMode,
       lastYear,
       lastYear,
@@ -447,7 +462,9 @@ export class HousingBenefitsService extends BaseTemplateApiService {
 
     let handedInLastFiveYears = false
     for (let year = lastYear - 1; year >= lastYear - 5; year--) {
-      if (await this.checkTaxReturnFiledForYear(taxMockMode, year, lastYear)) {
+      if (
+        await this.checkTaxReturnFiledForYear(auth, taxMockMode, year, lastYear)
+      ) {
         handedInLastFiveYears = true
         break
       }
@@ -475,6 +492,7 @@ export class HousingBenefitsService extends BaseTemplateApiService {
     )
 
     const handedInLastYear = await this.checkTaxReturnFiledForYear(
+      auth,
       taxMockMode,
       lastYear,
       lastYear,
@@ -489,7 +507,9 @@ export class HousingBenefitsService extends BaseTemplateApiService {
 
     let handedInLastFiveYears = false
     for (let year = lastYear - 1; year >= lastYear - 5; year--) {
-      if (await this.checkTaxReturnFiledForYear(taxMockMode, year, lastYear)) {
+      if (
+        await this.checkTaxReturnFiledForYear(auth, taxMockMode, year, lastYear)
+      ) {
         handedInLastFiveYears = true
         break
       }
@@ -649,7 +669,18 @@ export class HousingBenefitsService extends BaseTemplateApiService {
     }
 
     try {
-      const model = mapApplicationToHousingBenefitsModel(application)
+      const applicantKennitala = normalizeNationalId(
+        getValueViaPath<string>(application.answers, 'applicant.nationalId') ??
+          application.applicant,
+      )
+      const files = await resolveApplicationFilesForSubmission(
+        application,
+        applicantKennitala,
+        (app, key, expiration) =>
+          this.attachmentService.getAttachmentUrl(app, key, expiration),
+      )
+      const model = mapApplicationToHousingBenefitsModel(application, files)
+
       const result =
         await this.hmsHousingBenefitsClientService.createHousingBenefitsApplication(
           auth,
@@ -696,8 +727,8 @@ export class HousingBenefitsService extends BaseTemplateApiService {
       this.logger.error('Failed to submit housing benefits application:', e)
       throw new TemplateApiError(
         {
-          title: 'Failed to submit housing benefits application',
-          summary: e instanceof Error ? e.message : String(e),
+          title: 'Villa kom upp',
+          summary: e.body?.message ? e.body.message : String(e),
         },
         500,
       )

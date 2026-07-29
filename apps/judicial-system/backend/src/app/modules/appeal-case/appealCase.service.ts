@@ -42,6 +42,8 @@ import {
   AppealEventLogRepositoryService,
   Case,
   CaseRepositoryService,
+  CivilClaimant,
+  Defendant,
   UpdateAppealCase,
   UpdateCase,
 } from '../repository'
@@ -54,6 +56,7 @@ import { appealCaseModuleConfig } from './appealCase.config'
 import {
   findUserRulingOrderAppealDecision,
   isInCourtRulingOrderAppeal,
+  userRulingOrderAppealDecisions,
 } from './appealCase.helpers'
 
 @Injectable()
@@ -69,43 +72,49 @@ export class AppealCaseService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  private resolveDefencePartyIds(
+  // Every defence party (defendant / civil claimant) the user currently, and
+  // confirmedly, represents on the case. A defence event is recorded once per
+  // party, so a lawyer who represents several clients appeals (or submits a
+  // statement) on behalf of all of them - the backend resolves this, the client
+  // never has to pick. Empty for request cases (collective defence, no party)
+  // and non-defence users.
+  private resolveDefenceParties(
     theCase: Case,
     user: User,
-  ): { defendantId?: string; civilClaimantId?: string } {
+  ): { defendantId?: string; civilClaimantId?: string }[] {
     if (!isIndictmentCase(theCase.type)) {
-      return {}
+      return []
     }
 
-    // Only confirmed defenders / spokespersons can act on behalf of a party —
-    // unconfirmed picks shouldn't be tied to appeal events.
-    const defendant = theCase.defendants?.find(
-      (d) =>
-        d.isDefenderChoiceConfirmed &&
-        d.defenderNationalId &&
-        d.defenderNationalId === user.nationalId,
-    )
-    if (defendant) {
-      return { defendantId: defendant.id }
+    const parties: { defendantId?: string; civilClaimantId?: string }[] = []
+
+    for (const defendant of theCase.defendants ?? []) {
+      if (
+        Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [defendant])
+      ) {
+        parties.push({ defendantId: defendant.id })
+      }
     }
 
-    const civilClaimant = theCase.civilClaimants?.find(
-      (c) =>
-        c.isSpokespersonConfirmed &&
-        c.spokespersonNationalId &&
-        c.spokespersonNationalId === user.nationalId,
-    )
-    if (civilClaimant) {
-      return { civilClaimantId: civilClaimant.id }
+    for (const civilClaimant of theCase.civilClaimants ?? []) {
+      if (
+        CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(user.nationalId, [
+          civilClaimant,
+        ])
+      ) {
+        parties.push({ civilClaimantId: civilClaimant.id })
+      }
     }
 
-    return {}
+    return parties
   }
 
-  // Writes an appeal event-log row with an actor snapshot of who performed it.
-  // Defenders are not system users, so userId is null and national_id/name
-  // identify them (plus the defence party); for prosecution/court users the
-  // system user id is stored. Shared by registerAppellant and createEventLog.
+  // Writes appeal event-log rows with an actor snapshot of who performed the
+  // event. Defenders are not system users, so userId is null and
+  // national_id/name identify them (plus the defence party); for
+  // prosecution/court users the system user id is stored. A defence user who
+  // represents several parties gets one row per party. Shared by
+  // registerAppellant and createEventLog.
   private async writeEventLog(
     theCase: Case,
     appealCase: AppealCase,
@@ -113,22 +122,55 @@ export class AppealCaseService {
     user: User,
     transaction: Transaction,
   ): Promise<void> {
+    const parties = isDefenceUser(user)
+      ? this.resolveDefenceParties(theCase, user)
+      : []
+    // Prosecution and request-case collective defence carry no party, but still
+    // get a single event row.
+    const partyRows = parties.length > 0 ? parties : [{}]
+
+    await this.writeEventLogRows(
+      theCase,
+      appealCase,
+      eventType,
+      user,
+      partyRows,
+      transaction,
+    )
+  }
+
+  // Writes one appeal event-log row per given party. Callers decide which
+  // parties an event applies to: writeEventLog to every party the user
+  // represents (an appeal / statement covers all of them), the withdrawal flow
+  // to only the parties actually being withdrawn.
+  private async writeEventLogRows(
+    theCase: Case,
+    appealCase: AppealCase,
+    eventType: AppealEventType,
+    user: User,
+    partyRows: { defendantId?: string; civilClaimantId?: string }[],
+    transaction: Transaction,
+  ): Promise<void> {
     const isDefence = isDefenceUser(user)
 
-    await this.appealEventLogRepositoryService.create(
-      {
-        caseId: theCase.id,
-        appealCaseId: appealCase.id,
-        eventType,
-        userRole: user.role,
-        userId: isDefence ? undefined : user.id,
-        ...(isDefence ? this.resolveDefencePartyIds(theCase, user) : {}),
-        nationalId: user.nationalId,
-        userName: user.name,
-        userTitle: user.title,
-        institutionName: user.institution?.name,
-      },
-      { transaction },
+    await Promise.all(
+      partyRows.map((party) =>
+        this.appealEventLogRepositoryService.create(
+          {
+            caseId: theCase.id,
+            appealCaseId: appealCase.id,
+            eventType,
+            userRole: user.role,
+            userId: isDefence ? undefined : user.id,
+            ...party,
+            nationalId: user.nationalId,
+            userName: user.name,
+            userTitle: user.title,
+            institutionName: user.institution?.name,
+          },
+          { transaction },
+        ),
+      ),
     )
   }
 
@@ -746,11 +788,15 @@ export class AppealCaseService {
     )
   }
 
-  // A party withdraws its in-court ruling-order appeal. The party's decision row
-  // is stamped with the server's withdrawal time (never the client's) and an
-  // APPEAL_WITHDRAWN event records who did it. The appeal stands - and no party
-  // is notified - until every appealing party has withdrawn, at which point the
-  // appeal case itself is withdrawn (the existing WITHDRAW_APPEAL transition).
+  // A defence user withdraws its in-court ruling-order appeal. Just as an appeal
+  // is made for every party the lawyer represents, withdrawal covers all of them
+  // at once: every represented party with a standing (APPEAL, not yet withdrawn)
+  // decision for this ruling is withdrawn together. Each such decision row is
+  // stamped with the server's withdrawal time (never the client's) and an
+  // APPEAL_WITHDRAWN event records who did it, per withdrawn party. The appeal
+  // stands - and no party is notified - until every appealing party has
+  // withdrawn, at which point the appeal case itself is withdrawn (the existing
+  // WITHDRAW_APPEAL transition).
   private async withdrawInCourtRulingOrderAppeal(
     theCase: Case,
     appealCase: AppealCase,
@@ -758,16 +804,17 @@ export class AppealCaseService {
     user: User,
     transaction: Transaction,
   ): Promise<AppealTransitionResult & { appealCase: AppealCase }> {
-    const decision = findUserRulingOrderAppealDecision(
+    const withdrawable = userRulingOrderAppealDecisions(
       theCase,
       rulingFileId,
       user,
+    ).filter(
+      (decision) =>
+        decision.decision === CaseAppealDecision.APPEAL &&
+        !decision.withdrawnDate,
     )
 
-    if (
-      decision?.decision !== CaseAppealDecision.APPEAL ||
-      decision.withdrawnDate
-    ) {
+    if (withdrawable.length === 0) {
       throw new ForbiddenException(
         'Only a party that appealed this ruling in court and has not already withdrawn can withdraw the appeal',
       )
@@ -789,17 +836,30 @@ export class AppealCaseService {
       transaction,
     })
 
-    await this.appealDecisionRepositoryService.update(
-      decision.id,
-      { withdrawnDate: nowFactory() },
-      { transaction },
+    const withdrawnDate = nowFactory()
+
+    await Promise.all(
+      withdrawable.map((decision) =>
+        this.appealDecisionRepositoryService.update(
+          decision.id,
+          { withdrawnDate },
+          { transaction },
+        ),
+      ),
     )
 
-    await this.writeEventLog(
+    // One APPEAL_WITHDRAWN event per party actually withdrawn - not per party the
+    // user represents, since a represented party that accepted in court has no
+    // appeal to withdraw.
+    await this.writeEventLogRows(
       theCase,
       appealCase,
       AppealEventType.APPEAL_WITHDRAWN,
       user,
+      withdrawable.map((decision) => ({
+        defendantId: decision.defendantId ?? undefined,
+        civilClaimantId: decision.civilClaimantId ?? undefined,
+      })),
       transaction,
     )
 

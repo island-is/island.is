@@ -52,13 +52,6 @@ describe('InternalNotificationController - Dispatch event notifications', () => 
           type: MessageType.INDICTMENT_CASE_NOTIFICATION,
           caseId,
           body: {
-            type: IndictmentCaseNotificationType.INDICTMENT_VERDICT_INFO,
-          },
-        },
-        {
-          type: MessageType.INDICTMENT_CASE_NOTIFICATION,
-          caseId,
-          body: {
             type: IndictmentCaseNotificationType.CRIMINAL_RECORD_FILES_UPLOADED,
           },
         },
