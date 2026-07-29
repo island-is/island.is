@@ -226,18 +226,22 @@ export const Defendant = () => {
           </FormContentContainer>
           <FormContentContainer isFooter>
             <FormFooter
-              nextButtonIcon="arrowForward"
               previousUrl={getStandardUserDashboardRoute(user)}
-              nextIsLoading={isCreatingCase}
-              nextIsDisabled={!stepIsValid}
-              onNextButtonClick={() =>
-                handleNavigationTo(
-                  PROSECUTION_RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE,
-                )
-              }
-              nextButtonText={formatMessage(
-                workingCase.id === '' ? core.createCase : core.continue,
-              )}
+              actions={[
+                {
+                  text: formatMessage(
+                    workingCase.id === '' ? core.createCase : core.continue,
+                  ),
+                  icon: 'arrowForward',
+                  onClick: () =>
+                    handleNavigationTo(
+                      PROSECUTION_RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE,
+                    ),
+                  disabled: !stepIsValid,
+                  loading: isCreatingCase,
+                  testId: 'continueButton',
+                },
+              ]}
             />
           </FormContentContainer>
         </>
