@@ -378,10 +378,7 @@ describe('CaseInterceptor - rulingModifiedHistory', () => {
     error: Error
   }
 
-  let givenWhenThen: (
-    caseType: CaseType,
-    currentUser: unknown,
-  ) => Promise<Then>
+  let givenWhenThen: (caseType: CaseType, currentUser: unknown) => Promise<Then>
 
   beforeEach(() => {
     givenWhenThen = async (caseType, currentUser): Promise<Then> => {
