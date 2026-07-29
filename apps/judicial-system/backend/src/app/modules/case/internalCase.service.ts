@@ -1526,10 +1526,7 @@ export class InternalCaseService {
       theCase.caseFiles
         ?.filter(
           (caseFile) =>
-            caseFile.category &&
-            [CaseFileCategory.COURT_RECORD, CaseFileCategory.RULING].includes(
-              caseFile.category,
-            ) &&
+            caseFile.category === CaseFileCategory.COURT_RECORD &&
             caseFile.isKeyAccessible,
         )
         .map(async (caseFile) => {
@@ -1539,10 +1536,7 @@ export class InternalCaseService {
           )
 
           return {
-            type:
-              caseFile.category === CaseFileCategory.COURT_RECORD
-                ? PoliceDocumentType.RVTB
-                : PoliceDocumentType.RVDO,
+            type: PoliceDocumentType.RVTB,
             courtDocument: Base64.btoa(file.toString('binary')),
           }
         }) ?? [],
@@ -1567,7 +1561,6 @@ export class InternalCaseService {
         this.deliverCaseToPoliceWithFiles(theCase, user, courtDocuments),
       )
       .catch((reason) => {
-        // Tolerate failure, but log error
         this.logger.error(`Failed to deliver case ${theCase.id} to police`, {
           reason,
         })
