@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 
 import { Query, QueryGetNamespaceArgs } from '@island.is/web/graphql/schema'
@@ -33,6 +34,7 @@ export const ZendeskChatPanel = ({
   const [isLoading, setIsLoading] = useState(false)
   const [isChatOpen, setIsChatOpen] = useState(false)
   const { activeLocale } = useI18n()
+  const router = useRouter()
 
   const openChat = useCallback(() => {
     const setup = () => {
@@ -84,14 +86,20 @@ export const ZendeskChatPanel = ({
     if (queryParam === 't10') {
       timeout = setTimeout(() => {
         openChat()
+        const query = { ...router.query }
+        delete query['wa_lid']
+        router.replace({ pathname: router.pathname, query }, undefined, {
+          shallow: true,
+        })
       }, 100)
     }
 
     return () => {
       if (timeout) window.clearTimeout(timeout)
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [router.asPath])
 
   useEffect(
     () => () => {

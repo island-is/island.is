@@ -1,14 +1,13 @@
 import { DocumentV2Action, DocumentsV2Category } from '@island.is/api/schema'
 import { Box, Text } from '@island.is/island-ui/core'
 import { helperStyles } from '@island.is/island-ui/theme'
-import { useIsMobile } from '@island.is/portals/my-pages/core'
+import { AvatarImage, useIsMobile } from '@island.is/portals/my-pages/core'
 import { useEffect, useRef } from 'react'
 import {
   DocumentActionBar,
   DocumentActionBarProps,
 } from '../DocumentActionBar/DocumentActionBar'
 import DocumentActions from '../DocumentActions/DocumentActions'
-import AvatarImage from '../DocumentLine/AvatarImage'
 import * as styles from './DocumentHeader.css'
 type DocumentHeaderProps = {
   avatar?: string
@@ -76,7 +75,9 @@ export const DocumentHeader: React.FC<DocumentHeaderProps> = ({
         onClick={onClick}
         className={styles.actionContainer}
       >
-        {avatar && <AvatarImage large img={avatar} background="blue100" />}
+        {avatar && (
+          <AvatarImage large img={avatar} background="blue100" as="div" />
+        )}
         <Box
           display="flex"
           flexDirection="column"
