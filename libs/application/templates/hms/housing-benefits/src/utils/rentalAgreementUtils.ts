@@ -271,14 +271,11 @@ const displayNationalId = (nationalId: string) => {
   return kennitala.isValid(trimmed) ? kennitala.sanitize(trimmed) : trimmed
 }
 
-/** Renters (tenants) on the selected contract — also used for read-only static table rows. */
-export const getRentalAgreementTenantsFlat = (
-  application: Application,
+export const getRentalAgreementTenantsFlatFromAnswersAndExternalData = (
+  answers: FormValue,
+  externalData: ExternalData,
 ): Array<{ name: string; nationalId: string }> => {
-  const contract = getSelectedContract(
-    application.answers,
-    application.externalData,
-  )
+  const contract = getSelectedContract(answers, externalData)
   const tenants = contract?.contractParty?.filter(
     (p) => p.partyTypeUseCode === 'TENANT' && p.kennitala,
   )
@@ -286,6 +283,16 @@ export const getRentalAgreementTenantsFlat = (
     name: p.name ?? '',
     nationalId: displayNationalId(p.kennitala ?? ''),
   }))
+}
+
+/** Renters (tenants) on the selected contract — also used for read-only static table rows. */
+export const getRentalAgreementTenantsFlat = (
+  application: Application,
+): Array<{ name: string; nationalId: string }> => {
+  return getRentalAgreementTenantsFlatFromAnswersAndExternalData(
+    application.answers,
+    application.externalData,
+  )
 }
 
 /**
@@ -364,8 +371,9 @@ const mergeDomicileAndCustodyExcludingContractTenants = (
  * Full list: contract tenants, then domicile residents, then custody children, deduplicated
  * (used when the repeater has not been stored yet, e.g. overview preview).
  */
-const mergeHouseholdMemberSources = (
-  application: Application,
+export const mergeHouseholdMemberSourcesFromAnswersAndExternalData = (
+  answers: FormValue,
+  externalData: ExternalData,
 ): Array<{ name: string; nationalId: string }> => {
   const byKennitala = new Map<string, { name: string; nationalId: string }>()
 
@@ -379,12 +387,15 @@ const mergeHouseholdMemberSources = (
     })
   }
 
-  for (const t of getRentalAgreementTenantsFlat(application)) {
+  for (const t of getRentalAgreementTenantsFlatFromAnswersAndExternalData(
+    answers,
+    externalData,
+  )) {
     tryAdd(t.name, t.nationalId)
   }
 
   const selectedContractId = getValueViaPath<string | number>(
-    application.answers,
+    answers,
     'rentalAgreement.answer',
   )
   if (selectedContractId === undefined || selectedContractId === '') {
@@ -397,7 +408,7 @@ const mergeHouseholdMemberSources = (
       contractId: string
       residents: Array<{ nationalId?: string; name?: string | null }>
     }>
-  }>(application.externalData, 'getDomicileResidentsByRentalContracts.data')
+  }>(externalData, 'getDomicileResidentsByRentalContracts.data')
 
   const contractDomicile = domicilePayload?.contracts?.find(
     (c) => String(c.contractId).trim() === selectedNormalized,
@@ -407,7 +418,7 @@ const mergeHouseholdMemberSources = (
   }
 
   const custodyRaw = getValueViaPath<ApplicantChildCustodyInformationV3[]>(
-    application.externalData,
+    externalData,
     'childrenCustodyInformation.data',
   )
   for (const child of Array.isArray(custodyRaw) ? custodyRaw : []) {
@@ -415,6 +426,23 @@ const mergeHouseholdMemberSources = (
   }
 
   return Array.from(byKennitala.values())
+}
+
+export const getHouseholdMembersForTableFromAnswersAndExternalData = (
+  answers: FormValue,
+  externalData: ExternalData,
+): Array<{ name: string; nationalId: string }> => {
+  const members = mergeHouseholdMemberSourcesFromAnswersAndExternalData(
+    answers,
+    externalData,
+  )
+  if (members.length === 0) {
+    return []
+  }
+  return members.map((m) => ({
+    name: m.name,
+    nationalId: m.nationalId,
+  }))
 }
 
 /**
@@ -425,15 +453,10 @@ const mergeHouseholdMemberSources = (
 export const getHouseholdMembersForTable = (
   application: Application,
 ): Record<string, string>[] => {
-  const members = mergeHouseholdMemberSources(application)
-  if (members.length === 0) {
-    return []
-  }
-
-  return members.map((p) => ({
-    name: p.name,
-    nationalId: p.nationalId,
-  }))
+  return getHouseholdMembersForTableFromAnswersAndExternalData(
+    application.answers,
+    application.externalData,
+  )
 }
 
 /**

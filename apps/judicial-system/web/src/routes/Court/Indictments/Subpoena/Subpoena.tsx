@@ -16,7 +16,7 @@ import {
   DISTRICT_COURT_INDICTMENT_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { titles } from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   CourtArrangements,
   CourtCaseInfo,
@@ -493,24 +493,27 @@ const Subpoena: FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${DISTRICT_COURT_INDICTMENT_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
-          nextIsLoading={isLoadingWorkingCase}
-          onNextButtonClick={() => {
-            if (!isSchedulingArraignmentDate) {
-              router.push(
-                `${DISTRICT_COURT_INDICTMENT_CASE_DEFENDER_ROUTE}/${workingCase.id}`,
-              )
-            } else {
-              setNavigateTo(DISTRICT_COURT_INDICTMENT_CASE_DEFENDER_ROUTE)
-            }
-          }}
-          nextButtonText={
-            !isSchedulingArraignmentDate
-              ? undefined
-              : formatMessage(strings.nextButtonText)
-          }
-          nextIsDisabled={!stepIsValid}
+          actions={[
+            {
+              text: !isSchedulingArraignmentDate
+                ? formatMessage(core.continue)
+                : formatMessage(strings.nextButtonText),
+              icon: 'arrowForward',
+              onClick: () => {
+                if (!isSchedulingArraignmentDate) {
+                  router.push(
+                    `${DISTRICT_COURT_INDICTMENT_CASE_DEFENDER_ROUTE}/${workingCase.id}`,
+                  )
+                } else {
+                  setNavigateTo(DISTRICT_COURT_INDICTMENT_CASE_DEFENDER_ROUTE)
+                }
+              },
+              disabled: !stepIsValid,
+              loading: isLoadingWorkingCase,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
       <AnimatePresence>

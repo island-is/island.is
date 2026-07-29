@@ -261,19 +261,21 @@ const AddFiles: FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={previousRoute}
-          nextButtonText={
-            someFilesError
-              ? formatMessage(strings.tryUploadAgain)
-              : formatMessage(strings.nextButtonText)
-          }
-          nextButtonColorScheme={someFilesError ? 'destructive' : 'default'}
-          nextIsDisabled={
-            uploadFiles.length === 0 ||
-            !allFilesDoneOrError ||
-            editCount > 0 ||
-            !hasValidFileRepresentativeSelection
-          }
-          onNextButtonClick={() => setVisibleModal('confirmation')}
+          actions={[
+            {
+              text: someFilesError
+                ? formatMessage(strings.tryUploadAgain)
+                : formatMessage(strings.nextButtonText),
+              colorScheme: someFilesError ? 'destructive' : 'default',
+              onClick: () => setVisibleModal('confirmation'),
+              disabled:
+                uploadFiles.length === 0 ||
+                !allFilesDoneOrError ||
+                editCount > 0 ||
+                !hasValidFileRepresentativeSelection,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
       {visibleModal === 'confirmation' && (

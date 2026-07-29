@@ -24,8 +24,8 @@ import { WorkerService } from './worker.service'
 /**
  * Standalone module for the FJS backfill worker.
  *
- * Runs outside the main payments API: finds paid card flows without FJS charges,
- * creates the charges, and saves receptionId to PaymentFlow and PaymentFulfillment.
+ * Runs outside the main payments API: finds paid card and bank-transfer flows without
+ * FJS charges, creates the charges, and saves receptionId to PaymentFlow and PaymentFulfillment.
  *
  * Uses PaymentFlowService for charge creation, catalog lookup, and flow queries.
  */

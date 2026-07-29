@@ -582,6 +582,7 @@ application-system-api:
     XROAD_COURT_BANKRUPTCY_CERT_PATH: 'IS/GOV/4707171140/Domstolasyslan/JusticePortal-v1'
     XROAD_CRIMINAL_RECORD_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Sakaskra-v1'
     XROAD_DIGITAL_TACHOGRAPH_DRIVERS_CARD_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Okuritar-V1'
+    XROAD_DIRECTORATE_OF_EQUALITY_PATH: 'IS/GOV/5804170510/DMR-Protected/api.ritstjorn-jafnretti'
     XROAD_DIRECTORATE_OF_IMMIGRATION_PATH: 'IS/GOV/6702696399/UTL-Protected/Utl-Umsokn-v1'
     XROAD_DRIVING_LICENSE_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v1'
     XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v1'
@@ -3265,6 +3266,7 @@ services-payments:
   enabled: true
   env:
     BLIKK_API_BASE_URL: 'https://api.blikk.tech'
+    BLIKK_ONBOARDING_URL: 'https://light.blikk.tech'
     BLIKK_PAYMENT_TTL_SECONDS: '600'
     DB_EXTENSIONS: 'uuid-ossp'
     DB_HOST: 'postgres-applications.internal'
@@ -3416,6 +3418,7 @@ services-payments-worker:
   enabled: true
   env:
     BLIKK_API_BASE_URL: 'https://api.blikk.tech'
+    BLIKK_ONBOARDING_URL: 'https://light.blikk.tech'
     BLIKK_PAYMENT_TTL_SECONDS: '600'
     CODE_OWNER: 'aranja'
     DB_HOST: 'postgres-applications.internal'

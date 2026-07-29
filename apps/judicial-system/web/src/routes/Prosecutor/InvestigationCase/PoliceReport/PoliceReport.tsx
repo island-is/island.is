@@ -7,7 +7,11 @@ import {
   PROSECUTION_INVESTIGATION_CASE_CASE_FILES_ROUTE,
   PROSECUTION_INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { icReportForm, titles } from '@island.is/judicial-system-web/messages'
+import {
+  core,
+  icReportForm,
+  titles,
+} from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   CommentsInput,
@@ -171,13 +175,20 @@ const PoliceReport = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${PROSECUTION_INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() =>
-            handleNavigationTo(PROSECUTION_INVESTIGATION_CASE_CASE_FILES_ROUTE)
-          }
-          nextIsDisabled={!stepIsValid}
-          nextIsLoading={isLoadingWorkingCase}
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  PROSECUTION_INVESTIGATION_CASE_CASE_FILES_ROUTE,
+                ),
+              disabled: !stepIsValid,
+              loading: isLoadingWorkingCase,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>
