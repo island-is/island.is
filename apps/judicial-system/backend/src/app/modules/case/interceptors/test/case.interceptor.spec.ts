@@ -6,6 +6,7 @@ import {
   CaseIndictmentRulingDecision,
   CaseType,
   DefendantEventType,
+  InstitutionType,
   StringType,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -362,6 +363,98 @@ describe('CaseInterceptor - reopenReason mapping', () => {
 
     it('returns undefined for reopenReason', () => {
       expect(then.result.reopenReason).toBeUndefined()
+    })
+  })
+})
+
+describe('CaseInterceptor - rulingModifiedHistory', () => {
+  const mockRequest = jest.fn()
+  const mockHandle = jest.fn()
+
+  const rulingModifiedHistory = 'the ruling was corrected'
+
+  interface Then {
+    result: { rulingModifiedHistory?: string }
+    error: Error
+  }
+
+  let givenWhenThen: (
+    caseType: CaseType,
+    currentUser: unknown,
+  ) => Promise<Then>
+
+  beforeEach(() => {
+    givenWhenThen = async (caseType, currentUser): Promise<Then> => {
+      const interceptor = new CaseInterceptor({
+        findOriginalAncestorId: (theCase) => Promise.resolve(theCase.id),
+      } as unknown as CaseRepositoryService)
+      const then = {} as Then
+
+      mockRequest.mockImplementationOnce(() => ({
+        user: { currentUser },
+      }))
+      mockHandle.mockReturnValueOnce(
+        of({ ...makeCase([]), type: caseType, rulingModifiedHistory }),
+      )
+
+      await firstValueFrom(
+        interceptor.intercept(
+          {
+            switchToHttp: () => ({ getRequest: mockRequest }),
+          } as unknown as ExecutionContext,
+          { handle: mockHandle } as unknown as CallHandler,
+        ),
+      )
+        .then((result) => (then.result = result as Then['result']))
+        .catch((error) => (then.error = error))
+
+      return then
+    }
+  })
+
+  describe('when the user is a defence user in a request case', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(CaseType.CUSTODY, {
+        role: UserRole.DEFENDER,
+        nationalId,
+      })
+    })
+
+    it('includes the rulingModifiedHistory in the response', () => {
+      expect(then.result.rulingModifiedHistory).toBe(rulingModifiedHistory)
+    })
+  })
+
+  describe('when the user is a defence user in an indictment case', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(CaseType.INDICTMENT, {
+        role: UserRole.DEFENDER,
+        nationalId,
+      })
+    })
+
+    it('includes the rulingModifiedHistory in the response', () => {
+      expect(then.result.rulingModifiedHistory).toBe(rulingModifiedHistory)
+    })
+  })
+
+  describe('when the user is a prison system user in a request case', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(CaseType.CUSTODY, {
+        role: UserRole.PRISON_SYSTEM_STAFF,
+        nationalId,
+        institution: { type: InstitutionType.PRISON },
+      })
+    })
+
+    it('returns undefined for rulingModifiedHistory', () => {
+      expect(then.result.rulingModifiedHistory).toBeUndefined()
     })
   })
 })
