@@ -27,7 +27,7 @@ import {
 
 import { isNonEmptyArray } from './arrayHelpers'
 import { isCivilClaimantDefendantSelectionValid } from './civilClaimantUtils'
-import { isBusiness } from './utils'
+import { caseLevelAppealDecision, isBusiness } from './utils'
 
 export type Validation =
   | 'empty'
@@ -554,8 +554,11 @@ export const isRulingValidIC = (workingCase: Case): boolean => {
 
 export const isCourtRecordStepValidRC = (workingCase: Case): boolean => {
   return Boolean(
-    workingCase.accusedAppealDecision &&
-      workingCase.prosecutorAppealDecision &&
+    caseLevelAppealDecision(workingCase, AppealDecisionPartyRole.DEFENDANT) &&
+      caseLevelAppealDecision(
+        workingCase,
+        AppealDecisionPartyRole.PROSECUTOR,
+      ) &&
       validate([
         [workingCase.courtStartDate, ['empty', 'date-format']],
         [workingCase.courtLocation, ['empty']],
@@ -589,8 +592,11 @@ export const isCourtRecordStepValidIC = (workingCase: Case): boolean => {
   }
 
   return Boolean(
-    workingCase.accusedAppealDecision &&
-      workingCase.prosecutorAppealDecision &&
+    caseLevelAppealDecision(workingCase, AppealDecisionPartyRole.DEFENDANT) &&
+      caseLevelAppealDecision(
+        workingCase,
+        AppealDecisionPartyRole.PROSECUTOR,
+      ) &&
       validate(validations).isValid,
   )
 }
