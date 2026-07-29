@@ -40,7 +40,10 @@ describe('getApplicationLink', () => {
   })
 
   it('should throw when the application type has no configured slug', () => {
-    const unmapped = { id: 'some-id', typeId: 'NOT_A_REAL_TYPE' as ApplicationTypes }
+    const unmapped = {
+      id: 'some-id',
+      typeId: 'NOT_A_REAL_TYPE' as ApplicationTypes,
+    }
 
     expect(() =>
       getApplicationLink(unmapped, 'https://island.is/umsoknir'),

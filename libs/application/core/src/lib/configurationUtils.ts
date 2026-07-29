@@ -42,7 +42,5 @@ export const getApplicationLink = (
     )
   }
 
-  return `${clientLocationOrigin.replace(/\/$/, '')}/${slug}/${
-    application.id
-  }`
+  return `${clientLocationOrigin.replace(/\/$/, '')}/${slug}/${application.id}`
 }

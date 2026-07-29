@@ -13,9 +13,9 @@ describe('endOfDayFromCreation', () => {
   it('should return 23:59:59.999 UTC on the day `days` days after creation', () => {
     const application = { created: new Date('2026-08-10T14:23:45.123Z') }
 
-    expect(
-      endOfDayFromCreation(application as any, 2),
-    ).toEqual(new Date('2026-08-12T23:59:59.999Z'))
+    expect(endOfDayFromCreation(application as any, 2)).toEqual(
+      new Date('2026-08-12T23:59:59.999Z'),
+    )
   })
 
   it('should use UTC calendar arithmetic regardless of the process timezone', () => {
@@ -25,9 +25,9 @@ describe('endOfDayFromCreation', () => {
     try {
       const application = { created: new Date('2026-08-10T14:23:45.123Z') }
 
-      expect(
-        endOfDayFromCreation(application as any, 2),
-      ).toEqual(new Date('2026-08-12T23:59:59.999Z'))
+      expect(endOfDayFromCreation(application as any, 2)).toEqual(
+        new Date('2026-08-12T23:59:59.999Z'),
+      )
     } finally {
       process.env.TZ = originalTz
     }
