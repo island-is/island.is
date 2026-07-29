@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common'
 
 import {
+  AppealDecisionPartyRole,
   AppealEventType,
   CaseAppealDecision,
   CaseFileCategory,
@@ -79,15 +80,30 @@ export interface CaseLevelAppealInfo {
   isAppealDeadlineExpired?: boolean
 }
 
+// A case-level party's in-court appeal decision + announcement (the prosecution
+// or the collective defence) now lives on the appeal_decision rows
+// (ruling_file_id NULL) - the accused/prosecutor appeal decision and
+// announcement case columns have been dropped, so read them from there.
+const caseLevelAppealDecisionRow = (
+  theCase: Case,
+  partyRole: AppealDecisionPartyRole,
+) =>
+  theCase.appealDecisions?.find(
+    (decision) => !decision.rulingFileId && decision.partyRole === partyRole,
+  )
+
 export const getRequestCaseLevelAppealInfo = (
   theCase: Case,
 ): CaseLevelAppealInfo => {
-  const {
-    rulingDate,
-    accusedAppealDecision,
-    prosecutorAppealDecision,
-    isCompletedWithoutRuling,
-  } = theCase
+  const { rulingDate, isCompletedWithoutRuling } = theCase
+  const accusedAppealDecision = caseLevelAppealDecisionRow(
+    theCase,
+    AppealDecisionPartyRole.DEFENDANT,
+  )?.decision
+  const prosecutorAppealDecision = caseLevelAppealDecisionRow(
+    theCase,
+    AppealDecisionPartyRole.PROSECUTOR,
+  )?.decision
   const { appealState } = theCase.appealCase ?? {}
 
   if (!rulingDate) {
@@ -599,6 +615,25 @@ const transformCase = (
     ...theCase.toJSON(),
     ...stateOverride,
     ...caseLevelAppealInfo,
+    // The in-court appeal decision + announcement columns were dropped; project
+    // them from the case-level appeal_decision rows so the court record and
+    // appeal-sections UI keep reading the same fields.
+    accusedAppealDecision: caseLevelAppealDecisionRow(
+      theCase,
+      AppealDecisionPartyRole.DEFENDANT,
+    )?.decision,
+    prosecutorAppealDecision: caseLevelAppealDecisionRow(
+      theCase,
+      AppealDecisionPartyRole.PROSECUTOR,
+    )?.decision,
+    accusedAppealAnnouncement: caseLevelAppealDecisionRow(
+      theCase,
+      AppealDecisionPartyRole.DEFENDANT,
+    )?.announcement,
+    prosecutorAppealAnnouncement: caseLevelAppealDecisionRow(
+      theCase,
+      AppealDecisionPartyRole.PROSECUTOR,
+    )?.announcement,
     ...appealCaseOverride,
     ...rulingOrderAppealCasesOverride,
     defendants: transformDefendants({

@@ -103,65 +103,6 @@ describe('CaseController - Appeal decision dual-write', () => {
     }
   })
 
-  describe('district court records appeal decisions on a request case', () => {
-    const theCase = {
-      id: caseId,
-      type: CaseType.CUSTODY,
-      state: CaseState.RECEIVED,
-      defendants: [{ id: defendantId1 }, { id: defendantId2 }],
-    } as Case
-    const caseToUpdate = {
-      prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
-      prosecutorAppealAnnouncement: 'Sækjandi tekur sér frest',
-      accusedAppealDecision: CaseAppealDecision.APPEAL,
-      accusedAppealAnnouncement: 'Varnaraðili kærir',
-    } as UpdateCaseDto
-
-    beforeEach(async () => {
-      await update(theCase, caseToUpdate)
-    })
-
-    it('should mirror the prosecutor decision into an appeal decision row', () => {
-      expect(mockAppealDecisionRepositoryService.upsert).toHaveBeenCalledWith(
-        { caseId, partyRole: AppealDecisionPartyRole.PROSECUTOR },
-        {
-          decision: CaseAppealDecision.POSTPONE,
-          announcement: 'Sækjandi tekur sér frest',
-        },
-        { transaction },
-      )
-    })
-
-    it('should mirror the accused decision into a single collective defence row', () => {
-      expect(mockAppealDecisionRepositoryService.upsert).toHaveBeenCalledWith(
-        { caseId, partyRole: AppealDecisionPartyRole.DEFENDANT },
-        {
-          decision: CaseAppealDecision.APPEAL,
-          announcement: 'Varnaraðili kærir',
-        },
-        { transaction },
-      )
-    })
-
-    it('should not create a defence row per defendant', () => {
-      expect(
-        mockAppealDecisionRepositoryService.upsert,
-      ).not.toHaveBeenCalledWith(
-        expect.objectContaining({ defendantId: expect.anything() }),
-        expect.anything(),
-        expect.anything(),
-      )
-    })
-
-    it('should still persist the legacy case columns', () => {
-      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
-        caseId,
-        expect.objectContaining(caseToUpdate),
-        { transaction },
-      )
-    })
-  })
-
   describe('appeal decision fields on an indictment case are not mirrored', () => {
     const theCase = {
       id: caseId,
