@@ -19,7 +19,10 @@ export class OrganizationDelegationsService {
       error: JSON.stringify(error),
       category: 'forms-service',
     }
-    this.logger.error(errorDetail || 'Error in delegations service', err)
+    this.logger.error(
+      errorDetail || 'Error in organization delegations service',
+      err,
+    )
 
     throw new ApolloError(error.message)
   }

@@ -34,6 +34,7 @@ export interface FormLoaderResponse {
   applicantTypes: FormSystemFormApplicant[]
   listTypes: FormSystemListType[]
   submissionUrls: string[]
+  organizationDelegations: string[]
 }
 
 export interface ApplicationsLoaderResponse {

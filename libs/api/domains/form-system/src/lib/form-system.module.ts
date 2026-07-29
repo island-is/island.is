@@ -34,6 +34,8 @@ import { TranslationsResolver } from './translations/translations.resolver'
 import { TranslationsService } from './translations/translations.service'
 import { OrganizationDelegationsResolver } from './organizationDelegations/organizationDelegations.resolver'
 import { OrganizationDelegationsService } from './organizationDelegations/organizationDelegations.service'
+import { FormDelegationsResolver } from './formDelegations/formDelegations.resolver'
+import { FormDelegationsService } from './formDelegations/formDelegations.service'
 
 @Module({
   providers: [
@@ -67,6 +69,8 @@ import { OrganizationDelegationsService } from './organizationDelegations/organi
     PaymentsService,
     OrganizationDelegationsResolver,
     OrganizationDelegationsService,
+    FormDelegationsResolver,
+    FormDelegationsService,
   ],
   exports: [],
   imports: [

@@ -72,6 +72,7 @@ import {
   ApplicationJsonFieldSettingsDto,
   ApplicationJsonValueDto,
 } from '../applications/models/dto/application.json.dto'
+import { FormDelegationDto } from './models/dto/formDelegation.dto'
 
 @Injectable()
 export class FormsService {
@@ -152,6 +153,7 @@ export class FormsService {
       'hasSummaryScreen',
       'sectionInfo',
       'lastModifiedBy',
+      'delegations',
     ]
 
     const formResponseDto: FormResponseDto = {
@@ -369,6 +371,64 @@ export class FormsService {
     }
 
     return response
+  }
+
+  async addDelegation(
+    user: User,
+    formDelegationDto: FormDelegationDto,
+  ): Promise<void> {
+    const { formId } = formDelegationDto
+    const form = await this.formModel.findByPk(formId)
+
+    if (!form) {
+      throw new NotFoundException(`Form with id '${formId}' not found`)
+    }
+
+    const formOwnerNationalId = form.organizationNationalId
+
+    if (
+      user.nationalId !== formOwnerNationalId &&
+      !user.scope.includes(AdminPortalScope.formSystemAdmin)
+    ) {
+      throw new ForbiddenException(
+        `User does not have permission to add delegation to form with id '${formId}'`,
+      )
+    }
+
+    if (!form.delegations.includes(formDelegationDto.delegation)) {
+      form.delegations = [...form.delegations, formDelegationDto.delegation]
+      await form.save()
+    }
+  }
+
+  async deleteDelegation(
+    user: User,
+    formDelegationDto: FormDelegationDto,
+  ): Promise<void> {
+    const { formId } = formDelegationDto
+    const form = await this.formModel.findByPk(formId)
+
+    if (!form) {
+      throw new NotFoundException(`Form with id '${formId}' not found`)
+    }
+
+    const formOwnerNationalId = form.organizationNationalId
+
+    if (
+      user.nationalId !== formOwnerNationalId &&
+      !user.scope.includes(AdminPortalScope.formSystemAdmin)
+    ) {
+      throw new ForbiddenException(
+        `User does not have permission to delete delegation from form with id '${formId}'`,
+      )
+    }
+
+    if (form.delegations.includes(formDelegationDto.delegation)) {
+      form.delegations = form.delegations.filter(
+        (delegation) => delegation !== formDelegationDto.delegation,
+      )
+      await form.save()
+    }
   }
 
   async copy(user: User, id: string): Promise<FormResponseDto> {
@@ -748,6 +808,9 @@ export class FormsService {
       applicantTypes: await this.getApplicantTypes(),
       listTypes: await this.getListTypes(form.organizationId),
       submissionUrls: await this.getSubmissionUrls(form.organizationId),
+      organizationDelegations: await this.getOrganizationDelegations(
+        form.organizationId,
+      ),
     }
 
     if (form.sectionInfo) {
@@ -760,6 +823,13 @@ export class FormsService {
     }
 
     return response
+  }
+
+  private async getOrganizationDelegations(
+    organizationId: string,
+  ): Promise<string[]> {
+    const organization = await this.organizationModel.findByPk(organizationId)
+    return organization?.delegations ?? []
   }
 
   private async getSubmissionUrls(organizationId: string): Promise<string[]> {
@@ -885,6 +955,7 @@ export class FormsService {
       'hasSummaryScreen',
       'sectionInfo',
       'dependencies',
+      'delegations',
     ]
     const formDto: FormDto = Object.assign(
       defaults(
