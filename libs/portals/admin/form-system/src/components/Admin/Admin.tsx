@@ -10,6 +10,7 @@ import {
   Select,
   Text,
   DialogPrompt,
+  toast,
 } from '@island.is/island-ui/core'
 import { m } from '@island.is/form-system/ui'
 import { useContext, useEffect, useMemo, useState } from 'react'
@@ -90,6 +91,11 @@ export const Admin = () => {
 
       try {
         const response = await fetch(openIdConfigurationUrl)
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch OpenID configuration')
+        }
+
         const data = (await response.json()) as OpenIdConfiguration
 
         setScopeOptions(
@@ -100,13 +106,21 @@ export const Admin = () => {
               value: scope,
             })),
         )
+      } catch {
+        toast.error(
+          formatMessage({
+            id: 'adminScopesFetchError',
+            defaultMessage: 'Ekki tókst að sækja scopes.',
+          }),
+        )
       } finally {
         setIsLoadingScopes(false)
       }
     }
 
-    fetchScopes()
+    void fetchScopes().catch(() => undefined)
   }, [
+    formatMessage,
     hasEmptyScopeDropdown,
     openIdConfigurationUrl,
     scopeOptions.length,
@@ -144,8 +158,13 @@ export const Admin = () => {
           (delegation) => delegation !== selectedScope.value,
         ),
       )
-    } catch (error) {
-      throw new Error(`Failed to delete delegation: ${error}`)
+    } catch {
+      toast.error(
+        formatMessage({
+          id: 'adminDelegationDeleteError',
+          defaultMessage: 'Ekki tókst að eyða umboði.',
+        }),
+      )
     }
   }
 
@@ -178,8 +197,13 @@ export const Admin = () => {
       if (!selectedDelegations.includes(selected.value)) {
         setSelectedDelegations([...selectedDelegations, selected.value])
       }
-    } catch (error) {
-      throw new Error(`Failed to create delegation: ${error}`)
+    } catch {
+      toast.error(
+        formatMessage({
+          id: 'adminDelegationCreateError',
+          defaultMessage: 'Ekki tókst að bæta við umboði.',
+        }),
+      )
     }
   }
 
@@ -244,7 +268,9 @@ export const Admin = () => {
                         variant: 'ghost',
                         colorScheme: 'destructive',
                       }}
-                      onConfirm={() => void deleteSelectedScope(index)}
+                      onConfirm={() =>
+                        void deleteSelectedScope(index).catch(() => undefined)
+                      }
                       disclosureElement={
                         <Button
                           variant="ghost"
@@ -265,7 +291,9 @@ export const Admin = () => {
                     value={selectedScope}
                     placeholder={isLoadingScopes ? 'Sæki scopes...' : undefined}
                     onChange={(selected) =>
-                      void updateSelectedScope(index, selected)
+                      void updateSelectedScope(index, selected).catch(
+                        () => undefined,
+                      )
                     }
                   />
                 ),

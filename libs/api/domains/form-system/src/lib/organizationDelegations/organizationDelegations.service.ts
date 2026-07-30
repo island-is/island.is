@@ -41,14 +41,23 @@ export class OrganizationDelegationsService {
       throw new Error('Missing organization delegation input')
     }
 
-    await this.organizationsApiWithAuth(
-      auth,
-    ).organizationsControllerAddDelegation({
-      organizationDelegationDto: {
-        organizationNationalId: delegationDto.organizationNationalId,
-        delegation: delegationDto.delegation,
-      },
-    })
+    try {
+      await this.organizationsApiWithAuth(
+        auth,
+      ).organizationsControllerAddDelegation({
+        organizationDelegationDto: {
+          organizationNationalId: delegationDto.organizationNationalId,
+          delegation: delegationDto.delegation,
+        },
+      })
+    } catch (error) {
+      const normalizedError =
+        error instanceof Error ? error : new Error(String(error))
+      this.handleError(
+        normalizedError,
+        'Error creating organization delegation',
+      )
+    }
   }
 
   async deleteOrganizationDelegation(
@@ -61,13 +70,22 @@ export class OrganizationDelegationsService {
       throw new Error('Missing organization delegation input')
     }
 
-    await this.organizationsApiWithAuth(
-      auth,
-    ).organizationsControllerDeleteDelegation({
-      organizationDelegationDto: {
-        organizationNationalId: delegationDto.organizationNationalId,
-        delegation: delegationDto.delegation,
-      },
-    })
+    try {
+      await this.organizationsApiWithAuth(
+        auth,
+      ).organizationsControllerDeleteDelegation({
+        organizationDelegationDto: {
+          organizationNationalId: delegationDto.organizationNationalId,
+          delegation: delegationDto.delegation,
+        },
+      })
+    } catch (error) {
+      const normalizedError =
+        error instanceof Error ? error : new Error(String(error))
+      this.handleError(
+        normalizedError,
+        'Error deleting organization delegation',
+      )
+    }
   }
 }

@@ -377,58 +377,70 @@ export class FormsService {
     user: User,
     formDelegationDto: FormDelegationDto,
   ): Promise<void> {
-    const { formId } = formDelegationDto
-    const form = await this.formModel.findByPk(formId)
+    const { formId, delegation } = formDelegationDto
 
-    if (!form) {
-      throw new NotFoundException(`Form with id '${formId}' not found`)
-    }
+    await this.sequelize.transaction(async (transaction) => {
+      const form = await this.formModel.findByPk(formId, {
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      })
 
-    const formOwnerNationalId = form.organizationNationalId
+      if (!form) {
+        throw new NotFoundException(`Form with id '${formId}' not found`)
+      }
 
-    if (
-      user.nationalId !== formOwnerNationalId &&
-      !user.scope.includes(AdminPortalScope.formSystemAdmin)
-    ) {
-      throw new ForbiddenException(
-        `User does not have permission to add delegation to form with id '${formId}'`,
-      )
-    }
+      const formOwnerNationalId = form.organizationNationalId
 
-    if (!form.delegations.includes(formDelegationDto.delegation)) {
-      form.delegations = [...form.delegations, formDelegationDto.delegation]
-      await form.save()
-    }
+      if (
+        user.nationalId !== formOwnerNationalId &&
+        !user.scope.includes(AdminPortalScope.formSystemAdmin)
+      ) {
+        throw new ForbiddenException(
+          `User does not have permission to add delegation to form with id '${formId}'`,
+        )
+      }
+
+      if (!form.delegations.includes(delegation)) {
+        form.delegations = [...form.delegations, delegation]
+        await form.save({ transaction })
+      }
+    })
   }
 
   async deleteDelegation(
     user: User,
     formDelegationDto: FormDelegationDto,
   ): Promise<void> {
-    const { formId } = formDelegationDto
-    const form = await this.formModel.findByPk(formId)
+    const { formId, delegation } = formDelegationDto
 
-    if (!form) {
-      throw new NotFoundException(`Form with id '${formId}' not found`)
-    }
+    await this.sequelize.transaction(async (transaction) => {
+      const form = await this.formModel.findByPk(formId, {
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      })
 
-    const formOwnerNationalId = form.organizationNationalId
+      if (!form) {
+        throw new NotFoundException(`Form with id '${formId}' not found`)
+      }
 
-    if (
-      user.nationalId !== formOwnerNationalId &&
-      !user.scope.includes(AdminPortalScope.formSystemAdmin)
-    ) {
-      throw new ForbiddenException(
-        `User does not have permission to delete delegation from form with id '${formId}'`,
-      )
-    }
+      const formOwnerNationalId = form.organizationNationalId
 
-    if (form.delegations.includes(formDelegationDto.delegation)) {
-      form.delegations = form.delegations.filter(
-        (delegation) => delegation !== formDelegationDto.delegation,
-      )
-      await form.save()
-    }
+      if (
+        user.nationalId !== formOwnerNationalId &&
+        !user.scope.includes(AdminPortalScope.formSystemAdmin)
+      ) {
+        throw new ForbiddenException(
+          `User does not have permission to delete delegation from form with id '${formId}'`,
+        )
+      }
+
+      if (form.delegations.includes(delegation)) {
+        form.delegations = form.delegations.filter(
+          (currentDelegation) => currentDelegation !== delegation,
+        )
+        await form.save({ transaction })
+      }
+    })
   }
 
   async copy(user: User, id: string): Promise<FormResponseDto> {

@@ -20,6 +20,8 @@ import { AdminPortalScope } from '@island.is/auth/scopes'
 import { OrganizationZendeskInstanceDto } from './models/dto/organizationZendeskInstance.dto'
 import { OrganizationDelegationDto } from './models/dto/organizationDelegation.dto'
 import { Form } from '../forms/models/form.model'
+import { Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 
 @Injectable()
 export class OrganizationsService {
@@ -28,6 +30,7 @@ export class OrganizationsService {
     private readonly organizationModel: typeof Organization,
     @InjectModel(Form)
     private readonly formModel: typeof Form,
+    private readonly sequelize: Sequelize,
   ) {}
 
   async findAdmin(
@@ -132,20 +135,23 @@ export class OrganizationsService {
     user: User,
     organizationDelegationDto: OrganizationDelegationDto,
   ): Promise<void> {
-    const organization = await this.getOrganizationForUpdate(
-      user,
-      organizationDelegationDto.organizationNationalId,
-    )
+    await this.sequelize.transaction(async (transaction) => {
+      const organization = await this.getOrganizationForUpdate(
+        user,
+        organizationDelegationDto.organizationNationalId,
+        transaction,
+      )
 
-    if (
-      !organization.delegations.includes(organizationDelegationDto.delegation)
-    ) {
-      organization.delegations = [
-        ...organization.delegations,
-        organizationDelegationDto.delegation,
-      ]
-      await organization.save()
-    }
+      if (
+        !organization.delegations.includes(organizationDelegationDto.delegation)
+      ) {
+        organization.delegations = [
+          ...organization.delegations,
+          organizationDelegationDto.delegation,
+        ]
+        await organization.save({ transaction })
+      }
+    })
   }
 
   async deleteDelegation(
@@ -153,41 +159,50 @@ export class OrganizationsService {
     organizationDelegationDto: OrganizationDelegationDto,
   ): Promise<void> {
     const { delegation, organizationNationalId } = organizationDelegationDto
-    const organization = await this.getOrganizationForUpdate(
-      user,
-      organizationNationalId,
-    )
 
-    organization.delegations = organization.delegations.filter(
-      (organizationDelegation) => organizationDelegation !== delegation,
-    )
-
-    await organization.save()
-
-    const forms = await this.formModel.findAll({
-      where: {
+    await this.sequelize.transaction(async (transaction) => {
+      const organization = await this.getOrganizationForUpdate(
+        user,
         organizationNationalId,
-      },
-    })
+        transaction,
+      )
 
-    await Promise.all(
-      forms
-        .filter((form) => form.delegations.includes(delegation))
-        .map((form) => {
-          form.delegations = form.delegations.filter(
-            (formDelegation) => formDelegation !== delegation,
-          )
-          return form.save()
-        }),
-    )
+      organization.delegations = organization.delegations.filter(
+        (organizationDelegation) => organizationDelegation !== delegation,
+      )
+
+      await organization.save({ transaction })
+
+      const forms = await this.formModel.findAll({
+        where: {
+          organizationNationalId,
+        },
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      })
+
+      await Promise.all(
+        forms
+          .filter((form) => form.delegations.includes(delegation))
+          .map((form) => {
+            form.delegations = form.delegations.filter(
+              (formDelegation) => formDelegation !== delegation,
+            )
+            return form.save({ transaction })
+          }),
+      )
+    })
   }
 
   private async getOrganizationForUpdate(
     user: User,
     organizationNationalId: string,
+    transaction: Transaction,
   ): Promise<Organization> {
     const organization = await this.organizationModel.findOne({
       where: { nationalId: organizationNationalId },
+      transaction,
+      lock: transaction.LOCK.UPDATE,
     })
 
     if (!organization) {

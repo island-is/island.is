@@ -232,8 +232,22 @@ export class ApplicationsService {
       throw new NotFoundException(`Application with id '${id}' not found`)
     }
 
+    const form = await this.formModel.findByPk(application.formId, {
+      include: [{ model: Section, as: 'sections' }],
+    })
+
+    if (!form) {
+      throw new NotFoundException(
+        `Form with id '${application.formId}' not found`,
+      )
+    }
+
     const loginTypes = await this.getLoginTypes(user)
-    if (!this.doesUserMatchApplication(application, user, loginTypes)) {
+    const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
+    if (
+      !this.doesUserMatchApplication(application, user, loginTypes) ||
+      !hasRequiredDelegation
+    ) {
       throw new ForbiddenException(
         `User does not have permission to update application '${id}'`,
       )
@@ -245,16 +259,6 @@ export class ApplicationsService {
       application.completed = (application.completed ?? []).filter(
         (completedId) => !completedToRemove.includes(completedId),
       )
-
-      const form = await this.formModel.findByPk(application.formId, {
-        include: [{ model: Section, as: 'sections' }],
-      })
-
-      if (!form) {
-        throw new NotFoundException(
-          `Form with id '${application.formId}' not found`,
-        )
-      }
 
       let draftFinishedSteps = 0
 
@@ -308,21 +312,25 @@ export class ApplicationsService {
       throw new NotFoundException(`Application with id '${id}' not found.`)
     }
 
-    if (user) {
-      const loginTypes = await this.getLoginTypes(user)
-      if (!this.doesUserMatchApplication(application, user, loginTypes)) {
-        throw new ForbiddenException(
-          `User does not have permission to submit application '${id}'`,
-        )
-      }
-    }
-
     const form = await this.formModel.findByPk(application.formId)
 
     if (!form) {
       throw new NotFoundException(
         `Form with id '${application.formId}' not found.`,
       )
+    }
+
+    if (user) {
+      const loginTypes = await this.getLoginTypes(user)
+      const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
+      if (
+        !this.doesUserMatchApplication(application, user, loginTypes) ||
+        !hasRequiredDelegation
+      ) {
+        throw new ForbiddenException(
+          `User does not have permission to submit application '${id}'`,
+        )
+      }
     }
 
     const applicationResponseDto = await this.getApplication(id, '', null)
@@ -999,8 +1007,20 @@ export class ApplicationsService {
       )
     }
 
+    const form = await this.formModel.findByPk(application.formId)
+
+    if (!form) {
+      throw new NotFoundException(
+        `Form with id '${application.formId}' not found`,
+      )
+    }
+
     const loginTypes = await this.getLoginTypes(user)
-    if (!this.doesUserMatchApplication(application, user, loginTypes)) {
+    const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
+    if (
+      !this.doesUserMatchApplication(application, user, loginTypes) ||
+      !hasRequiredDelegation
+    ) {
       throw new ForbiddenException(
         `User does not have permission to save screen for application '${applicationId}'`,
       )
@@ -1159,8 +1179,20 @@ export class ApplicationsService {
       throw new NotFoundException(`Application with id '${id}' not found`)
     }
 
+    const form = await this.formModel.findByPk(application.formId)
+
+    if (!form) {
+      throw new NotFoundException(
+        `Form with id '${application.formId}' not found`,
+      )
+    }
+
     const loginTypes = await this.getLoginTypes(user)
-    if (!this.doesUserMatchApplication(application, user, loginTypes)) {
+    const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
+    if (
+      !this.doesUserMatchApplication(application, user, loginTypes) ||
+      !hasRequiredDelegation
+    ) {
       throw new ForbiddenException(
         `User does not have permission to delete application '${id}'`,
       )
@@ -1303,17 +1335,21 @@ export class ApplicationsService {
       )
     }
 
-    const loginTypes = await this.getLoginTypes(user)
-    if (!this.doesUserMatchApplication(application, user, loginTypes)) {
-      throw new ForbiddenException(
-        `User does not have permission to notify for application '${notificationDto.applicationId}'`,
-      )
-    }
-
     const form = await this.formModel.findByPk(application.formId)
     if (!form) {
       throw new NotFoundException(
         `Form with id '${application.formId}' not found for application '${notificationDto.applicationId}'`,
+      )
+    }
+
+    const loginTypes = await this.getLoginTypes(user)
+    const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
+    if (
+      !this.doesUserMatchApplication(application, user, loginTypes) ||
+      !hasRequiredDelegation
+    ) {
+      throw new ForbiddenException(
+        `User does not have permission to notify for application '${notificationDto.applicationId}'`,
       )
     }
 

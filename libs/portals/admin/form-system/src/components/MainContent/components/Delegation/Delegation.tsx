@@ -4,7 +4,7 @@ import {
   DELETE_FORM_DELEGATION,
 } from '@island.is/form-system/graphql'
 import { Box, Checkbox, GridRow, Stack, Text } from '@island.is/island-ui/core'
-import { useContext } from 'react'
+import { useContext, useEffect, useRef } from 'react'
 import { ControlContext } from '../../../../context/ControlContext'
 
 export const Delegation = () => {
@@ -12,6 +12,14 @@ export const Delegation = () => {
     useContext(ControlContext)
   const { isReadOnly } = control
   const selectedDelegations = control.form.delegations ?? []
+  const formRef = useRef(control.form)
+  const selectedDelegationsRef = useRef(selectedDelegations)
+  const saveQueueRef = useRef(Promise.resolve())
+
+  useEffect(() => {
+    formRef.current = control.form
+    selectedDelegationsRef.current = selectedDelegations
+  }, [control.form, selectedDelegations])
 
   const [createFormDelegationMutation] = useMutation(CREATE_FORM_DELEGATION)
   const [deleteFormDelegationMutation] = useMutation(DELETE_FORM_DELEGATION)
@@ -26,36 +34,48 @@ export const Delegation = () => {
       return
     }
 
-    const mutation = checked
-      ? createFormDelegationMutation
-      : deleteFormDelegationMutation
+    const saveDelegationChange = async () => {
+      const mutation = checked
+        ? createFormDelegationMutation
+        : deleteFormDelegationMutation
 
-    await mutation({
-      variables: {
-        input: {
-          updateFormDelegationDto: {
-            formId,
-            delegation,
+      await mutation({
+        variables: {
+          input: {
+            updateFormDelegationDto: {
+              formId,
+              delegation,
+            },
           },
         },
-      },
-    })
+      })
 
-    const delegations = checked
-      ? [...selectedDelegations, delegation]
-      : selectedDelegations.filter(
-          (selectedDelegation) => selectedDelegation !== delegation,
-        )
+      const delegations = checked
+        ? [...new Set([...selectedDelegationsRef.current, delegation])]
+        : selectedDelegationsRef.current.filter(
+            (selectedDelegation) => selectedDelegation !== delegation,
+          )
 
-    controlDispatch({
-      type: 'SET_FORM',
-      payload: {
-        form: {
-          ...control.form,
-          delegations,
+      const form = {
+        ...formRef.current,
+        delegations,
+      }
+
+      formRef.current = form
+      selectedDelegationsRef.current = delegations
+
+      controlDispatch({
+        type: 'SET_FORM',
+        payload: {
+          form,
         },
-      },
-    })
+      })
+    }
+
+    const queuedSave = saveQueueRef.current.then(saveDelegationChange)
+    saveQueueRef.current = queuedSave.catch(() => undefined)
+
+    await queuedSave
   }
 
   return (

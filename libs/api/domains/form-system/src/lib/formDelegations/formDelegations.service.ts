@@ -38,12 +38,18 @@ export class FormDelegationsService {
       throw new Error('Missing form delegation input')
     }
 
-    await this.formsApiWithAuth(auth).formsControllerAddDelegation({
-      formDelegationDto: {
-        formId: delegationDto.formId,
-        delegation: delegationDto.delegation,
-      },
-    })
+    try {
+      await this.formsApiWithAuth(auth).formsControllerAddDelegation({
+        formDelegationDto: {
+          formId: delegationDto.formId,
+          delegation: delegationDto.delegation,
+        },
+      })
+    } catch (error) {
+      const normalizedError =
+        error instanceof Error ? error : new Error(String(error))
+      this.handleError(normalizedError, 'Error creating form delegation')
+    }
   }
 
   async deleteFormDelegation(
@@ -56,11 +62,17 @@ export class FormDelegationsService {
       throw new Error('Missing form delegation input')
     }
 
-    await this.formsApiWithAuth(auth).formsControllerDeleteDelegation({
-      formDelegationDto: {
-        formId: delegationDto.formId,
-        delegation: delegationDto.delegation,
-      },
-    })
+    try {
+      await this.formsApiWithAuth(auth).formsControllerDeleteDelegation({
+        formDelegationDto: {
+          formId: delegationDto.formId,
+          delegation: delegationDto.delegation,
+        },
+      })
+    } catch (error) {
+      const normalizedError =
+        error instanceof Error ? error : new Error(String(error))
+      this.handleError(normalizedError, 'Error deleting form delegation')
+    }
   }
 }

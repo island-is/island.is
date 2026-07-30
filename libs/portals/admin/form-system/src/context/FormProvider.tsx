@@ -200,6 +200,8 @@ export const FormProvider: React.FC<{
       selectStatus,
       selectedUrls,
       openComponents,
+      organizationDelegations,
+      setOrganizationDelegations,
       submissionUrlInput,
     ],
   )

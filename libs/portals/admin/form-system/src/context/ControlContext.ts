@@ -28,6 +28,7 @@ export interface IControlContext {
   listTypes: Maybe<Maybe<FormSystemListType>[]> | undefined
   submissionUrls: string[]
   organizationDelegations: string[]
+  setOrganizationDelegations: Dispatch<SetStateAction<string[]>>
   setSubmissionUrls: Dispatch<React.SetStateAction<string[]>>
   submissionUrlInput: string
   setSubmissionUrlInput: Dispatch<string>
@@ -62,6 +63,11 @@ export const ControlContext = createContext<IControlContext>({
   },
   inSettings: false,
   organizationDelegations: [] as string[],
+  setOrganizationDelegations: function (
+    _value: SetStateAction<string[]>,
+  ): void {
+    throw new Error('Function not implemented.')
+  },
   updateActiveItem: function (_updatedActiveItem?: ActiveItem): void {
     throw new Error('Function not implemented.')
   },

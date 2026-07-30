@@ -1111,15 +1111,14 @@ export const m = defineMessages({
   },
   delegationRequired: {
     id: 'form.system:delegation-required',
-    defaultMessage: 'Ekki leyfi til að sækja um',
-    description: 'No permission to apply',
+    defaultMessage: 'Rangt umboð',
+    description: 'Wrong delegation',
   },
   applicationRequiresDelegation: {
     id: 'form.system:application-requires-delegation',
-    defaultMessage:
-      'Þú hefur ekki réttindi til að sækja um þessa umsókn. Hafðu samband við island@island.is',
+    defaultMessage: 'Þú hefur ekki rétt umboð til að opna þessa umsóknartegund',
     description:
-      'The application requires delegation. Please contact island@island.is',
+      'You do not have the correct delegation to open this application type',
   },
   errorFetchingApplication: {
     id: 'form.system:error-fetching-application',
