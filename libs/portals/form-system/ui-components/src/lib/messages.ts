@@ -1109,6 +1109,18 @@ export const m = defineMessages({
     defaultMessage: 'Þessi umsókn styður ekki þessa tegund innskráningar.',
     description: 'This application does not support this type of login.',
   },
+  delegationRequired: {
+    id: 'form.system:delegation-required',
+    defaultMessage: 'Ekki leyfi til að sækja um',
+    description: 'No permission to apply',
+  },
+  applicationRequiresDelegation: {
+    id: 'form.system:application-requires-delegation',
+    defaultMessage:
+      'Þú hefur ekki réttindi til að sækja um þessa umsókn. Hafðu samband við island@island.is',
+    description:
+      'The application requires delegation. Please contact island@island.is',
+  },
   errorFetchingApplication: {
     id: 'form.system:error-fetching-application',
     defaultMessage: 'Villa kom upp við að sækja umsóknina.',

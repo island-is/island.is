@@ -3,7 +3,14 @@ import {
   CREATE_ORGANIZATION_DELEGATION,
   DELETE_ORGANIZATION_DELEGATION,
 } from '@island.is/form-system/graphql'
-import { Box, Button, GridRow, Select, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  GridRow,
+  Select,
+  Text,
+  DialogPrompt,
+} from '@island.is/island-ui/core'
 import { m } from '@island.is/form-system/ui'
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -226,12 +233,26 @@ export const Admin = () => {
                     alignItems="center"
                     columnGap={2}
                   >
-                    <Button
-                      variant="ghost"
-                      colorScheme="destructive"
-                      icon="trash"
-                      size="small"
-                      onClick={() => void deleteSelectedScope(index)}
+                    <DialogPrompt
+                      baseId={`delete-delegation-${index}`}
+                      title={formatMessage(m.areYouSure)}
+                      description="Ef þú eyðir þessu umboði mun það líka eyðast úr umsóknum sem nú þegar nota það."
+                      ariaLabel="Delete delegation"
+                      buttonTextConfirm={formatMessage(m.confirm)}
+                      buttonTextCancel={formatMessage(m.cancel)}
+                      buttonPropsConfirm={{
+                        variant: 'ghost',
+                        colorScheme: 'destructive',
+                      }}
+                      onConfirm={() => void deleteSelectedScope(index)}
+                      disclosureElement={
+                        <Button
+                          variant="ghost"
+                          colorScheme="destructive"
+                          icon="trash"
+                          size="small"
+                        />
+                      }
                     />
                     <Text fontWeight="medium">{selectedScope.label}</Text>
                   </Box>

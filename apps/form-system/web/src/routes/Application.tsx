@@ -34,10 +34,15 @@ export const Application = () => {
 
   const formSystemApp = data?.formSystemApplication
   const isLoginTypeAllowed = formSystemApp?.isLoginTypeAllowed
+  const hasRequiredDelegation = formSystemApp?.hasRequiredDelegation
   const application = removeTypename(formSystemApp?.application)
 
   if (error || isLoginTypeAllowed === false || !application) {
     return <ErrorShell errorType="idNotFound" />
+  }
+
+  if (hasRequiredDelegation === false) {
+    return <ErrorShell errorType="forbidden" />
   }
 
   return <ApplicationProvider application={application} />

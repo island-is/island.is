@@ -19,12 +19,15 @@ import {
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { OrganizationZendeskInstanceDto } from './models/dto/organizationZendeskInstance.dto'
 import { OrganizationDelegationDto } from './models/dto/organizationDelegation.dto'
+import { Form } from '../forms/models/form.model'
 
 @Injectable()
 export class OrganizationsService {
   constructor(
     @InjectModel(Organization)
     private readonly organizationModel: typeof Organization,
+    @InjectModel(Form)
+    private readonly formModel: typeof Form,
   ) {}
 
   async findAdmin(
@@ -149,16 +152,34 @@ export class OrganizationsService {
     user: User,
     organizationDelegationDto: OrganizationDelegationDto,
   ): Promise<void> {
+    const { delegation, organizationNationalId } = organizationDelegationDto
     const organization = await this.getOrganizationForUpdate(
       user,
-      organizationDelegationDto.organizationNationalId,
+      organizationNationalId,
     )
 
     organization.delegations = organization.delegations.filter(
-      (delegation) => delegation !== organizationDelegationDto.delegation,
+      (organizationDelegation) => organizationDelegation !== delegation,
     )
 
     await organization.save()
+
+    const forms = await this.formModel.findAll({
+      where: {
+        organizationNationalId,
+      },
+    })
+
+    await Promise.all(
+      forms
+        .filter((form) => form.delegations.includes(delegation))
+        .map((form) => {
+          form.delegations = form.delegations.filter(
+            (formDelegation) => formDelegation !== delegation,
+          )
+          return form.save()
+        }),
+    )
   }
 
   private async getOrganizationForUpdate(
