@@ -124,6 +124,9 @@ export class Form {
 
   @Field(() => String, { nullable: true })
   lastModifiedBy?: string
+
+  @Field(() => [String], { nullable: 'itemsAndList' })
+  delegations?: string[]
 }
 
 @ObjectType('FormSystemFormResponse')
@@ -148,6 +151,9 @@ export class FormResponse {
 
   @Field(() => [String], { nullable: 'itemsAndList' })
   submissionUrls?: string[]
+
+  @Field(() => [String], { nullable: 'itemsAndList' })
+  organizationDelegations?: string[]
 
   @Field(() => [Option], { nullable: 'itemsAndList' })
   organizations?: Option[]
