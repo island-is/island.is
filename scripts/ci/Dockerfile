@@ -157,6 +157,14 @@ ENV PORT=4200
 COPY --from=deps /build/node_modules /webapp/node_modules
 COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
+# Turbopack builds emit .next/node_modules symlinks for externalized packages
+# (e.g. graphql-tag-<hash>) whose relative targets point at the repo-root
+# node_modules from the build context (five levels up, /node_modules here).
+# Keep them resolvable by mirroring the deps at that path.
+USER root
+RUN ln -sfn /webapp/node_modules /node_modules
+USER runner
+
 ENV GIT_BRANCH=${GIT_BRANCH} \
   GIT_COMMIT_SHA=${GIT_COMMIT_SHA} \
   GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL} \
