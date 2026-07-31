@@ -974,50 +974,13 @@ const prisonAdminState: CaseTableCellGenerator<TagValue> = {
 
 const indictmentAppealDeadline: CaseTableCellGenerator<StringValue> = {
   attributes: ['rulingDate', 'indictmentRulingDecision'],
-  includes: {
-    defendants: {
-      attributes: [],
-      includes: {
-        verdicts: { attributes: ['serviceRequirement', 'serviceDate'] },
-      },
-    },
-  },
   generate: (c: Case): CaseTableCell<StringValue> => {
     if (!c.rulingDate) {
       return generateCell()
     }
 
-    // Each defendant's deadline runs from the date their own verdict was
-    // served, falling back to the ruling date - counting from the ruling date
-    // for everyone would disagree with the deadline shown on the case.
-    //
-    // The public prosecution office tables render one row per defendant
-    // (expandCasesWithDefendants runs before cell generation, so the row's case
-    // carries just that defendant), which makes this the row defendant's own
-    // deadline. The reviewer's own list rows per case instead, and there the
-    // latest deadline stands for the case: it is only out of appeal once the
-    // last defendant's window has closed.
-    const baseDate = (c.defendants ?? []).reduce<Date | undefined>(
-      (latest, d) => {
-        const serviceDate = getDefendantServiceDate({
-          // Only the latest verdict is relevant
-          verdict: d.verdicts?.[0],
-          fallbackDate: c.rulingDate,
-        })
-
-        return serviceDate && (!latest || serviceDate > latest)
-          ? serviceDate
-          : latest
-      },
-      undefined,
-    )
-
-    if (!baseDate) {
-      return generateCell()
-    }
-
     const { deadlineDate } = getIndictmentAppealDeadline({
-      baseDate,
+      baseDate: c.rulingDate,
       isFine: c.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE,
     })
 
