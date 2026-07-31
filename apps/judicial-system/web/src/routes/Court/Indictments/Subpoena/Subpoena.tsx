@@ -103,10 +103,19 @@ const Subpoena: FC = () => {
   )
 
   const toggleNewAlternativeService = (defendant: Defendant) => () => {
+    if (!defendant.isAlternativeService) {
+      setNewAlternativeServices((previous) => [...previous, defendant.id])
+      return
+    }
+
     setNewAlternativeServices((previous) =>
-      defendant.isAlternativeService
-        ? previous.filter((id) => id !== defendant.id)
-        : [...previous, defendant.id],
+      previous.filter((id) => id !== defendant.id),
+    )
+
+    // Turning alternative service off means a new subpoena is being issued,
+    // just like when the new subpoena button is used
+    setNewSubpoenas((previous) =>
+      previous.includes(defendant.id) ? previous : [...previous, defendant.id],
     )
   }
 
@@ -147,10 +156,10 @@ const Subpoena: FC = () => {
           alternativeServiceDescription: defendant.isAlternativeService
             ? defendant.alternativeServiceDescription
             : null,
-          // Only change the subpoena type if the defendant is not
+          // Clear the subpoena type if the defendant is
           // being served by alternative means
           subpoenaType: defendant.isAlternativeService
-            ? undefined
+            ? null
             : defendant.subpoenaType,
         }),
       )
@@ -203,12 +212,16 @@ const Subpoena: FC = () => {
       return
     }
 
-    // Create subpoenas for selected defendants (or all if first-time scheduling)
-    const defendantIdsToCreateSubpoenasFor = isArraignmentScheduled
-      ? newSubpoenas
-      : updates?.defendants
-          ?.filter((defendant) => !defendant.isAlternativeService)
-          .map((defendant) => defendant.id) ?? []
+    // Create subpoenas for selected defendants (or all if first-time scheduling),
+    // never for defendants being served by alternative means
+    const defendantIdsToCreateSubpoenasFor =
+      updates?.defendants
+        ?.filter(
+          (defendant) =>
+            !defendant.isAlternativeService &&
+            (!isArraignmentScheduled || newSubpoenas.includes(defendant.id)),
+        )
+        .map((defendant) => defendant.id) ?? []
 
     if (defendantIdsToCreateSubpoenasFor.length > 0) {
       const arraignmentDate = updates?.theCase.arraignmentDate?.date
