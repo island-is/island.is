@@ -4,12 +4,20 @@ import {
   CaseIndictmentRulingDecision,
   IndictmentCaseReviewDecision,
   ServiceRequirement,
+  VERDICT_APPEAL_WINDOW_DAYS,
 } from '@island.is/judicial-system/types'
 
 import { CaseWhereOptions, expandCasesWithDefendants } from '../caseTable.types'
 import { publicProsecutionOfficeIndictmentsAccessWhereOptions } from './access'
 
 // Public prosecution office indictments
+
+// The appeal window runs until midnight at the end of its last day, counted
+// from the day the verdict was served (see getIndictmentAppealDeadline). A date
+// is therefore still on deadline while it is at or after this cutoff, and past
+// it once it is before - which keeps these lists in step with the deadline the
+// case itself reports, whether or not the date carries a time of day.
+const APPEAL_WINDOW_CUTOFF = `date_trunc('day', NOW()) - INTERVAL '${VERDICT_APPEAL_WINDOW_DAYS} days'`
 
 export const publicProsecutionOfficeIndictmentsNewWhereOptions =
   (): CaseWhereOptions => ({
@@ -58,7 +66,7 @@ export const publicProsecutionOfficeIndictmentsReviewedWhereOptions =
                   [Op.and]: [
                     {
                       '$Case.ruling_date$': {
-                        [Op.gt]: literal(`NOW() - INTERVAL '29 days'`),
+                        [Op.gte]: literal(APPEAL_WINDOW_CUTOFF),
                       },
                     },
                     literal(`
@@ -87,7 +95,7 @@ export const publicProsecutionOfficeIndictmentsReviewedWhereOptions =
                       AND verdict.is_acquitted_by_public_prosecution_office IS NOT TRUE
                       AND verdict.defendant_has_requested_appeal IS NOT TRUE
                       AND verdict.appeal_date IS NULL
-                      AND (verdict.service_date IS NULL OR verdict.service_date + INTERVAL '29 days' > NOW())
+                      AND (verdict.service_date IS NULL OR verdict.service_date >= ${APPEAL_WINDOW_CUTOFF})
                       AND verdict.created = (
                         SELECT MAX(v2.created)
                         FROM verdict v2
@@ -129,7 +137,7 @@ export const publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions =
                   [Op.and]: [
                     {
                       '$Case.ruling_date$': {
-                        [Op.lt]: literal(`NOW() - INTERVAL '29 days'`),
+                        [Op.lt]: literal(APPEAL_WINDOW_CUTOFF),
                       },
                     },
                     literal(`
@@ -158,7 +166,7 @@ export const publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions =
                       AND verdict.is_acquitted_by_public_prosecution_office IS NOT TRUE
                       AND verdict.defendant_has_requested_appeal IS NOT TRUE
                       AND verdict.appeal_date IS NULL
-                      AND verdict.service_date + INTERVAL '29 days' < NOW()
+                      AND verdict.service_date < ${APPEAL_WINDOW_CUTOFF}
                       AND verdict.created = (
                         SELECT MAX(v2.created)
                         FROM verdict v2
