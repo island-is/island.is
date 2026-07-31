@@ -854,6 +854,11 @@ export const m = defineMessages({
     defaultMessage: 'Ógilt fasteignanúmer',
     description: 'Invalid property number',
   },
+  propertySearchFailed: {
+    id: 'form.system:property-search-failed',
+    defaultMessage: 'Leit að fasteign skilaði ekki niðurstöðu',
+    description: 'Property search did not return a successful response',
+  },
   pickHour: {
     id: 'form.system:pick-hour',
     defaultMessage: 'Veldu klukkustund',
