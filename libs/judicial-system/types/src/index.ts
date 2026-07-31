@@ -85,6 +85,7 @@ export {
   CaseFileState,
   CaseFileCategory,
   HashAlgorithm,
+  isAppealFileDeletionLocked,
   PoliceFileTypeCode,
 } from './lib/file'
 

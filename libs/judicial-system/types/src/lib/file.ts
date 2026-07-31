@@ -36,6 +36,33 @@ export enum CaseFileCategory {
   DEFENDANT_RULING = 'DEFENDANT_RULING', // dómari: dómur (vísað frá eða niðurfelling) á einstakling
 }
 
+// Appeal files submitted by the parties (kærugögn) - as opposed to the court of
+// appeals' own documents (APPEAL_RULING, APPEAL_COURT_RECORD)
+const partyAppealFileCategories = [
+  CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+  CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
+  CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+  CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
+  CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
+  CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+  CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+  CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+  CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+  CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
+]
+
+const isPartyAppealFileCategory = (category?: string | null): boolean =>
+  Boolean(category) &&
+  partyAppealFileCategories.includes(category as CaseFileCategory)
+
+// Appeal files are delivered to the court of appeals as soon as it registers its
+// case number, so from that point on they can no longer be deleted
+export const isAppealFileDeletionLocked = (
+  category?: string | null,
+  appealCase?: { appealCaseNumber?: string | null } | null,
+): boolean =>
+  isPartyAppealFileCategory(category) && Boolean(appealCase?.appealCaseNumber)
+
 // MD5 was used as file hashing algorithm until (TODO: add date) but was updated to SHA256 to avoid the probability
 // of hash collision between files in our system. Since we still store MD5 alg types with each file hash
 // in the db for historical purposes, we support both types here.

@@ -11,6 +11,7 @@ import {
 } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
+  isAppealFileDeletionLocked,
   isDefenceUser,
   isIndictmentCase,
   isProsecutionUser,
@@ -120,8 +121,11 @@ const AppealCaseFilesOverview = () => {
     : isDefenceUser(user)
     ? defenceDeleteCategories
     : []
+  // Files can no longer be deleted once the court of appeals has registered its
+  // case number, as they have been delivered to the court of appeals by then
   const canDeleteFile = (file: CaseFile) =>
-    isMatchingAppealCaseFile(workingCase, deleteCategories, file, user)
+    isMatchingAppealCaseFile(workingCase, deleteCategories, file, user) &&
+    !isAppealFileDeletionLocked(file.category, targetAppealCase)
 
   useEffect(() => {
     if (workingCase.caseFiles) {
