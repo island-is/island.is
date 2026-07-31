@@ -124,8 +124,13 @@ const AppealCaseFilesOverview = () => {
   // Files can no longer be deleted once the court of appeals has registered its
   // case number, as they have been delivered to the court of appeals by then
   const canDeleteFile = (file: CaseFile) =>
-    isMatchingAppealCaseFile(workingCase, deleteCategories, file, user) &&
-    !isAppealFileDeletionLocked(file.category, targetAppealCase)
+    isMatchingAppealCaseFile(
+      workingCase,
+      deleteCategories,
+      file,
+      user,
+      targetAppealCase?.rulingFileId,
+    ) && !isAppealFileDeletionLocked(file.category, targetAppealCase)
 
   useEffect(() => {
     if (workingCase.caseFiles) {
