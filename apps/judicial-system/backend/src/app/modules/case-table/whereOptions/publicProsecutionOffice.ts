@@ -17,7 +17,10 @@ import { publicProsecutionOfficeIndictmentsAccessWhereOptions } from './access'
 // is therefore still on deadline while it is at or after this cutoff, and past
 // it once it is before - which keeps these lists in step with the deadline the
 // case itself reports, whether or not the date carries a time of day.
-const APPEAL_WINDOW_CUTOFF = `date_trunc('day', NOW()) - INTERVAL '${VERDICT_APPEAL_WINDOW_DAYS} days'`
+// The day boundary is pinned to UTC rather than left to the database session
+// time zone, so that it matches the deadline computed in Node - which also runs
+// in UTC, the time zone Iceland is in all year round.
+const APPEAL_WINDOW_CUTOFF = `((date_trunc('day', NOW() AT TIME ZONE 'UTC') - INTERVAL '${VERDICT_APPEAL_WINDOW_DAYS} days') AT TIME ZONE 'UTC')`
 
 export const publicProsecutionOfficeIndictmentsNewWhereOptions =
   (): CaseWhereOptions => ({
