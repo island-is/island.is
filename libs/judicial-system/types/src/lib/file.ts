@@ -38,7 +38,7 @@ export enum CaseFileCategory {
 
 // Appeal files submitted by the parties (kærugögn) - as opposed to the court of
 // appeals' own documents (APPEAL_RULING, APPEAL_COURT_RECORD)
-const partyAppealFileCategories = [
+export const partyAppealFileCategories = [
   CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
   CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
   CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
