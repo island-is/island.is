@@ -83,9 +83,7 @@ describe('indictment appeal deadline cell generator', () => {
     const cell = generate({
       defendants: [
         {
-          verdicts: [
-            { serviceRequirement: ServiceRequirement.NOT_REQUIRED },
-          ],
+          verdicts: [{ serviceRequirement: ServiceRequirement.NOT_REQUIRED }],
         },
       ],
     } as unknown as Case)
