@@ -101,4 +101,7 @@ export class FormDto {
 
   @ApiPropertyOptional()
   lastModifiedBy?: string
+
+  @ApiPropertyOptional()
+  delegations?: string[]
 }

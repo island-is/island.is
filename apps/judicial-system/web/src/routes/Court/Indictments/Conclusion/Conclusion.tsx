@@ -34,6 +34,7 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  FormFooterAction,
   Modal,
   PageHeader,
   PageLayout,
@@ -570,6 +571,47 @@ const Conclusion: FC = () => {
       : []),
   ]
 
+  const actions: FormFooterAction[] =
+    missingValidGeneratedCourtRecordForCompletion ||
+    missingValidGeneratedCourtRecordForCompletionWithMerge ||
+    missingRulingInGeneratedCourtSessions ||
+    missingValidGeneratedCourtRecordForSplitting
+      ? []
+      : [
+          {
+            text:
+              selectedAction === IndictmentDecision.COMPLETING
+                ? formatMessage(core.continue)
+                : formatMessage(strings.nextButtonTextConfirm),
+            icon: 'arrowForward',
+            onClick: () => {
+              if (
+                selectedAction === IndictmentDecision.COMPLETING_FOR_SOME ||
+                selectedAction === IndictmentDecision.SPLITTING
+              ) {
+                if (selectedAction === IndictmentDecision.COMPLETING_FOR_SOME) {
+                  setConclusionDate(formatDate(new Date()))
+                  setModalVisible('COMPLETING_FOR_SOME')
+                } else {
+                  setModalVisible('SPLIT')
+                }
+                return
+              }
+
+              handleNavigationTo(
+                selectedAction === IndictmentDecision.COMPLETING
+                  ? DISTRICT_COURT_INDICTMENT_CASE_SUMMARY_ROUTE
+                  : selectedAction === IndictmentDecision.REDISTRIBUTING
+                  ? getStandardUserDashboardRoute(user)
+                  : DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
+              )
+            },
+            disabled: !stepIsValid(),
+            loading: isUpdatingCase,
+            testId: 'continueButton',
+          },
+        ]
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -1019,43 +1061,8 @@ const Conclusion: FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${DISTRICT_COURT_INDICTMENT_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() => {
-            if (
-              selectedAction === IndictmentDecision.COMPLETING_FOR_SOME ||
-              selectedAction === IndictmentDecision.SPLITTING
-            ) {
-              if (selectedAction === IndictmentDecision.COMPLETING_FOR_SOME) {
-                setConclusionDate(formatDate(new Date()))
-                setModalVisible('COMPLETING_FOR_SOME')
-              } else {
-                setModalVisible('SPLIT')
-              }
-              return
-            }
-
-            handleNavigationTo(
-              selectedAction === IndictmentDecision.COMPLETING
-                ? DISTRICT_COURT_INDICTMENT_CASE_SUMMARY_ROUTE
-                : selectedAction === IndictmentDecision.REDISTRIBUTING
-                ? getStandardUserDashboardRoute(user)
-                : DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
-            )
-          }}
-          nextButtonText={
-            selectedAction === IndictmentDecision.COMPLETING
-              ? undefined
-              : formatMessage(strings.nextButtonTextConfirm)
-          }
-          nextIsDisabled={!stepIsValid()}
-          nextIsLoading={isUpdatingCase}
-          hideNextButton={
-            missingValidGeneratedCourtRecordForCompletion ||
-            missingValidGeneratedCourtRecordForCompletionWithMerge ||
-            missingRulingInGeneratedCourtSessions ||
-            missingValidGeneratedCourtRecordForSplitting
-          }
+          actions={actions}
           infoBoxText={
             missingValidGeneratedCourtRecordForCompletion
               ? 'Til að ljúka máli öðruvísi en með sameiningu þarf að staðfesta þingbók á þingbókarskjá.'
