@@ -44,7 +44,9 @@ export class ChildProtectionNotificationService extends BaseTemplateApiService {
     )
   }
 
-  async getChildUnknownNationalIdStates({ auth }: TemplateApiModuleActionProps) {
+  async getChildUnknownNationalIdStates({
+    auth,
+  }: TemplateApiModuleActionProps) {
     return await this.nationalAgencyForChildrenAndFamiliesClientService.getChildUnknownNationalIdStates(
       auth,
     )
