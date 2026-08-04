@@ -22,12 +22,10 @@ interface InfoLineItem {
 
 interface AppointmentDetailInfoLinesProps {
   appointment: AppointmentDetailFieldsFragment
-  loading?: boolean
 }
 
 export const AppointmentDetailInfoLines = ({
   appointment,
-  loading,
 }: AppointmentDetailInfoLinesProps) => {
   const { formatMessage } = useLocale()
 
@@ -138,7 +136,7 @@ export const AppointmentDetailInfoLines = ({
       space={1}
     >
       {lines.map((line, index) => (
-        <InfoLine key={index} loading={loading} {...line} />
+        <InfoLine key={index} {...line} />
       ))}
     </InfoLineStack>
   )

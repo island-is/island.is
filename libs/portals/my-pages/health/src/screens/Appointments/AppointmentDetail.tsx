@@ -74,10 +74,7 @@ const AppointmentDetail = () => {
             )}
           </Box>
 
-          <AppointmentDetailInfoLines
-            appointment={appointment}
-            loading={loading}
-          />
+          <AppointmentDetailInfoLines appointment={appointment} />
         </Stack>
       )}
     </IntroWrapper>
