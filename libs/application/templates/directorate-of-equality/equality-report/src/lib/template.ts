@@ -2,9 +2,7 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
-  ApplicationRole,
   ApplicationStateSchema,
-  Application,
   DefaultEvents,
   FormModes,
   UserProfileApi,
@@ -13,7 +11,6 @@ import {
   defineTemplateApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
-import { isCompany } from 'kennitala'
 import {
   ActiveEqualityReportApi,
   CompanyRegistryApi,
@@ -151,20 +148,20 @@ const template: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: {
-            target: States.COMPLETED,
+            target: States.IN_REVIEW,
           },
         },
       },
-      [States.COMPLETED]: {
+      [States.IN_REVIEW]: {
         meta: {
-          name: 'Completed form',
-          progress: 1,
-          status: FormModes.COMPLETED,
+          name: 'Til yfirferðar',
+          progress: 0.8,
+          status: FormModes.IN_PROGRESS,
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
             tag: {
-              label: coreMessages.tagsDone,
-              variant: 'mint',
+              label: coreMessages.tagsInProgress,
+              variant: 'blueberry',
             },
           },
           onEntry: defineTemplateApi({
@@ -177,8 +174,74 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/completedForm').then((module) =>
-                  Promise.resolve(module.completedForm),
+                import('../forms/inReviewForm').then((module) =>
+                  Promise.resolve(module.inReviewForm),
+                ),
+              read: 'all',
+              delete: true,
+            },
+            {
+              id: Roles.REVIEWER,
+              write: 'all',
+              read: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.APPROVE]: {
+            target: States.APPROVED,
+          },
+          DENY: {
+            target: States.DENIED,
+          },
+          [DefaultEvents.EDIT]: {
+            target: States.DRAFT,
+          },
+        },
+      },
+      [States.APPROVED]: {
+        meta: {
+          name: 'Approved form',
+          progress: 1,
+          status: FormModes.APPROVED,
+          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            tag: {
+              label: coreMessages.tagsDone,
+              variant: 'mint',
+            },
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/approvedForm').then((module) =>
+                  Promise.resolve(module.approvedForm),
+                ),
+              read: 'all',
+              delete: true,
+            },
+          ],
+        },
+      },
+      [States.DENIED]: {
+        meta: {
+          name: 'Denied form',
+          progress: 1,
+          status: FormModes.REJECTED,
+          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            tag: {
+              label: coreMessages.tagsRejected,
+              variant: 'red',
+            },
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/deniedForm').then((module) =>
+                  Promise.resolve(module.deniedForm),
                 ),
               read: 'all',
               delete: true,
