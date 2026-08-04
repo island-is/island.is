@@ -112,7 +112,11 @@ const buildCsp = (nonce: string): string => {
       'https://*.readspeaker.com',
       'https://cdnjs.cloudflare.com',
     ],
-    'child-src': ["'self'", 'https://*.mypurecloud.de', 'https://*.euc1.pure.cloud'],
+    'child-src': [
+      "'self'",
+      'https://*.mypurecloud.de',
+      'https://*.euc1.pure.cloud',
+    ],
     'manifest-src': ["'self'", 'https://*.devland.is'],
     'object-src': ['https://*.mypurecloud.de', 'https://*.euc1.pure.cloud'],
     'frame-ancestors': [
