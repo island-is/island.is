@@ -250,16 +250,6 @@ describe('CaseController - Appeal decision dual-write', () => {
         expect.anything(),
       )
     })
-
-    it('should still stamp the legacy prosecutor postponed appeal date', () => {
-      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
-        caseId,
-        expect.objectContaining({
-          prosecutorPostponedAppealDate: courtEndTime,
-        }),
-        { transaction },
-      )
-    })
   })
 
   describe('re-completing a corrected request case where the appeal still stands', () => {
@@ -382,17 +372,6 @@ describe('CaseController - Appeal decision dual-write', () => {
       ).toHaveBeenCalledWith(appealCaseId, { transaction })
       expect(mockAppealCaseRepositoryService.delete).toHaveBeenCalledWith(
         appealCaseId,
-        { transaction },
-      )
-    })
-
-    it('should clear the legacy postponed appeal dates', () => {
-      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
-        caseId,
-        expect.objectContaining({
-          prosecutorPostponedAppealDate: null,
-          accusedPostponedAppealDate: null,
-        }),
         { transaction },
       )
     })

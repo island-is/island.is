@@ -286,6 +286,7 @@ describe('addRichText highlight placement', () => {
     }
 
     const docInternals = doc as unknown as {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       _fragment: (text: string, x: number, y: number, options: unknown) => void
     }
     const originalFragment = docInternals._fragment.bind(doc)
