@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Barnaverndargátt API",
-    "description": "Gátt fyrir aðila til að skila inn tilkynningum vegna barnaverndarmála.<br>Build time(version): 2026-07-22 11:19:28",
+    "description": "Gátt fyrir aðila til að skila inn tilkynningum vegna barnaverndarmála.<br>Build time(version): 2026-07-29 09:35:41",
     "contact": {
       "name": "Apró ehf.",
       "url": "https://www.apro.is/",
@@ -2697,6 +2697,48 @@
         }
       }
     },
+    "/api/external/dropdown/child-unknown-national-id-states": {
+      "get": {
+        "tags": ["ExternalDropdown"],
+        "summary": "Get party state options for unknown child national ID",
+        "description": "Returns the party state values applicable when the child's national ID is not known: expected child with unknown ID, tourist, and border arrival. **Required Roles:** type:digital_iceland.",
+        "operationId": "ExternalChildUnknownNationalIdStates",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DropDownDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DropDownDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DropDownDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/api/external/dropdown/party-states": {
       "get": {
         "tags": ["ExternalDropdown"],
@@ -2829,6 +2871,48 @@
         "summary": "Get all postal codes",
         "description": "Returns all Icelandic postal codes with Guid as value and name as label. **Required Roles:** type:digital_iceland.",
         "operationId": "ExternalPostalCodes",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DropDownDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DropDownDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DropDownDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/external/dropdown/school-types": {
+      "get": {
+        "tags": ["ExternalDropdown"],
+        "summary": "Get all school types",
+        "description": "Returns school type options with Icelandic name as both value and label. **Required Roles:** type:digital_iceland.",
+        "operationId": "ExternalSchoolTypes",
         "responses": {
           "200": {
             "description": "OK",
@@ -7748,7 +7832,8 @@
           "Institution",
           "KerfisKennitala",
           "IcelandicResidentWithoutId",
-          "BorderReception"
+          "BorderReception",
+          "ExpectedUnknownNationalId"
         ],
         "type": "string"
       },
