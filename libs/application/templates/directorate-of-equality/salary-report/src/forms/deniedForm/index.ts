@@ -4,16 +4,16 @@ import { FormModes } from '@island.is/application/types'
 import { DirectorateOfEqualityLogo } from '@island.is/application/assets/institution-logos'
 import { messages } from '../../lib/messages'
 
-export const completedForm = buildForm({
-  id: 'completedForm',
+export const deniedForm = buildForm({
+  id: 'deniedForm',
   logo: DirectorateOfEqualityLogo,
-  mode: FormModes.COMPLETED,
+  mode: FormModes.REJECTED,
   children: [
     buildFormConclusionSection({
-      sectionTitle: messages.completed.sectionTitle,
-      tabTitle: messages.completed.sectionTitle,
-      alertTitle: messages.completed.alertTitle,
-      alertMessage: messages.completed.alertDescription,
+      sectionTitle: messages.rejected.sectionTitle,
+      tabTitle: messages.rejected.sectionTitle,
+      alertTitle: messages.rejected.title,
+      alertMessage: messages.rejected.description,
     }),
   ],
 })

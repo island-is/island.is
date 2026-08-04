@@ -927,18 +927,33 @@ export const messages = {
     },
   }),
 
-  completed: defineMessages({
+  inReview: defineMessages({
     sectionTitle: {
-      id: 'salaryReport.application:completed.sectionTitle',
+      id: 'salaryReport.application:inReview.sectionTitle',
       defaultMessage: 'Umsókn móttekin',
     },
     alertTitle: {
-      id: 'salaryReport.application:completed.alertTitle',
+      id: 'salaryReport.application:inReview.alertTitle',
       defaultMessage: 'Umsókn hefur verið send til Jafnréttisstofu',
     },
     alertDescription: {
-      id: 'salaryReport.application:completed.alertDescription',
+      id: 'salaryReport.application:inReview.alertDescription',
       defaultMessage: lorem,
+    },
+  }),
+
+  rejected: defineMessages({
+    sectionTitle: {
+      id: 'salaryReport.application:rejected.sectionTitle',
+      defaultMessage: 'Hafnað',
+    },
+    title: {
+      id: 'salaryReport.application:rejected.title',
+      defaultMessage: 'Umsókn hafnað',
+    },
+    description: {
+      id: 'salaryReport.application:rejected.description',
+      defaultMessage: 'Umsókn þinni hefur verið hafnað.',
     },
   }),
 

@@ -2,9 +2,7 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
-  ApplicationRole,
   ApplicationStateSchema,
-  Application,
   DefaultEvents,
   FormModes,
   UserProfileApi,
@@ -12,7 +10,6 @@ import {
   IdentityApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
-import { isCompany } from 'kennitala'
 import {
   ActiveEqualityReportApi,
   BlankExcelTemplateApi,
@@ -25,6 +22,7 @@ import {
   SubmitSalaryReportApi,
 } from '../dataProviders'
 import { Events, Roles, States } from '../utils/constants'
+import { mapUserToRole } from '../utils/mapUserToRole'
 import {
   hasActiveEqualityReport,
   hasPostponedOutlierPlan,
@@ -32,6 +30,7 @@ import {
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
 import {
+  coreMessages,
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
   pruneAfterDays,
@@ -159,7 +158,7 @@ const template: ApplicationTemplate<
               cond: hasPostponedOutlierPlan,
             },
             {
-              target: States.COMPLETED,
+              target: States.IN_REVIEW,
             },
           ],
         },
@@ -202,22 +201,86 @@ const template: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: {
-            target: States.COMPLETED,
+            target: States.IN_REVIEW,
           },
         },
       },
-      [States.COMPLETED]: {
+      [States.IN_REVIEW]: {
         meta: {
-          name: 'Completed form',
-          progress: 1,
-          status: FormModes.COMPLETED,
+          name: 'Til yfirferðar',
+          progress: 0.95,
+          status: FormModes.IN_PROGRESS,
           lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            tag: {
+              label: coreMessages.tagsInProgress,
+              variant: 'blueberry',
+            },
+          },
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/completedForm').then((module) =>
-                  Promise.resolve(module.completedForm),
+                import('../forms/inReviewForm').then((module) =>
+                  Promise.resolve(module.inReviewForm),
+                ),
+              read: 'all',
+              delete: true,
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.APPROVE]: {
+            target: States.APPROVED,
+          },
+          [DefaultEvents.REJECT]: {
+            target: States.DENIED,
+          },
+        },
+      },
+      [States.APPROVED]: {
+        meta: {
+          name: 'Approved form',
+          progress: 1,
+          status: FormModes.APPROVED,
+          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            tag: {
+              label: coreMessages.tagsDone,
+              variant: 'mint',
+            },
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/approvedForm').then((module) =>
+                  Promise.resolve(module.approvedForm),
+                ),
+              read: 'all',
+              delete: true,
+            },
+          ],
+        },
+      },
+      [States.DENIED]: {
+        meta: {
+          name: 'Denied form',
+          progress: 1,
+          status: FormModes.REJECTED,
+          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            tag: {
+              label: coreMessages.tagsRejected,
+              variant: 'red',
+            },
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/deniedForm').then((module) =>
+                  Promise.resolve(module.deniedForm),
                 ),
               read: 'all',
               delete: true,
@@ -227,18 +290,7 @@ const template: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole(
-    nationalId: string,
-    application: Application,
-  ): ApplicationRole | undefined {
-    if (
-      isCompany(application.applicant) &&
-      nationalId === application.applicant
-    ) {
-      return Roles.APPLICANT
-    }
-    return Roles.NOT_ALLOWED
-  },
+  mapUserToRole,
 }
 
 export default template
