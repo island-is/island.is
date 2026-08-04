@@ -155,6 +155,13 @@ const nextConfig = {
     // Source maps for the server production bundle, previously configured
     // through the custom webpack config (config.devtool).
     serverSourceMaps: true,
+    // Prefer `nx analyze web` for bundle inspection. ANALYZE=true is only for
+    // reading raw chunk text, which numeric module ids and scope hoisting
+    // otherwise make unattributable. It changes chunk sizes, so don't compare
+    // absolute bytes against a normal build.
+    ...(process.env.ANALYZE === 'true'
+      ? { turbopackModuleIds: 'named', turbopackScopeHoisting: false }
+      : {}),
   },
   turbopack: {
     resolveAlias: {
