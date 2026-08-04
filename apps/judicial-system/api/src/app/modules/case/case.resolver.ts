@@ -128,7 +128,10 @@ export class CaseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_CASE,
-      this.backendService.updateCaseAppealDecision(caseId, updateAppealDecision),
+      this.backendService.updateCaseAppealDecision(
+        caseId,
+        updateAppealDecision,
+      ),
       caseId,
     )
   }
