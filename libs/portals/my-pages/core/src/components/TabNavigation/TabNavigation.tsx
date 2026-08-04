@@ -28,7 +28,7 @@ interface ActivePath extends PortalNavigationItem {
 
 export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
   const { formatMessage } = useLocale()
-
+  const tester = 123
   const navigate = useNavigate()
   const { width } = useWindowSize()
 
