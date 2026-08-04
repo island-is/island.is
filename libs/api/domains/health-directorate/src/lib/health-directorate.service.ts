@@ -90,6 +90,7 @@ import { Waitlist, Waitlists } from './models/waitlists.model'
 import { HealthDirectorateHealthConversation } from './models/healthConversation.model'
 import { HealthDirectorateHealthConversationAttachment } from './models/healthConversationAttachment.model'
 import { HealthDirectorateHealthConversationDetail } from './models/healthConversationDetail.model'
+import { HealthDirectorateConversationOrganization } from './models/healthConversationOrganization.model'
 import { HealthDirectorateHealthConversationEntry } from './models/healthConversationEntry.model'
 import { HealthDirectorateHealthConversationRecipient } from './models/healthConversationRecipient.model'
 
@@ -735,6 +736,20 @@ export class HealthDirectorateService {
     }
   }
 
+  private mapConversationOrganization(c: {
+    organizationNationalId?: string
+    organizationName?: string
+    departmentName?: string
+  }): HealthDirectorateConversationOrganization | undefined {
+    return c.organizationNationalId
+      ? {
+          nationalId: c.organizationNationalId,
+          name: c.organizationName,
+          departmentName: c.departmentName,
+        }
+      : undefined
+  }
+
   private mapConversationEntry(
     m: ConversationMessageDto,
     conversationId: string,
@@ -763,6 +778,7 @@ export class HealthDirectorateService {
       messageCount: c.messageCount,
       lastMessageSentAt: c.lastMessageSentAt,
       lastSenderGroupName: c.lastSenderGroupName,
+      organization: this.mapConversationOrganization(c),
       hasAttachment: c.hasAttachment,
       isStarred: c.isStarred,
       isArchived: c.isArchived,
@@ -794,6 +810,7 @@ export class HealthDirectorateService {
       messageCount: c.messageCount,
       lastMessageSentAt: c.lastMessageSentAt,
       lastSenderGroupName: c.lastSenderGroupName,
+      organization: this.mapConversationOrganization(c),
       hasAttachment: c.hasAttachment,
       isStarred: c.isStarred,
       isArchived: c.isArchived,
