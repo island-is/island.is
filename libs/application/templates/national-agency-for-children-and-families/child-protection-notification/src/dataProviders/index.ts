@@ -54,6 +54,12 @@ export const PostalCodesApi = defineTemplateApi({
   namespace: ApplicationTypes.CHILD_PROTECTION_NOTIFICATION,
 })
 
+export const ChildUnknownNationalIdStatesApi = defineTemplateApi({
+  action: ApiModuleActions.getChildUnknownNationalIdStates,
+  externalDataId: 'childUnknownNationalIdStates',
+  namespace: ApplicationTypes.CHILD_PROTECTION_NOTIFICATION,
+})
+
 export const GuardianNotAwareReasonsApi = defineTemplateApi({
   action: ApiModuleActions.getGuardianNotAwareReasons,
   externalDataId: 'guardianNotAwareReasons',

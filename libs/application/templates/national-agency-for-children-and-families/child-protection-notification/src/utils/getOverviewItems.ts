@@ -29,7 +29,6 @@ import {
   DO_NOT_KNOW,
   IS,
   KnowsNationalId,
-  NoNationalIdReason,
   NOT_APPLICABLE,
   RISK_TO_UNBORN,
 } from '../utils/constants'
@@ -54,14 +53,6 @@ const knowsNationalIdLabelMap = {
   [KnowsNationalId.YES]: sharedMessages.radioYes,
   [KnowsNationalId.NO]: sharedMessages.radioNo,
   [KnowsNationalId.UNBORN]: childMessages.nationalIdLookup.radioOptionUnborn,
-} as const
-
-const noNationalIdReasonLabelMap = {
-  [NoNationalIdReason.EXPECTED_BUT_UNKNOWN]:
-    childMessages.noNationalId.reasonExpectedButUnknown,
-  [NoNationalIdReason.TRAVELER]: childMessages.noNationalId.reasonTraveler,
-  [NoNationalIdReason.BORDER_RECEPTION]:
-    childMessages.noNationalId.reasonBorderReception,
 } as const
 
 const educationTypeLabelMap = {
@@ -246,7 +237,8 @@ export const getChildWithNationalIdItems = (
   answers: FormValue,
   externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const { pronounOptions } = getApplicationExternalData(externalData)
+  const { pronounOptions, childUnknownNationalIdStates } =
+    getApplicationExternalData(externalData)
   const {
     childKnowsNationalId,
     childNoNationalIdReason,
@@ -327,9 +319,9 @@ export const getChildWithNationalIdItems = (
             width: 'half' as const,
             keyText: childMessages.noNationalId.reasonLabel,
             valueText: childNoNationalIdReason
-              ? noNationalIdReasonLabelMap[
-                  childNoNationalIdReason as keyof typeof noNationalIdReasonLabelMap
-                ] ?? childNoNationalIdReason
+              ? childUnknownNationalIdStates.find(
+                  (r) => r.value === childNoNationalIdReason,
+                )?.label ?? childNoNationalIdReason
               : '',
             hideIfEmpty: true,
           },

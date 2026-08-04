@@ -80,23 +80,6 @@ export const childMessages = {
       defaultMessage: 'Veldu nánari skýringu',
       description: 'Placeholder for the reason dropdown',
     },
-    reasonExpectedButUnknown: {
-      id: 'cpn.application:child.noNationalId.reasonExpectedButUnknown',
-      defaultMessage:
-        'Barnið er væntanlegt með kennitölu en ég þekki hana ekki',
-      description:
-        'Reason: child is expected to have a national ID but user does not know it',
-    },
-    reasonTraveler: {
-      id: 'cpn.application:child.noNationalId.reasonTraveler',
-      defaultMessage: 'Barnið er ferðamaður',
-      description: 'Reason: child is a traveler',
-    },
-    reasonBorderReception: {
-      id: 'cpn.application:child.noNationalId.reasonBorderReception',
-      defaultMessage: 'Móttaka barns við landamæri',
-      description: 'Reason: child is being received at the border',
-    },
   }),
   manualInfo: defineMessages({
     sectionTitle: {

@@ -24,6 +24,7 @@ export enum ApiModuleActions {
   getPostalCodes = 'getPostalCodes',
   getPronouns = 'getPronouns',
   getDisabilityStatuses = 'getDisabilityStatuses',
+  getChildUnknownNationalIdStates = 'getChildUnknownNationalIdStates',
   getGuardianNotAwareReasons = 'getGuardianNotAwareReasons',
   createNotification = 'createNotification',
   completeNotification = 'completeNotification',
@@ -39,12 +40,6 @@ export enum KnowsNationalId {
   YES = 'yes',
   NO = 'no',
   UNBORN = 'unborn',
-}
-
-export enum NoNationalIdReason {
-  EXPECTED_BUT_UNKNOWN = 'expectedButUnknown',
-  TRAVELER = 'traveler',
-  BORDER_RECEPTION = 'borderReception',
 }
 
 export const DO_NOT_KNOW = 'doNotKnow'
