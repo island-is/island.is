@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'application-templates-directorate-of-equality-salary-report',
   preset: '../../../../../jest.preset.js',

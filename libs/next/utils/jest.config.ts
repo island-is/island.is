@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 module.exports = {
   displayName: 'next-utils',
   preset: './jest.preset.js',
