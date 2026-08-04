@@ -7,7 +7,9 @@ query GetHealthConversationDetail($id: ID!) {
     isArchived
     patientCanReply
     isRead
-    lastSenderGroupName
+    organization {
+      ...HealthConversationOrganizationFragment
+    }
     messages {
       id
       direction
