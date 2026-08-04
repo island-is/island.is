@@ -295,27 +295,29 @@ const IndictmentOverview: FC = () => {
         <FormContentContainer isFooter>
           <FormFooter
             previousUrl={getStandardUserDashboardRoute(user)}
-            hideNextButton={
+            actions={
               !shouldDisplayReviewDecision && !canDuplicateIndictment
-            }
-            nextIsDisabled={
-              !canDuplicateIndictment &&
-              shouldDisplayReviewDecision &&
-              (isReviewMissing || !hasReviewDecisionChanged)
-            }
-            nextButtonText={
-              canDuplicateIndictment
-                ? 'Afrita mál í drög'
-                : workingCase.indictmentReviewedDate
-                ? 'Breyta ákvörðun'
-                : 'Ljúka yfirlestri'
-            }
-            onNextButtonClick={() =>
-              setModalVisible(
-                canDuplicateIndictment
-                  ? DUPLICATE_INDICTMENT
-                  : CONFIRM_PROSECUTOR_DECISION,
-              )
+                ? []
+                : [
+                    {
+                      text: canDuplicateIndictment
+                        ? 'Afrita mál í drög'
+                        : workingCase.indictmentReviewedDate
+                        ? 'Breyta ákvörðun'
+                        : 'Ljúka yfirlestri',
+                      onClick: () =>
+                        setModalVisible(
+                          canDuplicateIndictment
+                            ? DUPLICATE_INDICTMENT
+                            : CONFIRM_PROSECUTOR_DECISION,
+                        ),
+                      disabled:
+                        !canDuplicateIndictment &&
+                        shouldDisplayReviewDecision &&
+                        (isReviewMissing || !hasReviewDecisionChanged),
+                      testId: 'continueButton',
+                    },
+                  ]
             }
           />
         </FormContentContainer>

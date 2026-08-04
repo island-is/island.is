@@ -19,8 +19,7 @@ export const StickyLayout = ({
 }: StickyLayoutProps) => {
   const mainElmRef = useRef<HTMLDivElement>(null)
   const isIntersecting =
-    // react-use wants a non-null RefObject<HTMLElement>; React 19 types the ref as
-    // nullable, so narrow here (same pattern as BackgroundImage).
+    // react-use's useIntersection wants a non-null RefObject<HTMLElement>.
     (
       useIntersection(mainElmRef as React.RefObject<HTMLElement>, {
         rootMargin: '0% 0% -100% 0%',

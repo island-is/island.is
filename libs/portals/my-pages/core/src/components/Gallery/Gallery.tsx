@@ -53,10 +53,8 @@ export const Gallery: FC<GalleryProps> = ({
             </Box>
           ) : (
             <Box className={styles.galleryImageWrap}>
-              {/* React 19 types ReactElement.props as `unknown`, so cloneElement rejects
-                  the extra `active` prop; widen the element to keep it compiling. */}
               {childArray.map((item, i) =>
-                cloneElement(item as React.ReactElement<any>, {
+                cloneElement(item as React.ReactElement<{ active?: boolean }>, {
                   active: i === activeItem,
                 }),
               )}

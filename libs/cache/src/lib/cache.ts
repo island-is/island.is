@@ -1,17 +1,11 @@
 import { KeyvAdapter } from '@apollo/utils.keyvadapter'
 import KeyvRedis from '@keyv/redis'
 import { createCache as createCacheManager } from 'cache-manager'
-import type { CreateCacheOptions } from 'cache-manager'
-import {
-  Cluster,
-  ClusterNode,
-  RedisOptions,
-  ClusterOptions,
-  Redis,
-} from 'ioredis'
+import { EventEmitter } from 'events'
+import { Cluster, ClusterNode, RedisOptions, ClusterOptions } from 'ioredis'
 
 import { logger } from '@island.is/logging'
-import Keyv from 'keyv'
+import Keyv, { KeyvStoreAdapter } from 'keyv'
 
 type Options = {
   name: string
@@ -19,8 +13,6 @@ type Options = {
   ssl: boolean
   noPrefix?: boolean
 }
-
-type RedisClient = Cluster | Redis
 
 const DEFAULT_PORT = 6379
 
@@ -140,16 +132,9 @@ export const createCache = (options: Options) =>
   new Cache(createRedisCluster(options))
 
 export const createRedisApolloCache = (options: Options) => {
-  return new KeyvAdapter(
-    new Keyv({
-      store: new KeyvRedis(createRedisCluster(options) as any, {
-        useRedisSets: false,
-      }),
-    }) as any,
-    {
-      disableBatchReads: true,
-    },
-  )
+  return new KeyvAdapter(createRedisKeyv(options), {
+    disableBatchReads: true,
+  })
 }
 
 export const createRedisCluster = (options: Options): Cluster => {
@@ -159,32 +144,132 @@ export const createRedisCluster = (options: Options): Cluster => {
 }
 
 /**
- * Creates a cache-manager (v6) cache backed by the Redis cluster.
+ * Creates a cache-manager cache backed by the Redis cluster.
  *
- * Note: cache-manager v6 is Keyv-based. Keys get a Keyv namespace prefix, so
- * existing cache entries from the v5/ioredis-store era are simply cold after
- * upgrade — safe for caches, but do not use this for durable storage.
+ * Keys get a Keyv namespace prefix and values are wrapped by Keyv's
+ * serializer, so entries are not interoperable with clients reading or
+ * writing raw Redis keys — treat this strictly as a cache, never as durable
+ * storage.
  *
- * Kept async for backwards compatibility with the v5 `caching()` signature.
+ * Kept async for backwards compatibility with callers that await it.
  */
 export const createRedisCacheManager = async (
   options: Options & { ttl?: number },
 ) => {
   return createCacheManager({
-    // Cast because the repo hoists two structurally-identical keyv versions
-    // (top-level vs. the one bundled under cache-manager); they only differ by
-    // a private type field, so the Keyv instance is runtime-compatible.
-    stores: [
-      createRedisKeyv(options),
-    ] as unknown as CreateCacheOptions['stores'],
-    // v5 treated ttl: 0 as "no expiry"; v6/Keyv expects undefined for that.
+    stores: [createRedisKeyv(options)],
+    // Keyv expects undefined (not 0) for "no expiry".
     ttl: options.ttl || undefined,
   })
 }
 
-export const createRedisKeyv = (options: Options) =>
-  new Keyv({
-    store: new KeyvRedis(createRedisCluster(options) as any, {
+export const createRedisKeyv = (options: Options) => {
+  const keyv = new Keyv({
+    store: new KeyvRedis(createRedisCluster(options), {
       useRedisSets: false,
     }),
   })
+  // Keyv converts store errors into events plus cache-miss returns; without a
+  // listener a Redis outage is indistinguishable from a 100% miss rate.
+  keyv.on('error', (error) =>
+    logger.error(
+      `Redis cache error: ${error instanceof Error ? error.message : error}`,
+    ),
+  )
+  return keyv
+}
+
+/**
+ * Read-only Keyv store that reads entries written before the cache-manager v6
+ * upgrade, i.e. by cache-manager-ioredis-yet. Those entries live at the bare
+ * `<cluster prefix><key>` Redis key (no Keyv namespace) and hold a plain
+ * `JSON.stringify(value)` with the TTL kept by Redis itself.
+ *
+ * It never writes — new entries are only ever written in the current format —
+ * but it does delete legacy keys so that invalidations (logout, expiry) clear
+ * both formats. Used as a secondary cache-manager store so a miss in the
+ * current-format store falls through to it while legacy keys still exist.
+ */
+class LegacyRedisFallbackStore extends EventEmitter {
+  readonly opts = {}
+  readonly ttlSupport = false
+  namespace?: string
+
+  constructor(private readonly cluster: Cluster) {
+    super()
+    cluster.on('error', (error) => this.emit('error', error))
+  }
+
+  // Keys arrive unprefixed (the Keyv wrapper sets useKeyPrefix: false); the
+  // cluster's own keyPrefix reproduces the legacy `<name>:<key>` Redis key.
+  async get(key: string): Promise<string | undefined> {
+    return (await this.cluster.get(key)) ?? undefined
+  }
+
+  async set(): Promise<void> {
+    // No-op: legacy-format entries are never written going forward.
+  }
+
+  async delete(key: string): Promise<boolean> {
+    return (await this.cluster.del(key)) > 0
+  }
+
+  async clear(): Promise<void> {
+    // No-op: a namespace-wide clear is unsafe against a shared cluster.
+  }
+
+  async has(key: string): Promise<boolean> {
+    return (await this.cluster.exists(key)) > 0
+  }
+
+  async disconnect(): Promise<void> {
+    await this.cluster.quit()
+  }
+}
+
+const createLegacyRedisFallbackKeyv = (options: Options): Keyv => {
+  const keyv = new Keyv({
+    store: new LegacyRedisFallbackStore(
+      createRedisCluster(options),
+    ) as unknown as KeyvStoreAdapter,
+    // Read the raw legacy key/value verbatim: no Keyv namespace prefix, and
+    // wrap the bare JSON value in the { value, expires } envelope Keyv expects.
+    // Redis has already evicted anything past its TTL, so expires stays unset.
+    useKeyPrefix: false,
+    deserialize: (raw) => {
+      try {
+        return { value: JSON.parse(raw as string), expires: undefined }
+      } catch {
+        return undefined
+      }
+    },
+  })
+  keyv.on('error', (error) =>
+    logger.error(
+      `Redis legacy cache error: ${
+        error instanceof Error ? error.message : error
+      }`,
+    ),
+  )
+  return keyv
+}
+
+/**
+ * Builds the store list for a Redis-backed NestJS `CacheModule`.
+ *
+ * The first store uses the current Keyv key/value format. With
+ * `legacyKeyFallback`, a second read-only store is appended so cache-manager
+ * falls through to the pre-upgrade key format on a miss — keeping state written
+ * before the upgrade (sessions, one-time codes, in-flight payments) readable
+ * until those keys expire, without ever writing the old format again.
+ */
+export const createRedisCacheStores = (
+  options: Options,
+  { legacyKeyFallback = false }: { legacyKeyFallback?: boolean } = {},
+): Keyv[] => {
+  const stores = [createRedisKeyv(options)]
+  if (legacyKeyFallback) {
+    stores.push(createLegacyRedisFallbackKeyv(options))
+  }
+  return stores
+}

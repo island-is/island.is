@@ -1,3 +1,5 @@
+import { GraphQLError } from 'graphql'
+
 import { Inject, Injectable } from '@nestjs/common'
 import type { IcelandicNamesRegistryOptions } from '@island.is/icelandic-names-registry-types'
 import {
@@ -39,9 +41,15 @@ class BackendAPI {
     }
 
     if (!res.ok) {
-      throw Object.assign(
-        new Error(`Request to ${path} failed with status ${res.status}`),
-        { extensions: { response: { status: res.status, body: data } } },
+      throw new GraphQLError(
+        `Request to ${path} failed with status ${res.status}`,
+        {
+          extensions: {
+            ...(res.status === 401 && { code: 'UNAUTHENTICATED' }),
+            ...(res.status === 403 && { code: 'FORBIDDEN' }),
+            response: { status: res.status, body: data },
+          },
+        },
       )
     }
 

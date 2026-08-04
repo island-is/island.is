@@ -226,8 +226,8 @@ describe('UserAccessGuard', () => {
 
   const gqlQuery = (query: string) =>
     request(app.getHttpServer())
-      // Apollo Server 4+ enables CSRF prevention by default; GET requests need
-      // a preflight header (as a browser would send).
+      // Apollo Server's CSRF prevention requires a preflight header on GET
+      // requests (as a browser would send).
       .get('/graphql')
       .set('apollo-require-preflight', 'true')
       .query({

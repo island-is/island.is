@@ -9,9 +9,9 @@ declare module '*.svg' {
   export default content
 }
 
-// Type declaration for the Apple Pay Button web component.
-// @types/react 19 scopes JSX under the `react` module (`React.JSX`), so the custom element
-// must augment that namespace — the global `JSX` namespace is no longer consulted by TSX.
+// Type declaration for the Apple Pay Button web component. TSX resolves
+// custom elements from the `react` module's JSX namespace, so augment that
+// (not the global `JSX` namespace).
 declare module 'react' {
   namespace JSX {
     interface IntrinsicElements {

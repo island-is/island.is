@@ -68,9 +68,8 @@ export const IframeModal: FC<React.PropsWithChildren<IframeModalProps>> = ({
   return (
     <>
       {!!disclosure && (
-        // reakit's render-prop types predate React 19's stricter ReactElement typing
-        // (runtime unaffected); the `as any` casts keep the unknown-props spread and the
-        // function child compiling. Remove when this migrates to ariakit.
+        // reakit's types don't model this disclosure render-prop pattern; the
+        // `as any` casts keep it compiling. Remove when this migrates to ariakit.
         <DialogDisclosure {...dialog} {...(disclosure.props as any)}>
           {
             ((disclosureProps: any) =>

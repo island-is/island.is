@@ -74,8 +74,7 @@ export const BackgroundImage = ({
   format,
 }: BaseProps & ExtraProps) => {
   const intersectionRef = useRef<HTMLElement>(null)
-  // React 19 encodes ref nullability in the type arg; react-use's useIntersection wants a
-  // non-null RefObject<HTMLElement>, so narrow at the call site (Box accepts the nullable ref).
+  // react-use's useIntersection wants a non-null RefObject<HTMLElement>.
   const intersection = useIntersection(
     intersectionRef as React.RefObject<HTMLElement>,
     intersectionOptions,

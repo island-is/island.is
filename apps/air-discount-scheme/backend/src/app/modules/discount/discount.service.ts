@@ -105,9 +105,8 @@ export class DiscountService {
   /**
    * Remaining time-to-live for a cache key, in seconds.
    *
-   * cache-manager v6's `ttl()` returns the absolute expiry timestamp
-   * (epoch ms) rather than the remaining ms that the old ioredis store's
-   * `store.ttl()` returned, so we compute the remaining time here.
+   * cache-manager's `ttl()` returns the absolute expiry timestamp (epoch ms),
+   * so the remaining time is computed here.
    */
   private async getRemainingTtl(cacheKey: string): Promise<number> {
     const expiresAt = await this.cacheManager.ttl(cacheKey)

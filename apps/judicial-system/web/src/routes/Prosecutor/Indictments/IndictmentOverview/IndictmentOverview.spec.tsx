@@ -28,6 +28,7 @@ const reviewerUser = {
   id: 'reviewer_id',
   institution: {
     ...mockUser(UserRole.PROSECUTOR).institution,
+    id: 'public_prosecutors_office_id',
     type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
   },
 }

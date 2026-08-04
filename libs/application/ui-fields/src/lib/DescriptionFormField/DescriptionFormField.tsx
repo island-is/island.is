@@ -9,10 +9,8 @@ import { Locale } from '@island.is/shared/types'
 import { useFormContext } from 'react-hook-form'
 import * as styles from './DescriptionFormField.css'
 
-// Called as a plain function (`DescriptionFormField({...})`) rather than via JSX, so it
-// needs an explicit ReactElement return type: under @types/react 19 an FC's call signature
-// returns `ReactNode` (now including `Promise<AwaitedReactNode>`), which no longer fits a
-// `ReactNode` children slot at the call sites.
+// Called as a plain function (`DescriptionFormField({...})`) rather than via
+// JSX, so it needs an explicit ReactElement return type.
 export const DescriptionFormField = ({
   application,
   field,

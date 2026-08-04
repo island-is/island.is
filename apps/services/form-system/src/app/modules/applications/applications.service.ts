@@ -104,6 +104,13 @@ export class ApplicationsService {
       return responseDto
     }
 
+    const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
+    if (!hasRequiredDelegation) {
+      const responseDto = new ApplicationResponseDto()
+      responseDto.hasRequiredDelegation = false
+      return responseDto
+    }
+
     let newApplicationId = ''
 
     const isTest = form.status !== FormStatus.PUBLISHED
@@ -225,8 +232,22 @@ export class ApplicationsService {
       throw new NotFoundException(`Application with id '${id}' not found`)
     }
 
+    const form = await this.formModel.findByPk(application.formId, {
+      include: [{ model: Section, as: 'sections' }],
+    })
+
+    if (!form) {
+      throw new NotFoundException(
+        `Form with id '${application.formId}' not found`,
+      )
+    }
+
     const loginTypes = await this.getLoginTypes(user)
-    if (!this.doesUserMatchApplication(application, user, loginTypes)) {
+    const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
+    if (
+      !this.doesUserMatchApplication(application, user, loginTypes) ||
+      !hasRequiredDelegation
+    ) {
       throw new ForbiddenException(
         `User does not have permission to update application '${id}'`,
       )
@@ -238,16 +259,6 @@ export class ApplicationsService {
       application.completed = (application.completed ?? []).filter(
         (completedId) => !completedToRemove.includes(completedId),
       )
-
-      const form = await this.formModel.findByPk(application.formId, {
-        include: [{ model: Section, as: 'sections' }],
-      })
-
-      if (!form) {
-        throw new NotFoundException(
-          `Form with id '${application.formId}' not found`,
-        )
-      }
 
       let draftFinishedSteps = 0
 
@@ -301,21 +312,25 @@ export class ApplicationsService {
       throw new NotFoundException(`Application with id '${id}' not found.`)
     }
 
-    if (user) {
-      const loginTypes = await this.getLoginTypes(user)
-      if (!this.doesUserMatchApplication(application, user, loginTypes)) {
-        throw new ForbiddenException(
-          `User does not have permission to submit application '${id}'`,
-        )
-      }
-    }
-
     const form = await this.formModel.findByPk(application.formId)
 
     if (!form) {
       throw new NotFoundException(
         `Form with id '${application.formId}' not found.`,
       )
+    }
+
+    if (user) {
+      const loginTypes = await this.getLoginTypes(user)
+      const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
+      if (
+        !this.doesUserMatchApplication(application, user, loginTypes) ||
+        !hasRequiredDelegation
+      ) {
+        throw new ForbiddenException(
+          `User does not have permission to submit application '${id}'`,
+        )
+      }
     }
 
     const applicationResponseDto = await this.getApplication(id, '', null)
@@ -535,6 +550,13 @@ export class ApplicationsService {
           responseDto.isLoginTypeAllowed = false
           return responseDto
         }
+
+        const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
+        if (!hasRequiredDelegation) {
+          const responseDto = new ApplicationResponseDto()
+          responseDto.hasRequiredDelegation = false
+          return responseDto
+        }
       }
 
       const applicationDto = this.applicationMapper.mapFormToApplicationDto(
@@ -582,6 +604,13 @@ export class ApplicationsService {
     if (!this.isLoginAllowed(loginTypes, allowedLoginTypes)) {
       const responseDto = new ApplicationResponseDto()
       responseDto.isLoginTypeAllowed = false
+      return responseDto
+    }
+
+    const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
+    if (!hasRequiredDelegation) {
+      const responseDto = new ApplicationResponseDto()
+      responseDto.hasRequiredDelegation = false
       return responseDto
     }
 
@@ -736,6 +765,24 @@ export class ApplicationsService {
       loginTypes.length > 0 &&
       loginTypes.every((type) => allowedLoginTypes.includes(type))
     )
+  }
+
+  private hasDelegation(user: User, delegations: string[]): boolean {
+    const userDelegationTypes = user.delegationType ?? []
+
+    if (
+      userDelegationTypes.includes(AuthDelegationType.ProcurationHolder) ||
+      userDelegationTypes.includes(AuthDelegationType.GeneralMandate) ||
+      userDelegationTypes.includes(AuthDelegationType.LegalGuardian)
+    ) {
+      return true
+    }
+
+    if (userDelegationTypes.includes(AuthDelegationType.Custom)) {
+      return delegations.some((delegation) => user.scope?.includes(delegation))
+    }
+
+    return true
   }
 
   private doesUserMatchApplication(
@@ -960,8 +1007,20 @@ export class ApplicationsService {
       )
     }
 
+    const form = await this.formModel.findByPk(application.formId)
+
+    if (!form) {
+      throw new NotFoundException(
+        `Form with id '${application.formId}' not found`,
+      )
+    }
+
     const loginTypes = await this.getLoginTypes(user)
-    if (!this.doesUserMatchApplication(application, user, loginTypes)) {
+    const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
+    if (
+      !this.doesUserMatchApplication(application, user, loginTypes) ||
+      !hasRequiredDelegation
+    ) {
       throw new ForbiddenException(
         `User does not have permission to save screen for application '${applicationId}'`,
       )
@@ -1120,8 +1179,20 @@ export class ApplicationsService {
       throw new NotFoundException(`Application with id '${id}' not found`)
     }
 
+    const form = await this.formModel.findByPk(application.formId)
+
+    if (!form) {
+      throw new NotFoundException(
+        `Form with id '${application.formId}' not found`,
+      )
+    }
+
     const loginTypes = await this.getLoginTypes(user)
-    if (!this.doesUserMatchApplication(application, user, loginTypes)) {
+    const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
+    if (
+      !this.doesUserMatchApplication(application, user, loginTypes) ||
+      !hasRequiredDelegation
+    ) {
       throw new ForbiddenException(
         `User does not have permission to delete application '${id}'`,
       )
@@ -1175,7 +1246,11 @@ export class ApplicationsService {
     const form = await this.getForm(slug)
     const allowedLoginTypes = await this.getAllowedLoginTypes(form)
     const loginTypes = await this.getLoginTypes(user)
-    if (!this.isLoginAllowed(loginTypes, allowedLoginTypes)) {
+    const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
+    if (
+      !this.isLoginAllowed(loginTypes, allowedLoginTypes) ||
+      !hasRequiredDelegation
+    ) {
       throw new ForbiddenException(
         `User does not have permission to fetch external data for form '${slug}'`,
       )
@@ -1260,17 +1335,21 @@ export class ApplicationsService {
       )
     }
 
-    const loginTypes = await this.getLoginTypes(user)
-    if (!this.doesUserMatchApplication(application, user, loginTypes)) {
-      throw new ForbiddenException(
-        `User does not have permission to notify for application '${notificationDto.applicationId}'`,
-      )
-    }
-
     const form = await this.formModel.findByPk(application.formId)
     if (!form) {
       throw new NotFoundException(
         `Form with id '${application.formId}' not found for application '${notificationDto.applicationId}'`,
+      )
+    }
+
+    const loginTypes = await this.getLoginTypes(user)
+    const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
+    if (
+      !this.doesUserMatchApplication(application, user, loginTypes) ||
+      !hasRequiredDelegation
+    ) {
+      throw new ForbiddenException(
+        `User does not have permission to notify for application '${notificationDto.applicationId}'`,
       )
     }
 
@@ -1523,7 +1602,10 @@ export class ApplicationsService {
       if (user.delegationType.includes(AuthDelegationType.ProcurationHolder)) {
         loginTypes.push(ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION)
         loginTypes.push(ApplicantTypesEnum.LEGAL_ENTITY_OF_PROCURATION_HOLDER)
-      } else if (user.delegationType.includes(AuthDelegationType.Custom)) {
+      } else if (
+        user.delegationType.includes(AuthDelegationType.GeneralMandate) ||
+        user.delegationType.includes(AuthDelegationType.Custom)
+      ) {
         if (kennitala.isCompany(user.nationalId)) {
           loginTypes.push(
             ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY,

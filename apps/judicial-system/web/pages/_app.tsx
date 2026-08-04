@@ -5,9 +5,7 @@ import { ApolloProvider } from '@apollo/client'
 import { Query, QueryGetTranslationsArgs } from '@island.is/api/schema'
 import { Box, ToastContainer } from '@island.is/island-ui/core'
 import { GET_TRANSLATIONS, LocaleProvider } from '@island.is/localization'
-import { userMonitoring } from '@island.is/user-monitoring'
 
-import { getPublicRuntimeEnv } from '../environments/runtimeEnvironment'
 import client from '../graphql/client'
 import {
   FeatureProvider,
@@ -18,25 +16,6 @@ import {
   UserProvider,
   ViewportProvider,
 } from '../src/components'
-
-// ddLogsClientToken/appVersion/environment were never populated in
-// publicRuntimeConfig, so this datadog init is currently inert. Read them
-// from the public runtime env to preserve that behavior without next/config.
-const { ddLogsClientToken, appVersion, environment } =
-  getPublicRuntimeEnv() as unknown as {
-    ddLogsClientToken: string
-    appVersion: string
-    environment: string
-  }
-
-if (ddLogsClientToken && typeof window !== 'undefined') {
-  userMonitoring.initDdLogs({
-    service: 'judicial-system-web',
-    clientToken: ddLogsClientToken,
-    env: environment,
-    version: appVersion,
-  })
-}
 
 const getTranslationStrings = (apolloClient: typeof client) => {
   if (!apolloClient) {

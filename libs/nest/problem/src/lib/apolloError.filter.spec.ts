@@ -46,3 +46,27 @@ describe('ApolloErrorFilter', () => {
     })
   })
 })
+
+describe('ApolloErrorFilter with unrecognized error code', () => {
+  let request: CreateRequest
+  beforeAll(async () => {
+    ;[request] = await setup({
+      handler: () => {
+        throw new GraphQLError('Unexpected resolver failure.')
+      },
+    })
+  })
+
+  it('maps to internal server error instead of bad request', async () => {
+    // Act
+    const response = await request()
+
+    // Assert
+    expect(response.status).toBe(500)
+    expect(response.body).toMatchObject({
+      status: 500,
+      title: 'Internal server error',
+      type: ProblemType.HTTP_INTERNAL_SERVER_ERROR,
+    })
+  })
+})

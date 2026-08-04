@@ -3,13 +3,6 @@
  * (or handle server side as well, e.g. isRunningOnEnvironment).
  */
 export { getStaticEnv } from './lib/getStaticEnv'
-export {
-  NEXT_RUNTIME_ENV_SCRIPT_ID,
-  getClientRuntimeEnv,
-  isServerSide,
-  serializeRuntimeEnv,
-} from './lib/nextRuntimeEnv'
-export type { RuntimeEnv } from './lib/nextRuntimeEnv'
 export { sleep } from './lib/sleep'
 export { isRunningOnEnvironment } from './lib/environment'
 export { shouldLinkOpenInNewWindow } from './lib/shouldLinkOpenInNewWindow'

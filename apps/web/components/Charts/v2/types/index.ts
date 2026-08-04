@@ -1,10 +1,10 @@
-import type { CSSProperties } from 'react'
+import type { ComponentProps, CSSProperties } from 'react'
+import type { XAxis, YAxis } from 'recharts'
 import type { VerticalAlignmentType } from 'recharts/types/component/DefaultLegendContent'
 import type {
   AxisDomain,
   AxisInterval,
   Margin,
-  RenderableAxisProps,
 } from 'recharts/types/util/types'
 
 import {
@@ -75,7 +75,7 @@ export interface CustomStyleConfig {
     fontSize?: number
     domain?: AxisDomain
     interval?: AxisInterval
-    tick?: RenderableAxisProps<any, any>['tick']
+    tick?: ComponentProps<typeof YAxis>['tick']
     ticks?: (string | number)[]
   }
   xAxis?: {
@@ -84,7 +84,7 @@ export interface CustomStyleConfig {
     domain?: AxisDomain
     angle?: number
     interval?: AxisInterval
-    tick?: RenderableAxisProps<any, any>['tick']
+    tick?: ComponentProps<typeof XAxis>['tick']
   }
   pie?: {
     innerRadius?: number

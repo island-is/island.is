@@ -17,9 +17,8 @@ describe('Judicial system web api endpoints', () => {
         value: 'judicial-system.csrf=mock_token',
       })
 
-      // jsdom 26 (Jest 30) makes window.location and its methods non-configurable,
-      // so they can no longer be stubbed. logout() calls location.assign, which is
-      // a no-op navigation under jsdom; this test only asserts the cookie deletion.
+      // location.assign is not stubbable under jsdom; this test only asserts
+      // cookie deletion.
 
       // Act
       api.logout()

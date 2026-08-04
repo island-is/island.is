@@ -67,9 +67,10 @@ export const createApp = async ({
   // the X-Forwarded-For header before passing to internal services.
   app.set('trust proxy', JSON.parse(process.env.EXPRESS_TRUST_PROXY || 'false'))
 
-  // Express 5 changed the default query parser from 'extended' to 'simple',
-  // which no longer parses bracket syntax (?tags[]=a&tags[]=b, ?a[b]=c) into
-  // arrays/objects. Restore the Express 4 behavior.
+  // The 'extended' query parser exists for backward compatibility with
+  // external REST clients: e.g. axios's default serializer emits bracket
+  // arrays (?ids[]=1&ids[]=2), which the 'simple' parser would leave as a
+  // literal "ids[]" key. Internal code doesn't rely on it.
   app.set('query parser', 'extended')
 
   // Enable validation of request DTOs globally.
@@ -96,9 +97,8 @@ export const createApp = async ({
     app.use(bodyParser.json({ limit: options.jsonBodyLimit }))
   }
 
-  // Express 5 leaves req.body undefined for requests without a body, where
-  // Express 4 defaulted it to {}. Restore the old behavior so handlers
-  // reading optional body fields keep working across all services.
+  // Handlers and ValidationPipe assume req.body is always an object;
+  // default it for bodyless requests.
   app.use((req: { body?: unknown }, _res: unknown, next: () => void) => {
     req.body = req.body ?? {}
     next()

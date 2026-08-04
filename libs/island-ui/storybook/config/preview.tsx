@@ -1,5 +1,5 @@
 import React from 'react'
-import { Preview, Parameters } from '@storybook/react'
+import { Preview, Parameters } from '@storybook/react-webpack5'
 import { IntlProvider } from 'react-intl'
 import { FormProvider, useForm } from 'react-hook-form'
 import { ApolloClient, ApolloProvider } from '@apollo/client'
@@ -14,7 +14,6 @@ export const parameters: Parameters = {
 }
 
 const preview: Preview = {
-  // Replaces docs.autodocs:true from main.ts, removed in Storybook 9
   tags: ['autodocs'],
   decorators: [
     (Story) => {

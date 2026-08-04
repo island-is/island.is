@@ -1,7 +1,7 @@
 import fetch from 'isomorphic-unfetch'
 import { createHttpLink } from '@apollo/client'
 
-import { isServerSide } from '@island.is/shared/utils'
+import { isServerSide } from '@island.is/next/utils'
 
 import {
   getPublicRuntimeEnv,
