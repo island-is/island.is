@@ -7,7 +7,6 @@ import {
   LinkButton,
   formatDate,
   getTime,
-  getWeekday,
 } from '@island.is/portals/my-pages/core'
 
 import { messages } from '../../lib/messages'
@@ -33,7 +32,7 @@ export const AppointmentDetailCardInfo = ({
   const isVideo =
     appointment.modality === HealthDirectorateAppointmentModality.VIDEO
 
-  const weekday = mapWeekday(getWeekday(appointment.date ?? ''), formatMessage)
+  const weekday = mapWeekday(appointment.date ?? '', formatMessage)
 
   const mapsLink = generateGoogleMapsLink(
     appointment.location?.latitude,

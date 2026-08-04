@@ -3,6 +3,7 @@ import {
   HealthDirectoratePrescriptionRenewalBlockedReason,
 } from '@island.is/api/schema'
 import { FormatMessage } from '@island.is/localization'
+import { getWeekday } from '@island.is/portals/my-pages/core'
 import { messages } from '../lib/messages'
 
 export const mapBlockedStatus = (
@@ -119,7 +120,8 @@ export const mapBlockedStatus = (
   }
 }
 
-export const mapWeekday = (weekday: string, formatMessage: FormatMessage) => {
+export const mapWeekday = (date: string, formatMessage: FormatMessage) => {
+  const weekday = getWeekday(date)
   switch (weekday.toLowerCase()) {
     case 'monday':
       return formatMessage(messages.weekdayMondayAcc)
