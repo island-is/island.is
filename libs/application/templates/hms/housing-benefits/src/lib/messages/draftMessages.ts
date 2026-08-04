@@ -71,9 +71,10 @@ export const draftMessages = {
       description: 'Exemption alert title',
     },
     description: {
-      id: 'hb.application:draft.exemptionSection.description',
+      id: 'hb.application:draft.exemptionSection.alertMessageDescription#markdown',
       defaultMessage:
-        'Skráð lögheimili er ekki það sama og skráð heimilisfang á völdum leigusamning.',
+        'Ef þú átt eftir að færa lögheimili í leiguhúsnæði þá er hægt að gera það rafrænt hjá [Þjóðskrá](https://island.is/flytja-logheimili). Athugið að það getur tekið allt að tvo virka daga fyrir nýtt heimilisfang að uppfærast.',
+      description: 'Exemption alertmessage description',
     },
     description2: {
       id: 'hb.application:draft.exemptionSection.description2#markdown',
