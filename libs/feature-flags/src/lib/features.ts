@@ -45,6 +45,7 @@ export enum Features {
   isConfirmJobSearchEnabled = 'isConfirmJobSearchEnabled',
   isTravelConfirmationEnabled = 'isTravelConfirmationEnabled',
   isSubmitDocumentsEnabled = 'isSubmitDocumentsEnabled',
+  isDirectorateOfEqualityApplicationsEnabled = 'isDirectorateOfEqualityApplicationsEnabled',
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
 
@@ -203,8 +204,8 @@ export enum Features {
   isServicePortalPrimarySchoolPageEnabled = 'isServicePortalPrimarySchoolPageEnabled',
   // Primary school PDF viewer modal
   isServicePortalPrimarySchoolPdfViewerEnabled = 'isServicePortalPrimarySchoolPdfViewerEnabled',
-  // Service portal sidebar grid layout
-  isServicePortalSidebarGridLayoutEnabled = 'isServicePortalSidebarGridLayoutEnabled',
+  // New health overview page (incl. sidebar contact box)
+  isNewHealthOverviewPageEnabled = 'isNewHealthOverviewPageEnabled',
   // University micro-credentials (örnám)
   servicePortalUniversityMicroCredentialsEnabled = 'isServicePortalUniversityMicroCredentialsPageEnabled',
   // Car recycling

@@ -73,6 +73,7 @@ export const CreateBankTransferMutation = gql`
       providerPaymentId
       scaRedirectUrl
       expiresAt
+      onboardingRequired
     }
   }
 `
@@ -82,6 +83,9 @@ export const VerifyBankTransferMutation = gql`
     paymentsVerifyBankTransfer(input: $input) {
       status
       message
+      pendingStatus
+      scaRedirectUrl
+      failureReason
     }
   }
 `

@@ -41,6 +41,7 @@ import {
   getAppealActorText,
   getCurrentUserStatementDate,
   hasAcceptedRulingOrderInCourt,
+  isCurrentAppellantRepresentative,
   userHasActiveInCourtAppeal,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
@@ -137,8 +138,11 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
       : (appealCase.appealedByRole === UserRole.PROSECUTOR && isProsecution) ||
         (appealCase.appealedByRole === UserRole.DEFENDER &&
           isDefence &&
-          Boolean(user.nationalId) &&
-          user.nationalId === appealCase.appealedByNationalId))
+          isCurrentAppellantRepresentative(
+            workingCase,
+            appealCase,
+            user.nationalId,
+          )))
 
   const items: ContextMenuItem[] = []
 

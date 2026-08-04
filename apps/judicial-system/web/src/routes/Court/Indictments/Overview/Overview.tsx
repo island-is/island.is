@@ -20,6 +20,7 @@ import {
   isDistrictCourtUser,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
+import { commentsInput } from '@island.is/judicial-system-web/messages/Core/commentsInput'
 import {
   AppealRulingModifiedAlert,
   ConnectedCaseFilesAccordionItem,
@@ -74,6 +75,13 @@ const OverviewBody = ({
         <CourtCaseInfo workingCase={workingCase} />
         <ServiceAnnouncements defendants={workingCase.defendants} />
         <div className={grid({ gap: 5, marginBottom: 10 })}>
+          {workingCase.comments && (
+            <AlertMessage
+              title={formatMessage(commentsInput.heading)}
+              message={workingCase.comments}
+              type="warning"
+            />
+          )}
           <AppealRulingModifiedAlert />
           {workingCase.reopenReason && !isCompletedCase(workingCase.state) && (
             <AlertMessage
@@ -173,15 +181,19 @@ const OverviewBody = ({
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={getStandardUserDashboardRoute(user)}
-          nextIsLoading={isLoadingWorkingCase}
-          onNextButtonClick={() =>
-            handleNavigationTo(
-              DISTRICT_COURT_INDICTMENT_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
-            )
-          }
-          nextButtonText={formatMessage(core.continue)}
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  DISTRICT_COURT_INDICTMENT_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
+                ),
+              loading: isLoadingWorkingCase,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </>
