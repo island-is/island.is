@@ -6,7 +6,7 @@ export const titleText = style({
   lineHeight: '24px',
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      fontSize: 16,
+      fontSize: 18,
     },
   },
 })
