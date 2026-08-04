@@ -10,6 +10,7 @@ import { theme } from '@island.is/island-ui/theme'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { LinkResolver } from '@island.is/portals/my-pages/core'
 import { NotificationsBox } from '@island.is/portals/my-pages/information'
+import { DelegationPaths } from '@island.is/portals/shared-modules/delegations'
 import subYears from 'date-fns/subYears'
 import { useWindowSize } from 'react-use'
 import { HealthPaths } from '../../lib/paths'
@@ -133,7 +134,7 @@ export const HealthOverview = () => {
       label: formatMessage(messages.quickLinkMedicinePrescription),
     },
     {
-      href: HealthPaths.HealthMedicineDelegation,
+      href: DelegationPaths.Delegations,
       label: formatMessage(messages.quickLinkMedicineDelegation),
     },
     {
