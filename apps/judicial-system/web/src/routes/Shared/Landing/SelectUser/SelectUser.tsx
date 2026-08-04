@@ -43,10 +43,15 @@ const SelectUser = () => {
       <FormContentContainer isFooter>
         <FormFooter
           hidePreviousButton
-          nextButtonIcon="arrowForward"
-          nextButtonText="Halda áfram"
-          nextIsDisabled={!userId}
-          onNextButtonClick={() => userId && api.activate(userId)}
+          actions={[
+            {
+              text: 'Halda áfram',
+              icon: 'arrowForward',
+              onClick: () => userId && api.activate(userId),
+              disabled: !userId,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </>
