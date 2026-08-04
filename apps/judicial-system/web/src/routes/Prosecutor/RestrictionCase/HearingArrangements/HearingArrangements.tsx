@@ -8,6 +8,7 @@ import {
   PROSECUTION_RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
+  core,
   errors,
   rcRequestedHearingArrangements,
   titles,
@@ -175,15 +176,20 @@ export const HearingArrangements = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${PROSECUTION_RESTRICTION_CASE_DEFENDANT_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={async () =>
-            await handleNavigationTo(
-              PROSECUTION_RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
-            )
-          }
-          nextIsDisabled={!stepIsValid || isTransitioningCase}
-          nextIsLoading={isTransitioningCase}
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              onClick: async () =>
+                await handleNavigationTo(
+                  PROSECUTION_RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
+                ),
+              disabled: !stepIsValid || isTransitioningCase,
+              loading: isTransitioningCase,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
       {navigateTo !== undefined && (

@@ -80,7 +80,13 @@ export const AlertMessageFormField: FC<React.PropsWithChildren<Props>> = ({
           type={field.alertType ?? 'default'}
           title={formatTextWithLocale(
             field.title ?? '',
-            application,
+            {
+              ...application,
+              answers: {
+                ...application.answers,
+                ...getValues(),
+              },
+            },
             locale as Locale,
             formatMessage,
           )}

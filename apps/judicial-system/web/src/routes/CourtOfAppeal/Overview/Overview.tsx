@@ -12,6 +12,7 @@ import {
   isIndictmentCase,
   isInvestigationCase,
 } from '@island.is/judicial-system/types'
+import { core } from '@island.is/judicial-system-web/messages'
 import {
   AllIndictmentCaseFiles,
   CaseFilesAccordionItem,
@@ -181,14 +182,19 @@ const Overview = () => {
         <FormContentContainer isFooter>
           <FormFooter
             previousUrl={getStandardUserDashboardRoute(user)}
-            onNextButtonClick={() =>
-              handleNavigationTo(
-                shouldUseAppealWithdrawnRoutes(targetAppealCase)
-                  ? COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE
-                  : COURT_OF_APPEAL_CASE_ROUTE,
-              )
-            }
-            nextButtonIcon="arrowForward"
+            actions={[
+              {
+                text: formatMessage(core.continue),
+                icon: 'arrowForward',
+                onClick: () =>
+                  handleNavigationTo(
+                    shouldUseAppealWithdrawnRoutes(targetAppealCase)
+                      ? COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE
+                      : COURT_OF_APPEAL_CASE_ROUTE,
+                  ),
+                testId: 'continueButton',
+              },
+            ]}
           />
         </FormContentContainer>
       </PageLayout>

@@ -1,4 +1,4 @@
-import { createRedisKeyv } from '@island.is/cache'
+import { createRedisCacheStores } from '@island.is/cache'
 import { CacheModule as NestCacheModule } from '@nestjs/cache-manager'
 import { DynamicModule, Global, Module } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
@@ -18,7 +18,9 @@ export class CacheModule {
                 const configHasRedis = redis.nodes.length > 0 && redis.name
 
                 return {
-                  stores: configHasRedis ? [createRedisKeyv(redis)] : undefined,
+                  stores: configHasRedis
+                    ? createRedisCacheStores(redis, { legacyKeyFallback: true })
+                    : undefined,
                 }
               },
               inject: [BffConfig.KEY],
