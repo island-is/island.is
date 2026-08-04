@@ -13,6 +13,7 @@ import {
   PostalCodesApi,
   PronounsApi,
   ProtectiveFactorsApi,
+  SchoolTypesApi,
   UrgencyAssessmentsApi,
 } from '../../dataProviders'
 import { prerequisitesMessages } from '../../lib/messages'
@@ -61,6 +62,9 @@ export const externalDataSubSection = buildSubSection({
         }),
         buildDataProviderItem({
           provider: GuardianNotAwareReasonsApi,
+        }),
+        buildDataProviderItem({
+          provider: SchoolTypesApi,
         }),
       ],
     }),

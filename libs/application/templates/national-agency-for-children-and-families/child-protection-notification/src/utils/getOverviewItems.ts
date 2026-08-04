@@ -64,13 +64,6 @@ const noNationalIdReasonLabelMap = {
     childMessages.noNationalId.reasonBorderReception,
 } as const
 
-const educationTypeLabelMap = {
-  kindergarten: memmMessages.education.typeKindergarten,
-  elementarySchool: memmMessages.education.typeElementarySchool,
-  highSchool: memmMessages.education.typeHighSchool,
-  daycareProvider: memmMessages.education.typeDaycareProvider,
-} as const
-
 const receptionRadioLabelMap = {
   [YES]: sharedMessages.radioYes,
   [NO]: sharedMessages.radioNo,
@@ -631,22 +624,19 @@ export const getMemmEducationItems = (
     memmEducationCaregiverName,
   } = getApplicationAnswers(answers)
 
+  const hasNameField = isSchoolType(answers) || isDayCareProvider(answers)
+
   return [
     {
-      width: 'full',
+      width: hasNameField ? 'half' : 'full',
       keyText: memmMessages.education.typeLabel,
-      valueText:
-        educationTypeLabelMap[
-          memmEducationType as keyof typeof educationTypeLabelMap
-        ] ??
-        memmEducationType ??
-        '',
+      valueText: memmEducationType ?? '',
       hideIfEmpty: true,
     },
     ...(isSchoolType(answers)
       ? [
           {
-            width: 'full' as const,
+            width: 'half' as const,
             keyText: memmMessages.education.schoolName,
             valueText: memmEducationSchoolName ?? '',
             hideIfEmpty: true,
@@ -656,7 +646,7 @@ export const getMemmEducationItems = (
     ...(isDayCareProvider(answers)
       ? [
           {
-            width: 'full' as const,
+            width: 'half' as const,
             keyText: coreMessages.name,
             valueText: memmEducationCaregiverName ?? '',
             hideIfEmpty: true,

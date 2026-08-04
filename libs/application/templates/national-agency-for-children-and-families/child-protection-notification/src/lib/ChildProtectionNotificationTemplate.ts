@@ -27,6 +27,7 @@ import {
   PostalCodesApi,
   PronounsApi,
   ProtectiveFactorsApi,
+  SchoolTypesApi,
   UrgencyAssessmentsApi,
 } from '../dataProviders'
 import {
@@ -97,6 +98,7 @@ const template: ApplicationTemplate<
                   UrgencyAssessmentsApi,
                   PostalCodesApi,
                   GuardianNotAwareReasonsApi,
+                  SchoolTypesApi,
                 ],
                 delete: true,
               }),
@@ -127,6 +129,7 @@ const template: ApplicationTemplate<
                 UrgencyAssessmentsApi,
                 PostalCodesApi,
                 GuardianNotAwareReasonsApi,
+                SchoolTypesApi,
               ],
               delete: true,
             },

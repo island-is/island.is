@@ -37,7 +37,7 @@ export const isSchoolType = (answers: FormValue) =>
   SCHOOL_TYPES.includes(getApplicationAnswers(answers).memmEducationType ?? '')
 
 export const isDayCareProvider = (answers: FormValue) =>
-  getApplicationAnswers(answers).memmEducationType === 'daycareProvider'
+  getApplicationAnswers(answers).memmEducationType === 'Dagforeldri'
 
 export const showLanguageSection = (answers: FormValue) =>
   SHOW_LANGUAGE_SECTION_TYPES.includes(
