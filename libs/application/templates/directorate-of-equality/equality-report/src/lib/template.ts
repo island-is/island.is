@@ -9,6 +9,8 @@ import {
   ApplicationConfigurations,
   IdentityApi,
   defineTemplateApi,
+  ApplicationRole,
+  Application,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import {
@@ -31,6 +33,7 @@ import {
 import { messages } from './messages'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
+import { isCompany } from 'kennitala'
 
 const template: ApplicationTemplate<
   ApplicationContext,
