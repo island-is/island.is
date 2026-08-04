@@ -171,7 +171,7 @@ export const HealthOverview = () => {
             )}
           </>
         </GridColumn>
-        {!isStackedLayout && (
+        {isNewHealthOverviewPageEnabled && !isStackedLayout && (
           <GridColumn span="3/8">
             <Box display="flex" justifyContent="center">
               <img
