@@ -134,7 +134,12 @@ export const AppointmentDetailCardInfo = ({
           </Box>
         ) : (
           <Box key={index} display="flex" alignItems="center" columnGap={1}>
-            <Icon icon={line.icon} size="small" color="blue400" type="outline" />
+            <Icon
+              icon={line.icon}
+              size="small"
+              color="blue400"
+              type="outline"
+            />
             <Text>{line.text}</Text>
           </Box>
         ),
