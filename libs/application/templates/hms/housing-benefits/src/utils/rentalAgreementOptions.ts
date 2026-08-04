@@ -1,5 +1,4 @@
 import { Application } from '@island.is/application/types'
-import { Contract } from '@island.is/clients/hms-rental-agreement'
 import * as m from '../lib/messages'
 import { getRentalAgreementsForHousingBenefits } from './rentalAgreementUtils'
 
@@ -37,6 +36,7 @@ export const rentalContractOptions = (application: Application) => {
           renters: renters.join(', '),
           landlordsCount: landlords.length,
           rentersCount: renters.length,
+          expiryDate: contract.dateTo,
         },
       },
     }

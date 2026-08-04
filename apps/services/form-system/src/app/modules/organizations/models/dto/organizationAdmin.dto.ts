@@ -15,6 +15,9 @@ export class OrganizationAdminDto {
   selectedFieldTypes: string[] = []
 
   @ApiPropertyOptional()
+  organizationDelegations: string[] = []
+
+  @ApiPropertyOptional()
   selectedCertificationTypes: string[] = []
 
   @ApiPropertyOptional({ type: [ListType] })
