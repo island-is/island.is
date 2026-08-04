@@ -176,7 +176,6 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
     if (!unchanged) {
       setStartDate(start)
       setEndDate(end)
-       
       ;(datePickerRef.current as any)?.setState({ inputValue: null })
       handleChange && handleChange(start, end)
     }
