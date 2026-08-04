@@ -150,10 +150,15 @@ const SendToPrisonAdmin: FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE}/${workingCase.id}`}
-          nextButtonText={formatMessage(strings.nextButtonText)}
-          onNextButtonClick={handleNextButtonClick}
+          actions={[
+            {
+              text: formatMessage(strings.nextButtonText),
+              icon: 'arrowForward',
+              onClick: handleNextButtonClick,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
       {modalVisible === AvailableModal.SUCCESS && defendant && (

@@ -47,6 +47,9 @@ export class VehiclesMainInfo {
 
   @Field(() => Boolean, { nullable: true })
   availableMileageRegistration?: boolean
+
+  @Field({ nullable: true })
+  hasMilesOdometer?: boolean
 }
 
 @ObjectType()

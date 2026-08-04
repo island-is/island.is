@@ -9,6 +9,7 @@ export const GET_ORGANIZATION_ADMIN = gql`
       selectedCertificationTypes
       selectedListTypes
       selectedFieldTypes
+      organizationDelegations
       certificationTypes {
         id
         name {

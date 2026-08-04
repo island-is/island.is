@@ -1050,9 +1050,8 @@ export class PaymentFlowService {
         paymentMethod === 'card'
           ? {
               model: CardPaymentDetails,
-              required: false,
+              required: true,
               where: { isDeleted: false },
-              separate: true,
             }
           : {
               // Carries the providerPaymentId needed to rebuild the FJS charge.
