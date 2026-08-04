@@ -130,6 +130,10 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     fetchedResult?.data ?? initialInvoiceGroups?.data ?? []
   const totalCount =
     fetchedResult?.totalCount ?? initialInvoiceGroups?.totalCount ?? 0
+  const totalPayments =
+    fetchedResult?.totalPaymentsCount ??
+    initialInvoiceGroups?.totalPaymentsCount ??
+    0
 
   const [dateRangeEnd, setDateRangeEnd] = useQueryState(
     'dateRangeEnd',
@@ -276,7 +280,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
       invoiceGroupsData?.icelandicGovernmentInstitutionsInvoiceGroups
         ?.totalPaymentsSum ?? initialInvoiceGroups?.totalPaymentsSum
 
-    if (totalHits === 1) {
+    if (totalPayments === 1) {
       return totalPaymentsSum
         ? formatMessage(m.search.resultFound, {
             dateRangeStart: dateRangeStartArg,
@@ -291,13 +295,13 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
 
     return totalPaymentsSum
       ? formatMessage(m.search.resultsFound, {
-          records: totalHits,
+          records: totalPayments,
           dateRangeStart: dateRangeStartArg,
           dateRangeEnd: dateRangeEndArg,
           sum: formatCurrency(totalPaymentsSum),
         })
       : formatMessage(m.search.resultsFoundNoSum, {
-          records: totalHits,
+          records: totalPayments,
           dateRangeStart: dateRangeStartArg,
           dateRangeEnd: dateRangeEndArg,
         })
@@ -308,7 +312,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     initialInvoiceGroups?.totalPaymentsSum,
     invoiceGroupsData?.icelandicGovernmentInstitutionsInvoiceGroups
       ?.totalPaymentsSum,
-    totalHits,
+    totalPayments,
   ])
 
   // Mobile shows the same information as `hitsMessage` split across three
@@ -323,7 +327,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
 
     return {
       recordsLine: formatMessage(m.search.recordsFoundShort, {
-        records: totalHits,
+        records: totalPayments,
       }),
       dateRangeLine: formatMessage(m.search.dateRangeLineShort, {
         dateRangeStart: dateRangeStartArg,
@@ -342,8 +346,22 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     initialInvoiceGroups?.totalPaymentsSum,
     invoiceGroupsData?.icelandicGovernmentInstitutionsInvoiceGroups
       ?.totalPaymentsSum,
-    totalHits,
+    totalPayments,
   ])
+
+  // hitsMessage/hitsSummary are only committed to the displayed state once
+  // loading finishes — otherwise they flash back to initialInvoiceGroups
+  // values every time invoiceGroupsData clears during a refetch.
+  const [displayedHits, setDisplayedHits] = useState({
+    hitsMessage,
+    hitsSummary,
+  })
+  useEffect(() => {
+    if (!invoiceGroupsLoading) {
+      setDisplayedHits({ hitsMessage, hitsSummary })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [invoiceGroupsLoading])
 
   const onSearchFilterUpdate = (categoryId: string, values?: Array<string>) => {
     const filteredValues = values?.length ? [...values] : null
@@ -511,7 +529,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
                 onApply={fetchInvoiceGroups}
                 applyDisabled={invoiceGroupsLoading}
                 url={baseUrl}
-                hits={totalHits}
+                hits={totalPayments}
                 locale={locale}
                 searchState={filterSearchState}
                 categories={filterCategories}
@@ -527,13 +545,19 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
               marginBottom={2}
             >
               <Box display={['none', 'none', 'block']}>
-                <MarkdownText>{hitsMessage ?? ''}</MarkdownText>
+                <MarkdownText>{displayedHits.hitsMessage ?? ''}</MarkdownText>
               </Box>
               <Box display={['block', 'block', 'none']}>
-                <MarkdownText>{hitsSummary.recordsLine}</MarkdownText>
-                <MarkdownText>{hitsSummary.dateRangeLine}</MarkdownText>
-                {hitsSummary.totalLine && (
-                  <MarkdownText>{hitsSummary.totalLine}</MarkdownText>
+                <MarkdownText>
+                  {displayedHits.hitsSummary.recordsLine}
+                </MarkdownText>
+                <MarkdownText>
+                  {displayedHits.hitsSummary.dateRangeLine}
+                </MarkdownText>
+                {displayedHits.hitsSummary.totalLine && (
+                  <MarkdownText>
+                    {displayedHits.hitsSummary.totalLine}
+                  </MarkdownText>
                 )}
               </Box>
               <OverviewFilter
@@ -542,7 +566,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
                 onApply={fetchInvoiceGroups}
                 applyDisabled={invoiceGroupsLoading}
                 url={baseUrl}
-                hits={totalHits}
+                hits={totalPayments}
                 locale={locale}
                 searchState={filterSearchState}
                 categories={filterCategories}

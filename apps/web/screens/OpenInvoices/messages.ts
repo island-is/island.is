@@ -149,27 +149,27 @@ export const m = {
     resultFound: {
       id: 'web.openinvoices:search.resultFound#markdown',
       defaultMessage:
-        '1 færsla fannst fyrir tímabilið **{dateRangeStart}-{dateRangeEnd}** samtals **{sum}**',
+        '1 greiðsla fannst fyrir tímabilið **{dateRangeStart}-{dateRangeEnd}** samtals **{sum}**',
     },
     resultFoundNoSum: {
       id: 'web.openinvoices:search.resultFoundNoSum#markdown',
       defaultMessage:
-        '1 færsla fannst fyrir tímabilið **{dateRangeStart}-{dateRangeEnd}**',
+        '1 greiðsla fannst fyrir tímabilið **{dateRangeStart}-{dateRangeEnd}**',
     },
     resultsFound: {
       id: 'web.openinvoices:search.resultsFound#markdown',
       defaultMessage:
-        '**{records}** færslur fundust fyrir tímabilið **{dateRangeStart}-{dateRangeEnd}** samtals **{sum}**',
+        '**{records}** greiðslur fundust fyrir tímabilið **{dateRangeStart}-{dateRangeEnd}** samtals **{sum}**',
     },
     resultsFoundNoSum: {
       id: 'web.openinvoices:search.resultsFoundNoSum#markdown',
       defaultMessage:
-        '**{records}** færslur fundust fyrir tímabilið **{dateRangeStart}-{dateRangeEnd}**',
+        '**{records}** greiðslur fundust fyrir tímabilið **{dateRangeStart}-{dateRangeEnd}**',
     },
     recordsFoundShort: {
       id: 'web.openinvoices:search.recordsFoundShort#markdown',
       defaultMessage:
-        '**{records}** {records, plural, one {færsla fannst} other {færslur fundust}}',
+        '**{records}** {records, plural, one {greiðsla fannst} other {greiðslur fundust}}',
     },
     dateRangeLineShort: {
       id: 'web.openinvoices:search.dateRangeLineShort#markdown',
