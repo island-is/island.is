@@ -1,5 +1,8 @@
 {
   "private": true,
   "//": "Without this file every module in apps/web defaults to side-effectful, which stops Turbopack's reexports-only tree shaking from seeing through the components/real.ts barrel: importing 5 components pulled in 483 modules. vanilla-extract files are listed because they register global styles via globalStyle() and must never be dropped.",
-  "sideEffects": ["**/*.css.ts", "**/*.css"]
+  "sideEffects": [
+    "**/*.css.ts",
+    "**/*.css"
+  ]
 }
