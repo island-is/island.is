@@ -339,7 +339,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       })
     }
 
-    return attendees.length > 0 ? attendees.join('') : undefined
+    return `Mættir eru\n${attendees.join('')}`
   }, [workingCase.prosecutor, workingCase.defendants])
 
   const initialize = useCallback(() => {
@@ -1005,7 +1005,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
               <Input
                 data-testid="courtAttendees"
                 name="courtAttendees"
-                label="Mættir eru"
                 value={courtSession.attendees ?? getInitialAttendees()}
                 placeholder="Skrifa hér..."
                 onChange={(event) => {

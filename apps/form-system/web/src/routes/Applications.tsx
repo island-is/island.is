@@ -30,6 +30,7 @@ export const Applications = () => {
   const navigate = useNavigate()
   const [applications, setApplications] = useState<FormSystemApplication[]>([])
   const [loginAllowed, setLoginAllowed] = useState(true)
+  const [hasRequiredDelegation, setHasRequiredDelegation] = useState(true)
   const [isValidSlug, setIsValidSlug] = useState(true)
   const [createDisabled, setCreateDisabled] = useState(false)
   const [createApplicationMutation] = useMutation(CREATE_APPLICATION)
@@ -52,6 +53,10 @@ export const Applications = () => {
       })
       if (app.data?.createFormSystemApplication?.isLoginTypeAllowed === false) {
         setLoginAllowed(false)
+      } else if (
+        app.data?.createFormSystemApplication?.hasRequiredDelegation === false
+      ) {
+        setHasRequiredDelegation(false)
       } else if (app.data?.createFormSystemApplication?.application?.id) {
         navigate(
           `../${slug}/${app.data.createFormSystemApplication.application.id}`,
@@ -83,6 +88,10 @@ export const Applications = () => {
         setLoginAllowed(false)
         return null
       }
+      if (dto?.hasRequiredDelegation === false) {
+        setHasRequiredDelegation(false)
+        return null
+      }
       return dto
     } catch (error) {
       console.error('Error fetching applications:', error)
@@ -108,7 +117,7 @@ export const Applications = () => {
               ].includes(app.status as string),
           ),
         )
-      } else if (loginAllowed !== false) {
+      } else if (loginAllowed !== false && hasRequiredDelegation !== false) {
         await createApplication()
         if (cancelled) return
       }
@@ -119,7 +128,13 @@ export const Applications = () => {
     return () => {
       cancelled = true
     }
-  }, [slug, createApplication, fetchApplications, loginAllowed])
+  }, [
+    slug,
+    createApplication,
+    fetchApplications,
+    loginAllowed,
+    hasRequiredDelegation,
+  ])
 
   const [deleteApplicationMutation] = useMutation(DELETE_APPLICATION)
 
@@ -156,6 +171,16 @@ export const Applications = () => {
       <ErrorShell
         title={formatMessage(m.switchLoginToCreateApplication)}
         subTitle={formatMessage(m.applicationDoesNotPermitLogin)}
+        description=""
+      />
+    )
+  }
+
+  if (!hasRequiredDelegation) {
+    return (
+      <ErrorShell
+        title={formatMessage(m.delegationRequired)}
+        subTitle={formatMessage(m.applicationRequiresDelegation)}
         description=""
       />
     )

@@ -1,13 +1,5 @@
 import { FormSystemField } from '@island.is/api/schema'
-import {
-  Box,
-  GridColumn,
-  GridRow,
-  Input,
-  PhoneInput,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Input, PhoneInput, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { Dispatch, useEffect } from 'react'
