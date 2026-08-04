@@ -61,8 +61,6 @@ export const messageTypeToSuspensionCategory: Partial<
   [MessageType.DELIVERY_TO_POLICE_CASE_FILE]: MessageSuspensionCategory.POLICE,
   [MessageType.DELIVERY_TO_POLICE_CASE_FILES_RECORD]:
     MessageSuspensionCategory.POLICE,
-  [MessageType.DELIVERY_TO_POLICE_SUBPOENA_FILE]:
-    MessageSuspensionCategory.POLICE,
   [MessageType.DELIVERY_TO_POLICE_SIGNED_COURT_RECORD]:
     MessageSuspensionCategory.POLICE,
   [MessageType.DELIVERY_TO_POLICE_SIGNED_RULING]:
