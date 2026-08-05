@@ -1,7 +1,6 @@
 import { bootstrap } from '@island.is/infra-next-server'
 
 import { getServerRuntimeEnv } from './environments/runtimeEnvironment'
-import { buildCsp } from './csp'
 import proxyConfig from './proxy.config.json'
 
 bootstrap({
