@@ -1,6 +1,9 @@
 import { isDefined } from '@island.is/shared/utils'
 import { EntryCreationDto, Localized, RichTextParagraph } from '../cms.types'
-import { mapLocalizedRichTextDocument, mapLocalizedValue } from '../localization'
+import {
+  mapLocalizedRichTextDocument,
+  mapLocalizedValue,
+} from '../localization'
 
 interface Props {
   listId: string

@@ -1,6 +1,11 @@
 import { decode } from 'html-entities'
 import { LOCALE, EN_LOCALE } from '../constants'
-import { CmsRichTextDocument, EntryCreationDto, Localized, RichTextParagraph } from './cms.types'
+import {
+  CmsRichTextDocument,
+  EntryCreationDto,
+  Localized,
+  RichTextParagraph,
+} from './cms.types'
 
 export const stripHtml = (html: string): string =>
   decode(html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ')).trim()

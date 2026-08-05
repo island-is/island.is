@@ -13,7 +13,10 @@ import { generateNewsEntry } from '../../../../platform/content-types/news.mappe
 import { mapLocalizedValue, stripHtml } from '../../../../platform/localization'
 import { WpPost } from '../../lyfjastofnun.types'
 import { extractIntro } from '../../lyfjastofnun.utils'
-import { LYFJASTOFNUN_ORG_ID, LYFJASTOFNUN_OWNER_TAG } from '../../lyfjastofnun.constants'
+import {
+  LYFJASTOFNUN_ORG_ID,
+  LYFJASTOFNUN_OWNER_TAG,
+} from '../../lyfjastofnun.constants'
 
 const HEADING_TAG_TO_BLOCK: Record<string, BLOCKS> = {
   h2: BLOCKS.HEADING_2,
@@ -107,7 +110,11 @@ const makeTableNode = (inner: string): TopLevelBlock | null => {
       } as Block)
     }
     if (cells.length > 0) {
-      rows.push({ nodeType: BLOCKS.TABLE_ROW, data: {}, content: cells } as Block)
+      rows.push({
+        nodeType: BLOCKS.TABLE_ROW,
+        data: {},
+        content: cells,
+      } as Block)
     }
   }
   if (rows.length === 0) return null
@@ -116,9 +123,28 @@ const makeTableNode = (inner: string): TopLevelBlock | null => {
 
 const SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
   allowedTags: [
-    'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'ul', 'ol', 'li', 'a', 'hr',
-    'div', 'strong', 'em', 'blockquote',
-    'table', 'thead', 'tbody', 'tfoot', 'tr', 'th', 'td',
+    'h2',
+    'h3',
+    'h4',
+    'h5',
+    'h6',
+    'p',
+    'ul',
+    'ol',
+    'li',
+    'a',
+    'hr',
+    'div',
+    'strong',
+    'em',
+    'blockquote',
+    'table',
+    'thead',
+    'tbody',
+    'tfoot',
+    'tr',
+    'th',
+    'td',
   ],
   allowedAttributes: {
     a: ['href'],
@@ -143,7 +169,8 @@ const transformSpecialDivs = (html: string): string =>
     .replace(
       /<div[^>]+class="[^"]*linklist[^"]*"[^>]*>([\s\S]*?)<\/div>/gi,
       (_, inner) => {
-        const linkPattern = /<a[^>]+href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi
+        const linkPattern =
+          /<a[^>]+href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi
         let items = ''
         let linkMatch: RegExpExecArray | null
         while ((linkMatch = linkPattern.exec(inner)) !== null) {

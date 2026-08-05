@@ -1,6 +1,10 @@
 import slugify from '@sindresorhus/slugify'
 import { EN_LOCALE, LOCALE } from '../../../../constants'
-import { EntryCreationDto, Localized, RichTextParagraph } from '../../../../platform/cms.types'
+import {
+  EntryCreationDto,
+  Localized,
+  RichTextParagraph,
+} from '../../../../platform/cms.types'
 import { generateGenericListItem } from '../../../../platform/content-types/generic-list-item.mapper'
 import { mapLocalizedValue } from '../../../../platform/localization'
 import { LyfjastofnunScrapedItem } from '../../lyfjastofnun.types'

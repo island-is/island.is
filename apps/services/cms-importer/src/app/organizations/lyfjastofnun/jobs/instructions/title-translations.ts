@@ -12,7 +12,8 @@ export const TITLE_TRANSLATIONS_EN: Record<string, string> = {
     'Access to medicines before they are marketed or before marketing authorisation',
   'Skýringar með lyfjaverðskrá':
     'Clarifications to the Icelandic Medicine Price Catalogue',
-  'Röðun í viðmiðunarverðflokka': 'Classification in reference price categories',
+  'Röðun í viðmiðunarverðflokka':
+    'Classification in reference price categories',
   'Greiðsluþátttaka í leyfisskyldum lyfjum':
     'Reimbursement system for Specialty Care High-Cost Medicine',
   'Greiðsluþátttaka í almennum lyfjum': 'Reimbursement of general medicines',
@@ -31,7 +32,7 @@ export const TITLE_TRANSLATIONS_EN: Record<string, string> = {
   'Leiðbeiningar Framkvæmdarstjórnar Evrópusambandsins um lækningatæki':
     'European Commission guidelines on medical devices',
   'Leiðbeiningar um útfyllingu eyðublaðs framleiðanda vegna atvikatilkynningar lækningatækja':
-    "Guidelines for manufacturers on completing the medical device incident report form",
+    'Guidelines for manufacturers on completing the medical device incident report form',
   'Leiðbeiningar um umsókn um niðurfellingu markaðsleyfis eða brottfalls úr lyfjaskrám':
     'Guidelines on applying to withdraw a marketing authorisation or remove a medicine from the medicine registers',
   'Leiðbeiningar vegna gerð samninga um lyfjafræðilega þjónustu':

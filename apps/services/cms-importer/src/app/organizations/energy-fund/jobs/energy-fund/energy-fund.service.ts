@@ -31,7 +31,11 @@ export class EnergyFundImportService {
       getCreateDedupeKey: (item) => item.projectName,
       getExistingCreateKey: (entry) => entry.fields['internalTitle']?.[LOCALE],
       mapCreateEntry: (item) =>
-        mapEntryCreationDto(item, PREVIOUS_RECIPIENTS_GENERIC_LIST_ID, UOS_TAGS),
+        mapEntryCreationDto(
+          item,
+          PREVIOUS_RECIPIENTS_GENERIC_LIST_ID,
+          UOS_TAGS,
+        ),
       getUpdateMatchKey: (item) => item.projectName,
       getExistingUpdateKey: (entry) => entry.fields['internalTitle']?.[LOCALE],
       mapUpdateEntry: (existingEntry, item) =>

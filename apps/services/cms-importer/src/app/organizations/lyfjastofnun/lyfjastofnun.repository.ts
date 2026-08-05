@@ -106,7 +106,10 @@ export class LyfjastofnunRepository {
           html,
         )
       if (!match) return null
-      const text = match[1].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()
+      const text = match[1]
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
       return text || null
     } catch {
       return null

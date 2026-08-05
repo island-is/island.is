@@ -3,7 +3,11 @@ import { isDefined } from '@island.is/shared/utils'
 import { logger } from '@island.is/logging'
 import { LOCALE } from '../constants'
 import { CmsRepository } from './cms.repository'
-import { ContentTypeOptions, EntryCreationDto, EntryUpdateDto } from './cms.types'
+import {
+  ContentTypeOptions,
+  EntryCreationDto,
+  EntryUpdateDto,
+} from './cms.types'
 
 // ── create-only-with-resolution ─────────────────────────────────────────────
 // Used by jobs that dedupe against existing entries by a stable key, resolve
@@ -238,7 +242,10 @@ export interface SyncCreateAndReconcileConfig<Item> {
   mapCreateEntry: (item: Item) => EntryCreationDto | undefined
   getUpdateMatchKey: (item: Item) => string
   getExistingUpdateKey: (entry: Entry) => string | undefined
-  mapUpdateEntry: (existingEntry: Entry, item: Item) => EntryUpdateDto | undefined
+  mapUpdateEntry: (
+    existingEntry: Entry,
+    item: Item,
+  ) => EntryUpdateDto | undefined
   onlyUpdateDraft?: boolean
 }
 

@@ -88,7 +88,8 @@ export class LyfjastofnunListsImportService {
         })
         return undefined
       },
-      mapEntry: (item, link) => mapEntryCreationDto(item, GENERIC_LIST_ID, link),
+      mapEntry: (item, link) =>
+        mapEntryCreationDto(item, GENERIC_LIST_ID, link),
     })
   }
 }

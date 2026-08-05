@@ -5,7 +5,9 @@ const job = processJob()
 
 switch (job) {
   case 'energy-fund-import': {
-    import('./app/organizations/energy-fund/jobs/energy-fund/energy-fund.worker')
+    import(
+      './app/organizations/energy-fund/jobs/energy-fund/energy-fund.worker'
+    )
       .then((app) => app.energyFundWorker())
       .catch((error) => {
         console.error(
@@ -40,9 +42,7 @@ switch (job) {
     break
   }
   case 'web-sitemap': {
-    import(
-      './app/contentful-maintenance/jobs/web-sitemap/web-sitemap-worker'
-    )
+    import('./app/contentful-maintenance/jobs/web-sitemap/web-sitemap-worker')
       .then((app) => app.webSitemapWorker())
       .catch((error) => {
         console.error(

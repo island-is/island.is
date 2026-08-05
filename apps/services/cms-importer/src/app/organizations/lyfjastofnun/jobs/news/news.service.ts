@@ -11,7 +11,10 @@ import { makeTagMetadata } from '../../../../platform/localization'
 import { LyfjastofnunRepository } from '../../lyfjastofnun.repository'
 import { WpPost } from '../../lyfjastofnun.types'
 import { extractFirstImageUrl, extractIntro } from '../../lyfjastofnun.utils'
-import { LYFJASTOFNUN_ORG_ID, LYFJASTOFNUN_OWNER_TAG } from '../../lyfjastofnun.constants'
+import {
+  LYFJASTOFNUN_ORG_ID,
+  LYFJASTOFNUN_OWNER_TAG,
+} from '../../lyfjastofnun.constants'
 import { LOCALE } from '../../../../constants'
 import { cleanImageTitle, guessImageContentType } from './utils'
 import { buildNewsEntry } from './news.mapper'
@@ -73,7 +76,8 @@ export class LyfjastofnunNewsImportService {
 
         return { assetId, summary }
       },
-      mapEntry: (post, link) => buildNewsEntry(post, link.assetId, link.summary),
+      mapEntry: (post, link) =>
+        buildNewsEntry(post, link.assetId, link.summary),
     })
   }
 

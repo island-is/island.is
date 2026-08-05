@@ -4,7 +4,9 @@ import { LyfjastofnunNewsImportService } from './news.service'
 
 export const lyfjastofnunNewsImportWorker = () => {
   const { publish, slug } = parseCliFlags()
-  return runWorker('Lyfjastofnun news import', LyfjastofnunNewsImportModule, (app) =>
-    app.get(LyfjastofnunNewsImportService).run({ publish, slug }),
+  return runWorker(
+    'Lyfjastofnun news import',
+    LyfjastofnunNewsImportModule,
+    (app) => app.get(LyfjastofnunNewsImportService).run({ publish, slug }),
   )
 }
