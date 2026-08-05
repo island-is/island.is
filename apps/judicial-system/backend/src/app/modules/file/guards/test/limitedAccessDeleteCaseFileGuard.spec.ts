@@ -157,6 +157,7 @@ describe('LimitedAccess Delete Case File Guard', () => {
               civilClaimants: [
                 {
                   id: civilClaimantId,
+                  hasSpokesperson: true,
                   isSpokespersonConfirmed: true,
                   spokespersonNationalId: nationalId,
                 },

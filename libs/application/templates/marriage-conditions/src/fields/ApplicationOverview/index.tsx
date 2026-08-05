@@ -141,6 +141,8 @@ export const ApplicationOverview: FC<
                   <Text>{ceremony.place.office}</Text>
                 ) : ceremony.place.ceremonyPlace === CeremonyPlaces.society ? (
                   <Text>{ceremony.place.society}</Text>
+                ) : ceremony.place.ceremonyPlace === CeremonyPlaces.church ? (
+                  <Text>{formatMessage(m.ceremonyAtNationalChurch)}</Text>
                 ) : (
                   <Text>{formatMessage(m.ceremonyPlaceNone)}</Text>
                 )}

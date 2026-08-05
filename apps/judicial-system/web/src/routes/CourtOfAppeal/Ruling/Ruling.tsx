@@ -401,12 +401,18 @@ const Ruling = () => {
             `${COURT_OF_APPEAL_CASE_ROUTE}/${workingCase.id}`,
             targetAppealCase?.id,
           )}
-          nextUrl={appendAppealCaseIdQuery(
-            `${COURT_OF_APPEAL_SUMMARY_ROUTE}/${workingCase.id}`,
-            targetAppealCase?.id,
-          )}
-          nextIsDisabled={!isStepValid}
-          nextButtonIcon="arrowForward"
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              url: appendAppealCaseIdQuery(
+                `${COURT_OF_APPEAL_SUMMARY_ROUTE}/${workingCase.id}`,
+                targetAppealCase?.id,
+              ),
+              disabled: !isStepValid,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

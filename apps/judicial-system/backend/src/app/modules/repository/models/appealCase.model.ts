@@ -241,6 +241,15 @@ export class AppealCase extends Model {
   appealedByNationalId?: string
 
   /**********
+   * The time of appeal - the court session end time for in-court appeals
+   * (case-level court end time in request cases), the appeal creation time
+   * for appeals filed later
+   **********/
+  @Column({ type: DataType.DATE, allowNull: true })
+  @ApiPropertyOptional({ type: Date })
+  appealDate?: Date
+
+  /**********
    * Appeal lifecycle events (statement sent, etc.) anchored to this appeal case
    **********/
   @HasMany(() => AppealEventLog, 'appealCaseId')

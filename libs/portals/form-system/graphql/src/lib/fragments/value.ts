@@ -35,6 +35,12 @@ export const ValueFragment = gql`
     phoneNumber
     bankAccount
     time
+    registrationNumber
+    model
+    color {
+      is
+      en
+    }
     s3Key
     isLoggedInUser
   }

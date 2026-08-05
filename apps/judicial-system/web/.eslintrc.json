@@ -4,9 +4,16 @@
     "plugin:jsx-a11y/strict",
     "../../../.eslintrc.json"
   ],
-  "ignorePatterns": ["!**/*", "/src/graphql/schema.tsx"],
+  "ignorePatterns": ["!**/*", "/src/graphql/schema.tsx", "/public/**"],
   "rules": {
     "eqeqeq": ["error", "always"],
+    "no-restricted-syntax": [
+      "error",
+      {
+        "selector": "CallExpression[callee.name=/^format(Date)?$/] > Literal[value=/^Pp?$/]",
+        "message": "Do not use the date-fns short date token 'P'/'Pp' — the Icelandic locale renders it as 'd.MM.y' (unpadded day, padded month, e.g. \"5.05.2025\"). Use an explicit padded format like 'dd.MM.y' or 'dd.MM.y HH:mm'."
+      }
+    ],
     "@nx/enforce-module-boundaries": [
       "error",
       {

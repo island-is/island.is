@@ -13,6 +13,8 @@ export const messageTypeToSuspensionCategory: Partial<
 > = {
   [MessageType.DELIVERY_TO_COURT_PROSECUTOR]: MessageSuspensionCategory.COURT,
   [MessageType.DELIVERY_TO_COURT_DEFENDANT]: MessageSuspensionCategory.COURT,
+  [MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT]:
+    MessageSuspensionCategory.COURT,
   [MessageType.DELIVERY_TO_COURT_INDICTMENT]: MessageSuspensionCategory.COURT,
   [MessageType.DELIVERY_TO_COURT_INDICTMENT_INFO]:
     MessageSuspensionCategory.COURT,
@@ -20,9 +22,13 @@ export const messageTypeToSuspensionCategory: Partial<
     MessageSuspensionCategory.COURT,
   [MessageType.DELIVERY_TO_COURT_INDICTMENT_ARRAIGNMENT_DATE]:
     MessageSuspensionCategory.COURT,
-  [MessageType.DELIVERY_TO_COURT_INDICTMENT_DEFENDER]:
+  [MessageType.DELIVERY_TO_COURT_INDICTMENT_DEFENDANT]:
+    MessageSuspensionCategory.COURT,
+  [MessageType.DELIVERY_TO_COURT_INDICTMENT_CIVIL_CLAIMANT]:
     MessageSuspensionCategory.COURT,
   [MessageType.DELIVERY_TO_COURT_INDICTMENT_CANCELLATION_NOTICE]:
+    MessageSuspensionCategory.COURT,
+  [MessageType.DELIVERY_TO_COURT_INDICTMENT_CONCLUSION]:
     MessageSuspensionCategory.COURT,
   [MessageType.DELIVERY_TO_COURT_CASE_FILE]: MessageSuspensionCategory.COURT,
   [MessageType.DELIVERY_TO_COURT_CASE_FILES_RECORD]:
@@ -54,8 +60,6 @@ export const messageTypeToSuspensionCategory: Partial<
   [MessageType.DELIVERY_TO_POLICE_INDICTMENT]: MessageSuspensionCategory.POLICE,
   [MessageType.DELIVERY_TO_POLICE_CASE_FILE]: MessageSuspensionCategory.POLICE,
   [MessageType.DELIVERY_TO_POLICE_CASE_FILES_RECORD]:
-    MessageSuspensionCategory.POLICE,
-  [MessageType.DELIVERY_TO_POLICE_SUBPOENA_FILE]:
     MessageSuspensionCategory.POLICE,
   [MessageType.DELIVERY_TO_POLICE_SIGNED_COURT_RECORD]:
     MessageSuspensionCategory.POLICE,

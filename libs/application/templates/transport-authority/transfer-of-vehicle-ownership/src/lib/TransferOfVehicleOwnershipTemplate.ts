@@ -85,6 +85,11 @@ const template: ApplicationTemplate<
     {
       type: AuthDelegationType.Custom,
     },
+    {
+      // allsherjarumboð — accepted wherever Custom is; IDS auto-enables
+      // GeneralMandate on Custom-enabled scopes (samgongustofaVehicles).
+      type: AuthDelegationType.GeneralMandate,
+    },
   ],
   requiredScopes: [ApiScope.samgongustofaVehicles],
   adminDataConfig: {

@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing'
 import { DrivingLicenseService } from './drivingLicense.service'
 import {
+  DrivingLicenseApi,
   DrivingLicenseApiConfig,
   DrivingLicenseApiModule,
 } from '@island.is/clients/driving-license'
@@ -24,13 +25,17 @@ import { NationalRegistryV3ApplicationsClientService } from '@island.is/clients/
 import ResidenceHistory from '../lib/__mock-data__/residenceHistory.json'
 import { ConfigModule } from '@island.is/nest/config'
 
-import { DrivingLicenseCategory } from './drivingLicense.type'
+import {
+  DrivingLicenseApplicationType,
+  DrivingLicenseCategory,
+} from './drivingLicense.type'
 
 const daysOfResidency = 365
 
 startMocking(requestHandlers)
 describe('DrivingLicenseService', () => {
   let service: DrivingLicenseService
+  let drivingLicenseApi: DrivingLicenseApi
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -60,6 +65,7 @@ describe('DrivingLicenseService', () => {
     }).compile()
 
     service = module.get(DrivingLicenseService)
+    drivingLicenseApi = module.get(DrivingLicenseApi)
   })
 
   describe('Module', () => {
@@ -358,9 +364,103 @@ describe('DrivingLicenseService', () => {
           {
             key: 'DeniedByService',
             requirementMet: false,
+            errorCode: 'SOME REASON',
           },
         ],
       })
+    })
+
+    it('still returns eligibility when the RLS codetable lookup fails', async () => {
+      jest
+        .spyOn(drivingLicenseApi, 'getErrorCodeDescriptions')
+        .mockRejectedValueOnce(new Error('codetable down'))
+
+      const MOCK_USER_COPY = { ...MOCK_USER }
+      MOCK_USER_COPY.authorization = MOCK_TOKEN_EXPIRED
+
+      const response = await service.getApplicationEligibility(
+        MOCK_USER_COPY,
+        MOCK_NATIONAL_ID_EXPIRED,
+        'B-full',
+      )
+
+      // The denial reason (errorCode) is still attached; only the RLS message
+      // is omitted because the lookup failed — the query does not throw.
+      expect(response.isEligible).toBe(false)
+      expect(
+        response.requirements.find((r) => r.key === 'DeniedByService'),
+      ).toStrictEqual({
+        key: 'DeniedByService',
+        requirementMet: false,
+        errorCode: 'SOME REASON',
+      })
+    })
+
+    it('attaches the RLS description for an uncurated B-temp denial code (the case the UI actually shows)', async () => {
+      // HAS_NO_SIGNATURE maps to a key that falls through to the generic
+      // branch, so the resolved RLS message is what renders (unlike curated
+      // codes such as HAS_POINTS, whose own copy overrides `message`).
+      jest
+        .spyOn(drivingLicenseApi, 'getCanApplyForCategoryTemporary')
+        .mockResolvedValue({ result: false, errorCode: 'HAS_NO_SIGNATURE' })
+
+      const response = await service.getApplicationEligibility(
+        MOCK_USER,
+        MOCK_NATIONAL_ID,
+        'B-temp',
+      )
+
+      const canApply = response.requirements.find(
+        (r) => r.errorCode === 'HAS_NO_SIGNATURE',
+      )
+      expect(canApply?.messageIs).toBe(
+        'Einstaklingur hefur ekki undirskrift á skrá',
+      )
+      expect(canApply?.messageEn).toBe('Person has no signature on file')
+    })
+
+    it('attaches RLS text for renewal-65 too (no license-type gate)', async () => {
+      jest
+        .spyOn(drivingLicenseApi, 'getCanApplyForRenewal65')
+        .mockResolvedValue({ result: false, errorCode: 'HAS_POINTS' })
+
+      const response = await service.getApplicationEligibility(
+        MOCK_USER,
+        MOCK_NATIONAL_ID,
+        // Runtime value the GraphQL String field actually receives, even though
+        // it is outside the narrower DrivingLicenseApplicationType TS union.
+        'B-full-renewal-65' as DrivingLicenseApplicationType,
+      )
+
+      const canApply = response.requirements.find(
+        (r) => r.errorCode === 'HAS_POINTS',
+      )
+      expect(canApply?.messageIs).toBe('Þú ert með punkta á ökuskírteini')
+      expect(canApply?.messageEn).toBe('You have points on your license')
+    })
+  })
+
+  describe('describeErrorCode', () => {
+    it('returns both language descriptions for a known code', async () => {
+      const result = await service.describeErrorCode('HAS_POINTS')
+      expect(result).toEqual({
+        is: 'Þú ert með punkta á ökuskírteini',
+        en: 'You have points on your license',
+      })
+    })
+
+    it('returns null for a code not in the catalogue', async () => {
+      const result = await service.describeErrorCode('TOTALLY_UNKNOWN_CODE')
+      expect(result).toBeNull()
+    })
+
+    it('returns null (best-effort) when the codetable lookup fails', async () => {
+      jest
+        .spyOn(drivingLicenseApi, 'getErrorCodeDescriptions')
+        .mockRejectedValueOnce(new Error('codetable down'))
+
+      const result = await service.describeErrorCode('HAS_POINTS')
+      expect(result).toBeNull()
     })
   })
 

@@ -12,7 +12,8 @@ interface Props {
   onClick?: (evt: MouseEvent) => void
   disabled?: boolean
   tooltipText?: string
-  ariaLabel?: string
+  // Required: icon-only buttons need a descriptive accessible name.
+  ariaLabel: string
 }
 
 interface RenderButtonProps {
@@ -20,7 +21,7 @@ interface RenderButtonProps {
   colorScheme: 'blue' | 'red' | 'transparent'
   onClick?: (evt: MouseEvent) => void
   disabled?: boolean
-  ariaLabel?: string
+  ariaLabel: string
 }
 
 const RenderButton = forwardRef<HTMLButtonElement, RenderButtonProps>(
@@ -41,7 +42,7 @@ const RenderButton = forwardRef<HTMLButtonElement, RenderButtonProps>(
       }
       onClick={(evt) => onClick && onClick(evt)}
       disabled={disabled}
-      aria-label={ariaLabel ?? 'Valmynd'}
+      aria-label={ariaLabel}
     >
       <Icon
         icon={icon}

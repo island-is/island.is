@@ -11,9 +11,8 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { CacheField } from '@island.is/nest/graphql'
 import { SystemMetadata } from '@island.is/shared/types'
-import { IArticle } from '../generated/contentfulTypes'
+import { IArticle, IManual } from '../generated/contentfulTypes'
 import { ArticleGroup, mapArticleGroup } from './articleGroup.model'
-import { mapDocument } from '../unions/slice.union'
 import { mapOrganization, Organization } from './organization.model'
 import { ArticleCategory, mapArticleCategory } from './articleCategory.model'
 import { mapProcessEntry, ProcessEntry } from './processEntry.model'
@@ -46,6 +45,9 @@ export class ArticleReference {
 
   @Field()
   processEntryButtonText?: string
+
+  @Field({ nullable: true })
+  type?: string
 }
 
 export const mapArticleReference = ({
@@ -68,4 +70,22 @@ export const mapArticleReference = ({
     ? mapProcessEntry(fields.processEntry)
     : null,
   processEntryButtonText: fields.processEntryButtonText ?? '',
+  type: 'article',
+})
+
+export const mapManualToArticleReference = ({
+  fields,
+  sys,
+}: IManual): SystemMetadata<ArticleReference> => ({
+  typename: 'Article',
+  id: sys.id,
+  title: fields?.title ?? '',
+  slug: fields?.slug ?? '',
+  intro: '',
+  group: null,
+  category: null,
+  organization: [],
+  processEntry: null,
+  processEntryButtonText: '',
+  type: 'manual',
 })

@@ -1,11 +1,16 @@
 import request from 'supertest'
 
-import { PaymentMethod } from '../../types'
+import { PaymentMethod, PaymentStatus } from '../../types'
 import { TestApp } from '@island.is/testing/nest'
 
 import { setupTestApp } from '../../../test/setup'
 import { CreatePaymentFlowInput } from './dtos/createPaymentFlow.input'
 import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
+import { BankTransferService } from '../bankTransferPayment/bankTransfer.service'
+import {
+  BankTransferFailureReason,
+  BankTransferStatusOverlay,
+} from '../bankTransferPayment/bankTransfer.types'
 import { PaymentFlowService } from './paymentFlow.service'
 
 // A helper type to satisfy the linter for spying on private methods.
@@ -115,6 +120,122 @@ describe('PaymentFlowController', () => {
       const getResponse = await server.get(`/v1/payments/${paymentFlowId}`)
       expect(getResponse.status).toBe(200)
       expect(getResponse.body.cancelUrl).toBe(cancelUrl)
+    })
+  })
+
+  describe('getPaymentFlow — bank transfer overlay composition', () => {
+    let overlaySpy: jest.SpyInstance
+
+    const createFreshFlow = async () => {
+      const payload: CreatePaymentFlowInput = {
+        charges: [
+          {
+            chargeItemCode: '123',
+            chargeType: 'A',
+            quantity: 1,
+          },
+        ],
+        payerNationalId: '1234567890',
+        availablePaymentMethods: [PaymentMethod.CARD],
+        onUpdateUrl: 'https://www.island.is/greida/update',
+        organisationId: '5534567890',
+      }
+      const create = await server.post('/v1/payments').send(payload)
+      return new URL(create.body.urls.is).pathname.split('/').pop() as string
+    }
+
+    afterEach(() => {
+      // Restore only this describe's spy — the top-level mocks set in beforeAll must persist for
+      // sibling tests.
+      overlaySpy?.mockRestore()
+    })
+
+    it('returns the bare UNPAID base when no overlay applies', async () => {
+      overlaySpy = jest
+        .spyOn(
+          BankTransferService.prototype as SpiedService,
+          'getBankTransferStatus',
+        )
+        .mockResolvedValue(null)
+
+      const paymentFlowId = await createFreshFlow()
+      const response = await server.get(`/v1/payments/${paymentFlowId}`)
+
+      expect(response.status).toBe(200)
+      expect(overlaySpy).toHaveBeenCalledWith(paymentFlowId)
+      expect(response.body.paymentStatus).toBe(PaymentStatus.UNPAID)
+      expect(response.body.lastBankTransferFailure).toBeUndefined()
+      expect(response.body.bankTransferScaRedirectUrl).toBeUndefined()
+    })
+
+    it('overlays BANK_TRANSFER_PENDING with the SCA URL when getBankTransferStatus returns a pending overlay', async () => {
+      const overlay: BankTransferStatusOverlay = {
+        paymentStatus: PaymentStatus.BANK_TRANSFER_PENDING,
+        updatedAt: new Date(),
+        bankTransferScaRedirectUrl: 'https://stage.blikk.tech/sca/abc',
+      }
+      overlaySpy = jest
+        .spyOn(
+          BankTransferService.prototype as SpiedService,
+          'getBankTransferStatus',
+        )
+        .mockResolvedValue(overlay)
+
+      const paymentFlowId = await createFreshFlow()
+      const response = await server.get(`/v1/payments/${paymentFlowId}`)
+
+      expect(response.status).toBe(200)
+      expect(response.body.paymentStatus).toBe(
+        PaymentStatus.BANK_TRANSFER_PENDING,
+      )
+      expect(response.body.bankTransferScaRedirectUrl).toBe(
+        'https://stage.blikk.tech/sca/abc',
+      )
+    })
+
+    it('overlays BANK_TRANSFER_FAILED with the failure reason when getBankTransferStatus returns a failed overlay', async () => {
+      const overlay: BankTransferStatusOverlay = {
+        paymentStatus: PaymentStatus.BANK_TRANSFER_FAILED,
+        updatedAt: new Date(),
+        lastBankTransferFailure: BankTransferFailureReason.REJECTED,
+      }
+      overlaySpy = jest
+        .spyOn(
+          BankTransferService.prototype as SpiedService,
+          'getBankTransferStatus',
+        )
+        .mockResolvedValue(overlay)
+
+      const paymentFlowId = await createFreshFlow()
+      const response = await server.get(`/v1/payments/${paymentFlowId}`)
+
+      expect(response.status).toBe(200)
+      expect(response.body.paymentStatus).toBe(
+        PaymentStatus.BANK_TRANSFER_FAILED,
+      )
+      expect(response.body.lastBankTransferFailure).toBe(
+        BankTransferFailureReason.REJECTED,
+      )
+    })
+
+    it('overlays PAID when getBankTransferStatus finalizes a just-settled transfer (no stale UNPAID snapshot)', async () => {
+      const updatedAt = new Date()
+      const overlay: BankTransferStatusOverlay = {
+        paymentStatus: PaymentStatus.PAID,
+        updatedAt,
+      }
+      overlaySpy = jest
+        .spyOn(
+          BankTransferService.prototype as SpiedService,
+          'getBankTransferStatus',
+        )
+        .mockResolvedValue(overlay)
+
+      const paymentFlowId = await createFreshFlow()
+      const response = await server.get(`/v1/payments/${paymentFlowId}`)
+
+      expect(response.status).toBe(200)
+      expect(response.body.paymentStatus).toBe(PaymentStatus.PAID)
     })
   })
 })

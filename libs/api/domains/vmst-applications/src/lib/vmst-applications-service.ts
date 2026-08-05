@@ -15,6 +15,7 @@ import {
   VmstApplicationsUnemploymentApplicationOverview,
   VmstApplicationsValidationUnemploymentApplication,
   VmstApplicationsApplicantAttachment,
+  VmstApplicationsApplicantAttachmentsResponse,
   VmstApplicationsOverview,
 } from './models'
 import type { Locale } from '@island.is/shared/types'
@@ -177,33 +178,50 @@ export class VMSTApplicationsService {
   async getApplicantAttachments(
     applicantId: string,
     nationalId: string,
-  ): Promise<VmstApplicationsApplicantAttachment[]> {
-    const items = await this.vmstUnemploymentService.getApplicantAttachments(
+  ): Promise<VmstApplicationsApplicantAttachmentsResponse> {
+    const response = await this.vmstUnemploymentService.getApplicantAttachments(
       applicantId,
     )
 
-    return Promise.all(
-      items.flatMap((item) => {
-        if (!item.id || !item.name || !item.contentType || !item.created) {
-          return []
-        }
+    const mapItems = async (
+      items: Array<{
+        id?: string
+        typeId?: string | null
+        name?: string
+        contentType?: string
+        created?: string
+      }>,
+    ): Promise<VmstApplicationsApplicantAttachment[]> => {
+      return Promise.all(
+        items.flatMap((item) => {
+          if (!item.id || !item.name || !item.contentType || !item.created) {
+            return []
+          }
 
-        const { id, typeId, name, contentType, created } = item
+          const { id, typeId, name, contentType, created } = item
 
-        return [
-          maskString(id, nationalId).then((maskedId) => ({
-            id,
-            typeId: typeId ?? null,
-            name,
-            contentType,
-            created,
-            downloadServiceUrl: maskedId
-              ? `${this.downloadServiceConfig.baseUrl}/download/v1/vmst/attachment/${maskedId}`
-              : null,
-          })),
-        ]
-      }),
-    )
+          return [
+            maskString(id, nationalId).then((maskedId) => ({
+              id,
+              typeId: typeId ?? null,
+              name,
+              contentType,
+              created,
+              downloadServiceUrl: maskedId
+                ? `${this.downloadServiceConfig.baseUrl}/download/v1/vmst/attachment/${maskedId}`
+                : null,
+            })),
+          ]
+        }),
+      )
+    }
+
+    const [userSubmitted, letters] = await Promise.all([
+      mapItems(response.userSubmitted ?? []),
+      mapItems(response.letters ?? []),
+    ])
+
+    return { userSubmitted, letters }
   }
 
   async getAttachmentTypes(): Promise<GaldurDomainModelsSettingsAttachmentTypesAttachmentTypeListViewModel> {

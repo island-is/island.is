@@ -54,7 +54,8 @@ export const HeirsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers> & HeirsRepeaterProps>
 > = ({ application, field, errors, setBeforeSubmitCallback }) => {
   const { answers } = application
-  const { id, props } = field
+  const id = field.id as string
+  const { props } = field
   const { customFields } = props
 
   const { formatMessage } = useLocale()

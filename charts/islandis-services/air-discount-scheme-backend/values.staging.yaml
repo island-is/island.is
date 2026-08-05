@@ -41,6 +41,7 @@ env:
   XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
 grantNamespaces:
   - 'islandis'
+  - 'envoy-gateway-external'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
@@ -57,7 +58,7 @@ hpa:
       cpuAverageUtilization: 90
       nginxRequestsIrate: 20
     replicas:
-      max: 3
+      max: 2
       min: 1
 httpRoute:
   primary-gw:
@@ -73,21 +74,6 @@ httpRoute:
           - pathPrefix: '/api/public'
 image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-backend'
-ingress:
-  primary-alb:
-    annotations:
-      kubernetes.io/ingress.class: 'nginx-external-alb'
-      nginx.ingress.kubernetes.io/enable-global-auth: 'false'
-      nginx.ingress.kubernetes.io/service-upstream: 'true'
-    hosts:
-      - host: 'loftbru.staging01.devland.is'
-        paths:
-          - '/api/swagger'
-          - '/api/public'
-      - host: 'loftbru-cf.staging01.devland.is'
-        paths:
-          - '/api/swagger'
-          - '/api/public'
 initContainer:
   containers:
     - args:
@@ -120,7 +106,7 @@ podSecurityContext:
 pvcs: []
 replicaCount:
   default: 1
-  max: 3
+  max: 2
   min: 1
 resources:
   limits:

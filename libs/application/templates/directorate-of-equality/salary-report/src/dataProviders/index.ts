@@ -26,9 +26,39 @@ export const BlankExcelTemplateApi = defineTemplateApi({
   namespace: 'DirectorateOfEquality',
 })
 
+export const ImportPresignApi = defineTemplateApi({
+  action: 'presignImportUpload',
+  externalDataId: 'importPresign',
+  namespace: 'DirectorateOfEquality',
+  throwOnError: false,
+})
+
 export const ParsedSalaryReportApi = defineTemplateApi({
   action: 'parseSalaryReportWorkbook',
   externalDataId: 'parsedSalaryReport',
   namespace: 'DirectorateOfEquality',
   throwOnError: false,
+})
+
+export const SubmitSalaryReportApi = defineTemplateApi({
+  action: 'submitSalaryReport',
+  externalDataId: 'submitSalaryReport',
+  namespace: 'DirectorateOfEquality',
+  shouldPersistToExternalData: true,
+  throwOnError: true,
+})
+
+export const SalaryAnalysisApi = defineTemplateApi({
+  action: 'analyzeSalaryReport',
+  externalDataId: 'salaryAnalysisResult',
+  namespace: 'DirectorateOfEquality',
+  throwOnError: false,
+})
+
+export const EditOutliersApi = defineTemplateApi({
+  action: 'editOutliers',
+  externalDataId: 'editOutliers',
+  namespace: 'DirectorateOfEquality',
+  shouldPersistToExternalData: true,
+  throwOnError: true,
 })

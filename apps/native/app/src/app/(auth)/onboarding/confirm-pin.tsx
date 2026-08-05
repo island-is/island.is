@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { Image, Platform, SafeAreaView, ToastAndroid, View } from 'react-native'
+import { Image, SafeAreaView, View } from 'react-native'
 import { router, useLocalSearchParams, useRouter } from 'expo-router'
 import Keychain from 'react-native-keychain'
 import styled from 'styled-components/native'
-import * as Burnt from 'burnt'
 
 import { dynamicColor, font } from '@/ui'
 import { CancelButton } from '@/ui/lib/button/cancel-button'
 import { PinKeypad } from '@/components/pin-keypad/pin-keypad'
 import { VisualizedPinCode } from '@/components/visualized-pin-code/visualized-pin-code'
+import { toast } from '@/components/toast'
 import { preferencesStore } from '@/stores/preferences-store'
 import { nextOnboardingStep } from '@/utils/onboarding'
 
@@ -73,19 +73,7 @@ export default function ConfirmPinScreen() {
           preferencesStore.setState({ hasOnboardedPinCode: true })
           if (params.from === 'settings') {
             router.dismissTo('/(auth)/(modals)/settings')
-            if (Platform.OS === 'android') {
-              ToastAndroid.show(
-                intl.formatMessage({ id: 'pinCode.updated' }),
-                ToastAndroid.SHORT,
-              )
-            } else {
-              Burnt.toast({
-                title: intl.formatMessage({ id: 'pinCode.updated' }),
-                preset: 'done',
-                duration: 1.2,
-                shouldDismissByDrag: true,
-              })
-            }
+            toast.success(intl.formatMessage({ id: 'pinCode.updated' }))
           } else {
             nextOnboardingStep()
           }

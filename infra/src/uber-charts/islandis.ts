@@ -55,9 +55,7 @@ import {
   userNotificationBirthdayWorkerSetup,
 } from '../../../apps/services/user-notification/infra/user-notification'
 
-import { serviceSetup as adsApiSetup } from '../../../apps/air-discount-scheme/api/infra/api'
 import { serviceSetup as adsBackendSetup } from '../../../apps/air-discount-scheme/backend/infra/air-discount-scheme-backend'
-import { serviceSetup as adsWebSetup } from '../../../apps/air-discount-scheme/web/infra/web'
 
 import { serviceSetup as rabBackendSetup } from '../../../apps/services/regulations-admin-backend/infra/regulations-admin-backend'
 
@@ -114,8 +112,6 @@ const appSystemApiWorker = appSystemApiWorkerSetup({
 const nameRegistryBackend = serviceNameRegistryBackendSetup()
 
 const adsBackend = adsBackendSetup()
-const adsApi = adsApiSetup({ adsBackend })
-const adsWeb = adsWebSetup({ adsApi })
 
 const sessionsService = sessionsServiceSetup()
 const sessionsWorker = sessionsWorkerSetup()
@@ -210,9 +206,7 @@ export const Services: EnvironmentServices = {
     downloadService,
     nameRegistryBackend,
     endorsement,
-    adsWeb,
     adsBackend,
-    adsApi,
     rabBackend,
     appSystemApiWorker,
     userNotificationService,
@@ -260,9 +254,7 @@ export const Services: EnvironmentServices = {
     downloadService,
     nameRegistryBackend,
     endorsement,
-    adsWeb,
     adsBackend,
-    adsApi,
     rabBackend,
     appSystemApiWorker,
     userNotificationService,
@@ -307,9 +299,7 @@ export const Services: EnvironmentServices = {
     downloadService,
     nameRegistryBackend,
     endorsement,
-    adsWeb,
     adsBackend,
-    adsApi,
     rabBackend,
     githubActionsCache,
     userNotificationService,

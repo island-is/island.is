@@ -80,7 +80,7 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
         ? 'Rafrænt pósthólf island.is'
         : servedBy
 
-    return [processServer, formatDate(serviceDate, 'Pp')]
+    return [processServer, formatDate(serviceDate, 'dd.MM.y HH:mm')]
       .filter(Boolean)
       .join(', ')
   }
@@ -296,10 +296,7 @@ const IndictmentOverview: FC = () => {
           </div>
         </FormContentContainer>
         <FormContentContainer isFooter>
-          <FormFooter
-            previousUrl={getStandardUserDashboardRoute(user)}
-            hideNextButton
-          />
+          <FormFooter previousUrl={getStandardUserDashboardRoute(user)} />
         </FormContentContainer>
         {appealModals}
       </PageLayout>

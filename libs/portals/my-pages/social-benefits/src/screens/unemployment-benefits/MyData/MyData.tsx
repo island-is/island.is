@@ -3,6 +3,7 @@ import {
   UserInfoLine,
   formSubmit,
   m as coreMessages,
+  PdfModal,
 } from '@island.is/portals/my-pages/core'
 import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unemployment'
 import {
@@ -20,6 +21,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { useState } from 'react'
 import { ActionButtons } from '../components/ActionButtons'
 import { Problem } from '@island.is/react-spa/shared'
 
@@ -28,6 +30,7 @@ const VIEWABLE_CONTENT_TYPES = ['application/pdf', 'image/png', 'image/jpeg']
 const MyData = () => {
   useNamespaces('sp.social-benefits-unemployment')
   const { formatMessage, formatDateFns } = useLocale()
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null)
 
   const { data: actionsData, loading: actionsLoading } =
     useGetApplicantAvailableActionsQuery()
@@ -58,7 +61,7 @@ const MyData = () => {
 
   const coreLoading = actionsLoading || attachmentTypesLoading
   const requestedLoading = coreLoading || attachmentsLoading
-  const submittedLoading = coreLoading || applicantAttachmentsLoading
+  const applicantDataLoading = coreLoading || applicantAttachmentsLoading
 
   const requestedAttachmentsHasError = !!attachmentsError
   const submittedAttachmentsHasError = !!applicantAttachmentsError
@@ -71,7 +74,10 @@ const MyData = () => {
     requestedAttachments?.filter((a) => !a.attachmentId) ?? []
 
   const submittedAttachments =
-    applicantAttachmentsData?.vmstApplicantAttachments ?? []
+    applicantAttachmentsData?.vmstApplicantAttachments?.userSubmitted ?? []
+
+  const lettersAttachments =
+    applicantAttachmentsData?.vmstApplicantAttachments?.letters ?? []
 
   const getAttachmentName = (attachmentTypeId?: string | null) => {
     if (!attachmentTypeId) return ''
@@ -89,6 +95,12 @@ const MyData = () => {
       }}
       loading={coreLoading}
     >
+      <PdfModal
+        url={pdfUrl}
+        aria-label={formatMessage(um.myDataViewDocument)}
+        onClose={() => setPdfUrl(null)}
+      />
+
       <ActionButtons
         availableActions={availableActions}
         loading={coreLoading}
@@ -146,11 +158,11 @@ const MyData = () => {
             <Text variant="eyebrow" color="purple600" marginBottom={2}>
               {formatMessage(um.myDataSubmittedAttachmentsHeading)}
             </Text>
-            {submittedLoading && <SkeletonLoader repeat={3} space={2} />}
-            {!submittedLoading && submittedAttachmentsHasError && (
+            {applicantDataLoading && <SkeletonLoader repeat={3} space={2} />}
+            {!applicantDataLoading && submittedAttachmentsHasError && (
               <Problem type="no_data" noBorder={false} />
             )}
-            {!submittedLoading &&
+            {!applicantDataLoading &&
               !submittedAttachmentsHasError &&
               submittedAttachments.length > 0 && (
                 <Stack space={0}>
@@ -185,6 +197,51 @@ const MyData = () => {
                                     if (attachment.downloadServiceUrl) {
                                       formSubmit(attachment.downloadServiceUrl)
                                     }
+                                  },
+                                }
+                              : undefined
+                          }
+                        />
+                        <Divider />
+                      </Box>
+                    )
+                  })}
+                </Stack>
+              )}
+          </Box>
+
+          {/* Bref */}
+          <Box paddingTop={4}>
+            <Text variant="eyebrow" color="purple600" marginBottom={2}>
+              {formatMessage(um.myDataLettersHeading)}
+            </Text>
+            {applicantDataLoading && <SkeletonLoader repeat={3} space={2} />}
+            {!applicantDataLoading && submittedAttachmentsHasError && (
+              <Problem type="no_data" noBorder={false} />
+            )}
+            {!applicantDataLoading &&
+              !submittedAttachmentsHasError &&
+              lettersAttachments.length > 0 && (
+                <Stack space={0}>
+                  {lettersAttachments.map((attachment) => {
+                    return (
+                      <Box key={attachment.id}>
+                        <UserInfoLine
+                          label={attachment.name}
+                          content={
+                            attachment.created
+                              ? formatDateFns(attachment.created, 'dd.MM.yyyy')
+                              : ''
+                          }
+                          button={
+                            attachment.downloadServiceUrl
+                              ? {
+                                  title: um.myDataViewDocument,
+                                  icon: 'arrowForward',
+                                  onClick: () => {
+                                    setPdfUrl(
+                                      attachment.downloadServiceUrl || '',
+                                    )
                                   },
                                 }
                               : undefined

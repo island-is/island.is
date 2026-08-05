@@ -39,7 +39,6 @@ export type OutputPersistentVolumeClaim = {
 }
 export type ContainerEnvironmentVariables = { [name: string]: string }
 export type ContainerSecrets = { [name: string]: string }
-export type IngressClass = 'nginx-internal-alb' | 'nginx-external-alb'
 export type GatewayName = 'gateway-external' | 'gateway-internal'
 
 export interface HelmService {
@@ -92,17 +91,6 @@ export interface HelmService {
   securityContext: {
     privileged?: boolean
     allowPrivilegeEscalation?: boolean
-  }
-
-  ingress?: {
-    [name: string]: {
-      ingressClassName?: IngressClass
-      annotations: {
-        [anntName: string]: string
-      }
-      pathTypeOverride?: 'Exact' | 'Prefix' | 'ImplementationSpecific'
-      hosts: { host: string; paths: string[] }[]
-    }
   }
 
   httpRoute?: {

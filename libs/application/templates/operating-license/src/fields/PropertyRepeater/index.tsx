@@ -34,7 +34,8 @@ export const PropertyRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   errors,
 }) => {
   const { formatMessage, lang: locale } = useLocale()
-  const { id, title = '' } = field
+  const id = field.id as string
+  const { title = '' } = field
   const { fields, append, remove } = useFieldArray({
     name: `${id}`,
   })

@@ -24,7 +24,6 @@ import {
   XRoadMemberClass,
 } from '@island.is/shared/utils/server'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   CaseState,
   CaseType,
@@ -40,6 +39,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
+import { nationalIdTransformer } from '../../transformers'
 import { AwsS3Service } from '../aws-s3'
 import { EventService } from '../event'
 import { IndictmentCountService } from '../indictment-count/indictmentCount.service'
@@ -335,6 +335,20 @@ export class PoliceService {
     }
   }
 
+  /** Winston error log only (no Slack). */
+  private logPoliceFailure(
+    logMessage: string,
+    info: { [key: string]: string | boolean | Date | undefined },
+    reason: unknown,
+  ): void {
+    this.logger.error(logMessage, {
+      ...info,
+      error: reason instanceof Error ? reason : undefined,
+      errorSummary:
+        reason instanceof Error ? undefined : String(reason).slice(0, 2000),
+    })
+  }
+
   /** Winston error log plus Slack error webhook (same payload shape as before). */
   private logPoliceFailureAndNotify(
     slackTitle: string,
@@ -342,14 +356,12 @@ export class PoliceService {
     info: { [key: string]: string | boolean | Date | undefined },
     reason: unknown,
   ): void {
-    const errorForSlack = this.reasonToError(reason)
-    this.logger.error(logMessage, {
-      ...info,
-      error: reason instanceof Error ? reason : undefined,
-      errorSummary:
-        reason instanceof Error ? undefined : String(reason).slice(0, 2000),
-    })
-    void this.eventService.postErrorEvent(slackTitle, info, errorForSlack)
+    this.logPoliceFailure(logMessage, info, reason)
+    void this.eventService.postErrorEvent(
+      slackTitle,
+      info,
+      this.reasonToError(reason),
+    )
   }
 
   private async throttleUploadPoliceCaseFile(
@@ -1291,8 +1303,10 @@ export class PoliceService {
 
       throw await res.text()
     } catch (error) {
-      this.logPoliceFailureAndNotify(
-        'Failed to create external police document file',
+      // Winston only - VerdictService.deliverVerdictToNationalCommissionersOffice
+      // posts the Slack error for a failed delivery, so notifying here too would
+      // double-post.
+      this.logPoliceFailure(
         `${createDocumentPath} - create external police document for file type code ${fileTypeCode} for case ${caseId}`,
         {
           caseId,
@@ -1340,7 +1354,8 @@ export class PoliceService {
           return {
             serviceStatus: serviceStatus,
             deliveredToDefenderNationalId:
-              response.defenderNationalId ?? undefined,
+              nationalIdTransformer({ value: response.defenderNationalId }) ??
+              undefined,
             comment: response.comment ?? undefined,
             servedBy: response.servedBy ?? undefined,
             serviceDate: legalPaperServiceDate ?? servedAt,
@@ -1414,8 +1429,7 @@ export class PoliceService {
     const { nationalId: defendantNationalId } = defendant
     const { name: actor } = user
 
-    const normalizedNationalId =
-      normalizeAndFormatNationalId(defendantNationalId)[0]
+    const normalizedNationalId = defendantNationalId ?? ''
 
     const documentName = `Fyrirkall í máli ${courtCaseNumber}`
     const arraignmentInfo = DateLog.arraignmentDate(dateLogs)
@@ -1457,8 +1471,10 @@ export class PoliceService {
 
       throw await res.text()
     } catch (error) {
-      this.logPoliceFailureAndNotify(
-        'Failed to create subpoena',
+      // Winston only - SubpoenaService.deliverSubpoenaToNationalCommissionersOffice
+      // posts the Slack error for a failed delivery, so notifying here too would
+      // double-post.
+      this.logPoliceFailure(
         `Failed create subpoena for case ${theCase.id}`,
         {
           caseId: theCase.id,

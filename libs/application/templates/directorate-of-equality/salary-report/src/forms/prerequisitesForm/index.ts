@@ -7,6 +7,7 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import { DefaultEvents, FormModes } from '@island.is/application/types'
+import { DirectorateOfEqualityLogo } from '@island.is/application/assets/institution-logos'
 import {
   ActiveEqualityReportApi,
   BlankExcelTemplateApi,
@@ -19,16 +20,18 @@ import { messages } from '../../lib/messages'
 
 export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',
+  logo: DirectorateOfEqualityLogo,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'forsendur',
-      title: messages.prerequisites.section.sectionTitle,
+      tabTitle: messages.prerequisites.section.sectionTitle,
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
           title: messages.prerequisites.section.title,
+          description: messages.prerequisites.section.intro,
           checkboxLabel: messages.prerequisites.section.checkboxLabel,
           submitField: buildSubmitField({
             id: 'submit',
@@ -72,26 +75,6 @@ export const Prerequisites = buildForm({
           ],
         }),
       ],
-    }),
-    buildSection({
-      id: 'aboutTheCompany',
-      title: messages.aboutTheCompany.section.sectionTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'report',
-      title: messages.report.section.sectionTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'salaryAnalysis',
-      title: messages.salaryAnalysis.section.sectionTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'overview',
-      title: messages.overview.sectionTitle,
-      children: [],
     }),
   ],
 })

@@ -12,7 +12,6 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   AppealCaseNotificationType,
@@ -38,10 +37,12 @@ import {
   getConfirmedDefendantsForDefender,
   getDefenceUserCaseFileCategories,
   getDefenceUserCutoffDate,
-  getDefenderVisiblePoliceCaseNumbers,
+  getDefenceUserVisiblePoliceCaseNumbers,
+  isRulingOrderInConfirmedCourtSession,
 } from '../file'
 import {
   AppealCase,
+  AppealDecision,
   AppealEventLog,
   Case,
   CaseDefendantPoliceCaseNumber,
@@ -224,6 +225,12 @@ export const include: Includeable[] = [
       },
     ],
   },
+  {
+    model: AppealDecision,
+    as: 'appealDecisions',
+    required: false,
+    separate: true,
+  },
   { model: Case, as: 'parentCase', attributes },
   { model: Case, as: 'childCase', attributes },
   {
@@ -389,15 +396,6 @@ export const include: Includeable[] = [
     as: 'caseStrings',
     required: false,
     where: { stringType: stringTypes },
-    separate: true,
-  },
-  // Only expose APPEAL_COMPLETED to limited-access users (e.g. defenders) for the appeal banner date.
-  {
-    model: Notification,
-    as: 'notifications',
-    required: false,
-    where: { type: AppealCaseNotificationType.APPEAL_COMPLETED },
-    order: [['created', 'DESC']],
     separate: true,
   },
   {
@@ -634,10 +632,14 @@ export class LimitedAccessCaseService {
   }
 
   async findDefenderByNationalId(nationalId: string): Promise<User> {
+    // nationalId comes from a raw @Query param, so normalize it once here and
+    // pass the dash-free value down to the lookups and the constructed user.
+    const normalizedNationalId = nationalId.replace(/-/g, '')
+
     return this.caseRepositoryService
       .findOne({
         where: {
-          defenderNationalId: normalizeAndFormatNationalId(nationalId),
+          defenderNationalId: normalizedNationalId,
           state: { [Op.not]: CaseState.DELETED },
           isArchived: false,
         },
@@ -647,7 +649,7 @@ export class LimitedAccessCaseService {
         if (theCase) {
           // The national id is associated with a defender in a request case
           return this.constructDefender(
-            nationalId,
+            normalizedNationalId,
             theCase.defenderName,
             theCase.defenderPhoneNumber,
             theCase.defenderEmail,
@@ -655,12 +657,12 @@ export class LimitedAccessCaseService {
         }
 
         return this.defendantService
-          .findLatestDefendantByDefenderNationalId(nationalId)
+          .findLatestDefendantByDefenderNationalId(normalizedNationalId)
           .then((defendant) => {
             if (defendant) {
               // The national id is associated with a defender in an indictment case
               return this.constructDefender(
-                nationalId,
+                normalizedNationalId,
                 defendant.defenderName,
                 defendant.defenderPhoneNumber,
                 defendant.defenderEmail,
@@ -668,12 +670,12 @@ export class LimitedAccessCaseService {
             }
 
             return this.civilClaimantService
-              .findLatestClaimantBySpokespersonNationalId(nationalId)
+              .findLatestClaimantBySpokespersonNationalId(normalizedNationalId)
               .then((civilClaimant) => {
                 if (civilClaimant) {
                   // The national id is associated with a spokesperson for a civil claimant in an indictment case
                   return this.constructDefender(
-                    nationalId,
+                    normalizedNationalId,
                     civilClaimant.spokespersonName,
                     civilClaimant.spokespersonPhoneNumber,
                     civilClaimant.spokespersonEmail,
@@ -783,6 +785,15 @@ export class LimitedAccessCaseService {
           return false
         }
 
+        // A ruling order uploaded during the course of a case is only visible
+        // once it has been added to a confirmed court session.
+        if (file.category === CaseFileCategory.COURT_INDICTMENT_RULING_ORDER) {
+          return isRulingOrderInConfirmedCourtSession(
+            file.id,
+            theCase.courtSessions,
+          )
+        }
+
         if (!allowedCaseFileCategories.includes(file.category)) {
           return false
         }
@@ -859,16 +870,22 @@ export class LimitedAccessCaseService {
         ),
       )
 
-      const policeCaseNumbersForZip = Defendant.isConfirmedDefenderOfDefendant(
-        user.nationalId,
-        theCase.defendants,
-      )
-        ? getDefenderVisiblePoliceCaseNumbers(
-            user.nationalId,
-            theCase.defendants,
-            theCase.policeCaseNumbers,
-          )
-        : theCase.policeCaseNumbers
+      const policeCaseNumbersForZip =
+        Defendant.isConfirmedDefenderOfDefendant(
+          user.nationalId,
+          theCase.defendants,
+        ) ||
+        CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
+          user.nationalId,
+          theCase.civilClaimants,
+        )
+          ? getDefenceUserVisiblePoliceCaseNumbers(
+              user.nationalId,
+              theCase.defendants,
+              theCase.civilClaimants,
+              theCase.policeCaseNumbers,
+            )
+          : theCase.policeCaseNumbers
 
       policeCaseNumbersForZip.forEach((policeCaseNumber) => {
         promises.push(

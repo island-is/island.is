@@ -110,7 +110,7 @@ export const hasUsableRlsQualityPhoto = (externalData: ExternalData): boolean =>
 
 export const getCodes = (application: Application): BasicChargeItem[] => {
   const applicationFor = getValueViaPath<
-    'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65' | 'B-advanced'
+    'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65'
   >(application.answers, 'applicationFor', 'B-full')
 
   const deliveryMethod = getValueViaPath<Pickup>(

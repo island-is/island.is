@@ -4,11 +4,14 @@ import { PaymentFlowEvent } from '../app/paymentFlow/models/paymentFlowEvent.mod
 export enum PaymentMethod {
   CARD = 'card',
   INVOICE = 'invoice',
+  BANK_TRANSFER = 'bank_transfer',
 }
 
 export enum PaymentStatus {
   UNPAID = 'unpaid',
   INVOICE_PENDING = 'invoice_pending',
+  BANK_TRANSFER_PENDING = 'bank_transfer_pending',
+  BANK_TRANSFER_FAILED = 'bank_transfer_failed',
   PAID = 'paid',
 }
 
@@ -29,6 +32,7 @@ export enum PaymentFlowEventReason {
   PAYMENT_STARTED = 'payment_started',
   PAYMENT_COMPLETED = 'payment_completed',
   PAYMENT_FAILED = 'payment_failed',
+  PAYMENT_CANCELLED = 'payment_cancelled',
   PAYMENT_FINALIZED = 'payment_finalized',
   REFUND_STARTED = 'refund_started',
   REFUND_COMPLETED = 'refund_completed',

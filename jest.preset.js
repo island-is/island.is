@@ -14,6 +14,8 @@ module.exports = {
   detectLeaks: false,
   passWithNoTests: true,
   moduleFileExtensions: ['ts', 'js', 'html'],
+  maxWorkers: '50%',
+  workerIdleMemoryLimit: '512MB',
   coverageReporters: ['json', 'lcov'],
   collectCoverageFrom: [
     'src/**/*.{js,jsx,ts,tsx}',

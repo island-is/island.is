@@ -17,15 +17,27 @@ interface Props {
 
 const individuals: ApplicantTypesEnum[] = [
   ApplicantTypesEnum.INDIVIDUAL,
-  ApplicantTypesEnum.INDIVIDUAL_GIVING_DELEGATION,
   ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL,
+  ApplicantTypesEnum.INDIVIDUAL_GIVING_DELEGATION,
   ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY,
   ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION,
+  ApplicantTypesEnum.LEGAL_GUARDIAN,
+  ApplicantTypesEnum.WARD_OF_LEGAL_GUARDIAN,
 ]
+
+const shouldHydrateFromUserProfile = (applicantType?: string | null) =>
+  applicantType === ApplicantTypesEnum.INDIVIDUAL ||
+  applicantType ===
+    ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL ||
+  applicantType ===
+    ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY ||
+  applicantType === ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION ||
+  applicantType === ApplicantTypesEnum.LEGAL_GUARDIAN
 
 export const Applicants = ({ applicantField }: Props) => {
   const { dispatch } = useApplicationContext()
   const { applicantType } = applicantField.fieldSettings ?? {}
+  const hydrateFromUserProfile = shouldHydrateFromUserProfile(applicantType)
   const isLegalEntity =
     applicantType === ApplicantTypesEnum.LEGAL_ENTITY ||
     applicantType === ApplicantTypesEnum.LEGAL_ENTITY_OF_PROCURATION_HOLDER
@@ -59,11 +71,15 @@ export const Applicants = ({ applicantField }: Props) => {
     USER_PROFILE,
     {
       fetchPolicy: 'cache-first',
-      skip: didHydrateFromProfile || (hasEmail && hasPhoneNumber),
+      skip:
+        !hydrateFromUserProfile ||
+        didHydrateFromProfile ||
+        (hasEmail && hasPhoneNumber),
     },
   )
 
   useEffect(() => {
+    if (!hydrateFromUserProfile) return
     if (didHydrateFromProfile) return
 
     if (userProfileError) {
@@ -104,6 +120,7 @@ export const Applicants = ({ applicantField }: Props) => {
     applicantField,
     dispatch,
     fetchEmailFromMyPages,
+    hydrateFromUserProfile,
   ])
 
   useQuery(IDENTITY_QUERY, {

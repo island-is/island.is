@@ -53,6 +53,31 @@ const haveAllSignatoriesSigned = (context: ApplicationContext) => {
   return (signatoriesResult.signatories ?? []).every((s) => s.signed)
 }
 
+const submitApplicationAndFetchSignatories = [
+  defineTemplateApi({
+    action: ApiActions.submitToSyslumenn,
+    throwOnError: true,
+    triggerEvent: DefaultEvents.SUBMIT,
+    order: 0,
+  }),
+  defineTemplateApi({
+    action: ApiActions.sendApplicationCopyToParties,
+    shouldPersistToExternalData: true,
+    externalDataId: 'sendApplicationCopyToParties',
+    throwOnError: false,
+    triggerEvent: DefaultEvents.SUBMIT,
+    order: 1,
+  }),
+  defineTemplateApi({
+    action: ApiActions.getSignatories,
+    shouldPersistToExternalData: true,
+    externalDataId: 'getSignatories',
+    throwOnError: false,
+    triggerEvent: DefaultEvents.SUBMIT,
+    order: 2,
+  }),
+]
+
 const InheritanceReportTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<InheritanceReportEvent>,
@@ -135,9 +160,6 @@ const InheritanceReportTemplate: ApplicationTemplate<
           lifecycle: pruneAfterDays(DRAFT_PRUNE_DAYS),
           actionCard: {
             displayPruneAt: true,
-            // Submission to syslumenn happens on entry to the signing state
-            // (reached via this SUBMIT transition), so log "applicationSent"
-            // here rather than on the later signing -> done finalization.
             historyLogs: [
               {
                 logMessage: coreHistoryMessages.applicationSent,
@@ -145,6 +167,9 @@ const InheritanceReportTemplate: ApplicationTemplate<
               },
             ],
           },
+          // Submit before resolving the SUBMIT target so cases with no
+          // required signatories skip the signing/status state entirely.
+          onExit: submitApplicationAndFetchSignatories,
           roles: [
             {
               id: Roles.ESTATE_INHERITANCE_APPLICANT,
@@ -180,9 +205,13 @@ const InheritanceReportTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: {
-            target: States.signing,
-          },
+          SUBMIT: [
+            {
+              target: States.done,
+              cond: haveAllSignatoriesSigned,
+            },
+            { target: States.signing },
+          ],
         },
       },
       [States.signing]: {
@@ -195,23 +224,6 @@ const InheritanceReportTemplate: ApplicationTemplate<
             shouldBePruned: true,
             whenToPrune: 90 * 24 * 3600 * 1000, // 90 days
           },
-          // Submit the report to syslumenn on entry, then optionally email a
-          // copy of the application to the parties (when the applicant opted
-          // in). Sending the copy must never block submission.
-          onEntry: [
-            defineTemplateApi({
-              action: ApiActions.submitToSyslumenn,
-              throwOnError: true,
-              order: 0,
-            }),
-            defineTemplateApi({
-              action: ApiActions.sendApplicationCopyToParties,
-              shouldPersistToExternalData: true,
-              externalDataId: 'sendApplicationCopyToParties',
-              throwOnError: false,
-              order: 1,
-            }),
-          ],
           actionCard: {
             pendingAction: (application) => {
               const externalData =

@@ -47,6 +47,11 @@ export const client = new ApolloClient({
       AuthDelegationsGroupedByIdentity: {
         keyFields: ['nationalId', 'type'],
       },
+      // Health Questionnaire Question: composite key because
+      // questions from different sections can share the same id
+      QuestionnaireQuestion: {
+        keyFields: ['id', 'sectionId'],
+      },
       Query: {
         fields: {
           authDelegations: {

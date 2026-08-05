@@ -159,7 +159,7 @@ export const completedForm = defineMessages({
   },
 })
 
-export const applicationMessages = {
+export const applicationMessages = defineMessages({
   actionCardPrerequisites: {
     id: 'vmst.dub.application:applicationMessages.actionCardPrerequisites',
     defaultMessage: 'Gagnaöflun',
@@ -190,7 +190,7 @@ export const applicationMessages = {
     defaultMessage: 'Afskráning móttekin',
     description: 'History log message when application is sent',
   },
-}
+})
 
 export const errorMessages = defineMessages({
   cannotApplyErrorTitle: {

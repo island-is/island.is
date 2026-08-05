@@ -8,7 +8,8 @@ import { messages } from '../../lib/messages'
 import type { ParsedCriterionDto } from '@island.is/clients/directorate-of-equality'
 import { CriteriaItem } from './CriteriaItem'
 import { PersonalCriteriaList } from './PersonalCriteriaList'
-import { DEFAULT_JOB_FACTORS, type JobFactor } from '../../lib/constants'
+import { DEFAULT_JOB_FACTORS } from '../../utils/constants'
+import type { JobFactor } from '../../utils/types'
 
 export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,

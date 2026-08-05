@@ -176,6 +176,7 @@ const DeterminationDetails: CustomScreen<DeterminationDetailsProps> = ({
           href: '/s/haestirettur/akvardanir',
         },
       ]}
+      hideFromExternalSearchEngines={true}
     >
       <Stack space={6}>
         {item.resolutionLink && (

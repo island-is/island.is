@@ -27,7 +27,7 @@ export const uploadDocuments = defineMessages({
   multiFieldDescription: {
     id: 'vmst.vsd.application:uploadDocuments.multiFieldDescription',
     defaultMessage:
-      'Vinsamlegast skilaðu þeim gögnum sem vantar upp á hér að neðan. Hægt er að hlaða upp einu í einu en þú getur bætt við línu ef þú ætlar að skila fleiri gögnum í einu.',
+      'Velkomin í almenna gagnagátt Vinnumálastofnunar. Í fellilistanum hér að neðan sérðu hvaða gögnum er hægt að skila inn. Hægt er að hlaða upp einu skjali í einu en þú getur bætt við línu ef þú ætlar að skila fleiri gögnum. Passaðu upp á að skjalið sem er hlaðið inn sé sama skjal og er valið í tegund gagna.',
     description: 'Upload documents description',
   },
   sectionStepTitle: {
@@ -47,8 +47,29 @@ export const uploadDocuments = defineMessages({
   },
   commentLabel: {
     id: 'vmst.vsd.application:uploadDocuments.commentLabel',
-    defaultMessage: 'Athugasemd',
+    defaultMessage: 'Frekari skýringar',
     description: 'Label for comment input',
+  },
+  checkboxLabel: {
+    id: 'vmst.vsd.application:uploadDocuments.checkboxLabel',
+    defaultMessage: 'Ég hef ekki gögnin undir höndum eins og er',
+    description: 'Label for checkbox',
+  },
+  requestedAttachmentsDescription: {
+    id: 'vmst.vsd.application:uploadDocuments.requestedAttachmentsDescription',
+    defaultMessage:
+      'Vinnumálastofnun óskar eftir að þú skilir inn eftirfarandi gögnum:',
+    description: 'Requested attachments description heading',
+  },
+  submitNextButton: {
+    id: 'vmst.vsd.application:uploadDocuments.submitNextButton',
+    defaultMessage: 'Skila inn gögnum',
+    description: 'Submit application button',
+  },
+  uploadDocSaveButton: {
+    id: 'vmst.vsd.application:uploadDocuments.uploadDocSaveButton',
+    defaultMessage: 'Hlaða upp',
+    description: 'Save document button',
   },
 })
 
@@ -96,17 +117,6 @@ export const application = defineMessages({
     defaultMessage: 'Vinnumálastofnun hefur móttekið gögnin.',
     description: 'Title for alert when form is completed',
   },
-  completedFormDescriptionFieldTitle: {
-    id: 'vmst.vsd.application:completedFormDescriptionFieldTitle',
-    defaultMessage: 'Er eitthvað óljóst?',
-    description: 'Title for description field when form is completed',
-  },
-  completedFormDescriptionFieldDescription: {
-    id: 'vmst.vsd.application:completedFormDescriptionFieldDescription#markdown',
-    defaultMessage:
-      'Skoðaðu nánari upplýsingar á upplýsingasíðu Vinnumálastofnunar',
-    description: 'Description for description field when form is completed',
-  },
   bottomButtonMessage: {
     id: 'vmst.vsd.application:bottomButtonMessage',
     defaultMessage:
@@ -118,16 +128,6 @@ export const application = defineMessages({
     defaultMessage: 'Opna Mínar síður',
     description: 'Bottom button label on completed form',
   },
-  expandableHeader: {
-    id: 'vmst.vsd.application:expandableHeader',
-    defaultMessage: 'Hvað gerist næst?',
-    description: 'Expandable header on completed form',
-  },
-  expandableDescription: {
-    id: 'vmst.vsd.application:expandableDescription',
-    defaultMessage: '- Nú eru gögnin þín aðgengileg inni á Mínum síðum. ',
-    description: 'Expandable description on completed form',
-  },
   actionCardDraft: {
     id: 'vmst.vsd.application:actionCardDraft',
     defaultMessage: 'Í vinnslu',
@@ -137,6 +137,11 @@ export const application = defineMessages({
     id: 'vmst.vsd.application:applicationSent',
     defaultMessage: 'Gagnaskil móttekin',
     description: 'History log message when application is sent',
+  },
+  newApplicationButton: {
+    id: 'vmst.vsd.application:newApplicationButton',
+    defaultMessage: 'Ný aðgerð',
+    description: `new application's button`,
   },
 })
 
@@ -161,5 +166,16 @@ export const errorMessages = defineMessages({
     id: 'vmst.vsd.application:error.documentsMaxError',
     defaultMessage: 'Þú getur ekki skilað fleiri en {max} skjölum',
     description: 'Error message when too many documents are submitted',
+  },
+  documentsNoDocNoCommentError: {
+    id: 'vmst.vsd.application:error.documentsNoDocNoCommentError',
+    defaultMessage:
+      'Vinsamlegast gefðu frekari skýringar til að geta haldið áfram',
+    description: 'Error message when no document is chosen and no comment',
+  },
+  documentsNoDocNoCheckbox: {
+    id: 'vmst.vsd.application:error.documentsNoDocNoCheckbox',
+    defaultMessage: 'Vinsamlegast hlaðaðu upp skjali til að geta haldið áfram',
+    description: 'Error message when no document is chosen and no checkbox',
   },
 })

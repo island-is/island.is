@@ -322,7 +322,7 @@ export const coreMessages = defineMessages({
   paymentPendingInvoiceDescription: {
     id: 'application.system:core.payment.pendingInvoiceDescription#markdown',
     defaultMessage:
-      '* Krafa hefur verið stofnuð og verið send í netbanka. \n\n * Til að fá þjónustuna sem sótt er um þarf að greiða kröfuna. \n\n * Verði krafan ekki greidd innan 48 klst (á virkum degi) mun umsóknin verða felld niður.',
+      '* Krafa hefur verið stofnuð og verið send í netbanka. \n\n * Til að fá þjónustuna sem sótt er um þarf að greiða kröfuna. \n\n * Verði krafan ekki greidd innan tveggja virkra daga mun umsóknin verða felld niður.',
     description: 'Description for payment pending invoice',
   },
 })
@@ -437,6 +437,12 @@ export const coreErrorMessages = defineMessages({
     id: 'application.system:core.error.file.upload',
     defaultMessage: 'Villa kom upp við að hlaða inn einni eða fleiri skrám.',
     description: 'Error message when upload file fails',
+  },
+  fileUploadRequired: {
+    id: 'application.system:core.error.file.uploadRequired',
+    defaultMessage: 'Vinsamlegast hladdu inn að minnsta kosti einni skrá.',
+    description:
+      'Shown when a required file upload field has no files attached',
   },
   fileUploadMalware: {
     id: 'application.system:core.error.file.uploadMalware',

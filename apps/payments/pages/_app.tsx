@@ -2,6 +2,7 @@ import Head from 'next/head'
 import React, { FC } from 'react'
 import { ApolloProvider } from '@apollo/client/react'
 
+import { ToastContainer } from '@island.is/island-ui/core'
 import { LocaleProvider } from '@island.is/localization'
 
 import initApollo from '../graphql/client'
@@ -17,6 +18,7 @@ const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
         <meta name="description" content="Greiðslur á Ísland.is" />
       </Head>
       {children}
+      <ToastContainer />
     </div>
   )
 }

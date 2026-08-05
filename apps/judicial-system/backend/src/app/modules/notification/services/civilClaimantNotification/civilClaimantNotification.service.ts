@@ -25,13 +25,12 @@ import { EventService } from '../../../event'
 import {
   Case,
   CivilClaimant,
-  DateLog,
   Notification,
   Recipient,
 } from '../../../repository'
-import { BaseNotificationService } from '../../baseNotification.service'
 import { DeliverResponse } from '../../models/deliver.response'
 import { notificationModuleConfig } from '../../notification.config'
+import { BaseNotificationService } from '../baseNotification.service'
 import { strings } from './civilClaimantNotification.strings'
 
 @Injectable()
@@ -137,22 +136,25 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
       civilClaimant,
       TrackedNotificationType.SPOKESPERSON_COURT_DATE_FOLLOW_UP,
     )
-    const arraignmentDateLog = DateLog.arraignmentDate(theCase.dateLogs)
-    const hasFutureArraignmentDate =
-      arraignmentDateLog && arraignmentDateLog.date.getTime() > Date.now()
 
-    if (!shouldSendCourtDateFollowUp || !hasFutureArraignmentDate || !user) {
+    if (!shouldSendCourtDateFollowUp || !user) {
       // Nothing should be sent so we return a successful response
       return { delivered: true }
     }
 
-    const recipient = await this.sendArraignmentDateEmailNotification({
+    const recipient = await this.sendCourtDateFollowUpEmailNotification({
       theCase,
       user,
-      arraignmentDateLog,
       recipientName: civilClaimant.spokespersonName ?? '',
       recipientEmail: civilClaimant.spokespersonEmail ?? '',
+      recipientHasAccessToRVG: Boolean(civilClaimant.spokespersonNationalId),
     })
+
+    if (!recipient) {
+      // Neither a court session nor an arraignment is scheduled in the future,
+      // so there is nothing to invite the spokesperson to
+      return { delivered: true }
+    }
 
     const result = await this.recordNotification(
       theCase.id,

@@ -7,16 +7,25 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import { DefaultEvents, FormModes } from '@island.is/application/types'
-import { ActiveEqualityReportApi, CompanyRegistryApi, DoeCompanyApi, IdentityApi, UserProfileApi } from '../../dataProviders'
+import { DirectorateOfEqualityLogo } from '@island.is/application/assets/institution-logos'
+import {
+  ActiveEqualityReportApi,
+  CompanyRegistryApi,
+  DoeCompanyApi,
+  IdentityApi,
+  UserProfileApi,
+} from '../../dataProviders'
 import { messages } from '../../lib/messages'
 
 export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',
+  title: messages.general.applicationName,
+  logo: DirectorateOfEqualityLogo,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   children: [
     buildSection({
-      id: 'forsendur',
+      id: 'prerequisitesSection',
       title: messages.prerequisites.section.sectionTitle,
       children: [
         buildExternalDataProvider({
@@ -63,21 +72,6 @@ export const Prerequisites = buildForm({
           ],
         }),
       ],
-    }),
-    buildSection({
-      id: 'aboutTheCompany',
-      title: messages.aboutTheCompany.section.sectionTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'equalityReport',
-      title: messages.equalityReport.section.sectionTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'overview',
-      title: messages.overview.sectionTitle,
-      children: [],
     }),
   ],
 })

@@ -22,13 +22,13 @@ import {
   SendNotificationResponse,
   SignatureConfirmationResponse,
 } from '../case'
-import { CaseListEntry } from '../case-list'
 import {
   CaseTableMembershipResponse,
   CaseTableResponse,
   SearchCasesResponse,
 } from '../case-table'
 import {
+  AppealDecisionResponse,
   CourtDocumentResponse,
   CourtSessionResponse,
   CourtSessionString,
@@ -221,10 +221,6 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.patch(`message-suspension/${category}`, updateMessageSuspension)
   }
 
-  getCases(): Promise<CaseListEntry[]> {
-    return this.get('cases')
-  }
-
   getCase(caseId: string): Promise<Case> {
     return this.get<Case>(`case/${caseId}`, caseTransformer)
   }
@@ -399,9 +395,28 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.post(`case/${caseId}/notification`, sendNotification)
   }
 
+  sendAppealNotification(
+    caseId: string,
+    appealCaseId: string,
+    sendAppealNotification: unknown,
+  ): Promise<SendNotificationResponse> {
+    return this.post(
+      `case/${caseId}/appeal/${appealCaseId}/notification`,
+      sendAppealNotification,
+    )
+  }
+
   extendCase(caseId: string): Promise<Case> {
     return this.post<unknown, Case>(
       `case/${caseId}/extend`,
+      undefined,
+      caseTransformer,
+    )
+  }
+
+  duplicateIndictmentCase(caseId: string): Promise<Case> {
+    return this.post<unknown, Case>(
+      `case/${caseId}/duplicate`,
       undefined,
       caseTransformer,
     )
@@ -482,6 +497,10 @@ export class BackendService extends DataSource<{ req: Request }> {
 
   rejectCaseFile(caseId: string, fileId: string): Promise<CaseFile> {
     return this.post(`case/${caseId}/file/${fileId}/reject`)
+  }
+
+  confirmRulingOrder(caseId: string, fileId: string): Promise<CaseFile> {
+    return this.post(`case/${caseId}/file/${fileId}/confirm`)
   }
 
   deleteCaseFile(caseId: string, fileId: string): Promise<DeleteFileResponse> {
@@ -733,6 +752,24 @@ export class BackendService extends DataSource<{ req: Request }> {
       `case/${caseId}/courtSession/${courtSessionId}/courtSessionString`,
       updateCourtSessionString,
     )
+  }
+
+  updateCourtSessionAppealDecision(
+    caseId: string,
+    courtSessionId: string,
+    updateAppealDecision: unknown,
+  ): Promise<AppealDecisionResponse> {
+    return this.patch(
+      `case/${caseId}/courtSession/${courtSessionId}/appealDecision`,
+      updateAppealDecision,
+    )
+  }
+
+  updateCaseAppealDecision(
+    caseId: string,
+    updateAppealDecision: unknown,
+  ): Promise<AppealDecisionResponse> {
+    return this.patch(`case/${caseId}/appealDecision`, updateAppealDecision)
   }
 
   deleteCourtSession(

@@ -1,3 +1,4 @@
+import { HealthDirectorateAppointmentModality } from '@island.is/api/schema'
 import { Box, Icon, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -19,6 +20,7 @@ import { generateGoogleMapsLink } from '../../utils/googleMaps'
 import { mapWeekday } from '../../utils/mappers'
 import { useGetAppointmentDetailQuery } from './AppointmentDetail.generated'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
+import { AppointmentVideoCallAlert } from './AppointmentVideoCallAlert'
 
 const AppointmentDetail = () => {
   useNamespaces('sp.health')
@@ -66,108 +68,169 @@ const AppointmentDetail = () => {
     >
       {error && !loading && <Problem error={error} noBorder={false} />}
       {loading && !appointment && <CardLoader />}
-      {!loading && !error && !appointment && <Problem type="no_data" />}
+      {!loading && !error && !appointment && (
+        <Problem
+          type="no_data"
+          title={formatMessage(messages.appointmentNotFound)}
+          message={formatMessage(messages.appointmentNotFoundDetail)}
+          imgSrc="./assets/images/nodata.svg"
+          noBorder={false}
+        />
+      )}
       {!error && appointment && (
         <Stack space={5}>
-          <Box
-            border="standard"
-            borderRadius="large"
-            padding={[2, 2, 3]}
-            display="flex"
-            justifyContent="spaceBetween"
-            alignItems="center"
-          >
-            <Stack space={3}>
-              <Text variant="h4" color="blue400">
-                {appointment.title}
-              </Text>
-              <Stack space={2}>
-                {appointment.date && (
-                  <Box display="flex" alignItems="center" columnGap={1}>
-                    <Icon
-                      icon="calendar"
-                      size="small"
-                      color="blue400"
-                      type="outline"
-                    />
-                    <Text>
-                      {weekday ? `${weekday}, ` : ''}
-                      {formatDate(appointment.date)}
-                    </Text>
-                  </Box>
-                )}
-                {appointment.date && (
-                  <Box display="flex" alignItems="center" columnGap={1}>
-                    <Icon
-                      icon="time"
-                      size="small"
-                      color="blue400"
-                      type="outline"
-                    />
-                    <Text>{getTime(appointment.date)}</Text>
-                  </Box>
-                )}
-                {appointment.duration && (
-                  <Box display="flex" alignItems="center" columnGap={1}>
-                    <Icon
-                      icon="hourglass"
-                      size="small"
-                      color="blue400"
-                      type="outline"
-                    />
-                    <Text>
-                      {formatMessage(messages.argWithMinutes, {
-                        arg: appointment.duration,
-                      })}
-                    </Text>
-                  </Box>
-                )}
-                {fullAddress && (
-                  <Box display="flex" alignItems="flexStart" columnGap={1}>
-                    <Box flexShrink={0}>
+          <Box border="standard" borderRadius="large" padding={[2, 2, 3]}>
+            <Box
+              display="flex"
+              justifyContent="spaceBetween"
+              alignItems="center"
+            >
+              <Stack space={3}>
+                <Text variant="h4" color="blue400">
+                  {appointment.title}
+                </Text>
+                <Stack space={2}>
+                  {appointment.date && (
+                    <Box display="flex" alignItems="center" columnGap={1}>
                       <Icon
-                        icon="location"
+                        icon="calendar"
                         size="small"
                         color="blue400"
                         type="outline"
                       />
+                      <Text>
+                        {weekday ? `${weekday}, ` : ''}
+                        {formatDate(appointment.date)}
+                      </Text>
                     </Box>
-                    <Box
-                      display="flex"
-                      flexWrap="wrap"
-                      alignItems="center"
-                      columnGap={2}
-                    >
-                      <Text>{fullAddress}</Text>
-                      {mapsLink && (
-                        <LinkButton
-                          to={mapsLink}
-                          text={formatMessage(messages.openMap)}
-                          variant="text"
-                          size="small"
-                          icon="open"
-                        />
-                      )}
+                  )}
+                  {appointment.date && (
+                    <Box display="flex" alignItems="center" columnGap={1}>
+                      <Icon
+                        icon="time"
+                        size="small"
+                        color="blue400"
+                        type="outline"
+                      />
+                      <Text>{getTime(appointment.date)}</Text>
                     </Box>
-                  </Box>
-                )}
+                  )}
+                  {appointment.duration && (
+                    <Box display="flex" alignItems="center" columnGap={1}>
+                      <Icon
+                        icon="hourglass"
+                        size="small"
+                        color="blue400"
+                        type="outline"
+                      />
+                      <Text>
+                        {formatMessage(messages.argWithMinutes, {
+                          arg: appointment.duration,
+                        })}
+                      </Text>
+                    </Box>
+                  )}
+                  {appointment.modality ===
+                    HealthDirectorateAppointmentModality.VIDEO && (
+                    <Box display="flex" alignItems="center" columnGap={1}>
+                      <Icon
+                        icon="videoCam"
+                        size="small"
+                        color="blue400"
+                        type="outline"
+                      />
+                      <Text>
+                        {formatMessage(messages.appointmentModalityVideo)}
+                      </Text>
+                    </Box>
+                  )}
+                  {appointment.modality !==
+                    HealthDirectorateAppointmentModality.VIDEO &&
+                    fullAddress && (
+                      <Box display="flex" alignItems="flexStart" columnGap={1}>
+                        <Box flexShrink={0}>
+                          <Icon
+                            icon="location"
+                            size="small"
+                            color="blue400"
+                            type="outline"
+                          />
+                        </Box>
+                        <Box
+                          display="flex"
+                          flexWrap="wrap"
+                          alignItems="center"
+                          columnGap={2}
+                        >
+                          <Text>{fullAddress}</Text>
+                          {mapsLink && (
+                            <LinkButton
+                              to={mapsLink}
+                              text={formatMessage(messages.openMap)}
+                              variant="text"
+                              size="small"
+                              icon="open"
+                            />
+                          )}
+                        </Box>
+                      </Box>
+                    )}
+
+                  {appointment.modality !==
+                    HealthDirectorateAppointmentModality.VIDEO &&
+                    locationLink && (
+                      <Box display="flex" alignItems="flexStart" columnGap={1}>
+                        <Box flexShrink={0}>
+                          <Icon
+                            icon="informationCircle"
+                            size="small"
+                            color="blue400"
+                            type="outline"
+                          />
+                        </Box>
+                        <Box
+                          display="flex"
+                          flexWrap="wrap"
+                          alignItems="center"
+                          columnGap={2}
+                        >
+                          <Text>
+                            {formatMessage(messages.locationInstructions)}
+                          </Text>
+                          {locationLink && (
+                            <LinkButton
+                              to={locationLink}
+                              text={formatMessage(messages.seeMore)}
+                              variant="text"
+                              size="small"
+                              icon="open"
+                            />
+                          )}
+                        </Box>
+                      </Box>
+                    )}
+                </Stack>
               </Stack>
-            </Stack>
-            <Box
-              display={['none', 'none', 'block']}
-              flexShrink={0}
-              marginLeft={3}
-              marginRight={6}
-            >
-              <img src="./assets/images/appointment.svg" alt="" />
+              <Box
+                display={['none', 'none', 'block']}
+                flexShrink={0}
+                marginLeft={3}
+                marginRight={6}
+              >
+                <img src="./assets/images/appointment.svg" alt="" />
+              </Box>
             </Box>
+
+            {appointment.modality ===
+              HealthDirectorateAppointmentModality.VIDEO && (
+              <AppointmentVideoCallAlert links={appointment.links} />
+            )}
           </Box>
 
           {((appointment.practitioners?.length ?? 0) > 0 ||
             appointment.instruction ||
             appointment.location?.phoneNumber ||
-            appointment.location?.openingHoursText ||
-            appointment.location?.organization) && (
+            appointment.location?.openingHoursText) && (
             <InfoLineStack
               label={formatMessage(messages.appointmentMoreInfo)}
               space={1}
@@ -205,16 +268,6 @@ const AppointmentDetail = () => {
                   loading={loading}
                   label={formatMessage(messages.organization)}
                   content={appointment.location.organization}
-                  button={
-                    locationLink
-                      ? {
-                          type: 'link',
-                          to: locationLink,
-                          icon: 'open',
-                          label: formatMessage(messages.appointmentMoreInfo),
-                        }
-                      : undefined
-                  }
                 />
               )}
             </InfoLineStack>

@@ -124,7 +124,16 @@ export const RelevantParties = () => {
         handleCheckboxChange={handleCheckboxChange}
       />
 
-      {/* <PartyType
+      <PartyType
+        groupApplicantTypes={applicantTypeGroups.procuration}
+        label={formatMessage(m.individualWithPowerOfAttorney)}
+        formApplicantFields={applicantFields.filter(
+          (f) => f.fieldType === 'APPLICANT',
+        )}
+        handleCheckboxChange={handleCheckboxChange}
+      />
+
+      <PartyType
         groupApplicantTypes={applicantTypeGroups.individualDelegation}
         label={formatMessage(m.individualOnBehalfPerson)}
         formApplicantFields={applicantFields.filter(
@@ -140,11 +149,11 @@ export const RelevantParties = () => {
           (f) => f.fieldType === 'APPLICANT',
         )}
         handleCheckboxChange={handleCheckboxChange}
-      /> */}
+      />
 
       <PartyType
-        groupApplicantTypes={applicantTypeGroups.procuration}
-        label={formatMessage(m.individualWithPowerOfAttorney)}
+        groupApplicantTypes={applicantTypeGroups.legalGuardian}
+        label={formatMessage(m.legalGuardianOnBehalfOfIndividual)}
         formApplicantFields={applicantFields.filter(
           (f) => f.fieldType === 'APPLICANT',
         )}

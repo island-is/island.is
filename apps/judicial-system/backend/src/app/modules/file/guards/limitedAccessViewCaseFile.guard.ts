@@ -9,7 +9,10 @@ import {
 import { User } from '@island.is/judicial-system/types'
 
 import { Case, CaseFile } from '../../repository'
-import { canLimitedAccessUserViewCaseFile } from './caseFileCategory'
+import {
+  canLimitedAccessUserViewCaseFile,
+  isRulingOrderInConfirmedCourtSession,
+} from './caseFileCategory'
 
 @Injectable()
 export class LimitedAccessViewCaseFileGuard implements CanActivate {
@@ -51,6 +54,11 @@ export class LimitedAccessViewCaseFileGuard implements CanActivate {
         defendantId: caseFile.defendantId,
         civilClaimantId: caseFile.civilClaimantId,
         fileCreated: caseFile.created,
+        isRulingOrderInConfirmedCourtSession:
+          isRulingOrderInConfirmedCourtSession(
+            caseFile.id,
+            accessControlCase.courtSessions,
+          ),
       })
     ) {
       return true

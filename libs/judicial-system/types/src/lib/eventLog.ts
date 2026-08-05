@@ -16,6 +16,9 @@ export enum EventType {
   REQUEST_COMPLETED = 'REQUEST_COMPLETED', // Request case is completed
   INDICTMENT_SPLIT_COMPLETED = 'INDICTMENT_SPLIT_COMPLETED',
   INDICTMENT_REOPENED = 'INDICTMENT_REOPENED',
+  // An in-court ruling-order appeal was deleted because a confirmed court
+  // session was corrected to remove the appeal before it left the district court.
+  APPEAL_DELETED = 'APPEAL_DELETED',
 }
 
 export const eventTypes = Object.values(EventType)
@@ -34,6 +37,10 @@ export const defendantEventTypes = Object.values(DefendantEventType)
 
 export enum AppealEventType {
   APPEAL_STATEMENT_SENT = 'APPEAL_STATEMENT_SENT',
+  // A party's appeal was registered - in court (recorded by the judge at
+  // court session confirmation) or directly by the party within the appeal deadline
+  APPEALED = 'APPEALED',
+  APPEAL_WITHDRAWN = 'APPEAL_WITHDRAWN',
 }
 
 export const appealEventTypes = Object.values(AppealEventType)

@@ -32,6 +32,15 @@ export enum NotificationType {
   MarriageConditionsPruned = 'MarriageConditionsPrunedNotification',
   FinancialAidPruned = 'FinancialAidPrunedNotification',
   RentalAgreementPruned = 'RentalAgreementPrunedNotification',
+  HmsHousingBenefitsNotifyAssignee = 'HmsHousingBenefitsNotifyAssigneeNotification',
+  HmsHousingBenefitsAssigneeApproved = 'HmsHousingBenefitsAssigneeApprovedNotification',
+  HmsHousingBenefitsAssigneeRejected = 'HmsHousingBenefitsAssigneeRejectedNotification',
+  HmsHousingBenefitsReadyForApplicantSubmit = 'HmsHousingBenefitsReadyForApplicantSubmitNotification',
+  HmsHousingBenefitsExtraDataRequested = 'HmsHousingBenefitsExtraDataRequestedNotification',
+  HmsHousingBenefitsApprovedByInstitution = 'HmsHousingBenefitsApprovedByInstitutionNotification',
+  HmsHousingBenefitsRejectedByInstitution = 'HmsHousingBenefitsRejectedByInstitutionNotification',
+  HmsHousingBenefitsPruneReminder = 'HmsHousingBenefitsPruneReminderNotification',
+  HmsHousingBenefitsPruned = 'HmsHousingBenefitsPrunedNotification',
 }
 
 interface NotificationKeysMap {
@@ -90,6 +99,46 @@ interface NotificationKeysMap {
   [NotificationType.PaymentReminder]: {
     applicationLink: string
     expiryDate: string
+  }
+  [NotificationType.HmsHousingBenefitsNotifyAssignee]: {
+    applicantName: string
+    applicantNationalId: string
+    address: string
+    applicationLink: string
+  }
+  [NotificationType.HmsHousingBenefitsAssigneeApproved]: {
+    assigneeName: string
+    applicationLink: string
+  }
+  [NotificationType.HmsHousingBenefitsAssigneeRejected]: {
+    assigneeName: string
+    address: string
+    applicationLink: string
+  }
+  [NotificationType.HmsHousingBenefitsReadyForApplicantSubmit]: {
+    applicationLink: string
+    address: string
+  }
+  [NotificationType.HmsHousingBenefitsExtraDataRequested]: {
+    applicationLink: string
+    address: string
+    files: string
+  }
+  [NotificationType.HmsHousingBenefitsApprovedByInstitution]: {
+    address: string
+  }
+  [NotificationType.HmsHousingBenefitsRejectedByInstitution]: {
+    address: string
+    rejectReason: string
+  }
+  [NotificationType.HmsHousingBenefitsPruneReminder]: {
+    applicationLink: string
+    address: string
+    daysRemaining: string
+    expiryDate: string
+  }
+  [NotificationType.HmsHousingBenefitsPruned]: {
+    address: string
   }
   [NotificationType.ApplicationCompletionReminder]: {
     applicationLink: string
@@ -199,6 +248,33 @@ export const NotificationConfig = defineNotificationConfig({
   },
   [NotificationType.RentalAgreementPruned]: {
     templateId: 'HNIPP.AS.HMS.RA.PRUNED',
+  },
+  [NotificationType.HmsHousingBenefitsNotifyAssignee]: {
+    templateId: 'HNIPP.AS.HMS.HB.NOTIFY.ASSIGNEE',
+  },
+  [NotificationType.HmsHousingBenefitsAssigneeApproved]: {
+    templateId: 'HNIPP.AS.HMS.HB.ASSIGNEE.APPROVED',
+  },
+  [NotificationType.HmsHousingBenefitsAssigneeRejected]: {
+    templateId: 'HNIPP.AS.HMS.HB.ASSIGNEE.REJECTED',
+  },
+  [NotificationType.HmsHousingBenefitsReadyForApplicantSubmit]: {
+    templateId: 'HNIPP.AS.HMS.HB.READY.FOR.SUBMIT',
+  },
+  [NotificationType.HmsHousingBenefitsExtraDataRequested]: {
+    templateId: 'HNIPP.AS.HMS.HB.EXTRA.DATA.REQUESTED',
+  },
+  [NotificationType.HmsHousingBenefitsApprovedByInstitution]: {
+    templateId: 'HNIPP.AS.HMS.HB.APPROVED.BY.INSTITUTION',
+  },
+  [NotificationType.HmsHousingBenefitsRejectedByInstitution]: {
+    templateId: 'HNIPP.AS.HMS.HB.REJECTED.BY.INSTITUTION',
+  },
+  [NotificationType.HmsHousingBenefitsPruneReminder]: {
+    templateId: 'HNIPP.AS.HMS.HB.PRUNE.REMINDER',
+  },
+  [NotificationType.HmsHousingBenefitsPruned]: {
+    templateId: 'HNIPP.AS.HMS.HB.PRUNED',
   },
 } as const)
 

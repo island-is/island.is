@@ -9,8 +9,16 @@ import type {
   ParsedEmployeeDto,
 } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
-import { type Employee } from '../../lib/constants'
-import { buildStepMetaByTitle } from '../JobClassificationEditor/utils'
+import {
+  type Employee,
+  type PersonalFactor,
+  type SubCriterion,
+} from '../../utils/types'
+import {
+  buildStepAssignmentsFromSubCriteria,
+  buildStepMetaByTitle,
+  buildStepMetaFromSubCriteria,
+} from '../JobClassificationEditor/utils'
 import { EmployeeClassificationRow } from './EmployeeClassificationRow'
 
 const FIELD_NAME = 'employees'
@@ -28,7 +36,19 @@ export const EmployeeClassificationEditor: FC<
       'parsedSalaryReport.data.criteria',
       [],
     ) ?? []) as ParsedCriterionDto[]
-    return buildStepMetaByTitle(criteria)
+    const fromExternal = buildStepMetaByTitle(criteria)
+    if (Object.keys(fromExternal).length > 0) return fromExternal
+    // External data unavailable (stale right after import) — fall back to the
+    // sub-criteria in answers so the step dropdowns still render options.
+    const subCriteria = (getValueViaPath(
+      application.answers,
+      'subCriteria',
+      {},
+    ) ?? {}) as {
+      jobFactors?: SubCriterion[][]
+      personalFactors?: SubCriterion[][]
+    }
+    return buildStepMetaFromSubCriteria(subCriteria)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -36,12 +56,44 @@ export const EmployeeClassificationEditor: FC<
   // the Starfsmenn screen — this screen only edits personalStepAssignments).
   const employees = useMemo(() => {
     const saved = getValueViaPath<Employee[]>(application.answers, FIELD_NAME)
-    if (saved && saved.length > 0) return saved
-    return (getValueViaPath<ParsedEmployeeDto[]>(
-      application.externalData,
-      'parsedSalaryReport.data.employees',
+    const source =
+      saved && saved.length > 0
+        ? saved
+        : ((getValueViaPath<ParsedEmployeeDto[]>(
+            application.externalData,
+            'parsedSalaryReport.data.employees',
+            [],
+          ) ?? []) as Employee[])
+
+    // Manually-added employees start with no personalStepAssignments (there's
+    // no import to populate them from) — derive the defaults from the
+    // manually-entered personal-factor sub-criteria so classification is
+    // possible without ever uploading a workbook.
+    const personalFactors = (getValueViaPath<PersonalFactor[]>(
+      application.answers,
+      'criteria.personalFactors',
       [],
-    ) ?? []) as Employee[]
+    ) ?? []) as PersonalFactor[]
+    const subCriteriaPersonalFactors = (getValueViaPath<SubCriterion[][]>(
+      application.answers,
+      'subCriteria.personalFactors',
+      [],
+    ) ?? []) as SubCriterion[][]
+    const defaultAssignments = buildStepAssignmentsFromSubCriteria(
+      personalFactors.map((f) => f.title),
+      subCriteriaPersonalFactors,
+    )
+
+    return source.map((emp) =>
+      emp.personalStepAssignments?.length
+        ? emp
+        : {
+            ...emp,
+            personalStepAssignments: defaultAssignments.map((a) => ({
+              ...a,
+            })),
+          },
+    )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

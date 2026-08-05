@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router'
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { FlatList, RefreshControl } from 'react-native'
 import { useTheme } from 'styled-components/native'
@@ -15,6 +15,7 @@ import {
 import { useBrowser } from '@/hooks/use-browser'
 import { useLocale } from '@/hooks/use-locale'
 import {
+  fontByWeight,
   Problem,
   QuestionnaireCard,
   type QuestionnaireCardAction,
@@ -103,15 +104,27 @@ export default function QuestionnairesScreen() {
     })
 
   const isInitialLoading = loading && !data
+  const [refetching, setRefetching] = useState(false)
+  const [showExpired, setShowExpired] = useState(false)
+
+  const onRefresh = useCallback(async () => {
+    setRefetching(true)
+    try {
+      await refetch()
+    } finally {
+      setRefetching(false)
+    }
+  }, [refetch])
 
   const openDetail = useCallback(
     (
       id: string,
       organization?: QuestionnaireQuestionnairesOrganizationEnum,
+      title?: string,
     ) => {
       router.navigate({
         pathname: '/health/questionnaires/[id]',
-        params: { id, organization },
+        params: { id, organization, title },
       })
     },
     [router],
@@ -119,7 +132,8 @@ export default function QuestionnairesScreen() {
 
   const renderItem = useCallback(
     ({ item }: { item: Item }) => {
-      const open = () => openDetail(item.id, item.organization ?? undefined)
+      const open = () =>
+        openDetail(item.id, item.organization ?? undefined, item.title)
       return (
         <QuestionnaireCard
           key={item.id}
@@ -147,23 +161,53 @@ export default function QuestionnairesScreen() {
     [getActionList, intl, openDetail],
   )
 
-  const questionnaires = useMemo(
-    () =>
-      (data?.questionnairesList?.questionnaires ?? [])
-        .filter(
-          (item, index, self) =>
-            item?.id && index === self.findIndex((t) => t?.id === item?.id),
-        )
-        .slice(0, 64), // @todo needs paging
-    [data],
-  )
+  const questionnaires = useMemo(() => {
+    const seen = new Set<string>()
+    const result: Item[] = []
+    for (const item of data?.questionnairesList?.questionnaires ?? []) {
+      if (!item?.id || seen.has(item.id)) continue
+      if (
+        !showExpired &&
+        item.status === QuestionnaireQuestionnairesStatusEnum.Expired
+      ) {
+        continue
+      }
+      seen.add(item.id)
+      result.push(item)
+    }
+    return result
+  }, [data, showExpired])
 
   return (
     <>
-      <StackScreen networkStatus={networkStatus} />
+      <StackScreen
+        networkStatus={networkStatus}
+        options={{
+          headerRightItems: isInitialLoading
+            ? []
+            : [
+                {
+                  type: 'button',
+                  label: intl.formatMessage({
+                    id: showExpired
+                      ? 'health.questionnaires.action.hide-expired'
+                      : 'health.questionnaires.action.show-expired',
+                  }),
+                  labelStyle: {
+                    fontSize: 15,
+                    fontWeight: '400',
+                    fontFamily: fontByWeight('400'),
+                  },
+                  onPress() {
+                    setShowExpired((v) => !v)
+                  },
+                },
+              ],
+        }}
+      />
       <FlatList
         refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={refetch} />
+          <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
         }
         style={{
           paddingHorizontal: theme.spacing[2],
@@ -196,9 +240,10 @@ export default function QuestionnairesScreen() {
                       light: theme.color.blue200,
                     }}
                     overlayOpacity={1}
-                    height={112}
+                    height={140}
                     style={{
                       borderRadius: 8,
+                      marginBottom: theme.spacing[2],
                     }}
                   />
                 ))

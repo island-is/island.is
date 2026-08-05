@@ -85,13 +85,11 @@ test.describe.serial('Indictment tests', () => {
     await Promise.all([
       page.getByTestId('continueButton').click(),
       verifyRequestCompletion(page, '/api/graphql', 'Case'),
+      verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
     ])
 
     // Processing
-    await Promise.all([
-      expect(page).toHaveURL(`/akaera/malsmedferd/${caseId}`),
-      verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
-    ])
+    await expect(page).toHaveURL(`/akaera/malsmedferd/${caseId}`)
 
     await Promise.all([
       page.getByText('Játar sök').click(),
@@ -109,8 +107,8 @@ test.describe.serial('Indictment tests', () => {
     ])
 
     // Indictment
-
-    await page.getByRole('button', { name: 'Opna alla' }).click()
+    // The auto-created indictment count is expanded by default (open state is
+    // persisted in local storage), so no "Opna alla" toggle is needed.
 
     await page.getByPlaceholder('AB123').fill('AB123')
 
@@ -245,12 +243,11 @@ test.describe.serial('Indictment tests', () => {
       page.getByRole('button', { name: 'Bæta við þinghaldi' }).click(),
       verifyRequestCompletion(page, '/api/graphql', 'CreateCourtSession'),
     ])
-    await page.getByTestId('entries').fill('Afstaða, málflutningur, og bókun')
-    // await page
-    //   .getByTestId('entries')
-    //   .frameLocator('iframe')
-    //   .locator('body')
-    //   .fill('Afstaða, málflutningur, og bókun')
+    await page
+      .getByTestId('entries')
+      .frameLocator('iframe')
+      .locator('body')
+      .fill('Afstaða, málflutningur, og bókun')
 
     await page.locator('label').filter({ hasText: 'Dómur kveðinn upp' }).click()
     await page.getByTestId('ruling').fill('Dómsorð')

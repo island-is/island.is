@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Accordion, AlertMessage } from '@island.is/island-ui/core'
+import { Accordion } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   isIndictmentCase,
@@ -17,7 +17,6 @@ import {
   FormFooter,
   InfoCard,
   InfoCardClosedIndictment,
-  MarkdownWrapper,
   PageHeader,
   PageLayout,
   PoliceDigitalCaseFilesAccordionItem,
@@ -185,8 +184,13 @@ const Result = () => {
         <FormContentContainer isFooter>
           <FormFooter
             previousUrl={getStandardUserDashboardRoute(user)}
-            nextButtonText={formatMessage(strings.nextButtonText)}
-            onNextButtonClick={() => setModalVisible('reopenCase')}
+            actions={[
+              {
+                text: formatMessage(strings.nextButtonText),
+                onClick: () => setModalVisible('reopenCase'),
+                testId: 'continueButton',
+              },
+            ]}
           />
         </FormContentContainer>
       </PageLayout>

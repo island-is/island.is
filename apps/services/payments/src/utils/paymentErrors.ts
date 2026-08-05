@@ -3,6 +3,7 @@ import {
   FjsErrorCode,
   CardErrorCode,
   InvoiceErrorCode,
+  BankTransferErrorCode,
   PaymentErrorCode,
 } from '@island.is/shared/constants'
 
@@ -11,6 +12,7 @@ const ERROR_ENUMS = [
   FjsErrorCode,
   CardErrorCode,
   InvoiceErrorCode,
+  BankTransferErrorCode,
 ]
 
 export const onlyReturnKnownErrorCode = (

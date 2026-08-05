@@ -28,8 +28,10 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
 
   const equalityPlanHtml = (() => {
     const base64 =
-      getValueViaPath<string>(application.answers, 'information.customField') ??
-      ''
+      getValueViaPath<string>(
+        application.answers,
+        'goalsAndActions.customField',
+      ) ?? ''
     try {
       return Buffer.from(base64, 'base64').toString('utf-8') as HTMLText
     } catch {
@@ -50,7 +52,7 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
           label={formatMessage(messages.overview.hasSubsidiaries)}
           value={
             hasSubsidiaries
-              ? 'Já'
+              ? formatMessage(messages.overview.yesSubsidiaries)
               : formatMessage(messages.overview.noSubsidiaries)
           }
         />

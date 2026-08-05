@@ -1,5 +1,6 @@
 import {
   buildAlertMessageField,
+  buildBankAccountField,
   buildHiddenInput,
   buildMultiField,
   buildPhoneField,
@@ -11,6 +12,20 @@ import {
   ApplicantInformationInterface,
   applicantInformationProps,
 } from './types'
+
+/** Parses FJS / user-profile `bankInfo` string (`bank-ledger-accountNumber`). */
+export const parseBankAccountFromBankInfoString = (
+  bankInfo?: string | null,
+):
+  | { bankNumber: string; ledger: string; accountNumber: string }
+  | undefined => {
+  if (!bankInfo?.trim()) return undefined
+  const parts = bankInfo.trim().split('-')
+  if (parts.length !== 3) return undefined
+  const [bankNumber, ledger, accountNumber] = parts
+  if (!bankNumber || !ledger || !accountNumber) return undefined
+  return { bankNumber, ledger, accountNumber }
+}
 
 // This is extracted out if someone wants to build a applicantInformation screen that has more elements than the default
 export const applicantInformationArray = (
@@ -31,6 +46,10 @@ export const applicantInformationArray = (
     emailAndPhoneReadOnly = false,
     compactFields = false,
     customAddressLabel,
+    includeBankAccount = false,
+    bankAccountRequired = false,
+    bankAccountCondition,
+    bankAccountTitle,
   } = props ?? {}
 
   // Note: base info fields are not editable, and are default displayed as disabled fields.
@@ -180,6 +199,22 @@ export const applicantInformationArray = (
       defaultValue: (application: ApplicantInformationInterface) =>
         application.externalData?.userProfile?.data?.mobilePhoneNumber ?? '',
     }),
+    ...(includeBankAccount
+      ? [
+          buildBankAccountField({
+            id: 'applicant.bankAccount',
+            title: bankAccountTitle ?? undefined,
+            titleVariant: 'h3',
+            marginTop: 2,
+            condition: bankAccountCondition,
+            required: bankAccountRequired,
+            defaultValue: (application: ApplicantInformationInterface) =>
+              parseBankAccountFromBankInfoString(
+                application.externalData?.userProfile?.data?.bankInfo,
+              ),
+          }),
+        ]
+      : []),
     buildAlertMessageField({
       id: 'applicationInfoEmailPhoneAlertMessage',
       title: '',

@@ -97,6 +97,10 @@ export class ApplicationsXRoadService {
   }
 
   async getFile(id: string, xRoadClient: string): Promise<FileResponseDto> {
+    this.logger.info(
+      `Fetching file with id ${id} for X-Road client ${xRoadClient}`,
+    )
+
     const applicationId = id.split('/')[0]
     const application = await this.applicationModel.findByPk(applicationId)
 

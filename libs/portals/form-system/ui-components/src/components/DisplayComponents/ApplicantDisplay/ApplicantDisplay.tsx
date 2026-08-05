@@ -13,8 +13,8 @@ const applicantValues = [
   'name',
   'email',
   'phoneNumber',
-  'address',
-  'postalCode',
+  // 'address',
+  // 'postalCode',
 ] as const
 
 type ApplicantKey = typeof applicantValues[number]
@@ -36,14 +36,14 @@ const valueTranslations: Record<ApplicantKey, { is: string; en: string }> = {
     is: 'Símanúmer',
     en: 'Phone number',
   },
-  address: {
-    is: 'Heimilisfang',
-    en: 'Address',
-  },
-  postalCode: {
-    is: 'Póstnúmer',
-    en: 'Postal code',
-  },
+  // address: {
+  //   is: 'Heimilisfang',
+  //   en: 'Address',
+  // },
+  // postalCode: {
+  //   is: 'Póstnúmer',
+  //   en: 'Postal code',
+  // },
 }
 
 export const ApplicantDisplay = ({ item }: Props) => {

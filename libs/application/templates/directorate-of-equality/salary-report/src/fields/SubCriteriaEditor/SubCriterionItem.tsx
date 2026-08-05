@@ -4,10 +4,11 @@ import { useLocale } from '@island.is/localization'
 import { FC, useEffect, useState } from 'react'
 import { useFormContext, useWatch } from 'react-hook-form'
 import { messages } from '../../lib/messages'
-import type { SubCriterionStep } from '../../lib/constants'
+import type { SubCriterionStep } from '../../utils/types'
 
 type Props = {
   fieldName: string
+  index: number
   isLast: boolean
   canRemove: boolean
   onRemove: () => void
@@ -35,7 +36,9 @@ export const SubCriterionItem: FC<Props> = ({
     if (count === currentSteps.length) return
 
     if (count > currentSteps.length) {
-      const extra = Array(count - currentSteps.length).fill({ description: '' })
+      const extra = Array.from({ length: count - currentSteps.length }, () => ({
+        description: '',
+      }))
       setValue(`${fieldName}.steps`, [...currentSteps, ...extra])
     } else {
       setValue(`${fieldName}.steps`, currentSteps.slice(0, count))

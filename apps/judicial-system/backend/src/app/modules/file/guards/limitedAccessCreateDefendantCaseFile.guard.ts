@@ -6,7 +6,6 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import { CaseFileCategory, User } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../repository'
@@ -38,11 +37,7 @@ export class LimitedAccessCreateDefendantCaseFileGuard implements CanActivate {
 
     // Verify the logged-in user is the confirmed defender for this defendant
     if (
-      !defendant.isDefenderChoiceConfirmed ||
-      !defendant.defenderNationalId ||
-      !normalizeAndFormatNationalId(user.nationalId).includes(
-        defendant.defenderNationalId,
-      )
+      !Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [defendant])
     ) {
       return false
     }

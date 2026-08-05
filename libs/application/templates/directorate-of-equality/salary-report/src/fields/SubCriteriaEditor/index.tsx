@@ -5,12 +5,8 @@ import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import { messages } from '../../lib/messages'
 import type { ParsedCriterionDto } from '@island.is/clients/directorate-of-equality'
-import {
-  DEFAULT_JOB_FACTORS,
-  type JobFactor,
-  type PersonalFactor,
-  type SubCriterion,
-} from '../../lib/constants'
+import { DEFAULT_JOB_FACTORS } from '../../utils/constants'
+import type { JobFactor, PersonalFactor, SubCriterion } from '../../utils/types'
 import { CriterionPanel } from './CriterionPanel'
 
 export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
@@ -97,21 +93,24 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
               )}
             </Text>
             <Stack space={3}>
-              {personalFactors.map((factor, i) => (
-                <CriterionPanel
-                  key={`personal-${i}`}
-                  accordionId={`subCriteria-personalFactor-${i}`}
-                  criterionTitle={factor.title}
-                  criterionWeight={factor.weight}
-                  fieldName={`subCriteria.personalFactors.${i}`}
-                  savedSubCriteria={savedPersonalSubCriteria[i] ?? []}
-                  parsedSubCriteria={
-                    parsedPersonalCriteria[i]?.subCriteria ?? []
-                  }
-                  parsedSalaryReportDate={parsedSalaryReportDate}
-                  startExpanded={i === 0}
-                />
-              ))}
+              {personalFactors.map((factor, i) => {
+                const parsedCriterion = parsedPersonalCriteria.find(
+                  (c) => c.title === factor.title,
+                )
+                return (
+                  <CriterionPanel
+                    key={`personal-${i}`}
+                    accordionId={`subCriteria-personalFactor-${i}`}
+                    criterionTitle={factor.title}
+                    criterionWeight={factor.weight}
+                    fieldName={`subCriteria.personalFactors.${i}`}
+                    savedSubCriteria={savedPersonalSubCriteria[i] ?? []}
+                    parsedSubCriteria={parsedCriterion?.subCriteria ?? []}
+                    parsedSalaryReportDate={parsedSalaryReportDate}
+                    startExpanded={i === 0}
+                  />
+                )
+              })}
             </Stack>
           </Box>
         )}

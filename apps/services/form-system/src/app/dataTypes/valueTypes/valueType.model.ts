@@ -172,6 +172,22 @@ export class ValueType {
   time?: string
 
   @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  registrationNumber?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  model?: string
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => LanguageType)
+  @ApiPropertyOptional({ type: LanguageType })
+  color?: LanguageType
+
+  @IsOptional()
   @IsArray()
   @IsString({ each: true })
   @ApiPropertyOptional({ type: [String] })

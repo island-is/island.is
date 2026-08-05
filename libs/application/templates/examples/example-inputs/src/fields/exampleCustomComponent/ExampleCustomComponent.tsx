@@ -3,6 +3,7 @@ import { useLocale } from '@island.is/localization'
 import * as styles from './ExampleCustomComponent.css'
 import { Box, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
+import { resolveFieldId } from '@island.is/application/core'
 
 interface Props {
   field: {
@@ -12,14 +13,18 @@ interface Props {
   }
 }
 
-export const ExampleCustomComponent = ({ field }: Props & FieldBaseProps) => {
+export const ExampleCustomComponent = ({
+  field,
+  application,
+}: Props & FieldBaseProps) => {
   const { formatMessage } = useLocale()
   const { someData } = field.props
   if (!someData) return null
+  const resolvedId = resolveFieldId({ id: field.id }, application)
 
   return (
     <Box
-      id={field.id}
+      id={resolvedId}
       className={styles.boldNames}
       border="standard"
       borderRadius="large"

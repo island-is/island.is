@@ -1,4 +1,5 @@
 export { HealthDirectorateClientModule } from './lib/healthDirectorateClient.module'
+export { HealthDirectorateHealthModule } from './lib/clients/health/health.module'
 export * from './lib/healthDirectorateClient.types'
 export * from './lib/clients/occupational-license/gen/fetch'
 export {
@@ -18,6 +19,13 @@ export {
   QuestionnaireDetailDto,
   QuestionType,
   QuestionGroupDto,
+  AttachmentReplyViewDto,
+  BooleanReplyViewDto,
+  DateReplyViewDto,
+  ListReplyDto,
+  NumberReplyViewDto,
+  StringReplyViewDto,
+  TableReplyViewDto,
   BooleanQuestionDto,
   StringQuestionDto,
   DateQuestionDto,
@@ -38,7 +46,18 @@ export {
   CreateEuPatientConsentDto,
 } from './lib/clients'
 export {
+  ConversationAttachmentDto,
+  ConversationAttachmentRequestDto,
+  ConversationBaseDto,
+  ConversationDetailDto,
+  ConversationMessageDto,
+  ConversationReplyBlockedReason,
+  ConversationStatusFilter,
+  CreateConversationRequestDto,
+  CreateReplyRequestDto,
   DispensationHistoryItemDto,
+  MessagingRecipientDto,
+  RecipientCreateBlockedReason,
   UserVisibleAppointmentStatuses,
   OrganDonorDto,
 } from './lib/clients/health'

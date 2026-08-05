@@ -1,4 +1,5 @@
-import React, { useEffect, useId, useRef, useState } from 'react'
+import React, { useEffect, useId, useMemo, useRef, useState } from 'react'
+import debounce from 'lodash/debounce'
 import { AnimatePresence } from 'motion/react'
 import type { Editor as TinyMCEEditor, Ui } from 'tinymce'
 import { Editor } from '@tinymce/tinymce-react'
@@ -6,7 +7,13 @@ import { Editor } from '@tinymce/tinymce-react'
 import { ErrorMessage } from '@island.is/island-ui/core'
 
 import RequiredStar from '../RequiredStar/RequiredStar'
-import HighlightColorPicker, { HIGHLIGHT_COLORS } from './HighlightColorPicker'
+import HighlightColorPicker from './HighlightColorPicker'
+import {
+  INDENT_STEP_PX,
+  normalizePastedHighlights,
+  normalizePastedIndentation,
+  WORD_HIGHLIGHT_COLORS,
+} from './pasteNormalization'
 import * as styles from './TinyMCE.css'
 
 type ToolbarToggleButtonInstanceApi = Ui.Toolbar.ToolbarToggleButtonInstanceApi
@@ -18,75 +25,12 @@ const hexToRgb = (hex: string) => {
   return `rgb(${r}, ${g}, ${b})`
 }
 
-const parseCssColor = (cssColor: string): [number, number, number] | null => {
-  const rgb = cssColor.match(
-    /rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+))?/,
-  )
-  if (rgb) {
-    // A fully transparent rgba value is not a visible highlight.
-    if (rgb[4] !== undefined && parseFloat(rgb[4]) === 0) return null
-    return [+rgb[1], +rgb[2], +rgb[3]]
-  }
-  const hex6 = cssColor.match(/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i)
-  if (hex6)
-    return [parseInt(hex6[1], 16), parseInt(hex6[2], 16), parseInt(hex6[3], 16)]
-  const hex3 = cssColor.match(/^#([0-9a-f])([0-9a-f])([0-9a-f])$/i)
-  if (hex3)
-    return [
-      parseInt(hex3[1] + hex3[1], 16),
-      parseInt(hex3[2] + hex3[2], 16),
-      parseInt(hex3[3] + hex3[3], 16),
-    ]
-  return null
-}
-
-const HIGHLIGHT_DISTANCE_THRESHOLD = 200
-
-// Indent step (px) used by TinyMCE's indent/outdent buttons. Word paste uses
-// margin-left in pt, which the buttons can't outdent, so we normalize it to
-// padding-left rounded to this step (which the backend PDF also reads).
-const INDENT_STEP_PX = 40
-
-const normalizePastedIndentation = (html: string): string =>
-  html.replace(
-    /margin-left:\s*([\d.]+)(pt|px)\s*;?/g,
-    (_match: string, value: string, unit: string) => {
-      const numeric = parseFloat(value)
-      const px = unit === 'pt' ? numeric * (96 / 72) : numeric
-      const levels = Math.round(px / INDENT_STEP_PX)
-      return levels > 0 ? `padding-left: ${levels * INDENT_STEP_PX}px;` : ''
-    },
-  )
-
-const findNearestHighlightColor = (cssColor: string): string => {
-  const fallback = HIGHLIGHT_COLORS[0].color
-  const rgb = parseCssColor(cssColor)
-  if (!rgb) return fallback
-
-  let minDist = Infinity
-  let nearest = fallback
-
-  for (const { color } of HIGHLIGHT_COLORS) {
-    const r = parseInt(color.slice(1, 3), 16)
-    const g = parseInt(color.slice(3, 5), 16)
-    const b = parseInt(color.slice(5, 7), 16)
-    const dist = Math.sqrt(
-      (rgb[0] - r) ** 2 + (rgb[1] - g) ** 2 + (rgb[2] - b) ** 2,
-    )
-    if (dist < minDist) {
-      minDist = dist
-      nearest = color
-    }
-  }
-
-  return minDist <= HIGHLIGHT_DISTANCE_THRESHOLD ? nearest : fallback
-}
-
 interface Props {
   label: string
   placeholder: string
   defaultValue?: string
   onChange?: (html: string) => void
+  onDebouncedChange?: (html: string) => void
   onBlur?: (html: string) => void
   disabled?: boolean
   errorMessage?: string
@@ -99,6 +43,7 @@ const TinyMCE = ({
   placeholder,
   defaultValue,
   onChange,
+  onDebouncedChange,
   onBlur,
   disabled,
   errorMessage,
@@ -118,6 +63,28 @@ const TinyMCE = ({
   const highlightBtnApiRef = useRef<ToolbarToggleButtonInstanceApi | null>(null)
   const pickerRef = useRef<HTMLDivElement>(null)
   const highlightGroupRef = useRef<HTMLElement | null>(null)
+
+  // Persist while the user types so content isn't lost on a refresh that
+  // happens before the editor blurs (TinyMCE's iframe doesn't reliably fire
+  // blur on page unload). Passing the callback as an argument keeps the
+  // debounced function stable while still flushing with the latest handler.
+  const debouncedSave = useMemo(
+    () =>
+      debounce(
+        (html: string, callback: ((html: string) => void) | undefined) => {
+          callback?.(html)
+        },
+        500,
+      ),
+    [],
+  )
+
+  // Flush any pending save on unmount so edits aren't lost on navigation.
+  useEffect(() => {
+    return () => {
+      debouncedSave.flush()
+    }
+  }, [debouncedSave])
 
   useEffect(() => {
     highlightBtnApiRef.current?.setActive(pickerOpen)
@@ -153,11 +120,11 @@ const TinyMCE = ({
       while (node && node !== editor.getBody()) {
         const bg: string = node.style?.backgroundColor ?? ''
         if (bg && bg !== 'transparent') {
-          const match = HIGHLIGHT_COLORS.find(
-            ({ color }) => hexToRgb(color) === bg,
+          const match = WORD_HIGHLIGHT_COLORS.map(({ color }) => color).find(
+            (color) => hexToRgb(color) === bg,
           )
           if (match) {
-            setSelectedColor(match.color)
+            setSelectedColor(match)
             return
           }
         }
@@ -229,26 +196,24 @@ const TinyMCE = ({
               editor.on('blur', () => {
                 setFocused(false)
                 onBlur?.(editor.getContent())
+                // Blur already persisted; drop any pending debounced save.
+                debouncedSave.cancel()
               })
               editor.on('NodeChange', handleNodeChange(editor))
               editor.on('PastePreProcess', (args) => {
-                // Normalize pasted backgrounds to a known highlight color, and
-                // strip ones we can't parse (e.g. Word's "transparent"), which
-                // would otherwise render as a black rectangle in the PDF.
-                args.content = args.content.replace(
-                  /background(-color)?:\s*(#[0-9a-fA-F]{3,6}|rgba?\([^)]+\)|[a-zA-Z]+)\s*;?/g,
-                  (_match: string, _shorthand: string, color: string) =>
-                    parseCssColor(color)
-                      ? `background-color: ${findNearestHighlightColor(color)};`
-                      : '',
+                args.content = normalizePastedIndentation(
+                  normalizePastedHighlights(args.content),
                 )
-                args.content = normalizePastedIndentation(args.content)
               })
               setupHighlightButton(editor)
             },
             paste_word_valid_elements: 'p,b,strong,i,em,span,br',
+            // "background" (shorthand) is required: Word highlights arrive as
+            // "background:yellow" and the paste plugin also maps mso-highlight
+            // to "background" — both are normalized to a palette
+            // background-color in PastePreProcess below.
             paste_retain_style_properties:
-              'font-weight,font-style,background-color,margin-left,padding-left',
+              'font-weight,font-style,background,background-color,margin-left,padding-left',
             paste_strip_class_attributes: 'all',
             content_style:
               "@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,700;1,300;1,700&display=swap'); body { font-family: 'IBM Plex Sans', sans-serif; font-size: 18px; font-weight: 300; } strong, b { font-weight: 700; } p { margin: 0; }",
@@ -257,8 +222,11 @@ const TinyMCE = ({
             placeholder,
           }}
           initialValue={initialValueRef.current}
-          onEditorChange={(content) => {
-            onChange?.(content)
+          onEditorChange={(newContent) => {
+            onChange?.(newContent)
+            if (!disabled) {
+              debouncedSave(newContent, onDebouncedChange)
+            }
           }}
           disabled={disabled}
         />

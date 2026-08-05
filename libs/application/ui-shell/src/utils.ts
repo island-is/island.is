@@ -1,4 +1,8 @@
-import { getValueViaPath } from '@island.is/application/core'
+import {
+  getValueViaPath,
+  resolveFieldId,
+  resolveFormItemId,
+} from '@island.is/application/core'
 import {
   AccordionField,
   Application,
@@ -15,14 +19,20 @@ import {
 import { FormScreen, MOCKPAYMENT } from './types'
 import pick from 'lodash/pick'
 import get from 'lodash/get'
+import { BffUser } from '@island.is/shared/types'
 
 export const verifyExternalData = (
   externalData: ExternalData,
   dataProviders: DataProviderItem[],
+  application: Application,
+  user?: BffUser,
 ): boolean => {
   for (let i = 0; i < dataProviders.length; i++) {
     const { id } = dataProviders[i]
-    const dataProviderResult = externalData[id]
+    const resolvedId = id
+      ? resolveFieldId({ id }, application, user)
+      : undefined
+    const dataProviderResult = externalData[resolvedId ?? '']
     if (!dataProviderResult || dataProviderResult.status === 'failure') {
       return false
     }
@@ -39,8 +49,11 @@ export const getFieldsWithNoAnswer = (
   screen: FormScreen,
   answers: FormValue,
   errorMessage: string,
+  application?: Application,
+  user?: BffUser,
 ): RecordObject<string> => {
   let missingAnswers: RecordObject<string> = {}
+  const app = application ?? ({ answers } as Application)
 
   if (screen.type === FormItemTypes.MULTI_FIELD) {
     const { children } = screen
@@ -48,11 +61,11 @@ export const getFieldsWithNoAnswer = (
     for (const child of children) {
       missingAnswers = {
         ...missingAnswers,
-        ...getFieldsWithNoAnswer(child, answers, errorMessage),
+        ...getFieldsWithNoAnswer(child, answers, errorMessage, app, user),
       }
     }
   } else if (screen.type !== FormItemTypes.REPEATER && screen.isNavigable) {
-    const screenId = screen.id!
+    const screenId = resolveFieldId(screen as Field, app, user)
     const screenAnswer = getValueViaPath(answers, screenId)
     const hasBeenAnswered = !answerIsMissing(screenAnswer)
     const shouldBeAnswered = !get(screen, 'doesNotRequireAnswer')
@@ -90,7 +103,11 @@ export const findSubmitField = (
   return undefined
 }
 
-export const getAccordionChildFieldIds = (field: Field): string[] => {
+export const getAccordionChildFieldIds = (
+  field: Field,
+  application?: Application,
+  user?: BffUser,
+): string[] => {
   if (field.type !== FieldTypes.ACCORDION) return []
   const accordion = field as AccordionField
   const items =
@@ -98,15 +115,24 @@ export const getAccordionChildFieldIds = (field: Field): string[] => {
       ? []
       : accordion.accordionItems
   return items.flatMap((item) =>
-    item.children ? item.children.map((child) => child.id) : [],
+    item.children
+      ? item.children.map((child) =>
+          application
+            ? resolveFieldId(child, application, user)
+            : (child.id as string),
+        )
+      : [],
   )
 }
 
 export const extractAnswersToSubmitFromScreen = (
   data: FormValue,
   screen: FormScreen,
+  application?: Application,
+  user?: BffUser,
 ): FormValue => {
-  const screenId = screen.id ?? ''
+  const app = application ?? ({ answers: data } as Application)
+  const screenId = resolveFormItemId(screen, app, user)
 
   if (
     screen.isPartOfRepeater ||
@@ -114,7 +140,7 @@ export const extractAnswersToSubmitFromScreen = (
   ) {
     const baseId =
       screen.type === FormItemTypes.MULTI_FIELD
-        ? screen.children[0].id
+        ? resolveFieldId(screen.children[0] as Field, app, user)
         : screenId
 
     // We always submit the whole array for the repeater answers
@@ -140,7 +166,12 @@ export const extractAnswersToSubmitFromScreen = (
     case FormItemTypes.MULTI_FIELD:
       return pick(
         data,
-        screen.children.flatMap((c) => [c.id, ...getAccordionChildFieldIds(c)]),
+        screen.children.flatMap<string>((c) => [
+          application
+            ? resolveFieldId(c as Field, application, user)
+            : (c.id as string),
+          ...getAccordionChildFieldIds(c as Field, application, user),
+        ]),
       )
     case FormItemTypes.REPEATER:
       return {}

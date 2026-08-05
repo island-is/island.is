@@ -7,6 +7,7 @@ import { CivilClaimantController } from './civilClaimant.controller'
 import { CivilClaimantService } from './civilClaimant.service'
 import { DefendantController } from './defendant.controller'
 import { DefendantService } from './defendant.service'
+import { InternalCivilClaimantController } from './internalCivilClaimant.controller'
 import { InternalDefendantController } from './internalDefendant.controller'
 import { LimitedAccessDefendantController } from './limitedAccessDefendant.controller'
 
@@ -20,6 +21,7 @@ import { LimitedAccessDefendantController } from './limitedAccessDefendant.contr
   controllers: [
     DefendantController,
     InternalDefendantController,
+    InternalCivilClaimantController,
     CivilClaimantController,
     LimitedAccessDefendantController,
   ],

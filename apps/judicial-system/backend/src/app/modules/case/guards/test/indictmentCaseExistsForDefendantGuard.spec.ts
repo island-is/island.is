@@ -7,7 +7,6 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   CaseState,
   CaseType,
@@ -147,8 +146,7 @@ describe('Indictment Case Exists For Defendant Guard', () => {
           id: caseId,
           state: { [Op.not]: CaseState.DELETED },
           isArchived: false,
-          '$defendants.national_id$':
-            normalizeAndFormatNationalId(defendantNationalId),
+          '$defendants.national_id$': defendantNationalId.replace(/-/g, ''),
         },
       })
       expect(then.result).toBe(true)

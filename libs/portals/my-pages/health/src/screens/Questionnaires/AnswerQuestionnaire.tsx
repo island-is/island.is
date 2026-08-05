@@ -62,22 +62,24 @@ const AnswerQuestionnaire: FC = () => {
     )
   }
 
-  const initialAnswers = useMemo(() => {
-    if (!questionnaire?.draftAnswers?.length) return undefined
-
-    const questionLabels: { [key: string]: string } = {}
-    questionnaire.sections?.forEach((section) => {
+  const questionLabels = useMemo(() => {
+    const labels: { [key: string]: string } = {}
+    questionnaire?.sections?.forEach((section) => {
       section.questions?.forEach((q) => {
-        questionLabels[q.id] = q.label
+        labels[q.id] = q.label
       })
     })
+    return labels
+  }, [questionnaire?.sections])
+
+  const initialAnswers = useMemo(() => {
+    if (!questionnaire?.draftAnswers?.length) return undefined
 
     return questionnaire.draftAnswers.reduce<{ [key: string]: QuestionAnswer }>(
       (acc, draft) => {
         if (!isValidQuestionnaireAnswerType(draft.type)) {
           return acc
         }
-
         return {
           ...acc,
           [draft.questionId]: {
@@ -93,7 +95,7 @@ const AnswerQuestionnaire: FC = () => {
       },
       {},
     )
-  }, [questionnaire?.draftAnswers, questionnaire?.sections])
+  }, [questionnaire?.draftAnswers, questionLabels])
 
   if (!id) {
     return (

@@ -24,6 +24,7 @@ import {
 
 import { AppealCase } from '../../appeal-case'
 import {
+  AppealDecisionResponse,
   CourtDocumentResponse,
   CourtSessionResponse,
 } from '../../court-session'
@@ -450,4 +451,10 @@ export class Case {
 
   @Field(() => [AppealCase], { nullable: true })
   readonly rulingOrderAppealCases?: AppealCase[]
+
+  @Field(() => [AppealDecisionResponse], { nullable: true })
+  readonly appealDecisions?: AppealDecisionResponse[]
+
+  @Field(() => ID, { nullable: true })
+  readonly originalAncestorId?: string
 }

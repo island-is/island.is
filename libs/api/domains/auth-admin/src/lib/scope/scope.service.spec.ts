@@ -96,6 +96,9 @@ const createMockAdminApi = (
   meScopeClientsControllerFindAllRaw: jest
     .fn()
     .mockResolvedValue(createMockApiResponse([])),
+  meScopeUsersControllerFindUsersByScopeRaw: jest
+    .fn()
+    .mockResolvedValue(createMockApiResponse([])),
 })
 
 const mockAdminDevApi = createMockAdminApi(
@@ -246,6 +249,7 @@ describe('ScopeService', () => {
             isAccessControlled: false,
             categoryIds: [],
             tagIds: [],
+            userNationalIds: [],
           })),
         }),
       )
@@ -288,7 +292,12 @@ describe('ScopeService', () => {
       const environments = Object.entries(groupedScopes)
         .map(([_, scopes]) => scopes)
         .flat()
-        .map((env) => ({ ...env, categoryIds: [], tagIds: [] }))
+        .map((env) => ({
+          ...env,
+          categoryIds: [],
+          tagIds: [],
+          userNationalIds: [],
+        }))
 
       // Act
       const scopeResponses = await scopeService.getScope(currentUser, {

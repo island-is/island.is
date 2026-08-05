@@ -809,6 +809,10 @@ export const messages = defineMessages({
     defaultMessage: 'Afgr. staður',
     id: 'sp.health:location',
   },
+  locationInstructions: {
+    defaultMessage: 'Nánar um staðsetningu',
+    id: 'sp.health:location-instructions',
+  },
   LOTT: {
     defaultMessage: 'Lífeyrisþegi með óskerta tekjutryggingu',
     id: 'sp.health:lott',
@@ -1256,6 +1260,22 @@ export const messages = defineMessages({
     id: 'sp.health:health-overview-intro',
     defaultMessage:
       'Hér getur þú séð yfirlit yfir grunnupplýsingar þínar í Heilsu, tímabókanir, skráningar, stöðu á listum og mælingar.',
+  },
+  quickLinkMedicinePrescription: {
+    id: 'sp.health:quick-link-medicine-prescription',
+    defaultMessage: 'Endurnýja lyf',
+  },
+  quickLinkMedicineDelegation: {
+    id: 'sp.health:quick-link-medicine-delegation',
+    defaultMessage: 'Umboðsstillingar',
+  },
+  quickLinkWaitlists: {
+    id: 'sp.health:quick-link-waitlists',
+    defaultMessage: 'Biðlistar',
+  },
+  quickLinkQuestionnaires: {
+    id: 'sp.health:quick-link-questionnaires',
+    defaultMessage: 'Spurningalistar',
   },
   paymentDocument: {
     defaultMessage: 'Greiðsluskjal',
@@ -1870,6 +1890,122 @@ export const messages = defineMessages({
     defaultMessage: 'Upplýsingar um tímabókun',
     id: 'sp.health:appointment-detail',
   },
+  healthConversationsIntro: {
+    defaultMessage:
+      'Hér getur þú séð skilaboð milli þín og heilbrigðisstofnana.',
+    id: 'sp.health:health-messages-intro',
+  },
+  healthConversationsSearchPlaceholder: {
+    defaultMessage: 'Sía eftir leitarorði',
+    id: 'sp.health:health-messages-search-placeholder',
+  },
+  healthConversationsCreate: {
+    defaultMessage: 'Ný skilaboð',
+    id: 'sp.health:health-messages-create',
+  },
+  healthConversationsFilterStarred: {
+    defaultMessage: 'Stjörnumerkt',
+    id: 'sp.health:health-messages-filter-starred',
+  },
+  healthConversationsFilterArchived: {
+    defaultMessage: 'Geymsla',
+    id: 'sp.health:health-messages-filter-archived',
+  },
+  healthConversationsNewTitle: {
+    defaultMessage: 'Hafa samband',
+    id: 'sp.health:health-messages-new-title',
+  },
+  healthConversationsNewIntro: {
+    defaultMessage:
+      'Heilsugæslan svarar skilaboðum yfirleitt innan þriggja virkra daga. Ef erindið er brátt og þarfnast svars í dag, hringdu í 1700. Ef um neyðartilfelli er að ræða, hringdu strax í 112.',
+    id: 'sp.health:health-messages-new-intro',
+  },
+  healthConversationsNewIntroWithWindow: {
+    defaultMessage:
+      'Heilsugæslan tekur við skilaboðum alla daga frá kl. {openTime} til {closeTime}. Venjulega er svarað innan {days, plural, one {eins virks dags} other {# virkra daga}}. Ef erindið er brýnt og þú þarft svar sama dag skaltu hringja í 1700. Ef um neyðartilvik er að ræða skaltu hringja strax í 112.',
+    id: 'sp.health:health-messages-new-intro-with-window',
+  },
+  healthConversationsNewSelectService: {
+    defaultMessage: 'Veldu þjónustu',
+    id: 'sp.health:health-messages-new-select-service',
+  },
+  healthConversationsNewSelectServicePlaceholder: {
+    defaultMessage: 'Veldu þjónustu úr fellilistanum',
+    id: 'sp.health:health-messages-new-select-service-placeholder',
+  },
+  healthConversationsNewBodyPlaceholder: {
+    defaultMessage: 'Sláðu inn skilaboð',
+    id: 'sp.health:health-messages-new-body-placeholder',
+  },
+  healthConversationsNewTermsLabel: {
+    defaultMessage: 'Ég samþykki <link>skilmála</link>',
+    id: 'sp.health:health-messages-new-terms-label',
+  },
+  healthConversationsTermsModalTitle: {
+    defaultMessage: 'Skilmálar vegna skilaboða',
+    id: 'sp.health:health-messages-terms-modal-title',
+  },
+  healthConversationsTermsModalBody: {
+    defaultMessage:
+      '- Skilaboðum er svarað á opnunartíma, oftast innan þriggja virkra daga\n- Skilaboð og svör vistast sjálfkrafa í sjúkraskrá\n- Tegund skilaboða ræður hver svarar erindinu\n- Heilbrigðisstarfsmaður mun hafa aðgang að sjúkraskrá til að svara fyrirspurn',
+    id: 'sp.health:health-messages-terms-modal-body#markdown',
+  },
+  healthConversationNotFound: {
+    defaultMessage: 'Skilaboð fundust ekki',
+    id: 'sp.health:health-message-not-found',
+  },
+  healthConversationTo: {
+    defaultMessage: 'Til: {arg}',
+    id: 'sp.health:health-message-to',
+  },
+  healthConversationSend: {
+    defaultMessage: 'Senda skilaboð',
+    id: 'sp.health:health-message-send',
+  },
+  healthConversationCloseReply: {
+    defaultMessage: 'Loka svarglugga',
+    id: 'sp.health:health-message-close-reply',
+  },
+  healthConversationSentTitle: {
+    defaultMessage: 'Skilaboð móttekin',
+    id: 'sp.health:health-message-sent-title',
+  },
+  healthConversationSentText: {
+    defaultMessage:
+      'Við svörum á dagvinnutíma, yfirleitt innan þriggja virkra daga. Ef erindið er brátt og þarfnast svars í dag, hringdu í 1700. Ef um neyðartilfelli er að ræða, hringdu strax í 112.',
+    id: 'sp.health:health-message-sent-text',
+  },
+  healthConversationsNoRecipient: {
+    defaultMessage: 'Ekki er hægt að senda skilaboð eins og er',
+    id: 'sp.health:health-messages-no-recipient',
+  },
+  healthConversationClosingSoonTitle: {
+    defaultMessage: 'Athugið: það lokar bráðlega fyrir skilaboð',
+    id: 'sp.health:health-messages-closing-soon-title',
+  },
+  healthConversationClosingSoonText: {
+    defaultMessage:
+      'Sendu skilaboðin þín áður en lokað er kl. {closeTime}. Eftir það er ekki hægt að senda skilaboð fyrr en {hasOpenTime, select, false {á morgun} other {kl. {openTime} á morgun}}.',
+    id: 'sp.health:health-messages-closing-soon-text',
+  },
+  healthConversationClosedTitle: {
+    defaultMessage: 'Lokað fyrir ný skilaboð núna',
+    id: 'sp.health:health-messages-closed-title',
+  },
+  healthConversationClosedText: {
+    defaultMessage:
+      'Klukkan er {currentTime}. Þjónustan tekur við skilaboðum frá kl. {openTime} til kl. {closeTime}. Þú getur sent skilaboð aftur kl. {openTime} í fyrramálið.',
+    id: 'sp.health:health-messages-closed-text',
+  },
+  healthConversationMessagingNotAllowedTitle: {
+    defaultMessage: 'Ekki hægt að senda skilaboð',
+    id: 'sp.health:health-messages-messaging-not-allowed-title',
+  },
+  healthConversationMessagingNotAllowedText: {
+    defaultMessage:
+      'Þessi þjónustuaðili býður ekki upp á skilaboð á Ísland.is.',
+    id: 'sp.health:health-messages-messaging-not-allowed-text',
+  },
   myAppointments: {
     defaultMessage: 'Mínar tímabókanir',
     id: 'sp.health:my-appointments',
@@ -2452,6 +2588,14 @@ export const messages = defineMessages({
     id: 'sp.health:no-appointments',
     defaultMessage: 'Engar tímabókanir framundan',
   },
+  appointmentNotFound: {
+    id: 'sp.health:appointment-not-found',
+    defaultMessage: 'Tímabókun fannst ekki',
+  },
+  appointmentNotFoundDetail: {
+    id: 'sp.health:appointment-not-found-detail',
+    defaultMessage: 'Þessi tímabókun er ekki til eða hefur verið afbókuð',
+  },
   appointmentWith: {
     id: 'sp.health:appointment-with',
     defaultMessage: 'Tími hjá: {arg}',
@@ -2541,6 +2685,10 @@ export const messages = defineMessages({
     defaultMessage: 'Hafnað',
     id: 'sp.health:renewal-status-rejected',
   },
+  renewalStatusUnknown: {
+    defaultMessage: 'Óþekkt',
+    id: 'sp.health:renewal-status-unknown',
+  },
   renewalSendTo: {
     defaultMessage: 'Sendist til',
     id: 'sp.health:renewal-send-to',
@@ -2628,6 +2776,46 @@ export const messages = defineMessages({
     id: 'sp.health:opening-hours',
     defaultMessage: 'Opnunartímar',
   },
+  healthNotificationsTitle: {
+    id: 'sp.health:health-notifications-title',
+    defaultMessage: 'Tilkynningar í Heilsu',
+  },
+  contactChat: {
+    id: 'sp.health:contact-chat',
+    defaultMessage: 'Netspjall Heilsuveru',
+  },
+  contactChatDesc: {
+    id: 'sp.health:contact-chat-desc',
+    defaultMessage: 'Opið frá kl. 8-16 alla virka daga',
+  },
+  heilsuveraChatLink: {
+    id: 'sp.health:heilsuvera-chat-link',
+    defaultMessage: 'https://direct.lc.chat/15092154',
+  },
+  contactPhone: {
+    id: 'sp.health:contact-phone',
+    defaultMessage: 'Símaráðgjöf 1700 / 513 1700',
+  },
+  contactPhoneNumber: {
+    id: 'sp.health:contact-phone-number',
+    defaultMessage: '+3545131700',
+  },
+  contactPhoneDesc: {
+    id: 'sp.health:contact-phone-desc',
+    defaultMessage: 'Fyrir aðstoð samdægurs.',
+  },
+  contactPhoneEmergencyDesc: {
+    id: 'sp.health:contact-phone-emergency-desc',
+    defaultMessage: 'Ath. í neyð skal hringja í 112.',
+  },
+  contactSendMessage: {
+    id: 'sp.health:contact-send-message',
+    defaultMessage: 'Senda skilaboð á heilsugæslu',
+  },
+  contactSendMessageDesc: {
+    id: 'sp.health:contact-send-message-desc',
+    defaultMessage: 'Heilsugæslan svarar oftast innan 3. virkra daga.',
+  },
   appointmentMoreInfo: {
     id: 'sp.health:appointment-more-info',
     defaultMessage: 'Nánari upplýsingar',
@@ -2638,7 +2826,7 @@ export const messages = defineMessages({
   },
   appointmentModalityVideo: {
     id: 'sp.health:appointment-modality-video',
-    defaultMessage: 'Fjarfundur',
+    defaultMessage: 'Myndsímtal',
   },
   appointmentAssignees: {
     id: 'sp.health:appointment-assignees',
@@ -2646,7 +2834,21 @@ export const messages = defineMessages({
   },
   appointmentVideoCallLink: {
     id: 'sp.health:appointment-video-call-link',
-    defaultMessage: 'Opna fjarfund',
+    defaultMessage: 'Hefja myndsímtal',
+  },
+  appointmentVideoCallInfoWithLink: {
+    id: 'sp.health:appointment-video-call-info-with-link',
+    defaultMessage:
+      'Hnappurinn fyrir myndsímtalið verður virkur 5 mínútum fyrir bókaðan tíma. Smelltu á hann til að hefja símtalið.',
+  },
+  appointmentVideoCallInfoWithLinkActive: {
+    id: 'sp.health:appointment-video-call-info-with-link-active',
+    defaultMessage: 'Smelltu á hnappinn til að hefja myndsímtalið.',
+  },
+  appointmentVideoCallInfoNoLink: {
+    id: 'sp.health:appointment-video-call-info-no-link',
+    defaultMessage:
+      'Myndsamtalið fer fram í gegnum hlekk sem þú færð sendan í skilaboðum. Hlekkurinn virkjast 5 mínútum áður en tíminn hefst. Leiðbeiningar um hvernig þú tengist fylgja einnig með skilaboðunum.',
   },
   appointmentPreparation: {
     id: 'sp.health:appointment-preparation',

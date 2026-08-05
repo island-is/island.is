@@ -108,6 +108,8 @@ interface WrapperProps {
   showReadSpeaker?: boolean
   isSubpage?: boolean
   backLink?: { text: string; url: string }
+  hideFromExternalSearchEngines?: boolean
+  organizationSubpageId?: string
 }
 
 interface HeaderProps {
@@ -527,16 +529,46 @@ export const OrganizationFooter: React.FC<
   return OrganizationFooterComponent
 }
 
-export const OrganizationChatPanel = ({
+export const getOrganizationWebChatDisplayLocationIds = ({
+  organizationPageId,
   organizationId,
+  organizationSubpageId,
 }: {
-  organizationId: string | undefined
-}) => {
-  if (!organizationId) return null
-  return <OrganizationChat organizationId={organizationId} />
+  organizationPageId?: string
+  organizationId?: string
+  organizationSubpageId?: string
+}): string[] => {
+  const displayLocationIds: string[] = []
+
+  if (organizationSubpageId) {
+    displayLocationIds.push(organizationSubpageId)
+  }
+
+  if (organizationPageId) {
+    displayLocationIds.push(organizationPageId)
+  }
+
+  if (organizationId) {
+    displayLocationIds.push(organizationId)
+  }
+
+  return displayLocationIds
 }
 
-const OrganizationChat = ({ organizationId }: { organizationId: string }) => {
+export const OrganizationChatPanel = ({
+  displayLocationIds,
+}: {
+  displayLocationIds: string[]
+}) => {
+  if (displayLocationIds.length === 0) return null
+  return <OrganizationChat displayLocationIds={displayLocationIds} />
+}
+
+const OrganizationChat = ({
+  displayLocationIds,
+}: {
+  displayLocationIds: string[]
+}) => {
   const { activeLocale } = useI18n()
 
   const { data, loading } = useQuery<GetWebChatQuery, QueryGetWebChatArgs>(
@@ -544,7 +576,7 @@ const OrganizationChat = ({ organizationId }: { organizationId: string }) => {
     {
       variables: {
         input: {
-          displayLocationIds: [organizationId],
+          displayLocationIds,
           lang: activeLocale,
         },
       },
@@ -664,6 +696,8 @@ export const OrganizationWrapper: React.FC<
   showReadSpeaker = true,
   isSubpage = true,
   backLink,
+  hideFromExternalSearchEngines = false,
+  organizationSubpageId,
 }) => {
   const router = useRouter()
   const { width } = useWindowSize()
@@ -700,10 +734,11 @@ export const OrganizationWrapper: React.FC<
 
   const n = useNamespace(namespace)
 
-  const indexableBySearchEngine =
-    organizationPage.organization?.canPagesBeFoundInSearchResults ??
-    organizationPage.canBeFoundInSearchResults ??
-    true
+  const indexableBySearchEngine = hideFromExternalSearchEngines
+    ? false
+    : organizationPage.organization?.canPagesBeFoundInSearchResults ??
+      organizationPage.canBeFoundInSearchResults ??
+      true
 
   const sitemapContentTypeDeterminesNavigationAndBreadcrumbs = n(
     'sitemapContentTypeDeterminesNavigationAndBreadcrumbs',
@@ -1052,7 +1087,11 @@ export const OrganizationWrapper: React.FC<
       )}
       {n('enableOrganizationChatPanelForOrgPages', true) && (
         <OrganizationChatPanel
-          organizationId={organizationPage?.organization?.id}
+          displayLocationIds={getOrganizationWebChatDisplayLocationIds({
+            organizationPageId: organizationPage?.id,
+            organizationId: organizationPage?.organization?.id,
+            organizationSubpageId,
+          })}
         />
       )}
     </>

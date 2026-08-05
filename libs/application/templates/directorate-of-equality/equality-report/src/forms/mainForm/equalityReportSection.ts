@@ -7,6 +7,7 @@ import {
   buildSection,
   buildSubSection,
   buildTitleField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { messages } from '../../lib/messages'
 
@@ -14,6 +15,28 @@ export const equalityReportSection = buildSection({
   id: 'equalityReport',
   title: messages.equalityReport.section.sectionTitle,
   children: [
+    buildSubSection({
+      id: 'previousEqualityPlan',
+      title: messages.equalityReport.previousEqualityPlan.sectionTitle,
+      condition: (_answers, externalData) =>
+        getValueViaPath(
+          externalData,
+          'activeEqualityReport.data.hasActiveEqualityReport',
+        ) === true,
+      children: [
+        buildMultiField({
+          id: 'previousEqualityPlanMultiField',
+          title: messages.equalityReport.previousEqualityPlan.title,
+          description: messages.equalityReport.previousEqualityPlan.intro,
+          children: [
+            buildCustomField({
+              id: 'previousEqualityPlan.content',
+              component: 'PreviousEqualityPlan',
+            }),
+          ],
+        }),
+      ],
+    }),
     buildSubSection({
       id: 'information',
       title: messages.equalityReport.information.sectionTitle,
@@ -67,14 +90,8 @@ export const equalityReportSection = buildSection({
               link: messages.equalityReport.information.detailLink,
               variant: 'text',
             }),
-            buildDescriptionField({
-              id: 'goalsAndActions.placeholder',
-              title: '',
-              description: '',
-            }),
             buildCustomField({
-              id: 'information.customField',
-              title: '',
+              id: 'goalsAndActions.customField',
               component: 'Editor',
             }),
           ],

@@ -148,6 +148,12 @@ describe('DefendantController - Update', () => {
           caseId,
           elementId: defendantId,
         },
+        {
+          type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT,
+          user,
+          caseId,
+          elementId: defendantId,
+        },
       ])
     })
   })
@@ -175,6 +181,12 @@ describe('DefendantController - Update', () => {
         },
         {
           type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
+          user,
+          caseId,
+          elementId: defendantId,
+        },
+        {
+          type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT,
           user,
           caseId,
           elementId: defendantId,
@@ -207,7 +219,7 @@ describe('DefendantController - Update', () => {
         it('should queue messages if defender has been confirmed', () => {
           expect(mockQueuedMessages).toEqual([
             {
-              type: MessageType.DELIVERY_TO_COURT_INDICTMENT_DEFENDER,
+              type: MessageType.DELIVERY_TO_COURT_INDICTMENT_DEFENDANT,
               user,
               caseId,
               elementId: defendantId,

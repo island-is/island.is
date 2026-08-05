@@ -8,12 +8,14 @@ import {
   CaseState,
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { mockTransitionAppealCaseMutation } from '@island.is/judicial-system-web/src/utils/mocks'
+import {
+  mockCaseTableMembershipQuery,
+  mockTransitionAppealCaseMutation,
+} from '@island.is/judicial-system-web/src/utils/mocks'
 import {
   FormContextWrapper,
   IntlProviderWrapper,
 } from '@island.is/judicial-system-web/src/utils/testHelpers'
-import * as utils from '@island.is/judicial-system-web/src/utils/utils'
 
 import Summary from './Summary'
 
@@ -34,7 +36,10 @@ describe('Summary', () => {
 
     render(
       <MockedProvider
-        mocks={mockTransitionAppealCaseMutation(caseId, appealCaseId)}
+        mocks={[
+          ...mockTransitionAppealCaseMutation(caseId, appealCaseId),
+          ...mockCaseTableMembershipQuery(caseId),
+        ]}
         addTypename={false}
       >
         <IntlProviderWrapper>
@@ -70,13 +75,13 @@ describe('Summary', () => {
   it('should show a modal window when the appeal ruling is modified', async () => {
     const caseId = faker.datatype.uuid()
     const appealCaseId = faker.datatype.uuid()
-    jest
-      .spyOn(utils, 'hasSentNotification')
-      .mockReturnValue({ hasSent: true, date: null })
 
     render(
       <MockedProvider
-        mocks={mockTransitionAppealCaseMutation(caseId, appealCaseId)}
+        mocks={[
+          ...mockTransitionAppealCaseMutation(caseId, appealCaseId),
+          ...mockCaseTableMembershipQuery(caseId),
+        ]}
         addTypename={false}
       >
         <IntlProviderWrapper>
@@ -89,7 +94,10 @@ describe('Summary', () => {
               modified: '',
               state: CaseState.ACCEPTED,
               policeCaseNumbers: [],
-              appealCase: { id: appealCaseId },
+              appealCase: {
+                id: appealCaseId,
+                appealRulingDate: '2021-09-09T12:00:00.000Z',
+              },
             }}
           >
             <Summary />

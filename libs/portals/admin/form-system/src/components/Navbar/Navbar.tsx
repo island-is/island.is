@@ -23,6 +23,7 @@ import { ControlContext, IControlContext } from '../../context/ControlContext'
 import {
   lifetimeSettingsStep,
   urlSettingsStep,
+  delegationSettingsStep,
 } from '../../lib/utils/customSections'
 import { baseSettingsStep } from '../../lib/utils/getBaseSettingsSection'
 import { ItemType } from '../../lib/utils/interfaces'
@@ -261,6 +262,16 @@ export const Navbar = () => {
           },
         },
       })
+    } else if (id === delegationSettingsStep.id) {
+      controlDispatch({
+        type: 'SET_ACTIVE_ITEM',
+        payload: {
+          activeItem: {
+            type: 'Section',
+            data: delegationSettingsStep,
+          },
+        },
+      })
     } else if (data) {
       controlDispatch({
         type: 'SET_ACTIVE_ITEM',
@@ -277,17 +288,13 @@ export const Navbar = () => {
   const renderToggleAllButton = () => (
     <Box display="flex" justifyContent="flexEnd" paddingBottom={2}>
       <Button
-        icon={allNavbarItemsOpen ? 'chevronUp' : 'chevronDown'}
-        iconType="filled"
-        circle
-        inline
-        variant="ghost"
+        variant="text"
         size="small"
         onClick={toggleAllNavbarItems}
         disabled={inputSectionIds.length === 0}
-        title={allNavbarItemsOpen ? 'Loka öllu' : 'Opna allt'}
-        aria-label={allNavbarItemsOpen ? 'Loka öllu' : 'Opna allt'}
-      />
+      >
+        {allNavbarItemsOpen ? 'Loka öllu' : 'Opna allt'}
+      </Button>
     </Box>
   )
 
@@ -425,6 +432,15 @@ export const Navbar = () => {
           type="Section"
           data={lifetimeSettingsStep}
           active={activeItem.data?.id === lifetimeSettingsStep.id}
+          focusComponent={focusComponent}
+        />
+      </div>
+
+      <div>
+        <NavComponent
+          type="Section"
+          data={delegationSettingsStep}
+          active={activeItem.data?.id === delegationSettingsStep.id}
           focusComponent={focusComponent}
         />
       </div>

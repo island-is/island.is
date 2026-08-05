@@ -98,14 +98,20 @@ export class AppealCase {
   @Field(() => String, { nullable: true })
   readonly appealIsolationToDate?: string
 
-  @Field(() => String, { nullable: true })
-  readonly appealedByNationalId?: string
+  @Field(() => ID, { nullable: true })
+  readonly appealedByDefendantId?: string
+
+  @Field(() => ID, { nullable: true })
+  readonly appealedByCivilClaimantId?: string
 
   @Field(() => UserRole, { nullable: true })
   readonly appealedByRole?: UserRole
 
   @Field(() => String, { nullable: true })
   readonly appealedDate?: string
+
+  @Field(() => Boolean, { nullable: true })
+  readonly appealedInCourt?: boolean
 
   @Field(() => String, { nullable: true })
   readonly statementDeadline?: string

@@ -7,6 +7,7 @@ export { DrivingLicenseApiConfig } from './lib/drivingLicenseApi.config'
 export {
   DtoV5DriverLicenseDto,
   DtoV5CategoryDto,
+  DtoErrorCodeDescriptionDto,
   ModelsV5PostTemporaryLicenseWithHealthDeclaration,
   ModelsHealthDeclarationModel,
 } from './v5/index'

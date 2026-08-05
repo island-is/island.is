@@ -1,5 +1,4 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
-import GraphQLJSON from 'graphql-type-json'
 import { LanguageType } from './languageType.model'
 import { Value } from './value.model'
 
@@ -29,6 +28,12 @@ export class ApplicationJsonField {
   @Field(() => String)
   screenIdentifier!: string
 
+  @Field(() => LanguageType, { nullable: true })
+  screenTitle?: LanguageType
+
+  @Field(() => LanguageType, { nullable: true })
+  fieldTitle?: LanguageType
+
   @Field(() => String)
   fieldType!: string
 
@@ -43,6 +48,9 @@ export class ApplicationJsonField {
 export class ApplicationJson {
   @Field(() => String)
   id!: string
+
+  @Field(() => String)
+  organizationNationalId!: string
 
   @Field(() => String)
   slug!: string

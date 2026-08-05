@@ -469,7 +469,7 @@ export const addNumberedList = (
   const pageBottomY = doc.page.height - doc.page.margins.bottom
 
   for (const [i, item] of items.entries()) {
-    const label = `${start + i}.`
+    const label = `${start + i}`
     const textHeight = doc.heightOfString(label, {
       width: wrapWidth,
       height: 1.2,
@@ -527,6 +527,15 @@ const extractBgColor = (style: string): string | null => {
   // is not mistaken for transparent.
   if (/rgba\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*0*\.?0+\s*\)/.test(normalized))
     return null
+
+  // Browsers serialize inline styles in rgb()/rgba() form, but PDFKit only
+  // understands hex and named colors, so convert before handing it to fill().
+  const rgb = normalized.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/)
+  if (rgb) {
+    const toHex = (part: string) =>
+      Math.min(255, parseInt(part, 10)).toString(16).padStart(2, '0')
+    return `#${toHex(rgb[1])}${toHex(rgb[2])}${toHex(rgb[3])}`
+  }
 
   return value
 }
@@ -676,7 +685,29 @@ const getFontName = (run: Run): string => {
   return 'Times-Roman'
 }
 
-export const addRichText = (doc: PDFKit.PDFDocument, html: string): void => {
+interface LineFragment {
+  text: string
+  x: number
+  width: number
+  font: string
+  highlight: string | false
+}
+
+// Descender depth of the standard Times fonts, in 1/1000s of the font size
+// (AFM "Descender -217" — identical across all four Times variants).
+const TIMES_DESCENDER = 217
+
+// Lays out and draws each block manually, word by word, instead of letting
+// PDFKit wrap a chain of continued text() calls. Highlight rects and text are
+// drawn from the same computed coordinates, so they cannot drift apart the way
+// a parallel wrap simulation can (wrong line after a wrap, wrong page after a
+// page break). lineGap must match the line gap set on the document so this
+// text lines up with the surrounding addNormalText output.
+export const addRichText = (
+  doc: PDFKit.PDFDocument,
+  html: string,
+  lineGap = 0,
+): void => {
   const blocks = htmlToBlocks(html)
 
   for (const block of blocks) {
@@ -690,76 +721,139 @@ export const addRichText = (doc: PDFKit.PDFDocument, html: string): void => {
 
     const leftX = doc.page.margins.left + block.indent
     const width = doc.page.width - doc.page.margins.right - leftX
-    const blockY = doc.y
-    let currentX = leftX
     const paragraphGap = block.softBreak ? 0 : 1
 
-    for (let i = 0; i < block.runs.length; i++) {
-      const run = block.runs[i]
-      const isLast = i === block.runs.length - 1
+    // All Times variants share their vertical metrics, so the line geometry
+    // can be computed once per block.
+    doc.font('Times-Roman').fontSize(baseFontSize)
+    const lineHeight = doc.currentLineHeight(true)
+    const lineAdvance = lineHeight + lineGap
+    const visibleHeight = doc.currentLineHeight(false)
+    // Shift rect up by half the descender height to centre around visible glyphs
+    const descender = (TIMES_DESCENDER / 1000) * baseFontSize
+    const hPad = 1
 
-      doc.font(getFontName(run)).fontSize(baseFontSize)
+    let y = doc.y
+    let x = leftX
+    let lineFragments: LineFragment[] = []
 
-      if (run.highlight) {
-        const lineHeight = doc.currentLineHeight(true)
-        const h = doc.currentLineHeight(false)
-        // Shift rect up by half the descender height to centre around visible glyphs
-        const descender =
-          (Math.abs(
-            (doc as PDFKit.PDFDocument & { _font?: { descender?: number } })
-              ._font?.descender ?? 200,
-          ) /
-            1000) *
-          baseFontSize
-        const hPad = 1
+    // PDFKit's text() moves to a new page when the next line no longer fits;
+    // mirror that so rects and text agree on the page as well.
+    const ensureRoom = () => {
+      if (y + lineHeight > doc.page.height - doc.page.margins.bottom) {
+        doc.addPage()
+        y = doc.page.margins.top
+      }
+    }
+    ensureRoom()
 
-        // Simulate word-wrap to draw one highlight rect per laid-out line
-        const words = run.text.split(' ')
-        let lineText = ''
-        let lineIdx = 0
-        let lineAvailable = width - (currentX - leftX)
-
-        const drawHighlightRect = (text: string, idx: number) => {
-          const x = idx === 0 ? currentX : leftX
-          doc
-            .rect(
-              x - hPad,
-              blockY + idx * (lineHeight + 2) - descender / 2 - 1,
-              doc.widthOfString(text) + hPad * 2,
-              h + descender + 1,
-            )
-            .fill(run.highlight as string)
+    const flushLine = () => {
+      // Draw one rect per contiguous same-colored group, then the text on top.
+      let i = 0
+      let drewRect = false
+      while (i < lineFragments.length) {
+        const fragment = lineFragments[i]
+        if (!fragment.highlight) {
+          i++
+          continue
         }
-
-        for (const word of words) {
-          const candidate = lineText ? `${lineText} ${word}` : word
-          if (doc.widthOfString(candidate) > lineAvailable && lineText) {
-            drawHighlightRect(lineText, lineIdx)
-            lineText = word
-            lineIdx++
-            lineAvailable = width
-          } else {
-            lineText = candidate
-          }
+        let groupWidth = fragment.width
+        let end = i + 1
+        while (
+          end < lineFragments.length &&
+          lineFragments[end].highlight === fragment.highlight
+        ) {
+          groupWidth += lineFragments[end].width
+          end++
         }
-        if (lineText) {
-          drawHighlightRect(lineText, lineIdx)
-        }
-
+        doc
+          .rect(
+            fragment.x - hPad,
+            y - descender / 2 - 1,
+            groupWidth + hPad * 2,
+            visibleHeight + descender + 1,
+          )
+          .fill(fragment.highlight as string)
+        drewRect = true
+        i = end
+      }
+      if (drewRect) {
         doc.fillColor('black')
       }
+      for (const fragment of lineFragments) {
+        doc.font(fragment.font).fontSize(baseFontSize)
+        doc.text(fragment.text, fragment.x, y, { lineBreak: false })
+      }
+      lineFragments = []
+    }
 
-      if (i === 0) {
-        doc.text(run.text, leftX, blockY, {
-          continued: !isLast,
-          paragraphGap,
-          width,
-        })
-      } else {
-        doc.text(run.text, { continued: !isLast, paragraphGap })
+    const newline = () => {
+      flushLine()
+      x = leftX
+      y += lineAdvance
+      ensureRoom()
+    }
+
+    for (const run of block.runs) {
+      // Hard break from a <br> nested below the paragraph level.
+      if (run.text === '\n') {
+        newline()
+        continue
       }
 
-      currentX += doc.widthOfString(run.text)
+      const font = getFontName(run)
+      doc.font(font).fontSize(baseFontSize)
+
+      // Whitespace is already collapsed, so tokens are words with their
+      // single trailing space attached, or a lone inter-run space.
+      const tokens = run.text.match(/\S+ ?| /g) ?? []
+      for (let token of tokens) {
+        // Drop spaces that would start a wrapped line.
+        if (token === ' ' && x === leftX) continue
+
+        let tokenWidth = doc.widthOfString(token)
+        const wordWidth = token.endsWith(' ')
+          ? doc.widthOfString(token.trimEnd())
+          : tokenWidth
+        if (x + wordWidth > leftX + width && x > leftX) {
+          newline()
+        }
+
+        // A single token wider than the whole line is chopped to fit.
+        while (doc.widthOfString(token.trimEnd()) > width && token.length > 1) {
+          let length = token.length - 1
+          while (
+            length > 1 &&
+            doc.widthOfString(token.slice(0, length)) > width
+          ) {
+            length--
+          }
+          const head = token.slice(0, length)
+          lineFragments.push({
+            text: head,
+            x,
+            width: doc.widthOfString(head),
+            font,
+            highlight: run.highlight,
+          })
+          newline()
+          token = token.slice(length)
+        }
+
+        tokenWidth = doc.widthOfString(token)
+        lineFragments.push({
+          text: token,
+          x,
+          width: tokenWidth,
+          font,
+          highlight: run.highlight,
+        })
+        x += tokenWidth
+      }
     }
+    flushLine()
+
+    doc.x = doc.page.margins.left
+    doc.y = y + lineAdvance + paragraphGap
   }
 }

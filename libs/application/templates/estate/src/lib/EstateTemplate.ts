@@ -62,6 +62,31 @@ const haveAllSignatoriesSigned = (context: ApplicationContext) => {
   return (signatoriesResult.signatories ?? []).every((s) => s.signed)
 }
 
+const submitApplicationAndFetchSignatories = [
+  defineTemplateApi({
+    action: ApiActions.completeApplication,
+    throwOnError: true,
+    triggerEvent: DefaultEvents.SUBMIT,
+    order: 0,
+  }),
+  defineTemplateApi({
+    action: ApiActions.sendApplicationCopyToParties,
+    shouldPersistToExternalData: true,
+    externalDataId: 'sendApplicationCopyToParties',
+    throwOnError: false,
+    triggerEvent: DefaultEvents.SUBMIT,
+    order: 1,
+  }),
+  defineTemplateApi({
+    action: ApiActions.getSignatories,
+    shouldPersistToExternalData: true,
+    externalDataId: 'getSignatories',
+    throwOnError: false,
+    triggerEvent: DefaultEvents.SUBMIT,
+    order: 2,
+  }),
+]
+
 const EstateTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<EstateEvent>,
@@ -222,11 +247,18 @@ const EstateTemplate: ApplicationTemplate<
               },
             ],
           },
+          // Submit before resolving the SUBMIT target so cases with no
+          // required signatories skip the signing/status state entirely.
+          onExit: submitApplicationAndFetchSignatories,
         },
         on: {
-          [DefaultEvents.SUBMIT]: {
-            target: States.signing,
-          },
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.done,
+              cond: haveAllSignatoriesSigned,
+            },
+            { target: States.signing },
+          ],
           [DefaultEvents.PAYMENT]: {
             target: States.payment,
           },
@@ -259,7 +291,14 @@ const EstateTemplate: ApplicationTemplate<
           write: 'all' as const,
           delete: true,
         })),
-        submitTarget: States.signing,
+        onExit: submitApplicationAndFetchSignatories,
+        submitTarget: [
+          {
+            target: States.done,
+            cond: haveAllSignatoriesSigned,
+          },
+          { target: States.signing },
+        ],
         abortTarget: States.draft,
         lifecycle: {
           shouldBeListed: true,
@@ -302,23 +341,6 @@ const EstateTemplate: ApplicationTemplate<
             shouldBePruned: true,
             whenToPrune: 90 * 24 * 3600 * 1000, // 90 days
           },
-          // Submit the application to syslumenn on entry, then optionally email
-          // a copy of the application to the parties (when the applicant opted
-          // in). Sending the copy must never block submission.
-          onEntry: [
-            defineTemplateApi({
-              action: ApiActions.completeApplication,
-              throwOnError: true,
-              order: 0,
-            }),
-            defineTemplateApi({
-              action: ApiActions.sendApplicationCopyToParties,
-              shouldPersistToExternalData: true,
-              externalDataId: 'sendApplicationCopyToParties',
-              throwOnError: false,
-              order: 1,
-            }),
-          ],
           actionCard: {
             pendingAction: (application) => {
               const externalData =

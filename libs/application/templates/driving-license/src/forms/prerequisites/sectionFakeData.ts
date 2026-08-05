@@ -68,6 +68,17 @@ export const sectionFakeData = buildSubSection({
             },
           ],
         }),
+        buildTextField({
+          id: 'fakeData.submitErrorCode',
+          title: 'Líkja eftir villu við innsendingu? (RLS villukóði)',
+          placeholder:
+            't.d. HAS_POINTS eða INSTRUCTOR_DOES_NOT_HAVE_BE_CATEGORY',
+          // Dev-only: only applies on the fake (non-RLS) submit path. Leave tómt
+          // til að senda inn eðlilega. Á innsendingu hendir þetta villu með
+          // þessum kóða svo hægt sé að sjá villuskjáinn á greiðsluþrepi.
+          condition: allowFakeCondition(YES),
+          width: 'half',
+        }),
         buildRadioField({
           id: 'fakeData.currentLicense',
           title: 'Núverandi ökuréttindi umsækjanda',

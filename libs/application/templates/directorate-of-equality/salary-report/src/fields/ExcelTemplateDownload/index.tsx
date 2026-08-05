@@ -9,22 +9,31 @@ import {
   AlertMessage,
   Box,
   Button,
+  LoadingDots,
+  Stack,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useMutation } from '@apollo/client'
-import { FC, useRef, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import type {
   ParsedCriterionDto,
   ParsedEmployeeDto,
   ParsedRoleDto,
 } from '@island.is/clients/directorate-of-equality'
-import { DEFAULT_JOB_FACTORS, DEFAULT_SUB_CRITERION } from '../../lib/constants'
+import {
+  DEFAULT_CRITERIA_ANSWERS,
+  DEFAULT_JOB_FACTORS,
+  DEFAULT_SUB_CRITERION,
+} from '../../utils/constants'
 import { messages } from '../../lib/messages'
+
+// The next screen in the flow — both upload and manual entry advance here.
+const NEXT_SCREEN_ID = 'criteriaMultiField'
 
 export const ExcelTemplateDownload: FC<
   React.PropsWithChildren<FieldBaseProps>
-> = ({ application, goToScreen }) => {
+> = ({ application, goToScreen, setBeforeSubmitCallback }) => {
   const { formatMessage, lang: locale } = useLocale()
   const { setValue } = useFormContext()
   const [isImporting, setIsImporting] = useState(false)
@@ -57,13 +66,11 @@ export const ExcelTemplateDownload: FC<
     document.body.removeChild(link)
   }
 
-  const fileToBase64 = (file: File): Promise<string> =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader()
-      reader.onload = () => resolve((reader.result as string).split(',')[1])
-      reader.onerror = reject
-      reader.readAsDataURL(file)
-    })
+  const XLSX_CONTENT_TYPE =
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+
+  // Cap the presigned upload so a stalled request can't leave isImporting stuck.
+  const UPLOAD_TIMEOUT_MS = 60_000
 
   const handleFileSelected = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -75,25 +82,60 @@ export const ExcelTemplateDownload: FC<
     setIsImporting(true)
     setImportStatus(null)
     try {
-      const base64 = await fileToBase64(file)
-
-      // Store file temporarily so the server action can read it
-      await updateApplication({
+      // 1. Ask the server (authenticated against DMR) for a presigned upload
+      //    URL. The resulting { url, key } lands in externalData.importPresign.
+      const presignResult = await updateApplicationExternalData({
         variables: {
           input: {
             id: application.id,
-            answers: {
-              ...application.answers,
-              dataEntry: {
-                ...((application.answers.dataEntry as object) ?? {}),
-                excelFile: base64,
+            dataProviders: [
+              {
+                actionId: 'DirectorateOfEquality.presignImportUpload',
+                order: 0,
               },
-            },
+            ],
           },
           locale,
         },
       })
 
+      const presign = presignResult.data?.updateApplicationExternalData
+        .externalData?.importPresign?.data as
+        | { url: string; key: string }
+        | undefined
+
+      if (!presign?.url) {
+        setImportStatus('error')
+        return
+      }
+
+      // 2. Upload the raw workbook bytes straight to the presigned URL. No auth
+      //    header — the URL itself is the capability. DMR decides the target
+      //    (local disk vs S3) and returns it, so never hardcode it here.
+      const controller = new AbortController()
+      const uploadTimeout = setTimeout(
+        () => controller.abort(),
+        UPLOAD_TIMEOUT_MS,
+      )
+      let uploadResponse: Response
+      try {
+        uploadResponse = await fetch(presign.url, {
+          method: 'PUT',
+          body: file,
+          headers: { 'Content-Type': XLSX_CONTENT_TYPE },
+          signal: controller.signal,
+        })
+      } finally {
+        clearTimeout(uploadTimeout)
+      }
+
+      if (!uploadResponse.ok) {
+        setImportStatus('error')
+        return
+      }
+
+      // 3. Trigger the import — the server reads the key from externalData and
+      //    calls DMR's import endpoint with { key }.
       const result = await updateApplicationExternalData({
         variables: {
           input: {
@@ -137,20 +179,28 @@ export const ExcelTemplateDownload: FC<
             weight: String(c.weight),
           }))
 
-        const mapSubCriteria = (sc: ParsedCriterionDto['subCriteria'][0]) => ({
-          title: sc.title,
-          description: sc.description,
-          weight: String(sc.weight),
-          stepCount: String(sc.steps.length),
-          steps: sc.steps.map((s) => ({ description: s.description })),
-        })
+        // parsedCriteria is a runtime cast of externalData — the nested arrays
+        // aren't guaranteed, so guard each level and fall back to defaults so a
+        // partial parse doesn't fail the whole import.
+        const mapSubCriteria = (sc: ParsedCriterionDto['subCriteria'][0]) =>
+          Array.isArray(sc?.steps)
+            ? {
+                title: sc.title,
+                description: sc.description,
+                weight: String(sc.weight),
+                stepCount: String(sc.steps.length),
+                steps: sc.steps.map((s) => ({ description: s.description })),
+              }
+            : { ...DEFAULT_SUB_CRITERION }
 
         const subCriteriaJobFactors = DEFAULT_JOB_FACTORS.map(
           (defaultFactor) => {
             const parsed = parsedCriteria.find(
               (c) => c.type === defaultFactor.type,
             )
-            return parsed && parsed.subCriteria.length > 0
+            return parsed &&
+              Array.isArray(parsed.subCriteria) &&
+              parsed.subCriteria.length > 0
               ? parsed.subCriteria.map(mapSubCriteria)
               : [{ ...DEFAULT_SUB_CRITERION }]
           },
@@ -159,7 +209,7 @@ export const ExcelTemplateDownload: FC<
         const subCriteriaPersonalFactors = parsedCriteria
           .filter((c) => c.type === 'PERSONAL')
           .map((c) =>
-            c.subCriteria.length > 0
+            Array.isArray(c.subCriteria) && c.subCriteria.length > 0
               ? c.subCriteria.map(mapSubCriteria)
               : [{ ...DEFAULT_SUB_CRITERION }],
           )
@@ -173,18 +223,13 @@ export const ExcelTemplateDownload: FC<
         const roles = (result.data.updateApplicationExternalData.externalData
           ?.parsedSalaryReport?.data?.roles ?? []) as ParsedRoleDto[]
 
-        // Remove the temporary file and write parsed criteria directly to answers
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { excelFile: _removed, ...dataEntryWithoutFile } = (application
-          .answers.dataEntry ?? {}) as Record<string, unknown>
-
+        // Write the parsed criteria directly to answers
         await updateApplication({
           variables: {
             input: {
               id: application.id,
               answers: {
                 ...application.answers,
-                dataEntry: dataEntryWithoutFile,
                 criteria: {
                   jobFactors,
                   personalFactors,
@@ -226,6 +271,9 @@ export const ExcelTemplateDownload: FC<
         setValue('employees', employees, { shouldDirty: true })
         setValue('roles', roles, { shouldDirty: true })
         setImportStatus('success')
+
+        // Parsing succeeded — move straight on to the criteria screen.
+        goToScreen?.(NEXT_SCREEN_ID)
       } else {
         setImportStatus('error')
       }
@@ -236,8 +284,57 @@ export const ExcelTemplateDownload: FC<
     }
   }
 
+  // Seed the default job factors so the criteria screen starts populated
+  // instead of empty. Only when there's no data yet — a prior import or manual
+  // entry is left untouched.
+  const seedDefaultCriteriaIfEmpty = async () => {
+    const existingCriteria = getValueViaPath(application.answers, 'criteria')
+    if (existingCriteria) return
+    await updateApplication({
+      variables: {
+        input: {
+          id: application.id,
+          answers: {
+            ...application.answers,
+            criteria: DEFAULT_CRITERIA_ANSWERS,
+          },
+        },
+        locale,
+      },
+    })
+    setValue('criteria', DEFAULT_CRITERIA_ANSWERS)
+  }
+
+  // Manual entry mirrors "continue without a workbook": seed defaults and move on.
+  const handleManualEntry = async () => {
+    await seedDefaultCriteriaIfEmpty()
+    goToScreen?.(NEXT_SCREEN_ID)
+  }
+
+  // Pressing the footer "Halda áfram" behaves the same as manual entry: if the
+  // user has no data yet, seed the defaults before advancing; existing data
+  // (imported or manually entered) is preserved.
+  useEffect(() => {
+    if (!setBeforeSubmitCallback) return
+    setBeforeSubmitCallback(async () => {
+      await seedDefaultCriteriaIfEmpty()
+      return [true, null]
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setBeforeSubmitCallback, application.answers])
+
+  const m = messages.report.dataEntry
+
   return (
     <Box>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".xlsx"
+        style={{ display: 'none' }}
+        onChange={handleFileSelected}
+      />
+
       {base64Template && (
         <Box display="flex" justifyContent="flexEnd" marginBottom={3}>
           <Button
@@ -246,59 +343,45 @@ export const ExcelTemplateDownload: FC<
             iconType="outline"
             onClick={handleDownload}
           >
-            {formatMessage(messages.report.dataEntry.downloadTemplateButton)}
+            {formatMessage(m.downloadTemplateButton)}
           </Button>
         </Box>
       )}
 
-      <Box marginBottom={3}>
-        <ActionCard
-          heading={formatMessage(messages.report.dataEntry.uploadCardTitle)}
-          text={formatMessage(messages.report.dataEntry.uploadCardIntro)}
-          subText={
-            isImporting
-              ? formatMessage(messages.report.dataEntry.importingLabel)
-              : undefined
-          }
-          cta={{
-            label: formatMessage(messages.report.dataEntry.uploadButtonLabel),
-            icon: 'attach',
-            iconType: 'outline',
-            disabled: isImporting,
-            onClick: () => fileInputRef.current?.click(),
-          }}
-        />
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".xlsx"
-          style={{ display: 'none' }}
-          onChange={handleFileSelected}
-        />
-      </Box>
-
-      <ActionCard
-        heading={formatMessage(messages.report.dataEntry.manualEntryCardTitle)}
-        text={formatMessage(messages.report.dataEntry.manualEntryCardIntro)}
-        cta={{
-          label: formatMessage(
-            messages.report.dataEntry.manualEntryButtonLabel,
-          ),
-          icon: 'arrowForward',
-          onClick: () => goToScreen?.('criteriaMultiField'),
-        }}
-      />
-
-      {importStatus && (
-        <Box marginTop={3}>
-          <AlertMessage
-            type={importStatus === 'success' ? 'success' : 'error'}
-            message={formatMessage(
-              importStatus === 'success'
-                ? messages.report.dataEntry.importSuccess
-                : messages.report.dataEntry.importError,
-            )}
+      {isImporting ? (
+        <Box display="flex" justifyContent="center" paddingY={5}>
+          <LoadingDots />
+        </Box>
+      ) : (
+        <Stack space={2}>
+          <ActionCard
+            backgroundColor="white"
+            heading={formatMessage(m.uploadCardTitle)}
+            text={formatMessage(m.uploadCardDescription)}
+            cta={{
+              label: formatMessage(m.uploadButtonLabel),
+              variant: 'primary',
+              icon: 'attach',
+              onClick: () => fileInputRef.current?.click(),
+            }}
           />
+          <ActionCard
+            backgroundColor="white"
+            heading={formatMessage(m.manualCardTitle)}
+            text={formatMessage(m.manualCardDescription)}
+            cta={{
+              label: formatMessage(m.manualButtonLabel),
+              variant: 'primary',
+              icon: 'arrowForward',
+              onClick: handleManualEntry,
+            }}
+          />
+        </Stack>
+      )}
+
+      {importStatus === 'error' && (
+        <Box marginTop={3}>
+          <AlertMessage type="error" message={formatMessage(m.importError)} />
         </Box>
       )}
     </Box>

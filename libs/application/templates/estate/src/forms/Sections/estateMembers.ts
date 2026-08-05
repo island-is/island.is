@@ -16,6 +16,7 @@ export const estateMembers = buildSection({
       title: m.estateMembers,
       description: (application) =>
         getEstateMembersDescriptionText(application),
+      nextButtonText: m.saveAndContinue,
       children: [
         buildCustomField({
           id: 'estate.estateMembers',

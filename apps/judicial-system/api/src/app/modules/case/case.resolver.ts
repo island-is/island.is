@@ -15,16 +15,20 @@ import {
 import { type User } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
+import { AppealDecisionResponse } from '../court-session/dto/appealDecision.response'
 import { CaseQueryInput } from './dto/case.input'
 import { CreateCaseInput } from './dto/createCase.input'
 import { CreateCourtCaseInput } from './dto/createCourtCase.input'
+import { DuplicateIndictmentCaseInput } from './dto/duplicateIndictmentCase.input'
 import { ExtendCaseInput } from './dto/extendCase.input'
 import { RequestSignatureInput } from './dto/requestSignature.input'
+import { SendAppealNotificationInput } from './dto/sendAppealNotification.input'
 import { SendNotificationInput } from './dto/sendNotification.input'
 import { SignatureConfirmationQueryInput } from './dto/signatureConfirmation.input'
 import { SplitDefendantFromCaseInput } from './dto/splitDefendantFromCase.input'
 import { TransitionCaseInput } from './dto/transitionCase.input'
 import { UpdateCaseInput } from './dto/updateCase.input'
+import { UpdateCaseAppealDecisionInput } from './dto/updateCaseAppealDecision.input'
 import { CaseInterceptor } from './interceptors/case.interceptor'
 import { Case } from './models/case.model'
 import { RequestSignatureResponse } from './models/requestSignature.response'
@@ -115,6 +119,26 @@ export class CaseResolver {
       AuditedAction.UPDATE_CASE,
       backendService.updateCase(id, updateCase),
       id,
+    )
+  }
+
+  @Mutation(() => AppealDecisionResponse, { nullable: true })
+  updateCaseAppealDecision(
+    @Args('input', { type: () => UpdateCaseAppealDecisionInput })
+    input: UpdateCaseAppealDecisionInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<AppealDecisionResponse> {
+    const { caseId, ...updateAppealDecision } = input
+
+    this.logger.debug(`Updating case-level appeal decision for case ${caseId}`)
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.UPDATE_CASE,
+      backendService.updateCaseAppealDecision(caseId, updateAppealDecision),
+      caseId,
     )
   }
 
@@ -251,6 +275,30 @@ export class CaseResolver {
     )
   }
 
+  @Mutation(() => SendNotificationResponse, { nullable: true })
+  sendAppealNotification(
+    @Args('input', { type: () => SendAppealNotificationInput })
+    input: SendAppealNotificationInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<SendNotificationResponse> {
+    const { caseId, appealCaseId, ...sendAppealNotification } = input
+
+    this.logger.debug(`Sending appeal notification for case ${caseId}`)
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.SEND_NOTIFICATION,
+      backendService.sendAppealNotification(
+        caseId,
+        appealCaseId,
+        sendAppealNotification,
+      ),
+      caseId,
+    )
+  }
+
   @Mutation(() => Case, { nullable: true })
   @UseInterceptors(CaseInterceptor)
   extendCase(
@@ -266,6 +314,27 @@ export class CaseResolver {
       user.id,
       AuditedAction.EXTEND_CASE,
       backendService.extendCase(input.id),
+      (theCase) => theCase.id,
+    )
+  }
+
+  @Mutation(() => Case, { nullable: true })
+  @UseInterceptors(CaseInterceptor)
+  duplicateIndictmentCase(
+    @Args('input', { type: () => DuplicateIndictmentCaseInput })
+    input: DuplicateIndictmentCaseInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<Case> {
+    this.logger.debug(
+      `Duplicating indictment case ${input.id} into a new draft`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.DUPLICATE_INDICTMENT_CASE,
+      backendService.duplicateIndictmentCase(input.id),
       (theCase) => theCase.id,
     )
   }

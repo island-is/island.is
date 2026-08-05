@@ -30,6 +30,7 @@ import { CivilClaimantController } from '../civilClaimant.controller'
 import { CivilClaimantService } from '../civilClaimant.service'
 import { DefendantController } from '../defendant.controller'
 import { DefendantService } from '../defendant.service'
+import { InternalCivilClaimantController } from '../internalCivilClaimant.controller'
 import { InternalDefendantController } from '../internalDefendant.controller'
 import { LimitedAccessDefendantController } from '../limitedAccessDefendant.controller'
 
@@ -48,6 +49,7 @@ export const createTestingDefendantModule = async () => {
       DefendantController,
       LimitedAccessDefendantController,
       InternalDefendantController,
+      InternalCivilClaimantController,
       CivilClaimantController,
     ],
     providers: [
@@ -133,6 +135,11 @@ export const createTestingDefendantModule = async () => {
     CivilClaimantController,
   )
 
+  const internalCivilClaimantController =
+    defendantModule.get<InternalCivilClaimantController>(
+      InternalCivilClaimantController,
+    )
+
   const queuedMessages: Message[] = []
   const mockAddMessageToQueue = addMessagesToQueue as jest.Mock
   mockAddMessageToQueue.mockImplementation((...msgs: Message[]) => {
@@ -152,6 +159,7 @@ export const createTestingDefendantModule = async () => {
     defendantService,
     defendantController,
     internalDefendantController,
+    internalCivilClaimantController,
     limitedAccessDefendantController,
     civilClaimantService,
     civilClaimantController,

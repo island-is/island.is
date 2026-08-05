@@ -20,6 +20,7 @@ export const attachments = buildSection({
     buildMultiField({
       id: 'estateAttachments',
       title: m.attachmentsTitle,
+      nextButtonText: m.saveAndContinue,
       children: [
         buildTextField({
           id: 'additionalComments',

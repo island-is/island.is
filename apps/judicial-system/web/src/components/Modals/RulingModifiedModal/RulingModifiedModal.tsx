@@ -21,6 +21,11 @@ interface Props {
   description: string
   defaultExplanation: string
   fieldToModify: 'rulingModifiedHistory' | 'appealRulingModifiedHistory'
+  // The appeal case to update when fieldToModify is
+  // 'appealRulingModifiedHistory'. Defaults to the case-level appeal so
+  // existing request-case behavior is preserved. Ruling-order appeals pass the
+  // resolved target appeal id here.
+  appealCaseId?: string
 }
 
 const RulingModifiedModal: FC<Props> = ({
@@ -30,6 +35,7 @@ const RulingModifiedModal: FC<Props> = ({
   description,
   defaultExplanation,
   fieldToModify,
+  appealCaseId,
 }) => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
@@ -41,10 +47,12 @@ const RulingModifiedModal: FC<Props> = ({
 
   const handleContinue = async () => {
     if (fieldToModify === 'appealRulingModifiedHistory') {
-      if (workingCase.appealCase?.id) {
+      const targetAppealCaseId = appealCaseId ?? workingCase.appealCase?.id
+
+      if (targetAppealCaseId) {
         const result = await updateAppealCase(
           workingCase.id,
-          workingCase.appealCase.id,
+          targetAppealCaseId,
           { [fieldToModify]: explanation },
         )
 

@@ -36,7 +36,13 @@ import {
   CaseWriteGuard,
   CurrentCase,
 } from '../case'
-import { Case, CourtSession, CourtSessionString } from '../repository'
+import {
+  AppealDecision,
+  Case,
+  CourtSession,
+  CourtSessionString,
+} from '../repository'
+import { CourtSessionAppealDecisionDto } from './dto/courtSessionAppealDecision.dto'
 import { CourtSessionStringDto } from './dto/CourtSessionStringDto.dto'
 import { DeleteCourtSessionResponse } from './dto/deleteCourtSession.response'
 import { UpdateCourtSessionDto } from './dto/updateCourtSession.dto'
@@ -140,6 +146,39 @@ export class CourtSessionController {
       mergedCaseId: courtSessionString.mergedCaseId,
       update: courtSessionString,
     })
+  }
+
+  @UseGuards(CourtSessionExistsGuard)
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @Patch(':courtSessionId/appealDecision')
+  @ApiOkResponse({
+    type: AppealDecision,
+    description:
+      'Creates or updates a party appeal decision recorded in a court session',
+  })
+  upsertAppealDecision(
+    @Param('caseId') caseId: string,
+    @Param('courtSessionId') courtSessionId: string,
+    @Body() appealDecision: CourtSessionAppealDecisionDto,
+    @CurrentCase() theCase: Case,
+    @CurrentCourtSession() courtSession: CourtSession,
+  ): Promise<AppealDecision> {
+    this.logger.debug(
+      `Upserting appeal decision for court session ${courtSessionId} of case ${caseId}`,
+    )
+
+    return this.sequelize.transaction((transaction) =>
+      this.courtSessionService.upsertAppealDecision(
+        theCase,
+        courtSession,
+        appealDecision,
+        transaction,
+      ),
+    )
   }
 
   @UseGuards(CourtSessionExistsGuard)

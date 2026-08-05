@@ -1,21 +1,33 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, Stack } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Stack } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { FC, useEffect, useMemo } from 'react'
 import { useFormContext } from 'react-hook-form'
 import type {
   ParsedCriterionDto,
   ParsedRoleDto,
 } from '@island.is/clients/directorate-of-equality'
-import { type Role } from '../../lib/constants'
+import { messages } from '../../lib/messages'
+import {
+  type Employee,
+  type JobFactor,
+  type Role,
+  type SubCriterion,
+} from '../../utils/types'
 import { RolePanel } from './RolePanel'
-import { buildStepMetaByTitle } from './utils'
+import {
+  buildRolesFromEmployees,
+  buildStepMetaByTitle,
+  buildStepMetaFromSubCriteria,
+} from './utils'
 
 const FIELD_NAME = 'roles'
 
 export const JobClassificationEditor: FC<
   React.PropsWithChildren<FieldBaseProps>
 > = ({ application }) => {
+  const { formatMessage } = useLocale()
   const { getValues, setValue } = useFormContext()
 
   const stepMetaByTitle = useMemo(() => {
@@ -24,19 +36,57 @@ export const JobClassificationEditor: FC<
       'parsedSalaryReport.data.criteria',
       [],
     ) ?? []) as ParsedCriterionDto[]
-    return buildStepMetaByTitle(criteria)
+    const fromExternal = buildStepMetaByTitle(criteria)
+    if (Object.keys(fromExternal).length > 0) return fromExternal
+    // External data unavailable (stale right after import) — fall back to the
+    // sub-criteria in answers so the step dropdowns still render options.
+    const subCriteria = (getValueViaPath(
+      application.answers,
+      'subCriteria',
+      {},
+    ) ?? {}) as {
+      jobFactors?: SubCriterion[][]
+      personalFactors?: SubCriterion[][]
+    }
+    return buildStepMetaFromSubCriteria(subCriteria)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Structure (titles + assignments) for rendering: answers > external > empty.
+  // Structure (titles + assignments) for rendering: answers > external > derived.
   const roles = useMemo(() => {
     const saved = getValueViaPath<Role[]>(application.answers, FIELD_NAME)
     if (saved && saved.length > 0) return saved
-    return (getValueViaPath<ParsedRoleDto[]>(
+    const external = (getValueViaPath<ParsedRoleDto[]>(
       application.externalData,
       'parsedSalaryReport.data.roles',
       [],
     ) ?? []) as Role[]
+    if (external.length > 0) return external
+
+    // No import ever ran (fully manual entry) — there's no dedicated UI for
+    // creating roles, so derive them from the job titles already entered on
+    // the employees screen, paired with the manually-entered job-factor
+    // sub-criteria.
+    const employees = (getValueViaPath<Employee[]>(
+      application.answers,
+      'employees',
+      [],
+    ) ?? []) as Employee[]
+    const jobFactors = (getValueViaPath<JobFactor[]>(
+      application.answers,
+      'criteria.jobFactors',
+      [],
+    ) ?? []) as JobFactor[]
+    const subCriteriaJobFactors = (getValueViaPath<SubCriterion[][]>(
+      application.answers,
+      'subCriteria.jobFactors',
+      [],
+    ) ?? []) as SubCriterion[][]
+    return buildRolesFromEmployees(
+      employees.map((e) => e.roleTitle),
+      jobFactors.map((f) => f.title),
+      subCriteriaJobFactors,
+    )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -64,6 +114,19 @@ export const JobClassificationEditor: FC<
     setValue(FIELD_NAME, merged)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  if (roles.length === 0) {
+    return (
+      <Box>
+        <AlertMessage
+          type="info"
+          message={formatMessage(
+            messages.report.jobClassification.noRolesMessage,
+          )}
+        />
+      </Box>
+    )
+  }
 
   return (
     <Box>

@@ -47,7 +47,7 @@ export const buildDataProviderItem = (
   data: DataProviderBuilderItem,
 ): DataProviderItem => {
   return {
-    id: data.provider?.externalDataId ?? data.provider?.action ?? '',
+    id: data.id ?? data.provider?.externalDataId ?? data.provider?.action ?? '',
     action: data.provider?.actionId,
     order: data.provider?.order,
     title: data.title ?? '',

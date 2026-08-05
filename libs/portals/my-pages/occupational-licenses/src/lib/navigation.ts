@@ -37,5 +37,23 @@ export const occupationalLicensesNavigation: PortalNavigationItem = {
       navHide: true,
       path: OccupationalLicensesPaths.OccupationalLicensesEducationDetail,
     },
+    {
+      name: m.sailorsSectionTitle,
+      path: OccupationalLicensesPaths.SailorsRoot,
+      children: [
+        {
+          name: m.sailorsSchoolCertificatesTitle,
+          path: OccupationalLicensesPaths.SailorsSchoolCertificates,
+        },
+        {
+          name: m.sailorsRightCertificatesTitle,
+          path: OccupationalLicensesPaths.SailorsRightCertificates,
+        },
+        {
+          name: m.sailorsCrewRegistrationsTitle,
+          path: OccupationalLicensesPaths.SailorsCrewRegistrations,
+        },
+      ],
+    },
   ],
 }

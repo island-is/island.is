@@ -26,7 +26,6 @@ import {
   AppealCaseRulingDecision,
   AppealCaseState,
   AppealCaseTransition,
-  TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   getAppealDecision,
@@ -35,7 +34,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   appendAppealCaseIdQuery,
-  hasSentNotification,
+  isReopenedCOACase,
   shouldUseAppealWithdrawnRoutes,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
@@ -78,12 +77,7 @@ const Summary: FC = () => {
   }
 
   const handleNextButtonClick = async () => {
-    if (
-      hasSentNotification(
-        TrackedNotificationType.APPEAL_COMPLETED,
-        workingCase.notifications,
-      ).hasSent
-    ) {
+    if (isReopenedCOACase(targetAppealCase)) {
       setVisibleModal('AppealRulingModified')
     } else {
       await handleComplete()
@@ -146,10 +140,15 @@ const Summary: FC = () => {
                 : `${COURT_OF_APPEAL_RULING_ROUTE}/${workingCase.id}`,
               targetAppealCase?.id,
             )}
-            nextButtonIcon="checkmark"
-            nextButtonText={formatMessage(strings.nextButtonFooter)}
-            onNextButtonClick={async () => await handleNextButtonClick()}
-            nextIsDisabled={isTransitioningAppealCase}
+            actions={[
+              {
+                text: formatMessage(strings.nextButtonFooter),
+                icon: 'checkmark',
+                onClick: async () => await handleNextButtonClick(),
+                disabled: isTransitioningAppealCase,
+                testId: 'continueButton',
+              },
+            ]}
           />
         </FormContentContainer>
         {visibleModal === 'AppealCompleted' && (

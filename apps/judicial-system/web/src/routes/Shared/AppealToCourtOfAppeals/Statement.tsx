@@ -130,8 +130,6 @@ const Statement = () => {
       AppealEventType.APPEAL_STATEMENT_SENT,
     )
 
-    refreshCase()
-
     if (sent) {
       setVisibleModal('STATEMENT_SENT')
     }
@@ -142,7 +140,6 @@ const Statement = () => {
     targetAppealCaseId,
     createAppealEventLog,
     workingCase.id,
-    refreshCase,
   ])
 
   const handleRemoveFile = (file: UploadFile) => {
@@ -261,16 +258,19 @@ const Statement = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={previousUrl}
-          onNextButtonClick={handleNextButtonClick}
-          nextButtonText={someFilesError ? 'Reyna aftur' : 'Senda greinargerð'}
-          nextIsDisabled={
-            !targetAppealCaseId ||
-            appealStatementFiles.length === 0 ||
-            isCreatingAppealEventLog
-          }
-          nextIsLoading={!allFilesDoneOrError || isCreatingAppealEventLog}
-          nextButtonIcon={undefined}
-          nextButtonColorScheme={someFilesError ? 'destructive' : 'default'}
+          actions={[
+            {
+              text: someFilesError ? 'Reyna aftur' : 'Senda greinargerð',
+              colorScheme: someFilesError ? 'destructive' : 'default',
+              onClick: handleNextButtonClick,
+              disabled:
+                !targetAppealCaseId ||
+                appealStatementFiles.length === 0 ||
+                isCreatingAppealEventLog,
+              loading: !allFilesDoneOrError || isCreatingAppealEventLog,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
       {visibleModal === 'STATEMENT_SENT' && (
@@ -279,7 +279,10 @@ const Statement = () => {
           text="Tilkynning um greinargerð hefur verið send Landsrétti og aðilum máls."
           secondaryButton={{
             text: formatMessage(core.closeModal),
-            onClick: () => router.push(previousUrl),
+            onClick: () => {
+              refreshCase()
+              router.push(previousUrl)
+            },
           }}
         />
       )}

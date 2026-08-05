@@ -12,7 +12,7 @@ import {
   FormModes,
   DefaultEvents,
   EmployeeApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
 } from '@island.is/application/types'
 import { TransportAuthorityLogo } from '@island.is/application/assets/institution-logos'
 import { m } from '../lib/messages'
@@ -36,7 +36,7 @@ export const getDrivingSchoolConfirmation = (): Form => {
             checkboxLabel: m.dataCollectionCheckboxLabel,
             dataProviders: [
               buildDataProviderItem({
-                provider: NationalRegistryUserApi,
+                provider: NationalRegistryV3UserApi,
                 title: '',
                 subTitle: '',
               }),

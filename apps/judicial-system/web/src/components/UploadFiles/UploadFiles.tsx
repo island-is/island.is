@@ -1,11 +1,21 @@
-import { Dispatch, FC, SetStateAction, useCallback, useEffect } from 'react'
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useRef,
+} from 'react'
 import { useDropzone } from 'react-dropzone'
 import { useIntl } from 'react-intl'
 
 import { Box, Button, Text } from '@island.is/island-ui/core'
 
 import { TUploadFile } from '../../utils/hooks'
-import EditableCaseFile from '../EditableCaseFile/EditableCaseFile'
+import EditableCaseFile, {
+  EditableFields,
+  editableFields,
+} from '../EditableCaseFile/EditableCaseFile'
 import { strings } from './UploadFiles.strings'
 import * as styles from './UploadFiles.css'
 
@@ -21,6 +31,11 @@ interface Props {
   onRename: (fileId: string, newName: string, newDisplayDate: string) => void
   setEditCount: Dispatch<SetStateAction<number>>
   isBottomComponent?: boolean
+  /**
+   * Which fields of an uploaded file can be edited. Defaults to all editable
+   * fields (file name and display date).
+   */
+  editableFileAttributes?: readonly EditableFields[]
 }
 
 const UploadFiles: FC<Props> = (props) => {
@@ -32,6 +47,7 @@ const UploadFiles: FC<Props> = (props) => {
     onRename,
     setEditCount,
     isBottomComponent,
+    editableFileAttributes = editableFields,
   } = props
   const { formatMessage } = useIntl()
 
@@ -56,16 +72,34 @@ const UploadFiles: FC<Props> = (props) => {
     onDrop,
   })
 
+  // Keep the previous `files` in a ref so we can revoke the object URLs of
+  // files that have been removed, without revoking URLs that are still in use
+  // (e.g. after a rename, which keeps the same previewUrl).
+  const filesRef = useRef(files)
+
+  useEffect(() => {
+    const currentUrls = new Set(files.map((file) => file.previewUrl))
+
+    // Revoke object URLs for files that are no longer present
+    filesRef.current.forEach((file) => {
+      if (file.previewUrl && !currentUrls.has(file.previewUrl)) {
+        URL.revokeObjectURL(file.previewUrl)
+      }
+    })
+
+    filesRef.current = files
+  }, [files])
+
   useEffect(() => {
     return () => {
-      // Cleanup object URLs when component unmounts
-      files.forEach((file) => {
+      // Cleanup remaining object URLs when component unmounts
+      filesRef.current.forEach((file) => {
         if (file.previewUrl) {
           URL.revokeObjectURL(file.previewUrl)
         }
       })
     }
-  }, [files])
+  }, [])
 
   return (
     <div
@@ -99,7 +133,7 @@ const UploadFiles: FC<Props> = (props) => {
             caseFile={{
               ...file,
               id: file.id ?? '',
-              canEdit: file.percent === 0 ? ['fileName', 'displayDate'] : [],
+              canEdit: file.percent === 0 ? editableFileAttributes : [],
               canOpen: true,
             }}
             onOpen={() => file.previewUrl && window.open(file.previewUrl)}

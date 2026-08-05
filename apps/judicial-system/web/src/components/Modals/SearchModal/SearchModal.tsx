@@ -11,6 +11,7 @@ import {
 import {
   getCaseTableGroups,
   isCourtOfAppealsUser,
+  isDefenceUser,
   isDistrictCourtUser,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
@@ -240,7 +241,13 @@ const SearchModal: FC<Props> = ({ onClose }) => {
         <Text variant="h3" marginBottom={1}>
           Leit
         </Text>
-        <Box marginBottom={3} columnGap={1} display="flex" flexWrap="wrap">
+        <Box
+          marginBottom={3}
+          columnGap={1}
+          rowGap={1}
+          display="flex"
+          flexWrap="wrap"
+        >
           <Tag outlined disabled>
             Málsnúmer
           </Tag>
@@ -286,8 +293,8 @@ const SearchModal: FC<Props> = ({ onClose }) => {
                       const caseNumber = user
                         ? isProsecutionUser(user)
                           ? row.policeCaseNumbers[0]
-                          : isDistrictCourtUser(user)
-                          ? row.courtCaseNumber
+                          : isDistrictCourtUser(user) || isDefenceUser(user)
+                          ? row.courtCaseNumber ?? row.policeCaseNumbers[0]
                           : isCourtOfAppealsUser(user)
                           ? row.appealCaseNumber
                           : undefined
@@ -311,12 +318,14 @@ const SearchModal: FC<Props> = ({ onClose }) => {
                             caseType={row.caseType}
                             caseNumber={caseNumber}
                             caseTableTitles={caseTableTitles}
-                            descriptor={`${row.matchedValue}${
+                            descriptor={
                               row.matchedField === 'defendantName' ||
                               !row.defendantName
-                                ? ''
-                                : ` - ${row.defendantName}`
-                            }`}
+                                ? row.matchedValue
+                                : row.matchedValue
+                                ? `${row.matchedValue} - ${row.defendantName}`
+                                : row.defendantName
+                            }
                             onClick={onClose}
                           />
                         </li>

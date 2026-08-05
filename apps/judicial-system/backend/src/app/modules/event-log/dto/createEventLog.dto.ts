@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer'
 import {
   IsEnum,
   IsNotEmpty,
@@ -9,6 +10,8 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { EventType, UserRole } from '@island.is/judicial-system/types'
+
+import { nationalIdTransformer } from '../../../transformers'
 
 export class CreateEventLogDto {
   @IsNotEmpty()
@@ -23,6 +26,7 @@ export class CreateEventLogDto {
 
   @IsOptional()
   @IsString()
+  @Transform(nationalIdTransformer)
   @ApiPropertyOptional({ type: String })
   readonly nationalId?: string
 

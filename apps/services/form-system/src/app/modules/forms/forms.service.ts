@@ -72,6 +72,7 @@ import {
   ApplicationJsonFieldSettingsDto,
   ApplicationJsonValueDto,
 } from '../applications/models/dto/application.json.dto'
+import { FormDelegationDto } from './models/dto/formDelegation.dto'
 
 @Injectable()
 export class FormsService {
@@ -152,6 +153,7 @@ export class FormsService {
       'hasSummaryScreen',
       'sectionInfo',
       'lastModifiedBy',
+      'delegations',
     ]
 
     const formResponseDto: FormResponseDto = {
@@ -369,6 +371,76 @@ export class FormsService {
     }
 
     return response
+  }
+
+  async addDelegation(
+    user: User,
+    formDelegationDto: FormDelegationDto,
+  ): Promise<void> {
+    const { formId, delegation } = formDelegationDto
+
+    await this.sequelize.transaction(async (transaction) => {
+      const form = await this.formModel.findByPk(formId, {
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      })
+
+      if (!form) {
+        throw new NotFoundException(`Form with id '${formId}' not found`)
+      }
+
+      const formOwnerNationalId = form.organizationNationalId
+
+      if (
+        user.nationalId !== formOwnerNationalId &&
+        !user.scope.includes(AdminPortalScope.formSystemAdmin)
+      ) {
+        throw new ForbiddenException(
+          `User does not have permission to add delegation to form with id '${formId}'`,
+        )
+      }
+
+      if (!form.delegations.includes(delegation)) {
+        form.delegations = [...form.delegations, delegation]
+        await form.save({ transaction })
+      }
+    })
+  }
+
+  async deleteDelegation(
+    user: User,
+    formDelegationDto: FormDelegationDto,
+  ): Promise<void> {
+    const { formId, delegation } = formDelegationDto
+
+    await this.sequelize.transaction(async (transaction) => {
+      const form = await this.formModel.findByPk(formId, {
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      })
+
+      if (!form) {
+        throw new NotFoundException(`Form with id '${formId}' not found`)
+      }
+
+      const formOwnerNationalId = form.organizationNationalId
+
+      if (
+        user.nationalId !== formOwnerNationalId &&
+        !user.scope.includes(AdminPortalScope.formSystemAdmin)
+      ) {
+        throw new ForbiddenException(
+          `User does not have permission to delete delegation from form with id '${formId}'`,
+        )
+      }
+
+      if (form.delegations.includes(delegation)) {
+        form.delegations = form.delegations.filter(
+          (currentDelegation) => currentDelegation !== delegation,
+        )
+        await form.save({ transaction })
+      }
+    })
   }
 
   async copy(user: User, id: string): Promise<FormResponseDto> {
@@ -748,6 +820,9 @@ export class FormsService {
       applicantTypes: await this.getApplicantTypes(),
       listTypes: await this.getListTypes(form.organizationId),
       submissionUrls: await this.getSubmissionUrls(form.organizationId),
+      organizationDelegations: await this.getOrganizationDelegations(
+        form.organizationId,
+      ),
     }
 
     if (form.sectionInfo) {
@@ -760,6 +835,13 @@ export class FormsService {
     }
 
     return response
+  }
+
+  private async getOrganizationDelegations(
+    organizationId: string,
+  ): Promise<string[]> {
+    const organization = await this.organizationModel.findByPk(organizationId)
+    return organization?.delegations ?? []
   }
 
   private async getSubmissionUrls(organizationId: string): Promise<string[]> {
@@ -885,6 +967,7 @@ export class FormsService {
       'hasSummaryScreen',
       'sectionInfo',
       'dependencies',
+      'delegations',
     ]
     const formDto: FormDto = Object.assign(
       defaults(
@@ -1206,13 +1289,16 @@ export class FormsService {
         (screen.fields ?? []).map((field) => ({
           field,
           screenIdentifier: screen.identifier,
+          screenTitle: screen.name,
         })),
       )
       .filter(({ field }) => field.fieldType !== FieldTypesEnum.MESSAGE)
-      .map(({ field, screenIdentifier }) => {
+      .map(({ field, screenIdentifier, screenTitle }) => {
         const jsonField = new ApplicationJsonFieldDto()
         jsonField.identifier = field.identifier
         jsonField.screenIdentifier = screenIdentifier
+        jsonField.screenTitle = screenTitle
+        jsonField.fieldTitle = field.name
         jsonField.fieldType = field.fieldType
 
         const settings = new ApplicationJsonFieldSettingsDto()
@@ -1242,6 +1328,7 @@ export class FormsService {
 
     const jsonSample = new ApplicationJsonDto()
     jsonSample.id = uuidV4()
+    jsonSample.organizationNationalId = form.organizationNationalId ?? ''
     jsonSample.slug = form.slug ?? ''
     jsonSample.isTest = true
     jsonSample.status = 'COMPLETED'
@@ -1287,7 +1374,10 @@ export class FormsService {
     if ('bankAccount' in v) v.bankAccount = '0000-00-000000'
 
     if ('time' in v) v.time = '12:34'
-    if ('s3Key' in v) v.s3Key = ['uploads/example.pdf']
+    if ('s3Key' in v)
+      v.s3Key = [
+        'fd1db740-910d-40cd-aa25-d2fb0161261c/d36f7461-3ac5-4702-b292-b638fed83038_nafn-a-skra.pdf',
+      ]
 
     if ('paymentCode' in v) v.paymentCode = 'PAYMENT-CODE-123'
     if ('applicantType' in v) v.applicantType = 'INDIVIDUAL'

@@ -124,14 +124,20 @@ export interface ApplicationStateMeta<
   name: string
   lifecycle: StateLifeCycle
   actionCard?: {
-    /** @deprecated use pendingAction field instead */
-    title?: StaticText
-    /** @deprecated use pendingAction field instead */
-    description?: StaticText
+    /**
+     * @deprecated use pendingAction field instead
+     * Static copy or a function of the application (same shape as FormText).
+     */
+    title?: FormText
+    /**
+     * @deprecated use pendingAction field instead
+     * Static copy or a function of the application (same shape as FormText).
+     */
+    description?: FormText
     /**
      * Configures which messages should be displayed to the user when presenting the
      * application's history.
-     * Each `HistoryEventMessage` object maps an event to its corresponding user-friendly log message.
+     * Each `HistoryEventMessage` object maps a state's `exitEvent` to its corresponding user-friendly log message.
      * The `historyLogs` field can either be an array of `HistoryEventMessage` objects
      * or a single `HistoryEventMessage` object.
      */
@@ -165,7 +171,13 @@ export interface ApplicationStateMeta<
   /**
    * Represents the current status of the application in the state, defaults to draft
    */
-  status: 'approved' | 'rejected' | 'draft' | 'completed' | 'inprogress'
+  status:
+    | 'approved'
+    | 'rejected'
+    | 'draft'
+    | 'completed'
+    | 'inprogress'
+    | 'notstarted'
   roles?: RoleInState<T>[]
   onExit?: TemplateApi<R>[] | TemplateApi<R>
   onEntry?: TemplateApi<R>[] | TemplateApi<R>
@@ -177,7 +189,9 @@ export interface ApplicationStateMeta<
   scheduledNotifications?:
     | ScheduledNotificationConfig[]
     | ScheduledNotificationConfig
-    | ((application: Application) => ScheduledNotificationConfig)
+    | ((
+        application: Application,
+      ) => ScheduledNotificationConfig | ScheduledNotificationConfig[])
 }
 
 export interface ApplicationStateSchema<T extends EventObject = AnyEventObject>

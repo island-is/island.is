@@ -11,6 +11,7 @@ import {
 import {
   isDefenceUser,
   isDistrictCourtUser,
+  isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -232,7 +233,11 @@ const AddFiles: FC = () => {
         {CaseInfo}
         <SectionHeading
           title={formatMessage(strings.uploadFilesHeading)}
-          description={formatMessage(strings.uploadFilesDescription)}
+          description={`Gögnin verða að hafa lýsandi skráarheiti.${
+            isProsecutionUser(user)
+              ? ' Athugið að viðbótar rafrænum gögnum er bætt við málið í gegnum Réttarvörslugáttargluggann í LÖKE.'
+              : ''
+          }`}
         />
         <UploadFiles
           files={uploadFiles}
@@ -256,19 +261,21 @@ const AddFiles: FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={previousRoute}
-          nextButtonText={
-            someFilesError
-              ? formatMessage(strings.tryUploadAgain)
-              : formatMessage(strings.nextButtonText)
-          }
-          nextButtonColorScheme={someFilesError ? 'destructive' : 'default'}
-          nextIsDisabled={
-            uploadFiles.length === 0 ||
-            !allFilesDoneOrError ||
-            editCount > 0 ||
-            !hasValidFileRepresentativeSelection
-          }
-          onNextButtonClick={() => setVisibleModal('confirmation')}
+          actions={[
+            {
+              text: someFilesError
+                ? formatMessage(strings.tryUploadAgain)
+                : formatMessage(strings.nextButtonText),
+              colorScheme: someFilesError ? 'destructive' : 'default',
+              onClick: () => setVisibleModal('confirmation'),
+              disabled:
+                uploadFiles.length === 0 ||
+                !allFilesDoneOrError ||
+                editCount > 0 ||
+                !hasValidFileRepresentativeSelection,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
       {visibleModal === 'confirmation' && (

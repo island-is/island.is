@@ -66,6 +66,10 @@ export const FormShell: FC<
     renderLastScreenBackButton,
   } = state.form
   const currentScreen = screens[activeScreen]
+  const lastNavigableScreenIndex = screens.reduce(
+    (lastIdx, screen, idx) => (screen.isNavigable ? idx : lastIdx),
+    -1,
+  )
   const FormLogo = getFormComponent(form.logo, storedApplication)
 
   const getDraftSectionCurrentScreen = (): number | undefined => {
@@ -145,7 +149,7 @@ export const FormShell: FC<
                   canGoBack={canGoBack(screens, activeScreen)}
                   prevScreen={() => dispatch({ type: ActionTypes.PREV_SCREEN })}
                   activeScreenIndex={activeScreen}
-                  numberOfScreens={screens.length}
+                  numberOfScreens={lastNavigableScreenIndex + 1}
                   renderLastScreenButton={renderLastScreenButton}
                   renderLastScreenBackButton={renderLastScreenBackButton}
                   currentDraftScreen={getDraftSectionCurrentScreen()}

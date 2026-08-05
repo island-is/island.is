@@ -4,7 +4,6 @@ import { EmailService } from '@island.is/email-service'
 
 import {
   AppealCaseNotificationType,
-  RequestCaseNotificationType,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -14,7 +13,7 @@ import {
   createTestUsers,
 } from '../createTestingNotificationModule'
 
-import { Case } from '../../../repository'
+import { AppealCase, Case } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 
 interface Then {
@@ -22,7 +21,7 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (defenderNationalId?: string) => Promise<Then>
+type GivenWhenThen = (userIds?: string[]) => Promise<Then>
 
 describe('InternalNotificationController - Send appeal judges assigned notifications', () => {
   const { judge1, judge2, judge3, assistant } = createTestUsers([
@@ -33,6 +32,7 @@ describe('InternalNotificationController - Send appeal judges assigned notificat
   ])
   const userId = uuid()
   const caseId = uuid()
+  const appealCaseId = uuid()
   const appealCaseNumber = uuid()
   const receivedDate = new Date()
 
@@ -45,46 +45,53 @@ describe('InternalNotificationController - Send appeal judges assigned notificat
 
     mockEmailService = emailService
 
-    givenWhenThen = async () => {
+    givenWhenThen = async (userIds?: string[]) => {
       const then = {} as Then
 
+      const appealCase = {
+        appealCaseNumber,
+        appealReceivedByCourtDate: receivedDate,
+        appealAssistant: {
+          name: assistant.name,
+          email: assistant.email,
+          id: assistant.id,
+          role: UserRole.COURT_OF_APPEALS_ASSISTANT,
+        },
+        appealAssistantId: assistant.id,
+        appealJudge1: {
+          name: judge1.name,
+          email: judge1.email,
+          id: judge1.id,
+          role: UserRole.COURT_OF_APPEALS_JUDGE,
+        },
+        appealJudge1Id: judge1.id,
+        appealJudge2: {
+          name: judge2.name,
+          email: judge2.email,
+          id: judge2.id,
+          role: UserRole.COURT_OF_APPEALS_JUDGE,
+        },
+        appealJudge3: {
+          name: judge3.name,
+          email: judge3.email,
+          id: judge3.id,
+          role: UserRole.COURT_OF_APPEALS_JUDGE,
+        },
+      } as AppealCase
+
       await internalNotificationController
-        .sendCaseNotification(
+        .sendAppealCaseNotification(
           caseId,
+          appealCaseId,
           {
             id: caseId,
-            appealCase: {
-              appealCaseNumber,
-              appealReceivedByCourtDate: receivedDate,
-              appealAssistant: {
-                name: assistant.name,
-                email: assistant.email,
-                role: UserRole.COURT_OF_APPEALS_ASSISTANT,
-              },
-              appealJudge1: {
-                name: judge1.name,
-                email: judge1.email,
-                id: judge1.id,
-                role: UserRole.COURT_OF_APPEALS_JUDGE,
-              },
-              appealJudge1Id: judge1.id,
-              appealJudge2: {
-                name: judge2.name,
-                email: judge2.email,
-                id: judge2.id,
-                role: UserRole.COURT_OF_APPEALS_JUDGE,
-              },
-              appealJudge3: {
-                name: judge3.name,
-                email: judge3.email,
-                id: judge3.id,
-                role: UserRole.COURT_OF_APPEALS_JUDGE,
-              },
-            },
+            appealCase,
           } as Case,
+          appealCase,
           {
             user: { id: userId } as User,
-            type: AppealCaseNotificationType.APPEAL_JUDGES_ASSIGNED as unknown as RequestCaseNotificationType,
+            type: AppealCaseNotificationType.APPEAL_JUDGES_ASSIGNED,
+            userIds,
           },
         )
         .then((result) => (then.result = result))
@@ -93,11 +100,16 @@ describe('InternalNotificationController - Send appeal judges assigned notificat
     }
   })
 
-  describe('notification sent', () => {
+  describe('all roles newly assigned', () => {
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen(uuid())
+      then = await givenWhenThen([
+        assistant.id,
+        judge1.id,
+        judge2.id,
+        judge3.id,
+      ])
     })
 
     it('should send notification to the judge foreperson, the two other judges and the judges assistant', () => {
@@ -134,6 +146,39 @@ describe('InternalNotificationController - Send appeal judges assigned notificat
           html: `Landsréttur hefur skráð þig sem dómara í máli nr. ${appealCaseNumber}. Dómsformaður er ${judge1.name}. Þú getur nálgast yfirlit málsins á <a href="http://localhost:4200/landsrettur/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt.</a>`,
         }),
       )
+      expect(then.result).toEqual({ delivered: true })
+    })
+  })
+
+  describe('only a subset of roles newly assigned', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen([judge3.id])
+    })
+
+    it('should only send notification to the newly assigned judge', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(1)
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: judge3.name, address: judge3.email }],
+          subject: `Úthlutun máls nr. ${appealCaseNumber}`,
+          html: `Landsréttur hefur skráð þig sem dómara í máli nr. ${appealCaseNumber}. Dómsformaður er ${judge1.name}. Þú getur nálgast yfirlit málsins á <a href="http://localhost:4200/landsrettur/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt.</a>`,
+        }),
+      )
+      expect(then.result).toEqual({ delivered: true })
+    })
+  })
+
+  describe('no recipients listed', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen([])
+    })
+
+    it('should not send any notification', () => {
+      expect(mockEmailService.sendEmail).not.toHaveBeenCalled()
       expect(then.result).toEqual({ delivered: true })
     })
   })

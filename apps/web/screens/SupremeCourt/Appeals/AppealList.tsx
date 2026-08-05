@@ -188,6 +188,7 @@ const Appeals: CustomScreen<AppealsProps> = ({
           href: linkResolver('organizationpage', [organizationPage.slug]).href,
         },
       ]}
+      hideFromExternalSearchEngines={true}
     >
       <Stack space={2}>
         <Stack space={2}>

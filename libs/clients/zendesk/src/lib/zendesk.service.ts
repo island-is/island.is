@@ -52,6 +52,31 @@ export type User = {
   id: number
 }
 
+export type CustomObjectRecord = {
+  id: string
+  name: string
+  external_id: string
+  custom_object_fields?: Record<string, unknown>
+}
+
+export type CustomObjectJobItem = {
+  name: string
+  external_id: string
+  custom_object_fields?: Record<string, unknown>
+}
+
+type CustomObjectJobStatus = {
+  id: string
+  url?: string
+  status: 'queued' | 'working' | 'completed' | 'failed' | 'aborted'
+  results?: Array<{
+    id?: string
+    external_id?: string
+    status?: string
+    errors?: unknown
+  }>
+}
+
 export type Ticket = {
   id: string
   status: TicketStatus | string
@@ -268,5 +293,98 @@ export class ZendeskService {
     }
 
     return true
+  }
+
+  async upsertCustomObjectRecord(
+    objectKey: string,
+    record: CustomObjectJobItem,
+  ): Promise<CustomObjectRecord> {
+    const body = JSON.stringify({ custom_object_record: record })
+    try {
+      const response = await axios.patch(
+        `${
+          this.api
+        }/custom_objects/${objectKey}/records?external_id=${encodeURIComponent(
+          record.external_id,
+        )}`,
+        body,
+        this.params,
+      )
+      return response.data.custom_object_record
+    } catch (e) {
+      const errMsg = 'Failed to upsert Zendesk custom object record'
+      const description = e.response?.data?.description ?? e.message
+      this.logger.error(errMsg, { message: description })
+      throw new Error(`${errMsg}: ${description}`)
+    }
+  }
+
+  async runCustomObjectJob(
+    objectKey: string,
+    action: 'create_or_update_by_external_id',
+    items: CustomObjectJobItem[],
+  ): Promise<void> {
+    const body = JSON.stringify({ job: { action, items } })
+
+    let jobStatus: CustomObjectJobStatus
+    try {
+      const response = await axios.post(
+        `${this.api}/custom_objects/${objectKey}/jobs`,
+        body,
+        this.params,
+      )
+      jobStatus = response.data.job_status ?? response.data
+    } catch (e) {
+      const errMsg = 'Failed to create Zendesk custom object job'
+      const description = e.response?.data?.description ?? e.message
+      this.logger.error(errMsg, { message: description })
+      throw new Error(`${errMsg}: ${description}`)
+    }
+
+    const MAX_POLL_ATTEMPTS = 10
+    const POLL_INTERVAL_MS = 1000
+
+    for (let attempt = 0; attempt < MAX_POLL_ATTEMPTS; attempt++) {
+      if (jobStatus.status === 'completed') break
+      if (jobStatus.status === 'failed' || jobStatus.status === 'aborted') {
+        throw new Error(
+          `Zendesk custom object job ${jobStatus.status}: ${jobStatus.id}`,
+        )
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS))
+
+      try {
+        const pollUrl =
+          jobStatus.url ??
+          `${this.api}/custom_objects/${objectKey}/jobs/${jobStatus.id}`
+        const response = await axios.get(pollUrl, this.params)
+        jobStatus = response.data.job_status ?? response.data
+      } catch (e) {
+        const errMsg = 'Failed to poll Zendesk custom object job status'
+        const description = e.response?.data?.description ?? e.message
+        this.logger.error(errMsg, { message: description })
+        throw new Error(`${errMsg}: ${description}`)
+      }
+    }
+
+    if (jobStatus.status !== 'completed') {
+      throw new Error(
+        `Zendesk custom object job did not complete in time: ${jobStatus.id}`,
+      )
+    }
+
+    if (jobStatus.results) {
+      const failed = jobStatus.results.filter((r) =>
+        r.status === 'failed' || Array.isArray(r.errors)
+          ? (r.errors as unknown[]).length > 0
+          : Boolean(r.errors),
+      )
+      if (failed.length > 0) {
+        throw new Error(
+          `${failed.length} Zendesk custom object job item(s) failed`,
+        )
+      }
+    }
   }
 }

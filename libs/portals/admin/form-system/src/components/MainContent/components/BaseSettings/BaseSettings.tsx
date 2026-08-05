@@ -171,7 +171,7 @@ export const BaseSettings = () => {
             value={form?.slug ?? ''}
             backgroundColor="blue"
             errorMessage={errorMsg}
-            readOnly={isReadOnly}
+            readOnly={isReadOnly || form.status === 'PUBLISHED_BEING_CHANGED'}
             onFocus={(e) => {
               if (!form.slug) {
                 controlDispatch({

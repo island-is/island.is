@@ -15,6 +15,7 @@ export const approvePrivateDivisionSubmission = buildSection({
       id: 'approveSubmission',
       title: m.divisionOfEstateByHeirsTerms,
       description: m.divisionOfEstateByHeirsText,
+      nextButtonText: m.saveAndContinue,
       children: [
         buildDescriptionField({
           id: 'spaceSubmission',

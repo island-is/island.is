@@ -1,3 +1,4 @@
+import React from 'react'
 import { IsHealthInsuredInput } from '@island.is/api/schema'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Input } from '@island.is/island-ui/core'
@@ -15,7 +16,7 @@ export const DateOfAccident = ({
   field,
   error,
 }: FieldBaseProps) => {
-  const { id } = field
+  const id = field?.id as string
   const answers = application.answers as AccidentNotification
   const { register, setValue } = useFormContext()
   const { lang, formatMessage } = useLocale()

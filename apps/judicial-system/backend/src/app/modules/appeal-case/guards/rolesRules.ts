@@ -1,11 +1,16 @@
 import { RolesRule, RulesType } from '@island.is/judicial-system/auth'
 import {
   AppealCaseTransition,
-  isIndictmentCase,
+  type User,
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { Case, User } from '../../repository'
+import { AppealCase, Case } from '../../repository'
+import {
+  canWithdrawCaseLevelAppeal,
+  isInCourtRulingOrderAppeal,
+  userHasActiveInCourtAppeal,
+} from '../appealCase.helpers'
 import { UpdateAppealCaseDto } from '../dto/updateAppealCase.dto'
 
 const prosecutorFields: (keyof UpdateAppealCaseDto)[] = [
@@ -104,46 +109,55 @@ export const prosecutorRepresentativeUpdateRule: RolesRule = {
   dtoFields: prosecutorFields,
 }
 
+// Determines whether the user (prosecution or defence) is an appellant of the
+// appeal case being transitioned, and so may withdraw it. Handles case-level and
+// ruling-order, in-court and out-of-court appeals.
+const userAppealedAppealCase = (request: {
+  user?: { currentUser?: User }
+  case?: Case
+  appealCase?: AppealCase
+}): boolean => {
+  const user = request.user?.currentUser
+  const theCase = request.case
+  const appealCase = request.appealCase
+
+  if (!user || !theCase || !appealCase) {
+    return false
+  }
+
+  // In-court ruling-order appeals are per party and withdrawn on the decision
+  // row, which is the live state; the event log only catches up on confirmation.
+  // So authorize from the decision: the user's party appealed in court and has
+  // not already withdrawn.
+  if (
+    appealCase.rulingFileId &&
+    isInCourtRulingOrderAppeal(theCase, appealCase.rulingFileId)
+  ) {
+    return userHasActiveInCourtAppeal(theCase, appealCase.rulingFileId, user)
+  }
+
+  // Out-of-court and case-level appeals: the appellant is read from the APPEALED
+  // event log, resolved to the current representative (survives a defender swap).
+  // For request cases the defence cannot withdraw a shared appeal the prosecution
+  // also made (prosecution precedence), so authorize through canWithdraw... rather
+  // than plain userIsAppellant.
+  return canWithdrawCaseLevelAppeal(theCase, appealCase, user)
+}
+
 // Prosecutor transition rules
 export const prosecutorTransitionRule: RolesRule = {
   role: UserRole.PROSECUTOR,
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
   dtoFieldValues: [AppealCaseTransition.WITHDRAW_APPEAL],
-  canActivate: (request) => {
-    const theCase: Case = request.case
-
-    if (!theCase) {
-      return false
-    }
-
-    // Deny withdrawal if prosecutor did not appeal the case
-    if (!theCase.prosecutorPostponedAppealDate) {
-      return false
-    }
-
-    return true
-  },
+  canActivate: (request) => userAppealedAppealCase(request),
 }
 export const prosecutorRepresentativeTransitionRule: RolesRule = {
   role: UserRole.PROSECUTOR_REPRESENTATIVE,
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
   dtoFieldValues: [AppealCaseTransition.WITHDRAW_APPEAL],
-  canActivate: (request) => {
-    const theCase: Case = request.case
-
-    if (!theCase) {
-      return false
-    }
-
-    // Deny withdrawal if prosecutor did not appeal the case
-    if (!theCase.prosecutorPostponedAppealDate) {
-      return false
-    }
-
-    return true
-  },
+  canActivate: (request) => userAppealedAppealCase(request),
 }
 
 export const defenderTransitionRule: RolesRule = {
@@ -151,28 +165,5 @@ export const defenderTransitionRule: RolesRule = {
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
   dtoFieldValues: [AppealCaseTransition.WITHDRAW_APPEAL],
-  canActivate: (request) => {
-    const user: User = request.user?.currentUser
-    const theCase: Case = request.case
-
-    if (!user || !theCase) {
-      return false
-    }
-
-    // Deny withdrawal if defender did not appeal the case
-    if (!theCase.accusedPostponedAppealDate) {
-      return false
-    }
-
-    // For indictment cases, only the specific defender who appealed can withdraw
-    if (
-      isIndictmentCase(theCase.type) &&
-      (!theCase.appealCase?.appealedByNationalId ||
-        theCase.appealCase?.appealedByNationalId !== user.nationalId)
-    ) {
-      return false
-    }
-
-    return true
-  },
+  canActivate: (request) => userAppealedAppealCase(request),
 }

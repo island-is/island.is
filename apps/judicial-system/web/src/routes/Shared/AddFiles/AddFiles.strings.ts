@@ -12,12 +12,6 @@ export const strings = {
     description:
       'Notaður sem titill í Innsending gagna til dómsins hluta á Gögn síðu í ákærum.',
   },
-  uploadFilesDescription: {
-    id: 'judicial.system.core:add_files.upload_files_description',
-    defaultMessage: 'Gögnin verða að hafa lýsandi skráarheiti.',
-    description:
-      'Notaður sem texti í Innsending gagna til dómsins hluta á Gögn síðu í ákærum.',
-  },
   uploadFilesRepresentativeSelectionTitle: {
     id: 'judicial.system.core:add_files.upload_files_representative_selection_title',
     defaultMessage: 'Hver lagði skjölin fram?',

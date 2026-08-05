@@ -8,13 +8,17 @@ import {
   MessageType,
 } from '@island.is/judicial-system/message'
 import {
+  AppealDecisionPartyRole,
+  CaseAppealDecision,
   CaseFileCategory,
   CourtSessionRulingType,
+  IndictmentCaseNotificationType,
 } from '@island.is/judicial-system/types'
 
 import { createTestingCourtSessionModule } from '../createTestingCourtSessionModule'
 
 import {
+  AppealDecisionRepositoryService,
   Case,
   CaseFile,
   CourtSession,
@@ -46,6 +50,7 @@ describe('CourtSessionController - Update', () => {
   const courtSessionToUpdate = { location, attendees }
 
   let mockCourtSessionRepositoryService: CourtSessionRepositoryService
+  let mockAppealDecisionRepositoryService: AppealDecisionRepositoryService
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
@@ -58,8 +63,14 @@ describe('CourtSessionController - Update', () => {
   let caseFiles: Partial<CaseFile>[]
 
   beforeEach(async () => {
-    const { sequelize, courtSessionRepositoryService, courtSessionController } =
-      await createTestingCourtSessionModule()
+    const {
+      sequelize,
+      courtSessionRepositoryService,
+      appealDecisionRepositoryService,
+      courtSessionController,
+    } = await createTestingCourtSessionModule()
+
+    mockAppealDecisionRepositoryService = appealDecisionRepositoryService
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -169,6 +180,58 @@ describe('CourtSessionController - Update', () => {
         user: {},
         caseId,
       })
+    })
+  })
+
+  describe('ORDER court session is confirmed', () => {
+    const fileId = uuid()
+    const confirmationUpdate = {
+      ...courtSessionToUpdate,
+      isConfirmed: true,
+    }
+
+    beforeEach(async () => {
+      existingCourtSession.isConfirmed = false
+      existingCourtSession.rulingType = CourtSessionRulingType.ORDER
+      existingCourtSession.rulingFileId = fileId
+
+      // The case in this spec has no defendants or civil claimants, so a
+      // prosecutor decision is all the confirm-time validation requires.
+      const mockFindAll =
+        mockAppealDecisionRepositoryService.findAll as jest.Mock
+      mockFindAll.mockResolvedValue([
+        {
+          partyRole: AppealDecisionPartyRole.PROSECUTOR,
+          decision: CaseAppealDecision.ACCEPT,
+        },
+      ])
+
+      const mockUpdate = mockCourtSessionRepositoryService.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce({
+        id: courtSessionId,
+        caseId,
+        isConfirmed: true,
+        rulingType: CourtSessionRulingType.ORDER,
+        rulingFileId: fileId,
+      })
+
+      await givenWhenThen(caseId, courtSessionId, confirmationUpdate)
+    })
+
+    it('should also notify the parties about the ruling order', () => {
+      expect(addMessagesToQueue).toHaveBeenCalledWith(
+        {
+          type: MessageType.DELIVERY_TO_COURT_COURT_RECORD_WORKING_DOCUMENT,
+          user: {},
+          caseId,
+        },
+        {
+          type: MessageType.NOTIFICATION,
+          user: {},
+          caseId,
+          body: { type: IndictmentCaseNotificationType.RULING_ORDER_ADDED },
+        },
+      )
     })
   })
 

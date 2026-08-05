@@ -138,7 +138,6 @@ export class LimitedAccessAppealCaseController {
       ...indictmentCases,
     ]),
     CaseWriteGuard,
-    CaseCompletedGuard,
   )
   @RolesRules(defenderTransitionRule)
   @Patch('case/:caseId/limitedAccess/appealCase/:appealCaseId/state')

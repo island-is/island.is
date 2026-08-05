@@ -371,14 +371,6 @@ export class StatisticsService {
           separate: true,
         },
         {
-          model: Notification,
-          as: 'notifications',
-          required: false,
-          where: { type: AppealCaseNotificationType.APPEAL_COMPLETED },
-          order: [['created', 'DESC']],
-          separate: true,
-        },
-        {
           model: AppealCase,
           as: 'appealCase',
           required: false,

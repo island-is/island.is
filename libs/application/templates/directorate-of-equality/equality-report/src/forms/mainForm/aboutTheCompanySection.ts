@@ -16,6 +16,7 @@ import { Application } from '@island.is/application/types'
 import { messages } from '../../lib/messages'
 import { getEmployeeCountDisplay } from '../../utils/employeeCountCategory'
 import { getIsatClassification } from '../../utils/isatClassification'
+import { Gender, UNKNOWN_DISPLAY_VALUE } from '../../utils/constants'
 
 export const aboutTheCompanySection = buildSection({
   id: 'aboutTheCompany',
@@ -112,7 +113,7 @@ export const aboutTheCompanySection = buildSection({
                     classification?: { number?: string; name?: string }[]
                   }[]
                 >(application.externalData, 'companyData.data.vat')
-                return vat ? getIsatClassification(vat) : 'Óþekkt'
+                return vat ? getIsatClassification(vat) : UNKNOWN_DISPLAY_VALUE
               },
             }),
           ],
@@ -131,16 +132,26 @@ export const aboutTheCompanySection = buildSection({
             buildTextField({
               id: 'chiefExecutive.name',
               title: messages.aboutTheCompany.chiefExecutive.name,
-              placeholder: messages.aboutTheCompany.chiefExecutive.namePlaceholder,
+              placeholder:
+                messages.aboutTheCompany.chiefExecutive.namePlaceholder,
               width: 'full',
               required: true,
             }),
             buildTextField({
               id: 'chiefExecutive.email',
               title: messages.aboutTheCompany.chiefExecutive.email,
-              placeholder: messages.aboutTheCompany.chiefExecutive.emailPlaceholder,
+              placeholder:
+                messages.aboutTheCompany.chiefExecutive.emailPlaceholder,
               width: 'full',
               variant: 'email',
+              required: true,
+            }),
+            buildTextField({
+              id: 'chiefExecutive.jobTitle',
+              title: messages.aboutTheCompany.chiefExecutive.jobTitle,
+              placeholder:
+                messages.aboutTheCompany.chiefExecutive.jobTitlePlaceholder,
+              width: 'full',
               required: true,
             }),
             buildSelectField({
@@ -150,16 +161,17 @@ export const aboutTheCompanySection = buildSection({
               required: true,
               options: [
                 {
-                  value: 'MALE',
+                  value: Gender.MALE,
                   label: messages.aboutTheCompany.chiefExecutive.genderMale,
                 },
                 {
-                  value: 'FEMALE',
+                  value: Gender.FEMALE,
                   label: messages.aboutTheCompany.chiefExecutive.genderFemale,
                 },
                 {
-                  value: 'NON_BINARY',
-                  label: messages.aboutTheCompany.chiefExecutive.genderNonBinary,
+                  value: Gender.NON_BINARY,
+                  label:
+                    messages.aboutTheCompany.chiefExecutive.genderNonBinary,
                 },
               ],
             }),
@@ -185,7 +197,8 @@ export const aboutTheCompanySection = buildSection({
             buildTextField({
               id: 'contactPerson.name',
               title: messages.aboutTheCompany.contactPerson.name,
-              placeholder: messages.aboutTheCompany.contactPerson.namePlaceholder,
+              placeholder:
+                messages.aboutTheCompany.contactPerson.namePlaceholder,
               width: 'full',
               required: true,
               defaultValue: (application: Application) =>
@@ -194,21 +207,29 @@ export const aboutTheCompanySection = buildSection({
             buildTextField({
               id: 'contactPerson.email',
               title: messages.aboutTheCompany.contactPerson.email,
-              placeholder: messages.aboutTheCompany.contactPerson.emailPlaceholder,
+              placeholder:
+                messages.aboutTheCompany.contactPerson.emailPlaceholder,
               width: 'full',
               variant: 'email',
               required: true,
               defaultValue: (application: Application) =>
-                getValueViaPath(application.externalData, 'userProfile.data.email'),
+                getValueViaPath(
+                  application.externalData,
+                  'userProfile.data.email',
+                ),
             }),
             buildPhoneField({
               id: 'contactPerson.phone',
               title: messages.aboutTheCompany.contactPerson.phone,
-              placeholder: messages.aboutTheCompany.contactPerson.phonePlaceholder,
+              placeholder:
+                messages.aboutTheCompany.contactPerson.phonePlaceholder,
               width: 'half',
               required: true,
               defaultValue: (application: Application) =>
-                getValueViaPath(application.externalData, 'userProfile.data.mobilePhoneNumber'),
+                getValueViaPath(
+                  application.externalData,
+                  'userProfile.data.mobilePhoneNumber',
+                ),
             }),
           ],
         }),
@@ -259,37 +280,45 @@ export const aboutTheCompanySection = buildSection({
           children: [
             buildDescriptionField({
               id: 'subsidiaries.includesSubsidiariesTitle',
-              title: messages.aboutTheCompany.subsidiaries.includesSubsidiariesTitle,
+              title:
+                messages.aboutTheCompany.subsidiaries.includesSubsidiariesTitle,
               description: '',
               titleVariant: 'h4',
             }),
             buildRadioField({
               id: 'subsidiaries.includesSubsidiaries',
-              title: '',
               largeButtons: true,
               width: 'half',
               required: true,
               options: [
-                { value: YES, label: messages.aboutTheCompany.subsidiaries.yes },
+                {
+                  value: YES,
+                  label: messages.aboutTheCompany.subsidiaries.yes,
+                },
                 { value: NO, label: messages.aboutTheCompany.subsidiaries.no },
               ],
             }),
             buildTableRepeaterField({
               id: 'subsidiaries.list',
-              title: '',
               marginTop: 0,
               formTitle: messages.aboutTheCompany.subsidiaries.tableFormTitle,
-              addItemButtonText: messages.aboutTheCompany.subsidiaries.tableAddButton,
-              saveItemButtonText: messages.aboutTheCompany.subsidiaries.tableSaveButton,
-              removeButtonTooltipText: messages.aboutTheCompany.subsidiaries.tableRemoveButton,
-              editButtonTooltipText: messages.aboutTheCompany.subsidiaries.tableEditButton,
+              addItemButtonText:
+                messages.aboutTheCompany.subsidiaries.tableAddButton,
+              saveItemButtonText:
+                messages.aboutTheCompany.subsidiaries.tableSaveButton,
+              removeButtonTooltipText:
+                messages.aboutTheCompany.subsidiaries.tableRemoveButton,
+              editButtonTooltipText:
+                messages.aboutTheCompany.subsidiaries.tableEditButton,
               editField: true,
               fields: {
                 nationalIdWithName: {
                   component: 'nationalIdWithName',
                   searchCompanies: true,
-                  customNationalIdLabel: messages.aboutTheCompany.subsidiaries.tableHeaderNationalId,
-                  customNameLabel: messages.aboutTheCompany.subsidiaries.tableHeaderName,
+                  customNationalIdLabel:
+                    messages.aboutTheCompany.subsidiaries.tableHeaderNationalId,
+                  customNameLabel:
+                    messages.aboutTheCompany.subsidiaries.tableHeaderName,
                 },
               },
               table: {
@@ -300,7 +329,10 @@ export const aboutTheCompanySection = buildSection({
                 rows: ['name', 'nationalId'],
               },
               condition: (answers) =>
-                getValueViaPath(answers, 'subsidiaries.includesSubsidiaries') === YES,
+                getValueViaPath(
+                  answers,
+                  'subsidiaries.includesSubsidiaries',
+                ) === YES,
             }),
           ],
         }),

@@ -36,6 +36,7 @@ const mapBaseInformation = (
   formId: q.questionnaireId,
   organization: QuestionnairesOrganizationEnum.EL,
   lastSubmissionId: q.lastCreatedSubmissionId,
+  senderGroupName: q.senderGroupName ?? undefined,
 })
 
 export const mapElQuestionnaireOverview = (
@@ -102,4 +103,5 @@ export const mapElQuestionnaireListItem = (
     ? QuestionnairesStatusEnum.expired
     : QuestionnairesStatusEnum.notAnswered,
   lastSubmitted: q.lastSubmitted,
+  senderGroupName: q.senderGroupName ?? undefined,
 })

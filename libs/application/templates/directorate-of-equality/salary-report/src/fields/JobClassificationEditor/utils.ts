@@ -1,5 +1,5 @@
 import type { ParsedCriterionDto } from '@island.is/clients/directorate-of-equality'
-import type { StepAssignment } from '../../lib/constants'
+import type { Role, StepAssignment, SubCriterion } from '../../utils/types'
 
 export type StepMeta = {
   steps: { order: number; score: number }[]
@@ -7,6 +7,47 @@ export type StepMeta = {
   maxScore: number
   weight: number
   description: string
+}
+
+// The evaluation model scores each sub-criterion out of `weight × 10` — a fixed
+// 1000-point total scale (the sub-criterion weights sum to 100). Each step is an
+// equal fraction of that max: score(order) = order / stepCount × maxScore. This
+// matches the scores the API returns exactly, but is derived purely from the
+// weight + step count, both of which are always kept in answers.
+const POINTS_PER_WEIGHT_PERCENT = 10
+
+// Fallback for when the parsed criteria aren't on the client (external data can
+// be stale/absent after import — see CriteriaEditor). Rebuilds the step metadata
+// from the answers sub-criteria so the dropdowns AND the score totals work
+// without external data. Computing from the live weights also means the scores
+// reflect any weight edits the user makes on the sub-criteria screen.
+export const buildStepMetaFromSubCriteria = (subCriteria: {
+  jobFactors?: SubCriterion[][]
+  personalFactors?: SubCriterion[][]
+}): Record<string, StepMeta> => {
+  const map: Record<string, StepMeta> = {}
+  const all = [
+    ...(subCriteria.jobFactors ?? []).flat(),
+    ...(subCriteria.personalFactors ?? []).flat(),
+  ]
+  all.forEach((sc) => {
+    if (!sc?.title) return
+    const count = sc.steps?.length || Number(sc.stepCount) || 0
+    const weight = Number(sc.weight) || 0
+    const maxScore = weight * POINTS_PER_WEIGHT_PERCENT
+    const perStep = count > 0 ? maxScore / count : 0
+    map[sc.title] = {
+      steps: Array.from({ length: count }, (_, i) => ({
+        order: i + 1,
+        score: (i + 1) * perStep,
+      })),
+      totalSteps: count,
+      maxScore,
+      weight,
+      description: sc.description ?? '',
+    }
+  })
+  return map
 }
 
 // Step scores/weights live in the external (parsed) criteria — the saved
@@ -29,6 +70,42 @@ export const buildStepMetaByTitle = (
     })
   })
   return map
+}
+
+// Builds step assignments (one per sub-criterion, defaulted to the first step)
+// from the manually-entered criteria/sub-criteria answers. Used both for
+// deriving default roles and for seeding an employee's personal step
+// assignments when no import ever populated them.
+export const buildStepAssignmentsFromSubCriteria = (
+  factorTitles: string[],
+  subCriteriaGroups: SubCriterion[][],
+): StepAssignment[] =>
+  subCriteriaGroups.flatMap((group, i) =>
+    (group ?? []).map((sc) => ({
+      criterionTitle: factorTitles[i] ?? '',
+      subTitle: sc.title,
+      stepOrder: 1,
+    })),
+  )
+
+// Fully manual entry never gets a "roles" answer from an Excel import — there
+// is no dedicated UI for creating roles either, so derive them from the
+// distinct job titles already entered on the employees screen, paired with
+// the manually-entered job-factor sub-criteria.
+export const buildRolesFromEmployees = (
+  roleTitles: string[],
+  jobFactorTitles: string[],
+  subCriteriaJobFactors: SubCriterion[][],
+): Role[] => {
+  const stepAssignments = buildStepAssignmentsFromSubCriteria(
+    jobFactorTitles,
+    subCriteriaJobFactors,
+  )
+  const uniqueTitles = Array.from(new Set(roleTitles.filter(Boolean)))
+  return uniqueTitles.map((title) => ({
+    title,
+    stepAssignments: stepAssignments.map((a) => ({ ...a })),
+  }))
 }
 
 export const computeRoleScore = (

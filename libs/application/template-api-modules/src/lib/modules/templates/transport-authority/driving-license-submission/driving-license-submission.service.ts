@@ -30,6 +30,7 @@ import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { FetchError } from '@island.is/clients/middlewares'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { User } from '@island.is/auth-nest-tools'
+import type { Locale } from '@island.is/shared/types'
 import { DriverLicenseWithoutImages } from '@island.is/clients/driving-license'
 import { messages as drivingLicenseMessages } from '@island.is/application/templates/driving-license'
 import {
@@ -103,6 +104,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
   async submitApplication({
     application,
     auth,
+    currentUserLocale,
   }: TemplateApiModuleActionProps): Promise<{ success: boolean }> {
     const { answers } = application
     const nationalId = application.applicant
@@ -128,26 +130,9 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       })
 
       if (e instanceof Error && e.name === 'FetchError') {
-        const err = e as unknown as FetchError
-
-        if (err.problem?.title === 'INSTRUCTOR_DOES_NOT_HAVE_BE_CATEGORY') {
-          throw new TemplateApiError(
-            {
-              title: coreErrorMessages.failedDataProviderSubmit,
-              summary:
-                'Ökukennari er ekki með BE réttindi á ökuskírteini sínu. Vinsamlegast veldu annan ökukennara.',
-            },
-            400,
-          )
-        }
-
-        throw new TemplateApiError(
-          {
-            title:
-              err.problem?.title || coreErrorMessages.failedDataProviderSubmit,
-            summary: err.problem?.detail || '',
-          },
-          err.status || 400,
+        throw await this.toSubmissionError(
+          e as unknown as FetchError,
+          currentUserLocale,
         )
       }
 
@@ -180,6 +165,66 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     this.logger.log(lvl, `[driving-license-submission] ${message}`, meta)
   }
 
+  /**
+   * Turn a failed RLS submission into the error the applicant sees. RLS puts its
+   * error code in `problem.title`; if that code exists in the RLS error-code
+   * table we surface the table's own human-readable text in the user's language
+   * instead of leaking the raw code. Anything we can't resolve (no code, code
+   * not in the table, or a best-effort lookup failure) keeps the previous
+   * behaviour: raw `problem.title` / generic message, with `problem.detail` as
+   * the summary. `describeErrorCode` is best-effort and never throws.
+   */
+  private async toSubmissionError(
+    err: FetchError,
+    locale: Locale,
+  ): Promise<TemplateApiError> {
+    const code = err.problem?.title
+    if (code) {
+      try {
+        const described = await this.drivingLicenseService.describeErrorCode(
+          code,
+        )
+        // The table carries both languages for every code; pick the user's. For
+        // an `en` user with no English text we fall through rather than show
+        // Icelandic (mirrors the eligibility screen).
+        const localized = locale === 'en' ? described?.en : described?.is
+        if (localized) {
+          // Generic header + the RLS text as the body. Both fields must be
+          // non-empty: the payment screen's getErrorReasonIfPresent only treats
+          // a reason as a real provider error (and renders our text) when title
+          // AND summary are set — and RLS often sends a code with no
+          // `problem.detail`, so the text must go in `summary`, not `title`.
+          return new TemplateApiError(
+            {
+              title: coreErrorMessages.failedDataProviderSubmit,
+              summary: localized,
+            },
+            err.status || 400,
+          )
+        }
+      } catch (lookupError) {
+        // describeErrorCode is best-effort; never let resolving the nicer copy
+        // turn a handled submission error into an unhandled 500.
+        this.log('error', 'Failed to resolve RLS error-code description', {
+          lookupError,
+          code,
+        })
+      }
+    }
+
+    // `problem.title` is RLS's raw error *code* (not human text), so it must
+    // never become the user-facing title — always fall back to the generic
+    // message. (An unresolved code with a non-empty `summary` would otherwise
+    // leak the raw code into the opt-in submit-error toast.)
+    return new TemplateApiError(
+      {
+        title: coreErrorMessages.failedDataProviderSubmit,
+        summary: err.problem?.detail || '',
+      },
+      err.status || 400,
+    )
+  }
+
   private async createLicense(
     nationalId: string,
     answers: FormValue,
@@ -200,6 +245,24 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       'fakeData.submitToRLS',
     )
     if (useFakeData === YES && fakeDataSubmitToRLS !== YES) {
+      // Dev-only: simulate a failed RLS submission with a chosen error code so
+      // the payment-step error UI can be exercised end-to-end without calling
+      // RLS. The thrown shape matches a real RLS FetchError, so it flows through
+      // the same `submitApplication` catch → `toSubmissionError` path (and the
+      // code is still resolved against the real error-code table).
+      const fakeSubmitErrorCode = getValueViaPath<string>(
+        answers,
+        'fakeData.submitErrorCode',
+      )
+      if (fakeSubmitErrorCode) {
+        const fakeError = new Error(
+          'Simulated RLS submission failure',
+        ) as Error & { problem?: { title: string }; status?: number }
+        fakeError.name = 'FetchError'
+        fakeError.problem = { title: fakeSubmitErrorCode }
+        fakeError.status = 400
+        throw fakeError
+      }
       return {
         success: true,
         errorMessage: null,

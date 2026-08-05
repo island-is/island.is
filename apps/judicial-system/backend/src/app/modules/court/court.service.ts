@@ -1,5 +1,6 @@
 import formatISO from 'date-fns/formatISO'
 import { Base64 } from 'js-base64'
+import { Op } from 'sequelize'
 import { ConfidentialClientApplication } from '@azure/msal-node'
 
 import { Inject, Injectable, ServiceUnavailableException } from '@nestjs/common'
@@ -16,16 +17,17 @@ import type {
   Subtype,
   User,
   UserDescriptor,
-  UserRole,
 } from '@island.is/judicial-system/types'
 import {
   AppealCaseRulingDecision,
   CaseDecision,
   CaseFileCategory,
+  CaseIndictmentRulingDecision,
   CaseType,
   courtSubtypes,
   IndictmentSubtypeMap,
   isIndictmentCase,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { EventService } from '../event'
@@ -53,7 +55,15 @@ enum RobotEmailType {
   INDICTMENT_CASE_ARRAIGNMENT_DATE = 'INDICTMENT_CASE_ARRAIGNMENT_DATE',
   INDICTMENT_CASE_DEFENDER_INFO = 'INDICTMENT_CASE_DEFENDER_INFO',
   INDICTMENT_CASE_CANCELLATION_NOTICE = 'INDICTMENT_CASE_CANCELLATION_NOTICE',
+  INDICTMENT_CASE_CONCLUSION = 'INDICTMENT_CASE_CONCLUSION',
+  INDICTMENT_CASE_SPOKESPERSON_INFO = 'INDICTMENT_CASE_SPOKESPERSON_INFO',
+  REQUEST_CASE_DEFENDER_INFO = 'REQUEST_CASE_DEFENDER_INFO',
 }
+
+const INDICTMENT_JUDGE_ASSIGNMENT_ROLES = [
+  UserRole.DISTRICT_COURT_JUDGE,
+  UserRole.COURT_OF_APPEALS_JUDGE,
+]
 
 @Injectable()
 export class CourtService {
@@ -106,6 +116,15 @@ export class CourtService {
     return `${firstLetterInValue}${mask}${lastLetterInValueWithoutFileExtension}${
       valueIsFileName ? `.${fileNameEnding}` : ''
     }`
+  }
+
+  private validateCourtRobotEmailParams(
+    courtName?: string,
+    courtCaseNumber?: string,
+  ): void {
+    if (!courtName || !courtCaseNumber) {
+      throw new Error('Missing court name or court case number')
+    }
   }
 
   private getCourtSubtype(
@@ -573,6 +592,107 @@ export class CourtService {
     }
   }
 
+  async updateIndictmentCaseWithSpokespersonInfo(
+    user: User,
+    caseId: string,
+    courtName?: string,
+    courtCaseNumber?: string,
+    civilClaimantNationalId?: string,
+    civilClaimantName?: string,
+    spokespersonNationalId?: string,
+    spokespersonIsLawyer?: boolean,
+  ): Promise<unknown> {
+    try {
+      this.validateCourtRobotEmailParams(courtName, courtCaseNumber)
+
+      const subjectSuffix = spokespersonNationalId
+        ? spokespersonIsLawyer
+          ? 'lögmaður brotaþola'
+          : 'réttargæslumaður brotaþola'
+        : 'brotaþoli'
+      const subject = `${courtName} - ${courtCaseNumber} - ${subjectSuffix}`
+      const content = JSON.stringify({
+        civilClaimantNationalId,
+        civilClaimantName,
+        spokespersonNationalId,
+        spokespersonIsLawyer,
+      })
+
+      return await this.sendToRobot(
+        subject,
+        content,
+        RobotEmailType.INDICTMENT_CASE_SPOKESPERSON_INFO,
+        caseId,
+      )
+    } catch (error) {
+      this.eventService.postErrorEvent(
+        'Failed to update indictment case with spokesperson info',
+        {
+          caseId,
+          actor: user.name,
+          institution: user.institution?.name,
+          courtCaseNumber,
+        },
+        error,
+      )
+
+      throw error
+    }
+  }
+
+  async updateRequestCaseWithDefenderInfo(
+    user: User,
+    caseId: string,
+    courtName?: string,
+    courtCaseNumber?: string,
+    defendantNationalId?: string,
+    defenderName?: string,
+    defenderEmail?: string,
+  ): Promise<unknown> {
+    try {
+      this.validateCourtRobotEmailParams(courtName, courtCaseNumber)
+
+      const subject = `${courtName} - ${courtCaseNumber} - verjandi varnaraðila`
+      const content = JSON.stringify({
+        nationalId: defendantNationalId,
+        defenderName,
+        defenderEmail,
+      })
+
+      return await this.sendToRobot(
+        subject,
+        content,
+        RobotEmailType.REQUEST_CASE_DEFENDER_INFO,
+        caseId,
+      )
+    } catch (error) {
+      this.eventService.postErrorEvent(
+        'Failed to update request case with defender info',
+        {
+          caseId,
+          actor: user.name,
+          institution: user.institution?.name,
+          courtCaseNumber,
+        },
+        error,
+      )
+
+      throw error
+    }
+  }
+
+  async hasPriorIndictmentJudgeAssignment(caseId: string): Promise<boolean> {
+    const assignment = await this.robotLogModel.findOne({
+      where: {
+        caseId,
+        type: RobotEmailType.INDICTMENT_CASE_ASSIGNED_ROLES,
+        elementId: { [Op.in]: INDICTMENT_JUDGE_ASSIGNMENT_ROLES },
+      },
+    })
+
+    return Boolean(assignment)
+  }
+
   async updateIndictmentCaseWithAssignedRoles(
     user: User,
     caseId: string,
@@ -589,6 +709,7 @@ export class CourtService {
         content,
         RobotEmailType.INDICTMENT_CASE_ASSIGNED_ROLES,
         caseId,
+        assignedRole?.role,
       )
     } catch (error) {
       this.eventService.postErrorEvent(
@@ -666,6 +787,44 @@ export class CourtService {
           actor: user.name,
           institution: user.institution?.name,
           courtCaseNumber,
+        },
+        error,
+      )
+
+      throw error
+    }
+  }
+
+  async updateIndictmentCaseWithConclusion(
+    user: User,
+    caseId: string,
+    courtName: string,
+    courtCaseNumber: string,
+    content: Record<string, unknown>,
+    elementId?: string,
+  ): Promise<unknown> {
+    try {
+      this.validateCourtRobotEmailParams(courtName, courtCaseNumber)
+
+      const subject = `${courtName} - ${courtCaseNumber} - lyktir`
+
+      return await this.sendToRobot(
+        subject,
+        JSON.stringify(content),
+        RobotEmailType.INDICTMENT_CASE_CONCLUSION,
+        caseId,
+        elementId,
+      )
+    } catch (error) {
+      this.eventService.postErrorEvent(
+        'Failed to update indictment case with conclusion',
+        {
+          caseId,
+          actor: user.name,
+          institution: user.institution?.name,
+          courtName,
+          courtCaseNumber,
+          content: JSON.stringify(content),
         },
         error,
       )
@@ -948,4 +1107,64 @@ export class CourtService {
         ),
       )
   }
+}
+
+type BuildIndictmentConclusionContentInput = {
+  isCorrection?: boolean
+  courtCaseNumber: string
+  indictmentRulingDecision?: CaseIndictmentRulingDecision
+  rulingDate: Date | string
+  wasAssignedToJudge?: boolean
+  judgeNationalId?: string
+  mergeCaseNumber?: string
+  defendantNationalId?: string
+  splitCaseNumber?: string
+}
+
+export const buildIndictmentConclusionContent = ({
+  isCorrection = false,
+  courtCaseNumber,
+  indictmentRulingDecision,
+  rulingDate,
+  wasAssignedToJudge,
+  judgeNationalId,
+  mergeCaseNumber,
+  defendantNationalId,
+  splitCaseNumber,
+}: BuildIndictmentConclusionContentInput): Record<string, unknown> => {
+  const payload: Record<string, unknown> = {
+    isCorrection,
+    courtCaseNumber,
+    rulingDate:
+      rulingDate instanceof Date ? rulingDate.toISOString() : rulingDate,
+  }
+
+  if (splitCaseNumber !== undefined) {
+    payload.indictmentRulingDecision = 'SPLIT'
+    payload.splitCaseNumber = splitCaseNumber
+  } else if (indictmentRulingDecision) {
+    payload.indictmentRulingDecision = indictmentRulingDecision
+
+    if (indictmentRulingDecision === CaseIndictmentRulingDecision.WITHDRAWAL) {
+      payload.wasAssignedToJudge = Boolean(wasAssignedToJudge)
+      if (judgeNationalId) {
+        payload.judgeNationalId = judgeNationalId
+      }
+    }
+
+    if (
+      indictmentRulingDecision === CaseIndictmentRulingDecision.MERGE &&
+      mergeCaseNumber
+    ) {
+      // TODO(Evolv): Confirm merge payload with Auði
+      payload.mergeCaseNumber = mergeCaseNumber
+    }
+  }
+
+  if (defendantNationalId) {
+    // TODO(Evolv): Confirm per-defendant payload with Auði
+    payload.defendantNationalId = defendantNationalId
+  }
+
+  return payload
 }

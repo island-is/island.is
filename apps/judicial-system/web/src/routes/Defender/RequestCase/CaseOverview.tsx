@@ -23,7 +23,6 @@ import {
   PageHeader,
   PageLayout,
   PdfButton,
-  RulingModifiedAlert,
   SignedDocument,
   ZipButton,
 } from '@island.is/judicial-system-web/src/components'

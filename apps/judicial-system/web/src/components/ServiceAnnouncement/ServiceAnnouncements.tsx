@@ -43,7 +43,7 @@ const mapServiceStatusMessages = (
       return [
         `${subpoena.servedBy ? subpoena.servedBy : ''}${
           subpoena.serviceDate
-            ? ` - ${formatDate(subpoena.serviceDate, 'Pp')}`
+            ? ` - ${formatDate(subpoena.serviceDate, 'dd.MM.y HH:mm')}`
             : ''
         }`,
         formatMessage(strings.servedToDefender, {
@@ -55,7 +55,7 @@ const mapServiceStatusMessages = (
       return [
         formatMessage(strings.servedToElectronically, {
           date: subpoena.serviceDate
-            ? formatDate(subpoena.serviceDate, 'Pp')
+            ? formatDate(subpoena.serviceDate, 'dd.MM.y HH:mm')
             : '',
         }),
       ]
@@ -64,7 +64,7 @@ const mapServiceStatusMessages = (
       return [
         `${subpoena.servedBy ? subpoena.servedBy : ''}${
           subpoena.serviceDate
-            ? ` - ${formatDate(subpoena.serviceDate, 'Pp')}`
+            ? ` - ${formatDate(subpoena.serviceDate, 'dd.MM.y HH:mm')}`
             : ''
         }`,
         subpoena.comment,
@@ -74,7 +74,9 @@ const mapServiceStatusMessages = (
     default:
       return [
         formatMessage(strings.subpoenaCreated, {
-          date: subpoena.created ? formatDate(subpoena.created, 'Pp') : '',
+          date: subpoena.created
+            ? formatDate(subpoena.created, 'dd.MM.y HH:mm')
+            : '',
         }),
       ]
   }

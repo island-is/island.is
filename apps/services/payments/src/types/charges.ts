@@ -8,5 +8,5 @@ export type CatalogItemWithQuantity = CatalogItem & {
 export enum FjsPaymentMethod {
   CARD = 'CARD',
   CLAIM = 'CLAIM',
-  TRANSFER = 'TRANSFER', // not supported yet
+  BANK_TRANSFER = 'TRANSFER',
 }

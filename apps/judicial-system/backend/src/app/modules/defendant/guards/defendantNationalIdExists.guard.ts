@@ -6,8 +6,6 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
-
 import { Case } from '../../repository'
 
 @Injectable()
@@ -27,13 +25,11 @@ export class DefendantNationalIdExistsGuard implements CanActivate {
       throw new BadRequestException('Missing defendant national id')
     }
 
-    const normalizedAndFormattedNationalId =
-      normalizeAndFormatNationalId(defendantNationalId)
+    // defendantNationalId comes from a raw @Param, so normalize it once here
+    const normalizedNationalId = defendantNationalId.replace(/-/g, '')
 
     const defendant = theCase.defendants?.find(
-      (defendant) =>
-        defendant.nationalId &&
-        normalizedAndFormattedNationalId.includes(defendant.nationalId),
+      (defendant) => defendant.nationalId === normalizedNationalId,
     )
 
     if (!defendant) {

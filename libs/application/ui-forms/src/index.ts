@@ -3,6 +3,7 @@ export {
   applicantInformationArray,
   applicantInformationMultiField,
   applicantInformationSchema,
+  parseBankAccountFromBankInfoString,
 } from './lib/applicantInformationMultiField'
 export { applicantInformation as applicantInformationMessages } from './lib/applicantInformationMultiField/messages'
 export { buildFormConclusionSection } from './lib/formConclusionSection/formConclusionSection'
