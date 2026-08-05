@@ -2,14 +2,11 @@ import {
   buildMultiField,
   buildKeyValueField,
   buildDividerField,
-  buildTextField,
   buildSection,
-  buildPhoneField,
-  getValueViaPath,
 } from '@island.is/application/core'
-import { Application, NationalRegistryUser } from '@island.is/api/schema'
+import { applicantInformationArray } from '@island.is/application/ui-forms'
 import { m } from '../../../lib/messages'
-import { BE, B_ADVANCED, formatRegisteredAddress } from '../../../utils'
+import { BE, B_ADVANCED } from '../../../utils'
 
 export const sectionApplicantInfo = buildSection({
   id: 'infoStep',
@@ -22,6 +19,7 @@ export const sectionApplicantInfo = buildSection({
       space: 2,
       children: [
         buildDividerField({}),
+        // Application-specific row on top of the shared applicant fields:
         buildKeyValueField({
           label: m.drivingLicenseTypeRequested,
           value: m.applicationForBELicenseTitle,
@@ -32,45 +30,7 @@ export const sectionApplicantInfo = buildSection({
           value: m.applicationForBAdvancedDescription,
           condition: (answers) => answers.applicationFor === B_ADVANCED,
         }),
-        buildKeyValueField({
-          label: m.informationFullName,
-          value: ({ externalData }) =>
-            getValueViaPath<string>(
-              externalData,
-              'nationalRegistry.data.fullName',
-            ) ?? '',
-          width: 'half',
-        }),
-        buildKeyValueField({
-          label: m.informationStreetAddress,
-          value: ({ externalData }) =>
-            formatRegisteredAddress(
-              getValueViaPath<NationalRegistryUser['address']>(
-                externalData,
-                'nationalRegistry.data.address',
-              ),
-            ),
-          width: 'half',
-        }),
-        buildPhoneField({
-          id: 'phone',
-          width: 'half',
-          required: true,
-          title: m.phoneNumberTitle,
-          defaultValue: ({ externalData }: Application) =>
-            getValueViaPath(
-              externalData,
-              'userProfile.data.mobilePhoneNumber',
-            ) ?? '',
-        }),
-        buildTextField({
-          id: 'email',
-          title: m.informationYourEmail,
-          width: 'half',
-          required: true,
-          defaultValue: ({ externalData }: Application) =>
-            getValueViaPath(externalData, 'userProfile.data.email') ?? '',
-        }),
+        ...applicantInformationArray({ phoneRequired: true }),
       ],
     }),
   ],

@@ -1,10 +1,6 @@
 import { z } from 'zod'
+import { applicantInformationSchema } from '@island.is/application/ui-forms'
 import { AdvancedLicense, B_ADVANCED, BE, Pickup } from '../utils'
-import { parsePhoneNumberFromString } from 'libphonenumber-js'
-const isValidPhoneNumber = (phoneNumber: string) => {
-  const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
-  return phone && phone.isValid()
-}
 const FileSchema = z.object({
   name: z.string(),
   key: z.string(),
@@ -37,8 +33,7 @@ export const dataSchema = z.object({
   advancedLicense: z
     .array(z.enum(Object.values(AdvancedLicense) as [string, ...string[]]))
     .optional(),
-  email: z.string().email(),
-  phone: z.string().refine((v) => isValidPhoneNumber(v)),
+  applicant: applicantInformationSchema({ phoneRequired: true }),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

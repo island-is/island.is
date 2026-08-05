@@ -113,17 +113,22 @@ export const sectionSummary = buildSection({
         buildKeyValueField({
           label: m.overviewPhoneNumber,
           width: 'half',
-          condition: (answers) => !!answers?.phone,
-          value: ({ answers: { phone } }) =>
+          condition: (answers) =>
+            !!getValueViaPath<string>(answers, 'applicant.phoneNumber'),
+          value: ({ answers }) =>
             formatPhoneNumber(
-              (phone as string).replace(/(^00354|^\+354|\D)/g, ''),
+              (
+                getValueViaPath<string>(answers, 'applicant.phoneNumber') ?? ''
+              ).replace(/(^00354|^\+354|\D)/g, ''),
             ),
         }),
         buildKeyValueField({
           label: m.overviewEmail,
           width: 'half',
-          condition: (answers) => !!answers?.email,
-          value: ({ answers: { email } }) => email as string,
+          condition: (answers) =>
+            !!getValueViaPath<string>(answers, 'applicant.email'),
+          value: ({ answers }) =>
+            getValueViaPath<string>(answers, 'applicant.email') ?? '',
         }),
         buildKeyValueField({
           label: m.overviewStreetAddress,
