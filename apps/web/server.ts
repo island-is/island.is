@@ -8,7 +8,6 @@ bootstrap({
   name: 'web',
   appDir: 'apps/web',
   proxyConfig,
-  csp: buildCsp,
   externalEndpointDependencies: () => {
     const { graphqlUrl } = getServerRuntimeEnv()
     return [graphqlUrl]
