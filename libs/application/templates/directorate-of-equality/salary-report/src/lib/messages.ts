@@ -938,7 +938,8 @@ export const messages = {
     },
     alertDescription: {
       id: 'salaryReport.application:inReview.alertDescription',
-      defaultMessage: lorem,
+      defaultMessage:
+        'Við höfum móttekið launagreiningarskýrsluna þína og hún verður yfirfarin af Jafnréttisstofu. Þú færð senda staðfestingu þegar yfirferð er lokið. Ef frekari upplýsingar vantar mun Jafnréttisstofa hafa samband við þig.',
     },
   }),
 

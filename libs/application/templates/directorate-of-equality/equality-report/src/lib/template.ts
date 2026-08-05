@@ -9,8 +9,6 @@ import {
   ApplicationConfigurations,
   IdentityApi,
   defineTemplateApi,
-  ApplicationRole,
-  Application,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import {
@@ -22,6 +20,7 @@ import {
   PreviousEqualityReportContentApi,
 } from '../dataProviders'
 import { ApiActions, Events, Roles, States } from '../utils/constants'
+import { mapUserToRole } from '../utils/mapUserToRole'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
 import {
@@ -33,7 +32,6 @@ import {
 import { messages } from './messages'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
-import { isCompany } from 'kennitala'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -257,18 +255,7 @@ const template: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole(
-    nationalId: string,
-    application: Application,
-  ): ApplicationRole | undefined {
-    if (
-      isCompany(application.applicant) &&
-      nationalId === application.applicant
-    ) {
-      return Roles.APPLICANT
-    }
-    return Roles.NOT_ALLOWED
-  },
+  mapUserToRole,
 }
 
 export default template
