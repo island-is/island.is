@@ -22,7 +22,6 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { Link, matchPath, useNavigate } from 'react-router-dom'
 import { DocumentsPaths } from '@island.is/portals/my-pages/documents'
-import { theme } from '@island.is/island-ui/theme'
 import { DocumentsScope } from '@island.is/auth/scopes'
 import { FinancePaths } from '@island.is/portals/my-pages/finance'
 import { useUserInfo } from '@island.is/react-spa/bff'
@@ -69,17 +68,19 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
     <Box
       as="main"
       component="main"
-      className={
+      className={[
+        styles.fullWidthMinHeight,
         isDocuments && hasDocumentsDelegationAccess
           ? styles.fullWidthSplit
-          : undefined
-      }
+          : undefined,
+      ]
+        .filter(Boolean)
+        .join(' ')}
       paddingTop={
         isDocuments || isDashboard ? undefined : isFinance ? [0, 0, 9] : 9
       }
       style={{
         marginTop: height,
-        minHeight: `calc(100vh - ${theme.headerHeight.large}px`,
       }}
     >
       <Box className={styles.fullWidthInner} marginX={'auto'}>

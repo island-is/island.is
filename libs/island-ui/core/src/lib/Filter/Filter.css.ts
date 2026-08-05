@@ -128,7 +128,6 @@ export const content = style({
   flex: 1,
   minHeight: 0,
   overflowY: 'auto',
-  WebkitOverflowScrolling: 'touch',
   overscrollBehavior: 'contain',
   padding: `0 ${theme.spacing['3']}`,
   paddingBottom: theme.spacing['8'],
