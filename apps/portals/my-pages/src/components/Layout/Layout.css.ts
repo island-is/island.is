@@ -38,9 +38,12 @@ export const fullWidthMinHeight = style({
   minHeight: `calc(100vh - ${theme.headerHeight.large}px)`,
 })
 
-// Mobile browser chrome (address bar) resizes the visual viewport as the
-// user scrolls, which makes a static 100vh cut off or leave a gap at the
-// bottom of full-bleed views (Dashboard, Search, Finance, Documents).
+/*
+ *  Mobile browser chrome (address bar) resizes the visual viewport as the
+ *  user scrolls, which makes a static 100vh cut off or leave a gap at the
+ *  bottom of full-bleed views (Dashboard, Search, Finance, Documents).
+ */
+
 globalStyle(`@supports (height: 100dvh)`, {
   [fullWidthMinHeight]: {
     minHeight: `calc(100dvh - ${theme.headerHeight.large}px)`,

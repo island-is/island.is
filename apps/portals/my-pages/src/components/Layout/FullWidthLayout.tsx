@@ -23,6 +23,7 @@ import {
 import { Link, matchPath, useNavigate } from 'react-router-dom'
 import { DocumentsPaths } from '@island.is/portals/my-pages/documents'
 import { DocumentsScope } from '@island.is/auth/scopes'
+import cn from 'classnames'
 import { FinancePaths } from '@island.is/portals/my-pages/finance'
 import { useUserInfo } from '@island.is/react-spa/bff'
 
@@ -68,14 +69,9 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
     <Box
       as="main"
       component="main"
-      className={[
-        styles.fullWidthMinHeight,
-        isDocuments && hasDocumentsDelegationAccess
-          ? styles.fullWidthSplit
-          : undefined,
-      ]
-        .filter(Boolean)
-        .join(' ')}
+      className={cn(styles.fullWidthMinHeight, {
+        [styles.fullWidthSplit]: isDocuments && hasDocumentsDelegationAccess,
+      })}
       paddingTop={
         isDocuments || isDashboard ? undefined : isFinance ? [0, 0, 9] : 9
       }

@@ -147,9 +147,12 @@ export const fullScreen = style({
   }),
 })
 
-// Mobile browser chrome (address bar) resizes the visual viewport as the
-// user scrolls, which makes a static 100vh leave a gap at the bottom of
-// this fixed-position drawer. Small dvh upgrade when supported.
+/*
+ * Mobile browser chrome (address bar) resizes the visual viewport as the
+ * user scrolls, which makes a static 100vh leave a gap at the bottom of
+ * this fixed-position drawer. Small dvh upgrade when supported.
+ */
+
 globalStyle(`@supports (height: 100dvh)`, {
   [dropdown]: {
     height: `calc(100dvh - ${theme.headerHeight.small}px)`,
