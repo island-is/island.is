@@ -5,11 +5,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { getValueViaPath } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import ReviewSection from './ApplicationSection'
-import {
-  AdvancedLicense,
-  B_ADVANCED,
-  groupAdvancedLicenses,
-} from '../../utils'
+import { AdvancedLicense, B_ADVANCED, groupAdvancedLicenses } from '../../utils'
 import { m } from '../../lib/messages'
 
 const messages = m as unknown as Record<string, MessageDescriptor | undefined>
