@@ -39,7 +39,9 @@ export interface ContentSecurityPolicyOptions {
 
 export const buildContentSecurityPolicy = (
   nonce: string,
-  { matomoDomain = process.env.MATOMO_DOMAIN }: ContentSecurityPolicyOptions = {},
+  {
+    matomoDomain = process.env.MATOMO_DOMAIN,
+  }: ContentSecurityPolicyOptions = {},
 ): string => {
   const matomo = matomoDomain
   const directives: Record<string, string[]> = {
