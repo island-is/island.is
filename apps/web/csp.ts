@@ -7,13 +7,13 @@
  * every page's inline script was blocked — which broke SSR Suspense (React
  * error #419) and forced client-side rendering.
  *
- * Instead we mint a per-request nonce and put it in `script-src` (replacing the
- * two stale hashes). The nonce is applied by the custom server (see
- * `@island.is/infra-next-server` bootstrap `csp` option), which sets it on the
- * request's `content-security-policy` header before Next renders. Next reads it
- * (getScriptNonceFromHeader) and stamps its own inline scripts. This is done in
- * the custom server rather than Next middleware because middleware request-header
- * overrides do not reach the pages renderer through the Express custom server.
+ * Instead we mint a per-request nonce and put it in `script-src`. The nonce is
+ * applied by the custom server (see `@island.is/infra-next-server` bootstrap
+ * `csp` option), which sets it on the request's `content-security-policy` header
+ * before Next renders. Next reads it (getScriptNonceFromHeader) and stamps its
+ * own inline scripts. This is done in the custom server rather than Next
+ * middleware because middleware request-header overrides do not reach the pages
+ * renderer through the Express custom server.
  *
  * NB: Next 16's pages router does NOT forward that nonce into React 19's
  * streaming renderer, so React's inline Suspense streaming scripts ($RC/$RB…)
@@ -22,11 +22,35 @@
  * `renderToInitialFizzStream` (see .yarn/patches/next-npm-*.patch). Both this CSP
  * wiring AND that patch are required for a working nonce CSP on the pages router.
  *
- * Every directive is copied verbatim from the previous CloudFront policy; only
- * `script-src` differs (the two `sha256-…` hashes are replaced by the nonce).
- * The app now owns the CSP outright — CloudFront lets the origin header through.
+ * Ownership: prefer a single source of truth at the ingress. When CloudFront
+ * sends the policy as the `x-csp-template` request header (with a `{nonce}`
+ * placeholder), `buildCsp` just substitutes the per-request nonce — DevOps keeps
+ * owning the allow-list, the app owns only the nonce. When that header is absent
+ * the app falls back to the bundled policy below (copied verbatim from the
+ * previous CloudFront policy; only `script-src` differs — the two stale
+ * `sha256-…` hashes are replaced by the nonce), so ownership can move to the
+ * ingress later with no app redeploy.
  */
-export const buildCsp = (nonce: string): string => {
+export const buildCsp = (nonce: string, template?: string): string =>
+  template ? injectNonce(template, nonce) : bundledPolicy(nonce)
+
+/**
+ * Substitute the per-request nonce into an ingress-provided policy template.
+ * Prefers an explicit `{nonce}` placeholder; if none is present, adds the nonce
+ * source to `script-src` (or appends a `script-src` if the template lacks one).
+ */
+const injectNonce = (template: string, nonce: string): string => {
+  const source = `'nonce-${nonce}'`
+  if (template.includes('{nonce}')) {
+    return template.split('{nonce}').join(source)
+  }
+  if (/(^|;)\s*script-src\s/i.test(template)) {
+    return template.replace(/((^|;)\s*script-src)\s/i, `$1 ${source} `)
+  }
+  return `${template.replace(/;\s*$/, '')}; script-src ${source}`
+}
+
+const bundledPolicy = (nonce: string): string => {
   const directives: Record<string, string[]> = {
     'default-src': [
       "'self'",

@@ -41,19 +41,33 @@ type BootstrapOptions = {
   externalEndpointDependencies?: ExternalEndpointDependencies
 
   /**
-   * Opt-in per-request Content-Security-Policy. Given a fresh nonce, returns the
-   * CSP string. When set, a nonce is minted per document request and placed on
-   * the request's `content-security-policy` header (which Next reads to nonce its
-   * own inline scripts) and on the response header. Done here rather than in Next
-   * middleware because middleware request-header overrides do not reach the pages
-   * renderer through this custom server.
+   * Opt-in per-request Content-Security-Policy. Given a fresh nonce (and, when
+   * provided, the CSP `template` from the `x-csp-template` request header), returns
+   * the final CSP string. When set, a nonce is minted per document request and the
+   * result is placed on the request's `content-security-policy` header (which Next
+   * reads to nonce its own inline scripts) and on the response header. Done here
+   * rather than in Next middleware because middleware request-header overrides do
+   * not reach the pages renderer through this custom server.
+   *
+   * The `template` seam keeps the allow-list a single source of truth owned by the
+   * ingress layer (CloudFront): it sends the policy (with a `{nonce}` placeholder)
+   * as `x-csp-template`, and the app only substitutes the per-request nonce. When
+   * the header is absent the app falls back to its own bundled policy, so ownership
+   * can transfer without an app redeploy. NB: the ingress MUST strip any
+   * client-supplied `x-csp-template` so it cannot be spoofed.
    *
    * NB: nonce-ing React 19's streaming Suspense scripts additionally requires the
    * `yarn patch` on `next` that forwards the nonce into `renderToInitialFizzStream`
    * (see .yarn/patches/next-npm-*.patch) — Next 16's pages router omits it.
    */
-  csp?: (nonce: string) => string
+  csp?: (nonce: string, template?: string) => string
 }
+
+/**
+ * Request header the ingress (CloudFront) uses to hand the app its CSP policy
+ * (with a `{nonce}` placeholder). Stripped before Next sees the request.
+ */
+const CSP_TEMPLATE_HEADER = 'x-csp-template'
 
 const startServer = (app: Express, port = 4200) => {
   const nextPort = parseInt(process.env.PORT || '') || port
@@ -117,7 +131,14 @@ export const bootstrap = async (options: BootstrapOptions) => {
       )
     ) {
       const nonce = randomBytes(16).toString('base64')
-      const policy = options.csp(nonce)
+      // Ingress-owned policy template (single source of truth). Strip it before
+      // Next sees the request so a client-supplied value can never leak through.
+      const template = req.headers[CSP_TEMPLATE_HEADER]
+      delete req.headers[CSP_TEMPLATE_HEADER]
+      const policy = options.csp(
+        nonce,
+        typeof template === 'string' ? template : undefined,
+      )
       req.headers['content-security-policy'] = policy
       res.setHeader('Content-Security-Policy', policy)
     }
