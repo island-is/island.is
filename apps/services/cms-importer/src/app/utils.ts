@@ -24,6 +24,7 @@ export const processJob = () =>
         'fsre-buildings-import',
         'web-sitemap',
         'cms-cleanup',
+        'rsk-treaties-import',
         'lyfjastofnun-forms-import',
         'lyfjastofnun-instructions-import',
         'lyfjastofnun-lists-import',

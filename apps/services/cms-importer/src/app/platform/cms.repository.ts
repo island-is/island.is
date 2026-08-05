@@ -155,6 +155,61 @@ export class CmsRepository {
     }
   }
 
+  findAssetByFileName = async (fileName: string): Promise<Asset | null> => {
+    // Contentful's query API only supports equality search on top-level
+    // fields, not nested properties like file.fileName — filter client-side
+    // instead (same approach as findOrCreateLinkUrlEntry).
+    const response = await this.managementClient.getAssets()
+    if (!response.ok) return null
+    const match = response.data.items.find(
+      (asset) => asset.fields.file?.[LOCALE]?.fileName === fileName,
+    )
+    return match ?? null
+  }
+
+  createAsset = async (
+    data: Omit<AssetProps, 'sys'>,
+    publish = false,
+  ): Promise<Asset | null> => {
+    const createResult = await this.managementClient.createAsset(data)
+
+    if (!createResult.ok) {
+      logger.warn('Failed to create asset', { error: createResult.error })
+      return null
+    }
+
+    try {
+      const processed = await createResult.data.processForAllLocales()
+      return publish ? processed.publish() : processed
+    } catch (error) {
+      logger.error('Failed to process asset', { error })
+      return null
+    }
+  }
+
+  findOrCreateLinkUrlEntry = async (
+    url: string,
+  ): Promise<Entry | undefined> => {
+    const existing = await this.getContentByType('linkUrl')
+    const match = existing.find((entry) => entry.fields?.url?.[LOCALE] === url)
+    if (match) {
+      logger.debug('Found existing linkUrl entry', { id: match.sys.id, url })
+      return match
+    }
+
+    const cmsContentType = await this.getContentType('linkUrl')
+    if (!cmsContentType) {
+      logger.warn('linkUrl content type fetch failed, cannot create entry', {
+        url,
+      })
+      return undefined
+    }
+
+    return this.createSingleEntry(cmsContentType, {
+      fields: { url: { [LOCALE]: url } },
+    })
+  }
+
   createEntries = async (
     entries: Array<EntryCreationDto>,
     contentType: ContentTypeOptions,
@@ -264,6 +319,13 @@ export class CmsRepository {
         id: createdEntry.data.sys.id,
       })
       return publish ? createdEntry.data.publish() : createdEntry.data
+    }
+
+    if (createdEntry && !createdEntry.ok) {
+      logger.warn('Entry creation failed', {
+        error: createdEntry.error,
+        id: input.fields?.['slug']?.[LOCALE],
+      })
     }
 
     return

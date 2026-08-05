@@ -1,3 +1,4 @@
+import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types'
 import { decode } from 'html-entities'
 import { LOCALE, EN_LOCALE } from '../constants'
 import {
@@ -5,6 +6,7 @@ import {
   EntryCreationDto,
   Localized,
   RichTextParagraph,
+  RichTextValue,
 } from './cms.types'
 
 export const stripHtml = (html: string): string =>
@@ -22,41 +24,62 @@ export const makeTagMetadata = (
   })),
 })
 
+const buildInlineNode = (item: RichTextValue) => {
+  const textNode = {
+    data: {},
+    nodeType: 'text' as const,
+    marks: item.isBold ? [{ type: MARKS.BOLD }] : [],
+    value: item.value,
+  }
+
+  if (!item.link) {
+    return textNode
+  }
+
+  if (item.link.type === 'hyperlink') {
+    return {
+      data: { uri: item.link.uri },
+      nodeType: INLINES.HYPERLINK,
+      content: [textNode],
+    }
+  }
+
+  return {
+    data: {
+      target: {
+        sys: {
+          type: 'Link' as const,
+          linkType: 'Asset' as const,
+          id: item.link.assetId,
+        },
+      },
+    },
+    nodeType: INLINES.ASSET_HYPERLINK,
+    content: [textNode],
+  }
+}
+
+const buildRichTextDocument = (
+  paragraphs: Array<RichTextParagraph>,
+): CmsRichTextDocument => ({
+  data: {},
+  nodeType: BLOCKS.DOCUMENT,
+  content: paragraphs.map((paragraph) => ({
+    data: {},
+    nodeType: BLOCKS.PARAGRAPH,
+    content: paragraph.values.map(buildInlineNode),
+  })),
+})
+
 export const mapLocalizedRichTextDocument = (
   isContent: Array<RichTextParagraph>,
   enContent?: Array<RichTextParagraph>,
 ): Localized<CmsRichTextDocument> => {
   return {
     ...(enContent && {
-      [EN_LOCALE]: {
-        data: {},
-        nodeType: 'document',
-        content: enContent.map((paragraph) => ({
-          data: {},
-          nodeType: 'paragraph',
-          content: paragraph.values.map((item) => ({
-            data: {},
-            marks: item.isBold ? [{ type: 'bold' }] : [],
-            value: item.value,
-            nodeType: 'text',
-          })),
-        })),
-      },
+      [EN_LOCALE]: buildRichTextDocument(enContent),
     }),
-    [LOCALE]: {
-      data: {},
-      nodeType: 'document',
-      content: isContent.map((paragraph) => ({
-        data: {},
-        nodeType: 'paragraph',
-        content: paragraph.values.map((item) => ({
-          data: {},
-          marks: item.isBold ? [{ type: 'bold' }] : [],
-          value: item.value,
-          nodeType: 'text',
-        })),
-      })),
-    },
+    [LOCALE]: buildRichTextDocument(isContent),
   }
 }
 
