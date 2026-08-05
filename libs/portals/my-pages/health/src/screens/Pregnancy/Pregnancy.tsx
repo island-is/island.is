@@ -1,9 +1,10 @@
-import { Button, Text } from '@island.is/island-ui/core'
+import { Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   InfoCard,
   InfoCardGrid,
   IntroWrapper,
+  LinkButton,
   m,
 } from '@island.is/portals/my-pages/core'
 import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
@@ -54,25 +55,17 @@ const Pregnancy = () => {
     <IntroWrapper
       title={messages.myPregnancy}
       intro={messages.myPregnancyIntro}
-      childrenWidthFull
-      buttonGroup={[
-        <Button
-          variant="utility"
-          size="small"
-          key="button1"
-          as="span"
-          iconType="outline"
-          icon="open"
-        >
-          <a
-            href={formatMessage(messages.readingMaterialPregnancyLink)}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {formatMessage(messages.readingMaterialPregnancy)}
-          </a>
-        </Button>,
-      ]}
+      buttonGroup={{
+        actions: [
+          <LinkButton
+            key="reading-material-pregnancy"
+            to={formatMessage(messages.readingMaterialPregnancyLink)}
+            text={formatMessage(messages.readingMaterialPregnancy)}
+            variant="utility"
+            icon="open"
+          />,
+        ],
+      }}
     >
       {/* My appointments - TODO: fetch only pregnancy related time appointments */}
       {showAppointments && (
@@ -137,6 +130,7 @@ const Pregnancy = () => {
       />
       {/* Pregnancy details */}
       <InfoCard
+        title={formatMessage(messages.pregnancy)}
         size="large"
         variant="detail"
         fontSize="medium"

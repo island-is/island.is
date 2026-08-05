@@ -13,7 +13,6 @@ const Communications = () => {
     <IntroWrapper
       title={messages.communications}
       intro={messages.communicationsPregnancyIntro}
-      childrenWidthFull
     >
       {/* Display documents for pregnancy -> Fix and display only pregnancy related data */}
       <DocumentsList documents={filteredDocuments} loading={loading} />
