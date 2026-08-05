@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common'
-import fs from 'fs'
-import path from 'path'
 import { logger } from '@island.is/logging'
 import { CmsRepository } from '../../../../platform/cms.repository'
 import {
@@ -18,7 +16,7 @@ import {
 import { LOCALE } from '../../../../constants'
 import { cleanImageTitle, guessImageContentType } from './utils'
 import { buildNewsEntry } from './news.mapper'
-import { IMAGE_BANK_DIR, IMPORT_LIMIT, NEWS_CONTENT_TYPE } from './constants'
+import { IMPORT_LIMIT, NEWS_CONTENT_TYPE } from './constants'
 
 interface Link {
   assetId: string
@@ -86,10 +84,8 @@ export class LyfjastofnunNewsImportService {
     publish: boolean,
   ): Promise<string | null> {
     const inlineUrl = extractFirstImageUrl(post.content?.rendered ?? '')
-    if (inlineUrl) {
-      return this.uploadRemoteImage(inlineUrl, post.slug, publish)
-    }
-    return this.uploadImageFromBank(post.slug, publish)
+    if (!inlineUrl) return null
+    return this.uploadRemoteImage(inlineUrl, post.slug, publish)
   }
 
   private async uploadRemoteImage(
@@ -135,72 +131,5 @@ export class LyfjastofnunNewsImportService {
 
     logger.info('Inline image uploaded', { slug, assetId: asset.sys.id })
     return asset.sys.id
-  }
-
-  private async uploadImageFromBank(
-    slug: string,
-    publish: boolean,
-  ): Promise<string | null> {
-    const bankFile = this.pickRandomBankImage()
-    if (!bankFile) {
-      logger.warn('Image bank is empty', { slug })
-      return null
-    }
-
-    const { filePath, fileName } = bankFile
-    const title = cleanImageTitle(fileName)
-
-    const existing = await this.cmsRepository.findAssetByFileName(fileName)
-    if (existing) {
-      logger.info('Bank image already exists in Contentful, reusing', {
-        slug,
-        assetId: existing.sys.id,
-      })
-      return existing.sys.id
-    }
-
-    logger.info('Uploading image from bank', { slug, fileName })
-
-    const asset = await this.cmsRepository.createLocalAsset(
-      {
-        fields: {
-          title: { [LOCALE]: title },
-          description: { [LOCALE]: '' },
-          file: {
-            [LOCALE]: {
-              contentType: guessImageContentType(fileName),
-              fileName,
-              file: fs.createReadStream(filePath),
-            },
-          },
-        },
-      },
-      [LYFJASTOFNUN_OWNER_TAG],
-      publish,
-    )
-
-    if (!asset) {
-      logger.warn('Failed to upload bank image', { slug, fileName })
-      return null
-    }
-
-    logger.info('Bank image uploaded', {
-      slug,
-      assetId: asset.sys.id,
-      fileName,
-    })
-    return asset.sys.id
-  }
-
-  private pickRandomBankImage(): { filePath: string; fileName: string } | null {
-    if (!fs.existsSync(IMAGE_BANK_DIR)) return null
-
-    const files = fs
-      .readdirSync(IMAGE_BANK_DIR)
-      .filter((f) => /\.(jpg|jpeg|png|gif|webp|jfif)$/i.test(f))
-    if (!files.length) return null
-
-    const fileName = files[Math.floor(Math.random() * files.length)]
-    return { filePath: path.join(IMAGE_BANK_DIR, fileName), fileName }
   }
 }

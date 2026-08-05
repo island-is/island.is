@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common'
 import { isDefined } from '@island.is/shared/utils'
 import {
   Asset,
-  AssetFileProp,
   AssetProps,
   ContentFields,
   ContentType,
@@ -131,38 +130,6 @@ export class CmsRepository {
       return publish ? processed.publish() : processed
     } catch (error) {
       logger.error('Failed to process asset', { error })
-      return null
-    }
-  }
-
-  createLocalAsset = async (
-    data: Omit<AssetFileProp, 'sys'>,
-    tags: string[],
-    publish = false,
-  ): Promise<Asset | null> => {
-    const createResult = await this.managementClient.createAssetFromLocalFile(
-      data,
-    )
-
-    if (!createResult.ok) {
-      logger.warn('Failed to create local asset', {
-        error: createResult.error,
-      })
-      return null
-    }
-
-    try {
-      const asset = createResult.data
-      asset.metadata = {
-        tags: tags.map((id) => ({
-          sys: { type: 'Link' as const, linkType: 'Tag' as const, id },
-        })),
-      }
-      const updated = await asset.update()
-      const processed = await updated.processForAllLocales()
-      return publish ? processed.publish() : processed
-    } catch (error) {
-      logger.error('Failed to process local asset', { error })
       return null
     }
   }

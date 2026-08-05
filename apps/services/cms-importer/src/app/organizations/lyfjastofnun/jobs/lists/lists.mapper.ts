@@ -71,7 +71,9 @@ export const mapEntryCreationDto = (
       tagIds: [resolveCategoryTagId(item.groupTitle)],
       cardIntro: buildCardIntro(item),
       assetId: link.assetId,
+      assetIdEn: link.assetId,
       externalLinkId: link.externalLinkId,
+      externalLinkIdEn: link.externalLinkId,
     },
   })
 }

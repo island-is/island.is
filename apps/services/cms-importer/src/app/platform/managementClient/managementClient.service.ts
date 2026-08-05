@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import {
   Asset,
-  AssetFileProp,
   AssetProps,
   ClientAPI,
   Collection,
@@ -63,16 +62,6 @@ export class ManagementClientService {
       .getSpace(SPACE_ID)
       .then((space) => space.getEnvironment(ENVIRONMENT))
       .then((env) => env.createAsset(data))
-      .then((asset) => ({ ok: true as const, data: asset }))
-      .catch((e) => ({ ok: false as const, error: e }))
-
-  createAssetFromLocalFile = async (
-    data: Omit<AssetFileProp, 'sys'>,
-  ): Promise<ContentfulFetchResponse<Asset>> =>
-    this.client
-      .getSpace(SPACE_ID)
-      .then((space) => space.getEnvironment(ENVIRONMENT))
-      .then((env) => env.createAssetFromFiles(data))
       .then((asset) => ({ ok: true as const, data: asset }))
       .catch((e) => ({ ok: false as const, error: e }))
 
