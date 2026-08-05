@@ -396,9 +396,9 @@ export class FinancialAidService extends BaseTemplateApiService {
           phoneNumber: answers.contactInfo.phone,
           email: answers.contactInfo.email,
           homeCircumstances: answers.homeCircumstances.type,
-          homeCircumstancesCustom: answers.homeCircumstances.custom,
+          homeCircumstancesCustom: answers.homeCircumstances.custom || '',
           student: Boolean(answers.student.isStudent === ApproveOptions.Yes),
-          studentCustom: answers.student.custom,
+          studentCustom: answers.student.custom || '',
           hasIncome: Boolean(answers.income === ApproveOptions.Yes),
           usePersonalTaxCredit: Boolean(
             answers.personalTaxCredit === ApproveOptions.Yes,
@@ -407,7 +407,7 @@ export class FinancialAidService extends BaseTemplateApiService {
           ledger: answers.bankInfo.ledger,
           accountNumber: answers.bankInfo.accountNumber,
           employment: answers.employment.type,
-          employmentCustom: answers.employment.custom,
+          employmentCustom: answers.employment.custom || '',
           formComment: answers.formComment,
           state: ApplicationState.NEW,
           files: files, // attachments
