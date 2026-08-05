@@ -41,7 +41,7 @@ export const messages = {
     },
     institution: {
       id: 'equalityReport.application:general.institution',
-      defaultMessage: 'Dómsmálaráðuneytið',
+      defaultMessage: 'Jafnréttisstofa',
     },
   }),
 

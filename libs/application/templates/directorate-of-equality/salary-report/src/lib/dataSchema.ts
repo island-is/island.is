@@ -2,7 +2,7 @@ import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { messages } from './messages'
 import { EMAIL_REGEX } from '@island.is/application/core'
-import { PERIOD_ONE_MONTH, PERIOD_TWELVE_MONTHS } from './constants'
+import { Gender, PERIOD_ONE_MONTH, PERIOD_TWELVE_MONTHS } from './constants'
 
 const generalInformation = z.object({
   companyName: z.string().optional(),
@@ -21,9 +21,11 @@ const chiefExecutive = z.object({
   email: z.string().refine((v) => EMAIL_REGEX.test(v), {
     params: messages.errors.invalidEmail,
   }),
-  gender: z
+  jobTitle: z
     .string()
     .refine((v) => v && v.length > 0, { params: messages.errors.required }),
+
+  gender: z.nativeEnum(Gender),
 })
 
 const contactPerson = z.object({
