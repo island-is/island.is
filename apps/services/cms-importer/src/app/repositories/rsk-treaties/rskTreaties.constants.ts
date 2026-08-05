@@ -6,7 +6,10 @@ export const SKATTURINN_BASE_URL = 'https://www.skatturinn.is'
 export const ISLAND_IS_SEARCH_URL = 'https://island.is/stjornartidindi/leit'
 export const ISLAND_IS_VIEWER_BASE_URL = 'https://island.is/stjornartidindi/nr'
 
-export const TAB_SEARCH_KEYWORD: Record<'samningar' | 'upplysingaskipti', string> = {
+export const TAB_SEARCH_KEYWORD: Record<
+  'samningar' | 'upplysingaskipti',
+  string
+> = {
   samningar: 'tvísköttunarsamning',
   upplysingaskipti: 'upplýsingaskiptasamning',
 }
