@@ -11,8 +11,7 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/web",
-        "webpack": true
+        "outputPath": "dist/apps/web"
       },
       "configurations": {
         "development": {
@@ -28,8 +27,7 @@
       "options": {
         "buildTarget": "web:build",
         "dev": true,
-        "customServerTarget": "web:serve-custom-server",
-        "webpack": true
+        "customServerTarget": "web:serve-custom-server"
       },
       "configurations": {
         "development": {
@@ -101,6 +99,15 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "graphql-codegen --config apps/web/codegen.yml"
+      }
+    },
+    "analyze": {
+      "executor": "nx:run-commands",
+      "metadata": {
+        "description": "Turbopack bundle analyzer UI on http://localhost:4000. Add --port=N to move it, -o to only write files. Writes ~466MB into apps/web/.next (shared with the dev server's output dir), so clean up after."
+      },
+      "options": {
+        "command": "next experimental-analyze apps/web"
       }
     },
     "dev-init": {

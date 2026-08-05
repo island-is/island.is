@@ -6,6 +6,7 @@ import proxyConfig from './proxy.config.json'
 bootstrap({
   name: 'web',
   appDir: 'apps/web',
+  turbopack: true,
   proxyConfig,
   externalEndpointDependencies: () => {
     const { graphqlUrl } = getServerRuntimeEnv()

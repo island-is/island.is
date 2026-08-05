@@ -38,6 +38,12 @@ type BootstrapOptions = {
    * a callback function, which is called when the next config has loaded.
    */
   externalEndpointDependencies?: ExternalEndpointDependencies
+
+  /**
+   * Bundle with Turbopack in dev instead of webpack. Only for apps whose
+   * next.config.js no longer has custom webpack config.
+   */
+  turbopack?: boolean
 }
 
 const startServer = (app: Express, port = 4200) => {
@@ -74,7 +80,7 @@ export const bootstrap = async (options: BootstrapOptions) => {
 
   await setupProxy(expressApp, options.proxyConfig, dev)
 
-  const nextConfig = await getNextConfig(options.appDir, dev)
+  const nextConfig = await getNextConfig(options.appDir, dev, options.turbopack)
   const nextApp = next(nextConfig)
   const handle = nextApp.getRequestHandler()
   const readyPromise = nextApp.prepare()
