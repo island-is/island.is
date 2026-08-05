@@ -21,6 +21,7 @@ export const enum States {
   SUBMITTED = 'submitted',
   REJECTED = 'rejected',
   APPROVED = 'approved',
+  APPLICATION_BLOCKED = 'applicationBlocked',
 }
 
 export type Events =
@@ -37,6 +38,7 @@ export enum ApiModuleActions {
   notifyApplicantOfRejectionFromOtherGuardian = 'notifyApplicantOfRejectionFromOtherGuardian',
   assignPayer = 'assignPayer',
   notifyApplicantOfRejectionFromPayer = 'notifyApplicantOfRejectionFromPayer',
+  getIsApplicationBlocked = 'getIsApplicationBlocked',
 }
 
 export enum Roles {

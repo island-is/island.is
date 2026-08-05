@@ -24,13 +24,28 @@ fragment AuthAdminScopeEnvironmentFragment on AuthAdminScopeEnvironment {
 
   supportedDelegationTypes
   automaticDelegationGrant
+
+  # Access control
+  allowsWrite
+  requiresConfirmation
+
+  # Third party delegation login
+  thirdPartyLoginUrl
+
+  # Categories and Tags
+  categoryIds
+  tagIds
+
+  modified
 }
 
 query AuthAdminScope($input: ScopeInput!) {
   authAdminScope(input: $input) {
     scopeName
+    modified
     environments {
       ...AuthAdminScopeEnvironmentFragment
+      userNationalIds
     }
     defaultEnvironment {
       environment

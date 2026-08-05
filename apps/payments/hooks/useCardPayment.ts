@@ -15,21 +15,19 @@ import {
   useGetVerificationStatusLazyQuery,
 } from '../graphql/queries.graphql.generated'
 import { findProblemInApolloError } from '@island.is/shared/problem'
+import { getBrowserInfo } from '../utils/browserInfo'
 import { PaymentError } from '../utils/error/error'
 import { ApolloError } from '@apollo/client'
 
 interface UseCardPaymentProps {
   paymentFlow: GetPaymentFlowQuery['paymentsGetFlow'] | null
-  productInformation: {
-    amount: number
-    title: string
-  }
   onPaymentSuccess: (paymentMethod: 'card' | 'invoice') => void
   onPaymentError: (error: PaymentError) => void
   setThreeDSecureModalActive: (isActive: boolean) => void
 }
 
 interface CardPaymentData {
+  cardholderName: string
   number: string
   expiryMonth: number
   expiryYear: number
@@ -38,7 +36,6 @@ interface CardPaymentData {
 
 export const useCardPayment = ({
   paymentFlow,
-  productInformation,
   onPaymentSuccess,
   onPaymentError,
   setThreeDSecureModalActive,
@@ -181,11 +178,14 @@ export const useCardPayment = ({
 
       try {
         const verifyCardResponse = await verifyCardApi({
-          amount: productInformation.amount,
           cardNumber: cardData.number,
           expiryMonth: cardData.expiryMonth,
           expiryYear: cardData.expiryYear,
           paymentFlowId: paymentFlow.id,
+          // 3-D Secure authentication data: who the cardholder is and the
+          // browser environment the authentication happens in.
+          cardholderName: cardData.cardholderName,
+          browserInfo: getBrowserInfo(),
         })
 
         if (!verifyCardResponse.isSuccess) {
@@ -208,7 +208,6 @@ export const useCardPayment = ({
         }
 
         const chargeCardResponse = await chargeCardApi({
-          amount: productInformation.amount,
           cardNumber: cardData.number,
           cvc: cardData.cvc,
           expiryMonth: cardData.expiryMonth,
@@ -239,7 +238,6 @@ export const useCardPayment = ({
     },
     [
       paymentFlow,
-      productInformation,
       verifyCardApi,
       chargeCardApi,
       waitForCardVerification,

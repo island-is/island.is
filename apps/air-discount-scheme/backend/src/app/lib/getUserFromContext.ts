@@ -1,11 +1,12 @@
 import { environment as env } from '../../environments'
 import { AuthUser } from '@island.is/air-discount-scheme/types'
 import { ExecutionContext, UnauthorizedException } from '@nestjs/common'
-import { decode } from 'jsonwebtoken'
+import { jwtDecrypt } from 'jose'
+import { hkdf } from '@panva/hkdf'
 
-export const getUserFromContext = (
+export const getUserFromContext = async (
   context: ExecutionContext & { contextType?: string },
-): AuthUser => {
+): Promise<AuthUser> => {
   const req = context.switchToHttp().getRequest()
 
   const sessionToken = req.cookies ? req.cookies[env.idsTokenCookieName] : null
@@ -14,14 +15,29 @@ export const getUserFromContext = (
     throw new UnauthorizedException('Invalid user')
   }
 
-  const decodedToken = decode(sessionToken) as AuthUser
+  const secret = process.env.NEXTAUTH_SECRET
+  if (!secret) {
+    throw new UnauthorizedException('NEXTAUTH_SECRET is not configured')
+  }
+
+  const encryptionKey = await hkdf(
+    'sha256',
+    secret,
+    '',
+    'NextAuth.js Generated Encryption Key',
+    32,
+  )
+
+  const { payload } = await jwtDecrypt(sessionToken, encryptionKey, {
+    clockTolerance: 15,
+  })
 
   return {
-    name: decodedToken.name,
-    nationalId: decodedToken.nationalId,
-    mobile: decodedToken.mobile,
-    role: decodedToken.role,
-    meetsADSRequirements: decodedToken.meetsADSRequirements,
-    flightLegs: decodedToken.flightLegs,
+    name: payload.name as string,
+    nationalId: payload.nationalId as string,
+    mobile: payload.mobile as string,
+    role: payload.role as AuthUser['role'],
+    meetsADSRequirements: payload.meetsADSRequirements as boolean,
+    flightLegs: payload.flightLegs as AuthUser['flightLegs'],
   }
 }

@@ -249,7 +249,7 @@ const template: ApplicationTemplate<
                   NotificationConfig[
                     NotificationType.ChangeOperatorOfVehiclePruned
                   ].templateId,
-                internalBody: plate ?? '',
+                args: [{ key: 'internalBody', value: plate ?? '' }],
               }
             },
           },

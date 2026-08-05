@@ -5,11 +5,11 @@ import {
 } from '@island.is/api/schema'
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { LinkResolver } from '@island.is/portals/my-pages/core'
-import { AvatarImage } from '@island.is/portals/my-pages/documents'
+import { AvatarImage, LinkResolver } from '@island.is/portals/my-pages/core'
 import {
   COAT_OF_ARMS,
   resolveLink,
+  useMarkUserNotificationAsReadMutation,
 } from '@island.is/portals/my-pages/information'
 import { dateFormat } from '@island.is/shared/constants'
 import cn from 'classnames'
@@ -18,6 +18,7 @@ import { useWindowSize } from 'react-use'
 import * as styles from './Notifications.css'
 
 interface Props {
+  id: number
   data: {
     metadata: NotificationMetadata
     message: Omit<NotificationMessage, 'body'>
@@ -26,8 +27,9 @@ interface Props {
   onClickCallback: () => void
 }
 
-export const NotificationLine = ({ data, onClickCallback }: Props) => {
+export const NotificationLine = ({ id, data, onClickCallback }: Props) => {
   const { width } = useWindowSize()
+  const [markAsRead] = useMarkUserNotificationAsReadMutation()
 
   const isMobile = width < theme.breakpoints.md
 
@@ -42,7 +44,10 @@ export const NotificationLine = ({ data, onClickCallback }: Props) => {
       <LinkResolver
         className={styles.link}
         href={resolveLink(data.message?.link)}
-        callback={onClickCallback}
+        callback={() => {
+          markAsRead({ variables: { id } })
+          onClickCallback()
+        }}
       >
         <Box
           display="flex"

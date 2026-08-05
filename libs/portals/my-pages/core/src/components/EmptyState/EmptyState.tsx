@@ -4,12 +4,16 @@ import { MessageDescriptor } from 'react-intl'
 import { Text, Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import EmptyImageSmall from './EmptyImgSmall'
+import { Markdown } from '@island.is/shared/components'
 
 interface Props {
   title?: MessageDescriptor
   description?: MessageDescriptor
 }
 
+/**
+ * @deprecated Use `<Problem type="no_data" noBorder={false} />` from `@island.is/react-spa/shared` instead.
+ */
 export const EmptyState = ({ title, description }: Props) => {
   const { formatMessage } = useLocale()
   return (
@@ -41,11 +45,13 @@ export const EmptyState = ({ title, description }: Props) => {
             <Text marginBottom={1} variant="h3">
               {title ? formatMessage(title) : formatMessage(m.noDataFound)}
             </Text>
-            <Text marginBottom={1} as="p">
-              {description
-                ? formatMessage(description)
-                : formatMessage(m.noDataFoundDetail)}
-            </Text>
+            <Box marginBottom={1}>
+              <Markdown>
+                {description
+                  ? formatMessage(description)
+                  : formatMessage(m.noDataFoundDetail)}
+              </Markdown>
+            </Box>
           </Box>
         </GridColumn>
       </GridRow>

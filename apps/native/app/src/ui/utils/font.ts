@@ -7,13 +7,20 @@ type ThemeProps = { [key: string]: any; theme: DefaultTheme }
 type ThemePropsFn<T> = (props: ThemeProps) => T
 type ThemePropsFnType<T> = T | ThemePropsFn<T>
 type FontFamily =
-  | 'IBMPlexSans-Bold'
-  | 'IBMPlexSans-SemiBold'
-  | 'IBMPlexSans-Medium'
-  | 'IBMPlexSans'
-  | 'IBMPlexSans-Light'
-  | 'IBMPlexSans-ExtraLight'
-  | 'IBMPlexSans-Thin'
+  | 'IBMPlexSans_100Thin'
+  | 'IBMPlexSans_200ExtraLight'
+  | 'IBMPlexSans_300Light'
+  | 'IBMPlexSans_400Regular'
+  | 'IBMPlexSans_500Medium'
+  | 'IBMPlexSans_600SemiBold'
+  | 'IBMPlexSans_700Bold'
+  | 'IBMPlexSans_100Thin_Italic'
+  | 'IBMPlexSans_200ExtraLight_Italic'
+  | 'IBMPlexSans_300Light_Italic'
+  | 'IBMPlexSans_400Regular_Italic'
+  | 'IBMPlexSans_500Medium_Italic'
+  | 'IBMPlexSans_600SemiBold_Italic'
+  | 'IBMPlexSans_700Bold_Italic'
 
 interface FontSettings {
   fontWeight?: ThemePropsFnType<TextStyle['fontWeight']>
@@ -42,29 +49,40 @@ export const lineHeightByFontSize = (fontSize: number) => {
 export const fontByWeight = (weight: TextStyle['fontWeight']): FontFamily => {
   switch (weight) {
     case '900':
+    case 900:
     case '800':
+    case 800:
     case '700':
+    case 700:
     case 'bold':
-      return 'IBMPlexSans-Bold'
+      return 'IBMPlexSans_700Bold'
     case '600':
-      return 'IBMPlexSans-SemiBold'
+    case 600:
+      return 'IBMPlexSans_600SemiBold'
     case '500':
-      return 'IBMPlexSans-Medium'
-    case '300':
-    case '200':
-    case '100':
-      return 'IBMPlexSans-Light'
+    case 500:
+      return 'IBMPlexSans_500Medium'
+    default:
     case 'normal':
     case '400':
-      return 'IBMPlexSans'
+    case 400:
+      return 'IBMPlexSans_400Regular'
+    case '300':
+    case 300:
+      return 'IBMPlexSans_300Light'
+    case '200':
+    case 200:
+      return 'IBMPlexSans_200ExtraLight'
+    case '100':
+    case 100:
+      return 'IBMPlexSans_100Thin'
   }
+}
 
-  // missing
-  // '900' | '800' | '200' | '100'
-  // 'IBMPlexSans-ExtraLight'
-  // 'IBMPlexSans-Thin'
-
-  return 'IBMPlexSans'
+export const fontByWeightItalic = (
+  weight: TextStyle['fontWeight'],
+): FontFamily => {
+  return (fontByWeight(weight) + '_Italic') as FontFamily
 }
 
 const propOrValue = (props: ThemeProps) => (value: any) => {

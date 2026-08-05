@@ -3,11 +3,14 @@ import { CmsModule } from '@island.is/cms'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { Module } from '@nestjs/common'
 import {
+  BankInformationResolver,
   GeneralResolver,
   IncomePlanResolver,
   MedicalDocumentsResolver,
   PaymentPlanResolver,
+  PaymentTypesOverviewResolver,
   PensionResolver,
+  PersonalTaxCreditResolver,
 } from './resolvers'
 import { SocialInsuranceService } from './socialInsurance.service'
 
@@ -18,12 +21,15 @@ import { SocialInsuranceService } from './socialInsurance.service'
     CmsModule,
   ],
   providers: [
-    PaymentPlanResolver,
-    PensionResolver,
-    IncomePlanResolver,
-    SocialInsuranceService,
+    BankInformationResolver,
     GeneralResolver,
+    IncomePlanResolver,
     MedicalDocumentsResolver,
+    PaymentPlanResolver,
+    PaymentTypesOverviewResolver,
+    PensionResolver,
+    PersonalTaxCreditResolver,
+    SocialInsuranceService,
   ],
 })
 export class SocialInsuranceModule {}

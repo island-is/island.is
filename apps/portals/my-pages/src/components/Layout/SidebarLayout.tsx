@@ -41,7 +41,7 @@ export const SidebarLayout: FC<SidebarLayoutProps> = ({
           >
             {sidebarContent}
           </Box>
-          <GridContainer>
+          <GridContainer className={styles.sidebarWrap}>
             <GridRow>
               <GridColumn
                 offset={isXLScreen ? '1/12' : '0'}

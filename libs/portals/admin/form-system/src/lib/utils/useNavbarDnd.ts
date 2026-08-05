@@ -1,28 +1,32 @@
 import {
+  DragEndEvent,
   DragOverEvent,
   DragStartEvent,
   PointerSensor,
+  UniqueIdentifier,
   useSensor,
   useSensors,
 } from '@dnd-kit/core'
+import { FormSystemForm } from '@island.is/api/schema'
 import { FieldTypesEnum } from '@island.is/form-system/ui'
-import { useContext } from 'react'
+import { useContext, useRef, useState } from 'react'
 import { ControlContext, IControlContext } from '../../context/ControlContext'
 import { hasDependency } from './dependencyHelper'
-
-type DndAction =
-  | 'SECTION_OVER_SECTION'
-  | 'SCREEN_OVER_SECTION'
-  | 'SCREEN_OVER_SCREEN'
-  | 'FIELD_OVER_SCREEN'
-  | 'FIELD_OVER_FIELD'
+import { moveNavbarItem, NavbarDrop } from './moveNavbarItem'
 
 export const useNavbarDnD = () => {
-  const { controlDispatch, updateDnD, control, formUpdate } = useContext(
-    ControlContext,
-  ) as IControlContext
-  const { activeItem, form } = control
+  const { controlDispatch, updateDnD, control, formUpdate, setOpenComponents } =
+    useContext(ControlContext) as IControlContext
+
+  const { form, isReadOnly } = control
   const { dependencies } = form
+
+  const [isDraggingNavbarItem, setIsDraggingNavbarItem] = useState(false)
+  const [activeDragType, setActiveDragType] = useState<string | null>(null)
+  const [pendingDropId, setPendingDropId] = useState<string | null>(null)
+
+  const pendingDropRef = useRef<NavbarDrop | null>(null)
+  const lastPendingDropKeyRef = useRef<string | null>(null)
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -32,59 +36,219 @@ export const useNavbarDnD = () => {
     }),
   )
 
-  const onDragStart = (event: DragStartEvent) => {
-    controlDispatch({
-      type: 'SET_ACTIVE_ITEM',
-      payload: {
-        activeItem: {
-          type: event.active.data.current?.type,
-          data: event.active.data.current?.data ?? null,
-        },
-      },
+  const noopDragStart = (_event: DragStartEvent) => {
+    return
+  }
+
+  const noopDragOver = (_event: DragOverEvent) => {
+    return
+  }
+
+  const noopDragEnd = (_event?: DragEndEvent) => {
+    return
+  }
+
+  const resetDragState = () => {
+    pendingDropRef.current = null
+    lastPendingDropKeyRef.current = null
+    setPendingDropId(null)
+    setActiveDragType(null)
+    setIsDraggingNavbarItem(false)
+  }
+
+  const resolveDrop = (
+    activeType: string | undefined,
+    overType: string | undefined,
+    activeId: UniqueIdentifier,
+    overId: UniqueIdentifier,
+    overData?: { id?: string },
+  ): NavbarDrop | null => {
+    if (!activeType || !overType) {
+      return null
+    }
+
+    const normalizedOverId = overData?.id ?? String(overId)
+
+    if (activeType === 'Section' && overType === 'Section') {
+      return {
+        activeType,
+        overType,
+        activeId: String(activeId),
+        overId: normalizedOverId,
+      }
+    }
+
+    if (
+      activeType === 'Screen' &&
+      (overType === 'Section' ||
+        overType === 'Screen' ||
+        overType === 'ClosedSection')
+    ) {
+      return {
+        activeType,
+        overType,
+        activeId: String(activeId),
+        overId: normalizedOverId,
+      }
+    }
+
+    if (
+      activeType === 'Field' &&
+      (overType === 'Screen' ||
+        overType === 'Field' ||
+        overType === 'ClosedScreen')
+    ) {
+      return {
+        activeType,
+        overType,
+        activeId: String(activeId),
+        overId: normalizedOverId,
+      }
+    }
+
+    return null
+  }
+
+  const openDroppedIntoContainer = (
+    updatedForm: FormSystemForm,
+    drop: NavbarDrop,
+  ) => {
+    setOpenComponents((prev) => {
+      if (drop.activeType === 'Field') {
+        if (drop.overType === 'Screen' || drop.overType === 'ClosedScreen') {
+          return {
+            ...prev,
+            screens: prev.screens.includes(drop.overId)
+              ? prev.screens
+              : [...prev.screens, drop.overId],
+          }
+        }
+
+        if (drop.overType === 'Field') {
+          const targetField = updatedForm.fields?.find(
+            (field) => field?.id === drop.overId,
+          )
+
+          if (
+            !targetField?.screenId ||
+            prev.screens.includes(targetField.screenId)
+          ) {
+            return prev
+          }
+
+          return {
+            ...prev,
+            screens: [...prev.screens, targetField.screenId],
+          }
+        }
+      }
+
+      if (drop.activeType === 'Screen') {
+        if (drop.overType === 'Section' || drop.overType === 'ClosedSection') {
+          return {
+            ...prev,
+            sections: prev.sections.includes(drop.overId)
+              ? prev.sections
+              : [...prev.sections, drop.overId],
+          }
+        }
+
+        if (drop.overType === 'Screen') {
+          const targetScreen = updatedForm.screens?.find(
+            (screen) => screen?.id === drop.overId,
+          )
+
+          if (
+            !targetScreen?.sectionId ||
+            prev.sections.includes(targetScreen.sectionId)
+          ) {
+            return prev
+          }
+
+          return {
+            ...prev,
+            sections: [...prev.sections, targetScreen.sectionId],
+          }
+        }
+      }
+
+      return prev
     })
   }
 
-  const onDragOver = (event: DragOverEvent) => {
-    const { active, over } = event
-    if (!over) return
+  const keepDroppedItemActive = (
+    updatedForm: FormSystemForm,
+    drop: NavbarDrop,
+  ) => {
+    if (drop.activeType === 'Field') {
+      const field = updatedForm.fields?.find(
+        (field) => field?.id === drop.activeId,
+      )
 
-    const activeId = active.id
-    const overId = over.id
+      if (!field) {
+        return
+      }
 
-    if (activeId === overId) return
+      controlDispatch({
+        type: 'SET_ACTIVE_ITEM',
+        payload: {
+          activeItem: {
+            type: 'Field',
+            data: field,
+          },
+        },
+      })
 
-    const activeSection = active.data?.current?.type === 'Section'
-    const activeScreen = active.data?.current?.type === 'Screen'
-    const activeField = active.data?.current?.type === 'Field'
-    const overSection = over.data?.current?.type === 'Section'
-    const overScreen = over.data?.current?.type === 'Screen'
-    const overField = over.data?.current?.type === 'Field'
-
-    const dispatchDragAction = (type: DndAction) =>
-      controlDispatch({ type, payload: { activeId, overId } })
-
-    if (activeSection && overSection) {
-      dispatchDragAction('SECTION_OVER_SECTION')
+      return
     }
 
-    if (activeScreen) {
-      if (overSection) {
-        dispatchDragAction('SCREEN_OVER_SECTION')
+    if (drop.activeType === 'Screen') {
+      const screen = updatedForm.screens?.find(
+        (screen) => screen?.id === drop.activeId,
+      )
+
+      if (!screen) {
+        return
       }
-      if (overScreen) {
-        dispatchDragAction('SCREEN_OVER_SCREEN')
-      }
+
+      controlDispatch({
+        type: 'SET_ACTIVE_ITEM',
+        payload: {
+          activeItem: {
+            type: 'Screen',
+            data: screen,
+          },
+        },
+      })
+
+      return
     }
 
-    if (activeField) {
-      if (overScreen) {
-        dispatchDragAction('FIELD_OVER_SCREEN')
-      }
-      if (overField) {
-        dispatchDragAction('FIELD_OVER_FIELD')
-      }
-    }
+    if (drop.activeType === 'Section') {
+      const section = updatedForm.sections?.find(
+        (section) => section?.id === drop.activeId,
+      )
 
+      if (!section) {
+        return
+      }
+
+      controlDispatch({
+        type: 'SET_ACTIVE_ITEM',
+        payload: {
+          activeItem: {
+            type: 'Section',
+            data: section,
+          },
+        },
+      })
+    }
+  }
+
+  const cleanupDependenciesAfterDrop = (
+    activeId: UniqueIdentifier,
+    activeType: string | undefined,
+  ) => {
     if (hasDependency(dependencies, activeId as string)) {
       controlDispatch({
         type: 'REMOVE_DEPENDENCIES',
@@ -92,25 +256,122 @@ export const useNavbarDnD = () => {
       })
     }
 
-    if (activeField) {
-      const fieldItem = form.fields?.find((field) => field?.id === activeId)
-      if (fieldItem) {
-        if (
-          fieldItem.fieldType === FieldTypesEnum.DROPDOWN_LIST ||
-          fieldItem.fieldType === FieldTypesEnum.RADIO_BUTTONS
-        ) {
-          controlDispatch({
-            type: 'REMOVE_LIST_DEPENDENCIES',
-            payload: { field: fieldItem, update: formUpdate },
-          })
-        }
-      }
+    if (activeType !== 'Field') {
+      return
+    }
+
+    const fieldItem = form.fields?.find((field) => field?.id === activeId)
+
+    if (
+      fieldItem &&
+      (fieldItem.fieldType === FieldTypesEnum.DROPDOWN_LIST ||
+        fieldItem.fieldType === FieldTypesEnum.RADIO_BUTTONS)
+    ) {
+      controlDispatch({
+        type: 'REMOVE_LIST_DEPENDENCIES',
+        payload: { field: fieldItem, update: formUpdate },
+      })
     }
   }
 
-  const onDragEnd = () => {
-    updateDnD(activeItem.type)
-  }
+  const onDragStart = isReadOnly
+    ? noopDragStart
+    : (event: DragStartEvent) => {
+        const dragType = event.active.data.current?.type ?? null
 
-  return { sensors, onDragStart, onDragOver, onDragEnd }
+        setActiveDragType(dragType)
+        setIsDraggingNavbarItem(true)
+
+        controlDispatch({
+          type: 'SET_ACTIVE_ITEM',
+          payload: {
+            activeItem: {
+              type: event.active.data.current?.type,
+              data: event.active.data.current?.data ?? null,
+            },
+          },
+        })
+      }
+
+  const onDragOver = isReadOnly
+    ? noopDragOver
+    : (event: DragOverEvent) => {
+        const { active, over } = event
+
+        if (!over) {
+          pendingDropRef.current = null
+          lastPendingDropKeyRef.current = null
+          setPendingDropId(null)
+          return
+        }
+
+        const drop = resolveDrop(
+          active.data.current?.type,
+          over.data.current?.type,
+          active.id,
+          over.id,
+          over.data.current?.data,
+        )
+
+        if (!drop) {
+          pendingDropRef.current = null
+          lastPendingDropKeyRef.current = null
+          setPendingDropId(null)
+          return
+        }
+
+        const dropKey = `${drop.activeType}:${drop.activeId}:${drop.overType}:${drop.overId}`
+
+        if (lastPendingDropKeyRef.current === dropKey) {
+          return
+        }
+
+        lastPendingDropKeyRef.current = dropKey
+        pendingDropRef.current = drop
+        setPendingDropId(drop.overId)
+      }
+
+  const onDragEnd = isReadOnly
+    ? noopDragEnd
+    : (event: DragEndEvent) => {
+        const drop = pendingDropRef.current
+
+        if (!event.over || !drop) {
+          resetDragState()
+          return
+        }
+
+        const updatedForm = moveNavbarItem(control.form, drop)
+
+        controlDispatch({
+          type: 'SET_FORM',
+          payload: {
+            form: updatedForm,
+          },
+        })
+
+        openDroppedIntoContainer(updatedForm, drop)
+        keepDroppedItemActive(updatedForm, drop)
+
+        cleanupDependenciesAfterDrop(
+          event.active.id,
+          event.active.data.current?.type,
+        )
+
+        updateDnD(updatedForm)
+        resetDragState()
+      }
+
+  const onDragCancel = isReadOnly ? noopDragEnd : resetDragState
+
+  return {
+    sensors: isReadOnly ? [] : sensors,
+    onDragStart,
+    onDragOver,
+    onDragEnd,
+    onDragCancel,
+    isDraggingNavbarItem,
+    activeDragType,
+    pendingDropId,
+  }
 }

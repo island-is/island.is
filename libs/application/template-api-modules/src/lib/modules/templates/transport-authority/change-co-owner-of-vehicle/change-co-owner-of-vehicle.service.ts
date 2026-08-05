@@ -18,10 +18,7 @@ import {
   getRecipients,
   getRecipientBySsn,
 } from './change-co-owner-of-vehicle.utils'
-import {
-  ChargeFjsV2ClientService,
-  getPaymentIdFromExternalData,
-} from '@island.is/clients/charge-fjs-v2'
+import { getPaymentIdFromExternalData } from '@island.is/clients/charge-fjs-v2'
 import { TemplateApiError } from '@island.is/nest/problem'
 import {
   generateRequestReviewEmail,
@@ -38,6 +35,7 @@ import type { Logger } from '@island.is/logging'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { coreErrorMessages } from '@island.is/application/core'
 import { mapVehicle } from '../utils'
+import { PaymentService } from '@island.is/application/api/payment'
 
 @Injectable()
 export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
@@ -46,10 +44,10 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
     private readonly vehicleOperatorsClient: VehicleOperatorsClient,
-    private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
     private readonly vehicleServiceFjsV1Client: VehicleServiceFjsV1Client,
     private readonly vehiclesApi: VehicleSearchApi,
     private readonly mileageReadingApi: MileageReadingApi,
+    private readonly paymentService: PaymentService,
   ) {
     super(ApplicationTypes.CHANGE_CO_OWNER_OF_VEHICLE)
   }
@@ -290,12 +288,16 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
     { application, auth }: TemplateApiModuleActionProps,
     rejectType: RejectType,
   ): Promise<void> {
-    // 1. Delete charge so that the seller gets reimburshed
+    // 1. Delete charge so that the seller gets reimbursed
     // Note: not necessary on delete, since that is done in the shared delete function
     if (rejectType !== RejectType.DELETE) {
       const chargeId = getPaymentIdFromExternalData(application)
       if (chargeId) {
-        await this.chargeFjsV2ClientService.deleteCharge(chargeId)
+        await this.paymentService.refundPayment(
+          application.id,
+          'Application rejected',
+          true,
+        )
       }
     }
 

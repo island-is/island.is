@@ -1,8 +1,11 @@
 import { WhereOptions } from 'sequelize'
 
+import { NotImplementedException } from '@nestjs/common'
+
 import {
   CaseTableType,
   isCourtOfAppealsUser,
+  isDefenceUser,
   isDistrictCourtUser,
   isPrisonAdminUser,
   isPrisonStaffUser,
@@ -15,6 +18,7 @@ import {
 
 import {
   courtOfAppealsCasesAccessWhereOptions,
+  defenceCasesAccessWhereOptions,
   districtCourtCasesAccessWhereOptions,
   prisonAdminCasesAccessWhereOptions,
   prisonStaffCasesAccessWhereOptions,
@@ -24,10 +28,19 @@ import {
   publicProsecutionOfficeCasesAccessWhereOptions,
 } from './whereOptions/access'
 import {
-  courtOfAppealsRequestCasesCompletedWhereOptions,
-  courtOfAppealsRequestCasesInProgressWhereOptions,
+  courtOfAppealsCasesCompletedWhereOptions,
+  courtOfAppealsCasesInProgressWhereOptions,
 } from './whereOptions/courtOfAppeals'
 import {
+  defenceIndictmentsAppealedWhereOptions,
+  defenceIndictmentsCompletedWhereOptions,
+  defenceIndictmentsInProgressWhereOptions,
+  defenceRequestCasesAppealedWhereOptions,
+  defenceRequestCasesCompletedWhereOptions,
+  defenceRequestCasesInProgressWhereOptions,
+} from './whereOptions/defence'
+import {
+  districtCourtIndictmentsAppealedWhereOptions,
   districtCourtIndictmentsCompletedWhereOptions,
   districtCourtIndictmentsFinalizingWhereOptions,
   districtCourtIndictmentsInProgressWhereOptions,
@@ -48,6 +61,7 @@ import {
   prisonStaffRequestCasesDoneWhereOptions,
 } from './whereOptions/prisonStaff'
 import {
+  prosecutionIndictmentsAppealedWhereOptions,
   prosecutionIndictmentsCompletedWhereOptions,
   prosecutionIndictmentsInDraftWhereOptions,
   prosecutionIndictmentsInProgressWhereOptions,
@@ -62,13 +76,16 @@ import {
   publicProsecutionIndictmentsReviewedWhereOptions,
 } from './whereOptions/publicProsecution'
 import {
+  publicProsecutionOfficeIndictmentsAcquittedWhereOptions,
   publicProsecutionOfficeIndictmentsAppealedWhereOptions,
   publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions,
   publicProsecutionOfficeIndictmentsInReviewWhereOptions,
   publicProsecutionOfficeIndictmentsNewWhereOptions,
+  publicProsecutionOfficeIndictmentsRequestedAppealWhereOptions,
   publicProsecutionOfficeIndictmentsReviewedWhereOptions,
   publicProsecutionOfficeIndictmentsSentToPrisonAdminWhereOptions,
 } from './whereOptions/publicProsecutionOffice'
+import { CaseWhereOptions } from './caseTable.types'
 
 export const userAccessWhereOptions = (user: User): WhereOptions => {
   if (isCourtOfAppealsUser(user)) {
@@ -103,17 +120,21 @@ export const userAccessWhereOptions = (user: User): WhereOptions => {
     return prosecutorRepresentativeCasesAccessWhereOptions(user)
   }
 
+  if (isDefenceUser(user)) {
+    return defenceCasesAccessWhereOptions(user)
+  }
+
   return { id: null }
 }
 
 export const caseTableWhereOptions: Record<
   CaseTableType,
-  (user: User) => WhereOptions
+  (user: User) => CaseWhereOptions
 > = {
-  [CaseTableType.COURT_OF_APPEALS_REQUEST_CASES_IN_PROGRESS]:
-    courtOfAppealsRequestCasesInProgressWhereOptions,
-  [CaseTableType.COURT_OF_APPEALS_REQUEST_CASES_COMPLETED]:
-    courtOfAppealsRequestCasesCompletedWhereOptions,
+  [CaseTableType.COURT_OF_APPEALS_CASES_IN_PROGRESS]:
+    courtOfAppealsCasesInProgressWhereOptions,
+  [CaseTableType.COURT_OF_APPEALS_CASES_COMPLETED]:
+    courtOfAppealsCasesCompletedWhereOptions,
   [CaseTableType.DISTRICT_COURT_REQUEST_CASES_IN_PROGRESS]:
     districtCourtRequestCasesInProgressWhereOptions,
   [CaseTableType.DISTRICT_COURT_REQUEST_CASES_APPEALED]:
@@ -126,6 +147,8 @@ export const caseTableWhereOptions: Record<
     districtCourtIndictmentsReceivedWhereOptions,
   [CaseTableType.DISTRICT_COURT_INDICTMENTS_IN_PROGRESS]:
     districtCourtIndictmentsInProgressWhereOptions,
+  [CaseTableType.DISTRICT_COURT_INDICTMENTS_APPEALED]:
+    districtCourtIndictmentsAppealedWhereOptions,
   [CaseTableType.DISTRICT_COURT_INDICTMENTS_FINALIZING]:
     districtCourtIndictmentsFinalizingWhereOptions,
   [CaseTableType.DISTRICT_COURT_INDICTMENTS_COMPLETED]:
@@ -154,6 +177,10 @@ export const caseTableWhereOptions: Record<
     publicProsecutionOfficeIndictmentsSentToPrisonAdminWhereOptions,
   [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEALED]:
     publicProsecutionOfficeIndictmentsAppealedWhereOptions,
+  [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_ACQUITTED]:
+    publicProsecutionOfficeIndictmentsAcquittedWhereOptions,
+  [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REQUESTED_APPEAL]:
+    publicProsecutionOfficeIndictmentsRequestedAppealWhereOptions,
   [CaseTableType.PROSECUTION_REQUEST_CASES_IN_PROGRESS]:
     prosecutionRequestCasesInProgressWhereOptions,
   [CaseTableType.PROSECUTION_REQUEST_CASES_ACTIVE]:
@@ -172,7 +199,23 @@ export const caseTableWhereOptions: Record<
     prosecutionIndictmentsWaitingForConfirmationWhereOptions,
   [CaseTableType.PROSECUTION_INDICTMENTS_IN_PROGRESS]:
     prosecutionIndictmentsInProgressWhereOptions,
+  [CaseTableType.PROSECUTION_INDICTMENTS_APPEALED]:
+    prosecutionIndictmentsAppealedWhereOptions,
   [CaseTableType.PROSECUTION_INDICTMENTS_COMPLETED]:
     prosecutionIndictmentsCompletedWhereOptions,
-  [CaseTableType.STATISTICS]: () => ({}),
+  [CaseTableType.DEFENCE_REQUEST_CASES_IN_PROGRESS]:
+    defenceRequestCasesInProgressWhereOptions,
+  [CaseTableType.DEFENCE_REQUEST_CASES_APPEALED]:
+    defenceRequestCasesAppealedWhereOptions,
+  [CaseTableType.DEFENCE_REQUEST_CASES_COMPLETED]:
+    defenceRequestCasesCompletedWhereOptions,
+  [CaseTableType.DEFENCE_INDICTMENTS_IN_PROGRESS]:
+    defenceIndictmentsInProgressWhereOptions,
+  [CaseTableType.DEFENCE_INDICTMENTS_APPEALED]:
+    defenceIndictmentsAppealedWhereOptions,
+  [CaseTableType.DEFENCE_INDICTMENTS_COMPLETED]:
+    defenceIndictmentsCompletedWhereOptions,
+  [CaseTableType.STATISTICS]: () => {
+    throw new NotImplementedException('Case table type not implemented')
+  },
 }

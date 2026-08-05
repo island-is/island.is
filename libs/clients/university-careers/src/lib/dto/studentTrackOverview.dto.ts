@@ -1,13 +1,7 @@
 import { isDefined } from '@island.is/shared/utils'
-import {
-  HolarStudentTrackOverview,
-  LbhiStudentTrackOverview,
-  BifrostStudentTrackOverview,
-  UnakStudentTrackOverview,
-  HIStudentTrackOverview,
-} from '../clients'
+import type { GetNemandiFerillByFerillResponse } from '../../../gen/fetch'
 import { UniversityId } from '../universityCareers.types'
-import { StudentFileDto, mapToStudentFileDto } from './studentFileDto'
+import { StudentFileDto, mapToStudentFileDto } from './studentFile.dto'
 import { StudentTrackDto, mapToStudentTrackDto } from './studentTrack.dto'
 import { StudentTrackOverviewBodyDto } from './studentTrackOverviewBody.dto'
 
@@ -18,12 +12,7 @@ export interface StudentTrackOverviewDto {
 }
 
 export const mapToStudentTrackOverviewDto = (
-  overview:
-    | HolarStudentTrackOverview
-    | LbhiStudentTrackOverview
-    | BifrostStudentTrackOverview
-    | UnakStudentTrackOverview
-    | HIStudentTrackOverview,
+  overview: GetNemandiFerillByFerillResponse,
   institutionId: UniversityId,
 ): StudentTrackOverviewDto | null => {
   if (!overview.transcript) {
@@ -41,6 +30,12 @@ export const mapToStudentTrackOverviewDto = (
     files: overview.files
       ? overview.files.map((f) => mapToStudentFileDto(f)).filter(isDefined)
       : [],
-    body: overview.body ? { ...overview.body } : undefined,
+    body: overview.body
+      ? {
+          description: overview.body.description,
+          footer: overview.body.footer,
+          unconfirmedData: overview.body.unconfirmed_data,
+        }
+      : undefined,
   }
 }

@@ -18,10 +18,15 @@ export class UpdateScreenDto {
   @IsOptional()
   @IsNumber()
   @ApiPropertyOptional()
-  multiset?: number
+  multiMax?: number
 
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional()
-  callRuleset?: boolean
+  isMulti?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  shouldValidate?: boolean
 }

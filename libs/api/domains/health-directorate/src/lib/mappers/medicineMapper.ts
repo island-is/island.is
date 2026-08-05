@@ -3,7 +3,7 @@ import {
   PrescribedItemCategory,
   PrescriptionCommissionStatus,
   PrescriptionRenewalBlockedReason,
-  PrescriptionRenewalStatus,
+  PrescriptionRenewalStatusDisplay,
 } from '@island.is/clients/health-directorate'
 import {
   PermitStatusEnum,
@@ -30,30 +30,35 @@ export const mapPrescriptionRenewalBlockedReason = (
     case PrescriptionRenewalBlockedReason.IS_REGIMENT:
       return PrescribedItemRenewalBlockedReasonEnum.IsRegiment
     case PrescriptionRenewalBlockedReason.DRUG_NOT_ON_MED_CARD:
+    case PrescriptionRenewalBlockedReason.NO_MED_CARD:
       return PrescribedItemRenewalBlockedReasonEnum.NoMedCard
-    case PrescriptionRenewalBlockedReason.NO_PRIMARY_CARE_CLINIC:
-      return PrescribedItemRenewalBlockedReasonEnum.NoHealthClinic
     case PrescriptionRenewalBlockedReason.MORE_RECENT_PRESCRIPTION_EXISTS:
       return PrescribedItemRenewalBlockedReasonEnum.MoreRecentPrescriptionExists
-    case PrescriptionRenewalBlockedReason.SPECIALIST_ONLY_PRESCRIPTION:
-      return PrescribedItemRenewalBlockedReasonEnum.SpecialistOnlyPrescription
+    case PrescriptionRenewalBlockedReason.NO_RENEWAL_TARGETS:
+      return PrescribedItemRenewalBlockedReasonEnum.NoRenewalTargets
+    case PrescriptionRenewalBlockedReason.INVALID_RENEWAL_TARGET:
+      return PrescribedItemRenewalBlockedReasonEnum.InvalidRenewalTarget
+    case PrescriptionRenewalBlockedReason.RECIPIENT_EXCLUDES_ATC:
+      return PrescribedItemRenewalBlockedReasonEnum.RecipientExcludesAtc
     default:
       return PrescribedItemRenewalBlockedReasonEnum.Unknown
   }
 }
 
 export const mapPrescriptionRenewalStatus = (
-  status: PrescriptionRenewalStatus,
+  status: PrescriptionRenewalStatusDisplay,
 ): PrescribedItemRenewalStatusEnum => {
   switch (status) {
-    case PrescriptionRenewalStatus[0]:
-      return PrescribedItemRenewalStatusEnum.NUMBER_0
-    case PrescriptionRenewalStatus[1]:
-      return PrescribedItemRenewalStatusEnum.NUMBER_1
-    case PrescriptionRenewalStatus[2]:
-      return PrescribedItemRenewalStatusEnum.NUMBER_2
+    case PrescriptionRenewalStatusDisplay.APPROVED:
+      return PrescribedItemRenewalStatusEnum.Approved
+    case PrescriptionRenewalStatusDisplay.REJECTED:
+      return PrescribedItemRenewalStatusEnum.Rejected
+    case PrescriptionRenewalStatusDisplay.DISMISSED:
+      return PrescribedItemRenewalStatusEnum.Dismissed
+    case PrescriptionRenewalStatusDisplay.PENDING:
+      return PrescribedItemRenewalStatusEnum.Pending
     default:
-      return PrescribedItemRenewalStatusEnum.NUMBER_0
+      return PrescribedItemRenewalStatusEnum.Unknown
   }
 }
 

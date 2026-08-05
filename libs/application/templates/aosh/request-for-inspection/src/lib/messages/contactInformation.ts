@@ -20,6 +20,11 @@ export const contactInformation = {
       defaultMessage: 'Nafn',
       description: 'contactInformation name title',
     },
+    isSameAsApplicant: {
+      id: 'aosh.rifm.application:contactInformation.labels.isSameAsApplicant',
+      defaultMessage: 'Tengiliður er sami og innskráður aðili',
+      description: 'contactInformation isSameAsApplicant title',
+    },
     phoneNumber: {
       id: 'aosh.rifm.application:contactInformation.labels.phoneNumber',
       defaultMessage: 'Símanúmer',
@@ -32,7 +37,7 @@ export const contactInformation = {
     },
     approveButton: {
       id: 'aosh.rifm.application:contactInformation.labels.approveButton',
-      defaultMessage: 'Staðfesta',
+      defaultMessage: 'Senda inn umsókn',
       description: 'contactInformation approveButton label',
     },
   }),

@@ -1,4 +1,7 @@
-import { HealthDirectoratePrescription } from '@island.is/api/schema'
+import {
+  HealthDirectoratePrescription,
+  HealthDirectoratePrescriptionRenewalStatus,
+} from '@island.is/api/schema'
 import {
   AlertMessage,
   Box,
@@ -18,6 +21,20 @@ import { useGetPrescriptionDocumentsLazyQuery } from '../Prescriptions.generated
 import RenewPrescriptionModal from './RenewPrescriptionModal/RenewPrescriptionModal'
 
 const STRING_MAX_LENGTH = 22
+
+const renewalStatusMessageMap: Record<
+  HealthDirectoratePrescriptionRenewalStatus,
+  keyof typeof messages
+> = {
+  [HealthDirectoratePrescriptionRenewalStatus.Approved]:
+    'renewalStatusApproved',
+  [HealthDirectoratePrescriptionRenewalStatus.Rejected]:
+    'renewalStatusRejected',
+  [HealthDirectoratePrescriptionRenewalStatus.Dismissed]:
+    'renewalStatusDismissed',
+  [HealthDirectoratePrescriptionRenewalStatus.Unknown]: 'renewalStatusUnknown',
+  [HealthDirectoratePrescriptionRenewalStatus.Pending]: 'renewalInProgress',
+}
 
 interface Props {
   data?: HealthDirectoratePrescription[]
@@ -45,17 +62,23 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
     }
   }, [data])
 
-  const fetchPDFlink = async (id: string) => {
+  const fetchPDFlink = async (productId: string, rowIndex: number) => {
     if (pdfLoading) return
     setPdfLoading(true)
 
     try {
-      const response = await getDocuments({ variables: { input: { id } } })
-      const currentPrescription = prescriptions?.find((item) => item.id === id)
+      const response = await getDocuments({
+        variables: { input: { id: productId } },
+      })
       const documents =
         response.data?.healthDirectoratePrescriptionDocuments.documents
 
-      if (currentPrescription) {
+      setPrescriptions((prevPrescriptions) => {
+        if (!prevPrescriptions) return prevPrescriptions
+        const currentPrescription = prevPrescriptions[rowIndex]
+        if (!currentPrescription) {
+          return prevPrescriptions
+        }
         const updatedPrescription: PrescriptionItem = {
           ...currentPrescription,
           documents: documents?.map((doc) => ({
@@ -64,13 +87,10 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
             name: doc.name ?? '',
           })),
         }
-
-        setPrescriptions((prevPrescriptions) =>
-          prevPrescriptions?.map((prescription) =>
-            prescription.id === id ? updatedPrescription : prescription,
-          ),
+        return prevPrescriptions.map((prescription, index) =>
+          index === rowIndex ? updatedPrescription : prescription,
         )
-      }
+      })
     } catch (error) {
       console.error('Error fetching URL:', error)
       setError(formatMessage(messages.errorFetchingUrl))
@@ -103,9 +123,16 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
               ? new Date(item.expiryDate) < new Date()
               : false
 
+            const blockedStatus = !item.isRenewable
+              ? mapBlockedStatus(
+                  item.renewalBlockedReason?.toString() ?? '',
+                  formatMessage,
+                )
+              : null
+
             return {
-              id: `${item.id}-${i}`,
-              medicine: item?.name + ' ' + item?.strength,
+              id: item.id,
+              medicine: [item?.name, item?.strength].filter(Boolean).join(' '),
               usedFor: item?.indication ?? '',
               process: item?.amountRemaining ?? '',
               validTo: isExpired ? (
@@ -116,7 +143,15 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
                 formatDate(item?.expiryDate) ?? ''
               ),
               status: undefined,
-              lastNode: item?.isRenewable
+              lastNode: item?.renewalStatus
+                ? {
+                    type: 'text' as const,
+                    label: formatMessage(
+                      messages[renewalStatusMessageMap[item.renewalStatus]],
+                    ),
+                    text: item.renewResponseMessage ?? undefined,
+                  }
+                : item?.isRenewable
                 ? {
                     type: 'action' as const,
                     label: formatMessage(messages.renew),
@@ -128,36 +163,30 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
                   }
                 : {
                     type: 'text' as const,
-                    label: mapBlockedStatus(
-                      item.renewalBlockedReason?.toString() ?? '',
-                      formatMessage,
-                    ).status,
+                    label: blockedStatus?.status ?? '',
                     text:
-                      item.renewResponseMessage ||
-                      mapBlockedStatus(
-                        item.renewalBlockedReason?.toString() ?? '',
-                        formatMessage,
-                      ).description,
+                      item.renewResponseMessage || blockedStatus?.description,
                   },
 
               onExpandCallback: () => {
-                fetchPDFlink(item.id)
+                fetchPDFlink(item.productId ?? item.id, i)
               },
 
               children: (
                 <Box background="blue100" paddingBottom={1}>
-                  <Box paddingX={[0, 0, 3]} marginBottom={[2, 2, 0]}>
-                    <AlertMessage
-                      type="info"
-                      message={
-                        item.renewResponseMessage ||
-                        mapBlockedStatus(
-                          item.renewalBlockedReason?.toString() ?? '',
-                          formatMessage,
-                        ).description
-                      }
-                    />
-                  </Box>
+                  {(blockedStatus?.showReason || item.renewResponseMessage) && (
+                    <Box paddingX={[0, 0, 3]} marginBottom={[2, 2, 0]}>
+                      <AlertMessage
+                        type="info"
+                        message={
+                          <span style={{ whiteSpace: 'pre-line' }}>
+                            {item.renewResponseMessage ||
+                              blockedStatus?.description}
+                          </span>
+                        }
+                      />
+                    </Box>
+                  )}
 
                   <Stack space={2}>
                     <>
@@ -171,10 +200,16 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
                             href: item?.url ?? '',
                             type: 'link',
                           },
-                          {
-                            title: formatMessage(messages.medicineStrength),
-                            value: item?.strength ?? '',
-                          },
+                          ...(item?.strength
+                            ? [
+                                {
+                                  title: formatMessage(
+                                    messages.medicineStrength,
+                                  ),
+                                  value: item?.strength ?? '',
+                                },
+                              ]
+                            : []),
                           {
                             title: formatMessage(messages.usedFor),
                             value: item?.indication ?? '',

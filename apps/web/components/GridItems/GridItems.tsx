@@ -18,6 +18,7 @@ type GridItemsProps = {
   half?: boolean
   quarter?: boolean
   third?: boolean
+  scrollContainerRef?: React.RefObject<HTMLElement | null>
 }
 
 export const GridItems: FC<React.PropsWithChildren<GridItemsProps>> = ({
@@ -31,6 +32,7 @@ export const GridItems: FC<React.PropsWithChildren<GridItemsProps>> = ({
   half = false,
   quarter = false,
   third = false,
+  scrollContainerRef,
   children,
 }) => {
   const { width } = useWindowSize()
@@ -65,7 +67,10 @@ export const GridItems: FC<React.PropsWithChildren<GridItemsProps>> = ({
       <Box
         marginTop={marginTop}
         marginBottom={marginBottom}
-        className={styles.container}
+        ref={scrollContainerRef as React.RefObject<HTMLDivElement> | undefined}
+        className={cx(styles.container, {
+          [styles.hideScrollbar]: !!scrollContainerRef,
+        })}
       >
         <Box
           paddingTop={paddingTop}
@@ -86,7 +91,7 @@ export const GridItems: FC<React.PropsWithChildren<GridItemsProps>> = ({
 
 type WrapperProps = {
   show: boolean
-  children: JSX.Element
+  children: React.ReactNode
 }
 
 const Wrapper: FC<React.PropsWithChildren<WrapperProps>> = ({
@@ -96,7 +101,7 @@ const Wrapper: FC<React.PropsWithChildren<WrapperProps>> = ({
   show ? (
     <GridContainer className={styles.gridContainer}>{children}</GridContainer>
   ) : (
-    children
+    <>{children}</>
   )
 
 export default GridItems

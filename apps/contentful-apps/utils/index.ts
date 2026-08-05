@@ -100,6 +100,20 @@ export const previewLinkHandler = {
   projectPage: (entry: EntryProps<KeyValueMap>) => {
     return `${DEV_WEB_BASE_URL}/v/${entry.fields.slug[DEFAULT_LOCALE]}`
   },
+  projectSubpage: async (entry: EntryProps<KeyValueMap>, cma: CMAClient) => {
+    const projectPageResponse = await cma.entry.getMany({
+      query: {
+        content_type: 'projectPage',
+        links_to_entry: entry.sys.id,
+        limit: 1,
+        'sys.archivedVersion[exists]': false,
+      },
+    })
+    const projectPageSlug =
+      projectPageResponse?.items?.[0]?.fields?.slug?.[DEFAULT_LOCALE]
+    if (!projectPageSlug) return ''
+    return `${DEV_WEB_BASE_URL}/v/${projectPageSlug}/${entry.fields.slug[DEFAULT_LOCALE]}`
+  },
   organizationSubpage: async (
     entry: EntryProps<KeyValueMap>,
     cma: CMAClient,

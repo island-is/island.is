@@ -19,7 +19,7 @@ import { GetFullName, EndorseList } from '../../graphql'
 import format from 'date-fns/format'
 import { EndorsementList } from '@island.is/api/schema'
 import Skeleton from './Skeleton'
-import Illustration from '../../assets/Illustration'
+import { GuitarAndWheelchair } from '@island.is/application/assets/graphics'
 import { Markdown } from '@island.is/shared/components'
 import { getValueViaPath, YES } from '@island.is/application/core'
 
@@ -80,7 +80,7 @@ const SignPetitionView: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             justifyContent="center"
             height="full"
           >
-            <Illustration />
+            <GuitarAndWheelchair />
           </Box>
           <Box position="absolute" bottom={0} right={0}>
             <Button

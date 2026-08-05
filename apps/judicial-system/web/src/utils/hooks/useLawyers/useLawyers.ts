@@ -1,6 +1,6 @@
+import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import Cookie from 'js-cookie'
-import useSWRImmutable from 'swr/immutable'
 
 import { toast } from '@island.is/island-ui/core'
 import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
@@ -9,31 +9,40 @@ import { errors as errorMessages } from '@island.is/judicial-system-web/messages
 
 export const useGetLawyers = (shouldFetch?: boolean): Lawyer[] => {
   const { formatMessage } = useIntl()
-  const fetcher = (url: string): Promise<Lawyer[]> => {
+  const [lawyers, setLawyers] = useState<Lawyer[]>([])
+
+  useEffect(() => {
+    if (!shouldFetch) {
+      setLawyers([])
+      return
+    }
+
+    const controller = new AbortController()
+
     const token = Cookie.get(CSRF_COOKIE_NAME)
-    const options = token
-      ? { headers: { authorization: `Bearer ${token}` } }
-      : {}
+    const headers = token ? { authorization: `Bearer ${token}` } : undefined
 
-    return fetch(url, options).then((res) => {
-      if (!res.ok) {
-        throw new Error('Failed to get lawyers from lawyer registry')
-      }
-
-      return res.json()
+    fetch('/api/defender/lawyerRegistry', {
+      headers,
+      signal: controller.signal,
     })
-  }
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('Failed to get lawyers from lawyer registry')
+        }
 
-  const { data, error } = useSWRImmutable<Lawyer[]>(
-    shouldFetch ? '/api/defender/lawyerRegistry' : null,
-    fetcher,
-    { shouldRetryOnError: false, errorRetryCount: 0 },
-  )
+        return res.json()
+      })
+      .then(setLawyers)
+      .catch((e) => {
+        if (e.name !== 'AbortError') {
+          toast.error(formatMessage(errorMessages.fetchLawyers))
+          setLawyers([])
+        }
+      })
 
-  if (error) {
-    toast.error(formatMessage(errorMessages.fetchLawyers))
-    return []
-  }
+    return () => controller.abort()
+  }, [shouldFetch, formatMessage])
 
-  return data ?? []
+  return lawyers
 }

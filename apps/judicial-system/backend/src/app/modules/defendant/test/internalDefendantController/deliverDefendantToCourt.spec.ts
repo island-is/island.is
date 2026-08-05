@@ -1,7 +1,10 @@
 import { v4 as uuid } from 'uuid'
 
 import { Message, MessageType } from '@island.is/judicial-system/message'
-import { CaseNotificationType, User } from '@island.is/judicial-system/types'
+import {
+  RequestCaseNotificationType,
+  User,
+} from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
@@ -28,12 +31,11 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
   } as Defendant
   const caseId = uuid()
   const courtId = uuid()
-  const courtCaseNumber = uuid()
   const defenderEmail = uuid()
   const theCase = {
     id: caseId,
     courtId,
-    courtCaseNumber,
+    courtCaseNumber: uuid(),
     defenderEmail,
   } as Case
 
@@ -80,16 +82,22 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
       then = await givenWhenThen(defendant)
     })
 
-    it('should deliver the defendant', () => {
+    it('should deliver the defendant via API', () => {
       expect(mockCourtService.updateCaseWithDefendant).toHaveBeenCalledWith(
         user,
         caseId,
         courtId,
-        courtCaseNumber,
+        theCase.courtCaseNumber,
         defendantNationalId,
         defenderEmail,
       )
       expect(then.result).toEqual({ delivered: true })
+    })
+
+    it('should not send robot email', () => {
+      expect(
+        mockCourtService.updateRequestCaseWithDefenderInfo,
+      ).not.toHaveBeenCalled()
     })
   })
 
@@ -107,13 +115,19 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
           type: MessageType.NOTIFICATION,
           user,
           caseId,
-          body: { type: CaseNotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT },
+          body: {
+            type: RequestCaseNotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
+          },
         },
       ])
     })
+
+    it('should not call court API', () => {
+      expect(mockCourtService.updateCaseWithDefendant).not.toHaveBeenCalled()
+    })
   })
 
-  describe('delivery fails', () => {
+  describe('API delivery fails', () => {
     let then: Then
 
     beforeEach(async () => {
@@ -122,6 +136,12 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
 
     it('should return a failure response', () => {
       expect(then.result).toEqual({ delivered: false })
+    })
+
+    it('should not send robot email', () => {
+      expect(
+        mockCourtService.updateRequestCaseWithDefenderInfo,
+      ).not.toHaveBeenCalled()
     })
   })
 })

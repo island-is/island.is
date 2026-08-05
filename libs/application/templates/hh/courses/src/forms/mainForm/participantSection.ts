@@ -6,6 +6,7 @@ import {
 } from '@island.is/application/core'
 import type { Application } from '@island.is/application/types'
 import { m } from '../../lib/messages'
+import { isCourseForProfessionals } from '../../utils/isCourseForProfessionals'
 
 export const participantSection = buildSection({
   id: 'participantSection',
@@ -39,6 +40,11 @@ export const participantSection = buildSection({
               return undefined
             }
 
+            const workplace =
+              getValueViaPath<string>(application.answers, 'workplace') ?? ''
+            const jobTitle =
+              getValueViaPath<string>(application.answers, 'jobTitle') ?? ''
+
             return [
               {
                 nationalIdWithName: {
@@ -47,6 +53,8 @@ export const participantSection = buildSection({
                   email,
                   phone,
                 },
+                workplace,
+                jobTitle,
               },
             ]
           },
@@ -69,6 +77,26 @@ export const participantSection = buildSection({
               showPhoneField: true,
               phoneRequired: true,
               emailRequired: true,
+            },
+            workplace: {
+              component: 'input',
+              label: m.participant.participantWorkplace,
+              width: 'half',
+              displayInTable: false,
+              condition: (application: Application) =>
+                isCourseForProfessionals(application.answers),
+              defaultValue: (application: Application) =>
+                getValueViaPath<string>(application.answers, 'workplace') ?? '',
+            },
+            jobTitle: {
+              component: 'input',
+              label: m.participant.participantJobTitle,
+              width: 'half',
+              displayInTable: false,
+              condition: (application: Application) =>
+                isCourseForProfessionals(application.answers),
+              defaultValue: (application: Application) =>
+                getValueViaPath<string>(application.answers, 'jobTitle') ?? '',
             },
           },
         }),

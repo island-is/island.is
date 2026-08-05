@@ -14,6 +14,7 @@ import { Problem } from '@island.is/react-spa/shared'
 import { isDefined } from '@island.is/shared/utils'
 import { useNavigate } from 'react-router-dom'
 import { HealthDirectorateReferralStatusEnum } from '@island.is/api/schema'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const referralStatusToTagVariant = (
   status?: HealthDirectorateReferralStatusEnum | null,
@@ -39,6 +40,7 @@ const referralStatusToTagVariant = (
 
 const Referrals: React.FC = () => {
   useNamespaces('sp.health')
+  useHealthPlausibleSwap()
   const { formatMessage, lang } = useLocale()
   const navigate = useNavigate()
 
@@ -54,10 +56,11 @@ const Referrals: React.FC = () => {
     <IntroWrapper
       title={formatMessage(messages.referrals)}
       intro={formatMessage(messages.referralsIntro)}
-      serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
-      serviceProviderTooltip={formatMessage(
-        messages.landlaeknirReferralTooltip,
-      )}
+      serviceProvider={{
+        slug: HEALTH_DIRECTORATE_SLUG,
+        tooltip: formatMessage(messages.landlaeknirReferralTooltip),
+      }}
+      desktopContentSpan="10/12"
     >
       {!loading && !error && referrals?.length === 0 && (
         <Problem

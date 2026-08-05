@@ -30,6 +30,8 @@ export type EditLink = {
 type LineButton = {
   title: MessageDescriptor | string
   onClick: () => void
+  icon?: ButtonProps['icon']
+  iconType?: ButtonProps['iconType']
 }
 
 interface Props {
@@ -53,6 +55,7 @@ interface Props {
   translateLabel?: 'yes' | 'no'
   printable?: boolean
   tooltipFull?: boolean
+  renderEnd?: () => React.ReactNode
 }
 
 export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
@@ -76,6 +79,7 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
   printable = false,
   tooltipFull,
   button,
+  renderEnd,
 }) => {
   const { formatMessage } = useLocale()
 
@@ -189,12 +193,28 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
             >
               <Button
                 onClick={button.onClick}
-                icon="pencil"
+                icon={button.icon ?? 'pencil'}
+                iconType={button.iconType}
                 size="small"
                 variant="text"
               >
                 {formatMessage(button.title)}
               </Button>
+            </Box>
+          ) : renderEnd ? (
+            <Box
+              display="flex"
+              justifyContent={[
+                'flexStart',
+                'flexEnd',
+                'flexStart',
+                'flexStart',
+                'flexEnd',
+              ]}
+              alignItems="center"
+              height="full"
+            >
+              {renderEnd()}
             </Box>
           ) : undefined}
         </GridColumn>

@@ -50,24 +50,26 @@ interface ViewPagerProps {
 
 export function ViewPager({ children, itemWidth }: ViewPagerProps) {
   const pages = React.Children.count(children)
-  const OFFSET_X = 16
   const OFFSET_CARD = itemWidth ?? 283
-  const OFFSET = OFFSET_X + OFFSET_CARD
+  const OFFSET = OFFSET_CARD
+  const PEEK = 16
 
-  const [contentWidth, setContentWidth] = useState(pages * OFFSET - OFFSET_X)
+  const [viewportWidth, setViewportWidth] = useState(0)
 
-  const inputRange = (i: number) =>
-    i === pages - 1
-      ? [
-          contentWidth - OFFSET - OFFSET_CARD,
-          contentWidth - OFFSET - 60,
-          contentWidth - 120,
-        ].sort((a, b) => a - b) // Make sure inputRange is non-decreasing to prevent crash
-      : [
-          OFFSET * i - OFFSET,
-          OFFSET * i,
-          i === pages - 2 ? contentWidth - OFFSET - 60 : OFFSET * i + OFFSET,
-        ].sort((a, b) => a - b) // Make sure inputRange is non-decreasing to prevent crash
+  const snapOffsets = Array.from({ length: pages }, (_, i) => {
+    if (i === 0) return 0
+    if (i === pages - 1 && viewportWidth > 0) {
+      return pages * OFFSET_CARD - viewportWidth + PEEK
+    }
+    return i * OFFSET_CARD - PEEK
+  })
+
+  const inputRange = (i: number) => {
+    const curr = snapOffsets[i]
+    const prev = i === 0 ? curr - OFFSET : snapOffsets[i - 1]
+    const next = i === pages - 1 ? curr + OFFSET : snapOffsets[i + 1]
+    return [prev, curr, next]
+  }
 
   const x = useRef(new Animated.Value(0)).current
 
@@ -95,9 +97,9 @@ export function ViewPager({ children, itemWidth }: ViewPagerProps) {
         contentContainerStyle={{
           paddingRight: 16,
         }}
-        onContentSizeChange={setContentWidth}
+        onLayout={(e) => setViewportWidth(e.nativeEvent.layout.width)}
         horizontal={true}
-        snapToInterval={OFFSET}
+        snapToOffsets={snapOffsets}
         showsHorizontalScrollIndicator={false}
         snapToAlignment={'start'}
         automaticallyAdjustContentInsets={false}

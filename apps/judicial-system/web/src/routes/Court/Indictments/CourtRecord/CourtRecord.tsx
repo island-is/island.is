@@ -1,12 +1,14 @@
 import { FC, useCallback, useContext, useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import { Accordion, AlertMessage, Box, Button } from '@island.is/island-ui/core'
 import {
-  INDICTMENTS_CONCLUSION_ROUTE,
-  INDICTMENTS_DEFENDER_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_DEFENDER_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { hasGeneratedCourtRecordPdf } from '@island.is/judicial-system/types'
+import { core } from '@island.is/judicial-system-web/messages'
 import {
   CourtCaseInfo,
   FormContentContainer,
@@ -28,6 +30,7 @@ import CourtSessionAccordionItem from './CourtSessionAccordionItem'
 import { alertContainer } from './CourtRecord.css'
 
 const CourtRecord: FC = () => {
+  const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const { workingCase, isLoadingWorkingCase, caseNotFound, refreshCase } =
     useContext(FormContext)
@@ -86,7 +89,7 @@ const CourtRecord: FC = () => {
         <CourtCaseInfo workingCase={workingCase} />
         {workingCase.withCourtSessions ? (
           <>
-            <Accordion dividerOnTop={false} singleExpand>
+            <Accordion dividerOnTop={false} singleExpand={false}>
               {workingCase.courtSessions?.map((courtSession, index) => (
                 <CourtSessionAccordionItem
                   key={courtSession.id}
@@ -136,13 +139,19 @@ const CourtRecord: FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
-          previousUrl={`${INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`}
-          nextIsLoading={isLoadingWorkingCase}
-          nextUrl={`${INDICTMENTS_CONCLUSION_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() =>
-            handleNavigationTo(INDICTMENTS_CONCLUSION_ROUTE)
-          }
+          previousUrl={`${DISTRICT_COURT_INDICTMENT_CASE_DEFENDER_ROUTE}/${workingCase.id}`}
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE,
+                ),
+              loading: isLoadingWorkingCase,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

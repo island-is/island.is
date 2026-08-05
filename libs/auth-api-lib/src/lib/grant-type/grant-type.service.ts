@@ -1,6 +1,7 @@
 import { NoContentException } from '@island.is/nest/problem'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { Op } from 'sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { GrantType } from './models/grant-type.model'
@@ -61,6 +62,39 @@ export class GrantTypeService {
     })
   }
 
+  /** Searches grant types by name or description with pagination */
+  async search(
+    searchString: string,
+    page: number,
+    count: number,
+    includeArchived: boolean,
+  ): Promise<{
+    rows: GrantType[]
+    count: number
+  }> {
+    page--
+    const offset = page * count
+    const whereClause = {
+      ...(searchString
+        ? {
+            [Op.or]: ['name', 'description'].map((key) => ({
+              [key]: {
+                [Op.iLike]: `%${searchString.toLowerCase()}%`,
+              },
+            })),
+          }
+        : {}),
+      ...(includeArchived ? {} : { archived: null }),
+    }
+
+    return this.grantTypeModel.findAndCountAll({
+      limit: count,
+      offset,
+      where: whereClause,
+      order: ['name'],
+    })
+  }
+
   /** Get's a grant type by name */
   async getGrantType(name: string): Promise<GrantType | null> {
     this.logger.debug(`Finding grant type for name - "${name}"`)
@@ -105,6 +139,24 @@ export class GrantTypeService {
 
     const result = await this.grantTypeModel.update(
       { archived: new Date() },
+      {
+        where: { name: name },
+      },
+    )
+
+    return result[0]
+  }
+
+  /** Restore a soft-deleted grant type by name */
+  async restore(name: string): Promise<number> {
+    this.logger.debug('Restoring a grant type with name: ', name)
+
+    if (!name) {
+      throw new BadRequestException('name must be provided')
+    }
+
+    const result = await this.grantTypeModel.update(
+      { archived: null },
       {
         where: { name: name },
       },

@@ -4,7 +4,6 @@ import {
   Filter,
   FilterInput,
   DatePicker,
-  FilterMultiChoiceProps,
   Select,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
@@ -13,20 +12,21 @@ import { debounceTime } from '@island.is/shared/constants'
 import { useEffect, useMemo, useState } from 'react'
 import { useDebounce, useWindowSize } from 'react-use'
 import { m } from '../../lib/messages'
-import { ApplicationFilters, MultiChoiceFilter } from '../../types/filters'
-import { BffUser, Organization } from '@island.is/shared/types'
+import { ApplicationFilters } from '../../types/filters'
+import { Organization } from '@island.is/shared/types'
 import { format as formatNationalId } from 'kennitala'
-import { useGetInstitutionApplicationTypesQuery } from '../../queries/overview.generated'
-import { useUserInfo } from '@island.is/react-spa/bff'
+import {
+  useGetApplicationV2ApplicationTypesInstitutionAdminQuery,
+  useGetApplicationV2ApplicationTypesSuperAdminQuery,
+} from '../../queries/overview.generated'
 
 interface Props {
-  onTypeIdChange: (period: ApplicationFilters['typeIdValue']) => void
+  onTypeIdChange: (typeIdValue: ApplicationFilters['typeIdValue']) => void
   onSearchChange: (query: string) => void
   onSearchStrChange: (query: string) => void
   onDateChange: (period: ApplicationFilters['period']) => void
-  onFilterChange: FilterMultiChoiceProps['onChange']
+  onInstitutionChange: (institution: ApplicationFilters['institution']) => void
   onFilterClear: (categoryId?: string) => void
-  multiChoiceFilters: Record<MultiChoiceFilter, string[] | undefined>
   filters: ApplicationFilters
   applications: string[]
   organizations: Organization[]
@@ -40,11 +40,10 @@ export const Filters = ({
   onSearchChange,
   onSearchStrChange,
   onFilterClear,
-  onFilterChange,
+  onInstitutionChange,
   onDateChange,
   filters,
   numberOfDocuments,
-  multiChoiceFilters,
   organizations,
   isSuperAdmin = false,
   useAdvancedSearch = false,
@@ -52,40 +51,43 @@ export const Filters = ({
   const [typeId, setTypeId] = useState<string | undefined>(undefined)
   const [nationalId, setNationalId] = useState('')
   const [searchStr, setSearchStr] = useState('')
-  const { formatMessage } = useLocale()
+  const { formatMessage, locale: lang } = useLocale()
   const [isMobile, setIsMobile] = useState(false)
-  const [isTablet, setIsTablet] = useState(false)
-  const userInfo: BffUser = useUserInfo()
+  const [isSmallDesktop, setIsSmallDesktop] = useState(false)
   const { width } = useWindowSize()
-  const [chosenInstituteNationalId, setChosenInstituteNationalId] = useState<
-    string | undefined
-  >(undefined)
-  const [chosenInstituteSlug, setChosenInstituteSlug] = useState<
-    string | undefined
-  >(undefined)
-
-  const sortedOrganizations = organizations.sort((a, b) =>
-    a.title.localeCompare(b.title),
-  )
+  const [chosenInstitutionNationalId, setChosenInstitutionNationalId] =
+    useState<string | undefined>(undefined)
 
   const {
-    data: typeData,
-    loading: typesLoading,
-    refetch: refetchTypes,
-  } = useGetInstitutionApplicationTypesQuery({
+    data: institutionApplicationTypesData,
+    loading: loadingInstitutionApplicationTypes,
+    refetch: refetchInstitutionApplicationTypes,
+  } = useGetApplicationV2ApplicationTypesInstitutionAdminQuery({
+    ssr: false,
+    skip: isSuperAdmin, //do NOT run if user IS superAdmin
+  })
+
+  const {
+    data: superApplicationTypesData,
+    loading: loadingSuperApplicationTypes,
+    refetch: refetchSuperApplicationTypes,
+  } = useGetApplicationV2ApplicationTypesSuperAdminQuery({
+    ssr: false,
     variables: {
       input: {
-        nationalId: isSuperAdmin
-          ? chosenInstituteNationalId || ''
-          : userInfo.profile.nationalId,
+        nationalId: chosenInstitutionNationalId,
       },
     },
+    skip: !isSuperAdmin, //do NOT run if user is NOT superAdmin
   })
 
   useEffect(() => {
-    refetchTypes()
+    const refetch = isSuperAdmin
+      ? refetchSuperApplicationTypes
+      : refetchInstitutionApplicationTypes
+    refetch()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [multiChoiceFilters])
+  }, [chosenInstitutionNationalId])
 
   useDebounce(
     () => {
@@ -110,18 +112,20 @@ export const Filters = ({
       setIsMobile(false)
     }
 
-    if (width < theme.breakpoints.lg) {
-      setIsTablet(true)
+    // The national id search and the two date pickers only fit side by side
+    // on wide desktops. Below the xl breakpoint the date pickers wrap onto
+    // their own line and the search input expands to full width.
+    if (width < theme.breakpoints.xl) {
+      setIsSmallDesktop(true)
     } else {
-      setIsTablet(false)
+      setIsSmallDesktop(false)
     }
   }, [width])
 
   useEffect(() => {
     if (!filters.typeIdValue) setTypeId(undefined)
     if (!filters.institution) {
-      setChosenInstituteNationalId(undefined)
-      setChosenInstituteSlug(undefined)
+      setChosenInstitutionNationalId(undefined)
     }
 
     if (!filters.nationalId) setNationalId('')
@@ -130,14 +134,21 @@ export const Filters = ({
 
   const institutionTypeIds = useMemo(() => {
     return (
-      typeData?.applicationTypesInstitutionAdmin
+      (isSuperAdmin
+        ? superApplicationTypesData?.applicationV2ApplicationTypesSuperAdmin
+        : institutionApplicationTypesData?.applicationV2ApplicationTypesInstitutionAdmin
+      )
         ?.map((type) => ({
           value: type.id,
           label: type.name ?? '',
         }))
-        .sort((a, b) => a.label.localeCompare(b.label, 'is')) ?? []
+        .sort((a, b) => a.label.localeCompare(b.label, lang)) ?? []
     )
-  }, [typeData])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSuperAdmin, superApplicationTypesData, institutionApplicationTypesData])
+
+  const isLoading =
+    loadingSuperApplicationTypes || loadingInstitutionApplicationTypes
 
   return (
     <Box
@@ -160,8 +171,7 @@ export const Filters = ({
         labelTitle={formatMessage(m.filter)}
         onFilterClear={() => {
           onFilterClear()
-          setChosenInstituteNationalId(undefined)
-          setChosenInstituteSlug(undefined)
+          setChosenInstitutionNationalId(undefined)
           setTypeId(undefined)
           setSearchStr('')
         }}
@@ -179,7 +189,7 @@ export const Filters = ({
                   paddingBottom={isMobile ? 3 : 0}
                 >
                   <Select
-                    id={MultiChoiceFilter.INSTITUTION}
+                    id="institution"
                     label={formatMessage(m.institution)}
                     placeholder={formatMessage(
                       m.institutionDropdownPlaceholder,
@@ -189,31 +199,28 @@ export const Filters = ({
                     size="sm"
                     isClearable={true}
                     value={
-                      chosenInstituteSlug
+                      chosenInstitutionNationalId
                         ? {
-                            value: chosenInstituteSlug,
+                            value: chosenInstitutionNationalId,
                             label:
                               organizations.find(
-                                (x) => x.slug === chosenInstituteSlug,
+                                (x) =>
+                                  x.nationalId === chosenInstitutionNationalId,
                               )?.title || '',
                           }
                         : null
                     }
                     onChange={(v) => {
                       const institution = organizations.find(
-                        (x) => x.slug === v?.value,
+                        (x) => x.nationalId === v?.value,
                       )
-                      setChosenInstituteNationalId(
+                      setChosenInstitutionNationalId(
                         institution?.nationalId || '',
                       )
-                      setChosenInstituteSlug(institution?.slug || '')
-                      onFilterChange({
-                        categoryId: MultiChoiceFilter.INSTITUTION,
-                        selected: v ? [v.value] : [],
-                      })
+                      onInstitutionChange(institution?.nationalId || '')
                     }}
-                    options={sortedOrganizations.map((x) => ({
-                      value: x.slug,
+                    options={organizations.map((x) => ({
+                      value: x.nationalId,
                       label: x.title,
                     }))}
                   />
@@ -224,7 +231,7 @@ export const Filters = ({
                 paddingLeft={isMobile || !isSuperAdmin ? 0 : 3}
               >
                 <Select
-                  id={MultiChoiceFilter.TYPE_ID}
+                  id="typeId"
                   label={formatMessage(m.applicationType)}
                   placeholder={formatMessage(
                     m.applicationTypeDropdownPlaceholder,
@@ -240,29 +247,32 @@ export const Filters = ({
                   }}
                   size="sm"
                   options={institutionTypeIds}
-                  isLoading={typesLoading}
+                  isLoading={isLoading}
                   isClearable={true}
                 />
               </Box>
             </Box>
             <Box
               display="flex"
-              flexDirection={['column', 'column', 'column', 'row']}
+              flexDirection={isSmallDesktop ? 'column' : 'row'}
             >
               <Box
-                width={isTablet ? 'full' : 'half'}
-                paddingBottom={isTablet ? 3 : 0}
+                width={isSmallDesktop ? 'full' : 'half'}
+                paddingBottom={isSmallDesktop ? 3 : 0}
               >
                 {useAdvancedSearch ? (
                   <FilterInput
+                    label={formatMessage(m.searchStr)}
                     placeholder={formatMessage(m.searchStrPlaceholder)}
                     name="admin-applications-search-str"
                     value={searchStr}
                     onChange={setSearchStr}
                     backgroundColor="blue"
+                    size="sm"
                   />
                 ) : (
                   <FilterInput
+                    label={formatMessage(m.nationalId)}
                     placeholder={formatMessage(m.searchPlaceholder)}
                     name="admin-applications-nationalId"
                     value={
@@ -272,24 +282,25 @@ export const Filters = ({
                     }
                     onChange={setNationalId}
                     backgroundColor="blue"
+                    size="sm"
                   />
                 )}
               </Box>
               <Box
                 display="flex"
-                width={isTablet ? 'full' : 'half'}
-                paddingLeft={isTablet ? 0 : 3}
+                width={isSmallDesktop ? 'full' : 'half'}
+                paddingLeft={isSmallDesktop ? 0 : 3}
               >
                 <Box width="half">
                   <DatePicker
                     id="periodFrom"
-                    label=""
+                    label={formatMessage(m.filterFrom)}
                     backgroundColor="blue"
                     maxDate={filters.period.to}
                     selected={filters.period.from}
-                    placeholderText={formatMessage(m.filterFrom)}
+                    placeholderText={formatMessage(m.datePlaceholder)}
                     handleChange={(from) => onDateChange({ from })}
-                    size="xs"
+                    size="sm"
                     locale="is"
                     isClearable={true}
                     handleClear={() => onDateChange({ from: undefined })}
@@ -298,13 +309,13 @@ export const Filters = ({
                 <Box paddingLeft={3} width="half">
                   <DatePicker
                     id="periodTo"
-                    label=""
+                    label={formatMessage(m.filterTo)}
                     backgroundColor="blue"
                     minDate={filters.period.from}
                     selected={filters.period.to}
-                    placeholderText={formatMessage(m.filterTo)}
+                    placeholderText={formatMessage(m.datePlaceholder)}
                     handleChange={(to) => onDateChange({ to })}
-                    size="xs"
+                    size="sm"
                     locale="is"
                     isClearable={true}
                     handleClear={() => onDateChange({ to: undefined })}

@@ -3,9 +3,12 @@ import { IntlShape, useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
 
-import { Accordion, AlertMessage, Box, Button } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
+import { Accordion, AlertMessage, Box } from '@island.is/island-ui/core'
+import {
+  getStandardUserDashboardRoute,
+  PROSECUTION_INVESTIGATION_CASE_DEFENDANT_ROUTE,
+  PROSECUTION_RESTRICTION_CASE_DEFENDANT_ROUTE,
+} from '@island.is/judicial-system/consts'
 import {
   isDistrictCourtUser,
   isInvestigationCase,
@@ -20,11 +23,12 @@ import {
   titles,
 } from '@island.is/judicial-system-web/messages'
 import {
-  AlertBanner,
   AppealCaseFilesOverview,
+  AppealRulingModifiedAlert,
   CaseDates,
   CaseFilesAccordionItem,
   CaseTitleInfoAndTags,
+  ChangeProsecutorModal,
   CommentsAccordionItem,
   Conclusion,
   conclusion,
@@ -37,35 +41,37 @@ import {
   Modal,
   PageHeader,
   PageLayout,
+  PoliceDigitalCaseFilesAccordionItem,
   PoliceRequestAccordionItem,
   ReopenModal,
   RulingAccordionItem,
+  RulingModifiedAlert,
   SignatureConfirmationModal,
   SignatureType,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import {
+  AppealCaseState,
   Case,
-  CaseAppealState,
   CaseDecision,
+  CaseOrigin,
   CaseState,
-  CaseTransition,
   Institution,
   RequestSignatureResponse,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   UpdateCase,
-  useAppealAlertBanner,
+  useAppealCaseBanner,
   useCase,
+  usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import CaseDocuments from './Components/CaseDocuments/CaseDocuments'
 import ModifyDatesModal from './Components/ModifyDatesModal/ModifyDatesModal'
 import ShareCase, { InstitutionOption } from './Components/ShareCase/ShareCase'
-import { strings } from './SignedVerdictOverview.strings'
 
 interface ModalControls {
   open: boolean
@@ -154,9 +160,7 @@ type availableModals =
   | 'NoModal'
   | 'SigningConfirmationModal'
   | 'CourtRecordSigningConfirmationModal'
-  | 'ConfirmAppealAfterDeadline'
-  | 'ConfirmStatementAfterDeadline'
-  | 'AppealReceived'
+  | 'ChangeProsecutor'
 
 export const SignedVerdictOverview: FC = () => {
   const {
@@ -180,7 +184,6 @@ export const SignedVerdictOverview: FC = () => {
     appealAssistant,
     appealJudges,
     victims,
-    showItem,
   } = useInfoCardItems()
 
   const [isModifyingDates, setIsModifyingDates] = useState<boolean>(false)
@@ -218,15 +221,11 @@ export const SignedVerdictOverview: FC = () => {
     extendCase,
     isExtendingCase,
     isSendingNotification,
-    transitionCase,
   } = useCase()
-  const { title, description, child, isLoadingAppealBanner } =
-    useAppealAlertBanner(
-      workingCase,
-      () => setModalVisible('ConfirmAppealAfterDeadline'),
-      () => setModalVisible('ConfirmStatementAfterDeadline'),
-      () => handleReceivedTransition(workingCase),
-    )
+
+  const { appealBanner, appealModals } = useAppealCaseBanner()
+  const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
+    usePoliceDigitalCaseFile()
 
   /**
    * If the case is not rejected it must be accepted because
@@ -273,11 +272,11 @@ export const SignedVerdictOverview: FC = () => {
       if (workingCase.childCase) {
         if (isRestrictionCase(workingCase.type)) {
           router.push(
-            `${constants.RESTRICTION_CASE_DEFENDANT_ROUTE}/${workingCase.childCase.id}`,
+            `${PROSECUTION_RESTRICTION_CASE_DEFENDANT_ROUTE}/${workingCase.childCase.id}`,
           )
         } else {
           router.push(
-            `${constants.INVESTIGATION_CASE_DEFENDANT_ROUTE}/${workingCase.childCase.id}`,
+            `${PROSECUTION_INVESTIGATION_CASE_DEFENDANT_ROUTE}/${workingCase.childCase.id}`,
           )
         }
       } else {
@@ -285,11 +284,11 @@ export const SignedVerdictOverview: FC = () => {
           if (extendedCase) {
             if (isRestrictionCase(extendedCase.type)) {
               router.push(
-                `${constants.RESTRICTION_CASE_DEFENDANT_ROUTE}/${extendedCase.id}`,
+                `${PROSECUTION_RESTRICTION_CASE_DEFENDANT_ROUTE}/${extendedCase.id}`,
               )
             } else {
               router.push(
-                `${constants.INVESTIGATION_CASE_DEFENDANT_ROUTE}/${extendedCase.id}`,
+                `${PROSECUTION_INVESTIGATION_CASE_DEFENDANT_ROUTE}/${extendedCase.id}`,
               )
             }
           }
@@ -298,18 +297,6 @@ export const SignedVerdictOverview: FC = () => {
     } else {
       setIsReopeningCase(true)
     }
-  }
-
-  const handleReceivedTransition = (workingCase: Case) => {
-    transitionCase(
-      workingCase.id,
-      CaseTransition.RECEIVE_APPEAL,
-      setWorkingCase,
-    ).then((updatedCase) => {
-      if (updatedCase) {
-        setModalVisible('AppealReceived')
-      }
-    })
   }
 
   const shareCaseWithAnotherInstitution = (institution?: Institution) => {
@@ -383,19 +370,15 @@ export const SignedVerdictOverview: FC = () => {
     return true
   }
 
-  const shouldDisplayAlertBanner =
+  const shouldDisplayAppealBanner =
     (workingCase.hasBeenAppealed &&
       (isProsecutionUser(user) || isDistrictCourtUser(user))) ||
     (isProsecutionUser(user) && workingCase.canProsecutorAppeal) ||
-    workingCase.appealState === CaseAppealState.COMPLETED
+    workingCase.appealCase?.appealState === AppealCaseState.COMPLETED
 
   return (
     <>
-      {!isLoadingAppealBanner && shouldDisplayAlertBanner && (
-        <AlertBanner variant="warning" title={title} description={description}>
-          {child}
-        </AlertBanner>
-      )}
+      {shouldDisplayAppealBanner && appealBanner}
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}
@@ -408,15 +391,6 @@ export const SignedVerdictOverview: FC = () => {
         />
         <FormContentContainer>
           <Box component="section" marginBottom={5}>
-            <Box marginBottom={3}>
-              <Button
-                variant="text"
-                preTextIcon="arrowBack"
-                onClick={() => router.push(getStandardUserDashboardRoute(user))}
-              >
-                {formatMessage(core.back)}
-              </Button>
-            </Box>
             <CaseTitleInfoAndTags />
             {isRestrictionCase(workingCase.type) &&
               workingCase.decision !==
@@ -435,20 +409,6 @@ export const SignedVerdictOverview: FC = () => {
                   }
                 />
               )}
-            {workingCase.appealRulingModifiedHistory && (
-              <Box marginBottom={5} marginTop={5}>
-                <AlertMessage
-                  type="info"
-                  title={formatMessage(strings.rulingModifiedTitle)}
-                  message={
-                    <MarkdownWrapper
-                      markdown={workingCase.appealRulingModifiedHistory}
-                      textProps={{ variant: 'small' }}
-                    />
-                  }
-                />
-              </Box>
-            )}
           </Box>
           <div className={grid({ gap: 5, marginBottom: 10 })}>
             {workingCase.caseModifiedExplanation && (
@@ -465,32 +425,18 @@ export const SignedVerdictOverview: FC = () => {
                 }
               />
             )}
-            {workingCase.rulingModifiedHistory && (
-              <AlertMessage
-                type="info"
-                title={formatMessage(m.sections.modifyRulingInfo.title)}
-                message={
-                  <MarkdownWrapper
-                    markdown={workingCase.rulingModifiedHistory}
-                    textProps={{ variant: 'small' }}
-                  />
-                }
-              />
-            )}
+            <AppealRulingModifiedAlert />
+            <RulingModifiedAlert />
             <InfoCard
               sections={[
                 {
                   id: 'defendants-section',
                   items: [defendants({ caseType: workingCase.type })],
                 },
-                ...(showItem(victims)
-                  ? [
-                      {
-                        id: 'victims-section',
-                        items: [victims],
-                      },
-                    ]
-                  : []),
+                {
+                  id: 'victims-section',
+                  items: [victims],
+                },
                 {
                   id: 'case-info-section',
                   items: [
@@ -498,7 +444,12 @@ export const SignedVerdictOverview: FC = () => {
                     courtCaseNumber,
                     prosecutorsOffice,
                     court,
-                    prosecutor(workingCase.type),
+                    prosecutor(
+                      workingCase.type,
+                      isProsecutionUser(user)
+                        ? () => setModalVisible('ChangeProsecutor')
+                        : undefined,
+                    ),
                     judge,
                     ...(isInvestigationCase(workingCase.type)
                       ? [caseType]
@@ -507,16 +458,16 @@ export const SignedVerdictOverview: FC = () => {
                   ],
                   columns: 2,
                 },
-                ...(workingCase.appealCaseNumber
+                ...(workingCase.appealCase?.appealCaseNumber
                   ? [
                       {
                         id: 'court-of-appeal-section',
                         items: [
                           appealCaseNumber,
                           ...(appealAssistant ? [appealAssistant] : []),
-                          ...(workingCase.appealJudge1 &&
-                          workingCase.appealJudge2 &&
-                          workingCase.appealJudge3
+                          ...(workingCase.appealCase?.appealJudge1 &&
+                          workingCase.appealCase?.appealJudge2 &&
+                          workingCase.appealCase?.appealJudge3
                             ? [appealJudges]
                             : []),
                         ],
@@ -538,6 +489,13 @@ export const SignedVerdictOverview: FC = () => {
                     user={user}
                   />
                 )}
+                {workingCase.origin === CaseOrigin.LOKE && (
+                  <PoliceDigitalCaseFilesAccordionItem
+                    digitalCaseFiles={digitalCaseFiles}
+                    digitalCaseFilesLoading={digitalCaseFilesLoading}
+                    openDigitalCaseFileUrl={openDigitalCaseFileUrl}
+                  />
+                )}
                 {(workingCase.comments ||
                   workingCase.caseFilesComments ||
                   workingCase.caseResentExplanation) && (
@@ -550,11 +508,12 @@ export const SignedVerdictOverview: FC = () => {
               conclusionText={workingCase.conclusion}
               judgeName={workingCase.judge?.name}
             />
-            {workingCase.appealState === CaseAppealState.COMPLETED &&
-              workingCase.appealConclusion && (
+            {workingCase.appealCase?.appealState ===
+              AppealCaseState.COMPLETED &&
+              workingCase.appealCase?.appealConclusion && (
                 <Conclusion
                   title={formatMessage(conclusion.appealTitle)}
-                  conclusionText={workingCase.appealConclusion}
+                  conclusionText={workingCase.appealCase?.appealConclusion}
                 />
               )}
             <AppealCaseFilesOverview />
@@ -587,10 +546,18 @@ export const SignedVerdictOverview: FC = () => {
         <FormContentContainer isFooter>
           <FormFooter
             previousUrl={getStandardUserDashboardRoute(user)}
-            hideNextButton={shouldHideNextButton(workingCase, user)}
-            nextButtonText={getNextButtonText(formatMessage, workingCase, user)}
-            onNextButtonClick={() => handleNextButtonClick()}
-            nextIsLoading={isExtendingCase}
+            actions={
+              shouldHideNextButton(workingCase, user)
+                ? []
+                : [
+                    {
+                      text: getNextButtonText(formatMessage, workingCase, user),
+                      onClick: () => handleNextButtonClick(),
+                      loading: isExtendingCase,
+                      testId: 'continueButton',
+                    },
+                  ]
+            }
             infoBoxText={getExtensionInfoText(formatMessage, workingCase, user)}
           />
         </FormContentContainer>
@@ -670,63 +637,13 @@ export const SignedVerdictOverview: FC = () => {
               navigateOnClose={false}
             />
           )}
+        {modalVisible === 'ChangeProsecutor' && (
+          <ChangeProsecutorModal onClose={() => setModalVisible('NoModal')} />
+        )}
         {isReopeningCase && (
           <ReopenModal onClose={() => setIsReopeningCase(false)} />
         )}
-        {modalVisible === 'ConfirmAppealAfterDeadline' && (
-          <Modal
-            title={formatMessage(
-              m.sections.confirmAppealAfterDeadlineModal.title,
-            )}
-            text={formatMessage(
-              m.sections.confirmAppealAfterDeadlineModal.text,
-            )}
-            primaryButton={{
-              text: formatMessage(
-                m.sections.confirmAppealAfterDeadlineModal.primaryButtonText,
-              ),
-              onClick: () =>
-                router.push(`${constants.APPEAL_ROUTE}/${workingCase.id}`),
-            }}
-            secondaryButton={{
-              text: formatMessage(
-                m.sections.confirmAppealAfterDeadlineModal.secondaryButtonText,
-              ),
-              onClick: () => setModalVisible('NoModal'),
-            }}
-          />
-        )}
-        {modalVisible === 'ConfirmStatementAfterDeadline' && (
-          <Modal
-            title={formatMessage(
-              strings.confirmStatementAfterDeadlineModalTitle,
-            )}
-            text={formatMessage(strings.confirmStatementAfterDeadlineModalText)}
-            primaryButton={{
-              text: formatMessage(
-                strings.confirmStatementAfterDeadlineModalPrimaryButtonText,
-              ),
-              onClick: () =>
-                router.push(`${constants.STATEMENT_ROUTE}/${workingCase.id}`),
-            }}
-            secondaryButton={{
-              text: formatMessage(
-                strings.confirmStatementAfterDeadlineModalSecondaryButtonText,
-              ),
-              onClick: () => setModalVisible('NoModal'),
-            }}
-          />
-        )}
-        {modalVisible === 'AppealReceived' && (
-          <Modal
-            title={formatMessage(m.sections.appealReceived.title)}
-            text={formatMessage(m.sections.appealReceived.text)}
-            primaryButton={{
-              text: formatMessage(m.sections.appealReceived.primaryButtonText),
-              onClick: () => setModalVisible('NoModal'),
-            }}
-          />
-        )}
+        {appealModals}
       </PageLayout>
     </>
   )

@@ -1,7 +1,7 @@
 import { useMutation } from '@apollo/client'
 import { Dispatch, useCallback, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { v4 as uuid } from 'uuid'
+import { useLocale } from '@island.is/localization'
 
 import { FormSystemField } from '@island.is/api/schema'
 import {
@@ -14,29 +14,45 @@ import {
   InputFileUpload,
   UploadFile,
 } from '@island.is/island-ui/core'
-import { Action, getValue, uploadToS3 } from '../../../lib'
+import { Action, ApplicationState, getValue, uploadToS3 } from '../../../lib'
 import { m } from '../../../lib/messages'
+import { Controller, useFormContext } from 'react-hook-form'
 
 interface Props {
   item: FormSystemField
   hasError?: boolean
   dispatch?: Dispatch<Action>
+  state?: ApplicationState
+}
+
+const normalizeS3Keys = (raw: unknown): string[] => {
+  if (Array.isArray(raw)) {
+    return raw.filter((k): k is string => typeof k === 'string' && k.length > 0)
+  }
+  if (typeof raw === 'string' && raw.length > 0) return [raw]
+  return []
 }
 
 const initializeFiles = (item: FormSystemField): UploadFile[] => {
-  const s3Keys = getValue(item, 's3Key') as string[] | undefined
+  const s3Keys = normalizeS3Keys(getValue(item, 's3Key'))
   if (!s3Keys) {
     return []
   }
-  return s3Keys.map((key) => ({
-    name: key.split('_').pop() as string,
-    status: FileUploadStatus.done,
-    key,
-  }))
+  return s3Keys.map((key) => {
+    const lastPart = key.split('/').pop() ?? key // "uuid_filename.jpg"
+    const filename = lastPart.split('_').slice(1).join('_') // handles underscores in filename
+    return {
+      id: key,
+      name: filename || lastPart,
+      status: FileUploadStatus.done,
+      key,
+    }
+  })
 }
 
-export const FileUpload = ({ item, hasError, dispatch }: Props) => {
-  const { formatMessage } = useIntl()
+export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
+  const { formatMessage, lang } = useLocale()
+  const { control, setValue, trigger, clearErrors } = useFormContext()
   const [files, setFiles] = useState<UploadFile[]>(initializeFiles(item))
   const [error, setError] = useState<string | undefined>(
     hasError ? 'error' : undefined,
@@ -45,7 +61,13 @@ export const FileUpload = ({ item, hasError, dispatch }: Props) => {
   const [uploadFile] = useMutation(STORE_FILE)
   const [deleteFile] = useMutation(DELETE_FILE)
 
-  const types = item?.fieldSettings?.fileTypes?.split(',') ?? []
+  const applicationId = state?.application.id
+
+  const types =
+    item?.fieldSettings?.fileTypes
+      ?.split(',')
+      .map((t) => t.trim())
+      .filter((t) => t.length > 0 && t !== '*') ?? []
 
   const updateFile = useCallback((id: string, updated: Partial<UploadFile>) => {
     setFiles((prev) =>
@@ -56,8 +78,6 @@ export const FileUpload = ({ item, hasError, dispatch }: Props) => {
   const handleUpload = useCallback(
     async (file: UploadFile, id: string) => {
       try {
-        // const sanitizedFilename = file.name.replace(/_/g, '-')
-
         const { data } = await createUploadUrl({
           variables: { filename: file.name },
         })
@@ -86,18 +106,40 @@ export const FileUpload = ({ item, hasError, dispatch }: Props) => {
           },
         })
 
-        const currentKeys = getValue(item, 's3Key') ?? []
-        const newKeys = [...currentKeys, `${item.id}/${presigned.fields.key}`]
-        dispatch &&
-          dispatch({
+        if (!applicationId) {
+          throw new Error('Missing applicationId for file key construction')
+        }
+
+        const newKey = `${applicationId}/${presigned.fields.key}`
+
+        setFiles((prev) => {
+          const next = prev.map((f) =>
+            f.id === id
+              ? {
+                  ...f,
+                  status: FileUploadStatus.done,
+                  percent: 100,
+                  key: newKey,
+                }
+              : f,
+          )
+
+          const nextKeys = next
+            .map((f) => f.key)
+            .filter((k): k is string => typeof k === 'string' && k.length > 0)
+
+          dispatch?.({
             type: 'SET_FILES',
-            payload: { id: item.id, value: newKeys },
+            payload: { id: item.id, value: nextKeys },
           })
 
-        updateFile(id, {
-          status: FileUploadStatus.done,
-          percent: 100,
-          key: `${item.id}/${presigned.fields.key}`,
+          setValue(item.id, nextKeys, {
+            shouldDirty: true,
+            shouldValidate: true,
+          })
+          trigger(item.id)
+
+          return next
         })
       } catch (err) {
         updateFile(id, {
@@ -106,21 +148,44 @@ export const FileUpload = ({ item, hasError, dispatch }: Props) => {
         })
       }
     },
-    [createUploadUrl, uploadFile, item, dispatch, updateFile, formatMessage],
+    [
+      createUploadUrl,
+      uploadFile,
+      item,
+      dispatch,
+      updateFile,
+      formatMessage,
+      setValue,
+      trigger,
+      applicationId,
+    ],
   )
 
   const onChange = useCallback(
     (selectedFiles: File[]) => {
+      const maxSize = item?.fieldSettings?.fileMaxSize
+
       if (
         files.length + selectedFiles.length >
         (item?.fieldSettings?.maxFiles ?? 1)
       ) {
+        clearErrors(item.id)
         setError(
           `${formatMessage(m.maxFileError)} ${
             item.fieldSettings?.maxFiles ?? 1
           }`,
         )
         return
+      }
+
+      if (typeof maxSize === 'number' && maxSize > 0) {
+        const tooLarge = selectedFiles.find((f) => f.size > maxSize)
+        if (tooLarge) {
+          clearErrors(item.id)
+          const maxSizeInMb = Math.round((maxSize / (1024 * 1024)) * 10) / 10
+          setError(formatMessage(m.maxSizeInMb, { maxSizeInMb }))
+          return
+        }
       }
 
       setError(undefined)
@@ -141,7 +206,7 @@ export const FileUpload = ({ item, hasError, dispatch }: Props) => {
         handleUpload(f, f.id as string)
       })
     },
-    [files, item, formatMessage, handleUpload],
+    [files, item, formatMessage, handleUpload, clearErrors],
   )
 
   const onRetry = useCallback(
@@ -169,31 +234,60 @@ export const FileUpload = ({ item, hasError, dispatch }: Props) => {
           },
         },
       })
-      const newFiles = files.filter((f) => f.id !== file.id)
+      const newFiles = files.filter(
+        (f) => (f.key ?? f.id) !== (file.key ?? file.id),
+      )
       setFiles(newFiles)
-      dispatch &&
-        dispatch({
-          type: 'SET_FILES',
-          payload: { id: item.id, value: newFiles },
-        })
+      setError(undefined)
+
+      const newKeys = newFiles.map((f) => f.key).filter(Boolean) as string[]
+      dispatch?.({
+        type: 'SET_FILES',
+        payload: { id: item.id, value: newKeys },
+      })
+      setValue(item.id, newKeys, { shouldDirty: true, shouldValidate: true })
+      trigger(item.id)
     },
-    [deleteFile, dispatch, files, item.id, item.values],
+    [deleteFile, dispatch, files, item.id, item.values, setValue, trigger],
   )
 
+  const title = item.isRequired
+    ? `${item?.name?.[lang] ?? formatMessage(m.uploadBoxTitle)} *`
+    : item?.name?.[lang] ?? formatMessage(m.uploadBoxTitle)
+
   return (
-    <InputFileUpload
-      name={`fileUpload-${item.id}`}
-      files={files}
-      accept={types}
-      title={formatMessage(m.uploadBoxTitle)}
-      description={formatMessage(m.uploadBoxDescription, {
-        fileEndings: types.join(', '),
-      })}
-      buttonLabel={formatMessage(m.uploadBoxButtonLabel)}
-      onChange={onChange}
-      onRemove={onRemove}
-      onRetry={onRetry}
-      errorMessage={error}
+    <Controller
+      key={item.id}
+      name={item.id}
+      control={control}
+      defaultValue={normalizeS3Keys(getValue(item, 's3Key'))}
+      rules={{
+        validate: (v) =>
+          !(item.isRequired ?? false) ||
+          normalizeS3Keys(v).length > 0 ||
+          formatMessage(m.required),
+      }}
+      render={({ fieldState }) => (
+        <InputFileUpload
+          name={`fileUpload-${item.id}`}
+          files={files}
+          accept={types}
+          title={title}
+          description={formatMessage(m.uploadBoxDescription, {
+            fileEndings: types.join(', '),
+          })}
+          buttonLabel={formatMessage(m.uploadBoxButtonLabel)}
+          disabled={
+            types.length === 0 ||
+            !item.fieldSettings?.fileMaxSize ||
+            !item.fieldSettings?.maxFiles
+          }
+          onChange={onChange}
+          onRemove={onRemove}
+          onRetry={onRetry}
+          errorMessage={fieldState.error?.message ?? error}
+        />
+      )}
     />
   )
 }

@@ -222,6 +222,11 @@ export const Finance = new XroadConf({
       staging: 'IS-TEST/GOV/10021/FJS-Public/financeServicesFJS_v2',
       prod: 'IS/GOV/5402697509/FJS-Public/financeServicesFJS_v2',
     },
+    XROAD_FINANCES_V3_PATH: {
+      dev: 'IS-DEV/GOV/10021/FJS-Public/financeServicesFJS_v3',
+      staging: 'IS-TEST/GOV/10021/FJS-Public/financeServicesFJS_v3',
+      prod: 'IS/GOV/5402697509/FJS-Public/financeServicesFJS_v3',
+    },
     XROAD_HMS_LOANS_PATH: {
       dev: 'IS-DEV/GOV/10033/HMS-Protected/libra-v1',
       staging: 'IS-TEST/GOV/5812191480/HMS-Protected/libra-v1',
@@ -231,6 +236,16 @@ export const Finance = new XroadConf({
       dev: 'IS-DEV/GOV/10033/HMS-Protected/husbot-v1',
       staging: 'IS-TEST/GOV/5812191480/HMS-Protected/husbot-v1',
       prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/husbot-v1',
+    },
+  },
+})
+
+export const Farmers = new XroadConf({
+  env: {
+    XROAD_FARMERS_PATH: {
+      dev: 'IS-DEV/GOV/10094/Afurd-Private/baendur',
+      staging: 'IS-TEST/GOV/7108120120/Afurd-Private/baendur',
+      prod: 'IS/GOV/7108120120/Afurd-Private/baendur',
     },
   },
 })
@@ -285,22 +300,6 @@ export const RentalService = new XroadConf({
       dev: 'IS-DEV/GOV/10033/HMS-Protected/Leigusamningar-v1',
       staging: 'IS-TEST/GOV/5812191480/HMS-Protected/Leigusamningar-v1',
       prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Leigusamningar-v1',
-    },
-    HMS_CONTRACTS_AUTH_TOKEN_ENDPOINT: {
-      dev: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token',
-      staging:
-        'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token',
-      prod: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token',
-    },
-    HMS_CONTRACTS_AUTH_TENANT_ID: {
-      dev: 'c7256472-2622-417e-8955-a54eeb0a110e',
-      staging: 'c7256472-2622-417e-8955-a54eeb0a110e',
-      prod: 'c7256472-2622-417e-8955-a54eeb0a110e',
-    },
-    HMS_CONTRACTS_AUTH_CLIENT_ID: {
-      dev: 'e2411f5c-436a-4c17-aa14-eab9c225bc06',
-      staging: 'e2411f5c-436a-4c17-aa14-eab9c225bc06',
-      prod: '44055958-a462-4ba8-bbd2-5bfedbbd18c0',
     },
     XROAD_HMS_RENTAL_SERVICE_CLIENT_HEADER: {
       dev: 'IS-DEV/GOV/10000/island-is-client',
@@ -538,26 +537,25 @@ export const NationalRegistry = new XroadConf({
 export const NationalRegistryB2C = new XroadConf({
   env: {
     NATIONAL_REGISTRY_B2C_CLIENT_ID: {
-      dev: 'b464afdd-056b-406d-b650-6d41733cfeb7',
-      staging: 'ca128c23-b43c-443d-bade-ec5a146a933f',
-      prod: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f',
+      dev: '8f4c5411-9caf-40a1-8764-bbe05fd6de50',
+      staging: '138478ef-b078-4cfa-b322-fecdaced96e8',
+      prod: '636b16a3-7f61-4eca-84cb-71e2ad106adb',
     },
     NATIONAL_REGISTRY_B2C_ENDPOINT: {
-      dev: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
+      dev: 'https://dev.identity.skra.is/dev.identity.skra.is/oauth2/v2.0/token',
       staging:
-        'https://skraidentitystaging.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
-      prod: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
+        'https://staging.identity.skra.is/staging.identity.skra.is/oauth2/v2.0/token',
+      prod: 'https://identity.skra.is/identity.skra.is/oauth2/v2.0/token',
     },
     NATIONAL_REGISTRY_B2C_SCOPE: {
-      dev: 'https://skraidentitydev.onmicrosoft.com/midlun/.default',
-      staging: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default',
-      prod: 'https://skraidentity.onmicrosoft.com/midlun/.default',
+      dev: 'https://skraiddev.onmicrosoft.com/midlun/.default',
+      staging: 'https://skraidstaging.onmicrosoft.com/midlun/.default',
+      prod: 'https://skraid.onmicrosoft.com/midlun/.default',
     },
     NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: {
-      dev: 'https://skraidentitydev.onmicrosoft.com/midlunumsoknir/.default',
-      staging:
-        'https://skraidentitystaging.onmicrosoft.com/midlunumsoknir/.default',
-      prod: 'https://skraidentity.onmicrosoft.com/midlunumsoknir/.default',
+      dev: 'https://skraiddev.onmicrosoft.com/midlunUmsoknir/.default',
+      staging: 'https://skraidstaging.onmicrosoft.com/midlunUmsoknir/.default',
+      prod: 'https://skraid.onmicrosoft.com/midlunUmsoknir/.default',
     },
     NATIONAL_REGISTRY_B2C_PATH: {
       dev: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1',
@@ -575,20 +573,20 @@ export const NationalRegistryB2C = new XroadConf({
 export const NationalRegistryAuthB2C = new XroadConf({
   env: {
     NATIONAL_REGISTRY_B2C_CLIENT_ID: {
-      dev: '6cf94113-d326-4e4d-b97c-1fea12d2f5e1',
-      staging: '19e7d60e-920e-4a6f-a125-25ea283ee1a4',
-      prod: '8271bbc2-d8de-480f-8540-ea43fc40b7ae',
+      dev: '5a452d0d-395d-4e52-bef0-7ae07ecb2388',
+      staging: 'c090fd41-9893-46f5-8962-86bd48788570',
+      prod: '4b24e151-0aac-4b88-8d32-301ef7fe9d54',
     },
     NATIONAL_REGISTRY_B2C_ENDPOINT: {
-      dev: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
+      dev: 'https://dev.identity.skra.is/dev.identity.skra.is/oauth2/v2.0/token',
       staging:
-        'https://skraidentitystaging.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
-      prod: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
+        'https://staging.identity.skra.is/staging.identity.skra.is/oauth2/v2.0/token',
+      prod: 'https://identity.skra.is/identity.skra.is/oauth2/v2.0/token',
     },
     NATIONAL_REGISTRY_B2C_SCOPE: {
-      dev: 'https://skraidentitydev.onmicrosoft.com/midlun/.default',
-      staging: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default',
-      prod: 'https://skraidentity.onmicrosoft.com/midlun/.default',
+      dev: 'https://skraiddev.onmicrosoft.com/midlun/.default',
+      staging: 'https://skraidstaging.onmicrosoft.com/midlun/.default',
+      prod: 'https://skraid.onmicrosoft.com/midlun/.default',
     },
     NATIONAL_REGISTRY_B2C_PATH: {
       dev: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1',
@@ -897,6 +895,11 @@ export const ShipRegistry = new XroadConf({
       staging: 'IS-TEST/GOV/10017/Samgongustofa-Protected/skipaskra-V1',
       prod: 'IS/GOV/5405131040/Samgongustofa-Protected/skipaskra-V1',
     },
+    XROAD_SHIP_REGISTRY_V2_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Skutan-Gov-V1',
+      staging: 'IS-TEST/GOV/10017/Samgongustofa-Protected/Skutan-Gov-V1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Skutan-Gov-V1',
+    },
   },
 })
 
@@ -1016,6 +1019,16 @@ export const ArborgWorkpoint = new XroadConf({
   },
 })
 
+export const DirectorateOfEquality = new XroadConf({
+  env: {
+    XROAD_DIRECTORATE_OF_EQUALITY_PATH: {
+      dev: 'IS-DEV/GOV/10014/DMR-Protected/api.ritstjorn-jafnretti',
+      staging: 'IS-TEST/GOV/10014/DMR-Protected/api.ritstjorn-jafnretti',
+      prod: 'IS/GOV/5804170510/DMR-Protected/api.ritstjorn-jafnretti',
+    },
+  },
+})
+
 export const OfficialJournalOfIceland = new XroadConf({
   env: {
     XROAD_OFFICIAL_JOURNAL_PATH: {
@@ -1099,6 +1112,16 @@ export const SecondarySchool = new XroadConf({
   },
 })
 
+export const MmsPrimarySchool = new XroadConf({
+  env: {
+    XROAD_MMS_PRIMARY_SCHOOL_SERVICE_ID: {
+      dev: 'IS-DEV/GOV/10066/MMS-Protected/data-gateway-backend-internal',
+      staging: 'IS-TEST/GOV/10066/MMS-Protected/data-gateway-backend-internal',
+      prod: 'IS/GOV/6601241280/MMS-Protected/data-gateway-backend-internal',
+    },
+  },
+})
+
 export const LSH = new XroadConf({
   env: {
     XROAD_LSH_PATH: {
@@ -1132,6 +1155,17 @@ export const GoProVerdicts = new XroadConf({
       dev: 'IS-DEV/GOV/10019/Domstolasyslan-Client/Island-is',
       staging: 'IS-TEST/GOV/10019/Domstolasyslan-Client/Island-is',
       prod: 'IS/GOV/4707171140/Domstolasyslan-Client/Island-is',
+    },
+  },
+})
+
+export const RecyclingFund = new XroadConf({
+  env: {
+    XROAD_RECYCLING_FUND_PATH: {
+      dev: 'IS-DEV/GOV/10099/Urvinnslusjodur-Protected/skilavottord-api',
+      staging:
+        'IS-TEST/GOV/5308033680/Urvinnslusjodur-Protected/skilavottord-api',
+      prod: 'IS/GOV/5308033680/Urvinnslusjodur-Protected/skilavottord-api',
     },
   },
 })

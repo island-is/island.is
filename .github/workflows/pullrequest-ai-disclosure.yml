@@ -1,0 +1,40 @@
+name: PR AI disclosure
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - edited
+      - synchronize
+
+defaults:
+  run:
+    shell: bash -euo pipefail {0}
+
+jobs:
+  validate:
+    name: Validate PR AI disclosure
+    runs-on: arc-shared
+    permissions:
+      contents: 'read'
+    steps:
+      - name: Checkout validator
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            scripts/ci/validate-pr-ai-disclosure.mjs
+          sparse-checkout-cone-mode: false
+
+      - name: Load pull request body
+        run: |
+          delimiter="PR_BODY_$(date +%s%N)"
+          {
+            echo "PR_BODY<<${delimiter}"
+            node -e "const event = require(process.env.GITHUB_EVENT_PATH); process.stdout.write(event.pull_request?.body ?? '')"
+            echo
+            echo "${delimiter}"
+          } >> "$GITHUB_ENV"
+
+      - name: Validate pull request body
+        run: node scripts/ci/validate-pr-ai-disclosure.mjs

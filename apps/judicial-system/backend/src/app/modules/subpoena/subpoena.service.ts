@@ -21,7 +21,6 @@ import {
 } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
-  CaseOrigin,
   CourtDocumentType,
   HashAlgorithm,
   isFailedServiceStatus,
@@ -34,16 +33,16 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { getCaseFileHash } from '../../formatters'
-import { InternalCaseService } from '../case/internalCase.service'
 import { PdfService } from '../case/pdf.service'
 import { CourtDocumentFolder, CourtService } from '../court'
-import { CourtDocumentService } from '../court-session'
 import { DefendantService } from '../defendant/defendant.service'
 import { EventService } from '../event'
 import { FileService } from '../file/file.service'
-import { PoliceDocumentType, PoliceService } from '../police'
+import { PoliceService } from '../police'
 import {
   Case,
+  CaseDefendantPoliceCaseNumberRepositoryService,
+  CourtDocumentRepositoryService,
   CourtSession,
   Defendant,
   Institution,
@@ -88,7 +87,9 @@ export const include: Includeable[] = [
 @Injectable()
 export class SubpoenaService {
   constructor(
+    private readonly courtDocumentRepositoryService: CourtDocumentRepositoryService,
     private readonly subpoenaRepositoryService: SubpoenaRepositoryService,
+    private readonly caseDefendantPoliceCaseNumberRepositoryService: CaseDefendantPoliceCaseNumberRepositoryService,
     private readonly pdfService: PdfService,
     @Inject(forwardRef(() => FileService))
     private readonly fileService: FileService,
@@ -97,10 +98,7 @@ export class SubpoenaService {
     private readonly eventService: EventService,
     @Inject(forwardRef(() => DefendantService))
     private readonly defendantService: DefendantService,
-    private readonly courtDocumentService: CourtDocumentService,
     private readonly courtService: CourtService,
-    @Inject(forwardRef(() => InternalCaseService))
-    private readonly internalCaseService: InternalCaseService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -130,7 +128,7 @@ export class SubpoenaService {
     theCase: Case,
     user: TUser,
   ): Promise<Subpoena[]> {
-    const { id: caseId, defendants, withCourtSessions, courtSessions } = theCase
+    const { id: caseId, defendants, withCourtSessions } = theCase
 
     // Filter defendants by the provided IDs
     const requestedDefendants =
@@ -170,8 +168,8 @@ export class SubpoenaService {
       }),
     )
 
-    // Create court documents if court sessions exist
-    if (withCourtSessions && courtSessions && courtSessions.length > 0) {
+    // Create court documents if court sessions enabled for the case
+    if (withCourtSessions) {
       for (let i = 0; i < defendantsToProcess.length; i++) {
         const defendant = defendantsToProcess[i]
         const subpoena = subpoenas[i]
@@ -179,25 +177,31 @@ export class SubpoenaService {
           subpoena.created,
         )}`
 
-        await this.courtDocumentService.create(
+        await this.courtDocumentRepositoryService.create(
           caseId,
           {
             documentType: CourtDocumentType.GENERATED_DOCUMENT,
             name,
             generatedPdfUri: `/api/case/${caseId}/subpoena/${defendant.id}/${subpoena.id}/${name}`,
           },
-          transaction,
+          { transaction },
         )
       }
     }
 
-    // Queue messages for delivering subpoenas to police, court, and national commissioners office
+    // Queue messages for delivering subpoenas to court and national commissioners office
     await this.queueSubpoenaDeliveryMessages(
       theCase,
       defendantsToProcess,
       subpoenas,
       user,
     )
+
+    this.eventService.postEvent('SUBPOENA_ISSUED', theCase, false, {
+      Varnaraðili: defendantsToProcess
+        .map((defendant) => defendant.id)
+        .join(', '),
+    })
 
     return subpoenas
   }
@@ -214,17 +218,7 @@ export class SubpoenaService {
       const defendant = defendants[i]
       const subpoena = subpoenas[i]
 
-      // For LOKE origin cases, also send to police
-      if (theCase.origin === CaseOrigin.LOKE) {
-        messages.push({
-          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_FILE,
-          user,
-          caseId: theCase.id,
-          elementId: [defendant.id, subpoena.id],
-        })
-      }
-
-      // Always send to national commissioners office and court
+      // Send to national commissioners office and court
       messages.push(
         {
           type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA,
@@ -272,18 +266,14 @@ export class SubpoenaService {
           type: MessageType.SUBPOENA_NOTIFICATION,
           caseId: subpoena.caseId,
           elementId: [subpoena.defendantId, subpoena.id],
-          body: {
-            type: SubpoenaNotificationType.SERVICE_SUCCESSFUL,
-          },
+          body: { type: SubpoenaNotificationType.SERVICE_SUCCESSFUL },
         })
       } else if (isFailedServiceStatus(serviceStatus)) {
         addMessagesToQueue({
           type: MessageType.SUBPOENA_NOTIFICATION,
           caseId: subpoena.caseId,
           elementId: [subpoena.defendantId, subpoena.id],
-          body: {
-            type: SubpoenaNotificationType.SERVICE_FAILED,
-          },
+          body: { type: SubpoenaNotificationType.SERVICE_FAILED },
         })
       }
     }
@@ -296,6 +286,13 @@ export class SubpoenaService {
     update: UpdateSubpoenaDto,
     transaction: Transaction,
   ): Promise<Subpoena> {
+    // Case is often loaded via Sequelize include (e.g. internal LÖKE PATCH) and does not
+    // pass through CaseRepository, so the virtual policeCaseNumbers field is unset.
+    await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
+      [theCase],
+      { transaction },
+    )
+
     const {
       defenderChoice,
       defenderNationalId,
@@ -357,22 +354,17 @@ export class SubpoenaService {
       ].includes(serviceStatus)
 
     // File the service certificate as a court document
-    if (
-      wasSubpoenaSuccessfullyServed &&
-      theCase.withCourtSessions &&
-      theCase.courtSessions &&
-      theCase.courtSessions.length > 0
-    ) {
+    if (wasSubpoenaSuccessfullyServed && theCase.withCourtSessions) {
       const name = `Birtingarvottorð ${defendant.name}`
 
-      await this.courtDocumentService.create(
+      await this.courtDocumentRepositoryService.create(
         theCase.id,
         {
           documentType: CourtDocumentType.GENERATED_DOCUMENT,
           name,
           generatedPdfUri: `/api/case/${theCase.id}/subpoenaServiceCertificate/${defendant.id}/${subpoena.id}/${name}`,
         },
-        transaction,
+        { transaction },
       )
     }
 
@@ -446,9 +438,25 @@ export class SubpoenaService {
     try {
       const civilClaimPdfs: string[] = []
       const civilClaimFiles =
-        theCase.caseFiles?.filter(
-          (caseFile) => caseFile.category === CaseFileCategory.CIVIL_CLAIM,
-        ) ?? []
+        theCase.caseFiles?.filter((caseFile) => {
+          if (caseFile.category !== CaseFileCategory.CIVIL_CLAIM) {
+            return false
+          }
+
+          if (!caseFile.civilClaimantId) {
+            return true
+          }
+
+          const claimant = theCase.civilClaimants?.find(
+            (c) => c.id === caseFile.civilClaimantId,
+          )
+
+          if (!claimant?.defendantIds?.length) {
+            return true
+          }
+
+          return claimant.defendantIds.includes(defendant.id)
+        }) ?? []
 
       for (const civilClaimFile of civilClaimFiles) {
         const civilClaimPdf = await this.fileService.getCaseFileFromS3(
@@ -485,12 +493,6 @@ export class SubpoenaService {
         civilClaims: civilClaimPdfs,
       })
 
-      if (!createdSubpoena) {
-        this.logger.error('Failed to create subpoena file for police')
-
-        return { delivered: false }
-      }
-
       await this.subpoenaRepositoryService.update(
         theCase.id,
         defendant.id,
@@ -503,6 +505,16 @@ export class SubpoenaService {
         `Subpoena with police subpoena id ${createdSubpoena.policeSubpoenaId} delivered to the police centralized file service`,
       )
 
+      this.eventService.postEvent(
+        'SUBPOENA_DELIVERED_TO_POLICE',
+        theCase,
+        false,
+        {
+          Varnaraðili: defendant.id,
+          'RLS auðkenni': createdSubpoena.policeSubpoenaId,
+        },
+      )
+
       return { delivered: true }
     } catch (error) {
       this.logger.error(
@@ -510,40 +522,19 @@ export class SubpoenaService {
         error,
       )
 
-      return { delivered: false }
-    }
-  }
-
-  async deliverSubpoenaFileToPolice(
-    theCase: Case,
-    defendant: Defendant,
-    subpoena: Subpoena,
-    user: TUser,
-    transaction: Transaction,
-  ): Promise<DeliverResponse> {
-    try {
-      const subpoenaPdf = await this.pdfService.getSubpoenaPdf(
-        theCase,
-        defendant,
-        transaction,
-        subpoena,
+      // Report every failed attempt to the Slack error channel (the delivery is
+      // retried by the message-handler, so this fires once per retry) - this is
+      // the single place that catches all causes: PDF/S3, the police call, and
+      // the database update.
+      void this.eventService.postErrorEvent(
+        'Villa við að senda fyrirkall til RLS',
+        {
+          caseId: theCase.id,
+          defendantId: defendant.id,
+          subpoenaId: subpoena.id,
+        },
+        error instanceof Error ? error : new Error(String(error)),
       )
-
-      const delivered =
-        await this.internalCaseService.deliverCaseToPoliceWithFiles(
-          theCase,
-          user,
-          [
-            {
-              type: PoliceDocumentType.RVFK,
-              courtDocument: Base64.btoa(subpoenaPdf.toString('binary')),
-            },
-          ],
-        )
-
-      return { delivered }
-    } catch (error) {
-      this.logger.error('Error delivering subpoena to police', error)
 
       return { delivered: false }
     }

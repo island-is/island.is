@@ -18,7 +18,6 @@ export interface DefaultHeaderProps {
   fullWidth?: boolean
   image?: string
   background?: string
-  mobileBackground?: string | null
   title: string
   underTitle?: string
   titleSectionPaddingLeft?: ResponsiveSpace
@@ -43,7 +42,6 @@ export const DefaultHeader: React.FC<
   fullWidth,
   image,
   background,
-  mobileBackground,
   title,
   underTitle,
   logo,
@@ -102,8 +100,7 @@ export const DefaultHeader: React.FC<
       <div
         className={cn({ [styles.gridContainerWidth]: !fullWidth })}
         style={{
-          background:
-            isMobile || isSubpage ? mobileBackground || background : background,
+          background,
         }}
       >
         <div

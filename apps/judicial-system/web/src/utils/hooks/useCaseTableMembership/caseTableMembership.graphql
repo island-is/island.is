@@ -1,0 +1,5 @@
+query CaseTableMembership($caseId: String!) {
+  caseTableMembership(caseId: $caseId) {
+    caseTableTypes
+  }
+}

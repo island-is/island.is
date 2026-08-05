@@ -52,6 +52,11 @@ export const publishing = {
         'Mál sem send eru til birtingar með birtingardag innan við næstu 10 virka daga eru merkt í hraðbirtingu.',
       description: 'Message of the fast track section',
     },
+    categoryMessageTitle: {
+      id: 'ojoi.application:publishing.headings.categoryMessageTitle',
+      defaultMessage: 'Efnisflokkar í Stjórnartíðindum',
+      description: 'Title for the category select in Official Journal',
+    },
   }),
   inputs: {
     datepicker: defineMessages({

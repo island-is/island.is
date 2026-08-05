@@ -16,6 +16,12 @@ const schema = z.object({
     paymentsApiHeaderValue: z.string(),
     paymentsGatewayApiUrl: z.string(),
     systemCalling: z.string(),
+    applePayDomainName: z.string(),
+    applePayDisplayName: z.string(),
+    applePayMerchantIdentifier: z.string().optional(),
+    applePayMerchantIdentityCert: z.string().optional(),
+    applePayMerchantIdentityKey: z.string().optional(),
+    applePayPaymentProcessingKey: z.string().optional(),
   }),
   tokenExpiryMinutes: z.number().int(),
   memCacheExpiryMinutes: z.number().int(),
@@ -49,6 +55,18 @@ export const CardPaymentModuleConfig = defineConfig({
       paymentsApiHeaderValue: env.required('PAYMENTS_GATEWAY_API_HEADER_VALUE'),
       paymentsGatewayApiUrl: env.required('PAYMENTS_GATEWAY_API_URL'),
       systemCalling: env.required('PAYMENTS_GATEWAY_SYSTEM_CALLING'),
+      applePayDomainName: env.required('PAYMENTS_APPLE_PAY_DOMAIN'),
+      applePayDisplayName: env.required('PAYMENTS_APPLE_PAY_DISPLAY_NAME'),
+      applePayMerchantIdentifier: env.optional('APPLE_PAY_MERCHANT_IDENTIFIER'),
+      applePayMerchantIdentityCert: env.optional(
+        'APPLE_PAY_MERCHANT_IDENTITY_CERT',
+      ),
+      applePayMerchantIdentityKey: env.optional(
+        'APPLE_PAY_MERCHANT_IDENTITY_KEY',
+      ),
+      applePayPaymentProcessingKey: env.optional(
+        'APPLE_PAY_PAYMENT_PROCESSING_KEY',
+      ),
     },
     tokenExpiryMinutes: env.optionalJSON('PAYMENTS_TOKEN_EXPIRY_MINUTES') ?? 2,
     memCacheExpiryMinutes:

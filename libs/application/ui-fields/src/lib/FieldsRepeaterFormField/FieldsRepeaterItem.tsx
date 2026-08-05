@@ -20,6 +20,8 @@ import {
   RepeaterOptionValue,
   VehiclePermnoWithInfoField,
   StaticText,
+  SetFieldLoadingState,
+  SetSubmitButtonDisabled,
 } from '@island.is/application/types'
 import { GridColumn, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -50,6 +52,8 @@ interface ItemFieldProps {
   dataId: string
   index: number
   values: Array<Record<string, string>>
+  setFieldLoadingState?: SetFieldLoadingState
+  setSubmitButtonDisabled?: SetSubmitButtonDisabled
 }
 
 const componentMapper = {
@@ -69,6 +73,8 @@ export const Item = ({
   dataId,
   index,
   values,
+  setFieldLoadingState,
+  setSubmitButtonDisabled,
 }: ItemFieldProps) => {
   const { formatMessage, lang } = useLocale()
   const { setValue, getValues, control, clearErrors } = useFormContext()
@@ -376,7 +382,7 @@ export const Item = ({
         : item.title
     const messageVal =
       typeof item.message === 'function'
-        ? item.message(application, activeValues)
+        ? item.message(application, activeValues, index, lang)
         : item.message
 
     alertMessageProps = {
@@ -451,7 +457,7 @@ export const Item = ({
 
   if (
     typeof condition === 'function'
-      ? condition && !condition(application, activeValues, index)
+      ? condition && !condition(application, activeValues, index, lang)
       : condition
   ) {
     return null
@@ -564,6 +570,8 @@ export const Item = ({
                 }
               : {})}
             {...(component === 'input' ? { suffix: suffixVal } : {})}
+            setFieldLoadingState={setFieldLoadingState}
+            setSubmitButtonDisabled={setSubmitButtonDisabled}
           />
         )}
     </GridColumn>

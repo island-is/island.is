@@ -23,4 +23,14 @@ export class HnippTemplate {
     example: '@island.is/documents',
   })
   scope!: string
+
+  @ApiProperty({
+    example: 'Landlæknir',
+  })
+  smsPayer!: string
+
+  @ApiProperty({
+    example: 'OPT_IN',
+  })
+  smsDelivery!: string
 }

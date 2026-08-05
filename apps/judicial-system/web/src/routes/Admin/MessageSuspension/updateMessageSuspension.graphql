@@ -1,0 +1,9 @@
+mutation UpdateMessageSuspension($input: UpdateMessageSuspensionInput!) {
+  updateMessageSuspension(input: $input) {
+    category
+    suspended
+    delaySeconds
+    modified
+    modifiedBy
+  }
+}

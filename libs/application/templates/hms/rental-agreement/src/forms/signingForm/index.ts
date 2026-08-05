@@ -7,14 +7,14 @@ import {
   buildMultiField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import RA from '../../assets/RA'
-import Logo from '../../assets/Logo'
+import { MovingSearching } from '@island.is/application/assets/graphics'
+import { HmsLogo } from '@island.is/application/assets/institution-logos'
 import * as m from '../../lib/messages'
 
 export const SigningForm: Form = buildForm({
   id: 'SigningForm',
   title: m.application.name,
-  logo: Logo,
+  logo: HmsLogo,
   mode: FormModes.IN_PROGRESS,
   renderLastScreenButton: true,
   children: [
@@ -43,7 +43,7 @@ export const SigningForm: Form = buildForm({
             buildImageField({
               id: 'signing.image',
               width: 'full',
-              image: RA,
+              image: MovingSearching,
               imagePosition: 'center',
               alt: 'Undirritun',
             }),

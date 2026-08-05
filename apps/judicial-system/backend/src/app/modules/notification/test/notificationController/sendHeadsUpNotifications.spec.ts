@@ -1,7 +1,10 @@
 import { v4 as uuid } from 'uuid'
 
 import { Message, MessageType } from '@island.is/judicial-system/message'
-import { CaseNotificationType, User } from '@island.is/judicial-system/types'
+import {
+  RequestCaseNotificationType,
+  User,
+} from '@island.is/judicial-system/types'
 
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
@@ -33,7 +36,7 @@ describe('NotificationController - Send heads up notification', () => {
 
       await notificationController
         .sendCaseNotification(caseId, user, { id: caseId } as Case, {
-          type: CaseNotificationType.HEADS_UP,
+          type: RequestCaseNotificationType.HEADS_UP,
         })
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
@@ -56,7 +59,7 @@ describe('NotificationController - Send heads up notification', () => {
           type: MessageType.NOTIFICATION,
           user,
           caseId,
-          body: { type: CaseNotificationType.HEADS_UP },
+          body: { type: RequestCaseNotificationType.HEADS_UP },
         },
       ])
       expect(then.result).toEqual({ notificationSent: true })

@@ -1,4 +1,4 @@
-import { IndictmentSubtype } from './case'
+import { CrimeSceneMap, IndictmentSubtype } from './case'
 import {
   ILLEGAL_DRUGS_AND_PRESCRIPTION_DRUGS_DRIVING,
   Substance,
@@ -44,49 +44,48 @@ export const isTrafficViolationIndictmentCount = (
 }
 
 interface IndictmentCount {
+  id?: string
+  displayOrder?: number | null
   created?: string | Date | null
   policeCaseNumber?: string | null
 }
 
+export const sortIndictmentCounts = <T extends IndictmentCount>(
+  counts: T[],
+): T[] =>
+  [...counts].sort((a, b) => {
+    const orderDiff = (a.displayOrder ?? 0) - (b.displayOrder ?? 0)
+    if (orderDiff !== 0) return orderDiff
+    const aCreated = a.created ? new Date(a.created).getTime() : 0
+    const bCreated = b.created ? new Date(b.created).getTime() : 0
+    return aCreated - bCreated
+  })
+
 export const getIndictmentCountCompare =
-  (policeCaseNumbers: string[] | undefined | null) =>
+  (crimeScenes: CrimeSceneMap | undefined | null) =>
   (a: IndictmentCount, b: IndictmentCount): number => {
-    if (!policeCaseNumbers) {
-      // This should never happen
-      return 0
+    const getDateMs = (
+      date: Date | string | undefined | null,
+    ): number | undefined => {
+      if (!date) return undefined
+      if (typeof date === 'string') return new Date(date).getTime()
+      return date.getTime()
     }
 
-    const aCreated =
-      typeof a.created === 'string'
-        ? new Date(a.created).getTime()
-        : a.created?.getTime() ?? 0
-    const aPoliceCaseNumber = a.policeCaseNumber ?? ''
-    const aIndex = policeCaseNumbers.findIndex((n) => n === aPoliceCaseNumber)
-    const bCreated =
-      typeof b.created === 'string'
-        ? new Date(b.created).getTime()
-        : b.created?.getTime() ?? 0
-    const bPoliceCaseNumber = b.policeCaseNumber ?? ''
-    const bIndex = policeCaseNumbers.findIndex((n) => n === bPoliceCaseNumber)
+    const aDate = getDateMs(
+      a.policeCaseNumber ? crimeScenes?.[a.policeCaseNumber]?.date : undefined,
+    )
+    const bDate = getDateMs(
+      b.policeCaseNumber ? crimeScenes?.[b.policeCaseNumber]?.date : undefined,
+    )
 
-    let result: number
-
-    // We want incictment counts with missing police case numbers
-    // to be at the end of the list
-    if (aIndex < 0) {
-      result = bIndex < 0 ? 0 : 1
-    } else if (bIndex < 0) {
-      result = -1
-    } else {
-      result = aIndex !== bIndex ? (aIndex < bIndex ? -1 : 1) : 0
+    if (aDate === undefined || aDate === null) {
+      return bDate === undefined || bDate === null ? 0 : 1
     }
 
-    return result === 0
-      ? // When the police case numbers are equal we order by creation date
-        aCreated !== bCreated
-        ? aCreated < bCreated
-          ? -1
-          : 1
-        : 0
-      : result
+    if (bDate === undefined || bDate === null) {
+      return -1
+    }
+
+    return aDate !== bDate ? (aDate < bDate ? -1 : 1) : 0
   }

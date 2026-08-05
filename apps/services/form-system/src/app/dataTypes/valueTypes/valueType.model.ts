@@ -9,6 +9,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator'
+import { LanguageType } from '../languageType.model'
 
 class Month {
   @IsOptional()
@@ -37,14 +38,36 @@ export class ValueType {
 
   @IsOptional()
   @IsDate()
-  @Transform(({ value }) => new Date(value), { toClassOnly: true })
-  @ApiPropertyOptional({ type: Date })
-  date?: Date
+  @Transform(
+    ({ value }) => {
+      // Keep cleared values as null
+      if (value === null || value === undefined || value === '') {
+        return null
+      }
+
+      const d = new Date(value)
+      // Treat unparseable values as null (optional: you can throw instead)
+      if (isNaN(d.getTime())) {
+        return null
+      }
+
+      return d
+    },
+    { toClassOnly: true },
+  )
+  @ApiPropertyOptional({ type: Date, nullable: true })
+  date?: Date | null
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => LanguageType)
+  @ApiPropertyOptional({ type: LanguageType })
+  label?: LanguageType
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
-  listValue?: string
+  value?: string
 
   @IsOptional()
   @IsString()
@@ -149,15 +172,26 @@ export class ValueType {
   time?: string
 
   @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  @ApiPropertyOptional({ type: [String] })
-  s3Key?: string[]
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  registrationNumber?: string
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
-  s3Url?: string
+  model?: string
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => LanguageType)
+  @ApiPropertyOptional({ type: LanguageType })
+  color?: LanguageType
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  @ApiPropertyOptional({ type: [String] })
+  s3Key?: string[]
 
   @IsOptional()
   @IsString()

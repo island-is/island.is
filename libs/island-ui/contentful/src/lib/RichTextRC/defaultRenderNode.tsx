@@ -1,3 +1,4 @@
+import cn from 'classnames'
 import { BLOCKS, INLINES } from '@contentful/rich-text-types'
 import { Asset } from 'contentful'
 import { RenderNode } from '@contentful/rich-text-react-renderer'
@@ -8,6 +9,7 @@ import {
   ResponsiveSpace,
   Box,
   Table as T,
+  Text,
 } from '@island.is/island-ui/core'
 import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
 import Hyperlink from '../Hyperlink/Hyperlink'
@@ -148,7 +150,7 @@ export const defaultRenderNodeObject: RenderNode = {
     </Box>
   ),
   [BLOCKS.TABLE]: (_node, children) => (
-    <Box className={styles.clearBoth}>
+    <Box className={cn(styles.clearBoth, styles.tableContainer)}>
       <T.Table>{children}</T.Table>
     </Box>
   ),
@@ -239,11 +241,18 @@ export const defaultRenderNodeObject: RenderNode = {
     } else {
       url = ''
     }
-    return url ? <Hyperlink href={url}>{children}</Hyperlink> : null
+    return url ? (
+      <Hyperlink href={url}>{children}</Hyperlink>
+    ) : (
+      <Text as="span">{children}</Text>
+    )
   },
   [INLINES.ENTRY_HYPERLINK]: (node, children) => {
     const entry = node.data.target
     const type = entry?.sys?.contentType?.sys?.id
+
+    if (!type) return <Text as="span">{children}</Text>
+
     switch (type) {
       case 'article':
         return entry?.fields?.slug ? (

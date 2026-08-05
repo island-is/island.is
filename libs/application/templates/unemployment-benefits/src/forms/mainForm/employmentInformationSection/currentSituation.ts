@@ -105,7 +105,7 @@ export const currentSituationSubSection = buildSubSection({
               required: true,
               label:
                 employmentMessages.employmentHistory.labels.employerSelectLabel,
-              options: (application, _, locale, formatMessage) =>
+              options: (application, _, _locale, formatMessage) =>
                 getRskOptions(application, formatMessage),
             },
             employer: {
@@ -143,18 +143,11 @@ export const currentSituationSubSection = buildSubSection({
               width: 'half',
               type: 'number',
               suffix: '%',
+              placeholder: '1-100%',
               required: true,
-              max: 99,
+              allowNegative: false,
+              max: 100,
               condition: (application) => hasEmployer(application.answers),
-            },
-            startDate: {
-              component: 'date',
-              label:
-                employmentMessages.currentSituation.labels.partTimeJobStartDate,
-              width: 'half',
-              required: true,
-              condition: (application) =>
-                isEmployedPartTime(application.answers),
             },
             predictedEndDate: {
               component: 'date',

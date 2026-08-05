@@ -2,6 +2,8 @@ import { NextApiRequest, NextApiResponse } from 'next'
 
 import { NationalRegistryResponsePerson } from '@island.is/judicial-system-web/src/types'
 
+import { fakePerson } from '../constants'
+
 const getPersonByNationalId = async (
   nationalId: string,
 ): Promise<NationalRegistryResponsePerson> => {
@@ -23,6 +25,12 @@ export default async function handler(
 ) {
   const nationalId = (req.query.nationalId as string).replace('-', '')
 
-  const people = await getPersonByNationalId(nationalId)
+  // Each api call costs actual money. This allows us to develop and test
+  // without actually making a real api call.
+  const people: NationalRegistryResponsePerson =
+    process.env.NODE_ENV === 'production'
+      ? await getPersonByNationalId(nationalId)
+      : { items: [fakePerson] }
+
   res.status(200).json(people)
 }

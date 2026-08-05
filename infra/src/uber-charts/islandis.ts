@@ -18,6 +18,7 @@ import { serviceSetup as servicePortalApiSetup } from '../../../apps/services/us
 // Payments
 import { serviceSetup as paymentsWebSetup } from '../../../apps/payments/infra/payments'
 import { serviceSetup as paymentsServiceSetup } from '../../../apps/services/payments/infra/payments'
+import { serviceSetupForWorker as paymentsServiceWorkerSetup } from '../../../apps/services/payments/infra/payments'
 
 // Bff's
 import { serviceSetup as bffAdminPortalServiceSetup } from '../../../apps/services/bff/infra/admin-portal.infra'
@@ -29,8 +30,10 @@ import { serviceSetup as xroadCollectorSetup } from '../../../apps/services/xroa
 import { serviceSetup as licenseApiSetup } from '../../../apps/services/license-api/infra/license-api'
 import {
   workerSetup as cmsImporterSetup,
+  cmsCleanupSetup as cmsImporterCmsCleanupSetup,
   energyFundImportSetup as cmsImporterEnergyFundImportSetup,
   fsreBuildingsImportSetup as cmsImporterFsreBuildingsImportSetup,
+  webSitemapImportSetup as cmsImporterWebSitemapImportSetup,
 } from '../../../apps/services/cms-importer/infra/cms-importer-worker'
 
 import { serviceSetup as skilavottordWebSetup } from '../../../apps/skilavottord/web/infra/skilavottord-web'
@@ -52,9 +55,7 @@ import {
   userNotificationBirthdayWorkerSetup,
 } from '../../../apps/services/user-notification/infra/user-notification'
 
-import { serviceSetup as adsApiSetup } from '../../../apps/air-discount-scheme/api/infra/api'
 import { serviceSetup as adsBackendSetup } from '../../../apps/air-discount-scheme/backend/infra/air-discount-scheme-backend'
-import { serviceSetup as adsWebSetup } from '../../../apps/air-discount-scheme/web/infra/web'
 
 import { serviceSetup as rabBackendSetup } from '../../../apps/services/regulations-admin-backend/infra/regulations-admin-backend'
 
@@ -86,10 +87,13 @@ const skilavottordWeb = skilavottordWebSetup({ api: skilavottordWs })
 const documentsService = serviceDocumentsSetup()
 const servicePortalApi = servicePortalApiSetup()
 const paymentsService = paymentsServiceSetup()
+const paymentsServiceWorker = paymentsServiceWorkerSetup()
 
 const userNotificationService = userNotificationServiceSetup({
   userProfileApi: servicePortalApi,
 })
+
+const rabBackend = rabBackendSetup()
 
 const appSystemApi = appSystemApiSetup({
   documentsService,
@@ -98,6 +102,7 @@ const appSystemApi = appSystemApiSetup({
   servicePortalApi,
   userNotificationService,
   paymentsApi: paymentsService,
+  regulationsAdminBackend: rabBackend,
 })
 const appSystemApiWorker = appSystemApiWorkerSetup({
   userNotificationService,
@@ -107,9 +112,6 @@ const appSystemApiWorker = appSystemApiWorkerSetup({
 const nameRegistryBackend = serviceNameRegistryBackendSetup()
 
 const adsBackend = adsBackendSetup()
-const adsApi = adsApiSetup({ adsBackend })
-const adsWeb = adsWebSetup({ adsApi })
-const rabBackend = rabBackendSetup()
 
 const sessionsService = sessionsServiceSetup()
 const sessionsWorker = sessionsWorkerSetup()
@@ -120,7 +122,9 @@ const authAdminApi = authAdminApiSetup()
 const universityGatewayService = universityGatewaySetup()
 const universityGatewayWorker = universityGatewayWorkerSetup()
 
-const formSystemApi = formSystemApiSetup()
+const formSystemApi = formSystemApiSetup({
+  paymentsApi: paymentsService,
+})
 const formSystemWorker = formSystemWorkerSetup()
 const formSystemWeb = formSystemWebSetup()
 
@@ -164,6 +168,8 @@ const licenseApi = licenseApiSetup()
 const cmsImporter = cmsImporterSetup()
 const cmsImporterEnergyGrantImport = cmsImporterEnergyFundImportSetup()
 const cmsImporterFsreBuildingsImport = cmsImporterFsreBuildingsImportSetup()
+const cmsImporterWebSitemapImport = cmsImporterWebSitemapImportSetup()
+const cmsImporterCmsCleanup = cmsImporterCmsCleanupSetup()
 
 const storybook = storybookSetup({})
 
@@ -200,9 +206,7 @@ export const Services: EnvironmentServices = {
     downloadService,
     nameRegistryBackend,
     endorsement,
-    adsWeb,
     adsBackend,
-    adsApi,
     rabBackend,
     appSystemApiWorker,
     userNotificationService,
@@ -213,6 +217,8 @@ export const Services: EnvironmentServices = {
     cmsImporter,
     cmsImporterEnergyGrantImport,
     cmsImporterFsreBuildingsImport,
+    cmsImporterWebSitemapImport,
+    cmsImporterCmsCleanup,
     sessionsService,
     sessionsWorker,
     sessionsCleanupWorker,
@@ -224,9 +230,11 @@ export const Services: EnvironmentServices = {
     bffServicePortalService,
     paymentsWebApp,
     paymentsService,
+    paymentsServiceWorker,
     paymentFlowUpdateHandlerService,
     formSystemApi,
     formSystemWeb,
+    formSystemWorker,
   ],
   staging: [
     appSystemApi,
@@ -246,9 +254,7 @@ export const Services: EnvironmentServices = {
     downloadService,
     nameRegistryBackend,
     endorsement,
-    adsWeb,
     adsBackend,
-    adsApi,
     rabBackend,
     appSystemApiWorker,
     userNotificationService,
@@ -259,6 +265,7 @@ export const Services: EnvironmentServices = {
     cmsImporter,
     cmsImporterEnergyGrantImport,
     cmsImporterFsreBuildingsImport,
+    cmsImporterWebSitemapImport,
     sessionsService,
     sessionsWorker,
     sessionsCleanupWorker,
@@ -268,9 +275,11 @@ export const Services: EnvironmentServices = {
     bffAdminPortalService,
     paymentsWebApp,
     paymentsService,
+    paymentsServiceWorker,
     paymentFlowUpdateHandlerService,
     formSystemApi,
     formSystemWeb,
+    formSystemWorker,
   ],
   dev: [
     appSystemApi,
@@ -290,9 +299,7 @@ export const Services: EnvironmentServices = {
     downloadService,
     nameRegistryBackend,
     endorsement,
-    adsWeb,
     adsBackend,
-    adsApi,
     rabBackend,
     githubActionsCache,
     userNotificationService,
@@ -304,6 +311,8 @@ export const Services: EnvironmentServices = {
     cmsImporter,
     cmsImporterEnergyGrantImport,
     cmsImporterFsreBuildingsImport,
+    cmsImporterWebSitemapImport,
+    cmsImporterCmsCleanup,
     licenseApi,
     sessionsService,
     sessionsWorker,
@@ -314,6 +323,7 @@ export const Services: EnvironmentServices = {
     bffAdminPortalService,
     paymentsWebApp,
     paymentsService,
+    paymentsServiceWorker,
     bffServicePortalService,
     formSystemApi,
     formSystemWorker,
@@ -336,4 +346,6 @@ export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
   cmsImporter,
   cmsImporterEnergyGrantImport,
   cmsImporterFsreBuildingsImport,
+  cmsImporterWebSitemapImport,
+  cmsImporterCmsCleanup,
 ]

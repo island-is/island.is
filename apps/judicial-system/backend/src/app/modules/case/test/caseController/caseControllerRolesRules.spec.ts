@@ -2,7 +2,6 @@ import {
   courtOfAppealsAssistantRule,
   courtOfAppealsJudgeRule,
   courtOfAppealsRegistrarRule,
-  defenderRule,
   districtCourtAssistantRule,
   districtCourtJudgeRule,
   districtCourtRegistrarRule,
@@ -13,12 +12,6 @@ import {
 import { verifyRolesRules } from '../../../../test'
 import { CaseController } from '../../case.controller'
 import {
-  courtOfAppealsAssistantTransitionRule,
-  courtOfAppealsAssistantUpdateRule,
-  courtOfAppealsJudgeTransitionRule,
-  courtOfAppealsJudgeUpdateRule,
-  courtOfAppealsRegistrarTransitionRule,
-  courtOfAppealsRegistrarUpdateRule,
   districtCourtAssistantTransitionRule,
   districtCourtAssistantUpdateRule,
   districtCourtJudgeSignRulingRule,
@@ -47,9 +40,6 @@ describe('CaseController - Update rules', () => {
     districtCourtJudgeUpdateRule,
     districtCourtRegistrarUpdateRule,
     districtCourtAssistantUpdateRule,
-    courtOfAppealsJudgeUpdateRule,
-    courtOfAppealsRegistrarUpdateRule,
-    courtOfAppealsAssistantUpdateRule,
     publicProsecutorStaffUpdateRule,
   ])
 })
@@ -61,14 +51,7 @@ describe('CaseController - Transition rules', () => {
     districtCourtJudgeTransitionRule,
     districtCourtRegistrarTransitionRule,
     districtCourtAssistantTransitionRule,
-    courtOfAppealsJudgeTransitionRule,
-    courtOfAppealsRegistrarTransitionRule,
-    courtOfAppealsAssistantTransitionRule,
   ])
-})
-
-describe('CaseController - Get all rules', () => {
-  verifyRolesRules(CaseController, 'getAll', [defenderRule])
 })
 
 describe('CaseController - Get by id rules', () => {
@@ -82,14 +65,6 @@ describe('CaseController - Get by id rules', () => {
     courtOfAppealsJudgeRule,
     courtOfAppealsRegistrarRule,
     courtOfAppealsAssistantRule,
-  ])
-})
-
-describe('CaseController - Get connected cases rules', () => {
-  verifyRolesRules(CaseController, 'getConnectedCases', [
-    districtCourtJudgeRule,
-    districtCourtRegistrarRule,
-    districtCourtAssistantRule,
   ])
 })
 
@@ -121,6 +96,9 @@ describe('CaseController - Get case files record pdf rules', () => {
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
   ])
 })
 
@@ -134,6 +112,7 @@ describe('CaseController - Get court record pdf rules', () => {
     courtOfAppealsRegistrarRule,
     courtOfAppealsAssistantRule,
     publicProsecutorStaffRule,
+    prosecutorRepresentativeRule,
   ])
 })
 
@@ -166,6 +145,9 @@ describe('CaseController - Get indictment pdf rules', () => {
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
   ])
 })
 

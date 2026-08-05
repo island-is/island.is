@@ -30,7 +30,7 @@ import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import { removeCountryCode } from '@island.is/application/ui-components'
 import { dataCollection } from './sharedSections/dataCollection'
-import DigitalServices from '../assets/DigitalServices'
+import { ManOnThePhone } from '@island.is/application/assets/graphics'
 
 export const spouseConfirmation = ({ allowFakeData = false }): Form =>
   buildForm({
@@ -282,7 +282,7 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
             children: [
               buildImageField({
                 id: 'image',
-                image: DigitalServices,
+                image: ManOnThePhone,
                 imageWidth: '50%',
                 imagePosition: 'center',
               }),

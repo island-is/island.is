@@ -3,10 +3,16 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import { ConfigModule } from '@island.is/nest/config'
 
+import { AwsS3Module } from '../aws-s3/awsS3.module'
+import { AppealCase } from './models/appealCase.model'
+import { AppealDecision } from './models/appealDecision.model'
+import { AppealEventLog } from './models/appealEventLog.model'
 import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
+import { CaseDefendantPoliceCaseNumber } from './models/caseDefendantPoliceCaseNumber.model'
 import { CaseFile } from './models/caseFile.model'
 import { CaseString } from './models/caseString.model'
+import { CivilClaimant } from './models/civilClaimant.model'
 import { CourtDocument } from './models/courtDocument.model'
 import { CourtSession } from './models/courtSession.model'
 import { CourtSessionString } from './models/courtSessionString.model'
@@ -15,15 +21,26 @@ import { Defendant } from './models/defendant.model'
 import { DefendantEventLog } from './models/defendantEventLog.model'
 import { EventLog } from './models/eventLog.model'
 import { IndictmentCount } from './models/indictmentCount.model'
+import { InstitutionContact } from './models/institutionContact.model'
+import { MessageSuspension } from './models/messageSuspension.model'
+import { Offense } from './models/offense.model'
+import { PoliceDigitalCaseFile } from './models/policeDigitalCaseFile.model'
 import { Subpoena } from './models/subpoena.model'
 import { Verdict } from './models/verdict.model'
 import { Victim } from './models/victim.model'
+import { AppealCaseRepositoryService } from './services/appealCaseRepository.service'
+import { AppealDecisionRepositoryService } from './services/appealDecisionRepository.service'
+import { AppealEventLogRepositoryService } from './services/appealEventLogRepository.service'
 import { CaseArchiveRepositoryService } from './services/caseArchiveRepository.service'
+import { CaseDefendantPoliceCaseNumberRepositoryService } from './services/caseDefendantPoliceCaseNumber.repository.service'
 import { CaseRepositoryService } from './services/caseRepository.service'
 import { CourtDocumentRepositoryService } from './services/courtDocumentRepository.service'
 import { CourtSessionRepositoryService } from './services/courtSessionRepository.service'
 import { DefendantEventLogRepositoryService } from './services/defendantEventLogRepository.service'
 import { DefendantRepositoryService } from './services/defendantRepository.service'
+import { InstitutionContactRepositoryService } from './services/institutionContactRepository.service'
+import { MessageSuspensionRepositoryService } from './services/messageSuspensionRepository.service'
+import { PoliceDigitalCaseFileRepositoryService } from './services/policeDigitalCaseFileRepository.service'
 import { SubpoenaRepositoryService } from './services/subpoenaRepository.service'
 import { VerdictRepositoryService } from './services/verdictRepository.service'
 import { repositoryModuleConfig } from './repository.config'
@@ -31,10 +48,15 @@ import { repositoryModuleConfig } from './repository.config'
 @Module({
   imports: [
     SequelizeModule.forFeature([
+      AppealCase,
+      AppealDecision,
+      AppealEventLog,
       Case,
       CaseArchive,
       CaseFile,
+      CaseDefendantPoliceCaseNumber,
       CaseString,
+      CivilClaimant,
       CourtDocument,
       CourtSession,
       CourtSessionString,
@@ -43,29 +65,47 @@ import { repositoryModuleConfig } from './repository.config'
       DefendantEventLog,
       EventLog,
       IndictmentCount,
+      InstitutionContact,
+      MessageSuspension,
+      Offense,
+      PoliceDigitalCaseFile,
       Subpoena,
       Verdict,
       Victim,
     ]),
     ConfigModule.forFeature(repositoryModuleConfig),
+    AwsS3Module,
   ],
   providers: [
+    AppealCaseRepositoryService,
+    AppealDecisionRepositoryService,
+    AppealEventLogRepositoryService,
     CaseArchiveRepositoryService,
+    CaseDefendantPoliceCaseNumberRepositoryService,
     CaseRepositoryService,
     CourtSessionRepositoryService,
     CourtDocumentRepositoryService,
     DefendantRepositoryService,
     DefendantEventLogRepositoryService,
+    InstitutionContactRepositoryService,
+    MessageSuspensionRepositoryService,
+    PoliceDigitalCaseFileRepositoryService,
     SubpoenaRepositoryService,
     VerdictRepositoryService,
   ],
   exports: [
+    AppealCaseRepositoryService,
+    AppealDecisionRepositoryService,
+    AppealEventLogRepositoryService,
     CaseArchiveRepositoryService,
+    CaseDefendantPoliceCaseNumberRepositoryService,
     CaseRepositoryService,
     CourtSessionRepositoryService,
     CourtDocumentRepositoryService,
     DefendantRepositoryService,
     DefendantEventLogRepositoryService,
+    MessageSuspensionRepositoryService,
+    PoliceDigitalCaseFileRepositoryService,
     SubpoenaRepositoryService,
     VerdictRepositoryService,
   ],

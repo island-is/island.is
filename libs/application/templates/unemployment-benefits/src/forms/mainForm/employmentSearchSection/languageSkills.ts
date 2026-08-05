@@ -48,7 +48,7 @@ export const languageSkillsSubSection = buildSubSection({
                       '',
                   }))
               },
-              readonly: (application, _, index) => {
+              readonly: (_application, _, index) => {
                 if (index !== undefined && index < 2) {
                   return true
                 }

@@ -1,0 +1,17 @@
+query ShipsOverview {
+  shipRegistryUserShips {
+    data {
+      registrationNumber
+      name
+      regionAcronym
+      seaworthiness {
+        isValid
+        validTo
+      }
+    }
+    totalCount
+    pageInfo {
+      hasNextPage
+    }
+  }
+}

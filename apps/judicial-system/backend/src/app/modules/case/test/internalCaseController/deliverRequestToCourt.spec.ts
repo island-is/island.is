@@ -19,7 +19,7 @@ import { Case } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 
 jest.mock('../../../../factories/date.factory')
-jest.mock('../../../../formatters/requestPdf')
+jest.mock('../../../../formatters/generatedPdfs/requestPdf')
 
 interface Then {
   result: DeliverResponse

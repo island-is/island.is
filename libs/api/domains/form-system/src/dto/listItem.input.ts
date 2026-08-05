@@ -84,3 +84,12 @@ export class ListItemInput {
   @Field(() => Boolean, { nullable: true })
   isSelected?: boolean
 }
+
+@InputType('FormSystemTemplateListInput')
+export class TemplateListInput {
+  @Field(() => String, { nullable: true })
+  fieldId?: string
+
+  @Field(() => String, { nullable: true })
+  templateListType?: string
+}

@@ -4,7 +4,7 @@ import styled, { useTheme } from 'styled-components/native'
 
 import { Colors } from '../../utils'
 import { Typography } from '../typography/typography'
-import { useBrowser } from '../../../lib/use-browser'
+import { useBrowser } from '../../../hooks/use-browser'
 import externalLinkIcon from '../../../assets/icons/external-link.png'
 
 type Variant = 'info' | 'error' | 'warning'

@@ -16,20 +16,25 @@ class CardInformation {
   })
   cardScheme!: string
 
-  @Field(() => String, { description: 'Issuing country of the card' })
-  issuingCountry!: string
+  @Field(() => String, {
+    description: 'Issuing country of the card',
+    nullable: true,
+  })
+  issuingCountry?: string | null = null
 
-  @Field(() => String, { description: 'Card usage description' })
+  @Field(() => String, {
+    description: 'Card usage description',
+  })
   cardUsage!: string
 
-  @Field(() => String, { description: 'Card category' })
-  cardCategory!: string
+  @Field(() => String, { description: 'Card category', nullable: true })
+  cardCategory?: string | null = null
 
-  @Field(() => String, { description: 'Out-of-SCA scope status' })
-  outOfScaScope!: string
-
-  @Field(() => String, { description: 'Card product category' })
-  cardProductCategory!: string
+  @Field(() => Boolean, {
+    description: 'Out-of-SCA scope status',
+    nullable: true,
+  })
+  outOfScaScope?: boolean | null = null
 }
 
 @ObjectType('PaymentsVerifyCardResponse')
@@ -54,14 +59,14 @@ export class VerifyCardResponse {
   @Field(() => CardInformation, { description: 'Card information' })
   cardInformation!: CardInformation
 
-  @Field(() => String, { description: 'Script path for further actions' })
-  scriptPath!: string
+  @Field(() => String, {
+    description: 'Script path for further actions',
+    nullable: true,
+  })
+  scriptPath?: string
 
   @Field(() => String, { description: 'Response code from the verification' })
   responseCode!: string
-
-  @Field(() => String, { description: 'Description of the response' })
-  responseDescription!: string
 
   @Field(() => String, { description: 'Response time of the verification' })
   responseTime!: string

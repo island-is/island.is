@@ -1,10 +1,13 @@
 import { FC, useContext } from 'react'
 
 import {
+  isCompletedCase,
+  isDefenceUser,
   isPrisonAdminUser,
   isPublicProsecutionOfficeUser,
 } from '@island.is/judicial-system/types'
 
+import { isNonEmptyArray } from '../../utils/arrayHelpers'
 import { FormContext } from '../FormProvider/FormProvider'
 import { UserContext } from '../UserProvider/UserProvider'
 import InfoCard from './InfoCard'
@@ -21,8 +24,8 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
   const { user } = useContext(UserContext)
 
   const {
-    showItem,
     defendants,
+    cancelledAndDismissedDefendants,
     policeCaseNumbers,
     courtCaseNumber,
     prosecutorsOffice,
@@ -37,6 +40,9 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
     indictmentCreated,
     civilClaimants,
     registrar,
+    appealCaseNumber,
+    appealAssistant,
+    appealJudges,
   } = useInfoCardItems()
 
   const {
@@ -44,6 +50,13 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
     displayVerdictViewDate,
     displaySentToPrisonAdminDate,
   } = props
+
+  const excludedDefendants =
+    isDefenceUser(user) && isCompletedCase(workingCase.state)
+      ? []
+      : workingCase.defendants?.filter(
+          (defendant) => defendant.indictmentCancelledOrDismissedState !== null,
+        )
 
   return (
     <InfoCard
@@ -69,7 +82,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
             policeCaseNumbers,
             courtCaseNumber,
             prosecutorsOffice,
-            ...(showItem(mergeCase) ? [mergeCase] : []),
+            mergeCase,
             court,
             prosecutor(workingCase.type),
             judge,
@@ -78,6 +91,23 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
           ],
           columns: 2,
         },
+        ...(workingCase.appealCase?.appealCaseNumber
+          ? [
+              {
+                id: 'court-of-appeal-section',
+                items: [
+                  appealCaseNumber,
+                  ...(appealAssistant ? [appealAssistant] : []),
+                  ...(workingCase.appealCase?.appealJudge1 &&
+                  workingCase.appealCase?.appealJudge2 &&
+                  workingCase.appealCase?.appealJudge3
+                    ? [appealJudges]
+                    : []),
+                ],
+                columns: 2,
+              },
+            ]
+          : []),
         ...(workingCase.indictmentReviewer?.name &&
         (isPublicProsecutionOfficeUser(user) || isPrisonAdminUser(user))
           ? [
@@ -98,6 +128,18 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
                       ]
                     : []),
                 ],
+                columns: 2,
+              },
+            ]
+          : []),
+        ...(isNonEmptyArray(excludedDefendants)
+          ? [
+              {
+                id: 'cancelled-and-dismissed-defendants-section',
+                items:
+                  excludedDefendants.map((defendant) =>
+                    cancelledAndDismissedDefendants(defendant),
+                  ) || [],
                 columns: 2,
               },
             ]

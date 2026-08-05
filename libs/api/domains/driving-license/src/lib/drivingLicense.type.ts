@@ -9,10 +9,15 @@ export interface DrivingLicenseType {
 
 export type DrivingLicenseApplicationType = 'B-full' | 'B-temp' | 'BE'
 
-export interface PostRenewal65AndOverInput {
-  districtId?: number
-  pickupPlasticAtDistrict?: boolean | null
-  sendPlasticToPerson?: boolean | null
+export interface NewRenewal65DrivingLicenseInput {
+  jurisdiction: number
+  primaryPhoneNumber: string
+  studentEmail: string
+  pickupPlasticAtDistrict?: boolean
+  sendPlasticToPerson?: boolean
+  contentList?: NewBEDrivingLicenseContentItem[]
+  photoBiometricsId?: string | null
+  signatureBiometricsId?: string | null
 }
 
 export enum Pickup {
@@ -36,6 +41,29 @@ export interface NewTemporaryDrivingLicenseInput {
   email: string
   phone: string
   sendLicenseInMail: boolean
+  photoBiometricsId?: string | null
+  signatureBiometricsId?: string | null
+}
+
+export interface NewBEDrivingLicenseContentItem {
+  fileName: string
+  fileExtension: string
+  contentType: string
+  content: string
+  description: string
+}
+
+export interface NewBEHealthDeclaration {
+  isDisabled: boolean
+  hasDiabetes: boolean
+  hasEpilepsy: boolean
+  isAlcoholic: boolean
+  hasHeartDisease: boolean
+  hasMentalIllness: boolean
+  hasOtherDiseases: boolean
+  usesMedicalDrugs: boolean
+  usesContactGlasses: boolean
+  hasReducedPeripheralVision: boolean
 }
 
 export interface NewBEDrivingLicenseInput {
@@ -43,6 +71,11 @@ export interface NewBEDrivingLicenseInput {
   instructorSSN: string
   primaryPhoneNumber: string
   studentEmail: string
+  contentList?: NewBEDrivingLicenseContentItem[]
+  photoBiometricsId?: string | null
+  signatureBiometricsId?: string | null
+  sendPlasticToPerson?: boolean
+  healthDeclarationModel: NewBEHealthDeclaration
 }
 
 export interface NewDrivingLicenseResult {
@@ -85,8 +118,6 @@ export enum RequirementKey {
   hasPoints = 'HasPoints',
   personNotAtLeast24YearsOld = 'PersonNotAtLeast24YearsOld',
   hasHadValidCategoryForFiveYearsOrMore = 'HasHadValidCategoryForFiveYearsOrMore',
-  //TODO: Remove when RLS/SGS supports health certificate in BE license
-  beRequiresHealthCertificate = 'beRequiresHealthCertificate',
   noExtendedDrivingLicense = 'NoExtendedDrivingLicense',
 }
 
@@ -94,6 +125,12 @@ export interface ApplicationEligibilityRequirement {
   key: RequirementKey
   requirementMet: boolean
   daysOfResidency?: number
+  // Raw RLS error code (when the unmet requirement came from a can-apply denial)
+  errorCode?: string
+  // RLS's own human-readable description for that code, both languages; the
+  // frontend renders the one matching the current locale.
+  messageIs?: string
+  messageEn?: string
 }
 
 export interface ApplicationEligibility {

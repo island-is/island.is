@@ -55,7 +55,7 @@ interface InfoCardDetail {
 
 export interface InfoCardProps {
   id?: string
-  title?: string
+  title: string
   description?: string
   to?: string
   size?: 'small' | 'large'

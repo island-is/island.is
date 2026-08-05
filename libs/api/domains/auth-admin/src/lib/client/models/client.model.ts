@@ -15,6 +15,12 @@ export class Client {
   @Field(() => ClientSso)
   sso!: ClientSso
 
+  @Field(() => Date, { nullable: true })
+  modified?: Date
+
+  @Field(() => Boolean, { nullable: true })
+  archived?: boolean
+
   @Field(() => [ClientEnvironment])
   environments!: ClientEnvironment[]
 }

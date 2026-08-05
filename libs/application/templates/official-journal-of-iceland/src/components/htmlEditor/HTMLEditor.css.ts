@@ -106,6 +106,14 @@ export const classes: EditorClasses = {
     display: 'flex',
     flexFlow: 'column',
     width: '100%',
+    maxHeight: 'calc(100vh - 10rem)',
+    overflowY: 'auto',
+    selectors: {
+      [`${isImpact} &`]: {
+        maxHeight: 'none',
+        overflowY: 'visible',
+      },
+    },
   }),
 
   editorBooting: style({
@@ -138,13 +146,11 @@ export const classes: EditorClasses = {
 
   editor: style({
     position: 'relative',
-    minHeight: 100,
-    maxHeight: 'calc(100vh - 10rem)',
+    minHeight: 300,
     width: '100%',
     caretColor: theme.color.blue400,
     padding: spacing[3],
     paddingTop: spacing[2],
-    overflowY: 'auto',
     ':focus': {
       outline: 'none',
     },

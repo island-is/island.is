@@ -8,7 +8,7 @@ import {
   Button,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Jobs } from '../assets/Jobs'
+import { HandShake } from '@island.is/application/assets/graphics'
 import { confirmation } from '../lib/messages'
 
 export const Confirmation: FC<React.PropsWithChildren<FieldBaseProps>> = () => {
@@ -32,7 +32,7 @@ export const Confirmation: FC<React.PropsWithChildren<FieldBaseProps>> = () => {
         display="flex"
         justifyContent="center"
       >
-        <Jobs />
+        <HandShake />
       </Box>
 
       <Divider />

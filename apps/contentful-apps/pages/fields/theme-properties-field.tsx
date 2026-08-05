@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react'
 import { useDebounce } from 'react-use'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
 import {
+  Button,
   FormControl,
-  Paragraph,
   Radio,
   Stack,
+  Text,
   TextInput,
 } from '@contentful/f36-components'
+import { ChevronDownIcon, ChevronRightIcon } from '@contentful/f36-icons'
 import { useSDK } from '@contentful/react-apps-toolkit'
 
 enum TextColor {
@@ -45,6 +47,7 @@ const ThemePropertiesField = () => {
   const [state, setState] = useState<ThemeProperties>(
     sdk.field.getValue() || {},
   )
+  const [showAdvanced, setShowAdvanced] = useState(false)
 
   useEffect(() => {
     sdk.window.startAutoResizer()
@@ -67,10 +70,6 @@ const ThemePropertiesField = () => {
     setState((prevState) => ({ ...prevState, [key]: value }))
   }
 
-  if (!sdk.user.spaceMembership.admin) {
-    return <Paragraph>(Only admins can edit this JSON field)</Paragraph>
-  }
-
   return (
     <Stack
       flexDirection="column"
@@ -86,7 +85,10 @@ const ThemePropertiesField = () => {
               key={color}
               id={color}
               value={color}
-              isChecked={selectedTextColor === color}
+              isChecked={
+                selectedTextColor === color ||
+                (!selectedTextColor && color === 'dark400')
+              }
               onChange={() => {
                 updateState('textColor', color)
               }}
@@ -97,240 +99,138 @@ const ThemePropertiesField = () => {
         </Stack>
       </Stack>
       <Stack flexDirection="column" alignItems="flex-start" spacing="none">
-        <FormControl.Label>Full Width</FormControl.Label>
-        <Stack flexDirection="row">
-          <Radio
-            name="fullWidthRadio"
-            id="fullWidthOn"
-            value="Yes"
-            isChecked={state.fullWidth}
-            onChange={() => {
-              updateState('fullWidth', true)
-            }}
-          >
-            Yes
-          </Radio>
-          <Radio
-            name="fullWidthRadio"
-            id="fullWidthOff"
-            value="No"
-            isChecked={!state.fullWidth}
-            onChange={() => {
-              updateState('fullWidth', false)
-            }}
-          >
-            No
-          </Radio>
-        </Stack>
-      </Stack>
-      <Stack flexDirection="column" alignItems="flex-start" spacing="none">
-        <FormControl.Label>Image Is Full Height</FormControl.Label>
-        <Stack flexDirection="row">
-          <Radio
-            name="imageIsFullHeightRadio"
-            id="imageIsFullHeightOn"
-            value="Yes"
-            isChecked={state.imageIsFullHeight !== false}
-            onChange={() => {
-              updateState('imageIsFullHeight', true)
-            }}
-          >
-            Yes
-          </Radio>
-          <Radio
-            name="imageIsFullHeightRadio"
-            id="imageIsFullHeightOff"
-            value="No"
-            isChecked={state.imageIsFullHeight === false}
-            onChange={() => {
-              updateState('imageIsFullHeight', false)
-            }}
-          >
-            No
-          </Radio>
-        </Stack>
-      </Stack>
-      <Stack flexDirection="column" alignItems="flex-start" spacing="none">
-        <FormControl.Label>Image Padding</FormControl.Label>
-        <Stack flexDirection="row">
-          <Radio
-            name="imagePaddingRadio"
-            id="imagePaddingOn"
-            value="Yes"
-            isChecked={state.imagePadding === '20px'}
-            onChange={() => {
-              updateState('imagePadding', '20px')
-            }}
-          >
-            20px
-          </Radio>
-          <Radio
-            name="imagePaddingRadio"
-            id="imagePaddingOff"
-            value="No"
-            isChecked={!state.imagePadding || state.imagePadding === '0px'}
-            onChange={() => {
-              updateState('imagePadding', '0px')
-            }}
-          >
-            0px
-          </Radio>
-        </Stack>
-      </Stack>
-
-      <Stack flexDirection="column" alignItems="flex-start" spacing="none">
-        <FormControl.Label>Image Object Fit</FormControl.Label>
-        <Stack flexDirection="row">
-          <Radio
-            name="imageObjectFitRadio"
-            id="imageObjectFitContain"
-            value="contain"
-            isChecked={state.imageObjectFit === 'contain'}
-            onChange={() => {
-              updateState('imageObjectFit', 'contain')
-            }}
-          >
-            contain
-          </Radio>
-          <Radio
-            name="imageObjectFitRadio"
-            id="imageObjectFitCover"
-            value="cover"
-            isChecked={state.imageObjectFit === 'cover'}
-            onChange={() => {
-              updateState('imageObjectFit', 'cover')
-            }}
-          >
-            cover
-          </Radio>
-        </Stack>
-      </Stack>
-
-      <Stack flexDirection="column" alignItems="flex-start" spacing="none">
-        <FormControl.Label>Image Object Position</FormControl.Label>
-        <Stack flexDirection="row">
-          <Radio
-            name="imageObjectPositionRadio"
-            id="imageObjectPositionLeft"
-            value="left"
-            isChecked={state.imageObjectPosition === 'left'}
-            onChange={() => {
-              updateState('imageObjectPosition', 'left')
-            }}
-          >
-            left
-          </Radio>
-          <Radio
-            name="imageObjectPositionRadio"
-            id="imageObjectPositionCenter"
-            value="center"
-            isChecked={
-              !state.imageObjectPosition ||
-              state.imageObjectPosition === 'center'
-            }
-            onChange={() => {
-              updateState('imageObjectPosition', 'center')
-            }}
-          >
-            center
-          </Radio>
-          <Radio
-            name="imageObjectPositionRadio"
-            id="imageObjectPositionRight"
-            value="right"
-            isChecked={state.imageObjectPosition === 'right'}
-            onChange={() => {
-              updateState('imageObjectPosition', 'right')
-            }}
-          >
-            right
-          </Radio>
-        </Stack>
-      </Stack>
-
-      <Stack flexDirection="column" alignItems="flex-start" spacing="none">
-        <FormControl.Label>Background Color</FormControl.Label>
+        <FormControl.Label>Background Color (e.g. #FFFFFF)</FormControl.Label>
         <Stack
           paddingLeft="spacingL"
           flexDirection="column"
           spacing="spacingXs"
           alignItems="flex-start"
         >
-          <FormControl.HelpText>Use gradient color</FormControl.HelpText>
-          <Stack flexDirection="row">
-            <Radio
-              name="useGradientColorRadio"
-              id="useGradientColorOn"
-              value="Yes"
-              isChecked={state.useGradientColor}
-              onChange={() => {
-                updateState('useGradientColor', true)
-              }}
-            >
-              Yes
-            </Radio>
-            <Radio
-              name="useGradientColorRadio"
-              id="useGradientColorOff"
-              value="No"
-              isChecked={!state.useGradientColor}
-              onChange={() => {
-                updateState('useGradientColor', false)
-              }}
-            >
-              No
-            </Radio>
-          </Stack>
-
-          {state.useGradientColor && (
-            <Stack>
-              <Stack
-                flexDirection="column"
-                spacing="spacingXs"
-                alignItems="flex-start"
-              >
-                <FormControl.HelpText>Start Color</FormControl.HelpText>
-                <TextInput
-                  value={state.gradientStartColor || ''}
-                  onChange={(event) => {
-                    updateState('gradientStartColor', event.target.value)
-                  }}
-                />
-              </Stack>
-              <Stack
-                flexDirection="column"
-                spacing="spacingXs"
-                alignItems="flex-start"
-              >
-                <FormControl.HelpText>End Color</FormControl.HelpText>
-                <TextInput
-                  value={state.gradientEndColor || ''}
-                  onChange={(event) => {
-                    updateState('gradientEndColor', event.target.value)
-                  }}
-                />
-              </Stack>
-            </Stack>
-          )}
-
-          {!state.useGradientColor && (
-            <Stack>
-              <Stack
-                flexDirection="column"
-                spacing="spacingXs"
-                alignItems="flex-start"
-              >
-                <FormControl.HelpText>Color</FormControl.HelpText>
-                <TextInput
-                  value={state.backgroundColor || ''}
-                  onChange={(event) => {
-                    updateState('backgroundColor', event.target.value)
-                  }}
-                />
-              </Stack>
-            </Stack>
-          )}
+          <TextInput
+            value={state.backgroundColor || ''}
+            onChange={(event) => {
+              updateState('backgroundColor', event.target.value)
+            }}
+          />
         </Stack>
+      </Stack>
+      <Stack
+        flexDirection="column"
+        alignItems="flex-start"
+        marginTop="spacingS"
+      >
+        <Button
+          variant="transparent"
+          size="small"
+          style={{ paddingLeft: 0, paddingRight: 0 }}
+          startIcon={showAdvanced ? <ChevronDownIcon /> : <ChevronRightIcon />}
+          onClick={() => setShowAdvanced((open) => !open)}
+        >
+          Advanced settings
+        </Button>
+        {showAdvanced && (
+          <Stack
+            flexDirection="column"
+            alignItems="flex-start"
+            marginTop="spacingS"
+          >
+            <Stack
+              flexDirection="column"
+              alignItems="flex-start"
+              spacing="none"
+            >
+              <FormControl.Label>Image Display</FormControl.Label>
+              <Stack flexDirection="row" alignItems="flex-start">
+                <Stack
+                  flexDirection="column"
+                  alignItems="flex-start"
+                  spacing="none"
+                >
+                  <Radio
+                    name="imageObjectFitRadio"
+                    id="imageObjectFitContain"
+                    value="contain"
+                    isChecked={
+                      !state.imageObjectFit ||
+                      state.imageObjectFit === 'contain'
+                    }
+                    onChange={() => {
+                      updateState('imageObjectFit', 'contain')
+                    }}
+                  >
+                    Show Full Image
+                  </Radio>
+                  <Text
+                    marginLeft="spacingL"
+                    fontSize="fontSizeS"
+                    fontColor="gray500"
+                  >
+                    The entire image is visible, but may leave empty space to
+                    preserve its proportions
+                  </Text>
+                </Stack>
+                <Stack
+                  flexDirection="column"
+                  alignItems="flex-start"
+                  spacing="none"
+                >
+                  <Radio
+                    name="imageObjectFitRadio"
+                    id="imageObjectFitCover"
+                    value="cover"
+                    isChecked={state.imageObjectFit === 'cover'}
+                    onChange={() => {
+                      updateState('imageObjectFit', 'cover')
+                    }}
+                  >
+                    Fill Area (Crop Image)
+                  </Radio>
+                  <Text
+                    marginLeft="spacingL"
+                    fontSize="fontSizeS"
+                    fontColor="gray500"
+                  >
+                    Fills the space completely, but may crop the edges of the
+                    image
+                  </Text>
+                </Stack>
+              </Stack>
+            </Stack>
+            <Stack
+              flexDirection="column"
+              alignItems="flex-start"
+              spacing="none"
+            >
+              <FormControl.Label>Image Spacing</FormControl.Label>
+              <Stack flexDirection="row">
+                <Radio
+                  name="imagePaddingRadio"
+                  id="imagePaddingNone"
+                  value="0px"
+                  isChecked={
+                    !state.imagePadding || state.imagePadding === '0px'
+                  }
+                  onChange={() => {
+                    updateState('imagePadding', '0px')
+                  }}
+                >
+                  No spacing
+                </Radio>
+                <Radio
+                  name="imagePaddingRadio"
+                  id="imagePaddingSmall"
+                  value="20px"
+                  isChecked={state.imagePadding === '20px'}
+                  onChange={() => {
+                    updateState('imagePadding', '20px')
+                  }}
+                >
+                  Add spacing around image (20px)
+                </Radio>
+              </Stack>
+            </Stack>
+          </Stack>
+        )}
       </Stack>
     </Stack>
   )

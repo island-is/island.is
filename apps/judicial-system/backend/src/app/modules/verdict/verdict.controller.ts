@@ -134,7 +134,8 @@ export class VerdictController {
         verdict,
         verdictToUpdate,
         transaction,
-        theCase.rulingDate,
+        theCase,
+        defendantId,
       ),
     )
   }

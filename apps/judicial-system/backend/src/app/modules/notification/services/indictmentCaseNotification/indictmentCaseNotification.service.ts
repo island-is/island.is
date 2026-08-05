@@ -13,20 +13,18 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
 import {
-  DEFENDER_INDICTMENT_ROUTE,
-  INDICTMENTS_OVERVIEW_ROUTE,
+  DEFENDER_INDICTMENT_CASE_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE,
   ROUTE_HANDLER_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { applyDativeCaseToCourtName } from '@island.is/judicial-system/formatters'
 import {
-  CaseIndictmentRulingDecision,
   IndictmentCaseNotificationType,
+  TrackedNotificationType,
   UserDescriptor,
 } from '@island.is/judicial-system/types'
 
 import {
-  formatArraignmentDateEmailNotification,
-  formatCourtCalendarInvitation,
   formatDefenderRoute,
   formatPostponedCourtDateEmailNotification,
 } from '../../../../formatters'
@@ -37,13 +35,13 @@ import {
   Case,
   DateLog,
   Defendant,
-  InstitutionContact,
+  InstitutionContactRepositoryService,
   Notification,
   Recipient,
 } from '../../../repository'
-import { BaseNotificationService } from '../../baseNotification.service'
 import { DeliverResponse } from '../../models/deliver.response'
 import { notificationModuleConfig } from '../../notification.config'
+import { BaseNotificationService } from '../baseNotification.service'
 import { strings } from './indictmentCaseNotification.strings'
 
 interface Attachment {
@@ -57,30 +55,29 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
   constructor(
     @InjectModel(Notification)
     notificationModel: typeof Notification,
-    @InjectModel(InstitutionContact)
-    institutionContactModel: typeof InstitutionContact,
     @Inject(notificationModuleConfig.KEY)
     config: ConfigType<typeof notificationModuleConfig>,
     @Inject(LOGGER_PROVIDER) logger: Logger,
     intlService: IntlService,
     emailService: EmailService,
     eventService: EventService,
-    private readonly courtService: CourtService,
+    courtService: CourtService,
+    private readonly institutionContactRepositoryService: InstitutionContactRepositoryService,
   ) {
     super(
       notificationModel,
       emailService,
       intlService,
+      courtService,
       config,
       eventService,
       logger,
-      institutionContactModel,
     )
   }
 
   private async sendEmails(
     theCase: Case,
-    notificationType: IndictmentCaseNotificationType,
+    notificationType: TrackedNotificationType,
     subject: string,
     body: string,
     to: { name?: string; email?: string }[],
@@ -107,90 +104,6 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     return this.recordNotification(theCase.id, notificationType, recipients)
   }
 
-  // TODO-FIX: redundant in other services - defendant, case, indictmentCase notifications
-  private async uploadEmailToCourt(
-    theCase: Case,
-    user: UserDescriptor,
-    subject: string,
-    body: string,
-    recipients?: string,
-  ): Promise<void> {
-    try {
-      await this.courtService.createEmail(
-        user,
-        theCase.id,
-        theCase.courtId ?? '',
-        theCase.courtCaseNumber ?? '',
-        subject,
-        body,
-        recipients ?? '',
-        this.config.email.fromEmail,
-        this.config.email.fromName,
-      )
-    } catch (error) {
-      // Tolerate failure, but log warning - use warning instead of error to avoid monitoring alerts
-      this.logger.warn(
-        `Failed to upload email to court for indictment case ${theCase.id}`,
-        { error },
-      )
-    }
-  }
-
-  private async sendVerdictInfoNotification(
-    theCase: Case,
-  ): Promise<DeliverResponse> {
-    const institutionId = theCase.prosecutor?.institution?.id
-    const institutionEmail =
-      (institutionId &&
-        this.config.email.policeInstitutionEmails[institutionId]) ??
-      undefined
-
-    const hasRuling =
-      theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
-
-    if (!institutionEmail || !hasRuling) {
-      // institution does not want to receive these emails or the case does not have a ruling
-      return { delivered: true }
-    }
-
-    const formattedSubject = this.formatMessage(
-      strings.indictmentCompletedWithRuling.subject,
-      {
-        isCorrection: Boolean(theCase.rulingModifiedHistory),
-        courtCaseNumber: theCase.courtCaseNumber,
-      },
-    )
-
-    const formattedBody = this.formatMessage(
-      strings.indictmentCompletedWithRuling.body,
-      {
-        isCorrection: Boolean(theCase.rulingModifiedHistory),
-        courtCaseNumber: theCase.courtCaseNumber,
-        policeCaseNumber:
-          theCase.policeCaseNumbers.length > 0
-            ? theCase.policeCaseNumbers[0]
-            : '',
-        courtName: applyDativeCaseToCourtName(theCase.court?.name || ''),
-        serviceRequirement:
-          theCase.defendants?.[0]?.verdicts?.[0]?.serviceRequirement,
-        caseOrigin: theCase.origin,
-      },
-    )
-
-    return this.sendEmails(
-      theCase,
-      IndictmentCaseNotificationType.INDICTMENT_VERDICT_INFO,
-      formattedSubject,
-      formattedBody,
-      [
-        {
-          name: theCase.prosecutor?.institution?.name,
-          email: institutionEmail,
-        },
-      ],
-    )
-  }
-
   private async sendCriminalRecordFilesUploadedNotification(
     theCase: Case,
   ): Promise<DeliverResponse> {
@@ -215,7 +128,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
 
     return this.sendEmails(
       theCase,
-      IndictmentCaseNotificationType.CRIMINAL_RECORD_FILES_UPLOADED,
+      TrackedNotificationType.CRIMINAL_RECORD_FILES_UPLOADED,
       formattedSubject,
       formattedBody,
       [
@@ -232,16 +145,24 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
   private async sendDrivingLicenseSuspensionNotifications(
     theCase: Case,
   ): Promise<DeliverResponse> {
+    if (!theCase.prosecutorsOfficeId) {
+      return { delivered: false }
+    }
+
     const subject = `Svipting í máli ${theCase.courtCaseNumber}`
     const html = `Skrá skal sviptingu ökuréttinda í ökuskírteinaskrá vegna máls ${
       theCase.courtCaseNumber
     } í ${applyDativeCaseToCourtName(
       theCase.court?.name ?? 'héraðsdómi',
-    )}.<br><br>LÖKE númer: ${theCase.policeCaseNumbers}.`
+    )}.<br><br>LÖKE númer: ${theCase.policeCaseNumbers.join(', ')}.`
 
     const contactInfo = {
       name: theCase.prosecutorsOffice?.name,
-      email: await this.getInstitutionContact(theCase.prosecutorsOfficeId),
+      email:
+        await this.institutionContactRepositoryService.getInstitutionContact(
+          theCase.prosecutorsOfficeId,
+          IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
+        ),
     }
 
     if (!contactInfo.name || !contactInfo.email) {
@@ -250,7 +171,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
 
     return this.sendEmails(
       theCase,
-      IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
+      TrackedNotificationType.DRIVING_LICENSE_SUSPENSION,
       subject,
       html,
       [
@@ -260,69 +181,6 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
         },
       ],
     )
-  }
-
-  // TODO-FIX: redundant in other services - defendant, case, indictmentCase notifications
-  private getCourtDateCalendarInvite = (
-    theCase: Case,
-    targetDateLog: DateLog,
-  ) => {
-    const { date: scheduledDate, location: courtRoom } = targetDateLog
-    const { title, location, eventOrganizer } = formatCourtCalendarInvitation(
-      theCase,
-      courtRoom,
-    )
-    const calendarInvite = this.createICalAttachment({
-      eventOrganizer,
-      scheduledDate,
-      title,
-      location,
-    })
-
-    return calendarInvite
-  }
-
-  private sendArraignmentDateEmailNotification({
-    theCase,
-    user,
-    arraignmentDateLog,
-    recipientName,
-    recipientEmail,
-  }: {
-    theCase: Case
-    user: UserDescriptor
-    arraignmentDateLog: DateLog
-    recipientName: string
-    recipientEmail: string
-  }): Promise<Recipient> {
-    const { subject, body } = formatArraignmentDateEmailNotification({
-      formatMessage: this.formatMessage,
-      courtName: theCase.court?.name,
-      courtCaseNumber: theCase.courtCaseNumber,
-      judgeName: theCase.judge?.name,
-      registrarName: theCase.registrar?.name,
-      arraignmentDateLog,
-    })
-
-    const calendarInvite = this.getCourtDateCalendarInvite(
-      theCase,
-      arraignmentDateLog,
-    )
-
-    return this.sendEmail({
-      subject,
-      html: body,
-      recipientName,
-      recipientEmail,
-      attachments: calendarInvite ? [calendarInvite] : undefined,
-    }).then((recipient) => {
-      if (recipient.success) {
-        // No need to wait
-        this.uploadEmailToCourt(theCase, user, subject, body, recipientEmail)
-      }
-
-      return recipient
-    })
   }
 
   private sendArraignmentDateEmailNotifications(
@@ -348,11 +206,13 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     }
 
     // DEFENDER(s)
-    // get only confirmed defenders on defendants
+    // get only confirmed defenders of defendants
     const defenders = _uniqBy(
-      theCase.defendants ?? [],
-      (d: Defendant) => d.defenderEmail,
-    ).filter(({ isDefenderChoiceConfirmed }) => isDefenderChoiceConfirmed)
+      theCase.defendants?.filter(
+        ({ isDefenderChoiceConfirmed }) => isDefenderChoiceConfirmed,
+      ) ?? [],
+      ({ defenderEmail }) => defenderEmail,
+    )
 
     defenders.forEach(({ defenderName, defenderEmail }) => {
       if (defenderName && defenderEmail) {
@@ -363,6 +223,30 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
             arraignmentDateLog: arraignmentDate,
             recipientName: defenderName,
             recipientEmail: defenderEmail,
+          }),
+        )
+      }
+    })
+
+    // CIVIL CLAIMANT(s)
+    // get only confirmed spokespersons of civil claimants
+    const spokespersons = _uniqBy(
+      theCase.civilClaimants?.filter(
+        ({ hasSpokesperson, isSpokespersonConfirmed }) =>
+          hasSpokesperson && isSpokespersonConfirmed,
+      ) ?? [],
+      ({ spokespersonEmail }) => spokespersonEmail,
+    )
+
+    spokespersons.forEach(({ spokespersonName, spokespersonEmail }) => {
+      if (spokespersonName && spokespersonEmail) {
+        promises.push(
+          this.sendArraignmentDateEmailNotification({
+            theCase,
+            user,
+            arraignmentDateLog: arraignmentDate,
+            recipientName: spokespersonName,
+            recipientEmail: spokespersonEmail,
           }),
         )
       }
@@ -421,7 +305,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
         user,
         courtDate,
         calendarInvite,
-        `${this.config.clientUrl}${INDICTMENTS_OVERVIEW_ROUTE}/${theCase.id}`,
+        `${this.config.clientUrl}${PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE}/${theCase.id}`,
         theCase.prosecutor?.email,
         theCase.prosecutor?.name,
       ),
@@ -430,9 +314,11 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     // DEFENDER(s)
     // get only confirmed defenders on defendants
     const defenders = _uniqBy(
-      theCase.defendants ?? [],
-      (d: Defendant) => d.defenderEmail,
-    ).filter(({ isDefenderChoiceConfirmed }) => isDefenderChoiceConfirmed)
+      theCase.defendants?.filter(
+        ({ isDefenderChoiceConfirmed }) => isDefenderChoiceConfirmed,
+      ) ?? [],
+      ({ defenderEmail }) => defenderEmail,
+    )
 
     defenders.forEach(({ defenderName, defenderEmail, defenderNationalId }) => {
       if (defenderEmail) {
@@ -454,6 +340,39 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
         )
       }
     })
+
+    // CIVIL CLAIMANT(s)
+    // get only confirmed spokespersons on civil claimants
+    const spokespersons = _uniqBy(
+      theCase.civilClaimants?.filter(
+        ({ hasSpokesperson, isSpokespersonConfirmed }) =>
+          hasSpokesperson && isSpokespersonConfirmed,
+      ) ?? [],
+      ({ spokespersonEmail }) => spokespersonEmail,
+    )
+
+    spokespersons.forEach(
+      ({ spokespersonName, spokespersonEmail, spokespersonNationalId }) => {
+        if (spokespersonEmail) {
+          promises.push(
+            this.sendPostponedCourtDateEmailNotification(
+              theCase,
+              user,
+              courtDate,
+              calendarInvite,
+              spokespersonNationalId &&
+                formatDefenderRoute(
+                  this.config.clientUrl,
+                  theCase.type,
+                  theCase.id,
+                ),
+              spokespersonEmail,
+              spokespersonName,
+            ),
+          )
+        }
+      },
+    )
 
     return promises
   }
@@ -504,7 +423,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
 
     const result = await this.recordNotification(
       theCase.id,
-      IndictmentCaseNotificationType.COURT_DATE,
+      TrackedNotificationType.COURT_DATE,
       recipients,
     )
 
@@ -528,9 +447,11 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     const promises: Promise<Recipient>[] = []
 
     const defenders = _uniqBy(
-      theCase.defendants ?? [],
+      theCase.defendants?.filter(
+        ({ isDefenderChoiceConfirmed }) => isDefenderChoiceConfirmed,
+      ) ?? [],
       (d: Defendant) => d.defenderEmail,
-    ).filter(({ isDefenderChoiceConfirmed }) => isDefenderChoiceConfirmed)
+    )
 
     if (theCase.prosecutor) {
       const recipientEmail = theCase.prosecutor.email
@@ -555,7 +476,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
               this.config.clientUrl,
               theCase.type,
               theCase.id,
-            )}${DEFENDER_INDICTMENT_ROUTE}/${
+            )}${DEFENDER_INDICTMENT_CASE_ROUTE}/${
               theCase.id
             }">yfirlitssíðu málsins í Réttarvörslugátt.</a>`,
             recipientName: defenderName,
@@ -573,7 +494,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
   ): Promise<DeliverResponse> {
     if (
       this.hasSentNotification(
-        IndictmentCaseNotificationType.INDICTMENT_SPLIT_COMPLETED,
+        TrackedNotificationType.INDICTMENT_SPLIT_COMPLETED,
         theCase.notifications,
       )
     ) {
@@ -589,7 +510,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
 
     const result = await this.recordNotification(
       theCase.id,
-      IndictmentCaseNotificationType.INDICTMENT_SPLIT_COMPLETED,
+      TrackedNotificationType.INDICTMENT_SPLIT_COMPLETED,
       recipients,
     )
 
@@ -605,7 +526,8 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
       case IndictmentCaseNotificationType.COURT_DATE:
         return this.sendCourtDateNotifications(theCase, user)
       case IndictmentCaseNotificationType.INDICTMENT_VERDICT_INFO:
-        return this.sendVerdictInfoNotification(theCase)
+        // Notification removed — no-op for any messages still in the queue
+        return Promise.resolve({ delivered: true })
       case IndictmentCaseNotificationType.CRIMINAL_RECORD_FILES_UPLOADED:
         return this.sendCriminalRecordFilesUploadedNotification(theCase)
       case IndictmentCaseNotificationType.INDICTMENT_SPLIT_COMPLETED:
@@ -616,32 +538,6 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
         throw new InternalServerErrorException(
           `Invalid indictment notification type: ${notificationType}`,
         )
-    }
-  }
-
-  private async getInstitutionContact(
-    institutionId?: string,
-  ): Promise<string | null> {
-    try {
-      if (!institutionId || !this.institutionContactModel) {
-        return null
-      }
-
-      const institutionContact = await this.institutionContactModel.findOne({
-        where: {
-          institutionId,
-          type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
-        },
-      })
-
-      return institutionContact?.value ?? null
-    } catch (error) {
-      this.logger.error(
-        `Failed to get institution contact for institutionId: ${institutionId} and type: ${IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION}`,
-        error,
-      )
-
-      return null
     }
   }
 

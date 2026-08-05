@@ -85,6 +85,11 @@ const template: ApplicationTemplate<
     {
       type: AuthDelegationType.Custom,
     },
+    {
+      // allsherjarumboð — accepted wherever Custom is; IDS auto-enables
+      // GeneralMandate on Custom-enabled scopes (samgongustofaVehicles).
+      type: AuthDelegationType.GeneralMandate,
+    },
   ],
   requiredScopes: [ApiScope.samgongustofaVehicles],
   adminDataConfig: {
@@ -259,7 +264,7 @@ const template: ApplicationTemplate<
                   NotificationConfig[
                     NotificationType.TransferOfVehicleOwnershipPruned
                   ].templateId,
-                internalBody: plate ?? '',
+                args: [{ key: 'internalBody', value: plate ?? '' }],
               }
             },
           },

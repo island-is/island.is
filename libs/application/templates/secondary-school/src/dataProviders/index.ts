@@ -1,6 +1,6 @@
 import { defineTemplateApi, UserProfileApi } from '@island.is/application/types'
 
-export { NationalRegistryUserApi } from '@island.is/application/types'
+export { NationalRegistryV3UserApi } from '@island.is/application/types'
 
 export const ApplicationPeriodApi = defineTemplateApi({
   action: 'getApplicationPeriodInfo',
@@ -23,7 +23,7 @@ export const SchoolsApi = defineTemplateApi({
 export const NationalRegistryCustodiansApi = defineTemplateApi({
   action: 'getCustodians',
   externalDataId: 'nationalRegistryCustodians',
-  namespace: 'NationalRegistry',
+  namespace: 'NationalRegistryV3',
 })
 
 export const UserProfileApiWithValidation = UserProfileApi.configure({

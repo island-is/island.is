@@ -23,6 +23,9 @@ export class AdvertsInput {
   type?: string[]
 
   @Field(() => [String], { nullable: true })
+  mainType?: string[]
+
+  @Field(() => [String], { nullable: true })
   category?: string[]
 
   @Field(() => [String], { nullable: true })

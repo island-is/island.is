@@ -1,6 +1,6 @@
 import { useWindowSize } from 'react-use'
 
-import { Box, BoxProps, Text } from '../..'
+import { Box, BoxProps } from '../..'
 import { theme } from '@island.is/island-ui/theme'
 
 import * as styles from './InfoCard.css'
@@ -14,7 +14,7 @@ export type InfoCardItemProps = Omit<
 interface Props {
   cards: Array<InfoCardItemProps>
   variant?: 'detailed' | 'simple'
-  columns?: 1 | 2 | 3
+  maxColumnCount?: 1 | 2 | 3
   cardsBackground?: BoxProps['background']
   cardsBorder?: BoxProps['borderColor']
   notFoundText?: string
@@ -23,7 +23,7 @@ interface Props {
 type CardSize = 'small' | 'medium' | 'large'
 
 const mapColumnCountToCardSize = (
-  columns: Props['columns'],
+  columns: Props['maxColumnCount'],
   isMobile?: boolean,
 ): CardSize => {
   if (isMobile) {
@@ -44,22 +44,22 @@ export const InfoCardGrid = ({
   cardsBackground,
   cardsBorder,
   variant,
-  columns,
+  maxColumnCount,
 }: Props) => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.sm
 
-  const cardSize = mapColumnCountToCardSize(columns, isMobile)
+  const cardSize = mapColumnCountToCardSize(maxColumnCount, isMobile)
 
   return (
     <Box
       hidden={cards.length < 1}
       className={
         cardSize === 'small'
-          ? styles.gridContainerThreeColumn
+          ? styles.gridContainerMaxThreeColumn
           : cardSize === 'medium'
-          ? styles.gridContainerTwoColumn
-          : styles.gridContainerOneColumn
+          ? styles.gridContainerMaxTwoColumns
+          : styles.gridContainerMaxOneColumn
       }
     >
       {cards.map((c, index) => (

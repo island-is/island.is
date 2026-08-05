@@ -1,6 +1,7 @@
 import {
   coreMessages,
   formatText,
+  resolveFieldId,
   formatTextWithLocale,
   getValueViaPath,
 } from '@island.is/application/core'
@@ -20,6 +21,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { Locale } from '@island.is/shared/types'
 import isEqual from 'lodash/isEqual'
@@ -36,6 +38,8 @@ export const FieldsRepeaterFormField = ({
   field: data,
   showFieldName,
   error,
+  setFieldLoadingState,
+  setSubmitButtonDisabled,
 }: Props) => {
   const {
     id,
@@ -59,11 +63,13 @@ export const FieldsRepeaterFormField = ({
   } = data
 
   const { control, getValues, setValue } = useFormContext()
+  const user = useUserInfo()
   const answers = getValues()
+  const resolvedId = resolveFieldId({ id }, application, user)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const numberOfItemsInAnswers = getValueViaPath<Array<any>>(
     answers,
-    id,
+    resolvedId,
   )?.length
 
   const [updatedApplication, setUpdatedApplication] = useState({
@@ -88,16 +94,16 @@ export const FieldsRepeaterFormField = ({
 
   useEffect(() => {
     setUpdatedApplication((prev) => {
-      if (
-        isEqual(prev, {
-          ...stableApplication,
-          answers: { ...stableApplication.answers, ...stableAnswers },
-        })
-      ) {
+      const newApp = {
+        ...stableApplication,
+        answers: { ...stableApplication.answers, ...stableAnswers },
+      }
+
+      if (isEqual(prev, newApp)) {
         return prev
       }
 
-      return { ...stableApplication, answers: stableAnswers }
+      return newApp
     })
   }, [stableApplication, stableAnswers])
 
@@ -112,29 +118,29 @@ export const FieldsRepeaterFormField = ({
 
   const { remove } = useFieldArray({
     control: control,
-    name: id,
+    name: resolvedId,
   })
 
-  const values = useWatch({ name: data.id, control: control })
+  const values = useWatch({ name: resolvedId, control: control })
 
   const handleNewItem = () => {
     setNumberOfItems(numberOfItems + 1)
   }
 
   const handleRemoveItem = () => {
-    const items = getValueViaPath<Array<unknown>>(answers, id)
+    const items = getValueViaPath<Array<unknown>>(answers, resolvedId)
 
     if (numberOfItems > (numberOfItemsInAnswers || 0)) {
       setNumberOfItems(numberOfItems - 1)
     } else if (numberOfItems === numberOfItemsInAnswers) {
-      setValue(id, items?.slice(0, -1))
+      setValue(resolvedId, items?.slice(0, -1))
       setNumberOfItems(numberOfItems - 1)
     } else if (
       numberOfItemsInAnswers &&
       numberOfItems < numberOfItemsInAnswers
     ) {
       const difference = numberOfItems - numberOfItemsInAnswers
-      setValue(id, items?.slice(0, difference))
+      setValue(resolvedId, items?.slice(0, difference))
       setNumberOfItems(numberOfItems)
     }
 
@@ -149,9 +155,11 @@ export const FieldsRepeaterFormField = ({
           application={updatedApplication}
           error={error}
           item={item}
-          dataId={id}
+          dataId={resolvedId}
           index={index}
           values={values}
+          setFieldLoadingState={setFieldLoadingState}
+          setSubmitButtonDisabled={setSubmitButtonDisabled}
         />
       ))}
     </GridRow>
@@ -256,7 +264,7 @@ export const FieldsRepeaterFormField = ({
                         {formTitleNumbering === 'suffix' ? ` ${i + 1}` : ''}
                       </Text>
                     </Box>
-                    <GridColumn>{repeaterFields(i)}</GridColumn>
+                    <GridColumn span="1/1">{repeaterFields(i)}</GridColumn>
                   </Fragment>
                 )
               })}

@@ -4,9 +4,15 @@ import {
   DataUploadResponse,
   Person,
   PersonType,
+  SignatoryEstateTypes,
   SyslumennService,
 } from '@island.is/clients/syslumenn'
-import { getFakeData, roundMonetaryFieldsDeep, stringifyObject } from './utils'
+import {
+  getFakeData,
+  roundMonetaryFieldsDeep,
+  stringifyObject,
+  transformInheritanceReportToPDFStream,
+} from './utils'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
@@ -15,15 +21,46 @@ import {
 } from '@island.is/application/types'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { infer as zinfer } from 'zod'
-import { inheritanceReportSchema } from '@island.is/application/templates/inheritance-report'
+import {
+  inheritanceReportSchema,
+  nationalIdsMatch,
+} from '@island.is/application/templates/inheritance-report'
 import type { Logger } from '@island.is/logging'
 import { expandAnswers } from './utils/mappers'
 import { NationalRegistryV3Service } from '../../shared/api/national-registry-v3/national-registry-v3.service'
 import { S3Service } from '@island.is/nest/aws'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { coreErrorMessages } from '@island.is/application/core'
+import {
+  coreErrorMessages,
+  getValueViaPath,
+  YES,
+} from '@island.is/application/core'
+import { SharedTemplateApiService } from '../../shared'
 
 type InheritanceSchema = zinfer<typeof inheritanceReportSchema>
+
+interface SyslumennOnEntryData {
+  inheritanceReportInfos: Array<{
+    caseNumber?: string
+    nationalId?: string
+  }>
+}
+
+function getSyslumennData(
+  externalData: Record<string, unknown>,
+): SyslumennOnEntryData | undefined {
+  const entry = externalData?.syslumennOnEntry as
+    | { data?: SyslumennOnEntryData }
+    | undefined
+  if (
+    entry?.data &&
+    typeof entry.data === 'object' &&
+    Array.isArray(entry.data.inheritanceReportInfos)
+  ) {
+    return entry.data
+  }
+  return undefined
+}
 
 @Injectable()
 export class InheritanceReportService extends BaseTemplateApiService {
@@ -32,8 +69,121 @@ export class InheritanceReportService extends BaseTemplateApiService {
     private readonly syslumennService: SyslumennService,
     private readonly nationalRegistryService: NationalRegistryV3Service,
     private readonly s3Service: S3Service,
+    private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {
     super(ApplicationTypes.INHERITANCE_REPORT)
+  }
+
+  // Optionally email a PDF copy of the application to the parties (málsaðilar)
+  // when the applicant opted in via the overview checkbox. Triggered during
+  // the submission transition; must never block submission (registered with
+  // throwOnError: false).
+  async sendApplicationCopyToParties({
+    application,
+    currentUserLocale,
+  }: TemplateApiModuleActionProps) {
+    const answers = application.answers as InheritanceSchema
+
+    const sendCopy = getValueViaPath<string[]>(
+      application.answers,
+      'sendCopyToParties',
+      [],
+    )
+    if (!sendCopy?.includes(YES)) {
+      return { sent: false, recipients: 0 }
+    }
+
+    // Idempotency: do not re-send when the state is re-entered/refreshed.
+    const alreadySent = getValueViaPath<boolean>(
+      application.externalData,
+      'sendApplicationCopyToParties.data.sent',
+      false,
+    )
+    if (alreadySent) {
+      return { sent: true, recipients: 0 }
+    }
+
+    const recipients = (answers?.heirs?.data ?? []).filter(
+      (heir) =>
+        heir.enabled !== false &&
+        !!heir.email &&
+        !!heir.nationalId &&
+        !nationalIdsMatch(heir.nationalId, application.applicant),
+    )
+
+    if (recipients.length === 0) {
+      return { sent: false, recipients: 0 }
+    }
+
+    const pdfBuffer = await transformInheritanceReportToPDFStream(
+      answers,
+      application.id,
+      'Afrit af erfðafjárskýrslu',
+    )
+    const fileContent = pdfBuffer.toString('binary')
+
+    const results = await Promise.allSettled(
+      recipients.map((heir) =>
+        this.sharedTemplateAPIService.sendEmailWithAttachment(
+          (props, attachment, recipientEmail) => {
+            const isIcelandic = props.options.locale !== 'en'
+            const subject = isIcelandic
+              ? 'Afrit af erfðafjárskýrslu'
+              : 'Copy of inheritance report'
+            const intro = isIcelandic
+              ? 'Meðfylgjandi er afrit af erfðafjárskýrslu sem þú ert málsaðili að.'
+              : 'Attached is a copy of an inheritance report you are a party to.'
+
+            return {
+              from: {
+                name: props.options.email.sender,
+                address: props.options.email.address,
+              },
+              to: [
+                {
+                  name: heir.name ?? '',
+                  address: recipientEmail,
+                },
+              ],
+              subject,
+              template: {
+                title: subject,
+                body: [
+                  { component: 'Heading', context: { copy: subject } },
+                  { component: 'Copy', context: { copy: intro } },
+                ],
+              },
+              attachments: [
+                {
+                  filename: 'Afrit_af_erfdafjarskyrslu.pdf',
+                  content: attachment,
+                  encoding: 'binary',
+                },
+              ],
+            }
+          },
+          application,
+          fileContent,
+          heir.email ?? '',
+          currentUserLocale,
+        ),
+      ),
+    )
+
+    const failed = results.filter((r) => r.status === 'rejected').length
+    if (failed > 0) {
+      this.logger.error(
+        `[inheritance-report]: Failed to email application copy to ${failed}/${recipients.length} parties`,
+      )
+    }
+
+    // Persist sent:true on partial success so re-entry does not re-send to
+    // parties that already received the copy. Only mark sent:false when every
+    // send failed, leaving the door open to retry.
+    return {
+      sent: failed < recipients.length,
+      recipients: recipients.length - failed,
+    }
   }
 
   async syslumennOnEntry({ application }: TemplateApiModuleActionProps) {
@@ -89,7 +239,23 @@ export class InheritanceReportService extends BaseTemplateApiService {
     }
   }
 
-  async completeApplication({ application }: TemplateApiModuleActionProps) {
+  async completeApplication(props: TemplateApiModuleActionProps) {
+    return this.submitToSyslumenn(props)
+  }
+
+  /**
+   * Submits the inheritance report to Syslumenn.
+   * Handles idempotency: if already submitted, returns the existing result.
+   */
+  async submitToSyslumenn({ application }: TemplateApiModuleActionProps) {
+    // Idempotency: if already submitted, skip re-submission
+    const existingResult = application.externalData?.submitToSyslumenn?.data as
+      | { success?: boolean; id?: string }
+      | undefined
+    if (existingResult?.success && existingResult?.id) {
+      return existingResult
+    }
+
     const nationalRegistryData = application.externalData.nationalRegistry
       ?.data as NationalRegistryIndividual
 
@@ -181,6 +347,77 @@ export class InheritanceReportService extends BaseTemplateApiService {
       )
     }
     return { success: result.success, id: result.caseNumber }
+  }
+
+  async getSignatories(_props: TemplateApiModuleActionProps) {
+    const { application } = _props
+    const answers = application.answers as InheritanceSchema
+
+    // Get the deceased national ID from the selected estate
+    const estateInfoSelection = answers?.estateInfoSelection
+    const syslumennData = getSyslumennData(
+      application.externalData as Record<string, unknown>,
+    )
+    const inheritanceReportInfos = syslumennData?.inheritanceReportInfos ?? []
+
+    const selectedEstate = inheritanceReportInfos.find(
+      (estate) => estate.caseNumber === estateInfoSelection,
+    )
+    const deceasedNationalId = selectedEstate?.nationalId || ''
+
+    if (!deceasedNationalId) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary: 'Deceased national ID not found in application data.',
+        },
+        400,
+      )
+    }
+
+    const applicationFor = answers?.applicationFor
+    let estateType: SignatoryEstateTypes
+    if (applicationFor === 'prepaidInheritance') {
+      estateType = SignatoryEstateTypes.FyrirFramGreiddur
+    } else if (applicationFor === 'estateInheritance') {
+      estateType = SignatoryEstateTypes.ErfdafjarSkyrsla
+    } else {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary: `Invalid or missing applicationFor value: '${applicationFor}'.`,
+        },
+        400,
+      )
+    }
+
+    try {
+      this.logger.info('[inheritance-report]: Calling getSignatories API', {
+        estateType,
+      })
+      const signatories =
+        await this.syslumennService.getInheritanceReportSignatories(
+          deceasedNationalId,
+          estateType,
+        )
+
+      return {
+        success: true,
+        signatories,
+      }
+    } catch (error) {
+      this.logger.error(
+        '[inheritance-report]: Failed to get signatories',
+        error,
+      )
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary: 'Failed to retrieve signatories from Syslumenn service.',
+        },
+        500,
+      )
+    }
   }
 
   async maritalStatus(props: TemplateApiModuleActionProps) {

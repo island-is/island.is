@@ -18,7 +18,7 @@ import {
   renderHelmValueFileContent,
   renderCleanUpForFeature,
 } from './dsl/exports/helm'
-import { ServiceBuilder } from './dsl/dsl'
+import { ServiceBuilder, ScheduledJobBuilder } from './dsl/dsl'
 import { logger } from './logging'
 import fs from 'fs'
 
@@ -111,12 +111,19 @@ const parseArguments = (argv: Arguments) => {
 
 const buildIngressComment = (data: HelmService[]): string =>
   data
-    .filter((obj) => obj.ingress)
-    .map(({ ingress }) => Object.values(ingress!))
+    .filter((obj) => obj.httpRoute)
+    .map(({ httpRoute }) => Object.values(httpRoute!))
     .flat()
-    .map(({ hosts }) => hosts)
-    .flat()
-    .map(({ host, paths }) => paths.map((path) => `https://${host}${path}`))
+    .map((route) =>
+      route.hostnames.flatMap((hostname) =>
+        route.rules.flatMap((rule) =>
+          rule.matches.map(
+            (match) =>
+              `https://${hostname}${match.pathPrefix ?? match.pathExact ?? ''}`,
+          ),
+        ),
+      ),
+    )
     .flat()
     .sort()
     .join('\n')
@@ -201,12 +208,16 @@ yargs(process.argv.slice(2))
 
         if (writeDest != '') {
           try {
+            const fileName =
+              svc instanceof ScheduledJobBuilder
+                ? 'values.cronjob.yaml'
+                : 'values.yaml'
             fs.mkdirSync(`${writeDest}/${svc.name()}`, { recursive: true })
             console.log(
-              `writing file to directory: ${writeDest}/${svc.name()}/values.yaml`,
+              `writing file to directory: ${writeDest}/${svc.name()}/${fileName}`,
             )
             fs.writeFileSync(
-              `${writeDest}/${svc.name()}/values.yaml`,
+              `${writeDest}/${svc.name()}/${fileName}`,
               svcString,
             )
           } catch (error) {

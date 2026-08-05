@@ -1,17 +1,15 @@
 import React, { useContext } from 'react'
 import { AnimatePresence } from 'motion/react'
 
-import { Box, Checkbox } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { informationForDefendantMap } from '@island.is/judicial-system/types'
 import {
-  BlueBox,
+  CheckboxList,
   FormContext,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
-
-import { grid } from './Completed.css'
 
 export const InformationForDefendant = ({
   defendant,
@@ -42,39 +40,36 @@ export const InformationForDefendant = ({
           description="Vinsamlegast hakið við þau atriði sem upplýsa verður dómfellda um við
           birtingu dómsins."
         />
-        <BlueBox className={grid}>
-          {defendantCheckboxes.map((checkbox) => (
-            <Checkbox
-              key={`${verdict.id}-${checkbox.value}`}
-              label={checkbox.label['is']}
-              id={`${verdict.id}-${checkbox.value}`}
-              name={`${verdict.id}-${checkbox.value}`}
-              checked={verdict.serviceInformationForDefendant?.includes(
+        <CheckboxList
+          blueBox={false}
+          fullWidth
+          checkboxes={defendantCheckboxes.map((checkbox) => ({
+            id: `${verdict.id}-${checkbox.value}`,
+            title: checkbox.label['is'],
+            info: checkbox.tooltip,
+            checked:
+              verdict.serviceInformationForDefendant?.includes(
                 checkbox.value,
-              )}
-              tooltip={checkbox?.tooltip}
-              large
-              filled
-              onChange={(target) => {
-                setAndSendVerdictToServer(
-                  {
-                    defendantId: defendant.id,
-                    caseId: workingCase.id,
-                    serviceInformationForDefendant: target.target.checked
-                      ? [
-                          ...(verdict.serviceInformationForDefendant || []),
-                          checkbox.value,
-                        ]
-                      : (verdict.serviceInformationForDefendant || []).filter(
-                          (item) => item !== checkbox.value,
-                        ),
-                  },
-                  setWorkingCase,
-                )
-              }}
-            />
-          ))}
-        </BlueBox>
+              ) ?? false,
+            onChange: (checked) => {
+              setAndSendVerdictToServer(
+                {
+                  defendantId: defendant.id,
+                  caseId: workingCase.id,
+                  serviceInformationForDefendant: checked
+                    ? [
+                        ...(verdict.serviceInformationForDefendant || []),
+                        checkbox.value,
+                      ]
+                    : (verdict.serviceInformationForDefendant || []).filter(
+                        (item) => item !== checkbox.value,
+                      ),
+                },
+                setWorkingCase,
+              )
+            },
+          }))}
+        />
       </Box>
     </AnimatePresence>
   )

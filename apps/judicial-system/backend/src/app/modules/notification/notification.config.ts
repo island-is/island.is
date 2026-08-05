@@ -5,6 +5,8 @@ export const notificationModuleConfig = defineConfig({
   load: (env) => ({
     production: env.optional('NODE_ENV') === 'production',
     courtOfAppealsId: '4676f08b-aab4-4b4f-a366-697540788088',
+    prisonAdminId: 'c9b3b124-2a85-11ec-8d3d-0242ac130003',
+    publicProsecutorId: '8f9e2f6d-6a00-4a5e-b39b-95fd110d762e',
     shouldUseWhitelist:
       env.required('CONTENTFUL_ENVIRONMENT', 'test') !== 'master',
     email: {
@@ -16,10 +18,6 @@ export const notificationModuleConfig = defineConfig({
       prisonAdminEmail: env.required(
         'PRISON_ADMIN_EMAIL',
         'jl+d+prisonAdmin@kolibri.is',
-      ),
-      prisonAdminIndictmentEmails: env.required(
-        'PRISON_ADMIN_INDICTMENT_EMAILS',
-        'jl+d+prisonAdminIndictment@kolibri.is',
       ),
       publicProsecutorCriminalRecordsEmail: env.required(
         'PUBLIC_PROSECUTOR_CRIMINAL_RECORDS_EMAIL',

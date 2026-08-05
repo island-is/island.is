@@ -4,8 +4,11 @@ import { LayoutGroup } from 'motion/react'
 import router from 'next/router'
 
 import { Accordion, AlertMessage, Box } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
-import { titles } from '@island.is/judicial-system-web/messages'
+import {
+  PROSECUTION_INDICTMENT_CASE_CASE_FILES_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_POLICE_CASE_FILES_ROUTE,
+} from '@island.is/judicial-system/consts'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
   FormContext,
@@ -20,13 +23,17 @@ import {
 import {
   CaseFile as TCaseFile,
   CaseFileCategory,
+  PoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { usePoliceDigitalCaseFile } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { caseFile as m } from './CaseFile.strings'
 
 const CaseFile = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
+
+  const { digitalCaseFiles } = usePoliceDigitalCaseFile()
 
   const caseFiles = useMemo(() => {
     return new Map<string, TCaseFile[]>(
@@ -40,6 +47,17 @@ const CaseFile = () => {
       ]),
     )
   }, [workingCase.caseFiles, workingCase.policeCaseNumbers])
+
+  const policeDigitalCaseFiles = useMemo(() => {
+    return new Map<string, PoliceDigitalCaseFile[]>(
+      workingCase.policeCaseNumbers?.map((policeCaseNumber) => [
+        policeCaseNumber,
+        digitalCaseFiles?.filter(
+          (file) => file.policeCaseNumber === policeCaseNumber,
+        ) ?? [],
+      ]),
+    )
+  }, [digitalCaseFiles, workingCase.policeCaseNumbers])
 
   const { formatMessage } = useIntl()
   const [editCount, setEditCount] = useState<number>(0)
@@ -79,9 +97,13 @@ const CaseFile = () => {
                     policeCaseNumber={policeCaseNumber}
                     shouldStartExpanded={index === 0}
                     caseFiles={caseFiles.get(policeCaseNumber) ?? []}
+                    policeDigitalCaseFiles={
+                      policeDigitalCaseFiles.get(policeCaseNumber) ?? []
+                    }
                     subtypes={workingCase.indictmentSubtypes}
                     crimeScenes={workingCase.crimeScenes}
                     setEditCount={setEditCount}
+                    defendants={workingCase.defendants}
                   />
                 )
               })}
@@ -109,13 +131,20 @@ const CaseFile = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
-          previousUrl={`${constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() =>
-            handleNavigationTo(constants.INDICTMENTS_CASE_FILES_ROUTE)
-          }
-          nextIsLoading={isLoadingWorkingCase}
-          nextIsDisabled={editCount > 0}
+          previousUrl={`${PROSECUTION_INDICTMENT_CASE_POLICE_CASE_FILES_ROUTE}/${workingCase.id}`}
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  PROSECUTION_INDICTMENT_CASE_CASE_FILES_ROUTE,
+                ),
+              disabled: editCount > 0,
+              loading: isLoadingWorkingCase,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

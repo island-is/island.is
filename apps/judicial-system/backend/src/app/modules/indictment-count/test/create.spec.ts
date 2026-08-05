@@ -1,3 +1,4 @@
+import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import { createTestingIndictmentCountModule } from './createTestingIndictmentCountModule'
@@ -14,12 +15,18 @@ type GivenWhenThen = (caseId: string) => Promise<Then>
 describe('IndictmentCountController - Create', () => {
   let mockIndictmentCountModel: typeof IndictmentCount
   let givenWhenThen: GivenWhenThen
+  let transaction: Transaction
 
   beforeEach(async () => {
-    const { indictmentCountModel, indictmentCountController } =
+    const { indictmentCountModel, indictmentCountController, sequelize } =
       await createTestingIndictmentCountModule()
 
     mockIndictmentCountModel = indictmentCountModel
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     givenWhenThen = async (caseId: string) => {
       const then = {} as Then
@@ -40,6 +47,9 @@ describe('IndictmentCountController - Create', () => {
     let then: Then
 
     beforeEach(async () => {
+      const mockMax = mockIndictmentCountModel.max as jest.Mock
+      mockMax.mockResolvedValueOnce(-1)
+
       const mockCreate = mockIndictmentCountModel.create as jest.Mock
       mockCreate.mockResolvedValueOnce(createdIndictmentCount)
 
@@ -47,9 +57,20 @@ describe('IndictmentCountController - Create', () => {
     })
 
     it('should create an indictment count', () => {
-      expect(mockIndictmentCountModel.create).toHaveBeenCalledWith({
-        caseId,
-      })
+      expect(mockIndictmentCountModel.max).toHaveBeenCalledWith(
+        'displayOrder',
+        {
+          where: { caseId },
+          transaction,
+        },
+      )
+      expect(mockIndictmentCountModel.create).toHaveBeenCalledWith(
+        {
+          caseId,
+          displayOrder: 0,
+        },
+        { transaction },
+      )
       expect(then.result).toBe(createdIndictmentCount)
     })
   })

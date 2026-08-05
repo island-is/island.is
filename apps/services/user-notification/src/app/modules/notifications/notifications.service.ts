@@ -14,7 +14,9 @@ import type { User } from '@island.is/auth-nest-tools'
 import { NoContentException } from '@island.is/nest/problem'
 import { Notification } from './notification.model'
 import { ActorNotification } from './actor-notification.model'
+import { NotificationDelivery } from './notification-delivery.model'
 import { ArgumentDto } from './dto/createHnippNotification.dto'
+import { NotificationDeliveryDto } from './dto/notificationDelivery.dto'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 import {
   PaginatedNotificationDto,
@@ -26,7 +28,12 @@ import {
   UnreadNotificationsCountDto,
 } from './dto/notification.dto'
 import type { Locale } from '@island.is/shared/types'
-import { mapToContentfulLocale, mapToLocale, cleanString } from './utils'
+import {
+  mapToContentfulLocale,
+  mapToLocale,
+  cleanString,
+  SmsDelivery,
+} from './utils'
 import {
   CmsService,
   GetTemplateByTemplateId,
@@ -59,6 +66,8 @@ export class NotificationsService {
     private readonly notificationModel: typeof Notification,
     @InjectModel(ActorNotification)
     private readonly actorNotificationModel: typeof ActorNotification,
+    @InjectModel(NotificationDelivery)
+    private readonly notificationDeliveryModel: typeof NotificationDelivery,
     private readonly cmsService: CmsService,
   ) {}
 
@@ -182,6 +191,7 @@ export class NotificationsService {
     )) as unknown as {
       hnippTemplateCollection: { items: HnippTemplate[] }
     }
+
     const items = res.hnippTemplateCollection.items
     if (items.length > 0) {
       const template = items[0]
@@ -209,6 +219,18 @@ export class NotificationsService {
         }': ${missingArgs.join(', ')}. Required args are: ${template.args.join(
           ', ',
         )}`,
+      )
+    }
+  }
+
+  validateSmsDelivery(template: HnippTemplate): void {
+    const smsDelivery = template.smsDelivery ?? SmsDelivery.NEVER
+    const smsPayer = template.smsPayer?.trim()
+    const isPayerPresent = Boolean(smsPayer)
+
+    if (smsDelivery !== SmsDelivery.NEVER && !isPayerPresent) {
+      throw new BadRequestException(
+        'SMS payer is required when SMS delivery is not set to NEVER',
       )
     }
   }
@@ -527,5 +549,32 @@ export class NotificationsService {
       ...result,
       data: mappedData,
     }
+  }
+
+  /**
+   * Finds delivery records for a notification. When `isActor` is true, looks up
+   * deliveries by actor_notification_id; otherwise returns only direct
+   * deliveries for the user notification (actor_notification_id IS NULL).
+   */
+  async findDeliveries(
+    id: number,
+    isActor = false,
+  ): Promise<NotificationDeliveryDto[]> {
+    const where = isActor
+      ? { actorNotificationId: id }
+      : { userNotificationId: id, actorNotificationId: null }
+
+    const deliveries = await this.notificationDeliveryModel.findAll({
+      where,
+      order: [['created', 'ASC']],
+      attributes: ['id', 'channel', 'sentTo', 'created'],
+    })
+
+    return deliveries.map((d) => ({
+      id: d.id,
+      channel: d.channel,
+      sentTo: d.sentTo,
+      created: d.created,
+    }))
   }
 }

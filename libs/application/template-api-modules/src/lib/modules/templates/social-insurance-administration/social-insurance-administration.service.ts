@@ -6,7 +6,11 @@ import {
   getApplicationAnswers as getDBApplicationAnswers,
 } from '@island.is/application/templates/social-insurance-administration/death-benefits'
 import { getApplicationAnswers as getHSApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/household-supplement'
-import { getApplicationExternalData as getMARPApplicationExternalData } from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
+import {
+  errorMessages as marpErrorMessages,
+  getApplicationExternalData as getMARPApplicationExternalData,
+  getIncompleteAnswerSections,
+} from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
 import {
   ApplicationType,
   Employment,
@@ -18,14 +22,17 @@ import { Application, ApplicationTypes } from '@island.is/application/types'
 import {
   DocumentTypeEnum,
   SocialInsuranceAdministrationClientService,
-  type TrWebContractsExternalDigitalIcelandDocumentsDocument as Attachment,
+  type TrWebContractsExternalDigitalIcelandDocumentsDigitalIcelandDocument as Attachment,
   type ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
   type ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest,
   type ApiProtectedV1QuestionnairesDisabilitypensionSelfassessmentGetRequest,
+  SocialInsuranceAdministrationMedicalAndRehabilitationService,
+  SocialInsuranceAdministrationOldAgePensionService,
 } from '@island.is/clients/social-insurance-administration'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { S3Service } from '@island.is/nest/aws'
+import { TemplateApiError } from '@island.is/nest/problem'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { Inject, Injectable } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
@@ -34,7 +41,7 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { sharedModuleConfig } from '../../shared'
 import {
-  getApplicationType,
+  getOAPApplicationType,
   transformApplicationToAdditionalSupportForTheElderlyDTO,
   transformApplicationToDeathBenefitsDTO,
   transformApplicationToDisabilityPensionDTO,
@@ -57,6 +64,8 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private siaClientService: SocialInsuranceAdministrationClientService,
+    private siaOldAgePensionServiceV2: SocialInsuranceAdministrationOldAgePensionService,
+    private siaMedicalRehabServiceV2: SocialInsuranceAdministrationMedicalAndRehabilitationService,
     @Inject(sharedModuleConfig.KEY)
     private config: ConfigType<typeof sharedModuleConfig>,
     private readonly s3Service: S3Service,
@@ -414,13 +423,14 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
         attachments,
       )
 
-      const applicationType = getApplicationType(application).toLowerCase()
+      const applicationType = getOAPApplicationType(application)
 
-      const response = await this.siaClientService.sendApplication(
-        auth,
-        oldAgePensionDTO,
-        applicationType,
-      )
+      const response =
+        await this.siaOldAgePensionServiceV2.sendOldAgePensionApplication(
+          auth,
+          oldAgePensionDTO,
+          applicationType,
+        )
 
       return response
     }
@@ -500,14 +510,40 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       application.typeId ===
       ApplicationTypes.MEDICAL_AND_REHABILITATION_PAYMENTS
     ) {
+      // The application system does not validate answers against the full
+      // data schema when an application is submitted, so a SUBMIT event fired
+      // against a draft that was never filled in (e.g. a duplicate submit
+      // event from the prerequisites step) would send an empty application
+      // to Tryggingastofnun. Make sure the sections that every applicant
+      // must complete are present before anything is sent.
+      const incompleteSections = getIncompleteAnswerSections(
+        application.answers,
+      )
+
+      if (incompleteSections.length > 0) {
+        this.logger.warn(
+          `[medical-and-rehabilitation-payments] Stopped submission of incomplete application ${
+            application.id
+          }, missing or invalid answer sections: ${incompleteSections.join(
+            ', ',
+          )}`,
+        )
+        throw new TemplateApiError(
+          {
+            title: marpErrorMessages.applicationIncompleteTitle,
+            summary: marpErrorMessages.applicationIncompleteSummary,
+          },
+          400,
+        )
+      }
+
       const marpDTO =
         transformApplicationToMedicalAndRehabilitationPaymentsDTO(application)
 
       const response =
-        await this.siaClientService.sendMedicalAndRehabilitationPaymentsApplication(
+        await this.siaMedicalRehabServiceV2.sendMedicalAndRehabilitationPaymentsApplication(
           auth,
           marpDTO,
-          application.typeId.toLowerCase(),
         )
 
       return response

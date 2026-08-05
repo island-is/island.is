@@ -1,46 +1,89 @@
-import { Op } from 'sequelize'
+import { literal, Op } from 'sequelize'
 
 import {
-  CaseAppealState,
+  AppealCaseState,
   CaseDecision,
   CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
   completedIndictmentCaseStates,
   completedRequestCaseStates,
+  DateType,
   EventType,
   indictmentCases,
   investigationCases,
+  RequestSharedWhen,
+  RequestSharedWithDefender,
   restrictionCases,
   User,
 } from '@island.is/judicial-system/types'
 
 import {
   buildEventLogExistsCondition,
-  buildIsSentToPrisonExistsCondition,
+  buildIsSentToPrisonAdminExistsCondition,
 } from './conditions'
 
 // Court of appeals access
 
-export const courtOfAppealsRequestCasesAccessWhereOptions = {
+const courtOfAppealsRequestCasesAccessWhereOptions = {
   is_archived: false,
   type: [...restrictionCases, ...investigationCases],
   state: completedRequestCaseStates,
   [Op.or]: [
     {
-      appeal_state: [CaseAppealState.RECEIVED, CaseAppealState.COMPLETED],
+      '$appealCase.appeal_state$': [
+        AppealCaseState.RECEIVED,
+        AppealCaseState.COMPLETED,
+      ],
     },
     {
-      [Op.and]: [
-        { appeal_state: CaseAppealState.WITHDRAWN },
-        { appeal_received_by_court_date: { [Op.not]: null } },
-      ],
+      '$appealCase.appeal_state$': AppealCaseState.WITHDRAWN,
+      '$appealCase.appeal_received_by_court_date$': { [Op.not]: null },
     },
   ],
 }
 
-export const courtOfAppealsCasesAccessWhereOptions = () =>
-  courtOfAppealsRequestCasesAccessWhereOptions
+// Ruling-order side uses correlated EXISTS subqueries instead of joined-alias
+// references so the predicate stays valid even when Sequelize wraps the
+// outer query in a subSELECT (e.g. searchCases adds a LIMIT and the HasMany
+// JOIN would otherwise force `subQuery: true` and leave the alias
+// unreachable in the inner WHERE).
+const courtOfAppealsIndictmentsAccessWhereOptions = {
+  is_archived: false,
+  type: indictmentCases,
+  [Op.or]: [
+    {
+      '$appealCase.appeal_state$': [
+        AppealCaseState.RECEIVED,
+        AppealCaseState.COMPLETED,
+      ],
+    },
+    {
+      '$appealCase.appeal_state$': AppealCaseState.WITHDRAWN,
+      '$appealCase.appeal_received_by_court_date$': { [Op.not]: null },
+    },
+    literal(`EXISTS (
+      SELECT 1 FROM "appeal_case" ac
+      WHERE ac."case_id" = "Case"."id"
+        AND ac."ruling_file_id" IS NOT NULL
+        AND ac."appeal_state" IN ('RECEIVED', 'COMPLETED')
+    )`),
+    literal(`EXISTS (
+      SELECT 1 FROM "appeal_case" ac
+      WHERE ac."case_id" = "Case"."id"
+        AND ac."ruling_file_id" IS NOT NULL
+        AND ac."appeal_state" = 'WITHDRAWN'
+        AND ac."appeal_received_by_court_date" IS NOT NULL
+    )`),
+  ],
+}
+
+export const courtOfAppealsCasesAccessWhereOptions = () => ({
+  [Op.or]: [
+    courtOfAppealsRequestCasesAccessWhereOptions,
+    courtOfAppealsIndictmentsAccessWhereOptions,
+  ],
+})
 
 // District court access
 
@@ -107,7 +150,7 @@ export const prisonAdminIndictmentsAccessWhereOptions = {
     CaseIndictmentRulingDecision.RULING,
     CaseIndictmentRulingDecision.FINE,
   ],
-  [Op.and]: [buildIsSentToPrisonExistsCondition(true)],
+  [Op.and]: [buildIsSentToPrisonAdminExistsCondition(true)],
 }
 
 export const prisonAdminCasesAccessWhereOptions = () => ({
@@ -190,6 +233,129 @@ export const prosecutorCasesAccessWhereOptions = (user: User) => ({
 
 export const prosecutorRepresentativeCasesAccessWhereOptions = (user: User) =>
   prosecutionIndictmentsAccessWhereOptions(user)
+
+// Defence access
+
+// The defence queries embed the user's national id in raw SQL literals, so
+// reduce it to digits only to rule out SQL injection. National ids are stored
+// dash-free in the database, so this also normalizes the comparison value.
+const sanitizeNationalId = (nationalId?: string): string =>
+  nationalId?.replace(/\D/g, '') ?? ''
+
+export const defenceRequestCasesAccessWhereOptions = (user: User) => {
+  const userNationalId = sanitizeNationalId(user.nationalId)
+
+  return {
+    is_archived: false,
+    type: [...restrictionCases, ...investigationCases],
+    [Op.or]: [
+      {
+        // defender assigned to the case
+        defender_national_id: userNationalId,
+        [Op.or]: [
+          {
+            state: [CaseState.SUBMITTED, CaseState.RECEIVED],
+            request_shared_with_defender:
+              RequestSharedWithDefender.READY_FOR_COURT,
+          },
+          {
+            state: CaseState.RECEIVED,
+            id: {
+              [Op.in]: literal(`
+                (SELECT case_id
+                  FROM date_log
+                  WHERE date_type = '${DateType.ARRAIGNMENT_DATE}')
+              `),
+            },
+          },
+          { state: completedRequestCaseStates },
+        ],
+      },
+      {
+        // victim lawyer should get access when sent to court
+        state: [CaseState.SUBMITTED, CaseState.RECEIVED],
+        id: {
+          [Op.in]: literal(`
+            (SELECT case_id
+              FROM victim
+              WHERE lawyer_national_id = '${userNationalId}'
+              AND lawyer_access_to_request = '${RequestSharedWhen.READY_FOR_COURT}')
+          `),
+        },
+      },
+      {
+        // victim lawyer should get access when court date is scheduled or when case is concluded
+        id: {
+          [Op.in]: literal(`
+            (SELECT case_id
+              FROM victim
+              WHERE lawyer_national_id = '${userNationalId}'
+              AND lawyer_access_to_request != '${RequestSharedWhen.OBLIGATED}')
+          `),
+        },
+        [Op.or]: [
+          {
+            state: CaseState.RECEIVED,
+            id: {
+              [Op.in]: literal(`
+                (SELECT case_id
+                  FROM date_log
+                  WHERE date_type = '${DateType.ARRAIGNMENT_DATE}')
+              `),
+            },
+          },
+          { state: completedRequestCaseStates },
+        ],
+      },
+    ],
+  }
+}
+
+export const defenceIndictmentsAccessWhereOptions = (user: User) => {
+  const userNationalId = sanitizeNationalId(user.nationalId)
+
+  return {
+    is_archived: false,
+    type: indictmentCases,
+    state: [
+      CaseState.WAITING_FOR_CANCELLATION,
+      CaseState.RECEIVED,
+      ...completedIndictmentCaseStates,
+    ],
+    [Op.or]: [
+      {
+        // confirmed defender of a defendant
+        id: {
+          [Op.in]: literal(`
+            (SELECT case_id
+              FROM defendant
+              WHERE defender_national_id = '${userNationalId}'
+                AND is_defender_choice_confirmed = true)
+          `),
+        },
+      },
+      {
+        // confirmed spokesperson of a civil claimant
+        id: {
+          [Op.in]: literal(`
+            (SELECT case_id
+              FROM civil_claimant
+              WHERE has_spokesperson = true
+                AND spokesperson_national_id = '${userNationalId}'
+                AND is_spokesperson_confirmed = true)
+          `),
+        },
+      },
+    ],
+  }
+}
+
+export const defenceCasesAccessWhereOptions = (user: User) => ({
+  [Op.or]: [
+    defenceRequestCasesAccessWhereOptions(user),
+    defenceIndictmentsAccessWhereOptions(user),
+  ],
+})
 
 // Public prosecution access
 

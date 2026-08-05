@@ -43,7 +43,7 @@ export const DigitalIcelandLatestNewsCard = (item: ItemProps) => {
         <Box paddingLeft={2} paddingRight={2} paddingBottom={3}>
           <Stack space={1}>
             {item.date && (
-              <Text variant="eyebrow" color="purple400">
+              <Text variant="eyebrow" color="blue400">
                 {format(new Date(item.date), 'do MMMM yyyy')}
               </Text>
             )}
@@ -57,7 +57,7 @@ export const DigitalIcelandLatestNewsCard = (item: ItemProps) => {
       <Box paddingLeft={2} paddingRight={2}>
         <Inline space={1}>
           {item.tags.map((tag) => (
-            <Tag key={tag} disabled outlined>
+            <Tag key={tag} disabled>
               {tag}
             </Tag>
           ))}

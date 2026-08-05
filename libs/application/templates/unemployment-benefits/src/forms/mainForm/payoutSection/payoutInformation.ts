@@ -150,10 +150,12 @@ export const payoutInformationSubSection = buildSubSection({
                 'unemploymentApplication.data.supportData.privatePensionFunds',
                 [],
               ) || []
-            return pensionFundOptions.map((option) => ({
-              label: option.name || '',
-              value: option.id || '',
-            }))
+            return pensionFundOptions
+              .filter((x) => x.visibleOnWeb)
+              .map((option) => ({
+                label: option.name || '',
+                value: option.id || '',
+              }))
           },
           condition: payPrivatePensionFund,
         }),

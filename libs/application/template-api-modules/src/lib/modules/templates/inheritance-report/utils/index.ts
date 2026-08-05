@@ -4,5 +4,12 @@ import {
   roundMonetaryFieldsDeep,
   stringifyObject,
 } from './roundToInt'
+import { transformInheritanceReportToPDFStream } from './createCopyPdf'
 
-export { getFakeData, roundToInt, roundMonetaryFieldsDeep, stringifyObject }
+export {
+  getFakeData,
+  roundToInt,
+  roundMonetaryFieldsDeep,
+  stringifyObject,
+  transformInheritanceReportToPDFStream,
+}

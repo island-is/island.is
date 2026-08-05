@@ -1,6 +1,5 @@
+export * from './studentFile.dto'
 export * from './studentTrack.dto'
 export * from './studentTrackInstitution.dto'
 export * from './studentTrackOverviewBody.dto'
 export * from './studentTrackOverview.dto'
-export * from './studentFileType.dto'
-export * from './university.dto'

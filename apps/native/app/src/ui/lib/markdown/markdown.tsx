@@ -1,5 +1,5 @@
 import MarkdownRN from 'react-native-markdown-display'
-import { useBrowser } from '../../../lib/use-browser'
+import { useBrowser } from '../../../hooks/use-browser'
 import { useTheme } from 'styled-components'
 
 const onLinkPress = ({

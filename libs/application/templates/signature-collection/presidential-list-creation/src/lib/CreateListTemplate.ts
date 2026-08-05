@@ -1,5 +1,6 @@
 import {
   Application,
+  ApplicationConfigurations,
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
@@ -30,6 +31,9 @@ const CreateListTemplate: ApplicationTemplate<
   codeOwner: CodeOwners.Juni,
   institution: m.institution,
   dataSchema,
+  translationNamespaces: [
+    ApplicationConfigurations.PresidentialListCreation.translation,
+  ],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {

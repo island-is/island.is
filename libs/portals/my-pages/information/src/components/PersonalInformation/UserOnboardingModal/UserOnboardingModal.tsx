@@ -76,6 +76,7 @@ export const UserOnboardingModal = () => {
               canDrop={canDropOverlay}
               setFormLoading={(val: boolean) => setFormLoadingState(val)}
               showIntroTitle
+              isOnboardingModal
             />
             <GridRow>
               <GridColumn span={['12/12', '12/12', '12/12', '9/12']}>

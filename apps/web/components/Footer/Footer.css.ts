@@ -15,7 +15,7 @@ export const footer = style({
 })
 
 globalStyle(`${footer} a`, {
-  wordBreak: 'break-all',
+  overflowWrap: 'anywhere',
   textDecoration: 'underline',
   textUnderlineOffset: '5px',
 })

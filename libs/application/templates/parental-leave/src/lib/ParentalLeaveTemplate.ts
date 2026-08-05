@@ -560,6 +560,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               throwOnError: false,
             }),
             defineTemplateApi({
+              action: ApiModuleActions.setApplicationFundId,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'navId',
+              throwOnError: false,
+            }),
+            defineTemplateApi({
               action: ApiModuleActions.setVMSTPeriods,
               triggerEvent: DefaultEvents.EDIT,
               externalDataId: 'VMSTPeriods',
@@ -776,11 +782,21 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: pruneAfterDays(970),
-          onExit: defineTemplateApi({
-            action: ApiModuleActions.validateApplication,
-            triggerEvent: DefaultEvents.APPROVE,
-            throwOnError: true,
-          }),
+          onExit: [
+            defineTemplateApi({
+              action: ApiModuleActions.setApplicationFundId,
+              triggerEvent: DefaultEvents.APPROVE,
+              externalDataId: 'navId',
+              throwOnError: false,
+              order: 0,
+            }),
+            defineTemplateApi({
+              action: ApiModuleActions.validateApplication,
+              triggerEvent: DefaultEvents.APPROVE,
+              throwOnError: true,
+              order: 1,
+            }),
+          ],
 
           roles: [
             {
@@ -845,6 +861,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             defineTemplateApi({
               action: ApiModuleActions.setBirthDate,
               externalDataId: 'dateOfBirth',
+              throwOnError: false,
+            }),
+            defineTemplateApi({
+              action: ApiModuleActions.setApplicationFundId,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'navId',
               throwOnError: false,
             }),
             defineTemplateApi({
@@ -957,11 +979,21 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: pruneAfterDays(970),
-          onExit: defineTemplateApi({
-            triggerEvent: DefaultEvents.SUBMIT,
-            action: ApiModuleActions.validateApplication,
-            throwOnError: true,
-          }),
+          onExit: [
+            defineTemplateApi({
+              action: ApiModuleActions.setApplicationFundId,
+              triggerEvent: DefaultEvents.SUBMIT,
+              externalDataId: 'navId',
+              throwOnError: false,
+              order: 0,
+            }),
+            defineTemplateApi({
+              triggerEvent: DefaultEvents.SUBMIT,
+              action: ApiModuleActions.validateApplication,
+              throwOnError: true,
+              order: 1,
+            }),
+          ],
           roles: [
             {
               id: Roles.APPLICANT,
@@ -1028,6 +1060,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(970),
           onExit: [
+            defineTemplateApi({
+              action: ApiModuleActions.setApplicationFundId,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'navId',
+              throwOnError: false,
+            }),
             defineTemplateApi({
               action: ApiModuleActions.setVMSTPeriods,
               triggerEvent: DefaultEvents.EDIT,
@@ -1105,6 +1143,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(970),
           onExit: [
+            defineTemplateApi({
+              action: ApiModuleActions.setApplicationFundId,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'navId',
+              throwOnError: false,
+            }),
             defineTemplateApi({
               action: ApiModuleActions.setVMSTPeriods,
               triggerEvent: DefaultEvents.EDIT,
@@ -1214,6 +1258,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(970),
           onExit: [
+            defineTemplateApi({
+              action: ApiModuleActions.setApplicationFundId,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'navId',
+              throwOnError: false,
+            }),
             defineTemplateApi({
               action: ApiModuleActions.setVMSTPeriods,
               triggerEvent: DefaultEvents.EDIT,
@@ -1348,6 +1398,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               throwOnError: false,
             }),
             defineTemplateApi({
+              action: ApiModuleActions.setApplicationFundId,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'navId',
+              throwOnError: false,
+            }),
+            defineTemplateApi({
               action: ApiModuleActions.setVMSTPeriods,
               triggerEvent: DefaultEvents.EDIT,
               externalDataId: 'VMSTPeriods',
@@ -1427,6 +1483,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           lifecycle: pruneAfterDays(970),
           onExit: [
             defineTemplateApi({
+              action: ApiModuleActions.setApplicationFundId,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'navId',
+              throwOnError: false,
+            }),
+            defineTemplateApi({
               action: ApiModuleActions.setVMSTPeriods,
               triggerEvent: DefaultEvents.EDIT,
               externalDataId: 'VMSTPeriods',
@@ -1475,8 +1537,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
   stateMachineOptions: {
     actions: {
       /**
-       * Copy the current periods to temp. If the user cancels the edits,
-       * we will restore the periods to their original state from temp.
+       * Sync periods from VMST, drop stale client-side validation, then copy
+       * the refreshed periods to temp so the edit session starts from the
+       * VMST-backed source of truth and we can restore it if the user cancels.
        */
       createTempPeriods: assign((context, event) => {
         if (event.type !== DefaultEvents.EDIT) {
@@ -1486,7 +1549,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { application } = context
         const { answers } = application
 
-        set(answers, 'tempPeriods', answers.periods)
+        const newPeriods = restructureVMSTPeriods(context)
+        if (newPeriods.length > 0) {
+          set(answers, 'periods', newPeriods)
+        }
+
+        unset(answers, 'validatedPeriods')
+
+        set(answers, 'tempPeriods', cloneDeep(answers.periods))
 
         return context
       }),

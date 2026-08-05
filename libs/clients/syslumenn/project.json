@@ -19,7 +19,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "curl https://api.syslumenn.is/staging/swagger/v1/swagger.json -H 'Accept: application/json' | jq '.paths[][].tags = [\"Syslumenn\"]' | jq '(.. | objects | select(has(\"application/json\")) | .[\"application/json\"].schema) |= if has(\"items\") and .items == {} then .items = {\"type\": \"object\"} else . end' | jq '(.components[][] | select(has(\"additionalProperties\")) | select(.additionalProperties|objects) | .additionalProperties) |= if has(\"nullable\") and .nullable == true then (.type = \"object\") else . end' | jq '(.components[][] | objects | select(has(\"properties\")) | .properties | .[]) |= if has(\"items\") and .items == {} then .items = {\"type\": \"object\"} else . end' > src/clientConfig.json"
+          "curl https://api.syslumenn.is/staging/swagger/v1/swagger.json -H 'Accept: application/json' | jq '.paths[][].tags = [\"Syslumenn\"]' | jq '(.. | objects | select(has(\"application/json\")) | .[\"application/json\"].schema) |= if has(\"items\") and .items == {} then .items = {\"type\": \"object\"} else . end' | jq '(.components[][] | select(has(\"additionalProperties\")) | select(.additionalProperties|objects) | .additionalProperties) |= if has(\"nullable\") and .nullable == true then (.type = \"object\") else . end' | jq '(.components[][] | objects | select(has(\"properties\")) | .properties | .[]) |= if has(\"items\") and .items == {} then .items = {\"type\": \"object\"} else . end' | jq '(.components[][] | objects | select(has(\"properties\")) | .properties | .[]) |= if has(\"nullable\") and (has(\"type\") | not) then (.type = \"object\") else . end' > src/clientConfig.json"
         ],
         "parallel": false,
         "cwd": "libs/clients/syslumenn"
@@ -28,7 +28,10 @@
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/clients/syslumenn/gen/fetch -i libs/clients/syslumenn/src/clientConfig.json"
+        "commands": [
+          "yarn openapi-generator -o libs/clients/syslumenn/gen/fetch -i libs/clients/syslumenn/src/clientConfig.json"
+        ],
+        "parallel": false
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }

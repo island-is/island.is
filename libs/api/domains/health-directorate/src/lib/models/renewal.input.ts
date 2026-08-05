@@ -1,5 +1,5 @@
-import { Field, InputType } from '@nestjs/graphql'
-import { IsString } from 'class-validator'
+import { Field, InputType, Int } from '@nestjs/graphql'
+import { IsInt, IsOptional, IsString } from 'class-validator'
 
 @InputType()
 export class HealthDirectorateRenewalInput {
@@ -7,15 +7,13 @@ export class HealthDirectorateRenewalInput {
   @IsString()
   id!: string
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
+  @IsOptional()
   @IsString()
-  prescribedItemId!: string
+  nodeId?: string
 
-  @Field(() => String)
-  @IsString()
-  medCardDrugId!: string
-
-  @Field(() => String)
-  @IsString()
-  medCardDrugCategory!: string
+  @Field(() => Int, { nullable: true })
+  @IsOptional()
+  @IsInt()
+  groupId?: number
 }

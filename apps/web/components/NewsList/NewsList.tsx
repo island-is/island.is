@@ -43,6 +43,7 @@ interface NewsListProps {
   newsPerPage?: number
   newsTags?: GenericTag[]
   variant?: 'default' | 'digital-iceland'
+  mini?: boolean
 }
 
 export const NewsList = ({
@@ -62,6 +63,7 @@ export const NewsList = ({
   monthOptions,
   newsTags,
   variant = 'default',
+  mini,
 }: NewsListProps) => {
   const router = useRouter()
   const n = useNamespace(namespace)
@@ -226,7 +228,11 @@ export const NewsList = ({
                   .map((tag) => tag.title)}
                 title={newsItem.title}
                 description={newsItem.intro}
-                mini={selectedPage > 1 || (selectedPage === 1 && index > 2)}
+                mini={
+                  mini === undefined
+                    ? selectedPage > 1 || (selectedPage === 1 && index > 2)
+                    : mini
+                }
               />
             ))}
           </Box>

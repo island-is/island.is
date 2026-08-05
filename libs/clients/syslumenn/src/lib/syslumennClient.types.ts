@@ -1,3 +1,12 @@
+/**
+ * Delegation types supported by the syslumenn VirkUmbod API endpoint.
+ * Used to specify the type of delegation when checking if a delegation exists.
+ */
+export enum SyslumennDelegationType {
+  LegalRepresentative = 'LegalRepresentative',
+  PersonalRepresentative = 'PersonalRepresentative',
+}
+
 export interface SyslumennAuction {
   office: string
   location: string
@@ -368,6 +377,23 @@ export interface InheritanceReportInfo {
   addressOfDeceased?: string
   nameOfDeceased?: string
   inheritanceTax?: InheritanceTax
+}
+
+export interface InheritanceSignatory {
+  name: string
+  nationalId: string
+  signed: boolean
+}
+
+// Estate types for signatories API
+// These match the types accepted by the Syslumenn API
+export enum SignatoryEstateTypes {
+  Einkaskipti = 'Einkaskipti',
+  OskiptBu = 'OskiptBu',
+  ErfdafjarSkyrsla = 'ErfdafjarSkyrsla',
+  FyrirFramGreiddur = 'FyrirFramGreiddur',
+  OpinberSkipti = 'OpinberSkipti',
+  Eignaleysi = 'Eignaleysi',
 }
 
 // Copied from propertyDetails in @island.is/api/domains/assets. Only properties in use

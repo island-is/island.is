@@ -5,6 +5,7 @@ import {
   buildMultiField,
   buildRadioField,
   buildSubSection,
+  buildHiddenInput,
   coreMessages,
   getValueViaPath,
   NO,
@@ -16,7 +17,7 @@ import { Application, FormValue } from '@island.is/application/types'
 import {
   isIndependent,
   isEmployed,
-  isEmployedPartTime,
+  isUnemployed,
   hasDataFromCurrentStatusItem,
   getDefaultFromCurrentStatus,
   hasEmployer,
@@ -152,7 +153,6 @@ export const employmentHistorySubSection = buildSubSection({
                 index: number,
               ) => {
                 const name = getChosenEmployerName(index, application)
-
                 return name
               },
             },
@@ -202,6 +202,8 @@ export const employmentHistorySubSection = buildSubSection({
               type: 'number',
               suffix: '%',
               required: true,
+              max: 100,
+              allowNegative: false,
               condition: (application, _activeField, index) => {
                 return (
                   !hasDataFromCurrentStatus(application.answers, index) ||
@@ -229,42 +231,6 @@ export const employmentHistorySubSection = buildSubSection({
                   application.answers,
                   index,
                   'percentage',
-                )
-              },
-            },
-            startDate: {
-              component: 'date',
-              label:
-                employmentMessages.employmentHistory.labels.lastJobStartDate,
-              width: 'half',
-              required: true,
-              condition: (application, _activeField, index) => {
-                return (
-                  !hasDataFromCurrentStatus(application.answers, index) ||
-                  (isEmployedPartTime(application.answers) &&
-                    hasDataFromCurrentStatusItem(
-                      application.answers,
-                      index,
-                      'startDate',
-                    ))
-                )
-              },
-              readonly: (application, _, index) => {
-                return hasDataFromCurrentStatusItem(
-                  application.answers,
-                  index,
-                  'startDate',
-                )
-              },
-              defaultValue: (
-                application: Application,
-                _activeField: Record<string, string>,
-                index: number,
-              ) => {
-                return getDefaultFromCurrentStatus(
-                  application.answers,
-                  index,
-                  'startDate',
                 )
               },
             },
@@ -312,7 +278,15 @@ export const employmentHistorySubSection = buildSubSection({
             },
           },
         }),
-
+        buildHiddenInput({
+          id: 'employmentHistory.status',
+          defaultValue: (application: Application) => {
+            return getValueViaPath<string>(
+              application.answers,
+              'currentSituation.status',
+            )
+          },
+        }),
         buildDescriptionField({
           id: 'employmentHistoryLabel',
           title:
@@ -324,37 +298,46 @@ export const employmentHistorySubSection = buildSubSection({
         buildFieldsRepeaterField({
           id: 'employmentHistory.lastJobs',
           marginTop: 0,
-          minRows: 1,
+          minRows: (formValue) => {
+            return isUnemployed(formValue) ? 1 : 0
+          },
           formTitle:
             employmentMessages.employmentHistory.labels.lastJobRepeater,
           formTitleVariant: 'h5',
           fields: {
             nationalIdWithName: {
               component: 'select',
-              required: true,
+              isClearable: true,
+              required: (application) => {
+                return isUnemployed(application.answers)
+              },
               label:
                 employmentMessages.employmentHistory.labels.employerSelectLabel,
-              options: (application, _, locale, formatMessage) =>
+              options: (application, _, _locale, formatMessage) =>
                 getRskOptions(application, formatMessage),
             },
             employer: {
               component: 'nationalIdWithName',
-              required: true,
+              required: (application) => {
+                return isUnemployed(application.answers)
+              },
               searchPersons: true,
               searchCompanies: true,
               condition: (_, activeField) => {
                 const nationalIdChosen = activeField?.nationalIdWithName
                   ? activeField?.nationalIdWithName
                   : ''
-
-                return nationalIdChosen === '-' || activeField === undefined
+                return nationalIdChosen === '-'
               },
             },
             jobCodeId: {
               component: 'select',
+              isClearable: true,
               label: employmentMessages.employmentHistory.labels.lastJobTitle,
               width: 'half',
-              required: true,
+              required: (application) => {
+                return isUnemployed(application.answers)
+              },
               options: (application, _activeField, locale) =>
                 getJobCodeOptions(application, locale),
             },
@@ -366,15 +349,20 @@ export const employmentHistorySubSection = buildSubSection({
               type: 'number',
               suffix: '%',
               max: 100,
-              min: 1,
-              required: true,
+              placeholder: '1-100%',
+              allowNegative: false,
+              required: (application) => {
+                return isUnemployed(application.answers)
+              },
             },
             startDate: {
               component: 'date',
               label:
                 employmentMessages.employmentHistory.labels.lastJobStartDate,
               width: 'half',
-              required: true,
+              required: (application) => {
+                return isUnemployed(application.answers)
+              },
               maxDate: (_application, activeField) => {
                 const endDateStr = activeField?.endDate
                 return (endDateStr && new Date(endDateStr)) || undefined
@@ -382,7 +370,9 @@ export const employmentHistorySubSection = buildSubSection({
             },
             endDate: {
               component: 'date',
-              required: true,
+              required: (application) => {
+                return isUnemployed(application.answers)
+              },
               label:
                 employmentMessages.employmentHistory.labels.lastOldJobEndDate,
               width: 'half',
@@ -398,6 +388,7 @@ export const employmentHistorySubSection = buildSubSection({
           id: 'employmentHistory.hasWorkedEes',
           title: employmentMessages.employmentHistory.labels.radioEesLabel,
           width: 'half',
+          defaultValue: NO,
           options: [
             {
               value: YES,

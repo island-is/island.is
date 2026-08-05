@@ -2,7 +2,7 @@ import { AlertMessage, Box, Tag } from '@island.is/island-ui/core'
 import { CheckboxFormField } from '@island.is/application/ui-fields'
 import { selectChildren } from '../../lib/messages'
 import {
-  ApplicantChildCustodyInformation,
+  ApplicantChildCustodyInformationV3,
   FieldBaseProps,
   FieldComponents,
   FieldTypes,
@@ -19,10 +19,10 @@ export const SelectChildren: FC<FieldBaseProps> = ({ field, application }) => {
     answers,
   } = application
   const children =
-    childrenCustodyInformation.data as ApplicantChildCustodyInformation[]
+    childrenCustodyInformation.data as ApplicantChildCustodyInformationV3[]
 
   const childrenCheckboxes = children.map(
-    (child: ApplicantChildCustodyInformation) => {
+    (child: ApplicantChildCustodyInformationV3) => {
       const showForeignDomicileTag = !child.domicileInIceland
       const isCheckable =
         child.domicileInIceland && child.citizenship?.code !== 'IS'

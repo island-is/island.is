@@ -4,16 +4,12 @@ import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { ApolloError } from '@apollo/client'
 import {
   OrganizationsApi,
-  OrganizationsControllerCreateRequest,
   OrganizationsControllerFindAdminRequest,
-  OrganizationsControllerFindOneRequest,
+  OrganizationZendeskInstanceDto,
 } from '@island.is/clients/form-system'
-import {
-  GetOrganizationAdminInput,
-  GetOrganizationInput,
-} from '../../dto/organization.input'
-import { Organization } from '../../models/organization.model'
+import { GetOrganizationAdminInput } from '../../dto/organization.input'
 import { OrganizationAdmin } from '../../models/organizationAdmin.model'
+import { OrganizationZendeskInstanceInput } from '../../dto/organizationZendeskInstance.input'
 
 @Injectable()
 export class OrganizationsService {
@@ -38,32 +34,6 @@ export class OrganizationsService {
     return this.organizationsApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async createOrganization(
-    auth: User,
-    input: GetOrganizationInput,
-  ): Promise<Organization> {
-    const response = await this.organizationsApiWithAuth(
-      auth,
-    ).organizationsControllerCreate(
-      input as OrganizationsControllerCreateRequest,
-    )
-
-    return response as Organization
-  }
-
-  async getOrganization(
-    auth: User,
-    input: GetOrganizationInput,
-  ): Promise<Organization> {
-    const response = await this.organizationsApiWithAuth(
-      auth,
-    ).organizationsControllerFindOne(
-      input as OrganizationsControllerFindOneRequest,
-    )
-
-    return response as Organization
-  }
-
   async getOrganizationAdmin(
     auth: User,
     input: GetOrganizationAdminInput,
@@ -75,5 +45,16 @@ export class OrganizationsService {
     )
 
     return response as OrganizationAdmin
+  }
+
+  async updateOrganizationZendeskInstance(
+    auth: User,
+    input: OrganizationZendeskInstanceInput,
+  ): Promise<void> {
+    await this.organizationsApiWithAuth(
+      auth,
+    ).organizationsControllerUpdateZendeskInstance({
+      organizationZendeskInstanceDto: input as OrganizationZendeskInstanceDto,
+    })
   }
 }

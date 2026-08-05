@@ -12,11 +12,13 @@ import { useGetDonorStatusQuery } from './OrganDonation.generated'
 import { NoAccess } from './components/NoAccess'
 import { getOrganText } from './helpers/textMapper'
 import { useNavigate } from 'react-router-dom'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const OrganDonation = () => {
   useNamespaces('sp.health')
 
   const { formatMessage, lang } = useLocale()
+  useHealthPlausibleSwap()
   const navigate = useNavigate()
   const { data, loading, error } = useGetDonorStatusQuery({
     fetchPolicy: 'no-cache',
@@ -57,16 +59,24 @@ const OrganDonation = () => {
     <IntroWrapper
       title={formatMessage(m.organDonation)}
       intro={formatMessage(m.organDonationDescription)}
-      buttonGroup={[
-        <LinkResolver
-          href={formatMessage(m.organDonationLink)}
-          key="organ-donation"
-        >
-          <Button variant="utility" size="small" icon="open" iconType="outline">
-            {formatMessage(m.readAboutOrganDonation)}
-          </Button>
-        </LinkResolver>,
-      ]}
+      buttonGroup={{
+        actions: [
+          <LinkResolver
+            href={formatMessage(m.organDonationLink)}
+            key="organ-donation"
+          >
+            <Button
+              variant="utility"
+              size="small"
+              icon="open"
+              iconType="outline"
+            >
+              {formatMessage(m.readAboutOrganDonation)}
+            </Button>
+          </LinkResolver>,
+        ],
+      }}
+      desktopContentSpan="10/12"
     >
       {loading && (
         <Box marginY={4}>
@@ -84,6 +94,7 @@ const OrganDonation = () => {
             </Text>
             <ActionCard
               heading={texts.heading}
+              headingVariant="h4"
               text={texts.cardText}
               cta={{
                 onClick: () =>

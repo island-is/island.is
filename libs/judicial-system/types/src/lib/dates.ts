@@ -3,6 +3,9 @@ import endOfDay from 'date-fns/endOfDay'
 
 import { ServiceRequirement } from './verdict'
 
+export const getMillisecondsFromDays = (days: number) =>
+  days * 24 * 60 * 60 * 1000
+
 export const VERDICT_APPEAL_WINDOW_DAYS = 28
 const FINE_APPEAL_WINDOW_DAYS = 3
 

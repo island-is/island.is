@@ -6,7 +6,6 @@ import {
   Param,
   UseGuards,
   BadRequestException,
-  ParseIntPipe,
 } from '@nestjs/common'
 import { ApiOkResponse } from '@nestjs/swagger'
 import { Response } from 'express'
@@ -20,15 +19,9 @@ import {
 } from '@island.is/auth-nest-tools'
 import { AuditService } from '@island.is/nest/audit'
 import { HmsRentalAgreementService } from '@island.is/clients/hms-rental-agreement'
-import {
-  FeatureFlag,
-  FeatureFlagGuard,
-  Features,
-} from '@island.is/nest/feature-flags'
 
-@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.hms)
-@FeatureFlag(Features.isServicePortalMyContractsPageEnabled)
 @Controller('rental-agreements')
 export class RentalAgreementsController {
   constructor(
@@ -36,48 +29,44 @@ export class RentalAgreementsController {
     private readonly auditService: AuditService,
   ) {}
 
-  @Post('/:documentId/:contractId')
+  @Post('/:id')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
     description: 'Get a rental agreement pdf from HMSs',
   })
   async getRentalAgreementPdf(
-    @Param('documentId', ParseIntPipe) documentId: number,
-    @Param('contractId', ParseIntPipe) contractId: number,
+    @Param('id') id: string | undefined,
     @CurrentUser() user: User,
     @Res() res: Response,
   ) {
-    if (!documentId || !contractId) {
-      throw new BadRequestException('Missing documentId or contractId')
+    if (!id) {
+      throw new BadRequestException('Missing id')
     }
 
-    const documentResponse = await this.service.getRentalAgreementPdf(
-      user,
-      documentId,
-      contractId,
-    )
+    const documentResponse = await this.service.getRentalAgreementPdf(user, +id)
 
-    if (documentResponse) {
+    if (documentResponse && documentResponse.length > 0) {
       this.auditService.audit({
         action: 'getRentalAgreementPdf',
         auth: user,
-        resources: [documentId.toString(), contractId.toString()],
+        resources: id,
       })
 
-      const buffer = Buffer.from(documentResponse.document, 'base64')
-      const filename = `${
-        documentResponse.name ?? 'rental-agreement'
-      }-${contractId}-${documentId}.pdf`
+      //grab the first one
+      const document = documentResponse[0].document
 
-      res.header(
-        'Content-Disposition',
-        `inline; filename="${filename.replace(/"/g, '_')}"`,
-      )
+      const buffer = Buffer.from(document, 'base64')
+
+      const filename = `${user.nationalId}-rental-agreement-${id}.pdf`
+
+      res.header('Content-Disposition', `attachment; filename=${filename}`)
       res.header('Pragma', 'no-cache')
       res.header('Cache-Control', 'no-cache')
-      return res.status(200).end(buffer)
+      res.header('Cache-Control', 'max-age=0')
+      return res.end(buffer)
     }
-    res.status(404).contentType('text/plain').end('Rental agreement not found')
+    res.status(404)
+    return res.end('Rental agreement not found')
   }
 }

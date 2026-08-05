@@ -29,4 +29,7 @@ export class StudentTrackTranscript {
 
   @Field({ nullable: true })
   degree?: string
+
+  @Field({ nullable: true })
+  level?: string
 }

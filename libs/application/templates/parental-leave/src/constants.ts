@@ -70,6 +70,7 @@ export enum ApiModuleActions {
    * except states that are still pending employer approval.
    */
   setVMSTPeriods = 'setVMSTPeriods',
+  setApplicationFundId = 'setApplicationFundId',
   setApplicationRights = 'setApplicationRights',
   setOtherParent = 'setOtherParent',
 }

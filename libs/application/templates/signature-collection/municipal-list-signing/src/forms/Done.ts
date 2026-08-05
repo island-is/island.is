@@ -8,7 +8,7 @@ import {
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { NationalElectoralCommissionLogo } from '@island.is/application/assets/institution-logos'
-import Jobs from '@island.is/application/templates/signature-collection/assets/Jobs'
+import { ClipboardAndPencil } from '@island.is/application/assets/graphics'
 
 export const Done: Form = buildForm({
   id: 'done',
@@ -30,7 +30,7 @@ export const Done: Form = buildForm({
           children: [
             buildImageField({
               id: 'doneImage',
-              image: Jobs,
+              image: ClipboardAndPencil,
               imageWidth: 'auto',
               imagePosition: 'center',
               marginTop: 'none',

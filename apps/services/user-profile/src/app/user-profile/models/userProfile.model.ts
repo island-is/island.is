@@ -103,6 +103,14 @@ export class UserProfile extends Model {
   emailNotifications!: boolean
 
   @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: false,
+    allowNull: false,
+  })
+  @ApiProperty()
+  smsNotifications!: boolean
+
+  @Column({
     type: DataType.DATE,
     allowNull: true,
   })

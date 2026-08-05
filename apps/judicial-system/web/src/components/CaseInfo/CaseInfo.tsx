@@ -18,6 +18,7 @@ import {
   CaseType,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { getAppealActorText } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { strings } from './CaseInfo.strings'
 
@@ -71,11 +72,19 @@ const Defendants: FC<Props> = ({ workingCase }) => {
 
   if (!defendants) return null
 
+  const activeDefendants = defendants.filter(
+    (d) => !d.indictmentCancelledOrDismissedState,
+  )
+
+  if (activeDefendants.length === 0) return null
+
   return (
     <Entry
-      label={capitalize(getDefendantLabel(formatMessage, defendants, type))}
+      label={capitalize(
+        getDefendantLabel(formatMessage, activeDefendants, type),
+      )}
       value={enumerate(
-        flatMap(defendants, (d) => (d.name ? [d.name] : [])),
+        flatMap(activeDefendants, (d) => (d.name ? [d.name] : [])),
         formatMessage(core.and),
       )}
     />
@@ -83,14 +92,13 @@ const Defendants: FC<Props> = ({ workingCase }) => {
 }
 
 const Prosecutor: FC<Props> = ({ workingCase }) => {
-  const { formatMessage } = useIntl()
   if (!workingCase.prosecutorsOffice?.name) {
     return null
   }
 
   return (
     <Entry
-      label={formatMessage(core.prosecutor)}
+      label={isIndictmentCase(workingCase.type) ? 'Ákæruvald' : 'Sóknaraðili'}
       value={workingCase.prosecutorsOffice.name}
     />
   )
@@ -146,6 +154,13 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
               rulingDate: `${formatDate(workingCase.rulingDate, 'PPP')}`,
             })}
           </Text>
+          {workingCase.hasBeenAppealed && (
+            <Box marginBottom={1}>
+              <Text as="h5" variant="h5">
+                {getAppealActorText(workingCase)}
+              </Text>
+            </Box>
+          )}
         </Box>
       ) : (
         <ProsecutorAndDefendantsEntries workingCase={workingCase} />

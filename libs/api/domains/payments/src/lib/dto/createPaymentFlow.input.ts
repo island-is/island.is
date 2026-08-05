@@ -1,19 +1,19 @@
-import { Field, InputType, Float } from '@nestjs/graphql'
+import { Field, Float, InputType } from '@nestjs/graphql'
+import { Type } from 'class-transformer'
 import {
-  IsEnum,
+  ArrayNotEmpty,
   IsArray,
-  IsString,
+  IsBoolean,
+  IsEnum,
   IsNumber,
   IsObject,
   IsOptional,
-  ArrayNotEmpty,
+  IsPositive,
+  IsString,
   Length,
   Matches,
-  IsPositive,
   ValidateNested,
-  IsBoolean,
 } from 'class-validator'
-import { Type } from 'class-transformer'
 import { GraphQLJSONObject } from 'graphql-type-json'
 
 import { CreatePaymentFlowInputAvailablePaymentMethodsEnum } from '@island.is/clients/payments'
@@ -144,6 +144,23 @@ export class CreatePaymentFlowInput {
   @IsBoolean()
   @IsOptional()
   redirectToReturnUrlOnSuccess?: boolean
+
+  @Field(() => String, {
+    nullable: true,
+    description: 'URL to redirect the user to after an invoice is created',
+  })
+  @IsString()
+  @IsOptional()
+  invoiceReturnUrl?: string
+
+  @Field(() => Boolean, {
+    nullable: true,
+    description:
+      'If true the user will be redirected to the invoiceReturnUrl after an invoice has been created',
+  })
+  @IsBoolean()
+  @IsOptional()
+  redirectOnInvoiceCreation?: boolean
 
   @Field(() => [ExtraDataItem], {
     nullable: true,

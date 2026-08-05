@@ -1,20 +1,24 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { Field, Float, Int, ObjectType } from '@nestjs/graphql'
 import { ApplicationEventDto } from './applications.model'
 import { Month } from './month.model'
+import { LanguageType } from './languageType.model'
 
 @ObjectType('FormSystemValue')
 export class Value {
   @Field(() => String, { nullable: true })
   text?: string
 
-  @Field(() => Int, { nullable: true })
+  @Field(() => Float, { nullable: true })
   number?: number
 
   @Field(() => Date, { nullable: true })
-  date?: Date
+  date?: Date | null
+
+  @Field(() => LanguageType, { nullable: true })
+  label?: LanguageType
 
   @Field(() => String, { nullable: true })
-  listValue?: string
+  value?: string
 
   @Field(() => String, { nullable: true })
   nationalId?: string
@@ -79,14 +83,20 @@ export class Value {
   @Field(() => [String], { nullable: 'itemsAndList' })
   s3Key?: string[]
 
-  @Field(() => String, { nullable: true })
-  s3Url?: string
-
   @Field(() => Boolean, { nullable: true })
   isLoggedInUser?: boolean
 
   @Field(() => String, { nullable: true })
   paymentCode?: string
+
+  @Field(() => String, { nullable: true })
+  registrationNumber?: string
+
+  @Field(() => String, { nullable: true })
+  model?: string
+
+  @Field(() => LanguageType, { nullable: true })
+  color?: LanguageType
 }
 
 @ObjectType('FormSystemValueDto')

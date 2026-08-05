@@ -24,8 +24,22 @@ export const defaultLifecycleWithPruneMessage = (
   message:
     | PruningNotification
     | ((application: PruningApplication) => PruningNotification),
-) => ({
-  ...DefaultStateLifeCycle,
+): StateLifeCycle => ({
+  shouldBeListed: true,
+  shouldBePruned: true,
+  whenToPrune: 30 * 24 * 3600 * 1000,
+  pruneMessage: message,
+})
+
+export const pruneAfterDaysWithMessage = (
+  days: number,
+  message:
+    | PruningNotification
+    | ((application: PruningApplication) => PruningNotification),
+): StateLifeCycle => ({
+  shouldBeListed: true,
+  shouldBePruned: true,
+  whenToPrune: days * 24 * 3600 * 1000,
   pruneMessage: message,
 })
 

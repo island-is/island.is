@@ -29,8 +29,11 @@ const CourtCases = () => {
     <IntroWrapper
       title={messages.courtCases}
       intro={messages.courtCasesDescription}
-      serviceProviderSlug={DOMSMALARADUNEYTID_SLUG}
-      serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
+      serviceProvider={{
+        slug: DOMSMALARADUNEYTID_SLUG,
+        tooltip: formatMessage(m.domsmalaraduneytidTooltip),
+      }}
+      desktopContentSpan="10/12"
     >
       {loading && !error && (
         <Box width="full">
@@ -47,6 +50,7 @@ const CourtCases = () => {
           <Box marginTop={2}>
             <ActionCard
               heading={x.caseNumberTitle ?? ''}
+              headingVariant="h4"
               text={x.type ?? ''}
               tag={{
                 label: x.state?.label ?? '',

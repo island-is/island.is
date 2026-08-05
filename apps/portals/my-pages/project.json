@@ -62,11 +62,13 @@
     "serve": {
       "executor": "@nx/webpack:dev-server",
       "options": {
-        "buildTarget": "service-portal:build"
+        "buildTarget": "service-portal:build",
+        "hmr": true
       },
       "configurations": {
         "production": {
-          "buildTarget": "service-portal:build:production"
+          "buildTarget": "service-portal:build:production",
+          "hmr": false
         }
       },
       "dependsOn": [

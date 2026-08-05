@@ -1,4 +1,10 @@
-import { IsArray, IsInt, IsOptional, IsString } from 'class-validator'
+import {
+  IsArray,
+  IsBoolean,
+  IsInt,
+  IsOptional,
+  IsString,
+} from 'class-validator'
 import { Field, InputType, Int, registerEnumType } from '@nestjs/graphql'
 import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
 import { CacheField } from '@island.is/nest/graphql'
@@ -6,6 +12,7 @@ import { CacheField } from '@island.is/nest/graphql'
 export enum GrantsSortBy {
   ALPHABETICAL,
   RECENTLY_UPDATED,
+  DEADLINE,
 }
 
 registerEnumType(GrantsSortBy, {
@@ -69,4 +76,12 @@ export class GetGrantsInput {
   @IsArray()
   @IsOptional()
   funds?: string[]
+
+  @Field({
+    nullable: true,
+    description: 'Retrieve only grants with a defined future end date',
+  })
+  @IsBoolean()
+  @IsOptional()
+  filterOutDateToPassed?: boolean
 }

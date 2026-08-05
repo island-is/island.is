@@ -26,6 +26,7 @@ export interface Vehicle {
   nextInspection?: Date
   isUserMainOperator?: boolean
   isOwnerLegalEntity?: boolean
+  hasMilesOdometer?: boolean
   canRegisterMileage?: boolean
   requiresMileageRegistration?: boolean
   lastMileageRegistration?: {
@@ -101,6 +102,7 @@ export const mapVehicleResponseDto = (
                   }
                 : undefined,
 
+            hasMilesOdometer: d.vehicleHasMilesOdometer ?? undefined,
             canRegisterMileage: d.canRegisterMilage ?? undefined,
             requiresMileageRegistration:
               d.requiresMileageRegistration ?? undefined,

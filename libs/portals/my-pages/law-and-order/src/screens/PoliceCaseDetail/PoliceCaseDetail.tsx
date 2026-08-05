@@ -42,7 +42,6 @@ const PoliceCaseDetail = () => {
 
   const policeCase = data?.lawAndOrderPoliceCase ?? null
   const currentCaseProgress = policeCase?.status?.timelineStep ?? -1
-
   return (
     <>
       <IntroWrapper
@@ -50,26 +49,31 @@ const PoliceCaseDetail = () => {
           arg: policeCaseNumber,
         })}
         intro={m.policeCaseDetailDescription}
-        serviceProviderSlug={RIKISLOGREGLUSTJORI_SLUG}
-        serviceProviderTooltip={formatMessage(
-          coreMessages.nationalPoliceCommissionerTooltip,
-        )}
-        buttonGroup={[
-          <LinkButton
-            key="detail-link-button-1"
-            to={formatMessage(m.policeCasesDetailHeaderLinkButton1Url)}
-            text={formatMessage(m.policeCasesDetailHeaderLinkButton1Text)}
-            icon="open"
-            variant="utility"
-          />,
-          <LinkButton
-            key="detail-link-button-2"
-            to={formatMessage(m.policeCasesDetailHeaderLinkButton2Url)}
-            text={formatMessage(m.policeCasesDetailHeaderLinkButton2Text)}
-            icon="open"
-            variant="utility"
-          />,
-        ]}
+        serviceProvider={{
+          slug: RIKISLOGREGLUSTJORI_SLUG,
+          tooltip: formatMessage(
+            coreMessages.nationalPoliceCommissionerTooltip,
+          ),
+        }}
+        buttonGroup={{
+          actions: [
+            <LinkButton
+              key="detail-link-button-1"
+              to={formatMessage(m.policeCasesDetailHeaderLinkButton1Url)}
+              text={formatMessage(m.policeCasesDetailHeaderLinkButton1Text)}
+              icon="open"
+              variant="utility"
+            />,
+            <LinkButton
+              key="detail-link-button-2"
+              to={formatMessage(m.policeCasesDetailHeaderLinkButton2Url)}
+              text={formatMessage(m.policeCasesDetailHeaderLinkButton2Text)}
+              icon="open"
+              variant="utility"
+            />,
+          ],
+        }}
+        desktopContentSpan="10/12"
       />
       {error && !loading && <Problem error={error} noBorder={false} />}
 
@@ -97,6 +101,11 @@ const PoliceCaseDetail = () => {
             />
             <InfoLine
               loading={loading}
+              label={m.prosecutionOffice}
+              content={policeCase?.prosecutionOffice ?? ''}
+            />
+            <InfoLine
+              loading={loading}
               label={m.contact}
               content={policeCase?.contact ?? ''}
             />
@@ -115,6 +124,11 @@ const PoliceCaseDetail = () => {
                   </Tag>
                 ) : undefined
               }
+              button={{
+                type: 'link',
+                to: formatMessage(m.caseStatusLinkUrl),
+                label: m.caseStatusLink,
+              }}
             />
             <InfoLine
               loading={loading}

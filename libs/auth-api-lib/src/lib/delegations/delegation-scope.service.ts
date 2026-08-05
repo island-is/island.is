@@ -8,7 +8,7 @@ import { Op, Transaction } from 'sequelize'
 import { uuid } from 'uuidv4'
 
 import { SyslumennService } from '@island.is/clients/syslumenn'
-import { logger } from '@island.is/logging'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import {
   AuthDelegationProvider,
   AuthDelegationType,
@@ -31,6 +31,7 @@ import { Delegation } from './models/delegation.model'
 import { DelegationValidity } from './types/delegationValidity'
 import filterByCustomScopeRule from './utils/filterByScopeCustomScopeRule'
 import { getScopeValidityWhereClause } from './utils/scopes'
+import { validateDistrictCommissionersDelegations } from './utils/delegations'
 
 import type { User } from '@island.is/auth-nest-tools'
 @Injectable()
@@ -49,18 +50,21 @@ export class DelegationScopeService {
     private delegationProviderService: DelegationProviderService,
     private readonly syslumennService: SyslumennService,
     private readonly delegationsIndexService: DelegationsIndexService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async createOrUpdate(
     delegationId: string,
     scopes?: UpdateDelegationScopeDTO[],
+    transaction?: Transaction,
   ): Promise<DelegationScope[]> {
     if (scopes && scopes.length > 0) {
       await this.delete(
         delegationId,
         scopes.map((s) => s.name),
+        transaction,
       )
-      return this.createMany(delegationId, scopes)
+      return this.createMany(delegationId, scopes, transaction)
     }
 
     return []
@@ -69,6 +73,7 @@ export class DelegationScopeService {
   async createMany(
     delegationId: string,
     scopes: UpdateDelegationScopeDTO[],
+    transaction?: Transaction,
   ): Promise<DelegationScope[]> {
     const validFrom = startOfDay(new Date())
     const defaultValidTo = addDays(
@@ -83,12 +88,15 @@ export class DelegationScopeService {
       delegationId,
     }))
 
-    await this.delegationScopeModel.bulkCreate(delegationScopes)
+    await this.delegationScopeModel.bulkCreate(delegationScopes, {
+      transaction,
+    })
     return this.delegationScopeModel.findAll({
       where: {
         id: delegationScopes.map((s) => s.id),
       },
       include: [ApiScope],
+      transaction,
     })
   }
 
@@ -110,9 +118,25 @@ export class DelegationScopeService {
     })
   }
 
-  async findByDelegationId(delegationId: string): Promise<DelegationScope[]> {
+  async deleteByName(
+    delegationId: string,
+    scopeNames: string[],
+    transaction?: Transaction,
+  ): Promise<number> {
+    if (scopeNames.length === 0) return 0
+    return this.delegationScopeModel.destroy({
+      where: { delegationId, scopeName: scopeNames },
+      transaction,
+    })
+  }
+
+  async findByDelegationId(
+    delegationId: string,
+    transaction?: Transaction,
+  ): Promise<DelegationScope[]> {
     return this.delegationScopeModel.findAll({
       where: { delegationId },
+      transaction,
     })
   }
 
@@ -328,35 +352,22 @@ export class DelegationScopeService {
   private async findDistrictCommissionersRegistryScopesTo(
     user: User,
     fromNationalId: string,
+    delegationTypes: string[],
   ): Promise<string[]> {
-    // if no valid delegation exists, return empty array
-    try {
-      const delegationFound =
-        await this.syslumennService.checkIfDelegationExists(
-          user.nationalId,
-          fromNationalId,
-        )
+    const { validTypes } = await validateDistrictCommissionersDelegations({
+      user,
+      fromNationalId,
+      delegationTypes: delegationTypes as AuthDelegationType[],
+      featureFlagService: this.featureFlagService,
+      syslumennService: this.syslumennService,
+      delegationsIndexService: this.delegationsIndexService,
+    })
 
-      if (!delegationFound) {
-        void this.delegationsIndexService.removeDelegationRecord(
-          {
-            fromNationalId,
-            toNationalId: user.nationalId,
-            type: AuthDelegationType.LegalRepresentative,
-            provider: AuthDelegationProvider.DistrictCommissionersRegistry,
-          },
-          user,
-        )
-        return []
-      }
-    } catch (error) {
-      logger.error(
-        `Failed checking if delegation exists at provider '${AuthDelegationProvider.DistrictCommissionersRegistry}'`,
-      )
+    if (validTypes.length === 0) {
       return []
     }
 
-    // else return all enabled scopes for this provider and provided delegation types
+    // Return all enabled scopes for valid delegation types
     const apiScopes = await this.apiScopeModel.findAll({
       attributes: ['name'],
       where: {
@@ -367,7 +378,9 @@ export class DelegationScopeService {
           model: DelegationTypeModel,
           required: true,
           where: {
-            id: AuthDelegationType.LegalRepresentative,
+            id: {
+              [Op.in]: validTypes,
+            },
             provider: AuthDelegationProvider.DistrictCommissionersRegistry,
           },
         },
@@ -447,10 +460,15 @@ export class DelegationScopeService {
 
     if (
       providers.includes(AuthDelegationProvider.DistrictCommissionersRegistry)
-    )
+    ) {
       scopePromises.push(
-        this.findDistrictCommissionersRegistryScopesTo(user, fromNationalId),
+        this.findDistrictCommissionersRegistryScopesTo(
+          user,
+          fromNationalId,
+          delegationTypes,
+        ),
       )
+    }
 
     const scopeSets = await Promise.all(scopePromises)
 

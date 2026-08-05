@@ -42,6 +42,9 @@ export class UserProfile {
   @Field(() => Boolean, { nullable: true })
   emailNotifications?: boolean
 
+  @Field(() => Boolean)
+  smsNotifications!: boolean
+
   // Temporary merge with islyklar service
   @Field(() => Boolean, {
     nullable: true,

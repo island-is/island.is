@@ -1,4 +1,4 @@
-export * from './ContentTypeSelect'
+export * from './ValueSelect'
 export * from './FileInput'
 export * from './ReferenceFieldMapping'
 export * from './TagSelect'

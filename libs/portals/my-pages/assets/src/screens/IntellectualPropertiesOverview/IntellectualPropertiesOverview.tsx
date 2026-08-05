@@ -31,6 +31,7 @@ const IntellectualPropertiesOverview = () => {
       <ActionCard
         text={`${ipId}${description ? ' - ' + description : ''}`}
         heading={heading ?? ''}
+        headingVariant="h4"
         cta={{
           label: formatMessage(m.view),
           variant: 'text',
@@ -50,8 +51,11 @@ const IntellectualPropertiesOverview = () => {
       <IntroWrapper
         title={ipMessages.title}
         intro={ipMessages.description}
-        serviceProviderSlug={HUGVERKASTOFAN_SLUG}
-        serviceProviderTooltip={formatMessage(m.intellectualPropertiesTooltip)}
+        desktopContentSpan="10/12"
+        serviceProvider={{
+          slug: HUGVERKASTOFAN_SLUG,
+          tooltip: formatMessage(m.intellectualPropertiesTooltip),
+        }}
       >
         {loading && (
           <Box marginBottom={2}>

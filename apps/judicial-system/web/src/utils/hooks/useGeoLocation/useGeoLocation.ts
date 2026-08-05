@@ -1,20 +1,26 @@
-import useSWR from 'swr'
+import { useEffect, useState } from 'react'
 
 export const useGeoLocation = (): { countryCode: string } => {
-  const { data, error } = useSWR<{ countryCode: string }>(
-    '/api/geoLocation/getCountryCode',
-    (url: string) => fetch(url).then((res) => res.json()),
-    {
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-      errorRetryCount: 2,
-    },
-  )
+  const [countryCode, setCountryCode] = useState<string>('')
 
-  if (!data || error) {
-    return { countryCode: '' }
-  }
+  useEffect(() => {
+    const controller = new AbortController()
 
-  return data
+    fetch('/api/geoLocation/getCountryCode', { signal: controller.signal })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`Request failed with status ${res.status}`)
+        }
+
+        return res.json()
+      })
+      .then((res) => setCountryCode(res.countryCode ?? ''))
+      .catch(() => {
+        // Silently ignore errors; country code stays empty
+      })
+
+    return () => controller.abort()
+  }, [])
+
+  return { countryCode }
 }

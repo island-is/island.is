@@ -3,6 +3,8 @@ import cn from 'classnames'
 
 import { Box, Text } from '@island.is/island-ui/core'
 
+import BlueBox from '../BlueBox/BlueBox'
+import { grid } from '../../utils/styles/recipes.css'
 import * as styles from './InfoCard.css'
 
 interface Section {
@@ -17,31 +19,41 @@ export interface Item {
   values: string[] | ReactNode[]
 }
 
+type HeadingLevel = 'h2' | 'h3' | 'h4' | 'h5'
+
 interface Props {
   sections: Section[]
+  // Semantic heading level for string item titles. The visual size stays the
+  // same (h4) so only the level exposed to assistive technology changes.
+  titleAs?: HeadingLevel
 }
 
 const InfoCard: FC<Props> = (props) => {
-  const { sections } = props
+  const { sections, titleAs = 'h4' } = props
+
+  const visibleSections = sections
+    .map((section) => ({
+      ...section,
+      items: section.items.filter(
+        (item) => item.values.length > 0 && !!item.values[0],
+      ),
+    }))
+    .filter((section) => section.items.length > 0)
 
   return (
-    <Box className={styles.infoCardContainer} paddingX={[2, 2, 3, 3]}>
-      {sections.map((section, index) => (
+    <BlueBox className={grid({ gap: 3 })}>
+      {visibleSections.map((section, index) => (
         <Box
-          className={cn(
-            styles.grid,
-            index < sections.length - 1 ? styles.infoCardTitleContainer : null,
-            {
-              [styles.twoCols]: section.columns === 2,
-            },
-          )}
-          paddingY={[2, 2, 3, 3]}
+          className={cn(styles.grid, {
+            [styles.twoCols]: section.columns === 2,
+            [styles.renderDividerFull]: index !== visibleSections.length - 1,
+          })}
           key={section.id}
         >
           {section.items.map((item) => (
             <Box key={item.id}>
               {typeof item.title === 'string' ? (
-                <Text variant="h4" as="h4">
+                <Text variant="h4" as={titleAs}>
                   {item.title}
                 </Text>
               ) : (
@@ -49,16 +61,20 @@ const InfoCard: FC<Props> = (props) => {
               )}
               {item.values.map((value, index) =>
                 typeof value === 'string' ? (
-                  <Text key={`${value}-${index}`}>{value}</Text>
+                  <Text key={`${value}-${index}`} className={styles.breakWord}>
+                    {value}
+                  </Text>
                 ) : (
-                  <Box key={`${value}-${index}`}>{value}</Box>
+                  <Box key={`${value}-${index}`} className={styles.breakWord}>
+                    {value}
+                  </Box>
                 ),
               )}
             </Box>
           ))}
         </Box>
       ))}
-    </Box>
+    </BlueBox>
   )
 }
 

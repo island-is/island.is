@@ -1,19 +1,22 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { ApplicationDto } from '../applications/models/dto/application.dto'
 import { ConfigType, XRoadConfig } from '@island.is/nest/config'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import {
   createEnhancedFetch,
   EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
+import { NotificationResponseDto } from '../applications/models/dto/notification.response.dto'
+import { NotificationDto } from '../applications/models/dto/notification.dto'
+import { BodyRequestDto } from './models/body.request.dto'
+import { NotificationCommands } from '@island.is/form-system/shared'
+import { AuthService } from './auth.service'
 
 @Injectable()
 export class NotifyService {
   enhancedFetch: EnhancedFetchAPI
-  private readonly SYSLUMENN_USERNAME = process.env.SYSLUMENN_USERNAME
-  private readonly SYSLUMENN_PASSWORD = process.env.SYSLUMENN_PASSWORD
 
   constructor(
+    private readonly authService: AuthService,
     @Inject(XRoadConfig.KEY)
     private readonly xRoadConfig: ConfigType<typeof XRoadConfig>,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -29,25 +32,33 @@ export class NotifyService {
   private readonly xroadClient = this.xRoadConfig.xRoadClient
 
   async sendNotification(
-    applicationDto: ApplicationDto,
+    notificationDto: NotificationDto,
     url: string,
-  ): Promise<boolean> {
+  ): Promise<NotificationResponseDto> {
     if (!this.xroadBase || !this.xroadClient) {
       throw new Error(
         `X-Road configuration is missing for NotifyService. Please check environment variables.`,
       )
     }
-    let accessToken: string | null = null
+    let accessToken = ''
+    let audkenni = ''
     try {
-      accessToken = await this.getAccessToken(url)
+      const loginResponse = await this.authService.getAccessToken(url)
+      accessToken = loginResponse.accessToken
+      audkenni = loginResponse.audkenni
     } catch (error) {
       this.logger.error(
-        `Error acquiring access token for application ${applicationDto.id}: ${error}`,
+        `Error acquiring login tokens for application ${notificationDto.applicationId}: ${error}`,
       )
-      return false
+      return { operationSuccessful: false }
     }
 
-    const xRoadPath = `${this.xroadBase}/r1/${url}`
+    const notificationRequest: BodyRequestDto = {
+      notification: notificationDto,
+      ...(audkenni ? { audkenni } : {}),
+    }
+
+    const xRoadPath = `${this.xroadBase}${url}`
 
     try {
       const response = await this.enhancedFetch(xRoadPath, {
@@ -57,90 +68,40 @@ export class NotifyService {
           'X-Road-Client': this.xroadClient,
           ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         },
-        body: JSON.stringify({
-          applicationId: applicationDto.id,
-          applicationType: applicationDto.slug,
-        }),
+        body: JSON.stringify(notificationRequest),
       })
 
       if (!response.ok) {
         this.logger.error(
-          `Non-OK response for application ${applicationDto.id}`,
+          `Non-OK response for application ${notificationDto.applicationId}`,
         )
-        return false
       }
+
+      const responseData = await response.json()
+      let operationSuccessful = response.ok
+
+      if (notificationDto.command === NotificationCommands.SUBMIT) {
+        if (response.ok && responseData.success !== true) {
+          this.logger.error(
+            `SUBMIT rejected by external system for application ${
+              notificationDto.applicationId
+            }: ${responseData.error ?? 'no error detail'}`,
+          )
+        }
+        operationSuccessful = response.ok && responseData.success === true
+      }
+
+      const externalSystemResponse: NotificationResponseDto = {
+        operationSuccessful: operationSuccessful,
+        screen: responseData.screen,
+        screenError: responseData.screenError,
+      }
+      return externalSystemResponse
     } catch (error) {
       this.logger.error(
-        `Error sending notification for application ${applicationDto.id}: ${error}`,
+        `Error sending notification for application ${notificationDto.applicationId}: ${error}`,
       )
-      return false
+      return { operationSuccessful: false }
     }
-
-    return true
-  }
-
-  private async getAccessToken(url: string): Promise<string | null> {
-    if (url.toLowerCase().includes('syslumenn-protected')) {
-      return await this.getSyslumennAccessToken('syslumenn-protected')
-    }
-
-    return null
-  }
-
-  private async getSyslumennAccessToken(org: string): Promise<string> {
-    const env = this.getEnv(org)
-
-    if (!env) {
-      throw new Error(
-        `Could not determine environment for organization: ${org}`,
-      )
-    }
-
-    const loginUrl = `${this.xroadBase}/r1/${env}/Syslumenn-Protected/StarfsKerfi/v1/Innskraning`
-
-    try {
-      const response = await this.enhancedFetch(loginUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Road-Client': this.xroadClient,
-        },
-        body: JSON.stringify({
-          notandi: this.SYSLUMENN_USERNAME,
-          lykilord: this.SYSLUMENN_PASSWORD,
-        }),
-      })
-
-      if (!response.ok) {
-        this.logger.error(
-          `Syslumenn login failed with status: ${response.status}`,
-        )
-        this.logger.error(`Syslumenn login failed with: ${response}`)
-        throw new Error('Syslumenn login failed')
-      }
-
-      const data = await response.json()
-      if (!data?.accessToken) {
-        throw new Error('Syslumenn login response missing accessToken')
-      }
-      return data.accessToken
-    } catch (error) {
-      this.logger.error(`Error during Syslumenn login: ${error}`)
-      throw error
-    }
-  }
-
-  private getEnv(org: string): string {
-    const isDev =
-      this.xroadBase.includes('dev01') || this.xroadBase.includes('localhost')
-    const isStaging = this.xroadBase.includes('staging01')
-
-    if (org === 'syslumenn-protected') {
-      if (isDev) return 'IS-DEV/GOV/10016'
-      if (isStaging) return 'IS-TEST/GOV/10016'
-      return 'IS/GOV/5512201410'
-    }
-
-    return ''
   }
 }

@@ -1,3 +1,5 @@
+import format from 'date-fns/format'
+
 import { Charge } from '@island.is/clients/charge-fjs-v2'
 import { PaymentFlowAttributes } from '../app/paymentFlow/models/paymentFlow.model'
 import { CatalogItemWithQuantity } from '../types/charges'
@@ -18,10 +20,12 @@ export interface GenerateChargeFJSPayloadInput {
     CatalogItemWithQuantity,
     'chargeType' | 'priceAmount' | 'chargeItemCode' | 'quantity' | 'reference'
   >[]
-  totalPrice: number
   systemId: string
   payInfo?: PayInfo // If this is skipped, then the charge will create an invoice
   returnUrl?: string
+  // The moment the payment actually completed. Sent to FJS (as `effictiveDate`, yyyy-mm-dd) so it
+  // knows when the payment was made — distinct from when the charge happens to be created.
+  effectiveDate?: Date
 }
 
 export const generateChargeFJSPayload = ({
@@ -30,6 +34,7 @@ export const generateChargeFJSPayload = ({
   systemId,
   payInfo,
   returnUrl = '',
+  effectiveDate,
 }: GenerateChargeFJSPayloadInput): Charge => {
   const chargeItemSubjectId = paymentFlow.chargeItemSubjectId
     ? paymentFlow.chargeItemSubjectId
@@ -54,7 +59,10 @@ export const generateChargeFJSPayload = ({
     systemID: systemId,
     payInfo,
     returnUrl,
-    extraData: paymentFlow.extraData,
+    effictiveDate: effectiveDate
+      ? format(effectiveDate, 'yyyy-MM-dd')
+      : undefined,
+    extraData: paymentFlow.extraData ?? [],
   }
 }
 
@@ -80,6 +88,11 @@ export const fjsErrorMessageToCode = (
   message: string,
   onlyKnownCode = false,
 ): FjsErrorCode | null => {
+  if (message.startsWith('Búið að taka á móti niðurfellingu á álagningu')) {
+    // FJS already received the charge's cancellation — it is already deleted.
+    return FjsErrorCode.AlreadyDeletedCharge
+  }
+
   if (message.startsWith('Búið að taka á móti álagningu')) {
     return FjsErrorCode.AlreadyCreatedCharge
   }
@@ -89,4 +102,25 @@ export const fjsErrorMessageToCode = (
   }
 
   return FjsErrorCode.FailedToCreateCharge
+}
+
+/** Message used when FJS request failed due to network/transient error (no FJS response). */
+export const FJS_NETWORK_ERROR = 'FJS_NETWORK_ERROR'
+
+const NETWORK_ERROR_CODES = new Set([
+  'ECONNRESET',
+  'ETIMEDOUT',
+  'ECONNREFUSED',
+  'ENOTFOUND',
+  'ENETUNREACH',
+  'EAI_AGAIN',
+])
+
+/**
+ * Returns true if the error is a network/transient error (no response from FJS).
+ * In that case the worker should not record a failure event and will retry on the next run.
+ */
+export const isNetworkError = (e: unknown): boolean => {
+  const err = e as { code?: string }
+  return Boolean(err?.code && NETWORK_ERROR_CODES.has(err.code))
 }

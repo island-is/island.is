@@ -22,7 +22,7 @@ import { ApiActions } from '../shared'
 import { CitizenshipSchema } from './dataSchema'
 import {
   UserProfileApi,
-  ChildrenCustodyInformationApi,
+  ChildrenCustodyInformationApiV3,
   NationalRegistryParentsApi,
   NationalRegistrySpouseDetailsApi,
   NationalRegistryIndividualApi,
@@ -90,7 +90,7 @@ const template: ApplicationTemplate<
                 NationalRegistryBirthplaceApi,
                 NationalRegistrySpouseDetailsApi,
                 NationalRegistryParentsApi,
-                ChildrenCustodyInformationApi,
+                ChildrenCustodyInformationApiV3,
                 UserProfileApi,
                 ResidenceInIcelandLastChangeDateApi,
                 CountriesApi,

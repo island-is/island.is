@@ -30,7 +30,7 @@ judicial-system-api:
     BACKEND_URL: 'http://web-judicial-system-backend'
     CONTENTFUL_ENVIRONMENT: 'master'
     CONTENTFUL_HOST: 'cdn.contentful.com'
-    HIDDEN_FEATURES: ''
+    HIDDEN_FEATURES: 'APPEAL_RULING_ORDER'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -38,6 +38,7 @@ judicial-system-api:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-external'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -56,26 +57,25 @@ judicial-system-api:
       replicas:
         max: 10
         min: 2
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'rettarvorslugatt.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-external'
+      rules:
+        - matches:
+            - pathPrefix: '/api/graphql'
+            - pathPrefix: '/api/auth'
+            - pathPrefix: '/api/case'
+            - pathPrefix: '/api/feature'
+            - pathPrefix: '/api/defender'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-api'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'rettarvorslugatt.island.is'
-          paths:
-            - '/api/graphql'
-            - '/api/auth'
-            - '/api/case'
-            - '/api/feature'
-            - '/api/defender'
   namespace: 'judicial-system'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -94,6 +94,7 @@ judicial-system-api:
   secrets:
     AUTH_IDS_SECRET: '/k8s/judicial-system/AUTH_IDS_SECRET'
     AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET'
+    AUTH_TOKEN_SECRET_BASE64: '/k8s/judicial-system/AUTH_TOKEN_SECRET_BASE64'
     BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/judicial-system/CONTENTFUL_ACCESS_TOKEN'
@@ -112,7 +113,7 @@ judicial-system-backend:
     AUDIT_TRAIL_GROUP_NAME: 'k8s/judicial-system/audit-log'
     AUDIT_TRAIL_REGION: 'eu-west-1'
     AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
-    BLOCKED_API_INTEGRATION: ''
+    BLOCKED_API_INTEGRATION: 'POLICE_DIGITAL_CASE_FILES'
     CLIENT_URL: 'https://rettarvorslugatt.island.is'
     CONTENTFUL_ENVIRONMENT: 'master'
     CONTENTFUL_HOST: 'cdn.contentful.com'
@@ -124,7 +125,7 @@ judicial-system-backend:
     EMAIL_REGION: 'eu-west-1'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
-    NOVA_ACCEPT_UNAUTHORIZED: 'false'
+    NOVA_SENDER_NAME: 'Island.is'
     REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     S3_BUCKET: 'island-is-prod-upload-judicial-system'
     S3_REGION: 'eu-west-1'
@@ -148,6 +149,7 @@ judicial-system-backend:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
     - 'nginx-ingress-external'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -193,7 +195,7 @@ judicial-system-backend:
       DB_PASS: '/k8s/judicial-system/DB_PASSWORD'
   namespace: 'judicial-system'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -234,12 +236,11 @@ judicial-system-backend:
     ERROR_EVENT_URL: '/k8s/judicial-system/ERROR_EVENT_URL'
     EVENT_URL: '/k8s/judicial-system/EVENT_URL'
     LAWYERS_ICELAND_API_KEY: '/k8s/judicial-system/LAWYERS_ICELAND_API_KEY'
-    NOVA_PASSWORD: '/k8s/judicial-system/NOVA_PASSWORD'
-    NOVA_URL: '/k8s/judicial-system/NOVA_URL'
-    NOVA_USERNAME: '/k8s/judicial-system/NOVA_USERNAME'
+    NOVA_PASSWORD: '/k8s/NOVA_PASSWORD_V1'
+    NOVA_URL: '/k8s/NOVA_URL_V1'
+    NOVA_USERNAME: '/k8s/NOVA_USERNAME_V1'
     POLICE_INSTITUTIONS_EMAILS: '/k8s/judicial-system/POLICE_INSTITUTIONS_EMAILS'
     PRISON_ADMIN_EMAIL: '/k8s/judicial-system/PRISON_ADMIN_EMAIL'
-    PRISON_ADMIN_INDICTMENT_EMAILS: '/k8s/judicial-system/PRISON_ADMIN_INDICTMENT_EMAILS'
     PRISON_EMAIL: '/k8s/judicial-system/PRISON_EMAIL'
     PUBLIC_PROSECUTOR_CRIMINAL_RECORDS_EMAIL: '/k8s/judicial-system/PUBLIC_PROSECUTOR_CRIMINAL_RECORDS_EMAIL'
     XROAD_CLIENT_CERT: '/k8s/judicial-system/XROAD_CLIENT_CERT'
@@ -268,6 +269,7 @@ judicial-system-digital-mailbox-api:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-internal'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -286,20 +288,21 @@ judicial-system-digital-mailbox-api:
       replicas:
         max: 10
         min: 3
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'judicial-system-digital-mailbox-api-xrd.internal.island.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'envoy-gateway-internal'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-digital-mailbox-api'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'judicial-system-digital-mailbox-api-xrd.internal.island.is'
-          paths:
-            - '/'
   namespace: 'judicial-system'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -330,7 +333,6 @@ judicial-system-digital-mailbox-api:
     name: 'judicial-system-digital-mailbox-api'
 judicial-system-message-handler:
   args:
-    - '--no-experimental-fetch'
     - 'main.cjs'
   command:
     - 'node'
@@ -345,6 +347,7 @@ judicial-system-message-handler:
     SQS_REGION: 'eu-west-1'
   grantNamespaces:
     - 'nginx-ingress-external'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -367,7 +370,7 @@ judicial-system-message-handler:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-message-handler'
   namespace: 'judicial-system'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -396,7 +399,6 @@ judicial-system-message-handler:
     name: 'judicial-system-message-handler'
 judicial-system-scheduler:
   args:
-    - '--no-experimental-fetch'
     - 'main.cjs'
   command:
     - 'node'
@@ -412,6 +414,7 @@ judicial-system-scheduler:
     TIME_TO_LIVE_MINUTES: '30'
   grantNamespaces:
     - 'nginx-ingress-external'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -434,7 +437,7 @@ judicial-system-scheduler:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-scheduler'
   namespace: 'judicial-system'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -472,6 +475,7 @@ judicial-system-web:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-external'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -490,22 +494,21 @@ judicial-system-web:
       replicas:
         max: 10
         min: 3
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'rettarvorslugatt.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-external'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-web'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'rettarvorslugatt.island.is'
-          paths:
-            - '/'
   namespace: 'judicial-system'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   pvcs: []
   replicaCount:
@@ -539,6 +542,7 @@ judicial-system-xrd-api:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-internal'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -557,20 +561,21 @@ judicial-system-xrd-api:
       replicas:
         max: 10
         min: 3
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'judicial-system-xrd-api.internal.island.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'envoy-gateway-internal'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-xrd-api'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'judicial-system-xrd-api.internal.island.is'
-          paths:
-            - '/'
   namespace: 'judicial-system'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534

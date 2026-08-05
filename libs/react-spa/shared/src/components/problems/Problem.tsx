@@ -36,6 +36,7 @@ type ProblemBaseProps = {
   message?: Message
   tag?: string
   logError?: boolean
+  imgClassName?: string
 } & CommonProblemProps &
   TestSupport
 
@@ -59,6 +60,7 @@ interface NoDataProps extends ProblemBaseProps {
   title?: string
   message?: Message
   size?: ProblemSize
+  imgClassName?: string
 }
 
 type ProblemProps = InternalServiceErrorProps | NotFoundProps | NoDataProps
@@ -77,6 +79,7 @@ export const Problem = ({
   dataTestId,
   logError = true,
   expand,
+  imgClassName,
 }: ProblemProps) => {
   const { formatMessage } = useLocale()
 
@@ -140,6 +143,7 @@ export const Problem = ({
           size={size ?? 'large'}
           tag={tag}
           titleSize={titleSize}
+          imgClassName={imgClassName}
         />
       )
 

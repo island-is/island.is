@@ -10,6 +10,7 @@ export const iconButtonContainer = style({
   borderRadius: theme.border.radius.large,
   width: '34px',
   height: '34px',
+  flexShrink: 0,
   transition: 'filter .2s, background-color .2s',
 
   ':hover': {

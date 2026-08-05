@@ -94,11 +94,19 @@ interface IcelandicGovernmentInstitutionVacanciesListProps {
   vacancies: Vacancy[]
   namespace: Record<string, string>
   fetchErrorOccurred?: boolean | null
+  useNewApiOverride?: boolean
+  useOldApiOverride?: boolean
 }
 
 const IcelandicGovernmentInstitutionVacanciesList: Screen<
   IcelandicGovernmentInstitutionVacanciesListProps
-> = ({ vacancies, namespace, fetchErrorOccurred }) => {
+> = ({
+  vacancies,
+  namespace,
+  fetchErrorOccurred,
+  useNewApiOverride,
+  useOldApiOverride,
+}) => {
   const { query, replace, isReady } = useRouter()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
@@ -326,8 +334,11 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
         logoAlt: vacancy.institutionName ?? '',
         link: {
           label: n('viewDetails', 'Skoða nánar'),
-          href: linkResolver('vacancydetails', [vacancy.id?.toString() || ''])
-            .href,
+          href: `${
+            linkResolver('vacancydetails', [vacancy.id?.toString() || '']).href
+          }${
+            useNewApiOverride ? '?api=new' : useOldApiOverride ? '?api=old' : ''
+          }`,
         },
         tags,
         detailLines,
@@ -819,7 +830,10 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
 IcelandicGovernmentInstitutionVacanciesList.getProps = async ({
   apolloClient,
   locale,
+  query,
 }) => {
+  const useNewApiOverride = query?.api === 'new' ? true : undefined
+  const useOldApiOverride = query?.api === 'old' ? true : undefined
   const namespaceResponse = await apolloClient.query<
     GetNamespaceQuery,
     GetNamespaceQueryVariables
@@ -843,7 +857,10 @@ IcelandicGovernmentInstitutionVacanciesList.getProps = async ({
   >({
     query: GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES,
     variables: {
-      input: {},
+      input: {
+        ...(useNewApiOverride && { useNewApiOverride }),
+        ...(useOldApiOverride && { useOldApiOverride }),
+      },
     },
   })
 
@@ -854,6 +871,8 @@ IcelandicGovernmentInstitutionVacanciesList.getProps = async ({
     vacancies,
     namespace,
     fetchErrorOccurred,
+    useNewApiOverride,
+    useOldApiOverride,
   }
 }
 

@@ -292,5 +292,6 @@
       }
     }
   },
-  "security": [{ "Bearer": ["Bearer"] }]
+  "security": [{ "Bearer": [] }],
+  "tags": [{ "name": "Application" }]
 }

@@ -66,20 +66,34 @@ function getCurrentUrl() {
 
 /**
  * Gets a list of dirty files in the repository.
+ * Includes both modified tracked files and new untracked files.
  * @returns {string[]} An array of dirty files relative to the repository root.
  */
 function getDirtyFiles() {
   const ignoredFiles = getIgnoredFiles()
-  const stat = runCapture(
+
+  // Get modified tracked files
+  const modified = runCapture(
     'git',
     ['diff', '--name-only', '--', `"${absPath}"`],
     { cwd: repoRoot },
   )
     .split('\n')
     .filter(Boolean)
+
+  // Get new untracked files
+  const untracked = runCapture(
+    'git',
+    ['ls-files', '--others', '--exclude-standard', '--', `"${absPath}"`],
+    { cwd: repoRoot },
+  )
+    .split('\n')
+    .filter(Boolean)
+
+  const allFiles = [...new Set([...modified, ...untracked])]
     .map((e) => path.resolve(repoRoot, e))
     .filter((e) => !ignoredFiles.includes(e))
-  return stat
+  return allFiles
 }
 
 function commitAsGithubActions() {

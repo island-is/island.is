@@ -2,6 +2,11 @@ import { defineMessages } from 'react-intl'
 
 export const m = {
   listPage: defineMessages({
+    hearingTimePrefix: {
+      id: 'web.courtAgendas:listPage.hearingTimePrefix',
+      defaultMessage: 'Málflutningstími: ',
+      description: 'Málflutningstími: ',
+    },
     caseTypeAccordionLabel: {
       id: 'web.courtAgendas:listPage.caseTypeAccordionLabel',
       defaultMessage: 'Málategundir',

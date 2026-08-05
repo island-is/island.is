@@ -31,6 +31,8 @@ grantNamespaces:
   - 'nginx-ingress-external'
   - 'nginx-ingress-internal'
   - 'islandis'
+  - 'envoy-gateway-external'
+  - 'envoy-gateway-internal'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
@@ -47,26 +49,23 @@ hpa:
       cpuAverageUtilization: 90
       nginxRequestsIrate: 5
     replicas:
-      max: 3
+      max: 2
       min: 1
+httpRoute:
+  primary-gw:
+    hostnames:
+      - 'identity-server.staging01.devland.is'
+    parentRefs:
+      - name: 'gateway-external'
+        namespace: 'envoy-gateway-external'
+    rules:
+      - matches:
+          - pathPrefix: '/admin'
 image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/auth-admin-web'
-ingress:
-  primary-alb:
-    annotations:
-      kubernetes.io/ingress.class: 'nginx-external-alb'
-      nginx.ingress.kubernetes.io/proxy-buffer-size: '16k'
-      nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-      nginx.ingress.kubernetes.io/proxy-buffers-number: '4'
-      nginx.ingress.kubernetes.io/server-snippet: 'client_header_buffer_size 16k; large_client_header_buffers 4 16k;'
-      nginx.ingress.kubernetes.io/service-upstream: 'true'
-    hosts:
-      - host: 'identity-server.staging01.devland.is'
-        paths:
-          - '/admin'
 namespace: 'identity-server-admin'
 podDisruptionBudget:
-  minAvailable: 1
+  minAvailable: '50%'
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
@@ -74,7 +73,7 @@ progressDeadlineSeconds: 1200
 pvcs: []
 replicaCount:
   default: 1
-  max: 3
+  max: 2
   min: 1
 resources:
   limits:
@@ -86,6 +85,7 @@ resources:
 secrets:
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   IDENTITYSERVER_SECRET: '/k8s/auth-admin-web/IDENTITYSERVER_SECRET'
+  NEXTAUTH_SECRET: '/k8s/auth-admin-web/NEXTAUTH_SECRET'
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false

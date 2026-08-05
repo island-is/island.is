@@ -37,4 +37,9 @@ export class UpdateUserInput {
   @IsOptional()
   @Field(() => Boolean, { nullable: true })
   readonly canConfirmIndictment?: boolean
+
+  @Allow()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly canManageMessageSuspension?: boolean
 }

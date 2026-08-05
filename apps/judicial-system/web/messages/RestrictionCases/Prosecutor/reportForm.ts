@@ -16,13 +16,6 @@ export const rcReportForm = {
         description:
           'Notaður sem titill fyrir "dómkröfutexti" hlutann á greinargerðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
-      tooltip: {
-        id: 'judicial.system.restriction_cases:report_form.demands.tooltip',
-        defaultMessage:
-          'Hér er hægt að bæta texta við dómkröfur, t.d. ef óskað er eftir öðrum úrræðum til vara.',
-        description:
-          'Notaður sem upplýsingatexti í upplýsingasvæði við "dómkröfutexti" titlinn á greinargerðar skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
       label: {
         id: 'judicial.system.restriction_cases:report_form.demands.label',
         defaultMessage: 'Dómkröfur',

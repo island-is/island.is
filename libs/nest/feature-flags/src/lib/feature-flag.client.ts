@@ -1,5 +1,5 @@
 import { FactoryProvider } from '@nestjs/common'
-import * as ConfigCatNode from 'configcat-node'
+import * as ConfigCatNode from '@configcat/sdk'
 import { ConfigType } from '@island.is/nest/config'
 import {
   FeatureFlagClient,

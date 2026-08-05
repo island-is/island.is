@@ -54,6 +54,7 @@ export const queryFishingLicense = gql`
         }
         invalidOption
       }
+      needsOwnershipRegistration
     }
   }
 `

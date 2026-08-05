@@ -95,6 +95,7 @@ const LicenseDetail = () => {
         })
         .filter(isDefined)}
       marginBottom={4}
+      desktopContentSpan="10/12"
     >
       <GridRow marginBottom={2}>
         <GridColumn span={['12/12', '10/12']}>

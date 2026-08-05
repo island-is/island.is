@@ -14,7 +14,6 @@ import { Dispatch, SetStateAction, createContext } from 'react'
 import { ControlAction, ControlState } from '../hooks/controlReducer'
 import {
   ActiveItem,
-  ItemType,
   NavbarSelectStatus,
   OpenComponents,
 } from '../lib/utils/interfaces'
@@ -28,6 +27,8 @@ export interface IControlContext {
   fieldTypes: Maybe<Maybe<FormSystemFieldType>[]> | undefined
   listTypes: Maybe<Maybe<FormSystemListType>[]> | undefined
   submissionUrls: string[]
+  organizationDelegations: string[]
+  setOrganizationDelegations: Dispatch<SetStateAction<string[]>>
   setSubmissionUrls: Dispatch<React.SetStateAction<string[]>>
   submissionUrlInput: string
   setSubmissionUrlInput: Dispatch<string>
@@ -36,7 +37,7 @@ export interface IControlContext {
   updateActiveItem: (updatedActiveItem?: ActiveItem) => void
   focus: string
   setFocus: Dispatch<string>
-  updateDnD: (type: ItemType) => void
+  updateDnD: (updatedForm?: FormSystemForm) => void
   selectStatus: NavbarSelectStatus
   setSelectStatus: Dispatch<NavbarSelectStatus>
   setInListBuilder: Dispatch<SetStateAction<boolean>>
@@ -61,6 +62,12 @@ export const ControlContext = createContext<IControlContext>({
     throw new Error('Function not implemented.')
   },
   inSettings: false,
+  organizationDelegations: [] as string[],
+  setOrganizationDelegations: function (
+    _value: SetStateAction<string[]>,
+  ): void {
+    throw new Error('Function not implemented.')
+  },
   updateActiveItem: function (_updatedActiveItem?: ActiveItem): void {
     throw new Error('Function not implemented.')
   },
@@ -68,7 +75,7 @@ export const ControlContext = createContext<IControlContext>({
   setFocus: function (_value: string): void {
     throw new Error('Function not implemented.')
   },
-  updateDnD: function (_type: ItemType): void {
+  updateDnD: function (_updatedForm?: FormSystemForm): void {
     throw new Error('Function not implemented.')
   },
   setSubmissionUrls: function (_value: React.SetStateAction<string[]>): void {

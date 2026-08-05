@@ -173,6 +173,13 @@ globalStyle(
 )
 
 globalStyle(
+  `${wrapper} .island-select__control${container}${containerSizes.xs} > .island-select__value-container--is-multi`,
+  {
+    marginLeft: 8,
+  },
+)
+
+globalStyle(
   `${wrapper} .island-select__control${container}${hasError}`,
   inputMixins.inputErrorState,
 )

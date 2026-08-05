@@ -1,27 +1,30 @@
-import { HealthDirectoratePrescription } from '@island.is/api/schema'
 import {
+  AlertMessage,
   Box,
   Button,
   GridColumn,
   GridContainer,
   GridRow,
   ModalBase,
+  Select,
   Text,
   toast,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/portals/my-pages/core'
-import { Problem } from '@island.is/react-spa/shared'
 import cn from 'classnames'
 import React, { useState, useEffect } from 'react'
 import { messages } from '../../../../lib/messages'
 import { PrescriptionItem } from '../../../../utils/types'
-import { usePostPrescriptionRenewalMutation } from '../../Prescriptions.generated'
+import {
+  useGetPrescriptionRenewalTargetsLazyQuery,
+  usePostPrescriptionRenewalMutation,
+} from '../../Prescriptions.generated'
 import * as styles from './RenewPrescriptionModal.css'
 
 interface Props {
   id: string
-  activePrescription: HealthDirectoratePrescription
+  activePrescription: PrescriptionItem
   toggleClose?: boolean
   isVisible: boolean
   setVisible: (isVisible: boolean) => void
@@ -36,20 +39,48 @@ const RenewPrescriptionModal: React.FC<Props> = ({
   setActivePrescription,
 }) => {
   const { formatMessage } = useLocale()
-  const [error, setError] = useState<string>()
   const columnWidth = '7/12'
   const titleWidth = '5/12'
   const modulusCalculations = (index: number) => {
     return index % 2 === 0
   }
   const [modalVisible, setModalVisible] = useState<boolean>(isVisible ?? false)
+  const [selectedTarget, setSelectedTarget] = useState<{
+    nodeId: string
+    groupId: number
+  } | null>(null)
 
   useEffect(() => {
     setModalVisible(isVisible)
   }, [isVisible])
 
-  const [postRenewal, { data: renewalData, error: renewalError, loading }] =
-    usePostPrescriptionRenewalMutation()
+  const [
+    fetchTargets,
+    { data: targetsData, loading: targetsLoading, called: targetsCalled },
+  ] = useGetPrescriptionRenewalTargetsLazyQuery({ fetchPolicy: 'network-only' })
+
+  useEffect(() => {
+    if (isVisible && activePrescription.id) {
+      fetchTargets({ variables: { prescriptionId: activePrescription.id } })
+    }
+  }, [isVisible, activePrescription.id, fetchTargets])
+
+  const targets = targetsData?.healthDirectoratePrescriptionRenewalTargets ?? []
+  const targetOptions = targets.map((t) => ({
+    label: t.name,
+    value: `${t.groupId}:${t.nodeId}`,
+  }))
+  const selectedOption =
+    selectedTarget !== null
+      ? targetOptions.find(
+          (o) =>
+            o.value === `${selectedTarget.groupId}:${selectedTarget.nodeId}`,
+        ) ?? null
+      : targetOptions[0] ?? null
+
+  const [postRenewal, { loading }] = usePostPrescriptionRenewalMutation({
+    refetchQueries: ['GetMedicinePrescriptions'],
+  })
 
   const data = [
     {
@@ -78,43 +109,39 @@ const RenewPrescriptionModal: React.FC<Props> = ({
     setModalVisible(false)
     setVisible(false)
     setActivePrescription(null)
+    setSelectedTarget(null)
   }
 
   const submitForm = async () => {
-    // TODO: Improve form submission when service is ready
-    if (
-      activePrescription.category === undefined ||
-      activePrescription.id === undefined
-    ) {
-      setError('Please select a valid prescription.')
+    if (activePrescription.id == null) {
+      toast.error(formatMessage(messages.renewalInvalidPrescription))
       return
     }
+
+    const active =
+      selectedTarget ??
+      (targets[0]
+        ? { nodeId: targets[0].nodeId, groupId: targets[0].groupId }
+        : null)
 
     try {
       const data = await postRenewal({
         variables: {
           input: {
             id: activePrescription.id,
-            medCardDrugCategory: activePrescription.category ?? '',
-            medCardDrugId: activePrescription.medCardDrugId ?? '',
-            prescribedItemId: activePrescription.id,
+            ...(active
+              ? { nodeId: active.nodeId, groupId: active.groupId }
+              : {}),
           },
         },
       })
       if (data) {
-        setError('')
         closeModal()
-        toast.success(
-          'Endurnýjunarbeiðni hefur verið send. Vinsamlegast hafið samband við heilsugæslu ef þörf er á frekari upplýsingum.',
-        )
+        toast.success(formatMessage(messages.renewalRequestSent))
       }
     } catch (error) {
-      setError(
-        'Ekki tókst að senda endurnýjunarbeiðni. Vinsamlegast reynið aftur síðar.',
-      )
-      toast.error(
-        'Ekki tókst að senda endurnýjunarbeiðni. Vinsamlegast reynið aftur síðar.',
-      )
+      const errorMessage = formatMessage(messages.renewalRequestError)
+      toast.error(errorMessage)
     }
   }
 
@@ -124,7 +151,9 @@ const RenewPrescriptionModal: React.FC<Props> = ({
       isVisible={modalVisible}
       initialVisibility={false}
       onVisibilityChange={(visibility) => {
-        setModalVisible(visibility)
+        if (!visibility) {
+          closeModal()
+        }
       }}
       toggleClose={toggleClose}
       removeOnClose
@@ -150,6 +179,30 @@ const RenewPrescriptionModal: React.FC<Props> = ({
         <Text marginBottom={3}>
           {formatMessage(messages.renewalMedicineRequestText)}
         </Text>
+        {targetOptions.length > 0 && (
+          <Box marginBottom={3}>
+            <Select
+              name="renewalTarget"
+              label={formatMessage(messages.renewalSendTo)}
+              options={targetOptions}
+              value={selectedOption}
+              onChange={(opt) => {
+                if (!opt) return
+                const [groupId, nodeId] = opt.value.split(':')
+                setSelectedTarget({ nodeId, groupId: Number(groupId) })
+              }}
+              backgroundColor="blue"
+            />
+          </Box>
+        )}
+        {!targetsLoading && targetsCalled && targetOptions.length === 0 && (
+          <Box marginBottom={3}>
+            <AlertMessage
+              type="warning"
+              message={formatMessage(messages.renewalNoTarget)}
+            />
+          </Box>
+        )}
         <Text variant="small" fontWeight="medium" marginBottom={1}>
           {formatMessage(messages.medicineInformation)}
         </Text>
@@ -196,24 +249,21 @@ const RenewPrescriptionModal: React.FC<Props> = ({
                     size="small"
                     type="submit"
                     loading={loading}
-                    disabled={loading}
+                    disabled={
+                      loading ||
+                      (!targetsLoading &&
+                        targetsCalled &&
+                        targetOptions.length === 0)
+                    }
                     onClick={() => submitForm()}
                   >
                     {formatMessage(messages.renew)}
                   </Button>
                 </Box>
               </GridColumn>
-              {error && (
-                <GridColumn>
-                  <Box>
-                    <Text>{error}</Text>
-                  </Box>
-                </GridColumn>
-              )}
             </GridRow>
           </GridContainer>
         </Box>
-        {renewalError && !loading && <Problem />}
       </Box>
     </ModalBase>
   )

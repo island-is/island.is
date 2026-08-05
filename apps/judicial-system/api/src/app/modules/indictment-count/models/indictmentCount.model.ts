@@ -46,4 +46,7 @@ export class IndictmentCount {
 
   @Field(() => Int, { nullable: true })
   readonly speedLimit?: number
+
+  @Field(() => Int, { nullable: true })
+  readonly displayOrder?: number
 }

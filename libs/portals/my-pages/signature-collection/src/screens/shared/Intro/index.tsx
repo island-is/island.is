@@ -1,17 +1,20 @@
 import { Box } from '@island.is/island-ui/core'
 import {
   IntroWrapper,
-  THJODSKRA_SLUG as providerSlug,
+  THJODSKRA_SLUG as providerSlugFallback,
 } from '@island.is/portals/my-pages/core'
 import ShareLink from '../ShareLink'
+import { OrganizationSlugType } from '@island.is/shared/constants'
 
 const Intro = ({
   slug,
+  providerSlug,
   title,
   intro,
   withLessSpace = false,
 }: {
   slug: string
+  providerSlug?: OrganizationSlugType
   title: string
   intro: string
   withLessSpace?: boolean
@@ -22,7 +25,8 @@ const Intro = ({
       <IntroWrapper
         title={title}
         intro={intro}
-        serviceProviderSlug={providerSlug}
+        serviceProvider={{ slug: providerSlug ?? providerSlugFallback }}
+        desktopContentSpan="10/12"
       />
       {slug && <ShareLink slug={slug} />}
     </Box>

@@ -15,7 +15,7 @@ import {
 } from '@island.is/application/types'
 
 import { m } from '../lib/messages'
-import DigitalServices from '@island.is/application/templates/signature-collection/assets/DigitalServices'
+import { ManOnThePhone } from '@island.is/application/assets/graphics'
 import { NationalElectoralCommissionLogo } from '@island.is/application/assets/institution-logos'
 import { CanSignApi, GetListApi } from '../dataProviders'
 
@@ -36,7 +36,7 @@ export const Prerequisites: Form = buildForm({
           children: [
             buildImageField({
               id: 'introImage',
-              image: DigitalServices,
+              image: ManOnThePhone,
               imageWidth: 'auto',
               imagePosition: 'center',
               marginTop: 'gutter',

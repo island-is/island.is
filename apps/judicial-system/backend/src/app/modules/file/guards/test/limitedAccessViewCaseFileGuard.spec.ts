@@ -165,7 +165,6 @@ describe('Limited Access View Case File Guard', () => {
           CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
           CaseFileCategory.DEFENDANT_CASE_FILE,
           CaseFileCategory.CIVIL_CLAIM,
-          CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
         ]
 
         describe.each(allowedCaseFileCategories)(
@@ -422,7 +421,6 @@ describe('Limited Access View Case File Guard', () => {
         const allowedCaseFileCategories = [
           CaseFileCategory.COURT_RECORD,
           CaseFileCategory.RULING,
-          CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
         ]
 
         describe.each(allowedCaseFileCategories)(
@@ -548,6 +546,120 @@ describe('Limited Access View Case File Guard', () => {
         })
       })
     })
+
+    describe.each(indictmentCases)(
+      'for %s cases, DEFENDANT_RULING is always forbidden',
+      (type) => {
+        describe.each(Object.values(CaseState))('in state %s', (state) => {
+          describe('a defender cannot view DEFENDANT_RULING', () => {
+            let then: Then
+
+            beforeEach(() => {
+              const nationalId = uuid()
+              mockRequest.mockImplementationOnce(() => ({
+                user: {
+                  currentUser: { role: UserRole.DEFENDER, nationalId },
+                },
+                case: {
+                  type,
+                  state,
+                  defendants: [
+                    {
+                      id: uuid(),
+                      defenderNationalId: nationalId,
+                      isDefenderChoiceConfirmed: true,
+                      caseFilesSharedWithDefender: true,
+                      eventLogs: [],
+                    },
+                  ],
+                },
+                caseFile: {
+                  category: CaseFileCategory.DEFENDANT_RULING,
+                  created: new Date('2024-06-01'),
+                },
+              }))
+
+              then = givenWhenThen()
+            })
+
+            it('should throw ForbiddenException', () => {
+              expect(then.error).toBeInstanceOf(ForbiddenException)
+              expect(then.error.message).toBe(
+                `Forbidden for ${UserRole.DEFENDER}`,
+              )
+            })
+          })
+        })
+      },
+    )
+
+    describe.each(indictmentCases)(
+      'for %s cases, COURT_INDICTMENT_RULING_ORDER is gated by a confirmed court session',
+      (type) => {
+        describe.each(Object.values(CaseState))('in state %s', (state) => {
+          const fileId = uuid()
+
+          describe('when the ruling order is in a confirmed court session', () => {
+            let then: Then
+
+            beforeEach(() => {
+              const nationalId = uuid()
+              mockRequest.mockImplementationOnce(() => ({
+                user: {
+                  currentUser: { role: UserRole.DEFENDER, nationalId },
+                },
+                case: {
+                  type,
+                  state,
+                  courtSessions: [{ isConfirmed: true, rulingFileId: fileId }],
+                },
+                caseFile: {
+                  id: fileId,
+                  category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
+                },
+              }))
+
+              then = givenWhenThen()
+            })
+
+            it('should activate', () => {
+              expect(then.result).toBe(true)
+            })
+          })
+
+          describe('when the ruling order is not in a confirmed court session', () => {
+            let then: Then
+
+            beforeEach(() => {
+              const nationalId = uuid()
+              mockRequest.mockImplementationOnce(() => ({
+                user: {
+                  currentUser: { role: UserRole.DEFENDER, nationalId },
+                },
+                case: {
+                  type,
+                  state,
+                  courtSessions: [{ isConfirmed: false, rulingFileId: fileId }],
+                },
+                caseFile: {
+                  id: fileId,
+                  category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
+                },
+              }))
+
+              then = givenWhenThen()
+            })
+
+            it('should throw ForbiddenException', () => {
+              expect(then.error).toBeInstanceOf(ForbiddenException)
+              expect(then.error.message).toBe(
+                `Forbidden for ${UserRole.DEFENDER}`,
+              )
+            })
+          })
+        })
+      },
+    )
   })
 
   describe('prison admin users', () => {

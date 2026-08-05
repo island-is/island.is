@@ -12,11 +12,14 @@ import {
   DefaultEvents,
   defineTemplateApi,
   NationalRegistryV3UserApi,
+  NotificationConfig,
+  NotificationType,
   UserProfileApi,
   DistrictsApi,
   InstitutionNationalIds,
   ApplicationConfigurations,
 } from '@island.is/application/types'
+import { pruneAfterDaysWithMessage } from '@island.is/application/core'
 import { assign } from 'xstate'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import {
@@ -124,7 +127,11 @@ const MarriageConditionsTemplate: ApplicationTemplate<
           name: 'Done',
           status: 'inprogress',
           progress: 1,
-          lifecycle: pruneAfter(sixtyDays),
+          lifecycle: pruneAfterDaysWithMessage(60, () => ({
+            notificationTemplateId:
+              NotificationConfig[NotificationType.MarriageConditionsPruned]
+                .templateId,
+          })),
           onEntry: defineTemplateApi({
             action: ApiActions.assignSpouse,
           }),
@@ -220,6 +227,11 @@ const MarriageConditionsTemplate: ApplicationTemplate<
 
           return paymentCodes.flat()
         },
+        // A cancelled payment must return to SPOUSE_CONFIRM (where the spouse has a
+        // form), not buildPaymentState's default 'draft' — DRAFT has no
+        // ASSIGNED_SPOUSE role, so the assigned spouse would be stranded on an
+        // endless loading screen with no form to render.
+        abortTarget: States.SPOUSE_CONFIRM,
         submitTarget: States.DONE,
       }),
       [States.DONE]: {

@@ -1,10 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-import { CaseType } from '@island.is/judicial-system/types'
+import { CaseTableType, CaseType } from '@island.is/judicial-system/types'
 
 class SearchCasesRow {
   @ApiProperty({ type: String, description: 'The case id' })
   readonly caseId!: string
+
+  @ApiProperty({
+    type: String,
+    description: 'The appeal case id',
+    nullable: true,
+  })
+  readonly appealCaseId!: string | null
 
   @ApiProperty({ enum: CaseType, description: 'The case type' })
   readonly caseType!: CaseType
@@ -22,17 +29,41 @@ class SearchCasesRow {
   })
   readonly policeCaseNumbers!: string[]
 
-  @ApiProperty({ type: String, description: 'The court case number' })
+  @ApiProperty({
+    type: String,
+    description: 'The court case number',
+    nullable: true,
+  })
   readonly courtCaseNumber!: string | null
 
-  @ApiProperty({ type: String, description: 'The appeal case number' })
+  @ApiProperty({
+    type: String,
+    description: 'The appeal case number',
+    nullable: true,
+  })
   readonly appealCaseNumber!: string | null
 
-  @ApiProperty({ type: String, description: 'The defendant national id' })
+  @ApiProperty({
+    type: String,
+    description: 'The defendant national id',
+    nullable: true,
+  })
   readonly defendantNationalId!: string | null
 
-  @ApiProperty({ type: String, description: 'The defendant name' })
+  @ApiProperty({
+    type: String,
+    description: 'The defendant name',
+    nullable: true,
+  })
   readonly defendantName!: string | null
+
+  @ApiProperty({
+    enum: CaseTableType,
+    isArray: true,
+    description:
+      'Case table types (for the current user role) that this case belongs to',
+  })
+  readonly caseTableTypes!: CaseTableType[]
 }
 
 export class SearchCasesResponse {

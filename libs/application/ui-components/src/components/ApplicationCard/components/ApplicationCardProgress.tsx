@@ -30,7 +30,7 @@ const DraftProgressMeter = ({
   if (progress === undefined) return null
 
   const draftFinishedSteps = actionCard?.draftFinishedSteps ?? 1
-  const draftTotalSteps = actionCard?.draftTotalSteps ?? 1
+  const draftTotalSteps = actionCard?.draftTotalSteps || 1
 
   return (
     <Box

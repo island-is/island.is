@@ -168,4 +168,219 @@ export const olMessage = defineMessages({
     defaultMessage:
       'Leyfisbréf gefin út fyrir 1. janúar 2020 eru ekki aðgengileg á island.is. Þurfir þú afrit af áður útgefnu leyfisbréfi getur þú sent póst til mennta- og barnamálaráðuneytisins á netfangið mrn@mrn.is. Afrit leyfisbréfa eru send í tölvupósti sem pdf. skjöl.',
   },
+
+  // Sailor screens
+  sailorSchoolCertificatesIntro: {
+    id: 'sp.occupational-licenses:sailor-school-certificates-intro#markdown',
+    defaultMessage:
+      'Hér má sjá upplýsingar um próf, nám og námskeið sem þú hefur lokið, gilt sjómannalæknisvottorð og frest til lögskráningar þegar öryggisfræðslunámskeið eru útrunnin. Ef upplýsingar eru rangar eða vantar skaltu senda erindi og viðeigandi gögn á [sigling@samgongustofa.is](mailto:sigling@samgongustofa.is)',
+  },
+  sailorSchoolCertificatesEmpty: {
+    id: 'sp.occupational-licenses:sailor-school-certificates-empty',
+    defaultMessage: 'Engin próf, nám eða frestir fundust',
+  },
+  sailorSchoolCertificatesColumnTitle: {
+    id: 'sp.occupational-licenses:sailor-school-certificates-column-title',
+    defaultMessage: 'Próf, nám, námskeið eða frestur',
+  },
+  sailorSchoolCertificatesColumnValidDate: {
+    id: 'sp.occupational-licenses:sailor-school-certificates-column-valid-date',
+    defaultMessage: 'Gildisdagsetning',
+  },
+  sailorSchoolCertificatesExpandSchool: {
+    id: 'sp.occupational-licenses:sailor-school-certificates-expand-school',
+    defaultMessage: 'Skóli',
+  },
+  sailorSchoolCertificatesExpandIssueDate: {
+    id: 'sp.occupational-licenses:sailor-school-certificates-expand-issue-date',
+    defaultMessage: 'Útgáfudagsetning',
+  },
+  sailorRightCertificatesIntro: {
+    id: 'sp.occupational-licenses:sailor-right-certificates-intro#markdown',
+    defaultMessage:
+      'Hér er hægt að sjá atvinnuskírteini sem eru í gildi, þar á meðal skírteinistegund, réttindaflokk og gildislokadagsetningu. Ef upplýsingar eru rangar eða vantar skaltu senda erindi og viðeigandi gögn á [sigling@samgongustofa.is](mailto:sigling@samgongustofa.is)',
+  },
+  sailorRightCertificatesEmpty: {
+    id: 'sp.occupational-licenses:sailor-right-certificates-empty',
+    defaultMessage: 'Engin atvinnuskírteini fundust',
+  },
+  sailorRightCertificatesColumnType: {
+    id: 'sp.occupational-licenses:sailor-right-certificates-column-type',
+    defaultMessage: 'Tegund',
+  },
+  sailorRightCertificatesColumnRightsCategories: {
+    id: 'sp.occupational-licenses:sailor-right-certificates-column-rights-categories',
+    defaultMessage: 'Réttindaflokkar',
+  },
+  sailorRightCertificatesColumnValidDate: {
+    id: 'sp.occupational-licenses:sailor-right-certificates-column-valid-date',
+    defaultMessage: 'Gildisdagsetning',
+  },
+  sailorRightCertificatesExpandIssueDate: {
+    id: 'sp.occupational-licenses:sailor-right-certificates-expand-issue-date',
+    defaultMessage: 'Útgáfudagur',
+  },
+  sailorCrewRegistrationsIntro: {
+    id: 'sp.occupational-licenses:sailor-crew-registrations-intro#markdown',
+    defaultMessage:
+      'Hér má sjá heildarlögskráningardaga, siglingatíma eftir stöðu og skipaflokkum, auk upplýsinga um gildar undanþágur og sjóferðabækur. Ef upplýsingar eru rangar eða vantar skaltu senda erindi og viðeigandi gögn á [sigling@samgongustofa.is](mailto:sigling@samgongustofa.is)',
+  },
+  sailorTabSeaService: {
+    id: 'sp.occupational-licenses:sailor-tab-sea-service',
+    defaultMessage: 'Siglingatími',
+  },
+  sailorTabExemptions: {
+    id: 'sp.occupational-licenses:sailor-tab-exemptions',
+    defaultMessage: 'Undanþágur',
+  },
+  sailorTabSeaServiceBooks: {
+    id: 'sp.occupational-licenses:sailor-tab-sea-service-books',
+    defaultMessage: 'Sjóferðabækur',
+  },
+  sailorCrewRegistrationsTabsLabel: {
+    id: 'sp.occupational-licenses:sailor-crew-registrations-tabs-label',
+    defaultMessage: 'Veldu tegund',
+  },
+  sailorColumnRank: {
+    id: 'sp.occupational-licenses:sailor-column-rank',
+    defaultMessage: 'Staða',
+  },
+  sailorExemptionsIntro: {
+    id: 'sp.occupational-licenses:sailor-exemptions-intro',
+    defaultMessage:
+      'Hér finnur þú tímabundnar undanþágur sem veittar hafa verið vegna réttinda, mönnunar eða annarra skilyrða sem tengjast störfum um borð.',
+  },
+  sailorExemptionsLinkText: {
+    id: 'sp.occupational-licenses:sailor-exemptions-link-text',
+    defaultMessage: 'Nánar um undanþágur',
+  },
+  sailorExemptionsLinkUrl: {
+    id: 'sp.occupational-licenses:sailor-exemptions-link-url',
+    defaultMessage: 'https://island.is/undanthagur',
+  },
+  sailorColumnShip: {
+    id: 'sp.occupational-licenses:sailor-column-ship',
+    defaultMessage: 'Skip',
+  },
+  sailorColumnValidFrom: {
+    id: 'sp.occupational-licenses:sailor-column-valid-from',
+    defaultMessage: 'Gildir frá',
+  },
+  sailorCrewRegistrationsExpandShipNo: {
+    id: 'sp.occupational-licenses:sailor-crew-registrations-expand-ship-no',
+    defaultMessage: 'Skipaskrárnúmer',
+  },
+  sailorCrewRegistrationsExpandLowerRank: {
+    id: 'sp.occupational-licenses:sailor-crew-registrations-expand-lower-rank',
+    defaultMessage: 'Heimild til að gegna lægri stöðu',
+  },
+  sailorCrewRegistrationsExpandAdvertised: {
+    id: 'sp.occupational-licenses:sailor-crew-registrations-expand-advertised',
+    defaultMessage: 'Staðan auglýst',
+  },
+  sailorCrewRegistrationsExpandDays: {
+    id: 'sp.occupational-licenses:sailor-crew-registrations-expand-days',
+    defaultMessage: 'Fjöldi daga',
+  },
+  sailorCrewRegistrationsExemptionsEmpty: {
+    id: 'sp.occupational-licenses:sailor-crew-registrations-exemptions-empty',
+    defaultMessage: 'Engar undanþágur fundust',
+  },
+  sailorSeaServiceBooksIntro: {
+    id: 'sp.occupational-licenses:sailor-sea-service-books-intro',
+    defaultMessage:
+      'Hér finnur þú upplýsingar um útgefnar sjóferðabækur sjómanns.',
+  },
+  sailorSeaServiceBooksLinkText: {
+    id: 'sp.occupational-licenses:sailor-sea-service-books-link-text',
+    defaultMessage: 'Nánar um sjóferðabækur',
+  },
+  sailorSeaServiceBooksLinkUrl: {
+    id: 'sp.occupational-licenses:sailor-sea-service-books-link-url',
+    defaultMessage: 'https://island.is/sjoferdabok',
+  },
+  sailorSeaServiceBooksEmpty: {
+    id: 'sp.occupational-licenses:sailor-sea-service-books-empty',
+    defaultMessage: 'Engar sjóferðabækur fundust',
+  },
+  sailorSeaServiceRankAll: {
+    id: 'sp.occupational-licenses:sailor-sea-service-rank-all',
+    defaultMessage: 'Allar stöður',
+  },
+  sailorSeaServiceEmpty: {
+    id: 'sp.occupational-licenses:sailor-sea-service-empty',
+    defaultMessage: 'Engar lögskráningardagar fundust',
+  },
+  sailorSeaServiceDateFrom: {
+    id: 'sp.occupational-licenses:sailor-sea-service-date-from',
+    defaultMessage: 'Dagsetning frá',
+  },
+  sailorSeaServiceDateTo: {
+    id: 'sp.occupational-licenses:sailor-sea-service-date-to',
+    defaultMessage: 'Dagsetning til',
+  },
+  sailorSeaServiceRank: {
+    id: 'sp.occupational-licenses:sailor-sea-service-rank',
+    defaultMessage: 'Staða',
+  },
+  sailorSeaServiceSearchButton: {
+    id: 'sp.occupational-licenses:sailor-sea-service-search-button',
+    defaultMessage: 'Leita',
+  },
+  sailorSeaServiceTotalCrewDays: {
+    id: 'sp.occupational-licenses:sailor-sea-service-total-crew-days',
+    defaultMessage: 'Lögskráningardagar',
+  },
+  sailorSeaServiceServiceDays: {
+    id: 'sp.occupational-licenses:sailor-sea-service-service-days',
+    defaultMessage: 'Annar siglingatími',
+  },
+  sailorSeaServiceWorkAshoreDays: {
+    id: 'sp.occupational-licenses:sailor-sea-service-work-ashore-days',
+    defaultMessage: 'Vinnutímar í landi',
+  },
+  sailorSeaServiceTotalWorkDays: {
+    id: 'sp.occupational-licenses:sailor-sea-service-total-work-days',
+    defaultMessage: 'Samtals',
+  },
+  sailorSeaServiceMinLength: {
+    id: 'sp.occupational-licenses:sailor-sea-service-min-length',
+    defaultMessage: 'Yfir lengd (m)',
+  },
+  sailorSeaServiceMinLengthPlaceholder: {
+    id: 'sp.occupational-licenses:sailor-sea-service-min-length-placeholder',
+    defaultMessage: 'Skráðu metra',
+  },
+  sailorSeaServiceMinPower: {
+    id: 'sp.occupational-licenses:sailor-sea-service-min-power',
+    defaultMessage: 'Yfir afl (kW)',
+  },
+  sailorSeaServiceMinPowerPlaceholder: {
+    id: 'sp.occupational-licenses:sailor-sea-service-min-power-placeholder',
+    defaultMessage: 'Skráðu kW',
+  },
+  sailorSeaServiceMinTonnage: {
+    id: 'sp.occupational-licenses:sailor-sea-service-min-tonnage',
+    defaultMessage: 'Yfir brúttótonn',
+  },
+  sailorSeaServiceMinTonnagePlaceholder: {
+    id: 'sp.occupational-licenses:sailor-sea-service-min-tonnage-placeholder',
+    defaultMessage: 'Skráðu brúttótonn',
+  },
+  sailorSeaServicePageSize: {
+    id: 'sp.occupational-licenses:sailor-sea-service-page-size',
+    defaultMessage: 'Fjöldi á síðu',
+  },
+  sailorSeaServiceClearFilters: {
+    id: 'sp.occupational-licenses:sailor-sea-service-clear-filters',
+    defaultMessage: 'Hreinsa síur',
+  },
+  sailorSeaServiceShipSpecs: {
+    id: 'sp.occupational-licenses:sailor-sea-service-ship-specs',
+    defaultMessage: 'Eiginleikar skips',
+  },
+  sailorSeaServiceDateRange: {
+    id: 'sp.occupational-licenses:sailor-sea-service-date-range',
+    defaultMessage: 'Veldu tímabil',
+  },
 })

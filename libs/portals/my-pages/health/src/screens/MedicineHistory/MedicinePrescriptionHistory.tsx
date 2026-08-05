@@ -2,7 +2,6 @@ import { HealthDirectorateMedicineHistoryDispensation } from '@island.is/api/sch
 import { Box, Button, Icon } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
-  EmptyTable,
   formatDate,
   HEALTH_DIRECTORATE_SLUG,
   IntroWrapper,
@@ -17,6 +16,7 @@ import {
   useGetMedicineDispensationForAtcLazyQuery,
   useGetMedicineHistoryQuery,
 } from './MedicineHistory.generated'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const MAX_DISPENSATIONS = 3
 interface ActiveDispensation {
@@ -27,6 +27,7 @@ interface ActiveDispensation {
 
 const MedicinePrescriptionHistory = () => {
   const { formatMessage, lang } = useLocale()
+  useHealthPlausibleSwap()
   const [activeDispensation, setActiveDispensation] = useState<
     ActiveDispensation | undefined
   >(undefined)
@@ -63,11 +64,12 @@ const MedicinePrescriptionHistory = () => {
     <IntroWrapper
       title={formatMessage(messages.medicinePrescriptionHistory)}
       intro={formatMessage(messages.medicinePrescriptionHistoryIntroText)}
-      serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
-      serviceProviderTooltip={formatMessage(
-        messages.landlaeknirMedicinePrescriptionsTooltip,
-      )}
-      childrenWidthFull
+      serviceProvider={{
+        slug: HEALTH_DIRECTORATE_SLUG,
+        tooltip: formatMessage(
+          messages.landlaeknirMedicinePrescriptionsTooltip,
+        ),
+      }}
       marginBottom={6}
     >
       {!error && (
@@ -86,6 +88,9 @@ const MedicinePrescriptionHistory = () => {
           mobileTitleKey="medicine"
           ellipsisLength={22}
           tableLoading={loading}
+          emptyTableMessage={formatMessage(messages.noDataFound, {
+            arg: formatMessage(messages.medicineTitle).toLowerCase(),
+          })}
           items={
             history?.map((item, i) => ({
               id: item?.id ?? `${i}`,
@@ -201,14 +206,6 @@ const MedicinePrescriptionHistory = () => {
         />
       )}
       {error && !loading && <Problem error={error} noBorder={false} />}
-
-      {!error && !loading && history && history.length === 0 && (
-        <EmptyTable
-          message={formatMessage(messages.noDataFound, {
-            arg: formatMessage(messages.medicineTitle).toLowerCase(),
-          })}
-        />
-      )}
     </IntroWrapper>
   )
 }

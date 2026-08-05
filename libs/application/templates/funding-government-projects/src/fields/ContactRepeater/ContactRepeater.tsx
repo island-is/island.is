@@ -18,7 +18,7 @@ export const ContactRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   errors,
 }) => {
   const { formatMessage } = useLocale()
-  const { id } = field
+  const id = field.id as string
   const { fields, append, remove } = useFieldArray({
     name: id,
   })

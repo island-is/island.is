@@ -1,11 +1,21 @@
 import { useMutation } from '@apollo/client'
+import { FormSystemField } from '@island.is/api/schema'
+import { NotificationCommands } from '@island.is/form-system/enums'
 import {
+  CREATE_PAYMENT,
+  NOTIFY_EXTERNAL_SERVICE,
   SAVE_SCREEN,
   SUBMIT_APPLICATION,
   SUBMIT_SECTION,
   UPDATE_APPLICATION_SETTINGS,
+  removeTypename,
 } from '@island.is/form-system/graphql'
-import { SectionTypes, m } from '@island.is/form-system/ui'
+import {
+  FieldTypesEnum,
+  SectionTypes,
+  getValue,
+  m,
+} from '@island.is/form-system/ui'
 import { Box, Button, GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
@@ -26,6 +36,11 @@ export const Footer = ({ externalDataAgreement }: Props) => {
   const submitScreen = useMutation(SAVE_SCREEN)
   const submitSection = useMutation(SUBMIT_SECTION)
   const updateDependencies = useMutation(UPDATE_APPLICATION_SETTINGS)
+  const [notifyExternal, { loading: notifyLoading }] = useMutation(
+    NOTIFY_EXTERNAL_SERVICE,
+  )
+  const [createPayment, { loading: paymentLoading }] =
+    useMutation(CREATE_PAYMENT)
 
   const [submitApplication, { loading: submitLoading }] = useMutation(
     SUBMIT_APPLICATION,
@@ -39,6 +54,21 @@ export const Footer = ({ externalDataAgreement }: Props) => {
   const lastScreenDisplayOrder = state.application.sections
     ?.at(-1)
     ?.screens?.at(-1)?.displayOrder
+
+  const hasVisiblePaymentField = state.sections?.some((section) =>
+    section?.screens?.some((screen) =>
+      screen?.fields?.some(
+        (field) =>
+          field?.fieldType === FieldTypesEnum.PAYMENT &&
+          field?.isHidden === false,
+      ),
+    ),
+  )
+
+  const shouldShowPay =
+    currentSection?.data.sectionType === SectionTypes.PAYMENT ||
+    (currentSection?.data.sectionType === SectionTypes.SUMMARY &&
+      hasVisiblePaymentField)
 
   const onSubmit =
     currentSectionType === SectionTypes.PAYMENT ||
@@ -83,13 +113,135 @@ export const Footer = ({ externalDataAgreement }: Props) => {
       hasVisibleApplicantBeforeCurrentScreen())
 
   const handleIncrement = async () => {
+    if (paymentLoading) return
     const isValid = await validate()
     dispatch({ type: 'SET_VALIDITY', payload: { isValid } })
-    if (!isValid) return
+
+    const allowProceed = Boolean(state.application.allowProceedOnValidationFail)
+    const isParties = currentSectionType === SectionTypes.PARTIES
+
+    if (!isValid && (isParties || !allowProceed)) return
 
     if (isCompletedSection) {
       window.open('/minarsidur', '_blank', 'noopener,noreferrer')
       return
+    }
+
+    if (shouldShowPay) {
+      const chargeItems: {
+        performingOrgID: string
+        chargeType: string
+        chargeItemCode: string
+        chargeItemName: string
+        priceAmount: number
+        quantity?: number
+      }[] = []
+      const paymentQuantityFields: FormSystemField[] = []
+      state.sections?.forEach((section) => {
+        section?.screens?.forEach((screen) => {
+          screen?.fields?.forEach((field) => {
+            if (
+              field?.fieldType === FieldTypesEnum.PAYMENT_QUANTITY &&
+              field?.isHidden === false
+            ) {
+              paymentQuantityFields.push(field)
+            }
+          })
+        })
+      })
+
+      state.sections?.forEach((section) => {
+        section?.screens?.forEach((screen) => {
+          screen?.fields
+            ?.filter(
+              (field) =>
+                field?.fieldType === FieldTypesEnum.PAYMENT &&
+                field?.isHidden === false,
+            )
+            .forEach((field) => {
+              if (field?.fieldSettings?.chargeItemCode) {
+                const code = field.fieldSettings.chargeItemCode
+                let quantity: number | undefined = 1
+                const amount: number | undefined = field.fieldSettings
+                  .priceAmount as number | undefined
+                if (field.fieldSettings.paymentQuantityId) {
+                  const quantityField = paymentQuantityFields.find(
+                    (f) => f.id === field?.fieldSettings?.paymentQuantityId,
+                  )
+                  if (quantityField) {
+                    quantity = getValue(quantityField, 'number')
+                  }
+                }
+                chargeItems.push({
+                  performingOrgID:
+                    state.application.organizationNationalId ?? '',
+                  chargeType: field.fieldSettings.chargeType || 'default',
+                  chargeItemCode: code,
+                  chargeItemName:
+                    field.fieldSettings.chargeItemName || 'Default Name',
+                  priceAmount: amount || 0,
+                  quantity,
+                })
+              }
+            })
+        })
+      })
+      const { data } = await createPayment({
+        variables: {
+          input: {
+            applicationId: state.application.id,
+            createChargeRequestDto: {
+              performingOrganizationID:
+                state.application.organizationNationalId ?? '',
+              chargeItems,
+            },
+          },
+        },
+      })
+      if (data?.createFormSystemPayment?.paymentUrl) {
+        window.location.href = data.createFormSystemPayment.paymentUrl
+      }
+      return
+    }
+
+    if (
+      !onSubmit &&
+      state.currentScreen?.data?.shouldValidate &&
+      state.application.submissionServiceUrl !== 'zendesk'
+    ) {
+      try {
+        const { data } = await notifyExternal({
+          variables: {
+            input: {
+              applicationId: state.application.id,
+              nationalId: '',
+              organizationNationalId:
+                state.application.organizationNationalId ?? '',
+              slug: state.application.slug,
+              isTest: state.application.isTest,
+              command: NotificationCommands.VALIDATE,
+              screenDto: state.currentScreen.data,
+            },
+          },
+        })
+
+        const updatedScreen = removeTypename(
+          data?.notifyFormSystemExternalSystem?.screen,
+        )
+
+        dispatch({
+          type: 'EXTERNAL_SERVICE_NOTIFICATION',
+          payload: {
+            screen: updatedScreen,
+          },
+        })
+        if (updatedScreen?.screenError?.hasError) {
+          return
+        }
+      } catch (error) {
+        console.error('Error notifying external service:', error)
+        return
+      }
     }
 
     if (!onSubmit) {
@@ -107,13 +259,12 @@ export const Footer = ({ externalDataAgreement }: Props) => {
       const { data } = await submitApplication({
         variables: { input: { id: state.application.id } },
       })
-      if (!data?.submitFormSystemApplication?.success) {
+      if (data?.submitFormSystemApplication?.submissionFailed) {
         dispatch({
           type: 'SUBMITTED',
           payload: {
             submitted: false,
-            screenErrors:
-              data?.submitFormSystemApplication?.screenErrorMessages,
+            screenError: data?.submitFormSystemApplication?.validationError,
           },
         })
         return
@@ -128,24 +279,18 @@ export const Footer = ({ externalDataAgreement }: Props) => {
       })
       dispatch({
         type: 'SUBMITTED',
-        payload: { submitted: true, screenErrors: [] },
-      })
-    } catch {
-      dispatch({
-        type: 'SUBMITTED',
         payload: {
-          submitted: false,
-          screenErrors: [
-            {
-              title: { is: 'Villa við innsendingu', en: 'Error submitting' },
-              message: {
-                is: 'Ekki tókst að senda inn umsóknina, reyndu aftur síðar eða sendu póst á island@island.is',
-                en: 'The application could not be submitted. Please try again later or send an email to island@island.is',
-              },
-            },
-          ],
+          submitted: true,
+          screenError: {
+            hasError: false,
+            title: { is: '', en: '' },
+            message: { is: '', en: '' },
+          },
         },
       })
+    } catch (error) {
+      console.error('Error submitting application', error)
+      throw new Error('Error submitting application')
     }
   }
 
@@ -176,10 +321,16 @@ export const Footer = ({ externalDataAgreement }: Props) => {
             <Button
               icon="arrowForward"
               onClick={handleIncrement}
-              disabled={!enableContinueButton || submitLoading}
-              loading={submitLoading}
+              disabled={
+                !enableContinueButton ||
+                paymentLoading ||
+                submitLoading ||
+                notifyLoading ||
+                (onSubmit && state.isValid === false)
+              }
+              loading={submitLoading || notifyLoading || paymentLoading}
             >
-              {continueButtonText}
+              {shouldShowPay ? formatMessage(m.pay) : continueButtonText}
             </Button>
           </Box>
           {showBackButton && (
@@ -188,7 +339,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
                 preTextIcon="arrowBack"
                 variant="ghost"
                 onClick={handleDecrement}
-                disabled={submitLoading}
+                disabled={submitLoading || notifyLoading || paymentLoading}
               >
                 {formatMessage(m.back)}
               </Button>

@@ -15,32 +15,93 @@ import {
 import { m } from '@island.is/form-system/ui'
 import { Box, Button } from '@island.is/island-ui/core'
 import cn from 'classnames'
-import { Fragment, useContext, useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 import AnimateHeight from 'react-animate-height'
 import { createPortal } from 'react-dom'
 import { useIntl } from 'react-intl'
 import { ControlContext, IControlContext } from '../../context/ControlContext'
+import {
+  lifetimeSettingsStep,
+  urlSettingsStep,
+  delegationSettingsStep,
+} from '../../lib/utils/customSections'
 import { baseSettingsStep } from '../../lib/utils/getBaseSettingsSection'
 import { ItemType } from '../../lib/utils/interfaces'
 import { removeTypename } from '../../lib/utils/removeTypename'
 import { useNavbarDnD } from '../../lib/utils/useNavbarDnd'
 import { NavComponent } from '../NavComponent/NavComponent'
 import * as styles from './Navbar.css'
-import { urlSettingsStep } from '../../lib/utils/getUrlSettingsSection'
 
 export const Navbar = () => {
   const {
     control,
     controlDispatch,
     inSettings,
-    setOpenComponents,
     openComponents,
+    setOpenComponents,
   } = useContext(ControlContext) as IControlContext
+
   const { formatMessage } = useIntl()
-  const { activeItem, form } = control
+  const { activeItem, form, isReadOnly } = control
   const { sections, screens, fields } = form
-  const payment = sections?.find((s) => s?.sectionType === SectionTypes.PAYMENT)
-  const { hasPayment } = form
+
+  const inputSections = useMemo(
+    () =>
+      sections?.filter(
+        (section): section is FormSystemSection =>
+          section !== null &&
+          section !== undefined &&
+          section.sectionType === SectionTypes.INPUT,
+      ) ?? [],
+    [sections],
+  )
+
+  const inputScreens = useMemo(
+    () =>
+      screens?.filter(
+        (screen): screen is FormSystemScreen =>
+          screen !== null &&
+          screen !== undefined &&
+          inputSections.some((section) => section.id === screen.sectionId),
+      ) ?? [],
+    [screens, inputSections],
+  )
+
+  const inputSectionIds = useMemo(
+    () =>
+      inputSections
+        .map((section) => section.id)
+        .filter((id): id is string => Boolean(id)),
+    [inputSections],
+  )
+
+  const inputScreenIds = useMemo(
+    () =>
+      inputScreens
+        .map((screen) => screen.id)
+        .filter((id): id is string => Boolean(id)),
+    [inputScreens],
+  )
+
+  const allNavbarItemsOpen =
+    inputSectionIds.length > 0 &&
+    inputSectionIds.every((id) => openComponents.sections.includes(id)) &&
+    inputScreenIds.every((id) => openComponents.screens.includes(id))
+
+  const toggleAllNavbarItems = () => {
+    setOpenComponents(
+      allNavbarItemsOpen
+        ? {
+            sections: [],
+            screens: [],
+          }
+        : {
+            sections: inputSectionIds,
+            screens: inputScreenIds,
+          },
+    )
+  }
+
   const sectionIds = useMemo(
     () =>
       sections
@@ -48,23 +109,69 @@ export const Navbar = () => {
         .map((s) => s.id as UniqueIdentifier),
     [sections],
   )
-  const screenIds = useMemo(
-    () =>
-      screens
-        ?.filter((s): s is FormSystemScreen => s !== null && s !== undefined)
-        .map((s) => s.id as UniqueIdentifier),
-    [screens],
-  )
-  const fieldsIds = useMemo(
-    () =>
-      fields
-        ?.filter((f): f is FormSystemField => f !== null && f !== undefined)
-        .map((f) => f.id as UniqueIdentifier),
-    [fields],
-  )
+
+  const screenIdsBySection = useMemo(() => {
+    const map = new Map<string, UniqueIdentifier[]>()
+
+    screens
+      ?.filter((screen): screen is FormSystemScreen =>
+        Boolean(screen?.id && screen?.sectionId),
+      )
+      .forEach((screen) => {
+        const existing = map.get(screen.sectionId as string) ?? []
+
+        map.set(screen.sectionId as string, [
+          ...existing,
+          screen.id as UniqueIdentifier,
+        ])
+      })
+
+    return map
+  }, [screens])
+
+  const fieldIdsByScreen = useMemo(() => {
+    const map = new Map<string, UniqueIdentifier[]>()
+
+    fields
+      ?.filter((field): field is FormSystemField =>
+        Boolean(field?.id && field?.screenId),
+      )
+      .forEach((field) => {
+        const existing = map.get(field.screenId as string) ?? []
+
+        map.set(field.screenId as string, [
+          ...existing,
+          field.id as UniqueIdentifier,
+        ])
+      })
+
+    return map
+  }, [fields])
 
   const [createSection, { loading }] = useMutation(CREATE_SECTION)
   const [updateDisplayOrder] = useMutation(UPDATE_SECTION_DISPLAY_ORDER)
+
+  const {
+    sensors,
+    onDragStart,
+    onDragOver,
+    onDragEnd,
+    onDragCancel,
+    isDraggingNavbarItem,
+    activeDragType,
+    pendingDropId,
+  } = useNavbarDnD()
+
+  const isPendingDropTarget = (id?: string | null) => {
+    return Boolean(
+      isDraggingNavbarItem &&
+        activeDragType &&
+        pendingDropId &&
+        id &&
+        pendingDropId === id &&
+        activeItem.data?.id !== id,
+    )
+  }
 
   const addSection = async () => {
     try {
@@ -125,22 +232,6 @@ export const Navbar = () => {
             (item: Maybe<FormSystemField> | undefined) => item?.id === id,
           )
 
-    if (type === 'Section') {
-      setOpenComponents((prev) => ({
-        ...prev,
-        sections: prev.sections.includes(id as string)
-          ? prev.sections.filter((sectionId) => sectionId !== id)
-          : [...prev.sections, id as string],
-      }))
-    } else if (type === 'Screen') {
-      setOpenComponents((prev) => ({
-        ...prev,
-        screens: prev.screens.includes(id as string)
-          ? prev.screens.filter((screenId) => screenId !== id)
-          : [...prev.screens, id as string],
-      }))
-    }
-
     if (id === baseSettingsStep.id) {
       controlDispatch({
         type: 'SET_ACTIVE_ITEM',
@@ -161,6 +252,26 @@ export const Navbar = () => {
           },
         },
       })
+    } else if (id === lifetimeSettingsStep.id) {
+      controlDispatch({
+        type: 'SET_ACTIVE_ITEM',
+        payload: {
+          activeItem: {
+            type: 'Section',
+            data: lifetimeSettingsStep,
+          },
+        },
+      })
+    } else if (id === delegationSettingsStep.id) {
+      controlDispatch({
+        type: 'SET_ACTIVE_ITEM',
+        payload: {
+          activeItem: {
+            type: 'Section',
+            data: delegationSettingsStep,
+          },
+        },
+      })
     } else if (data) {
       controlDispatch({
         type: 'SET_ACTIVE_ITEM',
@@ -174,7 +285,18 @@ export const Navbar = () => {
     }
   }
 
-  const { sensors, onDragStart, onDragOver, onDragEnd } = useNavbarDnD()
+  const renderToggleAllButton = () => (
+    <Box display="flex" justifyContent="flexEnd" paddingBottom={2}>
+      <Button
+        variant="text"
+        size="small"
+        onClick={toggleAllNavbarItems}
+        disabled={inputSectionIds.length === 0}
+      >
+        {allNavbarItemsOpen ? 'Loka öllu' : 'Opna allt'}
+      </Button>
+    </Box>
+  )
 
   const renderNonInputSections = () => {
     return sections
@@ -182,8 +304,7 @@ export const Navbar = () => {
       .filter(
         (s) =>
           s.sectionType !== SectionTypes.INPUT &&
-          s.sectionType !== SectionTypes.SUMMARY &&
-          s.sectionType !== SectionTypes.PAYMENT,
+          s.sectionType !== SectionTypes.SUMMARY,
       )
       .map((s) => (
         <Box key={s.id}>
@@ -208,7 +329,9 @@ export const Navbar = () => {
           key={field.id}
           type="Field"
           data={field}
-          active={activeItem.data?.id === field.id}
+          active={
+            activeItem.data?.id === field.id || isPendingDropTarget(field.id)
+          }
           focusComponent={focusComponent}
         />
       ))
@@ -222,53 +345,64 @@ export const Navbar = () => {
           screen !== undefined &&
           screen.sectionId === section.id,
       )
-      .map((screen) => (
-        <Box key={screen.id}>
-          <NavComponent
-            type="Screen"
-            data={screen}
-            active={activeItem.data?.id === screen.id}
-            focusComponent={focusComponent}
-          />
-          <SortableContext items={fieldsIds ?? []}>
-            <AnimateHeight
-              duration={300}
-              height={openComponents.screens.includes(screen.id) ? 'auto' : 0}
-              easing="ease-in-out"
-            >
-              {renderFieldsForScreen(screen)}
-            </AnimateHeight>
-          </SortableContext>
-        </Box>
-      ))
+      .map((screen) => {
+        const screenIsOpen = openComponents.screens.includes(screen.id)
+
+        return (
+          <Box key={screen.id}>
+            <NavComponent
+              type="Screen"
+              data={screen}
+              active={
+                activeItem.data?.id === screen.id ||
+                isPendingDropTarget(screen.id)
+              }
+              focusComponent={focusComponent}
+            />
+
+            <SortableContext items={fieldIdsByScreen.get(screen.id) ?? []}>
+              <AnimateHeight
+                duration={isDraggingNavbarItem ? 0 : 150}
+                height={screenIsOpen ? 'auto' : 0}
+                easing="ease-in-out"
+              >
+                {renderFieldsForScreen(screen)}
+              </AnimateHeight>
+            </SortableContext>
+          </Box>
+        )
+      })
   }
 
   const renderInputSections = () => {
-    return sections
-      ?.filter(
-        (s): s is FormSystemSection =>
-          s !== null && s !== undefined && s.sectionType === SectionTypes.INPUT,
-      )
-      .map((section, index) => (
+    return inputSections.map((section, index) => {
+      const sectionIsOpen = openComponents.sections.includes(section.id)
+
+      return (
         <Box key={section.id}>
           <NavComponent
             type="Section"
             data={section}
-            active={activeItem.data?.id === section.id}
+            active={
+              activeItem.data?.id === section.id ||
+              isPendingDropTarget(section.id)
+            }
             index={index + 1}
             focusComponent={focusComponent}
           />
-          <SortableContext items={screenIds ?? []}>
+
+          <SortableContext items={screenIdsBySection.get(section.id) ?? []}>
             <AnimateHeight
-              duration={300}
-              height={openComponents.sections.includes(section.id) ? 'auto' : 0}
+              duration={isDraggingNavbarItem ? 0 : 150}
+              height={sectionIsOpen ? 'auto' : 0}
               easing="ease-in-out"
             >
               {renderScreensForSection(section)}
             </AnimateHeight>
           </SortableContext>
         </Box>
-      ))
+      )
+    })
   }
 
   const renderSettingsView = () => (
@@ -281,7 +415,9 @@ export const Navbar = () => {
           focusComponent={focusComponent}
         />
       </div>
+
       {renderNonInputSections()}
+
       <div>
         <NavComponent
           type="Section"
@@ -290,29 +426,45 @@ export const Navbar = () => {
           focusComponent={focusComponent}
         />
       </div>
+
+      <div>
+        <NavComponent
+          type="Section"
+          data={lifetimeSettingsStep}
+          active={activeItem.data?.id === lifetimeSettingsStep.id}
+          focusComponent={focusComponent}
+        />
+      </div>
+
+      <div>
+        <NavComponent
+          type="Section"
+          data={delegationSettingsStep}
+          active={activeItem.data?.id === delegationSettingsStep.id}
+          focusComponent={focusComponent}
+        />
+      </div>
     </>
   )
 
   const renderDnDView = () => (
     <div>
+      {renderToggleAllButton()}
+
       <Box className={cn(styles.navbarContainer)}>
         <DndContext
-          sensors={sensors}
-          onDragStart={onDragStart}
-          onDragEnd={onDragEnd}
-          onDragOver={onDragOver}
+          sensors={isReadOnly ? [] : sensors}
+          onDragStart={isReadOnly ? undefined : onDragStart}
+          onDragEnd={isReadOnly ? undefined : onDragEnd}
+          onDragCancel={isReadOnly ? undefined : onDragCancel}
+          onDragOver={isReadOnly ? undefined : onDragOver}
         >
           <SortableContext items={sectionIds ?? []}>
             {renderInputSections()}
           </SortableContext>
 
           {createPortal(
-            <DragOverlay
-              dropAnimation={{
-                duration: 500,
-                easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
-              }}
-            >
+            <DragOverlay dropAnimation={null}>
               {activeItem && (
                 <NavComponent
                   type={activeItem.type}
@@ -331,24 +483,19 @@ export const Navbar = () => {
           )}
         </DndContext>
       </Box>
-      {payment && hasPayment && (
-        <Fragment>
-          <NavComponent
-            type="Section"
-            data={payment}
-            active={activeItem.data?.id === payment.id}
-            focusComponent={focusComponent}
-          />
-          {renderScreensForSection(payment as FormSystemSection)}
-        </Fragment>
-      )}
+
       <Box
         display="flex"
         justifyContent="center"
         paddingTop={3}
         className={cn(styles.addSectionButton)}
       >
-        <Button variant="ghost" size="small" onClick={addSection}>
+        <Button
+          variant="ghost"
+          size="small"
+          onClick={addSection}
+          disabled={isReadOnly}
+        >
           {formatMessage(m.addSection)}
         </Button>
       </Box>
@@ -357,8 +504,11 @@ export const Navbar = () => {
 
   if (inSettings) {
     return renderSettingsView()
-  } else if (activeItem) {
+  }
+
+  if (activeItem) {
     return renderDnDView()
   }
+
   return null
 }

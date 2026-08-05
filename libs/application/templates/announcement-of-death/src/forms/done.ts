@@ -19,7 +19,7 @@ import {
   theAnnouncer,
   theDeceased,
 } from './overviewSections'
-import AOD from '../assets/AOD'
+import { GhostOnABench } from '@island.is/application/assets/graphics'
 
 export const done: Form = buildForm({
   id: 'done',
@@ -43,7 +43,7 @@ export const done: Form = buildForm({
             }),
             buildImageField({
               id: 'viewOverview',
-              image: AOD,
+              image: GhostOnABench,
               imagePosition: 'center',
               condition: (answers) =>
                 getValueViaPath(answers, 'viewOverview') !== true,

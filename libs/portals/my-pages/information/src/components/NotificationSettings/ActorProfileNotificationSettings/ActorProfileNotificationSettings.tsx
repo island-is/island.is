@@ -1,16 +1,10 @@
-import {
-  Divider,
-  SkeletonLoader,
-  Stack,
-  toast,
-} from '@island.is/island-ui/core'
+import { SkeletonLoader, Stack, toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useEffect, useState } from 'react'
 
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { useActorProfile } from '../../../hooks/useActorProfile'
-import { usePaperMail } from '../../../hooks/usePaperMail'
 import { mNotifications } from '../../../lib/messages'
 import { NotificationSettingsCard } from '../cards/NotificationSettingsCard'
 import { SettingsCard } from '../cards/SettingsCard/SettingsCard'
@@ -26,7 +20,6 @@ import { useScopeAccess } from '../../../hooks/useScopeAccess'
 
 type Settings = {
   emailNotifications: boolean
-  wantsPaper: boolean
 }
 
 export const ActorProfileNotificationSettings = () => {
@@ -49,15 +42,8 @@ export const ActorProfileNotificationSettings = () => {
 
   const { updateUserProfile } = useUpdateUserProfile()
 
-  const {
-    wantsPaper,
-    postPaperMailMutation,
-    loading: paperMailLoading,
-  } = usePaperMail()
-
   const [settings, setSettings] = useState<Settings>({
     emailNotifications: profile?.emailNotifications ?? true,
-    wantsPaper: wantsPaper ?? false,
   })
 
   useEffect(() => {
@@ -69,11 +55,6 @@ export const ActorProfileNotificationSettings = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile])
-
-  useEffect(() => {
-    setSettings({ ...settings, wantsPaper: wantsPaper ?? false })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wantsPaper])
 
   const onChange = async (updatedSettings: Partial<Settings>) => {
     const oldSettings = { ...settings }
@@ -108,33 +89,7 @@ export const ActorProfileNotificationSettings = () => {
     }
   }
 
-  const onPaperMailChange = async (active: boolean) => {
-    const oldSettings = { ...settings }
-    const newSettings = { ...settings, wantsPaper: active }
-    setSettings(newSettings)
-
-    const { error, data } = await safeAwait(
-      postPaperMailMutation({
-        variables: {
-          input: { wantsPaper: active },
-        },
-      }),
-    )
-
-    if (error) {
-      toast.error(formatMessage(mNotifications.updateError))
-      setSettings(oldSettings)
-      return
-    }
-
-    setSettings({
-      ...settings,
-      wantsPaper:
-        data?.data?.postPaperMailInfo?.wantsPaper ?? oldSettings.wantsPaper,
-    })
-  }
-
-  if (loading || paperMailLoading || isCheckingFeatureFlag) {
+  if (loading || isCheckingFeatureFlag) {
     return <SkeletonLoader borderRadius="large" height={473} />
   }
 
@@ -146,6 +101,9 @@ export const ActorProfileNotificationSettings = () => {
     return <AccessDenied />
   }
 
+  // This screen is only shown when acting on behalf of someone (UserNotifications
+  // renders it only when isActor). Paper mail is a personal documents preference, not
+  // an actor-profile setting, so we only show the email notifications toggle here.
   return (
     <NotificationSettingsCard title={userInfo?.profile.name}>
       <Stack space={[3, 4]}>
@@ -157,14 +115,6 @@ export const ActorProfileNotificationSettings = () => {
           )}
           checked={settings.emailNotifications}
           onChange={(active) => onChange({ emailNotifications: active })}
-        />
-        <Divider />
-        <SettingsCard
-          title={formatMessage(mNotifications.paperMailTitle)}
-          subtitle={formatMessage(mNotifications.paperMailDescription)}
-          toggleLabel={formatMessage(mNotifications.paperMailAriaLabel)}
-          checked={settings.wantsPaper}
-          onChange={onPaperMailChange}
         />
       </Stack>
     </NotificationSettingsCard>

@@ -23,8 +23,11 @@ const UserProfile = () => {
         marginBottom={[4, 8]}
         title={formatMessage(m.mySettingsNotifications)}
         intro={formatMessage(mNotifications.intro)}
-        serviceProviderTooltip={formatMessage(m.userProfileTooltip)}
-        serviceProviderSlug={ISLANDIS_SLUG}
+        serviceProvider={{
+          slug: ISLANDIS_SLUG,
+          tooltip: formatMessage(m.userProfileTooltip),
+        }}
+        desktopContentSpan="10/12"
       />
       {isActor ? (
         <ActorProfileNotificationSettings />

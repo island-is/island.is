@@ -15,16 +15,17 @@ import { StudentTrack } from '../models/studentTrack.model'
 import { UniversityCareersService } from '../universityCareers.service'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { StudentInfoByUniversityInput } from '../dto/studentInfoByUniversity.input'
-import { Locale } from '@island.is/shared/types'
 import { AUDIT_NAMESPACE } from '../constants'
 import { StudentFile } from '../models/studentFile.model'
-import { mapEnumToType } from '../mapper'
-import { isDefined } from '@island.is/shared/utils'
+import { isDefined, maskString } from '@island.is/shared/utils'
+import { CodeOwner } from '@island.is/nest/core'
+import { CodeOwners } from '@island.is/shared/constants'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.education)
 @Resolver(() => StudentTrack)
 @Audit({ namespace: AUDIT_NAMESPACE })
+@CodeOwner(CodeOwners.Hugsmidjan)
 export class StudentTrackResolver {
   constructor(
     private service: UniversityCareersService,
@@ -50,9 +51,9 @@ export class StudentTrackResolver {
     }
     const student = await this.service.getStudentTrack(
       user,
-      input.universityId,
       input.trackNumber,
-      input.locale as Locale,
+      input.universityId,
+      input.locale,
     )
 
     if (!student) {
@@ -65,10 +66,10 @@ export class StudentTrackResolver {
   }
 
   @ResolveField('files', () => [StudentFile])
-  resolveFiles(
+  async resolveFiles(
     @CurrentUser() user: User,
     @Parent() track: StudentTrack,
-  ): Array<StudentFile> {
+  ): Promise<Array<StudentFile>> {
     this.auditService.audit({
       auth: user,
       namespace: AUDIT_NAMESPACE,
@@ -83,20 +84,23 @@ export class StudentTrackResolver {
       return []
     }
 
-    const { institution, trackNumber } = track.transcript
+    const { institution } = track.transcript
 
-    return track.files
-      .map((f) => {
-        const type = mapEnumToType(f.type)
-        if (!type) {
-          this.logger.warn(`Invalid file type while downloading student file`)
+    const files = await Promise.all(
+      track.files.map(async (f) => {
+        if (!f.url) {
+          this.logger.warn(`Student file has no URL, skipping`)
           return null
         }
+
+        const url = await maskString(f.url, user.nationalId)
         return {
           ...f,
-          downloadServiceURL: `${this.downloadServiceConfig.baseUrl}/download/v1/education/graduation/${f.locale}/${institution.shortId}/${trackNumber}/${type}`,
+          downloadServiceURL: `${this.downloadServiceConfig.baseUrl}/download/v1/education/graduation/${institution.shortId}/${url}`,
         }
-      })
-      .filter(isDefined)
+      }),
+    )
+
+    return files.filter(isDefined)
   }
 }

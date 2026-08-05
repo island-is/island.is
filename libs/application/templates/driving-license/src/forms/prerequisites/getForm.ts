@@ -1,20 +1,19 @@
 import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { TheIcelandicPoliceLogo } from '@island.is/application/assets/institution-logos'
+import { DistrictCommissionersLogo } from '@island.is/application/assets/institution-logos'
 import { m } from '../../lib/messages'
 import { sectionFakeData } from './sectionFakeData'
 import { sectionExternalData } from './sectionExternalData'
 import { sectionApplicationFor } from './sectionApplicationFor'
 import { sectionRequirements } from './sectionRequirements'
-import { sectionExistingApplication } from './sectionExistingApplication'
-import { sectionAdvancedLicenseSelection } from './sectionAdvancedLicenseSelection'
 
 interface DrivingLicenseFormConfig {
   allowFakeData?: boolean
   allowPickLicense?: boolean
   allowBELicense?: boolean
   allow65Renewal?: boolean
-  allowAdvanced?: boolean
+  allow65RenewalRedesign?: boolean
+  allowBTempRedesign?: boolean
 }
 
 export const getForm = ({
@@ -22,11 +21,12 @@ export const getForm = ({
   allowPickLicense = false,
   allowBELicense = false,
   allow65Renewal = false,
-  allowAdvanced = false,
+  allow65RenewalRedesign = false,
+  allowBTempRedesign = false,
 }: DrivingLicenseFormConfig): Form =>
   buildForm({
     id: 'DrivingLicenseApplicationPrerequisitesForm',
-    logo: TheIcelandicPoliceLogo,
+    logo: DistrictCommissionersLogo,
     mode: FormModes.DRAFT,
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,
@@ -37,18 +37,10 @@ export const getForm = ({
         children: [
           ...(allowFakeData ? [sectionFakeData] : []),
           sectionExternalData,
-          sectionExistingApplication,
           ...(allowPickLicense
-            ? [
-                sectionApplicationFor(
-                  allowBELicense,
-                  allow65Renewal,
-                  allowAdvanced,
-                ),
-              ]
+            ? [sectionApplicationFor(allowBELicense, allow65Renewal)]
             : []),
-          ...(allowAdvanced ? [sectionAdvancedLicenseSelection] : []),
-          sectionRequirements,
+          sectionRequirements(allow65RenewalRedesign, allowBTempRedesign),
         ],
       }),
       buildSection({

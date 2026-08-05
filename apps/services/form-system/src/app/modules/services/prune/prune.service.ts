@@ -66,7 +66,11 @@ export class PruneService {
                     if (Array.isArray(keys)) {
                       await Promise.all(
                         keys.map((key) =>
-                          this.fileService.deleteFile(key, value.id),
+                          this.fileService.deleteFile(
+                            key,
+                            value.id,
+                            transaction,
+                          ),
                         ),
                       )
                     }
@@ -95,7 +99,11 @@ export class PruneService {
                     if (Array.isArray(keys)) {
                       await Promise.all(
                         keys.map((key) =>
-                          this.fileService.deleteFile(key, value.id),
+                          this.fileService.deleteFile(
+                            key,
+                            value.id,
+                            transaction,
+                          ),
                         ),
                       )
                     }

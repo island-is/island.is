@@ -1,18 +1,22 @@
-import { NationalRegistrySpouse } from '@island.is/api/schema'
 import { EMAIL_REGEX, YES, getValueViaPath } from '@island.is/application/core'
-import {
-  Application,
-  ExternalData,
-  FormValue,
-} from '@island.is/application/types'
+import { Application, FormValue } from '@island.is/application/types'
 import { InheritanceReportInfo } from '@island.is/clients/syslumenn'
 import { DebtTypes as ClientDebtType } from '@island.is/clients/syslumenn'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { MessageDescriptor } from 'react-intl'
+import { sanitize as sanitizeNationalId } from 'kennitala'
 import type { Answers } from '../../types'
 import { DebtTypes } from '../../types'
 import { PrePaidInheritanceOptions } from '../constants'
 import { InheritanceReport } from '../dataSchema'
+
+export const nationalIdsMatch = (
+  id1: string | undefined | null,
+  id2: string | undefined | null,
+): boolean => {
+  if (!id1 || !id2) return false
+  return sanitizeNationalId(id1) === sanitizeNationalId(id2)
+}
 
 export const currencyStringToNumber = (str: string) => {
   if (!str) {
@@ -68,16 +72,6 @@ export const parseDebtType = (debtType: ClientDebtType) => {
     default:
       return DebtTypes.OtherDebts
   }
-}
-
-export const getSpouseFromExternalData = (
-  externalData: ExternalData,
-): NationalRegistrySpouse | undefined => {
-  const spouse = getValueViaPath(externalData, 'maritalStatus.data', {}) as
-    | NationalRegistrySpouse
-    | undefined
-
-  return spouse
 }
 
 export const getPrePaidOverviewSectionsToDisplay = (

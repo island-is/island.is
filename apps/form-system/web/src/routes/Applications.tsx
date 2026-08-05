@@ -1,5 +1,6 @@
 import { useLazyQuery, useMutation } from '@apollo/client'
 import { FormSystemApplication } from '@island.is/api/schema'
+import { ApplicationStatus } from '@island.is/form-system/enums'
 import {
   CREATE_APPLICATION,
   DELETE_APPLICATION,
@@ -29,7 +30,9 @@ export const Applications = () => {
   const navigate = useNavigate()
   const [applications, setApplications] = useState<FormSystemApplication[]>([])
   const [loginAllowed, setLoginAllowed] = useState(true)
+  const [hasRequiredDelegation, setHasRequiredDelegation] = useState(true)
   const [isValidSlug, setIsValidSlug] = useState(true)
+  const [createDisabled, setCreateDisabled] = useState(false)
   const [createApplicationMutation] = useMutation(CREATE_APPLICATION)
 
   const { formatMessage } = useIntl()
@@ -39,6 +42,7 @@ export const Applications = () => {
   })
 
   const createApplication = useCallback(async () => {
+    setCreateDisabled(true)
     try {
       const app = await createApplicationMutation({
         variables: {
@@ -49,6 +53,10 @@ export const Applications = () => {
       })
       if (app.data?.createFormSystemApplication?.isLoginTypeAllowed === false) {
         setLoginAllowed(false)
+      } else if (
+        app.data?.createFormSystemApplication?.hasRequiredDelegation === false
+      ) {
+        setHasRequiredDelegation(false)
       } else if (app.data?.createFormSystemApplication?.application?.id) {
         navigate(
           `../${slug}/${app.data.createFormSystemApplication.application.id}`,
@@ -57,6 +65,8 @@ export const Applications = () => {
     } catch (error) {
       console.error('Error creating application:', error)
       return null
+    } finally {
+      setCreateDisabled(false)
     }
   }, [createApplicationMutation, slug, navigate])
 
@@ -78,6 +88,10 @@ export const Applications = () => {
         setLoginAllowed(false)
         return null
       }
+      if (dto?.hasRequiredDelegation === false) {
+        setHasRequiredDelegation(false)
+        return null
+      }
       return dto
     } catch (error) {
       console.error('Error fetching applications:', error)
@@ -91,10 +105,19 @@ export const Applications = () => {
       const responseDto = await fetchApplications()
       if (cancelled) return
 
-      const apps = responseDto?.applications || []
+      const apps: FormSystemApplication[] = responseDto?.applications || []
       if (apps.length > 0) {
-        setApplications(apps)
-      } else if (loginAllowed !== false) {
+        setApplications(
+          apps.filter(
+            (app) =>
+              ![
+                ApplicationStatus.COMPLETED,
+                ApplicationStatus.REJECTED,
+                ApplicationStatus.APPROVED,
+              ].includes(app.status as string),
+          ),
+        )
+      } else if (loginAllowed !== false && hasRequiredDelegation !== false) {
         await createApplication()
         if (cancelled) return
       }
@@ -105,7 +128,13 @@ export const Applications = () => {
     return () => {
       cancelled = true
     }
-  }, [slug, createApplication, fetchApplications, loginAllowed])
+  }, [
+    slug,
+    createApplication,
+    fetchApplications,
+    loginAllowed,
+    hasRequiredDelegation,
+  ])
 
   const [deleteApplicationMutation] = useMutation(DELETE_APPLICATION)
 
@@ -147,6 +176,16 @@ export const Applications = () => {
     )
   }
 
+  if (!hasRequiredDelegation) {
+    return (
+      <ErrorShell
+        title={formatMessage(m.delegationRequired)}
+        subTitle={formatMessage(m.applicationRequiresDelegation)}
+        description=""
+      />
+    )
+  }
+
   return (
     <>
       <Box
@@ -156,7 +195,11 @@ export const Applications = () => {
         marginBottom={4}
       >
         <Text variant="h1">{formatMessage(m.yourApplications)}</Text>
-        <Button variant="primary" onClick={createApplication}>
+        <Button
+          variant="primary"
+          onClick={createApplication}
+          disabled={createDisabled}
+        >
           {formatMessage(m.newApplication)}
         </Button>
       </Box>

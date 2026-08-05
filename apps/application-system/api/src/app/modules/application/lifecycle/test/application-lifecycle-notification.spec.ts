@@ -1,17 +1,13 @@
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { FileService } from '@island.is/application/api/files'
-import {
-  CreateNotificationResponse,
-  NotificationsApi,
-} from '@island.is/clients/user-notification'
+import { NotificationsApi } from '@island.is/clients/user-notification'
 import { Test } from '@nestjs/testing'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
-import { TestApp } from '@island.is/testing/nest'
 import {
   ApplicationTypes,
+  ApplicationStatus,
   PruningApplication,
 } from '@island.is/application/types'
-
 import { ApplicationLifeCycleService } from '../application-lifecycle.service'
 import { ApplicationService } from '@island.is/application/api/core'
 import { HistoryService } from '@island.is/application/api/history'
@@ -65,15 +61,17 @@ describe('ApplicationLifeCycleService', () => {
   })
 
   describe('preparePrunedNotification', () => {
-    it('should return notification when all required fields are present', async () => {
+    it('should return notification when all required fields are present and no applicantActors are present', async () => {
       const mockApplication = {
         id: '123',
-        typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
-        state: 'draft',
-        applicant: 'user123',
+        attachments: [],
         answers: {},
         externalData: {},
-        attachments: [],
+        typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
+        state: 'draft',
+        status: ApplicationStatus.DRAFT,
+        applicant: 'user123',
+        applicantActors: [],
       }
 
       const mockTemplate = {
@@ -84,8 +82,10 @@ describe('ApplicationLifeCycleService', () => {
                 lifecycle: {
                   shouldBePruned: true,
                   pruneMessage: {
-                    externalBody: 'external message',
-                    internalBody: 'internal message',
+                    args: [
+                      { key: 'externalBody', value: 'external message' },
+                      { key: 'internalBody', value: 'internal message' },
+                    ],
                     notificationTemplateId: 'template123',
                   },
                 },
@@ -101,20 +101,100 @@ describe('ApplicationLifeCycleService', () => {
 
       const result = await service['preparePrunedNotification'](mockApplication)
 
-      expect(result).toEqual({
-        recipient: 'user123',
-        templateId: 'template123',
-        args: [
-          {
-            key: 'externalBody',
-            value: 'external message',
+      expect(result).toEqual([
+        {
+          recipient: 'user123',
+          templateId: 'template123',
+          args: [
+            {
+              key: 'externalBody',
+              value: 'external message',
+            },
+            {
+              key: 'internalBody',
+              value: 'internal message',
+            },
+          ],
+        },
+      ])
+    })
+
+    it('should return notifications when all required fields are present and applicantActors are present', async () => {
+      const mockApplication = {
+        id: '123',
+        typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
+        state: 'draft',
+        status: ApplicationStatus.DRAFT,
+        applicant: 'user123',
+        answers: {},
+        externalData: {},
+        attachments: [],
+        applicantActors: ['user345', 'user678'],
+      }
+
+      const mockTemplate = {
+        stateMachineConfig: {
+          states: {
+            draft: {
+              meta: {
+                lifecycle: {
+                  shouldBePruned: true,
+                  pruneMessage: {
+                    args: [
+                      { key: 'externalBody', value: 'external message' },
+                      { key: 'internalBody', value: 'internal message' },
+                    ],
+                    notificationTemplateId: 'template123',
+                  },
+                },
+              },
+            },
           },
-          {
-            key: 'internalBody',
-            value: 'internal message',
+        },
+      }
+
+      ;(getApplicationTemplateByTypeId as jest.Mock).mockResolvedValue(
+        mockTemplate,
+      )
+
+      const result = await service['preparePrunedNotification'](mockApplication)
+
+      expect(result).toEqual([
+        {
+          recipient: 'user345',
+          templateId: 'template123',
+          onBehalfOf: {
+            nationalId: 'user123',
           },
-        ],
-      })
+          args: [
+            {
+              key: 'externalBody',
+              value: 'external message',
+            },
+            {
+              key: 'internalBody',
+              value: 'internal message',
+            },
+          ],
+        },
+        {
+          recipient: 'user678',
+          templateId: 'template123',
+          onBehalfOf: {
+            nationalId: 'user123',
+          },
+          args: [
+            {
+              key: 'externalBody',
+              value: 'external message',
+            },
+            {
+              key: 'internalBody',
+              value: 'internal message',
+            },
+          ],
+        },
+      ])
     })
 
     it('should handle function-based pruneMessage', async () => {
@@ -122,10 +202,12 @@ describe('ApplicationLifeCycleService', () => {
         id: '123',
         typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
         state: 'draft',
+        status: ApplicationStatus.DRAFT,
         applicant: 'user123',
         answers: {},
         externalData: {},
         attachments: [],
+        applicantActors: [],
       }
 
       const mockTemplate = {
@@ -136,8 +218,16 @@ describe('ApplicationLifeCycleService', () => {
                 lifecycle: {
                   shouldBePruned: true,
                   pruneMessage: (app: PruningApplication) => ({
-                    externalBody: `external message for ${app.id}`,
-                    internalBody: `internal message for ${app.id}`,
+                    args: [
+                      {
+                        key: 'externalBody',
+                        value: `external message for ${app.id}`,
+                      },
+                      {
+                        key: 'internalBody',
+                        value: `internal message for ${app.id}`,
+                      },
+                    ],
                     notificationTemplateId: 'template123',
                   }),
                 },
@@ -153,20 +243,22 @@ describe('ApplicationLifeCycleService', () => {
 
       const result = await service['preparePrunedNotification'](mockApplication)
 
-      expect(result).toEqual({
-        recipient: 'user123',
-        templateId: 'template123',
-        args: [
-          {
-            key: 'externalBody',
-            value: 'external message for 123',
-          },
-          {
-            key: 'internalBody',
-            value: 'internal message for 123',
-          },
-        ],
-      })
+      expect(result).toEqual([
+        {
+          recipient: 'user123',
+          templateId: 'template123',
+          args: [
+            {
+              key: 'externalBody',
+              value: 'external message for 123',
+            },
+            {
+              key: 'internalBody',
+              value: 'internal message for 123',
+            },
+          ],
+        },
+      ])
     })
 
     it('should return null when required fields are missing', async () => {
@@ -174,10 +266,12 @@ describe('ApplicationLifeCycleService', () => {
         id: '123',
         typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
         state: 'draft',
+        status: ApplicationStatus.DRAFT,
         applicant: 'user123',
         answers: {},
         externalData: {},
         attachments: [],
+        applicantActors: [],
       }
 
       const mockTemplate = {
@@ -205,7 +299,7 @@ describe('ApplicationLifeCycleService', () => {
   })
 })
 
-describe('ApplicationLifeCycleService', () => {
+describe('ApplicationLifeCycleService - Invoice handling', () => {
   let service: ApplicationLifeCycleService
   let notificationApi: jest.Mocked<NotificationsApi>
   let mockLogger: jest.Mocked<any>
@@ -322,10 +416,12 @@ describe('ApplicationLifeCycleService', () => {
         id: '123',
         typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
         state: 'draft',
+        status: ApplicationStatus.DRAFT,
         applicant: 'user123',
         answers: {},
         externalData: {},
         attachments: [],
+        applicantActors: [],
       }
 
       const mockTemplate = {

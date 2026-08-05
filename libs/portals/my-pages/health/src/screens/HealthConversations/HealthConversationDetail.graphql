@@ -1,0 +1,98 @@
+fragment HealthConversationTextContent on HealthDirectorateHealthConversationTextContent {
+  text
+}
+
+fragment HealthConversationSegmentedContent on HealthDirectorateHealthConversationSegmentedContent {
+  segments {
+    type
+    text
+    label
+    href
+  }
+}
+
+fragment HealthConversationVideoContent on HealthDirectorateHealthConversationVideoContent {
+  url
+  description
+  appointmentDate
+  appointmentHostName
+  isCanceled
+}
+
+fragment HealthConversationMessage on HealthDirectorateHealthConversationEntry {
+  id
+  direction
+  messageSentAt
+  senderGroupName
+  content {
+    __typename
+    ...HealthConversationTextContent
+    ...HealthConversationSegmentedContent
+    ...HealthConversationVideoContent
+  }
+  attachments {
+    id
+    fileName
+    description
+    downloadServiceURL
+  }
+}
+
+query GetHealthConversationDetail($id: ID!) {
+  healthDirectorateHealthConversation(id: $id) {
+    id
+    title
+    status
+    isStarred
+    isArchived
+    patientCanReply
+    isRead
+    organization {
+      ...HealthConversationOrganizationFragment
+    }
+    messages {
+      ...HealthConversationMessage
+    }
+  }
+}
+
+mutation MarkHealthConversationAsRead(
+  $input: HealthDirectorateConversationIdInput!
+) {
+  healthDirectorateMarkHealthConversationAsRead(input: $input)
+}
+
+mutation StarHealthConversationDetail(
+  $input: HealthDirectorateConversationIdInput!
+) {
+  healthDirectorateStarHealthConversation(input: $input)
+}
+
+mutation UnstarHealthConversationDetail(
+  $input: HealthDirectorateConversationIdInput!
+) {
+  healthDirectorateUnstarHealthConversation(input: $input)
+}
+
+mutation ArchiveHealthConversationDetail(
+  $input: HealthDirectorateConversationIdInput!
+) {
+  healthDirectorateArchiveHealthConversation(input: $input)
+}
+
+mutation UnarchiveHealthConversationDetail(
+  $input: HealthDirectorateConversationIdInput!
+) {
+  healthDirectorateUnarchiveHealthConversation(input: $input)
+}
+
+mutation ReplyToHealthConversation(
+  $input: HealthDirectorateReplyToConversationInput!
+) {
+  healthDirectorateReplyToHealthConversation(input: $input) {
+    id
+    messages {
+      ...HealthConversationMessage
+    }
+  }
+}

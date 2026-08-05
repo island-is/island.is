@@ -5,7 +5,7 @@ import React from 'react'
 import App from 'next/app'
 import { AppProps } from 'next/app'
 import getConfig from 'next/config'
-import { Provider } from 'next-auth/client'
+import { SessionProvider } from 'next-auth/react'
 
 import { ApolloProvider } from '@apollo/client'
 import get from 'lodash/get'
@@ -54,19 +54,20 @@ class Skilavottord extends App<AppProps> {
   }
 
   render() {
-    const { Component, pageProps, router } = this.props
+    const { Component, pageProps } = this.props
 
     return (
-      <Provider
+      <SessionProvider
         session={pageProps.session}
-        options={{ clientMaxAge: 120, basePath: '/app/skilavottord/api/auth' }}
+        basePath="/app/skilavottord/api/auth"
+        refetchInterval={120}
       >
         <ApolloProvider client={initApollo(pageProps.apolloState)}>
           <AppLayout>
             <Component {...pageProps} />
           </AppLayout>
         </ApolloProvider>
-      </Provider>
+      </SessionProvider>
     )
   }
 }

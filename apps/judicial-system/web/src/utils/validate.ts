@@ -4,9 +4,11 @@ import {
   isTrafficViolationIndictmentCount,
 } from '@island.is/judicial-system/types'
 import {
+  AppealCase,
+  AppealCaseRulingDecision,
+  AppealCaseState,
+  AppealDecisionPartyRole,
   Case,
-  CaseAppealRulingDecision,
-  CaseAppealState,
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseType,
@@ -23,6 +25,8 @@ import {
   Victim,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { isNonEmptyArray } from './arrayHelpers'
+import { isCivilClaimantDefendantSelectionValid } from './civilClaimantUtils'
 import { isBusiness } from './utils'
 
 export type Validation =
@@ -60,7 +64,7 @@ const getRegexByValidation = (validation: Validation) => {
       }
     case 'national-id':
       return {
-        regex: /^\d{6}(-?\d{4})?$/,
+        regex: /^\d{6}-?\d{4}$/,
         errorMessage: 'Dæmi: 000000-0000',
       }
     case 'date-of-birth':
@@ -138,24 +142,31 @@ export const validate = (items: ValidateItem[]): IsValid => {
     : { isValid: true, errorMessage: '' }
 }
 
+const isDefendantInvalid = (defendant: Defendant): boolean => {
+  return (
+    (!isBusiness(defendant.nationalId) && !defendant.gender) ||
+    !validate([
+      [
+        defendant.nationalId,
+        defendant.noNationalId ? ['date-of-birth'] : ['empty', 'national-id'],
+      ],
+      [defendant.name, ['empty']],
+      [defendant.address, ['empty']],
+    ]).isValid
+  )
+}
+
+/** Restriction cases only show the first defendant in the UI (police may sync more). */
+const firstDefendantIsInvalid = (workingCase: Case): boolean => {
+  const first = workingCase.defendants?.[0]
+  return Boolean(first && isDefendantInvalid(first))
+}
+
 const someDefendantIsInvalid = (workingCase: Case): boolean => {
   return Boolean(
     workingCase.defendants &&
       workingCase.defendants.length > 0 &&
-      workingCase.defendants.some(
-        (defendant) =>
-          (!isBusiness(defendant.nationalId) && !defendant.gender) ||
-          !validate([
-            [
-              defendant.nationalId,
-              defendant.noNationalId
-                ? ['date-of-birth']
-                : ['empty', 'national-id'],
-            ],
-            [defendant.name, ['empty']],
-            [defendant.address, ['empty']],
-          ]).isValid,
-      ),
+      workingCase.defendants.some((defendant) => isDefendantInvalid(defendant)),
   )
 }
 
@@ -192,6 +203,10 @@ export const isRegistrationStepValid = (
   )
 }
 
+/**
+ * Restriction / travel-ban prosecutor defendant step. The form only edits
+ * `defendants[0]`; Police system may sync additional defendants, so only the first is validated here.
+ */
 export const isDefendantStepValidRC = (
   workingCase: Case,
   policeCaseNumbers?: string[] | null,
@@ -199,7 +214,8 @@ export const isDefendantStepValidRC = (
   return Boolean(
     policeCaseNumbers &&
       policeCaseNumbers.length > 0 &&
-      !someDefendantIsInvalid(workingCase) &&
+      (workingCase.defendants?.length ?? 0) > 0 &&
+      !firstDefendantIsInvalid(workingCase) &&
       (workingCase.defenderName
         ? Boolean(workingCase.requestSharedWithDefender)
         : true) &&
@@ -218,7 +234,8 @@ export const isDefendantStepValidRC = (
 
 export const isDefendantStepValidIC = (workingCase: Case): boolean => {
   return Boolean(
-    !someDefendantIsInvalid(workingCase) &&
+    (workingCase.defendants?.length ?? 0) > 0 &&
+      !someDefendantIsInvalid(workingCase) &&
       areVictimsValid(workingCase.victims) &&
       (workingCase.defenderName
         ? Boolean(workingCase.requestSharedWithDefender)
@@ -241,6 +258,7 @@ export const isDefendantStepValidIndictments = (workingCase: Case): boolean => {
           !workingCase.indictmentSubtypes[n] ||
           workingCase.indictmentSubtypes[n].length === 0,
       ) &&
+      (workingCase.defendants?.length ?? 0) > 0 &&
       !someDefendantIsInvalid(workingCase) &&
       validate([
         [workingCase.type, ['empty']],
@@ -280,9 +298,12 @@ export const isHearingArrangementsStepValidIC = (
 export const isProcessingStepValidIndictments = (
   workingCase: Case,
 ): boolean => {
-  const defendantsAreValid = workingCase.defendants?.every(
-    (defendant) => validate([[defendant.defendantPlea, ['empty']]]).isValid,
-  )
+  const hasAtLeastOneDefendant = (workingCase.defendants?.length ?? 0) > 0
+  const defendantsAreValid =
+    hasAtLeastOneDefendant &&
+    workingCase.defendants?.every(
+      (defendant) => validate([[defendant.defendantPlea, ['empty']]]).isValid,
+    )
 
   const hasCivilClaimSelected =
     workingCase.hasCivilClaims !== null &&
@@ -292,6 +313,11 @@ export const isProcessingStepValidIndictments = (
     ? workingCase.civilClaimants?.every(
         (civilClaimant) =>
           civilClaimant.name &&
+          (civilClaimant.policeCaseNumbers?.length ?? 0) > 0 &&
+          isCivilClaimantDefendantSelectionValid(
+            civilClaimant,
+            workingCase.defendants ?? [],
+          ) &&
           validate([
             [
               civilClaimant.nationalId,
@@ -311,6 +337,95 @@ export const isProcessingStepValidIndictments = (
   )
 }
 
+const hasIndictmentCountOffenses = (count: IndictmentCount) =>
+  Boolean(count.offenses && count.offenses.length > 0)
+
+const isSpeedingIndictmentCount = (count: IndictmentCount) =>
+  count.offenses?.some((o) => o.offense === IndictmentCountOffense.SPEEDING) ??
+  false
+
+const isIndictmentCountTrafficViolation = (
+  count: IndictmentCount,
+  workingCase: Case,
+) =>
+  isTrafficViolationIndictmentCount(
+    count.indictmentCountSubtypes,
+    count.policeCaseNumber
+      ? workingCase.indictmentSubtypes?.[count.policeCaseNumber]
+      : undefined,
+  )
+
+type IndictmentCountFieldCheck = {
+  isMissing: (count: IndictmentCount) => boolean
+  warningMessage: string
+}
+
+const indictmentCountFieldChecks = (
+  workingCase: Case,
+): IndictmentCountFieldCheck[] => {
+  const isTrafficViolation = (count: IndictmentCount) =>
+    isIndictmentCountTrafficViolation(count, workingCase)
+
+  return [
+    {
+      isMissing: (count) => !count.policeCaseNumber,
+      warningMessage: 'Vantar LÖKE málsnúmer',
+    },
+    {
+      isMissing: (count) =>
+        isTrafficViolation(count) && !hasIndictmentCountOffenses(count),
+      warningMessage: 'Vantar brot',
+    },
+    {
+      isMissing: (count) =>
+        isTrafficViolation(count) && !count.vehicleRegistrationNumber,
+      warningMessage: 'Vantar skráningarnúmer ökutækis',
+    },
+    {
+      isMissing: (count) => isTrafficViolation(count) && !count.lawsBroken,
+      warningMessage: 'Vantar lagaákvæði',
+    },
+    {
+      isMissing: (count) => !count.incidentDescription,
+      warningMessage: 'Vantar atvikalýsingu',
+    },
+    {
+      isMissing: (count) => !count.legalArguments,
+      warningMessage: 'Vantar heimfærslu',
+    },
+    {
+      isMissing: (count) =>
+        isTrafficViolation(count) &&
+        isSpeedingIndictmentCount(count) &&
+        !count.recordedSpeed,
+      warningMessage: 'Vantar mældan hraða',
+    },
+    {
+      isMissing: (count) =>
+        isTrafficViolation(count) &&
+        isSpeedingIndictmentCount(count) &&
+        !count.speedLimit,
+      warningMessage: 'Vantar hámarkshraða',
+    },
+  ]
+}
+
+export const getIndictmentCountWarningMessage = (
+  indictmentCount: IndictmentCount,
+  workingCase: Case,
+): string | undefined =>
+  indictmentCountFieldChecks(workingCase).find((check) =>
+    check.isMissing(indictmentCount),
+  )?.warningMessage
+
+export const isIndictmentCountComplete = (
+  indictmentCount: IndictmentCount,
+  workingCase: Case,
+): boolean =>
+  !indictmentCountFieldChecks(workingCase).some((check) =>
+    check.isMissing(indictmentCount),
+  )
+
 export const isIndictmentStepValid = (workingCase: Case): boolean => {
   const hasValidDemands = Boolean(
     workingCase.demands &&
@@ -321,49 +436,12 @@ export const isIndictmentStepValid = (workingCase: Case): boolean => {
     return false
   }
 
-  const isValidSpeedingIndictmentCount = (indictmentCount: IndictmentCount) => {
-    return indictmentCount.offenses?.some(
-      (o) => o.offense === IndictmentCountOffense.SPEEDING,
-    )
-      ? Boolean(indictmentCount.recordedSpeed) &&
-          Boolean(indictmentCount.speedLimit)
-      : true
-  }
-
-  const hasOffenses = (indictmentCount: IndictmentCount) => {
-    return Boolean(
-      indictmentCount.offenses && indictmentCount.offenses?.length > 0,
-    )
-  }
-
-  const isValidTrafficViolation = (indictmentCount: IndictmentCount) =>
-    Boolean(indictmentCount.policeCaseNumber) &&
-    hasOffenses(indictmentCount) &&
-    Boolean(indictmentCount.vehicleRegistrationNumber) &&
-    Boolean(indictmentCount.lawsBroken) &&
-    Boolean(indictmentCount.incidentDescription) &&
-    Boolean(indictmentCount.legalArguments) &&
-    isValidSpeedingIndictmentCount(indictmentCount)
-
-  const isValidNonTrafficViolation = (indictmentCount: IndictmentCount) =>
-    Boolean(indictmentCount.incidentDescription) &&
-    Boolean(indictmentCount.legalArguments)
-
-  const isTrafficViolation = (indictmentCount: IndictmentCount) =>
-    isTrafficViolationIndictmentCount(
-      indictmentCount.indictmentCountSubtypes,
-      indictmentCount.policeCaseNumber &&
-        workingCase.indictmentSubtypes[indictmentCount.policeCaseNumber],
-    )
-
   if (!workingCase.indictmentCounts?.length) {
     return false
   }
 
-  return workingCase.indictmentCounts.every((indictmentCount) =>
-    isTrafficViolation(indictmentCount)
-      ? isValidTrafficViolation(indictmentCount)
-      : isValidNonTrafficViolation(indictmentCount),
+  return workingCase.indictmentCounts.every((count) =>
+    isIndictmentCountComplete(count, workingCase),
   )
 }
 
@@ -526,10 +604,15 @@ export const isSubpoenaStepValid = (
   const defendants = updatedDefendants || workingCase.defendants
 
   const validateDefendants = (defendants?: Defendant[] | null) => {
-    return defendants?.every((defendant) =>
-      defendant.isAlternativeService
-        ? defendant.alternativeServiceDescription
-        : defendant.subpoenaType,
+    const hasAtLeastOneDefendant = (defendants?.length ?? 0) > 0
+    return (
+      hasAtLeastOneDefendant &&
+      (defendants?.every((defendant) =>
+        defendant.isAlternativeService
+          ? defendant.alternativeServiceDescription
+          : defendant.subpoenaType,
+      ) ??
+        false)
     )
   }
 
@@ -542,8 +625,10 @@ export const isSubpoenaStepValid = (
 }
 
 export const isDefenderStepValid = (workingCase: Case): boolean => {
+  const hasAtLeastOneDefendant = isNonEmptyArray(workingCase.defendants)
   const defendantsAreValid = () =>
-    workingCase.defendants?.every((defendant) => {
+    hasAtLeastOneDefendant &&
+    (workingCase.defendants?.every((defendant) => {
       return (
         defendant.defenderChoice === DefenderChoice.WAIVE ||
         defendant.defenderChoice === DefenderChoice.DELAY ||
@@ -555,20 +640,35 @@ export const isDefenderStepValid = (workingCase: Case): boolean => {
           [defendant.defenderPhoneNumber, ['phonenumber']],
         ]).isValid
       )
-    })
+    }) ??
+      false)
 
   return Boolean(workingCase.prosecutor && defendantsAreValid())
 }
 
-export const isCourtSessionValid = (courtSession: CourtSessionResponse) => {
+export const isCourtSessionValid = (
+  courtSession: CourtSessionResponse,
+  workingCase: Case,
+  // Appeal decisions are only required once the (flagged) in-court appeal UI is
+  // live; while it is hidden, an ORDER session can be confirmed without them.
+  appealRulingOrderEnabled: boolean,
+) => {
   return (
     (courtSession.isClosed
       ? courtSession.closedLegalProvisions &&
         courtSession.closedLegalProvisions.length > 0
       : true) &&
     (courtSession.rulingType === CourtSessionRulingType.JUDGEMENT ||
+    courtSession.rulingType === CourtSessionRulingType.DISMISSAL_ORDER ||
     courtSession.rulingType === CourtSessionRulingType.ORDER
       ? !!courtSession.ruling
+      : true) &&
+    (courtSession.rulingType === CourtSessionRulingType.ORDER
+      ? !!courtSession.rulingFileId
+      : true) &&
+    (courtSession.rulingType === CourtSessionRulingType.ORDER &&
+    appealRulingOrderEnabled
+      ? areAppealDecisionsComplete(courtSession, workingCase)
       : true) &&
     (courtSession.isAttestingWitness
       ? courtSession.attestingWitnessId
@@ -582,6 +682,47 @@ export const isCourtSessionValid = (courtSession: CourtSessionResponse) => {
       [courtSession.endDate, ['empty', 'date-format']],
     ]).isValid
   )
+}
+
+// An ORDER court session can only be confirmed once every party - the
+// prosecution, each defendant and each civil claimant - has recorded a
+// decision on the ruling. Mirrors the backend confirm-time validation.
+export const areAppealDecisionsComplete = (
+  courtSession: CourtSessionResponse,
+  workingCase: Case,
+): boolean => {
+  const { rulingFileId } = courtSession
+  if (!rulingFileId) {
+    return false
+  }
+
+  const decided =
+    workingCase.appealDecisions?.filter(
+      (decision) => decision.rulingFileId === rulingFileId && decision.decision,
+    ) ?? []
+
+  const prosecutorDecided = decided.some(
+    (decision) => decision.partyRole === AppealDecisionPartyRole.PROSECUTOR,
+  )
+
+  const defendantsDecided = (workingCase.defendants ?? []).every((defendant) =>
+    decided.some(
+      (decision) =>
+        decision.partyRole === AppealDecisionPartyRole.DEFENDANT &&
+        decision.defendantId === defendant.id,
+    ),
+  )
+
+  const civilClaimantsDecided = (workingCase.civilClaimants ?? []).every(
+    (civilClaimant) =>
+      decided.some(
+        (decision) =>
+          decision.partyRole === AppealDecisionPartyRole.CIVIL_CLAIMANT &&
+          decision.civilClaimantId === civilClaimant.id,
+      ),
+  )
+
+  return prosecutorDecided && defendantsDecided && civilClaimantsDecided
 }
 
 export const isGeneratedIndictmentCourtRecordValid = (workingCase: Case) => {
@@ -665,35 +806,40 @@ export const isAdminUserFormValid = (user: User): boolean => {
   )
 }
 
-export const isCourtOfAppealCaseStepValid = (workingCase: Case): boolean => {
+export const isCourtOfAppealCaseStepValid = (
+  appealCase: AppealCase | undefined | null,
+): boolean => {
   return Boolean(
-    (workingCase.appealState === CaseAppealState.WITHDRAWN ||
-      (workingCase.appealJudge1 &&
-        workingCase.appealJudge2 &&
-        workingCase.appealJudge3 &&
-        workingCase.appealAssistant)) &&
+    (appealCase?.appealState === AppealCaseState.WITHDRAWN ||
+      (appealCase?.appealJudge1 &&
+        appealCase?.appealJudge2 &&
+        appealCase?.appealJudge3 &&
+        appealCase?.appealAssistant)) &&
       validate([
-        [workingCase.appealCaseNumber, ['empty', 'appeal-case-number-format']],
+        [appealCase?.appealCaseNumber, ['empty', 'appeal-case-number-format']],
       ]).isValid,
   )
 }
 
 export const isCourtOfAppealRulingStepFieldsValid = (
-  workingCase: Case,
+  appealCase: AppealCase | undefined | null,
 ): boolean => {
   return Boolean(
-    workingCase.appealRulingDecision &&
-      (workingCase.appealRulingDecision ===
-        CaseAppealRulingDecision.DISCONTINUED ||
-        validate([[workingCase.appealConclusion, ['empty']]]).isValid),
+    appealCase?.appealRulingDecision &&
+      (appealCase.appealRulingDecision ===
+        AppealCaseRulingDecision.DISCONTINUED ||
+        validate([[appealCase.appealConclusion, ['empty']]]).isValid),
   )
 }
 
-export const isCourtOfAppealRulingStepValid = (workingCase: Case): boolean => {
+export const isCourtOfAppealRulingStepValid = (
+  workingCase: Case,
+  appealCase: AppealCase | undefined | null,
+): boolean => {
   return Boolean(
-    isCourtOfAppealRulingStepFieldsValid(workingCase) &&
-      (workingCase.appealRulingDecision ===
-        CaseAppealRulingDecision.DISCONTINUED ||
+    isCourtOfAppealRulingStepFieldsValid(appealCase) &&
+      (appealCase?.appealRulingDecision ===
+        AppealCaseRulingDecision.DISCONTINUED ||
         workingCase.caseFiles?.some(
           (file) => file.category === CaseFileCategory.APPEAL_RULING,
         )),
@@ -704,7 +850,10 @@ export const isCourtOfAppealWithdrawnCaseStepValid = (
   workingCase: Case,
 ): boolean => {
   return validate([
-    [workingCase.appealCaseNumber, ['empty', 'appeal-case-number-format']],
+    [
+      workingCase.appealCase?.appealCaseNumber,
+      ['empty', 'appeal-case-number-format'],
+    ],
   ]).isValid
 }
 

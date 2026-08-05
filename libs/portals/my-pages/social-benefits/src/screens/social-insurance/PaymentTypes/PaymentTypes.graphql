@@ -1,0 +1,14 @@
+query GetPaymentTypes($locale: String!) {
+  socialInsurancePaymentTypes(locale: $locale) {
+    name
+    dateFrom
+    dateTo
+  }
+}
+
+query GetChildBenefits {
+  socialInsuranceChildBenefits {
+    name
+    nationalId
+  }
+}

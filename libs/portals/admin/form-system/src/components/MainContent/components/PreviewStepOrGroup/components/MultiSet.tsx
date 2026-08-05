@@ -26,7 +26,7 @@ export const MultiSet = ({ screen }: Props) => {
       {multiInput.map((inputArray, index) => (
         <div key={index}>
           {inputArray.map((i) => (
-            <Preview key={i.id} data={i} />
+            <Preview key={i.id} data={i} screenOrSection={true} />
           ))}
         </div>
       ))}
@@ -38,7 +38,7 @@ export const MultiSet = ({ screen }: Props) => {
       >
         <Box
           width="half"
-          style={{ width: '50%', height: '50px', cursor: 'pointer' }}
+          style={{ height: '50px', cursor: 'pointer' }}
           cursor="pointer"
           border="standard"
           borderRadius="standard"

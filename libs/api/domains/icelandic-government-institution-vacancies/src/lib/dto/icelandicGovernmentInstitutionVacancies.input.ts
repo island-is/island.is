@@ -8,4 +8,10 @@ export class IcelandicGovernmentInstitutionVacanciesInput {
 
   @Field({ nullable: true })
   institution?: string
+
+  @Field(() => Boolean, { nullable: true })
+  useNewApiOverride?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  useOldApiOverride?: boolean
 }

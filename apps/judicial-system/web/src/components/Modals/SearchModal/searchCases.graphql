@@ -3,6 +3,7 @@ query SearchCases($input: SearchCasesQueryInput!) {
     rowCount
     rows {
       caseId
+      appealCaseId
       caseType
       policeCaseNumbers
       courtCaseNumber
@@ -14,6 +15,7 @@ query SearchCases($input: SearchCasesQueryInput!) {
       appealCaseNumber
       defendantNationalId
       defendantName
+      caseTableTypes
     }
   }
 }

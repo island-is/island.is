@@ -14,6 +14,10 @@ class FiltersInput {
   @Field(() => Boolean, { nullable: true })
   @IsOptional()
   scopeCheck?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  @IsOptional()
+  showPruned?: boolean
 }
 
 @InputType()

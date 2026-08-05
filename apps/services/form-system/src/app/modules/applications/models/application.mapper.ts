@@ -1,17 +1,31 @@
+import {
+  ApplicationEvents,
+  ApplicationStatus,
+  FieldTypesEnum,
+  SectionTypes,
+} from '@island.is/form-system/shared'
+import type { Locale } from '@island.is/shared/types'
 import { Injectable } from '@nestjs/common'
 import { Dependency } from '../../../dataTypes/dependency.model'
 import { FieldDto } from '../../fields/models/dto/field.dto'
+import { Field } from '../../fields/models/field.model'
 import { Form } from '../../forms/models/form.model'
 import { ListItemDto } from '../../listItems/models/dto/listItem.dto'
 import { ScreenDto } from '../../screens/models/dto/screen.dto'
 import { SectionDto } from '../../sections/models/dto/section.dto'
 import { Application } from './application.model'
+import { ApplicationAdminDto } from './dto/admin/applicationAdmin.dto'
 import { ApplicationDto } from './dto/application.dto'
-import { ValueDto } from './dto/value.dto'
-import { ApplicationStatus, SectionTypes } from '@island.is/form-system/shared'
+import {
+  ApplicationJsonDto,
+  ApplicationJsonFieldDto,
+  ApplicationJsonFieldSettingsDto,
+  ApplicationJsonValueDto,
+} from './dto/application.json.dto'
 import { MyPagesApplicationResponseDto } from './dto/myPagesApplication.response.dto'
-import { Field } from '../../fields/models/field.model'
-import type { Locale } from '@island.is/shared/types'
+import { ValueDto } from './dto/value.dto'
+import { SectionInfo } from '../../../../app/dataTypes/sectionInfo.model'
+import { LanguageType } from '../../../../app/dataTypes/languageType.model'
 
 @Injectable()
 export class ApplicationMapper {
@@ -19,8 +33,23 @@ export class ApplicationMapper {
     form: Form,
     application: Application,
   ): ApplicationDto {
+    const normalizedSectionInfo: SectionInfo = {
+      title: form.sectionInfo?.title ?? { is: '', en: '' },
+      confirmationHeader: form.sectionInfo?.confirmationHeader ?? {
+        is: '',
+        en: '',
+      },
+      confirmationText: form.sectionInfo?.confirmationText ?? {
+        is: '',
+        en: '',
+      },
+      additionalInfo: form.sectionInfo?.additionalInfo ?? [],
+      additionalPremises: form.sectionInfo?.additionalPremises ?? [],
+    }
+
     const applicationDto: ApplicationDto = {
       id: application.id,
+      nationalId: application.nationalId,
       isTest: application.isTest,
       dependencies: application.dependencies,
       completed: application.completed,
@@ -32,8 +61,8 @@ export class ApplicationMapper {
       draftFinishedSteps: application.draftFinishedSteps,
       draftTotalSteps: application.draftTotalSteps,
       zendeskInternal: form.zendeskInternal,
+      useValidate: form.useValidate,
       submissionServiceUrl: form.submissionServiceUrl,
-      validationServiceUrl: form.validationServiceUrl,
       allowProceedOnValidationFail: form.allowProceedOnValidationFail,
       hasPayment: form.hasPayment,
       hasSummaryScreen: form.hasSummaryScreen,
@@ -41,7 +70,8 @@ export class ApplicationMapper {
       events: application.events,
       sections: [],
       certificationTypes: form.formCertificationTypes,
-      completedSectionInfo: form.completedSectionInfo,
+      sectionInfo: normalizedSectionInfo,
+      organizationNationalId: form.organizationNationalId,
     }
 
     form.sections
@@ -69,11 +99,18 @@ export class ApplicationMapper {
           screens: section.screens?.map((screen) => {
             return {
               id: screen.id,
+              identifier: screen.identifier,
               sectionId: screen.sectionId,
               name: screen.name,
               displayOrder: screen.displayOrder,
-              multiset: screen.multiset,
-              callRuleset: screen.callRuleset,
+              multiMax: screen.multiMax,
+              isMulti: screen.isMulti,
+              shouldValidate: form.useValidate && screen.shouldValidate,
+              screenError: {
+                hasError: false,
+                title: { is: '', en: '' },
+                message: { is: '', en: '' },
+              },
               isHidden: this.isHidden(
                 screen.id,
                 application.dependencies,
@@ -84,6 +121,7 @@ export class ApplicationMapper {
               fields: screen.fields?.map((field) => {
                 return {
                   id: field.id,
+                  identifier: field.identifier,
                   screenId: field.screenId,
                   name: field.name,
                   displayOrder: field.displayOrder,
@@ -151,6 +189,77 @@ export class ApplicationMapper {
       }),
     }
     return applicationMinimalDto
+  }
+
+  mapApplicationDtoToApplicationJsonDto(
+    applicationDto: ApplicationDto,
+  ): ApplicationJsonDto {
+    const fields: ApplicationJsonFieldDto[] = (applicationDto.sections ?? [])
+      .flatMap((section) => section.screens ?? [])
+      .flatMap((screen) => this.mapScreenToApplicationJsonFields(screen))
+
+    const jsonDto = new ApplicationJsonDto()
+    jsonDto.id = applicationDto.id ?? ''
+    jsonDto.organizationNationalId = applicationDto.organizationNationalId ?? ''
+    jsonDto.slug = applicationDto.slug ?? ''
+    jsonDto.isTest = applicationDto.isTest ?? false
+    jsonDto.status = applicationDto.status ?? ''
+    jsonDto.submittedAt = applicationDto.submittedAt ?? null
+    jsonDto.fields = fields
+
+    return jsonDto
+  }
+
+  mapScreenToApplicationJsonFields(
+    screen: ScreenDto,
+  ): ApplicationJsonFieldDto[] {
+    return (screen.fields ?? [])
+      .filter((field) => !field.isHidden)
+      .filter((field) => field.fieldType !== FieldTypesEnum.MESSAGE)
+      .filter((field) => (field.values?.length ?? 0) > 0)
+      .map((field) =>
+        this.mapFieldToApplicationJsonField(
+          field,
+          screen.identifier,
+          screen.name,
+        ),
+      )
+  }
+
+  private mapFieldToApplicationJsonField(
+    field: FieldDto,
+    screenIdentifier: string,
+    screenTitle: LanguageType,
+  ): ApplicationJsonFieldDto {
+    const jsonField = new ApplicationJsonFieldDto()
+    jsonField.identifier = field.identifier
+    jsonField.screenIdentifier = screenIdentifier
+    jsonField.screenTitle = screenTitle
+    jsonField.fieldTitle = field.name
+    jsonField.fieldType = field.fieldType
+
+    const settings = new ApplicationJsonFieldSettingsDto()
+    if (field.fieldType === FieldTypesEnum.NUMBERBOX) {
+      settings.isDecimal = field.fieldSettings?.isDecimal ?? false
+    }
+    if (field.fieldType === FieldTypesEnum.APPLICANT) {
+      settings.applicantType = field.fieldSettings?.applicantType
+    }
+    if (
+      settings.isDecimal !== undefined ||
+      settings.applicantType !== undefined
+    ) {
+      jsonField.fieldSettings = settings
+    }
+
+    jsonField.values = (field.values ?? []).map((value) => {
+      const jsonValue = new ApplicationJsonValueDto()
+      jsonValue.order = value.order
+      jsonValue.json = value.json ?? {}
+      return jsonValue
+    })
+
+    return jsonField
   }
 
   private isHidden(
@@ -239,23 +348,23 @@ export class ApplicationMapper {
           label: app.tagLabel,
           variant: app.tagVariant,
         },
-        deleteButton: false,
-        pendingAction: {
-          displayStatus: 'displayStatus',
-          title: 'title',
-          content: 'content',
-          button: 'button',
-        },
-        history:
-          app.events?.map((event) => {
+        deleteButton: true,
+        history: (app.events ?? [])
+          .filter(
+            (event) =>
+              event.eventType !== ApplicationEvents.APPLICATION_FETCHED,
+          )
+          .map((event) => {
             return {
               date: event.created,
               log: event.eventMessage[locale],
             }
-          }) || [],
+          }),
         draftFinishedSteps: app.draftFinishedSteps ?? 0,
         draftTotalSteps: app.draftTotalSteps ?? 0,
+        displayPruneAt: true,
       },
+      pruneAt: app.pruneAt,
       attachments: {},
       typeId: '',
       answers: { approveExternalData: true },
@@ -289,16 +398,22 @@ export class ApplicationMapper {
           variant: app.tagVariant,
         },
         deleteButton: false,
-        history:
-          app.events?.map((event) => {
+        history: (app.events ?? [])
+          .filter(
+            (event) =>
+              event.eventType !== ApplicationEvents.APPLICATION_FETCHED,
+          )
+          .map((event) => {
             return {
               date: event.created,
               log: event.eventMessage[locale],
             }
-          }) || [],
+          }),
         draftFinishedSteps: app.draftFinishedSteps ?? 0,
         draftTotalSteps: app.draftTotalSteps ?? 0,
+        displayPruneAt: true,
       },
+      pruneAt: app.pruneAt,
       attachments: {},
       typeId: '',
       answers: { approveExternalData: true },
@@ -309,6 +424,29 @@ export class ApplicationMapper {
       formSystemFormSlug: app.formSlug,
       formSystemOrgContentfulId: app.orgContentfulId,
       formSystemOrgSlug: app.orgSlug,
+    } as MyPagesApplicationResponseDto
+  }
+
+  mapApplicationToApplicationAdminDto(
+    application: Application,
+    locale?: Locale,
+  ): ApplicationAdminDto {
+    return {
+      id: application.id,
+      created: application.created,
+      modified: application.modified,
+      formId: application.formId,
+      formName:
+        locale === 'is'
+          ? application.form?.name?.is
+          : application.form?.name?.en,
+      formSlug: application.form?.slug,
+      applicant: application.nationalId,
+      status: application.status,
+      state: application.state,
+      pruneAt: application.pruneAt,
+      pruned: application.pruned,
+      institutionNationalId: application.form?.organization?.nationalId,
     }
   }
 }

@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing'
-import { EducationService } from './education.service'
+import { EducationService } from './services/education.service'
 import { LoggingModule } from '@island.is/logging'
-import type { Config } from './education.module'
+import type { Config } from './modules/education.module'
 import {
   ADULT1,
   CHILD_STUDENT1,
@@ -20,7 +20,7 @@ import {
   NationalRegistryV3ClientModule,
   NationalRegistryV3ClientService,
 } from '@island.is/clients/national-registry-v3'
-import { Student } from './education.type'
+import { Student } from './types'
 import { ConfigModule } from '@nestjs/config'
 import { XRoadConfig } from '@island.is/nest/config'
 import { AwsModule } from '@island.is/nest/aws'

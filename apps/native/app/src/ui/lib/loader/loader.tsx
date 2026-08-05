@@ -6,8 +6,10 @@ import { font } from '../../utils/font'
 
 const Host = styled.View`
   display: flex;
+  flex: 1;
   align-items: center;
   justify-content: center;
+  padding-bottom: 162px;
 `
 
 const Text = styled.Text`

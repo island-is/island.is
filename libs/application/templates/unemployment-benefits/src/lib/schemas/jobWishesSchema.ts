@@ -4,14 +4,19 @@ import { serviceErrors } from '../messages'
 
 export const jobWishesSchema = z
   .object({
-    jobList: z.array(z.string()).refine((v) => v.length >= 2, {
-      params: serviceErrors.minimumJobCount,
-    }),
+    jobList: z
+      .array(z.string())
+      .refine((v) => v.length >= 2 && v.length <= 10, {
+        params: serviceErrors.minimumJobCount,
+      }),
     outsideYourLocation: z
       .nativeEnum(YesOrNoEnum)
       .refine((v) => Object.values(YesOrNoEnum).includes(v)),
     location: z.array(z.string()).optional(),
-    wantedJobPercentage: z.string().min(1),
+    wantedJobPercentage: z
+      .string()
+      .min(1)
+      .refine((v) => Number(v) >= 1),
     jobTimelineStartDate: z.string().min(1),
   })
   .refine(

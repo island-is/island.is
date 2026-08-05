@@ -37,7 +37,7 @@ export const information = {
         description: 'Pick machine info title',
       },
       infoMessage: {
-        id: 'aosh.rifm.application:information.labels.pickMachine.infoMessage',
+        id: 'aosh.rifm.application:information.labels.pickMachine.infoMessage#markdown',
         defaultMessage:
           '•	árlega eða annað hvert á - sjá skoðunarmiða á vél \n\n' +
           '•	fyrir og eftir verulegar viðgerðir og breytingar á burðarvirkjum véla \n\n' +
@@ -47,7 +47,7 @@ export const information = {
       description: {
         id: 'aosh.rifm.application:information.labels.pickMachine.description',
         defaultMessage:
-          'Hér að neðan er listi yfir vélar og tæki í þinni eigu. Veldu það tæki sem þú vilt selja',
+          'Vinsamlegast veldu það tæki sem þú vilt láta skoða. Ef þú vilt láta skoða tæki sem er ekki í þinni eigu, geturðu leitað í öllum tækjum með því að slá inn fullt skráningarnúmer viðkomandi tækis.',
         description: 'Pick machine description',
       },
       vehicle: {
@@ -62,7 +62,7 @@ export const information = {
       },
       hasErrorTitle: {
         id: 'aosh.rifm.application:information.labels.pickMachine.hasErrorTitle',
-        defaultMessage: 'Ekki er hægt að selja þetta tæki vegna:',
+        defaultMessage: 'Ekki er hægt að skoða þetta tæki vegna:',
         description: 'Pick machine has an error title',
       },
       notFoundTitle: {
@@ -84,6 +84,16 @@ export const information = {
         id: 'aosh.rifm.application:information.labels.pickMachine.findButton',
         defaultMessage: 'Leita',
         description: 'Pick machine find button',
+      },
+      tabMyMachines: {
+        id: 'aosh.rifm.application:information.labels.pickMachine.tabMyMachines',
+        defaultMessage: 'Veldu úr þínum tækjum',
+        description: 'Pick machine my machines tab',
+      },
+      tabAllMachines: {
+        id: 'aosh.rifm.application:information.labels.pickMachine.tabAllMachines',
+        defaultMessage: 'Leitaðu í öllum tækjum',
+        description: 'Pick machine all machines tab',
       },
     }),
     machine: defineMessages({
@@ -132,6 +142,11 @@ export const information = {
         id: 'aosh.rifm.application:information.labels.machine.ownerNumber',
         defaultMessage: 'Eigandanúmer',
         description: 'Owner number label',
+      },
+      ownerName: {
+        id: 'aosh.rifm.application:information.labels.machine.ownerName',
+        defaultMessage: 'Nafn eiganda',
+        description: 'Owner name label',
       },
       subType: {
         id: 'aosh.rifm.application:information.labels.machine.subType',

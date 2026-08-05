@@ -1,5 +1,5 @@
+import escape from 'escape-html'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { parseAsString } from 'next-usequerystate'
 
 import initApollo from '@island.is/web/graphql/client'
 import {
@@ -7,6 +7,7 @@ import {
   GetVerdictsQueryVariables,
 } from '@island.is/web/graphql/schema'
 import { GET_VERDICTS_QUERY } from '@island.is/web/screens/queries/Verdicts'
+import { parseCommaSeparatedListFromQuery } from '@island.is/web/units/parseCourtQueryParam'
 
 interface Item {
   date: string | null | undefined
@@ -18,11 +19,15 @@ interface Item {
 
 const generateItemString = (item: Item) => {
   return `<item>
-  <title>${item.title}</title>
-  <link>${item.fullUrl}</link>
-  ${item.description ? `<description>${item.description}</description>` : ''}
-  <guid isPermaLink="false">${item.id}</guid>
-  ${item.date ? ` <pubDate>${item.date}</pubDate>` : ''}
+  <title>${escape(item.title)}</title>
+  <link>${escape(item.fullUrl)}</link>
+  ${
+    item.description
+      ? `<description>${escape(item.description)}</description>`
+      : ''
+  }
+  <guid isPermaLink="false">${escape(item.id)}</guid>
+  ${item.date ? ` <pubDate>${escape(item.date)}</pubDate>` : ''}
   </item>`
 }
 
@@ -37,7 +42,7 @@ export default async function handler(
   const baseUrl = `${protocol}${host}/domar`
 
   let itemString = ''
-  const court = parseAsString.parseServerSide(req.query?.court)
+  const court = parseCommaSeparatedListFromQuery(req.query?.court)
 
   const verdicts = await apolloClient.query<
     GetVerdictsQuery,
@@ -47,7 +52,7 @@ export default async function handler(
     variables: {
       input: {
         page: 1,
-        courtLevel: court ?? undefined,
+        court: court.length > 0 ? court : undefined,
       },
     },
   })
@@ -68,7 +73,7 @@ export default async function handler(
   <rss version="2.0">
   <channel>
   <title>Dómar og úrskurðir á Ísland.is</title>
-  <link>${baseUrl}</link>
+  <link>${escape(baseUrl)}</link>
   ${itemString}
   </channel>
   </rss>`

@@ -137,7 +137,7 @@ export const dataSchema = z.object({
     count: z.string(),
   }),
   backgroundInfoIcelandicCapability: z.object({
-    capability: z.coerce.number().int(),
+    capability: z.string().min(1),
   }),
   backgroundInfoLanguage: z
     .object({
@@ -303,7 +303,7 @@ export const dataSchema = z.object({
     text: z.string(),
   }),
   backgroundInfoEducationLevel: z.object({
-    level: z.string(),
+    level: z.string().min(1),
   }),
   paymentInfo: z
     .object({

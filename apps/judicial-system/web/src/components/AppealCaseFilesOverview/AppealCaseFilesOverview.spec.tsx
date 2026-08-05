@@ -4,8 +4,8 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import {
+  AppealCaseState,
   Case,
-  CaseAppealState,
   CaseFileCategory,
   CaseState,
   CaseType,
@@ -15,6 +15,14 @@ import {
 import { mockCaseFile } from '../../utils/mocks'
 import { FormContextWrapper, UserContextWrapper } from '../../utils/testHelpers'
 import AppealCaseFilesOverview from './AppealCaseFilesOverview'
+
+jest.mock('next/router', () => ({
+  useRouter() {
+    return {
+      pathname: '',
+    }
+  },
+}))
 
 describe('<AppealCaseFilesOverview />', () => {
   test('should display a context menu for all files', async () => {
@@ -26,7 +34,10 @@ describe('<AppealCaseFilesOverview />', () => {
         mockCaseFile(CaseFileCategory.APPEAL_RULING),
       ],
       state: CaseState.ACCEPTED,
-      appealState: CaseAppealState.COMPLETED,
+      appealCase: {
+        id: 'test_appeal_case_id',
+        appealState: AppealCaseState.COMPLETED,
+      },
     } as Case
 
     render(
@@ -41,7 +52,9 @@ describe('<AppealCaseFilesOverview />', () => {
       </IntlProvider>,
     )
 
-    expect(await screen.findAllByRole('button')).toHaveLength(2)
+    expect(
+      await screen.findAllByRole('button', { name: /^Valmynd fyrir / }),
+    ).toHaveLength(2)
   })
 
   test('should not have an option to delete file if the file is of category APPEAL_RULING', async () => {
@@ -50,7 +63,10 @@ describe('<AppealCaseFilesOverview />', () => {
       type: CaseType.CUSTODY,
       caseFiles: [mockCaseFile(CaseFileCategory.APPEAL_RULING)],
       state: CaseState.ACCEPTED,
-      appealState: CaseAppealState.COMPLETED,
+      appealCase: {
+        id: 'test_appeal_case_id',
+        appealState: AppealCaseState.COMPLETED,
+      },
     } as Case
 
     render(
@@ -64,7 +80,9 @@ describe('<AppealCaseFilesOverview />', () => {
         </ApolloProvider>
       </IntlProvider>,
     )
-    const button = await screen.findByRole('button')
+    const button = await screen.findByRole('button', {
+      name: /^Valmynd fyrir /,
+    })
     await userEvent.click(button)
     expect(await screen.findAllByRole('menuitem')).toHaveLength(1)
   })
@@ -75,8 +93,11 @@ describe('<AppealCaseFilesOverview />', () => {
       type: CaseType.CUSTODY,
       caseFiles: [mockCaseFile(CaseFileCategory.PROSECUTOR_APPEAL_BRIEF)],
       state: CaseState.ACCEPTED,
-      appealState: CaseAppealState.COMPLETED,
-      prosecutorPostponedAppealDate: '2021-09-01T00:00:00Z',
+      appealCase: {
+        id: 'test_appeal_case_id',
+        appealState: AppealCaseState.COMPLETED,
+        appealedByRole: UserRole.PROSECUTOR,
+      },
     } as Case
 
     render(
@@ -93,7 +114,9 @@ describe('<AppealCaseFilesOverview />', () => {
       </IntlProvider>,
     )
 
-    const button = await screen.findByRole('button')
+    const button = await screen.findByRole('button', {
+      name: /^Valmynd fyrir /,
+    })
     await userEvent.click(button)
     expect(await screen.findAllByRole('menuitem')).toHaveLength(1)
   })
@@ -101,10 +124,13 @@ describe('<AppealCaseFilesOverview />', () => {
   test('should not have an option to delete file if the file of category PROSECUTOR_APPEAL_CASE_FILE even though the user is a defender', async () => {
     const theCase = {
       id: 'asd',
-      type: CaseType.CUSTODY,
+      type: CaseType.INDICTMENT,
       caseFiles: [mockCaseFile(CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE)],
       state: CaseState.ACCEPTED,
-      appealState: CaseAppealState.COMPLETED,
+      appealCase: {
+        id: 'test_appeal_case_id',
+        appealState: AppealCaseState.COMPLETED,
+      },
     } as Case
 
     render(
@@ -121,7 +147,9 @@ describe('<AppealCaseFilesOverview />', () => {
       </IntlProvider>,
     )
 
-    const button = await screen.findByRole('button')
+    const button = await screen.findByRole('button', {
+      name: /^Valmynd fyrir /,
+    })
     await userEvent.click(button)
     expect(await screen.findAllByRole('menuitem')).toHaveLength(1)
   })
@@ -132,7 +160,10 @@ describe('<AppealCaseFilesOverview />', () => {
       type: CaseType.CUSTODY,
       caseFiles: [mockCaseFile(CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE)],
       state: CaseState.ACCEPTED,
-      appealState: CaseAppealState.COMPLETED,
+      appealCase: {
+        id: 'test_appeal_case_id',
+        appealState: AppealCaseState.COMPLETED,
+      },
     } as Case
 
     render(
@@ -149,7 +180,9 @@ describe('<AppealCaseFilesOverview />', () => {
       </IntlProvider>,
     )
 
-    const button = await screen.findByRole('button')
+    const button = await screen.findByRole('button', {
+      name: /^Valmynd fyrir /,
+    })
     await userEvent.click(button)
     expect(await screen.findAllByRole('menuitem')).toHaveLength(2)
   })

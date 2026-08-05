@@ -1,4 +1,4 @@
-import { useSession } from 'next-auth/client'
+import { useSession } from 'next-auth/react'
 import Head from 'next/head'
 import React, { FC, ReactNode, useState } from 'react'
 
@@ -25,7 +25,7 @@ export const AppLayout: FC<React.PropsWithChildren<LayoutProps>> = ({
   children,
 }) => {
   const [user, setUser] = useState<SkilavottordUser>()
-  const [session] = useSession() as [AuthSession, boolean]
+  const { data: session } = useSession() as { data: AuthSession | null }
 
   const { data } = useQuery<Query>(SkilavottordRecyclingPartnerActive, {
     variables: { input: { companyId: user?.partnerId } },

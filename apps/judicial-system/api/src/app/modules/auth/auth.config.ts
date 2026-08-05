@@ -28,5 +28,15 @@ export const authModuleConfig = defineConfig({
       'BACKEND_ACCESS_TOKEN',
       'secret-backend-api-token',
     ),
+    // Must decode to exactly 32 bytes (256 bits) — generate with: openssl rand -base64 32
+    tokenSecretBase64: env.required(
+      'AUTH_TOKEN_SECRET_BASE64',
+      'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=',
+    ),
+    redis: {
+      nodes: env.requiredJSON<string[]>('REDIS_NODES', []),
+      ssl: env.optionalJSON<boolean>('REDIS_SSL') ?? true,
+      name: 'judicial-system',
+    },
   }),
 })

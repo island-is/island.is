@@ -1,5 +1,4 @@
 import { rest } from 'msw'
-import { DriverLicenseDto } from '../../v5'
 
 export enum MOCK_TOKEN {
   'STUDENT' = '1',
@@ -74,6 +73,20 @@ export const requestHandlers = [
     return res(
       ctx.status(200),
       ctx.json(MOCK_HAS_SIGNATURE[mock_token] ? 1 : 0),
+    )
+  }),
+
+  rest.post(/api\/applications\/v5\/applyfor\/renewal65/, (req, res, ctx) => {
+    const jwttoken = req.headers.get('jwttoken')
+    if (!jwttoken) {
+      return res(ctx.status(401))
+    }
+    return res(
+      ctx.status(200),
+      ctx.json({
+        category: 'B',
+        result: true,
+      }),
     )
   }),
 ]

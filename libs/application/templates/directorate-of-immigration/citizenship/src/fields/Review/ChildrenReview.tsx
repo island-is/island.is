@@ -1,5 +1,5 @@
 import {
-  ApplicantChildCustodyInformation,
+  ApplicantChildCustodyInformationV3,
   FieldBaseProps,
   FieldComponents,
   FieldTypes,
@@ -12,7 +12,7 @@ import SummaryBlock from '../../components/SummaryBlock'
 import { DescriptionFormField } from '@island.is/application/ui-fields'
 
 interface ChildrenReviewProps extends FieldBaseProps {
-  selectedChildren: Array<ApplicantChildCustodyInformation> | undefined
+  selectedChildren: Array<ApplicantChildCustodyInformationV3> | undefined
   goToScreen?: (id: string) => void
   route: Routes
 }

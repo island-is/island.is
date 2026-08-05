@@ -19,7 +19,9 @@ export const coaJudgesCompleteAppealCaseTest = async (
   ])
 
   // Appeal case reception
-  await expect(page).toHaveURL(`/landsrettur/kaera/${caseId}`)
+  await expect(page).toHaveURL(
+    new RegExp(`/landsrettur/kaera/${caseId}(\\?.*)?$`),
+  )
   const appealCaseNumber = randomAppealCaseNumber()
   await page.getByText('Mál nr. *').fill(appealCaseNumber)
   await page.getByText('Mál nr. *').press('Tab')
@@ -39,7 +41,9 @@ export const coaJudgesCompleteAppealCaseTest = async (
   ])
 
   // Ruling
-  await expect(page).toHaveURL(`/landsrettur/urskurdur/${caseId}`)
+  await expect(page).toHaveURL(
+    new RegExp(`/landsrettur/urskurdur/${caseId}(\\?.*)?$`),
+  )
   await page.locator('label').filter({ hasText: 'Staðfesting' }).click()
   await page.getByPlaceholder('Hvert er úrskurðarorð Landsréttar?').click()
   await page
@@ -61,6 +65,8 @@ export const coaJudgesCompleteAppealCaseTest = async (
     verifyRequestCompletion(page, '/api/graphql', 'Case'),
   ])
 
-  await expect(page).toHaveURL(`/landsrettur/samantekt/${caseId}`)
+  await expect(page).toHaveURL(
+    new RegExp(`/landsrettur/samantekt/${caseId}(\\?.*)?$`),
+  )
   await page.getByTestId('continueButton').click()
 }

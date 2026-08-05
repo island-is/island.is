@@ -15,12 +15,10 @@ definitions:
     #        include: true
     #        source: true
   environment: &environment
-    node: 20.19.5
-    # TODO: Remove/upgrade after upgrading to react-native 0.76.9 or higher, fixing 16.3 build issues:
-    # https://github.com/facebook/react-native/issues/50411#issuecomment-2776681575
-  xcode: '26.0.1'
+    node: 24.10.0
   shared_envs: &shared_envs
     XCODE_WORKSPACE: 'IslandApp.xcworkspace'
+    XCODE_SCHEME: 'IslandApp'
     CM_CLONE_DEPTH: 200
     NODE_OPTIONS: '--max-old-space-size=8192'
   scripts:
@@ -48,11 +46,6 @@ definitions:
       script: |
         pip3 install --upgrade setuptools
         python3 -c "import distutils; print(distutils.__file__)"
-    - &set_android_location
-      name: Prepare Android configuration
-      script: |
-        echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
-        echo $ANDROID_FIREBASE_SECRET > android/app/google-services.json
     - &npm_install
       name: Install npm dependencies
       working_directory: .
@@ -65,19 +58,32 @@ definitions:
       working_directory: .
       script: |
         yarn codegen
+    - &prebuild_ios
+      name: Expo prebuild for iOS
+      script: |
+        npx expo prebuild --platform ios --clean
+    - &prebuild_android
+      name: Expo prebuild for Android
+      script: |
+        echo $ANDROID_FIREBASE_SECRET > assets/firebase/google-services.json
+        npx expo prebuild --platform android --clean
     - &cocoapods
       name: Install CocoaPods dependencies
       script: |
         cd ios && pod install
+    - &set_android_location
+      name: Prepare Android configuration
+      script: |
+        echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
     - &provisioning_profiles
       name: Set up provisioning profiles settings on Xcode project
-      script: xcode-project use-profiles
+      script: xcode-project use-profiles --project ios/IslandApp.xcodeproj
     - &increment_build_number
       name: Increment build number
       script: |
         cd ios
         APP_STORE_BUILD=$(app-store-connect get-latest-build-number "$APP_STORE_APPLE_ID")
-        PROJECT_BUILD=$(agvtool what-version -terse | tail -n 1) # tail -n 1takes the last line from the output
+        PROJECT_BUILD=$(agvtool what-version -terse | tail -n 1)
 
         if [ "$PROJECT_BUILD" -gt "$APP_STORE_BUILD" ]; then
           echo "Using project build: $PROJECT_BUILD"
@@ -93,17 +99,60 @@ definitions:
         xcode-project build-ipa \
           --workspace "ios/$XCODE_WORKSPACE" \
           --scheme "$XCODE_SCHEME"
+    - &get_android_version_code
+      name: Get latest Android version code
+      script: |
+        LATEST_GOOGLE_PLAY_BUILD_NUMBER=$(google-play get-latest-build-number --package-name "$PACKAGE_NAME")
+        if [ -z "$LATEST_GOOGLE_PLAY_BUILD_NUMBER" ]; then
+            echo "Failed to get build number from Google Play"
+            exit 1
+        fi
+        ANDROID_VERSION_CODE=$(($LATEST_GOOGLE_PLAY_BUILD_NUMBER + 1))
+        echo "ANDROID_VERSION_CODE=$ANDROID_VERSION_CODE" >> $CM_ENV
+        echo "Using Android version code: $ANDROID_VERSION_CODE"
     - &build_android
       name: Build Android release
       script: |
-        LATEST_GOOGLE_PLAY_BUILD_NUMBER=$(google-play get-latest-build-number --package-name "$PACKAGE_NAME")
-        if [ -z $LATEST_GOOGLE_PLAY_BUILD_NUMBER ]; then
-            exit 1
-        else
-            UPDATED_BUILD_NUMBER=$(($LATEST_GOOGLE_PLAY_BUILD_NUMBER + 1))
-        fi
         cd android
-        ./gradlew bundle${ANDROID_APP}Release -PversionCode=$UPDATED_BUILD_NUMBER
+        ./gradlew bundleRelease
+    - &build_ios_simulator
+      name: Build iOS simulator app (Release)
+      script: |
+        xcodebuild \
+          -workspace "ios/$XCODE_WORKSPACE" \
+          -scheme "$XCODE_SCHEME" \
+          -configuration Release \
+          -sdk iphonesimulator \
+          -derivedDataPath ios/build \
+          ARCHS="arm64" \
+          ONLY_ACTIVE_ARCH=YES
+
+        # Zip the .app for devicecloud upload
+        APP_PATH=$(find ios/build -name "*.app" -type d | head -1)
+        cd "$(dirname "$APP_PATH")"
+        zip -r "$CM_BUILD_DIR/IslandApp.zip" "$(basename "$APP_PATH")"
+    - &build_android_apk
+      name: Build Android release APK
+      script: |
+        cd android
+        ./gradlew assembleRelease
+    - &run_devicecloud_ios
+      name: Upload iOS to DeviceCloud
+      script: |
+        npx --yes @devicecloud.dev/dcd@latest cloud \
+          "$CM_BUILD_DIR/IslandApp.zip" \
+          .maestro/ \
+          --apiKey "$DCD_API_KEY" \
+          --quiet
+    - &run_devicecloud_android
+      name: Upload Android to DeviceCloud
+      script: |
+        APK_PATH=$(find android/app/build/outputs -name "*.apk" -type f | head -1)
+        npx --yes @devicecloud.dev/dcd@latest cloud \
+          "$APK_PATH" \
+          .maestro/ \
+          --apiKey "$DCD_API_KEY" \
+          --quiet
   publishing:
     ios_publishing: &ios_publishing
       app_store_connect:
@@ -142,18 +191,19 @@ workflows:
       vars:
         <<: *shared_envs
         BUNDLE_ID: 'is.island.app'
-        XCODE_SCHEME: 'Ísland.is'
         APP_STORE_APPLE_ID: 1569828682
+        APP_VARIANT: 'production'
     scripts:
       - *check_changes
       - *pip_install
       - *npm_install
       - *codegen
+      - *prebuild_ios
       - *cocoapods
       - *provisioning_profiles
       - *increment_build_number
       - *build_ipa
-    artifacts: &ios_artifacts
+    artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
       - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
@@ -177,18 +227,24 @@ workflows:
       vars:
         <<: *shared_envs
         BUNDLE_ID: 'is.island.app.dev'
-        XCODE_SCHEME: 'Ísland.dev'
         APP_STORE_APPLE_ID: 1570427360
+        APP_VARIANT: 'development'
     scripts:
       - *check_changes
       - *pip_install
       - *npm_install
       - *codegen
+      - *prebuild_ios
       - *cocoapods
       - *provisioning_profiles
       - *increment_build_number
       - *build_ipa
-    artifacts: *ios_artifacts
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+      - $CM_BUILD_DIR/IslandApp.zip
     publishing:
       <<: *ios_publishing
       slack:
@@ -200,9 +256,7 @@ workflows:
   prod-app-android:
     <<: *base
     name: Island.is Prod App Android
-    instance_type: mac_mini_m2
-    ## Switch when we have billing
-    # instance_type: linux_x2
+    instance_type: linux_x2
     cache: &android_cache
       cache_paths:
         - ~/.gradle/caches
@@ -218,15 +272,17 @@ workflows:
       vars:
         <<: *shared_envs
         PACKAGE_NAME: 'is.island.app'
-        ANDROID_APP: prod
+        APP_VARIANT: 'production'
     scripts:
       - *check_changes
-      - *set_android_location
       - *pip_install
       - *npm_install
       - *codegen
+      - *get_android_version_code
+      - *prebuild_android
+      - *set_android_location
       - *build_android
-    artifacts: &android_artifacts
+    artifacts:
       - android/app/build/outputs/**/*.aab
     publishing:
       <<: *android_publishing
@@ -235,9 +291,7 @@ workflows:
   dev-app-android:
     <<: *base
     name: Island.is Dev App Android
-    instance_type: mac_mini_m2
-    ## Switch when we have billing
-    # instance_type: linux_x2
+    instance_type: linux_x2
     cache: *android_cache
     environment:
       <<: *environment
@@ -249,15 +303,76 @@ workflows:
       vars:
         <<: *shared_envs
         PACKAGE_NAME: 'is.island.app.dev'
-        ANDROID_APP: dev
+        APP_VARIANT: 'development'
     scripts:
       - *check_changes
-      - *set_android_location
       - *pip_install
       - *npm_install
       - *codegen
+      - *get_android_version_code
+      - *prebuild_android
+      - *set_android_location
       - *build_android
-    artifacts: *android_artifacts
+    artifacts:
+      - android/app/build/outputs/**/*.aab
+      - android/app/build/outputs/**/*.apk
     publishing:
       <<: *android_publishing
       <<: *slack_errors
+
+  e2e-tests-ios:
+    <<: *base
+    name: Island.is E2E Tests iOS
+    instance_type: mac_mini_m2
+    cache: *ios_cache
+    environment:
+      <<: *environment
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: is.island.app.dev
+      groups:
+        - devicecloud
+      vars:
+        <<: *shared_envs
+        BUNDLE_ID: 'is.island.app.dev'
+        APP_STORE_APPLE_ID: 1570427360
+        APP_VARIANT: 'development'
+    scripts:
+      - *check_changes
+      - *pip_install
+      - *npm_install
+      - *codegen
+      - *prebuild_ios
+      - *cocoapods
+      - *build_ios_simulator
+      - *run_devicecloud_ios
+
+  e2e-tests-android:
+    <<: *base
+    name: Island.is E2E Tests Android
+    instance_type: linux_x2
+    cache: *android_cache
+    environment:
+      <<: *environment
+      android_signing:
+        - island-upload-keystore
+      groups:
+        - google_credentials
+        - firebase_credentials_dev
+        - devicecloud
+      vars:
+        <<: *shared_envs
+        PACKAGE_NAME: 'is.island.app.dev'
+        APP_VARIANT: 'development'
+    scripts:
+      - *check_changes
+      - *pip_install
+      - *npm_install
+      - *codegen
+      - *get_android_version_code
+      - *prebuild_android
+      - *set_android_location
+      - *build_android_apk
+      - *run_devicecloud_android
+    artifacts:
+      - android/app/build/outputs/**/*.apk

@@ -1,4 +1,13 @@
-import { Controller, Get, Inject, Query, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Inject,
+  Param,
+  Query,
+  UseGuards,
+} from '@nestjs/common'
 import { ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -15,6 +24,7 @@ import {
   courtOfAppealsAssistantRule,
   courtOfAppealsJudgeRule,
   courtOfAppealsRegistrarRule,
+  defenderRule,
   districtCourtAssistantRule,
   districtCourtJudgeRule,
   districtCourtRegistrarRule,
@@ -23,7 +33,9 @@ import {
   prosecutorRule,
   publicProsecutorStaffRule,
 } from '../../guards'
+import { CaseExistsGuard, CaseReadGuard } from '../case'
 import { CaseTableResponse } from './dto/caseTable.response'
+import { CaseTableMembershipResponse } from './dto/caseTableMembership.response'
 import { SearchCasesResponse } from './dto/searchCases.response'
 import { CaseTableTypeGuard } from './guards/caseTableType.guard'
 import { CaseTableService } from './caseTable.service'
@@ -72,6 +84,7 @@ export class CaseTableController {
     courtOfAppealsRegistrarRule,
     courtOfAppealsAssistantRule,
     prisonSystemStaffRule,
+    defenderRule,
   )
   @Get('search-cases')
   @ApiOkResponse({
@@ -91,5 +104,37 @@ export class CaseTableController {
     this.logger.debug(`Searching for cases for user ${user.id}`)
 
     return this.caseTableService.searchCases(query, user)
+  }
+
+  @UseGuards(RolesGuard, CaseExistsGuard, CaseReadGuard)
+  @RolesRules(
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+    publicProsecutorStaffRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
+    prisonSystemStaffRule,
+    defenderRule,
+  )
+  @Get('case/:caseId/case-table-membership')
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({
+    type: CaseTableMembershipResponse,
+    description:
+      'Returns which case tables (for the current user role) the case belongs to. Use for breadcrumbs on the case page.',
+  })
+  async getCaseTableMembership(
+    @CurrentHttpUser() user: User,
+    @Param('caseId') caseId: string,
+  ): Promise<CaseTableMembershipResponse> {
+    const caseTableTypes = await this.caseTableService.getCaseTableMembership(
+      caseId,
+      user,
+    )
+    return { caseTableTypes }
   }
 }

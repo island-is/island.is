@@ -2,11 +2,20 @@ import { useState, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import { SubmitHandler } from 'react-hook-form'
 
-import { CardErrorCode } from '@island.is/shared/constants'
+import {
+  PaymentsBankTransferFailureReason,
+  PaymentsGetFlowPaymentStatus,
+} from '@island.is/api/schema'
+import {
+  BankTransferErrorCode,
+  CardErrorCode,
+} from '@island.is/shared/constants'
 import { GetPaymentFlowQuery } from '../graphql/queries.graphql.generated'
 import { PaymentError } from '../utils/error/error'
 import { useCardPayment } from './useCardPayment'
 import { useInvoicePayment } from './useInvoicePayment'
+import { useApplePay } from './useApplePay'
+import { useBankTransferPayment } from './useBankTransferPayment'
 
 interface UsePaymentOrchestrationProps {
   paymentFlow: GetPaymentFlowQuery['paymentsGetFlow'] | null
@@ -14,11 +23,34 @@ interface UsePaymentOrchestrationProps {
     amount: number
     title: string
   }
+  isApplePayPaymentEnabledForUser: boolean
+}
+
+const deriveInitialBankTransferError = (
+  paymentFlow: UsePaymentOrchestrationProps['paymentFlow'],
+): PaymentError | null => {
+  if (
+    paymentFlow?.paymentStatus !==
+    PaymentsGetFlowPaymentStatus.bank_transfer_failed
+  ) {
+    return null
+  }
+  switch (paymentFlow.lastBankTransferFailure) {
+    case PaymentsBankTransferFailureReason.rejected:
+      return { code: BankTransferErrorCode.BankTransferRejected }
+    case PaymentsBankTransferFailureReason.cancelled:
+      return { code: BankTransferErrorCode.BankTransferCancelled }
+    case PaymentsBankTransferFailureReason.expired:
+      return { code: BankTransferErrorCode.BankTransferExpired }
+    default:
+      return { code: BankTransferErrorCode.BankTransferGenericError }
+  }
 }
 
 export const usePaymentOrchestration = ({
   paymentFlow,
   productInformation,
+  isApplePayPaymentEnabledForUser,
 }: UsePaymentOrchestrationProps) => {
   const router = useRouter()
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>(
@@ -26,16 +58,24 @@ export const usePaymentOrchestration = ({
   )
   // This local submitting state is for the brief period before a specific hook takes over
   const [isInitiatingSubmit, setIsInitiatingSubmit] = useState(false)
-  const [paymentError, setPaymentError] = useState<PaymentError | null>(null)
+  const [paymentError, setPaymentError] = useState<PaymentError | null>(() =>
+    deriveInitialBankTransferError(paymentFlow),
+  )
 
   const [isThreeDSecureModalActive, setIsThreeDSecureModalActive] =
     useState(false)
 
   const commonOnPaymentSuccess = useCallback(
-    (paymentMethod: 'card' | 'invoice') => {
-      // For invoice payments, always reload to show the "invoice created" screen
+    (paymentMethod: 'card' | 'invoice' | 'bank_transfer') => {
       if (paymentMethod === 'invoice') {
-        router.reload()
+        if (
+          paymentFlow?.redirectOnInvoiceCreation &&
+          paymentFlow?.invoiceReturnUrl
+        ) {
+          window.location.assign(paymentFlow.invoiceReturnUrl)
+        } else {
+          router.reload()
+        }
         return
       }
 
@@ -55,7 +95,6 @@ export const usePaymentOrchestration = ({
 
   const cardPayment = useCardPayment({
     paymentFlow,
-    productInformation,
     onPaymentSuccess: commonOnPaymentSuccess,
     onPaymentError: commonOnPaymentError,
     setThreeDSecureModalActive: setIsThreeDSecureModalActive,
@@ -67,6 +106,19 @@ export const usePaymentOrchestration = ({
     onPaymentError: commonOnPaymentError,
   })
 
+  const applePayPayment = useApplePay({
+    isEnabledForUser: isApplePayPaymentEnabledForUser,
+    paymentFlow,
+    productInformation,
+    onPaymentSuccess: commonOnPaymentSuccess,
+    onPaymentError: commonOnPaymentError,
+  })
+
+  const bankTransferPayment = useBankTransferPayment({
+    paymentFlowId: paymentFlow?.id,
+    onPaymentError: commonOnPaymentError,
+  })
+
   const handleFormSubmit: SubmitHandler<Record<string, string>> = useCallback(
     async (data) => {
       setIsInitiatingSubmit(true)
@@ -74,8 +126,9 @@ export const usePaymentOrchestration = ({
 
       try {
         if (selectedPaymentMethod === 'card') {
-          const { card, cardExpiry, cardCVC } = data
+          const { cardholderName, card, cardExpiry, cardCVC } = data
           if (
+            !cardholderName ||
             !card ||
             !cardExpiry ||
             typeof cardExpiry !== 'string' ||
@@ -87,6 +140,7 @@ export const usePaymentOrchestration = ({
           }
           const [month, year] = cardExpiry.split('/')
           await cardPayment.processCardPayment({
+            cardholderName,
             number: card,
             expiryMonth: Number(month),
             expiryYear: Number(year),
@@ -94,6 +148,18 @@ export const usePaymentOrchestration = ({
           })
         } else if (selectedPaymentMethod === 'invoice') {
           await invoicePayment.processInvoicePayment()
+        } else if (selectedPaymentMethod === 'bank_transfer') {
+          const { bankAccountNumber } = data
+          if (!bankAccountNumber) {
+            setPaymentError({
+              code: BankTransferErrorCode.MissingBankAccountNumber,
+            })
+            setIsInitiatingSubmit(false)
+            return
+          }
+          await bankTransferPayment.processBankTransferPayment(
+            bankAccountNumber,
+          )
         }
       } catch (e: unknown) {
         if (
@@ -108,13 +174,17 @@ export const usePaymentOrchestration = ({
         setIsInitiatingSubmit(false)
       }
     },
-    [selectedPaymentMethod, cardPayment, invoicePayment],
+    [selectedPaymentMethod, cardPayment, invoicePayment, bankTransferPayment],
   )
 
   const combinedIsProcessing =
     selectedPaymentMethod === 'card'
       ? cardPayment.isCardPaymentProcessing
-      : invoicePayment.isInvoicePaymentProcessing
+      : selectedPaymentMethod === 'invoice'
+      ? invoicePayment.isInvoicePaymentProcessing
+      : selectedPaymentMethod === 'bank_transfer'
+      ? bankTransferPayment.isBankTransferPaymentProcessing
+      : false
 
   // Overall submitting state combines the local initiation with the hook's processing state.
   const overallIsSubmitting = isInitiatingSubmit || combinedIsProcessing
@@ -132,11 +202,12 @@ export const usePaymentOrchestration = ({
     paymentError,
     setPaymentError, // Expose to allow clearing error from page if needed (e.g. error display component has a dismiss)
     handleFormSubmit,
-
     isThreeDSecureModalActive,
     threeDSecureDataForModal: cardPayment.threeDSecureDataForModal,
     handleVerificationCancelledByModal:
       cardPayment.handleVerificationCancelledByModal,
     verificationStatusLoading: cardPayment.verificationStatusLoading,
+    supportsApplePay: applePayPayment.supportsApplePay ?? false,
+    initiateApplePay: applePayPayment.initiateApplePay,
   }
 }

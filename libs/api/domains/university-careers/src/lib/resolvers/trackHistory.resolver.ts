@@ -12,13 +12,15 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { StudentTrackHistory } from '../models/studentTrackHistory.model'
 import { UniversityCareersService } from '../universityCareers.service'
 import { StudentInfoInput } from '../dto/studentInfo.input'
-import { Locale } from '@island.is/shared/types'
 import { AUDIT_NAMESPACE } from '../constants'
+import { CodeOwner } from '@island.is/nest/core'
+import { CodeOwners } from '@island.is/shared/constants'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.education)
 @Resolver(() => StudentTrackHistory)
 @Audit({ namespace: AUDIT_NAMESPACE })
+@CodeOwner(CodeOwners.Hugsmidjan)
 export class TrackHistoryResolver {
   constructor(private service: UniversityCareersService) {}
 
@@ -30,6 +32,10 @@ export class TrackHistoryResolver {
     @CurrentUser() user: User,
     @Args('input') input: StudentInfoInput,
   ): Promise<StudentTrackHistory | null> {
-    return this.service.getStudentTrackHistory(user, input.locale as Locale)
+    return this.service.getStudentTrackHistory(
+      user,
+      input.locale,
+      input.studyType,
+    )
   }
 }

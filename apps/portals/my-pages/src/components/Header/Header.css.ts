@@ -8,19 +8,24 @@ import { globalStyle, style } from '@vanilla-extract/css'
 export const header = style({
   position: 'fixed',
   display: 'flex',
+  flexDirection: 'column',
   width: '100%',
   left: 0,
   right: 0,
   top: 0,
   margin: '0 auto',
-  height: SERVICE_PORTAL_HEADER_HEIGHT_LG,
   zIndex: zIndex.header,
   backgroundColor: theme.color.blue100,
-  alignItems: 'center',
   opacity: 1,
   transform: 'translateY(0%)',
   transition:
     'opacity 250ms cubic-bezier(0.4, 0.0, 0.2, 1), transform 250ms cubic-bezier(0.4, 0.0, 0.2, 1), visibility 0ms',
+})
+
+export const headerNav = style({
+  display: 'flex',
+  alignItems: 'center',
+  height: SERVICE_PORTAL_HEADER_HEIGHT_LG,
   '@media': {
     [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
       height: SERVICE_PORTAL_HEADER_HEIGHT_SM,

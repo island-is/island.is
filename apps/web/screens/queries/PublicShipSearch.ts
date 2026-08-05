@@ -14,6 +14,7 @@ export const PUBLIC_SHIP_SEARCH_QUERY = gql`
         length
         manufactionYear
         manufacturer
+        opid
         owners {
           name
           nationalId

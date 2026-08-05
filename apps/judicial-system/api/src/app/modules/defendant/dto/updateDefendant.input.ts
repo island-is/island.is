@@ -103,6 +103,11 @@ export class UpdateDefendantInput {
 
   @Allow()
   @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly isRegisteredInPrisonSystem?: boolean
+
+  @Allow()
+  @IsOptional()
   @Field(() => PunishmentType, { nullable: true })
   readonly punishmentType?: PunishmentType
 
@@ -125,4 +130,9 @@ export class UpdateDefendantInput {
   @IsOptional()
   @Field(() => Boolean, { nullable: true })
   readonly isDrivingLicenseSuspended?: boolean
+
+  @Allow()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly publicProsecutorIsRegisteredInPoliceSystem?: boolean
 }

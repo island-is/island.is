@@ -1,10 +1,18 @@
-import React, { useState } from 'react'
-import { Outlet, useLoaderData, useNavigate, useParams } from 'react-router-dom'
+import React, { useMemo, useState } from 'react'
+import {
+  Outlet,
+  useLoaderData,
+  useNavigate,
+  useParams,
+  useRevalidator,
+} from 'react-router-dom'
 
 import {
   Box,
   Button,
+  Filter,
   FilterInput,
+  FilterMultiChoice,
   Inline,
   Stack,
   Text,
@@ -19,6 +27,7 @@ import { AuthClients } from './Clients.loader'
 import { ClientType } from '../../components/ClientType'
 import IdsAdminCard from '../../components/IdsAdminCard/IdsAdminCard'
 import { useLooseSearch } from '../../hooks/useLooseSearch'
+import { RestoreClient } from './RestoreClient'
 
 const Clients = () => {
   const originalClients = useLoaderData() as AuthClients
@@ -27,12 +36,25 @@ const Clients = () => {
   const navigate = useNavigate()
   const { locale } = useLocale()
 
+  const revalidator = useRevalidator()
+  const [restoreClientId, setRestoreClientId] = useState<string | null>(null)
   const [inputSearchValue, setInputSearchValue] = useState<string>('')
+  const [statusFilter, setStatusFilter] = useState<string>('active')
   const [clients, filterClients] = useLooseSearch(
     originalClients,
     ['defaultEnvironment.displayName[0].value', 'clientId'],
     'clientId',
   )
+
+  const filteredClients = useMemo(() => {
+    if (statusFilter === 'all') {
+      return clients
+    }
+    if (statusFilter === 'archived') {
+      return clients.filter((c) => !!c.archived)
+    }
+    return clients.filter((c) => !c.archived)
+  }, [clients, statusFilter])
 
   const handleSearch = (value: string) => {
     setInputSearchValue(value)
@@ -114,17 +136,74 @@ const Clients = () => {
     <>
       {getHeader()}
       <Stack space={2}>
-        <Inline>
-          <FilterInput
-            placeholder={formatMessage(m.searchPlaceholder)}
-            name="session-nationalId-input"
-            value={inputSearchValue}
-            onChange={handleSearch}
-            backgroundColor="blue"
-          />
-        </Inline>
+        <Box display="flex" justifyContent="spaceBetween" alignItems="center">
+          <Inline>
+            <FilterInput
+              placeholder={formatMessage(m.searchPlaceholder)}
+              name="clients-search-input"
+              value={inputSearchValue}
+              onChange={handleSearch}
+              backgroundColor="blue"
+            />
+          </Inline>
+          <Filter
+            variant="popover"
+            align="right"
+            labelClear={formatMessage(m.clearFilter)}
+            labelClearAll={formatMessage(m.clearFilter)}
+            labelOpen={formatMessage(m.openFilter)}
+            labelClose={formatMessage(m.closeFilter)}
+            filterCount={statusFilter !== 'active' ? 1 : 0}
+            onFilterClear={() => setStatusFilter('active')}
+          >
+            <FilterMultiChoice
+              singleExpand
+              onChange={({ selected }) => {
+                setStatusFilter(selected[0] ?? 'active')
+              }}
+              onClear={() => {
+                setStatusFilter('active')
+              }}
+              categories={[
+                {
+                  id: 'status',
+                  label: formatMessage(m.clientStatus),
+                  selected: [statusFilter],
+                  startExpanded: true,
+                  filters: [
+                    {
+                      value: 'active',
+                      label: formatMessage(m.activeClients),
+                    },
+                    {
+                      value: 'archived',
+                      label: formatMessage(m.archivedClients),
+                    },
+                    {
+                      value: 'all',
+                      label: formatMessage(m.allClients),
+                    },
+                  ],
+                  singleOption: true,
+                },
+              ]}
+            />
+          </Filter>
+        </Box>
 
-        {clients.map((item) => {
+        {filteredClients.length === 0 && originalClients.length > 0 && (
+          <Box
+            display="flex"
+            justifyContent="center"
+            padding={6}
+            border="standard"
+            borderRadius="large"
+          >
+            <Text>{formatMessage(m.noMatchingClients)}</Text>
+          </Box>
+        )}
+
+        {filteredClients.map((item) => {
           const href = replaceParams({
             href: IDSAdminPaths.IDSAdminClient,
             params: {
@@ -132,6 +211,7 @@ const Clients = () => {
               client: item.clientId,
             },
           })
+          const isArchived = !!item.archived
           return (
             <IdsAdminCard
               key={`clients-${item.clientId}`}
@@ -142,19 +222,49 @@ const Clients = () => {
                 )?.value
               }
               text={item.defaultEnvironment.clientId}
-              tags={item.availableEnvironments.map((tag) => ({
-                children: tag,
-                onClick: () => navigate(`${href}?env=${tag}`),
-              }))}
+              tags={
+                isArchived
+                  ? [
+                      {
+                        children: formatMessage(m.archived),
+                        variant: 'red' as const,
+                        outlined: false,
+                      },
+                    ]
+                  : item.availableEnvironments.map((tag) => ({
+                      children: tag,
+                      onClick: () => navigate(`${href}?env=${tag}`),
+                    }))
+              }
               eyebrow={<ClientType client={item} />}
-              cta={{
-                label: formatMessage(m.change),
-                to: href,
-              }}
+              cta={
+                isArchived
+                  ? {
+                      label: formatMessage(m.restore),
+                      icon: 'reload' as const,
+                      onClick: () => setRestoreClientId(item.clientId),
+                    }
+                  : {
+                      label: formatMessage(m.change),
+                      to: href,
+                    }
+              }
             />
           )
         })}
       </Stack>
+      {restoreClientId && tenant && (
+        <RestoreClient
+          isVisible={!!restoreClientId}
+          onClose={() => setRestoreClientId(null)}
+          tenantId={tenant}
+          clientId={restoreClientId}
+          onSuccess={() => {
+            setRestoreClientId(null)
+            revalidator.revalidate()
+          }}
+        />
+      )}
       <Outlet />
     </>
   )

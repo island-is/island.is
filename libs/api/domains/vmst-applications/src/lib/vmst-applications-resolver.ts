@@ -5,8 +5,19 @@ import { Args, Query, Resolver } from '@nestjs/graphql'
 import { Audit } from '@island.is/nest/audit'
 import { VMSTApplicationsService } from './vmst-applications-service'
 import { VmstApplicationsBankInformationInput } from './dto/bankInformationInput.input'
-import { ValidationUnemploymentApplication } from './models'
+import {
+  VmstApplicationsValidationUnemploymentApplication,
+  VmstApplicationsUnemploymentApplicationOverview,
+  VmstApplicationsOverview,
+  VmstApplicationsApplicantOverview,
+  VmstApplicationsApplicantRequestedAttachment,
+  VmstApplicationsApplicantAttachmentsResponse,
+  VmstApplicationsAvailableActions,
+  VmstApplicationsAttachmentTypeList,
+  VmstApplicationsAttachment,
+} from './models'
 import { VmstApplicationsVacationValidationInput } from './dto/vacationValidation.input'
+import type { Locale } from '@island.is/shared/types'
 
 @UseGuards(IdsUserGuard)
 @Resolver()
@@ -30,7 +41,7 @@ export class VMSTApplicationsResolver {
     return this.vmstApplicationsService.validateBankInformation(auth, input)
   }
 
-  @Query(() => ValidationUnemploymentApplication, {
+  @Query(() => VmstApplicationsValidationUnemploymentApplication, {
     name: 'vmstApplicationsAccountNumberValidationUnemploymentApplication',
   })
   @Audit()
@@ -47,7 +58,7 @@ export class VMSTApplicationsResolver {
     )
   }
 
-  @Query(() => ValidationUnemploymentApplication, {
+  @Query(() => VmstApplicationsValidationUnemploymentApplication, {
     name: 'vmstApplicationsVacationValidationUnemploymentApplication',
   })
   @Audit()
@@ -59,5 +70,103 @@ export class VMSTApplicationsResolver {
     input: VmstApplicationsVacationValidationInput,
   ) {
     return this.vmstApplicationsService.validateVacationDays(auth, input)
+  }
+
+  @Query(() => VmstApplicationsUnemploymentApplicationOverview, {
+    name: 'vmstApplicationsUnemploymentApplicationOverview',
+  })
+  @Audit()
+  async getApplicationOverview(
+    @CurrentUser() auth: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale?: Locale,
+  ): Promise<VmstApplicationsUnemploymentApplicationOverview | undefined> {
+    return this.vmstApplicationsService.getApplicationOverview(auth, locale)
+  }
+
+  @Query(() => VmstApplicationsOverview, {
+    name: 'vmstApplicationsOverview',
+  })
+  @Audit()
+  async getApplicationsOverview(
+    @CurrentUser() auth: User,
+  ): Promise<VmstApplicationsOverview> {
+    return this.vmstApplicationsService.getApplicationsOverviewForUser(auth)
+  }
+
+  @Query(() => VmstApplicationsApplicantOverview, {
+    name: 'vmstApplicantOverview',
+  })
+  @Audit()
+  async getApplicantOverview(
+    @CurrentUser() auth: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale?: Locale,
+  ) {
+    const { applicantId } = await this.vmstApplicationsService.resolveApplicant(
+      auth,
+    )
+
+    return this.vmstApplicationsService.getApplicantOverview(
+      applicantId,
+      locale,
+    )
+  }
+
+  @Query(() => [VmstApplicationsApplicantRequestedAttachment], {
+    name: 'vmstApplicantRequestedAttachments',
+  })
+  @Audit()
+  async getApplicantRequestedAttachments(@CurrentUser() auth: User) {
+    const { applicantId } = await this.vmstApplicationsService.resolveApplicant(
+      auth,
+    )
+
+    return this.vmstApplicationsService.getApplicantRequestedAttachments(
+      applicantId,
+    )
+  }
+
+  @Query(() => VmstApplicationsAvailableActions, {
+    name: 'vmstApplicantAvailableActions',
+  })
+  @Audit()
+  async getApplicantAvailableActions(@CurrentUser() auth: User) {
+    const { applicantId } = await this.vmstApplicationsService.resolveApplicant(
+      auth,
+    )
+
+    return this.vmstApplicationsService.getApplicantActions(applicantId)
+  }
+
+  @Query(() => VmstApplicationsApplicantAttachmentsResponse, {
+    name: 'vmstApplicantAttachments',
+  })
+  @Audit()
+  async getApplicantAttachments(@CurrentUser() auth: User) {
+    const { applicantId } = await this.vmstApplicationsService.resolveApplicant(
+      auth,
+    )
+
+    return this.vmstApplicationsService.getApplicantAttachments(
+      applicantId,
+      auth.nationalId,
+    )
+  }
+
+  @Query(() => VmstApplicationsAttachmentTypeList, {
+    name: 'vmstAttachmentTypes',
+  })
+  @Audit()
+  async getAttachmentTypes() {
+    return this.vmstApplicationsService.getAttachmentTypes()
+  }
+
+  @Query(() => VmstApplicationsAttachment, {
+    name: 'vmstAttachment',
+  })
+  @Audit()
+  async getAttachment(@Args('id') id: string) {
+    return this.vmstApplicationsService.getAttachment(id)
   }
 }

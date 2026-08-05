@@ -5,6 +5,7 @@ import {
   CourtSessionRulingType,
 } from '@island.is/judicial-system/types'
 
+import { CaseFile } from '../../file'
 import { User } from '../../user'
 import { CourtDocumentResponse } from './courtDocument.response'
 import { CourtSessionString } from './courtSessionString.response'
@@ -63,6 +64,12 @@ export class CourtSessionResponse {
 
   @Field(() => String, { nullable: true })
   readonly ruling?: string
+
+  @Field(() => ID, { nullable: true })
+  readonly rulingFileId?: string
+
+  @Field(() => CaseFile, { nullable: true })
+  readonly rulingFile?: CaseFile
 
   @Field(() => Boolean, { nullable: true })
   readonly isAttestingWitness?: boolean

@@ -23,9 +23,16 @@ export const DEFAULT_PAGE_SIZE = 10
 
 export const MINIMUM_WEEKDAYS = 10
 
+export enum ApplicationTypes {
+  AD = 'ad',
+  BASE_REGULATION = 'base_regulation',
+  AMENDING_REGULATION = 'amending_regulation',
+}
+
 export enum Routes {
   REQUIREMENTS = 'requirements',
   INVOLVED_PARTY = 'involvedParty',
+  TYPE_SELECTION = 'typeSelection',
   COMMENTS = 'comments',
   ADVERT = 'advert',
   SIGNATURE = 'signature',
@@ -37,9 +44,16 @@ export enum Routes {
   COMPLETE = 'complete',
   REJECTED = 'rejected',
   MISC = 'misc',
-}
 
-// this will be replaced with correct values once the api is ready
+  // Regulation-specific routes
+  REGULATION_CONTENT = 'regulationContent',
+  REGULATION_META = 'regulationMeta',
+  REGULATION_PUBLISHING = 'regulationPublishing',
+  REGULATION_ATTACHMENTS = 'regulationAttachments',
+  REGULATION_IMPACTS = 'regulationImpacts',
+  REGULATION_PREVIEW = 'regulationPreview',
+  REGULATION_SUMMARY = 'regulationSummary',
+}
 
 export enum TypeIds {
   GJALDSKRA = '0',
@@ -54,6 +68,9 @@ export const SIGNATURE_INDEX = '{institutionIndex}'
 
 export const INTERVAL_TIMER = 3000
 export const DEBOUNCE_INPUT_TIMER = 333
+
+// Gateway (apps/api) enforces a 100kb JSON body limit. Leave headroom for other metadata.
+export const MAX_APPLICATION_PAYLOAD_BYTES = 90 * 1024
 
 export enum FileNames {
   DOCUMENT = 'document',
@@ -71,5 +88,5 @@ export const MAXIMUM_REGULAR_SIGNATURE_COUNT = 3
 export const MINIMUM_COMMITTEE_SIGNATURE_MEMBER_COUNT = 2
 export const DEFAULT_COMMITTEE_SIGNATURE_MEMBER_COUNT = 2
 export const MAXIMUM_COMMITTEE_SIGNATURE_MEMBER_COUNT = 10
-export const MAXIMUM_ADDITIONS_COUNT = 10
+export const MAXIMUM_ADDITIONS_COUNT = 25
 export const DEFAULT_ADDITIONS_COUNT = 1

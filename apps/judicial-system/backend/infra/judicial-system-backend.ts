@@ -45,13 +45,8 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       SQS_REGION: 'eu-west-1',
       BLOCKED_API_INTEGRATION: {
         dev: '',
-        staging: 'COURT,POLICE_CASE',
-        prod: '',
-      },
-      NOVA_ACCEPT_UNAUTHORIZED: {
-        dev: 'true',
-        staging: 'false',
-        prod: 'false',
+        staging: 'COURT,POLICE_CASE, POLICE_DIGITAL_CASE_FILES',
+        prod: 'POLICE_DIGITAL_CASE_FILES',
       },
       USE_MICROSOFT_GRAPH_API_FOR_COURT_ROBOT: {
         dev: 'false',
@@ -72,12 +67,17 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
           'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
         ]),
       },
+      NOVA_SENDER_NAME: {
+        dev: 'Island Dev',
+        staging: 'Island Staging',
+        prod: 'Island.is',
+      },
     })
     .xroad(Base, JudicialSystem)
     .secrets({
-      NOVA_URL: '/k8s/judicial-system/NOVA_URL',
-      NOVA_USERNAME: '/k8s/judicial-system/NOVA_USERNAME',
-      NOVA_PASSWORD: '/k8s/judicial-system/NOVA_PASSWORD',
+      NOVA_URL: '/k8s/NOVA_URL_V1',
+      NOVA_USERNAME: '/k8s/NOVA_USERNAME_V1',
+      NOVA_PASSWORD: '/k8s/NOVA_PASSWORD_V1',
       COURTS_MOBILE_NUMBERS: '/k8s/judicial-system/COURTS_MOBILE_NUMBERS',
       COURTS_ASSISTANT_MOBILE_NUMBERS:
         '/k8s/judicial-system/COURTS_ASSISTANT_MOBILE_NUMBERS',
@@ -93,8 +93,6 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
         '/k8s/judicial-system/POLICE_INSTITUTIONS_EMAILS',
       PRISON_EMAIL: '/k8s/judicial-system/PRISON_EMAIL',
       PRISON_ADMIN_EMAIL: '/k8s/judicial-system/PRISON_ADMIN_EMAIL',
-      PRISON_ADMIN_INDICTMENT_EMAILS:
-        '/k8s/judicial-system/PRISON_ADMIN_INDICTMENT_EMAILS',
       PUBLIC_PROSECUTOR_CRIMINAL_RECORDS_EMAIL:
         '/k8s/judicial-system/PUBLIC_PROSECUTOR_CRIMINAL_RECORDS_EMAIL',
       AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET',

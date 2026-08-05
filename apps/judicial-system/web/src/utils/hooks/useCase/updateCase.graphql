@@ -4,11 +4,10 @@ mutation UpdateCase($input: UpdateCaseInput!) {
     created
     modified
     type
-    indictmentSubtypes
     description
     state
+    indictmentSubtypes
     policeCaseNumbers
-    publicProsecutorIsRegisteredInPoliceSystem
     defendants {
       id
       noNationalId
@@ -24,6 +23,7 @@ mutation UpdateCase($input: UpdateCaseInput!) {
       defenderChoice
       defendantPlea
       subpoenaType
+      publicProsecutorIsRegisteredInPoliceSystem
     }
     defenderName
     defenderNationalId
@@ -159,7 +159,6 @@ mutation UpdateCase($input: UpdateCaseInput!) {
       isKeyAccessible
     }
     isAppealDeadlineExpired
-    isAppealGracePeriodExpired
     caseModifiedExplanation
     rulingModifiedHistory
     caseResentExplanation
@@ -180,47 +179,20 @@ mutation UpdateCase($input: UpdateCaseInput!) {
       legalArguments
     }
     requestDriversLicenseSuspension
-    appealState
-    isStatementDeadlineExpired
-    statementDeadline
     canBeAppealed
     hasBeenAppealed
-    appealedByRole
-    appealedDate
     appealDeadline
-    prosecutorStatementDate
-    defendantStatementDate
-    appealReceivedByCourtDate
-    appealCaseNumber
-    appealAssistant {
+    appealCase {
       id
-      name
+      appealedByRole
+      appealedDate
+      statementDeadline
+      isStatementDeadlineExpired
     }
-    appealJudge1 {
-      id
-      name
-    }
-    appealJudge2 {
-      id
-      name
-    }
-    appealJudge3 {
-      id
-      name
-    }
-    appealConclusion
-    appealRulingDecision
-    appealRulingModifiedHistory
-    isAppealCustodyIsolation
-    appealValidToDate
-    appealIsolationToDate
-    requestAppealRulingNotToBePublished
-    isRegisteredInPrisonSystem
     prosecutorsOffice {
       id
       name
     }
-    indictmentReturnedExplanation
     indictmentDecision
     indictmentDeniedExplanation
     mergeCase {

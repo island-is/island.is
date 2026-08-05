@@ -105,6 +105,7 @@ export default {
     'numberBulletSection',
     'numberBullet',
     'genericList',
+    'fund',
   ],
   // Content types that have the 'activeTranslations' JSON field
   localizedContentTypes: ['article'],

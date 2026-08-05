@@ -161,6 +161,20 @@ describe('JwtStrategy#validate', () => {
     expect(user.actor!.scope).toEqual(payload.actor!.scope)
   })
 
+  it('works when audience is omitted', async () => {
+    const strategyWithoutAudience = new JwtStrategy({
+      issuer: 'issuer',
+    })
+    const payload: JwtPayload = {
+      nationalId: '1234567890',
+      scope: ['test-scope-1'],
+      client_id: 'test-client',
+    }
+    const user = await strategyWithoutAudience.validate(fakeRequest, payload)
+    expect(user.nationalId).toEqual(payload.nationalId)
+    expect(user.client).toEqual(payload.client_id)
+  })
+
   it('picks up client_nationalId', async () => {
     const jwtStrategywithClientNationalId = new JwtStrategy({
       issuer: 'issuer',

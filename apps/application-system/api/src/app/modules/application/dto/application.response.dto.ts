@@ -111,6 +111,11 @@ class ActionCardMetaData {
   @Expose()
   @IsString()
   historyButton?: string
+
+  @ApiPropertyOptional()
+  @Expose()
+  @IsBoolean()
+  displayPruneAt?: boolean
 }
 
 export class BaseApplicationResponseDto {
@@ -198,6 +203,11 @@ export class BaseApplicationResponseDto {
   @Expose()
   @IsBoolean()
   pruned?: boolean
+
+  @ApiPropertyOptional()
+  @Expose()
+  @IsDate()
+  pruneAt?: Date
 
   constructor(partial: Partial<BaseApplicationResponseDto>) {
     Object.assign(this, partial)

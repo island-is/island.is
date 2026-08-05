@@ -43,6 +43,7 @@ export const statusAndChildrenSection = buildSection({
           required: true,
           largeButtons: true,
           options: statusTypeOptions,
+          clearOnChange: ['status.confirmationOfStudies'],
         }),
         buildDescriptionField({
           id: 'confirmationOfStudiesDescription',

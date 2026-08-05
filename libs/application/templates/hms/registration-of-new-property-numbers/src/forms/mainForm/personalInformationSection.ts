@@ -25,7 +25,9 @@ export const personalInformationSection = buildSection({
           baseInfoReadOnly: true,
           emailAndPhoneReadOnly: true,
           compactFields: true,
-        }).children.filter((field) => !fieldsToRemove.includes(field.id)),
+        }).children.filter(
+          (field) => !fieldsToRemove.includes(field.id as string),
+        ),
       ],
     }),
   ],

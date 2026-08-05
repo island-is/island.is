@@ -7,11 +7,19 @@ import {
   useBffBroadcaster,
   useUserInfo,
 } from './bff.hooks'
+import type { SessionExpiredReason } from '@island.is/shared/types'
 import { isNewUser } from './bff.utils'
+
+class SessionExpiredError extends Error {
+  constructor() {
+    super('Session expired')
+    this.name = 'SessionExpiredError'
+  }
+}
 
 type BffPollerProps = {
   children: ReactNode
-  newSessionCb(): void
+  newSessionCb(reason: SessionExpiredReason): void
   pollIntervalMS?: number
 }
 
@@ -24,13 +32,13 @@ type BffPollerProps = {
  *
  * Features:
  * - Polls the backend at a specified interval to fetch user session data.
- * - If the user's session expires or the backend returns an error, it
- *   automatically triggers a sign-in process.
+ * - If the user's session expires (401/403 from the user endpoint), it
+ *   displays a session expired modal.
  * - If a change in user session (e.g., a new session ID) is detected, it
  *   broadcasts a message to all open tabs/windows and triggers the provided
  *   `newSessionCb` callback to handle the current tab/window.
  *
- * @param newSessionCb - Callback function to be called when a new session is detected.
+ * @param newSessionCb - Callback function to be called when a new session is detected or session expires.
  * @param pollIntervalMS - Polling interval in milliseconds. Default is 10000ms.
  *
  * @usage:
@@ -43,7 +51,7 @@ export const BffPoller = ({
   newSessionCb,
   pollIntervalMS = 10000,
 }: BffPollerProps) => {
-  const { signIn, bffUrlGenerator } = useAuth()
+  const { bffUrlGenerator } = useAuth()
   const userInfo = useUserInfo()
   const { postMessage } = useBffBroadcaster()
   const bffBaseUrl = bffUrlGenerator()
@@ -62,13 +70,14 @@ export const BffPoller = ({
     })
 
     if (!res.ok) {
-      signIn()
-
-      return
+      if (res.status === 401 || res.status === 403) {
+        throw new SessionExpiredError()
+      }
+      throw new Error(`Request failed: ${res.status} ${res.statusText}`)
     }
 
     return res.json() as Promise<BffUser>
-  }, [url, signIn])
+  }, [url])
 
   // Poll user data every 10 seconds
   const { data: newUser, error } = usePolling({
@@ -78,9 +87,8 @@ export const BffPoller = ({
   })
 
   useEffect(() => {
-    if (error) {
-      // If user polling fails, likely due to 401, then sign in.
-      signIn()
+    if (error instanceof SessionExpiredError) {
+      newSessionCb('expired')
     } else if (newUser) {
       // If user has changed (e.g. delegation switch), then notifiy tabs/windows/iframes and execute the callback.
       if (isNewUser(newUser, userInfo)) {
@@ -93,10 +101,10 @@ export const BffPoller = ({
           bffBaseUrl,
         })
 
-        newSessionCb()
+        newSessionCb('session-changed')
       }
     }
-  }, [newUser, error, userInfo, signIn, postMessage, newSessionCb, bffBaseUrl])
+  }, [newUser, error, userInfo, postMessage, newSessionCb, bffBaseUrl])
 
   return children
 }

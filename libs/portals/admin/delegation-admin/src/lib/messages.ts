@@ -167,4 +167,8 @@ export const m = defineMessages({
     id: 'admin.delegationAdmin:referenceIdAlreadyExistsError',
     defaultMessage: 'Númer máls í Zendesk er þegar til',
   },
+  deceasedIndividualError: {
+    id: 'admin.delegationAdmin:deceasedIndividualError',
+    defaultMessage: 'Ekki er hægt að veita umboð til látins einstaklings.',
+  },
 })

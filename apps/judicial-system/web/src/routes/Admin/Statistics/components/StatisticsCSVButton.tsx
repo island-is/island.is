@@ -15,7 +15,7 @@ const convertToCSV = (rows: Record<string, unknown>[]): string => {
         ? `"${val.replace(/"/g, '""')}"`
         : val
     }
-    return val != null ? String(val) : ''
+    return val !== null && val !== undefined ? String(val) : ''
   }
   const csv = [
     headers.join(','),

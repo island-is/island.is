@@ -8,7 +8,6 @@ const {
   BASE_PATH = '/samradsgatt',
   APP_VERSION,
   ENVIRONMENT,
-  CONFIGCAT_SDK_KEY,
   DD_LOGS_CLIENT_TOKEN,
 } = process.env
 const apiPath = '/api'
@@ -37,7 +36,6 @@ module.exports = withNx(
       ddLogsClientToken: DD_LOGS_CLIENT_TOKEN,
       appVersion: APP_VERSION,
       environment: ENVIRONMENT,
-      configCatSdkKey: CONFIGCAT_SDK_KEY,
     },
     serverRuntimeConfig: {
       // Will only be available on the server side

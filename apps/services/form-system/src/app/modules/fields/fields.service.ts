@@ -1,5 +1,11 @@
+import { User } from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 import { FieldTypesEnum } from '@island.is/form-system/shared'
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
@@ -11,6 +17,7 @@ import {
 import { FieldSettingsFactory } from '../../dataTypes/fieldSettings/fieldSettings.factory'
 import { FieldSettings } from '../../dataTypes/fieldSettings/fieldSettings.model'
 import { Form } from '../forms/models/form.model'
+import { ListItem } from '../listItems/models/listItem.model'
 import { Screen } from '../screens/models/screen.model'
 import { Section } from '../sections/models/section.model'
 import { CreateFieldDto } from './models/dto/createField.dto'
@@ -30,6 +37,8 @@ export class FieldsService {
     private readonly sectionModel: typeof Section,
     @InjectModel(Form)
     private readonly formModel: typeof Form,
+    @InjectModel(ListItem)
+    private readonly listItemModel: typeof ListItem,
   ) {}
 
   async findById(id: string): Promise<Field> {
@@ -42,8 +51,32 @@ export class FieldsService {
     return field
   }
 
-  async create(createFieldDto: CreateFieldDto): Promise<FieldDto> {
+  async create(user: User, createFieldDto: CreateFieldDto): Promise<FieldDto> {
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
     const { screenId, fieldType, displayOrder } = createFieldDto
+
+    const screen = await this.screenModel.findByPk(screenId)
+    if (!screen) {
+      throw new NotFoundException(`Screen with id '${screenId}' not found`)
+    }
+    const section = await this.sectionModel.findByPk(screen.sectionId)
+    if (!section) {
+      throw new NotFoundException(
+        `Section with id '${screen.sectionId}' not found`,
+      )
+    }
+    const form = await this.formModel.findByPk(section.formId)
+    if (!form) {
+      throw new NotFoundException(`Form with id '${section.formId}' not found`)
+    }
+    const formOwnerNationalId = form.organizationNationalId
+    if (user.nationalId !== formOwnerNationalId && !isAdmin) {
+      throw new UnauthorizedException(
+        `User does not have permission to create field for screen with id '${screenId}'`,
+      )
+    }
+
     const newField: Field = await this.fieldModel.create({
       screenId: screenId,
       fieldType: fieldType,
@@ -56,6 +89,7 @@ export class FieldsService {
 
     const keys = [
       'id',
+      'identifier',
       'screenId',
       'name',
       'displayOrder',
@@ -73,9 +107,16 @@ export class FieldsService {
     return fieldDto
   }
 
-  async update(id: string, updateFieldDto: UpdateFieldDto): Promise<void> {
+  async update(
+    user: User,
+    id: string,
+    updateFieldDto: UpdateFieldDto,
+  ): Promise<void> {
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
     const field = await this.findById(id)
     const currentFieldType = field.fieldType
+    const newFieldType = updateFieldDto.fieldType
 
     if (
       currentFieldType === FieldTypesEnum.DROPDOWN_LIST ||
@@ -83,8 +124,30 @@ export class FieldsService {
       currentFieldType === FieldTypesEnum.CHECKBOX
     ) {
       const screen = await this.screenModel.findByPk(field.screenId)
-      const section = await this.sectionModel.findByPk(screen?.sectionId)
-      const form = await this.formModel.findByPk(section?.formId)
+      if (!screen) {
+        throw new NotFoundException(
+          `Screen with id '${field.screenId}' not found`,
+        )
+      }
+      const section = await this.sectionModel.findByPk(screen.sectionId)
+      if (!section) {
+        throw new NotFoundException(
+          `Section with id '${screen.sectionId}' not found`,
+        )
+      }
+      const form = await this.formModel.findByPk(section.formId)
+      if (!form) {
+        throw new NotFoundException(
+          `Form with id '${section.formId}' not found`,
+        )
+      }
+
+      const formOwnerNationalId = form.organizationNationalId
+      if (user.nationalId !== formOwnerNationalId && !isAdmin) {
+        throw new UnauthorizedException(
+          `User does not have permission to update field with id '${id}'`,
+        )
+      }
 
       let listItemIds: string[] = []
 
@@ -94,15 +157,23 @@ export class FieldsService {
       ) {
         listItemIds = field.list?.map((item) => item.id) || []
         // TODO: listItems should be deleted from the database as well
+        if (
+          newFieldType !== FieldTypesEnum.DROPDOWN_LIST &&
+          newFieldType !== FieldTypesEnum.RADIO_BUTTONS
+        ) {
+          await this.listItemModel.destroy({
+            where: {
+              fieldId: field.id,
+            },
+          })
+        }
       }
 
-      if (form) {
-        const { dependencies } = form
-        const ids = listItemIds.length > 0 ? listItemIds : id
-        const newDependencies = filterOnlyParents(dependencies, ids)
-        form.dependencies = newDependencies
-        form.save()
-      }
+      const { dependencies } = form
+      const ids = listItemIds.length > 0 ? listItemIds : id
+      const newDependencies = filterOnlyParents(dependencies, ids)
+      form.dependencies = newDependencies
+      await form.save()
     }
 
     Object.assign(field, updateFieldDto)
@@ -111,8 +182,11 @@ export class FieldsService {
   }
 
   async updateDisplayOrder(
+    user: User,
     updateFieldsDisplayOrderDto: UpdateFieldsDisplayOrderDto,
   ): Promise<void> {
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
     const { fieldsDisplayOrderDto } = updateFieldsDisplayOrderDto
 
     for (let i = 0; i < fieldsDisplayOrderDto.length; i++) {
@@ -124,6 +198,32 @@ export class FieldsService {
         )
       }
 
+      const screen = await this.screenModel.findByPk(field.screenId)
+      if (!screen) {
+        throw new NotFoundException(
+          `Screen with id '${field.screenId}' not found`,
+        )
+      }
+      const section = await this.sectionModel.findByPk(screen.sectionId)
+      if (!section) {
+        throw new NotFoundException(
+          `Section with id '${screen.sectionId}' not found`,
+        )
+      }
+      const form = await this.formModel.findByPk(section.formId)
+      if (!form) {
+        throw new NotFoundException(
+          `Form with id '${section.formId}' not found`,
+        )
+      }
+
+      const formOwnerNationalId = form.organizationNationalId
+      if (user.nationalId !== formOwnerNationalId && !isAdmin) {
+        throw new UnauthorizedException(
+          `User does not have permission to update display order of field with id '${field.id}'`,
+        )
+      }
+
       await field.update({
         displayOrder: i,
         screenId: fieldsDisplayOrderDto[i].screenId,
@@ -131,7 +231,9 @@ export class FieldsService {
     }
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(user: User, id: string): Promise<void> {
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
     const field = await this.findById(id)
 
     if (!field) {
@@ -140,8 +242,28 @@ export class FieldsService {
     // Make sure to delete all instances of the fieldId in the dependencies array
 
     const screen = await this.screenModel.findByPk(field.screenId)
-    const section = await this.sectionModel.findByPk(screen?.sectionId)
-    const form = await this.formModel.findByPk(section?.formId)
+    if (!screen) {
+      throw new NotFoundException(
+        `Screen with id '${field.screenId}' not found`,
+      )
+    }
+    const section = await this.sectionModel.findByPk(screen.sectionId)
+    if (!section) {
+      throw new NotFoundException(
+        `Section with id '${screen.sectionId}' not found`,
+      )
+    }
+    const form = await this.formModel.findByPk(section.formId)
+    if (!form) {
+      throw new NotFoundException(`Form with id '${section.formId}' not found`)
+    }
+
+    const formOwnerNationalId = form.organizationNationalId
+    if (user.nationalId !== formOwnerNationalId && !isAdmin) {
+      throw new UnauthorizedException(
+        `User does not have permission to delete field with id '${id}'`,
+      )
+    }
 
     let listItemIds: string[] = []
 
@@ -153,14 +275,12 @@ export class FieldsService {
       listItemIds = field.list?.map((item) => item.id) || []
     }
 
-    if (form) {
-      const { dependencies } = form
-      const idsToRemove = listItemIds.length > 0 ? listItemIds : id
-      const newDependencies = filterDependency(dependencies, idsToRemove)
-      form.dependencies = newDependencies
-      form.save()
-    }
+    const { dependencies } = form
+    const idsToRemove = listItemIds.length > 0 ? listItemIds : id
+    const newDependencies = filterDependency(dependencies, idsToRemove)
+    form.dependencies = newDependencies
+    await form.save()
 
-    field?.destroy()
+    await field.destroy()
   }
 }

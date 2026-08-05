@@ -1,0 +1,121 @@
+import { useMemo, useState } from 'react'
+import {
+  ShipRegistryCertificate,
+  ShipRegistryCertificateStatus,
+} from '@island.is/api/schema'
+import { Box, Input, Tag } from '@island.is/island-ui/core'
+import {
+  PortalTable,
+  createColumnHelper,
+  formatDate,
+  m,
+  type Row,
+} from '@island.is/portals/my-pages/core'
+import { useLocale } from '@island.is/localization'
+import { shipsMessages } from '../../../../lib/messages'
+import { CertificateExpandedRow } from './CertificateExpandedRow'
+
+interface Props {
+  certificates: ShipRegistryCertificate[]
+  loading: boolean
+}
+
+const columnHelper = createColumnHelper<ShipRegistryCertificate>()
+
+export const CertificatesTable = ({ certificates, loading }: Props) => {
+  const { formatMessage } = useLocale()
+  const [search, setSearch] = useState('')
+
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor('name', {
+        header: formatMessage(shipsMessages.certificatesType),
+      }),
+      columnHelper.accessor('validToDate', {
+        header: formatMessage(shipsMessages.certificatesExpiry),
+        cell: ({ getValue }) => {
+          const value = getValue()
+          return value ? formatDate(new Date(value)) : '-'
+        },
+      }),
+      columnHelper.accessor('status', {
+        id: 'status',
+        header: formatMessage(shipsMessages.certificatesStatus),
+        enableSorting: false,
+        cell: ({ getValue }) => {
+          const value = getValue()
+          if (value === ShipRegistryCertificateStatus.Unknown) return null
+          return (
+            <Tag
+              outlined
+              disabled
+              variant={
+                value === ShipRegistryCertificateStatus.Invalid
+                  ? 'red'
+                  : value ===
+                      ShipRegistryCertificateStatus.ReinspectionNeeded ||
+                    value === ShipRegistryCertificateStatus.InInspectionWindow
+                  ? 'purple'
+                  : 'mint'
+              }
+            >
+              {value === ShipRegistryCertificateStatus.Invalid
+                ? formatMessage(shipsMessages.invalidTag)
+                : value === ShipRegistryCertificateStatus.ReinspectionNeeded
+                ? formatMessage(shipsMessages.reinspectionNeededTag)
+                : value === ShipRegistryCertificateStatus.InInspectionWindow
+                ? formatMessage(shipsMessages.inInspectionWindowTag)
+                : formatMessage(shipsMessages.validTag)}
+            </Tag>
+          )
+        },
+      }),
+    ],
+    [formatMessage],
+  )
+
+  const filteredCertificates = useMemo(
+    () =>
+      search
+        ? certificates.filter((c) =>
+            c.name?.toLowerCase().includes(search.toLowerCase()),
+          )
+        : certificates,
+    [certificates, search],
+  )
+
+  const renderExpandedRow = (row: Row<ShipRegistryCertificate>) => (
+    <CertificateExpandedRow
+      issueDate={row.original.issueDate}
+      extensionDate={row.original.extensionDate}
+    />
+  )
+
+  return (
+    <Box marginTop={4}>
+      <Box marginBottom={3} style={{ maxWidth: 318 }}>
+        <Input
+          name="cert-search"
+          label={formatMessage(m.searchLabel)}
+          placeholder={formatMessage(
+            shipsMessages.certificatesSearchPlaceholder,
+          )}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          size="xs"
+          backgroundColor="blue"
+          icon={{ name: 'search' }}
+        />
+      </Box>
+      <PortalTable
+        columns={columns}
+        data={filteredCertificates}
+        loading={loading}
+        emptyMessage={formatMessage(shipsMessages.certificatesEmpty)}
+        mobileTitleKey="name"
+        renderExpandedRow={renderExpandedRow}
+        srCaption={formatMessage(shipsMessages.certificatesTab)}
+      />
+    </Box>
+  )
+}

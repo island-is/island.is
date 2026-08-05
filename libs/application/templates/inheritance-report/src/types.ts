@@ -1,5 +1,11 @@
 import { FormValue } from '@island.is/application/types'
-import { Advocate, EstateAsset } from '@island.is/clients/syslumenn'
+import {
+  Advocate,
+  EstateAsset,
+  InheritanceSignatory,
+} from '@island.is/clients/syslumenn'
+
+export type { InheritanceSignatory }
 
 export enum RoleConfirmationEnum {
   CONTINUE = 'continue',
@@ -325,3 +331,20 @@ export const FuneralAssetItem = {
 } as const
 export type FuneralAssetItem =
   typeof FuneralAssetItem[keyof typeof FuneralAssetItem]
+
+export interface InheritanceReportExternalData {
+  submitToSyslumenn?: {
+    data: {
+      success: boolean
+      id?: string
+    }
+    date: string
+  }
+  getSignatories?: {
+    data: {
+      success: boolean
+      signatories: InheritanceSignatory[]
+    }
+    date: string
+  }
+}

@@ -73,8 +73,14 @@ export const serviceSetup = (services: {
         staging: 'digitaliceland',
         dev: 'digitaliceland',
       },
+      CONTENTFUL_HOST: {
+        dev: 'preview.contentful.com',
+        staging: 'cdn.contentful.com',
+        prod: 'cdn.contentful.com',
+      },
     })
     .secrets({
+      CONTENTFUL_ACCESS_TOKEN: '/k8s/identity-server/CONTENTFUL_ACCESS_TOKEN',
       ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL',
       ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN',
       ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE:

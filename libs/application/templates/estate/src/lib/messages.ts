@@ -276,6 +276,11 @@ export const m = defineMessages({
     defaultMessage: 'Fjarlægja',
     description: '',
   },
+  deleteAsset: {
+    id: 'es.application:deleteAsset',
+    defaultMessage: 'Eyða',
+    description: 'Label for delete button on user-added asset rows',
+  },
 
   // Applicant
   announcer: {
@@ -1065,6 +1070,11 @@ export const m = defineMessages({
     defaultMessage: 'Halda áfram',
     description: 'Button label to continue',
   },
+  saveAndContinue: {
+    id: 'es.application:saveAndContinue',
+    defaultMessage: 'Vista og halda áfram',
+    description: 'Save-and-continue navigation button label',
+  },
   paymentTitle: {
     id: 'es.application:paymentTitle',
     defaultMessage: 'Greiðsla',
@@ -1139,6 +1149,27 @@ export const m = defineMessages({
     defaultMessage: 'Símanúmer virðist ekki vera rétt',
     description: 'Phone number is invalid',
   },
+  phoneElectronicIdError: {
+    id: 'es.application:error.phoneElectronicIdError',
+    defaultMessage: 'Rafræn skilríki ekki til staðar fyrir kennitölu',
+    description: 'Electronic ID not found for national ID',
+  },
+  electronicIdCheckLoading: {
+    id: 'es.application:electronicIdCheckLoading',
+    defaultMessage: 'Athuga rafræn skilríki...',
+    description: 'Checking electronic ID',
+  },
+  electronicIdCheckSuccess: {
+    id: 'es.application:electronicIdCheckSuccess',
+    defaultMessage: 'Rafræn skilríki staðfest',
+    description: 'Electronic ID confirmed',
+  },
+  electronicIdCheckFailure: {
+    id: 'es.application:electronicIdCheckFailure',
+    defaultMessage:
+      'Rafræn skilríki ekki til staðar. Vinsamlegast hafðu samband við Auðkenni.',
+    description: 'Electronic ID not found. Please contact Auðkenni.',
+  },
   errorEmail: {
     id: 'es.application:error.errorEmail',
     defaultMessage: 'Netfang virðist ekki vera rétt',
@@ -1164,6 +1195,11 @@ export const m = defineMessages({
     id: 'es.application:error.errorPropertyNumber',
     defaultMessage: 'Verður að innihalda L og 6 tölustafi eða F og 7 tölustafi',
     description: 'Property number is invalid',
+  },
+  errorMarketValue: {
+    id: 'es.application:error.errorMarketValue',
+    defaultMessage: 'Markaðsverð þarf að vera hærra en 0 kr.',
+    description: 'Asset market value must be greater than 0',
   },
 
   // Inheritance step
@@ -1225,19 +1261,13 @@ export const m = defineMessages({
   inheritanceUnder18Error: {
     id: 'es.application:inheritanceUnder18Error',
     defaultMessage:
-      'Eftirfarandi erfingi er undir lögaldri og því er ekki hægt að halda áfram með umsókn. Vinsamlegast hafið samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
+      'Eftirfarandi erfingi er undir lögaldri án málsvara og því er ekki hægt að halda áfram með umsókn. Vinsamlegast tilgreinið lögráða málsvara eða hafið samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
     description: '',
   },
   inheritanceUnder18ErrorAdvocate: {
     id: 'es.application:inheritanceUnder18ErrorAdvocate',
     defaultMessage:
       'Eftirfarandi málssvari er undir lögaldri og því ekki hægt að halda áfram með umsókn. Vinsamlegast hafið samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
-    description: '',
-  },
-  inheritanceAgeValidation: {
-    id: 'es.application:inheritanceAgeValidation',
-    defaultMessage:
-      'Ekki er hægt að halda áfram með umsókn þar sem erfingi undir lögaldri er skráður',
     description: '',
   },
   heirAdvocateAgeValidation: {
@@ -1364,5 +1394,104 @@ export const m = defineMessages({
     id: 'es.application:debtsTypeOverdraft',
     defaultMessage: 'Yfirdráttur',
     description: 'Overdraft debt type',
+  },
+
+  // Send a copy of the application to the parties (málsaðilar)
+  sendCopyToPartiesLabel: {
+    id: 'es.application:sendCopyToParties.label',
+    defaultMessage: 'Senda afrit af umsókn til málsaðila',
+    description:
+      'Checkbox label to email a copy of the application to the parties',
+  },
+
+  // Signing / signature-status state messages
+  applicationSubmittedTitle: {
+    id: 'es.application:application.submittedTitle',
+    defaultMessage: 'Umsókn send til sýslumanns',
+    description: 'Title shown after the application has been submitted',
+  },
+  applicationSubmittedDescription: {
+    id: 'es.application:application.submittedDescription',
+    defaultMessage: 'Umsóknin hefur verið send til sýslumanns.',
+    description: 'Description shown after the application has been submitted',
+  },
+  signingTitle: {
+    id: 'es.application:signing.title',
+    defaultMessage: 'Undirritun',
+    description: 'Signing title',
+  },
+  signingDescription: {
+    id: 'es.application:signing.description',
+    defaultMessage:
+      'Umsóknin hefur verið send til sýslumanns. Allir aðilar þurfa að undirrita áður en hægt er að ljúka málinu.',
+    description: 'Signing description',
+  },
+  signingTableTitle: {
+    id: 'es.application:signing.tableTitle',
+    defaultMessage: 'Aðilar sem þurfa að undirrita',
+    description: 'Signing table title',
+  },
+  signingNameLabel: {
+    id: 'es.application:signing.nameLabel',
+    defaultMessage: 'Nafn',
+    description: 'Signatory name column label',
+  },
+  signingNationalIdLabel: {
+    id: 'es.application:signing.nationalIdLabel',
+    defaultMessage: 'Kennitala',
+    description: 'Signatory national ID column label',
+  },
+  signingStatusLabel: {
+    id: 'es.application:signing.statusLabel',
+    defaultMessage: 'Staða undirskriftar',
+    description: 'Signing status label',
+  },
+  signingStatusSigned: {
+    id: 'es.application:signing.status.signed',
+    defaultMessage: 'Undirritað',
+    description: 'Signed status',
+  },
+  signingStatusPending: {
+    id: 'es.application:signing.status.pending',
+    defaultMessage: 'Í bið',
+    description: 'Pending status',
+  },
+  signingActionsInfoTitle: {
+    id: 'es.application:signing.actionsInfoTitle',
+    defaultMessage: 'Næstu skref',
+    description: 'Signing next steps title',
+  },
+  signingActionsInfoDescription: {
+    id: 'es.application:signing.actionsInfoDescription',
+    defaultMessage:
+      'Þegar allir aðilar hafa undirritað birtist hnappur hér að neðan til að ljúka umsókn.',
+    description: 'Signing next steps description',
+  },
+  signingComplete: {
+    id: 'es.application:signing.complete',
+    defaultMessage: 'Ljúka umsókn',
+    description: 'Complete button',
+  },
+  signingPendingTitle: {
+    id: 'es.application:signing.pendingTitle',
+    defaultMessage: 'Beðið eftir undirskriftum',
+    description: 'Pending signatures title',
+  },
+  signingPendingDescription: {
+    id: 'es.application:signing.pendingDescription',
+    defaultMessage:
+      'Umsóknin hefur verið send til sýslumanns. Allir aðilar þurfa að undirrita áður en hægt er að ljúka málinu.',
+    description: 'Pending signatures description',
+  },
+  signingCompleteTitle: {
+    id: 'es.application:signing.completeTitle',
+    defaultMessage: 'Allar undirskriftir komnar',
+    description: 'All signatures complete title',
+  },
+  signingCompleteDescription: {
+    id: 'es.application:signing.completeDescription',
+    defaultMessage:
+      'Allir aðilar hafa undirritað. Þú getur núna lokið umsókninni.',
+    description: 'All signatures complete description',
   },
 })

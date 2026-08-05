@@ -1,5 +1,5 @@
 import { ApolloProvider } from '@apollo/client'
-import { getSession, Provider } from 'next-auth/client'
+import { getSession, SessionProvider } from 'next-auth/react'
 import { AppContext } from 'next/app'
 import { AppLayout, PageLoader, AuthProvider } from '../components'
 import initApollo from '../graphql/client'
@@ -8,9 +8,10 @@ import { IsSsrMobileContext } from '../context'
 const ConsultationPortalApplication: any = ({ Component, pageProps }) => {
   return (
     <ApolloProvider client={initApollo(pageProps.apolloState)}>
-      <Provider
+      <SessionProvider
         session={pageProps.session}
-        options={{ clientMaxAge: 120, basePath: '/samradsgatt/api/auth' }}
+        basePath="/samradsgatt/api/auth"
+        refetchInterval={120}
       >
         <AuthProvider>
           <IsSsrMobileContext.Provider value={pageProps.isMobile}>
@@ -78,7 +79,7 @@ const ConsultationPortalApplication: any = ({ Component, pageProps }) => {
             `}</style>
           </IsSsrMobileContext.Provider>
         </AuthProvider>
-      </Provider>
+      </SessionProvider>
     </ApolloProvider>
   )
 }
@@ -93,7 +94,7 @@ ConsultationPortalApplication.getInitialProps = async (
     apolloClient,
   }
   const apolloState = apolloClient.cache.extract()
-  const session = await getSession(customContext)
+  const session = await getSession({ req: ctx.req })
 
   const isServer = !!ctx.req
   const userAgent = isServer

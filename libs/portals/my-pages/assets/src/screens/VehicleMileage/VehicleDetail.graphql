@@ -37,6 +37,7 @@ query getCo2($input: VehiclesListInputV3!) {
     vehicleList {
       vehicleId
       co2
+      hasMilesOdometer
     }
   }
 }

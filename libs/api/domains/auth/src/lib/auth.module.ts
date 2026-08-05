@@ -4,7 +4,6 @@ import { AuthDelegationApiClientModule } from '@island.is/clients/auth/delegatio
 import { AuthIdsApiClientModule } from '@island.is/clients/auth/ids-api'
 import { AuthPublicApiClientModule } from '@island.is/clients/auth/public-api'
 import { IdentityClientModule } from '@island.is/clients/identity'
-import { CmsModule } from '@island.is/cms'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 import { ApiScopeLoader } from './loaders/apiScope.loader'
@@ -31,6 +30,7 @@ import { ClientResolver } from './resolvers/client.resolver'
 import { ConsentResolver } from './resolvers/consent.resolver'
 import { PasskeyResolver } from './resolvers/passkey.resolver'
 import { PasskeyService } from './services/passkey.service'
+import { ScopeCategoriesResolver } from './resolvers/scopeCategories.resolver'
 
 @Module({
   providers: [
@@ -48,7 +48,6 @@ import { PasskeyService } from './services/passkey.service'
     ApiScopeLoader,
     ClientLoader,
     DomainLoader,
-    CmsModule,
     ClientsService,
     ConsentResolver,
     ConsentService,
@@ -58,6 +57,7 @@ import { PasskeyService } from './services/passkey.service'
     LoginRestrictionService,
     PasskeyService,
     PasskeyResolver,
+    ScopeCategoriesResolver,
   ],
   imports: [
     AuthPublicApiClientModule,

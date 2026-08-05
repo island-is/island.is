@@ -1,6 +1,5 @@
 import { theme, themeUtils } from '@island.is/island-ui/theme'
-import { styleVariants } from '@vanilla-extract/css'
-import { style, globalStyle } from '@vanilla-extract/css'
+import { style, styleVariants, globalStyle } from '@vanilla-extract/css'
 
 export const badge = styleVariants({
   active: {
@@ -11,11 +10,6 @@ export const badge = styleVariants({
     width: theme.spacing[1],
     borderRadius: '50%',
     backgroundColor: theme.color.red400,
-    ...themeUtils.responsiveStyle({
-      md: {
-        left: 67,
-      },
-    }),
   },
   inactive: {
     display: 'none',
@@ -48,4 +42,39 @@ export const svgOutline = style({})
 
 globalStyle(`${svgOutline} svg path`, {
   stroke: theme.color.blue400,
+})
+
+export const featuredCardImageWrapper = style({
+  alignSelf: 'stretch',
+  flexShrink: 0,
+  width: 132,
+  marginTop: -theme.spacing[3],
+  marginBottom: -theme.spacing[3],
+  marginRight: -theme.spacing[3],
+  borderTopRightRadius: 8,
+  borderBottomRightRadius: 8,
+  overflow: 'hidden',
+  ...themeUtils.responsiveStyle({
+    xl: {
+      marginRight: -theme.spacing[4],
+    },
+  }),
+})
+
+export const featuredCardImage = style({
+  width: '100%',
+  height: '100%',
+  objectFit: 'contain',
+})
+
+export const featuredCardWithImage = style({})
+
+globalStyle(`${featuredCardWithImage} > *`, {
+  overflow: 'hidden',
+})
+
+export const featuredCardNoText = style({})
+
+globalStyle(`${featuredCardNoText} p`, {
+  display: 'none',
 })

@@ -26,7 +26,6 @@ export const dataSchema = z.object({
   children: z.nativeEnum(YesOrNoEnum),
   citizenship: z.string().optional(),
   formerInsurance,
-  hasAdditionalInfo: z.nativeEnum(YesOrNoEnum),
   additionalRemarks: z.string().optional(),
   additionalFiles: z.array(FileSchema).optional(),
   confirmCorrectInfo: z.array(z.enum([YES])).length(1),

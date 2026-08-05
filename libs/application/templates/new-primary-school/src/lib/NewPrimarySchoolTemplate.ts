@@ -1,9 +1,11 @@
 import {
   DefaultStateLifeCycle,
+  defaultLifecycleWithPruneMessage,
   EphemeralStateLifeCycle,
   YES,
   coreHistoryMessages,
   corePendingActionMessages,
+  getValueViaPath,
 } from '@island.is/application/core'
 import {
   Application,
@@ -17,12 +19,15 @@ import {
   FormModes,
   InstitutionNationalIds,
   NationalRegistryV3UserApi,
+  NotificationConfig,
+  NotificationType,
   UserProfileApi,
   defineTemplateApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { CodeOwners } from '@island.is/shared/constants'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import set from 'lodash/set'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
@@ -48,6 +53,7 @@ import {
 import {
   determineNameFromApplicationAnswers,
   getApplicationAnswers,
+  getApplicationExternalData,
   getApplicationType,
   getOtherGuardian,
   otherGuardianApprovalStatePendingAction,
@@ -108,6 +114,11 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               externalDataId: 'preferredSchool',
               throwOnError: true,
             }),
+            defineTemplateApi({
+              action: ApiModuleActions.getIsApplicationBlocked,
+              externalDataId: 'isApplicationBlocked',
+              throwOnError: true,
+            }),
           ],
           roles: [
             {
@@ -136,10 +147,46 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: {
-            target: States.DRAFT,
-            actions: 'setApplicationType',
-          },
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.DRAFT,
+              actions: 'setApplicationType',
+              cond: (application) => {
+                const { isApplicationBlocked } = getApplicationExternalData(
+                  application?.application?.externalData,
+                )
+
+                if (
+                  isRunningOnEnvironment('local') ||
+                  isRunningOnEnvironment('dev')
+                ) {
+                  return true
+                }
+
+                return !isApplicationBlocked
+              },
+            },
+            {
+              target: States.APPLICATION_BLOCKED,
+            },
+          ],
+        },
+      },
+      [States.APPLICATION_BLOCKED]: {
+        meta: {
+          name: States.APPLICATION_BLOCKED,
+          status: FormModes.DRAFT,
+          lifecycle: EphemeralStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/ApplicationBlocked').then((module) =>
+                  Promise.resolve(module.ApplicationBlocked),
+                ),
+              read: 'all',
+            },
+          ],
         },
       },
       [States.DRAFT]: {
@@ -208,7 +255,20 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         meta: {
           name: States.OTHER_GUARDIAN_APPROVAL,
           status: FormModes.IN_PROGRESS,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: defaultLifecycleWithPruneMessage((application) => {
+            const nationalId = getValueViaPath<string>(
+              application.answers,
+              'childNationalId',
+            )
+            return {
+              notificationTemplateId:
+                NotificationConfig[NotificationType.NewPrimarySchoolPruned]
+                  .templateId,
+              ...(nationalId && {
+                args: [{ key: 'internalBody', value: nationalId }],
+              }),
+            }
+          }),
           actionCard: {
             pendingAction: otherGuardianApprovalStatePendingAction,
             historyLogs: [
@@ -324,7 +384,20 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         meta: {
           name: States.PAYER_APPROVAL,
           status: FormModes.IN_PROGRESS,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: defaultLifecycleWithPruneMessage((application) => {
+            const nationalId = getValueViaPath<string>(
+              application.answers,
+              'childNationalId',
+            )
+            return {
+              notificationTemplateId:
+                NotificationConfig[NotificationType.NewPrimarySchoolPruned]
+                  .templateId,
+              ...(nationalId && {
+                args: [{ key: 'internalBody', value: nationalId }],
+              }),
+            }
+          }),
           actionCard: {
             pendingAction: payerApprovalStatePendingAction,
             historyLogs: [

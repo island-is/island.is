@@ -15,14 +15,9 @@ export interface CarCategoryError {
   carNr: string
 }
 
-export interface CurrentVehicleWithMilage {
-  permno: string | null
-  milage: number | null
-}
-
 export interface CarMap {
   [permno: string]: {
-    milage: number
+    mileage: number
     category: RateCategory
     activeDayRate?: DayRateEntryModel
   }

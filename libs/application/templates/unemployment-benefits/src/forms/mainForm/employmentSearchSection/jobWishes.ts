@@ -62,6 +62,7 @@ export const jobWishesSubSection = buildSubSection({
           required: true,
           allowNegative: false,
           max: 100,
+          placeholder: '1-100%',
         }),
         buildAlertMessageField({
           id: 'jobWishes.wantedJobAlert',

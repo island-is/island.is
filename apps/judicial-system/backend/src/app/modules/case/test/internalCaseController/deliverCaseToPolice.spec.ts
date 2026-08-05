@@ -20,9 +20,9 @@ import { PoliceDocumentType, PoliceService } from '../../../police'
 import { Case } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 
-jest.mock('../../../../formatters/requestPdf')
-jest.mock('../../../../formatters/courtRecordPdf')
-jest.mock('../../../../formatters/custodyNoticePdf')
+jest.mock('../../../../formatters/generatedPdfs/requestPdf')
+jest.mock('../../../../formatters/generatedPdfs/courtRecordPdf')
+jest.mock('../../../../formatters/generatedPdfs/custodyNoticePdf')
 
 interface Then {
   result: DeliverResponse

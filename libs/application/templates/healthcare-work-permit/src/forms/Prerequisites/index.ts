@@ -10,7 +10,7 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
 } from '@island.is/application/types'
 import {
   confirmation,
@@ -55,7 +55,7 @@ export const Prerequisites: Form = buildForm({
           }),
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryUserApi.configure({
+              provider: NationalRegistryV3UserApi.configure({
                 params: {
                   citizenshipWithinEES: true,
                 },

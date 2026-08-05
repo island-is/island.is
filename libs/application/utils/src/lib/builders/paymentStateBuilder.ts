@@ -4,7 +4,7 @@ import {
   StateNodeConfig,
   TransitionsConfig,
 } from 'xstate'
-import { PaymentForm } from '@island.is/application/ui-forms'
+import { getPaymentForm } from '@island.is/application/ui-forms'
 import {
   Application,
   ApplicationContext,
@@ -86,6 +86,15 @@ type PaymentStateConfigOptions<
    * This can be a string or a function that returns a string based on the application data.
    */
   payerNationalId?: string | ((application: Application) => string)
+
+  /**
+   * Opt-in: when a post-payment submit fails with a structured provider
+   * errorReason, surface that reason to the applicant as a toast on the payment
+   * screen (in addition to the generic error screen). Defaults to false, so
+   * existing applications are unaffected. Only applies to the default payment
+   * form (ignored when a custom `roles` formLoader is supplied).
+   */
+  showSubmitErrorReason?: boolean
 }
 
 /**
@@ -176,7 +185,7 @@ export const buildPaymentState = <
         {
           id: 'applicant',
           formLoader: async () => {
-            return PaymentForm
+            return getPaymentForm(options.showSubmitErrorReason ?? false)
           },
           actions: [
             { event: 'SUBMIT', name: 'Panta', type: 'primary' },

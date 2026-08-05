@@ -144,6 +144,8 @@ export const getCleanSchoolSelection = (
           },
         ].filter((x) => !!x.programId),
         thirdLanguageCode: selectionItem.thirdLanguage?.code || undefined,
+        fallbackThirdLanguageCode:
+          selectionItem.fallbackThirdLanguage?.code || undefined,
         nordicLanguageCode: selectionItem.nordicLanguage?.code || undefined,
         requestDormitory: selectionItem.requestDormitory?.includes(YES),
       })

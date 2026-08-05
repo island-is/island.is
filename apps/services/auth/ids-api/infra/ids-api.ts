@@ -3,6 +3,8 @@ import {
   json,
   service,
   ServiceBuilder,
+  scheduledJob,
+  ScheduledJobBuilder,
 } from '../../../../../infra/src/dsl/dsl'
 import {
   Base,
@@ -72,11 +74,6 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
         dev: '10001',
         staging: '6503760649',
       },
-      NOVA_ACCEPT_UNAUTHORIZED: {
-        dev: 'true',
-        staging: 'false',
-        prod: 'false',
-      },
       PASSKEY_CORE_RP_ID: 'island.is',
       PASSKEY_CORE_RP_NAME: 'Island.is',
       PASSKEY_CORE_CHALLENGE_TTL_MS: '120000',
@@ -84,8 +81,10 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
       PASSKEY_CORE_ALLOWED_ORIGINS: json([
         // Origin for iOS app.
         'https://island.is',
-        // Origin for Android test app
+        // Origin for Android debug app
         'android:apk-key-hash:JgPeo_F6KYk-ngRa26tO2SsAtMiTBQCc7WtSgN-jRX0',
+        // Origin for Android test app
+        'android:apk-key-hash:wrkMxD98Ii5lxgJdq7heBq_xTq38_s9GKLLgESObnMQ',
         // Origin for Android prod app
         'android:apk-key-hash:EsLTUu5kaY7XPmMl2f7nbq4amu-PNzdYu3FecNf90wU',
       ]),
@@ -105,6 +104,11 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
         staging: 'false',
         prod: 'false',
       },
+      NOVA_SENDER_NAME: {
+        dev: 'Island Dev',
+        staging: 'Island Staging',
+        prod: 'Island.is',
+      },
     })
     .secrets({
       ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL',
@@ -113,9 +117,9 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
         '/k8s/services-auth/ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE',
       IDENTITY_SERVER_CLIENT_SECRET:
         '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET',
-      NOVA_URL: '/k8s/services-auth/NOVA_URL',
-      NOVA_USERNAME: '/k8s/services-auth/NOVA_USERNAME',
-      NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD',
+      NOVA_URL: '/k8s/NOVA_URL_V1',
+      NOVA_USERNAME: '/k8s/NOVA_USERNAME_V1',
+      NOVA_PASSWORD: '/k8s/NOVA_PASSWORD_V1',
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/services-auth/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
       SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME',
@@ -147,10 +151,10 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
 
 const cleanupId = 'services-auth-ids-api-cleanup'
 // run daily at 3am
-const schedule = { schedule: '0 3 * * *' }
+const schedule = '0 3 * * *'
 
-export const cleanupSetup = (): ServiceBuilder<typeof cleanupId> =>
-  service(cleanupId)
+export const cleanupSetup = (): ScheduledJobBuilder<typeof cleanupId> =>
+  scheduledJob(cleanupId)
     .namespace(namespace)
     .image(imageName)
     .serviceAccount('services-auth-ids-api-cleanup')
@@ -174,7 +178,7 @@ export const cleanupSetup = (): ServiceBuilder<typeof cleanupId> =>
         prod: 'https://innskra.island.is',
       },
     })
-    .extraAttributes({
+    .schedule({
       dev: schedule,
       staging: schedule,
       prod: schedule,

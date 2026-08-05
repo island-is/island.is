@@ -24,6 +24,9 @@ export enum PrescribedItemRenewalBlockedReasonEnum {
   DismissedRequest = 'dismissedRequest',
   AlreadyRequested = 'alreadyRequested',
   MoreRecentPrescriptionExists = 'moreRecentPrescriptionExists',
+  NoRenewalTargets = 'noRenewalTargets',
+  InvalidRenewalTarget = 'invalidRenewalTarget',
+  RecipientExcludesAtc = 'recipientExcludesAtc',
   SpecialistOnlyPrescription = 'specialistOnlyPrescription',
   Unknown = 'unknown',
 }
@@ -33,9 +36,11 @@ registerEnumType(PrescribedItemRenewalBlockedReasonEnum, {
 })
 
 export enum PrescribedItemRenewalStatusEnum {
-  NUMBER_0 = 0,
-  NUMBER_1 = 1,
-  NUMBER_2 = 2,
+  Pending = 'pending',
+  Approved = 'approved',
+  Rejected = 'rejected',
+  Dismissed = 'dismissed',
+  Unknown = 'unknown',
 }
 
 registerEnumType(PrescribedItemRenewalStatusEnum, {
@@ -85,6 +90,39 @@ registerEnumType(AppointmentStatusEnum, {
   name: 'HealthDirectorateAppointmentStatus',
 })
 
+export enum AppointmentModalityEnum {
+  IN_PERSON = 'IN_PERSON',
+  VIDEO = 'VIDEO',
+}
+
+registerEnumType(AppointmentModalityEnum, {
+  name: 'HealthDirectorateAppointmentModality',
+})
+
+export enum AppointmentAssigneeTypeEnum {
+  ROLE = 'ROLE',
+  ROOM = 'ROOM',
+  EQUIPMENT = 'EQUIPMENT',
+  SERVICE = 'SERVICE',
+  OTHER = 'OTHER',
+  TEAM = 'TEAM',
+}
+
+registerEnumType(AppointmentAssigneeTypeEnum, {
+  name: 'HealthDirectorateAppointmentAssigneeType',
+})
+
+export enum AppointmentLinkTypeEnum {
+  PATIENT_INSTRUCTIONS = 'PATIENT_INSTRUCTIONS',
+  PREPARATION = 'PREPARATION',
+  ORGANIZATION_INFO = 'ORGANIZATION_INFO',
+  VIDEO_CALL = 'VIDEO_CALL',
+}
+
+registerEnumType(AppointmentLinkTypeEnum, {
+  name: 'HealthDirectorateAppointmentLinkType',
+})
+
 export enum WaitlistStatusTagColorEnum {
   blue = 'blue',
   purple = 'purple',
@@ -108,4 +146,52 @@ export enum ReferralStatusEnum {
 }
 registerEnumType(ReferralStatusEnum, {
   name: 'HealthDirectorateReferralStatusEnum',
+})
+
+export enum HealthConversationDirectionEnum {
+  PATIENT = 'PATIENT',
+  STAFF = 'STAFF',
+  SYSTEM = 'SYSTEM',
+}
+registerEnumType(HealthConversationDirectionEnum, {
+  name: 'HealthDirectorateHealthConversationDirection',
+})
+
+export enum HealthConversationStatusFilterEnum {
+  ACTIVE = 'active',
+  ARCHIVED = 'archived',
+  ALL = 'all',
+}
+registerEnumType(HealthConversationStatusFilterEnum, {
+  name: 'HealthDirectorateHealthConversationStatusFilter',
+})
+
+export enum HealthConversationReplyBlockedReasonEnum {
+  MISSING_RECIPIENT = 'missingRecipient',
+  REPLIES_DISABLED = 'repliesDisabled',
+  NO_REPLY_GROUP = 'noReplyGroup',
+  MESSAGING_NOT_ALLOWED = 'messagingNotAllowed',
+  OUTSIDE_MESSAGING_WINDOW = 'outsideMessagingWindow',
+  REPLY_WINDOW_EXPIRED = 'replyWindowExpired',
+  AWAITING_STAFF_REPLY = 'awaitingStaffReply',
+}
+registerEnumType(HealthConversationReplyBlockedReasonEnum, {
+  name: 'HealthDirectorateHealthConversationReplyBlockedReason',
+})
+
+export enum HealthConversationSegmentTypeEnum {
+  TEXT = 'text',
+  LINK = 'link',
+}
+registerEnumType(HealthConversationSegmentTypeEnum, {
+  name: 'HealthDirectorateHealthConversationSegmentType',
+})
+
+export enum HealthConversationRecipientBlockedReasonEnum {
+  MESSAGING_NOT_ALLOWED = 'messagingNotAllowed',
+  OUTSIDE_MESSAGING_WINDOW = 'outsideMessagingWindow',
+  NO_ALLOWED_TYPES = 'noAllowedTypes',
+}
+registerEnumType(HealthConversationRecipientBlockedReasonEnum, {
+  name: 'HealthDirectorateHealthConversationRecipientBlockedReason',
 })

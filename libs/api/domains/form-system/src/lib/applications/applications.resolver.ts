@@ -13,13 +13,16 @@ import {
   SubmitApplicationResponse,
 } from '../../models/applications.model'
 import {
-  ApplicationsInput,
   CreateApplicationInput,
   GetApplicationInput,
   GetApplicationsInput,
   SubmitScreenInput,
   UpdateApplicationInput,
 } from '../../dto/application.input'
+import { NotificationResponse } from '../../models/screen.model'
+import { NotificationInput } from '../../dto/notification.input'
+import { DataFromUrl } from '../../models/dataFromUrl.model'
+import { DataFromUrlInput } from '../../dto/dataFromUrlReq.input'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
@@ -36,17 +39,6 @@ export class ApplicationsResolver {
     @CurrentUser() user: User,
   ): Promise<ApplicationResponse> {
     return this.applicationsService.getApplication(user, input)
-  }
-
-  @Query(() => ApplicationResponse, {
-    name: 'formSystemApplications',
-  })
-  async getApplications(
-    @Args('input', { type: () => ApplicationsInput })
-    input: ApplicationsInput,
-    @CurrentUser() user: User,
-  ): Promise<ApplicationResponse> {
-    return this.applicationsService.getApplications(user, input)
   }
 
   @Query(() => ApplicationResponse, {
@@ -116,6 +108,29 @@ export class ApplicationsResolver {
     @CurrentUser() user: User,
   ): Promise<void> {
     return this.applicationsService.saveScreen(user, input)
+  }
+
+  @Mutation(() => NotificationResponse, {
+    name: 'notifyFormSystemExternalSystem',
+    nullable: true,
+  })
+  async notifyExternalSystem(
+    @Args('input', { type: () => NotificationInput })
+    input: NotificationInput,
+    @CurrentUser() user: User,
+  ): Promise<NotificationResponse> {
+    return this.applicationsService.notifyExternalSystem(user, input)
+  }
+
+  @Mutation(() => DataFromUrl, {
+    name: 'formSystemDataFromUrl',
+  })
+  async getDataFromUrl(
+    @Args('input', { type: () => DataFromUrlInput })
+    input: DataFromUrlInput,
+    @CurrentUser() user: User,
+  ): Promise<DataFromUrl> {
+    return this.applicationsService.getDataFromUrl(user, input)
   }
 
   @Mutation(() => Boolean, {

@@ -3,8 +3,15 @@ import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import { Box, Checkbox, Input, Text } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
-import { icReportForm, titles } from '@island.is/judicial-system-web/messages'
+import {
+  PROSECUTION_INVESTIGATION_CASE_CASE_FILES_ROUTE,
+  PROSECUTION_INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE,
+} from '@island.is/judicial-system/consts'
+import {
+  core,
+  icReportForm,
+  titles,
+} from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   CommentsInput,
@@ -168,13 +175,20 @@ const PoliceReport = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
-          previousUrl={`${constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() =>
-            handleNavigationTo(constants.INVESTIGATION_CASE_CASE_FILES_ROUTE)
-          }
-          nextIsDisabled={!stepIsValid}
-          nextIsLoading={isLoadingWorkingCase}
+          previousUrl={`${PROSECUTION_INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  PROSECUTION_INVESTIGATION_CASE_CASE_FILES_ROUTE,
+                ),
+              disabled: !stepIsValid,
+              loading: isLoadingWorkingCase,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

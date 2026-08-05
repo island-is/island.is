@@ -51,6 +51,11 @@ export interface AutoAuthOptions {
   scope: string[]
 
   /**
+   * The header name to use for the autoAuth authorization token. Defaults to authorization.
+   */
+  headerName?: string
+
+  /**
    * Controls how EnhancedFetch should auto-authenticate:
    *
    * - 'token': always request a non-user token. Ignores Auth object that are passed to the fetch function.
@@ -246,7 +251,8 @@ export const withAutoAuth = ({
 
   return async (request) => {
     const authorization = await getAuth(request)
-    request.headers.set('authorization', authorization)
+    const headerName = options.headerName ?? 'authorization'
+    request.headers.set(headerName, authorization)
     return fetch(request)
   }
 }

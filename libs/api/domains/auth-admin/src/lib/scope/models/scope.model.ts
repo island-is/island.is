@@ -7,6 +7,9 @@ export class Scope {
   @Field(() => ID)
   scopeName!: string
 
+  @Field(() => Date, { nullable: true })
+  modified?: Date
+
   @Field(() => [ScopeEnvironment])
   environments!: ScopeEnvironment[]
 }

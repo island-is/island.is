@@ -9,6 +9,8 @@ import {
   FormModes,
   UserProfileApi,
   ApplicationConfigurations,
+  NotificationType,
+  NotificationConfig,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -85,6 +87,19 @@ const template: ApplicationTemplate<
           progress: 0.4,
           status: FormModes.DRAFT,
           lifecycle: DefaultStateLifeCycle,
+          scheduledNotifications: [
+            // accepts an array of objects, a single object, or a function returning a single object
+            {
+              template: NotificationConfig[NotificationType.System].templateId,
+              delayInMs: 10000,
+              args: [
+                {
+                  key: 'documentId',
+                  value: '1234567890',
+                },
+              ],
+            },
+          ],
           roles: [
             {
               id: Roles.APPLICANT,

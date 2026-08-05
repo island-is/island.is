@@ -1,41 +1,93 @@
 import {
+  CodeOwners,
   service,
   ServiceBuilder,
   json,
   ref,
+  scheduledJob,
+  ScheduledJobBuilder,
 } from '../../../../infra/src/dsl/dsl'
 import { Base, Client, ChargeFjsV2 } from '../../../../infra/src/dsl/xroad'
 
 const namespace = 'services-payments'
 const serviceName = namespace
 const imageName = namespace
+const workerName = `${namespace}-worker`
 
+// common environment variables
+const env = {
+  IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/payments',
+  IDENTITY_SERVER_ISSUER_URL: {
+    dev: 'https://identity-server.dev01.devland.is',
+    staging: 'https://identity-server.staging01.devland.is',
+    prod: 'https://innskra.island.is',
+  },
+  PAYMENTS_WEB_URL: {
+    dev: ref(
+      (ctx) =>
+        `https://${
+          ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
+        }beta.dev01.devland.is/greida`,
+    ),
+    staging: `https://beta.staging01.devland.is/greida`,
+    prod: `https://island.is/greida`,
+  },
+  PAYMENTS_JWT_SIGNING_EXPIRES_IN_MINUTES: '5',
+  PAYMENTS_APPLE_PAY_DOMAIN: 'island.is',
+  PAYMENTS_APPLE_PAY_DISPLAY_NAME: 'island.is',
+  BLIKK_API_BASE_URL: {
+    dev: 'https://stage.blikk.tech',
+    staging: 'https://stage.blikk.tech',
+    prod: 'https://api.blikk.tech',
+  },
+  BLIKK_PAYMENT_TTL_SECONDS: {
+    dev: '300', // 5 minutes
+    staging: '300', // 5 minutes
+    prod: '600', // 10 minutes
+  },
+  // Origin of the Blikk onboarding app: a DRAFT payment whose scaRedirectUrl points here
+  // requires payer onboarding before SCA (the FE redirects there instead of rendering SCA).
+  BLIKK_ONBOARDING_URL: 'https://light.blikk.tech',
+}
+
+// common database configuration
+const db = {
+  name: 'services-payments',
+  extensions: ['uuid-ossp'],
+}
+
+// common secrets
+const secrets = {
+  IDENTITY_SERVER_CLIENT_SECRET:
+    '/k8s/services-payments/IDENTITY_SERVER_CLIENT_SECRET',
+  PAYMENTS_TOKEN_SIGNING_SECRET:
+    '/k8s/services-payments/PAYMENTS_TOKEN_SIGNING_SECRET',
+  PAYMENTS_TOKEN_SIGNING_ALGORITHM:
+    '/k8s/services-payments/PAYMENTS_TOKEN_SIGNING_ALGORITHM',
+  PAYMENTS_JWT_SIGNING_KEY_ID:
+    '/k8s/services-payments/PAYMENTS_JWT_SIGNING_KEY_ID',
+  PAYMENTS_JWT_SIGNING_PRIVATE_KEY:
+    '/k8s/services-payments/PAYMENTS_JWT_SIGNING_PRIVATE_KEY',
+  PAYMENTS_JWT_SIGNING_PUBLIC_KEY:
+    '/k8s/services-payments/PAYMENTS_JWT_SIGNING_PUBLIC_KEY',
+  PAYMENTS_PREVIOUS_KEY_ID: '/k8s/services-payments/PAYMENTS_PREVIOUS_KEY_ID',
+  PAYMENTS_PREVIOUS_PUBLIC_KEY:
+    '/k8s/services-payments/PAYMENTS_PREVIOUS_PUBLIC_KEY',
+  // Shared by the service and the worker: the worker transitively loads the
+  // bank-transfer/Blikk modules via PaymentFlowModule, so BlikkClientConfig must resolve at boot.
+  BLIKK_API_KEY: '/k8s/services-payments/BLIKK_API_KEY',
+}
+
+// service setup
 export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
   service(serviceName)
     .namespace(namespace)
     .image(imageName)
     .serviceAccount(serviceName)
-    .db({
-      extensions: ['uuid-ossp'],
-    })
+    .db(db)
     .migrations()
     .env({
-      IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/payments',
-      IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://identity-server.dev01.devland.is',
-        staging: 'https://identity-server.staging01.devland.is',
-        prod: 'https://innskra.island.is',
-      },
-      PAYMENTS_WEB_URL: {
-        dev: ref(
-          (ctx) =>
-            `https://${
-              ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
-            }beta.dev01.devland.is/greida`,
-        ),
-        staging: `https://beta.staging01.devland.is/greida`,
-        prod: `https://island.is/greida`,
-      },
+      ...env,
       REDIS_NODES: {
         dev: json([
           'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
@@ -47,7 +99,6 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
           'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
         ]),
       },
-      PAYMENTS_JWT_SIGNING_EXPIRES_IN_MINUTES: '5',
       XROAD_FJS_INVOICE_PAYMENT_BASE_CALLBACK_URL: {
         dev: 'XROAD:/IS-DEV/GOV/10000/island-is-protected/payments-v1',
         staging: 'XROAD:/IS-TEST/GOV/10000/island-is-protected/payments-v1',
@@ -55,12 +106,7 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
       },
     })
     .secrets({
-      IDENTITY_SERVER_CLIENT_SECRET:
-        '/k8s/services-payments/IDENTITY_SERVER_CLIENT_SECRET',
-      PAYMENTS_TOKEN_SIGNING_SECRET:
-        '/k8s/services-payments/PAYMENTS_TOKEN_SIGNING_SECRET',
-      PAYMENTS_TOKEN_SIGNING_ALGORITHM:
-        '/k8s/services-payments/PAYMENTS_TOKEN_SIGNING_ALGORITHM',
+      ...secrets,
       PAYMENTS_GATEWAY_API_SECRET:
         '/k8s/services-payments/PAYMENTS_GATEWAY_API_SECRET',
       PAYMENTS_GATEWAY_API_HEADER_KEY:
@@ -71,20 +117,18 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
         '/k8s/services-payments/PAYMENTS_GATEWAY_API_URL',
       PAYMENTS_GATEWAY_SYSTEM_CALLING:
         '/k8s/services-payments/PAYMENTS_GATEWAY_SYSTEM_CALLING',
-      PAYMENTS_JWT_SIGNING_KEY_ID:
-        '/k8s/services-payments/PAYMENTS_JWT_SIGNING_KEY_ID',
-      PAYMENTS_JWT_SIGNING_PRIVATE_KEY:
-        '/k8s/services-payments/PAYMENTS_JWT_SIGNING_PRIVATE_KEY',
-      PAYMENTS_JWT_SIGNING_PUBLIC_KEY:
-        '/k8s/services-payments/PAYMENTS_JWT_SIGNING_PUBLIC_KEY',
-      PAYMENTS_PREVIOUS_KEY_ID:
-        '/k8s/services-payments/PAYMENTS_PREVIOUS_KEY_ID',
-      PAYMENTS_PREVIOUS_PUBLIC_KEY:
-        '/k8s/services-payments/PAYMENTS_PREVIOUS_PUBLIC_KEY',
       PAYMENTS_INVOICE_TOKEN_SIGNING_SECRET:
         '/k8s/services-payments/PAYMENTS_INVOICE_TOKEN_SIGNING_SECRET',
       PAYMENTS_INVOICE_TOKEN_SIGNING_ALGORITHM:
         '/k8s/services-payments/PAYMENTS_INVOICE_TOKEN_SIGNING_ALGORITHM',
+      APPLE_PAY_MERCHANT_IDENTIFIER:
+        '/k8s/services-payments/APPLE_PAY_MERCHANT_IDENTIFIER',
+      APPLE_PAY_MERCHANT_IDENTITY_CERT:
+        '/k8s/services-payments/APPLE_PAY_MERCHANT_IDENTITY_CERT',
+      APPLE_PAY_MERCHANT_IDENTITY_KEY:
+        '/k8s/services-payments/APPLE_PAY_MERCHANT_IDENTITY_KEY',
+      APPLE_PAY_PAYMENT_PROCESSING_KEY:
+        '/k8s/services-payments/APPLE_PAY_PAYMENT_PROCESSING_KEY',
     })
     .ingress({
       primary: {
@@ -123,4 +167,29 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
     .xroad(Base, Client, ChargeFjsV2)
     .readiness('/liveness')
     .liveness('/liveness')
-    .grantNamespaces('application-system', 'nginx-ingress-internal', 'islandis')
+    .grantNamespaces(
+      'application-system',
+      'services-form-system-api',
+      'nginx-ingress-internal',
+      'islandis',
+    )
+
+// worker setup
+export const serviceSetupForWorker =
+  (): ScheduledJobBuilder<'services-payments-worker'> =>
+    scheduledJob(workerName)
+      .namespace(namespace)
+      .image(imageName)
+      .serviceAccount(workerName)
+      .db(db)
+      .codeOwner(CodeOwners.Aranja)
+      .env(env)
+      .secrets(secrets)
+      .xroad(Base, Client, ChargeFjsV2)
+      .command('node')
+      .args('main.cjs', '--job', 'worker')
+      .schedule({
+        dev: '*/5 * * * *',
+        staging: '*/5 * * * *',
+        prod: '*/5 * * * *',
+      })

@@ -7,8 +7,8 @@ import { pipe } from 'fp-ts/lib/function'
 import _uniq from 'lodash/uniq'
 
 import {
+  AppealCaseRulingDecision,
   CaseAppealDecision,
-  CaseAppealRulingDecision,
   CaseCustodyRestrictions,
   CaseFileCategory,
   CaseIndictmentRulingDecision,
@@ -283,22 +283,22 @@ export const districtCourtAbbreviation = (courtName?: string | null) => {
 }
 
 export const getAppealResultTextByValue = (
-  value?: CaseAppealRulingDecision | null,
+  value?: AppealCaseRulingDecision | null,
 ) => {
   switch (value) {
-    case CaseAppealRulingDecision.ACCEPTING:
+    case AppealCaseRulingDecision.ACCEPTING:
       return 'Staðfest'
-    case CaseAppealRulingDecision.REPEAL:
+    case AppealCaseRulingDecision.REPEAL:
       return 'Fellt úr gildi'
-    case CaseAppealRulingDecision.CHANGED:
-    case CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY:
+    case AppealCaseRulingDecision.CHANGED:
+    case AppealCaseRulingDecision.CHANGED_SIGNIFICANTLY:
       return 'Breytt'
-    case CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL:
-    case CaseAppealRulingDecision.DISMISSED_FROM_COURT:
+    case AppealCaseRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL:
+    case AppealCaseRulingDecision.DISMISSED_FROM_COURT:
       return 'Frávísun'
-    case CaseAppealRulingDecision.REMAND:
+    case AppealCaseRulingDecision.REMAND:
       return 'Heimvísun'
-    case CaseAppealRulingDecision.DISCONTINUED:
+    case AppealCaseRulingDecision.DISCONTINUED:
       return 'Niðurfellt'
     default:
       return 'Niðurstaða'

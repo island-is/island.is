@@ -1,16 +1,13 @@
 import { SectionTypes } from '@island.is/form-system/enums'
 import { m } from '@island.is/form-system/ui'
-import {
-  Box,
-  GridColumn as Column,
-  GridRow as Row,
-  Tabs,
-} from '@island.is/island-ui/core'
+import { Box, Tabs } from '@island.is/island-ui/core'
 import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { Outlet } from 'react-router-dom'
 import { ControlContext } from '../../context/ControlContext'
 import { baseSettingsStep } from '../../lib/utils/getBaseSettingsSection'
+import { NavbarSelectStatus } from '../../lib/utils/interfaces'
+import * as styles from './FormHeader.css'
 
 type FormTabType = {
   id: 'settings' | 'step'
@@ -30,11 +27,14 @@ const FORM_TABS: FormTabType[] = [
 
 export const FormHeader = () => {
   const { formatMessage } = useIntl()
-  const { control, controlDispatch, setInSettings, inSettings } =
+  const { control, controlDispatch, setInSettings, inSettings, selectStatus } =
     useContext(ControlContext)
   const { sections } = control.form
 
+  const tabsLocked = selectStatus !== NavbarSelectStatus.OFF
+
   const onTabChange = (tabId: string) => {
+    if (tabsLocked) return
     if (tabId === 'settings') {
       controlDispatch({
         type: 'SET_ACTIVE_ITEM',
@@ -62,32 +62,22 @@ export const FormHeader = () => {
       setInSettings(false)
     }
   }
-
   return (
     <Box>
-      <Row>
-        <Column offset="3/12" span="9/12">
-          <Box
-            style={{
-              maxWidth: '1200px',
-              width: '100%',
-              position: 'relative',
-            }}
-          >
-            <Tabs
-              label="formTabs"
-              tabs={FORM_TABS.map((tab) => ({
-                id: tab.id,
-                label: formatMessage(m[tab.id as keyof typeof m]),
-                content: <Outlet />,
-              }))}
-              onChange={onTabChange}
-              variant="default"
-              selected={inSettings ? 'settings' : 'step'}
-            />
-          </Box>
-        </Column>
-      </Row>
+      <Box className={styles.tabWrapper}>
+        <Tabs
+          label="formTabs"
+          tabs={FORM_TABS.map((tab) => ({
+            id: tab.id,
+            disabled: tabsLocked,
+            label: formatMessage(m[tab.id as keyof typeof m]),
+            content: <Outlet />,
+          }))}
+          onChange={onTabChange}
+          variant="default"
+          selected={inSettings ? 'settings' : 'step'}
+        />
+      </Box>
     </Box>
   )
 }

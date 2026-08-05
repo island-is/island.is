@@ -12,10 +12,12 @@ export const GET_COURT_AGENDAS_QUERY = gql`
         courtRoom
         type
         title
+        caseSubType
         judges {
           name
         }
         court
+        hearingTime
       }
       total
       input {

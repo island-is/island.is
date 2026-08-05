@@ -1,0 +1,14 @@
+mutation PatchAuthDelegation($input: PatchAuthDelegationInput!) {
+  patchAuthDelegation(input: $input) {
+    id
+    ... on AuthCustomDelegation {
+      scopes {
+        id
+        name
+        validTo
+        displayName
+        delegationId
+      }
+    }
+  }
+}

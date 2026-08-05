@@ -97,7 +97,10 @@ export const bffConfig = ({
         ]),
         dev: ref((ctx) => json(getRedirectUris(getBaseUrl(ctx), key))),
         staging: ref((ctx) => json(getRedirectUris(getBaseUrl(ctx), key))),
-        prod: json(getRedirectUris('https://island.is', key)),
+        prod: json([
+          ...getRedirectUris('https://island.is', key),
+          ...getRedirectUris('https://www.island.is', key),
+        ]),
       },
       BFF_LOGOUT_REDIRECT_URI: {
         local: `http://localhost:4200/${key}`,

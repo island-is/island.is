@@ -1,5 +1,4 @@
 import { MMKVInstance, MMKVLoader } from 'react-native-mmkv-storage'
-import { StateStorage } from 'zustand/middleware'
 
 const storages: MMKVInstance[] = []
 
@@ -20,10 +19,3 @@ export const createMMKVStorage = ({
 export const clearAllStorages = () => {
   storages.forEach((storage) => storage.clearStore())
 }
-
-export const createZustandMMKVStorage = (
-  storage: MMKVInstance,
-): StateStorage => ({
-  getItem: (name) => storage.getString(name) ?? null,
-  setItem: (name, value) => storage.setItem(name, value) as Promise<void>,
-})

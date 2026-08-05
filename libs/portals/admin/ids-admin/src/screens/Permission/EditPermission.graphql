@@ -1,5 +1,11 @@
 mutation PatchAuthAdminScope($input: AuthAdminPatchScopeInput!) {
   patchAuthAdminScope(input: $input) {
-    ...AuthAdminScopeEnvironmentFragment
+    environments {
+      ...AuthAdminScopeEnvironmentFragment
+    }
+    failedEnvironments {
+      environment
+      message
+    }
   }
 }

@@ -4,35 +4,45 @@ import {
   ContextMenuItem,
   Modal,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseTransition } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { AppealCaseTransition } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useAppealCase } from '@island.is/judicial-system-web/src/utils/hooks'
+
+interface WithdrawAppealIds {
+  caseId: string
+  appealCaseId: string
+}
 
 export const useWithdrawAppeal = (onComplete: () => void) => {
-  const [withdrawAppealCaseId, setWithdrawAppealCaseId] = useState<string>()
-  const { transitionCase, isTransitioningCase } = useCase()
+  const [withdrawAppealIds, setWithdrawAppealIds] =
+    useState<WithdrawAppealIds>()
+  const { transitionAppealCase, isTransitioningAppealCase } = useAppealCase()
 
-  const withdrawAppeal = (caseId: string): ContextMenuItem => {
+  const withdrawAppeal = (
+    caseId: string,
+    appealCaseId: string,
+  ): ContextMenuItem => {
     return {
       title: 'Afturkalla kæru',
       icon: 'trash',
       onClick: () => {
-        if (withdrawAppealCaseId) {
+        if (withdrawAppealIds) {
           return
         }
 
-        setWithdrawAppealCaseId(caseId)
+        setWithdrawAppealIds({ caseId, appealCaseId })
       },
     }
   }
 
   const handlePrimaryButtonClick = async () => {
-    if (!withdrawAppealCaseId) {
+    if (!withdrawAppealIds) {
       return
     }
 
-    const appealWithdrawn = await transitionCase(
-      withdrawAppealCaseId,
-      CaseTransition.WITHDRAW_APPEAL,
+    const appealWithdrawn = await transitionAppealCase(
+      withdrawAppealIds.caseId,
+      withdrawAppealIds.appealCaseId,
+      AppealCaseTransition.WITHDRAW_APPEAL,
     )
 
     if (!appealWithdrawn) {
@@ -41,14 +51,14 @@ export const useWithdrawAppeal = (onComplete: () => void) => {
 
     onComplete()
 
-    setWithdrawAppealCaseId(undefined)
+    setWithdrawAppealIds(undefined)
   }
 
   const handleSecondaryButtonClick = () => {
-    setWithdrawAppealCaseId(undefined)
+    setWithdrawAppealIds(undefined)
   }
 
-  const WithdrawAppealModal = withdrawAppealCaseId && (
+  const WithdrawAppealModal = withdrawAppealIds && (
     <Modal
       title="Afturkalla kæru"
       text="Ertu viss um að þú viljir afturkalla þessa kæru?"
@@ -56,7 +66,7 @@ export const useWithdrawAppeal = (onComplete: () => void) => {
         text: 'Afturkalla',
         onClick: handlePrimaryButtonClick,
         colorScheme: 'destructive',
-        isLoading: isTransitioningCase,
+        isLoading: isTransitioningAppealCase,
       }}
       secondaryButton={{
         text: 'Hætta við',

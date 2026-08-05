@@ -261,11 +261,6 @@ export const institutionMapper = {
     slug: InstitutionTypes.SAMGONGUSTOFA,
     contentfulId: InstitutionContentfulIds.SAMGONGUSTOFA,
   },
-  [ApplicationTypes.ALCOHOL_TAX_REDEMPTION]: {
-    nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
-    slug: InstitutionTypes.STAFRAENT_ISLAND,
-    contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
-  },
   [ApplicationTypes.OLD_AGE_PENSION]: {
     nationalId: InstitutionNationalIds.TRYGGINGASTOFNUN,
     slug: InstitutionTypes.TRYGGINGASTOFNUN,
@@ -375,11 +370,6 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
     slug: InstitutionTypes.VINNUEFTIRLITID,
     contentfulId: InstitutionContentfulIds.VINNUEFTIRLITID,
-  },
-  [ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT]: {
-    nationalId: InstitutionNationalIds.SYSLUMENN,
-    slug: InstitutionTypes.SYSLUMENN,
-    contentfulId: InstitutionContentfulIds.SYSLUMENN,
   },
   [ApplicationTypes.REQUEST_INSPECTION_FOR_MACHINE]: {
     nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
@@ -510,5 +500,45 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.HEILSUGAESLA_HOFUDBORDARSVAEDISINS,
     slug: InstitutionTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS,
     contentfulId: InstitutionContentfulIds.HEILSUGAESLA_HOFUDBORDARSVAEDISINS,
+  },
+  [ApplicationTypes.HOUSING_BENEFITS]: {
+    nationalId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+    slug: InstitutionTypes.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+    contentfulId: InstitutionContentfulIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+  },
+  [ApplicationTypes.EDIT_UNEMPLOYMENT_INFORMATION]: {
+    nationalId: InstitutionNationalIds.VINNUMALASTOFNUN,
+    slug: InstitutionTypes.VINNUMALASTOFNUN,
+    contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
+  },
+  [ApplicationTypes.CONFIRM_JOB_SEARCH]: {
+    nationalId: InstitutionNationalIds.VINNUMALASTOFNUN,
+    slug: InstitutionTypes.VINNUMALASTOFNUN,
+    contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
+  },
+  [ApplicationTypes.DEREGISTER_UNEMPLOYMENT_BENEFITS]: {
+    nationalId: InstitutionNationalIds.VINNUMALASTOFNUN,
+    slug: InstitutionTypes.VINNUMALASTOFNUN,
+    contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
+  },
+  [ApplicationTypes.VMST_SUBMIT_DOCUMENTS]: {
+    nationalId: InstitutionNationalIds.VINNUMALASTOFNUN,
+    slug: InstitutionTypes.VINNUMALASTOFNUN,
+    contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
+  },
+  [ApplicationTypes.UNEMPLOYMENT_CONFIRM_TRAVEL]: {
+    nationalId: InstitutionNationalIds.VINNUMALASTOFNUN,
+    slug: InstitutionTypes.VINNUMALASTOFNUN,
+    contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
+  },
+  [ApplicationTypes.EQUALITY_REPORT]: {
+    nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
+    slug: InstitutionTypes.STAFRAENT_ISLAND,
+    contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
+  },
+  [ApplicationTypes.SALARY_REPORT]: {
+    nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
+    slug: InstitutionTypes.STAFRAENT_ISLAND,
+    contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
   },
 }

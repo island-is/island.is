@@ -107,6 +107,7 @@ export const serviceSetup = (services: {
       AudkenniSettings__ClientSecret:
         '/k8s/identity-server/AudkenniClientSecret',
       IdentityServer__FakePersons: '/k8s/identity-server/FakePersons',
+      IdentityServer__FakePersons2: '/k8s/identity-server/FakePersons2',
       IdentityServer__SigningCertificate__Passphrase:
         '/k8s/identity-server/SigningCertificatePassphrase',
       PersistenceSettings__AccessTokenManagementSettings__ClientSecret:

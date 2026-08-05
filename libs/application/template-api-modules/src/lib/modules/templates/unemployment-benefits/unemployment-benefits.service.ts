@@ -393,6 +393,7 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
             unemploymentApplication: {
               applicationInformation: {
                 applicationLanguage: currentUserLocale === 'is' ? 'IS' : 'EN',
+                myPagesApplicationId: application.id,
               },
               personalInformation: personalInformation,
               otherInformation: otherInformation,
@@ -425,7 +426,6 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
       }
 
     const response = await this.vmstUnemploymentClientService.submitApplication(
-      auth,
       submitResponse,
     )
 

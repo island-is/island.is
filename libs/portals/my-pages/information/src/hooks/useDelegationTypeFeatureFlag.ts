@@ -22,10 +22,6 @@ export const useDelegationTypeFeatureFlag = () => {
         const featureFlagValue = await featureFlagCLI.getValue(
           Features.delegationTypesWithNotificationsEnabled,
           '',
-          {
-            id: profile?.nationalId || '',
-            attributes: {},
-          },
         )
 
         const isEnabled = parseDelegationTypeFeatureFlagValue({

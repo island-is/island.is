@@ -15,6 +15,7 @@ import {
   prevVisibleScreenInSection,
   prevVisibleSectionIndex,
 } from '../utils/reducerHelpers'
+import { removeTypename } from '@island.is/form-system/graphql'
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
@@ -56,6 +57,28 @@ const completeSection = (
   completed = true,
 ) => sections.map((s, i) => (i === idx ? { ...s, isCompleted: completed } : s))
 
+const stripFieldListsFromSections = (
+  sections: FormSystemSection[],
+): FormSystemSection[] =>
+  sections.map((section) => ({
+    ...section,
+    screens: section.screens?.map((screen) =>
+      screen
+        ? {
+            ...screen,
+            fields: screen.fields?.map((field) => {
+              if (!field) return field
+
+              return {
+                ...field,
+                list: undefined,
+              }
+            }),
+          }
+        : screen,
+    ),
+  }))
+
 export const incrementWithScreens = (
   state: ApplicationState,
   currentSectionData: FormSystemSection,
@@ -78,7 +101,13 @@ export const incrementWithScreens = (
   const errors = state.errors ?? []
   const isValid = state.isValid ?? true
 
-  if (errors.length > 0 || !isValid) {
+  const isParties =
+    state.currentSection.data.sectionType === SectionTypes.PARTIES
+
+  if (
+    errors.length > 0 ||
+    (!isValid && (isParties || !state.application.allowProceedOnValidationFail))
+  ) {
     return { ...state, errors }
   }
 
@@ -90,7 +119,7 @@ export const incrementWithScreens = (
           screenId: state.currentScreen?.data?.id,
           sectionId: state.currentSection.data.id,
           increment: true,
-          sections: state.sections,
+          sections: stripFieldListsFromSections(removeTypename(state.sections)),
         },
       },
     },
@@ -168,7 +197,7 @@ export const incrementWithoutScreens = (
           screenId: state.currentScreen?.data?.id,
           sectionId: state.currentSection.data.id,
           increment: true,
-          sections: state.sections,
+          sections: stripFieldListsFromSections(removeTypename(state.sections)),
         },
       },
     },
@@ -225,12 +254,6 @@ export const decrement = (
 ): ApplicationState => {
   const [submitScreen] = submitScreenMutation
   const [updateDependencies] = updateDependenciesMutation
-  const errors = state.errors ?? []
-  const isValid = state.isValid ?? true
-
-  if (errors.length > 0 || !isValid) {
-    return { ...state, errors }
-  }
 
   state.currentScreen = setCurrentScreen(
     state,
@@ -252,7 +275,7 @@ export const decrement = (
           screenId: state.currentScreen?.data?.id,
           sectionId: state.currentSection.data.id,
           increment: false,
-          sections: state.sections,
+          sections: stripFieldListsFromSections(removeTypename(state.sections)),
         },
       },
     },
@@ -339,7 +362,11 @@ export const decrement = (
     currentScreen: resultCurrentScreen,
     sections: resultSections,
     errors: [],
-    screenErrors: [],
+    screenError: {
+      hasError: false,
+      title: { is: '', en: '' },
+      message: { is: '', en: '' },
+    },
   }
 }
 
@@ -421,6 +448,62 @@ export const jumpToScreen = (
   }
 }
 
+const removeNullsDeep = <T>(value: T): T => {
+  if (Array.isArray(value)) {
+    return value
+      .filter((v) => v != null)
+      .map((v) => removeNullsDeep(v)) as unknown as T
+  }
+  if (value !== null && typeof value === 'object') {
+    const result: any = {}
+    for (const [key, val] of Object.entries(value as any)) {
+      if (val != null) {
+        result[key] = removeNullsDeep(val)
+      }
+    }
+    return result
+  }
+  return value
+}
+
+export const setExternalServiceErrors = (
+  state: ApplicationState,
+  screen: FormSystemScreen,
+): ApplicationState => {
+  const normalizedScreenError = screen.screenError || {
+    hasError: false,
+    title: { is: '', en: '' },
+    message: { is: '', en: '' },
+  }
+
+  const cleanedScreen = removeNullsDeep(screen)
+
+  const sections = state.sections.map((section) => {
+    const hasMatch = section.screens?.some(
+      (s) => s != null && s.id === screen.id,
+    )
+    if (!hasMatch) return section
+
+    return {
+      ...section,
+      screens: section.screens?.map((s) =>
+        s != null && s.id === screen.id ? cleanedScreen : s,
+      ),
+    }
+  })
+
+  const updatedState = setCurrentScreen(
+    { ...state, sections },
+    state.currentSection.index,
+    state.currentScreen?.index ?? -1,
+  )
+
+  return {
+    ...updatedState,
+    screenError: normalizedScreenError,
+  }
+}
+
 export const setCurrentScreen = (
   state: ApplicationState,
   sectionIndex: number,
@@ -472,4 +555,28 @@ export const setError = (
     ? [...errorArray, fieldId]
     : errorArray.filter((id) => id !== fieldId)
   return { ...state, errors: filteredArray }
+}
+
+export const getCompletedSectionAndScreen = (sections: FormSystemSection[]) => {
+  const completedSectionIndex = sections.findIndex(
+    (section) => section.sectionType === SectionTypes.COMPLETED,
+  )
+
+  if (completedSectionIndex === -1) {
+    return {
+      currentSection: {
+        data: sections[sections.length - 1],
+        index: sections.length - 1,
+      },
+      currentScreen: undefined,
+    }
+  }
+
+  return {
+    currentSection: {
+      data: sections[completedSectionIndex],
+      index: completedSectionIndex,
+    },
+    currentScreen: undefined,
+  }
 }

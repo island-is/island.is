@@ -1,0 +1,62 @@
+mutation CreateAuthDelegations($input: CreateAuthDelegationsInput!) {
+  createAuthDelegations(input: $input) {
+    id
+    to {
+      nationalId
+      name
+    }
+  }
+}
+
+query AuthScopeCategoriesForGrant(
+  $lang: String!
+  $direction: AuthDelegationDirection
+) {
+  authScopeCategories(lang: $lang, direction: $direction) {
+    id
+    title
+    description
+    slug
+    scopes {
+      name
+      displayName
+      description
+      allowsWrite
+    }
+  }
+}
+
+query AuthScopeTagsForGrant(
+  $lang: String!
+  $direction: AuthDelegationDirection
+) {
+  authScopeTags(lang: $lang, direction: $direction) {
+    id
+    title
+    description
+    slug
+    scopes {
+      name
+      displayName
+      description
+      allowsWrite
+    }
+  }
+}
+
+query AuthDomainsForGrant($lang: String!) {
+  authDomains(input: { lang: $lang }) {
+    name
+    displayName
+    description
+    nationalId
+  }
+}
+
+query IdentityForGrant($input: IdentityInput!) {
+  identity(input: $input) {
+    nationalId
+    type
+    name
+  }
+}

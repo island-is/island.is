@@ -7,7 +7,6 @@ import {
   ApplicationStatus,
   ExternalData,
   FormValue,
-  Institution,
 } from '@island.is/application/types'
 import {
   Application,
@@ -18,6 +17,10 @@ import {
   getInstitutionsWithApplicationTypesIds,
   getTypeIdsForInstitution,
 } from '@island.is/application/utils'
+import {
+  ScheduledNotification,
+  NotificationStatus,
+} from '../scheduledNotification/scheduledNotifications.model'
 
 const applicationIsNotSetToBePruned = () => ({
   [Op.or]: [
@@ -53,6 +56,8 @@ export class ApplicationService {
   constructor(
     @InjectModel(Application)
     private applicationModel: typeof Application,
+    @InjectModel(ScheduledNotification)
+    private scheduledNotificationModel: typeof ScheduledNotification,
     private sequelize: Sequelize,
   ) {}
 
@@ -78,6 +83,9 @@ export class ApplicationService {
       return []
     }
 
+    const fromDate = new Date(new Date(startDate).setHours(0, 0, 0, 0))
+    const toDate = new Date(new Date(endDate).setHours(23, 59, 59, 999))
+
     const query = `SELECT
         type_id as typeid,
         COUNT(*) as count,
@@ -87,15 +95,15 @@ export class ApplicationService {
         COUNT(*) FILTER (WHERE status = 'rejected') AS rejected,
         COUNT(*) FILTER (WHERE status = 'approved') AS approved
       FROM public.application
-      WHERE modified BETWEEN :startDate AND :endDate
+      WHERE created >= :startDate AND created <= :endDate
       ${
         applicationTypeIds?.length ? `AND type_id IN (:applicationTypeIds)` : ''
       }
       GROUP BY typeid;`
 
     const replacements: Record<string, unknown> = {
-      startDate,
-      endDate,
+      startDate: fromDate,
+      endDate: toDate,
     }
 
     if (applicationTypeIds?.length) {
@@ -177,8 +185,12 @@ export class ApplicationService {
     searchStr?: string,
   ): Promise<ApplicationPaginatedResponse> {
     const statuses = status?.split(',')
-    const toDate = to ? new Date(to) : undefined
-    const fromDate = from ? new Date(from) : undefined
+    const fromDate = from
+      ? new Date(new Date(from).setHours(0, 0, 0, 0))
+      : undefined
+    const toDate = to
+      ? new Date(new Date(to).setHours(23, 59, 59, 999))
+      : undefined
 
     const { applicationTypeIds, returnEmpty } = this.resolveApplicationTypeIds(
       institutionNationalId,
@@ -266,36 +278,28 @@ export class ApplicationService {
     return { applicationTypeIds: [typeId], returnEmpty: false }
   }
 
-  async getAllApplicationTypesInstitutionAdmin(
-    nationalId: string,
-  ): Promise<{ id: string }[]> {
-    const typeIds = getTypeIdsForInstitution(nationalId)
+  async getAllApplicationTypes(nationalId?: string): Promise<{ id: string }[]> {
+    let filterByTypeIds: string[] | undefined
 
-    if (!typeIds || typeIds.length === 0) {
-      return []
+    if (nationalId) {
+      filterByTypeIds = getTypeIdsForInstitution(nationalId)
+      if (!filterByTypeIds || filterByTypeIds.length === 0) {
+        return []
+      }
     }
 
     const results = await this.applicationModel.findAll({
       attributes: ['typeId'],
-      where: {
-        typeId: {
-          [Op.in]: typeIds,
+      ...(filterByTypeIds && {
+        where: {
+          typeId: {
+            [Op.in]: filterByTypeIds,
+          },
         },
-      },
+      }),
       group: ['typeId'],
       raw: true,
     })
-
-    return results.map((row) => ({ id: row.typeId }))
-  }
-
-  async getAllApplicationTypesSuperAdmin(): Promise<{ id: string }[]> {
-    const results = await this.applicationModel.findAll({
-      attributes: ['typeId'],
-      group: ['typeId'],
-      raw: true,
-    })
-
     return results.map((row) => ({ id: row.typeId }))
   }
 
@@ -331,7 +335,9 @@ export class ApplicationService {
     })
   }
 
-  async getAllInstitutionsSuperAdmin(): Promise<Institution[]> {
+  async getAllInstitutionsSuperAdmin(): Promise<
+    { nationalId: string; contentfulSlug: string }[]
+  > {
     const allInstitutions = getInstitutionsWithApplicationTypesIds()
 
     if (!allInstitutions) return []
@@ -361,9 +367,11 @@ export class ApplicationService {
       existingTypeIds.map((row) => row.typeId),
     )
 
-    return allInstitutions.filter((inst) =>
-      inst.applicationTypesIds.some((t) => existingTypeIdSet.has(t)),
-    )
+    return allInstitutions
+      .filter((inst) =>
+        inst.applicationTypesIds.some((t) => existingTypeIdSet.has(t)),
+      )
+      .map((x) => ({ nationalId: x.nationalId, contentfulSlug: x.slug }))
   }
 
   async findAllDueToBePruned(): Promise<Application[]> {
@@ -373,7 +381,9 @@ export class ApplicationService {
         'attachments',
         'typeId',
         'state',
+        'status',
         'applicant',
+        'applicantActors',
         'answers',
         'externalData',
       ],
@@ -387,6 +397,36 @@ export class ApplicationService {
           },
           pruned: {
             [Op.eq]: false,
+          },
+          userDeleted: {
+            [Op.eq]: false,
+          },
+        },
+      },
+    })
+  }
+
+  async findCurrentScheduledNotifications(): Promise<ScheduledNotification[]> {
+    return this.scheduledNotificationModel.findAll({
+      attributes: [
+        'id',
+        'application_id',
+        'template',
+        'application_state',
+        'schedule_time',
+        'schedule_status',
+        'args',
+      ],
+      where: {
+        [Op.and]: {
+          schedule_time: {
+            [Op.and]: {
+              [Op.not]: null,
+              [Op.lt]: new Date(),
+            },
+          },
+          schedule_status: {
+            [Op.eq]: NotificationStatus.PENDING,
           },
         },
       },
@@ -514,6 +554,69 @@ export class ApplicationService {
         { where: { id: application.id }, returning: true },
       )
     return { numberOfAffectedRows, updatedApplication }
+  }
+
+  async cancelScheduledNotifications(applicationId: string) {
+    return this.scheduledNotificationModel.update(
+      { schedule_status: NotificationStatus.CANCELED },
+      {
+        where: {
+          application_id: applicationId,
+          schedule_status: NotificationStatus.PENDING,
+        },
+      },
+    )
+  }
+
+  async markScheduledNotificationsSent(ids: string[]) {
+    if (!ids.length) return [0]
+
+    return this.scheduledNotificationModel.update(
+      { schedule_status: NotificationStatus.SENT },
+      {
+        where: {
+          id: {
+            [Op.in]: ids,
+          },
+          schedule_status: NotificationStatus.PENDING,
+        },
+      },
+    )
+  }
+
+  async markScheduledNotificationsFailed(ids: string[]) {
+    if (!ids.length) return [0]
+    return this.scheduledNotificationModel.update(
+      { schedule_status: NotificationStatus.FAILED },
+      {
+        where: {
+          id: {
+            [Op.in]: ids,
+          },
+          schedule_status: NotificationStatus.PENDING,
+        },
+      },
+    )
+  }
+
+  async createScheduledNotifications(
+    applicationId: string,
+    state: string,
+    notifications: {
+      template: string
+      schedule_time: Date
+      args?: Array<{ key: string; value: string }>
+    }[],
+  ) {
+    if (!notifications.length) return
+    const records = notifications.map((n) => ({
+      application_id: applicationId,
+      template: n.template,
+      application_state: state,
+      schedule_time: n.schedule_time,
+      args: n.args,
+    }))
+    return this.scheduledNotificationModel.bulkCreate(records)
   }
 
   async updateApplicationState(

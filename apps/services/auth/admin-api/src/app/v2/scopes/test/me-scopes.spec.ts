@@ -425,18 +425,24 @@ const inputPatch = {
 const patchExpectedOutput = {
   alsoForDelegatedUser: false,
   automaticDelegationGrant: false,
+  allowExplicitDelegationGrant: false,
+  allowsWrite: false,
+  categoryIds: [],
   domainName: TENANT_ID,
   emphasize: false,
   enabled: true,
   grantToPersonalRepresentatives: false,
   grantToLegalGuardians: false,
   grantToProcuringHolders: false,
-  allowExplicitDelegationGrant: false,
   name: `${TENANT_ID}/scope1`,
   order: 0,
   required: false,
+  requiresConfirmation: false,
   showInDiscoveryDocument: true,
   supportedDelegationTypes: [],
+  tagIds: [],
+  thirdPartyLoginUrl: '',
+  modified: expect.any(String),
   ...inputPatch,
 }
 
@@ -472,6 +478,23 @@ const patchTestCases: Record<string, PatchTestCase> = {
       status: 200,
       body: {
         ...patchExpectedOutput,
+      },
+    },
+  },
+  'should persist and return thirdPartyLoginUrl when patching a scope': {
+    user: superUser,
+    tenantId: TENANT_ID,
+    scopeName: mockedPatchApiScope.name,
+    input: {
+      ...inputPatch,
+      thirdPartyLoginUrl: 'https://example.com/callback',
+    },
+    expected: {
+      status: 200,
+      body: {
+        ...patchExpectedOutput,
+        thirdPartyLoginUrl: 'https://example.com/callback',
+        modified: expect.any(String),
       },
     },
   },
@@ -707,8 +730,10 @@ describe('MeScopesController', () => {
               ? testCase.expected.body.grantToLegalGuardians
               : false,
             allowExplicitDelegationGrant: false,
+            allowsWrite: false,
             alsoForDelegatedUser: false,
             automaticDelegationGrant: false,
+            categoryIds: [],
             domainName: TENANT_ID,
             emphasize: false,
             enabled: true,
@@ -717,7 +742,11 @@ describe('MeScopesController', () => {
             isAccessControlled: false,
             order: 0,
             required: false,
+            requiresConfirmation: false,
             showInDiscoveryDocument: true,
+            tagIds: [],
+            thirdPartyLoginUrl: '',
+            modified: expect.any(String),
           })
 
           // Assert - db record

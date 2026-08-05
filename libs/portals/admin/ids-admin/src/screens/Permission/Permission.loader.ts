@@ -6,7 +6,9 @@ import {
   AuthAdminScopeQueryVariables,
 } from './Permission.generated'
 
-export type PermissionLoaderResult = AuthAdminScopeQuery['authAdminScope']
+export type PermissionLoaderResult = NonNullable<
+  AuthAdminScopeQuery['authAdminScope']
+>
 
 export const permissionLoader: WrappedLoaderFn = ({ client }) => {
   return async ({ params }): Promise<PermissionLoaderResult> => {

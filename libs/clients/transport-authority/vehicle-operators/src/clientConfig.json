@@ -1,8 +1,8 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "3.0.4",
   "info": {
     "title": "SGS Rest API",
-    "description": "Operators API developed in .Net7.0 - Release-10 : 20231211.1",
+    "description": "Operators API developed in .Net7.0 - Release-22 : 20260216.1",
     "contact": {
       "name": "Samgöngustofa",
       "email": "tolvuhjalp@samgongustofa.is"
@@ -14,6 +14,7 @@
     "/authenticate": {
       "post": {
         "tags": ["Authentication"],
+        "summary": "Authentication for Domain user",
         "parameters": [
           {
             "name": "api-version",
@@ -31,6 +32,7 @@
           }
         ],
         "requestBody": {
+          "description": "",
           "content": {
             "application/json-patch+json": {
               "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
@@ -48,7 +50,7 @@
         },
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": { "$ref": "#/components/schemas/User" }
@@ -79,10 +81,12 @@
     "/{permno}": {
       "get": {
         "tags": ["Operator"],
+        "summary": "GET for vehicle permno",
         "parameters": [
           {
             "name": "permno",
             "in": "path",
+            "description": "Vehicle permno",
             "required": true,
             "schema": { "type": "string" }
           },
@@ -103,7 +107,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -127,6 +131,20 @@
           },
           "401": {
             "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
             "content": {
               "text/plain": {
                 "schema": { "$ref": "#/components/schemas/ProblemDetails" }
@@ -145,17 +163,20 @@
     "/{permno}/{operatorserialnumber}": {
       "get": {
         "tags": ["Operator"],
+        "summary": "Get operators for a permno and specific operator serialnumber",
         "operationId": "GetByPermnoAndSerialNumber",
         "parameters": [
           {
             "name": "permno",
             "in": "path",
+            "description": "Vehicle permno",
             "required": true,
             "schema": { "type": "string" }
           },
           {
             "name": "operatorserialnumber",
             "in": "path",
+            "description": "Operator serial number",
             "required": true,
             "schema": { "type": "integer", "format": "int32" }
           },
@@ -176,7 +197,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -200,6 +221,20 @@
           },
           "401": {
             "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
             "content": {
               "text/plain": {
                 "schema": { "$ref": "#/components/schemas/ProblemDetails" }
@@ -218,22 +253,26 @@
     "/{permno}/{persidno}/{operatorserialnumber}": {
       "get": {
         "tags": ["Operator"],
+        "summary": "Get operator info for a specific vehicle, persidno and serial number",
         "parameters": [
           {
             "name": "permno",
             "in": "path",
+            "description": "Vehicle permno",
             "required": true,
             "schema": { "type": "string" }
           },
           {
             "name": "persidno",
             "in": "path",
+            "description": "Person persidno",
             "required": true,
             "schema": { "type": "string" }
           },
           {
             "name": "operatorserialnumber",
             "in": "path",
+            "description": "Operator serial number",
             "required": true,
             "schema": { "type": "integer", "format": "int32" }
           },
@@ -254,7 +293,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": { "$ref": "#/components/schemas/OperatorDto" }
@@ -280,6 +319,20 @@
                 "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
           }
         }
       }
@@ -287,10 +340,12 @@
     "/all/{permno}": {
       "get": {
         "tags": ["Operator"],
+        "summary": "Get operator history for specific vehicle",
         "parameters": [
           {
             "name": "permno",
             "in": "path",
+            "description": "Vehicle permno",
             "required": true,
             "schema": { "type": "string" }
           },
@@ -311,7 +366,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -335,6 +390,20 @@
           },
           "401": {
             "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
             "content": {
               "text/plain": {
                 "schema": { "$ref": "#/components/schemas/ProblemDetails" }
@@ -353,6 +422,8 @@
     "/withcontract": {
       "post": {
         "tags": ["Operator"],
+        "summary": "Post changes for operators, using file in base64 format",
+        "description": "Success status codes:\r\n\r\n 200: operation is successful but message needs to be returned, no object returned\r\n 201: operation is successful , object created is returned",
         "parameters": [
           {
             "name": "api-version",
@@ -370,6 +441,7 @@
           }
         ],
         "requestBody": {
+          "description": "Model with information",
           "content": {
             "application/json-patch+json": {
               "schema": {
@@ -395,7 +467,7 @@
         },
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -453,6 +525,20 @@
           },
           "401": {
             "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
             "content": {
               "text/plain": {
                 "schema": { "$ref": "#/components/schemas/ProblemDetails" }
@@ -471,6 +557,8 @@
     "/withoutcontract": {
       "post": {
         "tags": ["Operator"],
+        "summary": "Post changes for operators, without contract",
+        "description": "Success status codes:\r\n 200: operation is successful but message needs to be returned, no object returned\r\n 201: operation is successful , object created is returned",
         "parameters": [
           {
             "name": "api-version",
@@ -488,6 +576,7 @@
           }
         ],
         "requestBody": {
+          "description": "Model with information",
           "content": {
             "application/json-patch+json": {
               "schema": {
@@ -560,6 +649,20 @@
                 "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
           }
         }
       }
@@ -567,6 +670,8 @@
     "/close/withcontract": {
       "post": {
         "tags": ["Operator"],
+        "summary": "Post close for operators, using file in base64 format",
+        "description": "Success status codes:\r\n\r\n 200: operation is successful but message needs to be returned, no object returned\r\n 204: operation is successful, nothing returned",
         "parameters": [
           {
             "name": "api-version",
@@ -584,6 +689,7 @@
           }
         ],
         "requestBody": {
+          "description": "Model with information",
           "content": {
             "application/json-patch+json": {
               "schema": {
@@ -609,7 +715,7 @@
         },
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -659,6 +765,20 @@
                 "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
           }
         }
       }
@@ -666,6 +786,8 @@
     "/close/withoutcontract": {
       "post": {
         "tags": ["Operator"],
+        "summary": "Post close for operators, using file in base64 format",
+        "description": "Success status codes:\r\n\r\n 200: operation is successful but message needs to be returned, no object returned\r\n 204: operation is successful, nothing returned",
         "parameters": [
           {
             "name": "api-version",
@@ -683,6 +805,7 @@
           }
         ],
         "requestBody": {
+          "description": "Model with information",
           "content": {
             "application/json-patch+json": {
               "schema": {
@@ -725,6 +848,20 @@
           },
           "401": {
             "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
             "content": {
               "text/plain": {
                 "schema": { "$ref": "#/components/schemas/ProblemDetails" }
@@ -753,6 +890,7 @@
         "additionalProperties": false
       },
       "OperatorDto": {
+        "required": ["persidno", "startDate"],
         "type": "object",
         "properties": {
           "startDate": {
@@ -808,7 +946,7 @@
           "permno": {
             "maxLength": 5,
             "minLength": 5,
-            "pattern": "^[A-Z,Þ,Ö]{2}[0-9A-Z]{1}[0-9]{2}",
+            "pattern": "(?i)^[A-Z,Þ,Ö]{2}[0-9A-Z]{1}[0-9]{2}",
             "type": "string",
             "description": "Vehicle permanent number"
           },
@@ -849,7 +987,7 @@
           "permno": {
             "maxLength": 5,
             "minLength": 5,
-            "pattern": "^[A-Z,Þ,Ö]{2}[0-9A-Z]{1}[0-9]{2}",
+            "pattern": "(?i)^[A-Z,Þ,Ö]{2}[0-9A-Z]{1}[0-9]{2}",
             "type": "string",
             "description": "Vehicle permanent number"
           },
@@ -879,7 +1017,7 @@
         "description": "Model to post entity to close latest operators"
       },
       "PostOperatorsEntityWithContractModel": {
-        "required": ["mainOperator"],
+        "required": ["mainOperator", "personIdNumber"],
         "type": "object",
         "properties": {
           "personIdNumber": {
@@ -900,7 +1038,7 @@
         "description": "Entity to post when posting multiple operators, version 3"
       },
       "PostOperatorsEntityWithoutContractModel": {
-        "required": ["mainOperator"],
+        "required": ["mainOperator", "personIdNumber"],
         "type": "object",
         "properties": {
           "personIdNumber": {
@@ -923,6 +1061,7 @@
       "PostOperatorsWithBase64ContractModel": {
         "required": [
           "contract",
+          "operators",
           "permno",
           "reportingPersonIdNumber",
           "startDate"
@@ -932,7 +1071,7 @@
           "permno": {
             "maxLength": 5,
             "minLength": 5,
-            "pattern": "^[A-Z,Þ,Ö]{2}[0-9A-Z]{1}[0-9]{2}",
+            "pattern": "(?i)^[A-Z,Þ,Ö]{2}[0-9A-Z]{1}[0-9]{2}",
             "type": "string",
             "description": "Vehicle permanent number"
           },
@@ -975,13 +1114,18 @@
         "description": "Class to post operators with contract, version 3"
       },
       "PostOperatorsWithoutContractModel": {
-        "required": ["permno", "reportingPersonIdNumber", "startDate"],
+        "required": [
+          "operators",
+          "permno",
+          "reportingPersonIdNumber",
+          "startDate"
+        ],
         "type": "object",
         "properties": {
           "permno": {
             "maxLength": 5,
             "minLength": 5,
-            "pattern": "^[A-Z,Þ,Ö]{2}[0-9A-Z]{1}[0-9]{2}",
+            "pattern": "(?i)^[A-Z,Þ,Ö]{2}[0-9A-Z]{1}[0-9]{2}",
             "type": "string",
             "description": "Vehicle permanent number"
           },
@@ -1035,6 +1179,7 @@
         "additionalProperties": false
       },
       "ReturnTypeMessage": {
+        "required": ["errorMess", "warnSever"],
         "type": "object",
         "properties": {
           "lookupNo": {

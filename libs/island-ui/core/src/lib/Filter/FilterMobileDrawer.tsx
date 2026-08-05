@@ -14,6 +14,7 @@ type Props = {
   labelClearAll?: string
   labelTitle?: string
   onFilterClear: () => void
+  onFilterResult?: () => void
   children: React.ReactNode
 }
 
@@ -25,6 +26,7 @@ export const FilterDrawerAriakit = ({
   labelShowResult,
   labelTitle,
   onFilterClear,
+  onFilterResult,
   children,
 }: Props) => {
   const store = useDialogStore({
@@ -110,7 +112,13 @@ export const FilterDrawerAriakit = ({
 
         {/* sticky footer */}
         <Box className={styles.footer} paddingX={3} paddingY={2}>
-          <Button fluid onClick={close}>
+          <Button
+            fluid
+            onClick={() => {
+              onFilterResult?.()
+              close()
+            }}
+          >
             {labelShowResult ?? 'Sýna niðurstöður'}
           </Button>
         </Box>

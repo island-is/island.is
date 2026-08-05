@@ -12,6 +12,7 @@ import { defaultCardDataByStatus } from './utils/defaultData'
 import { ApplicationCardFields } from './types'
 import { buildHistoryItems } from './utils/history'
 import { ApplicationStatus } from '@island.is/application/types'
+import { coreMessages } from '@island.is/application/core'
 import { useOpenApplication } from '../../hooks/useOpenApplication'
 
 export type ApplicationCardProps = {
@@ -60,7 +61,7 @@ export const ApplicationCard = ({
   focused = false,
   shouldShowCardButtons = true,
 }: ApplicationCardProps) => {
-  const { status, actionCard, modified } = application
+  const { status, actionCard, modified, pruneAt } = application
   const { lang: locale, formatMessage } = useLocale()
   const { openApplication: defaultOpen, slug } = useOpenApplication(application)
   const formattedDate = locale === 'is' ? dateFormat.is : dateFormat.en
@@ -75,6 +76,22 @@ export const ApplicationCard = ({
     formattedDate,
     shouldShowCardButtons ? openApplication : undefined,
   )
+
+  const MS_PER_DAY = 1000 * 60 * 60 * 24
+  const toUtcStartOfDay = (value: Date | string) => {
+    const date = new Date(value)
+    return Date.UTC(
+      date.getUTCFullYear(),
+      date.getUTCMonth(),
+      date.getUTCDate(),
+    )
+  }
+  const daysRemaining =
+    pruneAt && actionCard?.displayPruneAt
+      ? Math.ceil(
+          (toUtcStartOfDay(pruneAt) - toUtcStartOfDay(new Date())) / MS_PER_DAY,
+        )
+      : undefined
 
   const shouldRenderProgress = status === 'draft'
   const showHistory =
@@ -108,6 +125,22 @@ export const ApplicationCard = ({
           <Box display="flex" justifyContent="center">
             <Text variant="small">
               {format(new Date(modified), formattedDate)}
+              {daysRemaining !== undefined && daysRemaining > 0 && (
+                <>
+                  {' · '}
+                  <Text
+                    as="span"
+                    variant="small"
+                    color={daysRemaining < 7 ? 'red400' : 'dark300'}
+                  >
+                    {daysRemaining === 1
+                      ? formatMessage(coreMessages.oneDayRemaining)
+                      : formatMessage(coreMessages.daysRemaining, {
+                          count: daysRemaining,
+                        })}
+                  </Text>
+                </>
+              )}
             </Text>
           </Box>
         </Box>

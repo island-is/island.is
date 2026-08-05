@@ -6,8 +6,8 @@ export class VerdictsInput {
   @Field(() => String, { nullable: true })
   searchTerm?: string
 
-  @Field(() => String, { nullable: true })
-  courtLevel?: string
+  @Field(() => [String], { nullable: true })
+  court?: string[]
 
   @Field(() => String, { nullable: true })
   caseNumber?: string
@@ -35,4 +35,7 @@ export class VerdictsInput {
 
   @Field(() => String, { nullable: true })
   caseContact?: string
+
+  @Field(() => Int, { nullable: true })
+  pageSize?: number // If this number is higher than the default, the default will be used
 }

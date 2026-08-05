@@ -6,6 +6,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  IsUUID,
   MaxLength,
 } from 'class-validator'
 
@@ -81,4 +82,14 @@ export class CreateFileDto {
   @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly fileRepresentative?: string
+
+  /**********
+   * For appeal-related files belonging to a ruling-order appeal: the id of
+   * the COURT_INDICTMENT_RULING_ORDER file being appealed. NULL for case-
+   * level appeal files and any other case files.
+   **********/
+  @IsOptional()
+  @IsUUID()
+  @ApiPropertyOptional({ type: String })
+  readonly rulingFileId?: string
 }

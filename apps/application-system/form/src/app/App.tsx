@@ -8,7 +8,6 @@ import { defaultLanguage } from '@island.is/shared/constants'
 import { applicationSystemScopes } from '@island.is/auth/scopes'
 import { BffProvider, createMockedInitialState } from '@island.is/react-spa/bff'
 import { Router } from '../components/Router'
-import { environment } from '../environments'
 import { BASE_PATH } from '../lib/routes'
 import { isMockMode } from '../mocks'
 
@@ -25,7 +24,7 @@ export const App = () => (
         applicationBasePath={BASE_PATH}
         mockedInitialState={mockedInitialState}
       >
-        <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
+        <FeatureFlagProvider>
           <Router />
         </FeatureFlagProvider>
       </BffProvider>

@@ -105,7 +105,7 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
               title: 'Lög',
               href:
                 searchUrl +
-                '?tegund=a-deild-log-log%2Ca-deild-log%2Cb-deild-log&sida=1&staerd=20',
+                '?type=a-deild-log-log%2Ca-deild-log%2Cb-deild-log&mainType=a-deild-log%2Cb-deild-log&sida=1',
               variant: 'purple',
             },
             {

@@ -11,9 +11,6 @@ concurrency:
   group: push-${{ github.ref }}
   cancel-in-progress: false
 
-env:
-  RUNS_ON_BUCKET_NAME: ${{ vars.RUNS_ON_BUCKET_NAME }}
-
 jobs:
   check-rename:
     runs-on: arc-shared

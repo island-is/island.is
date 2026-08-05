@@ -1,0 +1,84 @@
+query GetGrantTypes($input: AuthAdminGrantTypesInput!) {
+  authAdminGrantTypes(input: $input) {
+    rows {
+      name
+      description
+      archived
+      availableEnvironments
+    }
+    totalCount
+  }
+}
+
+query GetGrantType($name: String!) {
+  authAdminGrantType(name: $name) {
+    name
+    availableEnvironments
+    environments {
+      environment
+      name
+      description
+      archived
+    }
+  }
+}
+
+query GetGrantTypeConfiguredEnvironments {
+  authAdminGrantTypeConfiguredEnvironments
+}
+
+mutation CreateGrantType($input: CreateAuthAdminGrantTypeInput!) {
+  createAuthAdminGrantType(input: $input) {
+    name
+    availableEnvironments
+    environments {
+      environment
+      name
+      description
+      archived
+    }
+    failedEnvironments {
+      environment
+      message
+    }
+  }
+}
+
+mutation UpdateGrantType($input: UpdateAuthAdminGrantTypeInput!) {
+  updateAuthAdminGrantType(input: $input) {
+    name
+    availableEnvironments
+    environments {
+      environment
+      name
+      description
+      archived
+    }
+    failedEnvironments {
+      environment
+      message
+    }
+  }
+}
+
+mutation DeleteGrantType($input: DeleteAuthAdminGrantTypeInput!) {
+  deleteAuthAdminGrantType(input: $input) {
+    success
+    affectedEnvironments
+    failedEnvironments {
+      environment
+      message
+    }
+  }
+}
+
+mutation RestoreGrantType($input: RestoreAuthAdminGrantTypeInput!) {
+  restoreAuthAdminGrantType(input: $input) {
+    success
+    affectedEnvironments
+    failedEnvironments {
+      environment
+      message
+    }
+  }
+}

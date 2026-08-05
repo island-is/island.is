@@ -56,6 +56,7 @@ export const DebouncedDatePicker = ({
       minYear={minDate ? minDate.getFullYear() : MIN_YEAR}
       maxYear={maxDate ? maxDate.getFullYear() : CURRENT_YEAR}
       locale={activeLocale}
+      fixedHeight={true}
     />
   )
 }

@@ -1,10 +1,6 @@
 import dynamic from 'next/dynamic'
 
-import {
-  FiskistofaFooter,
-  Footer,
-  LandskjorstjornFooter,
-} from '@island.is/web/components'
+import { Footer, LandskjorstjornFooter } from '@island.is/web/components'
 import { ProjectPage } from '@island.is/web/graphql/schema'
 
 const OpinberNyskopunFooter = dynamic(() =>
@@ -31,10 +27,6 @@ export const ProjectFooter = ({
           footerItems={footerItems}
           namespace={namespace}
         />
-      )
-    case 'gagnasidur-fiskistofu':
-      return (
-        <FiskistofaFooter footerItems={footerItems} namespace={namespace} />
       )
     case 'election':
       return (

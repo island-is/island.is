@@ -31,6 +31,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { CreateCaseDto } from './dto/createCase.dto'
+import { DeprecatedCreateCaseDto } from './dto/deprecatedCreateCase.dto'
 import { UpdatePoliceDocumentDeliveryDto } from './dto/policeDocument.dto'
 import { UpdateSubpoenaDto } from './dto/subpoena.dto'
 import { Case } from './models/case.model'
@@ -47,6 +48,15 @@ export class AppService {
     private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
+  async deprecatedCreate(caseToCreate: DeprecatedCreateCaseDto): Promise<Case> {
+    return this.auditTrailService.audit(
+      'xrd-api',
+      AuditedAction.CREATE_CASE,
+      this.deprecatedCreateCase(caseToCreate),
+      (theCase) => theCase.id,
+    )
+  }
+
   async create(caseToCreate: CreateCaseDto): Promise<Case> {
     return this.auditTrailService.audit(
       'xrd-api',
@@ -56,8 +66,48 @@ export class AppService {
     )
   }
 
-  private async createCase(caseToCreate: CreateCaseDto): Promise<Case> {
+  private async deprecatedCreateCase(
+    caseToCreate: DeprecatedCreateCaseDto,
+  ): Promise<Case> {
     return fetch(`${this.config.backend.url}/api/internal/case/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: `Bearer ${this.config.backend.accessToken}`,
+      },
+      body: JSON.stringify({
+        ...caseToCreate,
+        policeCaseNumber: undefined,
+        policeCaseNumbers: [caseToCreate.policeCaseNumber],
+      }),
+    })
+      .then(async (res) => {
+        const response = await res.json()
+
+        if (res.ok) {
+          return { id: response?.id }
+        }
+
+        if (res.status < 500) {
+          throw new BadRequestException(response?.detail)
+        }
+
+        throw response
+      })
+      .catch((reason) => {
+        if (reason instanceof BadRequestException) {
+          throw reason
+        }
+
+        throw new BadGatewayException({
+          ...reason,
+          message: 'Failed to create a new case',
+        })
+      })
+  }
+
+  private async createCase(caseToCreate: CreateCaseDto): Promise<Case> {
+    return fetch(`${this.config.backend.url}/api/internal/case/create`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

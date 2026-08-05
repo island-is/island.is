@@ -1,6 +1,6 @@
 import { IntlShape } from 'react-intl'
 
-import * as constants from '@island.is/judicial-system/consts'
+import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import {
   capitalize,
   formatDate,
@@ -21,7 +21,7 @@ export const createCaseModifiedExplanation = (
 
   return `${history}${formatMessage(m.sections.modifyDatesInfo.explanation, {
     date: capitalize(formatDate(now, 'PPPP', true) || ''),
-    time: formatDate(now, constants.TIME_FORMAT),
+    time: formatDate(now, TIME_FORMAT),
     userName: userName ?? '',
     userTitle: lowercase(userTitle),
     institutionName: institutionName ?? '',

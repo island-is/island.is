@@ -2,7 +2,15 @@
 
 ## Description
 
-The course registration application allows users to register both individuals and groups of individuals to specific courses.
+This application lets users register one or more participants for HH courses.
+
+The form supports:
+
+- Selecting a course and course instance (date/time)
+- Registering participant details
+- Paying for a course (some courses are free though)
+
+Course and translation content is managed in Contentful.
 
 ### URLs
 
@@ -12,32 +20,44 @@ The course registration application allows users to register both individuals an
 
 ### Clients, template-api-modules and Domain
 
-- [Template-api-module](https://github.com/island-is/island.is/blob/946aae49282209400527a0d648ebd623a8570006/libs/application/template-api-modules/src/lib/modules/templates/hh/courses)
+- [Template API module](https://github.com/island-is/island.is/tree/main/libs/application/template-api-modules/src/lib/modules/templates/hh/courses)
 
-### States
+### State Flow
 
-#### Prerequisite
+#### Prerequisites
 
-Data fetching from National Registry, User profile and course information is fetched from the CMS.
+Loads required data from National Registry, User Profile, Health Center API, and course information is fetched from the CMS.
 
 #### Draft
 
-In the draft state, the user inputs all names of individuals who want to attend the course.
+The applicant fills in course, participant, and payer information and submits the registration.
+
+#### Payment
+
+If the selected course instance has a charge item, the application goes through the payment step before completion.
 
 #### Completed
 
-User receives confirmation that the list of individuals have been registered for the course and information about the course registration gets sent to Zendesk.
+Shows a confirmation view and submits the registration data to external processing in Zendesk.
+
+#### Fully booked
+
+If the selected course instance is fully booked, the application ends in a dedicated fully booked state.
+
+### Preselection via Query Parameter
+
+The template supports preselecting course and course instance through the template `selection` query parameter.
 
 ### Localisation
 
-All localisation can be found on Contentful.
+Translations are managed in Contentful:
 
 - [HH courses translation](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/hh.courses.application)
 - [Application system translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
 
 ### Test users
 
-- All gervimenn should work here
+- All gervimenn work on dev
 
 ### Codeowners
 

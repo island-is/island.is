@@ -20,6 +20,7 @@ export * from './hooks/useModuleProps'
 export * from './hooks/useNavigation'
 export * from './hooks/useQueryParam'
 export * from './hooks/useSingleNavigationItem'
+export * from './hooks/useIsMobile/useIsMobile'
 
 // utils
 export * from './utils/formatNationalId'
@@ -28,13 +29,17 @@ export * from './utils/plausible'
 export * from './utils/getTranslatedValue'
 export * from './utils/router/prepareRouterData'
 export * from './utils/router/wrappers'
-export * from './utils/getTranslatedValue'
 export * from './utils/getApplicationsBaseUrl'
 
 // components
 export * from './components/ApplicationErrorBoundary/ApplicationErrorBoundary'
+export * from './components/EmptyTable/EmptyTable'
 export * from './components/PortalNavigation/PortalNavigation'
 export * from './components/PortalProvider'
 export * from './components/IntroHeader'
 export * from './components/PortalRouter'
 export * from './components/PortalPageLoader'
+export * from './components/Table/Table'
+
+// queries
+export * from './queries/ServicePortalPage.generated'

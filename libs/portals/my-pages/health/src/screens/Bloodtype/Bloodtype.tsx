@@ -3,7 +3,7 @@ import {
   InfoLine,
   InfoLineStack,
   IntroWrapper,
-  LANDLAEKNIR_SLUG,
+  LANDSPITALI_SLUG,
   LinkButton,
   formatDate,
 } from '@island.is/portals/my-pages/core'
@@ -11,9 +11,11 @@ import { Problem } from '@island.is/react-spa/shared'
 import React from 'react'
 import { messages } from '../../lib/messages'
 import { useBloodTypeQuery } from './Bloodtype.generated'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const Bloodtype: React.FC = () => {
   useNamespaces('sp.health')
+  useHealthPlausibleSwap()
   const { formatMessage, lang } = useLocale()
 
   const { data, loading, error } = useBloodTypeQuery({
@@ -26,24 +28,30 @@ const Bloodtype: React.FC = () => {
     <IntroWrapper
       title={formatMessage(messages.bloodtype)}
       intro={bloodType?.description ?? formatMessage(messages.bloodtypeDesc)}
-      serviceProviderSlug={LANDLAEKNIR_SLUG}
+      desktopContentSpan="10/12"
+      serviceProvider={{
+        slug: LANDSPITALI_SLUG,
+        tooltip: formatMessage(messages.landspitaliTooltip),
+      }}
       marginBottom={6}
-      buttonGroup={[
-        <LinkButton
-          key={'bloodtype-link'}
-          to={bloodType?.link ?? formatMessage(messages.bloodtypeLink)}
-          text={formatMessage(messages.readAboutBloodtypes)}
-          variant="utility"
-          icon="open"
-        />,
-        <LinkButton
-          key={'bloodbank-page-link'}
-          to={formatMessage(messages.contactBloodbankLink)}
-          text={formatMessage(messages.contactBloodbank)}
-          variant="utility"
-          icon="open"
-        />,
-      ]}
+      buttonGroup={{
+        actions: [
+          <LinkButton
+            key={'bloodtype-link'}
+            to={bloodType?.link ?? formatMessage(messages.bloodtypeLink)}
+            text={formatMessage(messages.readAboutBloodtypes)}
+            variant="utility"
+            icon="open"
+          />,
+          <LinkButton
+            key={'bloodbank-page-link'}
+            to={formatMessage(messages.contactBloodbankLink)}
+            text={formatMessage(messages.contactBloodbank)}
+            variant="utility"
+            icon="open"
+          />,
+        ],
+      }}
     >
       {!loading && !bloodType && !error && (
         <Problem type="no_data" noBorder={false} />

@@ -6,7 +6,7 @@ import { vehicleMessage } from '../lib/messages'
 import { MEDIUM_CO2_JUNE_2025 } from '../utils/constants'
 
 interface VehicleCO2Props {
-  co2: string
+  co2?: string
 }
 
 const VehicleCO2: React.FC<VehicleCO2Props> = ({ co2 }) => {
@@ -22,8 +22,8 @@ const VehicleCO2: React.FC<VehicleCO2Props> = ({ co2 }) => {
           detail={[
             {
               label: formatMessage(vehicleMessage.myCo2),
-              value: co2,
-              subValue: 'CO2',
+              value: co2 ?? formatMessage(vehicleMessage.co2Fallback),
+              subValue: co2 ? 'CO2' : undefined,
             },
             {
               label: formatMessage(vehicleMessage.mediumCo2),

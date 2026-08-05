@@ -1,19 +1,29 @@
-import { Includeable, Op } from 'sequelize'
+import { col, Includeable, literal, Op } from 'sequelize'
 
 import {
+  appealEventTypes,
   CaseFileCategory,
   CaseFileState,
-  CaseState,
-  CaseType,
+  CaseIndictmentRulingDecision,
   completedIndictmentCaseStates,
   dateTypes,
   defendantEventTypes,
+  DefendantPlea,
+  DefenderChoice,
   eventTypes,
-  notificationTypes,
+  Gender,
+  IndictmentCaseReviewDecision,
+  PunishmentType,
   stringTypes,
+  SubpoenaType,
+  trackedNotificationTypes,
 } from '@island.is/judicial-system/types'
 
+import { AppealCase } from '../models/appealCase.model'
+import { AppealDecision } from '../models/appealDecision.model'
+import { AppealEventLog } from '../models/appealEventLog.model'
 import { Case } from '../models/case.model'
+import { CaseDefendantPoliceCaseNumber } from '../models/caseDefendantPoliceCaseNumber.model'
 import { CaseFile } from '../models/caseFile.model'
 import { CaseString } from '../models/caseString.model'
 import { CivilClaimant } from '../models/civilClaimant.model'
@@ -37,6 +47,81 @@ export const caseInclude: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
   { model: Institution, as: 'court' },
   { model: Institution, as: 'sharedWithProsecutorsOffice' },
+  {
+    model: AppealCase,
+    as: 'appealCase',
+    required: false,
+    include: [
+      {
+        model: User,
+        as: 'appealAssistant',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge1',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge2',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge3',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: AppealEventLog,
+        as: 'appealEventLogs',
+        required: false,
+        where: { eventType: appealEventTypes },
+        separate: true,
+      },
+    ],
+  },
+  {
+    model: AppealCase,
+    as: 'rulingOrderAppealCases',
+    required: false,
+    separate: true,
+    include: [
+      {
+        model: User,
+        as: 'appealAssistant',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge1',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge2',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge3',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: AppealEventLog,
+        as: 'appealEventLogs',
+        required: false,
+        where: { eventType: appealEventTypes },
+        separate: true,
+      },
+    ],
+  },
+  {
+    model: AppealDecision,
+    as: 'appealDecisions',
+    required: false,
+    separate: true,
+  },
   {
     model: User,
     as: 'creatingProsecutor',
@@ -64,26 +149,6 @@ export const caseInclude: Includeable[] = [
   },
   {
     model: User,
-    as: 'appealAssistant',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'appealJudge1',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'appealJudge2',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'appealJudge3',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
     as: 'indictmentReviewer',
     include: [{ model: Institution, as: 'institution' }],
   },
@@ -95,6 +160,10 @@ export const caseInclude: Includeable[] = [
         model: CaseFile,
         as: 'caseFiles',
         required: false,
+        order: [
+          ['orderWithinChapter', 'ASC NULLS LAST'],
+          ['created', 'ASC'],
+        ],
         where: { state: { [Op.not]: CaseFileState.DELETED }, category: null },
         separate: true,
       },
@@ -128,6 +197,12 @@ export const caseInclude: Includeable[] = [
         order: [['created', 'DESC']],
         separate: true,
       },
+      {
+        model: CaseDefendantPoliceCaseNumber,
+        as: 'caseDefendantPoliceCaseNumbers',
+        required: false,
+        separate: true,
+      },
     ],
     separate: true,
   },
@@ -143,7 +218,10 @@ export const caseInclude: Includeable[] = [
     model: IndictmentCount,
     as: 'indictmentCounts',
     required: false,
-    order: [['created', 'ASC']],
+    order: [
+      ['displayOrder', 'ASC'],
+      ['created', 'ASC'],
+    ],
     include: [
       {
         model: Offense,
@@ -172,6 +250,11 @@ export const caseInclude: Includeable[] = [
         as: 'attestingWitness',
         required: false,
         include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: CaseFile,
+        as: 'rulingFile',
+        required: false,
       },
       {
         model: CourtDocument,
@@ -212,7 +295,10 @@ export const caseInclude: Includeable[] = [
     model: CaseFile,
     as: 'caseFiles',
     required: false,
-    order: [['created', 'DESC']],
+    order: [
+      ['orderWithinChapter', 'ASC NULLS LAST'],
+      ['created', 'ASC'],
+    ],
     where: { state: { [Op.not]: CaseFileState.DELETED } },
     separate: true,
   },
@@ -242,7 +328,7 @@ export const caseInclude: Includeable[] = [
     model: Notification,
     as: 'notifications',
     required: false,
-    where: { type: notificationTypes },
+    where: { type: trackedNotificationTypes },
     order: [['created', 'DESC']],
     separate: true,
   },
@@ -362,6 +448,7 @@ export const caseInclude: Includeable[] = [
         as: 'defendants',
         required: false,
         order: [['created', 'ASC']],
+        separate: true,
         include: [
           {
             model: Subpoena,
@@ -369,16 +456,38 @@ export const caseInclude: Includeable[] = [
             required: false,
             order: [['created', 'DESC']],
             separate: true,
+            where: {
+              created: {
+                [Op.lt]: literal(
+                  `(SELECT "created" FROM "case" WHERE "case"."id" = (SELECT "case_id" FROM "defendant" WHERE "defendant"."id" = "Subpoena"."defendant_id"))`,
+                ),
+              },
+            },
           },
         ],
-        separate: true,
       },
       {
         model: CaseFile,
         as: 'caseFiles',
         required: false,
-        where: { state: { [Op.not]: CaseFileState.DELETED } },
-        separate: true,
+        where: {
+          state: { [Op.not]: CaseFileState.DELETED },
+          defendantId: { [Op.not]: null },
+          category: {
+            [Op.in]: [
+              CaseFileCategory.CRIMINAL_RECORD,
+              CaseFileCategory.COST_BREAKDOWN,
+              CaseFileCategory.CASE_FILE,
+              CaseFileCategory.PROSECUTOR_CASE_FILE,
+              CaseFileCategory.DEFENDANT_CASE_FILE,
+              CaseFileCategory.CIVIL_CLAIM,
+              CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+              CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+              CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+            ],
+          },
+          created: { [Op.lt]: col('Case.created') },
+        },
       },
     ],
     separate: true,
@@ -388,6 +497,12 @@ export const caseInclude: Includeable[] = [
 interface UpdateDateLog {
   date?: Date
   location?: string
+}
+
+export interface UpdateCaseDefendantEventLogDecision {
+  defendantId: string
+  rulingDate?: Date
+  rulingDecision: CaseIndictmentRulingDecision
 }
 
 export interface UpdateCase
@@ -443,8 +558,6 @@ export interface UpdateCase
     | 'accusedAppealAnnouncement'
     | 'prosecutorAppealDecision'
     | 'prosecutorAppealAnnouncement'
-    | 'accusedPostponedAppealDate'
-    | 'prosecutorPostponedAppealDate'
     | 'caseModifiedExplanation'
     | 'rulingModifiedHistory'
     | 'caseResentExplanation'
@@ -452,52 +565,93 @@ export interface UpdateCase
     | 'indictmentIntroduction'
     | 'requestDriversLicenseSuspension'
     | 'creatingProsecutorId'
-    | 'appealState'
-    | 'prosecutorStatementDate'
-    | 'appealReceivedByCourtDate'
-    | 'appealCaseNumber'
-    | 'appealAssistantId'
-    | 'appealJudge1Id'
-    | 'appealJudge2Id'
-    | 'appealJudge3Id'
-    | 'appealConclusion'
-    | 'appealRulingDecision'
-    | 'appealRulingModifiedHistory'
     | 'requestSharedWithDefender'
-    | 'appealValidToDate'
-    | 'isAppealCustodyIsolation'
-    | 'appealIsolationToDate'
     | 'indictmentRulingDecision'
-    | 'indictmentReviewerId'
     | 'indictmentDecision'
     | 'courtSessionType'
     | 'mergeCaseId'
     | 'mergeCaseNumber'
     | 'isCompletedWithoutRuling'
     | 'hasCivilClaims'
-    | 'isRegisteredInPrisonSystem'
     | 'isArchived'
   > {
-  type?: CaseType
-  state?: CaseState
-  policeCaseNumbers?: string[]
-  defendantWaivesRightToCounsel?: boolean
-  rulingDate?: Date | null
-  courtCaseNumber?: string | null
-  judgeId?: string | null
-  registrarId?: string | null
-  courtRecordSignatoryId?: string | null
-  courtRecordSignatureDate?: Date | null
-  parentCaseId?: string | null
-  indictmentReturnedExplanation?: string | null
-  indictmentDeniedExplanation?: string | null
-  indictmentHash?: string | null
+  type?: Case['type']
+  state?: Case['state']
+  policeCaseNumbers?: Case['policeCaseNumbers']
+  defendantWaivesRightToCounsel?: Case['defendantWaivesRightToCounsel'] | null
+  rulingDate?: Case['rulingDate'] | null
+  courtCaseNumber?: Case['courtCaseNumber'] | null
+  judgeId?: Case['judgeId'] | null
+  registrarId?: Case['registrarId'] | null
+  courtRecordSignatoryId?: Case['courtRecordSignatoryId'] | null
+  courtRecordSignatureDate?: Case['courtRecordSignatureDate'] | null
+  parentCaseId?: Case['parentCaseId'] | null
+  indictmentReviewerId?: Case['indictmentReviewerId'] | null
+  indictmentDeniedExplanation?: Case['indictmentDeniedExplanation'] | null
+  indictmentHash?: Case['indictmentHash'] | null
+  rulingSignatureDate?: Case['rulingSignatureDate'] | null
+  withCourtSessions?: Case['withCourtSessions']
+  courtRecordHash?: Case['courtRecordHash'] | null
+  accusedPostponedAppealDate?: Case['accusedPostponedAppealDate'] | null
+  prosecutorPostponedAppealDate?: Case['prosecutorPostponedAppealDate'] | null
   arraignmentDate?: UpdateDateLog
   courtDate?: UpdateDateLog
   postponedIndefinitelyExplanation?: string
   civilDemands?: string
   penalties?: string
-  rulingSignatureDate?: Date | null
-  withCourtSessions?: boolean
-  courtRecordHash?: string | null
+  defendantEventLogDecisions?: UpdateCaseDefendantEventLogDecision[]
+  reopenReason?: string
+}
+
+export interface UpdateAppealCase
+  extends Pick<
+    AppealCase,
+    | 'appealCaseNumber'
+    | 'appealReceivedByCourtDate'
+    | 'appealRulingDate'
+    | 'appealAssistantId'
+    | 'appealJudge1Id'
+    | 'appealJudge2Id'
+    | 'appealJudge3Id'
+    | 'appealRulingDecision'
+    | 'appealConclusion'
+    | 'appealRulingModifiedHistory'
+    | 'requestAppealRulingNotToBePublished'
+    | 'appealValidToDate'
+    | 'isAppealCustodyIsolation'
+    | 'appealIsolationToDate'
+    | 'appealedByNationalId'
+    | 'rulingFileId'
+    | 'appealDate'
+  > {
+  appealState?: AppealCase['appealState']
+}
+
+export interface UpdateDefendant {
+  noNationalId?: boolean
+  nationalId?: string
+  dateOfBirth?: string
+  name?: string
+  gender?: Gender
+  address?: string
+  citizenship?: string
+  defenderName?: string
+  defenderNationalId?: string
+  defenderEmail?: string
+  defenderPhoneNumber?: string
+  defenderChoice?: DefenderChoice
+  defendantPlea?: DefendantPlea
+  subpoenaType?: SubpoenaType
+  requestedDefenderChoice?: DefenderChoice
+  requestedDefenderNationalId?: string
+  requestedDefenderName?: string
+  isDefenderChoiceConfirmed?: boolean
+  caseFilesSharedWithDefender?: boolean
+  isSentToPrisonAdmin?: boolean
+  punishmentType?: PunishmentType
+  isAlternativeService?: boolean
+  alternativeServiceDescription?: string
+  indictmentReviewDecision?: IndictmentCaseReviewDecision | null
+  publicProsecutorIsRegisteredInPoliceSystem?: boolean | null
+  isDrivingLicenseSuspended?: boolean | null
 }

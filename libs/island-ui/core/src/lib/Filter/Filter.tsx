@@ -3,7 +3,6 @@ import { Dialog, DialogDisclosure, useDialogState } from 'reakit/Dialog'
 import { usePopoverState, Popover, PopoverDisclosure } from 'reakit/Popover'
 import { Box } from '../Box/Box'
 import { Button } from '../Button/Button'
-import { Inline } from '../Inline/Inline'
 import { Stack } from '../Stack/Stack'
 import { Text } from '../Text/Text'
 import { usePreventBodyScroll } from './usePreventBodyScroll'
@@ -41,6 +40,9 @@ export interface FilterProps {
   /** Filter input component */
   filterInput?: ReactNode
 
+  /** Should Filter input fill up available flex space? */
+  filterInputFluid?: boolean
+
   /** How the filter should be displayed */
   variant?: 'popover' | 'dialog' | 'default'
 
@@ -67,6 +69,12 @@ export interface FilterProps {
 
   /** Remove left margin from filter button */
   removeLeftMargin?: boolean
+
+  /** Called when the user confirms the filter selection in the mobile drawer */
+  onFilterResult?: () => void
+
+  /** Make the disclosure button fluid, filling its container */
+  fluidDisclosure?: boolean
 }
 
 /**
@@ -94,6 +102,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
   align,
   variant = 'default',
   filterInput,
+  filterInputFluid,
   onFilterClear,
   reverse,
   children,
@@ -101,6 +110,8 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
   mobileWrap = true,
   removeLeftMargin = false,
   usePopoverDiscloureButtonStyling,
+  onFilterResult,
+  fluidDisclosure = false,
 }) => {
   const dialog = useDialogState({ modal: true })
   const popover = usePopoverState({
@@ -122,6 +133,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
   const popoverContent = (component: boolean) => (
     <Box
       component={component ? Popover : undefined}
+      aria-label={component ? labelOpen : undefined}
       background="white"
       borderRadius="large"
       boxShadow="subtle"
@@ -152,65 +164,92 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
     </Box>
   )
 
-  const popoverContainer = () => (
-    <>
+  const popoverContainer = () => {
+    const inputBox = filterInputContent ? (
       <Box
-        display="flex"
-        width="full"
-        justifyContent={align === 'right' ? 'flexEnd' : 'flexStart'}
+        width={filterInputFluid === true ? 'full' : undefined}
+        flexGrow={
+          filterInputFluid === true
+            ? 1
+            : filterInputFluid === false
+            ? 0
+            : undefined
+        }
+        className={styles.filterInput}
       >
-        <Inline
-          space={2}
-          reverse={reverse}
-          alignY="bottom"
-          flexWrap={mobileWrap ? 'wrap' : 'nowrap'}
+        {filterInputContent}
+      </Box>
+    ) : null
+
+    return (
+      <>
+        <Box
+          display="flex"
+          width="full"
+          justifyContent={align === 'right' ? 'flexEnd' : 'flexStart'}
         >
           <Box
-            component={PopoverDisclosure}
-            background="white"
-            display="inlineBlock"
-            borderRadius="large"
-            tabIndex={-1}
-            {...popover}
-            className={filterCount ? styles.filterCountButton : undefined}
+            display="flex"
+            alignItems="flexEnd"
+            flexWrap={mobileWrap ? 'wrap' : 'nowrap'}
+            columnGap={2}
+            flexGrow={
+              filterInputFluid === true
+                ? 1
+                : filterInputFluid === false
+                ? 0
+                : undefined
+            }
           >
-            {filterCount ? (
-              <Button
-                as="span"
-                variant="utility"
-                icon={!filterCount ? 'filter' : undefined}
-                fluid
-                nowrap
-              >
-                {labelOpen}
-
-                <Box
+            {reverse && inputBox}
+            <Box
+              component={PopoverDisclosure}
+              background="white"
+              display="inlineBlock"
+              borderRadius="large"
+              width={fluidDisclosure ? 'full' : undefined}
+              tabIndex={-1}
+              {...popover}
+              className={filterCount ? styles.filterCountButton : undefined}
+            >
+              {filterCount ? (
+                <Button
                   as="span"
-                  background="blue400"
-                  color="white"
-                  className={styles.filterCount}
+                  variant="utility"
+                  icon={!filterCount ? 'filter' : undefined}
+                  fluid
+                  nowrap
                 >
-                  <Text
-                    variant="eyebrow"
+                  {labelOpen}
+
+                  <Box
+                    as="span"
+                    background="blue400"
                     color="white"
-                    lineHeight={isMobile ? 'xl' : 'lg'}
+                    className={styles.filterCount}
                   >
-                    {filterCountNumber}
-                  </Text>
-                </Box>
-              </Button>
-            ) : (
-              <Button as="span" variant="utility" icon="filter" fluid nowrap>
-                {labelOpen}
-              </Button>
-            )}
+                    <Text
+                      variant="eyebrow"
+                      color="white"
+                      lineHeight={isMobile ? 'xl' : 'lg'}
+                    >
+                      {filterCountNumber}
+                    </Text>
+                  </Box>
+                </Button>
+              ) : (
+                <Button as="span" variant="utility" icon="filter" fluid nowrap>
+                  {labelOpen}
+                </Button>
+              )}
+            </Box>
+            {!reverse && inputBox}
           </Box>
-          {filterInputContent}
-        </Inline>
-      </Box>
-      {popoverContent(true)}
-    </>
-  )
+        </Box>
+        {popoverContent(true)}
+      </>
+    )
+  }
 
   const dialogContent = () => (
     <>
@@ -221,7 +260,11 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
         }
       >
         {usePopoverDiscloureButtonStyling ? (
-          <Box background="white" borderRadius="large">
+          <Box
+            background="white"
+            borderRadius="large"
+            width={fluidDisclosure ? 'full' : undefined}
+          >
             <Button
               unfocusable
               as="span"
@@ -241,6 +284,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
             background="white"
             padding={2}
             borderRadius="large"
+            width={fluidDisclosure ? 'full' : undefined}
           >
             <Text variant="h5" as="h5">
               {labelOpen}
@@ -257,7 +301,11 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
           </Box>
         )}
       </DialogDisclosure>
-      <Dialog {...dialog} preventBodyScroll={false}>
+      <Dialog
+        {...dialog}
+        preventBodyScroll={false}
+        aria-label={labelTitle ?? labelOpen}
+      >
         <Box
           background="white"
           position="fixed"
@@ -341,7 +389,11 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
 
   if (isMobile) {
     return (
-      <Box display="flex" alignItems="flexEnd">
+      <Box
+        display="flex"
+        alignItems="flexEnd"
+        columnGap={removeLeftMargin ? 0 : 2}
+      >
         {filterInputContent}
 
         <FilterDrawerAriakit
@@ -351,13 +403,14 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
           labelClearAll={labelClearAll}
           labelTitle={labelTitle}
           onFilterClear={onFilterClear}
+          onFilterResult={onFilterResult}
           disclosure={
             <Box
               background="white"
               marginTop={'auto'}
               borderRadius="large"
+              width={fluidDisclosure ? 'full' : undefined}
               tabIndex={-1}
-              marginLeft={removeLeftMargin ? 0 : 2}
               className={filterCount ? styles.filterCountButton : undefined}
             >
               {filterCount ? (

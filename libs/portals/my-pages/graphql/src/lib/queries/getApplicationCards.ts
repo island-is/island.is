@@ -15,6 +15,8 @@ export const APPLICATION_CARDS = gql`
       applicationPath
       orgContentfulId
       nationalId
+      pruneAt
+      pruned
       actionCard {
         title
         description
@@ -36,6 +38,7 @@ export const APPLICATION_CARDS = gql`
         draftTotalSteps
         draftFinishedSteps
         historyButton
+        displayPruneAt
       }
     }
   }

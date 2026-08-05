@@ -9,16 +9,16 @@ import { useQuery, gql } from '@apollo/client'
 import {
   B_FULL,
   B_FULL_RENEWAL_65,
+  B_TEMP,
   BE,
   codesExtendedLicenseCategories,
-  codesRequiringHealthCertificate,
   DrivingLicenseApplicationFor,
   DrivingLicenseFakeData,
-  otherLicenseCategories,
   remarksCannotRenew65,
 } from '../../lib/constants'
 import { fakeEligibility } from './fakeEligibility'
 import { DrivingLicense } from '../../lib/types'
+import { hasUsableRlsQualityPhoto } from '../../lib/utils'
 
 const QUERY = gql`
   query EligibilityQuery($input: ApplicationEligibilityInput!) {
@@ -28,6 +28,8 @@ const QUERY = gql`
         key
         requirementMet
         daysOfResidency
+        messageIs
+        messageEn
       }
     }
   }
@@ -40,6 +42,8 @@ export interface UseEligibilityResult {
 
 export const useEligibility = (
   application: Application,
+  is65RenewalRedesignEnabled: boolean,
+  isBTempRedesignEnabled: boolean,
 ): UseEligibilityResult => {
   const fakeData = getValueViaPath<DrivingLicenseFakeData>(
     application.answers,
@@ -67,34 +71,10 @@ export const useEligibility = (
     },
   })
 
-  //TODO: Remove when RLS/SGS supports health certificate in BE license
-  const hasGlasses = getValueViaPath<boolean>(
-    application.externalData,
-    'glassesCheck.data',
-  )
   const currentLicense = getValueViaPath<DrivingLicense>(
     application.externalData,
     'currentLicense.data',
   )
-  const hasQualityPhoto =
-    getValueViaPath<boolean>(
-      application.externalData,
-      'qualityPhoto.data.hasQualityPhoto',
-    ) ?? false
-
-  const hasOtherCategoryOrHealthRemarks = (
-    currentLicense: DrivingLicense | undefined,
-  ) => {
-    return (
-      (currentLicense?.categories.some((license) =>
-        otherLicenseCategories.includes(license.nr),
-      ) ??
-        false) ||
-      currentLicense?.remarks?.some((remark) =>
-        codesRequiringHealthCertificate.includes(remark.code),
-      )
-    )
-  }
 
   const hasExtendedDrivingLicense = (
     currentLicense: DrivingLicense | undefined,
@@ -108,20 +88,47 @@ export const useEligibility = (
 
     if (!relevantCategories?.length) return false
 
-    // Check if any category was issued on a different date than the 'B' license
-    // (indicating an extended license)
     return relevantCategories.some((x) => x.issued !== drivingLicenseIssued)
   }
 
+  const usesNewPhotoSelector =
+    applicationFor === BE ||
+    (applicationFor === B_FULL_RENEWAL_65 && is65RenewalRedesignEnabled) ||
+    (applicationFor === B_TEMP && isBTempRedesignEnabled)
+
   if (usingFakeData) {
+    let hasPhoto: boolean
+    if (usesNewPhotoSelector) {
+      // 'real' falls through to RLS/Þjóðskrá and populates externalData with
+      // real data. 'yes' / 'no' / 'metadata-only' all inject their fake shape
+      // into externalData via the data provider. So in every case the right
+      // answer comes from reading externalData through the same predicates
+      // the real path uses.
+      const qualityPhotoConfirmed = hasUsableRlsQualityPhoto(
+        application.externalData,
+      )
+
+      const thjodskraPhotos =
+        getValueViaPath<{
+          images?: Array<{ contentSpecification?: string }>
+        }>(application.externalData, 'allPhotosFromThjodskra.data')?.images ??
+        []
+      const hasThjodskraFacial = thjodskraPhotos.some(
+        (p) => p.contentSpecification === 'FACIAL',
+      )
+
+      hasPhoto = qualityPhotoConfirmed || hasThjodskraFacial
+    } else {
+      hasPhoto = fakeData?.qualityPhoto === YES
+    }
     return {
       loading: false,
       eligibility: fakeEligibility(
         applicationFor,
         parseInt(fakeData?.howManyDaysHaveYouLivedInIceland.toString(), 10),
-
-        //TODO: Remove when RLS/SGS supports health certificate in BE license
-        hasGlasses,
+        hasPhoto,
+        is65RenewalRedesignEnabled,
+        isBTempRedesignEnabled,
       ),
     }
   }
@@ -137,27 +144,33 @@ export const useEligibility = (
   const eligibility: ApplicationEligibilityRequirement[] =
     data.drivingLicenseApplicationEligibility?.requirements ?? []
 
-  //TODO: Remove when RLS/SGS supports health certificate in BE license
+  const computeUsablePhoto = () => {
+    if (hasUsableRlsQualityPhoto(application.externalData)) return true
+
+    const thjodskraPhotos =
+      getValueViaPath<{ images?: Array<{ contentSpecification?: string }> }>(
+        application.externalData,
+        'allPhotosFromThjodskra.data',
+      )?.images ?? []
+
+    return thjodskraPhotos.some((p) => p.contentSpecification === 'FACIAL')
+  }
+
   if (application.answers.applicationFor === BE) {
+    const hasUsablePhoto = computeUsablePhoto()
+
     return {
       loading: loading,
       eligibility: {
         isEligible: loading
           ? undefined
           : (data.drivingLicenseApplicationEligibility?.isEligible ?? false) &&
-            !hasGlasses &&
-            hasQualityPhoto &&
-            !hasOtherCategoryOrHealthRemarks(currentLicense),
+            hasUsablePhoto,
         requirements: [
           ...eligibility,
           {
-            key: RequirementKey.beRequiresHealthCertificate,
-            requirementMet:
-              !hasGlasses && !hasOtherCategoryOrHealthRemarks(currentLicense),
-          },
-          {
             key: RequirementKey.hasNoPhoto,
-            requirementMet: hasQualityPhoto,
+            requirementMet: hasUsablePhoto,
           },
         ],
       },
@@ -180,6 +193,11 @@ export const useEligibility = (
         remarksCannotRenew65.includes(remark.code),
       ) ?? false
 
+    // When the redesign is on, also require a usable photo (same as BE).
+    const hasUsablePhoto = is65RenewalRedesignEnabled
+      ? computeUsablePhoto()
+      : true
+
     const requirements = [
       ...eligibility,
       ...(hasExtendedLicense
@@ -187,6 +205,14 @@ export const useEligibility = (
             {
               key: RequirementKey.noExtendedDrivingLicense,
               requirementMet: false,
+            },
+          ]
+        : []),
+      ...(is65RenewalRedesignEnabled
+        ? [
+            {
+              key: RequirementKey.hasNoPhoto,
+              requirementMet: hasUsablePhoto,
             },
           ]
         : []),
@@ -199,8 +225,30 @@ export const useEligibility = (
           ? undefined
           : (data.drivingLicenseApplicationEligibility?.isEligible ?? false) &&
             !hasExtendedLicense &&
-            !hasAnyInvalidRemarks,
+            !hasAnyInvalidRemarks &&
+            hasUsablePhoto,
         requirements,
+      },
+    }
+  }
+
+  if (application.answers.applicationFor === B_TEMP && isBTempRedesignEnabled) {
+    const hasUsablePhoto = computeUsablePhoto()
+
+    return {
+      loading: loading,
+      eligibility: {
+        isEligible: loading
+          ? undefined
+          : (data.drivingLicenseApplicationEligibility?.isEligible ?? false) &&
+            hasUsablePhoto,
+        requirements: [
+          ...eligibility,
+          {
+            key: RequirementKey.hasNoPhoto,
+            requirementMet: hasUsablePhoto,
+          },
+        ],
       },
     }
   }

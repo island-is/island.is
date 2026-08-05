@@ -186,6 +186,7 @@ export class InternalVerdictController {
         caseId,
         getDeliveredVerdictNationalCommissionersOfficeLogDetails,
       )
+
       await transaction.commit()
 
       return response
@@ -244,7 +245,9 @@ export class InternalVerdictController {
 
       this.eventService.postEvent('VERDICT_SERVICE_STATUS', theCase, false, {
         Staða: getVerdictServiceStatusText(updatedVerdict.serviceStatus),
-        Birt: formatDate(updatedVerdict.serviceDate, 'Pp') ?? 'ekki skráð',
+        Birt:
+          formatDate(updatedVerdict.serviceDate, 'dd.MM.y HH:mm') ??
+          'ekki skráð',
       })
     }
 

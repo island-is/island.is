@@ -12,6 +12,7 @@ import React from 'react'
 import { useParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { useGetWaitlistDetailQuery } from './Waitlists.generated'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 type UseParams = {
   id: string
@@ -19,6 +20,8 @@ type UseParams = {
 
 const WaitlistsDetail: React.FC = () => {
   useNamespaces('sp.health')
+  useHealthPlausibleSwap()
+
   const { formatMessage, lang } = useLocale()
   const { id } = useParams() as UseParams
 
@@ -33,11 +36,12 @@ const WaitlistsDetail: React.FC = () => {
     <IntroWrapper
       title={formatMessage(messages.waitlists)}
       intro={formatMessage(messages.waitlistsIntro)}
-      serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
-      serviceProviderTooltip={formatMessage(
-        messages.landlaeknirWaitlistTooltip,
-      )}
+      serviceProvider={{
+        slug: HEALTH_DIRECTORATE_SLUG,
+        tooltip: formatMessage(messages.landlaeknirWaitlistTooltip),
+      }}
       marginBottom={6}
+      desktopContentSpan="10/12"
     >
       {!loading && !error && waitlist === null && (
         <Problem

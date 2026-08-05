@@ -8,9 +8,12 @@ import {
   RadioButton,
   Tooltip,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  DISTRICT_COURT_INVESTIGATION_CASE_OVERVIEW_ROUTE,
+  DISTRICT_COURT_INVESTIGATION_CASE_RULING_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { isDistrictCourtUser } from '@island.is/judicial-system/types'
-import { titles } from '@island.is/judicial-system-web/messages'
+import { errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   ArraignmentAlert,
   BlueBox,
@@ -30,8 +33,8 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { LegalRightsProtectorInputFields } from '@island.is/judicial-system-web/src/components/VictimInfo/LegalRightsProtectorInputFields'
 import {
-  NotificationType,
   SessionArrangements,
+  TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -45,6 +48,10 @@ import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-syste
 
 import { icHearingArrangements as m } from './HearingArrangements.strings'
 
+enum ModalButtonLoading {
+  PRIMARY = 'PRIMARY',
+}
+
 const HearingArrangements = () => {
   const {
     workingCase,
@@ -56,8 +63,13 @@ const HearingArrangements = () => {
   const { user } = useContext(UserContext)
 
   const { formatMessage } = useIntl()
-  const { setAndSendCaseToServer, sendNotification, isSendingNotification } =
-    useCase()
+  const {
+    setAndSendCaseToServer,
+    sendNotification,
+    isUpdatingCase,
+    isSendingNotification,
+    sendNotificationError,
+  } = useCase()
   const {
     courtDate,
     courtDateHasChanged,
@@ -67,7 +79,14 @@ const HearingArrangements = () => {
   } = useCourtArrangements(workingCase, setWorkingCase, 'arraignmentDate')
 
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
+  const [modalButtonLoading, setModalButtonLoading] =
+    useState<ModalButtonLoading>()
   const [checkedRadio, setCheckedRadio] = useState<SessionArrangements>()
+
+  const handleCloseModal = () => {
+    setNavigateTo(undefined)
+    setModalButtonLoading(undefined)
+  }
 
   const initialize = useCallback(() => {
     if (!workingCase.arraignmentDate && workingCase.requestedCourtDate) {
@@ -95,7 +114,7 @@ const HearingArrangements = () => {
   const courtDateNotification = useMemo(
     () =>
       hasSentNotification(
-        NotificationType.COURT_DATE,
+        TrackedNotificationType.COURT_DATE,
         workingCase.notifications,
       ),
     [workingCase.notifications],
@@ -104,12 +123,11 @@ const HearingArrangements = () => {
   const isCorrectingRuling = Boolean(workingCase.requestCompletedDate)
 
   const handleNavigationTo = async (destination: keyof stepValidationsType) => {
-    await sendCourtDateToServer()
-
     if (
       isCorrectingRuling ||
       (courtDateNotification.hasSent && !courtDateHasChanged)
     ) {
+      await sendCourtDateToServer()
       router.push(`${destination}/${workingCase.id}`)
     } else {
       setNavigateTo(destination)
@@ -120,6 +138,10 @@ const HearingArrangements = () => {
     workingCase,
     courtDate,
   )
+
+  const isModalConfirming = modalButtonLoading === ModalButtonLoading.PRIMARY
+  const isModalLoading =
+    isModalConfirming && (isUpdatingCase || isSendingNotification)
 
   return (
     <PageLayout
@@ -332,55 +354,77 @@ const HearingArrangements = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
-          previousUrl={`${constants.INVESTIGATION_CASE_OVERVIEW_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() =>
-            handleNavigationTo(constants.INVESTIGATION_CASE_RULING_ROUTE)
-          }
-          nextIsDisabled={!stepIsValid}
-          nextButtonText={formatMessage(m.continueButton.label)}
+          previousUrl={`${DISTRICT_COURT_INVESTIGATION_CASE_OVERVIEW_ROUTE}/${workingCase.id}`}
+          actions={[
+            {
+              text: 'Halda áfram',
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  DISTRICT_COURT_INVESTIGATION_CASE_RULING_ROUTE,
+                ),
+              disabled: !stepIsValid,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
       {navigateTo !== undefined && (
         <Modal
-          title={formatMessage(m.modal.heading)}
-          text={formatMessage(
-            workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT
-              ? m.modal.allPresentText
-              : workingCase.sessionArrangements ===
-                SessionArrangements.ALL_PRESENT_SPOKESPERSON
-              ? m.modal.allPresentSpokespersonText
-              : m.modal.prosecutorPresentText,
-            { courtDateHasChanged },
-          )}
+          title="Viltu staðfesta fyrirtökutíma?"
+          onClose={handleCloseModal}
+          loading={isModalConfirming}
+          text={(() => {
+            const recipients =
+              workingCase.sessionArrangements ===
+              SessionArrangements.ALL_PRESENT
+                ? 'saksóknara og verjanda, hafi verjandi verið skráður'
+                : workingCase.sessionArrangements ===
+                  SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                ? 'saksóknara og talsmann, hafi talsmaður verið skráður'
+                : 'saksóknara'
+
+            return courtDateHasChanged
+              ? `Fyrirtökutíma hefur verið breytt. Tilkynning um fyrirtöku verður send á ${recipients}.`
+              : `Málið fer á dagskrá og tilkynning um fyrirtöku verður send á ${recipients}.`
+          })()}
           primaryButton={{
-            text: formatMessage(m.modal.primaryButtonText),
+            text: 'Já, staðfesta',
             onClick: async () => {
+              setModalButtonLoading(ModalButtonLoading.PRIMARY)
+
+              const courtDateSaved = await sendCourtDateToServer()
+
+              if (!courtDateSaved) {
+                setModalButtonLoading(undefined)
+                return
+              }
+
               const notificationSent = await sendNotification(
                 workingCase.id,
-                NotificationType.COURT_DATE,
+                TrackedNotificationType.COURT_DATE,
               )
 
               if (notificationSent) {
                 router.push(`${navigateTo}/${workingCase.id}`)
+              } else {
+                setModalButtonLoading(undefined)
               }
             },
-            isLoading: isSendingNotification,
+            isLoading: isModalLoading,
           }}
           secondaryButton={{
-            text: formatMessage(m.modal.secondaryButtonText, {
-              courtDateHasChanged,
-            }),
+            text: 'Nei, staðfesta seinna',
+            isDisabled: isModalConfirming,
             onClick: () => {
-              sendNotification(
-                workingCase.id,
-                NotificationType.COURT_DATE,
-                true,
-              )
-
               router.push(`${navigateTo}/${workingCase.id}`)
             },
           }}
+          errorMessage={
+            modalButtonLoading && sendNotificationError
+              ? formatMessage(errors.sendNotification)
+              : undefined
+          }
         />
       )}
     </PageLayout>

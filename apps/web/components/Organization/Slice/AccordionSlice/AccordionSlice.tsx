@@ -52,7 +52,6 @@ export const AccordionSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
                 id={item.id}
                 label={item.title}
                 labelUse={childHeading}
-                startExpanded={slice.accordionItems?.length === 1}
               >
                 <Box>{webRichText(item.content ?? [])}</Box>
               </AccordionCard>
@@ -67,7 +66,6 @@ export const AccordionSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
                   id={item.id}
                   label={item.title}
                   labelUse={childHeading}
-                  startExpanded={slice.accordionItems?.length === 1}
                 >
                   <Text>{webRichText(item.content as SliceType[])}</Text>
                 </AccordionItem>

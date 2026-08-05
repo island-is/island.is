@@ -117,6 +117,16 @@ export const machineSubSection = buildSubSection({
           defaultValue: new Date().toISOString().substring(0, 10),
         }),
         buildHiddenInput({
+          id: 'machine.id',
+          defaultValue: (application: Application) => {
+            const machine = getSelectedMachine(
+              application.externalData,
+              application.answers,
+            ) as Machine
+            return machine?.id
+          },
+        }),
+        buildHiddenInput({
           id: 'machine.paymentRequiredForOwnerChange',
           defaultValue: (application: Application) => {
             const machine = getSelectedMachine(

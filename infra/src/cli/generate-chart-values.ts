@@ -7,6 +7,7 @@ import path from 'path'
 import yaml from 'yaml'
 import type { ToStringOptions } from 'yaml'
 import { REMOVE_APP_FROM_UBERCHART } from './const'
+import { ScheduledJobBuilder } from '../dsl/dsl'
 
 const yamlOptions: ToStringOptions = {
   defaultStringType: 'QUOTE_SINGLE',
@@ -95,12 +96,17 @@ const generateChartValues = async () => {
             ...renderedValues[serviceName],
           }
 
+          const fileName =
+            service instanceof ScheduledJobBuilder
+              ? `values.cronjob.${Envs[envName].type}.yaml`
+              : `values.${Envs[envName].type}.yaml`
+
           writeYamlFile(
             path.join(
               __dirname,
               `${relativeChartDir}/${name}-services`,
               serviceName,
-              `values.${Envs[envName].type}.yaml`,
+              fileName,
             ),
             serviceValues,
           )

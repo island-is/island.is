@@ -28,7 +28,15 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   CreatePaymentFlowInputAvailablePaymentMethodsEnum,
   PaymentsApi,
+  GetPaymentFlowStatusDTOPaymentStatusEnum,
 } from '@island.is/clients/payments'
+import { PaymentServiceCode } from '@island.is/shared/constants'
+import { FetchError } from '@island.is/clients/middlewares'
+
+export enum PaymentMethod {
+  CARD = 'card',
+  INVOICE = 'invoice',
+}
 
 @Injectable()
 export class PaymentService {
@@ -44,6 +52,20 @@ export class PaymentService {
     private readonly paymentsApi: PaymentsApi,
   ) {}
 
+  private logError(
+    errorString: string,
+    applicationId: string,
+    error: Error | FetchError | undefined,
+  ) {
+    this.logger.error(
+      `${errorString} for application ${applicationId}: ${
+        error instanceof FetchError
+          ? error.problem?.detail
+          : error?.message ?? 'Unknown error'
+      }`,
+    )
+  }
+
   async findPaymentByApplicationId(
     applicationId: string,
   ): Promise<Payment | null> {
@@ -54,16 +76,25 @@ export class PaymentService {
     })
   }
 
+  async findPaymentsByApplicationIds(
+    applicationIds: string[],
+  ): Promise<Payment[]> {
+    return this.paymentModel.findAll({
+      where: {
+        application_id: { [Op.in]: applicationIds },
+      },
+    })
+  }
+
   async fulfillPayment(
     paymentId: string,
-    receptionID: string,
     applicationId: string,
   ): Promise<void> {
     try {
       await this.paymentModel.update(
         {
           fulfilled: true,
-          reference_id: receptionID,
+          reference_id: null,
         },
         {
           where: {
@@ -177,8 +208,8 @@ export class PaymentService {
       | 'fulfilled'
       | 'amount'
       | 'definition'
-      | 'expires_at'
       | 'request_id'
+      | 'payment_method'
     > = {
       application_id: applicationId,
       fulfilled: false,
@@ -196,7 +227,7 @@ export class PaymentService {
           quantity: chargeItem.quantity,
         })),
       },
-      expires_at: new Date(),
+      payment_method: PaymentMethod.CARD,
       request_id: '', // request_id is not set here, it is set once the requestId has been returned by the payment system
       // the requestId is the ID of the created charge in FJS which must be used when deleting a charge
     }
@@ -277,7 +308,11 @@ export class PaymentService {
     const onUpdateUrl = new URL(this.config.paymentApiCallbackUrl)
     onUpdateUrl.pathname = '/application-payment/api-client-payment-callback'
 
-    const { returnUrl, cancelUrl } = await this.getReturnUrls(applicationId)
+    const {
+      returnUrl,
+      cancelUrl,
+      invoiceUrl: invoiceReturnUrl,
+    } = await this.getReturnUrls(applicationId)
 
     const resolvedPayerNationalId =
       payerNationalId && payerNationalId.trim().length > 0
@@ -305,7 +340,9 @@ export class PaymentService {
           },
           returnUrl,
           cancelUrl,
+          invoiceReturnUrl,
           redirectToReturnUrlOnSuccess: true,
+          redirectOnInvoiceCreation: true,
           extraData,
           chargeItemSubjectId: paymentModel.id.substring(0, 22), // chargeItemSubjectId has maxlength of 22 characters
         },
@@ -333,6 +370,75 @@ export class PaymentService {
     }
   }
 
+  async refundPayment(
+    applicationId: string,
+    reasonForRefund?: string,
+    ignoreNotEligibleToBeRefunded?: boolean,
+  ): Promise<void> {
+    const payment = await this.findPaymentByApplicationId(applicationId)
+    if (!payment) {
+      throw new NotFoundException(
+        `payment was not found for application id ${applicationId}`,
+      )
+    }
+    if (!payment.request_id) {
+      throw new Error('Request ID is not set for payment')
+    }
+
+    try {
+      const paymentStatus =
+        await this.paymentsApi.paymentFlowControllerGetPaymentFlowStatus({
+          id: payment.request_id,
+        })
+      if (
+        paymentStatus.paymentStatus ===
+        GetPaymentFlowStatusDTOPaymentStatusEnum.paid
+      ) {
+        try {
+          this.logger.info(
+            `payment already paid, calling refund controller to refund payment for application ${applicationId}`,
+          )
+          await this.paymentsApi.refundControllerRefund({
+            refundPaymentInput: {
+              paymentFlowId: payment.request_id,
+              reasonForRefund,
+            },
+          })
+        } catch (error) {
+          if (
+            error instanceof FetchError &&
+            (ignoreNotEligibleToBeRefunded ?? false) &&
+            error.problem?.detail ===
+              PaymentServiceCode.PaymentFlowNotEligibleToBeRefunded
+          ) {
+            this.logger.warn(
+              `Ignoring not eligible to be refunded error for application ${applicationId}`,
+              error,
+            )
+          } else {
+            this.logError('Failed to refund payment', applicationId, error)
+            throw error
+          }
+        }
+
+        this.logger.info(
+          `calling delete payment flow controller to delete payment flow for application ${applicationId}`,
+        )
+        try {
+          await this.paymentsApi.paymentFlowControllerDeletePaymentFlow({
+            id: payment.request_id,
+          })
+        } catch (error) {
+          this.logError('Failed to delete payment flow', applicationId, error)
+          throw error
+        }
+      }
+    } catch (error) {
+      this.logError('Failed to refund payment', applicationId, error)
+      throw error
+    }
+  }
+
   private auditPaymentCreation(
     user: User,
     applicationId: string,
@@ -351,9 +457,9 @@ export class PaymentService {
     targetChargeItems: BasicChargeItem[],
   ): Promise<CatalogItem[]> {
     const { item: catalogItems } =
-      await this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
-        performingOrganizationID,
-      )
+      await this.chargeFjsV2ClientService.getCatalogByPerformingOrg({
+        performingOrgID: performingOrganizationID,
+      })
 
     // get list of items with catalog info, but make sure to allow duplicates
     const result: CatalogItem[] = []
@@ -427,8 +533,13 @@ export class PaymentService {
     })
   }
 
-  private async getReturnUrls(applicationId: string) {
+  async getApplicationUrl(applicationId: string) {
     const application = await this.applicationService.findOneById(applicationId)
+    if (!application) {
+      throw new NotFoundException(
+        `application was not found for application id ${applicationId}`,
+      )
+    }
 
     let applicationSlug
     if (application?.typeId) {
@@ -439,14 +550,31 @@ export class PaymentService {
       )
     }
 
-    const returnUrl = new URL(this.config.clientLocationOrigin)
-    returnUrl.pathname = `umsoknir/${applicationSlug}/${applicationId}`
-    returnUrl.search = 'done'
+    const baseUrl = new URL(this.config.clientLocationOrigin)
+    baseUrl.pathname = `umsoknir/${applicationSlug}/${applicationId}`
+    const baseUrlString = baseUrl.toString()
 
-    const cancelUrl = new URL(this.config.clientLocationOrigin)
-    cancelUrl.pathname = `umsoknir/${applicationSlug}/${applicationId}`
-    cancelUrl.search = 'cancelled'
+    return baseUrlString
+  }
 
-    return { returnUrl: returnUrl.toString(), cancelUrl: cancelUrl.toString() }
+  private async getReturnUrls(applicationId: string) {
+    const baseUrlString = await this.getApplicationUrl(applicationId)
+
+    return {
+      returnUrl: `${baseUrlString}?done`,
+      cancelUrl: `${baseUrlString}?cancelled`,
+      invoiceUrl: `${baseUrlString}?invoice`,
+    }
+  }
+
+  async setPaymentMethod(applicationId: string, paymentMethod: PaymentMethod) {
+    const payment = await this.findPaymentByApplicationId(applicationId)
+    if (!payment) {
+      throw new NotFoundException(
+        `payment was not found for application id ${applicationId}`,
+      )
+    }
+    payment.payment_method = paymentMethod.toString()
+    await payment.save()
   }
 }

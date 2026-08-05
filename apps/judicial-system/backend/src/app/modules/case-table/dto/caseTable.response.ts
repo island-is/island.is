@@ -37,19 +37,22 @@ export class TagValue {
   readonly text!: string
 }
 
-export class TagPairValue {
+export class TagGroupValue {
   @ApiProperty({ type: TagValue, description: 'The first tag value' })
   readonly firstTag!: TagValue
 
   @ApiPropertyOptional({ type: TagValue, description: 'The second tag value' })
   readonly secondTag?: TagValue
+
+  @ApiPropertyOptional({ type: TagValue, description: 'The third tag value' })
+  readonly thirdTag?: TagValue
 }
 
 export type CaseTableCellValue =
   | StringValue
   | StringGroupValue
   | TagValue
-  | TagPairValue
+  | TagGroupValue
 
 export class CaseTableCell {
   @ApiPropertyOptional({
@@ -57,7 +60,7 @@ export class CaseTableCell {
       { $ref: getSchemaPath(StringValue) },
       { $ref: getSchemaPath(StringGroupValue) },
       { $ref: getSchemaPath(TagValue) },
-      { $ref: getSchemaPath(TagPairValue) },
+      { $ref: getSchemaPath(TagGroupValue) },
     ],
     description: 'The cell value',
   })
@@ -70,6 +73,12 @@ export class CaseTableCell {
 class CaseTableRow {
   @ApiProperty({ type: String, description: 'The row case id' })
   readonly caseId!: string
+
+  @ApiPropertyOptional({
+    type: String,
+    description: 'The row appeal case id',
+  })
+  readonly appealCaseId?: string
 
   @ApiPropertyOptional({
     type: String,

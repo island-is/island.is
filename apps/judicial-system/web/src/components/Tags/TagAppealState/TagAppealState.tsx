@@ -5,16 +5,16 @@ import { Tag, TagVariant } from '@island.is/island-ui/core'
 import { getAppealResultTextByValue } from '@island.is/judicial-system/formatters'
 import { tables } from '@island.is/judicial-system-web/messages'
 import {
-  CaseAppealRulingDecision,
-  CaseAppealState,
+  AppealCaseRulingDecision,
+  AppealCaseState,
   InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { UserContext } from '../../UserProvider/UserProvider'
 
 interface Props {
-  appealState?: CaseAppealState | null
-  appealRulingDecision?: CaseAppealRulingDecision | null
+  appealState?: AppealCaseState | null
+  appealRulingDecision?: AppealCaseRulingDecision | null
   appealCaseNumber?: string | null
 }
 
@@ -27,27 +27,27 @@ const TagAppealState: FC<Props> = ({
   const { user } = useContext(UserContext)
 
   const getTagVariantForAppealState = (
-    state?: CaseAppealState | null,
-    ruling?: CaseAppealRulingDecision | null,
+    state?: AppealCaseState | null,
+    ruling?: AppealCaseRulingDecision | null,
   ):
     | {
         color: TagVariant
         text: string
       }
     | undefined => {
-    if (state === CaseAppealState.WITHDRAWN) {
+    if (state === AppealCaseState.WITHDRAWN) {
       return {
         color: 'red',
         text: formatMessage(tables.withdrawnTag),
       }
     }
-    if (state === CaseAppealState.APPEALED) {
+    if (state === AppealCaseState.APPEALED) {
       return {
         color: 'red',
         text: formatMessage(tables.appealDate),
       }
     }
-    if (state === CaseAppealState.RECEIVED) {
+    if (state === AppealCaseState.RECEIVED) {
       if (
         user?.institution?.type === InstitutionType.COURT_OF_APPEALS &&
         !appealCaseNumber
@@ -62,15 +62,15 @@ const TagAppealState: FC<Props> = ({
           text: formatMessage(tables.receivedTag),
         }
     }
-    if (state === CaseAppealState.COMPLETED) {
+    if (state === AppealCaseState.COMPLETED) {
       return {
         color:
-          ruling === CaseAppealRulingDecision.ACCEPTING
+          ruling === AppealCaseRulingDecision.ACCEPTING
             ? 'mint'
-            : ruling === CaseAppealRulingDecision.CHANGED ||
-              ruling === CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY ||
-              ruling === CaseAppealRulingDecision.REPEAL ||
-              ruling === CaseAppealRulingDecision.DISCONTINUED
+            : ruling === AppealCaseRulingDecision.CHANGED ||
+              ruling === AppealCaseRulingDecision.CHANGED_SIGNIFICANTLY ||
+              ruling === AppealCaseRulingDecision.REPEAL ||
+              ruling === AppealCaseRulingDecision.DISCONTINUED
             ? 'rose'
             : 'blueberry',
         text: getAppealResultTextByValue(ruling),

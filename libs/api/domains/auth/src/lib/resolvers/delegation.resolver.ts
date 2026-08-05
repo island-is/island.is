@@ -19,16 +19,20 @@ import type { MergedDelegationDTO } from '@island.is/clients/auth/public-api'
 
 import {
   CreateDelegationInput,
+  CreateDelegationsInput,
   DelegationInput,
   DelegationsInput,
   DeleteDelegationInput,
+  DeleteDelegationScopesInput,
   PatchDelegationInput,
   UpdateDelegationInput,
 } from '../dto'
 import { Delegation, MergedDelegation } from '../models/delegation.model'
+import { DelegationsGroupedByIdentity } from '../dto/delegationsGroupedByIdentity.dto'
 import { ActorDelegationsService } from '../services/actorDelegations.service'
 import { ActorDelegationInput } from '../dto/actorDelegation.input'
 import { MeDelegationsService } from '../services/meDelegations.service'
+import { MeDelegationsControllerFindAllDirectionEnum } from '@island.is/clients/auth/delegation-api'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => Delegation)
@@ -60,6 +64,28 @@ export class DelegationResolver {
     return this.meDelegationsService.getDelegations(user, input)
   }
 
+  @Query(() => [DelegationsGroupedByIdentity], {
+    name: 'authDelegationsGroupedByIdentityOutgoing',
+  })
+  getDelegationsGroupedByIdentityOutgoing(
+    @CurrentUser() user: User,
+  ): Promise<DelegationsGroupedByIdentity[]> {
+    return this.meDelegationsService.getDelegationsGroupedByIdentity(user, {
+      direction: MeDelegationsControllerFindAllDirectionEnum.outgoing,
+    })
+  }
+
+  @Query(() => [DelegationsGroupedByIdentity], {
+    name: 'authDelegationsGroupedByIdentityIncoming',
+  })
+  getDelegationsGroupedByIdentityIncoming(
+    @CurrentUser() user: User,
+  ): Promise<DelegationsGroupedByIdentity[]> {
+    return this.meDelegationsService.getDelegationsGroupedByIdentity(user, {
+      direction: MeDelegationsControllerFindAllDirectionEnum.incoming,
+    })
+  }
+
   @Query(() => Delegation, { name: 'authDelegation', nullable: true })
   async getDelegation(
     @CurrentUser() user: User,
@@ -77,6 +103,15 @@ export class DelegationResolver {
     return this.meDelegationsService.createOrUpdateDelegation(user, input)
   }
 
+  @Mutation(() => [Delegation], { name: 'createAuthDelegations' })
+  createDelegations(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => CreateDelegationsInput })
+    input: CreateDelegationsInput,
+  ): Promise<DelegationDTO[]> {
+    return this.meDelegationsService.createOrUpdateDelegations(user, input)
+  }
+
   @Mutation(() => Delegation, {
     name: 'updateAuthDelegation',
     deprecationReason:
@@ -90,13 +125,25 @@ export class DelegationResolver {
     return this.meDelegationsService.updateDelegation(user, input)
   }
 
-  @Mutation(() => Delegation, { name: 'patchAuthDelegation' })
+  @Mutation(() => Delegation, { name: 'patchAuthDelegation', nullable: true })
   patchDelegation(
     @CurrentUser() user: User,
     @Args('input', { type: () => PatchDelegationInput })
     input: PatchDelegationInput,
-  ): Promise<DelegationDTO> {
+  ): Promise<DelegationDTO | null> {
     return this.meDelegationsService.patchDelegation(user, input)
+  }
+
+  @Mutation(() => Delegation, {
+    name: 'deleteAuthDelegationScopes',
+    nullable: true,
+  })
+  deleteDelegationScopes(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => DeleteDelegationScopesInput })
+    input: DeleteDelegationScopesInput,
+  ): Promise<DelegationDTO | null> {
+    return this.meDelegationsService.deleteDelegationScopes(user, input)
   }
 
   @Mutation(() => Boolean, { name: 'deleteAuthDelegation' })

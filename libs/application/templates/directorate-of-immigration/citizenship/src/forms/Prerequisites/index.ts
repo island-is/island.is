@@ -16,7 +16,7 @@ import {
   supportingDocuments,
 } from '../../lib/messages'
 import {
-  ChildrenCustodyInformationApi,
+  ChildrenCustodyInformationApiV3,
   CountriesApi,
   NationalRegistryIndividualApi,
   NationalRegistryBirthplaceApi,
@@ -77,7 +77,7 @@ export const Prerequisites: Form = buildForm({
               title: '',
             }),
             buildDataProviderItem({
-              provider: ChildrenCustodyInformationApi,
+              provider: ChildrenCustodyInformationApiV3,
               title: '',
             }),
             buildDataProviderItem({

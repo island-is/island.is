@@ -3,8 +3,8 @@ import { v4 as uuid } from 'uuid'
 import { SmsService } from '@island.is/nova-sms'
 
 import {
-  CaseNotificationType,
   CaseType,
+  RequestCaseNotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -42,7 +42,7 @@ describe('InternalNotificationController - Send heads up notifications', () => {
       await internalNotificationController
         .sendCaseNotification(caseId, theCase, {
           user: { id: userId } as User,
-          type: CaseNotificationType.HEADS_UP,
+          type: RequestCaseNotificationType.HEADS_UP,
         })
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))

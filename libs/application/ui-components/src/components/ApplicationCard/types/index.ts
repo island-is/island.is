@@ -15,6 +15,8 @@ export type ApplicationCardFields = Pick<
   | 'orgContentfulId'
   | 'slug'
   | 'applicationPath'
+  | 'pruneAt'
+  | 'pruned'
 >
 
 export interface DefaultCardData {
@@ -35,4 +37,9 @@ export type ApplicationCardHistoryItem = {
   title: string
   subjectAndActor?: string
   content?: React.ReactNode
+  /**
+   * When false, the stepper shows the “current” bullet (ellipse) instead of a checkmark.
+   * Set for the live pending-action row while the application is still in progress.
+   */
+  isComplete?: boolean
 }

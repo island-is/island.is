@@ -25,6 +25,7 @@ import {
   MunicipalCollectionApi,
 } from '../dataProviders'
 import { CodeOwners } from '@island.is/shared/constants'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const createListTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -40,6 +41,11 @@ const createListTemplate: ApplicationTemplate<
   translationNamespaces: [
     ApplicationConfigurations[ApplicationTypes.MUNICIPAL_LIST_CREATION]
       .translation,
+  ],
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+    },
   ],
   stateMachineConfig: {
     initial: States.PREREQUISITES,

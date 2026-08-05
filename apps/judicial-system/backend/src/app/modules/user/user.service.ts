@@ -85,6 +85,7 @@ export class UserService {
             role: UserRole.ADMIN,
             active: true,
             canConfirmIndictment: false,
+            canManageMessageSuspension: false,
             ...admin,
           } as User,
         ]

@@ -15,7 +15,7 @@ const CRCSelectChildren = ({
   const children = childrenCustodyInformation.data
   return (
     <SelectChildren
-      id={field.id}
+      id={field.id as string}
       children={children}
       error={error}
       currentAnswer={answers.selectedChildren}

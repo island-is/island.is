@@ -24,12 +24,18 @@ import { OrganizationPermissionsResolver } from './organizationPermissions/organ
 import { OrganizationPermissionsService } from './organizationPermissions/organizationPermissions.service'
 import { OrganizationsResolver } from './organizations/organizations.resolver'
 import { OrganizationsService } from './organizations/organizations.service'
+import { PaymentsResolver } from './payments/payments.resolver'
+import { PaymentsService } from './payments/payments.service'
 import { ScreensResolver } from './screens/screens.resolver'
 import { ScreensService } from './screens/screens.service'
 import { SectionsResolver } from './sections/sections.resolver'
 import { SectionsService } from './sections/sections.service'
 import { TranslationsResolver } from './translations/translations.resolver'
 import { TranslationsService } from './translations/translations.service'
+import { OrganizationDelegationsResolver } from './organizationDelegations/organizationDelegations.resolver'
+import { OrganizationDelegationsService } from './organizationDelegations/organizationDelegations.service'
+import { FormDelegationsResolver } from './formDelegations/formDelegations.resolver'
+import { FormDelegationsService } from './formDelegations/formDelegations.service'
 
 @Module({
   providers: [
@@ -55,11 +61,16 @@ import { TranslationsService } from './translations/translations.service'
     OrganizationPermissionsService,
     FormApplicantTypesResolver,
     FormApplicantTypesService,
-    CmsModule,
     NationalRegistryResolver,
     CompanyRegistryResolver,
     FilesService,
     FilesResolver,
+    PaymentsResolver,
+    PaymentsService,
+    OrganizationDelegationsResolver,
+    OrganizationDelegationsService,
+    FormDelegationsResolver,
+    FormDelegationsService,
   ],
   exports: [],
   imports: [

@@ -41,7 +41,7 @@ import { UserProfile } from '@island.is/api/schema'
 import { fakeDataSection } from './fakeDataSection'
 import { dataCollection } from './sharedSections/dataCollection'
 import { removeCountryCode } from '@island.is/application/ui-components'
-import DigitalServices from '../assets/DigitalServices'
+import { ManOnThePhone } from '@island.is/application/assets/graphics'
 
 export const getApplication = ({ allowFakeData = false }): Form => {
   return buildForm({
@@ -346,6 +346,10 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                         label: m.ceremonyAtReligiousLifeViewingSociety,
                       },
                       {
+                        value: CeremonyPlaces.church,
+                        label: m.ceremonyAtNationalChurch,
+                      },
+                      {
                         value: 'none',
                         label: m.ceremonyPlaceNone,
                       },
@@ -515,7 +519,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
             children: [
               buildImageField({
                 id: 'image',
-                image: DigitalServices,
+                image: ManOnThePhone,
                 imageWidth: '50%',
                 imagePosition: 'center',
               }),

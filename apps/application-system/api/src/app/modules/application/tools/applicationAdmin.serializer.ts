@@ -8,10 +8,14 @@ import {
 import { instanceToPlain, plainToInstance } from 'class-transformer'
 import { map } from 'rxjs/operators'
 import { Observable } from 'rxjs'
-import { ApplicationTemplateHelper } from '@island.is/application/core'
+import {
+  ApplicationTemplateHelper,
+  formatText,
+} from '@island.is/application/core'
 import {
   ApplicationTypes,
   Application as BaseApplication,
+  institutionMapper,
 } from '@island.is/application/types'
 import {
   getApplicationTemplateByTypeId,
@@ -176,18 +180,27 @@ export class ApplicationAdminSerializer
       application.id,
     )
 
+    const institutionContentfulSlug =
+      institutionMapper[application.typeId]?.slug
+
     const dto = plainToInstance(ApplicationListAdminResponseDto, {
       ...application,
       ...helper.getReadableAnswersAndExternalData(userRole),
       applicantActors,
       applicationActors: actors,
       actionCard: {
-        title: actionCardMeta.title
-          ? intl.formatMessage(actionCardMeta.title)
-          : null,
-        description: actionCardMeta.description
-          ? intl.formatMessage(actionCardMeta.description)
-          : null,
+        title:
+          actionCardMeta.title !== undefined
+            ? formatText(actionCardMeta.title, application, intl.formatMessage)
+            : null,
+        description:
+          actionCardMeta.description !== undefined
+            ? formatText(
+                actionCardMeta.description,
+                application,
+                intl.formatMessage,
+              )
+            : null,
         tag: {
           variant: actionCardMeta.tag.variant || null,
           label: actionCardMeta.tag.label
@@ -223,6 +236,7 @@ export class ApplicationAdminSerializer
         intl.formatMessage,
         this.identityService,
       ),
+      institutionContentfulSlug: institutionContentfulSlug,
     })
     return instanceToPlain(dto)
   }
@@ -361,9 +375,18 @@ export class ApplicationAdminStatisticsSerializer
       intl.formatMessage,
     )
 
+    const institutionInfo = institutionMapper[model.typeid as ApplicationTypes]
+    const institutionContentfulSlug = institutionInfo?.slug
+    const institutionNationalId = institutionInfo?.nationalId
+
     const dto = plainToInstance(ApplicationListAdminResponseDto, {
       ...model,
       name: name ?? '',
+      institution: template.institution
+        ? intl.formatMessage(template.institution)
+        : null,
+      institutionNationalId: institutionNationalId,
+      institutionContentfulSlug: institutionContentfulSlug,
     })
 
     return instanceToPlain(dto)

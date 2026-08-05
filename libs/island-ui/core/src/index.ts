@@ -61,6 +61,7 @@ export * from './lib/Drawer/Drawer'
 export * from './lib/ProblemTemplate/ProblemTemplate'
 export * from './lib/ProblemTemplate/ProblemTemplate.css'
 export * from './lib/InfoCardGrid'
+export * from './lib/FlowStepper'
 
 // Cards
 export * from './lib/LinkCard/LinkCard'
@@ -84,6 +85,14 @@ export * from './lib/Typography/Typography'
 export * from './lib/Text/Text'
 export * from './lib/Hyphen/Hyphen'
 export { Table } from './lib/Table'
+export { InteractiveTable, createColumnHelper } from './lib/InteractiveTable'
+export type {
+  InteractiveTableProps,
+  ColumnDef,
+  Row,
+  SortingState,
+  OnChangeFn,
+} from './lib/InteractiveTable'
 
 // Form
 export * from './lib/Checkbox/Checkbox'

@@ -12,6 +12,7 @@ import { appModuleConfig } from './app.config'
 import { HealthController } from './health.controller'
 import { InternalDeliveryService } from './internalDelivery.service'
 import { MessageHandlerService } from './messageHandler.service'
+import { SuspensionSettingsService } from './suspensionSettings.service'
 
 @Module({
   imports: [
@@ -23,6 +24,10 @@ import { MessageHandlerService } from './messageHandler.service'
     }),
   ],
   controllers: [HealthController],
-  providers: [InternalDeliveryService, MessageHandlerService],
+  providers: [
+    InternalDeliveryService,
+    SuspensionSettingsService,
+    MessageHandlerService,
+  ],
 })
 export class AppModule {}

@@ -16,7 +16,11 @@ import {
   RadioButton,
   Select,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  ADMIN_USERS_ROUTE,
+  PHONE_NUMBER,
+  SSN,
+} from '@island.is/judicial-system/consts'
 import {
   formatNationalId,
   formatPhoneNumber,
@@ -171,7 +175,7 @@ export const UserForm: FC<Props> = ({
     mobileNumber: existingUser.mobileNumber,
   })
 
-  const { personData, personError } = useNationalRegistry(user.nationalId)
+  const { personData, error } = useNationalRegistry(user.nationalId)
 
   const [nameErrorMessage, setNameErrorMessage] = useState<string>()
   const [nationalIdErrorMessage, setNationalIdErrorMessage] = useState<string>()
@@ -193,7 +197,7 @@ export const UserForm: FC<Props> = ({
   )
 
   useEffect(() => {
-    if (personError || (personData && personData.items?.length === 0)) {
+    if (error || (personData && personData.items?.length === 0)) {
       setNationalIdErrorMessage('Kennitala fannst ekki í þjóðskrá')
       return
     }
@@ -202,7 +206,7 @@ export const UserForm: FC<Props> = ({
       setNationalIdErrorMessage(undefined)
       setName(personData.items[0].name)
     }
-  }, [personData, personError, setName])
+  }, [personData, error, setName])
 
   const selectInstitutions = institutions
     .filter(
@@ -263,7 +267,7 @@ export const UserForm: FC<Props> = ({
         <Box marginBottom={2}>
           <InputMask
             component={Input}
-            mask={constants.SSN}
+            mask={SSN}
             replacement={{ _: /\d/ }}
             value={formatNationalId(user.nationalId)}
             onChange={(event) =>
@@ -364,6 +368,25 @@ export const UserForm: FC<Props> = ({
               />
             </Box>
           )}
+        {/* Only the super admin may grant the message suspension capability,
+            and it is only meaningful for local admins. */}
+        {admin?.role === UserRole.ADMIN && user.role === UserRole.LOCAL_ADMIN && (
+          <Box marginBottom={2}>
+            <Checkbox
+              name="canManageMessageSuspension"
+              label="Notandi getur stjórnað frestun skilaboða"
+              checked={Boolean(user.canManageMessageSuspension)}
+              onChange={({ target }) =>
+                setUser((prevUser) => ({
+                  ...prevUser,
+                  canManageMessageSuspension: target.checked,
+                }))
+              }
+              large
+              filled
+            />
+          </Box>
+        )}
         <Box marginBottom={2}>
           <Input
             name="title"
@@ -393,7 +416,7 @@ export const UserForm: FC<Props> = ({
         <Box marginBottom={2}>
           <InputMask
             component={Input}
-            mask={constants.PHONE_NUMBER}
+            mask={PHONE_NUMBER}
             replacement={{ _: /\d/ }}
             value={formatPhoneNumber(user.mobileNumber)}
             onChange={(event) =>
@@ -463,12 +486,17 @@ export const UserForm: FC<Props> = ({
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
-          onNextButtonClick={saveUser}
-          nextIsDisabled={!isValid}
-          nextIsLoading={loading}
-          nextButtonText="Vista"
-          previousUrl={constants.USERS_ROUTE}
+          previousUrl={ADMIN_USERS_ROUTE}
+          actions={[
+            {
+              text: 'Vista',
+              icon: 'arrowForward',
+              onClick: saveUser,
+              disabled: !isValid,
+              loading: loading,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </div>

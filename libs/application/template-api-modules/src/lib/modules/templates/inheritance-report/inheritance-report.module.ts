@@ -6,6 +6,7 @@ import { SyslumennClientModule } from '@island.is/clients/syslumenn'
 import { InheritanceReportService } from './inheritance-report.service'
 import { NationalRegistryV3Module } from '../../shared/api/national-registry-v3/national-registry-v3.module'
 import { AwsModule } from '@island.is/nest/aws'
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { AwsModule } from '@island.is/nest/aws'
     SyslumennClientModule,
     NationalRegistryV3Module,
     AwsModule,
+    FeatureFlagModule,
   ],
   providers: [InheritanceReportService],
   exports: [InheritanceReportService],

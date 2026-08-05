@@ -9,7 +9,7 @@ import {
   DefaultEvents,
   defineTemplateApi,
   InstitutionNationalIds,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
@@ -81,7 +81,7 @@ const template: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                NationalRegistryUserApi.configure({
+                NationalRegistryV3UserApi.configure({
                   params: {
                     citizenshipWithinEES: true,
                   },

@@ -31,13 +31,13 @@ env:
   IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
   LOG_LEVEL: 'info'
-  NATIONAL_REGISTRY_B2C_CLIENT_ID: '19e7d60e-920e-4a6f-a125-25ea283ee1a4'
-  NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitystaging.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+  NATIONAL_REGISTRY_B2C_CLIENT_ID: 'c090fd41-9893-46f5-8962-86bd48788570'
+  NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://staging.identity.skra.is/staging.identity.skra.is/oauth2/v2.0/token'
   NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
-  NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
+  NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidstaging.onmicrosoft.com/midlun/.default'
   NODE_OPTIONS: '--max-old-space-size=691 --enable-source-maps -r dd-trace/init'
-  NOVA_ACCEPT_UNAUTHORIZED: 'false'
-  PASSKEY_CORE_ALLOWED_ORIGINS: '["https://island.is","android:apk-key-hash:JgPeo_F6KYk-ngRa26tO2SsAtMiTBQCc7WtSgN-jRX0","android:apk-key-hash:EsLTUu5kaY7XPmMl2f7nbq4amu-PNzdYu3FecNf90wU"]'
+  NOVA_SENDER_NAME: 'Island Staging'
+  PASSKEY_CORE_ALLOWED_ORIGINS: '["https://island.is","android:apk-key-hash:JgPeo_F6KYk-ngRa26tO2SsAtMiTBQCc7WtSgN-jRX0","android:apk-key-hash:wrkMxD98Ii5lxgJdq7heBq_xTq38_s9GKLLgESObnMQ","android:apk-key-hash:EsLTUu5kaY7XPmMl2f7nbq4amu-PNzdYu3FecNf90wU"]'
   PASSKEY_CORE_CHALLENGE_TTL_MS: '120000'
   PASSKEY_CORE_MAX_AGE_DAYS: '365'
   PASSKEY_CORE_RP_ID: 'island.is'
@@ -65,6 +65,7 @@ grantNamespaces:
   - 'nginx-ingress-external'
   - 'user-notification'
   - 'datadog'
+  - 'envoy-gateway-external'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
@@ -81,7 +82,7 @@ hpa:
       cpuAverageUtilization: 90
       nginxRequestsIrate: 5
     replicas:
-      max: 3
+      max: 2
       min: 1
 image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-ids-api'
@@ -124,14 +125,14 @@ initContainer:
     DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
 namespace: 'identity-server'
 podDisruptionBudget:
-  minAvailable: 1
+  minAvailable: '50%'
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
 pvcs: []
 replicaCount:
   default: 1
-  max: 3
+  max: 2
   min: 1
 resources:
   limits:
@@ -145,9 +146,9 @@ secrets:
   DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
   IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
   NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/services-auth/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
-  NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD'
-  NOVA_URL: '/k8s/services-auth/NOVA_URL'
-  NOVA_USERNAME: '/k8s/services-auth/NOVA_USERNAME'
+  NOVA_PASSWORD: '/k8s/NOVA_PASSWORD_V1'
+  NOVA_URL: '/k8s/NOVA_URL_V1'
+  NOVA_USERNAME: '/k8s/NOVA_USERNAME_V1'
   SYSLUMENN_PASSWORD: '/k8s/services-auth/SYSLUMENN_PASSWORD'
   SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME'
   ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL'

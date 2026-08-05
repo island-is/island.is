@@ -14,6 +14,8 @@ export interface FeatureFlagHookValue<T extends SettingValue> {
 
 /**
  * Hook to get a feature flag.
+ * @param user Accepted for backwards compatibility but ignored.
+ *   Flags are evaluated server-side for the authenticated user.
  */
 export const useFeatureFlag = <T extends SettingValue>(
   featureFlag: string,
@@ -38,7 +40,7 @@ export const useFeatureFlag = <T extends SettingValue>(
     return () => {
       mounted = false
     }
-  }, [featureFlagClient, setState])
+  }, [featureFlagClient, featureFlag, defaultValue])
 
   return state
 }

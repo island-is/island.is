@@ -5,6 +5,7 @@ import {
 } from './case'
 import {
   InstitutionUser,
+  isCourtOfAppealsUser,
   isDefenceUser,
   isDistrictCourtUser,
   isPrisonAdminUser,
@@ -28,6 +29,7 @@ export enum CourtSessionRulingType {
   NONE = 'NONE',
   JUDGEMENT = 'JUDGEMENT',
   ORDER = 'ORDER',
+  DISMISSAL_ORDER = 'DISMISSAL_ORDER',
 }
 
 export enum CourtDocumentType {
@@ -60,7 +62,7 @@ export const hasGeneratedCourtRecordPdf = (
     return Boolean(courtSessions[0].isConfirmed)
   }
 
-  if (isPublicProsecutionOfficeUser(user)) {
+  if (isPublicProsecutionOfficeUser(user) || isCourtOfAppealsUser(user)) {
     return isCompletedCase(caseState) && Boolean(courtSessions[0].isConfirmed)
   }
 

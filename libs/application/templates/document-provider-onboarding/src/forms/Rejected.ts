@@ -12,7 +12,8 @@ import {
   FormModes,
 } from '@island.is/application/types'
 import { m } from '../lib/messages'
-import { ManOnBenchIllustration } from '../assets/ManOnBenchIllustration'
+import { OnThePhoneOutside } from '@island.is/application/assets/graphics'
+
 export const Rejected: Form = buildForm({
   id: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,
   title: m.rejectedTitle,
@@ -35,7 +36,7 @@ export const Rejected: Form = buildForm({
         }),
         buildImageField({
           id: 'ManOnBench',
-          image: ManOnBenchIllustration,
+          image: OnThePhoneOutside,
           imageWidth: ['full', 'full', '50%', '50%'],
           imagePosition: 'center',
         }),

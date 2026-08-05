@@ -40,3 +40,17 @@ export const SocialInsuranceAdministrationLatestIncomePlan = defineTemplateApi({
   externalDataId: 'socialInsuranceAdministrationLatestIncomePlan',
   namespace: 'SocialInsuranceAdministration',
 })
+
+export const SocialInsuranceAdministrationCategorizedIncomeTypesApi =
+  defineTemplateApi({
+    action: 'getCategorizedIncomeTypes',
+    externalDataId: 'socialInsuranceAdministrationCategorizedIncomeTypes',
+    namespace: 'SocialInsuranceAdministration',
+  })
+
+export const SocialInsuranceAdministrationIncomePlanConditionsApi =
+  defineTemplateApi({
+    action: 'getIncomePlanConditions',
+    externalDataId: 'socialInsuranceAdministrationIncomePlanConditions',
+    namespace: 'SocialInsuranceAdministration',
+  })

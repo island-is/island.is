@@ -38,6 +38,7 @@ import {
   ActionCardListField,
   TableRepeaterField,
   StaticTableField,
+  PaginatedSearchableTableField,
   HiddenInputWithWatchedValueField,
   HiddenInputField,
   SliderField,
@@ -203,6 +204,7 @@ export const buildRadioField = (
     required,
     widthWithIllustration,
     hasIllustration,
+    titleVariant,
   } = data
 
   return {
@@ -215,6 +217,7 @@ export const buildRadioField = (
     required,
     widthWithIllustration,
     hasIllustration,
+    titleVariant,
     type: FieldTypes.RADIO,
     component: FieldComponents.RADIO,
   }
@@ -392,6 +395,40 @@ export const buildCustomField = (
   }
 }
 
+export const buildPaginatedSearchableTableField = (
+  data: Omit<PaginatedSearchableTableField, 'type' | 'component' | 'children'>,
+): PaginatedSearchableTableField => {
+  const {
+    rowIdKey,
+    rows,
+    headers,
+    searchLabel,
+    searchPlaceholder,
+    emptyState,
+    searchKeys,
+    savePropertyNames,
+    pageSize,
+    callbackId,
+  } = data
+
+  return {
+    ...extractCommonFields(data),
+    children: undefined,
+    type: FieldTypes.PAGINATED_SEARCHABLE_TABLE,
+    component: FieldComponents.PAGINATED_SEARCHABLE_TABLE,
+    rowIdKey,
+    rows,
+    headers,
+    searchLabel,
+    searchPlaceholder,
+    emptyState,
+    searchKeys,
+    savePropertyNames,
+    pageSize,
+    callbackId,
+  }
+}
+
 export const buildFileUploadField = (
   data: Omit<FileUploadField, 'type' | 'component' | 'children'>,
 ): FileUploadField => {
@@ -407,11 +444,13 @@ export const buildFileUploadField = (
     totalMaxSize,
     maxFileCount,
     forImageUpload,
+    titleVariant,
   } = data
   return {
     ...extractCommonFields(data),
     children: undefined,
     introduction: introduction,
+    titleVariant,
     uploadHeader:
       uploadHeader || coreDefaultFieldMessages.defaultFileUploadHeader,
     uploadDescription:
@@ -644,12 +683,14 @@ export const buildRedirectToServicePortalField = (data: {
 export const buildPaymentPendingField = (data: {
   id: string
   title: FormText
+  showSubmitErrorReason?: boolean
 }): PaymentPendingField => {
-  const { id, title } = data
+  const { id, title, showSubmitErrorReason } = data
   return {
     children: undefined,
     id,
     title,
+    showSubmitErrorReason,
     type: FieldTypes.PAYMENT_PENDING,
     component: FieldComponents.PAYMENT_PENDING,
   }
@@ -1109,7 +1150,9 @@ export const buildSliderField = (
     marginTop,
     marginBottom,
   } = data
+
   return {
+    ...extractCommonFields(data),
     component: FieldComponents.SLIDER,
     id,
     title,
@@ -1221,6 +1264,7 @@ export const buildAccordionField = (
     component: FieldComponents.ACCORDION,
   }
 }
+
 export const buildBankAccountField = (
   data: Omit<BankAccountField, 'type' | 'component' | 'children'>,
 ): BankAccountField => {

@@ -2,11 +2,19 @@ import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import * as constants from '@island.is/judicial-system/consts'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
-import { isInvestigationCase } from '@island.is/judicial-system/types'
+import { Accordion } from '@island.is/island-ui/core'
 import {
-  AlertBanner,
+  COURT_OF_APPEAL_CASE_ROUTE,
+  COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE,
+} from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
+import {
+  isIndictmentCase,
+  isInvestigationCase,
+} from '@island.is/judicial-system/types'
+import { core } from '@island.is/judicial-system-web/messages'
+import {
+  AllIndictmentCaseFiles,
   CaseFilesAccordionItem,
   Conclusion,
   conclusion,
@@ -14,28 +22,40 @@ import {
   FormContext,
   FormFooter,
   InfoCard,
+  InfoCardClosedIndictment,
   PageHeader,
   PageLayout,
+  PoliceDigitalCaseFilesAccordionItem,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
-import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
+import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  useAppealCaseBanner,
+  usePoliceDigitalCaseFile,
+  useTargetAppealCaseByAppealCaseId,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
-import { shouldUseAppealWithdrawnRoutes } from '@island.is/judicial-system-web/src/utils/utils'
+import {
+  appendAppealCaseIdQuery,
+  shouldUseAppealWithdrawnRoutes,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
 import { CaseFilesOverview, CaseOverviewHeader } from '../components'
 import { overview as strings } from './Overview.strings'
 
-const CourtOfAppealOverview = () => {
+const Overview = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
-  const { title, description, isLoadingAppealBanner } =
-    useAppealAlertBanner(workingCase)
+  const { appealBanner } = useAppealCaseBanner()
+  const targetAppealCase = useTargetAppealCaseByAppealCaseId()
   const { formatMessage } = useIntl()
   const router = useRouter()
   const { user } = useContext(UserContext)
+  const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
+    usePoliceDigitalCaseFile()
   const {
     defendants,
     policeCaseNumbers,
@@ -47,21 +67,21 @@ const CourtOfAppealOverview = () => {
     registrar,
     caseType,
     victims,
-    showItem,
   } = useInfoCardItems()
 
   const handleNavigationTo = (destination: string) =>
-    router.push(`${destination}/${workingCase.id}`)
+    router.push(
+      appendAppealCaseIdQuery(
+        `${destination}/${workingCase.id}`,
+        targetAppealCase?.id,
+      ),
+    )
+
+  const isIndictment = isIndictmentCase(workingCase.type)
 
   return (
     <>
-      {!isLoadingAppealBanner && (
-        <AlertBanner
-          variant="warning"
-          title={title}
-          description={description}
-        />
-      )}
+      {targetAppealCase && appealBanner}
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}
@@ -73,7 +93,7 @@ const CourtOfAppealOverview = () => {
           <div className={grid({ gap: 5, marginBottom: 10 })}>
             <CaseOverviewHeader
               alerts={
-                workingCase.requestAppealRulingNotToBePublished
+                targetAppealCase?.requestAppealRulingNotToBePublished
                   ? [
                       {
                         message: formatMessage(
@@ -84,64 +104,97 @@ const CourtOfAppealOverview = () => {
                   : undefined
               }
             />
-            <InfoCard
-              sections={[
-                {
-                  id: 'defendants-section',
-                  items: [defendants({ caseType: workingCase.type })],
-                },
-                ...(showItem(victims)
-                  ? [
-                      {
-                        id: 'victims-section',
-                        items: [victims],
-                      },
-                    ]
-                  : []),
-                {
-                  id: 'case-info-section',
-                  items: [
-                    policeCaseNumbers,
-                    courtCaseNumber,
-                    prosecutorsOffice,
-                    court,
-                    prosecutor(workingCase.type),
-                    judge,
-                    ...(isInvestigationCase(workingCase.type)
-                      ? [caseType]
-                      : []),
-                    ...(workingCase.registrar ? [registrar] : []),
-                  ],
-                  columns: 2,
-                },
-              ]}
-            />
-            {user ? (
-              <CaseFilesAccordionItem
-                workingCase={workingCase}
-                setWorkingCase={setWorkingCase}
-                user={user}
+            {isIndictment ? (
+              <InfoCardClosedIndictment />
+            ) : (
+              <InfoCard
+                sections={[
+                  {
+                    id: 'defendants-section',
+                    items: [defendants({ caseType: workingCase.type })],
+                  },
+                  {
+                    id: 'victims-section',
+                    items: [victims],
+                  },
+                  {
+                    id: 'case-info-section',
+                    items: [
+                      policeCaseNumbers,
+                      courtCaseNumber,
+                      prosecutorsOffice,
+                      court,
+                      prosecutor(workingCase.type),
+                      judge,
+                      ...(isInvestigationCase(workingCase.type)
+                        ? [caseType]
+                        : []),
+                      ...(workingCase.registrar ? [registrar] : []),
+                    ],
+                    columns: 2,
+                  },
+                ]}
               />
-            ) : null}
-            <Conclusion
-              title={formatMessage(conclusion.title)}
-              conclusionText={workingCase.conclusion}
-              judgeName={workingCase.judge?.name}
-            />
-            <CaseFilesOverview />
+            )}
+            {isIndictment ? (
+              <>
+                <AllIndictmentCaseFiles />
+                {workingCase.origin === CaseOrigin.LOKE && (
+                  <PoliceDigitalCaseFilesAccordionItem
+                    digitalCaseFiles={digitalCaseFiles}
+                    digitalCaseFilesLoading={digitalCaseFilesLoading}
+                    openDigitalCaseFileUrl={openDigitalCaseFileUrl}
+                  />
+                )}
+              </>
+            ) : (
+              <>
+                <Accordion
+                  dividers={workingCase.origin === CaseOrigin.LOKE}
+                  dividerOnTop={workingCase.origin === CaseOrigin.LOKE}
+                  dividerOnBottom={workingCase.origin === CaseOrigin.LOKE}
+                >
+                  {user ? (
+                    <CaseFilesAccordionItem
+                      workingCase={workingCase}
+                      setWorkingCase={setWorkingCase}
+                      user={user}
+                    />
+                  ) : null}
+                  {workingCase.origin === CaseOrigin.LOKE && (
+                    <PoliceDigitalCaseFilesAccordionItem
+                      digitalCaseFiles={digitalCaseFiles}
+                      digitalCaseFilesLoading={digitalCaseFilesLoading}
+                      openDigitalCaseFileUrl={openDigitalCaseFileUrl}
+                    />
+                  )}
+                </Accordion>
+                <Conclusion
+                  title={formatMessage(conclusion.title)}
+                  conclusionText={workingCase.conclusion}
+                  judgeName={workingCase.judge?.name}
+                />
+                <CaseFilesOverview />
+              </>
+            )}
           </div>
         </FormContentContainer>
         <FormContentContainer isFooter>
           <FormFooter
             previousUrl={getStandardUserDashboardRoute(user)}
-            onNextButtonClick={() =>
-              handleNavigationTo(
-                shouldUseAppealWithdrawnRoutes(workingCase)
-                  ? constants.COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE
-                  : constants.COURT_OF_APPEAL_CASE_ROUTE,
-              )
-            }
-            nextButtonIcon="arrowForward"
+            actions={[
+              {
+                text: formatMessage(core.continue),
+                icon: 'arrowForward',
+                onClick: () =>
+                  handleNavigationTo(
+                    shouldUseAppealWithdrawnRoutes(targetAppealCase)
+                      ? COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE
+                      : COURT_OF_APPEAL_CASE_ROUTE,
+                  ),
+                testId: 'continueButton',
+              },
+            ]}
           />
         </FormContentContainer>
       </PageLayout>
@@ -149,4 +202,4 @@ const CourtOfAppealOverview = () => {
   )
 }
 
-export default CourtOfAppealOverview
+export default Overview

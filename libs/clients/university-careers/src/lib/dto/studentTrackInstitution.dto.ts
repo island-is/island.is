@@ -1,10 +1,4 @@
-import {
-  BifrostStudentTrackInstitution,
-  HIStudentTrackInstitution,
-  HolarStudentTrackInstitution,
-  LbhiStudentTrackInstitution,
-  UnakStudentTrackInstitution,
-} from '../clients'
+import type { StudentTrack } from '../../../gen/fetch'
 import {
   UniversityId,
   UniversityIdMap,
@@ -19,12 +13,7 @@ export interface StudentTrackInstitutionDto {
 
 export const mapToStudentTrackInstitutionDto = (
   institutionId: UniversityId,
-  institution?:
-    | HolarStudentTrackInstitution
-    | LbhiStudentTrackInstitution
-    | BifrostStudentTrackInstitution
-    | UnakStudentTrackInstitution
-    | HIStudentTrackInstitution,
+  institution?: StudentTrack['institution'],
 ): StudentTrackInstitutionDto | undefined => {
   return {
     ...institution,

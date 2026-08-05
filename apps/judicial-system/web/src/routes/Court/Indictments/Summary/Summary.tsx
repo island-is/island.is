@@ -10,7 +10,10 @@ import {
   Text,
   toast,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  DISTRICT_COURT_INDICTMENT_CASE_COMPLETED_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE,
+} from '@island.is/judicial-system/consts'
 import {
   formatDate,
   getHumanReadableCaseIndictmentRulingDecision,
@@ -18,6 +21,7 @@ import {
 import { hasGeneratedCourtRecordPdf } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
+  AppealRulingModifiedAlert,
   ConnectedCaseFilesAccordionItem,
   DateTime,
   FormContentContainer,
@@ -113,13 +117,19 @@ const Summary: FC = () => {
       workingCase.id,
       CaseTransition.COMPLETE,
       setWorkingCase,
+      {
+        indictmentDecision: workingCase.indictmentDecision,
+        indictmentRulingDecision: workingCase.indictmentRulingDecision,
+      },
     )
 
     if (!transitionSuccess) {
       return
     }
 
-    router.push(`${constants.INDICTMENTS_COMPLETED_ROUTE}/${workingCase.id}`)
+    router.push(
+      `${DISTRICT_COURT_INDICTMENT_CASE_COMPLETED_ROUTE}/${workingCase.id}`,
+    )
   }
 
   const handleModalPrimaryButtonClick = async () => {
@@ -218,10 +228,9 @@ const Summary: FC = () => {
     >
       <PageHeader title={formatMessage(strings.htmlTitle)} />
       <FormContentContainer>
-        <PageTitle includeTag={!!workingCase.indictmentRulingDecision}>
-          {formatMessage(strings.title)}
-        </PageTitle>
+        <PageTitle>{formatMessage(strings.title)}</PageTitle>
         <div className={grid({ gap: 5, marginBottom: 10 })}>
+          <AppealRulingModifiedAlert />
           <Box component="section" className={grid({ gap: 1 })}>
             <Text variant="h2" as="h2">
               {formatMessage(core.caseNumber, {
@@ -297,11 +306,19 @@ const Summary: FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.INDICTMENTS_CONCLUSION_ROUTE}/${workingCase.id}`}
-          nextButtonIcon="checkmark"
-          nextButtonText={formatMessage(strings.nextButtonText)}
-          onNextButtonClick={handleNextButtonClick}
-          hideNextButton={!canUserCompleteCase}
+          previousUrl={`${DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE}/${workingCase.id}`}
+          actions={
+            !canUserCompleteCase
+              ? []
+              : [
+                  {
+                    text: formatMessage(strings.nextButtonText),
+                    icon: 'checkmark',
+                    onClick: handleNextButtonClick,
+                    testId: 'continueButton',
+                  },
+                ]
+          }
           infoBoxText={
             canUserCompleteCase
               ? ''

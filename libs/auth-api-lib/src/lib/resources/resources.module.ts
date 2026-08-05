@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
+import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
+import { CmsModule } from '@island.is/cms'
+import { Client } from '../clients/models/client.model'
 import { DelegationScope } from '../delegations/models/delegation-scope.model'
 import { Delegation } from '../delegations/models/delegation.model'
 import { PersonalRepresentativeRightType } from '../personal-representative/models/personal-representative-right-type.model'
@@ -10,6 +13,8 @@ import { PersonalRepresentative } from '../personal-representative/models/person
 import { TranslationModule } from '../translation/translation.module'
 import { DelegationResourcesService } from './delegation-resources.service'
 import { ApiResourceScope } from './models/api-resource-scope.model'
+import { ApiScopeCategory } from './models/api-scope-category.model'
+import { ApiScopeTag } from './models/api-scope-tag.model'
 import { ApiResourceSecret } from './models/api-resource-secret.model'
 import { ApiResourceUserClaim } from './models/api-resource-user-claim.model'
 import { ApiResource } from './models/api-resource.model'
@@ -30,9 +35,12 @@ import { ApiScopeDelegationType } from './models/api-scope-delegation-type.model
 
 @Module({
   imports: [
+    CmsModule,
+    NationalRegistryV3ClientModule,
     TranslationModule,
     SequelizeModule.forFeature([
       Domain,
+      Client,
       IdentityResource,
       ApiScope,
       ApiResource,
@@ -41,6 +49,8 @@ import { ApiScopeDelegationType } from './models/api-scope-delegation-type.model
       ApiScopeUserAccess,
       ApiResourceScope,
       ApiScopeDelegationType,
+      ApiScopeCategory,
+      ApiScopeTag,
       IdentityResourceUserClaim,
       ApiScopeUserClaim,
       ApiResourceUserClaim,

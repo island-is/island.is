@@ -106,6 +106,7 @@ export const guardiansSubSection = buildSubSection({
           dataTestId: 'phone1',
           placeholder: '000-0000',
           required: true,
+          enableCountrySelector: true,
           defaultValue: (application: Application) => {
             const { userProfilePhoneNumber } = getApplicationExternalData(
               application.externalData,
@@ -240,6 +241,7 @@ export const guardiansSubSection = buildSubSection({
           dataTestId: 'phone2',
           placeholder: '000-0000',
           required: true,
+          enableCountrySelector: true,
           condition: (answers, externalData) =>
             hasOtherGuardian(answers, externalData),
           defaultValue: (application: Application) => {

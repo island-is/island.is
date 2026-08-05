@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Post,
   Put,
@@ -11,6 +14,7 @@ import {
 import {
   ApiBody,
   ApiCreatedResponse,
+  ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -31,6 +35,7 @@ import {
   User,
 } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
+import { FormDelegationDto } from './models/dto/formDelegation.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.formSystem)
@@ -38,6 +43,21 @@ import { AdminPortalScope } from '@island.is/auth/scopes'
 @Controller({ path: 'forms', version: ['1', VERSION_NEUTRAL] })
 export class FormsController {
   constructor(private readonly formsService: FormsService) {}
+
+  @ApiOperation({ summary: 'Add form delegation' })
+  @ApiNoContentResponse({
+    description: 'Add form delegation',
+  })
+  @ApiBody({ type: FormDelegationDto })
+  @Post('delegation')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async addDelegation(
+    @CurrentUser()
+    user: User,
+    @Body() formDelegationDto: FormDelegationDto,
+  ): Promise<void> {
+    return await this.formsService.addDelegation(user, formDelegationDto)
+  }
 
   @ApiOperation({ summary: 'Create new form' })
   @ApiCreatedResponse({
@@ -51,6 +71,21 @@ export class FormsController {
     @Param('organizationNationalId') organizationNationalId: string,
   ): Promise<FormResponseDto> {
     return await this.formsService.create(user, organizationNationalId)
+  }
+
+  @ApiOperation({ summary: 'Delete form delegation' })
+  @ApiNoContentResponse({
+    description: 'Delete form delegation',
+  })
+  @ApiBody({ type: FormDelegationDto })
+  @Delete('delegation')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteDelegation(
+    @CurrentUser()
+    user: User,
+    @Body() formDelegationDto: FormDelegationDto,
+  ): Promise<void> {
+    return await this.formsService.deleteDelegation(user, formDelegationDto)
   }
 
   @ApiOperation({ summary: 'Get all forms belonging to organization' })
@@ -68,6 +103,20 @@ export class FormsController {
     return await this.formsService.findAll(user, nationalId)
   }
 
+  @ApiOperation({ summary: 'Get JSON sample by form id' })
+  @ApiOkResponse({
+    type: FormResponseDto,
+    description: 'Get JSON sample by form id',
+  })
+  @ApiParam({ name: 'id', type: String })
+  @Get('jsonSample/:id')
+  async getJsonSample(
+    @CurrentUser() user: User,
+    @Param('id') id: string,
+  ): Promise<FormResponseDto> {
+    return await this.formsService.getJsonSample(user, id)
+  }
+
   @ApiOperation({ summary: 'Get form by id' })
   @ApiOkResponse({
     type: FormResponseDto,
@@ -75,8 +124,11 @@ export class FormsController {
   })
   @ApiParam({ name: 'id', type: String })
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<FormResponseDto> {
-    return await this.formsService.findOne(id)
+  async findOne(
+    @CurrentUser() user: User,
+    @Param('id') id: string,
+  ): Promise<FormResponseDto> {
+    return await this.formsService.findOne(user, id)
   }
 
   @ApiOperation({ summary: 'Update form status' })
@@ -88,10 +140,11 @@ export class FormsController {
   @ApiParam({ name: 'id', type: String })
   @Put('updateStatus/:id')
   async updateStatus(
+    @CurrentUser() user: User,
     @Param('id') id: string,
     @Body() updateFormStatusDto: UpdateFormStatusDto,
   ): Promise<FormResponseDto> {
-    return await this.formsService.updateStatus(id, updateFormStatusDto)
+    return await this.formsService.updateStatus(user, id, updateFormStatusDto)
   }
 
   @ApiOperation({ summary: 'Copy form' })
@@ -101,8 +154,11 @@ export class FormsController {
   })
   @ApiParam({ name: 'id', type: String })
   @Put('copy/:id')
-  async copy(@Param('id') id: string): Promise<FormResponseDto> {
-    return await this.formsService.copy(id)
+  async copy(
+    @CurrentUser() user: User,
+    @Param('id') id: string,
+  ): Promise<FormResponseDto> {
+    return await this.formsService.copy(user, id)
   }
 
   @ApiOperation({ summary: 'Update form' })
@@ -114,9 +170,10 @@ export class FormsController {
   @ApiParam({ name: 'id', type: String })
   @Put(':id')
   async updateForm(
+    @CurrentUser() user: User,
     @Param('id') id: string,
     @Body() updateFormDto: UpdateFormDto,
   ): Promise<UpdateFormResponse> {
-    return await this.formsService.update(id, updateFormDto)
+    return await this.formsService.update(user, id, updateFormDto)
   }
 }

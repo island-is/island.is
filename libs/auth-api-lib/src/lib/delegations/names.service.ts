@@ -32,6 +32,21 @@ export class NamesService {
   }
 
   async getPersonName(nationalId: string) {
+    const person = await this.fetchPerson(nationalId)
+    return person.nafn ?? ''
+  }
+
+  async validateRecipientNotDeceased(nationalId: string): Promise<string> {
+    const person = await this.fetchPerson(nationalId)
+    if (person.afdrif === 'LÉST') {
+      throw new BadRequestException(
+        `Cannot create a delegation to a deceased individual`,
+      )
+    }
+    return person.nafn ?? ''
+  }
+
+  private async fetchPerson(nationalId: string) {
     const person = await this.nationalRegistryClient.getAllDataIndividual(
       nationalId,
     )
@@ -40,6 +55,6 @@ export class NamesService {
         `A person with nationalId<${nationalId}> could not be found`,
       )
     }
-    return person.nafn ?? ''
+    return person
   }
 }

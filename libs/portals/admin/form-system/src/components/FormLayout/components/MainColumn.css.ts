@@ -1,6 +1,8 @@
 import { theme } from '@island.is/island-ui/theme'
 import { style } from '@vanilla-extract/css'
 
+const MOBILE = `screen and (max-width: ${theme.breakpoints.md}px)`
+
 export const mainColumn = style({
   maxWidth: '1200px',
   width: '100%',
@@ -10,4 +12,11 @@ export const mainColumn = style({
   borderRadius: '0 0 8px 8px',
   minHeight: '800px',
   height: 'auto',
+  '@media': {
+    [MOBILE]: {
+      minHeight: '400px',
+      borderRadius: theme.border.radius.standard,
+      borderTop: `1px solid ${theme.border.color.blue200}`,
+    },
+  },
 })

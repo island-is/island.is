@@ -21,10 +21,18 @@ import {
 export const subSectionQualityPhoto = buildSubSection({
   id: 'photoStep',
   title: m.applicationQualityPhotoTitle,
-  condition: isVisible(
-    isApplicationForCondition([B_FULL, B_FULL_RENEWAL_65]),
-    hasNoDrivingLicenseInOtherCountry,
-  ),
+  condition: isVisible((answers) => {
+    const matchesType = isApplicationForCondition([B_FULL, B_FULL_RENEWAL_65])(
+      answers,
+    )
+    if (!matchesType) return false
+    // When the 65+ redesign flag is on, the new photoStep65 takes over
+    // for B_FULL_RENEWAL_65 — suppress this old subsection for that case.
+    const isRedesigned65 =
+      answers.applicationFor === B_FULL_RENEWAL_65 &&
+      getValueViaPath(answers, 'is65RenewalRedesignEnabled') === true
+    return !isRedesigned65
+  }, hasNoDrivingLicenseInOtherCountry),
   children: [
     buildMultiField({
       id: 'info',

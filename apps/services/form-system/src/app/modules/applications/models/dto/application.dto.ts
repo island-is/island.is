@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
-import { CompletedSectionInfo } from '../../../../dataTypes/completedSectionInfo.model'
 import { Dependency } from '../../../../dataTypes/dependency.model'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
+import { SectionInfo } from '../../../../dataTypes/sectionInfo.model'
 import { FormCertificationTypeDto } from '../../../formCertificationTypes/models/dto/formCertificationType.dto'
 import { SectionDto } from '../../../sections/models/dto/section.dto'
 import { ApplicationEventDto } from './applicationEvent.dto'
@@ -10,6 +10,9 @@ import { ValueDto } from './value.dto'
 export class ApplicationDto {
   @ApiPropertyOptional()
   id?: string
+
+  @ApiPropertyOptional()
+  nationalId?: string
 
   @ApiPropertyOptional({ type: LanguageType })
   organizationName?: LanguageType
@@ -71,12 +74,18 @@ export class ApplicationDto {
   @ApiPropertyOptional({ type: [FormCertificationTypeDto] })
   certificationTypes?: FormCertificationTypeDto[]
 
-  @ApiPropertyOptional({ type: CompletedSectionInfo })
-  completedSectionInfo?: CompletedSectionInfo
+  @ApiPropertyOptional({ type: SectionInfo })
+  sectionInfo?: SectionInfo
 
   @ApiPropertyOptional()
   zendeskInternal?: boolean
 
+  @ApiPropertyOptional()
+  useValidate?: boolean
+
+  @ApiPropertyOptional()
   submissionServiceUrl?: string
-  validationServiceUrl?: string
+
+  @ApiPropertyOptional()
+  organizationNationalId?: string
 }

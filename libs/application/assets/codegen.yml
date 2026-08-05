@@ -1,0 +1,9 @@
+# Discovered by scripts/ci/generate-files.mjs for cache/archive. Generation runs via
+# Nx: nx run application-assets:codegen/frontend-client (triggered by yarn codegen).
+documents:
+  - libs/application/assets/institution-logos/svg/**/*.svg
+  - libs/application/assets/graphics/svg/**/*.svg
+  - libs/application/assets/generate-components.mjs
+generates:
+  libs/application/assets/institution-logos/gen/**/*.tsx: {}
+  libs/application/assets/graphics/gen/**/*.tsx: {}

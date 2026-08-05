@@ -1,7 +1,17 @@
-import { InputFields, OJOIFieldBaseProps } from '../lib/types'
-import { SkeletonLoader, Stack } from '@island.is/island-ui/core'
+import {
+  InputFields,
+  OJOIFieldBaseProps,
+  isAdApplication,
+  isRegulationApplication,
+} from '../lib/types'
+import {
+  AlertBanner,
+  Box,
+  SkeletonLoader,
+  Stack,
+} from '@island.is/island-ui/core'
 import { FormGroup } from '../components/form/FormGroup'
-import { advert } from '../lib/messages'
+import { advert, regulation } from '../lib/messages'
 import { useDepartments } from '../hooks/useDepartments'
 import { OJOISelectController } from '../components/input/OJOISelectController'
 import { useTypes } from '../hooks/useTypes'
@@ -15,11 +25,24 @@ import { DEPARTMENT_A, DEPARTMENT_B, OJOI_INPUT_HEIGHT } from '../lib/constants'
 import { useAdvertTemplateTypes } from '../hooks/useAdvertTemplateTypes'
 import { useAdvertTemplateLazy } from '../hooks/useAdvertTemplate'
 import { useMemo, useState } from 'react'
+import { useLocale } from '@island.is/localization'
+import { useFeatureFlag } from '@island.is/react/feature-flags'
+import { Features } from '@island.is/feature-flags'
 import { uuid } from 'uuidv4'
 import { AdvertPreview } from '../components/advertPreview/AdvertPreview'
 
 export const Advert = ({ application }: OJOIFieldBaseProps) => {
+  const { formatMessage: f } = useLocale()
   const { setValue } = useFormContext()
+  const { value: regulationsEnabled } = useFeatureFlag(
+    Features.officialJournalOfIcelandRegulations,
+    false,
+  )
+  const isAmending =
+    application.answers?.applicationType === 'amending_regulation'
+  const isAd = isAdApplication(application.answers)
+  const shouldFilterRegTypes = regulationsEnabled && isAd
+  const [showDiffWarning, setShowDiffWarning] = useState(isAmending)
   const [isLoadingDepartments, setLoadingDepartments] = useState(false)
   const {
     application: currentApplication,
@@ -45,10 +68,13 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
       updateApplicationV2({
         path: InputFields.advert.department,
         value: departmentB,
-        onComplete: () => {
-          setLoadingDepartments(false)
-          if (!departmentB) return
-          getLazyMainTypes({
+        onComplete: async () => {
+          if (!departmentB) {
+            setLoadingDepartments(false)
+            return
+          }
+
+          const { data: mtData } = await getLazyMainTypes({
             variables: {
               params: {
                 department: departmentB.id,
@@ -56,6 +82,34 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
               },
             },
           })
+
+          if (shouldFilterRegTypes && mtData) {
+            const fetchedMainTypes =
+              mtData.officialJournalOfIcelandMainTypes.mainTypes
+            const filtered = fetchedMainTypes.filter(
+              (mt) => !mt.slug?.toLowerCase().includes('reglug'),
+            )
+
+            if (filtered.length === 1) {
+              const mainType = filtered[0]
+              setValue(InputFields.advert.mainType, mainType)
+              updateApplicationV2({
+                path: InputFields.advert.mainType,
+                value: mainType,
+              })
+
+              if (mainType.types.length === 1) {
+                const typeValue = cleanTypename(mainType.types[0])
+                setValue(InputFields.advert.type, typeValue)
+                updateApplicationV2({
+                  path: InputFields.advert.type,
+                  value: typeValue,
+                })
+              }
+            }
+          }
+
+          setLoadingDepartments(false)
         },
         onError: () => {
           setLoadingDepartments(false)
@@ -92,16 +146,25 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
     },
   }))
 
-  const mainTypeOptions = mainTypes?.map((d) => ({
-    label: capitalizeText(d.title),
-    value: d,
-  }))
-
-  const currentTypes =
-    currentApplication?.answers?.advert?.mainType?.types?.map((d) => ({
+  const mainTypeOptions = mainTypes
+    ?.filter(
+      (d) => !shouldFilterRegTypes || !d.slug?.toLowerCase().includes('reglug'),
+    )
+    .map((d) => ({
       label: capitalizeText(d.title),
       value: d,
-    })) ?? []
+    }))
+
+  const currentTypes =
+    currentApplication?.answers?.advert?.mainType?.types
+      ?.filter(
+        (d) =>
+          !shouldFilterRegTypes || !d.slug?.toLowerCase().includes('reglug'),
+      )
+      .map((d) => ({
+        label: capitalizeText(d.title),
+        value: d,
+      })) ?? []
 
   const templateOptions = useMemo(
     () =>
@@ -194,18 +257,32 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
 
       <FormGroup title={advert.headings.materialForPublication}>
         <Stack space={[2, 2, 3]}>
-          <OJOISelectController
-            width="half"
-            name={InputFields.misc.selectedTemplate}
-            label={advert.inputs.template.label}
-            placeholder={advert.inputs.template.placeholder}
-            applicationId={application.id}
-            options={templateOptions}
-            loading={advertTemplateLoading}
-            onChange={(type) => {
-              advertTemplateQuery({ variables: { params: { type: type } } })
-            }}
-          />
+          {showDiffWarning && (
+            <Box>
+              <AlertBanner
+                description={f(
+                  regulation.content.warnings.diffPrecisionWarning,
+                )}
+                variant="info"
+                dismissable
+                onDismiss={() => setShowDiffWarning(false)}
+              />
+            </Box>
+          )}
+          {!isRegulationApplication(application.answers) && (
+            <OJOISelectController
+              width="half"
+              name={InputFields.misc.selectedTemplate}
+              label={advert.inputs.template.label}
+              placeholder={advert.inputs.template.placeholder}
+              applicationId={application.id}
+              options={templateOptions}
+              loading={advertTemplateLoading}
+              onChange={(type) => {
+                advertTemplateQuery({ variables: { params: { type: type } } })
+              }}
+            />
+          )}
 
           <OJOIHtmlController
             applicationId={application.id}

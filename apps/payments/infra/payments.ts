@@ -37,9 +37,13 @@ export const serviceSetup = (services: {
         staging: 'https://beta.staging01.devland.is',
         prod: 'https://island.is',
       },
+      ALLOW_APPLE_PAY: {
+        dev: 'true',
+        staging: 'true',
+        prod: 'true',
+      },
     })
     .secrets({
-      SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY',
       SI_PUBLIC_DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID',
       SI_PUBLIC_DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN',
       PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET:

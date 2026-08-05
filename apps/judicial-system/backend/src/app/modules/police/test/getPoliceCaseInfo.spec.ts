@@ -25,9 +25,19 @@ type GivenWhenThen = (
 
 describe('PoliceController - Get police case info', () => {
   let givenWhenThen: GivenWhenThen
+  let assignDefendantPoliceCaseNumbers: jest.Mock
+  let findDistinctPoliceCaseNumbersByCaseIds: jest.Mock
 
   beforeEach(async () => {
-    const { policeController } = await createTestingPoliceModule()
+    ;(fetch as jest.Mock).mockReset()
+
+    const { policeController, caseDefendantPoliceCaseNumberRepositoryService } =
+      await createTestingPoliceModule()
+
+    assignDefendantPoliceCaseNumbers =
+      caseDefendantPoliceCaseNumberRepositoryService.assignDefendantPoliceCaseNumbers as jest.Mock
+    findDistinctPoliceCaseNumbersByCaseIds =
+      caseDefendantPoliceCaseNumberRepositoryService.findDistinctPoliceCaseNumbersByCaseIds as jest.Mock
 
     givenWhenThen = async (
       caseId: string,
@@ -47,83 +57,59 @@ describe('PoliceController - Get police case info', () => {
 
   describe('police case info found', () => {
     const theUser = {} as User
-    const theCase = {} as Case
+    const caseId = uuid()
+    const theCase = {
+      id: caseId,
+      defendants: [
+        {
+          id: '11111111-1111-1111-1111-111111111111',
+          nationalId: '0101302399',
+          noNationalId: false,
+        },
+        { nationalId: '', noNationalId: false },
+      ],
+    } as Case
     let then: Then
 
     beforeEach(async () => {
       const mockFetch = fetch as jest.Mock
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: async () => ({
-          malsnumer: '007-2021-000001',
-          skjol: [
-            {
-              dagsStofnad: '2020-01-01',
-              domsSkjalsFlokkun: 'dsf1',
-              rvMalSkjolMals_ID: 1,
-              heitiSkjals: 'Name 1.pdf',
-              malsnumer: '007-2021-000001',
-            },
-            {
-              dagsStofnad: '2020-01-01',
-              domsSkjalsFlokkun: 'dsf1',
-              rvMalSkjolMals_ID: 1,
-              heitiSkjals: 'Name 1.pdf',
-              malsnumer: '007-2020-000103',
-            },
-            {
-              dagsStofnad: '2020-01-01',
-              domsSkjalsFlokkun: 'dsf1',
-              rvMalSkjolMals_ID: 1,
-              heitiSkjals: 'Name 1.pdf',
-              malsnumer: '007-2020-000057',
-            },
-            {
-              dagsStofnad: '2020-01-01',
-              domsSkjalsFlokkun: 'dsf1',
-              rvMalSkjolMals_ID: 1,
-              heitiSkjals: 'Name 1.pdf',
-              malsnumer: '008-2013-000033',
-            },
-            {
-              dagsStofnad: '2020-01-01',
-              domsSkjalsFlokkun: 'dsf1',
-              rvMalSkjolMals_ID: 1,
-              heitiSkjals: 'Name 1.pdf',
-              malsnumer: '008-2013-000033',
-            },
-          ],
-          malseinings: [
-            {
-              upprunalegtMalsnumer: '007-2021-000001',
-              brotFra: '2021-02-23T13:17:00',
-              licencePlate: 'ABC-123',
-              gotuHeiti: 'Testgata',
-              gotuNumer: '3',
-              sveitafelag: 'Testbær',
-            },
-            {
-              upprunalegtMalsnumer: '007-2020-000103',
-              brotFra: '2021-02-23T13:17:00',
-              gotuHeiti: 'Teststígur',
-              gotuNumer: null,
-              sveitafelag: 'Testbær',
-              licencePlate: 'CDE-123',
-            },
-            {
-              upprunalegtMalsnumer: '007-2020-000057',
-              brotFra: '2021-02-23T13:17:00',
-              gotuHeiti: 'Teststígur',
-              sveitafelag: null,
-            },
-          ],
-        }),
+        json: async () => [
+          {
+            upprunalegtMalsnumer: '007-2021-000001',
+            brotFra: '2021-02-23T13:17:00',
+            licencePlate: 'ABC-123',
+            gotuHeiti: 'Testgata',
+            gotuNumer: '3',
+            sveitafelag: 'Testbær',
+            artalNrGreinLidur: null,
+          },
+          {
+            upprunalegtMalsnumer: '007-2020-000103',
+            brotFra: '2021-02-23T13:17:00',
+            gotuHeiti: 'Teststígur',
+            gotuNumer: null,
+            sveitafelag: 'Testbær',
+            licencePlate: 'CDE-123',
+            artalNrGreinLidur: null,
+          },
+          {
+            upprunalegtMalsnumer: '007-2020-000057',
+            brotFra: '2021-02-23T13:17:00',
+            gotuHeiti: 'Teststígur',
+            gotuNumer: null,
+            sveitafelag: null,
+            licencePlate: null,
+            artalNrGreinLidur: null,
+          },
+        ],
       })
 
-      then = await givenWhenThen(uuid(), theUser, theCase)
+      then = await givenWhenThen(caseId, theUser, theCase)
     })
 
-    it('should return police case info without duplicates', () => {
+    it('should return police case info from case units only', () => {
       expect(then.result).toEqual([
         {
           policeCaseNumber: '007-2021-000001',
@@ -146,7 +132,199 @@ describe('PoliceController - Get police case info', () => {
           licencePlate: undefined,
           subtypes: [],
         },
-        { policeCaseNumber: '008-2013-000033' },
+      ])
+    })
+
+    it('should not fetch police defendants when case has national ids', () => {
+      const mockFetch = fetch as jest.Mock
+
+      expect(mockFetch).toHaveBeenCalledTimes(1)
+      expect(
+        mockFetch.mock.calls.some((call) =>
+          (call[0] as string).includes('/GetRVAdilarMals/'),
+        ),
+      ).toBe(false)
+    })
+
+    it('should not assign defendant links for numbers not already on the case', () => {
+      expect(assignDefendantPoliceCaseNumbers).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('defendant linking for existing police case numbers', () => {
+    const theUser = {} as User
+    const caseId = uuid()
+    const theCase = {
+      id: caseId,
+      defendants: [
+        {
+          id: '11111111-1111-1111-1111-111111111111',
+          nationalId: '0101302399',
+          noNationalId: false,
+        },
+      ],
+    } as Case
+
+    describe('when some police case numbers already exist on the case', () => {
+      let then: Then
+
+      beforeEach(async () => {
+        findDistinctPoliceCaseNumbersByCaseIds.mockResolvedValueOnce(
+          new Map([[caseId, ['007-2021-000001', '007-2020-000103']]]),
+        )
+
+        const mockFetch = fetch as jest.Mock
+        mockFetch.mockResolvedValueOnce({
+          ok: true,
+          json: async () => [
+            {
+              upprunalegtMalsnumer: '007-2021-000001',
+              brotFra: '2021-02-23T13:17:00',
+              gotuHeiti: 'Testgata',
+              gotuNumer: '3',
+              sveitafelag: 'Testbær',
+              artalNrGreinLidur: null,
+            },
+            {
+              upprunalegtMalsnumer: '007-2020-000103',
+              brotFra: '2021-02-23T13:17:00',
+              gotuHeiti: null,
+              gotuNumer: null,
+              sveitafelag: null,
+              artalNrGreinLidur: null,
+            },
+            {
+              upprunalegtMalsnumer: '007-2020-000057',
+              brotFra: '2021-02-23T13:17:00',
+              gotuHeiti: null,
+              gotuNumer: null,
+              sveitafelag: null,
+              artalNrGreinLidur: null,
+            },
+          ],
+        })
+
+        then = await givenWhenThen(caseId, theUser, theCase)
+      })
+
+      it('should only assign defendant links for police case numbers already on the case', () => {
+        expect(assignDefendantPoliceCaseNumbers).toHaveBeenCalledTimes(1)
+        expect(assignDefendantPoliceCaseNumbers).toHaveBeenCalledWith(
+          caseId,
+          expect.arrayContaining([
+            {
+              defendantId: '11111111-1111-1111-1111-111111111111',
+              policeCaseNumber: '007-2021-000001',
+            },
+            {
+              defendantId: '11111111-1111-1111-1111-111111111111',
+              policeCaseNumber: '007-2020-000103',
+            },
+          ]),
+          expect.objectContaining({ transaction: expect.any(Object) }),
+        )
+
+        const passedLinks = assignDefendantPoliceCaseNumbers.mock
+          .calls[0][1] as Array<{
+          policeCaseNumber: string
+        }>
+        expect(
+          passedLinks.some((l) => l.policeCaseNumber === '007-2020-000057'),
+        ).toBe(false)
+      })
+
+      it('should still return all police case info', () => {
+        expect(then.result).toHaveLength(3)
+      })
+    })
+
+    describe('when no police case numbers exist on the case yet', () => {
+      beforeEach(async () => {
+        findDistinctPoliceCaseNumbersByCaseIds.mockResolvedValueOnce(
+          new Map([[caseId, []]]),
+        )
+
+        const mockFetch = fetch as jest.Mock
+        mockFetch.mockResolvedValueOnce({
+          ok: true,
+          json: async () => [
+            {
+              upprunalegtMalsnumer: '007-2021-000001',
+              brotFra: '2021-02-23T13:17:00',
+              gotuHeiti: 'Testgata',
+              gotuNumer: '3',
+              sveitafelag: 'Testbær',
+              artalNrGreinLidur: null,
+            },
+          ],
+        })
+
+        await givenWhenThen(caseId, theUser, theCase)
+      })
+
+      it('should not assign any defendant links', () => {
+        expect(assignDefendantPoliceCaseNumbers).not.toHaveBeenCalled()
+      })
+    })
+  })
+
+  describe('police case info found with no usable national ids on case', () => {
+    const theUser = {} as User
+    const caseId = uuid()
+    const theCase = {
+      id: caseId,
+      defendants: [{ nationalId: '', noNationalId: false }],
+    } as Case
+    let then: Then
+
+    beforeEach(async () => {
+      const mockFetch = fetch as jest.Mock
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => [
+          {
+            accusedNationalId: '0101302399',
+            accusedName: 'Test Defendant',
+          },
+        ],
+      })
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => [
+          {
+            upprunalegtMalsnumer: '007-2021-000001',
+            brotFra: '2021-02-23T13:17:00',
+            licencePlate: 'ABC-123',
+            gotuHeiti: 'Testgata',
+            gotuNumer: '3',
+            sveitafelag: 'Testbær',
+            artalNrGreinLidur: null,
+          },
+        ],
+      })
+
+      then = await givenWhenThen(caseId, theUser, theCase)
+    })
+
+    it('should fetch police defendants as fallback', () => {
+      const mockFetch = fetch as jest.Mock
+
+      expect(assignDefendantPoliceCaseNumbers).not.toHaveBeenCalled()
+      expect(mockFetch).toHaveBeenCalledTimes(2)
+      expect(
+        mockFetch.mock.calls.some((call) =>
+          (call[0] as string).includes('/GetRVAdilarMals/'),
+        ),
+      ).toBe(true)
+      expect(then.result).toEqual([
+        {
+          policeCaseNumber: '007-2021-000001',
+          place: 'Testgata 3, Testbær',
+          date: new Date('2021-02-23T13:17:00'),
+          licencePlate: 'ABC-123',
+          subtypes: [],
+        },
       ])
     })
   })
@@ -159,15 +337,18 @@ describe('PoliceController - Get police case info', () => {
 
     beforeEach(async () => {
       const mockFetch = fetch as jest.Mock
-      mockFetch.mockResolvedValueOnce({ ok: false, text: () => 'Some error' })
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        text: () => 'Some error for getDefendantsFromPolice',
+      })
 
       then = await givenWhenThen(uuid(), user, theCase)
     })
 
-    it('should throw not found exception', () => {
+    it('should throw error exception', () => {
       expect(then.error).toBeInstanceOf(NotFoundException)
       expect(then.error.message).toBe(
-        `Police case info for case ${originalAncestorCaseId} does not exist`,
+        `Police defendants for case ${originalAncestorCaseId} do not exist`,
       )
     })
   })

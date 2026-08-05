@@ -1,4 +1,4 @@
-.PHONY: backend api web
+.PHONY: backend
 CWD=../../
 MAKEFLAGS += -j
 ARGS=$(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
@@ -13,9 +13,3 @@ backend:
 	yarn --cwd ${CWD} start air-discount-scheme-backend
 
 services: docker backend
-
-api:
-	yarn --cwd ${CWD} start air-discount-scheme-api
-
-web:
-	yarn --cwd ${CWD} start air-discount-scheme-web

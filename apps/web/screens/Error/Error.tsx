@@ -1,8 +1,7 @@
 import React, { Fragment, ReactNode } from 'react'
 import { useRouter } from 'next/router'
-import { Document } from '@contentful/rich-text-types'
 
-import { richText, Slice as SliceType } from '@island.is/island-ui/contentful'
+import { Slice as SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
   GridColumn,
@@ -12,10 +11,11 @@ import {
 } from '@island.is/island-ui/core'
 import { ErrorPageQuery } from '@island.is/web/graphql/schema'
 import { nlToBr } from '@island.is/web/utils/nlToBr'
+import { webRichText } from '@island.is/web/utils/richText'
 
 type MessageType = {
   title: string
-  description?: { __typename: 'Html'; id: string; document: Document }
+  description?: SliceType[] | null
   body?: string
 }
 
@@ -79,7 +79,7 @@ export const ErrorScreen: React.FC<ErrorProps> = ({ statusCode, errPage }) => {
                 </Text>
                 <Text variant="intro" as="div">
                   {errorMessages.description
-                    ? richText([errorMessages.description] as SliceType[])
+                    ? webRichText(errorMessages.description as SliceType[])
                     : // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                       // @ts-ignore make web strict
                       formatBody(errorMessages.body, asPath)}

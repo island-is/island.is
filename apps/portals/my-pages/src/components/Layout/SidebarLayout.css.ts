@@ -27,6 +27,7 @@ export const sticky = style({
 })
 
 export const sidebarWrap = style({
+  minWidth: 0,
   maxWidth: '100%',
   ...themeUtils.responsiveStyle({
     md: {

@@ -1,26 +1,30 @@
-import { FC } from 'react'
+import { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
+import { AnimatePresence, motion } from 'motion/react'
 
-import { Box, Icon, LinkV2, Text } from '@island.is/island-ui/core'
-import { INDICTMENTS_COURT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
+import { Box, Icon, LinkV2, Tag, Text } from '@island.is/island-ui/core'
+import { DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import {
   districtCourtAbbreviation,
   formatDate,
   formatDOB,
-  normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
+import { isPublicProsecutionOfficeUser } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
+  CaseIndictmentRulingDecision,
   Defendant,
   ServiceRequirement,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
+import { UserContext } from '../../UserProvider/UserProvider'
 import RenderPersonalData from '../RenderPersonalInfo/RenderPersonalInfo'
-import { useConnectedCasesQuery } from './connectedCases.generated'
 import {
   getAppealExpirationInfo,
+  getDefendantTagConfig,
   getVerdictViewDateText,
 } from './DefendantInfo.logic'
 import { strings as infoCardStrings } from '../useInfoCardItems.strings'
@@ -38,65 +42,26 @@ interface Defender {
 
 interface DefendantInfoProps {
   defendant: Defendant
-  workingCaseId: string
   courtId?: string
   displayAppealExpirationInfo?: boolean
   displayVerdictViewDate?: boolean
   displaySentToPrisonAdminDate?: boolean
   defender?: Defender
   displayOpenCaseReference?: boolean
+  indictmentRulingDecision?: CaseIndictmentRulingDecision | null
 }
 
 const ConnectedCasesInfo = ({
   defendant,
-  workingCaseId,
   courtId,
 }: {
   defendant: Defendant
-  workingCaseId: string
   courtId?: string
 }) => {
-  const { data: connectedCasesData } = useConnectedCasesQuery({
-    variables: { input: { id: workingCaseId } },
-  })
-
-  const connectedCases = connectedCasesData?.connectedCases
-    ?.filter((connectedCase) =>
-      connectedCase.defendants?.some((d) =>
-        defendant.noNationalId
-          ? defendant.nationalId === d.nationalId && defendant.name === d.name
-          : d.nationalId &&
-            normalizeAndFormatNationalId(defendant.nationalId).includes(
-              d.nationalId,
-            ),
-      ),
-    )
-    .map((connectedCase) => {
-      const hasCourtAccess = courtId === connectedCase.court?.id
-      const key = `${defendant.id}-${courtId}-${connectedCase.courtCaseNumber}`
-
-      return hasCourtAccess ? (
-        <LinkV2
-          href={`${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${connectedCase.id}`}
-          className={link}
-          key={key}
-        >
-          <Text as="span" whiteSpace="pre">
-            {connectedCase.courtCaseNumber}
-          </Text>
-        </LinkV2>
-      ) : (
-        <Text as="span" whiteSpace="pre" key={key}>
-          {`${connectedCase.courtCaseNumber} (${districtCourtAbbreviation(
-            connectedCase.court?.name,
-          )})`}
-        </Text>
-      )
-    })
+  const connectedCases = defendant.connectedCases
 
   return (
-    connectedCases &&
-    connectedCases.length > 0 && (
+    isNonEmptyArray(connectedCases) && (
       <Box display="flex" flexWrap="wrap">
         <Box
           display="inlineFlex"
@@ -107,14 +72,34 @@ const ConnectedCasesInfo = ({
           <Icon icon="warning" size="medium" color="blue400" type="outline" />
           <Text fontWeight="semiBold">{'Opin mál gegn ákærða: '}</Text>
         </Box>
-        {connectedCases.map((connectedCase, i) => (
-          <Box component="span" key={i}>
-            {connectedCase}
-            {i < connectedCases.length - 1 && (
-              <Text as="span" whiteSpace="pre">{`, `}</Text>
-            )}
-          </Box>
-        ))}
+        {connectedCases.map((connectedCase, i) => {
+          const hasCourtAccess = courtId === connectedCase.court?.id
+          const key = `${defendant.id}-${connectedCase.id}`
+
+          return (
+            <Box component="span" key={key}>
+              {hasCourtAccess ? (
+                <LinkV2
+                  href={`${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${connectedCase.id}`}
+                  className={link}
+                >
+                  <Text as="span" whiteSpace="pre">
+                    {connectedCase.courtCaseNumber}
+                  </Text>
+                </LinkV2>
+              ) : (
+                <Text as="span" whiteSpace="pre">
+                  {`${
+                    connectedCase.courtCaseNumber
+                  } (${districtCourtAbbreviation(connectedCase.court?.name)})`}
+                </Text>
+              )}
+              {i < connectedCases.length - 1 && (
+                <Text as="span" whiteSpace="pre">{`, `}</Text>
+              )}
+            </Box>
+          )
+        })}
       </Box>
     )
   )
@@ -123,15 +108,16 @@ const ConnectedCasesInfo = ({
 export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
   const {
     defendant,
-    workingCaseId,
     courtId,
     displayAppealExpirationInfo,
     displayVerdictViewDate,
     displaySentToPrisonAdminDate = true,
     displayOpenCaseReference,
     defender,
+    indictmentRulingDecision,
   } = props
   const { formatMessage } = useIntl()
+  const { user } = useContext(UserContext)
   const hasDefender = defendant.defenderName || defender?.name
   const defenderLabel =
     defender?.sessionArrangement ===
@@ -149,77 +135,110 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
     serviceRequirement: defendant.verdict?.serviceRequirement,
   })
 
+  const defendantTagConfig = getDefendantTagConfig({
+    verdict: defendant.verdict,
+    isPublicProsecutionOffice: isPublicProsecutionOfficeUser(user),
+    indictmentRulingDecision,
+  })
+
   return (
-    <Box className={grid({ gap: 1 })}>
-      <Text>
-        <Text as="span" fontWeight="semiBold">{`${formatMessage(
-          infoCardStrings.name,
-        )}: `}</Text>
-        <Text as="span">
-          {defendant.name}
-          {defendant.nationalId &&
-            `, ${formatDOB(defendant.nationalId, defendant.noNationalId)}`}
-          {defendant.citizenship && `, (${defendant.citizenship})`}
+    <Box display="flex" justifyContent="spaceBetween">
+      <div className={grid({ gap: 1 })}>
+        <Text>
+          <Text as="span" fontWeight="semiBold">{`${formatMessage(
+            infoCardStrings.name,
+          )}: `}</Text>
+          <Text as="span">
+            {defendant.name}
+            {defendant.nationalId &&
+              `, ${formatDOB(defendant.nationalId, defendant.noNationalId)}`}
+            {defendant.citizenship && `, (${defendant.citizenship})`}
+          </Text>
         </Text>
-      </Text>
-      <Text>
-        <Text as="span" fontWeight="semiBold">{`${formatMessage(
-          core.addressOrResidence,
-        )}: `}</Text>
-        <Text as="span">
-          {defendant.address ? defendant.address : 'Ekki skráð'}
+        <Text>
+          <Text as="span" fontWeight="semiBold">{`${formatMessage(
+            core.addressOrResidence,
+          )}: `}</Text>
+          <Text as="span">
+            {defendant.address ? defendant.address : 'Ekki skráð'}
+          </Text>
         </Text>
-      </Text>
-      <Text>
-        <Text as="span" whiteSpace="pre" fontWeight="semiBold">
-          {`${defenderLabel}: `}
+        <Text>
+          <Text as="span" whiteSpace="pre" fontWeight="semiBold">
+            {`${defenderLabel}: `}
+          </Text>
+          {hasDefender ? (
+            RenderPersonalData({
+              name: defenderName,
+              email: defenderEmail,
+              phoneNumber: defenderPhoneNumber,
+              breakSpaces: false,
+            })
+          ) : (
+            <Text as="span">{formatMessage(strings.noDefender)}</Text>
+          )}
         </Text>
-        {hasDefender ? (
-          RenderPersonalData({
-            name: defenderName,
-            email: defenderEmail,
-            phoneNumber: defenderPhoneNumber,
-            breakSpaces: false,
-          })
-        ) : (
-          <Text as="span">{formatMessage(strings.noDefender)}</Text>
-        )}
-      </Text>
-      {displayAppealExpirationInfo && (
-        <Text fontWeight="semiBold">
-          {formatMessage(appealExpirationInfo.message, {
-            appealExpirationDate: appealExpirationInfo.date,
-            deadlineType: defendant.verdict?.isDefaultJudgement
-              ? 'Endurupptökufrestur'
-              : 'Áfrýjunarfrestur',
-          })}
-        </Text>
-      )}
-      {displayVerdictViewDate &&
-        defendant.verdict?.serviceRequirement &&
-        defendant.verdict?.serviceRequirement !==
-          ServiceRequirement.NOT_REQUIRED && (
+        {displayAppealExpirationInfo && (
           <Text fontWeight="semiBold">
-            {getVerdictViewDateText(
-              formatMessage,
-              defendant.verdict?.serviceDate,
-            )}
+            {formatMessage(appealExpirationInfo.message, {
+              appealExpirationDate: appealExpirationInfo.date,
+              deadlineType: defendant.verdict?.isDefaultJudgement
+                ? 'Endurupptökufrestur'
+                : 'Áfrýjunarfrestur',
+            })}
           </Text>
         )}
-      {displaySentToPrisonAdminDate && defendant.sentToPrisonAdminDate && (
-        <Text fontWeight="semiBold">
-          {formatMessage(strings.sendToPrisonAdminDate, {
-            date: formatDate(defendant.sentToPrisonAdminDate, 'PPP'),
-          })}
-        </Text>
-      )}
-      {displayOpenCaseReference && (
-        <ConnectedCasesInfo
-          defendant={defendant}
-          workingCaseId={workingCaseId}
-          courtId={courtId}
-        />
-      )}
+        {displayVerdictViewDate &&
+          defendant.verdict?.serviceRequirement &&
+          defendant.verdict?.serviceRequirement !==
+            ServiceRequirement.NOT_REQUIRED && (
+            <Text fontWeight="semiBold">
+              {getVerdictViewDateText(
+                formatMessage,
+                defendant.verdict?.serviceDate,
+              )}
+            </Text>
+          )}
+        {displaySentToPrisonAdminDate && defendant.sentToPrisonAdminDate && (
+          <Text fontWeight="semiBold">
+            {formatMessage(strings.sendToPrisonAdminDate, {
+              date: formatDate(defendant.sentToPrisonAdminDate, 'PPP'),
+            })}
+          </Text>
+        )}
+        {defendant.indictmentCancelledOrDismissedState && (
+          <Text fontWeight="semiBold">{`${
+            defendant.indictmentCancelledOrDismissedState.type ===
+            CaseIndictmentRulingDecision.DISMISSAL
+              ? 'Vísað frá'
+              : 'Niðurfellt'
+          } ${formatDate(
+            defendant.indictmentCancelledOrDismissedState.time,
+            'dd.MM.y',
+          )}`}</Text>
+        )}
+        {displayOpenCaseReference && (
+          <ConnectedCasesInfo defendant={defendant} courtId={courtId} />
+        )}
+      </div>
+      {defendantTagConfig && defendant.verdict ? (
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.span
+            initial={{ opacity: 0, y: 3 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            key={defendantTagConfig.key}
+          >
+            <Tag variant={defendantTagConfig.variant} outlined disabled>
+              {defendantTagConfig.label}
+            </Tag>
+          </motion.span>
+        </AnimatePresence>
+      ) : defendantTagConfig ? (
+        <Tag variant={defendantTagConfig.variant} outlined disabled>
+          {defendantTagConfig.label}
+        </Tag>
+      ) : null}
     </Box>
   )
 }

@@ -22,6 +22,7 @@ export const airDiscountModule: PortalModule = {
       enabled:
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.internalProcuring),
+      notAvailableForActors: true,
       element: <AirDiscountOverview />,
     },
   ],

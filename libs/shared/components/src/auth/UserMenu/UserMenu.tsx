@@ -14,6 +14,7 @@ type UserMenuProps = {
   iconOnlyMobile?: boolean
   showLanguageSwitcher?: boolean
   showActorButton?: boolean
+  onButtonClick?: () => void
 }
 
 export const UserMenu = ({
@@ -25,6 +26,7 @@ export const UserMenu = ({
   showLanguageSwitcher = true,
   showActorButton = true,
   iconOnlyMobile = false,
+  onButtonClick,
 }: UserMenuProps) => {
   const [dropdownState, setDropdownState] = useState<'closed' | 'open'>(
     'closed',
@@ -32,6 +34,7 @@ export const UserMenu = ({
   const { signOut, switchUser, userInfo: user } = useAuth()
 
   const handleClick = () => {
+    if (dropdownState === 'closed') onButtonClick?.()
     setDropdownState(dropdownState === 'open' ? 'closed' : 'open')
   }
   useEffect(() => {

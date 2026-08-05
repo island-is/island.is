@@ -38,7 +38,7 @@ export class RestServiceCollector implements ServiceCollector {
         // Insert into Elastic
         await this.elasticService.bulk(services)
       } catch (err) {
-        logger.error(
+        logger.warn(
           `Failed to index service metadata for provider ${providerToString(
             provider,
           )}`,

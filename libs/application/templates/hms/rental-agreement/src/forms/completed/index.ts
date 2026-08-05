@@ -1,12 +1,12 @@
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { buildForm } from '@island.is/application/core'
-import Logo from '../../assets/Logo'
 import { FormModes } from '@island.is/application/types'
+import { HmsLogo } from '@island.is/application/assets/institution-logos'
 import * as m from '../../lib/messages'
 
 export const completedForm = buildForm({
   id: 'completedForm',
-  logo: Logo,
+  logo: HmsLogo,
   mode: FormModes.COMPLETED,
   renderLastScreenBackButton: false,
   children: [

@@ -3,8 +3,8 @@ import {
   DriverLicenseWithoutImagesDto as DriverLicenseWithoutImagesDtoV4,
 } from '../v4'
 import {
-  DriverLicenseDto as DriverLicenseDtoV5,
-  DriverLicenseWithoutImagesDto as DriverLicenseWithoutImagesDtoV5,
+  DtoV5DriverLicenseDto as DriverLicenseDtoV5,
+  DtoV5DriverLicenseWithoutImagesDto as DriverLicenseWithoutImagesDtoV5,
 } from '../v5'
 
 export type DrivingLicenseV4V5Dto =
@@ -78,7 +78,7 @@ export interface Category {
   categoryName?: string | null
   publishDate?: Date | null
   dateTo?: Date
-  validToCode?: number
+  validToCode?: number | null
   validToText?: string | null
   comment?: string | null
 }
@@ -119,6 +119,19 @@ export interface QualitySignature {
   data: string
 }
 
+export interface QualityPhotoAndSignature {
+  imageId: number | null
+  imageTypeId: number | null
+  imageTypeName: string | null
+  imageDate: Date | null
+  pohto: string | null
+  signatureId: number | null
+  signatureTypeId: number | null
+  signatureTypeName: string | null
+  signatureDate: Date | null
+  signature: string | null
+}
+
 export type CanApplyErrorCodeBTemporary =
   | 'PERSON_NOT_FOUND_IN_NATIONAL_REGISTRY'
   | 'NO_LICENSE_FOUND'
@@ -133,8 +146,18 @@ export type CanApplyErrorCodeBFull =
   | 'NO_TEMP_LICENSE'
   | 'HAS_DEPRIVATION'
 
+// Renewal-65 returns a much wider set of codes than the canApply endpoints
+// for B-full/B-temp (e.g. AGE_REQUIREMENT_NOT_MET, PERSON_NOT_REGISTERED_IN_ICELAND,
+// PERSON_NOT_FOUND, …). RLS hasn't published a closed enum, so we model this
+// as `string` and let the domain layer's mapping in
+// `canApplyErrorCodeToRequirementKey` be the source of truth.
+export type CanApplyErrorCodeRenewal65 = string
+
 export interface CanApplyForCategoryResult<
-  T extends CanApplyErrorCodeBFull | CanApplyErrorCodeBTemporary,
+  T extends
+    | CanApplyErrorCodeBFull
+    | CanApplyErrorCodeBTemporary
+    | CanApplyErrorCodeRenewal65,
 > {
   result: boolean
   errorCode?: T | undefined

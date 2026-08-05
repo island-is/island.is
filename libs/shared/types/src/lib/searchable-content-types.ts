@@ -13,4 +13,5 @@ export enum SearchableContentTypes {
   webManual = 'webManual',
   webManualChapterItem = 'webManualChapterItem',
   webOrganizationParentSubpage = 'webOrganizationParentSubpage',
+  webCourse = 'webCourse',
 }

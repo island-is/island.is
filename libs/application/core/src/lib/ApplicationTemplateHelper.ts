@@ -9,6 +9,7 @@ import {
   ExternalData,
   FormValue,
   StaticText,
+  FormText,
   FormatMessage,
   ApplicationContext,
   ApplicationRole,
@@ -70,10 +71,11 @@ export class ApplicationTemplateHelper<
   }
 
   getApplicationActionCardMeta(stateKey: string = this.application.state): {
-    title?: StaticText
-    description?: StaticText
+    title?: FormText
+    description?: FormText
     tag: { variant?: string; label?: StaticText }
     historyButton?: StaticText
+    displayPruneAt?: boolean
   } {
     const actionCard =
       this.template.stateMachineConfig.states[stateKey]?.meta?.actionCard
@@ -83,6 +85,7 @@ export class ApplicationTemplateHelper<
       description: actionCard?.description,
       tag: { variant: actionCard?.tag?.variant, label: actionCard?.tag?.label },
       historyButton: actionCard?.historyButton,
+      displayPruneAt: actionCard?.displayPruneAt,
     }
   }
 

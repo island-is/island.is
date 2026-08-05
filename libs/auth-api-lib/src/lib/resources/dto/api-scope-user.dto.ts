@@ -24,9 +24,11 @@ export class ApiScopeUserDTO {
   })
   email!: string
 
-  @IsNotEmpty()
+  @IsOptional()
   @ApiProperty({
+    type: [ApiScopeUserAccessDTO],
     example: [{ nationalId: '0123456789', scope: 'scope_name' }],
+    required: false,
   })
   userAccess?: ApiScopeUserAccessDTO[]
 }

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common'
-import fetch from 'isomorphic-fetch'
+import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { ProviderService } from './provider.service'
 import { RestMetadataService } from './restmetadata.service'
 import { Configuration, MetaservicesApi } from '../../gen/fetch/xrd'
@@ -19,7 +19,10 @@ const XROAD_CLIENT = process.env.XROAD_CLIENT_ID ?? ''
       useFactory: () =>
         new MetaservicesApi(
           new Configuration({
-            fetchApi: fetch,
+            fetchApi: createEnhancedFetch({
+              name: 'clients-xroad-metaservices',
+              circuitBreaker: false,
+            }),
             basePath: XROAD_BASE_PATH,
             headers: {
               Accept: 'application/json',
@@ -32,7 +35,10 @@ const XROAD_CLIENT = process.env.XROAD_CLIENT_ID ?? ''
       useFactory: () =>
         new RestMetaservicesApi(
           new RestConfiguration({
-            fetchApi: fetch,
+            fetchApi: createEnhancedFetch({
+              name: 'clients-xroad-rest-metaservices',
+              circuitBreaker: false,
+            }),
             basePath: XROAD_BASE_PATH + '/r1',
             headers: {
               Accept: 'application/json',

@@ -8,7 +8,7 @@ import {
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { EstateTypes } from '../lib/constants'
-import Grieving from '../../assets/Grieving'
+import { GhostOnABench } from '@island.is/application/assets/graphics'
 
 export const done: Form = buildForm({
   id: 'divisionOfEstateDone',
@@ -48,7 +48,7 @@ export const done: Form = buildForm({
       children: [
         buildImageField({
           id: 'doneImage',
-          image: Grieving,
+          image: GhostOnABench,
           marginTop: 3,
           marginBottom: 3,
           imageWidth: 'auto',

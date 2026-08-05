@@ -1,32 +1,51 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { User } from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
+import { FieldTypesEnum, ListTypesEnum } from '@island.is/form-system/shared'
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { ListItem } from './models/listItem.model'
-import { ListItemDto } from './models/dto/listItem.dto'
-import { CreateListItemDto } from './models/dto/createListItem.dto'
-import { UpdateListItemDto } from './models/dto/updateListItem.dto'
-import { UpdateListItemsDisplayOrderDto } from './models/dto/updateListItemsDisplayOrder.dto'
 import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
+import { Sequelize } from 'sequelize-typescript'
+import { TemplateListItems } from '../../dataTypes/listTypes/templateListItems'
+import { Field } from '../fields/models/field.model'
+import { Form } from '../forms/models/form.model'
+import { Screen } from '../screens/models/screen.model'
+import { Section } from '../sections/models/section.model'
+import { CreateListItemDto } from './models/dto/createListItem.dto'
+import { ListItemDto } from './models/dto/listItem.dto'
+import { TemplateListDto } from './models/dto/templateList.dto'
+import { UpdateListItemDto } from './models/dto/updateListItem.dto'
+import { UpdateListItemsDisplayOrderDto } from './models/dto/updateListItemsDisplayOrder.dto'
+import { ListItem } from './models/listItem.model'
 
 @Injectable()
 export class ListItemsService {
   constructor(
     @InjectModel(ListItem)
     private readonly listItemModel: typeof ListItem,
+    @InjectModel(Field)
+    private readonly fieldModel: typeof Field,
+    @InjectModel(Screen)
+    private readonly screenModel: typeof Screen,
+    @InjectModel(Section)
+    private readonly sectionModel: typeof Section,
+    @InjectModel(Form)
+    private readonly formModel: typeof Form,
+    private readonly sequelize: Sequelize,
   ) {}
 
-  async findById(id: string): Promise<ListItem> {
-    const listItem = await this.listItemModel.findByPk(id)
+  async create(
+    user: User,
+    createListItem: CreateListItemDto,
+  ): Promise<ListItemDto> {
+    await this.checkPermissions(user, createListItem.fieldId)
 
-    if (!listItem) {
-      throw new NotFoundException(`List item with id '${id}' not found`)
-    }
-
-    return listItem
-  }
-
-  async create(createListItem: CreateListItemDto): Promise<ListItemDto> {
     const newListItem = await this.listItemModel.create({
       fieldId: createListItem.fieldId,
       displayOrder: createListItem.displayOrder,
@@ -49,10 +68,17 @@ export class ListItemsService {
   }
 
   async update(
+    user: User,
     id: string,
     updateListItemDto: UpdateListItemDto,
   ): Promise<void> {
-    const listItem = await this.findById(id)
+    const listItem = await this.listItemModel.findByPk(id)
+
+    if (!listItem) {
+      throw new NotFoundException(`List item with id '${id}' not found`)
+    }
+
+    await this.checkPermissions(user, listItem.fieldId)
 
     Object.assign(listItem, updateListItemDto)
 
@@ -60,6 +86,7 @@ export class ListItemsService {
   }
 
   async updateDisplayOrder(
+    user: User,
     updateListItemsDisplayOrderDto: UpdateListItemsDisplayOrderDto,
   ): Promise<void> {
     const { listItemsDisplayOrderDto } = updateListItemsDisplayOrderDto
@@ -75,14 +102,133 @@ export class ListItemsService {
         )
       }
 
+      await this.checkPermissions(user, listItem.fieldId)
+
       await listItem.update({
         displayOrder: i,
       })
     }
   }
 
-  async delete(id: string): Promise<void> {
-    const listItem = await this.findById(id)
-    listItem?.destroy()
+  async delete(user: User, id: string): Promise<void> {
+    const listItem = await this.listItemModel.findByPk(id)
+
+    if (!listItem) {
+      throw new NotFoundException(`List item with id '${id}' not found`)
+    }
+
+    await this.checkPermissions(user, listItem.fieldId)
+
+    await listItem.destroy()
+  }
+
+  private async checkPermissions(user: User, fieldId: string): Promise<void> {
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
+    const field = await this.fieldModel.findByPk(fieldId)
+    if (!field) {
+      throw new NotFoundException(`Field with id '${fieldId}' not found`)
+    }
+    const screen = await this.screenModel.findByPk(field.screenId)
+    if (!screen) {
+      throw new NotFoundException(
+        `Screen with id '${field.screenId}' not found`,
+      )
+    }
+    const section = await this.sectionModel.findByPk(screen.sectionId)
+    if (!section) {
+      throw new NotFoundException(
+        `Section with id '${screen.sectionId}' not found`,
+      )
+    }
+    const form = await this.formModel.findByPk(section.formId)
+    if (!form) {
+      throw new NotFoundException(`Form with id '${section.formId}' not found`)
+    }
+
+    const formOwnerNationalId = form.organizationNationalId
+    if (user.nationalId !== formOwnerNationalId && !isAdmin) {
+      throw new UnauthorizedException(
+        `User does not have permission to manage list items of field with id '${fieldId}'`,
+      )
+    }
+  }
+
+  async applyTemplateList(
+    user: User,
+    templateListDto: TemplateListDto,
+  ): Promise<ListItemDto[]> {
+    const { fieldId, templateListType } = templateListDto
+    const templateItems = TemplateListItems[templateListType]
+
+    if (!templateItems?.length) {
+      throw new BadRequestException(
+        `Template list '${templateListType}' is not supported`,
+      )
+    }
+
+    await this.checkPermissions(user, fieldId)
+
+    return this.sequelize.transaction(async (transaction) => {
+      const field = await this.fieldModel.findByPk(fieldId, {
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      })
+
+      if (!field) {
+        throw new NotFoundException(`Field with id '${fieldId}' not found`)
+      }
+
+      if (
+        field.fieldType !== FieldTypesEnum.DROPDOWN_LIST &&
+        field.fieldType !== FieldTypesEnum.RADIO_BUTTONS
+      ) {
+        throw new BadRequestException(
+          `Field with id '${fieldId}' does not support template lists`,
+        )
+      }
+
+      await this.listItemModel.destroy({
+        where: { fieldId },
+        transaction,
+      })
+
+      field.fieldSettings = {
+        ...(field.fieldSettings ?? {}),
+        listType: ListTypesEnum.CUSTOM,
+      }
+      await field.save({ transaction })
+
+      const createdItems = await this.listItemModel.bulkCreate(
+        templateItems.map((item, displayOrder) => ({
+          fieldId,
+          displayOrder,
+          label: item.label,
+          description: item.description,
+          value: item.value,
+          isSelected: item.isSelected,
+        })) as ListItem[],
+        { transaction, returning: true },
+      )
+
+      const keys = [
+        'id',
+        'label',
+        'description',
+        'value',
+        'displayOrder',
+        'isSelected',
+      ]
+
+      return createdItems
+        .sort((a, b) => a.displayOrder - b.displayOrder)
+        .map(
+          (item) =>
+            defaults(
+              pick(item, keys),
+              zipObject(keys, Array(keys.length).fill(null)),
+            ) as ListItemDto,
+        )
+    })
   }
 }

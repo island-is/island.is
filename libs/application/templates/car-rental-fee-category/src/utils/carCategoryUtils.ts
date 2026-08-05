@@ -1,12 +1,7 @@
-import { EntryModel } from '@island.is/clients-rental-day-rate'
-import { isDayRateEntryActive } from './dayRateUtils'
+import { EntryModel, ValidVehicle } from '@island.is/clients-rental-day-rate'
+import { isDayRateEntryActive, is15DaysOrMoreFromDate } from './dayRateUtils'
 import { RateCategory } from './constants'
-import {
-  CarCategoryError,
-  CarCategoryRecord,
-  CarMap,
-  CurrentVehicleWithMilage,
-} from './types'
+import { CarCategoryError, CarCategoryRecord, CarMap } from './types'
 import { parseFileToCarCategory } from './UploadCarCategoryFileUtils'
 
 export type UploadFileType = 'csv' | 'xlsx'
@@ -16,7 +11,7 @@ export type ParseUploadResult =
   | { ok: false; errors: CarCategoryError[]; reason: 'errors' | 'no-data' }
 
 export const buildCurrentCarMap = (
-  vehicles: CurrentVehicleWithMilage[] | undefined,
+  vehicles: ValidVehicle[] | undefined,
   rates: EntryModel[] | undefined,
   currentDate: Date = new Date(),
 ): CarMap => {
@@ -31,13 +26,43 @@ export const buildCurrentCarMap = (
     )
 
     acc[vehicle.permno] = {
-      milage: vehicle.milage ?? 0,
+      mileage: vehicle.mileage,
       category: activeDayRate ? RateCategory.DAYRATE : RateCategory.KMRATE,
       activeDayRate,
     }
 
     return acc
   }, {} as CarMap)
+}
+
+export const getManualMileageTableRows = (
+  carMap: CarMap | undefined,
+  rateToChangeTo: RateCategory | undefined,
+): Array<{
+  permno: string
+  latestMilage: undefined
+  currentMilage: number | null
+}> => {
+  if (!carMap) return []
+
+  return Object.entries(carMap)
+    .filter(([, car]) => {
+      if (car.category === rateToChangeTo) return false
+
+      if (rateToChangeTo === RateCategory.KMRATE) {
+        const validFromDate = car.activeDayRate?.validFrom
+        if (validFromDate && !is15DaysOrMoreFromDate(validFromDate)) {
+          return false
+        }
+      }
+
+      return true
+    })
+    .map(([permno, car]) => ({
+      permno,
+      latestMilage: undefined,
+      currentMilage: car.mileage,
+    }))
 }
 
 export const getUploadFileType = (

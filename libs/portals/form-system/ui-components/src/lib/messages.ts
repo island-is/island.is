@@ -6,6 +6,16 @@ export const m = defineMessages({
     defaultMessage: 'Umsóknarsmiður',
     description: 'Form builder',
   },
+  showSidebar: {
+    id: 'form.system:show-sidebar',
+    defaultMessage: 'Sýna valmynd',
+    description: 'Show sidebar',
+  },
+  hideSidebar: {
+    id: 'form.system:hide-sidebar',
+    defaultMessage: 'Fela valmynd',
+    description: 'Hide sidebar',
+  },
   form: {
     id: 'form.system:form',
     defaultMessage: 'Form',
@@ -120,10 +130,15 @@ export const m = defineMessages({
     defaultMessage: 'slug',
     description: 'slug',
   },
-  daysUntilExpiration: {
-    id: 'form.system:days-until-expiration',
-    defaultMessage: 'Líftími umsóknar (hámark 30 dagar)',
-    description: 'Days until expiration of application (max 30 days)',
+  lifetimeWhileInDraft: {
+    id: 'form.system:lifetime-while-in-draft',
+    defaultMessage: 'Líftími umsókna í drögum (allt að 60 dagar)',
+    description: 'Application lifetime in drafts (max 60 days)',
+  },
+  lifetimeAfterSubmission: {
+    id: 'form.system:lifetime-after-submission',
+    defaultMessage: 'Líftími umsókna eftir skil (allt að 30 dagar)',
+    description: 'Application lifetime after submission (max 30 days)',
   },
   deadline: {
     id: 'form.system:deadline',
@@ -144,8 +159,8 @@ export const m = defineMessages({
   },
   summaryScreen: {
     id: 'form.system:summary-screen',
-    defaultMessage: 'Yfirlit',
-    description: 'Summary',
+    defaultMessage: 'Birta yfirlit áður en umsókn er send inn',
+    description: 'Display summary before submission',
   },
   payment: {
     id: 'form.system:payment',
@@ -238,6 +253,11 @@ export const m = defineMessages({
     id: 'form.system:individual-on-behalf-legal-entity',
     defaultMessage: 'Einstaklingur í umboði lögaðila',
     description: 'Individual on behalf of a legal entity',
+  },
+  legalGuardianOnBehalfOfIndividual: {
+    id: 'form.system:legal-guardian-on-behalf-of-individual',
+    defaultMessage: 'Forsjáraðili í umboði einstaklings',
+    description: 'Legal guardian on behalf of an individual',
   },
   individualWithPowerOfAttorney: {
     id: 'form.system:individual-with-power-of-attorney',
@@ -350,6 +370,21 @@ export const m = defineMessages({
     defaultMessage: 'Listasmiður',
     description: 'List builder',
   },
+  listBuilderSubtitle: {
+    id: 'form.system:list-builder-subtitle',
+    defaultMessage: 'Veldu lista til að skoða og breyta gildum.',
+    description: 'List builder subtitle',
+  },
+  noListSelected: {
+    id: 'form.system:no-list-selected',
+    defaultMessage: 'Enginn listi',
+    description: 'Empty-state heading when no list is selected',
+  },
+  noListSelectedDescription: {
+    id: 'form.system:no-list-selected-description',
+    defaultMessage: 'Veldu lista eða bættu við gildum',
+    description: 'Empty-state helper text when no list is selected',
+  },
   homestayNumber: {
     id: 'form.system:homestay-number',
     defaultMessage: 'Heimagistingarnúmer',
@@ -397,13 +432,8 @@ export const m = defineMessages({
   },
   submitUrls: {
     id: 'form.system:submitUrls',
-    defaultMessage: 'Innsendingarslóðir',
-    description: 'Submission URLs',
-  },
-  validationUrls: {
-    id: 'form.system:validationUrls',
-    defaultMessage: 'Reglukerfi',
-    description: 'Validation URLs',
+    defaultMessage: 'Veldu slóð',
+    description: 'Choose URL',
   },
   permissions: {
     id: 'form.system:permissions',
@@ -461,6 +491,11 @@ export const m = defineMessages({
     defaultMessage: 'Hámark 30 dagar',
     description: 'Max 30 days',
   },
+  max60Days: {
+    id: 'form.system:max-60-days',
+    defaultMessage: 'Hámark 60 dagar',
+    description: 'Max 60 days',
+  },
   chooseDate: {
     id: 'form.system:choose-date',
     defaultMessage: 'Veldu dagsetningu',
@@ -468,8 +503,15 @@ export const m = defineMessages({
   },
   chooseListType: {
     id: 'form.system:choose-list-type',
-    defaultMessage: 'Veldu lista tegund',
-    description: 'Choose list type',
+    defaultMessage: 'Veldu lista',
+    description: 'Choose list',
+  },
+  overwriteListConfirm: {
+    id: 'form.system:overwrite-list-confirm',
+    defaultMessage:
+      'Núverandi listi verður yfirskrifaður. Ertu viss um að þú viljir halda áfram?',
+    description:
+      'The existing list will be overwritten. Are you sure you want to continue?',
   },
   addLink: {
     id: 'form.system:add-link',
@@ -550,6 +592,16 @@ export const m = defineMessages({
     id: 'form.system:required',
     defaultMessage: 'Krafist',
     description: 'Required',
+  },
+  listFetchFailed: {
+    id: 'form.system:list-fetch-failed',
+    defaultMessage: 'Ekki tókst að hlaða lista',
+    description: 'Failed to load list',
+  },
+  select: {
+    id: 'form.system:select',
+    defaultMessage: 'Veldu',
+    description: 'Select an option',
   },
   email: {
     id: 'form.system:email',
@@ -633,8 +685,8 @@ export const m = defineMessages({
   },
   getJson: {
     id: 'form.system:get-json',
-    defaultMessage: 'Sækja JSON',
-    description: 'Get JSON',
+    defaultMessage: 'Niðurhala JSON',
+    description: 'Download JSON',
   },
   address: {
     id: 'form.system:address',
@@ -802,6 +854,11 @@ export const m = defineMessages({
     defaultMessage: 'Ógilt fasteignanúmer',
     description: 'Invalid property number',
   },
+  propertySearchFailed: {
+    id: 'form.system:property-search-failed',
+    defaultMessage: 'Leit að fasteign skilaði ekki niðurstöðu',
+    description: 'Property search did not return a successful response',
+  },
   pickHour: {
     id: 'form.system:pick-hour',
     defaultMessage: 'Veldu klukkustund',
@@ -908,8 +965,8 @@ export const m = defineMessages({
   },
   submitApplication: {
     id: 'form.system:submit-application',
-    defaultMessage: 'Senda inn umsókn',
-    description: 'Submit application',
+    defaultMessage: 'Senda inn',
+    description: 'Submit',
   },
   openMyPages: {
     id: 'form.system:open-my-pages',
@@ -1057,6 +1114,17 @@ export const m = defineMessages({
     defaultMessage: 'Þessi umsókn styður ekki þessa tegund innskráningar.',
     description: 'This application does not support this type of login.',
   },
+  delegationRequired: {
+    id: 'form.system:delegation-required',
+    defaultMessage: 'Rangt umboð',
+    description: 'Wrong delegation',
+  },
+  applicationRequiresDelegation: {
+    id: 'form.system:application-requires-delegation',
+    defaultMessage: 'Þú hefur ekki rétt umboð til að opna þessa umsóknartegund',
+    description:
+      'You do not have the correct delegation to open this application type',
+  },
   errorFetchingApplication: {
     id: 'form.system:error-fetching-application',
     defaultMessage: 'Villa kom upp við að sækja umsóknina.',
@@ -1138,7 +1206,138 @@ export const m = defineMessages({
   },
   zendeskPrivate: {
     id: 'form.system:zendesk-private',
-    defaultMessage: 'Umsóknirnar skulu vera merktar internal/private í Zendesk',
-    description: 'Applications should be marked as internal/private in Zendesk',
+    defaultMessage:
+      'Merkja umsóknirnar sem internal/private í Zendesk. Þá fer innihald umsókna ekki með í samskiptum við umsækjanda frá Zendesk.',
+    description:
+      'Mark applications as internal/private in Zendesk. This way, the content of the applications will not be included in communication with the applicant from Zendesk.',
+  },
+  useValidate: {
+    id: 'form.system:use-validate',
+    defaultMessage: 'Nota þjónustuna til að yfirfara (e. validate) gögnin',
+    description: 'Use the service to validate the data',
+  },
+  screenValidate: {
+    id: 'form.system:screen-validate',
+    defaultMessage: 'Senda skjá/umsókn til yfirferðar (e. validation)',
+    description: 'Send the screen for validation',
+  },
+  completedMessage: {
+    id: 'form.system:completed-message',
+    defaultMessage: 'Skilaboð á lokasíðu',
+    description: 'Message on completed page',
+  },
+  isPartOfMulti: {
+    id: 'form.system:is-part-of-multi',
+    defaultMessage: 'Hluti af fjölmengi',
+    description: 'Part of multiset',
+  },
+  multiMax: {
+    id: 'form.system:multi-max',
+    defaultMessage: 'Hámarksfjöldi lína í fjölmengi',
+    description: 'Maximum number of lines in multiset',
+  },
+  addMulti: {
+    id: 'form.system:add-multi',
+    defaultMessage: 'Bæta við línu',
+    description: 'Add line',
+  },
+  removeMulti: {
+    id: 'form.system:remove-multi',
+    defaultMessage: 'Fjarlægja',
+    description: 'Remove',
+  },
+  applicationLifetime: {
+    id: 'form.system:application-lifetime',
+    defaultMessage: 'Líftími umsókna',
+    description: 'Application lifetime',
+  },
+  maxSizeInMb: {
+    id: 'form.system:max-size-in-mb',
+    defaultMessage:
+      'Ein eða fleiri skrár eru of stórar. Hámarksstærð er {maxSizeInMb} MB.',
+    description:
+      'One or more files are too large. Max size is {maxSizeInMb} MB.',
+  },
+  minAmount: {
+    id: 'form.system:min-amount',
+    defaultMessage: 'Magn má ekki vera lægra en {minAmount}',
+    description: 'Minimum amount must not be lower than {minAmount}',
+  },
+  maxAmount: {
+    id: 'form.system:max-amount',
+    defaultMessage: 'Magn má ekki vera hærra en {maxAmount}',
+    description: 'Maximum amount must not be higher than {maxAmount}',
+  },
+  minValue: {
+    id: 'form.system:min-value',
+    defaultMessage: 'Gildi má ekki vera lægra en {minValue}',
+    description: 'Minimum value must not be lower than {minValue}',
+  },
+  maxValue: {
+    id: 'form.system:max-value',
+    defaultMessage: 'Gildi má ekki vera hærra en {maxValue}',
+    description: 'Maximum value must not be higher than {maxValue}',
+  },
+  total: {
+    id: 'form.system:total',
+    defaultMessage: 'Samtals',
+    description: 'Total',
+  },
+  price: {
+    id: 'form.system:price',
+    defaultMessage: 'Verð',
+    description: 'Price',
+  },
+  quantity: {
+    id: 'form.system:quantity',
+    defaultMessage: 'Fjöldi',
+    description: 'Quantity',
+  },
+  pay: {
+    id: 'form.system:pay',
+    defaultMessage: 'Greiða',
+    description: 'Pay',
+  },
+  translationNeededError: {
+    id: 'form.system:translation-needed-error',
+    defaultMessage:
+      'Ekki er hægt að gefa út formið. Allir reitir með íslensku þurfa enska þýðingu.',
+    description:
+      'The form cannot be published. All name fields with Icelandic text require an English translation.',
+  },
+  copyFieldHover: {
+    id: 'form.system:copy-field-hover',
+    defaultMessage: 'Afrita innslátt',
+    description: 'Copy field',
+  },
+  missingValue: {
+    id: 'form.system:missing-value',
+    defaultMessage: 'Vantar gildi',
+    description: 'Missing value',
+  },
+  registrationNumber: {
+    id: 'form.system:registration-number',
+    defaultMessage: 'Skráningarnúmer',
+    description: 'Registration number',
+  },
+  model: {
+    id: 'form.system:model',
+    defaultMessage: 'Tegund',
+    description: 'Model',
+  },
+  color: {
+    id: 'form.system:color',
+    defaultMessage: 'Litur',
+    description: 'Color',
+  },
+  vehicleNotFoundError: {
+    id: 'form.system:vehicle-not-found-error',
+    defaultMessage: 'Ekkert ökutæki fannst með þessu skráningarnúmeri',
+    description: 'No vehicle found with this registration number',
+  },
+  vehiclePlaceholder: {
+    id: 'form.system:vehicle-placeholder',
+    defaultMessage: 'Sláðu inn skráningarnúmer',
+    description: 'Enter registration number',
   },
 })

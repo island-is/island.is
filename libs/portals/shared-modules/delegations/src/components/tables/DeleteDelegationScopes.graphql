@@ -1,0 +1,14 @@
+mutation DeleteAuthDelegationScopes($input: DeleteAuthDelegationScopesInput!) {
+  deleteAuthDelegationScopes(input: $input) {
+    id
+    ... on AuthCustomDelegation {
+      scopes {
+        id
+        name
+        validTo
+        displayName
+        delegationId
+      }
+    }
+  }
+}

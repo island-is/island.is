@@ -116,11 +116,6 @@ export const information = {
         defaultMessage: 'Fæðingarland maka',
         description: 'Spouse birth country label',
       },
-      spouseCitizenship: {
-        id: 'doi.cs.application:information.labels.maritalStatus.spouseCitizenship',
-        defaultMessage: 'Ríkisfang maka',
-        description: 'Spouse citizenship label',
-      },
       applicantAddress: {
         id: 'doi.cs.application:information.labels.maritalStatus.applicantAddress',
         defaultMessage: 'Heimilisfang þitt',

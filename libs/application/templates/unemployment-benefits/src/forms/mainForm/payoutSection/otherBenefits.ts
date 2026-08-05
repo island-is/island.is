@@ -187,10 +187,12 @@ export const otherBenefitsSubSection = buildSubSection({
                     'unemploymentApplication.data.supportData.privatePensionFunds',
                   ) ?? []
 
-                return privatePensionFunds?.map((fund) => ({
-                  value: fund.id ?? '',
-                  label: fund.name ?? '',
-                }))
+                return privatePensionFunds
+                  ?.filter((x) => x.visibleInIncomeEntryOnWeb)
+                  .map((fund) => ({
+                    value: fund.id ?? '',
+                    label: fund.name ?? '',
+                  }))
               },
             },
             pensionFund: {

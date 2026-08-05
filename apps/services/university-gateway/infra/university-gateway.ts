@@ -2,6 +2,8 @@ import {
   CodeOwners,
   service,
   ServiceBuilder,
+  scheduledJob,
+  ScheduledJobBuilder,
 } from '../../../../infra/src/dsl/dsl'
 import {
   Base,
@@ -79,8 +81,10 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> => {
     .grantNamespaces('islandis', 'nginx-ingress-internal', 'application-system')
 }
 
-export const workerSetup = (): ServiceBuilder<typeof serviceWorkerName> => {
-  return service(serviceWorkerName)
+export const workerSetup = (): ScheduledJobBuilder<
+  typeof serviceWorkerName
+> => {
+  return scheduledJob(serviceWorkerName)
     .serviceAccount(serviceWorkerName)
     .namespace(namespace)
     .image(imageName)
@@ -115,11 +119,11 @@ export const workerSetup = (): ServiceBuilder<typeof serviceWorkerName> => {
       UniversityGatewayReykjavikUniversity,
     )
     .db()
-    .extraAttributes({
+    .schedule({
       // Schedule to run hourly at minute :00 (while testing)
-      dev: { schedule: '0 * * * *' },
+      dev: '0 * * * *',
       // Schedule to run daily at two in the morning:
-      staging: { schedule: '0 2 * * *' },
-      prod: { schedule: '0 * * * *' },
+      staging: '0 2 * * *',
+      prod: '0 * * * *',
     })
 }

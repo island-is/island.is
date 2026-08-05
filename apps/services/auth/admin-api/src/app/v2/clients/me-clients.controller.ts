@@ -136,6 +136,29 @@ export class MeClientsController {
     )
   }
 
+  @Patch(':clientId/restore')
+  @Documentation({
+    description: 'Restore an archived client.',
+    response: { status: 204 },
+  })
+  async restore(
+    @CurrentUser() user: User,
+    @Param('clientId') clientId: string,
+    @Param('tenantId') tenantId: string,
+  ): Promise<void> {
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'restore',
+        resources: clientId,
+        alsoLog: true,
+        meta: { tenantId },
+      },
+      this.clientsService.restore(clientId, tenantId),
+    )
+  }
+
   @Delete(':clientId')
   @Documentation({
     description: 'Delete a client.',

@@ -99,6 +99,7 @@ const DocumentsFilter = ({
         variant="popover"
         align="left"
         reverse
+        filterInputFluid
         labelClear={formatMessage(m.clearFilter)}
         labelClearAll={formatMessage(m.clearAllFilters)}
         labelOpen={formatMessage(m.openFilter)}

@@ -3,7 +3,7 @@ import { v4 as uuid } from 'uuid'
 import { EmailService } from '@island.is/email-service'
 import { ConfigType } from '@island.is/nest/config'
 
-import { DEFENDER_INDICTMENT_ROUTE } from '@island.is/judicial-system/consts'
+import { DEFENDER_INDICTMENT_CASE_ROUTE } from '@island.is/judicial-system/consts'
 import {
   CaseType,
   CivilClaimantNotificationType,
@@ -140,7 +140,7 @@ describe('InternalNotificationController - Send spokesperson assigned notificati
             },
             attachments: undefined,
             subject: `Héraðsdómur Reykjavíkur - aðgangur að máli`,
-            html: expect.stringContaining(DEFENDER_INDICTMENT_ROUTE),
+            html: expect.stringContaining(DEFENDER_INDICTMENT_CASE_ROUTE),
             text: expect.stringContaining(
               `Héraðsdómur Reykjavíkur hefur skráð þig lögmann einkaréttarkröfuhafa í máli R-123-456`,
             ),

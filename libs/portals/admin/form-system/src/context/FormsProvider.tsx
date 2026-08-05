@@ -1,16 +1,14 @@
+import { useLazyQuery } from '@apollo/client'
+import { FormSystemForm } from '@island.is/api/schema'
 import {
   FormsLoaderResponse,
-  GET_APPLICATIONS,
   GET_FORMS,
   GET_ORGANIZATION_ADMIN,
 } from '@island.is/form-system/graphql'
-import { useEffect, useState } from 'react'
 import { Option } from '@island.is/island-ui/core'
-import { FormsContext, IFormsContext } from './FormsContext'
-import { FormSystemApplication, FormSystemForm } from '@island.is/api/schema'
-import { useLazyQuery } from '@apollo/client'
+import { useEffect, useMemo, useState } from 'react'
 import { FormsLocationState } from '../lib/utils/interfaces'
-import { useMemo } from 'react'
+import { FormsContext, IFormsContext } from './FormsContext'
 
 interface Props {
   children: React.ReactNode
@@ -24,22 +22,17 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
     isAdmin,
     organizationId: orgId,
     organizationNationalId: orgNationalId,
-    applications: apps,
     selectedCertificationTypes: selectedCert,
     selectedListTypes: selectedList,
     selectedFieldTypes: selectedField,
     certificationTypes,
     listTypes,
     fieldTypes,
+    organizationDelegations,
   } = formsLoader
   const [forms, setForms] = useState<FormSystemForm[]>(formsState)
   const [organizations, setOrganizations] = useState<Option<string>[]>(orgs)
-  const [applications, setApplications] =
-    useState<FormSystemApplication[]>(apps)
   const [getFormsQuery] = useLazyQuery(GET_FORMS, { fetchPolicy: 'no-cache' })
-  const [getApplications] = useLazyQuery(GET_APPLICATIONS, {
-    fetchPolicy: 'no-cache',
-  })
   const [getAdminQuery] = useLazyQuery(GET_ORGANIZATION_ADMIN, {
     fetchPolicy: 'no-cache',
   })
@@ -53,8 +46,12 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
     useState<string[]>(selectedList)
   const [selectedFieldTypes, setSelectedFieldTypes] =
     useState<string[]>(selectedField)
+  const [selectedDelegations, setSelectedDelegations] = useState<string[]>(
+    organizationDelegations ?? [],
+  )
 
   const handleOrganizationChange = async (selected: { value: string }) => {
+    setOrganizationNationalId(selected.value)
     const updatedOrganizations = organizations.map((org) => ({
       ...org,
       isSelected: org.value === selected.value,
@@ -72,20 +69,6 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
       setForms(data.formSystemForms.forms)
     }
 
-    const { data: applicationsData } = await getApplications({
-      variables: {
-        input: {
-          organizationNationalId: selected.value,
-          page: 1,
-          limit: 20,
-          isTest: true,
-        },
-      },
-    })
-    if (applicationsData?.formSystemApplications?.applications) {
-      setApplications(applicationsData?.formSystemApplications?.applications)
-    }
-
     const { data: permissionsData } = await getAdminQuery({
       variables: {
         input: {
@@ -100,6 +83,7 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
       selectedCertificationTypes,
       selectedListTypes,
       selectedFieldTypes,
+      organizationDelegations,
     } = admin
 
     if (organizationId) {
@@ -113,6 +97,11 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
     }
     if (selectedFieldTypes) {
       setSelectedFieldTypes(selectedFieldTypes)
+    }
+    if (organizationDelegations) {
+      setSelectedDelegations(
+        organizationDelegations.filter(Boolean) as string[],
+      )
     }
   }
 
@@ -130,9 +119,7 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
       setOrganizationId,
       organizationNationalId,
       setOrganizationNationalId,
-      applications,
       isAdmin,
-      setApplications,
       location,
       setLocation,
       selectedCertificationTypes,
@@ -141,6 +128,8 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
       setSelectedListTypes,
       selectedFieldTypes,
       setSelectedFieldTypes,
+      selectedDelegations,
+      setSelectedDelegations,
       certificationTypes,
       listTypes,
       fieldTypes,
@@ -151,12 +140,12 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
       organizations,
       organizationId,
       organizationNationalId,
-      applications,
       isAdmin,
       location,
       selectedCertificationTypes,
       selectedListTypes,
       selectedFieldTypes,
+      selectedDelegations,
       certificationTypes,
       listTypes,
       fieldTypes,

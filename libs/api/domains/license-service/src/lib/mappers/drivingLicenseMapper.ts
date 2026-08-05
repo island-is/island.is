@@ -14,7 +14,7 @@ import isAfter from 'date-fns/isAfter'
 import { Locale } from '@island.is/shared/types'
 import { Injectable } from '@nestjs/common'
 import {
-  DriverLicenseDto as DriversLicense,
+  DtoV5DriverLicenseDto as DriversLicense,
   LicenseComments,
 } from '@island.is/clients/driving-license'
 import { isDefined } from '@island.is/shared/utils'

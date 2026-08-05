@@ -1,4 +1,5 @@
-import { map } from 'rxjs/operators'
+import { from } from 'rxjs'
+import { map, switchMap } from 'rxjs/operators'
 
 import {
   CallHandler,
@@ -8,29 +9,387 @@ import {
 } from '@nestjs/common'
 
 import {
+  AppealEventType,
+  CaseAppealDecision,
   CaseFileCategory,
   CaseFileState,
   CaseIndictmentRulingDecision,
+  CaseState,
   DefendantEventType,
   EventType,
+  getAppealDeadlineDate,
   getIndictmentAppealDeadline,
+  getStatementDeadline,
+  isCompletedCase,
   isDefenceUser,
+  isDistrictCourtUser,
+  isIndictmentCase,
   isPrisonSystemUser,
   isProsecutionUser,
   isRequestCase,
+  prosecutionRoles,
   ServiceRequirement,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { isRulingOrderInConfirmedCourtSession } from '../../file/guards/caseFileCategory'
+import { canDefenceUserViewCivilClaimCaseFile } from '../../file/guards/civilClaimFileVisibility'
 import {
+  AppealCase,
+  AppealEventLog,
   Case,
+  CaseFile,
+  CaseRepositoryService,
   CaseString,
   CivilClaimant,
   Defendant,
   DefendantEventLog,
   EventLog,
 } from '../../repository'
+
+// ---------------------------------------------------------------------------
+// Appeal-info computation
+//
+// Pre-appeal info (deadlines, hasBeenAppealed, canBeAppealed) lives on the
+// entity that gets appealed:
+//   - case-level appeals → on the Case
+//   - ruling-order appeals → on the COURT_INDICTMENT_RULING_ORDER CaseFile
+// Post-appeal info (appellant identity, statement deadline) lives on the
+// AppealCase row — same shape for both case-level and ruling-order appeals.
+// `hasBeenAppealed` is duplicated on the appealable entity for UI convenience.
+// ---------------------------------------------------------------------------
+
+const isAppealableDecision = (decision?: CaseAppealDecision | null) => {
+  if (!decision) {
+    return false
+  }
+  return [
+    CaseAppealDecision.POSTPONE,
+    CaseAppealDecision.NOT_APPLICABLE,
+  ].includes(decision)
+}
+
+export interface CaseLevelAppealInfo {
+  hasBeenAppealed?: boolean
+  canBeAppealed?: boolean
+  canProsecutorAppeal?: boolean
+  canDefenderAppeal?: boolean
+  appealDeadline?: Date
+  isAppealDeadlineExpired?: boolean
+}
+
+export const getRequestCaseLevelAppealInfo = (
+  theCase: Case,
+): CaseLevelAppealInfo => {
+  const {
+    rulingDate,
+    accusedAppealDecision,
+    prosecutorAppealDecision,
+    isCompletedWithoutRuling,
+  } = theCase
+  const { appealState } = theCase.appealCase ?? {}
+
+  if (!rulingDate) {
+    return {}
+  }
+
+  const didProsecutorAcceptInCourt =
+    prosecutorAppealDecision === CaseAppealDecision.ACCEPT
+  const didAccusedAcceptInCourt =
+    accusedAppealDecision === CaseAppealDecision.ACCEPT
+  const didAllAcceptInCourt =
+    didProsecutorAcceptInCourt && didAccusedAcceptInCourt
+
+  const hasBeenAppealed = Boolean(appealState) && !didAllAcceptInCourt
+  const canBeAppealed = Boolean(
+    !hasBeenAppealed &&
+      !isCompletedWithoutRuling &&
+      (isAppealableDecision(accusedAppealDecision) ||
+        isAppealableDecision(prosecutorAppealDecision)),
+  )
+  const canProsecutorAppeal =
+    canBeAppealed && isAppealableDecision(prosecutorAppealDecision)
+  const canDefenderAppeal =
+    canBeAppealed && isAppealableDecision(accusedAppealDecision)
+  const appealDeadline = getAppealDeadlineDate(rulingDate)
+  const isAppealDeadlineExpired = Date.now() >= appealDeadline.getTime()
+
+  return {
+    hasBeenAppealed,
+    canBeAppealed,
+    canProsecutorAppeal,
+    canDefenderAppeal,
+    appealDeadline,
+    isAppealDeadlineExpired,
+  }
+}
+
+export const getIndictmentCaseLevelAppealInfo = (
+  theCase: Case,
+): CaseLevelAppealInfo => {
+  if (
+    theCase.indictmentRulingDecision !==
+      CaseIndictmentRulingDecision.DISMISSAL ||
+    !theCase.rulingDate
+  ) {
+    return {}
+  }
+
+  const { appealState } = theCase.appealCase ?? {}
+  const hasBeenAppealed = Boolean(appealState)
+  const canBeAppealed = !hasBeenAppealed
+  const appealDeadline = getAppealDeadlineDate(theCase.rulingDate)
+  const isAppealDeadlineExpired = Date.now() >= appealDeadline.getTime()
+
+  return {
+    hasBeenAppealed,
+    canBeAppealed,
+    canProsecutorAppeal: canBeAppealed,
+    canDefenderAppeal: canBeAppealed,
+    appealDeadline,
+    isAppealDeadlineExpired,
+  }
+}
+
+export const getCaseLevelAppealInfo = (theCase: Case): CaseLevelAppealInfo => {
+  return isRequestCase(theCase.type)
+    ? getRequestCaseLevelAppealInfo(theCase)
+    : getIndictmentCaseLevelAppealInfo(theCase)
+}
+
+export interface AppealCaseInfo {
+  appealedByRole?: UserRole
+  appealedByDefendantId?: string
+  appealedByCivilClaimantId?: string
+  appealedDate?: Date
+  appealedInCourt?: boolean
+  statementDeadline?: Date
+  isStatementDeadlineExpired?: boolean
+}
+
+// The defence party (defendant / civil claimant) that appealed out of court, from
+// the APPEALED event log. Replaces the frozen appealedByNationalId as the way the
+// web names the appellant and gates its appeal files - the web resolves the
+// party's *current* defender / spokesperson. Empty for prosecution appeals (no
+// party on the event) and for request-case collective defence (no party either);
+// in-court appeals are handled by the caller (appealedInCourt), matching the old
+// single-valued national id, which was null for them.
+export const getAppealedByPartyFromEvents = (
+  appealCase: AppealCase,
+): { appealedByDefendantId?: string; appealedByCivilClaimantId?: string } => {
+  const appealedEvent = (appealCase.appealEventLogs ?? []).find(
+    (eventLog) =>
+      eventLog.eventType === AppealEventType.APPEALED &&
+      (eventLog.defendantId || eventLog.civilClaimantId),
+  )
+
+  return {
+    appealedByDefendantId: appealedEvent?.defendantId,
+    appealedByCivilClaimantId: appealedEvent?.civilClaimantId,
+  }
+}
+
+// The appellant's side as recorded on the APPEALED event log. Every appeal
+// registers one - out-of-court via registerAppellant, in-court via the
+// session-confirmation dual-write, historical rows via backfill. Prosecutor
+// precedence covers the case where several parties appealed in court; that only
+// affects in-court appeals, which are displayed as "Kært í þinghaldi" without
+// naming a side, so the single out-of-court appellant is always shown exactly.
+const getAppealedByRoleFromEvents = (
+  appealCase: AppealCase,
+): UserRole | undefined => {
+  const appealedEvents = (appealCase.appealEventLogs ?? []).filter(
+    (eventLog) => eventLog.eventType === AppealEventType.APPEALED,
+  )
+
+  if (appealedEvents.length === 0) {
+    return undefined
+  }
+
+  return appealedEvents.some((eventLog) =>
+    prosecutionRoles.includes(eventLog.userRole),
+  )
+    ? UserRole.PROSECUTOR
+    : UserRole.DEFENDER
+}
+
+// Legacy appellant-side derivation from the case columns. Kept as a fallback for
+// any appeal not yet represented by an APPEALED event (e.g. a backfill row that
+// could not be resolved); removed later with the columns themselves.
+const getLegacyAppealedByRole = (
+  appealCase: AppealCase,
+  theCase: Case,
+): UserRole | undefined => {
+  if (appealCase.rulingFileId) {
+    // Ruling-order appeals recorded the appellant on the AppealCase row itself.
+    return appealCase.appealedByNationalId
+      ? UserRole.DEFENDER
+      : UserRole.PROSECUTOR
+  }
+
+  const { prosecutorPostponedAppealDate, accusedPostponedAppealDate } = theCase
+  if (isRequestCase(theCase.type)) {
+    const didProsecutorAcceptInCourt =
+      theCase.prosecutorAppealDecision === CaseAppealDecision.ACCEPT
+    const didAccusedAcceptInCourt =
+      theCase.accusedAppealDecision === CaseAppealDecision.ACCEPT
+    return prosecutorPostponedAppealDate && !didProsecutorAcceptInCourt
+      ? UserRole.PROSECUTOR
+      : accusedPostponedAppealDate && !didAccusedAcceptInCourt
+      ? UserRole.DEFENDER
+      : undefined
+  }
+
+  return prosecutorPostponedAppealDate
+    ? UserRole.PROSECUTOR
+    : accusedPostponedAppealDate
+    ? UserRole.DEFENDER
+    : undefined
+}
+
+export const getAppealCaseInfo = (
+  appealCase: AppealCase,
+  theCase: Case,
+): AppealCaseInfo => {
+  const { appealReceivedByCourtDate, rulingFileId } = appealCase
+
+  // The time of appeal is read straight from the appeal case's own appeal_date
+  // column (populated on every appeal-creation path + backfilled), rather than
+  // derived from the legacy per-side postponed-date columns (case-level) or the
+  // row's `created` timestamp (ruling-order).
+  const appealedDate = appealCase.appealDate
+
+  // The appellant's side is read from the APPEALED event log, falling back to
+  // the legacy columns for any appeal not yet represented there - so the switch
+  // stays correct even where the backfill could not resolve a row.
+  const appealedByRole =
+    getAppealedByRoleFromEvents(appealCase) ??
+    getLegacyAppealedByRole(appealCase, theCase)
+
+  // True when the ruling order was appealed in court ("Kært í þinghaldi") -
+  // i.e. a party recorded a decision = APPEAL for it in the court record. The
+  // court of appeals shows this without naming who appealed.
+  const appealedInCourt = Boolean(
+    rulingFileId &&
+      theCase.appealDecisions?.some(
+        (decision) =>
+          decision.rulingFileId === rulingFileId &&
+          decision.decision === CaseAppealDecision.APPEAL,
+      ),
+  )
+
+  // The appellant party is only meaningful for a single out-of-court appellant;
+  // in-court appeals name no one ("Kært í þinghaldi"), matching the old
+  // appealedByNationalId which was null for them.
+  const { appealedByDefendantId, appealedByCivilClaimantId } = appealedInCourt
+    ? {}
+    : getAppealedByPartyFromEvents(appealCase)
+
+  let statementDeadline: Date | undefined
+  let isStatementDeadlineExpired: boolean | undefined
+  if (appealReceivedByCourtDate) {
+    statementDeadline = getStatementDeadline(appealReceivedByCourtDate)
+    isStatementDeadlineExpired = Date.now() >= statementDeadline.getTime()
+  }
+
+  return {
+    appealedByRole,
+    appealedByDefendantId,
+    appealedByCivilClaimantId,
+    appealedDate,
+    appealedInCourt,
+    statementDeadline,
+    isStatementDeadlineExpired,
+  }
+}
+
+export interface AppealCaseStatementDates {
+  prosecutorStatementDate?: Date
+  defendantStatementDate?: Date
+  defendantStatementDates?: { defendantId: string; statementDate: Date }[]
+  civilClaimantStatementDates?: {
+    civilClaimantId: string
+    statementDate: Date
+  }[]
+}
+
+export const getAppealCaseStatementDates = (
+  appealCase: AppealCase,
+  theCase: Case,
+): AppealCaseStatementDates => {
+  const eventLogs = appealCase.appealEventLogs
+  const prosecutorStatementDate = AppealEventLog.getLatestDateByRole(
+    AppealEventType.APPEAL_STATEMENT_SENT,
+    prosecutionRoles,
+    eventLogs,
+  )
+
+  if (isRequestCase(theCase.type)) {
+    return {
+      prosecutorStatementDate,
+      defendantStatementDate: AppealEventLog.getLatestDateByRole(
+        AppealEventType.APPEAL_STATEMENT_SENT,
+        UserRole.DEFENDER,
+        eventLogs,
+      ),
+    }
+  }
+
+  return {
+    prosecutorStatementDate,
+    defendantStatementDates: AppealEventLog.groupLatestByDefendant(
+      AppealEventType.APPEAL_STATEMENT_SENT,
+      eventLogs,
+    ),
+    civilClaimantStatementDates: AppealEventLog.groupLatestByCivilClaimant(
+      AppealEventType.APPEAL_STATEMENT_SENT,
+      eventLogs,
+    ),
+  }
+}
+
+export interface RulingOrderAppealInfo {
+  hasBeenAppealed?: boolean
+  canBeAppealed?: boolean
+  appealDeadline?: Date
+  isAppealDeadlineExpired?: boolean
+}
+
+export const getRulingOrderAppealInfo = (
+  caseFile: CaseFile,
+  theCase: Case,
+): RulingOrderAppealInfo => {
+  if (caseFile.category !== CaseFileCategory.COURT_INDICTMENT_RULING_ORDER) {
+    return {}
+  }
+
+  const hasBeenAppealed = Boolean(
+    theCase.rulingOrderAppealCases?.some((a) => a.rulingFileId === caseFile.id),
+  )
+  // Soft deadline — does not gate canBeAppealed; frontend warns visually.
+  const canBeAppealed = !hasBeenAppealed && !isCompletedCase(theCase.state)
+
+  // The ruling time and appeal deadline are based on the end date of the
+  // confirmed court session the ruling order was added to.
+  const confirmedCourtSession = theCase.courtSessions?.find(
+    (session) => session.isConfirmed && session.rulingFileId === caseFile.id,
+  )
+
+  let appealDeadline: Date | undefined
+  let isAppealDeadlineExpired: boolean | undefined
+  if (confirmedCourtSession?.endDate) {
+    appealDeadline = getAppealDeadlineDate(confirmedCourtSession.endDate)
+    isAppealDeadlineExpired = Date.now() >= appealDeadline.getTime()
+  }
+
+  return {
+    hasBeenAppealed,
+    canBeAppealed,
+    appealDeadline,
+    isAppealDeadlineExpired,
+  }
+}
 
 export const transformDefendants = ({
   defendants,
@@ -60,9 +419,29 @@ export const transformDefendants = ({
     const appealDeadline = appealDeadlineResult?.deadlineDate
     const isAppealDeadlineExpired =
       appealDeadlineResult?.isDeadlineExpired ?? false
+    const indictmentCancelledOrDismissedEventLog =
+      DefendantEventLog.getEventLogByEventType(
+        [
+          DefendantEventType.INDICTMENT_CANCELLED,
+          DefendantEventType.INDICTMENT_DISMISSED,
+        ],
+        defendant.eventLogs,
+      )
+    const indictmentCancelledOrDismissedState =
+      indictmentCancelledOrDismissedEventLog
+        ? {
+            type:
+              indictmentCancelledOrDismissedEventLog.eventType ===
+              DefendantEventType.INDICTMENT_CANCELLED
+                ? CaseIndictmentRulingDecision.CANCELLATION
+                : CaseIndictmentRulingDecision.DISMISSAL,
+            time: indictmentCancelledOrDismissedEventLog.created,
+          }
+        : undefined
 
     return {
       ...defendant.toJSON(),
+      policeCaseNumbers: defendant.policeCaseNumbers,
       ...(verdict
         ? {
             verdict: {
@@ -88,8 +467,18 @@ export const transformDefendants = ({
         DefendantEventType.OPENED_BY_PRISON_ADMIN,
         defendant.eventLogs,
       ),
+      indictmentCancelledOrDismissedState,
+      connectedCases: defendant.connectedCases ?? [],
     }
   })
+}
+
+export const transformCivilClaimants = ({
+  civilClaimants,
+}: {
+  civilClaimants?: CivilClaimant[]
+}) => {
+  return civilClaimants?.map((civilClaimant) => civilClaimant.toJSON())
 }
 
 const transformCaseRepresentatives = (theCase: Case) => {
@@ -142,38 +531,175 @@ const transformCaseRepresentatives = (theCase: Case) => {
   ].filter((representative) => !!representative)
 }
 
-const transformCase = (theCase: Case, user: User | undefined) => {
+const getDefenceUserDefendants = (
+  theCase: Case,
+  user: User,
+): {
+  defendants: Defendant[] | undefined
+  allCancelledOrDismissed: boolean
+  latestCancelledOrDismissedDate: Date | undefined
+} => {
+  const myDefendants = theCase.defendants?.filter(
+    (defendant) =>
+      defendant.isDefenderChoiceConfirmed &&
+      defendant.defenderNationalId &&
+      defendant.defenderNationalId === user.nationalId,
+  )
+
+  if (!myDefendants?.length) {
+    return {
+      defendants: theCase.defendants,
+      allCancelledOrDismissed: false,
+      latestCancelledOrDismissedDate: undefined,
+    }
+  }
+
+  const cancelledOrDismissedEventLogs = myDefendants.map((defendant) =>
+    DefendantEventLog.getEventLogByEventType(
+      [
+        DefendantEventType.INDICTMENT_CANCELLED,
+        DefendantEventType.INDICTMENT_DISMISSED,
+      ],
+      defendant.eventLogs,
+    ),
+  )
+
+  const allCancelledOrDismissed = cancelledOrDismissedEventLogs.every(Boolean)
+
+  const latestCancelledOrDismissedDate = allCancelledOrDismissed
+    ? cancelledOrDismissedEventLogs.reduce<Date | undefined>((latest, log) => {
+        if (!log) return latest
+        return !latest || log.created > latest ? log.created : latest
+      }, undefined)
+    : undefined
+
+  return {
+    defendants: allCancelledOrDismissed ? myDefendants : theCase.defendants,
+    allCancelledOrDismissed,
+    latestCancelledOrDismissedDate,
+  }
+}
+
+const transformCase = (
+  theCase: Case,
+  user: User | undefined,
+  originalAncestorId?: string,
+): Record<string, unknown> => {
+  const isDefence = isDefenceUser(user)
+  const {
+    defendants: transformedDefendants,
+    allCancelledOrDismissed,
+    latestCancelledOrDismissedDate,
+  } = isDefence && user
+    ? getDefenceUserDefendants(theCase, user)
+    : {
+        defendants: theCase.defendants,
+        allCancelledOrDismissed: false,
+        latestCancelledOrDismissedDate: undefined,
+      }
+
+  const stateOverride =
+    isDefence && isIndictmentCase(theCase.type) && allCancelledOrDismissed
+      ? {
+          state: CaseState.COMPLETED,
+          rulingDate: latestCancelledOrDismissedDate,
+        }
+      : {}
+
+  // Per-appeal statement dates are derived from each appeal's own event log,
+  // never from the parent case's union — keeps attribution scoped to the row.
+  const appealCaseOverride = theCase.appealCase
+    ? {
+        appealCase: {
+          ...theCase.appealCase.toJSON(),
+          ...getAppealCaseStatementDates(theCase.appealCase, theCase),
+          ...getAppealCaseInfo(theCase.appealCase, theCase),
+          appealEventLogs: undefined,
+        },
+      }
+    : {}
+
+  const rulingOrderAppealCasesOverride = theCase.rulingOrderAppealCases
+    ? {
+        rulingOrderAppealCases: theCase.rulingOrderAppealCases.map((ac) => ({
+          ...ac.toJSON(),
+          ...getAppealCaseStatementDates(ac, theCase),
+          ...getAppealCaseInfo(ac, theCase),
+          appealEventLogs: undefined,
+        })),
+      }
+    : {}
+
+  const caseLevelAppealInfo = getCaseLevelAppealInfo(theCase)
+
   return {
     ...theCase.toJSON(),
+    ...stateOverride,
+    ...caseLevelAppealInfo,
+    accusedPostponedAppealDate: caseLevelAppealInfo.hasBeenAppealed
+      ? theCase.accusedPostponedAppealDate
+      : undefined,
+    prosecutorPostponedAppealDate: caseLevelAppealInfo.hasBeenAppealed
+      ? theCase.prosecutorPostponedAppealDate
+      : undefined,
+    ...appealCaseOverride,
+    ...rulingOrderAppealCasesOverride,
     defendants: transformDefendants({
-      defendants: theCase.defendants,
+      defendants: transformedDefendants,
       indictmentRulingDecision: theCase.indictmentRulingDecision,
       rulingDate: theCase.rulingDate,
     }),
-    caseFiles: theCase.caseFiles?.filter(
-      (file) =>
-        // The user must be known
-        user &&
-        // Rejected files are only visible to relevant parties
-        (file.state !== CaseFileState.REJECTED ||
-          (file.category === CaseFileCategory.PROSECUTOR_CASE_FILE &&
-            isProsecutionUser(user)) ||
-          ((file.category === CaseFileCategory.DEFENDANT_CASE_FILE ||
-            file.category ===
-              CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE) &&
-            Defendant.isConfirmedDefenderOfDefendant(
-              user.nationalId,
-              theCase.defendants,
-            )) ||
-          ((file.category ===
-            CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE ||
-            file.category ===
-              CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE) &&
-            CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(
-              user.nationalId,
-              theCase.civilClaimants,
-            ))),
-    ),
+    civilClaimants: transformCivilClaimants({
+      civilClaimants: theCase.civilClaimants,
+    }),
+    caseFiles: theCase.caseFiles
+      ?.filter(
+        (file) =>
+          // The user must be known
+          user &&
+          // Rejected files are only visible to relevant parties
+          (file.state !== CaseFileState.REJECTED ||
+            (file.category === CaseFileCategory.PROSECUTOR_CASE_FILE &&
+              isProsecutionUser(user)) ||
+            ((file.category === CaseFileCategory.DEFENDANT_CASE_FILE ||
+              file.category ===
+                CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE) &&
+              Defendant.isConfirmedDefenderOfDefendant(
+                user.nationalId,
+                theCase.defendants,
+              )) ||
+            ((file.category ===
+              CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE ||
+              file.category ===
+                CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE) &&
+              CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(
+                user.nationalId,
+                theCase.civilClaimants,
+              ))),
+      )
+      .filter(
+        (file) =>
+          !isDefence ||
+          canDefenceUserViewCivilClaimCaseFile(user?.nationalId, {
+            category: file.category,
+            civilClaimantId: file.civilClaimantId,
+            defendants: theCase.defendants,
+            civilClaimants: theCase.civilClaimants,
+          }),
+      )
+      // A ruling order uploaded during the course of a case is hidden from
+      // everyone except district-court users until it has been added to a
+      // confirmed court session.
+      .filter(
+        (file) =>
+          file.category !== CaseFileCategory.COURT_INDICTMENT_RULING_ORDER ||
+          isDistrictCourtUser(user) ||
+          isRulingOrderInConfirmedCourtSession(file.id, theCase.courtSessions),
+      )
+      .map((file) => ({
+        ...file.toJSON(),
+        ...getRulingOrderAppealInfo(file, theCase),
+      })),
     caseRepresentatives: transformCaseRepresentatives(theCase),
     postponedIndefinitelyExplanation:
       CaseString.postponedIndefinitelyExplanation(theCase.caseStrings),
@@ -182,18 +708,37 @@ const transformCase = (theCase: Case, user: User | undefined) => {
       user && isProsecutionUser(user)
         ? CaseString.penalties(theCase.caseStrings)
         : null,
+    reopenReason: CaseString.reopenReason(theCase.caseStrings),
     caseSentToCourtDate: EventLog.getEventLogDateByEventType(
       [EventType.CASE_SENT_TO_COURT, EventType.INDICTMENT_CONFIRMED],
       theCase.eventLogs,
     ),
-    indictmentReviewedDate: DefendantEventLog.getEventLogDateByEventType(
-      DefendantEventType.INDICTMENT_REVIEWED,
-      theCase.defendants?.flatMap((defendant) => defendant.eventLogs || []),
-    ),
-    indictmentSentToPublicProsecutorDate: EventLog.getEventLogDateByEventType(
-      EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
-      theCase.eventLogs,
-    ),
+    indictmentReviewedDate: (() => {
+      const reviewedDate = DefendantEventLog.getEventLogDateByEventType(
+        DefendantEventType.INDICTMENT_REVIEWED,
+        theCase.defendants?.flatMap((defendant) => defendant.eventLogs || []),
+      )
+      if (!reviewedDate) return undefined
+      const reopenedDate = EventLog.getEventLogDateByEventType(
+        EventType.INDICTMENT_REOPENED,
+        theCase.eventLogs,
+      )
+      return reopenedDate && reopenedDate > reviewedDate
+        ? undefined
+        : reviewedDate
+    })(),
+    indictmentSentToPublicProsecutorDate: (() => {
+      const sentDate = EventLog.getEventLogDateByEventType(
+        EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+        theCase.eventLogs,
+      )
+      if (!sentDate) return undefined
+      const reopenedDate = EventLog.getEventLogDateByEventType(
+        EventType.INDICTMENT_REOPENED,
+        theCase.eventLogs,
+      )
+      return reopenedDate && reopenedDate > sentDate ? undefined : sentDate
+    })(),
     defenceAppealResultAccessDate: EventLog.getEventLogDateByEventType(
       EventType.APPEAL_RESULT_ACCESSED,
       theCase.eventLogs,
@@ -224,17 +769,40 @@ const transformCase = (theCase: Case, user: User | undefined) => {
       (isDefenceUser(user) || isPrisonSystemUser(user))
         ? undefined
         : theCase.rulingModifiedHistory,
+    parentCase: theCase.parentCase && transformCase(theCase.parentCase, user),
+    childCase: theCase.childCase && transformCase(theCase.childCase, user),
+    mergeCase: theCase.mergeCase && transformCase(theCase.mergeCase, user),
+    mergedCases:
+      theCase.mergedCases &&
+      theCase.mergedCases.map((mergedCase) => transformCase(mergedCase, user)),
+    splitCase: theCase.splitCase && transformCase(theCase.splitCase, user),
+    splitCases:
+      theCase.splitCases &&
+      theCase.splitCases.map((splitCase) => transformCase(splitCase, user)),
+    originalAncestorId,
   }
 }
 
 @Injectable()
 export class CaseInterceptor implements NestInterceptor {
+  constructor(private readonly caseRepositoryService: CaseRepositoryService) {}
+
   intercept(context: ExecutionContext, next: CallHandler) {
     const request = context.switchToHttp().getRequest()
 
     const user: User | undefined = request.user?.currentUser
 
-    return next.handle().pipe(map((theCase) => transformCase(theCase, user)))
+    return next
+      .handle()
+      .pipe(
+        switchMap((theCase: Case) =>
+          from(this.caseRepositoryService.findOriginalAncestorId(theCase)).pipe(
+            map((originalAncestorId) =>
+              transformCase(theCase, user, originalAncestorId),
+            ),
+          ),
+        ),
+      )
   }
 }
 

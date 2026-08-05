@@ -6,12 +6,16 @@ import { errors } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
+  CaseIndictmentRulingDecision,
   CaseTransition,
-  NotificationType,
+  IndictmentDecision,
+  TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { applyUpdateToCase } from '../../formHelper'
 import { useCreateCaseMutation } from './createCase.generated'
 import { useCreateCourtCaseMutation } from './createCourtCase.generated'
+import { useDuplicateIndictmentCaseMutation } from './duplicateIndictmentCase.generated'
 import { useExtendCaseMutation } from './extendCase.generated'
 import {
   LimitedAccessTransitionCaseMutation,
@@ -21,6 +25,7 @@ import {
   LimitedAccessUpdateCaseMutation,
   useLimitedAccessUpdateCaseMutation,
 } from './limitedAccessUpdateCase.generated'
+import { useSendAppealNotificationMutation } from './sendAppealNotification.generated'
 import { useSendNotificationMutation } from './sendNotification.generated'
 import { useSplitDefendantFromCaseMutation } from './splitDefendantFromCase.generated'
 import {
@@ -64,8 +69,21 @@ const useCase = () => {
     { loading: isSendingNotification, error: sendNotificationError },
   ] = useSendNotificationMutation()
 
+  const [
+    sendAppealNotificationMutation,
+    {
+      loading: isSendingAppealNotification,
+      error: sendAppealNotificationError,
+    },
+  ] = useSendAppealNotificationMutation()
+
   const [extendCaseMutation, { loading: isExtendingCase }] =
     useExtendCaseMutation()
+
+  const [
+    duplicateIndictmentCaseMutation,
+    { loading: isDuplicatingIndictmentCase },
+  ] = useDuplicateIndictmentCaseMutation()
 
   const [
     splitDefendantFromCaseMutation,
@@ -194,6 +212,10 @@ const useCase = () => {
         caseId: string,
         transition: CaseTransition,
         setWorkingCase?: Dispatch<SetStateAction<Case>>,
+        transitionUpdate?: {
+          indictmentDecision?: IndictmentDecision | null
+          indictmentRulingDecision?: CaseIndictmentRulingDecision | null
+        },
       ): Promise<boolean> => {
         const mutation = limitedAccess
           ? limitedAccessTransitionCaseMutation
@@ -209,6 +231,7 @@ const useCase = () => {
               input: {
                 id: caseId,
                 transition,
+                ...transitionUpdate,
               },
             },
           })
@@ -217,7 +240,7 @@ const useCase = () => {
             LimitedAccessTransitionCaseMutation
 
           const state = res?.[resultType]?.state
-          const appealState = res?.[resultType]?.appealState
+          const appealState = res?.[resultType]?.appealCase?.appealState
 
           if (!state && !appealState) {
             return false
@@ -249,7 +272,7 @@ const useCase = () => {
     () =>
       async (
         id: string,
-        notificationType: NotificationType,
+        notificationType: TrackedNotificationType,
         eventOnly?: boolean,
       ): Promise<boolean> => {
         try {
@@ -270,6 +293,31 @@ const useCase = () => {
     [sendNotificationMutation],
   )
 
+  const sendAppealNotification = useMemo(
+    () =>
+      async (
+        id: string,
+        notificationType: TrackedNotificationType,
+        appealCaseId: string,
+      ): Promise<boolean> => {
+        try {
+          const { data } = await sendAppealNotificationMutation({
+            variables: {
+              input: {
+                caseId: id,
+                type: notificationType,
+                appealCaseId,
+              },
+            },
+          })
+          return Boolean(data?.sendAppealNotification?.notificationSent)
+        } catch (e) {
+          return false
+        }
+      },
+    [sendAppealNotificationMutation],
+  )
+
   const extendCase = useMemo(
     () => async (id: string) => {
       try {
@@ -283,6 +331,21 @@ const useCase = () => {
       }
     },
     [extendCaseMutation, formatMessage],
+  )
+
+  const duplicateIndictmentCase = useMemo(
+    () => async (id: string) => {
+      try {
+        const { data } = await duplicateIndictmentCaseMutation({
+          variables: { input: { id } },
+        })
+
+        return data?.duplicateIndictmentCase
+      } catch (error) {
+        toast.error('Ekki tókst að afrita mál í drög')
+      }
+    },
+    [duplicateIndictmentCaseMutation],
   )
 
   const splitDefendantFromCase = useMemo(
@@ -313,10 +376,9 @@ const useCase = () => {
         return false
       }
 
-      setWorkingCase((prevWorkingCase) => ({
-        ...prevWorkingCase,
-        ...updatesToCase,
-      }))
+      setWorkingCase((prevWorkingCase) =>
+        applyUpdateToCase(prevWorkingCase, updatesToCase),
+      )
 
       if (!workingCase.id) {
         return false
@@ -351,8 +413,13 @@ const useCase = () => {
     sendNotification,
     isSendingNotification,
     sendNotificationError,
+    sendAppealNotification,
+    isSendingAppealNotification,
+    sendAppealNotificationError,
     extendCase,
     isExtendingCase,
+    duplicateIndictmentCase,
+    isDuplicatingIndictmentCase,
     splitDefendantFromCase,
     isSplittingDefendantFromCase,
     setAndSendCaseToServer,

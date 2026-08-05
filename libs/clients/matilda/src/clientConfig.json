@@ -1,0 +1,713 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Menu Publication API (OpenMeal)",
+    "description": "",
+    "version": "3"
+  },
+  "servers": [
+    {
+      "url": "/api/menu-publication/",
+      "description": "Swagger workaround"
+    }
+  ],
+  "paths": {
+    "/v3/distributors": {
+      "get": {
+        "tags": ["OpenMeal"],
+        "summary": "This method returns a list of Distributors (for example schools and retirement homes) for a specific Data Provider",
+        "operationId": "OpenMeal_GetAll_Distributors",
+        "parameters": [
+          {
+            "name": "addressCountry",
+            "in": "query",
+            "description": "SE - optional parameter used to only get the Distributors for a specific country.Use the 2-letter ISO 3166-1 aplha-2 country code, for example \"SE\" for Sweden",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "searchText",
+            "in": "query",
+            "description": "Search-text to find specific distributor",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DistributorsListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/distributors/{distributorId}": {
+      "get": {
+        "tags": ["OpenMeal"],
+        "operationId": "OpenMeal_Get_Distributor",
+        "parameters": [
+          {
+            "name": "distributorId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Distributor"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/meals": {
+      "get": {
+        "tags": ["OpenMeal"],
+        "summary": "This method returns a list of Meals",
+        "operationId": "OpenMeal_GetAll_Meals",
+        "parameters": [
+          {
+            "name": "distributorId",
+            "in": "query",
+            "description": "Parameter specifying the Data Provider ID for a Distributor, used to return only the meals for that distributor.If not provided meals for all distributors are returned",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "description": "1951-09-08 specifying the start of the period to get meals for. If not specified today's data will be used as default.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "description": "1951-09-08 specifying the end of the period to get meals for. If not specified the next 7 days will be used as default.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "lang",
+            "in": "query",
+            "description": "Get data in a specific language, if omitted default language is used",
+            "schema": {
+              "type": "string",
+              "default": "sv"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenMealMenuResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Address": {
+        "type": "object",
+        "properties": {
+          "streetAddress": {
+            "type": "string",
+            "description": "The street address, including house number, street name, etc.",
+            "nullable": true
+          },
+          "postalCode": {
+            "type": "string",
+            "description": "The postal code for the address.",
+            "nullable": true
+          },
+          "addressLocality": {
+            "type": "string",
+            "description": "The locality (city or town) of the address.",
+            "nullable": true
+          },
+          "addressRegion": {
+            "type": "string",
+            "description": "The region (state, province, etc.) of the address.",
+            "nullable": true
+          },
+          "addressCountry": {
+            "type": "string",
+            "description": "The country of the address.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Allergen": {
+        "required": ["codes"],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the allergen.",
+            "nullable": true
+          },
+          "presenceLevel": {
+            "$ref": "#/components/schemas/PresenceLevel"
+          },
+          "codes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LookupCode"
+            },
+            "description": "The collection of lookup codes associated with the allergen."
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents an allergen with a name and associated lookup codes."
+      },
+      "BrandingConfiguration": {
+        "required": ["image"],
+        "type": "object",
+        "properties": {
+          "image": {
+            "$ref": "#/components/schemas/Media"
+          },
+          "primaryColor": {
+            "type": "string",
+            "description": "Hex code or name of the primary color used in the branding.",
+            "nullable": true
+          },
+          "secondaryColor": {
+            "type": "string",
+            "description": "Hex code or name of the secondary color used in the branding.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Course": {
+        "required": [
+          "ingredients",
+          "knownAllergens",
+          "media",
+          "nutrients",
+          "tags"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The id of the course in the meal planning system",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "The Name of the food item that is included with this course",
+            "nullable": true
+          },
+          "optionName": {
+            "type": "string",
+            "description": "A generalized name of the course that doesn't change from day to day nor depend on the contents of what is served.\r\nCould be \"Lunch of the day\" or \"Vegetarian choice\" and so on",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "description": "A more detailed text than the name of the course.\r\nCould be a description of the ingredients and perhaps their origins, or whatever extra information about the course is relevant for the prospective dining guest.",
+            "nullable": true
+          },
+          "order": {
+            "type": "integer",
+            "description": "The sorting order",
+            "format": "int32"
+          },
+          "labelOfContents": {
+            "type": "string",
+            "description": "A text including the ingredients of the course.",
+            "nullable": true
+          },
+          "ingredients": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Ingredient"
+            }
+          },
+          "media": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Media"
+            }
+          },
+          "knownAllergens": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Allergen"
+            }
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Tag"
+            }
+          },
+          "nutrients": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Nutrient"
+            }
+          },
+          "prices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Price"
+            },
+            "nullable": true
+          },
+          "co2Equivalents": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "A course is a specific set of food items served together during a meal, all at the same time"
+      },
+      "Distributor": {
+        "required": [
+          "address",
+          "brandingConfiguration",
+          "id",
+          "locations",
+          "name",
+          "organization"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the distributor.",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the distributor.",
+            "nullable": true
+          },
+          "organization": {
+            "type": "string",
+            "description": "Name of the organization the distributor belongs to.",
+            "nullable": true
+          },
+          "lang": {
+            "type": "string",
+            "description": "Language preference for the distributor.",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of distributor (e.g., retail, wholesale).",
+            "nullable": true
+          },
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "locations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Location"
+            },
+            "description": "Collection of locations associated with the distributor. This field is required.",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the distributor's services or products.",
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "description": "Website URL of the distributor.",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "description": "Email address for contacting the distributor.",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "description": "Phone number for contacting the distributor.",
+            "nullable": true
+          },
+          "iCalendar": {
+            "type": "string",
+            "description": "iCalendar link for scheduling or events related to the distributor.",
+            "nullable": true
+          },
+          "messageForCustomers": {
+            "type": "string",
+            "description": "Message that the distributor wants to convey to customers.",
+            "nullable": true
+          },
+          "brandingConfiguration": {
+            "$ref": "#/components/schemas/BrandingConfiguration"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DistributorSummary": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DistributorsListResponse": {
+        "required": ["distributors"],
+        "type": "object",
+        "properties": {
+          "distributors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Distributor"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "Ingredient": {
+        "required": ["codes"],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the ingredient.",
+            "nullable": true
+          },
+          "codes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LookupCode"
+            },
+            "description": "The collection of lookup codes associated with the ingredient."
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents an ingredient with a name and associated lookup codes."
+      },
+      "Location": {
+        "required": ["geoPositionRepresentations"],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "geoPositionRepresentations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Position"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "LookupCode": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "The code value. Could be something like ML that with GS1 codes means Lactose (Milk Lactose)",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of the code. this could be GS1 meaning the code comes from that source",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents a lookup code with a code and type. these can be used to gather more information about the object in other databases\r\nprovided that the Type (source) can be found"
+      },
+      "Meal": {
+        "required": ["courses", "distributor"],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the meal.",
+            "nullable": true
+          },
+          "date": {
+            "type": "string",
+            "description": "The date of the meal.",
+            "format": "date-time"
+          },
+          "dateDescription": {
+            "type": "string",
+            "description": "The description of the Date. Can contain information specific to the date such as holidays and specific events.",
+            "nullable": true
+          },
+          "holidayName": {
+            "type": "string",
+            "description": "Name of Holiday if the current date is a holiday",
+            "nullable": true
+          },
+          "lang": {
+            "type": "string",
+            "description": "The language of the meal description.",
+            "nullable": true
+          },
+          "order": {
+            "type": "integer",
+            "description": "The sort order of the meal.",
+            "format": "int32"
+          },
+          "description": {
+            "type": "string",
+            "description": "The description of the meal.",
+            "nullable": true
+          },
+          "distributor": {
+            "$ref": "#/components/schemas/DistributorSummary"
+          },
+          "courses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Course"
+            },
+            "description": "The collection of courses associated with the meal."
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents a meal with its name, date, language, order, description, distributor, and associated courses."
+      },
+      "Media": {
+        "type": "object",
+        "properties": {
+          "src": {
+            "type": "string",
+            "description": "The source URL or path of the media file.",
+            "nullable": true
+          },
+          "mimeType": {
+            "type": "string",
+            "description": "The MIME type of the media file.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents a media file with a source and a MIME type."
+      },
+      "Nutrient": {
+        "required": ["codes"],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the nutrient.",
+            "nullable": true
+          },
+          "amount": {
+            "type": "number",
+            "description": "The amount of the nutrient for the given unit",
+            "format": "double"
+          },
+          "unit": {
+            "type": "string",
+            "description": "The unit of the nutrient amount. is most often g or µg",
+            "nullable": true
+          },
+          "codes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LookupCode"
+            },
+            "description": "The collection of lookup codes associated with the nutrient."
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents a nutrient"
+      },
+      "OpenMealMenuResponse": {
+        "required": ["meals"],
+        "type": "object",
+        "properties": {
+          "meals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Meal"
+            }
+          }
+        },
+        "additionalProperties": false,
+        "description": "Root response with a collection of meals"
+      },
+      "Position": {
+        "required": ["coordinates"],
+        "type": "object",
+        "properties": {
+          "coordinateSystem": {
+            "type": "string",
+            "description": "Name of the CoordinateSystem (wgs84)",
+            "nullable": true
+          },
+          "coordinates": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "double"
+            },
+            "description": "A pair of Coordinates indicating a point on a map"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PresenceLevel": {
+        "enum": ["PRESENT", "MAY_CONTAIN_TRACES"],
+        "type": "string"
+      },
+      "Price": {
+        "required": ["name", "value"],
+        "type": "object",
+        "properties": {
+          "name": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "value": {
+            "type": "number",
+            "format": "double"
+          },
+          "currency": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": {}
+      },
+      "Tag": {
+        "required": ["codes"],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the tag.",
+            "nullable": true
+          },
+          "codes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LookupCode"
+            },
+            "description": "The collection of lookup codes associated with the tag."
+          },
+          "media": {
+            "$ref": "#/components/schemas/Media"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents a tag used for food labeling with a name"
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "apiKey",
+        "description": "Please insert JWT with Bearer into field",
+        "name": "Authorization",
+        "in": "header"
+      },
+      "ApiKey": {
+        "type": "apiKey",
+        "name": "x-api-key",
+        "in": "header"
+      }
+    }
+  },
+  "security": [
+    {
+      "Bearer": []
+    },
+    {
+      "ApiKey": []
+    }
+  ]
+}

@@ -15,12 +15,6 @@ import { ApplicationApplicationsInput } from './dto/applicationApplications.inpu
 import { ApplicationPayment } from './application.model'
 import { AttachmentPresignedUrlInput } from './dto/AttachmentPresignedUrl.input'
 import { DeleteApplicationInput } from './dto/deleteApplication.input'
-import {
-  ApplicationsSuperAdminFilters,
-  ApplicationsAdminStatisticsInput,
-  ApplicationsAdminFilters,
-  ApplicationTypesInstitutionAdminInput,
-} from './application-admin/dto/applications-admin-inputs'
 
 @Injectable()
 export class ApplicationService {
@@ -81,94 +75,10 @@ export class ApplicationService {
     )
   }
 
-  async findAllSuperAdmin(
-    user: User,
-    locale: Locale,
-    filters: ApplicationsSuperAdminFilters,
-  ) {
-    return this.applicationApiWithAuth(user).adminControllerFindAllSuperAdmin({
-      count: filters.count,
-      page: filters.page,
-      applicantNationalId: filters.applicantNationalId,
-      locale,
-      status: filters.status?.join(','),
-      from: filters.from,
-      to: filters.to,
-      typeIdValue: filters.typeIdValue,
-      searchStr: filters.searchStr,
-      institutionNationalId: filters.institutionNationalId,
-    })
-  }
-
-  async findAllInstitutionAdmin(
-    user: User,
-    locale: Locale,
-    filters: ApplicationsAdminFilters,
-  ) {
-    return this.applicationApiWithAuth(
-      user,
-    ).adminControllerFindAllInstitutionAdmin({
-      page: filters.page,
-      count: filters.count,
-      locale,
-      status: filters.status?.join(','),
-      applicantNationalId: filters.applicantNationalId,
-      from: filters.from,
-      to: filters.to,
-      typeIdValue: filters.typeIdValue,
-      searchStr: filters.searchStr,
-    })
-  }
-
-  async findAllApplicationTypesInstitutionAdmin(
-    user: User,
-    locale: Locale,
-    input: ApplicationTypesInstitutionAdminInput,
-  ) {
-    return this.applicationApiWithAuth(
-      user,
-    ).adminControllerGetApplicationTypesInstitutionAdmin({
-      nationalId: input.nationalId,
-      locale,
-    })
-  }
-
-  async findAllApplicationTypesSuperAdmin(user: User, locale: Locale) {
-    return this.applicationApiWithAuth(
-      user,
-    ).adminControllerGetApplicationTypesSuperAdmin({
-      locale,
-    })
-  }
-
   async create(input: CreateApplicationInput, auth: Auth) {
     return this.applicationApiWithAuth(auth).applicationControllerCreate({
       createApplicationDto: input,
     })
-  }
-
-  async getSuperAdminApplicationCountByTypeIdAndStatus(
-    user: User,
-    input: ApplicationsAdminStatisticsInput,
-  ) {
-    return this.applicationApiWithAuth(
-      user,
-    ).adminControllerGetSuperAdminCountByTypeIdAndStatus(input)
-  }
-
-  async getInstitutionApplicationCountByTypeIdAndStatus(
-    user: User,
-    input: ApplicationsAdminStatisticsInput,
-  ) {
-    return this.applicationApiWithAuth(
-      user,
-    ).adminControllerGetInstitutionCountByTypeIdAndStatus(input)
-  }
-
-  async getApplicationInstitutions(user: User) {
-    return this.applicationApiWithAuth(
-      user,
-    ).adminControllerGetInstitutionsSuperAdmin({})
   }
 
   async update(input: UpdateApplicationInput, auth: Auth, locale: Locale) {

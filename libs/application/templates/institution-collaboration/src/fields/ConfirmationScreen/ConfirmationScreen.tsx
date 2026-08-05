@@ -2,10 +2,10 @@ import { Box, Bullet, BulletList, Stack } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
 
 import { FieldBaseProps } from '@island.is/application/types'
-import InstitutionIllustration from '../../assets/InstitutionIllustration'
 import { formatText } from '@island.is/application/core'
 import { institutionApplicationMessages as m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
+import { PersonsOnComputers } from '@island.is/application/assets/graphics'
 
 const ConfirmationScreen: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
@@ -39,7 +39,7 @@ const ConfirmationScreen: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           </Bullet>
         </BulletList>
         <Box display="flex" justifyContent="center" size={1}>
-          <InstitutionIllustration />
+          <PersonsOnComputers />
         </Box>
       </Stack>
     </Box>

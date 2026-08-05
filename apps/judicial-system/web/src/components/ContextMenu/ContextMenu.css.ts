@@ -6,6 +6,7 @@ export const menu = style({
   minWidth: 229,
   boxShadow: '0px 4px 30px rgba(0, 97, 255, 0.16)',
   alignItems: 'flex-start',
+  overflow: 'hidden',
 
   ':focus': {
     outline: 'none',
@@ -21,6 +22,9 @@ export const menuItem = style({
     '&:hover, &:focus': {
       textDecoration: 'none',
       color: theme.color.blue400,
+      outline: 'none',
+    },
+    '&:focus-visible': {
       outline: 'none',
     },
   },

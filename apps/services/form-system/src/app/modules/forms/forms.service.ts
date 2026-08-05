@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -11,17 +12,20 @@ import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 
+import { SectionInfo } from '@/app/dataTypes/sectionInfo.model'
 import { User } from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 import {
+  FieldTypesEnum,
   FormStatus,
   SectionTypes,
   UpdateFormError,
   UpdateFormResponse,
   UpdateFormStatusDto,
 } from '@island.is/form-system/shared'
+import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { randomUUID } from 'crypto'
-import { jwtDecode } from 'jwt-decode'
-import { Op, UniqueConstraintError } from 'sequelize'
+import { Op, Transaction, UniqueConstraintError } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuidV4 } from 'uuid'
 import {
@@ -32,7 +36,7 @@ import {
   CertificationType,
   CertificationTypes,
 } from '../../dataTypes/certificationTypes/certificationType.model'
-import { CompletedSectionInfo } from '../../dataTypes/completedSectionInfo.model'
+import { Dependency } from '../../dataTypes/dependency.model'
 import { FieldSettingsFactory } from '../../dataTypes/fieldSettings/fieldSettings.factory'
 import { FieldSettings } from '../../dataTypes/fieldSettings/fieldSettings.model'
 import {
@@ -44,8 +48,10 @@ import { Option } from '../../dataTypes/option.model'
 import { ValueTypeFactory } from '../../dataTypes/valueTypes/valueType.factory'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 import { Application } from '../applications/models/application.model'
+import { Value } from '../applications/models/value.model'
 import { FieldDto } from '../fields/models/dto/field.dto'
 import { Field } from '../fields/models/field.model'
+import { FileService } from '../file/file.service'
 import { FormCertificationTypeDto } from '../formCertificationTypes/models/dto/formCertificationType.dto'
 import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
 import { ListItem } from '../listItems/models/listItem.model'
@@ -59,8 +65,14 @@ import { FormDto } from './models/dto/form.dto'
 import { FormResponseDto } from './models/dto/form.response.dto'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
 import { Form } from './models/form.model'
-import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
-import { Dependency } from '../../dataTypes/dependency.model'
+import { OrganizationZendeskInstanceDto } from '../organizations/models/dto/organizationZendeskInstance.dto'
+import {
+  ApplicationJsonDto,
+  ApplicationJsonFieldDto,
+  ApplicationJsonFieldSettingsDto,
+  ApplicationJsonValueDto,
+} from '../applications/models/dto/application.json.dto'
+import { FormDelegationDto } from './models/dto/formDelegation.dto'
 
 @Injectable()
 export class FormsService {
@@ -84,16 +96,21 @@ export class FormsService {
     private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly fileService: FileService,
   ) {}
 
   async findAll(user: User, nationalId: string): Promise<FormResponseDto> {
-    const token = jwtDecode<{ name: string; nationalId: string }>(
-      user.authorization,
-    )
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
+    if (user.nationalId !== nationalId && !isAdmin) {
+      throw new ForbiddenException(
+        `User does not have permission to get forms for organization with nationalId '${nationalId}'`,
+      )
+    }
 
     // the loader is not sending the nationalId
     if (nationalId === '0') {
-      nationalId = token.nationalId
+      nationalId = user.nationalId
     }
 
     let organization = await this.organizationModel.findOne({
@@ -124,16 +141,19 @@ export class FormsService {
       'created',
       'modified',
       'zendeskInternal',
+      'useValidate',
       'submissionServiceUrl',
-      'validationServiceUrl',
       'isTranslated',
       'hasPayment',
       'beenPublished',
       'status',
-      'daysUntilApplicationPrune',
+      'draftDaysToLive',
+      'submissionDaysToLive',
       'allowProceedOnValidationFail',
       'hasSummaryScreen',
-      'completedSectionInfo',
+      'sectionInfo',
+      'lastModifiedBy',
+      'delegations',
     ]
 
     const formResponseDto: FormResponseDto = {
@@ -143,14 +163,15 @@ export class FormsService {
           zipObject(keys, Array(keys.length).fill(null)),
         ) as FormDto
 
-        if (dto.completedSectionInfo) {
-          const cs = dto.completedSectionInfo
+        if (dto.sectionInfo) {
+          const cs = dto.sectionInfo
 
           cs.title ??= { is: '', en: '' }
           cs.confirmationHeader ??= { is: '', en: '' }
           cs.confirmationText ??= { is: '', en: '' }
 
           cs.additionalInfo ??= []
+          cs.additionalPremises ??= []
         }
 
         return dto
@@ -179,13 +200,51 @@ export class FormsService {
     return formResponseDto
   }
 
-  async findOne(id: string): Promise<FormResponseDto> {
+  async findOne(user: User, id: string): Promise<FormResponseDto> {
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
     const form = await this.findById(id)
 
     if (!form) {
       throw new NotFoundException(`Form with id '${id}' not found`)
     }
+
+    const formOwnerNationalId = form.organizationNationalId
+
+    if (user.nationalId !== formOwnerNationalId && !isAdmin) {
+      throw new ForbiddenException(
+        `User does not have permission to get form for organization with nationalId '${formOwnerNationalId}'`,
+      )
+    }
+
     const formResponse = await this.buildFormResponse(form)
+
+    if (!formResponse) {
+      throw new Error('Error generating form response')
+    }
+
+    return formResponse
+  }
+
+  async getJsonSample(user: User, id: string): Promise<FormResponseDto> {
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
+    const form = await this.findById(id)
+
+    if (!form) {
+      throw new NotFoundException(`Form with id '${id}' not found`)
+    }
+
+    const formOwnerNationalId = form.organizationNationalId
+
+    if (user.nationalId !== formOwnerNationalId && !isAdmin) {
+      throw new ForbiddenException(
+        `User does not have permission to get JSON sample for form with id '${id}'`,
+      )
+    }
+
+    const formResponse = new FormResponseDto()
+    formResponse.jsonSample = this.mapFormToJsonSample(form)
 
     if (!formResponse) {
       throw new Error('Error generating form response')
@@ -198,6 +257,14 @@ export class FormsService {
     user: User,
     organizationNationalId: string,
   ): Promise<FormResponseDto> {
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
+    if (user.nationalId !== organizationNationalId && !isAdmin) {
+      throw new ForbiddenException(
+        `User does not have permission to create form for organization with nationalId '${organizationNationalId}'`,
+      )
+    }
+
     const organization = await this.organizationModel.findOne({
       where: { nationalId: organizationNationalId },
     })
@@ -208,19 +275,20 @@ export class FormsService {
       )
     }
 
-    const completedSectionInfo = {
+    const sectionInfo = {
       title: { is: '', en: '' },
       confirmationHeader: { is: '', en: '' },
       confirmationText: { is: '', en: '' },
       additionalInfo: [],
-    } as CompletedSectionInfo
+      additionalPremises: [],
+    } as SectionInfo
 
     const newForm = await this.formModel.create({
       organizationId: organization.id,
       organizationNationalId: organizationNationalId,
       status: FormStatus.IN_DEVELOPMENT,
       draftTotalSteps: 3,
-      completedSectionInfo,
+      sectionInfo,
     } as Form)
 
     await this.createFormTemplate(newForm)
@@ -242,12 +310,24 @@ export class FormsService {
   }
 
   async update(
+    user: User,
     id: string,
     updateFormDto: UpdateFormDto,
   ): Promise<UpdateFormResponse> {
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
     const form = await this.formModel.findByPk(id)
+
     if (!form) {
       throw new NotFoundException(`Form with id '${id}' not found`)
+    }
+
+    const formOwnerNationalId = form.organizationNationalId
+
+    if (user.nationalId !== formOwnerNationalId && !isAdmin) {
+      throw new ForbiddenException(
+        `User does not have permission to update form with id '${id}'`,
+      )
     }
 
     const originalHasPayment = form.hasPayment
@@ -293,11 +373,91 @@ export class FormsService {
     return response
   }
 
-  async copy(id: string): Promise<FormResponseDto> {
+  async addDelegation(
+    user: User,
+    formDelegationDto: FormDelegationDto,
+  ): Promise<void> {
+    const { formId, delegation } = formDelegationDto
+
+    await this.sequelize.transaction(async (transaction) => {
+      const form = await this.formModel.findByPk(formId, {
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      })
+
+      if (!form) {
+        throw new NotFoundException(`Form with id '${formId}' not found`)
+      }
+
+      const formOwnerNationalId = form.organizationNationalId
+
+      if (
+        user.nationalId !== formOwnerNationalId &&
+        !user.scope.includes(AdminPortalScope.formSystemAdmin)
+      ) {
+        throw new ForbiddenException(
+          `User does not have permission to add delegation to form with id '${formId}'`,
+        )
+      }
+
+      if (!form.delegations.includes(delegation)) {
+        form.delegations = [...form.delegations, delegation]
+        await form.save({ transaction })
+      }
+    })
+  }
+
+  async deleteDelegation(
+    user: User,
+    formDelegationDto: FormDelegationDto,
+  ): Promise<void> {
+    const { formId, delegation } = formDelegationDto
+
+    await this.sequelize.transaction(async (transaction) => {
+      const form = await this.formModel.findByPk(formId, {
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      })
+
+      if (!form) {
+        throw new NotFoundException(`Form with id '${formId}' not found`)
+      }
+
+      const formOwnerNationalId = form.organizationNationalId
+
+      if (
+        user.nationalId !== formOwnerNationalId &&
+        !user.scope.includes(AdminPortalScope.formSystemAdmin)
+      ) {
+        throw new ForbiddenException(
+          `User does not have permission to delete delegation from form with id '${formId}'`,
+        )
+      }
+
+      if (form.delegations.includes(delegation)) {
+        form.delegations = form.delegations.filter(
+          (currentDelegation) => currentDelegation !== delegation,
+        )
+        await form.save({ transaction })
+      }
+    })
+  }
+
+  async copy(user: User, id: string): Promise<FormResponseDto> {
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
     const form = await this.findById(id)
 
     if (!form) {
       throw new NotFoundException(`Form with id '${id}' not found`)
+    }
+
+    const formOwnerNationalId = form.organizationNationalId
+
+    if (user.nationalId !== formOwnerNationalId && !isAdmin) {
+      throw new ForbiddenException(
+        `User does not have permission to copy form with id '${id}'`,
+      )
     }
 
     const copyForm = await this.copyForm(id, false, `${form.slug}-afrit`)
@@ -311,13 +471,24 @@ export class FormsService {
   }
 
   async updateStatus(
+    user: User,
     id: string,
     updateFormStatusDto: UpdateFormStatusDto,
   ): Promise<FormResponseDto> {
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
     const form = await this.formModel.findByPk(id)
 
     if (!form) {
       throw new NotFoundException(`Form with id '${id}' not found`)
+    }
+
+    const formOwnerNationalId = form.organizationNationalId
+
+    if (user.nationalId !== formOwnerNationalId && !isAdmin) {
+      throw new ForbiddenException(
+        `User does not have permission to update status of form with id '${id}'`,
+      )
     }
 
     const { newStatus } = updateFormStatusDto
@@ -361,10 +532,23 @@ export class FormsService {
   ): Promise<FormResponseDto> {
     await this.sequelize.transaction(async (transaction) => {
       try {
-        await this.applicationModel.destroy({
+        const applications = await this.applicationModel.findAll({
           where: { formId: id },
+          include: [
+            {
+              model: Value,
+              as: 'values',
+              where: { fieldType: FieldTypesEnum.FILE },
+              required: false,
+            },
+          ],
           transaction,
         })
+
+        for (const application of applications) {
+          await this.cleanupApplicationFiles(application, transaction)
+          await application.destroy({ transaction })
+        }
 
         form.status = FormStatus.PUBLISHED
         form.beenPublished = true
@@ -413,10 +597,23 @@ export class FormsService {
 
     await this.sequelize.transaction(async (transaction) => {
       try {
-        await this.applicationModel.destroy({
+        const applications = await this.applicationModel.findAll({
           where: { formId: id },
+          include: [
+            {
+              model: Value,
+              as: 'values',
+              where: { fieldType: FieldTypesEnum.FILE },
+              required: false,
+            },
+          ],
           transaction,
         })
+
+        for (const application of applications) {
+          await this.cleanupApplicationFiles(application, transaction)
+          await application.destroy({ transaction })
+        }
 
         const slugToBeArchived = formToBeArchived.slug
         formToBeArchived.status = FormStatus.ARCHIVED
@@ -485,10 +682,63 @@ export class FormsService {
     return new FormResponseDto()
   }
 
+  private async cleanupApplicationFiles(
+    application: Application,
+    transaction?: Transaction,
+  ): Promise<void> {
+    for (const value of application.values ?? []) {
+      if (value.fieldType !== FieldTypesEnum.FILE) continue
+
+      let parsed: unknown = value.json
+      if (typeof value.json === 'string') {
+        try {
+          parsed = JSON.parse(value.json)
+        } catch (error) {
+          this.logger.warn('Skipping file cleanup due to invalid value.json', {
+            valueId: value.id,
+            error,
+          })
+          continue
+        }
+      }
+
+      const rawS3Keys = (parsed as { s3Key?: unknown } | undefined)?.s3Key
+      const s3Keys: string[] = Array.isArray(rawS3Keys)
+        ? rawS3Keys.filter(
+            (k): k is string => typeof k === 'string' && k.length > 0,
+          )
+        : typeof rawS3Keys === 'string' && rawS3Keys.length > 0
+        ? [rawS3Keys]
+        : []
+
+      this.logger.debug(`Deleting s3Keys for value ${value.id}:`, s3Keys)
+
+      for (const key of s3Keys) {
+        await this.fileService.deleteFile(key, value.id, transaction)
+      }
+    }
+  }
+
   private async deleteApplications(id: string): Promise<FormResponseDto> {
     try {
-      await this.applicationModel.destroy({
-        where: { formId: id, isTest: true },
+      await this.sequelize.transaction(async (transaction) => {
+        const applications = await this.applicationModel.findAll({
+          where: { formId: id, isTest: true },
+          include: [
+            {
+              model: Value,
+              as: 'values',
+              where: { fieldType: FieldTypesEnum.FILE },
+              required: false,
+            },
+          ],
+          transaction,
+        })
+
+        for (const application of applications) {
+          await this.cleanupApplicationFiles(application, transaction)
+          await application.destroy({ transaction })
+        }
       })
     } catch (error) {
       throw new InternalServerErrorException(
@@ -570,17 +820,28 @@ export class FormsService {
       applicantTypes: await this.getApplicantTypes(),
       listTypes: await this.getListTypes(form.organizationId),
       submissionUrls: await this.getSubmissionUrls(form.organizationId),
+      organizationDelegations: await this.getOrganizationDelegations(
+        form.organizationId,
+      ),
     }
 
-    if (form.completedSectionInfo) {
-      const cs = form.completedSectionInfo
+    if (form.sectionInfo) {
+      const cs = form.sectionInfo
       cs.title ??= { is: '', en: '' }
       cs.confirmationHeader ??= { is: '', en: '' }
       cs.confirmationText ??= { is: '', en: '' }
       cs.additionalInfo ??= []
+      cs.additionalPremises ??= []
     }
 
     return response
+  }
+
+  private async getOrganizationDelegations(
+    organizationId: string,
+  ): Promise<string[]> {
+    const organization = await this.organizationModel.findByPk(organizationId)
+    return organization?.delegations ?? []
   }
 
   private async getSubmissionUrls(organizationId: string): Promise<string[]> {
@@ -697,14 +958,16 @@ export class FormsService {
       'hasPayment',
       'beenPublished',
       'status',
-      'daysUntilApplicationPrune',
+      'draftDaysToLive',
+      'submissionDaysToLive',
       'allowProceedOnValidationFail',
       'zendeskInternal',
+      'useValidate',
       'submissionServiceUrl',
-      'validationServiceUrl',
       'hasSummaryScreen',
-      'completedSectionInfo',
+      'sectionInfo',
       'dependencies',
+      'delegations',
     ]
     const formDto: FormDto = Object.assign(
       defaults(
@@ -717,6 +980,10 @@ export class FormsService {
         sections: [],
         screens: [],
         fields: [],
+        organizationZendeskInstance: {
+          zendeskInstance: '',
+          zendeskBrandId: '',
+        } as OrganizationZendeskInstanceDto,
       },
     ) as FormDto
 
@@ -746,17 +1013,20 @@ export class FormsService {
     ]
     const screenKeys = [
       'id',
+      'identifier',
       'sectionId',
       'name',
       'created',
       'modified',
       'displayOrder',
       'isHidden',
-      'multiset',
-      'callRuleset',
+      'multiMax',
+      'isMulti',
+      'shouldValidate',
     ]
     const fieldKeys = [
       'id',
+      'identifier',
       'screenId',
       'name',
       'created',
@@ -803,6 +1073,14 @@ export class FormsService {
       })
     })
 
+    const organization = await this.organizationModel.findByPk(
+      form.organizationId,
+    )
+    formDto.organizationZendeskInstance.zendeskInstance =
+      organization?.zendeskInstance ?? ''
+    formDto.organizationZendeskInstance.zendeskBrandId =
+      organization?.zendeskBrandId ?? ''
+
     return formDto
   }
 
@@ -812,13 +1090,13 @@ export class FormsService {
         formId: form.id,
         sectionType: SectionTypes.PREMISES,
         displayOrder: 0,
-        name: { is: 'Forsendur', en: 'Premises' },
+        name: { is: 'Gagnaöflun', en: 'Data collection' },
       } as Section,
       {
         formId: form.id,
         sectionType: SectionTypes.PARTIES,
         displayOrder: 1,
-        name: { is: 'Hlutaðeigandi aðilar', en: 'Relevant parties' },
+        name: { is: 'Aðilar', en: 'Parties' },
       } as Section,
       {
         formId: form.id,
@@ -855,11 +1133,18 @@ export class FormsService {
       name: { is: 'Kafli', en: 'Section' },
     } as Section)
 
-    await this.screenModel.create({
+    const inputScreen = await this.screenModel.create({
       sectionId: inputSection.id,
       displayOrder: 0,
-      name: { is: 'innsláttarsíða 1', en: 'Input screen 1' },
+      name: { is: 'Innsláttarskjár', en: 'Input screen' },
     } as Screen)
+
+    await this.fieldModel.create({
+      screenId: inputScreen.id,
+      fieldType: FieldTypesEnum.TEXTBOX,
+      displayOrder: 0,
+      name: { is: 'Textainnsláttur', en: 'Text input' },
+    } as Field)
   }
 
   private async updateDependencies(
@@ -906,7 +1191,7 @@ export class FormsService {
     newForm.derivedFrom = isDerived ? existingForm.id : null
     newForm.identifier = isDerived ? existingForm.identifier : uuidV4()
     newForm.beenPublished = false
-    newForm.completedSectionInfo = existingForm.completedSectionInfo
+    newForm.sectionInfo = existingForm.sectionInfo
 
     const sections: Section[] = []
     const screens: Screen[] = []
@@ -995,5 +1280,109 @@ export class FormsService {
     }
 
     return newForm
+  }
+
+  private mapFormToJsonSample(form: Form): ApplicationJsonDto {
+    const fields: ApplicationJsonFieldDto[] = (form.sections ?? [])
+      .flatMap((section) => section.screens ?? [])
+      .flatMap((screen) =>
+        (screen.fields ?? []).map((field) => ({
+          field,
+          screenIdentifier: screen.identifier,
+          screenTitle: screen.name,
+        })),
+      )
+      .filter(({ field }) => field.fieldType !== FieldTypesEnum.MESSAGE)
+      .map(({ field, screenIdentifier, screenTitle }) => {
+        const jsonField = new ApplicationJsonFieldDto()
+        jsonField.identifier = field.identifier
+        jsonField.screenIdentifier = screenIdentifier
+        jsonField.screenTitle = screenTitle
+        jsonField.fieldTitle = field.name
+        jsonField.fieldType = field.fieldType
+
+        const settings = new ApplicationJsonFieldSettingsDto()
+        if (field.fieldType === FieldTypesEnum.NUMBERBOX) {
+          settings.isDecimal = field.fieldSettings?.isDecimal ?? false
+        }
+        if (field.fieldType === FieldTypesEnum.APPLICANT) {
+          settings.applicantType = field.fieldSettings?.applicantType
+        }
+        if (
+          settings.isDecimal !== undefined ||
+          settings.applicantType !== undefined
+        ) {
+          jsonField.fieldSettings = settings
+        }
+
+        const shaped =
+          ValueTypeFactory.getClass(field.fieldType, new ValueType()) ?? {}
+        jsonField.values = [
+          {
+            order: 0,
+            json: this.fillValueTypeExamples(shaped),
+          } as ApplicationJsonValueDto,
+        ]
+        return jsonField
+      })
+
+    const jsonSample = new ApplicationJsonDto()
+    jsonSample.id = uuidV4()
+    jsonSample.organizationNationalId = form.organizationNationalId ?? ''
+    jsonSample.slug = form.slug ?? ''
+    jsonSample.isTest = true
+    jsonSample.status = 'COMPLETED'
+    jsonSample.submittedAt = new Date()
+    jsonSample.fields = fields
+
+    return jsonSample
+  }
+
+  private fillValueTypeExamples(partial: Partial<ValueType>): ValueType {
+    const v = partial as any
+
+    if ('text' in v) v.text = 'Dæmi texti'
+    if ('number' in v) v.number = 123
+    if ('date' in v) v.date = new Date('2026-01-01')
+    if ('label' in v) v.label = { is: 'Dæmi', en: 'Example' }
+    if ('value' in v) v.value = 'example_value'
+
+    if ('nationalId' in v) v.nationalId = '0101302399'
+    if ('name' in v) v.name = 'Test Nafn'
+    if ('address' in v) v.address = 'Dæmigata 1'
+    if ('postalCode' in v) v.postalCode = '101'
+    if ('municipality' in v) v.municipality = 'Reykjavík'
+    if ('jobTitle' in v) v.jobTitle = 'Developer'
+    if ('altName' in v) v.altName = 'Aukanafn'
+
+    if ('homestayNumber' in v) v.homestayNumber = 'HOMESTAY-123'
+    if ('propertyNumber' in v) v.propertyNumber = 'F1234567'
+
+    if ('totalDays' in v) v.totalDays = 10
+    if ('totalAmount' in v) v.totalAmount = 5000
+    if ('year' in v) v.year = 2026
+    if ('isNullReport' in v) v.isNullReport = false
+
+    if ('months' in v) {
+      v.months = [{ month: 1, amount: 1000, days: [1, 2, 3] }]
+    }
+
+    if ('email' in v) v.email = 'test@example.is'
+    if ('iskNumber' in v) v.iskNumber = '12.345'
+    if ('checkboxValue' in v) v.checkboxValue = true
+    if ('phoneNumber' in v) v.phoneNumber = '+3545551234'
+    if ('bankAccount' in v) v.bankAccount = '0000-00-000000'
+
+    if ('time' in v) v.time = '12:34'
+    if ('s3Key' in v)
+      v.s3Key = [
+        'fd1db740-910d-40cd-aa25-d2fb0161261c/d36f7461-3ac5-4702-b292-b638fed83038_nafn-a-skra.pdf',
+      ]
+
+    if ('paymentCode' in v) v.paymentCode = 'PAYMENT-CODE-123'
+    if ('applicantType' in v) v.applicantType = 'INDIVIDUAL'
+    if ('isLoggedInUser' in v) v.isLoggedInUser = true
+
+    return v as ValueType
   }
 }

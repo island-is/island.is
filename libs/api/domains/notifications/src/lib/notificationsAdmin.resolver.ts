@@ -9,6 +9,8 @@ import {
   NotificationsInput,
   AdminNotificationsResponse,
   ActorNotificationsResponse,
+  AdminNotificationDeliveriesInput,
+  NotificationDelivery,
 } from './notifications.model'
 import type { Locale } from '@island.is/shared/types'
 
@@ -46,5 +48,17 @@ export class NotificationsAdminResolver {
     @CurrentUser() user: User,
   ): Promise<ActorNotificationsResponse> {
     return await this.service.getActorNotifications(nationalId, user, input)
+  }
+
+  @Query(() => [NotificationDelivery], {
+    name: 'adminNotificationDeliveries',
+  })
+  @Audit()
+  async getNotificationDeliveries(
+    @Args('input', { type: () => AdminNotificationDeliveriesInput })
+    input: AdminNotificationDeliveriesInput,
+    @CurrentUser() user: User,
+  ): Promise<NotificationDelivery[]> {
+    return await this.service.getNotificationDeliveries(user, input)
   }
 }

@@ -13,4 +13,13 @@ export class ApplicationEligibilityRequirement {
 
   @Field({ nullable: true })
   daysOfResidency?: number
+
+  @Field({ nullable: true })
+  errorCode?: string
+
+  @Field({ nullable: true })
+  messageIs?: string
+
+  @Field({ nullable: true })
+  messageEn?: string
 }

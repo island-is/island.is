@@ -426,3 +426,145 @@ export const POST_APPLICATION_MUTATION = gql`
     OJOIAPostApplication(input: $input)
   }
 `
+
+// ---- Regulation-related queries ----
+
+export const REGULATION_OPTION_SEARCH_QUERY = gql`
+  query OJOIAGetRegulationsOptionSearch(
+    $input: OJOIAGetRegulationsSearchInput!
+  ) {
+    OJOIAGetRegulationsOptionSearch(input: $input) {
+      regulations {
+        name
+        title
+        type
+        migrated
+        repealed
+      }
+    }
+  }
+`
+
+export const REGULATION_OPTION_LIST_QUERY = gql`
+  query OJOIAGetRegulationOptionList(
+    $input: OJOIAGetRegulationOptionListInput!
+  ) {
+    OJOIAGetRegulationOptionList(input: $input) {
+      regulations {
+        name
+        title
+        type
+        migrated
+        repealed
+      }
+    }
+  }
+`
+
+export const REGULATION_FROM_API_QUERY = gql`
+  query OJOIAGetRegulationFromApi($input: OJOIAGetRegulationFromApiInput!) {
+    OJOIAGetRegulationFromApi(input: $input)
+  }
+`
+
+export const REGULATION_IMPACTS_QUERY = gql`
+  query OJOIAGetRegulationImpactsByName(
+    $input: OJOIAGetRegulationImpactsInput!
+  ) {
+    OJOIAGetRegulationImpactsByName(input: $input) {
+      changes {
+        id
+        changingId
+        type
+        name
+        regTitle
+        date
+        title
+        dropped
+        diff
+        text
+        appendixes {
+          title
+          text
+        }
+        comments
+      }
+      cancellations {
+        id
+        changingId
+        type
+        name
+        regTitle
+        date
+        dropped
+      }
+    }
+  }
+`
+
+export const LAW_CHAPTERS_QUERY = gql`
+  query OJOIAGetLawChapters {
+    OJOIAGetLawChapters {
+      lawChapters {
+        name
+        slug
+      }
+    }
+  }
+`
+
+export const MINISTRIES_QUERY = gql`
+  query OJOIAGetMinistries {
+    OJOIAGetMinistries {
+      ministries {
+        name
+        slug
+        order
+      }
+    }
+  }
+`
+
+export const CREATE_DRAFT_REGULATION_MUTATION = gql`
+  mutation OJOIACreateDraftRegulation(
+    $input: OJOIACreateDraftRegulationInput!
+  ) {
+    OJOIACreateDraftRegulation(input: $input) {
+      id
+    }
+  }
+`
+
+export const GET_DRAFT_REGULATION_QUERY = gql`
+  query OJOIAGetDraftRegulation($input: OJOIAGetDraftRegulationInput!) {
+    OJOIAGetDraftRegulation(input: $input)
+  }
+`
+
+export const UPDATE_DRAFT_REGULATION_MUTATION = gql`
+  mutation OJOIAUpdateDraftRegulation(
+    $input: OJOIAUpdateDraftRegulationInput!
+  ) {
+    OJOIAUpdateDraftRegulation(input: $input)
+  }
+`
+
+export const CREATE_DRAFT_IMPACT_MUTATION = gql`
+  mutation OJOIACreateDraftImpact($input: OJOIACreateDraftImpactInput!) {
+    OJOIACreateDraftImpact(input: $input) {
+      id
+    }
+  }
+`
+
+export const UPDATE_DRAFT_IMPACT_MUTATION = gql`
+  mutation OJOIAUpdateDraftImpact($input: OJOIAUpdateDraftImpactInput!) {
+    OJOIAUpdateDraftImpact(input: $input)
+  }
+`
+
+export const DELETE_DRAFT_IMPACT_MUTATION = gql`
+  mutation OJOIADeleteDraftImpact($input: OJOIADeleteDraftImpactInput!) {
+    OJOIADeleteDraftImpact(input: $input)
+  }
+`

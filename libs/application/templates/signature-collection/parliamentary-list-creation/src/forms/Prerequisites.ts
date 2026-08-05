@@ -21,7 +21,7 @@ import {
   IsDelegatedToCompanyApi,
   CandidateApi,
 } from '../dataProviders'
-import DigitalServices from '@island.is/application/templates/signature-collection/assets/DigitalServices'
+import { ManOnThePhone } from '@island.is/application/assets/graphics'
 import { NationalElectoralCommissionLogo } from '@island.is/application/assets/institution-logos'
 
 export const Prerequisites: Form = buildForm({
@@ -41,7 +41,7 @@ export const Prerequisites: Form = buildForm({
           children: [
             buildImageField({
               id: 'doneImage',
-              image: DigitalServices,
+              image: ManOnThePhone,
               imageWidth: 'auto',
               imagePosition: 'center',
               marginTop: 'gutter',

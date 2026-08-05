@@ -163,40 +163,9 @@ const applyVisibilityToSections = (
 
         const fieldHidden = isHiddenByDependencies(field.id, dependencies)
 
-        let newValues = field.values
-
-        if (fieldHidden && field.fieldType === FieldTypesEnum.CHECKBOX) {
-          newValues = field.values?.map((v) => ({
-            ...v,
-            json: v?.json
-              ? {
-                  ...v.json,
-                  checkboxValue: undefined,
-                }
-              : { checkboxValue: undefined as unknown as boolean },
-          }))
-        }
-
-        if (
-          fieldHidden &&
-          (field.fieldType === FieldTypesEnum.RADIO_BUTTONS ||
-            field.fieldType === FieldTypesEnum.DROPDOWN_LIST)
-        ) {
-          newValues = field.values?.map((v) => ({
-            ...v,
-            json: v?.json
-              ? {
-                  ...v.json,
-                  listValue: undefined,
-                }
-              : { listValue: undefined as unknown as string },
-          }))
-        }
-
         return {
           ...field,
           isHidden: fieldHidden,
-          values: newValues,
         }
       }) as typeof screen.fields
 
@@ -231,11 +200,11 @@ const isControllerField = (
   ) {
     const listItemIds =
       field.list?.map((item) => item?.id).filter(Boolean) ?? []
+
     return dependencies.some((dependency) =>
       listItemIds.includes(dependency.parentProp ?? ''),
     )
   }
-
   return false
 }
 
@@ -245,6 +214,7 @@ export const setFieldValue = (
   fieldId: string,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any,
+  valueIndex?: number,
 ): ApplicationState => {
   const { currentScreen } = state
   if (!currentScreen || !currentScreen.data) {
@@ -252,11 +222,10 @@ export const setFieldValue = (
   }
 
   const screen = currentScreen.data
-
   // 1. Update the field's value on the current screen
   const updatedFields = screen.fields?.map((field) => {
     if (field?.id === fieldId) {
-      let newValue = field?.values?.[0] ?? {}
+      let newValue = field?.values?.[valueIndex ?? 0] ?? {}
       newValue = {
         ...newValue,
         json: {
@@ -264,9 +233,12 @@ export const setFieldValue = (
           [fieldProperty]: value,
         },
       }
+      const idx = valueIndex ?? 0
+      const nextValues = [...(field.values ?? [])]
+      nextValues[idx] = newValue
       return {
         ...field,
-        values: [newValue],
+        values: nextValues,
       }
     }
     return field
@@ -321,12 +293,13 @@ export const setFieldValue = (
   }
 
   const isListField =
-    currentField?.fieldType === FieldTypesEnum.RADIO_BUTTONS ||
-    currentField?.fieldType === FieldTypesEnum.DROPDOWN_LIST
+    fieldProperty === 'label' &&
+    (currentField?.fieldType === FieldTypesEnum.RADIO_BUTTONS ||
+      currentField?.fieldType === FieldTypesEnum.DROPDOWN_LIST)
 
   const selectedItem =
     isListField && currentField?.list
-      ? currentField.list.find((item) => item?.label?.is === String(value))
+      ? currentField.list.find((item) => item?.label?.is === value?.is)
       : undefined
 
   const selectedItemId = (selectedItem?.id as string) ?? undefined

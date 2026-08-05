@@ -14,8 +14,9 @@ import {
   hasSpecialEducationSubType,
   needsOtherGuardianApproval,
   needsPayerApproval,
+  shouldShowNewSchoolPage,
   shouldShowPage,
-  shouldShowReasonForApplicationAndNewSchoolPages,
+  shouldShowReasonForApplicationPage,
   showPreferredLanguageFields,
 } from './conditionUtils'
 import {
@@ -982,7 +983,7 @@ describe('hasSpecialEducationSubType', () => {
   })
 })
 
-describe('shouldShowReasonForApplicationAndNewSchoolPages', () => {
+describe('shouldShowReasonForApplicationPage', () => {
   it('should return true if application type is NEW_PRIMARY_SCHOOL', () => {
     const answers = {
       applicationType: ApplicationType.NEW_PRIMARY_SCHOOL,
@@ -996,9 +997,7 @@ describe('shouldShowReasonForApplicationAndNewSchoolPages', () => {
         status: 'success',
       },
     }
-    expect(
-      shouldShowReasonForApplicationAndNewSchoolPages(answers, externalData),
-    ).toBe(true)
+    expect(shouldShowReasonForApplicationPage(answers, externalData)).toBe(true)
   })
 
   it('should return false if application type is ENROLLMENT_IN_PRIMARY_SCHOOL and applyForPreferredSchool is YES', () => {
@@ -1015,9 +1014,9 @@ describe('shouldShowReasonForApplicationAndNewSchoolPages', () => {
         status: 'success',
       },
     }
-    expect(
-      shouldShowReasonForApplicationAndNewSchoolPages(answers, externalData),
-    ).toBe(false)
+    expect(shouldShowReasonForApplicationPage(answers, externalData)).toBe(
+      false,
+    )
   })
 
   it('should return true if application type is ENROLLMENT_IN_PRIMARY_SCHOOL and applyForPreferredSchool is NO', () => {
@@ -1034,12 +1033,10 @@ describe('shouldShowReasonForApplicationAndNewSchoolPages', () => {
         status: 'success',
       },
     }
-    expect(
-      shouldShowReasonForApplicationAndNewSchoolPages(answers, externalData),
-    ).toBe(true)
+    expect(shouldShowReasonForApplicationPage(answers, externalData)).toBe(true)
   })
 
-  it('should return true if application type is ENROLLMENT_IN_PRIMARY_SCHOOL and preferredSchool is null', () => {
+  it('should return false if application type is ENROLLMENT_IN_PRIMARY_SCHOOL and preferredSchool is null', () => {
     const answers = {
       applicationType: ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
     }
@@ -1050,9 +1047,9 @@ describe('shouldShowReasonForApplicationAndNewSchoolPages', () => {
         status: 'success',
       },
     }
-    expect(
-      shouldShowReasonForApplicationAndNewSchoolPages(answers, externalData),
-    ).toBe(true)
+    expect(shouldShowReasonForApplicationPage(answers, externalData)).toBe(
+      false,
+    )
   })
 
   it('should return false if application type is CONTINUING_ENROLLMENT', () => {
@@ -1068,9 +1065,91 @@ describe('shouldShowReasonForApplicationAndNewSchoolPages', () => {
         status: 'success',
       },
     }
-    expect(
-      shouldShowReasonForApplicationAndNewSchoolPages(answers, externalData),
-    ).toBe(false)
+    expect(shouldShowReasonForApplicationPage(answers, externalData)).toBe(
+      false,
+    )
+  })
+})
+
+describe('shouldShowNewSchoolPage', () => {
+  it('should return true if application type is NEW_PRIMARY_SCHOOL', () => {
+    const answers = {
+      applicationType: ApplicationType.NEW_PRIMARY_SCHOOL,
+    }
+    const externalData = {
+      preferredSchool: {
+        data: {
+          id: uuid(),
+        },
+        date: new Date(),
+        status: 'success',
+      },
+    }
+    expect(shouldShowNewSchoolPage(answers, externalData)).toBe(true)
+  })
+
+  it('should return false if application type is ENROLLMENT_IN_PRIMARY_SCHOOL and applyForPreferredSchool is YES', () => {
+    const answers = {
+      applicationType: ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
+      school: { applyForPreferredSchool: YES },
+    }
+    const externalData = {
+      preferredSchool: {
+        data: {
+          id: uuid(),
+        },
+        date: new Date(),
+        status: 'success',
+      },
+    }
+    expect(shouldShowNewSchoolPage(answers, externalData)).toBe(false)
+  })
+
+  it('should return true if application type is ENROLLMENT_IN_PRIMARY_SCHOOL and applyForPreferredSchool is NO', () => {
+    const answers = {
+      applicationType: ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
+      school: { applyForPreferredSchool: NO },
+    }
+    const externalData = {
+      preferredSchool: {
+        data: {
+          id: uuid(),
+        },
+        date: new Date(),
+        status: 'success',
+      },
+    }
+    expect(shouldShowNewSchoolPage(answers, externalData)).toBe(true)
+  })
+
+  it('should return true if application type is ENROLLMENT_IN_PRIMARY_SCHOOL and preferredSchool is null', () => {
+    const answers = {
+      applicationType: ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
+    }
+    const externalData = {
+      preferredSchool: {
+        data: null,
+        date: new Date(),
+        status: 'success',
+      },
+    }
+    expect(shouldShowNewSchoolPage(answers, externalData)).toBe(true)
+  })
+
+  it('should return false if application type is CONTINUING_ENROLLMENT', () => {
+    const answers = {
+      applicationType: ApplicationType.CONTINUING_ENROLLMENT,
+    }
+    const externalData = {
+      preferredSchool: {
+        data: {
+          id: uuid(),
+        },
+        date: new Date(),
+        status: 'success',
+      },
+    }
+    expect(shouldShowNewSchoolPage(answers, externalData)).toBe(false)
   })
 })
 

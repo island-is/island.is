@@ -4,6 +4,7 @@ export interface CaseTableColumn {
 const caseNumber: CaseTableColumn = { title: 'Málsnúmer' }
 const defendants: CaseTableColumn = { title: 'Varnaraðili' }
 const caseType: CaseTableColumn = { title: 'Tegund' }
+const appealCaseType: CaseTableColumn = { title: 'Tegund' }
 const appealState: CaseTableColumn = { title: 'Staða' }
 const courtOfAppealsHead: CaseTableColumn = { title: 'Dómsformaður' }
 const validFromTo: CaseTableColumn = { title: 'Gildistími' }
@@ -26,13 +27,20 @@ const caseSentToCourtDate: CaseTableColumn = { title: 'Útgáfudagur' }
 const arraignmentDate: CaseTableColumn = { title: 'Fyrirtaka' }
 const indictmentArraignmentDate: CaseTableColumn = { title: 'Fyrirtaka' }
 const indictmentRulingDecision: CaseTableColumn = { title: 'Niðurstaða' }
+// Used on tables with a separate appeal state column to avoid showing the
+// appeal state twice
+const indictmentRulingDecisionWithoutAppealState: CaseTableColumn = {
+  title: 'Niðurstaða',
+}
 const created: CaseTableColumn = { title: 'Stofnað' }
 const prosecutor: CaseTableColumn = { title: 'Ákærandi' }
+const prosecutorInitials: CaseTableColumn = { title: 'Ákærandi' }
 
 export const caseTableColumns = {
   caseNumber,
   defendants,
   caseType,
+  appealCaseType,
   appealState,
   courtOfAppealsHead,
   validFromTo,
@@ -53,8 +61,10 @@ export const caseTableColumns = {
   indictmentCaseState,
   indictmentArraignmentDate,
   indictmentRulingDecision,
+  indictmentRulingDecisionWithoutAppealState,
   created,
   prosecutor,
+  prosecutorInitials,
 }
 
 export type CaseTableColumnMap = typeof caseTableColumns

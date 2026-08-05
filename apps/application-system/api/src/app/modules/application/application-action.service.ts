@@ -16,7 +16,10 @@ import {
   TemplateApi,
 } from '@island.is/application/types'
 
-import { getApplicationLifecycle } from './utils/application'
+import {
+  getApplicationLifecycle,
+  handleScheduledNotifications,
+} from './utils/application'
 import { StateChangeResult, TemplateAPIModuleActionResult } from './types'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -73,8 +76,11 @@ export class ApplicationActionService {
     )
 
     for (const api of apis) {
-      const result =
-        updatedApplication.externalData[api.externalDataId || api.action]
+      const resolvedId = api.resolveExternalDataId(
+        updatedApplication,
+        auth.nationalId,
+      )
+      const result = updatedApplication.externalData[resolvedId]
 
       this.logger.debug(
         `Performing action ${api.action} on ${JSON.stringify(
@@ -137,9 +143,10 @@ export class ApplicationActionService {
       }
     }
 
+    const stateEvent = { type: event, nationalId: auth.nationalId }
     const [hasChanged, newState, withUpdatedState] =
       new ApplicationTemplateHelper(updatedApplication, template).changeState(
-        event,
+        stateEvent,
       )
     updatedApplication = {
       ...updatedApplication,
@@ -202,12 +209,23 @@ export class ApplicationActionService {
       )
 
       updatedApplication = update.updatedApplication as BaseApplication
-      await this.historyService.saveStateTransition(
-        application.id,
-        newState,
-        auth,
-        event,
-      )
+
+      // Wait for both promises in parallel, no fail fast
+      await Promise.allSettled([
+        this.historyService.saveStateTransition(
+          application.id,
+          newState,
+          auth,
+          event,
+        ),
+        handleScheduledNotifications(
+          // Clean up old and create new scheduled notifications
+          this.applicationService,
+          updatedApplication,
+          template,
+          newState,
+        ),
+      ])
     } catch (e) {
       this.logger.error(e)
       return {

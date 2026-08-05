@@ -5,6 +5,12 @@
   "projectType": "library",
   "tags": ["lib:react-spa", "scope:react-spa"],
   "targets": {
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "graphql-codegen --config libs/react/feature-flags/codegen.yml"
+      }
+    },
     "lint": {
       "executor": "@nx/eslint:lint"
     },

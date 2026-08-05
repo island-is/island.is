@@ -10,7 +10,7 @@ import {
 } from '@island.is/application/core'
 import { Application, Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
-import Jobs from '@island.is/application/templates/signature-collection/assets/Jobs'
+import { ClipboardAndPencil } from '@island.is/application/assets/graphics'
 
 export const Done: Form = buildForm({
   id: 'done',
@@ -35,7 +35,7 @@ export const Done: Form = buildForm({
             }),
             buildImageField({
               id: 'doneImage',
-              image: Jobs,
+              image: ClipboardAndPencil,
               imageWidth: 'auto',
               imagePosition: 'center',
               marginBottom: 'none',

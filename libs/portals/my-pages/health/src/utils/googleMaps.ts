@@ -1,6 +1,7 @@
-export const generateGoogleMapsLink = (address: string) => {
-  const baseUrl = 'https://www.google.com/maps/dir/?api=1'
-  const encodedAddress = encodeURIComponent(address)
-  const fullUrl = `${baseUrl}&destination=${encodedAddress}`
-  return fullUrl
+export const generateGoogleMapsLink = (
+  lat?: number | null,
+  lon?: number | null,
+): string | null => {
+  if (lat == null || lon == null) return null
+  return `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`
 }

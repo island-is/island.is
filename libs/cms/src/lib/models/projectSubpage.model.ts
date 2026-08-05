@@ -22,6 +22,12 @@ export class ProjectSubpage {
   @Field()
   slug!: string
 
+  @Field({ nullable: true })
+  contentLastReviewed?: string
+
+  @Field({ nullable: true })
+  showDateOfTheMostRecentReview?: boolean
+
   @CacheField(() => [SliceUnion], { nullable: true })
   content?: Array<typeof SliceUnion>
 
@@ -46,6 +52,8 @@ export const mapProjectSubpage = ({
   title: fields.title ?? '',
   shortTitle: fields.shortTitle || fields.title,
   slug: (fields.slug ?? '').trim(),
+  contentLastReviewed: fields.contentLastReviewed,
+  showDateOfTheMostRecentReview: fields.showDateOfTheLastReview,
   content: fields.content
     ? mapDocument(fields.content, sys.id + ':content')
     : [],

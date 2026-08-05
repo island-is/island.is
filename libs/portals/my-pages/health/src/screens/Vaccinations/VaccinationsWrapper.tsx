@@ -14,9 +14,12 @@ import { SECTION_GAP } from '../../utils/constants'
 import StatusModal from './StatusModal'
 import { useGetVaccinationsQuery } from './Vaccinations.generated'
 import { SortedVaccinationsTable } from './tables/SortedVaccinationsTable'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 export const VaccinationsWrapper = () => {
   useNamespaces('sp.health')
+  useHealthPlausibleSwap()
+
   const { formatMessage, locale } = useLocale()
   const { data, loading, error } = useGetVaccinationsQuery({
     variables: {
@@ -45,27 +48,30 @@ export const VaccinationsWrapper = () => {
     <IntroWrapper
       title={formatMessage(m.vaccinations)}
       intro={formatMessage(m.vaccinationsIntro)}
-      serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
-      serviceProviderTooltip={formatMessage(m.landlaeknirVaccinationsTooltip)}
-      childrenWidthFull
-      buttonGroup={[
-        <LinkButton
-          key="vaccinations-read-about"
-          to={formatMessage(m.readAboutVaccinationsLink)}
-          icon="open"
-          variant="utility"
-          text={formatMessage(m.readAboutVaccinations)}
-        />,
-        <Button
-          key="vaccinations-status-info"
-          icon="informationCircle"
-          variant="utility"
-          iconType="outline"
-          onClick={() => setIsStatusModalOpen(true)}
-        >
-          {formatMessage(m.vaccinationStatusDesc)}
-        </Button>,
-      ]}
+      serviceProvider={{
+        slug: HEALTH_DIRECTORATE_SLUG,
+        tooltip: formatMessage(m.landlaeknirVaccinationsTooltip),
+      }}
+      buttonGroup={{
+        actions: [
+          <LinkButton
+            key="vaccinations-read-about"
+            to={formatMessage(m.readAboutVaccinationsLink)}
+            icon="open"
+            variant="utility"
+            text={formatMessage(m.readAboutVaccinations)}
+          />,
+          <Button
+            key="vaccinations-status-info"
+            icon="informationCircle"
+            variant="utility"
+            iconType="outline"
+            onClick={() => setIsStatusModalOpen(true)}
+          >
+            {formatMessage(m.vaccinationStatusDesc)}
+          </Button>,
+        ],
+      }}
     >
       <Box>
         {loading && (

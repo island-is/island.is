@@ -17,6 +17,7 @@ import {
 import { Problem } from '@island.is/react-spa/shared'
 import { messages } from '../../lib/messages'
 import { ExtraDoctors } from './components/ExtraDoctors'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 type UseParams = {
   type: string
@@ -25,6 +26,7 @@ type UseParams = {
 
 export const MedicineCertificate = () => {
   const params = useParams() as UseParams
+  useHealthPlausibleSwap()
 
   const { formatMessage, formatDateFns } = useLocale()
 
@@ -45,8 +47,11 @@ export const MedicineCertificate = () => {
     <IntroWrapper
       title={formatMessage(messages.medicineLicenseTitle)}
       intro={formatMessage(messages.medicineLicenseIntroText)}
-      serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
-      serviceProviderTooltip={formatMessage(messages.healthTooltip)}
+      serviceProvider={{
+        slug: SJUKRATRYGGINGAR_SLUG,
+        tooltip: formatMessage(messages.healthTooltip),
+      }}
+      desktopContentSpan="10/12"
     >
       <Stack dividers="blueberry200" space={1}>
         {isLoading && <SkeletonLoader height={35} space={2} repeat={4} />}

@@ -1,71 +1,49 @@
-import { text, withKnobs } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react-native'
 import React from 'react'
 import { View } from 'react-native'
 import { Button } from '../button/button'
-import { CancelButton } from '../button/cancel-button'
-import { Illustration } from '../illustration/illustration'
 import { Onboarding } from './onboarding'
 
+import onboardingBiometrics from '../../../assets/illustrations/onboarding-biometrics.png'
+import onboardingNotifications from '../../../assets/illustrations/onboarding-notifications.png'
+import onboardingPrivacy from '../../../assets/illustrations/onboarding-privacy.png'
+
 const CenterView = ({ children }: any) => (
-  <View
-    style={{
-      flex: 1,
-      width: '100%',
-    }}
-  >
-    {children}
-  </View>
+  <View style={{ flex: 1, width: '100%' }}>{children}</View>
 )
+
+const noop = () => undefined
 
 storiesOf('Onboarding', module)
   .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
-  .addDecorator(withKnobs)
-  .add('Notifications', () => {
-    const title = text(
-      'Notification Onboarding Title',
-      'Fáðu tilkynningar um ný rafræn skjöl um leið og þau berast.',
-    )
-    return (
-      <Onboarding
-        illustration={<Illustration />}
-        title={title}
-        buttonSubmit={
-          <Button
-            title="Leyfa tilkynningar"
-            onPress={() => console.log('Allow pressed')}
-          />
-        }
-        buttonCancel={
-          <CancelButton
-            title="Ákveða seinna"
-            onPress={() => console.log('Cancel pressed')}
-          />
-        }
-      />
-    )
-  })
-  .add('Biometrics', () => {
-    const title = text(
-      'Biometrics Onboarding Title',
-      'Þú getur einnig notað FaceId til að opna appið án þess að slá inn PIN.',
-    )
-    return (
-      <Onboarding
-        illustration={<Illustration />}
-        title={title}
-        buttonSubmit={
-          <Button
-            title="Not FaceID"
-            onPress={() => console.log('Allow pressed')}
-          />
-        }
-        buttonCancel={
-          <CancelButton
-            title="Sleppa því í bili"
-            onPress={() => console.log('Cancel pressed')}
-          />
-        }
-      />
-    )
-  })
+  .add('Biometrics', () => (
+    <Onboarding
+      illustration={onboardingBiometrics}
+      title="Leyfa lífkenni"
+      body="Þú getur einnig notað Face ID til að opna appið án þess að slá inn PIN."
+      buttonSubmit={<Button title="Leyfa lífkenni" onPress={noop} />}
+      buttonCancel={
+        <Button title="Sleppa því í bili" isOutlined onPress={noop} />
+      }
+    />
+  ))
+  .add('Notifications', () => (
+    <Onboarding
+      illustration={onboardingNotifications}
+      title="Leyfa tilkynningar"
+      body="Fáðu tilkynningar um ný skjöl eða annað mikilvægt."
+      buttonSubmit={<Button title="Leyfa tilkynningar" onPress={noop} />}
+      buttonCancel={
+        <Button title="Sleppa því í bili" isOutlined onPress={noop} />
+      }
+    />
+  ))
+  .add('Privacy', () => (
+    <Onboarding
+      illustration={onboardingPrivacy}
+      title="Persónuvernd"
+      body="Hægt er að kynna sér stefnu Stafræns Íslands um meðferð persónuupplýsinga á Ísland.is"
+      link={{ title: 'Persónuverndastefna Ísland.is', onPress: noop }}
+      buttonSubmit={<Button title="Halda áfram" onPress={noop} />}
+    />
+  ))

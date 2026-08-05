@@ -17,6 +17,7 @@ interface Props {
   columns?: 1 | 2 | 3
   cardsBackground?: BoxProps['background']
   cardsBorder?: BoxProps['borderColor']
+  mapWidthToCardSize?: (width: number) => CardSize
 }
 
 type CardSize = 'small' | 'medium' | 'large'
@@ -44,17 +45,22 @@ export const InfoCardGrid = ({
   cardsBorder,
   variant,
   columns,
+  mapWidthToCardSize,
 }: Props) => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.sm
 
-  const cardSize = mapColumnCountToCardSize(columns, isMobile)
+  const cardSize = mapWidthToCardSize
+    ? mapWidthToCardSize(width)
+    : mapColumnCountToCardSize(columns, isMobile)
 
   return (
     <Box
       hidden={cards.length < 1}
       className={
-        cardSize === 'small'
+        columns === 1
+          ? styles.gridContainerOneColumn
+          : cardSize === 'small'
           ? styles.gridContainerThreeColumn
           : cardSize === 'medium'
           ? styles.gridContainerTwoColumn
@@ -65,7 +71,7 @@ export const InfoCardGrid = ({
         <InfoCard
           key={`${c.title}-${index}`}
           background={cardsBackground}
-          padding={isMobile ? 2 : 3}
+          padding={2}
           borderColor={cardsBorder}
           variant={variant}
           size={isMobile ? 'medium' : cardSize}

@@ -13,6 +13,10 @@ import {
   PaymentFlowEventType,
   PaymentFlowEventReason,
 } from '../../../types'
+import {
+  BankTransferFailureReason,
+  BankTransferPendingStatus,
+} from '../../bankTransferPayment/bankTransfer.types'
 import { PageInfoDto } from '@island.is/nest/pagination'
 
 export class PaymentFlowEventDTO {
@@ -182,6 +186,19 @@ export class GetPaymentFlowDTO {
   redirectToReturnUrlOnSuccess?: boolean
 
   @ApiPropertyOptional({
+    description: 'The URL to redirect the user to after an invoice is created',
+    type: String,
+  })
+  invoiceReturnUrl?: string
+
+  @ApiPropertyOptional({
+    description:
+      'If user should be redirected to the invoiceReturnUrl after an invoice has been created',
+    type: Boolean,
+  })
+  redirectOnInvoiceCreation?: boolean
+
+  @ApiPropertyOptional({
     description: 'Events associated with the payment flow',
     type: [PaymentFlowEventDTO],
   })
@@ -197,6 +214,41 @@ export class GetPaymentFlowDTO {
 
   @ApiPropertyOptional()
   cancelUrl?: string
+
+  @ApiPropertyOptional({
+    description:
+      'Populated only when paymentStatus is bank_transfer_failed. Indicates the reason the most recent bank-transfer attempt failed.',
+    enum: BankTransferFailureReason,
+  })
+  @IsOptional()
+  @IsEnum(BankTransferFailureReason)
+  lastBankTransferFailure?: BankTransferFailureReason
+
+  @ApiPropertyOptional({
+    description:
+      'Populated only when paymentStatus is bank_transfer_pending. The provider SCA URL the user can return to in order to resume their in-flight attempt. Empty/undefined indicates back-channel SCA (no URL to redirect to).',
+    type: String,
+  })
+  @IsOptional()
+  @IsString()
+  bankTransferScaRedirectUrl?: string
+
+  @ApiPropertyOptional({
+    description:
+      'Populated only when paymentStatus is bank_transfer_pending. The timestamp at which the in-flight attempt expires.',
+    type: Date,
+  })
+  @IsOptional()
+  @IsDate()
+  bankTransferExpiresAt?: Date
+
+  @ApiPropertyOptional({
+    description: 'Populated only when paymentStatus is bank_transfer_pending',
+    enum: BankTransferPendingStatus,
+  })
+  @IsOptional()
+  @IsEnum(BankTransferPendingStatus)
+  bankTransferPendingStatus?: BankTransferPendingStatus
 }
 
 export class GetPaymentFlowsPaginatedDTO {

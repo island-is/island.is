@@ -73,6 +73,11 @@ export class UpdateCourtSessionDto {
   readonly ruling?: string
 
   @IsOptional()
+  @IsUUID()
+  @ApiPropertyOptional({ type: String })
+  readonly rulingFileId?: string
+
+  @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
   readonly isAttestingWitness?: boolean

@@ -3,12 +3,13 @@ import { MockedProvider } from '@apollo/client/testing'
 import { render, screen } from '@testing-library/react'
 
 import {
+  AppealCaseState,
   CaseType,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   mockCase,
-  mockTransitonCaseMutation,
+  mockCaseTableMembershipQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import {
   FormContextWrapper,
@@ -33,14 +34,19 @@ describe('Overview', () => {
 
     render(
       <MockedProvider
-        mocks={mockTransitonCaseMutation(caseId)}
+        mocks={[...mockCaseTableMembershipQuery(caseId)]}
         addTypename={false}
       >
         <IntlProviderWrapper>
           <FormContextWrapper
             theCase={{
               ...mockCase(CaseType.CUSTODY),
-              requestAppealRulingNotToBePublished: [UserRole.PROSECUTOR],
+              id: caseId,
+              appealCase: {
+                id: 'test_appeal_case_id',
+                appealState: AppealCaseState.RECEIVED,
+                requestAppealRulingNotToBePublished: [UserRole.PROSECUTOR],
+              },
             }}
           >
             <Overview />

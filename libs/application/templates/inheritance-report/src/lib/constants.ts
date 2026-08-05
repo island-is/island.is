@@ -7,6 +7,7 @@ export const ESTATE_INHERITANCE = 'estateInheritance'
 export const States = {
   prerequisites: 'prerequisites',
   draft: 'draft',
+  signing: 'signing',
   done: 'done',
 }
 
@@ -51,12 +52,7 @@ export const PrePaidHeirsRelations = [
   },
 ]
 
-export type InheritanceReportEvent =
-  | { type: DefaultEvents.APPROVE }
-  | { type: DefaultEvents.REJECT }
-  | { type: DefaultEvents.SUBMIT }
-  | { type: DefaultEvents.ASSIGN }
-  | { type: DefaultEvents.EDIT }
+export type InheritanceReportEvent = { type: DefaultEvents.SUBMIT }
 
 export enum Roles {
   ESTATE_INHERITANCE_APPLICANT = 'estateInheritanceApplicant',
@@ -64,12 +60,19 @@ export enum Roles {
 }
 
 export enum ApiActions {
-  completeApplication = 'completeApplication',
   syslumennOnEntry = 'syslumennOnEntry',
+  completeApplication = 'completeApplication',
+  submitToSyslumenn = 'submitToSyslumenn',
+  getSignatories = 'getSignatories',
+  sendApplicationCopyToParties = 'sendApplicationCopyToParties',
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ErrorValue = { [key: string]: any }
+
+// Number of days applicants have to submit the application after starting it.
+// Used by the lifecycle pruning (prerequisites/draft states) and the frontend info message.
+export const DRAFT_PRUNE_DAYS = 90
 
 // TODO: this value should be fetched from the API at some point
 export const DEFAULT_TAX_FREE_LIMIT = 6_203_409

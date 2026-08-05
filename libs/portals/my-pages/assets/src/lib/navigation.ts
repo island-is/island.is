@@ -55,6 +55,10 @@ export const assetsNavigation: PortalNavigationItem = {
           name: m.vehiclesRegisterMileage,
           description: m.vehiclesRegisterMileageIntro,
           path: AssetsPaths.AssetsVehiclesBulkMileage,
+          customShortcut: {
+            name: m.vehiclesRegisterMileage,
+            description: m.vehicleMileageDescription,
+          },
           children: [
             {
               name: m.vehiclesBulkMileageUpload,
@@ -110,6 +114,18 @@ export const assetsNavigation: PortalNavigationItem = {
       ],
     },
     {
+      name: m.myShips,
+      description: m.myShipsIntro,
+      path: AssetsPaths.AssetsShips,
+      children: [
+        {
+          name: 'id',
+          navHide: true,
+          path: AssetsPaths.AssetsShipDetail,
+        },
+      ],
+    },
+    {
       name: m.workMachines,
       description: m.workMachinesIntro,
       searchTags: [s.assetsWorkMachines, s.assetsMachines],
@@ -119,6 +135,18 @@ export const assetsNavigation: PortalNavigationItem = {
           name: 'regNumber',
           navHide: true,
           path: AssetsPaths.AssetsWorkMachinesDetail,
+        },
+      ],
+    },
+    {
+      name: m.farmerLands,
+      description: m.farmerLandsIntro,
+      path: AssetsPaths.AssetsFarmerLands,
+      children: [
+        {
+          name: m.farmerLand,
+          navHide: true,
+          path: AssetsPaths.AssetsFarmerLandDetail,
         },
       ],
     },

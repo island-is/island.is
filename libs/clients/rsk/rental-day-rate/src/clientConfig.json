@@ -15,6 +15,59 @@
     }
   ],
   "paths": {
+    "/api/DayRate/entries/{EntityId}/eligible-vehicles": {
+      "get": {
+        "tags": ["DayRate"],
+        "parameters": [
+          {
+            "name": "EntityId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Api-Version",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ValidVehicle"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ValidVehicle"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ValidVehicle"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/DayRate/entries/{EntityId}": {
       "get": {
         "tags": ["DayRate"],
@@ -85,8 +138,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "date"
+              "pattern": "^\\d{4}-\\d{2}$",
+              "type": "string"
             }
           },
           {
@@ -674,6 +727,21 @@
           "timabil": {
             "type": "string",
             "format": "date"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ValidVehicle": {
+        "required": ["mileage", "permno"],
+        "type": "object",
+        "properties": {
+          "permno": {
+            "type": "string",
+            "nullable": true
+          },
+          "mileage": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false

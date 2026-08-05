@@ -1,6 +1,7 @@
 import { DetailedInfoCard, DetailedProps } from './DetailedInfoCard'
 import { SimpleInfoCard } from './SimpleInfoCard'
 import { Box, BoxProps, FocusableBox, LinkV2 } from '../..'
+import * as styles from './InfoCard.css'
 
 export interface BaseProps {
   id: string
@@ -41,7 +42,11 @@ export const InfoCard = ({ size, ...restOfProps }: InfoCardProps) => {
       width="full"
       borderRadius="large"
     >
-      <Box width="full" padding={restOfProps.padding ?? 3}>
+      <Box
+        className={styles.cardBase}
+        width="full"
+        padding={restOfProps.padding ?? 3}
+      >
         {restOfProps.variant === 'detailed' ? (
           <DetailedInfoCard size={size} {...restOfProps} />
         ) : (

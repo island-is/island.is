@@ -1,8 +1,8 @@
 import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 
-import { NotificationType } from '@island.is/judicial-system/types'
+import { TrackedNotificationType } from '@island.is/judicial-system/types'
 
-registerEnumType(NotificationType, { name: 'NotificationType' })
+registerEnumType(TrackedNotificationType, { name: 'TrackedNotificationType' })
 
 @ObjectType()
 export class Recipient {
@@ -24,8 +24,8 @@ export class Notification {
   @Field(() => ID, { nullable: true })
   readonly caseId?: string
 
-  @Field(() => NotificationType, { nullable: true })
-  readonly type?: NotificationType
+  @Field(() => TrackedNotificationType, { nullable: true })
+  readonly type?: TrackedNotificationType
 
   @Field(() => [Recipient], { nullable: true })
   readonly recipients?: Recipient[]

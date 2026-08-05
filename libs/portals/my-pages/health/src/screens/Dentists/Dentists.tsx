@@ -23,9 +23,11 @@ import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import BillsTable from './BillsTable'
 import { useGetDentistsQuery } from './Dentists.generated'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const Dentists = () => {
   useNamespaces('sp.health')
+  useHealthPlausibleSwap()
   const { formatMessage, lang } = useLocale()
   const location = useLocation()
   // Check if the user was transfered from another health center
@@ -66,8 +68,11 @@ const Dentists = () => {
       marginBottom={[6, 6, 10]}
       title={formatMessage(messages.dentistsTitle)}
       intro={formatMessage(messages.dentistsDescription)}
-      serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
-      serviceProviderTooltip={formatMessage(messages.healthTooltip)}
+      desktopContentSpan="10/12"
+      serviceProvider={{
+        slug: SJUKRATRYGGINGAR_SLUG,
+        tooltip: formatMessage(messages.healthTooltip),
+      }}
     >
       {error && !loading && <Problem error={error} noBorder={false} />}
 

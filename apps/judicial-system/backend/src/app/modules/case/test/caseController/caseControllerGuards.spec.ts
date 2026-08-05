@@ -42,25 +42,12 @@ describe('CaseController - Transition guards', () => {
   ])
 })
 
-describe('CaseController - Get all guards', () => {
-  verifyGuards(CaseController, 'getAll', [RolesGuard])
-})
-
 describe('CaseController - Get by id guards', () => {
   verifyGuards(CaseController, 'getById', [
     RolesGuard,
     CaseExistsGuard,
     CaseReadGuard,
   ])
-})
-
-describe('CaseController - Get connected cases guards', () => {
-  verifyGuards(
-    CaseController,
-    'getConnectedCases',
-    [RolesGuard, CaseExistsGuard, CaseTypeGuard],
-    [{ guard: CaseTypeGuard, prop: { allowedCaseTypes: indictmentCases } }],
-  )
 })
 
 describe('CaseController - Get candidate merge cases guards', () => {
@@ -288,6 +275,15 @@ describe('CaseController - Split defendant from case guards', () => {
         prop: { allowedCaseTypes: indictmentCases },
       },
     ],
+  )
+})
+
+describe('CaseController - Duplicate guards', () => {
+  verifyGuards(
+    CaseController,
+    'duplicate',
+    [RolesGuard, CaseExistsGuard, CaseTypeGuard, CaseReadGuard],
+    [{ guard: CaseTypeGuard, prop: { allowedCaseTypes: indictmentCases } }],
   )
 })
 

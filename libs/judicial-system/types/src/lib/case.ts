@@ -95,7 +95,7 @@ export const IndictmentCaseSubtypes: CourtIndictmentSubtypes = {
   POLICE_REGULATIONS: 'Brot gegn lögreglusamþykkt',
   INTIMATE_RELATIONS: 'Brot í nánu sambandi',
   ANIMAL_PROTECTION: 'Brot á lögum um dýravernd',
-  FOREIGN_NATIONALS: 'Brot á lögum um útlendinga',
+  FOREIGN_NATIONALS: 'Brot gegn útlendingalögum',
   PUBLIC_SERVICE_VIOLATION: 'Brot í opinberu starfi',
   PROPERTY_DAMAGE: 'Eignaspjöll',
   NARCOTICS_OFFENSE: 'Fíkniefnalagabrot',
@@ -227,63 +227,46 @@ export enum RequestCaseState {
   DELETED = CaseState.DELETED,
 }
 
-export enum CaseAppealState {
-  APPEALED = 'APPEALED',
-  RECEIVED = 'RECEIVED',
-  COMPLETED = 'COMPLETED',
-  WITHDRAWN = 'WITHDRAWN',
-}
-
 export enum CaseTransition {
   ACCEPT = 'ACCEPT',
-  APPEAL = 'APPEAL',
   ASK_FOR_CANCELLATION = 'ASK_FOR_CANCELLATION',
   ASK_FOR_CONFIRMATION = 'ASK_FOR_CONFIRMATION',
   COMPLETE = 'COMPLETE',
-  COMPLETE_APPEAL = 'COMPLETE_APPEAL',
+  CORRECT = 'CORRECT',
   DELETE = 'DELETE',
   DENY_INDICTMENT = 'DENY_INDICTMENT',
   DISMISS = 'DISMISS',
   MOVE = 'MOVE',
   OPEN = 'OPEN',
   RECEIVE = 'RECEIVE',
-  RECEIVE_APPEAL = 'RECEIVE_APPEAL',
   REJECT = 'REJECT',
   REOPEN = 'REOPEN',
-  REOPEN_APPEAL = 'REOPEN_APPEAL',
-  RETURN_INDICTMENT = 'RETURN_INDICTMENT',
   SUBMIT = 'SUBMIT',
-  WITHDRAW_APPEAL = 'WITHDRAW_APPEAL',
 }
 
 export enum IndictmentCaseTransition {
   ASK_FOR_CANCELLATION = CaseTransition.ASK_FOR_CANCELLATION,
   ASK_FOR_CONFIRMATION = CaseTransition.ASK_FOR_CONFIRMATION,
   COMPLETE = CaseTransition.COMPLETE,
+  CORRECT = CaseTransition.CORRECT,
   DELETE = CaseTransition.DELETE,
   DENY_INDICTMENT = CaseTransition.DENY_INDICTMENT,
   MOVE = CaseTransition.MOVE,
   RECEIVE = CaseTransition.RECEIVE,
   REOPEN = CaseTransition.REOPEN,
-  RETURN_INDICTMENT = CaseTransition.RETURN_INDICTMENT,
   SUBMIT = CaseTransition.SUBMIT,
 }
 
 export enum RequestCaseTransition {
   ACCEPT = CaseTransition.ACCEPT,
-  APPEAL = CaseTransition.APPEAL,
-  COMPLETE_APPEAL = CaseTransition.COMPLETE_APPEAL,
   DELETE = CaseTransition.DELETE,
   DISMISS = CaseTransition.DISMISS,
   MOVE = CaseTransition.MOVE,
   OPEN = CaseTransition.OPEN,
   RECEIVE = CaseTransition.RECEIVE,
-  RECEIVE_APPEAL = CaseTransition.RECEIVE_APPEAL,
   REJECT = CaseTransition.REJECT,
   REOPEN = CaseTransition.REOPEN,
-  REOPEN_APPEAL = CaseTransition.REOPEN_APPEAL,
   SUBMIT = CaseTransition.SUBMIT,
-  WITHDRAW_APPEAL = CaseTransition.WITHDRAW_APPEAL,
 }
 
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -309,13 +292,6 @@ export enum CaseCustodyRestrictions {
   WORKBAN = 'WORKBAN',
 }
 
-export enum CaseAppealDecision {
-  APPEAL = 'APPEAL',
-  ACCEPT = 'ACCEPT',
-  POSTPONE = 'POSTPONE',
-  NOT_APPLICABLE = 'NOT_APPLICABLE',
-}
-
 export enum CaseDecision {
   ACCEPTING = 'ACCEPTING',
   REJECTING = 'REJECTING',
@@ -331,17 +307,7 @@ export enum IndictmentDecision {
   REDISTRIBUTING = 'REDISTRIBUTING',
   SCHEDULING = 'SCHEDULING',
   SPLITTING = 'SPLITTING',
-}
-
-export enum CaseAppealRulingDecision {
-  ACCEPTING = 'ACCEPTING',
-  REPEAL = 'REPEAL',
-  CHANGED = 'CHANGED',
-  CHANGED_SIGNIFICANTLY = 'CHANGED_SIGNIFICANTLY',
-  DISMISSED_FROM_COURT_OF_APPEAL = 'DISMISSED_FROM_COURT_OF_APPEAL',
-  DISMISSED_FROM_COURT = 'DISMISSED_FROM_COURT',
-  REMAND = 'REMAND',
-  DISCONTINUED = 'DISCONTINUED',
+  COMPLETING_FOR_SOME = 'COMPLETING_FOR_SOME',
 }
 
 export enum CaseIndictmentRulingDecision {
@@ -495,12 +461,6 @@ export const hasIndictmentCaseBeenSubmittedToCourt = (
         ...completedIndictmentCaseStates,
       ].includes(state),
   )
-}
-
-export const getStatementDeadline = (appealReceived: Date): string => {
-  return new Date(
-    new Date(appealReceived).setDate(appealReceived.getDate() + 1),
-  ).toISOString()
 }
 
 export const isIndictmentCaseState = (

@@ -11,14 +11,13 @@ export enum Features {
   passportApplication = 'isPassportApplicationEnabled',
   passportAnnulmentApplication = 'isPassportAnnulmentApplicationEnabled',
   financialStatementInao = 'financialStatementInao',
-  alcoholTaxRedemption = 'isAlcoholTaxRedemptionEnabled',
   consultationPortalApplication = 'isConsultationPortalEnabled',
   childrenResidenceChangeV2 = 'isChildrenResidenceChangeV2Enabled',
   complaintsToAlthingiOmbudsman = 'isComplaintToAlthingiOmbudsmanEnabled',
   university = 'isUniversityEnabled',
   homeSupport = 'isHomeSupportEnabled',
-  grindavikHousingBuyout = 'isGrindavikHousingBuyoutEnabled',
   officialJournalOfIceland = 'isOfficialJournalOfIcelandEnabled',
+  officialJournalOfIcelandRegulations = 'isOjoiRegulationApplicationPathEnabled',
   legalGazette = 'isLegalGazetteEnabled',
   HealthInsuranceDeclaration = 'isHealthInsuranceDeclarationEnabled',
   newPrimarySchool = 'isNewPrimarySchoolEnabled',
@@ -39,7 +38,14 @@ export enum Features {
   UnemploymentBenefitsEnabled = 'isUnemploymentBenefitsEnabled',
   RegistrationOfNewPropertyNumbersEnabled = 'isRegistrationOfNewPropertyNumbersEnabled',
   fundingGovernmentProjectsEnabled = 'isFundingGovernmentProjectsEnabled',
-
+  editUnemploymentInformation = 'isEditUnemploymentInformationEnabled',
+  estateReviewEnabled = 'isEstateReviewEnabled',
+  inheritanceReportReviewEnabled = 'isInheritanceReportReviewEnabled',
+  isDeregisterUnemploymentBenefitsEnabled = 'isDeregisterUnemploymentBenefitsEnabled',
+  isConfirmJobSearchEnabled = 'isConfirmJobSearchEnabled',
+  isTravelConfirmationEnabled = 'isTravelConfirmationEnabled',
+  isSubmitDocumentsEnabled = 'isSubmitDocumentsEnabled',
+  isDirectorateOfEqualityApplicationsEnabled = 'isDirectorateOfEqualityApplicationsEnabled',
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
 
@@ -54,29 +60,48 @@ export enum Features {
   servicePortalHealthMedicineDelegationPageEnabled = 'isServicePortalHealthMedicineDelegationPageEnabled',
   servicePortalHealthBloodPageEnabled = 'isServicePortalHealthBloodPageEnabled',
   isServicePortalMyContractsPageEnabled = 'isServicePortalMyContractsPageEnabled',
+  isServicePortalMyPagesTRBankInformationPageEnabled = 'isServicePortalMyPagesTRBankInformationPageEnabled',
+  isServicePortalTRPaymentTypesOverviewPageEnabled = 'isServicePortalTRPaymentTypesOverviewPageEnabled',
+  isServicePortalTRPersonalTaxCreditPageEnabled = 'isServicePortalTRPersonalTaxCreditPageEnabled',
   servicePortalDocumentsActionsEnabled = 'isServicePortalDocumentsActionsEnabled',
   isServicePortalDocumentsV3PageEnabled = 'isServicePortalDocumentsV3PageEnabled',
   isServicePortal2WayMailboxEnabled = 'isServicePortal2WayMailboxEnabled',
   servicePortalPoliceCasesPageEnabled = 'isServicePortalPoliceCasesPageEnabled',
   isServicePortalHealthQuestionnairesPageEnabled = 'isServicePortalHealthQuestionnairesPageEnabled',
+  isServicePortalFarmersLandsPageEnabled = 'isServicePortalFarmersLandsPageEnabled',
+  isServicePortalUnemploymentBenefitsPageEnabled = 'isServicePortalUnemploymentBenefitsPageEnabled',
+
   // Health Aid and Nutrition Renewal feature enabled
   servicePortalHealthAidAndNutritionRenewalEnabled = 'isServicePortalHealthAidAndNutritionRenewalEnabled',
   //Occupational License Health directorate fetch enabled
   occupationalLicensesHealthDirectorate = 'isHealthDirectorateOccupationalLicenseEnabled',
   healthPaymentOverview = 'isHealthPaymentsDocumentOverviewEnabled',
   isIDSAdminSsoSettingEnabled = 'isIDSAdminSsoSettingEnabled',
+  isIDSAdminStepUpAuthEnabled = 'isIDSAdminStepUpAuthEnabled',
+  isNewPermissionsOptionsEnabled = 'isNewPermissionsOptionsEnabled',
+  showIdsAdminControls = 'showIdsAdminControls',
+  showThirdPartyUrlOptions = 'showThirdPartyUrlOptions',
   isIdentityDocumentEnabled = 'isIdentityDocumentEnabled',
   isServicePortalHealthAppointmentsPageEnabled = 'isServicePortalHealthAppointmentsPageEnabled',
+  isServicePortalHealthMessagesPageEnabled = 'isServicePortalHealthMessagesPageEnabled',
   isServicePortalHealthPaymentOverviewTotalPageEnabled = 'isServicePortalHealthPaymentOverviewTotalPageEnabled',
   //New License service fetch enabled
   licensesV2 = 'isLicensesV2Enabled',
   pkPassV2 = 'isPkPassV2Enabled',
+
+  isServicePortalFinanceTransactionsV3Enabled = 'IsServicePortalFinanceTransactionsV3Enabled',
 
   //Is social administration payment plan 2025 enabled?
   isServicePortalPaymentPlan2025Enabled = 'isServicePortalPaymentPlan2025Enabled',
 
   //Is vehicle bulk mileage graph enabled?
   isServicePortalVehicleBulkMileageSubdataPageEnabled = 'isServicePortalVehicleBulkMileageSubdataPageEnabled',
+
+  //Enable sailors page
+  isServicePortalSailorsPageEnabled = 'isServicePortalSailorsPageEnabled',
+
+  //Enable user ships page
+  isServicePortalUserShipsPageEnabled = 'isServicePortalUserShipsPageEnabled',
 
   //Possible universities
   isUniversityOfAkureyriEnabled = 'isUniversityOfAkureyriEnabled',
@@ -129,14 +154,28 @@ export enum Features {
   useIslandisPaymentForApplicationSystem = 'useIslandisPaymentForApplicationSystem',
   isIslandisInvoicePaymentEnabled = 'isIslandisInvoicePaymentEnabled',
   isIslandisInvoicePaymentAllowedForUser = 'isislandisinvoicepaymentsallowedforuser',
+  isIslandisApplePayPaymentEnabled = 'isIslandisApplePayPaymentEnabled',
+  isIslandisApplePayPaymentAllowedForUser = 'isIslandisApplePayPaymentAllowedForUser',
+  isIslandisApplePayStrictSignatureVerificationEnabled = 'isIslandisApplePayStrictSignatureVerificationEnabled',
+  isIslandisBankTransferPaymentEnabled = 'isIslandisBankTransferPaymentEnabled',
+  isIslandisBankTransferPaymentAllowedForUser = 'isIslandisBankTransferPaymentAllowedForUser',
 
   // Should auth api use national registry v3 for checking deceased status
   isNationalRegistryV3DeceasedStatusEnabled = 'isNationalRegistryV3DeceasedStatusEnabled',
+
+  // Should auth api use national registry v3 (Midlun) for incoming ward (legal guardian) delegations
+  isDelegationIncomingWardV3Enabled = 'isDelegationIncomingWardV3Enabled',
 
   // Should applicaton-system use national registry v3
   shouldApplicationSystemUseNationalRegistryV3 = 'shouldApplicationSystemUseNationalRegistryV3',
 
   delegationTypesWithNotificationsEnabled = 'delegationTypesWithNotificationsEnabled',
+
+  // Should user-notification worker check deceased status via national registry
+  isUserNotificationDeceasedCheckEnabled = 'isUserNotificationDeceasedCheckEnabled',
+
+  // Should user-notification worker check inactive company status via company registry
+  isUserNotificationInactiveCompanyCheckEnabled = 'isUserNotificationInactiveCompanyCheckEnabled',
 
   // Allow fake data
   digitalTachographDriversCardAllowFakeData = 'digitalTachographDriversCardAllowFakeData',
@@ -151,6 +190,30 @@ export enum Features {
   // Questionnaires
   questionnairesFromEL = 'isQuestionnairesHealthDirectorateClientEnabled',
   questionnairesFromLSH = 'isQuestionnairesLshClientEnabled',
+
+  // Use new delegation system
+  useNewDelegationSystem = 'useNewDelegationSystem',
+
+  // Validate Personal representative delegations at syslumenn
+  usePersonalRepresentativesFromSyslumenn = 'usePersonalRepresentativesFromSyslumenn',
+  // SMS Notifications
+  isSmsNotificationEnabled = 'isSmsNotificationEnabled',
+  isSendSmsNotificationsEnabled = 'isSendSmsNotificationsEnabled',
+
+  // Primary school (guardian-facing)
+  isServicePortalPrimarySchoolPageEnabled = 'isServicePortalPrimarySchoolPageEnabled',
+  // Primary school PDF viewer modal
+  isServicePortalPrimarySchoolPdfViewerEnabled = 'isServicePortalPrimarySchoolPdfViewerEnabled',
+  // New health overview page (incl. sidebar contact box)
+  isNewHealthOverviewPageEnabled = 'isNewHealthOverviewPageEnabled',
+  // University micro-credentials (örnám)
+  servicePortalUniversityMicroCredentialsEnabled = 'isServicePortalUniversityMicroCredentialsPageEnabled',
+  // Car recycling
+  isNewCarRecyclingBackendEnabled = 'isNewCarRecyclingBackendEnabled',
+  // Housing Benefits
+  isHousingBenefitsEnabled = 'isHousingBenefitsApplicationEnabled',
+
+  organizationFooterComesFromOrganizationPage = 'organizationFooterComesFromOrganizationPage',
 }
 
 export enum ServerSideFeature {

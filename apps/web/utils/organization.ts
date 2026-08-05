@@ -37,14 +37,6 @@ export const getBackgroundStyle = (
   background?: Omit<OrganizationTheme, '__typename'> | null,
 ) => {
   if (!background) return ''
-  if (
-    background.useGradientColor &&
-    background.gradientStartColor &&
-    background.gradientEndColor
-  )
-    return `linear-gradient(99.09deg, ${background.gradientStartColor} 23.68%,
-      ${background.gradientEndColor} 123.07%),
-      linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0, 0, 0, 0) 70%)`
   return background.backgroundColor ?? ''
 }
 

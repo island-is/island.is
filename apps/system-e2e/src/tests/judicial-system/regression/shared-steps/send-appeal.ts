@@ -52,7 +52,7 @@ export const prosecutorAppealsCaseTest = async (page: Page, caseId: string) => {
   ])
 
   // Send statement
-  await expect(page).toHaveURL(`/greinargerd/${caseId}`)
+  await expect(page).toHaveURL(`/kaera/greinargerd/${caseId}`)
   await chooseDocument(
     page,
     async () => {

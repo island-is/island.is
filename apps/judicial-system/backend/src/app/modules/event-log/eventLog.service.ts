@@ -32,6 +32,7 @@ const allowMultiple: EventType[] = [
   EventType.REQUEST_COMPLETED,
   EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
   EventType.INDICTMENT_COMPLETED,
+  EventType.INDICTMENT_REOPENED,
 ]
 
 const allowOnePerUserRole: EventType[] = [EventType.APPEAL_RESULT_ACCESSED]

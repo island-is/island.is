@@ -8,7 +8,7 @@ import {
   AppProvider,
   AppLayout,
 } from '@island.is/financial-aid-web/osk/src/components'
-import { Provider } from 'next-auth/client'
+import { SessionProvider } from 'next-auth/react'
 
 import '@island.is/financial-aid-web/osk/src/styles.css'
 
@@ -17,9 +17,10 @@ class FinancialAidApplication extends App<AppProps> {
     const { Component, pageProps } = this.props
 
     return (
-      <Provider
+      <SessionProvider
         session={pageProps.session}
-        options={{ clientMaxAge: 120, basePath: `/api/auth` }}
+        basePath="/api/auth"
+        refetchInterval={120}
       >
         <ApolloProvider client={client}>
           <FormProvider>
@@ -91,7 +92,7 @@ class FinancialAidApplication extends App<AppProps> {
             </AppProvider>
           </FormProvider>
         </ApolloProvider>
-      </Provider>
+      </SessionProvider>
     )
   }
 }

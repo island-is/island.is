@@ -3,6 +3,7 @@ import nodemailer from 'nodemailer'
 
 import { Inject } from '@nestjs/common'
 
+import { DogStatsD } from '@island.is/infra-metrics'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
@@ -12,6 +13,8 @@ import { Message } from '../types'
 import { emailModuleConfig } from './email.config'
 
 export class EmailService {
+  private readonly metrics = new DogStatsD({ prefix: 'email-service.' })
+
   constructor(
     @Inject(emailModuleConfig.KEY)
     private readonly config: ConfigType<typeof emailModuleConfig>,
@@ -84,6 +87,7 @@ export class EmailService {
 
       messageId = `${info.messageId}`
 
+      this.metrics.increment('sent', 1)
       this.logger.info(`Message sent: ${messageId}`)
 
       if (this.config.useNodemailerApp) {

@@ -1,4 +1,4 @@
-import * as Constants from '@island.is/judicial-system/consts'
+import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import {
   CaseAppealDecision,
   Gender,
@@ -29,7 +29,7 @@ describe('formatDate', () => {
     const date2 = undefined
 
     // Act
-    const time2 = formatDate(date2, Constants.TIME_FORMAT)
+    const time2 = formatDate(date2, TIME_FORMAT)
 
     // Assert
     expect(time2).toBeUndefined()
@@ -41,8 +41,8 @@ describe('formatDate', () => {
     const date2 = '2020-09-23T23:36:57.287Z'
 
     // Act
-    const time = formatDate(date, Constants.TIME_FORMAT)
-    const time2 = formatDate(date2, Constants.TIME_FORMAT)
+    const time = formatDate(date, TIME_FORMAT)
+    const time2 = formatDate(date2, TIME_FORMAT)
 
     // Assert
     expect(time).toEqual('09:36')

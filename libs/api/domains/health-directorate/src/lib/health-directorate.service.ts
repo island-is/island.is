@@ -1,38 +1,54 @@
 import { Auth } from '@island.is/auth-nest-tools'
 import {
+  ConversationAttachmentDto,
+  ConversationDetailDto,
+  ConversationMessageDto,
+  CreateConversationRequestDto,
   CreateEuPatientConsentDto,
+  CreateReplyRequestDto,
   HealthDirectorateHealthService,
-  HealthDirectorateOrganDonationService,
   HealthDirectorateVaccinationsService,
   OrganDonorDto,
-  PrescriptionRenewalRequestDto,
-  UserVisibleAppointmentStatuses,
   VaccinationDto,
-  organLocale,
 } from '@island.is/clients/health-directorate'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { ConfigType } from '@island.is/nest/config'
+import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { Locale } from '@island.is/shared/types'
+import { isDefined } from '@island.is/shared/utils'
 import { Inject, Injectable } from '@nestjs/common'
-import isNumber from 'lodash/isNumber'
 import sortBy from 'lodash/sortBy'
 import { PATIENT_PERMIT_CODE } from './constants'
-import { HealthDirectorateAppointmentsInput } from './dto/appointments.input'
+import {
+  HealthDirectorateAppointmentInput,
+  HealthDirectorateAppointmentsInput,
+} from './dto/appointments.input'
+import { HealthDirectorateCreateConversationInput } from './dto/createHealthConversation.input'
+import { HealthDirectorateReplyToConversationInput } from './dto/replyToHealthConversation.input'
 import {
   MedicineDelegationCreateOrDeleteInput,
   MedicineDelegationInput,
 } from './dto/medicineDelegation.input'
-import {
-  InvalidatePermitInput,
-  PermitInput,
-  PermitsInput,
-} from './dto/permit.input'
+import { PermitInput } from './dto/permit.input'
 import { HealthDirectorateResponse } from './dto/response.dto'
 import {
+  getAppointmentLinkActivationWindow,
   mapAppointmentStatus,
+  toAppointmentAssigneeTypeEnum,
+  toAppointmentLinkTypeEnum,
+  toAppointmentModalityEnum,
+  toAppointmentStatusEnum,
   mapStatusIdToColor,
   mapReferralStatusValueToStatus,
   mapVaccinationStatus,
 } from './mappers/basicInformationMapper'
+import {
+  mapConversationMessageContent,
+  mapMessagingRecipient,
+  toConversationDirectionEnum,
+  toConversationReplyBlockedReasonEnum,
+  toConversationStatusFilter,
+} from './mappers/conversationMapper'
 import {
   mapDelegationStatus,
   mapDispensationItem,
@@ -40,9 +56,13 @@ import {
   mapPrescriptionRenewalBlockedReason,
   mapPrescriptionRenewalStatus,
 } from './mappers/medicineMapper'
-import { mapCountryPermitStatus, mapPermit } from './mappers/patientDataMapper'
+import { mapPermit, mapPermitHistoryEntry } from './mappers/patientDataMapper'
 import { Appointment, Appointments } from './models/appointments.model'
-import { PermitStatusEnum } from './models/enums'
+import { AppointmentDetail } from './models/appointmentDetail.model'
+import {
+  HealthConversationStatusFilterEnum,
+  PermitStatusEnum,
+} from './models/enums'
 import { MedicineDelegations } from './models/medicineDelegation.model'
 import {
   MedicineHistory,
@@ -53,31 +73,45 @@ import { MedicineDispensationsATCInput } from './models/medicineHistoryATC.dto'
 import { MedicineDispensationsATC } from './models/medicineHistoryATC.model'
 import { Donor, DonorInput, Organ } from './models/organ-donation.model'
 import { Countries } from './models/permits/country.model'
-import { Permit, PermitReturn, Permits } from './models/permits/permits'
+import { Permit } from './models/permits/permit.model'
+import { PermitHistoryEntry } from './models/permits/permitHistoryEntry.model'
+import { PermitReturn } from './models/permits/permitReturn.model'
+import { Permits } from './models/permits/permits.model'
 import { MedicinePrescriptionDocumentsInput } from './models/prescriptionDocuments.dto'
 import { PrescriptionDocuments } from './models/prescriptionDocuments.model'
 import { Prescription, Prescriptions } from './models/prescriptions.model'
+import { PrescriptionRenewalTarget } from './models/renewalTarget.model'
 import { ReferralDetail } from './models/referral.model'
 import { Referral, Referrals } from './models/referrals.model'
 import { HealthDirectorateRenewalInput } from './models/renewal.input'
 import { Vaccination, Vaccinations } from './models/vaccinations.model'
 import { WaitlistDetail } from './models/waitlist.model'
 import { Waitlist, Waitlists } from './models/waitlists.model'
+import { HealthDirectorateHealthConversation } from './models/healthConversation.model'
+import { HealthDirectorateHealthConversationAttachment } from './models/healthConversationAttachment.model'
+import { HealthDirectorateHealthConversationDetail } from './models/healthConversationDetail.model'
+import { HealthDirectorateConversationOrganization } from './models/healthConversationOrganization.model'
+import { HealthDirectorateHealthConversationEntry } from './models/healthConversationEntry.model'
+import { HealthDirectorateHealthConversationRecipient } from './models/healthConversationRecipient.model'
 
 @Injectable()
 export class HealthDirectorateService {
   constructor(
     private readonly vaccinationApi: HealthDirectorateVaccinationsService,
     private readonly healthApi: HealthDirectorateHealthService,
-    private readonly organDonationApi: HealthDirectorateOrganDonationService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+    @Inject(DownloadServiceConfig.KEY)
+    private readonly downloadServiceConfig: ConfigType<
+      typeof DownloadServiceConfig
+    >,
   ) {}
 
   /* Organ Donation */
   async getDonorStatus(auth: Auth, locale: Locale): Promise<Donor | null> {
-    const lang: organLocale = locale === 'is' ? organLocale.Is : organLocale.En
-    const data: OrganDonorDto | null =
-      await this.organDonationApi.getOrganDonation(auth, lang)
+    const data: OrganDonorDto | null = await this.healthApi.getOrganDonation(
+      auth,
+      locale,
+    )
     if (data === null) {
       return null
     }
@@ -104,8 +138,7 @@ export class HealthDirectorateService {
     auth: Auth,
     locale: Locale,
   ): Promise<Array<Organ>> {
-    const lang: organLocale = locale === 'is' ? organLocale.Is : organLocale.En
-    const data = await this.organDonationApi.getDonationExceptions(auth, lang)
+    const data = await this.healthApi.getDonationExceptions(auth, locale)
 
     const limitations: Array<Organ> =
       data?.map((item) => {
@@ -126,14 +159,14 @@ export class HealthDirectorateService {
     const filteredList =
       input.organLimitations?.filter((item) => item !== 'other') ?? []
 
-    return await this.organDonationApi.updateOrganDonation(
+    return await this.healthApi.updateOrganDonation(
       auth,
       {
         isDonor: input.isDonor,
         exceptions: filteredList,
         exceptionComment: input.comment,
       },
-      locale === 'is' ? organLocale.Is : organLocale.En,
+      locale,
     )
   }
 
@@ -284,7 +317,8 @@ export class HealthDirectorateService {
     const prescriptions: Array<Prescription> =
       data.map((item) => {
         return {
-          id: item.product.id,
+          id: item.prescriptionId,
+          productId: item.product.id,
           name: item.product.name,
           type: item.product.type,
           form: item.product.form,
@@ -293,6 +327,7 @@ export class HealthDirectorateService {
           quantity: item.product?.quantity?.toString(),
           prescriberName: item.prescriber.name,
           medCardDrugId: item.medCard?.id,
+          medCardDrugCategory: item.medCard?.category,
           issueDate: item.issueDate,
           expiryDate: item.expiryDate,
           dosageInstructions: item.dosageInstructions,
@@ -332,25 +367,31 @@ export class HealthDirectorateService {
 
   /* Renewal */
   async postRenewal(auth: Auth, input: HealthDirectorateRenewalInput) {
-    const parsedInput = this.castRenewalInputToNumber(input)
-
-    if (!parsedInput) return null
-
-    // TODO: FIX WHEN RESPONSE BODY IS READY FROM CLIENT
-    await this.healthApi
-      .postRenewalPrescription(auth, input.id, {
-        medCardDrugId: input.medCardDrugId ?? input.id,
-        medCardDrugCategory: parsedInput.medCardDrugCategory,
-        prescribedItemId: parsedInput.prescribedItemId,
-      })
-      .catch((e) => {
-        return e
-      })
-      .then(() => {
-        return
-      })
+    await this.healthApi.postRenewalPrescription(auth, input.id, {
+      nodeId: input.nodeId,
+      groupId: input.groupId,
+    })
 
     return null
+  }
+
+  /* Renewal targets */
+  async getPrescriptionRenewalTargets(
+    auth: Auth,
+    id: string,
+  ): Promise<PrescriptionRenewalTarget[] | null> {
+    const data = await this.healthApi.getRenewalTargets(auth, id)
+
+    if (!data) {
+      return null
+    }
+
+    return data.map((item) => ({
+      groupId: item.groupId,
+      nodeId: item.nodeId,
+      name: item.name,
+      description: item.description,
+    }))
   }
 
   /* Prescription Documents */
@@ -431,9 +472,11 @@ export class HealthDirectorateService {
     const medicineDelegations = await this.healthApi.getMedicineDelegations(
       auth,
       locale,
-      input.status.map((status) =>
-        status === PermitStatusEnum.awaitingApproval ? 'pending' : status,
-      ),
+      input.status
+        .filter((status) => status !== PermitStatusEnum.unknown)
+        .map((status) =>
+          status === PermitStatusEnum.awaitingApproval ? 'pending' : status,
+        ),
     )
 
     if (!medicineDelegations) {
@@ -508,38 +551,22 @@ export class HealthDirectorateService {
   }
 
   /* Patient data - Permits */
-  async getPermits(
-    auth: Auth,
-    locale: Locale,
-    input: PermitsInput,
-  ): Promise<Permits | null> {
-    const permits = await this.healthApi.getPermits(
-      auth,
-      locale,
-      input.status.map((status) => mapCountryPermitStatus(status)),
+  async getPermits(auth: Auth, locale: Locale): Promise<Permits | null> {
+    const response = await this.healthApi.getPermits(auth, locale)
+
+    if (!response) {
+      return null
+    }
+
+    const consent: Permit | null = response.consent
+      ? mapPermit(response.consent, locale)
+      : null
+
+    const history: PermitHistoryEntry[] = (response.history ?? []).map(
+      mapPermitHistoryEntry,
     )
 
-    if (!permits) {
-      return null
-    }
-
-    const data: Permit[] = permits.map((item) => mapPermit(item, locale)) ?? []
-    return { data: sortBy(data, 'status') }
-  }
-
-  /* Patient data - Permit Detail */
-  async getPermit(
-    auth: Auth,
-    locale: Locale,
-    id: string,
-  ): Promise<Permit | null> {
-    const permit = await this.healthApi.getPermit(auth, locale, id)
-
-    if (!permit) {
-      return null
-    }
-
-    return mapPermit(permit, locale)
+    return { consent, history }
   }
 
   /* Patient data - Permit countries */
@@ -574,32 +601,9 @@ export class HealthDirectorateService {
   }
 
   /* Patient data - invalidate permit */
-  async invalidatePermit(
-    auth: Auth,
-    input: InvalidatePermitInput,
-  ): Promise<PermitReturn | null> {
-    const data = await this.healthApi.deactivatePermit(auth, input.id)
-    return data ? { status: true } : null
-  }
-
-  private castRenewalInputToNumber = (
-    input: HealthDirectorateRenewalInput,
-  ): PrescriptionRenewalRequestDto | null => {
-    // Trim whitespace from the string
-    const trimmedCategory = input.medCardDrugCategory.trim()
-    const trimmedId = input.prescribedItemId.trim()
-
-    // Try to convert the string to a number
-    const parsedCategory = Number(trimmedCategory)
-    const parsedId = Number(trimmedId)
-
-    if (isNumber(parsedCategory) && isNumber(parsedId)) {
-      return {
-        prescribedItemId: parsedId,
-        medCardDrugCategory: parsedCategory,
-        medCardDrugId: input.medCardDrugId,
-      }
-    } else return null
+  async invalidatePermit(auth: Auth): Promise<PermitReturn | null> {
+    const data = await this.healthApi.deactivatePermit(auth)
+    return data != null ? { status: true } : null
   }
 
   /* Appointments */
@@ -607,60 +611,288 @@ export class HealthDirectorateService {
     auth: Auth,
     input: HealthDirectorateAppointmentsInput,
   ): Promise<Appointments | null> {
-    try {
-      const data = await this.healthApi.getAppointments(
-        auth,
-        input.from,
-        input.status
-          ?.map((status) => mapAppointmentStatus(status))
-          .filter(
-            (status): status is UserVisibleAppointmentStatuses =>
-              status !== null,
-          ),
-      )
-      if (!data) {
-        return null
-      }
-
-      // Sort data by startTime before mapping
-      const sortedData = [...data].sort((a, b) => {
-        if (!a.startTime || !b.startTime) return 0
-        return new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
-      })
-
-      const appointments: Array<Appointment> =
-        sortedData.map((item) => {
-          const data: Appointment = {
-            id: item.id,
-            date: item.startTime?.toISOString(),
-            title: item.description,
-            status: item.status,
-            instruction: item.patientInstruction,
-            duration: item.duration,
-            location: item.location
-              ? {
-                  name: item.location.name,
-                  organization: item.location.organization || '',
-                  address: item.location.address,
-                  directions: item.location.directions || '',
-                  city: item.location.city || '',
-                  postalCode: item.location.postalCode || '',
-                  country: item.location.country || '',
-                  latitude: item.location.latitude || undefined,
-                  longitude: item.location.longitude || undefined,
-                }
-              : undefined,
-            practitioners: item.practitioners || [],
-          }
-          return data
-        }) ?? []
-      return { data: appointments }
-    } catch (error) {
-      this.logger.warn(
-        'Error fetching appointments from Health Directorate API',
-        error,
-      )
+    const data = await this.healthApi.getAppointments(
+      auth,
+      input.from,
+      input.status
+        ?.map((status) => mapAppointmentStatus(status))
+        .filter(isDefined),
+    )
+    if (!data) {
       return null
     }
+
+    // Sort data by startTime before mapping
+    const sortedData = [...data].sort((a, b) => {
+      if (!a.startTime || !b.startTime) return 0
+      return new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
+    })
+
+    const appointments: Array<Appointment> = sortedData.map((item) => ({
+      id: item.id,
+      date: item.startTime,
+      title: item.description,
+      status: toAppointmentStatusEnum(item.status),
+      modality: toAppointmentModalityEnum(item.modality),
+      duration: item.duration,
+      location: item.location
+        ? {
+            name: item.location.name,
+            organization: item.location.organization,
+            address: item.location.address,
+            city: item.location.city,
+            latitude: item.location.latitude,
+            longitude: item.location.longitude,
+          }
+        : undefined,
+      instruction: item.patientInstruction,
+      practitioners: item.practitioners ?? [],
+      assignees:
+        item.assignees
+          ?.map((a) => {
+            const type = toAppointmentAssigneeTypeEnum(a.type)
+            return type ? { type, name: a.name } : null
+          })
+          .filter(isDefined) ?? [],
+    }))
+    return { data: appointments }
+  }
+
+  public async getAppointmentById(
+    auth: Auth,
+    input: HealthDirectorateAppointmentInput,
+  ): Promise<AppointmentDetail | null> {
+    const { id } = input
+    const item = await this.healthApi.getAppointmentById(auth, id)
+    if (!item) {
+      return null
+    }
+
+    return {
+      id: item.id,
+      date: item.startTime,
+      title: item.description,
+      status: toAppointmentStatusEnum(item.status),
+      modality: toAppointmentModalityEnum(item.modality),
+      instruction: item.patientInstruction,
+      duration: item.duration,
+      location: item.location
+        ? {
+            name: item.location.name,
+            organization: item.location.organization,
+            address: item.location.address,
+            department: item.location.department,
+            wing: item.location.wing,
+            floor: item.location.floor,
+            room: item.location.room,
+            directions: item.location.directions,
+            link: item.location.link,
+            locationLinks: item.location.links,
+            city: item.location.city,
+            postalCode: item.location.postalCode,
+            country: item.location.country,
+            latitude: item.location.latitude,
+            longitude: item.location.longitude,
+            phoneNumber: item.location.phoneNumber,
+            openingHoursText: item.location.openingHours?.text,
+          }
+        : undefined,
+      practitioners: item.practitioners ?? [],
+      assignees:
+        item.assignees
+          ?.map((a) => {
+            const type = toAppointmentAssigneeTypeEnum(a.type)
+            return type ? { type, name: a.name } : null
+          })
+          .filter(isDefined) ?? [],
+      links: item.links
+        ?.map((l) => {
+          const type = toAppointmentLinkTypeEnum(l.type)
+          if (!type) {
+            return null
+          }
+          return {
+            type,
+            url: l.url,
+            ...getAppointmentLinkActivationWindow(type, item.startTime),
+          }
+        })
+        .filter(isDefined),
+    }
+  }
+
+  /* Health Conversations */
+
+  private mapConversationAttachment(
+    a: ConversationAttachmentDto,
+    conversationId: string,
+    messageId: string,
+  ): HealthDirectorateHealthConversationAttachment {
+    return {
+      id: String(a.id),
+      fileName: a.fileName,
+      description: a.description,
+      downloadServiceURL: `${this.downloadServiceConfig.baseUrl}/download/v1/health/conversations/${conversationId}/${messageId}/${a.id}`,
+    }
+  }
+
+  private mapConversationOrganization(c: {
+    organizationNationalId?: string
+    organizationName?: string
+    departmentName?: string
+  }): HealthDirectorateConversationOrganization | undefined {
+    return c.organizationNationalId
+      ? {
+          nationalId: c.organizationNationalId,
+          name: c.organizationName,
+          departmentName: c.departmentName,
+        }
+      : undefined
+  }
+
+  private mapConversationEntry(
+    m: ConversationMessageDto,
+    conversationId: string,
+  ): HealthDirectorateHealthConversationEntry {
+    return {
+      id: m.id,
+      direction: toConversationDirectionEnum(m.direction),
+      messageSentAt: m.messageSentAt,
+      messageTextContent: m.messageTextContent,
+      content: mapConversationMessageContent(m),
+      senderGroupName: m.senderGroupName,
+      attachments: m.attachments.map((a) =>
+        this.mapConversationAttachment(a, conversationId, m.id),
+      ),
+    }
+  }
+
+  private mapConversationDetail(
+    c: ConversationDetailDto,
+  ): HealthDirectorateHealthConversationDetail {
+    return {
+      id: c.id,
+      title: c.title,
+      status: c.status,
+      startDate: c.conversationStartDate,
+      messageCount: c.messageCount,
+      lastMessageSentAt: c.lastMessageSentAt,
+      lastSenderGroupName: c.lastSenderGroupName,
+      organization: this.mapConversationOrganization(c),
+      hasAttachment: c.hasAttachment,
+      isStarred: c.isStarred,
+      isArchived: c.isArchived,
+      patientCanReply: c.patientCanReply,
+      replyBlockedReason: toConversationReplyBlockedReasonEnum(
+        c.replyBlockedReason,
+      ),
+      isRead: !c.unread,
+      messages: c.messages.map((m) => this.mapConversationEntry(m, c.id)),
+    }
+  }
+
+  async getHealthConversations(
+    auth: Auth,
+    status?: HealthConversationStatusFilterEnum,
+    starred?: boolean,
+  ): Promise<HealthDirectorateHealthConversation[] | null> {
+    const items = await this.healthApi.getConversations(
+      auth,
+      status ? toConversationStatusFilter(status) : undefined,
+      starred,
+    )
+    if (!items) return null
+
+    return items.map((c) => ({
+      id: c.id,
+      title: c.title,
+      status: c.status,
+      messageCount: c.messageCount,
+      lastMessageSentAt: c.lastMessageSentAt,
+      lastSenderGroupName: c.lastSenderGroupName,
+      organization: this.mapConversationOrganization(c),
+      hasAttachment: c.hasAttachment,
+      isStarred: c.isStarred,
+      isArchived: c.isArchived,
+      isRead: !c.unread,
+    }))
+  }
+
+  async getHealthConversation(
+    auth: Auth,
+    id: string,
+  ): Promise<HealthDirectorateHealthConversationDetail | null> {
+    const c = await this.healthApi.getConversation(auth, id)
+    if (!c) return null
+
+    return this.mapConversationDetail(c)
+  }
+
+  async createHealthConversation(
+    auth: Auth,
+    input: HealthDirectorateCreateConversationInput,
+  ): Promise<HealthDirectorateHealthConversationDetail | null> {
+    const body: CreateConversationRequestDto = {
+      nodeId: input.nodeId,
+      groupId: input.groupId,
+      patientInitiatedTypeCode: input.patientInitiatedTypeCode,
+      title: input.title ?? '',
+      messageTextContent: input.messageTextContent,
+    }
+
+    const c = await this.healthApi.createConversation(auth, body)
+    if (!c) return null
+
+    return this.mapConversationDetail(c)
+  }
+
+  async replyToHealthConversation(
+    auth: Auth,
+    id: string,
+    input: HealthDirectorateReplyToConversationInput,
+  ): Promise<HealthDirectorateHealthConversationDetail | null> {
+    const body: CreateReplyRequestDto = {
+      messageTextContent: input.messageTextContent,
+    }
+
+    const c = await this.healthApi.replyToConversation(auth, id, body)
+    if (!c) return null
+
+    return this.mapConversationDetail(c)
+  }
+
+  async markHealthConversationAsRead(auth: Auth, id: string): Promise<boolean> {
+    await this.healthApi.markConversationAsRead(auth, id)
+    return true
+  }
+
+  async archiveHealthConversation(auth: Auth, id: string): Promise<boolean> {
+    await this.healthApi.archiveConversation(auth, id)
+    return true
+  }
+
+  async unarchiveHealthConversation(auth: Auth, id: string): Promise<boolean> {
+    await this.healthApi.unarchiveConversation(auth, id)
+    return true
+  }
+
+  async starHealthConversation(auth: Auth, id: string): Promise<boolean> {
+    await this.healthApi.starConversation(auth, id)
+    return true
+  }
+
+  async unstarHealthConversation(auth: Auth, id: string): Promise<boolean> {
+    await this.healthApi.unstarConversation(auth, id)
+    return true
+  }
+
+  async getHealthConversationRecipients(
+    auth: Auth,
+    locale: Locale = 'is',
+  ): Promise<HealthDirectorateHealthConversationRecipient[] | null> {
+    const items = await this.healthApi.getMessagingRecipients(auth, locale)
+    if (!items) return null
+
+    return items.map(mapMessagingRecipient)
   }
 }

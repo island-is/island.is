@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react'
 import { useRouteLoaderData } from 'react-router-dom'
 
 import { AuthAdminEnvironment } from '@island.is/api/schema'
-import { Text, Box, Select, Option } from '@island.is/island-ui/core'
+import { Text, Box, Select } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { isDefined } from '@island.is/shared/utils'
 
@@ -19,6 +19,7 @@ interface EnvironmentHeaderProps {
   availableEnvironments: AuthAdminEnvironment[]
   onChange(value: AuthAdminEnvironment): void
   preHeader?: ReactNode
+  postHeader?: ReactNode
 }
 
 const formatOption = (
@@ -35,6 +36,7 @@ export const EnvironmentHeader = ({
   availableEnvironments,
   onChange,
   preHeader,
+  postHeader,
 }: EnvironmentHeaderProps) => {
   const { formatMessage } = useLocale()
   const tenant = useRouteLoaderData(tenantLoaderId) as TenantLoaderResult
@@ -66,6 +68,7 @@ export const EnvironmentHeader = ({
         <Text as="h1" variant="h2">
           {title}
         </Text>
+        {postHeader}
       </Box>
       <div className={styles.selectWrapper}>
         <Select

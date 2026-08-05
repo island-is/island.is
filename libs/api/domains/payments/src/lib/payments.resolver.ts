@@ -1,8 +1,9 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import { ApolloError } from '@apollo/client'
 
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import type { GraphQLContext } from '@island.is/auth-nest-tools'
 import {
   FeatureFlag,
   FeatureFlagGuard,
@@ -18,6 +19,7 @@ import {
   PaymentFlowAdminResponse,
 } from './dto/getPaymentFlow.response'
 import { PaymentsService } from './payments.service'
+import { getPayerRequestInfo } from './payments.utils'
 import { VerifyCardResponse } from './dto/verifyCard.response'
 import { VerifyCardInput } from './dto/verifyCard.input'
 import { ChargeCardInput } from './dto/chargeCard.input'
@@ -31,6 +33,16 @@ import { GetJwksResponse } from './dto/getJwks.response'
 import { GetPaymentFlowsInput } from './dto/getPaymentFlows.input'
 import { GetPaymentFlowsResponse } from './dto/getPaymentFlows.response'
 import { AdminPortalScope } from '@island.is/auth/scopes'
+import { ValidateApplePayMerchantResponse } from './dto/validateApplePayMerchant.response'
+import { ValidateApplePayMerchantInput } from './dto/validateApplePayMerchant.input'
+import { ApplePayChargeInput } from './dto/applePayCharge.input'
+import { ApplePayChargeResponse } from './dto/applePayCharge.response'
+import { CreateBankTransferInput } from './dto/createBankTransfer.input'
+import { CreateBankTransferResponse } from './dto/createBankTransfer.response'
+import { VerifyBankTransferInput } from './dto/verifyBankTransfer.input'
+import { VerifyBankTransferResponse } from './dto/verifyBankTransfer.response'
+import { CancelBankTransferInput } from './dto/cancelBankTransfer.input'
+import { CancelBankTransferResponse } from './dto/cancelBankTransfer.response'
 
 @UseGuards(FeatureFlagGuard)
 @FeatureFlag(Features.isIslandisPaymentEnabled)
@@ -38,6 +50,8 @@ import { AdminPortalScope } from '@island.is/auth/scopes'
 export class PaymentsResolver {
   constructor(private readonly paymentsService: PaymentsService) {}
 
+  @UseGuards(IdsUserGuard, ScopesGuard)
+  @Scopes(AdminPortalScope.payments)
   @Query(() => GetPaymentFlowsResponse, { name: 'paymentsGetFlows' })
   async getPaymentFlows(
     @Args('input', { type: () => GetPaymentFlowsInput })
@@ -86,9 +100,10 @@ export class PaymentsResolver {
   async verifyCard(
     @Args('input', { type: () => VerifyCardInput })
     input: VerifyCardInput,
+    @Context('req') req: GraphQLContext['req'],
   ): Promise<VerifyCardResponse> {
     try {
-      return this.paymentsService.verifyCard(input)
+      return this.paymentsService.verifyCard(input, getPayerRequestInfo(req))
     } catch (e) {
       throw new ApolloError(e.message)
     }
@@ -132,10 +147,78 @@ export class PaymentsResolver {
     }
   }
 
+  @Mutation(() => CreateBankTransferResponse, {
+    name: 'paymentsCreateBankTransfer',
+  })
+  async createBankTransfer(
+    @Args('input', { type: () => CreateBankTransferInput })
+    input: CreateBankTransferInput,
+  ): Promise<CreateBankTransferResponse> {
+    try {
+      return this.paymentsService.createBankTransfer(input)
+    } catch (e) {
+      throw new ApolloError(e.message)
+    }
+  }
+
+  @Mutation(() => VerifyBankTransferResponse, {
+    name: 'paymentsVerifyBankTransfer',
+  })
+  async verifyBankTransfer(
+    @Args('input', { type: () => VerifyBankTransferInput })
+    input: VerifyBankTransferInput,
+  ): Promise<VerifyBankTransferResponse> {
+    try {
+      return this.paymentsService.verifyBankTransfer(input)
+    } catch (e) {
+      throw new ApolloError(e.message)
+    }
+  }
+
+  @Mutation(() => CancelBankTransferResponse, {
+    name: 'paymentsCancelBankTransfer',
+  })
+  async cancelBankTransfer(
+    @Args('input', { type: () => CancelBankTransferInput })
+    input: CancelBankTransferInput,
+  ): Promise<CancelBankTransferResponse> {
+    try {
+      return this.paymentsService.cancelBankTransfer(input)
+    } catch (e) {
+      throw new ApolloError(e.message)
+    }
+  }
+
   @Query(() => GetJwksResponse, { name: 'paymentsGetJwks' })
   async getJwks(): Promise<GetJwksResponse> {
     try {
       return this.paymentsService.getJwks()
+    } catch (e) {
+      throw new ApolloError(e.message)
+    }
+  }
+
+  @Mutation(() => ValidateApplePayMerchantResponse, {
+    name: 'paymentsValidateApplePayMerchant',
+  })
+  async validateApplePayMerchant(
+    @Args('input', { type: () => ValidateApplePayMerchantInput })
+    input: ValidateApplePayMerchantInput,
+  ): Promise<ValidateApplePayMerchantResponse> {
+    try {
+      return this.paymentsService.validateApplePayMerchant(input.validationURL)
+    } catch (e) {
+      throw new ApolloError(e.message)
+    }
+  }
+
+  @Mutation(() => ApplePayChargeResponse, { name: 'paymentsChargeApplePay' })
+  async chargeApplePay(
+    @Args('input', { type: () => ApplePayChargeInput })
+    input: ApplePayChargeInput,
+  ): Promise<ApplePayChargeResponse> {
+    try {
+      return this.paymentsService.chargeApplePay(input)
     } catch (e) {
       throw new ApolloError(e.message)
     }

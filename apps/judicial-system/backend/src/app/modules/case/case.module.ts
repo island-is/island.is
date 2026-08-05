@@ -20,6 +20,7 @@ import {
   VerdictModule,
   VictimModule,
 } from '..'
+import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CaseController } from './case.controller'
 import { CaseService } from './case.service'
 import { InternalCaseController } from './internalCase.controller'
@@ -49,6 +50,7 @@ import { PdfService } from './pdf.service'
   ],
   providers: [
     CaseService,
+    CaseInterceptor,
     InternalCaseService,
     LimitedAccessCaseService,
     PdfService,

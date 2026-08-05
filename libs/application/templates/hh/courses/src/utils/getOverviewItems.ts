@@ -16,34 +16,37 @@ export const getParticipantOverviewTableData = (
   answers: FormValue,
   _externalData: ExternalData,
 ): TableData => {
-  const tableData: TableData = {
-    header: [
-      m.overview.participantName,
-      m.overview.participantNationalId,
-      m.overview.participantEmail,
-      m.overview.participantPhone,
-    ],
-    rows: [],
-  }
-
   const participantList =
     getValueViaPath<z.infer<typeof dataSchema.shape.participantList>>(
       answers,
       'participantList',
     ) ?? []
 
-  if (participantList.length > 0) {
-    for (const participant of participantList) {
-      tableData.rows.push([
-        participant.nationalIdWithName.name,
-        participant.nationalIdWithName.nationalId,
-        participant.nationalIdWithName.email,
-        formatPhoneNumber(participant.nationalIdWithName.phone),
-      ])
-    }
-  }
+  const hasWorkplaceOrJobTitle = participantList.some(
+    (p) => p.workplace || p.jobTitle,
+  )
 
-  return tableData
+  const header = [
+    m.overview.participantName,
+    m.overview.participantNationalId,
+    m.overview.participantEmail,
+    m.overview.participantPhone,
+    ...(hasWorkplaceOrJobTitle
+      ? [m.overview.workplace, m.overview.jobTitle]
+      : []),
+  ]
+
+  const rows = participantList.map((participant) => [
+    participant.nationalIdWithName.name,
+    participant.nationalIdWithName.nationalId,
+    participant.nationalIdWithName.email,
+    formatPhoneNumber(participant.nationalIdWithName.phone),
+    ...(hasWorkplaceOrJobTitle
+      ? [participant.workplace ?? '', participant.jobTitle ?? '']
+      : []),
+  ])
+
+  return { header, rows }
 }
 
 export const getPayerOverviewItems = (
@@ -70,21 +73,16 @@ export const getPayerOverviewItems = (
   if (userIsPayingAsIndividual === YesOrNoEnum.NO) {
     items.push({
       width: 'full',
-      keyText: m.payer.companyTitle,
+      keyText: m.overview.payerName,
       valueText:
-        getValueViaPath<string>(
-          answers,
-          'payment.companyPayment.nationalIdWithName.name',
-        ) ?? '',
+        getValueViaPath<string>(answers, 'payment.companyPayment.name') ?? '',
     })
     items.push({
       width: 'full',
-      keyText: m.payer.companyNationalId,
+      keyText: m.overview.payerNationalId,
       valueText:
-        getValueViaPath<string>(
-          answers,
-          'payment.companyPayment.nationalIdWithName.nationalId',
-        ) ?? '',
+        getValueViaPath<string>(answers, 'payment.companyPayment.nationalId') ??
+        '',
     })
   }
 

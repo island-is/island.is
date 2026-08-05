@@ -1,9 +1,5 @@
 import { DefaultEvents } from '@island.is/application/types'
 
-export enum DataProviderTypes {
-  NationalRegistry = 'NationalRegistryProvider',
-}
-
 export const YES = 'Yes'
 export const NO = 'No'
 
@@ -17,20 +13,19 @@ export enum States {
   prerequisites = 'prerequisites',
   draft = 'draft',
   payment = 'payment',
+  signing = 'signing',
   done = 'done',
 }
 
 export enum ApiActions {
   completeApplication = 'completeApplication',
   syslumennOnEntry = 'syslumennOnEntry',
+  getSignatories = 'getSignatories',
+  sendApplicationCopyToParties = 'sendApplicationCopyToParties',
 }
 
 export type EstateEvent =
-  | { type: DefaultEvents.APPROVE }
-  | { type: DefaultEvents.REJECT }
   | { type: DefaultEvents.SUBMIT }
-  | { type: DefaultEvents.ASSIGN }
-  | { type: DefaultEvents.EDIT }
   | { type: DefaultEvents.PAYMENT }
   | { type: DefaultEvents.ABORT }
 

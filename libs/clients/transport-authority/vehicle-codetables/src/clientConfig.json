@@ -2,18 +2,14 @@
   "openapi": "3.0.1",
   "info": {
     "title": "SGS Rest API",
-    "description": "Vehicle Codetables API, developed in .Net6.0 - Release-4 : 20221202.1",
+    "description": "Vehicle Codetables API, developed in .Net8.0 - Release-9 : 20240916.3",
     "contact": {
       "name": "Samgöngustofa",
       "email": "tolvuhjalp@samgongustofa.is"
     },
     "version": "1.0"
   },
-  "servers": [
-    {
-      "url": "/vehicle/codetables"
-    }
-  ],
+  "servers": [{ "url": "/vehicle/codetables" }],
   "paths": {
     "/authenticate": {
       "post": {
@@ -23,91 +19,59 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "requestBody": {
           "content": {
             "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateModel"
-              }
+              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
             },
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateModel"
-              }
+              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
             },
             "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateModel"
-              }
+              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
             },
             "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateModel"
-              }
+              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
             },
             "application/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateModel"
-              }
+              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
             },
             "text/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateModel"
-              }
+              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
             },
             "application/*+xml": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateModel"
-              }
+              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Success"
-          },
+          "200": { "description": "OK" },
           "401": {
             "description": "Unauthorized",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
@@ -122,19 +86,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -142,73 +100,53 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               },
               "application/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               },
               "text/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               }
             }
@@ -224,19 +162,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -244,73 +176,53 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               },
               "application/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               },
               "text/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               }
             }
@@ -326,19 +238,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -346,73 +252,53 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/RegGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/RegGroupDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/RegGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/RegGroupDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/RegGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/RegGroupDto" }
                 }
               },
               "application/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/RegGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/RegGroupDto" }
                 }
               },
               "text/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/RegGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/RegGroupDto" }
                 }
               }
             }
@@ -428,19 +314,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -448,73 +328,53 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/RegGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/RegGroupDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/RegGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/RegGroupDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/RegGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/RegGroupDto" }
                 }
               },
               "application/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/RegGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/RegGroupDto" }
                 }
               },
               "text/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/RegGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/RegGroupDto" }
                 }
               }
             }
@@ -530,19 +390,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -550,73 +404,53 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               },
               "application/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               },
               "text/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               }
             }
@@ -632,19 +466,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -652,73 +480,53 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               },
               "application/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               },
               "text/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               }
             }
@@ -734,19 +542,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -754,73 +556,53 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               },
               "application/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               },
               "text/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               }
             }
@@ -836,19 +618,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -856,73 +632,53 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               },
               "application/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               },
               "text/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               }
             }
@@ -938,19 +694,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -958,73 +708,53 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               },
               "application/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               },
               "text/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               }
             }
@@ -1040,19 +770,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -1060,34 +784,24 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1142,19 +856,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -1162,34 +870,24 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1244,19 +942,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -1264,73 +956,53 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               },
               "application/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               },
               "text/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UseGroupDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UseGroupDto" }
                 }
               }
             }
@@ -1346,19 +1018,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -1366,34 +1032,24 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1448,19 +1104,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -1468,34 +1118,24 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1550,19 +1190,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -1570,73 +1204,53 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/InspectionTypeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/InspectionTypeDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/InspectionTypeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/InspectionTypeDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/InspectionTypeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/InspectionTypeDto" }
                 }
               },
               "application/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/InspectionTypeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/InspectionTypeDto" }
                 }
               },
               "text/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/InspectionTypeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/InspectionTypeDto" }
                 }
               }
             }
@@ -1652,19 +1266,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -1672,73 +1280,53 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/InspectionTypeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/InspectionTypeDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/InspectionTypeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/InspectionTypeDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/InspectionTypeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/InspectionTypeDto" }
                 }
               },
               "application/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/InspectionTypeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/InspectionTypeDto" }
                 }
               },
               "text/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/InspectionTypeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/InspectionTypeDto" }
                 }
               }
             }
@@ -1754,19 +1342,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -1774,73 +1356,53 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/InspectionTrackDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/InspectionTrackDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/InspectionTrackDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/InspectionTrackDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/InspectionTrackDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/InspectionTrackDto" }
                 }
               },
               "application/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/InspectionTrackDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/InspectionTrackDto" }
                 }
               },
               "text/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/InspectionTrackDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/InspectionTrackDto" }
                 }
               }
             }
@@ -1856,19 +1418,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -1876,73 +1432,53 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/InspectionTrackDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/InspectionTrackDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/InspectionTrackDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/InspectionTrackDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/InspectionTrackDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/InspectionTrackDto" }
                 }
               },
               "application/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/InspectionTrackDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/InspectionTrackDto" }
                 }
               },
               "text/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/InspectionTrackDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/InspectionTrackDto" }
                 }
               }
             }
@@ -1958,19 +1494,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -1978,73 +1508,53 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OfficerDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/OfficerDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OfficerDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/OfficerDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OfficerDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/OfficerDto" }
                 }
               },
               "application/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OfficerDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/OfficerDto" }
                 }
               },
               "text/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OfficerDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/OfficerDto" }
                 }
               }
             }
@@ -2060,19 +1570,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -2080,73 +1584,53 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OfficerDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/OfficerDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OfficerDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/OfficerDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OfficerDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/OfficerDto" }
                 }
               },
               "application/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OfficerDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/OfficerDto" }
                 }
               },
               "text/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OfficerDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/OfficerDto" }
                 }
               }
             }
@@ -2162,19 +1646,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -2182,34 +1660,24 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -2264,19 +1732,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -2284,73 +1746,53 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OfficerDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/OfficerDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OfficerDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/OfficerDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OfficerDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/OfficerDto" }
                 }
               },
               "application/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OfficerDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/OfficerDto" }
                 }
               },
               "text/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OfficerDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/OfficerDto" }
                 }
               }
             }
@@ -2366,19 +1808,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -2386,34 +1822,24 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -2468,19 +1894,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -2488,34 +1908,24 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -2570,19 +1980,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -2590,73 +1994,53 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UpdateLockTypeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UpdateLockTypeDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UpdateLockTypeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UpdateLockTypeDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UpdateLockTypeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UpdateLockTypeDto" }
                 }
               },
               "application/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UpdateLockTypeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UpdateLockTypeDto" }
                 }
               },
               "text/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UpdateLockTypeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UpdateLockTypeDto" }
                 }
               }
             }
@@ -2672,19 +2056,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -2692,73 +2070,53 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UpdateLockTypeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UpdateLockTypeDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UpdateLockTypeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UpdateLockTypeDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UpdateLockTypeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UpdateLockTypeDto" }
                 }
               },
               "application/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UpdateLockTypeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UpdateLockTypeDto" }
                 }
               },
               "text/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UpdateLockTypeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/UpdateLockTypeDto" }
                 }
               }
             }
@@ -2774,19 +2132,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -2794,34 +2146,24 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -2876,19 +2218,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -2896,34 +2232,24 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -2978,19 +2304,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -2998,73 +2318,53 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ImportDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/ImportDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ImportDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/ImportDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ImportDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/ImportDto" }
                 }
               },
               "application/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ImportDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/ImportDto" }
                 }
               },
               "text/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ImportDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/ImportDto" }
                 }
               }
             }
@@ -3080,19 +2380,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -3100,73 +2394,53 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ImportDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/ImportDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ImportDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/ImportDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ImportDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/ImportDto" }
                 }
               },
               "application/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ImportDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/ImportDto" }
                 }
               },
               "text/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ImportDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/ImportDto" }
                 }
               }
             }
@@ -3182,19 +2456,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -3202,73 +2470,53 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PlateTypeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/PlateTypeDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PlateTypeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/PlateTypeDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PlateTypeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/PlateTypeDto" }
                 }
               },
               "application/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PlateTypeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/PlateTypeDto" }
                 }
               },
               "text/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PlateTypeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/PlateTypeDto" }
                 }
               }
             }
@@ -3284,19 +2532,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -3304,73 +2546,53 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PlateTypeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/PlateTypeDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PlateTypeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/PlateTypeDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PlateTypeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/PlateTypeDto" }
                 }
               },
               "application/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PlateTypeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/PlateTypeDto" }
                 }
               },
               "text/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PlateTypeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/PlateTypeDto" }
                 }
               }
             }
@@ -3386,19 +2608,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -3406,73 +2622,53 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PlateReasonDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/PlateReasonDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PlateReasonDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/PlateReasonDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PlateReasonDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/PlateReasonDto" }
                 }
               },
               "application/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PlateReasonDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/PlateReasonDto" }
                 }
               },
               "text/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PlateReasonDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/PlateReasonDto" }
                 }
               }
             }
@@ -3488,19 +2684,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -3508,73 +2698,53 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PlateReasonDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/PlateReasonDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PlateReasonDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/PlateReasonDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PlateReasonDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/PlateReasonDto" }
                 }
               },
               "application/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PlateReasonDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/PlateReasonDto" }
                 }
               },
               "text/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PlateReasonDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/PlateReasonDto" }
                 }
               }
             }
@@ -3590,19 +2760,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -3610,73 +2774,53 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FuelDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/FuelDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FuelDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/FuelDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FuelDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/FuelDto" }
                 }
               },
               "application/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FuelDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/FuelDto" }
                 }
               },
               "text/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FuelDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/FuelDto" }
                 }
               }
             }
@@ -3692,19 +2836,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -3712,73 +2850,53 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FuelDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/FuelDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FuelDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/FuelDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FuelDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/FuelDto" }
                 }
               },
               "application/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FuelDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/FuelDto" }
                 }
               },
               "text/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FuelDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/FuelDto" }
                 }
               }
             }
@@ -3792,11 +2910,7 @@
       "AdditionalResultDto": {
         "type": "object",
         "properties": {
-          "code": {
-            "type": "string",
-            "description": "Code",
-            "nullable": true
-          },
+          "code": { "type": "string", "description": "Code", "nullable": true },
           "name": {
             "type": "string",
             "description": "Name of code",
@@ -3816,14 +2930,8 @@
         "required": ["password", "username"],
         "type": "object",
         "properties": {
-          "username": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "password": {
-            "minLength": 1,
-            "type": "string"
-          }
+          "username": { "minLength": 1, "type": "string" },
+          "password": { "minLength": 1, "type": "string" }
         },
         "additionalProperties": false
       },
@@ -4009,22 +3117,26 @@
           "code": {
             "type": "string",
             "description": "Plate reason code",
-            "nullable": true
+            "nullable": true,
+            "example": "\r\n A\r\n "
           },
           "subCode": {
             "type": "string",
             "description": "Plate reason sub code",
-            "nullable": true
+            "nullable": true,
+            "example": "\r\n 01\r\n "
           },
           "name": {
             "type": "string",
             "description": "Plate reason name",
-            "nullable": true
+            "nullable": true,
+            "example": "\r\n Afhent\r\n "
           },
           "subName": {
             "type": "string",
             "description": "Plate reason sub name",
-            "nullable": true
+            "nullable": true,
+            "example": "\r\n Almennt\r\n "
           },
           "valid": {
             "type": "integer",
@@ -4074,27 +3186,11 @@
       "ProblemDetails": {
         "type": "object",
         "properties": {
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "status": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "detail": {
-            "type": "string",
-            "nullable": true
-          },
-          "instance": {
-            "type": "string",
-            "nullable": true
-          }
+          "type": { "type": "string", "nullable": true },
+          "title": { "type": "string", "nullable": true },
+          "status": { "type": "integer", "format": "int32", "nullable": true },
+          "detail": { "type": "string", "nullable": true },
+          "instance": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -4167,21 +3263,13 @@
       "TrafficRegistrationDto": {
         "type": "object",
         "properties": {
-          "code": {
-            "type": "string",
-            "description": "Code",
-            "nullable": true
-          },
+          "code": { "type": "string", "description": "Code", "nullable": true },
           "outInUsage": {
             "type": "string",
             "description": "In/Out usage",
             "nullable": true
           },
-          "name": {
-            "type": "string",
-            "description": "Name",
-            "nullable": true
-          },
+          "name": { "type": "string", "description": "Name", "nullable": true },
           "valid": {
             "type": "integer",
             "description": "Is the code valid",
@@ -4208,6 +3296,12 @@
           "explanation": {
             "type": "string",
             "description": "Explanation",
+            "nullable": true
+          },
+          "valid": {
+            "type": "integer",
+            "description": "Is it valid",
+            "format": "int32",
             "nullable": true
           }
         },
@@ -4247,9 +3341,5 @@
       }
     }
   },
-  "security": [
-    {
-      "Bearer": []
-    }
-  ]
+  "security": [{ "Bearer": [] }]
 }

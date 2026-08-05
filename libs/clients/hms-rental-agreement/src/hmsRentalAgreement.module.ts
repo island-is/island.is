@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
-import { HmsRentalAgreementService } from './hmsRentalAgreement.service'
 import { exportedApis } from './apis'
+import { HmsRentalAgreementService } from './hmsRentalAgreement.service'
 
 @Module({
   providers: [...exportedApis, HmsRentalAgreementService],

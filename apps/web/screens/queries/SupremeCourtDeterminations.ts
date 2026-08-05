@@ -15,6 +15,18 @@ export const GET_SUPREME_COURT_DETERMINATIONS_QUERY = gql`
       total
       input {
         page
+        caseTypes
+        searchTerm
+      }
+    }
+  }
+`
+
+export const GET_SUPREME_COURT_DETERMINATION_CASE_TYPES_QUERY = gql`
+  query GetSupremeCourtDeterminationCaseTypes {
+    webSupremeCourtDeterminationCaseTypes {
+      caseTypes {
+        label
       }
     }
   }
@@ -33,6 +45,7 @@ export const GET_SUPREME_COURT_DETERMINATION_BY_ID_QUERY = gql`
         keywords
         richText
         presentings
+        resolutionLink
       }
     }
   }

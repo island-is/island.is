@@ -1,15 +1,15 @@
-import { useContext } from 'react'
-import { ControlContext } from '../../../../../../../context/ControlContext'
+import { FormSystemField } from '@island.is/api/schema'
+import { m } from '@island.is/form-system/ui'
 import {
-  GridRow as Row,
+  Checkbox,
   GridColumn as Column,
   Input,
-  Checkbox,
+  GridRow as Row,
   Stack,
 } from '@island.is/island-ui/core'
-import { FormSystemField } from '@island.is/api/schema'
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
-import { m } from '@island.is/form-system/ui'
+import { ControlContext } from '../../../../../../../context/ControlContext'
 
 export const MessageWithLinkSettings = () => {
   const {
@@ -20,6 +20,7 @@ export const MessageWithLinkSettings = () => {
     updateActiveItem,
     getTranslation,
   } = useContext(ControlContext)
+  const { isReadOnly } = control
   const currentItem = control.activeItem.data as FormSystemField
   const { fieldSettings } = currentItem
   const { formatMessage } = useIntl()
@@ -30,6 +31,7 @@ export const MessageWithLinkSettings = () => {
           <Checkbox
             label={formatMessage(m.addLink)}
             checked={fieldSettings?.hasLink ?? false}
+            disabled={isReadOnly}
             onChange={(e) =>
               controlDispatch({
                 type: 'SET_MESSAGE_WITH_LINK_SETTINGS',
@@ -52,6 +54,7 @@ export const MessageWithLinkSettings = () => {
                 name="buttonTitle"
                 backgroundColor="blue"
                 value={fieldSettings?.buttonText?.is ?? ''}
+                readOnly={isReadOnly}
                 onChange={(e) =>
                   controlDispatch({
                     type: 'SET_MESSAGE_WITH_LINK_SETTINGS',
@@ -72,6 +75,7 @@ export const MessageWithLinkSettings = () => {
                 name="buttonTitleEn"
                 backgroundColor="blue"
                 value={fieldSettings.buttonText?.en ?? ''}
+                readOnly={isReadOnly}
                 onChange={(e) =>
                   controlDispatch({
                     type: 'SET_MESSAGE_WITH_LINK_SETTINGS',
@@ -113,6 +117,7 @@ export const MessageWithLinkSettings = () => {
                 backgroundColor="blue"
                 placeholder="island.is"
                 value={fieldSettings?.url ?? ''}
+                readOnly={isReadOnly}
                 onChange={(e) =>
                   controlDispatch({
                     type: 'SET_MESSAGE_WITH_LINK_SETTINGS',

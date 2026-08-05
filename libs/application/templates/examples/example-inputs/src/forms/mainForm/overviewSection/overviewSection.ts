@@ -13,6 +13,7 @@ import {
   getSumItems,
   getTableData,
   getLoadTableData,
+  getPaginatedSearchableTableData,
 } from '../../../utils/overviewUtils'
 
 export const overviewSection = buildSection({
@@ -57,6 +58,13 @@ export const overviewSection = buildSection({
           title: 'Async Table overview',
           backId: 'tableRepeater',
           loadTableData: getLoadTableData,
+        }),
+        buildOverviewField({
+          id: 'overviewXXX',
+          title: 'Paginated searchable table edited and saved data overview',
+          backId: 'paginatedSearchableTableMultiField',
+          bottomLine: false,
+          tableData: getPaginatedSearchableTableData,
         }),
         buildOverviewField({
           id: 'overviewXX',

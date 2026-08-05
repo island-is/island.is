@@ -1,6 +1,7 @@
 import { Auth, AuthMiddleware, type User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
+  ActiveApplicationsModel,
   FormSubmitSuccessModel,
   FriggApi,
   GetOrganizationsByTypeRequest,
@@ -84,6 +85,15 @@ export class FriggClientService {
   ): Promise<FormSubmitSuccessModel> {
     return this.friggApiWithAuth(user).submitForm({
       registrationApplicationInput: form,
+    })
+  }
+
+  async getIsApplicationBlocked(
+    user: User,
+    childNationalId: string,
+  ): Promise<ActiveApplicationsModel> {
+    return await this.friggApiWithAuth(user).getApplications({
+      nationalId: childNationalId,
     })
   }
 }

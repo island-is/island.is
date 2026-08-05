@@ -1,12 +1,12 @@
-import { useContext } from 'react'
-import { FormsContext } from '../../../../context/FormsContext'
-import { Box, Checkbox, GridRow, Stack } from '@island.is/island-ui/core'
 import { useMutation } from '@apollo/client'
+import { FormSystemPermissionType } from '@island.is/api/schema'
 import {
   CREATE_ORGANIZATION_PERMISSION,
   DELETE_ORGANIZATION_PERMISSION,
 } from '@island.is/form-system/graphql'
-import { FormSystemPermissionType } from '@island.is/api/schema'
+import { Box, Checkbox, Stack } from '@island.is/island-ui/core'
+import { useContext } from 'react'
+import { FormsContext } from '../../../../context/FormsContext'
 
 type PermissionType = 'certificate' | 'list' | 'field'
 
@@ -131,38 +131,34 @@ export const Permission = ({ type }: Props) => {
   }
 
   return (
-    <Box marginTop={4}>
+    <Box marginTop={4} marginLeft={1}>
       <Stack space={2}>
         {getTypes().map((permission) => {
           if (permission.isCommon) {
             return (
-              <GridRow key={permission.id}>
-                <Checkbox
-                  key={permission.id}
-                  name={permission?.name?.is ?? ''}
-                  checked={true}
-                  label={permission?.name?.is ?? ''}
-                  disabled={true}
-                />
-              </GridRow>
-            )
-          }
-          return (
-            <GridRow key={permission.id}>
               <Checkbox
                 key={permission.id}
                 name={permission?.name?.is ?? ''}
-                checked={isSelected(permission.id ?? '')}
-                onChange={async (e) => {
-                  if (e.target.checked) {
-                    await addPermission(permission.id ?? '')
-                  } else {
-                    await removePermission(permission.id ?? '')
-                  }
-                }}
+                checked={true}
                 label={permission?.name?.is ?? ''}
+                disabled={true}
               />
-            </GridRow>
+            )
+          }
+          return (
+            <Checkbox
+              key={permission.id}
+              name={permission?.name?.is ?? ''}
+              checked={isSelected(permission.id ?? '')}
+              onChange={async (e) => {
+                if (e.target.checked) {
+                  await addPermission(permission.id ?? '')
+                } else {
+                  await removePermission(permission.id ?? '')
+                }
+              }}
+              label={permission?.name?.is ?? ''}
+            />
           )
         })}
       </Stack>

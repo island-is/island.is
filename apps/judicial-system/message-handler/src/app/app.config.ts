@@ -9,5 +9,7 @@ export const appModuleConfig = defineConfig({
     ),
     backendUrl: env.required('BACKEND_URL', 'http://localhost:3344'),
     waitTimeSeconds: env.optionalJSON('SQS_WAIT_TIME_SECONDS') ?? 10,
+    suspensionRefreshSeconds:
+      env.optionalJSON('SUSPENSION_REFRESH_SECONDS') ?? 20,
   }),
 })

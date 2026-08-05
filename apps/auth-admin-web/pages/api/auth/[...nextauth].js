@@ -1,68 +1,69 @@
 import NextAuth from 'next-auth'
-import Providers from 'next-auth/providers'
+import { decode } from 'jsonwebtoken'
 import { IdentityServer } from '../../../utils/ids.constants'
 import { TokenService } from '../../../services/TokenService'
 
 const providers = [
-  Providers.IdentityServer4({
+  {
     id: IdentityServer.id,
     name: IdentityServer.name,
-    scope: IdentityServer.scope,
+    type: 'oauth',
+    wellKnown: `https://${process.env.IDENTITYSERVER_DOMAIN}/.well-known/openid-configuration`,
     clientId: IdentityServer.clientId,
-    domain: process.env.IDENTITYSERVER_DOMAIN,
     clientSecret: process.env.IDENTITYSERVER_SECRET,
-    protection: 'pkce',
-  }),
+    authorization: {
+      params: { scope: IdentityServer.scope },
+    },
+    checks: ['pkce', 'state'],
+    idToken: true,
+    profile(profile) {
+      return {
+        id: profile.sub,
+        name: profile.name,
+        nationalId: profile.nationalId,
+      }
+    },
+  },
 ]
 
 const callbacks = {}
 
-callbacks.signIn = async function signIn(user, account, profile) {
-  if (account.provider === 'identity-server') {
-    user.nationalId = profile.nationalId
-    user.accessToken = account.accessToken
-    user.refreshToken = account.refreshToken
-    user.idToken = account.idToken
-    return true
-  }
-
-  return false
+callbacks.signIn = async function signIn({ account }) {
+  return account.provider === 'identity-server'
 }
 
-callbacks.jwt = async function jwt(token, user) {
-  if (user) {
+callbacks.jwt = async function jwt({ token, user, account, profile }) {
+  if (account && user) {
     token = {
-      nationalId: user.nationalId,
+      ...token,
+      nationalId: profile?.nationalId,
       name: user.name,
-      accessToken: user.accessToken,
-      refreshToken: user.refreshToken,
-      idToken: user.idToken,
+      accessToken: account.access_token,
+      refreshToken: account.refresh_token,
+      idToken: account.id_token,
       isRefreshTokenExpired: false,
     }
   }
 
-  const decoded = parseJwt(token.accessToken)
-  const expires = new Date(decoded.exp * 1000)
-  const renewalTime = expires.setSeconds(expires.getSeconds() - 300)
+  const decoded = decode(token.accessToken)
 
-  if (
-    decoded?.exp &&
-    new Date() > renewalTime &&
-    !token.isRefreshTokenExpired
-  ) {
-    try {
-      const [accessToken, refreshToken] = await TokenService.refreshAccessToken(
-        token.refreshToken,
-      )
+  if (decoded && typeof decoded !== 'string' && decoded.exp) {
+    const expires = new Date(decoded.exp * 1000)
+    const renewalTime = new Date(expires.getTime() - 300 * 1000)
 
-      token.accessToken = accessToken
-      token.refreshToken = refreshToken
-    } catch (error) {
-      console.warn('Error refreshing access token.', error)
-      // We don't know the refresh token lifetime, so we use the error response to check if it had expired
-      const errorMessage = error?.response?.data?.error
-      if (errorMessage && errorMessage === 'invalid_grant') {
-        token.isRefreshTokenExpired = true
+    if (new Date() > renewalTime && !token.isRefreshTokenExpired) {
+      try {
+        const [accessToken, refreshToken] =
+          await TokenService.refreshAccessToken(token.refreshToken)
+
+        token.accessToken = accessToken
+        token.refreshToken = refreshToken
+      } catch (error) {
+        console.warn('Error refreshing access token.', error)
+        const errorMessage = error?.response?.data?.error
+        if (errorMessage && errorMessage === 'invalid_grant') {
+          token.isRefreshTokenExpired = true
+        }
       }
     }
   }
@@ -70,24 +71,23 @@ callbacks.jwt = async function jwt(token, user) {
   return token
 }
 
-callbacks.session = async function session(session, token) {
+callbacks.session = async function session({ session, token }) {
   session.accessToken = token.accessToken
   session.idToken = token.idToken
-  const decoded = parseJwt(session.accessToken)
-  session.expires = new Date(decoded.exp * 1000)
-  session.scope = decoded.scope
+  const decoded = decode(session.accessToken)
+  if (decoded && typeof decoded !== 'string' && decoded.exp) {
+    session.expires = new Date(decoded.exp * 1000).toISOString()
+    session.scope = decoded.scope
+  }
   return session
 }
 
-function parseJwt(token) {
-  let base64Url = token.split('.')[1]
-  let base64 = base64Url.replace('-', '+').replace('_', '/')
-  let decodedData = JSON.parse(Buffer.from(base64, 'base64').toString('binary'))
-
-  return decodedData
+const options = {
+  providers,
+  callbacks,
+  secret: process.env.NEXTAUTH_SECRET,
+  session: { strategy: 'jwt' },
 }
-
-const options = { providers, callbacks }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default (req, res) => NextAuth(req, res, options)

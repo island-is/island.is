@@ -1,3 +1,3 @@
-import CourtOfAppealRuling from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/Ruling/Ruling'
+import Ruling from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/Ruling/Ruling'
 
-export default CourtOfAppealRuling
+export default Ruling

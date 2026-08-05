@@ -26,17 +26,22 @@ export type GetDelegationForNationalIdResult = RawRouterActionResponse<
 const schema = z.object({
   nationalId: z
     .string()
-    .length(10)
-    .superRefine((value, ctx) => {
-      if (!kennitala.isValid(value)) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: ErrorType.InvalidNationalId,
-        })
-        return false
-      }
-      return true
-    }),
+    .transform((value) => kennitala.format(value, false))
+    .pipe(
+      z
+        .string()
+        .length(10)
+        .superRefine((value, ctx) => {
+          if (!kennitala.isValid(value)) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: ErrorType.InvalidNationalId,
+            })
+            return false
+          }
+          return true
+        }),
+    ),
 })
 
 export const FindDelegationForNationalId: WrappedActionFn =
@@ -56,7 +61,7 @@ export const FindDelegationForNationalId: WrappedActionFn =
       }
     }
 
-    const nationalId = formData.get('nationalId') as string
+    const nationalId = data.nationalId
 
     return redirect(
       replaceParams({

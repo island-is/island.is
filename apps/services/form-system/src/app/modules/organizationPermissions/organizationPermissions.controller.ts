@@ -13,7 +13,13 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger'
-import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+  User,
+} from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { OrganizationPermissionsService } from './organizationPermissions.service'
 import { OrganizationPermissionDto } from './models/dto/organizationPermission.dto'
@@ -38,11 +44,13 @@ export class OrganizationPermissionsController {
   })
   @ApiBody({ type: UpdateOrganizationPermissionDto })
   @Post()
-  create(
+  async create(
+    @CurrentUser() user: User,
     @Body()
     createOrganizationPermissionDto: UpdateOrganizationPermissionDto,
   ): Promise<OrganizationPermissionDto> {
     return this.organizationPermissionsService.create(
+      user,
       createOrganizationPermissionDto,
     )
   }
@@ -54,10 +62,12 @@ export class OrganizationPermissionsController {
   @ApiBody({ type: UpdateOrganizationPermissionDto })
   @Delete()
   async delete(
+    @CurrentUser() user: User,
     @Body()
     deleteOrganizationPermissionDto: UpdateOrganizationPermissionDto,
   ): Promise<void> {
     return this.organizationPermissionsService.delete(
+      user,
       deleteOrganizationPermissionDto,
     )
   }

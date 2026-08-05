@@ -14,6 +14,7 @@ import {
   PrimaryKey,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
+import { ApiScopeUserAccessDTO } from '../dto/api-scope-user-access.dto'
 import { ApiScopeUserAccess } from './api-scope-user-access.model'
 
 @Table({
@@ -50,7 +51,7 @@ export class ApiScopeUser extends Model<
   email!: string
 
   @HasMany(() => ApiScopeUserAccess)
-  @ApiProperty()
+  @ApiProperty({ type: [ApiScopeUserAccessDTO], required: false })
   userAccess?: ApiScopeUserAccess[]
 
   @CreatedAt

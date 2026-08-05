@@ -1,3 +1,6 @@
+import type { User } from '@island.is/auth-nest-tools'
+import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
+import type { Locale } from '@island.is/shared/types'
 import {
   Body,
   Controller,
@@ -21,14 +24,15 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 import { ApplicationsService } from './applications.service'
-import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
 import { ApplicationResponseDto } from './models/dto/application.response.dto'
-import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
-import type { User } from '@island.is/auth-nest-tools'
-import { SubmitScreenDto } from './models/dto/submitScreen.dto'
 import { MyPagesApplicationResponseDto } from './models/dto/myPagesApplication.response.dto'
-import type { Locale } from '@island.is/shared/types'
+import { NotificationDto } from './models/dto/notification.dto'
+import { NotificationResponseDto } from './models/dto/notification.response.dto'
 import { SubmitApplicationResponseDto } from './models/dto/submitApplication.response.dto'
+import { SubmitScreenDto } from './models/dto/submitScreen.dto'
+import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
+import { DataFromUrlReqDto } from './models/dto/dataFromUrl.request.dto'
+import { DataFromUrlResDto } from './models/dto/dataFromUrl.response.dto'
 
 @UseGuards(IdsUserGuard)
 @ApiTags('applications')
@@ -54,27 +58,6 @@ export class ApplicationsController {
     return await this.applicationsService.findAllByNationalId(locale, user)
   }
 
-  @ApiOperation({ summary: 'Get all applications belonging to organization' })
-  @ApiOkResponse({
-    type: ApplicationResponseDto,
-    description: 'Get all applications belonging to organization',
-  })
-  @ApiParam({ name: 'organizationNationalId', type: String })
-  @Get('organization/:organizationNationalId')
-  async findAllByOrganization(
-    @Param('organizationNationalId') organizationNationalId: string,
-    @Query('page') page: number,
-    @Query('limit') limit: number,
-    @Query('isTest') isTest: boolean,
-  ): Promise<ApplicationResponseDto> {
-    return await this.applicationsService.findAllByOrganization(
-      organizationNationalId,
-      page,
-      limit,
-      isTest,
-    )
-  }
-
   @ApiOperation({ summary: 'Get an application by id' })
   @ApiOkResponse({
     description: 'Get an application by id',
@@ -89,6 +72,40 @@ export class ApplicationsController {
     @CurrentUser() user: User,
   ): Promise<ApplicationResponseDto> {
     return await this.applicationsService.getApplication(id, slug, user)
+  }
+
+  @ApiOperation({ summary: 'Send notification to external system' })
+  @ApiOkResponse({
+    description: 'Send notification to external system',
+    type: NotificationResponseDto,
+  })
+  @ApiBody({ type: NotificationDto })
+  @Post('notify')
+  async notify(
+    @Body() notificationDto: NotificationDto,
+    @CurrentUser() user: User,
+  ): Promise<NotificationResponseDto> {
+    return await this.applicationsService.notifyExternalService(
+      notificationDto,
+      user,
+    )
+  }
+
+  @ApiOperation({ summary: 'Get data from external url' })
+  @ApiOkResponse({
+    description: 'Get data from external url',
+    type: DataFromUrlResDto,
+  })
+  @ApiBody({ type: DataFromUrlReqDto })
+  @Post('dataFromUrl')
+  async getDataFromUrl(
+    @Body() dataFromUrlRequestDto: DataFromUrlReqDto,
+    @CurrentUser() user: User,
+  ): Promise<DataFromUrlResDto> {
+    return await this.applicationsService.getDataFromUrl(
+      dataFromUrlRequestDto,
+      user,
+    )
   }
 
   @ApiOperation({ summary: 'Create new application' })
@@ -150,8 +167,10 @@ export class ApplicationsController {
   async update(
     @Param('id') id: string,
     @Body() updateApplicationDto: UpdateApplicationDto,
+    @CurrentUser()
+    user: User,
   ): Promise<void> {
-    await this.applicationsService.update(id, updateApplicationDto)
+    await this.applicationsService.update(id, updateApplicationDto, user)
   }
 
   @ApiOperation({ summary: 'Submit application' })
@@ -161,8 +180,12 @@ export class ApplicationsController {
   })
   @ApiParam({ name: 'id', type: String })
   @Post('submit/:id')
-  async submit(@Param('id') id: string): Promise<SubmitApplicationResponseDto> {
-    return await this.applicationsService.submit(id)
+  async submit(
+    @Param('id') id: string,
+    @CurrentUser()
+    user: User,
+  ): Promise<SubmitApplicationResponseDto> {
+    return await this.applicationsService.submit(id, user)
   }
 
   @ApiOperation({ summary: 'Delete an application by id' })

@@ -47,6 +47,29 @@ const ReturnUrlRequired = (validationOptions?: ValidationOptions) => {
   }
 }
 
+const InvoiceReturnUrlRequired = (validationOptions?: ValidationOptions) => {
+  return function (object: object, propertyName: string) {
+    registerDecorator({
+      name: 'invoiceReturnUrlRequired',
+      target: (object as { constructor: NewableFunction }).constructor,
+      propertyName: propertyName,
+      options: validationOptions,
+      validator: {
+        validate(value: unknown, args: ValidationArguments) {
+          const obj = args.object as { invoiceReturnUrl?: string }
+          if (value && !obj.invoiceReturnUrl) {
+            return false
+          }
+          return true
+        },
+        defaultMessage(args: ValidationArguments) {
+          return `${args.property} can only have a value if invoiceReturnUrl is also provided.`
+        },
+      },
+    })
+  }
+}
+
 export class ExtraDataItem {
   @IsString()
   @ApiProperty({
@@ -105,16 +128,18 @@ export class ChargeInput {
 }
 
 export class CreatePaymentFlowInput {
-  @ApiProperty({
-    description: 'List of allowed payment methods for this payment flow',
+  @ApiPropertyOptional({
+    description: 'Payment methods are determined by the charges',
     type: [String],
     example: ['card', 'invoice'],
     enum: PaymentMethod,
     isArray: true,
+    deprecated: true,
   })
   @IsArray()
+  @IsOptional()
   @IsEnum(PaymentMethod, { each: true })
-  availablePaymentMethods!: PaymentMethod[]
+  availablePaymentMethods?: PaymentMethod[]
 
   @ApiProperty({
     description: 'Charges associated with the payment flow',
@@ -211,6 +236,23 @@ export class CreatePaymentFlowInput {
   })
   @ReturnUrlRequired() // See validator above
   redirectToReturnUrlOnSuccess?: boolean
+
+  @ApiPropertyOptional({
+    description: 'The url to redirect to when an invoice is created',
+  })
+  @IsOptional()
+  @IsUrl({ require_tld: isRunningOnEnvironment('production') })
+  invoiceReturnUrl?: string
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiPropertyOptional({
+    description:
+      'If true the user will be redirected to the invoiceReturnUrl after an invoice has been created',
+    type: Boolean,
+  })
+  @InvoiceReturnUrlRequired()
+  redirectOnInvoiceCreation?: boolean
 
   @ApiPropertyOptional({
     description:

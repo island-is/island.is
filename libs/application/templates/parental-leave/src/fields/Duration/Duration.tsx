@@ -31,7 +31,7 @@ export const Duration: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
   errors,
 }) => {
-  const { id } = field
+  const id = field.id as string
   const { register, setError, clearErrors, setValue } = useFormContext()
   const { formatMessage, formatDateFns } = useLocale()
   const { answers } = application

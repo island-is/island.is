@@ -9,7 +9,6 @@ import {
 import {
   CaseModule,
   CourtModule,
-  CourtSessionModule,
   DefendantModule,
   EventModule,
   FileModule,
@@ -29,7 +28,6 @@ import { SubpoenaService } from './subpoena.service'
     forwardRef(() => PoliceModule),
     forwardRef(() => EventModule),
     forwardRef(() => DefendantModule),
-    forwardRef(() => CourtSessionModule),
     forwardRef(() => FileModule),
     forwardRef(() => RepositoryModule),
     ConfigModule.forRoot({

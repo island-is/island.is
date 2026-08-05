@@ -14,11 +14,12 @@ import { getValue } from '../../../lib/getValue'
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
+  valueIndex?: number
 }
 
 const PHONE_REGEX = /^[0-9+\-() ]{7,20}$/
 
-export const PhoneNumber = ({ item, dispatch }: Props) => {
+export const PhoneNumber = ({ item, dispatch, valueIndex = 0 }: Props) => {
   const { locale, formatMessage, lang } = useLocale()
   const { control } = useFormContext()
 
@@ -26,10 +27,10 @@ export const PhoneNumber = ({ item, dispatch }: Props) => {
     <Row>
       <Column>
         <Controller
-          key={item.id}
-          name={`${item.id}.phoneNumber`}
+          key={`${item.id}-${valueIndex}`}
+          name={`${item.id}.${valueIndex}`}
           control={control}
-          defaultValue={getValue(item, 'phoneNumber') ?? ''}
+          defaultValue={getValue(item, 'phoneNumber', valueIndex) ?? ''}
           rules={{
             required: {
               value: item.isRequired ?? false,
@@ -40,31 +41,33 @@ export const PhoneNumber = ({ item, dispatch }: Props) => {
               message: formatMessage(m.invalidPhoneNumber),
             },
           }}
-          render={({ field, fieldState }) => (
-            <PhoneInput
-              label={item.name?.[lang] ?? ''}
-              placeholder={formatMessage(m.phoneNumber)}
-              name={field.name}
-              locale={locale as Locale}
-              required={item.isRequired ?? false}
-              backgroundColor="blue"
-              value={field.value}
-              onChange={(e) => {
-                field.onChange(e)
-                if (dispatch) {
-                  dispatch({
+          render={({ field, fieldState }) => {
+            return (
+              <PhoneInput
+                label={item.name?.[lang] ?? ''}
+                placeholder={formatMessage(m.phoneNumber)}
+                name={field.name}
+                locale={locale as Locale}
+                required={item.isRequired ?? false}
+                backgroundColor="blue"
+                value={field.value}
+                onFormatValueChange={(formattedValue: string) => {
+                  // This is the full value PhoneInput constructs (e.g. "+3545812345")
+                  field.onChange(formattedValue)
+                  dispatch?.({
                     type: 'SET_PHONE_NUMBER',
                     payload: {
                       id: item.id,
-                      value: e.target.value,
+                      value: formattedValue,
+                      valueIndex,
                     },
                   })
-                }
-              }}
-              onBlur={field.onBlur}
-              errorMessage={fieldState.error?.message}
-            />
-          )}
+                }}
+                onBlur={field.onBlur}
+                errorMessage={fieldState.error?.message}
+              />
+            )
+          }}
         />
       </Column>
     </Row>

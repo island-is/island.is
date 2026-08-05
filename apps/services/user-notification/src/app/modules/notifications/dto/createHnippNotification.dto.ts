@@ -1,4 +1,10 @@
-import { IsArray, IsOptional, IsString, ValidateNested } from 'class-validator'
+import {
+  IsArray,
+  IsBoolean,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { IsNationalId } from '@island.is/nest/core'
 import { Type } from 'class-transformer'
@@ -9,11 +15,12 @@ export class HnippNotificationOriginalRecipientDto {
   nationalId!: string
 
   @IsString()
-  @ApiProperty()
-  name!: string
+  @ApiPropertyOptional()
+  @IsOptional()
+  name?: string
 
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   subjectId?: string
 }
@@ -68,4 +75,12 @@ export class InternalCreateHnippNotificationDto extends CreateHnippNotificationD
   @IsOptional()
   @IsString()
   rootMessageId?: string
+
+  /**
+   * When true, the SMS opt-in check is overridden and the guardians of children under 16 should receive SMS
+   * regardless of their own SMS opt-in status.
+   */
+  @IsOptional()
+  @IsBoolean()
+  forceSmsToMinorGuardian?: boolean
 }

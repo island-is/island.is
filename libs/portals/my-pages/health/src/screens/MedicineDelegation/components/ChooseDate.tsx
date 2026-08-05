@@ -40,6 +40,9 @@ const SecondStep: FC<SecondStepProps> = ({ setFormState, formState }) => {
           range
           displaySelectInput
           minDate={today}
+          minYear={today.getFullYear()}
+          maxYear={addYears(today, 10).getFullYear()}
+          maxDate={addYears(today, 10)}
           selectedRange={{
             startDate: formState?.dateFrom ? formState.dateFrom : null,
             endDate: formState?.dateTo ? formState.dateTo : null,

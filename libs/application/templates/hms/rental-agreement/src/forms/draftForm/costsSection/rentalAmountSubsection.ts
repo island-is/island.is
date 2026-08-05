@@ -94,7 +94,7 @@ export const rentalAmountSubsection = buildSubSection({
             const options = getConsumerIndexDateOptions(application)
             return options.length > 1
               ? options[1].value
-              : options[0].value ?? undefined
+              : options[0]?.value ?? undefined
           },
           width: 'half',
           marginTop: 1,

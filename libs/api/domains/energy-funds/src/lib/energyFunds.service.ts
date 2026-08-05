@@ -67,7 +67,10 @@ export class EnergyFundsService {
 
     const basicVehicle = await this.vehiclesApiWithAuth(
       auth,
-    ).basicVehicleInformationGet({ permno: permno })
+    ).basicVehicleInformationGet({
+      clientPersidno: auth.nationalId,
+      permno: permno,
+    })
 
     if (!result || !result.data || result.data.length === 0 || !basicVehicle) {
       throw Error(

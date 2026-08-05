@@ -9,7 +9,11 @@ import {
 import { FormValue } from '@island.is/application/types'
 import { fishingLicenseFurtherInformation } from '../../lib/messages'
 import { FishingLicenseEnum } from '../../types'
-import { ATTACHMENTS_FIELD_ID, DATE_FIELD_ID } from '../../utils/fields'
+import {
+  ATTACHMENTS_FIELD_ID,
+  DATE_FIELD_ID,
+  NEEDS_OWNERSHIP_REGISTRATION_FIELD_ID,
+} from '../../utils/fields'
 import {
   licenseHasAreaSelection,
   licenseHasFileUploadField,
@@ -25,7 +29,15 @@ const hasFileUpload = (formValue: FormValue) => {
     'fishingLicense.license',
     '',
   ) as FishingLicenseEnum
-  return licenseHasFileUploadField(selectedLicenseType)
+  const needsOwnershipRegistration =
+    getValueViaPath(
+      formValue,
+      'fishingLicense.needsOwnershipRegistration',
+      false,
+    ) ?? false
+  return (
+    licenseHasFileUploadField(selectedLicenseType) || needsOwnershipRegistration
+  )
 }
 
 // Condition that determines whether given license has special fields
@@ -123,6 +135,8 @@ export const fishingLicenseFurtherInfoSection = buildSection({
           uploadButtonLabel:
             fishingLicenseFurtherInformation.attachmentInfo.buttonLabel,
           uploadAccept: FILE_UPLOAD_ACCEPT,
+          uploadMultiple: true,
+          maxFileCount: 2,
           condition: hasFileUpload,
         }),
         // Roe net and rail net information fields - only for selected license(s)

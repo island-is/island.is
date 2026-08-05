@@ -32,6 +32,8 @@ export const categorySelection = buildSection({
               value: RateCategory.KMRATE,
             },
           ],
+          clearOnChange: ['vehicleLatestMilageRows'],
+          clearOnChangeDefaultValue: [],
         }),
       ],
     }),

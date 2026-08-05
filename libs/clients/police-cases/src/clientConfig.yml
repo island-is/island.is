@@ -64,6 +64,8 @@ components:
           format: date-time
         embaetti:
           type: string
+        embaettiIferli:
+          type: string
   securitySchemes:
     ApiKey:
       type: apiKey

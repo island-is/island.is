@@ -39,6 +39,10 @@ export const getAdvertParams = (params?: UseAdvertsVariables) => {
     variables.type = params.type
   }
 
+  if (params?.mainType) {
+    variables.mainType = params.mainType
+  }
+
   if (params?.year) {
     variables.year = params.year
   }

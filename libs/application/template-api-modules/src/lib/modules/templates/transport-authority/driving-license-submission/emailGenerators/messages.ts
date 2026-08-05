@@ -2,12 +2,15 @@ export const m = {
   drivingLicenseSubject: {
     'B-temp': 'Umsókn um ökunám móttekin',
     'B-full': 'Umsókn um fullnaðarskírteini móttekin',
-    BE: 'Umsókn um kerruréttindi móttekin',
+    'B-full-renewal-65': 'Umsókn um endurnýjun ökuskírteinis móttekin',
+    BE: 'Umsókn um BE réttindi móttekin',
   },
   drivingLicenseHeading: {
     'B-temp': 'Umsókn þín um ökunám hefur verið móttekin',
     'B-full': 'Umsókn þín um fullnaðarskírteinið hefur verið móttekin',
-    BE: 'Umsókn þín um kerruréttindi móttekin',
+    'B-full-renewal-65':
+      'Umsókn þín um endurnýjun ökuskírteinis hefur verið móttekin',
+    BE: 'Umsókn þín um BE réttindi hefur verið móttekin',
   },
   inPersonRequirements: {
     title: {
@@ -15,6 +18,8 @@ export const m = {
         'Til að klára umsóknina þarf að koma á skrifstofu sýslumanns og skila eftirfarandi gögnum',
       'B-full':
         'Áður en hægt er að panta fullnaðarskírteini, þarf að koma á skrifstofu sýslumanns og skila eftirfarandi gögnum',
+      'B-full-renewal-65':
+        'Áður en hægt er að endurnýja ökuskírteini, þarf að koma á skrifstofu sýslumanns og skila eftirfarandi gögnum',
       BE: 'Áður en hægt er að panta ökuskírteini, þarf að koma á skrifstofu sýslumanns og skila eftirfarandi gögnum',
     },
     healthDeclaration: {
@@ -36,9 +41,22 @@ export const m = {
     },
   },
   completeFooter: [
-    'Skírteinið verður tilbúið á völdum afhendingarstað (%s) eftir þrjár vikur.',
-    '<strong>Áríðandi:</strong> Skila þarf inn bráðabirgðaskírteini áður en nýtt skírteini er afhent.',
-    '<a href="https://island.is/okuskirteini">Hér</a> getur þú uppfært stafræna skírteinið þitt.',
+    'Ökuskírteinið þitt verður tilbúið á völdum afhendingastað (%s) eftir 7 virka daga.',
+    'Þú getur uppfært stafræna ökuskírteinið þitt í <a href="https://island.is/okuskirteini">Ísland.is appinu</a>.',
   ],
-  congratulations: 'Til hamingju',
+  completeFooterPost: [
+    'Ökuskírteinið þitt verður sent á lögheimili þitt.',
+    'Þú getur uppfært stafræna ökuskírteinið þitt í <a href="https://island.is/okuskirteini">Ísland.is appinu</a>.',
+  ],
+  congratulations: 'Góðan daginn',
+  nextSteps: {
+    BE: [
+      'Ef læknisvottorð fylgdi umsókninni verður það nú yfirfarið. Þegar umsókn hefur verið samþykkt verður hún send áfram í ökunámsbók. Ef læknisvottorð uppfyllir ekki skilyrði getur umsókninni verið hafnað. Ef umsókn er hafnað þarf að senda beiðni um endurgreiðslu á endurgreidsla@island.is og sækja aftur um.',
+      'Þegar verklegu prófi er lokið verður ökuskírteinið pantað og afhent samkvæmt því sem valið var í umsóknarferlinu, annað hvort sent eða sótt á valda afgreiðslu.',
+    ],
+    'B-full-renewal-65': [
+      'Ef læknisvottorð fylgdi umsókninni verður það nú yfirfarið. Ef læknisvottorð uppfyllir ekki skilyrði getur umsókninni verið hafnað. Ef umsókn er hafnað þarf að senda beiðni um endurgreiðslu á endurgreidsla@island.is og sækja aftur um.',
+      'Þegar umsóknin hefur verið samþykkt verður ökuskírteinið pantað og afhent samkvæmt því sem valið var í umsóknarferlinu, annað hvort sent eða sótt á valda afgreiðslu.',
+    ],
+  } as Record<string, string[] | undefined>,
 }

@@ -14,6 +14,10 @@ This application template allows applicants to apply for a school transfer, cont
 
 This state is a temporary state in which all new applications are created. It has a short lifespan and is unlisted. In this state, there is an external data step that fetches data from Þjóðskrá and MMS. If the user has child/children to apply for, they select them in this state.
 
+#### Application Blocked
+
+If the selected child already has active applications the application goes to this state, the application cannot advance and the applicant will get a screen detailing why they cannot proceed with an application.
+
 #### Draft
 
 If the applicant has a child to apply for, they advance to the draft state. In this state, they complete the actual application.

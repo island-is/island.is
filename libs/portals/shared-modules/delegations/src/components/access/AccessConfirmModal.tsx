@@ -5,7 +5,7 @@ import { Box, useBreakpoint } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { formatNationalId, m as coreMessages } from '@island.is/portals/core'
 import { Problem } from '@island.is/react-spa/shared'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
 import { Modal, ModalProps } from '@island.is/react/components'
 import { IdentityCard } from '../IdentityCard/IdentityCard'
@@ -55,9 +55,11 @@ export const AccessConfirmModal = ({
     await onConfirm()
   }
 
-  if (isDefined(formError) && formError !== error) {
-    setError(formError)
-  }
+  useEffect(() => {
+    if (isDefined(formError)) {
+      setError(formError)
+    }
+  }, [formError])
 
   const toName = delegation?.to?.name
   const toNationalId = delegation?.to?.nationalId
@@ -68,7 +70,7 @@ export const AccessConfirmModal = ({
     <Modal
       id="access-confirm-modal"
       label={formatMessage(m.accessConfirmModalTitle)}
-      eyebrow={formatMessage(m.accessControl)}
+      eyebrow={formatMessage(m.digitalDelegations)}
       title={formatMessage(m.accessConfirmModalTitle)}
       {...rest}
       onClose={onClose}

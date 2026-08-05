@@ -3,7 +3,7 @@ import {
   DataGovernance,
   IConfigCatClient,
   PollingMode,
-} from 'configcat-common'
+} from '@configcat/sdk'
 import {
   FeatureFlagClient,
   FeatureFlagUser,
@@ -34,6 +34,9 @@ export const createFeatureFlagClient = (
     ccConfig,
   )
 
+  const toConfigCatUser = (user?: FeatureFlagUser) =>
+    user ? { identifier: user.id, custom: user.attributes } : undefined
+
   return {
     dispose: () => {
       client.dispose()
@@ -46,8 +49,24 @@ export const createFeatureFlagClient = (
       return await client.getValueAsync(
         key,
         defaultValue,
-        user ? { identifier: user.id, custom: user.attributes } : undefined,
+        toConfigCatUser(user),
       )
+    },
+    getAllValues: async (
+      user?: FeatureFlagUser,
+    ): Promise<Record<string, boolean | string | number>> => {
+      const keyValues = await client.getAllValuesAsync(toConfigCatUser(user))
+      const result: Record<string, boolean | string | number> = {}
+      for (const kv of keyValues) {
+        if (
+          typeof kv.settingValue === 'boolean' ||
+          typeof kv.settingValue === 'string' ||
+          typeof kv.settingValue === 'number'
+        ) {
+          result[kv.settingKey] = kv.settingValue
+        }
+      }
+      return result
     },
   }
 }

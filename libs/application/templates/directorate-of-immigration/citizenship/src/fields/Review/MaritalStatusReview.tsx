@@ -70,7 +70,6 @@ export const MaritalStatusReview: FC<Props> = ({
             <Text>{answers?.maritalStatus?.name}</Text>
             <Text>{kennitala.format(answers?.maritalStatus?.nationalId)}</Text>
             <Text>{answers?.maritalStatus?.birthCountry}</Text>
-            <Text>{answers?.maritalStatus?.citizenship}</Text>
           </GridColumn>
         </GridRow>
       </Box>

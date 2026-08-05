@@ -27,6 +27,9 @@ class Item {
 
   @Field(() => String)
   presentings!: string
+
+  @Field(() => String, { nullable: true })
+  resolutionLink?: string | null
 }
 
 @ObjectType('WebSupremeCourtDeterminationByIdResponse')

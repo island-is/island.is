@@ -9,7 +9,10 @@ import {
   Checkbox,
   Input,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  DISTRICT_COURT_INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+  DISTRICT_COURT_INVESTIGATION_CASE_COURT_RECORD_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import { core, ruling, titles } from '@island.is/judicial-system-web/messages'
@@ -332,12 +335,19 @@ const Ruling = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
-          previousUrl={`${constants.INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!stepIsValid}
-          onNextButtonClick={() =>
-            handleNavigationTo(constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE)
-          }
+          previousUrl={`${DISTRICT_COURT_INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  DISTRICT_COURT_INVESTIGATION_CASE_COURT_RECORD_ROUTE,
+                ),
+              disabled: !stepIsValid,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

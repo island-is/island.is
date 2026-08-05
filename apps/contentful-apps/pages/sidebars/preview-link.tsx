@@ -42,7 +42,8 @@ const PreviewLinkSidebar = () => {
 
             const url = await previewLinkHandler[contentTypeId](entry, cma)
 
-            window.open(`${url}${queryParams}`, '_blank')
+            if (url) window.open(`${url}${queryParams}`, '_blank')
+            else sdk.notifier.warning('No preview link available')
           }
         }}
       >

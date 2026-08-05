@@ -10,7 +10,10 @@ import { format as formatNationalId } from 'kennitala'
 import { PdfConstants } from '../constants'
 import { YES } from '@island.is/application/core'
 
-export const generateComplaintPdf = async (application: Application) => {
+export const generateComplaintPdf = async (
+  application: Application,
+  submittedAt: Date,
+) => {
   const answers = application.answers as ComplaintsToAlthingiOmbudsmanAnswers
   const complainedFor =
     answers.complainedFor.decision === ComplainedForTypes.MYSELF
@@ -24,6 +27,14 @@ export const generateComplaintPdf = async (application: Application) => {
   })
 
   addHeader('Kvörtun til umboðsmanns Alþingis', doc)
+
+  addSubheader('Kvörtun móttekin', doc)
+  addValue(
+    submittedAt.toISOString().substring(0, 10),
+    doc,
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.NORMAL_LINE_GAP,
+  )
 
   addValue(
     `${answers.applicant.name}, ${formatNationalId(
@@ -128,7 +139,12 @@ export const generateComplaintPdf = async (application: Application) => {
   )
 
   if (answers.complaintDescription.decisionDate) {
-    addSubheader('Dagsetning', doc)
+    addSubheader(
+      answers.complaintType === OmbudsmanComplaintTypeEnum.DECISION
+        ? 'Dagsetning ákvörðunar'
+        : 'Dagsetning athafnar',
+      doc,
+    )
     addValue(
       answers.complaintDescription.decisionDate ?? '',
       doc,

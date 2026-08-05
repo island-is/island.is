@@ -49,4 +49,7 @@ export class User {
 
   @Field(() => Boolean, { nullable: true })
   readonly canConfirmIndictment?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  readonly canManageMessageSuspension?: boolean
 }

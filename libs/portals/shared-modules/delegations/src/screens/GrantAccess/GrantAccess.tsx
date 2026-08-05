@@ -1,6 +1,7 @@
+import { ApolloError } from '@apollo/client'
 import cn from 'classnames'
 import * as kennitala from 'kennitala'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Control, FormProvider, useForm } from 'react-hook-form'
 import { defineMessage } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
@@ -49,6 +50,7 @@ const GrantAccess = () => {
   const inputRef = React.useRef<HTMLInputElement>(null)
   const navigate = useNavigate()
   const { md } = useBreakpoint()
+
   const {
     options,
     selectedOption,
@@ -64,17 +66,16 @@ const GrantAccess = () => {
     toast.warning(formatMessage(m.grantIdentityError))
   }
 
-  const [getIdentity, { data, loading: queryLoading, error }] =
-    useIdentityLazyQuery({
-      onError: (error) => {
-        setFormError(error)
-      },
-      onCompleted: (data) => {
-        if (!data.identity) {
-          noUserFoundToast()
-        }
-      },
-    })
+  const [getIdentity, { data, loading: queryLoading }] = useIdentityLazyQuery({
+    onError: (error) => {
+      setFormError(error)
+    },
+    onCompleted: (data) => {
+      if (!data.identity) {
+        noUserFoundToast()
+      }
+    },
+  })
 
   const { identity } = data || {}
 
@@ -145,6 +146,21 @@ const GrantAccess = () => {
       setFormError(error)
     }
   })
+
+  const formErrorOverrides = useMemo(() => {
+    const problem = (formError as ApolloError | undefined)?.graphQLErrors?.[0]
+      ?.extensions?.problem as { status?: number; detail?: string } | undefined
+    if (
+      problem?.status === 400 &&
+      problem.detail?.toLowerCase().includes('deceased')
+    ) {
+      return {
+        title: formatMessage(m.grantDeceasedTitle),
+        message: formatMessage(m.grantDeceasedMessage),
+      }
+    }
+    return {}
+  }, [formError, formatMessage])
 
   const clearPersonState = () => {
     setName('')
@@ -258,7 +274,7 @@ const GrantAccess = () => {
                   <SelectController
                     id="domainName"
                     name="domainName"
-                    label={formatMessage(m.accessControl)}
+                    label={formatMessage(m.digitalDelegations)}
                     placeholder={formatMessage(m.chooseDomain)}
                     error={errors.domainName?.message}
                     options={options}
@@ -280,7 +296,14 @@ const GrantAccess = () => {
               </div>
             </Box>
             <Box display="flex" flexDirection="column" rowGap={5} marginTop={5}>
-              {formError && <Problem error={formError} size="small" />}
+              {formError && (
+                <Problem
+                  error={formError}
+                  size="small"
+                  title={formErrorOverrides.title}
+                  message={formErrorOverrides.message}
+                />
+              )}
               <Text variant="small">
                 {formatMessage(m.grantNextStepDescription)}
               </Text>

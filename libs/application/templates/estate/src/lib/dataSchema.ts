@@ -8,6 +8,7 @@ import {
   isValidEmail,
   isValidPhoneNumber,
   isValidString,
+  valueToNumber,
 } from './utils'
 
 const asset = z
@@ -37,7 +38,55 @@ const asset = z
   )
   .refine(
     ({ share }) => {
-      return share ? share > 0 && share <= 100 : true
+      return share ? share >= 0.01 && share <= 100 : true
+    },
+    {
+      path: ['share'],
+    },
+  )
+  .refine(
+    ({ enabled, description }) => {
+      return enabled ? isValidString(description) : true
+    },
+    {
+      path: ['description'],
+    },
+  )
+  .array()
+  .optional()
+
+// Same shape as `asset`, but marketValue must be greater than 0 so vehicles
+// cannot be submitted at 0 kr. Heirs that genuinely should not count a vehicle
+// can disable the row ("Afvirkja"), which skips validation.
+const vehicleAsset = z
+  .object({
+    assetNumber: z.string(),
+    description: z.string(),
+    marketValue: z.string(),
+    initial: z.boolean(),
+    enabled: z.boolean(),
+    share: z.number(),
+  })
+  .refine(
+    ({ enabled, marketValue }) => {
+      return enabled ? valueToNumber(marketValue) > 0 : true
+    },
+    {
+      path: ['marketValue'],
+      params: m.errorMarketValue,
+    },
+  )
+  .refine(
+    ({ enabled, assetNumber }) => {
+      return enabled ? isValidString(assetNumber) : true
+    },
+    {
+      path: ['assetNumber'],
+    },
+  )
+  .refine(
+    ({ share }) => {
+      return share ? share >= 0.01 && share <= 100 : true
     },
     {
       path: ['share'],
@@ -139,8 +188,8 @@ export const estateSchema = z.object({
         dateOfBirth: z.string().optional(),
         initial: z.boolean(),
         enabled: z.boolean(),
-        phone: z.string(),
-        email: z.string(),
+        phone: z.string().optional().default(''),
+        email: z.string().optional().default(''),
         // Málsvari
         advocate: z
           .object({
@@ -153,10 +202,10 @@ export const estateSchema = z.object({
         // Málsvari 2
         advocate2: z
           .object({
-            name: z.string(),
-            nationalId: z.string(),
-            phone: z.string(),
-            email: z.string(),
+            name: z.string().optional().default(''),
+            nationalId: z.string().optional().default(''),
+            phone: z.string().optional().default(''),
+            email: z.string().optional().default(''),
           })
           .optional(),
       })
@@ -227,7 +276,7 @@ export const estateSchema = z.object({
       .optional(),
     assets: asset,
     flyers: asset,
-    vehicles: asset,
+    vehicles: vehicleAsset,
     ships: asset,
     guns: asset,
     bankAccounts: z
@@ -673,6 +722,7 @@ export const estateSchema = z.object({
       nationalId: z.string().optional(),
       phone: z.string().optional(),
       email: z.string().optional(),
+      electronicID: z.string().optional(),
     })
     /* ---- Validating whether the fields are either all filled out or all empty ---- */
     .refine(
@@ -715,6 +765,17 @@ export const estateSchema = z.object({
         path: ['name'],
       },
     )
+    .refine(
+      ({ name, nationalId, phone, email, electronicID }) => {
+        return !!name || !!nationalId || !!phone || !!email
+          ? electronicID !== ''
+          : true
+      },
+      {
+        params: m.phoneElectronicIdError,
+        path: ['phone'],
+      },
+    )
     .optional(),
   estateAttachments: z.object({
     attached: z.object({
@@ -744,4 +805,7 @@ export const estateSchema = z.object({
   confirmAction: z.array(z.enum([YES])).length(1),
   confirmActionAssetsAndDebt: z.array(z.enum([YES])).length(1),
   confirmActionUndividedEstate: z.array(z.enum([YES])).length(1),
+  // Optional: applicant chooses to email a copy of the application to the
+  // parties (málsaðilar). Only offered for the payment-bearing estate types.
+  sendCopyToParties: z.array(z.enum([YES])).optional(),
 })

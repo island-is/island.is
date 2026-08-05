@@ -10,24 +10,31 @@ import { Routes } from '../../../utils'
 import {
   clearOnChangeSchool,
   filterSchoolOptions,
-  getAlertMessageAddThirdSelectionCondition,
-  getAlertSpecialNeedsProgramCondition,
-  getAlertSpecialNeedsProgramMessage,
+  getAlertMessageConditionAddThirdSelection,
+  getAlertMessageConditionSpecialNeedsProgram,
+  getAlertMessageSpecialNeedsProgram,
+  getFallbackThirdLanguageOptions,
+  getConditionFallbackThirdLanguage,
+  getConditionNordicLanguage,
+  getConditionProgramApplicationMessage,
+  getConditionRequestDormitory,
   getConditionSecondProgram,
+  getConditionThirdLanguage,
   getFormTitle,
   getIsClearableSecondProgram,
-  getNordicLanguageCondition,
   getNordicLanguageOptions,
-  getRequestDormitoryCondition,
+  getProgramApplicationMessage,
   getRequestDormitoryOptions,
-  getRequiredSecondProgram,
+  getRequireFallbackThirdLanguage,
+  getRequireSecondProgram,
+  getRequireThirdLanguage,
   getRowsLimitCount,
   getSchoolOptions,
-  getThirdLanguageCondition,
   getThirdLanguageOptions,
   getUpdateOnSelectFirstProgram,
   getUpdateOnSelectSecondProgram,
   loadProgramOptions,
+  setOnChangeFallbackThirdLanguage,
   setOnChangeFirstProgram,
   setOnChangeNordicLanguage,
   setOnChangeSchool,
@@ -68,7 +75,7 @@ export const schoolSection = buildSection({
               options: (application) => getSchoolOptions(application),
               filterOptions: (options, answers, index) =>
                 filterSchoolOptions(options, answers, index),
-              clearOnChange: (index) => clearOnChangeSchool(index),
+              clearOnChange: (_) => clearOnChangeSchool(),
               setOnChange: async (option, application, index) =>
                 setOnChangeSchool(option, application, index),
             },
@@ -99,11 +106,29 @@ export const schoolSection = buildSection({
                   activeField,
                 ),
             },
+            firstProgramAlert: {
+              component: 'alertMessage',
+              alertType: 'info',
+              message: (application, _activeField, index, locale) =>
+                getProgramApplicationMessage(
+                  'firstProgram',
+                  application.answers,
+                  index,
+                  locale,
+                ),
+              condition: (application, _activeField, index, locale) =>
+                getConditionProgramApplicationMessage(
+                  'firstProgram',
+                  application.answers,
+                  index,
+                  locale,
+                ),
+            },
             'secondProgram.id': {
               component: 'selectAsync',
               label: school.selection.secondProgramLabel,
               required: (_, activeField) =>
-                getRequiredSecondProgram(activeField),
+                getRequireSecondProgram(activeField),
               isClearable: (_, activeField) =>
                 getIsClearableSecondProgram(activeField),
               condition: (_, activeField) =>
@@ -126,16 +151,54 @@ export const schoolSection = buildSection({
               setOnChange: async (option, _, index, activeField) =>
                 setOnChangeSecondProgram(option, index, activeField),
             },
+            secondProgramAlert: {
+              component: 'alertMessage',
+              alertType: 'info',
+              message: (application, _, index, locale) =>
+                getProgramApplicationMessage(
+                  'secondProgram',
+                  application.answers,
+                  index,
+                  locale,
+                ),
+              condition: (application, _, index, locale) =>
+                getConditionProgramApplicationMessage(
+                  'secondProgram',
+                  application.answers,
+                  index,
+                  locale,
+                ),
+            },
             'thirdLanguage.code': {
               component: 'select',
               label: school.selection.thirdLanguageLabel,
+              required: (_, activeField) =>
+                getRequireThirdLanguage(activeField),
               isClearable: true,
               condition: (application, activeField) =>
-                getThirdLanguageCondition(application, activeField),
+                getConditionThirdLanguage(application, activeField),
               options: (application, activeField) =>
                 getThirdLanguageOptions(application, activeField),
               setOnChange: async (option, application, index, activeField) =>
                 setOnChangeThirdLanguage(
+                  option,
+                  application,
+                  index,
+                  activeField,
+                ),
+            },
+            'fallbackThirdLanguage.code': {
+              component: 'select',
+              label: school.selection.fallbackThirdLanguageLabel,
+              required: (_, activeField) =>
+                getRequireFallbackThirdLanguage(activeField),
+              isClearable: true,
+              condition: (application, activeField) =>
+                getConditionFallbackThirdLanguage(application, activeField),
+              options: (application, activeField) =>
+                getFallbackThirdLanguageOptions(application, activeField),
+              setOnChange: async (option, application, index, activeField) =>
+                setOnChangeFallbackThirdLanguage(
                   option,
                   application,
                   index,
@@ -147,7 +210,7 @@ export const schoolSection = buildSection({
               label: school.selection.nordicLanguageLabel,
               isClearable: true,
               condition: (application, activeField) =>
-                getNordicLanguageCondition(application, activeField),
+                getConditionNordicLanguage(application, activeField),
               options: (application, activeField) =>
                 getNordicLanguageOptions(application, activeField),
               setOnChange: async (option, application, index, activeField) =>
@@ -162,7 +225,7 @@ export const schoolSection = buildSection({
               component: 'checkbox',
               options: getRequestDormitoryOptions(),
               condition: (application, activeField) =>
-                getRequestDormitoryCondition(application, activeField),
+                getConditionRequestDormitory(application, activeField),
             },
           },
         }),
@@ -172,8 +235,9 @@ export const schoolSection = buildSection({
           alertType: 'warning',
           title: school.selection.specialNeedsProgramAlertTitle,
           message: (application, locale) =>
-            getAlertSpecialNeedsProgramMessage(application.answers, locale),
-          condition: (answers) => getAlertSpecialNeedsProgramCondition(answers),
+            getAlertMessageSpecialNeedsProgram(application.answers, locale),
+          condition: (answers) =>
+            getAlertMessageConditionSpecialNeedsProgram(answers),
         }),
 
         buildAlertMessageField({
@@ -182,7 +246,7 @@ export const schoolSection = buildSection({
           title: school.thirdSelection.addAlertTitle,
           message: school.thirdSelection.addAlertDescription,
           condition: (answers) =>
-            getAlertMessageAddThirdSelectionCondition(answers),
+            getAlertMessageConditionAddThirdSelection(answers),
         }),
       ],
     }),

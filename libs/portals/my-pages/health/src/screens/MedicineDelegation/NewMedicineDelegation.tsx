@@ -14,9 +14,11 @@ import { DelegationState } from '../../utils/types'
 import SecondStep from './components/ChooseDate'
 import FirstStep from './components/ChoosePerson'
 import { usePostMedicineDelegationMutation } from './MedicineDelegation.generated'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const NewMedicineDelegation = () => {
   const { formatMessage } = useLocale()
+  useHealthPlausibleSwap()
   const [step, setStep] = useState<number>(1)
   const [openModal, setOpenModal] = useState<boolean>(false)
   const [formState, setFormState] = useState<DelegationState>()
@@ -68,10 +70,11 @@ const NewMedicineDelegation = () => {
     <IntroWrapper
       title={formatMessage(messages.medicineDelegation)}
       intro={formatMessage(messages.newMedicineDelegationIntroText)}
-      serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
-      serviceProviderTooltip={formatMessage(
-        messages.landlaeknirMedicineDelegationTooltip,
-      )}
+      serviceProvider={{
+        slug: HEALTH_DIRECTORATE_SLUG,
+        tooltip: formatMessage(messages.landlaeknirMedicineDelegationTooltip),
+      }}
+      desktopContentSpan="10/12"
     >
       {step === 1 && (
         <FirstStep setFormState={setFormState} formState={formState} />
@@ -131,6 +134,7 @@ const NewMedicineDelegation = () => {
                 toDate: formState?.dateTo?.toLocaleDateString(),
               })}
               heading={formState?.name}
+              headingVariant="h4"
               text={
                 formState?.lookup
                   ? formatMessage(messages.pickupMedicineAndLookup)

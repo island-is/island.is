@@ -30,6 +30,8 @@ export interface ApplicantInformationInterface {
       data?: {
         email?: string
         mobilePhoneNumber?: string
+        /** From UserProfile API / FJS, e.g. `0515-23-012841` */
+        bankInfo?: string
       }
     }
   }
@@ -53,4 +55,9 @@ export type applicantInformationProps = {
   compactFields?: boolean
   customAddressLabel?: StaticText
   customPostalCodeAndCityLabel?: StaticText
+  /** When true, adds `applicant.bankAccount` (bank / ledger / account) after phone. */
+  includeBankAccount?: boolean
+  bankAccountRequired?: boolean
+  bankAccountCondition?: Condition
+  bankAccountTitle?: FormText
 }

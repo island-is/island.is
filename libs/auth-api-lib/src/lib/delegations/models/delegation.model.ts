@@ -29,7 +29,9 @@ import { isDefined } from '@island.is/shared/utils'
 
 @Table({
   tableName: 'delegation',
-  timestamps: false,
+  timestamps: true,
+  createdAt: 'created',
+  updatedAt: 'modified',
   indexes: [
     {
       unique: true,
@@ -142,6 +144,7 @@ export class Delegation extends Model<
       toNationalId: this.toNationalId,
       toName: this.toName,
       createdByNationalId: this.createdByNationalId,
+      createdAt: this.created,
       validTo: this.validTo,
       scopes: this.delegationScopes
         ? this.delegationScopes.map((scope) => scope.toDTO())

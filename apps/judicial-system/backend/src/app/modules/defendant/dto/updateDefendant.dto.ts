@@ -131,6 +131,11 @@ export class UpdateDefendantDto {
   readonly isSentToPrisonAdmin?: boolean
 
   @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly isRegisteredInPrisonSystem?: boolean
+
+  @IsOptional()
   @IsEnum(PunishmentType)
   @ApiPropertyOptional({ enum: PunishmentType })
   readonly punishmentType?: PunishmentType
@@ -155,4 +160,9 @@ export class UpdateDefendantDto {
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
   readonly isDrivingLicenseSuspended?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly publicProsecutorIsRegisteredInPoliceSystem?: boolean
 }

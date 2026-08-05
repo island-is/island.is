@@ -233,6 +233,13 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       description:
         'The reason for this is the following:\n* You are already receiving payments from the Social Insurance Administration.\n\nYou can apply for a continuation of payments when there are 3 months or less left on approved payments.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
     },
+    inactivePaymentsForTooLongDescription: {
+      id: 'marp.application:not.eligible.inactive.payments.for.too.long.description#markdown',
+      defaultMessage:
+        'Ástæðan fyrir því er eftirfarandi:\n* Þú ert ekki með gilt vottorð um sjúkra- og endurhæfingargreiðslur (má vera mest 6 mánaða gamalt).\n\nEf hlé hefur orðið á greiðslum frá Tryggingastofnun í meira en 6 mánuði, vegna vanda sem orsakar skerta starfsgetu, þá þarf að fá nýtt vottorð til þess að geta sótt aftur um sjúkra- og endurhæfingargreiðslur',
+      description:
+        'The reason for this is the following:\n* You do not have a valid certificate for sickness and rehabilitation (issued within the last 6 months).\n\nYou need a new certificate in order to apply for medical and rehabilitation payments.',
+    },
     baseCertNotFoundDescription: {
       id: 'marp.application:not.eligible.base.cert.not.found.description#markdown',
       defaultMessage:
@@ -299,13 +306,6 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
   }),
 
   generalInformation: defineMessages({
-    // Income Plan - Instructions
-    incomePlanInstructionsSubSectionTitle: {
-      id: 'marp.application:general.information.income.plan.instructions.sub.section.title',
-      defaultMessage: 'Tekjuáætlun - Leiðbeiningar',
-      description: 'Income Plan - Instructions',
-    },
-
     // Benefits from another country
     benefitsFromAnotherCountrySubSectionTitle: {
       id: 'marp.application:general.information.benefits.from.another.country.sub.section.title',
@@ -1237,6 +1237,18 @@ export const errorMessages = defineMessages({
     id: 'marp.application:error.self.assessment.questionnaire.required',
     defaultMessage: 'Þú átt eftir að fylla út í reit á þessari síðu',
     description: 'You have to fill in a field on this page.',
+  },
+  applicationIncompleteTitle: {
+    id: 'marp.application:error.application.incomplete.title',
+    defaultMessage: 'Umsóknin er ófullnægjandi',
+    description: 'The application is incomplete',
+  },
+  applicationIncompleteSummary: {
+    id: 'marp.application:error.application.incomplete.summary',
+    defaultMessage:
+      'Ekki tókst að senda umsóknina þar sem svör vantar í hana. Vinsamlegast farðu yfir umsóknina og reyndu aftur.',
+    description:
+      'The application could not be submitted because answers are missing. Please review the application and try again.',
   },
 })
 

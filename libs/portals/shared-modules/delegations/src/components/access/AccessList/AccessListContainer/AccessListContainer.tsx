@@ -14,10 +14,26 @@ import { AccessListLoading } from '../AccessListLoading'
 import { AuthScopeTree } from '../../access.types'
 import { m } from '../../../../lib/messages'
 
+type DelegationScope = Pick<
+  AuthDelegationScope,
+  'id' | 'name' | 'displayName' | 'validTo' | 'validFrom'
+> & {
+  domain?: {
+    displayName?: string
+    organisationLogoUrl?: string | null
+    organisationLogoKey?: string
+  } | null
+  apiScope?: {
+    name?: string
+    displayName?: string
+    description?: string | null
+  } | null
+}
+
 type AccessListContainerProps = {
   delegation?: {
     validTo?: string | null
-    scopes?: AuthDelegationScope[]
+    scopes?: DelegationScope[]
   }
   scopeTree?: AuthScopeTree
   scopes?: Pick<AuthDelegationScope, 'name' | 'validTo' | 'displayName'>[]

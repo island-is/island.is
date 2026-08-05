@@ -1,32 +1,32 @@
 import { CaseTableColumnKey } from '../caseTableColumnTypes'
 import { CaseTable, pickColumns } from '../caseTableTypes'
 
-const courtOfAppealsRequestCaseslsInProgressColumnKeys: CaseTableColumnKey[] = [
+const courtOfAppealsCasesInProgressColumnKeys: CaseTableColumnKey[] = [
   'caseNumber',
   'defendants',
-  'caseType',
+  'appealCaseType',
   'appealState',
   'courtOfAppealsHead',
 ]
 
-export const courtOfAppealsRequestCasesInProgress: CaseTable = {
+export const courtOfAppealsCasesInProgress: CaseTable = {
   title: 'Mál í vinnslu',
   hasMyCasesFilter: false,
-  columnKeys: courtOfAppealsRequestCaseslsInProgressColumnKeys,
-  columns: pickColumns(courtOfAppealsRequestCaseslsInProgressColumnKeys),
+  columnKeys: courtOfAppealsCasesInProgressColumnKeys,
+  columns: pickColumns(courtOfAppealsCasesInProgressColumnKeys),
 }
 
-const courtOfAppealsRequestCasesCompletedColumnKeys: CaseTableColumnKey[] = [
+const courtOfAppealsCasesCompletedColumnKeys: CaseTableColumnKey[] = [
   'caseNumber',
   'defendants',
-  'caseType',
+  'appealCaseType',
   'appealState',
   'validFromTo',
 ]
 
-export const courtOfAppealsRequestCasesCompleted: CaseTable = {
+export const courtOfAppealsCasesCompleted: CaseTable = {
   title: 'Afgreidd mál',
   hasMyCasesFilter: false,
-  columnKeys: courtOfAppealsRequestCasesCompletedColumnKeys,
-  columns: pickColumns(courtOfAppealsRequestCasesCompletedColumnKeys),
+  columnKeys: courtOfAppealsCasesCompletedColumnKeys,
+  columns: pickColumns(courtOfAppealsCasesCompletedColumnKeys),
 }

@@ -1,0 +1,33 @@
+query PrimarySchoolAssessmentData($studentId: String!) {
+  primarySchoolStudent(studentId: $studentId) {
+    id
+    assessmentHistory {
+      id
+      name
+    }
+  }
+}
+
+query PrimarySchoolAssessmentResults(
+  $studentId: String!
+  $assessmentId: String!
+) {
+  primarySchoolStudent(studentId: $studentId) {
+    id
+    assessmentHistory(input: { assessmentId: $assessmentId }) {
+      id
+      resultHistory {
+        id
+        schoolYear
+        grade {
+          level
+          name
+        }
+        period {
+          startDateString
+        }
+        downloadServiceUrl
+      }
+    }
+  }
+}

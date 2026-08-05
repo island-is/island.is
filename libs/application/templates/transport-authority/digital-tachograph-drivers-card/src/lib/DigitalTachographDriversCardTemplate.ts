@@ -21,7 +21,7 @@ import { application } from './messages'
 import { ApiActions } from '../shared'
 import { DigitalTachographDriversCardSchema } from './dataSchema'
 import {
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
   SamgongustofaPaymentCatalogApi,
   DrivingLicenseApi,
@@ -95,7 +95,7 @@ const template: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 UserProfileApi,
                 SamgongustofaPaymentCatalogApi,
                 MockableSamgongustofaPaymentCatalogApi,

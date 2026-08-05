@@ -168,3 +168,12 @@ export const lastSemesterGeneralCondition = (answers: FormValue) => {
     (!isCurrentlyStudying(answers) && sameEducationAsCurrent(answers))
   )
 }
+
+export const getYearOptions = () => {
+  const currentYear = new Date().getFullYear()
+  const years = Array.from({ length: 51 }, (_, i) => {
+    const year = (currentYear - i).toString()
+    return { value: year, label: year }
+  })
+  return years
+}

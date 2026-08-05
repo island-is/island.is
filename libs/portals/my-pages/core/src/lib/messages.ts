@@ -13,6 +13,14 @@ export const m = defineMessages({
     id: 'service.portal:print',
     defaultMessage: 'Prenta',
   },
+  zoomIn: {
+    id: 'service.portal:zoom-in',
+    defaultMessage: 'Þysja inn',
+  },
+  zoomOut: {
+    id: 'service.portal:zoom-out',
+    defaultMessage: 'Þysja út',
+  },
   more: {
     id: 'service.portal:more',
     defaultMessage: 'Meira',
@@ -191,6 +199,10 @@ export const m = defineMessages({
   nothing: {
     id: 'service.portal:nothing',
     defaultMessage: 'Hér er ekkert...',
+  },
+  inputSearchTerm: {
+    id: 'service.portal:input-search-term',
+    defaultMessage: 'Sláðu inn leitarorð',
   },
   searchForResults: {
     id: 'service.portal:search-for-results',
@@ -509,6 +521,10 @@ export const m = defineMessages({
     id: 'service.portal:open-documents',
     defaultMessage: 'Opna pósthólf',
   },
+  moreCategories: {
+    id: 'service.portal:more-categories',
+    defaultMessage: 'Fleiri flokkar',
+  },
   documentsDescription: {
     id: 'service.portal:documents-description',
     defaultMessage: 'Erindi til þín frá opinberum aðilum',
@@ -556,6 +572,15 @@ export const m = defineMessages({
   inProgressApplications: {
     id: 'service.portal:inProgressApplications',
     defaultMessage: 'Umsóknir í vinnslu',
+  },
+  olderApplications: {
+    id: 'service.portal:older-applications',
+    defaultMessage: 'Eldri umsóknir',
+  },
+  applicationsIntroOlder: {
+    id: 'service.portal:applications-intro-older',
+    defaultMessage:
+      'Hér sérðu yfirlit yfir eldri umsóknir sem þú hefur sótt um í gegnum Ísland.is.',
   },
   myInfo: {
     id: 'service.portal:my-info',
@@ -635,6 +660,11 @@ export const m = defineMessages({
     id: 'service.portal:signatureCollectionMunicipalLists',
     defaultMessage: 'Sveitarstjórnarkosningar',
   },
+  signatureCollectionMunicipalListsNavigationDescription: {
+    id: 'service.portal:signatureCollectionMunicipalListsNavigationDescription',
+    defaultMessage:
+      'Hér sérðu framboð sem hægt er að mæla með í þínu sveitarfélagi fyrir sveitarstjórnarkosningar 2026',
+  },
   signatureCollectionParliamentaryLists: {
     id: 'service.portal:signatureCollectionParliamentaryLists',
     defaultMessage: 'Alþingiskosningar',
@@ -658,6 +688,14 @@ export const m = defineMessages({
   notificationsViewAll: {
     id: 'service.portal:notifications-view-all',
     defaultMessage: 'Sjá allar tilkynningar',
+  },
+  notificationUnread: {
+    id: 'service.portal:notification-unread',
+    defaultMessage: 'Ólesið',
+  },
+  notificationOpensInNewTab: {
+    id: 'service.portal:notification-opens-in-new-tab',
+    defaultMessage: 'Opnast í nýjum glugga',
   },
   viewSignatureList: {
     id: 'service.portal:viewSignatureList',
@@ -733,6 +771,10 @@ export const m = defineMessages({
   educationGraduation: {
     id: 'service.portal:education-graduation',
     defaultMessage: 'Brautskráning',
+  },
+  educationMicroCredentials: {
+    id: 'service.portal:education-micro-credentials',
+    defaultMessage: 'Örnám',
   },
   documentProvider: {
     id: 'service.portal:document-provider',
@@ -1050,12 +1092,10 @@ export const m = defineMessages({
     id: 'service.portal:accessDenied',
     defaultMessage: 'Ekki með aðgang',
   },
-
   accessNeeded: {
     id: 'service.portal:access-needed',
     defaultMessage: 'Umboð vantar',
   },
-
   accessNeededText: {
     id: 'service.portal:access-needed-text',
     defaultMessage: 'Umboð vantar',
@@ -1582,6 +1622,19 @@ export const m = defineMessages({
     defaultMessage:
       'Íslendingar eru sjálfkrafa skráðir líffæragjafar. Þau sem vilja geta breytt afstöðu sinni.',
   },
+  farmerLands: {
+    id: 'service.portal:farmer-lands',
+    defaultMessage: 'Jarðabók',
+  },
+  farmerLand: {
+    id: 'service.portal:farmer-land',
+    defaultMessage: 'Jörð',
+  },
+  farmerLandsIntro: {
+    id: 'service.portal:farmer-lands-intro',
+    defaultMessage:
+      'Hér getur þú skoðað yfirlit yfir bújarðir þínar og tengdar upplýsingar.',
+  },
   workMachines: {
     id: 'service.portal:work-machines',
     defaultMessage: 'Vinnuvélar',
@@ -1594,6 +1647,30 @@ export const m = defineMessages({
   workMachineDetail: {
     id: 'service.portal:work-machine-detail',
     defaultMessage: 'Nánar um vinnuvél',
+  },
+  myShips: {
+    id: 'service.portal:my-ships',
+    defaultMessage: 'Mín skip',
+  },
+  myShipsIntro: {
+    id: 'service.portal:my-ships-intro',
+    defaultMessage: 'Hér getur þú skoðað upplýsingar um skip í þinni eigu',
+  },
+  sailorsSectionTitle: {
+    id: 'service.portal:sailors-section-title',
+    defaultMessage: 'Starfsleyfi sjómanna',
+  },
+  sailorsSchoolCertificatesTitle: {
+    id: 'service.portal:sailors-school-certificates-title',
+    defaultMessage: 'Próf, nám og frestir',
+  },
+  sailorsRightCertificatesTitle: {
+    id: 'service.portal:sailors-right-certificates-title',
+    defaultMessage: 'Atvinnuskírteini',
+  },
+  sailorsCrewRegistrationsTitle: {
+    id: 'service.portal:sailors-crew-registrations-title',
+    defaultMessage: 'Lögskráningar',
   },
   health: {
     id: 'service.portal:health',
@@ -1671,6 +1748,15 @@ export const m = defineMessages({
     id: 'service.portal:vehicles-tooltip',
     defaultMessage: 'Samgöngustofa hefur umsjón með gögnum um ökutæki.',
   },
+  shipsTooltip: {
+    id: 'service.portal:ships-tooltip',
+    defaultMessage: 'Samgöngustofa hefur umsjón með gögnum um skip.',
+  },
+  sailorsTooltip: {
+    id: 'service.portal:sailors-tooltip',
+    defaultMessage:
+      'Samgöngustofa hefur umsjón með gögnum um starfsleyfi sjómanna.',
+  },
   drivingLessonTooltip: {
     id: 'service.portal:driving-lessons-tooltip',
     defaultMessage: 'Samgöngustofa hefur umsjón með gögnum um ökukennslu.',
@@ -1705,6 +1791,11 @@ export const m = defineMessages({
   workmachineTooltip: {
     id: 'service.portal:workmachine-tooltip',
     defaultMessage: 'Vinnueftirlitið hefur umsjón með gögnum um vinnuvélar.',
+  },
+  farmerLandTooltip: {
+    id: 'service.portal:farmer-land-tooltip',
+    defaultMessage:
+      'Atvinnuvegaráðuneytið hefur umsjón með gögnum um jarðabók.',
   },
   financeTooltip: {
     id: 'service.portal:finance-tooltip',
@@ -1766,6 +1857,10 @@ export const m = defineMessages({
     id: 'service.portal:active-document-open-enlarged-aria-label',
     defaultMessage: '{subject} stækkað',
   },
+  close: {
+    id: 'service.portal:close',
+    defaultMessage: 'Loka',
+  },
   closeActiveDocument: {
     id: 'service.portal:close-active-document',
     defaultMessage: 'Loka skjali',
@@ -1814,6 +1909,10 @@ export const m = defineMessages({
     id: 'service.portal:social-insurance-maintenance',
     defaultMessage: 'Framfærsla',
   },
+  socialSecurity: {
+    id: 'service.portal:socialSecurity',
+    defaultMessage: 'Almannatryggingar',
+  },
   socialInsuranceMaintenanceIntro: {
     id: 'service.portal:social-insurance-maintenance-intro',
     defaultMessage: 'Yfirlit yfir greiðslur frá almannatryggingum',
@@ -1839,6 +1938,23 @@ export const m = defineMessages({
   paymentPlan: {
     id: 'service.portal:payment-plan',
     defaultMessage: 'Greiðsluáætlun',
+  },
+  personalTaxCredit: {
+    id: 'service.portal:personal-tax-credit',
+    defaultMessage: 'Persónuafsláttur',
+  },
+  personalTaxCreditDescription: {
+    id: 'service.portal:personal-tax-credit-description',
+    defaultMessage: 'Persónuafsláttur er 72.492. á mánuði á árinu 2026.',
+  },
+  paymentTypesOverview: {
+    id: 'service.portal:payment-types-overview',
+    defaultMessage: 'Greiðslutegundir',
+  },
+  paymentTypesOverviewDescription: {
+    id: 'service.portal:payment-types-overview-description',
+    defaultMessage:
+      'Hér fyrir neðan eru upplýsingar um tegundir greiðslna sem hafa borist þér frá TR.',
   },
   paymentsReasoning: {
     id: 'service.portal:payments-reasoning',
@@ -2154,6 +2270,19 @@ export const m = defineMessages({
     id: 'service.portal:a11y-progress-bar-description',
     defaultMessage:
       'Notaðu örvatakka til að fara á milli valkosta. Ýttu á Enter eða Space til að velja.',
+  },
+  sidebarContactBoxTitle: {
+    id: 'service.portal:sidebar-contact-box-title',
+    defaultMessage: 'Ertu með spurningu?',
+  },
+  sidebarContactBoxBody: {
+    id: 'service.portal:sidebar-contact-box-body',
+    defaultMessage:
+      'Ef þú ert í vandræðum getur þú sent okkur fyrirspurn eða ábendingu á netfangið island@island.is',
+  },
+  unemploymentHasConfirmedJobSearch: {
+    id: 'service.portal:unemployment-has-confirmed-job-search',
+    defaultMessage: 'Atvinnuleit þín er staðfest fyrir þetta tímabil',
   },
 })
 

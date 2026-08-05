@@ -6,4 +6,10 @@ import { Int } from '@nestjs/graphql'
 export class SupremeCourtDeterminationsInput {
   @Field(() => Int)
   page!: number
+
+  @Field(() => [String], { nullable: true })
+  caseTypes?: string[]
+
+  @Field(() => String, { nullable: true })
+  searchTerm?: string
 }

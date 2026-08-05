@@ -7,11 +7,13 @@ import {
   buildFieldRequired,
   formatText,
   formatTextWithLocale,
+  resolveFieldId,
 } from '@island.is/application/core'
 
 import { Box } from '@island.is/island-ui/core'
 import { CompanySearchController } from '@island.is/application/ui-components'
 import { useLocale } from '@island.is/localization'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { Locale } from '@island.is/shared/types'
 import { useFormContext } from 'react-hook-form'
 
@@ -36,9 +38,11 @@ export const CompanySearchFormField: FC<React.PropsWithChildren<Props>> = ({
     marginBottom,
   } = field
   const { formatMessage, lang: locale } = useLocale()
+  const user = useUserInfo()
   const { getValues } = useFormContext()
+  const resolvedId = resolveFieldId({ id }, application, user)
 
-  const storedValue = getValues(id)
+  const storedValue = getValues(resolvedId)
   const [searchTerm, setSearchTerm] = useState(storedValue?.label ?? '')
 
   return (
@@ -49,9 +53,9 @@ export const CompanySearchFormField: FC<React.PropsWithChildren<Props>> = ({
         required={buildFieldRequired(application, required)}
         checkIfEmployerIsOnForbiddenList={checkIfEmployerIsOnForbiddenList}
         shouldIncludeIsatNumber={shouldIncludeIsatNumber}
-        id={id}
+        id={resolvedId}
         error={error}
-        name={id}
+        name={resolvedId}
         label={formatTextWithLocale(
           title,
           application,

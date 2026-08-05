@@ -11,12 +11,18 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Req,
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common'
 import { InjectConnection } from '@nestjs/sequelize'
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -67,27 +73,32 @@ import { Case, CaseFile, Defendant } from '../repository'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFilesDto } from './dto/updateFile.dto'
+import { UpdatePoliceDigitalCaseFilesDto } from './dto/updatePoliceDigitalCaseFiles.dto'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
 import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
 import { CreateCivilClaimantCaseFileGuard } from './guards/createCivilClaimantCaseFile.guard'
 import { CreateDefendantCaseFileGuard } from './guards/createDefendantCaseFile.guard'
+import { districtCourtJudgeConfirmRulingOrderRule } from './guards/rolesRules'
 import { SplitCaseFileExistsGuard } from './guards/splitCaseFileExists.guard'
 import { ViewCaseFileGuard } from './guards/viewCaseFile.guard'
 import { DeleteFileResponse } from './models/deleteFile.response'
+import { PoliceDigitalCaseFileSyncResult } from './models/policeDigitalCaseFileSyncResult.model'
 import { PresignedPost } from './models/presignedPost.model'
 import { SignedUrl } from './models/signedUrl.model'
 import { UploadCriminalRecordFileResponse } from './models/uploadCriminalRecordFile.response'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
+import { PoliceDigitalCaseFileService } from './policeDigitalCaseFiles/policeDigitalCaseFile.service'
 import { CriminalRecordService } from './criminalRecord.service'
 import { FileService } from './file.service'
 
 @Controller('api/case/:caseId')
 @ApiTags('files')
-@UseGuards(JwtAuthUserGuard, RolesGuard, CaseExistsGuard)
+@UseGuards(JwtAuthUserGuard, CaseExistsGuard, RolesGuard)
 export class FileController {
   constructor(
     private readonly fileService: FileService,
     private readonly criminalRecordService: CriminalRecordService,
+    private readonly policeDigitalCaseFileService: PoliceDigitalCaseFileService,
     @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -188,7 +199,11 @@ export class FileController {
     CivilClaimantExistsGuard,
     CreateCivilClaimantCaseFileGuard,
   )
-  @RolesRules() // This endpoint is not used by any role at the moment
+  @RolesRules(
+    publicProsecutorStaffRule,
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+  )
   @Post('civilClaimant/:civilClaimantId/file')
   @ApiCreatedResponse({
     type: CaseFile,
@@ -343,6 +358,30 @@ export class FileController {
   }
 
   @UseGuards(
+    new CaseTypeGuard(indictmentCases),
+    CaseWriteGuard,
+    CaseFileExistsGuard,
+  )
+  @RolesRules(districtCourtJudgeConfirmRulingOrderRule)
+  @Post('file/:fileId/confirm')
+  @ApiOkResponse({
+    type: CaseFile,
+    description: 'Confirms a ruling order uploaded during the course of a case',
+  })
+  confirmRulingOrder(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Param('fileId') fileId: string,
+    @CurrentCaseFile() caseFile: CaseFile,
+  ): Promise<CaseFile> {
+    this.logger.debug(`Confirming ruling order ${fileId} of case ${caseId}`)
+
+    return this.sequelize.transaction((transaction) =>
+      this.fileService.confirmRulingOrder(theCase, caseFile, transaction),
+    )
+  }
+
+  @UseGuards(
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
     CaseReceivedGuard,
@@ -371,7 +410,11 @@ export class FileController {
   }
 
   @UseGuards(
-    new CaseTypeGuard(indictmentCases),
+    new CaseTypeGuard([
+      ...indictmentCases,
+      ...restrictionCases,
+      ...investigationCases,
+    ]),
     CaseWriteGuard,
     CaseNotCompletedGuard,
   )
@@ -425,5 +468,129 @@ export class FileController {
       defendant,
       user,
     })
+  }
+
+  @UseGuards(CaseReadGuard)
+  @RolesRules(
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
+  )
+  @Get('policeDigitalCaseFiles')
+  @ApiOkResponse({
+    type: PoliceDigitalCaseFileSyncResult,
+    isArray: true,
+    description:
+      'Syncs with police digital file system source and returns all police digital case files for a case',
+  })
+  getPoliceDigitalCaseFiles(
+    @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+  ): Promise<PoliceDigitalCaseFileSyncResult[]> {
+    this.logger.debug(
+      `Syncing and getting police digital case files for case ${caseId}`,
+    )
+
+    return this.policeDigitalCaseFileService.syncAndGetPoliceDigitalCaseFiles(
+      caseId,
+      theCase.type,
+      theCase.state,
+      theCase.courtCaseNumber,
+      theCase.withCourtSessions,
+      theCase.prosecutor?.name,
+      theCase.policeCaseNumbers,
+      user,
+    )
+  }
+
+  @UseGuards(CaseReadGuard)
+  @RolesRules(
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
+  )
+  @Get('policeDigitalCaseFileTokenUrl')
+  @ApiOkResponse({
+    type: SignedUrl,
+    description: 'Gets a token URL for a police digital case file',
+  })
+  @ApiResponse({
+    status: 425,
+    description:
+      'Police digital case file is not published yet (secure area still processing)',
+  })
+  getPoliceDigitalCaseFileTokenUrl(
+    @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
+    @Query('policeDigitalFileId') policeDigitalFileId: string,
+  ): Promise<SignedUrl> {
+    if (!policeDigitalFileId?.trim()) {
+      throw new BadRequestException('Missing policeDigitalFileId')
+    }
+
+    this.logger.debug(
+      `Getting token URL for police digital case file ${policeDigitalFileId} in case ${caseId}`,
+    )
+
+    return this.policeDigitalCaseFileService
+      .getTokenUrl(caseId, user, policeDigitalFileId)
+      .then((url) => ({ url }))
+  }
+
+  @UseGuards(CaseWriteGuard)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
+  @Delete('policeDigitalCaseFile/:fileId')
+  @ApiOkResponse({
+    type: DeleteFileResponse,
+    description: 'Deletes a police digital case file entry',
+  })
+  async deletePoliceDigitalCaseFile(
+    @Param('fileId') fileId: string,
+    @CurrentCase() theCase: Case,
+  ): Promise<DeleteFileResponse> {
+    this.logger.debug(`Deleting police digital case file ${fileId}`)
+
+    const success =
+      await this.policeDigitalCaseFileService.deletePoliceDigitalCaseFile(
+        theCase.id,
+        fileId,
+      )
+    return { success }
+  }
+
+  @UseGuards(new CaseTypeGuard(indictmentCases), CaseWriteGuard)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
+  @Patch('policeDigitalCaseFiles')
+  @ApiOkResponse({
+    description: 'Updates order of police digital case files',
+  })
+  async updatePoliceDigitalCaseFiles(
+    @Param('caseId') caseId: string,
+    @Body() updateDto: UpdatePoliceDigitalCaseFilesDto,
+  ): Promise<object> {
+    this.logger.debug(
+      `Updating police digital case file orders for case ${caseId}`,
+    )
+
+    await this.sequelize.transaction((transaction) =>
+      this.policeDigitalCaseFileService.updatePoliceDigitalCaseFileOrders(
+        caseId,
+        updateDto.files,
+        transaction,
+      ),
+    )
+
+    return {}
   }
 }

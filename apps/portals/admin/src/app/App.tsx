@@ -9,7 +9,6 @@ import {
 import { BffProvider, createMockedInitialState } from '@island.is/react-spa/bff'
 import { FeatureFlagProvider } from '@island.is/react/feature-flags'
 import { defaultLanguage } from '@island.is/shared/constants'
-import environment from '../environments/environment'
 import { client } from '../graphql'
 import { modules } from '../lib/modules'
 import { AdminPortalPaths } from '../lib/paths'
@@ -30,7 +29,7 @@ export const App = () => (
           bffGlobalPrefix={`${AdminPortalPaths.Base}/bff`}
           mockedInitialState={mockedInitialState}
         >
-          <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
+          <FeatureFlagProvider>
             <PortalRouter
               modules={modules}
               createRoutes={createRoutes}

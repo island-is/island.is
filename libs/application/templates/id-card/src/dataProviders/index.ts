@@ -2,7 +2,7 @@ import {
   defineTemplateApi,
   PaymentCatalogApi,
   UserProfileApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   InstitutionNationalIds,
   MockablePaymentCatalogApi,
 } from '@island.is/application/types'
@@ -37,11 +37,11 @@ const defaultParams = {
   allowIfChildHasCitizenship: true,
 }
 
-export const NationalRegistryUser = NationalRegistryUserApi.configure({
+export const NationalRegistryUser = NationalRegistryV3UserApi.configure({
   params: defaultParams,
 })
 
-export const NationalRegistryUserParentB = NationalRegistryUserApi.configure({
+export const NationalRegistryUserParentB = NationalRegistryV3UserApi.configure({
   params: {
     ...defaultParams,
     icelandicCitizenship: false,

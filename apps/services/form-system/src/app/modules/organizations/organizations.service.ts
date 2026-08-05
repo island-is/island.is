@@ -1,19 +1,14 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Form } from '../forms/models/form.model'
-import { CreateOrganizationDto } from './models/dto/createOrganization.dto'
 import { Organization } from './models/organization.model'
-import { OrganizationsResponseDto } from './models/dto/organizations.response.dto'
-import { OrganizationDto } from './models/dto/organization.dto'
-import defaults from 'lodash/defaults'
-import pick from 'lodash/pick'
-import zipObject from 'lodash/zipObject'
-import { FormDto } from '../forms/models/dto/form.dto'
 import { OrganizationAdminDto } from './models/dto/organizationAdmin.dto'
 import { CertificationTypes } from '../../dataTypes/certificationTypes/certificationType.model'
 import { Option } from '../../dataTypes/option.model'
 import { User } from '@island.is/auth-nest-tools'
-import { jwtDecode } from 'jwt-decode'
 import { ListTypes } from '../../dataTypes/listTypes/listType.model'
 import { FieldTypes } from '../../dataTypes/fieldTypes/fieldType.model'
 import {
@@ -21,47 +16,36 @@ import {
   ListTypesEnum,
   FieldTypesEnum,
 } from '@island.is/form-system/shared'
+import { AdminPortalScope } from '@island.is/auth/scopes'
+import { OrganizationZendeskInstanceDto } from './models/dto/organizationZendeskInstance.dto'
+import { OrganizationDelegationDto } from './models/dto/organizationDelegation.dto'
+import { Form } from '../forms/models/form.model'
+import { Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 
 @Injectable()
 export class OrganizationsService {
   constructor(
     @InjectModel(Organization)
     private readonly organizationModel: typeof Organization,
+    @InjectModel(Form)
+    private readonly formModel: typeof Form,
+    private readonly sequelize: Sequelize,
   ) {}
-
-  async findAll(): Promise<OrganizationsResponseDto> {
-    const organizations = await this.organizationModel.findAll()
-
-    const organizationsDto: OrganizationDto[] = []
-
-    const keys = ['id', 'name', 'nationalId']
-    organizations.map((organization) => {
-      organizationsDto.push(
-        defaults(
-          pick(organization, keys),
-          zipObject(keys, Array(keys.length).fill(null)),
-        ) as OrganizationDto,
-      )
-    })
-
-    const organizationsResponse: OrganizationsResponseDto =
-      new OrganizationsResponseDto()
-    organizationsResponse.organizations = organizationsDto
-
-    return organizationsResponse
-  }
 
   async findAdmin(
     user: User,
     nationalId: string,
   ): Promise<OrganizationAdminDto> {
-    const token = jwtDecode<{ name: string; nationalId: string }>(
-      user.authorization,
-    )
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
+    if (user.nationalId !== nationalId && !isAdmin) {
+      throw new UnauthorizedException(`User does not have admin privileges`)
+    }
 
     // the loader is not sending the nationalId
     if (nationalId === '0') {
-      nationalId = token.nationalId
+      nationalId = user.nationalId
     }
 
     const organization = await this.organizationModel.findOne({
@@ -103,6 +87,7 @@ export class OrganizationsService {
     organizationAdminDto.certificationTypes = CertificationTypes
     organizationAdminDto.ListTypes = ListTypes
     organizationAdminDto.FieldTypes = FieldTypes
+    organizationAdminDto.organizationDelegations = organization.delegations
 
     organizationAdminDto.organizations = await this.organizationModel
       .findAll({
@@ -121,60 +106,116 @@ export class OrganizationsService {
     return organizationAdminDto
   }
 
-  async findOne(id: string): Promise<OrganizationDto> {
-    const organization = await this.organizationModel.findByPk(id, {
-      include: [Form],
+  async updateZendeskInstance(
+    user: User,
+    organizationZendeskInstanceDto: OrganizationZendeskInstanceDto,
+  ): Promise<void> {
+    const { zendeskInstance, zendeskBrandId, organizationId } =
+      organizationZendeskInstanceDto
+    const organization = await this.organizationModel.findByPk(organizationId)
+
+    if (!organization) {
+      throw new NotFoundException(
+        `Organization with ID ${organizationId} not found`,
+      )
+    }
+
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+    if (!isAdmin && user.nationalId !== organization.nationalId) {
+      throw new UnauthorizedException(`User does not have admin privileges`)
+    }
+
+    organization.zendeskInstance = zendeskInstance ? zendeskInstance : ''
+    organization.zendeskBrandId = zendeskBrandId ? zendeskBrandId : ''
+
+    await organization.save()
+  }
+
+  async addDelegation(
+    user: User,
+    organizationDelegationDto: OrganizationDelegationDto,
+  ): Promise<void> {
+    await this.sequelize.transaction(async (transaction) => {
+      const organization = await this.getOrganizationForUpdate(
+        user,
+        organizationDelegationDto.organizationNationalId,
+        transaction,
+      )
+
+      if (
+        !organization.delegations.includes(organizationDelegationDto.delegation)
+      ) {
+        organization.delegations = [
+          ...organization.delegations,
+          organizationDelegationDto.delegation,
+        ]
+        await organization.save({ transaction })
+      }
+    })
+  }
+
+  async deleteDelegation(
+    user: User,
+    organizationDelegationDto: OrganizationDelegationDto,
+  ): Promise<void> {
+    const { delegation, organizationNationalId } = organizationDelegationDto
+
+    await this.sequelize.transaction(async (transaction) => {
+      const organization = await this.getOrganizationForUpdate(
+        user,
+        organizationNationalId,
+        transaction,
+      )
+
+      organization.delegations = organization.delegations.filter(
+        (organizationDelegation) => organizationDelegation !== delegation,
+      )
+
+      await organization.save({ transaction })
+
+      const forms = await this.formModel.findAll({
+        where: {
+          organizationNationalId,
+        },
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      })
+
+      await Promise.all(
+        forms
+          .filter((form) => form.delegations.includes(delegation))
+          .map((form) => {
+            form.delegations = form.delegations.filter(
+              (formDelegation) => formDelegation !== delegation,
+            )
+            return form.save({ transaction })
+          }),
+      )
+    })
+  }
+
+  private async getOrganizationForUpdate(
+    user: User,
+    organizationNationalId: string,
+    transaction: Transaction,
+  ): Promise<Organization> {
+    const organization = await this.organizationModel.findOne({
+      where: { nationalId: organizationNationalId },
+      transaction,
+      lock: transaction.LOCK.UPDATE,
     })
 
     if (!organization) {
-      throw new NotFoundException(`Organization with id ${id} not found`)
+      throw new NotFoundException(
+        `Organization with nationalId ${organizationNationalId} not found`,
+      )
     }
 
-    const keys = ['id', 'nationalId']
-    const organizationDto: OrganizationDto = defaults(
-      pick(organization, keys),
-      zipObject(keys, Array(keys.length).fill(null)),
-    ) as OrganizationDto
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+    if (!isAdmin) {
+      throw new UnauthorizedException(`User does not have admin privileges`)
+    }
 
-    const formKeys = [
-      'id',
-      'name',
-      'slug',
-      'invalidationDate',
-      'created',
-      'modified',
-      'isTranslated',
-      'daysUntilApplicationPrune',
-      'allowProceedOnValidationFail',
-      'hasSummaryScreen',
-      'hasPayment',
-    ]
-
-    organizationDto.forms = organization.forms?.map((form) => {
-      return defaults(
-        pick(form, formKeys),
-        zipObject(formKeys, Array(formKeys.length).fill(null)),
-      ) as FormDto
-    })
-
-    return organizationDto
-  }
-
-  async create(
-    createOrganizationDto: CreateOrganizationDto,
-  ): Promise<OrganizationDto> {
-    const organization = createOrganizationDto as Organization
-    const newOrganzation: Organization = new this.organizationModel(
-      organization,
-    )
-    await newOrganzation.save()
-
-    const keys = ['id', 'nationalId']
-    const organizationDto: OrganizationDto = defaults(
-      pick(newOrganzation, keys),
-      zipObject(keys, Array(keys.length).fill(null)),
-    ) as OrganizationDto
-
-    return organizationDto
+    return organization
   }
 }

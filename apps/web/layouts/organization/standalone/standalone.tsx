@@ -49,7 +49,7 @@ export const StandaloneLayout = ({
     titleColor:
       (organizationPage.themeProperties
         .textColor as HeaderProps['titleColor']) ?? 'dark400',
-    imagePadding: organizationPage?.themeProperties.imagePadding || '20px',
+    imagePadding: organizationPage?.themeProperties.imagePadding || '0px',
     imageIsFullHeight:
       organizationPage?.themeProperties.imageIsFullHeight ?? true,
     imageObjectFit:

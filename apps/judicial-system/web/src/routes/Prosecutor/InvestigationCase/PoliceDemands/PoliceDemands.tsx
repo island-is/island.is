@@ -3,7 +3,10 @@ import { MessageDescriptor, useIntl } from 'react-intl'
 import router from 'next/router'
 
 import { Box, Input } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  PROSECUTION_INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
+  PROSECUTION_INVESTIGATION_CASE_POLICE_REPORT_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { enumerate, formatDOB } from '@island.is/judicial-system/formatters'
 import {
   core,
@@ -258,13 +261,20 @@ const PoliceDemands = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
-          previousUrl={`${constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() =>
-            handleNavigationTo(constants.INVESTIGATION_CASE_POLICE_REPORT_ROUTE)
-          }
-          nextIsDisabled={!stepIsValid}
-          nextIsLoading={isLoadingWorkingCase}
+          previousUrl={`${PROSECUTION_INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  PROSECUTION_INVESTIGATION_CASE_POLICE_REPORT_ROUTE,
+                ),
+              disabled: !stepIsValid,
+              loading: isLoadingWorkingCase,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

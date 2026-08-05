@@ -7,15 +7,15 @@ import {
   ApplicationsApi,
   ApplicationsControllerCreateRequest,
   ApplicationsControllerDeleteApplicationRequest,
-  ApplicationsControllerFindAllByOrganizationRequest,
   ApplicationsControllerFindAllBySlugAndUserRequest,
   ApplicationsControllerGetApplicationRequest,
+  ApplicationsControllerGetDataFromUrlRequest,
+  ApplicationsControllerNotifyRequest,
   ApplicationsControllerSaveScreenRequest,
   ApplicationsControllerSubmitRequest,
   ApplicationsControllerUpdateRequest,
 } from '@island.is/clients/form-system'
 import {
-  ApplicationsInput,
   CreateApplicationInput,
   GetApplicationInput,
   GetApplicationsInput,
@@ -26,6 +26,10 @@ import {
   ApplicationResponse,
   SubmitApplicationResponse,
 } from '../../models/applications.model'
+import { NotificationResponse } from '../../models/screen.model'
+import { NotificationInput } from '../../dto/notification.input'
+import { DataFromUrl } from '../../models/dataFromUrl.model'
+import { DataFromUrlInput } from '../../dto/dataFromUrlReq.input'
 
 @Injectable()
 export class ApplicationsService {
@@ -70,20 +74,6 @@ export class ApplicationsService {
       )
       .catch((e) => handle4xx(e, this.handleError, 'failed to get application'))
 
-    return response as ApplicationResponse
-  }
-
-  async getApplications(
-    auth: User,
-    input: ApplicationsInput,
-  ): Promise<ApplicationResponse> {
-    const response = await this.applicationsApiWithAuth(auth)
-      .applicationsControllerFindAllByOrganization(
-        input as ApplicationsControllerFindAllByOrganizationRequest,
-      )
-      .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to get applications'),
-      )
     return response as ApplicationResponse
   }
 
@@ -137,6 +127,35 @@ export class ApplicationsService {
     await this.applicationsApiWithAuth(auth).applicationsControllerSaveScreen(
       input as ApplicationsControllerSaveScreenRequest,
     )
+  }
+
+  async notifyExternalSystem(
+    auth: User,
+    input: NotificationInput,
+  ): Promise<NotificationResponse> {
+    const response = await this.applicationsApiWithAuth(auth)
+      .applicationsControllerNotify({
+        notificationDto: input,
+      } as ApplicationsControllerNotifyRequest)
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to notify external system'),
+      )
+    return response as NotificationResponse
+  }
+
+  async getDataFromUrl(
+    auth: User,
+    input: DataFromUrlInput,
+  ): Promise<DataFromUrl> {
+    const response = await this.applicationsApiWithAuth(auth)
+      .applicationsControllerGetDataFromUrl({
+        dataFromUrlReqDto: input,
+      } as ApplicationsControllerGetDataFromUrlRequest)
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to get data from url'),
+      )
+
+    return response as DataFromUrl
   }
 
   async deleteApplication(auth: User, input: string): Promise<void> {

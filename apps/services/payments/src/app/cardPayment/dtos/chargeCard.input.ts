@@ -30,13 +30,6 @@ export class ChargeCardInput {
   })
   expiryYear!: number
 
-  @IsNumber()
-  @ApiProperty({
-    description: 'Total amount to be paid in ISK (not cents)',
-    type: Number,
-  })
-  amount!: number
-
   @IsString()
   @ApiProperty({
     description: 'Card cvc',

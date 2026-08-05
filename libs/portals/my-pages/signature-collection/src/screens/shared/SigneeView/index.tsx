@@ -10,15 +10,18 @@ import {
   SignatureCollectionSignedList,
 } from '@island.is/api/schema'
 import format from 'date-fns/format'
+import { MessageDescriptor } from 'react-intl'
 
 const SigneeView = ({
   collectionType,
   listsForUser,
   signedLists,
+  emptyStateDescriptionMessage,
 }: {
   collectionType: SignatureCollectionCollectionType
   listsForUser: SignatureCollectionList[]
   signedLists: SignatureCollectionSignedList[]
+  emptyStateDescriptionMessage?: MessageDescriptor
 }) => {
   const { formatMessage } = useLocale()
 
@@ -27,7 +30,9 @@ const SigneeView = ({
       {listsForUser?.length === 0 && signedLists?.length === 0 && (
         <EmptyState
           title={m.noCollectionIsActive}
-          description={m.noCollectionIsActiveDescription}
+          description={
+            emptyStateDescriptionMessage ?? m.noCollectionIsActiveDescription
+          }
         />
       )}
 
@@ -54,6 +59,7 @@ const SigneeView = ({
                   <ActionCard
                     key={list.id}
                     backgroundColor="white"
+                    headingVariant="h4"
                     eyebrow={`${formatMessage(m.endTime)} ${format(
                       new Date(list.endTime),
                       'dd.MM.yyyy',

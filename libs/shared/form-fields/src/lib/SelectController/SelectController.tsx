@@ -14,7 +14,7 @@ import { clearInputsOnChange, setInputsOnChange } from '@island.is/shared/utils'
 interface SelectControllerProps<Value, IsMulti extends boolean = false> {
   error?: string
   id: string
-  defaultValue?: Value
+  defaultValue?: Value | Value[]
   disabled?: boolean
   name?: string
   label: string

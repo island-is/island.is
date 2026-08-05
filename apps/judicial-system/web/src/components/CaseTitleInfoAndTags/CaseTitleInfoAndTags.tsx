@@ -4,14 +4,11 @@ import { useIntl } from 'react-intl'
 import { Box, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 
-import {
-  CaseAppealDecision,
-  CaseAppealState,
-  InstitutionType,
-  UserRole,
-} from '../../graphql/schema'
+import { AppealCaseState, InstitutionType } from '../../graphql/schema'
 import { CaseNumbers } from '../../routes/CourtOfAppeal/components'
+import useTargetAppealCaseByAppealCaseId from '../../utils/hooks/useTargetAppealCaseByAppealCaseId'
 import { titleForCase } from '../../utils/titleForCase/titleForCase'
+import { getAppealActorText } from '../../utils/utils'
 import DateLabel from '../DateLabel/DateLabel'
 import RulingDateLabel from '../DateLabel/RulingDateLabel'
 import { FormContext } from '../FormProvider/FormProvider'
@@ -24,6 +21,20 @@ const CaseTitleInfoAndTags: FC = () => {
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
+  const targetAppealCase = useTargetAppealCaseByAppealCaseId()
+
+  // For ruling-order appeals show the user-generated filename of the ruling
+  // file being appealed instead of the generic case-state title.
+  const rulingOrderFile = targetAppealCase?.rulingFileId
+    ? workingCase.caseFiles?.find((f) => f.id === targetAppealCase.rulingFileId)
+    : undefined
+  const rulingOrderFileName = rulingOrderFile?.userGeneratedFilename
+  const courtCaseNumberPrefix = `${workingCase.courtCaseNumber ?? ''} `
+  const title = rulingOrderFile
+    ? (rulingOrderFileName?.startsWith(courtCaseNumberPrefix)
+        ? rulingOrderFileName.slice(courtCaseNumberPrefix.length)
+        : rulingOrderFileName) ?? 'Úrskurður'
+    : titleForCase(formatMessage, workingCase)
 
   return (
     <Box
@@ -33,9 +44,7 @@ const CaseTitleInfoAndTags: FC = () => {
       marginBottom={3}
     >
       <Box>
-        <PageTitle marginBottom={5}>
-          {titleForCase(formatMessage, workingCase)}
-        </PageTitle>
+        <PageTitle marginBottom={5}>{title}</PageTitle>
         <CaseNumbers />
         {workingCase.rulingDate &&
           (workingCase.isCompletedWithoutRuling ? (
@@ -46,31 +55,17 @@ const CaseTitleInfoAndTags: FC = () => {
           ) : (
             <RulingDateLabel rulingDate={workingCase.rulingDate} />
           ))}
-        {workingCase.appealedDate && (
+        {targetAppealCase && (
           <>
             <Box marginTop={1}>
               <Text as="h5" variant="h5">
-                {workingCase.prosecutorAppealDecision ===
-                  CaseAppealDecision.APPEAL ||
-                workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
-                  ? formatMessage(strings.appealedByInCourt, {
-                      appealedByProsecutor:
-                        workingCase.appealedByRole === UserRole.PROSECUTOR,
-                    })
-                  : formatMessage(strings.appealedBy, {
-                      appealedByProsecutor:
-                        workingCase.appealedByRole === UserRole.PROSECUTOR,
-                      appealedDate: `${formatDate(
-                        workingCase.appealedDate,
-                        'PPPp',
-                      )}`,
-                    })}
+                {getAppealActorText(workingCase, targetAppealCase)}
               </Text>
             </Box>
             {((user?.institution?.type === InstitutionType.DISTRICT_COURT &&
-              workingCase.appealState === CaseAppealState.COMPLETED) ||
+              targetAppealCase.appealState === AppealCaseState.COMPLETED) ||
               user?.institution?.type === InstitutionType.COURT_OF_APPEALS) &&
-              workingCase.appealReceivedByCourtDate && (
+              targetAppealCase.appealReceivedByCourtDate && (
                 <Box marginTop={1}>
                   <Text as="h5" variant="h5">
                     {formatMessage(
@@ -79,7 +74,7 @@ const CaseTitleInfoAndTags: FC = () => {
                         : strings.appealReceivedAt,
                       {
                         appealReceived: formatDate(
-                          workingCase.appealReceivedByCourtDate,
+                          targetAppealCase.appealReceivedByCourtDate,
                           'PPPp',
                         ),
                       },

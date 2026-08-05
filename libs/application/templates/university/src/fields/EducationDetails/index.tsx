@@ -137,7 +137,7 @@ export const EducationDetails: FC<FieldBaseProps> = ({
             <Box paddingTop={3}>
               <DetailsRepeaterItem
                 key={`educationDetails-${index}`}
-                id={field.id}
+                id={field.id as string}
                 application={application}
                 goToScreen={goToScreen}
                 repeaterField={educationItem}

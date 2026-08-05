@@ -12,3 +12,7 @@ export const image = style({
     },
   }),
 })
+
+export const smallImage = style({
+  maxHeight: '150px',
+})

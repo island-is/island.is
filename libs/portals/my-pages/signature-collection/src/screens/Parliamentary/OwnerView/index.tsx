@@ -63,9 +63,10 @@ const OwnerView = ({
                 key={list.id}
                 backgroundColor="white"
                 heading={list.area?.name}
+                headingVariant="h4"
                 progressMeter={{
                   currentProgress: list.numberOfSignatures || 0,
-                  maxProgress: list.area?.min || 0,
+                  maxProgress: list.area?.max || 0,
                   withLabel: true,
                 }}
                 eyebrow={list.title}

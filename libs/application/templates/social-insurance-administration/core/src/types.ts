@@ -18,6 +18,8 @@ export interface ApplicantInfo {
   emailAddress?: string
 }
 
+//  This format is kept for older flows
+//  that still rely on separate bank fields instead of BankAccountFormField.
 export interface PaymentInfo {
   bankAccountType: BankAccountType
   bank?: string
@@ -29,6 +31,24 @@ export interface PaymentInfo {
   bankAddress?: string
   currency?: string
   bankNumber?: string // used in BankAccountFormField
+}
+
+//  Updated payment info structure used with BankAccountFormField.
+//  The original PaymentInfo interface is kept for backward compatibility.
+export interface PaymentInfoV2 {
+  bankAccountType: BankAccountType
+  bank?: Bank
+  iban?: string
+  swift?: string
+  currency?: string
+  bankName?: string
+  bankAddress?: string
+}
+
+export interface Bank {
+  bankNumber: string
+  ledger: string
+  accountNumber: string
 }
 
 export interface Attachments {
@@ -91,4 +111,23 @@ export interface IncomePlanRow {
 export interface IncomePlanConditions {
   incomePlanYear: number
   showTemporaryCalculations: boolean
+}
+
+export interface LatestIncomePlan {
+  year: number
+  origin: string
+  status: string
+  incomeTypeLines: IncomeType[]
+  registrationDate: string
+}
+
+interface IncomeType {
+  currency: string
+  totalSum: number
+  incomeTypeCode: string
+  incomeTypeName: string
+  incomeTypeNumber: number
+  incomeCategoryCode: string
+  incomeCategoryName: string
+  incomeCategoryNumber: number
 }

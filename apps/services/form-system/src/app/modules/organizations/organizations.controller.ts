@@ -1,25 +1,25 @@
 import {
-  Body,
+  HttpCode,
+  HttpStatus,
   Controller,
-  Post,
   Get,
   Param,
-  NotFoundException,
   VERSION_NEUTRAL,
   UseGuards,
+  Put,
+  Body,
+  Post,
+  Delete,
 } from '@nestjs/common'
 import {
   ApiBody,
-  ApiCreatedResponse,
+  ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger'
 import { OrganizationsService } from './organizations.service'
-import { CreateOrganizationDto } from './models/dto/createOrganization.dto'
-import { OrganizationsResponseDto } from './models/dto/organizations.response.dto'
-import { OrganizationDto } from './models/dto/organization.dto'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -29,6 +29,8 @@ import {
 } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { OrganizationAdminDto } from './models/dto/organizationAdmin.dto'
+import { OrganizationZendeskInstanceDto } from './models/dto/organizationZendeskInstance.dto'
+import { OrganizationDelegationDto } from './models/dto/organizationDelegation.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.formSystem)
@@ -36,29 +38,6 @@ import { OrganizationAdminDto } from './models/dto/organizationAdmin.dto'
 @Controller({ path: 'organizations', version: ['1', VERSION_NEUTRAL] })
 export class OrganizationsController {
   constructor(private readonly organizationsService: OrganizationsService) {}
-
-  @ApiOperation({ summary: 'Create an organization' })
-  @ApiCreatedResponse({
-    description: 'Create an organization',
-    type: OrganizationDto,
-  })
-  @ApiBody({ type: CreateOrganizationDto })
-  @Post()
-  create(
-    @Body() createOrganizationDto: CreateOrganizationDto,
-  ): Promise<OrganizationDto> {
-    return this.organizationsService.create(createOrganizationDto)
-  }
-
-  @ApiOperation({ summary: 'Get all Organizations' })
-  @ApiOkResponse({
-    description: 'Get all Organizations',
-    type: OrganizationsResponseDto,
-  })
-  @Get()
-  async findAll(): Promise<OrganizationsResponseDto> {
-    return await this.organizationsService.findAll()
-  }
 
   @ApiOperation({ summary: 'Get organization admin' })
   @ApiOkResponse({
@@ -75,19 +54,59 @@ export class OrganizationsController {
     return await this.organizationsService.findAdmin(user, nationalId)
   }
 
-  @ApiOperation({ summary: 'Get an organization by id' })
-  @ApiOkResponse({
-    description: 'Get an organization by id',
-    type: OrganizationDto,
+  @ApiOperation({
+    summary: 'Update zendesk instance and brandId for organization',
   })
-  @ApiParam({ name: 'id', type: String })
-  @Get(':id')
-  async findOne(@Param('id') id: string): Promise<OrganizationDto> {
-    const organization = await this.organizationsService.findOne(id)
-    if (!organization) {
-      throw new NotFoundException(`Organization not found`)
-    }
+  @ApiNoContentResponse({
+    description: 'Update zendesk instance and brandId for organization',
+  })
+  @ApiBody({ type: OrganizationZendeskInstanceDto })
+  @Put('zendesk')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async updateZendeskInstance(
+    @CurrentUser()
+    user: User,
+    @Body() organizationZendeskInstanceDto: OrganizationZendeskInstanceDto,
+  ): Promise<void> {
+    return await this.organizationsService.updateZendeskInstance(
+      user,
+      organizationZendeskInstanceDto,
+    )
+  }
 
-    return organization
+  @ApiOperation({ summary: 'Add organization delegation' })
+  @ApiNoContentResponse({
+    description: 'Add organization delegation',
+  })
+  @ApiBody({ type: OrganizationDelegationDto })
+  @Post('delegation')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async addDelegation(
+    @CurrentUser()
+    user: User,
+    @Body() organizationDelegationDto: OrganizationDelegationDto,
+  ): Promise<void> {
+    return await this.organizationsService.addDelegation(
+      user,
+      organizationDelegationDto,
+    )
+  }
+
+  @ApiOperation({ summary: 'Delete organization delegation' })
+  @ApiNoContentResponse({
+    description: 'Delete organization delegation',
+  })
+  @ApiBody({ type: OrganizationDelegationDto })
+  @Delete('delegation')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteDelegation(
+    @CurrentUser()
+    user: User,
+    @Body() organizationDelegationDto: OrganizationDelegationDto,
+  ): Promise<void> {
+    return await this.organizationsService.deleteDelegation(
+      user,
+      organizationDelegationDto,
+    )
   }
 }

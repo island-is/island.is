@@ -15,10 +15,6 @@ type ChildKeys = Pick<
   | 'sharedWithProsecutorsOfficeId'
   | 'registrarId'
   | 'judgeId'
-  | 'appealAssistantId'
-  | 'appealJudge1Id'
-  | 'appealJudge2Id'
-  | 'appealJudge3Id'
   | 'indictmentReviewerId'
   | 'mergeCaseId'
 >
@@ -34,10 +30,6 @@ const isChildKey = (key: keyof UpdateCaseInput): key is keyof ChildKeys => {
     'sharedWithProsecutorsOfficeId',
     'registrarId',
     'judgeId',
-    'appealAssistantId',
-    'appealJudge1Id',
-    'appealJudge2Id',
-    'appealJudge3Id',
     'indictmentReviewerId',
     'mergeCaseId',
   ].includes(key)
@@ -49,10 +41,6 @@ const childof: { [Property in keyof ChildKeys]-?: keyof Case } = {
   sharedWithProsecutorsOfficeId: 'sharedWithProsecutorsOffice',
   registrarId: 'registrar',
   judgeId: 'judge',
-  appealAssistantId: 'appealAssistant',
-  appealJudge1Id: 'appealJudge1',
-  appealJudge2Id: 'appealJudge2',
-  appealJudge3Id: 'appealJudge3',
   indictmentReviewerId: 'indictmentReviewer',
   mergeCaseId: 'mergeCase',
 }
@@ -66,11 +54,17 @@ const overwrite = (update: UpdateCase): UpdateCase => {
 const fieldHasValue = (workingCase: Case) => (value: unknown, key: string) => {
   const theKey = key as keyof UpdateCaseInput
 
-  if (
-    isChildKey(theKey) // check if key is f.example `judgeId`
-      ? isNil(workingCase[childof[theKey]])
-      : isNil(workingCase[theKey])
-  ) {
+  let currentValue: unknown
+
+  if (theKey === 'defendantEventLogDecisions') {
+    return false
+  } else if (isChildKey(theKey)) {
+    currentValue = workingCase[childof[theKey]]
+  } else {
+    currentValue = workingCase[theKey]
+  }
+
+  if (isNil(currentValue)) {
     return value === undefined
   }
 

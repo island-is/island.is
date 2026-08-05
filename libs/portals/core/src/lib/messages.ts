@@ -104,6 +104,10 @@ export const m = defineMessages({
     id: 'portals:accessControl',
     defaultMessage: 'Aðgangsstýring',
   },
+  digitalDelegations: {
+    id: 'portals:digitalDelegations',
+    defaultMessage: 'Rafræn umboð',
+  },
   accessControlDelegations: {
     id: 'portals:accessControlDelegations',
     defaultMessage: 'Umboð',
@@ -123,5 +127,32 @@ export const m = defineMessages({
   accessControlAccess: {
     id: 'portals:accessControlAccess',
     defaultMessage: 'Aðgangur',
+  },
+  disabledReasonDefault: {
+    id: 'portals:disabledReasonDefault',
+    defaultMessage:
+      'Þú ert ekki með réttindi til að sjá þessar upplýsingar. Til að fá aðgang þarf viðkomandi að veita þér rafrænt umboð.',
+  },
+  disabledReasonNotAvailableForActors: {
+    id: 'portals:disabledReasonNotAvailableForActors',
+    defaultMessage:
+      '{moduleName} er ekki í boði með rafrænu umboði. Ef þig vantar upplýsingar, hafðu samband við viðeigandi stofnun.',
+  },
+  disabledReasonNotMinor: {
+    id: 'portals:disabledReasonNotMinor',
+    defaultMessage:
+      '{moduleName} er ekki lengur aðgengileg forsjáraðilum 16 ára barna og eldri. Barnið getur veitt þér rafrænt umboð. Sjá nánar um takmarkaðan aðgang forsjáraðila við 16 ára aldur.',
+  },
+  tableCaption: {
+    id: 'portals:table-caption',
+    defaultMessage: 'Tafla',
+  },
+  tableExpandColumn: {
+    id: 'portals:table-expand-column',
+    defaultMessage: 'Skoða nánar',
+  },
+  tableSortHint: {
+    id: 'portals:table-sort-hint',
+    defaultMessage: 'Takkar í dálkahausum stýra röðun þess dálks',
   },
 })

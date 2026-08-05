@@ -9,6 +9,7 @@ import { CurrentEmploymentInAnswers, EmploymentStatus } from '../shared'
 import { GaldurApplicationRSKQueriesGetRSKEmployerListRskEmployer } from '@island.is/clients/vmst-unemployment'
 import { employment as employmentMessages } from '../lib/messages'
 
+// User choice in current situation screen e.g Unemployed, partial employment etc.
 export const isUnemployed = (answers: FormValue) => {
   const status = getValueViaPath<string>(answers, 'currentSituation.status')
   return status === EmploymentStatus.UNEMPLOYED

@@ -30,11 +30,12 @@ env:
   IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
   IDENTITY_SERVER_ISSUER_URL_LIST: '["https://innskra.island.is"]'
   LOG_LEVEL: 'info'
-  NATIONAL_REGISTRY_B2C_CLIENT_ID: '8271bbc2-d8de-480f-8540-ea43fc40b7ae'
-  NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+  NATIONAL_REGISTRY_B2C_CLIENT_ID: '4b24e151-0aac-4b88-8d32-301ef7fe9d54'
+  NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://identity.skra.is/identity.skra.is/oauth2/v2.0/token'
   NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
-  NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
+  NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraid.onmicrosoft.com/midlun/.default'
   NODE_OPTIONS: '--max-old-space-size=691 --enable-source-maps -r dd-trace/init'
+  NOVA_SENDER_NAME: 'Island.is'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   SYSLUMENN_HOST: 'https://api.syslumenn.is/api'
   SYSLUMENN_TIMEOUT: '3000'
@@ -54,6 +55,8 @@ grantNamespaces:
   - 'nginx-ingress-external'
   - 'nginx-ingress-internal'
   - 'islandis'
+  - 'envoy-gateway-external'
+  - 'envoy-gateway-internal'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
@@ -72,21 +75,21 @@ hpa:
     replicas:
       max: 10
       min: 2
+httpRoute:
+  primary-gw:
+    hostnames:
+      - 'innskra.island.is'
+    parentRefs:
+      - name: 'gateway-external'
+        namespace: 'envoy-gateway-external'
+    rules:
+      - matches:
+          - pathPrefix: '/backend'
 image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-admin-api'
-ingress:
-  primary-alb:
-    annotations:
-      kubernetes.io/ingress.class: 'nginx-external-alb'
-      nginx.ingress.kubernetes.io/enable-global-auth: 'false'
-      nginx.ingress.kubernetes.io/service-upstream: 'true'
-    hosts:
-      - host: 'innskra.island.is'
-        paths:
-          - '/backend'
 namespace: 'identity-server-admin'
 podDisruptionBudget:
-  minAvailable: 1
+  minAvailable: '50%'
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
@@ -109,9 +112,9 @@ secrets:
   IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
   NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/services-auth/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
   NATIONAL_REGISTRY_IDS_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
-  NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD'
-  NOVA_URL: '/k8s/services-auth/NOVA_URL'
-  NOVA_USERNAME: '/k8s/services-auth/NOVA_USERNAME'
+  NOVA_PASSWORD: '/k8s/NOVA_PASSWORD_V1'
+  NOVA_URL: '/k8s/NOVA_URL_V1'
+  NOVA_USERNAME: '/k8s/NOVA_USERNAME_V1'
   SYSLUMENN_PASSWORD: '/k8s/services-auth/SYSLUMENN_PASSWORD'
   SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME'
   ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL'

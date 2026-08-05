@@ -99,8 +99,11 @@ const CourtCaseDetail = () => {
         verdict?.title ?? formatMessage(messages.courtCaseNumberNotRegistered)
       }
       intro={messages.verdictDescription}
-      serviceProviderSlug={DOMSMALARADUNEYTID_SLUG}
-      serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
+      serviceProvider={{
+        slug: DOMSMALARADUNEYTID_SLUG,
+        tooltip: formatMessage(m.domsmalaraduneytidTooltip),
+      }}
+      desktopContentSpan="10/12"
     >
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && verdict && verdict?.groups && (

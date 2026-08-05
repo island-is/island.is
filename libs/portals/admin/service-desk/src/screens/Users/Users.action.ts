@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import * as kennitala from 'kennitala'
 
 import {
   RawRouterActionResponse,
@@ -58,6 +59,9 @@ export const UsersAction: WrappedActionFn =
         data: null,
       }
     }
+    const searchTerm = kennitala.isValid(data.searchQuery)
+      ? kennitala.sanitize(data.searchQuery)
+      : data.searchQuery
 
     try {
       const res = await client.query<
@@ -67,7 +71,7 @@ export const UsersAction: WrappedActionFn =
         query: GetPaginatedUserProfilesDocument,
         fetchPolicy: 'network-only',
         variables: {
-          query: data.searchQuery,
+          query: searchTerm,
         },
       })
 

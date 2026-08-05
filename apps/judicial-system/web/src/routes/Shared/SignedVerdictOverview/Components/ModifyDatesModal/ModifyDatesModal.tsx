@@ -5,7 +5,7 @@ import formatISO from 'date-fns/formatISO'
 import { AnimatePresence, motion } from 'motion/react'
 
 import { Box, Input } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   core,
@@ -75,7 +75,7 @@ const getModificationSuccessText = (
       date: `${formatDate(modifiedValidToDate?.value, 'PPPP')?.replace(
         'dagur,',
         'dagsins',
-      )} kl. ${formatDate(modifiedValidToDate?.value, constants.TIME_FORMAT)}`,
+      )} kl. ${formatDate(modifiedValidToDate?.value, TIME_FORMAT)}`,
       userRole,
     })
   } else if (validToDateAndIsolationToDateAreTheSame) {
@@ -86,10 +86,7 @@ const getModificationSuccessText = (
         date: `${formatDate(modifiedValidToDate?.value, 'PPPP')?.replace(
           'dagur,',
           'dagsins',
-        )} kl. ${formatDate(
-          modifiedValidToDate?.value,
-          constants.TIME_FORMAT,
-        )}`,
+        )} kl. ${formatDate(modifiedValidToDate?.value, TIME_FORMAT)}`,
       },
     )
   } else if (validToDateChanged || isolationToDateChanged) {
@@ -101,10 +98,7 @@ const getModificationSuccessText = (
           date: `${formatDate(modifiedValidToDate?.value, 'PPPP')?.replace(
             'dagur,',
             'dagsins',
-          )} kl. ${formatDate(
-            modifiedValidToDate?.value,
-            constants.TIME_FORMAT,
-          )}`,
+          )} kl. ${formatDate(modifiedValidToDate?.value, TIME_FORMAT)}`,
         },
       )
     }
@@ -116,10 +110,7 @@ const getModificationSuccessText = (
           date: `${formatDate(modifiedIsolationToDate?.value, 'PPPP')?.replace(
             'dagur,',
             'dagsins',
-          )} kl. ${formatDate(
-            modifiedIsolationToDate?.value,
-            constants.TIME_FORMAT,
-          )}`,
+          )} kl. ${formatDate(modifiedIsolationToDate?.value, TIME_FORMAT)}`,
         },
       )
       modification = modification

@@ -1,0 +1,14 @@
+query PoliceDigitalCaseFiles($input: PoliceDigitalCaseFilesQueryInput!) {
+  policeDigitalCaseFiles(input: $input) {
+    id
+    caseId
+    policeCaseNumber
+    policeDigitalFileId
+    policeExternalVendorId
+    name
+    displayDate
+    orderWithinChapter
+    isDeletable
+    isNew
+  }
+}

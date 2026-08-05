@@ -86,12 +86,14 @@ export const GunsRepeater: FC<
               />
               <Box display="flex" justifyContent="flexEnd">
                 <Button
-                  variant="ghost"
+                  variant="text"
                   size="small"
-                  circle
                   icon="remove"
+                  iconType="outline"
                   onClick={handleRemoveAsset.bind(null, index)}
-                />
+                >
+                  {formatMessage(m.deleteAsset)}
+                </Button>
               </Box>
               <GridRow>
                 <GridColumn

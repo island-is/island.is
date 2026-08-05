@@ -8,7 +8,10 @@ import {
 import { useLocale } from '@island.is/localization'
 import { partialSchema } from '../lib/dataSchema'
 import { InputFields, OJOIApplication } from '../lib/types'
-import { DEBOUNCE_INPUT_TIMER } from '../lib/constants'
+import {
+  DEBOUNCE_INPUT_TIMER,
+  MAX_APPLICATION_PAYLOAD_BYTES,
+} from '../lib/constants'
 import { ApplicationTypes } from '@island.is/application/types'
 import { Application } from '@island.is/api/schema'
 import { POST_APPLICATION_MUTATION } from '../graphql/queries'
@@ -26,11 +29,6 @@ type UpdateApplicationProps = {
   value: any
   onComplete?: () => void
   onError?: (error: Error) => void
-}
-
-interface GraphQLProblem {
-  detail?: string
-  stack?: string
 }
 
 export const useApplication = ({ applicationId }: OJOIUseApplicationParams) => {
@@ -76,29 +74,48 @@ export const useApplication = ({ applicationId }: OJOIUseApplicationParams) => {
     input: Partial<partialSchema>,
     cb?: () => void,
   ) => {
+    const mutationInput = {
+      id: applicationId,
+      answers: {
+        ...input,
+      },
+    }
+
+    const payloadSize = new Blob([JSON.stringify(mutationInput)]).size
+    if (payloadSize > MAX_APPLICATION_PAYLOAD_BYTES) {
+      console.error('Error: Attachment too large')
+
+      // Clear the oversized html field and switch to file-upload mode in a
+      // single atomic delta. Without clearing html, the next save (e.g. on
+      // "Next" click) re-sends the oversized content and trips the guard
+      // again, blocking navigation.
+      setValue(InputFields.advert.html, '')
+      setValue(InputFields.misc.mainTextAsFile, true)
+
+      const fallbackAnswers = set({}, InputFields.advert.html, '')
+      set(fallbackAnswers, InputFields.misc.mainTextAsFile, true)
+
+      await updateApplicationMutation({
+        variables: {
+          locale,
+          input: {
+            id: applicationId,
+            answers: fallbackAnswers,
+          },
+        },
+        onError: (err) => {
+          console.error('Failed to persist file-upload fallback:', err)
+        },
+      })
+
+      cb && cb()
+      return
+    }
+
     await updateApplicationMutation({
       variables: {
         locale,
-        input: {
-          id: applicationId,
-          answers: {
-            ...input,
-          },
-        },
-      },
-      onError: (err) => {
-        // if error stack contains PayloadTooLargeError display too large message
-        const applicationTooLarge = err.graphQLErrors.some((graphQLError) => {
-          const problem = graphQLError.extensions?.problem as GraphQLProblem
-          return (
-            problem?.detail === 'request entity too large' ||
-            problem?.stack?.includes('PayloadTooLargeError')
-          )
-        })
-        if (applicationTooLarge) {
-          console.error('Error: Attachment too large')
-          setValue(InputFields.misc.mainTextAsFile, true)
-        }
+        input: mutationInput,
       },
     })
 

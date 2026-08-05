@@ -866,6 +866,7 @@ export class CmsElasticsearchService {
       types,
       organizations,
       funds,
+      filterOutDateToPassed = false,
     }: GetGrantsInput,
   ): Promise<GrantList> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -886,15 +887,31 @@ export class CmsElasticsearchService {
     }
 
     let sortRules: ('_score' | sortRule)[] = []
-    if (!sort || sort === GrantsSortBy.RECENTLY_UPDATED) {
-      sortRules = [
-        { dateUpdated: { order: SortDirection.ASC } },
-        { 'title.sort': { order: SortDirection.ASC } },
-      ]
-    } else if (sort === GrantsSortBy.ALPHABETICAL) {
+
+    if (sort === GrantsSortBy.ALPHABETICAL) {
       sortRules = [
         { 'title.sort': { order: SortDirection.ASC } },
         { dateUpdated: { order: SortDirection.DESC } },
+      ]
+    } else if (sort === GrantsSortBy.DEADLINE) {
+      if (!filterOutDateToPassed) {
+        // dateCreated = dateTo ?? entry.sys.createdAt (grants.service.ts:151)
+        // DEADLINE sort is only valid when past-deadline entries are filtered out;
+        // without that filter, grants with no dateTo sort by createdAt and appear first.
+        sortRules = [
+          { dateUpdated: { order: SortDirection.DESC } },
+          { 'title.sort': { order: SortDirection.ASC } },
+        ]
+      } else {
+        sortRules = [
+          { dateCreated: { order: SortDirection.ASC } },
+          { 'title.sort': { order: SortDirection.ASC } },
+        ]
+      }
+    } else {
+      sortRules = [
+        { dateUpdated: { order: SortDirection.DESC } },
+        { 'title.sort': { order: SortDirection.ASC } },
       ]
     }
 
@@ -945,6 +962,16 @@ export class CmsElasticsearchService {
         },
       })
     })
+
+    if (filterOutDateToPassed) {
+      must.push({
+        range: {
+          dateCreated: {
+            gt: 'now',
+          },
+        },
+      })
+    }
 
     if (status !== undefined) {
       if (status === GrantsAvailabilityStatus.CLOSED) {
@@ -1382,6 +1409,7 @@ export class CmsElasticsearchService {
         },
       },
     ]
+    const should: Record<string, unknown>[] = []
 
     if (!!input.tagKeys && input.tagKeys.length > 0) {
       must.push({
@@ -1415,16 +1443,14 @@ export class CmsElasticsearchService {
       ? input.queryString.replace('´', '').trim().toLowerCase()
       : ''
 
-    must.push({
+    const simpleQuery = {
       simple_query_string: {
         query: queryString + '*',
         fields: ['title^100', 'content'],
         analyze_wildcard: true,
         default_operator: 'and',
       },
-    })
-
-    const size = 10
+    }
 
     let sort = [
       { _score: { order: SortDirection.DESC } },
@@ -1432,14 +1458,33 @@ export class CmsElasticsearchService {
     ]
 
     if (queryString.length === 0) {
+      must.push(simpleQuery)
       sort = [{ 'title.sort': { order: SortDirection.ASC } }]
+    } else {
+      should.push(simpleQuery)
+      should.push({
+        nested: {
+          path: 'tags',
+          query: {
+            bool: {
+              must: [
+                { term: { 'tags.type': 'keyword' } },
+                { match_phrase_prefix: { 'tags.value': queryString } },
+              ],
+            },
+          },
+        },
+      })
     }
+
+    const size = 10
 
     const response: ApiResponse<SearchResponse<MappedData>> =
       await this.elasticService.findByQuery(index, {
         query: {
           bool: {
             must,
+            ...(should.length > 0 ? { should, minimum_should_match: 1 } : {}),
           },
         },
         sort,
@@ -1609,31 +1654,29 @@ export class CmsElasticsearchService {
     ]
 
     if (!!input.categoryKeys && input.categoryKeys.length > 0) {
-      must.push({
-        nested: {
-          path: 'tags',
-          query: {
-            bool: {
-              should: input.categoryKeys.map((key) => ({
-                bool: {
-                  must: [
-                    {
-                      term: {
-                        'tags.key': key,
-                      },
+      must.push(
+        ...input.categoryKeys.map((key) => ({
+          nested: {
+            path: 'tags',
+            query: {
+              bool: {
+                must: [
+                  {
+                    term: {
+                      'tags.key': key,
                     },
-                    {
-                      term: {
-                        'tags.type': 'genericTag',
-                      },
+                  },
+                  {
+                    term: {
+                      'tags.type': 'genericTag',
                     },
-                  ],
-                },
-              })),
+                  },
+                ],
+              },
             },
           },
-        },
-      })
+        })),
+      )
     }
 
     if (!!input.organizationSlug && input.organizationSlug.length > 0) {

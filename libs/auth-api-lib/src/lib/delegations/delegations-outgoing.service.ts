@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { and, Op, WhereOptions } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import { isUuid, uuid } from 'uuidv4'
 import startOfDay from 'date-fns/startOfDay'
 
@@ -44,6 +45,22 @@ import { DelegationDelegationType } from './models/delegation-delegation-type.mo
 import { AuthDelegationType } from '@island.is/shared/types'
 
 /**
+ * Discriminated result for the PATCH endpoint. Controllers translate the
+ * variant into an HTTP status and decide whether to audit:
+ *  - notFound: delegation didn't exist or wasn't the caller's → 204, skip audit
+ *  - updated:  scopes changed but the delegation still has scopes → 200, audit "update"
+ *  - destroyed: the patch removed the last scope and the row was deleted → 204, audit "destroy"
+ */
+export type PatchDelegationResult =
+  | { kind: 'notFound' }
+  | {
+      kind: 'updated'
+      delegation: DelegationDTO
+      hadExistingScopes: boolean
+    }
+  | { kind: 'destroyed'; toNationalId: string }
+
+/**
  * Service class for outgoing delegations.
  * This class supports domain based delegations.
  */
@@ -58,6 +75,7 @@ export class DelegationsOutgoingService {
     private namesService: NamesService,
     private notificationsApi: NotificationsApi,
     private featureFlagService: FeatureFlagService,
+    private sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -235,7 +253,9 @@ export class DelegationsOutgoingService {
     if (!delegation) {
       const [fromDisplayName, toName] = await Promise.all([
         this.namesService.getUserName(user),
-        this.namesService.getPersonName(createDelegation.toNationalId),
+        this.namesService.validateRecipientNotDeceased(
+          createDelegation.toNationalId,
+        ),
       ])
 
       delegation = await this.delegationModel.create({
@@ -349,85 +369,128 @@ export class DelegationsOutgoingService {
     user: User,
     delegationId: string,
     patchedDelegation: PatchDelegationDTO,
-  ): Promise<DelegationDTO> {
-    const currentDelegation = await this.delegationModel.findOne({
-      where: {
-        [Op.and]: [
-          {
-            id: delegationId,
-            fromNationalId: user.nationalId,
-          },
-          getDelegationNoActorWhereClause(user),
-        ],
-      },
-      include: [
-        {
-          model: DelegationScope,
-          required: false,
-          as: 'delegationScopes',
-        },
-      ],
-    })
-    if (!currentDelegation) {
-      throw new NoContentException()
-    }
-
-    if (
-      !(await this.delegationResourceService.validateScopeAccess(
-        user,
-        currentDelegation.domainName ?? null,
-        DelegationDirection.OUTGOING,
-        [
-          ...(patchedDelegation.updateScopes ?? []).map((scope) => scope.name),
-          ...(patchedDelegation.deleteScopes ?? []),
-        ],
-      ))
-    ) {
-      throw new BadRequestException(
-        'User does not have access to the requested scopes.',
-      )
-    }
-
+  ): Promise<PatchDelegationResult> {
     if (!validateScopesPeriod(patchedDelegation.updateScopes)) {
       throw new BadRequestException(
         'If scope validTo property is provided it must be in the future',
       )
     }
 
-    if (
-      patchedDelegation.deleteScopes &&
-      patchedDelegation.deleteScopes?.length > 0
-    ) {
-      await this.delegationScopeService.delete(
-        delegationId,
-        patchedDelegation.deleteScopes,
-      )
+    const txResult = await this.sequelize.transaction(async (transaction) => {
+      const currentDelegation = await this.delegationModel.findOne({
+        where: {
+          [Op.and]: [
+            { id: delegationId, fromNationalId: user.nationalId },
+            getDelegationNoActorWhereClause(user),
+          ],
+        },
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      })
+      if (!currentDelegation) {
+        return { kind: 'notFound' as const }
+      }
+
+      const existingScopes =
+        await this.delegationScopeService.findByDelegationId(
+          delegationId,
+          transaction,
+        )
+
+      if (
+        !(await this.delegationResourceService.validateScopeAccess(
+          user,
+          currentDelegation.domainName ?? null,
+          DelegationDirection.OUTGOING,
+          [
+            ...(patchedDelegation.updateScopes ?? []).map(
+              (scope) => scope.name,
+            ),
+            ...(patchedDelegation.deleteScopes ?? []),
+          ],
+        ))
+      ) {
+        throw new BadRequestException(
+          'User does not have access to the requested scopes.',
+        )
+      }
+
+      if (
+        patchedDelegation.deleteScopes &&
+        patchedDelegation.deleteScopes.length > 0
+      ) {
+        await this.delegationScopeService.deleteByName(
+          delegationId,
+          patchedDelegation.deleteScopes,
+          transaction,
+        )
+      }
+
+      if (
+        patchedDelegation.updateScopes &&
+        patchedDelegation.updateScopes.length > 0
+      ) {
+        await this.delegationScopeService.createOrUpdate(
+          delegationId,
+          patchedDelegation.updateScopes,
+          transaction,
+        )
+      }
+
+      const remainingScopes =
+        await this.delegationScopeService.findByDelegationId(
+          delegationId,
+          transaction,
+        )
+
+      if (remainingScopes.length === 0) {
+        // No scopes remain — delete the delegation row so it doesn't linger
+        // as an empty record that grants nothing.
+        await this.delegationModel.destroy({
+          where: { id: delegationId },
+          transaction,
+        })
+        return {
+          kind: 'destroyed' as const,
+          toNationalId: currentDelegation.toNationalId,
+        }
+      }
+
+      return {
+        kind: 'survived' as const,
+        toNationalId: currentDelegation.toNationalId,
+        hadExistingScopes: existingScopes.length > 0,
+      }
+    })
+
+    if (txResult.kind === 'notFound') {
+      return { kind: 'notFound' }
     }
 
-    if (
-      patchedDelegation.updateScopes &&
-      patchedDelegation.updateScopes.length > 0
-    ) {
-      await this.delegationScopeService.createOrUpdate(
-        delegationId,
-        patchedDelegation.updateScopes,
-      )
-    }
-
-    const delegation = await this.findById(user, delegationId)
-
-    // Index custom delegations for the toNationalId
+    // Reindex after commit so we never reindex changes that might roll back.
     void this.delegationIndexService.indexCustomDelegations(
-      delegation.toNationalId,
+      txResult.toNationalId,
       user,
     )
 
-    const hasExistingScopes =
-      (currentDelegation.delegationScopes?.length ?? 0) > 0
+    if (txResult.kind === 'destroyed') {
+      return {
+        kind: 'destroyed',
+        toNationalId: txResult.toNationalId,
+      }
+    }
 
-    void this.notifyDelegationUpdate(user, delegation, hasExistingScopes)
-
-    return delegation
+    const delegation = await this.findById(user, delegationId)
+    void this.notifyDelegationUpdate(
+      user,
+      delegation,
+      txResult.hadExistingScopes,
+    )
+    return {
+      kind: 'updated',
+      delegation,
+      hadExistingScopes: txResult.hadExistingScopes,
+    }
   }
 
   async delete(user: User, delegationId: string): Promise<void> {

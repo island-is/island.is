@@ -1,8 +1,9 @@
 import { lazy } from 'react'
 
 import { ApiScope } from '@island.is/auth/scopes'
-import { Features } from '@island.is/feature-flags'
+import { Features } from '@island.is/react/feature-flags'
 import { PortalModule } from '@island.is/portals/core'
+import { Navigate } from 'react-router-dom'
 
 import { m } from './lib/messages'
 import { Paths } from './lib/paths'
@@ -19,7 +20,31 @@ export const restrictionsModule: PortalModule = {
   enabled({ userInfo }) {
     return userInfo.scopes.some((scope) => allowedScopes.includes(scope))
   },
-  routes(args) {
+  async routes(args) {
+    const { userInfo, featureFlagClient } = args
+    const useNewRoute = await featureFlagClient.getValue(
+      Features.useNewDelegationSystem,
+      false,
+    )
+
+    if (useNewRoute) {
+      return [
+        {
+          name: m.restrictions,
+          path: Paths.RestrictionsNew,
+          loader: restrictionsLoader(args),
+          action: restrictionsAction(args),
+          element: <Restrictions />,
+        },
+        {
+          name: m.restrictions,
+          path: Paths.Restrictions,
+          navHide: true,
+          element: <Navigate to={Paths.RestrictionsNew} replace />,
+        },
+      ]
+    }
+
     return [
       {
         name: m.restrictions,

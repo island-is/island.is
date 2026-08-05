@@ -37,8 +37,11 @@ export const supportSubSection = buildSubSection({
   id: 'supportSubSection',
   title: differentNeedsMessages.support.subSectionTitle,
   condition: (answers, externalData) =>
-    shouldShowPage(answers, externalData, ApplicationFeatureKey.SOCIAL_INFO) &&
-    !hasSpecialEducationSubType(answers, externalData),
+    //Business logic override as applicationConfig isn't ready on MMS side
+    //Should be removed when applicationConfig is ready
+    true ||
+    (shouldShowPage(answers, externalData, ApplicationFeatureKey.SOCIAL_INFO) &&
+      !hasSpecialEducationSubType(answers, externalData)),
   children: [
     buildMultiField({
       id: 'support',

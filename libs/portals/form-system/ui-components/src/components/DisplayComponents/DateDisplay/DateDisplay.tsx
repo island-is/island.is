@@ -1,17 +1,41 @@
 import { FormSystemField } from '@island.is/api/schema'
-import { Box, Stack, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { m } from '../../../lib/messages'
 
 interface Props {
   item: FormSystemField
-  lang?: 'is' | 'en'
+  valueIndex: number
+  requiredMissing?: boolean
 }
 
-export const DateDisplay = ({ item, lang = 'is' }: Props) => {
-  const date = (item?.values?.[0]?.json as Record<string, unknown>)?.[
-    'date'
-  ] as Date
-  const { formatDate } = useLocale()
+export const DateDisplay = ({
+  item,
+  valueIndex,
+  requiredMissing = false,
+}: Props) => {
+  const { formatDate, lang, formatMessage } = useLocale()
+
+  const formatDateValue = (raw: unknown) => {
+    if (raw == null) return ''
+
+    const asDate =
+      raw instanceof Date
+        ? raw
+        : new Date(typeof raw === 'string' ? raw : String(raw))
+
+    if (Number.isNaN(asDate.getTime())) return ''
+
+    return formatDate(asDate, {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    })
+  }
+
+  const raw = item.values?.[valueIndex]
+  const value = formatDateValue(raw?.json?.date)
+
   return (
     <Box
       component="form"
@@ -20,19 +44,29 @@ export const DateDisplay = ({ item, lang = 'is' }: Props) => {
       justifyContent="spaceBetween"
       height="full"
     >
-      <Stack space={1}>
-        <Text as="p" fontWeight="semiBold">
-          {item.name?.[lang]}
-        </Text>
-        <Text fontWeight="light">
-          {' '}
-          {formatDate(date, {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-          })}
-        </Text>
-      </Stack>
+      <Text as="p" fontWeight="semiBold">
+        {item.name?.[lang]}
+        {requiredMissing && (
+          <>
+            {' '}
+            <Text as="span" fontWeight="medium" color="red600">
+              *
+            </Text>
+          </>
+        )}
+      </Text>
+
+      <Box marginLeft={2}>
+        {requiredMissing && (
+          <>
+            {' '}
+            <Text as="span" fontWeight="light" color="red600">
+              {formatMessage(m.missingValue)}
+            </Text>
+          </>
+        )}
+        {!requiredMissing && <Text fontWeight="light">{value}</Text>}
+      </Box>
     </Box>
   )
 }

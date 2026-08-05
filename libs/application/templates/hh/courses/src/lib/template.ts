@@ -12,6 +12,7 @@ import {
   HealthCenterApi,
   InstitutionNationalIds,
 } from '@island.is/application/types'
+import { getValueViaPath } from '@island.is/application/core'
 import { buildPaymentState } from '@island.is/application/utils'
 import { Features } from '@island.is/feature-flags'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -22,10 +23,15 @@ import {
 import { UserProfileApi, NationalRegistryUserApi } from '../dataProviders'
 import { ApiActions, Events, Roles, States } from '../utils/constants'
 import { dataSchema } from './dataSchema'
-import { HhCoursesSelectedChargeItemApi } from '../dataProviders'
+import {
+  HhCoursesSelectedChargeItemApi,
+  HhCoursesParticipantAvailabilityApi,
+} from '../dataProviders'
 
 import { m } from './messages'
 import { getChargeItems } from '../utils/getChargeItems'
+import { hasCourseBeenFullyBooked } from '../utils/hasCourseBeenFullyBooked'
+import { isCourseForProfessionals } from '../utils/isCourseForProfessionals'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -33,7 +39,22 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID,
-  name: m.general.applicationTitle,
+  name: (application: Application) => {
+    const courseTitle = getValueViaPath<string>(
+      application.externalData,
+      'hhCoursesSelectedChargeItem.data.courseTitle',
+    )
+    return courseTitle
+      ? {
+          name: isCourseForProfessionals(application.answers)
+            ? m.general.applicationTitleWithCourseForProfessionals
+            : m.general.applicationTitleWithCourse,
+          value: courseTitle,
+        }
+      : isCourseForProfessionals(application.answers)
+      ? m.general.applicationTitleForProfessionals
+      : m.general.applicationTitle
+  },
   codeOwner: CodeOwners.Stefna,
   institution: m.general.institutionName,
   applicationText: m.general.applicationListTitle,
@@ -103,7 +124,7 @@ const template: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: m.overview.submitTitle,
+                  name: m.overview.submitRegistrationTitle,
                   type: 'primary',
                 },
               ],
@@ -113,8 +134,11 @@ const template: ApplicationTemplate<
             },
           ],
           onExit: [
-            HhCoursesSelectedChargeItemApi.configure({
+            HhCoursesParticipantAvailabilityApi.configure({
               order: 0,
+            }),
+            HhCoursesSelectedChargeItemApi.configure({
+              order: 1,
             }),
           ],
         },
@@ -122,12 +146,19 @@ const template: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: [
             {
               target: States.PAYMENT,
-              cond: ({ application }) => getChargeItems(application).length > 0,
+              cond: ({ application }) =>
+                getChargeItems(application).length > 0 &&
+                !hasCourseBeenFullyBooked(application),
             },
             {
               target: States.COMPLETED,
               cond: ({ application }) =>
-                getChargeItems(application).length === 0,
+                getChargeItems(application).length === 0 &&
+                !hasCourseBeenFullyBooked(application),
+            },
+            {
+              target: States.FULLY_BOOKED,
+              cond: ({ application }) => hasCourseBeenFullyBooked(application),
             },
           ],
         },
@@ -137,6 +168,11 @@ const template: ApplicationTemplate<
           InstitutionNationalIds.HEILSUGAESLA_HOFUDBORDARSVAEDISINS,
         chargeItems: getChargeItems,
         submitTarget: States.COMPLETED,
+        lifecycle: {
+          shouldBeListed: true,
+          shouldBePruned: true,
+          whenToPrune: 20 * 60 * 1000, // 20 minutes
+        },
       }),
       [States.COMPLETED]: {
         meta: {
@@ -156,6 +192,29 @@ const template: ApplicationTemplate<
               formLoader: () =>
                 import('../forms/completedForm').then((module) =>
                   Promise.resolve(module.completedForm),
+                ),
+              read: 'all',
+              delete: false,
+            },
+          ],
+        },
+      },
+      [States.FULLY_BOOKED]: {
+        meta: {
+          name: 'Fully booked form',
+          progress: 1,
+          status: FormModes.COMPLETED,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 20 * 60 * 1000, // 20 minutes
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/fullyBookedForm').then((module) =>
+                  Promise.resolve(module.fullyBookedForm),
                 ),
               read: 'all',
               delete: true,

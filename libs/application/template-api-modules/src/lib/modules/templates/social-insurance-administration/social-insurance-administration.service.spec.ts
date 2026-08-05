@@ -1,5 +1,9 @@
 import { createApplication } from '@island.is/application/testing'
-import { SocialInsuranceAdministrationClientService } from '@island.is/clients/social-insurance-administration'
+import {
+  SocialInsuranceAdministrationClientService,
+  SocialInsuranceAdministrationMedicalAndRehabilitationService,
+  SocialInsuranceAdministrationOldAgePensionService,
+} from '@island.is/clients/social-insurance-administration'
 import { Test, TestingModule } from '@nestjs/testing'
 import { SocialInsuranceAdministrationService } from './social-insurance-administration.service'
 import { createCurrentUser } from '@island.is/testing/fixtures'
@@ -8,6 +12,7 @@ import { ApplicationTypes } from '@island.is/application/types'
 import { sharedModuleConfig } from '../../shared'
 import { S3Service } from '@island.is/nest/aws'
 import { NationalRegistryV3ApplicationsClientService } from '@island.is/clients/national-registry-v3-applications'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 const mockConfig = {
   SharedModuleConfig: {
@@ -19,8 +24,13 @@ const mockConfig = {
 
 describe('SocialInsuranceAdministrationService', () => {
   let socialInsuranceAdministrationService: SocialInsuranceAdministrationService
+  const sendMedicalAndRehabilitationPaymentsApplication = jest.fn()
 
   beforeEach(async () => {
+    sendMedicalAndRehabilitationPaymentsApplication
+      .mockReset()
+      .mockResolvedValue({ applicationLineId: '0' })
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         SocialInsuranceAdministrationService,
@@ -49,6 +59,21 @@ describe('SocialInsuranceAdministrationService', () => {
               }),
           })),
         },
+        {
+          provide: SocialInsuranceAdministrationOldAgePensionService,
+          useClass: jest.fn(() => ({
+            sendOldAgePensionApplication: () =>
+              Promise.resolve({
+                applicationLineId: '0',
+              }),
+          })),
+        },
+        {
+          provide: SocialInsuranceAdministrationMedicalAndRehabilitationService,
+          useValue: {
+            sendMedicalAndRehabilitationPaymentsApplication,
+          },
+        },
       ],
     }).compile()
 
@@ -76,7 +101,7 @@ describe('SocialInsuranceAdministrationService', () => {
       },
       answers: {
         paymentInfo: {
-          bank: '222200123456',
+          bank: { ledger: '00', bankNumber: '2222', accountNumber: '123456' },
           iban: '',
           swift: '',
           taxLevel: '2',
@@ -102,7 +127,7 @@ describe('SocialInsuranceAdministrationService', () => {
       currentUserLocale: 'is',
     })
 
-    expect(result).toMatchObject({ applicationLineId: '123' })
+    expect(result).toMatchObject({ applicationLineId: '0' })
   })
 
   it('should send household supplement application', async () => {
@@ -144,5 +169,87 @@ describe('SocialInsuranceAdministrationService', () => {
     })
 
     expect(result).toMatchObject({ applicationLineId: '123' })
+  })
+
+  it('should stop an incomplete medical and rehabilitation payments application from being sent', async () => {
+    const auth = createCurrentUser()
+    // The answers an application holds right after the prerequisites step,
+    // matching the empty applications Tryggingastofnun received.
+    const application = createApplication({
+      answers: {
+        approveExternalData: true,
+        incomePlanTable: [
+          {
+            income: 'yearly',
+            currency: 'IKR',
+            incomeType: 'Laun',
+            incomePerYear: '0',
+            incomeCategory: 'Atvinnutekjur',
+          },
+        ],
+      },
+      typeId: ApplicationTypes.MEDICAL_AND_REHABILITATION_PAYMENTS,
+    })
+
+    await expect(
+      socialInsuranceAdministrationService.sendApplication({
+        application,
+        auth,
+        currentUserLocale: 'is',
+      }),
+    ).rejects.toBeInstanceOf(TemplateApiError)
+
+    expect(
+      sendMedicalAndRehabilitationPaymentsApplication,
+    ).not.toHaveBeenCalled()
+  })
+
+  it('should send a complete medical and rehabilitation payments application', async () => {
+    const auth = createCurrentUser()
+    const application = createApplication({
+      externalData: {
+        socialInsuranceAdministrationApplicant: {
+          data: {
+            bankAccount: {
+              bank: '2222',
+              ledger: '00',
+              accountNumber: '123456',
+            },
+          },
+          date: new Date('2021-06-10T11:31:02.641Z'),
+          status: 'success',
+        },
+      },
+      answers: {
+        applicantInfo: {
+          email: 'mail@mail.is',
+          phonenumber: '6611234',
+        },
+        paymentInfo: {
+          bank: { bankNumber: '2222', ledger: '00', accountNumber: '123456' },
+          personalAllowance: 'no',
+          taxLevel: '2',
+        },
+        questions: {
+          isPartTimeEmployed: 'no',
+          isStudying: 'no',
+        },
+        selfAssessmentQuestionsOne: {
+          educationalLevel: '1',
+        },
+      },
+      typeId: ApplicationTypes.MEDICAL_AND_REHABILITATION_PAYMENTS,
+    })
+
+    const result = await socialInsuranceAdministrationService.sendApplication({
+      application,
+      auth,
+      currentUserLocale: 'is',
+    })
+
+    expect(result).toMatchObject({ applicationLineId: '0' })
+    expect(
+      sendMedicalAndRehabilitationPaymentsApplication,
+    ).toHaveBeenCalledTimes(1)
   })
 })

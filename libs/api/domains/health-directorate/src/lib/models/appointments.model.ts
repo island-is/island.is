@@ -1,4 +1,25 @@
-import { Field, ObjectType, Float, Int } from '@nestjs/graphql'
+import {
+  Field,
+  ObjectType,
+  Float,
+  Int,
+  GraphQLISODateTime,
+} from '@nestjs/graphql'
+import {
+  AppointmentStatusEnum,
+  AppointmentModalityEnum,
+  AppointmentAssigneeTypeEnum,
+  AppointmentLinkTypeEnum,
+} from './enums'
+
+@ObjectType('HealthDirectorateAppointmentLocationLink')
+export class AppointmentLocationLink {
+  @Field()
+  type!: string
+
+  @Field()
+  url!: string
+}
 
 @ObjectType('HealthDirectorateAppointmentLocation')
 export class AppointmentLocation {
@@ -8,8 +29,20 @@ export class AppointmentLocation {
   @Field({ nullable: true })
   organization?: string
 
-  @Field()
-  address!: string
+  @Field({ nullable: true })
+  address?: string
+
+  @Field({ nullable: true })
+  department?: string
+
+  @Field({ nullable: true })
+  wing?: string
+
+  @Field({ nullable: true })
+  floor?: string
+
+  @Field({ nullable: true })
+  room?: string
 
   @Field({ nullable: true })
   directions?: string
@@ -23,11 +56,55 @@ export class AppointmentLocation {
   @Field({ nullable: true })
   country?: string
 
+  @Field({ nullable: true })
+  link?: string
+
   @Field(() => Float, { nullable: true })
   latitude?: number
 
   @Field(() => Float, { nullable: true })
   longitude?: number
+
+  @Field({ nullable: true })
+  phoneNumber?: string
+
+  @Field({ nullable: true })
+  openingHoursText?: string
+
+  @Field(() => [AppointmentLocationLink], { nullable: true })
+  locationLinks?: AppointmentLocationLink[]
+}
+
+@ObjectType('HealthDirectorateAppointmentAssignee')
+export class AppointmentAssignee {
+  @Field(() => AppointmentAssigneeTypeEnum)
+  type!: AppointmentAssigneeTypeEnum
+
+  @Field()
+  name!: string
+}
+
+@ObjectType('HealthDirectorateAppointmentLink')
+export class AppointmentLink {
+  @Field(() => AppointmentLinkTypeEnum)
+  type!: AppointmentLinkTypeEnum
+
+  @Field()
+  url!: string
+
+  @Field(() => GraphQLISODateTime, {
+    nullable: true,
+    description:
+      'When this link becomes active, for links that are time-gated (e.g. video calls). Null if not time-gated.',
+  })
+  activatesAt?: Date
+
+  @Field(() => GraphQLISODateTime, {
+    nullable: true,
+    description:
+      'When this link expires, for links that are time-gated (e.g. video calls). Null if not time-gated.',
+  })
+  expiresAt?: Date
 }
 
 @ObjectType('HealthDirectorateAppointment')
@@ -38,23 +115,29 @@ export class Appointment {
   @Field({ nullable: true })
   title?: string
 
-  @Field({ nullable: true })
-  date?: string
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  date?: Date
 
-  @Field()
-  status!: string
+  @Field(() => AppointmentStatusEnum, { nullable: true })
+  status?: AppointmentStatusEnum
 
-  @Field({ nullable: true })
-  instruction?: string
+  @Field(() => AppointmentModalityEnum, { nullable: true })
+  modality?: AppointmentModalityEnum
 
   @Field(() => AppointmentLocation, { nullable: true })
   location?: AppointmentLocation
 
+  @Field(() => Int, { nullable: true, description: 'Duration in minutes' })
+  duration?: number
+
+  @Field({ nullable: true })
+  instruction?: string
+
   @Field(() => [String])
   practitioners!: string[]
 
-  @Field(() => Int, { nullable: true })
-  duration?: number
+  @Field(() => [AppointmentAssignee], { nullable: true })
+  assignees?: AppointmentAssignee[]
 }
 
 @ObjectType('HealthDirectorateAppointments')

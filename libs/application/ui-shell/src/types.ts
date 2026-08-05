@@ -1,4 +1,5 @@
 import {
+  Application,
   Field,
   MultiField,
   ExternalDataProvider,
@@ -7,6 +8,7 @@ import {
   Schema,
   StaticText,
 } from '@island.is/application/types'
+import { BffUser } from '@island.is/shared/types'
 
 type ScreenAttributes = {
   isNavigable?: boolean
@@ -37,6 +39,8 @@ export type FormScreen =
 export type ResolverContext = {
   formNode: FormNode
   dataSchema: Schema
+  application: Application
+  user?: BffUser
 }
 
 export enum ScreenType {

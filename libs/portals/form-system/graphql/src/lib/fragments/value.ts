@@ -1,4 +1,5 @@
 import { gql } from '@apollo/client'
+import { LanguageFields } from './languageFields'
 
 export const ValueFragment = gql`
   fragment Value on FormSystemValue {
@@ -23,13 +24,23 @@ export const ValueFragment = gql`
       amount
       days
     }
-    listValue
+    value
+    label {
+      is
+      en
+    }
     email
     iskNumber
     checkboxValue
     phoneNumber
     bankAccount
     time
+    registrationNumber
+    model
+    color {
+      is
+      en
+    }
     s3Key
     isLoggedInUser
   }
@@ -44,4 +55,5 @@ export const ValueDtoFragment = gql`
     }
   }
   ${ValueFragment}
+  ${LanguageFields}
 `

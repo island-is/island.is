@@ -11,7 +11,7 @@ export interface MileageRecord {
 }
 
 export interface MileageError {
-  code: 1 | 2
+  code: 1 | 2 | 3 | 4
   message: string
 }
 
@@ -22,11 +22,18 @@ const vehicleIndexTitle = [
   'okutaeki',
   'fastanumer',
 ]
-const mileageIndexTitle = ['kilometrastada', 'mileage', 'odometer']
+const mileageIndexTitle = [
+  'kilometrastada',
+  'skra stodu',
+  'mileage',
+  'odometer',
+]
 
 export const errorMap: Record<number, MessageDescriptor> = {
   1: m.invalidVehicleColumnHeader,
   2: m.invalidMileageColumnHeader,
+  3: m.mileageTooLow,
+  4: m.missingPermno,
 }
 
 export const parseBufferToMileageRecord = async (
@@ -40,13 +47,8 @@ export const parseBufferToMileageRecord = async (
 
   const [rawHeader, ...values] = parsedLines
 
-  // strip BOM, trim, and lowercase each header cell
-  const header = rawHeader.map((h) =>
-    h
-      .replace(/^\uFEFF/, '')
-      .trim()
-      .toLowerCase(),
-  )
+  // strip BOM, trim, lowercase, and normalize Icelandic/accented chars each header cell
+  const header = rawHeader.map((h) => normalizeHeader(h))
 
   const vehicleIndex = header.findIndex((h) => vehicleIndexTitle.includes(h))
 
@@ -69,12 +71,14 @@ export const parseBufferToMileageRecord = async (
   }
 
   const filteredValues = values.filter((row) => {
+    const permno = row[vehicleIndex]
     const mileageValue = row[mileageIndex]
     const sanitizedMileage = sanitizeNumber(mileageValue || '')
     const numericMileage = Number(sanitizedMileage)
 
-    // Keep row if mileage is not NaN, not 0, and not empty
     return (
+      permno?.trim() !== '' &&
+      permno != null &&
       !Number.isNaN(numericMileage) &&
       numericMileage > 0 &&
       mileageValue?.trim() !== ''
@@ -93,6 +97,14 @@ export const parseBufferToMileageRecord = async (
       }
     })
     .filter(isDefined)
+
+  if (uploadedOdometerStatuses.some((r) => r.mileage <= 0)) {
+    return { code: 3, message: formatMessage(errorMap[3]) }
+  }
+
+  if (uploadedOdometerStatuses.some((r) => !r.permno?.trim())) {
+    return { code: 4, message: formatMessage(errorMap[4]) }
+  }
 
   return uploadedOdometerStatuses
 }
@@ -151,6 +163,18 @@ const parseCsvString = (chunk: string): Promise<string[][]> => {
     parser.end()
   })
 }
+
+// Normalize accented header strings to plain ASCII so any permutation of
+// accented/unaccented chars matches the lookup arrays. ð is handled explicitly
+// before NFD since it has no canonical decomposition.
+const normalizeHeader = (h: string): string =>
+  h
+    .replace(/^\uFEFF/, '')
+    .trim()
+    .toLowerCase()
+    .replace(/ð/g, 'd')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
 
 const sanitizeNumber = (n: string) => n.replace(new RegExp(/[.,]/g), '')
 

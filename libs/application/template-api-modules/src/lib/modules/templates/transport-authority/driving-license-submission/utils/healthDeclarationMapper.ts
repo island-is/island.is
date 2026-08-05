@@ -1,6 +1,6 @@
 import {
-  PostTemporaryLicenseWithHealthDeclaration,
-  HealthDeclarationModel,
+  ModelsV5PostTemporaryLicenseWithHealthDeclaration,
+  ModelsHealthDeclarationModel,
 } from '@island.is/clients/driving-license'
 import { dataSchema } from '@island.is/application/templates/driving-license'
 import { infer as zinfer } from 'zod'
@@ -13,10 +13,10 @@ export type DrivingLicenseSchema = zinfer<typeof dataSchema>
 
 export const PostTemporaryLicenseWithHealthDeclarationMapper = (
   answers: DrivingLicenseSchema,
-): PostTemporaryLicenseWithHealthDeclaration => {
+): ModelsV5PostTemporaryLicenseWithHealthDeclaration => {
   const propertyMapping: Record<
     string,
-    keyof PostTemporaryLicenseWithHealthDeclaration
+    keyof ModelsV5PostTemporaryLicenseWithHealthDeclaration
   > = {
     willBringQualityPhoto: 'bringNewPhoto',
     drivingInstructor: 'instructorSSN',
@@ -24,7 +24,7 @@ export const PostTemporaryLicenseWithHealthDeclarationMapper = (
     phone: 'gsm',
   }
 
-  const mappedAnswers: PostTemporaryLicenseWithHealthDeclaration = {
+  const mappedAnswers: ModelsV5PostTemporaryLicenseWithHealthDeclaration = {
     // Setting default district authority to Kópavogur
     authority: getValueViaPath(answers, 'delivery.jurisdiction') || 37,
     bringsHealthCertificate: true,
@@ -42,7 +42,7 @@ export const PostTemporaryLicenseWithHealthDeclarationMapper = (
 
   const healthDeclarationMapper = (
     answers: DrivingLicenseSchema['healthDeclaration'],
-  ): HealthDeclarationModel => {
+  ): ModelsHealthDeclarationModel => {
     return Object.fromEntries(
       Object.entries(answers).map(([key, value]) => {
         if (value === 'yes') {
@@ -64,7 +64,7 @@ export const PostTemporaryLicenseWithHealthDeclarationMapper = (
       }
       const mappedKey = propertyMapping[
         key
-      ] as keyof PostTemporaryLicenseWithHealthDeclaration
+      ] as keyof ModelsV5PostTemporaryLicenseWithHealthDeclaration
       const mappedValue =
         value === 'yes' ? true : value === 'no' ? false : value
       ;(mappedAnswers[

@@ -16,11 +16,10 @@ import React, {
   ReactElement,
   ReactNode,
   useEffect,
-  useRef,
+  useMemo,
   useState,
 } from 'react'
 import AnimateHeight from 'react-animate-height'
-import { Menu, MenuButton, MenuStateReturn, useMenuState } from 'reakit/Menu'
 
 import * as styles from './Navigation.css'
 import { useScrolledPassed } from '../../hooks/useScrolledPassed/useScrolledPassed'
@@ -84,7 +83,6 @@ interface MobileNavigationDialogProps {
   asSpan?: NavigationTreeProps['asSpan']
   isVisible: boolean
   onClick: () => void
-  menuState: MenuStateReturn
   mobileNavigationButtonCloseLabel?: string
 }
 
@@ -94,7 +92,6 @@ interface NavigationTreeProps {
   colorScheme?: keyof typeof styles.colorScheme
   expand?: boolean
   renderLink?: (link: ReactElement, item?: NavigationItem) => ReactNode
-  menuState: MenuStateReturn
   linkOnClick?: () => void
   id?: string
   labelId?: string
@@ -165,44 +162,53 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
   mobileNavigationButtonOpenLabel = 'Open',
   mobileNavigationButtonCloseLabel = 'Close',
 }) => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  // First-level accordion ids that match the current route. 'items' is
+  // recomputed whenever the route changes (and when async sub-routes finish loading)
+  // so this must stay in sync rather than being seeded only once on mount.
+  const activeAccordionIds = useMemo(
+    () =>
+      (items ?? [])
+        .map((item, index) => ({ item, index }))
+        .filter(({ item }) => item.accordion && item.active)
+        .map(({ index }) => `1-${index}`),
+    [items],
+  )
 
   const [activeAccordions, setActiveAccordions] = useState<Array<string>>(
-    () => {
-      const initialActivePathIndex = items?.findIndex(
-        (item) => item.active && item.accordion,
-      )
-
-      if (initialActivePathIndex > 0) {
-        //first level only
-        return [
-          `1-${items?.findIndex(
-            (item) =>
-              item.active &&
-              item.accordion &&
-              item.items?.some((child) => child.active),
-          )}`,
-        ]
-      }
-
-      return []
-    },
+    // In single-accordion mode only one may be open, so seed with the active
+    // route only (last one wins if several match, mirroring toggle behaviour).
+    singleAccordion ? activeAccordionIds.slice(-1) : activeAccordionIds,
   )
+
+  // Expand the accordion for the active route when navigating to a sub-path or
+  // when its children finish loading.
+  useEffect(() => {
+    if (activeAccordionIds.length === 0) {
+      return
+    }
+    setActiveAccordions((prev) => {
+      if (singleAccordion) {
+        // Only one accordion may be open; the active route replaces whatever
+        // was open. Return prev unchanged if it already matches to skip a render.
+        const next = activeAccordionIds.slice(-1)
+        return prev.length === next.length && prev[0] === next[0] ? prev : next
+      }
+      // Additive: open the active accordion(s) without closing ones the user
+      // opened manually.
+      const missing = activeAccordionIds.filter((id) => !prev.includes(id))
+      return missing.length ? [...prev, ...missing] : prev
+    })
+    // This useEffect would fire every re-render since activeAccordionIds
+    // is a new array every render, Using join() so it only runs when content changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeAccordionIds.join('|'), singleAccordion])
 
   const color = colorSchemeColors[colorScheme]['color']
   const activeColor = colorSchemeColors[colorScheme]['activeColor']
   const backgroundColor = colorSchemeColors[colorScheme]['backgroundColor']
   const dividerColor = colorSchemeColors[colorScheme]['dividerColor']
 
-  const menu = useMenuState({
-    animated: true,
-    baseId,
-    visible: false,
-  })
-
-  useEffect(() => {
-    setMobileMenuOpen(menu.visible)
-  }, [menu.visible])
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const titleLinkProps = titleLink
     ? {
@@ -297,37 +303,31 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
           })}
           id={mobileId}
         >
-          <MenuButton
-            {...menu}
+          <Box
+            component="button"
+            type="button"
             className={styles.menuBtn}
-            onClick={() => menu.show}
-            aria-label={title}
+            onClick={() => setMobileMenuOpen(true)}
+            aria-expanded={mobileMenuOpen}
+            aria-haspopup="dialog"
           >
             <MobileButton
               title={activeItemTitle ?? title}
               titleIcon={titleIcon}
               colorScheme={colorScheme}
-              aria-expanded={!mobileMenuOpen}
               mobileNavigationButtonOpenLabel={mobileNavigationButtonOpenLabel}
             />
-          </MenuButton>
-          <Menu {...menu} className={cn(styles.transition)}>
-            <MobileNavigationDialog
-              Title={Title}
-              colorScheme={colorScheme}
-              items={items}
-              renderLink={renderLink}
-              asSpan={asSpan}
-              isVisible={mobileMenuOpen}
-              menuState={menu}
-              mobileNavigationButtonCloseLabel={
-                mobileNavigationButtonCloseLabel
-              }
-              onClick={() => {
-                menu.hide()
-              }}
-            />
-          </Menu>
+          </Box>
+          <MobileNavigationDialog
+            Title={Title}
+            colorScheme={colorScheme}
+            items={items}
+            renderLink={renderLink}
+            asSpan={asSpan}
+            isVisible={mobileMenuOpen}
+            mobileNavigationButtonCloseLabel={mobileNavigationButtonCloseLabel}
+            onClick={() => setMobileMenuOpen(false)}
+          />
         </Box>
       ) : (
         <Box
@@ -348,7 +348,6 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
             asSpan={asSpan}
             colorScheme={colorScheme}
             renderLink={renderLink}
-            menuState={menu}
             expand={expand}
           />
         </Box>
@@ -363,14 +362,17 @@ const MobileNavigationDialog = ({
   items,
   renderLink,
   onClick,
-  menuState,
+  isVisible,
   asSpan,
   mobileNavigationButtonCloseLabel,
 }: MobileNavigationDialogProps) => {
   return (
     <ModalBase
       baseId={'mobile-nav'}
-      isVisible={menuState.visible ?? false}
+      isVisible={isVisible}
+      onVisibilityChange={(isVisible) => {
+        if (!isVisible) onClick()
+      }}
       preventBodyScroll
       className={styles.mobileNav}
     >
@@ -412,7 +414,6 @@ const MobileNavigationDialog = ({
           asSpan={asSpan}
           colorScheme={colorScheme}
           renderLink={renderLink}
-          menuState={menuState}
           linkOnClick={onClick}
         />
       </Box>
@@ -495,7 +496,6 @@ export const NavigationTree: FC<
   colorScheme = 'blue',
   expand = false,
   renderLink = defaultLinkRender,
-  menuState,
   linkOnClick,
   id = '',
   labelId = '',
@@ -535,6 +535,9 @@ export const NavigationTree: FC<
             const activeAccordion = activeAccordions.includes(accordionId)
             const labelId = `${baseId}-title-${accordionId}`
             const ariaId = `${baseId}-tree-${accordionId}`
+            const titleId = `navigation-title-${accordionId}${
+              id ? `-${id}` : ''
+            }`
 
             const nextLevelTree = (
               <NavigationTree
@@ -545,7 +548,6 @@ export const NavigationTree: FC<
                 colorScheme={colorScheme}
                 expand={expand}
                 renderLink={renderLink}
-                menuState={menuState}
                 linkOnClick={linkOnClick}
               />
             )
@@ -581,9 +583,7 @@ export const NavigationTree: FC<
                       })}
                     >
                       <Text
-                        id={`navigation-title-${accordionId}${
-                          id ? `-${id}` : ''
-                        }`}
+                        id={titleId}
                         as="span"
                         color={textColor}
                         variant={isChildren ? 'h5' : 'h4'}
@@ -614,6 +614,7 @@ export const NavigationTree: FC<
                     marginRight={2}
                     aria-expanded={activeAccordion}
                     aria-controls={ariaId}
+                    aria-labelledby={titleId}
                     className={cn(
                       styles.accordionIcon,
                       styles.largerClickableArea,
@@ -648,7 +649,7 @@ export const NavigationTree: FC<
                     id={ariaId}
                     duration={300}
                     height={activeAccordion ? 'auto' : 0}
-                    aria-labelledby={labelId}
+                    aria-labelledby={titleId}
                   >
                     {nextLevelTree}
                   </AnimateHeight>

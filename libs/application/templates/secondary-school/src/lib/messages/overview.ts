@@ -106,6 +106,11 @@ export const overview = {
       defaultMessage: 'Þriðja tungumál',
       description: 'Selection third language label',
     },
+    fallbackThirdLanguageLabel: {
+      id: 'ss.application:overview.selection.fallbackThirdLanguageLabel',
+      defaultMessage: 'Þriðja tungumál til vara ef við á',
+      description: 'Selection fallback third language label',
+    },
     nordicLanguageLabel: {
       id: 'ss.application:overview.selection.nordicLanguageLabel',
       defaultMessage: 'Norðurlandamál',

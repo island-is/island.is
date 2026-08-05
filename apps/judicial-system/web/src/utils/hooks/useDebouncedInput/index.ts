@@ -20,7 +20,7 @@ const useDebouncedInput = <T extends keyof UpdateCase>(
   const initialValue = workingCase[
     fieldName as keyof typeof workingCase
   ] as string
-  const [value, setValue] = useState(initialValue)
+  const [value, setValue] = useState(initialValue ?? '')
   const [errorMessage, setErrorMessage] = useState('')
   const [hasUserEdited, setHasUserEdited] = useState(false)
   const { updateCase } = useCase()

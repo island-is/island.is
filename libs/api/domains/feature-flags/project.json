@@ -1,0 +1,20 @@
+{
+  "name": "api-domains-feature-flags",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/api/domains/feature-flags/src",
+  "projectType": "library",
+  "tags": ["lib:api", "scope:api"],
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "libs/api/domains/feature-flags/jest.config.ts"
+      },
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/feature-flags"]
+    }
+  }
+}

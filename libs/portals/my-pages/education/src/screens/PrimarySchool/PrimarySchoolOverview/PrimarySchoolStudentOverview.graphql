@@ -1,0 +1,9 @@
+query PrimarySchoolStudentOverview($studentId: String!) {
+  primarySchoolStudent(studentId: $studentId) {
+    id
+    name
+    schoolName
+    contactTeacherName
+    homeRoomName
+  }
+}

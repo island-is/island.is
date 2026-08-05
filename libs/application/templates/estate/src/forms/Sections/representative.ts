@@ -3,7 +3,6 @@ import {
   buildMultiField,
   buildTextField,
   buildCustomField,
-  buildPhoneField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 
@@ -15,6 +14,7 @@ export const representative = buildSection({
       id: 'representative',
       title: m.representativeTitle,
       description: m.representativeDescription,
+      nextButtonText: m.saveAndContinue,
       children: [
         buildCustomField(
           {
@@ -26,13 +26,17 @@ export const representative = buildSection({
             alertWhenUnder18: true,
           },
         ),
-        buildPhoneField({
-          id: 'representative.phone',
-          title: m.phone,
-          width: 'half',
-          required: true,
-          allowedCountryCodes: ['IS'],
-        }),
+        buildCustomField(
+          {
+            id: 'representative.phone',
+            title: m.phone,
+            component: 'PhoneWithElectronicId',
+            width: 'half',
+          },
+          {
+            nationalIdPath: 'representative.nationalId',
+          },
+        ),
         buildTextField({
           id: 'representative.email',
           title: m.email,

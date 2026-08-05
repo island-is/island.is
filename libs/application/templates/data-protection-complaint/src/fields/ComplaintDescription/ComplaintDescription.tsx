@@ -13,9 +13,8 @@ export const ComplaintDescription: FC<
   React.PropsWithChildren<FieldBaseProps>
 > = ({ application, field, errors }) => {
   const { formatMessage } = useLocale()
-  const value = getValueViaPath(application.answers, field.id) as
-    | string
-    | undefined
+  const id = field.id as string
+  const value = getValueViaPath<string>(application.answers, id)
   const [wordCount, setWordCount] = useState(calcWordCount(value || ''))
 
   const handleOnChange = (
@@ -38,8 +37,8 @@ export const ComplaintDescription: FC<
         </Text>
       </Box>
       <InputController
-        id={field.id}
-        name={field.id}
+        id={id}
+        name={id}
         placeholder={formatMessage(
           complaint.labels.complaintDescriptionPlaceholder,
         )}

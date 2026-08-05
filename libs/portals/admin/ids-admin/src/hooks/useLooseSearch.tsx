@@ -1,5 +1,5 @@
 import get from 'lodash/get'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { pseudolocalizeString } from '../utils/forms'
 
@@ -11,12 +11,13 @@ import { pseudolocalizeString } from '../utils/forms'
  * @param searchPaths Uses the lodash get syntax to search through nested objects.
  * @param keyPath Uses the lodash get syntax to search through nested objects.
  */
-export function useLooseSearch<T>(
+export const useLooseSearch = <T,>(
   fullList: T[],
   searchPaths: string[],
   keyPath: string,
-): [T[], (searchValue: string) => void] {
+): [T[], (searchValue: string) => void] => {
   const [filteredList, setFilteredList] = useState(fullList)
+  const [lastSearchValue, setLastSearchValue] = useState('')
 
   // Populate the search map with the full list.
   const searchMap = useMemo(() => {
@@ -47,32 +48,40 @@ export function useLooseSearch<T>(
     return map
   }, [fullList, keyPath, searchPaths])
 
-  const filterList = (searchValue = '') => {
+  const applySearch = (searchValue: string, list: T[]) => {
     if (searchValue.length === 0) {
-      setFilteredList(fullList)
-      return
+      return list
     }
 
     const tokens = pseudolocalizeString(searchValue).toLowerCase().split(' ')
 
-    setFilteredList(
-      fullList.filter((item) => {
-        const key = get(item, keyPath)
+    return list.filter((item) => {
+      const key = get(item, keyPath)
 
-        if (!key) {
-          return false
-        }
+      if (!key) {
+        return false
+      }
 
-        const concatenatedStr = searchMap.get(key)
+      const concatenatedStr = searchMap.get(key)
 
-        if (!concatenatedStr) {
-          return false
-        }
+      if (!concatenatedStr) {
+        return false
+      }
 
-        return tokens.every((token) => concatenatedStr.includes(token))
-      }),
-    )
+      return tokens.every((token) => concatenatedStr.includes(token))
+    })
   }
+
+  const filterList = (searchValue = '') => {
+    setLastSearchValue(searchValue)
+    setFilteredList(applySearch(searchValue, fullList))
+  }
+
+  // Re-apply current search when source data changes (e.g. after revalidation)
+  useEffect(() => {
+    setFilteredList(applySearch(lastSearchValue, fullList))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fullList])
 
   return [filteredList, filterList]
 }

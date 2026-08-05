@@ -4,14 +4,20 @@ const {
   publicRuntimeConfig: { basepath },
 } = getConfig()
 
-export const generateFormHtml = (
-  postUrl: string,
-  scriptPath: string,
-  verificationFields: { name: string; value: string }[],
-): string => {
-  console.log(
-    `intentionally skipping ${scriptPath} for CSP reasons while testing`,
-  )
+export const generateFormHtml = ({
+  postUrl,
+  scriptPath,
+  verificationFields,
+}: {
+  postUrl: string
+  scriptPath?: string
+  verificationFields: { name: string; value: string }[]
+}): string => {
+  if (scriptPath) {
+    console.log(
+      `intentionally skipping ${scriptPath} for CSP reasons while testing`,
+    )
+  }
   const fieldsHtml = verificationFields
     .map(
       (field) =>
@@ -31,18 +37,22 @@ export const generateFormHtml = (
     `
 }
 
-export const generatePopupHtml = (
-  postUrl: string,
-  scriptPath: string,
-  verificationFields: { name: string; value: string }[],
-): string => {
+export const generatePopupHtml = ({
+  postUrl,
+  scriptPath,
+  verificationFields,
+}: {
+  postUrl: string
+  scriptPath?: string
+  verificationFields: { name: string; value: string }[]
+}): string => {
   return `
     <html>
       <head>
         <title>Ísland.is | </title>
       </head>
       <body>
-        ${generateFormHtml(postUrl, scriptPath, verificationFields)}
+        ${generateFormHtml({ postUrl, scriptPath, verificationFields })}
       </body>
     </html>
   `

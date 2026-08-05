@@ -1,33 +1,126 @@
 import { delegationScopes } from '@island.is/auth/scopes'
 import { lazy } from 'react'
-import { m, PortalModule, PortalRoute } from '@island.is/portals/core'
+import {
+  m as coreMessages,
+  PortalModule,
+  PortalRoute,
+  PortalType,
+} from '@island.is/portals/core'
 import { DelegationPaths } from './lib/paths'
+import { m } from './lib/messages'
+import { Features } from '@island.is/react/feature-flags'
+import EditAccess from './screens/EditAccess.tsx/EditAccess'
+import { CategoryDetails } from './screens/CategoryDetails/CategoryDetails'
+import { Navigate } from 'react-router-dom'
 
 const AccessControl = lazy(() => import('./screens/AccessControl'))
+const AccessControlNew = lazy(() =>
+  import('./screens/AccessControlNew/AccessControlNew'),
+)
+const DelegationLayout = lazy(() => import('./screens/DelegationLayout'))
 const GrantAccess = lazy(() => import('./screens/GrantAccess/GrantAccess'))
+const GrantAccessNew = lazy(() =>
+  import('./screens/GrantAccessNew/GrantAccessNew'),
+)
+
 const AccessOutgoing = lazy(() =>
   import('./screens/AccessOutgoing/AccessOutgoing'),
 )
+const ServiceCategories = lazy(() =>
+  import('./screens/ServiceCategories/ServiceCategories'),
+)
+const Faq = lazy(() => import('./screens/Faq/Faq'))
 
-export const delegationsModule: PortalModule = {
-  name: m.accessControl,
+export const createDelegationsModule = (
+  portalType: PortalType,
+): PortalModule => ({
+  name: coreMessages.accessControl,
+
   enabled({ userInfo }) {
     return delegationScopes.some((scope) => userInfo.scopes.includes(scope))
   },
-  routes(props) {
-    const { userInfo } = props
+  async routes(props) {
+    const { userInfo, featureFlagClient } = props
+
+    const useNewRoutes =
+      portalType === 'my-pages' &&
+      (await featureFlagClient.getValue(
+        Features.useNewDelegationSystem,
+        false,
+        {
+          id: userInfo.profile.nationalId,
+          attributes: {},
+        },
+      ))
 
     const hasAccess = delegationScopes.some((scope) =>
       userInfo.scopes.includes(scope),
     )
     const commonProps = {
-      name: m.accessControlDelegations,
-      navHide: !hasAccess,
+      name: coreMessages.accessControlDelegations,
+      navHide: !hasAccess || useNewRoutes,
       enabled: hasAccess,
-      element: <AccessControl />,
+      element: useNewRoutes ? (
+        <Navigate to={DelegationPaths.DelegationsNew} replace />
+      ) : (
+        <AccessControl />
+      ),
     }
 
-    const routes: PortalRoute[] = [
+    const newRoutes: PortalRoute[] = [
+      {
+        name: m.digitalDelegations,
+        path: DelegationPaths.DelegationsNew,
+        enabled: hasAccess,
+        element: <DelegationLayout />,
+        children: [
+          {
+            name: m.digitalDelegations,
+            navHide: false,
+            enabled: hasAccess,
+            path: DelegationPaths.DelegationsNew,
+            element: <AccessControlNew />,
+          },
+          {
+            name: m.grantAccessNewTitle,
+            path: DelegationPaths.DelegationsGrantNew,
+            navHide: true,
+            enabled: hasAccess,
+            element: <GrantAccessNew />,
+          },
+          {
+            name: m.editAccessTitle,
+            path: DelegationPaths.DelegationsEdit,
+            navHide: true,
+            enabled: hasAccess,
+            element: <EditAccess />,
+          },
+          {
+            name: m.serviceCategories,
+            path: DelegationPaths.ServiceCategories,
+            navHide: true,
+            enabled: hasAccess,
+            element: <ServiceCategories />,
+          },
+          {
+            name: m.categoryDetails,
+            path: DelegationPaths.CategoryDetails,
+            navHide: true,
+            enabled: hasAccess,
+            element: <CategoryDetails />,
+          },
+          {
+            name: m.faq,
+            path: DelegationPaths.Faq,
+            navHide: true,
+            enabled: hasAccess,
+            element: <Faq />,
+          },
+        ],
+      },
+    ]
+
+    const oldRoutes: PortalRoute[] = [
       {
         ...commonProps,
         path: DelegationPaths.Delegations,
@@ -37,17 +130,27 @@ export const delegationsModule: PortalModule = {
         path: DelegationPaths.DelegationsIncoming,
       },
       {
-        name: m.accessControlGrant,
+        name: coreMessages.accessControlGrant,
         path: DelegationPaths.DelegationsGrant,
-        element: <GrantAccess />,
+        navHide: useNewRoutes,
+        element: useNewRoutes ? (
+          <Navigate to={DelegationPaths.DelegationsGrantNew} replace />
+        ) : (
+          <GrantAccess />
+        ),
       },
       {
-        name: m.accessControlAccess,
+        name: coreMessages.accessControlAccess,
         path: DelegationPaths.DelegationAccess,
-        element: <AccessOutgoing />,
+        navHide: useNewRoutes,
+        element: useNewRoutes ? (
+          <Navigate to={DelegationPaths.DelegationsNew} replace />
+        ) : (
+          <AccessOutgoing />
+        ),
       },
     ]
 
-    return routes
+    return useNewRoutes ? [...newRoutes, ...oldRoutes] : oldRoutes
   },
-}
+})

@@ -4,6 +4,7 @@ import { UseMeasureRef } from 'react-use/lib/useMeasure'
 
 import {
   Box,
+  type BoxProps,
   Button,
   ButtonSizes,
   ButtonTypes,
@@ -51,6 +52,8 @@ type SidePanelItems = {
 
 type SidePanelConfigProps = {
   buttonLabel?: string
+  paddingLeft?: BoxProps['paddingLeft']
+  paddingTop?: BoxProps['paddingTop']
   items?: Array<SidePanelItems>
   cta?: CTAProps
 }
@@ -155,6 +158,7 @@ const Component = forwardRef<HTMLElement, ActionCategoryCardProps>(
                   icon={cta.icon}
                   iconType={cta.iconType}
                   nowrap
+                  unfocusable
                 >
                   <LinkV2 href={cta.href} newTab={true}>
                     {cta.label}
@@ -299,7 +303,8 @@ const Component = forwardRef<HTMLElement, ActionCategoryCardProps>(
               flexDirection="column"
               position="relative"
               justifyContent="flexStart"
-              paddingLeft={5}
+              paddingLeft={sidePanelConfig.paddingLeft ?? 5}
+              paddingTop={sidePanelConfig.paddingTop ?? 0}
               style={{ alignSelf: 'stretch' }}
             >
               {sidePanelConfig.items &&

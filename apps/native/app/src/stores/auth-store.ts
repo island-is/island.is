@@ -8,28 +8,27 @@ import {
   revoke,
 } from 'react-native-app-auth'
 import Keychain from 'react-native-keychain'
-import createUse from 'zustand'
-import create, { State } from 'zustand/vanilla'
-import { Navigation } from 'react-native-navigation'
 
 import { bundleId, getConfig } from '../config'
-import { getIntl } from '../contexts/i18n-provider'
-import { getApolloClientAsync } from '../graphql/client'
+import { LOCK_SCREEN_SUPPRESS_MAX_MS } from '../constants/auth'
+import { getIntl } from '../components/providers/locale-provider'
+import { getApolloClientAsync } from '../graphql/client-instance'
 import { isAndroid } from '../utils/devices'
 import { offlineStore } from './offline-store'
 import { preferencesStore } from './preferences-store'
-import { clearAllStorages } from '../stores/mmkv'
 import { notificationsStore } from './notifications-store'
-import { featureFlagClient } from '../contexts/feature-flag-provider'
+import { getFeatureFlagValue } from '../lib/feature-flag-client'
 import {
   DeletePasskeyDocument,
   DeletePasskeyMutation,
   DeletePasskeyMutationVariables,
 } from '../graphql/types/schema'
-import { getAppRoot } from '../utils/lifecycle/get-app-root'
 import { deduplicatePromise } from '../utils/deduplicatePromise'
-import type { User } from 'configcat-js'
 import { clearWidgetData } from '../lib/widget-sync'
+import { setAuthStoreRef } from './auth-store-ref'
+import { create, useStore } from 'zustand'
+import { clearAllStorages } from './mmkv'
+import { router } from 'expo-router'
 
 const KEYCHAIN_AUTH_KEY = `@islandis_${bundleId}`
 const INVALID_REFRESH_TOKEN_ERROR = 'invalid_grant'
@@ -48,12 +47,18 @@ type KeychainAuthorizeCredentials = Awaited<
   ReturnType<typeof Keychain.getGenericPassword>
 >
 
-interface AuthStore extends State {
+interface AuthStore {
   authorizeResult: AuthorizeResult | RefreshResult | undefined
   userInfo: UserInfo | undefined
   lockScreenActivatedAt?: number
   lockScreenComponentId: string | undefined
-  noLockScreenUntilNextAppStateActive: boolean
+  // Synchronously set when a push is dispatched, cleared when the lock route
+  // mounts (or times out). Prevents two pushers from racing before componentId
+  // can dedupe them.
+  lockScreenPushPending: boolean
+  lockScreenSuppressedUntil: number | undefined
+  // Auto-prompt biometrics at most once per lock session (loop guard).
+  biometricAutoPromptedForCurrentLock: boolean
   isCogitoAuth: boolean
   cognitoDismissCount: number
   cognitoAuthUrl?: string
@@ -69,11 +74,16 @@ interface AuthStore extends State {
 
 const getAppAuthConfig = () => {
   const config = getConfig()
-  const android = isAndroid && !config.isTestingApp ? '.auth' : ''
+  const android = isAndroid ? '.auth' : ''
+  const clientId =
+    config.isTestingApp && config.id === 'prod'
+      ? // Use this custom client ID for testing on prod.
+        '@island.is/island.dev-appid'
+      : config.idsClientId
 
   return {
     issuer: config.idsIssuer,
-    clientId: config.idsClientId,
+    clientId,
     redirectUrl: `${config.bundleId}${android}://oauth`,
     scopes: config.idsScopes,
   }
@@ -98,11 +108,7 @@ export async function prefetchAuthConfig() {
 
 const clearPasskey = async (userNationalId?: string) => {
   // Clear passkey if exists
-  const isPasskeyEnabled = await featureFlagClient?.getValueAsync(
-    'isPasskeyEnabled',
-    false,
-    userNationalId ? ({ identifier: userNationalId } as User) : undefined,
-  )
+  const isPasskeyEnabled = getFeatureFlagValue('isPasskeyEnabled', false)
 
   if (isPasskeyEnabled) {
     preferencesStore.setState({
@@ -138,7 +144,9 @@ export const authStore = create<AuthStore>((set, get) => ({
   userInfo: undefined,
   lockScreenActivatedAt: undefined,
   lockScreenComponentId: undefined,
-  noLockScreenUntilNextAppStateActive: false,
+  lockScreenPushPending: false,
+  lockScreenSuppressedUntil: undefined,
+  biometricAutoPromptedForCurrentLock: false,
   isCogitoAuth: false,
   cognitoDismissCount: 0,
   cognitoAuthUrl: undefined,
@@ -198,7 +206,8 @@ export const authStore = create<AuthStore>((set, get) => ({
         )
 
         await get().logout(true)
-        await Navigation.setRoot({ root: await getAppRoot() })
+        // await Navigation.setRoot({ root: await getAppRoot() })
+        router.replace('/login')
       }
       throw e
     }
@@ -227,6 +236,7 @@ export const authStore = create<AuthStore>((set, get) => ({
         prompt_delegations: 'true',
         ui_locales: preferencesStore.getState().locale,
         externalUserAgent: 'yes',
+        // login_prompt: 'select_account',
       },
     })
 
@@ -266,14 +276,19 @@ export const authStore = create<AuthStore>((set, get) => ({
 
     const appAuthConfig = getAppAuthConfig()
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const tokenToRevoke = get().authorizeResult!.accessToken!
+    const tokenToRevoke = get().authorizeResult?.accessToken
     try {
-      await revoke(appAuthConfig, {
-        tokenToRevoke,
-        includeBasicAuth: true,
-        sendClientId: true,
-      })
+      if (tokenToRevoke) {
+        await revoke(appAuthConfig, {
+          tokenToRevoke,
+          includeBasicAuth: true,
+          sendClientId: true,
+        })
+      } else {
+        throw new Error('No token to revoke')
+      }
     } catch (e) {
+      console.log('Failed to revoke token', e)
       // NOOP
     }
 
@@ -285,6 +300,7 @@ export const authStore = create<AuthStore>((set, get) => ({
         ...state,
         authorizeResult: undefined,
         userInfo: undefined,
+        lockScreenActivatedAt: undefined,
       }),
       true,
     )
@@ -295,7 +311,36 @@ export const authStore = create<AuthStore>((set, get) => ({
   },
 }))
 
-export const useAuthStore = createUse(authStore)
+// Register ref so graphql/client.ts can access authStore without a circular import
+setAuthStoreRef(authStore)
+
+export const useAuthStore = <U = AuthStore>(
+  selector?: (state: AuthStore) => U,
+) => useStore(authStore, selector!)
+
+/**
+ * Suppress the app lock screen until explicitly cleared or the safety cap expires.
+ * Call `clearLockScreenSuppression()` when the flow ends.
+ */
+export function suppressLockScreen() {
+  authStore.setState({
+    lockScreenSuppressedUntil: Date.now() + LOCK_SCREEN_SUPPRESS_MAX_MS,
+  })
+}
+
+export function isLockScreenSuppressed() {
+  const until = authStore.getState().lockScreenSuppressedUntil
+  return until != null && Date.now() < until
+}
+
+export function clearLockScreenSuppression() {
+  authStore.setState({ lockScreenSuppressedUntil: undefined })
+}
+
+// True if the lock screen is in an auth-required state (not just a mask).
+export function isLockScreenActive() {
+  return authStore.getState().lockScreenActivatedAt !== undefined
+}
 
 export async function readAuthorizeResult(): Promise<void> {
   const { authorizeResult } = authStore.getState()
@@ -337,7 +382,8 @@ async function readStoredAuthorizeCredentials(): Promise<KeychainAuthorizeCreden
   try {
     return await Keychain.getGenericPassword({
       service: KEYCHAIN_AUTH_KEY,
-      accessible: Keychain.ACCESSIBLE.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
+      // authenticationPrompt: Keychain.ACCESSIBLE.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY
+      // accessible: Keychain.ACCESSIBLE.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
     })
   } catch (err) {
     console.log('Unable to read from keystore: ', err)

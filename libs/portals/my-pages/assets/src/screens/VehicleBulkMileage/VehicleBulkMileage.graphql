@@ -11,6 +11,7 @@ query vehiclesList($input: VehiclesListInputV3!) {
       }
       make
       co2
+      hasMilesOdometer
       color {
         name
       }

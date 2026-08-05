@@ -273,7 +273,10 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
   return (
     <>
       {organizationPage && (
-        <OrganizationHeader organizationPage={organizationPage} />
+        <OrganizationHeader
+          organizationPage={organizationPage}
+          isSubpage={true}
+        />
       )}
       <SidebarLayout
         fullWidthContent={true}

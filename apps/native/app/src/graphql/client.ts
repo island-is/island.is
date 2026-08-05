@@ -4,40 +4,44 @@ import {
   defaultDataIdFromObject,
   HttpLink,
   InMemoryCache,
-  NormalizedCacheObject,
+  ServerError,
+  ServerParseError,
 } from '@apollo/client'
-
+import * as WebBrowser from 'expo-web-browser'
 import { setContext } from '@apollo/client/link/context'
 import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
 import { MMKVStorageWrapper, persistCache } from 'apollo3-cache-persist'
 import { config, getConfig } from '../config'
-import { openNativeBrowser } from '../lib/rn-island'
-import { cognitoAuthUrl } from '../screens/cognito-auth/config-switcher'
-import { authStore } from '../stores/auth-store'
+import { LOCK_SCREEN_SUPPRESS_MAX_MS } from '../constants/auth'
+import { environments } from '../constants/environments'
+import { setInitializer } from './client-instance'
+import { getAuthStoreRef } from '../stores/auth-store-ref'
 import { environmentStore } from '../stores/environment-store'
 import { createMMKVStorage } from '../stores/mmkv'
-import { offlineStore } from '../stores/offline-store'
-import { MainBottomTabs } from '../utils/component-registry'
 import { getCustomUserAgent } from '../utils/user-agent'
 import { GenericUserLicense } from './types/schema'
+import { createNetworkStatusNotifier } from 'react-apollo-network-status'
+
+export function cognitoAuthUrl() {
+  const url = `https://cognito.shared.devland.is/login`
+  const params = {
+    approval_prompt: 'prompt',
+    client_id: config.cognitoClientId,
+    redirect_uri: `${config.bundleId}://cognito`,
+    response_type: 'token',
+    scope: 'openid',
+    state: 'state',
+  }
+  return `${url}?${new URLSearchParams(params)}`
+}
+
+const NetworkStatusNotifier = createNetworkStatusNotifier()
+
+export const useApolloNetworkStatus =
+  NetworkStatusNotifier.useApolloNetworkStatus
 
 const apolloMMKVStorage = createMMKVStorage({ withEncryption: true })
-
-const connectivityLink = new ApolloLink((operation, forward) => {
-  return forward(operation).map((response) => {
-    // Check if the network response was successful
-    const success =
-      response.errors === undefined || response.errors.length === 0
-
-    // This is a fallback check if the @react-native-community/netinfo will fail to detect if the network status is available again.
-    if (success && !offlineStore.getState().isConnected) {
-      offlineStore.setState({ isConnected: true })
-    }
-
-    return response
-  })
-})
 
 const httpLink = new HttpLink({
   uri() {
@@ -58,7 +62,69 @@ const retryLink = new RetryLink({
   },
 })
 
-const errorLink = onError(({ graphQLErrors, networkError }) => {
+let cognitoBrowserOpen = false
+
+const triggerCognitoReauth = ({
+  clearStaleToken,
+}: {
+  clearStaleToken: boolean
+}) => {
+  if (clearStaleToken) {
+    environmentStore.setState({ cognito: null })
+  }
+  const redirectUrl = cognitoAuthUrl()
+  getAuthStoreRef().setState({ cognitoAuthUrl: redirectUrl })
+  if (
+    config.isTestingApp &&
+    getAuthStoreRef().getState().authorizeResult &&
+    !cognitoBrowserOpen
+  ) {
+    cognitoBrowserOpen = true
+    // Suppress app-lock: iOS Keychain autofill backgrounds the app and would
+    // otherwise dismiss the FORM_SHEET webview via the AppState listener.
+    getAuthStoreRef().setState({
+      lockScreenSuppressedUntil: Date.now() + LOCK_SCREEN_SUPPRESS_MAX_MS,
+    })
+    WebBrowser.openBrowserAsync(redirectUrl, {
+      presentationStyle: WebBrowser.WebBrowserPresentationStyle.FORM_SHEET,
+    })
+      .finally(() => {
+        cognitoBrowserOpen = false
+        getAuthStoreRef().setState({ lockScreenSuppressedUntil: undefined })
+      })
+      .catch(() => void 0)
+  }
+}
+
+// Tag each GenericUserLicense in the response with the locale used to fetch it.
+// Lets the cache key include the locale so entities for different locales don't
+// overwrite each other in normalised storage.
+const licenseLocaleTagLink = new ApolloLink((operation, forward) => {
+  const locale = (operation.variables as { locale?: string } | undefined)
+    ?.locale
+  return forward(operation).map((response) => {
+    const collection = response.data?.genericLicenseCollection
+    const licenses = collection?.licenses
+    if (!locale || !collection || !Array.isArray(licenses)) {
+      return response
+    }
+    return {
+      ...response,
+      data: {
+        ...response.data,
+        genericLicenseCollection: {
+          ...collection,
+          licenses: licenses.map((license: Record<string, unknown>) => ({
+            ...license,
+            __locale: locale,
+          })),
+        },
+      },
+    }
+  })
+})
+
+const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
   if (graphQLErrors) {
     graphQLErrors.map((graphQLError) =>
       console.log(`[GraphQL error]: ${JSON.stringify(graphQLError, null, 2)}`),
@@ -66,29 +132,35 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
   }
 
   if (networkError) {
-    console.log(`[Network error]: ${networkError}`)
-
-    // Detect possible OAuth needed
+    // Cognito proxy served the HTML login page
     if (networkError.name === 'ServerParseError') {
-      const redirectUrl = (networkError as { response?: { url: string } })
-        .response?.url
-      if (
-        redirectUrl &&
-        redirectUrl.indexOf('cognito.shared.devland.is') >= 0
-      ) {
-        authStore.setState({ cognitoAuthUrl: redirectUrl })
-
-        if (config.isTestingApp && authStore.getState().authorizeResult) {
-          openNativeBrowser(cognitoAuthUrl(), MainBottomTabs)
-        }
+      const parseError = networkError as ServerParseError
+      const isCognitoLogin = parseError.bodyText.includes('cognito-login.css')
+      const isCognitoRedirect = parseError?.response?.url?.includes('cognito')
+      if (isCognitoLogin || isCognitoRedirect) {
+        triggerCognitoReauth({ clearStaleToken: false })
+        return
       }
     }
+
+    // 401 from the Cognito proxy (non-prod only).
+    if (
+      networkError.name === 'ServerError' &&
+      (networkError as ServerError).statusCode === 401 &&
+      environmentStore.getState().environment.idsIssuer !==
+        environments.prod.idsIssuer
+    ) {
+      triggerCognitoReauth({ clearStaleToken: true })
+      return
+    }
+
+    console.log(`[Network error]: ${networkError}`)
   }
 })
 
 const getAndRefreshToken = async () => {
-  const { refresh } = authStore.getState()
-  let { authorizeResult } = authStore.getState()
+  const { refresh } = getAuthStoreRef().getState()
+  let { authorizeResult } = getAuthStoreRef().getState()
 
   const timeUntilExpiration =
     new Date(authorizeResult?.accessTokenExpirationDate ?? 0).getTime() -
@@ -98,10 +170,10 @@ const getAndRefreshToken = async () => {
   if (isTokenPerhapsExpired) {
     // get a new token to be safe
     await refresh()
-    authorizeResult = authStore.getState().authorizeResult
+    authorizeResult = getAuthStoreRef().getState().authorizeResult
   } else if (isTokenCloseToExpiring) {
     // expires in less than 60 seconds, so refresh in the background
-    refresh().catch((err) => {
+    refresh().catch((err: Error) => {
       console.error('Failed to refresh token in the background', err)
     })
   }
@@ -120,7 +192,7 @@ const authLink = setContext(async (_, { headers }) => {
         environmentStore.getState().cognito?.accessToken
       }`,
       'User-Agent': getCustomUserAgent(),
-      cookie: [authStore.getState().cookies]
+      cookie: [getAuthStoreRef().getState().cookies]
         .filter((x) => String(x) !== '')
         .join('; '),
     },
@@ -172,65 +244,64 @@ const cache = new InMemoryCache({
     },
     // Custom cache key for GenericUserLicense.
     // The backend does not expose a single stable id, so we synthesise one from
-    // license.type and payload.metadata.licenseId. This must stay in sync with
-    // the fields selected in GenericUserLicenseFragment so list and detail
-    // queries for the same license share the same cache entry.
+    // license.type and payload.metadata.licenseId. We also append the locale
+    // (injected by licenseLocaleTagLink) so entities fetched in different
+    // locales don't overwrite each other.
     GenericUserLicense: {
       keyFields: (object) => {
         const licenseType = (object as GenericUserLicense).license?.type
         const licenseId = (object as GenericUserLicense).payload?.metadata
           ?.licenseId
+        const locale = (object as { __locale?: string }).__locale
 
-        if (licenseType && licenseId) {
-          // Composite key ensures no collisions between different license types
-          // that might share the same licenseId.
-          return `${licenseType}:${licenseId}`
+        const baseKey =
+          licenseType && licenseId
+            ? // Composite key ensures no collisions between different license types
+              // that might share the same licenseId.
+              `${licenseType}:${licenseId}`
+            : // Fallback when type is missing but licenseId is still unique enough.
+              licenseId ??
+              // Last resort – let Apollo fall back to its default normalisation.
+              defaultDataIdFromObject(object) ??
+              undefined
+
+        if (!baseKey) {
+          return undefined
         }
-
-        if (licenseId) {
-          // Fallback when type is missing but licenseId is still unique enough.
-          return licenseId
-        }
-
-        // Last resort – let Apollo fall back to its default normalisation.
-        return defaultDataIdFromObject(object) ?? undefined
+        return locale ? `${baseKey}:${locale}` : baseKey
       },
     },
   },
 })
 
-let apolloClientPromise: Promise<ApolloClient<NormalizedCacheObject>> | null =
-  null
-let apolloClient: ApolloClient<NormalizedCacheObject> | null = null
+// Re-export from client-instance for backward compatibility
+export { getApolloClientAsync, getApolloClient } from './client-instance'
 
-export const getApolloClientAsync = () => {
-  if (!apolloClientPromise) {
-    apolloClientPromise = initializeApolloClient()
-  }
-
-  return apolloClientPromise
-}
-
-export const getApolloClient = () => {
-  if (!apolloClient) {
-    throw new Error('Apollo client not initialized')
-  }
-
-  return apolloClient
-}
-
-export const initializeApolloClient = async () => {
+const initializeApolloClient = async () => {
   await persistCache({
     cache,
-    storage: new MMKVStorageWrapper(apolloMMKVStorage),
+    storage: new MMKVStorageWrapper({
+      getItem: async (key) => {
+        const value = await apolloMMKVStorage.getStringAsync(key)
+        return value ?? null
+      },
+      setItem: async (key, value) => {
+        await apolloMMKVStorage.setItem(key, value)
+        return true
+      },
+      removeItem: async (key) => {
+        await apolloMMKVStorage.removeItem(key)
+        return true
+      },
+    }),
   })
 
-  apolloClient = new ApolloClient({
+  return new ApolloClient({
     link: ApolloLink.from([
-      connectivityLink,
       retryLink,
       errorLink,
       authLink,
+      licenseLocaleTagLink,
       httpLink,
     ]),
     defaultOptions: {
@@ -240,6 +311,7 @@ export const initializeApolloClient = async () => {
     },
     cache,
   })
-
-  return apolloClient
 }
+
+// Register the initializer so client-instance can create the client on demand
+setInitializer(initializeApolloClient)

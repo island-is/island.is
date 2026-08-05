@@ -5,13 +5,12 @@ export const container = style({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
-  transition: 'margin-left .35s ease .5s',
+  flexShrink: 0,
 
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       flexDirection: 'column',
       alignItems: 'flex-start',
-      transition: 'none',
     },
   },
 })

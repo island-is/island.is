@@ -17,6 +17,7 @@ export interface PdfViewerProps {
   scale?: number
   autoWidth?: boolean
   errorComponent?: ReactNode
+  disableLoading?: boolean
   onLoadingError?: (error: Error) => void
   onLoadingSuccess?: () => void
 }
@@ -38,6 +39,7 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
   scale = 1,
   autoWidth = true,
   errorComponent,
+  disableLoading = false,
   onLoadingError,
   onLoadingSuccess,
 }) => {
@@ -86,7 +88,7 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
           file={file}
           onLoadSuccess={onDocumentLoadSuccess}
           className={cn(styles.pdfViewer, { [styles.pdfSvgPage]: autoWidth })}
-          loading={() => loadingView()}
+          loading={disableLoading ? undefined : () => loadingView()}
           error={errorComponent ?? pdfError}
           onLoadError={onLoadingError}
           externalLinkTarget="_blank"

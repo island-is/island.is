@@ -7,23 +7,23 @@ query getAppointments(
       __typename
       id
       title
-      instruction
       date
-      status
       duration
+      modality
+      practitioners
+      assignees {
+        type
+        name
+      }
       location {
         __typename
         name
         organization
-        directions
         address
         city
-        postalCode
-        country
         latitude
         longitude
       }
-      practitioners
     }
   }
 }

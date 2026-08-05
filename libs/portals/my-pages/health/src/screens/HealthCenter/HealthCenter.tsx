@@ -20,12 +20,14 @@ import { messages as hm, messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { useGetHealthCenterQuery } from './HealthCenter.generated'
 import HistoryTable from './HistoryTable'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const DEFAULT_DATE_TO = new Date()
 const DEFAULT_DATE_FROM = subYears(DEFAULT_DATE_TO, 10)
 
 const HealthCenter = () => {
   useNamespaces('sp.health')
+  useHealthPlausibleSwap()
   const { formatMessage } = useLocale()
   const location = useLocation()
 
@@ -66,8 +68,11 @@ const HealthCenter = () => {
       marginBottom={[6, 6, 10]}
       title={formatMessage(messages.healthCenterTitle)}
       intro={formatMessage(messages.healthCenterDescription)}
-      serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
-      serviceProviderTooltip={formatMessage(messages.healthTooltip)}
+      serviceProvider={{
+        slug: SJUKRATRYGGINGAR_SLUG,
+        tooltip: formatMessage(messages.healthTooltip),
+      }}
+      desktopContentSpan="10/12"
     >
       {wasSuccessfulTransfer && !loading && (
         <Box width="full" marginTop={4}>

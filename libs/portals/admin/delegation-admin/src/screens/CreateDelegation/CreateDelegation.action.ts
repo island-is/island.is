@@ -11,11 +11,7 @@ import {
   CreateDelegationMutation,
   CreateDelegationMutationVariables,
 } from './CreateDelegation.generated'
-import {
-  findProblemInApolloError,
-  Problem,
-  ProblemType,
-} from '@island.is/shared/problem'
+import { findProblemInApolloError, Problem } from '@island.is/shared/problem'
 
 const schema = z
   .object({

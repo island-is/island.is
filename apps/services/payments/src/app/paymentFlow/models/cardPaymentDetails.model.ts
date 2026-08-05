@@ -97,6 +97,15 @@ export class CardPaymentDetails extends Model<
   })
   merchantReferenceData!: string
 
+  @ApiProperty()
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+    field: 'is_deleted',
+  })
+  isDeleted!: CreationOptional<boolean>
+
   @CreatedAt
   @ApiProperty()
   @Column({

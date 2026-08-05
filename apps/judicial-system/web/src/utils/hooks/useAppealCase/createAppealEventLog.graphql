@@ -1,0 +1,5 @@
+mutation CreateAppealEventLog($input: CreateAppealEventLogInput!) {
+  createAppealEventLog(input: $input) {
+    id
+  }
+}

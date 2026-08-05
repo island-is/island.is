@@ -17,19 +17,19 @@ import {
   FeatureFlagGuard,
   Features,
 } from '@island.is/nest/feature-flags'
-import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import {
   InvoiceErrorCode,
   PaymentServiceCode,
 } from '@island.is/shared/constants'
-import { CreateInvoiceResponse } from './dtos/createInvoice.response'
-import { CreateInvoiceInput } from './dtos/createInvoice.input'
-import { CallbackInput } from './dtos/callback.input'
-import { PaidStatus } from './dtos/paidStatus.enum'
+import { environment } from '../../environments'
 import { PaymentMethod } from '../../types'
 import { generateChargeFJSPayload } from '../../utils/fjsCharge'
-import { environment } from '../../environments'
 import { onlyReturnKnownErrorCode } from '../../utils/paymentErrors'
+import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
+import { CallbackInput } from './dtos/callback.input'
+import { CreateInvoiceInput } from './dtos/createInvoice.input'
+import { CreateInvoiceResponse } from './dtos/createInvoice.response'
+import { PaidStatus } from './dtos/paidStatus.enum'
 import { InvoicePaymentService } from './invoicePayment.service'
 
 @UseGuards(FeatureFlagGuard)
@@ -58,14 +58,13 @@ export class InvoicePaymentController {
       const paymentFlow = await this.paymentFlowService.getPaymentFlowDetails(
         createInvoiceInput.paymentFlowId,
       )
-      const [{ catalogItems, totalPrice }, { paymentStatus }] =
-        await Promise.all([
-          this.paymentFlowService.getPaymentFlowChargeDetails(
-            paymentFlow.organisationId,
-            paymentFlow.charges,
-          ),
-          this.paymentFlowService.getPaymentFlowStatus(paymentFlow),
-        ])
+      const [{ catalogItems }, { paymentStatus }] = await Promise.all([
+        this.paymentFlowService.getPaymentFlowChargeDetails(
+          paymentFlow.organisationId,
+          paymentFlow.charges,
+        ),
+        this.paymentFlowService.getPaymentFlowStatus(paymentFlow),
+      ])
 
       if (paymentStatus === 'paid') {
         throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
@@ -84,7 +83,6 @@ export class InvoicePaymentController {
         generateChargeFJSPayload({
           paymentFlow,
           charges: catalogItems,
-          totalPrice,
           systemId: environment.chargeFjs.systemId,
           returnUrl: callbackUrl,
         }),
@@ -232,25 +230,5 @@ export class InvoicePaymentController {
       // Failed notification event is already stored in the database with a failed delivery status
       // No additional storage needed, can be queried later for retry
     }
-  }
-
-  private async refundPaymentAndLogError(
-    paymentFlowId: string,
-    errorMessage: string,
-  ): Promise<void> {
-    // Refund the payment by deleting the FJS charge
-    await this.paymentFlowService.deleteFjsCharge(paymentFlowId)
-
-    await this.paymentFlowService.logPaymentFlowUpdate({
-      paymentFlowId,
-      type: 'error',
-      occurredAt: new Date(),
-      paymentMethod: PaymentMethod.INVOICE,
-      reason: 'other',
-      message: `Failed to create invoice payment confirmation`,
-      metadata: {
-        error: errorMessage,
-      },
-    })
   }
 }

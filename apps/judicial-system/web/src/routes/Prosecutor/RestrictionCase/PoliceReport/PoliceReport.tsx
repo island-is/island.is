@@ -3,8 +3,15 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, Input } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
-import { rcReportForm, titles } from '@island.is/judicial-system-web/messages'
+import {
+  PROSECUTION_RESTRICTION_CASE_CASE_FILES_ROUTE,
+  PROSECUTION_RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
+} from '@island.is/judicial-system/consts'
+import {
+  core,
+  rcReportForm,
+  titles,
+} from '@island.is/judicial-system-web/messages'
 import {
   CommentsInput,
   FormContentContainer,
@@ -50,7 +57,6 @@ export const PoliceReport = () => {
           <Box component="section">
             <SectionHeading
               title={formatMessage(rcReportForm.sections.demands.heading)}
-              tooltip={formatMessage(rcReportForm.sections.demands.tooltip)}
             />
             <Input
               name="demands"
@@ -121,12 +127,20 @@ export const PoliceReport = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
-          previousUrl={`${constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() => {
-            handleNavigationTo(constants.RESTRICTION_CASE_CASE_FILES_ROUTE)
-          }}
-          nextIsDisabled={!stepIsValid}
+          previousUrl={`${PROSECUTION_RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              onClick: () => {
+                handleNavigationTo(
+                  PROSECUTION_RESTRICTION_CASE_CASE_FILES_ROUTE,
+                )
+              },
+              disabled: !stepIsValid,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

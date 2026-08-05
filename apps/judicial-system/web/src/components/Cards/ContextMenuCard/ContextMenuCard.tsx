@@ -1,0 +1,52 @@
+import { FC, PropsWithChildren, ReactElement } from 'react'
+
+import { Box } from '@island.is/island-ui/core'
+
+import BlueBox from '../../BlueBox/BlueBox'
+import ContextMenu, { ContextMenuItem } from '../../ContextMenu/ContextMenu'
+import IconButton from '../../IconButton/IconButton'
+
+interface ContextMenuCardProps {
+  title: ReactElement | string
+  contextMenuItems?: ContextMenuItem[]
+  // Accessible name for the icon-only context menu button.
+  menuLabel: string
+}
+
+const ContextMenuCard: FC<PropsWithChildren<ContextMenuCardProps>> = (
+  props,
+) => {
+  const { title, contextMenuItems, menuLabel, children } = props
+
+  return (
+    <BlueBox>
+      <Box
+        display="flex"
+        justifyContent="spaceBetween"
+        alignItems="center"
+        marginBottom={2}
+      >
+        {title}
+        <ContextMenu
+          placement="left-start"
+          shift={-12}
+          items={contextMenuItems ?? []}
+          render={
+            <IconButton
+              icon="ellipsisVertical"
+              colorScheme="transparent"
+              ariaLabel={menuLabel}
+              disabled={!contextMenuItems || contextMenuItems.length === 0}
+              onClick={(evt) => {
+                evt.stopPropagation()
+              }}
+            />
+          }
+        />
+      </Box>
+      {children}
+    </BlueBox>
+  )
+}
+
+export default ContextMenuCard

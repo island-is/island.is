@@ -9,6 +9,7 @@ import {
 } from '../types/input-types'
 import {
   ContainerRunHelm,
+  GatewayName,
   OutputFormat,
   OutputPersistentVolumeClaim,
   SerializeErrors,
@@ -56,7 +57,7 @@ const serializeService: SerializeMethod<HelmService> = async (
   ]
   const result: HelmService = {
     enabled: true,
-    grantNamespaces: grantNamespaces,
+    grantNamespaces: migrateGrantNamespaces(grantNamespaces),
     grantNamespacesEnabled: grantNamespacesEnabled,
     namespace: namespace,
     image: {
@@ -74,7 +75,7 @@ const serializeService: SerializeMethod<HelmService> = async (
     secrets: {},
     podDisruptionBudget: serviceDef.podDisruptionBudget ?? {
       unhealthyPodEvictionPolicy: 'IfHealthyBudget',
-      minAvailable: 1,
+      minAvailable: '50%',
     },
     healthCheck: {
       liveness: {
@@ -117,7 +118,7 @@ const serializeService: SerializeMethod<HelmService> = async (
   ) {
     result.replicaCount = {
       min: 1,
-      max: 3,
+      max: 2,
       default: 1,
     }
   } else {
@@ -153,6 +154,27 @@ const serializeService: SerializeMethod<HelmService> = async (
 
   if (serviceDef.extraAttributes) {
     result.extra = serviceDef.extraAttributes
+  }
+
+  // scheduled job — merge cron fields into extra so they land as top-level Helm values
+  if (serviceDef.scheduledJob) {
+    const {
+      schedule,
+      concurrencyPolicy,
+      startingDeadlineSeconds,
+      successfulJobsHistoryLimit,
+      failedJobsHistoryLimit,
+    } = serviceDef.scheduledJob
+    const cronExtra: Record<string, string | number | boolean> = { schedule }
+    if (concurrencyPolicy !== undefined)
+      cronExtra['concurrencyPolicy'] = concurrencyPolicy
+    if (startingDeadlineSeconds !== undefined)
+      cronExtra['startingDeadlineSeconds'] = startingDeadlineSeconds
+    if (successfulJobsHistoryLimit !== undefined)
+      cronExtra['successfulJobsHistoryLimit'] = successfulJobsHistoryLimit
+    if (failedJobsHistoryLimit !== undefined)
+      cronExtra['failedJobsHistoryLimit'] = failedJobsHistoryLimit
+    result.extra = { ...(result.extra ?? {}), ...cronExtra }
   }
   // target port
   if (typeof serviceDef.port !== 'undefined') {
@@ -239,14 +261,14 @@ const serializeService: SerializeMethod<HelmService> = async (
     }
   }
 
-  // ingress
+  // httpRoute (Envoy Gateway)
   if (Object.keys(serviceDef.ingress).length > 0) {
-    result.ingress = Object.entries(serviceDef.ingress).reduce(
+    result.httpRoute = Object.entries(serviceDef.ingress).reduce(
       (acc, [ingressName, ingressConf]) => {
-        const ingress = serializeIngress(serviceDef, ingressConf, env1)
+        const route = serializeHTTPRoute(ingressConf, env1)
         return {
           ...acc,
-          [`${ingressName}-alb`]: ingress,
+          [`${ingressName}-gw`]: route,
         }
       },
       {},
@@ -353,39 +375,6 @@ function serializePostgres(
   return { env, secrets, errors }
 }
 
-function serializeIngress(
-  _serviceDef: ServiceDefinitionForEnv,
-  ingressConf: IngressForEnv,
-  env: EnvironmentConfig,
-): NonNullable<HelmService['ingress']>[string] {
-  const hosts = (
-    typeof ingressConf.host === 'string' ? [ingressConf.host] : ingressConf.host
-  ).map((host) =>
-    ingressConf.public ?? true
-      ? hostFullName(host, env)
-      : internalHostFullName(host, env),
-  )
-
-  const className =
-    ingressConf.public ?? true ? 'nginx-external-alb' : 'nginx-internal-alb'
-  const pathTypeOverride = ingressConf.pathTypeOverride
-    ? { pathTypeOverride: ingressConf.pathTypeOverride }
-    : null
-  return {
-    annotations: {
-      'kubernetes.io/ingress.class': className,
-      'nginx.ingress.kubernetes.io/service-upstream':
-        ingressConf.serviceUpstream ?? true ? 'true' : 'false',
-      ...ingressConf.extraAnnotations,
-    },
-    hosts: hosts.map((host) => ({
-      host: host,
-      ...pathTypeOverride,
-      paths: ingressConf.paths,
-    })),
-  }
-}
-
 function serializeVolumes(
   service: ServiceDefinitionForEnv,
   volumes: {
@@ -468,6 +457,79 @@ const hostFullName = (host: string, env: EnvironmentConfig) => {
 const internalHostFullName = (host: string, env: EnvironmentConfig) =>
   host.indexOf('.') < 0 ? `${host}.internal.${env.domain}` : host
 
+const GATEWAY_EXTERNAL_NAMESPACE = 'envoy-gateway-external'
+const GATEWAY_INTERNAL_NAMESPACE = 'envoy-gateway-internal'
+
+/**
+ * Add envoy-gateway-external/internal grant namespaces alongside nginx ones.
+ * Maps nginx-ingress-external* → envoy-gateway-external,
+ *      nginx-ingress-internal* → envoy-gateway-internal.
+ * Keeps all existing grants intact for side-by-side migration.
+ */
+function migrateGrantNamespaces(namespaces: string[]): string[] {
+  const extra: string[] = []
+  for (const ns of namespaces) {
+    if (ns.startsWith('nginx-ingress-external')) {
+      extra.push(GATEWAY_EXTERNAL_NAMESPACE)
+    } else if (ns.startsWith('nginx-ingress-internal')) {
+      extra.push(GATEWAY_INTERNAL_NAMESPACE)
+    }
+  }
+  if (extra.length === 0) return namespaces
+  return Array.from(new Set([...namespaces, ...extra]))
+}
+
+function serializeHTTPRoute(
+  ingressConf: IngressForEnv,
+  env: EnvironmentConfig,
+): NonNullable<HelmService['httpRoute']>[string] {
+  const isPublic = ingressConf.public ?? true
+
+  let gatewayName: GatewayName
+  if (!isPublic) {
+    gatewayName = 'gateway-internal'
+  } else {
+    gatewayName = 'gateway-external'
+  }
+
+  const hostnames = (
+    typeof ingressConf.host === 'string' ? [ingressConf.host] : ingressConf.host
+  ).map((host) =>
+    isPublic ? hostFullName(host, env) : internalHostFullName(host, env),
+  )
+
+  // Detect nginx rewrite-target annotation → Gateway API ReplacePrefixMatch
+  const rewriteTarget =
+    ingressConf.extraAnnotations?.['nginx.ingress.kubernetes.io/rewrite-target']
+  const rewritePrefix = rewriteTarget === '/$2' ? '/' : undefined
+
+  return {
+    parentRefs: [
+      {
+        name: gatewayName,
+        namespace: isPublic
+          ? GATEWAY_EXTERNAL_NAMESPACE
+          : GATEWAY_INTERNAL_NAMESPACE,
+      },
+    ],
+    hostnames,
+    rules: [
+      {
+        matches: ingressConf.paths.map((path) => {
+          // Normalize nginx regex paths to Gateway API PathPrefix
+          // e.g. /api(/|$)(.*) → /api
+          const normalized = path.replace(/\(\/\|\$\)\(\.\*\)$/, '')
+          if (ingressConf.pathTypeOverride === 'Exact') {
+            return { pathExact: normalized }
+          }
+          return { pathPrefix: normalized }
+        }),
+        ...(rewritePrefix ? { rewritePrefix } : {}),
+      },
+    ],
+  }
+}
+
 const serviceMockDef = (options: {
   runtime: ReferenceResolver
   env: EnvironmentConfig
@@ -539,7 +601,7 @@ export const HelmOutput: OutputFormat<HelmService> = {
     })
     s.replicaCount = {
       min: Math.min(1, s.replicaCount?.min ?? 1),
-      max: Math.min(2, s.replicaCount?.max ?? 1),
+      max: Math.min(1, s.replicaCount?.max ?? 1),
       default: Math.min(1, s.replicaCount?.default ?? 1),
     }
     s.namespace = getFeatureDeploymentNamespace(env)

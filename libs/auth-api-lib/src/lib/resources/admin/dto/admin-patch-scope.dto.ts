@@ -1,5 +1,14 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
-import { IsArray, IsBoolean, IsOptional, ValidateNested } from 'class-validator'
+import {
+  IsArray,
+  IsBoolean,
+  IsOptional,
+  IsUrl,
+  MaxLength,
+  ValidateIf,
+  ValidateNested,
+  IsString,
+} from 'class-validator'
 import { Type } from 'class-transformer'
 
 import { TranslatedValueDto } from '../../../translation/dto/translated-value.dto'
@@ -112,6 +121,79 @@ export class AdminPatchScopeDto {
     example: ['Custom'],
   })
   removedDelegationTypes?: AuthDelegationType[]
+
+  @IsArray()
+  @IsOptional()
+  @IsString({ each: true })
+  @ApiPropertyOptional({
+    type: [String],
+    example: ['4vQ4htPOAZvzcXBcjx06SH'],
+    description: 'CMS category IDs to add to this scope',
+  })
+  addedCategoryIds?: string[]
+
+  @IsArray()
+  @IsOptional()
+  @IsString({ each: true })
+  @ApiPropertyOptional({
+    type: [String],
+    example: ['4vQ4htPOAZvzcXBcjx06SH'],
+    description: 'CMS category IDs to remove from this scope',
+  })
+  removedCategoryIds?: string[]
+
+  @IsArray()
+  @IsOptional()
+  @IsString({ each: true })
+  @ApiPropertyOptional({
+    type: [String],
+    example: ['2eGxK9pLm3'],
+    description: 'CMS tag IDs to add to this scope',
+  })
+  addedTagIds?: string[]
+
+  @IsArray()
+  @IsOptional()
+  @IsString({ each: true })
+  @ApiPropertyOptional({
+    type: [String],
+    example: ['2eGxK9pLm3'],
+    description: 'CMS tag IDs to remove from this scope',
+  })
+  removedTagIds?: string[]
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiPropertyOptional({
+    example: false,
+    description:
+      'Whether this scope allows write access (read access is always implicit)',
+  })
+  allowsWrite?: boolean
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiPropertyOptional({
+    example: false,
+    description:
+      'Whether this scope requires step-up authentication (tvöfalt samþykki) for sensitive information access',
+  })
+  requiresConfirmation?: boolean
+
+  @IsString()
+  @IsOptional()
+  @ValidateIf((o) => !!o.thirdPartyLoginUrl)
+  @IsUrl(
+    { protocols: ['https'], require_protocol: true },
+    { message: 'thirdPartyLoginUrl must be an HTTPS URL' },
+  )
+  @MaxLength(2000)
+  @ApiPropertyOptional({
+    example:
+      'https://example.com/bff/login?login_hint={{subjectId}}&target_link_uri=https://example.com/minarsidur',
+    description: 'URL to redirect to for third party delegation login',
+  })
+  thirdPartyLoginUrl?: string
 }
 
 /**

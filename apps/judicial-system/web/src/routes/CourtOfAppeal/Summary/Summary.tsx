@@ -3,7 +3,11 @@ import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import { Box } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE,
+  COURT_OF_APPEAL_RESULT_ROUTE,
+  COURT_OF_APPEAL_RULING_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   AlertBanner,
@@ -19,17 +23,18 @@ import {
   PageTitle,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CaseAppealRulingDecision,
-  CaseAppealState,
-  CaseTransition,
-  NotificationType,
+  AppealCaseRulingDecision,
+  AppealCaseState,
+  AppealCaseTransition,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   getAppealDecision,
-  useCase,
+  useAppealCase,
+  useTargetAppealCaseByAppealCaseId,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
-  hasSentNotification,
+  appendAppealCaseIdQuery,
+  isReopenedCOACase,
   shouldUseAppealWithdrawnRoutes,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
@@ -47,34 +52,32 @@ const Summary: FC = () => {
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { transitionCase, isTransitioningCase } = useCase()
+  const targetAppealCase = useTargetAppealCaseByAppealCaseId()
+  const { transitionAppealCase, isTransitioningAppealCase } = useAppealCase()
 
   const [visibleModal, setVisibleModal] = useState<ModalType>('none')
 
   const handleComplete = async () => {
     const caseTransitioned =
-      workingCase.appealState !== CaseAppealState.COMPLETED
-        ? await transitionCase(
+      targetAppealCase?.appealState !== AppealCaseState.COMPLETED
+        ? await transitionAppealCase(
             workingCase.id,
-            CaseTransition.COMPLETE_APPEAL,
+            targetAppealCase?.id ?? '',
+            AppealCaseTransition.COMPLETE_APPEAL,
             setWorkingCase,
           )
         : true
 
     if (caseTransitioned) {
-      workingCase.appealRulingDecision === CaseAppealRulingDecision.DISCONTINUED
+      targetAppealCase?.appealRulingDecision ===
+      AppealCaseRulingDecision.DISCONTINUED
         ? setVisibleModal('AppealDiscontinued')
         : setVisibleModal('AppealCompleted')
     }
   }
 
   const handleNextButtonClick = async () => {
-    if (
-      hasSentNotification(
-        NotificationType.APPEAL_COMPLETED,
-        workingCase.notifications,
-      ).hasSent
-    ) {
+    if (isReopenedCOACase(targetAppealCase)) {
       setVisibleModal('AppealRulingModified')
     } else {
       await handleComplete()
@@ -82,7 +85,12 @@ const Summary: FC = () => {
   }
 
   const handleNavigationTo = (destination: string) => {
-    return router.push(`${destination}/${workingCase.id}`)
+    return router.push(
+      appendAppealCaseIdQuery(
+        `${destination}/${workingCase.id}`,
+        targetAppealCase?.id,
+      ),
+    )
   }
 
   return (
@@ -92,7 +100,7 @@ const Summary: FC = () => {
         title={formatMessage(strings.alertBannerTitle)}
         description={getAppealDecision(
           formatMessage,
-          workingCase.appealRulingDecision,
+          targetAppealCase?.appealRulingDecision,
         )}
       />
       <PageLayout
@@ -117,7 +125,7 @@ const Summary: FC = () => {
           <Box marginBottom={6}>
             <Conclusion
               title={formatMessage(conclusion.appealTitle)}
-              conclusionText={workingCase.appealConclusion}
+              conclusionText={targetAppealCase?.appealConclusion}
             />
           </Box>
           <Box marginBottom={6}>
@@ -126,15 +134,21 @@ const Summary: FC = () => {
         </FormContentContainer>
         <FormContentContainer isFooter>
           <FormFooter
-            previousUrl={
-              shouldUseAppealWithdrawnRoutes(workingCase)
-                ? `${constants.COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE}/${workingCase.id}`
-                : `${constants.COURT_OF_APPEAL_RULING_ROUTE}/${workingCase.id}`
-            }
-            nextButtonIcon="checkmark"
-            nextButtonText={formatMessage(strings.nextButtonFooter)}
-            onNextButtonClick={async () => await handleNextButtonClick()}
-            nextIsDisabled={isTransitioningCase}
+            previousUrl={appendAppealCaseIdQuery(
+              shouldUseAppealWithdrawnRoutes(targetAppealCase)
+                ? `${COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE}/${workingCase.id}`
+                : `${COURT_OF_APPEAL_RULING_ROUTE}/${workingCase.id}`,
+              targetAppealCase?.id,
+            )}
+            actions={[
+              {
+                text: formatMessage(strings.nextButtonFooter),
+                icon: 'checkmark',
+                onClick: async () => await handleNextButtonClick(),
+                disabled: isTransitioningAppealCase,
+                testId: 'continueButton',
+              },
+            ]}
           />
         </FormContentContainer>
         {visibleModal === 'AppealCompleted' && (
@@ -145,7 +159,10 @@ const Summary: FC = () => {
               text: formatMessage(core.closeModal),
               onClick: () => {
                 router.push(
-                  `${constants.COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
+                  appendAppealCaseIdQuery(
+                    `${COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
+                    targetAppealCase?.id,
+                  ),
                 )
               },
             }}
@@ -165,7 +182,10 @@ const Summary: FC = () => {
               text: formatMessage(core.closeModal),
               onClick: () => {
                 router.push(
-                  `${constants.COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
+                  appendAppealCaseIdQuery(
+                    `${COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
+                    targetAppealCase?.id,
+                  ),
                 )
               },
             }}

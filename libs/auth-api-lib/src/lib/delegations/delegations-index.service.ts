@@ -11,6 +11,7 @@ import {
   AuthDelegationProvider,
   AuthDelegationType,
   getPersonalRepresentativeDelegationType,
+  isPersonalRepresentativeDelegationType,
 } from '@island.is/shared/types'
 
 import { PersonalRepresentativeScopePermissionService } from '../personal-representative/services/personal-representative-scope-permission.service'
@@ -474,33 +475,45 @@ export class DelegationsIndexService {
     return updatedDelegation.toDTO()
   }
 
-  /* Delete record from index */
+  /* Remove record from index; logs errors internally. */
   async removeDelegationRecord(
     delegation: DelegationRecordInputDTO,
     auth: Auth,
   ) {
     validateCrudParams(delegation)
 
-    await this.auditService.auditPromise(
-      {
-        auth,
-        action: 'remove-delegation-record',
-        namespace: '@island.is/auth/delegation-index',
-        resources: delegation.toNationalId,
-        alsoLog: true,
-        meta: {
-          delegation,
+    try {
+      await this.auditService.auditPromise(
+        {
+          auth,
+          action: 'remove-delegation-record',
+          namespace: '@island.is/auth/delegation-index',
+          resources: delegation.toNationalId,
+          alsoLog: true,
+          meta: {
+            delegation,
+          },
         },
-      },
-      this.delegationIndexModel.destroy({
-        where: {
+        this.delegationIndexModel.destroy({
+          where: {
+            fromNationalId: delegation.fromNationalId,
+            toNationalId: delegation.toNationalId,
+            provider: delegation.provider,
+            type: delegation.type,
+          },
+        }),
+      )
+    } catch (error) {
+      this.logger.error('Failed to remove delegation record from index', {
+        error,
+        delegation: {
           fromNationalId: delegation.fromNationalId,
           toNationalId: delegation.toNationalId,
-          provider: delegation.provider,
           type: delegation.type,
+          provider: delegation.provider,
         },
-      }),
-    )
+      })
+    }
   }
 
   async getAvailableDistrictCommissionersRegistryRecords(
@@ -510,11 +523,15 @@ export class DelegationsIndexService {
     requireApiScopes?: boolean,
   ): Promise<DelegationRecordDTO[]> {
     if (requireApiScopes) {
-      const noSupportedScope = !clientAllowedApiScopes.some(
-        (s) =>
-          s.supportedDelegationTypes?.some(
-            (dt) => dt.delegationType == AuthDelegationType.LegalRepresentative,
-          ) && !s.isAccessControlled,
+      const noSupportedScope = !clientAllowedApiScopes.some((s) =>
+        s.supportedDelegationTypes?.some(
+          (dt) =>
+            (dt.delegationType === AuthDelegationType.LegalRepresentative ||
+              isPersonalRepresentativeDelegationType(
+                String(dt.delegationType),
+              )) &&
+            !s.isAccessControlled,
+        ),
       )
       if (noSupportedScope) {
         return []
@@ -801,5 +818,44 @@ export class DelegationsIndexService {
           )
           .filter((d) => d.validTo !== null), // if child has already turned 18/16, we don't want to index the delegation
     )
+  }
+
+  async getSubjectIdsForDelegations(
+    delegations: DelegationDTO[],
+  ): Promise<DelegationDTO[]> {
+    if (delegations.length === 0) return delegations
+
+    const pairs = [
+      ...new Set(
+        delegations.map((d) => `${d.fromNationalId}|${d.toNationalId}`),
+      ),
+    ]
+
+    const records = await this.delegationIndexModel.findAll({
+      attributes: ['fromNationalId', 'toNationalId', 'subjectId'],
+      where: {
+        [Op.or]: pairs.map((pair) => {
+          const [fromNationalId, toNationalId] = pair.split('|')
+          return { fromNationalId, toNationalId }
+        }),
+        subjectId: { [Op.ne]: null },
+      },
+      group: ['fromNationalId', 'toNationalId', 'subjectId'],
+    })
+
+    const subjectIdMap = new Map(
+      records.map((r) => [
+        `${r.fromNationalId}|${r.toNationalId}`,
+        r.subjectId,
+      ]),
+    )
+
+    return delegations.map((d) => ({
+      ...d,
+      subjectId:
+        d.subjectId ??
+        subjectIdMap.get(`${d.fromNationalId}|${d.toNationalId}`) ??
+        null,
+    }))
   }
 }

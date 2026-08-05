@@ -1,14 +1,26 @@
 import { ApplicationEligibility, RequirementKey } from '@island.is/api/schema'
-import { DrivingLicenseApplicationFor, B_FULL, BE } from '../../lib/constants'
+import {
+  B_FULL,
+  B_FULL_RENEWAL_65,
+  B_TEMP,
+  BE,
+  DrivingLicenseApplicationFor,
+} from '../../lib/constants'
 
 export const fakeEligibility = (
   applicationFor: DrivingLicenseApplicationFor,
   daysOfResidency = 365,
-  requiresHealthCertificate = false, //TODO: Remove when RLS/SGS supports health certificate in BE license
+  hasPhoto = true,
+  is65RenewalRedesignEnabled = false,
+  isBTempRedesignEnabled = false,
 ): ApplicationEligibility => {
+  const usesPhotoGate =
+    applicationFor === BE ||
+    (applicationFor === B_FULL_RENEWAL_65 && is65RenewalRedesignEnabled) ||
+    (applicationFor === B_TEMP && isBTempRedesignEnabled)
+
   return {
-    //TODO: set to true when RLS/SGS supports health certificate in BE license
-    isEligible: applicationFor === BE ? !requiresHealthCertificate : true,
+    isEligible: usesPhotoGate ? hasPhoto : true,
     requirements: [
       ...(applicationFor === B_FULL
         ? [
@@ -21,17 +33,16 @@ export const fakeEligibility = (
               requirementMet: true,
             },
           ]
-        : //TODO: Remove when RLS/SGS supports health certificate in BE license
-        applicationFor === BE
+        : usesPhotoGate
         ? [
-            {
-              key: RequirementKey.beRequiresHealthCertificate,
-              requirementMet: !requiresHealthCertificate,
-            },
             {
               key: RequirementKey.localResidency,
               daysOfResidency,
               requirementMet: daysOfResidency >= 185,
+            },
+            {
+              key: RequirementKey.hasNoPhoto,
+              requirementMet: hasPhoto,
             },
           ]
         : [
@@ -43,9 +54,7 @@ export const fakeEligibility = (
           ]),
       {
         key: RequirementKey.deniedByService,
-        //TODO: set to true when RLS/SGS supports health certificate in BE license
-        requirementMet:
-          applicationFor === BE ? !requiresHealthCertificate : true,
+        requirementMet: true,
       },
     ],
   }

@@ -1,4 +1,7 @@
-import { Field, InputType } from '@nestjs/graphql'
+import { Field, InputType, registerEnumType } from '@nestjs/graphql'
+import { FinanceApiVersion } from '../enums'
+
+registerEnumType(FinanceApiVersion, { name: 'FinanceApiVersion' })
 
 @InputType()
 export class GetCustomerRecordsInput {

@@ -1,4 +1,5 @@
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
@@ -19,8 +20,6 @@ import {
 import { Case } from './case.model'
 import { CivilClaimant } from './civilClaimant.model'
 import { Defendant } from './defendant.model'
-
-// TODO Find a way to import from an index file
 
 @Table({
   tableName: 'case_file',
@@ -58,6 +57,22 @@ export class CaseFile extends Model {
   @Column({ type: DataType.UUID, allowNull: true })
   @ApiProperty({ type: String })
   civilClaimantId?: string
+
+  /**********
+   * For appeal-related files (brief, statement, ...) belonging to a
+   * ruling-order appeal: the id of the COURT_INDICTMENT_RULING_ORDER file
+   * being appealed — same value the matching AppealCase row holds in its
+   * own rulingFileId column. NULL for case-level appeal files and for the
+   * source ruling-order files themselves.
+   **********/
+  @ForeignKey(() => CaseFile)
+  @Column({ type: DataType.UUID, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  rulingFileId?: string
+
+  @BelongsTo(() => CaseFile, 'rulingFileId')
+  @ApiPropertyOptional({ type: () => CaseFile })
+  rulingFile?: CaseFile
 
   @Column({ type: DataType.STRING, allowNull: false })
   @ApiProperty({ type: String })

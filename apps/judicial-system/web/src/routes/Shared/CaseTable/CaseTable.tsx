@@ -11,7 +11,11 @@ import {
   TagVariant,
   Text,
 } from '@island.is/island-ui/core'
-import { caseTables, getCaseTableType } from '@island.is/judicial-system/types'
+import {
+  caseTables,
+  getCaseTableType,
+  isDefenceUser,
+} from '@island.is/judicial-system/types'
 import {
   CasesLayout,
   Logo,
@@ -34,7 +38,7 @@ import {
   ContextMenuCaseActionType,
   StringGroupValue,
   StringValue,
-  TagPairValue,
+  TagGroupValue,
   TagValue,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -88,14 +92,14 @@ const renderTag = (value: TagValue) => {
   )
 }
 
-const renderTagPair = (value: TagPairValue) => {
-  const firstTag = value.firstTag
-  const secondTag = value.secondTag
+const renderTagGroup = (value: TagGroupValue) => {
+  const { firstTag, secondTag, thirdTag } = value
 
   return (
     <TagContainer>
       {renderTag(firstTag)}
       {secondTag && renderTag(secondTag)}
+      {thirdTag && renderTag(thirdTag)}
     </TagContainer>
   )
 }
@@ -114,8 +118,8 @@ const render = (cell: CaseTableCell): ReactNode => {
       return renderStringGroup(value)
     case 'TagValue':
       return renderTag(value)
-    case 'TagPairValue':
-      return renderTagPair(value)
+    case 'TagGroupValue':
+      return renderTagGroup(value)
     // This should never happen, but if it does, we return null
     default:
       return null
@@ -129,6 +133,7 @@ const CaseTable: FC = () => {
   const {
     isOpeningCaseId,
     isOpeningDefendantIds,
+    isOpeningAppealCaseId,
     handleOpenCase,
     LoadingIndicator,
     showLoading,
@@ -165,17 +170,23 @@ const CaseTable: FC = () => {
 
   const getRow = (r: CaseTableRow) => {
     const getContextMenuItems = () => {
-      return r.contextMenuActions.map((a) => {
-        switch (a) {
-          case ContextMenuCaseActionType.DELETE_CASE:
-            return deleteCase(r.caseId)
-          case ContextMenuCaseActionType.WITHDRAW_APPEAL:
-            return withdrawAppeal(r.caseId)
-          case ContextMenuCaseActionType.OPEN_CASE_IN_NEW_TAB:
-          default: // Default to opening the case in a new tab
-            return openCaseInNewTab(r.caseId)
-        }
-      })
+      return r.contextMenuActions
+        .map((a) => {
+          switch (a) {
+            case ContextMenuCaseActionType.DELETE_CASE:
+              return deleteCase(r.caseId)
+            case ContextMenuCaseActionType.WITHDRAW_APPEAL:
+              return r.appealCaseId
+                ? withdrawAppeal(r.caseId, r.appealCaseId)
+                : null
+            case ContextMenuCaseActionType.OPEN_APPEAL_CASE_IN_NEW_TAB:
+              return openCaseInNewTab(r.caseId, r.appealCaseId)
+            case ContextMenuCaseActionType.OPEN_CASE_IN_NEW_TAB:
+            default: // Default to opening the case in a new tab
+              return openCaseInNewTab(r.caseId)
+          }
+        })
+        .filter((i) => i !== null)
     }
 
     const getRowClickAction = () => {
@@ -185,6 +196,20 @@ const CaseTable: FC = () => {
             onClick: () => cancelCase(r.caseId),
             isDisabled: cancelCaseId === r.caseId,
             isLoading: cancelCaseId === r.caseId && isCancelCaseLoading,
+          }
+        case CaseActionType.OPEN_APPEAL_CASE:
+          return {
+            onClick: () =>
+              handleOpenCase(r.caseId, false, r.defendantIds, r.appealCaseId),
+            isDisabled:
+              isOpeningCaseId === r.caseId &&
+              compareArrays(isOpeningDefendantIds, r.defendantIds) &&
+              isOpeningAppealCaseId === r.appealCaseId,
+            isLoading:
+              isOpeningCaseId === r.caseId &&
+              compareArrays(isOpeningDefendantIds, r.defendantIds) &&
+              isOpeningAppealCaseId === r.appealCaseId &&
+              showLoading,
           }
         case CaseActionType.OPEN_CASE:
         default: // Default to opening the case in a new tab
@@ -205,8 +230,24 @@ const CaseTable: FC = () => {
     const cells = r.cells
     const contextMenuItems = getContextMenuItems()
     const { onClick, isDisabled, isLoading } = getRowClickAction()
+    // Build a descriptive accessible name for the row from its leading
+    // cell values (e.g. case number and defendant) so screen reader users
+    // can tell rows apart.
+    const label = r.cells
+      .map((c) => c.sortValue)
+      .filter((v): v is string => Boolean(v))
+      .slice(0, 2)
+      .join(', ')
 
-    return { id, cells, contextMenuItems, onClick, isDisabled, isLoading }
+    return {
+      id,
+      cells,
+      contextMenuItems,
+      onClick,
+      isDisabled,
+      isLoading,
+      label,
+    }
   }
 
   const errorMessage = (
@@ -236,7 +277,16 @@ const CaseTable: FC = () => {
         </Button>
       </Box>
       <div className={styles.logoContainer}>
-        <Logo />
+        {isDefenceUser(user) ? (
+          <SectionHeading
+            heading="h1"
+            variant="h1"
+            marginBottom={0}
+            title="Málin þín"
+          />
+        ) : (
+          <Logo />
+        )}
       </div>
       {/* If we cannot get the user, then we cannot determine which table to show and only show an error message */}
       {hasError && errorMessage}

@@ -18,11 +18,12 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
+  CurrentHttpUser,
   JwtAuthUserGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
-import { indictmentCases } from '@island.is/judicial-system/types'
+import { indictmentCases, type User } from '@island.is/judicial-system/types'
 
 import {
   districtCourtAssistantRule,
@@ -35,10 +36,17 @@ import {
   CaseWriteGuard,
   CurrentCase,
 } from '../case'
-import { Case, CourtSession, CourtSessionString } from '../repository'
+import {
+  AppealDecision,
+  Case,
+  CourtSession,
+  CourtSessionString,
+} from '../repository'
+import { CourtSessionAppealDecisionDto } from './dto/courtSessionAppealDecision.dto'
 import { CourtSessionStringDto } from './dto/CourtSessionStringDto.dto'
 import { DeleteCourtSessionResponse } from './dto/deleteCourtSession.response'
 import { UpdateCourtSessionDto } from './dto/updateCourtSession.dto'
+import { CurrentCourtSession } from './guards/courtSession.decorator'
 import { CourtSessionExistsGuard } from './guards/courtSessionExists.guard'
 import { CourtSessionService } from './courtSession.service'
 
@@ -94,6 +102,9 @@ export class CourtSessionController {
     @Param('caseId') caseId: string,
     @Param('courtSessionId') courtSessionId: string,
     @Body() courtSessionToUpdate: UpdateCourtSessionDto,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+    @CurrentCourtSession() courtSession: CourtSession,
   ): Promise<CourtSession> {
     this.logger.debug(
       `Updating court session ${courtSessionId} of case ${caseId}`,
@@ -101,9 +112,10 @@ export class CourtSessionController {
 
     return this.sequelize.transaction(async (transaction) =>
       this.courtSessionService.update(
-        caseId,
-        courtSessionId,
+        theCase,
+        courtSession,
         courtSessionToUpdate,
+        user,
         transaction,
       ),
     )
@@ -134,6 +146,39 @@ export class CourtSessionController {
       mergedCaseId: courtSessionString.mergedCaseId,
       update: courtSessionString,
     })
+  }
+
+  @UseGuards(CourtSessionExistsGuard)
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @Patch(':courtSessionId/appealDecision')
+  @ApiOkResponse({
+    type: AppealDecision,
+    description:
+      'Creates or updates a party appeal decision recorded in a court session',
+  })
+  upsertAppealDecision(
+    @Param('caseId') caseId: string,
+    @Param('courtSessionId') courtSessionId: string,
+    @Body() appealDecision: CourtSessionAppealDecisionDto,
+    @CurrentCase() theCase: Case,
+    @CurrentCourtSession() courtSession: CourtSession,
+  ): Promise<AppealDecision> {
+    this.logger.debug(
+      `Upserting appeal decision for court session ${courtSessionId} of case ${caseId}`,
+    )
+
+    return this.sequelize.transaction((transaction) =>
+      this.courtSessionService.upsertAppealDecision(
+        theCase,
+        courtSession,
+        appealDecision,
+        transaction,
+      ),
+    )
   }
 
   @UseGuards(CourtSessionExistsGuard)

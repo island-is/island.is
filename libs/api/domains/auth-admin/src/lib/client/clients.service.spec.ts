@@ -318,39 +318,41 @@ describe('ClientsService', () => {
         1,
       )
       expect(mockAdminProdApi.meClientsControllerUpdateRaw).toBeCalledTimes(1)
-      expect(response).toEqual([
-        {
-          environment: Environment.Development,
-          ...baseResponse,
-          id: `${
-            baseResponse.clientId
-          }#${Environment.Development.toLowerCase()}`,
-          postLogoutRedirectUris: [
-            'https://test.island.is',
-            'https://test2.island.is',
-          ],
-        },
-        {
-          environment: Environment.Staging,
-          ...baseResponse,
-          id: `${baseResponse.clientId}#${Environment.Staging.toLowerCase()}`,
-          postLogoutRedirectUris: [
-            'https://test.island.is',
-            'https://test2.island.is',
-          ],
-        },
-        {
-          environment: Environment.Production,
-          ...baseResponse,
-          id: `${
-            baseResponse.clientId
-          }#${Environment.Production.toLowerCase()}`,
-          postLogoutRedirectUris: [
-            'https://test.island.is',
-            'https://test2.island.is',
-          ],
-        },
-      ])
+      expect(response).toEqual({
+        environments: [
+          {
+            environment: Environment.Development,
+            ...baseResponse,
+            id: `${
+              baseResponse.clientId
+            }#${Environment.Development.toLowerCase()}`,
+            postLogoutRedirectUris: [
+              'https://test.island.is',
+              'https://test2.island.is',
+            ],
+          },
+          {
+            environment: Environment.Staging,
+            ...baseResponse,
+            id: `${baseResponse.clientId}#${Environment.Staging.toLowerCase()}`,
+            postLogoutRedirectUris: [
+              'https://test.island.is',
+              'https://test2.island.is',
+            ],
+          },
+          {
+            environment: Environment.Production,
+            ...baseResponse,
+            id: `${
+              baseResponse.clientId
+            }#${Environment.Production.toLowerCase()}`,
+            postLogoutRedirectUris: [
+              'https://test.island.is',
+              'https://test2.island.is',
+            ],
+          },
+        ],
+      })
     })
 
     it('should update the postLogoutRedirectUris for all Development only', async () => {
@@ -374,19 +376,21 @@ describe('ClientsService', () => {
         0,
       )
       expect(mockAdminProdApi.meClientsControllerUpdateRaw).toBeCalledTimes(0)
-      expect(response).toEqual([
-        {
-          environment: Environment.Development,
-          ...baseResponse,
-          id: `${
-            baseResponse.clientId
-          }#${Environment.Development.toLowerCase()}`,
-          postLogoutRedirectUris: [
-            'https://test.island.is',
-            'https://test2.island.is',
-          ],
-        },
-      ])
+      expect(response).toEqual({
+        environments: [
+          {
+            environment: Environment.Development,
+            ...baseResponse,
+            id: `${
+              baseResponse.clientId
+            }#${Environment.Development.toLowerCase()}`,
+            postLogoutRedirectUris: [
+              'https://test.island.is',
+              'https://test2.island.is',
+            ],
+          },
+        ],
+      })
     })
 
     it('should only rotate secret in a single target environment', async () => {

@@ -9,7 +9,8 @@ import {
   forwardRef,
 } from '@nestjs/common'
 import { AuthenticationError } from 'apollo-server-express'
-import { decode } from 'jsonwebtoken'
+import { jwtDecrypt } from 'jose'
+import { hkdf } from '@panva/hkdf'
 
 import type { GraphQLContext } from '@island.is/auth-nest-tools'
 import { getRequest } from '@island.is/auth-nest-tools'
@@ -41,7 +42,9 @@ export class AuthGuard implements CanActivate {
     return { ...user, role: Role.citizen } as User
   }
 
-  private decodeSession(request: GraphQLContext['req']): Partial<User> {
+  private async decodeSession(
+    request: GraphQLContext['req'],
+  ): Promise<Partial<User>> {
     const sessionToken = request.cookies
       ? request.cookies[environment.auth.nextAuthCookieName]
       : null
@@ -50,17 +53,32 @@ export class AuthGuard implements CanActivate {
       throw new AuthenticationError('Invalid user')
     }
 
-    const decodedToken = decode(sessionToken) as Partial<User>
+    const secret = process.env.NEXTAUTH_SECRET
+    if (!secret) {
+      throw new AuthenticationError('NEXTAUTH_SECRET is not configured')
+    }
+
+    const encryptionKey = await hkdf(
+      'sha256',
+      secret,
+      '',
+      'NextAuth.js Generated Encryption Key',
+      32,
+    )
+
+    const { payload } = await jwtDecrypt(sessionToken, encryptionKey, {
+      clockTolerance: 15,
+    })
 
     return {
-      name: decodedToken.name,
-      nationalId: decodedToken.nationalId,
+      name: payload.name as string,
+      nationalId: payload.nationalId as string,
     }
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request: GraphQLContext['req'] = getRequest(context)
-    const oidcUser = this.decodeSession(request)
+    const oidcUser = await this.decodeSession(request)
     const user = await this.getUser(oidcUser)
     request['auth'] = { scope: [], authorization: '', client: '', ...user }
     request['user'] = { scope: [], authorization: '', client: '', ...user }

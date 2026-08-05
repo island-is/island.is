@@ -3,7 +3,9 @@ import { ActionCardMetaData, ApplicationAdminData } from '@island.is/api/schema'
 
 export interface AdminApplication {
   id: string
-  typeId: Types.ApplicationListAdminResponseDtoTypeIdEnum
+  isFormSystem?: boolean
+  typeId: string
+  formSlug?: string
   applicant: string
   state: string
   created: string
@@ -20,4 +22,5 @@ export interface AdminApplication {
   applicantName?: string
   paymentStatus?: string
   adminData?: Array<ApplicationAdminData>
+  institutionContentfulSlug?: string
 }

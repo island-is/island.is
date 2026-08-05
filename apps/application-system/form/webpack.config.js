@@ -10,7 +10,9 @@ module.exports = composePlugins(withNx(), withReact(), nrwlConfig, (config) => {
   config.stats.modules = false
 
   if (isDev) {
-    config.devtool = 'eval-cheap-module-source-map'
+    // Disabling source maps due to memory consumption
+    // config.devtool = 'eval-cheap-module-source-map'
+    config.devtool = false
 
     // Add proxy configuration for development
     config.devServer = {

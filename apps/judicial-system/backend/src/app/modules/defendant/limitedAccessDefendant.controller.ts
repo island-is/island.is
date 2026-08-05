@@ -64,7 +64,11 @@ export class LimitedAccessDefendantController {
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @CurrentDefendant() defendant: Defendant,
-    @Body() updateDto: Pick<UpdateDefendantDto, 'punishmentType'>,
+    @Body()
+    updateDto: Pick<
+      UpdateDefendantDto,
+      'punishmentType' | 'isRegisteredInPrisonSystem'
+    >,
   ): Promise<Defendant> {
     this.logger.debug(
       `Updating limitedAccess defendant ${defendantId} of case ${caseId}`,

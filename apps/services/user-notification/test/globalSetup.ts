@@ -30,6 +30,35 @@ const setupSqsQueue = async () => {
       new CreateQueueCommand({ QueueName: environment.DEAD_LETTER_QUEUE_NAME }),
     )
     logger.debug('Dead letter queue created.')
+
+    logger.debug('Creating sub-queues and their dead letter queues...')
+    await Promise.all([
+      client.send(
+        new CreateQueueCommand({ QueueName: environment.EMAIL_QUEUE_NAME }),
+      ),
+      client.send(
+        new CreateQueueCommand({
+          QueueName: environment.EMAIL_DEAD_LETTER_QUEUE_NAME,
+        }),
+      ),
+      client.send(
+        new CreateQueueCommand({ QueueName: environment.SMS_QUEUE_NAME }),
+      ),
+      client.send(
+        new CreateQueueCommand({
+          QueueName: environment.SMS_DEAD_LETTER_QUEUE_NAME,
+        }),
+      ),
+      client.send(
+        new CreateQueueCommand({ QueueName: environment.PUSH_QUEUE_NAME }),
+      ),
+      client.send(
+        new CreateQueueCommand({
+          QueueName: environment.PUSH_DEAD_LETTER_QUEUE_NAME,
+        }),
+      ),
+    ])
+    logger.debug('Sub-queues created.')
   } catch (error) {
     console.error('Error setting up SQS queue', error)
     throw error

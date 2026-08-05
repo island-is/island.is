@@ -1,0 +1,19 @@
+{
+  "name": "api-domains-farmers",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/api/domains/farmers/src",
+  "projectType": "library",
+  "tags": ["lib:api", "scope:api"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/api/domains/farmers/jest.config.ts"
+      }
+    }
+  }
+}

@@ -343,4 +343,50 @@ describe('LimitedAccessCaseFileInterceptor', () => {
       )
     })
   })
+
+  describe('DEFENDANT_RULING filtering', () => {
+    describe.each(indictmentCases)('for %s cases', (type) => {
+      describe('defender is always denied access to DEFENDANT_RULING files', () => {
+        let then: Then
+
+        beforeEach(async () => {
+          const nationalId = uuid()
+          const theCase = {
+            type: type as CaseType,
+            state: CaseState.RECEIVED,
+            defendants: [
+              {
+                id: uuid(),
+                defenderNationalId: nationalId,
+                isDefenderChoiceConfirmed: true,
+                caseFilesSharedWithDefender: true,
+                eventLogs: [],
+              },
+            ],
+            caseFiles: [
+              {
+                id: uuid(),
+                category: CaseFileCategory.DEFENDANT_RULING,
+                created: new Date('2024-06-01'),
+                submittedBy: 'test',
+                fileRepresentative: 'test',
+              },
+            ],
+          }
+
+          mockRequest.mockImplementationOnce(() => ({
+            user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
+          }))
+          mockHandle.mockReturnValueOnce(of(theCase))
+
+          then = await givenWhenThen()
+        })
+
+        it('should filter out defendant ruling file', () => {
+          const result = then.result as { caseFiles: unknown[] }
+          expect(result.caseFiles).toHaveLength(0)
+        })
+      })
+    })
+  })
 })

@@ -130,5 +130,3 @@ export const Gallery: FC<GalleryProps> = ({
     </>
   )
 }
-
-export default Image

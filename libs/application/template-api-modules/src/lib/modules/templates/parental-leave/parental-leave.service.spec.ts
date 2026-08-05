@@ -130,8 +130,11 @@ const createApplication = (): Application => ({
 describe('ParentalLeaveService', () => {
   let parentalLeaveService: ParentalLeaveService
   let sharedService: SharedTemplateApiService
+  let applicationGetApplicationInformation: jest.Mock
 
   beforeEach(async () => {
+    applicationGetApplicationInformation = jest.fn(() => Promise.reject())
+
     const module = await Test.createTestingModule({
       providers: [
         ParentalLeaveService,
@@ -154,7 +157,7 @@ describe('ParentalLeaveService', () => {
         {
           provide: ApplicationInformationApi,
           useClass: jest.fn(() => ({
-            applicationGetApplicationInformation: () => Promise.reject(),
+            applicationGetApplicationInformation,
           })),
         },
         {
@@ -244,6 +247,51 @@ describe('ParentalLeaveService', () => {
 
     parentalLeaveService = module.get(ParentalLeaveService)
     sharedService = module.get(SharedTemplateApiService)
+  })
+
+  describe('setApplicationFundId', () => {
+    it('should return applicationFundId from VMST application information', async () => {
+      const application = createApplication()
+      applicationGetApplicationInformation.mockResolvedValue({
+        applicationFundId: '2025-03076',
+      })
+
+      const res = await parentalLeaveService.setApplicationFundId({
+        application,
+      } as TemplateApiModuleActionProps)
+
+      expect(applicationGetApplicationInformation).toHaveBeenCalledWith({
+        applicationId: application.id,
+      })
+      expect(res).toBe('2025-03076')
+    })
+
+    it('should return null when VMST application information has no applicationFundId', async () => {
+      const application = createApplication()
+      applicationGetApplicationInformation.mockResolvedValue({})
+
+      const res = await parentalLeaveService.setApplicationFundId({
+        application,
+      } as TemplateApiModuleActionProps)
+
+      expect(res).toBeNull()
+    })
+
+    it('should keep existing applicationFundId without calling VMST application information', async () => {
+      const application = createApplication()
+      application.externalData.navId = {
+        data: '2025-03076',
+        date: new Date(),
+        status: 'success',
+      }
+
+      const res = await parentalLeaveService.setApplicationFundId({
+        application,
+      } as TemplateApiModuleActionProps)
+
+      expect(applicationGetApplicationInformation).not.toHaveBeenCalled()
+      expect(res).toBe('2025-03076')
+    })
   })
 
   describe('createPeriodsDTO', () => {

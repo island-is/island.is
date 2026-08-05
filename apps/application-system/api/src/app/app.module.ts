@@ -42,11 +42,12 @@ import { SignatureCollectionClientConfig } from '@island.is/clients/signature-co
 import { InnaClientConfig } from '@island.is/clients/inna'
 import { OfficialJournalOfIcelandClientConfig } from '@island.is/clients/official-journal-of-iceland'
 import { OfficialJournalOfIcelandApplicationClientConfig } from '@island.is/clients/official-journal-of-iceland/application'
+import { RegulationsClientConfig } from '@island.is/clients/regulations'
+import { RegulationsAdminClientConfig } from '@island.is/clients/regulations-admin'
 import { LegalGazetteClientConfig } from '@island.is/clients/legal-gazette'
 import {
   HealthDirectorateClientConfig,
   HealthDirectorateVaccinationsClientConfig,
-  HealthDirectorateOrganDonationClientConfig,
   HealthDirectorateHealthClientConfig,
 } from '@island.is/clients/health-directorate'
 import {
@@ -74,7 +75,11 @@ import { BankInfoClientConfig } from '@island.is/clients/fjs/bank-info'
 import { PaymentsApiClientConfig } from '@island.is/clients/payments'
 import { VmstUnemploymentClientConfig } from '@island.is/clients/vmst-unemployment'
 import { HmsRentalAgreementClientConfig } from '@island.is/clients/hms-rental-agreement'
+import { HousingBenefitsConfig } from '@island.is/clients/hms-housing-benefits'
 import { ExemptionForTransportationClientConfig } from '@island.is/clients/transport-authority/exemption-for-transportation'
+import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
+import { RecyclingFundClientConfig } from '@island.is/clients/recycling-fund'
+import { DirectorateOfEqualityClientConfig } from '@island.is/clients/directorate-of-equality'
 
 @Module({
   imports: [
@@ -118,9 +123,10 @@ import { ExemptionForTransportationClientConfig } from '@island.is/clients/trans
         InnaClientConfig,
         OfficialJournalOfIcelandClientConfig,
         OfficialJournalOfIcelandApplicationClientConfig,
+        RegulationsClientConfig,
+        RegulationsAdminClientConfig,
         LegalGazetteClientConfig,
         HealthDirectorateVaccinationsClientConfig,
-        HealthDirectorateOrganDonationClientConfig,
         HealthDirectorateClientConfig,
         HealthDirectorateHealthClientConfig,
         AgriculturalUniversityOfIcelandCareerClientConfig,
@@ -146,7 +152,11 @@ import { ExemptionForTransportationClientConfig } from '@island.is/clients/trans
         PaymentsApiClientConfig,
         VmstUnemploymentClientConfig,
         HmsRentalAgreementClientConfig,
+        HousingBenefitsConfig,
         ExemptionForTransportationClientConfig,
+        ZendeskServiceConfig,
+        RecyclingFundClientConfig,
+        DirectorateOfEqualityClientConfig,
       ],
     }),
   ],

@@ -122,7 +122,7 @@ export const Modal: FC<React.PropsWithChildren<Props>> = ({
               />
             </Box>
             <Box width="full">
-              <Box marginBottom={6}>
+              <Box marginBottom={4}>
                 {title && (
                   <Text variant="h3" marginBottom={1}>
                     <Hyphen>{title}</Hyphen>

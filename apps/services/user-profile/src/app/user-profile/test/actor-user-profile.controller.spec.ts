@@ -34,7 +34,7 @@ const testUserProfileEmail = {
   emailStatus: DataStatus.VERIFIED,
 }
 const testUserProfile = {
-  nationalId: createNationalId(),
+  nationalId: createNationalId('person'),
   emails: [testUserProfileEmail],
   mobilePhoneNumber: formatPhoneNumber(createPhoneNumber()),
 }

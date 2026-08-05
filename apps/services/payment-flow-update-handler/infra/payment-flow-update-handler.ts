@@ -56,7 +56,7 @@ export const serviceSetup =
       })
       .liveness('/liveness')
       .readiness('/health/check')
-      .grantNamespaces('services-payments')
+      .grantNamespaces('services-payments', 'nginx-ingress-internal')
       .codeOwner(CodeOwners.Stefna)
       .ingress({
         internal: {

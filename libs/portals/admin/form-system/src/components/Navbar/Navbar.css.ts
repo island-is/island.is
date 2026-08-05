@@ -1,15 +1,24 @@
+import { theme } from '@island.is/island-ui/theme'
 import { style } from '@vanilla-extract/css'
+
+const MOBILE = `screen and (max-width: ${theme.breakpoints.md}px)`
 
 export const minimalScrollbar = style({
   height: 'calc(100vh - 200px)',
   overflowY: 'auto',
+  scrollbarGutter: 'stable',
 
   // Firefox
   scrollbarWidth: 'thin',
   scrollbarColor: 'rgba(0,0,0,0.05) transparent',
+  '@media': {
+    [MOBILE]: {
+      height: 'auto',
+      maxHeight: '50vh',
+    },
+  },
 
   selectors: {
-    // Chrome, Safari, Edge
     '&::-webkit-scrollbar': {
       width: '3px',
     },

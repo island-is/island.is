@@ -1,11 +1,14 @@
-import { useCallback, useContext } from 'react'
+import { useCallback, useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
 import { v4 as uuid } from 'uuid'
 
-import { Box, Button } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import { Box, Button, LoadingDots, toast } from '@island.is/island-ui/core'
+import {
+  PROSECUTION_INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
+  PROSECUTION_INVESTIGATION_CASE_REGISTRATION_ROUTE,
+} from '@island.is/judicial-system/consts'
 import {
   core,
   defendant as m,
@@ -25,11 +28,13 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
+  CaseOrigin,
   Defendant as TDefendant,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useDefendants,
+  useSyncDefendantsFromPolice,
   useVictim,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
@@ -38,14 +43,30 @@ import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils
 
 import { DefendantInfo } from '../../components'
 
+const isLokeCaseWithId = (origin: CaseOrigin | null | undefined, id: string) =>
+  origin === CaseOrigin.LOKE && Boolean(id)
+
 const Defendant = () => {
   const router = useRouter()
   const { updateDefendant, createDefendant, deleteDefendant } = useDefendants()
+  const { loading: policeDefendantsLoading, error: policeDefendantsError } =
+    useSyncDefendantsFromPolice()
 
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { createVictimAndSetState, deleteVictimAndSetState } = useVictim()
   const { formatMessage } = useIntl()
+
+  const showPoliceDefendantsUI = isLokeCaseWithId(
+    workingCase.origin,
+    workingCase.id,
+  )
+
+  useEffect(() => {
+    if (policeDefendantsError && showPoliceDefendantsUI) {
+      toast.error('Ekki tókst að sækja málsaðila úr LÖKE')
+    }
+  }, [policeDefendantsError, showPoliceDefendantsUI])
 
   const handleNavigationTo = useCallback(
     async (destination: string) => {
@@ -171,7 +192,17 @@ const Defendant = () => {
             hideCourt
           />
           <Box component="section" className={grid({ gap: 3 })}>
-            <SectionHeading title="Varnaraðili" marginBottom={0} />
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="spaceBetween"
+              marginBottom={2}
+            >
+              <SectionHeading title="Varnaraðili" marginBottom={0} />
+              {showPoliceDefendantsUI && policeDefendantsLoading && (
+                <LoadingDots size="small" />
+              )}
+            </Box>
             <AnimatePresence>
               {workingCase.defendants &&
                 workingCase.defendants.map((defendant, index) => (
@@ -286,18 +317,22 @@ const Defendant = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
-          previousUrl={`${constants.INVESTIGATION_CASE_REGISTRATION_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() =>
-            handleNavigationTo(
-              constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
-            )
-          }
-          nextIsDisabled={!stepIsValid}
-          nextIsLoading={isLoadingWorkingCase}
-          nextButtonText={formatMessage(
-            workingCase.id === '' ? core.createCase : core.continue,
-          )}
+          previousUrl={`${PROSECUTION_INVESTIGATION_CASE_REGISTRATION_ROUTE}/${workingCase.id}`}
+          actions={[
+            {
+              text: formatMessage(
+                workingCase.id === '' ? core.createCase : core.continue,
+              ),
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  PROSECUTION_INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
+                ),
+              disabled: !stepIsValid,
+              loading: isLoadingWorkingCase,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

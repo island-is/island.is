@@ -1,0 +1,9 @@
+query MessageSuspensions {
+  messageSuspensions {
+    category
+    suspended
+    delaySeconds
+    modified
+    modifiedBy
+  }
+}

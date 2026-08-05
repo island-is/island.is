@@ -116,6 +116,10 @@ export const outlined = style({
       borderColor: theme.color.mint200,
       color: theme.color.mint800,
     },
+    [`&${variants.yellow}`]: {
+      borderColor: theme.color.yellow600,
+      color: theme.color.dark400,
+    },
     [`&${variants.disabled}`]: {
       borderColor: theme.color.dark100,
       color: theme.color.dark200,
@@ -158,6 +162,19 @@ export const attention = style({
 
 export const focusable = style({
   ':focus': {
+    backgroundColor: theme.color.mint400,
+    color: theme.color.dark400,
+  },
+  ':hover': {
+    textDecoration: 'none',
+    backgroundColor: theme.color.blue400,
+    color: theme.color.white,
+  },
+})
+
+/** Mint focus styling only when :focus-visible (e.g. keyboard); opt-in via Tag prop. */
+export const focusableVisibleOnly = style({
+  ':focus-visible': {
     backgroundColor: theme.color.mint400,
     color: theme.color.dark400,
   },

@@ -44,9 +44,11 @@ import {
   useGetDrugsDataQuery,
 } from './Medicine.generated'
 import { MedicinePaymentParticipationWrapper } from './wrapper/MedicinePaymentParticipationWrapper'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 export const MedicinePurchase = () => {
   useNamespaces('sp.health')
+  useHealthPlausibleSwap()
 
   const { formatMessage, formatDateFns } = useLocale()
   const [selectedPeriod, setSelectedPeriod] =

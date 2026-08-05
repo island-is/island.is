@@ -13,7 +13,7 @@ import { CourtService } from '../../../court'
 import { Case } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 
-jest.mock('../../../../formatters/courtRecordPdf')
+jest.mock('../../../../formatters/generatedPdfs/courtRecordPdf')
 jest.mock('../../../../factories/date.factory')
 
 interface Then {

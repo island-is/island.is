@@ -1,14 +1,15 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { ImageSourcePropType } from 'react-native'
-import createUse from 'zustand'
-import { persist } from 'zustand/middleware'
-import create, { State } from 'zustand/vanilla'
+import { create, StateCreator } from 'zustand'
+import { createJSONStorage, persist } from 'zustand/middleware'
+import { useStore } from 'zustand/react'
 import islandLogoSrc from '../assets/logo/logo-64w.png'
 import organizations from '../graphql/cache/organizations.json'
 import { getApolloClientAsync } from '../graphql/client'
 import { ListOrganizationsDocument } from '../graphql/types/schema'
 import { lowerCase } from '../lib/lowercase'
 import { environmentStore } from './environment-store'
+import { omit } from 'lodash'
 
 interface Organization {
   id: string
@@ -28,7 +29,8 @@ interface Organization {
   query: string
 }
 
-interface OrganizationsStore extends State {
+interface OrganizationsStore {
+  organizations: Organization[]
   getOrganizationLogoUrl(
     forName: string,
     size?: number,
@@ -44,10 +46,14 @@ interface OrganizationsStore extends State {
     size?: number,
     canReturnEmpty?: boolean,
   ): ImageSourcePropType | undefined
-
-  organizations: Organization[]
+  getSenderLogo(
+    sender: { logoUrl?: string | null } | null | undefined,
+    size?: number,
+  ): ImageSourcePropType
   getOrganizationNameBySlug(slug: string): string
-  actions: Record<string, () => Promise<void> | void>
+  actions: {
+    updateOriganizations(): Promise<void>
+  }
 }
 
 function processItems(items: Omit<Organization, 'query'>[]) {
@@ -59,7 +65,10 @@ function processItems(items: Omit<Organization, 'query'>[]) {
 
 const logoCache = new Map()
 
-export const organizationsStore = create<OrganizationsStore>(
+const COAT_OF_ARMS_URL =
+  'https://images.ctfassets.net/8k0h54kbe6bj/6XhCz5Ss17OVLxpXNVDxAO/d3d6716bdb9ecdc5041e6baf68b92ba6/coat_of_arms.svg'
+
+export const organizationsStore = create<OrganizationsStore>()(
   persist(
     (set, get) => ({
       organizations: processItems(organizations),
@@ -105,12 +114,18 @@ export const organizationsStore = create<OrganizationsStore>(
           return undefined
         }
 
-        const url =
-          c ??
-          'https://images.ctfassets.net/8k0h54kbe6bj/6XhCz5Ss17OVLxpXNVDxAO/d3d6716bdb9ecdc5041e6baf68b92ba6/coat_of_arms.svg'
+        const url = c ?? COAT_OF_ARMS_URL
         const uri = `${url}?w=${size}&h=${size}&fit=pad&fm=png`
 
         return { uri }
+      },
+      getSenderLogo(
+        sender: { logoUrl?: string | null } | null | undefined,
+        size = 100,
+      ) {
+        const raw = sender?.logoUrl ?? COAT_OF_ARMS_URL
+        const url = raw.startsWith('https://') ? raw : `https:${raw}`
+        return { uri: `${url}?w=${size}&h=${size}&fit=pad&fm=png` }
       },
       getOrganizationNameBySlug(slug: string) {
         const org = get().organizations.find((o) => o.slug === slug)
@@ -135,21 +150,14 @@ export const organizationsStore = create<OrganizationsStore>(
     }),
     {
       name: 'organizations_02',
-      getStorage: () => AsyncStorage,
-      serialize({ state, version }) {
-        const res = { ...state }
-        return JSON.stringify({ state: res, version })
-      },
-      deserialize(str: string) {
-        const { state, version } = JSON.parse(str)
-        // actions
-        delete state.actions
-        return { state, version }
-      },
+      storage: createJSONStorage(() => AsyncStorage),
+      partialize: (state) => omit(state, ['actions']),
     },
   ),
 )
 
-export const useOrganizationsStore = createUse(organizationsStore)
+export const useOrganizationsStore = <U = OrganizationsStore>(
+  selector?: (state: OrganizationsStore) => U,
+) => useStore(organizationsStore, selector!)
 
 organizationsStore.getState().actions.updateOriganizations()

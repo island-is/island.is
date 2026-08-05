@@ -1,4 +1,4 @@
-export { delegationsModule } from './module'
+export { createDelegationsModule } from './module'
 
 // libs
 export * from './lib/paths'

@@ -1,6 +1,7 @@
 {
   "extends": "../../../.eslintrc.json",
   "rules": {
+    "eqeqeq": ["error", "always"],
     "simple-import-sort/imports": [
       "error",
       {

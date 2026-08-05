@@ -14,7 +14,7 @@ import {
   ActionCard,
   ToggleSwitchButton,
 } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   formatDate,
@@ -30,26 +30,28 @@ import { HealthPaths } from '../../lib/paths'
 import { useGetQuestionnairesQuery } from './questionnaires.generated'
 import { Problem } from '@island.is/react-spa/shared'
 import * as styles from './Questionnaires.css'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const defaultFilterValues = {
   searchQuery: '',
   status: [],
-  organization: [],
   treatment: [],
 }
 
 type FilterValues = {
   searchQuery: string
   status: QuestionnaireQuestionnairesStatusEnum[]
-  organization: QuestionnaireQuestionnairesOrganizationEnum[]
   treatment: string[]
 }
 
 const Questionnaires: FC = () => {
+  useNamespaces('sp.health')
   const { formatMessage, lang } = useLocale()
+  useHealthPlausibleSwap()
   const navigate = useNavigate()
   const [filterValues, setFilterValues] =
     useState<FilterValues>(defaultFilterValues)
+  const [inputValue, setInputValue] = useState('')
   const [filteredData, setFilteredData] = useState<
     QuestionnairesBaseItem[] | null
   >(null)
@@ -59,6 +61,7 @@ const Questionnaires: FC = () => {
     variables: {
       locale: lang,
     },
+    fetchPolicy: 'network-only',
   })
 
   const dataLength = data?.questionnairesList?.questionnaires?.length ?? 0
@@ -69,17 +72,6 @@ const Questionnaires: FC = () => {
       status: prev.status.includes(status)
         ? prev.status.filter((s) => s !== status)
         : [...prev.status, status],
-    }))
-  }
-
-  const toggleOrganization = (
-    organization: QuestionnaireQuestionnairesOrganizationEnum,
-  ) => {
-    setFilterValues((prev) => ({
-      ...prev,
-      organization: prev.organization.includes(organization)
-        ? prev.organization.filter((o) => o !== organization)
-        : [...prev.organization, organization],
     }))
   }
 
@@ -95,6 +87,7 @@ const Questionnaires: FC = () => {
   )
 
   const handleSearchChange = (value: string) => {
+    setInputValue(value)
     debouncedSetSearchQuery(value)
   }
 
@@ -105,6 +98,7 @@ const Questionnaires: FC = () => {
         const searchLower = filterValues.searchQuery.toLowerCase()
         const matchesSearch =
           !searchLower ||
+          item.senderGroupName?.toLowerCase().includes(searchLower) ||
           item.organization?.toLowerCase().includes(searchLower) ||
           item.title?.toLowerCase().includes(searchLower)
 
@@ -113,22 +107,11 @@ const Questionnaires: FC = () => {
           filterValues.status.length === 0 ||
           (item.status && filterValues.status.includes(item.status))
 
-        // Organization filter
-        const matchesOrganization =
-          filterValues.organization.length === 0 ||
-          (item.organization &&
-            filterValues.organization.includes(item.organization))
-
         // Expired filter
         const matchesExpired =
           showExpired || item.status !== QuestionnairesStatusEnum.expired
 
-        return (
-          matchesSearch &&
-          matchesStatus &&
-          matchesOrganization &&
-          matchesExpired
-        )
+        return matchesSearch && matchesStatus && matchesExpired
       }) ?? null,
     )
   }, [filterValues, data, showExpired])
@@ -138,9 +121,7 @@ const Questionnaires: FC = () => {
     data?.questionnairesList?.questionnaires?.length === 0
 
   const filterIsEmpty =
-    filterValues.searchQuery.length === 0 &&
-    filterValues.status.length === 0 &&
-    filterValues.organization.length === 0
+    filterValues.searchQuery.length === 0 && filterValues.status.length === 0
 
   const noActive = filteredData?.every(
     (item) => item.status === QuestionnairesStatusEnum.expired,
@@ -172,6 +153,7 @@ const Questionnaires: FC = () => {
       title={formatMessage(messages.questionnaires)}
       intro={formatMessage(messages.questionnairesIntro)}
       loading={loading}
+      desktopContentSpan="10/12"
     >
       {!loading && error && (
         <Box marginTop={3}>
@@ -193,6 +175,7 @@ const Questionnaires: FC = () => {
           labelOpen={formatMessage(m.openFilter)}
           onFilterClear={() => {
             debouncedSetSearchQuery.cancel()
+            setInputValue('')
             setFilterValues(defaultFilterValues)
           }}
           filterInput={
@@ -201,6 +184,7 @@ const Questionnaires: FC = () => {
               name="rafraen-skjol-input"
               size="xs"
               label={formatMessage(m.searchLabel)}
+              value={inputValue}
               onChange={(e) => handleSearchChange(e.target.value)}
               backgroundColor="blue"
               icon={{ name: 'search' }}
@@ -243,42 +227,6 @@ const Questionnaires: FC = () => {
                   checked={filterValues.status.includes(status)}
                   onChange={() => {
                     toggleStatus(status)
-                  }}
-                />
-              ))}
-            </Stack>
-          </Box>
-          <Box paddingX={4} paddingBottom={2}>
-            <Text
-              variant="default"
-              as="p"
-              fontWeight="semiBold"
-              paddingBottom={2}
-            >
-              {formatMessage(messages.organization)}
-            </Text>
-
-            <Stack space={2}>
-              {[
-                {
-                  name: 'lsh',
-                  label: formatMessage(messages.landspitali),
-                  organization: QuestionnaireQuestionnairesOrganizationEnum.LSH,
-                },
-                {
-                  name: 'el',
-                  label: formatMessage(messages.healthDirectorate),
-                  organization: QuestionnaireQuestionnairesOrganizationEnum.EL,
-                },
-              ].map(({ name, label, organization }) => (
-                <Checkbox
-                  key={name}
-                  name={name}
-                  label={label}
-                  value={name}
-                  checked={filterValues.organization.includes(organization)}
-                  onChange={() => {
-                    toggleOrganization(organization)
                   }}
                 />
               ))}
@@ -348,10 +296,11 @@ const Questionnaires: FC = () => {
                 headingVariant="h4"
                 subText={questionnaire.description ?? ''}
                 eyebrow={
-                  questionnaire.organization ===
+                  questionnaire.senderGroupName ??
+                  (questionnaire.organization ===
                   QuestionnaireQuestionnairesOrganizationEnum.EL
                     ? formatMessage(messages.healthDirectorate)
-                    : formatMessage(messages.landspitali)
+                    : formatMessage(messages.landspitali))
                 }
                 eyebrowColor="purple400"
                 text={formatDate(questionnaire.sentDate)}

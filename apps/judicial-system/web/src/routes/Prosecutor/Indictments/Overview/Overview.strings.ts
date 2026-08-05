@@ -92,12 +92,6 @@ export const overview = {
     description:
       'Notaður sem titill á "Hafna aðkæra" hluta af yfirliti ákæru á Yfirlit ákæru skefi í ákærum.',
   }),
-  indictmentReturnedExplanationTitle: defineMessage({
-    id: 'judicial.system.indictments:overview.indictment_returned_explanation_title',
-    defaultMessage: 'Ákæra endursend',
-    description:
-      'Notaður sem titill á "Ákæra endursend" hluta af yfirliti ákæru á Yfirlit ákæru skefi í ákærum.',
-  }),
   askForCancellationButtonText: defineMessage({
     id: 'judicial.system.indictments:overview.ask_for_cancellation_button_text',
     defaultMessage: 'Afturkalla ákæru',

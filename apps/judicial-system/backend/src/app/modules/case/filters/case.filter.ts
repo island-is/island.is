@@ -1,6 +1,5 @@
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
-  CaseAppealState,
+  AppealCaseState,
   CaseDecision,
   CaseIndictmentRulingDecision,
   CaseState,
@@ -23,6 +22,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import {
+  AppealCase,
   Case,
   CivilClaimant,
   DateLog,
@@ -152,41 +152,74 @@ const canDistrictCourtUserAccessCase = (theCase: Case, user: User): boolean => {
   return true
 }
 
-const canAppealsCourtUserAccessCase = (theCase: Case): boolean => {
-  // Check case type access
-  if (!isRequestCase(theCase.type)) {
-    return false
-  }
-
-  // Check case state access
-  if (
-    ![CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED].includes(
-      theCase.state,
-    )
-  ) {
-    return false
-  }
-
+const canAppealsCourtUserAccessAppealedCase = (
+  appealCase: AppealCase,
+): boolean => {
   // Check appeal state access
   if (
-    !theCase.appealState ||
+    !appealCase.appealState ||
     ![
-      CaseAppealState.RECEIVED,
-      CaseAppealState.COMPLETED,
-      CaseAppealState.WITHDRAWN,
-    ].includes(theCase.appealState)
+      AppealCaseState.RECEIVED,
+      AppealCaseState.COMPLETED,
+      AppealCaseState.WITHDRAWN,
+    ].includes(appealCase.appealState)
   ) {
     return false
   }
 
   if (
-    theCase.appealState === CaseAppealState.WITHDRAWN &&
-    !theCase.appealReceivedByCourtDate
+    appealCase.appealState === AppealCaseState.WITHDRAWN &&
+    !appealCase.appealReceivedByCourtDate
   ) {
     return false
   }
 
   return true
+}
+
+const canAppealsCourtUserAccessCaseAppealCase = (theCase: Case): boolean => {
+  if (!theCase.appealCase) {
+    return false
+  }
+
+  return canAppealsCourtUserAccessAppealedCase(theCase.appealCase)
+}
+
+const canAppealsCourtUserAccessCaseRulingOrderAppealCase = (
+  theCase: Case,
+): boolean => {
+  if (!theCase.rulingOrderAppealCases?.length) {
+    return false
+  }
+
+  return theCase.rulingOrderAppealCases.some((rulingOrderAppealCase) =>
+    canAppealsCourtUserAccessAppealedCase(rulingOrderAppealCase),
+  )
+}
+
+const canAppealsCourtUserAccessRequestCase = (theCase: Case): boolean => {
+  return canAppealsCourtUserAccessCaseAppealCase(theCase)
+}
+
+const canAppealsCourtUserAccessIndictmentCase = (theCase: Case): boolean => {
+  return (
+    canAppealsCourtUserAccessCaseAppealCase(theCase) ||
+    canAppealsCourtUserAccessCaseRulingOrderAppealCase(theCase)
+  )
+}
+
+const canAppealsCourtUserAccessCase = (theCase: Case): boolean => {
+  // Request cases
+  if (isRequestCase(theCase.type)) {
+    return canAppealsCourtUserAccessRequestCase(theCase)
+  }
+
+  // Indictment cases — only dismissed cases can be appealed
+  if (isIndictmentCase(theCase.type)) {
+    return canAppealsCourtUserAccessIndictmentCase(theCase)
+  }
+
+  return false
 }
 
 const canPrisonStaffUserAccessCase = (
@@ -343,14 +376,9 @@ const canCaseDefendantDefenceUserAccessRequestCase = (
     return false
   }
 
-  const normalizedAndFormattedNationalId = normalizeAndFormatNationalId(
-    user.nationalId,
-  )
-
   // Check case defender assignment
   return (
-    theCase.defenderNationalId &&
-    normalizedAndFormattedNationalId.includes(theCase.defenderNationalId)
+    theCase.defenderNationalId && theCase.defenderNationalId === user.nationalId
   )
 }
 

@@ -145,7 +145,7 @@ export const UserDropdown = ({
                 onClick={() => switchUser()}
               />
 
-              {hasAccessToUserProfileInfo && (
+              {hasAccessToUserProfileInfo && !actor && (
                 <UserProfileInfo
                   onClick={() => onClose()}
                   isCompany={isDelegationCompany}

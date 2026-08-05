@@ -123,7 +123,6 @@ describe('SharedTemplateApiService', () => {
         clientLocationOrigin: mockConfig.templateApi.clientLocationOrigin,
       })
       expect(smsService.sendSms).toHaveBeenCalledWith('1234567', 'Test message')
-      expect(logger.warn).toHaveBeenCalledTimes(2)
     })
 
     it('should normalize phone numbers with special characters', async () => {
@@ -138,7 +137,6 @@ describe('SharedTemplateApiService', () => {
 
       // Assert
       expect(smsService.sendSms).toHaveBeenCalledWith('1234567', 'Test message')
-      expect(logger.warn).toHaveBeenCalledTimes(2)
     })
 
     it('should handle phone numbers longer than 7 digits', async () => {
@@ -153,7 +151,6 @@ describe('SharedTemplateApiService', () => {
 
       // Assert
       expect(smsService.sendSms).toHaveBeenCalledWith('1234567', 'Test message')
-      expect(logger.warn).toHaveBeenCalledTimes(1)
     })
   })
 })

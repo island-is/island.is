@@ -27,6 +27,12 @@ export class SubArticle {
   @Field({ nullable: true })
   showTableOfContents?: boolean
 
+  @Field({ nullable: true })
+  contentLastReviewed?: string
+
+  @Field({ nullable: true })
+  showDateOfTheMostRecentReview?: boolean
+
   @CacheField(() => EmbeddedVideo, { nullable: true })
   signLanguageVideo?: EmbeddedVideo | null
 
@@ -53,6 +59,8 @@ export const mapSubArticle = ({
     parent: fields.parent?.fields && mapArticleReference(fields.parent),
     body: fields.content ? mapDocument(fields.content, sys.id + ':body') : [],
     showTableOfContents: fields.showTableOfContents ?? false,
+    contentLastReviewed: fields.contentLastReviewed,
+    showDateOfTheMostRecentReview: fields.showDateOfTheMostRecentReview,
     signLanguageVideo: fields.signLanguageVideo
       ? mapEmbeddedVideo(fields.signLanguageVideo)
       : null,

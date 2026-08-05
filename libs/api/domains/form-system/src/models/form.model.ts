@@ -3,7 +3,6 @@ import {
   FormCertificationType,
   FormCertificationTypeDto,
 } from './certification.model'
-import { CompletedSectionInfo } from './completedSectionInfo'
 import { Field as FieldModel } from './field.model'
 import { FieldType } from './fieldType.model'
 import { FormApplicant } from './formApplicant.model'
@@ -12,6 +11,9 @@ import { ListType } from './listItem.model'
 import { Option } from './option.model'
 import { Screen as ScreenModel } from './screen.model'
 import { Section } from './section.model'
+import { OrganizationZendeskInstance } from './organizationZendeskInstance.model'
+import { SectionInfo } from './sectionInfo.model'
+import { ApplicationJson } from './applicationJson.model'
 
 @ObjectType('FormSystemDependency')
 export class Dependency {
@@ -51,11 +53,11 @@ export class Form {
   @Field(() => Boolean, { nullable: true })
   zendeskInternal?: boolean
 
-  @Field(() => String, { nullable: true })
-  submissionServiceUrl?: string
+  @Field(() => Boolean, { nullable: true })
+  useValidate?: boolean
 
   @Field(() => String, { nullable: true })
-  validationServiceUrl?: string
+  submissionServiceUrl?: string
 
   @Field(() => Boolean, { nullable: true })
   hasPayment?: boolean
@@ -82,7 +84,10 @@ export class Form {
   isTranslated!: boolean
 
   @Field(() => Int)
-  daysUntilApplicationPrune!: number
+  draftDaysToLive!: number
+
+  @Field(() => Int)
+  submissionDaysToLive!: number
 
   @Field(() => Boolean)
   allowProceedOnValidationFail!: boolean
@@ -90,8 +95,11 @@ export class Form {
   @Field(() => Boolean)
   hasSummaryScreen!: boolean
 
-  @Field(() => CompletedSectionInfo, { nullable: true })
-  completedSectionInfo?: CompletedSectionInfo
+  @Field(() => OrganizationZendeskInstance, { nullable: true })
+  organizationZendeskInstance?: OrganizationZendeskInstance
+
+  @Field(() => SectionInfo, { nullable: true })
+  sectionInfo?: SectionInfo
 
   @Field(() => [FormCertificationTypeDto], { nullable: 'itemsAndList' })
   certificationTypes?: FormCertificationTypeDto[]
@@ -113,6 +121,12 @@ export class Form {
 
   @Field(() => String)
   status!: string
+
+  @Field(() => String, { nullable: true })
+  lastModifiedBy?: string
+
+  @Field(() => [String], { nullable: 'itemsAndList' })
+  delegations?: string[]
 }
 
 @ObjectType('FormSystemFormResponse')
@@ -138,6 +152,12 @@ export class FormResponse {
   @Field(() => [String], { nullable: 'itemsAndList' })
   submissionUrls?: string[]
 
+  @Field(() => [String], { nullable: 'itemsAndList' })
+  organizationDelegations?: string[]
+
   @Field(() => [Option], { nullable: 'itemsAndList' })
   organizations?: Option[]
+
+  @Field(() => ApplicationJson, { nullable: true })
+  jsonSample?: ApplicationJson
 }

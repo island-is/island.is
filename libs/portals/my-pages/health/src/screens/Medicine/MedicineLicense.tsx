@@ -15,18 +15,23 @@ import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { useGetDrugCertificatesQuery } from './Medicine.generated'
 import { useNavigate } from 'react-router-dom'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 export const MedicineLicense = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
+  useHealthPlausibleSwap()
   const { data, error, loading } = useGetDrugCertificatesQuery()
 
   return (
     <IntroWrapper
       title={formatMessage(messages.medicineLicenseTitle)}
       intro={formatMessage(messages.medicineLicenseIntroText)}
-      serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
-      serviceProviderTooltip={formatMessage(messages.healthTooltip)}
+      serviceProvider={{
+        slug: SJUKRATRYGGINGAR_SLUG,
+        tooltip: formatMessage(messages.healthTooltip),
+      }}
+      desktopContentSpan="10/12"
     >
       {error ? (
         <Problem error={error} noBorder={false} />
@@ -49,6 +54,7 @@ export const MedicineLicense = () => {
                   <ActionCard
                     key={i}
                     heading={certificate.drugName ?? undefined}
+                    headingVariant="h4"
                     tag={{
                       label: formatMessage(
                         certificate.processed === false

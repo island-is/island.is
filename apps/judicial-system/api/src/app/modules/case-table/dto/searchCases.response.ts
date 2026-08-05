@@ -1,11 +1,14 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-import { CaseType } from '@island.is/judicial-system/types'
+import { CaseTableType, CaseType } from '@island.is/judicial-system/types'
 
 @ObjectType()
 class SearchCasesRow {
   @Field(() => String, { description: 'The case id' })
   readonly caseId!: string
+
+  @Field(() => String, { description: 'The appeal case id', nullable: true })
+  readonly appealCaseId!: string | null
 
   @Field(() => CaseType, { description: 'The case type' })
   readonly caseType!: CaseType
@@ -36,6 +39,12 @@ class SearchCasesRow {
 
   @Field(() => String, { description: 'The defendant name', nullable: true })
   readonly defendantName!: string | null
+
+  @Field(() => [CaseTableType], {
+    description:
+      'Case table types (for the current user role) that this case belongs to',
+  })
+  readonly caseTableTypes!: CaseTableType[]
 }
 
 @ObjectType()

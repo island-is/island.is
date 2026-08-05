@@ -27,8 +27,7 @@ export const Conclusion: Form = buildForm({
     buildFormConclusionSection({
       alertTitle: conclusion.general.alertTitle,
       alertMessage: conclusion.general.alertMessage,
-      expandableHeader: conclusion.general.accordionTitle,
-      expandableDescription: conclusion.general.accordionText,
+      accordion: false,
     }),
   ],
 })

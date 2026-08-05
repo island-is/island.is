@@ -6,10 +6,10 @@ import { Tooltip, TooltipAnchor, TooltipProvider } from '@ariakit/react'
 
 import { Box, Icon, Text } from '@island.is/island-ui/core'
 import {
-  INDICTMENTS_COURT_RECORD_ROUTE,
-  INDICTMENTS_SUBPOENA_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_COURT_RECORD_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_SUBPOENA_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { titles } from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   CourtCaseInfo,
   FormContentContainer,
@@ -123,14 +123,20 @@ const Advocates = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
-          previousUrl={`${INDICTMENTS_SUBPOENA_ROUTE}/${workingCase.id}`}
-          nextIsLoading={isLoadingWorkingCase}
-          nextUrl={`${INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!stepIsValid}
-          onNextButtonClick={() =>
-            handleNavigationTo(INDICTMENTS_COURT_RECORD_ROUTE)
-          }
+          previousUrl={`${DISTRICT_COURT_INDICTMENT_CASE_SUBPOENA_ROUTE}/${workingCase.id}`}
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  DISTRICT_COURT_INDICTMENT_CASE_COURT_RECORD_ROUTE,
+                ),
+              disabled: !stepIsValid,
+              loading: isLoadingWorkingCase,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

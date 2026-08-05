@@ -27,7 +27,6 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
       SI_PUBLIC_ENVIRONMENT: ref((h) => h.env.type),
     })
     .secrets({
-      SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY',
       SI_PUBLIC_DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID',
       SI_PUBLIC_DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN',
     })

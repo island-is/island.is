@@ -24,6 +24,12 @@ export class OrganizationSubpage {
   @Field(() => String, { nullable: true })
   shortTitle?: string
 
+  @Field({ nullable: true })
+  contentLastReviewed?: string
+
+  @Field({ nullable: true })
+  showDateOfTheMostRecentReview?: boolean
+
   @Field()
   slug!: string
 
@@ -81,6 +87,8 @@ export const mapOrganizationSubpage = ({
     slug: (fields.slug ?? '').trim(),
     url,
     intro: fields.intro ?? '',
+    contentLastReviewed: fields.contentLastReviewed,
+    showDateOfTheMostRecentReview: fields.showDateOfTheLastReview,
     description:
       fields.description &&
       fields.sliceCustomRenderer !== 'SliceTableOfContents'

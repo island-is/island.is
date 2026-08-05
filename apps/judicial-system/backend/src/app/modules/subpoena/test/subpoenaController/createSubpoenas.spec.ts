@@ -1,7 +1,7 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import { BadRequestException, NotFoundException } from '@nestjs/common'
+import { NotFoundException } from '@nestjs/common'
 
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
@@ -14,10 +14,10 @@ import {
 
 import { createTestingSubpoenaModule } from '../createTestingSubpoenaModule'
 
-import { CourtDocumentService } from '../../../court-session'
 import {
   Case,
   CaseRepositoryService,
+  CourtDocumentRepositoryService,
   CourtSession,
   Defendant,
   Subpoena,
@@ -79,7 +79,7 @@ describe('SubpoenaController - Create subpoenas', () => {
 
   let mockCaseRepositoryService: CaseRepositoryService
   let mockSubpoenaRepositoryService: SubpoenaRepositoryService
-  let mockCourtDocumentService: CourtDocumentService
+  let mockCourtDocumentRepositoryService: CourtDocumentRepositoryService
   let mockQueuedMessages: Message[]
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
@@ -90,14 +90,14 @@ describe('SubpoenaController - Create subpoenas', () => {
       sequelize,
       caseRepositoryService,
       subpoenaRepositoryService,
-      courtDocumentService,
+      courtDocumentRepositoryService,
       subpoenaController: controller,
       queuedMessages,
     } = await createTestingSubpoenaModule()
 
     mockCaseRepositoryService = caseRepositoryService
     mockSubpoenaRepositoryService = subpoenaRepositoryService
-    mockCourtDocumentService = courtDocumentService
+    mockCourtDocumentRepositoryService = courtDocumentRepositoryService
     subpoenaController = controller
     mockQueuedMessages = queuedMessages
 
@@ -214,7 +214,7 @@ describe('SubpoenaController - Create subpoenas', () => {
       expect(then.error).toBeUndefined()
     })
 
-    it('should also queue police messages for LOKE origin cases', async () => {
+    it('should queue the same messages for LOKE origin cases', async () => {
       const lokeCase = {
         ...theCase,
         origin: CaseOrigin.LOKE,
@@ -228,15 +228,9 @@ describe('SubpoenaController - Create subpoenas', () => {
 
       const then = await givenWhenThen(caseId, lokeCase, createSubpoenasDto)
 
-      // Verify messages are queued for police, court, and national commissioners office
-      expect(mockQueuedMessages).toHaveLength(6) // 2 defendants × 3 message types (police + court + national commissioners)
+      expect(mockQueuedMessages).toHaveLength(4) // 2 defendants × 2 message types (court + national commissioners)
       expect(mockQueuedMessages).toEqual(
         expect.arrayContaining([
-          expect.objectContaining({
-            type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_FILE,
-            caseId: lokeCase.id,
-            elementId: [defendantId1, subpoenaId1],
-          }),
           expect.objectContaining({
             type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA,
             caseId: lokeCase.id,
@@ -271,7 +265,8 @@ describe('SubpoenaController - Create subpoenas', () => {
       mockCreate.mockResolvedValueOnce(subpoena1)
       mockCreate.mockResolvedValueOnce(subpoena2)
 
-      const mockCreateDocument = mockCourtDocumentService.create as jest.Mock
+      const mockCreateDocument =
+        mockCourtDocumentRepositoryService.create as jest.Mock
       mockCreateDocument.mockResolvedValue({})
     })
 
@@ -284,9 +279,9 @@ describe('SubpoenaController - Create subpoenas', () => {
 
       const then = await givenWhenThen(caseId, theCase, createSubpoenasDto)
 
-      expect(mockCourtDocumentService.create).toHaveBeenCalledTimes(2)
+      expect(mockCourtDocumentRepositoryService.create).toHaveBeenCalledTimes(2)
       // Check that court documents are created (exact name format depends on formatDate)
-      expect(mockCourtDocumentService.create).toHaveBeenCalledWith(
+      expect(mockCourtDocumentRepositoryService.create).toHaveBeenCalledWith(
         caseId,
         expect.objectContaining({
           documentType: CourtDocumentType.GENERATED_DOCUMENT,
@@ -295,7 +290,7 @@ describe('SubpoenaController - Create subpoenas', () => {
             `/api/case/${caseId}/subpoena/${defendantId1}/${subpoenaId1}`,
           ),
         }),
-        transaction,
+        { transaction },
       )
 
       expect(then.result).toEqual([subpoena1, subpoena2])

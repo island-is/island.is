@@ -3,8 +3,12 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, Input, toast } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
 import {
+  PROSECUTION_INVESTIGATION_CASE_DEFENDANT_ROUTE,
+  PROSECUTION_INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE,
+} from '@island.is/judicial-system/consts'
+import {
+  core,
   errors,
   icRequestedHearingArrangements as m,
   titles,
@@ -23,7 +27,7 @@ import {
 import {
   CaseState,
   CaseTransition,
-  NotificationType,
+  TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
@@ -78,7 +82,7 @@ const HearingArrangements = () => {
           (workingCase.state !== CaseState.NEW &&
             workingCase.state !== CaseState.DRAFT) ||
           hasSentNotification(
-            NotificationType.HEADS_UP,
+            TrackedNotificationType.HEADS_UP,
             workingCase.notifications,
           ).hasSent
         ) {
@@ -155,15 +159,20 @@ const HearingArrangements = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
-          previousUrl={`${constants.INVESTIGATION_CASE_DEFENDANT_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={async () =>
-            await handleNavigationTo(
-              constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE,
-            )
-          }
-          nextIsDisabled={!stepIsValid}
-          nextIsLoading={isLoadingWorkingCase || isTransitioningCase}
+          previousUrl={`${PROSECUTION_INVESTIGATION_CASE_DEFENDANT_ROUTE}/${workingCase.id}`}
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              onClick: async () =>
+                await handleNavigationTo(
+                  PROSECUTION_INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE,
+                ),
+              disabled: !stepIsValid,
+              loading: isLoadingWorkingCase || isTransitioningCase,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
       {navigateTo !== undefined && (
@@ -175,7 +184,7 @@ const HearingArrangements = () => {
             onClick: async () => {
               const notificationSent = await sendNotification(
                 workingCase.id,
-                NotificationType.HEADS_UP,
+                TrackedNotificationType.HEADS_UP,
               )
 
               if (notificationSent) {

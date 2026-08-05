@@ -1,21 +1,81 @@
 import { Op } from 'sequelize'
 
-import { CaseAppealState } from '@island.is/judicial-system/types'
+import { AppealCaseState } from '@island.is/judicial-system/types'
 
-import { courtOfAppealsRequestCasesAccessWhereOptions } from './access'
+import { CaseWhereOptions, expandCasesWithAppeals } from '../caseTable.types'
+import { courtOfAppealsCasesAccessWhereOptions } from './access'
 
-// Court of appeals request cases
+// Court of appeals cases
 
-export const courtOfAppealsRequestCasesInProgressWhereOptions = () => ({
-  [Op.and]: [
-    courtOfAppealsRequestCasesAccessWhereOptions,
-    { appeal_state: [CaseAppealState.RECEIVED, CaseAppealState.WITHDRAWN] },
-  ],
-})
+export const courtOfAppealsCasesInProgressWhereOptions =
+  (): CaseWhereOptions => ({
+    includes: {
+      appealCase: {
+        attributes: [],
+        required: false,
+        where: {
+          appeal_state: [AppealCaseState.RECEIVED, AppealCaseState.WITHDRAWN],
+        },
+      },
+      rulingOrderAppealCases: {
+        attributes: [],
+        required: false,
+        where: {
+          appeal_state: [AppealCaseState.RECEIVED, AppealCaseState.WITHDRAWN],
+        },
+      },
+    },
+    where: {
+      [Op.and]: [
+        courtOfAppealsCasesAccessWhereOptions(),
+        {
+          [Op.or]: [
+            {
+              '$appealCase.appeal_state$': [
+                AppealCaseState.RECEIVED,
+                AppealCaseState.WITHDRAWN,
+              ],
+            },
+            {
+              '$rulingOrderAppealCases.appeal_state$': [
+                AppealCaseState.RECEIVED,
+                AppealCaseState.WITHDRAWN,
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    displayCases: expandCasesWithAppeals,
+  })
 
-export const courtOfAppealsRequestCasesCompletedWhereOptions = () => ({
-  [Op.and]: [
-    courtOfAppealsRequestCasesAccessWhereOptions,
-    { appeal_state: CaseAppealState.COMPLETED },
-  ],
-})
+export const courtOfAppealsCasesCompletedWhereOptions =
+  (): CaseWhereOptions => ({
+    includes: {
+      appealCase: {
+        attributes: [],
+        required: false,
+        where: { appeal_state: AppealCaseState.COMPLETED },
+      },
+      rulingOrderAppealCases: {
+        attributes: [],
+        required: false,
+        where: { appeal_state: AppealCaseState.COMPLETED },
+      },
+    },
+    where: {
+      [Op.and]: [
+        courtOfAppealsCasesAccessWhereOptions(),
+        {
+          [Op.or]: [
+            { '$appealCase.appeal_state$': AppealCaseState.COMPLETED },
+            {
+              '$rulingOrderAppealCases.appeal_state$':
+                AppealCaseState.COMPLETED,
+            },
+          ],
+        },
+      ],
+    },
+    displayCases: expandCasesWithAppeals,
+  })

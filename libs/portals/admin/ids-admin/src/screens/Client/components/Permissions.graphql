@@ -1,0 +1,23 @@
+query GetAvailableScopesByTenants($input: ScopesByTenantsInput!) {
+  authAdminScopesByTenants(input: $input) {
+    data {
+      tenantId
+      data {
+        scopeName
+        environments {
+          name
+          environment
+          displayName {
+            locale
+            value
+          }
+          description {
+            locale
+            value
+          }
+          domainName
+        }
+      }
+    }
+  }
+}

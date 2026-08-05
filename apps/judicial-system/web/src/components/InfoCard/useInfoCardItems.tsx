@@ -1,27 +1,38 @@
-import { Fragment, useContext } from 'react'
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 
 import { Text } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  ROUTE_HANDLER_ROUTE,
+  TIME_FORMAT,
+} from '@island.is/judicial-system/consts'
 import {
   capitalize,
   formatCaseType,
   formatDate,
+  getHumanReadableCaseIndictmentRulingDecision,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import { isRequestCase } from '@island.is/judicial-system/types'
+import {
+  isCompletedCase,
+  isDefenceUser,
+  isIndictmentCase,
+  isRequestCase,
+} from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import { requestCourtDate } from '@island.is/judicial-system-web/messages'
 import {
   Case,
   CaseIndictmentRulingDecision,
   CaseType,
+  Defendant,
   IndictmentCaseReviewDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { isNonEmptyArray } from '../../utils/arrayHelpers'
 import { sortByIcelandicAlphabet } from '../../utils/sortHelper'
+import { getDefaultDefendantGender } from '../../utils/utils'
 import { FormContext } from '../FormProvider/FormProvider'
 import { LinkComponent } from '../MarkdownWrapper/MarkdownWrapper'
 import { UserContext } from '../UserProvider/UserProvider'
@@ -31,16 +42,17 @@ import RenderPersonalData from './RenderPersonalInfo/RenderPersonalInfo'
 import { VictimInfo } from './VictimInfo/VictimInfo'
 import { Item } from './InfoCard'
 import { strings } from './useInfoCardItems.strings'
+import { grid } from '../../utils/styles/recipes.css'
 import * as styles from './InfoCard.css'
 
-const useInfoCardItems = () => {
+type HeadingLevel = 'h2' | 'h3' | 'h4' | 'h5'
+
+// Semantic heading level for the item titles built here. The visual size stays
+// h4 so only the level exposed to assistive technology changes.
+const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
-  const { limitedAccess } = useContext(UserContext)
-
-  // helper for info card items. If items have no values they will have [{falsy value}]
-  const showItem = (item: Item) =>
-    isNonEmptyArray(item.values) && !!item.values[0]
+  const { limitedAccess, user } = useContext(UserContext)
 
   const defendants = ({
     caseType,
@@ -55,13 +67,17 @@ const useInfoCardItems = () => {
     displaySentToPrisonAdminDate?: boolean
     displayOpenCaseReference?: boolean
   }): Item => {
-    const defendants = workingCase.defendants
+    const defendants = workingCase.defendants?.filter((defendant) =>
+      isDefenceUser(user) && isCompletedCase(workingCase.state)
+        ? true
+        : !defendant.indictmentCancelledOrDismissedState,
+    )
     const isMultipleDefendants = defendants && defendants.length > 1
 
     return {
       id: 'defendant-item',
       title: (
-        <Text variant="h4" as="h4" marginBottom={isMultipleDefendants ? 3 : 2}>
+        <Text variant="h4" as={titleAs} marginBottom={2}>
           {capitalize(
             isRequestCase(caseType)
               ? formatMessage(core.defendant, {
@@ -70,40 +86,67 @@ const useInfoCardItems = () => {
               : isMultipleDefendants
               ? formatMessage(core.indictmentDefendants)
               : formatMessage(core.indictmentDefendant, {
-                  gender: defendants?.[0].gender,
+                  gender: getDefaultDefendantGender(defendants),
                 }),
           )}
         </Text>
       ),
       values: defendants
-        ? defendants.map((defendant, index) => (
-            <div
-              key={defendant.id}
-              className={cn(
-                isMultipleDefendants ? styles.renderDivider : undefined,
-                defendants && index === defendants.length - 1
-                  ? styles.last
-                  : undefined,
-              )}
-            >
-              <DefendantInfo
-                defendant={defendant}
-                workingCaseId={workingCase.id}
-                courtId={workingCase.court?.id}
-                defender={{
-                  name: workingCase.defenderName,
-                  email: workingCase.defenderEmail,
-                  phoneNumber: workingCase.defenderPhoneNumber,
-                  sessionArrangement: workingCase.sessionArrangements,
-                }}
-                displayAppealExpirationInfo={displayAppealExpirationInfo}
-                displayVerdictViewDate={displayVerdictViewDate}
-                displaySentToPrisonAdminDate={displaySentToPrisonAdminDate}
-                displayOpenCaseReference={displayOpenCaseReference}
-              />
-            </div>
-          ))
+        ? [
+            <div key="defendants-grid" className={grid({ gap: 3 })}>
+              {defendants.map((defendant, index) => (
+                <div
+                  key={`defendants-grid-${defendant.id}`}
+                  className={cn({
+                    [styles.renderDividerFull]: index !== defendants.length - 1,
+                  })}
+                >
+                  <DefendantInfo
+                    defendant={defendant}
+                    courtId={workingCase.court?.id}
+                    defender={{
+                      name: workingCase.defenderName,
+                      email: workingCase.defenderEmail,
+                      phoneNumber: workingCase.defenderPhoneNumber,
+                      sessionArrangement: workingCase.sessionArrangements,
+                    }}
+                    displayAppealExpirationInfo={displayAppealExpirationInfo}
+                    displayVerdictViewDate={displayVerdictViewDate}
+                    displaySentToPrisonAdminDate={displaySentToPrisonAdminDate}
+                    displayOpenCaseReference={displayOpenCaseReference}
+                    indictmentRulingDecision={
+                      workingCase.indictmentRulingDecision
+                    }
+                  />
+                </div>
+              ))}
+            </div>,
+          ]
         : [],
+    }
+  }
+
+  const cancelledAndDismissedDefendants = (defendant: Defendant): Item => {
+    return {
+      id: `cancelled-and-dismissed-defendant-item-${defendant.id}`,
+      title: (
+        <Text variant="h4" as={titleAs}>
+          {getHumanReadableCaseIndictmentRulingDecision(
+            defendant.indictmentCancelledOrDismissedState?.type,
+          )}
+        </Text>
+      ),
+      values: [
+        <div key="cancelled-and-dismissed-defendants-grid">
+          <Text>{defendant.name}</Text>
+          <Text>
+            {formatDate(
+              defendant.indictmentCancelledOrDismissedState?.time,
+              'dd.MM.y',
+            )}
+          </Text>
+        </div>,
+      ],
     }
   }
 
@@ -132,7 +175,7 @@ const useInfoCardItems = () => {
 
   const prosecutorsOffice: Item = {
     id: 'prosecutors-office-item',
-    title: formatMessage(core.prosecutor),
+    title: isIndictmentCase(workingCase.type) ? 'Ákæruvald' : 'Sóknaraðili',
     values: [workingCase.prosecutorsOffice?.name || ''],
   }
 
@@ -204,10 +247,7 @@ const useInfoCardItems = () => {
     values: [
       `${capitalize(
         formatDate(workingCase.requestedCourtDate, 'PPPP', true) ?? '',
-      )} eftir kl. ${formatDate(
-        workingCase.requestedCourtDate,
-        constants.TIME_FORMAT,
-      )}`,
+      )} eftir kl. ${formatDate(workingCase.requestedCourtDate, TIME_FORMAT)}`,
     ],
   }
 
@@ -248,7 +288,7 @@ const useInfoCardItems = () => {
 
   const mergedCaseProsecutor = (mergedCase: Case): Item => ({
     id: 'merged-case-prosecutor-item',
-    title: formatMessage(core.prosecutor),
+    title: isIndictmentCase(mergedCase.type) ? 'Ákæruvald' : 'Sóknaraðili',
     values: [mergedCase.prosecutorsOffice?.name],
   })
 
@@ -264,22 +304,30 @@ const useInfoCardItems = () => {
     values: [mergedCase.court?.name],
   })
 
+  const splitCaseEntries =
+    workingCase.splitCases?.flatMap(
+      (splitCase) =>
+        splitCase.defendants?.map((defendant) => ({ defendant, splitCase })) ??
+        [],
+    ) ?? []
+
   const splitCases: Item = {
     id: 'split-cases-item',
     title: 'Klofinn frá',
-    values:
-      workingCase.splitCases?.flatMap((splitCase) =>
-        splitCase.defendants?.map((defendant) => (
-          <Fragment key={defendant.id}>
-            <Text>{defendant.name}</Text>
-            <LinkComponent
-              href={`/${constants.ROUTE_HANDLER_ROUTE}/${splitCase.id}`}
-            >
-              {splitCase.courtCaseNumber}
-            </LinkComponent>
-          </Fragment>
-        )),
-      ) || [],
+    values: isNonEmptyArray(splitCaseEntries)
+      ? [
+          <div key="split-cases-grid" className={grid({ gap: 2 })}>
+            {splitCaseEntries.map(({ defendant, splitCase }) => (
+              <div key={`split-cases-grid-${splitCase.id}-${defendant.id}`}>
+                <Text>{defendant.name}</Text>
+                <LinkComponent href={`${ROUTE_HANDLER_ROUTE}/${splitCase.id}`}>
+                  {splitCase.courtCaseNumber}
+                </LinkComponent>
+              </div>
+            ))}
+          </div>,
+        ]
+      : [],
   }
 
   const splitCase: Item = {
@@ -291,7 +339,7 @@ const useInfoCardItems = () => {
             workingCase.splitCase.courtCaseNumber
           ) : (
             <LinkComponent
-              href={`${constants.ROUTE_HANDLER_ROUTE}/${workingCase.splitCase.id}`}
+              href={`${ROUTE_HANDLER_ROUTE}/${workingCase.splitCase.id}`}
               key={workingCase.splitCase.id}
             >
               {workingCase.splitCase.courtCaseNumber}
@@ -304,13 +352,13 @@ const useInfoCardItems = () => {
   const appealCaseNumber: Item = {
     id: 'appeal-case-number-item',
     title: formatMessage(core.appealCaseNumberHeading),
-    values: [workingCase.appealCaseNumber],
+    values: [workingCase.appealCase?.appealCaseNumber],
   }
 
   const appealAssistant: Item = {
     id: 'appeal-assistant-item',
     title: formatMessage(core.appealAssistantHeading),
-    values: [workingCase.appealAssistant?.name],
+    values: [workingCase.appealCase?.appealAssistant?.name],
   }
 
   const appealJudges: Item = {
@@ -319,9 +367,9 @@ const useInfoCardItems = () => {
     values: [
       <>
         {sortByIcelandicAlphabet([
-          workingCase.appealJudge1?.name || '',
-          workingCase.appealJudge2?.name || '',
-          workingCase.appealJudge3?.name || '',
+          workingCase.appealCase?.appealJudge1?.name || '',
+          workingCase.appealCase?.appealJudge2?.name || '',
+          workingCase.appealCase?.appealJudge3?.name || '',
         ]).map((judge, index) => (
           <Text key={`${judge}_${index}`}>{judge}</Text>
         ))}
@@ -338,7 +386,7 @@ const useInfoCardItems = () => {
   const indictmentReviewDecision: Item = {
     id: 'indictment-review-decision-item',
     title: formatMessage(strings.indictmentReviewDecision),
-    values: workingCase.defendants
+    values: isNonEmptyArray(workingCase.defendants)
       ? workingCase.defendants
           .filter((defendant) => defendant.indictmentReviewDecision)
           .map((defendant) => (
@@ -376,14 +424,11 @@ const useInfoCardItems = () => {
       workingCase.parentCase
         ? `${capitalize(
             formatDate(workingCase.parentCase.validToDate, 'PPPP', true) ?? '',
-          )} kl. ${formatDate(
-            workingCase.parentCase.validToDate,
-            constants.TIME_FORMAT,
-          )}`
+          )} kl. ${formatDate(workingCase.parentCase.validToDate, TIME_FORMAT)}`
         : workingCase.arrestDate
         ? `${capitalize(
             formatDate(workingCase.arrestDate, 'PPPP', true) ?? '',
-          )} kl. ${formatDate(workingCase.arrestDate, constants.TIME_FORMAT)}`
+          )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`
         : 'Var ekki skráður',
     ],
   }
@@ -391,80 +436,67 @@ const useInfoCardItems = () => {
   const civilClaimants: Item = {
     id: 'civil-claimant-item',
     title: (
-      <Text
-        variant="h4"
-        as="h4"
-        marginBottom={
-          workingCase.civilClaimants && workingCase.civilClaimants.length > 1
-            ? 3
-            : 2
-        }
-      >
+      <Text variant="h4" as={titleAs} marginBottom={2}>
         {capitalize(
-          workingCase.civilClaimants && workingCase.civilClaimants.length > 1
+          isNonEmptyArray(workingCase.civilClaimants) &&
+            workingCase.civilClaimants.length > 1
             ? formatMessage(strings.civilClaimants)
             : formatMessage(strings.civilClaimant),
         )}
       </Text>
     ),
-    values: workingCase.civilClaimants
-      ? workingCase.civilClaimants.map((civilClaimant, index) => (
-          <div
-            key={civilClaimant.id}
-            className={cn(
-              workingCase.civilClaimants &&
-                workingCase.civilClaimants.length > 1
-                ? styles.renderDivider
-                : undefined,
-              workingCase.civilClaimants &&
-                index === workingCase.civilClaimants.length - 1
-                ? styles.last
-                : undefined,
-            )}
-          >
-            <CivilClaimantInfo civilClaimant={civilClaimant} />
-          </div>
-        ))
+    values: isNonEmptyArray(workingCase.civilClaimants)
+      ? [
+          <div key="civil-claimants-grid" className={grid({ gap: 3 })}>
+            {workingCase.civilClaimants.map((civilClaimant, index) => (
+              <div
+                key={civilClaimant.id}
+                className={cn({
+                  [styles.renderDividerFull]:
+                    isNonEmptyArray(workingCase.civilClaimants) &&
+                    index !== workingCase.civilClaimants.length - 1,
+                })}
+              >
+                <CivilClaimantInfo civilClaimant={civilClaimant} />
+              </div>
+            ))}
+          </div>,
+        ]
       : [],
   }
 
   const victims: Item = {
     id: 'victim-item',
     title: (
-      <Text
-        variant="h4"
-        as="h4"
-        marginBottom={
-          workingCase.victims && workingCase.victims.length > 1 ? 3 : 2
-        }
-      >
+      <Text variant="h4" as={titleAs} marginBottom={2}>
         {workingCase.victims && workingCase.victims.length > 1
           ? 'Brotaþolar'
           : 'Brotaþoli'}
       </Text>
     ),
-    values: workingCase.victims
-      ? workingCase.victims.map((victim, index) => (
-          <div
-            key={victim.id}
-            className={cn(
-              workingCase.victims && workingCase.victims.length > 1
-                ? styles.renderDivider
-                : undefined,
-              workingCase.victims && index === workingCase.victims.length - 1
-                ? styles.last
-                : undefined,
-            )}
-          >
-            <VictimInfo victim={victim} />
-          </div>
-        ))
+    values: isNonEmptyArray(workingCase.victims)
+      ? [
+          <div key="victims-grid" className={grid({ gap: 3 })}>
+            {workingCase.victims.map((victim, index) => (
+              <div
+                key={victim.id}
+                className={cn(grid({ gap: 1 }), {
+                  [styles.renderDividerFull]:
+                    isNonEmptyArray(workingCase.victims) &&
+                    index !== workingCase.victims.length - 1,
+                })}
+              >
+                <VictimInfo victim={victim} />
+              </div>
+            ))}
+          </div>,
+        ]
       : [],
   }
 
   return {
-    showItem,
     defendants,
+    cancelledAndDismissedDefendants,
     indictmentCreated,
     prosecutor,
     prosecutorsOffice,

@@ -20,6 +20,7 @@ export const registrant = buildSection({
       id: 'registrant',
       title: m.registrantTitle,
       description: m.applicantsInfoSubtitle,
+      nextButtonText: m.saveAndContinue,
       children: [
         buildCustomField(
           {

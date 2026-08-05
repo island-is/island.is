@@ -21,7 +21,13 @@ import {
 import { UpdateFieldDto } from './models/dto/updateField.dto'
 import { FieldDto } from './models/dto/field.dto'
 import { UpdateFieldsDisplayOrderDto } from './models/dto/updateFieldsDisplayOrder.dto'
-import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+  User,
+} from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -38,8 +44,11 @@ export class FieldsController {
   })
   @ApiBody({ type: CreateFieldDto })
   @Post()
-  create(@Body() createFieldDto: CreateFieldDto): Promise<FieldDto> {
-    return this.fieldsService.create(createFieldDto)
+  create(
+    @CurrentUser() user: User,
+    @Body() createFieldDto: CreateFieldDto,
+  ): Promise<FieldDto> {
+    return this.fieldsService.create(user, createFieldDto)
   }
 
   @ApiOperation({ summary: 'Update field' })
@@ -52,8 +61,9 @@ export class FieldsController {
   async update(
     @Param('id') id: string,
     @Body() updateFieldDto: UpdateFieldDto,
+    @CurrentUser() user: User,
   ): Promise<void> {
-    await this.fieldsService.update(id, updateFieldDto)
+    await this.fieldsService.update(user, id, updateFieldDto)
   }
 
   @ApiOperation({ summary: 'Update display order of fields' })
@@ -63,9 +73,13 @@ export class FieldsController {
   @ApiBody({ type: UpdateFieldsDisplayOrderDto })
   @Put()
   async updateDisplayOrder(
+    @CurrentUser() user: User,
     @Body() updateFieldsDisplayOrderDto: UpdateFieldsDisplayOrderDto,
   ): Promise<void> {
-    return this.fieldsService.updateDisplayOrder(updateFieldsDisplayOrderDto)
+    return this.fieldsService.updateDisplayOrder(
+      user,
+      updateFieldsDisplayOrderDto,
+    )
   }
 
   @ApiOperation({ summary: 'Delete field by id' })
@@ -74,7 +88,10 @@ export class FieldsController {
   })
   @ApiParam({ name: 'id', type: String })
   @Delete(':id')
-  async delete(@Param('id') id: string): Promise<void> {
-    return this.fieldsService.delete(id)
+  async delete(
+    @CurrentUser() user: User,
+    @Param('id') id: string,
+  ): Promise<void> {
+    return this.fieldsService.delete(user, id)
   }
 }

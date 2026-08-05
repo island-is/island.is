@@ -74,7 +74,7 @@ const FirstPeriodStart: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   }, [renderHiddenStartDateInput, startDateFieldId, unregister, setValue])
 
   return (
-    <Box marginY={3} key={field.id}>
+    <Box marginY={3} key={field.id as string}>
       <FieldDescription
         description={formatMessage(
           isFosterCareAndAdoption(application)
@@ -89,7 +89,7 @@ const FirstPeriodStart: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       />
       <Box paddingTop={3} marginBottom={3}>
         <RadioController
-          id={field.id}
+          id={field.id as string}
           error={error}
           defaultValue={
             statefulAnswer !== undefined

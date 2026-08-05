@@ -1,5 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import differenceWith from 'lodash/differenceWith'
+import groupBy from 'lodash/groupBy'
+import min from 'lodash/min'
+import max from 'lodash/max'
 
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
@@ -11,13 +18,17 @@ import {
 
 import {
   CreateDelegationInput,
+  CreateDelegationsInput,
   DelegationInput,
   DelegationsInput,
   DeleteDelegationInput,
+  DeleteDelegationScopesInput,
   PatchDelegationInput,
   UpdateDelegationInput,
 } from '../dto'
 import { DelegationByOtherUserInput } from '../dto/delegationByOtherUser.input'
+import { DelegationsGroupedByIdentity } from '../dto/delegationsGroupedByIdentity.dto'
+import { DelegationScope } from '../models/delegationScope.model'
 import startOfDay from 'date-fns/startOfDay'
 
 @Injectable()
@@ -94,6 +105,49 @@ export class MeDelegationsService {
     return this.includeDomainNameInScopes(delegation)
   }
 
+  async createOrUpdateDelegations(
+    user: User,
+    { toNationalIds, scopes }: CreateDelegationsInput,
+  ): Promise<DelegationDTO[]> {
+    const scopesByDomain = groupBy(scopes, (scope) => scope.domainName)
+
+    const results = await Promise.allSettled(
+      toNationalIds.map((toNationalId) =>
+        Promise.all(
+          Object.entries(scopesByDomain).map(([domainName, domainScopes]) =>
+            this.createOrUpdateDelegation(user, {
+              toNationalId,
+              domainName,
+              scopes: domainScopes.map(({ name, validTo }) => ({
+                name,
+                validTo,
+              })),
+            }),
+          ),
+        ),
+      ),
+    )
+
+    const successful: DelegationDTO[] = []
+    const failedNationalIds: string[] = []
+
+    results.forEach((result, index) => {
+      if (result.status === 'fulfilled') {
+        successful.push(...result.value)
+      } else {
+        failedNationalIds.push(toNationalIds[index])
+      }
+    })
+
+    if (failedNationalIds.length > 0) {
+      throw new BadRequestException(
+        'Failed to create delegations for some recipients',
+      )
+    }
+
+    return successful
+  }
+
   private createDelegation(
     user: User,
     { toNationalId, domainName, scopes }: CreateDelegationInput,
@@ -132,7 +186,6 @@ export class MeDelegationsService {
         name: scope.scopeName,
         validTo: scope.validTo,
       })) ?? []
-
     const updateScopes = differenceWith(
       newScopes,
       oldScopes,
@@ -144,11 +197,15 @@ export class MeDelegationsService {
       this.compareScopesByName,
     ).map((s) => s.name)
 
-    return this.patchDelegation(user, {
+    const patched = await this.patchDelegation(user, {
       delegationId,
       updateScopes,
       deleteScopes,
     })
+    if (!patched) {
+      throw new NotFoundException()
+    }
+    return patched
   }
 
   async patchDelegation(
@@ -158,17 +215,32 @@ export class MeDelegationsService {
       updateScopes = [],
       deleteScopes = [],
     }: PatchDelegationInput,
-  ): Promise<DelegationDTO> {
-    const delegation = await this.delegationsApiWithAuth(
+  ): Promise<DelegationDTO | null> {
+    const request = await this.delegationsApiWithAuth(
       user,
-    ).meDelegationsControllerPatch({
+    ).meDelegationsControllerPatchRaw({
       delegationId,
       patchDelegationDTO: {
         deleteScopes,
         updateScopes,
       },
     })
-    return this.includeDomainNameInScopes(delegation)
+    const delegation = request.raw.status === 204 ? null : await request.value()
+    return delegation ? this.includeDomainNameInScopes(delegation) : null
+  }
+
+  async deleteDelegationScopes(
+    user: User,
+    { delegationId, scopeNames }: DeleteDelegationScopesInput,
+  ): Promise<DelegationDTO | null> {
+    const request = await this.delegationsApiWithAuth(
+      user,
+    ).meDelegationsControllerDeleteScopesRaw({
+      delegationId,
+      deleteDelegationScopesDTO: { scopeNames },
+    })
+    const delegation = request.raw.status === 204 ? null : await request.value()
+    return delegation ? this.includeDomainNameInScopes(delegation) : null
   }
 
   private compareScopesByName(
@@ -201,5 +273,75 @@ export class MeDelegationsService {
           domainName: delegation.domainName,
         })),
     }
+  }
+
+  async getDelegationsGroupedByIdentity(
+    user: User,
+    input: {
+      direction: MeDelegationsControllerFindAllDirectionEnum
+    },
+  ): Promise<DelegationsGroupedByIdentity[]> {
+    const allDelegations = (
+      await this.delegationsApiWithAuth(user).meDelegationsControllerFindAll({
+        direction: input.direction,
+        validity: MeDelegationsControllerFindAllValidityEnum.includeFuture,
+      })
+    ).map((delegation) => this.includeDomainNameInScopes(delegation))
+
+    const isOutgoing =
+      input.direction === MeDelegationsControllerFindAllDirectionEnum.outgoing
+
+    const groupedByPersonAndType = groupBy(allDelegations, (delegation) => {
+      const nationalId = isOutgoing
+        ? delegation.toNationalId
+        : delegation.fromNationalId
+      return `${nationalId}|${delegation.type}`
+    })
+
+    return Object.entries(groupedByPersonAndType).map(([key, delegations]) => {
+      const firstDelegation = delegations[0]
+      const nationalId = isOutgoing
+        ? firstDelegation.toNationalId
+        : firstDelegation.fromNationalId
+      const personName = isOutgoing
+        ? firstDelegation.toName ?? nationalId ?? ''
+        : firstDelegation.fromName ?? nationalId ?? ''
+
+      // Flatten all scopes from all domains, adding domain context to each scope
+      const allScopes: DelegationScope[] = delegations.flatMap(
+        (delegation) =>
+          delegation.scopes?.map((scope) => ({
+            id: scope.id ?? `${delegation.id}-${scope.scopeName}`,
+            name: scope.scopeName ?? '',
+            scopeName: scope.scopeName ?? '',
+            displayName: scope.displayName ?? scope.scopeName ?? '',
+            validFrom: scope.validFrom ?? undefined,
+            validTo: scope.validTo ?? undefined,
+            domainName: delegation.domainName ?? '',
+            delegationId: scope.delegationId ?? delegation.id ?? '',
+          })) ?? [],
+      )
+
+      // Get earliest and latest dates
+      const validFromDates = allScopes
+        .map((s) => s.validFrom)
+        .filter((d): d is Date => d != null)
+      const validToDates = allScopes
+        .map((s) => s.validTo)
+        .filter((d): d is Date => d != null)
+
+      return {
+        nationalId: nationalId ?? '',
+        name: personName,
+        type: firstDelegation.type,
+        subjectId: firstDelegation.subjectId ?? null,
+        totalScopeCount: allScopes.length,
+        scopes: allScopes,
+        createdAt: firstDelegation.createdAt ?? null,
+        earliestValidFrom:
+          validFromDates.length > 0 ? min(validFromDates) : null,
+        latestValidTo: validToDates.length > 0 ? max(validToDates) : null,
+      }
+    })
   }
 }

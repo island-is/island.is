@@ -8,7 +8,7 @@ import {
 import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/enums'
 import { Box, Checkbox, Icon, Text } from '@island.is/island-ui/core'
 import cn from 'classnames'
-import { useContext } from 'react'
+import { MouseEvent, useContext } from 'react'
 import { ControlContext } from '../../context/ControlContext'
 import { ItemType, NavbarSelectStatus } from '../../lib/utils/interfaces'
 import { NavButtons } from './components/NavButtons'
@@ -20,6 +20,7 @@ type Props = {
   active: boolean
   index?: number
   selectable?: boolean
+  stylePaymentFieldAsSection?: boolean
   focusComponent?(type: ItemType, id: UniqueIdentifier): void
 }
 
@@ -29,6 +30,7 @@ export const NavComponent = ({
   active,
   index,
   selectable,
+  stylePaymentFieldAsSection = false,
   focusComponent,
 }: Props) => {
   const {
@@ -40,13 +42,100 @@ export const NavComponent = ({
     openComponents,
     setOpenComponents,
   } = useContext(ControlContext)
-  const { activeItem, activeListItem, form } = control
+  const { activeItem, activeListItem, form, isReadOnly } = control
   const activeGuid =
     selectStatus === NavbarSelectStatus.LIST_ITEM
       ? activeListItem?.id ?? ''
       : activeItem?.data?.id ?? ''
-
+  const name = data?.name?.is ?? ''
   const selectingIsOff = selectStatus === NavbarSelectStatus.OFF
+  const isPaymentField =
+    type === 'Field' &&
+    (data as FormSystemField).fieldType === FieldTypesEnum.PAYMENT
+  const isPaymentFieldWithSectionStyle =
+    isPaymentField && stylePaymentFieldAsSection
+
+  const isSectionOrScreen = type === 'Section' || type === 'Screen'
+
+  const isSectionWithoutChevron =
+    type === 'Section' &&
+    ((data as FormSystemSection).sectionType === SectionTypes.PARTIES ||
+      (data as FormSystemSection).sectionType === SectionTypes.PAYMENT)
+
+  const hasChildren =
+    type === 'Section'
+      ? form.screens?.some((screen) => screen?.sectionId === data.id)
+      : type === 'Screen'
+      ? form.fields?.some((field) => field?.screenId === data.id)
+      : false
+
+  const canToggleOpenState =
+    isSectionOrScreen && !isSectionWithoutChevron && hasChildren
+
+  const componentIsOpen =
+    type === 'Section'
+      ? openComponents.sections.includes(data.id)
+      : type === 'Screen'
+      ? openComponents.screens.includes(data.id)
+      : false
+
+  const openComponent = () => {
+    if (!canToggleOpenState || componentIsOpen) {
+      return
+    }
+
+    if (type === 'Section') {
+      setOpenComponents((prev) => ({
+        ...prev,
+        sections: [...prev.sections, data.id as string],
+      }))
+    }
+
+    if (type === 'Screen') {
+      setOpenComponents((prev) => ({
+        ...prev,
+        screens: [...prev.screens, data.id as string],
+      }))
+    }
+  }
+
+  const toggleComponentOpen = (event: MouseEvent<HTMLDivElement>) => {
+    event.stopPropagation()
+
+    if (!canToggleOpenState) {
+      return
+    }
+
+    if (focusComponent) {
+      focusComponent(type, data.id as UniqueIdentifier)
+    }
+
+    if (type === 'Section') {
+      setOpenComponents((prev) => ({
+        ...prev,
+        sections: prev.sections.includes(data.id)
+          ? prev.sections.filter((id) => id !== data.id)
+          : [...prev.sections, data.id as string],
+      }))
+    }
+
+    if (type === 'Screen') {
+      setOpenComponents((prev) => ({
+        ...prev,
+        screens: prev.screens.includes(data.id)
+          ? prev.screens.filter((id) => id !== data.id)
+          : [...prev.screens, data.id as string],
+      }))
+    }
+  }
+
+  const handleComponentClick = () => {
+    if (focusComponent) {
+      focusComponent(type, data.id as UniqueIdentifier)
+    }
+
+    openComponent()
+  }
 
   const connected = () => {
     const hasDependency = form.dependencies?.find((dep) => {
@@ -87,45 +176,21 @@ export const NavComponent = ({
     (connected() || listIsConnected()) && !selectable && !inListBuilder
 
   const renderChevron = () => {
-    const isSectionOrScreen = type === 'Section' || type === 'Screen'
-    const isClosed =
-      !openComponents.sections.includes(data.id) &&
-      !openComponents.screens.includes(data.id)
-    if (isSectionOrScreen && isClosed) {
-      const hasChildren =
-        type === 'Section'
-          ? form.screens?.some((screen) => screen?.sectionId === data.id)
-          : form.fields?.some((field) => field?.screenId === data.id)
-      if (hasChildren) {
-        return (
-          <Box display="flex" alignItems="center" justifyContent="center">
-            <Box
-              className={cn(styles.chevronStyle)}
-              onClick={() => {
-                if (type === 'Section') {
-                  setOpenComponents((prev) => ({
-                    ...prev,
-                    sections: prev.sections.includes(data.id)
-                      ? prev.sections.filter((id) => id !== data.id)
-                      : [...prev.sections, data.id as string],
-                  }))
-                }
-                if (type === 'Screen') {
-                  setOpenComponents((prev) => ({
-                    ...prev,
-                    screens: prev.screens.includes(data.id)
-                      ? prev.screens.filter((id) => id !== data.id)
-                      : [...prev.screens, data.id as string],
-                  }))
-                }
-              }}
-            >
-              <Icon icon="chevronForward" size="small" color="dark300" />
-            </Box>
-          </Box>
-        )
-      }
+    if (!canToggleOpenState) {
+      return
     }
+
+    return (
+      <Box display="flex" alignItems="center" justifyContent="center">
+        <Box className={cn(styles.chevronStyle)} onClick={toggleComponentOpen}>
+          {componentIsOpen ? (
+            <Icon icon="chevronDown" size="small" color="dark300" />
+          ) : (
+            <Icon icon="chevronForward" size="small" color="dark300" />
+          )}
+        </Box>
+      </Box>
+    )
   }
 
   const { setNodeRef, attributes, listeners, isDragging } = useSortable({
@@ -134,61 +199,86 @@ export const NavComponent = ({
       type: type,
       data,
     },
+    disabled: isReadOnly,
   })
+
+  const sortableRef = isReadOnly ? undefined : setNodeRef
+  const sortableAttributes = isReadOnly ? undefined : attributes
+  const sortableListeners = isReadOnly ? undefined : listeners
 
   if (isDragging) {
     return (
       <div
-        ref={setNodeRef}
+        ref={sortableRef}
         className={cn({
-          [styles.navComponent.step]: type === 'Section' && focusComponent,
+          [styles.navComponent.step]:
+            (type === 'Section' || isPaymentFieldWithSectionStyle) &&
+            focusComponent,
           [styles.navComponent.group]: type === 'Screen' && focusComponent,
-          [styles.navComponent.input]: type === 'Field' && focusComponent,
+          [styles.navComponent.input]:
+            type === 'Field' &&
+            !isPaymentFieldWithSectionStyle &&
+            focusComponent,
           [styles.navComponent.stepSelect]:
-            type === 'Section' && !focusComponent,
+            (type === 'Section' || isPaymentFieldWithSectionStyle) &&
+            !focusComponent,
           [styles.navComponent.groupSelect]:
             type === 'Screen' && !focusComponent,
           [styles.navComponent.inputSelect]:
-            type === 'Field' && !focusComponent,
+            type === 'Field' &&
+            !isPaymentFieldWithSectionStyle &&
+            !focusComponent,
         })}
       >
         <div
           className={cn({
-            [styles.navBackgroundActive.step]: type === 'Section',
+            [styles.navBackgroundActive.step]:
+              type === 'Section' || isPaymentFieldWithSectionStyle,
             [styles.navBackgroundActive.group]: type === 'Screen',
-            [styles.navBackgroundActive.input]: type === 'Field',
+            [styles.navBackgroundActive.input]:
+              type === 'Field' && !isPaymentFieldWithSectionStyle,
           })}
         ></div>
       </div>
     )
   }
+
   return (
     <Box
       className={cn({
-        [styles.navComponent.step]: type === 'Section' && focusComponent,
+        [styles.navComponent.step]:
+          (type === 'Section' || isPaymentFieldWithSectionStyle) &&
+          focusComponent,
         [styles.navComponent.group]: type === 'Screen' && focusComponent,
-        [styles.navComponent.input]: type === 'Field' && focusComponent,
-        [styles.navComponent.stepSelect]: type === 'Section' && !focusComponent,
+        [styles.navComponent.input]:
+          type === 'Field' && !isPaymentFieldWithSectionStyle && focusComponent,
+        [styles.navComponent.stepSelect]:
+          (type === 'Section' || isPaymentFieldWithSectionStyle) &&
+          !focusComponent,
         [styles.navComponent.groupSelect]: type === 'Screen' && !focusComponent,
-        [styles.navComponent.inputSelect]: type === 'Field' && !focusComponent,
+        [styles.navComponent.inputSelect]:
+          type === 'Field' &&
+          !isPaymentFieldWithSectionStyle &&
+          !focusComponent,
       })}
-      {...(focusComponent && {
-        ...listeners,
-        ...attributes,
-        onClick: () => focusComponent(type, data.id as UniqueIdentifier),
-      })}
-      ref={setNodeRef}
+      onClick={handleComponentClick}
+      ref={sortableRef}
     >
       {active ? (
         <Box display="flex" flexDirection="row">
           <Box
             className={cn({
-              [styles.navBackgroundActive.step]: type === 'Section',
+              [styles.navBackgroundActive.step]:
+                type === 'Section' || isPaymentFieldWithSectionStyle,
               [styles.navBackgroundActive.group]: type === 'Screen',
-              [styles.navBackgroundActive.input]: type === 'Field',
+              [styles.navBackgroundActive.input]:
+                type === 'Field' && !isPaymentFieldWithSectionStyle,
             })}
+            {...sortableListeners}
+            {...sortableAttributes}
           >
             {focusComponent ? index : ''}
+            {renderChevron()}
           </Box>
           <Box
             paddingLeft={1}
@@ -197,6 +287,7 @@ export const NavComponent = ({
             minWidth={0}
             alignItems="center"
             justifyContent="center"
+            title={name}
           >
             <Text
               id={`formSystem.${type.toLowerCase()}.name`}
@@ -219,7 +310,6 @@ export const NavComponent = ({
             ) &&
               selectingIsOff && <NavButtons id={data.id} type={type} />}
           </Box>
-          {renderChevron()}
         </Box>
       ) : (
         <Box
@@ -231,12 +321,15 @@ export const NavComponent = ({
           <Box
             id="1"
             className={cn({
-              [styles.navBackgroundDefault.step]: type === 'Section',
+              [styles.navBackgroundDefault.step]:
+                type === 'Section' || isPaymentFieldWithSectionStyle,
               [styles.navBackgroundDefault.group]: type === 'Screen',
-              [styles.navBackgroundDefault.input]: type === 'Field',
+              [styles.navBackgroundDefault.input]:
+                type === 'Field' && !isPaymentFieldWithSectionStyle,
             })}
           >
-            {/* {index} */}
+            {index}
+            {renderChevron()}
           </Box>
           <Box
             data-testid="navcomponent-content"
@@ -247,6 +340,7 @@ export const NavComponent = ({
             minWidth={0}
             overflow="hidden"
             justifyContent="flexStart"
+            title={name}
           >
             <Text
               id={`formSystem.${type.toLowerCase()}.name`}
@@ -269,7 +363,11 @@ export const NavComponent = ({
               selectingIsOff && <NavButtons id={data.id} type={type} />}
           </Box>
           {selectable && (
-            <Box className={cn(styles.selectableComponent)} marginLeft="auto">
+            <Box
+              className={cn(styles.selectableComponent)}
+              marginLeft="auto"
+              onClick={(event) => event.stopPropagation()}
+            >
               <Checkbox
                 checked={connected()}
                 onChange={() =>
@@ -286,11 +384,14 @@ export const NavComponent = ({
             </Box>
           )}
           {showCheckbox() && (
-            <Box className={cn(styles.selectableComponent)} marginLeft="auto">
+            <Box
+              className={cn(styles.selectableComponent)}
+              marginLeft="auto"
+              onClick={(event) => event.stopPropagation()}
+            >
               <Checkbox checked={true} disabled={true} />
             </Box>
           )}
-          {renderChevron()}
         </Box>
       )}
     </Box>

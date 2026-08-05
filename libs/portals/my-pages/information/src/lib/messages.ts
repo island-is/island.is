@@ -161,6 +161,10 @@ export const mInformationNotifications = defineMessages({
     id: 'sp.information-notifications:all-marked-as-read',
     defaultMessage: 'Allar tilkynningar merktar lesnar',
   },
+  fetchErrorTitle: {
+    id: 'sp.information-notifications:fetch-error-title',
+    defaultMessage: 'Ekki tókst að sækja tilkynningar',
+  },
 })
 
 export const msg = defineMessages({
@@ -425,6 +429,19 @@ export const mNotifications = defineMessages({
     id: 'sp.notifications:app-notifications-aria-label',
     defaultMessage: 'Fá tilkynningar í Ísland.is appinu?',
   },
+  smsNotifications: {
+    id: 'sp.notifications:sms-notifications',
+    defaultMessage: 'Tilkynningar í smáskilaboðum (SMS)',
+  },
+  smsNotificationsDescription: {
+    id: 'sp.notifications:sms-notifications-description',
+    defaultMessage:
+      'Ef þú ert ekki með Ísland.is appið getur þú fengið ákveðnar tilkynningar frá stofnunum sendar sem smáskilaboð.',
+  },
+  smsNotificationsAriaLabel: {
+    id: 'sp.notifications:sms-notifications-aria-label',
+    defaultMessage: 'Fá tilkynningar í smáskilaboðum?',
+  },
   delegations: {
     id: 'sp.notifications:delegations',
     defaultMessage: 'Umboð',
@@ -681,10 +698,6 @@ export const contractsMessages = defineMessages({
     id: 'sp.contracts:status',
     defaultMessage: 'Staða',
   },
-  terminationDate: {
-    id: 'sp.contracts:termination-date',
-    defaultMessage: 'Lokadagsetning',
-  },
   active: {
     id: 'sp.contracts:active',
     defaultMessage: 'Í gildi',
@@ -727,9 +740,9 @@ export const contractsMessages = defineMessages({
     id: 'sp.contracts:hide-inactive-contracts',
     defaultMessage: 'Fela óvirka samninga',
   },
-  downloadFiles: {
-    id: 'sp.contracts:download-files',
-    defaultMessage: 'Sækja skrár',
+  downloadAsPdf: {
+    id: 'sp.contracts:download-as-pdf',
+    defaultMessage: 'Sækja sem PDF',
   },
   terminateRentalAgreement: {
     id: 'sp.contracts:terminate-rental-agreement',

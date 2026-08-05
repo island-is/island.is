@@ -39,8 +39,8 @@ export class ComplaintsToAlthingiOmbudsmanTemplateService extends BaseTemplateAp
         ['complainedForInformation.powerOfAttorney'],
         application,
       )
-    const buffer = await generateComplaintPdf(application)
     const now = new Date()
+    const buffer = await generateComplaintPdf(application, now)
     const nowString = now.toISOString().replace(/T.*$/g, '')
     const pdf: DocumentInfo = {
       content: buffer.toString('base64'),

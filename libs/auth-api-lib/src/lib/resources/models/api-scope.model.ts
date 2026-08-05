@@ -23,6 +23,8 @@ import { ApiScopeUserClaim } from './api-scope-user-claim.model'
 import { Domain } from './domain.model'
 import { ApiScopeDelegationType } from './api-scope-delegation-type.model'
 import { DelegationTypeModel } from '../../delegations/models/delegation-type.model'
+import { ApiScopeCategory } from './api-scope-category.model'
+import { ApiScopeTag } from './api-scope-tag.model'
 
 interface ModelAttributes {
   name: string
@@ -40,6 +42,8 @@ interface ModelAttributes {
   automaticDelegationGrant: boolean
   alsoForDelegatedUser: boolean
   isAccessControlled?: boolean
+  allowsWrite: boolean
+  thirdPartyLoginUrl: string
   userClaims?: ApiScopeUserClaim[]
   order: number
   required: boolean
@@ -63,6 +67,8 @@ type CreationAttributes = Optional<
   | 'allowExplicitDelegationGrant'
   | 'automaticDelegationGrant'
   | 'alsoForDelegatedUser'
+  | 'allowsWrite'
+  | 'thirdPartyLoginUrl'
   | 'order'
   | 'required'
   | 'emphasize'
@@ -207,6 +213,35 @@ export class ApiScope extends Model<ModelAttributes, CreationAttributes> {
   @ApiPropertyOptional({ nullable: true })
   isAccessControlled?: boolean | null
 
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+    comment: 'Whether this scope allows write access (read is always implicit)',
+  })
+  @ApiProperty()
+  allowsWrite!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+    comment:
+      'Whether this scope requires step-up authentication (tvöfalt samþykki) for sensitive information access',
+  })
+  @ApiProperty()
+  requiresConfirmation!: boolean
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    defaultValue: '',
+    field: 'third_party_login_url',
+    comment: 'URL to redirect to for third party delegation login',
+  })
+  @ApiProperty()
+  thirdPartyLoginUrl!: string
+
   @HasMany(() => ApiScopeUserClaim)
   @ApiPropertyOptional({ nullable: true })
   userClaims?: ApiScopeUserClaim[]
@@ -260,6 +295,12 @@ export class ApiScope extends Model<ModelAttributes, CreationAttributes> {
   @HasMany(() => ApiScopeDelegationType)
   supportedDelegationTypes?: ApiScopeDelegationType[]
 
+  @HasMany(() => ApiScopeCategory)
+  categories?: ApiScopeCategory[]
+
+  @HasMany(() => ApiScopeTag)
+  tags?: ApiScopeTag[]
+
   @BelongsTo(() => Domain)
   @ApiPropertyOptional({ type: () => Domain })
   domain?: Domain
@@ -288,10 +329,15 @@ export class ApiScope extends Model<ModelAttributes, CreationAttributes> {
       emphasize: this.emphasize,
       domainName: this.domainName,
       isAccessControlled: this.isAccessControlled ?? undefined,
+      allowsWrite: this.allowsWrite,
+      requiresConfirmation: this.requiresConfirmation,
+      thirdPartyLoginUrl: this.thirdPartyLoginUrl,
       supportedDelegationTypes:
         this.supportedDelegationTypes?.map(
           ({ delegationType }) => delegationType,
         ) ?? [],
+      categoryIds: this.categories?.map((c) => c.categoryId) ?? [],
+      tagIds: this.tags?.map((t) => t.tagId) ?? [],
     }
   }
 }

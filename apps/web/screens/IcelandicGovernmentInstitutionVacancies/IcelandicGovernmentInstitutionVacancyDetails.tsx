@@ -365,6 +365,9 @@ IcelandicGovernmentInstitutionVacancyDetails.getProps = async ({
     throw new CustomNextError(404, 'Vacancy was not found')
   }
 
+  const useNewApiOverride = query?.api === 'new' ? true : undefined
+  const useOldApiOverride = query?.api === 'old' ? true : undefined
+
   const [vacancyResponse, namespaceResponse] = await Promise.all([
     apolloClient.query<
       GetIcelandicGovernmentInstitutionVacancyDetailsQuery,
@@ -374,6 +377,8 @@ IcelandicGovernmentInstitutionVacancyDetails.getProps = async ({
       variables: {
         input: {
           id: query.id as string,
+          ...(useNewApiOverride && { useNewApiOverride }),
+          ...(useOldApiOverride && { useOldApiOverride }),
         },
       },
     }),

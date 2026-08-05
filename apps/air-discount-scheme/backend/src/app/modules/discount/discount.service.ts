@@ -59,8 +59,10 @@ export class DiscountService {
     return Math.random() * (max + 1 - min) + min
   }
 
-  private generateDiscountCode(): string {
-    return [...Array(DISCOUNT_CODE_LENGTH)]
+  private generateDiscountCode(
+    type: 'normal' | 'connecting' = 'normal',
+  ): string {
+    const codeBody = [...Array(DISCOUNT_CODE_LENGTH - 1)]
       .map(() => {
         // We are excluding 0 and O because users mix them up
         const charCodes = [
@@ -73,6 +75,14 @@ export class DiscountService {
         return String.fromCharCode(randomCharCode)
       })
       .join('')
+
+    // Last character is always a digit: 0-4 for normal flights, 5-9 for connecting flights
+    const lastDigit =
+      type === 'connecting'
+        ? Math.floor(Math.random() * 5) + 5 // 5-9
+        : Math.floor(Math.random() * 5) // 0-4
+
+    return `${codeBody}${lastDigit}`
   }
 
   private async setCache<T>(
@@ -99,7 +109,7 @@ export class DiscountService {
     numberOfDaysUntilExpiration = 1,
     isExplicit = false,
   ): Promise<Discount> {
-    const discountCode = this.generateDiscountCode()
+    const discountCode = this.generateDiscountCode('normal')
     const cacheId = CACHE_KEYS.discount(uuid())
 
     let connectionDiscountCodes: ConnectionDiscountCode[] = []
@@ -140,7 +150,7 @@ export class DiscountService {
           flightLegs[flightLegsCount - 1].destination
         }`
 
-        const connectionDiscountCode = this.generateDiscountCode()
+        const connectionDiscountCode = this.generateDiscountCode('connecting')
 
         // Point every connection discount code to the cache id for lookup later
         await this.setCache<string>(

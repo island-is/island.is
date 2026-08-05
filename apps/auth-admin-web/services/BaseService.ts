@@ -3,7 +3,7 @@
 import APIResponse from '../entities/common/APIResponse'
 import api from './api'
 import { ApiStatusStore } from '../store/ApiStatusStore'
-import { getSession } from 'next-auth/client'
+import { getSession } from 'next-auth/react'
 
 export class BaseService {
   protected static async GET(path: string): Promise<any | null> {

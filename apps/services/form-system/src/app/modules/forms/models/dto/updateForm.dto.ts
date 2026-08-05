@@ -4,14 +4,16 @@ import {
   IsArray,
   IsBoolean,
   IsDateString,
-  IsNumber,
+  IsInt,
   IsOptional,
   IsString,
+  Max,
+  Min,
   ValidateNested,
 } from 'class-validator'
-import { CompletedSectionInfo } from '../../../../dataTypes/completedSectionInfo.model'
 import { Dependency } from '../../../../dataTypes/dependency.model'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
+import { SectionInfo } from '../../../../dataTypes/sectionInfo.model'
 
 export class UpdateFormDto {
   @IsString()
@@ -46,15 +48,15 @@ export class UpdateFormDto {
   @ApiPropertyOptional()
   zendeskInternal?: boolean
 
-  @IsString()
+  @IsBoolean()
   @IsOptional()
   @ApiPropertyOptional()
-  submissionServiceUrl?: string
+  useValidate?: boolean
 
   @IsString()
   @IsOptional()
   @ApiPropertyOptional()
-  validationServiceUrl?: string
+  submissionServiceUrl?: string
 
   @IsBoolean()
   @IsOptional()
@@ -71,10 +73,19 @@ export class UpdateFormDto {
   @ApiPropertyOptional()
   isTranslated?: boolean
 
-  @IsNumber()
+  @IsInt()
+  @Min(1)
+  @Max(60)
   @IsOptional()
   @ApiPropertyOptional()
-  daysUntilApplicationPrune?: number
+  draftDaysToLive?: number
+
+  @IsInt()
+  @Min(1)
+  @Max(30)
+  @IsOptional()
+  @ApiPropertyOptional()
+  submissionDaysToLive?: number
 
   @IsBoolean()
   @IsOptional()
@@ -87,10 +98,10 @@ export class UpdateFormDto {
   hasSummaryScreen?: boolean
 
   @ValidateNested()
-  @Type(() => CompletedSectionInfo)
+  @Type(() => SectionInfo)
   @IsOptional()
-  @ApiPropertyOptional({ type: CompletedSectionInfo })
-  completedSectionInfo?: CompletedSectionInfo
+  @ApiPropertyOptional({ type: SectionInfo })
+  sectionInfo?: SectionInfo
 
   @ValidateNested()
   @Type(() => Dependency)
@@ -98,4 +109,9 @@ export class UpdateFormDto {
   @IsOptional()
   @ApiPropertyOptional({ type: [Dependency] })
   dependencies?: Dependency[]
+
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional()
+  lastModifiedBy?: string
 }

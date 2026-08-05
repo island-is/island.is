@@ -3,8 +3,9 @@ import { v4 as uuid } from 'uuid'
 import { EmailService } from '@island.is/email-service'
 
 import {
-  CaseNotificationType,
   CaseType,
+  IndictmentCaseNotificationType,
+  RequestCaseNotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -67,7 +68,7 @@ describe('InternalNotificationController - Send indictment denied notification',
 
     const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
-      type: CaseNotificationType.INDICTMENT_DENIED,
+      type: IndictmentCaseNotificationType.INDICTMENT_DENIED as unknown as RequestCaseNotificationType,
     }
 
     const theCase = {

@@ -1,18 +1,7 @@
-import { ObjectType, Field, registerEnumType } from '@nestjs/graphql'
-import { FileType } from '../universityCareers.types'
-
-registerEnumType(FileType, {
-  name: 'UniversityCareersStudentFileType',
-})
+import { ObjectType, Field } from '@nestjs/graphql'
 
 @ObjectType('UniversityCareersStudentFile')
 export class StudentFile {
-  @Field(() => FileType)
-  type!: FileType
-
-  @Field()
-  locale!: string
-
   @Field()
   displayName!: string
 
@@ -21,4 +10,7 @@ export class StudentFile {
 
   @Field({ nullable: true })
   downloadServiceURL?: string
+
+  // Internal only — not exposed in GraphQL schema
+  url?: string
 }

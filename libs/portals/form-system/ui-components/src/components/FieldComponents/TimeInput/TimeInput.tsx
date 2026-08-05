@@ -15,11 +15,13 @@ import { m } from '../../../lib/messages'
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
+  valueIndex?: number
 }
 
-export const TimeInput = ({ item, dispatch }: Props) => {
-  const { control, setValue, watch } = useFormContext()
+export const TimeInput = ({ item, dispatch, valueIndex = 0 }: Props) => {
+  const { control, setValue, watch, trigger } = useFormContext()
   const { formatMessage } = useIntl()
+
   // If value from backend is a string like "13:45", split and set fields
   useEffect(() => {
     if (
@@ -27,14 +29,14 @@ export const TimeInput = ({ item, dispatch }: Props) => {
       (item.values as string).includes(':')
     ) {
       const [h, m] = (item.values as string).split(':')
-      setValue(`${item.id}.hour`, { label: h, value: h })
-      setValue(`${item.id}.minute`, { label: m, value: m })
+      setValue(`${item.id}.${valueIndex}_hour`, { label: h, value: h })
+      setValue(`${item.id}.${valueIndex}_minute`, { label: m, value: m })
     }
-  }, [item.values, item.id, setValue])
+  }, [item.values, item.id, setValue, valueIndex])
 
   // Watch hour and minute fields for this item
-  const hour = watch(`${item.id}.hour`)
-  const minute = watch(`${item.id}.minute`)
+  const hour = watch(`${item.id}.${valueIndex}_hour`)
+  const minute = watch(`${item.id}.${valueIndex}_minute`)
 
   // Dispatch combined time string when both are set
   useEffect(() => {
@@ -53,10 +55,11 @@ export const TimeInput = ({ item, dispatch }: Props) => {
         payload: {
           id: item.id,
           value: timeString,
+          valueIndex,
         },
       })
     }
-  }, [dispatch, item.id, hour, minute])
+  }, [dispatch, item.id, hour, minute, valueIndex])
 
   // 0: Minute
   // 1: Hourly
@@ -79,7 +82,7 @@ export const TimeInput = ({ item, dispatch }: Props) => {
         return createOptions(minuteList)
     }
   }
-  const timeValue = getValue(item, 'time')
+  const timeValue = getValue(item, 'time', valueIndex)
   const [hourValue, minuteValue] = timeValue
     ? timeValue.split(':')
     : [undefined, undefined]
@@ -88,8 +91,8 @@ export const TimeInput = ({ item, dispatch }: Props) => {
     <Row marginTop={2}>
       <Column span="3/10">
         <Controller
-          key={`hour.${item.id}`}
-          name={`${item.id}.hour`}
+          key={`${item.id}-${valueIndex}_hour`}
+          name={`${item.id}.${valueIndex}_hour`}
           control={control}
           defaultValue={
             hourValue ? { label: hourValue, value: hourValue } : undefined
@@ -110,9 +113,14 @@ export const TimeInput = ({ item, dispatch }: Props) => {
                 value: t,
               }))}
               size="xs"
+              required={item?.isRequired ?? false}
               backgroundColor="blue"
-              onChange={field.onChange}
+              onChange={(opt) => {
+                field.onChange(opt)
+                trigger(field.name)
+              }}
               onBlur={field.onBlur}
+              hasError={!!fieldState.error}
               errorMessage={fieldState.error?.message}
             />
           )}
@@ -121,8 +129,8 @@ export const TimeInput = ({ item, dispatch }: Props) => {
       <Box style={{ lineHeight: '90px' }}>:</Box>
       <Column span="3/10">
         <Controller
-          key={`minute.${item.id}`}
-          name={`${item.id}.minute`}
+          key={`${item.id}-${valueIndex}_minute`}
+          name={`${item.id}.${valueIndex}_minute`}
           control={control}
           defaultValue={
             minuteValue ? { label: minuteValue, value: minuteValue } : undefined
@@ -140,11 +148,16 @@ export const TimeInput = ({ item, dispatch }: Props) => {
               value={field.value}
               options={chosenMinuteList()}
               size="xs"
+              required={item?.isRequired ?? false}
               isSearchable
               isDisabled={item?.fieldSettings?.timeInterval === '1'}
               backgroundColor="blue"
-              onChange={field.onChange}
+              onChange={(opt) => {
+                field.onChange(opt)
+                trigger(field.name)
+              }}
               onBlur={field.onBlur}
+              hasError={!!fieldState.error}
               errorMessage={fieldState.error?.message}
             />
           )}

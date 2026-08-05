@@ -4,23 +4,33 @@ import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
 
 import {
-  Accordion,
   AlertMessage,
   Box,
   Button,
   RadioButton,
+  Text,
   toast,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
+import {
+  getStandardUserDashboardRoute,
+  PROSECUTION_INDICTMENT_CASE_ADD_FILES_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_INDICTMENT_ROUTE,
+} from '@island.is/judicial-system/consts'
+import {
+  isCompletedCase,
+  isProsecutionUser,
+} from '@island.is/judicial-system/types'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
+  AllIndictmentCaseFiles,
+  AppealRulingModifiedAlert,
   BlueBox,
-  ConnectedCaseFilesAccordionItem,
+  ChangeProsecutorModal,
+  DuplicateIndictmentModal,
   FormContentContainer,
   FormContext,
   FormFooter,
-  IndictmentCaseFilesList,
+  FormFooterAction,
   IndictmentCaseScheduledCard,
   // IndictmentsLawsBrokenAccordionItem, NOTE: Temporarily hidden while list of laws broken is not complete
   InfoCardActiveIndictment,
@@ -29,10 +39,8 @@ import {
   PageLayout,
   PageTitle,
   ProsecutorCaseInfo,
-  ProsecutorSelection,
   SectionHeading,
   ServiceAnnouncements,
-  useIndictmentsLawsBroken,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import InputPenalties from '@island.is/judicial-system-web/src/components/Inputs/InputPenalties'
@@ -42,6 +50,7 @@ import {
   IndictmentDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import DenyIndictmentCaseModal from './DenyIndictmentCaseModal/DenyIndictmentCaseModal'
 import { overview as strings } from './Overview.strings'
@@ -57,17 +66,15 @@ const Overview: FC = () => {
     | 'caseSentForConfirmationModal'
     | 'caseDeniedModal'
     | 'askForCancellationModal'
+    | 'duplicateIndictmentModal'
     | 'editProsecutor'
   >('noModal')
   const [indictmentConfirmationDecision, setIndictmentConfirmationDecision] =
     useState<'confirm' | 'deny'>()
-  const [menuIsOpen, setMenuIsOpen] = useState<boolean>(false)
-  const [prosecutorsCount, setProsecutorsCount] = useState<number>(0)
 
   const router = useRouter()
   const { formatMessage } = useIntl()
-  const { transitionCase, updateCase, isTransitioningCase } = useCase()
-  const lawsBroken = useIndictmentsLawsBroken(workingCase)
+  const { transitionCase, isTransitioningCase } = useCase()
 
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
 
@@ -87,6 +94,8 @@ const Overview: FC = () => {
   const userCanCancelIndictment =
     (isIndictmentSubmitted || isIndictmentReceived) &&
     !workingCase.indictmentDecision
+  const canDuplicateIndictment =
+    isProsecutionUser(user) && isIndictmentWaitingForCancellation
   const userCanAddDocuments =
     isIndictmentSubmitted ||
     (isIndictmentReceived &&
@@ -163,22 +172,43 @@ const Overview: FC = () => {
     router.push(getStandardUserDashboardRoute(user))
   }
 
-  const calculateMargin = (count: number) => {
-    if (count === 0) {
-      return 40
-    }
-
-    const cappedCount = Math.min(count, 5)
-    const baseMargin = 50
-    const marginPerProsecutor = 65
-    const margin = baseMargin + (cappedCount - 2) * marginPerProsecutor
-
-    return Math.max(2, margin)
-  }
-
-  const hasLawsBroken = lawsBroken.size > 0
-  const hasMergeCases =
-    workingCase.mergedCases && workingCase.mergedCases.length > 0
+  const footerActions: FormFooterAction[] = [
+    ...(isIndictmentWaitingForCancellation
+      ? []
+      : [
+          {
+            text: formatMessage(strings.askForCancellationButtonText),
+            variant: 'ghost' as const,
+            colorScheme: 'destructive' as const,
+            onClick: () => setModal('askForCancellationModal'),
+            disabled: !userCanCancelIndictment,
+          },
+        ]),
+    ...(isIndictmentReceived ||
+    (isIndictmentWaitingForCancellation && !canDuplicateIndictment)
+      ? []
+      : [
+          {
+            text: canDuplicateIndictment
+              ? 'Afrita mál í drög'
+              : userCanSendIndictmentToCourt
+              ? formatMessage(core.continue)
+              : formatMessage(strings.nextButtonText, {
+                  isNewIndictment: isIndictmentNew,
+                }),
+            icon: canDuplicateIndictment
+              ? undefined
+              : ('arrowForward' as const),
+            onClick: canDuplicateIndictment
+              ? () => setModal('duplicateIndictmentModal')
+              : handleNextButtonClick,
+            disabled:
+              userCanSendIndictmentToCourt && !indictmentConfirmationDecision,
+            loading: isTransitioningCase,
+            testId: 'continueButton',
+          },
+        ]),
+  ]
 
   return (
     <PageLayout
@@ -199,15 +229,6 @@ const Overview: FC = () => {
             />
           </Box>
         )}
-        {workingCase.indictmentReturnedExplanation && (
-          <Box marginBottom={5}>
-            <AlertMessage
-              title={formatMessage(strings.indictmentReturnedExplanationTitle)}
-              message={workingCase.indictmentReturnedExplanation}
-              type="warning"
-            />
-          </Box>
-        )}
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
         <Box marginBottom={5}>
           <ProsecutorCaseInfo workingCase={workingCase} />
@@ -218,6 +239,19 @@ const Overview: FC = () => {
               title={formatMessage(strings.indictmentCancelledTitle)}
               message={formatMessage(strings.indictmentCancelledMessage)}
               type="warning"
+            />
+          </Box>
+        )}
+        {workingCase.reopenReason && !isCompletedCase(workingCase.state) && (
+          <Box marginBottom={2}>
+            <AlertMessage
+              title="Mál enduropnað"
+              message={
+                <Text variant="small" whiteSpace="preWrap">
+                  {workingCase.reopenReason}
+                </Text>
+              }
+              type="info"
             />
           </Box>
         )}
@@ -241,121 +275,84 @@ const Overview: FC = () => {
               />
             </Box>
           )}
-        <Box component="section" marginBottom={5}>
-          <InfoCardActiveIndictment
-            displayVerdictViewDate
-            onProsecutorClick={() => {
-              setModal('editProsecutor')
-            }}
-          />
-        </Box>
-        {(hasLawsBroken || hasMergeCases) && (
-          <Box marginBottom={5}>
-            {/* 
-            NOTE: Temporarily hidden while list of laws broken is not complete in
-            indictment cases
-            
-            {hasLawsBroken && (
-              <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
-            )} */}
-            {hasMergeCases && (
-              <Accordion dividerOnBottom={false} dividerOnTop={false}>
-                {workingCase.mergedCases?.map((mergedCase) => (
-                  <Box key={mergedCase.id}>
-                    <ConnectedCaseFilesAccordionItem
-                      connectedCaseParentId={workingCase.id}
-                      connectedCase={mergedCase}
-                    />
-                  </Box>
-                ))}
-              </Accordion>
-            )}
-          </Box>
-        )}
-        <Box marginBottom={5}>
-          <IndictmentCaseFilesList workingCase={workingCase} />
-        </Box>
-        {userCanAddDocuments && (
-          <Box display="flex" justifyContent="flexEnd" marginBottom={5}>
-            <Button
-              size="small"
-              icon="add"
-              onClick={() =>
-                router.push(
-                  `${constants.INDICTMENTS_ADD_FILES_ROUTE}/${workingCase.id}`,
-                )
-              }
-            >
-              {formatMessage(strings.addDocumentsButtonText)}
-            </Button>
-          </Box>
-        )}
-        {userCanSendIndictmentToCourt && (
-          <Box marginBottom={5}>
-            <SectionHeading
-              title={formatMessage(strings.indictmentConfirmationTitle)}
-              required
+        <div className={grid({ gap: 5, marginBottom: 10 })}>
+          <AppealRulingModifiedAlert />
+          <Box component="section">
+            <InfoCardActiveIndictment
+              displayVerdictViewDate
+              onProsecutorClick={() => {
+                setModal('editProsecutor')
+              }}
             />
-            <BlueBox>
-              <div className={styles.gridRowEqual}>
-                <RadioButton
-                  large
-                  name="indictmentConfirmationRequest"
-                  id="denyIndictment"
-                  backgroundColor="white"
-                  label={formatMessage(strings.denyIndictment)}
-                  checked={indictmentConfirmationDecision === 'deny'}
-                  onChange={() => setIndictmentConfirmationDecision('deny')}
-                />
-                <RadioButton
-                  large
-                  name="indictmentConfirmationRequest"
-                  id="confirmIndictment"
-                  backgroundColor="white"
-                  label={formatMessage(strings.confirmIndictment)}
-                  checked={indictmentConfirmationDecision === 'confirm'}
-                  onChange={() => setIndictmentConfirmationDecision('confirm')}
-                />
-              </div>
-            </BlueBox>
           </Box>
-        )}
-        <Box component="section" marginBottom={10}>
-          <InputPenalties />
-        </Box>
+          <AllIndictmentCaseFiles
+            forceDisplayAdditionalFiles={userCanAddDocuments}
+          />
+          {userCanAddDocuments && (
+            <Box display="flex" justifyContent="flexEnd">
+              <Button
+                size="small"
+                icon="add"
+                onClick={() =>
+                  router.push(
+                    `${PROSECUTION_INDICTMENT_CASE_ADD_FILES_ROUTE}/${workingCase.id}`,
+                  )
+                }
+              >
+                {formatMessage(strings.addDocumentsButtonText)}
+              </Button>
+            </Box>
+          )}
+          {userCanSendIndictmentToCourt && (
+            <Box component="section">
+              <SectionHeading
+                title={formatMessage(strings.indictmentConfirmationTitle)}
+                required
+              />
+              <BlueBox>
+                <div className={styles.gridRowEqual}>
+                  <RadioButton
+                    large
+                    name="indictmentConfirmationRequest"
+                    id="denyIndictment"
+                    backgroundColor="white"
+                    label={formatMessage(strings.denyIndictment)}
+                    checked={indictmentConfirmationDecision === 'deny'}
+                    onChange={() => setIndictmentConfirmationDecision('deny')}
+                  />
+                  <RadioButton
+                    large
+                    name="indictmentConfirmationRequest"
+                    id="confirmIndictment"
+                    backgroundColor="white"
+                    label={formatMessage(strings.confirmIndictment)}
+                    checked={indictmentConfirmationDecision === 'confirm'}
+                    onChange={() =>
+                      setIndictmentConfirmationDecision('confirm')
+                    }
+                  />
+                </div>
+              </BlueBox>
+            </Box>
+          )}
+          <Box component="section">
+            <InputPenalties />
+          </Box>
+        </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={
             isIndictmentReceived || isIndictmentWaitingForCancellation
               ? getStandardUserDashboardRoute(user)
-              : `${constants.INDICTMENTS_INDICTMENT_ROUTE}/${workingCase.id}`
+              : `${PROSECUTION_INDICTMENT_CASE_INDICTMENT_ROUTE}/${workingCase.id}`
           }
-          nextButtonText={
-            userCanSendIndictmentToCourt
-              ? undefined
-              : formatMessage(strings.nextButtonText, {
-                  isNewIndictment: isIndictmentNew,
-                })
-          }
-          hideNextButton={
-            isIndictmentReceived || isIndictmentWaitingForCancellation
-          }
+          actions={footerActions}
           infoBoxText={
             isIndictmentReceived
               ? formatMessage(strings.indictmentSentToCourt)
               : undefined
           }
-          onNextButtonClick={handleNextButtonClick}
-          nextIsDisabled={
-            userCanSendIndictmentToCourt && !indictmentConfirmationDecision
-          }
-          hideActionButton={isIndictmentWaitingForCancellation}
-          actionButtonText={formatMessage(strings.askForCancellationButtonText)}
-          actionButtonColorScheme="destructive"
-          actionButtonIsDisabled={!userCanCancelIndictment}
-          onActionButtonClick={() => setModal('askForCancellationModal')}
         />
       </FormContentContainer>
       <AnimatePresence>
@@ -410,43 +407,10 @@ const Overview: FC = () => {
               onClick: () => setModal('noModal'),
             }}
           />
+        ) : modal === 'duplicateIndictmentModal' ? (
+          <DuplicateIndictmentModal onClose={() => setModal('noModal')} />
         ) : modal === 'editProsecutor' ? (
-          <Modal
-            title="Breyta um ákæranda"
-            text="Nýr ákærandi mun verða skráður sem ákærandi í málinu og fá tilkynningar er það varðar."
-            onClose={() => setModal('noModal')}
-            primaryButton={{
-              text: 'Staðfesta',
-              onClick: async () => {
-                const prosecutorId = workingCase?.prosecutor?.id
-                await updateCase(workingCase.id, {
-                  prosecutorId,
-                })
-                setModal('noModal')
-              },
-            }}
-            secondaryButton={{
-              text: 'Loka glugga',
-              onClick: () => setModal('noModal'),
-            }}
-          >
-            <div
-              style={{
-                marginBottom: menuIsOpen
-                  ? calculateMargin(prosecutorsCount)
-                  : 40,
-              }}
-            >
-              <ProsecutorSelection
-                placeholder="Veldu ákæranda til að taka við málinu"
-                isRequired={false}
-                shouldInitializeSelector={true}
-                onMenuOpen={() => setMenuIsOpen(true)}
-                onMenuClose={() => setMenuIsOpen(false)}
-                onProsecutorsLoaded={(count) => setProsecutorsCount(count)}
-              />
-            </div>
-          </Modal>
+          <ChangeProsecutorModal onClose={() => setModal('noModal')} />
         ) : null}
       </AnimatePresence>
     </PageLayout>

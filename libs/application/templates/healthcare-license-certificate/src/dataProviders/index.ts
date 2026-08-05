@@ -6,7 +6,7 @@ import {
 import { ApiActions } from '../shared'
 
 export {
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
 } from '@island.is/application/types'
 

@@ -20,9 +20,11 @@ import {
   useDeleteMedicineDelegationMutation,
   useGetMedicineDelegationsQuery,
 } from './MedicineDelegation.generated'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const MedicineDelegationDetail = () => {
   const { formatMessage, lang } = useLocale()
+  useHealthPlausibleSwap()
   const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
   const [modalVisible, setModalVisible] = useState(false)
@@ -80,11 +82,12 @@ const MedicineDelegationDetail = () => {
     <IntroWrapper
       title={formatMessage(messages.medicineDelegation)}
       intro={formatMessage(messages.medicineDelegationIntroText)}
-      serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
-      serviceProviderTooltip={formatMessage(
-        messages.landlaeknirMedicineDelegationTooltip,
-      )}
+      serviceProvider={{
+        slug: HEALTH_DIRECTORATE_SLUG,
+        tooltip: formatMessage(messages.landlaeknirMedicineDelegationTooltip),
+      }}
       loading={loading}
+      desktopContentSpan="10/12"
     >
       {!loading && !error && !filteredData && <Problem type="no_data" />}
       <InfoLineStack label={m.info} space={1}>

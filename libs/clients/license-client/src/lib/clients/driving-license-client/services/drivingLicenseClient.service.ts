@@ -1,6 +1,6 @@
 import { User } from '@island.is/auth-nest-tools'
 import {
-  DriverLicenseDto as DriversLicense,
+  DtoV5DriverLicenseDto as DriversLicense,
   DrivingLicenseApi,
   RemarkCode,
 } from '@island.is/clients/driving-license'

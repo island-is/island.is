@@ -32,6 +32,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import { useMatomoTrackOrganization } from '@island.is/matomo'
 import { shouldLinkBeAnAnchorTag } from '@island.is/shared/utils'
 import {
   DefaultHeaderProps,
@@ -41,7 +42,6 @@ import {
   SearchBox,
   SidebarShipSearchInput,
   Sticky,
-  WatsonChatPanel,
   WebChat,
   Webreader,
 } from '@island.is/web/components'
@@ -70,14 +70,8 @@ import { GET_WEB_CHAT } from '@island.is/web/screens/queries/WebChat'
 import { getBackgroundStyle } from '@island.is/web/utils/organization'
 
 import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
-import { DigitalIcelandFooter } from './Themes/DigitalIcelandTheme/DigitalIcelandFooter'
-import { FiskistofaDefaultHeader } from './Themes/FiskistofaTheme'
-import { FiskistofaFooter } from './Themes/FiskistofaTheme'
 import { GevFooter } from './Themes/GevTheme'
 import { HeilbrigdisstofnunAusturlandsFooter } from './Themes/HeilbrigdisstofnunAusturlandsTheme'
-import { HeilbrigdisstofnunNordurlandsFooter } from './Themes/HeilbrigdisstofnunNordurlandsTheme'
-import { HeilbrigdisstofnunSudurlandsFooter } from './Themes/HeilbrigdisstofnunSudurlandsTheme'
-import { HljodbokasafnIslandsHeader } from './Themes/HljodbokasafnIslandsTheme'
 import { HveFooter } from './Themes/HveTheme'
 import { IcelandicNaturalDisasterInsuranceFooter } from './Themes/IcelandicNaturalDisasterInsuranceTheme'
 import { LandskjorstjornFooter } from './Themes/LandkjorstjornTheme'
@@ -86,19 +80,9 @@ import { MannaudstorgFooter } from './Themes/MannaudstorgTheme'
 import { RikislogmadurFooter } from './Themes/RikislogmadurTheme'
 import { SAkFooter } from './Themes/SAkTheme'
 import { ShhFooter } from './Themes/SHHTheme'
-import {
-  SjukratryggingarDefaultHeader,
-  SjukratryggingarFooter,
-} from './Themes/SjukratryggingarTheme'
-import {
-  SyslumennDefaultHeader,
-  SyslumennFooter,
-} from './Themes/SyslumennTheme'
-import { UniversityStudiesHeader } from './Themes/UniversityStudiesTheme'
-import UniversityStudiesFooter from './Themes/UniversityStudiesTheme/UniversityStudiesFooter'
+import { SjukratryggingarFooter } from './Themes/SjukratryggingarTheme'
+import { SyslumennFooter } from './Themes/SyslumennTheme'
 import { UtlendingastofnunFooter } from './Themes/UtlendingastofnunTheme'
-import { VinnueftilitidHeader } from './Themes/VinnueftirlitidTheme'
-import { watsonConfig } from './config'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -124,6 +108,8 @@ interface WrapperProps {
   showReadSpeaker?: boolean
   isSubpage?: boolean
   backLink?: { text: string; url: string }
+  hideFromExternalSearchEngines?: boolean
+  organizationSubpageId?: string
 }
 
 interface HeaderProps {
@@ -215,7 +201,7 @@ export const OrganizationHeader: React.FC<
     : organizationLogoAltTextFallback
 
   const defaultProps: DefaultHeaderProps = {
-    fullWidth: organizationPage.themeProperties.fullWidth ?? false,
+    fullWidth: false,
     image: organizationPage.defaultHeaderImage?.url,
     background: getBackgroundStyle(organizationPage.themeProperties),
     title: organizationPage.title,
@@ -224,7 +210,7 @@ export const OrganizationHeader: React.FC<
     titleColor:
       (organizationPage.themeProperties
         .textColor as DefaultHeaderProps['titleColor']) || 'dark400',
-    imagePadding: organizationPage.themeProperties.imagePadding || '20px',
+    imagePadding: organizationPage.themeProperties.imagePadding || '0px',
     imageIsFullHeight:
       organizationPage.themeProperties.imageIsFullHeight ?? true,
     imageObjectFit:
@@ -236,244 +222,16 @@ export const OrganizationHeader: React.FC<
         ? 'left'
         : organizationPage.themeProperties.imageObjectPosition === 'right'
         ? 'right'
-        : 'center',
+        : 'right',
     logoAltText: logoAltText,
     titleSectionPaddingLeft: organizationPage.themeProperties
       .titleSectionPaddingLeft as ResponsiveSpace,
-    mobileBackground: organizationPage.themeProperties.mobileBackgroundColor,
     isSubpage,
   }
 
-  switch (organizationPage.theme) {
-    case 'syslumenn':
-      return (
-        <SyslumennDefaultHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-          isSubpage={isSubpage}
-        />
-      )
-    case 'sjukratryggingar':
-      return (
-        <SjukratryggingarDefaultHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-          isSubpage={isSubpage}
-        />
-      )
-    case 'digital_iceland':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          titleClassName={styles.digitalIcelandHeaderTitle}
-        />
-      )
-    case 'hsn':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          image={n(
-            'hsnHeaderImage',
-            'https://images.ctfassets.net/8k0h54kbe6bj/4v20729OMrRYkktuaCTWRi/675807c8c848895833c4a6a162f2813a/hsn-header-icon.svg',
-          )}
-        />
-      )
-    case 'landlaeknir':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          image={n(
-            'landlaeknirHeaderImage',
-            'https://images.ctfassets.net/8k0h54kbe6bj/2p6UWMBdVkVHBAjsnX20bY/c04b402332dbae96c198db7b8640f20b/Header_illustration_1.svg',
-          )}
-          className={
-            isSubpage
-              ? styles.landlaeknirHeaderGridContainerSubpage
-              : styles.landlaeknirHeaderGridContainer
-          }
-        />
-      )
-    case 'fiskistofa':
-      return (
-        <FiskistofaDefaultHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-          isSubpage={isSubpage}
-        />
-      )
-    case 'rikislogmadur':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          className={
-            isSubpage
-              ? styles.rikislogmadurHeaderGridContainerWidthSubpage
-              : styles.rikislogmadurHeaderGridContainerWidth
-          }
-        />
-      )
-    case 'landskjorstjorn':
-      return <DefaultHeader {...defaultProps} />
-    case 'landing_page':
-      return null
-    case 'fjarsysla-rikisins':
-      return <DefaultHeader {...defaultProps} />
-    case 'sak':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          className={
-            isSubpage
-              ? styles.sakHeaderGridContainerSubpage
-              : styles.sakHeaderGridContainer
-          }
-          image={n(
-            `sakHeaderBgImage`,
-            'https://images.ctfassets.net/8k0h54kbe6bj/4SjqwRBZRMWVWG0y73sXxq/cf8d0d16704cfea124362eca03afdb41/sak-header-trans_2x.png',
-          )}
-          titleSectionPaddingLeft={isSubpage ? 0 : 10}
-        />
-      )
-    case 'gev':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          image={n(
-            'gevHeaderImage',
-            'https://images.ctfassets.net/8k0h54kbe6bj/13E4vIA69gDNF87pkHwJgc/c2175b5ce58e50c93ddef5ea26854740/figura.png',
-          )}
-        />
-      )
-    case 'hve':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          className={
-            isSubpage
-              ? styles.hveHeaderGridContainerSubpage
-              : styles.hveHeaderGridContainer
-          }
-          image={n(
-            'hveHeaderImage',
-            'https://images.ctfassets.net/8k0h54kbe6bj/7ie5X2T4g8a7g5PLvu5226/4ec8b2cb69b5cb7193a61c562f9b36e0/minstur1.png',
-          )}
-        />
-      )
-    case 'shh':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          className={
-            isSubpage
-              ? styles.shhHeaderGridContainerWidthSubpage
-              : styles.shhHeaderGridContainerWidth
-          }
-          titleSectionPaddingLeft={isSubpage ? 0 : 5}
-        />
-      )
-    case 'hsa':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          className={
-            isSubpage
-              ? styles.hsaHeaderGridContainerWidthSubpage
-              : styles.hsaHeaderGridContainerWidth
-          }
-        />
-      )
-    case 'haskolanam':
-      return (
-        <UniversityStudiesHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-        />
-      )
-    case 'nti':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          image={n(
-            'icelandicNaturalDisasterInsuranceHeaderImage',
-            'https://images.ctfassets.net/8k0h54kbe6bj/eXqcbclteE88H5iQ6J3lo/bbc1d0c9d3abee93d34ec0aa718c833b/Group__1_.svg',
-          )}
-        />
-      )
+  if (organizationPage.theme === 'landing_page') return null
 
-    case 'samgongustofa':
-      return <DefaultHeader {...defaultProps} />
-    case 'geislavarnir-rikisins':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          background="linear-gradient(96.23deg, rgba(1, 54, 65, 0.8) 0.85%, rgba(19, 101, 103, 0.93) 16.4%, rgba(19, 101, 103, 0.885709) 32.16%, rgba(1, 73, 87, 0.88) 56.43%, rgba(2, 69, 91, 0.98) 78.47%, rgba(1, 52, 62, 0.96) 100.8%)"
-          image={n(
-            'geislavarnirRikisinsHeaderImage',
-            'https://images.ctfassets.net/8k0h54kbe6bj/5KjaMY9IIB0aX0GOUU60H7/176b6ed26dc01fe4e2559ba2957e85b7/skjaldamerki-transparent.svg',
-          )}
-        />
-      )
-    case 'rettindagaesla-fatlads-folks':
-      return <DefaultHeader {...defaultProps} />
-    case 'hms':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          image={n(
-            'hmsHeaderImage',
-            'https://images.ctfassets.net/8k0h54kbe6bj/5pAFV6h9PVzSTQgJY67rbT/3117436e3043bebf720b2f9a7e7619b8/hms-header-image.svg',
-          )}
-        />
-      )
-    case 'rikissaksoknari':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          className={
-            isSubpage
-              ? styles.rikissaksoknariHeaderGridContainerSubpage
-              : styles.rikissaksoknariHeaderGridContainerWidth
-          }
-        />
-      )
-    case 'vinnueftirlitid':
-      return (
-        <VinnueftilitidHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-        />
-      )
-    case 'hljodbokasafn-islands':
-      return (
-        <HljodbokasafnIslandsHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-        />
-      )
-    case 'tryggingastofnun':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          customTitleColor={n('tryggingastofnunHeaderTitleColor', '#007339')}
-        />
-      )
-    case 'faggilding':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          logoImageClassName={styles.logoLarge}
-        />
-      )
-    case 'rannis':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          background="linear-gradient(271deg, #C00B02 5.72%, #DB0B00 91.04%)"
-        />
-      )
-    default:
-      return <DefaultHeader {...defaultProps} />
-  }
+  return <DefaultHeader {...defaultProps} />
 }
 
 interface ExternalLinksProps {
@@ -513,15 +271,6 @@ export const OrganizationExternalLinks: React.FC<
               isSjukratryggingar &&
               (link.text.includes('Gagna') || link.text.includes('Data'))
 
-            let variant = undefined
-            if (
-              isSjukratryggingar &&
-              organizationPage.externalLinks &&
-              organizationPage.externalLinks.length === 2
-            ) {
-              variant = index === 0 ? 'primary' : 'ghost'
-            }
-
             return (
               <Link
                 href={link.url}
@@ -529,9 +278,6 @@ export const OrganizationExternalLinks: React.FC<
                 pureChildren={true}
               >
                 <Button
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore make web strict
-                  variant={variant}
                   unfocusable
                   icon={buttonHasLockIcon ? 'lockClosed' : 'open'}
                   iconType="outline"
@@ -567,11 +313,23 @@ export const OrganizationFooter: React.FC<
     () => JSON.parse(organization?.namespace?.fields || '{}'),
     [],
   )
-  const n = useNamespace(namespace)
 
   let OrganizationFooterComponent = null
 
   const { isServiceWeb } = useContext(GlobalContext)
+
+  if (namespace?.usingDefaultFooter === true) {
+    const footerItems = organization?.footerItems ?? []
+    if (footerItems.length === 0) return null
+    return (
+      <WebFooter
+        heading={organization?.title ?? ''}
+        columns={footerItems}
+        background={organization?.footerConfig?.background}
+        color={organization?.footerConfig?.textColor}
+      />
+    )
+  }
 
   switch (organization?.slug) {
     case 'syslumenn':
@@ -626,32 +384,6 @@ export const OrganizationFooter: React.FC<
         />
       )
       break
-    case 'hsn':
-      OrganizationFooterComponent = (
-        <HeilbrigdisstofnunNordurlandsFooter
-          footerItems={organization.footerItems}
-          namespace={namespace}
-        />
-      )
-      break
-    case 'hsu':
-      OrganizationFooterComponent = (
-        <HeilbrigdisstofnunSudurlandsFooter
-          title={organization.title}
-          footerItems={organization.footerItems}
-          namespace={namespace}
-        />
-      )
-      break
-    case 'fiskistofa':
-    case 'directorate-of-fisheries':
-      OrganizationFooterComponent = (
-        <FiskistofaFooter
-          footerItems={organization.footerItems}
-          namespace={namespace}
-        />
-      )
-      break
     case 'landskjorstjorn':
       OrganizationFooterComponent = (
         <LandskjorstjornFooter
@@ -689,12 +421,6 @@ export const OrganizationFooter: React.FC<
           logo={organization.logo?.url}
           title={organization.title}
         />
-      )
-      break
-    case 'haskolanam':
-    case 'university-studies':
-      OrganizationFooterComponent = (
-        <UniversityStudiesFooter organization={organization} />
       )
       break
     case 'gev':
@@ -786,20 +512,6 @@ export const OrganizationFooter: React.FC<
         )
       }
       break
-    case 'stafraent-island':
-    case 'digital-iceland':
-      OrganizationFooterComponent = (
-        <GridContainer>
-          <DigitalIcelandFooter
-            illustrationSrc={n(
-              'digitalIcelandFooterIllustrationSrc',
-              'https://images.ctfassets.net/8k0h54kbe6bj/X3D3BSLC0PHyxvOkfhlbt/7d6b3bb0a552af01275b15cac8b16eb9/DigitalIcelandHeaderImage_1__1_.svg',
-            )}
-            links={n('digitalIcelandFooterLinks', [])}
-          />
-        </GridContainer>
-      )
-      break
     default: {
       const footerItems = organization?.footerItems ?? []
       if (footerItems.length === 0) break
@@ -817,16 +529,46 @@ export const OrganizationFooter: React.FC<
   return OrganizationFooterComponent
 }
 
-export const OrganizationChatPanel = ({
+export const getOrganizationWebChatDisplayLocationIds = ({
+  organizationPageId,
   organizationId,
+  organizationSubpageId,
 }: {
-  organizationId: string | undefined
-}) => {
-  if (!organizationId) return null
-  return <OrganizationChat organizationId={organizationId} />
+  organizationPageId?: string
+  organizationId?: string
+  organizationSubpageId?: string
+}): string[] => {
+  const displayLocationIds: string[] = []
+
+  if (organizationSubpageId) {
+    displayLocationIds.push(organizationSubpageId)
+  }
+
+  if (organizationPageId) {
+    displayLocationIds.push(organizationPageId)
+  }
+
+  if (organizationId) {
+    displayLocationIds.push(organizationId)
+  }
+
+  return displayLocationIds
 }
 
-const OrganizationChat = ({ organizationId }: { organizationId: string }) => {
+export const OrganizationChatPanel = ({
+  displayLocationIds,
+}: {
+  displayLocationIds: string[]
+}) => {
+  if (displayLocationIds.length === 0) return null
+  return <OrganizationChat displayLocationIds={displayLocationIds} />
+}
+
+const OrganizationChat = ({
+  displayLocationIds,
+}: {
+  displayLocationIds: string[]
+}) => {
   const { activeLocale } = useI18n()
 
   const { data, loading } = useQuery<GetWebChatQuery, QueryGetWebChatArgs>(
@@ -834,7 +576,7 @@ const OrganizationChat = ({ organizationId }: { organizationId: string }) => {
     {
       variables: {
         input: {
-          displayLocationIds: [organizationId],
+          displayLocationIds,
           lang: activeLocale,
         },
       },
@@ -843,18 +585,7 @@ const OrganizationChat = ({ organizationId }: { organizationId: string }) => {
 
   if (loading) return null
 
-  return (
-    <WebChat
-      webChat={data?.getWebChat}
-      renderFallback={() => {
-        if (organizationId in watsonConfig[activeLocale])
-          return (
-            <WatsonChatPanel {...watsonConfig[activeLocale][organizationId]} />
-          )
-        return null
-      }}
-    />
-  )
+  return <WebChat webChat={data?.getWebChat} />
 }
 
 const SecondaryMenu = ({
@@ -965,10 +696,13 @@ export const OrganizationWrapper: React.FC<
   showReadSpeaker = true,
   isSubpage = true,
   backLink,
+  hideFromExternalSearchEngines = false,
+  organizationSubpageId,
 }) => {
   const router = useRouter()
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState<boolean | undefined>()
+  useMatomoTrackOrganization(organizationPage.organization?.slug)
   usePlausiblePageview(organizationPage.organization?.trackingDomain)
   useEffect(() => {
     setIsMobile(width < theme.breakpoints.md)
@@ -1000,10 +734,11 @@ export const OrganizationWrapper: React.FC<
 
   const n = useNamespace(namespace)
 
-  const indexableBySearchEngine =
-    organizationPage.organization?.canPagesBeFoundInSearchResults ??
-    organizationPage.canBeFoundInSearchResults ??
-    true
+  const indexableBySearchEngine = hideFromExternalSearchEngines
+    ? false
+    : organizationPage.organization?.canPagesBeFoundInSearchResults ??
+      organizationPage.canBeFoundInSearchResults ??
+      true
 
   const sitemapContentTypeDeterminesNavigationAndBreadcrumbs = n(
     'sitemapContentTypeDeterminesNavigationAndBreadcrumbs',
@@ -1026,7 +761,7 @@ export const OrganizationWrapper: React.FC<
     }))
 
     const pathname = new URL(router.asPath, 'https://island.is').pathname
-
+    const activeTopLinks: { href: string; active: boolean }[] = []
     const navigationData: NavigationData = {
       title: navigationDataProp.title,
       items: (organizationPage.navigationLinks?.topLinks ?? []).map(
@@ -1041,16 +776,29 @@ export const OrganizationWrapper: React.FC<
               active: isActive,
             }
           })
-          return {
+          const isActive =
+            topLink.isActive || pathname === topLink.href || isAnyChildActive
+          const item = {
             title: topLink.label,
             href: topLink.href,
-            active:
-              topLink.isActive || pathname === topLink.href || isAnyChildActive,
+            active: isActive,
             items: midLinks,
           }
+          if (isActive) activeTopLinks.push(item)
+          return item
         },
       ),
     }
+
+    const lastBreadcrumb = breadcrumbItems[breadcrumbItems.length - 1]
+
+    if (lastBreadcrumb?.href)
+      for (let i = 0; i < activeTopLinks.length; i += 1)
+        if (lastBreadcrumb?.href === activeTopLinks[i].href) {
+          for (let j = 0; j < activeTopLinks.length; j += 1)
+            if (j !== i) activeTopLinks[j].active = false
+          break
+        }
 
     return {
       breadcrumbItems,
@@ -1339,7 +1087,11 @@ export const OrganizationWrapper: React.FC<
       )}
       {n('enableOrganizationChatPanelForOrgPages', true) && (
         <OrganizationChatPanel
-          organizationId={organizationPage?.organization?.id}
+          displayLocationIds={getOrganizationWebChatDisplayLocationIds({
+            organizationPageId: organizationPage?.id,
+            organizationId: organizationPage?.organization?.id,
+            organizationSubpageId,
+          })}
         />
       )}
     </>

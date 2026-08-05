@@ -1,1 +1,1 @@
-export { MachinesField } from './MachinesField'
+export { TabsField } from './Tabs'

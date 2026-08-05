@@ -52,6 +52,9 @@ const transformRequestCase = (theCase: Case): Case => {
 
 const transformIndictmentCase = (theCase: Case): Case => {
   const { indictmentRulingDecision, rulingDate, defendants } = theCase
+
+  // Verdict-appeal info is computed here. Case-level dismissal-appeal info is
+  // computed in the backend's CaseInterceptor and arrives pre-populated.
   return {
     ...theCase,
     ...getIndictmentInfo({

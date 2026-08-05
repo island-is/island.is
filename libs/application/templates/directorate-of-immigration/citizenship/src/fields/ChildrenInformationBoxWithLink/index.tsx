@@ -1,5 +1,5 @@
 import {
-  ApplicantChildCustodyInformation,
+  ApplicantChildCustodyInformationV3,
   FieldBaseProps,
   FieldComponents,
   FieldTypes,
@@ -29,7 +29,7 @@ export const ChildrenInformationBoxWithLink: FC<FieldBaseProps> = ({
     application.externalData,
     'childrenCustodyInformation.data',
     [],
-  ) as ApplicantChildCustodyInformation[]
+  ) as ApplicantChildCustodyInformationV3[]
 
   const childrenInAgeRange = childWithInfo.filter((child) => {
     const childInfo = kennitala.info(child.nationalId)

@@ -2,7 +2,7 @@ import { Allow, IsOptional } from 'class-validator'
 
 import { Field, ID, InputType } from '@nestjs/graphql'
 
-import { NotificationType } from '@island.is/judicial-system/types'
+import { TrackedNotificationType } from '@island.is/judicial-system/types'
 
 @InputType()
 export class SendNotificationInput {
@@ -11,8 +11,8 @@ export class SendNotificationInput {
   readonly caseId!: string
 
   @Allow()
-  @Field(() => NotificationType)
-  readonly type!: NotificationType
+  @Field(() => TrackedNotificationType)
+  readonly type!: TrackedNotificationType
 
   @Allow()
   @IsOptional()

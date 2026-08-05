@@ -52,6 +52,7 @@ import type {
 import { useNamespace, usePlausiblePageview } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useI18n } from '@island.is/web/i18n'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -356,6 +357,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
   webChat,
 }) => {
   const { activeLocale } = useI18n()
+  const { format } = useDateUtils()
   const portalRef = useRef()
   const processEntryRef = useRef(null)
   const [mounted, setMounted] = useState(false)
@@ -376,6 +378,14 @@ const ArticleScreen: Screen<ArticleProps> = ({
   const subArticle = article?.subArticles.find((sub) => {
     return sub.slug.split('/').pop() === query.subSlug
   })
+
+  // On a sub article (Baby Article) page, prefer the sub article's own "last
+  // reviewed" date when it has one; otherwise fall back to the main article's
+  // date so existing parent-level dates keep rendering (no regression).
+  const reviewedContent =
+    subArticle?.showDateOfTheMostRecentReview && subArticle.contentLastReviewed
+      ? subArticle
+      : article
 
   useContentfulId(article?.id ?? '', subArticle?.id)
 
@@ -562,6 +572,20 @@ const ArticleScreen: Screen<ArticleProps> = ({
             activeLocale,
           )}
           <AppendedArticleComponents article={article} />
+          {reviewedContent?.showDateOfTheMostRecentReview &&
+            reviewedContent?.contentLastReviewed && (
+              <Box paddingTop={2}>
+                <Text variant="small">
+                  {`${n(
+                    'contentLastReviewedLabel',
+                    activeLocale === 'is' ? 'Síðast uppfært' : 'Last updated',
+                  )}: ${format(
+                    new Date(reviewedContent.contentLastReviewed),
+                    'do MMMM yyyy',
+                  )}`}
+                </Text>
+              </Box>
+            )}
         </Box>
       )}
 

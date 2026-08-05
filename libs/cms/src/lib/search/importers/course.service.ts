@@ -104,7 +104,7 @@ export class CourseSyncService implements CmsSyncProvider<ICourse> {
             content,
             contentWordCount: content.split(' ').length,
             type: 'webCourse',
-            response: JSON.stringify(mapped),
+            response: JSON.stringify({ ...mapped, typename: 'Course' }),
             tags,
             dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),

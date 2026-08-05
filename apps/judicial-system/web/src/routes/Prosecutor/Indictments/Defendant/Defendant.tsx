@@ -3,8 +3,10 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
+import {
+  getStandardUserDashboardRoute,
+  PROSECUTION_INDICTMENT_CASE_POLICE_CASE_FILES_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
@@ -39,6 +41,9 @@ const Defendant = () => {
   const handleNavigationTo = useCallback(
     async (destination: string) => {
       if (workingCase.id) {
+        if (!workingCase.defendants || workingCase.defendants.length === 0) {
+          return
+        }
         router.push(`${destination}/${workingCase.id}`)
 
         return
@@ -105,20 +110,28 @@ const Defendant = () => {
           <ProsecutorSection />
         </Box>
         <PoliceCaseList />
-        <DefendantList />
+        <Box component="section" marginBottom={10}>
+          <DefendantList />
+        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={getStandardUserDashboardRoute(user)}
-          onNextButtonClick={() =>
-            handleNavigationTo(constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE)
-          }
-          nextIsDisabled={!stepIsValid}
-          nextIsLoading={isCreatingCase}
-          nextButtonText={formatMessage(
-            workingCase.id === '' ? core.createCase : core.continue,
-          )}
+          actions={[
+            {
+              text: formatMessage(
+                workingCase.id === '' ? core.createCase : core.continue,
+              ),
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  PROSECUTION_INDICTMENT_CASE_POLICE_CASE_FILES_ROUTE,
+                ),
+              disabled: !stepIsValid,
+              loading: isCreatingCase,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

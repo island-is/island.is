@@ -80,8 +80,9 @@ export const m = defineMessages({
   },
   applicantInstitution: {
     id: 'dld.application:information.applicantInstitution',
-    defaultMessage: 'Ríkislögreglustjóri',
-    description: '',
+    defaultMessage: 'Sýslumenn',
+    description:
+      'Institution responsible for the driving license duplicate application',
   },
   validTag: {
     id: 'dld.application:information.validTag',
@@ -277,6 +278,17 @@ export const m = defineMessages({
   deliveryPickupLocationPlaceholder: {
     id: 'dld.application:deliveryPickupLocationPlaceholder',
     defaultMessage: 'Veldu afhendingarstað',
+  },
+
+  overviewPhotoQualityPhoto: {
+    id: 'dld.application:overview.photoQualityPhoto',
+    defaultMessage: 'Ökuskírteinaskrá',
+    description: 'Quality photo from RLS driving license registry',
+  },
+  overviewPhotoThjodskra: {
+    id: 'dld.application:overview.photoThjodskra',
+    defaultMessage: 'Skilríkjaskrá',
+    description: 'Photo from national registry',
   },
 
   /* Overview Section */

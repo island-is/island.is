@@ -1,11 +1,11 @@
 import { gql } from '@apollo/client'
-import { CompletedSectionInfoFragment } from './completedSectionInfo'
 import { DependencyFragment } from './dependency'
 import { FieldFragment } from './field'
 import { FormApplicantFragment } from './formApplicant'
 import { LanguageFields } from './languageFields'
 import { ScreenFragment } from './screen'
 import { SectionFragment } from './section'
+import { SectionInfoFragment } from './sectionInfo'
 
 export const FormFragment = gql`
   fragment Form on FormSystemForm {
@@ -25,17 +25,22 @@ export const FormFragment = gql`
     created
     modified
     zendeskInternal
+    useValidate
     submissionServiceUrl
-    validationServiceUrl
     isTranslated
     hasPayment
     beenPublished
-    daysUntilApplicationPrune
+    draftDaysToLive
+    submissionDaysToLive
     derivedFrom
     allowProceedOnValidationFail
     hasSummaryScreen
-    completedSectionInfo {
-      ...CompletedSectionInfo
+    organizationZendeskInstance {
+      zendeskInstance
+      zendeskBrandId
+    }
+    sectionInfo {
+      ...SectionInfo
     }
     certificationTypes {
       id
@@ -57,6 +62,8 @@ export const FormFragment = gql`
       ...Dependency
     }
     status
+    lastModifiedBy
+    delegations
   }
   ${LanguageFields}
   ${FormApplicantFragment}
@@ -64,5 +71,5 @@ export const FormFragment = gql`
   ${ScreenFragment}
   ${FieldFragment}
   ${DependencyFragment}
-  ${CompletedSectionInfoFragment}
+  ${SectionInfoFragment}
 `

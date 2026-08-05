@@ -1,69 +1,93 @@
 import {
   FeatureFlagClient,
-  FeatureFlagUser,
   SettingTypeOf,
   SettingValue,
-  createClientFactory,
 } from '@island.is/feature-flags'
 import { useUserInfo } from '@island.is/react-spa/bff'
-import * as ConfigCatJS from 'configcat-js'
-import React, { FC, createContext, useContext, useMemo } from 'react'
+import React, {
+  FC,
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react'
+import {
+  FeatureFlagsDocument,
+  FeatureFlagsQuery,
+} from './FeatureFlags.generated'
+import { useQuery } from '@apollo/client'
 
-const createClient = createClientFactory(ConfigCatJS)
+type FeatureFlagRecord = Record<string, boolean | string | number>
+
+const EMPTY_FLAGS: FeatureFlagRecord = {}
 
 const FeatureFlagContext = createContext<FeatureFlagClient>({
   getValue: <T extends SettingValue>(_: string, defaultValue: T) =>
     Promise.resolve(defaultValue as SettingTypeOf<T>),
+  getAllValues: () => Promise.resolve(EMPTY_FLAGS),
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   dispose() {},
 })
 
-export interface FeatureFlagContextProviderProps {
-  sdkKey: string
-  defaultUser?: FeatureFlagUser
-}
-
-export const FeatureFlagProvider: FC<
-  React.PropsWithChildren<FeatureFlagContextProviderProps>
-> = ({ children, sdkKey, defaultUser: userProp }) => {
+export const FeatureFlagProvider: FC<React.PropsWithChildren<{}>> = ({
+  children,
+}) => {
   const userInfo = useUserInfo()
-  const featureFlagClient = useMemo(() => {
-    return createClient({ sdkKey })
-  }, [sdkKey])
+  const isAuthenticated = !!userInfo?.profile?.nationalId
+  const { data, loading } = useQuery<FeatureFlagsQuery>(FeatureFlagsDocument, {
+    skip: !isAuthenticated,
+  })
+  const flags = data?.featureFlags?.flags ?? EMPTY_FLAGS
 
-  const context = useMemo<FeatureFlagClient>(() => {
-    const userAuth =
-      userInfo && userInfo.profile.nationalId !== undefined
-        ? {
-            id: userInfo.profile.nationalId,
-            attributes: {
-              nationalId: userInfo.profile.nationalId,
-              subjectType: userInfo.profile.subjectType,
-            },
-          }
-        : undefined
-    const defaultUser = userProp ?? userAuth
+  // Use a ref for flags so getValue always reads the latest value
+  // regardless of which render's closure it was created in.
+  const flagsRef = useRef<FeatureFlagRecord>(EMPTY_FLAGS)
+  flagsRef.current = flags
 
-    return {
-      getValue<T extends SettingValue>(
-        key: string,
-        defaultValue: T,
-        user: FeatureFlagUser | undefined = defaultUser,
-      ) {
-        return featureFlagClient.getValue(key, defaultValue, user)
-      },
-      dispose: () => featureFlagClient.dispose(),
+  const readyRef = useRef<{
+    resolve: () => void
+    promise: Promise<void>
+  } | null>(null)
+
+  if (isAuthenticated && loading && !readyRef.current) {
+    let resolve: () => void
+    const promise = new Promise<void>((r) => {
+      resolve = r
+    })
+    readyRef.current = { resolve: resolve!, promise }
+  }
+
+  useEffect(() => {
+    if ((!loading || !isAuthenticated) && readyRef.current) {
+      readyRef.current.resolve()
+      readyRef.current = null
     }
-  }, [featureFlagClient, userInfo, userProp])
+  }, [loading, isAuthenticated])
+
+  const contextRef = useRef<FeatureFlagClient>({
+    getValue: async <T extends SettingValue>(key: string, defaultValue: T) => {
+      if (readyRef.current) {
+        await readyRef.current.promise
+      }
+      return (flagsRef.current[key] ?? defaultValue) as SettingTypeOf<T>
+    },
+    getAllValues: async () => {
+      if (readyRef.current) {
+        await readyRef.current.promise
+      }
+      return flagsRef.current
+    },
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    dispose() {},
+  })
 
   return (
-    <FeatureFlagContext.Provider value={context}>
+    <FeatureFlagContext.Provider value={contextRef.current}>
       {children}
     </FeatureFlagContext.Provider>
   )
 }
-
-type FeatureFlagRecord = Record<string, boolean | string>
 
 export interface MockedFeatureFlagProviderProps {
   flags: string[] | FeatureFlagRecord
@@ -86,6 +110,7 @@ export const MockedFeatureFlagProvider: FC<
       ) {
         return (cleanFlags[key] ?? defaultValue) as SettingTypeOf<T>
       },
+      getAllValues: async () => cleanFlags as FeatureFlagRecord,
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       dispose() {},
     }

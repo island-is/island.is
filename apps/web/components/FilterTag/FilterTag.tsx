@@ -17,7 +17,12 @@ export const FilterTag: React.FC<React.PropsWithChildren<FilterTagProps>> = ({
   variant,
 }) => {
   return (
-    <Tag onClick={onClick} active={active} variant={variant}>
+    <Tag
+      onClick={onClick}
+      active={active}
+      variant={variant}
+      focusVisibleOnly={true}
+    >
       <Box flexDirection="row" alignItems="center">
         {children}
         <span className={styles.crossmark}>&#10005;</span>
