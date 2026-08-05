@@ -14,6 +14,7 @@ export const deniedForm = buildForm({
       tabTitle: messages.rejected.sectionTitle,
       alertTitle: messages.rejected.title,
       alertMessage: messages.rejected.description,
+      alertType: 'error',
     }),
   ],
 })

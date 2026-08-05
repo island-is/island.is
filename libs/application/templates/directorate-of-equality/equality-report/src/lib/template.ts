@@ -160,7 +160,10 @@ const template: ApplicationTemplate<
           name: 'Til yfirferðar',
           progress: 0.8,
           status: FormModes.IN_PROGRESS,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: false,
+          },
           actionCard: {
             tag: {
               label: coreMessages.tagsInProgress,
@@ -204,7 +207,7 @@ const template: ApplicationTemplate<
       },
       [States.APPROVED]: {
         meta: {
-          name: 'Approved form',
+          name: 'Samþykkt',
           progress: 1,
           status: FormModes.APPROVED,
           lifecycle: DefaultStateLifeCycle,
@@ -229,7 +232,7 @@ const template: ApplicationTemplate<
       },
       [States.DENIED]: {
         meta: {
-          name: 'Denied form',
+          name: 'Hafnað',
           progress: 1,
           status: FormModes.REJECTED,
           lifecycle: DefaultStateLifeCycle,
