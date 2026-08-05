@@ -3581,6 +3581,876 @@
         },
         "tags": ["Certificates"]
       }
+    },
+    "/v1/me/pregnancies/active": {
+      "get": {
+        "description": "The patient's current active pregnancy",
+        "operationId": "MePregnancyController_getActivePregnancy_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Pregnancies"]
+      }
+    },
+    "/v1/me/pregnancies/active/exists": {
+      "get": {
+        "description": "Whether the patient currently has an active pregnancy on record. Cheap flags-based check — does not reflect user hidden-settings.",
+        "operationId": "MePregnancyController_hasActivePregnancy_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Pregnancies"]
+      }
+    },
+    "/v1/me/pregnancies/history": {
+      "get": {
+        "description": "Summary list of the patient's past pregnancies, newest first.",
+        "operationId": "MePregnancyController_getPregnancyHistory_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Pregnancies"]
+      }
+    },
+    "/v1/me/pregnancies/{pregnancyId}/births": {
+      "get": {
+        "description": "Child-birth records nested under one pregnancy.",
+        "operationId": "MePregnancyController_getPregnancyBirths_v1",
+        "parameters": [
+          {
+            "name": "pregnancyId",
+            "required": true,
+            "in": "path",
+            "description": "Pregnancy GUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Pregnancies"]
+      }
+    },
+    "/v1/me/pregnancies/{pregnancyId}/communications": {
+      "get": {
+        "description": "Combined timeline of phone calls and examination chart notes for one pregnancy, newest-first. 404 when the pregnancy is unknown or hidden by the patient.",
+        "operationId": "MePregnancyController_getPregnancyCommunications_v1",
+        "parameters": [
+          {
+            "name": "pregnancyId",
+            "required": true,
+            "in": "path",
+            "description": "Pregnancy GUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Pregnancies"]
+      }
+    },
+    "/v1/me/pregnancies/{pregnancyId}/communications/{communicationId}": {
+      "get": {
+        "description": "Rich detail view of one examination or phone call. Discriminated by `kind` — examinations carry biometrics + per-fetus heart rates; phone calls carry the populated `<PhoneCallChecklist>` keys plus reason/result wire codes. 404 when the pregnancy or communication id is unknown / hidden.",
+        "operationId": "MePregnancyController_getPregnancyCommunicationDetail_v1",
+        "parameters": [
+          {
+            "name": "pregnancyId",
+            "required": true,
+            "in": "path",
+            "description": "Pregnancy GUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "communicationId",
+            "required": true,
+            "in": "path",
+            "description": "GUID of the examination or phone call within the pregnancy detail payload.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Pregnancies"]
+      }
+    },
+    "/v1/me/pregnancies/{pregnancyId}/measurements": {
+      "get": {
+        "description": "Per-examination measurements. Sorted newest-first. 404 when the pregnancy is unknown or hidden by the patient.",
+        "operationId": "MePregnancyController_getPregnancyMeasurements_v1",
+        "parameters": [
+          {
+            "name": "pregnancyId",
+            "required": true,
+            "in": "path",
+            "description": "Pregnancy GUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Pregnancies"]
+      }
+    },
+    "/v1/me/pregnancies/{pregnancyId}/documents": {
+      "get": {
+        "description": "Combined certificates + attachments list, newest-first. Attachments stay empty until the wire schema lands. 404 when the pregnancy is unknown or hidden by the patient.",
+        "operationId": "MePregnancyController_getPregnancyDocuments_v1",
+        "parameters": [
+          {
+            "name": "pregnancyId",
+            "required": true,
+            "in": "path",
+            "description": "Pregnancy GUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Pregnancies"]
+      }
+    },
+    "/v1/me/pregnancies/{pregnancyId}/settings": {
+      "patch": {
+        "description": "Patient-owned settings for a single pregnancy",
+        "operationId": "MePregnancyController_updatePregnancySettings_v1",
+        "parameters": [
+          {
+            "name": "pregnancyId",
+            "required": true,
+            "in": "path",
+            "description": "Pregnancy id.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePregnancySettingsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Pregnancies"]
+      }
+    },
+    "/v1/me/attachments": {
+      "post": {
+        "description": "Upload an attachment ahead of sending a message or submitting a questionnaire. The binary is stored in the object bucket (staged) and the returned id is referenced when committing the attachment.",
+        "operationId": "MeAttachmentController_upload_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": ["file"],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "allowedFileTypes": {
+                    "type": "string",
+                    "description": "Optional comma-separated allowlist (extensions or MIME types) for early, advisory file-type feedback. Not authoritative — the referencing commit re-validates."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StagedAttachmentDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Attachments"]
+      }
+    },
+    "/v1/me/attachments/{id}": {
+      "get": {
+        "description": "Stream a previously uploaded attachment back to its owner (e.g. to preview before sending).",
+        "operationId": "MeAttachmentController_download_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Attachment id",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Attachments"]
+      },
+      "delete": {
+        "description": "Discard a staged (not-yet-referenced) attachment upload — removes the bucket object. Idempotent: discarding an already-gone upload still returns 204. Once a message/submission has committed the attachment it is no longer discardable and returns 409.",
+        "operationId": "MeAttachmentController_discard_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Attachment id",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Attachments"]
+      }
     }
   },
   "info": {
@@ -6599,9 +7469,6 @@
           "title": {
             "type": "string"
           },
-          "status": {
-            "type": "string"
-          },
           "messageCount": {
             "type": "number"
           },
@@ -6677,8 +7544,9 @@
             "type": "string"
           },
           "appointmentDate": {
+            "format": "date-time",
             "type": "string",
-            "description": "Local ISO datetime with no timezone offset. Iceland is UTC year-round — interpret as UTC, do not shift."
+            "description": "Appointment start time as a UTC ISO datetime (e.g. 2026-03-28T10:30:00.000Z)."
           },
           "appointmentHostName": {
             "type": "string"
@@ -6825,9 +7693,6 @@
           "title": {
             "type": "string"
           },
-          "status": {
-            "type": "string"
-          },
           "conversationStartDate": {
             "format": "date-time",
             "type": "string"
@@ -6903,6 +7768,20 @@
           "messages"
         ]
       },
+      "StagedAttachmentRefDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Id returned by POST /me/attachments."
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": ["id"]
+      },
       "ConversationAttachmentRequestDto": {
         "type": "object",
         "properties": {
@@ -6953,6 +7832,15 @@
             "maxLength": 300
           },
           "attachments": {
+            "description": "Pre-uploaded attachments from POST /me/attachments. Combined with inline attachments, the server enforces a per-message maximum (MAX_ATTACHMENTS_PER_MESSAGE).",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StagedAttachmentRefDto"
+            }
+          },
+          "inlineAttachments": {
+            "deprecated": true,
+            "description": "Inline base64 attachments. Deprecated: upload via POST /me/attachments and pass `attachments` instead.",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ConversationAttachmentRequestDto"
@@ -6975,6 +7863,15 @@
             "maxLength": 300
           },
           "attachments": {
+            "description": "Pre-uploaded attachments from POST /me/attachments. Combined with inline attachments, the server enforces a per-message maximum (MAX_ATTACHMENTS_PER_MESSAGE).",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StagedAttachmentRefDto"
+            }
+          },
+          "inlineAttachments": {
+            "deprecated": true,
+            "description": "Inline base64 attachments. Deprecated: upload via POST /me/attachments and pass `attachments` instead.",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ConversationAttachmentRequestDto"
@@ -7292,6 +8189,32 @@
           }
         },
         "required": ["paymentId", "paymentPageUrl"]
+      },
+      "UpdatePregnancySettingsDto": {
+        "type": "object",
+        "properties": {
+          "hidden": {
+            "type": "boolean",
+            "description": "When true, the pregnancy is hidden from all pregnancy routes."
+          }
+        }
+      },
+      "StagedAttachmentDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Attachment id (uuid)."
+          },
+          "fileName": {
+            "type": "string"
+          },
+          "contentType": {
+            "type": "string",
+            "description": "Content type detected from the uploaded bytes."
+          }
+        },
+        "required": ["id", "fileName", "contentType"]
       }
     }
   }
