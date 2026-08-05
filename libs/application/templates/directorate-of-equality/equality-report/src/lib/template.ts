@@ -197,7 +197,7 @@ const template: ApplicationTemplate<
           [DefaultEvents.APPROVE]: {
             target: States.APPROVED,
           },
-          DENY: {
+          [DefaultEvents.REJECT]: {
             target: States.DENIED,
           },
           [DefaultEvents.EDIT]: {

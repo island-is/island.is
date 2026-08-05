@@ -5,7 +5,7 @@ export type Events = {
     | DefaultEvents.SUBMIT
     | DefaultEvents.APPROVE
     | DefaultEvents.EDIT
-    | 'DENY'
+    | DefaultEvents.REJECT
 }
 
 export enum States {
