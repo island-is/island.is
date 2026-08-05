@@ -21,7 +21,7 @@ import {
 } from '@island.is/application/types'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
-import { FeatureFlagClient } from '@island.is/feature-flags'
+import { FeatureFlagClient, Features } from '@island.is/feature-flags'
 import {
   coreHistoryMessages,
   DefaultStateLifeCycle,
@@ -51,7 +51,7 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.DRIVING_LICENSE_ADDITIONAL,
-  readyForProduction: false,
+  featureFlag: Features.drivingLicenseAdvanced,
   name: (application) =>
     application.answers.applicationFor === BE
       ? m.applicationForBELicenseTitle.defaultMessage

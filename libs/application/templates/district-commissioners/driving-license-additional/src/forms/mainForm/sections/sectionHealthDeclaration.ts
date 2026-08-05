@@ -1,12 +1,12 @@
 import {
   buildMultiField,
-  buildSubSection,
+  buildSection,
   buildDescriptionField,
   buildFileUploadField,
 } from '@island.is/application/core'
 import { m } from '../../../lib/messages'
 
-export const subSectionHealthDeclaration = buildSubSection({
+export const sectionHealthDeclaration = buildSection({
   id: 'healthDeclaration',
   title: m.healthDeclarationSectionTitle,
   children: [

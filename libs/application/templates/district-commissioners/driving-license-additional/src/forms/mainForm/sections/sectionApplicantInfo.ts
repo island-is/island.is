@@ -3,7 +3,7 @@ import {
   buildKeyValueField,
   buildDividerField,
   buildTextField,
-  buildSubSection,
+  buildSection,
   buildPhoneField,
   getValueViaPath,
 } from '@island.is/application/core'
@@ -11,7 +11,7 @@ import { Application, NationalRegistryUser } from '@island.is/api/schema'
 import { m } from '../../../lib/messages'
 import { BE, B_ADVANCED, formatRegisteredAddress } from '../../../utils'
 
-export const subSectionApplicantInfo = buildSubSection({
+export const sectionApplicantInfo = buildSection({
   id: 'infoStep',
   title: m.informationApplicant,
   children: [

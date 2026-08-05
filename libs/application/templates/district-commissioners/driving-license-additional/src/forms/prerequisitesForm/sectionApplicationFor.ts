@@ -26,8 +26,6 @@ export const sectionApplicationFor = buildSubSection({
       children: [
         buildRadioField({
           id: 'applicationFor',
-          backgroundColor: 'white',
-          largeButtons: true,
           options: (app) => {
             let { currentLicense } = getValueViaPath<DrivingLicense>(
               app.externalData,

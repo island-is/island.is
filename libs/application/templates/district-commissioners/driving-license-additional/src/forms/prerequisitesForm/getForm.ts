@@ -33,20 +33,5 @@ export const getForm = ({
           sectionAdditionalSummary,
         ],
       }),
-      buildSection({
-        id: 'info',
-        title: m.informationTitle,
-        children: [],
-      }),
-      buildSection({
-        id: 'payment',
-        title: m.overviewPaymentCharge,
-        children: [],
-      }),
-      buildSection({
-        id: 'confirm',
-        title: m.applicationDone,
-        children: [],
-      }),
     ],
   })

@@ -3,7 +3,7 @@ import {
   buildMultiField,
   buildRadioField,
   buildSelectField,
-  buildSubSection,
+  buildSection,
   getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../../lib/messages'
@@ -11,7 +11,7 @@ import { m } from '../../../lib/messages'
 import { Jurisdiction } from '@island.is/clients/driving-license'
 import { Pickup } from '../../../utils'
 
-export const subSectionDelivery = buildSubSection({
+export const sectionDelivery = buildSection({
   id: 'user',
   title: m.informationSectionTitle,
   children: [

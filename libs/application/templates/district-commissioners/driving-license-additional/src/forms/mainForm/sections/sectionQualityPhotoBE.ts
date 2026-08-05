@@ -1,7 +1,7 @@
 import {
   buildMultiField,
   buildRadioField,
-  buildSubSection,
+  buildSection,
   buildDescriptionField,
   getValueViaPath,
 } from '@island.is/application/core'
@@ -16,7 +16,7 @@ interface ThjodskraImage {
   contentSpecification: string
 }
 
-export const subSectionQualityPhotoBE = buildSubSection({
+export const sectionQualityPhotoBE = buildSection({
   id: 'photoStepBE',
   title: m.photoSelectionTitle,
   children: [

@@ -1,8 +1,10 @@
-import { buildForm, buildSection } from '@island.is/application/core'
+import { buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { DistrictCommissionersLogo } from '@island.is/application/assets/institution-logos'
-import { m } from '../../lib/messages'
-import { sectionInfo } from './sectionInfo'
+import { sectionApplicantInfo } from './sections/sectionApplicantInfo'
+import { sectionQualityPhotoBE } from './sections/sectionQualityPhotoBE'
+import { sectionDelivery } from './sections/sectionDelivery'
+import { sectionHealthDeclaration } from './sections/sectionHealthDeclaration'
 import { sectionSummary } from './sectionSummary'
 
 export const mainForm: Form = buildForm({
@@ -12,27 +14,10 @@ export const mainForm: Form = buildForm({
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [
-    buildSection({
-      id: 'externalData',
-      title: m.externalDataSection,
-      children: [],
-    }),
-    sectionInfo,
+    sectionApplicantInfo,
+    sectionQualityPhotoBE,
+    sectionDelivery,
+    sectionHealthDeclaration,
     sectionSummary,
-    buildSection({
-      id: 'payment',
-      title: m.overviewPaymentCharge,
-      children: [],
-    }),
-    buildSection({
-      id: 'confirm',
-      title: m.overviewSectionTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'done',
-      title: m.applicationDone,
-      children: [],
-    }),
   ],
 })
