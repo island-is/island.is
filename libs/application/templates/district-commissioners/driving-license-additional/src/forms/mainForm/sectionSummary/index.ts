@@ -1,11 +1,10 @@
 import {
   buildDescriptionField,
   buildMultiField,
-  buildKeyValueField,
-  buildSubmitField,
-  buildDividerField,
-  getValueViaPath,
+  buildOverviewField,
   buildSection,
+  buildSubmitField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import {
   Application,
@@ -91,78 +90,95 @@ export const sectionSummary = buildSection({
             return `- ${formatMessage(m.applicationForFullLicenseTitle)}`
           },
         }),
-        buildDividerField({}),
-        buildKeyValueField({
-          label: m.overviewName,
-          width: 'half',
-          value: ({ externalData }) =>
-            getValueViaPath(externalData, 'nationalRegistry.data.fullName') ??
-            '',
+        buildOverviewField({
+          id: 'overviewApplicant',
+          items: (answers, externalData) => [
+            {
+              width: 'half',
+              keyText: m.overviewName,
+              valueText:
+                getValueViaPath<string>(
+                  externalData,
+                  'nationalRegistry.data.fullName',
+                ) ?? '',
+            },
+            {
+              width: 'half',
+              keyText: m.overviewNationalId,
+              valueText: formatNationalId(
+                getValueViaPath<string>(
+                  externalData,
+                  'nationalRegistry.data.nationalId',
+                ) ?? '',
+              ),
+            },
+            {
+              width: 'half',
+              keyText: m.overviewPhoneNumber,
+              hideIfEmpty: true,
+              valueText: (() => {
+                const phone = getValueViaPath<string>(
+                  answers,
+                  'applicant.phoneNumber',
+                )
+                return phone
+                  ? formatPhoneNumber(phone.replace(/(^00354|^\+354|\D)/g, ''))
+                  : ''
+              })(),
+            },
+            {
+              width: 'half',
+              keyText: m.overviewEmail,
+              hideIfEmpty: true,
+              valueText:
+                getValueViaPath<string>(answers, 'applicant.email') ?? '',
+            },
+            {
+              width: 'half',
+              keyText: m.overviewStreetAddress,
+              valueText: formatRegisteredAddress(
+                getValueViaPath<NationalRegistryUser['address']>(
+                  externalData,
+                  'nationalRegistry.data.address',
+                ),
+              ),
+            },
+          ],
         }),
-        buildKeyValueField({
-          label: m.overviewNationalId,
-          width: 'half',
-          value: ({ externalData }) =>
-            formatNationalId(
-              getValueViaPath(
-                externalData,
-                'nationalRegistry.data.nationalId',
-              ) ?? '',
-            ),
-        }),
-        buildKeyValueField({
-          label: m.overviewPhoneNumber,
-          width: 'half',
-          condition: (answers) =>
-            !!getValueViaPath<string>(answers, 'applicant.phoneNumber'),
-          value: ({ answers }) =>
-            formatPhoneNumber(
-              (
-                getValueViaPath<string>(answers, 'applicant.phoneNumber') ?? ''
-              ).replace(/(^00354|^\+354|\D)/g, ''),
-            ),
-        }),
-        buildKeyValueField({
-          label: m.overviewEmail,
-          width: 'half',
-          condition: (answers) =>
-            !!getValueViaPath<string>(answers, 'applicant.email'),
-          value: ({ answers }) =>
-            getValueViaPath<string>(answers, 'applicant.email') ?? '',
-        }),
-        buildKeyValueField({
-          label: m.overviewStreetAddress,
-          width: 'half',
-          value: ({ externalData: { nationalRegistry } }) =>
-            formatRegisteredAddress(
-              (nationalRegistry.data as NationalRegistryUser).address,
-            ),
-        }),
-
-        // Health cert section — uploaded-file display.
-        // BE: gated on health-declaration triggering the upload.
-        // Redesigned 65+: always shown (cert is mandatory regardless of
-        // health questions, which 65+ doesn't have).
-        buildDividerField({}),
-        buildKeyValueField({
-          label: m.overviewHealthCertificateUploaded,
-          value: ({ answers }) => {
-            const files = getValueViaPath<Array<{ name: string }>>(
-              answers,
-              'healthCertificate',
-            )
-            return files?.map((f) => f.name).join(', ') ?? ''
+        // Health cert — uploaded-file display. BE: gated on health-declaration
+        // triggering the upload. Redesigned 65+: always present (cert mandatory
+        // regardless of health questions, which 65+ doesn't have).
+        buildOverviewField({
+          id: 'overviewHealthCertificate',
+          items: (answers) => {
+            const files =
+              getValueViaPath<Array<{ name: string }>>(
+                answers,
+                'healthCertificate',
+              ) ?? []
+            return [
+              {
+                width: 'full',
+                keyText: m.overviewHealthCertificateUploaded,
+                valueText: files.map((file) => file.name).join(', '),
+              },
+            ]
           },
         }),
-        buildDividerField({}),
-        buildKeyValueField({
-          label: m.pickupLocationTitle,
-          value: ({ answers, externalData }) => {
+        buildOverviewField({
+          id: 'overviewPickup',
+          items: (answers, externalData) => {
             if (
               getValueViaPath(answers, 'delivery.deliveryMethod') ===
               Pickup.POST
             ) {
-              return m.overviewPickupPost
+              return [
+                {
+                  width: 'full',
+                  keyText: m.pickupLocationTitle,
+                  valueText: m.overviewPickupPost,
+                },
+              ]
             }
 
             const jurisdictionId = getValueViaPath(
@@ -174,28 +190,35 @@ export const sectionSummary = buildSection({
               'jurisdictions.data',
             )?.find(({ id }) => `${id}` === `${jurisdictionId}`)
 
-            return {
-              ...m.overviewPickupDistrictWithLocation,
-              values: { location: jurisdiction?.name ?? '' },
-            }
+            return [
+              {
+                width: 'full',
+                keyText: m.pickupLocationTitle,
+                valueText: {
+                  ...m.overviewPickupDistrictWithLocation,
+                  values: { location: jurisdiction?.name ?? '' },
+                },
+              },
+            ]
           },
-          width: 'full',
         }),
-        buildDividerField({}),
-        buildKeyValueField({
-          label: ({ answers }) =>
-            getValueViaPath(answers, 'delivery.deliveryMethod') === Pickup.POST
-              ? m.overviewPaymentChargeWithDelivery
-              : m.overviewPaymentCharge,
-          value: ({ answers, externalData }) => {
+        buildOverviewField({
+          id: 'overviewPayment',
+          items: (answers, externalData) => {
+            const label =
+              getValueViaPath(answers, 'delivery.deliveryMethod') ===
+              Pickup.POST
+                ? m.overviewPaymentChargeWithDelivery
+                : m.overviewPaymentCharge
+
             // getCodes throws when applicationFor is unset; guard so a partial/
             // corrupt answer state degrades to a blank price instead of crashing
             // the whole summary render.
             if (!getValueViaPath(answers, 'applicationFor')) {
-              return '' as StaticText
+              return [{ width: 'full', keyText: label, valueText: '' }]
             }
 
-            const items =
+            const priceItems =
               getValueViaPath<
                 { priceAmount: number; chargeItemCode: string }[]
               >(externalData, 'payment.data') ?? []
@@ -208,14 +231,19 @@ export const sectionSummary = buildSection({
             } as Application).reduce(
               (sum, { code }) =>
                 sum +
-                (items.find(({ chargeItemCode }) => chargeItemCode === code)
+                (priceItems.find(({ chargeItemCode }) => chargeItemCode === code)
                   ?.priceAmount ?? 0),
               0,
             )
 
-            return (total.toLocaleString('is-IS') + ' kr.') as StaticText
+            return [
+              {
+                width: 'full',
+                keyText: label,
+                valueText: total.toLocaleString('is-IS') + ' kr.',
+              },
+            ]
           },
-          width: 'full',
         }),
         buildSubmitField({
           id: 'submit',
