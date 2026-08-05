@@ -9,7 +9,7 @@ import { messages } from '../../lib/messages'
 import { mapAssigneeType } from '../../utils/mappers'
 import { AppointmentDetailFieldsFragment } from './AppointmentDetail.generated'
 
-interface InfoLineItem {
+interface InfoLine {
   label: string
   content?: string
   button?: {
@@ -42,16 +42,16 @@ export const AppointmentDetailInfoLines = ({
     HealthDirectorateAppointmentLinkType.ORGANIZATION_INFO,
   )
 
-  const lines: InfoLineItem[] = []
+  const infoLines: InfoLine[] = []
 
   if ((appointment.practitioners?.length ?? 0) > 0) {
-    lines.push({
+    infoLines.push({
       label: formatMessage(messages.appointmentAtSimple),
       content: appointment.practitioners.join(', '),
     })
   }
 
-  lines.push(
+  infoLines.push(
     ...(appointment.assignees ?? []).map((assignee) => ({
       label: mapAssigneeType(assignee.type, formatMessage),
       content: assignee.name,
@@ -59,7 +59,7 @@ export const AppointmentDetailInfoLines = ({
   )
 
   if (appointment.instruction) {
-    lines.push({
+    infoLines.push({
       label: formatMessage(messages.instructions),
       content: appointment.instruction,
       button: patientInstructionsLink
@@ -74,7 +74,7 @@ export const AppointmentDetailInfoLines = ({
   }
 
   if (preparationLink) {
-    lines.push({
+    infoLines.push({
       label: formatMessage(messages.appointmentPreparation),
       button: {
         type: 'link',
@@ -85,7 +85,7 @@ export const AppointmentDetailInfoLines = ({
     })
   }
 
-  const locationLines: InfoLineItem[] = [
+  const locationLines: InfoLine[] = [
     {
       label: formatMessage(messages.appointmentLocationDepartment),
       content: appointment.location?.department ?? undefined,
@@ -124,9 +124,9 @@ export const AppointmentDetailInfoLines = ({
     },
   ]
 
-  lines.push(...locationLines.filter((line) => line.content))
+  infoLines.push(...locationLines.filter((line) => line.content))
 
-  if (lines.length === 0) {
+  if (infoLines.length === 0) {
     return null
   }
 
@@ -135,7 +135,7 @@ export const AppointmentDetailInfoLines = ({
       label={formatMessage(messages.appointmentMoreInfo)}
       space={1}
     >
-      {lines.map((line, index) => (
+      {infoLines.map((line, index) => (
         <InfoLine key={index} {...line} />
       ))}
     </InfoLineStack>

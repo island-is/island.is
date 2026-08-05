@@ -53,7 +53,7 @@ const AppointmentDetail = () => {
               alignItems="center"
             >
               <Stack space={3}>
-                <Text variant="h4" color="blue400">
+                <Text variant="h4" as="h4" color="blue400">
                   {appointment.title}
                 </Text>
                 <AppointmentDetailCardInfo appointment={appointment} />

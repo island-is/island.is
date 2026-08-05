@@ -2828,10 +2828,6 @@ export const messages = defineMessages({
     id: 'sp.health:appointment-modality-video',
     defaultMessage: 'Myndsímtal',
   },
-  appointmentAssignees: {
-    id: 'sp.health:appointment-assignees',
-    defaultMessage: 'Úthlutað til',
-  },
   appointmentAssigneeTypeRole: {
     id: 'sp.health:appointment-assignee-type-role',
     defaultMessage: 'Hlutverk',

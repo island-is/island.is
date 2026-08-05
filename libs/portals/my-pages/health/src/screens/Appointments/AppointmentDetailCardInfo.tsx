@@ -14,7 +14,7 @@ import { generateGoogleMapsLink } from '../../utils/googleMaps'
 import { mapWeekday } from '../../utils/mappers'
 import { AppointmentDetailFieldsFragment } from './AppointmentDetail.generated'
 
-interface Line {
+interface InfoLine {
   icon: IconMapIcon
   text: ReactNode
   link?: { to: string; label: string }
@@ -56,10 +56,10 @@ export const AppointmentDetailCardInfo = ({
     appointment.location?.link ??
     undefined
 
-  const lines: Line[] = []
+  const infoLines: InfoLine[] = []
 
   if (appointment.date) {
-    lines.push({
+    infoLines.push({
       icon: 'calendar',
       text: (
         <>
@@ -68,11 +68,11 @@ export const AppointmentDetailCardInfo = ({
         </>
       ),
     })
-    lines.push({ icon: 'time', text: getTime(appointment.date) })
+    infoLines.push({ icon: 'time', text: getTime(appointment.date) })
   }
 
   if (appointment.duration) {
-    lines.push({
+    infoLines.push({
       icon: 'hourglass',
       text: formatMessage(messages.argWithMinutes, {
         arg: appointment.duration,
@@ -81,12 +81,12 @@ export const AppointmentDetailCardInfo = ({
   }
 
   if (isVideo) {
-    lines.push({
+    infoLines.push({
       icon: 'videoCam',
       text: formatMessage(messages.appointmentModalityVideo),
     })
   } else if (fullAddress) {
-    lines.push({
+    infoLines.push({
       icon: 'location',
       text: fullAddress,
       link: mapsLink
@@ -96,7 +96,7 @@ export const AppointmentDetailCardInfo = ({
   }
 
   if (!isVideo && locationLink) {
-    lines.push({
+    infoLines.push({
       icon: 'informationCircle',
       text: formatMessage(messages.locationInstructions),
       link: { to: locationLink, label: formatMessage(messages.seeMore) },
@@ -105,7 +105,7 @@ export const AppointmentDetailCardInfo = ({
 
   return (
     <Stack space={2}>
-      {lines.map((line, index) =>
+      {infoLines.map((line, index) =>
         line.link ? (
           <Box key={index} display="flex" alignItems="flexStart" columnGap={1}>
             <Box flexShrink={0}>
