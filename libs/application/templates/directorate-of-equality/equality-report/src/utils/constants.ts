@@ -1,7 +1,11 @@
 import { DefaultEvents } from '@island.is/application/types'
 
 export type Events = {
-  type: DefaultEvents.SUBMIT | DefaultEvents.APPROVE | DefaultEvents.EDIT | 'DENY'
+  type:
+    | DefaultEvents.SUBMIT
+    | DefaultEvents.APPROVE
+    | DefaultEvents.EDIT
+    | 'DENY'
 }
 
 export enum States {
