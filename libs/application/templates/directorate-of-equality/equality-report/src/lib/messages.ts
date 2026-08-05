@@ -29,7 +29,7 @@ export const messages = {
       defaultMessage: 'Texti verður að vera að minnsta kosti 200 stafir',
     },
     invalidCompanyNationalId: {
-      id: 'equalityReport.application::errors.invalidCompanyNationalId',
+      id: 'equalityReport.application:errors.invalidCompanyNationalId',
       defaultMessage: 'Kennitala er ekki gild kennitala fyrirtækis',
     },
   }),

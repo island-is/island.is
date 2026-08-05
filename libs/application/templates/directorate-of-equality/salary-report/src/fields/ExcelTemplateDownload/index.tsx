@@ -367,10 +367,10 @@ export const ExcelTemplateDownload: FC<
           />
           <ActionCard
             backgroundColor="white"
-            heading={formatMessage(m.manualCardTitle)}
-            text={formatMessage(m.manualCardDescription)}
+            heading={formatMessage(m.manualEntryCardTitle)}
+            text={formatMessage(m.manualEntryCardIntro)}
             cta={{
-              label: formatMessage(m.manualButtonLabel),
+              label: formatMessage(m.manualEntryButtonLabel),
               variant: 'primary',
               icon: 'arrowForward',
               onClick: handleManualEntry,
