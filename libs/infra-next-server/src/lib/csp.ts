@@ -1,40 +1,47 @@
 /**
- * Nonce-based Content-Security-Policy for web.
+ * Shared nonce-based Content-Security-Policy for island.is Next apps.
  *
- * The CSP was previously served by the infra/ingress layer (CloudFront) and
+ * These apps used to get their CSP from the ingress (CloudFront), which
  * allow-listed Next's inline bootstrap scripts by two pinned `sha256-…` hashes.
- * Next 16 changed those inline scripts, so the hashes no longer matched and
- * every page's inline script was blocked — which broke SSR Suspense (React
- * error #419) and forced client-side rendering.
+ * Next 16 changed those inline scripts, so the hashes stopped matching and every
+ * page's inline script was blocked — breaking SSR Suspense (React #419) and
+ * forcing client-side rendering.
  *
- * Instead we mint a per-request nonce and put it in `script-src`. The nonce is
- * applied by the custom server (see `@island.is/infra-next-server` bootstrap
- * `csp` option), which sets it on the request's `content-security-policy` header
- * before Next renders. Next reads it (getScriptNonceFromHeader) and stamps its
- * own inline scripts. This is done in the custom server rather than Next
- * middleware because middleware request-header overrides do not reach the pages
- * renderer through the Express custom server.
+ * Instead each app mints a per-request nonce and owns its CSP. Pass this builder
+ * to the bootstrap `csp` option (`csp: buildContentSecurityPolicy`); the custom
+ * server sets the result on the request's `content-security-policy` header before
+ * Next renders, so Next reads it (getScriptNonceFromHeader) and stamps its inline
+ * scripts. Done in the custom server rather than Next middleware because
+ * middleware request-header overrides do not reach the pages renderer through it.
  *
  * NB: Next 16's pages router does NOT forward that nonce into React 19's
  * streaming renderer, so React's inline Suspense streaming scripts ($RC/$RB…)
- * come out un-nonced, get CSP-blocked, and break SSR (React #419) on their own.
- * A `yarn patch` on `next` closes that gap by passing the nonce to
- * `renderToInitialFizzStream` (see .yarn/patches/next-npm-*.patch). Both this CSP
- * wiring AND that patch are required for a working nonce CSP on the pages router.
+ * come out un-nonced, get CSP-blocked, and break SSR on their own. A `yarn patch`
+ * on `next` closes that gap by passing the nonce to `renderToInitialFizzStream`
+ * (see .yarn/patches/next-npm-*.patch). Both this wiring AND that patch are
+ * required for a working nonce CSP on the pages router.
  *
- * The allow-list below is the single source of truth, owned by the app. Fixed
- * SaaS hosts are hard-coded; environment-specific hosts (Matomo is self-hosted
- * per env) are sourced from the app's own runtime env (`MATOMO_DOMAIN`, set per
- * env in infra/web.ts) so the policy is always env-correct and cannot drift from
+ * The allow-list is the single source of truth, owned by the app. Fixed SaaS
+ * hosts are hard-coded; environment-specific hosts (Matomo is self-hosted per
+ * env) are sourced from the app's own runtime env (`MATOMO_DOMAIN`, set per env
+ * in the app's infra) so the policy is always env-correct and cannot drift from
  * the hosts the app actually loads. Completeness is checked two ways: diffing
  * against the live CloudFront header, and the A/B smoke test (a missing host
  * shows up as a CSP violation vs the base deploy).
  */
-export const buildCsp = (nonce: string): string => {
-  // Self-hosted Matomo host differs per environment; take it from the same env
-  // var the app uses to load Matomo, so the CSP matches the actual request
-  // (dev → matomo-dev.dev01…, prod → islandis.matomo.cloud, staging → none).
-  const matomo = process.env.MATOMO_DOMAIN
+export interface ContentSecurityPolicyOptions {
+  /**
+   * Self-hosted Matomo host for this environment. Defaults to
+   * `process.env.MATOMO_DOMAIN` (the same value the app uses to load Matomo).
+   */
+  matomoDomain?: string
+}
+
+export const buildContentSecurityPolicy = (
+  nonce: string,
+  { matomoDomain = process.env.MATOMO_DOMAIN }: ContentSecurityPolicyOptions = {},
+): string => {
+  const matomo = matomoDomain
   const directives: Record<string, string[]> = {
     'default-src': [
       "'self'",
@@ -80,8 +87,8 @@ export const buildCsp = (nonce: string): string => {
       'https://*.mypurecloud.de',
       'https://*.euc1.pure.cloud',
     ],
-    // Only change from the CloudFront policy: the two stale `sha256-…` hashes are
-    // replaced by the per-request nonce.
+    // The two stale `sha256-…` hashes from the old CloudFront policy are replaced
+    // by the per-request nonce; the Matomo host is env-sourced (see above).
     'script-src': [
       "'self'",
       "'unsafe-eval'",
