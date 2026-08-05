@@ -85,6 +85,8 @@ export const createTestingVerdictModule = async () => {
 
   const policeService = verdictModule.get<PoliceService>(PoliceService)
 
+  const eventService = verdictModule.get<EventService>(EventService)
+
   const fileService = verdictModule.get<FileService>(FileService)
 
   const verdictController =
@@ -102,6 +104,7 @@ export const createTestingVerdictModule = async () => {
     internalVerdictController,
     verdictService,
     policeService,
+    eventService,
     fileService,
     verdictRepositoryService,
     sequelize,
