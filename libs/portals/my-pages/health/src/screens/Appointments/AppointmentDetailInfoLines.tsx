@@ -124,7 +124,9 @@ export const AppointmentDetailInfoLines = ({
     },
   ]
 
-  infoLines.push(...locationLines.filter((line) => line.content))
+  infoLines.push(
+    ...locationLines.filter((line) => line.content || line.button),
+  )
 
   if (infoLines.length === 0) {
     return null
