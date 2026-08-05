@@ -1,7 +1,4 @@
-import type {
-  Application,
-  ApplicationRole,
-} from '@island.is/application/types'
+import type { Application, ApplicationRole } from '@island.is/application/types'
 import { isCompany } from 'kennitala'
 import { Roles } from './constants'
 
