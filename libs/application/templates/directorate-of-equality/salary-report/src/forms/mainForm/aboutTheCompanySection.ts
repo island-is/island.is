@@ -1,4 +1,5 @@
 import {
+  buildDateField,
   buildDescriptionField,
   buildMultiField,
   buildPhoneField,
@@ -13,6 +14,8 @@ import {
   NO,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
+import startOfMonth from 'date-fns/startOfMonth'
+import subMonths from 'date-fns/subMonths'
 import { messages } from '../../lib/messages'
 import { PERIOD_ONE_MONTH, PERIOD_TWELVE_MONTHS } from '../../lib/constants'
 import { getEmployeeCountDisplay } from '../../utils/employeeCountCategory'
@@ -371,6 +374,19 @@ export const aboutTheCompanySection = buildSection({
                   label: messages.aboutTheCompany.period.oneMonth,
                 },
               ],
+            }),
+            buildDateField({
+              id: 'period.month',
+              title: messages.aboutTheCompany.period.month,
+              width: 'half',
+              required: true,
+              minDate: () => startOfMonth(subMonths(new Date(), 12)),
+              maxDate: () => new Date(),
+              minYear: new Date().getFullYear() - 1,
+              maxYear: new Date().getFullYear(),
+              placeholder: 'dd.mm.yyyy',
+              condition: (answers) =>
+                getValueViaPath(answers, 'period.period') === PERIOD_ONE_MONTH,
             }),
           ],
         }),

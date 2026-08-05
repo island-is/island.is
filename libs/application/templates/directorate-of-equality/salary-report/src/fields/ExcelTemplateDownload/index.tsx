@@ -357,7 +357,7 @@ export const ExcelTemplateDownload: FC<
           <ActionCard
             backgroundColor="white"
             heading={formatMessage(m.uploadCardTitle)}
-            text={formatMessage(m.uploadCardDescription)}
+            text={formatMessage(m.uploadCardIntro)}
             cta={{
               label: formatMessage(m.uploadButtonLabel),
               variant: 'primary',

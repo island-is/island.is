@@ -21,6 +21,10 @@ export const messages = {
       id: 'salaryReport.application:errors.duplicateSubsidiary',
       defaultMessage: 'Þetta dótturfélag er þegar á listanum',
     },
+    invalidCompany: {
+      id: 'salaryReport.application:errors.invalidCompany',
+      defaultMessage: 'Kennitala fyrirtækis er ekki gild',
+    },
   }),
 
   general: defineMessages({
@@ -77,10 +81,6 @@ export const messages = {
       title: {
         id: 'salaryReport.application:prerequisites.section.title',
         defaultMessage: 'Gagnaöflun',
-      },
-      intro: {
-        id: 'salaryReport.application:prerequisites.section.intro',
-        defaultMessage: lorem,
       },
       checkboxLabel: {
         id: 'salaryReport.application:prerequisites.section.checkboxLabel',
@@ -307,7 +307,7 @@ export const messages = {
       },
       nonBinary: {
         id: 'salaryReport.application:aboutTheCompany.employeeCount.nonBinary',
-        defaultMessage: 'Hlutlæg skráning kyns í þjóðskrá',
+        defaultMessage: 'Kynsegin',
       },
     }),
     subsidiaries: defineMessages({
@@ -392,6 +392,10 @@ export const messages = {
         defaultMessage:
           'Einn mánuður undangenginna tólf mánaða (mælt er með því að velja mánuð þar sem ekki var mikið um óhefðbundin laun, t.d. leiðréttingar, uppgjör vegna starfsloka eða slíks)',
       },
+      month: {
+        id: 'salaryReport.application:aboutTheCompany.period.month',
+        defaultMessage: 'Veldu mánuð',
+      },
     }),
   },
 
@@ -450,6 +454,19 @@ export const messages = {
         id: 'salaryReport.application:report.dataEntry.uploadCardIntro',
         defaultMessage:
           'Sæktu sniðmátið, fylltu út gögnin og hlaðið skjalinu aftur upp hér svo þau flytjist sjálfkrafa inn í umsóknina.',
+      },
+      manualCardTitle: {
+        id: 'salaryReport.application:report.dataEntry.manualCardTitle',
+        defaultMessage: 'Handvirkur innsláttur',
+      },
+      manualCardDescription: {
+        id: 'salaryReport.application:report.dataEntry.manualCardDescription',
+        defaultMessage:
+          'Sláðu gögnin inn handvirkt. Sjálfgefin viðmið eru forútfyllt og hægt er að breyta þeim.',
+      },
+      manualButtonLabel: {
+        id: 'salaryReport.application:report.dataEntry.manualButtonLabel',
+        defaultMessage: 'Byrja innslátt',
       },
       manualEntryCardTitle: {
         id: 'salaryReport.application:report.dataEntry.manualEntryCardTitle',
@@ -747,7 +764,7 @@ export const messages = {
       },
       stigLabel: {
         id: 'salaryReport.application:report.jobClassification.stigLabel',
-        defaultMessage: 'Stig',
+        defaultMessage: 'Þrep',
       },
       roleScore: {
         id: 'salaryReport.application:report.jobClassification.roleScore',
@@ -775,7 +792,7 @@ export const messages = {
       intro: {
         id: 'salaryReport.application:report.employeeClassification.intro',
         defaultMessage:
-          'Hér að neðan þarf að skilgreina stig fyrir hvern starfsmann útfrá einstaklingsbundnum þáttum. Veldu næst þrep fyrir hvert undirviðmið fyrir alla starfsmenn og stig verða reiknuð sjálfkrafa.',
+          'Hér að neðan þarf að velja þrep fyrir hvern starfsmann útfrá einstaklingsbundnum þáttum. Veldu þrep fyrir hvert undirviðmið og stig verða reiknuð sjálfkrafa.',
       },
     }),
   },

@@ -2,6 +2,7 @@ import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { messages } from './messages'
 import { EMAIL_REGEX } from '@island.is/application/core'
+import { PERIOD_ONE_MONTH, PERIOD_TWELVE_MONTHS } from './constants'
 
 const generalInformation = z.object({
   companyName: z.string().optional(),
@@ -89,6 +90,23 @@ const criteria = z
         code: z.ZodIssueCode.custom,
         path: ['jobFactors'],
         params: messages.report.criteria.weightSumError,
+      })
+    }
+  })
+
+const period = z
+  .object({
+    period: z
+      .enum([PERIOD_TWELVE_MONTHS, PERIOD_ONE_MONTH])
+      .refine((v) => !!v, { params: messages.errors.required }),
+    month: z.string().optional(),
+  })
+  .superRefine((val, ctx) => {
+    if (val.period === PERIOD_ONE_MONTH && !val.month) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['month'],
+        params: messages.errors.required,
       })
     }
   })
@@ -266,6 +284,7 @@ export const dataSchema = z.object({
   chiefExecutive: chiefExecutive.optional(),
   contactPerson: contactPerson.optional(),
   employeeCount: employeeCount.optional(),
+  period: period.optional(),
   subsidiaries: subsidiaries.optional(),
   criteria: criteria.optional(),
   subCriteria: subCriteria,

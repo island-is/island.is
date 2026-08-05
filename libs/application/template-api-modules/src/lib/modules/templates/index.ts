@@ -1,5 +1,3 @@
-import { DirectorateOfEqualityModule } from './directorate-of-equality/directorate-of-equality.module'
-import { DirectorateOfEqualityService } from './directorate-of-equality/directorate-of-equality.service'
 import { HousingBenefitsModule } from './hms/housing-benefits/housing-benefits.module'
 import { HousingBenefitsService } from './hms/housing-benefits/housing-benefits.service'
 import { SubmitDocumentsModule } from './vmst/submit-documents/submit-documents.module'

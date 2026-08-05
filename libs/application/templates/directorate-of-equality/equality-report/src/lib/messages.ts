@@ -253,7 +253,15 @@ export const messages = {
       },
       genderNonBinary: {
         id: 'equalityReport.application:aboutTheCompany.chiefExecutive.genderNonBinary',
-        defaultMessage: 'Hlutlægt',
+        defaultMessage: 'Kynsegin',
+      },
+      jobTitle: {
+        id: 'equalityReport.application:aboutTheCompany.chiefExecutive.jobTitle',
+        defaultMessage: 'Starfsheiti',
+      },
+      jobTitlePlaceholder: {
+        id: 'equalityReport.application:aboutTheCompany.chiefExecutive.jobTitlePlaceholder',
+        defaultMessage: 'Starfsheiti æðsta stjórnanda',
       },
     }),
     contactPerson: defineMessages({
@@ -321,7 +329,7 @@ export const messages = {
       },
       nonBinary: {
         id: 'equalityReport.application:aboutTheCompany.employeeCount.nonBinary',
-        defaultMessage: 'Hlutlæg skráning kyns í þjóðskrá',
+        defaultMessage: 'Kynsegin',
       },
     }),
     subsidiaries: defineMessages({
@@ -557,7 +565,7 @@ export const messages = {
     },
     nonBinary: {
       id: 'equalityReport.application:overview.nonBinary',
-      defaultMessage: 'Hlutlægt kyn',
+      defaultMessage: 'Kynsegin',
     },
     hasSubsidiaries: {
       id: 'equalityReport.application:overview.hasSubsidiaries',
@@ -566,6 +574,10 @@ export const messages = {
     noSubsidiaries: {
       id: 'equalityReport.application:overview.noSubsidiaries',
       defaultMessage: 'Nei',
+    },
+    yesSubsidiaries: {
+      id: 'equalityReport.application:overview.yesSubsidiaries',
+      defaultMessage: 'Já',
     },
   }),
 
