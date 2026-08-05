@@ -145,9 +145,6 @@ export const sectionSummary = buildSection({
             },
           ],
         }),
-        // Health cert — uploaded-file display. BE: gated on health-declaration
-        // triggering the upload. Redesigned 65+: always present (cert mandatory
-        // regardless of health questions, which 65+ doesn't have).
         buildOverviewField({
           id: 'overviewHealthCertificate',
           items: (answers) => {
@@ -231,8 +228,9 @@ export const sectionSummary = buildSection({
             } as Application).reduce(
               (sum, { code }) =>
                 sum +
-                (priceItems.find(({ chargeItemCode }) => chargeItemCode === code)
-                  ?.priceAmount ?? 0),
+                (priceItems.find(
+                  ({ chargeItemCode }) => chargeItemCode === code,
+                )?.priceAmount ?? 0),
               0,
             )
 
