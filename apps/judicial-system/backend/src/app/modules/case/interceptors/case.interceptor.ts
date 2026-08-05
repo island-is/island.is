@@ -160,10 +160,34 @@ export const getCaseLevelAppealInfo = (theCase: Case): CaseLevelAppealInfo => {
 
 export interface AppealCaseInfo {
   appealedByRole?: UserRole
+  appealedByDefendantId?: string
+  appealedByCivilClaimantId?: string
   appealedDate?: Date
   appealedInCourt?: boolean
   statementDeadline?: Date
   isStatementDeadlineExpired?: boolean
+}
+
+// The defence party (defendant / civil claimant) that appealed out of court, from
+// the APPEALED event log. Replaces the frozen appealedByNationalId as the way the
+// web names the appellant and gates its appeal files - the web resolves the
+// party's *current* defender / spokesperson. Empty for prosecution appeals (no
+// party on the event) and for request-case collective defence (no party either);
+// in-court appeals are handled by the caller (appealedInCourt), matching the old
+// single-valued national id, which was null for them.
+export const getAppealedByPartyFromEvents = (
+  appealCase: AppealCase,
+): { appealedByDefendantId?: string; appealedByCivilClaimantId?: string } => {
+  const appealedEvent = (appealCase.appealEventLogs ?? []).find(
+    (eventLog) =>
+      eventLog.eventType === AppealEventType.APPEALED &&
+      (eventLog.defendantId || eventLog.civilClaimantId),
+  )
+
+  return {
+    appealedByDefendantId: appealedEvent?.defendantId,
+    appealedByCivilClaimantId: appealedEvent?.civilClaimantId,
+  }
 }
 
 // The appellant's side as recorded on the APPEALED event log. Every appeal
@@ -255,6 +279,13 @@ export const getAppealCaseInfo = (
       ),
   )
 
+  // The appellant party is only meaningful for a single out-of-court appellant;
+  // in-court appeals name no one ("Kært í þinghaldi"), matching the old
+  // appealedByNationalId which was null for them.
+  const { appealedByDefendantId, appealedByCivilClaimantId } = appealedInCourt
+    ? {}
+    : getAppealedByPartyFromEvents(appealCase)
+
   let statementDeadline: Date | undefined
   let isStatementDeadlineExpired: boolean | undefined
   if (appealReceivedByCourtDate) {
@@ -264,6 +295,8 @@ export const getAppealCaseInfo = (
 
   return {
     appealedByRole,
+    appealedByDefendantId,
+    appealedByCivilClaimantId,
     appealedDate,
     appealedInCourt,
     statementDeadline,

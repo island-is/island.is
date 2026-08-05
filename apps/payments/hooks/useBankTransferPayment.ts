@@ -49,11 +49,11 @@ export const useBankTransferPayment = ({
           },
         })
 
-        const scaRedirectUrl =
-          response.data?.paymentsCreateBankTransfer?.scaRedirectUrl
+        const created = response.data?.paymentsCreateBankTransfer
+        const scaRedirectUrl = created?.scaRedirectUrl
 
-        // Interactive SCA → redirect.
-        if (scaRedirectUrl) {
+        // Redirect if onboarding is required.
+        if (created?.onboardingRequired && scaRedirectUrl) {
           if (!isHttpsUrl(scaRedirectUrl)) {
             onPaymentError({
               code: BankTransferErrorCode.FailedToCreateBankTransfer,
@@ -64,7 +64,7 @@ export const useBankTransferPayment = ({
           return
         }
 
-        // No SCA redirect URL → reload so SSR lands on the dedicated waiting screen.
+        // Reload to land on the dedicated pending screen.
         router.reload()
       } catch (e: unknown) {
         const detail = findProblemInApolloError(e as ApolloError)?.detail

@@ -3,7 +3,6 @@ import {
   ConversationAttachmentDto,
   ConversationDetailDto,
   ConversationMessageDto,
-  ConversationStatusFilter,
   CreateConversationRequestDto,
   CreateEuPatientConsentDto,
   CreateReplyRequestDto,
@@ -33,6 +32,7 @@ import {
 import { PermitInput } from './dto/permit.input'
 import { HealthDirectorateResponse } from './dto/response.dto'
 import {
+  getAppointmentLinkActivationWindow,
   mapAppointmentStatus,
   toAppointmentAssigneeTypeEnum,
   toAppointmentLinkTypeEnum,
@@ -41,9 +41,14 @@ import {
   mapStatusIdToColor,
   mapReferralStatusValueToStatus,
   mapVaccinationStatus,
-  toConversationDirectionEnum,
-  toConversationStatusFilter,
 } from './mappers/basicInformationMapper'
+import {
+  mapConversationMessageContent,
+  mapMessagingRecipient,
+  toConversationDirectionEnum,
+  toConversationReplyBlockedReasonEnum,
+  toConversationStatusFilter,
+} from './mappers/conversationMapper'
 import {
   mapDelegationStatus,
   mapDispensationItem,
@@ -85,8 +90,8 @@ import { Waitlist, Waitlists } from './models/waitlists.model'
 import { HealthDirectorateHealthConversation } from './models/healthConversation.model'
 import { HealthDirectorateHealthConversationAttachment } from './models/healthConversationAttachment.model'
 import { HealthDirectorateHealthConversationDetail } from './models/healthConversationDetail.model'
+import { HealthDirectorateConversationOrganization } from './models/healthConversationOrganization.model'
 import { HealthDirectorateHealthConversationEntry } from './models/healthConversationEntry.model'
-import { HealthDirectorateHealthConversationType } from './models/healthConversationType.model'
 import { HealthDirectorateHealthConversationRecipient } from './models/healthConversationRecipient.model'
 
 @Injectable()
@@ -703,7 +708,14 @@ export class HealthDirectorateService {
       links: item.links
         ?.map((l) => {
           const type = toAppointmentLinkTypeEnum(l.type)
-          return type ? { type, url: l.url } : null
+          if (!type) {
+            return null
+          }
+          return {
+            type,
+            url: l.url,
+            ...getAppointmentLinkActivationWindow(type, item.startTime),
+          }
         })
         .filter(isDefined),
     }
@@ -724,6 +736,20 @@ export class HealthDirectorateService {
     }
   }
 
+  private mapConversationOrganization(c: {
+    organizationNationalId?: string
+    organizationName?: string
+    departmentName?: string
+  }): HealthDirectorateConversationOrganization | undefined {
+    return c.organizationNationalId
+      ? {
+          nationalId: c.organizationNationalId,
+          name: c.organizationName,
+          departmentName: c.departmentName,
+        }
+      : undefined
+  }
+
   private mapConversationEntry(
     m: ConversationMessageDto,
     conversationId: string,
@@ -733,6 +759,7 @@ export class HealthDirectorateService {
       direction: toConversationDirectionEnum(m.direction),
       messageSentAt: m.messageSentAt,
       messageTextContent: m.messageTextContent,
+      content: mapConversationMessageContent(m),
       senderGroupName: m.senderGroupName,
       attachments: m.attachments.map((a) =>
         this.mapConversationAttachment(a, conversationId, m.id),
@@ -751,10 +778,14 @@ export class HealthDirectorateService {
       messageCount: c.messageCount,
       lastMessageSentAt: c.lastMessageSentAt,
       lastSenderGroupName: c.lastSenderGroupName,
+      organization: this.mapConversationOrganization(c),
       hasAttachment: c.hasAttachment,
       isStarred: c.isStarred,
       isArchived: c.isArchived,
       patientCanReply: c.patientCanReply,
+      replyBlockedReason: toConversationReplyBlockedReasonEnum(
+        c.replyBlockedReason,
+      ),
       isRead: !c.unread,
       messages: c.messages.map((m) => this.mapConversationEntry(m, c.id)),
     }
@@ -779,6 +810,7 @@ export class HealthDirectorateService {
       messageCount: c.messageCount,
       lastMessageSentAt: c.lastMessageSentAt,
       lastSenderGroupName: c.lastSenderGroupName,
+      organization: this.mapConversationOrganization(c),
       hasAttachment: c.hasAttachment,
       isStarred: c.isStarred,
       isArchived: c.isArchived,
@@ -861,25 +893,6 @@ export class HealthDirectorateService {
     const items = await this.healthApi.getMessagingRecipients(auth, locale)
     if (!items) return null
 
-    return items.map(
-      (r): HealthDirectorateHealthConversationRecipient => ({
-        nodeId: r.nodeId,
-        groupId: r.groupId,
-        name: r.name,
-        allowsMessaging: r.allowsMessaging,
-        messagingWindowOpen: r.messagingWindowOpen,
-        messagingWindowClose: r.messagingWindowClose,
-        isCurrentlyWithinWindow: r.isCurrentlyWithinWindow,
-        patientReplyWindowDays: r.patientReplyWindowDays,
-        allowedMessageTypes: r.allowedConversationTypes.map(
-          (t): HealthDirectorateHealthConversationType => ({
-            patientInitiatedTypeCode: t.patientInitiatedTypeCode,
-            title: t.title,
-            description: t.description,
-            isCertificate: t.isCertificate,
-          }),
-        ),
-      }),
-    )
+    return items.map(mapMessagingRecipient)
   }
 }

@@ -486,12 +486,17 @@ export const UserForm: FC<Props> = ({
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
-          onNextButtonClick={saveUser}
-          nextIsDisabled={!isValid}
-          nextIsLoading={loading}
-          nextButtonText="Vista"
           previousUrl={ADMIN_USERS_ROUTE}
+          actions={[
+            {
+              text: 'Vista',
+              icon: 'arrowForward',
+              onClick: saveUser,
+              disabled: !isValid,
+              loading: loading,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </div>

@@ -9,6 +9,7 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { LinkResolver } from '@island.is/portals/my-pages/core'
+import { NotificationsBox } from '@island.is/portals/my-pages/information'
 import subYears from 'date-fns/subYears'
 import { useWindowSize } from 'react-use'
 import { HealthPaths } from '../../lib/paths'
@@ -16,6 +17,7 @@ import { messages } from '../../lib/messages'
 import {
   CONTENT_GAP_LG,
   DEFAULT_APPOINTMENTS_STATUS,
+  SECTION_GAP,
 } from '../../utils/constants'
 import {
   useGetAppointmentsOverviewQuery,
@@ -31,8 +33,10 @@ import {
 import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import Appointments from './components/Appointments'
 import BasicInformation from './components/BasicInformation'
+import ContactLinks from './components/ContactLinks'
 import PaymentsAndRights from './components/PaymentsAndRights'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
+import * as styles from './HealthOverview.css'
 
 const DEFAULT_DATE_TO = new Date()
 const DEFAULT_DATE_FROM = subYears(DEFAULT_DATE_TO, 10)
@@ -42,13 +46,13 @@ export const HealthOverview = () => {
   useHealthPlausibleSwap()
   const { formatMessage, locale } = useLocale()
   const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
+  const isStackedLayout = width < theme.breakpoints.lg
   const { value: showAppointments } = useFeatureFlag(
     Features.isServicePortalHealthAppointmentsPageEnabled,
     false,
   )
-  const { value: showQuickLinks } = useFeatureFlag(
-    Features.servicePortalHealthMedicineLandlaeknirPageEnabled,
+  const { value: isNewHealthOverviewPageEnabled } = useFeatureFlag(
+    Features.isNewHealthOverviewPageEnabled,
     false,
   )
 
@@ -146,7 +150,7 @@ export const HealthOverview = () => {
   return (
     <>
       <GridRow marginBottom={CONTENT_GAP_LG}>
-        <GridColumn span={isMobile ? '8/8' : '5/8'}>
+        <GridColumn span={isStackedLayout ? '8/8' : '5/8'}>
           <>
             <Text variant="h3" as={'h1'}>
               {formatMessage(messages.healthOverview)}
@@ -154,7 +158,7 @@ export const HealthOverview = () => {
             <Text variant="default" paddingTop={1}>
               {formatMessage(messages.healthOverviewIntro)}
             </Text>
-            {showQuickLinks && (
+            {isNewHealthOverviewPageEnabled && (
               <Box marginTop={3}>
                 <Inline space={[1, 2]}>
                   {quickLinks.map((link) => (
@@ -167,7 +171,34 @@ export const HealthOverview = () => {
             )}
           </>
         </GridColumn>
+        {isNewHealthOverviewPageEnabled && !isStackedLayout && (
+          <GridColumn span="3/8">
+            <Box display="flex" justifyContent="center">
+              <img
+                src="./assets/images/health.svg"
+                alt=""
+                className={styles.image}
+              />
+            </Box>
+          </GridColumn>
+        )}
       </GridRow>
+      {isNewHealthOverviewPageEnabled && (
+        <GridRow marginBottom={SECTION_GAP}>
+          <GridColumn span={isStackedLayout ? '8/8' : '5/8'}>
+            <Box marginBottom={isStackedLayout ? CONTENT_GAP_LG : 0}>
+              <NotificationsBox
+                limit={3}
+                title={formatMessage(messages.healthNotificationsTitle)}
+                showViewAllArrow={false}
+              />
+            </Box>
+          </GridColumn>
+          <GridColumn span={isStackedLayout ? '8/8' : '3/8'}>
+            <ContactLinks />
+          </GridColumn>
+        </GridRow>
+      )}
       {/* Appointments */}
       {showAppointments && (
         <Appointments
