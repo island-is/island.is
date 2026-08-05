@@ -7,10 +7,13 @@ import {
 import { DefaultEvents } from '@island.is/application/types'
 import * as m from '../../../lib/messages'
 import { getSignedAssigneeOverviewItems } from '../../../utils/assigneeUtil'
+import { hasAllAssigneesRejectedInAnswers } from '../../../utils/assigneeRejectionUtils'
 
 export const assigneeOverviewSection = buildSection({
   id: 'applicantSubmitAssigneeOverviewSection',
   title: m.applicantSubmitMessages.assigneeOverviewSectionTitle,
+  condition: (answers, externalData) =>
+    !hasAllAssigneesRejectedInAnswers(answers, externalData),
   children: [
     buildMultiField({
       id: 'applicantSubmitAssigneeOverviewMultiField',

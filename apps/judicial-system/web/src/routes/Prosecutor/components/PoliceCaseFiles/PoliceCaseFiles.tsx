@@ -86,6 +86,9 @@ const PoliceCaseFiles: FC<Props> = ({
           : policeCaseFiles?.isLoading
       }
       successMessage={
+        !policeCaseFiles?.isLoading &&
+        policeCaseFiles &&
+        policeCaseFiles.files.length > 0 &&
         policeCaseFileList?.length === 0
           ? formatMessage(strings.allFilesUploadedMessage)
           : undefined

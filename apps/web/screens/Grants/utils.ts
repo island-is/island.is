@@ -4,20 +4,28 @@ import format from 'date-fns/format'
 import { Locale } from '@island.is/shared/types'
 import { Grant, GrantStatus } from '@island.is/web/graphql/schema'
 import { containsTimePart } from '@island.is/web/utils/containsTimePart'
-import { formatDate } from '@island.is/web/utils/formatDate'
+import { formatDate, toIcelandTime } from '@island.is/web/utils/formatDate'
 
 import { m } from './messages'
 import { Status } from './types'
+
+const withUtcSuffix = (
+  text: string,
+  formatMessage: IntlShape['formatMessage'],
+): string => {
+  const suffix = formatMessage(m.single.utcSuffix).trim()
+  return suffix ? `${text} ${suffix}` : text
+}
 
 const formatDeadlinePeriod = (
   dateFrom: string,
   dateTo: string,
 ): string | undefined => {
   try {
-    return `${format(new Date(dateFrom), 'dd.MM.yyyy')} - ${format(
-      new Date(dateTo),
+    return `${format(
+      toIcelandTime(new Date(dateFrom)),
       'dd.MM.yyyy',
-    )}`
+    )} - ${format(toIcelandTime(new Date(dateTo)), 'dd.MM.yyyy')}`
   } catch (e) {
     console.warn('Error formatting deadline period:', e)
     return undefined
@@ -28,11 +36,12 @@ export const parseStatus = (
   grant: Grant,
   formatMessage: IntlShape['formatMessage'],
   locale: Locale,
+  includeUtcSuffix = false,
 ): Status => {
   switch (grant.status) {
     case GrantStatus.Closed: {
       const date = grant.dateTo
-        ? formatDate(new Date(grant.dateTo), locale)
+        ? formatDate(toIcelandTime(new Date(grant.dateTo)), locale)
         : undefined
 
       return {
@@ -56,7 +65,7 @@ export const parseStatus = (
     }
     case GrantStatus.ClosedOpeningSoon: {
       const date = grant.dateFrom
-        ? formatDate(new Date(grant.dateFrom), locale)
+        ? formatDate(toIcelandTime(new Date(grant.dateFrom)), locale)
         : undefined
       return {
         applicationStatus: 'closed',
@@ -74,7 +83,11 @@ export const parseStatus = (
     }
     case GrantStatus.ClosedOpeningSoonWithEstimation: {
       const date = grant.dateFrom
-        ? formatDate(new Date(grant.dateFrom), locale, 'MMMM yyyy')
+        ? formatDate(
+            toIcelandTime(new Date(grant.dateFrom)),
+            locale,
+            'MMMM yyyy',
+          )
         : undefined
       return {
         applicationStatus: 'closed',
@@ -123,25 +136,35 @@ export const parseStatus = (
         ? 'dd MMMM'
         : 'dd. MMMM'
 
-      const date = formatDate(new Date(dateString), locale, dateFormat)
+      const date = formatDate(
+        toIcelandTime(new Date(dateString)),
+        locale,
+        dateFormat,
+      )
+
+      const deadlineStatus = date
+        ? formatMessage(
+            hasTime
+              ? m.search.applicationOpensTo
+              : m.search.applicationOpensToWithDay,
+            {
+              arg: date,
+            },
+          )
+        : formatMessage(m.search.applicationOpen)
 
       return {
         applicationStatus: 'open',
-        deadlineStatus: date
-          ? formatMessage(
-              hasTime
-                ? m.search.applicationOpensTo
-                : m.search.applicationOpensToWithDay,
-              {
-                arg: date,
-              },
-            )
-          : formatMessage(m.search.applicationOpen),
+        deadlineStatus:
+          hasTime && includeUtcSuffix
+            ? withUtcSuffix(deadlineStatus, formatMessage)
+            : deadlineStatus,
         note: grant.statusText ?? undefined,
         deadlinePeriod:
           grant.dateFrom && grant.dateTo
             ? formatDeadlinePeriod(grant.dateFrom, grant.dateTo)
             : undefined,
+        hasTime,
       }
     }
     case GrantStatus.OpenWithNote: {

@@ -27,11 +27,70 @@ import {
   hasAcceptedRulingOrderInCourt,
   hasSentNotification,
   isAppealFileCategoryVisible,
+  isCurrentAppellantRepresentative,
+  isSentToPublicProsecutor,
   mapStringToGender,
   reconcileAppealDecisionsForRulingFileChange,
+  userHasActiveInCourtAppeal,
 } from './utils'
 
 describe('Utils', () => {
+  describe('isSentToPublicProsecutor', () => {
+    test('should be true when the case was sent to the public prosecutor after completion', () => {
+      // Arrange
+      const workingCase = {
+        indictmentCompletedDate: '2024-01-01',
+        indictmentSentToPublicProsecutorDate: '2024-01-02',
+      } as Case
+
+      // Act
+      const res = isSentToPublicProsecutor(workingCase)
+
+      // Assert
+      expect(res).toBe(true)
+    })
+
+    test('should be false when the case was sent to the public prosecutor before completion', () => {
+      // Arrange
+      const workingCase = {
+        indictmentCompletedDate: '2024-01-02',
+        indictmentSentToPublicProsecutorDate: '2024-01-01',
+      } as Case
+
+      // Act
+      const res = isSentToPublicProsecutor(workingCase)
+
+      // Assert
+      expect(res).toBe(false)
+    })
+
+    test('should be false when the case has not been sent to the public prosecutor', () => {
+      // Arrange
+      const workingCase = {
+        indictmentCompletedDate: '2024-01-01',
+      } as Case
+
+      // Act
+      const res = isSentToPublicProsecutor(workingCase)
+
+      // Assert
+      expect(res).toBe(false)
+    })
+
+    test('should be false when the case has no completed date', () => {
+      // Arrange
+      const workingCase = {
+        indictmentSentToPublicProsecutorDate: '2024-01-02',
+      } as Case
+
+      // Act
+      const res = isSentToPublicProsecutor(workingCase)
+
+      // Assert
+      expect(res).toBe(false)
+    })
+  })
+
   describe('removeTabs', () => {
     test('should replace a single tab with a single space', () => {
       // Arrange
@@ -396,22 +455,13 @@ describe('Utils', () => {
         )
       })
 
-      test('returns "Verjandi {name} kærði úrskurðinn {date}" for confirmed defender', () => {
-        const nationalId = '0101011010'
+      test('returns "Verjandi {name} kærði úrskurðinn {date}" for the case defender', () => {
         const workingCase = {
           type: CaseType.CUSTODY,
           accusedAppealDecision: CaseAppealDecision.POSTPONE,
-          defendants: [
-            {
-              id: 'defendant-1',
-              isDefenderChoiceConfirmed: true,
-              defenderNationalId: nationalId,
-              defenderName: 'Jón Jónsson',
-            } as Defendant,
-          ],
+          defenderName: 'Jón Jónsson',
           appealCase: {
             appealedByRole: UserRole.DEFENDER,
-            appealedByNationalId: nationalId,
             appealedDate,
           } as AppealCase,
         } as Case
@@ -421,7 +471,7 @@ describe('Utils', () => {
         )
       })
 
-      test('falls back to "Kært af verjanda {date}" when defender national id has no match', () => {
+      test('falls back to "Kært af verjanda {date}" when the case has no defender name', () => {
         const workingCase = {
           type: CaseType.CUSTODY,
           accusedAppealDecision: CaseAppealDecision.POSTPONE,
@@ -429,7 +479,6 @@ describe('Utils', () => {
           civilClaimants: [],
           appealCase: {
             appealedByRole: UserRole.DEFENDER,
-            appealedByNationalId: '0202022020',
             appealedDate,
           } as AppealCase,
         } as unknown as Case
@@ -461,7 +510,6 @@ describe('Utils', () => {
           defendants: [],
           appealCase: {
             appealedByRole: UserRole.DEFENDER,
-            appealedByNationalId: '0202022020',
             appealedDate,
           } as AppealCase,
         } as unknown as Case
@@ -515,7 +563,7 @@ describe('Utils', () => {
         const appealCase = {
           rulingFileId: 'file-1',
           appealedByRole: UserRole.DEFENDER,
-          appealedByNationalId: nationalId,
+          appealedByDefendantId: 'defendant-1',
           appealedDate,
         } as AppealCase
 
@@ -542,7 +590,7 @@ describe('Utils', () => {
         const appealCase = {
           rulingFileId: 'file-1',
           appealedByRole: UserRole.DEFENDER,
-          appealedByNationalId: nationalId,
+          appealedByCivilClaimantId: 'cc-1',
           appealedDate,
         } as AppealCase
 
@@ -559,7 +607,6 @@ describe('Utils', () => {
         const appealCase = {
           rulingFileId: 'file-1',
           appealedByRole: UserRole.DEFENDER,
-          appealedByNationalId: '0404044040',
           appealedDate,
         } as AppealCase
 
@@ -739,6 +786,221 @@ describe('Utils', () => {
     })
   })
 
+  describe('userHasActiveInCourtAppeal', () => {
+    const rulingFileId = 'ruling-file-1'
+    const defendantId = 'defendant-1'
+    const defenderNationalId = '1234567890'
+
+    const defenceUser = {
+      role: UserRole.DEFENDER,
+      nationalId: defenderNationalId,
+    } as User
+
+    const prosecutionUser = {
+      role: UserRole.PROSECUTOR,
+      nationalId: '0000000000',
+      institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
+    } as User
+
+    const caseWith = (decision: {
+      partyRole: AppealDecisionPartyRole
+      defendantId?: string
+      decision: CaseAppealDecision
+      withdrawnDate?: string
+    }) =>
+      ({
+        defendants: [
+          {
+            id: defendantId,
+            isDefenderChoiceConfirmed: true,
+            defenderNationalId,
+          },
+        ],
+        civilClaimants: [],
+        appealDecisions: [{ ...decision, rulingFileId }],
+      } as unknown as Case)
+
+    it('is true when the defendant appealed in court and has not withdrawn', () => {
+      const workingCase = caseWith({
+        partyRole: AppealDecisionPartyRole.DEFENDANT,
+        defendantId,
+        decision: CaseAppealDecision.APPEAL,
+      })
+
+      expect(
+        userHasActiveInCourtAppeal(workingCase, defenceUser, rulingFileId),
+      ).toBe(true)
+    })
+
+    it('is false once the defendant has withdrawn', () => {
+      const workingCase = caseWith({
+        partyRole: AppealDecisionPartyRole.DEFENDANT,
+        defendantId,
+        decision: CaseAppealDecision.APPEAL,
+        withdrawnDate: '2026-06-05T12:00:00.000Z',
+      })
+
+      expect(
+        userHasActiveInCourtAppeal(workingCase, defenceUser, rulingFileId),
+      ).toBe(false)
+    })
+
+    it('is false when the party did not appeal (ACCEPT)', () => {
+      const workingCase = caseWith({
+        partyRole: AppealDecisionPartyRole.DEFENDANT,
+        defendantId,
+        decision: CaseAppealDecision.ACCEPT,
+      })
+
+      expect(
+        userHasActiveInCourtAppeal(workingCase, defenceUser, rulingFileId),
+      ).toBe(false)
+    })
+
+    it('is true when the prosecution appealed in court', () => {
+      const workingCase = caseWith({
+        partyRole: AppealDecisionPartyRole.PROSECUTOR,
+        decision: CaseAppealDecision.APPEAL,
+      })
+
+      expect(
+        userHasActiveInCourtAppeal(workingCase, prosecutionUser, rulingFileId),
+      ).toBe(true)
+    })
+
+    it('is false when there is no user', () => {
+      const workingCase = caseWith({
+        partyRole: AppealDecisionPartyRole.PROSECUTOR,
+        decision: CaseAppealDecision.APPEAL,
+      })
+
+      expect(
+        userHasActiveInCourtAppeal(workingCase, undefined, rulingFileId),
+      ).toBe(false)
+    })
+
+    it('is true when one of several represented clients still has a standing appeal', () => {
+      const otherDefendantId = 'defendant-2'
+      // The defender represents two defendants: the first accepted in court, the
+      // second appealed and has not withdrawn. Resolving across all represented
+      // parties, the defender may still withdraw.
+      const workingCase = {
+        defendants: [
+          {
+            id: defendantId,
+            isDefenderChoiceConfirmed: true,
+            defenderNationalId,
+          },
+          {
+            id: otherDefendantId,
+            isDefenderChoiceConfirmed: true,
+            defenderNationalId,
+          },
+        ],
+        civilClaimants: [],
+        appealDecisions: [
+          {
+            partyRole: AppealDecisionPartyRole.DEFENDANT,
+            defendantId,
+            decision: CaseAppealDecision.ACCEPT,
+            rulingFileId,
+          },
+          {
+            partyRole: AppealDecisionPartyRole.DEFENDANT,
+            defendantId: otherDefendantId,
+            decision: CaseAppealDecision.APPEAL,
+            rulingFileId,
+          },
+        ],
+      } as unknown as Case
+
+      expect(
+        userHasActiveInCourtAppeal(workingCase, defenceUser, rulingFileId),
+      ).toBe(true)
+    })
+  })
+
+  describe('isCurrentAppellantRepresentative', () => {
+    it('is true for the current confirmed defender of the appellant defendant', () => {
+      const workingCase = {
+        defendants: [
+          {
+            id: 'd-1',
+            isDefenderChoiceConfirmed: true,
+            defenderNationalId: '0101011010',
+          },
+        ],
+      } as Case
+      const appealCase = { appealedByDefendantId: 'd-1' } as AppealCase
+
+      expect(
+        isCurrentAppellantRepresentative(workingCase, appealCase, '0101011010'),
+      ).toBe(true)
+    })
+
+    it('is false for a different national id (survives a defender swap)', () => {
+      const workingCase = {
+        defendants: [
+          {
+            id: 'd-1',
+            isDefenderChoiceConfirmed: true,
+            defenderNationalId: 'new-defender',
+          },
+        ],
+      } as unknown as Case
+      const appealCase = { appealedByDefendantId: 'd-1' } as AppealCase
+
+      // The old (frozen) defender no longer matches; only the current one does.
+      expect(
+        isCurrentAppellantRepresentative(
+          workingCase,
+          appealCase,
+          'old-defender',
+        ),
+      ).toBe(false)
+      expect(
+        isCurrentAppellantRepresentative(
+          workingCase,
+          appealCase,
+          'new-defender',
+        ),
+      ).toBe(true)
+    })
+
+    it('is true for the current confirmed spokesperson of the appellant civil claimant', () => {
+      const workingCase = {
+        civilClaimants: [
+          {
+            id: 'cc-1',
+            hasSpokesperson: true,
+            isSpokespersonConfirmed: true,
+            spokespersonNationalId: '0303033030',
+          },
+        ],
+      } as unknown as Case
+      const appealCase = { appealedByCivilClaimantId: 'cc-1' } as AppealCase
+
+      expect(
+        isCurrentAppellantRepresentative(workingCase, appealCase, '0303033030'),
+      ).toBe(true)
+    })
+
+    it('is false when there is no appellant party or no user', () => {
+      const workingCase = { defendants: [] } as unknown as Case
+
+      expect(
+        isCurrentAppellantRepresentative(workingCase, {} as AppealCase, '123'),
+      ).toBe(false)
+      expect(
+        isCurrentAppellantRepresentative(
+          workingCase,
+          { appealedByDefendantId: 'd-1' } as AppealCase,
+          undefined,
+        ),
+      ).toBe(false)
+    })
+  })
+
   describe('isAppealFileCategoryVisible', () => {
     const courtOfAppealsUser = {
       role: UserRole.COURT_OF_APPEALS_JUDGE,
@@ -819,21 +1081,14 @@ describe('Utils', () => {
         ).toBe(false)
       })
 
-      test("indictment: shows defendant brief when appellant national id matches the file's defender", () => {
-        const nationalId = '0101011010'
+      test("indictment: shows defendant brief when the appellant is the file's defendant", () => {
         const workingCase = {
           type: CaseType.INDICTMENT,
-          defendants: [
-            {
-              id: 'd-1',
-              isDefenderChoiceConfirmed: true,
-              defenderNationalId: nationalId,
-            } as Defendant,
-          ],
+          defendants: [{ id: 'd-1' } as Defendant],
         } as Case
         const appealCase = {
           appealedByRole: UserRole.DEFENDER,
-          appealedByNationalId: nationalId,
+          appealedByDefendantId: 'd-1',
         } as AppealCase
 
         expect(
@@ -848,28 +1103,17 @@ describe('Utils', () => {
         ).toBe(true)
       })
 
-      test("indictment: hides defendant brief when appellant national id does NOT match the file's defender", () => {
+      test('indictment: hides defendant brief when the appellant is a different defendant', () => {
         const workingCase = {
           type: CaseType.INDICTMENT,
-          defendants: [
-            {
-              id: 'd-1',
-              isDefenderChoiceConfirmed: true,
-              defenderNationalId: '0101011010',
-            } as Defendant,
-            {
-              id: 'd-2',
-              isDefenderChoiceConfirmed: true,
-              defenderNationalId: '0202022020',
-            } as Defendant,
-          ],
+          defendants: [{ id: 'd-1' } as Defendant, { id: 'd-2' } as Defendant],
         } as Case
         const appealCase = {
           appealedByRole: UserRole.DEFENDER,
-          appealedByNationalId: '0101011010',
+          appealedByDefendantId: 'd-1',
         } as AppealCase
 
-        // d-2's brief should be hidden — appellant is d-1's defender.
+        // d-2's brief should be hidden — appellant is d-1.
         expect(
           isAppealFileCategoryVisible(
             workingCase,
@@ -882,22 +1126,14 @@ describe('Utils', () => {
         ).toBe(false)
       })
 
-      test("indictment: shows defendant brief when appellant matches the file's civil-claimant spokesperson", () => {
-        const nationalId = '0303033030'
+      test("indictment: shows defendant brief when the appellant is the file's civil claimant", () => {
         const workingCase = {
           type: CaseType.INDICTMENT,
-          civilClaimants: [
-            {
-              id: 'cc-1',
-              hasSpokesperson: true,
-              isSpokespersonConfirmed: true,
-              spokespersonNationalId: nationalId,
-            } as CivilClaimant,
-          ],
+          civilClaimants: [{ id: 'cc-1' } as CivilClaimant],
         } as Case
         const appealCase = {
           appealedByRole: UserRole.DEFENDER,
-          appealedByNationalId: nationalId,
+          appealedByCivilClaimantId: 'cc-1',
         } as AppealCase
 
         expect(

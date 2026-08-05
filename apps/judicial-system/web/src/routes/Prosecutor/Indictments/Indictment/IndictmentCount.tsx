@@ -11,7 +11,6 @@ import { IntlShape, useIntl } from 'react-intl'
 import {
   Box,
   Button,
-  Checkbox,
   Icon,
   Input,
   Select,
@@ -27,6 +26,7 @@ import {
 } from '@island.is/judicial-system/types'
 import {
   BlueBox,
+  CheckboxList,
   IndictmentInfo,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
@@ -55,7 +55,6 @@ import {
 import { getIncidentDescription } from './lib/getIncidentDescription'
 import { Offenses } from './Offenses/Offenses'
 import { strings } from './IndictmentCount.strings'
-import * as styles from './IndictmentCount.css'
 
 interface Props {
   indictmentCount: TIndictmentCount
@@ -483,31 +482,18 @@ export const IndictmentCount: FC<Props> = ({
               heading="h4"
               marginBottom={2}
             />
-            <div className={styles.indictmentSubtypesContainter}>
-              {subtypes.map((subtype: IndictmentSubtype) => (
-                <div
-                  className={styles.indictmentSubtypesItem}
-                  key={`${subtype}-${indictmentCount.id}`}
-                >
-                  <Checkbox
-                    name={`${subtype}-${indictmentCount.id}`}
-                    value={subtype}
-                    label={capitalize(indictmentSubtypes[subtype])}
-                    checked={
-                      indictmentCount.indictmentCountSubtypes?.includes(
-                        subtype,
-                      ) ?? false
-                    }
-                    onChange={(evt) => {
-                      handleSubtypeChange(subtype, evt.target.checked)
-                    }}
-                    backgroundColor="white"
-                    large
-                    filled
-                  />
-                </div>
-              ))}
-            </div>
+            <CheckboxList
+              blueBox={false}
+              checkboxes={subtypes.map((subtype: IndictmentSubtype) => ({
+                id: `${subtype}-${indictmentCount.id}`,
+                title: capitalize(indictmentSubtypes[subtype]),
+                checked:
+                  indictmentCount.indictmentCountSubtypes?.includes(subtype) ??
+                  false,
+                onChange: (checked: boolean) =>
+                  handleSubtypeChange(subtype, checked),
+              }))}
+            />
           </Box>
         )}
       </Box>
