@@ -22,35 +22,19 @@
  * `renderToInitialFizzStream` (see .yarn/patches/next-npm-*.patch). Both this CSP
  * wiring AND that patch are required for a working nonce CSP on the pages router.
  *
- * Ownership: prefer a single source of truth at the ingress. When CloudFront
- * sends the policy as the `x-csp-template` request header (with a `{nonce}`
- * placeholder), `buildCsp` just substitutes the per-request nonce — DevOps keeps
- * owning the allow-list, the app owns only the nonce. When that header is absent
- * the app falls back to the bundled policy below (copied verbatim from the
- * previous CloudFront policy; only `script-src` differs — the two stale
- * `sha256-…` hashes are replaced by the nonce), so ownership can move to the
- * ingress later with no app redeploy.
+ * The allow-list below is the single source of truth, owned by the app. Fixed
+ * SaaS hosts are hard-coded; environment-specific hosts (Matomo is self-hosted
+ * per env) are sourced from the app's own runtime env (`MATOMO_DOMAIN`, set per
+ * env in infra/web.ts) so the policy is always env-correct and cannot drift from
+ * the hosts the app actually loads. Completeness is checked two ways: diffing
+ * against the live CloudFront header, and the A/B smoke test (a missing host
+ * shows up as a CSP violation vs the base deploy).
  */
-export const buildCsp = (nonce: string, template?: string): string =>
-  template ? injectNonce(template, nonce) : bundledPolicy(nonce)
-
-/**
- * Substitute the per-request nonce into an ingress-provided policy template.
- * Prefers an explicit `{nonce}` placeholder; if none is present, adds the nonce
- * source to `script-src` (or appends a `script-src` if the template lacks one).
- */
-const injectNonce = (template: string, nonce: string): string => {
-  const source = `'nonce-${nonce}'`
-  if (template.includes('{nonce}')) {
-    return template.split('{nonce}').join(source)
-  }
-  if (/(^|;)\s*script-src\s/i.test(template)) {
-    return template.replace(/((^|;)\s*script-src)\s/i, `$1 ${source} `)
-  }
-  return `${template.replace(/;\s*$/, '')}; script-src ${source}`
-}
-
-const bundledPolicy = (nonce: string): string => {
+export const buildCsp = (nonce: string): string => {
+  // Self-hosted Matomo host differs per environment; take it from the same env
+  // var the app uses to load Matomo, so the CSP matches the actual request
+  // (dev → matomo-dev.dev01…, prod → islandis.matomo.cloud, staging → none).
+  const matomo = process.env.MATOMO_DOMAIN
   const directives: Record<string, string[]> = {
     'default-src': [
       "'self'",
@@ -121,6 +105,7 @@ const bundledPolicy = (nonce: string): string => {
       'https://applepay.cdn-apple.com',
       'https://matomo.island.is/matomo.js',
       'https://islandis.matomo.cloud/matomo.js',
+      ...(matomo ? [`${matomo}/matomo.js`] : []),
     ],
     'style-src': [
       "'self'",
@@ -210,6 +195,7 @@ const bundledPolicy = (nonce: string): string => {
       'https://paymentrelayservice.apple.com',
       'https://islandis.matomo.cloud/matomo.js',
       'https://islandis.matomo.cloud',
+      ...(matomo ? [matomo] : []),
     ],
     'worker-src': ["'self'", 'blob:'],
     'font-src': [
@@ -223,6 +209,6 @@ const bundledPolicy = (nonce: string): string => {
   }
 
   return Object.entries(directives)
-    .map(([key, values]) => `${key} ${values.join(' ')}`)
+    .map(([key, values]) => `${key} ${[...new Set(values)].join(' ')}`)
     .join('; ')
 }
