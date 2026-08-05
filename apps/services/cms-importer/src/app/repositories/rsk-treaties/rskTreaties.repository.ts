@@ -58,7 +58,9 @@ const parseCells = (rowHtml: string): ParsedCell[] => {
   const tds = rowHtml.match(/<td[^>]*>([\s\S]*?)<\/td>/g) ?? []
   return tds.map((td) => {
     const inner = td.replace(/^<td[^>]*>/, '').replace(/<\/td>$/, '')
-    const anchorMatch = inner.match(/<a[^>]*href="([^"]*)"[^>]*>([\s\S]*?)<\/a>/)
+    const anchorMatch = inner.match(
+      /<a[^>]*href="([^"]*)"[^>]*>([\s\S]*?)<\/a>/,
+    )
     return {
       text: stripTags(inner),
       href: anchorMatch ? decodeHtmlEntities(anchorMatch[1]) : null,
@@ -70,7 +72,11 @@ const parseCells = (rowHtml: string): ParsedCell[] => {
 const resolveAbsoluteUrl = (href: string): string =>
   href.startsWith('/') ? `${SKATTURINN_BASE_URL}${href}` : href
 
-const extractSection = (html: string, startHeader: string, endHeader: string) => {
+const extractSection = (
+  html: string,
+  startHeader: string,
+  endHeader: string,
+) => {
   const start = html.indexOf(`<h2 class="tabhead">${startHeader}</h2>`)
   if (start === -1) return null
   const rest = html.slice(start)
@@ -194,7 +200,11 @@ const parseUpplysingaskiptiTable = (html: string): RskTreatyItem[] => {
 }
 
 const parseAdrirSamningarTable = (html: string): RskTreatyItem[] => {
-  const section = extractSection(html, 'Aðrir samningar', 'Gagnkvæmt samkomulag')
+  const section = extractSection(
+    html,
+    'Aðrir samningar',
+    'Gagnkvæmt samkomulag',
+  )
   const table = section && extractFirstTable(section)
   if (!table) {
     logger.warn('RSK treaties: could not find Aðrir samningar table')
@@ -448,7 +458,10 @@ export class RskTreatiesRepository {
       const adverts = findInitialAdverts(data)
       if (!Array.isArray(adverts)) return null
       return adverts
-        .filter((advert) => typeof advert?.id === 'string' && typeof advert?.title === 'string')
+        .filter(
+          (advert) =>
+            typeof advert?.id === 'string' && typeof advert?.title === 'string',
+        )
         .map((advert) => ({ id: advert.id, title: advert.title }))
     } catch (error) {
       logger.warn('RSK treaties: failed to parse search results JSON', {

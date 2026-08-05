@@ -7,7 +7,10 @@ export interface RskTreatyLink {
   href: string
 }
 
-export type RskTreatyTabKey = 'samningar' | 'upplysingaskipti' | 'adrirSamningar'
+export type RskTreatyTabKey =
+  | 'samningar'
+  | 'upplysingaskipti'
+  | 'adrirSamningar'
 
 export interface RskTreatyDocument {
   /** e.g. 'Viðauki/breyting 1997' — undefined for the base document of an item */

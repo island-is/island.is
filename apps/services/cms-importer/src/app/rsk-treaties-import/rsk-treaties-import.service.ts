@@ -134,7 +134,11 @@ export class RskTreatiesImportService {
 
     const documents: ResolvedRskDocument[] = []
     for (const document of item.documents) {
-      const resolvedDocument = await this.resolveDocument(item, document, simple)
+      const resolvedDocument = await this.resolveDocument(
+        item,
+        document,
+        simple,
+      )
       if (resolvedDocument) {
         documents.push(resolvedDocument)
       }
@@ -215,7 +219,11 @@ export class RskTreatiesImportService {
         })
         return undefined
       }
-      return { kind: link.kind, label: link.label, resolved: { type: 'asset', assetId } }
+      return {
+        kind: link.kind,
+        label: link.label,
+        resolved: { type: 'asset', assetId },
+      }
     }
 
     // resolved.type === 'hyperlink'

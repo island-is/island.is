@@ -61,7 +61,9 @@ export const isSimpleShape = (item: {
   documents: Array<{ links: Array<{ kind: RskTreatyLinkKind }> }>
 }): boolean =>
   item.documents.length === 1 &&
-  item.documents[0].links.every((link) => link.kind === 'is' || link.kind === 'en')
+  item.documents[0].links.every(
+    (link) => link.kind === 'is' || link.kind === 'en',
+  )
 
 export const mapSlug = (nameIs: string): Localized<string> =>
   mapLocalizedValue(
