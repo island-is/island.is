@@ -9,18 +9,13 @@ import {
   useGetUnemploymentApplicationOverviewQuery,
 } from './Status.generated'
 
-import {
-  ActionCard,
-  AlertMessage,
-  Box,
-  SkeletonLoader,
-  Tabs,
-} from '@island.is/island-ui/core'
+import { Box, SkeletonLoader, Tabs } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { OverviewTable } from './OverviewTable'
 import { ApplicantOverview } from './ApplicantOverview'
 import { Problem } from '@island.is/react-spa/shared'
-import { ActionButtons } from '../components/ActionButtons'
+import { ActionButtons } from '../../unemployment-benefits/components/ActionButtons'
+import { VmstApplicationStatus } from '@island.is/api/schema'
 
 // Atvinnuleysi – Staðan þín
 const Status = () => {
@@ -30,13 +25,13 @@ const Status = () => {
   const { data, loading, error } = useGetUnemploymentApplicationOverviewQuery({
     variables: { locale },
   })
+  // TODO Use the loading state
   const { data: actionsData, loading: actionsLoading } =
     useGetApplicantAvailableActionsQuery()
 
-  const overview = data?.vmstApplicationsUnemploymentApplicationOverview
+  const overview = data?.vmstApplicationsActivationGrantApplicationOverview
   const availableActions = actionsData?.vmstApplicantAvailableActions
-  const jobSearchConfirmationStatus = overview?.jobSearchConfirmationStatus
-  const hasData = !!overview?.unemploymentApplicationId
+  const hasData = !!overview?.activationGrantApplicationId
 
   if (!loading && error) {
     return (
@@ -86,37 +81,6 @@ const Status = () => {
         availableActions={availableActions ?? undefined}
         loading={loading}
       />
-      {!loading && jobSearchConfirmationStatus?.canConfirm === true && (
-        <Box marginBottom={4}>
-          <ActionCard
-            heading={formatMessage(um.jobSearchConfirmationHeading)}
-            text={formatMessage(um.jobSearchConfirmationText)}
-            backgroundColor="blue"
-            cta={{
-              label: formatMessage(um.jobSearchConfirmationCta),
-              variant: 'primary',
-              icon: 'open',
-              iconType: 'outline',
-              onClick: () =>
-                window.open(
-                  formatMessage(um.jobSearchConfirmationUrl),
-                  '_blank',
-                  'noopener,noreferrer',
-                ),
-            }}
-          />
-        </Box>
-      )}
-      {!loading && jobSearchConfirmationStatus?.hasConfirmed === true && (
-        <Box marginBottom={4}>
-          <AlertMessage
-            type="success"
-            message={formatMessage(
-              coreMessages.unemploymentHasConfirmedJobSearch,
-            )}
-          />
-        </Box>
-      )}
       <Tabs
         label={formatMessage(um.title)}
         contentBackground="white"
@@ -138,8 +102,9 @@ const Status = () => {
               <OverviewTable
                 overviewItems={overview?.overviewItems ?? []}
                 applicationStatusName={overview?.applicationStatusName}
-                applicationStatus={overview?.applicationStatus}
-                dataRequested={overview?.dataRequested}
+                applicationStatus={
+                  overview?.applicationStatusId as VmstApplicationStatus
+                } // TODO REMOVE THIS TYPE ASSERTION AND ASK VMST FOR STATUS INSTEAD OF ID
               />
             ),
           },

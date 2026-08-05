@@ -2,6 +2,7 @@ import { PortalRoute } from '@island.is/portals/core'
 import { BffUser } from '@island.is/shared/types'
 import { m, sharedMessages } from '../messages'
 import { ActivationAllowancePaths } from '../paths'
+import MyData from '../../screens/unemployment-benefits/MyData/MyData'
 
 export const activationAllowanceRoutes = (userInfo: BffUser): PortalRoute[] => [
   {
@@ -25,6 +26,6 @@ export const activationAllowanceRoutes = (userInfo: BffUser): PortalRoute[] => [
     path: ActivationAllowancePaths.MyData,
     enabled: true,
     dynamic: true,
-    element: null,
+    element: <MyData />,
   },
 ]
