@@ -2031,6 +2031,68 @@ export const messages = defineMessages({
     defaultMessage: 'Meðgangan mín',
     id: 'sp.health:my-pregnancy',
   },
+  myPregnancyIntro: {
+    defaultMessage:
+      'Hér finnur þú allar upplýsingar sem tengjast meðgöngu þinni á einum stað. Þú getur skoðað fræðsluefni frá mæðravernd, tímalínu samskipta, næstu tímabókanir, mælingar, skjöl og annað sem tengist meðgöngu þinni.',
+    id: 'sp.health:my-pregnancy-intro',
+  },
+  pregnancy: {
+    defaultMessage: 'Meðganga',
+    id: 'sp.health:pregnancy',
+  },
+  readingMaterialPregnancy: {
+    defaultMessage: 'Lesefni um meðgöngu',
+    id: 'sp.health:reading-material-pregnancy',
+  },
+  readingMaterialPregnancyLink: {
+    defaultMessage:
+      'https://www.heilsuvera.is/efnisflokkar/throskaferlid/medganga/',
+    id: 'sp.health:reading-material-pregnancy-link',
+  },
+  nextAppointments: {
+    defaultMessage: 'Næstu tímar',
+    id: 'sp.health:next-appointments',
+  },
+  pregnancyMessagesTitle: {
+    defaultMessage: 'Skilaboð frá Mæðravernd',
+    id: 'sp.health:pregnancy-messages-title',
+  },
+  pregnancyDocumentsCard: {
+    defaultMessage: 'Skjöl tengd meðgönguni',
+    id: 'sp.health:pregnancy-documents-card',
+  },
+  measurements: {
+    defaultMessage: 'Mælingar',
+    id: 'sp.health:measurements',
+  },
+  infoMaterial: {
+    defaultMessage: 'Fræðsluefni',
+    id: 'sp.health:info-material',
+  },
+  changedLast: {
+    defaultMessage: 'Síðast breytt: {arg}',
+    id: 'sp.health:changed-last',
+  },
+  midwife: {
+    defaultMessage: 'Ljósmóðir',
+    id: 'sp.health:midwife',
+  },
+  partner: {
+    defaultMessage: 'Maki',
+    id: 'sp.health:partner',
+  },
+  pregnancyLength: {
+    defaultMessage: 'Lengd meðgöngu',
+    id: 'sp.health:pregnancy-length',
+  },
+  dueDatePregnancy: {
+    defaultMessage: 'Væntanlegur fæðingardagur',
+    id: 'sp.health:due-date-pregnancy',
+  },
+  seeAllMessages: {
+    defaultMessage: 'Sjá öll skilaboð',
+    id: 'sp.health:see-all-messages',
+  },
   noSearchResults: {
     id: 'sp.health:no-search-results',
     defaultMessage: 'Engar niðurstöður fundust',

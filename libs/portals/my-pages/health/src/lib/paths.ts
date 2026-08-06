@@ -70,6 +70,9 @@ export enum HealthPaths {
   HealthConversationsNew = '/heilsa/skilabod/nytt',
   HealthConversationsDetail = '/heilsa/skilabod/:id',
 
+  HealthPregnancy = '/heilsa/medganga',
+  HealthPregnancyOverview = '/heilsa/medganga/min-medganga',
+
   // Deprecated paths - kept for redirects
   HealthOverviewOld = `${basicInformation}/yfirlit`,
   HealthBloodtypeOld = '/heilsa/blodflokkur',
