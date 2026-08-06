@@ -70,6 +70,7 @@ export default function TabLayout() {
               default: require('@/assets/icons/tabbar-mail.png'),
               selected: require('@/assets/icons/tabbar-mail-selected.png'),
             }}
+            renderingMode="original"
           />
         </NativeTabs.Trigger>
 
@@ -82,6 +83,7 @@ export default function TabLayout() {
               default: require('@/assets/icons/tabbar-wallet.png'),
               selected: require('@/assets/icons/tabbar-wallet-selected.png'),
             }}
+            renderingMode="original"
           />
         </NativeTabs.Trigger>
         <NativeTabs.Trigger name="index">
@@ -105,6 +107,7 @@ export default function TabLayout() {
               default: require('@/assets/icons/tabbar-health.png'),
               selected: require('@/assets/icons/tabbar-health-selected.png'),
             }}
+            renderingMode="original"
           />
         </NativeTabs.Trigger>
         <NativeTabs.Trigger name="more">
@@ -113,6 +116,7 @@ export default function TabLayout() {
           </NativeTabs.Trigger.Label>
           <NativeTabs.Trigger.Icon
             src={require('@/assets/icons/tabbar-more.png')}
+            renderingMode="original"
           />
         </NativeTabs.Trigger>
       </NativeTabs>

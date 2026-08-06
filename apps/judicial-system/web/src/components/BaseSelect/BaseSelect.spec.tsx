@@ -9,7 +9,7 @@ const options: ReactSelectOption[] = [
 ]
 
 describe('<BaseSelect />', () => {
-  test('should fall back to the placeholder as the accessible name', () => {
+  test('should fall back to the placeholder as the accessible name', async () => {
     render(
       <BaseSelect
         options={options}
@@ -18,12 +18,12 @@ describe('<BaseSelect />', () => {
       />,
     )
 
-    expect(screen.getByRole('combobox')).toHaveAccessibleName(
+    expect(await screen.findByRole('combobox')).toHaveAccessibleName(
       'Hver lagði fram?',
     )
   })
 
-  test('should prefer an explicit aria-label over the placeholder', () => {
+  test('should prefer an explicit aria-label over the placeholder', async () => {
     render(
       <BaseSelect
         options={options}
@@ -33,6 +33,8 @@ describe('<BaseSelect />', () => {
       />,
     )
 
-    expect(screen.getByRole('combobox')).toHaveAccessibleName('Veldu málsaðila')
+    expect(await screen.findByRole('combobox')).toHaveAccessibleName(
+      'Veldu málsaðila',
+    )
   })
 })

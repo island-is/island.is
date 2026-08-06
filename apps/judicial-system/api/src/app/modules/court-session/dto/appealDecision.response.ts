@@ -42,4 +42,7 @@ export class AppealDecisionResponse {
 
   @Field(() => String, { nullable: true })
   readonly announcement?: string
+
+  @Field(() => String, { nullable: true })
+  readonly withdrawnDate?: string
 }

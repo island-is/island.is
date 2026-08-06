@@ -11,7 +11,7 @@ import {
   PROSECUTION_RESTRICTION_CASE_POLICE_REPORT_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { isRestrictionCase } from '@island.is/judicial-system/types'
-import { errors } from '@island.is/judicial-system-web/messages'
+import { core, errors } from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
   FormContext,
@@ -42,7 +42,6 @@ import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.cs
 
 import {
   mapPoliceCaseFileToPoliceCaseFileCheck,
-  PoliceCaseFileCheck,
   PoliceCaseFiles,
   PoliceCaseFilesData,
 } from '../../components'
@@ -69,9 +68,6 @@ export const CaseFiles = () => {
     useState<boolean>(false)
   const [editCount, setEditCount] = useState(0)
   const [updateFilesMutation] = useUpdateFilesReorderableMutation()
-  const [policeCaseFileList, setPoliceCaseFileList] = useState<
-    PoliceCaseFileCheck[]
-  >([])
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
   const {
     uploadFiles,
@@ -130,18 +126,18 @@ export const CaseFiles = () => {
     }
   }, [policeData, policeDataError, policeDataLoading, workingCase.origin])
 
-  useEffect(() => {
-    setPoliceCaseFileList(
+  const policeCaseFileList = useMemo(
+    () =>
       policeCaseFiles?.files
         .filter(
           (policeFile) =>
-            !workingCase.caseFiles?.some(
+            !uploadFiles.some(
               (file) => !file.category && file.policeFileId === policeFile.id,
             ),
         )
-        .map(mapPoliceCaseFileToPoliceCaseFileCheck) || [],
-    )
-  }, [policeCaseFiles, workingCase.caseFiles])
+        .map(mapPoliceCaseFileToPoliceCaseFileCheck) ?? [],
+    [policeCaseFiles, uploadFiles],
+  )
 
   const uploadErrorMessage = useMemo(() => {
     if (uploadFiles.some((file) => file.status === FileUploadStatus.error)) {
@@ -226,14 +222,6 @@ export const CaseFiles = () => {
     if (newId) {
       addUploadFile({ ...file, id: newId })
     }
-
-    setPoliceCaseFileList((previous) =>
-      newId
-        ? previous.filter((p) => p.id !== file.id)
-        : previous.map((p) =>
-            p.id === file.id ? { ...p, checked: false } : p,
-          ),
-    )
   }
 
   const handlePoliceCaseFileUpload = async (selectedFiles: Item[]) => {
@@ -255,21 +243,6 @@ export const CaseFiles = () => {
     await handleUploadFromPolice(filesToUpload, uploadPoliceCaseFileCallback)
 
     setIsUploadingPoliceCaseFiles(false)
-  }
-
-  const removeFileCB = (file: TUploadFile) => {
-    const policeCaseFile = policeCaseFiles?.files.find(
-      (f) => f.id === file.policeFileId,
-    )
-
-    if (policeCaseFile) {
-      setPoliceCaseFileList((previous) => [
-        mapPoliceCaseFileToPoliceCaseFileCheck(policeCaseFile),
-        ...previous,
-      ])
-    }
-
-    removeUploadFile(file)
   }
 
   return (
@@ -328,7 +301,7 @@ export const CaseFiles = () => {
               onFilesChange={(files) =>
                 handleUpload(addUploadFiles(files), updateUploadFile)
               }
-              onRemove={(file) => handleRemove(file, removeFileCB)}
+              onRemove={(file) => handleRemove(file, removeUploadFile)}
               onRetry={(file) => handleRetry(file, updateUploadFile)}
               onOpenFile={(file) => onOpenFile(file)}
               onReorder={handleReorder}
@@ -357,20 +330,25 @@ export const CaseFiles = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${
             isRestrictionCase(workingCase.type)
               ? PROSECUTION_RESTRICTION_CASE_POLICE_REPORT_ROUTE
               : PROSECUTION_INVESTIGATION_CASE_POLICE_REPORT_ROUTE
           }/${workingCase.id}`}
-          onNextButtonClick={() =>
-            handleNavigationTo(
-              isRestrictionCase(workingCase.type)
-                ? PROSECUTION_RESTRICTION_CASE_OVERVIEW_ROUTE
-                : PROSECUTION_INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
-            )
-          }
-          nextIsDisabled={!stepIsValid}
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  isRestrictionCase(workingCase.type)
+                    ? PROSECUTION_RESTRICTION_CASE_OVERVIEW_ROUTE
+                    : PROSECUTION_INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
+                ),
+              disabled: !stepIsValid,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

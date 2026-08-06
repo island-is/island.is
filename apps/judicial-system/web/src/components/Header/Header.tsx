@@ -57,7 +57,7 @@ const LogoIcon = () => (
 
 const Container: FC<PropsWithChildren> = ({ children }) => {
   return (
-    <Box paddingX={[3, 3, 4]}>
+    <Box component="header" paddingX={[3, 3, 4]}>
       <GridContainer className={styles.gridContainer}>
         <GridRow>
           <GridColumn span="12/12">
@@ -89,7 +89,7 @@ const HeaderContainer = () => {
   const { lawyers } = useContext(LawyerRegistryContext)
 
   const isLawyerInLawyersRegistry = isDefenceUser(user) && lawyer
-  const canUseSearch = !!user && !isDefenceUser(user) && !isAdminUser(user)
+  const canUseSearch = !!user && !isAdminUser(user)
 
   useKeyboardCombo('Meta + k', () => {
     if (canUseSearch) setIsSearchOpen(!isSearchOpen)

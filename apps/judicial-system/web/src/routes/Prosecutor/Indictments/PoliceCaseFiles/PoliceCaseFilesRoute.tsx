@@ -12,7 +12,7 @@ import {
   CrimeSceneMap,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
-import { titles } from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
   FormContext,
@@ -214,7 +214,9 @@ const PoliceUploadListMemo: FC<PoliceUploadListMenuProps> = memo(
                     policeCaseFilesData?.files?.filter(
                       (file) => file.policeCaseNumber === policeCaseNumber,
                     ) ?? [],
-                  isLoading: !!policeCaseFilesData?.isLoading,
+                  isLoading:
+                    policeCaseFilesData?.isLoading ??
+                    caseOrigin === CaseOrigin.LOKE,
                   hasError: !!policeCaseFilesData?.hasError,
                   errorCode: policeCaseFilesData?.errorCode,
                 }}
@@ -313,13 +315,18 @@ const PoliceCaseFilesRoute = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${PROSECUTION_INDICTMENT_CASE_DEFENDANT_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() =>
-            handleNavigationTo(PROSECUTION_INDICTMENT_CASE_CASE_FILE_ROUTE)
-          }
-          nextIsDisabled={!stepIsValid}
-          nextIsLoading={isLoadingWorkingCase}
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(PROSECUTION_INDICTMENT_CASE_CASE_FILE_ROUTE),
+              disabled: !stepIsValid,
+              loading: isLoadingWorkingCase,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

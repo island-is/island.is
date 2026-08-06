@@ -22,7 +22,13 @@ const ZipButton: FC<Props> = (props) => {
       download={`mal_${courtCaseNumber}`}
       className={styles.downloadAllButton}
     >
-      <Button variant="ghost" size="small" icon="download" iconType="outline">
+      <Button
+        as="span"
+        variant="ghost"
+        size="small"
+        icon="download"
+        iconType="outline"
+      >
         {formatMessage(strings.getAllDocuments)}
       </Button>
     </a>

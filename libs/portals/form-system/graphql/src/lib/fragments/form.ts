@@ -63,6 +63,7 @@ export const FormFragment = gql`
     }
     status
     lastModifiedBy
+    delegations
   }
   ${LanguageFields}
   ${FormApplicantFragment}

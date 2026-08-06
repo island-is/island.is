@@ -157,9 +157,15 @@ export class AppealEventLog extends Model {
 
   /**********
    * Actor snapshot - the human who performed the event, captured at event
-   * time so the record survives prosecutor/defender reassignment. userRole is
-   * the actor's role; userId is the acting system user (null for defenders,
-   * who are not system users - national_id/user_name identify them instead).
+   * time so the record survives prosecutor/defender reassignment. userId is the
+   * acting system user (null for defenders, who are not system users -
+   * national_id/user_name identify them instead).
+   *
+   * userRole is the appellant's side, not necessarily the actor's role. For an
+   * out-of-court appeal the two coincide (the appellant performs it). For an
+   * in-court APPEALED event the party appeals but the court records it, so the
+   * actor snapshot is the confirming judge while userRole + defendantId /
+   * civilClaimantId identify who appealed.
    **********/
   @Column({
     type: DataType.ENUM,
