@@ -871,9 +871,8 @@ export const m = defineMessages({
   },
   reviewApplication: {
     id: 'form.system:review-application',
-    defaultMessage:
-      'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
-    description: 'Please review the application before submitting it.',
+    defaultMessage: 'Vinsamlega farðu vel yfir áður en þú sendir inn.',
+    description: 'Please review before submitting.',
   },
   externalDataTitle: {
     id: 'form.system:external-data-title',
