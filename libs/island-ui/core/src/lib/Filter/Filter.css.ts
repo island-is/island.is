@@ -81,6 +81,11 @@ export const sheet = style({
 
   // Fallback for browsers without dvh
   maxHeight: `calc(100vh - ${drawerTop})`,
+  '@supports': {
+    '(height: 100dvh)': {
+      maxHeight: `calc(100dvh - ${drawerTop})`,
+    },
+  },
 
   transform: 'translateY(100%)',
   opacity: 0,
@@ -164,9 +169,4 @@ globalStyle(`@supports (padding-bottom: env(safe-area-inset-bottom))`, {
   [content]: {
     paddingBottom: `calc(${theme.spacing['8']} + env(safe-area-inset-bottom))`,
   },
-})
-
-/* Small dvh upgrade when supported */
-globalStyle(`@supports (height: 100dvh)`, {
-  [sheet]: { maxHeight: `calc(100dvh - ${drawerTop})` },
 })
