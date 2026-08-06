@@ -580,3 +580,12 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     }
   }
 }
+
+const toNumberOrZero = (number: string | undefined) => {
+  if (!number) {
+    return 0
+  }
+
+  const parsed = Number(number)
+  return Number.isFinite(parsed) ? parsed : 0
+}
