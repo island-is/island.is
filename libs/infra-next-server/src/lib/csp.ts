@@ -44,6 +44,10 @@ export const buildContentSecurityPolicy = (
   }: ContentSecurityPolicyOptions = {},
 ): string => {
   const matomo = matomoDomain
+  // Local dev needs a couple of extra origins (the Next HMR websocket). Gate this
+  // to dev only so the deployed policy stays strict and we still catch real
+  // violations locally before they reach a deployment.
+  const isDev = process.env.NODE_ENV !== 'production'
   const directives: Record<string, string[]> = {
     'default-src': [
       "'self'",
@@ -205,6 +209,10 @@ export const buildContentSecurityPolicy = (
       'https://islandis.matomo.cloud/matomo.js',
       'https://islandis.matomo.cloud',
       ...(matomo ? [matomo] : []),
+      // Next dev server HMR websocket (dev only).
+      ...(isDev
+        ? ['ws://localhost:*', 'ws://127.0.0.1:*', 'http://localhost:*']
+        : []),
     ],
     'worker-src': ["'self'", 'blob:'],
     'font-src': [
