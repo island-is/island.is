@@ -2,7 +2,8 @@ import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { messages } from './messages'
 import { EMAIL_REGEX } from '@island.is/application/core'
-import { Gender, PERIOD_ONE_MONTH, PERIOD_TWELVE_MONTHS } from './constants'
+import { Gender } from '../utils/types'
+import { PERIOD_ONE_MONTH, PERIOD_TWELVE_MONTHS } from '../utils/constants'
 
 const generalInformation = z.object({
   companyName: z.string().optional(),

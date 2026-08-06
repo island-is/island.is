@@ -1,5 +1,5 @@
 import {
-  ChiefExecutiveGender,
+  Gender,
   type ApplicationAnswers as SalaryReportAnswers,
 } from '@island.is/application/templates/directorate-of-equality/salary-report'
 import type {
@@ -8,18 +8,18 @@ import type {
 } from '@island.is/clients/directorate-of-equality'
 
 const companyAdminGenderMap: Record<
-  ChiefExecutiveGender,
+  Gender,
   'MALE' | 'FEMALE' | 'NEUTRAL'
 > = {
-  [ChiefExecutiveGender.MALE]: 'MALE',
-  [ChiefExecutiveGender.FEMALE]: 'FEMALE',
-  [ChiefExecutiveGender.NON_BINARY]: 'NEUTRAL',
+  [Gender.MALE]: 'MALE',
+  [Gender.FEMALE]: 'FEMALE',
+  [Gender.NON_BINARY]: 'NEUTRAL',
 }
 
-const mapChiefExecutiveGender = (
+const mapGender = (
   gender?: string,
 ): 'MALE' | 'FEMALE' | 'NEUTRAL' =>
-  companyAdminGenderMap[gender as ChiefExecutiveGender] ?? 'NEUTRAL'
+  companyAdminGenderMap[gender as Gender] ?? 'NEUTRAL'
 
 export const mapAnswersToSalaryReportSubmission = ({
   answers,
@@ -45,7 +45,7 @@ export const mapAnswersToSalaryReportSubmission = ({
     providerId: identifier,
     companyAdminName: answers.chiefExecutive?.name ?? '',
     companyAdminEmail: answers.chiefExecutive?.email ?? '',
-    companyAdminGender: mapChiefExecutiveGender(answers.chiefExecutive?.gender),
+    companyAdminGender: mapGender(answers.chiefExecutive?.gender),
     contactName: answers.contactPerson?.name ?? '',
     contactEmail: answers.contactPerson?.email ?? '',
     contactPhone: answers.contactPerson?.phone ?? '',

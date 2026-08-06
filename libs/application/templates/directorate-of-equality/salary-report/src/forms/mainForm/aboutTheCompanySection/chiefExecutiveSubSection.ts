@@ -5,7 +5,7 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { messages } from '../../../lib/messages'
-import { ChiefExecutiveGender } from '../../../utils/types'
+import { Gender } from '../../../utils/types'
 
 export const chiefExecutiveSubSection = buildSubSection({
   id: 'chiefExecutive',
@@ -46,15 +46,15 @@ export const chiefExecutiveSubSection = buildSubSection({
           required: true,
           options: [
             {
-              value: ChiefExecutiveGender.MALE,
+              value: Gender.MALE,
               label: messages.aboutTheCompany.chiefExecutive.genderMale,
             },
             {
-              value: ChiefExecutiveGender.FEMALE,
+              value: Gender.FEMALE,
               label: messages.aboutTheCompany.chiefExecutive.genderFemale,
             },
             {
-              value: ChiefExecutiveGender.NON_BINARY,
+              value: Gender.NON_BINARY,
               label: messages.aboutTheCompany.chiefExecutive.genderNonBinary,
             },
           ],

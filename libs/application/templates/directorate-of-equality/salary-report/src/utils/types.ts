@@ -71,7 +71,7 @@ export type Role = {
   stepAssignments: StepAssignment[]
 }
 
-export enum ChiefExecutiveGender {
+export enum Gender {
   MALE = 'MALE',
   FEMALE = 'FEMALE',
   NON_BINARY = 'NON_BINARY',
