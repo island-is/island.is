@@ -62,7 +62,8 @@ export const formatRegisteredAddress = (
 
   const { streetAddress, postalCode, city } = address
 
-  return `${streetAddress}${city ? ', ' + postalCode + ' ' + city : ''}`
+  const postalAndCity = [postalCode, city].filter(Boolean).join(' ')
+  return [streetAddress, postalAndCity].filter(Boolean).join(', ')
 }
 
 export const getCodes = (application: Application): BasicChargeItem[] => {

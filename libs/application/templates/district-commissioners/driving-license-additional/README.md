@@ -32,14 +32,14 @@ prerequisites step, and controls which options are enabled on the
   - an existing full B licence, and
   - at least one advanced category the applicant is old enough for and does not
     already hold (minimum ages: `C1` 18, `C` 21, `D1` 21, `D` 23; see
-    `advancedLicenseMap` in [`src/lib/constants.ts`](./src/lib/constants.ts)).
+    `advancedLicenseMap` in [`src/utils/constants.ts`](./src/utils/constants.ts)).
 
 ## Which gervimenn (test personas) can use this template?
 
 **Any gervimaður can be used**, because the RLS/Þjóðskrá staging lookups are
 replaced by fake data. The "Gervigögn" section is only rendered when the
 `ALLOW_FAKE` feature flag is enabled
-(see [`getApplicationFeatureFlags.ts`](./src/lib/getApplicationFeatureFlags.ts)),
+(see [`getApplicationFeatureFlags.ts`](./src/utils/getApplicationFeatureFlags.ts)),
 and it lets you simulate the inputs that would otherwise come from RLS staging
 (dev x-road):
 
@@ -132,14 +132,16 @@ src/
 ├── lib/
 │   ├── template.ts          # state machine
 │   ├── dataSchema.ts        # zod schema for answers
-│   ├── constants.ts         # licence types, category map, charge codes, fake-data types
 │   ├── messages.ts          # localized strings (dla.application namespace)
-│   └── utils/               # eligibility / form helpers (+ specs)
-└── utils/constants.ts       # States, Roles, Events
+│   └── types.ts             # shared types
+└── utils/                   # constants, helpers and feature flags (+ specs)
+    ├── constants.ts         # States/Roles/Events, licence types, category map, charges
+    ├── formUtils.ts         # eligibility / form helpers (incl. groupAdvancedLicenses)
+    └── getApplicationFeatureFlags.ts
 ```
 
 The server-side action lives in
-[`libs/application/template-api-modules/.../driving-license-additional`](../../template-api-modules/src/lib/modules/templates/driving-license-additional).
+[`libs/application/template-api-modules/.../driving-license-additional`](../../../template-api-modules/src/lib/modules/templates/driving-license-additional).
 
 ## Known gaps
 
@@ -158,14 +160,14 @@ Two RLS-API decisions block it, both living outside this repo:
    payload must be confirmed with the RLS API owner before wiring.
 
 See the doc comment on `submitApplication` in
-[`driving-license-additional.service.ts`](../../template-api-modules/src/lib/modules/templates/driving-license-additional/driving-license-additional.service.ts)
+[`driving-license-additional.service.ts`](../../../template-api-modules/src/lib/modules/templates/driving-license-additional/driving-license-additional.service.ts)
 for details.
 
 ## Running unit tests
 
-Run `nx test driving-license-additional` to execute the unit tests via [Jest](https://jestjs.io).
+Run `nx test application-templates-district-commissioners-driving-license-additional` to execute the unit tests via [Jest](https://jestjs.io).
 
 ## Extracting translation strings
 
-Run `nx extract-strings driving-license-additional` to sync the `dla.application`
+Run `nx extract-strings application-templates-district-commissioners-driving-license-additional` to sync the `dla.application`
 namespace strings to Contentful.

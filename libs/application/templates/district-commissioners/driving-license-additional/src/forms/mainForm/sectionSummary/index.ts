@@ -222,15 +222,24 @@ export const sectionSummary = buildSection({
 
             // Derive the total from the same charge codes that are actually
             // billed (getCodes), so the displayed price can't drift from it.
-            const total = getCodes({
+            const prices = getCodes({
               answers,
               externalData,
-            } as Application).reduce(
-              (sum, { code }) =>
-                sum +
-                (priceItems.find(
-                  ({ chargeItemCode }) => chargeItemCode === code,
-                )?.priceAmount ?? 0),
+            } as Application).map(
+              ({ code }) =>
+                priceItems.find(({ chargeItemCode }) => chargeItemCode === code)
+                  ?.priceAmount,
+            )
+
+            // If the payment catalog hasn't fully loaded, some expected codes
+            // have no price. Show blank rather than a misleading partial/zero
+            // total until every billable code is priced.
+            if (prices.some((price) => price == null)) {
+              return [{ width: 'full', keyText: label, valueText: '' }]
+            }
+
+            const total = prices.reduce<number>(
+              (sum, price) => sum + (price ?? 0),
               0,
             )
 

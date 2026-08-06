@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect, useRef, useState } from 'react'
 
 import {
   Box,
@@ -84,7 +84,16 @@ const AdvancedLicenseSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     ),
   )
 
+  // Skip the first render's write. `Screen` resets the form with `...formValue`
+  // before rendering, so on a re-render where `advancedLicense` is momentarily
+  // absent, `selectedLicenses` starts empty and writing it back would wipe the
+  // applicant's saved selection. Only persist selections the user makes here.
+  const isFirstRender = useRef(true)
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+      return
+    }
     setValue('advancedLicense', selectedLicenses)
   }, [selectedLicenses, setValue])
 

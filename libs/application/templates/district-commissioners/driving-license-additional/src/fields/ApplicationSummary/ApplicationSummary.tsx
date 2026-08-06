@@ -2,14 +2,13 @@ import React, { FC, useEffect } from 'react'
 import { MessageDescriptor } from 'react-intl'
 import type { FieldBaseProps } from '@island.is/application/types'
 import { Box, Text } from '@island.is/island-ui/core'
-import { getValueViaPath } from '@island.is/application/core'
+import {
+  formatTextWithLocale,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import ReviewSection from './ApplicationSection'
-import {
-  AdvancedLicense,
-  B_ADVANCED,
-  groupAdvancedLicenses,
-} from '../../utils'
+import { AdvancedLicense, B_ADVANCED, groupAdvancedLicenses } from '../../utils'
 import { m } from '../../lib/messages'
 
 const messages = m as unknown as Record<string, MessageDescriptor | undefined>
@@ -35,15 +34,21 @@ const resolveMessage = (...keys: string[]): MessageDescriptor => {
 
 export const ApplicationSummary: FC<
   React.PropsWithChildren<FieldBaseProps>
-> = ({ application, setBeforeSubmitCallback }) => {
-  const { formatMessage } = useLocale()
-
+> = ({ application, field, setBeforeSubmitCallback }) => {
+  const { formatMessage, lang } = useLocale()
+  const applicationFor = getValueViaPath<'BE' | 'B-advanced'>(
+    application.answers,
+    'applicationFor',
+  )
   const advancedLicense =
     getValueViaPath<Array<keyof typeof AdvancedLicense>>(
       application.answers,
       'advancedLicense',
     ) ?? []
-  const applicationFor = groupAdvancedLicenses(advancedLicense)
+  const groupedAdvancedLicenses =
+    applicationFor === 'B-advanced'
+      ? groupAdvancedLicenses(advancedLicense)
+      : []
 
   // This is the final submit screen of the prerequisites form. The selection
   // screen's own setBeforeSubmitCallback only fires when leaving that screen,
@@ -71,34 +76,57 @@ export const ApplicationSummary: FC<
 
   return (
     <Box marginBottom={10}>
+      {field.description && (
+        <Text marginBottom={2}>
+          {formatTextWithLocale(
+            field.description,
+            application,
+            lang,
+            formatMessage,
+          )}
+        </Text>
+      )}
       <Box marginTop={3} marginBottom={8}>
-        {applicationFor.map((group, i) => (
-          <Box key={`group-${group.group}`} marginTop={i === 0 ? 0 : 5}>
-            <Text variant="default" marginBottom={2}>
-              {formatMessage(resolveMessage(`groupTitle${group.group}`))}{' '}
-            </Text>
-            <Box paddingLeft={[0, 0, 2]}>
-              {group.codes.map((code, j) => (
-                <ReviewSection
-                  key={`${group.group}-${code}`}
-                  application={application}
-                  index={j + 1}
-                  step={{
-                    title: resolveMessage(
-                      `applicationForAdvancedLicenseTitle${code}`,
-                      `applicationForAdvancedLicenseLabel${code}`,
-                    ),
-                    description: resolveMessage(
-                      `applicationForAdvancedLicenseLabel${code}`,
-                    ),
-                    group: group.group,
-                    subGroup: code,
-                  }}
-                />
-              ))}
+        {applicationFor === 'B-advanced' &&
+          groupedAdvancedLicenses.map((group, i) => (
+            <Box key={`group-${group.group}`} marginTop={i === 0 ? 0 : 5}>
+              <Text variant="default" marginBottom={2}>
+                {formatMessage(resolveMessage(`groupTitle${group.group}`))}{' '}
+              </Text>
+              <Box paddingLeft={[0, 0, 2]}>
+                {group.codes.map((code, j) => (
+                  <ReviewSection
+                    key={`${group.group}-${code}`}
+                    application={application}
+                    index={j + 1}
+                    step={{
+                      title: resolveMessage(
+                        `applicationForAdvancedLicenseTitle${code}`,
+                        `applicationForAdvancedLicenseLabel${code}`,
+                      ),
+                      description: resolveMessage(
+                        `applicationForAdvancedLicenseLabel${code}`,
+                      ),
+                      group: group.group,
+                      subGroup: code,
+                    }}
+                  />
+                ))}
+              </Box>
             </Box>
-          </Box>
-        ))}
+          ))}
+        {applicationFor === 'BE' && (
+          <ReviewSection
+            application={application}
+            index={1}
+            step={{
+              title: resolveMessage(`applicationForBELicenseTitle`),
+              description: resolveMessage(`applicationForBELicenseDescription`),
+              group: 'BE',
+              subGroup: 'BE',
+            }}
+          />
+        )}
       </Box>
     </Box>
   )

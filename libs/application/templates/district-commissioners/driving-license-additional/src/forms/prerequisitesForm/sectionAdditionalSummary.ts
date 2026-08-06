@@ -9,17 +9,17 @@ import { m } from '../../lib/messages'
 
 export const sectionAdditionalSummary = buildSubSection({
   id: 'additionalSummary',
-  title: m.applicationEligibilityTitle,
+  title: m.applicationOverviewTitle,
   children: [
     buildMultiField({
-      id: 'info',
-      title: m.applicationEligibilityTitle,
-      description: m.eligibilityRequirementTitle,
+      id: 'appsummaryMultiField',
+      title: m.applicationOverviewTitle,
       children: [
         buildCustomField({
-          title: m.eligibilityRequirementTitle,
-          component: 'ApplicationSummary',
           id: 'appsummary',
+          title: m.applicationOverviewTitle,
+          description: m.applicationOverviewDescription,
+          component: 'ApplicationSummary',
         }),
         buildSubmitField({
           id: 'submit',

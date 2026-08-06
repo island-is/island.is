@@ -32,12 +32,22 @@ export const m = defineMessages({
   eligibilityRequirementTitle: {
     id: 'dla.application:eligibilityTitle',
     defaultMessage: 'Skilyrði sem umsækjandi þarf að uppfylla:',
-    description: 'title for requirement component',
+    description: 'Conditions that the applicant must meet',
   },
   applicationEligibilityTitle: {
     id: 'dla.application:applicationEligibilityTitle',
     defaultMessage: 'Skilyrði umsóknar',
-    description: 'title for requirement section',
+    description: 'Eligibility requirements for the application',
+  },
+  applicationOverviewTitle: {
+    id: 'dla.application:applicationOverviewTitle',
+    defaultMessage: 'Yfirfara',
+    description: 'Review',
+  },
+  applicationOverviewDescription: {
+    id: 'dla.application:applicationOverviewDescription',
+    defaultMessage: 'Vinsamlegast farðu yfir val þitt',
+    description: 'Please review your selections',
   },
   applicationForAdvancedAgeRequired: {
     id: 'dla.application:applicationForAdvancedAgeFor',
@@ -327,7 +337,7 @@ export const m = defineMessages({
   },
   applicationForAdvancedLicenseTitleD1E: {
     id: 'dla.application:applicationForAdvancedLicenseTitleD1E',
-    defaultMessage: 'Lítil rúta og eftirvagn (D1)',
+    defaultMessage: 'Lítil rúta og eftirvagn (D1E)',
     description: 'D1E title',
   },
   applicationForAdvancedLicenseLabelD1E: {
