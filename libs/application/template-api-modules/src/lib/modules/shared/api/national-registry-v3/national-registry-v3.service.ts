@@ -85,7 +85,9 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
       if (children.length > 0) {
         let foundChildWithIcelandicCitizenship = false
         for (const child of children) {
-          const individual = await this.getIndividual(child, auth)
+          const individual = await this.getIndividual(child, auth, {
+            skipMaritalTitle: true,
+          })
           if (individual?.citizenship?.code === 'IS') {
             foundChildWithIcelandicCitizenship = true
             break
