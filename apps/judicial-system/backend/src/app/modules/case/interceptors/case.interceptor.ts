@@ -293,7 +293,9 @@ export const getAppealCaseInfo = (
   // appeals too - unlike appealedInCourt above, which is derived from the ruling's
   // decision rows and is therefore always false without a ruling file. The court
   // record cannot take such an appeal away, so the appeal decision UI locks on it.
-  const appealedOutOfCourt = hasOutOfCourtAppeal(appealCase.appealEventLogs ?? [])
+  const appealedOutOfCourt = hasOutOfCourtAppeal(
+    appealCase.appealEventLogs ?? [],
+  )
 
   let statementDeadline: Date | undefined
   let isStatementDeadlineExpired: boolean | undefined
