@@ -28,6 +28,7 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
     certificationTypes,
     listTypes,
     fieldTypes,
+    organizationDelegations,
   } = formsLoader
   const [forms, setForms] = useState<FormSystemForm[]>(formsState)
   const [organizations, setOrganizations] = useState<Option<string>[]>(orgs)
@@ -45,6 +46,9 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
     useState<string[]>(selectedList)
   const [selectedFieldTypes, setSelectedFieldTypes] =
     useState<string[]>(selectedField)
+  const [selectedDelegations, setSelectedDelegations] = useState<string[]>(
+    organizationDelegations ?? [],
+  )
 
   const handleOrganizationChange = async (selected: { value: string }) => {
     setOrganizationNationalId(selected.value)
@@ -79,6 +83,7 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
       selectedCertificationTypes,
       selectedListTypes,
       selectedFieldTypes,
+      organizationDelegations,
     } = admin
 
     if (organizationId) {
@@ -92,6 +97,11 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
     }
     if (selectedFieldTypes) {
       setSelectedFieldTypes(selectedFieldTypes)
+    }
+    if (organizationDelegations) {
+      setSelectedDelegations(
+        organizationDelegations.filter(Boolean) as string[],
+      )
     }
   }
 
@@ -118,6 +128,8 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
       setSelectedListTypes,
       selectedFieldTypes,
       setSelectedFieldTypes,
+      selectedDelegations,
+      setSelectedDelegations,
       certificationTypes,
       listTypes,
       fieldTypes,
@@ -133,6 +145,7 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
       selectedCertificationTypes,
       selectedListTypes,
       selectedFieldTypes,
+      selectedDelegations,
       certificationTypes,
       listTypes,
       fieldTypes,

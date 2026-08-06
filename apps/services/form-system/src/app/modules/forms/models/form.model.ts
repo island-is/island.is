@@ -183,6 +183,13 @@ export class Form extends Model<Form> {
   })
   dependencies?: Dependency[]
 
+  @Column({
+    type: DataType.ARRAY(DataType.STRING),
+    allowNull: false,
+    defaultValue: [],
+  })
+  delegations!: string[]
+
   @HasMany(() => Section)
   sections!: Section[]
 
