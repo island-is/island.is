@@ -1478,6 +1478,38 @@ export class CaseService {
       )
     }
 
+    // The in-court decisions describe what happened at the ruling, and an appeal
+    // that no longer depends on them must not be disturbed by editing them. Two
+    // cases: a party filed its own appeal, which the court record did not create
+    // and cannot take away; or the appeal has left the district court, where the
+    // decisions are already part of the record Landsréttur received. The web
+    // disables the decision UI on the same conditions - this makes the API
+    // enforce it rather than rely on that.
+    const existingAppealCase = theCase.appealCase
+    if (existingAppealCase) {
+      const appealedEvents = await this.appealEventLogRepositoryService.findAll(
+        {
+          where: {
+            appealCaseId: existingAppealCase.id,
+            eventType: AppealEventType.APPEALED,
+          },
+          transaction,
+        },
+      )
+
+      if (hasOutOfCourtAppeal(appealedEvents)) {
+        throw new BadRequestException(
+          'This case has been appealed out of court, so the appeal decisions can no longer be changed',
+        )
+      }
+
+      if (existingAppealCase.appealState !== AppealCaseState.APPEALED) {
+        throw new BadRequestException(
+          'The appeal of this case has progressed past the district court, so the appeal decisions can no longer be changed',
+        )
+      }
+    }
+
     const data: {
       decision?: CaseAppealDecision | null
       announcement?: string | null
