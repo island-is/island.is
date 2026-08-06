@@ -1,4 +1,10 @@
-import { Field, GraphQLISODateTime, ID, ObjectType } from '@nestjs/graphql'
+import {
+  Field,
+  GraphQLISODateTime,
+  ID,
+  Int,
+  ObjectType,
+} from '@nestjs/graphql'
 import { HealthConversationDirectionEnum } from './enums'
 import { HealthDirectorateHealthConversationAttachment } from './healthConversationAttachment.model'
 import { HealthDirectorateHealthConversationMessageContent } from './healthConversationMessageContent.model'
@@ -34,4 +40,28 @@ export class HealthDirectorateHealthConversationEntry {
 
   @Field(() => [HealthDirectorateHealthConversationAttachment])
   attachments!: HealthDirectorateHealthConversationAttachment[]
+
+  @Field({
+    nullable: true,
+    description:
+      'Id of the certificate issued for this message, if any. Pass to the certificate query/mutations.',
+  })
+  certificateId?: string
+
+  @Field({
+    nullable: true,
+    description:
+      'True when the HCP charges patients for this certificate and it is gated behind a successful payment.',
+  })
+  requiresPayment?: boolean
+
+  @Field({ nullable: true })
+  paid?: boolean
+
+  @Field(() => Int, {
+    nullable: true,
+    description:
+      'Price the patient would be charged, in ISK. Only set when requiresPayment is true.',
+  })
+  amountIsk?: number
 }

@@ -3,6 +3,8 @@ import {
   ConversationAttachmentDto,
   ConversationDetailDto,
   ConversationMessageDto,
+  CreateCertificatePaymentIntentDto,
+  CreateCertificateRequestDto,
   CreateConversationRequestDto,
   CreateEuPatientConsentDto,
   CreateReplyRequestDto,
@@ -23,6 +25,8 @@ import {
   HealthDirectorateAppointmentInput,
   HealthDirectorateAppointmentsInput,
 } from './dto/appointments.input'
+import { HealthDirectorateCreateCertificatePaymentIntentInput } from './dto/createCertificatePaymentIntent.input'
+import { HealthDirectorateCreateCertificateRequestInput } from './dto/createCertificateRequest.input'
 import { HealthDirectorateCreateConversationInput } from './dto/createHealthConversation.input'
 import { HealthDirectorateReplyToConversationInput } from './dto/replyToHealthConversation.input'
 import {
@@ -42,6 +46,13 @@ import {
   mapReferralStatusValueToStatus,
   mapVaccinationStatus,
 } from './mappers/basicInformationMapper'
+import {
+  mapCertificate,
+  mapCertificateRequest,
+  mapPayment,
+  toCertificateTypeCode,
+  toDateOnly,
+} from './mappers/certificateMapper'
 import {
   mapConversationMessageContent,
   mapMessagingRecipient,
@@ -93,6 +104,10 @@ import { HealthDirectorateHealthConversationDetail } from './models/healthConver
 import { HealthDirectorateConversationOrganization } from './models/healthConversationOrganization.model'
 import { HealthDirectorateHealthConversationEntry } from './models/healthConversationEntry.model'
 import { HealthDirectorateHealthConversationRecipient } from './models/healthConversationRecipient.model'
+import { HealthDirectorateCertificate } from './models/certificate.model'
+import { HealthDirectorateCertificateRequest } from './models/certificateRequest.model'
+import { HealthDirectoratePayment } from './models/payment.model'
+import { HealthDirectoratePaymentIntent } from './models/paymentIntent.model'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -764,6 +779,10 @@ export class HealthDirectorateService {
       attachments: m.attachments.map((a) =>
         this.mapConversationAttachment(a, conversationId, m.id),
       ),
+      certificateId: m.certificateId,
+      requiresPayment: m.requiresPayment,
+      paid: m.paid,
+      amountIsk: m.amountIsk,
     }
   }
 
@@ -894,5 +913,69 @@ export class HealthDirectorateService {
     if (!items) return null
 
     return items.map(mapMessagingRecipient)
+  }
+
+  /* Certificates */
+
+  async createCertificateRequest(
+    auth: Auth,
+    input: HealthDirectorateCreateCertificateRequestInput,
+  ): Promise<HealthDirectorateCertificateRequest | null> {
+    // The generated client type declares startDate/endDate as `Date`, but the
+    // upstream API expects a date-only string (YYYY-MM-DD) on the wire.
+    const body = {
+      nodeId: input.nodeId,
+      groupId: input.groupId,
+      certificateType: toCertificateTypeCode(input.certificateType),
+      recipientName: input.recipientName,
+      startDate: toDateOnly(input.startDate),
+      endDate: toDateOnly(input.endDate),
+      note: input.note,
+    } as unknown as CreateCertificateRequestDto
+
+    const request = await this.healthApi.createCertificateRequest(auth, body)
+    if (!request) return null
+
+    return mapCertificateRequest(request)
+  }
+
+  async getCertificate(
+    auth: Auth,
+    id: string,
+  ): Promise<HealthDirectorateCertificate | null> {
+    const certificate = await this.healthApi.getCertificate(auth, id)
+    if (!certificate) return null
+
+    const downloadServiceURL = `${this.downloadServiceConfig.baseUrl}/download/v1/health/certificates/${id}/pdf`
+
+    return mapCertificate(certificate, downloadServiceURL)
+  }
+
+  async createCertificatePaymentIntent(
+    auth: Auth,
+    input: HealthDirectorateCreateCertificatePaymentIntentInput,
+  ): Promise<HealthDirectoratePaymentIntent | null> {
+    const body: CreateCertificatePaymentIntentDto = {
+      returnUrl: input.returnUrl,
+    }
+
+    const intent = await this.healthApi.createCertificatePaymentIntent(
+      auth,
+      input.id,
+      body,
+    )
+    if (!intent) return null
+
+    return intent
+  }
+
+  async getPayment(
+    auth: Auth,
+    id: string,
+  ): Promise<HealthDirectoratePayment | null> {
+    const payment = await this.healthApi.getPayment(auth, id)
+    if (!payment) return null
+
+    return mapPayment(payment)
   }
 }

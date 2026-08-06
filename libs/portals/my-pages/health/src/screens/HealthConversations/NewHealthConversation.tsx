@@ -1,4 +1,5 @@
 import {
+  AlertMessage,
   Box,
   Button,
   Checkbox,
@@ -18,6 +19,10 @@ import {
 import ConversationAvatar from './components/ConversationAvatar'
 import ConversationAvailabilityAlert from './components/ConversationAvailabilityAlert'
 import ConversationTermsModal from './components/ConversationTermsModal'
+import CertificateRequestForm, {
+  CertificateFormState,
+  emptyCertificateFormState,
+} from './components/CertificateRequestForm'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { useState } from 'react'
@@ -29,6 +34,7 @@ import { getMessagingWindowInfo } from './utils/messagingWindow'
 import {
   useGetHealthConversationRecipientsForNewQuery,
   useCreateHealthConversationMutation,
+  useCreateHealthCertificateRequestMutation,
 } from './NewHealthConversation.generated'
 
 const NewHealthConversation = () => {
@@ -39,6 +45,9 @@ const NewHealthConversation = () => {
 
   const [selectedTypeCode, setSelectedTypeCode] = useState<string | null>(null)
   const [messageText, setMessageText] = useState('')
+  const [certificateForm, setCertificateForm] = useState<CertificateFormState>(
+    emptyCertificateFormState,
+  )
   const [termsAccepted, setTermsAccepted] = useState(false)
   const [termsModalOpen, setTermsModalOpen] = useState(false)
 
@@ -52,17 +61,29 @@ const NewHealthConversation = () => {
       refetchQueries: ['GetHealthConversations'],
     })
 
+  const [createCertificateRequest, { loading: sendingCertificate }] =
+    useCreateHealthCertificateRequestMutation({
+      refetchQueries: ['GetHealthConversations'],
+    })
+
   const recipients = data?.healthDirectorateHealthConversationRecipients
   const recipient =
     recipients?.find((r) => r.allowsMessaging) ?? recipients?.[0]
 
   const typeOptions =
-    recipient?.allowedMessageTypes
-      .filter((t) => !t.isCertificate)
-      .map((t) => ({ label: t.title, value: t.patientInitiatedTypeCode })) ?? []
+    recipient?.allowedMessageTypes.map((t) => ({
+      label: t.title,
+      value: t.patientInitiatedTypeCode,
+      disabled: t.isCertificate && recipient.canRequestCertificate === false,
+    })) ?? []
 
   const selectedOption =
     typeOptions.find((o) => o.value === selectedTypeCode) ?? null
+
+  const selectedType = recipient?.allowedMessageTypes.find(
+    (t) => t.patientInitiatedTypeCode === selectedTypeCode,
+  )
+  const isCertificateSelected = !!selectedType?.isCertificate
 
   const windowInfo = getMessagingWindowInfo({
     windowOpen: recipient?.messagingWindowOpen,
@@ -84,24 +105,73 @@ const NewHealthConversation = () => {
 
   const isFormLocked = recipient?.canCreateConversation === false
 
-  const isFormValid =
-    !!selectedTypeCode && !!messageText.trim() && termsAccepted
+  const isFormValid = isCertificateSelected
+    ? !!certificateForm.certificateType &&
+      !!certificateForm.recipientName.trim() &&
+      !!certificateForm.startDate &&
+      !!certificateForm.endDate &&
+      termsAccepted
+    : !!selectedTypeCode && !!messageText.trim() && termsAccepted
 
-  const canSubmit = isFormValid && !sending && !isFormLocked
+  const sendingAny = sending || sendingCertificate
+
+  const canSubmit = isFormValid && !sendingAny && !isFormLocked
+
+  const handleTypeChange = (typeCode: string | null) => {
+    setSelectedTypeCode(typeCode)
+    setMessageText('')
+    setCertificateForm(emptyCertificateFormState)
+  }
 
   const handleSubmit = async () => {
-    if (!canSubmit || !recipient || !selectedTypeCode) return
-    const selectedType = recipient.allowedMessageTypes.find(
-      (t) => t.patientInitiatedTypeCode === selectedTypeCode,
-    )
+    if (!canSubmit || !recipient || !selectedTypeCode || !selectedType) return
+
     try {
+      if (isCertificateSelected) {
+        if (
+          !certificateForm.certificateType ||
+          !certificateForm.startDate ||
+          !certificateForm.endDate
+        ) {
+          return
+        }
+        const result = await createCertificateRequest({
+          variables: {
+            input: {
+              nodeId: recipient.nodeId,
+              groupId: recipient.groupId,
+              certificateType: certificateForm.certificateType,
+              recipientName: certificateForm.recipientName.trim(),
+              startDate: certificateForm.startDate,
+              endDate: certificateForm.endDate,
+              note: certificateForm.note.trim() || undefined,
+            },
+          },
+        })
+        const conversationId =
+          result.data?.healthDirectorateCreateCertificateRequest
+            ?.conversationId
+        if (conversationId) {
+          navigate(
+            HealthPaths.HealthConversationsDetail.replace(
+              ':id',
+              conversationId,
+            ),
+            { state: { justCreated: true } },
+          )
+        } else {
+          navigate(HealthPaths.HealthConversations)
+        }
+        return
+      }
+
       const result = await createMessage({
         variables: {
           input: {
             nodeId: recipient.nodeId,
             groupId: recipient.groupId,
             patientInitiatedTypeCode: selectedTypeCode,
-            title: selectedType?.title,
+            title: selectedType.title,
             messageTextContent: messageText.trim(),
           },
         },
@@ -182,28 +252,49 @@ const NewHealthConversation = () => {
                 )}
                 options={typeOptions}
                 value={selectedOption}
-                onChange={(opt) => setSelectedTypeCode(opt?.value ?? null)}
+                onChange={(opt) => handleTypeChange(opt?.value ?? null)}
                 backgroundColor="blue"
                 size="sm"
                 required
                 isDisabled={isFormLocked}
               />
             </Box>
-            <Box marginBottom={3}>
-              <Input
-                textarea
-                rows={8}
-                name="message-body"
-                label={formatMessage(m.messages)}
-                placeholder={formatMessage(
-                  messages.healthConversationsNewBodyPlaceholder,
-                )}
-                backgroundColor="blue"
-                value={messageText}
-                onChange={(e) => setMessageText(e.target.value)}
+
+            {isCertificateSelected &&
+              recipient.canRequestCertificate === false && (
+                <Box marginBottom={3}>
+                  <AlertMessage
+                    type="warning"
+                    message={formatMessage(
+                      messages.healthConversationsCertificateBlockedText,
+                    )}
+                  />
+                </Box>
+              )}
+
+            {isCertificateSelected ? (
+              <CertificateRequestForm
+                formState={certificateForm}
+                setFormState={setCertificateForm}
                 disabled={isFormLocked}
               />
-            </Box>
+            ) : (
+              <Box marginBottom={3}>
+                <Input
+                  textarea
+                  rows={8}
+                  name="message-body"
+                  label={formatMessage(m.messages)}
+                  placeholder={formatMessage(
+                    messages.healthConversationsNewBodyPlaceholder,
+                  )}
+                  backgroundColor="blue"
+                  value={messageText}
+                  onChange={(e) => setMessageText(e.target.value)}
+                  disabled={isFormLocked}
+                />
+              </Box>
+            )}
 
             <Box marginBottom={4}>
               <Checkbox
@@ -223,10 +314,16 @@ const NewHealthConversation = () => {
                 disabled={isFormLocked}
               />
             </Box>
-            <Box display="flex" justifyContent="flexEnd">
+            <Box display="flex" justifyContent="spaceBetween" columnGap={2}>
+              <Button
+                variant="ghost"
+                onClick={() => navigate(HealthPaths.HealthConversations)}
+              >
+                {formatMessage(messages.cancel)}
+              </Button>
               <Button
                 onClick={handleSubmit}
-                loading={sending}
+                loading={sendingAny}
                 disabled={!canSubmit}
               >
                 {formatMessage(messages.healthConversationSend)}

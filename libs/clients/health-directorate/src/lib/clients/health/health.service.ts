@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 
 import { Auth, withAuthContext } from '@island.is/auth-nest-tools'
-import { data, dataOr404Null } from '@island.is/clients/middlewares'
+import { FetchError, data, dataOr404Null } from '@island.is/clients/middlewares'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
@@ -17,6 +17,11 @@ import {
   donationExceptionControllerGetOrgansV1,
   meAppointmentControllerGetPatientAppointmentsV1,
   meAppointmentControllerGetPatientAppointmentByIdV1,
+  meCertificateControllerCreateCertificateRequestV1,
+  meCertificateControllerCreatePaymentIntentV1,
+  meCertificateControllerGetCertificatePdfV1,
+  meCertificateControllerGetCertificateV1,
+  mePaymentControllerGetByIdV1,
   meConversationControllerArchiveConversationV1,
   meConversationControllerCreateConversationV1,
   meConversationControllerGetConversationByIdV1,
@@ -53,10 +58,14 @@ import {
 import {
   AppointmentBaseDto,
   AppointmentDetailDto,
+  CertificateDto,
+  CertificateRequestDto,
   ConsentCountryDto,
   ConversationBaseDto,
   ConversationDetailDto,
   ConversationStatusFilter,
+  CreateCertificatePaymentIntentDto,
+  CreateCertificateRequestDto,
   CreateConversationRequestDto,
   CreateEuPatientConsentDto,
   CreateOrUpdatePrescriptionCommissionDto,
@@ -64,6 +73,8 @@ import {
   EuPatientConsentResponseDto,
   Locale,
   MessagingRecipientDto,
+  PaymentDto,
+  PaymentIntentDto,
   PrescriptionCommissionDto,
   QuestionnaireBaseDto,
   QuestionnaireDetailDto,
@@ -704,5 +715,110 @@ export class HealthDirectorateHealthService {
     )
 
     return recipients ?? null
+  }
+
+  /* Certificates */
+
+  public async createCertificateRequest(
+    auth: Auth,
+    input: CreateCertificateRequestDto,
+  ): Promise<CertificateRequestDto | null> {
+    const request = await withAuthContext(auth, () =>
+      data(
+        meCertificateControllerCreateCertificateRequestV1({
+          body: input,
+        }),
+      ),
+    )
+
+    return request ?? null
+  }
+
+  public async getCertificate(
+    auth: Auth,
+    id: string,
+  ): Promise<CertificateDto | null> {
+    const certificate = await withAuthContext(auth, () =>
+      dataOr404Null(
+        meCertificateControllerGetCertificateV1({
+          path: { id },
+        }),
+      ),
+    )
+
+    return certificate ?? null
+  }
+
+  public async createCertificatePaymentIntent(
+    auth: Auth,
+    id: string,
+    input: CreateCertificatePaymentIntentDto,
+  ): Promise<PaymentIntentDto | null> {
+    const intent = await withAuthContext(auth, () =>
+      data(
+        meCertificateControllerCreatePaymentIntentV1({
+          path: { id },
+          body: input,
+        }),
+      ),
+    )
+
+    return intent ?? null
+  }
+
+  public async getCertificatePdf(
+    auth: Auth,
+    id: string,
+  ): Promise<
+    | { status: 200; data: ArrayBuffer; contentType: string }
+    | { status: 402; resourceType: string; resourceId: string }
+    | null
+  > {
+    try {
+      const result = await withAuthContext(auth, () =>
+        meCertificateControllerGetCertificatePdfV1({
+          path: { id },
+          parseAs: 'arrayBuffer',
+        }),
+      )
+      if (!result.data) return null
+      return {
+        status: 200,
+        data: result.data as ArrayBuffer,
+        contentType:
+          result.response.headers.get('content-type') ?? 'application/pdf',
+      }
+    } catch (error) {
+      if (error instanceof FetchError && error.status === 404) {
+        return null
+      }
+      // The OpenAPI spec only documents the 402 payment-required shape in
+      // free-text description, not a typed `responses.402` schema, so the
+      // body has to be cast rather than typed from the generated client.
+      if (error instanceof FetchError && error.status === 402) {
+        const body = error.body as { resourceType: string; resourceId: string }
+        return {
+          status: 402,
+          resourceType: body.resourceType,
+          resourceId: body.resourceId,
+        }
+      }
+      throw error
+    }
+  }
+
+  public async getPayment(
+    auth: Auth,
+    id: string,
+  ): Promise<PaymentDto | null> {
+    const payment = await withAuthContext(auth, () =>
+      dataOr404Null(
+        mePaymentControllerGetByIdV1({
+          path: { id },
+        }),
+      ),
+    )
+
+    return payment ?? null
   }
 }
