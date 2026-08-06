@@ -127,6 +127,30 @@ export const staticAssetsDir = (dir: string, urlPath: string): Plugin => {
 }
 
 /**
+ * The docker-static entrypoint (scripts/dockerfile-assets/bash/
+ * extract-environment.js) expands the environment placeholder from
+ * index.src.html into index.html at container start. The webpack builds
+ * emitted the processed html under that name; emit a copy so the runtime
+ * environment injection keeps working for vite builds.
+ */
+export const emitIndexSrcHtml = (): Plugin => {
+  let outDir: string
+  return {
+    name: 'emit-index-src-html',
+    apply: 'build',
+    configResolved(config) {
+      outDir = config.build.outDir
+    },
+    closeBundle() {
+      const index = join(outDir, 'index.html')
+      if (existsSync(index)) {
+        cpSync(index, join(outDir, 'index.src.html'))
+      }
+    },
+  }
+}
+
+/**
  * Vite's dev server only responds under the exact base path and shows a hint
  * page for anything else. Redirect the bare base (and the site root) to it,
  * like the webpack dev server did.

@@ -9,6 +9,7 @@ import svgr from 'vite-plugin-svgr'
 import {
   bffDevProxy,
   define,
+  emitIndexSrcHtml,
   injectDevSiEnvironment,
   mainFields,
   nodeBuiltinPolyfills,
@@ -33,6 +34,7 @@ export default defineConfig({
       svgrOptions: { exportType: 'named', namedExport: 'ReactComponent' },
     }),
     injectDevSiEnvironment(),
+    emitIndexSrcHtml(),
     redirectToBase('/minarsidur/'),
     staticAssetsDir(join(__dirname, 'src/assets'), '/minarsidur/assets/'),
   ],
