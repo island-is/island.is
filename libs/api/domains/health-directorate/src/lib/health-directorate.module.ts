@@ -9,6 +9,7 @@ import {
 import { MedicineResolver } from './resolvers/medicine.resolver'
 import { PatientDataResolver } from './resolvers/patientData.resolver'
 import { BasicInformationResolver } from './resolvers/basicInformation.resolver'
+import { PregnancyResolver } from './resolvers/pregnancy.resolver'
 
 @Module({
   imports: [HealthDirectorateClientModule, FeatureFlagModule],
@@ -18,6 +19,7 @@ import { BasicInformationResolver } from './resolvers/basicInformation.resolver'
     MedicineResolver,
     PatientDataResolver,
     BasicInformationResolver,
+    PregnancyResolver,
     HealthDirectorateService,
   ],
 })

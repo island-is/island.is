@@ -151,6 +151,11 @@ export class HealthDirectorateService {
     return limitations
   }
 
+  /* Pregnancy */
+  async hasActivePregnancy(auth: Auth): Promise<boolean | null> {
+    return this.healthApi.hasActivePregnancy(auth)
+  }
+
   async updateDonorStatus(
     auth: Auth,
     input: DonorInput,
@@ -773,7 +778,6 @@ export class HealthDirectorateService {
     return {
       id: c.id,
       title: c.title,
-      status: c.status,
       startDate: c.conversationStartDate,
       messageCount: c.messageCount,
       lastMessageSentAt: c.lastMessageSentAt,
@@ -806,7 +810,6 @@ export class HealthDirectorateService {
     return items.map((c) => ({
       id: c.id,
       title: c.title,
-      status: c.status,
       messageCount: c.messageCount,
       lastMessageSentAt: c.lastMessageSentAt,
       lastSenderGroupName: c.lastSenderGroupName,
