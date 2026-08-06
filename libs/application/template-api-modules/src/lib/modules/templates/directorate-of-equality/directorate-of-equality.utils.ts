@@ -7,18 +7,13 @@ import type {
   SubmitSalaryReportDto,
 } from '@island.is/clients/directorate-of-equality'
 
-const companyAdminGenderMap: Record<
-  Gender,
-  'MALE' | 'FEMALE' | 'NEUTRAL'
-> = {
+const companyAdminGenderMap: Record<Gender, 'MALE' | 'FEMALE' | 'NEUTRAL'> = {
   [Gender.MALE]: 'MALE',
   [Gender.FEMALE]: 'FEMALE',
   [Gender.NON_BINARY]: 'NEUTRAL',
 }
 
-const mapGender = (
-  gender?: string,
-): 'MALE' | 'FEMALE' | 'NEUTRAL' =>
+const mapGender = (gender?: string): 'MALE' | 'FEMALE' | 'NEUTRAL' =>
   companyAdminGenderMap[gender as Gender] ?? 'NEUTRAL'
 
 export const mapAnswersToSalaryReportSubmission = ({
