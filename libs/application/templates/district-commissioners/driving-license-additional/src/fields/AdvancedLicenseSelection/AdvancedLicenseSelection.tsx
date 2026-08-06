@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef, useState } from 'react'
+import React, { FC, useEffect } from 'react'
 
 import {
   Box,
@@ -34,7 +34,9 @@ const AdvancedLicenseSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     ? formatMessage(m.applicationForAdvancedRequiredError)
     : ''
 
-  const advancedLicenseValue = watch('advancedLicense') ?? []
+  const advancedLicenseValue = (watch('advancedLicense') ?? []) as Array<
+    keyof typeof AdvancedLicenseEnum
+  >
 
   const fakeData = watch('fakeData') as DrivingLicenseFakeData | undefined
   // Age and held categories are derived the same way on the prerequisites
@@ -52,30 +54,22 @@ const AdvancedLicenseSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       code in AdvancedLicenseEnum,
   )
 
-  // The applied-for licenses never include categories the applicant already
-  // holds, so the setBeforeSubmitCallback below keeps the submit/continue
-  // blocked until at least one new category is selected.
-  const [selectedLicenses, setSelectedLicenses] = useState<
-    Array<keyof typeof AdvancedLicenseEnum>
-  >(() =>
-    advancedLicenseValue.filter(
-      (code: keyof typeof AdvancedLicenseEnum) =>
-        !heldAdvancedCategories.includes(code),
-    ),
+  // The form value `advancedLicense` is the single source of truth for what the
+  // applicant is applying for. It never includes categories they already hold
+  // (those render checked + locked and can't be toggled), so the applied-for
+  // selection is derived straight from it and changes are written back
+  // immediately. Reading from the form value (rather than mirroring it into
+  // local state at mount) means a `Screen` re-render with a transiently-empty
+  // form value can't desync the display or wipe the saved selection.
+  const selectedLicenses = advancedLicenseValue.filter(
+    (code) => !heldAdvancedCategories.includes(code),
   )
 
-  // Skip the first render's write. `Screen` resets the form with `...formValue`
-  // before rendering, so on a re-render where `advancedLicense` is momentarily
-  // absent, `selectedLicenses` starts empty and writing it back would wipe the
-  // applicant's saved selection. Only persist selections the user makes here.
-  const isFirstRender = useRef(true)
-  useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false
-      return
-    }
-    setValue('advancedLicense', selectedLicenses)
-  }, [selectedLicenses, setValue])
+  const updateSelected = (
+    updater: (
+      prev: Array<keyof typeof AdvancedLicenseEnum>,
+    ) => Array<keyof typeof AdvancedLicenseEnum>,
+  ) => setValue('advancedLicense', updater(selectedLicenses))
 
   // Block moving past this screen until at least one *new* license (one the
   // applicant doesn't already hold) has been selected — but only when there is
@@ -167,7 +161,7 @@ const AdvancedLicenseSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                       selectedLicenses.includes(option.code) || alreadyHas
                     }
                     onChange={() => {
-                      setSelectedLicenses((prev) => {
+                      updateSelected((prev) => {
                         if (!prev.includes(option.code)) {
                           return [...prev, option.code]
                         }
@@ -216,7 +210,7 @@ const AdvancedLicenseSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                             ) || alreadyHasCategory(option.professional.code)
                           }
                           onChange={(e) => {
-                            setSelectedLicenses((prev) => {
+                            updateSelected((prev) => {
                               if (
                                 e.target.checked &&
                                 option.professional?.code

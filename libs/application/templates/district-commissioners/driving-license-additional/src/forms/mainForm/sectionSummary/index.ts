@@ -23,7 +23,10 @@ import {
   getCodes,
   Pickup,
 } from '../../../utils'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
+import {
+  formatPhoneNumber,
+  removeCountryCode,
+} from '@island.is/application/ui-components'
 
 export const sectionSummary = buildSection({
   id: 'overview',
@@ -121,9 +124,7 @@ export const sectionSummary = buildSection({
                   answers,
                   'applicant.phoneNumber',
                 )
-                return phone
-                  ? formatPhoneNumber(phone.replace(/(^00354|^\+354|\D)/g, ''))
-                  : ''
+                return phone ? formatPhoneNumber(removeCountryCode(phone)) : ''
               })(),
             },
             {
