@@ -210,7 +210,18 @@ export class BankTransferService {
 
     const isPending = result.status === BankTransferStatus.PENDING
     const scaRedirectUrl =
-      result.scaRedirectUrl ?? row.scaRedirectUrl ?? undefined
+      result.rawStatus === 'SCA_REQUIRED'
+        ? result.scaRedirectUrl
+        : result.scaRedirectUrl ?? row.scaRedirectUrl ?? undefined
+
+    // Diagnostic: on a raw Blikk SCA_REQUIRED, record whether Blikk sent its own SCA URL, and whether
+    // we dropped a persisted row URL by trusting Blikk's omission. Booleans only — no URL logged.
+    if (isPending && result.rawStatus === 'SCA_REQUIRED') {
+      this.logger.info(`[${row.paymentFlowId}] SCA_REQUIRED verify`, {
+        blikkSentScaUrl: !!result.scaRedirectUrl,
+        droppedRowUrl: !result.scaRedirectUrl && !!row.scaRedirectUrl,
+      })
+    }
 
     return {
       status: result.status,
@@ -426,9 +437,10 @@ export class BankTransferService {
     }
 
     if (mapped === BankTransferStatus.PENDING) {
-      // Prefer the just-refreshed URL — the in-memory row predates any persist above.
       const scaRedirectUrl =
-        refreshed?.scaRedirectUrl ?? row.scaRedirectUrl ?? undefined
+        refreshed?.rawStatus === 'SCA_REQUIRED'
+          ? refreshed.scaRedirectUrl
+          : refreshed?.scaRedirectUrl ?? row.scaRedirectUrl ?? undefined
       return {
         paymentStatus: PaymentStatus.BANK_TRANSFER_PENDING,
         updatedAt: row.modified,

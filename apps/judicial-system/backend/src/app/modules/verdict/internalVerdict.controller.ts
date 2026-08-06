@@ -186,6 +186,7 @@ export class InternalVerdictController {
         caseId,
         getDeliveredVerdictNationalCommissionersOfficeLogDetails,
       )
+
       await transaction.commit()
 
       return response

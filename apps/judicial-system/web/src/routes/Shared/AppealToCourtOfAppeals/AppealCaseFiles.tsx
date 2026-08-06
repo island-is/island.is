@@ -205,11 +205,16 @@ const AppealFiles = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={previousUrl}
-          onNextButtonClick={handleNextButtonClick}
-          nextButtonText={someFilesError ? 'Reyna aftur' : 'Senda gögn'}
-          nextIsLoading={!allFilesDoneOrError}
-          nextIsDisabled={uploadFiles.length === 0 || !allFilesDoneOrError}
-          nextButtonColorScheme={someFilesError ? 'destructive' : 'default'}
+          actions={[
+            {
+              text: someFilesError ? 'Reyna aftur' : 'Senda gögn',
+              colorScheme: someFilesError ? 'destructive' : 'default',
+              onClick: handleNextButtonClick,
+              disabled: uploadFiles.length === 0 || !allFilesDoneOrError,
+              loading: !allFilesDoneOrError,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
       {visibleModal === true && (
