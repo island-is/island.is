@@ -6,70 +6,25 @@
   "tags": ["scope:form-system"],
   "targets": {
     "build": {
-      "executor": "@nx/webpack:webpack",
-      "outputs": ["{options.outputPath}"],
-      "defaultConfiguration": "production",
+      "executor": "nx:run-commands",
       "options": {
-        "compiler": "babel",
-        "outputPath": "dist/apps/form-system/web",
-        "index": "apps/form-system/web/src/index.html",
-        "baseHref": "/form/",
-        "main": "apps/form-system/web/src/main.tsx",
-        "tsConfig": "apps/form-system/web/tsconfig.app.json",
-        "assets": [
-          "apps/form-system/web/src/favicon.ico",
-          "apps/form-system/web/src/mockServiceWorker.js",
-          "apps/form-system/web/src/assets"
-        ],
-        "styles": ["apps/form-system/web/src/styles.scss"],
-        "scripts": [],
-        "webpackConfig": "apps/form-system/web/webpack.config.js"
+        "command": "vite build --config apps/form-system/web/vite.config.ts"
       },
       "configurations": {
-        "development": {
-          "extractLicenses": false,
-          "optimization": false,
-          "sourceMap": true,
-          "vendorChunk": true
-        },
-        "production": {
-          "optimization": true,
-          "outputHashing": "all",
-          "sourceMap": false,
-          "namedChunks": false,
-          "extractLicenses": true,
-          "vendorChunk": false,
-          "index": "apps/form-system/web/src/index.src.html"
-        }
+        "production": {}
       },
-      "dependsOn": [
-        {
-          "target": "generateDevIndexHTML"
-        }
-      ]
+      "outputs": ["{workspaceRoot}/dist/apps/form-system/web"],
+      "cache": true,
+      "inputs": ["production", "^production"]
     },
     "serve": {
-      "executor": "@nx/webpack:dev-server",
-      "defaultConfiguration": "development",
+      "executor": "nx:run-commands",
       "options": {
-        "port": 4242,
-        "buildTarget": "form-system-web:build:development",
-        "hmr": true
+        "command": "vite serve --config apps/form-system/web/vite.config.ts"
       },
       "configurations": {
-        "development": {
-          "buildTarget": "form-system-web:build:development"
-        },
-        "production": {
-          "buildTarget": "form-system-web:build:production",
-          "hmr": false
-        }
-      },
-      "dependsOn": [
-        {
-          "target": "generateDevIndexHTML"
-        }
-      ]
+        "production": {}
+      }
     },
     "lint": {
       "executor": "@nx/eslint:lint"
@@ -116,26 +71,13 @@
     "docker-static": {
       "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-static`"
     },
-    "generateDevIndexHTML": {
+    "typecheck": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "node scripts/dockerfile-assets/bash/extract-environment.js apps/form-system/web/src"
-        ]
+        "command": "tsc --noEmit -p apps/form-system/web/tsconfig.app.json"
       },
-      "outputs": ["{workspaceRoot}/apps/form-system/web/src/index.html"]
-    },
-    "serve-vite": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "vite serve --config apps/form-system/web/vite.config.ts"
-      }
-    },
-    "build-vite": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "vite build --config apps/form-system/web/vite.config.ts"
-      }
+      "cache": true,
+      "inputs": ["production", "^production"]
     }
   }
 }

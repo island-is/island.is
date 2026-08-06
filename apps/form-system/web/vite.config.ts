@@ -9,9 +9,11 @@ import svgr from 'vite-plugin-svgr'
 import {
   bffDevProxy,
   define,
+  emitIndexSrcHtml,
   injectDevSiEnvironment,
   mainFields,
   nodeBuiltinPolyfills,
+  redirectToBase,
   spaAliases,
 } from '../../../libs/shared/vite/base'
 
@@ -19,6 +21,7 @@ const workspaceRoot = join(__dirname, '../../..')
 
 export default defineConfig({
   root: __dirname,
+  base: '/form/',
   plugins: [
     nodeBuiltinPolyfills(),
     react(),
@@ -30,6 +33,8 @@ export default defineConfig({
       svgrOptions: { exportType: 'named', namedExport: 'ReactComponent' },
     }),
     injectDevSiEnvironment(),
+    emitIndexSrcHtml(),
+    redirectToBase('/form/'),
   ],
   resolve: {
     tsconfigPaths: true,
@@ -38,16 +43,16 @@ export default defineConfig({
   },
   define,
   server: {
-    port: process.env.PORT ? Number(process.env.PORT) : 4200,
+    port: process.env.PORT ? Number(process.env.PORT) : 4242,
     // Fail instead of drifting to another port while the browser still
     // points at the old one.
     strictPort: true,
     proxy: bffDevProxy,
   },
   build: {
-    outDir: join(workspaceRoot, 'dist/apps/form-system/web-vite'),
+    outDir: join(workspaceRoot, 'dist/apps/form-system/web'),
     emptyOutDir: true,
-    sourcemap: true,
+    sourcemap: false,
     target: browserslistToEsbuild(undefined, {
       path: join(__dirname, 'src'),
     }),
