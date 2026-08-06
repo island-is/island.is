@@ -13,7 +13,7 @@ import {
   DialogPrompt,
   Text,
 } from '@island.is/island-ui/core'
-import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
+import nationalRegistryLogo from '../../../assets/nationalRegistry.svg?url'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
@@ -42,8 +42,10 @@ const AllMunicipalities = ({ isMunicipality }: { isMunicipality: boolean }) => {
         },
       },
       onCompleted: (response) => {
-        const { success, reasons } =
-          response.signatureCollectionAdminStartMunicipalityCollection
+        const {
+          success,
+          reasons,
+        } = response.signatureCollectionAdminStartMunicipalityCollection
 
         if (success) {
           toast.success(formatMessage(m.openMunicipalCollectionSuccess))

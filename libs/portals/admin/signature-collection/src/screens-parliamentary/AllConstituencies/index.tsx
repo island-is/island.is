@@ -18,14 +18,17 @@ import { SignatureCollectionPaths } from '../../lib/paths'
 import CompareLists from '../../shared-components/compareLists'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import { CollectionStatus } from '@island.is/api/schema'
-import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
+import nationalRegistryLogo from '../../../assets/nationalRegistry.svg?url'
 import FindSignature from '../../shared-components/findSignature'
 import ActionDrawer from '../../shared-components/actionDrawer'
 import { Actions } from '../../shared-components/actionDrawer/ListActions'
 
 const ParliamentaryRoot = () => {
-  const { collection, collectionStatus, allLists } =
-    useLoaderData() as ListsLoaderReturn
+  const {
+    collection,
+    collectionStatus,
+    allLists,
+  } = useLoaderData() as ListsLoaderReturn
 
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
