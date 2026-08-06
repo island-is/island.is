@@ -29,7 +29,6 @@ import {
   DO_NOT_KNOW,
   IS,
   KnowsNationalId,
-  NoNationalIdReason,
   NOT_APPLICABLE,
   RISK_TO_UNBORN,
 } from '../utils/constants'
@@ -239,7 +238,8 @@ export const getChildWithNationalIdItems = (
   answers: FormValue,
   externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const { pronounOptions } = getApplicationExternalData(externalData)
+  const { pronounOptions, childUnknownNationalIdStates } =
+    getApplicationExternalData(externalData)
   const {
     childKnowsNationalId,
     childNoNationalIdReason,
@@ -320,9 +320,9 @@ export const getChildWithNationalIdItems = (
             width: 'half' as const,
             keyText: childMessages.noNationalId.reasonLabel,
             valueText: childNoNationalIdReason
-              ? noNationalIdReasonLabelMap[
-                  childNoNationalIdReason as keyof typeof noNationalIdReasonLabelMap
-                ] ?? childNoNationalIdReason
+              ? childUnknownNationalIdStates.find(
+                  (r) => r.value === childNoNationalIdReason,
+                )?.label ?? childNoNationalIdReason
               : '',
             hideIfEmpty: true,
           },
