@@ -393,12 +393,6 @@ export const m = defineMessages({
     defaultMessage: 'Afhendingarstaður',
     description: 'location for pickup',
   },
-  pickupLocationDescription: {
-    id: 'dla.application:pickupLocationDescription',
-    defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.',
-    description: 'location for pickup',
-  },
   deliveryMethodHeader: {
     id: 'dla.application:deliveryMethodHeader',
     defaultMessage: 'Hvernig vilt þú fá plastökuskírteini þitt afhent?',

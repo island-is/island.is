@@ -18,7 +18,6 @@ export const sectionDelivery = buildSection({
     buildMultiField({
       id: 'info',
       title: m.pickupLocationTitle,
-      description: m.pickupLocationDescription,
       children: [
         buildDescriptionField({
           id: 'pickupHeader',
