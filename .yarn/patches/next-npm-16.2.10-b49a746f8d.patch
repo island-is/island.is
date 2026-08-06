@@ -1,3 +1,15 @@
+# island.is patch — Next 16 Pages Router SSR does not pass the CSP nonce to React
+# 19's streaming renderer, so streamed Suspense boundary scripts ($RC/$RB, e.g. from
+# island-ui's lazy-loaded icons) come out un-nonced, get CSP-blocked, and break SSR
+# with React error #419. This ports what App Router already does (fizzOptions.nonce)
+# into the Pages Router: it passes `streamOptions: { nonce }` to renderToInitialFizzStream.
+#
+# Upstream issue: https://github.com/vercel/next.js/issues/96443
+# Upstream fix:   https://github.com/vercel/next.js/pull/96447
+# -> Drop this patch once #96447 is merged and we bump Next past it.
+#
+# Applied to the precompiled pages.runtime.prod.js because that (not dist/server/render.js)
+# is what the production server actually loads.
 diff --git a/dist/compiled/next-server/pages.runtime.prod.js b/dist/compiled/next-server/pages.runtime.prod.js
 index f5022e89dcc012bdf3bfe580d31d74597761abd6..9630854591f7141e050ec63d8b44d7a9391a9744 100644
 --- a/dist/compiled/next-server/pages.runtime.prod.js
