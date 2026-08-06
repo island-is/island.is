@@ -13,6 +13,7 @@ import {
   AdvancedLicenseGroupCodes,
   CHARGE_ITEM_CODES,
   DELIVERY_FEE,
+  DrivingLicenseFakeData,
   organizedAdvancedLicenseMap,
   Pickup,
 } from './constants'
@@ -31,6 +32,43 @@ export const hasUsableRlsQualityPhoto = (externalData: ExternalData): boolean =>
     externalData,
     'qualityPhotoAndSignature.data',
   )?.imageId != null
+
+// The applicant's age, from fakeData when faking, else nationalRegistry.
+// Coerced to a number so a non-numeric/empty fake value becomes 0 rather than
+// NaN (NaN comparisons silently pass the `age < minAge` gates).
+export const getApplicantAge = (
+  externalData: ExternalData,
+  fakeData?: DrivingLicenseFakeData,
+): number => {
+  const raw =
+    fakeData?.useFakeData === YES
+      ? fakeData.age
+      : getValueViaPath<number>(externalData, 'nationalRegistry.data.age')
+  return Number(raw) || 0
+}
+
+// Canonical, uppercased category codes the applicant already holds, from
+// currentLicense (or fakeData when faking). Reads `nr` OR `name` because legacy
+// RLS records carry the category letter in `name` with an empty `nr`, and
+// uppercases so casing differences from RLS don't hide a held category.
+export const getHeldCategories = (
+  externalData: ExternalData,
+  fakeData?: DrivingLicenseFakeData,
+): string[] => {
+  if (fakeData?.useFakeData === YES) {
+    return (fakeData.advancedCategories ?? []).map((code) =>
+      code.toUpperCase(),
+    )
+  }
+  return (
+    getValueViaPath<Array<{ nr?: string | null; name?: string | null }>>(
+      externalData,
+      'currentLicense.data.categories',
+    ) ?? []
+  )
+    .map((category) => (category.nr || category.name)?.toUpperCase())
+    .filter((code): code is string => !!code)
+}
 
 // Whether there is at least one advanced category (main or professional) the
 // applicant is old enough for and does not already hold. Used both to gate the

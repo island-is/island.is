@@ -9,11 +9,12 @@ import {
 } from '@island.is/island-ui/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { useFormContext } from 'react-hook-form'
-import { getValueViaPath, YES } from '@island.is/application/core'
 import {
   organizedAdvancedLicenseMap,
   AdvancedLicense as AdvancedLicenseEnum,
   DrivingLicenseFakeData,
+  getApplicantAge,
+  getHeldCategories,
   hasSelectableAdvancedCategories,
 } from '../../utils'
 import { useLocale } from '@island.is/localization'
@@ -36,31 +37,10 @@ const AdvancedLicenseSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const advancedLicenseValue = watch('advancedLicense') ?? []
 
   const fakeData = watch('fakeData') as DrivingLicenseFakeData | undefined
-  const rawAge =
-    fakeData?.useFakeData === YES
-      ? fakeData.age
-      : getValueViaPath<number>(
-          application.externalData,
-          'nationalRegistry.data.age',
-        )
-  // Coerce to a number so a non-numeric/empty fake value can't become NaN and
-  // silently pass the `age < option.minAge` checks (NaN comparisons are false).
-  const age = Number(rawAge) || 0
-
-  // Categories the applicant already holds — these come back in the
-  // currentLicense data provider (or fakeData when faking) and are tagged
-  // in the list so the applicant can see what they already have.
-  const heldCategories: string[] =
-    fakeData?.useFakeData === YES
-      ? fakeData.advancedCategories ?? []
-      : (
-          getValueViaPath<Array<{ nr?: string | null; name?: string | null }>>(
-            application.externalData,
-            'currentLicense.data.categories',
-          ) ?? []
-        )
-          .map((category) => category.nr ?? category.name)
-          .filter((code): code is string => !!code)
+  // Age and held categories are derived the same way on the prerequisites
+  // eligibility gate, so both screens share these helpers to stay in sync.
+  const age = getApplicantAge(application.externalData, fakeData)
+  const heldCategories = getHeldCategories(application.externalData, fakeData)
 
   const alreadyHasCategory = (code?: string) =>
     !!code && heldCategories.includes(code)

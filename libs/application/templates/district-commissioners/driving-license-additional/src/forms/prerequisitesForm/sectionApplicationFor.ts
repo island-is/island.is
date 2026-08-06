@@ -11,6 +11,8 @@ import {
   B_ADVANCED,
   BE,
   DrivingLicenseFakeData,
+  getApplicantAge,
+  getHeldCategories,
   hasSelectableAdvancedCategories,
   TEMPORARY_LICENSE_VALIDTO_CODE,
 } from '../../utils'
@@ -27,30 +29,27 @@ export const sectionApplicationFor = buildSubSection({
         buildRadioField({
           id: 'applicationFor',
           options: (app) => {
-            let { currentLicense } = getValueViaPath<DrivingLicense>(
-              app.externalData,
-              'currentLicense.data',
-            ) ?? { currentLicense: null }
-
-            let { categories } = getValueViaPath<DrivingLicense>(
-              app.externalData,
-              'currentLicense.data',
-            ) ?? { categories: null }
-
-            let age =
-              getValueViaPath<number>(
-                app.externalData,
-                'nationalRegistry.data.age',
-              ) ?? 0
-
             const fakeData = getValueViaPath<DrivingLicenseFakeData>(
               app.answers,
               'fakeData',
             )
 
+            // Shared with the AdvancedLicenseSelection screen so this
+            // eligibility gate and the selection screen agree on age and on
+            // which advanced categories the applicant already holds.
+            const age = getApplicantAge(app.externalData, fakeData)
+            const heldCategories = getHeldCategories(app.externalData, fakeData)
+
+            const currentLicenseData = getValueViaPath<DrivingLicense>(
+              app.externalData,
+              'currentLicense.data',
+            )
+            let currentLicense = currentLicenseData?.currentLicense ?? null
+            let categories = currentLicenseData?.categories ?? null
+
             if (fakeData?.useFakeData === YES) {
-              // 'none' must stay falsy — it is a string, so it would
-              // otherwise read as "has a license" and disable B-temp.
+              // 'none' must stay falsy: it is a string, so it would otherwise
+              // read as "has a license" and disable B-temp.
               currentLicense =
                 fakeData.currentLicense && fakeData.currentLicense !== 'none'
                   ? fakeData.currentLicense
@@ -66,8 +65,6 @@ export const sectionApplicationFor = buildSubSection({
                       { nr: 'BE', validToCode: 9 },
                     ]
                   : []
-
-              age = Number(fakeData?.age) || 0
             }
 
             const options = [
@@ -98,14 +95,9 @@ export const sectionApplicationFor = buildSubSection({
                       c.validToCode !== TEMPORARY_LICENSE_VALIDTO_CODE,
                   ) ||
                   // Nothing to apply for if the applicant is too young for, or
-                  // already holds, every advanced category — don't let them
+                  // already holds, every advanced category, so don't let them
                   // into a flow that would dead-end on the selection screen.
-                  !hasSelectableAdvancedCategories(
-                    age,
-                    (categories ?? [])
-                      .map((c) => c.nr)
-                      .filter((nr): nr is string => !!nr),
-                  ),
+                  !hasSelectableAdvancedCategories(age, heldCategories),
               },
             ]
 
