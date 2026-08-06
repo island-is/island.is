@@ -587,5 +587,5 @@ const toNumberOrZero = (number: string | undefined) => {
   }
 
   const parsed = Number(number)
-  return Number.isFinite(parsed) ? parsed : 0
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0
 }
