@@ -455,19 +455,6 @@ export const messages = {
         defaultMessage:
           'Sæktu sniðmátið, fylltu út gögnin og hlaðið skjalinu aftur upp hér svo þau flytjist sjálfkrafa inn í umsóknina.',
       },
-      manualCardTitle: {
-        id: 'salaryReport.application:report.dataEntry.manualCardTitle',
-        defaultMessage: 'Handvirkur innsláttur',
-      },
-      manualCardDescription: {
-        id: 'salaryReport.application:report.dataEntry.manualCardDescription',
-        defaultMessage:
-          'Sláðu gögnin inn handvirkt. Sjálfgefin viðmið eru forútfyllt og hægt er að breyta þeim.',
-      },
-      manualButtonLabel: {
-        id: 'salaryReport.application:report.dataEntry.manualButtonLabel',
-        defaultMessage: 'Byrja innslátt',
-      },
       manualEntryCardTitle: {
         id: 'salaryReport.application:report.dataEntry.manualEntryCardTitle',
         defaultMessage: 'Handvirkur innsláttur',
