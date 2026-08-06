@@ -707,11 +707,11 @@ export const messages = {
     employeeClassification: defineMessages({
       sectionTitle: {
         id: 'salaryReport.application:report.employeeClassification.sectionTitle',
-        defaultMessage: 'Flokkun starfsmanna',
+        defaultMessage: 'Mat á einstaklingsbundnum þáttum',
       },
       title: {
         id: 'salaryReport.application:report.employeeClassification.title',
-        defaultMessage: 'Flokkun starfsmanna',
+        defaultMessage: 'Mat á einstaklingsbundnum þáttum',
       },
       intro: {
         id: 'salaryReport.application:report.employeeClassification.intro',
