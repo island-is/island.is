@@ -56,9 +56,7 @@ export const getHeldCategories = (
   fakeData?: DrivingLicenseFakeData,
 ): string[] => {
   if (fakeData?.useFakeData === YES) {
-    return (fakeData.advancedCategories ?? []).map((code) =>
-      code.toUpperCase(),
-    )
+    return (fakeData.advancedCategories ?? []).map((code) => code.toUpperCase())
   }
   return (
     getValueViaPath<Array<{ nr?: string | null; name?: string | null }>>(
