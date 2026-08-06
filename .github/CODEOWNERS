@@ -12,6 +12,7 @@
 # that are developed by others teams, we first list down the team working on the core and
 # further below the other team working on other part of the project.
 /apps/application-system/                                                                                                    @island-is/norda
+/apps/application-system-next/                                                                                               @island-is/norda
 /apps/web*/                                                                                                                  @island-is/juni @island-is/stefna
 /libs/application/                                                                                                           @island-is/norda
 /libs/portals/my-pages/                                                                                                      @island-is/hugsmidjan

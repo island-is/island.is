@@ -1,0 +1,96 @@
+{
+  "name": "application-system-next",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/application-system-next",
+  "projectType": "application",
+  "tags": ["scope:application-system-next"],
+  "targets": {
+    "build": {
+      "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/application-system-next"
+      },
+      "configurations": {
+        "development": {
+          "outputPath": "apps/application-system-next"
+        },
+        "production": {}
+      },
+      "dependsOn": ["build-custom-server"]
+    },
+    "build-custom-server": {
+      "executor": "@nx/webpack:webpack",
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/application-system-next",
+        "main": "apps/application-system-next/server.ts",
+        "tsConfig": "apps/application-system-next/tsconfig.server.json",
+        "maxWorkers": 2,
+        "assets": [],
+        "compiler": "tsc",
+        "target": "node",
+        "webpackConfig": "apps/application-system-next/webpack.config.js"
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "application-system-next:build",
+        "dev": true,
+        "port": 4250,
+        "customServerTarget": "application-system-next:serve-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "application-system-next:build:development",
+          "dev": true,
+          "customServerTarget": "application-system-next:serve-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "application-system-next:build:production",
+          "dev": false,
+          "customServerTarget": "application-system-next:serve-custom-server:production"
+        }
+      }
+    },
+    "serve-custom-server": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "application-system-next:build-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "application-system-next:build-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "application-system-next:build-custom-server:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "apps/application-system-next/jest.config.ts"
+      },
+      "outputs": ["{workspaceRoot}/coverage/apps/application-system-next"]
+    },
+    "docker-next": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-next`"
+    }
+  }
+}
