@@ -267,9 +267,9 @@ export abstract class BaseNotificationService {
 
   protected async uploadEmailToCourt(
     theCase: Case,
-    user: UserDescriptor,
     subject: string,
     body: string,
+    user?: UserDescriptor,
     recipients?: string,
   ): Promise<void> {
     try {
@@ -301,7 +301,7 @@ export abstract class BaseNotificationService {
     recipientEmail,
   }: {
     theCase: Case
-    user: UserDescriptor
+    user: UserDescriptor | undefined
     arraignmentDateLog: DateLog
     recipientName: string
     recipientEmail: string
@@ -329,7 +329,7 @@ export abstract class BaseNotificationService {
     }).then((recipient) => {
       if (recipient.success) {
         // No need to wait
-        this.uploadEmailToCourt(theCase, user, subject, body, recipientEmail)
+        this.uploadEmailToCourt(theCase, subject, body, user, recipientEmail)
       }
 
       return recipient
@@ -374,7 +374,7 @@ export abstract class BaseNotificationService {
     }).then((recipient) => {
       if (recipient.success) {
         // No need to wait
-        this.uploadEmailToCourt(theCase, user, subject, body, recipientEmail)
+        this.uploadEmailToCourt(theCase, subject, body, user, recipientEmail)
       }
 
       return recipient
@@ -396,7 +396,7 @@ export abstract class BaseNotificationService {
     recipientHasAccessToRVG,
   }: {
     theCase: Case
-    user: UserDescriptor
+    user: UserDescriptor | undefined
     recipientName: string
     recipientEmail: string
     recipientHasAccessToRVG: boolean

@@ -243,7 +243,7 @@ export class InternalVerdictController {
         })
       }
 
-      this.eventService.postEvent('VERDICT_SERVICE_STATUS', theCase, false, {
+      this.eventService.postEvent('VERDICT_SERVICE_STATUS', theCase, {
         Staða: getVerdictServiceStatusText(updatedVerdict.serviceStatus),
         Birt:
           formatDate(updatedVerdict.serviceDate, 'dd.MM.y HH:mm') ??

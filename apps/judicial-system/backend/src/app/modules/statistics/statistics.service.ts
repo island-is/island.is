@@ -13,7 +13,6 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import type { User } from '@island.is/judicial-system/types'
 import {
-  AppealCaseNotificationType,
   CaseState,
   CaseType,
   DataGroups,
@@ -37,7 +36,6 @@ import {
   EventLog,
   IndictmentCount,
   Institution,
-  Notification,
   Offense,
   Subpoena,
   SubpoenaRepositoryService,

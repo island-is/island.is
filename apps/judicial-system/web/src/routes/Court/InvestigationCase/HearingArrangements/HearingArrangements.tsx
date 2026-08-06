@@ -13,7 +13,7 @@ import {
   DISTRICT_COURT_INVESTIGATION_CASE_RULING_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { isDistrictCourtUser } from '@island.is/judicial-system/types'
-import { errors, titles } from '@island.is/judicial-system-web/messages'
+import { titles } from '@island.is/judicial-system-web/messages'
 import {
   ArraignmentAlert,
   BlueBox,
@@ -63,13 +63,7 @@ const HearingArrangements = () => {
   const { user } = useContext(UserContext)
 
   const { formatMessage } = useIntl()
-  const {
-    setAndSendCaseToServer,
-    sendNotification,
-    isUpdatingCase,
-    isSendingNotification,
-    sendNotificationError,
-  } = useCase()
+  const { setAndSendCaseToServer, sendNotification, isUpdatingCase } = useCase()
   const {
     courtDate,
     courtDateHasChanged,
@@ -140,8 +134,7 @@ const HearingArrangements = () => {
   )
 
   const isModalConfirming = modalButtonLoading === ModalButtonLoading.PRIMARY
-  const isModalLoading =
-    isModalConfirming && (isUpdatingCase || isSendingNotification)
+  const isModalLoading = isModalConfirming && isUpdatingCase
 
   return (
     <PageLayout
@@ -393,6 +386,7 @@ const HearingArrangements = () => {
             onClick: async () => {
               setModalButtonLoading(ModalButtonLoading.PRIMARY)
 
+              // Saving the arraignment date triggers the court date notifications
               const courtDateSaved = await sendCourtDateToServer()
 
               if (!courtDateSaved) {
@@ -400,16 +394,7 @@ const HearingArrangements = () => {
                 return
               }
 
-              const notificationSent = await sendNotification(
-                workingCase.id,
-                TrackedNotificationType.COURT_DATE,
-              )
-
-              if (notificationSent) {
-                router.push(`${navigateTo}/${workingCase.id}`)
-              } else {
-                setModalButtonLoading(undefined)
-              }
+              router.push(`${navigateTo}/${workingCase.id}`)
             },
             isLoading: isModalLoading,
           }}
@@ -417,14 +402,16 @@ const HearingArrangements = () => {
             text: 'Nei, staðfesta seinna',
             isDisabled: isModalConfirming,
             onClick: () => {
+              // The arraignment date is not confirmed, so we only let registered
+              // advocates know that they are on the case
+              sendNotification(
+                workingCase.id,
+                TrackedNotificationType.ADVOCATE_ASSIGNED,
+              )
+
               router.push(`${navigateTo}/${workingCase.id}`)
             },
           }}
-          errorMessage={
-            modalButtonLoading && sendNotificationError
-              ? formatMessage(errors.sendNotification)
-              : undefined
-          }
         />
       )}
     </PageLayout>

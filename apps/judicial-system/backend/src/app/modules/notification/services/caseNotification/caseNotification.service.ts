@@ -568,7 +568,7 @@ export class CaseNotificationService extends BaseNotificationService {
 
   private sendCourtDateEmailNotificationToProsecutor(
     theCase: Case,
-    user: UserDescriptor,
+    user?: UserDescriptor,
   ): Promise<Recipient> {
     const arraignmentDate = DateLog.arraignmentDate(theCase.dateLogs)
 
@@ -602,9 +602,9 @@ export class CaseNotificationService extends BaseNotificationService {
         // No need to wait
         this.uploadEmailToCourt(
           theCase,
-          user,
           subject,
           body,
+          user,
           theCase.prosecutor?.email,
         )
       }
@@ -695,7 +695,7 @@ export class CaseNotificationService extends BaseNotificationService {
     }).then((recipient) => {
       if (recipient.success) {
         // No need to wait
-        this.uploadEmailToCourt(theCase, user, subject, html, defenderEmail)
+        this.uploadEmailToCourt(theCase, subject, html, user, defenderEmail)
       }
 
       return recipient
@@ -804,11 +804,7 @@ export class CaseNotificationService extends BaseNotificationService {
     theCase: Case,
     user?: UserDescriptor,
   ): Promise<DeliverResponse> {
-    if (!user) {
-      // nothing happens
-      return { delivered: true }
-    }
-
+    // TODO: Move to case service
     this.eventService.postEvent('SCHEDULE_COURT_DATE', theCase)
 
     const promises: Promise<Recipient>[] = []
@@ -1814,6 +1810,42 @@ export class CaseNotificationService extends BaseNotificationService {
   //#endregion
 
   //#region ADVOCATE_ASSIGNED notifications */
+
+  // Sent when the district court registers an advocate but does not confirm an
+  // arraignment date. Without a confirmed arraignment date the advocate has no
+  // access to the case in RVG, so this notification is information only - it
+  // deliberately carries no link to the case.
+  private sendAdvocateAssignedEmailNotification({
+    theCase,
+    advocateName,
+    advocateEmail,
+    advocateSubRole,
+  }: {
+    theCase: Case
+    advocateName?: string
+    advocateEmail?: string
+    advocateSubRole: DefenderSubRole
+  }): Promise<Recipient> {
+    const html = formatDefenderCourtDateLinkEmailNotification({
+      formatMessage: this.formatMessage,
+      // No overview url - the advocate cannot access the case yet
+      overviewUrl: undefined,
+      court: theCase.court?.name,
+      courtCaseNumber: theCase.courtCaseNumber,
+      requestSharedWithDefender: false,
+      defenderSubRole: advocateSubRole,
+    })
+
+    return this.sendEmail({
+      subject: `Yfirlit máls ${theCase.courtCaseNumber}`,
+      html,
+      recipientName: advocateName,
+      recipientEmail: advocateEmail,
+      // The email is information only, so we do not append the link tail either
+      skipTail: true,
+    })
+  }
+
   private shouldSendAdvocateAssignedNotification(
     theCase: Case,
     advocateEmail?: string,
@@ -1821,34 +1853,18 @@ export class CaseNotificationService extends BaseNotificationService {
     if (!advocateEmail) {
       return false
     }
-    if (isInvestigationCase(theCase.type)) {
-      const isDefenderIncludedInSessionArrangements =
-        theCase.sessionArrangements &&
-        [
-          SessionArrangements.ALL_PRESENT,
-          SessionArrangements.ALL_PRESENT_SPOKESPERSON,
-        ].includes(theCase.sessionArrangements)
 
-      if (!isDefenderIncludedInSessionArrangements) {
-        return false
-      }
-    } else if (isRequestCase(theCase.type)) {
-      const hasDefenderBeenNotified = this.hasReceivedNotification(
-        [
-          TrackedNotificationType.READY_FOR_COURT,
-          TrackedNotificationType.COURT_DATE,
-          TrackedNotificationType.ADVOCATE_ASSIGNED,
-        ],
-        theCase.defenderEmail,
-        theCase.notifications,
-      )
+    const hasAdvocateBeenNotified = this.hasReceivedNotification(
+      [
+        TrackedNotificationType.READY_FOR_COURT,
+        TrackedNotificationType.COURT_DATE,
+        TrackedNotificationType.ADVOCATE_ASSIGNED,
+      ],
+      advocateEmail,
+      theCase.notifications,
+    )
 
-      if (hasDefenderBeenNotified) {
-        return false
-      }
-    }
-
-    return true
+    return !hasAdvocateBeenNotified
   }
 
   private async sendAdvocateAssignedNotifications(
@@ -1856,14 +1872,50 @@ export class CaseNotificationService extends BaseNotificationService {
   ): Promise<DeliverResponse> {
     const promises: Promise<Recipient>[] = []
 
-    if (DateLog.arraignmentDate(theCase.dateLogs)?.date) {
-      const shouldSend = this.shouldSendAdvocateAssignedNotification(
+    // DEFENDER / SPOKESPERSON
+    const isDefenderIncludedInSessionArrangements =
+      isRestrictionCase(theCase.type) ||
+      (theCase.sessionArrangements &&
+        [
+          SessionArrangements.ALL_PRESENT,
+          SessionArrangements.ALL_PRESENT_SPOKESPERSON,
+        ].includes(theCase.sessionArrangements))
+
+    if (
+      isDefenderIncludedInSessionArrangements &&
+      this.shouldSendAdvocateAssignedNotification(
         theCase,
         theCase.defenderEmail,
       )
+    ) {
+      promises.push(
+        this.sendAdvocateAssignedEmailNotification({
+          theCase,
+          advocateName: theCase.defenderName,
+          advocateEmail: theCase.defenderEmail,
+          advocateSubRole: DefenderSubRole.DEFENDANT_DEFENDER,
+        }),
+      )
+    }
 
-      if (shouldSend) {
-        promises.push(this.sendCourtDateEmailNotificationToDefender(theCase))
+    // VICTIM LAWYER
+    if (isInvestigationCase(theCase.type)) {
+      for (const victim of theCase.victims ?? []) {
+        if (
+          this.shouldSendAdvocateAssignedNotification(
+            theCase,
+            victim.lawyerEmail,
+          )
+        ) {
+          promises.push(
+            this.sendAdvocateAssignedEmailNotification({
+              theCase,
+              advocateName: victim.lawyerName,
+              advocateEmail: victim.lawyerEmail,
+              advocateSubRole: DefenderSubRole.VICTIM_LAWYER,
+            }),
+          )
+        }
       }
     }
 
@@ -2342,9 +2394,21 @@ export class CaseNotificationService extends BaseNotificationService {
   private sendNotification(
     type: UmbrellaNotificationType,
     theCase: Case,
-    user: User,
+    user?: User,
     userDescriptor?: UserDescriptor,
   ): Promise<DeliverResponse> {
+    // A few notifications are only ever triggered by a registered user and
+    // cannot be sent without one
+    const requireUser = (): User => {
+      if (!user) {
+        throw new InternalServerErrorException(
+          `Notification type ${type} requires a user`,
+        )
+      }
+
+      return user
+    }
+
     switch (type) {
       case RequestCaseNotificationType.HEADS_UP:
         return this.sendHeadsUpNotifications(theCase)
@@ -2367,7 +2431,7 @@ export class CaseNotificationService extends BaseNotificationService {
       case RequestCaseNotificationType.RULING:
         return this.sendRulingNotifications(theCase)
       case RequestCaseNotificationType.MODIFIED:
-        return this.sendModifiedNotifications(theCase, user)
+        return this.sendModifiedNotifications(theCase, requireUser())
       case RequestCaseNotificationType.REVOKED:
         return this.sendRevokedNotifications(theCase)
       case RequestCaseNotificationType.ADVOCATE_ASSIGNED:
@@ -2377,7 +2441,7 @@ export class CaseNotificationService extends BaseNotificationService {
       case IndictmentCaseNotificationType.INDICTMENT_DENIED:
         return this.sendIndictmentDeniedNotifications(theCase)
       case RequestCaseNotificationType.CASE_FILES_UPDATED:
-        return this.sendCaseFilesUpdatedNotifications(theCase, user)
+        return this.sendCaseFilesUpdatedNotifications(theCase, requireUser())
       case IndictmentCaseNotificationType.RULING_ORDER_ADDED:
         return this.sendRulingOrderAddedNotifications(theCase)
       case IndictmentCaseNotificationType.PUBLIC_PROSECUTOR_REVIEWER_ASSIGNED:
@@ -2394,7 +2458,7 @@ export class CaseNotificationService extends BaseNotificationService {
   async sendCaseNotification(
     type: UmbrellaNotificationType,
     theCase: Case,
-    user: User,
+    user?: User,
     userDescriptor?: UserDescriptor,
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
