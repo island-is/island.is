@@ -658,7 +658,7 @@ export class CaseNotificationService extends BaseNotificationService {
     defenderSubRole,
   }: {
     theCase: Case
-    user: UserDescriptor
+    user: UserDescriptor | undefined
     defenderName?: string
     defenderEmail?: string
     defenderNationalId?: string

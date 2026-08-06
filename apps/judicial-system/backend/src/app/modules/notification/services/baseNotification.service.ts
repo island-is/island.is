@@ -345,7 +345,7 @@ export abstract class BaseNotificationService {
     recipientHasAccessToRVG,
   }: {
     theCase: Case
-    user: UserDescriptor
+    user: UserDescriptor | undefined
     courtDate: DateLog
     recipientName: string
     recipientEmail: string

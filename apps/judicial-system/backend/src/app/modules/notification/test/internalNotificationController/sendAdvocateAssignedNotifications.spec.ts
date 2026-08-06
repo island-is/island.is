@@ -168,7 +168,7 @@ describe('InternalNotificationController - Send advocate assigned notifications'
     })
   })
 
-  describe('when the defender already has access to the case', () => {
+  describe('when the defender has already been sent a link to the case', () => {
     const caseId = uuid()
     const theCase = {
       id: caseId,
@@ -178,6 +178,12 @@ describe('InternalNotificationController - Send advocate assigned notifications'
       defenderEmail: defender.email,
       defenderName: defender.name,
       requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
+      notifications: [
+        {
+          type: TrackedNotificationType.READY_FOR_COURT,
+          recipients: [{ address: defender.email, success: true }],
+        },
+      ],
     } as Case
 
     let then: Then
@@ -287,7 +293,7 @@ describe('InternalNotificationController - Send advocate assigned notifications'
     })
   })
 
-  describe('when a victim lawyer already has access to the case', () => {
+  describe('when a victim lawyer has already been sent a link to the case', () => {
     const caseId = uuid()
     const theCase = {
       id: caseId,
@@ -300,6 +306,12 @@ describe('InternalNotificationController - Send advocate assigned notifications'
           lawyerEmail: victimLawyer.email,
           lawyerName: victimLawyer.name,
           lawyerAccessToRequest: RequestSharedWhen.READY_FOR_COURT,
+        },
+      ],
+      notifications: [
+        {
+          type: TrackedNotificationType.READY_FOR_COURT,
+          recipients: [{ address: victimLawyer.email, success: true }],
         },
       ],
     } as Case
