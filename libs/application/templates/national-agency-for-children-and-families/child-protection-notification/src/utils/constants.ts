@@ -26,6 +26,7 @@ export enum ApiModuleActions {
   getDisabilityStatuses = 'getDisabilityStatuses',
   getChildUnknownNationalIdStates = 'getChildUnknownNationalIdStates',
   getGuardianNotAwareReasons = 'getGuardianNotAwareReasons',
+  getSchoolTypes = 'getSchoolTypes',
   createNotification = 'createNotification',
   completeNotification = 'completeNotification',
 }
@@ -46,7 +47,7 @@ export const DO_NOT_KNOW = 'doNotKnow'
 export const NOT_APPLICABLE = 'notApplicable'
 export const PROT_FACTOR_UNBORN_SECTION = 'ProtFactorUnbornSection'
 
-export const SCHOOL_TYPES = ['kindergarten', 'elementarySchool', 'highSchool']
+export const SCHOOL_TYPES = ['Leikskóli', 'Grunnskóli', 'Framhaldsskóli']
 
 export enum LanguageEnvironmentOptions {
   ONLY_ICELANDIC = 'onlyIcelandic',

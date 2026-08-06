@@ -65,3 +65,9 @@ export const GuardianNotAwareReasonsApi = defineTemplateApi({
   externalDataId: 'guardianNotAwareReasons',
   namespace: ApplicationTypes.CHILD_PROTECTION_NOTIFICATION,
 })
+
+export const SchoolTypesApi = defineTemplateApi({
+  action: ApiModuleActions.getSchoolTypes,
+  externalDataId: 'schoolTypes',
+  namespace: ApplicationTypes.CHILD_PROTECTION_NOTIFICATION,
+})

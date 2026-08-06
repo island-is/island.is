@@ -98,6 +98,9 @@ export const getApplicationExternalData = (
       'guardianNotAwareReasons.data',
     ) ?? []
 
+  const schoolTypes =
+    getValueViaPath<DropDownDto[]>(externalData, 'schoolTypes.data') ?? []
+
   return {
     applicantName,
     applicantNationalId,
@@ -117,5 +120,6 @@ export const getApplicationExternalData = (
     disabilityStatusOptions,
     childUnknownNationalIdStates,
     guardianNotAwareReasons,
+    schoolTypes,
   }
 }

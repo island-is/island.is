@@ -46,26 +46,6 @@ export const memmMessages = {
       defaultMessage: 'Veldu menntun eða gæslu',
       description: 'Placeholder for the education type dropdown',
     },
-    typeKindergarten: {
-      id: 'cpn.application:memm.education.typeKindergarten',
-      defaultMessage: 'Leikskóli',
-      description: 'Education type: kindergarten/preschool',
-    },
-    typeElementarySchool: {
-      id: 'cpn.application:memm.education.typeElementarySchool',
-      defaultMessage: 'Grunnskóli',
-      description: 'Education type: elementary school',
-    },
-    typeHighSchool: {
-      id: 'cpn.application:memm.education.typeHighSchool',
-      defaultMessage: 'Framhaldsskóli',
-      description: 'Education type: high school',
-    },
-    typeDaycareProvider: {
-      id: 'cpn.application:memm.education.typeDaycareProvider',
-      defaultMessage: 'Dagforeldri',
-      description: 'Education type: daycare provider',
-    },
     schoolName: {
       id: 'cpn.application:memm.education.schoolName',
       defaultMessage: 'Nafn á skóla',

@@ -11,6 +11,7 @@ import {
   isDayCareProvider,
   isSchoolType,
 } from '../../../../utils/conditionUtils'
+import { getApplicationExternalData } from '../../../../utils/getApplicationExternalData'
 
 export const educationSubSection = buildSubSection({
   id: 'memmEducationSubSection',
@@ -33,25 +34,13 @@ export const educationSubSection = buildSubSection({
           title: memmMessages.education.typeLabel,
           placeholder: memmMessages.education.typePlaceholder,
           doesNotRequireAnswer: true,
-          // TODO: replace with school list dropdown from API when available
-          options: [
-            {
-              value: 'kindergarten',
-              label: memmMessages.education.typeKindergarten,
-            },
-            {
-              value: 'elementarySchool',
-              label: memmMessages.education.typeElementarySchool,
-            },
-            {
-              value: 'highSchool',
-              label: memmMessages.education.typeHighSchool,
-            },
-            {
-              value: 'daycareProvider',
-              label: memmMessages.education.typeDaycareProvider,
-            },
-          ],
+          options: ({ externalData }) => {
+            const { schoolTypes } = getApplicationExternalData(externalData)
+            return schoolTypes.map((r) => ({
+              value: r.value ?? '',
+              label: r.label ?? '',
+            }))
+          },
         }),
         buildTextField({
           id: 'memm.education.schoolName',

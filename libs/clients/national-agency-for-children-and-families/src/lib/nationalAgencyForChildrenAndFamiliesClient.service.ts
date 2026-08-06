@@ -62,4 +62,8 @@ export class NationalAgencyForChildrenAndFamiliesClientService {
       user,
     ).externalGuardianNotAwareReasons()
   }
+
+  async getSchoolTypes(user: User): Promise<DropDownDto[]> {
+    return await this.externalDropdownApiWithAuth(user).externalSchoolTypes()
+  }
 }

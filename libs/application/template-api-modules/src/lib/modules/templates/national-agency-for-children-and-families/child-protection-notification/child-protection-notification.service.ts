@@ -58,6 +58,12 @@ export class ChildProtectionNotificationService extends BaseTemplateApiService {
     )
   }
 
+  async getSchoolTypes({ auth }: TemplateApiModuleActionProps) {
+    return await this.nationalAgencyForChildrenAndFamiliesClientService.getSchoolTypes(
+      auth,
+    )
+  }
+
   async getChildInformation({
     auth,
     application,
