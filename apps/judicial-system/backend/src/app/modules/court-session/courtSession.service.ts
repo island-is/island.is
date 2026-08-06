@@ -33,7 +33,9 @@ import {
 
 import {
   buildInCourtAppealedEvent,
+  hasOutOfCourtAppeal,
   inCourtAppellantsFromDecisions,
+  isOutOfCourtAppealEvent,
 } from '../appeal-case'
 import { transitionAppealCase } from '../appeal-case'
 import { EventLogService } from '../event-log'
@@ -395,11 +397,28 @@ export class CourtSessionService {
       (d) => d.decision === CaseAppealDecision.APPEAL,
     )
 
-    if (!someoneAppealedInCourt) {
-      throw new BadRequestException(
-        'The appeal of this ruling has progressed past the district court and cannot be removed by correcting the court record',
-      )
+    if (someoneAppealedInCourt) {
+      return
     }
+
+    // An appeal a party filed itself is not held up by the court record: it has
+    // no decision = APPEAL row, so the absence of one is not the correction
+    // removing anything, and reconciliation leaves such an appeal in place.
+    const appealedEvents = await this.appealEventLogRepositoryService.findAll({
+      where: {
+        appealCaseId: existingAppealCase.id,
+        eventType: AppealEventType.APPEALED,
+      },
+      transaction,
+    })
+
+    if (hasOutOfCourtAppeal(appealedEvents)) {
+      return
+    }
+
+    throw new BadRequestException(
+      'The appeal of this ruling has progressed past the district court and cannot be removed by correcting the court record',
+    )
   }
 
   // The session's ruling is being removed (the ruling type moved away from
@@ -503,8 +522,13 @@ export class CourtSessionService {
     const eventsToAdd = appellants.filter(
       (appellant) => !existingKeys.has(partyKey(appellant)),
     )
+    // Only an appeal made in court can be corrected away by changing the court
+    // record. A party that filed its own appeal for this ruling has no
+    // decision = APPEAL row at all, so its key is never in appealedKeys -
+    // removing it would erase a real appeal.
     const eventsToRemove = existingEvents.filter(
-      (event) => !appealedKeys.has(partyKey(event)),
+      (event) =>
+        !isOutOfCourtAppealEvent(event) && !appealedKeys.has(partyKey(event)),
     )
 
     await Promise.all(
@@ -638,8 +662,26 @@ export class CourtSessionService {
       return
     }
 
-    // No in-court appeals remain (all corrected away) -> delete a still-APPEALED
-    // appeal case.
+    // No in-court appeals remain. If a party filed its own appeal of this ruling
+    // there is still an appeal - a court-record correction cannot take it away -
+    // so only an appeal that existed solely because of the corrected-away
+    // decisions may be deleted.
+    const appealedEvents = await this.appealEventLogRepositoryService.findAll({
+      where: {
+        appealCaseId: existingAppealCase.id,
+        eventType: AppealEventType.APPEALED,
+      },
+      transaction,
+    })
+
+    if (hasOutOfCourtAppeal(appealedEvents)) {
+      this.logger.debug(
+        `Kept the out-of-court appeal of ruling ${rulingFileId} of case ${theCase.id} after a court record correction`,
+      )
+
+      return
+    }
+
     if (existingAppealCase.appealState === AppealCaseState.APPEALED) {
       await this.deleteInCourtRulingOrderAppeal(
         theCase,
@@ -714,12 +756,31 @@ export class CourtSessionService {
       existingAppealCase &&
       existingAppealCase.appealState === AppealCaseState.APPEALED
     ) {
-      await this.deleteInCourtRulingOrderAppeal(
-        theCase,
-        existingAppealCase,
-        user,
-        transaction,
+      const appealedEvents = await this.appealEventLogRepositoryService.findAll(
+        {
+          where: {
+            appealCaseId: existingAppealCase.id,
+            eventType: AppealEventType.APPEALED,
+          },
+          transaction,
+        },
       )
+
+      // A party's own appeal is not a consequence of the ruling being pronounced
+      // here, so dropping the ruling from the court record must not destroy it.
+      // It keeps pointing at the ruling file it was filed against.
+      if (hasOutOfCourtAppeal(appealedEvents)) {
+        this.logger.debug(
+          `Kept the out-of-court appeal of ruling ${previousRulingFileId} of case ${theCase.id} after its ruling was removed from the court record`,
+        )
+      } else {
+        await this.deleteInCourtRulingOrderAppeal(
+          theCase,
+          existingAppealCase,
+          user,
+          transaction,
+        )
+      }
     }
 
     // The session no longer pronounces a ruling order, so there is no file to
