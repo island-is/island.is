@@ -11,10 +11,13 @@ import { mockCase } from '../../../../utils/mocks'
 import { IntlProviderWrapper } from '../../../../utils/testHelpers'
 import AppealSections from './AppealSections'
 
-jest.mock('@island.is/judicial-system-web/src/utils/hooks/useCaseAppealDecision', () => ({
-  __esModule: true,
-  default: () => ({ updateCaseAppealDecision: jest.fn() }),
-}))
+jest.mock(
+  '@island.is/judicial-system-web/src/utils/hooks/useCaseAppealDecision',
+  () => ({
+    __esModule: true,
+    default: () => ({ updateCaseAppealDecision: jest.fn() }),
+  }),
+)
 
 jest.mock('./useDebouncedAppealAnnouncement', () => ({
   __esModule: true,
@@ -31,10 +34,7 @@ describe('AppealSections', () => {
   const renderComponent = (workingCase: Case) =>
     render(
       <IntlProviderWrapper>
-        <AppealSections
-          workingCase={workingCase}
-          setWorkingCase={jest.fn()}
-        />
+        <AppealSections workingCase={workingCase} setWorkingCase={jest.fn()} />
       </IntlProviderWrapper>,
     )
 
