@@ -55,13 +55,6 @@ const knowsNationalIdLabelMap = {
   [KnowsNationalId.UNBORN]: childMessages.nationalIdLookup.radioOptionUnborn,
 } as const
 
-const noNationalIdReasonLabelMap = {
-  [NoNationalIdReason.EXPECTED_BUT_UNKNOWN]:
-    childMessages.noNationalId.reasonExpectedButUnknown,
-  [NoNationalIdReason.TRAVELER]: childMessages.noNationalId.reasonTraveler,
-  [NoNationalIdReason.BORDER_RECEPTION]:
-    childMessages.noNationalId.reasonBorderReception,
-} as const
 
 const receptionRadioLabelMap = {
   [YES]: sharedMessages.radioYes,
