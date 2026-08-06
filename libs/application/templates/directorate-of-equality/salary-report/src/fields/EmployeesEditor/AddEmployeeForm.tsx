@@ -173,7 +173,6 @@ export const AddEmployeeForm: FC<Props> = ({
               label={formatMessage(m.fieldLabel)}
               backgroundColor="white"
               size="sm"
-              required
               rules={{ required: requiredMsg }}
               error={errors.field?.message}
             />
@@ -185,7 +184,6 @@ export const AddEmployeeForm: FC<Props> = ({
               label={formatMessage(m.departmentLabel)}
               backgroundColor="white"
               size="sm"
-              required
               rules={{ required: requiredMsg }}
               error={errors.department?.message}
             />
