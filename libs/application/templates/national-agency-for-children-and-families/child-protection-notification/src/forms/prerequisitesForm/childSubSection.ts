@@ -19,7 +19,7 @@ import {
   sharedMessages,
 } from '../../lib/messages'
 import { isKnowsNationalId, isNoNationalId } from '../../utils/conditionUtils'
-import { KnowsNationalId, NoNationalIdReason } from '../../utils/constants'
+import { KnowsNationalId } from '../../utils/constants'
 import { getApplicationAnswers } from '../../utils/getApplicationAnswers'
 import { getApplicationExternalData } from '../../utils/getApplicationExternalData'
 
@@ -57,20 +57,14 @@ export const childSubSection = buildSubSection({
           title: childMessages.noNationalId.reasonLabel,
           placeholder: childMessages.noNationalId.reasonPlaceholder,
           condition: isNoNationalId,
-          options: [
-            {
-              value: NoNationalIdReason.EXPECTED_BUT_UNKNOWN,
-              label: childMessages.noNationalId.reasonExpectedButUnknown,
-            },
-            {
-              value: NoNationalIdReason.TRAVELER,
-              label: childMessages.noNationalId.reasonTraveler,
-            },
-            {
-              value: NoNationalIdReason.BORDER_RECEPTION,
-              label: childMessages.noNationalId.reasonBorderReception,
-            },
-          ],
+          options: ({ externalData }) => {
+            const { childUnknownNationalIdStates } =
+              getApplicationExternalData(externalData)
+            return childUnknownNationalIdStates.map((r) => ({
+              value: r.value ?? '',
+              label: r.label ?? '',
+            }))
+          },
         }),
         buildDescriptionField({
           id: 'child.childInfoTitle',
