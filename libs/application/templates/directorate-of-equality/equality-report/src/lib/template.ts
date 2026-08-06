@@ -167,6 +167,20 @@ const template: ApplicationTemplate<
               label: coreMessages.tagsInProgress,
               variant: 'blueberry',
             },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: coreHistoryMessages.applicationApproved,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: coreHistoryMessages.applicationRejected,
+              },
+              {
+                onEvent: DefaultEvents.EDIT,
+                logMessage: 'Application sent back to draft for editing',
+              },
+            ],
           },
           onEntry: defineTemplateApi({
             action: ApiActions.submitEqualityReport,
@@ -183,11 +197,6 @@ const template: ApplicationTemplate<
                 ),
               read: 'all',
               delete: true,
-            },
-            {
-              id: Roles.REVIEWER,
-              write: 'all',
-              read: 'all',
             },
           ],
         },

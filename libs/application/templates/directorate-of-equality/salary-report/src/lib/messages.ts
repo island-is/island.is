@@ -1006,4 +1006,11 @@ export const messages = {
       defaultMessage: 'Senda inn úrbótaáætlun',
     },
   }),
+
+  historyLogs: defineMessages({
+    postponed: {
+      id: 'salaryReport.application:historyLogs.postponed',
+      defaultMessage: 'Salary report outliers postponed',
+    },
+  }),
 }

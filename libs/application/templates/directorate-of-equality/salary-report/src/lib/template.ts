@@ -30,6 +30,7 @@ import {
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
 import {
+  coreHistoryMessages,
   coreMessages,
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
@@ -179,6 +180,12 @@ const template: ApplicationTemplate<
               label: messages.postponed.tagLabel,
               variant: 'blueberry',
             },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: messages.historyLogs.postponed,
+              },
+            ],
           },
           roles: [
             {
@@ -219,6 +226,16 @@ const template: ApplicationTemplate<
               label: coreMessages.tagsInProgress,
               variant: 'blueberry',
             },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: coreHistoryMessages.applicationApproved,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: coreHistoryMessages.applicationRejected,
+              },
+            ],
           },
           roles: [
             {
