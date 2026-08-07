@@ -168,6 +168,21 @@ describe('htmlToBlocks', () => {
     expect(htmlToBlocks('<p class="indent-3">x</p>')[0].indent).toBe(90)
   })
 
+  it('applies an indent-N class on other block tags to nested content', () => {
+    // The editor's content CSS indents any element carrying the class, not
+    // just paragraphs, so div/li/blockquote must indent here too.
+    expect(htmlToBlocks('<div class="indent-2">x</div>')[0].indent).toBe(60)
+    expect(
+      htmlToBlocks('<blockquote class="indent-1"><p>x</p></blockquote>')[0]
+        .indent,
+    ).toBe(30)
+    expect(
+      htmlToBlocks(
+        '<ul><li class="indent-1"><p class="indent-1">x</p></li></ul>',
+      )[0].indent,
+    ).toBe(60)
+  })
+
   it('caps a class-based indent at the maximum level', () => {
     const blocks = htmlToBlocks('<p class="indent-99">x</p>')
     expect(blocks[0].indent).toBe(300)

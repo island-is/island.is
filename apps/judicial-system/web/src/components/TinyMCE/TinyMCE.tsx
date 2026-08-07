@@ -34,7 +34,7 @@ const CLASS_CONTENT_STYLE = [
   ...Array.from(
     { length: MAX_INDENT_LEVEL },
     (_, i) =>
-      `p.${indentClassFromLevel(i + 1)} { padding-left: ${
+      `.${indentClassFromLevel(i + 1)} { padding-left: ${
         (i + 1) * INDENT_STEP_PX
       }px; }`,
   ),

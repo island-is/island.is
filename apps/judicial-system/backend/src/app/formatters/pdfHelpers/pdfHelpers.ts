@@ -592,6 +592,14 @@ const collectRuns = (
   }
 }
 
+const indentFromClass = (el: Element): number => {
+  const classMatch = el.attribs?.class?.match(INDENT_CLASS_REGEX)
+
+  return classMatch
+    ? Math.min(MAX_INDENT_LEVEL, parseInt(classMatch[1], 10)) * INDENT_LEVEL_PT
+    : 0
+}
+
 const collectBlocksFromNodes = (
   nodes: ChildNode[],
   indent = 0,
@@ -614,12 +622,11 @@ const collectBlocksFromNodes = (
     const children = el.children ?? []
 
     if (el.name === 'p') {
-      const classMatch = el.attribs?.class?.match(INDENT_CLASS_REGEX)
       const style = el.attribs?.style ?? ''
       const paddingMatch = style.match(/padding-left:\s*(\d+(?:\.\d+)?)px/)
-      const pIndent = classMatch
-        ? Math.min(MAX_INDENT_LEVEL, parseInt(classMatch[1], 10)) *
-          INDENT_LEVEL_PT
+      const classIndent = indentFromClass(el)
+      const pIndent = classIndent
+        ? classIndent
         : paddingMatch
         ? Math.round(parseFloat(paddingMatch[1]) * 0.75)
         : 0
@@ -646,7 +653,12 @@ const collectBlocksFromNodes = (
         })
       }
     } else {
-      blocks.push(...collectBlocksFromNodes(children, indent))
+      // The editor also puts indent-N on div/li/blockquote (legacy or pasted
+      // content), and its content CSS indents any element carrying the class —
+      // so carry the level down onto the blocks nested inside.
+      blocks.push(
+        ...collectBlocksFromNodes(children, indent + indentFromClass(el)),
+      )
     }
   }
 
