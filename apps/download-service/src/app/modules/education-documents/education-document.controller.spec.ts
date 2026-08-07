@@ -80,6 +80,25 @@ afterEach(() => {
 const post = () => request(app.getHttpServer()).post(ENDPOINT).send({})
 
 describe('EducationController — getPrimarySchoolAssignmentResultPdf', () => {
+  it.each(['old', 'current', 'new'] as const)(
+    'logs which implementation is serving the request (%s)',
+    async (implementation) => {
+      flagState.implementation = implementation
+      fakePdfClient.getAssignmentResultPdf.mockResolvedValue(fakePdfBlob())
+
+      await post()
+
+      expect(fakeLogger.info).toHaveBeenCalledWith(
+        'Serving primary school assignment result PDF request',
+        expect.objectContaining({
+          implementation,
+          studentId: 'student1',
+          assignmentResultId: 'result1',
+        }),
+      )
+    },
+  )
+
   describe("implementation: 'current' (default, today's real code)", () => {
     beforeEach(() => {
       flagState.implementation = 'current'
@@ -198,16 +217,22 @@ describe('EducationController — getPrimarySchoolAssignmentResultPdf', () => {
       await post()
       expect(fakeAudit.audit).not.toHaveBeenCalled()
     })
+  })
 
-    describe('simulate-failure flag', () => {
-      let randomSpy: jest.SpyInstance
+  describe('simulate-failure flag (Features.downloadServiceSimulateMmsPrimarySchoolFailure)', () => {
+    let randomSpy: jest.SpyInstance
 
+    beforeEach(() => {
+      flagState.simulateFailure = true
+    })
+
+    afterEach(() => {
+      randomSpy?.mockRestore()
+    })
+
+    describe("scenario coverage (implementation: 'new')", () => {
       beforeEach(() => {
-        flagState.simulateFailure = true
-      })
-
-      afterEach(() => {
-        randomSpy?.mockRestore()
+        flagState.implementation = 'new'
       })
 
       it.each([0, 1, 2, 3, 4, 5])(
@@ -226,6 +251,41 @@ describe('EducationController — getPrimarySchoolAssignmentResultPdf', () => {
           // (not thrown Nest HttpExceptions), so ErrorFilter catches every one
           // and flattens it to 500 — matches the "propagate raw" design.
           expect(res.status).toBe(500)
+        },
+      )
+    })
+
+    describe('applies to every implementation variant, not just the new one', () => {
+      it.each(['old', 'current', 'new'] as const)(
+        'never calls the real client and returns a 500 for implementation: %s',
+        async (implementation) => {
+          flagState.implementation = implementation
+
+          const res = await post()
+
+          expect(fakePdfClient.getAssignmentResultPdf).not.toHaveBeenCalled()
+          expect(fakeLogger.info).toHaveBeenCalledWith(
+            'Simulating MMS primary-school PDF failure',
+            expect.objectContaining({
+              scenario: expect.any(String),
+              studentId: 'student1',
+              assignmentResultId: 'result1',
+            }),
+          )
+          expect(res.status).toBe(500)
+
+          if (implementation === 'current') {
+            // Caught by the 'current' variant's own manual catch block.
+            expect(fakeLogger.error).toHaveBeenCalledWith(
+              'Failed to get primary school assignment result PDF',
+              expect.objectContaining({ assignmentResultId: 'result1' }),
+            )
+          } else {
+            // 'old' and 'new' both let it propagate uncaught to ProblemModule.
+            expect(res.headers['content-type']).toContain(
+              'application/problem+json',
+            )
+          }
         },
       )
     })

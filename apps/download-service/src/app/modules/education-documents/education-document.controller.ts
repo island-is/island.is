@@ -211,6 +211,40 @@ export class EducationController {
     )
   }
 
+  // Shared by all three variants so the simulate-failure flag (Features.
+  // downloadServiceSimulateMmsPrimarySchoolFailure) exercises each variant's
+  // own error handling, not just the 'new' implementation's.
+  private async getAssignmentResultPdfOrSimulatedFailure(
+    user: User,
+    studentId: string,
+    assignmentResultId: string,
+  ) {
+    const simulateFailure = await this.featureFlagService.getValue(
+      Features.downloadServiceSimulateMmsPrimarySchoolFailure,
+      false,
+      user,
+    )
+
+    if (simulateFailure) {
+      const scenario =
+        SIMULATED_FAILURE_SCENARIOS[
+          Math.floor(Math.random() * SIMULATED_FAILURE_SCENARIOS.length)
+        ]
+      this.logger.info('Simulating MMS primary-school PDF failure', {
+        scenario: scenario.name,
+        studentId,
+        assignmentResultId,
+      })
+      throw scenario.make()
+    }
+
+    return this.primarySchoolService.getAssignmentResultPdf(
+      user,
+      studentId,
+      assignmentResultId,
+    )
+  }
+
   // TEMPORARY — pre-#22820 behavior, kept only for side-by-side comparison via
   // Features.downloadServiceMmsPrimarySchoolImplementationTest. Delete once 'new'
   // is trusted.
@@ -220,7 +254,7 @@ export class EducationController {
     user: User,
     res: Response,
   ) {
-    const blob = await this.primarySchoolService.getAssignmentResultPdf(
+    const blob = await this.getAssignmentResultPdfOrSimulatedFailure(
       user,
       studentId,
       assignmentResultId,
@@ -264,7 +298,7 @@ export class EducationController {
     res: Response,
   ) {
     try {
-      const blob = await this.primarySchoolService.getAssignmentResultPdf(
+      const blob = await this.getAssignmentResultPdfOrSimulatedFailure(
         user,
         studentId,
         assignmentResultId,
@@ -317,27 +351,10 @@ export class EducationController {
     user: User,
   ) {
     return withLoggingContext({ studentId, assignmentResultId }, async () => {
-      const simulateFailure = await this.featureFlagService.getValue(
-        Features.downloadServiceSimulateMmsPrimarySchoolFailure,
-        false,
-        user,
-      )
-
-      if (simulateFailure) {
-        const scenario =
-          SIMULATED_FAILURE_SCENARIOS[
-            Math.floor(Math.random() * SIMULATED_FAILURE_SCENARIOS.length)
-          ]
-        this.logger.info('Simulating MMS primary-school PDF failure', {
-          scenario: scenario.name,
-        })
-        throw scenario.make()
-      }
-
       // No catch here — a client failure propagates as-is to ProblemModule's
       // ErrorFilter, which logs it (via the real structured logger) and
       // returns a problem+json 500. Same stack trace, no new exception.
-      const blob = await this.primarySchoolService.getAssignmentResultPdf(
+      const blob = await this.getAssignmentResultPdfOrSimulatedFailure(
         user,
         studentId,
         assignmentResultId,
