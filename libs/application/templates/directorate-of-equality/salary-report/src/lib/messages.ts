@@ -581,10 +581,6 @@ export const messages = {
         id: 'salaryReport.application:report.employees.identifierLabel',
         defaultMessage: 'Kennitala',
       },
-      educationLabel: {
-        id: 'salaryReport.application:report.employees.educationLabel',
-        defaultMessage: 'Menntun',
-      },
       fieldLabel: {
         id: 'salaryReport.application:report.employees.fieldLabel',
         defaultMessage: 'Svið',
@@ -595,7 +591,7 @@ export const messages = {
       },
       startDateLabel: {
         id: 'salaryReport.application:report.employees.startDateLabel',
-        defaultMessage: 'Starfstímabil',
+        defaultMessage: 'Ráðningardagsetning',
       },
       workRatioLabel: {
         id: 'salaryReport.application:report.employees.workRatioLabel',

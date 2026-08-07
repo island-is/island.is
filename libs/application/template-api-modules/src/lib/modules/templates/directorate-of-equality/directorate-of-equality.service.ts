@@ -151,7 +151,6 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
         ordinal: e.ordinal,
         identifier: e.identifier,
         roleTitle: e.roleTitle,
-        education: e.education as ParsedEmployeeDto['education'],
         gender: e.gender as ParsedEmployeeDto['gender'],
         field: e.field,
         department: e.department,

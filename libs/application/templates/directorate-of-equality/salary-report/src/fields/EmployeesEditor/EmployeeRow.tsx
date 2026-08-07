@@ -11,11 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
-import {
-  EDUCATION_LABELS,
-  GENDER_LABELS,
-  SALARY_COMPONENT_KEYS,
-} from '../../utils/constants'
+import { GENDER_LABELS, SALARY_COMPONENT_KEYS } from '../../utils/constants'
 import type { Employee, SalaryComponentKey } from '../../utils/types'
 import { formatCurrency, formatStartDate, formatWorkRatio } from './utils'
 import * as styles from './EmployeesEditor.css'
@@ -58,10 +54,6 @@ export const EmployeeRow: FC<Props> = ({ employee, onRemove }) => {
 
   const leftItems = [
     { label: formatMessage(m.identifierLabel), value: employee.identifier },
-    {
-      label: formatMessage(m.educationLabel),
-      value: EDUCATION_LABELS[employee.education] ?? employee.education,
-    },
     { label: formatMessage(m.fieldLabel), value: employee.field },
     { label: formatMessage(m.departmentLabel), value: employee.department },
     {

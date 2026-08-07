@@ -98,29 +98,14 @@ export const GENDER_OPTIONS: { value: string; label: string }[] = [
   { value: 'NEUTRAL', label: 'Kynsegin/annað' },
 ]
 
-export const EDUCATION_OPTIONS: { value: string; label: string }[] = [
-  { value: 'COMPULSORY', label: 'Grunnskólapróf' },
-  { value: 'UPPER_SECONDARY', label: 'Framhaldsskólapróf' },
-  { value: 'VOCATIONAL', label: 'Iðnmenntun' },
-  { value: 'BACHELOR', label: 'Háskólamenntun' },
-  { value: 'MASTER', label: 'Meistaragráða' },
-  { value: 'DOCTORATE', label: 'Doktorsgráða' },
-  { value: 'PROFESSIONAL', label: 'Starfsréttindi' },
-]
-
 export const GENDER_LABELS: Record<string, string> = Object.fromEntries(
   GENDER_OPTIONS.map((o) => [o.value, o.label]),
-)
-
-export const EDUCATION_LABELS: Record<string, string> = Object.fromEntries(
-  EDUCATION_OPTIONS.map((o) => [o.value, o.label]),
 )
 
 export const EMPTY_EMPLOYEE: Employee = {
   ordinal: 0,
   identifier: '',
   roleTitle: '',
-  education: '',
   gender: '',
   field: '',
   department: '',

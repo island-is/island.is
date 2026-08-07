@@ -48,7 +48,6 @@ export type Employee = {
   ordinal: number
   identifier: string
   roleTitle: string
-  education: string
   gender: string
   field: string
   department: string

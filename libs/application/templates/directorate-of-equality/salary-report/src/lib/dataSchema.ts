@@ -173,7 +173,6 @@ const employee = z.object({
   ordinal: z.number(),
   identifier: z.string().min(1),
   roleTitle: z.string(),
-  education: z.string(),
   gender: z.string(),
   field: z.string().optional(),
   department: z.string().optional(),
