@@ -137,7 +137,7 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
       TrackedNotificationType.SPOKESPERSON_COURT_DATE_FOLLOW_UP,
     )
 
-    if (!shouldSendCourtDateFollowUp || !user) {
+    if (!shouldSendCourtDateFollowUp) {
       // Nothing should be sent so we return a successful response
       return { delivered: true }
     }
