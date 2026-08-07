@@ -1,6 +1,7 @@
 import request from 'supertest'
 import { INestApplication } from '@nestjs/common'
-import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
+import { useAuth } from '@island.is/testing/nest'
+import { createCurrentUser } from '@island.is/testing/fixtures'
 import { PrimarySchoolClientService } from '@island.is/clients/mms/primary-school'
 import { AuditService } from '@island.is/nest/audit'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
@@ -43,15 +44,16 @@ let app: INestApplication
 
 beforeAll(async () => {
   app = await setup({
+    hooks: [
+      useAuth({
+        auth: createCurrentUser({
+          nationalId: '1234567890',
+          scope: [EDUCATION_SCOPE],
+        }),
+      }),
+    ],
     override: (builder) =>
       builder
-        .overrideGuard(IdsUserGuard)
-        .useValue(
-          new MockAuthGuard({
-            nationalId: '1234567890',
-            scope: [EDUCATION_SCOPE],
-          }),
-        )
         .overrideProvider(PrimarySchoolClientService)
         .useValue(fakePdfClient)
         .overrideProvider(AuditService)
