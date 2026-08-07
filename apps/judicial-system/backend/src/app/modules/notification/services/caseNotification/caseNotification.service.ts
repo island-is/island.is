@@ -841,13 +841,19 @@ export class CaseNotificationService extends BaseNotificationService {
         }),
       )
 
-      const hasDefenderBeenNotified = this.hasReceivedNotification(
-        TrackedNotificationType.READY_FOR_COURT,
+      // The link to the case carries no court date, so it is only sent once.
+      // Note that an advocate assigned notification does not count - it is
+      // information only and carries no link.
+      const hasDefenderBeenSentLinkToCase = this.hasReceivedNotification(
+        [
+          TrackedNotificationType.READY_FOR_COURT,
+          TrackedNotificationType.COURT_DATE,
+        ],
         theCase.defenderEmail,
         theCase.notifications,
       )
 
-      if (!hasDefenderBeenNotified) {
+      if (!hasDefenderBeenSentLinkToCase) {
         promises.push(this.sendCourtDateEmailNotificationToDefender(theCase))
       }
     }

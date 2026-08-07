@@ -183,6 +183,57 @@ describe('InternalNotificationController - Send court date notifications', () =>
     })
   })
 
+  describe('the court date is sent again', () => {
+    const notificationDto: CaseNotificationDto = {
+      user: { id: userId } as User,
+      userDescriptor: { name: userName },
+      type: RequestCaseNotificationType.COURT_DATE,
+    }
+
+    const theCase = {
+      id: caseId,
+      type: CaseType.CUSTODY,
+      prosecutor: { name: prosecutor.name, email: prosecutor.email },
+      court: { name: courtName },
+      courtCaseNumber,
+      defenderName: defender.name,
+      defenderEmail: defender.email,
+      // The defender was notified the first time the court date was sent
+      notifications: [
+        {
+          caseId,
+          type: TrackedNotificationType.COURT_DATE,
+          recipients: [{ address: defender.email, success: true }],
+        },
+      ],
+    } as Case
+
+    beforeEach(async () => {
+      const mockCreate = mockNotificationModel.create as jest.Mock
+      mockCreate.mockResolvedValueOnce({} as Notification)
+
+      await givenWhenThen(theCase, notificationDto)
+    })
+
+    it('should not send the link to the case to the defender again', () => {
+      expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: defender.name, address: defender.email }],
+          subject: `Yfirlit máls ${courtCaseNumber}`,
+        }),
+      )
+    })
+
+    it('should still send a calendar invitation to the defender', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: defender.name, address: defender.email }],
+          subject: `Fyrirtaka í máli ${courtCaseNumber}`,
+        }),
+      )
+    })
+  })
+
   describe('the same advocate is registered more than once', () => {
     const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
