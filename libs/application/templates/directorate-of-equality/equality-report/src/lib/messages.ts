@@ -581,17 +581,17 @@ export const messages = {
     },
   }),
 
-  completed: defineMessages({
+  inReview: defineMessages({
     sectionTitle: {
-      id: 'doe.er.application:completed.sectionTitle',
+      id: 'doe.er.application:inReview.sectionTitle',
       defaultMessage: 'Umsókn móttekin',
     },
     alertTitle: {
-      id: 'doe.er.application:completed.title',
+      id: 'doe.er.application:inReview.title',
       defaultMessage: 'Jafnréttisáætlun hefur verið send til Jafnréttisstofu',
     },
     alertDescription: {
-      id: 'doe.er.application:completed.description',
+      id: 'doe.er.application:inReview.description',
       defaultMessage:
         'Við höfum móttekið jafnréttisáætlunina þína og hún verður yfirfarin af Jafnréttisstofu. Þú færð senda staðfestingu þegar yfirferð er lokið. Ef frekari upplýsingar vantar mun Jafnréttisstofa hafa samband við þig.',
     },
