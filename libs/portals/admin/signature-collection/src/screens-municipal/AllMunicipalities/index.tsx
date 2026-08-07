@@ -42,10 +42,8 @@ const AllMunicipalities = ({ isMunicipality }: { isMunicipality: boolean }) => {
         },
       },
       onCompleted: (response) => {
-        const {
-          success,
-          reasons,
-        } = response.signatureCollectionAdminStartMunicipalityCollection
+        const { success, reasons } =
+          response.signatureCollectionAdminStartMunicipalityCollection
 
         if (success) {
           toast.success(formatMessage(m.openMunicipalCollectionSuccess))
