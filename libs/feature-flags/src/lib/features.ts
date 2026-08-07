@@ -204,6 +204,16 @@ export enum Features {
   isServicePortalPrimarySchoolPageEnabled = 'isServicePortalPrimarySchoolPageEnabled',
   // Primary school PDF viewer modal
   isServicePortalPrimarySchoolPdfViewerEnabled = 'isServicePortalPrimarySchoolPdfViewerEnabled',
+  // Deliberately simulate an MMS primary-school PDF failure in download-service,
+  // for verifying error handling/logging in production. Target via GrowthBook
+  // to a specific test nationalId only.
+  downloadServiceSimulateMmsPrimarySchoolFailure = 'downloadServiceSimulateMmsPrimarySchoolFailure',
+  // TEMPORARY — selects between 'old' | 'current' | 'new' implementations of
+  // download-service's getPrimarySchoolAssignmentResultPdf, for side-by-side
+  // comparison via GrowthBook targeting on specific test nationalIds while the
+  // rewrite is being monitored. Remove this flag and the old/current code
+  // paths once the 'new' implementation is trusted.
+  downloadServiceMmsPrimarySchoolImplementationTest = 'downloadServiceMmsPrimarySchoolImplementationTest',
   // New health overview page (incl. sidebar contact box)
   isNewHealthOverviewPageEnabled = 'isNewHealthOverviewPageEnabled',
   // University micro-credentials (örnám)

@@ -147,7 +147,7 @@ api:
     CONSULTATION_PORTAL_CLIENT_BASE_PATH: 'https://samradapi-test.devland.is'
     CONTACT_US_EMAIL: 's@kogk.is'
     CONTENTFUL_HOST: 'preview.contentful.com'
-    DOWNLOAD_SERVICE_BASE_PATH: 'https://api.dev01.devland.is'
+    DOWNLOAD_SERVICE_BASE_PATH: 'https://refactordownload-service-review-api.dev01.devland.is'
     ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
     ENDORSEMENT_SYSTEM_BASE_API_URL: 'http://endorsement-system-api.endorsement-system.svc.cluster.local'
     ENVIRONMENT: 'dev'
@@ -2863,7 +2863,7 @@ services-bff-portals-admin:
 services-bff-portals-my-pages:
   enabled: true
   env:
-    BFF_ALLOWED_EXTERNAL_API_URLS: '["https://api.dev01.devland.is"]'
+    BFF_ALLOWED_EXTERNAL_API_URLS: '["https://api.dev01.devland.is","https://refactordownload-service-review-api.dev01.devland.is"]'
     BFF_ALLOWED_REDIRECT_URIS: '["https://beta.dev01.devland.is/minarsidur","https://beta.dev01.devland.is/umsoknir","https://beta.dev01.devland.is/form"]'
     BFF_CACHE_USER_PROFILE_TTL_MS: '3595000'
     BFF_CALLBACKS_BASE_PATH: 'https://beta.dev01.devland.is/bff/callbacks'
