@@ -183,3 +183,6 @@ apps/judicial-system/web/public/tinymce/
 charts/bootstrap
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
+
+# Claude Code local files
+.claude/

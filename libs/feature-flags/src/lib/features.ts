@@ -10,6 +10,7 @@ export enum Features {
   europeanHealthInsuranceCard = 'isEuropeanHealthInsuranceCardApplicationEnabled',
   passportApplication = 'isPassportApplicationEnabled',
   passportAnnulmentApplication = 'isPassportAnnulmentApplicationEnabled',
+  drivingLicenseAdvanced = 'isDrivingLicenseAdvancedEnabled',
   financialStatementInao = 'financialStatementInao',
   consultationPortalApplication = 'isConsultationPortalEnabled',
   childrenResidenceChangeV2 = 'isChildrenResidenceChangeV2Enabled',
