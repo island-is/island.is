@@ -62,3 +62,20 @@ export const EditOutliersApi = defineTemplateApi({
   shouldPersistToExternalData: true,
   throwOnError: true,
 })
+
+// On-demand only — triggered manually from the CommentThread field, never
+// wired to a state's onEntry/onExit. Listed on a role's `api` array purely so
+// updateApplicationExternalData is permitted to invoke it for that role.
+export const GetReportCommentsApi = defineTemplateApi({
+  action: 'getReportComments',
+  externalDataId: 'getReportComments',
+  namespace: 'DirectorateOfEquality',
+  throwOnError: false,
+})
+
+export const SubmitReportCommentApi = defineTemplateApi({
+  action: 'submitReportComment',
+  externalDataId: 'submitReportComment',
+  namespace: 'DirectorateOfEquality',
+  throwOnError: false,
+})
