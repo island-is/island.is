@@ -815,44 +815,56 @@ export class CaseNotificationService extends BaseNotificationService {
     )
 
     // DEFENDER
-    if (theCase.defenderEmail) {
-      if (
-        isRestrictionCase(theCase.type) ||
-        (isInvestigationCase(theCase.type) &&
-          theCase.sessionArrangements &&
-          [
-            SessionArrangements.ALL_PRESENT,
-            SessionArrangements.ALL_PRESENT_SPOKESPERSON,
-          ].includes(theCase.sessionArrangements))
-      ) {
-        promises.push(
-          this.sendCourtDateCalendarInviteEmailNotificationToDefender({
-            theCase,
-            user,
-            defenderName: theCase.defenderName,
-            defenderEmail: theCase.defenderEmail,
-            defenderNationalId: theCase.defenderNationalId,
-            defenderSubRole: DefenderSubRole.DEFENDANT_DEFENDER,
-          }),
-        )
+    const isDefenderIncludedInSessionArrangements =
+      isRestrictionCase(theCase.type) ||
+      (isInvestigationCase(theCase.type) &&
+        theCase.sessionArrangements &&
+        [
+          SessionArrangements.ALL_PRESENT,
+          SessionArrangements.ALL_PRESENT_SPOKESPERSON,
+        ].includes(theCase.sessionArrangements))
 
-        const hasDefenderBeenNotified = this.hasReceivedNotification(
-          TrackedNotificationType.READY_FOR_COURT,
-          theCase.defenderEmail,
-          theCase.notifications,
-        )
+    const notifiedDefenderEmail =
+      theCase.defenderEmail && isDefenderIncludedInSessionArrangements
+        ? theCase.defenderEmail
+        : undefined
 
-        if (!hasDefenderBeenNotified) {
-          promises.push(this.sendCourtDateEmailNotificationToDefender(theCase))
-        }
+    if (notifiedDefenderEmail) {
+      promises.push(
+        this.sendCourtDateCalendarInviteEmailNotificationToDefender({
+          theCase,
+          user,
+          defenderName: theCase.defenderName,
+          defenderEmail: theCase.defenderEmail,
+          defenderNationalId: theCase.defenderNationalId,
+          defenderSubRole: DefenderSubRole.DEFENDANT_DEFENDER,
+        }),
+      )
+
+      const hasDefenderBeenNotified = this.hasReceivedNotification(
+        TrackedNotificationType.READY_FOR_COURT,
+        theCase.defenderEmail,
+        theCase.notifications,
+      )
+
+      if (!hasDefenderBeenNotified) {
+        promises.push(this.sendCourtDateEmailNotificationToDefender(theCase))
       }
     }
 
     // VICTIM LAWYER
     if (isInvestigationCase(theCase.type)) {
-      theCase.victims?.forEach((victim) => {
-        if (!victim.lawyerEmail) return
+      // Victims can share a lawyer, and a victim's lawyer can also be the
+      // defender, but each advocate should only be notified once
+      const uniqueVictimLawyers = _uniqBy(
+        theCase.victims?.filter(
+          (victim) =>
+            victim.lawyerEmail && victim.lawyerEmail !== notifiedDefenderEmail,
+        ) ?? [],
+        (victim) => victim.lawyerEmail,
+      )
 
+      uniqueVictimLawyers.forEach((victim) => {
         const hasReceivedCourtDateEventNotification =
           this.hasReceivedNotification(
             TrackedNotificationType.COURT_DATE,

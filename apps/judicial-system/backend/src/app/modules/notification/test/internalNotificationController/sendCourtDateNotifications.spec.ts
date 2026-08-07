@@ -7,6 +7,8 @@ import { EmailService } from '@island.is/email-service'
 import {
   CaseType,
   RequestCaseNotificationType,
+  RequestSharedWhen,
+  SessionArrangements,
   TrackedNotificationType,
   User,
 } from '@island.is/judicial-system/types'
@@ -41,7 +43,11 @@ describe('InternalNotificationController - Send court date notifications', () =>
   const courtName = 'Héraðsdómur Reykjavíkur'
   const courtCaseNumber = uuid()
 
-  const { prosecutor, defender } = createTestUsers(['prosecutor', 'defender'])
+  const { prosecutor, defender, victimLawyer } = createTestUsers([
+    'prosecutor',
+    'defender',
+    'victimLawyer',
+  ])
 
   let mockConfig: ConfigType<typeof notificationModuleConfig>
 
@@ -174,6 +180,59 @@ describe('InternalNotificationController - Send court date notifications', () =>
       )
 
       expect(then.result).toEqual({ delivered: true })
+    })
+  })
+
+  describe('the same advocate is registered more than once', () => {
+    const notificationDto: CaseNotificationDto = {
+      user: { id: userId } as User,
+      userDescriptor: { name: userName },
+      type: RequestCaseNotificationType.COURT_DATE,
+    }
+
+    const theCase = {
+      id: caseId,
+      type: CaseType.PHONE_TAPPING,
+      prosecutor: { name: prosecutor.name, email: prosecutor.email },
+      court: { name: courtName },
+      courtCaseNumber,
+      // The defender is also the legal rights protector of one of the victims
+      defenderName: defender.name,
+      defenderEmail: defender.email,
+      sessionArrangements: SessionArrangements.ALL_PRESENT,
+      victims: [
+        {
+          lawyerName: victimLawyer.name,
+          lawyerEmail: victimLawyer.email,
+          lawyerAccessToRequest: RequestSharedWhen.ARRAIGNMENT_DATE_ASSIGNED,
+        },
+        // Victims can share a lawyer
+        {
+          lawyerName: victimLawyer.name,
+          lawyerEmail: victimLawyer.email,
+          lawyerAccessToRequest: RequestSharedWhen.ARRAIGNMENT_DATE_ASSIGNED,
+        },
+        {
+          lawyerName: defender.name,
+          lawyerEmail: defender.email,
+          lawyerAccessToRequest: RequestSharedWhen.ARRAIGNMENT_DATE_ASSIGNED,
+        },
+      ],
+    } as Case
+
+    const countEmailsTo = (address: string) =>
+      (mockEmailService.sendEmail as jest.Mock).mock.calls.filter(
+        ([email]) => email.to[0].address === address,
+      ).length
+
+    beforeEach(async () => {
+      await givenWhenThen(theCase, notificationDto)
+    })
+
+    it('should only send one calendar invitation to each advocate', () => {
+      // A calendar invitation and a link to the case, but only once each
+      expect(countEmailsTo(defender.email)).toBe(2)
+      expect(countEmailsTo(victimLawyer.email)).toBe(2)
     })
   })
 })
