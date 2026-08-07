@@ -7,7 +7,7 @@ export type JobFactor = {
 
 export type PersonalFactor = {
   title: string
-  description: string
+  description?: string
   weight: string
 }
 
@@ -17,7 +17,7 @@ export type SubCriterionStep = {
 
 export type SubCriterion = {
   title: string
-  description: string
+  description?: string
   weight: string
   stepCount: string
   steps: SubCriterionStep[]
@@ -70,7 +70,7 @@ export type Role = {
   stepAssignments: StepAssignment[]
 }
 
-export enum ChiefExecutiveGender {
+export enum Gender {
   MALE = 'MALE',
   FEMALE = 'FEMALE',
   NON_BINARY = 'NON_BINARY',

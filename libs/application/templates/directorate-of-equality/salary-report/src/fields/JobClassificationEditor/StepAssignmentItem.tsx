@@ -62,7 +62,7 @@ export const StepAssignmentItem: FC<Props> = ({
         </Text>
         {info && <Text variant="small">{info}</Text>}
       </Box>
-      <Box style={{ minWidth: 140 }}>
+      <Box style={{ minWidth: 160 }}>
         <SelectController
           id={fieldName}
           name={fieldName}
