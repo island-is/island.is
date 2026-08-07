@@ -31,6 +31,9 @@ export enum Roles {
   REVIEWER = 'reviewer',
 }
 
+export const PERIOD_ONE_MONTH = 'oneMonth'
+export const PERIOD_TWELVE_MONTHS = 'twelveMonths'
+
 export const DEFAULT_JOB_FACTORS: JobFactor[] = [
   {
     type: 'RESPONSIBILITY',

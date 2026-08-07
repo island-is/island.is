@@ -1028,7 +1028,7 @@ export const messages = {
   postponed: defineMessages({
     tagLabel: {
       id: 'doe.sr.application:postponed.tagLabel',
-      defaultMessage: 'Beðið eftir úrbótaáætlun',
+      defaultMessage: 'Úrbótaáætlun frestað',
     },
     introSectionTitle: {
       id: 'doe.sr.application:postponed.introSectionTitle',
