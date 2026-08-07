@@ -1007,15 +1007,73 @@ describe('CaseController - Update', () => {
   describe('arraignment date updated', () => {
     const arraignmentDate = { date: new Date(), location: uuid() }
     const caseToUpdate = { arraignmentDate }
+    const updatedCase = {
+      ...theCase,
+      type: CaseType.CUSTODY,
+      dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, ...arraignmentDate }],
+    }
 
     beforeEach(async () => {
-      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(
+        caseId,
+        user,
+        { ...theCase, type: CaseType.CUSTODY } as Case,
+        caseToUpdate,
+      )
     })
 
     it('should update case', () => {
       expect(mockDateLogModel.create).toHaveBeenCalledWith(
         { dateType: DateType.ARRAIGNMENT_DATE, caseId, ...arraignmentDate },
         { transaction },
+      )
+    })
+
+    it('should log a court date scheduled event, which drives court date notifications', () => {
+      expect(mockEventLogService.createWithUser).toHaveBeenCalledWith(
+        EventType.COURT_DATE_SCHEDULED,
+        caseId,
+        user,
+        transaction,
+      )
+    })
+  })
+
+  describe('arraignment date unchanged', () => {
+    const arraignmentDate = { date: new Date(), location: uuid() }
+    const updatedCase = {
+      ...theCase,
+      type: CaseType.CUSTODY,
+      dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, ...arraignmentDate }],
+    }
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(
+        caseId,
+        user,
+        {
+          ...theCase,
+          type: CaseType.CUSTODY,
+          dateLogs: [
+            { dateType: DateType.ARRAIGNMENT_DATE, ...arraignmentDate },
+          ],
+        } as Case,
+        {},
+      )
+    })
+
+    it('should not log a court date scheduled event', () => {
+      expect(mockEventLogService.createWithUser).not.toHaveBeenCalledWith(
+        EventType.COURT_DATE_SCHEDULED,
+        caseId,
+        user,
+        transaction,
       )
     })
   })
