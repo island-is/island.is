@@ -644,10 +644,6 @@ export const messages = {
         id: 'doe.sr.application:report.employees.identifierLabel',
         defaultMessage: 'Kennitala',
       },
-      educationLabel: {
-        id: 'doe.sr.application:report.employees.educationLabel',
-        defaultMessage: 'Menntun',
-      },
       fieldLabel: {
         id: 'doe.sr.application:report.employees.fieldLabel',
         defaultMessage: 'Svið',
@@ -658,7 +654,7 @@ export const messages = {
       },
       startDateLabel: {
         id: 'doe.sr.application:report.employees.startDateLabel',
-        defaultMessage: 'Starfstímabil',
+        defaultMessage: 'Ráðningardagsetning',
       },
       workRatioLabel: {
         id: 'doe.sr.application:report.employees.workRatioLabel',
@@ -770,11 +766,11 @@ export const messages = {
     employeeClassification: defineMessages({
       sectionTitle: {
         id: 'doe.sr.application:report.employeeClassification.sectionTitle',
-        defaultMessage: 'Flokkun starfsmanna',
+        defaultMessage: 'Mat á einstaklingsbundnum þáttum',
       },
       title: {
         id: 'doe.sr.application:report.employeeClassification.title',
-        defaultMessage: 'Flokkun starfsmanna',
+        defaultMessage: 'Mat á einstaklingsbundnum þáttum',
       },
       intro: {
         id: 'doe.sr.application:report.employeeClassification.intro',
@@ -1012,6 +1008,57 @@ export const messages = {
       defaultMessage:
         'Við höfum móttekið launagreiningarskýrsluna þína og hún verður yfirfarin af Jafnréttisstofu. Þú færð senda staðfestingu þegar yfirferð er lokið. Ef frekari upplýsingar vantar mun Jafnréttisstofa hafa samband við þig.',
     },
+    sentHistoryLog: {
+      id: 'doe.sr.application:inReview.sentHistoryLog',
+      defaultMessage: 'Launagreiningarskýrsla send til Jafnréttisstofu',
+    },
+    approvedHistoryLog: {
+      id: 'doe.sr.application:inReview.approvedHistoryLog',
+      defaultMessage: 'Launagreiningarskýrsla samþykkt af Jafnréttisstofu',
+    },
+    rejectedHistoryLog: {
+      id: 'doe.sr.application:inReview.rejectedHistoryLog',
+      defaultMessage: 'Launagreiningarskýrsla hafnað af Jafnréttisstofu',
+    },
+    editHistoryLog: {
+      id: 'doe.sr.application:inReview.editHistoryLog',
+      defaultMessage: 'Umsókn send aftur í vinnslu til lagfæringar',
+    },
+  }),
+
+  comments: defineMessages({
+    sectionTitle: {
+      id: 'doe.sr.application:comments.sectionTitle',
+      defaultMessage: 'Samskipti',
+    },
+    title: {
+      id: 'doe.sr.application:comments.title',
+      defaultMessage: 'Samskipti við Jafnréttisstofu',
+    },
+    emptyState: {
+      id: 'doe.sr.application:comments.emptyState',
+      defaultMessage: 'Engin skilaboð hafa verið send.',
+    },
+    textareaLabel: {
+      id: 'doe.sr.application:comments.textareaLabel',
+      defaultMessage: 'Skrifa skilaboð',
+    },
+    sendButton: {
+      id: 'doe.sr.application:comments.sendButton',
+      defaultMessage: 'Senda',
+    },
+    reviewerLabel: {
+      id: 'doe.sr.application:comments.reviewerLabel',
+      defaultMessage: 'Jafnréttisstofa',
+    },
+    companyLabel: {
+      id: 'doe.sr.application:comments.companyLabel',
+      defaultMessage: 'Þú',
+    },
+    sendError: {
+      id: 'doe.sr.application:comments.sendError',
+      defaultMessage: 'Ekki tókst að senda skilaboð, reyndu aftur.',
+    },
   }),
 
   rejected: defineMessages({
@@ -1032,7 +1079,7 @@ export const messages = {
   postponed: defineMessages({
     tagLabel: {
       id: 'doe.sr.application:postponed.tagLabel',
-      defaultMessage: 'Beðið eftir úrbótaáætlun',
+      defaultMessage: 'Úrbótaáætlun frestað',
     },
     introSectionTitle: {
       id: 'doe.sr.application:postponed.introSectionTitle',

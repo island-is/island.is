@@ -16,7 +16,6 @@ import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { messages } from '../../lib/messages'
 import {
-  EDUCATION_OPTIONS,
   GENDER_OPTIONS,
   SALARY_COMPONENT_GROUPS,
   SALARY_COMPONENT_KEYS,
@@ -34,7 +33,6 @@ type Props = {
 type FormValues = {
   roleTitle: string
   gender: string
-  education: string
   field: string
   department: string
   startDate: string
@@ -45,7 +43,6 @@ type FormValues = {
 const DEFAULTS: FormValues = {
   roleTitle: '',
   gender: '',
-  education: '',
   field: '',
   department: '',
   startDate: '',
@@ -110,7 +107,6 @@ export const AddEmployeeForm: FC<Props> = ({
       identifier: computeIdentifier(identifierPrefix, nextOrdinal),
       roleTitle: data.roleTitle,
       gender: data.gender,
-      education: data.education,
       field: data.field,
       department: data.department,
       startDate: data.startDate,
@@ -154,26 +150,12 @@ export const AddEmployeeForm: FC<Props> = ({
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
-            <SelectController
-              id="education"
-              name="education"
-              label={formatMessage(m.educationLabel)}
-              options={EDUCATION_OPTIONS}
-              backgroundColor="white"
-              size="sm"
-              required
-              rules={{ required: requiredMsg }}
-              error={errors.education?.message}
-            />
-          </GridColumn>
-          <GridColumn span={['12/12', '6/12']}>
             <InputController
               id="field"
               name="field"
               label={formatMessage(m.fieldLabel)}
               backgroundColor="white"
               size="sm"
-              required
               rules={{ required: requiredMsg }}
               error={errors.field?.message}
             />
@@ -185,7 +167,6 @@ export const AddEmployeeForm: FC<Props> = ({
               label={formatMessage(m.departmentLabel)}
               backgroundColor="white"
               size="sm"
-              required
               rules={{ required: requiredMsg }}
               error={errors.department?.message}
             />

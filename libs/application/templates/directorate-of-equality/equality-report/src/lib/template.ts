@@ -17,14 +17,15 @@ import {
   DoeCompanyApi,
   EqualityReportTemplateDocxApi,
   EqualityReportTemplateHtmlApi,
+  GetReportCommentsApi,
   PreviousEqualityReportContentApi,
+  SubmitReportCommentApi,
 } from '../dataProviders'
 import { ApiActions, Events, Roles, States } from '../utils/constants'
 import { mapUserToRole } from '../utils/mapUserToRole'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
 import {
-  coreHistoryMessages,
   coreMessages,
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
@@ -118,10 +119,15 @@ const template: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.SUBMIT,
-                logMessage: coreHistoryMessages.applicationSent,
+                logMessage: messages.inReview.sentHistoryLog,
               },
             ],
           },
+          // So the comment thread's non-empty check has fresh externalData on
+          // first render — role.api alone never auto-fetches outside
+          // PREREQUISITES, it only permits the on-demand call CommentThread
+          // makes from within the mounted field.
+          onEntry: GetReportCommentsApi,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -142,6 +148,7 @@ const template: ApplicationTemplate<
                 EqualityReportTemplateHtmlApi,
                 EqualityReportTemplateDocxApi,
                 PreviousEqualityReportContentApi,
+                GetReportCommentsApi,
               ],
               delete: true,
             },
@@ -170,15 +177,15 @@ const template: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: coreHistoryMessages.applicationApproved,
+                logMessage: messages.inReview.approvedHistoryLog,
               },
               {
                 onEvent: DefaultEvents.REJECT,
-                logMessage: coreHistoryMessages.applicationRejected,
+                logMessage: messages.inReview.rejectedHistoryLog,
               },
               {
                 onEvent: DefaultEvents.EDIT,
-                logMessage: 'Application sent back to draft for editing',
+                logMessage: messages.inReview.editHistoryLog,
               },
             ],
           },
@@ -196,6 +203,8 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.inReviewForm),
                 ),
               read: 'all',
+              write: { answers: ['comment'] },
+              api: [GetReportCommentsApi, SubmitReportCommentApi],
               delete: true,
             },
           ],
@@ -224,6 +233,9 @@ const template: ApplicationTemplate<
               variant: 'mint',
             },
           },
+          // So the comment thread's non-empty check has fresh externalData —
+          // see the identical comment on States.DRAFT.
+          onEntry: GetReportCommentsApi,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -232,6 +244,7 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.approvedForm),
                 ),
               read: 'all',
+              api: [GetReportCommentsApi],
               delete: true,
             },
           ],
@@ -249,6 +262,9 @@ const template: ApplicationTemplate<
               variant: 'red',
             },
           },
+          // So the comment thread's non-empty check has fresh externalData —
+          // see the identical comment on States.DRAFT.
+          onEntry: GetReportCommentsApi,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -257,6 +273,7 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.deniedForm),
                 ),
               read: 'all',
+              api: [GetReportCommentsApi],
               delete: true,
             },
           ],

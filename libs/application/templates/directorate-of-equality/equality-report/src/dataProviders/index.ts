@@ -47,3 +47,22 @@ export const EqualityReportTemplateDocxApi = defineTemplateApi({
   namespace: 'DirectorateOfEquality',
   order: 0,
 })
+
+// On-demand only — triggered manually from the CommentThread field, never
+// wired to a state's onEntry. Listed on a role's `api` array purely so
+// updateApplicationExternalData is permitted to invoke it for that role.
+export const GetReportCommentsApi = defineTemplateApi({
+  action: ApiActions.getReportComments,
+  externalDataId: 'getReportComments',
+  namespace: 'DirectorateOfEquality',
+  order: 0,
+  throwOnError: false,
+})
+
+export const SubmitReportCommentApi = defineTemplateApi({
+  action: ApiActions.submitReportComment,
+  externalDataId: 'submitReportComment',
+  namespace: 'DirectorateOfEquality',
+  order: 0,
+  throwOnError: false,
+})

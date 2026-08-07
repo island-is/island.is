@@ -13,6 +13,7 @@ export type Events = {
     | DefaultEvents.ABORT
     | DefaultEvents.APPROVE
     | DefaultEvents.REJECT
+    | DefaultEvents.EDIT
 }
 
 export enum States {
@@ -30,6 +31,9 @@ export enum Roles {
   NOT_ALLOWED = 'notAllowed',
   REVIEWER = 'reviewer',
 }
+
+export const PERIOD_ONE_MONTH = 'oneMonth'
+export const PERIOD_TWELVE_MONTHS = 'twelveMonths'
 
 export const DEFAULT_JOB_FACTORS: JobFactor[] = [
   {
@@ -105,32 +109,14 @@ export const GENDER_OPTIONS: { value: string; label: string }[] = [
   { value: 'NEUTRAL', label: 'Kynsegin/annað' },
 ]
 
-export const EDUCATION_OPTIONS: { value: string; label: string }[] = [
-  { value: 'COMPULSORY', label: 'Grunnskólapróf' },
-  { value: 'UPPER_SECONDARY', label: 'Framhaldsskólapróf' },
-  { value: 'VOCATIONAL', label: 'Iðnmenntun' },
-  { value: 'BACHELOR', label: 'Háskólamenntun' },
-  { value: 'MASTER', label: 'Meistaragráða' },
-  { value: 'DOCTORATE', label: 'Doktorsgráða' },
-  { value: 'PROFESSIONAL', label: 'Starfsréttindi' },
-]
-
 export const GENDER_LABELS: Record<string, string> = Object.fromEntries(
   GENDER_OPTIONS.map((o) => [o.value, o.label]),
 )
-
-export const EDUCATION_LABELS: Record<string, string> = Object.fromEntries(
-  EDUCATION_OPTIONS.map((o) => [o.value, o.label]),
-)
-
-export const PERIOD_TWELVE_MONTHS = '12months'
-export const PERIOD_ONE_MONTH = '1month'
 
 export const EMPTY_EMPLOYEE: Employee = {
   ordinal: 0,
   identifier: '',
   roleTitle: '',
-  education: '',
   gender: '',
   field: '',
   department: '',
