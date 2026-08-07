@@ -56,10 +56,14 @@ const CertificateRequestForm = ({
         {formatMessage(messages.healthConversationsCertificateTypeTitle)}
       </Text>
       <GridRow marginBottom={3}>
-        <GridColumn span={['12/12', '6/12']} paddingBottom={[2, 0]}>
+        <GridColumn
+          span={['12/12', '12/12', '12/12', '12/12', '6/12']}
+          paddingBottom={[2, 2, 2, 2, 0]}
+        >
           <RadioButton
             large
             backgroundColor="blue"
+            id="certificate-type-work"
             name="certificate-type"
             label={formatMessage(
               messages.healthConversationsCertificateTypeWork,
@@ -77,10 +81,11 @@ const CertificateRequestForm = ({
             }
           />
         </GridColumn>
-        <GridColumn span={['12/12', '6/12']}>
+        <GridColumn span={['12/12', '12/12', '12/12', '12/12', '6/12']}>
           <RadioButton
             large
             backgroundColor="blue"
+            id="certificate-type-school"
             name="certificate-type"
             label={formatMessage(
               messages.healthConversationsCertificateTypeSchool,
@@ -101,8 +106,12 @@ const CertificateRequestForm = ({
       </GridRow>
 
       <GridRow marginBottom={3}>
-        <GridColumn span={['12/12', '6/12']} paddingBottom={[2, 0]}>
+        <GridColumn
+          span={['12/12', '12/12', '12/12', '12/12', '6/12']}
+          paddingBottom={[2, 2, 2, 2, 0]}
+        >
           <Input
+            size="sm"
             name="certificate-recipient-name"
             label={formatMessage(
               messages.healthConversationsCertificateRecipientNameLabel,
@@ -118,8 +127,9 @@ const CertificateRequestForm = ({
             disabled={disabled}
           />
         </GridColumn>
-        <GridColumn span={['12/12', '6/12']}>
+        <GridColumn span={['12/12', '12/12', '12/12', '12/12', '6/12']}>
           <DatePicker
+            size="sm"
             backgroundColor="blue"
             range
             selectedRange={{
@@ -142,6 +152,7 @@ const CertificateRequestForm = ({
 
       <Box marginBottom={3}>
         <Input
+          size="sm"
           textarea
           rows={5}
           name="certificate-note"
@@ -153,9 +164,7 @@ const CertificateRequestForm = ({
           )}
           backgroundColor="blue"
           value={formState.note}
-          onChange={(e) =>
-            setFormState({ ...formState, note: e.target.value })
-          }
+          onChange={(e) => setFormState({ ...formState, note: e.target.value })}
           disabled={disabled}
         />
       </Box>

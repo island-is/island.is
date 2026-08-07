@@ -1938,12 +1938,13 @@ export const messages = defineMessages({
     id: 'sp.health:health-messages-new-body-placeholder',
   },
   healthConversationsCertificateBlockedText: {
-    defaultMessage: 'Ekki er hægt að óska eftir vottorði hjá þessari stofnun núna.',
+    defaultMessage:
+      'Ekki er hægt að óska eftir vottorði hjá þessari stofnun núna.',
     id: 'sp.health:health-messages-certificate-blocked-text',
   },
   healthConversationsCertificatePaymentNotice: {
     defaultMessage:
-      'Athugið að greiða þarf 2.346 kr. fyrir Atvinnurekenda og skólavottorð.',
+      'Athugið að greiða þarf fyrir atvinnurekenda og skólavottorð.',
     id: 'sp.health:health-messages-certificate-payment-notice',
   },
   healthConversationsCertificateTypeTitle: {

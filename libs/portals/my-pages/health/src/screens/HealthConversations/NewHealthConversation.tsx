@@ -4,6 +4,8 @@ import {
   Button,
   Checkbox,
   Divider,
+  GridColumn,
+  GridRow,
   Input,
   Select,
   Text,
@@ -149,8 +151,7 @@ const NewHealthConversation = () => {
           },
         })
         const conversationId =
-          result.data?.healthDirectorateCreateCertificateRequest
-            ?.conversationId
+          result.data?.healthDirectorateCreateCertificateRequest?.conversationId
         if (conversationId) {
           navigate(
             HealthPaths.HealthConversationsDetail.replace(
@@ -241,24 +242,26 @@ const NewHealthConversation = () => {
           <Divider />
 
           <Box paddingX={4} paddingY={4}>
-            <Box marginBottom={3}>
-              <Select
-                name="service-type"
-                label={formatMessage(
-                  messages.healthConversationsNewSelectService,
-                )}
-                placeholder={formatMessage(
-                  messages.healthConversationsNewSelectServicePlaceholder,
-                )}
-                options={typeOptions}
-                value={selectedOption}
-                onChange={(opt) => handleTypeChange(opt?.value ?? null)}
-                backgroundColor="blue"
-                size="sm"
-                required
-                isDisabled={isFormLocked}
-              />
-            </Box>
+            <GridRow marginBottom={3}>
+              <GridColumn span={['12/12', '8/12']}>
+                <Select
+                  name="service-type"
+                  label={formatMessage(
+                    messages.healthConversationsNewSelectService,
+                  )}
+                  placeholder={formatMessage(
+                    messages.healthConversationsNewSelectServicePlaceholder,
+                  )}
+                  options={typeOptions}
+                  value={selectedOption}
+                  onChange={(opt) => handleTypeChange(opt?.value ?? null)}
+                  backgroundColor="blue"
+                  size="sm"
+                  required
+                  isDisabled={isFormLocked}
+                />
+              </GridColumn>
+            </GridRow>
 
             {isCertificateSelected &&
               recipient.canRequestCertificate === false && (
@@ -317,12 +320,14 @@ const NewHealthConversation = () => {
             <Box display="flex" justifyContent="spaceBetween" columnGap={2}>
               <Button
                 variant="ghost"
+                size="medium"
                 onClick={() => navigate(HealthPaths.HealthConversations)}
               >
                 {formatMessage(messages.cancel)}
               </Button>
               <Button
                 onClick={handleSubmit}
+                size="medium"
                 loading={sendingAny}
                 disabled={!canSubmit}
               >
