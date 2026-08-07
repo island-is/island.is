@@ -1870,7 +1870,11 @@ export class CaseNotificationService extends BaseNotificationService {
   private async sendAdvocateAssignedNotifications(
     theCase: Case,
   ): Promise<DeliverResponse> {
-    const promises: Promise<Recipient>[] = []
+    const advocates: {
+      name?: string
+      email?: string
+      subRole: DefenderSubRole
+    }[] = []
 
     // DEFENDER / SPOKESPERSON
     const isDefenderIncludedInSessionArrangements =
@@ -1881,45 +1885,45 @@ export class CaseNotificationService extends BaseNotificationService {
           SessionArrangements.ALL_PRESENT_SPOKESPERSON,
         ].includes(theCase.sessionArrangements))
 
-    if (
-      isDefenderIncludedInSessionArrangements &&
-      this.shouldSendAdvocateAssignedNotification(
-        theCase,
-        theCase.defenderEmail,
-      )
-    ) {
-      promises.push(
-        this.sendAdvocateAssignedEmailNotification({
-          theCase,
-          advocateName: theCase.defenderName,
-          advocateEmail: theCase.defenderEmail,
-          advocateSubRole: DefenderSubRole.DEFENDANT_DEFENDER,
-        }),
-      )
+    if (isDefenderIncludedInSessionArrangements) {
+      advocates.push({
+        name: theCase.defenderName,
+        email: theCase.defenderEmail,
+        subRole: DefenderSubRole.DEFENDANT_DEFENDER,
+      })
     }
 
     // VICTIM LAWYER
     if (isInvestigationCase(theCase.type)) {
-      for (const victim of theCase.victims ?? []) {
-        if (
-          this.shouldSendAdvocateAssignedNotification(
-            theCase,
-            victim.lawyerEmail,
-          )
-        ) {
-          promises.push(
-            this.sendAdvocateAssignedEmailNotification({
-              theCase,
-              advocateName: victim.lawyerName,
-              advocateEmail: victim.lawyerEmail,
-              advocateSubRole: DefenderSubRole.VICTIM_LAWYER,
-            }),
-          )
-        }
-      }
+      advocates.push(
+        ...(theCase.victims ?? []).map((victim) => ({
+          name: victim.lawyerName,
+          email: victim.lawyerEmail,
+          subRole: DefenderSubRole.VICTIM_LAWYER,
+        })),
+      )
     }
 
-    const recipients = await Promise.all(promises)
+    // The same advocate can be registered more than once - victims can share a
+    // lawyer, and a victim's lawyer can also be the defender - but should only
+    // be notified once
+    const uniqueAdvocates = _uniqBy(
+      advocates.filter((advocate) =>
+        this.shouldSendAdvocateAssignedNotification(theCase, advocate.email),
+      ),
+      (advocate) => advocate.email,
+    )
+
+    const recipients = await Promise.all(
+      uniqueAdvocates.map((advocate) =>
+        this.sendAdvocateAssignedEmailNotification({
+          theCase,
+          advocateName: advocate.name,
+          advocateEmail: advocate.email,
+          advocateSubRole: advocate.subRole,
+        }),
+      ),
+    )
 
     if (recipients.length === 0) {
       // Nothing to send

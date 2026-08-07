@@ -293,6 +293,60 @@ describe('InternalNotificationController - Send advocate assigned notifications'
     })
   })
 
+  describe('when the same advocate is registered more than once', () => {
+    const caseId = uuid()
+    const theCase = {
+      id: caseId,
+      type: CaseType.PHONE_TAPPING,
+      court,
+      courtCaseNumber,
+      // The defender is also the legal rights protector of one of the victims
+      defenderEmail: defender.email,
+      defenderName: defender.name,
+      sessionArrangements: SessionArrangements.ALL_PRESENT,
+      victims: [
+        {
+          lawyerEmail: victimLawyer.email,
+          lawyerName: victimLawyer.name,
+          lawyerAccessToRequest: RequestSharedWhen.ARRAIGNMENT_DATE_ASSIGNED,
+        },
+        // Victims can share a lawyer
+        {
+          lawyerEmail: victimLawyer.email,
+          lawyerName: victimLawyer.name,
+          lawyerAccessToRequest: RequestSharedWhen.ARRAIGNMENT_DATE_ASSIGNED,
+        },
+        {
+          lawyerEmail: defender.email,
+          lawyerName: defender.name,
+          lawyerAccessToRequest: RequestSharedWhen.ARRAIGNMENT_DATE_ASSIGNED,
+        },
+      ],
+    } as Case
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, theCase, notificationDTO)
+    })
+
+    it('should only send one email to each advocate', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(2)
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expectedEmail({
+          name: defender.name,
+          address: defender.email,
+          responsibility: 'verjanda/talsmann sakbornings',
+        }),
+      )
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expectedEmail({
+          name: victimLawyer.name,
+          address: victimLawyer.email,
+          responsibility: 'réttargæslumaður',
+        }),
+      )
+    })
+  })
+
   describe('when a victim lawyer has already been sent a link to the case', () => {
     const caseId = uuid()
     const theCase = {
