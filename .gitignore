@@ -100,6 +100,11 @@ _book
 
 # Ignore generated .html files when running `serve`
 apps/**/index.html
+# ...except vite apps, where index.html is the source entry point
+!apps/portals/my-pages/index.html
+!apps/form-system/web/index.html
+!apps/portals/admin/index.html
+!apps/application-system/form/index.html
 
 # Next.js
 .next
