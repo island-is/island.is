@@ -123,6 +123,11 @@ export const bootstrap = async (options: BootstrapOptions) => {
     }
 
     try {
+      // The server deliberately listens before Next has finished preparing so
+      // the health endpoints respond during warm-up, but Next 16's custom
+      // server handler throws if invoked before prepare() resolves — hold
+      // early requests here until it has (no-op once resolved).
+      await readyPromise
       await handle(req, res)
     } catch (err: any) {
       logger.error('Error in Next.js request handler!', {
