@@ -537,7 +537,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
             </Stack>
           }
         >
-          <Box marginLeft={[2, 2, 2]} marginRight={[2, 2, 0]}>
+          <Box marginLeft={[0, 0, 2]} marginRight={[0, 0, 0]}>
             <Box
               display="flex"
               justifyContent="spaceBetween"

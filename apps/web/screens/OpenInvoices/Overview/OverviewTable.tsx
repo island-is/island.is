@@ -43,6 +43,13 @@ export const OverviewTable = ({
 
   const columns = useMemo(
     () => [
+      columnHelper.display({
+        id: 'title',
+        header: () => null,
+        cell: (info) =>
+          `${info.row.original.supplier.name} / ${info.row.original.debtor.name}`,
+        meta: { visibility: 'mobile' },
+      }),
       columnHelper.accessor((row) => row.supplier.name, {
         id: 'supplier',
         header: formatMessage(m.overview.supplier),
@@ -79,7 +86,7 @@ export const OverviewTable = ({
         }
         srCaption={formatMessage(m.overview.srCaption)}
         sortHint={formatMessage(m.overview.sortHint)}
-        mobileTitleKey="supplier"
+        mobileTitleKey="title"
         expanderLabel={formatMessage(m.overview.expandRow)}
         renderExpandedRow={(row) => (
           <NestedLines

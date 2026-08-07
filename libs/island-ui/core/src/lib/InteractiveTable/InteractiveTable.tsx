@@ -38,6 +38,8 @@ declare module '@tanstack/react-table' {
     /** Skip the `<Text>` wrapper — use for interactive cells (input, button) */
     type?: 'text' | 'interactive'
     span?: 1 | 2
+    /** Restrict this column to the mobile card view — hidden from the desktop table */
+    visibility?: 'mobile'
   }
 }
 
@@ -72,8 +74,9 @@ type BaseInteractiveTableProps<TData extends object> = {
   colorScheme?: 'default' | 'negative'
 }
 
-export type InteractiveTableProps<TData extends object> =
-  BaseInteractiveTableProps<TData> & (WithExpander<TData> | WithoutExpander)
+export type InteractiveTableProps<
+  TData extends object
+> = BaseInteractiveTableProps<TData> & (WithExpander<TData> | WithoutExpander)
 
 export const InteractiveTable = <TData extends object>({
   columns: providedColumns,
@@ -123,6 +126,11 @@ export const InteractiveTable = <TData extends object>({
 
   const tableId = useId()
 
+  const desktopColumnCount = useMemo(
+    () => columns.filter((col) => col.meta?.visibility !== 'mobile').length,
+    [columns],
+  )
+
   const table = useReactTable<TData>({
     data,
     columns,
@@ -165,82 +173,87 @@ export const InteractiveTable = <TData extends object>({
       <T.Head>
         {table.getHeaderGroups().map((headerGroup) => (
           <T.Row key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
-              <T.HeadData
-                key={header.id}
-                scope="col"
-                aria-label={
-                  header.column.id === 'expander'
-                    ? resolvedExpanderLabel
-                    : undefined
-                }
-                aria-sort={
-                  header.column.getCanSort()
-                    ? header.column.getIsSorted() === 'asc'
-                      ? 'ascending'
-                      : header.column.getIsSorted() === 'desc'
-                      ? 'descending'
-                      : 'none'
-                    : undefined
-                }
-                style={{
-                  fontSize: '16px',
-                  ...(header.column.columnDef.meta?.align && {
-                    textAlign: header.column.columnDef.meta.align,
-                  }),
-                }}
-              >
-                {header.column.getCanSort() ? (
-                  <FocusableBox
-                    component="button"
-                    type="button"
-                    display="flex"
-                    alignItems="center"
-                    color="blue"
-                    className={styles.sortButton}
-                    onClick={header.column.getToggleSortingHandler()}
-                  >
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext(),
-                    )}
-                    <Box
-                      marginLeft={1}
-                      aria-hidden="true"
-                      style={{
-                        visibility: header.column.getIsSorted()
-                          ? 'visible'
-                          : 'hidden',
-                      }}
+            {headerGroup.headers
+              .filter(
+                (header) =>
+                  header.column.columnDef.meta?.visibility !== 'mobile',
+              )
+              .map((header) => (
+                <T.HeadData
+                  key={header.id}
+                  scope="col"
+                  aria-label={
+                    header.column.id === 'expander'
+                      ? resolvedExpanderLabel
+                      : undefined
+                  }
+                  aria-sort={
+                    header.column.getCanSort()
+                      ? header.column.getIsSorted() === 'asc'
+                        ? 'ascending'
+                        : header.column.getIsSorted() === 'desc'
+                        ? 'descending'
+                        : 'none'
+                      : undefined
+                  }
+                  style={{
+                    fontSize: '16px',
+                    ...(header.column.columnDef.meta?.align && {
+                      textAlign: header.column.columnDef.meta.align,
+                    }),
+                  }}
+                >
+                  {header.column.getCanSort() ? (
+                    <FocusableBox
+                      component="button"
+                      type="button"
+                      display="flex"
+                      alignItems="center"
+                      color="blue"
+                      className={styles.sortButton}
+                      onClick={header.column.getToggleSortingHandler()}
                     >
-                      <Icon
-                        color="blue400"
-                        icon={
-                          header.column.getIsSorted() === 'desc'
-                            ? 'caretDown'
-                            : 'caretUp'
-                        }
-                        size="small"
-                      />
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
+                      <Box
+                        marginLeft={1}
+                        aria-hidden="true"
+                        style={{
+                          visibility: header.column.getIsSorted()
+                            ? 'visible'
+                            : 'hidden',
+                        }}
+                      >
+                        <Icon
+                          color="blue400"
+                          icon={
+                            header.column.getIsSorted() === 'desc'
+                              ? 'caretDown'
+                              : 'caretUp'
+                          }
+                          size="small"
+                        />
+                      </Box>
+                    </FocusableBox>
+                  ) : (
+                    <Box display="flex" flexDirection="row" alignItems="center">
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
                     </Box>
-                  </FocusableBox>
-                ) : (
-                  <Box display="flex" flexDirection="row" alignItems="center">
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext(),
-                    )}
-                  </Box>
-                )}
-              </T.HeadData>
-            ))}
+                  )}
+                </T.HeadData>
+              ))}
           </T.Row>
         ))}
       </T.Head>
       <T.Body>
         {loading ? (
           <tr>
-            <td colSpan={columns.length}>
+            <td colSpan={desktopColumnCount}>
               <Box padding={4} display="flex" justifyContent="center">
                 <LoadingDots />
               </Box>
@@ -250,7 +263,7 @@ export const InteractiveTable = <TData extends object>({
           <>
             {!data.length && emptyMessage && (
               <tr>
-                <td colSpan={columns.length}>
+                <td colSpan={desktopColumnCount}>
                   <Box padding={4} display="flex" justifyContent="center">
                     <Text color="dark400">{emptyMessage}</Text>
                   </Box>
@@ -266,115 +279,121 @@ export const InteractiveTable = <TData extends object>({
               return (
                 <Fragment key={row.id}>
                   <T.Row>
-                    {row.getVisibleCells().map((cell, i) =>
-                      i === 0 && renderExpandedRow ? (
-                        <T.Data
-                          key={cell.id}
-                          style={{ padding: theme.spacing[2] + 'px' }}
-                          box={{
-                            position: 'relative',
-                            background: rowBackground,
-                            borderBottomWidth:
-                              isExpanded || isCollapsing
-                                ? undefined
-                                : 'standard',
-                          }}
-                        >
-                          {(isExpanded || isCollapsing) && (
-                            <div className={styles.line} />
-                          )}
-                          <Box
-                            display="flex"
-                            alignItems="center"
-                            justifyContent="center"
-                          >
-                            <Button
-                              circle
-                              colorScheme="light"
-                              icon={isExpanded ? 'remove' : 'add'}
-                              iconType="filled"
-                              size="small"
-                              type="button"
-                              variant="primary"
-                              aria-labelledby={
-                                mobileTitleKey
-                                  ? `${tableId}-row-title-${row.id}`
-                                  : undefined
-                              }
-                              aria-label={
-                                mobileTitleKey
+                    {row
+                      .getAllCells()
+                      .filter(
+                        (cell) =>
+                          cell.column.columnDef.meta?.visibility !== 'mobile',
+                      )
+                      .map((cell, i) =>
+                        i === 0 && renderExpandedRow ? (
+                          <T.Data
+                            key={cell.id}
+                            style={{ padding: theme.spacing[2] + 'px' }}
+                            box={{
+                              position: 'relative',
+                              background: rowBackground,
+                              borderBottomWidth:
+                                isExpanded || isCollapsing
                                   ? undefined
-                                  : resolvedExpanderLabel
-                              }
-                              aria-expanded={isExpanded}
-                              aria-controls={`${tableId}-row-expanded-${row.id}`}
-                              onClick={() => {
-                                if (isExpanded) {
-                                  setCollapsingRows((prev) =>
-                                    new Set(prev).add(row.id),
-                                  )
+                                  : 'standard',
+                            }}
+                          >
+                            {(isExpanded || isCollapsing) && (
+                              <div className={styles.line} />
+                            )}
+                            <Box
+                              display="flex"
+                              alignItems="center"
+                              justifyContent="center"
+                            >
+                              <Button
+                                circle
+                                colorScheme="light"
+                                icon={isExpanded ? 'remove' : 'add'}
+                                iconType="filled"
+                                size="small"
+                                type="button"
+                                variant="primary"
+                                aria-labelledby={
+                                  mobileTitleKey
+                                    ? `${tableId}-row-title-${row.id}`
+                                    : undefined
                                 }
-                                row.toggleExpanded()
-                              }}
-                            />
-                          </Box>
-                        </T.Data>
-                      ) : (
-                        <T.Data
-                          key={cell.id}
-                          style={{
-                            padding: theme.spacing[2] + 'px',
-                            background: rowBackground,
-                          }}
-                          box={{
-                            background: rowBackground,
-                            borderBottomWidth:
-                              isExpanded || isCollapsing
-                                ? undefined
-                                : 'standard',
-                          }}
-                        >
-                          {cell.column.columnDef.meta?.type ===
-                          'interactive' ? (
-                            mobileTitleKey &&
-                            cell.column.id === mobileTitleKey ? (
-                              <Box id={`${tableId}-row-title-${row.id}`}>
+                                aria-label={
+                                  mobileTitleKey
+                                    ? undefined
+                                    : resolvedExpanderLabel
+                                }
+                                aria-expanded={isExpanded}
+                                aria-controls={`${tableId}-row-expanded-${row.id}`}
+                                onClick={() => {
+                                  if (isExpanded) {
+                                    setCollapsingRows((prev) =>
+                                      new Set(prev).add(row.id),
+                                    )
+                                  }
+                                  row.toggleExpanded()
+                                }}
+                              />
+                            </Box>
+                          </T.Data>
+                        ) : (
+                          <T.Data
+                            key={cell.id}
+                            style={{
+                              padding: theme.spacing[2] + 'px',
+                              background: rowBackground,
+                            }}
+                            box={{
+                              background: rowBackground,
+                              borderBottomWidth:
+                                isExpanded || isCollapsing
+                                  ? undefined
+                                  : 'standard',
+                            }}
+                          >
+                            {cell.column.columnDef.meta?.type ===
+                            'interactive' ? (
+                              mobileTitleKey &&
+                              cell.column.id === mobileTitleKey ? (
+                                <Box id={`${tableId}-row-title-${row.id}`}>
+                                  {flexRender(
+                                    cell.column.columnDef.cell,
+                                    cell.getContext(),
+                                  )}
+                                </Box>
+                              ) : (
+                                flexRender(
+                                  cell.column.columnDef.cell,
+                                  cell.getContext(),
+                                )
+                              )
+                            ) : (
+                              <Text
+                                variant="medium"
+                                id={
+                                  mobileTitleKey &&
+                                  cell.column.id === mobileTitleKey
+                                    ? `${tableId}-row-title-${row.id}`
+                                    : undefined
+                                }
+                                textAlign={cell.column.columnDef.meta?.align}
+                              >
                                 {flexRender(
                                   cell.column.columnDef.cell,
                                   cell.getContext(),
                                 )}
-                              </Box>
-                            ) : (
-                              flexRender(
-                                cell.column.columnDef.cell,
-                                cell.getContext(),
-                              )
-                            )
-                          ) : (
-                            <Text
-                              variant="medium"
-                              id={
-                                mobileTitleKey &&
-                                cell.column.id === mobileTitleKey
-                                  ? `${tableId}-row-title-${row.id}`
-                                  : undefined
-                              }
-                              textAlign={cell.column.columnDef.meta?.align}
-                            >
-                              {flexRender(
-                                cell.column.columnDef.cell,
-                                cell.getContext(),
-                              )}
-                            </Text>
-                          )}
-                        </T.Data>
-                      ),
-                    )}
+                              </Text>
+                            )}
+                          </T.Data>
+                        ),
+                      )}
                   </T.Row>
                   {renderExpandedRow && (
                     <tr aria-hidden={!isExpanded && !isCollapsing}>
                       <T.Data
-                        colSpan={columns.length}
+                        colSpan={desktopColumnCount}
                         style={{ padding: 0 }}
                         box={{
                           position: 'relative',
@@ -434,10 +453,10 @@ export const InteractiveTable = <TData extends object>({
           )}
           {table.getRowModel().rows.map((row, rowIndex) => {
             const titleCell = row
-              .getVisibleCells()
+              .getAllCells()
               .find((c) => c.column.id === mobileTitleKey)
             const dataCells = row
-              .getVisibleCells()
+              .getAllCells()
               .filter(
                 (c) =>
                   c.column.id !== mobileTitleKey && c.column.id !== 'expander',
@@ -463,6 +482,8 @@ export const InteractiveTable = <TData extends object>({
                 position="relative"
                 paddingTop={rowIndex > 0 ? 5 : 3}
                 paddingBottom={3}
+                paddingLeft={2}
+                paddingRight={2}
               >
                 <Box
                   marginBottom={1}
