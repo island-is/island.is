@@ -123,6 +123,9 @@ export const EDUCATION_LABELS: Record<string, string> = Object.fromEntries(
   EDUCATION_OPTIONS.map((o) => [o.value, o.label]),
 )
 
+export const PERIOD_TWELVE_MONTHS = '12months'
+export const PERIOD_ONE_MONTH = '1month'
+
 export const EMPTY_EMPLOYEE: Employee = {
   ordinal: 0,
   identifier: '',
