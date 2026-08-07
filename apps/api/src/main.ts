@@ -14,5 +14,3 @@ bootstrap({
   jsonBodyLimit: '350kb',
 })
 
-// Intentional no-op touch so the deploy-feature pipeline picks up an
-// api change alongside the web-only header nav work on this branch.
