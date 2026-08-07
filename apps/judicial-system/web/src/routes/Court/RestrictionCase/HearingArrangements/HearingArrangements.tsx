@@ -7,7 +7,7 @@ import {
   DISTRICT_COURT_RESTRICTION_CASE_COURT_OVERVIEW_ROUTE,
   DISTRICT_COURT_RESTRICTION_CASE_RULING_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { titles } from '@island.is/judicial-system-web/messages'
+import { errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   ArraignmentAlert,
   CourtArrangements,
@@ -39,6 +39,7 @@ import { rcHearingArrangements as m } from './HearingArrangements.strings'
 
 enum ModalButtonLoading {
   PRIMARY = 'PRIMARY',
+  SECONDARY = 'SECONDARY',
 }
 
 export const HearingArrangements = () => {
@@ -54,7 +55,13 @@ export const HearingArrangements = () => {
   const [modalButtonLoading, setModalButtonLoading] =
     useState<ModalButtonLoading>()
 
-  const { setAndSendCaseToServer, sendNotification, isUpdatingCase } = useCase()
+  const {
+    setAndSendCaseToServer,
+    sendNotification,
+    isUpdatingCase,
+    isSendingNotification,
+    sendNotificationError,
+  } = useCase()
   const { formatMessage } = useIntl()
   const {
     courtDate,
@@ -131,7 +138,9 @@ export const HearingArrangements = () => {
   )
 
   const isModalConfirming = modalButtonLoading === ModalButtonLoading.PRIMARY
+  const isModalDeferring = modalButtonLoading === ModalButtonLoading.SECONDARY
   const isModalLoading = isModalConfirming && isUpdatingCase
+  const isModalDeferringLoading = isModalDeferring && isSendingNotification
 
   return (
     <PageLayout
@@ -213,21 +222,37 @@ export const HearingArrangements = () => {
               router.push(`${navigateTo}/${workingCase.id}`)
             },
             isLoading: isModalLoading,
+            isDisabled: isModalDeferring,
           }}
           secondaryButton={{
             text: 'Nei, staðfesta seinna',
             isDisabled: isModalConfirming,
-            onClick: () => {
+            onClick: async () => {
+              setModalButtonLoading(ModalButtonLoading.SECONDARY)
+
               // The arraignment date is not confirmed, so we only let a
-              // registered advocate know that they are on the case
-              sendNotification(
+              // registered advocate know that they are on the case. This is
+              // their only notification, so we do not navigate away until it
+              // has been sent.
+              const notificationSent = await sendNotification(
                 workingCase.id,
                 TrackedNotificationType.ADVOCATE_ASSIGNED,
               )
 
+              if (!notificationSent) {
+                setModalButtonLoading(undefined)
+                return
+              }
+
               router.push(`${navigateTo}/${workingCase.id}`)
             },
+            isLoading: isModalDeferringLoading,
           }}
+          errorMessage={
+            isModalDeferring && sendNotificationError
+              ? formatMessage(errors.sendNotification)
+              : undefined
+          }
         />
       )}
     </PageLayout>
