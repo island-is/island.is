@@ -595,5 +595,56 @@ export const messages = {
       defaultMessage:
         'Við höfum móttekið jafnréttisáætlunina þína og hún verður yfirfarin af Jafnréttisstofu. Þú færð senda staðfestingu þegar yfirferð er lokið. Ef frekari upplýsingar vantar mun Jafnréttisstofa hafa samband við þig.',
     },
+    sentHistoryLog: {
+      id: 'doe.er.application:inReview.sentHistoryLog',
+      defaultMessage: 'Jafnréttisáætlun send til Jafnréttisstofu',
+    },
+    approvedHistoryLog: {
+      id: 'doe.er.application:inReview.approvedHistoryLog',
+      defaultMessage: 'Jafnréttisáætlun samþykkt af Jafnréttisstofu',
+    },
+    rejectedHistoryLog: {
+      id: 'doe.er.application:inReview.rejectedHistoryLog',
+      defaultMessage: 'Jafnréttisáætlun hafnað af Jafnréttisstofu',
+    },
+    editHistoryLog: {
+      id: 'doe.er.application:inReview.editHistoryLog',
+      defaultMessage: 'Umsókn send aftur í vinnslu til lagfæringar',
+    },
+  }),
+
+  comments: defineMessages({
+    sectionTitle: {
+      id: 'doe.er.application:comments.sectionTitle',
+      defaultMessage: 'Samskipti',
+    },
+    title: {
+      id: 'doe.er.application:comments.title',
+      defaultMessage: 'Samskipti við Jafnréttisstofu',
+    },
+    emptyState: {
+      id: 'doe.er.application:comments.emptyState',
+      defaultMessage: 'Engin skilaboð hafa verið send.',
+    },
+    textareaLabel: {
+      id: 'doe.er.application:comments.textareaLabel',
+      defaultMessage: 'Skrifa skilaboð',
+    },
+    sendButton: {
+      id: 'doe.er.application:comments.sendButton',
+      defaultMessage: 'Senda',
+    },
+    reviewerLabel: {
+      id: 'doe.er.application:comments.reviewerLabel',
+      defaultMessage: 'Jafnréttisstofa',
+    },
+    companyLabel: {
+      id: 'doe.er.application:comments.companyLabel',
+      defaultMessage: 'Þú',
+    },
+    sendError: {
+      id: 'doe.er.application:comments.sendError',
+      defaultMessage: 'Ekki tókst að senda skilaboð, reyndu aftur.',
+    },
   }),
 }
