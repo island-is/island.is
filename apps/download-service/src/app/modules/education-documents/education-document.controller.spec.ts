@@ -27,7 +27,9 @@ const flagState = {
 }
 const fakeFeatureFlagService = {
   getValue: jest.fn((feature: Features) => {
-    if (feature === Features.downloadServiceMmsPrimarySchoolImplementationTest) {
+    if (
+      feature === Features.downloadServiceMmsPrimarySchoolImplementationTest
+    ) {
       return Promise.resolve(flagState.implementation)
     }
     if (feature === Features.downloadServiceSimulateMmsPrimarySchoolFailure) {
@@ -90,7 +92,9 @@ describe('EducationController — getPrimarySchoolAssignmentResultPdf', () => {
 
       expect(res.status).toBe(200)
       expect(res.headers['content-type']).toContain('application/pdf')
-      expect(res.headers['content-disposition']).toContain('namsmat-result1.pdf')
+      expect(res.headers['content-disposition']).toContain(
+        'namsmat-result1.pdf',
+      )
     })
 
     it('returns 404 when the client resolves null', async () => {
@@ -144,7 +148,9 @@ describe('EducationController — getPrimarySchoolAssignmentResultPdf', () => {
 
       expect(res.status).toBe(200)
       expect(res.headers['content-type']).toContain('application/pdf')
-      expect(res.headers['content-disposition']).toContain('namsmat-result1.pdf')
+      expect(res.headers['content-disposition']).toContain(
+        'namsmat-result1.pdf',
+      )
       expect(res.headers['content-disposition']).not.toContain('1234567890')
       expect(res.headers['x-content-type-options']).toBe('nosniff')
     })

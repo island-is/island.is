@@ -28,7 +28,11 @@ import {
 } from '@nestjs/common'
 import { ApiOkResponse } from '@nestjs/swagger'
 import { Response } from 'express'
-import { LOGGER_PROVIDER, type Logger, withLoggingContext } from '@island.is/logging'
+import {
+  LOGGER_PROVIDER,
+  type Logger,
+  withLoggingContext,
+} from '@island.is/logging'
 import { unmaskString } from '@island.is/shared/utils'
 import { PrimarySchoolAssignmentResultParamsDto } from './dto/primarySchoolAssignmentResultParams.dto'
 
@@ -80,10 +84,13 @@ const SIMULATED_FAILURE_SCENARIOS = [
   {
     name: 'network-error',
     make: () =>
-      Object.assign(new Error('request to http://mms-test/pdf failed, reason: ECONNRESET'), {
-        name: 'FetchError',
-        type: 'system',
-      }),
+      Object.assign(
+        new Error('request to http://mms-test/pdf failed, reason: ECONNRESET'),
+        {
+          name: 'FetchError',
+          type: 'system',
+        },
+      ),
   },
 ] as const
 
@@ -168,9 +175,12 @@ export class EducationController {
   ) {
     const { studentId, assignmentResultId } = params
 
-    const implementation = await this.featureFlagService.getValue<
-      PrimarySchoolImplementation
-    >(Features.downloadServiceMmsPrimarySchoolImplementationTest, 'current', user)
+    const implementation =
+      await this.featureFlagService.getValue<PrimarySchoolImplementation>(
+        Features.downloadServiceMmsPrimarySchoolImplementationTest,
+        'current',
+        user,
+      )
 
     if (implementation === 'old') {
       return this.getPrimarySchoolAssignmentResultPdfOld(
