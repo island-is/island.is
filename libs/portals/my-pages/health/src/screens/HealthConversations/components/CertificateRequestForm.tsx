@@ -57,8 +57,8 @@ const CertificateRequestForm = ({
       </Text>
       <GridRow marginBottom={3}>
         <GridColumn
-          span={['12/12', '12/12', '12/12', '12/12', '6/12']}
-          paddingBottom={[2, 2, 2, 2, 0]}
+          span={['12/12', '12/12', '12/12', '6/12']}
+          paddingBottom={[2, 2, 2, 0]}
         >
           <RadioButton
             large
@@ -81,7 +81,7 @@ const CertificateRequestForm = ({
             }
           />
         </GridColumn>
-        <GridColumn span={['12/12', '12/12', '12/12', '12/12', '6/12']}>
+        <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <RadioButton
             large
             backgroundColor="blue"
@@ -107,8 +107,8 @@ const CertificateRequestForm = ({
 
       <GridRow marginBottom={3}>
         <GridColumn
-          span={['12/12', '12/12', '12/12', '12/12', '6/12']}
-          paddingBottom={[2, 2, 2, 2, 0]}
+          span={['12/12', '12/12', '12/12', '6/12']}
+          paddingBottom={[2, 2, 2, 0]}
         >
           <Input
             size="sm"
@@ -127,7 +127,7 @@ const CertificateRequestForm = ({
             disabled={disabled}
           />
         </GridColumn>
-        <GridColumn span={['12/12', '12/12', '12/12', '12/12', '6/12']}>
+        <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <DatePicker
             size="sm"
             backgroundColor="blue"
