@@ -182,6 +182,12 @@ export class EducationController {
         user,
       )
 
+    this.logger.info('Serving primary school assignment result PDF request', {
+      implementation,
+      studentId,
+      assignmentResultId,
+    })
+
     if (implementation === 'old') {
       return this.getPrimarySchoolAssignmentResultPdfOld(
         studentId,
