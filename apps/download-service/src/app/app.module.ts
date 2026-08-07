@@ -19,6 +19,7 @@ import {
   FeatureFlagConfig,
   FeatureFlagModule,
 } from '@island.is/nest/feature-flags'
+import { ProblemModule } from '@island.is/nest/problem'
 
 import { DocumentController } from './modules/documents/document.controller'
 import { DocumentsInfraController } from './modules/infra/documentsInfra.controller'
@@ -114,6 +115,7 @@ import {
     RightsPortalClientModule,
     HealthDirectorateHealthModule,
     FeatureFlagModule,
+    ProblemModule,
     HmsRentalAgreementClientModule,
     PrimarySchoolClientModule,
     VmstUnemploymentClientModule,
