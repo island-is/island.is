@@ -10,7 +10,7 @@ module.exports = {
       queryInterface.sequelize.query(
         `
         UPDATE court_session
-        SET attendees = 'Mættir eru' || CHR(10) || attendees
+        SET attendees = 'Mættir eru:' || CHR(10) || attendees
         WHERE attendees IS NOT NULL
           AND BTRIM(attendees, E' \t\n\r') <> ''
           AND BTRIM(attendees, E' \t\n\r') NOT LIKE 'Mættir eru%'
