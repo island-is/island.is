@@ -183,3 +183,5 @@ apps/judicial-system/web/public/tinymce/
 charts/bootstrap
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
+
+.claude/worktrees

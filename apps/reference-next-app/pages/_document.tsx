@@ -1,6 +1,8 @@
 import React from 'react'
 import Document, { Html, Head, Main, NextScript } from 'next/document'
 import { defaultLanguage } from '@island.is/shared/constants'
+import { RuntimeEnv } from '@island.is/next/utils'
+import { buildPublicRuntimeEnv } from '../environments/runtimeEnvironment'
 
 interface Props {
   lang: string
@@ -18,7 +20,9 @@ class MyDocument extends Document<Props> {
 
     return (
       <Html lang={lang}>
-        <Head />
+        <Head>
+          <RuntimeEnv env={buildPublicRuntimeEnv()} />
+        </Head>
         <body>
           <Main />
           <NextScript />

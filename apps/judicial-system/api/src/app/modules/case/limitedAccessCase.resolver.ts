@@ -1,5 +1,5 @@
 import { Inject, UseGuards, UseInterceptors } from '@nestjs/common'
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -29,6 +29,7 @@ export class LimitedAccessCaseResolver {
     private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly backendService: BackendService,
   ) {}
 
   @Query(() => Case, { nullable: true })
@@ -37,15 +38,13 @@ export class LimitedAccessCaseResolver {
     @Args('input', { type: () => CaseQueryInput })
     input: CaseQueryInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<Case> {
     this.logger.debug(`Getting case ${input.id}`)
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_CASE,
-      backendService.limitedAccessGetCase(input.id),
+      this.backendService.limitedAccessGetCase(input.id),
       input.id,
     )
   }
@@ -56,8 +55,6 @@ export class LimitedAccessCaseResolver {
     @Args('input', { type: () => UpdateCaseInput })
     input: UpdateCaseInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<Case> {
     const { id, ...updateCase } = input
 
@@ -66,7 +63,7 @@ export class LimitedAccessCaseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_CASE,
-      backendService.limitedAccessUpdateCase(id, updateCase),
+      this.backendService.limitedAccessUpdateCase(id, updateCase),
       id,
     )
   }
@@ -77,8 +74,6 @@ export class LimitedAccessCaseResolver {
     @Args('input', { type: () => TransitionCaseInput })
     input: TransitionCaseInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<Case> {
     const { id, ...transitionCase } = input
 
@@ -87,7 +82,7 @@ export class LimitedAccessCaseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.TRANSITION_CASE,
-      backendService.limitedAccessTransitionCase(id, transitionCase),
+      this.backendService.limitedAccessTransitionCase(id, transitionCase),
       id,
     )
   }

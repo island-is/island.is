@@ -47,7 +47,7 @@ export const Menu = ({
   languageToggleQueryParams,
   searchInputPlaceholder,
 }: Props) => {
-  const searchInput = useRef<HTMLInputElement>()
+  const searchInput = useRef<HTMLInputElement>(undefined)
   const { activeLocale, t } = useI18n()
 
   return (

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
-import getConfig from 'next/config'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 
@@ -31,6 +30,7 @@ import { OrganizationIslandFooter } from '../components/Organization/Organizatio
 import { PRELOADED_FONTS } from '../constants'
 import { GlobalContextProvider } from '../context'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
+import { getPublicRuntimeEnv } from '../environments/runtimeEnvironment'
 import {
   ContentLanguage,
   GetAlertBannerQuery,
@@ -64,8 +64,6 @@ import {
 } from '../utils/processMenuData'
 import Illustration from './Illustration'
 import * as styles from './main.css'
-
-const { publicRuntimeConfig = {} } = getConfig() ?? {}
 
 const IS_MOCK =
   process.env.NODE_ENV !== 'production' && process.env.API_MOCKS === 'true'
@@ -124,13 +122,16 @@ export interface LayoutProps {
   children?: React.ReactNode
 }
 
-if (publicRuntimeConfig.ddLogsClientToken && typeof window !== 'undefined') {
-  userMonitoring.initDdLogs({
-    service: 'islandis',
-    clientToken: publicRuntimeConfig.ddLogsClientToken,
-    env: publicRuntimeConfig.environment || 'local',
-    version: publicRuntimeConfig.appVersion || 'local',
-  })
+if (typeof window !== 'undefined') {
+  const { ddLogsClientToken, environment, appVersion } = getPublicRuntimeEnv()
+  if (ddLogsClientToken) {
+    userMonitoring.initDdLogs({
+      service: 'islandis',
+      clientToken: ddLogsClientToken,
+      env: environment || 'local',
+      version: appVersion || 'local',
+    })
+  }
 }
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error make web strict
