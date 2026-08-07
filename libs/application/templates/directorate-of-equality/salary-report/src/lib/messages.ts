@@ -998,18 +998,34 @@ export const messages = {
     },
   }),
 
-  completed: defineMessages({
+  inReview: defineMessages({
     sectionTitle: {
-      id: 'doe.sr.application:completed.sectionTitle',
+      id: 'salaryReport.application:inReview.sectionTitle',
       defaultMessage: 'Umsókn móttekin',
     },
     alertTitle: {
-      id: 'doe.sr.application:completed.alertTitle',
+      id: 'salaryReport.application:inReview.alertTitle',
       defaultMessage: 'Umsókn hefur verið send til Jafnréttisstofu',
     },
     alertDescription: {
-      id: 'doe.sr.application:completed.alertDescription',
-      defaultMessage: lorem,
+      id: 'salaryReport.application:inReview.alertDescription',
+      defaultMessage:
+        'Við höfum móttekið launagreiningarskýrsluna þína og hún verður yfirfarin af Jafnréttisstofu. Þú færð senda staðfestingu þegar yfirferð er lokið. Ef frekari upplýsingar vantar mun Jafnréttisstofa hafa samband við þig.',
+    },
+  }),
+
+  rejected: defineMessages({
+    sectionTitle: {
+      id: 'salaryReport.application:rejected.sectionTitle',
+      defaultMessage: 'Hafnað',
+    },
+    title: {
+      id: 'salaryReport.application:rejected.title',
+      defaultMessage: 'Umsókn hafnað',
+    },
+    description: {
+      id: 'salaryReport.application:rejected.description',
+      defaultMessage: 'Umsókn þinni hefur verið hafnað.',
     },
   }),
 
@@ -1059,6 +1075,13 @@ export const messages = {
     submitButton: {
       id: 'doe.sr.application:postponed.submitButton',
       defaultMessage: 'Senda inn úrbótaáætlun',
+    },
+  }),
+
+  historyLogs: defineMessages({
+    postponed: {
+      id: 'salaryReport.application:historyLogs.postponed',
+      defaultMessage: 'Salary report outliers postponed',
     },
   }),
 }
