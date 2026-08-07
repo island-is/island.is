@@ -854,6 +854,11 @@ export const m = defineMessages({
     defaultMessage: 'Ógilt fasteignanúmer',
     description: 'Invalid property number',
   },
+  propertySearchFailed: {
+    id: 'form.system:property-search-failed',
+    defaultMessage: 'Leit að fasteign skilaði ekki niðurstöðu',
+    description: 'Property search did not return a successful response',
+  },
   pickHour: {
     id: 'form.system:pick-hour',
     defaultMessage: 'Veldu klukkustund',
@@ -866,9 +871,8 @@ export const m = defineMessages({
   },
   reviewApplication: {
     id: 'form.system:review-application',
-    defaultMessage:
-      'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
-    description: 'Please review the application before submitting it.',
+    defaultMessage: 'Vinsamlega farðu vel yfir áður en þú sendir inn.',
+    description: 'Please review before submitting.',
   },
   externalDataTitle: {
     id: 'form.system:external-data-title',
@@ -960,8 +964,8 @@ export const m = defineMessages({
   },
   submitApplication: {
     id: 'form.system:submit-application',
-    defaultMessage: 'Senda inn umsókn',
-    description: 'Submit application',
+    defaultMessage: 'Senda inn',
+    description: 'Submit',
   },
   openMyPages: {
     id: 'form.system:open-my-pages',
@@ -1108,6 +1112,17 @@ export const m = defineMessages({
     id: 'form.system:application-does-not-permit-login',
     defaultMessage: 'Þessi umsókn styður ekki þessa tegund innskráningar.',
     description: 'This application does not support this type of login.',
+  },
+  delegationRequired: {
+    id: 'form.system:delegation-required',
+    defaultMessage: 'Rangt umboð',
+    description: 'Wrong delegation',
+  },
+  applicationRequiresDelegation: {
+    id: 'form.system:application-requires-delegation',
+    defaultMessage: 'Þú hefur ekki rétt umboð til að opna þessa umsóknartegund',
+    description:
+      'You do not have the correct delegation to open this application type',
   },
   errorFetchingApplication: {
     id: 'form.system:error-fetching-application',

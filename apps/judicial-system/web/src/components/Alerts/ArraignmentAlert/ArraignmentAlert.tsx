@@ -18,20 +18,22 @@ const ArraignmentAlert = () => {
     [workingCase.notifications],
   )
 
+  const isConfirmed = courtDateNotification.hasSent
+
   return (
     <Box marginBottom={5}>
       <AlertMessage
-        type="info"
+        type={isConfirmed ? 'info' : 'warning'}
         title="Upplýsingar um fyrirtöku"
         message={
           <Box display="flex" flexDirection="column">
             <Text variant="small">
-              {courtDateNotification.hasSent
-                ? `Síðasta tilkynnning var send ${formatDate(
+              {isConfirmed
+                ? `Fyrirtökutími staðfestur ${formatDate(
                     courtDateNotification.date,
-                    'PPPp',
+                    "dd.MM.yyyy 'kl.' HH:mm",
                   )}.`
-                : 'Tilkynning um fyrirtökutíma hefur ekki verið send.'}
+                : 'Fyrirtökutími hefur ekki verið staðfestur'}
             </Text>
             {workingCase.comments && (
               <Text variant="small" marginTop={2}>

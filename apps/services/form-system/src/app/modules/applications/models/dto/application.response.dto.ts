@@ -17,4 +17,7 @@ export class ApplicationResponseDto {
 
   @ApiPropertyOptional()
   isLoginTypeAllowed?: boolean
+
+  @ApiPropertyOptional()
+  hasRequiredDelegation?: boolean
 }

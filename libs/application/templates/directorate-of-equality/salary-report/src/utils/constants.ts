@@ -8,13 +8,19 @@ import {
 } from './types'
 
 export type Events = {
-  type: DefaultEvents.SUBMIT | DefaultEvents.ABORT
+  type:
+    | DefaultEvents.SUBMIT
+    | DefaultEvents.ABORT
+    | DefaultEvents.APPROVE
+    | DefaultEvents.REJECT
 }
 
 export enum States {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
-  COMPLETED = 'completed',
+  IN_REVIEW = 'inReview',
+  APPROVED = 'approved',
+  DENIED = 'denied',
   POSTPONED = 'postponed',
   NOT_ALLOWED = 'notAllowed',
 }
@@ -22,6 +28,7 @@ export enum States {
 export enum Roles {
   APPLICANT = 'applicant',
   NOT_ALLOWED = 'notAllowed',
+  REVIEWER = 'reviewer',
 }
 
 export const DEFAULT_JOB_FACTORS: JobFactor[] = [
