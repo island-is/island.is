@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y \
   python3 \
   make \
   g++ \
+  awscli \
   && rm -rf /var/lib/apt/lists/*
 
 FROM public.ecr.aws/docker/library/node:20.15.0-bookworm-slim AS build

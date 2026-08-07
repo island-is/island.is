@@ -24,8 +24,8 @@ import {
   resolveWithMaxLength,
   serializeEnvironmentVariables,
 } from './serialization-helpers'
-
 import { getScaledValue } from '../utils/scale-value'
+import { featureDbRestores } from '../feature-deployments'
 
 /**
  * Transforms our definition of a service to a Helm values object
@@ -222,39 +222,54 @@ const serializeService: SerializeMethod<HelmService> = async (
   // initContainers
   if (typeof serviceDef.initContainers !== 'undefined') {
     if (serviceDef.initContainers.containers.length > 0) {
-      result.initContainer = {
-        containers: serializeContainerRuns(
-          serviceDef.initContainers.containers,
-        ),
-        env: {
-          SERVERSIDE_FEATURES_ON: env1.featuresOn.join(','),
-        },
-        secrets: {},
-      }
-      if (typeof serviceDef.initContainers.envs !== 'undefined') {
-        const { envs } = serializeEnvironmentVariables(
-          service,
-          deployment,
-          serviceDef.initContainers.envs,
-          env1,
-        )
-        mergeObjects(result.initContainer.env, envs)
-      }
-      if (typeof serviceDef.initContainers.secrets !== 'undefined') {
-        result.initContainer.secrets = serviceDef.initContainers.secrets
-      }
-      if (serviceDef.initContainers.postgres) {
-        const { env, secrets, errors } = serializePostgres(
-          serviceDef,
-          deployment,
-          env1,
-          service,
-          serviceDef.initContainers.postgres,
-        )
+      const isFeatureDeploy = !!env1.feature
+      const hasPostgres = !!serviceDef.initContainers.postgres
+      const dbName = serviceDef.initContainers.postgres?.name
+      const restores = featureDbRestores.find((service) =>
+        dbName?.endsWith(`_${service.service}`),
+      )
 
-        mergeObjects(result.initContainer.env, env)
-        mergeObjects(result.initContainer.secrets, secrets)
-        addToErrors(errors)
+      const hasDbRestore = isFeatureDeploy && !!restores
+
+      const containersToRun = hasDbRestore
+        ? serviceDef.initContainers.containers.filter(
+            (container) => container.name !== 'seed',
+          )
+        : serviceDef.initContainers.containers
+
+      if (containersToRun.length > 0) {
+        result.initContainer = {
+          containers: serializeContainerRuns(containersToRun),
+          env: {
+            SERVERSIDE_FEATURES_ON: env1.featuresOn.join(','),
+          },
+          secrets: {},
+        }
+        if (typeof serviceDef.initContainers.envs !== 'undefined') {
+          const { envs } = serializeEnvironmentVariables(
+            service,
+            deployment,
+            serviceDef.initContainers.envs,
+            env1,
+          )
+          mergeObjects(result.initContainer.env, envs)
+        }
+        if (typeof serviceDef.initContainers.secrets !== 'undefined') {
+          result.initContainer.secrets = serviceDef.initContainers.secrets
+        }
+        if (serviceDef.initContainers.postgres) {
+          const { env, secrets, errors } = serializePostgres(
+            serviceDef,
+            deployment,
+            env1,
+            service,
+            serviceDef.initContainers.postgres,
+          )
+
+          mergeObjects(result.initContainer.env, env)
+          mergeObjects(result.initContainer.secrets, secrets)
+          addToErrors(errors)
+        }
       }
     } else {
       addToErrors(['No containers to run defined in initContainers'])
@@ -590,15 +605,39 @@ function getFeatureDeploymentNamespace(env: EnvironmentConfig) {
 
 export const HelmOutput: OutputFormat<HelmService> = {
   featureDeployment(s: ServiceDefinition, env): void {
-    // Set feature-deployment prefix for URLs
     Object.values(s.ingress).forEach((ingress) => {
       if (!Array.isArray(ingress.host.dev)) {
         ingress.host.dev = [ingress.host.dev]
       }
-      ingress.host.dev = ingress.host.dev.map(
-        (host) => `${env.feature}-${host}`,
-      )
+      if (ingress.idsFeature === true) {
+        ingress.host.dev = ingress.host.dev.map((host) => {
+          if (host.includes('.')) {
+            const parts = host.split('.')
+            return `${env.feature}${parts.slice(1).join('.')}.identity-server.${
+              env.domain
+            }`
+          } else {
+            return `${env.feature}.identity-server.${env.domain}`
+          }
+        })
+      } else {
+        ingress.host.dev = ingress.host.dev.map(
+          (host) => `${env.feature}-${host}`,
+        )
+      }
     })
+
+    //TODO mark somewhere that the serice will be using ids features.
+    if (s.env.IDENTITY_SERVER_ISSUER_URL) {
+      const currentValue = s.env.IDENTITY_SERVER_ISSUER_URL
+      if (typeof currentValue === 'object' && 'dev' in currentValue) {
+        s.env.IDENTITY_SERVER_ISSUER_URL = {
+          ...currentValue,
+          dev: `https://${env.feature}.identity-server.${env.domain}`,
+        }
+      }
+    }
+
     s.replicaCount = {
       min: Math.min(1, s.replicaCount?.min ?? 1),
       max: Math.min(1, s.replicaCount?.max ?? 1),

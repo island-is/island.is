@@ -3,6 +3,14 @@ import { getPostgresExtensions, resolveDbHost } from './map-to-helm-values'
 import { FeatureKubeJob } from '../types/output-types'
 import { resolveWithMaxLength } from './serialization-helpers'
 import { EnvironmentConfig } from '../types/charts'
+import { featureDbRestores } from '../feature-deployments'
+
+function getBaseDatabaseName(featureDbName: string, feature: string): string {
+  const prefix = `feature_${feature.replace(/-/g, '_')}_`
+  return featureDbName.startsWith(prefix)
+    ? featureDbName.substring(prefix.length)
+    : featureDbName
+}
 
 export const generateJobsForFeature = async (
   image: string,
@@ -17,6 +25,7 @@ export const generateJobsForFeature = async (
     privileged: false,
     allowPrivilegeEscalation: false,
   }
+
   const containers = Object.values(services)
     .map((service) =>
       [service.postgres, service.initContainers?.postgres]
@@ -26,8 +35,15 @@ export const generateJobsForFeature = async (
           const extensions = getPostgresExtensions(
             service.initContainers?.postgres?.extensions,
           )
+          const baseDbName = getBaseDatabaseName(info!.name!, feature)
+          const restoreConfig = featureDbRestores.find(
+            (r) => r.service === baseDbName,
+          )
+
           return {
-            command: ['/app/create-db.sh'],
+            command: restoreConfig
+              ? ['/app/restore-db-wrapper.sh']
+              : ['/app/create-db.sh'],
             image,
             name: `${info!.username!.replace(/_/g, '-').substring(0, 60)}1`,
             securityContext,
@@ -64,6 +80,18 @@ export const generateJobsForFeature = async (
                 name: 'DB_EXTENSIONS',
                 value: extensions,
               },
+              ...(restoreConfig
+                ? [
+                    {
+                      name: 'RESTORE_BUCKET',
+                      value: restoreConfig.bucket,
+                    },
+                    {
+                      name: 'RESTORE_KEY',
+                      value: restoreConfig.key,
+                    },
+                  ]
+                : []),
             ],
           }
         }),

@@ -160,6 +160,7 @@ export interface Ingress {
   }
   pathTypeOverride?: 'Exact' | 'Prefix' | 'ImplementationSpecific'
   paths: string[]
+  idsFeature?: boolean
   public?: boolean
   extraAnnotations?: Partial<{
     [env in OpsEnv]: { [annotation: string]: string | null }
