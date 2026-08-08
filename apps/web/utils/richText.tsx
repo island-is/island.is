@@ -132,6 +132,7 @@ import { LandspitaliMenu } from '../components/connected/LandspitaliMenu'
 import { LandsretturCourtOfAppealAppeals } from '../components/connected/LandsretturCourtOfAppealAppeals'
 import { LatestVerdicts } from '../components/connected/LatestVerdicts'
 import LyfjastofnunAccordion from '../components/connected/lyfjastofnun/LyfjastofnunAccordion'
+import { RSKCalculator } from '../components/connected/RSKCalculator'
 import { BurningPermitList } from '../components/connected/syslumenn/CardLists/BurningPermitList/BurningPermitList'
 import { ReligiousOrganizationList } from '../components/connected/syslumenn/CardLists/ReligiousOrganizationList/ReligiousOrganizationList'
 import SyslumennDrivingInstructorList from '../components/connected/syslumenn/DrivingInstructorList/DrivingInstructorList'
@@ -264,6 +265,9 @@ export const webRenderConnectedComponent = (
       break
     case 'ECOI/Calculator':
       connectedComponent = <ECOICalculator slice={slice} />
+      break
+    case 'RSK/Calculator':
+      connectedComponent = <RSKCalculator slice={slice} />
       break
     case 'DigitalIcelandMailingListThumbnailCard':
       connectedComponent = (

@@ -74,6 +74,7 @@ import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
 import { RegulationsModule } from '@island.is/api/domains/regulations'
 import { RegulationsAdminModule } from '@island.is/api/domains/regulations-admin'
 import { RightsPortalModule } from '@island.is/api/domains/rights-portal'
+import { RskCalculatorsModule } from '@island.is/api/domains/rsk-calculators'
 import { SessionsModule } from '@island.is/api/domains/sessions'
 import { ShipRegistryModule } from '@island.is/api/domains/ship-registry'
 import { StatisticsModule } from '@island.is/api/domains/statistics'
@@ -384,6 +385,7 @@ const environment = getConfig
     FinancialStatementsInaoModule,
     VehiclesModule,
     RightsPortalModule,
+    RskCalculatorsModule,
     AssetsModule,
     ApiDomainsHmsModule,
     HmsLoansModule,

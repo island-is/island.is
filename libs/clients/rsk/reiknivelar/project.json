@@ -1,0 +1,32 @@
+{
+  "name": "clients-rsk-reiknivelar",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/rsk/reiknivelar/src",
+  "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/rsk/reiknivelar"],
+      "options": {
+        "jestConfig": "libs/clients/rsk/reiknivelar/jest.config.ts"
+      }
+    },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "curl -s https://reiknivelarapi.rsk.is/swagger/v1/swagger.json | jq > libs/clients/rsk/reiknivelar/src/clientConfig.json"
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-ts -f libs/clients/rsk/reiknivelar/src/lib/openapi-ts.config.ts"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
+    }
+  }
+}
