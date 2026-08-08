@@ -176,7 +176,6 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
     if (!unchanged) {
       setStartDate(start)
       setEndDate(end)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ;(datePickerRef.current as any)?.setState({ inputValue: null })
       handleChange && handleChange(start, end)
     }
@@ -220,7 +219,6 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
               setEndDate(startDate)
               hoverDateRef.current = null
               setIsOpen(false)
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               ;(datePickerRef.current as any)?.setState({
                 inputValue: null,
               })

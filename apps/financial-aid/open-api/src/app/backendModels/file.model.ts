@@ -5,8 +5,10 @@ import { ApiProperty } from '@nestjs/swagger'
 
 import { ApplicationFile, FileType } from '@island.is/financial-aid/shared/lib'
 
-interface ApplicationFileCreationAttributes
-  extends Optional<ApplicationFile, 'id' | 'created'> {}
+type ApplicationFileCreationAttributes = Optional<
+  ApplicationFile,
+  'id' | 'created'
+>
 
 @Table({
   tableName: 'application_files',

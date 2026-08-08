@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import cn from 'classnames'
 import NextLink from 'next/link'
 

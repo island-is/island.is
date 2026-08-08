@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'application-templates-mortgage-certificate',
   preset: './jest.preset.js',

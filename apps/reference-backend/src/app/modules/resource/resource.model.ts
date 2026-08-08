@@ -16,8 +16,10 @@ interface ResourceAttributes {
   modified: Date
 }
 
-interface ResourceCreationAttributes
-  extends Optional<ResourceAttributes, 'id' | 'created' | 'modified'> {}
+type ResourceCreationAttributes = Optional<
+  ResourceAttributes,
+  'id' | 'created' | 'modified'
+>
 
 @Table({
   tableName: 'resource',

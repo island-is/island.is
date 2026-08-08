@@ -14,8 +14,10 @@ import { useDeleteIndictmentCountMutation } from './deleteIndictmentCount.genera
 import { useReorderIndictmentCountsMutation } from './reorderIndictmentCounts.generated'
 import { useUpdateIndictmentCountMutation } from './updateIndictmentCount.generated'
 
-export interface UpdateIndictmentCount
-  extends Omit<UpdateIndictmentCountInput, 'caseId' | 'indictmentCountId'> {}
+export type UpdateIndictmentCount = Omit<
+  UpdateIndictmentCountInput,
+  'caseId' | 'indictmentCountId'
+>
 
 export type UpdateIndictmentCountState = UpdateIndictmentCount & {
   offenses?: Offense[] | null

@@ -63,7 +63,7 @@ const municipalitySeeds = `[
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    var model = queryInterface.sequelize.define('staff', {
+    const model = queryInterface.sequelize.define('staff', {
       id: {
         type: Sequelize.UUID,
         primaryKey: true,

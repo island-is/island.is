@@ -11,8 +11,7 @@ export type ValidateField<T> = {
   message: MessageDescriptor
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export const validateFieldInDictionary = <T extends Object>(
+export const validateFieldInDictionary = <T extends object>(
   dictionary: Record<string, T>,
   answerField: string,
   fieldName: string,

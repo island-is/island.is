@@ -43,6 +43,9 @@ export type PropsBase = {
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore make web strict
 declare module 'react-select/dist/declarations/src/Select' {
+  // must stay an interface: declaration merging augments react-select's Props;
+  // a type alias would replace instead of merge and drop our custom props
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
   export interface Props<
     Option,
     IsMulti extends boolean,

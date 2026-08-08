@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import { useMutation, useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 import * as kennitala from 'kennitala'

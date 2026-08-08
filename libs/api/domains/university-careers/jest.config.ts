@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'api-domains-university-careers',
   preset: '../../../../jest.preset.js',

@@ -1,5 +1,5 @@
-import { useContext } from 'react'
 import React from 'react'
+import { useContext } from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import {
