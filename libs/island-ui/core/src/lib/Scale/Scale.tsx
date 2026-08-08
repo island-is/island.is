@@ -1,7 +1,11 @@
-import { Box, Stack, Text } from '@island.is/island-ui/core'
 import cn from 'classnames'
 import { FC, useMemo } from 'react'
-import * as styles from './QuestionTypes.css'
+import { Box } from '../Box/Box'
+import { InputError } from '../InputError/InputError'
+import { Stack } from '../Stack/Stack'
+import { Text } from '../Text/Text'
+import * as styles from './Scale.css'
+
 export interface ScaleProps {
   id: string
   label?: string
@@ -37,10 +41,9 @@ export const Scale: FC<ScaleProps> = ({
   const minNum = Number(min)
   const maxNum = Number(max)
 
-  const generateScaleValues = useMemo(() => {
+  const scaleValues = useMemo(() => {
     // Bail out early if values are invalid
     if (isNaN(minNum) || isNaN(maxNum) || minNum >= maxNum) {
-      console.warn('Invalid min/max in Scale component', { min, max })
       return []
     }
 
@@ -51,6 +54,7 @@ export const Scale: FC<ScaleProps> = ({
       values.push(i.toString())
       if (i + s > maxNum) break // prevent floating point overflow
     }
+
     // If we have more than 20 values, sample by index
     if (values.length > 20) {
       const interval = Math.ceil(values.length / 20)
@@ -61,90 +65,66 @@ export const Scale: FC<ScaleProps> = ({
       if (sampledValues[sampledValues.length - 1] !== lastValue) {
         sampledValues.push(lastValue)
       }
-
       return sampledValues
     }
+
     return values
-  }, [minNum, maxNum, step, min, max])
+  }, [minNum, maxNum, step])
 
   return (
     <Box>
       {label && (
-        <Text variant="h5" marginBottom={2} id={`${id}-label`}>
+        <Text variant="h4" marginBottom={2} id={`${id}-label`}>
           {label}
           {required && <span style={{ color: 'red' }}> *</span>}
         </Text>
       )}
+      <Stack space={1}>
+        <Box
+          className={styles.scaleContainer}
+          role="radiogroup"
+          aria-required={required}
+          aria-labelledby={label ? `${id}-label` : undefined}
+        >
+          {scaleValues.map((scaleValue) => (
+            <Box
+              key={scaleValue}
+              className={cn(styles.scaleButton, {
+                [styles.scaleButtonSelected]: value === scaleValue,
+                [styles.scaleButtonError]: error !== undefined,
+              })}
+              onClick={!disabled ? () => onChange(scaleValue) : undefined}
+              disabled={disabled}
+              role="radio"
+              aria-checked={value === scaleValue}
+              aria-disabled={disabled}
+              type="button"
+            >
+              <Text className={styles.scaleButtonText}>{scaleValue}</Text>
+            </Box>
+          ))}
+        </Box>
 
-      <Stack space={2}>
         {showLabels && (minLabel || maxLabel) && (
           <Box display="flex" justifyContent="spaceBetween">
             {minLabel && (
-              <Text variant="small" color="dark300">
+              <Text variant="small" color="blue400" fontWeight="semiBold">
                 {minLabel}
               </Text>
             )}
             {maxLabel && (
-              <Text variant="small" color="dark300">
+              <Text variant="small" color="blue400" fontWeight="semiBold">
                 {maxLabel}
               </Text>
             )}
           </Box>
         )}
-
-        <Box
-          className={styles.scaleContainer}
-          display="flex"
-          flexWrap="nowrap"
-          role="radiogroup"
-          aria-required={required}
-          aria-labelledby={label ? `${id}-label` : undefined}
-        >
-          {generateScaleValues.map((scaleValue) => (
-            <Box
-              key={scaleValue}
-              className={cn(styles.scaleButton, {
-                [styles.scaleButtonSelected]: value === scaleValue,
-              })}
-              style={{ height: '80px', width: '74px' }}
-              onClick={!disabled ? () => onChange(scaleValue) : undefined}
-              disabled={disabled}
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              role="radio"
-              aria-checked={value === scaleValue}
-              aria-disabled={disabled}
-              type="button"
-              color={value === scaleValue ? 'white' : 'dark400'}
-            >
-              <Text
-                color={value === scaleValue ? 'white' : 'dark400'}
-                fontWeight={value === scaleValue ? 'medium' : 'light'}
-                textAlign="center"
-              >
-                {scaleValue}
-              </Text>
-            </Box>
-          ))}
-        </Box>
-
-        {showLabels && (
-          <Box display="flex" justifyContent="spaceBetween">
-            <Text variant="small" color="dark300">
-              {min}
-            </Text>
-            <Text variant="small" color="dark300">
-              {max}
-            </Text>
-          </Box>
-        )}
       </Stack>
 
       {error && (
-        <Text color="red400" variant="small" marginTop={1}>
-          {error}
-        </Text>
+        <Box paddingBottom={2}>
+          <InputError errorMessage={error} />
+        </Box>
       )}
     </Box>
   )
