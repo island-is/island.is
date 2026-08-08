@@ -75,6 +75,36 @@
         "args": ["--job", "cms-cleanup"]
       }
     },
+    "lyfjastofnun-instructions-import": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "services-cms-importer:build",
+        "buildTargetOptions": {
+          "outputPath": "dist/apps/services/cms-importer"
+        },
+        "args": ["--job", "lyfjastofnun-instructions-import"]
+      }
+    },
+    "lyfjastofnun-lists-import": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "services-cms-importer:build",
+        "buildTargetOptions": {
+          "outputPath": "dist/apps/services/cms-importer"
+        },
+        "args": ["--job", "lyfjastofnun-lists-import"]
+      }
+    },
+    "lyfjastofnun-news-import": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "services-cms-importer:build",
+        "buildTargetOptions": {
+          "outputPath": "dist/apps/services/cms-importer"
+        },
+        "args": ["--job", "lyfjastofnun-news-import"]
+      }
+    },
     "lint": {
       "executor": "@nx/eslint:lint"
     },
