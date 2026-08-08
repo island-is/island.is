@@ -31,7 +31,6 @@ const IndictmentsLawsBrokenAccordionItem: FC<Props> = (props) => {
   return (
     <Accordion>
       <AccordionItem
-        labelVariant="h3"
         id="lawsBrokenAccordionItem"
         label={formatMessage(lawsBrokenAccordion.heading)}
       >

@@ -303,7 +303,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
               <Text variant="eyebrow" color="purple400">
                 {formatMessage(ipMessages.productsAndServices)}
               </Text>
-              <Accordion dividerOnTop={false} space={3}>
+              <Accordion dividerOnTop={false}>
                 {ip?.markCategories
                   ?.map((category, index) => {
                     if (!category.categoryNumber) {

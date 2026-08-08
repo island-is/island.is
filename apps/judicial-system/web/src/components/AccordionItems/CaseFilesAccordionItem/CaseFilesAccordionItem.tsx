@@ -92,7 +92,6 @@ const CaseFilesAccordionItem: FC<Props> = (props) => {
           )}
         </Box>
       }
-      labelVariant="h3"
       labelUse="h3"
     >
       <CaseFileList

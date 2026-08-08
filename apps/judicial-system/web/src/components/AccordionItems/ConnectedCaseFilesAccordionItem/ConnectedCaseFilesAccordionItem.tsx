@@ -31,7 +31,6 @@ const ConnectedCaseFilesAccordionItem: FC<Props> = ({
   return (
     <AccordionItem
       id="connectedCaseFiles"
-      labelVariant="h3"
       label={`Gögn úr máli ${connectedCase.courtCaseNumber}`}
     >
       <IndictmentCaseFilesList

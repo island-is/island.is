@@ -39,7 +39,6 @@ const PoliceRequestAccordionItem: FC<Props> = ({ workingCase }: Props) => {
       label={formatMessage(core.requestCaseType, {
         caseType: formatRequestCaseType(workingCase.type),
       })}
-      labelVariant="h3"
       labelUse="h3"
     >
       <AccordionListItem

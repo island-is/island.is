@@ -48,7 +48,6 @@ const CourtRecordAccordionItem: FC<Props> = ({ workingCase }: Props) => {
     <AccordionItem
       id="courtRecordAccordionItem"
       label={formatMessage(m.title)}
-      labelVariant="h3"
       labelUse="h3"
     >
       <AccordionListItem

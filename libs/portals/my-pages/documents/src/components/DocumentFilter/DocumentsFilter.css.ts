@@ -7,5 +7,4 @@ export const unreadFilter = style({
 
 export const dateFilter = style({
   marginTop: -theme.spacing[4],
-  paddingBottom: theme.spacing[2],
 })

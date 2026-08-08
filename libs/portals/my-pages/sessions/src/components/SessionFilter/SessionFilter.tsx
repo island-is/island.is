@@ -66,6 +66,7 @@ const SessionFilter: React.FC<React.PropsWithChildren<IProps>> = ({
           />
           <Box marginTop={5}>
             <Accordion
+              variant="mini"
               dividerOnBottom={false}
               dividerOnTop={false}
               singleExpand={false}
@@ -76,8 +77,6 @@ const SessionFilter: React.FC<React.PropsWithChildren<IProps>> = ({
                 label={formatMessage(m.datesLabel)}
                 labelUse="h5"
                 labelColor="blue400"
-                labelVariant="h5"
-                iconVariant="small"
                 startExpanded
               >
                 <Box display="flex" flexDirection="column">

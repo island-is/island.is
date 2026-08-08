@@ -24,10 +24,9 @@ const ParentCaseFiles: FC<Props> = ({ files }) => {
 
   return (
     <Box marginBottom={5}>
-      <Accordion dividerOnTop={false}>
+      <Accordion variant="large" dividerOnTop={false}>
         <AccordionItem
           id="parentCaseFiles"
-          labelVariant="h3"
           label={`${formatMessage(m.heading)} (${files.length})`}
         >
           {files.map((file, index) => (

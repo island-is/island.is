@@ -179,8 +179,9 @@ const FinanceTransactions = () => {
                     borderColor="blue200"
                     width="full"
                   />
-                  <Box marginTop={1}>
+                  <Box>
                     <Accordion
+                      variant="mini"
                       dividerOnBottom={false}
                       dividerOnTop={false}
                       singleExpand={false}
@@ -191,8 +192,6 @@ const FinanceTransactions = () => {
                         label={formatMessage(m.datesLabel)}
                         labelColor="dark400"
                         labelUse="h5"
-                        labelVariant="h5"
-                        iconVariant="small"
                       >
                         <Box
                           className={styles.accordionBox}
