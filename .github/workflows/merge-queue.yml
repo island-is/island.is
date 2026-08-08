@@ -59,7 +59,7 @@ jobs:
       - prepare
       - pre-checks
     runs-on: arc-shared
-    if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS }}
+    if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
     permissions:
       actions: read
       contents: read
@@ -252,10 +252,11 @@ jobs:
       - name: Get docker-build output
         uses: cloudposse/github-action-matrix-outputs-read@v1
         id: read
+        if: ${{ needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
         with:
           matrix-step-name: docker-build
       - name: checkout
-        if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
+        if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && ((needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]') || (needs.prepare.outputs.MQ_REUSED_DOCKER_DATA && needs.prepare.outputs.MQ_REUSED_DOCKER_DATA != '[]')) }}
         uses: actions/checkout@v4
 
       - name: Record deploy start time
@@ -267,20 +268,21 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-        if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
+        if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && ((needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]') || (needs.prepare.outputs.MQ_REUSED_DOCKER_DATA && needs.prepare.outputs.MQ_REUSED_DOCKER_DATA != '[]')) }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
-        if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
+        if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && ((needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]') || (needs.prepare.outputs.MQ_REUSED_DOCKER_DATA && needs.prepare.outputs.MQ_REUSED_DOCKER_DATA != '[]')) }}
       - name: Prepare artifact to be uploaded
-        if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
+        if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && ((needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]') || (needs.prepare.outputs.MQ_REUSED_DOCKER_DATA && needs.prepare.outputs.MQ_REUSED_DOCKER_DATA != '[]')) }}
         env:
           JSON_DATA: ${{ steps.read.outputs.result }}
+          REUSED_DOCKER_DATA: ${{ needs.prepare.outputs.MQ_REUSED_DOCKER_DATA }}
         run: |
           node scripts/ci/docker/write-data.mjs
       - name: Get manifest data
         id: manifest
-        if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
+        if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && ((needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]') || (needs.prepare.outputs.MQ_REUSED_DOCKER_DATA && needs.prepare.outputs.MQ_REUSED_DOCKER_DATA != '[]')) }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -288,7 +290,7 @@ jobs:
           node scripts/ci/docker/get-data.mjs
       - name: Update helm-values repository
         uses: ./.github/actions/update-helm-values
-        if: ${{ steps.manifest.outputs.MQ_HAS_OUTPUT == 'true' && needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
+        if: ${{ steps.manifest.outputs.MQ_HAS_OUTPUT == 'true' && needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && ((needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]') || (needs.prepare.outputs.MQ_REUSED_DOCKER_DATA && needs.prepare.outputs.MQ_REUSED_DOCKER_DATA != '[]')) }}
         with:
           files: ${{ steps.manifest.outputs.MQ_CHANGED_FILES }}
           ssh-key: ${{ secrets.HELM_VALUES_SSH_KEY }}
