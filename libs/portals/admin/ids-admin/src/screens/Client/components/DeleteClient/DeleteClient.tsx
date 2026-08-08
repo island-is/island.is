@@ -87,7 +87,7 @@ export const DeleteClient: FC<Props> = ({ isVisible, onClose }) => {
           loading={loading}
           onClick={handleSubmit}
         >
-          {formatMessage(m.delete)}
+          {formatMessage(m.archive)}
         </Button>
       </Box>
     </Modal>

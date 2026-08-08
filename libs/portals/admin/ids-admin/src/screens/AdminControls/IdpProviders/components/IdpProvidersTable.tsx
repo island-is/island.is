@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 import { AuthAdminEnvironment } from '@island.is/api/schema'
 import {
@@ -14,6 +14,7 @@ import { useLocale } from '@island.is/localization'
 import { Problem } from '@island.is/react-spa/shared'
 
 import { m } from '../../../../lib/messages'
+import { TableActionMenu } from '../../components/TableActionMenu'
 import type { IdpProviderRow } from '../IdpProviders.types'
 import { IdpProviderConfirmModal } from './IdpProviderConfirmModal'
 
@@ -117,23 +118,21 @@ export const IdpProvidersTable = ({
                   </Box>
                 </T.Data>
                 <T.Data>
-                  <Box display="flex" columnGap={2} justifyContent="flexEnd">
-                    <Button
-                      aria-label={formatMessage(m.edit)}
-                      variant="ghost"
-                      size="small"
-                      icon="pencil"
-                      onClick={() => onEdit(idpProvider)}
-                    />
-                    <Button
-                      aria-label={formatMessage(m.delete)}
-                      variant="ghost"
-                      size="small"
-                      icon="trash"
-                      colorScheme="destructive"
-                      onClick={() => setDeleteTarget(idpProvider)}
-                    />
-                  </Box>
+                  <TableActionMenu
+                    actions={[
+                      {
+                        title: m.edit,
+                        icon: 'pencil',
+                        onClick: () => onEdit(idpProvider),
+                      },
+                      {
+                        title: m.delete,
+                        icon: 'trash',
+                        color: 'red600',
+                        onClick: () => setDeleteTarget(idpProvider),
+                      },
+                    ]}
+                  />
                 </T.Data>
               </T.Row>
             ))}

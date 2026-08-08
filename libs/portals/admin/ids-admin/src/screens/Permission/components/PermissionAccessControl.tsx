@@ -232,7 +232,7 @@ export const PermissionAccessControl = () => {
                       <Select
                         value={selectedUsers}
                         options={allUserOptions}
-                        label={formatMessage(m.apiScopeUsers)}
+                        label={formatMessage(m.authorizedUsers)}
                         onChange={(value) => {
                           handleUserChange(value as MultiValue<UserOption>)
                         }}

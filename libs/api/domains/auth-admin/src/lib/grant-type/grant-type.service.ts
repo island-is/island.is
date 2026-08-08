@@ -105,17 +105,12 @@ export class GrantTypeService extends MultiEnvironmentService {
     const pageRows = allRows.slice(offset, offset + input.count)
 
     return {
-      rows: pageRows.map(({ row, envs, archivedEnvs }) => {
-        const isFullyArchived =
-          archivedEnvs.length > 0 && archivedEnvs.length === envs.length
-        const nonArchivedEnvs = envs.filter((e) => !archivedEnvs.includes(e))
-        return {
-          name: row.name,
-          availableEnvironments: isFullyArchived ? envs : nonArchivedEnvs,
-          description: row.description,
-          archived: isFullyArchived ? new Date(row.archived ?? '') : undefined,
-        }
-      }),
+      rows: pageRows.map(({ row, envs, archivedEnvs }) => ({
+        name: row.name,
+        description: row.description,
+        availableEnvironments: envs,
+        archivedEnvironments: archivedEnvs,
+      })),
       totalCount: allRows.length,
     }
   }

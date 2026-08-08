@@ -51,7 +51,7 @@ const DeleteTenantModal = ({
       toast.success(formatMessage(m.deleteTenantSuccess))
       onDeleted()
     } catch (error) {
-      setErrorMessage(formatMessage(m.deleteTenantError))
+      setErrorMessage(formatMessage(m.tenantHasReferences))
       toast.error(formatMessage(m.deleteTenantError))
     }
   }

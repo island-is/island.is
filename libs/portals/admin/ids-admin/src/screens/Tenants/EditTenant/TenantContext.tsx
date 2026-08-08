@@ -7,14 +7,16 @@ import { useEnvironmentQuery } from '../../../hooks/useEnvironmentQuery'
 import { PublishData } from '../../../types/publishData'
 import type { EditTenantActionResult } from './EditTenant.action'
 import type {
-  EditTenantLoaderResult,
   EditTenantEnvironment,
+  EditTenantLoaderData,
+  EditTenantLoaderResult,
 } from './EditTenant.loader'
 
 export type TenantContextType = {
   tenant: EditTenantLoaderResult
   selectedEnvironment: EditTenantEnvironment
   availableEnvironments: AuthAdminEnvironment[]
+  configuredEnvironments: AuthAdminEnvironment[]
   /**
    * Result of the edit tenant action – exposed so individual FormCards can
    * surface field-level errors mirroring the client context.
@@ -31,7 +33,8 @@ const TenantContext = createContext<TenantContextType | undefined>(undefined)
 export const TenantProvider: FC<React.PropsWithChildren<unknown>> = ({
   children,
 }) => {
-  const tenant = useLoaderData() as EditTenantLoaderResult
+  const { tenant, configuredEnvironments } =
+    useLoaderData() as EditTenantLoaderData
   const actionData = useActionData() as EditTenantActionResult | undefined
   const [publishData, setPublishData] = useState<PublishData | null>(null)
   const { environment: selectedEnvironment, updateEnvironment } =
@@ -64,6 +67,7 @@ export const TenantProvider: FC<React.PropsWithChildren<unknown>> = ({
         tenant,
         selectedEnvironment,
         availableEnvironments: tenant.availableEnvironments,
+        configuredEnvironments,
         actionData,
         publishData,
         onEnvironmentChange,

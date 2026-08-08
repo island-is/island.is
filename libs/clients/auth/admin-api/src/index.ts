@@ -30,6 +30,9 @@ export {
   DelegationProviderDto,
   DelegationAdminApi,
   DelegationAdminCustomDto,
+  UserIdentity,
+  Claim,
+  ActiveDTO,
 } from '../gen/fetch'
 export * from './lib/apis'
 export * from './lib/auth-admin-api-client.config'
