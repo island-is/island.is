@@ -6,6 +6,7 @@ import {
   Animated,
   FlatList,
   Image,
+  ImageSourcePropType,
   ListRenderItemInfo,
   Platform,
   Pressable,
@@ -36,7 +37,6 @@ import {
 } from '@/stores/inbox-filter-store'
 import {
   blue400,
-  Button,
   EmptyList,
   fontByWeight,
   ListItemSkeleton,
@@ -48,6 +48,7 @@ import {
 import { isAndroid } from '@/utils/devices'
 import { testIDs } from '@/utils/test-ids'
 import { ActionBar } from '../../../../components/action-bar'
+import { OfflineIcon } from '@/components/offline/offline-icon'
 import { PressableListItem } from '../../../../components/pressable-list-item'
 import { toast } from '@/components/toast'
 import { normalizesFilters } from '../../../../utils/inbox-filters'
@@ -529,6 +530,38 @@ export default function InboxScreen() {
     uiStore.setState({ tabsHidden: selectState && !!selectedItems.length })
   }, [selectState, selectedItems.length])
 
+  const renderHeaderIconSegment = (
+    icon: ImageSourcePropType,
+    onPress: () => void,
+  ) => (
+    <Pressable
+      onPress={onPress}
+      style={{
+        width: 46,
+        height: 46,
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <Image
+        source={icon}
+        resizeMode="contain"
+        style={{ width: 20, height: 20, tintColor: theme.color.blue400 }}
+      />
+    </Pressable>
+  )
+
+  // The header applies its own (glass on iOS 26) background, so the icons are
+  // rendered plain here to avoid a doubled-up background.
+  const renderHeaderActions = (children: React.ReactNode) => (
+    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      {/* The custom `headerRight` opts out of the native header items, so the
+          loading/offline indicator is rendered here instead. */}
+      <OfflineIcon networkStatus={res.networkStatus} />
+      {children}
+    </View>
+  )
+
   return (
     <>
       <StackScreen
@@ -580,25 +613,42 @@ export default function InboxScreen() {
                   tintColor: theme.color.blue400,
                 },
               ],
-          headerRightItems: selectState
-            ? [
-                {
-                  type: 'button',
-                  label: intl.formatMessage({
-                    id: 'inbox.bulkSelectCancelButton',
-                  }),
-                  labelStyle: {
-                    fontSize: 15,
-                    fontWeight: '400',
-                    fontFamily: fontByWeight('400'),
-                  },
-                  onPress() {
+          // Always rendered via `headerRight`: the native items API breaks
+          // title centering on iOS (StackScreen prepends the offline
+          // indicator as a custom item there).
+          headerRight: () =>
+            renderHeaderActions(
+              selectState ? (
+                <Pressable
+                  onPress={resetSelectState}
+                  style={{
+                    height: 46,
+                    justifyContent: 'center',
+                    paddingHorizontal: theme.spacing[1],
+                  }}
+                >
+                  <Typography
+                    size={15}
+                    weight="400"
+                    color={theme.color.blue400}
+                  >
+                    {intl.formatMessage({ id: 'inbox.bulkSelectCancelButton' })}
+                  </Typography>
+                </Pressable>
+              ) : (
+                <>
+                  {renderHeaderIconSegment(filterIcon, () => {
                     resetSelectState()
-                  },
-                  tintColor: theme.color.blue400,
-                },
-              ]
-            : [],
+                    inboxFilterStore.setState({
+                      availableSenders,
+                      availableCategories,
+                    })
+                    router.push('/inbox/filter')
+                  })}
+                  {renderHeaderIconSegment(inboxReadIcon, onMarkAllAsReadPress)}
+                </>
+              ),
+            ),
         }}
       />
       {selectState && selectedItems.length ? (
@@ -654,41 +704,6 @@ export default function InboxScreen() {
                 })}
                 value={query}
                 onChangeText={(text) => setQuery(text)}
-              />
-              <Button
-                title={intl.formatMessage({
-                  id: 'inbox.filterButtonTitle',
-                })}
-                isOutlined
-                isUtilityButton
-                style={{
-                  marginLeft: 8,
-                  paddingTop: 0,
-                  paddingBottom: 0,
-                }}
-                icon={filterIcon}
-                iconStyle={{ tintColor: theme.color.blue400 }}
-                onPress={() => {
-                  resetSelectState()
-                  inboxFilterStore.setState({
-                    availableSenders,
-                    availableCategories,
-                  })
-                  router.push('/inbox/filter')
-                }}
-              />
-              <Button
-                icon={inboxReadIcon}
-                isUtilityButton
-                isOutlined
-                style={{
-                  paddingTop: 0,
-                  paddingBottom: 0,
-                  paddingLeft: 12,
-                  paddingRight: 12,
-                  minWidth: 40,
-                }}
-                onPress={onMarkAllAsReadPress}
               />
             </ListHeaderWrapper>
             {isFilterApplied ? (

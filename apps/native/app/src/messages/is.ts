@@ -859,6 +859,38 @@ export const is = {
   'health.appointments.minutesFormat': '{minutes} mínútur',
   'health.appointments.moreInfo': 'Nánari upplýsingar',
 
+  // health - messages
+  'health.messages.screenTitle': 'Skilaboð',
+  'health.messages.errorMessage':
+    'Ekki tókst að sækja skilaboð. Vinsamlegast reyndu aftur síðar.',
+  'health.messages.noMessagesTitle': 'Engin skilaboð',
+  'health.messages.noMessagesText': 'Þú ert ekki með nein skilaboð.',
+  'health.messages.searchPlaceholder': 'Leita',
+  'health.messages.filter.screenTitle': 'Sía skilaboð',
+  'health.messages.replyButton': 'Svara skilaboðum',
+  'health.messages.cannotReply':
+    'Ekki er hægt að svara þessum skilaboðum því sendandi hefur lokað fyrir frekari svör í þessu samtali.',
+  'health.messages.compose.newTitle': 'Ný skilaboð',
+  'health.messages.compose.selectRecipient': 'Veldu viðtakanda',
+  'health.messages.compose.selectService': 'Veldu þjónustu',
+  'health.messages.compose.selectServicePlaceholder':
+    'Veldu þjónustu úr fellilistanum',
+  'health.messages.compose.to': 'Til: {name}',
+  'health.messages.compose.messageLabel': 'Skilaboð',
+  'health.messages.compose.messagePlaceholder': 'Skrifaðu skilaboð hér',
+  'health.messages.compose.termsAccept': 'Ég samþykki',
+  'health.messages.compose.termsLink': 'skilmála',
+  'health.messages.compose.send': 'Senda skilaboð',
+  'health.messages.compose.sendError':
+    'Ekki tókst að senda skilaboð. Vinsamlegast reyndu aftur síðar.',
+  'health.messages.compose.noRecipient':
+    'Ekki er hægt að senda skilaboð eins og er',
+  'health.messages.attachmentError':
+    'Ekki tókst að sækja skjalið. Vinsamlegast reyndu aftur síðar.',
+  'health.messages.sentTitle': 'Skilaboð móttekin',
+  'health.messages.sentText':
+    'Við svörum á dagvinnutíma, yfirleitt innan þriggja virkra daga. Ef erindið er brátt og þarfnast svars í dag, hringdu í 1700. Ef um neyðartilfelli er að ræða, hringdu strax í 112.',
+
   // health - organ donation
   'health.organDonation': 'Líffæragjöf',
   'health.organDonation.change': 'Breyta afstöðu',

@@ -14,6 +14,7 @@ import styled, { useTheme } from 'styled-components/native'
 
 import categoriesIcon from '@/assets/icons/categories.png'
 import externalLinkIcon from '@/assets/icons/external-link.png'
+import heartIcon from '@/assets/icons/health.png'
 import medicineIcon from '@/assets/icons/medicine.png'
 import readerIcon from '@/assets/icons/reader.png'
 import vaccinationsIcon from '@/assets/icons/vaccinations.png'
@@ -25,6 +26,7 @@ import {
   useGetBloodTypeOverviewQuery,
   useGetDentistOverviewQuery,
   useGetHealthCenterQuery,
+  useGetHealthConversationsQuery,
   useGetHealthInsuranceOverviewQuery,
   useGetMedicineDataQuery,
   useGetOrganDonorStatusQuery,
@@ -35,10 +37,13 @@ import { useLocale } from '@/hooks/use-locale'
 import { useBrowser } from '@/hooks/use-browser'
 import {
   Alert,
+  ChevronRight,
   GeneralCardSkeleton,
   Heading,
   Input,
   InputRow,
+  ListItem,
+  ListItemSkeleton,
   MoreCard,
   Problem,
   Skeleton,
@@ -77,6 +82,7 @@ interface HeadingSectionProps {
   linkTextId?: string
   onPress?: () => void
   showIcon?: boolean
+  chevron?: boolean
 }
 
 const HeadingSection: React.FC<HeadingSectionProps> = ({
@@ -84,6 +90,7 @@ const HeadingSection: React.FC<HeadingSectionProps> = ({
   onPress,
   linkTextId,
   showIcon = true,
+  chevron = false,
 }) => {
   const theme = useTheme()
 
@@ -94,7 +101,7 @@ const HeadingSection: React.FC<HeadingSectionProps> = ({
       disabled={!onPress}
     >
       <Heading
-        small
+        medium
         button={
           <TouchableOpacity
             onPress={onPress}
@@ -113,7 +120,11 @@ const HeadingSection: React.FC<HeadingSectionProps> = ({
                 >
                   <FormattedMessage id={linkTextId ?? 'button.seeAll'} />
                 </Typography>
-                {showIcon && <Image source={externalLinkIcon} />}
+                {chevron ? (
+                  <ChevronRight />
+                ) : (
+                  showIcon && <Image source={externalLinkIcon} />
+                )}
               </>
             )}
           </TouchableOpacity>
@@ -226,6 +237,11 @@ export default function HealthOverviewScreen() {
     false,
     null,
   )
+  const isHealthMessagesEnabled = useFeatureFlag(
+    'isAppHealthMessagesEnabled',
+    false,
+    null,
+  )
 
   const isLoadingFeatureFlags =
     isVaccinationsEnabled === null ||
@@ -233,7 +249,8 @@ export default function HealthOverviewScreen() {
     isPrescriptionsEnabled === null ||
     isOrganDonationEnabled === null ||
     isQuestionnaireFeatureEnabled === null ||
-    isAppointmentsEnabled === null
+    isAppointmentsEnabled === null ||
+    isHealthMessagesEnabled === null
 
   const now = useMemo(() => new Date().toISOString(), [])
 
@@ -352,6 +369,10 @@ export default function HealthOverviewScreen() {
     skip: !hasBeenFocused || !isAppointmentsEnabled,
     notifyOnNetworkStatusChange: true,
   })
+  const messagesRes = useGetHealthConversationsQuery({
+    skip: !hasBeenFocused || !isHealthMessagesEnabled,
+    notifyOnNetworkStatusChange: true,
+  })
 
   const medicinePurchaseData =
     medicinePurchaseRes.data?.rightsPortalDrugPeriods?.[0]
@@ -364,6 +385,7 @@ export default function HealthOverviewScreen() {
     organDonationRes.data?.healthDirectorateOrganDonation.donor
   const appointments =
     appointmentsRes.data?.healthDirectorateAppointments?.data ?? []
+  const messages = messagesRes.data?.healthDirectorateHealthConversations ?? []
 
   const isMedicinePeriodActive =
     medicinePurchaseData?.active ||
@@ -386,6 +408,7 @@ export default function HealthOverviewScreen() {
         isOrganDonationEnabled && organDonationRes.refetch(),
         bloodTypeRes.refetch(),
         isAppointmentsEnabled && appointmentsRes.refetch(),
+        isHealthMessagesEnabled && messagesRes.refetch(),
       ].filter(Boolean)
       await Promise.all(promises)
     } catch (e) {
@@ -405,6 +428,8 @@ export default function HealthOverviewScreen() {
     bloodTypeRes,
     isAppointmentsEnabled,
     appointmentsRes,
+    isHealthMessagesEnabled,
+    messagesRes,
   ])
 
   const handleAppointmentPress = useCallback(
@@ -430,6 +455,7 @@ export default function HealthOverviewScreen() {
           dentistRes.networkStatus,
           bloodTypeRes.networkStatus,
           appointmentsRes.networkStatus,
+          messagesRes.networkStatus,
         ]}
       />
       <Animated.ScrollView
@@ -495,7 +521,7 @@ export default function HealthOverviewScreen() {
               title={intl.formatMessage({
                 id: 'health.appointments.screenTitle',
               })}
-              showIcon={false}
+              chevron
               onPress={() =>
                 router.navigate('/(auth)/(tabs)/health/appointments')
               }
@@ -546,6 +572,68 @@ export default function HealthOverviewScreen() {
                   ))}
                 </AppointmentsContainer>
               )}
+          </>
+        )}
+        {isHealthMessagesEnabled && (
+          <>
+            <HeadingSection
+              title={intl.formatMessage({
+                id: 'health.messages.screenTitle',
+              })}
+              chevron
+              onPress={() => router.navigate('/(auth)/(tabs)/health/messages')}
+            />
+            {(!hasBeenFocused || messagesRes.loading) && (
+              <View style={{ marginHorizontal: -theme.spacing[2] }}>
+                {Array.from({ length: 3 }).map((_, index) => (
+                  <ListItemSkeleton key={index} />
+                ))}
+              </View>
+            )}
+            {messagesRes.error && messages.length === 0 && (
+              <AppointmentsContainer>
+                <Problem
+                  type="error"
+                  size="small"
+                  title={intl.formatMessage({ id: 'problem.error.title' })}
+                  message={intl.formatMessage({
+                    id: 'health.messages.errorMessage',
+                  })}
+                />
+              </AppointmentsContainer>
+            )}
+            {hasBeenFocused &&
+              !messagesRes.loading &&
+              !messagesRes.error &&
+              messages.length === 0 && (
+                <AppointmentsContainer>
+                  <Problem type="no_data" size="small" />
+                </AppointmentsContainer>
+              )}
+            {hasBeenFocused && !messagesRes.loading && messages.length > 0 && (
+              <View style={{ marginHorizontal: -theme.spacing[2] }}>
+                {messages.slice(0, 3).map((message) => (
+                  <TouchableOpacity
+                    key={message.id}
+                    onPress={() =>
+                      router.navigate({
+                        pathname: '/health/messages/[id]',
+                        params: { id: message.id },
+                      })
+                    }
+                  >
+                    <ListItem
+                      title={message.lastSenderGroupName ?? ''}
+                      subtitle={message.title ?? ''}
+                      date={message.lastMessageSentAt ?? undefined}
+                      unread={!message.isRead}
+                      starred={message.isStarred}
+                      icon={message.hasAttachment ? readerIcon : heartIcon}
+                    />
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
           </>
         )}
         <HeadingSection

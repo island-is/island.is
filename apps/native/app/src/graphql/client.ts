@@ -158,7 +158,7 @@ const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
   }
 })
 
-const getAndRefreshToken = async () => {
+export const getAndRefreshToken = async () => {
   const { refresh } = getAuthStoreRef().getState()
   let { authorizeResult } = getAuthStoreRef().getState()
 

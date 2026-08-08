@@ -1,6 +1,6 @@
 import { setStringAsync } from 'expo-clipboard'
 import { useEffect } from 'react'
-import { Image, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Image, TouchableOpacity, View } from 'react-native'
 import Animated, {
   useAnimatedStyle,
   useDerivedValue,
@@ -8,6 +8,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
+import documentIcon from '@/assets/icons/reader.png'
 import { PressableHighlight } from '@/components/pressable-highlight/pressable-highlight'
 import { useOrganizationsStore } from '@/stores/organizations-store'
 import { Avatar, Container, Icon, Typography } from '@/ui'
@@ -69,6 +70,27 @@ const MetaSeparator = styled.View`
   background-color: ${({ theme }) => theme.color.blue200};
 `
 
+const AttachmentChip = styled(TouchableOpacity)`
+  flex-direction: row;
+  align-items: center;
+  align-self: flex-start;
+  column-gap: ${({ theme }) => theme.spacing[1]}px;
+  margin-top: ${({ theme }) => theme.spacing[1]}px;
+  padding: ${({ theme }) => theme.spacing[1]}px
+    ${({ theme }) => theme.spacing[2]}px;
+  border-width: ${({ theme }) => theme.border.width.standard}px;
+  border-color: ${({ theme }) => theme.color.blue200};
+  border-radius: ${({ theme }) => theme.border.radius.large};
+  background-color: ${({ theme }) => theme.color.white};
+`
+
+export interface DocumentListItemAttachment {
+  id: string
+  label: string
+  loading?: boolean
+  onPress: () => void
+}
+
 type DocumentListItemProps = {
   sender: string
   title: string
@@ -77,6 +99,7 @@ type DocumentListItemProps = {
   caseNumber?: string
   caseNumberLabel?: string
   caseNumberCopyLabel?: string
+  attachments?: DocumentListItemAttachment[]
   isOpen?: boolean
   closeable?: boolean
   hasTopBorder?: boolean
@@ -91,6 +114,7 @@ export const DocumentListItem = ({
   caseNumber,
   caseNumberLabel,
   caseNumberCopyLabel,
+  attachments,
   closeable = false,
   isOpen = false,
   hasTopBorder = true,
@@ -192,6 +216,26 @@ export const DocumentListItem = ({
               }}
             >
               {body ? <Markdown>{body}</Markdown> : null}
+              {attachments?.map((attachment) => (
+                <AttachmentChip
+                  key={attachment.id}
+                  onPress={attachment.onPress}
+                  disabled={attachment.loading}
+                  accessibilityRole="button"
+                  accessibilityLabel={attachment.label}
+                >
+                  <Typography variant="eyebrow">{attachment.label}</Typography>
+                  {attachment.loading ? (
+                    <ActivityIndicator size="small" />
+                  ) : (
+                    <Image
+                      source={documentIcon}
+                      style={{ width: 16, height: 16 }}
+                      resizeMode="contain"
+                    />
+                  )}
+                </AttachmentChip>
+              ))}
             </Body>
           </Animated.View>
         </View>
