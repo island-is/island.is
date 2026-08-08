@@ -40,6 +40,11 @@ class MyDocument extends Document<Props> {
         </Head>
         <body>
           <Main />
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `(function(){try{if(window.location.hostname.indexOf('vefsafn.is')!==-1){document.addEventListener('DOMContentLoaded',function(){document.querySelectorAll('script[src]').forEach(function(s){s.remove()})})}}catch(e){}})()`,
+            }}
+          />
           <NextScript />
         </body>
       </Html>
