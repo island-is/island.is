@@ -18,7 +18,10 @@ import type { Logger } from '@island.is/logging'
 import { Contract, HomeApi } from '@island.is/clients/hms-rental-agreement'
 import { HmsHousingBenefitsClientService } from '@island.is/clients/hms-housing-benefits'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
-import { getValueViaPath } from '@island.is/application/core'
+import {
+  getApplicationLink,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { format as formatKennitala } from 'kennitala'
 import { getConfigValue } from '../../../shared/shared.utils'
 import { ContractStatus } from './types'
@@ -28,7 +31,6 @@ import {
   doesDomicileAddressMatchContractProperty,
   filterContractsForHousingBenefits,
   getApplicantName,
-  getApplicationLink,
   getPreviouslyNotifiedIds,
   getRejectReason,
   getRequestedExtraDataFiles,
