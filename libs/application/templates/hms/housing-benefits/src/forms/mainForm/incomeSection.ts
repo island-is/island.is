@@ -17,6 +17,7 @@ import {
   otherIncomeSelected,
 } from '../../utils/incomeSectionUtils'
 import { isTaxReturnFiled } from '../../utils/utils'
+import { MAX_TEXT_LENGTH } from '../../utils/constants'
 
 export const incomeSection = buildSection({
   id: 'incomeSection',
@@ -73,6 +74,7 @@ export const incomeSection = buildSection({
           variant: 'currency',
           allowNegative: false,
           marginBottom: 2,
+          maxLength: MAX_TEXT_LENGTH,
           condition: contractorIncomeSelected,
         }),
         buildCheckboxField({
