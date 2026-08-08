@@ -617,6 +617,170 @@ describe('DrivingLicenseSubmissionService', () => {
     })
   })
 
+  describe('B-full redesign branch', () => {
+    let service: DrivingLicenseSubmissionService
+    let newDrivingLicense: jest.Mock
+
+    const baseAnswers = {
+      applicationFor: 'B-full',
+      email: 'mock@email.com',
+      phone: '9999999',
+      delivery: {
+        deliveryMethod: 'post',
+        jurisdiction: '37',
+      },
+    }
+
+    const thjodskraExternalData = {
+      allPhotosFromThjodskra: {
+        data: {
+          images: [
+            { biometricId: 'facial-1', contentSpecification: 'FACIAL' },
+            { biometricId: 'sig-1', contentSpecification: 'SIGNATURE' },
+          ],
+        },
+        status: 'success' as const,
+        date: new Date(),
+      },
+    }
+
+    beforeEach(async () => {
+      newDrivingLicense = jest.fn(async () => ({
+        success: true,
+        errorMessage: null,
+      }))
+
+      const module = await Test.createTestingModule({
+        imports: [
+          ConfigModule.forRoot({
+            isGlobal: true,
+            load: [emailModuleConfig],
+          }),
+        ],
+        providers: [
+          DrivingLicenseSubmissionService,
+          EmailService,
+          AdapterService,
+          {
+            provide: DrivingLicenseService,
+            useValue: { newDrivingLicense },
+          },
+          { provide: LOGGER_PROVIDER, useValue: logger },
+          {
+            provide: ConfigService,
+            useClass: jest.fn(() => ({ get: () => 'http://localhost' })),
+          },
+          {
+            provide: AttachmentS3Service,
+            useValue: { getFiles: jest.fn(async () => []) },
+          },
+          {
+            provide: SharedTemplateApiService,
+            useClass: jest.fn(() => ({
+              async getPaymentStatus() {
+                return { fulfilled: true }
+              },
+              async sendEmail() {
+                return 'messageId'
+              },
+            })),
+          },
+        ],
+      }).compile()
+
+      service = module.get(DrivingLicenseSubmissionService)
+    })
+
+    it('passes no biometric IDs when the persisted flag is off, even if selectLicensePhoto is set', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          isBFullRedesignEnabled: false,
+          selectLicensePhoto: 'facial-1',
+        },
+        externalData: thjodskraExternalData,
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      const res = await service.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
+      })
+
+      expect(res).toEqual({ success: true })
+      expect(newDrivingLicense).toHaveBeenCalledTimes(1)
+
+      // Flag off → biometric IDs are omitted entirely (not sent as null),
+      // keeping the RLS request byte-identical to the pre-redesign flow.
+      const [, input] = newDrivingLicense.mock.calls[0]
+      expect(input.photoBiometricsId).toBeUndefined()
+      expect(input.signatureBiometricsId).toBeUndefined()
+    })
+
+    it('resolves photo and signature biometric IDs when a Thjodskra photo is selected', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          isBFullRedesignEnabled: true,
+          selectLicensePhoto: 'facial-1',
+        },
+        externalData: thjodskraExternalData,
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      const res = await service.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
+      })
+
+      expect(res).toEqual({ success: true })
+      const [, input] = newDrivingLicense.mock.calls[0]
+      expect(input).toMatchObject({
+        photoBiometricsId: 'facial-1',
+        signatureBiometricsId: 'sig-1',
+      })
+    })
+
+    it('sends null biometric IDs when the RLS quality photo is selected', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          isBFullRedesignEnabled: true,
+          selectLicensePhoto: 'qualityPhoto',
+        },
+        externalData: {
+          qualityPhotoAndSignature: {
+            data: { pohto: 'somebase64' },
+            status: 'success',
+            date: new Date(),
+          },
+        },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      const res = await service.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
+      })
+
+      expect(res).toEqual({ success: true })
+      const [, input] = newDrivingLicense.mock.calls[0]
+      expect(input).toMatchObject({
+        photoBiometricsId: null,
+        signatureBiometricsId: null,
+      })
+    })
+  })
+
   describe('BE branch', () => {
     let service: DrivingLicenseSubmissionService
     let applyForBELicense: jest.Mock
