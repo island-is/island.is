@@ -89,7 +89,6 @@ import {
   AppealCaseRepositoryService,
   AppealDecision,
   AppealDecisionRepositoryService,
-  AppealEventLog,
   AppealEventLogRepositoryService,
   Case,
   caseInclude,
@@ -1703,7 +1702,7 @@ export class CaseService {
     }
   }
 
-  private handleStateChangeEventLogUpdatesForRequest(
+  private handleStateChangeEventLogUpdatesForRequests(
     theCase: Case,
     updatedCase: Case,
     user: TUser,
@@ -1759,7 +1758,7 @@ export class CaseService {
     }
 
     if (isRequestCase(theCase.type)) {
-      return this.handleStateChangeEventLogUpdatesForRequest(
+      return this.handleStateChangeEventLogUpdatesForRequests(
         theCase,
         updatedCase,
         user,
@@ -1909,7 +1908,9 @@ export class CaseService {
     }
   }
 
-  private async handleEventLogUpdatesForIndictments(
+  // Scheduling a court date drives court date notifications for both
+  // indictment and request cases - see NotificationDispatchService
+  private async handleCourtDateEventLogUpdates(
     theCase: Case,
     updatedCase: Case,
     user: TUser,
@@ -2034,14 +2035,12 @@ export class CaseService {
       )
     }
 
-    if (isIndictmentCase(theCase.type)) {
-      return this.handleEventLogUpdatesForIndictments(
-        theCase,
-        updatedCase,
-        user,
-        transaction,
-      )
-    }
+    return this.handleCourtDateEventLogUpdates(
+      theCase,
+      updatedCase,
+      user,
+      transaction,
+    )
   }
 
   async update(
@@ -2453,15 +2452,10 @@ export class CaseService {
     }
 
     if (requiresCourtTransition) {
-      this.eventService.postEvent(
-        CaseTransition.MOVE,
-        updatedCase ?? theCase,
-        false,
-        {
-          from: theCase.court?.name,
-          to: updatedCase?.court?.name,
-        },
-      )
+      this.eventService.postEvent(CaseTransition.MOVE, updatedCase, {
+        from: theCase.court?.name,
+        to: updatedCase?.court?.name,
+      })
     }
 
     if (returnUpdatedCase) {
