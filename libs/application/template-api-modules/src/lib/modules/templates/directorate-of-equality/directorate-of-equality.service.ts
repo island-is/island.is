@@ -155,6 +155,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
         field: e.field,
         department: e.department,
         startDate: e.startDate,
+        education: 'null', // Not collected in the form, but required by the API. // TODO: cleanup when backend changes
         workRatio: e.workRatio,
         baseSalary: e.baseSalary,
         additionalFixedOvertime: e.additionalFixedOvertime,
