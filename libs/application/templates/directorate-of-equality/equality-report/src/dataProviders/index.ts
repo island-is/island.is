@@ -66,3 +66,10 @@ export const SubmitReportCommentApi = defineTemplateApi({
   order: 0,
   throwOnError: false,
 })
+
+export const SubmitEqualityReportApi = defineTemplateApi({
+  action: ApiActions.submitEqualityReport,
+  namespace: 'DirectorateOfEquality',
+  shouldPersistToExternalData: true,
+  throwOnError: true,
+})

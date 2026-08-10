@@ -8,7 +8,6 @@ import {
   UserProfileApi,
   ApplicationConfigurations,
   IdentityApi,
-  defineTemplateApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import {
@@ -19,9 +18,10 @@ import {
   EqualityReportTemplateHtmlApi,
   GetReportCommentsApi,
   PreviousEqualityReportContentApi,
+  SubmitEqualityReportApi,
   SubmitReportCommentApi,
 } from '../dataProviders'
-import { ApiActions, Events, Roles, States } from '../utils/constants'
+import { Events, Roles, States } from '../utils/constants'
 import { mapUserToRole } from '../utils/mapUserToRole'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
@@ -123,10 +123,14 @@ const template: ApplicationTemplate<
               },
             ],
           },
-          // So the comment thread's non-empty check has fresh externalData on
-          // first render — role.api alone never auto-fetches outside
-          // PREREQUISITES, it only permits the on-demand call CommentThread
-          // makes from within the mounted field.
+          // onExit (not onEntry on IN_REVIEW) so a failed submission blocks
+          // the transition instead of silently landing the applicant on a
+          // fake "in review" screen with a stale backend record.
+          onExit: SubmitEqualityReportApi,
+          // onEntry so the comment thread's non-empty check has fresh
+          // externalData on first render — role.api alone never auto-fetches
+          // outside PREREQUISITES, it only permits the on-demand call
+          // CommentThread makes from within the mounted field.
           onEntry: GetReportCommentsApi,
           roles: [
             {
@@ -189,12 +193,6 @@ const template: ApplicationTemplate<
               },
             ],
           },
-          onEntry: defineTemplateApi({
-            action: ApiActions.submitEqualityReport,
-            namespace: 'DirectorateOfEquality',
-            shouldPersistToExternalData: true,
-            throwOnError: true,
-          }),
           roles: [
             {
               id: Roles.APPLICANT,
