@@ -1954,6 +1954,10 @@ export const messages = defineMessages({
       '- Skilaboðum er svarað á opnunartíma, oftast innan þriggja virkra daga\n- Skilaboð og svör vistast sjálfkrafa í sjúkraskrá\n- Tegund skilaboða ræður hver svarar erindinu\n- Heilbrigðisstarfsmaður mun hafa aðgang að sjúkraskrá til að svara fyrirspurn',
     id: 'sp.health:health-messages-terms-modal-body#markdown',
   },
+  healthConversationVideoCallCanceled: {
+    defaultMessage: 'Afboðað',
+    id: 'sp.health:health-messages-video-call-canceled',
+  },
   healthConversationNotFound: {
     defaultMessage: 'Skilaboð fundust ekki',
     id: 'sp.health:health-message-not-found',
@@ -2832,9 +2836,29 @@ export const messages = defineMessages({
     id: 'sp.health:appointment-modality-video',
     defaultMessage: 'Myndsímtal',
   },
-  appointmentAssignees: {
-    id: 'sp.health:appointment-assignees',
-    defaultMessage: 'Úthlutað til',
+  appointmentAssigneeTypeRole: {
+    id: 'sp.health:appointment-assignee-type-role',
+    defaultMessage: 'Hlutverk',
+  },
+  appointmentAssigneeTypeRoom: {
+    id: 'sp.health:appointment-assignee-type-room',
+    defaultMessage: 'Herbergi',
+  },
+  appointmentAssigneeTypeEquipment: {
+    id: 'sp.health:appointment-assignee-type-equipment',
+    defaultMessage: 'Tæki',
+  },
+  appointmentAssigneeTypeService: {
+    id: 'sp.health:appointment-assignee-type-service',
+    defaultMessage: 'Þjónusta',
+  },
+  appointmentAssigneeTypeTeam: {
+    id: 'sp.health:appointment-assignee-type-team',
+    defaultMessage: 'Teymi',
+  },
+  appointmentAssigneeTypeOther: {
+    id: 'sp.health:appointment-assignee-type-other',
+    defaultMessage: 'Annað',
   },
   appointmentVideoCallLink: {
     id: 'sp.health:appointment-video-call-link',
