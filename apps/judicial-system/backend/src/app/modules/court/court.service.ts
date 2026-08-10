@@ -249,23 +249,23 @@ export class CourtService {
           courtCaseNumber,
           sanitizedFileName,
         )
+      } else {
+        this.eventService.postErrorEvent(
+          'Failed to create a document at court',
+          {
+            caseId,
+            actor: user.name,
+            institution: user.institution?.name,
+            courtId,
+            courtCaseNumber,
+            subject: this.mask(subject),
+            fileName: this.mask(sanitizedFileName),
+            fileType,
+            caseFolder,
+          },
+          reason,
+        )
       }
-
-      this.eventService.postErrorEvent(
-        'Failed to create a document at court',
-        {
-          caseId,
-          actor: user.name,
-          institution: user.institution?.name,
-          courtId,
-          courtCaseNumber,
-          subject: this.mask(subject),
-          fileName: this.mask(sanitizedFileName),
-          fileType,
-          caseFolder,
-        },
-        reason,
-      )
 
       throw reason
     }
@@ -301,22 +301,22 @@ export class CourtService {
 
       if (reason instanceof PayloadTooLargeException) {
         await this.notifyCourtOfFileTooLarge(courtId, courtCaseNumber, fileName)
+      } else {
+        this.eventService.postErrorEvent(
+          'Failed to create a court record at court',
+          {
+            caseId,
+            actor: user.name,
+            institution: user.institution?.name,
+            courtId,
+            courtCaseNumber,
+            subject: this.mask(subject),
+            fileName: this.mask(fileName),
+            fileType,
+          },
+          reason,
+        )
       }
-
-      this.eventService.postErrorEvent(
-        'Failed to create a court record at court',
-        {
-          caseId,
-          actor: user.name,
-          institution: user.institution?.name,
-          courtId,
-          courtCaseNumber,
-          subject: this.mask(subject),
-          fileName: this.mask(fileName),
-          fileType,
-        },
-        reason,
-      )
 
       throw reason
     }

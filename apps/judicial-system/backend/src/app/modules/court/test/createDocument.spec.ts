@@ -213,7 +213,7 @@ describe('CourtService - Create document', () => {
         expect.objectContaining({
           to: [{ name: '', address: courtEmail }],
           subject: `Ekki tókst að hlaða upp skjali í Auði í máli ${courtCaseNumber}`,
-          text: 'Ekki tókst að hlaða upp skjali t******e.pdf í Auði vegna stærðartakmarkana. Vinsamlegast hlaðið skjali upp handvirkt.',
+          text: 'Ekki tókst að hlaða upp skjali t******e.pdf í Auði vegna stærðartakmarkana. Vinsamlegast hlaðið skjali upp handvirkt í Auði.',
         }),
       )
     })

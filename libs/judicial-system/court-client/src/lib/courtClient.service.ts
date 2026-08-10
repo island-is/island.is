@@ -93,7 +93,7 @@ const isPayloadTooLargeError = (reason: CourtClientError): boolean => {
     return false
   }
 
-  // X-road logs these errors when subbmitting large files to the court service on dev.
+  // X-road may surface oversized uploads as this proxy error instead of HTTP 413.
   return (
     reason.message.includes('Server.ServerProxy.LoggingFailed') &&
     reason.message.includes('Message size exceeds maximum loggable size')
@@ -397,12 +397,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
     // limit. This is not a transient error, so it is kept out of the error
     // count that triggers a forced relogin.
     if (payloadTooLarge) {
-      this.logger.warn(
-        '[413-DEBUG] handleCaseError: mapping to PayloadTooLargeException',
-      )
-
       return new PayloadTooLargeException({
-        ...reason,
         message: 'The file is too large for the court service',
         detail: reason.message,
       })
