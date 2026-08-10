@@ -71,9 +71,7 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   // all key off that, not the sorted display position.
   const sortedFields = (fields as unknown as (Employee & { id: string })[])
     .map((field, index) => ({ field, index }))
-    .sort((a, b) =>
-      a.field.roleTitle.localeCompare(b.field.roleTitle, 'is'),
-    )
+    .sort((a, b) => a.field.roleTitle.localeCompare(b.field.roleTitle, 'is'))
 
   return (
     <Box>
@@ -89,28 +87,27 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             </T.Row>
           </T.Head>
           <T.Body>
-            {sortedFields.map(
-              ({ field, index }) =>
-                editingIndex === index ? (
-                  <T.Row key={field.id}>
-                    <T.Data colSpan={5} style={{ padding: 0 }}>
-                      <EmployeeForm
-                        employee={field}
-                        nextOrdinal={nextOrdinal}
-                        identifierPrefix={identifierPrefix}
-                        onSubmit={(employee) => handleSave(index, employee)}
-                        onCancel={() => setEditingIndex(null)}
-                      />
-                    </T.Data>
-                  </T.Row>
-                ) : (
-                  <EmployeeRow
-                    key={field.id}
-                    employee={field}
-                    onRemove={() => remove(index)}
-                    onEdit={() => setEditingIndex(index)}
-                  />
-                ),
+            {sortedFields.map(({ field, index }) =>
+              editingIndex === index ? (
+                <T.Row key={field.id}>
+                  <T.Data colSpan={5} style={{ padding: 0 }}>
+                    <EmployeeForm
+                      employee={field}
+                      nextOrdinal={nextOrdinal}
+                      identifierPrefix={identifierPrefix}
+                      onSubmit={(employee) => handleSave(index, employee)}
+                      onCancel={() => setEditingIndex(null)}
+                    />
+                  </T.Data>
+                </T.Row>
+              ) : (
+                <EmployeeRow
+                  key={field.id}
+                  employee={field}
+                  onRemove={() => remove(index)}
+                  onEdit={() => setEditingIndex(index)}
+                />
+              ),
             )}
           </T.Body>
         </T.Table>
