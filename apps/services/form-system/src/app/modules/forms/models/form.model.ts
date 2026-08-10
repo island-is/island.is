@@ -154,6 +154,13 @@ export class Form extends Model<Form> {
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
+    defaultValue: false,
+  })
+  isInaccessible!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
     defaultValue: true,
   })
   hasSummaryScreen!: boolean

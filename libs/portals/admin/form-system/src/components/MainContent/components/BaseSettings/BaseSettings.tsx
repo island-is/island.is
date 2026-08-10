@@ -230,6 +230,16 @@ export const BaseSettings = () => {
           />
         </Column>
       </Row>
+      <Box marginTop={1} />
+      <Row>
+        <Column>
+          <Checkbox
+            label="Loka fyrir aðgengi að umsóknarforminu"
+            disabled={isReadOnly}
+          />
+        </Column>
+      </Row>
+      <Box marginTop={1} />
       <Row>
         <Column>
           <Checkbox
@@ -258,6 +268,7 @@ export const BaseSettings = () => {
           />
         </Column>
       </Row>
+      <Box marginTop={1} />
       <Row>
         <Column>
           <Checkbox

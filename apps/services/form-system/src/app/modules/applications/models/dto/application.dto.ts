@@ -57,6 +57,9 @@ export class ApplicationDto {
   allowProceedOnValidationFail?: boolean
 
   @ApiPropertyOptional()
+  isInaccessible?: boolean
+
+  @ApiPropertyOptional()
   hasSummaryScreen?: boolean
 
   @ApiPropertyOptional()

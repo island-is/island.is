@@ -23,6 +23,7 @@ export const ApplicationFragment = gql`
     draftFinishedSteps
     draftTotalSteps
     allowProceedOnValidationFail
+    isInaccessible
     submissionServiceUrl
     hasPayment
     hasSummaryScreen

@@ -68,6 +68,9 @@ export class Application {
   allowProceedOnValidationFail?: boolean
 
   @Field(() => Boolean, { nullable: true })
+  isInaccessible?: boolean
+
+  @Field(() => Boolean, { nullable: true })
   hasSummaryScreen?: boolean
 
   @Field(() => Boolean, { nullable: true })

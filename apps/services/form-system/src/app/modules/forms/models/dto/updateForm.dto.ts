@@ -95,6 +95,11 @@ export class UpdateFormDto {
   @IsBoolean()
   @IsOptional()
   @ApiPropertyOptional()
+  isInaccessible?: boolean
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiPropertyOptional()
   hasSummaryScreen?: boolean
 
   @ValidateNested()
