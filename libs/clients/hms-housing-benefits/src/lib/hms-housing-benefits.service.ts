@@ -5,6 +5,7 @@ import {
   ApplicationApi,
   HousingBenefitsApplicationModel,
   PaymentApi,
+  TaxApi,
 } from '../../gen/fetch'
 import { handle204 } from '@island.is/clients/middlewares'
 import { CalculationTypes, TransactionTypes } from './enums'
@@ -14,6 +15,7 @@ export class HmsHousingBenefitsClientService {
   constructor(
     private readonly paymentApi: PaymentApi,
     private readonly applicationApi: ApplicationApi,
+    private readonly taxApi: TaxApi,
   ) {}
 
   private apiWithAuth = (user: User) =>
@@ -28,6 +30,23 @@ export class HmsHousingBenefitsClientService {
       .apiVversionApplicationCreateHousingBenefitsApplicationPost({
         version: '1',
         housingBenefitsApplicationModel: model,
+      })
+  }
+
+  async hasTaxReturnForYear(auth: Auth, nationalId: string, year: number) {
+    return this.taxApi
+      .withMiddleware(new AuthMiddleware(auth))
+      .hasTaxReturnForYear({
+        version: '1',
+        year,
+      })
+  }
+
+  async hasTaxReturnLastFiveYears(auth: Auth, nationalId: string) {
+    return this.taxApi
+      .withMiddleware(new AuthMiddleware(auth))
+      .hasTaxReturnLastFiveYears({
+        version: '1',
       })
   }
 

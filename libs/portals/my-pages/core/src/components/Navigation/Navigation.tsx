@@ -16,6 +16,7 @@ import React, {
   ReactElement,
   ReactNode,
   useEffect,
+  useMemo,
   useState,
 } from 'react'
 import AnimateHeight from 'react-animate-height'
@@ -161,27 +162,46 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
   mobileNavigationButtonOpenLabel = 'Open',
   mobileNavigationButtonCloseLabel = 'Close',
 }) => {
-  const [activeAccordions, setActiveAccordions] = useState<Array<string>>(
-    () => {
-      const initialActivePathIndex = items?.findIndex(
-        (item) => item.active && item.accordion,
-      )
-
-      if (initialActivePathIndex > 0) {
-        //first level only
-        return [
-          `1-${items?.findIndex(
-            (item) =>
-              item.active &&
-              item.accordion &&
-              item.items?.some((child) => child.active),
-          )}`,
-        ]
-      }
-
-      return []
-    },
+  // First-level accordion ids that match the current route. 'items' is
+  // recomputed whenever the route changes (and when async sub-routes finish loading)
+  // so this must stay in sync rather than being seeded only once on mount.
+  const activeAccordionIds = useMemo(
+    () =>
+      (items ?? [])
+        .map((item, index) => ({ item, index }))
+        .filter(({ item }) => item.accordion && item.active)
+        .map(({ index }) => `1-${index}`),
+    [items],
   )
+
+  const [activeAccordions, setActiveAccordions] = useState<Array<string>>(
+    // In single-accordion mode only one may be open, so seed with the active
+    // route only (last one wins if several match, mirroring toggle behaviour).
+    singleAccordion ? activeAccordionIds.slice(-1) : activeAccordionIds,
+  )
+
+  // Expand the accordion for the active route when navigating to a sub-path or
+  // when its children finish loading.
+  useEffect(() => {
+    if (activeAccordionIds.length === 0) {
+      return
+    }
+    setActiveAccordions((prev) => {
+      if (singleAccordion) {
+        // Only one accordion may be open; the active route replaces whatever
+        // was open. Return prev unchanged if it already matches to skip a render.
+        const next = activeAccordionIds.slice(-1)
+        return prev.length === next.length && prev[0] === next[0] ? prev : next
+      }
+      // Additive: open the active accordion(s) without closing ones the user
+      // opened manually.
+      const missing = activeAccordionIds.filter((id) => !prev.includes(id))
+      return missing.length ? [...prev, ...missing] : prev
+    })
+    // This useEffect would fire every re-render since activeAccordionIds
+    // is a new array every render, Using join() so it only runs when content changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeAccordionIds.join('|'), singleAccordion])
 
   const color = colorSchemeColors[colorScheme]['color']
   const activeColor = colorSchemeColors[colorScheme]['activeColor']

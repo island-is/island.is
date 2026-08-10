@@ -12,6 +12,7 @@ import {
   applicantSubmitRejectedAssigneesDescription,
 } from '../../../utils/applicantSubmitInfoUtils'
 import { hasRejectedAssigneesInAnswers } from '../../../utils/assigneeRejectionUtils'
+import { hasApprovingAssignees } from '../../../utils/assigneeUtils'
 
 export const infoSection = buildSection({
   id: 'applicantSubmitInfoSection',
@@ -40,7 +41,7 @@ export const infoSection = buildSection({
         buildDescriptionField({
           id: 'applicantSubmitInfoApprovedAssignees',
           description: applicantSubmitApprovedAssigneesDescription,
-          condition: (answers) => hasRejectedAssigneesInAnswers(answers),
+          condition: hasApprovingAssignees,
           marginBottom: 4,
         }),
         buildDescriptionField({

@@ -99,6 +99,12 @@ export const buildReportOverviewFields = (withBackLinks: boolean) => [
           valueText:
             getValueViaPath<string>(answers, 'chiefExecutive.email') ?? '',
         },
+        {
+          width: 'half',
+          keyText: messages.overview.chiefExecutiveJobTitleLabel,
+          valueText:
+            getValueViaPath<string>(answers, 'chiefExecutive.jobTitle') ?? '',
+        },
       ]
     },
   }),

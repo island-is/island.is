@@ -6,6 +6,7 @@ import {
   CaseType,
   EventNotificationType,
   IndictmentCaseNotificationType,
+  RequestCaseNotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -52,13 +53,6 @@ describe('InternalNotificationController - Dispatch event notifications', () => 
           type: MessageType.INDICTMENT_CASE_NOTIFICATION,
           caseId,
           body: {
-            type: IndictmentCaseNotificationType.INDICTMENT_VERDICT_INFO,
-          },
-        },
-        {
-          type: MessageType.INDICTMENT_CASE_NOTIFICATION,
-          caseId,
-          body: {
             type: IndictmentCaseNotificationType.CRIMINAL_RECORD_FILES_UPLOADED,
           },
         },
@@ -87,6 +81,34 @@ describe('InternalNotificationController - Dispatch event notifications', () => 
           caseId,
           body: {
             type: IndictmentCaseNotificationType.COURT_DATE,
+            userDescriptor: { name: user.name },
+          },
+        },
+      ],
+    },
+    {
+      theCase: setCaseType(CaseType.CUSTODY),
+      notificationType: EventNotificationType.COURT_DATE_SCHEDULED,
+      expectedMessages: [
+        {
+          type: MessageType.NOTIFICATION,
+          caseId,
+          body: {
+            type: RequestCaseNotificationType.COURT_DATE,
+            userDescriptor: { name: user.name },
+          },
+        },
+      ],
+    },
+    {
+      theCase: setCaseType(CaseType.PHONE_TAPPING),
+      notificationType: EventNotificationType.COURT_DATE_SCHEDULED,
+      expectedMessages: [
+        {
+          type: MessageType.NOTIFICATION,
+          caseId,
+          body: {
+            type: RequestCaseNotificationType.COURT_DATE,
             userDescriptor: { name: user.name },
           },
         },

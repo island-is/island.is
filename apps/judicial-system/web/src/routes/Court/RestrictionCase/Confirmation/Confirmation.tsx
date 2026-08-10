@@ -7,7 +7,6 @@ import {
   DISTRICT_COURT_RESTRICTION_CASE_COURT_RECORD_ROUTE,
   SIGNED_VERDICT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   isAcceptingCaseDecision,
   isCompletedCase,
@@ -176,35 +175,41 @@ const Confirmation: FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${DISTRICT_COURT_RESTRICTION_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`}
-          nextUrl={getStandardUserDashboardRoute(user)}
-          nextButtonText={formatMessage(
-            workingCase.decision === CaseDecision.ACCEPTING
-              ? strings.continueButtonTextAccepting
-              : workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY
-              ? strings.continueButtonTextAcceptingPartially
-              : workingCase.decision === CaseDecision.REJECTING
-              ? strings.continueButtonTextRejecting
-              : workingCase.decision === CaseDecision.DISMISSING
-              ? strings.continueButtonTextDismissing
-              : strings.continueButtonTextAcceptingAlternativeTravelBan,
-          )}
-          nextButtonIcon={
-            isAcceptingCaseDecision(workingCase.decision) ||
-            workingCase.decision ===
-              CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-              ? 'checkmark'
-              : 'close'
+          actions={
+            hideNextButton
+              ? []
+              : [
+                  {
+                    text: formatMessage(
+                      workingCase.decision === CaseDecision.ACCEPTING
+                        ? strings.continueButtonTextAccepting
+                        : workingCase.decision ===
+                          CaseDecision.ACCEPTING_PARTIALLY
+                        ? strings.continueButtonTextAcceptingPartially
+                        : workingCase.decision === CaseDecision.REJECTING
+                        ? strings.continueButtonTextRejecting
+                        : workingCase.decision === CaseDecision.DISMISSING
+                        ? strings.continueButtonTextDismissing
+                        : strings.continueButtonTextAcceptingAlternativeTravelBan,
+                    ),
+                    icon:
+                      isAcceptingCaseDecision(workingCase.decision) ||
+                      workingCase.decision ===
+                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                        ? 'checkmark'
+                        : 'close',
+                    colorScheme:
+                      isAcceptingCaseDecision(workingCase.decision) ||
+                      workingCase.decision ===
+                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                        ? 'default'
+                        : 'destructive',
+                    onClick: handleNextButtonClick,
+                    loading: isTransitioningCase,
+                    testId: 'continueButton',
+                  },
+                ]
           }
-          nextButtonColorScheme={
-            isAcceptingCaseDecision(workingCase.decision) ||
-            workingCase.decision ===
-              CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-              ? 'default'
-              : 'destructive'
-          }
-          onNextButtonClick={handleNextButtonClick}
-          nextIsLoading={isTransitioningCase}
-          hideNextButton={hideNextButton}
           infoBoxText={
             !hideNextButton
               ? undefined

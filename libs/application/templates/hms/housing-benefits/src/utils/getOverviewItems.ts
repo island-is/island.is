@@ -778,6 +778,30 @@ export const assigneeAssetDeclarationOverviewItems = (
   ]
 }
 
+export const assigneeIncomeDeclarationOverviewItems = (
+  answers: FormValue,
+  _externalData: ExternalData,
+  userNationalId?: string,
+  _locale?: Locale,
+): Array<KeyValueItem> => {
+  const prefix = userNationalId ? sanitizeKennitala(userNationalId) : ''
+  const description =
+    getValueViaPath<string>(
+      answers,
+      `${prefix}.incomeDeclarationTextField`,
+    )?.trim() ?? ''
+
+  if (!description) return []
+
+  return [
+    {
+      width: 'full',
+      keyText: m.assigneeDraftOverview.incomeDeclarationDescription,
+      valueText: description,
+    },
+  ]
+}
+
 const assigneeAccessAgreementChildDisplayName = (
   answers: FormValue,
   forChildId: string | undefined,

@@ -1,15 +1,7 @@
 import { useQuery } from '@apollo/client'
 import { FormSystemField } from '@island.is/api/schema'
 import { GET_COMPANY_BY_NATIONALID } from '@island.is/form-system/graphql'
-import {
-  Box,
-  GridColumn,
-  GridRow,
-  Input,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
-import { m } from '../../lib/messages'
+import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { ApplicationLoading } from '../ApplicationsLoading/ApplicationLoading'
 import { NationalIdField } from './components/nationalIdField'
 import { useLocale } from '@island.is/localization'
@@ -23,7 +15,7 @@ export const LegalEntity = ({
   applicant: applicantType,
   nationalId,
 }: Props) => {
-  const { formatMessage, lang } = useLocale()
+  const { lang } = useLocale()
   const shouldQuery = !!nationalId
   const { data: companyData, loading: companyLoading } = useQuery(
     GET_COMPANY_BY_NATIONALID,

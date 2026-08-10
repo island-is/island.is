@@ -20,6 +20,7 @@ import {
   isIndictmentCase,
   NotificationDispatchType,
   prosecutorsOfficeTypes,
+  RequestCaseNotificationType,
   ServiceRequirement,
   UserDescriptor,
 } from '@island.is/judicial-system/types'
@@ -130,27 +131,18 @@ export class NotificationDispatchService {
     const isFine =
       theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
 
-    addMessagesToQueue(
-      {
+    if (
+      hasDrivingLicenseSuspension &&
+      (isFine || hasServiceRequirementNotApplicable)
+    ) {
+      addMessagesToQueue({
         type: MessageType.INDICTMENT_CASE_NOTIFICATION,
         caseId: theCase.id,
         body: {
-          type: IndictmentCaseNotificationType.INDICTMENT_VERDICT_INFO,
+          type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
         },
-      },
-      ...(hasDrivingLicenseSuspension &&
-      (isFine || hasServiceRequirementNotApplicable)
-        ? [
-            {
-              type: MessageType.INDICTMENT_CASE_NOTIFICATION,
-              caseId: theCase.id,
-              body: {
-                type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
-              },
-            },
-          ]
-        : []),
-    )
+      })
+    }
 
     this.addMessagesForCriminalRecordFileUpdateToQueue(theCase)
   }
@@ -169,10 +161,14 @@ export class NotificationDispatchService {
         },
       })
     } else {
-      // This path is never hit as EventNotificationType.COURT_DATE_SCHEDULED is only dispatched for indictment cases
-      this.logger.warn(
-        `Attempted to dispatch court date notification for case ${theCase.id} of type ${theCase.type}`,
-      )
+      addMessagesToQueue({
+        type: MessageType.NOTIFICATION,
+        caseId: theCase.id,
+        body: {
+          type: RequestCaseNotificationType.COURT_DATE,
+          userDescriptor,
+        },
+      })
     }
   }
 
