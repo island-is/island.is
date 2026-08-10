@@ -9,7 +9,10 @@ export class HealthDirectoratePayment {
   @Field(() => PaymentStatusEnum)
   status!: PaymentStatusEnum
 
-  @Field({ description: 'Id of the resource this payment is for, e.g. a certificate id.' })
+  @Field({
+    description:
+      'Id of the resource this payment is for, e.g. a certificate id.',
+  })
   resourceId!: string
 
   @Field(() => Int)

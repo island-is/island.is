@@ -1,10 +1,4 @@
-import {
-  Field,
-  GraphQLISODateTime,
-  ID,
-  Int,
-  ObjectType,
-} from '@nestjs/graphql'
+import { Field, GraphQLISODateTime, ID, Int, ObjectType } from '@nestjs/graphql'
 import { HealthConversationDirectionEnum } from './enums'
 import { HealthDirectorateHealthConversationAttachment } from './healthConversationAttachment.model'
 import { HealthDirectorateHealthConversationMessageContent } from './healthConversationMessageContent.model'

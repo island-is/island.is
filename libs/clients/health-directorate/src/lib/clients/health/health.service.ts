@@ -807,10 +807,7 @@ export class HealthDirectorateHealthService {
     }
   }
 
-  public async getPayment(
-    auth: Auth,
-    id: string,
-  ): Promise<PaymentDto | null> {
+  public async getPayment(auth: Auth, id: string): Promise<PaymentDto | null> {
     const payment = await withAuthContext(auth, () =>
       dataOr404Null(
         mePaymentControllerGetByIdV1({

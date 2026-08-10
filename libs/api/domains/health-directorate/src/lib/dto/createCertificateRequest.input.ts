@@ -1,5 +1,12 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
-import { IsDate, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator'
+import {
+  IsDate,
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator'
 import { CertificateTypeEnum } from '../models/enums'
 
 @InputType()

@@ -13,7 +13,8 @@ import { HealthDirectoratePayment } from '../models/payment.model'
  * The certificate request endpoint expects a date-only string
  * (YYYY-MM-DD), not a full ISO timestamp.
  */
-export const toDateOnly = (date: Date): string => date.toISOString().slice(0, 10)
+export const toDateOnly = (date: Date): string =>
+  date.toISOString().slice(0, 10)
 
 export const toCertificateTypeCode = (
   value: CertificateTypeEnum,
