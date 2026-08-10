@@ -362,8 +362,8 @@ export const mockGetRentalAgreements = (): Array<Contract> => {
       contractTypeUseCode: 'DEFINITEAGREEMENT',
     },
     {
-      dateFrom: '2025-08-01',
-      dateTo: '2027-08-01',
+      dateFrom: '2025-08-22',
+      dateTo: '2027-08-22',
       indexType: 'Ekki vísitölubundinn',
       baseAmount: 100000,
       contractId: 40444,
