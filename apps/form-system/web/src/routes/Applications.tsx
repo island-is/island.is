@@ -31,6 +31,8 @@ export const Applications = () => {
   const [applications, setApplications] = useState<FormSystemApplication[]>([])
   const [loginAllowed, setLoginAllowed] = useState(true)
   const [hasRequiredDelegation, setHasRequiredDelegation] = useState(true)
+  const [isInaccessible, setIsInaccessible] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [isValidSlug, setIsValidSlug] = useState(true)
   const [createDisabled, setCreateDisabled] = useState(false)
   const [createApplicationMutation] = useMutation(CREATE_APPLICATION)
@@ -51,6 +53,9 @@ export const Applications = () => {
           },
         },
       })
+      if (app.data?.createFormSystemApplication?.isInaccessible === true) {
+        setIsInaccessible(true)
+      }
       if (app.data?.createFormSystemApplication?.isLoginTypeAllowed === false) {
         setLoginAllowed(false)
       } else if (
@@ -84,6 +89,11 @@ export const Applications = () => {
         return null
       }
       const dto = app.data?.formSystemGetApplications
+
+      if (dto?.isInaccessible === true) {
+        setIsInaccessible(true)
+        return null
+      }
       if (dto?.isLoginTypeAllowed === false) {
         setLoginAllowed(false)
         return null
@@ -102,10 +112,16 @@ export const Applications = () => {
   useEffect(() => {
     let cancelled = false
     const run = async () => {
+      setIsLoading(true)
       const responseDto = await fetchApplications()
       if (cancelled) return
 
-      const apps: FormSystemApplication[] = responseDto?.applications || []
+      if (!responseDto) {
+        setIsLoading(false)
+        return
+      }
+
+      const apps: FormSystemApplication[] = responseDto.applications || []
       if (apps.length > 0) {
         setApplications(
           apps.filter(
@@ -117,10 +133,12 @@ export const Applications = () => {
               ].includes(app.status as string),
           ),
         )
-      } else if (loginAllowed !== false && hasRequiredDelegation !== false) {
+      } else {
         await createApplication()
         if (cancelled) return
       }
+
+      setIsLoading(false)
     }
 
     run()
@@ -128,13 +146,7 @@ export const Applications = () => {
     return () => {
       cancelled = true
     }
-  }, [
-    slug,
-    createApplication,
-    fetchApplications,
-    loginAllowed,
-    hasRequiredDelegation,
-  ])
+  }, [slug, createApplication, fetchApplications])
 
   const [deleteApplicationMutation] = useMutation(DELETE_APPLICATION)
 
@@ -156,11 +168,25 @@ export const Applications = () => {
     [deleteApplicationMutation],
   )
 
+  if (isLoading) {
+    return null
+  }
+
   if (!isValidSlug) {
     return (
       <ErrorShell
         title={formatMessage(m.slugNotFound)}
         subTitle={formatMessage(m.checkUrlPlease)}
+        description=""
+      />
+    )
+  }
+
+  if (isInaccessible) {
+    return (
+      <ErrorShell
+        title={formatMessage(m.applicationInaccessibleHeader)}
+        subTitle={formatMessage(m.applicationInaccessibleDescription)}
         description=""
       />
     )

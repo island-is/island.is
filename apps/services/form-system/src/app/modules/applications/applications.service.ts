@@ -95,6 +95,12 @@ export class ApplicationsService {
       throw new NotFoundException(`Form with slug '${slug}' not found`)
     }
 
+    if (form.isInaccessible) {
+      const responseDto = new ApplicationResponseDto()
+      responseDto.isInaccessible = true
+      return responseDto
+    }
+
     const allowedLoginTypes = await this.getAllowedLoginTypes(form)
 
     const loginTypes = await this.getLoginTypes(user)
@@ -568,6 +574,7 @@ export class ApplicationsService {
       const responseDto = new ApplicationResponseDto()
       responseDto.application = applicationDto
       responseDto.isLoginTypeAllowed = true
+      responseDto.isInaccessible = form.isInaccessible
 
       return responseDto
     } catch (error) {
@@ -622,6 +629,7 @@ export class ApplicationsService {
     const responseDto = new ApplicationResponseDto()
     responseDto.applications = existingApplications
     responseDto.isLoginTypeAllowed = true
+    responseDto.isInaccessible = form.isInaccessible
     return responseDto
   }
 
