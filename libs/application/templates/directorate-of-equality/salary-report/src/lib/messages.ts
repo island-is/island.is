@@ -617,11 +617,11 @@ export const messages = {
     employees: defineMessages({
       sectionTitle: {
         id: 'doe.sr.application:report.employees.sectionTitle',
-        defaultMessage: 'Starfsmenn',
+        defaultMessage: 'Launagögn',
       },
       title: {
         id: 'doe.sr.application:report.employees.title',
-        defaultMessage: 'Starfsmenn',
+        defaultMessage: 'Launagögn',
       },
       intro: {
         id: 'doe.sr.application:report.employees.intro',
@@ -642,7 +642,7 @@ export const messages = {
       },
       identifierLabel: {
         id: 'doe.sr.application:report.employees.identifierLabel',
-        defaultMessage: 'Kennitala',
+        defaultMessage: 'Auðkenni',
       },
       fieldLabel: {
         id: 'doe.sr.application:report.employees.fieldLabel',
@@ -706,9 +706,30 @@ export const messages = {
         id: 'doe.sr.application:report.employees.removeButton',
         defaultMessage: 'Fjarlægja starfsmann',
       },
+      editButton: {
+        id: 'doe.sr.application:report.employees.editButton',
+        defaultMessage: 'Breyta starfsmanni',
+      },
+      removeConfirmTitle: {
+        id: 'doe.sr.application:report.employees.removeConfirmTitle',
+        defaultMessage: 'Eyða starfsmanni',
+      },
+      removeConfirmDescription: {
+        id: 'doe.sr.application:report.employees.removeConfirmDescription',
+        defaultMessage:
+          'Ertu viss um að þú viljir eyða þessum starfsmanni? Þessa aðgerð er ekki hægt að afturkalla.',
+      },
+      removeConfirmButton: {
+        id: 'doe.sr.application:report.employees.removeConfirmButton',
+        defaultMessage: 'Eyða',
+      },
       addFormTitle: {
         id: 'doe.sr.application:report.employees.addFormTitle',
         defaultMessage: 'Nýr starfsmaður',
+      },
+      editFormTitle: {
+        id: 'doe.sr.application:report.employees.editFormTitle',
+        defaultMessage: 'Breyta starfsmanni',
       },
       genderInputLabel: {
         id: 'doe.sr.application:report.employees.genderInputLabel',

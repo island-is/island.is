@@ -8,7 +8,7 @@ import type { ParsedEmployeeDto } from '@island.is/clients/directorate-of-equali
 import { messages } from '../../lib/messages'
 import { type Employee } from '../../utils/types'
 import { EmployeeRow } from './EmployeeRow'
-import { AddEmployeeForm } from './AddEmployeeForm'
+import { EmployeeForm } from './EmployeeForm'
 import { deriveIdentifierPrefix } from './utils'
 
 const FIELD_NAME = 'employees'
@@ -21,8 +21,9 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const m = messages.report.employees
 
   const [isAdding, setIsAdding] = useState(false)
+  const [editingIndex, setEditingIndex] = useState<number | null>(null)
 
-  const { fields, append, remove, replace } = useFieldArray({
+  const { fields, append, remove, replace, update } = useFieldArray({
     control,
     name: FIELD_NAME,
   })
@@ -53,12 +54,26 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     setIsAdding(false)
   }
 
+  const handleSave = (index: number, employee: Employee) => {
+    update(index, employee)
+    setEditingIndex(null)
+  }
+
   const employees = fields as unknown as Employee[]
 
   const nextOrdinal =
     employees.reduce((max, e) => Math.max(max, e.ordinal ?? 0), 0) + 1
 
   const identifierPrefix = deriveIdentifierPrefix(employees)
+
+  // Table rows are sorted alphabetically by role title, but callbacks below
+  // still need the field's real index in `fields` — remove/update/editingIndex
+  // all key off that, not the sorted display position.
+  const sortedFields = (fields as unknown as (Employee & { id: string })[])
+    .map((field, index) => ({ field, index }))
+    .sort((a, b) =>
+      a.field.roleTitle.localeCompare(b.field.roleTitle, 'is'),
+    )
 
   return (
     <Box>
@@ -74,23 +89,37 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             </T.Row>
           </T.Head>
           <T.Body>
-            {(fields as unknown as (Employee & { id: string })[]).map(
-              (field, index) => (
-                <EmployeeRow
-                  key={field.id}
-                  employee={field}
-                  onRemove={() => remove(index)}
-                />
-              ),
+            {sortedFields.map(
+              ({ field, index }) =>
+                editingIndex === index ? (
+                  <T.Row key={field.id}>
+                    <T.Data colSpan={5} style={{ padding: 0 }}>
+                      <EmployeeForm
+                        employee={field}
+                        nextOrdinal={nextOrdinal}
+                        identifierPrefix={identifierPrefix}
+                        onSubmit={(employee) => handleSave(index, employee)}
+                        onCancel={() => setEditingIndex(null)}
+                      />
+                    </T.Data>
+                  </T.Row>
+                ) : (
+                  <EmployeeRow
+                    key={field.id}
+                    employee={field}
+                    onRemove={() => remove(index)}
+                    onEdit={() => setEditingIndex(index)}
+                  />
+                ),
             )}
           </T.Body>
         </T.Table>
 
         {isAdding ? (
-          <AddEmployeeForm
+          <EmployeeForm
             nextOrdinal={nextOrdinal}
             identifierPrefix={identifierPrefix}
-            onAdd={handleAdd}
+            onSubmit={handleAdd}
             onCancel={() => setIsAdding(false)}
           />
         ) : (
