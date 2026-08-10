@@ -24,6 +24,7 @@ export interface FormsLoaderResponse {
   listTypes: FormSystemPermissionType[]
   fieldTypes: FormSystemPermissionType[]
   submissionUrls: string[]
+  organizationDelegations: string[]
 }
 
 export interface FormLoaderResponse {
@@ -33,6 +34,7 @@ export interface FormLoaderResponse {
   applicantTypes: FormSystemFormApplicant[]
   listTypes: FormSystemListType[]
   submissionUrls: string[]
+  organizationDelegations: string[]
 }
 
 export interface ApplicationsLoaderResponse {
