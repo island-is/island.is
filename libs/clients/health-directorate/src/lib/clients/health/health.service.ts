@@ -517,7 +517,7 @@ export class HealthDirectorateHealthService {
     // Convert object with numeric keys to array
     if (typeof countries === 'object' && !Array.isArray(countries)) {
       return Object.values(
-        (countries as unknown) as Record<string, ConsentCountryDto>,
+        countries as unknown as Record<string, ConsentCountryDto>,
       )
     }
 
@@ -735,8 +735,8 @@ export class HealthDirectorateHealthService {
     // already match the generated type.
     const body: CreateCertificateRequestDto = {
       ...input,
-      startDate: (input.startDate as unknown) as Date,
-      endDate: (input.endDate as unknown) as Date,
+      startDate: input.startDate as unknown as Date,
+      endDate: input.endDate as unknown as Date,
     }
 
     const request = await withAuthContext(auth, () =>
