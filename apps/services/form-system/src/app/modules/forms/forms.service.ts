@@ -461,7 +461,12 @@ export class FormsService {
       )
     }
 
-    const copyForm = await this.copyForm(id, false, `${form.slug}-afrit`)
+    const copyForm = await this.copyForm(
+      id,
+      false,
+      form.isInaccessible,
+      `${form.slug}-afrit`,
+    )
     const formResponse = await this.buildFormResponse(copyForm)
 
     if (!formResponse) {
@@ -570,7 +575,7 @@ export class FormsService {
     form.slug = `${form.slug}-archived-${Date.now()}`
     await form.save()
 
-    const copyForm = await this.copyForm(id, false, slug)
+    const copyForm = await this.copyForm(id, false, true, slug)
     const formResponse = await this.buildFormResponse(copyForm)
 
     if (!formResponse) {
@@ -649,7 +654,12 @@ export class FormsService {
     id: string,
     form: Form,
   ): Promise<FormResponseDto> {
-    const copyForm = await this.copyForm(id, true, `${form.slug}-i-breytingu`)
+    const copyForm = await this.copyForm(
+      id,
+      true,
+      form.isInaccessible,
+      `${form.slug}-i-breytingu`,
+    )
     const formResponse = await this.buildFormResponse(copyForm)
 
     if (!formResponse) {
@@ -1167,6 +1177,7 @@ export class FormsService {
   private async copyForm(
     id: string,
     isDerived: boolean,
+    isInaccessible: boolean,
     slug: string,
   ): Promise<Form> {
     const existingForm = await this.findById(id)
@@ -1194,6 +1205,7 @@ export class FormsService {
     newForm.identifier = isDerived ? existingForm.identifier : uuidV4()
     newForm.beenPublished = false
     newForm.sectionInfo = existingForm.sectionInfo
+    newForm.isInaccessible = isInaccessible
 
     const sections: Section[] = []
     const screens: Screen[] = []
