@@ -115,6 +115,7 @@ function LoginButtonDropdown(props: Props) {
       <Hidden above="sm">
         <DropdownMenu
           fixed
+          menuLabel={t.login}
           disclosure={
             <Button
               colorScheme={props.colorScheme}
@@ -132,6 +133,7 @@ function LoginButtonDropdown(props: Props) {
       <Hidden below="md">
         <DropdownMenu
           fixed
+          menuLabel={t.login}
           disclosure={
             <Button
               colorScheme={props.colorScheme}
