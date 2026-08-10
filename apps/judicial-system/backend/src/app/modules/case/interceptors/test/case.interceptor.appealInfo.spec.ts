@@ -209,6 +209,7 @@ describe('getAppealCaseInfo', () => {
         appealEventLogs: [
           {
             eventType: AppealEventType.APPEALED,
+            appealOrigin: AppealOrigin.OUT_OF_COURT,
             userRole: UserRole.PROSECUTOR,
           } as AppealEventLog,
         ],
@@ -218,9 +219,7 @@ describe('getAppealCaseInfo', () => {
         appealedByRole: UserRole.PROSECUTOR,
         appealedDate: appealDate,
         appealedInCourt: false,
-        // No APPEALED event on the fixture, so nothing marks it as filed by a
-        // party - the origin is read from the events, not the legacy columns.
-        appealedOutOfCourt: false,
+        appealedOutOfCourt: true,
         statementDeadline: undefined,
         isStatementDeadlineExpired: undefined,
       })
@@ -236,6 +235,7 @@ describe('getAppealCaseInfo', () => {
         appealEventLogs: [
           {
             eventType: AppealEventType.APPEALED,
+            appealOrigin: AppealOrigin.OUT_OF_COURT,
             userRole: UserRole.DEFENDER,
           } as AppealEventLog,
         ],
@@ -245,7 +245,7 @@ describe('getAppealCaseInfo', () => {
         appealedByRole: UserRole.DEFENDER,
         appealedDate: appealDate,
         appealedInCourt: false,
-        appealedOutOfCourt: false,
+        appealedOutOfCourt: true,
         statementDeadline: undefined,
         isStatementDeadlineExpired: undefined,
       })
@@ -288,6 +288,25 @@ describe('getAppealCaseInfo', () => {
 
       expect(getAppealCaseInfo(appealCase, theCase).appealedOutOfCourt).toBe(
         false,
+      )
+    })
+
+    // An event that cannot be classified is preserved rather than destroyed by
+    // court record corrections, so a missing origin reads as out of court.
+    it('reports appealedOutOfCourt when the APPEALED event has no origin', () => {
+      const theCase = { type: CaseType.CUSTODY } as Case
+      const appealCase = {
+        appealDate: new Date('2022-06-16T10:00:00.000Z'),
+        appealEventLogs: [
+          {
+            eventType: AppealEventType.APPEALED,
+            userRole: UserRole.DEFENDER,
+          },
+        ],
+      } as AppealCase
+
+      expect(getAppealCaseInfo(appealCase, theCase).appealedOutOfCourt).toBe(
+        true,
       )
     })
 
