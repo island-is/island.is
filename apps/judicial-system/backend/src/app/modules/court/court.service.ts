@@ -113,10 +113,14 @@ export class CourtService {
       ? value.replace(`.${fileNameEnding}`, '')
       : value
 
+    // The first and last letter are always kept, so there is nothing left to
+    // mask in shorter values
+    if (valueWithoutFileExtension.length < 2) {
+      return value
+    }
+
     const firstLetterInValue = valueWithoutFileExtension[0]
-    const mask = '*'.repeat(
-      Math.max(0, valueWithoutFileExtension.length - 2), // -2 to keep the first and last letter of the file name
-    )
+    const mask = '*'.repeat(valueWithoutFileExtension.length - 2) // -2 to keep the first and last letter of the file name
     const lastLetterInValueWithoutFileExtension =
       valueWithoutFileExtension[valueWithoutFileExtension.length - 1]
 
@@ -220,52 +224,51 @@ export class CourtService {
   ): Promise<string> {
     const sanitizedFileName = sanitize(fileName)
 
-    return this.courtClientService
-      .uploadStream(courtId, {
+    try {
+      const streamId = await this.courtClientService.uploadStream(courtId, {
         value: content,
         options: { filename: sanitizedFileName, contentType: fileType },
       })
-      .then((streamId) =>
-        this.courtClientService.createDocument(courtId, {
-          caseNumber: courtCaseNumber,
-          subject,
-          fileName: sanitizedFileName,
-          streamID: streamId,
-          caseFolder,
-        }),
-      )
-      .catch(async (reason) => {
-        if (reason instanceof ServiceUnavailableException) {
-          // Act as if the document was created successfully
-          return ''
-        }
 
-        if (reason instanceof PayloadTooLargeException) {
-          await this.notifyCourtOfFileTooLarge(
-            courtId,
-            courtCaseNumber,
-            sanitizedFileName,
-          )
-        }
-
-        this.eventService.postErrorEvent(
-          'Failed to create a document at court',
-          {
-            caseId,
-            actor: user.name,
-            institution: user.institution?.name,
-            courtId,
-            courtCaseNumber,
-            subject: this.mask(subject),
-            fileName: this.mask(sanitize(fileName)),
-            fileType,
-            caseFolder,
-          },
-          reason,
-        )
-
-        throw reason
+      return await this.courtClientService.createDocument(courtId, {
+        caseNumber: courtCaseNumber,
+        subject,
+        fileName: sanitizedFileName,
+        streamID: streamId,
+        caseFolder,
       })
+    } catch (reason) {
+      if (reason instanceof ServiceUnavailableException) {
+        // Act as if the document was created successfully
+        return ''
+      }
+
+      if (reason instanceof PayloadTooLargeException) {
+        await this.notifyCourtOfFileTooLarge(
+          courtId,
+          courtCaseNumber,
+          sanitizedFileName,
+        )
+      }
+
+      this.eventService.postErrorEvent(
+        'Failed to create a document at court',
+        {
+          caseId,
+          actor: user.name,
+          institution: user.institution?.name,
+          courtId,
+          courtCaseNumber,
+          subject: this.mask(subject),
+          fileName: this.mask(sanitizedFileName),
+          fileType,
+          caseFolder,
+        },
+        reason,
+      )
+
+      throw reason
+    }
   }
 
   async createCourtRecord(
@@ -278,50 +281,45 @@ export class CourtService {
     fileType: string,
     content: Buffer,
   ): Promise<string> {
-    return this.courtClientService
-      .uploadStream(courtId, {
+    try {
+      const streamId = await this.courtClientService.uploadStream(courtId, {
         value: content,
         options: { filename: fileName, contentType: fileType },
       })
-      .then((streamId) =>
-        this.courtClientService.createThingbok(courtId, {
-          caseNumber: courtCaseNumber,
-          subject,
-          fileName,
-          streamID: streamId,
-        }),
-      )
-      .catch(async (reason) => {
-        if (reason instanceof ServiceUnavailableException) {
-          // Act as if the document was created successfully
-          return ''
-        }
 
-        if (reason instanceof PayloadTooLargeException) {
-          await this.notifyCourtOfFileTooLarge(
-            courtId,
-            courtCaseNumber,
-            fileName,
-          )
-        }
-
-        this.eventService.postErrorEvent(
-          'Failed to create a court record at court',
-          {
-            caseId,
-            actor: user.name,
-            institution: user.institution?.name,
-            courtId,
-            courtCaseNumber,
-            subject: this.mask(subject),
-            fileName: this.mask(fileName),
-            fileType,
-          },
-          reason,
-        )
-
-        throw reason
+      return await this.courtClientService.createThingbok(courtId, {
+        caseNumber: courtCaseNumber,
+        subject,
+        fileName,
+        streamID: streamId,
       })
+    } catch (reason) {
+      if (reason instanceof ServiceUnavailableException) {
+        // Act as if the document was created successfully
+        return ''
+      }
+
+      if (reason instanceof PayloadTooLargeException) {
+        await this.notifyCourtOfFileTooLarge(courtId, courtCaseNumber, fileName)
+      }
+
+      this.eventService.postErrorEvent(
+        'Failed to create a court record at court',
+        {
+          caseId,
+          actor: user.name,
+          institution: user.institution?.name,
+          courtId,
+          courtCaseNumber,
+          subject: this.mask(subject),
+          fileName: this.mask(fileName),
+          fileType,
+        },
+        reason,
+      )
+
+      throw reason
+    }
   }
 
   async createCourtCase(
