@@ -1,4 +1,4 @@
-import { Inject, UseGuards, UseInterceptors } from '@nestjs/common'
+import { Inject, UseGuards } from '@nestjs/common'
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
@@ -29,7 +29,6 @@ import { SplitDefendantFromCaseInput } from './dto/splitDefendantFromCase.input'
 import { TransitionCaseInput } from './dto/transitionCase.input'
 import { UpdateCaseInput } from './dto/updateCase.input'
 import { UpdateCaseAppealDecisionInput } from './dto/updateCaseAppealDecision.input'
-import { CaseInterceptor } from './interceptors/case.interceptor'
 import { Case } from './models/case.model'
 import { RequestSignatureResponse } from './models/requestSignature.response'
 import { SendNotificationResponse } from './models/sendNotification.response'
@@ -45,7 +44,6 @@ export class CaseResolver {
   ) {}
 
   @Query(() => Case, { nullable: true })
-  @UseInterceptors(CaseInterceptor)
   async case(
     @Args('input', { type: () => CaseQueryInput })
     input: CaseQueryInput,
@@ -83,7 +81,6 @@ export class CaseResolver {
   }
 
   @Mutation(() => Case, { nullable: true })
-  @UseInterceptors(CaseInterceptor)
   createCase(
     @Args('input', { type: () => CreateCaseInput })
     input: CreateCaseInput,
@@ -102,7 +99,6 @@ export class CaseResolver {
   }
 
   @Mutation(() => Case, { nullable: true })
-  @UseInterceptors(CaseInterceptor)
   updateCase(
     @Args('input', { type: () => UpdateCaseInput })
     input: UpdateCaseInput,
@@ -143,7 +139,6 @@ export class CaseResolver {
   }
 
   @Mutation(() => Case, { nullable: true })
-  @UseInterceptors(CaseInterceptor)
   transitionCase(
     @Args('input', { type: () => TransitionCaseInput })
     input: TransitionCaseInput,
@@ -300,7 +295,6 @@ export class CaseResolver {
   }
 
   @Mutation(() => Case, { nullable: true })
-  @UseInterceptors(CaseInterceptor)
   extendCase(
     @Args('input', { type: () => ExtendCaseInput })
     input: ExtendCaseInput,
@@ -319,7 +313,6 @@ export class CaseResolver {
   }
 
   @Mutation(() => Case, { nullable: true })
-  @UseInterceptors(CaseInterceptor)
   duplicateIndictmentCase(
     @Args('input', { type: () => DuplicateIndictmentCaseInput })
     input: DuplicateIndictmentCaseInput,
@@ -340,7 +333,6 @@ export class CaseResolver {
   }
 
   @Mutation(() => Case, { nullable: true })
-  @UseInterceptors(CaseInterceptor)
   splitDefendantFromCase(
     @Args('input', { type: () => SplitDefendantFromCaseInput })
     input: SplitDefendantFromCaseInput,
@@ -361,7 +353,6 @@ export class CaseResolver {
   }
 
   @Mutation(() => Case, { nullable: true })
-  @UseInterceptors(CaseInterceptor)
   createCourtCase(
     @Args('input', { type: () => CreateCourtCaseInput })
     input: CreateCourtCaseInput,
