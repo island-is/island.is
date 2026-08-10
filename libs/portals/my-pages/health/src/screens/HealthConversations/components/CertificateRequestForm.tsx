@@ -70,13 +70,13 @@ const CertificateRequestForm = ({
             )}
             checked={
               formState.certificateType ===
-              HealthDirectorateCertificateTypeEnum.WORK
+              HealthDirectorateCertificateTypeEnum.work
             }
             disabled={disabled}
             onChange={() =>
               setFormState({
                 ...formState,
-                certificateType: HealthDirectorateCertificateTypeEnum.WORK,
+                certificateType: HealthDirectorateCertificateTypeEnum.work,
               })
             }
           />
@@ -92,13 +92,13 @@ const CertificateRequestForm = ({
             )}
             checked={
               formState.certificateType ===
-              HealthDirectorateCertificateTypeEnum.SCHOOL
+              HealthDirectorateCertificateTypeEnum.school
             }
             disabled={disabled}
             onChange={() =>
               setFormState({
                 ...formState,
-                certificateType: HealthDirectorateCertificateTypeEnum.SCHOOL,
+                certificateType: HealthDirectorateCertificateTypeEnum.school,
               })
             }
           />

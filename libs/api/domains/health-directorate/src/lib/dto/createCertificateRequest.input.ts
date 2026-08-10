@@ -1,4 +1,4 @@
-import { Field, InputType, Int } from '@nestjs/graphql'
+import { Field, GraphQLISODateTime, InputType, Int } from '@nestjs/graphql'
 import {
   IsDate,
   IsEnum,
@@ -38,16 +38,16 @@ export class HealthDirectorateCreateCertificateRequestInput {
   @IsNotEmpty()
   recipientName!: string
 
-  @Field()
+  @Field(() => GraphQLISODateTime)
   @IsDate()
   startDate!: Date
 
-  @Field()
+  @Field(() => GraphQLISODateTime)
   @IsDate()
   endDate!: Date
 
   @Field({ nullable: true })
-  @IsString()
   @IsOptional()
+  @IsString()
   note?: string
 }

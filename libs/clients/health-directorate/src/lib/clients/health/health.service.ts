@@ -55,6 +55,7 @@ import {
   questionnaireControllerSubmitQuestionnaireV1,
 } from './gen/fetch'
 
+import { CreateCertificateRequestBody } from './dtos/createCertificateRequestBody.dto'
 import {
   AppointmentBaseDto,
   AppointmentDetailDto,
@@ -85,6 +86,10 @@ import {
   SubmitQuestionnaireResponseDto,
   UserVisibleAppointmentStatuses,
 } from './gen/fetch/types.gen'
+
+type CertificatePdfResult =
+  | { status: 200; data: ArrayBuffer; contentType: string }
+  | { status: 402; resourceType: string; resourceId: string }
 
 @Injectable()
 export class HealthDirectorateHealthService {
@@ -512,7 +517,7 @@ export class HealthDirectorateHealthService {
     // Convert object with numeric keys to array
     if (typeof countries === 'object' && !Array.isArray(countries)) {
       return Object.values(
-        countries as unknown as Record<string, ConsentCountryDto>,
+        (countries as unknown) as Record<string, ConsentCountryDto>,
       )
     }
 
@@ -721,12 +726,23 @@ export class HealthDirectorateHealthService {
 
   public async createCertificateRequest(
     auth: Auth,
-    input: CreateCertificateRequestDto,
+    input: CreateCertificateRequestBody,
   ): Promise<CertificateRequestDto | null> {
+    // The generated type has startDate/endDate as `Date` because this
+    // client's openapi-ts config sets `dates: true` for every date field,
+    // but the wire format for this endpoint is a date-only string (see
+    // CreateCertificateRequestBody) — cast only those two fields, the rest
+    // already match the generated type.
+    const body: CreateCertificateRequestDto = {
+      ...input,
+      startDate: (input.startDate as unknown) as Date,
+      endDate: (input.endDate as unknown) as Date,
+    }
+
     const request = await withAuthContext(auth, () =>
       data(
         meCertificateControllerCreateCertificateRequestV1({
-          body: input,
+          body,
         }),
       ),
     )
@@ -769,11 +785,7 @@ export class HealthDirectorateHealthService {
   public async getCertificatePdf(
     auth: Auth,
     id: string,
-  ): Promise<
-    | { status: 200; data: ArrayBuffer; contentType: string }
-    | { status: 402; resourceType: string; resourceId: string }
-    | null
-  > {
+  ): Promise<CertificatePdfResult | null> {
     try {
       const result = await withAuthContext(auth, () =>
         meCertificateControllerGetCertificatePdfV1({
@@ -792,9 +804,13 @@ export class HealthDirectorateHealthService {
       if (error instanceof FetchError && error.status === 404) {
         return null
       }
-      // The OpenAPI spec only documents the 402 payment-required shape in
-      // free-text description, not a typed `responses.402` schema, so the
-      // body has to be cast rather than typed from the generated client.
+      /*
+        The api spec only documents the 402 payment-required shape in
+        free-text description, not a typed responses.402 schema, so the
+        body has to be cast rather than typed from the generated client.
+        The wire body itself has no `status` field, so it must be spread
+        into the discriminated union rather than cast directly onto it.
+      */
       if (error instanceof FetchError && error.status === 402) {
         const body = error.body as { resourceType: string; resourceId: string }
         return {

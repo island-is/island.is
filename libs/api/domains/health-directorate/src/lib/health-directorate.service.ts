@@ -4,7 +4,7 @@ import {
   ConversationDetailDto,
   ConversationMessageDto,
   CreateCertificatePaymentIntentDto,
-  CreateCertificateRequestDto,
+  CreateCertificateRequestBody,
   CreateConversationRequestDto,
   CreateEuPatientConsentDto,
   CreateReplyRequestDto,
@@ -19,6 +19,7 @@ import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import { Inject, Injectable } from '@nestjs/common'
+import format from 'date-fns/format'
 import sortBy from 'lodash/sortBy'
 import { PATIENT_PERMIT_CODE } from './constants'
 import {
@@ -51,7 +52,6 @@ import {
   mapCertificateRequest,
   mapPayment,
   toCertificateTypeCode,
-  toDateOnly,
 } from './mappers/certificateMapper'
 import {
   mapConversationMessageContent,
@@ -921,17 +921,15 @@ export class HealthDirectorateService {
     auth: Auth,
     input: HealthDirectorateCreateCertificateRequestInput,
   ): Promise<HealthDirectorateCertificateRequest | null> {
-    // The generated client type declares startDate/endDate as `Date`, but the
-    // upstream API expects a date-only string (YYYY-MM-DD) on the wire.
-    const body = {
+    const body: CreateCertificateRequestBody = {
       nodeId: input.nodeId,
       groupId: input.groupId,
       certificateType: toCertificateTypeCode(input.certificateType),
       recipientName: input.recipientName,
-      startDate: toDateOnly(input.startDate),
-      endDate: toDateOnly(input.endDate),
+      startDate: format(input.startDate, 'yyyy-MM-dd'),
+      endDate: format(input.endDate, 'yyyy-MM-dd'),
       note: input.note,
-    } as unknown as CreateCertificateRequestDto
+    }
 
     const request = await this.healthApi.createCertificateRequest(auth, body)
     if (!request) return null

@@ -59,6 +59,7 @@ export {
   ConversationReplyBlockedReason,
   ConversationStatusFilter,
   CreateCertificatePaymentIntentDto,
+  CreateCertificateRequestBody,
   CreateCertificateRequestDto,
   CreateConversationRequestDto,
   CreateReplyRequestDto,

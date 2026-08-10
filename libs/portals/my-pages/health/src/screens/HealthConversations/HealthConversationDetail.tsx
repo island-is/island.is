@@ -183,7 +183,7 @@ const HealthConversationDetail = () => {
             >
               <Box className={styles.backButton}>
                 <Button
-                  circle
+                  variant="text"
                   icon="arrowBack"
                   size="default"
                   aria-label={formatMessage(m.goBack)}

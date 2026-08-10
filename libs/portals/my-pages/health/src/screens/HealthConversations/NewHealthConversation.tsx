@@ -1,5 +1,6 @@
 import {
   AlertMessage,
+  AlertMessageType,
   Box,
   Button,
   Checkbox,
@@ -30,12 +31,19 @@ import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { LocaleEnum } from '@island.is/portals/my-pages/graphql'
 import { getMessagingWindowInfo } from './utils/messagingWindow'
+import { HealthDirectorateHealthConversationRecipientBlockedReason } from '@island.is/api/schema'
 import * as styles from './HealthConversations.css'
 import {
   useGetHealthConversationRecipientsForNewQuery,
   useCreateHealthConversationMutation,
   useCreateHealthCertificateRequestMutation,
 } from './NewHealthConversation.generated'
+
+interface CertificateAlert {
+  type: AlertMessageType
+  title?: string
+  message?: string
+}
 
 const NewHealthConversation = () => {
   useNamespaces('sp.health')
@@ -73,7 +81,6 @@ const NewHealthConversation = () => {
     recipient?.allowedMessageTypes.map((t) => ({
       label: t.title,
       value: t.patientInitiatedTypeCode,
-      disabled: t.isCertificate && recipient.canRequestCertificate === false,
     })) ?? []
 
   const selectedOption =
@@ -102,7 +109,33 @@ const NewHealthConversation = () => {
       })
     : formatMessage(messages.healthConversationsNewIntro)
 
-  const isFormLocked = recipient?.canCreateConversation === false
+  const isCertificateBlocked =
+    isCertificateSelected && recipient?.canRequestCertificate === false
+
+  const isFormLocked =
+    recipient?.canCreateConversation === false || isCertificateBlocked
+
+  const certificateAlert: CertificateAlert | undefined = isCertificateBlocked
+    ? recipient?.certificateBlockedReason ===
+        HealthDirectorateHealthConversationRecipientBlockedReason.OUTSIDE_MESSAGING_WINDOW &&
+      windowInfo.windowOpenLabel &&
+      windowInfo.windowCloseLabel
+      ? {
+          type: 'info',
+          title: formatMessage(messages.healthConversationClosedTitle),
+          message: formatMessage(messages.healthConversationClosedText, {
+            currentTime: windowInfo.currentTimeLabel,
+            openTime: windowInfo.windowOpenLabel,
+            closeTime: windowInfo.windowCloseLabel,
+          }),
+        }
+      : {
+          type: 'warning',
+          message: formatMessage(
+            messages.healthConversationsCertificateBlockedText,
+          ),
+        }
+    : undefined
 
   const isFormValid = isCertificateSelected
     ? !!certificateForm.certificateType &&
@@ -215,7 +248,7 @@ const NewHealthConversation = () => {
                 className={styles.backButton}
               >
                 <Button
-                  circle
+                  variant="text"
                   icon="arrowBack"
                   size="default"
                   colorScheme="light"
@@ -260,17 +293,15 @@ const NewHealthConversation = () => {
                   </GridColumn>
                 </GridRow>
 
-                {isCertificateSelected &&
-                  recipient.canRequestCertificate === false && (
-                    <Box marginBottom={3}>
-                      <AlertMessage
-                        type="warning"
-                        message={formatMessage(
-                          messages.healthConversationsCertificateBlockedText,
-                        )}
-                      />
-                    </Box>
-                  )}
+                {certificateAlert && (
+                  <Box marginBottom={3}>
+                    <AlertMessage
+                      type={certificateAlert.type}
+                      title={certificateAlert.title}
+                      message={certificateAlert.message}
+                    />
+                  </Box>
+                )}
 
                 {isCertificateSelected ? (
                   <CertificateRequestForm
@@ -296,7 +327,7 @@ const NewHealthConversation = () => {
                   </Box>
                 )}
 
-                <Box marginBottom={4} style={{ marginTop: 34 }}>
+                <Box marginTop={4} marginBottom={4}>
                   <Checkbox
                     id="terms-accept"
                     checked={termsAccepted}

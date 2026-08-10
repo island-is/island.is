@@ -16,18 +16,9 @@ export const messageCard = style({
 
 export const backButton = style({})
 
-globalStyle(`${backButton} button`, {
-  backgroundColor: theme.color.white,
-  width: 40,
-  height: 40,
-  marginLeft: -10,
-})
-
-globalStyle(`${backButton} button:hover`, {
-  backgroundColor: theme.color.blue100,
-})
-
-globalStyle(`${backButton} button svg`, {
-  width: 20,
-  height: 20,
-})
+globalStyle(
+  `${backButton} span, ${backButton} span:hover, ${backButton} span:focus`,
+  {
+    boxShadow: 'none',
+  },
+)

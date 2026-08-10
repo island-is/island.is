@@ -1,4 +1,4 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql'
 
 import { UseGuards } from '@nestjs/common'
 
@@ -56,7 +56,7 @@ export class CertificateResolver {
   @Scopes(ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
   getCertificate(
-    @Args('id') id: string,
+    @Args('id', { type: () => ID }) id: string,
     @CurrentUser() user: User,
   ): Promise<HealthDirectorateCertificate | null> {
     return this.api.getCertificate(user, id)
@@ -86,7 +86,7 @@ export class CertificateResolver {
   @Scopes(ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
   getPayment(
-    @Args('id') id: string,
+    @Args('id', { type: () => ID }) id: string,
     @CurrentUser() user: User,
   ): Promise<HealthDirectoratePayment | null> {
     return this.api.getPayment(user, id)

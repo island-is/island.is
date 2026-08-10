@@ -197,16 +197,16 @@ registerEnumType(HealthConversationRecipientBlockedReasonEnum, {
 })
 
 export enum CertificateTypeEnum {
-  WORK = 'WORK',
-  SCHOOL = 'SCHOOL',
+  work = 'work',
+  school = 'school',
 }
 registerEnumType(CertificateTypeEnum, {
   name: 'HealthDirectorateCertificateTypeEnum',
 })
 
 export enum PaymentStatusEnum {
-  PENDING = 'PENDING',
-  SUCCEEDED = 'SUCCEEDED',
+  pending = 'pending',
+  succeeded = 'succeeded',
 }
 registerEnumType(PaymentStatusEnum, {
   name: 'HealthDirectoratePaymentStatusEnum',

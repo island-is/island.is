@@ -1,9 +1,11 @@
-import { Field, InputType } from '@nestjs/graphql'
+import { Field, ID, InputType } from '@nestjs/graphql'
 import { IsNotEmpty, IsString } from 'class-validator'
 
 @InputType()
 export class HealthDirectorateCreateCertificatePaymentIntentInput {
-  @Field({ description: 'Id of the certificate to open a payment for.' })
+  @Field(() => ID, {
+    description: 'Id of the certificate to open a payment for.',
+  })
   @IsString()
   @IsNotEmpty()
   id!: string

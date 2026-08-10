@@ -9,20 +9,13 @@ import { HealthDirectorateCertificate } from '../models/certificate.model'
 import { HealthDirectorateCertificateRequest } from '../models/certificateRequest.model'
 import { HealthDirectoratePayment } from '../models/payment.model'
 
-/**
- * The certificate request endpoint expects a date-only string
- * (YYYY-MM-DD), not a full ISO timestamp.
- */
-export const toDateOnly = (date: Date): string =>
-  date.toISOString().slice(0, 10)
-
 export const toCertificateTypeCode = (
   value: CertificateTypeEnum,
 ): CertificateTypeCode => {
   switch (value) {
-    case CertificateTypeEnum.WORK:
+    case CertificateTypeEnum.work:
       return CertificateTypeCode.WORK
-    case CertificateTypeEnum.SCHOOL:
+    case CertificateTypeEnum.school:
       return CertificateTypeCode.SCHOOL
   }
 }
@@ -32,9 +25,9 @@ export const fromCertificateTypeCode = (
 ): CertificateTypeEnum => {
   switch (value) {
     case CertificateTypeCode.WORK:
-      return CertificateTypeEnum.WORK
+      return CertificateTypeEnum.work
     case CertificateTypeCode.SCHOOL:
-      return CertificateTypeEnum.SCHOOL
+      return CertificateTypeEnum.school
   }
 }
 
@@ -73,8 +66,8 @@ export const mapPayment = (dto: PaymentDto): HealthDirectoratePayment => ({
   id: dto.id,
   status:
     dto.status === 'SUCCEEDED'
-      ? PaymentStatusEnum.SUCCEEDED
-      : PaymentStatusEnum.PENDING,
+      ? PaymentStatusEnum.succeeded
+      : PaymentStatusEnum.pending,
   resourceId: dto.resourceId,
   amountIsk: dto.amountIsk,
   paidAt: dto.paidAt,

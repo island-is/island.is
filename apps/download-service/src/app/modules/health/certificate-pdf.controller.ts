@@ -42,16 +42,19 @@ export class HealthCertificatePdfController {
       return res.status(403).json({ statusCode: 403, message: 'Not allowed' })
     }
 
-    const result = await this.healthService.getCertificatePdf(user, id)
+    const certificateResponse = await this.healthService.getCertificatePdf(
+      user,
+      id,
+    )
 
-    if (!result) {
+    if (!certificateResponse) {
       return res.status(404).json({ statusCode: 404, message: 'Not found' })
     }
 
-    if (result.status === 402) {
+    if (certificateResponse.status === 402) {
       return res.status(402).json({
-        resourceType: result.resourceType,
-        resourceId: result.resourceId,
+        resourceType: certificateResponse.resourceType,
+        resourceId: certificateResponse.resourceId,
       })
     }
 
@@ -61,9 +64,9 @@ export class HealthCertificatePdfController {
       resources: id,
     })
 
-    const buffer = Buffer.from(result.data)
+    const buffer = Buffer.from(certificateResponse.data)
     res.header('Content-Length', buffer.length.toString())
-    res.header('Content-Type', result.contentType)
+    res.header('Content-Type', certificateResponse.contentType)
     res.header('Pragma', 'no-cache')
     res.header('Cache-Control', 'no-store, private, max-age=0')
     return res.status(200).end(buffer)
