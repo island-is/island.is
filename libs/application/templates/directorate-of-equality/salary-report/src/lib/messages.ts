@@ -630,7 +630,7 @@ export const messages = {
       },
       nameColumn: {
         id: 'doe.sr.application:report.employees.nameColumn',
-        defaultMessage: 'Nafn',
+        defaultMessage: 'Auðkenni',
       },
       roleColumn: {
         id: 'doe.sr.application:report.employees.roleColumn',
@@ -895,7 +895,7 @@ export const messages = {
       },
       employeeColumn: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.employeeColumn',
-        defaultMessage: 'Nafn',
+        defaultMessage: 'Auðkenni',
       },
       roleColumn: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.roleColumn',
