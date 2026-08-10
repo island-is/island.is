@@ -39,6 +39,7 @@ import { rcHearingArrangements as m } from './HearingArrangements.strings'
 
 enum ModalButtonLoading {
   PRIMARY = 'PRIMARY',
+  SECONDARY = 'SECONDARY',
 }
 
 export const HearingArrangements = () => {
@@ -137,8 +138,9 @@ export const HearingArrangements = () => {
   )
 
   const isModalConfirming = modalButtonLoading === ModalButtonLoading.PRIMARY
-  const isModalLoading =
-    isModalConfirming && (isUpdatingCase || isSendingNotification)
+  const isModalDeferring = modalButtonLoading === ModalButtonLoading.SECONDARY
+  const isModalLoading = isModalConfirming && isUpdatingCase
+  const isModalDeferringLoading = isModalDeferring && isSendingNotification
 
   return (
     <PageLayout
@@ -209,6 +211,7 @@ export const HearingArrangements = () => {
             onClick: async () => {
               setModalButtonLoading(ModalButtonLoading.PRIMARY)
 
+              // Saving the arraignment date triggers the court date notifications
               const courtDateSaved = await sendCourtDateToServer()
 
               if (!courtDateSaved) {
@@ -216,28 +219,37 @@ export const HearingArrangements = () => {
                 return
               }
 
-              const notificationSent = await sendNotification(
-                workingCase.id,
-                TrackedNotificationType.COURT_DATE,
-              )
-
-              if (notificationSent) {
-                router.push(`${navigateTo}/${workingCase.id}`)
-              } else {
-                setModalButtonLoading(undefined)
-              }
+              router.push(`${navigateTo}/${workingCase.id}`)
             },
             isLoading: isModalLoading,
+            isDisabled: isModalDeferring,
           }}
           secondaryButton={{
             text: 'Nei, staðfesta seinna',
             isDisabled: isModalConfirming,
-            onClick: () => {
+            onClick: async () => {
+              setModalButtonLoading(ModalButtonLoading.SECONDARY)
+
+              // The arraignment date is not confirmed, so we only let a
+              // registered advocate know that they are on the case. This is
+              // their only notification, so we do not navigate away until it
+              // has been sent.
+              const notificationSent = await sendNotification(
+                workingCase.id,
+                TrackedNotificationType.ADVOCATE_ASSIGNED,
+              )
+
+              if (!notificationSent) {
+                setModalButtonLoading(undefined)
+                return
+              }
+
               router.push(`${navigateTo}/${workingCase.id}`)
             },
+            isLoading: isModalDeferringLoading,
           }}
           errorMessage={
-            sendNotificationError
+            isModalDeferring && sendNotificationError
               ? formatMessage(errors.sendNotification)
               : undefined
           }

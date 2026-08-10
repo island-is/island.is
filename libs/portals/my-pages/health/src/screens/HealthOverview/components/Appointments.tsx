@@ -4,7 +4,6 @@ import { useLocale } from '@island.is/localization'
 import {
   formatDate,
   getTime,
-  getWeekday,
   InfoCardGrid,
   LinkButton,
 } from '@island.is/portals/my-pages/core'
@@ -54,10 +53,7 @@ const Appointments: React.FC<Props> = ({ data, showLinkButton }) => {
         appointment: {
           date: formatDate(appointment.date ?? ''),
           time: getTime(appointment.date ?? ''),
-          weekday: mapWeekday(
-            getWeekday(appointment.date ?? ''),
-            formatMessage,
-          ),
+          weekday: mapWeekday(appointment.date ?? '', formatMessage),
           location: {
             label: appointment.location?.name ?? '',
             href:

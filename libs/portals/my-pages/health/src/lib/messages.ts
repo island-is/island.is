@@ -2832,9 +2832,29 @@ export const messages = defineMessages({
     id: 'sp.health:appointment-modality-video',
     defaultMessage: 'Myndsímtal',
   },
-  appointmentAssignees: {
-    id: 'sp.health:appointment-assignees',
-    defaultMessage: 'Úthlutað til',
+  appointmentAssigneeTypeRole: {
+    id: 'sp.health:appointment-assignee-type-role',
+    defaultMessage: 'Hlutverk',
+  },
+  appointmentAssigneeTypeRoom: {
+    id: 'sp.health:appointment-assignee-type-room',
+    defaultMessage: 'Herbergi',
+  },
+  appointmentAssigneeTypeEquipment: {
+    id: 'sp.health:appointment-assignee-type-equipment',
+    defaultMessage: 'Tæki',
+  },
+  appointmentAssigneeTypeService: {
+    id: 'sp.health:appointment-assignee-type-service',
+    defaultMessage: 'Þjónusta',
+  },
+  appointmentAssigneeTypeTeam: {
+    id: 'sp.health:appointment-assignee-type-team',
+    defaultMessage: 'Teymi',
+  },
+  appointmentAssigneeTypeOther: {
+    id: 'sp.health:appointment-assignee-type-other',
+    defaultMessage: 'Annað',
   },
   appointmentVideoCallLink: {
     id: 'sp.health:appointment-video-call-link',
