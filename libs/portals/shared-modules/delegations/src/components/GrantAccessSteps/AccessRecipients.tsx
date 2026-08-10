@@ -15,8 +15,15 @@ interface FormData {
 
 export const AccessRecipients = ({
   methods,
+  allowCompany = false,
+  singleRecipient = false,
 }: {
   methods: UseFormReturn<FormData>
+  // When requesting a delegation the grantor may be a company.
+  allowCompany?: boolean
+  // When requesting a delegation there is a single grantor, so hide the
+  // add/remove recipient controls.
+  singleRecipient?: boolean
 }) => {
   const { formatMessage } = useLocale()
   const [formError, setFormError] = useState<Error | undefined>()
@@ -41,20 +48,23 @@ export const AccessRecipients = ({
             setFormError={setFormError}
             methods={methods}
             index={index}
-            showRemoveButton={fields.length > 1}
+            showRemoveButton={!singleRecipient && fields.length > 1}
             onRemove={() => remove(index)}
+            allowCompany={allowCompany}
           />
         ))}
-        <Box>
-          <Button
-            variant="text"
-            size="small"
-            icon="add"
-            onClick={() => append({ nationalId: '', name: '' })}
-          >
-            {formatMessage(m.grantAddMorePeople)}
-          </Button>
-        </Box>
+        {!singleRecipient && (
+          <Box>
+            <Button
+              variant="text"
+              size="small"
+              icon="add"
+              onClick={() => append({ nationalId: '', name: '' })}
+            >
+              {formatMessage(m.grantAddMorePeople)}
+            </Button>
+          </Box>
+        )}
       </Box>
       {formError && (
         <Box display="flex" flexDirection="column" rowGap={5} marginTop={5}>

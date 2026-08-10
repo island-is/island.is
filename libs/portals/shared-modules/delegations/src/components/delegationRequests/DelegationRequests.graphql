@@ -1,0 +1,71 @@
+fragment AuthDelegationRequestData on AuthDelegationRequest {
+  id
+  from {
+    nationalId
+    name
+    type
+  }
+  to {
+    nationalId
+    name
+    type
+  }
+  domainName
+  relationship
+  reason
+  status
+  expiresAt
+  createdAt
+  scopes {
+    scopeName
+    displayName
+    validTo
+  }
+}
+
+query AuthDelegationRequestsOutgoing {
+  authDelegationRequestsOutgoing {
+    ...AuthDelegationRequestData
+  }
+}
+
+query AuthDelegationRequestsIncoming {
+  authDelegationRequestsIncoming {
+    ...AuthDelegationRequestData
+  }
+}
+
+query AuthDelegationRequest($input: AuthDelegationRequestInput!) {
+  authDelegationRequest(input: $input) {
+    ...AuthDelegationRequestData
+  }
+}
+
+mutation CreateAuthDelegationRequest($input: AuthCreateDelegationRequestInput!) {
+  createAuthDelegationRequest(input: $input) {
+    ...AuthDelegationRequestData
+  }
+}
+
+mutation RejectAuthDelegationRequest($input: AuthDelegationRequestInput!) {
+  rejectAuthDelegationRequest(input: $input) {
+    id
+    status
+  }
+}
+
+mutation CancelAuthDelegationRequest($input: AuthDelegationRequestInput!) {
+  cancelAuthDelegationRequest(input: $input) {
+    id
+    status
+  }
+}
+
+mutation FulfillAuthDelegationRequest(
+  $input: AuthFulfillDelegationRequestInput!
+) {
+  fulfillAuthDelegationRequest(input: $input) {
+    id
+    status
+  }
+}

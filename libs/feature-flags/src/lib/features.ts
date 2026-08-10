@@ -196,6 +196,10 @@ export enum Features {
   // Use new delegation system
   useNewDelegationSystem = 'useNewDelegationSystem',
 
+  // Request-a-delegation ("Beiðni um umboð")
+  isDelegationRequestsEnabled = 'isDelegationRequestsEnabled',
+  isDelegationRequestNotificationEnabled = 'isDelegationRequestNotificationEnabled',
+
   // Validate Personal representative delegations at syslumenn
   usePersonalRepresentativesFromSyslumenn = 'usePersonalRepresentativesFromSyslumenn',
   // SMS Notifications
