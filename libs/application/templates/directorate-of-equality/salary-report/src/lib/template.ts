@@ -222,7 +222,11 @@ const template: ApplicationTemplate<
                 answers: ['salaryAnalysis', 'comment'],
                 externalData: ['salaryAnalysisResult'],
               },
-              api: [SalaryAnalysisApi, GetReportCommentsApi, SubmitReportCommentApi],
+              api: [
+                SalaryAnalysisApi,
+                GetReportCommentsApi,
+                SubmitReportCommentApi,
+              ],
             },
           ],
         },

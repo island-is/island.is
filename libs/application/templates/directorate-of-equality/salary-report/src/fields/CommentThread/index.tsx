@@ -6,7 +6,13 @@ import {
 } from '@island.is/application/graphql'
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, Button, LoadingDots, Text, toast } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  LoadingDots,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
@@ -58,7 +64,9 @@ export const CommentThread = ({ application }: FieldBaseProps) => {
   }, [])
 
   const handleSend = async () => {
-    const draft = (getValues('comment.newMessage') as string | undefined)?.trim()
+    const draft = (
+      getValues('comment.newMessage') as string | undefined
+    )?.trim()
     if (!draft) return
 
     setIsSending(true)
