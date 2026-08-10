@@ -148,7 +148,7 @@ export class CourtService {
 
     const body = `Ekki tókst að hlaða upp skjali ${this.mask(
       fileName,
-    )} í Auði vegna stærðartakmarkana. Vinsamlegast hlaðið skjali upp handvirkt.`
+    )} í Auði vegna stærðartakmarkana. Vinsamlegast hlaðið skjali upp handvirkt í Auði.`
 
     try {
       await this.emailService.sendEmail({

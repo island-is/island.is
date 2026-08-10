@@ -81,6 +81,25 @@ interface CourtClientError {
   message: unknown
 }
 
+// True when the court service or x-road rejected the upload because the file
+// is too large. X-road may surface this as HTTP 500 with a proxy logging
+// error instead of HTTP 413.
+const isPayloadTooLargeError = (reason: CourtClientError): boolean => {
+  if (reason.status === HttpStatus.PAYLOAD_TOO_LARGE) {
+    return true
+  }
+
+  if (typeof reason.message !== 'string') {
+    return false
+  }
+
+  // X-road logs these errors when subbmitting large files to the court service on dev.
+  return (
+    reason.message.includes('Server.ServerProxy.LoggingFailed') &&
+    reason.message.includes('Message size exceeds maximum loggable size')
+  )
+}
+
 interface ConnectionState {
   credentials: CredentialsData
   authenticationToken: string
@@ -365,6 +384,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
   }
 
   private handleCaseError(courtId: string, reason: CourtClientError): Error {
+    const payloadTooLarge = isPayloadTooLargeError(reason)
     // Check for known errors
     if (
       typeof reason.message === 'string' &&
@@ -376,7 +396,11 @@ export class CourtClientServiceImplementation implements CourtClientService {
     // The court service, or x-road, rejects payloads that exceed their size
     // limit. This is not a transient error, so it is kept out of the error
     // count that triggers a forced relogin.
-    if (reason.status === HttpStatus.PAYLOAD_TOO_LARGE) {
+    if (payloadTooLarge) {
+      this.logger.warn(
+        '[413-DEBUG] handleCaseError: mapping to PayloadTooLargeException',
+      )
+
       return new PayloadTooLargeException({
         ...reason,
         message: 'The file is too large for the court service',

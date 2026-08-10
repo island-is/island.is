@@ -48,7 +48,13 @@ export class UploadStreamApi {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const status = error.response?.status
-        const message = error.response?.data || error.message
+        const data = error.response?.data
+        const message =
+          data === undefined || data === null
+            ? error.message
+            : typeof data === 'string'
+            ? data
+            : JSON.stringify(data)
 
         // The status is reported separately so that callers can react to
         // specific responses, such as the file being too large.
