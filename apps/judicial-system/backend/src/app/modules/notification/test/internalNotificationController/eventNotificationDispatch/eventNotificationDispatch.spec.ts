@@ -3,10 +3,12 @@ import { v4 as uuid } from 'uuid'
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
+  CaseIndictmentRulingDecision,
   CaseType,
   EventNotificationType,
   IndictmentCaseNotificationType,
   RequestCaseNotificationType,
+  ServiceRequirement,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -150,5 +152,162 @@ describe('InternalNotificationController - Dispatch event notifications', () => 
     )
 
     expect(missingNotificationTypes).toEqual([])
+  })
+
+  describe('driving license suspension when indictment is sent to public prosecutor', () => {
+    const suspensionMessage = {
+      type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+      caseId,
+      body: {
+        type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
+      },
+    }
+    const criminalRecordMessage = {
+      type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+      caseId,
+      body: {
+        type: IndictmentCaseNotificationType.CRIMINAL_RECORD_FILES_UPLOADED,
+      },
+    }
+
+    const suspensionScenarios = [
+      {
+        description:
+          'should not send when suspended defendant still requires service but another defendant was present',
+        theCase: {
+          ...baseCase,
+          defendants: [
+            {
+              id: uuid(),
+              isDrivingLicenseSuspended: true,
+              verdicts: [
+                { serviceRequirement: ServiceRequirement.REQUIRED },
+              ],
+            },
+            {
+              id: uuid(),
+              isDrivingLicenseSuspended: false,
+              verdicts: [
+                {
+                  serviceRequirement: ServiceRequirement.NOT_APPLICABLE,
+                },
+              ],
+            },
+          ],
+        } as Case,
+        expectedMessages: [criminalRecordMessage],
+      },
+      {
+        description:
+          'should send once for a suspended defendant who was present at ruling',
+        theCase: {
+          ...baseCase,
+          defendants: [
+            {
+              id: uuid(),
+              isDrivingLicenseSuspended: true,
+              verdicts: [
+                {
+                  serviceRequirement: ServiceRequirement.NOT_APPLICABLE,
+                },
+              ],
+            },
+            {
+              id: uuid(),
+              isDrivingLicenseSuspended: false,
+              verdicts: [
+                { serviceRequirement: ServiceRequirement.REQUIRED },
+              ],
+            },
+          ],
+        } as Case,
+        expectedMessages: [suspensionMessage, criminalRecordMessage],
+      },
+      {
+        description:
+          'should send once for each ready suspended defendant',
+        theCase: {
+          ...baseCase,
+          defendants: [
+            {
+              id: uuid(),
+              isDrivingLicenseSuspended: true,
+              verdicts: [
+                {
+                  serviceRequirement: ServiceRequirement.NOT_APPLICABLE,
+                },
+              ],
+            },
+            {
+              id: uuid(),
+              isDrivingLicenseSuspended: true,
+              verdicts: [
+                {
+                  serviceRequirement: ServiceRequirement.NOT_REQUIRED,
+                },
+              ],
+            },
+            {
+              id: uuid(),
+              isDrivingLicenseSuspended: true,
+              verdicts: [
+                { serviceRequirement: ServiceRequirement.REQUIRED },
+              ],
+            },
+          ],
+        } as Case,
+        expectedMessages: [
+          suspensionMessage,
+          suspensionMessage,
+          criminalRecordMessage,
+        ],
+      },
+      {
+        description:
+          'should send once for each suspended defendant when ruling is a fine',
+        theCase: {
+          ...baseCase,
+          indictmentRulingDecision: CaseIndictmentRulingDecision.FINE,
+          defendants: [
+            {
+              id: uuid(),
+              isDrivingLicenseSuspended: true,
+              verdicts: [
+                { serviceRequirement: ServiceRequirement.REQUIRED },
+              ],
+            },
+            {
+              id: uuid(),
+              isDrivingLicenseSuspended: true,
+              verdicts: [
+                { serviceRequirement: ServiceRequirement.REQUIRED },
+              ],
+            },
+          ],
+        } as Case,
+        expectedMessages: [
+          suspensionMessage,
+          suspensionMessage,
+          criminalRecordMessage,
+        ],
+      },
+    ]
+
+    it.each(suspensionScenarios)(
+      '$description',
+      async ({ theCase, expectedMessages }) => {
+        const result =
+          await internalNotificationController.dispatchEventNotification(
+            theCase.id,
+            theCase,
+            {
+              type: EventNotificationType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+            },
+          )
+
+        expect(mockQueuedMessages).toEqual(expectedMessages)
+        expect(result).toEqual({ delivered: true })
+      },
+    )
   })
 })
