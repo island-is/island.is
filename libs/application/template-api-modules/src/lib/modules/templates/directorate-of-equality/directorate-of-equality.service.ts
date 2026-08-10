@@ -152,8 +152,8 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
         identifier: e.identifier,
         roleTitle: e.roleTitle,
         gender: e.gender as ParsedEmployeeDto['gender'],
-        field: e.field,
-        department: e.department,
+        field: e.field ?? '', // Not collected in the form, but required by the API. // TODO: cleanup when backend changes
+        department: e.department ?? '', // Not collected in the form, but required by the API. // TODO: cleanup when backend changes
         startDate: e.startDate,
         education: 'PROFESSIONAL', // Not collected in the form, but required by the API. // TODO: cleanup when backend changes
         workRatio: e.workRatio,
