@@ -71,7 +71,12 @@ import {
   getCourtRecordPdfAsString,
   getRulingPdfAsString,
 } from '../../formatters'
-import { buildInCourtAppealedEvent, InCourtAppellant } from '../appeal-case'
+import {
+  buildInCourtAppealedEvent,
+  hasOutOfCourtAppeal,
+  InCourtAppellant,
+  isOutOfCourtAppealEvent,
+} from '../appeal-case'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
 import { DefendantService } from '../defendant'
@@ -84,7 +89,6 @@ import {
   AppealCaseRepositoryService,
   AppealDecision,
   AppealDecisionRepositoryService,
-  AppealEventLog,
   AppealEventLogRepositoryService,
   Case,
   caseInclude,
@@ -1473,6 +1477,38 @@ export class CaseService {
       )
     }
 
+    // The in-court decisions describe what happened at the ruling, and an appeal
+    // that no longer depends on them must not be disturbed by editing them. Two
+    // cases: a party filed its own appeal, which the court record did not create
+    // and cannot take away; or the appeal has left the district court, where the
+    // decisions are already part of the record Landsréttur received. The web
+    // disables the decision UI on the same conditions - this makes the API
+    // enforce it rather than rely on that.
+    const existingAppealCase = theCase.appealCase
+    if (existingAppealCase) {
+      const appealedEvents = await this.appealEventLogRepositoryService.findAll(
+        {
+          where: {
+            appealCaseId: existingAppealCase.id,
+            eventType: AppealEventType.APPEALED,
+          },
+          transaction,
+        },
+      )
+
+      if (hasOutOfCourtAppeal(appealedEvents)) {
+        throw new BadRequestException(
+          'This case has been appealed out of court, so the appeal decisions can no longer be changed',
+        )
+      }
+
+      if (existingAppealCase.appealState !== AppealCaseState.APPEALED) {
+        throw new BadRequestException(
+          'The appeal of this case has progressed past the district court, so the appeal decisions can no longer be changed',
+        )
+      }
+    }
+
     const data: {
       decision?: CaseAppealDecision | null
       announcement?: string | null
@@ -1553,8 +1589,15 @@ export class CaseService {
       appellantsToAdd.push({ appellantRole: UserRole.DEFENDER })
     }
 
+    // Only an appeal made in court can be corrected away by changing the court
+    // record. A party that filed its own appeal keeps its event regardless of
+    // what the decisions now say - it has no decision = APPEAL row to begin
+    // with, so inferring from the rows that it never appealed would erase a real
+    // appeal.
     const eventsToRemove = existingEvents.filter((event) =>
-      prosecutionRoles.includes(event.userRole)
+      isOutOfCourtAppealEvent(event)
+        ? false
+        : prosecutionRoles.includes(event.userRole)
         ? !appeals.prosecutor
         : !appeals.defence,
     )
@@ -1659,7 +1702,7 @@ export class CaseService {
     }
   }
 
-  private handleStateChangeEventLogUpdatesForRequest(
+  private handleStateChangeEventLogUpdatesForRequests(
     theCase: Case,
     updatedCase: Case,
     user: TUser,
@@ -1715,7 +1758,7 @@ export class CaseService {
     }
 
     if (isRequestCase(theCase.type)) {
-      return this.handleStateChangeEventLogUpdatesForRequest(
+      return this.handleStateChangeEventLogUpdatesForRequests(
         theCase,
         updatedCase,
         user,
@@ -1865,7 +1908,9 @@ export class CaseService {
     }
   }
 
-  private async handleEventLogUpdatesForIndictments(
+  // Scheduling a court date drives court date notifications for both
+  // indictment and request cases - see NotificationDispatchService
+  private async handleCourtDateEventLogUpdates(
     theCase: Case,
     updatedCase: Case,
     user: TUser,
@@ -1990,14 +2035,12 @@ export class CaseService {
       )
     }
 
-    if (isIndictmentCase(theCase.type)) {
-      return this.handleEventLogUpdatesForIndictments(
-        theCase,
-        updatedCase,
-        user,
-        transaction,
-      )
-    }
+    return this.handleCourtDateEventLogUpdates(
+      theCase,
+      updatedCase,
+      user,
+      transaction,
+    )
   }
 
   async update(
@@ -2114,13 +2157,30 @@ export class CaseService {
         prosecutorAppealedInCourt || accusedAppealedInCourt
       const existingAppealCase = theCase.appealCase
 
+      // A party may also have filed its own appeal outside the court record.
+      // Such an appeal has no decision = APPEAL row, so the stance above says
+      // nothing about it, and correcting the court record cannot take it away -
+      // it must survive both the rejection below and the cleanup further down.
+      const appealedEvents = existingAppealCase
+        ? await this.appealEventLogRepositoryService.findAll({
+            where: {
+              appealCaseId: existingAppealCase.id,
+              eventType: AppealEventType.APPEALED,
+            },
+            transaction,
+          })
+        : []
+      const appealedOutOfCourt = hasOutOfCourtAppeal(appealedEvents)
+
       // Correcting a completed request case must not silently discard an appeal
       // that has already moved past the district court: if the correction leaves
-      // no in-court appeal but the appeal case has progressed beyond APPEALED,
-      // reject the completion.
+      // no appeal at all but the appeal case has progressed beyond APPEALED,
+      // reject the completion. An out-of-court appeal is not being removed, so
+      // it does not stand in the way of an unrelated correction.
       if (
         existingAppealCase &&
         !someoneAppealedInCourt &&
+        !appealedOutOfCourt &&
         existingAppealCase.appealState !== AppealCaseState.APPEALED
       ) {
         throw new BadRequestException(
@@ -2188,10 +2248,18 @@ export class CaseService {
           user,
           transaction,
         )
+      } else if (existingAppealCase && appealedOutOfCourt) {
+        // No in-court appeal remains, but a party filed its own appeal, which a
+        // court-record correction does not touch. Leave the appeal case and its
+        // events alone - deleting here is what used to destroy real appeals
+        // together with the briefs and statements filed for them.
+        this.logger.debug(
+          `Kept the out-of-court appeal of case ${theCase.id} while re-completing after a correction`,
+        )
       } else if (existingAppealCase) {
-        // The in-court appeal was corrected away entirely - delete the
-        // still-APPEALED appeal case (a progressed one was rejected above),
-        // mirroring the ruling-order correction cleanup.
+        // The in-court appeal was corrected away entirely and nobody appealed
+        // out of court - delete the still-APPEALED appeal case (a progressed one
+        // was rejected above), mirroring the ruling-order correction cleanup.
         await this.deleteCaseLevelAppeal(
           theCase,
           existingAppealCase,
@@ -2384,15 +2452,10 @@ export class CaseService {
     }
 
     if (requiresCourtTransition) {
-      this.eventService.postEvent(
-        CaseTransition.MOVE,
-        updatedCase ?? theCase,
-        false,
-        {
-          from: theCase.court?.name,
-          to: updatedCase?.court?.name,
-        },
-      )
+      this.eventService.postEvent(CaseTransition.MOVE, updatedCase, {
+        from: theCase.court?.name,
+        to: updatedCase?.court?.name,
+      })
     }
 
     if (returnUpdatedCase) {

@@ -14,7 +14,6 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
-  AppealCaseNotificationType,
   appealEventTypes,
   CaseFileCategory,
   CaseFileState,
@@ -59,7 +58,6 @@ import {
   EventLog,
   IndictmentCount,
   Institution,
-  Notification,
   Offense,
   Subpoena,
   User,
