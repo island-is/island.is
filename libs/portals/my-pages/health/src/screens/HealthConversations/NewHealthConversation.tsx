@@ -209,7 +209,11 @@ const NewHealthConversation = () => {
           )}
           {!loading && !error && recipient && (
             <Box className={styles.messageCard} background="white">
-              <Box paddingX={5} paddingTop={3} className={styles.backButton}>
+              <Box
+                paddingX={[2, 2, 5]}
+                paddingTop={[2, 2, 3]}
+                className={styles.backButton}
+              >
                 <Button
                   circle
                   icon="arrowBack"
@@ -219,7 +223,7 @@ const NewHealthConversation = () => {
                   onClick={() => navigate(HealthPaths.HealthConversations)}
                 />
               </Box>
-              <Box paddingX={5} paddingTop={1}>
+              <Box paddingX={[2, 2, 5]} paddingTop={1}>
                 <Text variant="h4" fontWeight="semiBold">
                   {formatMessage(messages.healthConversationsCreate)}
                 </Text>
@@ -230,7 +234,11 @@ const NewHealthConversation = () => {
                 </Text>
               </Box>
 
-              <Box paddingX={5} paddingTop={4} paddingBottom={5}>
+              <Box
+                paddingX={[2, 2, 5]}
+                paddingTop={[3, 3, 4]}
+                paddingBottom={[2, 2, 5]}
+              >
                 <GridRow marginBottom={3}>
                   <GridColumn span={['12/12', '8/12']}>
                     <Select

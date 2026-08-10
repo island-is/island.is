@@ -166,13 +166,13 @@ const HealthConversationDetail = () => {
 
   return (
     <GridContainer>
-      <GridRow marginTop={2}>
+      <GridRow marginTop={[1, 1, 2]}>
         <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
           <Box
             className={styles.messageCard}
             background="white"
-            paddingTop={3}
-            paddingBottom={[3, 3, 5]}
+            paddingTop={[2, 2, 3]}
+            paddingBottom={[2, 2, 5]}
             paddingX={[2, 2, 5]}
           >
             <Box
