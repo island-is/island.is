@@ -180,9 +180,7 @@ describe('InternalNotificationController - Dispatch event notifications', () => 
             {
               id: uuid(),
               isDrivingLicenseSuspended: true,
-              verdicts: [
-                { serviceRequirement: ServiceRequirement.REQUIRED },
-              ],
+              verdicts: [{ serviceRequirement: ServiceRequirement.REQUIRED }],
             },
             {
               id: uuid(),
@@ -215,17 +213,14 @@ describe('InternalNotificationController - Dispatch event notifications', () => 
             {
               id: uuid(),
               isDrivingLicenseSuspended: false,
-              verdicts: [
-                { serviceRequirement: ServiceRequirement.REQUIRED },
-              ],
+              verdicts: [{ serviceRequirement: ServiceRequirement.REQUIRED }],
             },
           ],
         } as Case,
         expectedMessages: [suspensionMessage, criminalRecordMessage],
       },
       {
-        description:
-          'should send once for each ready suspended defendant',
+        description: 'should send once for each ready suspended defendant',
         theCase: {
           ...baseCase,
           defendants: [
@@ -250,9 +245,7 @@ describe('InternalNotificationController - Dispatch event notifications', () => 
             {
               id: uuid(),
               isDrivingLicenseSuspended: true,
-              verdicts: [
-                { serviceRequirement: ServiceRequirement.REQUIRED },
-              ],
+              verdicts: [{ serviceRequirement: ServiceRequirement.REQUIRED }],
             },
           ],
         } as Case,
@@ -272,16 +265,12 @@ describe('InternalNotificationController - Dispatch event notifications', () => 
             {
               id: uuid(),
               isDrivingLicenseSuspended: true,
-              verdicts: [
-                { serviceRequirement: ServiceRequirement.REQUIRED },
-              ],
+              verdicts: [{ serviceRequirement: ServiceRequirement.REQUIRED }],
             },
             {
               id: uuid(),
               isDrivingLicenseSuspended: true,
-              verdicts: [
-                { serviceRequirement: ServiceRequirement.REQUIRED },
-              ],
+              verdicts: [{ serviceRequirement: ServiceRequirement.REQUIRED }],
             },
           ],
         } as Case,
