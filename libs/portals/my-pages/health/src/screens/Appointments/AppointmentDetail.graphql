@@ -1,44 +1,48 @@
+fragment AppointmentDetailFields on HealthDirectorateAppointmentDetail {
+  id
+  title
+  instruction
+  date
+  duration
+  modality
+  practitioners
+  assignees {
+    type
+    name
+  }
+  links {
+    type
+    url
+    activatesAt
+    expiresAt
+  }
+  location {
+    __typename
+    name
+    organization
+    address
+    department
+    wing
+    floor
+    room
+    city
+    postalCode
+    country
+    latitude
+    longitude
+    link
+    locationLinks {
+      type
+      url
+    }
+    phoneNumber
+    openingHoursText
+  }
+}
+
 query getAppointmentDetail($id: String!) {
   healthDirectorateAppointment(id: $id) {
     __typename
-    id
-    title
-    instruction
-    date
-    duration
-    modality
-    practitioners
-    assignees {
-      type
-      name
-    }
-    links {
-      type
-      url
-      activatesAt
-      expiresAt
-    }
-    location {
-      __typename
-      name
-      organization
-      address
-      department
-      wing
-      floor
-      room
-      city
-      postalCode
-      country
-      latitude
-      longitude
-      link
-      locationLinks {
-        type
-        url
-      }
-      phoneNumber
-      openingHoursText
-    }
+    ...AppointmentDetailFields
   }
 }
