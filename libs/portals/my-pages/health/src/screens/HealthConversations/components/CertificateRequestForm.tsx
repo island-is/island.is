@@ -58,7 +58,9 @@ const CertificateRequestForm = ({
       <Text variant="h5" marginBottom={2}>
         {formatMessage(messages.healthConversationsCertificateTypeTitle)} *
       </Text>
-      <GridRow marginBottom={submitAttempted && !formState.certificateType ? 1 : 3}>
+      <GridRow
+        marginBottom={submitAttempted && !formState.certificateType ? 1 : 3}
+      >
         <GridColumn
           span={['12/12', '12/12', '12/12', '6/12']}
           paddingBottom={[2, 2, 2, 0]}
