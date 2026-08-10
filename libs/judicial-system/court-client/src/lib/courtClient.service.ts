@@ -79,6 +79,8 @@ interface CourtsCredentials {
 interface CourtClientError {
   status?: number
   message: unknown
+  // Raw upstream response body when available (before any local wrapping).
+  detail?: unknown
 }
 
 // True when the court service or x-road rejected the upload because the file
@@ -89,14 +91,21 @@ const isPayloadTooLargeError = (reason: CourtClientError): boolean => {
     return true
   }
 
-  if (typeof reason.message !== 'string') {
+  const rawResponse =
+    typeof reason.detail === 'string'
+      ? reason.detail
+      : typeof reason.message === 'string'
+      ? reason.message
+      : undefined
+
+  if (!rawResponse) {
     return false
   }
 
   // X-road may surface oversized uploads as this proxy error instead of HTTP 413.
   return (
-    reason.message.includes('Server.ServerProxy.LoggingFailed') &&
-    reason.message.includes('Message size exceeds maximum loggable size')
+    rawResponse.includes('Server.ServerProxy.LoggingFailed') &&
+    rawResponse.includes('Message size exceeds maximum loggable size')
   )
 }
 
@@ -399,7 +408,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
     if (payloadTooLarge) {
       return new PayloadTooLargeException({
         message: 'The file is too large for the court service',
-        detail: reason.message,
+        detail: reason.detail ?? reason.message,
       })
     }
 

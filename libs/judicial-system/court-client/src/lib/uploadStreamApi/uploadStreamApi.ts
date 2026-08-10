@@ -56,10 +56,12 @@ export class UploadStreamApi {
             ? data
             : JSON.stringify(data)
 
-        // The status is reported separately so that callers can react to
-        // specific responses, such as the file being too large.
+        // The status and raw response body are reported separately so that
+        // callers can react to specific responses, such as the file being too
+        // large, without parsing the wrapped log message.
         throw {
           status,
+          detail: message,
           message: `Upload failed with status ${status}: ${message}`,
         }
       }
