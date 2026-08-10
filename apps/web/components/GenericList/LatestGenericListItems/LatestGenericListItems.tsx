@@ -25,13 +25,14 @@ export const LatestGenericListItems = ({
     // The url is [organizationPageSlug, subpageSlug] or, in case the subpage
     // belongs to a parent subpage, [organizationPageSlug, parentSubpageSlug, subpageSlug]
     const url = slice.seeMorePage.url ?? []
-    if (url.length >= 2 && url.every(Boolean)) {
-      seeMoreLinkHref = linkResolver(
-        url.length > 2
-          ? 'organizationparentsubpagechild'
-          : 'organizationsubpage',
-        url,
-      ).href
+    const linkType =
+      url.length === 3
+        ? 'organizationparentsubpagechild'
+        : url.length === 2
+        ? 'organizationsubpage'
+        : null
+    if (linkType && url.every(Boolean)) {
+      seeMoreLinkHref = linkResolver(linkType, url).href
     }
   }
 
