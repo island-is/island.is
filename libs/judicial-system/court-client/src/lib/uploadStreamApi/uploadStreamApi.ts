@@ -49,7 +49,13 @@ export class UploadStreamApi {
       if (axios.isAxiosError(error)) {
         const status = error.response?.status
         const message = error.response?.data || error.message
-        throw new Error(`Upload failed with status ${status}: ${message}`)
+
+        // The status is reported separately so that callers can react to
+        // specific responses, such as the file being too large.
+        throw {
+          status,
+          message: `Upload failed with status ${status}: ${message}`,
+        }
       }
 
       throw new Error(

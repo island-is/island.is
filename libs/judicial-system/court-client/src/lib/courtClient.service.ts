@@ -8,10 +8,12 @@ import {
 import {
   BadGatewayException,
   BadRequestException,
+  HttpStatus,
   Inject,
   Injectable,
   NotFoundException,
   NotImplementedException,
+  PayloadTooLargeException,
   ServiceUnavailableException,
   UnprocessableEntityException,
   UnsupportedMediaTypeException,
@@ -72,6 +74,11 @@ const stripResult = (str: string): string => {
 
 interface CourtsCredentials {
   [key: string]: CredentialsData
+}
+
+interface CourtClientError {
+  status?: number
+  message: unknown
 }
 
 interface ConnectionState {
@@ -343,10 +350,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
     }
   }
 
-  private handleUnknownError(
-    courtId: string,
-    reason: { status: string; message: unknown },
-  ) {
+  private handleUnknownError(courtId: string, reason: CourtClientError) {
     // Get the connection state
     const connectionState = this.getConnectionState(courtId)
 
@@ -360,10 +364,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
     })
   }
 
-  private handleCaseError(
-    courtId: string,
-    reason: { status: string; message: unknown },
-  ): Error {
+  private handleCaseError(courtId: string, reason: CourtClientError): Error {
     // Check for known errors
     if (
       typeof reason.message === 'string' &&
@@ -372,12 +373,23 @@ export class CourtClientServiceImplementation implements CourtClientService {
       return new NotFoundException(reason)
     }
 
+    // The court service, or x-road, rejects payloads that exceed their size
+    // limit. This is not a transient error, so it is kept out of the error
+    // count that triggers a forced relogin.
+    if (reason.status === HttpStatus.PAYLOAD_TOO_LARGE) {
+      return new PayloadTooLargeException({
+        ...reason,
+        message: 'The file is too large for the court service',
+        detail: reason.message,
+      })
+    }
+
     return this.handleUnknownError(courtId, reason)
   }
 
   private handleParticipantError(
     courtId: string,
-    reason: { status: string; message: unknown },
+    reason: CourtClientError,
   ): Error {
     // Check for known errors
     if (
@@ -422,7 +434,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
       this.createDocumentApi.createDocument({
         createDocumentData: { ...args, authenticationToken },
       }),
-    ).catch((reason: { status: string; message: unknown }) => {
+    ).catch((reason: CourtClientError) => {
       this.logger.warn('Court client error - createDocument', {
         courtId,
         reason,
@@ -538,7 +550,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
       this.updateCaseWithDefendantApi.updateCaseWithDefendant({
         updateCaseWithDefendantData: { ...args, authenticationToken },
       }),
-    ).catch((reason: { status: string; message: unknown }) => {
+    ).catch((reason: CourtClientError) => {
       this.logger.warn('Court client error - updateCaseWithDefendant', {
         courtId,
         reason,

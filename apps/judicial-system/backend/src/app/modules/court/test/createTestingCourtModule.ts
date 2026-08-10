@@ -3,6 +3,7 @@ import { mock } from 'jest-mock-extended'
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
+import { EmailService } from '@island.is/email-service'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ConfigModule } from '@island.is/nest/config'
 
@@ -48,9 +49,11 @@ export const createTestingCourtModule = async () => {
   const courtClientService =
     courtModule.get<CourtClientService>(CourtClientService)
 
+  const emailService = courtModule.get<EmailService>(EmailService)
+
   const courtService = courtModule.get<CourtService>(CourtService)
 
   courtModule.close()
 
-  return { courtClientService, courtService }
+  return { courtClientService, emailService, courtService }
 }

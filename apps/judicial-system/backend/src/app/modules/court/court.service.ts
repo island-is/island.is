@@ -3,7 +3,12 @@ import { Base64 } from 'js-base64'
 import { Op } from 'sequelize'
 import { ConfidentialClientApplication } from '@azure/msal-node'
 
-import { Inject, Injectable, ServiceUnavailableException } from '@nestjs/common'
+import {
+  Inject,
+  Injectable,
+  PayloadTooLargeException,
+  ServiceUnavailableException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { EmailService } from '@island.is/email-service'
@@ -109,13 +114,56 @@ export class CourtService {
       : value
 
     const firstLetterInValue = valueWithoutFileExtension[0]
-    const mask = '*'.repeat(valueWithoutFileExtension.length - 2) // -2 to keep the first and last letter of the file name
+    const mask = '*'.repeat(
+      Math.max(0, valueWithoutFileExtension.length - 2), // -2 to keep the first and last letter of the file name
+    )
     const lastLetterInValueWithoutFileExtension =
       valueWithoutFileExtension[valueWithoutFileExtension.length - 1]
 
     return `${firstLetterInValue}${mask}${lastLetterInValueWithoutFileExtension}${
       valueIsFileName ? `.${fileNameEnding}` : ''
     }`
+  }
+
+  // The court service rejects files that exceed its size limit and no amount of
+  // retrying will change that, so the court is asked to upload the file by hand.
+  private async notifyCourtOfFileTooLarge(
+    courtId: string,
+    courtCaseNumber: string,
+    fileName: string,
+  ): Promise<void> {
+    const courtEmail = this.config.courtsEmails[courtId]
+
+    if (!courtEmail) {
+      this.logger.error(
+        `No email address is registered for court ${courtId}, so it cannot be notified that a file was too large for the court service`,
+      )
+
+      return
+    }
+
+    const body = `Ekki tókst að hlaða upp skjali ${this.mask(
+      fileName,
+    )} í Auði vegna stærðartakmarkana. Vinsamlegast hlaðið skjali upp handvirkt.`
+
+    try {
+      await this.emailService.sendEmail({
+        from: { name: this.config.fromName, address: this.config.fromEmail },
+        replyTo: {
+          name: this.config.replyToName,
+          address: this.config.replyToEmail,
+        },
+        to: [{ name: '', address: courtEmail }],
+        subject: `Ekki tókst að hlaða upp skjali í Auði í máli ${courtCaseNumber}`,
+        text: body,
+        html: body,
+      })
+    } catch (reason) {
+      this.logger.error(
+        `Failed to notify court ${courtId} that a file was too large for the court service`,
+        { reason },
+      )
+    }
   }
 
   private validateCourtRobotEmailParams(
@@ -186,10 +234,18 @@ export class CourtService {
           caseFolder,
         }),
       )
-      .catch((reason) => {
+      .catch(async (reason) => {
         if (reason instanceof ServiceUnavailableException) {
           // Act as if the document was created successfully
           return ''
+        }
+
+        if (reason instanceof PayloadTooLargeException) {
+          await this.notifyCourtOfFileTooLarge(
+            courtId,
+            courtCaseNumber,
+            sanitizedFileName,
+          )
         }
 
         this.eventService.postErrorEvent(
@@ -235,10 +291,18 @@ export class CourtService {
           streamID: streamId,
         }),
       )
-      .catch((reason) => {
+      .catch(async (reason) => {
         if (reason instanceof ServiceUnavailableException) {
           // Act as if the document was created successfully
           return ''
+        }
+
+        if (reason instanceof PayloadTooLargeException) {
+          await this.notifyCourtOfFileTooLarge(
+            courtId,
+            courtCaseNumber,
+            fileName,
+          )
         }
 
         this.eventService.postErrorEvent(
