@@ -117,7 +117,11 @@ const getParentProps = (
     // content of its first child when no subpage slug is present in the url
     return OrganizationParentSubpage.getProps(
       withSlugs(querySlugs.slice(0, 2)),
-    ).catch(() => {
+    ).catch((parentSubpageError) => {
+      if (!(parentSubpageError instanceof CustomNextError)) {
+        throw parentSubpageError
+      }
+      // Neither lookup found a page, the original error describes the url best
       throw error
     })
   })
