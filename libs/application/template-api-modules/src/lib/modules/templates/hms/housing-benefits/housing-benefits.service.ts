@@ -683,21 +683,11 @@ export class HousingBenefitsService extends BaseTemplateApiService {
       )
       const model = mapApplicationToHousingBenefitsModel(application, files)
 
-      console.log('--------------------------------')
-      console.log('Model:')
-      console.dir(model, { depth: null, colors: true })
-      console.log('--------------------------------')
-
       const result =
         await this.hmsHousingBenefitsClientService.createHousingBenefitsApplication(
           auth,
           model,
         )
-
-      console.log('--------------------------------')
-      console.log('Result:')
-      console.dir(result, { depth: null, colors: true })
-      console.log('--------------------------------')
 
       if (!result.success) {
         throw new TemplateApiError(
@@ -735,11 +725,6 @@ export class HousingBenefitsService extends BaseTemplateApiService {
           500,
         )
       }
-
-      console.log('--------------------------------')
-      console.log('Error:')
-      console.dir(e, { depth: null, colors: true })
-      console.log('--------------------------------')
 
       this.logger.error('Failed to submit housing benefits application:', e)
 
