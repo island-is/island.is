@@ -2,6 +2,7 @@ import {
   AlertMessage,
   Box,
   DatePicker,
+  ErrorMessage,
   GridColumn,
   GridRow,
   Input,
@@ -32,12 +33,14 @@ interface Props {
   formState: CertificateFormState
   setFormState: (formState: CertificateFormState) => void
   disabled?: boolean
+  submitAttempted?: boolean
 }
 
 const CertificateRequestForm = ({
   formState,
   setFormState,
   disabled,
+  submitAttempted,
 }: Props) => {
   const { formatMessage } = useLocale()
 
@@ -53,9 +56,9 @@ const CertificateRequestForm = ({
       </Box>
 
       <Text variant="h5" marginBottom={2}>
-        {formatMessage(messages.healthConversationsCertificateTypeTitle)}
+        {formatMessage(messages.healthConversationsCertificateTypeTitle)} *
       </Text>
-      <GridRow marginBottom={3}>
+      <GridRow marginBottom={submitAttempted && !formState.certificateType ? 1 : 3}>
         <GridColumn
           span={['12/12', '12/12', '12/12', '6/12']}
           paddingBottom={[2, 2, 2, 0]}
@@ -105,6 +108,14 @@ const CertificateRequestForm = ({
         </GridColumn>
       </GridRow>
 
+      {submitAttempted && !formState.certificateType && (
+        <Box marginBottom={3}>
+          <ErrorMessage>
+            {formatMessage(messages.healthConversationsCertificateTypeRequired)}
+          </ErrorMessage>
+        </Box>
+      )}
+
       <GridRow marginBottom={3}>
         <GridColumn
           span={['12/12', '12/12', '12/12', '6/12']}
@@ -125,6 +136,11 @@ const CertificateRequestForm = ({
               setFormState({ ...formState, recipientName: e.target.value })
             }
             disabled={disabled}
+            required
+            hasError={submitAttempted && !formState.recipientName.trim()}
+            errorMessage={formatMessage(
+              messages.healthConversationsCertificateRecipientNameRequired,
+            )}
           />
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
@@ -146,6 +162,13 @@ const CertificateRequestForm = ({
             label={formatMessage(messages.period)}
             placeholderText={formatMessage(messages.choosePeriod)}
             disabled={disabled}
+            required
+            hasError={
+              submitAttempted && (!formState.startDate || !formState.endDate)
+            }
+            errorMessage={formatMessage(
+              messages.healthConversationsCertificatePeriodRequired,
+            )}
           />
         </GridColumn>
       </GridRow>

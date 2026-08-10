@@ -57,6 +57,7 @@ const NewHealthConversation = () => {
   )
   const [termsAccepted, setTermsAccepted] = useState(false)
   const [termsModalOpen, setTermsModalOpen] = useState(false)
+  const [submitAttempted, setSubmitAttempted] = useState(false)
 
   const { data, loading, error } =
     useGetHealthConversationRecipientsForNewQuery({
@@ -153,9 +154,11 @@ const NewHealthConversation = () => {
     setSelectedTypeCode(typeCode)
     setMessageText('')
     setCertificateForm(emptyCertificateFormState)
+    setSubmitAttempted(false)
   }
 
   const handleSubmit = async () => {
+    setSubmitAttempted(true)
     if (!canSubmit || !recipient || !selectedTypeCode || !selectedType) return
 
     try {
@@ -191,7 +194,7 @@ const NewHealthConversation = () => {
             { state: { justCreated: true } },
           )
         } else {
-          navigate(HealthPaths.HealthConversations)
+          toast.error(formatMessage(m.errorTitle))
         }
         return
       }
@@ -308,6 +311,7 @@ const NewHealthConversation = () => {
                     formState={certificateForm}
                     setFormState={setCertificateForm}
                     disabled={isFormLocked}
+                    submitAttempted={submitAttempted}
                   />
                 ) : (
                   <Box>
