@@ -197,7 +197,7 @@ export class SubpoenaService {
       user,
     )
 
-    this.eventService.postEvent('SUBPOENA_ISSUED', theCase, false, {
+    this.eventService.postEvent('SUBPOENA_ISSUED', theCase, {
       Varnaraðili: defendantsToProcess
         .map((defendant) => defendant.id)
         .join(', '),
@@ -375,7 +375,7 @@ export class SubpoenaService {
       update.serviceStatus &&
       update.serviceStatus !== subpoena.serviceStatus
     ) {
-      this.eventService.postEvent('SUBPOENA_SERVICE_STATUS', theCase, false, {
+      this.eventService.postEvent('SUBPOENA_SERVICE_STATUS', theCase, {
         Staða: getServiceStatusText(update.serviceStatus),
       })
     }
@@ -505,15 +505,10 @@ export class SubpoenaService {
         `Subpoena with police subpoena id ${createdSubpoena.policeSubpoenaId} delivered to the police centralized file service`,
       )
 
-      this.eventService.postEvent(
-        'SUBPOENA_DELIVERED_TO_POLICE',
-        theCase,
-        false,
-        {
-          Varnaraðili: defendant.id,
-          'RLS auðkenni': createdSubpoena.policeSubpoenaId,
-        },
-      )
+      this.eventService.postEvent('SUBPOENA_DELIVERED_TO_POLICE', theCase, {
+        Varnaraðili: defendant.id,
+        'RLS auðkenni': createdSubpoena.policeSubpoenaId,
+      })
 
       return { delivered: true }
     } catch (error) {

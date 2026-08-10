@@ -31,6 +31,7 @@ export const Prerequisites = buildForm({
         buildExternalDataProvider({
           id: 'approveExternalData',
           title: messages.prerequisites.section.title,
+          description: messages.prerequisites.section.intro,
           checkboxLabel: messages.prerequisites.section.checkboxLabel,
           submitField: buildSubmitField({
             id: 'submit',

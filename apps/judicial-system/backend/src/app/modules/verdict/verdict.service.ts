@@ -500,15 +500,10 @@ export class VerdictService {
         transaction,
       )
 
-      this.eventService.postEvent(
-        'VERDICT_DELIVERED_TO_POLICE',
-        theCase,
-        false,
-        {
-          Varnaraðili: defendant.id,
-          'RLS auðkenni': createdDocument.externalPoliceDocumentId,
-        },
-      )
+      this.eventService.postEvent('VERDICT_DELIVERED_TO_POLICE', theCase, {
+        Varnaraðili: defendant.id,
+        'RLS auðkenni': createdDocument.externalPoliceDocumentId,
+      })
 
       return { delivered: true }
     } catch (error) {
