@@ -1,11 +1,4 @@
-import {
-  IsArray,
-  IsEnum,
-  IsNotEmpty,
-  IsObject,
-  IsOptional,
-  IsString,
-} from 'class-validator'
+import { IsEnum, IsNotEmpty, IsObject, IsOptional } from 'class-validator'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
@@ -13,10 +6,12 @@ import type { User, UserDescriptor } from '@island.is/judicial-system/types'
 import { UmbrellaNotificationType } from '@island.is/judicial-system/types'
 
 export class CaseNotificationDto {
-  @IsNotEmpty()
+  // Notifications dispatched in response to logged events carry a
+  // userDescriptor rather than a registered user - see below
+  @IsOptional()
   @IsObject()
-  @ApiProperty({ type: Object })
-  readonly user!: User
+  @ApiPropertyOptional({ type: Object })
+  readonly user?: User
 
   @IsNotEmpty()
   @IsEnum(UmbrellaNotificationType)
@@ -30,12 +25,4 @@ export class CaseNotificationDto {
   @IsObject()
   @ApiPropertyOptional({ type: Object })
   readonly userDescriptor?: UserDescriptor
-
-  // The ids of the users that should receive the notification. Used to limit
-  // recipients to a specific subset (e.g. only newly assigned appeal judges).
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  @ApiPropertyOptional({ type: String, isArray: true })
-  readonly userIds?: string[]
 }

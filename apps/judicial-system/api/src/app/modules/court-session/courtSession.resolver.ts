@@ -15,12 +15,14 @@ import {
 import type { User } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
+import { AppealDecisionResponse } from './dto/appealDecision.response'
 import { CourtSessionResponse } from './dto/courtSession.response'
 import { CourtSessionString } from './dto/courtSessionString.response'
 import { CreateCourtSessionInput } from './dto/createCourtSession.input'
 import { DeleteCourtSessionInput } from './dto/deleteCourtSession.input'
 import { DeleteCourtSessionResponse } from './dto/deleteCourtSession.response'
 import { UpdateCourtSessionInput } from './dto/updateCourtSession.input'
+import { UpdateCourtSessionAppealDecisionInput } from './dto/updateCourtSessionAppealDecision.input'
 import { UpdateCourtSessionStringInput } from './dto/updateCourtSessionString.input'
 
 @UseGuards(JwtGraphQlAuthUserGuard)
@@ -99,6 +101,32 @@ export class CourtSessionResolver {
         caseId,
         courtSessionId,
         updateCourtSessionString,
+      ),
+      courtSessionId,
+    )
+  }
+
+  @Mutation(() => AppealDecisionResponse, { nullable: true })
+  updateCourtSessionAppealDecision(
+    @Args('input', { type: () => UpdateCourtSessionAppealDecisionInput })
+    input: UpdateCourtSessionAppealDecisionInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<AppealDecisionResponse> {
+    const { caseId, courtSessionId, ...updateAppealDecision } = input
+
+    this.logger.debug(
+      `Updating appeal decision in court session ${courtSessionId} for case ${caseId}`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.UPDATE_COURT_SESSION,
+      backendService.updateCourtSessionAppealDecision(
+        caseId,
+        courtSessionId,
+        updateAppealDecision,
       ),
       courtSessionId,
     )

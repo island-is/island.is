@@ -46,6 +46,8 @@ export interface PoliceCaseUpdate {
 
 interface Props {
   index: number
+  policeCaseNumber: string
+  mainLokePoliceCaseNumber?: string
   setPoliceCase: (update: PoliceCaseUpdate) => void
   updatePoliceCase: (update?: PoliceCaseUpdate) => void
   deletePoliceCase?: () => void
@@ -53,6 +55,8 @@ interface Props {
 
 export const PoliceCase: FC<Props> = ({
   index,
+  policeCaseNumber,
+  mainLokePoliceCaseNumber,
   setPoliceCase,
   updatePoliceCase,
   deletePoliceCase,
@@ -64,11 +68,6 @@ export const PoliceCase: FC<Props> = ({
   const policeCaseNumbers = useMemo(
     () => workingCase.policeCaseNumbers ?? [],
     [workingCase.policeCaseNumbers],
-  )
-
-  const policeCaseNumber = useMemo(
-    () => policeCaseNumbers[index] ?? '',
-    [index, policeCaseNumbers],
   )
 
   const policeCaseNumberSubtypes: IndictmentSubtype[] = useMemo(
@@ -131,8 +130,9 @@ export const PoliceCase: FC<Props> = ({
       // The police case number was modified by the user
       if (
         !policeCaseNumbers.some(
-          (policeCaseNumber, idx) =>
-            idx !== index && policeCaseNumber === policeCaseNumberInput,
+          (otherPoliceCaseNumber) =>
+            otherPoliceCaseNumber !== policeCaseNumber &&
+            otherPoliceCaseNumber === policeCaseNumberInput,
         )
       ) {
         setPoliceCaseNumberErrorMessage('')
@@ -177,7 +177,8 @@ export const PoliceCase: FC<Props> = ({
   ])
 
   const isPoliceCaseNumberImmutable =
-    workingCase.origin === CaseOrigin.LOKE && index === 0
+    workingCase.origin === CaseOrigin.LOKE &&
+    policeCaseNumber === mainLokePoliceCaseNumber
 
   return (
     <BlueBox className={styles.grid}>
@@ -201,8 +202,9 @@ export const PoliceCase: FC<Props> = ({
         onChange={(event) => {
           if (
             !policeCaseNumbers.some(
-              (policeCaseNumber, idx) =>
-                idx !== index && policeCaseNumber === event.target.value,
+              (otherPoliceCaseNumber) =>
+                otherPoliceCaseNumber !== policeCaseNumber &&
+                otherPoliceCaseNumber === event.target.value,
             )
           ) {
             removeErrorMessageIfValid(

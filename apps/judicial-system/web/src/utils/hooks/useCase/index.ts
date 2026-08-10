@@ -6,7 +6,9 @@ import { errors } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
+  CaseIndictmentRulingDecision,
   CaseTransition,
+  IndictmentDecision,
   TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -210,6 +212,10 @@ const useCase = () => {
         caseId: string,
         transition: CaseTransition,
         setWorkingCase?: Dispatch<SetStateAction<Case>>,
+        transitionUpdate?: {
+          indictmentDecision?: IndictmentDecision | null
+          indictmentRulingDecision?: CaseIndictmentRulingDecision | null
+        },
       ): Promise<boolean> => {
         const mutation = limitedAccess
           ? limitedAccessTransitionCaseMutation
@@ -225,6 +231,7 @@ const useCase = () => {
               input: {
                 id: caseId,
                 transition,
+                ...transitionUpdate,
               },
             },
           })
@@ -266,7 +273,6 @@ const useCase = () => {
       async (
         id: string,
         notificationType: TrackedNotificationType,
-        eventOnly?: boolean,
       ): Promise<boolean> => {
         try {
           const { data } = await sendNotificationMutation({
@@ -274,7 +280,6 @@ const useCase = () => {
               input: {
                 caseId: id,
                 type: notificationType,
-                eventOnly,
               },
             },
           })

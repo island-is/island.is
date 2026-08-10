@@ -93,6 +93,7 @@ env:
   XROAD_COURT_BANKRUPTCY_CERT_PATH: 'IS-TEST/GOV/10019/Domstolasyslan/JusticePortal-v1'
   XROAD_CRIMINAL_RECORD_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Sakaskra-v1'
   XROAD_DIGITAL_TACHOGRAPH_DRIVERS_CARD_PATH: 'IS-TEST/GOV/10017/Samgongustofa-Protected/Okuritar-V1'
+  XROAD_DIRECTORATE_OF_EQUALITY_PATH: 'IS-TEST/GOV/10014/DMR-Protected/api.ritstjorn-jafnretti'
   XROAD_DIRECTORATE_OF_IMMIGRATION_PATH: 'IS-TEST/GOV/10011/UTL-Protected/Utl-Umsokn-v1'
   XROAD_DRIVING_LICENSE_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v1'
   XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v2'
@@ -181,7 +182,7 @@ hpa:
       cpuAverageUtilization: 90
       nginxRequestsIrate: 5
     replicas:
-      max: 3
+      max: 2
       min: 1
 httpRoute:
   primary-gw:
@@ -229,7 +230,7 @@ podSecurityContext:
 pvcs: []
 replicaCount:
   default: 1
-  max: 3
+  max: 2
   min: 1
 resources:
   limits:

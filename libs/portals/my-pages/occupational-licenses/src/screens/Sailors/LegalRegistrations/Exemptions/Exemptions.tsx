@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import {
   Box,
+  Divider,
   FilterInput,
   GridColumn,
   GridRow,
@@ -12,7 +13,7 @@ import {
   LinkButton,
   NestedLines,
   NestedTable,
-  Table,
+  PortalTable,
   createColumnHelper,
   formatDate,
   m,
@@ -98,7 +99,14 @@ export const Exemptions = () => {
       },
     ]
     if (isMobile) {
-      return <NestedLines data={nestedData} />
+      return (
+        <>
+          <Box paddingTop={3} paddingBottom={2}>
+            <Divider />
+          </Box>
+          <NestedLines data={nestedData} />
+        </>
+      )
     }
     return <NestedTable data={nestedData} />
   }
@@ -139,7 +147,7 @@ export const Exemptions = () => {
             {filtered.length === 0 ? (
               <Problem type="no_data" noBorder={false} />
             ) : (
-              <Table
+              <PortalTable
                 columns={columns}
                 data={filtered}
                 emptyMessage={om.sailorCrewRegistrationsExemptionsEmpty}

@@ -6,8 +6,6 @@ import { sectionFakeData } from './sectionFakeData'
 import { sectionExternalData } from './sectionExternalData'
 import { sectionApplicationFor } from './sectionApplicationFor'
 import { sectionRequirements } from './sectionRequirements'
-import { sectionExistingApplication } from './sectionExistingApplication'
-import { sectionAdvancedLicenseSelection } from './sectionAdvancedLicenseSelection'
 
 interface DrivingLicenseFormConfig {
   allowFakeData?: boolean
@@ -16,7 +14,6 @@ interface DrivingLicenseFormConfig {
   allow65Renewal?: boolean
   allow65RenewalRedesign?: boolean
   allowBTempRedesign?: boolean
-  allowAdvanced?: boolean
 }
 
 export const getForm = ({
@@ -26,7 +23,6 @@ export const getForm = ({
   allow65Renewal = false,
   allow65RenewalRedesign = false,
   allowBTempRedesign = false,
-  allowAdvanced = false,
 }: DrivingLicenseFormConfig): Form =>
   buildForm({
     id: 'DrivingLicenseApplicationPrerequisitesForm',
@@ -41,17 +37,9 @@ export const getForm = ({
         children: [
           ...(allowFakeData ? [sectionFakeData] : []),
           sectionExternalData,
-          sectionExistingApplication,
           ...(allowPickLicense
-            ? [
-                sectionApplicationFor(
-                  allowBELicense,
-                  allow65Renewal,
-                  allowAdvanced,
-                ),
-              ]
+            ? [sectionApplicationFor(allowBELicense, allow65Renewal)]
             : []),
-          ...(allowAdvanced ? [sectionAdvancedLicenseSelection] : []),
           sectionRequirements(allow65RenewalRedesign, allowBTempRedesign),
         ],
       }),

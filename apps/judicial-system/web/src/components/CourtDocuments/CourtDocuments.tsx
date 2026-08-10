@@ -172,6 +172,7 @@ const CourtDocuments: FC<Props> = ({ workingCase, setWorkingCase }) => {
                 onClick={() => handleRemoveDocument(index)}
                 icon="trash"
                 colorScheme="blue"
+                ariaLabel={`Eyða ${courtDocument.name}`}
               />
             </div>
           ))}

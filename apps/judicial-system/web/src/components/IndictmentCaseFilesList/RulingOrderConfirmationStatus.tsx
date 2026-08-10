@@ -58,7 +58,6 @@ const RulingOrderConfirmationStatus: FC<Props> = ({ file }) => {
     return (
       <Box marginLeft={1}>
         <Button
-          variant="ghost"
           size="small"
           loading={loading}
           onClick={(evt: MouseEvent) => {

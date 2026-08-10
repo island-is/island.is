@@ -51,7 +51,10 @@ type CaseEvent =
   | 'SCHEDULE_ARRAIGNMENT_DATE'
   | 'SCHEDULE_COURT_DATE'
   | 'SPLIT'
+  | 'SUBPOENA_ISSUED'
+  | 'SUBPOENA_DELIVERED_TO_POLICE'
   | 'SUBPOENA_SERVICE_STATUS'
+  | 'VERDICT_DELIVERED_TO_POLICE'
   | 'VERDICT_SERVICE_STATUS'
 
 type AppealCaseEvent = AppealCaseTransition | 'CREATE_APPEAL'
@@ -87,7 +90,10 @@ const eventHeading: Record<Event, string> = {
   SCHEDULE_COURT_DATE: ':timer_clock: Fyrirtökutíma úthlutað',
   SPLIT: ':scissors: Mál klofið',
   [CaseTransition.SUBMIT]: ':mailbox_with_mail: Sent',
+  SUBPOENA_ISSUED: ':envelope_with_arrow: Fyrirkall gefið út',
+  SUBPOENA_DELIVERED_TO_POLICE: ':oncoming_police_car: Fyrirkall sent til RLS',
   SUBPOENA_SERVICE_STATUS: ':page_with_curl: Staða fyrirkalls uppfærð',
+  VERDICT_DELIVERED_TO_POLICE: ':oncoming_police_car: Dómur sendur til RLS',
   VERDICT_SERVICE_STATUS:
     ':mailbox_with_no_mail: Birtingarstaða á dómi uppfærð',
   [AppealCaseTransition.WITHDRAW_APPEAL]:
@@ -103,7 +109,10 @@ const caseEventsToLog = [
   'REJECT',
   'SCHEDULE_ARRAIGNMENT_DATE',
   'SCHEDULE_COURT_DATE',
+  'SUBPOENA_ISSUED',
+  'SUBPOENA_DELIVERED_TO_POLICE',
   'SUBPOENA_SERVICE_STATUS',
+  'VERDICT_DELIVERED_TO_POLICE',
   'VERDICT_SERVICE_STATUS',
 ]
 
@@ -119,7 +128,6 @@ export class EventService {
   async postEvent(
     event: Event,
     theCase: Case,
-    eventOnly = false,
     info?: { [key: string]: string | boolean | Date | undefined },
   ) {
     try {
@@ -127,9 +135,7 @@ export class EventService {
         return
       }
 
-      const title = `${eventHeading[event]}${
-        eventOnly ? ' - aðgerð ekki framkvæmd' : ''
-      }`
+      const title = eventHeading[event]
       const typeText = `${capitalize(formatCaseType(theCase.type))}${
         isIndictmentCase(theCase.type)
           ? `:(${readableIndictmentSubtypes(

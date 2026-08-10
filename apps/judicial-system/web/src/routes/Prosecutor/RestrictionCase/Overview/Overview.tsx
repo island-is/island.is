@@ -15,7 +15,6 @@ import {
   PROSECUTION_RESTRICTION_CASE_CASE_FILES_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { formatDate, lowercase } from '@island.is/judicial-system/formatters'
-import { sortCaseFiles } from '@island.is/judicial-system/types'
 import {
   core,
   errors,
@@ -137,9 +136,8 @@ export const Overview = () => {
     setModal('caseSubmittedModal')
   }
 
-  const caseFiles = sortCaseFiles(
-    workingCase.caseFiles?.filter((file) => !file.category) ?? [],
-  )
+  const caseFiles =
+    workingCase.caseFiles?.filter((file) => !file.category) ?? []
 
   return (
     <PageLayout
@@ -340,26 +338,28 @@ export const Overview = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${PROSECUTION_RESTRICTION_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={workingCase.state === CaseState.NEW}
-          nextButtonText={
-            workingCase.state === CaseState.NEW ||
-            workingCase.state === CaseState.DRAFT
-              ? 'Senda kröfu á héraðsdóm'
-              : 'Endursenda kröfu á héraðsdóm'
-          }
-          nextIsLoading={
-            workingCase.state !== CaseState.RECEIVED &&
-            (isTransitioningCase || isSendingNotification)
-          }
-          onNextButtonClick={
-            workingCase.state === CaseState.RECEIVED
-              ? () => {
-                  setModal('caseResubmitModal')
-                }
-              : handleNextButtonClick
-          }
+          actions={[
+            {
+              text:
+                workingCase.state === CaseState.NEW ||
+                workingCase.state === CaseState.DRAFT
+                  ? 'Senda kröfu á héraðsdóm'
+                  : 'Endursenda kröfu á héraðsdóm',
+              icon: 'arrowForward',
+              onClick:
+                workingCase.state === CaseState.RECEIVED
+                  ? () => {
+                      setModal('caseResubmitModal')
+                    }
+                  : handleNextButtonClick,
+              disabled: workingCase.state === CaseState.NEW,
+              loading:
+                workingCase.state !== CaseState.RECEIVED &&
+                (isTransitioningCase || isSendingNotification),
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
       <AnimatePresence>

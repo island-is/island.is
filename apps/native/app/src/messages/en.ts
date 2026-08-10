@@ -291,6 +291,7 @@ export const en: TranslatedMessages = {
 
   // document communications
   'documentCommunications.caseNumber': 'Case number',
+  'documentCommunications.copyCaseNumber': 'Copy case number',
   'documentCommunications.initialReply':
     'The message has been received and a case has been created. You can continue the conversation here or via your personal email {email}.',
   'documentCommunications.cannotReply':

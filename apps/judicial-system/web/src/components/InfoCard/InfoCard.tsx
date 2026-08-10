@@ -19,12 +19,17 @@ export interface Item {
   values: string[] | ReactNode[]
 }
 
+type HeadingLevel = 'h2' | 'h3' | 'h4' | 'h5'
+
 interface Props {
   sections: Section[]
+  // Semantic heading level for string item titles. The visual size stays the
+  // same (h4) so only the level exposed to assistive technology changes.
+  titleAs?: HeadingLevel
 }
 
 const InfoCard: FC<Props> = (props) => {
-  const { sections } = props
+  const { sections, titleAs = 'h4' } = props
 
   const visibleSections = sections
     .map((section) => ({
@@ -48,7 +53,7 @@ const InfoCard: FC<Props> = (props) => {
           {section.items.map((item) => (
             <Box key={item.id}>
               {typeof item.title === 'string' ? (
-                <Text variant="h4" as="h4">
+                <Text variant="h4" as={titleAs}>
                   {item.title}
                 </Text>
               ) : (

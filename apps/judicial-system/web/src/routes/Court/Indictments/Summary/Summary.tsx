@@ -21,6 +21,7 @@ import {
 import { hasGeneratedCourtRecordPdf } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
+  AppealRulingModifiedAlert,
   ConnectedCaseFilesAccordionItem,
   DateTime,
   FormContentContainer,
@@ -116,6 +117,10 @@ const Summary: FC = () => {
       workingCase.id,
       CaseTransition.COMPLETE,
       setWorkingCase,
+      {
+        indictmentDecision: workingCase.indictmentDecision,
+        indictmentRulingDecision: workingCase.indictmentRulingDecision,
+      },
     )
 
     if (!transitionSuccess) {
@@ -225,6 +230,7 @@ const Summary: FC = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
         <div className={grid({ gap: 5, marginBottom: 10 })}>
+          <AppealRulingModifiedAlert />
           <Box component="section" className={grid({ gap: 1 })}>
             <Text variant="h2" as="h2">
               {formatMessage(core.caseNumber, {
@@ -301,10 +307,18 @@ const Summary: FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE}/${workingCase.id}`}
-          nextButtonIcon="checkmark"
-          nextButtonText={formatMessage(strings.nextButtonText)}
-          onNextButtonClick={handleNextButtonClick}
-          hideNextButton={!canUserCompleteCase}
+          actions={
+            !canUserCompleteCase
+              ? []
+              : [
+                  {
+                    text: formatMessage(strings.nextButtonText),
+                    icon: 'checkmark',
+                    onClick: handleNextButtonClick,
+                    testId: 'continueButton',
+                  },
+                ]
+          }
           infoBoxText={
             canUserCompleteCase
               ? ''

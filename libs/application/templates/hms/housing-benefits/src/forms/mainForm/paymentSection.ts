@@ -24,6 +24,7 @@ export const paymentSection = buildSection({
           id: 'payment.paymentRadio',
           title: m.draftMessages.paymentSection.paymentRadioTitle,
           titleVariant: 'h3',
+          defaultValue: 'me',
           clearOnChange: [
             'payment.landlordSelection',
             'payment.landlordBankAccount',

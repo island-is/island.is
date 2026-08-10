@@ -22,13 +22,13 @@ import {
   SendNotificationResponse,
   SignatureConfirmationResponse,
 } from '../case'
-import { CaseListEntry } from '../case-list'
 import {
   CaseTableMembershipResponse,
   CaseTableResponse,
   SearchCasesResponse,
 } from '../case-table'
 import {
+  AppealDecisionResponse,
   CourtDocumentResponse,
   CourtSessionResponse,
   CourtSessionString,
@@ -219,10 +219,6 @@ export class BackendService extends DataSource<{ req: Request }> {
     updateMessageSuspension: unknown,
   ): Promise<MessageSuspension> {
     return this.patch(`message-suspension/${category}`, updateMessageSuspension)
-  }
-
-  getCases(): Promise<CaseListEntry[]> {
-    return this.get('cases')
   }
 
   getCase(caseId: string): Promise<Case> {
@@ -756,6 +752,24 @@ export class BackendService extends DataSource<{ req: Request }> {
       `case/${caseId}/courtSession/${courtSessionId}/courtSessionString`,
       updateCourtSessionString,
     )
+  }
+
+  updateCourtSessionAppealDecision(
+    caseId: string,
+    courtSessionId: string,
+    updateAppealDecision: unknown,
+  ): Promise<AppealDecisionResponse> {
+    return this.patch(
+      `case/${caseId}/courtSession/${courtSessionId}/appealDecision`,
+      updateAppealDecision,
+    )
+  }
+
+  updateCaseAppealDecision(
+    caseId: string,
+    updateAppealDecision: unknown,
+  ): Promise<AppealDecisionResponse> {
+    return this.patch(`case/${caseId}/appealDecision`, updateAppealDecision)
   }
 
   deleteCourtSession(

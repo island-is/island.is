@@ -20,6 +20,7 @@ import {
   CaseType,
   DateType,
   DefendantEventType,
+  DefendantNotificationType,
   EventType,
   IndictmentCaseNotificationType,
   indictmentCases,
@@ -191,6 +192,18 @@ describe('CaseController - Update', () => {
       )
     })
 
+    it('should not enqueue the completed for some notification', () => {
+      expect(mockQueuedMessages).not.toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            body: {
+              type: DefendantNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
+            },
+          }),
+        ]),
+      )
+    })
+
     it('should return the updated case', () => {
       expect(then.result).toEqual(updatedCase)
     })
@@ -254,8 +267,63 @@ describe('CaseController - Update', () => {
       )
     })
 
-    it('should not queue indictment conclusion messages without ruling dates', () => {
-      expect(mockQueuedMessages).toEqual([])
+    it('should enqueue a completed for some notification per concluded defendant', () => {
+      expect(mockQueuedMessages).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            type: MessageType.DEFENDANT_NOTIFICATION,
+            caseId,
+            elementId: defendantId1,
+            body: expect.objectContaining({
+              type: DefendantNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
+            }),
+          }),
+          expect.objectContaining({
+            type: MessageType.DEFENDANT_NOTIFICATION,
+            caseId,
+            elementId: defendantId2,
+            body: expect.objectContaining({
+              type: DefendantNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
+            }),
+          }),
+        ]),
+      )
+    })
+  })
+
+  describe('indictment completed for some — last remaining defendant (indictmentDecision set to null by frontend)', () => {
+    const indictmentCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+    } as Case
+
+    const caseToUpdate = {
+      indictmentDecision: null,
+      defendantEventLogDecisions: [
+        {
+          defendantId: defendantId1,
+          rulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+        },
+      ],
+    } as unknown as UpdateCaseDto
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, user, indictmentCase, caseToUpdate)
+    })
+
+    it('should enqueue the completed for some notification even when indictmentDecision is null', () => {
+      expect(mockQueuedMessages).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            type: MessageType.DEFENDANT_NOTIFICATION,
+            caseId,
+            elementId: defendantId1,
+            body: expect.objectContaining({
+              type: DefendantNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
+            }),
+          }),
+        ]),
+      )
     })
   })
 
@@ -324,6 +392,22 @@ describe('CaseController - Update', () => {
             defendantId: defendantId1,
             indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
             rulingDate,
+          },
+        },
+        {
+          type: MessageType.DEFENDANT_NOTIFICATION,
+          caseId,
+          elementId: defendantId1,
+          body: {
+            type: DefendantNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
+          },
+        },
+        {
+          type: MessageType.DEFENDANT_NOTIFICATION,
+          caseId,
+          elementId: defendantId2,
+          body: {
+            type: DefendantNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
           },
         },
       ])
@@ -923,15 +1007,73 @@ describe('CaseController - Update', () => {
   describe('arraignment date updated', () => {
     const arraignmentDate = { date: new Date(), location: uuid() }
     const caseToUpdate = { arraignmentDate }
+    const updatedCase = {
+      ...theCase,
+      type: CaseType.CUSTODY,
+      dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, ...arraignmentDate }],
+    }
 
     beforeEach(async () => {
-      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(
+        caseId,
+        user,
+        { ...theCase, type: CaseType.CUSTODY } as Case,
+        caseToUpdate,
+      )
     })
 
     it('should update case', () => {
       expect(mockDateLogModel.create).toHaveBeenCalledWith(
         { dateType: DateType.ARRAIGNMENT_DATE, caseId, ...arraignmentDate },
         { transaction },
+      )
+    })
+
+    it('should log a court date scheduled event, which drives court date notifications', () => {
+      expect(mockEventLogService.createWithUser).toHaveBeenCalledWith(
+        EventType.COURT_DATE_SCHEDULED,
+        caseId,
+        user,
+        transaction,
+      )
+    })
+  })
+
+  describe('arraignment date unchanged', () => {
+    const arraignmentDate = { date: new Date(), location: uuid() }
+    const updatedCase = {
+      ...theCase,
+      type: CaseType.CUSTODY,
+      dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, ...arraignmentDate }],
+    }
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(
+        caseId,
+        user,
+        {
+          ...theCase,
+          type: CaseType.CUSTODY,
+          dateLogs: [
+            { dateType: DateType.ARRAIGNMENT_DATE, ...arraignmentDate },
+          ],
+        } as Case,
+        {},
+      )
+    })
+
+    it('should not log a court date scheduled event', () => {
+      expect(mockEventLogService.createWithUser).not.toHaveBeenCalledWith(
+        EventType.COURT_DATE_SCHEDULED,
+        caseId,
+        user,
+        transaction,
       )
     })
   })
@@ -1230,6 +1372,7 @@ describe('CaseController - Update', () => {
         isSentToPrisonAdmin: false,
         indictmentReviewDecision: null,
         publicProsecutorIsRegisteredInPoliceSystem: null,
+        isDrivingLicenseSuspended: null,
       }
       expect(mockDefendantService.updateDatabaseDefendant).toHaveBeenCalledWith(
         caseId,

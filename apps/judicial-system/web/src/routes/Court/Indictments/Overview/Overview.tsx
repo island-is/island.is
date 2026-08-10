@@ -1,4 +1,4 @@
-import { useCallback, useContext } from 'react'
+import { useCallback, useContext, useEffect, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -20,7 +20,9 @@ import {
   isDistrictCourtUser,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
+import { commentsInput } from '@island.is/judicial-system-web/messages/Core/commentsInput'
 import {
+  AppealRulingModifiedAlert,
   ConnectedCaseFilesAccordionItem,
   CourtCaseInfo,
   FormContentContainer,
@@ -45,6 +47,7 @@ import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayH
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
+import { useCancelCase } from '../../../Shared/CaseTable/CancelCase'
 import { strings } from './Overview.strings'
 // onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>
 
@@ -72,6 +75,14 @@ const OverviewBody = ({
         <CourtCaseInfo workingCase={workingCase} />
         <ServiceAnnouncements defendants={workingCase.defendants} />
         <div className={grid({ gap: 5, marginBottom: 10 })}>
+          {workingCase.comments && (
+            <AlertMessage
+              title={formatMessage(commentsInput.heading)}
+              message={workingCase.comments}
+              type="warning"
+            />
+          )}
+          <AppealRulingModifiedAlert />
           {workingCase.reopenReason && !isCompletedCase(workingCase.state) && (
             <AlertMessage
               title="Mál enduropnað"
@@ -170,15 +181,19 @@ const OverviewBody = ({
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={getStandardUserDashboardRoute(user)}
-          nextIsLoading={isLoadingWorkingCase}
-          onNextButtonClick={() =>
-            handleNavigationTo(
-              DISTRICT_COURT_INDICTMENT_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
-            )
-          }
-          nextButtonText={formatMessage(core.continue)}
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  DISTRICT_COURT_INDICTMENT_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
+                ),
+              loading: isLoadingWorkingCase,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </>
@@ -187,9 +202,47 @@ const OverviewBody = ({
 
 const IndictmentOverview = () => {
   const router = useRouter()
-  const { workingCase, isLoadingWorkingCase, caseNotFound } =
+  const { user } = useContext(UserContext)
+  const { workingCase, isLoadingWorkingCase, caseNotFound, isCaseUpToDate } =
     useContext(FormContext)
   const { updateDefendant } = useDefendants()
+
+  // Once the user finishes or dismisses the modal we must not re-open it for the
+  // same loaded case — workingCase.state stays WAITING_FOR_CANCELLATION until the
+  // case is re-fetched, so the effect below would otherwise fire again.
+  const dismissedRef = useRef(false)
+
+  const dismissAndGoToDashboard = () => {
+    dismissedRef.current = true
+    router.push(getStandardUserDashboardRoute(user))
+  }
+
+  const { cancelCase, CancelCaseModal } = useCancelCase(
+    dismissAndGoToDashboard,
+    dismissAndGoToDashboard,
+  )
+
+  // A different case (or a fresh load of the same one) is a new chance to act.
+  useEffect(() => {
+    dismissedRef.current = false
+  }, [workingCase.id])
+
+  // Show the cancellation modal whenever a district court user opens an
+  // indictment the prosecutor has cancelled, no matter how they got here
+  // (table, search, email, direct URL). Gate on isCaseUpToDate so we react to
+  // the freshly loaded case rather than a stale workingCase left over from a
+  // previously opened case (the FormProvider persists workingCase while the
+  // next case is still being fetched).
+  useEffect(() => {
+    if (
+      isCaseUpToDate &&
+      !dismissedRef.current &&
+      isDistrictCourtUser(user) &&
+      workingCase.state === CaseState.WAITING_FOR_CANCELLATION
+    ) {
+      cancelCase(workingCase.id)
+    }
+  }, [isCaseUpToDate, user, workingCase.state, workingCase.id, cancelCase])
 
   const defendants = workingCase.defendants
   const hasDefendants = isNonEmptyArray(defendants)
@@ -220,15 +273,18 @@ const IndictmentOverview = () => {
   )
 
   return (
-    <PageLayout
-      workingCase={workingCase}
-      isLoading={isLoadingWorkingCase}
-      notFound={caseNotFound}
-      isValid={hasDefendants}
-      onNavigationTo={handleNavigationTo}
-    >
-      <OverviewBody handleNavigationTo={handleNavigationTo} />
-    </PageLayout>
+    <>
+      <PageLayout
+        workingCase={workingCase}
+        isLoading={isLoadingWorkingCase}
+        notFound={caseNotFound}
+        isValid={hasDefendants}
+        onNavigationTo={handleNavigationTo}
+      >
+        <OverviewBody handleNavigationTo={handleNavigationTo} />
+      </PageLayout>
+      {CancelCaseModal}
+    </>
   )
 }
 

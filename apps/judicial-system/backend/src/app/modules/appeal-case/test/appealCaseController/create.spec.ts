@@ -10,7 +10,10 @@ import {
 import {
   AppealCaseNotificationType,
   AppealCaseState,
+  AppealDecisionPartyRole,
   AppealEventType,
+  AppealOrigin,
+  CaseAppealDecision,
   CaseFileCategory,
   CaseFileState,
   CaseIndictmentRulingDecision,
@@ -41,7 +44,11 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (theCase: Case, user: User) => Promise<Then>
+type GivenWhenThen = (
+  theCase: Case,
+  user: User,
+  rulingFileId?: string,
+) => Promise<Then>
 
 describe('AppealCaseController - Create', () => {
   const caseId = uuid()
@@ -100,10 +107,10 @@ describe('AppealCaseController - Create', () => {
     const mockCreate = mockAppealCaseRepositoryService.create as jest.Mock
     mockCreate.mockResolvedValue(createdAppealCase)
 
-    givenWhenThen = async (theCase, user) => {
+    givenWhenThen = async (theCase, user, rulingFileId) => {
       const then = {} as Then
 
-      const dto: CreateAppealCaseDto = {}
+      const dto: CreateAppealCaseDto = { rulingFileId }
 
       await appealCaseController
         .create(caseId, user, theCase, dto)
@@ -145,6 +152,7 @@ describe('AppealCaseController - Create', () => {
           caseId,
           appealCaseId,
           eventType: AppealEventType.APPEALED,
+          appealOrigin: AppealOrigin.OUT_OF_COURT,
           userRole: UserRole.PROSECUTOR,
           userId: prosecutor.id,
           nationalId: prosecutor.nationalId,
@@ -220,6 +228,132 @@ describe('AppealCaseController - Create', () => {
         'Only dismissed indictment cases can be appealed',
       )
       expect(mockAppealCaseRepositoryService.create).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('defence user appeals a ruling order', () => {
+    const rulingFileId = uuid()
+    const defendantId = uuid()
+
+    const caseWithDecision = (decision: CaseAppealDecision) =>
+      ({
+        id: caseId,
+        type: CaseType.INDICTMENT,
+        caseFiles: [
+          {
+            id: rulingFileId,
+            category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
+          },
+        ],
+        defendants: [
+          {
+            id: defendantId,
+            isDefenderChoiceConfirmed: true,
+            defenderNationalId: defender.nationalId,
+          },
+        ],
+        appealDecisions: [
+          {
+            rulingFileId,
+            partyRole: AppealDecisionPartyRole.DEFENDANT,
+            defendantId,
+            decision,
+          },
+        ],
+      } as unknown as Case)
+
+    describe('that the defendant accepted in court', () => {
+      let then: Then
+
+      beforeEach(async () => {
+        then = await givenWhenThen(
+          caseWithDecision(CaseAppealDecision.ACCEPT),
+          defender,
+          rulingFileId,
+        )
+      })
+
+      it('should reject the appeal and create nothing', () => {
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+        expect(mockAppealCaseRepositoryService.create).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('that the defendant took the deadline on in court (POSTPONE)', () => {
+      let then: Then
+
+      beforeEach(async () => {
+        then = await givenWhenThen(
+          caseWithDecision(CaseAppealDecision.POSTPONE),
+          defender,
+          rulingFileId,
+        )
+      })
+
+      it('should create the ruling order appeal case', () => {
+        expect(then.error).toBeUndefined()
+        expect(mockAppealCaseRepositoryService.create).toHaveBeenCalledWith(
+          caseId,
+          expect.objectContaining({
+            appealState: AppealCaseState.APPEALED,
+            rulingFileId,
+          }),
+          { transaction },
+        )
+      })
+    })
+  })
+
+  describe('defence user representing multiple defendants appeals a dismissal', () => {
+    const defendantId1 = uuid()
+    const defendantId2 = uuid()
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(
+        {
+          id: caseId,
+          type: CaseType.INDICTMENT,
+          indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+          defendants: [
+            {
+              id: defendantId1,
+              isDefenderChoiceConfirmed: true,
+              defenderNationalId: defender.nationalId,
+            },
+            {
+              id: defendantId2,
+              isDefenderChoiceConfirmed: true,
+              defenderNationalId: defender.nationalId,
+            },
+          ],
+        } as unknown as Case,
+        defender,
+        undefined,
+      )
+    })
+
+    it('records an APPEALED event for each represented defendant', () => {
+      expect(then.error).toBeUndefined()
+      expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledTimes(
+        2,
+      )
+      expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          eventType: AppealEventType.APPEALED,
+          userRole: UserRole.DEFENDER,
+          defendantId: defendantId1,
+        }),
+        { transaction },
+      )
+      expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          eventType: AppealEventType.APPEALED,
+          userRole: UserRole.DEFENDER,
+          defendantId: defendantId2,
+        }),
+        { transaction },
+      )
     })
   })
 

@@ -1,11 +1,17 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useLocale } from '@island.is/localization'
-import { Box, Pagination, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Divider,
+  Pagination,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import {
   CardLoader,
   NestedLines,
   NestedTable,
-  Table,
+  PortalTable,
   createColumnHelper,
   formatDate,
   useIsMobile,
@@ -178,7 +184,14 @@ export const SeagoingTime = () => {
     ]
 
     if (isMobile) {
-      return <NestedLines data={nestedData} />
+      return (
+        <>
+          <Box paddingTop={3} paddingBottom={2}>
+            <Divider />
+          </Box>
+          <NestedLines data={nestedData} />
+        </>
+      )
     }
     return <NestedTable data={nestedData} />
   }
@@ -234,7 +247,7 @@ export const SeagoingTime = () => {
       )}
       {!loading && !error && called && entries.length > 0 && (
         <>
-          <Table
+          <PortalTable
             columns={columns}
             data={entries}
             emptyMessage={om.sailorSeaServiceEmpty}

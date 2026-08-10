@@ -157,6 +157,7 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
             <IconButton
               icon="pencil"
               colorScheme="blue"
+              ariaLabel={`Breyta verjanda ${defendant.name}`}
               disabled={workingCase.state === CaseState.CORRECTING}
               onClick={() => setDisplayModal(true)}
             />

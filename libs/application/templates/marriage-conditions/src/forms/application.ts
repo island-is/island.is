@@ -346,6 +346,10 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                         label: m.ceremonyAtReligiousLifeViewingSociety,
                       },
                       {
+                        value: CeremonyPlaces.church,
+                        label: m.ceremonyAtNationalChurch,
+                      },
+                      {
                         value: 'none',
                         label: m.ceremonyPlaceNone,
                       },

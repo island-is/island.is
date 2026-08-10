@@ -31,6 +31,7 @@ const LegalRegistrations = () => {
       <Box marginTop={5} marginBottom={5}>
         <Tabs
           label={formatMessage(om.sailorCrewRegistrationsTabsLabel)}
+          size="xs"
           contentBackground="white"
           selected="seagoing-service"
           onlyRenderSelectedTab
