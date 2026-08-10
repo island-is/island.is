@@ -6,6 +6,7 @@ import { getServerRuntimeEnv } from './environments/runtimeEnvironment'
 bootstrap({
   name: 'skilavottord',
   appDir: 'apps/skilavottord/web',
+  turbopack: true,
   proxyConfig,
   externalEndpointDependencies: () => {
     const { graphqlEndpoint } = getServerRuntimeEnv()

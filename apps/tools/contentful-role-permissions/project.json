@@ -10,8 +10,7 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/tools/contentful-role-permissions",
-        "webpack": true
+        "outputPath": "dist/apps/tools/contentful-role-permissions"
       },
       "configurations": {
         "production": {},
@@ -24,8 +23,7 @@
       "executor": "@nx/next:server",
       "options": {
         "buildTarget": "contentful-role-permissions:build",
-        "dev": true,
-        "webpack": true
+        "dev": true
       },
       "configurations": {
         "production": {

@@ -5,6 +5,7 @@ import { getServerRuntimeEnv } from './environments/runtimeEnvironment'
 bootstrap({
   name: 'consultation-portal',
   appDir: 'apps/consultation-portal',
+  turbopack: true,
   proxyConfig,
   externalEndpointDependencies: () => {
     const { graphqlEndpoint } = getServerRuntimeEnv()

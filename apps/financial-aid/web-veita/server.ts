@@ -5,6 +5,7 @@ import { getServerRuntimeEnv } from './environments/runtimeEnvironment'
 bootstrap({
   name: 'financial-aid',
   appDir: 'apps/financial-aid/web-veita',
+  turbopack: true,
   proxyConfig,
   externalEndpointDependencies: () => {
     const { graphqlEndpoint } = getServerRuntimeEnv()
