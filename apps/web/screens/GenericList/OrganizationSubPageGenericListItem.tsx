@@ -6,7 +6,9 @@ import { useLinkResolver } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { type LayoutProps } from '@island.is/web/layouts/main'
 import { Screen, ScreenContext } from '@island.is/web/types'
+import { CustomNextError } from '@island.is/web/units/errors'
 
+import OrganizationParentSubpage from '../Organization/ParentSubpage'
 import SubPage, { type SubPageProps } from '../Organization/SubPage'
 import GenericListItemPage, {
   type GenericListItemPageProps,
@@ -85,25 +87,52 @@ const OrganizationSubPageGenericListItem: Screen<
   )
 }
 
-OrganizationSubPageGenericListItem.getProps = async (context) => {
-  const organizationPageSlug = context.query.slugs?.[0] ?? ''
-  const organizationSubpageSlug =
-    context.query.slugs?.length === 4
-      ? context.query.slugs[2]
-      : context.query.slugs?.[1] ?? ''
+// The page that the generic list is displayed on is either an organization
+// subpage or a subpage that belongs to an organization parent subpage. Subpages
+// that belong to a parent subpage can't be fetched by slug on their own, so in
+// that case the parent subpage screen needs to resolve them.
+const getParentProps = (
+  context: OrganizationSubPageGenericListItemScreenContext,
+  querySlugs: string[],
+) => {
+  const withSlugs = (slugs: string[]) => ({
+    ...context,
+    query: {
+      ...context.query,
+      slugs,
+    },
+  })
 
-  const [subPageProps, genericListItemProps] = await Promise.all([
-    SubPage.getProps({
-      ...context,
-      query: {
-        ...context.query,
-        slugs: [organizationPageSlug, organizationSubpageSlug],
-      },
-    }),
+  // /s/[organization]/[parentSubpage]/[subpage]/[item]
+  if (querySlugs.length === 4) {
+    return OrganizationParentSubpage.getProps(withSlugs(querySlugs.slice(0, 3)))
+  }
+
+  // /s/[organization]/[subpage]/[item]
+  return SubPage.getProps(withSlugs(querySlugs.slice(0, 2))).catch((error) => {
+    if (!(error instanceof CustomNextError)) {
+      throw error
+    }
+    // /s/[organization]/[parentSubpage]/[item] - a parent subpage displays the
+    // content of its first child when no subpage slug is present in the url
+    return OrganizationParentSubpage.getProps(
+      withSlugs(querySlugs.slice(0, 2)),
+    ).catch(() => {
+      throw error
+    })
+  })
+}
+
+OrganizationSubPageGenericListItem.getProps = async (context) => {
+  const querySlugs = (context.query.slugs ?? []) as string[]
+
+  const [parentProps, genericListItemProps] = await Promise.all([
+    getParentProps(context, querySlugs),
     GenericListItemPage.getProps(context),
   ])
+
   return {
-    parentProps: subPageProps,
+    parentProps,
     genericListItemProps,
   } as OrganizationSubPageGenericListItemProps
 }
