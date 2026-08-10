@@ -195,3 +195,19 @@ export enum HealthConversationRecipientBlockedReasonEnum {
 registerEnumType(HealthConversationRecipientBlockedReasonEnum, {
   name: 'HealthDirectorateHealthConversationRecipientBlockedReason',
 })
+
+export enum CertificateTypeEnum {
+  work = 'work',
+  school = 'school',
+}
+registerEnumType(CertificateTypeEnum, {
+  name: 'HealthDirectorateCertificateType',
+})
+
+export enum PaymentStatusEnum {
+  pending = 'pending',
+  succeeded = 'succeeded',
+}
+registerEnumType(PaymentStatusEnum, {
+  name: 'HealthDirectoratePaymentStatus',
+})

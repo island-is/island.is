@@ -1,7 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common'
 
 import { Auth, withAuthContext } from '@island.is/auth-nest-tools'
-import { data, dataOr404Null } from '@island.is/clients/middlewares'
+import {
+  FetchError,
+  data,
+  dataOr404Null,
+  handle404,
+} from '@island.is/clients/middlewares'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
@@ -17,6 +22,11 @@ import {
   donationExceptionControllerGetOrgansV1,
   meAppointmentControllerGetPatientAppointmentsV1,
   meAppointmentControllerGetPatientAppointmentByIdV1,
+  meCertificateControllerCreateCertificateRequestV1,
+  meCertificateControllerCreatePaymentIntentV1,
+  meCertificateControllerGetCertificatePdfV1,
+  meCertificateControllerGetCertificateV1,
+  mePaymentControllerGetByIdV1,
   meConversationControllerArchiveConversationV1,
   meConversationControllerCreateConversationV1,
   meConversationControllerGetConversationByIdV1,
@@ -50,13 +60,18 @@ import {
   questionnaireControllerSubmitQuestionnaireV1,
 } from './gen/fetch'
 
+import { CreateCertificateRequestBody } from './dtos/createCertificateRequestBody.dto'
 import {
   AppointmentBaseDto,
   AppointmentDetailDto,
+  CertificateDto,
+  CertificateRequestDto,
   ConsentCountryDto,
   ConversationBaseDto,
   ConversationDetailDto,
   ConversationStatusFilter,
+  CreateCertificatePaymentIntentDto,
+  CreateCertificateRequestDto,
   CreateConversationRequestDto,
   CreateEuPatientConsentDto,
   CreateOrUpdatePrescriptionCommissionDto,
@@ -64,6 +79,8 @@ import {
   EuPatientConsentResponseDto,
   Locale,
   MessagingRecipientDto,
+  PaymentDto,
+  PaymentIntentDto,
   PrescriptionCommissionDto,
   QuestionnaireBaseDto,
   QuestionnaireDetailDto,
@@ -74,6 +91,10 @@ import {
   SubmitQuestionnaireResponseDto,
   UserVisibleAppointmentStatuses,
 } from './gen/fetch/types.gen'
+
+export type CertificatePdfResult =
+  | { paymentRequired: false; data: ArrayBuffer; contentType: string }
+  | { paymentRequired: true; resourceType: string; resourceId: string }
 
 @Injectable()
 export class HealthDirectorateHealthService {
@@ -704,5 +725,126 @@ export class HealthDirectorateHealthService {
     )
 
     return recipients ?? null
+  }
+
+  /* Certificates */
+
+  public async createCertificateRequest(
+    auth: Auth,
+    input: CreateCertificateRequestBody,
+  ): Promise<CertificateRequestDto | null> {
+    /* 
+       The generated type has startDate/endDate as Date because this
+       client's openapi-ts config sets `dates: true` for every date field,
+       but the wire format for this endpoint is a date-only string (see
+       CreateCertificateRequestBody) — cast only those two fields, the rest
+       already match the generated type.
+    */
+
+    const body: CreateCertificateRequestDto = {
+      ...input,
+      startDate: input.startDate as unknown as Date,
+      endDate: input.endDate as unknown as Date,
+    }
+
+    const request = await withAuthContext(auth, () =>
+      data(
+        meCertificateControllerCreateCertificateRequestV1({
+          body,
+        }),
+      ),
+    )
+
+    return request ?? null
+  }
+
+  public async getCertificate(
+    auth: Auth,
+    id: string,
+  ): Promise<CertificateDto | null> {
+    const certificate = await withAuthContext(auth, () =>
+      dataOr404Null(
+        meCertificateControllerGetCertificateV1({
+          path: { id },
+        }),
+      ),
+    )
+
+    return certificate ?? null
+  }
+
+  public async createCertificatePaymentIntent(
+    auth: Auth,
+    id: string,
+    input: CreateCertificatePaymentIntentDto,
+  ): Promise<PaymentIntentDto | null> {
+    const intent = await withAuthContext(auth, () =>
+      data(
+        meCertificateControllerCreatePaymentIntentV1({
+          path: { id },
+          body: input,
+        }),
+      ),
+    )
+
+    return intent ?? null
+  }
+
+  public async getCertificatePdf(
+    auth: Auth,
+    id: string,
+  ): Promise<CertificatePdfResult | null> {
+    try {
+      const result = await withAuthContext(auth, () =>
+        meCertificateControllerGetCertificatePdfV1({
+          path: { id },
+          parseAs: 'arrayBuffer',
+        }),
+      )
+      if (!result.data) return null
+      return {
+        paymentRequired: false,
+        data: result.data as ArrayBuffer,
+        contentType:
+          result.response.headers.get('content-type') ?? 'application/pdf',
+      }
+    } catch (error) {
+      /*
+        The api spec only documents the 402 payment-required body in
+        free-text description, not a typed responses.402 schema, so the
+        shape has to be checked at runtime. Note: `error.body` is only
+        populated because health.module.ts sets `logErrorResponseBody:
+        true` on the enhanced fetch.
+      */
+      if (error instanceof FetchError && error.status === 402) {
+        const body = error.body as
+          | Partial<{ resourceType: string; resourceId: string }>
+          | undefined
+        if (
+          typeof body?.resourceType === 'string' &&
+          typeof body?.resourceId === 'string'
+        ) {
+          return {
+            paymentRequired: true,
+            resourceType: body.resourceType,
+            resourceId: body.resourceId,
+          }
+        }
+        throw error
+      }
+      return handle404(error)
+    }
+  }
+
+  public async getPayment(auth: Auth, id: string): Promise<PaymentDto | null> {
+    const payment = await withAuthContext(auth, () =>
+      dataOr404Null(
+        mePaymentControllerGetByIdV1({
+          path: { id },
+        }),
+      ),
+    )
+
+    return payment ?? null
   }
 }
