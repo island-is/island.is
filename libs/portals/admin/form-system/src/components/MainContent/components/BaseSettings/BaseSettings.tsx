@@ -8,6 +8,7 @@ import {
   Input,
   GridRow as Row,
   Stack,
+  Text,
 } from '@island.is/island-ui/core'
 import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -26,6 +27,7 @@ export const BaseSettings = () => {
   const { form, isReadOnly } = control
   const { formatMessage } = useIntl()
   const [errorMsg, setErrorMsg] = useState('')
+  const tomorrowDate = new Date(new Date().setDate(new Date().getDate() + 1))
 
   return (
     <Stack space={2}>
@@ -212,11 +214,23 @@ export const BaseSettings = () => {
       <Box marginTop={5} />
       <Row>
         <Column span="5/10">
+          <Text variant="small" color="dark400" marginBottom={1}>
+            Veldu dagsetningu þegar loka á aðgengi að forminu. Lokað verður
+            fyrir aðgengi að forminu á miðnætti þegar valinn dagur rennur upp.
+          </Text>
           <DatePicker
             label={formatMessage(m.deadline)}
             placeholderText={formatMessage(m.chooseDate)}
             backgroundColor="blue"
             disabled={isReadOnly}
+            isClearable={true}
+            handleClear={() => {
+              controlDispatch({
+                type: 'CHANGE_INVALIDATION_DATE',
+                payload: { value: new Date('2100-12-31') },
+              })
+            }}
+            minDate={tomorrowDate}
             selected={
               form.invalidationDate ? new Date(form.invalidationDate) : null
             }
