@@ -1,4 +1,7 @@
-import { bootstrap } from '@island.is/infra-next-server'
+import {
+  bootstrap,
+  buildContentSecurityPolicy,
+} from '@island.is/infra-next-server'
 import proxyConfig from './proxy.config'
 import { getServerRuntimeEnv } from './environments/runtimeEnvironment'
 
@@ -7,6 +10,7 @@ bootstrap({
   appDir: 'apps/consultation-portal',
   turbopack: true,
   proxyConfig,
+  csp: buildContentSecurityPolicy,
   externalEndpointDependencies: () => {
     const { graphqlEndpoint } = getServerRuntimeEnv()
     return [graphqlEndpoint]

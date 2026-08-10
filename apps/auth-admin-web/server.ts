@@ -1,4 +1,7 @@
-import { bootstrap } from '@island.is/infra-next-server'
+import {
+  bootstrap,
+  buildContentSecurityPolicy,
+} from '@island.is/infra-next-server'
 import proxyConfig from './proxy.config.json'
 
 bootstrap({
@@ -6,6 +9,7 @@ bootstrap({
   appDir: 'apps/auth-admin-web',
   turbopack: true,
   proxyConfig,
+  csp: buildContentSecurityPolicy,
   externalEndpointDependencies: process.env.BASE_URL
     ? [process.env.BASE_URL]
     : [],
