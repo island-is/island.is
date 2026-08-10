@@ -43,6 +43,12 @@ export const GET_VMST_APPLICATIONS_OVERVIEW_QUERY = gql`
   }
 `
 
+export const GET_HEALTH_PREGNANCY_QUERY = gql`
+  query GetHealthPregnancyDynamic {
+    healthDirectorateHasActivePregnancy
+  }
+`
+
 export const GET_NAMESPACE_QUERY = gql`
   query GetNamespace($input: GetNamespaceInput!) {
     getNamespace(input: $input) {
@@ -72,6 +78,16 @@ export const useDynamicRoutes = () => {
     GET_VMST_APPLICATIONS_OVERVIEW_QUERY,
     {
       skip: !vmstEnabled,
+    },
+  )
+
+  const { value: pregnancyEnabled, loading: pregnancyFlagLoading } =
+    useFeatureFlag(Features.isServicePortalHealthPregnancyPageEnabled, false)
+
+  const { data: pregnancyData, loading: pregnancyLoading } = useQuery<Query>(
+    GET_HEALTH_PREGNANCY_QUERY,
+    {
+      skip: !pregnancyEnabled,
     },
   )
 
@@ -118,14 +134,29 @@ export const useDynamicRoutes = () => {
       dynamicPathArray.push(DynamicPaths.SocialBenefitsUnemploymentMyData)
     }
 
+    /**
+     * portals-my-pages/health
+     * Show the pregnancy nav section only if the patient has an active pregnancy.
+     */
+    if (pregnancyData?.healthDirectorateHasActivePregnancy) {
+      dynamicPathArray.push(DynamicPaths.HealthPregnancy)
+      dynamicPathArray.push(DynamicPaths.HealthPregnancyOverview)
+    }
+
     // Combine routes, no duplicates.
     setActiveDynamicRoutes(uniq([...activeDynamicRoutes, ...dynamicPathArray]))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, licenseBook, vmstOverview])
+  }, [data, licenseBook, vmstOverview, pregnancyData])
 
   return {
     activeDynamicRoutes,
-    loading: loading || licenseBookLoading || vmstFlagLoading || vmstLoading,
+    loading:
+      loading ||
+      licenseBookLoading ||
+      vmstFlagLoading ||
+      vmstLoading ||
+      pregnancyFlagLoading ||
+      pregnancyLoading,
   }
 }
 

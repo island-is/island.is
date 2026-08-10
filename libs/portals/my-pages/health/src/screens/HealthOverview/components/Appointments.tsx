@@ -8,6 +8,7 @@ import {
   LinkButton,
 } from '@island.is/portals/my-pages/core'
 import React from 'react'
+import { MessageDescriptor } from 'react-intl'
 import { useWindowSize } from 'react-use'
 import { messages } from '../../..'
 import { HealthPaths } from '../../../lib/paths'
@@ -19,9 +20,14 @@ import { HealthDirectorateAppointments } from '@island.is/api/schema'
 interface Props {
   data?: DataState<HealthDirectorateAppointments>
   showLinkButton?: boolean
+  title?: MessageDescriptor
 }
 
-const Appointments: React.FC<Props> = ({ data, showLinkButton }) => {
+const Appointments: React.FC<Props> = ({
+  data,
+  showLinkButton,
+  title = messages.myAppointments,
+}) => {
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
   const isDesktop = width >= theme.breakpoints.lg
@@ -80,7 +86,7 @@ const Appointments: React.FC<Props> = ({ data, showLinkButton }) => {
         >
           <Box>
             <Text variant="eyebrow" color="foregroundBrandSecondary">
-              {formatMessage(messages.myAppointments)}
+              {formatMessage(title)}
             </Text>
           </Box>
           {showLinkButton && (
