@@ -236,6 +236,16 @@ export const BaseSettings = () => {
           <Checkbox
             label="Loka fyrir aðgengi að umsóknarforminu"
             disabled={isReadOnly}
+            checked={form.isInaccessible ?? false}
+            onChange={(e) => {
+              controlDispatch({
+                type: 'CHANGE_IS_INACCESSIBLE',
+                payload: {
+                  value: e.target.checked,
+                  update: formUpdate,
+                },
+              })
+            }}
           />
         </Column>
       </Row>
