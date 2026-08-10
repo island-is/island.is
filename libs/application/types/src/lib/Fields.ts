@@ -904,6 +904,7 @@ export type AccordionItem = {
   itemTitle: FormText
   itemContent?: FormText
   children?: Field[]
+  startExpanded?: boolean
 }
 export interface AccordionField extends BaseField {
   readonly type: FieldTypes.ACCORDION
@@ -912,6 +913,7 @@ export interface AccordionField extends BaseField {
     | Array<AccordionItem>
     | ((application: Application) => Array<AccordionItem>)
   titleVariant?: TitleVariants
+  singleExpand?: boolean
 }
 export interface BankAccountField extends InputField {
   readonly type: FieldTypes.BANK_ACCOUNT

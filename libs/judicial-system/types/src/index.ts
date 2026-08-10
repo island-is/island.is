@@ -64,6 +64,8 @@ export {
   defendantEventTypes,
   AppealEventType,
   appealEventTypes,
+  AppealOrigin,
+  appealOrigins,
 } from './lib/eventLog'
 
 export {

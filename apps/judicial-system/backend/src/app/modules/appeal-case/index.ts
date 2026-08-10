@@ -5,6 +5,8 @@ export {
   appellantRepresentativeNationalIds,
   buildInCourtAppealedEvent,
   findAppealCaseOfCaseFile,
+  hasOutOfCourtAppeal,
   InCourtAppellant,
   inCourtAppellantsFromDecisions,
+  isOutOfCourtAppealEvent,
 } from './appealCase.helpers'
