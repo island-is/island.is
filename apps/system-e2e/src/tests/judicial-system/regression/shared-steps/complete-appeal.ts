@@ -5,14 +5,21 @@ import { randomAppealCaseNumber, uploadDocument } from '../../utils/helpers'
 export const coaJudgesCompleteAppealCaseTest = async (
   page: Page,
   caseId: string,
+  appealCaseId?: string,
 ) => {
+  const appealCaseQuery = appealCaseId
+    ? `?appealCaseId=${appealCaseId}`
+    : ''
+
   await Promise.all([
-    page.goto(`/landsrettur/yfirlit/${caseId}`),
+    page.goto(`/landsrettur/yfirlit/${caseId}${appealCaseQuery}`),
     verifyRequestCompletion(page, '/api/graphql', 'Case'),
   ])
 
   // Overview
-  await expect(page).toHaveURL(`/landsrettur/yfirlit/${caseId}`)
+  await expect(page).toHaveURL(
+    new RegExp(`/landsrettur/yfirlit/${caseId}(\\?.*)?$`),
+  )
   await Promise.all([
     page.getByTestId('continueButton').click(),
     verifyRequestCompletion(page, '/api/graphql', 'Case'),
