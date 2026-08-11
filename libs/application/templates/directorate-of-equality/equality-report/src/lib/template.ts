@@ -16,16 +16,15 @@ import {
   DoeCompanyApi,
   EqualityReportTemplateDocxApi,
   EqualityReportTemplateHtmlApi,
-  GetReportCommentsApi,
   PreviousEqualityReportContentApi,
   SubmitEqualityReportApi,
-  SubmitReportCommentApi,
 } from '../dataProviders'
 import { Events, Roles, States } from '../utils/constants'
 import { mapUserToRole } from '../utils/mapUserToRole'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
 import {
+  coreHistoryMessages,
   coreMessages,
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
@@ -120,7 +119,7 @@ const template: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.SUBMIT,
-                logMessage: messages.inReview.sentHistoryLog,
+                logMessage: coreHistoryMessages.applicationSent,
               },
             ],
           },
@@ -128,11 +127,6 @@ const template: ApplicationTemplate<
           // the transition instead of silently landing the applicant on a
           // fake "in review" screen with a stale backend record.
           onExit: SubmitEqualityReportApi,
-          // onEntry so the comment thread's non-empty check has fresh
-          // externalData on first render — role.api alone never auto-fetches
-          // outside PREREQUISITES, it only permits the on-demand call
-          // CommentThread makes from within the mounted field.
-          onEntry: GetReportCommentsApi,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -153,7 +147,6 @@ const template: ApplicationTemplate<
                 EqualityReportTemplateHtmlApi,
                 EqualityReportTemplateDocxApi,
                 PreviousEqualityReportContentApi,
-                GetReportCommentsApi,
               ],
               delete: true,
             },
@@ -182,15 +175,15 @@ const template: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: messages.inReview.approvedHistoryLog,
+                logMessage: coreHistoryMessages.applicationApproved,
               },
               {
                 onEvent: DefaultEvents.REJECT,
-                logMessage: messages.inReview.rejectedHistoryLog,
+                logMessage: coreHistoryMessages.applicationRejected,
               },
               {
                 onEvent: DefaultEvents.EDIT,
-                logMessage: messages.inReview.editHistoryLog,
+                logMessage: 'Application sent back to draft for editing',
               },
             ],
           },
@@ -202,8 +195,6 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.inReviewForm),
                 ),
               read: 'all',
-              write: { answers: ['comment'] },
-              api: [GetReportCommentsApi, SubmitReportCommentApi],
               delete: true,
             },
           ],
@@ -232,9 +223,6 @@ const template: ApplicationTemplate<
               variant: 'mint',
             },
           },
-          // So the comment thread's non-empty check has fresh externalData —
-          // see the identical comment on States.DRAFT.
-          onEntry: GetReportCommentsApi,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -243,7 +231,6 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.approvedForm),
                 ),
               read: 'all',
-              api: [GetReportCommentsApi],
               delete: true,
             },
           ],
@@ -261,9 +248,6 @@ const template: ApplicationTemplate<
               variant: 'red',
             },
           },
-          // So the comment thread's non-empty check has fresh externalData —
-          // see the identical comment on States.DRAFT.
-          onEntry: GetReportCommentsApi,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -272,7 +256,6 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.deniedForm),
                 ),
               read: 'all',
-              api: [GetReportCommentsApi],
               delete: true,
             },
           ],

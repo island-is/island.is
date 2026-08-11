@@ -1,4 +1,3 @@
-export { CommentThread } from './CommentThread'
 export { CriteriaEditor } from './CriteriaEditor'
 export { EmployeeClassificationEditor } from './EmployeeClassificationEditor'
 export { EmployeesEditor } from './EmployeesEditor'

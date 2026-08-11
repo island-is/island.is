@@ -5,7 +5,6 @@ import { aboutTheCompanySection } from './aboutTheCompanySection'
 import { reportSection } from './reportSection'
 import { salaryAnalysisSection } from './salaryAnalysisSection'
 import { overviewSection } from './overviewSection'
-import { buildCommentThreadSection } from '../commentThreadSection'
 
 export const MainForm = buildForm({
   id: 'MainForm',
@@ -18,6 +17,5 @@ export const MainForm = buildForm({
     reportSection,
     salaryAnalysisSection,
     overviewSection,
-    buildCommentThreadSection(),
   ],
 })
