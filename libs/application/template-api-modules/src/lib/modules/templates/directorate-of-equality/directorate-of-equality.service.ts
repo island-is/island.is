@@ -579,6 +579,14 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
             postcode: answers.generalInformation?.postalCode ?? '',
             isatCategory: answers.generalInformation?.isatClassification ?? '',
           },
+          averageEmployeeFemaleCount: toNumberOrZero(
+            answers.employeeCount?.women,
+          ),
+          averageEmployeeMaleCount: toNumberOrZero(answers.employeeCount?.men),
+          averageEmployeeNeutralCount: toNumberOrZero(
+            answers.employeeCount?.nonBinary,
+          ),
+
           subsidiaries:
             answers.subsidiaries?.includesSubsidiaries === 'yes'
               ? subsidiaryList.map((s) => ({
@@ -605,4 +613,13 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
       )
     }
   }
+}
+
+const toNumberOrZero = (number: string | undefined) => {
+  if (!number) {
+    return 0
+  }
+
+  const parsed = Number(number)
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0
 }
