@@ -124,8 +124,6 @@ const caseEncryptionProperties: (keyof Case)[] = [
   'ruling',
   'conclusion',
   'endOfSessionBookings',
-  'accusedAppealAnnouncement',
-  'prosecutorAppealAnnouncement',
   'caseModifiedExplanation',
   'caseResentExplanation',
   'crimeScenes',
