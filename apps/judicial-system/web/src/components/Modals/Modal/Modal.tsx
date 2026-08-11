@@ -185,8 +185,10 @@ export const Modal: FC<PropsWithChildren<ModalProps>> = ({
               {buttons?.map((button, index) => {
                 const isLastButton = index === lastButtonIndex
                 const defaultTestId =
-                  isLastButton &&
-                  !(buttons.length === 1 && button.variant === 'ghost')
+                  buttons.length > 2
+                    ? `modalButton-${index}`
+                    : isLastButton &&
+                      !(buttons.length === 1 && button.variant === 'ghost')
                     ? 'modalPrimaryButton'
                     : 'modalSecondaryButton'
 

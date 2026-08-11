@@ -83,4 +83,21 @@ describe('Modal', () => {
     expect(onSecondary).toHaveBeenCalledTimes(1)
     expect(onPrimary).toHaveBeenCalledTimes(1)
   })
+
+  it('generates unique default test ids for three or more buttons', async () => {
+    render(
+      <Modal
+        title="Titill"
+        buttons={[
+          { text: 'A', onClick: jest.fn(), variant: 'ghost' },
+          { text: 'B', onClick: jest.fn(), variant: 'ghost' },
+          { text: 'C', onClick: jest.fn() },
+        ]}
+      />,
+    )
+
+    expect(await screen.findByTestId('modalButton-0')).toHaveTextContent('A')
+    expect(await screen.findByTestId('modalButton-1')).toHaveTextContent('B')
+    expect(await screen.findByTestId('modalButton-2')).toHaveTextContent('C')
+  })
 })
