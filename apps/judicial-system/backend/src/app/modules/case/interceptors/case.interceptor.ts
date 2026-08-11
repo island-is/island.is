@@ -910,7 +910,7 @@ const transformCase = (
     eventLogs: undefined,
     // Prison system users should not see rulingModifiedHistory for request cases
     rulingModifiedHistory:
-      isRequestCase(theCase.type) && isLimitedAccess
+      isRequestCase(theCase.type) && isPrisonSystemUser(user)
         ? undefined
         : theCase.rulingModifiedHistory,
     // Nor why a request was resent, until the request itself is shared with them
