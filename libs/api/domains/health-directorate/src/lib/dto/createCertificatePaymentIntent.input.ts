@@ -1,5 +1,5 @@
 import { Field, ID, InputType } from '@nestjs/graphql'
-import { IsNotEmpty, IsString } from 'class-validator'
+import { IsNotEmpty, IsString, IsUrl } from 'class-validator'
 
 @InputType('HealthDirectorateCreateCertificatePaymentIntentInput')
 export class CreateCertificatePaymentIntentInput {
@@ -13,7 +13,14 @@ export class CreateCertificatePaymentIntentInput {
   @Field({
     description: 'Where to redirect the user after a successful charge.',
   })
-  @IsString()
+  @IsUrl(
+    {
+      protocols: ['https'],
+      require_protocol: true,
+      require_tld: false,
+    },
+    { message: 'returnUrl must be a valid https URL including protocol' },
+  )
   @IsNotEmpty()
   returnUrl!: string
 }

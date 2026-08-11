@@ -19,7 +19,6 @@ import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import { Inject, Injectable } from '@nestjs/common'
-import format from 'date-fns/format'
 import sortBy from 'lodash/sortBy'
 import { PATIENT_PERMIT_CODE } from './constants'
 import {
@@ -926,8 +925,8 @@ export class HealthDirectorateService {
       groupId: input.groupId,
       certificateType: toCertificateTypeCode(input.certificateType),
       recipientName: input.recipientName,
-      startDate: format(input.startDate, 'yyyy-MM-dd'),
-      endDate: format(input.endDate, 'yyyy-MM-dd'),
+      startDate: input.startDate,
+      endDate: input.endDate,
       note: input.note,
     }
 

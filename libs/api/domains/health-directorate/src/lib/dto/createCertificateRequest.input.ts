@@ -1,11 +1,12 @@
-import { Field, GraphQLISODateTime, InputType, Int } from '@nestjs/graphql'
+import { Field, InputType, Int } from '@nestjs/graphql'
 import {
-  IsDate,
+  IsDateString,
   IsEnum,
   IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
+  Matches,
 } from 'class-validator'
 import { CertificateTypeEnum } from '../models/enums'
 
@@ -37,13 +38,25 @@ export class CreateCertificateRequestInput {
   @IsNotEmpty()
   recipientName!: string
 
-  @Field(() => GraphQLISODateTime)
-  @IsDate()
-  startDate!: Date
+  @Field({
+    description:
+      'Date-only string (YYYY-MM-DD). A calendar date, not a timestamp — sending a datetime could shift the date across timezones.',
+  })
+  @Matches(/^\d{4}-\d{2}-\d{2}$/, {
+    message: 'startDate must be a date-only string in YYYY-MM-DD format',
+  })
+  @IsDateString()
+  startDate!: string
 
-  @Field(() => GraphQLISODateTime)
-  @IsDate()
-  endDate!: Date
+  @Field({
+    description:
+      'Date-only string (YYYY-MM-DD). Must be on or after startDate.',
+  })
+  @Matches(/^\d{4}-\d{2}-\d{2}$/, {
+    message: 'endDate must be a date-only string in YYYY-MM-DD format',
+  })
+  @IsDateString()
+  endDate!: string
 
   @Field({ nullable: true })
   @IsOptional()

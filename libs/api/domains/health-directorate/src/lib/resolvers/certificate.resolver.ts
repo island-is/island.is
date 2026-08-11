@@ -80,7 +80,7 @@ export class CertificateResolver {
     name: 'healthDirectoratePayment',
     nullable: true,
     description:
-      'FE polls this after browser-return from the payment page until status becomes SUCCEEDED.',
+      'FE polls this after browser-return from the payment page until status becomes succeeded.',
   })
   @Audit()
   @Scopes(ApiScope.health)
