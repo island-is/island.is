@@ -24,6 +24,10 @@ export const messages = {
       id: 'doe.er.application:errors.duplicateSubsidiary',
       defaultMessage: 'Þetta dótturfélag er þegar á listanum',
     },
+    editorMinLength: {
+      id: 'doe.er.application:errors.editorMinLength',
+      defaultMessage: 'Texti verður að vera að minnsta kosti 200 stafir',
+    },
     invalidCompanyNationalId: {
       id: 'doe.er.application:errors.invalidCompanyNationalId',
       defaultMessage: 'Kennitala er ekki gild kennitala fyrirtækis',
@@ -83,7 +87,7 @@ export const messages = {
     },
   }),
 
-  //
+  // Forsendur
   prerequisites: {
     errors: defineMessages({
       approveExternalData: {
@@ -154,17 +158,6 @@ export const messages = {
           'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina.',
       },
     }),
-    personalData: defineMessages({
-      title: {
-        id: 'doe.er.application:prerequisites.personalData.title',
-        defaultMessage: 'Meðferð persónuupplýsinga',
-      },
-      intro: {
-        id: 'doe.er.application:prerequisites.personalData.intro',
-        defaultMessage:
-          'Vefsvæðið er öruggt og vinnur aðeins með auðkenni starfsmanna en ekki persónugreinanlegar upplýsingar, svo sem nöfn eða kennitölur. Skipulag vinnunnar skiptir því miklu máli og nauðsynlegt er að halda vel utan um öll gögn sem henni tengjast, auðkenni starfsmanna o.s.frv.. Ef það kemur til dæmis í ljós að þú þurfir að leiðrétta laun starfsmanns með auðkennið 10, þá viltu vita á auðveldan hátt hvaða starfsmann um ræðir.',
-      },
-    }),
   },
 
   // Upplýsingar um fyrirtækið
@@ -186,8 +179,7 @@ export const messages = {
       },
       intro: {
         id: 'doe.er.application:aboutTheCompany.generalInformation.intro',
-        defaultMessage:
-          'Eftirfarandi upplýsingar eru sóttar sjálfkrafa frá fyrirtækjaskrá Skattsins og úr kerfum Jafnréttisstofu. Ef upplýsingar um fjölda starfsmanna vantar, verður fjöldi útreiknaður útfrá skilum á þessari áætlun.',
+        defaultMessage: lorem,
       },
       companyName: {
         id: 'doe.er.application:aboutTheCompany.generalInformation.companyName',
@@ -229,8 +221,7 @@ export const messages = {
       },
       intro: {
         id: 'doe.er.application:aboutTheCompany.chiefExecutive.intro',
-        defaultMessage:
-          'Óskað er sérstaklega eftir upplýsingum um kyn æðsta stjórnanda til að fylgjast með kynjaskiptingu í æðstu stjórnendastöðum á vinnumarkaði. Þá er hægt að greina þróun yfir tíma, bera saman atvinnugreinar og meta hvort markmið jafnréttislaga um að jafna stöðu kynjanna séu að nást.',
+        defaultMessage: lorem,
       },
       name: {
         id: 'doe.er.application:aboutTheCompany.chiefExecutive.name',
@@ -248,14 +239,6 @@ export const messages = {
         id: 'doe.er.application:aboutTheCompany.chiefExecutive.emailPlaceholder',
         defaultMessage: 'Netfang æðsta stjórnanda',
       },
-      jobTitle: {
-        id: 'doe.er.application:aboutTheCompany.chiefExecutive.jobTitle',
-        defaultMessage: 'Starfstitill',
-      },
-      jobTitlePlaceholder: {
-        id: 'doe.er.application:aboutTheCompany.chiefExecutive.jobTitlePlaceholder',
-        defaultMessage: 'Starfstitill æðsta stjórnanda',
-      },
       gender: {
         id: 'doe.er.application:aboutTheCompany.chiefExecutive.gender',
         defaultMessage: 'Kyn',
@@ -270,7 +253,15 @@ export const messages = {
       },
       genderNonBinary: {
         id: 'doe.er.application:aboutTheCompany.chiefExecutive.genderNonBinary',
-        defaultMessage: 'Hlutlæg skráning kyns í þjóðskrá',
+        defaultMessage: 'Kynsegin',
+      },
+      jobTitle: {
+        id: 'doe.er.application:aboutTheCompany.chiefExecutive.jobTitle',
+        defaultMessage: 'Starfsheiti',
+      },
+      jobTitlePlaceholder: {
+        id: 'doe.er.application:aboutTheCompany.chiefExecutive.jobTitlePlaceholder',
+        defaultMessage: 'Starfsheiti æðsta stjórnanda',
       },
     }),
     contactPerson: defineMessages({
@@ -284,8 +275,7 @@ export const messages = {
       },
       intro: {
         id: 'doe.er.application:aboutTheCompany.contactPerson.intro',
-        defaultMessage:
-          'Tengiliður er sá aðili sem ber ábyrgð á skýrslugjöfinni auk stjórnanda. Við höfum samskipti við tengiliðinn svo mikilvægt er að hann sé með á nótunum.',
+        defaultMessage: lorem,
       },
       contactInfoTitle: {
         id: 'doe.er.application:aboutTheCompany.contactPerson.contactInfoTitle',
@@ -319,16 +309,15 @@ export const messages = {
     employeeCount: defineMessages({
       sectionTitle: {
         id: 'doe.er.application:aboutTheCompany.employeeCount.sectionTitle',
-        defaultMessage: 'Fjöldi starfsmanna',
+        defaultMessage: 'Meðalfjöldi starfsmanna',
       },
       title: {
         id: 'doe.er.application:aboutTheCompany.employeeCount.title',
-        defaultMessage: 'Fjöldi starfsmanna',
+        defaultMessage: 'Meðalfjöldi starfsmanna',
       },
       intro: {
         id: 'doe.er.application:aboutTheCompany.employeeCount.intro',
-        defaultMessage:
-          'Forskráðar upplýsingar um starfsmannafjölda koma frá Skattinum í janúar ár hvert. Hér að neðan er hins vegar beðið um upplýsingar um þann núverandi fjölda starfsmanna.',
+        defaultMessage: lorem,
       },
       women: {
         id: 'doe.er.application:aboutTheCompany.employeeCount.women',
@@ -340,7 +329,7 @@ export const messages = {
       },
       nonBinary: {
         id: 'doe.er.application:aboutTheCompany.employeeCount.nonBinary',
-        defaultMessage: 'Hlutlæg skráning kyns í þjóðskrá',
+        defaultMessage: 'Kynsegin',
       },
     }),
     subsidiaries: defineMessages({
@@ -354,8 +343,7 @@ export const messages = {
       },
       intro: {
         id: 'doe.er.application:aboutTheCompany.subsidiaries.intro',
-        defaultMessage:
-          'Hægt er að skila inn einni áætlun fyrir móður- og dótturfyrirtæki.',
+        defaultMessage: lorem,
       },
       includesSubsidiariesTitle: {
         id: 'doe.er.application:aboutTheCompany.subsidiaries.includesSubsidiariesTitle',
@@ -496,6 +484,18 @@ export const messages = {
         id: 'doe.er.application:equalityReport.previousEqualityPlan.copied',
         defaultMessage: 'Afritað!',
       },
+      alertTitle: {
+        id: 'doe.er.application:equalityReport.previousEqualityPlan.alertTitle',
+        defaultMessage: 'Gild jafnréttisáætlun',
+      },
+      approvedAt: {
+        id: 'doe.er.application:equalityReport.previousEqualityPlan.approvedAt',
+        defaultMessage: 'Samþykkt',
+      },
+      validUntil: {
+        id: 'doe.er.application:equalityReport.previousEqualityPlan.validUntil',
+        defaultMessage: 'Gildir til',
+      },
     }),
     goalsAndActions: defineMessages({
       sectionTitle: {
@@ -565,7 +565,7 @@ export const messages = {
     },
     nonBinary: {
       id: 'doe.er.application:overview.nonBinary',
-      defaultMessage: 'Hlutlægt kyn',
+      defaultMessage: 'Kynsegin',
     },
     hasSubsidiaries: {
       id: 'doe.er.application:overview.hasSubsidiaries',
