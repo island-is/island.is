@@ -58,16 +58,10 @@ export const getApplicationExternalData = (
   const genders =
     getValueViaPath<DropDownDto[]>(externalData, 'genders.data') ?? []
 
-  const childInPrimarySchoolAge =
-    getValueViaPath<boolean>(
-      externalData,
-      'childInformation.data.childInPrimarySchoolAge',
-    ) ?? false
-
   const languageEnvironmentOptions =
     getValueViaPath<Option[]>(
       externalData,
-      'childInformation.data.languageEnvironmentOptions',
+      'languageEnvironments.data.languageEnvironmentOptions',
     ) ?? []
 
   const urgencyAssessments =
@@ -112,7 +106,6 @@ export const getApplicationExternalData = (
     categories,
     protectiveFactorSections,
     genders,
-    childInPrimarySchoolAge,
     languageEnvironmentOptions,
     urgencyAssessments,
     postalCodes,

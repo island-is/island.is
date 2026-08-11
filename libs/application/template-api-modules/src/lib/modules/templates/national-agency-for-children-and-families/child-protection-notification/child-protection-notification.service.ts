@@ -1,7 +1,3 @@
-import {
-  getApplicationAnswers,
-  isChildInPrimarySchoolAge,
-} from '@island.is/application/templates/national-agency-for-children-and-families/child-protection-notification'
 import { ApplicationTypes } from '@island.is/application/types'
 import { NationalAgencyForChildrenAndFamiliesClientService } from '@island.is/clients/national-agency-for-children-and-families'
 import { FriggClientService } from '@island.is/clients/mms/frigg'
@@ -67,24 +63,12 @@ export class ChildProtectionNotificationService extends BaseTemplateApiService {
     )
   }
 
-  async getChildInformation({
-    auth,
-    application,
-  }: TemplateApiModuleActionProps) {
-    const { childNationalId } = getApplicationAnswers(application.answers)
-
-    if (!childNationalId) {
-      return { childInPrimarySchoolAge: false, languageEnvironmentOptions: [] }
-    }
-
-    const childInPrimarySchoolAge = isChildInPrimarySchoolAge(childNationalId)
-
+  async getLanguageEnvironments({ auth }: TemplateApiModuleActionProps) {
     const keyOptions = await this.friggClientService.getAllKeyOptions(
       auth,
       'languageEnvironment',
     )
     return {
-      childInPrimarySchoolAge,
       languageEnvironmentOptions: keyOptions[0]?.options ?? [],
     }
   }

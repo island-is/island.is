@@ -1,5 +1,4 @@
 import { NO, YES } from '@island.is/application/core'
-import { info } from 'kennitala'
 import { FormValue } from '@island.is/application/types'
 import {
   memmMessages,
@@ -81,11 +80,3 @@ export const getAreParentsInformedTitle = (answers: FormValue) =>
     : isKnowsNationalId(answers) // TODO: Need to check if kerfiskennitala! (If kerfiskennitala, then it is a custodian, otherwise a guardian)
     ? reasonForNotificationMessages.notificationHistory.areCustodiansInformed
     : reasonForNotificationMessages.notificationHistory.areGuardiansInformed
-
-export const isChildInPrimarySchoolAge = (nationalId: string): boolean => {
-  const { birthday } = info(nationalId)
-  const currentYear = new Date().getFullYear()
-  const birthYear = birthday.getFullYear()
-  const yearAge = currentYear - birthYear
-  return yearAge >= 6 && yearAge <= 16
-}

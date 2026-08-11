@@ -65,8 +65,8 @@ const template: ApplicationTemplate<
           lifecycle: EphemeralStateLifeCycle,
           onExit: [
             defineTemplateApi({
-              action: ApiModuleActions.getChildInformation,
-              externalDataId: 'childInformation',
+              action: ApiModuleActions.getLanguageEnvironments,
+              externalDataId: 'languageEnvironments',
               namespace: ApplicationTypes.CHILD_PROTECTION_NOTIFICATION,
               throwOnError: true,
             }),
