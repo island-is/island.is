@@ -110,7 +110,9 @@ describe('EducationController — getPrimarySchoolAssignmentResultPdf (current)'
 
     await postCurrent()
 
-    expect(fakePdfClient.getAssignmentResultPdf.mock.calls[0][3]).toBeUndefined()
+    expect(
+      fakePdfClient.getAssignmentResultPdf.mock.calls[0][3],
+    ).toBeUndefined()
   })
 })
 
