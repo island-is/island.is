@@ -775,10 +775,9 @@ const transformCase = (
       theCase.eventLogs,
     ),
     eventLogs: undefined,
-    // Defence and prison system users should not see rulingModifiedHistory for request cases
+    // Prison system users should not see rulingModifiedHistory for request cases
     rulingModifiedHistory:
-      isRequestCase(theCase.type) &&
-      (isDefenceUser(user) || isPrisonSystemUser(user))
+      isRequestCase(theCase.type) && isPrisonSystemUser(user)
         ? undefined
         : theCase.rulingModifiedHistory,
     parentCase: theCase.parentCase && transformCase(theCase.parentCase, user),
