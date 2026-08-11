@@ -182,7 +182,9 @@ const NewHealthConversation = () => {
                       )}
                       options={typeOptions}
                       value={selectedOption}
-                      onChange={(opt) => setSelectedTypeCode(opt?.value ?? null)}
+                      onChange={(opt) =>
+                        setSelectedTypeCode(opt?.value ?? null)
+                      }
                       backgroundColor="blue"
                       size="sm"
                       required
