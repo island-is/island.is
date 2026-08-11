@@ -62,16 +62,19 @@ export const useRejectCaseFile = (onComplete: (caseFile: CaseFile) => void) => {
     <Modal
       title="Eyða skjali"
       text="Ertu viss um að þú viljir eyða þessu skjali?"
-      primaryButton={{
-        text: 'Eyða',
-        onClick: handlePrimaryButtonClick,
-        colorScheme: 'destructive',
-        isLoading: isRejectingFile,
-      }}
-      secondaryButton={{
-        text: 'Hætta við',
-        onClick: handleSecondaryButtonClick,
-      }}
+      buttons={[
+        {
+          text: 'Hætta við',
+          onClick: handleSecondaryButtonClick,
+          variant: 'ghost',
+        },
+        {
+          text: 'Eyða',
+          onClick: handlePrimaryButtonClick,
+          colorScheme: 'destructive',
+          isLoading: isRejectingFile,
+        },
+      ]}
     />
   )
 

@@ -32,37 +32,41 @@ const useAppealCaseModals = (options: UseAppealCaseModalsOptions = {}) => {
         <Modal
           title="Kærufrestur er liðinn"
           text="Viltu halda áfram og senda kæru?"
-          primaryButton={{
-            text: 'Já, senda kæru',
-            onClick: () => {
-              if (options.confirmAppealRoute) {
-                router.push(options.confirmAppealRoute)
-              }
+          buttons={[
+            { text: 'Hætta við', onClick: close, variant: 'ghost' },
+            {
+              text: 'Já, senda kæru',
+              onClick: () => {
+                if (options.confirmAppealRoute) {
+                  router.push(options.confirmAppealRoute)
+                }
+              },
             },
-          }}
-          secondaryButton={{ text: 'Hætta við', onClick: close }}
+          ]}
         />
       )}
       {visible === 'ConfirmStatementAfterDeadline' && (
         <Modal
           title="Frestur til að skila greinargerð er liðinn"
           text="Viltu halda áfram og senda greinargerð?"
-          primaryButton={{
-            text: 'Já, senda greinargerð',
-            onClick: () => {
-              if (options.confirmStatementRoute) {
-                router.push(options.confirmStatementRoute)
-              }
+          buttons={[
+            { text: 'Hætta við', onClick: close, variant: 'ghost' },
+            {
+              text: 'Já, senda greinargerð',
+              onClick: () => {
+                if (options.confirmStatementRoute) {
+                  router.push(options.confirmStatementRoute)
+                }
+              },
             },
-          }}
-          secondaryButton={{ text: 'Hætta við', onClick: close }}
+          ]}
         />
       )}
       {visible === 'AppealReceived' && (
         <Modal
           title="Tilkynningar sendar á málsaðila"
           text="Kæra hefur borist Landsrétti. Aðilar máls hafa fengið tilkynningu um frest til að skila greinargerð."
-          primaryButton={{ text: 'Loka glugga', onClick: close }}
+          buttons={[{ text: 'Loka glugga', onClick: close }]}
         />
       )}
     </>

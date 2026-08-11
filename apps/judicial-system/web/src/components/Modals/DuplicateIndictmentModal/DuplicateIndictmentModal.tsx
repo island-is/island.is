@@ -43,16 +43,19 @@ const DuplicateIndictmentModal: FC<Props> = ({ onClose }) => {
       text="Nýtt mál verður til í drögum. Innihald ákæru ásamt gögnum afritast yfir á nýja málið."
       onClose={onClose}
       loading={isLoading}
-      primaryButton={{
-        text: 'Afrita mál í drög',
-        onClick: handleDuplicateIndictment,
-        isLoading,
-      }}
-      secondaryButton={{
-        text: 'Hætta við',
-        onClick: onClose,
-        isDisabled: isLoading,
-      }}
+      buttons={[
+        {
+          text: 'Hætta við',
+          onClick: onClose,
+          isDisabled: isLoading,
+          variant: 'ghost',
+        },
+        {
+          text: 'Afrita mál í drög',
+          onClick: handleDuplicateIndictment,
+          isLoading,
+        },
+      ]}
     />
   )
 }

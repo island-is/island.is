@@ -34,7 +34,11 @@ import {
 
 import { getCaseFileHash } from '../../formatters'
 import { PdfService } from '../case/pdf.service'
-import { CourtDocumentFolder, CourtService } from '../court'
+import {
+  CourtDocumentFolder,
+  CourtService,
+  isFileTooLargeForCourt,
+} from '../court'
 import { DefendantService } from '../defendant/defendant.service'
 import { EventService } from '../event'
 import { FileService } from '../file/file.service'
@@ -567,7 +571,8 @@ export class SubpoenaService {
           { reason },
         )
 
-        return { delivered: false }
+        // Do not retry an upload the court service will never accept
+        return { delivered: isFileTooLargeForCourt(reason) }
       })
   }
 
@@ -602,7 +607,8 @@ export class SubpoenaService {
           { reason },
         )
 
-        return { delivered: false }
+        // Do not retry an upload the court service will never accept
+        return { delivered: isFileTooLargeForCourt(reason) }
       })
   }
 
