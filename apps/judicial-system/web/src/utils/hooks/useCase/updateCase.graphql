@@ -93,8 +93,6 @@ mutation UpdateCase($input: UpdateCaseInput!) {
     accusedAppealAnnouncement
     prosecutorAppealDecision
     prosecutorAppealAnnouncement
-    accusedPostponedAppealDate
-    prosecutorPostponedAppealDate
     rulingDate
     rulingSignatureDate
     judge {

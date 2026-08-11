@@ -53,35 +53,38 @@ const ChangeProsecutorModal: FC<Props> = (props) => {
       title={title}
       text={text}
       onClose={onClose}
-      primaryButton={{
-        text: 'Staðfesta',
-        isDisabled: !selectedProsecutorId,
-        onClick: async () => {
-          if (!selectedProsecutorId) {
-            return
-          }
-          await updateCase(workingCase.id, {
-            prosecutorId: selectedProsecutorId,
-          })
-
-          const userWouldLoseAccess =
-            workingCase.isHeightenedSecurityLevel &&
-            user?.id !== workingCase.creatingProsecutor?.id &&
-            user?.id !== selectedProsecutorId
-
-          if (userWouldLoseAccess) {
-            router.push(getStandardUserDashboardRoute(user))
-          } else {
-            refreshCase()
-          }
-
-          onClose()
+      buttons={[
+        {
+          text: 'Loka glugga',
+          onClick: onClose,
+          variant: 'ghost',
         },
-      }}
-      secondaryButton={{
-        text: 'Loka glugga',
-        onClick: onClose,
-      }}
+        {
+          text: 'Staðfesta',
+          isDisabled: !selectedProsecutorId,
+          onClick: async () => {
+            if (!selectedProsecutorId) {
+              return
+            }
+            await updateCase(workingCase.id, {
+              prosecutorId: selectedProsecutorId,
+            })
+
+            const userWouldLoseAccess =
+              workingCase.isHeightenedSecurityLevel &&
+              user?.id !== workingCase.creatingProsecutor?.id &&
+              user?.id !== selectedProsecutorId
+
+            if (userWouldLoseAccess) {
+              router.push(getStandardUserDashboardRoute(user))
+            } else {
+              refreshCase()
+            }
+
+            onClose()
+          },
+        },
+      ]}
     >
       <div
         style={{

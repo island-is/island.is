@@ -584,27 +584,29 @@ const VerdictTimelineCard: FC<Props> = (props) => {
         <Modal
           title="Afturkalla úr fullnustu"
           text={`Mál ${workingCase.courtCaseNumber} verður afturkallað.\nÁkærði: ${modalVisible.defendant.name}.`}
-          primaryButton={{
-            text: 'Afturkalla',
-            onClick: () => {
-              setAndSendDefendantToServer(
-                {
-                  caseId: workingCase.id,
-                  defendantId: defendant.id,
-                  isSentToPrisonAdmin: false,
-                },
-                setWorkingCase,
-              )
-
-              setModalVisible(undefined)
+          buttons={[
+            {
+              text: formatMessage(core.cancel),
+              onClick: () => setModalVisible(undefined),
+              variant: 'ghost',
             },
+            {
+              text: 'Afturkalla',
+              onClick: () => {
+                setAndSendDefendantToServer(
+                  {
+                    caseId: workingCase.id,
+                    defendantId: defendant.id,
+                    isSentToPrisonAdmin: false,
+                  },
+                  setWorkingCase,
+                )
 
-            isLoading: isUpdatingDefendant,
-          }}
-          secondaryButton={{
-            text: formatMessage(core.cancel),
-            onClick: () => setModalVisible(undefined),
-          }}
+                setModalVisible(undefined)
+              },
+              isLoading: isUpdatingDefendant,
+            },
+          ]}
         />
       )}
       {modalVisible?.type === 'CONFIRM_APPEAL_AFTER_DEADLINE' && (
@@ -615,17 +617,20 @@ const VerdictTimelineCard: FC<Props> = (props) => {
           )} en skráð áfrýjun er ${formatDate(
             modalVisible.appealDate,
           )}.\nViltu skrá áfrýjunina?`}
-          primaryButton={{
-            text: 'Skrá áfrýjun',
-            onClick: () => {
-              submitAppealDate(modalVisible.appealDate)
-              setModalVisible(undefined)
+          buttons={[
+            {
+              text: formatMessage(core.cancel),
+              onClick: () => setModalVisible(undefined),
+              variant: 'ghost',
             },
-          }}
-          secondaryButton={{
-            text: formatMessage(core.cancel),
-            onClick: () => setModalVisible(undefined),
-          }}
+            {
+              text: 'Skrá áfrýjun',
+              onClick: () => {
+                submitAppealDate(modalVisible.appealDate)
+                setModalVisible(undefined)
+              },
+            },
+          ]}
         />
       )}
     </>

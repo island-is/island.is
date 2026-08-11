@@ -74,15 +74,18 @@ const RulingOrderConfirmationStatus: FC<Props> = ({ file }) => {
           <Box onClick={(evt: MouseEvent) => evt.stopPropagation()}>
             <Modal
               title="Viltu staðfesta úrskurð?"
-              primaryButton={{
-                text: 'Staðfesta',
-                onClick: handleConfirm,
-                isLoading: loading,
-              }}
-              secondaryButton={{
-                text: 'Hætta við',
-                onClick: () => setModalVisible(false),
-              }}
+              buttons={[
+                {
+                  text: 'Hætta við',
+                  onClick: () => setModalVisible(false),
+                  variant: 'ghost',
+                },
+                {
+                  text: 'Staðfesta',
+                  onClick: handleConfirm,
+                  isLoading: loading,
+                },
+              ]}
               onClose={() => setModalVisible(false)}
             />
           </Box>

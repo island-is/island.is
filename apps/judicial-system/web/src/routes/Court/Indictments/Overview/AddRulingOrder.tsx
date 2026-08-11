@@ -133,17 +133,20 @@ const AddRulingOrder: FC = () => {
         <Modal
           title="Viltu hlaða upp úrskurði?"
           text="Dómari þarf að staðfesta úrskurðinn eftir að honum hefur verið hlaðið upp."
-          primaryButton={{
-            text: 'Já, hlaða upp',
-            onClick: async () => {
-              await handleNextButtonClick()
+          buttons={[
+            {
+              text: 'Hætta við',
+              onClick: () => setVisibleModal(undefined),
+              variant: 'ghost',
             },
-            isDisabled: !allFilesDoneOrError,
-          }}
-          secondaryButton={{
-            text: 'Hætta við',
-            onClick: () => setVisibleModal(undefined),
-          }}
+            {
+              text: 'Já, hlaða upp',
+              onClick: async () => {
+                await handleNextButtonClick()
+              },
+              isDisabled: !allFilesDoneOrError,
+            },
+          ]}
           onClose={() => setVisibleModal(undefined)}
         />
       )}
