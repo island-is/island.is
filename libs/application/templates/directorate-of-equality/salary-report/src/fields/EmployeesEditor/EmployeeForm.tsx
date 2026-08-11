@@ -15,10 +15,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { messages } from '../../lib/messages'
-import {
-  GENDER_OPTIONS,
-  SALARY_COMPONENT_GROUPS,
-} from '../../utils/constants'
+import { GENDER_OPTIONS, SALARY_COMPONENT_GROUPS } from '../../utils/constants'
 import type { Employee, SalaryComponentKey } from '../../utils/types'
 import {
   componentsFromFormValues,
@@ -47,7 +44,9 @@ export const EmployeeForm: FC<Props> = ({
   const { formatMessage, lang } = useLocale()
   const m = messages.report.employees
   const methods = useForm<EmployeeFormValues>({
-    defaultValues: employee ? toFormValues(employee) : EMPTY_EMPLOYEE_FORM_VALUES,
+    defaultValues: employee
+      ? toFormValues(employee)
+      : EMPTY_EMPLOYEE_FORM_VALUES,
   })
   const {
     formState: { errors },
