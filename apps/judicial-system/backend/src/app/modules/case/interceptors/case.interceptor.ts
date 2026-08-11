@@ -906,7 +906,7 @@ const transformCase = (
       theCase.eventLogs,
     ),
     eventLogs: undefined,
-    // Defence and prison system users should not see rulingModifiedHistory for request cases
+    // Prison system users should not see rulingModifiedHistory for request cases
     rulingModifiedHistory:
       isRequestCase(theCase.type) && isLimitedAccess
         ? undefined

@@ -68,7 +68,14 @@ const SubpoenaType: FC<SubpoenaTypeProps> = ({
                   item.toggleNewAlternativeService &&
                     item.toggleNewAlternativeService()
 
-                  item.onUpdate({ caseId, defendantId, isAlternativeService })
+                  item.onUpdate({
+                    caseId,
+                    defendantId,
+                    isAlternativeService,
+                    // A subpoena type does not apply when the indictment
+                    // is served by other means
+                    ...(isAlternativeService ? { subpoenaType: null } : {}),
+                  })
                 }}
                 tooltip={
                   'Ef ákæra og fyrirkall eru birt utan gáttarinnar, t.d. í þinghaldi eða í Lögbirtingablaðinu, þá er hægt að haka í þennan reit til að komast áfram án þess að gefa út fyrirkall í gegnum Réttarvörslugátt.'
