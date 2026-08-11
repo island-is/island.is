@@ -33,6 +33,7 @@ export class FormInvalidationService {
     })
 
     this.logger.info(`Found ${formsToInvalidate.length} forms to invalidate.`)
+    const failedFormIds: string[] = []
 
     for (const form of formsToInvalidate) {
       try {
@@ -40,11 +41,20 @@ export class FormInvalidationService {
 
         this.logger.info('form invalidated', { id: form.id })
       } catch (error) {
+        failedFormIds.push(form.id)
         this.logger.error('Failed to invalidate form', {
           id: form.id,
           error,
         })
       }
+    }
+
+    if (failedFormIds.length > 0) {
+      throw new Error(
+        `Failed to invalidate ${
+          failedFormIds.length
+        } form(s): ${failedFormIds.join(', ')}`,
+      )
     }
   }
 }

@@ -9,9 +9,15 @@ export const worker = async () => {
 
   try {
     await app.get(PruneService).run()
+  } catch (error) {
+    console.error('Form system worker pruning failed:', error)
+    process.exitCode = 1
+  }
+
+  try {
     await app.get(FormInvalidationService).run()
   } catch (error) {
-    console.error('Form system worker failed:', error)
+    console.error('Form system worker form invalidation failed:', error)
     process.exitCode = 1
   } finally {
     await app.close()
