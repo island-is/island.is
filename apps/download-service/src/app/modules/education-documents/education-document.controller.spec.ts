@@ -197,11 +197,18 @@ describe('EducationController — getPrimarySchoolAssignmentResultPdfV2', () => 
     expect(signal.aborted).toBe(false)
   })
 
-  it('rethrows a client AbortError as a GatewayTimeout naming the configured timeout, resulting in a 504 problem+json response', async () => {
-    const abortError = Object.assign(new Error('The user aborted a request.'), {
-      name: 'AbortError',
+  it('maps a client rejection that aborted the signal to a GatewayTimeout naming the configured timeout, resulting in a 504 problem+json response', async () => {
+    const timeoutError = Object.assign(new Error('The operation was aborted'), {
+      name: 'TimeoutError',
     })
-    fakePdfClient.getAssignmentResultPdf.mockRejectedValue(abortError)
+    fakePdfClient.getAssignmentResultPdf.mockImplementation(
+      (_user, _studentId, _assignmentResultId, signal: AbortSignal) =>
+        new Promise((_resolve, reject) => {
+          signal.addEventListener('abort', () => reject(timeoutError), {
+            once: true,
+          })
+        }),
+    )
 
     const res = await post()
 
@@ -211,5 +218,14 @@ describe('EducationController — getPrimarySchoolAssignmentResultPdfV2', () => 
     const loggedError = fakeLogger.error.mock.calls[0][0]
     expect(loggedError).toBeInstanceOf(GatewayTimeout)
     expect(loggedError.message).toContain(String(TEST_TIMEOUT_MS))
+  })
+
+  it('lets a client error that does not abort the signal propagate untouched, resulting in a 500 problem+json response', async () => {
+    fakePdfClient.getAssignmentResultPdf.mockRejectedValue(new Error('boom'))
+
+    const res = await post()
+
+    expect(res.status).toBe(500)
+    expect(res.headers['content-type']).toContain('application/problem+json')
   })
 })

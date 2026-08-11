@@ -29,6 +29,7 @@ import {
 import {
   ApiBadRequestResponse,
   ApiForbiddenResponse,
+  ApiGatewayTimeoutResponse,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -181,6 +182,7 @@ export class EducationController {
   @ApiForbiddenResponse({ type: HttpProblemResponse })
   @ApiNotFoundResponse({ type: HttpProblemResponse })
   @ApiInternalServerErrorResponse({ type: HttpProblemResponse })
+  @ApiGatewayTimeoutResponse({ type: HttpProblemResponse })
   async getPrimarySchoolAssignmentResultPdfV2(
     @Param() params: PrimarySchoolAssignmentResultParamsDto,
     @CurrentUser() user: User,

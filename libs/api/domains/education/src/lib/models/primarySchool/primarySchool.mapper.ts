@@ -25,11 +25,13 @@ export const mapAssessment = (
   }
 }
 
+export type PrimarySchoolPdfImplementation = 'current' | 'new'
+
 export const mapResult = (
   item: IslandIsSimpleAssignmentResultDto,
   studentId: string,
   downloadServiceBaseUrl: string,
-  implementation = 'current',
+  implementation: PrimarySchoolPdfImplementation = 'current',
 ): PrimarySchoolAssessmentResult | null => {
   if (!item.id || item.gradeLevel == null) return null
 

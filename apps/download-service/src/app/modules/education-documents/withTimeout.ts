@@ -10,7 +10,7 @@ export const withTimeout = async <T>(
   try {
     return await fetchFn(signal)
   } catch (error) {
-    if (error instanceof Error && error.name === 'AbortError') {
+    if (signal.aborted) {
       throw new GatewayTimeout(timeoutMs)
     }
     throw error

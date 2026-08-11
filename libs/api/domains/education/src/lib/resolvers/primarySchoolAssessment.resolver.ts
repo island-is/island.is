@@ -20,7 +20,10 @@ import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@nestjs/config'
 import { PrimarySchoolAssessment } from '../models/primarySchool/primarySchoolAssessment.model'
 import { PrimarySchoolAssessmentResult } from '../models/primarySchool/primarySchoolAssessmentResult.model'
-import { mapResult } from '../models/primarySchool/primarySchool.mapper'
+import {
+  mapResult,
+  PrimarySchoolPdfImplementation,
+} from '../models/primarySchool/primarySchool.mapper'
 import type { PrimarySchoolAssessmentWithContext } from '../types'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
@@ -48,11 +51,13 @@ export class PrimarySchoolAssessmentResolver {
       assessment.id,
     )
 
-    const implementation = await this.featureFlagService.getValue(
+    const requestedImplementation = await this.featureFlagService.getValue(
       Features.downloadServiceMmsPrimarySchoolImplementationTest,
       'current',
       user,
     )
+    const implementation: PrimarySchoolPdfImplementation =
+      requestedImplementation === 'new' ? 'new' : 'current'
 
     return results
       ?.map((r) =>
