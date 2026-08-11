@@ -19,7 +19,7 @@ export const showMemmSection = (
   externalData: ExternalData,
 ) =>
   isKnowsNationalId(answers) &&
-  !getApplicationExternalData(externalData).childFoundInFrigg
+  !getApplicationExternalData(externalData).childInPrimarySchoolAge
 
 export const isUnborn = (answers: FormValue) =>
   getApplicationAnswers(answers).childKnowsNationalId === KnowsNationalId.UNBORN
