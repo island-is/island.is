@@ -63,77 +63,77 @@ test.describe.serial('Ruling order appeal tests', () => {
     await nameInput.press('Tab')
     await expect(nameInput).toHaveValue(accusedName)
     await Promise.all([
-      page.getByRole('button', { name: 'Stofna mál' }).click(),
       verifyRequestCompletion(page, '/api/graphql', 'CreateCase').then(
         (res) => (caseId = res.data.createCase.id),
       ),
       verifyRequestCompletion(page, '/api/graphql', 'Case'),
+      page.getByRole('button', { name: 'Stofna mál' }).click(),
     ])
 
     await expect(page).toHaveURL(`/akaera/malsgogn/${caseId}`)
     await Promise.all([
-      page.getByTestId('continueButton').click(),
       verifyRequestCompletion(page, '/api/graphql', 'Case'),
+      page.getByTestId('continueButton').click(),
     ])
 
     await expect(page).toHaveURL(`/akaera/skjalaskra/${caseId}`)
     await Promise.all([
-      page.getByTestId('continueButton').click(),
       verifyRequestCompletion(page, '/api/graphql', 'Case'),
+      page.getByTestId('continueButton').click(),
     ])
 
     await expect(page).toHaveURL(`/akaera/domskjol/${caseId}`)
     await Promise.all([
-      page.getByTestId('continueButton').click(),
       verifyRequestCompletion(page, '/api/graphql', 'Case'),
       verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
+      page.getByTestId('continueButton').click(),
     ])
 
     await expect(page).toHaveURL(`/akaera/malsmedferd/${caseId}`)
 
     await Promise.all([
-      page.getByText('Játar sök').click(),
       verifyRequestCompletion(page, '/api/graphql', 'UpdateDefendant'),
+      page.getByText('Játar sök').click(),
     ])
 
     await Promise.all([
-      page.getByText('Nei').last().click(),
       verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
+      page.getByText('Nei').last().click(),
     ])
 
     await Promise.all([
-      page.getByTestId('continueButton').click(),
       verifyRequestCompletion(page, '/api/graphql', 'Case'),
+      page.getByTestId('continueButton').click(),
     ])
 
     await page.getByPlaceholder('AB-123').fill('AB-123')
 
     await Promise.all([
-      page.keyboard.press('Tab'),
       verifyRequestCompletion(page, '/api/graphql', 'UpdateIndictmentCount'),
+      page.keyboard.press('Tab'),
     ])
 
     await Promise.all([
+      verifyRequestCompletion(page, '/api/graphql', 'UpdateIndictmentCount'),
       page.getByText('Brot *Veldu brot').click(),
       page.getByRole('option', { name: 'Sviptingarakstur' }).click(),
-      verifyRequestCompletion(page, '/api/graphql', 'UpdateIndictmentCount'),
     ])
 
     await Promise.all([
-      page.getByLabel('Krefjast sviptingarKrefjast').check(),
       verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
+      page.getByLabel('Krefjast sviptingarKrefjast').check(),
     ])
 
     await Promise.all([
-      page.getByTestId('continueButton').click(),
       verifyRequestCompletion(page, '/api/graphql', 'Case'),
+      page.getByTestId('continueButton').click(),
     ])
 
     await expect(page).toHaveURL(`/akaera/stadfesta/${caseId}`)
 
     await Promise.all([
-      page.getByTestId('continueButton').click(),
       verifyRequestCompletion(page, '/api/graphql', 'TransitionCase'),
+      page.getByTestId('continueButton').click(),
     ])
     await page.getByTestId('modalPrimaryButton').click()
   })
@@ -153,8 +153,8 @@ test.describe.serial('Ruling order appeal tests', () => {
     await page.getByTestId('continueButton').click()
 
     await Promise.all([
-      page.getByTestId('modalPrimaryButton').click(),
       verifyRequestCompletion(page, '/api/graphql', 'TransitionCase'),
+      page.getByTestId('modalPrimaryButton').click(),
     ])
   })
 
@@ -171,8 +171,8 @@ test.describe.serial('Ruling order appeal tests', () => {
     await expect(page).toHaveURL(`domur/akaera/yfirlit/${caseId}`)
 
     await Promise.all([
-      page.getByTestId('continueButton').click(),
       verifyRequestCompletion(page, '/api/graphql', 'Case'),
+      page.getByTestId('continueButton').click(),
     ])
 
     await expect(page).toHaveURL(`domur/akaera/mottaka/${caseId}`)
@@ -190,8 +190,8 @@ test.describe.serial('Ruling order appeal tests', () => {
       .click()
 
     await Promise.all([
-      page.getByTestId('continueButton').click(),
       verifyRequestCompletion(page, '/api/graphql', 'Case'),
+      page.getByTestId('continueButton').click(),
     ])
 
     await expect(page).toHaveURL(`domur/akaera/fyrirkall/${caseId}`)
@@ -223,8 +223,8 @@ test.describe.serial('Ruling order appeal tests', () => {
     await page.getByTestId('modalPrimaryButton').click()
 
     await Promise.all([
-      page.getByTestId('continueButton').click(),
       verifyRequestCompletion(page, '/api/graphql', 'Case'),
+      page.getByTestId('continueButton').click(),
     ])
 
     await expect(page).toHaveURL(`domur/akaera/thingbok/${caseId}`)

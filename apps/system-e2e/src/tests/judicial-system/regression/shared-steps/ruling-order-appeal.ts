@@ -11,8 +11,8 @@ export const judgeUploadsAndConfirmsRulingOrder = async (
   caseId: string,
 ) => {
   await Promise.all([
-    page.goto(`/domur/akaera/yfirlit/${caseId}`),
     verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    page.goto(`/domur/akaera/yfirlit/${caseId}`),
   ])
   await expect(page).toHaveURL(`/domur/akaera/yfirlit/${caseId}`)
 
@@ -36,8 +36,8 @@ export const judgeUploadsAndConfirmsRulingOrder = async (
 
   await page.getByTestId('continueButton').click()
   await Promise.all([
-    page.getByRole('button', { name: 'Já, hlaða upp' }).click(),
     verifyUpload(page),
+    page.getByRole('button', { name: 'Já, hlaða upp' }).click(),
   ])
 
   await expect(page).toHaveURL(`/domur/akaera/yfirlit/${caseId}`)
@@ -47,8 +47,8 @@ export const judgeUploadsAndConfirmsRulingOrder = async (
 
   await page.getByRole('button', { name: 'Staðfesta' }).click()
   await Promise.all([
-    page.getByTestId('modalPrimaryButton').click(),
     verifyRequestCompletion(page, '/api/graphql', 'ConfirmRulingOrder'),
+    page.getByTestId('modalPrimaryButton').click(),
   ])
 }
 
@@ -61,14 +61,14 @@ export const judgeCreatesInCourtRulingOrderAppeal = async (
   caseId: string,
 ) => {
   await Promise.all([
-    page.goto(`/domur/akaera/thingbok/${caseId}`),
     verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    page.goto(`/domur/akaera/thingbok/${caseId}`),
   ])
   await expect(page).toHaveURL(`/domur/akaera/thingbok/${caseId}`)
 
   await Promise.all([
-    page.getByRole('button', { name: 'Bæta við þinghaldi' }).click(),
     verifyRequestCompletion(page, '/api/graphql', 'CreateCourtSession'),
+    page.getByRole('button', { name: 'Bæta við þinghaldi' }).click(),
   ])
 
   // Session accordion expands and auto-initializes judge/location/dates.
@@ -82,11 +82,11 @@ export const judgeCreatesInCourtRulingOrderAppeal = async (
     .fill('Afstaða, málflutningur, og bókun vegna úrskurðar')
 
   await Promise.all([
+    verifyRequestCompletion(page, '/api/graphql', 'UpdateCourtSession'),
     page
       .locator('label')
       .filter({ hasText: 'Úrskurður undir rekstri máls' })
       .click(),
-    verifyRequestCompletion(page, '/api/graphql', 'UpdateCourtSession'),
   ])
 
   await expect(
@@ -94,47 +94,47 @@ export const judgeCreatesInCourtRulingOrderAppeal = async (
   ).toBeVisible({ timeout: 10000 })
 
   await Promise.all([
-    page.locator('input[id^="result_ruling_file-"]').first().check(),
     verifyRequestCompletion(page, '/api/graphql', 'UpdateCourtSession'),
+    page.locator('input[id^="result_ruling_file-"]').first().check(),
   ])
 
   await page.getByTestId('ruling').fill('Úrskurðarorð úr e2e prófi')
   await Promise.all([
-    page.getByTestId('ruling').press('Tab'),
     verifyRequestCompletion(page, '/api/graphql', 'UpdateCourtSession'),
+    page.getByTestId('ruling').press('Tab'),
   ])
 
   await Promise.all([
-    page
-      .locator('label')
-      .filter({ hasText: 'Ákærði unir úrskurðinum' })
-      .click(),
     verifyRequestCompletion(
       page,
       '/api/graphql',
       'UpdateCourtSessionAppealDecision',
     ),
+    page
+      .locator('label')
+      .filter({ hasText: 'Ákærði unir úrskurðinum' })
+      .click(),
   ])
 
   await Promise.all([
+    verifyRequestCompletion(
+      page,
+      '/api/graphql',
+      'UpdateCourtSessionAppealDecision',
+    ),
     page
       .locator('label')
       .filter({ hasText: 'Sækjandi kærir úrskurðinn' })
       .first()
       .click(),
-    verifyRequestCompletion(
-      page,
-      '/api/graphql',
-      'UpdateCourtSessionAppealDecision',
-    ),
   ])
 
   await expect(page.getByTestId('confirm-court-record')).toBeEnabled({
     timeout: 15000,
   })
   await Promise.all([
-    page.getByTestId('confirm-court-record').click(),
     verifyRequestCompletion(page, '/api/graphql', 'UpdateCourtSession'),
+    page.getByTestId('confirm-court-record').click(),
   ])
 }
 
@@ -147,9 +147,9 @@ export const judgeReceivesRulingOrderAppeal = async (
   caseId: string,
 ): Promise<string> => {
   const caseResponse = await Promise.all([
-    page.goto(`/domur/akaera/yfirlit/${caseId}`),
     verifyRequestCompletion(page, '/api/graphql', 'Case'),
-  ]).then(([, res]) => res)
+    page.goto(`/domur/akaera/yfirlit/${caseId}`),
+  ]).then(([res]) => res)
 
   await expect(page).toHaveURL(`/domur/akaera/yfirlit/${caseId}`)
 
@@ -158,8 +158,8 @@ export const judgeReceivesRulingOrderAppeal = async (
 
   await page.getByLabel(/Valmynd fyrir/).click()
   await Promise.all([
-    page.getByText('Senda til Landsréttar').click(),
     verifyRequestCompletion(page, '/api/graphql', 'TransitionAppealCase'),
+    page.getByText('Senda til Landsréttar').click(),
   ])
   await page.getByTestId('modalPrimaryButton').click()
 
