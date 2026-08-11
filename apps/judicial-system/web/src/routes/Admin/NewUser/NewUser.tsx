@@ -46,7 +46,9 @@ export const NewUser = () => {
         const code = error.graphQLErrors[0]?.extensions?.code
 
         if (code === 'https://httpstatuses.org/409') {
-          toast.error('Notandi með þessa kennitölu er nú þegar til')
+          toast.error(
+            'Notandi með þessa kennitölu, hlutverk og stofnun er nú þegar til',
+          )
         } else {
           toast.error(formatMessage(strings.createError))
         }
