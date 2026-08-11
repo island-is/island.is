@@ -3,6 +3,7 @@ import AnimateHeight from 'react-animate-height'
 import {
   Box,
   Button,
+  DialogPrompt,
   GridColumn,
   GridRow,
   Stack,
@@ -11,11 +12,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
-import {
-  EDUCATION_LABELS,
-  GENDER_LABELS,
-  SALARY_COMPONENT_KEYS,
-} from '../../utils/constants'
+import { GENDER_LABELS, SALARY_COMPONENT_KEYS } from '../../utils/constants'
 import type { Employee, SalaryComponentKey } from '../../utils/types'
 import { formatCurrency, formatStartDate, formatWorkRatio } from './utils'
 import * as styles from './EmployeesEditor.css'
@@ -23,6 +20,7 @@ import * as styles from './EmployeesEditor.css'
 type Props = {
   employee: Employee
   onRemove: () => void
+  onEdit: () => void
 }
 
 // Alternating white / transparent (blue container shows through) rows.
@@ -49,7 +47,7 @@ const DetailItem: FC<{ label: string; value: string; highlight: boolean }> = ({
   </Box>
 )
 
-export const EmployeeRow: FC<Props> = ({ employee, onRemove }) => {
+export const EmployeeRow: FC<Props> = ({ employee, onRemove, onEdit }) => {
   const { formatMessage } = useLocale()
   const [expanded, setExpanded] = useState(false)
   const m = messages.report.employees
@@ -58,12 +56,11 @@ export const EmployeeRow: FC<Props> = ({ employee, onRemove }) => {
 
   const leftItems = [
     { label: formatMessage(m.identifierLabel), value: employee.identifier },
+    { label: formatMessage(m.fieldLabel), value: employee.field ?? '' },
     {
-      label: formatMessage(m.educationLabel),
-      value: EDUCATION_LABELS[employee.education] ?? employee.education,
+      label: formatMessage(m.departmentLabel),
+      value: employee.department ?? '',
     },
-    { label: formatMessage(m.fieldLabel), value: employee.field },
-    { label: formatMessage(m.departmentLabel), value: employee.department },
     {
       label: formatMessage(m.startDateLabel),
       value: formatStartDate(employee.startDate),
@@ -121,17 +118,43 @@ export const EmployeeRow: FC<Props> = ({ employee, onRemove }) => {
           {GENDER_LABELS[employee.gender] ?? employee.gender}
         </T.Data>
         <T.Data box={{ background, textAlign: 'right' }}>
-          <Button
-            circle
-            colorScheme="light"
-            icon="trash"
-            iconType="outline"
-            onClick={onRemove}
-            size="small"
-            type="button"
-            variant="ghost"
-            title={formatMessage(m.removeButton)}
-          />
+          <Box display="flex" justifyContent="flexEnd">
+            <Button
+              circle
+              colorScheme="light"
+              icon="pencil"
+              iconType="outline"
+              onClick={onEdit}
+              size="small"
+              type="button"
+              variant="ghost"
+              title={formatMessage(m.editButton)}
+            />
+            <Box marginLeft={1}>
+              <DialogPrompt
+                baseId={`employee_remove_dialog_${employee.identifier}`}
+                title={formatMessage(m.removeConfirmTitle)}
+                description={formatMessage(m.removeConfirmDescription)}
+                ariaLabel={formatMessage(m.removeButton)}
+                disclosureElement={
+                  <Button
+                    circle
+                    colorScheme="light"
+                    icon="trash"
+                    iconType="outline"
+                    size="small"
+                    type="button"
+                    variant="ghost"
+                    title={formatMessage(m.removeButton)}
+                  />
+                }
+                onConfirm={onRemove}
+                buttonTextConfirm={formatMessage(m.removeConfirmButton)}
+                buttonTextCancel={formatMessage(m.cancelButton)}
+                buttonPropsConfirm={{ colorScheme: 'destructive' }}
+              />
+            </Box>
+          </Box>
         </T.Data>
       </T.Row>
       <T.Row>
