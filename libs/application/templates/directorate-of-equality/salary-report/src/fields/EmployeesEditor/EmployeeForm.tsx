@@ -18,10 +18,15 @@ import { messages } from '../../lib/messages'
 import {
   GENDER_OPTIONS,
   SALARY_COMPONENT_GROUPS,
-  SALARY_COMPONENT_KEYS,
 } from '../../utils/constants'
 import type { Employee, SalaryComponentKey } from '../../utils/types'
-import { computeIdentifier } from './utils'
+import {
+  componentsFromFormValues,
+  computeIdentifier,
+  EMPTY_EMPLOYEE_FORM_VALUES,
+  type EmployeeFormValues,
+  toFormValues,
+} from './utils'
 
 type Props = {
   // Present when editing an existing employee; omitted when adding a new one.
@@ -32,45 +37,6 @@ type Props = {
   onCancel: () => void
 }
 
-type FormValues = {
-  roleTitle: string
-  gender: string
-  field: string
-  department: string
-  startDate: string
-  workRatio: string
-  baseSalary: string
-} & Record<SalaryComponentKey, string>
-
-const DEFAULTS: FormValues = {
-  roleTitle: '',
-  gender: '',
-  field: '',
-  department: '',
-  startDate: '',
-  workRatio: '100',
-  baseSalary: '',
-  ...(Object.fromEntries(
-    SALARY_COMPONENT_KEYS.map((key) => [key, '']),
-  ) as Record<SalaryComponentKey, string>),
-}
-
-const valuesFromEmployee = (employee: Employee): FormValues => ({
-  roleTitle: employee.roleTitle,
-  gender: employee.gender,
-  field: employee.field ?? '',
-  department: employee.department ?? '',
-  startDate: employee.startDate,
-  workRatio: String((employee.workRatio ?? 0) * 100),
-  baseSalary: String(employee.baseSalary ?? ''),
-  ...(Object.fromEntries(
-    SALARY_COMPONENT_KEYS.map((key) => {
-      const value = employee[key]
-      return [key, value == null ? '' : String(value)]
-    }),
-  ) as Record<SalaryComponentKey, string>),
-})
-
 export const EmployeeForm: FC<Props> = ({
   employee,
   nextOrdinal,
@@ -80,8 +46,8 @@ export const EmployeeForm: FC<Props> = ({
 }) => {
   const { formatMessage, lang } = useLocale()
   const m = messages.report.employees
-  const methods = useForm<FormValues>({
-    defaultValues: employee ? valuesFromEmployee(employee) : DEFAULTS,
+  const methods = useForm<EmployeeFormValues>({
+    defaultValues: employee ? toFormValues(employee) : EMPTY_EMPLOYEE_FORM_VALUES,
   })
   const {
     formState: { errors },
@@ -107,7 +73,7 @@ export const EmployeeForm: FC<Props> = ({
     bonus: formatMessage(m.bonusSalaryLabel),
   }
 
-  const onValid = (data: FormValues) => {
+  const onValid = (data: EmployeeFormValues) => {
     // startDate uses the shared DatePickerController, which doesn't accept RHF
     // `rules`, so enforce the requirement here (the `required` prop is UI-only).
     if (!data.startDate) {
@@ -115,13 +81,7 @@ export const EmployeeForm: FC<Props> = ({
       return
     }
 
-    // Empty component → null (the API treats each component as optional/nullable)
-    const components = Object.fromEntries(
-      SALARY_COMPONENT_KEYS.map((key) => [
-        key,
-        data[key] === '' ? null : Number(data[key]) || 0,
-      ]),
-    ) as Record<SalaryComponentKey, number | null>
+    const components = componentsFromFormValues(data)
 
     onSubmit({
       ordinal: employee?.ordinal ?? nextOrdinal,
