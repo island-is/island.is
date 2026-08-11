@@ -10,6 +10,7 @@ import React, {
 } from 'react'
 import { CalendarContainer } from 'react-datepicker'
 import { Box, Tag } from '../..'
+import { Icon } from '../IconRC/Icon'
 import * as styles from './DatePicker.css'
 
 interface CustomCalendarContainerProps {
@@ -21,6 +22,9 @@ interface CustomCalendarContainerProps {
   highlightWeekends?: boolean
   displaySelectInput?: boolean
   ranges?: { label: string; startDate: Date; endDate: Date }[]
+  onClose?: () => void
+  inputLabel?: string
+  inputValue?: string
 }
 
 const CustomCalendarContainer: FC<CustomCalendarContainerProps> = ({
@@ -32,6 +36,9 @@ const CustomCalendarContainer: FC<CustomCalendarContainerProps> = ({
   endDate,
   highlightWeekends,
   displaySelectInput,
+  onClose,
+  inputLabel,
+  inputValue,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [weekCount, setWeekCount] = useState(0)
@@ -68,6 +75,27 @@ const CustomCalendarContainer: FC<CustomCalendarContainerProps> = ({
 
   return (
     <CalendarContainer className={className}>
+      {onClose && (
+        <div className={styles.mobilePickerHeader}>
+          <div className={styles.mobilePickerInputWrapper}>
+            {inputLabel && (
+              <span className={styles.mobilePickerLabel}>{inputLabel}</span>
+            )}
+            <div className={styles.mobilePickerField}>
+              <span className={styles.mobilePickerValue}>{inputValue}</span>
+              <Icon icon="calendar" type="outline" color="blue400" />
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className={styles.mobilePickerClose}
+            aria-label="Close date picker"
+          >
+            <Icon icon="close" type="outline" color="blue400" />
+          </button>
+        </div>
+      )}
       <div ref={containerRef} className={styles.parentContainer}>
         <div
           style={
