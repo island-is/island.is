@@ -14,7 +14,7 @@ export const completedMessages = defineMessages({
   alertTitle: {
     id: 'cpn.application:completed.alertTitle',
     defaultMessage:
-      'Tilkynningin þín hefur nú verið send til barnarverndarþjónustu X',
+      'Tilkynningin þín hefur nú verið send til barnarverndarþjónustu',
     description: 'Success alert title on the completed page',
   },
   alertMessage: {
