@@ -7,6 +7,7 @@ import {
 
 import { createTestingVerdictModule } from '../createTestingVerdictModule'
 
+import { EventService } from '../../../event'
 import { FileService } from '../../../file'
 import { PoliceService } from '../../../police'
 import { Case, Defendant, Verdict } from '../../../repository'
@@ -50,14 +51,20 @@ describe('InternalVerdictController - Deliver verdict to national commissioners 
 
   let mockPoliceService: PoliceService
   let mockFileService: FileService
+  let mockEventService: EventService
 
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { internalVerdictController, policeService, fileService } =
-      await createTestingVerdictModule()
+    const {
+      internalVerdictController,
+      policeService,
+      fileService,
+      eventService,
+    } = await createTestingVerdictModule()
 
     mockPoliceService = policeService
+    mockEventService = eventService
     const mockCreateDocument = mockPoliceService.createDocument as jest.Mock
     mockCreateDocument.mockRejectedValue(new Error('Some error'))
 
@@ -114,6 +121,28 @@ describe('InternalVerdictController - Deliver verdict to national commissioners 
           { code: 'VERDICT_COURT_CASE_NUMBER', value: courtCaseNumber },
         ],
       })
+    })
+  })
+
+  describe('delivery fails', () => {
+    let then: Then
+
+    // The top-level beforeEach makes the police createDocument call reject, so
+    // the delivery fails.
+    beforeEach(async () => {
+      then = await givenWhenThen()
+    })
+
+    it('should report the failure to the Slack error channel', () => {
+      expect(mockEventService.postErrorEvent).toHaveBeenCalledWith(
+        'Villa við að senda dóm til RLS',
+        { caseId, defendantId },
+        expect.any(Error),
+      )
+    })
+
+    it('should propagate the error', () => {
+      expect(then.error).toBeDefined()
     })
   })
 })

@@ -24,6 +24,7 @@ import {
   courtOfAppealsAssistantRule,
   courtOfAppealsJudgeRule,
   courtOfAppealsRegistrarRule,
+  defenderRule,
   districtCourtAssistantRule,
   districtCourtJudgeRule,
   districtCourtRegistrarRule,
@@ -83,6 +84,7 @@ export class CaseTableController {
     courtOfAppealsRegistrarRule,
     courtOfAppealsAssistantRule,
     prisonSystemStaffRule,
+    defenderRule,
   )
   @Get('search-cases')
   @ApiOkResponse({
@@ -116,6 +118,7 @@ export class CaseTableController {
     courtOfAppealsRegistrarRule,
     courtOfAppealsAssistantRule,
     prisonSystemStaffRule,
+    defenderRule,
   )
   @Get('case/:caseId/case-table-membership')
   @HttpCode(HttpStatus.OK)

@@ -191,7 +191,7 @@ test.describe.serial('Custody tests', () => {
     await page.keyboard.press('Tab')
     await page.getByTestId('continueButton').click()
     await Promise.all([
-      page.getByTestId('modalSecondaryButton').click(),
+      page.getByTestId('modalPrimaryButton').click(),
       verifyRequestCompletion(page, '/api/graphql', 'Case'),
     ])
 

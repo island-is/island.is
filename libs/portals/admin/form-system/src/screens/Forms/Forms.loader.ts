@@ -130,6 +130,9 @@ export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
       certificationTypes: mapPermissionTypes(admin.certificationTypes || []),
       listTypes: mapPermissionTypes(admin.listTypes || []),
       fieldTypes: mapPermissionTypes(admin.fieldTypes || []),
+      organizationDelegations: (admin?.organizationDelegations?.filter(
+        Boolean,
+      ) ?? []) as string[],
     }
   }
 }
