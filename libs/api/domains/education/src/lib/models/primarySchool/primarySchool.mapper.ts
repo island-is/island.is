@@ -29,7 +29,7 @@ export const mapResult = (
   item: IslandIsSimpleAssignmentResultDto,
   studentId: string,
   downloadServiceBaseUrl: string,
-  implementation: string = 'current',
+  implementation = 'current',
 ): PrimarySchoolAssessmentResult | null => {
   if (!item.id || item.gradeLevel == null) return null
 
