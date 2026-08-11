@@ -920,6 +920,77 @@
       }
     },
     "/api/v1/application/reports/{providerId}/comments": {
+      "get": {
+        "description": "The report's external comment thread on its own, ordered oldest-first. Only comments with `EXTERNAL` visibility are returned — reviewer-internal notes are never exposed to the applicant. Use this instead of re-fetching the report detail when only the conversation is needed; the same list is embedded as `externalComments` in `GET /application/reports/:providerId`.",
+        "operationId": "getApplicationReportComments",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "description": "Upstream submission ID (e.g. the island.is application UUID).",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApplicationReportCommentDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      },
       "post": {
         "description": "Submits an external comment on a report owned by the authenticated company. Report is looked up by upstream `providerId`.",
         "operationId": "submitApplicationReportComment",
@@ -1418,7 +1489,7 @@
         "type": "object",
         "properties": {
           "parsed": {
-            "description": "Parsed workbook payload from `POST /application/reports/excel/import`.",
+            "description": "Parsed workbook payload from an excel import endpoint.",
             "allOf": [{ "$ref": "#/components/schemas/ParsedReportDto" }]
           }
         },
@@ -1661,6 +1732,11 @@
           "importedFromExcel": { "type": "boolean" },
           "providerId": { "type": "string" },
           "companyAdminName": { "type": "string" },
+          "companyAdminTitle": {
+            "type": "string",
+            "nullable": true,
+            "description": "Job title (starfsheiti) of the company executive."
+          },
           "companyAdminEmail": { "type": "string" },
           "companyAdminGender": {
             "type": "string",
@@ -1729,6 +1805,11 @@
           "identifier": { "type": "string" },
           "providerId": { "type": "string" },
           "companyAdminName": { "type": "string" },
+          "companyAdminTitle": {
+            "type": "string",
+            "nullable": true,
+            "description": "Job title (starfsheiti) of the company executive."
+          },
           "companyAdminEmail": { "type": "string" },
           "companyAdminGender": {
             "type": "string",
@@ -1739,9 +1820,11 @@
           "contactPhone": { "type": "string" },
           "equalityReportContent": {
             "type": "string",
-            "minLength": 1,
-            "description": "Narrative gender-equality plan. Persisted as `report.equality_report_content`."
+            "description": "Narrative gender-equality plan as base64-encoded HTML. Decoded server-side and persisted as `report.equality_report_content`."
           },
+          "averageEmployeeMaleCount": { "type": "number", "nullable": true },
+          "averageEmployeeFemaleCount": { "type": "number", "nullable": true },
+          "averageEmployeeNeutralCount": { "type": "number", "nullable": true },
           "company": { "$ref": "#/components/schemas/SubmitReportCompanyDto" },
           "subsidiaries": {
             "type": "array",

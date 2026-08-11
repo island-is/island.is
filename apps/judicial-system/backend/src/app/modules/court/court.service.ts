@@ -318,7 +318,7 @@ export class CourtService {
   }
 
   async createEmail(
-    user: UserDescriptor,
+    user: UserDescriptor | undefined,
     caseId: string,
     courtId: string,
     courtCaseNumber: string,
@@ -347,8 +347,8 @@ export class CourtService {
           'Failed to create an email at court',
           {
             caseId,
-            actor: user.name,
-            institution: user.institution?.name,
+            actor: user?.name,
+            institution: user?.institution?.name,
             courtId,
             courtCaseNumber,
             subject: this.mask(subject),

@@ -23,11 +23,16 @@ export const getIndictmentAppealDeadline = ({
   const windowDays = isFine
     ? FINE_APPEAL_WINDOW_DAYS
     : VERDICT_APPEAL_WINDOW_DAYS
-  const deadlineDate = addDays(baseDate, windowDays)
+  // The appeal window runs until midnight at the end of the last day, so expiry
+  // has to be measured against the same instant we display. Measuring against
+  // the raw base date instead expires the deadline at whatever time of day the
+  // verdict was served - and since service dates are entered date-only, that
+  // used to swallow the whole last day of the window.
+  const deadlineDate = endOfDay(addDays(baseDate, windowDays))
 
   return {
-    deadlineDate: endOfDay(deadlineDate),
-    isDeadlineExpired: !!deadlineDate && hasDatePassed(deadlineDate),
+    deadlineDate,
+    isDeadlineExpired: hasDatePassed(deadlineDate),
   }
 }
 

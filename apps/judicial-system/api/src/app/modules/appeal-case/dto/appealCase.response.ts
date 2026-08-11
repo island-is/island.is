@@ -113,6 +113,12 @@ export class AppealCase {
   @Field(() => Boolean, { nullable: true })
   readonly appealedInCourt?: boolean
 
+  // A party filed the appeal itself rather than it being recorded in court.
+  // Unlike appealedInCourt this is meaningful for case-level appeals, since it
+  // comes from the appeal event's origin rather than a ruling's decision rows.
+  @Field(() => Boolean, { nullable: true })
+  readonly appealedOutOfCourt?: boolean
+
   @Field(() => String, { nullable: true })
   readonly statementDeadline?: string
 
