@@ -156,7 +156,10 @@ type ChangeActions =
     }
   | { type: 'CHANGE_DRAFT_DAYS_TO_LIVE'; payload: { value: number } }
   | { type: 'CHANGE_SUBMISSION_DAYS_TO_LIVE'; payload: { value: number } }
-  | { type: 'CHANGE_INVALIDATION_DATE'; payload: { value: Date } }
+  | {
+      type: 'CHANGE_INVALIDATION_DATE'
+      payload: { value: Date | null }
+    }
   | {
       type: 'CHANGE_ALLOW_PROCEED_ON_VALIDATION_FAIL'
       payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }

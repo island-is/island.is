@@ -569,7 +569,7 @@ export class FormsService {
     return new FormResponseDto()
   }
 
-  private async archiveForm(id: string, form: Form): Promise<FormResponseDto> {
+  async archiveForm(id: string, form: Form): Promise<FormResponseDto> {
     const slug = form.slug
     form.status = FormStatus.ARCHIVED
     form.slug = `${form.slug}-archived-${Date.now()}`
@@ -1177,7 +1177,7 @@ export class FormsService {
   private async copyForm(
     id: string,
     isDerived: boolean,
-    isInaccessible: boolean,
+    isBeingArchived: boolean,
     slug: string,
   ): Promise<Form> {
     const existingForm = await this.findById(id)
@@ -1205,7 +1205,10 @@ export class FormsService {
     newForm.identifier = isDerived ? existingForm.identifier : uuidV4()
     newForm.beenPublished = false
     newForm.sectionInfo = existingForm.sectionInfo
-    newForm.isInaccessible = isInaccessible
+    newForm.isInaccessible = isBeingArchived
+    newForm.invalidationDate = isBeingArchived
+      ? undefined
+      : existingForm.invalidationDate
 
     const sections: Section[] = []
     const screens: Screen[] = []

@@ -40,8 +40,8 @@ export class UpdateFormDto {
 
   @IsDateString()
   @IsOptional()
-  @ApiPropertyOptional({ type: Date })
-  invalidationDate?: Date
+  @ApiPropertyOptional({ type: Date, nullable: true })
+  invalidationDate?: Date | null
 
   @IsBoolean()
   @IsOptional()

@@ -38,10 +38,7 @@ export const updateFormFn = async (
               en: newForm.organizationDisplayName?.en ?? '',
             },
             slug: newForm.slug,
-            invalidationDate:
-              newForm.invalidationDate === null
-                ? undefined
-                : newForm.invalidationDate,
+            invalidationDate: newForm.invalidationDate,
             isTranslated: newForm.isTranslated,
             draftDaysToLive: newForm.draftDaysToLive,
             submissionDaysToLive: newForm.submissionDaysToLive,

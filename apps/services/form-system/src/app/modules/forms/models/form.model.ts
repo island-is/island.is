@@ -68,7 +68,7 @@ export class Form extends Model<Form> {
     allowNull: true,
     defaultValue: null,
   })
-  invalidationDate?: Date
+  invalidationDate?: Date | null
 
   @CreatedAt
   created!: CreationOptional<Date>
