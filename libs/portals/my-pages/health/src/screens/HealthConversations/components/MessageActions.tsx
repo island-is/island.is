@@ -15,7 +15,7 @@ type MessageActionsProps = {
   loading?: boolean
   stashLabels?: { add: string; remove: string }
   colorScheme?: 'light' | 'negative'
-  size?: 'small' | 'default' | 'medium' | 'large'
+  size?: 'small' | 'default' | 'large'
 }
 
 const blurAfter =
