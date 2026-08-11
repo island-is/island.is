@@ -14,7 +14,6 @@ import type { Locale } from '@island.is/shared/types'
 import { AuthDelegationType } from '@island.is/shared/types'
 import {
   BadRequestException,
-  ConflictException,
   ForbiddenException,
   HttpException,
   Inject,
@@ -248,7 +247,7 @@ export class ApplicationsService {
       )
     }
 
-    if (form.isInaccessible) {
+    if (form.isInaccessible || form.status === FormStatus.ARCHIVED) {
       throw new ForbiddenException(`Form with id '${form.id}' is inaccessible`)
     }
 
@@ -330,7 +329,7 @@ export class ApplicationsService {
       )
     }
 
-    if (form.isInaccessible) {
+    if (form.isInaccessible || form.status === FormStatus.ARCHIVED) {
       throw new ForbiddenException(`Form with id '${form.id}' is inaccessible`)
     }
 
@@ -553,7 +552,7 @@ export class ApplicationsService {
         slug,
       )
 
-      if (form.isInaccessible) {
+      if (form.isInaccessible || form.status === FormStatus.ARCHIVED) {
         const responseDto = new ApplicationResponseDto()
         responseDto.isInaccessible = true
         return responseDto
@@ -953,10 +952,6 @@ export class ApplicationsService {
       )
     }
 
-    if (form.status === FormStatus.ARCHIVED) {
-      throw new ConflictException(`Form with id '${formId}' is archived`)
-    }
-
     return form
   }
 
@@ -1043,7 +1038,7 @@ export class ApplicationsService {
       )
     }
 
-    if (form.isInaccessible) {
+    if (form.isInaccessible || form.status === FormStatus.ARCHIVED) {
       throw new ForbiddenException(`Form with id '${form.id}' is inaccessible`)
     }
 
@@ -1379,7 +1374,7 @@ export class ApplicationsService {
       )
     }
 
-    if (form.isInaccessible) {
+    if (form.isInaccessible || form.status === FormStatus.ARCHIVED) {
       throw new ForbiddenException(`Form with id '${form.id}' is inaccessible`)
     }
 
