@@ -11,6 +11,7 @@ export const activationAllowanceRoutes = (
 ): PortalRoute[] => [
   {
     name: m.maintenance,
+    key: 'ActivationAllowance',
     path: ActivationAllowancePaths.Root,
     enabled: true,
     element: <ActivationAllowanceRoot />,
@@ -18,12 +19,14 @@ export const activationAllowanceRoutes = (
   {
     name: sharedMessages.myStatus,
     path: ActivationAllowancePaths.Status,
+    key: 'ActivationAllowance',
     enabled: true,
     dynamic: true,
     element: <Status />,
   },
   {
     name: sharedMessages.myData,
+    key: 'ActivationAllowance',
     path: ActivationAllowancePaths.MyData,
     enabled: true,
     dynamic: true,

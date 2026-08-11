@@ -33,8 +33,15 @@ const SocialBenefitsOverview = () => {
     Features.isServicePortalUnemploymentBenefitsPageEnabled,
     false,
   )
+  const {
+    value: activationAllowanceEnabled,
+    loading: activationAllowanceFlagLoading,
+  } = useFeatureFlag(
+    Features.isServicePortalActivationAllowancePageEnabled,
+    false,
+  )
   const { data, loading, error } = useGetApplicationsOverviewQuery({
-    skip: !vmstEnabled,
+    skip: !vmstEnabled && !activationAllowanceEnabled,
   })
   const overview = data?.vmstApplicationsOverview
 
@@ -44,7 +51,9 @@ const SocialBenefitsOverview = () => {
       intro={formatMessage(sharedMessages.overviewIntro)}
     >
       <Stack space={3}>
-        {(loading || vmstFlagLoading) && <ActionCardLoader repeat={1} />}
+        {(loading || vmstFlagLoading || activationAllowanceFlagLoading) && (
+          <ActionCardLoader repeat={1} />
+        )}
         {!loading && !!error && (
           <AlertMessage
             type="error"
@@ -73,7 +82,7 @@ const SocialBenefitsOverview = () => {
               )}
             />
           )}
-        {vmstEnabled &&
+        {activationAllowanceEnabled &&
           !loading &&
           !error &&
           overview?.activationGrant?.isVisible && (

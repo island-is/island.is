@@ -63,15 +63,24 @@ export const useDynamicRoutes = () => {
     GET_DRIVING_LICENSE_BOOK_QUERY,
   )
 
-  const { value: vmstEnabled, loading: vmstFlagLoading } = useFeatureFlag(
-    Features.isServicePortalUnemploymentBenefitsPageEnabled,
+  const { value: unemploymentBenefitsEnabled, loading: vmstFlagLoading } =
+    useFeatureFlag(
+      Features.isServicePortalUnemploymentBenefitsPageEnabled,
+      false,
+    )
+
+  const {
+    value: activationAllowanceEnabled,
+    loading: activationAllowanceFlagLoading,
+  } = useFeatureFlag(
+    Features.isServicePortalActivationAllowancePageEnabled,
     false,
   )
 
   const { data: vmstOverview, loading: vmstLoading } = useQuery(
     GET_VMST_APPLICATIONS_OVERVIEW_QUERY,
     {
-      skip: !vmstEnabled,
+      skip: !unemploymentBenefitsEnabled && !activationAllowanceEnabled,
     },
   )
 
@@ -114,11 +123,14 @@ export const useDynamicRoutes = () => {
      * Show activation allowance child routes only if user has visible application.
      */
     const vmstData = vmstOverview?.vmstApplicationsOverview
-    if (vmstData?.unemploymentApplication?.isVisible) {
+    if (
+      unemploymentBenefitsEnabled &&
+      vmstData?.unemploymentApplication?.isVisible
+    ) {
       dynamicPathArray.push(DynamicPaths.SocialBenefitsUnemploymentStatus)
       dynamicPathArray.push(DynamicPaths.SocialBenefitsUnemploymentMyData)
     }
-    if (vmstData?.activationGrant?.isVisible) {
+    if (activationAllowanceEnabled && vmstData?.activationGrant?.isVisible) {
       dynamicPathArray.push(
         DynamicPaths.SocialBenefitsActivationAllowanceStatus,
       )
@@ -134,7 +146,12 @@ export const useDynamicRoutes = () => {
 
   return {
     activeDynamicRoutes,
-    loading: loading || licenseBookLoading || vmstFlagLoading || vmstLoading,
+    loading:
+      loading ||
+      licenseBookLoading ||
+      vmstFlagLoading ||
+      activationAllowanceFlagLoading ||
+      vmstLoading,
   }
 }
 
