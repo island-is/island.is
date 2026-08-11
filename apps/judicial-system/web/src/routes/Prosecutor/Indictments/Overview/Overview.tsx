@@ -409,7 +409,9 @@ const Overview: FC = () => {
                 variant: 'ghost',
               },
               {
-                text: formatMessage(strings.askForCancellationPrimaryButtonText),
+                text: formatMessage(
+                  strings.askForCancellationPrimaryButtonText,
+                ),
                 onClick: handleAskForCancellation,
                 isLoading: isTransitioningCase,
               },

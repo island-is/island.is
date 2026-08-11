@@ -229,9 +229,7 @@ export const SignatureConfirmationModal: FC<
         ...(signingProgress === 'error' || signingProgress === 'canceled'
           ? [
               {
-                text: formatMessage(
-                  signingModalStrings.primaryButtonErrorText,
-                ),
+                text: formatMessage(signingModalStrings.primaryButtonErrorText),
                 onClick: handleClose,
                 variant: 'ghost' as const,
               },

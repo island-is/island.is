@@ -194,14 +194,10 @@ export const Modal: FC<PropsWithChildren<ModalProps>> = ({
                   <Button
                     key={`${button.text}-${index}`}
                     data-testid={button.dataTestId ?? defaultTestId}
-                    variant={
-                      button.variant === 'ghost' ? 'ghost' : undefined
-                    }
+                    variant={button.variant === 'ghost' ? 'ghost' : undefined}
                     onClick={button.onClick}
                     icon={button.icon}
-                    loading={
-                      (isLastButton && loading) || !!button.isLoading
-                    }
+                    loading={(isLastButton && loading) || !!button.isLoading}
                     disabled={loading || !!button.isDisabled}
                     colorScheme={
                       button.variant === 'ghost'
