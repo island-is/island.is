@@ -58,8 +58,8 @@ const DEFAULTS: FormValues = {
 const valuesFromEmployee = (employee: Employee): FormValues => ({
   roleTitle: employee.roleTitle,
   gender: employee.gender,
-  field: employee.field,
-  department: employee.department,
+  field: employee.field ?? '',
+  department: employee.department ?? '',
   startDate: employee.startDate,
   workRatio: String(Math.round((employee.workRatio ?? 0) * 100)),
   baseSalary: String(employee.baseSalary ?? ''),
@@ -179,7 +179,6 @@ export const EmployeeForm: FC<Props> = ({
               label={formatMessage(m.fieldLabel)}
               backgroundColor="white"
               size="sm"
-              rules={{ required: requiredMsg }}
               error={errors.field?.message}
             />
           </GridColumn>
@@ -190,7 +189,6 @@ export const EmployeeForm: FC<Props> = ({
               label={formatMessage(m.departmentLabel)}
               backgroundColor="white"
               size="sm"
-              rules={{ required: requiredMsg }}
               error={errors.department?.message}
             />
           </GridColumn>

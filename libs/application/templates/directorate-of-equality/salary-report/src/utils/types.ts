@@ -49,8 +49,8 @@ export type Employee = {
   identifier: string
   roleTitle: string
   gender: string
-  field: string
-  department: string
+  field?: string
+  department?: string
   startDate: string
   workRatio: number
   baseSalary: number

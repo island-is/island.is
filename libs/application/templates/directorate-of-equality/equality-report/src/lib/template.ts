@@ -44,7 +44,8 @@ const template: ApplicationTemplate<
   featureFlag: Features.isDirectorateOfEqualityApplicationsEnabled,
   codeOwner: CodeOwners.Hugsmidjan,
   institution: messages.general.institution,
-  translationNamespaces: ApplicationConfigurations.EqualityReport.translation,
+  translationNamespaces:
+    ApplicationConfigurations[ApplicationTypes.EQUALITY_REPORT].translation,
   dataSchema,
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   requiredScopes: [ApiScope.directorateOfEquality],

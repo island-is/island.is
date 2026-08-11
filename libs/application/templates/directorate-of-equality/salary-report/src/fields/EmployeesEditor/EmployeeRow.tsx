@@ -56,8 +56,11 @@ export const EmployeeRow: FC<Props> = ({ employee, onRemove, onEdit }) => {
 
   const leftItems = [
     { label: formatMessage(m.identifierLabel), value: employee.identifier },
-    { label: formatMessage(m.fieldLabel), value: employee.field },
-    { label: formatMessage(m.departmentLabel), value: employee.department },
+    { label: formatMessage(m.fieldLabel), value: employee.field ?? '' },
+    {
+      label: formatMessage(m.departmentLabel),
+      value: employee.department ?? '',
+    },
     {
       label: formatMessage(m.startDateLabel),
       value: formatStartDate(employee.startDate),

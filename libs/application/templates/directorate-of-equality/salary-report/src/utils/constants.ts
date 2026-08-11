@@ -31,6 +31,20 @@ export enum Roles {
   NOT_ALLOWED = 'notAllowed',
 }
 
+export enum ApiActions {
+  getCompanyData = 'getCompanyData',
+  getDoeCompany = 'getDoeCompany',
+  getActiveEqualityReport = 'getActiveEqualityReport',
+  getBlankExcelTemplate = 'getBlankExcelTemplate',
+  presignImportUpload = 'presignImportUpload',
+  parseSalaryReportWorkbook = 'parseSalaryReportWorkbook',
+  submitSalaryReport = 'submitSalaryReport',
+  analyzeSalaryReport = 'analyzeSalaryReport',
+  editOutliers = 'editOutliers',
+  getReportComments = 'getReportComments',
+  submitReportComment = 'submitReportComment',
+}
+
 export const PERIOD_ONE_MONTH = 'oneMonth'
 export const PERIOD_TWELVE_MONTHS = 'twelveMonths'
 

@@ -175,10 +175,18 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     return { criteria, roles, employees }
   }
 
-  async getCompanyData({ auth }: TemplateApiModuleActionProps) {
-    const company = await this.companyRegistryService.getCompany(
-      auth.nationalId,
-    )
+  async getCompanyData({ auth, application }: TemplateApiModuleActionProps) {
+    let company
+    try {
+      company = await this.companyRegistryService.getCompany(auth.nationalId)
+    } catch (error) {
+      this.logger.error('Failed to get company data from company registry', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...this.extractFetchErrorDetails(error),
+      })
+      throw error
+    }
 
     if (!company) {
       throw new TemplateApiError(
@@ -224,17 +232,43 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     }
   }
 
-  async getEqualityReportTemplateHtml({ auth }: TemplateApiModuleActionProps) {
-    return this.directorateOfEqualityService.getEqualityReportTemplateHtml(auth)
-  }
-
-  async getEqualityReportTemplateDocx({ auth }: TemplateApiModuleActionProps) {
-    const blob =
-      await this.directorateOfEqualityService.getEqualityReportTemplateDocx(
+  async getEqualityReportTemplateHtml({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    try {
+      return await this.directorateOfEqualityService.getEqualityReportTemplateHtml(
         auth,
       )
-    const arrayBuffer = await blob.arrayBuffer()
-    return { base64: Buffer.from(arrayBuffer).toString('base64') }
+    } catch (error) {
+      this.logger.error('Failed to get equality report template html', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...this.extractFetchErrorDetails(error),
+      })
+      throw error
+    }
+  }
+
+  async getEqualityReportTemplateDocx({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    try {
+      const blob =
+        await this.directorateOfEqualityService.getEqualityReportTemplateDocx(
+          auth,
+        )
+      const arrayBuffer = await blob.arrayBuffer()
+      return { base64: Buffer.from(arrayBuffer).toString('base64') }
+    } catch (error) {
+      this.logger.error('Failed to get equality report template docx', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...this.extractFetchErrorDetails(error),
+      })
+      throw error
+    }
   }
 
   async getPreviousEqualityReportContent({
