@@ -25,13 +25,15 @@ import { useKeyboardCombo } from '@island.is/judicial-system-web/src/utils/hooks
 
 import * as styles from './Modal.css'
 
-interface ButtonProps {
+export interface ModalButton {
   text: string
-  icon?: IconMapIcon
   onClick: () => void
+  icon?: IconMapIcon
   isLoading?: boolean
   isDisabled?: boolean
   colorScheme?: 'default' | 'destructive'
+  variant?: 'primary' | 'ghost'
+  dataTestId?: string
 }
 
 interface FooterCheckbox {
@@ -44,13 +46,11 @@ interface FooterCheckbox {
 interface ModalProps {
   title: string
   text?: string | ReactNode
-  primaryButton?: ButtonProps
-  secondaryButton?: ButtonProps
+  buttons?: ModalButton[]
   footerCheckbox?: FooterCheckbox
   onClose?: () => void
   errorMessage?: string
   children?: ReactNode
-  invertButtonColors?: boolean
   loading?: boolean
   position?: 'center' | 'top' | 'bottom'
   footerJustifyContent?: BoxProps['justifyContent']
@@ -59,13 +59,11 @@ interface ModalProps {
 export const Modal: FC<PropsWithChildren<ModalProps>> = ({
   title,
   text,
-  primaryButton,
-  secondaryButton,
+  buttons,
   footerCheckbox,
   onClose,
   errorMessage,
   children,
-  invertButtonColors,
   loading,
   footerJustifyContent = 'spaceBetween',
 }: ModalProps) => {
@@ -83,6 +81,7 @@ export const Modal: FC<PropsWithChildren<ModalProps>> = ({
 
   const footerCheckboxId = useId()
   const titleId = useId()
+  const lastButtonIndex = buttons ? buttons.length - 1 : -1
 
   useKeyboardCombo('Escape', () => {
     if (onClose && !loading) {
@@ -183,30 +182,37 @@ export const Modal: FC<PropsWithChildren<ModalProps>> = ({
               />
             )}
             <Box display="flex" columnGap={3}>
-              {secondaryButton && (
-                <Button
-                  data-testid="modalSecondaryButton"
-                  variant={invertButtonColors ? undefined : 'ghost'}
-                  onClick={secondaryButton.onClick}
-                  loading={secondaryButton.isLoading}
-                  disabled={loading || !!secondaryButton.isDisabled}
-                >
-                  {secondaryButton.text}
-                </Button>
-              )}
-              {primaryButton && (
-                <Button
-                  data-testid="modalPrimaryButton"
-                  variant={invertButtonColors ? 'ghost' : undefined}
-                  onClick={primaryButton.onClick}
-                  icon={primaryButton.icon}
-                  loading={loading || !!primaryButton.isLoading}
-                  disabled={loading || !!primaryButton.isDisabled}
-                  colorScheme={primaryButton.colorScheme || 'default'}
-                >
-                  {primaryButton.text}
-                </Button>
-              )}
+              {buttons?.map((button, index) => {
+                const isLastButton = index === lastButtonIndex
+                const defaultTestId =
+                  isLastButton &&
+                  !(buttons.length === 1 && button.variant === 'ghost')
+                    ? 'modalPrimaryButton'
+                    : 'modalSecondaryButton'
+
+                return (
+                  <Button
+                    key={`${button.text}-${index}`}
+                    data-testid={button.dataTestId ?? defaultTestId}
+                    variant={
+                      button.variant === 'ghost' ? 'ghost' : undefined
+                    }
+                    onClick={button.onClick}
+                    icon={button.icon}
+                    loading={
+                      (isLastButton && loading) || !!button.isLoading
+                    }
+                    disabled={loading || !!button.isDisabled}
+                    colorScheme={
+                      button.variant === 'ghost'
+                        ? button.colorScheme
+                        : button.colorScheme || 'default'
+                    }
+                  >
+                    {button.text}
+                  </Button>
+                )
+              })}
             </Box>
           </Box>
           {errorMessage && (
@@ -296,13 +302,11 @@ export const ModalContainer = ({
 const ModalPortal = ({
   title,
   text,
-  primaryButton,
-  secondaryButton,
+  buttons,
   footerCheckbox,
   onClose,
   errorMessage,
   children,
-  invertButtonColors,
   loading,
   footerJustifyContent,
 }: ModalProps) => {
@@ -313,13 +317,11 @@ const ModalPortal = ({
     <Modal
       title={title}
       text={text}
-      primaryButton={primaryButton}
-      secondaryButton={secondaryButton}
+      buttons={buttons}
       footerCheckbox={footerCheckbox}
       onClose={onClose}
       errorMessage={errorMessage}
       children={children}
-      invertButtonColors={invertButtonColors}
       loading={loading}
       footerJustifyContent={footerJustifyContent}
     />,

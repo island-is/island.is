@@ -50,4 +50,37 @@ describe('Modal', () => {
     expect(alert).toHaveTextContent('Eitthvað fór úrskeiðis')
     expect(alert).toHaveAttribute('aria-live', 'assertive')
   })
+
+  it('renders buttons in order with per-button variants', async () => {
+    const onSecondary = jest.fn()
+    const onPrimary = jest.fn()
+
+    render(
+      <Modal
+        title="Titill"
+        buttons={[
+          {
+            text: 'Hætta við',
+            onClick: onSecondary,
+            variant: 'ghost',
+            dataTestId: 'modalSecondaryButton',
+          },
+          {
+            text: 'Staðfesta',
+            onClick: onPrimary,
+            dataTestId: 'modalPrimaryButton',
+          },
+        ]}
+      />,
+    )
+
+    const secondary = await screen.findByTestId('modalSecondaryButton')
+    const primary = await screen.findByTestId('modalPrimaryButton')
+
+    fireEvent.click(secondary)
+    fireEvent.click(primary)
+
+    expect(onSecondary).toHaveBeenCalledTimes(1)
+    expect(onPrimary).toHaveBeenCalledTimes(1)
+  })
 })
