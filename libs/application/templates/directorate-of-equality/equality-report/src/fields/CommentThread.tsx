@@ -60,6 +60,7 @@ export const CommentThread = ({ application }: FieldBaseProps) => {
           ?.getReportComments?.data as ApplicationReportCommentDto[] | undefined
         if (fetched) setComments(fetched)
       })
+      .catch(() => toast.error(formatMessage(messages.comments.loadError)))
       .finally(() => setIsLoading(false))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -76,10 +77,7 @@ export const CommentThread = ({ application }: FieldBaseProps) => {
         variables: {
           input: {
             id: application.id,
-            answers: {
-              ...application.answers,
-              comment: { newMessage: draft },
-            },
+            answers: { comment: { newMessage: draft } },
           },
           locale,
         },
@@ -106,6 +104,15 @@ export const CommentThread = ({ application }: FieldBaseProps) => {
       if (newComment) {
         setComments((prev) => [...prev, newComment])
         setValue('comment.newMessage', '')
+        await updateApplication({
+          variables: {
+            input: {
+              id: application.id,
+              answers: { comment: { newMessage: '' } },
+            },
+            locale,
+          },
+        })
       } else {
         toast.error(formatMessage(messages.comments.sendError))
       }

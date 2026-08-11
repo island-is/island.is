@@ -29,7 +29,7 @@ export const buildCommentThreadSection = ({
     children: [
       buildMultiField({
         id: 'commentThreadMultiField',
-        title: messages.comments.title,
+        title: messages.comments.sectionTitle,
         children: [
           buildCustomField({
             id: 'commentThread',

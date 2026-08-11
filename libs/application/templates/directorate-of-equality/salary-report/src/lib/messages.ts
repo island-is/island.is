@@ -1063,6 +1063,10 @@ export const messages = {
       id: 'doe.sr.application:comments.sendError',
       defaultMessage: 'Ekki tókst að senda skilaboð, reyndu aftur.',
     },
+    loadError: {
+      id: 'doe.sr.application:comments.loadError',
+      defaultMessage: 'Ekki tókst að sækja skilaboð, reyndu aftur.',
+    },
   }),
 
   rejected: defineMessages({
