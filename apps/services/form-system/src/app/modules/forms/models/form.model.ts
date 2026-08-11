@@ -68,7 +68,7 @@ export class Form extends Model<Form> {
     allowNull: true,
     defaultValue: null,
   })
-  invalidationDate?: Date
+  invalidationDate?: Date | null
 
   @CreatedAt
   created!: CreationOptional<Date>
@@ -150,6 +150,13 @@ export class Form extends Model<Form> {
     defaultValue: false,
   })
   allowProceedOnValidationFail!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  isInaccessible!: boolean
 
   @Column({
     type: DataType.BOOLEAN,
