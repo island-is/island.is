@@ -50,7 +50,7 @@ export interface NewProblem extends BaseProblem {
 
 Add your problem interface to the [Problem](src/Problem.ts) union type.
 
-Finally, add the new problem type to docs.devland.is. Note: this used to be done by editing a `handbook/` folder in this repo, but that content was removed in 2023 when Gitbook sync was dropped — check with the current docs/platform team owners for how to publish the page. Make sure the documentation URL matches your problem type URL.
+Finally, add the new problem type to our [docs](../../../handbook/reference/problems/README.md). Make sure the documentation URL matches your problem type URL.
 
 Check out the [`@island.is/nest/problem`](../../nest/problem/README.md#custom-problems) docs on how to return your new custom problem.
 
