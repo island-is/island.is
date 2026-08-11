@@ -1,7 +1,7 @@
 import each from 'jest-each'
 import { v4 as uuid } from 'uuid'
 
-import { NotFoundException } from '@nestjs/common'
+import { NotFoundException, PayloadTooLargeException } from '@nestjs/common'
 
 import {
   CaseFileCategory,
@@ -360,6 +360,35 @@ describe('InternalFileController - Deliver case file to court', () => {
     it('should throw error', () => {
       expect(then.error).toBeInstanceOf(Error)
       expect(then.error.message).toBe('Some error')
+    })
+  })
+
+  describe('file is too large for the court service', () => {
+    const caseId = uuid()
+    const theCase = { id: caseId } as Case
+    const fileId = uuid()
+    const key = `${caseId}/${uuid()}/test.txt`
+    const caseFile = { id: fileId, key, isKeyAccessible: true } as CaseFile
+    const content = Buffer.from('Test content')
+    let then: Then
+
+    beforeEach(async () => {
+      const mockObjectExists = mockAwsS3Service.objectExists as jest.Mock
+      mockObjectExists.mockResolvedValueOnce(true)
+      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
+      mockGetObject.mockResolvedValueOnce(content)
+      const mockCreateDocument = mockCourtService.createDocument as jest.Mock
+      mockCreateDocument.mockRejectedValueOnce(new PayloadTooLargeException())
+
+      then = await givenWhenThen(caseId, fileId, theCase, caseFile)
+    })
+
+    it('should not mark the file as stored in court', () => {
+      expect(mockFileModel.update).not.toHaveBeenCalled()
+    })
+
+    it('should complete the delivery so that it is not retried', () => {
+      expect(then.result).toEqual({ delivered: true })
     })
   })
 

@@ -36,6 +36,7 @@ import {
 import { nowFactory } from '../../factories'
 import { createConfirmedPdf, getCaseFileHash } from '../../formatters'
 import { hasConfirmableCaseFileCategories } from '../../formatters/confirmation/confirmedPdf'
+import { findAppealCaseOfCaseFile } from '../appeal-case'
 import { AwsS3Service } from '../aws-s3'
 import { InternalCaseService } from '../case/internalCase.service'
 import { CourtDocumentFolder, CourtService } from '../court'
@@ -422,11 +423,7 @@ export class FileService {
         CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
       ].includes(file.category)
     ) {
-      const appealCase = file.rulingFileId
-        ? theCase.rulingOrderAppealCases?.find(
-            (a) => a.rulingFileId === file.rulingFileId,
-          )
-        : theCase.appealCase
+      const appealCase = findAppealCaseOfCaseFile(theCase, file)
 
       if (appealCase) {
         addMessagesToQueue({

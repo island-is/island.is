@@ -1,6 +1,11 @@
-import { Op } from 'sequelize'
+import { Op, UniqueConstraintError } from 'sequelize'
 
-import { Inject, Injectable, NotFoundException } from '@nestjs/common'
+import {
+  ConflictException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
@@ -108,7 +113,17 @@ export class UserService {
   }
 
   async create(userToCreate: CreateUserDto): Promise<User> {
-    return this.userModel.create({ ...userToCreate })
+    try {
+      return await this.userModel.create({ ...userToCreate })
+    } catch (error) {
+      if (error instanceof UniqueConstraintError) {
+        throw new ConflictException(
+          'A user with this national id, role and institution already exists',
+        )
+      }
+
+      throw error
+    }
   }
 
   async update(userId: string, update: UpdateUserDto): Promise<User> {

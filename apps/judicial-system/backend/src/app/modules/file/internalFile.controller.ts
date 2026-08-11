@@ -19,6 +19,7 @@ import {
 
 import { AppealCaseExistsGuard, CurrentAppealCase } from '../appeal-case'
 import { CaseExistsGuard, CurrentCase } from '../case'
+import { isFileTooLargeForCourt } from '../court'
 import { AppealCase, Case, CaseFile } from '../repository'
 import { DeliverDto } from './dto/deliver.dto'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
@@ -70,13 +71,21 @@ export class InternalFileController {
   ): Promise<DeliverResponse> {
     this.logger.debug(`Delivering file ${fileId} of case ${caseId} to court`)
 
-    const { success } = await this.fileService.uploadCaseFileToCourt(
-      theCase,
-      caseFile,
-      deliverDto.user,
-    )
+    try {
+      const { success } = await this.fileService.uploadCaseFileToCourt(
+        theCase,
+        caseFile,
+        deliverDto.user,
+      )
 
-    return { delivered: success }
+      return { delivered: success }
+    } catch (reason) {
+      if (isFileTooLargeForCourt(reason)) {
+        return { delivered: true }
+      }
+
+      throw reason
+    }
   }
 
   @UseGuards(AppealCaseExistsGuard)

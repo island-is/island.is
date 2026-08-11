@@ -1124,6 +1124,16 @@ export const m = defineMessages({
     description:
       'You do not have the correct delegation to open this application type',
   },
+  applicationInaccessibleHeader: {
+    id: 'form.system:application-inaccessible-header',
+    defaultMessage: 'Umsóknartegundin er ekki aðgengileg',
+    description: 'The application type is not accessible',
+  },
+  applicationInaccessibleDescription: {
+    id: 'form.system:application-inaccessible-description',
+    defaultMessage: 'Þessi umsóknartegund hefur verið tekin úr notkun.',
+    description: 'This application type has been deprecated.',
+  },
   errorFetchingApplication: {
     id: 'form.system:error-fetching-application',
     defaultMessage: 'Villa kom upp við að sækja umsóknina.',
