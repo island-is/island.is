@@ -314,6 +314,7 @@ const HealthConversations = () => {
                         : ''}
                     </Text>
                     <MessageActions
+                      size="small"
                       colorScheme="negative"
                       bookmarked={item.isStarred}
                       archived={item.isArchived}

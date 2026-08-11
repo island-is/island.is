@@ -15,7 +15,7 @@ type MessageActionsProps = {
   loading?: boolean
   stashLabels?: { add: string; remove: string }
   colorScheme?: 'light' | 'negative'
-  size?: 'small' | 'default' | 'large'
+  size?: 'small' | 'default' | 'medium' | 'large'
 }
 
 const blurAfter =
@@ -35,7 +35,7 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
   loading,
   stashLabels,
   colorScheme = 'light',
-  size = 'small',
+  size = 'default',
 }) => {
   const { formatMessage } = useLocale()
 
@@ -50,7 +50,7 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
   return (
     <Box
       className={cn(styles.filterActionButtons, {
-        [styles.hoverWhite]: colorScheme === 'light',
+        [styles.circleActionButtons]: colorScheme === 'light',
       })}
       display="flex"
       height="full"

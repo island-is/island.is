@@ -6,20 +6,19 @@ export const filterActionButtons = style({
   gap: '8px',
 })
 
-globalStyle(`${filterActionButtons} button`, {
-  backgroundColor: 'transparent',
-  boxShadow: 'none',
+export const circleActionButtons = style({})
+
+globalStyle(`${circleActionButtons} button`, {
+  backgroundColor: theme.color.white,
+  width: 40,
+  height: 40,
 })
 
-globalStyle(
-  `${filterActionButtons} button:hover, ${filterActionButtons} button:focus-visible`,
-  {
-    backgroundColor: theme.color.blue100,
-    boxShadow: 'none',
-  },
-)
+globalStyle(`${circleActionButtons} button:hover`, {
+  backgroundColor: theme.color.blue100,
+})
 
-export const hoverWhite = style({})
-globalStyle(`${hoverWhite} button:hover, ${hoverWhite} button:focus-visible`, {
-  backgroundColor: theme.color.white,
+globalStyle(`${circleActionButtons} button svg`, {
+  width: 20,
+  height: 20,
 })
