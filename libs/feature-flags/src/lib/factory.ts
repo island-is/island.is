@@ -8,7 +8,7 @@ import {
 export const clientCache = new Map<string, FeatureFlagClient>()
 
 const createCacheKey = (config?: FeatureFlagClientProps): string => {
-  return config?.sdkKey || process.env.CONFIGCAT_SDK_KEY || ''
+  return config?.sdkKey || process.env['CONFIGCAT_SDK_KEY'] || ''
 }
 
 export const createClientFactory = (moduleProvider: ConfigCatModule) => {

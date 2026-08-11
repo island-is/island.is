@@ -162,10 +162,7 @@ export const serviceSetup = (services: {
       ),
       DOWNLOAD_SERVICE_BASE_PATH: {
         prod: 'https://api.island.is',
-        // TEMPORARY — hardcoded to this review app's own download-service so
-        // feature-flag-gated testing actually hits the branch's code instead
-        // of the shared dev01 download-service. Revert before merging.
-        dev: 'https://refactordownload-service-review-api.dev01.devland.is',
+        dev: 'https://api.dev01.devland.is',
         staging: 'https://api.staging01.devland.is',
       },
       ENDORSEMENT_SYSTEM_BASE_API_URL: ref(

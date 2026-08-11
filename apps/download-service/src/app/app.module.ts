@@ -27,6 +27,7 @@ import { FinanceDocumentController } from './modules/finance-documents/document.
 import { environment } from '../environments'
 import { VehicleController } from './modules/vehicles-documents/vehicle-document.controller'
 import { EducationController } from './modules/education-documents/education-document.controller'
+import { EducationDocumentsConfig } from './modules/education-documents/education-document.config'
 import { RegulationDocumentsController } from './modules/regulation-documents/regulation-documents.controller'
 import { WorkMachinesController } from './modules/work-machines-documents/work-machines-documents.controller'
 import { HealthPaymentsOverviewController } from './modules/health/payment-overview-documents.controller'
@@ -144,6 +145,7 @@ import {
         HmsRentalAgreementClientConfig,
         PrimarySchoolClientConfig,
         VmstUnemploymentClientConfig,
+        EducationDocumentsConfig,
       ],
     }),
   ],

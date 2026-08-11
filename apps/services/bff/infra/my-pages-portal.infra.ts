@@ -17,14 +17,7 @@ export const serviceSetup = (
     .env({
       BFF_ALLOWED_EXTERNAL_API_URLS: {
         local: json(['http://localhost:3377/download/v1']),
-        // TEMPORARY — added this review app's own api host so feature-flag-gated
-        // testing hits the branch's download-service instead of the shared
-        // dev01 one (see DOWNLOAD_SERVICE_BASE_PATH in apps/api/infra/api.ts).
-        // Revert before merging.
-        dev: json([
-          'https://api.dev01.devland.is',
-          'https://refactordownload-service-review-api.dev01.devland.is',
-        ]),
+        dev: json(['https://api.dev01.devland.is']),
         staging: json(['https://api.staging01.devland.is']),
         prod: json(['https://api.island.is']),
       },

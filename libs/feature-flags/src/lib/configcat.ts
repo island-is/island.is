@@ -18,7 +18,7 @@ export const createFeatureFlagClient = (
   config: FeatureFlagClientProps,
   moduleProvider: ConfigCatModule,
 ): FeatureFlagClient => {
-  const resolvedSdkKey = config.sdkKey || process.env.CONFIGCAT_SDK_KEY
+  const resolvedSdkKey = config.sdkKey || process.env['CONFIGCAT_SDK_KEY']
 
   if (!resolvedSdkKey) {
     throw new Error(SDK_KEY_ERROR)

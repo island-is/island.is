@@ -7,4 +7,4 @@ import { ServerSideFeatureClientType } from './types'
 export const ServerSideFeatureClient: ServerSideFeatureClientType =
   typeof window !== 'undefined'
     ? new ServerSideFeaturesOnTheClientSide()
-    : new ServerSideFeatures(process.env.SERVERSIDE_FEATURES_ON)
+    : new ServerSideFeatures(process.env['SERVERSIDE_FEATURES_ON'])
