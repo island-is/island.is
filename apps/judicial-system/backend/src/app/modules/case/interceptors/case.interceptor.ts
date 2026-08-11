@@ -790,7 +790,9 @@ const transformCase = (
     defendants: transformDefendants({
       defendants: transformedDefendants,
       indictmentRulingDecision: theCase.indictmentRulingDecision,
-      rulingDate: theCase.rulingDate,
+      // Same effective ruling date the case level uses, so defendant deadlines
+      // never fall back to a ruling date the user is not presented with.
+      rulingDate: stateOverride.rulingDate ?? theCase.rulingDate,
     }),
     civilClaimants: transformCivilClaimants({
       civilClaimants: theCase.civilClaimants,
