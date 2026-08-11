@@ -107,6 +107,7 @@ const dropdownBase: StyleWithSelectors = {
   right: spacing[0],
   left: spacing[0],
   borderRadius: 'unset',
+  // Fallback for browsers without dvh
   height: `calc(100vh - ${theme.headerHeight.small}px)`,
   maxHeight: `calc(100vh - ${theme.headerHeight.small}px)`,
 }
@@ -119,9 +120,22 @@ const dropdownBaseMD: StyleWithSelectors = {
   height: 'auto',
 }
 
+// Mobile browser chrome (address bar) resizes the visual viewport as the
+// user scrolls, which makes a static 100vh leave a gap at the bottom of
+// this fixed-position drawer. Small dvh upgrade when supported.
+const dvhUpgrade = {
+  '@supports': {
+    '(height: 100dvh)': {
+      height: `calc(100dvh - ${theme.headerHeight.small}px)`,
+      maxHeight: `calc(100dvh - ${theme.headerHeight.small}px)`,
+    },
+  },
+}
+
 export const dropdown = style({
   ...dropdownBase,
   overflow: 'auto',
+  ...dvhUpgrade,
   ...themeUtils.responsiveStyle({
     md: {
       ...dropdownBaseMD,
@@ -137,6 +151,7 @@ export const dropdown = style({
 
 export const fullScreen = style({
   ...dropdownBase,
+  ...dvhUpgrade,
   ...themeUtils.responsiveStyle({
     md: {
       ...dropdownBaseMD,

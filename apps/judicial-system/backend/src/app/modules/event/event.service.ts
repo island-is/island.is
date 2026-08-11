@@ -128,7 +128,6 @@ export class EventService {
   async postEvent(
     event: Event,
     theCase: Case,
-    eventOnly = false,
     info?: { [key: string]: string | boolean | Date | undefined },
   ) {
     try {
@@ -136,9 +135,7 @@ export class EventService {
         return
       }
 
-      const title = `${eventHeading[event]}${
-        eventOnly ? ' - aðgerð ekki framkvæmd' : ''
-      }`
+      const title = eventHeading[event]
       const typeText = `${capitalize(formatCaseType(theCase.type))}${
         isIndictmentCase(theCase.type)
           ? `:(${readableIndictmentSubtypes(
