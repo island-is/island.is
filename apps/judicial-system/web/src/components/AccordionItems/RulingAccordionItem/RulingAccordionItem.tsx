@@ -2,10 +2,11 @@ import { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AccordionItem, Box, Text } from '@island.is/island-ui/core'
+import { isRestrictionCase } from '@island.is/judicial-system/types'
 import { rulingAccordion as m } from '@island.is/judicial-system-web/messages'
 import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { AccordionListItem, SectionHeading } from '../..'
+import { AccordionListItem, HtmlContent, SectionHeading } from '../..'
 
 interface Props {
   workingCase: Case
@@ -48,7 +49,11 @@ const RulingAccordionItem: FC<Props> = ({
             <AccordionListItem
               title={formatMessage(m.sections.courtCaseFacts.title)}
             >
-              <Text>{workingCase.courtCaseFacts}</Text>
+              {isRestrictionCase(workingCase.type) ? (
+                <HtmlContent html={workingCase.courtCaseFacts ?? ''} />
+              ) : (
+                <Text>{workingCase.courtCaseFacts}</Text>
+              )}
             </AccordionListItem>
             <AccordionListItem
               title={formatMessage(m.sections.courtLegalArguments.title)}

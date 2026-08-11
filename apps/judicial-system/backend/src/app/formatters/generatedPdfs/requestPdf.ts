@@ -31,6 +31,7 @@ import {
   addNormalJustifiedText,
   addNormalText,
   addPoliceStar,
+  addRichText,
   setLineGap,
   setTitle,
 } from '../pdfHelpers'
@@ -190,10 +191,9 @@ const constructRestrictionRequestPdf = (
   addLargeText(doc, formatMessage(m.factsAndArguments.heading), 'Times-Bold')
   addEmptyLines(doc)
   addMediumText(doc, formatMessage(m.factsAndArguments.facts))
-  addNormalJustifiedText(
+  addRichText(
     doc,
     theCase.caseFacts ?? formatMessage(m.factsAndArguments.noFacts),
-    'Times-Roman',
   )
   addEmptyLines(doc)
   addMediumText(doc, formatMessage(m.factsAndArguments.arguments), 'Times-Bold')

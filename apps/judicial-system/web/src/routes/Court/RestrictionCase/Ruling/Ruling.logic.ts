@@ -2,6 +2,7 @@ import { IntlShape } from 'react-intl'
 
 import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
+import { ruling } from '@island.is/judicial-system-web/messages'
 import {
   Case,
   CaseDecision,
@@ -10,6 +11,19 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './Ruling.strings'
+
+export const getCourtCaseFactsPrefill = (
+  formatMessage: IntlShape['formatMessage'],
+  caseFacts?: string | null,
+): string | undefined => {
+  if (!caseFacts) {
+    return undefined
+  }
+
+  const prefix = formatMessage(ruling.sections.courtCaseFacts.prefillPrefix)
+
+  return `<p>${prefix}</p>${caseFacts}`
+}
 
 export const getConclusionAutofill = (
   formatMessage: IntlShape['formatMessage'],
