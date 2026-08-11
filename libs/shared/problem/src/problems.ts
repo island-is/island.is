@@ -42,6 +42,10 @@ export interface AttemptFailedProblem extends BaseProblem {
   fields?: ValidationFailedFields
 }
 
+export interface RequestTimeoutProblem extends BaseProblem {
+  type: ProblemType.REQUEST_TIMEOUT
+}
+
 export interface ProviderErrorReason {
   title: StaticText
   summary: StaticText

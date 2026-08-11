@@ -4,6 +4,7 @@ import { useAuth } from '@island.is/testing/nest'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { PrimarySchoolClientService } from '@island.is/clients/mms/primary-school'
 import { AuditService } from '@island.is/nest/audit'
+import { TimeoutExceededError } from '@island.is/nest/problem'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { setup } from '../../../../test/setup'
 import { EducationDocumentsConfig } from './education-document.config'
@@ -18,6 +19,7 @@ const fakeLogger = {
   error: jest.fn(),
   warn: jest.fn(),
   info: jest.fn(),
+  debug: jest.fn(),
   log: jest.fn(),
   child: jest.fn().mockReturnThis(),
 }
@@ -66,7 +68,7 @@ describe('EducationController — getPrimarySchoolAssignmentResultPdf', () => {
 
     await post()
 
-    expect(fakeLogger.info).toHaveBeenCalledWith(
+    expect(fakeLogger.debug).toHaveBeenCalledWith(
       'Serving primary school assignment result PDF request',
       expect.objectContaining({
         studentId: 'student1',
@@ -141,7 +143,7 @@ describe('EducationController — getPrimarySchoolAssignmentResultPdf', () => {
     expect(signal.aborted).toBe(false)
   })
 
-  it('rethrows a client AbortError as a TimeoutExceededError naming the configured timeout, still resulting in a 500 problem+json response', async () => {
+  it('rethrows a client AbortError as a TimeoutExceededError naming the configured timeout, resulting in a 504 problem+json response', async () => {
     const abortError = Object.assign(new Error('The user aborted a request.'), {
       name: 'AbortError',
     })
@@ -149,11 +151,11 @@ describe('EducationController — getPrimarySchoolAssignmentResultPdf', () => {
 
     const res = await post()
 
-    expect(res.status).toBe(500)
+    expect(res.status).toBe(504)
     expect(res.headers['content-type']).toContain('application/problem+json')
     expect(fakeLogger.error).toHaveBeenCalled()
     const loggedError = fakeLogger.error.mock.calls[0][0]
-    expect(loggedError.name).toBe('TimeoutExceededError')
+    expect(loggedError).toBeInstanceOf(TimeoutExceededError)
     expect(loggedError.message).toContain(String(TEST_TIMEOUT_MS))
   })
 })

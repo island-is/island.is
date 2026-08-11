@@ -1,0 +1,18 @@
+import { TimeoutExceededError } from '@island.is/nest/problem'
+import { acceptableTimeSignal } from '../../utils/acceptableTime'
+
+export const withTimeout = async <T>(
+  timeoutMs: number,
+  fetchFn: (signal: AbortSignal) => Promise<T>,
+): Promise<T> => {
+  const signal = acceptableTimeSignal(timeoutMs)
+
+  try {
+    return await fetchFn(signal)
+  } catch (error) {
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new TimeoutExceededError(timeoutMs)
+    }
+    throw error
+  }
+}

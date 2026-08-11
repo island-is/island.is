@@ -36,7 +36,7 @@ import {
 import { unmaskString } from '@island.is/shared/utils'
 import { PrimarySchoolAssignmentResultParamsDto } from './dto/primarySchoolAssignmentResultParams.dto'
 import { EducationDocumentsConfig } from './education-document.config'
-import { acceptableTimeSignal } from '../../utils/acceptableTime'
+import { withTimeout } from './withTimeout'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.education)
@@ -115,50 +115,28 @@ export class EducationController {
     content: { 'application/pdf': {} },
     description: 'Get a primary school assignment result PDF',
   })
-  // No manual catch/logging around the client call — ProblemModule's
-  // ErrorFilter/HttpExceptionFilter handle logging (via the app's real
-  // structured logger) and response shaping. withLoggingContext tags every
-  // log line made within this scope — both the client's own withErrorLog
-  // call and ProblemModule's eventual log — with studentId and
-  // assignmentResultId, without mutating the error or adding a new log call.
   async getPrimarySchoolAssignmentResultPdf(
     @Param() params: PrimarySchoolAssignmentResultParamsDto,
     @CurrentUser() user: User,
   ) {
     const { studentId, assignmentResultId } = params
 
-    this.logger.info('Serving primary school assignment result PDF request', {
+    this.logger.debug('Serving primary school assignment result PDF request', {
       studentId,
       assignmentResultId,
     })
 
     return withLoggingContext({ studentId, assignmentResultId }, async () => {
-      const timeoutMs = this.educationDocumentsConfig.primarySchoolPdfTimeoutMs
-      const signal = acceptableTimeSignal(timeoutMs)
-
-      let blob: Blob | File | null
-      try {
-        blob = await this.primarySchoolService.getAssignmentResultPdf(
-          user,
-          studentId,
-          assignmentResultId,
-          signal,
-        )
-      } catch (error) {
-        // node-fetch always throws its own hardcoded AbortError regardless of
-        // the signal's reason, so without a rethrow the eventual ProblemModule
-        // log would just say "the user aborted a request," with no indication
-        // of why or after how long.
-        if (error instanceof Error && error.name === 'AbortError') {
-          throw Object.assign(
-            new Error(
-              `download-service timeout exceeded (over ${timeoutMs}ms)`,
-            ),
-            { name: 'TimeoutExceededError' },
-          )
-        }
-        throw error
-      }
+      const blob = await withTimeout(
+        this.educationDocumentsConfig.primarySchoolPdfTimeoutMs,
+        (signal) =>
+          this.primarySchoolService.getAssignmentResultPdf(
+            user,
+            studentId,
+            assignmentResultId,
+            signal,
+          ),
+      )
 
       if (!blob) {
         throw new NotFoundException(
