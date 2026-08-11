@@ -2,6 +2,7 @@ import each from 'jest-each'
 
 import {
   AppealCaseState,
+  AppealDecisionPartyRole,
   AppealEventType,
   AppealOrigin,
   CaseAppealDecision,
@@ -32,9 +33,19 @@ describe('getRequestCaseLevelAppealInfo', () => {
     const theCase = {
       type: CaseType.CUSTODY,
       rulingDate: new Date('2022-06-15T19:50:08.033Z'),
-      accusedAppealDecision: CaseAppealDecision.POSTPONE,
-      prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
-    } as Case
+      appealDecisions: [
+        {
+          rulingFileId: null,
+          partyRole: AppealDecisionPartyRole.DEFENDANT,
+          decision: CaseAppealDecision.POSTPONE,
+        },
+        {
+          rulingFileId: null,
+          partyRole: AppealDecisionPartyRole.PROSECUTOR,
+          decision: CaseAppealDecision.POSTPONE,
+        },
+      ],
+    } as unknown as Case
 
     const info = getRequestCaseLevelAppealInfo(theCase)
 
@@ -52,10 +63,20 @@ describe('getRequestCaseLevelAppealInfo', () => {
     const theCase = {
       type: CaseType.CUSTODY,
       rulingDate: new Date('2022-06-15T19:50:08.033Z'),
-      accusedAppealDecision: CaseAppealDecision.APPEAL,
-      prosecutorAppealDecision: CaseAppealDecision.NOT_APPLICABLE,
+      appealDecisions: [
+        {
+          rulingFileId: null,
+          partyRole: AppealDecisionPartyRole.DEFENDANT,
+          decision: CaseAppealDecision.APPEAL,
+        },
+        {
+          rulingFileId: null,
+          partyRole: AppealDecisionPartyRole.PROSECUTOR,
+          decision: CaseAppealDecision.NOT_APPLICABLE,
+        },
+      ],
       appealCase: { appealState: AppealCaseState.APPEALED } as AppealCase,
-    } as Case
+    } as unknown as Case
 
     const info = getRequestCaseLevelAppealInfo(theCase)
 
@@ -73,10 +94,20 @@ describe('getRequestCaseLevelAppealInfo', () => {
     const theCase = {
       type: CaseType.CUSTODY,
       rulingDate: new Date('2022-06-15T19:50:08.033Z'),
-      accusedAppealDecision: CaseAppealDecision.ACCEPT,
-      prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
+      appealDecisions: [
+        {
+          rulingFileId: null,
+          partyRole: AppealDecisionPartyRole.DEFENDANT,
+          decision: CaseAppealDecision.ACCEPT,
+        },
+        {
+          rulingFileId: null,
+          partyRole: AppealDecisionPartyRole.PROSECUTOR,
+          decision: CaseAppealDecision.ACCEPT,
+        },
+      ],
       appealCase: { appealState: AppealCaseState.APPEALED } as AppealCase,
-    } as Case
+    } as unknown as Case
 
     const info = getRequestCaseLevelAppealInfo(theCase)
 
@@ -97,8 +128,14 @@ describe('getRequestCaseLevelAppealInfo', () => {
       const theCase = {
         type: CaseType.CUSTODY,
         rulingDate: new Date('2022-06-15T19:50:08.033Z'),
-        prosecutorAppealDecision: decision,
-      } as Case
+        appealDecisions: [
+          {
+            rulingFileId: null,
+            partyRole: AppealDecisionPartyRole.PROSECUTOR,
+            decision,
+          },
+        ],
+      } as unknown as Case
 
       const info = getRequestCaseLevelAppealInfo(theCase)
 
@@ -117,8 +154,14 @@ describe('getRequestCaseLevelAppealInfo', () => {
       const theCase = {
         type: CaseType.CUSTODY,
         rulingDate: new Date('2022-06-15T19:50:08.033Z'),
-        accusedAppealDecision: decision,
-      } as Case
+        appealDecisions: [
+          {
+            rulingFileId: null,
+            partyRole: AppealDecisionPartyRole.DEFENDANT,
+            decision,
+          },
+        ],
+      } as unknown as Case
 
       const info = getRequestCaseLevelAppealInfo(theCase)
 
