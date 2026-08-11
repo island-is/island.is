@@ -16,7 +16,6 @@ import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { messages } from '../../lib/messages'
 import {
-  EDUCATION_OPTIONS,
   GENDER_OPTIONS,
   SALARY_COMPONENT_GROUPS,
   SALARY_COMPONENT_KEYS,
@@ -25,16 +24,17 @@ import type { Employee, SalaryComponentKey } from '../../utils/types'
 import { computeIdentifier } from './utils'
 
 type Props = {
+  // Present when editing an existing employee; omitted when adding a new one.
+  employee?: Employee
   nextOrdinal: number
   identifierPrefix: string
-  onAdd: (employee: Employee) => void
+  onSubmit: (employee: Employee) => void
   onCancel: () => void
 }
 
 type FormValues = {
   roleTitle: string
   gender: string
-  education: string
   field: string
   department: string
   startDate: string
@@ -45,7 +45,6 @@ type FormValues = {
 const DEFAULTS: FormValues = {
   roleTitle: '',
   gender: '',
-  education: '',
   field: '',
   department: '',
   startDate: '',
@@ -56,15 +55,34 @@ const DEFAULTS: FormValues = {
   ) as Record<SalaryComponentKey, string>),
 }
 
-export const AddEmployeeForm: FC<Props> = ({
+const valuesFromEmployee = (employee: Employee): FormValues => ({
+  roleTitle: employee.roleTitle,
+  gender: employee.gender,
+  field: employee.field ?? '',
+  department: employee.department ?? '',
+  startDate: employee.startDate,
+  workRatio: String(Math.round((employee.workRatio ?? 0) * 100)),
+  baseSalary: String(employee.baseSalary ?? ''),
+  ...(Object.fromEntries(
+    SALARY_COMPONENT_KEYS.map((key) => {
+      const value = employee[key]
+      return [key, value == null ? '' : String(value)]
+    }),
+  ) as Record<SalaryComponentKey, string>),
+})
+
+export const EmployeeForm: FC<Props> = ({
+  employee,
   nextOrdinal,
   identifierPrefix,
-  onAdd,
+  onSubmit,
   onCancel,
 }) => {
   const { formatMessage, lang } = useLocale()
   const m = messages.report.employees
-  const methods = useForm<FormValues>({ defaultValues: DEFAULTS })
+  const methods = useForm<FormValues>({
+    defaultValues: employee ? valuesFromEmployee(employee) : DEFAULTS,
+  })
   const {
     formState: { errors },
   } = methods
@@ -105,19 +123,20 @@ export const AddEmployeeForm: FC<Props> = ({
       ]),
     ) as Record<SalaryComponentKey, number | null>
 
-    onAdd({
-      ordinal: nextOrdinal,
-      identifier: computeIdentifier(identifierPrefix, nextOrdinal),
+    onSubmit({
+      ordinal: employee?.ordinal ?? nextOrdinal,
+      identifier:
+        employee?.identifier ??
+        computeIdentifier(identifierPrefix, nextOrdinal),
       roleTitle: data.roleTitle,
       gender: data.gender,
-      education: data.education,
       field: data.field,
       department: data.department,
       startDate: data.startDate,
       workRatio: (Number(data.workRatio) || 0) / 100,
       baseSalary: Number(data.baseSalary) || 0,
       ...components,
-      personalStepAssignments: [],
+      personalStepAssignments: employee?.personalStepAssignments ?? [],
     })
   }
 
@@ -125,7 +144,7 @@ export const AddEmployeeForm: FC<Props> = ({
     <FormProvider {...methods}>
       <Box background="blue100" borderRadius="large" padding={4} marginTop={3}>
         <Text variant="h4" marginBottom={3}>
-          {formatMessage(m.addFormTitle)}
+          {formatMessage(employee ? m.editFormTitle : m.addFormTitle)}
         </Text>
         <GridRow rowGap={[2, 2, 2, 3]}>
           <GridColumn span={['12/12', '6/12']}>
@@ -154,27 +173,12 @@ export const AddEmployeeForm: FC<Props> = ({
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
-            <SelectController
-              id="education"
-              name="education"
-              label={formatMessage(m.educationLabel)}
-              options={EDUCATION_OPTIONS}
-              backgroundColor="white"
-              size="sm"
-              required
-              rules={{ required: requiredMsg }}
-              error={errors.education?.message}
-            />
-          </GridColumn>
-          <GridColumn span={['12/12', '6/12']}>
             <InputController
               id="field"
               name="field"
               label={formatMessage(m.fieldLabel)}
               backgroundColor="white"
               size="sm"
-              required
-              rules={{ required: requiredMsg }}
               error={errors.field?.message}
             />
           </GridColumn>
@@ -185,8 +189,6 @@ export const AddEmployeeForm: FC<Props> = ({
               label={formatMessage(m.departmentLabel)}
               backgroundColor="white"
               size="sm"
-              required
-              rules={{ required: requiredMsg }}
               error={errors.department?.message}
             />
           </GridColumn>

@@ -1,47 +1,55 @@
 import { defineTemplateApi } from '@island.is/application/types'
+import { ApiActions } from '../utils/constants'
 
 export { IdentityApi, UserProfileApi } from '@island.is/application/types'
 
+// PREREQUISITES providers — independent of each other, order is inconsequential
 export const CompanyRegistryApi = defineTemplateApi({
-  action: 'getCompanyData',
+  action: ApiActions.getCompanyData,
   externalDataId: 'companyData',
   namespace: 'DirectorateOfEquality',
 })
 
 export const DoeCompanyApi = defineTemplateApi({
-  action: 'getDoeCompany',
+  action: ApiActions.getDoeCompany,
   externalDataId: 'doeCompany',
   namespace: 'DirectorateOfEquality',
 })
 
 export const ActiveEqualityReportApi = defineTemplateApi({
-  action: 'getActiveEqualityReport',
+  action: ApiActions.getActiveEqualityReport,
   externalDataId: 'activeEqualityReport',
   namespace: 'DirectorateOfEquality',
 })
 
 export const BlankExcelTemplateApi = defineTemplateApi({
-  action: 'getBlankExcelTemplate',
+  action: ApiActions.getBlankExcelTemplate,
   externalDataId: 'blankExcelTemplate',
   namespace: 'DirectorateOfEquality',
 })
 
+// On-demand providers below — outside PREREQUISITES, role.api only grants
+// permission for updateApplicationExternalData; it doesn't batch-execute the
+// list. Each is invoked independently from its own screen action (import,
+// parse, analyze, comment), so relative order in a role's api array doesn't
+// matter.
+
 export const ImportPresignApi = defineTemplateApi({
-  action: 'presignImportUpload',
+  action: ApiActions.presignImportUpload,
   externalDataId: 'importPresign',
   namespace: 'DirectorateOfEquality',
   throwOnError: false,
 })
 
 export const ParsedSalaryReportApi = defineTemplateApi({
-  action: 'parseSalaryReportWorkbook',
+  action: ApiActions.parseSalaryReportWorkbook,
   externalDataId: 'parsedSalaryReport',
   namespace: 'DirectorateOfEquality',
   throwOnError: false,
 })
 
 export const SubmitSalaryReportApi = defineTemplateApi({
-  action: 'submitSalaryReport',
+  action: ApiActions.submitSalaryReport,
   externalDataId: 'submitSalaryReport',
   namespace: 'DirectorateOfEquality',
   shouldPersistToExternalData: true,
@@ -49,14 +57,14 @@ export const SubmitSalaryReportApi = defineTemplateApi({
 })
 
 export const SalaryAnalysisApi = defineTemplateApi({
-  action: 'analyzeSalaryReport',
+  action: ApiActions.analyzeSalaryReport,
   externalDataId: 'salaryAnalysisResult',
   namespace: 'DirectorateOfEquality',
   throwOnError: false,
 })
 
 export const EditOutliersApi = defineTemplateApi({
-  action: 'editOutliers',
+  action: ApiActions.editOutliers,
   externalDataId: 'editOutliers',
   namespace: 'DirectorateOfEquality',
   shouldPersistToExternalData: true,

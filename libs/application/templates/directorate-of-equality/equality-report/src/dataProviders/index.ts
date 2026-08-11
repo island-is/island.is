@@ -47,3 +47,10 @@ export const EqualityReportTemplateDocxApi = defineTemplateApi({
   namespace: 'DirectorateOfEquality',
   order: 0,
 })
+
+export const SubmitEqualityReportApi = defineTemplateApi({
+  action: ApiActions.submitEqualityReport,
+  namespace: 'DirectorateOfEquality',
+  shouldPersistToExternalData: true,
+  throwOnError: true,
+})
