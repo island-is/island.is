@@ -103,8 +103,6 @@ export const attributes: (keyof Case)[] = [
   'caseResentExplanation',
   'accusedAppealDecision',
   'prosecutorAppealDecision',
-  'accusedPostponedAppealDate',
-  'prosecutorPostponedAppealDate',
   'prosecutorsOfficeId',
   'indictmentDecision',
   'indictmentRulingDecision',

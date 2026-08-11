@@ -166,8 +166,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     isCustodyIsolation
     isolationToDate
     conclusion
-    accusedPostponedAppealDate
-    prosecutorPostponedAppealDate
     rulingDate
     rulingSignatureDate
     reopenReason
