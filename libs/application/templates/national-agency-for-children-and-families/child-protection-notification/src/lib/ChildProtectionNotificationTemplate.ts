@@ -13,7 +13,6 @@ import {
   DefaultEvents,
   FormModes,
   UserProfileApi,
-  defineTemplateApi,
 } from '@island.is/application/types'
 import { CodeOwners } from '@island.is/shared/constants'
 import { AuthDelegationType } from '@island.is/shared/types'
@@ -25,6 +24,7 @@ import {
   GendersApi,
   GuardianNotAwareReasonsApi,
   IdentityApiProvider,
+  LanguageEnvironmentsApi,
   PostalCodesApi,
   PronounsApi,
   ProtectiveFactorsApi,
@@ -36,7 +36,7 @@ import {
   prerequisitesMessages,
   sharedMessages,
 } from '../lib/messages'
-import { ApiModuleActions, Events, Roles, States } from '../utils/constants'
+import { Events, Roles, States } from '../utils/constants'
 import { getApplicantRole } from '../utils/roleUtils'
 import { dataSchema } from './dataSchema'
 
@@ -63,14 +63,6 @@ const template: ApplicationTemplate<
           progress: 0,
           status: FormModes.DRAFT,
           lifecycle: EphemeralStateLifeCycle,
-          onExit: [
-            defineTemplateApi({
-              action: ApiModuleActions.getLanguageEnvironments,
-              externalDataId: 'languageEnvironments',
-              namespace: ApplicationTypes.CHILD_PROTECTION_NOTIFICATION,
-              throwOnError: true,
-            }),
-          ],
           roles: [
             ...[Roles.MINOR_APPLICANT, Roles.ADULT_PERSONAL_APPLICANT].map(
               (roleId) => ({
@@ -101,6 +93,7 @@ const template: ApplicationTemplate<
                   ChildUnknownNationalIdStatesApi,
                   GuardianNotAwareReasonsApi,
                   SchoolTypesApi,
+                  LanguageEnvironmentsApi,
                 ],
                 delete: true,
               }),
@@ -133,6 +126,7 @@ const template: ApplicationTemplate<
                 ChildUnknownNationalIdStatesApi,
                 GuardianNotAwareReasonsApi,
                 SchoolTypesApi,
+                LanguageEnvironmentsApi,
               ],
               delete: true,
             },

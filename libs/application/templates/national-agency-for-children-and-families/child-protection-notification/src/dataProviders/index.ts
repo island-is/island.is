@@ -71,3 +71,9 @@ export const SchoolTypesApi = defineTemplateApi({
   externalDataId: 'schoolTypes',
   namespace: ApplicationTypes.CHILD_PROTECTION_NOTIFICATION,
 })
+
+export const LanguageEnvironmentsApi = defineTemplateApi({
+  action: ApiModuleActions.getLanguageEnvironments,
+  externalDataId: 'languageEnvironments',
+  namespace: ApplicationTypes.CHILD_PROTECTION_NOTIFICATION,
+})

@@ -68,9 +68,7 @@ export class ChildProtectionNotificationService extends BaseTemplateApiService {
       auth,
       'languageEnvironment',
     )
-    return {
-      languageEnvironmentOptions: keyOptions[0]?.options ?? [],
-    }
+    return keyOptions[0]?.options ?? []
   }
 
   async getUrgencyAssessments({ auth }: TemplateApiModuleActionProps) {

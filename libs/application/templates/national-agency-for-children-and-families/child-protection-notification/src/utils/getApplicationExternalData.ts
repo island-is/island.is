@@ -59,10 +59,7 @@ export const getApplicationExternalData = (
     getValueViaPath<DropDownDto[]>(externalData, 'genders.data') ?? []
 
   const languageEnvironmentOptions =
-    getValueViaPath<Option[]>(
-      externalData,
-      'languageEnvironments.data.languageEnvironmentOptions',
-    ) ?? []
+    getValueViaPath<Option[]>(externalData, 'languageEnvironments.data') ?? []
 
   const urgencyAssessments =
     getValueViaPath<DetailedDropDownDto[]>(
