@@ -112,7 +112,7 @@ function LoginButtonDropdown(props: Props) {
 
   return (
     <>
-      <Hidden above="sm">
+      <Hidden above="md">
         <DropdownMenu
           fixed
           menuLabel={t.login}
@@ -130,7 +130,7 @@ function LoginButtonDropdown(props: Props) {
           items={items}
         />
       </Hidden>
-      <Hidden below="md">
+      <Hidden below="lg">
         <DropdownMenu
           fixed
           menuLabel={t.login}
@@ -158,7 +158,7 @@ const LoginButtonLink = (props: Props) => {
 
   return (
     <>
-      <Hidden above="sm">
+      <Hidden above="md">
         <a href={ProjectBasePath.ServicePortal} tabIndex={-1}>
           <Button
             colorScheme={props.colorScheme}
@@ -169,7 +169,7 @@ const LoginButtonLink = (props: Props) => {
           />
         </a>
       </Hidden>
-      <Hidden below="md">
+      <Hidden below="lg">
         <a href={ProjectBasePath.ServicePortal} tabIndex={-1}>
           <Button
             colorScheme={props.colorScheme}

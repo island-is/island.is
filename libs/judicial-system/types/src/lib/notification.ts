@@ -41,15 +41,15 @@ export enum TrackedNotificationType {
 
 export enum RequestCaseNotificationType {
   ADVOCATE_ASSIGNED = TrackedNotificationType.ADVOCATE_ASSIGNED,
-  CASE_FILES_UPDATED = TrackedNotificationType.CASE_FILES_UPDATED,
+  CASE_FILES_UPDATED = TrackedNotificationType.CASE_FILES_UPDATED, // Líka notað fyrir ákærur
   COURT_DATE = TrackedNotificationType.COURT_DATE,
   DEFENDANTS_NOT_UPDATED_AT_COURT = TrackedNotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
   HEADS_UP = TrackedNotificationType.HEADS_UP,
   MODIFIED = TrackedNotificationType.MODIFIED,
-  READY_FOR_COURT = TrackedNotificationType.READY_FOR_COURT,
-  RECEIVED_BY_COURT = TrackedNotificationType.RECEIVED_BY_COURT,
-  REVOKED = TrackedNotificationType.REVOKED,
-  RULING = TrackedNotificationType.RULING,
+  READY_FOR_COURT = TrackedNotificationType.READY_FOR_COURT, // Líka notað fyrir ákærur
+  RECEIVED_BY_COURT = TrackedNotificationType.RECEIVED_BY_COURT, // Líka notað fyrir ákærur
+  REVOKED = TrackedNotificationType.REVOKED, // Líka notað fyrir ákærur
+  RULING = TrackedNotificationType.RULING, // Líka notað fyrir ákærur
 }
 
 export enum IndictmentCaseNotificationType {

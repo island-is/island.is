@@ -179,24 +179,27 @@ const HearingArrangements = () => {
         <Modal
           title={formatMessage(m.modal.heading)}
           text={formatMessage(m.modal.text)}
-          primaryButton={{
-            text: formatMessage(m.modal.primaryButtonText),
-            onClick: async () => {
-              const notificationSent = await sendNotification(
-                workingCase.id,
-                TrackedNotificationType.HEADS_UP,
-              )
-
-              if (notificationSent) {
-                router.push(`${navigateTo}/${workingCase.id}`)
-              }
+          buttons={[
+            {
+              text: formatMessage(m.modal.secondaryButtonText),
+              onClick: () => router.push(`${navigateTo}/${workingCase.id}`),
+              variant: 'ghost',
             },
-            isLoading: isSendingNotification,
-          }}
-          secondaryButton={{
-            text: formatMessage(m.modal.secondaryButtonText),
-            onClick: () => router.push(`${navigateTo}/${workingCase.id}`),
-          }}
+            {
+              text: formatMessage(m.modal.primaryButtonText),
+              onClick: async () => {
+                const notificationSent = await sendNotification(
+                  workingCase.id,
+                  TrackedNotificationType.HEADS_UP,
+                )
+
+                if (notificationSent) {
+                  router.push(`${navigateTo}/${workingCase.id}`)
+                }
+              },
+              isLoading: isSendingNotification,
+            },
+          ]}
           onClose={() => setNavigateTo(undefined)}
           errorMessage={
             sendNotificationError

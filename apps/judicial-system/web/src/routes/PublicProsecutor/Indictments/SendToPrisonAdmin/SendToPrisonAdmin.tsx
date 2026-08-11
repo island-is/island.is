@@ -168,15 +168,18 @@ const SendToPrisonAdmin: FC = () => {
             courtCaseNumber: workingCase.courtCaseNumber,
             defendant: defendant.name,
           })}
-          primaryButton={{
-            text: formatMessage(strings.modalNextButtonText),
-            onClick: handlePrimaryButtonClick,
-            isLoading: isUpdatingDefendant,
-          }}
-          secondaryButton={{
-            text: formatMessage(core.back),
-            onClick: handleSecondaryButtonClick,
-          }}
+          buttons={[
+            {
+              text: formatMessage(core.back),
+              onClick: handleSecondaryButtonClick,
+              variant: 'ghost',
+            },
+            {
+              text: formatMessage(strings.modalNextButtonText),
+              onClick: handlePrimaryButtonClick,
+              isLoading: isUpdatingDefendant,
+            },
+          ]}
           onClose={handleSecondaryButtonClick}
           loading={isUpdatingDefendant}
           errorMessage={uploadFileError}

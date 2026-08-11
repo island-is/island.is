@@ -46,6 +46,8 @@ export {
   CreateEuPatientConsentDto,
 } from './lib/clients'
 export {
+  ContentSegmentDto,
+  ContentSegmentType,
   ConversationAttachmentDto,
   ConversationAttachmentRequestDto,
   ConversationBaseDto,
@@ -56,7 +58,9 @@ export {
   CreateConversationRequestDto,
   CreateReplyRequestDto,
   DispensationHistoryItemDto,
+  MessageType,
   MessagingRecipientDto,
+  VideoConversationDto,
   RecipientCreateBlockedReason,
   UserVisibleAppointmentStatuses,
   OrganDonorDto,
