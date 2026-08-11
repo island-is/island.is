@@ -277,13 +277,16 @@ const Statement = () => {
         <Modal
           title="Greinargerð hefur verið send Landsrétti"
           text="Tilkynning um greinargerð hefur verið send Landsrétti og aðilum máls."
-          secondaryButton={{
-            text: formatMessage(core.closeModal),
-            onClick: () => {
-              refreshCase()
-              router.push(previousUrl)
+          buttons={[
+            {
+              text: formatMessage(core.closeModal),
+              onClick: () => {
+                refreshCase()
+                router.push(previousUrl)
+              },
+              variant: 'ghost',
             },
-          }}
+          ]}
         />
       )}
     </PageLayout>
