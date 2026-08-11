@@ -111,6 +111,9 @@ const HealthConversations = () => {
     onError: onMutationError,
   })
 
+  const filterCount =
+    (filterValues.starred ? 1 : 0) + (filterValues.archived ? 1 : 0)
+
   const filteredConversations = useMemo(() => {
     if (!healthConversations) {
       return []
@@ -159,6 +162,7 @@ const HealthConversations = () => {
             variant="popover"
             align="left"
             mobileWrap={false}
+            filterCount={filterCount}
             filterInput={
               <Input
                 name="messageSearch"
