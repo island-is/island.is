@@ -153,8 +153,7 @@ export const judgeReceivesRulingOrderAppeal = async (
 
   await expect(page).toHaveURL(`/domur/akaera/yfirlit/${caseId}`)
 
-  const appealCaseId =
-    caseResponse?.data?.case?.rulingOrderAppealCases?.[0]?.id
+  const appealCaseId = caseResponse?.data?.case?.rulingOrderAppealCases?.[0]?.id
   expect(appealCaseId).toBeTruthy()
 
   await page.getByLabel(/Valmynd fyrir/).click()

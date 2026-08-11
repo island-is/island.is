@@ -7,9 +7,7 @@ export const coaJudgesCompleteAppealCaseTest = async (
   caseId: string,
   appealCaseId?: string,
 ) => {
-  const appealCaseQuery = appealCaseId
-    ? `?appealCaseId=${appealCaseId}`
-    : ''
+  const appealCaseQuery = appealCaseId ? `?appealCaseId=${appealCaseId}` : ''
 
   await Promise.all([
     page.goto(`/landsrettur/yfirlit/${caseId}${appealCaseQuery}`),
