@@ -82,10 +82,16 @@ const Status = () => {
       }}
       loading={loading}
     >
-      <ActionButtons
-        availableActions={availableActions ?? undefined}
-        loading={loading}
-      />
+      {actionsLoading ? (
+        <Box marginBottom={4}>
+          <SkeletonLoader height={32} width={200} />
+        </Box>
+      ) : (
+        <ActionButtons
+          availableActions={availableActions ?? undefined}
+          loading={actionsLoading}
+        />
+      )}
       {!loading && jobSearchConfirmationStatus?.canConfirm === true && (
         <Box marginBottom={4}>
           <ActionCard

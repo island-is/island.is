@@ -111,11 +111,20 @@ export const useDynamicRoutes = () => {
     /**
      * portals-my-pages/social-benefits
      * Show unemployment benefits child routes only if user has visible application.
+     * Show activation allowance child routes only if user has visible application.
      */
     const vmstData = vmstOverview?.vmstApplicationsOverview
     if (vmstData?.unemploymentApplication?.isVisible) {
       dynamicPathArray.push(DynamicPaths.SocialBenefitsUnemploymentStatus)
       dynamicPathArray.push(DynamicPaths.SocialBenefitsUnemploymentMyData)
+    }
+    if (vmstData?.activationGrant?.isVisible) {
+      dynamicPathArray.push(
+        DynamicPaths.SocialBenefitsActivationAllowanceStatus,
+      )
+      dynamicPathArray.push(
+        DynamicPaths.SocialBenefitsActivationAllowanceMyData,
+      )
     }
 
     // Combine routes, no duplicates.

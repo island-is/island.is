@@ -7,8 +7,10 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { sharedMessages } from '../../lib/messages/shared'
 import { unemploymentBenefitsMessages as um } from '../../lib/messages/'
+import { activationAllowanceMessages as am } from '../../lib/messages'
 import { AlertMessage, Stack } from '@island.is/island-ui/core'
 import {
+  ActivationAllowancePaths,
   SocialInsuranceMaintenancePaths,
   UnemploymentBenefitsPaths,
 } from '../../lib/paths'
@@ -68,6 +70,28 @@ const SocialBenefitsOverview = () => {
               tag={getStatusTag(
                 overview.unemploymentApplication.statusName,
                 overview.unemploymentApplication.status,
+              )}
+            />
+          )}
+        {vmstEnabled &&
+          !loading &&
+          !error &&
+          overview?.activationGrant?.isVisible && (
+            <ActionCard
+              heading={formatMessage(am.activationAllowance)}
+              text={formatMessage(
+                sharedMessages.activationGrantCardDescription,
+              )}
+              cta={{
+                label: formatMessage(sharedMessages.overviewCtaLabel),
+                variant: 'text',
+                icon: 'arrowForward',
+                url: ActivationAllowancePaths.Status,
+              }}
+              image={{ type: 'logo', url: './assets/images/vmst-logo.svg' }}
+              tag={getStatusTag(
+                overview.activationGrant.statusName,
+                overview.activationGrant.status,
               )}
             />
           )}

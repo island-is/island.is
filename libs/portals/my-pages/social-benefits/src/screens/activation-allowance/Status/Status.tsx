@@ -3,7 +3,7 @@ import {
   m as coreMessages,
   useIsMobile,
 } from '@island.is/portals/my-pages/core'
-import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unemployment'
+import { activationAllowanceMessages as am } from '../../../lib/messages/'
 import {
   useGetApplicantAvailableActionsQuery,
   useGetUnemploymentApplicationOverviewQuery,
@@ -25,7 +25,6 @@ const Status = () => {
   const { data, loading, error } = useGetUnemploymentApplicationOverviewQuery({
     variables: { locale },
   })
-  // TODO Use the loading state
   const { data: actionsData, loading: actionsLoading } =
     useGetApplicantAvailableActionsQuery()
 
@@ -36,10 +35,10 @@ const Status = () => {
   if (!loading && error) {
     return (
       <IntroWrapper
-        title={formatMessage(um.title)}
+        title={formatMessage(am.title)}
         serviceProvider={{
           slug: 'vinnumalastofnun',
-          tooltip: formatMessage(um.tooltip),
+          tooltip: formatMessage(am.tooltip),
         }}
       >
         <Problem error={error} />
@@ -50,10 +49,10 @@ const Status = () => {
   if (!loading && !hasData) {
     return (
       <IntroWrapper
-        title={formatMessage(um.title)}
+        title={formatMessage(am.title)}
         serviceProvider={{
           slug: 'vinnumalastofnun',
-          tooltip: formatMessage(um.tooltip),
+          tooltip: formatMessage(am.tooltip),
         }}
       >
         <Problem
@@ -69,20 +68,26 @@ const Status = () => {
 
   return (
     <IntroWrapper
-      title={formatMessage(um.title)}
-      intro={formatMessage(um.intro)}
+      title={formatMessage(am.title)}
+      intro={formatMessage(am.intro)}
       serviceProvider={{
         slug: 'vinnumalastofnun',
-        tooltip: formatMessage(um.tooltip),
+        tooltip: formatMessage(am.tooltip),
       }}
       loading={loading}
     >
-      <ActionButtons
-        availableActions={availableActions ?? undefined}
-        loading={loading}
-      />
+      {actionsLoading ? (
+        <Box marginBottom={4}>
+          <SkeletonLoader height={32} width={200} />
+        </Box>
+      ) : (
+        <ActionButtons
+          availableActions={availableActions ?? undefined}
+          loading={actionsLoading}
+        />
+      )}
       <Tabs
-        label={formatMessage(um.title)}
+        label={formatMessage(am.title)}
         contentBackground="white"
         onlyRenderSelectedTab
         selected="application"
@@ -91,8 +96,8 @@ const Status = () => {
             id: 'application',
             label: formatMessage(
               isMobile
-                ? um.statusTabApplicationMobile
-                : um.statusTabApplication,
+                ? am.statusTabApplicationMobile
+                : am.statusTabApplication,
             ),
             content: loading ? (
               <Box paddingTop={4}>
@@ -111,7 +116,7 @@ const Status = () => {
           {
             id: 'applicant',
             label: formatMessage(
-              isMobile ? um.statusTabApplicantMobile : um.statusTabApplicant,
+              isMobile ? am.statusTabApplicantMobile : am.statusTabApplicant,
             ),
             content: <ApplicantOverview />,
           },

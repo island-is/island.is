@@ -3,26 +3,27 @@ import { BffUser } from '@island.is/shared/types'
 import { m, sharedMessages } from '../messages'
 import { ActivationAllowancePaths } from '../paths'
 import MyData from '../../screens/unemployment-benefits/MyData/MyData'
+import { ActivationAllowanceRoot } from '../../screens/activation-allowance/ActivationAllowanceRoot'
+import Status from '../../screens/activation-allowance/Status/Status'
 
-export const activationAllowanceRoutes = (userInfo: BffUser): PortalRoute[] => [
+export const activationAllowanceRoutes = (
+  _userInfo: BffUser,
+): PortalRoute[] => [
   {
     name: m.maintenance,
-    key: 'ActivationAllowance',
     path: ActivationAllowancePaths.Root,
     enabled: true,
-    element: null,
+    element: <ActivationAllowanceRoot />,
   },
   {
     name: sharedMessages.myStatus,
-    key: 'ActivationAllowance',
     path: ActivationAllowancePaths.Status,
     enabled: true,
     dynamic: true,
-    element: null,
+    element: <Status />,
   },
   {
     name: sharedMessages.myData,
-    key: 'ActivationAllowance',
     path: ActivationAllowancePaths.MyData,
     enabled: true,
     dynamic: true,
