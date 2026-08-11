@@ -329,7 +329,7 @@ export const SearchInput = forwardRef<
             skipContext={skipContext}
             rootProps={{
               'aria-controls': id + '-menu',
-              ...getRootProps({ refKey: 'ref' }, { suppressRefError: true }),
+              ...getRootProps(),
             }}
             menuProps={{
               comp: 'div',

@@ -532,7 +532,8 @@
     "path-parse": "1.0.7",
     "@types/react": "19.2.17",
     "node-request-interceptor@^0.5.1": "patch:node-request-interceptor@npm%3A0.5.9#./.yarn/patches/node-request-interceptor-npm-0.5.9-77e9d9c058.patch",
-    "@types/node": "22.20.1"
+    "@types/node": "22.20.1",
+    "downshift/react-is": "19.2.7"
   },
   "volta": {
     "node": "22.22.3",
