@@ -155,6 +155,7 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
   const [isLoading, setIsLoading] = useState(shouldFetch && !cached)
   const [propertiesFetchHasError, setPropertiesFetchHasError] = useState(false)
   const [searchLoading, setSearchLoading] = useState(false)
+  const [isPropertySearchFocused, setIsPropertySearchFocused] = useState(false)
 
   const buildListItem = (property: SimpleProperty): FormSystemListItem => {
     const propertyNumber = property.propertyNumber ?? ''
@@ -184,6 +185,13 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
     const seen = new Set<string>()
 
     while (hasNextPage) {
+      const cursorValue = cursor.toString()
+      console.log('[FormSystemRealEstate] Fetching assetsOverview', {
+        fieldId: item.id,
+        valueIndex,
+        cursor: cursorValue,
+      })
+
       const result = await client.query<
         RealEstatePropertiesQuery,
         RealEstatePropertiesVars
@@ -191,7 +199,7 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
         query: GET_REAL_ESTATE_PROPERTIES,
         variables: {
           input: {
-            cursor: cursor.toString(),
+            cursor: cursorValue,
           },
         },
         fetchPolicy: 'network-only',
@@ -199,10 +207,23 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
 
       const pageData = result.data?.assetsOverview
       if (!pageData) {
+        console.warn('[FormSystemRealEstate] assetsOverview returned no data', {
+          fieldId: item.id,
+          valueIndex,
+          cursor: cursorValue,
+        })
         break
       }
 
       const pageItems = pageData.properties ?? []
+      console.log('[FormSystemRealEstate] assetsOverview page received', {
+        fieldId: item.id,
+        valueIndex,
+        cursor: cursorValue,
+        itemCount: pageItems.length,
+        hasNextPage: pageData.paging?.hasNextPage ?? false,
+      })
+
       for (const property of pageItems) {
         if (!property?.propertyNumber || seen.has(property.propertyNumber)) {
           continue
@@ -215,6 +236,12 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
       hasNextPage = pageData.paging?.hasNextPage ?? false
       cursor += 1
     }
+
+    console.log('[FormSystemRealEstate] Finished fetching assetsOverview', {
+      fieldId: item.id,
+      valueIndex,
+      totalItems: allItems.length,
+    })
 
     return allItems
   }
@@ -235,12 +262,22 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
     }
 
     if (!PROPERTY_NUMBER_REGEX.test(normalized)) {
+      setError(propertyNumberField, {
+        type: 'validate',
+        message: formatMessage(m.invalidPropertyNumber),
+      })
       return
     }
 
     setSearchLoading(true)
 
     try {
+      console.log('[FormSystemRealEstate] Fetching assetsDetail', {
+        fieldId: item.id,
+        valueIndex,
+        assetId: normalized,
+      })
+
       const result = await client.query<
         RealEstatePropertyQuery,
         RealEstatePropertyVars
@@ -257,6 +294,13 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
       const propertyData = result.data?.assetsDetail
 
       if (propertyData?.propertyNumber) {
+        console.log('[FormSystemRealEstate] assetsDetail received', {
+          fieldId: item.id,
+          valueIndex,
+          assetId: normalized,
+          hasDefaultAddress: Boolean(propertyData.defaultAddress),
+        })
+
         const propertyNumber = propertyData.propertyNumber
         const { address, postalCode, municipality } = getAddressParts(
           propertyData.defaultAddress,
@@ -274,12 +318,21 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
         clearErrors(postalCodeField)
         clearErrors(municipalityField)
       } else {
+        console.warn(
+          '[FormSystemRealEstate] assetsDetail returned no property',
+          {
+            fieldId: item.id,
+            valueIndex,
+            assetId: normalized,
+          },
+        )
+
         setValue(addressField, '')
         setValue(postalCodeField, '')
         setValue(municipalityField, '')
         setError(propertyNumberField, {
           type: 'validate',
-          message: formatMessage(m.invalidPropertyNumber),
+          message: formatMessage(m.propertySearchFailed),
         })
         setError(addressField, {
           type: 'validate',
@@ -294,13 +347,20 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
           message: '',
         })
       }
-    } catch (_error) {
+    } catch (error) {
+      console.error('[FormSystemRealEstate] Failed to fetch assetsDetail', {
+        fieldId: item.id,
+        valueIndex,
+        assetId: normalized,
+        error,
+      })
+
       setValue(addressField, '')
       setValue(postalCodeField, '')
       setValue(municipalityField, '')
       setError(propertyNumberField, {
         type: 'validate',
-        message: formatMessage(m.invalidPropertyNumber),
+        message: formatMessage(m.propertySearchFailed),
       })
       setError(addressField, {
         type: 'validate',
@@ -355,7 +415,13 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
             placeholder: null,
           },
         })
-      } catch (_error) {
+      } catch (error) {
+        console.error('[FormSystemRealEstate] Failed to fetch assetsOverview', {
+          fieldId: item.id,
+          valueIndex,
+          error,
+        })
+
         if (!cancelled) {
           setPropertyList([])
           setPropertiesFetchHasError(true)
@@ -516,9 +582,14 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
             value: item?.isRequired ?? false,
             message: formatMessage(m.required),
           },
-          pattern: {
-            value: PROPERTY_NUMBER_REGEX,
-            message: formatMessage(m.invalidPropertyNumber),
+          validate: (value) => {
+            if (!value || PROPERTY_NUMBER_REGEX.test(value)) {
+              return true
+            }
+
+            return searchLoading || isPropertySearchFocused
+              ? true
+              : formatMessage(m.invalidPropertyNumber)
           },
         }}
         render={({ field, fieldState }) => (
@@ -542,7 +613,12 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
 
                   dispatchAssetValue('', '', '', '')
                 }}
+                onFocus={() => {
+                  setIsPropertySearchFocused(true)
+                }}
                 onBlur={() => {
+                  setIsPropertySearchFocused(false)
+                  field.onBlur()
                   fetchProperty(field.value)
                 }}
                 placeholder={formatMessage(m.enterPropertyNumber)}

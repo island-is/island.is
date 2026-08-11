@@ -23,6 +23,7 @@ import {
   AppealCaseState,
   AppealCaseTransition,
   AppealEventType,
+  AppealOrigin,
   CaseAppealDecision,
   CaseFileCategory,
   CaseFileState,
@@ -159,6 +160,14 @@ export class AppealCaseService {
             caseId: theCase.id,
             appealCaseId: appealCase.id,
             eventType,
+            // Everything written here is a party acting outside the court
+            // record; in-court APPEALED events are built by
+            // buildInCourtAppealedEvent instead. Origin is only meaningful for
+            // APPEALED.
+            appealOrigin:
+              eventType === AppealEventType.APPEALED
+                ? AppealOrigin.OUT_OF_COURT
+                : undefined,
             userRole: user.role,
             userId: isDefence ? undefined : user.id,
             ...party,

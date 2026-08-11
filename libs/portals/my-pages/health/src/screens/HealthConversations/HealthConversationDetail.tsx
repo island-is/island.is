@@ -19,6 +19,7 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { MessageActions } from './components/MessageActions'
 import ConversationAvatar from './components/ConversationAvatar'
+import ConversationMessageBody from './components/ConversationMessageBody'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { useEffect, useRef, useState } from 'react'
@@ -212,7 +213,7 @@ const HealthConversationDetail = () => {
               const isPatient = msg.direction === 'PATIENT'
               const senderName = isPatient
                 ? userInfo.profile.name ?? ''
-                : msg.senderGroupName ?? item.lastSenderGroupName ?? ''
+                : item.organization?.name ?? msg.senderGroupName ?? ''
 
               return (
                 <Box key={msg.id}>
@@ -237,7 +238,7 @@ const HealthConversationDetail = () => {
                     ) : (
                       <ConversationAvatar
                         variant="organization"
-                        name={senderName}
+                        logoUrl={item.organization?.logoUrl ?? undefined}
                       />
                     )}
                     <Box
@@ -256,11 +257,7 @@ const HealthConversationDetail = () => {
                   </Box>
 
                   {/* Body */}
-                  {msg.messageTextContent && (
-                    <Box marginBottom={4} style={{ whiteSpace: 'pre-line' }}>
-                      <Text fontWeight="light">{msg.messageTextContent}</Text>
-                    </Box>
-                  )}
+                  <ConversationMessageBody message={msg} />
 
                   {/* Attachments */}
                   {msg.attachments.length > 0 && (
@@ -344,7 +341,7 @@ const HealthConversationDetail = () => {
                       </Text>
                       <Text variant="medium">
                         {formatMessage(messages.healthConversationTo, {
-                          arg: item.lastSenderGroupName ?? '',
+                          arg: item.organization?.name ?? '',
                         })}
                       </Text>
                     </Box>

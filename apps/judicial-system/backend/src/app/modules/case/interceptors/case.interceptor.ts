@@ -34,6 +34,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { hasOutOfCourtAppeal } from '../../appeal-case'
 import { isRulingOrderInConfirmedCourtSession } from '../../file/guards/caseFileCategory'
 import { canDefenceUserViewCivilClaimCaseFile } from '../../file/guards/civilClaimFileVisibility'
 import {
@@ -180,6 +181,7 @@ export interface AppealCaseInfo {
   appealedByCivilClaimantId?: string
   appealedDate?: Date
   appealedInCourt?: boolean
+  appealedOutOfCourt?: boolean
   statementDeadline?: Date
   isStatementDeadlineExpired?: boolean
 }
@@ -265,6 +267,15 @@ export const getAppealCaseInfo = (
     ? {}
     : getAppealedByPartyFromEvents(appealCase)
 
+  // A party filed this appeal itself rather than it being recorded in the court
+  // record. Read from the event origin, so it is meaningful for case-level
+  // appeals too - unlike appealedInCourt above, which is derived from the ruling's
+  // decision rows and is therefore always false without a ruling file. The court
+  // record cannot take such an appeal away, so the appeal decision UI locks on it.
+  const appealedOutOfCourt = hasOutOfCourtAppeal(
+    appealCase.appealEventLogs ?? [],
+  )
+
   let statementDeadline: Date | undefined
   let isStatementDeadlineExpired: boolean | undefined
   if (appealReceivedByCourtDate) {
@@ -278,6 +289,7 @@ export const getAppealCaseInfo = (
     appealedByCivilClaimantId,
     appealedDate,
     appealedInCourt,
+    appealedOutOfCourt,
     statementDeadline,
     isStatementDeadlineExpired,
   }

@@ -273,7 +273,6 @@ const useCase = () => {
       async (
         id: string,
         notificationType: TrackedNotificationType,
-        eventOnly?: boolean,
       ): Promise<boolean> => {
         try {
           const { data } = await sendNotificationMutation({
@@ -281,7 +280,6 @@ const useCase = () => {
               input: {
                 caseId: id,
                 type: notificationType,
-                eventOnly,
               },
             },
           })
