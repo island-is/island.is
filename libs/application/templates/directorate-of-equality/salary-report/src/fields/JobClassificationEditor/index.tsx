@@ -109,16 +109,22 @@ export const JobClassificationEditor: FC<
   useEffect(() => {
     if (roles.length === 0) return
     const current = getValues(FIELD_NAME) as Role[] | undefined
-    const merged = roles.map((role, ri) => ({
-      ...role,
-      stepAssignments: role.stepAssignments.map((assignment, ai) => ({
-        ...assignment,
-        stepOrder:
-          (current?.[ri]?.stepAssignments?.[ai]?.stepOrder as
-            | number
-            | undefined) ?? assignment.stepOrder,
-      })),
-    }))
+    const currentByTitle = new Map(
+      (current ?? []).map((role) => [role.title, role]),
+    )
+    const merged = roles.map((role) => {
+      const currentRole = currentByTitle.get(role.title)
+      return {
+        ...role,
+        stepAssignments: role.stepAssignments.map((assignment, ai) => ({
+          ...assignment,
+          stepOrder:
+            (currentRole?.stepAssignments?.[ai]?.stepOrder as
+              | number
+              | undefined) ?? assignment.stepOrder,
+        })),
+      }
+    })
     setValue(FIELD_NAME, merged)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

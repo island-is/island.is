@@ -61,7 +61,7 @@ const valuesFromEmployee = (employee: Employee): FormValues => ({
   field: employee.field ?? '',
   department: employee.department ?? '',
   startDate: employee.startDate,
-  workRatio: String(Math.round((employee.workRatio ?? 0) * 100)),
+  workRatio: String((employee.workRatio ?? 0) * 100),
   baseSalary: String(employee.baseSalary ?? ''),
   ...(Object.fromEntries(
     SALARY_COMPONENT_KEYS.map((key) => {
