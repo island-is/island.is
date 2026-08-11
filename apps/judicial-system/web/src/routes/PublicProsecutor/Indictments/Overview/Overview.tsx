@@ -230,10 +230,13 @@ export const Overview = () => {
             caseNumber: workingCase.courtCaseNumber,
             reviewer: selectedIndictmentReviewer?.label,
           })}
-          secondaryButton={{
-            text: fm(core.back),
-            onClick: () => router.push(getStandardUserDashboardRoute(user)),
-          }}
+          buttons={[
+            {
+              text: fm(core.back),
+              onClick: () => router.push(getStandardUserDashboardRoute(user)),
+              variant: 'ghost',
+            },
+          ]}
         />
       )}
     </PageLayout>

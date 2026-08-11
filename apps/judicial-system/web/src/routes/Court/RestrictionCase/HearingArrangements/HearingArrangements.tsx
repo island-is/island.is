@@ -206,48 +206,51 @@ export const HearingArrangements = () => {
               ? 'Fyrirtökutíma hefur verið breytt. Tilkynning verður send á sækjanda, fangelsi og verjanda hafi verjandi verið skráður.'
               : 'Málið fer á dagskrá og tilkynning verður send á sækjanda, fangelsi og verjanda hafi verjandi verið skráður.'
           }
-          primaryButton={{
-            text: 'Já, staðfesta',
-            onClick: async () => {
-              setModalButtonLoading(ModalButtonLoading.PRIMARY)
+          buttons={[
+            {
+              text: 'Nei, staðfesta seinna',
+              isDisabled: isModalConfirming,
+              onClick: async () => {
+                setModalButtonLoading(ModalButtonLoading.SECONDARY)
 
-              // Saving the arraignment date triggers the court date notifications
-              const courtDateSaved = await sendCourtDateToServer()
+                // The arraignment date is not confirmed, so we only let a
+                // registered advocate know that they are on the case. This is
+                // their only notification, so we do not navigate away until it
+                // has been sent.
+                const notificationSent = await sendNotification(
+                  workingCase.id,
+                  TrackedNotificationType.ADVOCATE_ASSIGNED,
+                )
 
-              if (!courtDateSaved) {
-                setModalButtonLoading(undefined)
-                return
-              }
+                if (!notificationSent) {
+                  setModalButtonLoading(undefined)
+                  return
+                }
 
-              router.push(`${navigateTo}/${workingCase.id}`)
+                router.push(`${navigateTo}/${workingCase.id}`)
+              },
+              isLoading: isModalDeferringLoading,
+              variant: 'ghost',
             },
-            isLoading: isModalLoading,
-            isDisabled: isModalDeferring,
-          }}
-          secondaryButton={{
-            text: 'Nei, staðfesta seinna',
-            isDisabled: isModalConfirming,
-            onClick: async () => {
-              setModalButtonLoading(ModalButtonLoading.SECONDARY)
+            {
+              text: 'Já, staðfesta',
+              onClick: async () => {
+                setModalButtonLoading(ModalButtonLoading.PRIMARY)
 
-              // The arraignment date is not confirmed, so we only let a
-              // registered advocate know that they are on the case. This is
-              // their only notification, so we do not navigate away until it
-              // has been sent.
-              const notificationSent = await sendNotification(
-                workingCase.id,
-                TrackedNotificationType.ADVOCATE_ASSIGNED,
-              )
+                // Saving the arraignment date triggers the court date notifications
+                const courtDateSaved = await sendCourtDateToServer()
 
-              if (!notificationSent) {
-                setModalButtonLoading(undefined)
-                return
-              }
+                if (!courtDateSaved) {
+                  setModalButtonLoading(undefined)
+                  return
+                }
 
-              router.push(`${navigateTo}/${workingCase.id}`)
+                router.push(`${navigateTo}/${workingCase.id}`)
+              },
+              isLoading: isModalLoading,
+              isDisabled: isModalDeferring,
             },
-            isLoading: isModalDeferringLoading,
-          }}
+          ]}
           errorMessage={
             isModalDeferring && sendNotificationError
               ? formatMessage(errors.sendNotification)

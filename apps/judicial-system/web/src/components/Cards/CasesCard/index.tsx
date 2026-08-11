@@ -50,7 +50,7 @@ const CasesCard: FC<CasesCardProps> = (props) => (
       height="full"
       className={styles.container}
     >
-      {props.includeCounter && props.type !== CaseTableType.STATISTICS ? (
+      {props.includeCounter ? (
         <TitleWithCounter title={props.title} type={props.type} />
       ) : (
         <Text variant="h4" color="blue400" marginBottom={1}>
