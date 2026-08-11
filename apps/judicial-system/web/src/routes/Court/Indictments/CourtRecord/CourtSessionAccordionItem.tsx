@@ -339,7 +339,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       })
     }
 
-    return `Mættir eru\n${attendees.join('')}`
+    return `Mættir eru:\n${attendees.join('')}`
   }, [workingCase.prosecutor, workingCase.defendants])
 
   const initialize = useCallback(() => {

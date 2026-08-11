@@ -412,6 +412,7 @@ query Case($input: CaseQueryInput!) {
       appealedByCivilClaimantId
       appealedByRole
       appealedDate
+      appealedOutOfCourt
       statementDeadline
       isStatementDeadlineExpired
       appealCaseNumber

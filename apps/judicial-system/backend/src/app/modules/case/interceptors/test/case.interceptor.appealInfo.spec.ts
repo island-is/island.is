@@ -4,6 +4,7 @@ import {
   AppealCaseState,
   AppealDecisionPartyRole,
   AppealEventType,
+  AppealOrigin,
   CaseAppealDecision,
   CaseFileCategory,
   CaseIndictmentRulingDecision,
@@ -251,6 +252,7 @@ describe('getAppealCaseInfo', () => {
         appealEventLogs: [
           {
             eventType: AppealEventType.APPEALED,
+            appealOrigin: AppealOrigin.OUT_OF_COURT,
             userRole: UserRole.PROSECUTOR,
           } as AppealEventLog,
         ],
@@ -260,6 +262,7 @@ describe('getAppealCaseInfo', () => {
         appealedByRole: UserRole.PROSECUTOR,
         appealedDate: appealDate,
         appealedInCourt: false,
+        appealedOutOfCourt: true,
         statementDeadline: undefined,
         isStatementDeadlineExpired: undefined,
       })
@@ -275,6 +278,7 @@ describe('getAppealCaseInfo', () => {
         appealEventLogs: [
           {
             eventType: AppealEventType.APPEALED,
+            appealOrigin: AppealOrigin.OUT_OF_COURT,
             userRole: UserRole.DEFENDER,
           } as AppealEventLog,
         ],
@@ -284,9 +288,69 @@ describe('getAppealCaseInfo', () => {
         appealedByRole: UserRole.DEFENDER,
         appealedDate: appealDate,
         appealedInCourt: false,
+        appealedOutOfCourt: true,
         statementDeadline: undefined,
         isStatementDeadlineExpired: undefined,
       })
+    })
+
+    // appealedInCourt is derived from a ruling's decision rows, so it is always
+    // false without a ruling file and cannot tell the web whether a case-level
+    // appeal came from the court record. The event origin can.
+    it('reports appealedOutOfCourt from the APPEALED event origin', () => {
+      const theCase = { type: CaseType.CUSTODY } as Case
+      const appealCase = {
+        appealDate: new Date('2022-06-16T10:00:00.000Z'),
+        appealEventLogs: [
+          {
+            eventType: AppealEventType.APPEALED,
+            appealOrigin: AppealOrigin.OUT_OF_COURT,
+            userRole: UserRole.DEFENDER,
+          },
+        ],
+      } as AppealCase
+
+      const info = getAppealCaseInfo(appealCase, theCase)
+
+      expect(info.appealedOutOfCourt).toBe(true)
+      expect(info.appealedInCourt).toBe(false)
+    })
+
+    it('does not report appealedOutOfCourt for an in-court appeal', () => {
+      const theCase = { type: CaseType.CUSTODY } as Case
+      const appealCase = {
+        appealDate: new Date('2022-06-16T10:00:00.000Z'),
+        appealEventLogs: [
+          {
+            eventType: AppealEventType.APPEALED,
+            appealOrigin: AppealOrigin.IN_COURT,
+            userRole: UserRole.PROSECUTOR,
+          },
+        ],
+      } as AppealCase
+
+      expect(getAppealCaseInfo(appealCase, theCase).appealedOutOfCourt).toBe(
+        false,
+      )
+    })
+
+    // An event that cannot be classified is preserved rather than destroyed by
+    // court record corrections, so a missing origin reads as out of court.
+    it('reports appealedOutOfCourt when the APPEALED event has no origin', () => {
+      const theCase = { type: CaseType.CUSTODY } as Case
+      const appealCase = {
+        appealDate: new Date('2022-06-16T10:00:00.000Z'),
+        appealEventLogs: [
+          {
+            eventType: AppealEventType.APPEALED,
+            userRole: UserRole.DEFENDER,
+          },
+        ],
+      } as AppealCase
+
+      expect(getAppealCaseInfo(appealCase, theCase).appealedOutOfCourt).toBe(
+        true,
+      )
     })
 
     it('returns statement deadline + expired flag when the appeal has been received by the court', () => {

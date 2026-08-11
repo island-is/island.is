@@ -8,13 +8,19 @@ import {
 } from './types'
 
 export type Events = {
-  type: DefaultEvents.SUBMIT | DefaultEvents.ABORT
+  type:
+    | DefaultEvents.SUBMIT
+    | DefaultEvents.ABORT
+    | DefaultEvents.APPROVE
+    | DefaultEvents.REJECT
 }
 
 export enum States {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
-  COMPLETED = 'completed',
+  IN_REVIEW = 'inReview',
+  APPROVED = 'approved',
+  DENIED = 'denied',
   POSTPONED = 'postponed',
   NOT_ALLOWED = 'notAllowed',
 }
@@ -22,6 +28,7 @@ export enum States {
 export enum Roles {
   APPLICANT = 'applicant',
   NOT_ALLOWED = 'notAllowed',
+  REVIEWER = 'reviewer',
 }
 
 export const DEFAULT_JOB_FACTORS: JobFactor[] = [
@@ -115,6 +122,9 @@ export const GENDER_LABELS: Record<string, string> = Object.fromEntries(
 export const EDUCATION_LABELS: Record<string, string> = Object.fromEntries(
   EDUCATION_OPTIONS.map((o) => [o.value, o.label]),
 )
+
+export const PERIOD_TWELVE_MONTHS = '12months'
+export const PERIOD_ONE_MONTH = '1month'
 
 export const EMPTY_EMPLOYEE: Employee = {
   ordinal: 0,

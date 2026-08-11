@@ -7,7 +7,6 @@ import { EmailService } from '@island.is/email-service'
 import {
   CaseType,
   RequestCaseNotificationType,
-  TrackedNotificationType,
 } from '@island.is/judicial-system/types'
 
 import {

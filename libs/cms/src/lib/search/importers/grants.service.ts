@@ -129,6 +129,16 @@ export class GrantsSyncService implements CmsSyncProvider<IGrant> {
             })
           }
 
+          if (
+            entry.fields.grantStatus === 'Automatic' &&
+            entry.fields.grantFromDateIsEstimated
+          ) {
+            tags.push({
+              type: 'grantFromDateIsEstimated',
+              key: 'true',
+            })
+          }
+
           // Tag the document with the ids of its children so we can later look up what document a child belongs to
           const childEntryIds = extractChildEntryIds(entry)
           for (const id of childEntryIds) {

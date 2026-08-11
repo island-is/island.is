@@ -7,6 +7,7 @@ import {
   AppealCaseState,
   AppealDecisionPartyRole,
   AppealEventType,
+  AppealOrigin,
   CaseAppealDecision,
   CaseState,
   CaseTransition,
@@ -215,7 +216,14 @@ describe('CaseController - Appeal decision dual-write', () => {
     beforeEach(async () => {
       ;(
         mockAppealEventLogRepositoryService.findAll as jest.Mock
-      ).mockResolvedValue([{ id: uuid(), userRole: UserRole.PROSECUTOR }])
+      ).mockResolvedValue([
+        {
+          id: uuid(),
+          eventType: AppealEventType.APPEALED,
+          appealOrigin: AppealOrigin.IN_COURT,
+          userRole: UserRole.PROSECUTOR,
+        },
+      ])
 
       await accept(theCase)
     })
@@ -255,7 +263,13 @@ describe('CaseController - Appeal decision dual-write', () => {
       ;(
         mockAppealEventLogRepositoryService.findAll as jest.Mock
       ).mockResolvedValue([
-        { id: prosecutorEventId, userRole: UserRole.PROSECUTOR },
+        {
+          // Appealed in court, so correcting the record can take it away again.
+          id: prosecutorEventId,
+          eventType: AppealEventType.APPEALED,
+          appealOrigin: AppealOrigin.IN_COURT,
+          userRole: UserRole.PROSECUTOR,
+        },
       ])
 
       await accept(theCase)
@@ -304,6 +318,17 @@ describe('CaseController - Appeal decision dual-write', () => {
     } as Case
 
     beforeEach(async () => {
+      ;(
+        mockAppealEventLogRepositoryService.findAll as jest.Mock
+      ).mockResolvedValue([
+        {
+          id: uuid(),
+          eventType: AppealEventType.APPEALED,
+          appealOrigin: AppealOrigin.IN_COURT,
+          userRole: UserRole.PROSECUTOR,
+        },
+      ])
+
       await accept(theCase)
     })
 
@@ -339,7 +364,119 @@ describe('CaseController - Appeal decision dual-write', () => {
     } as Case
 
     it('should reject the correction and delete nothing', async () => {
+      ;(
+        mockAppealEventLogRepositoryService.findAll as jest.Mock
+      ).mockResolvedValue([
+        {
+          id: uuid(),
+          eventType: AppealEventType.APPEALED,
+          appealOrigin: AppealOrigin.IN_COURT,
+          userRole: UserRole.PROSECUTOR,
+        },
+      ])
+
       await expect(accept(theCase)).rejects.toBeInstanceOf(BadRequestException)
+      expect(mockAppealCaseRepositoryService.delete).not.toHaveBeenCalled()
+    })
+  })
+
+  // The appeal was filed by a party, not recorded in the court record, so it has
+  // no decision = APPEAL row. Re-completing after a correction must not read that
+  // absence as "nobody appealed" - doing so used to delete the appeal along with
+  // the briefs and statements filed for it.
+  describe('re-completing a request case whose appeal was made out of court', () => {
+    const outOfCourtEventId = uuid()
+    const theCase = {
+      id: caseId,
+      type: CaseType.CUSTODY,
+      state: CaseState.RECEIVED,
+      appealCase: { id: appealCaseId, appealState: AppealCaseState.APPEALED },
+      // Nobody appealed in court - the defence postponed and then appealed
+      // itself within the deadline.
+      appealDecisions: [
+        {
+          partyRole: AppealDecisionPartyRole.PROSECUTOR,
+          decision: CaseAppealDecision.ACCEPT,
+        },
+        {
+          partyRole: AppealDecisionPartyRole.DEFENDANT,
+          decision: CaseAppealDecision.POSTPONE,
+        },
+      ],
+      defendants: [{ id: defendantId1 }],
+    } as Case
+
+    beforeEach(async () => {
+      ;(
+        mockAppealEventLogRepositoryService.findAll as jest.Mock
+      ).mockResolvedValue([
+        {
+          id: outOfCourtEventId,
+          eventType: AppealEventType.APPEALED,
+          appealOrigin: AppealOrigin.OUT_OF_COURT,
+          userRole: UserRole.DEFENDER,
+        },
+      ])
+
+      await accept(theCase)
+    })
+
+    it('should keep the appeal case', () => {
+      expect(mockAppealCaseRepositoryService.delete).not.toHaveBeenCalled()
+      expect(
+        mockAppealEventLogRepositoryService.deleteByAppealCaseId,
+      ).not.toHaveBeenCalled()
+    })
+
+    it('should keep the appellant event', () => {
+      expect(
+        mockAppealEventLogRepositoryService.deleteByIds,
+      ).not.toHaveBeenCalledWith([outOfCourtEventId], { transaction })
+    })
+
+    it('should not clear the legacy postponed appeal dates', () => {
+      expect(mockCaseRepositoryService.update).not.toHaveBeenCalledWith(
+        caseId,
+        expect.objectContaining({ accusedPostponedAppealDate: null }),
+        { transaction },
+      )
+    })
+  })
+
+  describe('re-completing a progressed request case whose appeal was made out of court', () => {
+    const theCase = {
+      id: caseId,
+      type: CaseType.CUSTODY,
+      state: CaseState.RECEIVED,
+      appealCase: { id: appealCaseId, appealState: AppealCaseState.RECEIVED },
+      appealDecisions: [
+        {
+          partyRole: AppealDecisionPartyRole.PROSECUTOR,
+          decision: CaseAppealDecision.ACCEPT,
+        },
+        {
+          partyRole: AppealDecisionPartyRole.DEFENDANT,
+          decision: CaseAppealDecision.POSTPONE,
+        },
+      ],
+      defendants: [{ id: defendantId1 }],
+    } as Case
+
+    // The correction is not removing this appeal, so it must not be blocked as
+    // if it were.
+    it('should allow the correction and keep the appeal', async () => {
+      ;(
+        mockAppealEventLogRepositoryService.findAll as jest.Mock
+      ).mockResolvedValue([
+        {
+          id: uuid(),
+          eventType: AppealEventType.APPEALED,
+          appealOrigin: AppealOrigin.OUT_OF_COURT,
+          userRole: UserRole.DEFENDER,
+        },
+      ])
+
+      await expect(accept(theCase)).resolves.not.toThrow()
       expect(mockAppealCaseRepositoryService.delete).not.toHaveBeenCalled()
     })
   })
