@@ -9,7 +9,7 @@ export class ServerSideFeatures implements ServerSideFeatureClientType {
   constructor(featuresOn?: string) {
     this.processed = false
     this.featuresOn = []
-    const isDev = process.env['NODE_ENV'] !== 'production'
+    const isDev = process.env.NODE_ENV !== 'production'
     this.input = isDev ? featuresOn ?? '' : featuresOn
   }
 

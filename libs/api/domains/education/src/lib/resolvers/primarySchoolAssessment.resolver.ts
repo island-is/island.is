@@ -11,6 +11,7 @@ import {
 import {
   FeatureFlag,
   FeatureFlagGuard,
+  FeatureFlagService,
   Features,
 } from '@island.is/nest/feature-flags'
 import { PrimarySchoolClientService } from '@island.is/clients/mms/primary-school'
@@ -28,6 +29,7 @@ import type { PrimarySchoolAssessmentWithContext } from '../types'
 export class PrimarySchoolAssessmentResolver {
   constructor(
     private readonly primarySchoolService: PrimarySchoolClientService,
+    private readonly featureFlagService: FeatureFlagService,
     @Inject(DownloadServiceConfig.KEY)
     private readonly downloadServiceConfig: ConfigType<
       typeof DownloadServiceConfig
@@ -46,9 +48,20 @@ export class PrimarySchoolAssessmentResolver {
       assessment.id,
     )
 
+    const implementation = await this.featureFlagService.getValue(
+      Features.downloadServiceMmsPrimarySchoolImplementationTest,
+      'current',
+      user,
+    )
+
     return results
       ?.map((r) =>
-        mapResult(r, assessment.studentId, this.downloadServiceConfig.baseUrl),
+        mapResult(
+          r,
+          assessment.studentId,
+          this.downloadServiceConfig.baseUrl,
+          implementation,
+        ),
       )
       .filter(isDefined)
   }

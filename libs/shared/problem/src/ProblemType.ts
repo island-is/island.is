@@ -10,5 +10,5 @@ export enum ProblemType {
   TEMPLATE_API_ERROR = 'https://docs.devland.is/reference/problems/template-api-error',
   ATTEMPT_FAILED = 'https://docs.devland.is/reference/problems/attempt-failed',
   BAD_SESSION = 'https://docs.devland.is/reference/problems/bad-session',
-  REQUEST_TIMEOUT = 'https://docs.devland.is/reference/problems/request-timeout',
+  REQUEST_TIMEOUT = 'https://httpstatuses.org/504',
 }

@@ -11,6 +11,7 @@ import { EducationDocumentsConfig } from './education-document.config'
 
 const EDUCATION_SCOPE = '@island.is/education'
 const ENDPOINT = '/education/primary-school/student1/result/result1/pdf'
+const ENDPOINT_V2 = '/education/primary-school/student1/result/result1/pdf-v2'
 const TEST_TIMEOUT_MS = 50
 
 const fakePdfClient = { getAssignmentResultPdf: jest.fn() }
@@ -60,9 +61,60 @@ afterEach(() => {
   jest.clearAllMocks()
 })
 
-const post = () => request(app.getHttpServer()).post(ENDPOINT).send({})
+const post = () => request(app.getHttpServer()).post(ENDPOINT_V2).send({})
+const postCurrent = () => request(app.getHttpServer()).post(ENDPOINT).send({})
 
-describe('EducationController — getPrimarySchoolAssignmentResultPdf', () => {
+describe('EducationController — getPrimarySchoolAssignmentResultPdf (current)', () => {
+  it('returns a 200 with correct headers on success', async () => {
+    fakePdfClient.getAssignmentResultPdf.mockResolvedValue(fakePdfBlob())
+
+    const res = await postCurrent()
+
+    expect(res.status).toBe(200)
+    expect(res.headers['content-type']).toContain('application/pdf')
+    expect(res.headers['content-disposition']).toContain(
+      '1234567890-namsmat-result1.pdf',
+    )
+  })
+
+  it('returns a 404 when the blob is missing', async () => {
+    fakePdfClient.getAssignmentResultPdf.mockResolvedValue(null)
+
+    const res = await postCurrent()
+
+    expect(res.status).toBe(404)
+  })
+
+  it('returns a 500 and logs when the client throws', async () => {
+    fakePdfClient.getAssignmentResultPdf.mockRejectedValue(new Error('boom'))
+
+    const res = await postCurrent()
+
+    expect(res.status).toBe(500)
+    expect(fakeLogger.error).toHaveBeenCalled()
+  })
+
+  it('calls audit exactly once on success, never on failure', async () => {
+    fakePdfClient.getAssignmentResultPdf.mockResolvedValue(fakePdfBlob())
+    await postCurrent()
+    expect(fakeAudit.audit).toHaveBeenCalledTimes(1)
+
+    jest.clearAllMocks()
+    fakePdfClient.getAssignmentResultPdf.mockRejectedValue(new Error('boom'))
+    await postCurrent()
+    expect(fakeAudit.audit).not.toHaveBeenCalled()
+  })
+
+  it('does not pass an AbortSignal to the client', async () => {
+    fakePdfClient.getAssignmentResultPdf.mockResolvedValue(fakePdfBlob())
+
+    await postCurrent()
+
+    expect(fakePdfClient.getAssignmentResultPdf.mock.calls[0][3]).toBeUndefined()
+  })
+})
+
+describe('EducationController — getPrimarySchoolAssignmentResultPdfV2', () => {
   it('logs that it is serving the request', async () => {
     fakePdfClient.getAssignmentResultPdf.mockResolvedValue(fakePdfBlob())
 

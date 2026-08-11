@@ -26,7 +26,14 @@ import {
   StreamableFile,
   UseGuards,
 } from '@nestjs/common'
-import { ApiOkResponse } from '@nestjs/swagger'
+import {
+  ApiBadRequestResponse,
+  ApiForbiddenResponse,
+  ApiInternalServerErrorResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger'
 import { Response } from 'express'
 import {
   LOGGER_PROVIDER,
@@ -34,6 +41,7 @@ import {
   withLoggingContext,
 } from '@island.is/logging'
 import { unmaskString } from '@island.is/shared/utils'
+import { HttpProblemResponse } from '@island.is/nest/problem'
 import { PrimarySchoolAssignmentResultParamsDto } from './dto/primarySchoolAssignmentResultParams.dto'
 import { EducationDocumentsConfig } from './education-document.config'
 import { withTimeout } from './withTimeout'
@@ -109,13 +117,71 @@ export class EducationController {
   }
 
   @Post('/primary-school/:studentId/result/:assignmentResultId/pdf')
+  @Header('Content-Type', 'application/pdf')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description: 'Get a primary school assignment result PDF',
+  })
+  async getPrimarySchoolAssignmentResultPdf(
+    @Param('studentId') studentId: string,
+    @Param('assignmentResultId') assignmentResultId: string,
+    @CurrentUser() user: User,
+    @Res() res: Response,
+  ) {
+    try {
+      const blob = await this.primarySchoolService.getAssignmentResultPdf(
+        user,
+        studentId,
+        assignmentResultId,
+      )
+
+      if (blob) {
+        this.auditService.audit({
+          action: 'getPrimarySchoolAssignmentResultPdf',
+          auth: user,
+          resources: `${studentId}/${assignmentResultId}`,
+        })
+
+        const contentArrayBuffer = await blob.arrayBuffer()
+        const buffer = Buffer.from(contentArrayBuffer)
+
+        res.header('Content-length', buffer.length.toString())
+        res.header(
+          'Content-Disposition',
+          `attachment; filename="${user.nationalId}-namsmat-${assignmentResultId}.pdf"`,
+        )
+        res.header('Content-Type', 'application/pdf')
+        res.header('Pragma', 'no-cache')
+        res.header(
+          'Cache-Control',
+          'no-cache, no-store, max-age=0, must-revalidate',
+        )
+        return res.status(200).end(buffer)
+      }
+      return res.status(404).end()
+    } catch (error) {
+      this.logger.error('Failed to get primary school assignment result PDF', {
+        errorMessage: error.message,
+        errorStack: error.stack,
+        assignmentResultId,
+      })
+      return res.status(500).end()
+    }
+  }
+
+  @Post('/primary-school/:studentId/result/:assignmentResultId/pdf-v2')
   @HttpCode(200)
   @Header('X-Content-Type-Options', 'nosniff')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
     description: 'Get a primary school assignment result PDF',
   })
-  async getPrimarySchoolAssignmentResultPdf(
+  @ApiBadRequestResponse({ type: HttpProblemResponse })
+  @ApiUnauthorizedResponse({ type: HttpProblemResponse })
+  @ApiForbiddenResponse({ type: HttpProblemResponse })
+  @ApiNotFoundResponse({ type: HttpProblemResponse })
+  @ApiInternalServerErrorResponse({ type: HttpProblemResponse })
+  async getPrimarySchoolAssignmentResultPdfV2(
     @Param() params: PrimarySchoolAssignmentResultParamsDto,
     @CurrentUser() user: User,
   ) {
