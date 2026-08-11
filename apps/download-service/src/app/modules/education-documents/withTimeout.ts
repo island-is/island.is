@@ -1,4 +1,4 @@
-import { TimeoutExceededError } from '@island.is/nest/problem'
+import { GatewayTimeout } from '@island.is/nest/problem'
 import { acceptableTimeSignal } from '../../utils/acceptableTime'
 
 export const withTimeout = async <T>(
@@ -11,7 +11,7 @@ export const withTimeout = async <T>(
     return await fetchFn(signal)
   } catch (error) {
     if (error instanceof Error && error.name === 'AbortError') {
-      throw new TimeoutExceededError(timeoutMs)
+      throw new GatewayTimeout(timeoutMs)
     }
     throw error
   }

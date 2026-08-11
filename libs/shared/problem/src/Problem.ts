@@ -6,7 +6,7 @@ import {
   TemplateApiErrorProblem,
   AttemptFailedProblem,
   BadSessionProblem,
-  RequestTimeoutProblem,
+  GatewayTimeoutProblem,
 } from './problems'
 
 export type Problem =
@@ -17,4 +17,4 @@ export type Problem =
   | TemplateApiErrorProblem
   | AttemptFailedProblem
   | BadSessionProblem
-  | RequestTimeoutProblem
+  | GatewayTimeoutProblem

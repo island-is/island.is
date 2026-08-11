@@ -4,7 +4,7 @@ import { useAuth } from '@island.is/testing/nest'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { PrimarySchoolClientService } from '@island.is/clients/mms/primary-school'
 import { AuditService } from '@island.is/nest/audit'
-import { TimeoutExceededError } from '@island.is/nest/problem'
+import { GatewayTimeout } from '@island.is/nest/problem'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { setup } from '../../../../test/setup'
 import { EducationDocumentsConfig } from './education-document.config'
@@ -197,7 +197,7 @@ describe('EducationController — getPrimarySchoolAssignmentResultPdfV2', () => 
     expect(signal.aborted).toBe(false)
   })
 
-  it('rethrows a client AbortError as a TimeoutExceededError naming the configured timeout, resulting in a 504 problem+json response', async () => {
+  it('rethrows a client AbortError as a GatewayTimeout naming the configured timeout, resulting in a 504 problem+json response', async () => {
     const abortError = Object.assign(new Error('The user aborted a request.'), {
       name: 'AbortError',
     })
@@ -209,7 +209,7 @@ describe('EducationController — getPrimarySchoolAssignmentResultPdfV2', () => 
     expect(res.headers['content-type']).toContain('application/problem+json')
     expect(fakeLogger.error).toHaveBeenCalled()
     const loggedError = fakeLogger.error.mock.calls[0][0]
-    expect(loggedError).toBeInstanceOf(TimeoutExceededError)
+    expect(loggedError).toBeInstanceOf(GatewayTimeout)
     expect(loggedError.message).toContain(String(TEST_TIMEOUT_MS))
   })
 })
