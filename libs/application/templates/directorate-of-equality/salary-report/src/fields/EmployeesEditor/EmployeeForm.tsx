@@ -15,56 +15,39 @@ import {
 import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { messages } from '../../lib/messages'
-import {
-  EDUCATION_OPTIONS,
-  GENDER_OPTIONS,
-  SALARY_COMPONENT_GROUPS,
-  SALARY_COMPONENT_KEYS,
-} from '../../utils/constants'
+import { GENDER_OPTIONS, SALARY_COMPONENT_GROUPS } from '../../utils/constants'
 import type { Employee, SalaryComponentKey } from '../../utils/types'
-import { computeIdentifier } from './utils'
+import {
+  componentsFromFormValues,
+  computeIdentifier,
+  EMPTY_EMPLOYEE_FORM_VALUES,
+  type EmployeeFormValues,
+  toFormValues,
+} from './utils'
 
 type Props = {
+  // Present when editing an existing employee; omitted when adding a new one.
+  employee?: Employee
   nextOrdinal: number
   identifierPrefix: string
-  onAdd: (employee: Employee) => void
+  onSubmit: (employee: Employee) => void
   onCancel: () => void
 }
 
-type FormValues = {
-  roleTitle: string
-  gender: string
-  education: string
-  field: string
-  department: string
-  startDate: string
-  workRatio: string
-  baseSalary: string
-} & Record<SalaryComponentKey, string>
-
-const DEFAULTS: FormValues = {
-  roleTitle: '',
-  gender: '',
-  education: '',
-  field: '',
-  department: '',
-  startDate: '',
-  workRatio: '100',
-  baseSalary: '',
-  ...(Object.fromEntries(
-    SALARY_COMPONENT_KEYS.map((key) => [key, '']),
-  ) as Record<SalaryComponentKey, string>),
-}
-
-export const AddEmployeeForm: FC<Props> = ({
+export const EmployeeForm: FC<Props> = ({
+  employee,
   nextOrdinal,
   identifierPrefix,
-  onAdd,
+  onSubmit,
   onCancel,
 }) => {
   const { formatMessage, lang } = useLocale()
   const m = messages.report.employees
-  const methods = useForm<FormValues>({ defaultValues: DEFAULTS })
+  const methods = useForm<EmployeeFormValues>({
+    defaultValues: employee
+      ? toFormValues(employee)
+      : EMPTY_EMPLOYEE_FORM_VALUES,
+  })
   const {
     formState: { errors },
   } = methods
@@ -89,7 +72,7 @@ export const AddEmployeeForm: FC<Props> = ({
     bonus: formatMessage(m.bonusSalaryLabel),
   }
 
-  const onValid = (data: FormValues) => {
+  const onValid = (data: EmployeeFormValues) => {
     // startDate uses the shared DatePickerController, which doesn't accept RHF
     // `rules`, so enforce the requirement here (the `required` prop is UI-only).
     if (!data.startDate) {
@@ -97,27 +80,22 @@ export const AddEmployeeForm: FC<Props> = ({
       return
     }
 
-    // Empty component → null (the API treats each component as optional/nullable)
-    const components = Object.fromEntries(
-      SALARY_COMPONENT_KEYS.map((key) => [
-        key,
-        data[key] === '' ? null : Number(data[key]) || 0,
-      ]),
-    ) as Record<SalaryComponentKey, number | null>
+    const components = componentsFromFormValues(data)
 
-    onAdd({
-      ordinal: nextOrdinal,
-      identifier: computeIdentifier(identifierPrefix, nextOrdinal),
+    onSubmit({
+      ordinal: employee?.ordinal ?? nextOrdinal,
+      identifier:
+        employee?.identifier ??
+        computeIdentifier(identifierPrefix, nextOrdinal),
       roleTitle: data.roleTitle,
       gender: data.gender,
-      education: data.education,
       field: data.field,
       department: data.department,
       startDate: data.startDate,
       workRatio: (Number(data.workRatio) || 0) / 100,
       baseSalary: Number(data.baseSalary) || 0,
       ...components,
-      personalStepAssignments: [],
+      personalStepAssignments: employee?.personalStepAssignments ?? [],
     })
   }
 
@@ -125,7 +103,7 @@ export const AddEmployeeForm: FC<Props> = ({
     <FormProvider {...methods}>
       <Box background="blue100" borderRadius="large" padding={4} marginTop={3}>
         <Text variant="h4" marginBottom={3}>
-          {formatMessage(m.addFormTitle)}
+          {formatMessage(employee ? m.editFormTitle : m.addFormTitle)}
         </Text>
         <GridRow rowGap={[2, 2, 2, 3]}>
           <GridColumn span={['12/12', '6/12']}>
@@ -154,27 +132,12 @@ export const AddEmployeeForm: FC<Props> = ({
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
-            <SelectController
-              id="education"
-              name="education"
-              label={formatMessage(m.educationLabel)}
-              options={EDUCATION_OPTIONS}
-              backgroundColor="white"
-              size="sm"
-              required
-              rules={{ required: requiredMsg }}
-              error={errors.education?.message}
-            />
-          </GridColumn>
-          <GridColumn span={['12/12', '6/12']}>
             <InputController
               id="field"
               name="field"
               label={formatMessage(m.fieldLabel)}
               backgroundColor="white"
               size="sm"
-              required
-              rules={{ required: requiredMsg }}
               error={errors.field?.message}
             />
           </GridColumn>
@@ -185,8 +148,6 @@ export const AddEmployeeForm: FC<Props> = ({
               label={formatMessage(m.departmentLabel)}
               backgroundColor="white"
               size="sm"
-              required
-              rules={{ required: requiredMsg }}
               error={errors.department?.message}
             />
           </GridColumn>

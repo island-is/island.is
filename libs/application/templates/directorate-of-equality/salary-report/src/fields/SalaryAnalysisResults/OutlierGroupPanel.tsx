@@ -1,10 +1,6 @@
 import { FC, useEffect, useState } from 'react'
 import { useFormContext, useWatch } from 'react-hook-form'
-import {
-  getErrorViaPath,
-  getValueViaPath,
-  YES,
-} from '@island.is/application/core'
+import { getErrorViaPath, YES } from '@island.is/application/core'
 import { Application, RecordObject } from '@island.is/application/types'
 import AnimateHeight from 'react-animate-height'
 import {
@@ -26,6 +22,7 @@ import type { SalaryAnalysisOutlierDto } from '@island.is/clients/directorate-of
 import { messages } from '../../lib/messages'
 import { GENDER_LABELS } from '../../utils/constants'
 import type { Employee } from '../../utils/types'
+import { getPathValue } from '../../utils/answerHelpers'
 
 const FIELD_NAME = 'salaryAnalysis.outlierGroups.0'
 
@@ -123,11 +120,11 @@ export const OutlierGroupPanel: FC<Props> = ({
     reasonError || actionError || signatureNameError || signatureRoleError,
   )
 
-  const employees = (getValueViaPath<Employee[]>(
+  const employees = getPathValue<Employee[]>(
     application.answers,
     'employees',
     [],
-  ) ?? []) as Employee[]
+  )
   const employeeByOrdinal = new Map(employees.map((e) => [e.ordinal, e]))
 
   const postponed: string[] =

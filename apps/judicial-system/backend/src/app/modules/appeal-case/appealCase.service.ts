@@ -46,7 +46,6 @@ import {
   CivilClaimant,
   Defendant,
   UpdateAppealCase,
-  UpdateCase,
 } from '../repository'
 import { UpdateAppealCaseDto } from './dto/updateAppealCase.dto'
 import {
@@ -197,13 +196,12 @@ export class AppealCaseService {
     )
   }
 
-  // Dual-write: records an APPEALED event for an out-of-court appeal. In-court
+  // Records an APPEALED event for an out-of-court appeal - the appellant source
+  // now that the legacy postponed-date / appealed-by columns are gone. In-court
   // appeals are recorded by the appeal_decision rows instead and never reach
   // here. Unlike createEventLog it dispatches no notification - the appeal
   // notification is queued separately by the caller
-  // (addMessagesFor[RulingOrder]AppealedCaseToQueue). The legacy columns
-  // (postponed appeal dates, appealedByNationalId) remain the source of truth
-  // for now.
+  // (addMessagesFor[RulingOrder]AppealedCaseToQueue).
   private registerAppellant(
     theCase: Case,
     appealCase: AppealCase,
@@ -523,7 +521,6 @@ export class AppealCaseService {
       )
     }
 
-    const caseUpdate: UpdateCase = {}
     const appealCaseData: UpdateAppealCase = {
       appealState: AppealCaseState.APPEALED,
       // An appeal filed out-of-court happens now - in-court appeals get
@@ -534,16 +531,11 @@ export class AppealCaseService {
     let fileCategories: CaseFileCategory[]
 
     if (isProsecutionUser(user)) {
-      caseUpdate.prosecutorPostponedAppealDate = nowFactory()
       fileCategories = [
         CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
         CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
       ]
     } else if (isDefenceUser(user)) {
-      caseUpdate.accusedPostponedAppealDate = nowFactory()
-      if (isIndictmentCase(theCase.type)) {
-        appealCaseData.appealedByNationalId = user.nationalId
-      }
       fileCategories = [
         CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
         CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
@@ -559,12 +551,6 @@ export class AppealCaseService {
       appealCaseData,
       { transaction },
     )
-
-    if (Object.keys(caseUpdate).length > 0) {
-      await this.caseRepositoryService.update(theCase.id, caseUpdate, {
-        transaction,
-      })
-    }
 
     await this.registerAppellant(theCase, appealCase, user, transaction)
 
@@ -628,10 +614,6 @@ export class AppealCaseService {
       // An appeal filed out-of-court happens now - in-court appeals get
       // the court session end time instead
       appealDate: nowFactory(),
-    }
-
-    if (isDefenceUser(user)) {
-      appealCaseData.appealedByNationalId = user.nationalId
     }
 
     const appealCase = await this.appealCaseRepositoryService.create(
