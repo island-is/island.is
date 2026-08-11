@@ -54,7 +54,7 @@ export const PersonalCriteriaList = () => {
                 />
               </Box>
               <Button
-                size="small"
+                size="default"
                 variant="ghost"
                 icon="trash"
                 iconType="outline"

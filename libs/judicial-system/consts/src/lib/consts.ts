@@ -102,7 +102,6 @@ export const InvestigationCaseTypes = [
 export const TIME_FORMAT = 'HH:mm'
 
 //#region Defence user routes
-export const DEFENDER_CASES_ROUTE = '/verjandi/krofur'
 
 export const DEFENDER_REQUEST_CASE_ROUTE = '/verjandi/krafa'
 

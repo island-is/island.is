@@ -10,6 +10,7 @@ import {
 import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import {
+  core,
   rcDemands,
   rcReportForm,
   titles,
@@ -447,12 +448,19 @@ export const PoliceDemands = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${PROSECUTION_RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() =>
-            handleNavigationTo(PROSECUTION_RESTRICTION_CASE_POLICE_REPORT_ROUTE)
-          }
-          nextIsDisabled={!stepIsValid}
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  PROSECUTION_RESTRICTION_CASE_POLICE_REPORT_ROUTE,
+                ),
+              disabled: !stepIsValid,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

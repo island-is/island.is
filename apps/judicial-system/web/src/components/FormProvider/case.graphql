@@ -410,9 +410,11 @@ query Case($input: CaseQueryInput!) {
     appealCase {
       id
       appealState
-      appealedByNationalId
+      appealedByDefendantId
+      appealedByCivilClaimantId
       appealedByRole
       appealedDate
+      appealedOutOfCourt
       statementDeadline
       isStatementDeadlineExpired
       appealCaseNumber
@@ -455,7 +457,8 @@ query Case($input: CaseQueryInput!) {
     rulingOrderAppealCases {
       id
       appealState
-      appealedByNationalId
+      appealedByDefendantId
+      appealedByCivilClaimantId
       appealedByRole
       appealedDate
       appealedInCourt
@@ -674,8 +677,10 @@ query Case($input: CaseQueryInput!) {
       rulingOrderAppealCases {
         id
         appealState
-        appealedByNationalId
+        appealedByDefendantId
+        appealedByCivilClaimantId
         appealedByRole
+        appealedInCourt
         appealedDate
         statementDeadline
         isStatementDeadlineExpired

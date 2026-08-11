@@ -39,6 +39,7 @@ export {
 } from './FeatureProvider/FeatureProvider'
 export { default as FormContentContainer } from './FormContentContainer/FormContentContainer'
 export { default as FormFooter } from './FormFooter/FormFooter'
+export type { FormFooterAction } from './FormFooter/FormFooter'
 export { FormProvider, FormContext } from './FormProvider/FormProvider'
 export { default as Header } from './Header/Header'
 export { default as HideableText } from './HideableText/HideableText'
@@ -82,7 +83,6 @@ export { strings as serviceAnnouncementsStrings } from './ServiceAnnouncement/Se
 export { default as ServiceInterruptionBanner } from './ServiceInterruptionBanner/ServiceInterruptionBanner'
 export { default as SignedDocument } from './SignedDocument/SignedDocument'
 export { default as TagAppealState } from './Tags/TagAppealState/TagAppealState'
-export { default as TagCaseState } from './Tags/TagCaseState/TagCaseState'
 export { default as CaseTag } from './Tags/CaseTag'
 export { getIndictmentRulingDecisionTag } from './Tags/utils'
 export {
@@ -126,10 +126,6 @@ export {
   useIndictmentsLawsBroken,
 } from './AccordionItems/IndictmentsLawsBrokenAccordionItem/IndictmentsLawsBrokenAccordionItem'
 export { default as IndictmentCaseFilesList } from './IndictmentCaseFilesList/IndictmentCaseFilesList'
-export {
-  default as WithdrawAppealContextMenuModal,
-  useWithdrawAppealMenuOption,
-} from './DeprecatedContextMenuOptions/WithdrawAppealMenuOption'
 export { default as ZipButton } from './ZipButton/ZipButton'
 export { default as RequestAppealRulingNotToBePublishedCheckbox } from './RequestAppealRulingNotToBePublishedCheckbox/RequestAppealRulingNotToBePublishedCheckbox'
 export { LawyerRegistryProvider } from './LawyerRegistryProvider/LawyerRegistryProvider'
