@@ -103,7 +103,6 @@ export const SigningMethodSelectionModal: FC<
           text: 'Auðkennisappið',
           onClick: () => handleMethodSelection(true),
           isLoading: loadingMethod === 'audkenni',
-          variant: 'ghost',
         },
         {
           text: 'Rafræn skilríki',
