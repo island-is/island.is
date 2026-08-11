@@ -35,7 +35,6 @@ export class InternalFileController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  // TODO: Add tests for this endpoint
   @Post(`${messageEndpoint[MessageType.DELIVERY_TO_POLICE_CASE_FILE]}/:fileId`)
   @ApiCreatedResponse({
     type: DeliverResponse,
