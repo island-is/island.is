@@ -361,27 +361,32 @@ const Overview: FC = () => {
             title={formatMessage(strings.caseSubmitModalTitle)}
             text={formatMessage(strings.caseSubmitModalText)}
             onClose={() => setModal('noModal')}
-            primaryButton={{
-              text: formatMessage(strings.caseSubmitPrimaryButtonText),
-              onClick: handleConfirmIndictment,
-              isLoading: isTransitioningCase,
-            }}
-            secondaryButton={{
-              text: formatMessage(strings.caseSubmitSecondaryButtonText),
-              onClick: () => setModal('noModal'),
-            }}
+            buttons={[
+              {
+                text: formatMessage(strings.caseSubmitSecondaryButtonText),
+                onClick: () => setModal('noModal'),
+                variant: 'ghost',
+              },
+              {
+                text: formatMessage(strings.caseSubmitPrimaryButtonText),
+                onClick: handleConfirmIndictment,
+                isLoading: isTransitioningCase,
+              },
+            ]}
           />
         ) : modal === 'caseSentForConfirmationModal' ? (
           <Modal
             title={formatMessage(strings.indictmentSentForConfirmationTitle)}
             text={formatMessage(strings.indictmentSentForConfirmationText)}
             onClose={() => router.push(getStandardUserDashboardRoute(user))}
-            primaryButton={{
-              text: formatMessage(core.closeModal),
-              onClick: () => {
-                router.push(getStandardUserDashboardRoute(user))
+            buttons={[
+              {
+                text: formatMessage(core.closeModal),
+                onClick: () => {
+                  router.push(getStandardUserDashboardRoute(user))
+                },
               },
-            }}
+            ]}
           />
         ) : modal === 'caseDeniedModal' ? (
           <DenyIndictmentCaseModal
@@ -395,17 +400,22 @@ const Overview: FC = () => {
             title={formatMessage(strings.askForCancellationModalTitle)}
             text={formatMessage(strings.askForCancellationModalText)}
             onClose={() => setModal('noModal')}
-            primaryButton={{
-              text: formatMessage(strings.askForCancellationPrimaryButtonText),
-              onClick: handleAskForCancellation,
-              isLoading: isTransitioningCase,
-            }}
-            secondaryButton={{
-              text: formatMessage(
-                strings.askForCancellationSecondaryButtonText,
-              ),
-              onClick: () => setModal('noModal'),
-            }}
+            buttons={[
+              {
+                text: formatMessage(
+                  strings.askForCancellationSecondaryButtonText,
+                ),
+                onClick: () => setModal('noModal'),
+                variant: 'ghost',
+              },
+              {
+                text: formatMessage(
+                  strings.askForCancellationPrimaryButtonText,
+                ),
+                onClick: handleAskForCancellation,
+                isLoading: isTransitioningCase,
+              },
+            ]}
           />
         ) : modal === 'duplicateIndictmentModal' ? (
           <DuplicateIndictmentModal onClose={() => setModal('noModal')} />

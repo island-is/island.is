@@ -521,15 +521,18 @@ const Subpoena: FC = () => {
           <Modal
             title={modalContent.title}
             text={modalContent.text}
-            primaryButton={{
-              text: modalContent.primaryButtonText,
-              onClick: () => scheduleArraignmentDate(),
-              isLoading: isCreatingSubpoena,
-            }}
-            secondaryButton={{
-              text: formatMessage(strings.modalSecondaryButtonText),
-              onClick: () => setNavigateTo(undefined),
-            }}
+            buttons={[
+              {
+                text: formatMessage(strings.modalSecondaryButtonText),
+                onClick: () => setNavigateTo(undefined),
+                variant: 'ghost',
+              },
+              {
+                text: modalContent.primaryButtonText,
+                onClick: () => scheduleArraignmentDate(),
+                isLoading: isCreatingSubpoena,
+              },
+            ]}
             onClose={() => setNavigateTo(undefined)}
           />
         )}
