@@ -19,7 +19,7 @@ export enum ApiModuleActions {
   getCategories = 'getCategories',
   getProtectiveFactors = 'getProtectiveFactors',
   getGenders = 'getGenders',
-  getChildInformation = 'getChildInformation',
+  getLanguageEnvironments = 'getLanguageEnvironments',
   getUrgencyAssessments = 'getUrgencyAssessments',
   getPostalCodes = 'getPostalCodes',
   getPronouns = 'getPronouns',

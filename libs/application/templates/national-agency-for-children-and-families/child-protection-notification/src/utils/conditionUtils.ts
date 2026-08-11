@@ -1,5 +1,6 @@
 import { NO, YES } from '@island.is/application/core'
 import { ExternalData, FormValue } from '@island.is/application/types'
+import { info } from 'kennitala'
 import {
   KnowsNationalId,
   LanguageEnvironmentOptions,
@@ -7,8 +8,15 @@ import {
   SHOW_LANGUAGE_SECTION_TYPES,
 } from './constants'
 import { getApplicationAnswers } from './getApplicationAnswers'
-import { getApplicationExternalData } from './getApplicationExternalData'
 import { getSelectedReasonForNotificationCategoryCodes } from './childProtectionNotificationUtils'
+
+export const isChildInPrimarySchoolAge = (nationalId: string): boolean => {
+  const { birthday } = info(nationalId)
+  const currentYear = new Date().getFullYear()
+  const birthYear = birthday.getFullYear()
+  const yearAge = currentYear - birthYear
+  return yearAge >= 6 && yearAge <= 16
+}
 
 export const isKnowsNationalId = (answers: FormValue) =>
   getApplicationAnswers(answers).childKnowsNationalId === KnowsNationalId.YES
@@ -16,10 +24,15 @@ export const isKnowsNationalId = (answers: FormValue) =>
 //TODO: Do we also need to add in the showMemmSection to check if kerfiskennitala?
 export const showMemmSection = (
   answers: FormValue,
-  externalData: ExternalData,
-) =>
-  isKnowsNationalId(answers) &&
-  !getApplicationExternalData(externalData).childFoundInFrigg
+  _externalData: ExternalData,
+) => {
+  const { childNationalId } = getApplicationAnswers(answers)
+  return (
+    isKnowsNationalId(answers) &&
+    !!childNationalId &&
+    !isChildInPrimarySchoolAge(childNationalId)
+  )
+}
 
 export const isUnborn = (answers: FormValue) =>
   getApplicationAnswers(answers).childKnowsNationalId === KnowsNationalId.UNBORN

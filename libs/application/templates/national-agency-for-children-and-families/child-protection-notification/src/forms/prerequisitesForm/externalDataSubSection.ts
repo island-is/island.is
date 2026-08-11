@@ -11,6 +11,7 @@ import {
   GendersApi,
   GuardianNotAwareReasonsApi,
   IdentityApiProvider,
+  LanguageEnvironmentsApi,
   PostalCodesApi,
   PronounsApi,
   ProtectiveFactorsApi,
@@ -69,6 +70,9 @@ export const externalDataSubSection = buildSubSection({
         }),
         buildDataProviderItem({
           provider: SchoolTypesApi,
+        }),
+        buildDataProviderItem({
+          provider: LanguageEnvironmentsApi,
         }),
       ],
     }),
