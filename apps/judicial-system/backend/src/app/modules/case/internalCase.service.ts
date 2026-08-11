@@ -61,7 +61,11 @@ import {
 } from '../../formatters'
 import { courtUpload, notifications } from '../../messages'
 import { AwsS3Service } from '../aws-s3'
-import { CourtDocumentFolder, CourtService } from '../court'
+import {
+  CourtDocumentFolder,
+  CourtService,
+  isFileTooLargeForCourt,
+} from '../court'
 import { buildIndictmentConclusionContent } from '../court/court.service'
 import { DefendantService } from '../defendant'
 import { EventService } from '../event'
@@ -264,7 +268,8 @@ export class InternalCaseService {
         { error },
       )
 
-      return false
+      // Do not retry an upload the court service will never accept
+      return isFileTooLargeForCourt(error)
     }
   }
 
@@ -313,7 +318,8 @@ export class InternalCaseService {
         { error },
       )
 
-      return false
+      // Do not retry an upload the court service will never accept
+      return isFileTooLargeForCourt(error)
     }
   }
 
@@ -350,7 +356,8 @@ export class InternalCaseService {
           { error },
         )
 
-        return false
+        // Do not retry an upload the court service will never accept
+        return isFileTooLargeForCourt(error)
       })
   }
 
@@ -399,7 +406,8 @@ export class InternalCaseService {
         { error },
       )
 
-      return false
+      // Do not retry an upload the court service will never accept
+      return isFileTooLargeForCourt(error)
     }
   }
 
@@ -927,7 +935,8 @@ export class InternalCaseService {
           { reason },
         )
 
-        return { delivered: false }
+        // Do not retry an upload the court service will never accept
+        return { delivered: isFileTooLargeForCourt(reason) }
       })
   }
 
@@ -1266,7 +1275,8 @@ export class InternalCaseService {
           { reason },
         )
 
-        return { delivered: false }
+        // Do not retry an upload the court service will never accept
+        return { delivered: isFileTooLargeForCourt(reason) }
       })
   }
 
