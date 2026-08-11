@@ -1,7 +1,7 @@
 import { SystemMetadata } from '@island.is/shared/types'
 import orderBy from 'lodash/orderBy'
 import { Resolvers } from '../../types'
-import { store } from './store'
+import { HEADER_NAV_GROUPED_MENU_ID, store } from './store'
 import { getDatePrefix } from './utils'
 
 export const resolvers: Resolvers = {
@@ -27,7 +27,10 @@ export const resolvers: Resolvers = {
 
     getMenu: () => store.menu,
 
-    getGroupedMenu: (_parent, _args) => store.groupedMenu,
+    getGroupedMenu: (_parent, args) =>
+      args.input.id === HEADER_NAV_GROUPED_MENU_ID
+        ? store.headerNavGroupedMenu
+        : store.groupedMenu,
 
     getAlertBanner: () => store.alertBanner,
 

@@ -9,6 +9,7 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  AppealCaseState,
   AppealDecisionPartyRole,
   Case,
   CaseAppealDecision,
@@ -56,6 +57,19 @@ const AppealSections: FC<Props> = ({
   const prosecutorAppealAnnouncementInput = useDebouncedAppealAnnouncement(
     AppealDecisionPartyRole.PROSECUTOR,
     'prosecutorAppealAnnouncement',
+  )
+
+  // The in-court decisions describe what happened at the ruling. Once an appeal
+  // no longer depends on them they must not be edited: a party that filed its own
+  // appeal did not get it from the court record and correcting the record cannot
+  // take it away, and an appeal that has left the district court is already part
+  // of the record Landsréttur received. Mirrors the backend guard in
+  // case.service.upsertCaseAppealDecision, which rejects the same cases.
+  const { appealCase } = workingCase
+  const disabled = Boolean(
+    appealCase &&
+      (appealCase.appealedOutOfCourt ||
+        appealCase.appealState !== AppealCaseState.APPEALED),
   )
 
   const handleChange = (update: {
@@ -148,6 +162,7 @@ const AppealSections: FC<Props> = ({
                 }}
                 large
                 backgroundColor="white"
+                disabled={disabled}
               />
               <RadioButton
                 name="accused-appeal-decision"
@@ -170,6 +185,7 @@ const AppealSections: FC<Props> = ({
                 }}
                 large
                 backgroundColor="white"
+                disabled={disabled}
               />
             </div>
             <div className={styles.gridRow2fr1fr}>
@@ -194,6 +210,7 @@ const AppealSections: FC<Props> = ({
                 }}
                 large
                 backgroundColor="white"
+                disabled={disabled}
               />
               <RadioButton
                 name="accused-appeal-decision"
@@ -216,11 +233,13 @@ const AppealSections: FC<Props> = ({
                 }}
                 large
                 backgroundColor="white"
+                disabled={disabled}
               />
             </div>
             <Input
               name="accusedAppealAnnouncement"
               data-testid="accusedAppealAnnouncement"
+              disabled={disabled}
               label={formatMessage(m.defendantAnnouncementLabelV2)}
               value={accusedAppealAnnouncementInput.value || ''}
               placeholder={formatMessage(m.defendantAnnouncementPlaceholderV2)}
@@ -271,6 +290,7 @@ const AppealSections: FC<Props> = ({
               }}
               large
               backgroundColor="white"
+              disabled={disabled}
             />
             <RadioButton
               name="prosecutor-appeal-decision"
@@ -293,6 +313,7 @@ const AppealSections: FC<Props> = ({
               }}
               large
               backgroundColor="white"
+              disabled={disabled}
             />
           </div>
           <div className={styles.gridRow2fr1fr}>
@@ -317,6 +338,7 @@ const AppealSections: FC<Props> = ({
               }}
               large
               backgroundColor="white"
+              disabled={disabled}
             />
 
             <RadioButton
@@ -340,12 +362,14 @@ const AppealSections: FC<Props> = ({
               }}
               large
               backgroundColor="white"
+              disabled={disabled}
             />
           </div>
           <Box>
             <Input
               name="prosecutorAppealAnnouncement"
               data-testid="prosecutorAppealAnnouncement"
+              disabled={disabled}
               label={formatMessage(m.prosecutorAnnouncementLabelV2)}
               value={prosecutorAppealAnnouncementInput.value || ''}
               placeholder={formatMessage(m.prosecutorAnnouncementPlaceholderV2)}
