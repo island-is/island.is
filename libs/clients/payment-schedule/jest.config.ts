@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-payment-schedule',
   preset: './jest.preset.js',
   rootDir: '../../..',

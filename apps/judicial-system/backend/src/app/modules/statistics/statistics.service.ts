@@ -28,6 +28,7 @@ import {
 import { AwsS3Service } from '../aws-s3'
 import {
   AppealCase,
+  AppealEventLog,
   Case,
   CaseRepositoryService,
   DateLog,
@@ -372,6 +373,15 @@ export class StatisticsService {
           model: AppealCase,
           as: 'appealCase',
           required: false,
+          include: [
+            {
+              model: AppealEventLog,
+              as: 'appealEventLogs',
+              required: false,
+              attributes: ['eventType', 'userRole'],
+              separate: true,
+            },
+          ],
         },
       ],
     })

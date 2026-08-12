@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { ApolloError } from 'apollo-server-express'
+import { GraphQLError } from 'graphql'
 import { FasteignirApi } from '@island.is/clients/assets'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
@@ -26,15 +26,17 @@ export class AssetsXRoadService {
     private fasteignirApi: FasteignirApi,
   ) {}
 
-  handleError(error: any, detail?: string): ApolloError | null {
+  handleError(error: any, detail?: string): GraphQLError | null {
     this.logger.error(detail || 'Domain assets error', {
       error: JSON.stringify(error),
       category: LOG_CATEGORY,
     })
-    throw new ApolloError('Failed to resolve request', error.status)
+    throw new GraphQLError('Failed to resolve request', {
+      extensions: { code: error.status },
+    })
   }
 
-  private handle4xx(error: any, detail?: string): ApolloError | null {
+  private handle4xx(error: any, detail?: string): GraphQLError | null {
     if (error.status === 403 || error.status === 404) {
       return null
     }

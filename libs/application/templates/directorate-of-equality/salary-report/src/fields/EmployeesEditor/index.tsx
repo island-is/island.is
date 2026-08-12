@@ -1,23 +1,25 @@
-import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Button, Stack, Table as T } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { sortAlpha } from '@island.is/shared/utils'
 import { FC, useEffect, useState } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
-import type { ParsedEmployeeDto } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
+import type { ApplicationAnswers } from '../../lib/dataSchema'
 import { type Employee } from '../../utils/types'
+import { getPathValue } from '../../utils/answerHelpers'
 import { EmployeeRow } from './EmployeeRow'
 import { EmployeeForm } from './EmployeeForm'
 import { deriveIdentifierPrefix } from './utils'
 
 const FIELD_NAME = 'employees'
+const byRoleTitle = sortAlpha<Employee>('roleTitle')
 
 export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
 }) => {
   const { formatMessage } = useLocale()
-  const { control, getValues } = useFormContext()
+  const { control, getValues } = useFormContext<ApplicationAnswers>()
   const m = messages.report.employees
 
   const [isAdding, setIsAdding] = useState(false)
@@ -34,14 +36,14 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   // answer exists yet. Reading getValues first also makes this idempotent
   // under StrictMode's double-invoked effects.
   useEffect(() => {
-    const current = getValues(FIELD_NAME) as Employee[] | undefined
+    const current = getValues(FIELD_NAME)
     if (current && current.length > 0) return
 
-    const externalEmployees = (getValueViaPath<ParsedEmployeeDto[]>(
+    const externalEmployees = getPathValue<Employee[]>(
       application.externalData,
       'parsedSalaryReport.data.employees',
       [],
-    ) ?? []) as Employee[]
+    )
 
     if (externalEmployees.length > 0) {
       replace(externalEmployees)
@@ -59,7 +61,7 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     setEditingIndex(null)
   }
 
-  const employees = fields as unknown as Employee[]
+  const employees = fields
 
   const nextOrdinal =
     employees.reduce((max, e) => Math.max(max, e.ordinal ?? 0), 0) + 1
@@ -69,9 +71,9 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   // Table rows are sorted alphabetically by role title, but callbacks below
   // still need the field's real index in `fields` — remove/update/editingIndex
   // all key off that, not the sorted display position.
-  const sortedFields = (fields as unknown as (Employee & { id: string })[])
+  const sortedFields = fields
     .map((field, index) => ({ field, index }))
-    .sort((a, b) => a.field.roleTitle.localeCompare(b.field.roleTitle, 'is'))
+    .sort((a, b) => byRoleTitle(a.field, b.field))
 
   return (
     <Box>
