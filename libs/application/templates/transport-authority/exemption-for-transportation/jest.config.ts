@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'transport-authority-exemption-for-transportation',
   preset: '../../../../../jest.preset.js',
   transform: {
