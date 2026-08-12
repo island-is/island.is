@@ -55,11 +55,11 @@ const AppealSections: FC<Props> = ({
     useState<CaseAppealDecision>()
 
   const accusedAppealDecision = caseLevelAppealDecision(
-    workingCase,
+    workingCase.appealDecisions,
     AppealDecisionPartyRole.DEFENDANT,
   )
   const prosecutorAppealDecision = caseLevelAppealDecision(
-    workingCase,
+    workingCase.appealDecisions,
     AppealDecisionPartyRole.PROSECUTOR,
   )
 

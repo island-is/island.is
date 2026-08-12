@@ -278,30 +278,36 @@ export const getDefenceUserPartyIds = (
   return {}
 }
 
+// The case-level appeal_decision row of a party - the one with no rulingFileId.
+const caseLevelAppealDecisionRow = (
+  appealDecisions: Case['appealDecisions'],
+  partyRole: AppealDecisionPartyRole,
+) =>
+  appealDecisions?.find(
+    (decision) => !decision.rulingFileId && decision.partyRole === partyRole,
+  )
+
 /**
  * The in-court appeal decision (Ákvörðun um kæru) recorded for a case-level
  * party - the collective defence (DEFENDANT) or the prosecution (PROSECUTOR).
  * Case-level decisions are the appeal_decision rows with no rulingFileId.
  */
 export const caseLevelAppealDecision = (
-  workingCase: Case,
+  appealDecisions: Case['appealDecisions'],
   partyRole: AppealDecisionPartyRole,
 ): CaseAppealDecision | undefined =>
-  workingCase.appealDecisions?.find(
-    (decision) => !decision.rulingFileId && decision.partyRole === partyRole,
-  )?.decision ?? undefined
+  caseLevelAppealDecisionRow(appealDecisions, partyRole)?.decision ?? undefined
 
 /**
  * The in-court appeal announcement (free text) recorded for a case-level party.
  * Same case-level row (no rulingFileId) as caseLevelAppealDecision.
  */
 export const caseLevelAppealAnnouncement = (
-  workingCase: Case,
+  appealDecisions: Case['appealDecisions'],
   partyRole: AppealDecisionPartyRole,
 ): string | undefined =>
-  workingCase.appealDecisions?.find(
-    (decision) => !decision.rulingFileId && decision.partyRole === partyRole,
-  )?.announcement ?? undefined
+  caseLevelAppealDecisionRow(appealDecisions, partyRole)?.announcement ??
+  undefined
 
 /**
  * Returns a new appeal-decisions array where the case-level (no rulingFileId)
@@ -363,11 +369,11 @@ export const getAppealActorText = (
   if (isRequestCase(workingCase.type)) {
     const appealedInCourt =
       caseLevelAppealDecision(
-        workingCase,
+        workingCase.appealDecisions,
         AppealDecisionPartyRole.PROSECUTOR,
       ) === CaseAppealDecision.APPEAL ||
       caseLevelAppealDecision(
-        workingCase,
+        workingCase.appealDecisions,
         AppealDecisionPartyRole.DEFENDANT,
       ) === CaseAppealDecision.APPEAL
 

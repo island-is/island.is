@@ -46,11 +46,14 @@ export const populateEndOfCourtSessionBookingsIntro = (
   // prosecutor appeal decision
   const prosecutorAppealAnnouncement =
     caseLevelAppealAnnouncement(
-      workingCase,
+      workingCase.appealDecisions,
       AppealDecisionPartyRole.PROSECUTOR,
     ) ?? ''
   let prosecutorAppeal = formatAppeal(
-    caseLevelAppealDecision(workingCase, AppealDecisionPartyRole.PROSECUTOR),
+    caseLevelAppealDecision(
+      workingCase.appealDecisions,
+      AppealDecisionPartyRole.PROSECUTOR,
+    ),
     'Sækjandi',
   )
 
@@ -69,11 +72,14 @@ export const populateEndOfCourtSessionBookingsIntro = (
 
   const accusedAppealAnnouncement =
     caseLevelAppealAnnouncement(
-      workingCase,
+      workingCase.appealDecisions,
       AppealDecisionPartyRole.DEFENDANT,
     ) ?? ''
   let accusedAppeal = formatAppeal(
-    caseLevelAppealDecision(workingCase, AppealDecisionPartyRole.DEFENDANT),
+    caseLevelAppealDecision(
+      workingCase.appealDecisions,
+      AppealDecisionPartyRole.DEFENDANT,
+    ),
     hasMultipleDefendants ? 'Varnaraðilar' : 'Varnaraðili',
   )
 

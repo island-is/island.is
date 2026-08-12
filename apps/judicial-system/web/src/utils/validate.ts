@@ -554,9 +554,12 @@ export const isRulingValidIC = (workingCase: Case): boolean => {
 
 export const isCourtRecordStepValidRC = (workingCase: Case): boolean => {
   return Boolean(
-    caseLevelAppealDecision(workingCase, AppealDecisionPartyRole.DEFENDANT) &&
+    caseLevelAppealDecision(
+      workingCase.appealDecisions,
+      AppealDecisionPartyRole.DEFENDANT,
+    ) &&
       caseLevelAppealDecision(
-        workingCase,
+        workingCase.appealDecisions,
         AppealDecisionPartyRole.PROSECUTOR,
       ) &&
       validate([
@@ -592,9 +595,12 @@ export const isCourtRecordStepValidIC = (workingCase: Case): boolean => {
   }
 
   return Boolean(
-    caseLevelAppealDecision(workingCase, AppealDecisionPartyRole.DEFENDANT) &&
+    caseLevelAppealDecision(
+      workingCase.appealDecisions,
+      AppealDecisionPartyRole.DEFENDANT,
+    ) &&
       caseLevelAppealDecision(
-        workingCase,
+        workingCase.appealDecisions,
         AppealDecisionPartyRole.PROSECUTOR,
       ) &&
       validate(validations).isValid,

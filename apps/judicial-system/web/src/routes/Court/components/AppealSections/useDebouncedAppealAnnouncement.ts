@@ -19,7 +19,8 @@ const useDebouncedAppealAnnouncement = (
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { updateCaseAppealDecision } = useCaseAppealDecision()
 
-  const initialValue = caseLevelAppealAnnouncement(workingCase, partyRole) ?? ''
+  const initialValue =
+    caseLevelAppealAnnouncement(workingCase.appealDecisions, partyRole) ?? ''
   const [value, setValue] = useState(initialValue)
   const [hasUserEdited, setHasUserEdited] = useState(false)
 
