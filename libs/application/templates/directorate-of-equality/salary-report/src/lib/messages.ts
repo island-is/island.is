@@ -928,13 +928,21 @@ export const messages = {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.genderColumn',
         defaultMessage: 'Kyn',
       },
-      directionColumn: {
-        id: 'doe.sr.application:salaryAnalysis.outlierGroup.directionColumn',
-        defaultMessage: 'Átt',
-      },
       differenceColumn: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.differenceColumn',
         defaultMessage: 'Launamunur',
+      },
+      scoreColumn: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.scoreColumn',
+        defaultMessage: 'Stigaflokkur',
+      },
+      salaryColumn: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.salaryColumn',
+        defaultMessage: 'Laun',
+      },
+      medianSalaryColumn: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.medianSalaryColumn',
+        defaultMessage: 'Miðgildi launa í stigaflokki',
       },
       postponeCardTitle: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.postponeCardTitle',
@@ -948,18 +956,6 @@ export const messages = {
       postponeCheckboxLabel: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.postponeCheckboxLabel',
         defaultMessage: 'Ég vil skila úrbótaáætlun seinna',
-      },
-      directionAbove: {
-        id: 'doe.sr.application:salaryAnalysis.outlierGroup.directionAbove',
-        defaultMessage: 'Yfir viðmiði',
-      },
-      directionBelow: {
-        id: 'doe.sr.application:salaryAnalysis.outlierGroup.directionBelow',
-        defaultMessage: 'Undir viðmiði',
-      },
-      directionEqual: {
-        id: 'doe.sr.application:salaryAnalysis.outlierGroup.directionEqual',
-        defaultMessage: 'Á viðmiði',
       },
       formTitle: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.formTitle',
@@ -990,6 +986,32 @@ export const messages = {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.formErrorRequired',
         defaultMessage:
           'Eyðublaðið má ekki vera tómt. Vinsamlegast fylltu það út.',
+      },
+      createGroupButton: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.createGroupButton',
+        defaultMessage: 'Setja í frávikahóp',
+      },
+      groupHeading: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.groupHeading',
+        defaultMessage: 'Frávikahópur',
+      },
+      groupMembers: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.groupMembers',
+        defaultMessage: 'Starfsmenn í hóp',
+      },
+      removeGroupButton: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.removeGroupButton',
+        defaultMessage: 'Fjarlægja hóp',
+      },
+      unassignedWarning: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.unassignedWarning',
+        defaultMessage:
+          'Öll frávik þurfa að vera hluti af frávikahópi til að halda áfram.',
+      },
+      incompleteGroupWarning: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.incompleteGroupWarning',
+        defaultMessage:
+          'Fylla þarf út allar upplýsingar fyrir hvern frávikahóp til að halda áfram.',
       },
     }),
   },

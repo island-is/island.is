@@ -1,6 +1,7 @@
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useMemo, useState } from 'react'
+import { useWatch } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { CustomField, FieldBaseProps } from '@island.is/application/types'
 import {
@@ -50,6 +51,14 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
       ? (field.props['hidePostponeCheckbox'] as boolean)
       : false
   const { formatMessage, lang: locale } = useLocale()
+  const postponed: string[] = useWatch({ name: 'salaryAnalysis.postponed' }) ?? []
+  const isPostponed = postponed.includes(YES)
+  const watchedOutlierGroups: { employeeOrdinals?: number[]; reason?: string; action?: string; signatureName?: string; signatureRole?: string }[] =
+    useWatch({ name: 'salaryAnalysis.outlierGroups' })
+  const outlierGroups = useMemo(
+    () => watchedOutlierGroups ?? [],
+    [watchedOutlierGroups],
+  )
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [hasError, setHasError] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | undefined>()
@@ -136,9 +145,53 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
             formatMessage(messages.salaryAnalysis.results.analyzeError),
         ]
       }
+      // Postponing the improvement plan exempts the applicant from grouping
+      // and explaining outliers here entirely — same exemption the schema
+      // already applies (see dataSchema's superRefine).
+      const currentOutliers = result?.outliers ?? []
+      if (!isPostponed && currentOutliers.length > 0) {
+        const assignedOrdinals = new Set(
+          outlierGroups.flatMap((g) => g.employeeOrdinals ?? []),
+        )
+        const allOutliersAssigned = currentOutliers.every((o) =>
+          assignedOrdinals.has(o.employeeOrdinal),
+        )
+        if (!allOutliersAssigned) {
+          return [
+            false,
+            formatMessage(messages.salaryAnalysis.outlierGroup.unassignedWarning),
+          ]
+        }
+        const groupsComplete = outlierGroups
+          .filter((g) => (g.employeeOrdinals ?? []).length > 0)
+          .every(
+            (g) =>
+              g.reason?.trim() &&
+              g.action?.trim() &&
+              g.signatureName?.trim() &&
+              g.signatureRole?.trim(),
+          )
+        if (!groupsComplete) {
+          return [
+            false,
+            formatMessage(
+              messages.salaryAnalysis.outlierGroup.incompleteGroupWarning,
+            ),
+          ]
+        }
+      }
       return [true, null]
     })
-  }, [setBeforeSubmitCallback, isAnalyzing, hasError, errorMessage, formatMessage])
+  }, [
+    setBeforeSubmitCallback,
+    isAnalyzing,
+    hasError,
+    errorMessage,
+    formatMessage,
+    isPostponed,
+    outlierGroups,
+    result,
+  ])
 
   const totals = result?.baseSalaryByGenderAndScoreAll?.totals
   const outlierCount = result?.outliers?.length ?? 0
@@ -232,6 +285,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
       <OutlierGroupPanel
         application={application}
         outliers={result?.outliers ?? []}
+        scoreBuckets={result?.baseSalaryByGenderAndScoreAll?.scoreBuckets ?? []}
         hidePostponeCheckbox={hidePostponeCheckbox}
         errors={errors}
       />
