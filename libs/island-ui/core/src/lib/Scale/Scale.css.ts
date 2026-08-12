@@ -85,6 +85,15 @@ export const scaleButtonSelected = style({
 export const scaleButtonError = style({
   borderColor: theme.color.red600,
   selectors: {
+    [`${scaleInput}:disabled + ${scaleButton}&`]: {
+      borderColor: theme.color.red600,
+    },
+    [`${scaleInput}:disabled + ${scaleButton}:first-of-type&`]: {
+      borderColor: theme.color.red600,
+    },
+    [`${scaleInput}:disabled + ${scaleButton}:last-of-type&`]: {
+      borderColor: theme.color.red600,
+    },
     '&:hover': {
       borderColor: theme.color.red600,
     },
