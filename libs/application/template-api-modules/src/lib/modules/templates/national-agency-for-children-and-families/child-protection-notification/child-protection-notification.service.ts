@@ -71,8 +71,8 @@ export class ChildProtectionNotificationService extends BaseTemplateApiService {
     return keyOptions[0]?.options ?? []
   }
 
-  async getUrgencyAssessments({ auth }: TemplateApiModuleActionProps) {
-    return await this.nationalAgencyForChildrenAndFamiliesClientService.getUrgencyAssessments(
+  async getChildSafetyLevels({ auth }: TemplateApiModuleActionProps) {
+    return await this.nationalAgencyForChildrenAndFamiliesClientService.getChildSafetyLevels(
       auth,
     )
   }

@@ -43,22 +43,20 @@ export const childSafetySection = buildSection({
           },
           title: ({ answers, externalData }) => {
             const { childSafetyUrgencyLevel } = getApplicationAnswers(answers)
-            const { urgencyAssessments } =
+            const { childSafetyLevels } =
               getApplicationExternalData(externalData)
             return (
-              urgencyAssessments.find(
-                (a) => a.value === childSafetyUrgencyLevel,
-              )?.label ?? ''
+              childSafetyLevels.find((a) => a.value === childSafetyUrgencyLevel)
+                ?.label ?? ''
             )
           },
           message: ({ answers, externalData }) => {
             const { childSafetyUrgencyLevel } = getApplicationAnswers(answers)
-            const { urgencyAssessments } =
+            const { childSafetyLevels } =
               getApplicationExternalData(externalData)
             return (
-              urgencyAssessments.find(
-                (a) => a.value === childSafetyUrgencyLevel,
-              )?.description ?? ''
+              childSafetyLevels.find((a) => a.value === childSafetyUrgencyLevel)
+                ?.description ?? ''
             )
           },
         }),
@@ -66,23 +64,21 @@ export const childSafetySection = buildSection({
           id: 'childSafetyUrgencyLevel',
           min: 0,
           max: ({ externalData }) => {
-            const { urgencyAssessments } =
+            const { childSafetyLevels } =
               getApplicationExternalData(externalData)
-            return urgencyAssessments.length > 0
-              ? Number(urgencyAssessments[urgencyAssessments.length - 1].value)
+            return childSafetyLevels.length > 0
+              ? Number(childSafetyLevels[childSafetyLevels.length - 1].value)
               : 0
           },
           minLabel: ({ externalData }) => {
-            const { urgencyAssessments } =
+            const { childSafetyLevels } =
               getApplicationExternalData(externalData)
-            return urgencyAssessments[0]?.label ?? ''
+            return childSafetyLevels[0]?.label ?? ''
           },
           maxLabel: ({ externalData }) => {
-            const { urgencyAssessments } =
+            const { childSafetyLevels } =
               getApplicationExternalData(externalData)
-            return (
-              urgencyAssessments[urgencyAssessments.length - 1]?.label ?? ''
-            )
+            return childSafetyLevels[childSafetyLevels.length - 1]?.label ?? ''
           },
           step: 1,
           required: true,

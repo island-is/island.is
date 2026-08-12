@@ -61,10 +61,10 @@ export const getApplicationExternalData = (
   const languageEnvironmentOptions =
     getValueViaPath<Option[]>(externalData, 'languageEnvironments.data') ?? []
 
-  const urgencyAssessments =
+  const childSafetyLevels =
     getValueViaPath<DetailedDropDownDto[]>(
       externalData,
-      'urgencyAssessments.data',
+      'childSafetyLevels.data',
     ) ?? []
 
   const postalCodes =
@@ -104,7 +104,7 @@ export const getApplicationExternalData = (
     protectiveFactorSections,
     genders,
     languageEnvironmentOptions,
-    urgencyAssessments,
+    childSafetyLevels,
     postalCodes,
     pronounOptions,
     disabilityStatusOptions,

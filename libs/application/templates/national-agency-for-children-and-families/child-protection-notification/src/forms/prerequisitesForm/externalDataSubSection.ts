@@ -6,6 +6,7 @@ import {
 import { UserProfileApi } from '@island.is/application/types'
 import {
   CategoriesApi,
+  ChildSafetyLevelsApi,
   ChildUnknownNationalIdStatesApi,
   DisabilityStatusesApi,
   GendersApi,
@@ -16,7 +17,6 @@ import {
   PronounsApi,
   ProtectiveFactorsApi,
   SchoolTypesApi,
-  UrgencyAssessmentsApi,
 } from '../../dataProviders'
 import { prerequisitesMessages } from '../../lib/messages'
 
@@ -51,7 +51,7 @@ export const externalDataSubSection = buildSubSection({
           provider: GendersApi,
         }),
         buildDataProviderItem({
-          provider: UrgencyAssessmentsApi,
+          provider: ChildSafetyLevelsApi,
         }),
         buildDataProviderItem({
           provider: PronounsApi,
