@@ -9,6 +9,7 @@ import {
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
+  isAppealFileDeletionLocked,
   isDefenceUser,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
@@ -110,6 +111,8 @@ const RulingOrderAppealFilesAccordion: FC<Props> = ({
     : isDefenceUser(user)
     ? defenceDeleteCategories
     : []
+  // Files can no longer be deleted once the court of appeals has registered its
+  // case number, as they have been delivered to the court of appeals by then
   const canDeleteFile = (file: CaseFile) =>
     isMatchingAppealCaseFile(
       workingCase,
@@ -117,7 +120,7 @@ const RulingOrderAppealFilesAccordion: FC<Props> = ({
       file,
       user,
       appealCase.rulingFileId,
-    )
+    ) && !isAppealFileDeletionLocked(file.category, appealCase)
 
   const rulingFileName =
     rulingFile.userGeneratedFilename ?? rulingFile.name ?? 'Úrskurður'

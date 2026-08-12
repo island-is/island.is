@@ -247,13 +247,16 @@ const AppealToCourtOfAppeals = () => {
         <Modal
           title="Kæra hefur verið send viðkomandi héraðsdómstól"
           text="Tilkynning um móttöku kæru verður send á aðila máls."
-          secondaryButton={{
-            text: formatMessage(core.closeModal),
-            onClick: () => {
-              refreshCase()
-              router.push(previousUrl)
+          buttons={[
+            {
+              text: formatMessage(core.closeModal),
+              onClick: () => {
+                refreshCase()
+                router.push(previousUrl)
+              },
+              variant: 'ghost',
             },
-          }}
+          ]}
         />
       )}
     </PageLayout>

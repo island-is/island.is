@@ -66,6 +66,8 @@ const listTypePlaceholder = {
   },
 } as const
 
+const excludedOrganizations = ['65° ARTIC ehf.']
+
 export const List = ({
   item,
   dispatch,
@@ -100,8 +102,6 @@ export const List = ({
     loading: organizationsLoading,
     error: organizationsError,
   } = useQuery(GET_ORGANIZATIONS, { skip: !isOrganizations })
-
-  const excludedOrganizations = ['65° ARTIC ehf.']
 
   const organizationsList = useMemo<FormSystemListItem[]>(
     () =>

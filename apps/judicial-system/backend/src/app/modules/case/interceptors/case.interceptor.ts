@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common'
 
 import {
+  AppealDecisionPartyRole,
   AppealEventType,
   CaseAppealDecision,
   CaseFileCategory,
@@ -80,15 +81,30 @@ export interface CaseLevelAppealInfo {
   isAppealDeadlineExpired?: boolean
 }
 
+// A case-level party's in-court appeal decision + announcement (the prosecution
+// or the collective defence) now lives on the appeal_decision rows
+// (ruling_file_id NULL) - the accused/prosecutor appeal decision and
+// announcement case columns have been dropped, so read them from there.
+const caseLevelAppealDecisionRow = (
+  theCase: Case,
+  partyRole: AppealDecisionPartyRole,
+) =>
+  theCase.appealDecisions?.find(
+    (decision) => !decision.rulingFileId && decision.partyRole === partyRole,
+  )
+
 export const getRequestCaseLevelAppealInfo = (
   theCase: Case,
 ): CaseLevelAppealInfo => {
-  const {
-    rulingDate,
-    accusedAppealDecision,
-    prosecutorAppealDecision,
-    isCompletedWithoutRuling,
-  } = theCase
+  const { rulingDate, isCompletedWithoutRuling } = theCase
+  const accusedAppealDecision = caseLevelAppealDecisionRow(
+    theCase,
+    AppealDecisionPartyRole.DEFENDANT,
+  )?.decision
+  const prosecutorAppealDecision = caseLevelAppealDecisionRow(
+    theCase,
+    AppealDecisionPartyRole.PROSECUTOR,
+  )?.decision
   const { appealState } = theCase.appealCase ?? {}
 
   if (!rulingDate) {
@@ -216,40 +232,6 @@ const getAppealedByRoleFromEvents = (
     : UserRole.DEFENDER
 }
 
-// Legacy appellant-side derivation from the case columns. Kept as a fallback for
-// any appeal not yet represented by an APPEALED event (e.g. a backfill row that
-// could not be resolved); removed later with the columns themselves.
-const getLegacyAppealedByRole = (
-  appealCase: AppealCase,
-  theCase: Case,
-): UserRole | undefined => {
-  if (appealCase.rulingFileId) {
-    // Ruling-order appeals recorded the appellant on the AppealCase row itself.
-    return appealCase.appealedByNationalId
-      ? UserRole.DEFENDER
-      : UserRole.PROSECUTOR
-  }
-
-  const { prosecutorPostponedAppealDate, accusedPostponedAppealDate } = theCase
-  if (isRequestCase(theCase.type)) {
-    const didProsecutorAcceptInCourt =
-      theCase.prosecutorAppealDecision === CaseAppealDecision.ACCEPT
-    const didAccusedAcceptInCourt =
-      theCase.accusedAppealDecision === CaseAppealDecision.ACCEPT
-    return prosecutorPostponedAppealDate && !didProsecutorAcceptInCourt
-      ? UserRole.PROSECUTOR
-      : accusedPostponedAppealDate && !didAccusedAcceptInCourt
-      ? UserRole.DEFENDER
-      : undefined
-  }
-
-  return prosecutorPostponedAppealDate
-    ? UserRole.PROSECUTOR
-    : accusedPostponedAppealDate
-    ? UserRole.DEFENDER
-    : undefined
-}
-
 export const getAppealCaseInfo = (
   appealCase: AppealCase,
   theCase: Case,
@@ -262,12 +244,9 @@ export const getAppealCaseInfo = (
   // row's `created` timestamp (ruling-order).
   const appealedDate = appealCase.appealDate
 
-  // The appellant's side is read from the APPEALED event log, falling back to
-  // the legacy columns for any appeal not yet represented there - so the switch
-  // stays correct even where the backfill could not resolve a row.
-  const appealedByRole =
-    getAppealedByRoleFromEvents(appealCase) ??
-    getLegacyAppealedByRole(appealCase, theCase)
+  // The appellant's side is read from the APPEALED event log - every appeal now
+  // registers one (out-of-court, in-court dual-write, and historical backfill).
+  const appealedByRole = getAppealedByRoleFromEvents(appealCase)
 
   // True when the ruling order was appealed in court ("Kært í þinghaldi") -
   // i.e. a party recorded a decision = APPEAL for it in the court record. The
@@ -648,12 +627,25 @@ const transformCase = (
     ...theCase.toJSON(),
     ...stateOverride,
     ...caseLevelAppealInfo,
-    accusedPostponedAppealDate: caseLevelAppealInfo.hasBeenAppealed
-      ? theCase.accusedPostponedAppealDate
-      : undefined,
-    prosecutorPostponedAppealDate: caseLevelAppealInfo.hasBeenAppealed
-      ? theCase.prosecutorPostponedAppealDate
-      : undefined,
+    // The in-court appeal decision + announcement columns were dropped; project
+    // them from the case-level appeal_decision rows so the court record and
+    // appeal-sections UI keep reading the same fields.
+    accusedAppealDecision: caseLevelAppealDecisionRow(
+      theCase,
+      AppealDecisionPartyRole.DEFENDANT,
+    )?.decision,
+    prosecutorAppealDecision: caseLevelAppealDecisionRow(
+      theCase,
+      AppealDecisionPartyRole.PROSECUTOR,
+    )?.decision,
+    accusedAppealAnnouncement: caseLevelAppealDecisionRow(
+      theCase,
+      AppealDecisionPartyRole.DEFENDANT,
+    )?.announcement,
+    prosecutorAppealAnnouncement: caseLevelAppealDecisionRow(
+      theCase,
+      AppealDecisionPartyRole.PROSECUTOR,
+    )?.announcement,
     ...appealCaseOverride,
     ...rulingOrderAppealCasesOverride,
     defendants: transformDefendants({
@@ -775,10 +767,9 @@ const transformCase = (
       theCase.eventLogs,
     ),
     eventLogs: undefined,
-    // Defence and prison system users should not see rulingModifiedHistory for request cases
+    // Prison system users should not see rulingModifiedHistory for request cases
     rulingModifiedHistory:
-      isRequestCase(theCase.type) &&
-      (isDefenceUser(user) || isPrisonSystemUser(user))
+      isRequestCase(theCase.type) && isPrisonSystemUser(user)
         ? undefined
         : theCase.rulingModifiedHistory,
     parentCase: theCase.parentCase && transformCase(theCase.parentCase, user),

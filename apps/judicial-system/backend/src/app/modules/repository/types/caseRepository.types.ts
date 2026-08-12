@@ -554,10 +554,6 @@ export interface UpdateCase
     | 'isolationToDate'
     | 'conclusion'
     | 'endOfSessionBookings'
-    | 'accusedAppealDecision'
-    | 'accusedAppealAnnouncement'
-    | 'prosecutorAppealDecision'
-    | 'prosecutorAppealAnnouncement'
     | 'caseModifiedExplanation'
     | 'rulingModifiedHistory'
     | 'caseResentExplanation'
@@ -592,8 +588,6 @@ export interface UpdateCase
   rulingSignatureDate?: Case['rulingSignatureDate'] | null
   withCourtSessions?: Case['withCourtSessions']
   courtRecordHash?: Case['courtRecordHash'] | null
-  accusedPostponedAppealDate?: Case['accusedPostponedAppealDate'] | null
-  prosecutorPostponedAppealDate?: Case['prosecutorPostponedAppealDate'] | null
   arraignmentDate?: UpdateDateLog
   courtDate?: UpdateDateLog
   postponedIndefinitelyExplanation?: string
@@ -620,7 +614,6 @@ export interface UpdateAppealCase
     | 'appealValidToDate'
     | 'isAppealCustodyIsolation'
     | 'appealIsolationToDate'
-    | 'appealedByNationalId'
     | 'rulingFileId'
     | 'appealDate'
   > {
