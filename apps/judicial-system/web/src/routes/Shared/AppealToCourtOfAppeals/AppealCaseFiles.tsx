@@ -221,10 +221,13 @@ const AppealFiles = () => {
         <Modal
           title="Gögn hafa verið send Landsrétti"
           text="Tilkynning hefur verið send Landsrétti og aðilum máls."
-          secondaryButton={{
-            text: formatMessage(core.closeModal),
-            onClick: () => router.push(previousUrl),
-          }}
+          buttons={[
+            {
+              text: formatMessage(core.closeModal),
+              onClick: () => router.push(previousUrl),
+              variant: 'ghost',
+            },
+          ]}
         />
       )}
     </PageLayout>

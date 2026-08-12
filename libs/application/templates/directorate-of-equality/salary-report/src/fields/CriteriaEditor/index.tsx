@@ -10,6 +10,7 @@ import { CriteriaItem } from './CriteriaItem'
 import { PersonalCriteriaList } from './PersonalCriteriaList'
 import { DEFAULT_JOB_FACTORS } from '../../utils/constants'
 import type { JobFactor } from '../../utils/types'
+import { getPathValue } from '../../utils/answerHelpers'
 
 export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
@@ -42,11 +43,11 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     const hasFilledWeights = savedFactors?.some((f) => f.weight !== '')
     if (hasFilledWeights) return
 
-    const parsedCriteria = getValueViaPath<ParsedCriterionDto[]>(
+    const parsedCriteria = getPathValue<ParsedCriterionDto[]>(
       application.externalData,
       'parsedSalaryReport.data.criteria',
       [],
-    ) as ParsedCriterionDto[]
+    )
 
     const hasParsedData = parsedCriteria.length > 0
 
