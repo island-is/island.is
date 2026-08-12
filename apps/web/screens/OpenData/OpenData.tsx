@@ -26,33 +26,30 @@ import {
 } from '@island.is/web/components'
 import {
   ContentLanguage,
-  GetArticleCategoriesQuery,
   GetGroupedMenuQuery,
   GetOpenDataPageQuery,
-  QueryGetArticleCategoriesArgs,
+  GetOrganizationLogosQuery,
   QueryGetGroupedMenuArgs,
   QueryGetOpenDataPageArgs,
+  QueryGetOrganizationsArgs,
 } from '@island.is/web/graphql/schema'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
-import {
-  formatMegaMenuCategoryLinks,
-  formatMegaMenuLinks,
-} from '@island.is/web/utils/processMenuData'
 
+import { buildHeaderNavData } from '../../components/Header/buildHeaderNavData'
+import type { HeaderNavData } from '../../components/Header/headerNavData'
 import { useLinkResolver } from '../../hooks/useLinkResolver'
-import { GET_CATEGORIES_QUERY, GET_OPEN_DATA_PAGE_QUERY } from '../queries'
+import { GET_OPEN_DATA_PAGE_QUERY } from '../queries'
 import { GET_GROUPED_MENU_QUERY } from '../queries/Menu'
+import { GET_ORGANIZATION_LOGOS_QUERY } from '../queries/Organization'
 import * as styles from './OpenData.css'
 
 interface OpenDataProps {
   page: GetOpenDataPageQuery['getOpenDataPage']
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
-  megaMenuData
+  headerNavData?: HeaderNavData | null
 }
 
-const OpenDataPage: Screen<OpenDataProps> = ({ page, megaMenuData }) => {
+const OpenDataPage: Screen<OpenDataProps> = ({ page, headerNavData }) => {
   const { linkResolver } = useLinkResolver()
   const {
     pageTitle,
@@ -72,7 +69,7 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page, megaMenuData }) => {
   return (
     <Box id="main-content" position="relative" style={{ overflow: 'hidden' }}>
       <Box background="blue100">
-        <Header megaMenuData={megaMenuData} />
+        <Header headerNavData={headerNavData} />
       </Box>
       <Section
         aria-labelledby="openDataHeroTitle"
@@ -196,8 +193,8 @@ OpenDataPage.getProps = async ({ apolloClient, locale }) => {
     {
       data: { getOpenDataPage: page },
     },
-    megaMenuData,
-    categories,
+    headerNavMenuData,
+    headerNavOrganizations,
   ] = await Promise.all([
     apolloClient.query<GetOpenDataPageQuery, QueryGetOpenDataPageArgs>({
       query: GET_OPEN_DATA_PAGE_QUERY,
@@ -211,38 +208,29 @@ OpenDataPage.getProps = async ({ apolloClient, locale }) => {
       .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
         query: GET_GROUPED_MENU_QUERY,
         variables: {
-          input: { id: '5prHB8HLyh4Y35LI4bnhh2', lang: locale },
+          input: { id: '1SCm5KnfQ3DrWT600MTt82', lang: locale },
         },
       })
-      .then((res) => res.data.getGroupedMenu),
+      .then((res) => res.data.getGroupedMenu)
+      .catch(() => null),
     apolloClient
-      .query<GetArticleCategoriesQuery, QueryGetArticleCategoriesArgs>({
-        query: GET_CATEGORIES_QUERY,
+      .query<GetOrganizationLogosQuery, QueryGetOrganizationsArgs>({
+        query: GET_ORGANIZATION_LOGOS_QUERY,
         variables: {
-          input: {
-            lang: locale,
-          },
+          input: { lang: locale as ContentLanguage },
         },
       })
-      .then((res) => res.data.getArticleCategories),
+      .then((res) => res.data.getOrganizations?.items ?? [])
+      .catch(() => []),
   ])
-
-  const [asideTopLinksData, asideBottomLinksData] = megaMenuData?.menus ?? []
 
   return {
     page,
-    megaMenuData: {
-      asideTopLinks: formatMegaMenuLinks(
-        locale as Locale,
-        asideTopLinksData.menuLinks,
-      ),
-      asideBottomTitle: asideBottomLinksData.title,
-      asideBottomLinks: formatMegaMenuLinks(
-        locale as Locale,
-        asideBottomLinksData.menuLinks,
-      ),
-      mainLinks: formatMegaMenuCategoryLinks(locale as Locale, categories),
-    },
+    headerNavData: buildHeaderNavData(
+      headerNavMenuData,
+      headerNavOrganizations,
+      locale as Locale,
+    ),
   }
 }
 

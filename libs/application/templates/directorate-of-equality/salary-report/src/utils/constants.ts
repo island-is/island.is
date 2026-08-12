@@ -8,13 +8,19 @@ import {
 } from './types'
 
 export type Events = {
-  type: DefaultEvents.SUBMIT | DefaultEvents.ABORT
+  type:
+    | DefaultEvents.SUBMIT
+    | DefaultEvents.ABORT
+    | DefaultEvents.APPROVE
+    | DefaultEvents.REJECT
 }
 
 export enum States {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
-  COMPLETED = 'completed',
+  IN_REVIEW = 'inReview',
+  APPROVED = 'approved',
+  DENIED = 'denied',
   POSTPONED = 'postponed',
   NOT_ALLOWED = 'notAllowed',
 }
@@ -23,6 +29,23 @@ export enum Roles {
   APPLICANT = 'applicant',
   NOT_ALLOWED = 'notAllowed',
 }
+
+export enum ApiActions {
+  getCompanyData = 'getCompanyData',
+  getDoeCompany = 'getDoeCompany',
+  getActiveEqualityReport = 'getActiveEqualityReport',
+  getBlankExcelTemplate = 'getBlankExcelTemplate',
+  presignImportUpload = 'presignImportUpload',
+  parseSalaryReportWorkbook = 'parseSalaryReportWorkbook',
+  submitSalaryReport = 'submitSalaryReport',
+  analyzeSalaryReport = 'analyzeSalaryReport',
+  editOutliers = 'editOutliers',
+  getReportComments = 'getReportComments',
+  submitReportComment = 'submitReportComment',
+}
+
+export const PERIOD_ONE_MONTH = 'oneMonth'
+export const PERIOD_TWELVE_MONTHS = 'twelveMonths'
 
 export const DEFAULT_JOB_FACTORS: JobFactor[] = [
   {
@@ -98,29 +121,14 @@ export const GENDER_OPTIONS: { value: string; label: string }[] = [
   { value: 'NEUTRAL', label: 'Kynsegin/annað' },
 ]
 
-export const EDUCATION_OPTIONS: { value: string; label: string }[] = [
-  { value: 'COMPULSORY', label: 'Grunnskólapróf' },
-  { value: 'UPPER_SECONDARY', label: 'Framhaldsskólapróf' },
-  { value: 'VOCATIONAL', label: 'Iðnmenntun' },
-  { value: 'BACHELOR', label: 'Háskólamenntun' },
-  { value: 'MASTER', label: 'Meistaragráða' },
-  { value: 'DOCTORATE', label: 'Doktorsgráða' },
-  { value: 'PROFESSIONAL', label: 'Starfsréttindi' },
-]
-
 export const GENDER_LABELS: Record<string, string> = Object.fromEntries(
   GENDER_OPTIONS.map((o) => [o.value, o.label]),
-)
-
-export const EDUCATION_LABELS: Record<string, string> = Object.fromEntries(
-  EDUCATION_OPTIONS.map((o) => [o.value, o.label]),
 )
 
 export const EMPTY_EMPLOYEE: Employee = {
   ordinal: 0,
   identifier: '',
   roleTitle: '',
-  education: '',
   gender: '',
   field: '',
   department: '',
