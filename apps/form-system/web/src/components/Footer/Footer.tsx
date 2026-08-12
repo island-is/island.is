@@ -1,5 +1,5 @@
 import { useMutation } from '@apollo/client'
-import { FormSystemField } from '@island.is/api/schema'
+import { FormSystemField, FormSystemSection } from '@island.is/api/schema'
 import { NotificationCommands } from '@island.is/form-system/enums'
 import {
   CREATE_PAYMENT,
@@ -22,6 +22,52 @@ import { useFormContext } from 'react-hook-form'
 import { useApplicationContext } from '../../context/ApplicationProvider'
 import * as styles from './Footer.css'
 
+const emptyScreenError = {
+  hasError: false,
+  title: { is: '', en: '' },
+  message: { is: '', en: '' },
+}
+
+const saveScreenError = {
+  hasError: true,
+  title: { is: 'Ekki tókst að vista', en: 'Could not save' },
+  message: {
+    is: 'Villa kom upp við að vista umsóknina. Vinsamlegast reyndu aftur.',
+    en: 'An error occurred while saving the application. Please try again.',
+  },
+}
+
+const submitApplicationError = {
+  hasError: true,
+  title: { is: 'Ekki tókst að senda umsókn', en: 'Could not submit' },
+  message: {
+    is: 'Villa kom upp við að senda umsóknina. Vinsamlegast reyndu aftur.',
+    en: 'An error occurred while submitting the application. Please try again.',
+  },
+}
+
+const stripFieldListsFromSections = (
+  sections: FormSystemSection[],
+): FormSystemSection[] =>
+  sections.map((section) => ({
+    ...section,
+    screens: section.screens?.map((screen) =>
+      screen
+        ? {
+            ...screen,
+            fields: screen.fields?.map((field) => {
+              if (!field) return field
+
+              return {
+                ...field,
+                list: undefined,
+              }
+            }),
+          }
+        : screen,
+    ),
+  }))
+
 interface Props {
   externalDataAgreement: boolean
 }
@@ -36,6 +82,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
   const submitScreen = useMutation(SAVE_SCREEN)
   const submitSection = useMutation(SUBMIT_SECTION)
   const updateDependencies = useMutation(UPDATE_APPLICATION_SETTINGS)
+  const saveLoading = submitScreen[1].loading || updateDependencies[1].loading
   const [notifyExternal, { loading: notifyLoading }] = useMutation(
     NOTIFY_EXTERNAL_SERVICE,
   )
@@ -111,6 +158,63 @@ export const Footer = ({ externalDataAgreement }: Props) => {
       currentSectionType !== SectionTypes.PARTIES) ||
     (currentSectionType === SectionTypes.PARTIES &&
       hasVisibleApplicantBeforeCurrentScreen())
+
+  const increment = () => {
+    dispatch({
+      type: 'INCREMENT',
+      payload: {
+        submitScreen: submitScreen,
+        submitSection: submitSection,
+        updateDependencies: updateDependencies,
+      },
+    })
+  }
+
+  const saveCurrentScreen = async () => {
+    try {
+      await submitScreen[0]({
+        variables: {
+          input: {
+            submitScreenDto: {
+              applicationId: state.application.id,
+              screenId: state.currentScreen?.data?.id,
+              sectionId: state.currentSection.data.id,
+              increment: true,
+              sections: stripFieldListsFromSections(
+                removeTypename(state.sections),
+              ),
+            },
+          },
+        },
+      })
+
+      if (currentSectionType === SectionTypes.INPUT) {
+        await updateDependencies[0]({
+          variables: {
+            input: {
+              id: state.application.id,
+              updateApplicationDto: {
+                dependencies: state.application.dependencies,
+              },
+            },
+          },
+        })
+      }
+
+      dispatch({
+        type: 'CLEAR_SCREEN_ERROR',
+        payload: { screenError: emptyScreenError },
+      })
+      return true
+    } catch (error) {
+      console.error('Error saving application:', error)
+      dispatch({
+        type: 'SAVE_FAILED',
+        payload: { screenError: saveScreenError },
+      })
+      return false
+    }
+  }
 
   const handleIncrement = async () => {
     if (paymentLoading) return
@@ -245,17 +349,14 @@ export const Footer = ({ externalDataAgreement }: Props) => {
     }
 
     if (!onSubmit) {
-      dispatch({
-        type: 'INCREMENT',
-        payload: {
-          submitScreen: submitScreen,
-          submitSection: submitSection,
-          updateDependencies: updateDependencies,
-        },
-      })
+      const saved = await saveCurrentScreen()
+      if (saved) increment()
       return
     }
     try {
+      const saved = await saveCurrentScreen()
+      if (!saved) return
+
       const { data } = await submitApplication({
         variables: { input: { id: state.application.id } },
       })
@@ -269,28 +370,20 @@ export const Footer = ({ externalDataAgreement }: Props) => {
         })
         return
       }
-      dispatch({
-        type: 'INCREMENT',
-        payload: {
-          submitScreen: submitScreen,
-          submitSection: submitSection,
-          updateDependencies: updateDependencies,
-        },
-      })
+      increment()
       dispatch({
         type: 'SUBMITTED',
         payload: {
           submitted: true,
-          screenError: {
-            hasError: false,
-            title: { is: '', en: '' },
-            message: { is: '', en: '' },
-          },
+          screenError: emptyScreenError,
         },
       })
     } catch (error) {
       console.error('Error submitting application', error)
-      throw new Error('Error submitting application')
+      dispatch({
+        type: 'SAVE_FAILED',
+        payload: { screenError: submitApplicationError },
+      })
     }
   }
 
@@ -325,6 +418,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
                 !enableContinueButton ||
                 paymentLoading ||
                 submitLoading ||
+                saveLoading ||
                 notifyLoading ||
                 (onSubmit && state.isValid === false)
               }

@@ -83,21 +83,7 @@ export const incrementWithScreens = (
   state: ApplicationState,
   currentSectionData: FormSystemSection,
   currentScreenIndex: number,
-  submitScreenMutation: MutationTuple<
-    any,
-    OperationVariables,
-    DefaultContext,
-    ApolloCache<any>
-  >,
-  updateDependenciesMutation: MutationTuple<
-    any,
-    OperationVariables,
-    DefaultContext,
-    ApolloCache<any>
-  >,
 ): ApplicationState => {
-  const [submitScreen] = submitScreenMutation
-  const [updateDependencies] = updateDependenciesMutation
   const errors = state.errors ?? []
   const isValid = state.isValid ?? true
 
@@ -109,36 +95,6 @@ export const incrementWithScreens = (
     (!isValid && (isParties || !state.application.allowProceedOnValidationFail))
   ) {
     return { ...state, errors }
-  }
-
-  submitScreen({
-    variables: {
-      input: {
-        submitScreenDto: {
-          applicationId: state.application.id,
-          screenId: state.currentScreen?.data?.id,
-          sectionId: state.currentSection.data.id,
-          increment: true,
-          sections: stripFieldListsFromSections(removeTypename(state.sections)),
-        },
-      },
-    },
-  }).catch((error) => {
-    console.error('Error submitting screen:', error)
-  })
-  if (currentSectionData.sectionType === SectionTypes.INPUT) {
-    updateDependencies({
-      variables: {
-        input: {
-          id: state.application.id,
-          updateApplicationDto: {
-            dependencies: state.application.dependencies,
-          },
-        },
-      },
-    }).catch((error) => {
-      console.error('Error updating dependencies:', error)
-    })
   }
 
   const sections = state.sections ?? []
@@ -180,31 +136,7 @@ export const incrementWithScreens = (
 
 export const incrementWithoutScreens = (
   state: ApplicationState,
-  submitScreenMutation: MutationTuple<
-    any,
-    OperationVariables,
-    DefaultContext,
-    ApolloCache<any>
-  >,
 ): ApplicationState => {
-  const [submitScreen] = submitScreenMutation
-
-  submitScreen({
-    variables: {
-      input: {
-        submitScreenDto: {
-          applicationId: state.application.id,
-          screenId: state.currentScreen?.data?.id,
-          sectionId: state.currentSection.data.id,
-          increment: true,
-          sections: stripFieldListsFromSections(removeTypename(state.sections)),
-        },
-      },
-    },
-  }).catch((error) => {
-    console.error('Error submitting screen:', error)
-  })
-
   const sections = state.sections ?? []
   const leavingIdx = state.currentSection.index
   const curSecIdx = state.currentSection.index

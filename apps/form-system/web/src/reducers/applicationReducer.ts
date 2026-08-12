@@ -147,17 +147,14 @@ export const applicationReducer = (
     case 'INCREMENT': {
       const { currentSectionData, currentScreenIndex } =
         getIncrementVariables(state)
-      const { submitScreen, updateDependencies } = action.payload
       if (hasScreens(currentSectionData)) {
         return incrementWithScreens(
           state,
           currentSectionData,
           currentScreenIndex,
-          submitScreen,
-          updateDependencies,
         )
       }
-      return incrementWithoutScreens(state, submitScreen)
+      return incrementWithoutScreens(state)
     }
     case 'DECREMENT': {
       const { currentSectionIndex, currentScreenIndex } =
@@ -188,6 +185,15 @@ export const applicationReducer = (
     case 'EXTERNAL_SERVICE_NOTIFICATION': {
       const { screen } = action.payload
       return setExternalServiceErrors(state, screen)
+    }
+
+    case 'SAVE_FAILED':
+    case 'CLEAR_SCREEN_ERROR': {
+      const { screenError } = action.payload
+      return {
+        ...state,
+        screenError,
+      }
     }
 
     case 'SUBMITTED': {
