@@ -6,9 +6,7 @@ describe('Helm config runtime image', () => {
   const finalStage = dockerfile.slice(dockerfile.lastIndexOf('FROM runner'))
 
   it('packages path-preserved Nx project metadata for the runtime image', () => {
-    expect(dockerfile).toContain(
-      'COPY nx.json /app/workspace-metadata/nx.json',
-    )
+    expect(dockerfile).toContain('COPY nx.json /app/workspace-metadata/nx.json')
     expect(dockerfile).toMatch(
       /find apps libs -type f -name project\.json\s+\\\n\s+-exec cp --parents \{\} workspace-metadata\//,
     )
