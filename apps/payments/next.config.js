@@ -4,7 +4,9 @@
 const { composePlugins, withNx } = require('@nx/next')
 const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 
-const withVanillaExtract = createVanillaExtractPlugin()
+const withVanillaExtract = createVanillaExtractPlugin({
+  unstable_turbopack: { mode: 'auto' },
+})
 
 const { BASEPATH = '/greida' } = process.env
 
@@ -13,19 +15,6 @@ const { BASEPATH = '/greida' } = process.env
  **/
 const nextConfig = {
   nx: {},
-  webpack: (config, { dev }) => {
-    // Workaround for Firefox "unterminated comment" when loading vanilla-extract
-    // global.css (gzip+base64 in magic comments). Shorten those comments in dev
-    // so Firefox's parser doesn't choke (Firefox-only, dev-only bug).
-    if (dev) {
-      config.optimization = config.optimization || {}
-      config.optimization.moduleIds = 'deterministic'
-      config.output = config.output || {}
-      config.output.pathinfo = false
-      config.plugins = config.plugins || []
-    }
-    return config
-  },
   // Runtime configuration lives in environments/runtimeEnvironment.ts
   basePath: `${BASEPATH}`,
 }

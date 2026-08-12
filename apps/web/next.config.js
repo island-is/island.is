@@ -1,12 +1,8 @@
-const path = require('path')
-const { IgnorePlugin } = require('webpack')
 const { composePlugins, withNx } = require('@nx/next')
 const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
-const withVanillaExtract = createVanillaExtractPlugin()
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
-const StatoscopeWebpackPlugin = require('@statoscope/webpack-plugin').default
-const { DuplicatesPlugin } = require('inspectpack/plugin')
-
+const withVanillaExtract = createVanillaExtractPlugin({
+  unstable_turbopack: { mode: 'auto' },
+})
 /**
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
@@ -155,63 +151,26 @@ const nextConfig = {
       },
     ]
   },
-  webpack: (config, { isServer, dev }) => {
-    if (process.env.ANALYZE === 'true' && !isServer) {
-      config.plugins.push(
-        new DuplicatesPlugin({
-          emitErrors: false,
-          verbose: true,
-        }),
-      )
-
-      config.plugins.push(
-        new StatoscopeWebpackPlugin({
-          saveTo: 'dist/apps/web/statoscope.html',
-          saveStatsTo: 'dist/apps/web/stats.json',
-          statsOptions: { all: true, source: false },
-        }),
-      )
-
-      config.plugins.push(
-        new BundleAnalyzerPlugin({
-          analyzerMode: 'static',
-          reportFilename: isServer
-            ? '../analyze/server.html'
-            : './analyze/client.html',
-        }),
-      )
-    }
-
-    if (!isServer) {
-      config.plugins.push(
-        new IgnorePlugin({
-          resourceRegExp: /^@island.is\/clients\/middlewares$/,
-        }),
-      )
-    }
-
-    if (!dev && isServer) {
-      config.devtool = 'source-map'
-    }
-
-    const modules = path.resolve(__dirname, '../..', 'node_modules')
-
-    config.resolve.alias = {
-      ...(config.resolve.alias || {}),
-      '@babel/runtime': path.resolve(modules, '@babel/runtime'),
-      'bn.js': path.resolve(modules, 'bn.js'),
-      'date-fns': path.resolve(modules, 'date-fns'),
-      'es-abstract': path.resolve(modules, 'es-abstract'),
-      'escape-string-regexp': path.resolve(modules, 'escape-string-regexp'),
-      'readable-stream': path.resolve(modules, 'readable-stream'),
-      'react-popper': path.resolve(modules, 'react-popper'),
-      inherits: path.resolve(modules, 'inherits'),
-      'graphql-tag': path.resolve(modules, 'graphql-tag'),
-      'safe-buffer': path.resolve(modules, 'safe-buffer'),
-      scheduler: path.resolve(modules, 'scheduler'),
-    }
-
-    return config
+  experimental: {
+    // Source maps for the server production bundle, previously configured
+    // through the custom webpack config (config.devtool).
+    serverSourceMaps: true,
+    // Prefer `nx analyze web` for bundle inspection. ANALYZE=true is only for
+    // reading raw chunk text, which numeric module ids and scope hoisting
+    // otherwise make unattributable. It changes chunk sizes, so don't compare
+    // absolute bytes against a normal build.
+    ...(process.env.ANALYZE === 'true'
+      ? { turbopackModuleIds: 'named', turbopackScopeHoisting: false }
+      : {}),
+  },
+  turbopack: {
+    resolveAlias: {
+      // Server-only (behind RUNTIME_ENV checks); previously excluded from
+      // browser bundles with webpack IgnorePlugin.
+      '@island.is/clients/middlewares': {
+        browser: './turbopack/emptyModule.ts',
+      },
+    },
   },
 
   // Runtime configuration lives in environments/runtimeEnvironment.ts

@@ -5,5 +5,6 @@ import proxyConfig from './proxy.config.json'
 bootstrap({
   name: 'contentful-apps',
   appDir: 'apps/contentful-apps',
+  turbopack: true,
   proxyConfig,
 })

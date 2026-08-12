@@ -1,40 +1,30 @@
 const { composePlugins, withNx } = require('@nx/next')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
+const fs = require('fs')
 const path = require('path')
 
 const tinymceDir = path.dirname(require.resolve('tinymce/package.json'))
 
 const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
-const withVanillaExtract = createVanillaExtractPlugin()
+const withVanillaExtract = createVanillaExtractPlugin({
+  unstable_turbopack: { mode: 'auto' },
+})
+
+// TinyMCE is self-hosted: the editor loads /tinymce/tinymce.min.js and its
+// assets from public/ at runtime (tinymceScriptSrc), so they must be copied
+// out of node_modules. Previously done with CopyWebpackPlugin.
+for (const asset of ['tinymce.min.js', 'plugins', 'skins', 'themes', 'icons']) {
+  fs.cpSync(
+    path.join(tinymceDir, asset),
+    path.join(__dirname, 'public/tinymce', asset),
+    { recursive: true },
+  )
+}
 
 const nextConfig = {
-  webpack: (
-    config,
-    { buildId, dev, isServer, defaultLoaders, nextRuntime, webpack },
-  ) => {
-    if (!dev && isServer) {
-      config.devtool = 'source-map'
-    }
-
-    if (!isServer) {
-      config.plugins.push(
-        new CopyWebpackPlugin({
-          patterns: [
-            'tinymce.min.js',
-            'plugins',
-            'skins',
-            'themes',
-            'icons',
-          ].map((asset) => ({
-            from: path.join(tinymceDir, asset),
-            to: path.join(__dirname, 'public/tinymce', asset),
-          })),
-        }),
-      )
-    }
-
-    // Important: return the modified config
-    return config
+  experimental: {
+    // Source maps for the server production bundle, previously configured
+    // through the custom webpack config (config.devtool).
+    serverSourceMaps: true,
   },
   // Runtime configuration lives in environments/runtimeEnvironment.ts
   env: {

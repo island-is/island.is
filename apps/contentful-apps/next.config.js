@@ -2,7 +2,9 @@
 const { composePlugins, withNx } = require('@nx/next')
 const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 
-const withVanillaExtract = createVanillaExtractPlugin()
+const withVanillaExtract = createVanillaExtractPlugin({
+  unstable_turbopack: { mode: 'auto' },
+})
 
 const graphqlPath = '/api/graphql'
 const { PUBLIC_API_URL = 'https://island.is' } = process.env
@@ -20,11 +22,10 @@ const nextConfig = {
     ]
   },
   nx: {},
-  webpack: (config, { isServer, dev }) => {
-    if (!dev && isServer) {
-      config.devtool = 'source-map'
-    }
-    return config
+  experimental: {
+    // Source maps for the server production bundle, previously configured
+    // through the custom webpack config (config.devtool).
+    serverSourceMaps: true,
   },
   // Runtime configuration lives in environments/runtimeEnvironment.ts
 }

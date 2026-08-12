@@ -8,6 +8,7 @@ import proxyConfig from './proxy.config.json'
 bootstrap({
   name: 'payments',
   appDir: 'apps/payments',
+  turbopack: true,
   proxyConfig,
   csp: buildContentSecurityPolicy,
   externalEndpointDependencies: () => {

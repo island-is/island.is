@@ -12,8 +12,7 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/consultation-portal",
-        "webpack": true
+        "outputPath": "dist/apps/consultation-portal"
       },
       "configurations": {
         "development": {
@@ -51,8 +50,7 @@
       "options": {
         "buildTarget": "consultation-portal:build",
         "dev": true,
-        "customServerTarget": "consultation-portal:serve-custom-server",
-        "webpack": true
+        "customServerTarget": "consultation-portal:serve-custom-server"
       },
       "configurations": {
         "development": {

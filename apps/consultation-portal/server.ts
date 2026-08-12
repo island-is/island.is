@@ -8,6 +8,7 @@ import { getServerRuntimeEnv } from './environments/runtimeEnvironment'
 bootstrap({
   name: 'consultation-portal',
   appDir: 'apps/consultation-portal',
+  turbopack: true,
   proxyConfig,
   csp: buildContentSecurityPolicy,
   externalEndpointDependencies: () => {

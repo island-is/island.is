@@ -1,0 +1,8 @@
+{
+  "private": true,
+  "//": "Without this file every module in the app defaults to side-effectful, which stops Turbopack's reexports-only tree shaking from seeing through barrel files. vanilla-extract files register global styles and must never be dropped.",
+  "sideEffects": [
+    "**/*.css.ts",
+    "**/*.css"
+  ]
+}

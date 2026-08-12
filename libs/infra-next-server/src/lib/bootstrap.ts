@@ -41,6 +41,12 @@ type BootstrapOptions = {
   externalEndpointDependencies?: ExternalEndpointDependencies
 
   /**
+   * Bundle with Turbopack in dev instead of webpack. Only for apps whose
+   * next.config.js no longer has custom webpack config.
+   */
+  turbopack?: boolean
+
+  /**
    * Opt-in per-request Content-Security-Policy. Given a fresh nonce, returns the
    * CSP string (the app owns the allow-list). When set, a nonce is minted per
    * document request and placed on the request's `content-security-policy` header
@@ -89,7 +95,7 @@ export const bootstrap = async (options: BootstrapOptions) => {
 
   await setupProxy(expressApp, options.proxyConfig, dev)
 
-  const nextConfig = await getNextConfig(options.appDir, dev)
+  const nextConfig = await getNextConfig(options.appDir, dev, options.turbopack)
   const nextApp = next(nextConfig)
   const handle = nextApp.getRequestHandler()
   const readyPromise = nextApp.prepare()

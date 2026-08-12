@@ -1,17 +1,18 @@
 const withNx = require('@nx/next/plugins/with-nx')
 const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
-const withVanillaExtract = createVanillaExtractPlugin()
+const withVanillaExtract = createVanillaExtractPlugin({
+  unstable_turbopack: { mode: 'auto' },
+})
 const { createSecureHeaders } = require('next-secure-headers')
 
 module.exports = withNx(
   withVanillaExtract({
     basePath: '/admin',
     cssModules: false,
-    webpack: (config, { isServer, dev }) => {
-      if (!dev && isServer) {
-        config.devtool = 'source-map'
-      }
-      return config
+    experimental: {
+      // Source maps for the server production bundle, previously configured
+      // through the custom webpack config (config.devtool).
+      serverSourceMaps: true,
     },
     env: {
       API_MOCKS: process.env.API_MOCKS || '',

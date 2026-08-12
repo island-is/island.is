@@ -1,22 +1,21 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { composePlugins, withNx } = require('@nx/next')
 const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
-const withVanillaExtract = createVanillaExtractPlugin()
+const withVanillaExtract = createVanillaExtractPlugin({
+  unstable_turbopack: { mode: 'auto' },
+})
 
 /**
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
 const nextConfig = {
   nx: {},
-  webpack: (config, { isServer, dev }) => {
-    if (!dev && isServer) {
-      config.devtool = 'source-map'
-    }
-    return config
+  experimental: {
+    // Source maps for the server production bundle, previously configured
+    // through the custom webpack config (config.devtool).
+    serverSourceMaps: true,
   },
 }
-
-module.exports = withVanillaExtract(withNx(nextConfig))
 
 const plugins = [
   // Add more Next.js plugins to this list if needed.
