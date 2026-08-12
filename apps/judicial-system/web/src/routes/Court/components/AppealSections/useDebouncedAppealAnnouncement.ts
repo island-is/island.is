@@ -32,7 +32,12 @@ const useDebouncedAppealAnnouncement = (
 
   useDebounce(
     () => {
-      if (hasUserEdited && value !== '') {
+      // An emptied field is persisted like any other value. The announcement is
+      // nullable and clearing it is a real edit - the sibling paths already write
+      // it (the ruling-order card on blur, and picking a non-APPEAL decision,
+      // which clears the autofilled text). Skipping it here would leave the row
+      // holding text the judge deleted, restored on the next reload.
+      if (hasUserEdited) {
         updateCaseAppealDecision({
           caseId: workingCase.id,
           partyRole,
