@@ -1,13 +1,18 @@
 import {
   CodeOwners,
   ref,
-  service,
-  ServiceBuilder,
+  staticService,
+  StaticServiceBuilder,
 } from '../../../../infra/src/dsl/dsl'
+import { applicationContentSecurityPolicies } from '../../../../infra/src/dsl/application-content-security-policy'
 
 const serviceName = 'form-system-web'
-export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
-  service(serviceName)
+export const serviceSetup = (): StaticServiceBuilder<typeof serviceName> =>
+  staticService(serviceName)
+    .csp({
+      enforce: applicationContentSecurityPolicies(),
+      hashDirectives: ['script-src', 'style-src-elem'],
+    })
     .codeOwner(CodeOwners.Advania)
     .namespace(serviceName)
     .liveness('/liveness')

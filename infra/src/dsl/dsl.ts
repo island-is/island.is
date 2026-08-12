@@ -27,6 +27,15 @@ import type {
 import { bffConfig } from './bff'
 import { logger } from '../logging'
 import { COMMON_SECRETS } from './consts'
+import {
+  CONTENT_SECURITY_POLICY_ENV,
+  CONTENT_SECURITY_POLICY_HASH_DIRECTIVES_ENV,
+  CONTENT_SECURITY_POLICY_REPORT_ONLY_ENV,
+  ContentSecurityPolicyConfig,
+  serializeContentSecurityPolicyByEnvironment,
+  serializeContentSecurityPolicyHashDirectives,
+} from './content-security-policy'
+import { validateStaticServiceProject } from './static-service-project'
 
 /**
  * Allows you to make some properties of a type optional.
@@ -592,6 +601,64 @@ export const service = <Service extends string>(
   return new ServiceBuilder<Service>(name)
 }
 
+/** A service served by the repository's shared static nginx image. */
+export class StaticServiceBuilder<
+  ServiceType extends string,
+> extends ServiceBuilder<ServiceType> {
+  constructor(name: ServiceType) {
+    super(name)
+    validateStaticServiceProject(name)
+  }
+
+  /** Adds enforcement and/or report-only Content-Security-Policy headers. */
+  csp(config: ContentSecurityPolicyConfig): this {
+    if (
+      config === null ||
+      typeof config !== 'object' ||
+      Array.isArray(config)
+    ) {
+      throw new Error('CSP configuration must be an object')
+    }
+    const unknownModes = Object.keys(config).filter(
+      (mode) =>
+        mode !== 'enforce' &&
+        mode !== 'reportOnly' &&
+        mode !== 'hashDirectives',
+    )
+    if (unknownModes.length > 0) {
+      throw new Error(`Unknown CSP mode: ${unknownModes.join(', ')}`)
+    }
+
+    const enforce = config.enforce
+      ? serializeContentSecurityPolicyByEnvironment(config.enforce)
+      : undefined
+    const reportOnly = config.reportOnly
+      ? serializeContentSecurityPolicyByEnvironment(config.reportOnly)
+      : undefined
+    if (config.hashDirectives && !enforce) {
+      throw new Error('CSP hash directives require an enforcement policy')
+    }
+    const hashDirectives = config.hashDirectives
+      ? serializeContentSecurityPolicyHashDirectives(config.hashDirectives)
+      : undefined
+    const env = {
+      ...(enforce ? { [CONTENT_SECURITY_POLICY_ENV]: enforce } : {}),
+      ...(hashDirectives
+        ? { [CONTENT_SECURITY_POLICY_HASH_DIRECTIVES_ENV]: hashDirectives }
+        : {}),
+      ...(reportOnly
+        ? { [CONTENT_SECURITY_POLICY_REPORT_ONLY_ENV]: reportOnly }
+        : {}),
+    }
+    if (Object.keys(env).length > 0) this.env(env)
+    return this
+  }
+}
+
+export const staticService = <Service extends string>(
+  name: Service,
+): StaticServiceBuilder<Service> => new StaticServiceBuilder<Service>(name)
+
 export const json = (value: unknown): string => JSON.stringify(value)
 
 /**
@@ -763,3 +830,13 @@ export const scheduledJob = <Service extends string>(
 
 export { CodeOwners }
 export type { Context }
+export type {
+  ContentSecurityPolicy,
+  ContentSecurityPolicyConfig,
+  ContentSecurityPolicyHashDirective,
+  ContentSecurityPolicySource,
+  EnvironmentContentSecurityPolicies,
+  EnvironmentPolicies,
+  Policy,
+  SandboxValue,
+} from './content-security-policy'
