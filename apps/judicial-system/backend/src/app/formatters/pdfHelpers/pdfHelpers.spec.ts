@@ -491,11 +491,7 @@ describe('addNumberedList', () => {
     return { doc, frags, currentPage }
   }
 
-  const visibleText = (frags: Frag[]) =>
-    frags
-      .map((f) => f.text)
-      .join('')
-      .replace(/\u200B/g, '')
+  const visibleText = (frags: Frag[]) => frags.map((f) => f.text).join('')
 
   it('keeps a short name on one line without truncating', () => {
     const { doc, frags } = createInstrumentedDoc()
@@ -519,21 +515,22 @@ describe('addNumberedList', () => {
     expect(visibleText(frags)).toContain('kafli0')
     expect(visibleText(frags)).toContain('kafli19')
     expect(visibleText(frags)).not.toContain('...')
+    expect(visibleText(frags)).not.toContain('\u200B')
     const nameFrags = frags.filter((f) => /kafli\d+/.test(f.text))
     const ys = [...new Set(nameFrags.map((f) => Math.round(f.y)))]
     expect(ys.length).toBeGreaterThan(1)
     doc.end()
   })
 
-  it('wraps a long name with no spaces onto multiple lines', () => {
+  it('wraps a long name with no spaces onto multiple lines via PDFKit', () => {
     const { doc, frags } = createInstrumentedDoc()
     const name = `${'a'.repeat(120)}.pdf`
 
     addNumberedList(doc, [name])
 
-    expect(visibleText(frags)).toContain('a'.repeat(120))
-    expect(visibleText(frags)).toContain('.pdf')
+    expect(visibleText(frags)).toBe(`1${name}`)
     expect(visibleText(frags)).not.toContain('...')
+    expect(visibleText(frags)).not.toContain('\u200B')
     const nameFrags = frags.filter(
       (f) => f.text.includes('a') || f.text.includes('.pdf'),
     )
@@ -542,9 +539,9 @@ describe('addNumberedList', () => {
 
     const rightEdge = doc.page.width - doc.page.margins.right
     for (const frag of nameFrags) {
-      expect(
-        frag.x + doc.widthOfString(frag.text.replace(/\u200B/g, '')),
-      ).toBeLessThanOrEqual(rightEdge + 2)
+      expect(frag.x + doc.widthOfString(frag.text)).toBeLessThanOrEqual(
+        rightEdge + 2,
+      )
     }
     doc.end()
   })
@@ -565,7 +562,8 @@ describe('addNumberedList', () => {
     )
     expect(nameFrags.length).toBeGreaterThan(0)
     expect(nameFrags.every((f) => f.page > pagesBefore)).toBe(true)
-    expect(visibleText(frags)).toContain('b'.repeat(120))
+    expect(visibleText(frags)).toContain(name)
+    expect(visibleText(frags)).not.toContain('\u200B')
     doc.end()
   })
 })

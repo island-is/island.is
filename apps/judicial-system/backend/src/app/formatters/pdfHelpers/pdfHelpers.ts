@@ -445,29 +445,6 @@ export const addNormalRightAlignedText = (
   addAlignedText(doc, baseFontSize, text, 'right', font)
 }
 
-// PDFKit only wraps on whitespace. Filenames often have none, so insert
-// zero-width spaces into oversized tokens so measure + draw can mid-break.
-const withWrapOpportunities = (
-  doc: PDFKit.PDFDocument,
-  text: string,
-  maxWidth: number,
-): string => {
-  const zeroWidthSpace = '\u200B'
-
-  return text
-    .split(/(\s+)/)
-    .map((part) => {
-      if (part.length === 0 || /^\s+$/.test(part)) {
-        return part
-      }
-      if (doc.widthOfString(part) <= maxWidth) {
-        return part
-      }
-      return [...part].join(zeroWidthSpace)
-    })
-    .join('')
-}
-
 export const addNumberedList = (
   doc: PDFKit.PDFDocument,
   items: string[],
@@ -493,8 +470,8 @@ export const addNumberedList = (
 
   for (const [i, item] of items.entries()) {
     const label = `${start + i}`
-    const wrappedItem = withWrapOpportunities(doc, item, wrapWidth)
-    const textHeight = doc.heightOfString(wrappedItem, {
+    // PDFKit wraps on whitespace and also splits oversized unbroken tokens.
+    const textHeight = doc.heightOfString(item, {
       width: wrapWidth,
     })
     const labelWidth = doc.widthOfString(label)
@@ -506,7 +483,7 @@ export const addNumberedList = (
     const y = doc.y
 
     doc.text(label, labelX, y, { lineBreak: false })
-    doc.text(wrappedItem, itemX, y, { width: wrapWidth })
+    doc.text(item, itemX, y, { width: wrapWidth })
   }
 
   doc.x = originalX
