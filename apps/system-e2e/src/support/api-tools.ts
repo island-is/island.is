@@ -1,6 +1,10 @@
 import { Page } from '@playwright/test'
 
-export const graphqlSpy = async (page: Page, url: string, operation: string) => {
+export const graphqlSpy = async (
+  page: Page,
+  url: string,
+  operation: string,
+) => {
   const data: { request: any; response: any }[] = []
   await page.route(url, async (route, req) => {
     const response = await page.request.fetch(req)
