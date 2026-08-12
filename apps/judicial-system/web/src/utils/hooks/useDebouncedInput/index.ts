@@ -1,86 +1,44 @@
-import { useCallback, useContext, useEffect, useState } from 'react'
-import { useDebounce } from 'react-use'
+import { useContext } from 'react'
 
 import { FormContext } from '@island.is/judicial-system-web/src/components'
 
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
-  validateAndSetErrorMessage,
 } from '../../formHelper'
 import { Validation } from '../../validate'
+import useDebouncedField from '../useDebouncedField'
 import { UpdateCase, useCase } from '..'
 
+// Debounced text input for a case level field. Thin wrapper around
+// useDebouncedField that supplies the case specific pieces: the working case as
+// the source of truth, an optimistic write through setWorkingCase and a
+// persist through updateCase.
 const useDebouncedInput = <T extends keyof UpdateCase>(
   fieldName: T,
   validations: Validation[] = [],
   delay = 500,
 ) => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
-  const initialValue = workingCase[
-    fieldName as keyof typeof workingCase
-  ] as string
-  const [value, setValue] = useState(initialValue ?? '')
-  const [errorMessage, setErrorMessage] = useState('')
-  const [hasUserEdited, setHasUserEdited] = useState(false)
   const { updateCase } = useCase()
 
-  useEffect(() => {
-    if (!hasUserEdited && initialValue !== value) {
-      setValue(initialValue ?? '')
-    }
-  }, [initialValue, hasUserEdited, value])
-
-  useDebounce(
-    () => {
-      if (hasUserEdited) {
-        if (value === '') {
-          return
-        }
-
-        validateAndSendToServer(
-          fieldName,
-          value,
-          validations,
-          workingCase,
-          updateCase,
-          setErrorMessage,
-        )
-      }
-    },
+  return useDebouncedField({
+    value: workingCase[fieldName as keyof typeof workingCase] as string,
+    validations,
     delay,
-    [value],
-  )
-
-  const handleChange = useCallback(
-    (newValue: UpdateCase[T]) => {
-      setValue(newValue)
-      setHasUserEdited(true)
-      removeTabsValidateAndSet(
+    onChange: (value) =>
+      removeTabsValidateAndSet(fieldName, value, validations, setWorkingCase),
+    // validateAndSendToServer skips cases without an id, so a field edited
+    // before the case exists is not persisted here.
+    onSave: (value) =>
+      validateAndSendToServer(
         fieldName,
-        newValue,
+        value,
         validations,
-        setWorkingCase,
-        errorMessage,
-        setErrorMessage,
-      )
-    },
-    [fieldName, validations, setWorkingCase, errorMessage],
-  )
-
-  const handleBlur = useCallback(
-    (value: UpdateCase[T]) =>
-      validateAndSetErrorMessage(validations, value, setErrorMessage),
-    [validations],
-  )
-
-  return {
-    value,
-    errorMessage,
-    hasError: errorMessage !== '',
-    onChange: handleChange,
-    onBlur: handleBlur,
-  }
+        workingCase,
+        updateCase,
+      ),
+  })
 }
 
 export default useDebouncedInput

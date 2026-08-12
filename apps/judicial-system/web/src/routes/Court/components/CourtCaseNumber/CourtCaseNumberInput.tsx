@@ -1,5 +1,4 @@
-import { FC, useContext, useState } from 'react'
-import { useDebounce } from 'react-use'
+import { FC, useContext, useRef, useState } from 'react'
 
 import { Button, Input } from '@island.is/island-ui/core'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
@@ -8,8 +7,10 @@ import {
   FormContext,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { validate } from '@island.is/judicial-system-web/src/utils/validate'
+import {
+  useCase,
+  useDebouncedField,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 import * as styles from './CourtCaseNumber.css'
 
@@ -32,56 +33,67 @@ export const CourtCaseNumberInput: FC<Props> = (props) => {
 
   const { updateCase, createCourtCase, isCreatingCourtCase } = useCase()
 
-  const [value, setValue] = useState<string>(courtCaseNumber ?? '')
-  const [courtCaseNumberErrorMessage, setCourtCaseNumberErrorMessage] =
+  const [createCourtCaseErrorMessage, setCreateCourtCaseErrorMessage] =
     useState<string>('')
   const [createCourtCaseSuccess, setCreateCourtCaseSuccess] =
     useState<boolean>(false)
+  // Bumped whenever the button above creates a court case number for us. That
+  // number replaces whatever the user may have typed, so the debounced field
+  // has to re-adopt it rather than treat it as a server echo of its own edit.
+  const [createCourtCaseCount, setCreateCourtCaseCount] = useState(0)
+
+  // The number we know the server already has. `courtCaseNumber` can't be used
+  // for this — it is the optimistic working case value, which every keystroke
+  // updates.
+  const persistedCourtCaseNumber = useRef(courtCaseNumber ?? '')
 
   const policeCaseNumberValidator = isIndictmentCase
     ? 'S-case-number'
     : 'R-case-number'
 
+  // The backend treats any update carrying a court case number on a submitted
+  // case as receiving the case, and a changed number resets case file states.
+  // So only persist a valid number, and only when it differs from what the
+  // server already has.
+  const courtCaseNumberField = useDebouncedField({
+    value: courtCaseNumber,
+    resetKey: String(createCourtCaseCount),
+    validations: ['empty', policeCaseNumberValidator],
+    disabled: isDisabled,
+    onChange: (value) => {
+      setCreateCourtCaseErrorMessage('')
+      setCreateCourtCaseSuccess(false)
+      setCourtCaseNumber(value)
+    },
+    onSave: (value) => {
+      if (value === persistedCourtCaseNumber.current) {
+        return
+      }
+
+      persistedCourtCaseNumber.current = value
+      updateCase(caseId, { courtCaseNumber: value })
+    },
+  })
+
   const handleCreateCourtCase = async () => {
-    const courtCaseNumber = await createCourtCase(caseId)
+    const createdCourtCaseNumber = await createCourtCase(caseId)
 
-    setCourtCaseNumber(courtCaseNumber)
+    setCourtCaseNumber(createdCourtCaseNumber)
 
-    if (courtCaseNumber !== '') {
-      setCourtCaseNumberErrorMessage('')
-      setValue(courtCaseNumber)
+    if (createdCourtCaseNumber !== '') {
+      persistedCourtCaseNumber.current = createdCourtCaseNumber
+      setCreateCourtCaseErrorMessage('')
+      setCreateCourtCaseCount((count) => count + 1)
       setCreateCourtCaseSuccess(true)
     } else {
-      setCourtCaseNumberErrorMessage(
+      setCreateCourtCaseErrorMessage(
         'Ekki tókst að stofna nýtt mál, reyndu aftur eða sláðu inn málsnúmer',
       )
     }
   }
 
-  const updateCourtCaseNumber = async () => {
-    const isValid = validate([
-      [value, ['empty', policeCaseNumberValidator]],
-    ]).isValid
-
-    if (!isValid) {
-      return
-    }
-
-    updateCase(caseId, { courtCaseNumber: value })
-    setCourtCaseNumber(value)
-  }
-
-  const validateInput = (inputValue: string) => {
-    const validation = validate([
-      [inputValue, ['empty', policeCaseNumberValidator]],
-    ])
-
-    setCourtCaseNumberErrorMessage(
-      validation.isValid ? '' : validation.errorMessage,
-    )
-  }
-
-  useDebounce(updateCourtCaseNumber, 500, [value])
+  const errorMessage =
+    createCourtCaseErrorMessage || courtCaseNumberField.errorMessage
 
   return (
     <BlueBox className={styles.createCourtCaseContainer}>
@@ -107,21 +119,16 @@ export const CourtCaseNumberInput: FC<Props> = (props) => {
           autoComplete="off"
           size="sm"
           backgroundColor="white"
-          value={value}
+          value={courtCaseNumberField.value}
           icon={
             courtCaseNumber && createCourtCaseSuccess
               ? { name: 'checkmark' }
               : undefined
           }
-          errorMessage={courtCaseNumberErrorMessage}
-          hasError={!isCreatingCourtCase && courtCaseNumberErrorMessage !== ''}
-          onChange={(evt) => {
-            setCourtCaseNumberErrorMessage('')
-            setCreateCourtCaseSuccess(false)
-            setValue(evt.target.value)
-            setCourtCaseNumber(evt.target.value)
-          }}
-          onBlur={(evt) => validateInput(evt.target.value)}
+          errorMessage={errorMessage}
+          hasError={!isCreatingCourtCase && errorMessage !== ''}
+          onChange={(evt) => courtCaseNumberField.onChange(evt.target.value)}
+          onBlur={() => courtCaseNumberField.onBlur()}
           disabled={isDisabled}
           required
         />
