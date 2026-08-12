@@ -17,9 +17,10 @@ import {
 } from '../../utils/types'
 import { RolePanel } from './RolePanel'
 import {
+  buildMergedStepMetaByTitle,
   buildRolesFromEmployees,
-  buildStepMetaByTitle,
-  buildStepMetaFromSubCriteria,
+  buildStepAssignmentsFromSubCriteria,
+  mergeStepAssignments,
 } from './utils'
 
 const FIELD_NAME = 'roles'
@@ -36,19 +37,15 @@ export const JobClassificationEditor: FC<
       'parsedSalaryReport.data.criteria',
       [],
     ) ?? []) as ParsedCriterionDto[]
-    const fromExternal = buildStepMetaByTitle(criteria)
-    if (Object.keys(fromExternal).length > 0) return fromExternal
-    // External data unavailable (stale right after import) — fall back to the
-    // sub-criteria in answers so the step dropdowns still render options.
-    const subCriteria = (getValueViaPath(
+    // Live sub-criteria are the base (so a criterion added after import still
+    // gets metadata) — the imported external criteria overlay authoritative
+    // scores/weights for titles that exist in both.
+    const jobFactors = (getValueViaPath<SubCriterion[][]>(
       application.answers,
-      'subCriteria',
-      {},
-    ) ?? {}) as {
-      jobFactors?: SubCriterion[][]
-      personalFactors?: SubCriterion[][]
-    }
-    return buildStepMetaFromSubCriteria(subCriteria)
+      'subCriteria.jobFactors',
+      [],
+    ) ?? []) as SubCriterion[][]
+    return buildMergedStepMetaByTitle(criteria, jobFactors)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -57,6 +54,21 @@ export const JobClassificationEditor: FC<
   // here, before the form-seeding effect below, so the on-screen order and
   // the `roles.${roleIndex}` field paths stay in sync.
   const roles = useMemo(() => {
+    const jobFactors = (getValueViaPath<JobFactor[]>(
+      application.answers,
+      'criteria.jobFactors',
+      [],
+    ) ?? []) as JobFactor[]
+    const subCriteriaJobFactors = (getValueViaPath<SubCriterion[][]>(
+      application.answers,
+      'subCriteria.jobFactors',
+      [],
+    ) ?? []) as SubCriterion[][]
+    const defaultAssignments = buildStepAssignmentsFromSubCriteria(
+      jobFactors.map((f) => f.title),
+      subCriteriaJobFactors,
+    )
+
     const saved = getValueViaPath<Role[]>(application.answers, FIELD_NAME)
     const bySavedOrExternalOrDerived = (): Role[] => {
       if (saved && saved.length > 0) return saved
@@ -76,25 +88,24 @@ export const JobClassificationEditor: FC<
         'employees',
         [],
       ) ?? []) as Employee[]
-      const jobFactors = (getValueViaPath<JobFactor[]>(
-        application.answers,
-        'criteria.jobFactors',
-        [],
-      ) ?? []) as JobFactor[]
-      const subCriteriaJobFactors = (getValueViaPath<SubCriterion[][]>(
-        application.answers,
-        'subCriteria.jobFactors',
-        [],
-      ) ?? []) as SubCriterion[][]
       return buildRolesFromEmployees(
         employees.map((e) => e.roleTitle),
         jobFactors.map((f) => f.title),
         subCriteriaJobFactors,
       )
     }
-    return [...bySavedOrExternalOrDerived()].sort((a, b) =>
-      a.title.localeCompare(b.title, 'is'),
-    )
+
+    // Merge newly-added job criteria into every role regardless of which
+    // branch produced it, so criteria added after an import still get a row
+    // for already-imported/saved roles, not just freshly-derived ones.
+    const merged = bySavedOrExternalOrDerived().map((role) => ({
+      ...role,
+      stepAssignments: mergeStepAssignments(
+        role.stepAssignments ?? [],
+        defaultAssignments,
+      ),
+    }))
+    return merged.sort((a, b) => a.title.localeCompare(b.title, 'is'))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

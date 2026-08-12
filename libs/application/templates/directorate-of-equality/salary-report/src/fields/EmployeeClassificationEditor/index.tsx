@@ -15,9 +15,9 @@ import {
   type SubCriterion,
 } from '../../utils/types'
 import {
+  buildMergedStepMetaByTitle,
   buildStepAssignmentsFromSubCriteria,
-  buildStepMetaByTitle,
-  buildStepMetaFromSubCriteria,
+  mergeStepAssignments,
 } from '../JobClassificationEditor/utils'
 import { EmployeeClassificationRow } from './EmployeeClassificationRow'
 
@@ -36,19 +36,15 @@ export const EmployeeClassificationEditor: FC<
       'parsedSalaryReport.data.criteria',
       [],
     ) ?? []) as ParsedCriterionDto[]
-    const fromExternal = buildStepMetaByTitle(criteria)
-    if (Object.keys(fromExternal).length > 0) return fromExternal
-    // External data unavailable (stale right after import) — fall back to the
-    // sub-criteria in answers so the step dropdowns still render options.
-    const subCriteria = (getValueViaPath(
+    // Live sub-criteria are the base (so a criterion added after import still
+    // gets metadata) — the imported external criteria overlay authoritative
+    // scores/weights for titles that exist in both.
+    const personalFactors = (getValueViaPath<SubCriterion[][]>(
       application.answers,
-      'subCriteria',
-      {},
-    ) ?? {}) as {
-      jobFactors?: SubCriterion[][]
-      personalFactors?: SubCriterion[][]
-    }
-    return buildStepMetaFromSubCriteria(subCriteria)
+      'subCriteria.personalFactors',
+      [],
+    ) ?? []) as SubCriterion[][]
+    return buildMergedStepMetaByTitle(criteria, personalFactors)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -84,16 +80,13 @@ export const EmployeeClassificationEditor: FC<
       subCriteriaPersonalFactors,
     )
 
-    return source.map((emp) =>
-      emp.personalStepAssignments?.length
-        ? emp
-        : {
-            ...emp,
-            personalStepAssignments: defaultAssignments.map((a) => ({
-              ...a,
-            })),
-          },
-    )
+    return source.map((emp) => ({
+      ...emp,
+      personalStepAssignments: mergeStepAssignments(
+        emp.personalStepAssignments ?? [],
+        defaultAssignments,
+      ),
+    }))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

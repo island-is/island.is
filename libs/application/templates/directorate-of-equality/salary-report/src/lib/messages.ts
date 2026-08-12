@@ -613,6 +613,11 @@ export const messages = {
         defaultMessage:
           'Mikilvægt er að einstaklingsbundnu viðmiðin séu hlutlæg, gagnsæ og sanngjörn. Illa skilgreind viðmið geta leitt til ómeðvitaðrar mismununar og óútskýrðs launamunar. Gott er að velja fá og skýr viðmið sem byggð eru á sannreynanlegum þáttum sem styðja markmið um jafnræði og samræmi í ákvörðunum um laun.',
       },
+      weightSumError: {
+        id: 'doe.sr.application:report.subCriteria.weightSumError',
+        defaultMessage:
+          'Vægi undirviðmiða verður að vera samtals jafnt vægi yfirviðmiðsins ({expected}%) — núverandi samtals: {total}%',
+      },
     }),
     employees: defineMessages({
       sectionTitle: {

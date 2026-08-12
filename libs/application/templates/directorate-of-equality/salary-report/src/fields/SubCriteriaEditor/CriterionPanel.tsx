@@ -1,7 +1,7 @@
-import { AccordionCard, Box, Button } from '@island.is/island-ui/core'
+import { AccordionCard, Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useEffect, useRef } from 'react'
-import { useFieldArray, useFormContext } from 'react-hook-form'
+import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import type { ParsedSubCriterionDto } from '@island.is/clients/directorate-of-equality'
 import { DEFAULT_SUB_CRITERION } from '../../utils/constants'
 import type { SubCriterion } from '../../utils/types'
@@ -110,6 +110,15 @@ export const CriterionPanel: FC<Props> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parsedSalaryReportDate])
 
+  const watchedSubCriteria = useWatch({ name: fieldName }) as
+    | SubCriterion[]
+    | undefined
+  const subCriteriaTotal = (watchedSubCriteria ?? []).reduce(
+    (sum, sc) => sum + (Number(sc.weight) || 0),
+    0,
+  )
+  const expectedWeight = Number(criterionWeight) || 0
+
   return (
     <AccordionCard
       id={accordionId}
@@ -145,6 +154,18 @@ export const CriterionPanel: FC<Props> = ({
           {formatMessage(messages.report.subCriteria.addButton)}
         </Button>
       </Box>
+
+      {subCriteriaTotal !== 0 &&
+        Math.abs(subCriteriaTotal - expectedWeight) > 0.001 && (
+          <Box marginTop={3}>
+            <Text color="red600">
+              {formatMessage(messages.report.subCriteria.weightSumError, {
+                total: subCriteriaTotal,
+                expected: expectedWeight,
+              })}
+            </Text>
+          </Box>
+        )}
     </AccordionCard>
   )
 }

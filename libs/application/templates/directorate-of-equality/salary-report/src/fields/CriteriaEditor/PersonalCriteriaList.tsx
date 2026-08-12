@@ -3,15 +3,33 @@ import { InputController } from '@island.is/shared/form-fields'
 import { Box, Button, Text, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
+import type { SubCriterion } from '../../utils/types'
 
 export const PersonalCriteriaList = () => {
   const { formatMessage } = useLocale()
-  const { control } = useFormContext()
+  const { control, getValues, setValue } = useFormContext()
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'criteria.personalFactors',
   })
+
+  // subCriteria.personalFactors is kept parallel/position-indexed with
+  // criteria.personalFactors (no shared id), so deleting a criterion must also
+  // drop its sub-criteria slot or a later-added criterion inherits the
+  // deleted one's leftover sub-criteria data at that index. Spliced directly
+  // via getValues/setValue rather than useFieldArray — each element here is
+  // itself an array (SubCriterion[][]), not an object, which useFieldArray's
+  // id-tracking isn't designed for.
+  const removeSubCriteria = (index: number) => {
+    const current =
+      (getValues('subCriteria.personalFactors') as
+        | SubCriterion[][]
+        | undefined) ?? []
+    const next = [...current]
+    next.splice(index, 1)
+    setValue('subCriteria.personalFactors', next)
+  }
 
   return (
     <Box marginTop={6}>
@@ -58,7 +76,10 @@ export const PersonalCriteriaList = () => {
                 variant="ghost"
                 icon="trash"
                 iconType="outline"
-                onClick={() => remove(i)}
+                onClick={() => {
+                  remove(i)
+                  removeSubCriteria(i)
+                }}
               >
                 {formatMessage(messages.report.criteria.deleteButton)}
               </Button>
