@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Barnaverndargátt API",
-    "description": "Gátt fyrir aðila til að skila inn tilkynningum vegna barnaverndarmála.<br>Build time(version): 2026-07-29 09:35:41",
+    "description": "Gátt fyrir aðila til að skila inn tilkynningum vegna barnaverndarmála.<br>Build time(version): 2026-08-12 11:21:20",
     "contact": {
       "name": "Apró ehf.",
       "url": "https://www.apro.is/",
@@ -2619,6 +2619,48 @@
         "summary": "Get all urgency assessment options",
         "description": "Returns urgency assessment levels with integer code as value, Icelandic name as label, and a longer sentence-form description. **Required Roles:** type:digital_iceland.",
         "operationId": "ExternalUrgencyAssessments",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DetailedDropDownDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DetailedDropDownDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DetailedDropDownDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/external/dropdown/child-safety-levels": {
+      "get": {
+        "tags": ["ExternalDropdown"],
+        "summary": "Get all child safety level options",
+        "description": "Returns child safety levels on a 0-10 scale, where 0 is most critical and 10 is safest. Each level has an integer value, an Icelandic short label, and a sentence-form description. **Required Roles:** type:digital_iceland.",
+        "operationId": "ExternalChildSafetyLevels",
         "responses": {
           "200": {
             "description": "OK",
@@ -7162,8 +7204,8 @@
           "child",
           "generalPublic",
           "notificationVia112",
-          "notifierRole",
-          "urgencyAssessment"
+          "notifierExpectationLevel",
+          "notifierRole"
         ],
         "type": "object",
         "properties": {
@@ -7186,8 +7228,11 @@
           "residenceOfEvent": {
             "$ref": "#/components/schemas/ResidenceOfEventRequest"
           },
-          "urgencyAssessment": {
-            "$ref": "#/components/schemas/UrgencyAssessment"
+          "notifierExpectationLevel": {
+            "maximum": 10,
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32"
           },
           "notifierNotes": {
             "$ref": "#/components/schemas/NotifierNotes"
