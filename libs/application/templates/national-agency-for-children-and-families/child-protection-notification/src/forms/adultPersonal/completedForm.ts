@@ -2,7 +2,6 @@ import {
   buildForm,
   buildMultiField,
   buildOverviewField,
-  buildSection,
 } from '@island.is/application/core'
 import { FormModes } from '@island.is/application/types'
 
@@ -13,22 +12,15 @@ export const AdultPersonalCompletedForm = buildForm({
   id: 'AdultPersonalCompletedForm',
   mode: FormModes.COMPLETED,
   children: [
-    buildSection({
-      id: 'completedOverviewSection',
+    buildMultiField({
+      id: 'completedOverview',
       title: overviewMessages.sectionTitle,
       children: [
-        buildMultiField({
-          id: 'completedOverview',
+        buildOverviewField({
+          id: 'overview',
           title: overviewMessages.sectionTitle,
-          description: overviewMessages.description,
-          children: [
-            buildOverviewField({
-              id: 'overview',
-              title: overviewMessages.sectionTitle,
-              bottomLine: false,
-              items: getOverviewItems,
-            }),
-          ],
+          bottomLine: false,
+          items: getOverviewItems,
         }),
       ],
     }),

@@ -32,6 +32,7 @@ import {
   UrgencyAssessmentsApi,
 } from '../dataProviders'
 import {
+  applicationCardMessages,
   overviewMessages,
   prerequisitesMessages,
   sharedMessages,
@@ -53,6 +54,7 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.ChildProtectionNotification.translation,
   ],
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
+  newApplicationButtonLabel: applicationCardMessages.newNotificationButton,
   dataSchema,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
@@ -63,6 +65,14 @@ const template: ApplicationTemplate<
           progress: 0,
           status: FormModes.DRAFT,
           lifecycle: EphemeralStateLifeCycle,
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: applicationCardMessages.historyNotificationStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
           roles: [
             ...[Roles.MINOR_APPLICANT, Roles.ADULT_PERSONAL_APPLICANT].map(
               (roleId) => ({
@@ -144,6 +154,18 @@ const template: ApplicationTemplate<
           progress: 0.4,
           status: FormModes.DRAFT,
           lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            tag: {
+              label: applicationCardMessages.notificationInProgressTag,
+            },
+            historyButton: applicationCardMessages.openNotificationButton,
+            historyLogs: [
+              {
+                logMessage: applicationCardMessages.historyNotificationSent,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
           roles: [
             {
               id: Roles.MINOR_APPLICANT,
@@ -210,6 +232,14 @@ const template: ApplicationTemplate<
           progress: 1,
           status: FormModes.COMPLETED,
           lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            pendingAction: {
+              title: applicationCardMessages.notificationReceivedTitle,
+              content: applicationCardMessages.notificationReceivedContent,
+              displayStatus: 'success',
+              button: applicationCardMessages.openNotificationButton,
+            },
+          },
           roles: [
             {
               id: Roles.MINOR_APPLICANT,

@@ -1,8 +1,4 @@
-import {
-  buildForm,
-  buildMultiField,
-  buildSection,
-} from '@island.is/application/core'
+import { buildForm, buildMultiField } from '@island.is/application/core'
 import { FormModes } from '@island.is/application/types'
 
 import { overviewMessages } from '../../lib/messages'
@@ -12,17 +8,10 @@ export const AdultProcurationCompletedForm = buildForm({
   id: 'AdultProcurationCompletedForm',
   mode: FormModes.COMPLETED,
   children: [
-    buildSection({
-      id: 'completedOverviewSection',
+    buildMultiField({
+      id: 'completedOverview',
       title: overviewMessages.sectionTitle,
-      children: [
-        buildMultiField({
-          id: 'completedOverview',
-          title: overviewMessages.sectionTitle,
-          description: overviewMessages.description,
-          children: adultProcurationOverviewFields(false),
-        }),
-      ],
+      children: adultProcurationOverviewFields(false),
     }),
   ],
 })

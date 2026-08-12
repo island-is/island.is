@@ -1,3 +1,4 @@
+export * from './applicationCard'
 export * from './child'
 export * from './completed'
 export * from './memm'
