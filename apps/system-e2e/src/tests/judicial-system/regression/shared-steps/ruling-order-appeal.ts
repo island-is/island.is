@@ -52,13 +52,10 @@ export const judgeUploadsAndConfirmsRulingOrder = async (
   ])
 }
 
-/**
- * Create an ORDER court session, record prosecutor in-court appeal (defendant
- * accepts), and confirm the court record. Auto-creates the AppealCase.
- */
-export const judgeCreatesInCourtRulingOrderAppeal = async (
+const judgeCreatesOrderRulingSession = async (
   page: Page,
   caseId: string,
+  prosecutorAppealLabel: string,
 ) => {
   await Promise.all([
     verifyRequestCompletion(page, '/api/graphql', 'Case'),
@@ -124,7 +121,7 @@ export const judgeCreatesInCourtRulingOrderAppeal = async (
     ),
     page
       .locator('label')
-      .filter({ hasText: 'Sækjandi kærir úrskurðinn' })
+      .filter({ hasText: prosecutorAppealLabel })
       .first()
       .click(),
   ])
@@ -136,6 +133,87 @@ export const judgeCreatesInCourtRulingOrderAppeal = async (
     verifyRequestCompletion(page, '/api/graphql', 'UpdateCourtSession'),
     page.getByTestId('confirm-court-record').click(),
   ])
+}
+
+/**
+ * Create an ORDER court session, record prosecutor in-court appeal (defendant
+ * accepts), and confirm the court record. Auto-creates the AppealCase.
+ */
+export const judgeCreatesInCourtRulingOrderAppeal = async (
+  page: Page,
+  caseId: string,
+) => {
+  await judgeCreatesOrderRulingSession(
+    page,
+    caseId,
+    'Sækjandi kærir úrskurðinn',
+  )
+}
+
+/**
+ * Create an ORDER court session where the prosecutor takes the legal deadline
+ * instead of appealing in court. Leaves the ruling order open for an
+ * out-of-court appeal.
+ */
+export const judgeCreatesOrderSessionForOutOfCourtAppeal = async (
+  page: Page,
+  caseId: string,
+) => {
+  await judgeCreatesOrderRulingSession(
+    page,
+    caseId,
+    'Sækjandi tekur sér lögboðinn frest',
+  )
+}
+
+/**
+ * Prosecutor sends an out-of-court appeal for a confirmed ruling order.
+ * Returns the created appealCaseId.
+ */
+export const prosecutorAppealsRulingOrderOutOfCourt = async (
+  page: Page,
+  caseId: string,
+): Promise<string> => {
+  await Promise.all([
+    verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    page.goto(`/akaera/yfirlit/${caseId}`),
+  ])
+  await expect(page).toHaveURL(`/akaera/yfirlit/${caseId}`)
+
+  await page.getByLabel(/Valmynd fyrir.*Úrskurður/).click()
+  await Promise.all([
+    verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    page.getByText('Senda inn kæru').click(),
+  ])
+
+  await expect(page).toHaveURL(
+    new RegExp(`/kaera/${caseId}\\?rulingFileId=.+`),
+  )
+
+  await chooseDocument(
+    page,
+    async () => {
+      await page
+        .locator('button')
+        .filter({ hasText: 'Velja skjöl til að hlaða upp' })
+        .first()
+        .click()
+    },
+    'TestKaera.pdf',
+  )
+
+  const createAppealCaseResponse = await Promise.all([
+    verifyRequestCompletion(page, '/api/graphql', 'CreateAppealCase'),
+    verifyUpload(page),
+    page.getByTestId('continueButton').click(),
+  ]).then(([res]) => res)
+
+  const appealCaseId = createAppealCaseResponse?.data?.createAppealCase?.id
+  expect(appealCaseId).toBeTruthy()
+
+  await page.getByTestId('modalSecondaryButton').click()
+
+  return appealCaseId as string
 }
 
 /**
@@ -156,7 +234,7 @@ export const judgeReceivesRulingOrderAppeal = async (
   const appealCaseId = caseResponse?.data?.case?.rulingOrderAppealCases?.[0]?.id
   expect(appealCaseId).toBeTruthy()
 
-  await page.getByLabel(/Valmynd fyrir/).click()
+  await page.getByLabel(/Valmynd fyrir.*Úrskurður/).click()
   await Promise.all([
     verifyRequestCompletion(page, '/api/graphql', 'TransitionAppealCase'),
     page.getByText('Senda til Landsréttar').click(),
