@@ -1,5 +1,5 @@
 import cn from 'classnames'
-import { FC, useMemo } from 'react'
+import { FC, Fragment, useMemo } from 'react'
 import { Box } from '../Box/Box'
 import { InputError } from '../InputError/InputError'
 import { Stack } from '../Stack/Stack'
@@ -71,6 +71,8 @@ export const Scale: FC<ScaleProps> = ({
     return values
   }, [minNum, maxNum, step])
 
+  const errorId = error ? `${id}-error` : undefined
+
   return (
     <Box>
       {label && (
@@ -84,24 +86,33 @@ export const Scale: FC<ScaleProps> = ({
           className={styles.scaleContainer}
           role="radiogroup"
           aria-required={required}
+          aria-invalid={error !== undefined}
+          aria-describedby={errorId}
           aria-labelledby={label ? `${id}-label` : undefined}
         >
-          {scaleValues.map((scaleValue) => (
-            <Box
-              key={scaleValue}
-              className={cn(styles.scaleButton, {
-                [styles.scaleButtonSelected]: value === scaleValue,
-                [styles.scaleButtonError]: error !== undefined,
-              })}
-              onClick={!disabled ? () => onChange(scaleValue) : undefined}
-              disabled={disabled}
-              role="radio"
-              aria-checked={value === scaleValue}
-              aria-disabled={disabled}
-              type="button"
-            >
-              <Text className={styles.scaleButtonText}>{scaleValue}</Text>
-            </Box>
+          {scaleValues.map((scaleValue, index) => (
+            <Fragment key={scaleValue}>
+              <input
+                id={`${id}-${scaleValue}`}
+                className={cn('visually-hidden', styles.scaleInput)}
+                type="radio"
+                name={id}
+                value={scaleValue}
+                checked={value === scaleValue}
+                disabled={disabled}
+                required={required && index === 0}
+                onChange={(event) => onChange(event.target.value)}
+              />
+              <label
+                htmlFor={`${id}-${scaleValue}`}
+                className={cn(styles.scaleButton, {
+                  [styles.scaleButtonSelected]: value === scaleValue,
+                  [styles.scaleButtonError]: error !== undefined,
+                })}
+              >
+                <Text className={styles.scaleButtonText}>{scaleValue}</Text>
+              </label>
+            </Fragment>
           ))}
         </Box>
 
@@ -123,7 +134,7 @@ export const Scale: FC<ScaleProps> = ({
 
       {error && (
         <Box paddingBottom={2}>
-          <InputError errorMessage={error} />
+          <InputError id={errorId} errorMessage={error} />
         </Box>
       )}
     </Box>
