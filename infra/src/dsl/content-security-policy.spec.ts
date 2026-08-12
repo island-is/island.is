@@ -121,7 +121,73 @@ describe('staticService()', () => {
       staticService(staticProject).csp({
         hashDirectives: ['script-src'],
       }),
-    ).toThrow(/require an enforcement policy/)
+    ).toThrow(/require an enforcement or report-only policy/)
+  })
+
+  it('supports hash directives with report-only or both policy modes', () => {
+    const reportOnly = staticService(staticProject).csp({
+      reportOnly: { scriptSrc: ["'self'"] },
+      hashDirectives: ['script-src'],
+    })
+    const both = staticService(staticProject).csp({
+      enforce: { scriptSrc: ["'self'"] },
+      reportOnly: { scriptSrc: ["'self'", 'https://example.is'] },
+      hashDirectives: ['script-src'],
+    })
+
+    expect(reportOnly.serviceDef.env).toMatchObject({
+      [CONTENT_SECURITY_POLICY_REPORT_ONLY_ENV]: "script-src 'self'",
+      [CONTENT_SECURITY_POLICY_HASH_DIRECTIVES_ENV]: 'script-src',
+    })
+    expect(both.serviceDef.env).toMatchObject({
+      [CONTENT_SECURITY_POLICY_ENV]: "script-src 'self'",
+      [CONTENT_SECURITY_POLICY_REPORT_ONLY_ENV]:
+        "script-src 'self' https://example.is",
+      [CONTENT_SECURITY_POLICY_HASH_DIRECTIVES_ENV]: 'script-src',
+    })
+  })
+
+  it('requires every selected directive in every policy mode and environment', () => {
+    const policy = {
+      dev: { scriptSrc: ["'self'"], styleSrcElem: ["'self'"] },
+      staging: { scriptSrc: ["'self'"], styleSrcElem: ["'self'"] },
+      prod: { scriptSrc: ["'self'"], styleSrcElem: ["'self'"] },
+      local: { scriptSrc: ["'self'"], styleSrcElem: ["'self'"] },
+    }
+
+    expect(() =>
+      staticService(staticProject).csp({
+        enforce: policy,
+        reportOnly: policy,
+        hashDirectives: ['script-src', 'style-src-elem'],
+      }),
+    ).not.toThrow()
+
+    expect(() =>
+      staticService(staticProject).csp({
+        enforce: {
+          ...policy,
+          staging: { styleSrcElem: ["'self'"] },
+        },
+        hashDirectives: ['script-src'],
+      }),
+    ).toThrow(/script-src.*enforce.*staging environment/)
+
+    expect(() =>
+      staticService(staticProject).csp({
+        enforce: { scriptSrc: ["'self'"] },
+        reportOnly: { defaultSrc: ["'self'"] },
+        hashDirectives: ['script-src'],
+      }),
+    ).toThrow(/script-src.*reportOnly.*all environment/)
+
+    expect(() =>
+      staticService(staticProject).csp({
+        enforce: { scriptSrc: ["'self'"] },
+        reportOnly: {},
+        hashDirectives: ['script-src'],
+      }),
+    ).toThrow(/script-src.*reportOnly.*all environment/)
   })
 
   it('relies on the environment pipeline to fall local back to dev', () => {

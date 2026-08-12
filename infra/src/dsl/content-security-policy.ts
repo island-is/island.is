@@ -221,6 +221,57 @@ const isEnvironmentPolicies = (
 ): policy is EnvironmentContentSecurityPolicies =>
   Object.keys(policy).some((key) => environmentPolicyKeys.includes(key))
 
+const hashDirectiveKeys: Record<
+  ContentSecurityPolicyHashDirective,
+  keyof ContentSecurityPolicy
+> = {
+  'script-src': 'scriptSrc',
+  'style-src-elem': 'styleSrcElem',
+}
+
+export const validateContentSecurityPolicyHashDirectives = (
+  directives: readonly ContentSecurityPolicyHashDirective[],
+  policies: Readonly<
+    Partial<
+      Record<
+        'enforce' | 'reportOnly',
+        ContentSecurityPolicy | EnvironmentContentSecurityPolicies
+      >
+    >
+  >,
+): void => {
+  const configuredPolicies = Object.entries(policies).filter(
+    (
+      entry,
+    ): entry is [
+      'enforce' | 'reportOnly',
+      ContentSecurityPolicy | EnvironmentContentSecurityPolicies,
+    ] => entry[1] !== undefined,
+  )
+
+  if (configuredPolicies.length === 0) {
+    throw new Error(
+      'CSP hash directives require an enforcement or report-only policy',
+    )
+  }
+
+  for (const [mode, policy] of configuredPolicies) {
+    const policiesByEnvironment = isEnvironmentPolicies(policy)
+      ? Object.entries(policy)
+      : [['all', policy] as const]
+
+    for (const [environment, environmentPolicy] of policiesByEnvironment) {
+      for (const directive of directives) {
+        if (!(hashDirectiveKeys[directive] in environmentPolicy)) {
+          throw new Error(
+            `CSP hash directive ${directive} is missing from ${mode} policy for ${environment} environment`,
+          )
+        }
+      }
+    }
+  }
+}
+
 export const serializeContentSecurityPolicyByEnvironment = (
   policy: ContentSecurityPolicy | EnvironmentContentSecurityPolicies,
 ): EnvironmentVariableValue | undefined => {

@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, mkdtempSync, writeFileSync } from 'fs'
 import { tmpdir } from 'os'
 import { join, resolve } from 'path'
+import { spawnSync } from 'child_process'
 
 type HashManifest = {
   version: number
@@ -18,16 +19,26 @@ const generator = require(resolve(
     file?: string,
   ) => { scriptHashes: string[]; styleHashes: string[] }
 }
-const merger = require(resolve(
+const mergerPath = resolve(
   repositoryRoot,
   'scripts/dockerfile-assets/csp/merge-csp-hashes.js',
-)) as {
+)
+const merger = require(mergerPath) as {
   mergeHashes: (
     policy: string,
     manifest: HashManifest,
     selected: string,
   ) => string
-  readAndRemoveManifest: (root: string) => HashManifest
+  preparePolicies: (
+    policies: {
+      enforce?: string
+      reportOnly?: string
+      selected?: string
+    },
+    manifest: HashManifest,
+  ) => { enforce: string; reportOnly: string }
+  readManifest: (root: string) => HashManifest
+  removeManifest: (root: string) => void
   validateManifest: (value: unknown) => HashManifest
 }
 
@@ -139,6 +150,59 @@ describe('CSP hash manifest startup merging', () => {
     )
   })
 
+  it('merges selected hashes into enforcement, report-only, or both policies', () => {
+    expect(
+      merger.preparePolicies(
+        {
+          enforce: "default-src 'self'; script-src 'self'",
+          selected: 'script-src',
+        },
+        validManifest(),
+      ),
+    ).toEqual({
+      enforce: `default-src 'self'; script-src 'self' ${scriptHash}`,
+      reportOnly: '',
+    })
+    expect(
+      merger.preparePolicies(
+        {
+          reportOnly: "default-src 'self'; script-src 'self'",
+          selected: 'script-src',
+        },
+        validManifest(),
+      ),
+    ).toEqual({
+      enforce: '',
+      reportOnly: `default-src 'self'; script-src 'self' ${scriptHash}`,
+    })
+    expect(
+      merger.preparePolicies(
+        {
+          enforce: "script-src 'self'",
+          reportOnly: 'script-src https://example.is',
+          selected: 'script-src',
+        },
+        validManifest(),
+      ),
+    ).toEqual({
+      enforce: `script-src 'self' ${scriptHash}`,
+      reportOnly: `script-src https://example.is ${scriptHash}`,
+    })
+  })
+
+  it('supports policy-less startup and policies without hash selection', () => {
+    expect(merger.preparePolicies({}, validManifest())).toEqual({
+      enforce: '',
+      reportOnly: '',
+    })
+    expect(
+      merger.preparePolicies(
+        { reportOnly: "default-src 'self'" },
+        validManifest(),
+      ),
+    ).toEqual({ enforce: '', reportOnly: "default-src 'self'" })
+  })
+
   it('fails for malformed manifests, hashes, and selected directives', () => {
     expect(() => merger.validateManifest({ version: 2, hashes: {} })).toThrow(
       /Unsupported.*version/,
@@ -155,7 +219,7 @@ describe('CSP hash manifest startup merging', () => {
         validManifest(),
         'style-src-elem',
       ),
-    ).toThrow(/missing from policy/)
+    ).toThrow(/missing from CONTENT_SECURITY_POLICY/)
     expect(() =>
       merger.mergeHashes(
         "default-src 'self'; script-src 'self'",
@@ -163,14 +227,84 @@ describe('CSP hash manifest startup merging', () => {
         'script-src unknown-src',
       ),
     ).toThrow(/Unsupported CSP hash directive/)
+    expect(() =>
+      merger.preparePolicies({ selected: 'script-src' }, validManifest()),
+    ).toThrow(/requires an enforcement or report-only policy/)
+    expect(() =>
+      merger.preparePolicies(
+        { reportOnly: "default-src 'self';" },
+        validManifest(),
+      ),
+    ).toThrow(/CONTENT_SECURITY_POLICY_REPORT_ONLY contains an empty directive/)
   })
 
-  it('removes the manifest from the document root after reading it', () => {
+  it('reads the manifest without removing it and removes it explicitly', () => {
     const root = mkdtempSync(join(tmpdir(), 'csp-runtime-'))
     const path = join(root, '.csp-hashes.json')
     writeFileSync(path, JSON.stringify(validManifest()))
 
-    expect(merger.readAndRemoveManifest(root)).toEqual(validManifest())
+    expect(merger.readManifest(root)).toEqual(validManifest())
+    expect(existsSync(path)).toBe(true)
+    merger.removeManifest(root)
     expect(existsSync(path)).toBe(false)
+  })
+
+  it('retains the manifest on startup failure and removes it after success', () => {
+    const failedRoot = mkdtempSync(join(tmpdir(), 'csp-runtime-failed-'))
+    const failedPath = join(failedRoot, '.csp-hashes.json')
+    writeFileSync(failedPath, JSON.stringify(validManifest()))
+
+    const failed = spawnSync(process.execPath, [mergerPath, failedRoot], {
+      encoding: 'utf8',
+      env: {
+        ...process.env,
+        CONTENT_SECURITY_POLICY: "default-src 'self'",
+        CONTENT_SECURITY_POLICY_HASH_DIRECTIVES: 'script-src',
+        CONTENT_SECURITY_POLICY_REPORT_ONLY: '',
+      },
+    })
+    expect(failed.status).toBe(1)
+    expect(failed.stderr).toMatch(/missing from CONTENT_SECURITY_POLICY/)
+    expect(existsSync(failedPath)).toBe(true)
+
+    const successfulRoot = mkdtempSync(join(tmpdir(), 'csp-runtime-ok-'))
+    const successfulPath = join(successfulRoot, '.csp-hashes.json')
+    writeFileSync(successfulPath, JSON.stringify(validManifest()))
+    const successful = spawnSync(
+      process.execPath,
+      [mergerPath, successfulRoot],
+      {
+        encoding: 'utf8',
+        env: {
+          ...process.env,
+          CONTENT_SECURITY_POLICY: "script-src 'self'",
+          CONTENT_SECURITY_POLICY_HASH_DIRECTIVES: 'script-src',
+          CONTENT_SECURITY_POLICY_REPORT_ONLY: '',
+        },
+      },
+    )
+    expect(successful.status).toBe(0)
+    expect(successful.stdout).toContain('CONTENT_SECURITY_POLICY=')
+    expect(successful.stdout).toContain('CONTENT_SECURITY_POLICY_REPORT_ONLY=')
+    expect(existsSync(successfulPath)).toBe(false)
+  })
+
+  it('retains malformed manifests for inspection', () => {
+    const root = mkdtempSync(join(tmpdir(), 'csp-runtime-invalid-'))
+    const path = join(root, '.csp-hashes.json')
+    writeFileSync(path, '{not json')
+
+    const result = spawnSync(process.execPath, [mergerPath, root], {
+      encoding: 'utf8',
+      env: {
+        ...process.env,
+        CONTENT_SECURITY_POLICY: '',
+        CONTENT_SECURITY_POLICY_HASH_DIRECTIVES: '',
+        CONTENT_SECURITY_POLICY_REPORT_ONLY: '',
+      },
+    })
+    expect(result.status).toBe(1)
+    expect(result.stderr).toMatch(/Invalid CSP hash manifest JSON/)
+    expect(existsSync(path)).toBe(true)
   })
 })

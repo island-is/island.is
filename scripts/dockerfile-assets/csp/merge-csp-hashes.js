@@ -57,10 +57,11 @@ const validateManifest = (value) => {
   return value
 }
 
-const readAndRemoveManifest = (documentRoot) => {
-  const path = join(resolve(documentRoot), MANIFEST_FILE)
-  const contents = readFileSync(path, 'utf8')
-  unlinkSync(path)
+const manifestPath = (documentRoot) =>
+  join(resolve(documentRoot), MANIFEST_FILE)
+
+const readManifest = (documentRoot) => {
+  const contents = readFileSync(manifestPath(documentRoot), 'utf8')
 
   let parsed
   try {
@@ -70,6 +71,8 @@ const readAndRemoveManifest = (documentRoot) => {
   }
   return validateManifest(parsed)
 }
+
+const removeManifest = (documentRoot) => unlinkSync(manifestPath(documentRoot))
 
 const parseSelectedDirectives = (value) => {
   if (typeof value !== 'string' || value.trim() === '') {
@@ -87,19 +90,22 @@ const parseSelectedDirectives = (value) => {
   return directives
 }
 
-const parsePolicy = (policy) => {
+const parsePolicy = (
+  policy,
+  environmentVariable = 'CONTENT_SECURITY_POLICY',
+) => {
   if (typeof policy !== 'string' || policy.trim() === '') {
-    throw new Error('CONTENT_SECURITY_POLICY must not be empty')
+    throw new Error(`${environmentVariable} must not be empty`)
   }
   if (/[\r\n\0]/u.test(policy)) {
     throw new Error(
-      'CONTENT_SECURITY_POLICY contains invalid control characters',
+      `${environmentVariable} contains invalid control characters`,
     )
   }
 
   const directives = policy.split(';').map((part) => part.trim())
   if (directives.some((part) => part === '')) {
-    throw new Error('CONTENT_SECURITY_POLICY contains an empty directive')
+    throw new Error(`${environmentVariable} contains an empty directive`)
   }
 
   const parsed = directives.map((serialized) => {
@@ -111,20 +117,25 @@ const parsePolicy = (policy) => {
   })
   const names = parsed.map(({ name }) => name)
   if (new Set(names).size !== names.length) {
-    throw new Error('CONTENT_SECURITY_POLICY contains duplicate directives')
+    throw new Error(`${environmentVariable} contains duplicate directives`)
   }
   return parsed
 }
 
-const mergeHashes = (policy, manifest, selectedDirectiveValue) => {
+const mergeHashes = (
+  policy,
+  manifest,
+  selectedDirectiveValue,
+  environmentVariable = 'CONTENT_SECURITY_POLICY',
+) => {
   const selected = parseSelectedDirectives(selectedDirectiveValue)
-  const directives = parsePolicy(policy)
+  const directives = parsePolicy(policy, environmentVariable)
 
   for (const name of selected) {
     const directive = directives.find((candidate) => candidate.name === name)
     if (!directive) {
       throw new Error(
-        `Selected CSP hash directive is missing from policy: ${name}`,
+        `Selected CSP hash directive is missing from ${environmentVariable}: ${name}`,
       )
     }
     const hashes = manifest.hashes[name]
@@ -140,16 +151,71 @@ const mergeHashes = (policy, manifest, selectedDirectiveValue) => {
 
 const shellQuote = (value) => `'${value.replace(/'/gu, `'"'"'`)}'`
 
+const configuredPolicy = (value) => value !== undefined && value !== ''
+
+const preparePolicies = ({ enforce, reportOnly, selected }, manifest) => {
+  const selectedDirectives =
+    selected === undefined || selected === ''
+      ? undefined
+      : parseSelectedDirectives(selected).join(' ')
+  const policies = [
+    ['CONTENT_SECURITY_POLICY', enforce],
+    ['CONTENT_SECURITY_POLICY_REPORT_ONLY', reportOnly],
+  ]
+  const configuredPolicies = policies.filter(([, policy]) =>
+    configuredPolicy(policy),
+  )
+
+  if (selectedDirectives && configuredPolicies.length === 0) {
+    throw new Error(
+      'CONTENT_SECURITY_POLICY_HASH_DIRECTIVES requires an enforcement or report-only policy',
+    )
+  }
+
+  const prepared = Object.fromEntries(
+    policies.map(([environmentVariable, policy]) => {
+      if (!configuredPolicy(policy)) return [environmentVariable, '']
+      // Validate every configured policy even when no hashes were selected.
+      parsePolicy(policy, environmentVariable)
+      return [
+        environmentVariable,
+        selectedDirectives
+          ? mergeHashes(
+              policy,
+              manifest,
+              selectedDirectives,
+              environmentVariable,
+            )
+          : policy,
+      ]
+    }),
+  )
+
+  return {
+    enforce: prepared.CONTENT_SECURITY_POLICY,
+    reportOnly: prepared.CONTENT_SECURITY_POLICY_REPORT_ONLY,
+  }
+}
+
+const serializePolicyExports = ({ enforce, reportOnly }) =>
+  `CONTENT_SECURITY_POLICY=${shellQuote(enforce)}\n` +
+  `CONTENT_SECURITY_POLICY_REPORT_ONLY=${shellQuote(reportOnly)}\n`
+
 if (require.main === module) {
   try {
     const documentRoot = process.argv[2] ?? '/usr/share/nginx/html'
-    const manifest = readAndRemoveManifest(documentRoot)
-    const policy = mergeHashes(
-      process.env.CONTENT_SECURITY_POLICY,
+    const manifest = readManifest(documentRoot)
+    const policies = preparePolicies(
+      {
+        enforce: process.env.CONTENT_SECURITY_POLICY,
+        reportOnly: process.env.CONTENT_SECURITY_POLICY_REPORT_ONLY,
+        selected: process.env.CONTENT_SECURITY_POLICY_HASH_DIRECTIVES,
+      },
       manifest,
-      process.env.CONTENT_SECURITY_POLICY_HASH_DIRECTIVES,
     )
-    process.stdout.write(`CONTENT_SECURITY_POLICY=${shellQuote(policy)}\n`)
+    const exports = serializePolicyExports(policies)
+    removeManifest(documentRoot)
+    process.stdout.write(exports)
   } catch (error) {
     console.error(error instanceof Error ? error.message : error)
     process.exitCode = 1
@@ -162,7 +228,10 @@ module.exports = {
   mergeHashes,
   parsePolicy,
   parseSelectedDirectives,
-  readAndRemoveManifest,
+  preparePolicies,
+  readManifest,
+  removeManifest,
+  serializePolicyExports,
   shellQuote,
   validateManifest,
 }

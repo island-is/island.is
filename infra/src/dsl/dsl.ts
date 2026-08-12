@@ -34,6 +34,7 @@ import {
   ContentSecurityPolicyConfig,
   serializeContentSecurityPolicyByEnvironment,
   serializeContentSecurityPolicyHashDirectives,
+  validateContentSecurityPolicyHashDirectives,
 } from './content-security-policy'
 import { validateStaticServiceProject } from './static-service-project'
 
@@ -635,12 +636,15 @@ export class StaticServiceBuilder<
     const reportOnly = config.reportOnly
       ? serializeContentSecurityPolicyByEnvironment(config.reportOnly)
       : undefined
-    if (config.hashDirectives && !enforce) {
-      throw new Error('CSP hash directives require an enforcement policy')
-    }
     const hashDirectives = config.hashDirectives
       ? serializeContentSecurityPolicyHashDirectives(config.hashDirectives)
       : undefined
+    if (config.hashDirectives) {
+      validateContentSecurityPolicyHashDirectives(config.hashDirectives, {
+        enforce: config.enforce,
+        reportOnly: config.reportOnly,
+      })
+    }
     const env = {
       ...(enforce ? { [CONTENT_SECURITY_POLICY_ENV]: enforce } : {}),
       ...(hashDirectives

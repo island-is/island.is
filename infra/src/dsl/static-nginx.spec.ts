@@ -23,17 +23,20 @@ describe('shared static nginx image', () => {
     'utf8',
   )
 
-  it('defines empty defaults for enforcement and hash selection', () => {
+  it('defines empty defaults for both policies and hash selection', () => {
     expect(dockerfile).toMatch(/CONTENT_SECURITY_POLICY= \\\n/)
     expect(dockerfile).toMatch(/CONTENT_SECURITY_POLICY_HASH_DIRECTIVES=/)
-    expect(dockerfile).not.toContain('CONTENT_SECURITY_POLICY_REPORT_ONLY=')
+    expect(dockerfile).toContain('CONTENT_SECURITY_POLICY_REPORT_ONLY=')
   })
 
-  it('adds only enforced CSP to the SPA location', () => {
+  it('adds enforcement and report-only CSP to the SPA location', () => {
     expect(template.match(/add_header Content-Security-Policy /g)).toHaveLength(
       1,
     )
-    expect(template).not.toContain('Content-Security-Policy-Report-Only')
+    expect(
+      template.match(/add_header Content-Security-Policy-Report-Only /g),
+    ).toHaveLength(1)
+    expect(template).toContain('"$CONTENT_SECURITY_POLICY_REPORT_ONLY"')
 
     const hashedAssetLocation = template.slice(
       template.indexOf('location ~'),
@@ -48,7 +51,13 @@ describe('shared static nginx image', () => {
     expect(dockerfile).toContain('COPY --from=static-builder')
     expect(dockerfile).toContain('05-content-security-policy.sh')
     expect(entrypoint).toContain('merge-csp-hashes.js')
-    expect(entrypoint).toContain("envsubst '${CONTENT_SECURITY_POLICY}'")
+    expect(entrypoint).toContain(
+      'envsubst "\\${CONTENT_SECURITY_POLICY} \\${CONTENT_SECURITY_POLICY_REPORT_ONLY}"',
+    )
+    expect(entrypoint).toContain(
+      'export CONTENT_SECURITY_POLICY CONTENT_SECURITY_POLICY_REPORT_ONLY',
+    )
+    expect(entrypoint).not.toContain("envsubst '${CONTENT_SECURITY_POLICY}'")
     expect(entrypoint).toContain('default.conf.template')
     expect(
       '05-content-security-policy.sh' < '20-envsubst-on-templates.sh',
