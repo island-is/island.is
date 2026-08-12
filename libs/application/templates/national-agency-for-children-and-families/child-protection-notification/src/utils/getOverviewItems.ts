@@ -41,6 +41,7 @@ import {
   isKnowsNationalId,
   isNoNationalId,
   isSchoolType,
+  isUnborn,
   showDisabilityService,
   showWellbeingContactFields,
   showWellbeingManagerFields,
@@ -581,7 +582,11 @@ export const getParentsPreItems = (
   return [
     {
       width: 'full',
-      keyText: parentsMessages.expectantParents.radioLabel,
+      keyText: isUnborn(answers)
+        ? parentsMessages.expectantParents.radioLabel
+        : isKnowsNationalId(answers)
+        ? parentsMessages.custodians.radioLabel
+        : parentsMessages.guardians.radioLabel,
       valueText:
         parentsKnowsNationalIds === YES
           ? sharedMessages.radioYes
