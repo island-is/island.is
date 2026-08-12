@@ -86,10 +86,9 @@ const useDebouncedField = ({
     [delay],
   )
 
-  // `react-use`'s `useDebounce` clears its timer on unmount without firing,
-  // silently dropping an edit made just before navigating away — and the
-  // optimistic value goes with it, since FormProvider refetches the case on
-  // every route change. Flush instead.
+  // Flush on unmount rather than cancel. An edit made within `delay` of
+  // navigating away would otherwise be dropped, and the optimistic value goes
+  // with it, since FormProvider refetches the case on every route change.
   useEffect(() => {
     return () => {
       debouncedSave.flush()
