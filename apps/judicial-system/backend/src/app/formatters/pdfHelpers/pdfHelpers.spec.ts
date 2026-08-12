@@ -492,7 +492,10 @@ describe('addNumberedList', () => {
   }
 
   const visibleText = (frags: Frag[]) =>
-    frags.map((f) => f.text).join('').replace(/\u200B/g, '')
+    frags
+      .map((f) => f.text)
+      .join('')
+      .replace(/\u200B/g, '')
 
   it('keeps a short name on one line without truncating', () => {
     const { doc, frags } = createInstrumentedDoc()
@@ -539,9 +542,9 @@ describe('addNumberedList', () => {
 
     const rightEdge = doc.page.width - doc.page.margins.right
     for (const frag of nameFrags) {
-      expect(frag.x + doc.widthOfString(frag.text.replace(/\u200B/g, ''))).toBeLessThanOrEqual(
-        rightEdge + 2,
-      )
+      expect(
+        frag.x + doc.widthOfString(frag.text.replace(/\u200B/g, '')),
+      ).toBeLessThanOrEqual(rightEdge + 2)
     }
     doc.end()
   })
