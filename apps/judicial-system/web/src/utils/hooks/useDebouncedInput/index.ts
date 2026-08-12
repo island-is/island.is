@@ -1,6 +1,7 @@
 import { useContext } from 'react'
 
 import { FormContext } from '@island.is/judicial-system-web/src/components'
+import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import {
   removeTabsValidateAndSet,
@@ -10,11 +11,23 @@ import { Validation } from '../../validate'
 import useDebouncedField from '../useDebouncedField'
 import { UpdateCase, useCase } from '..'
 
+type SharedField = keyof UpdateCase & keyof Case
+
+/**
+ * Case fields this hook can drive: present on both `UpdateCase` and `Case`, and
+ * string valued. `UpdateCase` also holds non-string fields and id fields such
+ * as `courtId` that are not columns on `workingCase`, and reading those through
+ * here would need a cast that hides the mismatch.
+ */
+type StringCaseField = {
+  [K in SharedField]-?: NonNullable<UpdateCase[K]> extends string ? K : never
+}[SharedField]
+
 // Debounced text input for a case level field. Thin wrapper around
 // useDebouncedField that supplies the case specific pieces: the working case as
 // the source of truth, an optimistic write through setWorkingCase and a
 // persist through updateCase.
-const useDebouncedInput = <T extends keyof UpdateCase>(
+const useDebouncedInput = <T extends StringCaseField>(
   fieldName: T,
   validations: Validation[] = [],
   delay = 500,
@@ -23,7 +36,7 @@ const useDebouncedInput = <T extends keyof UpdateCase>(
   const { updateCase } = useCase()
 
   return useDebouncedField({
-    value: workingCase[fieldName as keyof typeof workingCase] as string,
+    value: workingCase[fieldName],
     validations,
     delay,
     onChange: (value) =>

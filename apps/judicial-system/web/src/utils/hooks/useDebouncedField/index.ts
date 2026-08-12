@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import debounce from 'lodash/debounce'
 
 import { replaceTabs } from '../../formatters'
@@ -26,7 +26,12 @@ interface UseDebouncedFieldParams {
   onChange?: (value: string) => void
   validations?: Validation[]
   delay?: number
-  /** Never persist — e.g. a confirmed court session or a read-only row. */
+  /**
+   * Never persist — e.g. a confirmed court session or a read-only row. Read
+   * when the save is scheduled rather than when it fires, so an edit made
+   * while the field was still editable is not silently dropped by a later
+   * state change.
+   */
   disabled?: boolean
   /**
    * Identity of the entity this field belongs to (defendant id, indictment
@@ -48,33 +53,26 @@ const useDebouncedField = ({
 }: UseDebouncedFieldParams) => {
   const [value, setValue] = useState(persistedValue ?? '')
   const [errorMessage, setErrorMessage] = useState('')
+  const [hasUserEdited, setHasUserEdited] = useState(false)
   const [seenResetKey, setSeenResetKey] = useState(resetKey)
 
-  const hasUserEdited = useRef(false)
-  const valueRef = useRef(value)
-  const errorMessageRef = useRef(errorMessage)
-  const disabledRef = useRef(disabled)
-
-  valueRef.current = value
-  errorMessageRef.current = errorMessage
-  disabledRef.current = disabled
-
   // A different entity now occupies this slot, so this instance is no longer
-  // mid-edit. Note that any already scheduled save is deliberately left alone:
-  // it is bound to the entity that was being edited and must still land there.
+  // mid-edit. Adjusting state during render is the supported way to respond to
+  // a changed input. Any already scheduled save is deliberately left alone: it
+  // is bound to the entity that was being edited and must still land there.
   if (seenResetKey !== resetKey) {
     setSeenResetKey(resetKey)
-    hasUserEdited.current = false
+    setHasUserEdited(false)
     setValue(persistedValue ?? '')
     setErrorMessage('')
   }
 
   // Follow server and autofill updates until the user starts editing.
   useEffect(() => {
-    if (!hasUserEdited.current) {
+    if (!hasUserEdited) {
       setValue(persistedValue ?? '')
     }
-  }, [persistedValue])
+  }, [persistedValue, hasUserEdited])
 
   // Passing the work as an argument keeps the debounced function's identity
   // stable — so `flush` stays meaningful — while the work itself is bound at
@@ -89,59 +87,57 @@ const useDebouncedField = ({
   // Flush on unmount rather than cancel. An edit made within `delay` of
   // navigating away would otherwise be dropped, and the optimistic value goes
   // with it, since FormProvider refetches the case on every route change.
+  // Keying the cleanup on `debouncedSave` also flushes the outgoing instance
+  // if `delay` ever changes.
   useEffect(() => {
     return () => {
       debouncedSave.flush()
     }
   }, [debouncedSave])
 
-  const handleChange = useCallback(
-    (newValue: string) => {
-      const nextValue = newValue.includes('\t')
-        ? replaceTabs(newValue)
-        : newValue
+  // The two handlers below are deliberately not wrapped in useCallback. Every
+  // call site passes `validations` and the callbacks as inline literals, so a
+  // dependency array would change on every render and the memoisation would be
+  // a no-op that only hides that fact.
+  const handleChange = (newValue: string) => {
+    const nextValue = newValue.includes('\t') ? replaceTabs(newValue) : newValue
 
-      hasUserEdited.current = true
-      setValue(nextValue)
-      removeErrorMessageIfValid(
-        validations,
-        nextValue,
-        errorMessageRef.current,
-        setErrorMessage,
-      )
-      onValueChange?.(nextValue)
+    setHasUserEdited(true)
+    setValue(nextValue)
+    removeErrorMessageIfValid(
+      validations,
+      nextValue,
+      errorMessage,
+      setErrorMessage,
+    )
+    onValueChange?.(nextValue)
 
-      // There is deliberately no `nextValue === ''` guard here: clearing a
-      // field has to persist. Required fields stay protected by `validations`.
-      debouncedSave(() => {
-        if (disabledRef.current) {
-          return
-        }
+    // There is deliberately no `nextValue === ''` guard here: clearing a
+    // field has to persist. Required fields stay protected by `validations`.
+    debouncedSave(() => {
+      if (disabled) {
+        return
+      }
 
-        if (
-          !validateAndSetErrorMessage(validations, nextValue, setErrorMessage)
-        ) {
-          return
-        }
+      if (
+        !validateAndSetErrorMessage(validations, nextValue, setErrorMessage)
+      ) {
+        return
+      }
 
-        onSave(nextValue)
-      })
-    },
-    [debouncedSave, onSave, onValueChange, validations],
-  )
+      onSave(nextValue)
+    })
+  }
 
   // Blur is an unambiguous "done editing", so persist now instead of waiting
   // out the timer. `flush` is a no-op when nothing is pending, so tabbing
   // through an untouched field never fires a mutation. The value argument is
   // accepted for call-site convenience but ignored — the input is controlled,
   // so local state is authoritative.
-  const handleBlur = useCallback(
-    (_value?: string) => {
-      debouncedSave.flush()
-      validateAndSetErrorMessage(validations, valueRef.current, setErrorMessage)
-    },
-    [debouncedSave, validations],
-  )
+  const handleBlur = (_value?: string) => {
+    debouncedSave.flush()
+    validateAndSetErrorMessage(validations, value, setErrorMessage)
+  }
 
   const flush = useCallback(() => {
     debouncedSave.flush()

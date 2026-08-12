@@ -1,4 +1,4 @@
-import { FC, useContext, useRef, useState } from 'react'
+import { FC, useContext, useEffect, useRef, useState } from 'react'
 
 import { Button, Input } from '@island.is/island-ui/core'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
@@ -46,6 +46,18 @@ export const CourtCaseNumberInput: FC<Props> = (props) => {
   // for this — it is the optimistic working case value, which every keystroke
   // updates.
   const persistedCourtCaseNumber = useRef(courtCaseNumber ?? '')
+  const hasEditedCourtCaseNumber = useRef(false)
+
+  // FormProvider renders its children while the case is still being fetched,
+  // so the first render can see no court case number at all. Keep adopting the
+  // incoming one until the user types, otherwise the unchanged-value check
+  // below compares against a stale empty string and re-sends a number the
+  // server already has.
+  useEffect(() => {
+    if (!hasEditedCourtCaseNumber.current) {
+      persistedCourtCaseNumber.current = courtCaseNumber ?? ''
+    }
+  }, [courtCaseNumber])
 
   const policeCaseNumberValidator = isIndictmentCase
     ? 'S-case-number'
@@ -61,6 +73,7 @@ export const CourtCaseNumberInput: FC<Props> = (props) => {
     validations: ['empty', policeCaseNumberValidator],
     disabled: isDisabled,
     onChange: (value) => {
+      hasEditedCourtCaseNumber.current = true
       setCreateCourtCaseErrorMessage('')
       setCreateCourtCaseSuccess(false)
       setCourtCaseNumber(value)
