@@ -19,6 +19,8 @@ global:
 name: 'island-ui-storybook'
 enabled: true
 env:
+  CONTENT_SECURITY_POLICY: 'base-uri ''self''; connect-src ''self'' https://fonts.googleapis.com; default-src ''self''; font-src ''self'' data: https://fonts.gstatic.com; form-action ''self''; frame-ancestors ''self''; frame-src ''self'' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; img-src ''self'' data: blob: https://images.ctfassets.net https://www.stevensegallery.com; manifest-src ''self''; media-src ''self'' data: blob:; object-src ''none''; script-src ''self'' ''unsafe-eval''; style-src ''self'' ''unsafe-inline'' https://fonts.googleapis.com; worker-src ''self'' blob:'
+  CONTENT_SECURITY_POLICY_HASH_DIRECTIVES: 'script-src'
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps'
   SERVERSIDE_FEATURES_ON: ''
