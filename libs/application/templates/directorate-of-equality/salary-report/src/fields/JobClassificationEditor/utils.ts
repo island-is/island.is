@@ -101,6 +101,21 @@ export const mergeStepAssignments = (
   return [...existing, ...defaultAssignments.filter((a) => !isPresent(a))]
 }
 
+// Drops a single (criterionTitle, subTitle) entry — used when a sub-criterion
+// itself is deleted, so already-assigned employees/roles don't keep a stale,
+// unratable row for a sub-criterion that no longer exists. Generic over
+// StepAssignment/EmployeeStepAssignment, which share this shape.
+export const removeAssignment = <
+  T extends { criterionTitle: string; subTitle: string },
+>(
+  assignments: T[],
+  criterionTitle: string,
+  subTitle: string,
+): T[] =>
+  assignments.filter(
+    (a) => !(a.criterionTitle === criterionTitle && a.subTitle === subTitle),
+  )
+
 // Builds step assignments (one per sub-criterion, defaulted to the first step)
 // from the manually-entered criteria/sub-criteria answers. Used both for
 // deriving default roles and for seeding an employee's personal step

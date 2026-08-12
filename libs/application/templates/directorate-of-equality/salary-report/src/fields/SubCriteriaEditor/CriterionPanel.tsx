@@ -1,14 +1,25 @@
-import { AccordionCard, Box, Button, Text } from '@island.is/island-ui/core'
+import {
+  AccordionCard,
+  AlertMessage,
+  Box,
+  Button,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useEffect, useRef } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
+import type { Application } from '@island.is/application/types'
 import type { ParsedSubCriterionDto } from '@island.is/clients/directorate-of-equality'
 import { DEFAULT_SUB_CRITERION } from '../../utils/constants'
-import type { SubCriterion } from '../../utils/types'
+import type { Employee, Role, SubCriterion } from '../../utils/types'
+import { useCascadeDelete } from '../../utils/useCascadeDelete'
 import { messages } from '../../lib/messages'
+import { removeAssignment } from '../JobClassificationEditor/utils'
 import { SubCriterionItem } from './SubCriterionItem'
 
 type Props = {
+  application: Application
+  factorsKey: 'jobFactors' | 'personalFactors'
   accordionId: string
   criterionTitle: string
   criterionWeight: string
@@ -31,6 +42,8 @@ const mapParsedToSubCriteria = (
   }))
 
 export const CriterionPanel: FC<Props> = ({
+  application,
+  factorsKey,
   accordionId,
   criterionTitle,
   criterionWeight,
@@ -42,11 +55,45 @@ export const CriterionPanel: FC<Props> = ({
 }) => {
   const { formatMessage } = useLocale()
   const { control, getValues } = useFormContext()
+  const employeesCascade = useCascadeDelete<Employee>(application, 'employees')
+  const rolesCascade = useCascadeDelete<Role>(application, 'roles')
+  const saveError =
+    factorsKey === 'personalFactors'
+      ? employeesCascade.saveError
+      : rolesCascade.saveError
 
   const { fields, append, remove, replace } = useFieldArray({
     control,
     name: fieldName,
   })
+
+  // A deleted sub-criterion's already-assigned steps must be dropped too, or
+  // employees/roles keep a stale row with no step options for a sub-criterion
+  // that no longer exists. useCascadeDelete persists the correction
+  // immediately, since this screen's own "Continue" only saves the
+  // `subCriteria` answer key.
+  const removeFromAssignments = (deletedSubTitle: string) =>
+    factorsKey === 'personalFactors'
+      ? employeesCascade.persist(deletedSubTitle, (employees) =>
+          employees.map((emp) => ({
+            ...emp,
+            personalStepAssignments: removeAssignment(
+              emp.personalStepAssignments ?? [],
+              criterionTitle,
+              deletedSubTitle,
+            ),
+          })),
+        )
+      : rolesCascade.persist(deletedSubTitle, (roles) =>
+          roles.map((role) => ({
+            ...role,
+            stepAssignments: removeAssignment(
+              role.stepAssignments ?? [],
+              criterionTitle,
+              deletedSubTitle,
+            ),
+          })),
+        )
 
   // Always hold the latest parsed data so the import effect never reads a
   // stale closure value
@@ -139,7 +186,13 @@ export const CriterionPanel: FC<Props> = ({
             index={i}
             isLast={i === fields.length - 1}
             canRemove={fields.length > 1}
-            onRemove={() => remove(i)}
+            onRemove={() => {
+              const deletedSubTitle = getValues(
+                `${fieldName}.${i}.title`,
+              ) as string
+              remove(i)
+              void removeFromAssignments(deletedSubTitle)
+            }}
           />
         ))}
       </Box>
@@ -166,6 +219,29 @@ export const CriterionPanel: FC<Props> = ({
             </Text>
           </Box>
         )}
+
+      {saveError && (
+        <Box marginTop={3}>
+          <AlertMessage
+            type="error"
+            message={formatMessage(
+              messages.report.subCriteria.deleteSaveError,
+            )}
+          />
+          <Box marginTop={2}>
+            <Button
+              variant="ghost"
+              size="small"
+              icon="reload"
+              onClick={() =>
+                void removeFromAssignments(saveError)
+              }
+            >
+              {formatMessage(messages.report.subCriteria.retryButton)}
+            </Button>
+          </Box>
+        </Box>
+      )}
     </AccordionCard>
   )
 }

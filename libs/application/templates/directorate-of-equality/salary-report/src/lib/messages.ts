@@ -627,6 +627,15 @@ export const messages = {
         defaultMessage:
           'Vægi undirviðmiða verður að vera samtals jafnt vægi yfirviðmiðsins ({expected}%) — núverandi samtals: {total}%',
       },
+      deleteSaveError: {
+        id: 'doe.sr.application:report.subCriteria.deleteSaveError',
+        defaultMessage:
+          'Ekki tókst að vista eyðingu undirviðmiðsins. Vinsamlegast reyndu aftur.',
+      },
+      retryButton: {
+        id: 'doe.sr.application:report.subCriteria.retryButton',
+        defaultMessage: 'Reyna aftur',
+      },
     }),
     employees: defineMessages({
       sectionTitle: {

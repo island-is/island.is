@@ -1,8 +1,5 @@
-import { useState } from 'react'
-import { useMutation } from '@apollo/client'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { InputController } from '@island.is/shared/form-fields'
-import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import type { Application } from '@island.is/application/types'
 import {
   AlertMessage,
@@ -14,18 +11,19 @@ import {
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
 import type { Employee, SubCriterion } from '../../utils/types'
+import { useCascadeDelete } from '../../utils/useCascadeDelete'
 
 type Props = {
   application: Application
 }
 
 export const PersonalCriteriaList = ({ application }: Props) => {
-  const { formatMessage, lang: locale } = useLocale()
+  const { formatMessage } = useLocale()
   const { control, getValues, setValue } = useFormContext()
-  const [updateApplication] = useMutation(UPDATE_APPLICATION)
-  const [saveError, setSaveError] = useState<{
-    deletedTitle: string
-  } | null>(null)
+  const { persist, saveError } = useCascadeDelete<Employee>(
+    application,
+    'employees',
+  )
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -53,44 +51,18 @@ export const PersonalCriteriaList = ({ application }: Props) => {
   // einstaklingsbundnum þáttum" screen) must be dropped too, or every
   // employee keeps a stale, unreachable assignment for a criterion that no
   // longer exists. Matched by title, same as the rest of this template links
-  // criteria to their step assignments.
-  //
-  // This screen's own "Continue" only persists the `criteria` answer key, so
-  // a plain setValue here would leave the correction stuck in local form
-  // state until the (much later) Employees screen is submitted — a reload in
-  // between would resurrect the stale assignment from the backend. Persist
-  // it immediately instead, mirroring ExcelTemplateDownload's pattern.
-  const removeFromEmployees = async (deletedTitle: string) => {
-    if (!deletedTitle) return
-    const employees =
-      (getValues('employees') as Employee[] | undefined) ?? []
-    if (employees.length === 0) return
-    const filtered = employees.map((emp) => ({
-      ...emp,
-      personalStepAssignments: (emp.personalStepAssignments ?? []).filter(
-        (a) => a.criterionTitle !== deletedTitle,
-      ),
-    }))
-    setValue('employees', filtered)
-    try {
-      await updateApplication({
-        variables: {
-          input: {
-            id: application.id,
-            answers: { employees: filtered },
-          },
-          locale,
-        },
-      })
-      setSaveError(null)
-    } catch {
-      // The local form state above is already corrected, but the backend
-      // isn't — a reload before the Employees screen is reached would
-      // resurrect the stale assignment. Surface this so the user can retry
-      // rather than unknowingly relying on an unsaved local-only fix.
-      setSaveError({ deletedTitle })
-    }
-  }
+  // criteria to their step assignments. useCascadeDelete persists the
+  // correction immediately, since this screen's own "Continue" only saves
+  // the `criteria` answer key.
+  const removeFromEmployees = (deletedTitle: string) =>
+    persist(deletedTitle, (employees) =>
+      employees.map((emp) => ({
+        ...emp,
+        personalStepAssignments: (emp.personalStepAssignments ?? []).filter(
+          (a) => a.criterionTitle !== deletedTitle,
+        ),
+      })),
+    )
 
   return (
     <Box marginTop={6}>
@@ -183,7 +155,7 @@ export const PersonalCriteriaList = ({ application }: Props) => {
               variant="ghost"
               size="small"
               icon="reload"
-              onClick={() => void removeFromEmployees(saveError.deletedTitle)}
+              onClick={() => void removeFromEmployees(saveError)}
             >
               {formatMessage(messages.report.criteria.retryButton)}
             </Button>
