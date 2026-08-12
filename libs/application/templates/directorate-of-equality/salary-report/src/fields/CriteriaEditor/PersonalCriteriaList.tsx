@@ -1,13 +1,31 @@
+import { useState } from 'react'
+import { useMutation } from '@apollo/client'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { InputController } from '@island.is/shared/form-fields'
-import { Box, Button, Text, Stack } from '@island.is/island-ui/core'
+import { UPDATE_APPLICATION } from '@island.is/application/graphql'
+import type { Application } from '@island.is/application/types'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  Text,
+  Stack,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
-import type { SubCriterion } from '../../utils/types'
+import type { Employee, SubCriterion } from '../../utils/types'
 
-export const PersonalCriteriaList = () => {
-  const { formatMessage } = useLocale()
+type Props = {
+  application: Application
+}
+
+export const PersonalCriteriaList = ({ application }: Props) => {
+  const { formatMessage, lang: locale } = useLocale()
   const { control, getValues, setValue } = useFormContext()
+  const [updateApplication] = useMutation(UPDATE_APPLICATION)
+  const [saveError, setSaveError] = useState<{
+    deletedTitle: string
+  } | null>(null)
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -29,6 +47,49 @@ export const PersonalCriteriaList = () => {
     const next = [...current]
     next.splice(index, 1)
     setValue('subCriteria.personalFactors', next)
+  }
+
+  // A deleted criterion's already-assigned steps (from the "Mat á
+  // einstaklingsbundnum þáttum" screen) must be dropped too, or every
+  // employee keeps a stale, unreachable assignment for a criterion that no
+  // longer exists. Matched by title, same as the rest of this template links
+  // criteria to their step assignments.
+  //
+  // This screen's own "Continue" only persists the `criteria` answer key, so
+  // a plain setValue here would leave the correction stuck in local form
+  // state until the (much later) Employees screen is submitted — a reload in
+  // between would resurrect the stale assignment from the backend. Persist
+  // it immediately instead, mirroring ExcelTemplateDownload's pattern.
+  const removeFromEmployees = async (deletedTitle: string) => {
+    if (!deletedTitle) return
+    const employees =
+      (getValues('employees') as Employee[] | undefined) ?? []
+    if (employees.length === 0) return
+    const filtered = employees.map((emp) => ({
+      ...emp,
+      personalStepAssignments: (emp.personalStepAssignments ?? []).filter(
+        (a) => a.criterionTitle !== deletedTitle,
+      ),
+    }))
+    setValue('employees', filtered)
+    try {
+      await updateApplication({
+        variables: {
+          input: {
+            id: application.id,
+            answers: { employees: filtered },
+          },
+          locale,
+        },
+      })
+      setSaveError(null)
+    } catch {
+      // The local form state above is already corrected, but the backend
+      // isn't — a reload before the Employees screen is reached would
+      // resurrect the stale assignment. Surface this so the user can retry
+      // rather than unknowingly relying on an unsaved local-only fix.
+      setSaveError({ deletedTitle })
+    }
   }
 
   return (
@@ -77,8 +138,12 @@ export const PersonalCriteriaList = () => {
                 icon="trash"
                 iconType="outline"
                 onClick={() => {
+                  const deletedTitle = getValues(
+                    `criteria.personalFactors.${i}.title`,
+                  ) as string
                   remove(i)
                   removeSubCriteria(i)
+                  void removeFromEmployees(deletedTitle)
                 }}
               >
                 {formatMessage(messages.report.criteria.deleteButton)}
@@ -106,6 +171,25 @@ export const PersonalCriteriaList = () => {
           {formatMessage(messages.report.criteria.addCriterionButton)}
         </Button>
       </Box>
+
+      {saveError && (
+        <Box marginTop={3}>
+          <AlertMessage
+            type="error"
+            message={formatMessage(messages.report.criteria.deleteSaveError)}
+          />
+          <Box marginTop={2}>
+            <Button
+              variant="ghost"
+              size="small"
+              icon="reload"
+              onClick={() => void removeFromEmployees(saveError.deletedTitle)}
+            >
+              {formatMessage(messages.report.criteria.retryButton)}
+            </Button>
+          </Box>
+        </Box>
+      )}
     </Box>
   )
 }

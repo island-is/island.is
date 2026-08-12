@@ -544,6 +544,15 @@ export const messages = {
         defaultMessage:
           'Vægi allra viðmiða verður að vera samtals 100% (núverandi: {total}%)',
       },
+      deleteSaveError: {
+        id: 'doe.sr.application:report.criteria.deleteSaveError',
+        defaultMessage:
+          'Ekki tókst að vista eyðingu viðmiðsins. Vinsamlegast reyndu aftur.',
+      },
+      retryButton: {
+        id: 'doe.sr.application:report.criteria.retryButton',
+        defaultMessage: 'Reyna aftur',
+      },
     }),
     subCriteria: defineMessages({
       sectionTitle: {
