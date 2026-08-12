@@ -19,6 +19,7 @@ import { AuthDelegationType } from '@island.is/shared/types'
 
 import {
   CategoriesApi,
+  ChildSafetyLevelsApi,
   ChildUnknownNationalIdStatesApi,
   DisabilityStatusesApi,
   GendersApi,
@@ -29,7 +30,6 @@ import {
   PronounsApi,
   ProtectiveFactorsApi,
   SchoolTypesApi,
-  UrgencyAssessmentsApi,
 } from '../dataProviders'
 import {
   overviewMessages,
@@ -88,7 +88,7 @@ const template: ApplicationTemplate<
                   GendersApi,
                   PronounsApi,
                   DisabilityStatusesApi,
-                  UrgencyAssessmentsApi,
+                  ChildSafetyLevelsApi,
                   PostalCodesApi,
                   ChildUnknownNationalIdStatesApi,
                   GuardianNotAwareReasonsApi,
@@ -121,7 +121,7 @@ const template: ApplicationTemplate<
                 GendersApi,
                 PronounsApi,
                 DisabilityStatusesApi,
-                UrgencyAssessmentsApi,
+                ChildSafetyLevelsApi,
                 PostalCodesApi,
                 ChildUnknownNationalIdStatesApi,
                 GuardianNotAwareReasonsApi,

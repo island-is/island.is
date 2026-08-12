@@ -1098,9 +1098,9 @@ export const getChildSafetyItems = (
   externalData: ExternalData,
 ): Array<KeyValueItem> => {
   const { childSafetyUrgencyLevel } = getApplicationAnswers(answers)
-  const { urgencyAssessments } = getApplicationExternalData(externalData)
+  const { childSafetyLevels } = getApplicationExternalData(externalData)
 
-  const selectedAssessment = urgencyAssessments.find(
+  const selectedAssessment = childSafetyLevels.find(
     (a) => a.value === childSafetyUrgencyLevel,
   )
 

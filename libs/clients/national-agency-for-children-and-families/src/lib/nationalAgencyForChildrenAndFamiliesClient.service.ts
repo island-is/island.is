@@ -31,10 +31,10 @@ export class NationalAgencyForChildrenAndFamiliesClientService {
     return await this.externalDropdownApiWithAuth(user).externalGenders()
   }
 
-  async getUrgencyAssessments(user: User): Promise<DetailedDropDownDto[]> {
+  async getChildSafetyLevels(user: User): Promise<DetailedDropDownDto[]> {
     return await this.externalDropdownApiWithAuth(
       user,
-    ).externalUrgencyAssessments()
+    ).externalChildSafetyLevels()
   }
 
   async getPostalCodes(user: User): Promise<DropDownDto[]> {
