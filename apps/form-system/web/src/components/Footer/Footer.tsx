@@ -433,7 +433,12 @@ export const Footer = ({ externalDataAgreement }: Props) => {
                 preTextIcon="arrowBack"
                 variant="ghost"
                 onClick={handleDecrement}
-                disabled={submitLoading || notifyLoading || paymentLoading}
+                disabled={
+                  submitLoading ||
+                  notifyLoading ||
+                  paymentLoading ||
+                  saveLoading
+                }
               >
                 {formatMessage(m.back)}
               </Button>
