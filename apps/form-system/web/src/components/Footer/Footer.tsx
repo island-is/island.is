@@ -170,7 +170,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
     })
   }
 
-  const saveCurrentScreen = async () => {
+  const saveCurrentScreen = async (increment = true) => {
     try {
       await submitScreen[0]({
         variables: {
@@ -179,7 +179,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
               applicationId: state.application.id,
               screenId: state.currentScreen?.data?.id,
               sectionId: state.currentSection.data.id,
-              increment: true,
+              increment,
               sections: stripFieldListsFromSections(
                 removeTypename(state.sections),
               ),
@@ -387,7 +387,10 @@ export const Footer = ({ externalDataAgreement }: Props) => {
     }
   }
 
-  const handleDecrement = () =>
+  const handleDecrement = async () => {
+    const saved = await saveCurrentScreen(false)
+    if (!saved) return
+
     dispatch({
       type: 'DECREMENT',
       payload: {
@@ -396,6 +399,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
         updateDependencies: updateDependencies,
       },
     })
+  }
 
   return (
     <Box marginTop={7} className={styles.buttonContainer}>

@@ -159,14 +159,7 @@ export const applicationReducer = (
     case 'DECREMENT': {
       const { currentSectionIndex, currentScreenIndex } =
         getDecrementVariables(state)
-      const { submitScreen, updateDependencies } = action.payload
-      return decrement(
-        state,
-        currentSectionIndex,
-        currentScreenIndex,
-        submitScreen,
-        updateDependencies,
-      )
+      return decrement(state, currentSectionIndex, currentScreenIndex)
     }
     case 'INDEX_SCREEN': {
       const { sectionIndex, screenIndex, updateCompleted } = action.payload

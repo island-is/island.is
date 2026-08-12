@@ -15,7 +15,6 @@ import {
   prevVisibleScreenInSection,
   prevVisibleSectionIndex,
 } from '../utils/reducerHelpers'
-import { removeTypename } from '@island.is/form-system/graphql'
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
@@ -56,28 +55,6 @@ const completeSection = (
   idx: number,
   completed = true,
 ) => sections.map((s, i) => (i === idx ? { ...s, isCompleted: completed } : s))
-
-const stripFieldListsFromSections = (
-  sections: FormSystemSection[],
-): FormSystemSection[] =>
-  sections.map((section) => ({
-    ...section,
-    screens: section.screens?.map((screen) =>
-      screen
-        ? {
-            ...screen,
-            fields: screen.fields?.map((field) => {
-              if (!field) return field
-
-              return {
-                ...field,
-                list: undefined,
-              }
-            }),
-          }
-        : screen,
-    ),
-  }))
 
 export const incrementWithScreens = (
   state: ApplicationState,
@@ -171,22 +148,7 @@ export const decrement = (
   state: ApplicationState,
   currentSectionIndex: number,
   currentScreenIndex: number,
-  submitScreenMutation: MutationTuple<
-    any,
-    OperationVariables,
-    DefaultContext,
-    ApolloCache<any>
-  >,
-  updateDependenciesMutation: MutationTuple<
-    any,
-    OperationVariables,
-    DefaultContext,
-    ApolloCache<any>
-  >,
 ): ApplicationState => {
-  const [submitScreen] = submitScreenMutation
-  const [updateDependencies] = updateDependenciesMutation
-
   state.currentScreen = setCurrentScreen(
     state,
     currentSectionIndex,
@@ -198,39 +160,6 @@ export const decrement = (
     currentSectionIndex,
     currentScreenIndex,
   ).currentSection
-
-  submitScreen({
-    variables: {
-      input: {
-        submitScreenDto: {
-          applicationId: state.application.id,
-          screenId: state.currentScreen?.data?.id,
-          sectionId: state.currentSection.data.id,
-          increment: false,
-          sections: stripFieldListsFromSections(removeTypename(state.sections)),
-        },
-      },
-    },
-  }).catch((error) => {
-    console.error('Error decrementing screen:', error)
-  })
-  if (
-    updateDependencies &&
-    state.currentSection.data.sectionType === SectionTypes.INPUT
-  ) {
-    updateDependencies({
-      variables: {
-        input: {
-          id: state.application.id,
-          updateApplicationDto: {
-            dependencies: state.application.dependencies,
-          },
-        },
-      },
-    }).catch((error) => {
-      console.error('Error updating dependencies:', error)
-    })
-  }
 
   let resultSections = state.sections ?? []
   let resultCurrentScreen = state.currentScreen
