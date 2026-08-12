@@ -224,18 +224,14 @@ export const CriterionPanel: FC<Props> = ({
         <Box marginTop={3}>
           <AlertMessage
             type="error"
-            message={formatMessage(
-              messages.report.subCriteria.deleteSaveError,
-            )}
+            message={formatMessage(messages.report.subCriteria.deleteSaveError)}
           />
           <Box marginTop={2}>
             <Button
               variant="ghost"
               size="small"
               icon="reload"
-              onClick={() =>
-                void removeFromAssignments(saveError)
-              }
+              onClick={() => void removeFromAssignments(saveError)}
             >
               {formatMessage(messages.report.subCriteria.retryButton)}
             </Button>

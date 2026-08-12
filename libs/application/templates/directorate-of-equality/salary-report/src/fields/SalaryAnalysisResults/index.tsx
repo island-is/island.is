@@ -87,9 +87,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
         },
       })
       const salaryAnalysisResult = res.data?.updateApplicationExternalData
-        .externalData?.salaryAnalysisResult as
-        | AnalysisExternalData
-        | undefined
+        .externalData?.salaryAnalysisResult as AnalysisExternalData | undefined
       if (
         salaryAnalysisResult?.status === 'success' &&
         salaryAnalysisResult.data
@@ -124,10 +122,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
     if (!setBeforeSubmitCallback) return
     setBeforeSubmitCallback(async () => {
       if (isAnalyzing) {
-        return [
-          false,
-          formatMessage(messages.salaryAnalysis.results.analyzing),
-        ]
+        return [false, formatMessage(messages.salaryAnalysis.results.analyzing)]
       }
       if (hasError) {
         return [
@@ -138,7 +133,13 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
       }
       return [true, null]
     })
-  }, [setBeforeSubmitCallback, isAnalyzing, hasError, errorMessage, formatMessage])
+  }, [
+    setBeforeSubmitCallback,
+    isAnalyzing,
+    hasError,
+    errorMessage,
+    formatMessage,
+  ])
 
   const totals = result?.baseSalaryByGenderAndScoreAll?.totals
   const outlierCount = result?.outliers?.length ?? 0

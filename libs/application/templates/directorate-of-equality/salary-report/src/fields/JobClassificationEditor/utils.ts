@@ -95,8 +95,7 @@ export const mergeStepAssignments = (
 ): StepAssignment[] => {
   const isPresent = (a: StepAssignment) =>
     existing.some(
-      (e) =>
-        e.criterionTitle === a.criterionTitle && e.subTitle === a.subTitle,
+      (e) => e.criterionTitle === a.criterionTitle && e.subTitle === a.subTitle,
     )
   return [...existing, ...defaultAssignments.filter((a) => !isPresent(a))]
 }
