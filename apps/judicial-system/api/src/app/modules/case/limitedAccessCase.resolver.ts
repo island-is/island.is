@@ -1,4 +1,4 @@
-import { Inject, UseGuards, UseInterceptors } from '@nestjs/common'
+import { Inject, UseGuards } from '@nestjs/common'
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
@@ -16,10 +16,7 @@ import type { User } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
 import { CaseQueryInput } from './dto/case.input'
-import { TransitionCaseInput } from './dto/transitionCase.input'
 import { UpdateCaseInput } from './dto/updateCase.input'
-import { CaseInterceptor } from './interceptors/case.interceptor'
-import { LimitedAccessCaseInterceptor } from './interceptors/limitedAccessCase.interceptor'
 import { Case } from './models/case.model'
 
 @UseGuards(new JwtGraphQlAuthUserGuard(true))
@@ -32,7 +29,6 @@ export class LimitedAccessCaseResolver {
   ) {}
 
   @Query(() => Case, { nullable: true })
-  @UseInterceptors(CaseInterceptor, LimitedAccessCaseInterceptor)
   async limitedAccessCase(
     @Args('input', { type: () => CaseQueryInput })
     input: CaseQueryInput,
@@ -51,7 +47,6 @@ export class LimitedAccessCaseResolver {
   }
 
   @Mutation(() => Case, { nullable: true })
-  @UseInterceptors(CaseInterceptor)
   limitedAccessUpdateCase(
     @Args('input', { type: () => UpdateCaseInput })
     input: UpdateCaseInput,
@@ -67,27 +62,6 @@ export class LimitedAccessCaseResolver {
       user.id,
       AuditedAction.UPDATE_CASE,
       backendService.limitedAccessUpdateCase(id, updateCase),
-      id,
-    )
-  }
-
-  @Mutation(() => Case, { nullable: true })
-  @UseInterceptors(CaseInterceptor)
-  limitedAccessTransitionCase(
-    @Args('input', { type: () => TransitionCaseInput })
-    input: TransitionCaseInput,
-    @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
-  ): Promise<Case> {
-    const { id, ...transitionCase } = input
-
-    this.logger.debug(`Transitioning case ${id}`)
-
-    return this.auditTrailService.audit(
-      user.id,
-      AuditedAction.TRANSITION_CASE,
-      backendService.limitedAccessTransitionCase(id, transitionCase),
       id,
     )
   }
