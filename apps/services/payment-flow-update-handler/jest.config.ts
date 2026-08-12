@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'services-payment-flow-update-handler',
   preset: '../../../jest.preset.js',
   testEnvironment: 'node',

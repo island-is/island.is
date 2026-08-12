@@ -136,14 +136,17 @@ export const ReviewDecision: FC<Props> = (props) => {
         <Modal
           title={fm(strings.reviewModalTitle)}
           text="Ertu viss um að þú viljir ljúka yfirlestri?"
-          primaryButton={{
-            text: fm(strings.reviewModalPrimaryButtonText),
-            onClick: handleReviewDecision,
-          }}
-          secondaryButton={{
-            text: fm(strings.reviewModalSecondaryButtonText),
-            onClick: () => setModalVisible(undefined),
-          }}
+          buttons={[
+            {
+              text: fm(strings.reviewModalSecondaryButtonText),
+              onClick: () => setModalVisible(undefined),
+              variant: 'ghost',
+            },
+            {
+              text: fm(strings.reviewModalPrimaryButtonText),
+              onClick: handleReviewDecision,
+            },
+          ]}
           onClose={() => setModalVisible(undefined)}
         />
       )}

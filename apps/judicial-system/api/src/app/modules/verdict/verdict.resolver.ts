@@ -1,5 +1,5 @@
 import { Inject, Logger, UseGuards } from '@nestjs/common'
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -28,6 +28,7 @@ export class VerdictResolver {
     private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly backendService: BackendService,
   ) {}
 
   @Mutation(() => [Verdict], { nullable: true })
@@ -35,8 +36,6 @@ export class VerdictResolver {
     @Args('input', { type: () => CreateVerdictsInput })
     input: CreateVerdictsInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<Verdict[]> {
     this.logger.debug(`Creating verdicts for defendants in ${input.caseId}`)
     const { caseId, ...createVerdictInputs } = input
@@ -44,7 +43,10 @@ export class VerdictResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_VERDICTS,
-      backendService.createVerdicts(caseId, createVerdictInputs.verdicts ?? []),
+      this.backendService.createVerdicts(
+        caseId,
+        createVerdictInputs.verdicts ?? [],
+      ),
       caseId,
     )
   }
@@ -54,8 +56,6 @@ export class VerdictResolver {
     @Args('input', { type: () => UpdateVerdictInput })
     input: UpdateVerdictInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<Verdict> {
     this.logger.debug(
       `Updating verdict for defendant ${input.defendantId} of case ${input.caseId}`,
@@ -65,7 +65,7 @@ export class VerdictResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_VERDICT,
-      backendService.updateVerdict(caseId, defendantId, updateVerdict),
+      this.backendService.updateVerdict(caseId, defendantId, updateVerdict),
       defendantId,
     )
   }
@@ -75,8 +75,6 @@ export class VerdictResolver {
     @Args('input', { type: () => VerdictQueryInput })
     input: VerdictQueryInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<Verdict> {
     this.logger.debug(
       `Getting verdict for defendant ${input.defendantId} of case ${input.caseId}`,
@@ -85,7 +83,7 @@ export class VerdictResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_VERDICT,
-      backendService.getVerdict(input.caseId, input.defendantId),
+      this.backendService.getVerdict(input.caseId, input.defendantId),
       input.caseId,
     )
   }
@@ -95,8 +93,6 @@ export class VerdictResolver {
     @Args('input', { type: () => DeliverCaseVerdictQueryInput })
     input: DeliverCaseVerdictQueryInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<DeliverCaseVerdictResponse> {
     this.logger.debug(
       `Delivering case verdict ${input.caseId} to affected defendants`,
@@ -105,7 +101,7 @@ export class VerdictResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.DELIVER_CASE_VERDICT,
-      backendService.deliverCaseVerdict(input.caseId),
+      this.backendService.deliverCaseVerdict(input.caseId),
       input.caseId,
     )
   }

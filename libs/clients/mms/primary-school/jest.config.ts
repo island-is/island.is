@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'primary-school',
   preset: '../../../../jest.preset.js',
   testEnvironment: 'node',

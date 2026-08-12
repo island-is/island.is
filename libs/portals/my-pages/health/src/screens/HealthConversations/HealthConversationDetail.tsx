@@ -19,6 +19,7 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { MessageActions } from './components/MessageActions'
 import ConversationAvatar from './components/ConversationAvatar'
+import ConversationMessageBody from './components/ConversationMessageBody'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { useEffect, useRef, useState } from 'react'
@@ -256,11 +257,7 @@ const HealthConversationDetail = () => {
                   </Box>
 
                   {/* Body */}
-                  {msg.messageTextContent && (
-                    <Box marginBottom={4} style={{ whiteSpace: 'pre-line' }}>
-                      <Text fontWeight="light">{msg.messageTextContent}</Text>
-                    </Box>
-                  )}
+                  <ConversationMessageBody message={msg} />
 
                   {/* Attachments */}
                   {msg.attachments.length > 0 && (
