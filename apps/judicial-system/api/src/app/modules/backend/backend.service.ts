@@ -867,17 +867,6 @@ export class BackendService extends DataSource<{ req: Request }> {
     )
   }
 
-  limitedAccessTransitionCase(
-    caseId: string,
-    transitionCase: unknown,
-  ): Promise<Case> {
-    return this.patch<unknown, Case>(
-      `case/${caseId}/limitedAccess/state`,
-      transitionCase,
-      caseTransformer,
-    )
-  }
-
   limitedAccessCreateAppealCase(
     caseId: string,
     createAppealCase: unknown,
