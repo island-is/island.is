@@ -2,6 +2,8 @@ import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { messages } from './messages'
 import { EMAIL_REGEX } from '@island.is/application/core'
+import { Gender } from '../utils/types'
+import { PERIOD_ONE_MONTH, PERIOD_TWELVE_MONTHS } from '../utils/constants'
 
 const generalInformation = z.object({
   companyName: z.string().optional(),
@@ -20,9 +22,11 @@ const chiefExecutive = z.object({
   email: z.string().refine((v) => EMAIL_REGEX.test(v), {
     params: messages.errors.invalidEmail,
   }),
-  gender: z
+  jobTitle: z
     .string()
     .refine((v) => v && v.length > 0, { params: messages.errors.required }),
+
+  gender: z.nativeEnum(Gender),
 })
 
 const contactPerson = z.object({
@@ -89,6 +93,23 @@ const criteria = z
         code: z.ZodIssueCode.custom,
         path: ['jobFactors'],
         params: messages.report.criteria.weightSumError,
+      })
+    }
+  })
+
+const period = z
+  .object({
+    period: z
+      .enum([PERIOD_TWELVE_MONTHS, PERIOD_ONE_MONTH])
+      .refine((v) => !!v, { params: messages.errors.required }),
+    month: z.string().optional(),
+  })
+  .superRefine((val, ctx) => {
+    if (val.period === PERIOD_ONE_MONTH && !val.month) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['month'],
+        params: messages.errors.required,
       })
     }
   })
@@ -173,10 +194,9 @@ const employee = z.object({
   ordinal: z.number(),
   identifier: z.string().min(1),
   roleTitle: z.string(),
-  education: z.string(),
   gender: z.string(),
-  field: z.string(),
-  department: z.string(),
+  field: z.string().optional(),
+  department: z.string().optional(),
   startDate: z.string(),
   workRatio: z.number(),
   baseSalary: z.number(),
@@ -266,6 +286,7 @@ export const dataSchema = z.object({
   chiefExecutive: chiefExecutive.optional(),
   contactPerson: contactPerson.optional(),
   employeeCount: employeeCount.optional(),
+  period: period.optional(),
   subsidiaries: subsidiaries.optional(),
   criteria: criteria.optional(),
   subCriteria: subCriteria,

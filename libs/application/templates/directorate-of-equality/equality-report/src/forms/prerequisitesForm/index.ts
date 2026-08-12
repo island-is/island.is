@@ -6,14 +6,17 @@ import {
   buildSubmitField,
   coreMessages,
 } from '@island.is/application/core'
-import { DefaultEvents, FormModes } from '@island.is/application/types'
+import {
+  DefaultEvents,
+  FormModes,
+  IdentityApi,
+  UserProfileApi,
+} from '@island.is/application/types'
 import { DirectorateOfEqualityLogo } from '@island.is/application/assets/institution-logos'
 import {
   ActiveEqualityReportApi,
   CompanyRegistryApi,
   DoeCompanyApi,
-  IdentityApi,
-  UserProfileApi,
 } from '../../dataProviders'
 import { messages } from '../../lib/messages'
 
@@ -31,6 +34,7 @@ export const Prerequisites = buildForm({
         buildExternalDataProvider({
           id: 'approveExternalData',
           title: messages.prerequisites.section.title,
+          description: messages.prerequisites.section.intro,
           checkboxLabel: messages.prerequisites.section.checkboxLabel,
           submitField: buildSubmitField({
             id: 'submit',

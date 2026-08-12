@@ -339,7 +339,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       })
     }
 
-    return attendees.length > 0 ? attendees.join('') : undefined
+    return `Mættir eru:\n${attendees.join('')}`
   }, [workingCase.prosecutor, workingCase.defendants])
 
   const initialize = useCallback(() => {
@@ -1869,15 +1869,18 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
             <Modal
               title="Ertu viss?"
               text={`Ertu viss um að þú viljir eyða þinghaldi ${index + 1}?`}
-              primaryButton={{
-                text: 'Já, eyða',
-                colorScheme: 'destructive',
-                onClick: () => handleDeleteCourtSession(courtSession.id),
-              }}
-              secondaryButton={{
-                text: 'Hætta við',
-                onClick: () => setModalVisible(undefined),
-              }}
+              buttons={[
+                {
+                  text: 'Hætta við',
+                  onClick: () => setModalVisible(undefined),
+                  variant: 'ghost',
+                },
+                {
+                  text: 'Já, eyða',
+                  colorScheme: 'destructive',
+                  onClick: () => handleDeleteCourtSession(courtSession.id),
+                },
+              ]}
             />
           )}
         </Box>

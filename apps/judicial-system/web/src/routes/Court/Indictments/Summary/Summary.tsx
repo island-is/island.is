@@ -307,10 +307,18 @@ const Summary: FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE}/${workingCase.id}`}
-          nextButtonIcon="checkmark"
-          nextButtonText={formatMessage(strings.nextButtonText)}
-          onNextButtonClick={handleNextButtonClick}
-          hideNextButton={!canUserCompleteCase}
+          actions={
+            !canUserCompleteCase
+              ? []
+              : [
+                  {
+                    text: formatMessage(strings.nextButtonText),
+                    icon: 'checkmark',
+                    onClick: handleNextButtonClick,
+                    testId: 'continueButton',
+                  },
+                ]
+          }
           infoBoxText={
             canUserCompleteCase
               ? ''
@@ -358,21 +366,24 @@ const Summary: FC = () => {
               </Box>
             </Box>
           }
-          primaryButton={{
-            text: 'Staðfesta',
-            onClick: async () => await handleModalPrimaryButtonClick(),
-            isLoading: isTransitioningCase,
-            isDisabled: !hasReviewed || pdfError,
-          }}
-          secondaryButton={{
-            text: 'Hætta við',
-            onClick: () => {
-              setIsLoading(true)
-              setModalVisible(undefined)
-              setHasReviewed(false)
-              setPDFError(false)
+          buttons={[
+            {
+              text: 'Hætta við',
+              onClick: () => {
+                setIsLoading(true)
+                setModalVisible(undefined)
+                setHasReviewed(false)
+                setPDFError(false)
+              },
+              variant: 'ghost',
             },
-          }}
+            {
+              text: 'Staðfesta',
+              onClick: async () => await handleModalPrimaryButtonClick(),
+              isLoading: isTransitioningCase,
+              isDisabled: !hasReviewed || pdfError,
+            },
+          ]}
           footerCheckbox={{
             label: 'Ég hef rýnt þetta dómskjal',
             checked: hasReviewed,
@@ -419,15 +430,18 @@ const Summary: FC = () => {
               <Text>Niðurstaða málsins verður send málflytjendum.</Text>
             </Box>
           }
-          primaryButton={{
-            text: formatMessage(strings.completeCaseModalPrimaryButton),
-            onClick: async () => await handleModalPrimaryButtonClick(),
-            isLoading: isTransitioningCase,
-          }}
-          secondaryButton={{
-            text: formatMessage(strings.completeCaseModalSecondaryButton),
-            onClick: () => setModalVisible(undefined),
-          }}
+          buttons={[
+            {
+              text: formatMessage(strings.completeCaseModalSecondaryButton),
+              onClick: () => setModalVisible(undefined),
+              variant: 'ghost',
+            },
+            {
+              text: formatMessage(strings.completeCaseModalPrimaryButton),
+              onClick: async () => await handleModalPrimaryButtonClick(),
+              isLoading: isTransitioningCase,
+            },
+          ]}
         />
       )}
       {modalVisible === 'CORRECTION_EXPLANATION' && (

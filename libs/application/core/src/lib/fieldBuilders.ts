@@ -1251,6 +1251,7 @@ export const buildAccordionField = (
     marginTop,
     marginBottom,
     condition,
+    singleExpand = true,
   } = data
   return {
     children: undefined,
@@ -1261,6 +1262,7 @@ export const buildAccordionField = (
     marginBottom,
     accordionItems,
     condition,
+    singleExpand,
     type: FieldTypes.ACCORDION,
     component: FieldComponents.ACCORDION,
   }

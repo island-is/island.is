@@ -16,7 +16,7 @@ import * as React from 'react'
 import { forwardRef, useEffect, useRef, useState } from 'react'
 import {
   default as ReactDatePicker,
-  ReactDatePickerProps,
+  DatePickerProps as ReactDatePickerProps,
   registerLocale,
 } from 'react-datepicker'
 import { Icon } from '../IconRC/Icon'
@@ -128,7 +128,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   const errorId = `${id}-error`
   const ariaError = hasError
     ? {
-        'aria-invalid': true,
+        'aria-invalid': 'true',
         'aria-describedby': errorId,
       }
     : {}
@@ -150,6 +150,113 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected, selectedRange])
+
+  // Commits a fully typed "start - end" input value. Returns the committed
+  // range when the value parses, or null otherwise. Skips the change callback
+  // when the parsed range matches what is already selected (e.g. the calendar
+  // closing right after a click selection).
+  const commitTypedRange = (value: string | undefined): [Date, Date] | null => {
+    if (!value || value.trim() === '') return null
+    const parts = value.split(/\s*-\s*/)
+    if (parts.length !== 2) return null
+    const fmt = showTimeInput
+      ? currentLanguage.formatWithTime
+      : currentLanguage.format
+    const fallbacks = showTimeInput ? [] : currentLanguage.parseFallbacks
+    const parsedStart = tryParseDate(parts[0], fmt, fallbacks)
+    const parsedEnd = tryParseDate(parts[1], fmt, fallbacks)
+    if (!parsedStart || !parsedEnd) return null
+    const [start, end] =
+      parsedEnd < parsedStart
+        ? [parsedEnd, parsedStart]
+        : [parsedStart, parsedEnd]
+    const unchanged =
+      start.getTime() === startDate?.getTime() &&
+      end.getTime() === endDate?.getTime()
+    if (!unchanged) {
+      setStartDate(start)
+      setEndDate(end)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ;(datePickerRef.current as any)?.setState({ inputValue: null })
+      handleChange && handleChange(start, end)
+    }
+    return [start, end]
+  }
+
+  // react-datepicker 9 types its props as a discriminated union on
+  // selectsRange, so the mode-dependent props are built with literal values.
+  const selectionModeProps = range
+    ? {
+        selectsRange: true as const,
+        endDate,
+        onChange: (date: any) => {
+          if (isTypingInInputRef.current) {
+            // Typed ranges are committed by the Enter handler below.
+            // (react-datepicker 9 parses a fully typed range in a
+            // single change event, which would commit mid-typing.)
+            return
+          }
+
+          const [start, end] = date
+
+          if (start === null && end === null) {
+            setStartDate(null)
+            setEndDate(null)
+            return
+          }
+
+          if (
+            start instanceof Date &&
+            !isNaN(start.getTime()) &&
+            (end === null || (end instanceof Date && !isNaN(end.getTime())))
+          ) {
+            if (
+              end === null &&
+              startDate !== null &&
+              endDate === null &&
+              start < startDate
+            ) {
+              setStartDate(start)
+              setEndDate(startDate)
+              hoverDateRef.current = null
+              setIsOpen(false)
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              ;(datePickerRef.current as any)?.setState({
+                inputValue: null,
+              })
+              handleChange && handleChange(start, startDate)
+              return
+            }
+
+            setStartDate(start)
+            setEndDate(end)
+
+            if (end !== null) {
+              hoverDateRef.current = null
+              setIsOpen(false)
+              if (handleChange) {
+                handleChange(start, end)
+              }
+            } else {
+              setIsOpen(true)
+            }
+          }
+        },
+      }
+    : {
+        onChange: (date: any) => {
+          if (date === null) {
+            setStartDate(null)
+            setIsOpen(false)
+            return
+          }
+          if (date instanceof Date && !isNaN(date.getTime())) {
+            setStartDate(date)
+            handleChange && handleChange(date)
+            setIsOpen(false)
+          }
+        },
+      }
 
   return (
     <div
@@ -214,94 +321,31 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
             setDatePickerState('closed')
             setIsOpen(false)
             hoverDateRef.current = null
-            handleCloseCalendar && handleCloseCalendar(startDate)
+            // A typed range must also commit when the calendar closes without
+            // Enter (click outside, tab away) — otherwise the input is
+            // silently discarded.
+            const committed = range
+              ? commitTypedRange(
+                  containerRef.current?.querySelector('input')?.value,
+                )
+              : null
+            handleCloseCalendar &&
+              handleCloseCalendar(committed?.[0] ?? startDate)
           }}
           // We handle closing manually in range mode
           shouldCloseOnSelect={!range}
           onClickOutside={() => setIsOpen(false)}
           closeOnScroll={false}
-          onChange={
-            range
-              ? (date: any) => {
-                  if (isTypingInInputRef.current) {
-                    // Block intermediate parses, but allow a fully-typed range through.
-                    const arr = Array.isArray(date) ? date : []
-                    const bothValid =
-                      arr[0] instanceof Date &&
-                      !isNaN(arr[0].getTime()) &&
-                      arr[1] instanceof Date &&
-                      !isNaN(arr[1].getTime())
-                    if (!bothValid) return
-                  }
-
-                  const [start, end] = date
-
-                  if (start === null && end === null) {
-                    setStartDate(null)
-                    setEndDate(null)
-                    return
-                  }
-
-                  if (
-                    start instanceof Date &&
-                    !isNaN(start.getTime()) &&
-                    (end === null ||
-                      (end instanceof Date && !isNaN(end.getTime())))
-                  ) {
-                    if (
-                      end === null &&
-                      startDate !== null &&
-                      endDate === null &&
-                      start < startDate
-                    ) {
-                      setStartDate(start)
-                      setEndDate(startDate)
-                      hoverDateRef.current = null
-                      setIsOpen(false)
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                      ;(datePickerRef.current as any)?.setState({
-                        inputValue: null,
-                      })
-                      handleChange && handleChange(start, startDate)
-                      return
-                    }
-
-                    setStartDate(start)
-                    setEndDate(end)
-
-                    if (end !== null) {
-                      hoverDateRef.current = null
-                      setIsOpen(false)
-                      if (handleChange) {
-                        handleChange(start, end)
-                      }
-                    } else {
-                      setIsOpen(true)
-                    }
-                  }
-                }
-              : (date: any) => {
-                  if (date === null) {
-                    setStartDate(null)
-                    setIsOpen(false)
-                    return
-                  }
-                  if (date instanceof Date && !isNaN(date.getTime())) {
-                    setStartDate(date)
-                    handleChange && handleChange(date)
-                    setIsOpen(false)
-                  }
-                }
-          }
-          onChangeRaw={(e: React.SyntheticEvent<HTMLInputElement>) => {
+          {...selectionModeProps}
+          onChangeRaw={(e) => {
             if (!range) return
             // handleSelect also calls onChangeRaw before onChange — skip for calendar clicks.
-            if (!(e.target instanceof HTMLInputElement)) return
+            if (!(e?.target instanceof HTMLInputElement)) return
             isTypingInInputRef.current = true
             setTimeout(() => {
               isTypingInInputRef.current = false
             }, 0)
-            const v = (e.target as HTMLInputElement).value
+            const v = e.target.value
             if (!v || v.trim() === '') {
               setStartDate(null)
               setEndDate(null)
@@ -324,29 +368,9 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
             }
             if (e.key === 'Enter') {
               e.preventDefault()
-              const v = (e.target as HTMLInputElement).value
-              if (!v || v.trim() === '') return
-              const parts = v.split(/\s*-\s*/)
-              if (parts.length !== 2) return
-              const fmt = showTimeInput
-                ? currentLanguage.formatWithTime
-                : currentLanguage.format
-              const fallbacks = showTimeInput
-                ? []
-                : currentLanguage.parseFallbacks
-              const parsedStart = tryParseDate(parts[0], fmt, fallbacks)
-              const parsedEnd = tryParseDate(parts[1], fmt, fallbacks)
-              if (!parsedStart || !parsedEnd) return
-              const [s, end2] =
-                parsedEnd < parsedStart
-                  ? [parsedEnd, parsedStart]
-                  : [parsedStart, parsedEnd]
-              setStartDate(s)
-              setEndDate(end2)
-              setIsOpen(false)
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              ;(datePickerRef.current as any)?.setState({ inputValue: null })
-              handleChange && handleChange(s, end2)
+              if (commitTypedRange((e.target as HTMLInputElement).value)) {
+                setIsOpen(false)
+              }
             }
           }}
           onDayMouseEnter={
@@ -360,17 +384,15 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
             range
               ? (date: Date) => {
                   const hover = hoverDateRef.current
-                  if (!startDate || endDate !== null || !hover) return null
-                  if (hover >= startDate) return null
+                  if (!startDate || endDate !== null || !hover) return ''
+                  if (hover >= startDate) return ''
                   return date >= hover && date <= startDate
                     ? 'react-datepicker__day--in-selecting-range'
-                    : null
+                    : ''
                 }
               : undefined
           }
           startDate={startDate}
-          endDate={range ? endDate : undefined}
-          selectsRange={range}
           required={required}
           autoComplete="off"
           calendarClassName={cn({

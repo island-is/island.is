@@ -27,6 +27,7 @@ import { Premises } from './components/Premises/Premises'
 import { PreviewStepOrGroup } from './components/PreviewStepOrGroup/PreviewStepOrGroup'
 import { RelevantParties } from './components/RelevantParties/RelevantParties'
 import { Urls } from './components/Urls/Urls'
+import { Delegation } from './components/Delegation/Delegation'
 
 interface Props {
   openPreview: boolean
@@ -99,6 +100,9 @@ export const MainContent = ({ openPreview, setOpenPreview }: Props) => {
       ) : activeItem.type === 'Section' &&
         (activeItem.data as FormSystemSection).id === 'Lifetime' ? (
         <Lifetime />
+      ) : activeItem.type === 'Section' &&
+        (activeItem.data as FormSystemSection).id === 'Delegation' ? (
+        <Delegation />
       ) : (activeItem.data as FormSystemSection).sectionType ===
         SectionTypes.PAYMENT ? (
         <Payment />
