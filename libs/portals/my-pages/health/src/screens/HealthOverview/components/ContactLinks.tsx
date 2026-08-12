@@ -1,4 +1,5 @@
-import { Box, Icon, Text } from '@island.is/island-ui/core'
+import React from 'react'
+import { Box, Icon, IconMapIcon, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { LinkResolver, parseFullNumber } from '@island.is/portals/my-pages/core'
 import { messages } from '../../..'
@@ -10,6 +11,7 @@ type ContactLinkItem = {
   description: string
   emergencyDescription?: string
   href: string
+  icon: IconMapIcon
 }
 
 const ContactLinks = () => {
@@ -20,6 +22,7 @@ const ContactLinks = () => {
       title: formatMessage(messages.contactChat),
       description: formatMessage(messages.contactChatDesc),
       href: formatMessage(messages.heilsuveraChatLink),
+      icon: 'open',
     },
     {
       title: formatMessage(messages.contactPhone),
@@ -28,11 +31,13 @@ const ContactLinks = () => {
       href: `tel:${parseFullNumber(
         formatMessage(messages.contactPhoneNumber),
       )}`,
+      icon: 'call',
     },
     {
       title: formatMessage(messages.contactSendMessage),
       description: formatMessage(messages.contactSendMessageDesc),
       href: HealthPaths.HealthConversationsNew,
+      icon: 'arrowForward',
     },
   ]
 
@@ -54,6 +59,15 @@ const ContactLinks = () => {
     </>
   )
 
+  const renderLink = (link: ContactLinkItem, children: React.ReactNode) =>
+    link.href.startsWith('tel:') ? (
+      <a href={link.href} className={styles.telLink}>
+        {children}
+      </a>
+    ) : (
+      <LinkResolver href={link.href}>{children}</LinkResolver>
+    )
+
   const renderRowContent = (link: ContactLinkItem) => (
     <Box
       display="flex"
@@ -64,15 +78,18 @@ const ContactLinks = () => {
       width="full"
     >
       <Box flexGrow={1} minWidth={0}>
-        <Text
-          variant="medium"
-          fontWeight="semiBold"
-          lineHeight="lg"
-          color="blue400"
-          className={styles.titleText}
-        >
-          {link.title}
-        </Text>
+        {renderLink(
+          link,
+          <Text
+            variant="medium"
+            fontWeight="semiBold"
+            lineHeight="lg"
+            color="blue400"
+            className={styles.titleText}
+          >
+            {link.title}
+          </Text>,
+        )}
         {renderDescription(link)}
       </Box>
       <Box
@@ -81,7 +98,10 @@ const ContactLinks = () => {
         display="flex"
         style={{ minWidth: 16, minHeight: 16, alignItems: 'center' }}
       >
-        <Icon icon="arrowForward" color="blue400" size="small" />
+        {renderLink(
+          link,
+          <Icon icon={link.icon} type="outline" color="blue400" size="small" />,
+        )}
       </Box>
     </Box>
   )
@@ -99,15 +119,7 @@ const ContactLinks = () => {
           borderTopWidth={index > 0 ? 'standard' : undefined}
           borderColor="blue200"
         >
-          {link.href.startsWith('tel:') ? (
-            <a href={link.href} className={styles.telLink}>
-              {renderRowContent(link)}
-            </a>
-          ) : (
-            <LinkResolver href={link.href}>
-              {renderRowContent(link)}
-            </LinkResolver>
-          )}
+          {renderRowContent(link)}
         </Box>
       ))}
     </Box>

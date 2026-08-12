@@ -160,12 +160,15 @@ export const ModalBase: FC<ModalBaseProps> = ({
   return (
     <>
       {disclosure && (
-        <DialogDisclosure {...modal} {...disclosure.props}>
-          {(disclosureProps: DisclosureProps) =>
-            renderDisclosure(
-              React.cloneElement(disclosure, disclosureProps),
-              disclosureProps,
-            )
+        // reakit's types don't model this disclosure render-prop pattern; the
+        // `as any` casts keep it compiling. Remove when this migrates to ariakit.
+        <DialogDisclosure {...modal} {...(disclosure.props as any)}>
+          {
+            ((disclosureProps: DisclosureProps) =>
+              renderDisclosure(
+                React.cloneElement(disclosure, disclosureProps),
+                disclosureProps,
+              )) as any
           }
         </DialogDisclosure>
       )}

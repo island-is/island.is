@@ -2,9 +2,7 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
-  ApplicationRole,
   ApplicationStateSchema,
-  Application,
   DefaultEvents,
   FormModes,
   UserProfileApi,
@@ -12,7 +10,6 @@ import {
   IdentityApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
-import { isCompany } from 'kennitala'
 import {
   ActiveEqualityReportApi,
   BlankExcelTemplateApi,
@@ -25,6 +22,7 @@ import {
   SubmitSalaryReportApi,
 } from '../dataProviders'
 import { Events, Roles, States } from '../utils/constants'
+import { mapUserToRole } from '../utils/mapUserToRole'
 import {
   hasActiveEqualityReport,
   hasPostponedOutlierPlan,
@@ -32,6 +30,8 @@ import {
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
 import {
+  coreHistoryMessages,
+  coreMessages,
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
   pruneAfterDays,
@@ -55,6 +55,7 @@ const template: ApplicationTemplate<
   dataSchema,
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   requiredScopes: [ApiScope.directorateOfEquality],
+  allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -159,7 +160,7 @@ const template: ApplicationTemplate<
               cond: hasPostponedOutlierPlan,
             },
             {
-              target: States.COMPLETED,
+              target: States.IN_REVIEW,
             },
           ],
         },
@@ -180,6 +181,12 @@ const template: ApplicationTemplate<
               label: messages.postponed.tagLabel,
               variant: 'blueberry',
             },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: messages.historyLogs.postponed,
+              },
+            ],
           },
           roles: [
             {
@@ -202,22 +209,99 @@ const template: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: {
-            target: States.COMPLETED,
+            target: States.IN_REVIEW,
           },
         },
       },
-      [States.COMPLETED]: {
+      [States.IN_REVIEW]: {
         meta: {
-          name: 'Completed form',
-          progress: 1,
-          status: FormModes.COMPLETED,
-          lifecycle: DefaultStateLifeCycle,
+          name: 'Til yfirferðar',
+          progress: 0.95,
+          status: FormModes.IN_PROGRESS,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: false,
+          },
+          actionCard: {
+            tag: {
+              label: coreMessages.tagsInProgress,
+              variant: 'blueberry',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: coreHistoryMessages.applicationApproved,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: coreHistoryMessages.applicationRejected,
+              },
+            ],
+          },
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/completedForm').then((module) =>
-                  Promise.resolve(module.completedForm),
+                import('../forms/inReviewForm').then((module) =>
+                  Promise.resolve(module.inReviewForm),
+                ),
+              read: 'all',
+              delete: true,
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.APPROVE]: {
+            target: States.APPROVED,
+          },
+          [DefaultEvents.REJECT]: {
+            target: States.DENIED,
+          },
+        },
+      },
+      [States.APPROVED]: {
+        meta: {
+          name: 'Samþykkt',
+          progress: 1,
+          status: FormModes.APPROVED,
+          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            tag: {
+              label: coreMessages.tagsApproved,
+              variant: 'mint',
+            },
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/approvedForm').then((module) =>
+                  Promise.resolve(module.approvedForm),
+                ),
+              read: 'all',
+              delete: true,
+            },
+          ],
+        },
+      },
+      [States.DENIED]: {
+        meta: {
+          name: 'Hafnað',
+          progress: 1,
+          status: FormModes.REJECTED,
+          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            tag: {
+              label: coreMessages.tagsRejected,
+              variant: 'red',
+            },
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/deniedForm').then((module) =>
+                  Promise.resolve(module.deniedForm),
                 ),
               read: 'all',
               delete: true,
@@ -227,18 +311,7 @@ const template: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole(
-    nationalId: string,
-    application: Application,
-  ): ApplicationRole | undefined {
-    if (
-      isCompany(application.applicant) &&
-      nationalId === application.applicant
-    ) {
-      return Roles.APPLICANT
-    }
-    return Roles.NOT_ALLOWED
-  },
+  mapUserToRole,
 }
 
 export default template

@@ -7,18 +7,6 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const StatoscopeWebpackPlugin = require('@statoscope/webpack-plugin').default
 const { DuplicatesPlugin } = require('inspectpack/plugin')
 
-const graphqlPath = '/api/graphql'
-const {
-  API_URL = 'http://localhost:4444',
-  DISABLE_API_CATALOGUE,
-  DD_LOGS_CLIENT_TOKEN,
-  APP_VERSION,
-  ENVIRONMENT,
-  MATOMO_SITE_ID,
-  MATOMO_DOMAIN,
-  MATOMO_ENABLED,
-} = process.env
-
 /**
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
@@ -226,26 +214,7 @@ const nextConfig = {
     return config
   },
 
-  serverRuntimeConfig: {
-    // Will only be available on the server side
-    // Requests made by the server are internal request made directly to the api hostname
-    graphqlUrl: API_URL,
-    graphqlEndpoint: graphqlPath,
-  },
-
-  publicRuntimeConfig: {
-    // Will be available on both server and client
-    graphqlUrl: '',
-    graphqlEndpoint: graphqlPath,
-    disableApiCatalog: DISABLE_API_CATALOGUE,
-    ddLogsClientToken: DD_LOGS_CLIENT_TOKEN,
-    appVersion: APP_VERSION,
-    environment: ENVIRONMENT,
-    matomoSiteId: MATOMO_SITE_ID,
-    matomoDomain: MATOMO_DOMAIN,
-    isMatomoEnabled: MATOMO_ENABLED === 'true',
-  },
-
+  // Runtime configuration lives in environments/runtimeEnvironment.ts
   env: {
     API_MOCKS: process.env.API_MOCKS || '',
   },

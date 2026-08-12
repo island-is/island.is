@@ -33,8 +33,8 @@ export class FormDto {
   @ApiProperty()
   slug!: string
 
-  @ApiPropertyOptional({ type: Date })
-  invalidationDate?: Date
+  @ApiPropertyOptional({ type: Date, nullable: true })
+  invalidationDate?: Date | null
 
   @ApiProperty({ type: Date })
   created!: Date
@@ -74,6 +74,9 @@ export class FormDto {
 
   @ApiProperty()
   allowProceedOnValidationFail!: boolean
+
+  @ApiProperty()
+  isInaccessible!: boolean
 
   @ApiProperty()
   hasSummaryScreen!: boolean

@@ -34,7 +34,11 @@ import {
 
 import { getCaseFileHash } from '../../formatters'
 import { PdfService } from '../case/pdf.service'
-import { CourtDocumentFolder, CourtService } from '../court'
+import {
+  CourtDocumentFolder,
+  CourtService,
+  isFileTooLargeForCourt,
+} from '../court'
 import { DefendantService } from '../defendant/defendant.service'
 import { EventService } from '../event'
 import { FileService } from '../file/file.service'
@@ -197,7 +201,7 @@ export class SubpoenaService {
       user,
     )
 
-    this.eventService.postEvent('SUBPOENA_ISSUED', theCase, false, {
+    this.eventService.postEvent('SUBPOENA_ISSUED', theCase, {
       Varnaraðili: defendantsToProcess
         .map((defendant) => defendant.id)
         .join(', '),
@@ -375,7 +379,7 @@ export class SubpoenaService {
       update.serviceStatus &&
       update.serviceStatus !== subpoena.serviceStatus
     ) {
-      this.eventService.postEvent('SUBPOENA_SERVICE_STATUS', theCase, false, {
+      this.eventService.postEvent('SUBPOENA_SERVICE_STATUS', theCase, {
         Staða: getServiceStatusText(update.serviceStatus),
       })
     }
@@ -505,15 +509,10 @@ export class SubpoenaService {
         `Subpoena with police subpoena id ${createdSubpoena.policeSubpoenaId} delivered to the police centralized file service`,
       )
 
-      this.eventService.postEvent(
-        'SUBPOENA_DELIVERED_TO_POLICE',
-        theCase,
-        false,
-        {
-          Varnaraðili: defendant.id,
-          'RLS auðkenni': createdSubpoena.policeSubpoenaId,
-        },
-      )
+      this.eventService.postEvent('SUBPOENA_DELIVERED_TO_POLICE', theCase, {
+        Varnaraðili: defendant.id,
+        'RLS auðkenni': createdSubpoena.policeSubpoenaId,
+      })
 
       return { delivered: true }
     } catch (error) {
@@ -572,7 +571,8 @@ export class SubpoenaService {
           { reason },
         )
 
-        return { delivered: false }
+        // Do not retry an upload the court service will never accept
+        return { delivered: isFileTooLargeForCourt(reason) }
       })
   }
 
@@ -607,7 +607,8 @@ export class SubpoenaService {
           { reason },
         )
 
-        return { delivered: false }
+        // Do not retry an upload the court service will never accept
+        return { delivered: isFileTooLargeForCourt(reason) }
       })
   }
 

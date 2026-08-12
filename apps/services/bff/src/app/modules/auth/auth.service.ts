@@ -559,7 +559,8 @@ export class AuthService {
   }
 
   async callbackLogout(res: Response, body: CallbackLogoutDto) {
-    const logoutToken = body.logout_token
+    // `body` is undefined when the request carries no body.
+    const logoutToken = body?.logout_token
 
     if (!logoutToken) {
       const errorMessage = 'No param "logout_token" provided!'

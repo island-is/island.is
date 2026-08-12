@@ -565,10 +565,12 @@ export const SignedVerdictOverview: FC = () => {
           <Modal
             title={shareCaseModal.title}
             text={shareCaseModal.text}
-            primaryButton={{
-              text: formatMessage(core.closeModal),
-              onClick: () => setSharedCaseModal(undefined),
-            }}
+            buttons={[
+              {
+                text: formatMessage(core.closeModal),
+                onClick: () => setSharedCaseModal(undefined),
+              },
+            ]}
           />
         )}
         <AnimatePresence>

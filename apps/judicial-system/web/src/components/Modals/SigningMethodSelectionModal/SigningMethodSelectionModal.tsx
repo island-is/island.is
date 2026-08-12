@@ -98,16 +98,18 @@ export const SigningMethodSelectionModal: FC<
     <Modal
       title="Undirritun"
       text={description}
-      secondaryButton={{
-        text: 'Auðkennisappið',
-        onClick: () => handleMethodSelection(true),
-        isLoading: loadingMethod === 'audkenni',
-      }}
-      primaryButton={{
-        text: 'Rafræn skilríki',
-        onClick: () => handleMethodSelection(false),
-        isLoading: loadingMethod === 'mobile',
-      }}
+      buttons={[
+        {
+          text: 'Auðkennisappið',
+          onClick: () => handleMethodSelection(true),
+          isLoading: loadingMethod === 'audkenni',
+        },
+        {
+          text: 'Rafræn skilríki',
+          onClick: () => handleMethodSelection(false),
+          isLoading: loadingMethod === 'mobile',
+        },
+      ]}
       onClose={onClose}
     />
   )

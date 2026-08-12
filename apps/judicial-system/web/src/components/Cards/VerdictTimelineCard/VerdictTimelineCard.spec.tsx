@@ -103,6 +103,8 @@ describe('VerdictTimelineCard', () => {
               defendant={defendant}
               canDefendantAppealVerdict={canDefendantAppealVerdict}
             />
+            {/* Modals portal into this container, normally supplied by PageLayout */}
+            <div id="modal" />
           </FormContextWrapper>
         </ApolloProviderWrapper>
       </IntlProviderWrapper>,
@@ -169,6 +171,76 @@ describe('VerdictTimelineCard', () => {
     expect(
       screen.queryByTestId('set-valid-defendantServiceDate'),
     ).not.toBeInTheDocument()
+  })
+
+  // The public prosecution office has to be able to register an appeal that it
+  // only hears about after the deadline has run out - see the confirmation
+  // below for the case where the appeal itself was late.
+  it('shows the appeal date picker after the appeal deadline has expired', async () => {
+    const defendant = {
+      ...mockDefendant,
+      isVerdictAppealDeadlineExpired: true,
+      verdictAppealDeadline: '2026-02-01T23:59:59.999Z',
+      verdict: {
+        serviceRequirement: 'REQUIRED',
+      },
+    } as Defendant
+
+    renderComponent(defendant)
+
+    expect(
+      await screen.findByTestId('set-valid-defendantAppealDate'),
+    ).toBeInTheDocument()
+  })
+
+  it('registers an appeal date on the last day of the deadline without confirming', async () => {
+    // The picker emits 2026-01-01, the last day of this deadline
+    const defendant = {
+      ...mockDefendant,
+      isVerdictAppealDeadlineExpired: true,
+      verdictAppealDeadline: '2026-01-01T23:59:59.999Z',
+      verdict: {
+        serviceRequirement: 'REQUIRED',
+      },
+    } as Defendant
+
+    renderComponent(defendant)
+
+    await userEvent.click(
+      await screen.findByTestId('set-valid-defendantAppealDate'),
+    )
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Skrá áfrýjun ákærða' }),
+    )
+
+    expect(
+      screen.queryByText('Áfrýjun eftir að fresti lauk'),
+    ).not.toBeInTheDocument()
+  })
+
+  it('confirms before registering an appeal date that falls after the deadline', async () => {
+    // The picker emits 2026-01-01, the day after this deadline ran out
+    const defendant = {
+      ...mockDefendant,
+      isVerdictAppealDeadlineExpired: true,
+      verdictAppealDeadline: '2025-12-31T23:59:59.999Z',
+      verdict: {
+        serviceRequirement: 'REQUIRED',
+      },
+    } as Defendant
+
+    renderComponent(defendant)
+
+    await userEvent.click(
+      await screen.findByTestId('set-valid-defendantAppealDate'),
+    )
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Skrá áfrýjun ákærða' }),
+    )
+
+    expect(
+      await screen.findByText('Áfrýjun eftir að fresti lauk'),
+    ).toBeInTheDocument()
   })
 
   it('renders verdict appeal decision choice only when verdict exists and appeal is allowed', async () => {
