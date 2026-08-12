@@ -39,3 +39,4 @@ export { BankAccountFormField } from './BankAccountFormField/BankAccountFormFiel
 export { OverviewFormField } from './OverviewFormField/OverviewFormField'
 export { CopyLinkFormField } from './CopyLinkFormField/CopyLinkFormField'
 export { VehiclePermnoWithInfoFormField } from './VehiclePermnoWithInfoFormField/VehiclePermnoWithInfoFormField'
+export { ScaleFormField } from './ScaleFormField/ScaleFormField'

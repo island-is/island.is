@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'shared-components',
   preset: './jest.preset.js',
   rootDir: '../../..',

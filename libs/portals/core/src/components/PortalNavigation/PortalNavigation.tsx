@@ -1,5 +1,5 @@
 import { Link, useParams } from 'react-router-dom'
-import { cloneElement, useMemo } from 'react'
+import { cloneElement, useMemo, type ReactElement } from 'react'
 
 import {
   FocusableBox,
@@ -85,7 +85,7 @@ export function PortalNavigation({
       renderLink={(link, item) => {
         const href = item?.href ?? ''
         if (href && link.type === FocusableBox) {
-          return cloneElement(link, {
+          return cloneElement(link as ReactElement<Record<string, unknown>>, {
             component: Link,
             href: undefined,
             to: href,
