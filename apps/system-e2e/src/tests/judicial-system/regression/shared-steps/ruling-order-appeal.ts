@@ -2,6 +2,14 @@ import { Page, expect } from '@playwright/test'
 import { verifyRequestCompletion } from '../../../../support/api-tools'
 import { chooseDocument, verifyUpload } from '../../utils/helpers'
 
+// RulingOrderFileRow menu: aria-label is `Valmynd fyrir ${userGeneratedFilename}`.
+// Upload sets userGeneratedFilename to "{courtCaseNumber} Úrskurður {date}"
+// (AddRulingOrder), not the local file chooser name (TestUrskurdur.pdf).
+const rulingOrderFileRowMenuButton = (page: Page) =>
+  page.getByRole('button', {
+    name: /^Valmynd fyrir .+ Úrskurður /,
+  })
+
 /**
  * Upload a mid-case ruling order (úrskurður undir rekstri máls) and confirm it
  * as the registered judge. Leaves the browser on the indictment court overview.
@@ -180,7 +188,7 @@ export const prosecutorAppealsRulingOrderOutOfCourt = async (
   ])
   await expect(page).toHaveURL(`/akaera/yfirlit/${caseId}`)
 
-  await page.getByLabel(/Valmynd fyrir.*Úrskurður/).click()
+  await rulingOrderFileRowMenuButton(page).click()
   await Promise.all([
     verifyRequestCompletion(page, '/api/graphql', 'Case'),
     page.getByText('Senda inn kæru').click(),
@@ -234,7 +242,7 @@ export const judgeReceivesRulingOrderAppeal = async (
   const appealCaseId = caseResponse?.data?.case?.rulingOrderAppealCases?.[0]?.id
   expect(appealCaseId).toBeTruthy()
 
-  await page.getByLabel(/Valmynd fyrir.*Úrskurður/).click()
+  await rulingOrderFileRowMenuButton(page).click()
   await Promise.all([
     verifyRequestCompletion(page, '/api/graphql', 'TransitionAppealCase'),
     page.getByText('Senda til Landsréttar').click(),
