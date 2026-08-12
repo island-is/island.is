@@ -6,6 +6,7 @@ import {
   buildRadioField,
   buildSubSection,
   getValueViaPath,
+  toBase64DataUrl,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { requirementsMessages, m } from '../../lib/messages'
@@ -14,7 +15,6 @@ import {
   hasNoDrivingLicenseInOtherCountry,
   hasUsableRlsQualityPhoto,
   isVisible,
-  toBase64DataUrl,
 } from '../../lib/utils'
 
 interface ThjodskraImage {
