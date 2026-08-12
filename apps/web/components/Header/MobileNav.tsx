@@ -72,7 +72,7 @@ interface MobileNavPanelProps {
   // Buttons outside the panel that should NOT trigger the outside-click
   // close (they have their own onClick that toggles the panel). Typically
   // the Search and Menu buttons.
-  triggerRefs?: React.RefObject<HTMLElement>[]
+  triggerRefs?: React.RefObject<HTMLElement | null>[]
   // When false the panel is search-only: the nav sections (drilldown rows)
   // are hidden, leaving just the search input. Used on institution sites
   // and project pages so mobile search keeps working with nav hidden.

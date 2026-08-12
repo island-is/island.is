@@ -1,8 +1,8 @@
 diff --git a/packages/dd-trace/src/external-logger/src/index.js b/packages/dd-trace/src/external-logger/src/index.js
-index aa21b20b6e78336329f8f99214a36fde3b9c2c59..523c285768a9f34ba9bc353a5caff6962cf1ff5c 100644
+index c00e519f5eb0d2a6578245db5fa674fe50d90c4f..6840b50ae72dd656bc36419519ab2801bedcfae8 100644
 --- a/packages/dd-trace/src/external-logger/src/index.js
 +++ b/packages/dd-trace/src/external-logger/src/index.js
-@@ -81,7 +81,7 @@ class ExternalLogger {
+@@ -83,7 +83,7 @@ class ExternalLogger {
      let encodedLogs
  
      if (!this.queue.length) {
@@ -11,7 +11,7 @@ index aa21b20b6e78336329f8f99214a36fde3b9c2c59..523c285768a9f34ba9bc353a5caff696
        return
      }
  
-@@ -93,7 +93,7 @@ class ExternalLogger {
+@@ -95,7 +95,7 @@ class ExternalLogger {
        encodedLogs = JSON.stringify(logs)
      } catch (error) {
        tracerLogger.error(`failed to encode ${numLogs} logs`)
@@ -21,24 +21,24 @@ index aa21b20b6e78336329f8f99214a36fde3b9c2c59..523c285768a9f34ba9bc353a5caff696
      }
  
 diff --git a/packages/dd-trace/src/telemetry/dependencies.js b/packages/dd-trace/src/telemetry/dependencies.js
-index 992dde7d2ec7b6742b55e48bb0941f88d01669bf..9a0559d576663eaff4291edf0fdda6ea51da1456 100644
+index dbdac5823246e6f31648607577d1df981cd94207..1d340f64520cc067a66e1822033e9011f991ecea 100644
 --- a/packages/dd-trace/src/telemetry/dependencies.js
 +++ b/packages/dd-trace/src/telemetry/dependencies.js
-@@ -32,7 +32,7 @@ function createBatchPayload (payload) {
- }
+@@ -22,7 +22,7 @@ let getRetryData
+ let updateRetryData
+ 
  function waitAndSend (config, application, host) {
-   if (!immediate) {
--    immediate = setImmediate(() => {
-+    immediate = setTimeout(() => {
-       immediate = null
-       if (savedDependenciesToSend.size > 0) {
-         const dependencies = Array.from(savedDependenciesToSend.values())
-@@ -69,7 +69,7 @@ function waitAndSend (config, application, host) {
-           waitAndSend(config, application, host)
-         }
-       }
--    })
-+    }, 0)
-     immediate.unref()
-   }
+-  setImmediate(() => {
++  setTimeout(() => {
+     if (savedDependenciesToSend.size === 0) {
+       return
+     }
+@@ -75,7 +75,7 @@ function waitAndSend (config, application, host) {
+     if (savedDependenciesToSend.size > 0) {
+       waitAndSend(config, application, host)
+     }
+-  }).unref?.()
++  }, 0).unref?.()
  }
+ 
+ function loadAllTheLoadedModules () {
