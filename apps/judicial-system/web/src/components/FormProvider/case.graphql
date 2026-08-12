@@ -199,8 +199,6 @@ query Case($input: CaseQueryInput!) {
     accusedAppealAnnouncement
     prosecutorAppealDecision
     prosecutorAppealAnnouncement
-    accusedPostponedAppealDate
-    prosecutorPostponedAppealDate
     rulingDate
     rulingSignatureDate
     judge {

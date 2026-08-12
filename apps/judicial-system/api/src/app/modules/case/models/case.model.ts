@@ -257,12 +257,6 @@ export class Case {
   @Field(() => String, { nullable: true })
   readonly prosecutorAppealAnnouncement?: string
 
-  @Field(() => String, { nullable: true })
-  readonly accusedPostponedAppealDate?: string
-
-  @Field(() => String, { nullable: true })
-  readonly prosecutorPostponedAppealDate?: string
-
   @Field(() => Boolean, { nullable: true })
   readonly isAppealDeadlineExpired?: boolean
 
