@@ -81,6 +81,8 @@ export class DelegationRequestScope extends Model<
     return {
       scopeName: this.scopeName,
       displayName: this.apiScope?.displayName ?? 'N/A',
+      domainName: this.apiScope?.domainName ?? null,
+      domainDisplayName: this.apiScope?.domain?.displayName ?? null,
       validTo: this.validTo,
     }
   }

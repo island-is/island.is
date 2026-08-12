@@ -15,6 +15,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { IntroHeader, m as coreMessages } from '@island.is/portals/core'
 
 import { m } from '../../lib/messages'
+import { getCreateRequestErrorMessage } from '../../lib/delegationRequestErrors'
 import { DelegationPaths } from '../../lib/paths'
 import { useDelegationForm } from '../../context'
 import { AccessScopes } from '../../components/GrantAccessSteps/AccessScopes'
@@ -121,6 +122,9 @@ const RequestDelegation = () => {
           methods={recipientMethods}
           allowCompany
           singleRecipient
+          title={m.requestChooseGranterTitle}
+          nationalIdLabel={m.requestGranterNationalIdLabel}
+          sameSsnMessage={m.requestSameSsnError}
         />
       ),
       onContinue: () => {
@@ -137,7 +141,7 @@ const RequestDelegation = () => {
     {
       id: 'request-scopes',
       name: formatMessage(m.choosePermissionsLabel),
-      content: <AccessScopes />,
+      content: <AccessScopes title={m.requestChooseScopesTitle} />,
       continueButtonDisabled: selectedScopes.length === 0,
       continueButtonLabel: formatMessage(m.requestChooseScopesButtonLabel),
       continueButtonIcon: 'arrowForward',
@@ -177,8 +181,8 @@ const RequestDelegation = () => {
           onClose={() => setIsConfirmModalVisible(false)}
           relationship={detailsMethods.getValues('relationship')}
           reason={detailsMethods.getValues('reason')}
-          onError={() => {
-            toast.error(formatMessage(m.requestError))
+          onError={(error) => {
+            toast.error(formatMessage(getCreateRequestErrorMessage(error)))
             setIsConfirmModalVisible(false)
           }}
           onSuccess={() => {

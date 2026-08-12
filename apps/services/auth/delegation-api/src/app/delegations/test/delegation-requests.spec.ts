@@ -5,12 +5,14 @@ import request from 'supertest'
 import {
   ApiScope,
   DelegationRequest,
+  DelegationRequestError,
   DelegationRequestScope,
   DelegationRequestStatus,
   Domain,
   NamesService,
   NotificationsApi,
 } from '@island.is/auth-api-lib'
+import { AuthScope } from '@island.is/auth/scopes'
 import { createCurrentUser, createNationalId } from '@island.is/testing/fixtures'
 import { FixtureFactory } from '@island.is/services/auth/testing'
 import { TestApp } from '@island.is/testing/nest'
@@ -21,7 +23,9 @@ import { setupWithAuth } from '../../../../test/setup'
 const path = '/v1/me/delegation-requests'
 
 describe('DelegationRequestsController', () => {
-  const requester: User = createCurrentUser()
+  const requester: User = createCurrentUser({
+    scope: [AuthScope.delegations],
+  })
   const granterNationalId = createNationalId('person')
 
   let app: TestApp
@@ -51,9 +55,11 @@ describe('DelegationRequestsController', () => {
       .mockResolvedValue(faker.name.findName())
 
     // Avoid real notification network calls (feature flag mock returns truthy).
+    // NotificationsApi is a scoped provider, so spy on the prototype rather
+    // than a container instance.
     notifySpy = jest
       .spyOn(
-        app.get(NotificationsApi),
+        NotificationsApi.prototype,
         'notificationsControllerCreateHnippNotification',
       )
       .mockResolvedValue(undefined as never)
@@ -135,6 +141,47 @@ describe('DelegationRequestsController', () => {
 
     const second = await server.post(path).send(validBody())
     expect(second.status).toEqual(400)
+  })
+
+  it('caps the number of simultaneously pending requests', async () => {
+    // Default cap is 2 pending requests per requester.
+    const first = await server
+      .post(path)
+      .send({ ...validBody(), toGranterNationalId: createNationalId('person') })
+    expect(first.status).toEqual(201)
+    const second = await server
+      .post(path)
+      .send({ ...validBody(), toGranterNationalId: createNationalId('person') })
+    expect(second.status).toEqual(201)
+
+    const third = await server
+      .post(path)
+      .send({ ...validBody(), toGranterNationalId: createNationalId('person') })
+
+    expect(third.status).toEqual(400)
+    expect(third.body.detail).toEqual(DelegationRequestError.TooManyPending)
+  })
+
+  it('blocks a requester with too many recent rejections', async () => {
+    // Default lock threshold is 2 rejections within the lock window.
+    for (let i = 0; i < 2; i++) {
+      const created = await server.post(path).send({
+        ...validBody(),
+        toGranterNationalId: createNationalId('person'),
+      })
+      expect(created.status).toEqual(201)
+      await app
+        .get(getModelToken(DelegationRequest))
+        .update(
+          { status: DelegationRequestStatus.Rejected },
+          { where: { id: created.body.id } },
+        )
+    }
+
+    const res = await server.post(path).send(validBody())
+
+    expect(res.status).toEqual(403)
+    expect(res.body.detail).toEqual(DelegationRequestError.Blocked)
   })
 
   it('lets the requester cancel their own pending request', async () => {
