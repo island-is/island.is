@@ -1,5 +1,5 @@
 import { Inject, UseGuards } from '@nestjs/common'
-import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Resolver } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -28,6 +28,7 @@ export class DefendantResolver {
     private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly backendService: BackendService,
   ) {}
 
   @Mutation(() => Defendant, { nullable: true })
@@ -35,8 +36,6 @@ export class DefendantResolver {
     @Args('input', { type: () => CreateDefendantInput })
     input: CreateDefendantInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<Defendant> {
     const { caseId, ...createDefendant } = input
     this.logger.debug(`Creating a new defendant for case ${caseId}`)
@@ -44,7 +43,7 @@ export class DefendantResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_DEFENDANT,
-      backendService.createDefendant(caseId, createDefendant),
+      this.backendService.createDefendant(caseId, createDefendant),
       (defendant) => defendant.id,
     )
   }
@@ -54,8 +53,6 @@ export class DefendantResolver {
     @Args('input', { type: () => UpdateDefendantInput })
     input: UpdateDefendantInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<Defendant> {
     const { caseId, defendantId, ...updateDefendant } = input
     this.logger.debug(`Updating defendant ${defendantId} for case ${caseId}`)
@@ -63,7 +60,7 @@ export class DefendantResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_DEFENDANT,
-      backendService.updateDefendant(caseId, defendantId, updateDefendant),
+      this.backendService.updateDefendant(caseId, defendantId, updateDefendant),
       defendantId,
     )
   }
@@ -73,8 +70,6 @@ export class DefendantResolver {
     @Args('input', { type: () => DeleteDefendantInput })
     input: DeleteDefendantInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<DeleteDefendantResponse> {
     const { caseId, defendantId } = input
     this.logger.debug(`Deleting defendant ${defendantId} for case ${caseId}`)
@@ -82,7 +77,7 @@ export class DefendantResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_DEFENDANT,
-      backendService.deleteDefendant(caseId, defendantId),
+      this.backendService.deleteDefendant(caseId, defendantId),
       defendantId,
     )
   }

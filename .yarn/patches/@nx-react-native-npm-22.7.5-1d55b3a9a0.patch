@@ -1,11 +1,11 @@
 diff --git a/plugins/metro-resolver.js b/plugins/metro-resolver.js
-index 0df6ab6f113be6279a1450eddb0f10028ecf8525..db8f6a0558abad0448456c8ee4d8686e3c42585e 100644
+index 2d3b7c0d8ef1c1a77c07e487853a654b38084407..ecefbc0811d7b5fb3189e367429e4c6213c6f3c3 100644
 --- a/plugins/metro-resolver.js
 +++ b/plugins/metro-resolver.js
-@@ -97,7 +97,14 @@ function getMatcher(debug) {
+@@ -116,7 +116,14 @@ function getMatcher(debug) {
          const result = (0, tsconfig_paths_1.loadConfig)();
          if (result.resultType === 'success') {
-             absoluteBaseUrl = result.absoluteBaseUrl;
+             absoluteBaseUrl = (0, ts_config_1.resolvePathsBaseUrl)(result.configFileAbsolutePath);
 -            paths = result.paths;
 +            // Support ${configDir} variable in tsconfig paths
 +            const configDirAbs = (0, path_1.dirname)(result.configFileAbsolutePath);
