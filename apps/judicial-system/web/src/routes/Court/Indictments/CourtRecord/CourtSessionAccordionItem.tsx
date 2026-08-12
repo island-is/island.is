@@ -1005,6 +1005,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
               <Input
                 data-testid="courtAttendees"
                 name="courtAttendees"
+                label="Mættir eru"
                 value={courtSession.attendees ?? getInitialAttendees()}
                 placeholder="Skrifa hér..."
                 onChange={(event) => {
