@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'application-types',
   preset: './jest.preset.js',
   rootDir: '../../..',

@@ -421,5 +421,110 @@ describe('AppealCaseController - Transition', () => {
         ).not.toHaveBeenCalled()
       })
     })
+
+    describe('a defender representing several clients withdraws', () => {
+      const defendantId2 = uuid()
+      const defendantDecisionId2 = uuid()
+
+      const defender = {
+        id: uuid(),
+        role: UserRole.DEFENDER,
+        nationalId: '1111111111',
+      } as User
+
+      // The defender is the confirmed representative of two defendants that both
+      // appealed this ruling in court.
+      const caseWithTwoDefendants = {
+        id: caseId,
+        type: CaseType.INDICTMENT,
+        defendants: [
+          {
+            id: defendantId,
+            isDefenderChoiceConfirmed: true,
+            defenderNationalId: defender.nationalId,
+          },
+          {
+            id: defendantId2,
+            isDefenderChoiceConfirmed: true,
+            defenderNationalId: defender.nationalId,
+          },
+        ],
+        appealDecisions: [
+          {
+            id: defendantDecisionId,
+            rulingFileId,
+            partyRole: AppealDecisionPartyRole.DEFENDANT,
+            defendantId,
+            decision: CaseAppealDecision.APPEAL,
+          },
+          {
+            id: defendantDecisionId2,
+            rulingFileId,
+            partyRole: AppealDecisionPartyRole.DEFENDANT,
+            defendantId: defendantId2,
+            decision: CaseAppealDecision.APPEAL,
+          },
+        ],
+      } as unknown as Case
+
+      beforeEach(async () => {
+        // No party is left appealing once the defender withdraws for both.
+        ;(
+          mockAppealDecisionRepositoryService.findAll as jest.Mock
+        ).mockResolvedValue([
+          { id: defendantDecisionId, withdrawnDate: now },
+          { id: defendantDecisionId2, withdrawnDate: now },
+        ])
+
+        await givenWhenThen(
+          caseWithTwoDefendants,
+          appealCase,
+          AppealCaseTransition.WITHDRAW_APPEAL,
+          defender,
+        )
+      })
+
+      it('should withdraw the appeal for every represented client', () => {
+        expect(mockAppealDecisionRepositoryService.update).toHaveBeenCalledWith(
+          defendantDecisionId,
+          { withdrawnDate: now },
+          { transaction },
+        )
+        expect(mockAppealDecisionRepositoryService.update).toHaveBeenCalledWith(
+          defendantDecisionId2,
+          { withdrawnDate: now },
+          { transaction },
+        )
+      })
+
+      it('should record an APPEAL_WITHDRAWN event per withdrawn client', () => {
+        expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledWith(
+          expect.objectContaining({
+            eventType: AppealEventType.APPEAL_WITHDRAWN,
+            userRole: UserRole.DEFENDER,
+            defendantId,
+          }),
+          { transaction },
+        )
+        expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledWith(
+          expect.objectContaining({
+            eventType: AppealEventType.APPEAL_WITHDRAWN,
+            userRole: UserRole.DEFENDER,
+            defendantId: defendantId2,
+          }),
+          { transaction },
+        )
+      })
+
+      it('should withdraw the appeal case once no party is left appealing', () => {
+        expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
+          appealCaseId,
+          expect.objectContaining({
+            appealState: AppealCaseState.WITHDRAWN,
+          }),
+          { transaction },
+        )
+      })
+    })
   })
 })

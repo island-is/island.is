@@ -1,4 +1,4 @@
-import { caching } from 'cache-manager'
+import { createCache } from 'cache-manager'
 
 import {
   buildCacheControl,
@@ -13,7 +13,7 @@ const getCacheManager = async (
 ) => {
   if (config.redis.nodes.length === 0) {
     // Fall back to in-memory cache if redis is not configured
-    return caching('memory', { ttl: config.redis.cacheTtl })
+    return createCache({ ttl: config.redis.cacheTtl })
   }
 
   return createRedisCacheManager({

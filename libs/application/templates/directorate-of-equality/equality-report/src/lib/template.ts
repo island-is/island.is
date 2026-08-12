@@ -2,18 +2,14 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
-  ApplicationRole,
   ApplicationStateSchema,
-  Application,
   DefaultEvents,
   FormModes,
   UserProfileApi,
   ApplicationConfigurations,
   IdentityApi,
-  defineTemplateApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
-import { isCompany } from 'kennitala'
 import {
   ActiveEqualityReportApi,
   CompanyRegistryApi,
@@ -21,8 +17,10 @@ import {
   EqualityReportTemplateDocxApi,
   EqualityReportTemplateHtmlApi,
   PreviousEqualityReportContentApi,
+  SubmitEqualityReportApi,
 } from '../dataProviders'
-import { ApiActions, Events, Roles, States } from '../utils/constants'
+import { Events, Roles, States } from '../utils/constants'
+import { mapUserToRole } from '../utils/mapUserToRole'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
 import {
@@ -45,7 +43,8 @@ const template: ApplicationTemplate<
   featureFlag: Features.isDirectorateOfEqualityApplicationsEnabled,
   codeOwner: CodeOwners.Hugsmidjan,
   institution: messages.general.institution,
-  translationNamespaces: ApplicationConfigurations.EqualityReport.translation,
+  translationNamespaces:
+    ApplicationConfigurations[ApplicationTypes.EQUALITY_REPORT].translation,
   dataSchema,
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   requiredScopes: [ApiScope.directorateOfEquality],
@@ -124,6 +123,10 @@ const template: ApplicationTemplate<
               },
             ],
           },
+          // onExit (not onEntry on IN_REVIEW) so a failed submission blocks
+          // the transition instead of silently landing the applicant on a
+          // fake "in review" screen with a stale backend record.
+          onExit: SubmitEqualityReportApi,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -151,15 +154,68 @@ const template: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: {
-            target: States.COMPLETED,
+            target: States.IN_REVIEW,
           },
         },
       },
-      [States.COMPLETED]: {
+      [States.IN_REVIEW]: {
         meta: {
-          name: 'Completed form',
+          name: 'Til yfirferðar',
+          progress: 0.8,
+          status: FormModes.IN_PROGRESS,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: false,
+          },
+          actionCard: {
+            tag: {
+              label: coreMessages.tagsInProgress,
+              variant: 'blueberry',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: coreHistoryMessages.applicationApproved,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: coreHistoryMessages.applicationRejected,
+              },
+              {
+                onEvent: DefaultEvents.EDIT,
+                logMessage: 'Application sent back to draft for editing',
+              },
+            ],
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/inReviewForm').then((module) =>
+                  Promise.resolve(module.inReviewForm),
+                ),
+              read: 'all',
+              delete: true,
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.APPROVE]: {
+            target: States.APPROVED,
+          },
+          [DefaultEvents.REJECT]: {
+            target: States.DENIED,
+          },
+          [DefaultEvents.EDIT]: {
+            target: States.DRAFT,
+          },
+        },
+      },
+      [States.APPROVED]: {
+        meta: {
+          name: 'Samþykkt',
           progress: 1,
-          status: FormModes.COMPLETED,
+          status: FormModes.APPROVED,
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
             tag: {
@@ -167,17 +223,37 @@ const template: ApplicationTemplate<
               variant: 'mint',
             },
           },
-          onEntry: defineTemplateApi({
-            action: ApiActions.submitEqualityReport,
-            shouldPersistToExternalData: true,
-            throwOnError: true,
-          }),
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/completedForm').then((module) =>
-                  Promise.resolve(module.completedForm),
+                import('../forms/approvedForm').then((module) =>
+                  Promise.resolve(module.approvedForm),
+                ),
+              read: 'all',
+              delete: true,
+            },
+          ],
+        },
+      },
+      [States.DENIED]: {
+        meta: {
+          name: 'Hafnað',
+          progress: 1,
+          status: FormModes.REJECTED,
+          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            tag: {
+              label: coreMessages.tagsRejected,
+              variant: 'red',
+            },
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/deniedForm').then((module) =>
+                  Promise.resolve(module.deniedForm),
                 ),
               read: 'all',
               delete: true,
@@ -187,18 +263,7 @@ const template: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole(
-    nationalId: string,
-    application: Application,
-  ): ApplicationRole | undefined {
-    if (
-      isCompany(application.applicant) &&
-      nationalId === application.applicant
-    ) {
-      return Roles.APPLICANT
-    }
-    return Roles.NOT_ALLOWED
-  },
+  mapUserToRole,
 }
 
 export default template

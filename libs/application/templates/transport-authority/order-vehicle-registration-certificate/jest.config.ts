@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName:
     'application-templates-transport-authority-order-vehicle-registration-certificate',
   preset: './jest.preset.js',

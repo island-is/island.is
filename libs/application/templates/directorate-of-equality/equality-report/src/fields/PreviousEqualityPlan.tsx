@@ -39,7 +39,7 @@ export const PreviousEqualityPlan = ({ application }: FieldBaseProps) => {
           id: application.id,
           dataProviders: [
             {
-              actionId: ApiActions.getPreviousEqualityReportContent,
+              actionId: `DirectorateOfEquality.${ApiActions.getPreviousEqualityReportContent}`,
               order: 0,
             },
           ],
@@ -76,7 +76,6 @@ export const PreviousEqualityPlan = ({ application }: FieldBaseProps) => {
     return <SkeletonLoader height={300} />
   }
 
-  // TODO: GET THIS TO WORK
   return (
     <Box>
       <Box display="flex" justifyContent="flexEnd" marginBottom={2}>

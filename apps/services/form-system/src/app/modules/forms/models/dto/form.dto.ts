@@ -33,8 +33,8 @@ export class FormDto {
   @ApiProperty()
   slug!: string
 
-  @ApiPropertyOptional({ type: Date })
-  invalidationDate?: Date
+  @ApiPropertyOptional({ type: Date, nullable: true })
+  invalidationDate?: Date | null
 
   @ApiProperty({ type: Date })
   created!: Date
@@ -76,6 +76,9 @@ export class FormDto {
   allowProceedOnValidationFail!: boolean
 
   @ApiProperty()
+  isInaccessible!: boolean
+
+  @ApiProperty()
   hasSummaryScreen!: boolean
 
   @ApiProperty({ type: OrganizationZendeskInstanceDto })
@@ -101,4 +104,7 @@ export class FormDto {
 
   @ApiPropertyOptional()
   lastModifiedBy?: string
+
+  @ApiPropertyOptional()
+  delegations?: string[]
 }

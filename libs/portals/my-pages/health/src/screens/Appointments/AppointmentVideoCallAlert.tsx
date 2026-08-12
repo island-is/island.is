@@ -81,7 +81,7 @@ export const AppointmentVideoCallAlert = ({ links }: Props) => {
   const isVideoCallActive = videoCallPhase === 'active'
 
   return (
-    <Box marginTop={3}>
+    <Box marginTop={3} role="status" aria-live="polite">
       <AlertMessage
         type="info"
         message={

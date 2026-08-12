@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'application-templates-criminal-record',
   preset: './jest.preset.js',
   rootDir: '../../../..',

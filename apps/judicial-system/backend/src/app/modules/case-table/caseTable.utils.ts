@@ -7,6 +7,7 @@ import {
   CaseTableColumnKey,
   ContextMenuCaseActionType,
   isCourtOfAppealsUser,
+  isDefenceUser,
   isDistrictCourtUser,
   isIndictmentCase,
   isProsecutionUser,
@@ -14,6 +15,7 @@ import {
   type User,
 } from '@island.is/judicial-system/types'
 
+import { canWithdrawCaseLevelAppeal } from '../appeal-case/appealCase.helpers'
 import { Case } from '../repository'
 import { caseTableCellGenerators } from './caseTable.cellGenerators'
 import { CaseIncludes, modelMap, subModelMap } from './caseTable.types'
@@ -32,11 +34,18 @@ const getIsMyCaseAttributes = (user: User): string[] => {
 
 const getAvailableActionsAttributes = (user: User): string[] => {
   if (isProsecutionUser(user)) {
-    return ['type', 'state', 'prosecutorPostponedAppealDate']
+    return ['type', 'state']
   }
 
   if (isDistrictCourtUser(user)) {
     return ['type', 'state']
+  }
+
+  if (isDefenceUser(user)) {
+    // defenderNationalId resolves the collective request-case appellant to the
+    // case's current registered defender (see userIsAppellant); type selects
+    // that request-case branch.
+    return ['type', 'defenderNationalId']
   }
 
   return []
@@ -57,8 +66,48 @@ export const getAttributes = (
 }
 
 const getAvailableActionsIncludes = (user: User): CaseIncludes => {
+  // Withdrawal eligibility is read from the case-level appeal's APPEALED event
+  // log (userIsAppellant), matching the appeal-case withdrawal guard.
   if (isProsecutionUser(user)) {
-    return { appealCase: { attributes: ['id', 'appealState'] } }
+    return {
+      appealCase: {
+        attributes: ['id', 'appealState'],
+        includes: {
+          appealEventLogs: { attributes: ['eventType', 'userRole'] },
+        },
+      },
+    }
+  }
+
+  if (isDefenceUser(user)) {
+    return {
+      appealCase: {
+        attributes: ['id', 'appealState'],
+        includes: {
+          appealEventLogs: {
+            attributes: [
+              'eventType',
+              'userRole',
+              'defendantId',
+              'civilClaimantId',
+            ],
+          },
+        },
+      },
+      // Needed to resolve a per-party (dismissed indictment) defence appellant to
+      // the current confirmed defender / spokesperson.
+      defendants: {
+        attributes: ['id', 'isDefenderChoiceConfirmed', 'defenderNationalId'],
+      },
+      civilClaimants: {
+        attributes: [
+          'id',
+          'hasSpokesperson',
+          'isSpokespersonConfirmed',
+          'spokespersonNationalId',
+        ],
+      },
+    }
   }
 
   return {}
@@ -301,29 +350,48 @@ export const canDeleteCase = (
   return false
 }
 
+// Mirrors the appeal-case module's withdrawal authorization
+// (userAppealedAppealCase in appeal-case/guards/rolesRules.ts) for the appeals
+// shown in the case tables. The tables' appealCase slot only ever holds the
+// case-level appeal (request case and dismissed indictment appeals) -
+// ruling-order appeals are withdrawn from the ruling order's context menu on the
+// case screen instead. So it shares the guard's case-level eligibility check
+// (canWithdrawCaseLevelAppeal): the appellant is read from the APPEALED event
+// log, with request-case prosecution precedence.
 export const canCancelAppeal = (
-  theCase: Pick<Case, 'type' | 'appealCase' | 'prosecutorPostponedAppealDate'>,
+  theCase: Pick<
+    Case,
+    | 'type'
+    | 'appealCase'
+    | 'defenderNationalId'
+    | 'defendants'
+    | 'civilClaimants'
+  >,
   user: User,
 ): boolean => {
-  if (!isProsecutionUser(user)) {
+  const appealCase = theCase.appealCase
+
+  // An appeal can only be withdrawn before the court of appeals has ruled
+  if (
+    !appealCase ||
+    (appealCase.appealState !== AppealCaseState.APPEALED &&
+      appealCase.appealState !== AppealCaseState.RECEIVED)
+  ) {
     return false
   }
 
-  if (
-    (theCase.appealCase?.appealState === AppealCaseState.APPEALED ||
-      theCase.appealCase?.appealState === AppealCaseState.RECEIVED) &&
-    theCase.prosecutorPostponedAppealDate
-  ) {
-    return true
-  }
-
-  return false
+  return canWithdrawCaseLevelAppeal(theCase, appealCase, user)
 }
 
 export const getContextMenuActions = (
   theCase: Pick<
     Case,
-    'type' | 'state' | 'appealCase' | 'prosecutorPostponedAppealDate'
+    | 'type'
+    | 'state'
+    | 'appealCase'
+    | 'defenderNationalId'
+    | 'defendants'
+    | 'civilClaimants'
   >,
   user: User,
 ): ContextMenuCaseActionType[] => {

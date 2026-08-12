@@ -9,7 +9,7 @@ import { BASE_PATH, routes } from '../../lib/routes'
 export const Router = () => {
   const { formatMessage } = useLocale()
   const userInfo = useUserInfo()
-  const router = useRef<ReturnType<typeof createBrowserRouter>>()
+  const router = useRef<ReturnType<typeof createBrowserRouter>>(undefined)
   useNamespaces('form.system')
 
   if (!userInfo) {

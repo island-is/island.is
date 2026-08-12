@@ -12,6 +12,7 @@ import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
 import { ApiActions } from '../utils/constants'
+import { escapeHtml } from '../utils/htmlHelpers'
 
 export const Editor = ({ application, errors }: FieldBaseProps) => {
   const { formatMessage } = useIntl()
@@ -54,7 +55,7 @@ export const Editor = ({ application, errors }: FieldBaseProps) => {
         const text = await file.text()
         html = text
           .split(/\n\n+/)
-          .map((p) => `<p>${p.replace(/\n/g, '<br />')}</p>`)
+          .map((p) => `<p>${escapeHtml(p).replace(/\n/g, '<br />')}</p>`)
           .join('')
       } else {
         toast.error(
@@ -85,7 +86,10 @@ export const Editor = ({ application, errors }: FieldBaseProps) => {
           input: {
             id: application.id,
             dataProviders: [
-              { actionId: ApiActions.getEqualityReportTemplateHtml, order: 0 },
+              {
+                actionId: `DirectorateOfEquality.${ApiActions.getEqualityReportTemplateHtml}`,
+                order: 0,
+              },
             ],
           },
           locale,
@@ -124,7 +128,10 @@ export const Editor = ({ application, errors }: FieldBaseProps) => {
           input: {
             id: application.id,
             dataProviders: [
-              { actionId: ApiActions.getEqualityReportTemplateDocx, order: 0 },
+              {
+                actionId: `DirectorateOfEquality.${ApiActions.getEqualityReportTemplateDocx}`,
+                order: 0,
+              },
             ],
           },
           locale,

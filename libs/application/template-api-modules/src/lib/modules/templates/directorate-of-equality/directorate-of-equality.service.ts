@@ -1,17 +1,35 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { ApplicationTypes } from '@island.is/application/types'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
-import { DirectorateOfEqualityClientService } from '@island.is/clients/directorate-of-equality'
 import {
-  Gender,
-  type ApplicationAnswers,
-} from '@island.is/application/templates/directorate-of-equality/equality-report'
-import { FetchError } from '@island.is/clients/middlewares'
+  DirectorateOfEqualityClientService,
+  type ParsedCriterionDto,
+  type ParsedEmployeeDto,
+  type ParsedReportDto,
+  type ParsedRoleDto,
+  type ParsedSubCriterionDto,
+} from '@island.is/clients/directorate-of-equality'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import {
+  Gender,
+  dataSchema as equalityReportDataSchema,
+} from '@island.is/application/templates/directorate-of-equality/equality-report'
+import {
+  dataSchema as salaryReportDataSchema,
+  type ApplicationAnswers as SalaryReportAnswers,
+} from '@island.is/application/templates/directorate-of-equality/salary-report'
+import { FetchError } from '@island.is/clients/middlewares'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { ZodTypeAny, z } from 'zod'
+import { mapAnswersToSalaryReportSubmission } from './directorate-of-equality.utils'
+
+// The evaluation model scores each sub-criterion out of `weight × 10` — a fixed
+// 1000-point total scale (the sub-criterion weights sum to 100). Mirrors the
+// frontend's JobClassificationEditor/utils.ts so submitted scores match what
+// the applicant saw on screen.
+const POINTS_PER_WEIGHT_PERCENT = 10
 
 const LOGGING_CONTEXT = 'DirectorateOfEqualityService'
 
@@ -22,10 +40,38 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     private readonly directorateOfEqualityService: DirectorateOfEqualityClientService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
-    super(ApplicationTypes.EQUALITY_REPORT)
+    super('DirectorateOfEquality')
   }
 
-  private extractFetchErrorDetails(error: unknown): Record<string, unknown> {
+  private parseAnswers<S extends ZodTypeAny>(
+    schema: S,
+    answers: unknown,
+    applicationId: string,
+  ): z.infer<S> {
+    const result = schema.safeParse(answers)
+    if (!result.success) {
+      this.logger.error('Invalid application answers', {
+        applicationId,
+        context: LOGGING_CONTEXT,
+        issues: result.error.issues,
+      })
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary: coreErrorMessages.defaultTemplateApiError,
+        },
+        400,
+      )
+    }
+    return result.data
+  }
+
+  private extractFetchErrorDetails(error: unknown): {
+    status?: number
+    statusText?: string
+    problem?: unknown
+    message?: string
+  } {
     if (error instanceof FetchError) {
       return {
         status: error.status,
@@ -38,10 +84,109 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     }
   }
 
-  async getCompanyData({ auth }: TemplateApiModuleActionProps) {
-    const company = await this.companyRegistryService.getCompany(
-      auth.nationalId,
+  private mapSubCriterionToParsed(sc: {
+    title: string
+    description?: string
+    weight: string
+    stepCount: string
+    steps: { description: string }[]
+  }): ParsedSubCriterionDto {
+    const count = sc.steps?.length || Number(sc.stepCount) || 0
+    const weight = Number(sc.weight) || 0
+    const maxScore = weight * POINTS_PER_WEIGHT_PERCENT
+    const perStep = count > 0 ? maxScore / count : 0
+    return {
+      title: sc.title,
+      description: sc.description ?? '',
+      weight,
+      steps: Array.from({ length: count }, (_, i) => ({
+        order: i + 1,
+        description: sc.steps?.[i]?.description ?? '',
+        score: (i + 1) * perStep,
+      })),
+    }
+  }
+
+  private mapAnswersToParsedReport(
+    answers: SalaryReportAnswers,
+  ): ParsedReportDto {
+    const jobFactors = answers.criteria?.jobFactors ?? []
+    const personalFactors = answers.criteria?.personalFactors ?? []
+    const subCriteriaJobFactors = answers.subCriteria?.jobFactors ?? []
+    const subCriteriaPersonalFactors =
+      answers.subCriteria?.personalFactors ?? []
+
+    const criteria: ParsedCriterionDto[] = [
+      ...jobFactors.map((factor, i) => ({
+        type: factor.type as ParsedCriterionDto['type'],
+        title: factor.title,
+        description: factor.description,
+        weight: Number(factor.weight) || 0,
+        subCriteria: (subCriteriaJobFactors[i] ?? []).map((sc) =>
+          this.mapSubCriterionToParsed(sc),
+        ),
+      })),
+      ...personalFactors.map((factor, i) => ({
+        type: 'PERSONAL' as const,
+        title: factor.title,
+        description: factor.description ?? '',
+        weight: Number(factor.weight) || 0,
+        subCriteria: (subCriteriaPersonalFactors[i] ?? []).map((sc) =>
+          this.mapSubCriterionToParsed(sc),
+        ),
+      })),
+    ]
+
+    const roles: ParsedRoleDto[] = (answers.roles ?? []).map((role) => ({
+      title: role.title,
+      stepAssignments: role.stepAssignments.map((a) => ({
+        criterionTitle: a.criterionTitle,
+        subTitle: a.subTitle,
+        stepOrder: a.stepOrder,
+      })),
+    }))
+
+    const employees: ParsedEmployeeDto[] = (answers.employees ?? []).map(
+      (e) => ({
+        ordinal: e.ordinal,
+        identifier: e.identifier,
+        roleTitle: e.roleTitle,
+        gender: e.gender as ParsedEmployeeDto['gender'],
+        field: e.field ?? '', // Not collected in the form, but required by the API. // TODO: cleanup when backend changes
+        department: e.department ?? '', // Not collected in the form, but required by the API. // TODO: cleanup when backend changes
+        startDate: e.startDate,
+        education: 'PROFESSIONAL', // Not collected in the form, but required by the API. // TODO: cleanup when backend changes
+        workRatio: e.workRatio,
+        baseSalary: e.baseSalary,
+        additionalFixedOvertime: e.additionalFixedOvertime,
+        additionalFixedCarAllowance: e.additionalFixedCarAllowance,
+        bonusOccasionalCarAllowance: e.bonusOccasionalCarAllowance,
+        bonusOccasionalOvertime: e.bonusOccasionalOvertime,
+        bonusPayments: e.bonusPayments,
+        bonusOther: e.bonusOther,
+        personalStepAssignments: e.personalStepAssignments.map((a) => ({
+          criterionTitle: a.criterionTitle,
+          subTitle: a.subTitle,
+          stepOrder: a.stepOrder,
+        })),
+      }),
     )
+
+    return { criteria, roles, employees }
+  }
+
+  async getCompanyData({ auth, application }: TemplateApiModuleActionProps) {
+    let company
+    try {
+      company = await this.companyRegistryService.getCompany(auth.nationalId)
+    } catch (error) {
+      this.logger.error('Failed to get company data from company registry', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...this.extractFetchErrorDetails(error),
+      })
+      throw error
+    }
 
     if (!company) {
       throw new TemplateApiError(
@@ -87,17 +232,43 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     }
   }
 
-  async getEqualityReportTemplateHtml({ auth }: TemplateApiModuleActionProps) {
-    return this.directorateOfEqualityService.getEqualityReportTemplateHtml(auth)
-  }
-
-  async getEqualityReportTemplateDocx({ auth }: TemplateApiModuleActionProps) {
-    const blob =
-      await this.directorateOfEqualityService.getEqualityReportTemplateDocx(
+  async getEqualityReportTemplateHtml({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    try {
+      return await this.directorateOfEqualityService.getEqualityReportTemplateHtml(
         auth,
       )
-    const arrayBuffer = await blob.arrayBuffer()
-    return { base64: Buffer.from(arrayBuffer).toString('base64') }
+    } catch (error) {
+      this.logger.error('Failed to get equality report template html', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...this.extractFetchErrorDetails(error),
+      })
+      throw error
+    }
+  }
+
+  async getEqualityReportTemplateDocx({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    try {
+      const blob =
+        await this.directorateOfEqualityService.getEqualityReportTemplateDocx(
+          auth,
+        )
+      const arrayBuffer = await blob.arrayBuffer()
+      return { base64: Buffer.from(arrayBuffer).toString('base64') }
+    } catch (error) {
+      this.logger.error('Failed to get equality report template docx', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...this.extractFetchErrorDetails(error),
+      })
+      throw error
+    }
   }
 
   async getPreviousEqualityReportContent({
@@ -119,6 +290,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     )
     if (!providerId) return null
     try {
+      // TODO: PROVIDER ID VS COMPANY ID.
       const report = await this.directorateOfEqualityService.getReport(
         auth,
         providerId,
@@ -137,11 +309,239 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     }
   }
 
+  async getBlankExcelTemplate({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    try {
+      const blob =
+        await this.directorateOfEqualityService.getBlankExcelTemplate(auth)
+      const arrayBuffer = await blob.arrayBuffer()
+      return {
+        base64: Buffer.from(arrayBuffer).toString('base64'),
+        filename: 'launagreining-sniðmát.xlsx',
+      }
+    } catch (error) {
+      const errorDetails = this.extractFetchErrorDetails(error)
+      this.logger.error('Failed to get blank Excel template', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...errorDetails,
+      })
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary: coreErrorMessages.defaultTemplateApiError,
+        },
+        errorDetails.status ?? 500,
+      )
+    }
+  }
+
+  async presignImportUpload({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    try {
+      return await this.directorateOfEqualityService.presignImportUpload(auth)
+    } catch (error) {
+      const errorDetails = this.extractFetchErrorDetails(error)
+      this.logger.error('Failed to presign import upload', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...errorDetails,
+      })
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary: coreErrorMessages.defaultTemplateApiError,
+        },
+        errorDetails.status ?? 500,
+      )
+    }
+  }
+
+  async parseSalaryReportWorkbook({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    const key = getValueViaPath<string>(
+      application.externalData,
+      'importPresign.data.key',
+    )
+    if (!key) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary: coreErrorMessages.defaultTemplateApiError,
+        },
+        400,
+      )
+    }
+    try {
+      return await this.directorateOfEqualityService.importSalaryReportWorkbook(
+        auth,
+        key,
+      )
+    } catch (error) {
+      const errorDetails = this.extractFetchErrorDetails(error)
+      this.logger.error('Failed to parse salary report workbook', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...errorDetails,
+      })
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary: coreErrorMessages.defaultTemplateApiError,
+        },
+        errorDetails.status ?? 500,
+      )
+    }
+  }
+
+  async analyzeSalaryReport({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    const answers = this.parseAnswers(
+      salaryReportDataSchema,
+      application.answers,
+      application.id,
+    )
+    const parsed = this.mapAnswersToParsedReport(answers)
+    try {
+      return await this.directorateOfEqualityService.analyzeSalaryReport(auth, {
+        parsed,
+      })
+    } catch (error) {
+      const errorDetails = this.extractFetchErrorDetails(error)
+      this.logger.error('Failed to analyze salary report', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...errorDetails,
+      })
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary: coreErrorMessages.defaultTemplateApiError,
+        },
+        errorDetails.status ?? 500,
+      )
+    }
+  }
+
+  async submitSalaryReport({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    const answers = this.parseAnswers(
+      salaryReportDataSchema,
+      application.answers,
+      application.id,
+    )
+
+    const equalityReportId = getValueViaPath<string>(
+      application.externalData,
+      'activeEqualityReport.data.id',
+    )
+    if (!equalityReportId) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary: coreErrorMessages.defaultTemplateApiError,
+        },
+        400,
+      )
+    }
+
+    const parsed = this.mapAnswersToParsedReport(answers)
+
+    try {
+      return await this.directorateOfEqualityService.submitSalaryReport(
+        auth,
+        mapAnswersToSalaryReportSubmission({
+          answers,
+          equalityReportId,
+          identifier: application.id,
+          importedFromExcel: Boolean(
+            getValueViaPath(
+              application.externalData,
+              'parsedSalaryReport.date',
+            ),
+          ),
+          parsed,
+        }),
+      )
+    } catch (error) {
+      const errorDetails = this.extractFetchErrorDetails(error)
+      this.logger.error('Failed to submit salary report', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...errorDetails,
+      })
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary: coreErrorMessages.defaultTemplateApiError,
+        },
+        errorDetails.status ?? 500,
+      )
+    }
+  }
+
+  async editOutliers({ auth, application }: TemplateApiModuleActionProps) {
+    try {
+      const answers = this.parseAnswers(
+        salaryReportDataSchema,
+        application.answers,
+        application.id,
+      )
+
+      const groups = (answers.salaryAnalysis?.outlierGroups ?? [])
+        .filter((g) => g.employeeOrdinals.length > 0)
+        .map((g) => ({
+          name: g.name,
+          reason: g.reason ?? '',
+          action: g.action ?? '',
+          signatureName: g.signatureName ?? '',
+          signatureRole: g.signatureRole ?? '',
+          employeeOrdinals: g.employeeOrdinals,
+        }))
+
+      await this.directorateOfEqualityService.editOutliers(
+        auth,
+        application.id,
+        {
+          groups,
+        },
+      )
+    } catch (error) {
+      const errorDetails = this.extractFetchErrorDetails(error)
+      this.logger.error('Failed to edit outliers', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...errorDetails,
+      })
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary: coreErrorMessages.defaultTemplateApiError,
+        },
+        errorDetails.status ?? 500,
+      )
+    }
+  }
+
   async submitEqualityReport({
     auth,
     application,
   }: TemplateApiModuleActionProps) {
-    const answers = application.answers as ApplicationAnswers
+    const answers = this.parseAnswers(
+      equalityReportDataSchema,
+      application.answers,
+      application.id,
+    )
 
     const genderMap: Record<Gender, 'MALE' | 'FEMALE' | 'NEUTRAL'> = {
       [Gender.MALE]: 'MALE',
@@ -179,6 +579,14 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
             postcode: answers.generalInformation?.postalCode ?? '',
             isatCategory: answers.generalInformation?.isatClassification ?? '',
           },
+          averageEmployeeFemaleCount: toNumberOrZero(
+            answers.employeeCount?.women,
+          ),
+          averageEmployeeMaleCount: toNumberOrZero(answers.employeeCount?.men),
+          averageEmployeeNeutralCount: toNumberOrZero(
+            answers.employeeCount?.nonBinary,
+          ),
+
           subsidiaries:
             answers.subsidiaries?.includesSubsidiaries === 'yes'
               ? subsidiaryList.map((s) => ({
@@ -201,8 +609,17 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
           title: coreErrorMessages.defaultTemplateApiError,
           summary: coreErrorMessages.defaultTemplateApiError,
         },
-        (errorDetails.status as number) ?? 500,
+        errorDetails.status ?? 500,
       )
     }
   }
+}
+
+const toNumberOrZero = (number: string | undefined) => {
+  if (!number) {
+    return 0
+  }
+
+  const parsed = Number(number)
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0
 }
