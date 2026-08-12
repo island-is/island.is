@@ -4,8 +4,8 @@ import {
   HttpException,
   Inject,
 } from '@nestjs/common'
-import { ApolloError } from 'apollo-server-express'
 import { Response } from 'express'
+import { GraphQLError } from 'graphql'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -46,11 +46,13 @@ export abstract class BaseProblemFilter implements ExceptionFilter {
   }
 
   catchGraphQLError(error: Error, problem: Problem) {
-    if (error instanceof ApolloError) {
+    if (error instanceof GraphQLError) {
       error.extensions.problem = error.extensions.problem || problem
       throw error
     } else {
-      throw new ApolloError(problem.title, problem.type, { problem })
+      throw new GraphQLError(problem.title, {
+        extensions: { code: problem.type, problem },
+      })
     }
   }
 

@@ -1,5 +1,5 @@
 import { Inject, UseGuards } from '@nestjs/common'
-import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Resolver } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -28,6 +28,7 @@ export class AppealCaseResolver {
     private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly backendService: BackendService,
   ) {}
 
   @Mutation(() => AppealCase, { nullable: true })
@@ -35,8 +36,6 @@ export class AppealCaseResolver {
     @Args('input', { type: () => CreateAppealCaseInput })
     input: CreateAppealCaseInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<AppealCase> {
     const { caseId, ...body } = input
 
@@ -45,7 +44,7 @@ export class AppealCaseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_APPEAL_CASE,
-      backendService.createAppealCase(caseId, body),
+      this.backendService.createAppealCase(caseId, body),
       caseId,
     )
   }
@@ -55,8 +54,6 @@ export class AppealCaseResolver {
     @Args('input', { type: () => UpdateAppealCaseInput })
     input: UpdateAppealCaseInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<AppealCase> {
     const { caseId, appealCaseId, ...updateAppealCase } = input
 
@@ -65,7 +62,11 @@ export class AppealCaseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_APPEAL_CASE,
-      backendService.updateAppealCase(caseId, appealCaseId, updateAppealCase),
+      this.backendService.updateAppealCase(
+        caseId,
+        appealCaseId,
+        updateAppealCase,
+      ),
       caseId,
     )
   }
@@ -74,8 +75,6 @@ export class AppealCaseResolver {
   createAppealEventLog(
     @Args('input', { type: () => CreateAppealEventLogInput })
     input: CreateAppealEventLogInput,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<AppealCase> {
     const { caseId, appealCaseId, eventType } = input
 
@@ -83,7 +82,11 @@ export class AppealCaseResolver {
       `Creating appeal event log ${eventType} on appeal case ${appealCaseId} of case ${caseId}`,
     )
 
-    return backendService.createAppealEventLog(caseId, appealCaseId, eventType)
+    return this.backendService.createAppealEventLog(
+      caseId,
+      appealCaseId,
+      eventType,
+    )
   }
 
   @Mutation(() => AppealCase, { nullable: true })
@@ -91,8 +94,6 @@ export class AppealCaseResolver {
     @Args('input', { type: () => TransitionAppealCaseInput })
     input: TransitionAppealCaseInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<AppealCase> {
     const { caseId, appealCaseId, ...transitionAppealCase } = input
 
@@ -103,7 +104,7 @@ export class AppealCaseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.TRANSITION_APPEAL_CASE,
-      backendService.transitionAppealCase(
+      this.backendService.transitionAppealCase(
         caseId,
         appealCaseId,
         transitionAppealCase,
