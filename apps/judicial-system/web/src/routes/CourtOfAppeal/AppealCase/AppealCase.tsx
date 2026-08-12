@@ -345,16 +345,18 @@ const AppealCase: FC = () => {
           <Modal
             title={formatMessage(strings.modalHeading)}
             text={formatMessage(strings.modalMessage)}
-            primaryButton={{
-              text: formatMessage(strings.modalPrimaryButton),
-              onClick: () =>
-                router.push(
-                  appendAppealCaseIdQuery(
-                    `${navigateTo}/${workingCase.id}`,
-                    targetAppealCase?.id,
+            buttons={[
+              {
+                text: formatMessage(strings.modalPrimaryButton),
+                onClick: () =>
+                  router.push(
+                    appendAppealCaseIdQuery(
+                      `${navigateTo}/${workingCase.id}`,
+                      targetAppealCase?.id,
+                    ),
                   ),
-                ),
-            }}
+              },
+            ]}
           />
         )}
       </AnimatePresence>

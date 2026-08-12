@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'api-domains-email-signup',
   preset: './jest.preset.js',
   rootDir: '../../../..',

@@ -17,10 +17,12 @@ const FileNotFoundModal: FC<Props> = ({ dismiss }) => {
       title={formatMessage(strings.title)}
       text={formatMessage(strings.text)}
       onClose={dismiss}
-      primaryButton={{
-        text: formatMessage(strings.close),
-        onClick: dismiss,
-      }}
+      buttons={[
+        {
+          text: formatMessage(strings.close),
+          onClick: dismiss,
+        },
+      ]}
     />
   )
 }

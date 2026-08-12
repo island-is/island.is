@@ -37,10 +37,8 @@ export const SimpleLineChart = ({ graphData }: SimpleLineChartGraphProps) => {
   return (
     <Box width="full" height="full">
       <YAxisLabel label={parsedDatakeys.yAxis.label} />
-      <ResponsiveContainer width="100%" height="100%">
+      <ResponsiveContainer width="100%" height={380}>
         <LineChart
-          width={500}
-          height={300}
           data={parsedData}
           margin={{
             top: 40,

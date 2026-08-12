@@ -1,4 +1,7 @@
+import { UniqueConstraintError } from 'sequelize'
 import { v4 as uuid } from 'uuid'
+
+import { ConflictException } from '@nestjs/common'
 
 import { UserRole } from '@island.is/judicial-system/types'
 
@@ -78,6 +81,40 @@ describe('UserController - Create', () => {
         canConfirmIndictment,
       })
       expect(then.result).toBe(user)
+    })
+  })
+
+  describe('user already exists', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      const mockCreate = mockUserModel.create as jest.Mock
+      mockCreate.mockRejectedValueOnce(new UniqueConstraintError({}))
+
+      then = await givenWhenThen()
+    })
+
+    it('should throw a conflict exception', () => {
+      expect(then.error).toBeInstanceOf(ConflictException)
+      expect(then.error.message).toBe(
+        'A user with this national id, role and institution already exists',
+      )
+    })
+  })
+
+  describe('user creation fails', () => {
+    const error = new Error('database error')
+    let then: Then
+
+    beforeEach(async () => {
+      const mockCreate = mockUserModel.create as jest.Mock
+      mockCreate.mockRejectedValueOnce(error)
+
+      then = await givenWhenThen()
+    })
+
+    it('should rethrow the error', () => {
+      expect(then.error).toBe(error)
     })
   })
 })

@@ -4,8 +4,7 @@ import { ApolloError } from '@apollo/client'
 import { CardErrorCode } from '@island.is/shared/constants'
 import { findProblemInApolloError } from '@island.is/shared/problem'
 
-import getConfig from 'next/config'
-
+import { getPublicRuntimeEnv } from '../environments/runtimeEnvironment'
 import {
   useChargeApplePayMutation,
   useValidateApplePayMerchantMutation,
@@ -62,9 +61,9 @@ export const useApplePay = ({
 
   // check if apple pay is available
   useEffect(() => {
-    const { publicRuntimeConfig } = getConfig()
+    const { allowApplePay } = getPublicRuntimeEnv()
     // if apple pay is not enabled or if apple pay is not allowed, set supports apple pay to false
-    if (publicRuntimeConfig.allowApplePay !== 'true' || !isEnabledForUser) {
+    if (allowApplePay !== 'true' || !isEnabledForUser) {
       setSupportsApplePay(false)
       return
     }
