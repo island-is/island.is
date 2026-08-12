@@ -89,10 +89,6 @@ mutation UpdateCase($input: UpdateCaseInput!) {
     isolationToDate
     conclusion
     endOfSessionBookings
-    accusedAppealDecision
-    accusedAppealAnnouncement
-    prosecutorAppealDecision
-    prosecutorAppealAnnouncement
     rulingDate
     rulingSignatureDate
     judge {
