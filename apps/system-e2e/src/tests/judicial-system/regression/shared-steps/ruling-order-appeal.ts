@@ -186,9 +186,7 @@ export const prosecutorAppealsRulingOrderOutOfCourt = async (
     page.getByText('Senda inn kæru').click(),
   ])
 
-  await expect(page).toHaveURL(
-    new RegExp(`/kaera/${caseId}\\?rulingFileId=.+`),
-  )
+  await expect(page).toHaveURL(new RegExp(`/kaera/${caseId}\\?rulingFileId=.+`))
 
   await chooseDocument(
     page,

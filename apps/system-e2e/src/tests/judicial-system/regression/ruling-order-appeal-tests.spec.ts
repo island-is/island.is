@@ -31,11 +31,7 @@ test.describe.serial('In-court ruling order appeal tests', () => {
   test('prosecutor should accept and send indictment case to court', async ({
     prosecutorPage,
   }) => {
-    await prosecutorSendsIndictmentToCourt(
-      prosecutorPage,
-      caseId,
-      accusedName,
-    )
+    await prosecutorSendsIndictmentToCourt(prosecutorPage, caseId, accusedName)
   })
 
   test('judge should receive indictment case through advocates', async ({
@@ -87,11 +83,7 @@ test.describe.serial('Out-of-court ruling order appeal tests', () => {
   test('prosecutor should accept and send indictment case to court', async ({
     prosecutorPage,
   }) => {
-    await prosecutorSendsIndictmentToCourt(
-      prosecutorPage,
-      caseId,
-      accusedName,
-    )
+    await prosecutorSendsIndictmentToCourt(prosecutorPage, caseId, accusedName)
   })
 
   test('judge should receive indictment case through advocates', async ({

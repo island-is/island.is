@@ -171,11 +171,7 @@ export const judgeReceivesIndictmentThroughAdvocates = async (
   await page.keyboard.press('Tab')
 
   await page.getByText('Veldu dómara/aðstoðarmann').click()
-  await page
-    .getByTestId('select-judge')
-    .getByText('Test Dómari')
-    .last()
-    .click()
+  await page.getByTestId('select-judge').getByText('Test Dómari').last().click()
 
   await Promise.all([
     verifyRequestCompletion(page, '/api/graphql', 'Case'),
@@ -184,10 +180,7 @@ export const judgeReceivesIndictmentThroughAdvocates = async (
 
   await expect(page).toHaveURL(`domur/akaera/fyrirkall/${caseId}`)
 
-  await page
-    .locator('label')
-    .filter({ hasText: 'Útivistarfyrirkall' })
-    .click()
+  await page.locator('label').filter({ hasText: 'Útivistarfyrirkall' }).click()
 
   await page.locator('input[id=courtDate]').fill(nextWeek)
   await page.keyboard.press('Escape')
