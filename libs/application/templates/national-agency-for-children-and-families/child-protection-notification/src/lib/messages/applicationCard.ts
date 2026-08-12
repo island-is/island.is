@@ -26,9 +26,14 @@ export const applicationCardMessages = defineMessages({
     defaultMessage: 'Tilkynning send',
     description: 'History log entry when a notification is submitted',
   },
+  notificationReceivedTag: {
+    id: 'cpn.application:shared.notificationReceivedTag',
+    defaultMessage: 'Móttekin',
+    description: 'Tag label for a completed notification',
+  },
   notificationReceivedTitle: {
     id: 'cpn.application:shared.notificationReceivedTitle',
-    defaultMessage: 'Tilkynning afgreidd',
+    defaultMessage: 'Tilkynning móttekin',
     description: 'Pending action title shown on completed notification card',
   },
   notificationReceivedContent: {

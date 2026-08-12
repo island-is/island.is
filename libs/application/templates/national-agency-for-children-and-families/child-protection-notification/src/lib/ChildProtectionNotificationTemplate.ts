@@ -233,6 +233,9 @@ const template: ApplicationTemplate<
           status: FormModes.COMPLETED,
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
+            tag: {
+              label: applicationCardMessages.notificationReceivedTag,
+            },
             pendingAction: {
               title: applicationCardMessages.notificationReceivedTitle,
               content: applicationCardMessages.notificationReceivedContent,
