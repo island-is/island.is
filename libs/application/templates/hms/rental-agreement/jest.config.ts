@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'application-templates-rental-agreement',
   preset: '../../../../../jest.preset.js',
   transform: {

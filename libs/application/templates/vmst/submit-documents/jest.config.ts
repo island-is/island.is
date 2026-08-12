@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'submit-documents',
   preset: '../../../../../jest.preset.js',
   transform: {

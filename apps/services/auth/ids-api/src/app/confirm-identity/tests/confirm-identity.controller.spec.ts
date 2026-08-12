@@ -194,7 +194,7 @@ describe('ConfirmIdentityController', () => {
 
     // Assert
     expect(response.status).toBe(200)
-    expect(nationalRegistryClient.getAllDataIndividual).toBeCalledTimes(1)
+    expect(nationalRegistryClient.getAllDataIndividual).toHaveBeenCalledTimes(1)
     expect(zendeskService.updateTicket).toHaveBeenCalledWith(
       identityConfirmations.valid1.ticketId,
       expect.objectContaining({
@@ -230,7 +230,7 @@ describe('ConfirmIdentityController', () => {
 
     // Assert
     expect(response.status).toBe(400)
-    expect(nationalRegistryClient.getAllDataIndividual).toBeCalledTimes(1)
+    expect(nationalRegistryClient.getAllDataIndividual).toHaveBeenCalledTimes(1)
 
     // Db assertion
     const ic = await identityConfirmationModel.findOne({

@@ -32,7 +32,7 @@ interface DatasetListProps {
   n: TranslationFn
   isMobileScreenWidth: boolean
   isTabletScreenWidth: boolean
-  titleRef: React.RefObject<HTMLDivElement>
+  titleRef: React.RefObject<HTMLDivElement | null>
   itemsPerPage: number
 }
 

@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-one-systems-complaints-committee-rulings',
   preset: '../../../../jest.preset.js',
   testEnvironment: 'node',

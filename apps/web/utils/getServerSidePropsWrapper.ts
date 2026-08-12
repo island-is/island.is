@@ -1,3 +1,4 @@
+import type { JSX } from 'react'
 import type { GetServerSideProps } from 'next'
 import { NormalizedCacheObject } from '@apollo/client'
 
