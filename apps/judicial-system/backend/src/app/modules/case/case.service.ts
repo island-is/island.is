@@ -1009,6 +1009,14 @@ export class CaseService {
         if (isIndictment) {
           if (theCase.state === CaseState.WAITING_FOR_CANCELLATION) {
             this.addMessagesForIndictmentConclusionToQueue(updatedCase, user)
+
+            if (updatedCase.origin === CaseOrigin.LOKE) {
+              addMessagesToQueue({
+                type: MessageType.DELIVERY_TO_POLICE_INDICTMENT_CASE,
+                user,
+                caseId: updatedCase.id,
+              })
+            }
           } else {
             this.addMessagesForCompletedIndictmentCaseToQueue(updatedCase, user)
           }

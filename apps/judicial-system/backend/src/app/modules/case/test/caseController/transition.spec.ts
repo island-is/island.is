@@ -299,6 +299,7 @@ describe('CaseController - Transition', () => {
       ${CaseTransition.ASK_FOR_CANCELLATION} | ${CaseState.SUBMITTED}                | ${CaseState.WAITING_FOR_CANCELLATION}
       ${CaseTransition.ASK_FOR_CANCELLATION} | ${CaseState.RECEIVED}                 | ${CaseState.WAITING_FOR_CANCELLATION}
       ${CaseTransition.RECEIVE}              | ${CaseState.SUBMITTED}                | ${CaseState.RECEIVED}
+      ${CaseTransition.COMPLETE}             | ${CaseState.WAITING_FOR_CANCELLATION} | ${CaseState.COMPLETED}
       ${CaseTransition.COMPLETE}             | ${CaseState.RECEIVED}                 | ${CaseState.COMPLETED}
       ${CaseTransition.DELETE}               | ${CaseState.DRAFT}                    | ${CaseState.DELETED}
       ${CaseTransition.DELETE}               | ${CaseState.WAITING_FOR_CONFIRMATION} | ${CaseState.DELETED}
@@ -378,25 +379,38 @@ describe('CaseController - Transition', () => {
           )
 
           if (completedIndictmentCaseStates.includes(newState)) {
-            expect(mockQueuedMessages).toEqual([
-              {
-                type: MessageType.NOTIFICATION,
-                user: {
-                  ...defaultUser,
-                  canConfirmIndictment: isIndictmentCase(theCase.type),
+            if (oldState === CaseState.WAITING_FOR_CANCELLATION) {
+              expect(mockQueuedMessages).toEqual([
+                {
+                  type: MessageType.DELIVERY_TO_POLICE_INDICTMENT_CASE,
+                  user: {
+                    ...defaultUser,
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
+                  },
+                  caseId,
                 },
-                caseId,
-                body: { type: RequestCaseNotificationType.RULING },
-              },
-              {
-                type: MessageType.DELIVERY_TO_POLICE_INDICTMENT_CASE,
-                user: {
-                  ...defaultUser,
-                  canConfirmIndictment: isIndictmentCase(theCase.type),
+              ])
+            } else {
+              expect(mockQueuedMessages).toEqual([
+                {
+                  type: MessageType.NOTIFICATION,
+                  user: {
+                    ...defaultUser,
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
+                  },
+                  caseId,
+                  body: { type: RequestCaseNotificationType.RULING },
                 },
-                caseId,
-              },
-            ])
+                {
+                  type: MessageType.DELIVERY_TO_POLICE_INDICTMENT_CASE,
+                  user: {
+                    ...defaultUser,
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
+                  },
+                  caseId,
+                },
+              ])
+            }
           } else if (
             newState === CaseState.DELETED &&
             !isIndictmentCase(theCase.type)
