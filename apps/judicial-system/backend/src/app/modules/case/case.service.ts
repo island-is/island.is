@@ -36,6 +36,7 @@ import {
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   AppealCaseState,
+  appealCorrectionLock,
   AppealDecisionPartyRole,
   AppealEventType,
   CaseAppealDecision,
@@ -1438,13 +1439,18 @@ export class CaseService {
         },
       )
 
-      if (hasOutOfCourtAppeal(appealedEvents)) {
+      const lock = appealCorrectionLock({
+        appealState: existingAppealCase.appealState,
+        appealedOutOfCourt: hasOutOfCourtAppeal(appealedEvents),
+      })
+
+      if (lock === 'OUT_OF_COURT') {
         throw new BadRequestException(
           'This case has been appealed out of court, so the appeal decisions can no longer be changed',
         )
       }
 
-      if (existingAppealCase.appealState !== AppealCaseState.APPEALED) {
+      if (lock === 'PROGRESSED') {
         throw new BadRequestException(
           'The appeal of this case has progressed past the district court, so the appeal decisions can no longer be changed',
         )

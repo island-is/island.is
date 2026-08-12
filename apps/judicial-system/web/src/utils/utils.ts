@@ -279,6 +279,22 @@ export const getDefenceUserPartyIds = (
 }
 
 /**
+ * The appeal of a specific ruling order, if it has one. A case can carry several
+ * ruling-order appeals at once, keyed by the ruling file they were made against
+ * - so anything acting on one ruling must resolve its own appeal rather than the
+ * case-level `appealCase`.
+ */
+export const rulingOrderAppealCase = (
+  workingCase: Case,
+  rulingFileId: string | null | undefined,
+): AppealCase | undefined =>
+  rulingFileId
+    ? workingCase.rulingOrderAppealCases?.find(
+        (appealCase) => appealCase.rulingFileId === rulingFileId,
+      )
+    : undefined
+
+/**
  * The in-court appeal decision (Ákvörðun um kæru) recorded for a case-level
  * party - the collective defence (DEFENDANT) or the prosecution (PROSECUTOR).
  * Case-level decisions are the appeal_decision rows with no rulingFileId.
