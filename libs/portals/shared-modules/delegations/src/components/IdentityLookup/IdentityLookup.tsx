@@ -21,12 +21,16 @@ export const IdentityLookup = ({
   index = 0,
   showRemoveButton = false,
   onRemove,
+  allowCompany = false,
 }: {
   setFormError: (error: Error) => void
   methods: UseFormReturn<FormData>
   index?: number
   showRemoveButton?: boolean
   onRemove?: () => void
+  // When requesting a delegation you may target a company (its procuration
+  // holders decide), so company national ids are accepted in that flow.
+  allowCompany?: boolean
 }) => {
   const { formatMessage } = useLocale()
 
@@ -78,7 +82,7 @@ export const IdentityLookup = ({
     if (
       value.length === 10 &&
       kennitala.isValid(value) &&
-      !kennitala.isCompany(value) &&
+      (allowCompany || !kennitala.isCompany(value)) &&
       value !== userInfo.profile.nationalId &&
       value !== userInfo.profile.actor?.nationalId
     ) {
@@ -147,7 +151,7 @@ export const IdentityLookup = ({
                     return formatMessage(m.grantActorSsn)
                   }
 
-                  if (kennitala.isCompany(valueAsString)) {
+                  if (!allowCompany && kennitala.isCompany(valueAsString)) {
                     return formatMessage(m.grantCompanySsn)
                   }
                 },
