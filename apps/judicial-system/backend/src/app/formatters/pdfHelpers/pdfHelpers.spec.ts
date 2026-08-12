@@ -1,6 +1,6 @@
 import PDFDocument from 'pdfkit'
 
-import { addRichText, htmlToBlocks } from './pdfHelpers'
+import { addNumberedList, addRichText, htmlToBlocks } from './pdfHelpers'
 
 describe('htmlToBlocks', () => {
   it('wraps plain text in a single block', () => {
@@ -450,6 +450,119 @@ describe('addRichText highlight placement', () => {
     expect(rects).toHaveLength(1)
     expect(rects[0].page).toBe(frag.page)
     expect(Math.abs(rects[0].y - frag.y)).toBeLessThanOrEqual(Y_TOLERANCE)
+    doc.end()
+  })
+})
+
+describe('addNumberedList', () => {
+  interface Frag {
+    text: string
+    x: number
+    y: number
+    page: number
+  }
+
+  const createInstrumentedDoc = () => {
+    const doc = new PDFDocument({
+      size: 'A4',
+      margins: { top: 70, bottom: 70, left: 70, right: 70 },
+      bufferPages: true,
+    })
+    doc.font('Times-Roman').fontSize(11)
+
+    const frags: Frag[] = []
+    const currentPage = () => doc.bufferedPageRange().count
+
+    const docInternals = doc as unknown as {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      _fragment: (text: string, x: number, y: number, options: unknown) => void
+    }
+    const originalFragment = docInternals._fragment.bind(doc)
+    docInternals._fragment = (
+      text: string,
+      x: number,
+      y: number,
+      options: unknown,
+    ) => {
+      frags.push({ text: `${text}`, x, y, page: currentPage() })
+      return originalFragment(text, x, y, options)
+    }
+
+    return { doc, frags, currentPage }
+  }
+
+  const visibleText = (frags: Frag[]) =>
+    frags.map((f) => f.text).join('').replace(/\u200B/g, '')
+
+  it('keeps a short name on one line without truncating', () => {
+    const { doc, frags } = createInstrumentedDoc()
+
+    addNumberedList(doc, ['Skjal.pdf'])
+
+    expect(visibleText(frags)).toContain('Skjal.pdf')
+    expect(visibleText(frags)).not.toContain('...')
+    const nameFrags = frags.filter((f) => f.text.includes('Skjal'))
+    const ys = [...new Set(nameFrags.map((f) => Math.round(f.y)))]
+    expect(ys).toHaveLength(1)
+    doc.end()
+  })
+
+  it('wraps a long name with spaces onto multiple lines', () => {
+    const { doc, frags } = createInstrumentedDoc()
+    const name = Array.from({ length: 20 }, (_, i) => `kafli${i}`).join(' ')
+
+    addNumberedList(doc, [name])
+
+    expect(visibleText(frags)).toContain('kafli0')
+    expect(visibleText(frags)).toContain('kafli19')
+    expect(visibleText(frags)).not.toContain('...')
+    const nameFrags = frags.filter((f) => /kafli\d+/.test(f.text))
+    const ys = [...new Set(nameFrags.map((f) => Math.round(f.y)))]
+    expect(ys.length).toBeGreaterThan(1)
+    doc.end()
+  })
+
+  it('wraps a long name with no spaces onto multiple lines', () => {
+    const { doc, frags } = createInstrumentedDoc()
+    const name = `${'a'.repeat(120)}.pdf`
+
+    addNumberedList(doc, [name])
+
+    expect(visibleText(frags)).toContain('a'.repeat(120))
+    expect(visibleText(frags)).toContain('.pdf')
+    expect(visibleText(frags)).not.toContain('...')
+    const nameFrags = frags.filter(
+      (f) => f.text.includes('a') || f.text.includes('.pdf'),
+    )
+    const ys = [...new Set(nameFrags.map((f) => Math.round(f.y)))]
+    expect(ys.length).toBeGreaterThan(1)
+
+    const rightEdge = doc.page.width - doc.page.margins.right
+    for (const frag of nameFrags) {
+      expect(frag.x + doc.widthOfString(frag.text.replace(/\u200B/g, ''))).toBeLessThanOrEqual(
+        rightEdge + 2,
+      )
+    }
+    doc.end()
+  })
+
+  it('moves a wrapping item to the next page instead of leaving an empty page gap', () => {
+    const { doc, frags, currentPage } = createInstrumentedDoc()
+    const name = `${'b'.repeat(120)}.pdf`
+
+    // Park near the bottom so a multi-line item cannot fit on this page.
+    doc.y = doc.page.height - doc.page.margins.bottom - 15
+    const pagesBefore = currentPage()
+
+    addNumberedList(doc, [name])
+
+    expect(currentPage()).toBeGreaterThan(pagesBefore)
+    const nameFrags = frags.filter(
+      (f) => f.text.includes('b') || f.text.includes('.pdf'),
+    )
+    expect(nameFrags.length).toBeGreaterThan(0)
+    expect(nameFrags.every((f) => f.page > pagesBefore)).toBe(true)
+    expect(visibleText(frags)).toContain('b'.repeat(120))
     doc.end()
   })
 })
