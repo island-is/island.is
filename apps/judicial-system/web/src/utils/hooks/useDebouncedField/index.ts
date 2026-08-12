@@ -6,7 +6,7 @@ import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
 } from '../../formHelper'
-import { Validation } from '../../validate'
+import { validate, Validation } from '../../validate'
 
 interface UseDebouncedFieldParams {
   /**
@@ -119,9 +119,11 @@ const useDebouncedField = ({
         return
       }
 
-      if (
-        !validateAndSetErrorMessage(validations, nextValue, setErrorMessage)
-      ) {
+      // Decide whether to persist without touching the error message. Errors
+      // surface on blur, the same as every other input in the app — setting one
+      // from here would make a required field complain mid-sentence, as soon as
+      // the user cleared it to retype.
+      if (!validate([[nextValue, validations]]).isValid) {
         return
       }
 

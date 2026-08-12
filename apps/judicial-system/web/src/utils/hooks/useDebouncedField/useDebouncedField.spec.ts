@@ -108,7 +108,7 @@ describe('useDebouncedField', () => {
       expect(onSave).toHaveBeenCalledWith('')
     })
 
-    it('should not persist an empty value for a required field, and should set an error message', () => {
+    it('should not persist an empty value for a required field', () => {
       const onSave = jest.fn()
       const { result } = renderHook(() =>
         useDebouncedField({ value: 'Jón', onSave, validations: ['empty'] }),
@@ -118,7 +118,29 @@ describe('useDebouncedField', () => {
       advance(DELAY)
 
       expect(onSave).not.toHaveBeenCalled()
-      expect(result.current.errorMessage).not.toBe('')
+    })
+
+    // Regression: the debounced save used to set the error message as a side
+    // effect of deciding not to persist, so clearing a required field to retype
+    // it flagged an error mid-edit, while the field still had focus. Every other
+    // input in the app only reports errors on blur.
+    it('should not show an error for a cleared required field until it is blurred', () => {
+      const { result } = renderHook(() =>
+        useDebouncedField({
+          value: 'Jón',
+          onSave: jest.fn(),
+          validations: ['empty'],
+        }),
+      )
+
+      act(() => result.current.onChange(''))
+      advance(DELAY)
+
+      expect(result.current.errorMessage).toBe('')
+      expect(result.current.hasError).toBe(false)
+
+      act(() => result.current.onBlur())
+
       expect(result.current.hasError).toBe(true)
     })
   })
@@ -245,7 +267,7 @@ describe('useDebouncedField', () => {
       )
 
       act(() => result.current.onChange(''))
-      advance(DELAY)
+      act(() => result.current.onBlur())
 
       expect(result.current.value).toBe('')
       expect(result.current.hasError).toBe(true)
@@ -343,7 +365,7 @@ describe('useDebouncedField', () => {
       )
 
       act(() => result.current.onChange(''))
-      advance(DELAY)
+      act(() => result.current.onBlur())
 
       expect(result.current.hasError).toBe(true)
 
