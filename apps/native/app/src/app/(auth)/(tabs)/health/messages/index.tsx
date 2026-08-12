@@ -13,8 +13,6 @@ import { useTheme } from 'styled-components/native'
 
 import composeIcon from '@/assets/icons/compose.png'
 import filterIcon from '@/assets/icons/filter-icon.png'
-import heartIcon from '@/assets/icons/health.png'
-import documentIcon from '@/assets/icons/reader.png'
 import illustrationSrc from '@/assets/illustrations/le-company-s3.png'
 import { OfflineIcon } from '@/components/offline/offline-icon'
 import { StackScreen } from '@/components/stack-screen'
@@ -23,6 +21,7 @@ import {
   useGetHealthConversationsQuery,
 } from '@/graphql/types/schema'
 import { useHealthMessagesFilterStore } from '@/stores/health-messages-filter-store'
+import { useOrganizationsStore } from '@/stores/organizations-store'
 import { EmptyList, ListItem, ListItemSkeleton, Problem, SearchBar } from '@/ui'
 
 export default function HealthMessagesScreen() {
@@ -30,6 +29,7 @@ export default function HealthMessagesScreen() {
   const theme = useTheme()
   const [query, setQuery] = useState('')
   const { starred, archived } = useHealthMessagesFilterStore()
+  const { getSenderLogo } = useOrganizationsStore()
 
   const messagesRes = useGetHealthConversationsQuery({
     notifyOnNetworkStatusChange: true,
@@ -53,7 +53,11 @@ export default function HealthMessagesScreen() {
     }
     return conversations.filter((conversation) => {
       const title = conversation.title?.toLowerCase() ?? ''
-      const sender = conversation.lastSenderGroupName?.toLowerCase() ?? ''
+      const sender = (
+        conversation.organization?.name ??
+        conversation.lastSenderGroupName ??
+        ''
+      ).toLowerCase()
       return title.includes(q) || sender.includes(q)
     })
   }, [conversations, query])
@@ -167,12 +171,12 @@ export default function HealthMessagesScreen() {
             }
           >
             <ListItem
-              title={item.lastSenderGroupName ?? ''}
+              title={item.organization?.name ?? item.lastSenderGroupName ?? ''}
               subtitle={item.title ?? ''}
               date={item.lastMessageSentAt ?? undefined}
               unread={!item.isRead}
               starred={item.isStarred}
-              icon={item.hasAttachment ? documentIcon : heartIcon}
+              icon={getSenderLogo(item.organization, 75)}
             />
           </Pressable>
         )}

@@ -296,6 +296,10 @@ query GetHealthConversations(
     isStarred
     isArchived
     isRead
+    organization {
+      name
+      logoUrl
+    }
   }
 }
 
@@ -311,6 +315,10 @@ query GetHealthConversation($id: ID!) {
     isArchived
     isRead
     patientCanReply
+    organization {
+      name
+      logoUrl
+    }
     messages {
       id
       direction

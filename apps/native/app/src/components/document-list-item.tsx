@@ -93,6 +93,12 @@ export interface DocumentListItemAttachment {
 
 type DocumentListItemProps = {
   sender: string
+  /**
+   * Explicit organization logo URL. When set it takes precedence over the
+   * name-based logo lookup — used where the API provides the sender's logo
+   * directly (e.g. health conversations).
+   */
+  logoUrl?: string | null
   title: string
   body?: string
   date?: string
@@ -108,6 +114,7 @@ type DocumentListItemProps = {
 
 export const DocumentListItem = ({
   sender,
+  logoUrl,
   title,
   body,
   date,
@@ -120,7 +127,7 @@ export const DocumentListItem = ({
   hasTopBorder = true,
 }: DocumentListItemProps) => {
   const theme = useTheme()
-  const { getOrganizationLogoUrl } = useOrganizationsStore()
+  const { getOrganizationLogoUrl, getSenderLogo } = useOrganizationsStore()
 
   const height = useSharedValue(0)
   const containerOpacity = useSharedValue(isAndroid ? 1 : 0)
@@ -163,7 +170,9 @@ export const DocumentListItem = ({
     isExpanded.value = !isExpanded.value
   }
 
-  const source = getOrganizationLogoUrl(sender, 75, true)
+  const source = logoUrl
+    ? getSenderLogo({ logoUrl }, 75)
+    : getOrganizationLogoUrl(sender, 75, true)
 
   return (
     <Animated.View style={containerAnimatedStyle}>

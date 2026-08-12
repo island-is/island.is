@@ -150,7 +150,10 @@ export default function HealthMessageDetailScreen() {
         item.direction === HealthDirectorateHealthConversationDirection.Patient
       const senderName = isPatient
         ? userName ?? ''
-        : item.senderGroupName ?? conversation?.lastSenderGroupName ?? ''
+        : conversation?.organization?.name ??
+          item.senderGroupName ??
+          conversation?.lastSenderGroupName ??
+          ''
 
       const sentAt = new Date(item.messageSentAt)
       const dateTime = item.messageSentAt
@@ -170,6 +173,7 @@ export default function HealthMessageDetailScreen() {
           isOpen={index === messages.length - 1}
           closeable={messages.length > 1}
           sender={senderName}
+          logoUrl={isPatient ? undefined : conversation?.organization?.logoUrl}
           title={senderName}
           body={item.messageTextContent ?? undefined}
           date={dateTime}
@@ -193,6 +197,8 @@ export default function HealthMessageDetailScreen() {
       intl,
       userName,
       conversation?.lastSenderGroupName,
+      conversation?.organization?.name,
+      conversation?.organization?.logoUrl,
       downloadingAttachmentId,
       handleAttachmentPress,
     ],
@@ -272,7 +278,10 @@ export default function HealthMessageDetailScreen() {
                       pathname: '/health/messages/new',
                       params: {
                         conversationId: id,
-                        recipientName: conversation?.lastSenderGroupName ?? '',
+                        recipientName:
+                          conversation?.organization?.name ??
+                          conversation?.lastSenderGroupName ??
+                          '',
                         subject: conversation?.title ?? '',
                       },
                     })

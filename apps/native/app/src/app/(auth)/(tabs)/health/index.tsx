@@ -14,7 +14,6 @@ import styled, { useTheme } from 'styled-components/native'
 
 import categoriesIcon from '@/assets/icons/categories.png'
 import externalLinkIcon from '@/assets/icons/external-link.png'
-import heartIcon from '@/assets/icons/health.png'
 import medicineIcon from '@/assets/icons/medicine.png'
 import readerIcon from '@/assets/icons/reader.png'
 import vaccinationsIcon from '@/assets/icons/vaccinations.png'
@@ -35,6 +34,7 @@ import {
 } from '@/graphql/types/schema'
 import { useLocale } from '@/hooks/use-locale'
 import { useBrowser } from '@/hooks/use-browser'
+import { useOrganizationsStore } from '@/stores/organizations-store'
 import {
   Alert,
   ChevronRight,
@@ -196,6 +196,7 @@ export default function HealthOverviewScreen() {
   const intl = useIntl()
   const theme = useTheme()
   const { openBrowser } = useBrowser()
+  const { getSenderLogo } = useOrganizationsStore()
   const origin = getConfig().apiUrl.replace(/\/api$/, '')
   const [refetching, setRefetching] = useState(false)
 
@@ -623,12 +624,16 @@ export default function HealthOverviewScreen() {
                     }
                   >
                     <ListItem
-                      title={message.lastSenderGroupName ?? ''}
+                      title={
+                        message.organization?.name ??
+                        message.lastSenderGroupName ??
+                        ''
+                      }
                       subtitle={message.title ?? ''}
                       date={message.lastMessageSentAt ?? undefined}
                       unread={!message.isRead}
                       starred={message.isStarred}
-                      icon={message.hasAttachment ? readerIcon : heartIcon}
+                      icon={getSenderLogo(message.organization, 75)}
                     />
                   </TouchableOpacity>
                 ))}
