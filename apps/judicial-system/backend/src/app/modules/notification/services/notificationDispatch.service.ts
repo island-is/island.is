@@ -113,6 +113,9 @@ export class NotificationDispatchService {
     this.addMessagesForCriminalRecordFileUpdateToQueue(theCase)
   }
 
+  // The suspension takes effect without service of the verdict when the
+  // defendant was present at the ruling (NOT_APPLICABLE) or service is
+  // not required (NOT_REQUIRED)
   private isDefendantReadyForDrivingLicenseSuspensionNotification(
     defendant: NonNullable<Case['defendants']>[number],
     isFine: boolean,

@@ -14,7 +14,7 @@ import {
 
 import { createTestingNotificationModule } from '../../createTestingNotificationModule'
 
-import { Case, CaseFile } from '../../../../repository'
+import { Case, CaseFile, Defendant } from '../../../../repository'
 import { InternalNotificationController } from '../../../internalNotification.controller'
 
 describe('InternalNotificationController - Dispatch event notifications', () => {
@@ -32,6 +32,20 @@ describe('InternalNotificationController - Dispatch event notifications', () => 
       ...baseCase,
       type,
     } as Case)
+  const setSuspendedDefendant = (
+    indictmentRulingDecision: CaseIndictmentRulingDecision,
+    serviceRequirement?: ServiceRequirement,
+  ) =>
+    ({
+      ...baseCase,
+      indictmentRulingDecision,
+      defendants: [
+        {
+          isDrivingLicenseSuspended: true,
+          verdicts: serviceRequirement ? [{ serviceRequirement }] : [],
+        },
+      ] as Defendant[],
+    } as Case)
   const user = { id: uuid(), name: 'Test' } as User
 
   let mockQueuedMessages: Message[]
@@ -48,6 +62,98 @@ describe('InternalNotificationController - Dispatch event notifications', () => 
   const notificationScenarios = [
     {
       theCase: baseCase,
+      notificationType:
+        EventNotificationType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+      expectedMessages: [
+        {
+          type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+          caseId,
+          body: {
+            type: IndictmentCaseNotificationType.CRIMINAL_RECORD_FILES_UPLOADED,
+          },
+        },
+      ],
+    },
+    {
+      theCase: setSuspendedDefendant(
+        CaseIndictmentRulingDecision.RULING,
+        ServiceRequirement.NOT_REQUIRED,
+      ),
+      scenarioDescription:
+        'driving license suspension with service not required',
+      notificationType:
+        EventNotificationType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+      expectedMessages: [
+        {
+          type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+          caseId,
+          body: {
+            type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
+          },
+        },
+        {
+          type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+          caseId,
+          body: {
+            type: IndictmentCaseNotificationType.CRIMINAL_RECORD_FILES_UPLOADED,
+          },
+        },
+      ],
+    },
+    {
+      theCase: setSuspendedDefendant(
+        CaseIndictmentRulingDecision.RULING,
+        ServiceRequirement.NOT_APPLICABLE,
+      ),
+      scenarioDescription:
+        'driving license suspension with service not applicable',
+      notificationType:
+        EventNotificationType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+      expectedMessages: [
+        {
+          type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+          caseId,
+          body: {
+            type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
+          },
+        },
+        {
+          type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+          caseId,
+          body: {
+            type: IndictmentCaseNotificationType.CRIMINAL_RECORD_FILES_UPLOADED,
+          },
+        },
+      ],
+    },
+    {
+      theCase: setSuspendedDefendant(CaseIndictmentRulingDecision.FINE),
+      scenarioDescription: 'driving license suspension with fine',
+      notificationType:
+        EventNotificationType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+      expectedMessages: [
+        {
+          type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+          caseId,
+          body: {
+            type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
+          },
+        },
+        {
+          type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+          caseId,
+          body: {
+            type: IndictmentCaseNotificationType.CRIMINAL_RECORD_FILES_UPLOADED,
+          },
+        },
+      ],
+    },
+    {
+      theCase: setSuspendedDefendant(
+        CaseIndictmentRulingDecision.RULING,
+        ServiceRequirement.REQUIRED,
+      ),
+      scenarioDescription: 'driving license suspension with service required',
       notificationType:
         EventNotificationType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
       expectedMessages: [
@@ -119,16 +225,16 @@ describe('InternalNotificationController - Dispatch event notifications', () => 
   ]
 
   it.each(
-    notificationScenarios.map(
-      ({ theCase, notificationType, expectedMessages }) => ({
-        theCase,
-        notificationType,
-        expectedMessages,
-        description: `should send messages to queue for notification type ${notificationType} ${
-          theCase.type ? `- ${theCase.type}` : ''
-        }`,
-      }),
-    ),
+    notificationScenarios.map((scenario) => ({
+      ...scenario,
+      description: `should send messages to queue for notification type ${
+        scenario.notificationType
+      }${scenario.theCase.type ? ` - ${scenario.theCase.type}` : ''}${
+        'scenarioDescription' in scenario
+          ? ` - ${scenario.scenarioDescription}`
+          : ''
+      }`,
+    })),
   )('$description', async ({ theCase, notificationType, expectedMessages }) => {
     const result =
       await internalNotificationController.dispatchEventNotification(

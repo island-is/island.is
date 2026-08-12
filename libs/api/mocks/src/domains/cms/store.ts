@@ -11,11 +11,77 @@ import {
   articleSubgroup,
   genericPage,
   frontpage as createFrontpage,
+  image as createImage,
   organization,
 } from './factories'
 import orderBy from 'lodash/orderBy'
-import { Article } from '../../types'
+import { Article, GroupedMenu, Organization } from '../../types'
 import { createStore, faker } from '@island.is/shared/mocking'
+
+export const HEADER_NAV_GROUPED_MENU_ID = '1SCm5KnfQ3DrWT600MTt82'
+
+const createHeaderMenuLink = (title: string, slug: string, type: string) => ({
+  title,
+  link: { slug, type },
+  childLinks: [],
+})
+
+const createHeaderNavGroupedMenu = (): GroupedMenu => ({
+  id: HEADER_NAV_GROUPED_MENU_ID,
+  title: 'Header navigation',
+  menus: [
+    createMenu({
+      id: '667soOAm18qMsyKWawUQgx',
+      title: 'Stofnanir',
+      links: [],
+      menuLinks: [
+        createHeaderMenuLink(
+          'Stafraent Island',
+          'stafraent-island',
+          'organizationpage',
+        ),
+        createHeaderMenuLink('Syslumenn', 'syslumenn', 'organizationpage'),
+        createHeaderMenuLink(
+          'Vinnumalastofnun',
+          'vinnumalastofnun',
+          'organizationpage',
+        ),
+      ],
+    }),
+    createMenu({
+      id: '62QvK3jzHzWnuIAp0jYgvq',
+      title: 'Thjonustuflokkar',
+      links: [],
+      menuLinks: [
+        createHeaderMenuLink('Fjolskylda', 'fjolskylda', 'articlecategory'),
+        createHeaderMenuLink(
+          'Atvinna',
+          'atvinna-rekstur-og-felag',
+          'articlecategory',
+        ),
+        createHeaderMenuLink('Heilsa', 'heilsa', 'articlecategory'),
+      ],
+    }),
+    createMenu({
+      id: '4nXPzCHn5X8UDEKaDZqCgb',
+      title: 'Lifsvidburdir',
+      links: [],
+      menuLinks: [
+        createHeaderMenuLink('Barneignir', 'barneignir', 'lifeeventpage'),
+        createHeaderMenuLink(
+          'Buin ad eignast barn',
+          'nyfaett-barn',
+          'lifeeventpage',
+        ),
+        createHeaderMenuLink(
+          'Flytja til Islands',
+          'flytja-til-islands',
+          'lifeeventpage',
+        ),
+      ],
+    }),
+  ],
+})
 
 export const store = createStore(() => {
   faker.seed(100)
@@ -44,6 +110,7 @@ export const store = createStore(() => {
   }, [])
 
   const groupedMenu = createGroupedMenu()
+  const headerNavGroupedMenu = createHeaderNavGroupedMenu()
 
   const alertBanner = createAlertBanner()
 
@@ -66,7 +133,35 @@ export const store = createStore(() => {
 
   const genericPages = [genericPage({ title: 'Loftbrú', slug: 'loftbru' })]
 
-  const organizations = { items: organization.list(5) }
+  const organizations: { items: Organization[] } = {
+    items: [
+      organization({
+        title: 'Stafraent Island',
+        slug: 'stafraent-island',
+        logo: createImage({
+          title: 'Stafraent Island',
+          url: '/assets/mock-logo-1.svg',
+        }),
+      }),
+      organization({
+        title: 'Syslumenn',
+        slug: 'syslumenn',
+        logo: createImage({
+          title: 'Syslumenn',
+          url: '/assets/mock-logo-2.svg',
+        }),
+      }),
+      organization({
+        title: 'Vinnumalastofnun',
+        slug: 'vinnumalastofnun',
+        logo: createImage({
+          title: 'Vinnumalastofnun',
+          url: '/assets/mock-logo-3.svg',
+        }),
+      }),
+      ...organization.list(2),
+    ],
+  }
 
   return {
     frontpage,
@@ -76,6 +171,7 @@ export const store = createStore(() => {
     alertBanner,
     menu,
     groupedMenu,
+    headerNavGroupedMenu,
     articles,
     articleCategories,
     genericPages,
