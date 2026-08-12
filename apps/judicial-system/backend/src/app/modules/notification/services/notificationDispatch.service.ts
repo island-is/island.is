@@ -120,11 +120,15 @@ export class NotificationDispatchService {
       (defendant) => defendant.isDrivingLicenseSuspended,
     )
 
-    const hasServiceRequirementNotApplicable = theCase.defendants?.some(
+    // The suspension takes effect without service of the verdict when the
+    // defendant was present at the ruling (NOT_APPLICABLE) or service is
+    // not required (NOT_REQUIRED)
+    const hasVerdictThatDoesNotRequireService = theCase.defendants?.some(
       (defendant) =>
         defendant.verdicts?.some(
           (verdict) =>
-            verdict.serviceRequirement === ServiceRequirement.NOT_APPLICABLE,
+            verdict.serviceRequirement === ServiceRequirement.NOT_APPLICABLE ||
+            verdict.serviceRequirement === ServiceRequirement.NOT_REQUIRED,
         ),
     )
 
@@ -133,7 +137,7 @@ export class NotificationDispatchService {
 
     if (
       hasDrivingLicenseSuspension &&
-      (isFine || hasServiceRequirementNotApplicable)
+      (isFine || hasVerdictThatDoesNotRequireService)
     ) {
       addMessagesToQueue({
         type: MessageType.INDICTMENT_CASE_NOTIFICATION,

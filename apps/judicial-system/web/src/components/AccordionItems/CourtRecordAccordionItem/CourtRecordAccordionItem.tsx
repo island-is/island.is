@@ -33,21 +33,27 @@ const CourtRecordAccordionItem: FC<Props> = ({ workingCase }: Props) => {
   const { formatMessage } = useIntl()
 
   const prosecutorAppealAnnouncement = caseLevelAppealAnnouncement(
-    workingCase,
+    workingCase.appealDecisions,
     AppealDecisionPartyRole.PROSECUTOR,
   )
   const accusedAppealAnnouncement = caseLevelAppealAnnouncement(
-    workingCase,
+    workingCase.appealDecisions,
     AppealDecisionPartyRole.DEFENDANT,
   )
 
   const prosecutorAppeal = formatAppeal(
-    caseLevelAppealDecision(workingCase, AppealDecisionPartyRole.PROSECUTOR),
+    caseLevelAppealDecision(
+      workingCase.appealDecisions,
+      AppealDecisionPartyRole.PROSECUTOR,
+    ),
     'Sækjandi',
   )
 
   const accusedAppeal = formatAppeal(
-    caseLevelAppealDecision(workingCase, AppealDecisionPartyRole.DEFENDANT),
+    caseLevelAppealDecision(
+      workingCase.appealDecisions,
+      AppealDecisionPartyRole.DEFENDANT,
+    ),
     capitalize(
       formatMessage(core.defendant, {
         suffix:

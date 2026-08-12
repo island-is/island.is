@@ -6,6 +6,7 @@ import {
   CaseIndictmentRulingDecision,
   CaseType,
   DefendantEventType,
+  getIndictmentAppealDeadline,
   InstitutionType,
   StringType,
   UserRole,
@@ -112,7 +113,13 @@ describe('CaseInterceptor - getDefenceUserDefendants', () => {
   const mockHandle = jest.fn()
 
   interface Then {
-    result: { defendants: { defenderNationalId: string }[] }
+    result: {
+      defendants: {
+        defenderNationalId: string
+        verdictAppealDeadline?: Date
+      }[]
+      indictmentAppealDeadline?: Date
+    }
     error: Error
   }
 
@@ -284,6 +291,47 @@ describe('CaseInterceptor - getDefenceUserDefendants', () => {
           (d) => d.defenderNationalId === nationalId,
         ),
       ).toBe(true)
+    })
+  })
+
+  describe('when a cancelled defendant belongs to a case with a ruling date', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      const theCase = {
+        ...makeCase([
+          makeDefendant(nationalId, [
+            makeEventLog(DefendantEventType.INDICTMENT_CANCELLED, cancelledAt),
+          ]),
+          makeDefendant(otherNationalId, []), // another defender's active defendant
+        ]),
+        // A ruling date the defence user is never presented with, since the
+        // case is presented to them as completed on the cancellation date
+        rulingDate: new Date('2024-03-01'),
+      }
+
+      mockRequest.mockImplementationOnce(() => ({
+        user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
+      }))
+      mockHandle.mockReturnValueOnce(of(theCase))
+
+      then = await givenWhenThen(theCase)
+    })
+
+    it('counts the defendant appeal deadline from the cancellation date', () => {
+      const { deadlineDate } = getIndictmentAppealDeadline({
+        baseDate: cancelledAt,
+      })
+
+      expect(then.result.defendants[0].verdictAppealDeadline).toStrictEqual(
+        deadlineDate,
+      )
+    })
+
+    it('matches the case level indictment appeal deadline', () => {
+      expect(then.result.defendants[0].verdictAppealDeadline).toStrictEqual(
+        then.result.indictmentAppealDeadline,
+      )
     })
   })
 })
