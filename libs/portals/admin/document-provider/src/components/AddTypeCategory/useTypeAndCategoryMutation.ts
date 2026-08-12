@@ -6,7 +6,7 @@ import {
   usePutDocumentProvidedTypeMutation,
   usePostDocumentProvidedTypeMutation,
 } from './MutateTypeCategory.generated'
-import { toast } from 'react-toastify'
+import { toast } from 'react-toastify/unstyled'
 import {
   useGetDocumentProvidedCategoriesQuery,
   useGetDocumentProvidedTypesQuery,

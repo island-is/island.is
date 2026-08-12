@@ -8,6 +8,10 @@
           {
             "name": "@island.is/island-ui/core",
             "message": "Cannot self reference library. Please us a relative import within @island.is/island-ui/core"
+          },
+          {
+            "name": "react-toastify",
+            "message": "Import from 'react-toastify/unstyled' to avoid runtime style injection that violates CSP."
           }
         ]
       }

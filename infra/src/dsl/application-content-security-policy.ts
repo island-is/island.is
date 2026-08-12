@@ -23,14 +23,6 @@ export type ApplicationContentSecurityPolicyAdditionsByEnvironment = Partial<
 
 const datadogBrowserIntake = 'https://browser-intake-datadoghq.eu'
 
-// The shared application styling runtime briefly applies these deterministic
-// style elements while initializing. Keep them hash-scoped rather than opening
-// style-src-elem to arbitrary inline styles.
-const applicationRuntimeStyleHashes = [
-  "'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='",
-  "'sha256-YFrCBlteVde6uSwx8YpZnzAcn7hUjnPIliM6Qwc6vHc='",
-] as const
-
 export const applicationContentSecurityPolicyBase: ContentSecurityPolicy = {
   defaultSrc: ["'self'"],
   baseUri: ["'self'"],
@@ -40,7 +32,7 @@ export const applicationContentSecurityPolicyBase: ContentSecurityPolicy = {
   scriptSrcAttr: ["'none'"],
   styleSrc: ["'self'", "'unsafe-inline'"],
   styleSrcAttr: ["'unsafe-inline'"],
-  styleSrcElem: ["'self'", ...applicationRuntimeStyleHashes],
+  styleSrcElem: ["'self'"],
   fontSrc: ["'self'", 'data:'],
   imgSrc: ["'self'", 'data:', 'blob:', 'https://images.ctfassets.net'],
   mediaSrc: ["'self'", 'data:', 'blob:'],

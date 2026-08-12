@@ -15,7 +15,7 @@ import { useEffect, useState } from 'react'
 import { InputController } from '@island.is/shared/form-fields'
 import { useForm } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
-import { toast } from 'react-toastify'
+import { toast } from 'react-toastify/unstyled'
 import {
   useGetCanSign,
   useGetListSignees,

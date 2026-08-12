@@ -3,6 +3,7 @@ import { serviceSetup as formSystemWeb } from '../../../apps/form-system/web/inf
 import { serviceSetup as portalsAdmin } from '../../../apps/portals/admin/infra/portals-admin'
 import { serviceSetup as servicePortal } from '../../../apps/portals/my-pages/infra/portals-my-pages'
 import { serviceSetup as islandUiStorybook } from '../../../libs/island-ui/storybook/infra/storybook'
+import { applicationContentSecurityPolicyBase } from './application-content-security-policy'
 import {
   CONTENT_SECURITY_POLICY_ENV,
   CONTENT_SECURITY_POLICY_HASH_DIRECTIVES_ENV,
@@ -57,6 +58,12 @@ const directiveSources = (policy: string, directive: string) => {
 }
 
 describe('repository static service definitions', () => {
+  it('allows only same-origin style elements in the shared application policy', () => {
+    expect(applicationContentSecurityPolicyBase.styleSrcElem).toEqual([
+      "'self'",
+    ])
+  })
+
   it.each(Object.entries(services))(
     '%s uses a validated StaticServiceBuilder',
     (_name, setup) => {
@@ -102,12 +109,10 @@ describe('repository static service definitions', () => {
         expect(directiveSources(policy, 'style-src-attr')).toEqual([
           "'unsafe-inline'",
         ])
-        expect(directiveSources(policy, 'style-src-elem')).toEqual(
-          expect.arrayContaining([
-            "'self'",
-            "'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='",
-            "'sha256-YFrCBlteVde6uSwx8YpZnzAcn7hUjnPIliM6Qwc6vHc='",
-          ]),
+        const styleSrcElem = directiveSources(policy, 'style-src-elem')
+        expect(styleSrcElem).toEqual(expect.arrayContaining(["'self'"]))
+        expect(styleSrcElem).not.toEqual(
+          expect.arrayContaining([expect.stringMatching(/^'sha256-/)]),
         )
         expect(directiveSources(policy, 'font-src')).toEqual([
           "'self'",
@@ -172,6 +177,9 @@ describe('repository static service definitions', () => {
     for (const environment of environments) {
       const policy = enforcedPolicy('application-system-form', environment)
       expect(directiveSources(policy, 'style-src')).toContain(
+        'https://cdnjs.cloudflare.com',
+      )
+      expect(directiveSources(policy, 'style-src-elem')).toContain(
         'https://cdnjs.cloudflare.com',
       )
       expect(directiveSources(policy, 'img-src')).toEqual(

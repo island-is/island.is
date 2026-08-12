@@ -9,7 +9,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import * as styles from '../styles.css'
 import { m } from '../../../lib/messages'
 import copyToClipboard from 'copy-to-clipboard'
-import { toast } from 'react-toastify'
+import { toast } from 'react-toastify/unstyled'
 import { useMutation } from '@apollo/client'
 import { ExportList } from '../../queries'
 

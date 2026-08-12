@@ -232,6 +232,10 @@
               "date-fns",
               "date-fns/locale",
               "styled-components",
+              {
+                "name": "react-toastify",
+                "message": "Import from 'react-toastify/unstyled' to avoid runtime style injection that violates CSP."
+              },
               "."
             ]
           }
