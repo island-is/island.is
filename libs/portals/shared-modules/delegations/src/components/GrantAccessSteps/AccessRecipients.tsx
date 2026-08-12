@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { FormProvider, useFieldArray, UseFormReturn } from 'react-hook-form'
+import type { MessageDescriptor } from 'react-intl'
 
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -17,6 +18,9 @@ export const AccessRecipients = ({
   methods,
   allowCompany = false,
   singleRecipient = false,
+  title = m.chooseRecipientsTitle,
+  nationalIdLabel,
+  sameSsnMessage,
 }: {
   methods: UseFormReturn<FormData>
   // When requesting a delegation the grantor may be a company.
@@ -24,6 +28,10 @@ export const AccessRecipients = ({
   // When requesting a delegation there is a single grantor, so hide the
   // add/remove recipient controls.
   singleRecipient?: boolean
+  // The request flow asks who to request from, not who receives access.
+  title?: MessageDescriptor
+  nationalIdLabel?: MessageDescriptor
+  sameSsnMessage?: MessageDescriptor
 }) => {
   const { formatMessage } = useLocale()
   const [formError, setFormError] = useState<Error | undefined>()
@@ -38,7 +46,7 @@ export const AccessRecipients = ({
   return (
     <FormProvider {...methods}>
       <Text variant="h3" marginBottom={4}>
-        {formatMessage(m.chooseRecipientsTitle)}
+        {formatMessage(title)}
       </Text>
 
       <Box display="flex" flexDirection="column" rowGap={3}>
@@ -51,6 +59,8 @@ export const AccessRecipients = ({
             showRemoveButton={!singleRecipient && fields.length > 1}
             onRemove={() => remove(index)}
             allowCompany={allowCompany}
+            nationalIdLabel={nationalIdLabel}
+            sameSsnMessage={sameSsnMessage}
           />
         ))}
         {!singleRecipient && (

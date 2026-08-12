@@ -26,6 +26,16 @@ export class DelegationRequestScopeDTO {
   displayName?: string | null
 
   @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ nullable: true, type: String })
+  domainName?: string | null
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ nullable: true, type: String })
+  domainDisplayName?: string | null
+
+  @IsOptional()
   @IsDateString()
   @ApiPropertyOptional({ nullable: true, type: Date })
   validTo?: Date | null

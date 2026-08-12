@@ -19,6 +19,8 @@ fragment AuthDelegationRequestData on AuthDelegationRequest {
   scopes {
     scopeName
     displayName
+    domainName
+    domainDisplayName
     validTo
   }
 }

@@ -1,5 +1,6 @@
 import { VIRTUAL_MUNICIPALITY_TAG_ID } from '../../constants/domain'
 import { useQuery } from '@apollo/client'
+import type { MessageDescriptor } from 'react-intl'
 import {
   AuthScopeCategoriesDocument,
   AuthScopeCategoriesQuery,
@@ -29,7 +30,12 @@ import add from 'date-fns/add'
 import { useAuthDomainsQuery } from '../../hooks/useDomains/useDomains.generated'
 import { RecipientsTag } from '../RecipientsTag'
 
-export const AccessScopes = () => {
+export const AccessScopes = ({
+  // The request flow asks which permissions to request, not grant.
+  title = m.choosePermissionsTitle,
+}: {
+  title?: MessageDescriptor
+} = {}) => {
   const { lang } = useLocale()
   const { formatMessage } = useLocale()
   const [searchQuery, setSearchQuery] = useState('')
@@ -230,7 +236,7 @@ export const AccessScopes = () => {
   return (
     <Box display="flex" flexDirection="column" alignItems="flexStart">
       <Text variant="h3" marginBottom={2}>
-        {formatMessage(m.choosePermissionsTitle)}
+        {formatMessage(title)}
       </Text>
       <RecipientsTag />
       {notGrantableScopeNames.length > 0 && (

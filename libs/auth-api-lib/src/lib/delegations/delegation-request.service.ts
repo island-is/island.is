@@ -16,15 +16,19 @@ import { User } from '@island.is/auth-nest-tools'
 import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
 import { Features } from '@island.is/feature-flags'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { ConfigType } from '@island.is/nest/config'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 
 import { ApiScope } from '../resources/models/api-scope.model'
+import { Domain } from '../resources/models/domain.model'
 import { NotificationsApi } from '../user-notification'
+import { DelegationRequestError } from './constants/delegation-request-errors'
 import {
   DELEGATION_REQUEST_APPROVED_TEMPLATE_ID,
   DELEGATION_REQUEST_REJECTED_TEMPLATE_ID,
   DELEGATION_REQUEST_TEMPLATE_ID,
 } from './constants/hnipp'
+import { DelegationConfig } from './DelegationConfig'
 import {
   CreateDelegationRequestDTO,
   DelegationRequestDTO,
@@ -34,8 +38,6 @@ import { DelegationRequest } from './models/delegation-request.model'
 import { NamesService } from './names.service'
 import { DelegationRequestStatus } from './types/delegationRequestStatus'
 
-/** Max number of simultaneously pending requests a single requester may have. */
-const MAX_PENDING_REQUESTS_PER_REQUESTER = 20
 /** How long a pending request stays actionable before it auto-expires. */
 const REQUEST_TTL_DAYS = 30
 
@@ -53,6 +55,8 @@ export class DelegationRequestService {
     private notificationsApi: NotificationsApi,
     private featureFlagService: FeatureFlagService,
     private sequelize: Sequelize,
+    @Inject(DelegationConfig.KEY)
+    private delegationConfig: ConfigType<typeof DelegationConfig>,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -100,6 +104,17 @@ export class DelegationRequestService {
       )
     }
 
+    // Guardrails against abuse, checked before the registry lookups: a
+    // rejection-based lock, duplicate live requests, and a cap on how many
+    // requests a single requester can have open at once.
+    await this.assertNotRejectionBlocked(requesterNationalId)
+    await this.assertNoDuplicatePending(
+      granterNationalId,
+      requesterNationalId,
+      dto.domainName ?? null,
+    )
+    await this.assertUnderPendingCap(requesterNationalId)
+
     // Confirm the grantor exists (and, for individuals, is not deceased) and
     // resolve who should be notified.
     let recipients: string[]
@@ -126,15 +141,6 @@ export class DelegationRequestService {
       await this.namesService.validateRecipientNotDeceased(granterNationalId)
       recipients = [granterNationalId]
     }
-
-    // Guardrails against abuse: block duplicate live requests and cap the
-    // number a single requester can have open at once.
-    await this.assertNoDuplicatePending(
-      granterNationalId,
-      requesterNationalId,
-      dto.domainName ?? null,
-    )
-    await this.assertUnderPendingCap(requesterNationalId)
 
     const expiresAt = new Date()
     expiresAt.setDate(expiresAt.getDate() + REQUEST_TTL_DAYS)
@@ -179,7 +185,12 @@ export class DelegationRequestService {
     await this.expireStale({ toNationalId: user.nationalId })
     const requests = await this.delegationRequestModel.findAll({
       where: { toNationalId: user.nationalId },
-      include: [DelegationRequestScope],
+      include: [
+        {
+          model: DelegationRequestScope,
+          include: [{ model: ApiScope, include: [Domain] }],
+        },
+      ],
       order: [['created', 'DESC']],
     })
     return requests.map((r) => r.toDTO())
@@ -194,7 +205,12 @@ export class DelegationRequestService {
     await this.expireStale({ fromNationalId: user.nationalId })
     const requests = await this.delegationRequestModel.findAll({
       where: { fromNationalId: user.nationalId },
-      include: [DelegationRequestScope],
+      include: [
+        {
+          model: DelegationRequestScope,
+          include: [{ model: ApiScope, include: [Domain] }],
+        },
+      ],
       order: [['created', 'DESC']],
     })
     return requests.map((r) => r.toDTO())
@@ -272,7 +288,12 @@ export class DelegationRequestService {
     id: string,
   ): Promise<DelegationRequest> {
     const request = await this.delegationRequestModel.findByPk(id, {
-      include: [DelegationRequestScope],
+      include: [
+        {
+          model: DelegationRequestScope,
+          include: [{ model: ApiScope, include: [Domain] }],
+        },
+      ],
     })
     if (
       !request ||
@@ -289,7 +310,12 @@ export class DelegationRequestService {
     id: string,
   ): Promise<DelegationRequest> {
     const request = await this.delegationRequestModel.findByPk(id, {
-      include: [DelegationRequestScope],
+      include: [
+        {
+          model: DelegationRequestScope,
+          include: [{ model: ApiScope, include: [Domain] }],
+        },
+      ],
     })
     // The grantor side is the current subject (an individual, or a company the
     // acting procuration holder is currently representing).
@@ -336,10 +362,37 @@ export class DelegationRequestService {
         status: DelegationRequestStatus.Pending,
       },
     })
-    if (pendingCount >= MAX_PENDING_REQUESTS_PER_REQUESTER) {
-      throw new BadRequestException(
-        'You have too many pending delegation requests. Resolve or cancel some before creating new ones.',
-      )
+    if (pendingCount >= this.delegationConfig.delegationRequestMaxPending) {
+      throw new BadRequestException(DelegationRequestError.TooManyPending)
+    }
+  }
+
+  /**
+   * Requesters who collect too many rejections within the lock window are
+   * blocked from creating new requests until rejections age out of it. A
+   * rejection is the terminal write on its row, so `modified` is when it
+   * happened.
+   */
+  private async assertNotRejectionBlocked(
+    requesterNationalId: string,
+  ): Promise<void> {
+    const {
+      delegationRequestRejectionLockThreshold: threshold,
+      delegationRequestRejectionLockDays: lockDays,
+    } = this.delegationConfig
+
+    const windowStart = new Date()
+    windowStart.setDate(windowStart.getDate() - lockDays)
+
+    const rejectionCount = await this.delegationRequestModel.count({
+      where: {
+        toNationalId: requesterNationalId,
+        status: DelegationRequestStatus.Rejected,
+        modified: { [Op.gte]: windowStart },
+      },
+    })
+    if (rejectionCount >= threshold) {
+      throw new ForbiddenException(DelegationRequestError.Blocked)
     }
   }
 

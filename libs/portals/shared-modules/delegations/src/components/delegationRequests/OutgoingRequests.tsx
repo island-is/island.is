@@ -1,23 +1,31 @@
+import { useState } from 'react'
+import format from 'date-fns/format'
+
 import {
   Box,
   Button,
   SkeletonLoader,
-  Stack,
   Table as T,
   Tag,
   Text,
   toast,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { formatNationalId } from '@island.is/portals/core'
 import { AuthDelegationRequestStatus } from '@island.is/api/schema'
 
 import { m } from '../../lib/messages'
+import ExpandableRow from '../tables/ExpandableRow/ExpandableRow'
+import { IdentityInfo } from '../tables/IdentityInfo/IdentityInfo'
+import * as styles from '../tables/Tables.css'
 import {
   useAuthDelegationRequestsOutgoingQuery,
   useCancelAuthDelegationRequestMutation,
   AuthDelegationRequestsOutgoingDocument,
+  AuthDelegationRequestsOutgoingQuery,
 } from './DelegationRequests.generated'
+
+type OutgoingRequest =
+  AuthDelegationRequestsOutgoingQuery['authDelegationRequestsOutgoing'][number]
 
 const statusMessage = {
   [AuthDelegationRequestStatus.pending]: m.requestStatusPending,
@@ -35,8 +43,60 @@ const statusVariant = {
   [AuthDelegationRequestStatus.expired]: 'disabled',
 } as const
 
+const RequestScopesTable = ({
+  scopes,
+}: {
+  scopes: OutgoingRequest['scopes']
+}) => {
+  const { formatMessage } = useLocale()
+
+  return (
+    <div className={styles.tableContainer}>
+      <T.Table>
+        <T.Head>
+          <T.Row>
+            {[
+              formatMessage(m.headerDomain),
+              formatMessage(m.headerScopeName),
+              formatMessage(m.headerValidityPeriod),
+            ].map((value, i) => (
+              <T.HeadData key={value + i} style={{ paddingInline: 16 }}>
+                <Text variant="medium" fontWeight="semiBold">
+                  {value}
+                </Text>
+              </T.HeadData>
+            ))}
+          </T.Row>
+        </T.Head>
+        <T.Body>
+          {scopes.map((scope) => (
+            <T.Row key={scope.scopeName}>
+              <T.Data style={{ paddingInline: 16, wordBreak: 'break-word' }}>
+                <Text variant="medium">{scope.domainDisplayName}</Text>
+              </T.Data>
+              <T.Data style={{ paddingInline: 16, wordBreak: 'break-word' }}>
+                <Text variant="medium">
+                  {scope.displayName ?? scope.scopeName}
+                </Text>
+              </T.Data>
+              <T.Data style={{ paddingInline: 16 }}>
+                <Text variant="medium">
+                  {scope.validTo
+                    ? format(new Date(scope.validTo), 'dd.MM.yyyy')
+                    : '-'}
+                </Text>
+              </T.Data>
+            </T.Row>
+          ))}
+        </T.Body>
+      </T.Table>
+    </div>
+  )
+}
+
 export const OutgoingRequests = () => {
   const { formatMessage } = useLocale()
+  const [expandedRow, setExpandedRow] = useState<string | null>(null)
 
   const { data, loading } = useAuthDelegationRequestsOutgoingQuery({
     fetchPolicy: 'cache-and-network',
@@ -67,6 +127,15 @@ export const OutgoingRequests = () => {
     return null
   }
 
+  const headerArray = [
+    { value: '' },
+    { value: formatMessage(m.requestTo) },
+    { value: formatMessage(m.requestScopeCount) },
+    { value: formatMessage(m.requestDateSent) },
+    { value: formatMessage(m.requestStatus) },
+    { value: '' },
+  ]
+
   return (
     <Box
       marginBottom={6}
@@ -75,68 +144,87 @@ export const OutgoingRequests = () => {
       rowGap={[0, 0, 0, 2]}
     >
       <Text variant="h5">{formatMessage(m.outgoingRequestsTitle)}</Text>
-      <T.Table>
-        <T.Head>
-          <T.Row>
-            <T.HeadData>
-              <Text variant="medium" fontWeight="semiBold">
-                {formatMessage(m.requestTo)}
-              </Text>
-            </T.HeadData>
-            <T.HeadData>
-              <Text variant="medium" fontWeight="semiBold">
-                {formatMessage(m.accessScopes)}
-              </Text>
-            </T.HeadData>
-            <T.HeadData>
-              <Text variant="medium" fontWeight="semiBold">
-                {formatMessage(m.requestStatus)}
-              </Text>
-            </T.HeadData>
-            <T.HeadData />
-          </T.Row>
-        </T.Head>
-        <T.Body>
-          {requests.map((request) => (
-            <T.Row key={request.id}>
-              <T.Data>
-                <Text variant="medium">{request.to.name}</Text>
-                <Text variant="small" color="dark400">
-                  {formatNationalId(request.to.nationalId)}
-                </Text>
-              </T.Data>
-              <T.Data>
-                <Stack space={0}>
-                  {request.scopes.map((scope) => (
-                    <Text key={scope.scopeName} variant="medium">
-                      {scope.displayName ?? scope.scopeName}
-                    </Text>
-                  ))}
-                </Stack>
-              </T.Data>
-              <T.Data>
-                <Tag variant={statusVariant[request.status]} disabled outlined>
-                  {formatMessage(statusMessage[request.status])}
-                </Tag>
-              </T.Data>
-              <T.Data>
-                <Box display="flex" justifyContent="flexEnd">
-                  {request.status === AuthDelegationRequestStatus.pending && (
-                    <Button
-                      variant="ghost"
-                      colorScheme="destructive"
-                      size="small"
-                      onClick={() => onCancel(request.id)}
-                    >
-                      {formatMessage(m.requestCancel)}
-                    </Button>
-                  )}
-                </Box>
-              </T.Data>
+      <div className={styles.tableContainer}>
+        <T.Table>
+          <T.Head>
+            <T.Row>
+              {headerArray.map((item, i) => (
+                <T.HeadData key={item.value + i} style={{ paddingInline: 16 }}>
+                  <Text variant="medium" fontWeight="semiBold">
+                    {item.value}
+                  </Text>
+                </T.HeadData>
+              ))}
             </T.Row>
-          ))}
-        </T.Body>
-      </T.Table>
+          </T.Head>
+          <T.Body>
+            {requests.map((request) => (
+              <ExpandableRow
+                key={request.id}
+                onExpandCallback={() => setExpandedRow(request.id)}
+                data={[
+                  {
+                    value: (
+                      <IdentityInfo
+                        identity={{
+                          nationalId: request.to.nationalId,
+                          name: request.to.name,
+                        }}
+                        isExpanded={expandedRow === request.id}
+                      />
+                    ),
+                  },
+                  {
+                    value: (
+                      <Text variant="medium" fontWeight="semiBold">
+                        {request.scopes.length}
+                      </Text>
+                    ),
+                  },
+                  {
+                    value: request.createdAt
+                      ? format(new Date(request.createdAt), 'dd.MM.yyyy')
+                      : '-',
+                  },
+                  {
+                    value: (
+                      <Tag
+                        variant={statusVariant[request.status]}
+                        disabled
+                        outlined
+                      >
+                        {formatMessage(statusMessage[request.status])}
+                      </Tag>
+                    ),
+                  },
+                  {
+                    value: (
+                      <Box flexShrink={0} display="flex" columnGap={2}>
+                        {request.status ===
+                          AuthDelegationRequestStatus.pending && (
+                          <Button
+                            variant="text"
+                            icon="trash"
+                            iconType="outline"
+                            size="small"
+                            colorScheme="destructive"
+                            onClick={() => onCancel(request.id)}
+                          >
+                            {formatMessage(m.requestCancel)}
+                          </Button>
+                        )}
+                      </Box>
+                    ),
+                    align: 'right',
+                  },
+                ]}
+              >
+                <RequestScopesTable scopes={request.scopes} />
+              </ExpandableRow>
+            ))}
+          </T.Body>
+        </T.Table>
+      </div>
     </Box>
   )
 }

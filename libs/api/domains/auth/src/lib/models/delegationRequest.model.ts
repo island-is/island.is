@@ -15,6 +15,12 @@ export class DelegationRequestScope {
   @Field(() => String, { nullable: true })
   displayName?: string | null
 
+  @Field(() => String, { nullable: true })
+  domainName?: string | null
+
+  @Field(() => String, { nullable: true })
+  domainDisplayName?: string | null
+
   @Field(() => Date, { nullable: true })
   validTo?: Date | null
 }

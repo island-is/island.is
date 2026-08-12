@@ -675,6 +675,18 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:request-choose-granter-label',
     defaultMessage: 'Velja umboðsveitanda',
   },
+  requestGranterNationalIdLabel: {
+    id: 'sp.access-control-delegations:request-granter-national-id-label',
+    defaultMessage: 'Kennitala umboðsveitanda',
+  },
+  requestSameSsnError: {
+    id: 'sp.access-control-delegations:request-same-ssn-error',
+    defaultMessage: 'Ekki er hægt að biðja sjálfan sig um umboð',
+  },
+  requestChooseScopesTitle: {
+    id: 'sp.access-control-delegations:request-choose-scopes-title',
+    defaultMessage: 'Hvaða réttindi viltu biðja um?',
+  },
   requestChooseGranterButtonLabel: {
     id: 'sp.access-control-delegations:request-choose-granter-button-label',
     defaultMessage: 'Velja réttindi',
@@ -732,6 +744,16 @@ export const m = defineMessages({
     defaultMessage:
       'Ekki tókst að senda beiðni um umboð. Vinsamlegast reyndu aftur síðar.',
   },
+  requestTooManyPendingError: {
+    id: 'sp.access-control-delegations:request-too-many-pending-error',
+    defaultMessage:
+      'Þú ert með of margar opnar beiðnir. Afturkallaðu beiðni eða bíddu eftir svari áður en þú sendir nýja.',
+  },
+  requestBlockedError: {
+    id: 'sp.access-control-delegations:request-blocked-error',
+    defaultMessage:
+      'Ekki er hægt að senda beiðni um umboð. Lokað hefur verið á nýjar beiðnir vegna ítrekaðra hafnana.',
+  },
   requestRelationshipHeader: {
     id: 'sp.access-control-delegations:request-relationship-header',
     defaultMessage: 'Tengsl',
@@ -766,6 +788,23 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:request-reject-success',
     defaultMessage: 'Beiðni hafnað',
   },
+  requestRejectConfirmTitle: {
+    id: 'sp.access-control-delegations:request-reject-confirm-title',
+    defaultMessage: 'Hafna beiðni um umboð',
+  },
+  requestRejectConfirmText: {
+    id: 'sp.access-control-delegations:request-reject-confirm-text',
+    defaultMessage: 'Ertu viss um að þú viljir hafna beiðni frá {name}?',
+  },
+  requestRejectConfirmTracking: {
+    id: 'sp.access-control-delegations:request-reject-confirm-tracking',
+    defaultMessage:
+      'Hafnanir eru skráðar. Aðili sem fær ítrekaðar hafnanir verður tilkynntur og lokað verður á frekari beiðnir frá viðkomandi.',
+  },
+  requestRejectConfirmButton: {
+    id: 'sp.access-control-delegations:request-reject-confirm-button',
+    defaultMessage: 'Hafna beiðni',
+  },
   requestRejectError: {
     id: 'sp.access-control-delegations:request-reject-error',
     defaultMessage: 'Ekki tókst að hafna beiðni. Vinsamlegast reyndu aftur.',
@@ -792,6 +831,14 @@ export const m = defineMessages({
   requestStatus: {
     id: 'sp.access-control-delegations:request-status',
     defaultMessage: 'Staða',
+  },
+  requestDateSent: {
+    id: 'sp.access-control-delegations:request-date-sent',
+    defaultMessage: 'Sent dags',
+  },
+  requestScopeCount: {
+    id: 'sp.access-control-delegations:request-scope-count',
+    defaultMessage: 'Fjöldi réttinda',
   },
   requestCancel: {
     id: 'sp.access-control-delegations:request-cancel',

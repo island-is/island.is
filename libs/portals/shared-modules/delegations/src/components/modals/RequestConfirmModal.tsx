@@ -23,7 +23,7 @@ export const RequestConfirmModal = ({
   relationship: string
   reason: string
   onSuccess: () => void
-  onError: () => void
+  onError: (error?: unknown) => void
 }) => {
   const { formatMessage } = useLocale()
   const { identities, selectedScopes } = useDelegationForm()
@@ -52,7 +52,7 @@ export const RequestConfirmModal = ({
       },
     })
       .then(() => onSuccess())
-      .catch(() => onError())
+      .catch((error) => onError(error))
   }
 
   return (
