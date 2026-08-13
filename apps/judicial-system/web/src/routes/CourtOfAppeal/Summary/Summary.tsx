@@ -155,17 +155,20 @@ const Summary: FC = () => {
           <Modal
             title={formatMessage(strings.appealCompletedModalTitle)}
             text={formatMessage(strings.appealCompletedModalText)}
-            secondaryButton={{
-              text: formatMessage(core.closeModal),
-              onClick: () => {
-                router.push(
-                  appendAppealCaseIdQuery(
-                    `${COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
-                    targetAppealCase?.id,
-                  ),
-                )
+            buttons={[
+              {
+                text: formatMessage(core.closeModal),
+                onClick: () => {
+                  router.push(
+                    appendAppealCaseIdQuery(
+                      `${COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
+                      targetAppealCase?.id,
+                    ),
+                  )
+                },
+                variant: 'ghost',
               },
-            }}
+            ]}
           />
         )}
         {visibleModal === 'AppealRulingModified' && (
@@ -178,17 +181,20 @@ const Summary: FC = () => {
           <Modal
             title={formatMessage(strings.appealDiscontinuedModalTitle)}
             text={formatMessage(strings.appealDiscontinuedModalText)}
-            secondaryButton={{
-              text: formatMessage(core.closeModal),
-              onClick: () => {
-                router.push(
-                  appendAppealCaseIdQuery(
-                    `${COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
-                    targetAppealCase?.id,
-                  ),
-                )
+            buttons={[
+              {
+                text: formatMessage(core.closeModal),
+                onClick: () => {
+                  router.push(
+                    appendAppealCaseIdQuery(
+                      `${COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
+                      targetAppealCase?.id,
+                    ),
+                  )
+                },
+                variant: 'ghost',
               },
-            }}
+            ]}
           />
         )}
       </PageLayout>

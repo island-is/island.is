@@ -2,7 +2,7 @@ import React from 'react'
 
 import { withFigma } from '../../utils/withFigma'
 import { Select } from './Select'
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-webpack5'
 
 const config: Meta<typeof Select> = {
   title: 'Form/Select',
