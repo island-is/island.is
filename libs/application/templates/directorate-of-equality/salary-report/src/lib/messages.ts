@@ -1036,8 +1036,7 @@ export const messages = {
         defaultMessage: 'Velja alla starfsmenn á þessari síðu',
       },
       selectEmployeeLabel: {
-        id:
-          'doe.sr.application:salaryAnalysis.outlierGroup.selectEmployeeLabel',
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.selectEmployeeLabel',
         defaultMessage: 'Velja starfsmann {employee}',
       },
       groupHeading: {
