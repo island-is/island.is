@@ -35,9 +35,11 @@ import {
   GaldurXRoadAPIModelsJobSearchConfirmationJobSearchConfirmationEligibilityResponse,
   ApplicantCreateApplicantRequestedAttachmentRequest,
   GaldurXRoadAPIModelsApplicantForeignTravelEligibilityResponse,
-  GaldurXRoadAPIModelsApplicantCreateAttachmentEligibilityResponse,
   GaldurDomainModelsBaseViewModel,
   GaldurXRoadAPIModelsApplicantApplicantAttachmentsResponse,
+  GaldurXRoadAPIModelsApplicantApplicantEligibilityResponse,
+  JobSearchConfirmationApi,
+  GaldurXRoadAPIModelsJobSearchConfirmationQuestionaireSchemaResponse,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
@@ -60,6 +62,7 @@ type VmstApis =
   | ApplicantApi
   | ApplicationApi
   | SupportDataApi
+  | JobSearchConfirmationApi
 
 @Injectable()
 export class VmstUnemploymentClientService {
@@ -469,7 +472,7 @@ export class VmstUnemploymentClientService {
   }
 
   async checkCreateAttachmentEligibility(auth: User): Promise<
-    GaldurXRoadAPIModelsApplicantCreateAttachmentEligibilityResponse & {
+    GaldurXRoadAPIModelsApplicantApplicantEligibilityResponse & {
       applicantId: string
     }
   > {
@@ -563,5 +566,29 @@ export class VmstUnemploymentClientService {
       id: attachmentId,
       includeData: true,
     })
+  }
+
+  async getQuestionnaire(): Promise<GaldurXRoadAPIModelsJobSearchConfirmationQuestionaireSchemaResponse> {
+    const api = await this.createApiClient(
+      JobSearchConfirmationApi,
+      'clients-vmst-unemployment',
+    )
+    return await api.jobSearchConfirmationGetQuestionaireSchema()
+  }
+
+  async getQuestionnaireEligibility(
+    auth: User,
+  ): Promise<GaldurXRoadAPIModelsApplicantApplicantEligibilityResponse> {
+    const { applicantId } = await this.resolveApplicant(auth)
+
+    if (!applicantId) {
+      throw new Error('Failed to resolve applicantId')
+    }
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+    )
+
+    return await api.applicantApplicantMinus3Eligibility({ applicantId })
   }
 }
