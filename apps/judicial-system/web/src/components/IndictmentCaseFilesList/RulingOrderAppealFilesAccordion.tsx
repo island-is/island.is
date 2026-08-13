@@ -136,7 +136,7 @@ const RulingOrderAppealFilesAccordion: FC<Props> = ({
       labelVariant="h3"
       labelUse="h3"
     >
-      <Box>
+      <Box className={styles.filesList}>
         {files.map((file) => {
           const isDisabled = !file.isKeyAccessible
           const canDelete = canDeleteFile(file)

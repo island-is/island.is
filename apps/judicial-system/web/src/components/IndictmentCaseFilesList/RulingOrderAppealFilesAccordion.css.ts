@@ -1,4 +1,11 @@
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
+
+export const filesList = style({})
+
+// Avoid double line: last PdfButton border + Accordion Divider between items.
+globalStyle(`${filesList} > *:last-child`, {
+  boxShadow: 'none',
+})
 
 export const metadataRow = style({
   display: 'flex',
