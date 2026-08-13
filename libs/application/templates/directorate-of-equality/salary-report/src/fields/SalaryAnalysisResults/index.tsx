@@ -59,9 +59,10 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
   const watchedOutlierGroups: OutlierGroupAnswer[] = useWatch({
     name: 'salaryAnalysis.outlierGroups',
   })
-  const outlierGroups = useMemo(() => watchedOutlierGroups ?? [], [
-    watchedOutlierGroups,
-  ])
+  const outlierGroups = useMemo(
+    () => watchedOutlierGroups ?? [],
+    [watchedOutlierGroups],
+  )
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [hasError, setHasError] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | undefined>()

@@ -170,8 +170,7 @@ export const messages = {
     }),
     generalInformation: defineMessages({
       sectionTitle: {
-        id:
-          'doe.er.application:aboutTheCompany.generalInformation.sectionTitle',
+        id: 'doe.er.application:aboutTheCompany.generalInformation.sectionTitle',
         defaultMessage: 'Almennar upplýsingar',
       },
       title: {
@@ -199,18 +198,15 @@ export const messages = {
         defaultMessage: 'Póstnúmer',
       },
       municipality: {
-        id:
-          'doe.er.application:aboutTheCompany.generalInformation.municipality',
+        id: 'doe.er.application:aboutTheCompany.generalInformation.municipality',
         defaultMessage: 'Sveitarfélag',
       },
       numberOfEmployees: {
-        id:
-          'doe.er.application:aboutTheCompany.generalInformation.numberOfEmployees',
+        id: 'doe.er.application:aboutTheCompany.generalInformation.numberOfEmployees',
         defaultMessage: 'Fjöldi starfsmanna',
       },
       isatClassification: {
-        id:
-          'doe.er.application:aboutTheCompany.generalInformation.isatClassification',
+        id: 'doe.er.application:aboutTheCompany.generalInformation.isatClassification',
         defaultMessage: 'ÍSAT atvinnugreinarflokkun',
       },
     }),
@@ -240,8 +236,7 @@ export const messages = {
         defaultMessage: 'Netfang',
       },
       emailPlaceholder: {
-        id:
-          'doe.er.application:aboutTheCompany.chiefExecutive.emailPlaceholder',
+        id: 'doe.er.application:aboutTheCompany.chiefExecutive.emailPlaceholder',
         defaultMessage: 'Netfang æðsta stjórnanda',
       },
       gender: {
@@ -265,8 +260,7 @@ export const messages = {
         defaultMessage: 'Starfsheiti',
       },
       jobTitlePlaceholder: {
-        id:
-          'doe.er.application:aboutTheCompany.chiefExecutive.jobTitlePlaceholder',
+        id: 'doe.er.application:aboutTheCompany.chiefExecutive.jobTitlePlaceholder',
         defaultMessage: 'Starfsheiti æðsta stjórnanda',
       },
     }),
@@ -352,8 +346,7 @@ export const messages = {
         defaultMessage: lorem,
       },
       includesSubsidiariesTitle: {
-        id:
-          'doe.er.application:aboutTheCompany.subsidiaries.includesSubsidiariesTitle',
+        id: 'doe.er.application:aboutTheCompany.subsidiaries.includesSubsidiariesTitle',
         defaultMessage: 'Nær jafnréttisáætlun einnig til dótturfyrirtækja?',
       },
       yes: {
@@ -389,8 +382,7 @@ export const messages = {
         defaultMessage: 'Nafn fyrirtækis',
       },
       tableHeaderNationalId: {
-        id:
-          'doe.er.application:aboutTheCompany.subsidiaries.tableHeaderNationalId',
+        id: 'doe.er.application:aboutTheCompany.subsidiaries.tableHeaderNationalId',
         defaultMessage: 'Kennitala',
       },
     }),
@@ -439,8 +431,7 @@ export const messages = {
         defaultMessage: 'Skipulag og framkvæmd',
       },
       implementationList: {
-        id:
-          'doe.er.application:equalityReport.information.implementationList#markdown',
+        id: 'doe.er.application:equalityReport.information.implementationList#markdown',
         defaultMessage:
           '* Markmiðin eru skýr\n\n* Framkvæmdaáætlun er í samræmi við sett markmið\n\n* Aðgerðir hafa tímaramma\n\n* Áætlunin inniheldur árangursmat\n\n* Ábyrgð er skýr\n\n* Gildistími tilgreindur',
       },
@@ -453,13 +444,11 @@ export const messages = {
         defaultMessage: 'Sækja sniðmát',
       },
       editorFetchTemplateDoc: {
-        id:
-          'doe.er.application:equalityReport.information.editorFetchTemplateDoc',
+        id: 'doe.er.application:equalityReport.information.editorFetchTemplateDoc',
         defaultMessage: 'Hlaða niður sniðmáti (.docx)',
       },
       editorFetchTemplateFill: {
-        id:
-          'doe.er.application:equalityReport.information.editorFetchTemplateFill',
+        id: 'doe.er.application:equalityReport.information.editorFetchTemplateFill',
         defaultMessage: 'Fá sniðmát í ritil',
       },
       editorUploadFile: {
@@ -467,8 +456,7 @@ export const messages = {
         defaultMessage: 'Hlaða upp skjali',
       },
       editorUnsupportedFile: {
-        id:
-          'doe.er.application:equalityReport.information.editorUnsupportedFile',
+        id: 'doe.er.application:equalityReport.information.editorUnsupportedFile',
         defaultMessage:
           'Ekki stutt skráarsnið. Vinsamlegast hlaðið upp .txt eða .docx skrá.',
       },
@@ -480,8 +468,7 @@ export const messages = {
     }),
     previousEqualityPlan: defineMessages({
       sectionTitle: {
-        id:
-          'doe.er.application:equalityReport.previousEqualityPlan.sectionTitle',
+        id: 'doe.er.application:equalityReport.previousEqualityPlan.sectionTitle',
         defaultMessage: 'Eldri Jafnréttisáætlun',
       },
       title: {
