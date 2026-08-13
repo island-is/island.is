@@ -29,6 +29,7 @@ import {
 } from '@/ui'
 import { createSkeletonArr } from '@/utils/create-skeleton-arr'
 import { downloadHealthAttachment } from '@/utils/download-health-attachment'
+import { HealthConversationMessageContent } from '@/components/health-conversation-message-content'
 import { DocumentListItem } from '@/components/document-list-item'
 import { toast } from '@/components/toast'
 
@@ -78,7 +79,7 @@ export default function HealthMessageDetailScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversation?.id])
 
-  const loadingTimeout = useRef<ReturnType<typeof setTimeout>>()
+  const loadingTimeout = useRef<ReturnType<typeof setTimeout>>(undefined)
 
   const handleRefresh = async () => {
     try {
@@ -175,7 +176,11 @@ export default function HealthMessageDetailScreen() {
           sender={senderName}
           logoUrl={isPatient ? undefined : conversation?.organization?.logoUrl}
           title={senderName}
-          body={item.messageTextContent ?? undefined}
+          bodyContent={
+            item.content ? (
+              <HealthConversationMessageContent content={item.content} />
+            ) : undefined
+          }
           date={dateTime}
           hasTopBorder={index !== 0}
           attachments={item.attachments.map((attachment) => ({

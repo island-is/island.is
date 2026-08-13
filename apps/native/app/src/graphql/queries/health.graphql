@@ -323,7 +323,9 @@ query GetHealthConversation($id: ID!) {
       id
       direction
       messageSentAt
-      messageTextContent
+      content {
+        ...HealthConversationMessageContent
+      }
       senderGroupName
       attachments {
         id
@@ -375,7 +377,9 @@ mutation ReplyToHealthConversation(
       id
       direction
       messageSentAt
-      messageTextContent
+      content {
+        ...HealthConversationMessageContent
+      }
       senderGroupName
       attachments {
         id

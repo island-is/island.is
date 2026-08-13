@@ -65,7 +65,7 @@ export default function HealthMessagesScreen() {
   const showSearch = conversations.length > 0 || query.length > 0
 
   const [refetching, setRefetching] = useState(false)
-  const loadingTimeout = useRef<ReturnType<typeof setTimeout>>()
+  const loadingTimeout = useRef<ReturnType<typeof setTimeout>>(undefined)
 
   const onRefresh = useCallback(async () => {
     try {

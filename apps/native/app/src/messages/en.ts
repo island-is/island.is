@@ -870,6 +870,9 @@ export const en: TranslatedMessages = {
   'health.messages.searchPlaceholder': 'Search',
   'health.messages.filter.screenTitle': 'Filter messages',
   'health.messages.replyButton': 'Reply to message',
+  'health.messages.videoCall': 'Video call',
+  'health.messages.videoCallCanceled': 'Canceled',
+  'health.messages.startVideoCall': 'Start video call',
   'health.messages.cannotReply':
     'You cannot reply to this message because the sender has closed further replies in this conversation.',
   'health.messages.compose.newTitle': 'New message',

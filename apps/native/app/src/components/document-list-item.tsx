@@ -1,5 +1,5 @@
 import { setStringAsync } from 'expo-clipboard'
-import { useEffect } from 'react'
+import { ReactNode, useEffect } from 'react'
 import { ActivityIndicator, Image, TouchableOpacity, View } from 'react-native'
 import Animated, {
   useAnimatedStyle,
@@ -101,6 +101,12 @@ type DocumentListItemProps = {
   logoUrl?: string | null
   title: string
   body?: string
+  /**
+   * Rich body override. When provided it is rendered instead of the markdown
+   * `body` — used for structured content (e.g. health message text/link/video
+   * segments).
+   */
+  bodyContent?: ReactNode
   date?: string
   caseNumber?: string
   caseNumberLabel?: string
@@ -117,6 +123,7 @@ export const DocumentListItem = ({
   logoUrl,
   title,
   body,
+  bodyContent,
   date,
   caseNumber,
   caseNumberLabel,
@@ -224,7 +231,7 @@ export const DocumentListItem = ({
                 height.value = e.nativeEvent.layout.height
               }}
             >
-              {body ? <Markdown>{body}</Markdown> : null}
+              {bodyContent ?? (body ? <Markdown>{body}</Markdown> : null)}
               {attachments?.map((attachment) => (
                 <AttachmentChip
                   key={attachment.id}

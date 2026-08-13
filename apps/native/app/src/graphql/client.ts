@@ -202,6 +202,16 @@ const authLink = setContext(async (_, { headers }) => {
 export const archivedCache = new Map()
 
 const cache = new InMemoryCache({
+  // Union/interface types need possibleTypes so the cache can match inline
+  // fragments when reading; without it a union member's fields (e.g. the
+  // health message content segments) come back undefined.
+  possibleTypes: {
+    HealthDirectorateHealthConversationMessageContent: [
+      'HealthDirectorateHealthConversationTextContent',
+      'HealthDirectorateHealthConversationSegmentedContent',
+      'HealthDirectorateHealthConversationVideoContent',
+    ],
+  },
   dataIdFromObject: (object) => {
     switch (object.__typename) {
       case 'VehiclesVehicle':

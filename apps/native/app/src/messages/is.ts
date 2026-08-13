@@ -868,6 +868,9 @@ export const is = {
   'health.messages.searchPlaceholder': 'Leita',
   'health.messages.filter.screenTitle': 'Sía skilaboð',
   'health.messages.replyButton': 'Svara skilaboðum',
+  'health.messages.videoCall': 'Myndsímtal',
+  'health.messages.videoCallCanceled': 'Afboðað',
+  'health.messages.startVideoCall': 'Hefja myndsímtal',
   'health.messages.cannotReply':
     'Ekki er hægt að svara þessum skilaboðum því sendandi hefur lokað fyrir frekari svör í þessu samtali.',
   'health.messages.compose.newTitle': 'Ný skilaboð',
