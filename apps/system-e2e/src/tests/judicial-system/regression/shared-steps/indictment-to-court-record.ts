@@ -91,7 +91,7 @@ export const prosecutorCreatesIndictmentCase = async (
     page.getByTestId('continueButton').click(),
   ])
 
-  await page.getByPlaceholder('AB-123').fill('AB-123')
+  await page.getByPlaceholder('AB123').fill('AB123')
 
   await Promise.all([
     verifyRequestCompletion(page, '/api/graphql', 'UpdateIndictmentCount'),
