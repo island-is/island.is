@@ -254,13 +254,21 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     if (selectedPhoto === 'qualityPhoto') {
       // RLS already holds the quality photo, so no biometric IDs are sent —
       // only verify it is actually there, for logging.
+      //
+      // Gate on `imageId`, NOT on the `pohto` binary: legacy RLS records
+      // routinely carry a valid imageId with a null binary, and applicants can
+      // legitimately select those — the picker offers them and falls back to a
+      // placeholder thumbnail (see `hasUsableRlsQualityPhoto`, which is what
+      // the form itself gates on). Checking `pohto` logged an error for every
+      // such applicant even though the submission was entirely correct.
       const qualityPhotoData = application.externalData
         ?.qualityPhotoAndSignature?.data as {
+        imageId?: number | null
         pohto?: string | null
         imageTypeId?: number | null
       } | null
 
-      if (!qualityPhotoData?.pohto) {
+      if (qualityPhotoData?.imageId == null) {
         this.log(
           'error',
           'User selected qualityPhoto but no quality photo exists in externalData',
