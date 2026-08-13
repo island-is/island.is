@@ -17,15 +17,12 @@ import { m } from '../../lib/messages'
 import ExpandableRow from '../tables/ExpandableRow/ExpandableRow'
 import { IdentityInfo } from '../tables/IdentityInfo/IdentityInfo'
 import * as styles from '../tables/Tables.css'
+import { RequestScopesTable } from './RequestScopesTable'
 import {
   useAuthDelegationRequestsOutgoingQuery,
   useCancelAuthDelegationRequestMutation,
   AuthDelegationRequestsOutgoingDocument,
-  AuthDelegationRequestsOutgoingQuery,
 } from './DelegationRequests.generated'
-
-type OutgoingRequest =
-  AuthDelegationRequestsOutgoingQuery['authDelegationRequestsOutgoing'][number]
 
 const statusMessage = {
   [AuthDelegationRequestStatus.pending]: m.requestStatusPending,
@@ -42,57 +39,6 @@ const statusVariant = {
   [AuthDelegationRequestStatus.cancelled]: 'disabled',
   [AuthDelegationRequestStatus.expired]: 'disabled',
 } as const
-
-const RequestScopesTable = ({
-  scopes,
-}: {
-  scopes: OutgoingRequest['scopes']
-}) => {
-  const { formatMessage } = useLocale()
-
-  return (
-    <div className={styles.tableContainer}>
-      <T.Table>
-        <T.Head>
-          <T.Row>
-            {[
-              formatMessage(m.headerDomain),
-              formatMessage(m.headerScopeName),
-              formatMessage(m.headerValidityPeriod),
-            ].map((value, i) => (
-              <T.HeadData key={value + i} style={{ paddingInline: 16 }}>
-                <Text variant="medium" fontWeight="semiBold">
-                  {value}
-                </Text>
-              </T.HeadData>
-            ))}
-          </T.Row>
-        </T.Head>
-        <T.Body>
-          {scopes.map((scope) => (
-            <T.Row key={scope.scopeName}>
-              <T.Data style={{ paddingInline: 16, wordBreak: 'break-word' }}>
-                <Text variant="medium">{scope.domainDisplayName}</Text>
-              </T.Data>
-              <T.Data style={{ paddingInline: 16, wordBreak: 'break-word' }}>
-                <Text variant="medium">
-                  {scope.displayName ?? scope.scopeName}
-                </Text>
-              </T.Data>
-              <T.Data style={{ paddingInline: 16 }}>
-                <Text variant="medium">
-                  {scope.validTo
-                    ? format(new Date(scope.validTo), 'dd.MM.yyyy')
-                    : '-'}
-                </Text>
-              </T.Data>
-            </T.Row>
-          ))}
-        </T.Body>
-      </T.Table>
-    </div>
-  )
-}
 
 export const OutgoingRequests = () => {
   const { formatMessage } = useLocale()

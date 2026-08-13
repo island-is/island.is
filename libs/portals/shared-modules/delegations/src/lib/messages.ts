@@ -780,6 +780,18 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:request-approve',
     defaultMessage: 'Samþykkja',
   },
+  requestReviewButton: {
+    id: 'sp.access-control-delegations:request-review-button',
+    defaultMessage: 'Skoða',
+  },
+  requestReviewTitle: {
+    id: 'sp.access-control-delegations:request-review-title',
+    defaultMessage: 'Beiðni um umboð',
+  },
+  requestExpiresAt: {
+    id: 'sp.access-control-delegations:request-expires-at',
+    defaultMessage: 'Beiðnin fellur úr gildi',
+  },
   requestReject: {
     id: 'sp.access-control-delegations:request-reject',
     defaultMessage: 'Hafna',
