@@ -19,7 +19,6 @@ import {
 } from '@island.is/judicial-system/consts'
 import { applyDativeCaseToCourtName } from '@island.is/judicial-system/formatters'
 import {
-  CaseIndictmentRulingDecision,
   IndictmentCaseNotificationType,
   TrackedNotificationType,
   UserDescriptor,
@@ -105,61 +104,6 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     return this.recordNotification(theCase.id, notificationType, recipients)
   }
 
-  private async sendVerdictInfoNotification(
-    theCase: Case,
-  ): Promise<DeliverResponse> {
-    const institutionId = theCase.prosecutor?.institution?.id
-    const institutionEmail =
-      (institutionId &&
-        this.config.email.policeInstitutionEmails[institutionId]) ??
-      undefined
-
-    const hasRuling =
-      theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
-
-    if (!institutionEmail || !hasRuling) {
-      // institution does not want to receive these emails or the case does not have a ruling
-      return { delivered: true }
-    }
-
-    const formattedSubject = this.formatMessage(
-      strings.indictmentCompletedWithRuling.subject,
-      {
-        isCorrection: Boolean(theCase.rulingModifiedHistory),
-        courtCaseNumber: theCase.courtCaseNumber,
-      },
-    )
-
-    const formattedBody = this.formatMessage(
-      strings.indictmentCompletedWithRuling.body,
-      {
-        isCorrection: Boolean(theCase.rulingModifiedHistory),
-        courtCaseNumber: theCase.courtCaseNumber,
-        policeCaseNumber:
-          theCase.policeCaseNumbers.length > 0
-            ? theCase.policeCaseNumbers[0]
-            : '',
-        courtName: applyDativeCaseToCourtName(theCase.court?.name || ''),
-        serviceRequirement:
-          theCase.defendants?.[0]?.verdicts?.[0]?.serviceRequirement,
-        caseOrigin: theCase.origin,
-      },
-    )
-
-    return this.sendEmails(
-      theCase,
-      TrackedNotificationType.INDICTMENT_VERDICT_INFO,
-      formattedSubject,
-      formattedBody,
-      [
-        {
-          name: theCase.prosecutor?.institution?.name,
-          email: institutionEmail,
-        },
-      ],
-    )
-  }
-
   private async sendCriminalRecordFilesUploadedNotification(
     theCase: Case,
   ): Promise<DeliverResponse> {
@@ -210,7 +154,9 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
       theCase.courtCaseNumber
     } í ${applyDativeCaseToCourtName(
       theCase.court?.name ?? 'héraðsdómi',
-    )}.<br><br>LÖKE númer: ${theCase.policeCaseNumbers.join(', ')}.`
+    )}. Einn af dómfelldu í málinu var sviptur ökuréttinda.<br><br>LÖKE númer: ${theCase.policeCaseNumbers.join(
+      ', ',
+    )}.`
 
     const contactInfo = {
       name: theCase.prosecutorsOffice?.name,
@@ -241,7 +187,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
 
   private sendArraignmentDateEmailNotifications(
     theCase: Case,
-    user: UserDescriptor,
+    user: UserDescriptor | undefined,
     arraignmentDate: DateLog,
   ) {
     this.eventService.postEvent('SCHEDULE_ARRAIGNMENT_DATE', theCase)
@@ -313,7 +259,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
 
   private async sendPostponedCourtDateEmailNotification(
     theCase: Case,
-    user: UserDescriptor,
+    user: UserDescriptor | undefined,
     courtDate: DateLog,
     calendarInvite: Attachment | undefined,
     overviewUrl?: string,
@@ -337,7 +283,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     }).then((recipient) => {
       if (recipient.success) {
         // No need to wait
-        this.uploadEmailToCourt(theCase, user, subject, body, email)
+        this.uploadEmailToCourt(theCase, subject, body, user, email)
       }
 
       return recipient
@@ -347,7 +293,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
   private sendPostponedCourtDateEmailNotifications(
     theCase: Case,
     courtDate: DateLog,
-    user: UserDescriptor,
+    user: UserDescriptor | undefined,
   ): Promise<Recipient>[] {
     this.eventService.postEvent('SCHEDULE_COURT_DATE', theCase)
 
@@ -435,7 +381,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
 
   private sendCourtDateEmailNotification(
     theCase: Case,
-    user: UserDescriptor,
+    user: UserDescriptor | undefined,
   ): Promise<Recipient>[] {
     // check both regular court dates and arraignment date
     const courtDate = DateLog.courtDate(theCase.dateLogs)
@@ -463,13 +409,8 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
 
   private async sendCourtDateNotifications(
     theCase: Case,
-    user?: UserDescriptor,
+    user: UserDescriptor | undefined,
   ): Promise<DeliverResponse> {
-    if (!user) {
-      // nothing happens
-      return { delivered: true }
-    }
-
     const promises: Promise<Recipient>[] = this.sendCourtDateEmailNotification(
       theCase,
       user,
@@ -582,7 +523,8 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
       case IndictmentCaseNotificationType.COURT_DATE:
         return this.sendCourtDateNotifications(theCase, user)
       case IndictmentCaseNotificationType.INDICTMENT_VERDICT_INFO:
-        return this.sendVerdictInfoNotification(theCase)
+        // Notification removed — no-op for any messages still in the queue
+        return Promise.resolve({ delivered: true })
       case IndictmentCaseNotificationType.CRIMINAL_RECORD_FILES_UPLOADED:
         return this.sendCriminalRecordFilesUploadedNotification(theCase)
       case IndictmentCaseNotificationType.INDICTMENT_SPLIT_COMPLETED:

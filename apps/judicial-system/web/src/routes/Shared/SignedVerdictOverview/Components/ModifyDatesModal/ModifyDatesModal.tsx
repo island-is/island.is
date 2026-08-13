@@ -349,15 +349,18 @@ const ModifyDatesModal: FC<Props> = ({
           <Modal
             title={getSuccessTitle(workingCase.type)}
             text={successText}
-            secondaryButton={{
-              text: formatMessage(core.closeModal),
-              onClick: () => {
-                closeModal()
+            buttons={[
+              {
+                text: formatMessage(core.closeModal),
+                onClick: () => {
+                  closeModal()
 
-                setCaseModifiedExplanation(undefined)
-                setSuccessText(undefined)
+                  setCaseModifiedExplanation(undefined)
+                  setSuccessText(undefined)
+                },
+                variant: 'ghost',
               },
-            }}
+            ]}
           />
         </motion.div>
       ) : (
@@ -365,34 +368,37 @@ const ModifyDatesModal: FC<Props> = ({
           <Modal
             title={getTitle(workingCase.type)}
             text={getText(workingCase.type)}
-            primaryButton={{
-              text: 'Staðfesta',
-              onClick: handleDateModification,
-              isDisabled: isCaseModificationInvalid(),
-              isLoading: isSendingNotification || isUpdatingCase,
-            }}
-            secondaryButton={{
-              text: 'Hætta við',
-              onClick: () => {
-                closeModal()
+            buttons={[
+              {
+                text: 'Hætta við',
+                onClick: () => {
+                  closeModal()
 
-                setCaseModifiedExplanation(undefined)
+                  setCaseModifiedExplanation(undefined)
 
-                if (workingCase.validToDate) {
-                  setModifiedValidToDate({
-                    value: new Date(workingCase.validToDate),
-                    isValid: true,
-                  })
-                }
+                  if (workingCase.validToDate) {
+                    setModifiedValidToDate({
+                      value: new Date(workingCase.validToDate),
+                      isValid: true,
+                    })
+                  }
 
-                if (workingCase.isolationToDate) {
-                  setModifiedIsolationToDate({
-                    value: new Date(workingCase.isolationToDate),
-                    isValid: true,
-                  })
-                }
+                  if (workingCase.isolationToDate) {
+                    setModifiedIsolationToDate({
+                      value: new Date(workingCase.isolationToDate),
+                      isValid: true,
+                    })
+                  }
+                },
+                variant: 'ghost',
               },
-            }}
+              {
+                text: 'Staðfesta',
+                onClick: handleDateModification,
+                isDisabled: isCaseModificationInvalid(),
+                isLoading: isSendingNotification || isUpdatingCase,
+              },
+            ]}
           >
             <Box marginBottom={5}>
               <SectionHeading

@@ -1,5 +1,5 @@
 import { Inject, Logger, UseGuards } from '@nestjs/common'
-import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Resolver } from '@nestjs/graphql'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -27,6 +27,7 @@ export class VictimResolver {
     private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly backendService: BackendService,
   ) {}
 
   @Mutation(() => Victim)
@@ -34,15 +35,13 @@ export class VictimResolver {
     @Args('input', { type: () => CreateVictimInput })
     input: CreateVictimInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<Victim> {
     const { caseId, ...createVictim } = input
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_VICTIM,
-      backendService.createVictim(caseId, createVictim),
+      this.backendService.createVictim(caseId, createVictim),
       (victim) => victim.id,
     )
   }
@@ -52,15 +51,13 @@ export class VictimResolver {
     @Args('input', { type: () => UpdateVictimInput })
     input: UpdateVictimInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<Victim> {
     const { caseId, victimId, ...updateVictim } = input
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_VICTIM,
-      backendService.updateVictim(caseId, victimId, updateVictim),
+      this.backendService.updateVictim(caseId, victimId, updateVictim),
       (victim) => victim.id,
     )
   }
@@ -70,15 +67,13 @@ export class VictimResolver {
     @Args('input', { type: () => DeleteVictimInput })
     input: DeleteVictimInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<DeleteVictimResponse> {
     const { caseId, victimId } = input
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.DELETE_VICTIM,
-      backendService.deleteVictim(caseId, victimId),
+      this.backendService.deleteVictim(caseId, victimId),
       victimId,
     )
   }

@@ -61,7 +61,11 @@ import {
 } from '../../formatters'
 import { courtUpload, notifications } from '../../messages'
 import { AwsS3Service } from '../aws-s3'
-import { CourtDocumentFolder, CourtService } from '../court'
+import {
+  CourtDocumentFolder,
+  CourtService,
+  isFileTooLargeForCourt,
+} from '../court'
 import { buildIndictmentConclusionContent } from '../court/court.service'
 import { DefendantService } from '../defendant'
 import { EventService } from '../event'
@@ -120,8 +124,6 @@ const caseEncryptionProperties: (keyof Case)[] = [
   'ruling',
   'conclusion',
   'endOfSessionBookings',
-  'accusedAppealAnnouncement',
-  'prosecutorAppealAnnouncement',
   'caseModifiedExplanation',
   'caseResentExplanation',
   'crimeScenes',
@@ -264,7 +266,8 @@ export class InternalCaseService {
         { error },
       )
 
-      return false
+      // Do not retry an upload the court service will never accept
+      return isFileTooLargeForCourt(error)
     }
   }
 
@@ -313,7 +316,8 @@ export class InternalCaseService {
         { error },
       )
 
-      return false
+      // Do not retry an upload the court service will never accept
+      return isFileTooLargeForCourt(error)
     }
   }
 
@@ -350,7 +354,8 @@ export class InternalCaseService {
           { error },
         )
 
-        return false
+        // Do not retry an upload the court service will never accept
+        return isFileTooLargeForCourt(error)
       })
   }
 
@@ -399,7 +404,8 @@ export class InternalCaseService {
         { error },
       )
 
-      return false
+      // Do not retry an upload the court service will never accept
+      return isFileTooLargeForCourt(error)
     }
   }
 
@@ -927,7 +933,8 @@ export class InternalCaseService {
           { reason },
         )
 
-        return { delivered: false }
+        // Do not retry an upload the court service will never accept
+        return { delivered: isFileTooLargeForCourt(reason) }
       })
   }
 
@@ -1266,7 +1273,8 @@ export class InternalCaseService {
           { reason },
         )
 
-        return { delivered: false }
+        // Do not retry an upload the court service will never accept
+        return { delivered: isFileTooLargeForCourt(reason) }
       })
   }
 
@@ -1528,10 +1536,7 @@ export class InternalCaseService {
       theCase.caseFiles
         ?.filter(
           (caseFile) =>
-            caseFile.category &&
-            [CaseFileCategory.COURT_RECORD, CaseFileCategory.RULING].includes(
-              caseFile.category,
-            ) &&
+            caseFile.category === CaseFileCategory.COURT_RECORD &&
             caseFile.isKeyAccessible,
         )
         .map(async (caseFile) => {
@@ -1541,10 +1546,7 @@ export class InternalCaseService {
           )
 
           return {
-            type:
-              caseFile.category === CaseFileCategory.COURT_RECORD
-                ? PoliceDocumentType.RVTB
-                : PoliceDocumentType.RVDO,
+            type: PoliceDocumentType.RVTB,
             courtDocument: Base64.btoa(file.toString('binary')),
           }
         }) ?? [],
@@ -1569,7 +1571,6 @@ export class InternalCaseService {
         this.deliverCaseToPoliceWithFiles(theCase, user, courtDocuments),
       )
       .catch((reason) => {
-        // Tolerate failure, but log error
         this.logger.error(`Failed to deliver case ${theCase.id} to police`, {
           reason,
         })

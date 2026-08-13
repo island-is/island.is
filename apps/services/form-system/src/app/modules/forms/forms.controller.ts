@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Post,
   Put,
@@ -11,6 +14,7 @@ import {
 import {
   ApiBody,
   ApiCreatedResponse,
+  ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -31,6 +35,7 @@ import {
   User,
 } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
+import { FormDelegationDto } from './models/dto/formDelegation.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.formSystem)
@@ -38,6 +43,21 @@ import { AdminPortalScope } from '@island.is/auth/scopes'
 @Controller({ path: 'forms', version: ['1', VERSION_NEUTRAL] })
 export class FormsController {
   constructor(private readonly formsService: FormsService) {}
+
+  @ApiOperation({ summary: 'Add form delegation' })
+  @ApiNoContentResponse({
+    description: 'Add form delegation',
+  })
+  @ApiBody({ type: FormDelegationDto })
+  @Post('delegation')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async addDelegation(
+    @CurrentUser()
+    user: User,
+    @Body() formDelegationDto: FormDelegationDto,
+  ): Promise<void> {
+    return await this.formsService.addDelegation(user, formDelegationDto)
+  }
 
   @ApiOperation({ summary: 'Create new form' })
   @ApiCreatedResponse({
@@ -51,6 +71,21 @@ export class FormsController {
     @Param('organizationNationalId') organizationNationalId: string,
   ): Promise<FormResponseDto> {
     return await this.formsService.create(user, organizationNationalId)
+  }
+
+  @ApiOperation({ summary: 'Delete form delegation' })
+  @ApiNoContentResponse({
+    description: 'Delete form delegation',
+  })
+  @ApiBody({ type: FormDelegationDto })
+  @Delete('delegation')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteDelegation(
+    @CurrentUser()
+    user: User,
+    @Body() formDelegationDto: FormDelegationDto,
+  ): Promise<void> {
+    return await this.formsService.deleteDelegation(user, formDelegationDto)
   }
 
   @ApiOperation({ summary: 'Get all forms belonging to organization' })

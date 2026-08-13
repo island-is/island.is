@@ -6,7 +6,15 @@ import {
 import { useRouter } from 'expo-router'
 import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { AppState, BackHandler, Image, SafeAreaView, View } from 'react-native'
+import {
+  AppState,
+  BackHandler,
+  Image,
+  InteractionManager,
+  Platform,
+  SafeAreaView,
+  View,
+} from 'react-native'
 import Keychain from 'react-native-keychain'
 import styled from 'styled-components/native'
 
@@ -15,15 +23,26 @@ import { VisualizedPinCode } from '@/components/visualized-pin-code/visualized-p
 import {
   clearPendingDeepLink,
   consumePendingDeepLink,
+  hasPendingDeepLink,
 } from '@/app/+native-intent'
-import { authStore, useAuthStore } from '@/stores/auth-store'
+import {
+  authStore,
+  clearLockScreenSuppression,
+  suppressLockScreen,
+  useAuthStore,
+} from '@/stores/auth-store'
 import {
   preferencesStore,
   usePreferencesStore,
 } from '@/stores/preferences-store'
 import { useUiStore } from '@/stores/ui-store'
 import { dynamicColor, font } from '@/ui'
+import {
+  ensureDeviceUnlockCanary,
+  isDeviceUnlocked,
+} from '@/utils/device-unlock-canary'
 import { testIDs } from '@/utils/test-ids'
+import { useBrowser } from '@/hooks/use-browser'
 
 const MAX_PIN_CHARS = 4
 const MAX_ATTEMPTS = 3
@@ -81,18 +100,39 @@ export default function AppLockScreen() {
   const logout = useAuthStore(({ logout }) => logout)
   const biometricType = useBiometricType()
   const intl = useIntl()
+  const { openBrowser } = useBrowser()
 
   // Clear state before router.back so the layout's re-push subscriber
   // doesn't fire during unmount. Defer the deep-link replay until back has
   // settled — replaying with the lock still on top would push the link
   // above it, then back would pop the link instead of the lock.
   const unlockApp = () => {
+    // The user just authenticated, so the device is unlocked — refresh the canary.
+    void ensureDeviceUnlockCanary()
     authStore.setState({
       lockScreenActivatedAt: undefined,
       biometricAutoPromptedForCurrentLock: false,
     })
-    router.back()
-    setTimeout(consumePendingDeepLink, 0)
+    // Suppress lock re-arming during the dismiss + replay: iOS fires a
+    // transient active→inactive that the auth layout would otherwise treat as
+    // backgrounding and re-push the lock. Re-armed once it settles.
+    suppressLockScreen()
+
+    // With a pending link, clear the lock AND any open modal so the replay
+    // lands on the tabs base — leaving a stale modal on top breaks its own
+    // back/close ("GO_BACK was not handled"). A plain unlock keeps it.
+    if (hasPendingDeepLink() && router.canDismiss()) {
+      router.dismissAll()
+    } else if (router.canGoBack()) {
+      router.back()
+    }
+    // Replay after the dismiss settles — on setTimeout(0) the navigate races
+    // the pop and gets dropped.
+    InteractionManager.runAfterInteractions(() => {
+      void consumePendingDeepLink(openBrowser)
+      // Buffer the clear past the replayed screen's present animation.
+      setTimeout(() => clearLockScreenSuppression(), 600)
+    })
   }
 
   const authenticateWithBiometrics = async () => {
@@ -196,13 +236,29 @@ export default function AppLockScreen() {
   // On mount and each → active: undefined → dismiss, within grace → unlock,
   // else → require auth (biometric prompted once per lock).
   useEffect(() => {
-    const tryUnlockOrPrompt = () => {
+    let unmounted = false
+    const tryUnlockOrPrompt = async () => {
+      // AppState can claim 'active' while the phone is locked (Always-On
+      // Display), but the keychain can't lie: WHEN_UNLOCKED items are only
+      // readable once the device is genuinely unlocked.
+      const deviceUnlocked = await isDeviceUnlocked()
+      // Re-check unmounted: the screen may have been dismissed during the
+      // await, and acting (e.g. router.back below) would hit a stale screen.
+      if (unmounted || !deviceUnlocked) {
+        return
+      }
+      if (AppState.currentState !== 'active') {
+        return
+      }
+
       const { lockScreenActivatedAt, biometricAutoPromptedForCurrentLock } =
         authStore.getState()
       const { appLockTimeout } = preferencesStore.getState()
 
       if (lockScreenActivatedAt === undefined) {
-        router.back()
+        if (router.canGoBack()) {
+          router.back()
+        }
         return
       }
 
@@ -219,18 +275,61 @@ export default function AppLockScreen() {
       void authenticateWithBiometrics()
     }
 
+    // With Always-On Display, iOS fires ghost 'active' events while the
+    // phone is locked and dark. Reacting to them pops/re-pushes the lock
+    // modal off-screen, corrupting the native stack (black screen on
+    // resume). Ghost events flip back to inactive within ~250ms, so require
+    // 500ms of uninterrupted 'active' plus a rendered frame before acting.
+    let pendingTimer: ReturnType<typeof setTimeout> | undefined
+    const confirmVisibleThenRun = () => {
+      // The ghost events are iOS-only; Android evaluates immediately.
+      if (Platform.OS !== 'ios') {
+        void tryUnlockOrPrompt()
+        return
+      }
+      if (pendingTimer) {
+        return
+      }
+      pendingTimer = setTimeout(() => {
+        pendingTimer = undefined
+        if (unmounted || AppState.currentState !== 'active') {
+          return
+        }
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            if (unmounted || AppState.currentState !== 'active') {
+              return
+            }
+            void tryUnlockOrPrompt()
+          })
+        })
+      }, 500)
+    }
+    const cancelPendingConfirm = () => {
+      if (pendingTimer) {
+        clearTimeout(pendingTimer)
+        pendingTimer = undefined
+      }
+    }
+
     if (AppState.currentState === 'active') {
-      tryUnlockOrPrompt()
+      confirmVisibleThenRun()
     }
 
     const subscription = AppState.addEventListener('change', (nextAppState) => {
       if (nextAppState === 'active') {
         isPromptRef.current = false
-        tryUnlockOrPrompt()
+        confirmVisibleThenRun()
+      } else {
+        cancelPendingConfirm()
       }
     })
 
-    return () => subscription.remove()
+    return () => {
+      unmounted = true
+      cancelPendingConfirm()
+      subscription.remove()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

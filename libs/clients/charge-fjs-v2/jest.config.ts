@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-charge-fjs-v2',
   preset: './jest.preset.js',
   rootDir: '../../..',

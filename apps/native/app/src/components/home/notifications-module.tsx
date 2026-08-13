@@ -21,6 +21,7 @@ import {
   useMarkUserNotificationAsReadMutation,
 } from '@/graphql/types/schema'
 import { navigateToUniversalLink } from '@/lib/deep-linking'
+import { useBrowser } from '@/hooks/use-browser'
 
 const Host = styled.View`
   margin-bottom: ${({ theme }) => theme.spacing[2]}px;
@@ -64,6 +65,7 @@ const NotificationsModule = React.memo(
     const theme = useTheme()
     const intl = useIntl()
     const [markUserNotificationAsRead] = useMarkUserNotificationAsReadMutation()
+    const { openBrowser } = useBrowser()
 
     if (error && !data) {
       return null
@@ -83,6 +85,7 @@ const NotificationsModule = React.memo(
       navigateToUniversalLink({
         link: notification.message?.link?.url,
         fromScreen: '/notifications',
+        openBrowser,
       })
     }
 
