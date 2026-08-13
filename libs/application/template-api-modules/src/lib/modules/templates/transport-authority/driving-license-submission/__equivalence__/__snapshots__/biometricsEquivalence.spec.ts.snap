@@ -1,0 +1,3150 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`biometric resolution — request-shape equivalence produces identical RLS request payloads across the full matrix 1`] = `
+Object {
+  "B-full | flag absent | no selection | both thjodskra and rls": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag absent | no selection | no external data": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag absent | no selection | rls legacy record (imageId, null binary)": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag absent | no selection | rls quality photo with binary": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag absent | no selection | thjodskra FACIAL + SIGNATURE": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag absent | no selection | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag absent | qualityPhoto | both thjodskra and rls": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag absent | qualityPhoto | no external data": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag absent | qualityPhoto | rls legacy record (imageId, null binary)": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag absent | qualityPhoto | rls quality photo with binary": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag absent | qualityPhoto | thjodskra FACIAL + SIGNATURE": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag absent | qualityPhoto | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag absent | unmatched facial | both thjodskra and rls": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag absent | unmatched facial | no external data": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag absent | unmatched facial | rls legacy record (imageId, null binary)": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag absent | unmatched facial | rls quality photo with binary": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag absent | unmatched facial | thjodskra FACIAL + SIGNATURE": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag absent | unmatched facial | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag absent | valid facial | both thjodskra and rls": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag absent | valid facial | no external data": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag absent | valid facial | rls legacy record (imageId, null binary)": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag absent | valid facial | rls quality photo with binary": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag absent | valid facial | thjodskra FACIAL + SIGNATURE": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag absent | valid facial | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag false | no selection | both thjodskra and rls": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag false | no selection | no external data": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag false | no selection | rls legacy record (imageId, null binary)": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag false | no selection | rls quality photo with binary": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag false | no selection | thjodskra FACIAL + SIGNATURE": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag false | no selection | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag false | qualityPhoto | both thjodskra and rls": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag false | qualityPhoto | no external data": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag false | qualityPhoto | rls legacy record (imageId, null binary)": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag false | qualityPhoto | rls quality photo with binary": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag false | qualityPhoto | thjodskra FACIAL + SIGNATURE": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag false | qualityPhoto | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag false | unmatched facial | both thjodskra and rls": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag false | unmatched facial | no external data": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag false | unmatched facial | rls legacy record (imageId, null binary)": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag false | unmatched facial | rls quality photo with binary": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag false | unmatched facial | thjodskra FACIAL + SIGNATURE": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag false | unmatched facial | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag false | valid facial | both thjodskra and rls": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag false | valid facial | no external data": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag false | valid facial | rls legacy record (imageId, null binary)": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag false | valid facial | rls quality photo with binary": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag false | valid facial | thjodskra FACIAL + SIGNATURE": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag false | valid facial | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag true | no selection | both thjodskra and rls": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag true | no selection | no external data": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag true | no selection | rls legacy record (imageId, null binary)": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag true | no selection | rls quality photo with binary": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag true | no selection | thjodskra FACIAL + SIGNATURE": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag true | no selection | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": undefined,
+      },
+    ],
+  },
+  "B-full | flag true | qualityPhoto | both thjodskra and rls": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": null,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": null,
+      },
+    ],
+  },
+  "B-full | flag true | qualityPhoto | no external data": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": null,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": null,
+      },
+    ],
+  },
+  "B-full | flag true | qualityPhoto | rls legacy record (imageId, null binary)": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": null,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": null,
+      },
+    ],
+  },
+  "B-full | flag true | qualityPhoto | rls quality photo with binary": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": null,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": null,
+      },
+    ],
+  },
+  "B-full | flag true | qualityPhoto | thjodskra FACIAL + SIGNATURE": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": null,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": null,
+      },
+    ],
+  },
+  "B-full | flag true | qualityPhoto | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": null,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": null,
+      },
+    ],
+  },
+  "B-full | flag true | unmatched facial | both thjodskra and rls": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": null,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": null,
+      },
+    ],
+  },
+  "B-full | flag true | unmatched facial | no external data": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": null,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": null,
+      },
+    ],
+  },
+  "B-full | flag true | unmatched facial | rls legacy record (imageId, null binary)": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": null,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": null,
+      },
+    ],
+  },
+  "B-full | flag true | unmatched facial | rls quality photo with binary": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": null,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": null,
+      },
+    ],
+  },
+  "B-full | flag true | unmatched facial | thjodskra FACIAL + SIGNATURE": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": null,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": null,
+      },
+    ],
+  },
+  "B-full | flag true | unmatched facial | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": null,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": null,
+      },
+    ],
+  },
+  "B-full | flag true | valid facial | both thjodskra and rls": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": "facial-1",
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": "sig-1",
+      },
+    ],
+  },
+  "B-full | flag true | valid facial | no external data": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": null,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": null,
+      },
+    ],
+  },
+  "B-full | flag true | valid facial | rls legacy record (imageId, null binary)": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": null,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": null,
+      },
+    ],
+  },
+  "B-full | flag true | valid facial | rls quality photo with binary": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": null,
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": null,
+      },
+    ],
+  },
+  "B-full | flag true | valid facial | thjodskra FACIAL + SIGNATURE": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": "facial-1",
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": "sig-1",
+      },
+    ],
+  },
+  "B-full | flag true | valid facial | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "newDrivingLicense": Array [
+      Object {
+        "jurisdictionId": 37,
+        "licenseCategory": "B",
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "photoBiometricsId": "facial-1",
+        "sendLicenseInMail": 1,
+        "signatureBiometricsId": null,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag absent | no selection | both thjodskra and rls": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag absent | no selection | no external data": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag absent | no selection | rls legacy record (imageId, null binary)": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag absent | no selection | rls quality photo with binary": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag absent | no selection | thjodskra FACIAL + SIGNATURE": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag absent | no selection | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag absent | qualityPhoto | both thjodskra and rls": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag absent | qualityPhoto | no external data": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag absent | qualityPhoto | rls legacy record (imageId, null binary)": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag absent | qualityPhoto | rls quality photo with binary": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag absent | qualityPhoto | thjodskra FACIAL + SIGNATURE": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag absent | qualityPhoto | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag absent | unmatched facial | both thjodskra and rls": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag absent | unmatched facial | no external data": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag absent | unmatched facial | rls legacy record (imageId, null binary)": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag absent | unmatched facial | rls quality photo with binary": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag absent | unmatched facial | thjodskra FACIAL + SIGNATURE": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag absent | unmatched facial | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag absent | valid facial | both thjodskra and rls": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag absent | valid facial | no external data": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag absent | valid facial | rls legacy record (imageId, null binary)": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag absent | valid facial | rls quality photo with binary": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag absent | valid facial | thjodskra FACIAL + SIGNATURE": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag absent | valid facial | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag false | no selection | both thjodskra and rls": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag false | no selection | no external data": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag false | no selection | rls legacy record (imageId, null binary)": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag false | no selection | rls quality photo with binary": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag false | no selection | thjodskra FACIAL + SIGNATURE": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag false | no selection | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag false | qualityPhoto | both thjodskra and rls": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag false | qualityPhoto | no external data": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag false | qualityPhoto | rls legacy record (imageId, null binary)": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag false | qualityPhoto | rls quality photo with binary": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag false | qualityPhoto | thjodskra FACIAL + SIGNATURE": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag false | qualityPhoto | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag false | unmatched facial | both thjodskra and rls": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag false | unmatched facial | no external data": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag false | unmatched facial | rls legacy record (imageId, null binary)": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag false | unmatched facial | rls quality photo with binary": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag false | unmatched facial | thjodskra FACIAL + SIGNATURE": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag false | unmatched facial | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag false | valid facial | both thjodskra and rls": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag false | valid facial | no external data": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag false | valid facial | rls legacy record (imageId, null binary)": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag false | valid facial | rls quality photo with binary": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag false | valid facial | thjodskra FACIAL + SIGNATURE": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag false | valid facial | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "renewDrivingLicense65AndOver": Array [
+      Object {
+        "jurisdiction": 37,
+        "pickupPlasticAtDistrict": false,
+        "sendPlasticToPerson": true,
+      },
+    ],
+  },
+  "B-full-renewal-65 | flag true | no selection | both thjodskra and rls": Object {
+    "threw": "Application TemplateApi Error",
+  },
+  "B-full-renewal-65 | flag true | no selection | no external data": Object {
+    "threw": "Application TemplateApi Error",
+  },
+  "B-full-renewal-65 | flag true | no selection | rls legacy record (imageId, null binary)": Object {
+    "threw": "Application TemplateApi Error",
+  },
+  "B-full-renewal-65 | flag true | no selection | rls quality photo with binary": Object {
+    "threw": "Application TemplateApi Error",
+  },
+  "B-full-renewal-65 | flag true | no selection | thjodskra FACIAL + SIGNATURE": Object {
+    "threw": "Application TemplateApi Error",
+  },
+  "B-full-renewal-65 | flag true | no selection | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "threw": "Application TemplateApi Error",
+  },
+  "B-full-renewal-65 | flag true | qualityPhoto | both thjodskra and rls": Object {
+    "threw": "Application TemplateApi Error",
+  },
+  "B-full-renewal-65 | flag true | qualityPhoto | no external data": Object {
+    "threw": "Application TemplateApi Error",
+  },
+  "B-full-renewal-65 | flag true | qualityPhoto | rls legacy record (imageId, null binary)": Object {
+    "threw": "Application TemplateApi Error",
+  },
+  "B-full-renewal-65 | flag true | qualityPhoto | rls quality photo with binary": Object {
+    "threw": "Application TemplateApi Error",
+  },
+  "B-full-renewal-65 | flag true | qualityPhoto | thjodskra FACIAL + SIGNATURE": Object {
+    "threw": "Application TemplateApi Error",
+  },
+  "B-full-renewal-65 | flag true | qualityPhoto | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "threw": "Application TemplateApi Error",
+  },
+  "B-full-renewal-65 | flag true | unmatched facial | both thjodskra and rls": Object {
+    "threw": "Application TemplateApi Error",
+  },
+  "B-full-renewal-65 | flag true | unmatched facial | no external data": Object {
+    "threw": "Application TemplateApi Error",
+  },
+  "B-full-renewal-65 | flag true | unmatched facial | rls legacy record (imageId, null binary)": Object {
+    "threw": "Application TemplateApi Error",
+  },
+  "B-full-renewal-65 | flag true | unmatched facial | rls quality photo with binary": Object {
+    "threw": "Application TemplateApi Error",
+  },
+  "B-full-renewal-65 | flag true | unmatched facial | thjodskra FACIAL + SIGNATURE": Object {
+    "threw": "Application TemplateApi Error",
+  },
+  "B-full-renewal-65 | flag true | unmatched facial | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "threw": "Application TemplateApi Error",
+  },
+  "B-full-renewal-65 | flag true | valid facial | both thjodskra and rls": Object {
+    "threw": "Application TemplateApi Error",
+  },
+  "B-full-renewal-65 | flag true | valid facial | no external data": Object {
+    "threw": "Application TemplateApi Error",
+  },
+  "B-full-renewal-65 | flag true | valid facial | rls legacy record (imageId, null binary)": Object {
+    "threw": "Application TemplateApi Error",
+  },
+  "B-full-renewal-65 | flag true | valid facial | rls quality photo with binary": Object {
+    "threw": "Application TemplateApi Error",
+  },
+  "B-full-renewal-65 | flag true | valid facial | thjodskra FACIAL + SIGNATURE": Object {
+    "threw": "Application TemplateApi Error",
+  },
+  "B-full-renewal-65 | flag true | valid facial | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "threw": "Application TemplateApi Error",
+  },
+  "B-temp | flag absent | no selection | both thjodskra and rls": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag absent | no selection | no external data": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag absent | no selection | rls legacy record (imageId, null binary)": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag absent | no selection | rls quality photo with binary": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag absent | no selection | thjodskra FACIAL + SIGNATURE": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag absent | no selection | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag absent | qualityPhoto | both thjodskra and rls": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag absent | qualityPhoto | no external data": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag absent | qualityPhoto | rls legacy record (imageId, null binary)": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag absent | qualityPhoto | rls quality photo with binary": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag absent | qualityPhoto | thjodskra FACIAL + SIGNATURE": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag absent | qualityPhoto | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag absent | unmatched facial | both thjodskra and rls": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag absent | unmatched facial | no external data": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag absent | unmatched facial | rls legacy record (imageId, null binary)": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag absent | unmatched facial | rls quality photo with binary": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag absent | unmatched facial | thjodskra FACIAL + SIGNATURE": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag absent | unmatched facial | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag absent | valid facial | both thjodskra and rls": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag absent | valid facial | no external data": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag absent | valid facial | rls legacy record (imageId, null binary)": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag absent | valid facial | rls quality photo with binary": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag absent | valid facial | thjodskra FACIAL + SIGNATURE": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag absent | valid facial | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag false | no selection | both thjodskra and rls": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag false | no selection | no external data": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag false | no selection | rls legacy record (imageId, null binary)": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag false | no selection | rls quality photo with binary": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag false | no selection | thjodskra FACIAL + SIGNATURE": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag false | no selection | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag false | qualityPhoto | both thjodskra and rls": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag false | qualityPhoto | no external data": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag false | qualityPhoto | rls legacy record (imageId, null binary)": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag false | qualityPhoto | rls quality photo with binary": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag false | qualityPhoto | thjodskra FACIAL + SIGNATURE": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag false | qualityPhoto | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag false | unmatched facial | both thjodskra and rls": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag false | unmatched facial | no external data": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag false | unmatched facial | rls legacy record (imageId, null binary)": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag false | unmatched facial | rls quality photo with binary": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag false | unmatched facial | thjodskra FACIAL + SIGNATURE": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag false | unmatched facial | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag false | valid facial | both thjodskra and rls": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag false | valid facial | no external data": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag false | valid facial | rls legacy record (imageId, null binary)": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag false | valid facial | rls quality photo with binary": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag false | valid facial | thjodskra FACIAL + SIGNATURE": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag false | valid facial | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag true | no selection | both thjodskra and rls": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag true | no selection | no external data": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag true | no selection | rls legacy record (imageId, null binary)": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag true | no selection | rls quality photo with binary": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag true | no selection | thjodskra FACIAL + SIGNATURE": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag true | no selection | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": undefined,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": undefined,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag true | qualityPhoto | both thjodskra and rls": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": null,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": null,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag true | qualityPhoto | no external data": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": null,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": null,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag true | qualityPhoto | rls legacy record (imageId, null binary)": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": null,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": null,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag true | qualityPhoto | rls quality photo with binary": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": null,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": null,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag true | qualityPhoto | thjodskra FACIAL + SIGNATURE": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": null,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": null,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag true | qualityPhoto | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": null,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": null,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag true | unmatched facial | both thjodskra and rls": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": null,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": null,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag true | unmatched facial | no external data": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": null,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": null,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag true | unmatched facial | rls legacy record (imageId, null binary)": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": null,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": null,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag true | unmatched facial | rls quality photo with binary": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": null,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": null,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag true | unmatched facial | thjodskra FACIAL + SIGNATURE": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": null,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": null,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag true | unmatched facial | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": null,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": null,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag true | valid facial | both thjodskra and rls": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": "facial-1",
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": "sig-1",
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag true | valid facial | no external data": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": null,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": null,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag true | valid facial | rls legacy record (imageId, null binary)": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": null,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": null,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag true | valid facial | rls quality photo with binary": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": null,
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": null,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag true | valid facial | thjodskra FACIAL + SIGNATURE": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": "facial-1",
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": "sig-1",
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "B-temp | flag true | valid facial | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "newTemporaryDrivingLicense": Array [
+      Object {
+        "email": "mock@email.com",
+        "jurisdictionId": 37,
+        "needsToPresentHealthCertificate": false,
+        "needsToPresentQualityPhoto": false,
+        "phone": "9999999",
+        "photoBiometricsId": "facial-1",
+        "sendLicenseInMail": true,
+        "signatureBiometricsId": null,
+        "teacherNationalId": undefined,
+      },
+    ],
+  },
+  "BE | flag absent | no selection | both thjodskra and rls": Object {
+    "applyForBELicense": Array [
+      Object {
+        "contentList": undefined,
+        "healthDeclarationModel": Object {
+          "hasDiabetes": false,
+          "hasEpilepsy": false,
+          "hasHeartDisease": false,
+          "hasMentalIllness": false,
+          "hasOtherDiseases": false,
+          "hasReducedPeripheralVision": false,
+          "isAlcoholic": false,
+          "isDisabled": false,
+          "usesContactGlasses": false,
+          "usesMedicalDrugs": false,
+        },
+        "instructorSSN": "",
+        "jurisdiction": 37,
+        "photoBiometricsId": null,
+        "primaryPhoneNumber": "9999999",
+        "sendPlasticToPerson": true,
+        "signatureBiometricsId": null,
+        "studentEmail": "mock@email.com",
+      },
+    ],
+  },
+  "BE | flag absent | no selection | no external data": Object {
+    "applyForBELicense": Array [
+      Object {
+        "contentList": undefined,
+        "healthDeclarationModel": Object {
+          "hasDiabetes": false,
+          "hasEpilepsy": false,
+          "hasHeartDisease": false,
+          "hasMentalIllness": false,
+          "hasOtherDiseases": false,
+          "hasReducedPeripheralVision": false,
+          "isAlcoholic": false,
+          "isDisabled": false,
+          "usesContactGlasses": false,
+          "usesMedicalDrugs": false,
+        },
+        "instructorSSN": "",
+        "jurisdiction": 37,
+        "photoBiometricsId": null,
+        "primaryPhoneNumber": "9999999",
+        "sendPlasticToPerson": true,
+        "signatureBiometricsId": null,
+        "studentEmail": "mock@email.com",
+      },
+    ],
+  },
+  "BE | flag absent | no selection | rls legacy record (imageId, null binary)": Object {
+    "applyForBELicense": Array [
+      Object {
+        "contentList": undefined,
+        "healthDeclarationModel": Object {
+          "hasDiabetes": false,
+          "hasEpilepsy": false,
+          "hasHeartDisease": false,
+          "hasMentalIllness": false,
+          "hasOtherDiseases": false,
+          "hasReducedPeripheralVision": false,
+          "isAlcoholic": false,
+          "isDisabled": false,
+          "usesContactGlasses": false,
+          "usesMedicalDrugs": false,
+        },
+        "instructorSSN": "",
+        "jurisdiction": 37,
+        "photoBiometricsId": null,
+        "primaryPhoneNumber": "9999999",
+        "sendPlasticToPerson": true,
+        "signatureBiometricsId": null,
+        "studentEmail": "mock@email.com",
+      },
+    ],
+  },
+  "BE | flag absent | no selection | rls quality photo with binary": Object {
+    "applyForBELicense": Array [
+      Object {
+        "contentList": undefined,
+        "healthDeclarationModel": Object {
+          "hasDiabetes": false,
+          "hasEpilepsy": false,
+          "hasHeartDisease": false,
+          "hasMentalIllness": false,
+          "hasOtherDiseases": false,
+          "hasReducedPeripheralVision": false,
+          "isAlcoholic": false,
+          "isDisabled": false,
+          "usesContactGlasses": false,
+          "usesMedicalDrugs": false,
+        },
+        "instructorSSN": "",
+        "jurisdiction": 37,
+        "photoBiometricsId": null,
+        "primaryPhoneNumber": "9999999",
+        "sendPlasticToPerson": true,
+        "signatureBiometricsId": null,
+        "studentEmail": "mock@email.com",
+      },
+    ],
+  },
+  "BE | flag absent | no selection | thjodskra FACIAL + SIGNATURE": Object {
+    "applyForBELicense": Array [
+      Object {
+        "contentList": undefined,
+        "healthDeclarationModel": Object {
+          "hasDiabetes": false,
+          "hasEpilepsy": false,
+          "hasHeartDisease": false,
+          "hasMentalIllness": false,
+          "hasOtherDiseases": false,
+          "hasReducedPeripheralVision": false,
+          "isAlcoholic": false,
+          "isDisabled": false,
+          "usesContactGlasses": false,
+          "usesMedicalDrugs": false,
+        },
+        "instructorSSN": "",
+        "jurisdiction": 37,
+        "photoBiometricsId": null,
+        "primaryPhoneNumber": "9999999",
+        "sendPlasticToPerson": true,
+        "signatureBiometricsId": null,
+        "studentEmail": "mock@email.com",
+      },
+    ],
+  },
+  "BE | flag absent | no selection | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "applyForBELicense": Array [
+      Object {
+        "contentList": undefined,
+        "healthDeclarationModel": Object {
+          "hasDiabetes": false,
+          "hasEpilepsy": false,
+          "hasHeartDisease": false,
+          "hasMentalIllness": false,
+          "hasOtherDiseases": false,
+          "hasReducedPeripheralVision": false,
+          "isAlcoholic": false,
+          "isDisabled": false,
+          "usesContactGlasses": false,
+          "usesMedicalDrugs": false,
+        },
+        "instructorSSN": "",
+        "jurisdiction": 37,
+        "photoBiometricsId": null,
+        "primaryPhoneNumber": "9999999",
+        "sendPlasticToPerson": true,
+        "signatureBiometricsId": null,
+        "studentEmail": "mock@email.com",
+      },
+    ],
+  },
+  "BE | flag absent | qualityPhoto | both thjodskra and rls": Object {
+    "applyForBELicense": Array [
+      Object {
+        "contentList": undefined,
+        "healthDeclarationModel": Object {
+          "hasDiabetes": false,
+          "hasEpilepsy": false,
+          "hasHeartDisease": false,
+          "hasMentalIllness": false,
+          "hasOtherDiseases": false,
+          "hasReducedPeripheralVision": false,
+          "isAlcoholic": false,
+          "isDisabled": false,
+          "usesContactGlasses": false,
+          "usesMedicalDrugs": false,
+        },
+        "instructorSSN": "",
+        "jurisdiction": 37,
+        "photoBiometricsId": null,
+        "primaryPhoneNumber": "9999999",
+        "sendPlasticToPerson": true,
+        "signatureBiometricsId": null,
+        "studentEmail": "mock@email.com",
+      },
+    ],
+  },
+  "BE | flag absent | qualityPhoto | no external data": Object {
+    "applyForBELicense": Array [
+      Object {
+        "contentList": undefined,
+        "healthDeclarationModel": Object {
+          "hasDiabetes": false,
+          "hasEpilepsy": false,
+          "hasHeartDisease": false,
+          "hasMentalIllness": false,
+          "hasOtherDiseases": false,
+          "hasReducedPeripheralVision": false,
+          "isAlcoholic": false,
+          "isDisabled": false,
+          "usesContactGlasses": false,
+          "usesMedicalDrugs": false,
+        },
+        "instructorSSN": "",
+        "jurisdiction": 37,
+        "photoBiometricsId": null,
+        "primaryPhoneNumber": "9999999",
+        "sendPlasticToPerson": true,
+        "signatureBiometricsId": null,
+        "studentEmail": "mock@email.com",
+      },
+    ],
+  },
+  "BE | flag absent | qualityPhoto | rls legacy record (imageId, null binary)": Object {
+    "applyForBELicense": Array [
+      Object {
+        "contentList": undefined,
+        "healthDeclarationModel": Object {
+          "hasDiabetes": false,
+          "hasEpilepsy": false,
+          "hasHeartDisease": false,
+          "hasMentalIllness": false,
+          "hasOtherDiseases": false,
+          "hasReducedPeripheralVision": false,
+          "isAlcoholic": false,
+          "isDisabled": false,
+          "usesContactGlasses": false,
+          "usesMedicalDrugs": false,
+        },
+        "instructorSSN": "",
+        "jurisdiction": 37,
+        "photoBiometricsId": null,
+        "primaryPhoneNumber": "9999999",
+        "sendPlasticToPerson": true,
+        "signatureBiometricsId": null,
+        "studentEmail": "mock@email.com",
+      },
+    ],
+  },
+  "BE | flag absent | qualityPhoto | rls quality photo with binary": Object {
+    "applyForBELicense": Array [
+      Object {
+        "contentList": undefined,
+        "healthDeclarationModel": Object {
+          "hasDiabetes": false,
+          "hasEpilepsy": false,
+          "hasHeartDisease": false,
+          "hasMentalIllness": false,
+          "hasOtherDiseases": false,
+          "hasReducedPeripheralVision": false,
+          "isAlcoholic": false,
+          "isDisabled": false,
+          "usesContactGlasses": false,
+          "usesMedicalDrugs": false,
+        },
+        "instructorSSN": "",
+        "jurisdiction": 37,
+        "photoBiometricsId": null,
+        "primaryPhoneNumber": "9999999",
+        "sendPlasticToPerson": true,
+        "signatureBiometricsId": null,
+        "studentEmail": "mock@email.com",
+      },
+    ],
+  },
+  "BE | flag absent | qualityPhoto | thjodskra FACIAL + SIGNATURE": Object {
+    "applyForBELicense": Array [
+      Object {
+        "contentList": undefined,
+        "healthDeclarationModel": Object {
+          "hasDiabetes": false,
+          "hasEpilepsy": false,
+          "hasHeartDisease": false,
+          "hasMentalIllness": false,
+          "hasOtherDiseases": false,
+          "hasReducedPeripheralVision": false,
+          "isAlcoholic": false,
+          "isDisabled": false,
+          "usesContactGlasses": false,
+          "usesMedicalDrugs": false,
+        },
+        "instructorSSN": "",
+        "jurisdiction": 37,
+        "photoBiometricsId": null,
+        "primaryPhoneNumber": "9999999",
+        "sendPlasticToPerson": true,
+        "signatureBiometricsId": null,
+        "studentEmail": "mock@email.com",
+      },
+    ],
+  },
+  "BE | flag absent | qualityPhoto | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "applyForBELicense": Array [
+      Object {
+        "contentList": undefined,
+        "healthDeclarationModel": Object {
+          "hasDiabetes": false,
+          "hasEpilepsy": false,
+          "hasHeartDisease": false,
+          "hasMentalIllness": false,
+          "hasOtherDiseases": false,
+          "hasReducedPeripheralVision": false,
+          "isAlcoholic": false,
+          "isDisabled": false,
+          "usesContactGlasses": false,
+          "usesMedicalDrugs": false,
+        },
+        "instructorSSN": "",
+        "jurisdiction": 37,
+        "photoBiometricsId": null,
+        "primaryPhoneNumber": "9999999",
+        "sendPlasticToPerson": true,
+        "signatureBiometricsId": null,
+        "studentEmail": "mock@email.com",
+      },
+    ],
+  },
+  "BE | flag absent | unmatched facial | both thjodskra and rls": Object {
+    "applyForBELicense": Array [
+      Object {
+        "contentList": undefined,
+        "healthDeclarationModel": Object {
+          "hasDiabetes": false,
+          "hasEpilepsy": false,
+          "hasHeartDisease": false,
+          "hasMentalIllness": false,
+          "hasOtherDiseases": false,
+          "hasReducedPeripheralVision": false,
+          "isAlcoholic": false,
+          "isDisabled": false,
+          "usesContactGlasses": false,
+          "usesMedicalDrugs": false,
+        },
+        "instructorSSN": "",
+        "jurisdiction": 37,
+        "photoBiometricsId": null,
+        "primaryPhoneNumber": "9999999",
+        "sendPlasticToPerson": true,
+        "signatureBiometricsId": null,
+        "studentEmail": "mock@email.com",
+      },
+    ],
+  },
+  "BE | flag absent | unmatched facial | no external data": Object {
+    "applyForBELicense": Array [
+      Object {
+        "contentList": undefined,
+        "healthDeclarationModel": Object {
+          "hasDiabetes": false,
+          "hasEpilepsy": false,
+          "hasHeartDisease": false,
+          "hasMentalIllness": false,
+          "hasOtherDiseases": false,
+          "hasReducedPeripheralVision": false,
+          "isAlcoholic": false,
+          "isDisabled": false,
+          "usesContactGlasses": false,
+          "usesMedicalDrugs": false,
+        },
+        "instructorSSN": "",
+        "jurisdiction": 37,
+        "photoBiometricsId": null,
+        "primaryPhoneNumber": "9999999",
+        "sendPlasticToPerson": true,
+        "signatureBiometricsId": null,
+        "studentEmail": "mock@email.com",
+      },
+    ],
+  },
+  "BE | flag absent | unmatched facial | rls legacy record (imageId, null binary)": Object {
+    "applyForBELicense": Array [
+      Object {
+        "contentList": undefined,
+        "healthDeclarationModel": Object {
+          "hasDiabetes": false,
+          "hasEpilepsy": false,
+          "hasHeartDisease": false,
+          "hasMentalIllness": false,
+          "hasOtherDiseases": false,
+          "hasReducedPeripheralVision": false,
+          "isAlcoholic": false,
+          "isDisabled": false,
+          "usesContactGlasses": false,
+          "usesMedicalDrugs": false,
+        },
+        "instructorSSN": "",
+        "jurisdiction": 37,
+        "photoBiometricsId": null,
+        "primaryPhoneNumber": "9999999",
+        "sendPlasticToPerson": true,
+        "signatureBiometricsId": null,
+        "studentEmail": "mock@email.com",
+      },
+    ],
+  },
+  "BE | flag absent | unmatched facial | rls quality photo with binary": Object {
+    "applyForBELicense": Array [
+      Object {
+        "contentList": undefined,
+        "healthDeclarationModel": Object {
+          "hasDiabetes": false,
+          "hasEpilepsy": false,
+          "hasHeartDisease": false,
+          "hasMentalIllness": false,
+          "hasOtherDiseases": false,
+          "hasReducedPeripheralVision": false,
+          "isAlcoholic": false,
+          "isDisabled": false,
+          "usesContactGlasses": false,
+          "usesMedicalDrugs": false,
+        },
+        "instructorSSN": "",
+        "jurisdiction": 37,
+        "photoBiometricsId": null,
+        "primaryPhoneNumber": "9999999",
+        "sendPlasticToPerson": true,
+        "signatureBiometricsId": null,
+        "studentEmail": "mock@email.com",
+      },
+    ],
+  },
+  "BE | flag absent | unmatched facial | thjodskra FACIAL + SIGNATURE": Object {
+    "applyForBELicense": Array [
+      Object {
+        "contentList": undefined,
+        "healthDeclarationModel": Object {
+          "hasDiabetes": false,
+          "hasEpilepsy": false,
+          "hasHeartDisease": false,
+          "hasMentalIllness": false,
+          "hasOtherDiseases": false,
+          "hasReducedPeripheralVision": false,
+          "isAlcoholic": false,
+          "isDisabled": false,
+          "usesContactGlasses": false,
+          "usesMedicalDrugs": false,
+        },
+        "instructorSSN": "",
+        "jurisdiction": 37,
+        "photoBiometricsId": null,
+        "primaryPhoneNumber": "9999999",
+        "sendPlasticToPerson": true,
+        "signatureBiometricsId": null,
+        "studentEmail": "mock@email.com",
+      },
+    ],
+  },
+  "BE | flag absent | unmatched facial | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "applyForBELicense": Array [
+      Object {
+        "contentList": undefined,
+        "healthDeclarationModel": Object {
+          "hasDiabetes": false,
+          "hasEpilepsy": false,
+          "hasHeartDisease": false,
+          "hasMentalIllness": false,
+          "hasOtherDiseases": false,
+          "hasReducedPeripheralVision": false,
+          "isAlcoholic": false,
+          "isDisabled": false,
+          "usesContactGlasses": false,
+          "usesMedicalDrugs": false,
+        },
+        "instructorSSN": "",
+        "jurisdiction": 37,
+        "photoBiometricsId": null,
+        "primaryPhoneNumber": "9999999",
+        "sendPlasticToPerson": true,
+        "signatureBiometricsId": null,
+        "studentEmail": "mock@email.com",
+      },
+    ],
+  },
+  "BE | flag absent | valid facial | both thjodskra and rls": Object {
+    "applyForBELicense": Array [
+      Object {
+        "contentList": undefined,
+        "healthDeclarationModel": Object {
+          "hasDiabetes": false,
+          "hasEpilepsy": false,
+          "hasHeartDisease": false,
+          "hasMentalIllness": false,
+          "hasOtherDiseases": false,
+          "hasReducedPeripheralVision": false,
+          "isAlcoholic": false,
+          "isDisabled": false,
+          "usesContactGlasses": false,
+          "usesMedicalDrugs": false,
+        },
+        "instructorSSN": "",
+        "jurisdiction": 37,
+        "photoBiometricsId": "facial-1",
+        "primaryPhoneNumber": "9999999",
+        "sendPlasticToPerson": true,
+        "signatureBiometricsId": "sig-1",
+        "studentEmail": "mock@email.com",
+      },
+    ],
+  },
+  "BE | flag absent | valid facial | no external data": Object {
+    "applyForBELicense": Array [
+      Object {
+        "contentList": undefined,
+        "healthDeclarationModel": Object {
+          "hasDiabetes": false,
+          "hasEpilepsy": false,
+          "hasHeartDisease": false,
+          "hasMentalIllness": false,
+          "hasOtherDiseases": false,
+          "hasReducedPeripheralVision": false,
+          "isAlcoholic": false,
+          "isDisabled": false,
+          "usesContactGlasses": false,
+          "usesMedicalDrugs": false,
+        },
+        "instructorSSN": "",
+        "jurisdiction": 37,
+        "photoBiometricsId": null,
+        "primaryPhoneNumber": "9999999",
+        "sendPlasticToPerson": true,
+        "signatureBiometricsId": null,
+        "studentEmail": "mock@email.com",
+      },
+    ],
+  },
+  "BE | flag absent | valid facial | rls legacy record (imageId, null binary)": Object {
+    "applyForBELicense": Array [
+      Object {
+        "contentList": undefined,
+        "healthDeclarationModel": Object {
+          "hasDiabetes": false,
+          "hasEpilepsy": false,
+          "hasHeartDisease": false,
+          "hasMentalIllness": false,
+          "hasOtherDiseases": false,
+          "hasReducedPeripheralVision": false,
+          "isAlcoholic": false,
+          "isDisabled": false,
+          "usesContactGlasses": false,
+          "usesMedicalDrugs": false,
+        },
+        "instructorSSN": "",
+        "jurisdiction": 37,
+        "photoBiometricsId": null,
+        "primaryPhoneNumber": "9999999",
+        "sendPlasticToPerson": true,
+        "signatureBiometricsId": null,
+        "studentEmail": "mock@email.com",
+      },
+    ],
+  },
+  "BE | flag absent | valid facial | rls quality photo with binary": Object {
+    "applyForBELicense": Array [
+      Object {
+        "contentList": undefined,
+        "healthDeclarationModel": Object {
+          "hasDiabetes": false,
+          "hasEpilepsy": false,
+          "hasHeartDisease": false,
+          "hasMentalIllness": false,
+          "hasOtherDiseases": false,
+          "hasReducedPeripheralVision": false,
+          "isAlcoholic": false,
+          "isDisabled": false,
+          "usesContactGlasses": false,
+          "usesMedicalDrugs": false,
+        },
+        "instructorSSN": "",
+        "jurisdiction": 37,
+        "photoBiometricsId": null,
+        "primaryPhoneNumber": "9999999",
+        "sendPlasticToPerson": true,
+        "signatureBiometricsId": null,
+        "studentEmail": "mock@email.com",
+      },
+    ],
+  },
+  "BE | flag absent | valid facial | thjodskra FACIAL + SIGNATURE": Object {
+    "applyForBELicense": Array [
+      Object {
+        "contentList": undefined,
+        "healthDeclarationModel": Object {
+          "hasDiabetes": false,
+          "hasEpilepsy": false,
+          "hasHeartDisease": false,
+          "hasMentalIllness": false,
+          "hasOtherDiseases": false,
+          "hasReducedPeripheralVision": false,
+          "isAlcoholic": false,
+          "isDisabled": false,
+          "usesContactGlasses": false,
+          "usesMedicalDrugs": false,
+        },
+        "instructorSSN": "",
+        "jurisdiction": 37,
+        "photoBiometricsId": "facial-1",
+        "primaryPhoneNumber": "9999999",
+        "sendPlasticToPerson": true,
+        "signatureBiometricsId": "sig-1",
+        "studentEmail": "mock@email.com",
+      },
+    ],
+  },
+  "BE | flag absent | valid facial | thjodskra FACIAL only (no SIGNATURE)": Object {
+    "applyForBELicense": Array [
+      Object {
+        "contentList": undefined,
+        "healthDeclarationModel": Object {
+          "hasDiabetes": false,
+          "hasEpilepsy": false,
+          "hasHeartDisease": false,
+          "hasMentalIllness": false,
+          "hasOtherDiseases": false,
+          "hasReducedPeripheralVision": false,
+          "isAlcoholic": false,
+          "isDisabled": false,
+          "usesContactGlasses": false,
+          "usesMedicalDrugs": false,
+        },
+        "instructorSSN": "",
+        "jurisdiction": 37,
+        "photoBiometricsId": "facial-1",
+        "primaryPhoneNumber": "9999999",
+        "sendPlasticToPerson": true,
+        "signatureBiometricsId": null,
+        "studentEmail": "mock@email.com",
+      },
+    ],
+  },
+}
+`;
