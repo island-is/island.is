@@ -98,9 +98,19 @@ export const removeErrorMessageIfValid = (
   errorMessage?: string,
   errorMessageSetter?: (value: SetStateAction<string>) => void,
 ) => {
-  const isValid = validations.validate([[value, validationsToRun]]).isValid
+  if (errorMessage === '' || !errorMessageSetter) {
+    return
+  }
 
-  if (errorMessage !== '' && errorMessageSetter && isValid) {
+  const validation = validations.validate([[value, validationsToRun]])
+
+  // Clear as soon as the problem the message describes is fixed, even when the
+  // value is not valid yet. `validate` reports the first failing rule, so a
+  // different message means the displayed one is stale: clearing a required
+  // field and starting to retype would otherwise leave "Reitur má ekki vera
+  // tómur" sitting next to a value that is no longer empty. A newly broken rule
+  // is deliberately not surfaced here — errors appear on blur.
+  if (validation.isValid || validation.errorMessage !== errorMessage) {
     errorMessageSetter('')
   }
 }

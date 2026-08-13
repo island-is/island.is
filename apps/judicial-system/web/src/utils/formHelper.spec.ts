@@ -12,9 +12,78 @@ import { faker } from '@island.is/shared/mocking'
 import {
   findFirstInvalidStep,
   hasDateChanged,
+  removeErrorMessageIfValid,
   toggleInArray,
   validateAndSendToServer,
 } from './formHelper'
+
+describe('removeErrorMessageIfValid', () => {
+  const EMPTY = 'Reitur má ekki vera tómur'
+  const FORMAT = `Dæmi: R-1234/${new Date().getFullYear()}`
+
+  it('should clear the error message once the value is valid', () => {
+    const setErrorMessage = jest.fn()
+
+    removeErrorMessageIfValid(
+      ['empty', 'R-case-number'],
+      `R-1/${new Date().getFullYear()}`,
+      EMPTY,
+      setErrorMessage,
+    )
+
+    expect(setErrorMessage).toHaveBeenCalledWith('')
+  })
+
+  // Regression: an empty-field message used to survive until the value passed
+  // every validation, so clearing a required field and starting to retype left
+  // "must not be empty" displayed next to a value that was no longer empty.
+  it('should clear a stale message when the value fails a different validation', () => {
+    const setErrorMessage = jest.fn()
+
+    removeErrorMessageIfValid(
+      ['empty', 'R-case-number'],
+      'R-',
+      EMPTY,
+      setErrorMessage,
+    )
+
+    expect(setErrorMessage).toHaveBeenCalledWith('')
+  })
+
+  it('should keep the message while the value still breaks the same validation', () => {
+    const setErrorMessage = jest.fn()
+
+    removeErrorMessageIfValid(
+      ['empty', 'R-case-number'],
+      '',
+      EMPTY,
+      setErrorMessage,
+    )
+
+    expect(setErrorMessage).not.toHaveBeenCalled()
+  })
+
+  it('should not surface a newly broken validation', () => {
+    const setErrorMessage = jest.fn()
+
+    removeErrorMessageIfValid(
+      ['empty', 'R-case-number'],
+      'R-',
+      FORMAT,
+      setErrorMessage,
+    )
+
+    expect(setErrorMessage).not.toHaveBeenCalledWith(FORMAT)
+  })
+
+  it('should do nothing when no message is displayed', () => {
+    const setErrorMessage = jest.fn()
+
+    removeErrorMessageIfValid(['empty'], '', '', setErrorMessage)
+
+    expect(setErrorMessage).not.toHaveBeenCalled()
+  })
+})
 
 describe('toggleInArray', () => {
   it.each`
