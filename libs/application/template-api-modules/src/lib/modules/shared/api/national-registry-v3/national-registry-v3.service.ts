@@ -17,7 +17,6 @@ import {
   NationalRegistryParent,
   ApplicantChildCustodyInformation,
   NationalRegistrySpouse,
-  NationalRegistryNationalIdType,
 } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import {
@@ -25,6 +24,7 @@ import {
   CitizenshipDto,
   CohabitationDto,
   IndividualDto,
+  NationalIdTypeDto,
 } from '@island.is/clients/national-registry-v3-applications'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages } from '@island.is/application/core'
@@ -873,7 +873,7 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
   async getNationalIdType(
     nationalId: string,
     auth: User,
-  ): Promise<NationalRegistryNationalIdType | null> {
+  ): Promise<NationalIdTypeDto | null> {
     return this.nationalRegistryV3Api.getNationalIdType(nationalId, auth)
   }
 }
