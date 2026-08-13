@@ -71,7 +71,7 @@ export const childMessages = {
     childOver18Error: {
       id: 'cpn.application:child.nationalIdLookup.childOver18Error',
       defaultMessage:
-        'Ekki er hægt að tilkynna barn sem er 18 ára eða eldra til barnaverndar. Vinsamlegast athugaðu kennitöluna.',
+        'Viðkomandi er orðinn 18 ára og telst því ekki lengur barn samkvæmt barnaverndarlögum. Ef þú telur samt sem áður mikilvægt að koma upplýsingum um viðkomandi á framfæri getur þú haft beint samband við félagsþjónustu eða barnavernd í því sveitarfélagi þar sem viðkomandi býr.',
       description:
         'Error shown when the entered national ID belongs to someone 18 or older',
     },
