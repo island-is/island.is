@@ -1,6 +1,7 @@
 import { ApplicationTypes } from '@island.is/application/types'
 import { NationalAgencyForChildrenAndFamiliesClientService } from '@island.is/clients/national-agency-for-children-and-families'
 import { FriggClientService } from '@island.is/clients/mms/frigg'
+import { DataGatewayClientService } from '@island.is/clients/mms/data-gateway'
 import { Injectable } from '@nestjs/common'
 
 import { NotificationsService } from '../../../../notification/notifications.service'
@@ -15,6 +16,7 @@ export class ChildProtectionNotificationService extends BaseTemplateApiService {
     private readonly notificationsService: NotificationsService,
     private readonly nationalAgencyForChildrenAndFamiliesClientService: NationalAgencyForChildrenAndFamiliesClientService,
     private readonly friggClientService: FriggClientService,
+    private readonly dataGatewayClientService: DataGatewayClientService,
   ) {
     super(ApplicationTypes.CHILD_PROTECTION_NOTIFICATION)
   }
@@ -57,10 +59,8 @@ export class ChildProtectionNotificationService extends BaseTemplateApiService {
     )
   }
 
-  async getSchoolTypes({ auth }: TemplateApiModuleActionProps) {
-    return await this.nationalAgencyForChildrenAndFamiliesClientService.getSchoolTypes(
-      auth,
-    )
+  async getSchools() {
+    return await this.dataGatewayClientService.getSchools()
   }
 
   async getLanguageEnvironments({ auth }: TemplateApiModuleActionProps) {

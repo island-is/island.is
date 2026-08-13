@@ -6,6 +6,7 @@ import {
   ProtectiveFactorSectionDto,
 } from '@island.is/clients/national-agency-for-children-and-families'
 import { Option } from '@island.is/clients/mms/frigg'
+import { SchoolDto } from '@island.is/clients/mms/data-gateway'
 import { Category } from './types'
 
 export const getApplicationExternalData = (
@@ -89,8 +90,8 @@ export const getApplicationExternalData = (
       'guardianNotAwareReasons.data',
     ) ?? []
 
-  const schoolTypes =
-    getValueViaPath<DropDownDto[]>(externalData, 'schoolTypes.data') ?? []
+  const schools =
+    getValueViaPath<SchoolDto[]>(externalData, 'schools.data') ?? []
 
   return {
     applicantName,
@@ -110,6 +111,6 @@ export const getApplicationExternalData = (
     disabilityStatusOptions,
     childUnknownNationalIdStates,
     guardianNotAwareReasons,
-    schoolTypes,
+    schools,
   }
 }

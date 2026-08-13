@@ -892,6 +892,9 @@
         "libs/clients/middlewares/src/index.ts"
       ],
       "@island.is/clients/mms": ["libs/clients/mms/general/src/index.ts"],
+      "@island.is/clients/mms/data-gateway": [
+        "libs/clients/mms/data-gateway/src/index.ts"
+      ],
       "@island.is/clients/mms/frigg": ["libs/clients/mms/frigg/src/index.ts"],
       "@island.is/clients/mms/grade": ["libs/clients/mms/grade/src/index.ts"],
       "@island.is/clients/mms/primary-school": [

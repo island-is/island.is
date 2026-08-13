@@ -1,0 +1,37 @@
+{
+  "name": "clients-mms-data-gateway",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/mms/data-gateway/src",
+  "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/mms/data-gateway"],
+      "options": {
+        "jestConfig": "libs/clients/mms/data-gateway/jest.config.ts"
+      }
+    },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl https://api.gagnamidlunargatt.staging.devmms.is/swagger/v1/swagger.json -H 'Accept: application/json' -H 'User-Agent: Mozilla/5.0' > src/clientConfig.json",
+          "prettier --write src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/mms/data-gateway"
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/mms/data-gateway/gen/fetch -i libs/clients/mms/data-gateway/src/clientConfig.json"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
+    }
+  }
+}

@@ -26,7 +26,7 @@ export enum ApiModuleActions {
   getDisabilityStatuses = 'getDisabilityStatuses',
   getChildUnknownNationalIdStates = 'getChildUnknownNationalIdStates',
   getGuardianNotAwareReasons = 'getGuardianNotAwareReasons',
-  getSchoolTypes = 'getSchoolTypes',
+  getSchools = 'getSchools',
   createNotification = 'createNotification',
   completeNotification = 'completeNotification',
 }

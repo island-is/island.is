@@ -35,10 +35,10 @@ export const educationSubSection = buildSubSection({
           placeholder: memmMessages.education.typePlaceholder,
           doesNotRequireAnswer: true,
           options: ({ externalData }) => {
-            const { schoolTypes } = getApplicationExternalData(externalData)
-            return schoolTypes.map((r) => ({
-              value: r.value ?? '',
-              label: r.label ?? '',
+            const { schools } = getApplicationExternalData(externalData)
+            return schools.map((s) => ({
+              value: s.id ?? '',
+              label: s.name ?? '',
             }))
           },
         }),

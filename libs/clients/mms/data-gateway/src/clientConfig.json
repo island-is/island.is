@@ -1,0 +1,2509 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "DataGatewayBackend",
+    "description": "DataGatewayBackend",
+    "version": "1.0"
+  },
+  "paths": {
+    "/v1/applications": {
+      "get": {
+        "tags": ["Applications"],
+        "summary": "Get all applications for the authenticated organization.",
+        "parameters": [
+          {
+            "name": "Type",
+            "in": "query",
+            "description": "Gets or sets the application type filter (Transfer, Enrollment, Continuation).",
+            "schema": {
+              "$ref": "#/components/schemas/ApplicationType"
+            }
+          },
+          {
+            "name": "Since",
+            "in": "query",
+            "description": "Gets or sets the date filter to retrieve applications updated since this date (UTC).",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Current page number (1-based).",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Number of items per page.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 25
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationDtoPaginationResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/applications/{applicationId}/pdf": {
+      "get": {
+        "tags": ["Applications"],
+        "summary": "Get a PDF for a specific application.",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "description": "The unique identifier of the application.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/applications/.nationalid/pdf": {
+      "get": {
+        "tags": ["Applications"],
+        "summary": "Get a PDF for a student's application using their national Id.\nRetrieves the document from external storage after validating the\ncalling organization has access to the student's application.",
+        "parameters": [
+          {
+            "name": "X-Param-NationalId",
+            "in": "header",
+            "description": "The student's national Id (via X-Param-NationalId header).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/registrations": {
+      "get": {
+        "tags": ["Registrations"],
+        "summary": "Gets registrations filtered by status for the authenticated user's organizations",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Registration status filter (Active, Pending, Expired, or All)",
+            "schema": {
+              "$ref": "#/components/schemas/RegistrationStatus"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Current page number (1-based).",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Number of items per page.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 25
+            }
+          },
+          {
+            "name": "asOf",
+            "in": "query",
+            "description": "Optional point-in-time reference date. When provided, status filters use this date instead of now,\n            and status=All applies a point-in-time window filter. When omitted, the current UTC time is used.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegistrationDtoPaginationResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/registrations/.nationalid": {
+      "get": {
+        "tags": ["Registrations"],
+        "summary": "Gets active registrations for a student by national Id",
+        "parameters": [
+          {
+            "name": "X-Param-NationalId",
+            "in": "header",
+            "description": "National Id of the student (validated by middleware)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RegistrationDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/registrations/search": {
+      "post": {
+        "tags": ["Registrations"],
+        "summary": "Searches for active registration status of students by national Ids.\nReturns whether each national Id has an active student affiliation in any school.\nRequires both @gagnagatt/read (class-level) and @gagnagatt/registrations/search scopes.",
+        "description": "This endpoint does not enforce organization-based access control (no org_ids filtering).\nThe calling service (Tryggingastofnun / National Insurance Company) has statutory authority\nunder Icelandic law to query the registration status of any national Id for the purpose of\ndetermining compensation eligibility. Access is controlled exclusively via the\n@gagnagatt/registrations/search OAuth2 scope.",
+        "requestBody": {
+          "description": "Request containing list of national Ids to check (max 5000)",
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegistrationSearchRequest"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegistrationSearchRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegistrationSearchRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegistrationSearchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RegistrationSearchResultItem"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/schools": {
+      "get": {
+        "tags": ["Schools"],
+        "summary": "Get all schools with nested child organizations.",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Current page number (1-based).",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Number of items per page.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 25
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SchoolDtoPaginationResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/staff": {
+      "get": {
+        "tags": ["Staff"],
+        "summary": "Gets all staff members affiliated with the caller's organizations.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TeacherDetailsDto"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/staff/{id}": {
+      "get": {
+        "tags": ["Staff"],
+        "summary": "Gets a single staff member by Id, scoped to the caller's organizations.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The unique identifier of the staff member.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeacherDetailsDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/students": {
+      "get": {
+        "tags": ["Students"],
+        "summary": "Gets students by organization IDs",
+        "parameters": [
+          {
+            "name": "orgIds",
+            "in": "query",
+            "description": "Optional list of organization IDs to filter by",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Current page number (1-based).",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Number of items per page.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 25
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseStudentDtoPaginationResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/students/.nationalid": {
+      "get": {
+        "tags": ["Students"],
+        "summary": "Gets a student by national ID",
+        "parameters": [
+          {
+            "name": "X-Param-NationalId",
+            "in": "header",
+            "description": "National ID of the student (validated by middleware)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseStudentDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/students/{studentId}/agents": {
+      "get": {
+        "tags": ["Students"],
+        "summary": "Gets agents (guardians) for a specific student",
+        "parameters": [
+          {
+            "name": "studentId",
+            "in": "path",
+            "description": "The unique identifier of the student",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AgentDto"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/students/{studentId}/contacts": {
+      "get": {
+        "tags": ["Students"],
+        "summary": "Gets contacts (emergency contacts) for a specific student",
+        "parameters": [
+          {
+            "name": "studentId",
+            "in": "path",
+            "description": "The unique identifier of the student",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ContactDto"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/students/{studentId}/groups": {
+      "get": {
+        "tags": ["Students"],
+        "summary": "Gets groups for a specific student",
+        "parameters": [
+          {
+            "name": "studentId",
+            "in": "path",
+            "description": "The unique identifier of the student",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StudentBatchGroupDto"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/students/{studentId}/address": {
+      "get": {
+        "tags": ["Students"],
+        "summary": "Gets the address for a specific student",
+        "parameters": [
+          {
+            "name": "studentId",
+            "in": "path",
+            "description": "The unique identifier of the student",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddressDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/students/{studentId}/languageprofile": {
+      "get": {
+        "tags": ["Students"],
+        "summary": "Gets the language profile for a specific student",
+        "parameters": [
+          {
+            "name": "studentId",
+            "in": "path",
+            "description": "The unique identifier of the student",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LanguageProfileDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/students/{studentId}/health": {
+      "get": {
+        "tags": ["Students"],
+        "summary": "Gets the health profile for a specific student",
+        "parameters": [
+          {
+            "name": "studentId",
+            "in": "path",
+            "description": "The unique identifier of the student",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthProfileDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/students/{studentId}/case-managers": {
+      "get": {
+        "tags": ["Students"],
+        "summary": "Gets case managers for a specific student",
+        "parameters": [
+          {
+            "name": "studentId",
+            "in": "path",
+            "description": "The unique identifier of the student",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CaseManagerDto"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/students/{studentId}/support-assessments": {
+      "get": {
+        "tags": ["Students"],
+        "summary": "Gets the support and assessments profile for a specific student",
+        "parameters": [
+          {
+            "name": "studentId",
+            "in": "path",
+            "description": "The unique identifier of the student",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupportAssessmentsDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/students/{studentId}/extendedinfo": {
+      "get": {
+        "tags": ["Students"],
+        "summary": "Gets extended information for a specific student",
+        "parameters": [
+          {
+            "name": "studentId",
+            "in": "path",
+            "description": "The unique identifier of the student",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudentExtendedInfoDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/students/{studentId}/siblings": {
+      "get": {
+        "tags": ["Students"],
+        "summary": "Gets siblings (students with shared guardians) for a specific student at the same school",
+        "parameters": [
+          {
+            "name": "studentId",
+            "in": "path",
+            "description": "The unique identifier of the student",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BaseStudentDto"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/students/delegated": {
+      "get": {
+        "tags": ["Students"],
+        "summary": "Gets a batch of students that the calling user has access to based on their explicitly provided national ID and delegation type.",
+        "parameters": [
+          {
+            "name": "userNationalId",
+            "in": "query",
+            "description": "The user national ID.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "actorNationalId",
+            "in": "query",
+            "description": "The actor national ID.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "delegationType",
+            "in": "query",
+            "description": "The delegation type.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IslandIsStudentDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AddressDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Gets or sets the unique identifier of the address.",
+            "format": "uuid"
+          },
+          "address": {
+            "type": "string",
+            "description": "Gets or sets the street address.",
+            "nullable": true
+          },
+          "postalCode": {
+            "type": "string",
+            "description": "Gets or sets the postal code.",
+            "nullable": true
+          },
+          "municipality": {
+            "type": "string",
+            "description": "Gets or sets the municipality name.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents an address data transfer object for roster entries."
+      },
+      "AffiliationRole": {
+        "enum": [
+          "Member",
+          "Guardian",
+          "Parent",
+          "Principal",
+          "Relative",
+          "Student",
+          "Teacher",
+          "Aide",
+          "Counselor",
+          "DistrictAdministrator",
+          "Proctor",
+          "SiteAdministrator",
+          "SystemAdministrator",
+          "Admin"
+        ],
+        "type": "string"
+      },
+      "AgentDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Gets or sets the unique identifier of the agent.",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "Gets or sets the full name of the agent.",
+            "nullable": true
+          },
+          "nationalId": {
+            "type": "string",
+            "description": "Gets or sets the national identification number of the agent.",
+            "nullable": true
+          },
+          "address": {
+            "$ref": "#/components/schemas/AddressDto"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "description": "Gets or sets the primary phone number of the agent.",
+            "nullable": true
+          },
+          "mobileNumber": {
+            "type": "string",
+            "description": "Gets or sets the mobile phone number of the agent.",
+            "nullable": true
+          },
+          "workNumber": {
+            "type": "string",
+            "description": "Gets or sets the work phone number of the agent.",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "description": "Gets or sets the email address of the agent.",
+            "nullable": true
+          },
+          "gender": {
+            "$ref": "#/components/schemas/Gender"
+          },
+          "nationality": {
+            "type": "string",
+            "description": "Gets or sets the agent's nationality.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents an agent's information in the roster system."
+      },
+      "AgentType": {
+        "enum": [
+          "Guardian",
+          "Relative",
+          "Sibling",
+          "Parent",
+          "EmergencyContact"
+        ],
+        "type": "string"
+      },
+      "AllergyDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Gets or sets the unique identifier of the allergy.",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string",
+            "description": "Gets or sets the allergy code.",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Gets or sets the allergy name (human-readable title).",
+            "nullable": true
+          },
+          "group": {
+            "$ref": "#/components/schemas/AllergyGroup"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents an allergy with its code, name, and group classification."
+      },
+      "AllergyGroup": {
+        "enum": ["Food", "Medicine", "Environmental"],
+        "type": "string"
+      },
+      "AnswersSiblingDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Gets or sets the name of the sibling.",
+            "nullable": true
+          },
+          "nationalId": {
+            "type": "string",
+            "description": "Gets or sets the national identification number of the sibling.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for sibling information from application answers."
+      },
+      "ApplicationAgentDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Gets or sets the unique identifier for the agent.",
+            "format": "uuid"
+          },
+          "nationalId": {
+            "type": "string",
+            "description": "Gets or sets the national identification number of the agent.",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Gets or sets the full name of the agent.",
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/AgentType"
+          },
+          "relationTitle": {
+            "type": "string",
+            "description": "Gets or sets the title describing the relation type (e.g., \"Mother\", \"Father\").",
+            "nullable": true
+          },
+          "domicile": {
+            "$ref": "#/components/schemas/AddressDto"
+          },
+          "nationality": {
+            "type": "string",
+            "description": "Gets or sets the nationality of the agent.",
+            "nullable": true
+          },
+          "gender": {
+            "type": "string",
+            "description": "Gets or sets the gender of the agent.",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "description": "Gets or sets the phone number of the agent.",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "description": "Gets or sets the email address of the agent.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for agent (guardian, relative, etc.) information."
+      },
+      "ApplicationAnswersDto": {
+        "type": "object",
+        "properties": {
+          "language": {
+            "$ref": "#/components/schemas/LanguageProfileDto"
+          },
+          "health": {
+            "$ref": "#/components/schemas/HealthProfileDto"
+          },
+          "support": {
+            "$ref": "#/components/schemas/SupportAssessmentsDto"
+          },
+          "caseManagers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CaseManagerDto"
+            },
+            "description": "Gets or sets the list of case managers.",
+            "nullable": true
+          },
+          "wellbeingContacts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CaseManagerDto"
+            },
+            "description": "Gets or sets the list of wellbeing contacts.",
+            "nullable": true
+          },
+          "siblings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AnswersSiblingDto"
+            },
+            "description": "Gets or sets the list of siblings.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for structured application form answers."
+      },
+      "ApplicationDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Gets or sets the unique identifier for the application.",
+            "format": "uuid"
+          },
+          "type": {
+            "$ref": "#/components/schemas/ApplicationType"
+          },
+          "state": {
+            "$ref": "#/components/schemas/ReviewState"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Gets or sets the date and time when the application was created.",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Gets or sets the date and time when the application was last updated.",
+            "format": "date-time"
+          },
+          "applicant": {
+            "$ref": "#/components/schemas/ApplicationUserDto"
+          },
+          "agents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationAgentDto"
+            },
+            "description": "Gets or sets the list of agents (guardians, relatives, etc.) associated with the applicant.",
+            "nullable": true
+          },
+          "approvalRequester": {
+            "$ref": "#/components/schemas/ApplicationUserDto"
+          },
+          "registration": {
+            "$ref": "#/components/schemas/ApplicationRegistrationDto"
+          },
+          "currentReviewer": {
+            "$ref": "#/components/schemas/ApplicationReviewerDto"
+          },
+          "answers": {
+            "$ref": "#/components/schemas/ApplicationAnswersDto"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for application information."
+      },
+      "ApplicationDtoPaginationResult": {
+        "type": "object",
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationDto"
+            },
+            "description": "Expected result collection",
+            "nullable": true
+          },
+          "page": {
+            "type": "integer",
+            "description": "Current page number (1-based).",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "Number of items per page.",
+            "format": "int32"
+          },
+          "numberOfRows": {
+            "type": "integer",
+            "description": "Number of rows in the current result page.",
+            "format": "int32"
+          },
+          "totalRows": {
+            "type": "integer",
+            "description": "Total number of rows across all pages.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Paginated result of type T"
+      },
+      "ApplicationOrganizationDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Gets or sets the unique identifier for the organization.",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "Gets or sets the name of the organization.",
+            "nullable": true
+          },
+          "unitId": {
+            "type": "string",
+            "description": "Gets or sets the unit identifier for the organization.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for organization information in application context."
+      },
+      "ApplicationReasonDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Gets or sets the reason code.",
+            "nullable": true
+          },
+          "titleEn": {
+            "type": "string",
+            "description": "Gets or sets the English title.",
+            "nullable": true
+          },
+          "titleIs": {
+            "type": "string",
+            "description": "Gets or sets the Icelandic title.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for coded bilingual values (reason, language environment, etc.)."
+      },
+      "ApplicationRegistrationDto": {
+        "type": "object",
+        "properties": {
+          "selectedOrganization": {
+            "$ref": "#/components/schemas/ApplicationOrganizationDto"
+          },
+          "defaultOrganization": {
+            "$ref": "#/components/schemas/ApplicationOrganizationDto"
+          },
+          "expectedStartDate": {
+            "type": "string",
+            "description": "Gets or sets the expected start date for the registration.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "requestingMeeting": {
+            "type": "boolean",
+            "description": "Gets or sets whether a meeting is requested.",
+            "nullable": true
+          },
+          "reason": {
+            "$ref": "#/components/schemas/ApplicationReasonDto"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for registration information related to an application."
+      },
+      "ApplicationReviewerDto": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "$ref": "#/components/schemas/ReviewState"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Gets or sets the date and time when the review was last updated.",
+            "format": "date-time"
+          },
+          "organization": {
+            "$ref": "#/components/schemas/ApplicationOrganizationDto"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for current reviewer information."
+      },
+      "ApplicationType": {
+        "enum": ["Transfer", "Enrollment", "Continuation"],
+        "type": "string"
+      },
+      "ApplicationUserDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Gets or sets the unique identifier for the user.",
+            "format": "uuid"
+          },
+          "nationalId": {
+            "type": "string",
+            "description": "Gets or sets the national identification number.",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Gets or sets the full name of the user.",
+            "nullable": true
+          },
+          "domicile": {
+            "$ref": "#/components/schemas/AddressDto"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Gets or sets the phone number of the user.",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "description": "Gets or sets the email address of the user.",
+            "nullable": true
+          },
+          "nationality": {
+            "type": "string",
+            "description": "Gets or sets the nationality of the user.",
+            "nullable": true
+          },
+          "gender": {
+            "type": "string",
+            "description": "Gets or sets the gender of the user.",
+            "nullable": true
+          },
+          "preferredName": {
+            "type": "string",
+            "description": "Gets or sets the preferred name of the user.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for user information in application context."
+      },
+      "BaseStudentDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Gets or sets the unique identifier for the student.",
+            "format": "uuid"
+          },
+          "nationalId": {
+            "type": "string",
+            "description": "Gets or sets the national identifier for the student.",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Gets or sets the full name of the student.",
+            "nullable": true
+          },
+          "schoolName": {
+            "type": "string",
+            "description": "Gets or sets the name of the school the student is enrolled in.",
+            "nullable": true
+          },
+          "schoolId": {
+            "type": "string",
+            "description": "Gets or sets the unit identifier of the school the student is enrolled in.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents the base data transfer object for a student in the roster.\nContains basic identifying and school information."
+      },
+      "BaseStudentDtoPaginationResult": {
+        "type": "object",
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BaseStudentDto"
+            },
+            "description": "Expected result collection",
+            "nullable": true
+          },
+          "page": {
+            "type": "integer",
+            "description": "Current page number (1-based).",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "Number of items per page.",
+            "format": "int32"
+          },
+          "numberOfRows": {
+            "type": "integer",
+            "description": "Number of rows in the current result page.",
+            "format": "int32"
+          },
+          "totalRows": {
+            "type": "integer",
+            "description": "Total number of rows across all pages.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Paginated result of type T"
+      },
+      "CaseManagerDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Gets or sets the unique identifier of the case manager.",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "Gets or sets the case manager's name.",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "description": "Gets or sets the case manager's email.",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "description": "Gets or sets the case manager's phone number.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents a student's case manager (málstjóri)."
+      },
+      "ContactDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Gets or sets the unique identifier of the contact.",
+            "format": "uuid"
+          },
+          "nationalId": {
+            "type": "string",
+            "description": "Gets or sets the national identification number of the contact.",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Gets or sets the full name of the contact.",
+            "nullable": true
+          },
+          "relationTitle": {
+            "type": "string",
+            "description": "Gets or sets the relation type title (e.g., \"Móðir\", \"Faðir\").",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "description": "Gets or sets the phone number of the contact.",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "description": "Gets or sets the email address of the contact.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents a student's emergency contact information."
+      },
+      "Gender": {
+        "enum": ["Male", "Female", "Unspecified", "Other"],
+        "type": "string"
+      },
+      "GroupMembershipRole": {
+        "enum": ["Aide", "ContactTeacher", "Student", "Teacher"],
+        "type": "string"
+      },
+      "GroupType": {
+        "enum": ["Basis", "Teaching", "SpecialEducation", "Other", "Cohort"],
+        "type": "string"
+      },
+      "HealthProfileDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Gets or sets the unique identifier of the health profile.",
+            "format": "uuid"
+          },
+          "epipen": {
+            "type": "boolean",
+            "description": "Gets or sets whether the student requires an epipen."
+          },
+          "medicalDiagnoses": {
+            "type": "boolean",
+            "description": "Gets or sets whether the student has medical diagnoses on file."
+          },
+          "medicationAssistance": {
+            "type": "boolean",
+            "description": "Gets or sets whether the student requires medication assistance."
+          },
+          "allergies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AllergyDto"
+            },
+            "description": "Gets or sets the list of allergies the student has.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents a student's health profile including medical flags and allergies."
+      },
+      "IslandIsStudentDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the student or calling user.",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "Full name of the student or calling user.",
+            "nullable": true
+          },
+          "nationalId": {
+            "type": "string",
+            "description": "National Id (kennitala) of the student or calling user.",
+            "nullable": true
+          },
+          "schoolName": {
+            "type": "string",
+            "description": "School name. null if no current school.",
+            "nullable": true
+          },
+          "contactTeacherName": {
+            "type": "string",
+            "description": "Contact  teacher name for the student. Null if the calling user is the student themselves or if no contact teacher is assigned.",
+            "nullable": true
+          },
+          "homeRoomName": {
+            "type": "string",
+            "description": "The name of the homeroom associated with the student.",
+            "nullable": true
+          },
+          "relationType": {
+            "$ref": "#/components/schemas/AgentType"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents a student returned by the Island.is student list API."
+      },
+      "LanguageProfileDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Gets or sets the unique identifier of the language profile.",
+            "nullable": true
+          },
+          "preferredLanguage": {
+            "type": "string",
+            "description": "Gets or sets the student's preferred language.",
+            "nullable": true
+          },
+          "languages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Gets or sets the list of languages spoken by the student.",
+            "nullable": true
+          },
+          "languageEnvironment": {
+            "type": "string",
+            "description": "Gets or sets the language environment code (human-readable key resolved from the key_options table).",
+            "nullable": true
+          },
+          "interpreter": {
+            "type": "boolean",
+            "description": "Gets or sets whether the student needs an interpreter."
+          },
+          "signLanguage": {
+            "type": "boolean",
+            "description": "Gets or sets whether the student uses sign language."
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents a student's language profile including preferred language, spoken languages,\nand language support needs."
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RegistrationDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Gets or sets the unique identifier for the registration (affiliation ID).",
+            "format": "uuid"
+          },
+          "beginDate": {
+            "type": "string",
+            "description": "Gets or sets the date when the registration begins or began.",
+            "format": "date-time"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "Gets or sets the date when the registration ends or ended, if applicable.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/RegistrationStatus"
+          },
+          "grade": {
+            "type": "string",
+            "description": "Gets or sets the grade level for the registration.",
+            "nullable": true
+          },
+          "organizationId": {
+            "type": "string",
+            "description": "Gets or sets the unique identifier of the organization (school) where the student is registered.",
+            "format": "uuid"
+          },
+          "organizationName": {
+            "type": "string",
+            "description": "Gets or sets the name of the organization (school) where the student is registered.",
+            "nullable": true
+          },
+          "student": {
+            "$ref": "#/components/schemas/BaseStudentDto"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents a student registration at a school."
+      },
+      "RegistrationDtoPaginationResult": {
+        "type": "object",
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RegistrationDto"
+            },
+            "description": "Expected result collection",
+            "nullable": true
+          },
+          "page": {
+            "type": "integer",
+            "description": "Current page number (1-based).",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "Number of items per page.",
+            "format": "int32"
+          },
+          "numberOfRows": {
+            "type": "integer",
+            "description": "Number of rows in the current result page.",
+            "format": "int32"
+          },
+          "totalRows": {
+            "type": "integer",
+            "description": "Total number of rows across all pages.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Paginated result of type T"
+      },
+      "RegistrationSearchRequest": {
+        "type": "object",
+        "properties": {
+          "nationalIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of national Ids to check registration status for. Maximum 5000 items.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Request body for batch registration status search."
+      },
+      "RegistrationSearchResultItem": {
+        "type": "object",
+        "properties": {
+          "nationalId": {
+            "type": "string",
+            "description": "The national Id that was queried.",
+            "nullable": true
+          },
+          "isRegistered": {
+            "type": "boolean",
+            "description": "Whether the national Id has an active student affiliation in any school."
+          }
+        },
+        "additionalProperties": false,
+        "description": "Result item indicating whether a national Id has an active school registration."
+      },
+      "RegistrationStatus": {
+        "enum": ["Active", "Pending", "Expired", "All"],
+        "type": "string",
+        "description": "Represents the status of a student registration."
+      },
+      "ReviewState": {
+        "enum": ["Pending", "Approved", "Rejected", "Withdrawn"],
+        "type": "string"
+      },
+      "SchoolDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Id of school",
+            "format": "uuid"
+          },
+          "nationalId": {
+            "type": "string",
+            "description": "School's national id",
+            "nullable": true
+          },
+          "unitId": {
+            "type": "string",
+            "description": "School unit id (e.g. G-xxxx-A/B/C)",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "School name",
+            "nullable": true
+          },
+          "gradeLevels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of all grades this school teaches",
+            "nullable": true
+          },
+          "addressId": {
+            "type": "string",
+            "description": "Id of the address for this school",
+            "format": "uuid",
+            "nullable": true
+          },
+          "address": {
+            "$ref": "#/components/schemas/AddressDto"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email address of this school",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "School dto"
+      },
+      "SchoolDtoPaginationResult": {
+        "type": "object",
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SchoolDto"
+            },
+            "description": "Expected result collection",
+            "nullable": true
+          },
+          "page": {
+            "type": "integer",
+            "description": "Current page number (1-based).",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "Number of items per page.",
+            "format": "int32"
+          },
+          "numberOfRows": {
+            "type": "integer",
+            "description": "Number of rows in the current result page.",
+            "format": "int32"
+          },
+          "totalRows": {
+            "type": "integer",
+            "description": "Total number of rows across all pages.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Paginated result of type T"
+      },
+      "StaffAffiliationDto": {
+        "type": "object",
+        "properties": {
+          "schoolId": {
+            "type": "string",
+            "description": "The school's organization Id.",
+            "format": "uuid"
+          },
+          "schoolName": {
+            "type": "string",
+            "description": "The school's name.",
+            "nullable": true
+          },
+          "schoolUnitId": {
+            "type": "string",
+            "description": "The school's unit Id (external identifier).",
+            "nullable": true
+          },
+          "role": {
+            "$ref": "#/components/schemas/AffiliationRole"
+          },
+          "jobTitle": {
+            "type": "string",
+            "description": "The job title of the staff member (from classification).",
+            "nullable": true
+          },
+          "istarfCode": {
+            "type": "string",
+            "description": "The ISTARF code for the job classification.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents a staff member's affiliation with a school."
+      },
+      "StaffGroupDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the group.",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the group.",
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/GroupType"
+          },
+          "role": {
+            "$ref": "#/components/schemas/GroupMembershipRole"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents a group that a staff member belongs to."
+      },
+      "StudentBatchGroupDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Gets or sets the unique identifier of the group.",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "Gets or sets the name of the group.",
+            "nullable": true
+          },
+          "organizationId": {
+            "type": "string",
+            "description": "Unique identifier of the organization associated with this group.",
+            "format": "uuid"
+          },
+          "organizationName": {
+            "type": "string",
+            "description": "Name of the organization associated with this group.",
+            "nullable": true
+          },
+          "organizationIdentifier": {
+            "type": "string",
+            "description": "Identifier of the organization associated with this group.",
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/GroupType"
+          },
+          "primaryGradeLevel": {
+            "type": "string",
+            "description": "Gets or sets the primary grade level for this group.\nFor Basis/Other groups this is the classroom-level grade level.\nFor Cohort/Teaching groups this may be null when multiple grade levels are present.",
+            "nullable": true
+          },
+          "schoolYear": {
+            "type": "string",
+            "description": "Gets or sets the school year for this group.",
+            "nullable": true
+          },
+          "gradeLevels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Gets or sets the grade levels associated with this group.\nCohort/Teaching groups can span multiple grade levels.",
+            "nullable": true
+          },
+          "teachers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TeacherDto"
+            },
+            "description": "Gets or sets the teachers associated with this group.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents a group within a student batch item, containing group details and associated teachers."
+      },
+      "StudentExtendedInfoDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Gets or sets the unique identifier of the student.",
+            "format": "uuid"
+          },
+          "preferredName": {
+            "type": "string",
+            "description": "Gets or sets the student's preferred name.",
+            "nullable": true
+          },
+          "middleName": {
+            "type": "string",
+            "description": "Gets or sets the student's middle name.",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "description": "Gets or sets the student's phone number.",
+            "nullable": true
+          },
+          "gender": {
+            "$ref": "#/components/schemas/Gender"
+          },
+          "nationality": {
+            "type": "string",
+            "description": "Gets or sets the student's nationality.",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "description": "Gets or sets the student's email address.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents extended information about a student beyond the basic profile data."
+      },
+      "SupportAssessmentsDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Gets or sets the unique identifier of the support assessments profile.",
+            "nullable": true
+          },
+          "previousSupport": {
+            "type": "boolean",
+            "description": "Gets or sets whether the student has received previous support."
+          },
+          "diagnoses": {
+            "type": "boolean",
+            "description": "Gets or sets whether the student has diagnoses on file."
+          },
+          "integratedServices": {
+            "type": "boolean",
+            "description": "Gets or sets whether the student receives integrated services."
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents a student's support and assessments profile."
+      },
+      "TeacherDetailsDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the teacher.",
+            "format": "uuid"
+          },
+          "nationalId": {
+            "type": "string",
+            "description": "National ID of the teacher.",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Full name of the teacher.",
+            "nullable": true
+          },
+          "affiliations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StaffAffiliationDto"
+            },
+            "description": "List of school affiliations for the teacher.",
+            "nullable": true
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StaffGroupDto"
+            },
+            "description": "List of group memberships for the teacher.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Detailed information about a teacher including affiliations and group memberships."
+      },
+      "TeacherDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "nationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "preferredName": {
+            "type": "string",
+            "nullable": true
+          },
+          "middleName": {
+            "type": "string",
+            "nullable": true
+          },
+          "role": {
+            "$ref": "#/components/schemas/GroupMembershipRole"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "apiKey",
+        "description": "Enter: Bearer {JWT token}.",
+        "name": "Authorization",
+        "in": "header"
+      }
+    }
+  },
+  "security": [{}],
+  "tags": [
+    {
+      "name": "Applications"
+    },
+    {
+      "name": "Registrations"
+    },
+    {
+      "name": "Schools"
+    },
+    {
+      "name": "Staff"
+    },
+    {
+      "name": "Students"
+    }
+  ]
+}
