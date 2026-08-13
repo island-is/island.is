@@ -1966,10 +1966,6 @@ export const messages = defineMessages({
     defaultMessage: 'Senda skilaboð',
     id: 'sp.health:health-message-send',
   },
-  healthConversationCloseReply: {
-    defaultMessage: 'Loka svarglugga',
-    id: 'sp.health:health-message-close-reply',
-  },
   healthConversationSentTitle: {
     defaultMessage: 'Skilaboð móttekin',
     id: 'sp.health:health-message-sent-title',
@@ -2009,6 +2005,15 @@ export const messages = defineMessages({
     defaultMessage:
       'Þessi þjónustuaðili býður ekki upp á skilaboð á Ísland.is.',
     id: 'sp.health:health-messages-messaging-not-allowed-text',
+  },
+  healthConversationReplyClosedText: {
+    defaultMessage:
+      'Ekki er hægt að svara þessum skilaboðum því sendandi hefur lokað fyrir frekari svör.',
+    id: 'sp.health:health-message-reply-closed-text',
+  },
+  healthConversationReplyClosedShortText: {
+    defaultMessage: 'Ekki er hægt að svara þessum skilaboðum',
+    id: 'sp.health:health-message-reply-closed-short-text',
   },
   myAppointments: {
     defaultMessage: 'Mínar tímabókanir',

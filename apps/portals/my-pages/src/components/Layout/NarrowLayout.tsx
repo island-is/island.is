@@ -10,13 +10,22 @@ import {
   Navigation,
   ServicePortalNavigationItem,
 } from '@island.is/portals/my-pages/core'
+import { HealthPaths } from '@island.is/portals/my-pages/health'
 import { ReactNode } from 'react'
-import { Link as ReactLink } from 'react-router-dom'
+import { Link as ReactLink, matchPath } from 'react-router-dom'
 import { useWindowSize } from 'react-use'
 import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBreadcrumbs'
 import Sticky from '../Sticky/Sticky'
 import * as styles from './Layout.css'
 import SidebarLayout from './SidebarLayout'
+
+// Health Conversations takes over the screen on mobile (hidden sub-nav and
+// breadcrumbs, fixed action footer) — mirrors the `isDocuments` pathname
+// special-case in FullWidthLayout.tsx, scoped to just these two routes.
+const MOBILE_TAKEOVER_PATHS = [
+  HealthPaths.HealthConversationsDetail,
+  HealthPaths.HealthConversationsNew,
+]
 
 interface NarrowLayoutProps {
   activeParent?: PortalNavigationItem
@@ -40,6 +49,12 @@ export const NarrowLayout = ({
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
   const { headerVisible, headerHeight } = useHeaderVisibility()
+
+  // The takeover is only worth it at true phone widths — narrower than the
+  // `md` cutoff used for the sidebar/mobile-nav split elsewhere in this file.
+  const isMobileTakeover =
+    width < theme.breakpoints.sm &&
+    !!MOBILE_TAKEOVER_PATHS.find((route) => matchPath(route, pathname))
 
   // headerHeight is the measured height of the fixed header, so the sticky
   // menu clears whatever it contains (e.g. the delegation banner)
@@ -124,38 +139,43 @@ export const NarrowLayout = ({
         component="main"
         style={{ marginTop: height }}
       >
-        <ContentBreadcrumbs />
-        {isMobile && subNavItems && subNavItems.length > 0 && (
-          <Box
-            paddingBottom={3}
-            width="full"
-            className={styles.mobileNav}
-            style={{ top: stickyHeight }}
-          >
-            <Navigation
-              renderLink={(link, item) => {
-                return item?.href ? (
-                  <ReactLink to={item?.href}>{link}</ReactLink>
-                ) : (
-                  link
-                )
-              }}
-              asSpan
-              baseId="service-portal-mobile-navigation"
-              title={
-                activeParent?.name
-                  ? formatMessage(activeParent?.name)
-                  : formatMessage(m.tableOfContents)
-              }
-              items={subNavItems}
-              titleIcon={activeParent?.icon}
-              isMenuDialog={true}
-            />
-          </Box>
-        )}
+        {!isMobileTakeover && <ContentBreadcrumbs />}
+        {!isMobileTakeover &&
+          isMobile &&
+          subNavItems &&
+          subNavItems.length > 0 && (
+            <Box
+              paddingBottom={3}
+              width="full"
+              className={styles.mobileNav}
+              style={{ top: stickyHeight }}
+            >
+              <Navigation
+                renderLink={(link, item) => {
+                  return item?.href ? (
+                    <ReactLink to={item?.href}>{link}</ReactLink>
+                  ) : (
+                    link
+                  )
+                }}
+                asSpan
+                baseId="service-portal-mobile-navigation"
+                title={
+                  activeParent?.name
+                    ? formatMessage(activeParent?.name)
+                    : formatMessage(m.tableOfContents)
+                }
+                items={subNavItems}
+                titleIcon={activeParent?.icon}
+                isMenuDialog={true}
+              />
+            </Box>
+          )}
         <ModuleAlertBannerSection />
         {children}
-        {sidebarFooter && <Hidden above="sm">{sidebarFooter}</Hidden>}
+        {!isMobileTakeover && sidebarFooter && (
+          <Hidden above="sm">{sidebarFooter}</Hidden>
+        )}
       </Box>
     </SidebarLayout>
   )

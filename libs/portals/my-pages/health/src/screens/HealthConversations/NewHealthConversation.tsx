@@ -3,24 +3,25 @@ import {
   Button,
   Checkbox,
   GridColumn,
+  GridContainer,
   GridRow,
+  Icon,
   Input,
   Select,
   Text,
   toast,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  CardLoader,
-  InlineLink,
-  IntroWrapper,
-  m,
-} from '@island.is/portals/my-pages/core'
+import { CardLoader, InlineLink, m } from '@island.is/portals/my-pages/core'
 import ConversationAvailabilityAlert from './components/ConversationAvailabilityAlert'
+import ConversationCancelSubmit from './components/ConversationCancelSubmit'
 import ConversationTermsModal from './components/ConversationTermsModal'
+import MobileActionFooter from './components/MobileActionFooter'
 import { Problem } from '@island.is/react-spa/shared'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useWindowSize } from 'react-use'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { LocaleEnum } from '@island.is/portals/my-pages/graphql'
@@ -35,6 +36,8 @@ const NewHealthConversation = () => {
   useNamespaces('sp.health')
   const { formatMessage, lang } = useLocale()
   const navigate = useNavigate()
+  const { width } = useWindowSize()
+  const isMobileWidth = width < theme.breakpoints.sm
 
   const [selectedTypeCode, setSelectedTypeCode] = useState<string | null>(null)
   const [messageText, setMessageText] = useState('')
@@ -118,14 +121,39 @@ const NewHealthConversation = () => {
     }
   }
 
-  return (
-    <IntroWrapper
-      title={messages.healthConversationsNewTitle}
-      intro={introText}
-      desktopContentSpan="12/12"
+  const backButton = (
+    <Button
+      variant="text"
+      size="default"
+      colorScheme="light"
+      aria-label={formatMessage(m.goBack)}
+      onClick={() => navigate(HealthPaths.HealthConversations)}
     >
-      <GridRow>
+      <Icon icon="arrowBack" type="filled" />
+    </Button>
+  )
+
+  return (
+    <GridContainer>
+      <GridRow marginTop={[1, 1, 2]}>
         <GridColumn span={['12/12', '12/12', '12/12', '12/12', '10/12']}>
+          {/* On mobile the back arrow sits above the title; on desktop it
+              moves inside the message card below (see the other render site) */}
+          {isMobileWidth && (
+            <Box className={styles.backButton} marginBottom={4}>
+              {backButton}
+            </Box>
+          )}
+
+          <Box marginBottom={4}>
+            <Text variant="h2" as="h1">
+              {formatMessage(messages.healthConversationsNewTitle)}
+            </Text>
+            <Text variant="default" paddingTop={1}>
+              {introText}
+            </Text>
+          </Box>
+
           {loading && <CardLoader />}
           {error && <Problem error={error} noBorder={false} />}
           {!loading && !error && !recipient && (
@@ -140,20 +168,15 @@ const NewHealthConversation = () => {
           )}
           {!loading && !error && recipient && (
             <Box className={styles.messageCard} background="white">
-              <Box
-                paddingX={[2, 2, 5]}
-                paddingTop={[2, 2, 3]}
-                className={styles.backButton}
-              >
-                <Button
-                  variant="text"
-                  icon="arrowBack"
-                  size="default"
-                  colorScheme="light"
-                  aria-label={formatMessage(m.goBack)}
-                  onClick={() => navigate(HealthPaths.HealthConversations)}
-                />
-              </Box>
+              {!isMobileWidth && (
+                <Box
+                  paddingX={[2, 2, 5]}
+                  paddingTop={[2, 2, 3]}
+                  className={styles.backButton}
+                >
+                  {backButton}
+                </Box>
+              )}
               <Box paddingX={[2, 2, 5]} paddingTop={1}>
                 <Text variant="h4" fontWeight="semiBold">
                   {formatMessage(messages.healthConversationsCreate)}
@@ -168,7 +191,7 @@ const NewHealthConversation = () => {
               <Box
                 paddingX={[2, 2, 5]}
                 paddingTop={[3, 3, 4]}
-                paddingBottom={[2, 2, 5]}
+                paddingBottom={[10, 10, 5]}
               >
                 <GridRow marginBottom={3}>
                   <GridColumn span={['12/12', '8/12']}>
@@ -227,23 +250,20 @@ const NewHealthConversation = () => {
                     disabled={isFormLocked}
                   />
                 </Box>
-                <Box display="flex" justifyContent="spaceBetween" columnGap={2}>
-                  <Button
-                    variant="ghost"
-                    size="medium"
-                    onClick={() => navigate(HealthPaths.HealthConversations)}
-                  >
-                    {formatMessage(messages.cancel)}
-                  </Button>
-                  <Button
-                    onClick={handleSubmit}
-                    size="medium"
+
+                <MobileActionFooter>
+                  <ConversationCancelSubmit
+                    cancelLabel={formatMessage(messages.cancel)}
+                    submitLabel={formatMessage(
+                      messages.healthConversationSend,
+                    )}
+                    onCancel={() => navigate(HealthPaths.HealthConversations)}
+                    onSubmit={handleSubmit}
+                    submitDisabled={!canSubmit}
                     loading={sending}
-                    disabled={!canSubmit}
-                  >
-                    {formatMessage(messages.healthConversationSend)}
-                  </Button>
-                </Box>
+                    fluid={isMobileWidth}
+                  />
+                </MobileActionFooter>
               </Box>
             </Box>
           )}
@@ -253,7 +273,7 @@ const NewHealthConversation = () => {
           />
         </GridColumn>
       </GridRow>
-    </IntroWrapper>
+    </GridContainer>
   )
 }
 

@@ -6,10 +6,12 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  Icon,
   Input,
   Text,
   toast,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
@@ -19,11 +21,14 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { MessageActions } from './components/MessageActions'
 import ConversationAvatar from './components/ConversationAvatar'
+import ConversationCancelSubmit from './components/ConversationCancelSubmit'
 import ConversationMessageBody from './components/ConversationMessageBody'
+import MobileActionFooter from './components/MobileActionFooter'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useWindowSize } from 'react-use'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import * as styles from './HealthConversations.css'
@@ -50,6 +55,8 @@ const HealthConversationDetail = () => {
   const location = useLocation()
   const justCreated =
     (location.state as { justCreated?: boolean } | null)?.justCreated ?? false
+  const { width } = useWindowSize()
+  const isMobileWidth = width < theme.breakpoints.sm
 
   const [replyOpen, setReplyOpen] = useState(false)
   const [replyText, setReplyText] = useState('')
@@ -164,6 +171,9 @@ const HealthConversationDetail = () => {
     }
   }
 
+  const lastMessageIsFromPatient =
+    item.messages[item.messages.length - 1]?.direction === 'PATIENT'
+
   return (
     <GridContainer>
       <GridRow marginTop={[1, 1, 2]}>
@@ -172,7 +182,7 @@ const HealthConversationDetail = () => {
             className={styles.messageCard}
             background="white"
             paddingTop={[2, 2, 3]}
-            paddingBottom={[2, 2, 5]}
+            paddingBottom={[10, 10, 5]}
             paddingX={[2, 2, 5]}
           >
             <Box
@@ -184,36 +194,45 @@ const HealthConversationDetail = () => {
               <Box className={styles.backButton}>
                 <Button
                   variant="text"
-                  icon="arrowBack"
                   size="default"
                   aria-label={formatMessage(m.goBack)}
-                  onClick={() => navigate(HealthPaths.HealthConversations)}
+                  onClick={() => {
+                    if (replyOpen) {
+                      setReplyOpen(false)
+                    } else {
+                      navigate(HealthPaths.HealthConversations)
+                    }
+                  }}
                   colorScheme="light"
-                />
+                >
+                  <Icon icon="arrowBack" type="filled" />
+                </Button>
               </Box>
-              <MessageActions
-                bookmarked={item.isStarred}
-                archived={item.isArchived}
-                onReply={
-                  item.patientCanReply !== false
-                    ? () => setReplyOpen(true)
-                    : undefined
-                }
-                onFav={() => {
-                  if (item.isStarred) {
-                    unstarMessage({ variables: { input: { id } } })
-                  } else {
-                    starMessage({ variables: { input: { id } } })
+              {!replyOpen && (
+                <MessageActions
+                  bookmarked={item.isStarred}
+                  archived={item.isArchived}
+                  onReply={
+                    item.patientCanReply !== false
+                      ? () => setReplyOpen(true)
+                      : undefined
                   }
-                }}
-                onStash={() => {
-                  if (item.isArchived) {
-                    unarchiveMessage({ variables: { input: { id } } })
-                  } else {
-                    archiveMessage({ variables: { input: { id } } })
-                  }
-                }}
-              />
+                  onFav={() => {
+                    if (item.isStarred) {
+                      unstarMessage({ variables: { input: { id } } })
+                    } else {
+                      starMessage({ variables: { input: { id } } })
+                    }
+                  }}
+                  onStash={() => {
+                    if (item.isArchived) {
+                      unarchiveMessage({ variables: { input: { id } } })
+                    } else {
+                      archiveMessage({ variables: { input: { id } } })
+                    }
+                  }}
+                />
+              )}
             </Box>
 
             <Text variant="h4" as="h1" marginBottom={2}>
@@ -297,21 +316,6 @@ const HealthConversationDetail = () => {
               )
             })}
 
-            {/* Reply button — below thread, hidden when form is open */}
-            {!replyOpen && item.patientCanReply !== false && (
-              <Box marginTop={6}>
-                <Button
-                  variant="ghost"
-                  size="small"
-                  preTextIcon="document"
-                  preTextIconType="outline"
-                  onClick={() => setReplyOpen(true)}
-                >
-                  {formatMessage(m.replyDocument)}
-                </Button>
-              </Box>
-            )}
-
             {/* Sent confirmation banner */}
             {justCreated && !replyOpen && (
               <Box marginTop={4}>
@@ -333,40 +337,28 @@ const HealthConversationDetail = () => {
                 <Box
                   display="flex"
                   flexDirection="row"
-                  justifyContent="spaceBetween"
                   paddingTop={3}
                   marginBottom={3}
                 >
-                  <Box display="flex" flexDirection="row">
-                    <ConversationAvatar
-                      variant="user"
-                      name={userInfo.profile.name ?? ''}
-                    />
-                    <Box
-                      display="flex"
-                      flexDirection="column"
-                      marginLeft={2}
-                      justifyContent="center"
-                    >
-                      <Text variant="eyebrow" fontWeight="medium" truncate>
-                        {userInfo.profile.name ?? ''}
-                      </Text>
-                      <Text variant="medium">
-                        {formatMessage(messages.healthConversationTo, {
-                          arg: item.organization?.name ?? '',
-                        })}
-                      </Text>
-                    </Box>
-                  </Box>
-                  <Button
-                    circle
-                    icon="close"
-                    colorScheme="light"
-                    aria-label={formatMessage(
-                      messages.healthConversationCloseReply,
-                    )}
-                    onClick={() => setReplyOpen(false)}
+                  <ConversationAvatar
+                    variant="user"
+                    name={userInfo.profile.name ?? ''}
                   />
+                  <Box
+                    display="flex"
+                    flexDirection="column"
+                    marginLeft={2}
+                    justifyContent="center"
+                  >
+                    <Text variant="eyebrow" fontWeight="medium" truncate>
+                      {userInfo.profile.name ?? ''}
+                    </Text>
+                    <Text variant="medium">
+                      {formatMessage(messages.healthConversationTo, {
+                        arg: item.organization?.name ?? '',
+                      })}
+                    </Text>
+                  </Box>
                 </Box>
 
                 <Box marginBottom={3}>
@@ -381,19 +373,42 @@ const HealthConversationDetail = () => {
                     ref={replyInputRef}
                   />
                 </Box>
-
-                <Box display="flex" justifyContent="flexEnd">
-                  <Button
-                    size="small"
-                    onClick={handleReply}
-                    loading={replySending}
-                    disabled={!replyText.trim()}
-                  >
-                    {formatMessage(messages.healthConversationSend)}
-                  </Button>
-                </Box>
               </div>
             )}
+
+            <MobileActionFooter>
+              {replyOpen ? (
+                <ConversationCancelSubmit
+                  cancelLabel={formatMessage(messages.cancel)}
+                  submitLabel={formatMessage(messages.healthConversationSend)}
+                  onCancel={() => setReplyOpen(false)}
+                  onSubmit={handleReply}
+                  submitDisabled={!replyText.trim()}
+                  loading={replySending}
+                  fluid={isMobileWidth}
+                />
+              ) : item.patientCanReply === false ? (
+                <AlertMessage
+                  type="info"
+                  message={formatMessage(
+                    lastMessageIsFromPatient
+                      ? messages.healthConversationReplyClosedShortText
+                      : messages.healthConversationReplyClosedText,
+                  )}
+                />
+              ) : (
+                <Button
+                  variant="ghost"
+                  size="medium"
+                  preTextIcon="undo"
+                  preTextIconType="outline"
+                  onClick={() => setReplyOpen(true)}
+                  fluid={isMobileWidth}
+                >
+                  {formatMessage(m.replyDocument)}
+                </Button>
+              )}
+            </MobileActionFooter>
           </Box>
         </GridColumn>
       </GridRow>
