@@ -3,7 +3,11 @@ import PDFDocument from 'pdfkit'
 
 import { FormatMessage } from '@island.is/cms-translations'
 
-import { formatDate, lowercase } from '@island.is/judicial-system/formatters'
+import {
+  containsHtml,
+  formatDate,
+  lowercase,
+} from '@island.is/judicial-system/formatters'
 import { sortIndictmentCounts } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
@@ -16,6 +20,8 @@ import {
   addNormalPlusJustifiedText,
   addNormalPlusText,
   addNormalText,
+  addRichText,
+  basePlusFontSize,
   Confirmation,
   drawConfirmation,
   formatActor,
@@ -112,9 +118,16 @@ export const createIndictment = async (
 
       if (hasManyCounts) {
         addNormalPlusCenteredText(doc, `${roman(index + 1)}.`)
-        addNormalPlusJustifiedText(doc, count.incidentDescription ?? '')
+      }
+
+      const incidentDescription = count.incidentDescription ?? ''
+
+      // Newer indictments store the incident description as rich text from
+      // the TinyMCE editor, while older ones store plain text.
+      if (containsHtml(incidentDescription)) {
+        addRichText(doc, incidentDescription, 0, basePlusFontSize)
       } else {
-        addNormalPlusJustifiedText(doc, count.incidentDescription ?? '')
+        addNormalPlusJustifiedText(doc, incidentDescription)
       }
       addEmptyLines(doc)
       addNormalPlusJustifiedText(doc, count.legalArguments ?? '')

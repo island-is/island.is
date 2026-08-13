@@ -19,47 +19,56 @@ type Props = {
 
 export const PersonalCriteriaList = ({ application }: Props) => {
   const { formatMessage } = useLocale()
-  const { control, getValues } = useFormContext()
-  const { persist, retry, saveError } = useCascadeDelete(application)
+  const { control, getValues, setValue } = useFormContext()
+  const { persist, saveError } = useCascadeDelete<Employee>(
+    application,
+    'employees',
+  )
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'criteria.personalFactors',
   })
 
-  // Deleting a criterion has to cascade into two other answer keys, neither of
-  // which this screen's own "Continue" saves — so both go out here in a single
-  // mutation rather than sitting in local form state until some later,
-  // unrelated screen is submitted:
-  //
-  // - `subCriteria.personalFactors` is position-indexed parallel to
-  //   `criteria.personalFactors` (no shared id), so the matching slot must be
-  //   spliced out or a later-added criterion inherits the deleted one's
-  //   leftover sub-criteria at that index.
-  // - `employees` keep `personalStepAssignments` matched by criterion title,
-  //   which would otherwise be stale and unreachable.
-  //
-  // Written through the whole `subCriteria` object, not the nested path:
-  // updateApplication merges answers only one level deep.
-  const cascadeDelete = (index: number, deletedTitle: string) => {
-    const subCriteria = getValues('subCriteria') as
-      | { jobFactors?: SubCriterion[][]; personalFactors?: SubCriterion[][] }
-      | undefined
-    const personalFactors = [...(subCriteria?.personalFactors ?? [])]
-    personalFactors.splice(index, 1)
-
-    const employees = (getValues('employees') as Employee[] | undefined) ?? []
-
-    return persist(deletedTitle, {
-      subCriteria: { ...subCriteria, personalFactors },
-      employees: employees.map((emp) => ({
-        ...emp,
-        personalStepAssignments: (emp.personalStepAssignments ?? []).filter(
-          (a) => a.criterionTitle !== deletedTitle,
-        ),
-      })),
-    })
+  // subCriteria.personalFactors is kept parallel/position-indexed with
+  // criteria.personalFactors (no shared id), so deleting a criterion must also
+  // drop its sub-criteria slot or a later-added criterion inherits the
+  // deleted one's leftover sub-criteria data at that index. Spliced directly
+  // via getValues/setValue rather than useFieldArray — each element here is
+  // itself an array (SubCriterion[][]), not an object, which useFieldArray's
+  // id-tracking isn't designed for. Only the local splice happens here; the
+  // delete handler below persists it (this screen saves `criteria` alone).
+  const removeSubCriteria = (index: number) => {
+    const current =
+      (getValues('subCriteria.personalFactors') as
+        | SubCriterion[][]
+        | undefined) ?? []
+    const next = [...current]
+    next.splice(index, 1)
+    setValue('subCriteria.personalFactors', next)
   }
+
+  // A deleted criterion's already-assigned steps (from the "Mat á
+  // einstaklingsbundnum þáttum" screen) must be dropped too, or every
+  // employee keeps a stale, unreachable assignment for a criterion that no
+  // longer exists. Matched by title, same as the rest of this template links
+  // criteria to their step assignments. useCascadeDelete persists the
+  // correction immediately, since this screen's own "Continue" only saves
+  // the `criteria` answer key — which is also why `subCriteria` rides along:
+  // removeSubCriteria's splice would otherwise sit in local form state and be
+  // undone by a reload, resurrecting the deleted criterion's sub-criteria.
+  const removeFromEmployees = (deletedTitle: string) =>
+    persist(
+      deletedTitle,
+      (employees) =>
+        employees.map((emp) => ({
+          ...emp,
+          personalStepAssignments: (emp.personalStepAssignments ?? []).filter(
+            (a) => a.criterionTitle !== deletedTitle,
+          ),
+        })),
+      ['subCriteria'],
+    )
 
   return (
     <Box marginTop={6}>
@@ -111,7 +120,8 @@ export const PersonalCriteriaList = ({ application }: Props) => {
                     `criteria.personalFactors.${i}.title`,
                   ) as string
                   remove(i)
-                  void cascadeDelete(i, deletedTitle)
+                  removeSubCriteria(i)
+                  void removeFromEmployees(deletedTitle)
                 }}
               >
                 {formatMessage(messages.report.criteria.deleteButton)}
@@ -151,7 +161,7 @@ export const PersonalCriteriaList = ({ application }: Props) => {
               variant="ghost"
               size="small"
               icon="reload"
-              onClick={() => void retry()}
+              onClick={() => void removeFromEmployees(saveError)}
             >
               {formatMessage(messages.report.criteria.retryButton)}
             </Button>

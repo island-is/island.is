@@ -20,10 +20,6 @@ import { SubCriterionItem } from './SubCriterionItem'
 type Props = {
   application: Application
   factorsKey: 'jobFactors' | 'personalFactors'
-  // Position of this criterion within `subCriteria[factorsKey]` — the cascade
-  // below has to write the whole `subCriteria` object back, so it needs to
-  // know which group slot it owns.
-  criterionIndex: number
   accordionId: string
   criterionTitle: string
   criterionWeight: string
@@ -48,7 +44,6 @@ const mapParsedToSubCriteria = (
 export const CriterionPanel: FC<Props> = ({
   application,
   factorsKey,
-  criterionIndex,
   accordionId,
   criterionTitle,
   criterionWeight,
@@ -60,7 +55,12 @@ export const CriterionPanel: FC<Props> = ({
 }) => {
   const { formatMessage } = useLocale()
   const { control, getValues } = useFormContext()
-  const { persist, retry, saveError } = useCascadeDelete(application)
+  const employeesCascade = useCascadeDelete<Employee>(application, 'employees')
+  const rolesCascade = useCascadeDelete<Role>(application, 'roles')
+  const saveError =
+    factorsKey === 'personalFactors'
+      ? employeesCascade.saveError
+      : rolesCascade.saveError
 
   const { fields, append, remove, replace } = useFieldArray({
     control,
@@ -73,51 +73,40 @@ export const CriterionPanel: FC<Props> = ({
   // immediately, since this screen's own "Continue" only saves the
   // `subCriteria` answer key.
   //
-  // `subCriteria` goes out in the SAME payload as the assignment cleanup: the
-  // removal itself only lives in local form state until "Continue", so
-  // persisting the cleanup alone would let a reload bring the sub-criterion
-  // back while its assignments stay deleted — and mergeStepAssignments would
-  // then silently re-seed them at stepOrder 1, losing the chosen step.
-  // Written as the whole `subCriteria` object, not the nested path:
-  // updateApplication merges answers only one level deep.
-  const removeFromAssignments = (
-    deletedSubTitle: string,
-    remainingSubCriteria: SubCriterion[],
-  ) => {
-    const subCriteria = (getValues('subCriteria') as
-      | Record<Props['factorsKey'], SubCriterion[][]>
-      | undefined) ?? { jobFactors: [], personalFactors: [] }
-    const groups = [...(subCriteria[factorsKey] ?? [])]
-    groups[criterionIndex] = remainingSubCriteria
-    const nextSubCriteria = { ...subCriteria, [factorsKey]: groups }
-
-    if (factorsKey === 'personalFactors') {
-      const employees = (getValues('employees') as Employee[] | undefined) ?? []
-      return persist(deletedSubTitle, {
-        subCriteria: nextSubCriteria,
-        employees: employees.map((emp) => ({
-          ...emp,
-          personalStepAssignments: removeAssignment(
-            emp.personalStepAssignments ?? [],
-            criterionTitle,
-            deletedSubTitle,
-          ),
-        })),
-      })
-    }
-    const roles = (getValues('roles') as Role[] | undefined) ?? []
-    return persist(deletedSubTitle, {
-      subCriteria: nextSubCriteria,
-      roles: roles.map((role) => ({
-        ...role,
-        stepAssignments: removeAssignment(
-          role.stepAssignments ?? [],
-          criterionTitle,
+  // `subCriteria` rides along for the same reason it does in
+  // PersonalCriteriaList: the removal itself only lives in local form state
+  // until "Continue", so persisting the cleanup alone would let a reload bring
+  // the sub-criterion back while its assignments stay deleted — and
+  // mergeStepAssignments would then silently re-seed them at stepOrder 1,
+  // losing the chosen step.
+  const removeFromAssignments = (deletedSubTitle: string) =>
+    factorsKey === 'personalFactors'
+      ? employeesCascade.persist(
           deletedSubTitle,
-        ),
-      })),
-    })
-  }
+          (employees) =>
+            employees.map((emp) => ({
+              ...emp,
+              personalStepAssignments: removeAssignment(
+                emp.personalStepAssignments ?? [],
+                criterionTitle,
+                deletedSubTitle,
+              ),
+            })),
+          ['subCriteria'],
+        )
+      : rolesCascade.persist(
+          deletedSubTitle,
+          (roles) =>
+            roles.map((role) => ({
+              ...role,
+              stepAssignments: removeAssignment(
+                role.stepAssignments ?? [],
+                criterionTitle,
+                deletedSubTitle,
+              ),
+            })),
+          ['subCriteria'],
+        )
 
   // Always hold the latest parsed data so the import effect never reads a
   // stale closure value
@@ -214,14 +203,8 @@ export const CriterionPanel: FC<Props> = ({
               const deletedSubTitle = getValues(
                 `${fieldName}.${i}.title`,
               ) as string
-              // Computed from the pre-removal value rather than re-read after
-              // `remove`, so the persisted payload never depends on when
-              // react-hook-form flushes the field array.
-              const remaining = (
-                (getValues(fieldName) as SubCriterion[] | undefined) ?? []
-              ).filter((_, index) => index !== i)
               remove(i)
-              void removeFromAssignments(deletedSubTitle, remaining)
+              void removeFromAssignments(deletedSubTitle)
             }}
           />
         ))}
@@ -238,7 +221,12 @@ export const CriterionPanel: FC<Props> = ({
         </Button>
       </Box>
 
+      {/* Only meaningful once both sides exist: the parent criterion's own
+          weight can still be blank here (it's entered on the previous screen
+          for personal criteria), and `Number('') || 0` would otherwise make
+          this claim the sub-criteria must total 0%. */}
       {subCriteriaTotal !== 0 &&
+        expectedWeight !== 0 &&
         Math.abs(subCriteriaTotal - expectedWeight) > 0.001 && (
           <Box marginTop={3}>
             <Text color="red600">
@@ -261,7 +249,7 @@ export const CriterionPanel: FC<Props> = ({
               variant="ghost"
               size="small"
               icon="reload"
-              onClick={() => void retry()}
+              onClick={() => void removeFromAssignments(saveError)}
             >
               {formatMessage(messages.report.subCriteria.retryButton)}
             </Button>
