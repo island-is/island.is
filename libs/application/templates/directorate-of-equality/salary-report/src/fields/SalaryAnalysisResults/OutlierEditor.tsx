@@ -90,7 +90,7 @@ export const OutlierEditor: FC<Props> = ({
   // group card owns it from then on. Removing a group frees its members
   // back into this list.
   const assignedOrdinals = new Set(
-    ((fields as unknown) as (OutlierGroupAnswer & { id: string })[]).flatMap(
+    (fields as unknown as (OutlierGroupAnswer & { id: string })[]).flatMap(
       (g) => g.employeeOrdinals,
     ),
   )
@@ -248,7 +248,7 @@ export const OutlierEditor: FC<Props> = ({
 
       <Box>
         {fields.map((field, index) => {
-          const group = (field as unknown) as OutlierGroupAnswer & {
+          const group = field as unknown as OutlierGroupAnswer & {
             id: string
           }
           return (
