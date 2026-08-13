@@ -7,7 +7,6 @@ import {
   Box,
   Button,
   SkeletonLoader,
-  Stack,
   Table as T,
   Text,
   toast,
@@ -21,17 +20,27 @@ import { m } from '../../lib/messages'
 import { DelegationPaths } from '../../lib/paths'
 import { useDelegationForm } from '../../context'
 import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
+import { ReviewRequestModal } from '../modals/ReviewRequestModal'
 import {
   useAuthDelegationRequestsIncomingQuery,
   useRejectAuthDelegationRequestMutation,
   AuthDelegationRequestsIncomingDocument,
+  AuthDelegationRequestsIncomingQuery,
 } from './DelegationRequests.generated'
+
+type IncomingRequest =
+  AuthDelegationRequestsIncomingQuery['authDelegationRequestsIncoming'][number]
 
 export const IncomingRequests = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
-  const { setIdentities, setPendingRequestId, setRequestedScopeNames, clearForm, skipNextClear } =
-    useDelegationForm()
+  const {
+    setIdentities,
+    setPendingRequestId,
+    setRequestedScopeNames,
+    clearForm,
+    skipNextClear,
+  } = useDelegationForm()
 
   const { data, loading } = useAuthDelegationRequestsIncomingQuery({
     fetchPolicy: 'cache-and-network',
@@ -47,9 +56,10 @@ export const IncomingRequests = () => {
     (request) => request.status === 'pending',
   )
 
-  const [requestToReject, setRequestToReject] = useState<
-    (typeof requests)[number] | null
-  >(null)
+  const [requestToReview, setRequestToReview] =
+    useState<IncomingRequest | null>(null)
+  const [requestToReject, setRequestToReject] =
+    useState<IncomingRequest | null>(null)
 
   const onRejectConfirm = () => {
     if (!requestToReject) {
@@ -61,11 +71,13 @@ export const IncomingRequests = () => {
       .finally(() => setRequestToReject(null))
   }
 
-  const onApprove = (request: (typeof requests)[number]) => {
+  const onApprove = (request: IncomingRequest) => {
     // Reset any stale wizard state before seeding it, but keep the seeded
     // values across the navigation (clearForm runs on unmount).
     clearForm()
-    setIdentities([{ nationalId: request.to.nationalId, name: request.to.name }])
+    setIdentities([
+      { nationalId: request.to.nationalId, name: request.to.name },
+    ])
     setRequestedScopeNames(request.scopes.map((scope) => scope.scopeName))
     setPendingRequestId(request.id)
     skipNextClear()
@@ -84,6 +96,14 @@ export const IncomingRequests = () => {
     return null
   }
 
+  const headerArray = [
+    { value: formatMessage(m.requestFrom) },
+    { value: formatMessage(m.requestRelationshipHeader) },
+    { value: formatMessage(m.requestScopeCount) },
+    { value: formatMessage(m.requestDateSent) },
+    { value: '' },
+  ]
+
   return (
     <Box
       marginBottom={6}
@@ -95,32 +115,13 @@ export const IncomingRequests = () => {
       <T.Table>
         <T.Head>
           <T.Row>
-            <T.HeadData>
-              <Text variant="medium" fontWeight="semiBold">
-                {formatMessage(m.requestFrom)}
-              </Text>
-            </T.HeadData>
-            <T.HeadData>
-              <Text variant="medium" fontWeight="semiBold">
-                {formatMessage(m.requestRelationshipHeader)}
-              </Text>
-            </T.HeadData>
-            <T.HeadData>
-              <Text variant="medium" fontWeight="semiBold">
-                {formatMessage(m.requestReasonHeader)}
-              </Text>
-            </T.HeadData>
-            <T.HeadData>
-              <Text variant="medium" fontWeight="semiBold">
-                {formatMessage(m.accessScopes)}
-              </Text>
-            </T.HeadData>
-            <T.HeadData>
-              <Text variant="medium" fontWeight="semiBold">
-                {formatMessage(m.validTo)}
-              </Text>
-            </T.HeadData>
-            <T.HeadData />
+            {headerArray.map((item, i) => (
+              <T.HeadData key={item.value + i}>
+                <Text variant="medium" fontWeight="semiBold">
+                  {item.value}
+                </Text>
+              </T.HeadData>
+            ))}
           </T.Row>
         </T.Head>
         <T.Body>
@@ -141,46 +142,27 @@ export const IncomingRequests = () => {
                 <Text variant="medium">{request.relationship}</Text>
               </T.Data>
               <T.Data>
-                <Text variant="medium">{request.reason}</Text>
-              </T.Data>
-              <T.Data>
-                <Stack space={0}>
-                  {request.scopes.map((scope) => (
-                    <Text key={scope.scopeName} variant="medium">
-                      {scope.displayName ?? scope.scopeName}
-                    </Text>
-                  ))}
-                </Stack>
+                <Text variant="medium" fontWeight="semiBold">
+                  {request.scopes.length}
+                </Text>
               </T.Data>
               <T.Data>
                 <Text variant="medium">
-                  {request.expiresAt
-                    ? format(new Date(request.expiresAt), 'dd.MM.yyyy')
+                  {request.createdAt
+                    ? format(new Date(request.createdAt), 'dd.MM.yyyy')
                     : '-'}
                 </Text>
               </T.Data>
               <T.Data>
-                <Box
-                  display="flex"
-                  flexDirection={['column', 'row']}
-                  columnGap={1}
-                  rowGap={1}
-                  justifyContent="flexEnd"
-                >
+                <Box display="flex" justifyContent="flexEnd">
                   <Button
-                    variant="ghost"
-                    colorScheme="destructive"
+                    variant="text"
+                    icon="arrowForward"
+                    iconType="outline"
                     size="small"
-                    onClick={() => setRequestToReject(request)}
+                    onClick={() => setRequestToReview(request)}
                   >
-                    {formatMessage(m.requestReject)}
-                  </Button>
-                  <Button
-                    variant="primary"
-                    size="small"
-                    onClick={() => onApprove(request)}
-                  >
-                    {formatMessage(m.requestApprove)}
+                    {formatMessage(m.requestReviewButton)}
                   </Button>
                 </Box>
               </T.Data>
@@ -188,6 +170,19 @@ export const IncomingRequests = () => {
           ))}
         </T.Body>
       </T.Table>
+
+      <ReviewRequestModal
+        request={requestToReview}
+        onClose={() => setRequestToReview(null)}
+        onApprove={(request) => {
+          setRequestToReview(null)
+          onApprove(request)
+        }}
+        onReject={(request) => {
+          setRequestToReview(null)
+          setRequestToReject(request)
+        }}
+      />
 
       <Modal
         id="reject-request-modal"
