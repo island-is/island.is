@@ -91,10 +91,11 @@ const ReviewSection: FC<React.PropsWithChildren<ReviewSectionProps>> = ({
             : formatMessage(description)}
         </Text>
         {showLocalRequirementDays && (
-          <Text
-            marginTop={2}
-            fontWeight="medium"
-          >{`Þú hefur aðeins búið á Íslandi í ${daysOfResidency} daga.`}</Text>
+          <Text marginTop={2} fontWeight="medium">
+            {formatMessage(m.localResidencyDaysSpent, {
+              days: daysOfResidency,
+            })}
+          </Text>
         )}
       </Box>
     </Box>

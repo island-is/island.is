@@ -121,6 +121,7 @@ export const healthNavigation: PortalNavigationItem = {
           name: m.messages,
           path: HealthPaths.HealthConversationsDetail,
           navHide: true,
+          breadcrumbHide: true,
         },
         {
           name: messages.healthConversationsNewTitle,

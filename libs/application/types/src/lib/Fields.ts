@@ -428,6 +428,7 @@ export enum FieldTypes {
   OVERVIEW = 'OVERVIEW',
   COPY_LINK = 'COPY_LINK',
   VEHICLE_PERMNO_WITH_INFO = 'VEHICLE_PERMNO_WITH_INFO',
+  SCALE = 'SCALE',
 }
 
 export enum FieldComponents {
@@ -472,6 +473,7 @@ export enum FieldComponents {
   OVERVIEW = 'OverviewFormField',
   COPY_LINK = 'CopyLinkFormField',
   VEHICLE_PERMNO_WITH_INFO = 'VehiclePermnoWithInfoFormField',
+  SCALE = 'ScaleFormField',
 }
 
 export interface CheckboxField extends InputField {
@@ -904,6 +906,7 @@ export type AccordionItem = {
   itemTitle: FormText
   itemContent?: FormText
   children?: Field[]
+  startExpanded?: boolean
 }
 export interface AccordionField extends BaseField {
   readonly type: FieldTypes.ACCORDION
@@ -912,6 +915,7 @@ export interface AccordionField extends BaseField {
     | Array<AccordionItem>
     | ((application: Application) => Array<AccordionItem>)
   titleVariant?: TitleVariants
+  singleExpand?: boolean
 }
 export interface BankAccountField extends InputField {
   readonly type: FieldTypes.BANK_ACCOUNT
@@ -1172,6 +1176,17 @@ export interface VehiclePermnoWithInfoField extends InputField {
   isTrailer: boolean
 }
 
+export interface ScaleField extends InputField {
+  readonly type: FieldTypes.SCALE
+  component: FieldComponents.SCALE
+  min: number | string
+  max: MaybeWithApplicationAndFieldAndLocale<number | string>
+  step?: number
+  minLabel?: FormTextWithLocale
+  maxLabel?: FormTextWithLocale
+  showLabels?: boolean
+}
+
 export type Field =
   | CheckboxField
   | CustomField
@@ -1216,3 +1231,4 @@ export type Field =
   | OverviewField
   | CopyLinkField
   | VehiclePermnoWithInfoField
+  | ScaleField

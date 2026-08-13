@@ -67,7 +67,11 @@ export const GridItems: FC<React.PropsWithChildren<GridItemsProps>> = ({
       <Box
         marginTop={marginTop}
         marginBottom={marginBottom}
-        ref={scrollContainerRef as React.RefObject<HTMLDivElement> | undefined}
+        ref={
+          scrollContainerRef as
+            | React.RefObject<HTMLDivElement | null>
+            | undefined
+        }
         className={cx(styles.container, {
           [styles.hideScrollbar]: !!scrollContainerRef,
         })}

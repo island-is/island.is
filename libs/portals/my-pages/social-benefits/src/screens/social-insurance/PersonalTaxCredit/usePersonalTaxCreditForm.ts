@@ -1,4 +1,4 @@
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { toast } from '@island.is/island-ui/core'
 import { m } from '../../../lib/messages'
@@ -123,12 +123,16 @@ export const usePersonalTaxCreditForm = () => {
     return true
   }
 
-  const personalAction = personalForm.watch('action')
-  const spouseAction = spouseForm.watch('action')
+  const personalAction = useWatch({
+    control: personalForm.control,
+    name: 'action',
+  })
+  const spouseAction = useWatch({ control: spouseForm.control, name: 'action' })
 
   return {
     personalForm,
     spouseForm,
+    personalAction,
     spouseAction,
 
     handleCancelPersonal,

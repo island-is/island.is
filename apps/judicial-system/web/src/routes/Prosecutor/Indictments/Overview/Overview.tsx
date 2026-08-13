@@ -16,15 +16,21 @@ import {
   PROSECUTION_INDICTMENT_CASE_ADD_FILES_ROUTE,
   PROSECUTION_INDICTMENT_CASE_INDICTMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { isCompletedCase } from '@island.is/judicial-system/types'
+import {
+  isCompletedCase,
+  isProsecutionUser,
+} from '@island.is/judicial-system/types'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   AllIndictmentCaseFiles,
+  AppealRulingModifiedAlert,
   BlueBox,
   ChangeProsecutorModal,
+  DuplicateIndictmentModal,
   FormContentContainer,
   FormContext,
   FormFooter,
+  FormFooterAction,
   IndictmentCaseScheduledCard,
   // IndictmentsLawsBrokenAccordionItem, NOTE: Temporarily hidden while list of laws broken is not complete
   InfoCardActiveIndictment,
@@ -60,6 +66,7 @@ const Overview: FC = () => {
     | 'caseSentForConfirmationModal'
     | 'caseDeniedModal'
     | 'askForCancellationModal'
+    | 'duplicateIndictmentModal'
     | 'editProsecutor'
   >('noModal')
   const [indictmentConfirmationDecision, setIndictmentConfirmationDecision] =
@@ -87,6 +94,8 @@ const Overview: FC = () => {
   const userCanCancelIndictment =
     (isIndictmentSubmitted || isIndictmentReceived) &&
     !workingCase.indictmentDecision
+  const canDuplicateIndictment =
+    isProsecutionUser(user) && isIndictmentWaitingForCancellation
   const userCanAddDocuments =
     isIndictmentSubmitted ||
     (isIndictmentReceived &&
@@ -163,6 +172,44 @@ const Overview: FC = () => {
     router.push(getStandardUserDashboardRoute(user))
   }
 
+  const footerActions: FormFooterAction[] = [
+    ...(isIndictmentWaitingForCancellation
+      ? []
+      : [
+          {
+            text: formatMessage(strings.askForCancellationButtonText),
+            variant: 'ghost' as const,
+            colorScheme: 'destructive' as const,
+            onClick: () => setModal('askForCancellationModal'),
+            disabled: !userCanCancelIndictment,
+          },
+        ]),
+    ...(isIndictmentReceived ||
+    (isIndictmentWaitingForCancellation && !canDuplicateIndictment)
+      ? []
+      : [
+          {
+            text: canDuplicateIndictment
+              ? 'Afrita mál í drög'
+              : userCanSendIndictmentToCourt
+              ? formatMessage(core.continue)
+              : formatMessage(strings.nextButtonText, {
+                  isNewIndictment: isIndictmentNew,
+                }),
+            icon: canDuplicateIndictment
+              ? undefined
+              : ('arrowForward' as const),
+            onClick: canDuplicateIndictment
+              ? () => setModal('duplicateIndictmentModal')
+              : handleNextButtonClick,
+            disabled:
+              userCanSendIndictmentToCourt && !indictmentConfirmationDecision,
+            loading: isTransitioningCase,
+            testId: 'continueButton',
+          },
+        ]),
+  ]
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -229,6 +276,7 @@ const Overview: FC = () => {
             </Box>
           )}
         <div className={grid({ gap: 5, marginBottom: 10 })}>
+          <AppealRulingModifiedAlert />
           <Box component="section">
             <InfoCardActiveIndictment
               displayVerdictViewDate
@@ -256,7 +304,7 @@ const Overview: FC = () => {
             </Box>
           )}
           {userCanSendIndictmentToCourt && (
-            <>
+            <Box component="section">
               <SectionHeading
                 title={formatMessage(strings.indictmentConfirmationTitle)}
                 required
@@ -285,7 +333,7 @@ const Overview: FC = () => {
                   />
                 </div>
               </BlueBox>
-            </>
+            </Box>
           )}
           <Box component="section">
             <InputPenalties />
@@ -294,36 +342,17 @@ const Overview: FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={
             isIndictmentReceived || isIndictmentWaitingForCancellation
               ? getStandardUserDashboardRoute(user)
               : `${PROSECUTION_INDICTMENT_CASE_INDICTMENT_ROUTE}/${workingCase.id}`
           }
-          nextButtonText={
-            userCanSendIndictmentToCourt
-              ? undefined
-              : formatMessage(strings.nextButtonText, {
-                  isNewIndictment: isIndictmentNew,
-                })
-          }
-          hideNextButton={
-            isIndictmentReceived || isIndictmentWaitingForCancellation
-          }
+          actions={footerActions}
           infoBoxText={
             isIndictmentReceived
               ? formatMessage(strings.indictmentSentToCourt)
               : undefined
           }
-          onNextButtonClick={handleNextButtonClick}
-          nextIsDisabled={
-            userCanSendIndictmentToCourt && !indictmentConfirmationDecision
-          }
-          hideActionButton={isIndictmentWaitingForCancellation}
-          actionButtonText={formatMessage(strings.askForCancellationButtonText)}
-          actionButtonColorScheme="destructive"
-          actionButtonIsDisabled={!userCanCancelIndictment}
-          onActionButtonClick={() => setModal('askForCancellationModal')}
         />
       </FormContentContainer>
       <AnimatePresence>
@@ -332,27 +361,32 @@ const Overview: FC = () => {
             title={formatMessage(strings.caseSubmitModalTitle)}
             text={formatMessage(strings.caseSubmitModalText)}
             onClose={() => setModal('noModal')}
-            primaryButton={{
-              text: formatMessage(strings.caseSubmitPrimaryButtonText),
-              onClick: handleConfirmIndictment,
-              isLoading: isTransitioningCase,
-            }}
-            secondaryButton={{
-              text: formatMessage(strings.caseSubmitSecondaryButtonText),
-              onClick: () => setModal('noModal'),
-            }}
+            buttons={[
+              {
+                text: formatMessage(strings.caseSubmitSecondaryButtonText),
+                onClick: () => setModal('noModal'),
+                variant: 'ghost',
+              },
+              {
+                text: formatMessage(strings.caseSubmitPrimaryButtonText),
+                onClick: handleConfirmIndictment,
+                isLoading: isTransitioningCase,
+              },
+            ]}
           />
         ) : modal === 'caseSentForConfirmationModal' ? (
           <Modal
             title={formatMessage(strings.indictmentSentForConfirmationTitle)}
             text={formatMessage(strings.indictmentSentForConfirmationText)}
             onClose={() => router.push(getStandardUserDashboardRoute(user))}
-            primaryButton={{
-              text: formatMessage(core.closeModal),
-              onClick: () => {
-                router.push(getStandardUserDashboardRoute(user))
+            buttons={[
+              {
+                text: formatMessage(core.closeModal),
+                onClick: () => {
+                  router.push(getStandardUserDashboardRoute(user))
+                },
               },
-            }}
+            ]}
           />
         ) : modal === 'caseDeniedModal' ? (
           <DenyIndictmentCaseModal
@@ -366,18 +400,25 @@ const Overview: FC = () => {
             title={formatMessage(strings.askForCancellationModalTitle)}
             text={formatMessage(strings.askForCancellationModalText)}
             onClose={() => setModal('noModal')}
-            primaryButton={{
-              text: formatMessage(strings.askForCancellationPrimaryButtonText),
-              onClick: handleAskForCancellation,
-              isLoading: isTransitioningCase,
-            }}
-            secondaryButton={{
-              text: formatMessage(
-                strings.askForCancellationSecondaryButtonText,
-              ),
-              onClick: () => setModal('noModal'),
-            }}
+            buttons={[
+              {
+                text: formatMessage(
+                  strings.askForCancellationSecondaryButtonText,
+                ),
+                onClick: () => setModal('noModal'),
+                variant: 'ghost',
+              },
+              {
+                text: formatMessage(
+                  strings.askForCancellationPrimaryButtonText,
+                ),
+                onClick: handleAskForCancellation,
+                isLoading: isTransitioningCase,
+              },
+            ]}
           />
+        ) : modal === 'duplicateIndictmentModal' ? (
+          <DuplicateIndictmentModal onClose={() => setModal('noModal')} />
         ) : modal === 'editProsecutor' ? (
           <ChangeProsecutorModal onClose={() => setModal('noModal')} />
         ) : null}

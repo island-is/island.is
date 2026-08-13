@@ -68,7 +68,7 @@ export class Form extends Model<Form> {
     allowNull: true,
     defaultValue: null,
   })
-  invalidationDate?: Date
+  invalidationDate?: Date | null
 
   @CreatedAt
   created!: CreationOptional<Date>
@@ -154,6 +154,13 @@ export class Form extends Model<Form> {
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
+    defaultValue: false,
+  })
+  isInaccessible!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
     defaultValue: true,
   })
   hasSummaryScreen!: boolean
@@ -182,6 +189,13 @@ export class Form extends Model<Form> {
     allowNull: true,
   })
   dependencies?: Dependency[]
+
+  @Column({
+    type: DataType.ARRAY(DataType.STRING),
+    allowNull: false,
+    defaultValue: [],
+  })
+  delegations!: string[]
 
   @HasMany(() => Section)
   sections!: Section[]

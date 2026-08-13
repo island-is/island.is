@@ -2,6 +2,13 @@ import { globalStyle, style } from '@vanilla-extract/css'
 
 import { theme } from '@island.is/island-ui/theme'
 
+// Lets the table scroll horizontally instead of overflowing the viewport
+// once it gets wider than the available space (e.g. on smaller screens).
+export const tableWrapper = style({
+  width: '100%',
+  overflowX: 'auto',
+})
+
 export const table = style({
   borderSpacing: 0,
   borderCollapse: 'collapse',
@@ -20,6 +27,12 @@ export const thButton = style({
 
   ':active': {
     color: theme.color.dark400,
+  },
+
+  selectors: {
+    '&:focus-visible': {
+      boxShadow: `0 0 0 ${theme.border.width.large}px ${theme.border.color.focus}`,
+    },
   },
 })
 
@@ -40,6 +53,32 @@ export const smallContainer = style({
   width: '34px',
   height: '34px',
   marginLeft: 'auto',
+})
+
+// The context menu trigger is the focusable element itself (the Ariakit
+// MenuButton renders onto it), so it carries the icon-button affordance and
+// the keyboard focus ring.
+export const contextMenuButton = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '34px',
+  height: '34px',
+  marginLeft: 'auto',
+  borderRadius: theme.border.radius.large,
+  cursor: 'pointer',
+  transition: 'background-color .2s',
+
+  ':hover': {
+    backgroundColor: theme.color.blue200,
+  },
+
+  selectors: {
+    '&:focus-visible': {
+      outline: 'none',
+      boxShadow: `0 0 0 ${theme.border.width.large}px ${theme.border.color.focus}`,
+    },
+  },
 })
 
 globalStyle(`${table} td, th`, {

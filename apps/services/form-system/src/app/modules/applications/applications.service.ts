@@ -14,7 +14,6 @@ import type { Locale } from '@island.is/shared/types'
 import { AuthDelegationType } from '@island.is/shared/types'
 import {
   BadRequestException,
-  ConflictException,
   ForbiddenException,
   HttpException,
   Inject,
@@ -95,12 +94,25 @@ export class ApplicationsService {
       throw new NotFoundException(`Form with slug '${slug}' not found`)
     }
 
+    if (form.isInaccessible) {
+      const responseDto = new ApplicationResponseDto()
+      responseDto.isInaccessible = true
+      return responseDto
+    }
+
     const allowedLoginTypes = await this.getAllowedLoginTypes(form)
 
     const loginTypes = await this.getLoginTypes(user)
     if (!this.isLoginAllowed(loginTypes, allowedLoginTypes)) {
       const responseDto = new ApplicationResponseDto()
       responseDto.isLoginTypeAllowed = false
+      return responseDto
+    }
+
+    const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
+    if (!hasRequiredDelegation) {
+      const responseDto = new ApplicationResponseDto()
+      responseDto.hasRequiredDelegation = false
       return responseDto
     }
 
@@ -225,8 +237,26 @@ export class ApplicationsService {
       throw new NotFoundException(`Application with id '${id}' not found`)
     }
 
+    const form = await this.formModel.findByPk(application.formId, {
+      include: [{ model: Section, as: 'sections' }],
+    })
+
+    if (!form) {
+      throw new NotFoundException(
+        `Form with id '${application.formId}' not found`,
+      )
+    }
+
+    if (form.isInaccessible || form.status === FormStatus.ARCHIVED) {
+      throw new ForbiddenException(`Form with id '${form.id}' is inaccessible`)
+    }
+
     const loginTypes = await this.getLoginTypes(user)
-    if (!this.doesUserMatchApplication(application, user, loginTypes)) {
+    const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
+    if (
+      !this.doesUserMatchApplication(application, user, loginTypes) ||
+      !hasRequiredDelegation
+    ) {
       throw new ForbiddenException(
         `User does not have permission to update application '${id}'`,
       )
@@ -238,16 +268,6 @@ export class ApplicationsService {
       application.completed = (application.completed ?? []).filter(
         (completedId) => !completedToRemove.includes(completedId),
       )
-
-      const form = await this.formModel.findByPk(application.formId, {
-        include: [{ model: Section, as: 'sections' }],
-      })
-
-      if (!form) {
-        throw new NotFoundException(
-          `Form with id '${application.formId}' not found`,
-        )
-      }
 
       let draftFinishedSteps = 0
 
@@ -301,21 +321,29 @@ export class ApplicationsService {
       throw new NotFoundException(`Application with id '${id}' not found.`)
     }
 
-    if (user) {
-      const loginTypes = await this.getLoginTypes(user)
-      if (!this.doesUserMatchApplication(application, user, loginTypes)) {
-        throw new ForbiddenException(
-          `User does not have permission to submit application '${id}'`,
-        )
-      }
-    }
-
     const form = await this.formModel.findByPk(application.formId)
 
     if (!form) {
       throw new NotFoundException(
         `Form with id '${application.formId}' not found.`,
       )
+    }
+
+    if (form.isInaccessible || form.status === FormStatus.ARCHIVED) {
+      throw new ForbiddenException(`Form with id '${form.id}' is inaccessible`)
+    }
+
+    if (user) {
+      const loginTypes = await this.getLoginTypes(user)
+      const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
+      if (
+        !this.doesUserMatchApplication(application, user, loginTypes) ||
+        !hasRequiredDelegation
+      ) {
+        throw new ForbiddenException(
+          `User does not have permission to submit application '${id}'`,
+        )
+      }
     }
 
     const applicationResponseDto = await this.getApplication(id, '', null)
@@ -524,6 +552,12 @@ export class ApplicationsService {
         slug,
       )
 
+      if (form.isInaccessible || form.status === FormStatus.ARCHIVED) {
+        const responseDto = new ApplicationResponseDto()
+        responseDto.isInaccessible = true
+        return responseDto
+      }
+
       const allowedLoginTypes = await this.getAllowedLoginTypes(form)
       if (user) {
         const loginTypes = await this.getLoginTypes(user)
@@ -533,6 +567,13 @@ export class ApplicationsService {
         ) {
           const responseDto = new ApplicationResponseDto()
           responseDto.isLoginTypeAllowed = false
+          return responseDto
+        }
+
+        const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
+        if (!hasRequiredDelegation) {
+          const responseDto = new ApplicationResponseDto()
+          responseDto.hasRequiredDelegation = false
           return responseDto
         }
       }
@@ -546,6 +587,7 @@ export class ApplicationsService {
       const responseDto = new ApplicationResponseDto()
       responseDto.application = applicationDto
       responseDto.isLoginTypeAllowed = true
+      responseDto.isInaccessible = form.isInaccessible
 
       return responseDto
     } catch (error) {
@@ -576,12 +618,25 @@ export class ApplicationsService {
       throw new NotFoundException(`Form with slug '${slug}' not found`)
     }
 
+    if (form.isInaccessible) {
+      const responseDto = new ApplicationResponseDto()
+      responseDto.isInaccessible = true
+      return responseDto
+    }
+
     const allowedLoginTypes = await this.getAllowedLoginTypes(form)
 
     const loginTypes = await this.getLoginTypes(user)
     if (!this.isLoginAllowed(loginTypes, allowedLoginTypes)) {
       const responseDto = new ApplicationResponseDto()
       responseDto.isLoginTypeAllowed = false
+      return responseDto
+    }
+
+    const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
+    if (!hasRequiredDelegation) {
+      const responseDto = new ApplicationResponseDto()
+      responseDto.hasRequiredDelegation = false
       return responseDto
     }
 
@@ -593,6 +648,7 @@ export class ApplicationsService {
     const responseDto = new ApplicationResponseDto()
     responseDto.applications = existingApplications
     responseDto.isLoginTypeAllowed = true
+    responseDto.isInaccessible = form.isInaccessible
     return responseDto
   }
 
@@ -738,6 +794,24 @@ export class ApplicationsService {
     )
   }
 
+  private hasDelegation(user: User, delegations: string[]): boolean {
+    const userDelegationTypes = user.delegationType ?? []
+
+    if (
+      userDelegationTypes.includes(AuthDelegationType.ProcurationHolder) ||
+      userDelegationTypes.includes(AuthDelegationType.GeneralMandate) ||
+      userDelegationTypes.includes(AuthDelegationType.LegalGuardian)
+    ) {
+      return true
+    }
+
+    if (userDelegationTypes.includes(AuthDelegationType.Custom)) {
+      return delegations.some((delegation) => user.scope?.includes(delegation))
+    }
+
+    return true
+  }
+
   private doesUserMatchApplication(
     application: Application,
     user: User,
@@ -878,10 +952,6 @@ export class ApplicationsService {
       )
     }
 
-    if (form.status === FormStatus.ARCHIVED) {
-      throw new ConflictException(`Form with id '${formId}' is archived`)
-    }
-
     return form
   }
 
@@ -960,8 +1030,24 @@ export class ApplicationsService {
       )
     }
 
+    const form = await this.formModel.findByPk(application.formId)
+
+    if (!form) {
+      throw new NotFoundException(
+        `Form with id '${application.formId}' not found`,
+      )
+    }
+
+    if (form.isInaccessible || form.status === FormStatus.ARCHIVED) {
+      throw new ForbiddenException(`Form with id '${form.id}' is inaccessible`)
+    }
+
     const loginTypes = await this.getLoginTypes(user)
-    if (!this.doesUserMatchApplication(application, user, loginTypes)) {
+    const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
+    if (
+      !this.doesUserMatchApplication(application, user, loginTypes) ||
+      !hasRequiredDelegation
+    ) {
       throw new ForbiddenException(
         `User does not have permission to save screen for application '${applicationId}'`,
       )
@@ -1120,8 +1206,20 @@ export class ApplicationsService {
       throw new NotFoundException(`Application with id '${id}' not found`)
     }
 
+    const form = await this.formModel.findByPk(application.formId)
+
+    if (!form) {
+      throw new NotFoundException(
+        `Form with id '${application.formId}' not found`,
+      )
+    }
+
     const loginTypes = await this.getLoginTypes(user)
-    if (!this.doesUserMatchApplication(application, user, loginTypes)) {
+    const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
+    if (
+      !this.doesUserMatchApplication(application, user, loginTypes) ||
+      !hasRequiredDelegation
+    ) {
       throw new ForbiddenException(
         `User does not have permission to delete application '${id}'`,
       )
@@ -1170,12 +1268,21 @@ export class ApplicationsService {
     }
     const fieldType = field.fieldType
 
+    const form = await this.getForm(slug)
+
+    if (form.isInaccessible) {
+      throw new ForbiddenException(`Form with id '${form.id}' is inaccessible`)
+    }
+
     // Ownership + access check: field must belong to the requested form,
     // and the current user's loginTypes must be allowed for that form.
-    const form = await this.getForm(slug)
     const allowedLoginTypes = await this.getAllowedLoginTypes(form)
     const loginTypes = await this.getLoginTypes(user)
-    if (!this.isLoginAllowed(loginTypes, allowedLoginTypes)) {
+    const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
+    if (
+      !this.isLoginAllowed(loginTypes, allowedLoginTypes) ||
+      !hasRequiredDelegation
+    ) {
       throw new ForbiddenException(
         `User does not have permission to fetch external data for form '${slug}'`,
       )
@@ -1260,17 +1367,25 @@ export class ApplicationsService {
       )
     }
 
-    const loginTypes = await this.getLoginTypes(user)
-    if (!this.doesUserMatchApplication(application, user, loginTypes)) {
-      throw new ForbiddenException(
-        `User does not have permission to notify for application '${notificationDto.applicationId}'`,
-      )
-    }
-
     const form = await this.formModel.findByPk(application.formId)
     if (!form) {
       throw new NotFoundException(
         `Form with id '${application.formId}' not found for application '${notificationDto.applicationId}'`,
+      )
+    }
+
+    if (form.isInaccessible || form.status === FormStatus.ARCHIVED) {
+      throw new ForbiddenException(`Form with id '${form.id}' is inaccessible`)
+    }
+
+    const loginTypes = await this.getLoginTypes(user)
+    const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
+    if (
+      !this.doesUserMatchApplication(application, user, loginTypes) ||
+      !hasRequiredDelegation
+    ) {
+      throw new ForbiddenException(
+        `User does not have permission to notify for application '${notificationDto.applicationId}'`,
       )
     }
 
@@ -1523,7 +1638,10 @@ export class ApplicationsService {
       if (user.delegationType.includes(AuthDelegationType.ProcurationHolder)) {
         loginTypes.push(ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION)
         loginTypes.push(ApplicantTypesEnum.LEGAL_ENTITY_OF_PROCURATION_HOLDER)
-      } else if (user.delegationType.includes(AuthDelegationType.Custom)) {
+      } else if (
+        user.delegationType.includes(AuthDelegationType.GeneralMandate) ||
+        user.delegationType.includes(AuthDelegationType.Custom)
+      ) {
         if (kennitala.isCompany(user.nationalId)) {
           loginTypes.push(
             ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY,

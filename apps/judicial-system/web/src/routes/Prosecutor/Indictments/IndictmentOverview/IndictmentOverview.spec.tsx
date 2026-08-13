@@ -7,10 +7,12 @@ import {
   CaseState,
   CaseType,
   InstitutionType,
+  User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   mockCase,
+  mockCaseTableMembershipQuery,
   mockUser,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import {
@@ -22,11 +24,12 @@ import IndictmentOverview from './IndictmentOverview'
 
 // A public prosecution reviewer assigned to the case so the review decision
 // section is displayed.
-const reviewerUser = {
+const reviewerUser: User = {
   ...mockUser(UserRole.PROSECUTOR),
   id: 'reviewer_id',
   institution: {
     ...mockUser(UserRole.PROSECUTOR).institution,
+    id: 'reviewer_institution_id',
     type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
   },
 }
@@ -45,7 +48,10 @@ window.scrollTo = jest.fn()
 describe('Prosecutor IndictmentOverview', () => {
   it('should not render a review decision for a defendant whose indictment was cancelled or dismissed (completed for some)', async () => {
     const { container } = render(
-      <MockedProvider mocks={[]} addTypename={false}>
+      <MockedProvider
+        mocks={[...mockCaseTableMembershipQuery('test_id')]}
+        addTypename={false}
+      >
         <UserContext.Provider value={{ user: reviewerUser }}>
           <IntlProviderWrapper>
             <FormContextWrapper

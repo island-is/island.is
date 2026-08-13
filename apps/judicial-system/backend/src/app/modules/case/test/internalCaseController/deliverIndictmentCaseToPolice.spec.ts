@@ -1,5 +1,3 @@
-import { Base64 } from 'js-base64'
-import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import {
@@ -15,7 +13,7 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
 import { FileService } from '../../../file'
-import { PoliceDocumentType, PoliceService } from '../../../police'
+import { PoliceService } from '../../../police'
 import { Case } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 
@@ -35,21 +33,14 @@ describe('InternalCaseController - Deliver indictment case to police', () => {
 
   let mockFileService: FileService
   let mockPoliceService: PoliceService
-  let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { sequelize, fileService, policeService, internalCaseController } =
+    const { fileService, policeService, internalCaseController } =
       await createTestingCaseModule()
 
     mockFileService = fileService
     mockPoliceService = policeService
-
-    const mockTransaction = sequelize.transaction as jest.Mock
-    transaction = {} as Transaction
-    mockTransaction.mockImplementationOnce(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
 
     const mockToday = nowFactory as jest.Mock
     mockToday.mockReturnValueOnce(date)
@@ -70,46 +61,32 @@ describe('InternalCaseController - Deliver indictment case to police', () => {
     }
   })
 
-  describe('deliver case to police', () => {
+  describe('deliver indictment case to police', () => {
     const caseId = uuid()
-    const caseType = CaseType.INDICTMENT
-    const caseState = CaseState.COMPLETED
     const policeCaseNumber = uuid()
     const courtCaseNumber = uuid()
     const defendantNationalId = '0123456789'
-    const courtRecordPdf = 'test court record'
-    const rulingPdf = 'test ruling'
-    const caseFile1 = {
+    const courtRecordFile = {
       id: uuid(),
       key: uuid(),
       isKeyAccessible: true,
       category: CaseFileCategory.COURT_RECORD,
     }
-    const caseFile2 = {
-      id: uuid(),
-      key: uuid(),
-      isKeyAccessible: true,
-      category: CaseFileCategory.RULING,
-    }
     const theCase = {
       id: caseId,
       origin: CaseOrigin.LOKE,
-      type: caseType,
-      state: caseState,
+      type: CaseType.INDICTMENT,
+      state: CaseState.COMPLETED,
       policeCaseNumbers: [policeCaseNumber],
       courtCaseNumber,
       defendants: [{ nationalId: uuid() }],
-      caseFiles: [caseFile1, caseFile2],
+      caseFiles: [courtRecordFile],
       policeDefendantNationalId: defendantNationalId,
     } as Case
 
     let then: Then
 
     beforeEach(async () => {
-      const mockGetCaseFileFromS3 =
-        mockFileService.getCaseFileFromS3 as jest.Mock
-      mockGetCaseFileFromS3.mockResolvedValueOnce(courtRecordPdf)
-      mockGetCaseFileFromS3.mockResolvedValueOnce(rulingPdf)
       const mockUpdatePoliceCase =
         mockPoliceService.updatePoliceCase as jest.Mock
       mockUpdatePoliceCase.mockResolvedValueOnce(true)
@@ -117,37 +94,42 @@ describe('InternalCaseController - Deliver indictment case to police', () => {
       then = await givenWhenThen(caseId, theCase)
     })
 
-    it('should update the police case', async () => {
-      expect(mockFileService.getCaseFileFromS3).toHaveBeenCalledWith(
-        theCase,
-        caseFile1,
-      )
-      expect(mockFileService.getCaseFileFromS3).toHaveBeenCalledWith(
-        theCase,
-        caseFile2,
-      )
+    it('should update the police case without delivering any documents', () => {
+      expect(mockFileService.getCaseFileFromS3).not.toHaveBeenCalled()
       expect(mockPoliceService.updatePoliceCase).toHaveBeenCalledWith(
         user,
         caseId,
-        caseType,
-        caseState,
+        CaseType.INDICTMENT,
+        CaseState.COMPLETED,
         policeCaseNumber,
         courtCaseNumber,
         defendantNationalId,
         date,
         '',
-        [
-          {
-            type: PoliceDocumentType.RVTB,
-            courtDocument: Base64.btoa(courtRecordPdf),
-          },
-          {
-            type: PoliceDocumentType.RVDO,
-            courtDocument: Base64.btoa(rulingPdf),
-          },
-        ],
+        [],
       )
       expect(then.result.delivered).toEqual(true)
+    })
+  })
+
+  describe('deliver indictment case to police fails', () => {
+    const caseId = uuid()
+    const theCase = {
+      id: caseId,
+      origin: CaseOrigin.LOKE,
+      type: CaseType.INDICTMENT,
+      state: CaseState.COMPLETED,
+      policeCaseNumbers: [uuid()],
+    } as Case
+
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(caseId, theCase)
+    })
+
+    it('should not deliver the case', () => {
+      expect(then.result.delivered).toEqual(false)
     })
   })
 })

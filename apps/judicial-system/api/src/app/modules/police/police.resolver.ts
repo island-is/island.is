@@ -1,5 +1,5 @@
 import { Inject, UseGuards } from '@nestjs/common'
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -31,6 +31,7 @@ export class PoliceResolver {
     private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly backendService: BackendService,
   ) {}
 
   @Query(() => [PoliceCaseFile], { nullable: true })
@@ -38,15 +39,13 @@ export class PoliceResolver {
     @Args('input', { type: () => PoliceCaseFilesQueryInput })
     input: PoliceCaseFilesQueryInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<PoliceCaseFile[]> {
     this.logger.debug(`Getting all police case files for case ${input.caseId}`)
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_POLICE_CASE_FILES,
-      backendService.getPoliceCaseFiles(input.caseId),
+      this.backendService.getPoliceCaseFiles(input.caseId),
       input.caseId,
     )
   }
@@ -56,8 +55,6 @@ export class PoliceResolver {
     @Args('input', { type: () => PoliceDefendantsQueryInput })
     input: PoliceDefendantsQueryInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<PoliceDefendant[]> {
     this.logger.debug(
       `Getting defendants for case ${input.caseId} from police API`,
@@ -66,7 +63,7 @@ export class PoliceResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_POLICE_DEFENDANTS,
-      backendService.getPoliceDefendants(input.caseId),
+      this.backendService.getPoliceDefendants(input.caseId),
       input.caseId,
     )
   }
@@ -76,15 +73,13 @@ export class PoliceResolver {
     @Args('input', { type: () => PoliceCaseInfoQueryInput })
     input: PoliceCaseInfoQueryInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<PoliceCaseInfo[]> {
     this.logger.debug(`Getting all police case info for case ${input.caseId}`)
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_POLICE_CASE_INFO,
-      backendService.getPoliceCaseInfo(input.caseId),
+      this.backendService.getPoliceCaseInfo(input.caseId),
       input.caseId,
     )
   }
@@ -94,8 +89,6 @@ export class PoliceResolver {
     @Args('input', { type: () => UploadPoliceCaseFileInput })
     input: UploadPoliceCaseFileInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<UploadPoliceCaseFileResponse> {
     const { caseId, ...uploadPoliceFile } = input
     this.logger.debug(
@@ -105,7 +98,7 @@ export class PoliceResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPLOAD_POLICE_CASE_FILE,
-      backendService.uploadPoliceFile(input.caseId, uploadPoliceFile),
+      this.backendService.uploadPoliceFile(input.caseId, uploadPoliceFile),
       input.caseId,
     )
   }

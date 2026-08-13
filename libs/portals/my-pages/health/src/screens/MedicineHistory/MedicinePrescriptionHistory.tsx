@@ -2,7 +2,6 @@ import { HealthDirectorateMedicineHistoryDispensation } from '@island.is/api/sch
 import { Box, Button, Icon } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
-  EmptyTable,
   formatDate,
   HEALTH_DIRECTORATE_SLUG,
   IntroWrapper,
@@ -89,6 +88,9 @@ const MedicinePrescriptionHistory = () => {
           mobileTitleKey="medicine"
           ellipsisLength={22}
           tableLoading={loading}
+          emptyTableMessage={formatMessage(messages.noDataFound, {
+            arg: formatMessage(messages.medicineTitle).toLowerCase(),
+          })}
           items={
             history?.map((item, i) => ({
               id: item?.id ?? `${i}`,
@@ -204,14 +206,6 @@ const MedicinePrescriptionHistory = () => {
         />
       )}
       {error && !loading && <Problem error={error} noBorder={false} />}
-
-      {!error && !loading && history && history.length === 0 && (
-        <EmptyTable
-          message={formatMessage(messages.noDataFound, {
-            arg: formatMessage(messages.medicineTitle).toLowerCase(),
-          })}
-        />
-      )}
     </IntroWrapper>
   )
 }

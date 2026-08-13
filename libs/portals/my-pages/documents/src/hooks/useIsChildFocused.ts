@@ -1,7 +1,7 @@
 import { RefObject, useEffect, useState } from 'react'
 
 export const useIsChildFocusedorHovered = (
-  ref: RefObject<HTMLElement>,
+  ref: RefObject<HTMLElement | null>,
   focus = true,
 ) => {
   const [isFocused, setIsFocused] = useState(false)

@@ -35,10 +35,15 @@ interface Props {
   canDefendantAppealVerdict: boolean
 }
 
-type VisibleModal = {
-  type: 'REVOKE_SEND_TO_PRISON_ADMIN'
-  defendant: Defendant
-}
+type VisibleModal =
+  | {
+      type: 'REVOKE_SEND_TO_PRISON_ADMIN'
+      defendant: Defendant
+    }
+  | {
+      type: 'CONFIRM_APPEAL_AFTER_DEADLINE'
+      appealDate: Date
+    }
 
 const VerdictTimelineCard: FC<Props> = (props) => {
   const router = useRouter()
@@ -75,10 +80,11 @@ const VerdictTimelineCard: FC<Props> = (props) => {
 
   const showDatePickers = !defendant.isSentToPrisonAdmin && !isFine
 
-  const showAppealDatePicker =
-    canDefendantAppealVerdict &&
-    !verdict?.appealDate &&
-    !defendant.isVerdictAppealDeadlineExpired
+  // The appeal date records when an appeal actually happened, which the public
+  // prosecution office may well need to register after the deadline has run out
+  // - either late bookkeeping for a timely appeal, or a genuinely late appeal.
+  // The latter is confirmed in a modal, see handleSetDate.
+  const showAppealDatePicker = canDefendantAppealVerdict && !verdict?.appealDate
   const shouldShowAppealDatePicker =
     showAppealDatePicker && !isAppealDatePickerClosing
 
@@ -182,6 +188,18 @@ const VerdictTimelineCard: FC<Props> = (props) => {
     verdict,
   ])
 
+  // The deadline runs until the end of its last day, and the picker is date
+  // only, so an appeal registered on the last day itself is still timely.
+  const isAfterAppealDeadline = (date: Date) => {
+    const { verdictAppealDeadline } = defendant
+
+    if (!verdictAppealDeadline) {
+      return false
+    }
+
+    return date.getTime() > new Date(verdictAppealDeadline).getTime()
+  }
+
   const handleDateChange = (
     date: Date | undefined,
     valid: boolean,
@@ -217,10 +235,25 @@ const VerdictTimelineCard: FC<Props> = (props) => {
 
     // Appeal date: hide picker first, then submit on exit complete
     if (type === 'appealDate') {
-      setPendingAppealDate(date)
-      setIsAppealDatePickerClosing(true)
-      return
+      // Registering an appeal that happened after the deadline ran out is
+      // allowed, but confirmed first. Note that the picker only reaches back to
+      // today, so this can only ever trigger once the deadline has passed -
+      // registering a timely appeal late goes through without a prompt.
+      if (isAfterAppealDeadline(date)) {
+        setModalVisible({
+          type: 'CONFIRM_APPEAL_AFTER_DEADLINE',
+          appealDate: date,
+        })
+        return
+      }
+
+      submitAppealDate(date)
     }
+  }
+
+  const submitAppealDate = (date: Date) => {
+    setPendingAppealDate(date)
+    setIsAppealDatePickerClosing(true)
   }
 
   const sendVerdictDate = (type: keyof typeof dates, date: Date) => {
@@ -551,27 +584,53 @@ const VerdictTimelineCard: FC<Props> = (props) => {
         <Modal
           title="Afturkalla úr fullnustu"
           text={`Mál ${workingCase.courtCaseNumber} verður afturkallað.\nÁkærði: ${modalVisible.defendant.name}.`}
-          primaryButton={{
-            text: 'Afturkalla',
-            onClick: () => {
-              setAndSendDefendantToServer(
-                {
-                  caseId: workingCase.id,
-                  defendantId: defendant.id,
-                  isSentToPrisonAdmin: false,
-                },
-                setWorkingCase,
-              )
-
-              setModalVisible(undefined)
+          buttons={[
+            {
+              text: formatMessage(core.cancel),
+              onClick: () => setModalVisible(undefined),
+              variant: 'ghost',
             },
+            {
+              text: 'Afturkalla',
+              onClick: () => {
+                setAndSendDefendantToServer(
+                  {
+                    caseId: workingCase.id,
+                    defendantId: defendant.id,
+                    isSentToPrisonAdmin: false,
+                  },
+                  setWorkingCase,
+                )
 
-            isLoading: isUpdatingDefendant,
-          }}
-          secondaryButton={{
-            text: formatMessage(core.cancel),
-            onClick: () => setModalVisible(undefined),
-          }}
+                setModalVisible(undefined)
+              },
+              isLoading: isUpdatingDefendant,
+            },
+          ]}
+        />
+      )}
+      {modalVisible?.type === 'CONFIRM_APPEAL_AFTER_DEADLINE' && (
+        <Modal
+          title="Áfrýjun eftir að fresti lauk"
+          text={`Áfrýjunarfrestur rann út ${formatDate(
+            defendant.verdictAppealDeadline,
+          )} en skráð áfrýjun er ${formatDate(
+            modalVisible.appealDate,
+          )}.\nViltu skrá áfrýjunina?`}
+          buttons={[
+            {
+              text: formatMessage(core.cancel),
+              onClick: () => setModalVisible(undefined),
+              variant: 'ghost',
+            },
+            {
+              text: 'Skrá áfrýjun',
+              onClick: () => {
+                submitAppealDate(modalVisible.appealDate)
+                setModalVisible(undefined)
+              },
+            },
+          ]}
         />
       )}
     </>

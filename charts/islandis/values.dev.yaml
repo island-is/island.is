@@ -47,7 +47,7 @@ air-discount-scheme-backend:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 20
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -95,7 +95,7 @@ air-discount-scheme-backend:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -338,7 +338,7 @@ api:
         cpuAverageUtilization: 70
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -362,7 +362,7 @@ api:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -588,6 +588,7 @@ application-system-api:
     XROAD_COURT_BANKRUPTCY_CERT_PATH: 'IS-DEV/GOV/10019/Domstolasyslan/JusticePortal-v1'
     XROAD_CRIMINAL_RECORD_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Sakavottord-PDF-v2'
     XROAD_DIGITAL_TACHOGRAPH_DRIVERS_CARD_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Okuritar-V1'
+    XROAD_DIRECTORATE_OF_EQUALITY_PATH: 'IS-DEV/GOV/10014/DMR-Protected/api.ritstjorn-jafnretti'
     XROAD_DIRECTORATE_OF_IMMIGRATION_PATH: 'IS-DEV/GOV/10011/UTL-Protected/Utl-Umsokn-v1'
     XROAD_DRIVING_LICENSE_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1'
     XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2'
@@ -676,7 +677,7 @@ application-system-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -724,7 +725,7 @@ application-system-api:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -863,7 +864,7 @@ application-system-api-worker:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
@@ -876,7 +877,7 @@ application-system-api-worker:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -942,7 +943,7 @@ application-system-form:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -965,7 +966,7 @@ application-system-form:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1014,7 +1015,7 @@ cms-importer-cms-cleanup:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-cms-importer'
@@ -1025,7 +1026,7 @@ cms-importer-cms-cleanup:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1069,7 +1070,7 @@ cms-importer-energy-fund-import:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-cms-importer'
@@ -1080,7 +1081,7 @@ cms-importer-energy-fund-import:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1124,7 +1125,7 @@ cms-importer-fsre-buildings-import:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-cms-importer'
@@ -1135,7 +1136,7 @@ cms-importer-fsre-buildings-import:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1181,7 +1182,7 @@ cms-importer-web-sitemap:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-cms-importer'
@@ -1194,7 +1195,7 @@ cms-importer-web-sitemap:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1245,7 +1246,7 @@ cms-importer-worker:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-cms-importer'
@@ -1256,7 +1257,7 @@ cms-importer-worker:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1304,7 +1305,7 @@ consultation-portal:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -1327,7 +1328,7 @@ consultation-portal:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1376,7 +1377,7 @@ contentful-apps:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -1399,7 +1400,7 @@ contentful-apps:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1443,7 +1444,7 @@ contentful-entry-tagger-service:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -1466,7 +1467,7 @@ contentful-entry-tagger-service:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1550,7 +1551,7 @@ download-service:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -1573,7 +1574,7 @@ download-service:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1664,7 +1665,7 @@ endorsement-system-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-endorsements-api'
@@ -1700,7 +1701,7 @@ endorsement-system-api:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1750,7 +1751,7 @@ form-system-web:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -1773,7 +1774,7 @@ form-system-web:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1823,7 +1824,7 @@ github-actions-cache:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -1846,7 +1847,7 @@ github-actions-cache:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1905,7 +1906,7 @@ icelandic-names-registry-backend:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/icelandic-names-registry-backend'
@@ -1954,7 +1955,7 @@ icelandic-names-registry-backend:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -1999,7 +2000,7 @@ island-ui-storybook:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -2020,7 +2021,7 @@ island-ui-storybook:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -2075,7 +2076,7 @@ license-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -2098,7 +2099,7 @@ license-api:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -2204,7 +2205,7 @@ payments:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -2227,7 +2228,7 @@ payments:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -2278,7 +2279,7 @@ portals-admin:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 8
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -2301,7 +2302,7 @@ portals-admin:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -2366,7 +2367,7 @@ regulations-admin-backend:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -2412,7 +2413,7 @@ regulations-admin-backend:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -2607,7 +2608,7 @@ service-portal:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -2630,7 +2631,7 @@ service-portal:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -2701,7 +2702,7 @@ service-portal-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     internal-gw:
@@ -2747,7 +2748,7 @@ service-portal-api:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -2820,7 +2821,7 @@ services-bff-portals-admin:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -2843,7 +2844,7 @@ services-bff-portals-admin:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -2880,7 +2881,7 @@ services-bff-portals-my-pages:
     BFF_PAR_SUPPORT_ENABLED: 'false'
     BFF_PROXY_API_ENDPOINT: 'http://api.islandis.svc.cluster.local/api/graphql'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/web'
-    IDENTITY_SERVER_CLIENT_SCOPES: '["api_resource.scope","@island.is/applications:read","@island.is/applications:write","@island.is/user-profile:read","@island.is/user-profile:write","@island.is/auth/actor-delegations","@island.is/auth/delegations:write","@island.is/auth/consents","@skra.is/individuals","@island.is/documents","@island.is/endorsements","@admin.island.is/petitions","@island.is/assets/ip","@island.is/assets","@island.is/education","@island.is/education-license","@island.is/finance:overview","@island.is/finance/salary","@island.is/finance/schedule:read","@island.is/finance/loans","@island.is/internal","@island.is/internal:procuring","@island.is/me:details","@island.is/law-and-order","@island.is/licenses","@island.is/licenses:verify","@island.is/company","@island.is/ships","@island.is/vehicles","@island.is/work-machines","@island.is/health","@island.is/health/payments","@island.is/health/medicines","@island.is/health/assistive-devices-and-nutrition","@island.is/health/therapies","@island.is/health/healthcare","@island.is/health/rights-status","@island.is/health/dentists","@island.is/health/organ-donation","@island.is/health/vaccinations","@island.is/signature-collection","@island.is/applications/urvinnslusjodur","@island.is/applications/orkusjodur","@island.is/fishing-license","@island.is/applications/iceland-health","@island.is/applications/samgongustofa-vehicles","@island.is/applications/social-insurance-administration","@island.is/applications/rsk","@island.is/applications/ver","@island.is/applications/ver:accidents","@island.is/applications/mms","@island.is/applications/dmr:stjornartidindi","@island.is/applications/hms","@samband.is/financial-aid/applicant","@samband.is/financial-aid:read","@samband.is/financial-aid:write"]'
+    IDENTITY_SERVER_CLIENT_SCOPES: '["api_resource.scope","@island.is/applications:read","@island.is/applications:write","@island.is/user-profile:read","@island.is/user-profile:write","@island.is/auth/actor-delegations","@island.is/auth/delegations:write","@island.is/auth/consents","@skra.is/individuals","@island.is/documents","@island.is/endorsements","@admin.island.is/petitions","@island.is/assets/ip","@island.is/assets","@island.is/education","@island.is/education-license","@island.is/finance:overview","@island.is/finance/salary","@island.is/finance/schedule:read","@island.is/finance/loans","@island.is/internal","@island.is/internal:procuring","@island.is/me:details","@island.is/law-and-order","@island.is/licenses","@island.is/licenses:verify","@island.is/company","@island.is/ships","@island.is/vehicles","@island.is/work-machines","@island.is/health","@island.is/health/payments","@island.is/health/medicines","@island.is/health/assistive-devices-and-nutrition","@island.is/health/therapies","@island.is/health/healthcare","@island.is/health/rights-status","@island.is/health/dentists","@island.is/health/organ-donation","@island.is/health/vaccinations","@island.is/signature-collection","@island.is/applications/urvinnslusjodur","@island.is/applications/orkusjodur","@island.is/fishing-license","@island.is/applications/iceland-health","@island.is/applications/samgongustofa-vehicles","@island.is/applications/social-insurance-administration","@island.is/applications/rsk","@island.is/applications/ver","@island.is/applications/ver:accidents","@island.is/applications/mms","@island.is/applications/dmr:stjornartidindi","@island.is/applications/hms","@island.is/applications/directorate-of-equality","@samband.is/financial-aid/applicant","@samband.is/financial-aid:read","@samband.is/financial-aid:write"]'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -2906,7 +2907,7 @@ services-bff-portals-my-pages:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -2929,7 +2930,7 @@ services-bff-portals-my-pages:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -2980,7 +2981,7 @@ services-documents:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-documents'
@@ -3016,7 +3017,7 @@ services-documents:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -3096,7 +3097,7 @@ services-form-system-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -3142,7 +3143,7 @@ services-form-system-api:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -3222,7 +3223,7 @@ services-form-system-api-worker:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-form-system-api'
@@ -3235,7 +3236,7 @@ services-form-system-api-worker:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -3288,7 +3289,7 @@ services-payment-flow-update-handler:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     internal-gw:
@@ -3311,7 +3312,7 @@ services-payment-flow-update-handler:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -3335,6 +3336,7 @@ services-payments:
   enabled: true
   env:
     BLIKK_API_BASE_URL: 'https://stage.blikk.tech'
+    BLIKK_ONBOARDING_URL: 'https://light.blikk.tech'
     BLIKK_PAYMENT_TTL_SECONDS: '300'
     DB_EXTENSIONS: 'uuid-ossp'
     DB_HOST: 'postgres-applications.internal'
@@ -3380,7 +3382,7 @@ services-payments:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     internal-gw:
@@ -3436,7 +3438,7 @@ services-payments:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -3485,6 +3487,9 @@ services-payments-worker:
     - 'node'
   enabled: true
   env:
+    BLIKK_API_BASE_URL: 'https://stage.blikk.tech'
+    BLIKK_ONBOARDING_URL: 'https://light.blikk.tech'
+    BLIKK_PAYMENT_TTL_SECONDS: '300'
     CODE_OWNER: 'aranja'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_payments'
@@ -3527,7 +3532,7 @@ services-payments-worker:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-payments'
@@ -3540,7 +3545,7 @@ services-payments-worker:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -3551,6 +3556,7 @@ services-payments-worker:
       memory: '128Mi'
   schedule: '*/5 * * * *'
   secrets:
+    BLIKK_API_KEY: '/k8s/services-payments/BLIKK_API_KEY'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-payments/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-payments/IDENTITY_SERVER_CLIENT_SECRET'
@@ -3604,7 +3610,7 @@ services-sessions:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     internal-gw:
@@ -3627,7 +3633,7 @@ services-sessions:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -3684,7 +3690,7 @@ services-sessions-cleanup:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
@@ -3695,7 +3701,7 @@ services-sessions-cleanup:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -3752,7 +3758,7 @@ services-sessions-worker:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
@@ -3789,7 +3795,7 @@ services-sessions-worker:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -3860,7 +3866,7 @@ services-university-gateway:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -3919,7 +3925,7 @@ services-university-gateway:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -3993,7 +3999,7 @@ services-university-gateway-worker:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway'
@@ -4006,7 +4012,7 @@ services-university-gateway-worker:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -4055,7 +4061,7 @@ skilavottord-web:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 8
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -4078,7 +4084,7 @@ skilavottord-web:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -4132,7 +4138,7 @@ skilavottord-ws:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -4178,7 +4184,7 @@ skilavottord-ws:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -4277,7 +4283,7 @@ user-notification:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     internal-gw:
@@ -4309,7 +4315,7 @@ user-notification:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -4409,7 +4415,7 @@ user-notification-birthday-worker:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
@@ -4422,7 +4428,7 @@ user-notification-birthday-worker:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -4491,7 +4497,7 @@ user-notification-cleanup-worker:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
@@ -4527,7 +4533,7 @@ user-notification-cleanup-worker:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -4619,7 +4625,7 @@ user-notification-worker:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
@@ -4655,7 +4661,7 @@ user-notification-worker:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -4724,7 +4730,7 @@ web:
         cpuAverageUtilization: 70
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -4747,7 +4753,7 @@ web:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -4801,7 +4807,7 @@ xroad-collector:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-xroad-collector'
@@ -4814,7 +4820,7 @@ xroad-collector:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:

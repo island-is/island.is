@@ -8,6 +8,7 @@ import {
   PROSECUTION_INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
+  core,
   errors,
   icRequestedHearingArrangements as m,
   titles,
@@ -158,39 +159,47 @@ const HearingArrangements = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${PROSECUTION_INVESTIGATION_CASE_DEFENDANT_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={async () =>
-            await handleNavigationTo(
-              PROSECUTION_INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE,
-            )
-          }
-          nextIsDisabled={!stepIsValid}
-          nextIsLoading={isLoadingWorkingCase || isTransitioningCase}
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              onClick: async () =>
+                await handleNavigationTo(
+                  PROSECUTION_INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE,
+                ),
+              disabled: !stepIsValid,
+              loading: isLoadingWorkingCase || isTransitioningCase,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
       {navigateTo !== undefined && (
         <Modal
           title={formatMessage(m.modal.heading)}
           text={formatMessage(m.modal.text)}
-          primaryButton={{
-            text: formatMessage(m.modal.primaryButtonText),
-            onClick: async () => {
-              const notificationSent = await sendNotification(
-                workingCase.id,
-                TrackedNotificationType.HEADS_UP,
-              )
-
-              if (notificationSent) {
-                router.push(`${navigateTo}/${workingCase.id}`)
-              }
+          buttons={[
+            {
+              text: formatMessage(m.modal.secondaryButtonText),
+              onClick: () => router.push(`${navigateTo}/${workingCase.id}`),
+              variant: 'ghost',
             },
-            isLoading: isSendingNotification,
-          }}
-          secondaryButton={{
-            text: formatMessage(m.modal.secondaryButtonText),
-            onClick: () => router.push(`${navigateTo}/${workingCase.id}`),
-          }}
+            {
+              text: formatMessage(m.modal.primaryButtonText),
+              onClick: async () => {
+                const notificationSent = await sendNotification(
+                  workingCase.id,
+                  TrackedNotificationType.HEADS_UP,
+                )
+
+                if (notificationSent) {
+                  router.push(`${navigateTo}/${workingCase.id}`)
+                }
+              },
+              isLoading: isSendingNotification,
+            },
+          ]}
           onClose={() => setNavigateTo(undefined)}
           errorMessage={
             sendNotificationError

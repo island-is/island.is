@@ -4,6 +4,14 @@ import {
   courtOfAppealsCasesInProgress,
 } from './caseTables/courtOfAppeals'
 import {
+  defenceIndictmentsAppealed,
+  defenceIndictmentsCompleted,
+  defenceIndictmentsInProgress,
+  defenceRequestCasesAppealed,
+  defenceRequestCasesCompleted,
+  defenceRequestCasesInProgress,
+} from './caseTables/defence'
+import {
   districtCourtIndictmentsAppealed,
   districtCourtIndictmentsCompleted,
   districtCourtIndictmentsFinalizing,
@@ -114,11 +122,10 @@ export const caseTables: Record<CaseTableType, CaseTable> = {
   PROSECUTION_INDICTMENTS_IN_PROGRESS: prosecutionIndictmentsInProgress,
   PROSECUTION_INDICTMENTS_APPEALED: prosecutionIndictmentsAppealed,
   PROSECUTION_INDICTMENTS_COMPLETED: prosecutionIndictmentsCompleted,
-  // Exception: Not implemented as a static table but we currently need to preserve the case table type
-  STATISTICS: {
-    title: '',
-    hasMyCasesFilter: false,
-    columnKeys: [],
-    columns: [],
-  },
+  DEFENCE_REQUEST_CASES_IN_PROGRESS: defenceRequestCasesInProgress,
+  DEFENCE_REQUEST_CASES_APPEALED: defenceRequestCasesAppealed,
+  DEFENCE_REQUEST_CASES_COMPLETED: defenceRequestCasesCompleted,
+  DEFENCE_INDICTMENTS_IN_PROGRESS: defenceIndictmentsInProgress,
+  DEFENCE_INDICTMENTS_APPEALED: defenceIndictmentsAppealed,
+  DEFENCE_INDICTMENTS_COMPLETED: defenceIndictmentsCompleted,
 }

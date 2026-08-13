@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 
 import { Auth, withAuthContext } from '@island.is/auth-nest-tools'
-import { data } from '@island.is/clients/middlewares'
+import { data, dataOr404Null } from '@island.is/clients/middlewares'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
@@ -565,7 +565,7 @@ export class HealthDirectorateHealthService {
     id: string,
   ): Promise<AppointmentDetailDto | null> {
     const appointment = await withAuthContext(auth, () =>
-      data(
+      dataOr404Null(
         meAppointmentControllerGetPatientAppointmentByIdV1({
           path: { id },
         }),

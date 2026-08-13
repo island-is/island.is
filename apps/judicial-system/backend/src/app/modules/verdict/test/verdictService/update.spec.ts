@@ -11,6 +11,7 @@ import { createTestingVerdictModule } from '../createTestingVerdictModule'
 
 import { Case, Verdict, VerdictRepositoryService } from '../../../repository'
 import { UpdateVerdictDto } from '../../dto/updateVerdict.dto'
+import { VerdictService } from '../../verdict.service'
 
 interface Then {
   result: Verdict
@@ -32,15 +33,17 @@ describe('VerdictService - update', () => {
   let mockVerdictRepositoryService: VerdictRepositoryService
   let transaction: Transaction
   let mockAddMessagesToQueue: jest.Mock
+  let verdictService: VerdictService
 
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     jest.resetAllMocks()
 
-    const { verdictService, verdictRepositoryService } =
+    const { verdictService: service, verdictRepositoryService } =
       await createTestingVerdictModule()
 
+    verdictService = service
     mockVerdictRepositoryService = verdictRepositoryService
     transaction = {} as Transaction
     mockAddMessagesToQueue = (
@@ -157,6 +160,37 @@ describe('VerdictService - update', () => {
       expect(mockVerdictRepositoryService.update).toHaveBeenCalledTimes(1)
       expect(mockAddMessagesToQueue).not.toHaveBeenCalled()
       expect(then.result).toBeDefined()
+    })
+  })
+
+  describe('resetVerdictDataForReopen', () => {
+    beforeEach(async () => {
+      const verdict = {
+        id: verdictId,
+        caseId,
+        defendantId,
+        isDefaultJudgement: true,
+      } as unknown as Verdict
+
+      const mockUpdate = mockVerdictRepositoryService.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce(verdict)
+
+      await verdictService.resetVerdictDataForReopen(verdict, transaction)
+    })
+
+    it('should reset verdict data including isDefaultJudgement', () => {
+      expect(mockVerdictRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        defendantId,
+        verdictId,
+        {
+          isAcquittedByPublicProsecutionOffice: null,
+          defendantHasRequestedAppeal: null,
+          serviceRequirement: null,
+          isDefaultJudgement: null,
+        },
+        { transaction },
+      )
     })
   })
 })

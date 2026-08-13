@@ -1,3 +1,7 @@
+// Loaded at runtime by @nestjs/apollo's Apollo driver via a dynamic require;
+// imported here so Nx keeps it in the generated production package.json.
+import '@as-integrations/express5'
+
 import { ApolloDriver } from '@nestjs/apollo'
 import { Module } from '@nestjs/common'
 import { APP_INTERCEPTOR } from '@nestjs/core'
@@ -260,7 +264,7 @@ import { SecondarySchoolApiModule } from '@island.is/api/domains/secondary-schoo
 import { NationalRegistryV3ApplicationsClientConfig } from '@island.is/clients/national-registry-v3-applications'
 import { LshClientConfig } from '@island.is/clients/lsh'
 import { MatildaClientConfig } from '@island.is/clients/matilda'
-import { LyfjastofnunPharmaciesClientConfig } from '@island.is/clients/lyfjastofnun-pharmacies'
+import { LyfjastofnunHealthProvidersClientConfig } from '@island.is/clients/lyfjastofnun-health-providers'
 import { HmsConfig } from '@island.is/clients/hms'
 import { NvsPermitsClientConfig } from '@island.is/clients/nvs-permits'
 import { HmsApplicationSystemConfig } from '@island.is/clients/hms-application-system'
@@ -466,7 +470,7 @@ const environment = getConfig
         DownloadServiceConfig,
         LshClientConfig,
         MatildaClientConfig,
-        LyfjastofnunPharmaciesClientConfig,
+        LyfjastofnunHealthProvidersClientConfig,
         FeatureFlagConfig,
         HmsConfig,
         HmsApplicationSystemConfig,

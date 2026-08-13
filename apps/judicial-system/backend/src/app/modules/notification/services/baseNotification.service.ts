@@ -16,6 +16,8 @@ import {
   filterWhitelistEmails,
   formatArraignmentDateEmailNotification,
   formatCourtCalendarInvitation,
+  formatDefenderRoute,
+  formatPostponedCourtDateEmailNotification,
   stripHtmlTags,
 } from '../../../formatters'
 import { notifications } from '../../../messages'
@@ -265,9 +267,9 @@ export abstract class BaseNotificationService {
 
   protected async uploadEmailToCourt(
     theCase: Case,
-    user: UserDescriptor,
     subject: string,
     body: string,
+    user?: UserDescriptor,
     recipients?: string,
   ): Promise<void> {
     try {
@@ -299,7 +301,7 @@ export abstract class BaseNotificationService {
     recipientEmail,
   }: {
     theCase: Case
-    user: UserDescriptor
+    user: UserDescriptor | undefined
     arraignmentDateLog: DateLog
     recipientName: string
     recipientEmail: string
@@ -327,10 +329,103 @@ export abstract class BaseNotificationService {
     }).then((recipient) => {
       if (recipient.success) {
         // No need to wait
-        this.uploadEmailToCourt(theCase, user, subject, body, recipientEmail)
+        this.uploadEmailToCourt(theCase, subject, body, user, recipientEmail)
       }
 
       return recipient
     })
+  }
+
+  private async sendPostponedCourtDateEmailNotificationToRecipient({
+    theCase,
+    user,
+    courtDate,
+    recipientName,
+    recipientEmail,
+    recipientHasAccessToRVG,
+  }: {
+    theCase: Case
+    user: UserDescriptor | undefined
+    courtDate: DateLog
+    recipientName: string
+    recipientEmail: string
+    recipientHasAccessToRVG: boolean
+  }): Promise<Recipient> {
+    const overviewUrl = recipientHasAccessToRVG
+      ? formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id)
+      : undefined
+
+    const { subject, body } = formatPostponedCourtDateEmailNotification(
+      this.formatMessage,
+      theCase,
+      courtDate,
+      overviewUrl,
+    )
+
+    const calendarInvite = this.getCourtDateCalendarInvite(theCase, courtDate)
+
+    return this.sendEmail({
+      subject,
+      html: body,
+      recipientName,
+      recipientEmail,
+      attachments: calendarInvite ? [calendarInvite] : undefined,
+      skipTail: !overviewUrl,
+    }).then((recipient) => {
+      if (recipient.success) {
+        // No need to wait
+        this.uploadEmailToCourt(theCase, subject, body, user, recipientEmail)
+      }
+
+      return recipient
+    })
+  }
+
+  /**
+   * Sends an invitation to the next scheduled court session to a party that was
+   * just confirmed. The arraignment (þingfesting / ARRAIGNMENT_DATE) takes
+   * precedence over a regularly scheduled court session (þinghald / COURT_DATE) -
+   * the party is invited to whichever is scheduled in the future. Returns null
+   * when neither date is in the future, meaning nothing should be sent.
+   */
+  protected async sendCourtDateFollowUpEmailNotification({
+    theCase,
+    user,
+    recipientName,
+    recipientEmail,
+    recipientHasAccessToRVG,
+  }: {
+    theCase: Case
+    user: UserDescriptor | undefined
+    recipientName: string
+    recipientEmail: string
+    recipientHasAccessToRVG: boolean
+  }): Promise<Recipient | null> {
+    const arraignmentDate = DateLog.arraignmentDate(theCase.dateLogs)
+
+    if (arraignmentDate && arraignmentDate.date.getTime() > Date.now()) {
+      return this.sendArraignmentDateEmailNotification({
+        theCase,
+        user,
+        arraignmentDateLog: arraignmentDate,
+        recipientName,
+        recipientEmail,
+      })
+    }
+
+    const courtDate = DateLog.courtDate(theCase.dateLogs)
+
+    if (courtDate && courtDate.date.getTime() > Date.now()) {
+      return this.sendPostponedCourtDateEmailNotificationToRecipient({
+        theCase,
+        user,
+        courtDate,
+        recipientName,
+        recipientEmail,
+        recipientHasAccessToRVG,
+      })
+    }
+
+    return null
   }
 }

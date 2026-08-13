@@ -99,6 +99,7 @@ export class PaymentFlowController {
       bankTransferScaRedirectUrl: overlay.bankTransferScaRedirectUrl,
       lastBankTransferFailure: overlay.lastBankTransferFailure,
       bankTransferExpiresAt: overlay.bankTransferExpiresAt,
+      bankTransferPendingStatus: overlay.bankTransferPendingStatus,
     }
   }
 

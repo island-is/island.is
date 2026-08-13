@@ -158,6 +158,6 @@ describe('AuditInterceptor', () => {
     await lastValueFrom(observable)
 
     // Assert
-    expect(auditService.auditPromise).toBeCalledTimes(0)
+    expect(auditService.auditPromise).toHaveBeenCalledTimes(0)
   })
 })

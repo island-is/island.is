@@ -8,8 +8,6 @@ const sidebarWidth = {
   tablet: '230px',
 }
 
-// ── Existing styles (unchanged) ──────────────────────────────────────────────
-
 export const sidebarWrapper = style({
   top: top + theme.spacing[3],
   maxWidth: sidebarWidth.tablet,
@@ -38,25 +36,5 @@ export const sidebarWrap = style({
     lg: {
       maxWidth: `calc(100% - ${sidebarWidth.desktop})`,
     },
-  }),
-})
-
-// ── New grid layout styles ────────────────────────────────────────────────────
-
-// Hides the sidebar GridColumn below lg; visible as block on lg+
-export const sidebarColumn = style({
-  display: 'none',
-  ...themeUtils.responsiveStyle({
-    lg: { display: 'block' },
-  }),
-})
-
-// Sticky for grid layout: consolidates top positioning from sidebarWrapper
-export const stickyGrid = style({
-  position: 'sticky',
-  alignSelf: 'flex-start',
-  top: top + theme.spacing[3],
-  ...themeUtils.responsiveStyle({
-    lg: { top: top + theme.spacing[9] },
   }),
 })
