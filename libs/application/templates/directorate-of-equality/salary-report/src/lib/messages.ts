@@ -544,6 +544,15 @@ export const messages = {
         defaultMessage:
           'Vægi allra viðmiða verður að vera samtals 100% (núverandi: {total}%)',
       },
+      deleteSaveError: {
+        id: 'doe.sr.application:report.criteria.deleteSaveError',
+        defaultMessage:
+          'Ekki tókst að vista eyðingu viðmiðsins. Vinsamlegast reyndu aftur.',
+      },
+      retryButton: {
+        id: 'doe.sr.application:report.criteria.retryButton',
+        defaultMessage: 'Reyna aftur',
+      },
     }),
     subCriteria: defineMessages({
       sectionTitle: {
@@ -612,6 +621,20 @@ export const messages = {
         id: 'doe.sr.application:report.subCriteria.personalFactorGroupIntro',
         defaultMessage:
           'Mikilvægt er að einstaklingsbundnu viðmiðin séu hlutlæg, gagnsæ og sanngjörn. Illa skilgreind viðmið geta leitt til ómeðvitaðrar mismununar og óútskýrðs launamunar. Gott er að velja fá og skýr viðmið sem byggð eru á sannreynanlegum þáttum sem styðja markmið um jafnræði og samræmi í ákvörðunum um laun.',
+      },
+      weightSumError: {
+        id: 'doe.sr.application:report.subCriteria.weightSumError',
+        defaultMessage:
+          'Vægi undirviðmiða verður að vera samtals jafnt vægi yfirviðmiðsins ({expected}%) — núverandi samtals: {total}%',
+      },
+      deleteSaveError: {
+        id: 'doe.sr.application:report.subCriteria.deleteSaveError',
+        defaultMessage:
+          'Ekki tókst að vista eyðingu undirviðmiðsins. Vinsamlegast reyndu aftur.',
+      },
+      retryButton: {
+        id: 'doe.sr.application:report.subCriteria.retryButton',
+        defaultMessage: 'Reyna aftur',
       },
     }),
     employees: defineMessages({
