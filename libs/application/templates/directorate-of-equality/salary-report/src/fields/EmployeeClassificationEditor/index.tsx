@@ -1,7 +1,7 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Stack, Table as T } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC, useEffect, useMemo } from 'react'
+import { FC, useEffect, useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import type { ParsedCriterionDto } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
@@ -17,6 +17,7 @@ import {
   mergeStepAssignments,
 } from '../JobClassificationEditor/utils'
 import { EmployeeClassificationRow } from './EmployeeClassificationRow'
+import { TABLE_PAGE_SIZE, TablePagination } from '../TablePagination'
 
 const FIELD_NAME = 'employees'
 
@@ -26,6 +27,8 @@ export const EmployeeClassificationEditor: FC<
   const { formatMessage } = useLocale()
   const { getValues, setValue } = useFormContext()
   const m = messages.report.employees
+
+  const [page, setPage] = useState(1)
 
   const stepMetaByTitle = useMemo(() => {
     const criteria = getPathValue<ParsedCriterionDto[]>(
@@ -109,6 +112,14 @@ export const EmployeeClassificationEditor: FC<
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const totalPages = Math.ceil(employees.length / TABLE_PAGE_SIZE)
+
+  // The employee list is fixed for the lifetime of this screen (no add/remove
+  // here), so the page only ever changes when the user asks for it.
+  const visibleEmployees = employees
+    .map((employee, index) => ({ employee, index }))
+    .slice((page - 1) * TABLE_PAGE_SIZE, page * TABLE_PAGE_SIZE)
+
   return (
     <Box>
       <Stack space={4}>
@@ -122,7 +133,7 @@ export const EmployeeClassificationEditor: FC<
             </T.Row>
           </T.Head>
           <T.Body>
-            {employees.map((employee, index) => (
+            {visibleEmployees.map(({ employee, index }) => (
               <EmployeeClassificationRow
                 key={`${employee.identifier}-${index}`}
                 employee={employee}
@@ -132,6 +143,12 @@ export const EmployeeClassificationEditor: FC<
             ))}
           </T.Body>
         </T.Table>
+
+        <TablePagination
+          page={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+        />
       </Stack>
     </Box>
   )

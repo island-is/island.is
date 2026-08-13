@@ -396,6 +396,58 @@ export const messages = {
         id: 'doe.sr.application:aboutTheCompany.period.month',
         defaultMessage: 'Veldu mánuð',
       },
+      year: {
+        id: 'doe.sr.application:aboutTheCompany.period.year',
+        defaultMessage: 'Veldu ár',
+      },
+      january: {
+        id: 'doe.sr.application:aboutTheCompany.period.january',
+        defaultMessage: 'Janúar',
+      },
+      february: {
+        id: 'doe.sr.application:aboutTheCompany.period.february',
+        defaultMessage: 'Febrúar',
+      },
+      march: {
+        id: 'doe.sr.application:aboutTheCompany.period.march',
+        defaultMessage: 'Mars',
+      },
+      april: {
+        id: 'doe.sr.application:aboutTheCompany.period.april',
+        defaultMessage: 'Apríl',
+      },
+      may: {
+        id: 'doe.sr.application:aboutTheCompany.period.may',
+        defaultMessage: 'Maí',
+      },
+      june: {
+        id: 'doe.sr.application:aboutTheCompany.period.june',
+        defaultMessage: 'Júní',
+      },
+      july: {
+        id: 'doe.sr.application:aboutTheCompany.period.july',
+        defaultMessage: 'Júlí',
+      },
+      august: {
+        id: 'doe.sr.application:aboutTheCompany.period.august',
+        defaultMessage: 'Ágúst',
+      },
+      september: {
+        id: 'doe.sr.application:aboutTheCompany.period.september',
+        defaultMessage: 'September',
+      },
+      october: {
+        id: 'doe.sr.application:aboutTheCompany.period.october',
+        defaultMessage: 'Október',
+      },
+      november: {
+        id: 'doe.sr.application:aboutTheCompany.period.november',
+        defaultMessage: 'Nóvember',
+      },
+      december: {
+        id: 'doe.sr.application:aboutTheCompany.period.december',
+        defaultMessage: 'Desember',
+      },
     }),
   },
 
@@ -650,6 +702,10 @@ export const messages = {
         id: 'doe.sr.application:report.employees.intro',
         defaultMessage:
           'Hér þarf að fylla inn upplýsingar um starfsmenn fyrirtækisins sem skýrslugjöfin nær yfir. Athugið að fjöldi starfsmanna sem skráðir eru hér þarf að vera í samræmi við fjölda starfsmanna sem gefinn er upp í fyrra skrefi umsóknarinnar.',
+      },
+      paginationPageLabel: {
+        id: 'doe.sr.application:report.employees.paginationPageLabel',
+        defaultMessage: 'Fara á síðu {page}',
       },
       nameColumn: {
         id: 'doe.sr.application:report.employees.nameColumn',

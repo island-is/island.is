@@ -102,10 +102,19 @@ const period = z
     period: z
       .enum([PERIOD_TWELVE_MONTHS, PERIOD_ONE_MONTH])
       .refine((v) => !!v, { params: messages.errors.required }),
-    month: z.string().optional(),
+    year: z.string().nullish(),
+    month: z.string().nullish(),
   })
   .superRefine((val, ctx) => {
-    if (val.period === PERIOD_ONE_MONTH && !val.month) {
+    if (val.period !== PERIOD_ONE_MONTH) return
+    if (!val.year) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['year'],
+        params: messages.errors.required,
+      })
+    }
+    if (!val.month) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['month'],
@@ -195,8 +204,10 @@ const employee = z.object({
   identifier: z.string().min(1),
   roleTitle: z.string(),
   gender: z.string(),
-  field: z.string().optional(),
-  department: z.string().optional(),
+  // Nullish, not just optional: the API returns `null` for an empty Svið/Deild
+  // cell and the imported report is seeded straight into answers.
+  field: z.string().nullish(),
+  department: z.string().nullish(),
   startDate: z.string(),
   workRatio: z.number(),
   baseSalary: z.number(),

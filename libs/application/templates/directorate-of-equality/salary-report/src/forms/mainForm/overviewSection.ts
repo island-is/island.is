@@ -7,6 +7,22 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { messages } from '../../lib/messages'
+import { PERIOD_ONE_MONTH } from '../../utils/constants'
+
+const MONTH_LABELS = [
+  messages.aboutTheCompany.period.january,
+  messages.aboutTheCompany.period.february,
+  messages.aboutTheCompany.period.march,
+  messages.aboutTheCompany.period.april,
+  messages.aboutTheCompany.period.may,
+  messages.aboutTheCompany.period.june,
+  messages.aboutTheCompany.period.july,
+  messages.aboutTheCompany.period.august,
+  messages.aboutTheCompany.period.september,
+  messages.aboutTheCompany.period.october,
+  messages.aboutTheCompany.period.november,
+  messages.aboutTheCompany.period.december,
+]
 
 // Shared with the POSTPONED-state report recap (postponedReportSummarySection)
 // — that screen shows the same submitted-report fields read-only, with no
@@ -157,6 +173,37 @@ export const buildReportOverviewFields = (withBackLinks: boolean) => [
           getValueViaPath<string>(answers, 'employeeCount.nonBinary') ?? '',
       },
     ],
+  }),
+  buildOverviewField({
+    id: 'overview.period',
+    title: messages.overview.periodLabel,
+    titleVariant: 'h3',
+    ...(withBackLinks ? { backId: 'periodMultiField' } : {}),
+    items: (answers) => {
+      const period = getValueViaPath<string>(answers, 'period.period')
+      const isOneMonth = period === PERIOD_ONE_MONTH
+      const items = [
+        {
+          width: 'half' as const,
+          keyText: messages.aboutTheCompany.period.label,
+          valueText: isOneMonth
+            ? messages.aboutTheCompany.period.oneMonth
+            : messages.aboutTheCompany.period.medium12months,
+        },
+      ]
+      if (!isOneMonth) return items
+      const year = getValueViaPath<string>(answers, 'period.year') ?? ''
+      const month = getValueViaPath<string>(answers, 'period.month')
+      const monthLabel = month ? MONTH_LABELS[Number(month) - 1] : undefined
+      return [
+        ...items,
+        {
+          width: 'half' as const,
+          keyText: messages.aboutTheCompany.period.year,
+          valueText: monthLabel ? [monthLabel, year] : year,
+        },
+      ]
+    },
   }),
 ]
 
