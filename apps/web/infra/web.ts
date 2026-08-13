@@ -42,6 +42,7 @@ export const serviceSetup = (services: {
       ENVIRONMENT: ref((h) => h.env.type),
     })
     .secrets({
+      DD_CSP_REPORT_CLIENT_TOKEN: '/k8s/DD_CSP_REPORT_CLIENT_TOKEN',
       DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN',
     })
     .ingress({

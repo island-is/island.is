@@ -1,3 +1,5 @@
+import { logger } from '@island.is/logging'
+
 /**
  * Shared nonce-based Content-Security-Policy for island.is Next apps.
  *
@@ -35,15 +37,109 @@ export interface ContentSecurityPolicyOptions {
    * `process.env.MATOMO_DOMAIN` (the same value the app uses to load Matomo).
    */
   matomoDomain?: string
+
+  /**
+   * One or more endpoints that receive CSP violation reports. When configured,
+   * these are emitted as the policy's `report-uri` directive.
+   */
+  reportUri?: string | readonly string[]
+}
+
+export interface DatadogCspReportUriOptions {
+  /**
+   * Datadog client token. This must not be an API or application key. Defaults
+   * to `process.env.DD_CSP_REPORT_CLIENT_TOKEN`.
+   */
+  clientToken?: string
+
+  /** Canonical Datadog service name for CSP reports. */
+  service: string
+
+  /** Defaults to Datadog's injected `DD_ENV`, then `ENVIRONMENT`. */
+  env?: string
+
+  /** Defaults to `DD_VERSION`, then `APP_VERSION`, then `GIT_COMMIT_SHA`. */
+  version?: string
+}
+
+const DATADOG_EU_CSP_REPORT_INTAKE =
+  'https://browser-intake-datadoghq.eu/api/v2/logs'
+
+let didWarnAboutMissingDatadogClientToken = false
+
+const firstNonBlank = (...values: Array<string | undefined>) =>
+  values.find((value) => value?.trim())?.trim()
+
+/**
+ * Builds the EU Datadog intake URL for CSP violation reports. Returns undefined
+ * when no client token is configured, allowing reporting to be disabled in
+ * environments such as local development without emitting an invalid policy.
+ */
+export const buildDatadogCspReportUri = ({
+  clientToken = process.env.DD_CSP_REPORT_CLIENT_TOKEN,
+  service,
+  env,
+  version,
+}: DatadogCspReportUriOptions): string | undefined => {
+  if (!clientToken?.trim()) {
+    if (!didWarnAboutMissingDatadogClientToken) {
+      logger.warn(
+        'CSP reporting is disabled because DD_CSP_REPORT_CLIENT_TOKEN is not configured.',
+        { context: 'ContentSecurityPolicy' },
+      )
+      didWarnAboutMissingDatadogClientToken = true
+    }
+
+    return undefined
+  }
+
+  const resolvedEnv =
+    env === undefined
+      ? firstNonBlank(process.env.DD_ENV, process.env.ENVIRONMENT)
+      : env.trim()
+  const resolvedVersion =
+    version === undefined
+      ? firstNonBlank(
+          process.env.DD_VERSION,
+          process.env.APP_VERSION,
+          process.env.GIT_COMMIT_SHA,
+        )
+      : version.trim()
+
+  const tags = [
+    ['service', service],
+    ['env', resolvedEnv],
+    ['version', resolvedVersion],
+  ]
+    .filter((tag): tag is [string, string] => Boolean(tag[1]?.trim()))
+    .map(([key, value]) => `${key}:${value.trim()}`)
+    .join(',')
+
+  const reportUri = new URL(DATADOG_EU_CSP_REPORT_INTAKE)
+  reportUri.searchParams.set('dd-api-key', clientToken.trim())
+  reportUri.searchParams.set('dd-evp-origin', 'content-security-policy')
+  reportUri.searchParams.set('ddsource', 'csp-report')
+
+  if (tags) {
+    reportUri.searchParams.set('ddtags', tags)
+  }
+
+  return reportUri.toString()
 }
 
 export const buildContentSecurityPolicy = (
   nonce: string,
   {
     matomoDomain = process.env.MATOMO_DOMAIN,
+    reportUri,
   }: ContentSecurityPolicyOptions = {},
 ): string => {
   const matomo = matomoDomain
+  const reportUris = (
+    typeof reportUri === 'string' ? [reportUri] : reportUri ?? []
+  )
+    .map((uri) => uri.trim())
+    .filter(Boolean)
   // Local dev needs a couple of extra origins (the Next HMR websocket). Gate this
   // to dev only so the deployed policy stays strict and we still catch real
   // violations locally before they reach a deployment.
@@ -223,6 +319,7 @@ export const buildContentSecurityPolicy = (
       'https://web-chat.global.assistant.watson.appdomain.cloud',
       'https://applepay.cdn-apple.com',
     ],
+    ...(reportUris.length > 0 ? { 'report-uri': reportUris } : {}),
   }
 
   return Object.entries(directives)
