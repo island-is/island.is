@@ -26,6 +26,7 @@ command:
 enabled: true
 env:
   BLIKK_API_BASE_URL: 'https://api.blikk.tech'
+  BLIKK_ONBOARDING_URL: 'https://light.blikk.tech'
   BLIKK_PAYMENT_TTL_SECONDS: '600'
   CODE_OWNER: 'aranja'
   DB_HOST: 'postgres-applications.internal'

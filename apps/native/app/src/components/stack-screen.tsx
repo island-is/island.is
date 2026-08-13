@@ -137,7 +137,9 @@ export function StackScreen({
   return (
     <Stack.Screen
       options={{
-        unstable_headerLeftItems: headerLeftItems,
+        ...(options?.headerLeftItems !== undefined && {
+          unstable_headerLeftItems: headerLeftItems,
+        }),
         headerLeft,
         unstable_headerRightItems: headerRightItems,
         headerRight,

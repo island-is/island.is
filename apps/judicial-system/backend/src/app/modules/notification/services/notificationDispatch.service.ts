@@ -20,6 +20,7 @@ import {
   isIndictmentCase,
   NotificationDispatchType,
   prosecutorsOfficeTypes,
+  RequestCaseNotificationType,
   ServiceRequirement,
   UserDescriptor,
 } from '@island.is/judicial-system/types'
@@ -112,45 +113,55 @@ export class NotificationDispatchService {
     this.addMessagesForCriminalRecordFileUpdateToQueue(theCase)
   }
 
+  // The suspension takes effect without service of the verdict when the
+  // defendant was present at the ruling (NOT_APPLICABLE) or service is
+  // not required (NOT_REQUIRED)
+  private isDefendantReadyForDrivingLicenseSuspensionNotification(
+    defendant: NonNullable<Case['defendants']>[number],
+    isFine: boolean,
+  ): boolean {
+    if (!defendant.isDrivingLicenseSuspended) {
+      return false
+    }
+
+    if (isFine) {
+      return true
+    }
+
+    return (
+      defendant.verdicts?.some(
+        (verdict) =>
+          verdict.serviceRequirement === ServiceRequirement.NOT_APPLICABLE ||
+          verdict.serviceRequirement === ServiceRequirement.NOT_REQUIRED,
+      ) ?? false
+    )
+  }
+
   private dispatchIndictmentSentToPublicProsecutorNotifications(
     theCase: Case,
   ): void {
-    const hasDrivingLicenseSuspension = theCase.defendants?.some(
-      (defendant) => defendant.isDrivingLicenseSuspended,
-    )
-
-    const hasServiceRequirementNotApplicable = theCase.defendants?.some(
-      (defendant) =>
-        defendant.verdicts?.some(
-          (verdict) =>
-            verdict.serviceRequirement === ServiceRequirement.NOT_APPLICABLE,
-        ),
-    )
-
     const isFine =
       theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
 
-    addMessagesToQueue(
-      {
-        type: MessageType.INDICTMENT_CASE_NOTIFICATION,
-        caseId: theCase.id,
-        body: {
-          type: IndictmentCaseNotificationType.INDICTMENT_VERDICT_INFO,
-        },
-      },
-      ...(hasDrivingLicenseSuspension &&
-      (isFine || hasServiceRequirementNotApplicable)
-        ? [
-            {
-              type: MessageType.INDICTMENT_CASE_NOTIFICATION,
-              caseId: theCase.id,
-              body: {
-                type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
-              },
-            },
-          ]
-        : []),
-    )
+    const readySuspendedDefendants =
+      theCase.defendants?.filter((defendant) =>
+        this.isDefendantReadyForDrivingLicenseSuspensionNotification(
+          defendant,
+          isFine,
+        ),
+      ) ?? []
+
+    if (readySuspendedDefendants.length > 0) {
+      addMessagesToQueue(
+        ...readySuspendedDefendants.map(() => ({
+          type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+          caseId: theCase.id,
+          body: {
+            type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
+          },
+        })),
+      )
+    }
 
     this.addMessagesForCriminalRecordFileUpdateToQueue(theCase)
   }
@@ -169,10 +180,14 @@ export class NotificationDispatchService {
         },
       })
     } else {
-      // This path is never hit as EventNotificationType.COURT_DATE_SCHEDULED is only dispatched for indictment cases
-      this.logger.warn(
-        `Attempted to dispatch court date notification for case ${theCase.id} of type ${theCase.type}`,
-      )
+      addMessagesToQueue({
+        type: MessageType.NOTIFICATION,
+        caseId: theCase.id,
+        body: {
+          type: RequestCaseNotificationType.COURT_DATE,
+          userDescriptor,
+        },
+      })
     }
   }
 

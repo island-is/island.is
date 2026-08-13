@@ -1,5 +1,5 @@
 import { useFormContext, Controller } from 'react-hook-form'
-import InputMask from 'react-input-mask'
+import { format, InputMask } from '@react-input/mask'
 
 import { Box, Input, Text, Divider } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -11,14 +11,24 @@ import { validateCardCVC, validateCardExpiry } from './CardPayment.utils'
 const APPLE_PAY_BUTTON_ID = 'apple-pay-button'
 
 interface CardPaymentInput {
+  cardholderName: string
   card: string
   cardExpiry: string
   cardCVC: string
 }
 
+const MASK_REPLACEMENT = { _: /\d/ }
+
+// The form stores unmasked digits; the inputs display the masked value.
+const toMaskedValue = (value: string | undefined, mask: string) =>
+  format((value ?? '').replace(/\D/g, ''), {
+    mask,
+    replacement: MASK_REPLACEMENT,
+  })
+
 const CARD_MASK_BY_TYPE = {
-  default: '9999 9999 9999 9999',
-  amex: '9999 999999 99999',
+  default: '____ ____ ____ ____',
+  amex: '____ ______ _____',
 }
 
 const getCardType = (cardNumber: string) => {
@@ -85,6 +95,30 @@ export const CardPayment = ({
       )}
       <Box display="flex" flexDirection="column" rowGap={[2, 3]}>
         <Controller
+          name={'cardholderName'}
+          control={control}
+          rules={{
+            required: formatMessage(cardValidationError.cardholderName),
+            validate: (value) => {
+              if (value.trim().length < 2) {
+                return formatMessage(cardValidationError.cardholderNameTooShort)
+              }
+              return true
+            },
+          }}
+          render={({ field }) => (
+            <Input
+              {...field}
+              backgroundColor="blue"
+              label={formatMessage(card.cardholderName)}
+              placeholder={formatMessage(card.cardholderNamePlaceholder)}
+              size="sm"
+              maxLength={45}
+              errorMessage={formState.errors.cardholderName?.message}
+            />
+          )}
+        />
+        <Controller
           name={'card'}
           control={control}
           rules={{
@@ -99,23 +133,21 @@ export const CardPayment = ({
           render={({ field }) => (
             <InputMask
               mask={cardMask}
-              maskPlaceholder={null}
+              replacement={MASK_REPLACEMENT}
+              component={Input}
               {...field}
+              value={toMaskedValue(field.value, cardMask)}
               onChange={(e) => {
                 const cardNumber = e.target.value.replace(/\s/g, '')
                 handleCardChange(cardNumber)
                 field.onChange(cardNumber)
               }}
-            >
-              <Input
-                name={field.name}
-                backgroundColor="blue"
-                label={formatMessage(card.cardNumber)}
-                placeholder={formatMessage(card.cardNumberPlaceholder)}
-                size="sm"
-                errorMessage={formState.errors.card?.message}
-              />
-            </InputMask>
+              backgroundColor="blue"
+              label={formatMessage(card.cardNumber)}
+              placeholder={formatMessage(card.cardNumberPlaceholder)}
+              size="sm"
+              errorMessage={formState.errors.card?.message}
+            />
           )}
         />
         <Box
@@ -134,23 +166,20 @@ export const CardPayment = ({
               }}
               render={({ field }) => (
                 <InputMask
-                  mask="99/99"
-                  maskPlaceholder={null}
+                  mask="__/__"
+                  replacement={MASK_REPLACEMENT}
+                  component={Input}
                   {...field}
+                  value={toMaskedValue(field.value, '__/__')}
                   onChange={(e) =>
                     field.onChange(e.target.value.replace(/\s/g, ''))
                   }
-                >
-                  <Input
-                    name={field.name}
-                    backgroundColor="blue"
-                    label={formatMessage(card.cardExpiry)}
-                    placeholder={formatMessage(card.cardExpiryPlaceholder)}
-                    size="sm"
-                    rows={6}
-                    errorMessage={formState.errors.cardExpiry?.message}
-                  />
-                </InputMask>
+                  backgroundColor="blue"
+                  label={formatMessage(card.cardExpiry)}
+                  placeholder={formatMessage(card.cardExpiryPlaceholder)}
+                  size="sm"
+                  errorMessage={formState.errors.cardExpiry?.message}
+                />
               )}
             />
           </Box>
@@ -163,17 +192,18 @@ export const CardPayment = ({
                 validate: (value) => validateCardCVC(value, formatMessage),
               }}
               render={({ field }) => (
-                <InputMask mask="999" maskPlaceholder={null} {...field}>
-                  <Input
-                    name={field.name}
-                    backgroundColor="blue"
-                    label={formatMessage(card.cardCVC)}
-                    placeholder={formatMessage(card.cardCVCPlaceholder)}
-                    size="sm"
-                    rows={6}
-                    errorMessage={formState.errors.cardCVC?.message}
-                  />
-                </InputMask>
+                <InputMask
+                  mask="___"
+                  replacement={MASK_REPLACEMENT}
+                  component={Input}
+                  {...field}
+                  value={toMaskedValue(field.value, '___')}
+                  backgroundColor="blue"
+                  label={formatMessage(card.cardCVC)}
+                  placeholder={formatMessage(card.cardCVCPlaceholder)}
+                  size="sm"
+                  errorMessage={formState.errors.cardCVC?.message}
+                />
               )}
             />
           </Box>

@@ -136,7 +136,7 @@ describe('IndictmentCountsList', () => {
     renderComponent(workingCase)
 
     await user.click(
-      screen.getByRole('button', { name: 'Raða ákæruliðum í tímaröð' }),
+      await screen.findByRole('button', { name: 'Raða ákæruliðum í tímaröð' }),
     )
 
     await waitFor(() => {
@@ -165,7 +165,7 @@ describe('IndictmentCountsList', () => {
       workingCase,
     )
 
-    const dragHandle = screen.getByTestId('indictmentCountDragHandle')
+    const dragHandle = await screen.findByTestId('indictmentCountDragHandle')
     const warningIconPlaceholder = Array.from(
       document.querySelectorAll('[class*="Icon_placeholder"]'),
     ).find((element) => !dragHandle.contains(element))
@@ -196,7 +196,7 @@ describe('IndictmentCountsList', () => {
 
     renderComponent(workingCase)
 
-    const countOneAccordion = screen.getByRole('button', {
+    const countOneAccordion = await screen.findByRole('button', {
       name: /1\. 007-2021-001/,
     })
     const countTwoAccordion = screen.getByRole('button', {
@@ -249,7 +249,7 @@ describe('IndictmentCountsList', () => {
 
     const { unmount } = renderComponent(workingCase)
 
-    await user.click(screen.getByRole('button', { name: 'Loka öllum' }))
+    await user.click(await screen.findByRole('button', { name: 'Loka öllum' }))
 
     await waitFor(() => {
       expect(
@@ -264,7 +264,7 @@ describe('IndictmentCountsList', () => {
     renderComponent(workingCase)
 
     expect(
-      screen.getByRole('button', { name: /1\. 007-2021-001/ }),
+      await screen.findByRole('button', { name: /1\. 007-2021-001/ }),
     ).toHaveAttribute('aria-expanded', 'false')
     expect(
       screen.getByRole('button', { name: /2\. 007-2021-002/ }),

@@ -118,8 +118,8 @@ describe('InternalNotificationController - Send defender assigned notifications'
     })
 
     it('should send a confirmed defender assigned notification with a link to the case', () => {
-      expect(mockEmailService.sendEmail).toBeCalledTimes(1)
-      expect(mockEmailService.sendEmail).toBeCalledWith({
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(1)
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith({
         from: {
           name: mockConfig.email.fromName,
           address: mockConfig.email.fromEmail,
@@ -180,7 +180,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
         defendantNotificationDTO,
       )
 
-      expect(mockEmailService.sendEmail).toBeCalledTimes(0)
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(0)
     })
 
     it('should not record notification', () => {
@@ -210,7 +210,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
         defendantNotificationDTO,
       )
 
-      expect(mockEmailService.sendEmail).toBeCalledTimes(0)
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(0)
     })
   })
 })

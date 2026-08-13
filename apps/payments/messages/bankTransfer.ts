@@ -68,6 +68,43 @@ export const bankTransfer = defineMessages({
     description:
       'Error toast shown when the cancel-bank-transfer mutation fails (non-already-paid)',
   },
+  cancelInBankAppNote: {
+    id: 'payments:bankTransfer.cancelInBankAppNote',
+    defaultMessage: 'Þú getur hafnað greiðslubeiðninni í bankaappinu þínu.',
+    description:
+      'Static note under the SCA QR / open-banking-app screen telling the payer how to back out, since the payment cannot be cancelled from here once SCA is under way. EN: "Changed your mind? You can decline the payment request in your banking app."',
+  },
+  scanQrInstruction: {
+    id: 'payments:bankTransfer.scanQrInstruction',
+    defaultMessage: 'Skannaðu þennan QR-kóða með símanum þínum.',
+    description:
+      'Bold heading under the SCA QR code on the desktop pending screen. EN: "Scan the QR code"',
+  },
+  openBankingApp: {
+    id: 'payments:bankTransfer.openBankingApp',
+    defaultMessage: 'Opna bankaapp',
+    description:
+      'Primary CTA on the mobile pending screen that opens the SCA deep link in the banking app. EN: "Open banking app"',
+  },
+  openBankingAppInstruction: {
+    id: 'payments:bankTransfer.openBankingAppInstruction',
+    defaultMessage: 'Opnaðu bankaappið þitt til að staðfesta greiðslu.',
+    description:
+      'Supporting text under the open-banking-app button on the mobile pending screen. EN: "Open your banking app to approve payment."',
+  },
+  waitingForAuthorisation: {
+    id: 'payments:bankTransfer.waitingForAuthorisation',
+    defaultMessage: 'Beðið eftir heimild',
+    description:
+      'Waiting message under the loading dots while SCA is complete/not yet required and we poll for terminal status. EN: "Waiting for authorisation..."',
+  },
+  checkPhone: {
+    id: 'payments:bankTransfer.checkPhone',
+    defaultMessage:
+      'Athugaðu hvort tilkynning frá bankanum þínum hafi borist í símann þinn',
+    description:
+      'Waiting message when SCA is required but there is no SCA URL (back-channel SCA). EN: "Please check your phone for a banking app notification"',
+  },
 })
 
 export const bankTransferSuccess = defineMessages({
@@ -140,13 +177,13 @@ export const bankTransferError = defineMessages({
   expired: {
     id: 'payments:bankTransferError.expired',
     defaultMessage:
-      'Tími til að ljúka millifærslunni rann út. Reyndu aftur til að halda áfram.',
+      'Tími til að ljúka millifærslunni rann út. Vinsamlegast reynið aftur.',
     description:
       'Error shown when the bank-transfer attempt timed out before completing',
   },
   expiredTitle: {
     id: 'payments:bankTransferError.expiredTitle',
-    defaultMessage: 'Millifærsla rann út á tíma',
+    defaultMessage: 'Tíminn rann út',
     description:
       'Header on the standard error view for a bank-transfer that expired before completing',
   },

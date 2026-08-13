@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-vehicles-mileage',
   preset: '../../../jest.preset.js',
   testEnvironment: 'node',

@@ -153,4 +153,13 @@ export class AppealDecision extends Model {
   @Column({ type: DataType.TEXT, allowNull: true })
   @ApiPropertyOptional({ type: String })
   announcement?: string
+
+  /**********
+   * When the party withdrew its in-court appeal (decision = APPEAL) - null
+   * while the appeal stands. The appeal case is only withdrawn once every
+   * appealing party's row is stamped. Cleared if the party's decision changes.
+   **********/
+  @Column({ type: DataType.DATE, allowNull: true })
+  @ApiPropertyOptional({ type: Date })
+  withdrawnDate?: Date
 }

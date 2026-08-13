@@ -9,6 +9,16 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    # TEMPORARY (chore/upgrade-nx-22): Storybook 10 requires Node >= 20.19, but the
+    # arc-shared runner image is on older Node. This overrides the Node version for
+    # all CI jobs so we can validate the pipeline on Node 22 before the platform team
+    # bumps the runner image. Runs before Corepack so yarn binds to the new Node.
+    # REMOVE once the arc-shared runner image is updated.
+    - name: Setup Node (temporary override)
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22
+
     - name: Corepack
       shell: bash
       working-directory: ${{ inputs.working-directory }}

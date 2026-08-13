@@ -37,7 +37,7 @@ export default function VehiclesScreen() {
   const scrollY = useRef(new Animated.Value(0)).current
   const [refetching, setRefetching] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
-  const loadingTimeout = useRef<ReturnType<typeof setTimeout>>()
+  const loadingTimeout = useRef<ReturnType<typeof setTimeout>>(undefined)
 
   const res = useListVehiclesV2Query({
     variables: { input: { page: 1, pageSize: PAGE_SIZE } },

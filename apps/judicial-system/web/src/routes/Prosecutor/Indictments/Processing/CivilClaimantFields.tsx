@@ -14,6 +14,7 @@ import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
+  CheckboxList,
   FormContext,
   InputAdvocate,
   InputName,
@@ -516,20 +517,18 @@ export const CivilClaimantFields = ({
                 marginBottom={2}
                 required
               />
-              {availableDefendants.map((defendant) => (
-                <Box marginBottom={1} key={defendant.id}>
-                  <Checkbox
-                    name={`civilClaimant-${civilClaimant.id}-defendant-${defendant.id}`}
-                    label={defendant.name ?? ''}
-                    checked={(civilClaimant.defendantIds ?? []).includes(
-                      defendant.id,
-                    )}
-                    onChange={() => handleDefendantToggle(defendant.id)}
-                    large
-                    filled
-                  />
-                </Box>
-              ))}
+              <CheckboxList
+                blueBox={false}
+                fullWidth
+                checkboxes={availableDefendants.map((defendant) => ({
+                  id: `civilClaimant-${civilClaimant.id}-defendant-${defendant.id}`,
+                  title: defendant.name ?? '',
+                  checked: (civilClaimant.defendantIds ?? []).includes(
+                    defendant.id,
+                  ),
+                  onChange: () => handleDefendantToggle(defendant.id),
+                }))}
+              />
               {isDefendantSelectionInvalid && (
                 <Text color="red600" variant="eyebrow" marginTop={2}>
                   Veldu að minnsta kosti einn ákærða

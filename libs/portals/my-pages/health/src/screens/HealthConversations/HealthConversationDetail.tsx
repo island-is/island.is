@@ -19,11 +19,14 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { MessageActions } from './components/MessageActions'
 import ConversationAvatar from './components/ConversationAvatar'
+import ConversationMessageBody from './components/ConversationMessageBody'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { useEffect, useRef, useState } from 'react'
-import { useLocation, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
+import { HealthPaths } from '../../lib/paths'
+import * as styles from './HealthConversations.css'
 import {
   useGetHealthConversationDetailQuery,
   useMarkHealthConversationAsReadMutation,
@@ -43,6 +46,7 @@ const HealthConversationDetail = () => {
   const { formatMessage } = useLocale()
   const { id } = useParams() as UseParams
   const userInfo = useUserInfo()
+  const navigate = useNavigate()
   const location = useLocation()
   const justCreated =
     (location.state as { justCreated?: boolean } | null)?.justCreated ?? false
@@ -162,26 +166,31 @@ const HealthConversationDetail = () => {
 
   return (
     <GridContainer>
-      <GridRow marginTop={2}>
+      <GridRow marginTop={[1, 1, 2]}>
         <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
           <Box
+            className={styles.messageCard}
             background="white"
-            borderColor="blue200"
-            borderWidth="standard"
-            borderRadius="large"
-            paddingTop={3}
-            paddingBottom={[3, 3, 5]}
+            paddingTop={[2, 2, 3]}
+            paddingBottom={[2, 2, 5]}
             paddingX={[2, 2, 5]}
           >
             <Box
               display="flex"
               justifyContent="spaceBetween"
               alignItems="center"
-              marginBottom={0}
+              marginBottom={1}
             >
-              <Text variant="h3" as="h1">
-                {item.title}
-              </Text>
+              <Box className={styles.backButton}>
+                <Button
+                  variant="text"
+                  icon="arrowBack"
+                  size="default"
+                  aria-label={formatMessage(m.goBack)}
+                  onClick={() => navigate(HealthPaths.HealthConversations)}
+                  colorScheme="light"
+                />
+              </Box>
               <MessageActions
                 bookmarked={item.isStarred}
                 archived={item.isArchived}
@@ -207,12 +216,16 @@ const HealthConversationDetail = () => {
               />
             </Box>
 
+            <Text variant="h4" as="h1" marginBottom={2}>
+              {item.title}
+            </Text>
+
             {/* Message thread */}
             {item.messages.map((msg, index) => {
               const isPatient = msg.direction === 'PATIENT'
               const senderName = isPatient
                 ? userInfo.profile.name ?? ''
-                : msg.senderGroupName ?? item.lastSenderGroupName ?? ''
+                : item.organization?.name ?? msg.senderGroupName ?? ''
 
               return (
                 <Box key={msg.id}>
@@ -226,7 +239,7 @@ const HealthConversationDetail = () => {
                   <Box
                     display="flex"
                     flexDirection="row"
-                    paddingTop={3}
+                    paddingTop={index > 0 ? 3 : 0}
                     marginBottom={3}
                   >
                     {isPatient ? (
@@ -237,7 +250,7 @@ const HealthConversationDetail = () => {
                     ) : (
                       <ConversationAvatar
                         variant="organization"
-                        name={senderName}
+                        logoUrl={item.organization?.logoUrl ?? undefined}
                       />
                     )}
                     <Box
@@ -256,11 +269,7 @@ const HealthConversationDetail = () => {
                   </Box>
 
                   {/* Body */}
-                  {msg.messageTextContent && (
-                    <Box marginBottom={4} style={{ whiteSpace: 'pre-line' }}>
-                      <Text fontWeight="light">{msg.messageTextContent}</Text>
-                    </Box>
-                  )}
+                  <ConversationMessageBody message={msg} />
 
                   {/* Attachments */}
                   {msg.attachments.length > 0 && (
@@ -344,7 +353,7 @@ const HealthConversationDetail = () => {
                       </Text>
                       <Text variant="medium">
                         {formatMessage(messages.healthConversationTo, {
-                          arg: item.lastSenderGroupName ?? '',
+                          arg: item.organization?.name ?? '',
                         })}
                       </Text>
                     </Box>

@@ -35,9 +35,11 @@ const addPoliceDigitalCaseFilesPage = (
   pageMargin: number,
   textFontSize: number,
   subtitleFontSize: number,
-) => {
+): { file: PoliceDigitalCaseFile; pageIndex: number }[] => {
   const bulletIndent = pageMargin + 16
   const valueIndent = pageMargin + 180
+
+  const filePages: { file: PoliceDigitalCaseFile; pageIndex: number }[] = []
 
   pdfDocument.addPage().addText('6. Rafræn gögn (IDES)', subtitleFontSize, {
     bold: true,
@@ -49,6 +51,13 @@ const addPoliceDigitalCaseFilesPage = (
     pdfDocument.addText(file.name, textFontSize, {
       bold: true,
       marginTop: 8,
+    })
+
+    // Capture the page after drawing the name as drawing it may have
+    // overflowed to a new page
+    filePages.push({
+      file,
+      pageIndex: pdfDocument.getCurrentLineLink().pageNumber,
     })
 
     pdfDocument
@@ -85,6 +94,8 @@ const addPoliceDigitalCaseFilesPage = (
         },
       )
   }
+
+  return filePages
 }
 
 export const createCaseFilesRecord = async (
@@ -114,7 +125,7 @@ export const createCaseFilesRecord = async (
   const chapters = [0, 1, 2, 3, 4, 5]
   const pageReferences: {
     chapter: number
-    date: Date
+    date?: Date
     name: string
     pageNumber: number
     pageLink: PageLink
@@ -158,14 +169,12 @@ export const createCaseFilesRecord = async (
     })
   }
 
-  // Add police digital case files page (IDES)
+  // Add police digital case files pages (IDES)
   if (policeDigitalCaseFiles.length > 0) {
-    const pageNumber = pdfDocument.getPageCount()
-
     const sortedFiles = [...policeDigitalCaseFiles].sort(
       (a, b) => (a.orderWithinChapter ?? 0) - (b.orderWithinChapter ?? 0),
     )
-    addPoliceDigitalCaseFilesPage(
+    const digitalCaseFilePages = addPoliceDigitalCaseFilesPage(
       pdfDocument,
       sortedFiles,
       formatMessage,
@@ -174,19 +183,13 @@ export const createCaseFilesRecord = async (
       subtitleFontSize,
     )
 
-    const digitalCaseFilesPage = pageNumber + 1
-
-    for (const digitalCaseFile of sortedFiles) {
-      const date = digitalCaseFile.displayDate
-      if (!date) {
-        continue
-      }
+    for (const { file, pageIndex } of digitalCaseFilePages) {
       pageReferences.push({
         chapter: 5,
-        date,
-        name: digitalCaseFile.name,
-        pageNumber: digitalCaseFilesPage,
-        pageLink: pdfDocument.getPageLink(pageNumber),
+        date: file.displayDate,
+        name: file.name,
+        pageNumber: pageIndex + 1,
+        pageLink: pdfDocument.getPageLink(pageIndex),
       })
     }
   }
@@ -321,9 +324,14 @@ export const createCaseFilesRecord = async (
     for (const pageReference of pageReferences.filter(
       (pageReference) => pageReference.chapter === chapter,
     )) {
+      // The line link must be captured with the same top margin as the date,
+      // name and page number are drawn with. Otherwise the link can be
+      // captured at the bottom of a page while the rest of the line overflows
+      // to the next page, and stamping the page number at the link position
+      // later inserts an extra page into the finished document.
       tableOfContentsLineReferences.push({
         lineLink: pdfDocument
-          .addText('', textFontSize, { newLine: false })
+          .addText('', textFontSize, { newLine: false, marginTop: 1 })
           .getCurrentLineLink(),
         pageNumber: pageReference.pageNumber,
         pageLink: pageReference.pageLink,
@@ -332,10 +340,12 @@ export const createCaseFilesRecord = async (
         pageLink: pageReference.pageLink,
         newLine: false,
         position: { x: pageDateIndent },
-        marginTop: 1,
       })
 
-      const nameChunks = pageReference.name.match(/.{1,40}(?=\s|$)/g)
+      // Split the name at whitespace into chunks of at most 40 characters,
+      // hard-splitting runs longer than 40 characters, which would otherwise
+      // not match and be silently dropped
+      const nameChunks = pageReference.name.match(/.{1,40}(?=\s|$)|.{1,40}/g)
 
       // Add name in chunks of max 40 characters
       for (const chunk of nameChunks ?? []) {
@@ -350,7 +360,9 @@ export const createCaseFilesRecord = async (
 
   const tableOfContentsPageCount = pdfDocument.getPageCount() - pageCount
 
-  // Add page numbers to table of contents
+  // Add page numbers to table of contents. The line links already include
+  // the line's top margin, so no margin may be added here as that could
+  // overflow the page and insert an extra page into the finished document.
   for (const lineReference of tableOfContentsLineReferences) {
     pdfDocument
       .setCurrentLine(lineReference.lineLink)
@@ -361,7 +373,6 @@ export const createCaseFilesRecord = async (
           alignment: Alignment.Right,
           pageLink: lineReference.pageLink,
           newLine: false,
-          marginTop: 1,
         },
       )
   }

@@ -12,6 +12,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   mockCase,
+  mockCaseTableMembershipQuery,
   mockUser,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { IntlProviderWrapper } from '@island.is/judicial-system-web/src/utils/testHelpers'
@@ -38,7 +39,10 @@ const renderOverview = (
   isCaseUpToDate = true,
 ) => {
   const wrapInProviders = (children: ReactNode) => (
-    <MockedProvider addTypename={false}>
+    <MockedProvider
+      mocks={[...mockCaseTableMembershipQuery(theCase.id)]}
+      addTypename={false}
+    >
       <IntlProviderWrapper>
         <UserContext.Provider value={{ user: mockUser(userRole) }}>
           <FormContext.Provider
@@ -87,6 +91,37 @@ describe('Court Indictment Overview', () => {
       expect.any(Function),
       expect.any(Function),
     )
+  })
+
+  it('shows case handling comments when present', () => {
+    const caseWithComments: Case = {
+      ...mockCase(CaseType.INDICTMENT),
+      state: CaseState.RECEIVED,
+      comments: 'Flýtimeðferð',
+    }
+    const getCase = jest.fn()
+
+    renderOverview(caseWithComments, UserRole.DISTRICT_COURT_JUDGE, getCase)
+
+    expect(
+      screen.getByText('Athugasemdir vegna málsmeðferðar'),
+    ).toBeInTheDocument()
+    expect(screen.getByText('Flýtimeðferð')).toBeInTheDocument()
+  })
+
+  it('does not show case handling comments when absent', () => {
+    const receivedCase: Case = {
+      ...mockCase(CaseType.INDICTMENT),
+      state: CaseState.RECEIVED,
+      comments: null,
+    }
+    const getCase = jest.fn()
+
+    renderOverview(receivedCase, UserRole.DISTRICT_COURT_JUDGE, getCase)
+
+    expect(
+      screen.queryByText('Athugasemdir vegna málsmeðferðar'),
+    ).not.toBeInTheDocument()
   })
 
   it('does not show the cancellation modal for a received indictment', async () => {

@@ -1,4 +1,5 @@
 import { Field, GraphQLISODateTime, ID, Int, ObjectType } from '@nestjs/graphql'
+import { HealthDirectorateConversationOrganization } from './healthConversationOrganization.model'
 
 @ObjectType()
 export class HealthDirectorateHealthConversation {
@@ -19,6 +20,9 @@ export class HealthDirectorateHealthConversation {
 
   @Field({ nullable: true })
   lastSenderGroupName?: string
+
+  @Field(() => HealthDirectorateConversationOrganization, { nullable: true })
+  organization?: HealthDirectorateConversationOrganization
 
   @Field()
   hasAttachment!: boolean

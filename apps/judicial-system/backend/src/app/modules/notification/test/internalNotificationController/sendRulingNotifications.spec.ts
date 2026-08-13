@@ -118,6 +118,39 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     })
   })
 
+  describe('email to prosecutor for dismissed indictment case', () => {
+    const caseId = uuid()
+
+    const prosecutor = {
+      name: testProsecutor.name,
+      email: testProsecutor.email,
+    }
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      courtCaseNumber: '007-2022-07',
+      court: { name: 'Héraðsdómur Reykjavíkur' },
+      indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+      prosecutor,
+    } as Case
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, theCase, notificationDto)
+    })
+
+    it('should send email with appeal information to prosecutor', () => {
+      const expectedLink = `<a href="${mockConfig.clientUrl}${PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE}/${caseId}">`
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(1)
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: prosecutor.name, address: prosecutor.email }],
+          subject: 'Máli lokið 007-2022-07',
+          html: `Máli 007-2022-07 hjá Héraðsdómi Reykjavíkur hefur verið lokið.<br /><br />Niðurstaða: Frávísun<br /><br />Skjöl málsins eru aðgengileg á ${expectedLink}yfirlitssíðu málsins í Réttarvörslugátt</a>.<br /><br />Hægt er að kæra úrskurðinn og senda greinargerðir og gögn í gegnum Réttarvörslugátt ef við á.`,
+        }),
+      )
+    })
+  })
+
   describe('email to prosecutor for restriction case', () => {
     const caseId = uuid()
     const prosecutor = {

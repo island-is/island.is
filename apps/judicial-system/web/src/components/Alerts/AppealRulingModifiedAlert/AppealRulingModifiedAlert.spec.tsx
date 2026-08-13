@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 
 import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -18,13 +18,13 @@ const renderAlert = (theCase: Partial<Case>) =>
   )
 
 describe('AppealRulingModifiedAlert', () => {
-  it('renders nothing when there are no corrected appeals', () => {
+  it('renders nothing when there are no corrected appeals', async () => {
     const { container } = renderAlert({ id: 'case-1' })
 
-    expect(container).toBeEmptyDOMElement()
+    await waitFor(() => expect(container).toBeEmptyDOMElement())
   })
 
-  it('renders the case-level correction box', () => {
+  it('renders the case-level correction box', async () => {
     renderAlert({
       id: 'case-1',
       appealCase: {
@@ -34,12 +34,12 @@ describe('AppealRulingModifiedAlert', () => {
     })
 
     expect(
-      screen.getByText('Úrskurður Landsréttar leiðréttur'),
+      await screen.findByText('Úrskurður Landsréttar leiðréttur'),
     ).toBeInTheDocument()
     expect(screen.getByText('Leiðrétting á máli')).toBeInTheDocument()
   })
 
-  it('renders one box per corrected ruling-order appeal with the file name', () => {
+  it('renders one box per corrected ruling-order appeal with the file name', async () => {
     renderAlert({
       id: 'case-1',
       caseFiles: [
@@ -61,7 +61,9 @@ describe('AppealRulingModifiedAlert', () => {
     })
 
     expect(
-      screen.getByText('Úrskurður Landsréttar leiðréttur — Úrskurður 15-2026'),
+      await screen.findByText(
+        'Úrskurður Landsréttar leiðréttur — Úrskurður 15-2026',
+      ),
     ).toBeInTheDocument()
     expect(
       screen.getByText('Úrskurður Landsréttar leiðréttur — Úrskurður 16-2026'),
@@ -70,7 +72,7 @@ describe('AppealRulingModifiedAlert', () => {
     expect(screen.getByText('Leiðrétting tvö')).toBeInTheDocument()
   })
 
-  it('falls back to the plain title when the file name is missing', () => {
+  it('falls back to the plain title when the file name is missing', async () => {
     renderAlert({
       id: 'case-1',
       caseFiles: [],
@@ -84,7 +86,7 @@ describe('AppealRulingModifiedAlert', () => {
     })
 
     expect(
-      screen.getByText('Úrskurður Landsréttar leiðréttur'),
+      await screen.findByText('Úrskurður Landsréttar leiðréttur'),
     ).toBeInTheDocument()
     expect(screen.getByText('Leiðrétting án skráarnafns')).toBeInTheDocument()
   })
