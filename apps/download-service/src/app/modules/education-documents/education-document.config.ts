@@ -11,8 +11,7 @@ export const EducationDocumentsConfig = defineConfig<z.infer<typeof schema>>({
   load(env) {
     return {
       primarySchoolPdfTimeoutMs:
-        env.optionalJSON('DOWNLOAD_SERVICE_PRIMARY_SCHOOL_PDF_TIMEOUT_MS') ??
-        30000,
+        env.optionalJSON('REQUEST_TIMEOUT_MS') ?? 30000,
     }
   },
 })
