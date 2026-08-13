@@ -68,6 +68,13 @@ export const childMessages = {
       defaultMessage: 'Veldu persónufornafn',
       description: 'Placeholder for preferred pronoun select field',
     },
+    childOver18Error: {
+      id: 'cpn.application:child.nationalIdLookup.childOver18Error',
+      defaultMessage:
+        'Ekki er hægt að tilkynna barn sem er 18 ára eða eldra til barnaverndar. Vinsamlegast athugaðu kennitöluna.',
+      description:
+        'Error shown when the entered national ID belongs to someone 18 or older',
+    },
   }),
   noNationalId: defineMessages({
     reasonLabel: {
