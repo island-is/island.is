@@ -1,7 +1,7 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Stack, Table as T } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC, useEffect, useMemo } from 'react'
+import { FC, useEffect, useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import type { ParsedCriterionDto } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
@@ -10,13 +10,14 @@ import {
   type PersonalFactor,
   type SubCriterion,
 } from '../../utils/types'
-import { getPathValue } from '../../utils/answerHelpers'
+import { getLiveOrSavedArray, getPathValue } from '../../utils/answerHelpers'
 import {
   buildMergedStepMetaByTitle,
   buildStepAssignmentsFromSubCriteria,
   mergeStepAssignments,
 } from '../JobClassificationEditor/utils'
 import { EmployeeClassificationRow } from './EmployeeClassificationRow'
+import { TABLE_PAGE_SIZE, TablePagination } from '../TablePagination'
 
 const FIELD_NAME = 'employees'
 
@@ -27,19 +28,24 @@ export const EmployeeClassificationEditor: FC<
   const { getValues, setValue } = useFormContext()
   const m = messages.report.employees
 
+  const [page, setPage] = useState(1)
+
   const stepMetaByTitle = useMemo(() => {
+    // Only the PERSONAL criteria: the merge is keyed by sub-criterion title
+    // alone, so passing the job criteria too would let a same-titled job
+    // sub-criterion overwrite this screen's scores and weights.
     const criteria = getPathValue<ParsedCriterionDto[]>(
       application.externalData,
       'parsedSalaryReport.data.criteria',
       [],
-    )
+    ).filter((c) => c.type === 'PERSONAL')
     // Live sub-criteria are the base (so a criterion added after import still
     // gets metadata) — the imported external criteria overlay authoritative
     // scores/weights for titles that exist in both.
-    const personalFactors = getPathValue<SubCriterion[][]>(
+    const personalFactors = getLiveOrSavedArray<SubCriterion[]>(
+      getValues,
       application.answers,
       'subCriteria.personalFactors',
-      [],
     )
     return buildMergedStepMetaByTitle(criteria, personalFactors)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -62,15 +68,15 @@ export const EmployeeClassificationEditor: FC<
     // no import to populate them from) — derive the defaults from the
     // manually-entered personal-factor sub-criteria so classification is
     // possible without ever uploading a workbook.
-    const personalFactors = getPathValue<PersonalFactor[]>(
+    const personalFactors = getLiveOrSavedArray<PersonalFactor>(
+      getValues,
       application.answers,
       'criteria.personalFactors',
-      [],
     )
-    const subCriteriaPersonalFactors = getPathValue<SubCriterion[][]>(
+    const subCriteriaPersonalFactors = getLiveOrSavedArray<SubCriterion[]>(
+      getValues,
       application.answers,
       'subCriteria.personalFactors',
-      [],
     )
     const defaultAssignments = buildStepAssignmentsFromSubCriteria(
       personalFactors.map((f) => f.title),
@@ -109,6 +115,14 @@ export const EmployeeClassificationEditor: FC<
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const totalPages = Math.ceil(employees.length / TABLE_PAGE_SIZE)
+
+  // The employee list is fixed for the lifetime of this screen (no add/remove
+  // here), so the page only ever changes when the user asks for it.
+  const visibleEmployees = employees
+    .map((employee, index) => ({ employee, index }))
+    .slice((page - 1) * TABLE_PAGE_SIZE, page * TABLE_PAGE_SIZE)
+
   return (
     <Box>
       <Stack space={4}>
@@ -122,7 +136,7 @@ export const EmployeeClassificationEditor: FC<
             </T.Row>
           </T.Head>
           <T.Body>
-            {employees.map((employee, index) => (
+            {visibleEmployees.map(({ employee, index }) => (
               <EmployeeClassificationRow
                 key={`${employee.identifier}-${index}`}
                 employee={employee}
@@ -132,6 +146,12 @@ export const EmployeeClassificationEditor: FC<
             ))}
           </T.Body>
         </T.Table>
+
+        <TablePagination
+          page={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+        />
       </Stack>
     </Box>
   )
