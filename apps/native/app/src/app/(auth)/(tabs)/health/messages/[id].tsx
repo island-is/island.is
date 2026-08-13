@@ -174,7 +174,9 @@ export default function HealthMessageDetailScreen() {
           isOpen={index === messages.length - 1}
           closeable={messages.length > 1}
           sender={senderName}
-          logoUrl={isPatient ? undefined : conversation?.organization?.logoUrl}
+          logoUrl={
+            isPatient ? undefined : conversation?.organization?.logoUrl ?? null
+          }
           title={senderName}
           bodyContent={
             item.content ? (

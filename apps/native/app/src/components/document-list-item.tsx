@@ -177,9 +177,14 @@ export const DocumentListItem = ({
     isExpanded.value = !isExpanded.value
   }
 
-  const source = logoUrl
-    ? getSenderLogo({ logoUrl }, 75)
-    : getOrganizationLogoUrl(sender, 75, true)
+  // When a `logoUrl` prop is passed (even null) the sender is an organization,
+  // so always resolve via getSenderLogo — it falls back to the coat of arms
+  // instead of an empty avatar. Callers that omit logoUrl (e.g. the inbox) keep
+  // the name-based lookup.
+  const source =
+    logoUrl !== undefined
+      ? getSenderLogo({ logoUrl }, 75)
+      : getOrganizationLogoUrl(sender, 75, true)
 
   return (
     <Animated.View style={containerAnimatedStyle}>
