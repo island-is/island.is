@@ -154,7 +154,9 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
       theCase.courtCaseNumber
     } í ${applyDativeCaseToCourtName(
       theCase.court?.name ?? 'héraðsdómi',
-    )}.<br><br>LÖKE númer: ${theCase.policeCaseNumbers.join(', ')}.`
+    )}. Einn af dómfelldu í málinu var sviptur ökuréttinda.<br><br>LÖKE númer: ${theCase.policeCaseNumbers.join(
+      ', ',
+    )}.`
 
     const contactInfo = {
       name: theCase.prosecutorsOffice?.name,
