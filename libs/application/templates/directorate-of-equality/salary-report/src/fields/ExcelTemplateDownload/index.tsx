@@ -357,7 +357,7 @@ export const ExcelTemplateDownload: FC<
           <ActionCard
             backgroundColor="white"
             heading={formatMessage(m.uploadCardTitle)}
-            text={formatMessage(m.uploadCardDescription)}
+            text={formatMessage(m.uploadCardIntro)}
             cta={{
               label: formatMessage(m.uploadButtonLabel),
               variant: 'primary',
@@ -367,10 +367,10 @@ export const ExcelTemplateDownload: FC<
           />
           <ActionCard
             backgroundColor="white"
-            heading={formatMessage(m.manualCardTitle)}
-            text={formatMessage(m.manualCardDescription)}
+            heading={formatMessage(m.manualEntryCardTitle)}
+            text={formatMessage(m.manualEntryCardIntro)}
             cta={{
-              label: formatMessage(m.manualButtonLabel),
+              label: formatMessage(m.manualEntryButtonLabel),
               variant: 'primary',
               icon: 'arrowForward',
               onClick: handleManualEntry,

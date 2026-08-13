@@ -159,14 +159,20 @@ const Registration: FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={getStandardUserDashboardRoute(user)}
-          onNextButtonClick={() =>
-            handleNavigationTo(PROSECUTION_INVESTIGATION_CASE_DEFENDANT_ROUTE)
-          }
-          nextIsDisabled={!stepIsValid}
-          nextIsLoading={isCreatingCase}
-          nextButtonText={workingCase.id === '' ? 'Stofna mál' : 'Halda áfram'}
+          actions={[
+            {
+              text: workingCase.id === '' ? 'Stofna mál' : 'Halda áfram',
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  PROSECUTION_INVESTIGATION_CASE_DEFENDANT_ROUTE,
+                ),
+              disabled: !stepIsValid,
+              loading: isCreatingCase,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

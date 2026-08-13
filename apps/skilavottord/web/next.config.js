@@ -2,17 +2,7 @@ const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 const { withNx, composePlugins } = require('@nx/next')
 const withVanillaExtract = createVanillaExtractPlugin()
 
-const {
-  BASE_PATH = '/app/skilavottord',
-  API_URL = 'http://localhost:3333',
-  API_PATH = '/app/skilavottord/api',
-  WEB_PUBLIC_URL = 'http://localhost:4200',
-  DD_LOGS_CLIENT_TOKEN,
-  APP_VERSION,
-  ENVIRONMENT,
-} = process.env
-
-const graphqlPath = '/graphql'
+const { BASE_PATH = '/app/skilavottord' } = process.env
 
 /**
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
@@ -24,15 +14,7 @@ const nextConfig = {
     }
     return config
   },
-  serverRuntimeConfig: {
-    graphqlEndpoint: `${API_URL}${API_PATH}${graphqlPath}`,
-  },
-  publicRuntimeConfig: {
-    graphqlEndpoint: `${API_PATH}${graphqlPath}`,
-    ddRumClientToken: DD_LOGS_CLIENT_TOKEN,
-    appVersion: APP_VERSION,
-    environment: ENVIRONMENT,
-  },
+  // Runtime configuration lives in environments/runtimeEnvironment.ts
   env: {
     API_MOCKS: process.env.API_MOCKS || '',
   },

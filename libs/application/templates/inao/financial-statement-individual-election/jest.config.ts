@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'application-templates-financial-statment-individual-election',
   preset: '../../../../../jest.preset.js',
   transform: {

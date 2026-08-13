@@ -64,6 +64,8 @@ export {
   defendantEventTypes,
   AppealEventType,
   appealEventTypes,
+  AppealOrigin,
+  appealOrigins,
 } from './lib/eventLog'
 
 export {
@@ -85,6 +87,8 @@ export {
   CaseFileState,
   CaseFileCategory,
   HashAlgorithm,
+  partyAppealFileCategories,
+  isAppealFileDeletionLocked,
   PoliceFileTypeCode,
 } from './lib/file'
 

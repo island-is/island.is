@@ -1,5 +1,5 @@
 import { Inject, UseGuards } from '@nestjs/common'
-import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Resolver } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -27,6 +27,7 @@ export class LimitedAccessAppealCaseResolver {
     private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly backendService: BackendService,
   ) {}
 
   @Mutation(() => AppealCase, { nullable: true })
@@ -34,8 +35,6 @@ export class LimitedAccessAppealCaseResolver {
     @Args('input', { type: () => CreateAppealCaseInput })
     input: CreateAppealCaseInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<AppealCase> {
     const { caseId, ...body } = input
 
@@ -44,7 +43,7 @@ export class LimitedAccessAppealCaseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_APPEAL_CASE,
-      backendService.limitedAccessCreateAppealCase(caseId, body),
+      this.backendService.limitedAccessCreateAppealCase(caseId, body),
       caseId,
     )
   }
@@ -53,8 +52,6 @@ export class LimitedAccessAppealCaseResolver {
   limitedAccessCreateAppealEventLog(
     @Args('input', { type: () => CreateAppealEventLogInput })
     input: CreateAppealEventLogInput,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<AppealCase> {
     const { caseId, appealCaseId, eventType } = input
 
@@ -62,7 +59,7 @@ export class LimitedAccessAppealCaseResolver {
       `Creating appeal event log ${eventType} on limited access appeal case ${appealCaseId} of case ${caseId}`,
     )
 
-    return backendService.limitedAccessCreateAppealEventLog(
+    return this.backendService.limitedAccessCreateAppealEventLog(
       caseId,
       appealCaseId,
       eventType,
@@ -74,8 +71,6 @@ export class LimitedAccessAppealCaseResolver {
     @Args('input', { type: () => TransitionAppealCaseInput })
     input: TransitionAppealCaseInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<AppealCase> {
     const { caseId, appealCaseId, ...transitionAppealCase } = input
 
@@ -86,7 +81,7 @@ export class LimitedAccessAppealCaseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.TRANSITION_APPEAL_CASE,
-      backendService.limitedAccessTransitionAppealCase(
+      this.backendService.limitedAccessTransitionAppealCase(
         caseId,
         appealCaseId,
         transitionAppealCase,

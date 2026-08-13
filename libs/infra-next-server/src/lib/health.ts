@@ -1,6 +1,5 @@
 import dns from 'dns'
 import { Express } from 'express'
-import getNextConfig from 'next/config'
 
 const checkExternalDependency = (url: string) =>
   new Promise((resolve, reject) => {
@@ -10,18 +9,18 @@ const checkExternalDependency = (url: string) =>
     })
   })
 
-export type ExternalEndpointDependencies =
-  | string[]
-  // TODO: When NextJS has been upgraded update the type to NextConfig from import { NextConfig } from 'next'
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  | ((nextConfig: any) => string[])
+/**
+ * Either a static list of external endpoint URLs or a callback returning one.
+ * The callback runs server-side after the app is ready — read values from the
+ * app's server runtime environment (process.env), e.g. its
+ * environments/runtimeEnvironment.ts module.
+ */
+export type ExternalEndpointDependencies = string[] | (() => string[])
 
 /**
  * Sets up /readiness and /liveness paths for a Next app.
  * /readiness checks for 200 OK response from external endpoint dependencies before responding with 200 OK.
  * /liveness responds with 200 OK indicating that the app server is up and running.
- *
- * Note: This must be loaded after the Next app has been initialised as it depends on loading the next.config.js.
  *
  * @param app Express app to add the readiness and liveness routes.
  * @param readyPromise Promise which resolves when the server is ready.
@@ -33,9 +32,8 @@ export const setupHealthchecks = (
   externalEndpointDependencies: ExternalEndpointDependencies = [],
 ) => {
   const getDependencies = readyPromise.then(() => {
-    const nextConfig = getNextConfig()
     return typeof externalEndpointDependencies === 'function'
-      ? externalEndpointDependencies(nextConfig)
+      ? externalEndpointDependencies()
       : externalEndpointDependencies
   })
 

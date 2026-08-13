@@ -61,18 +61,18 @@ import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.resp
 import { policeModuleConfig } from './police.config'
 
 export enum PoliceDocumentType {
-  RVKR = 'RVKR', // Krafa
-  RVTB = 'RVTB', // Þingbók
-  RVUR = 'RVUR', // Úrskurður
-  RVVI = 'RVVI', // Vistunarseðill
-  RVUL = 'RVUL', // Úrskurður Landsréttar
-  RVDO = 'RVDO', // Dómur
-  RVAS = 'RVAS', // Ákæra
-  RVMG = 'RVMG', // Málsgögn
-  RVMV = 'RVMV', // Viðbótargögn verjanda
-  RVVS = 'RVVS', // Viðbótargögn sækjanda
-  RVFK = 'RVFK', // Fyrirkall
-  RVBD = 'BRTNG_RVBD', // Birtingarvottorð dóms
+  RVKR = 'RVKR', // Krafa í R-málum
+  RVTB = 'RVTB', // Þingbók í R- og S-málum
+  RVUR = 'RVUR', // Úrskurður í R-málum
+  RVVI = 'RVVI', // Vistunarseðill í R-málum
+  RVUL = 'RVUL', // Úrskurður Landsréttar í R- og S-málum
+  RVDO = 'RVDO', // Dómur og úrskurður í S-málum
+  RVAS = 'RVAS', // Ákæra í S-málum
+  RVMG = 'RVMG', // Málsgögn/gagnapakki í S-málum - þetta er svolítil ruslakista
+  RVMV = 'RVMV', // Viðbótargögn verjanda í S-málum
+  RVVS = 'RVVS', // Viðbótargögn sækjandan í S-málum
+  RVFK = 'RVFK', // Fyrirkall í S-málum
+  RVBD = 'BRTNG_RVBD', // Birtingarvottorð dóms í S-málum
 }
 
 export interface PoliceDocument {
@@ -335,6 +335,20 @@ export class PoliceService {
     }
   }
 
+  /** Winston error log only (no Slack). */
+  private logPoliceFailure(
+    logMessage: string,
+    info: { [key: string]: string | boolean | Date | undefined },
+    reason: unknown,
+  ): void {
+    this.logger.error(logMessage, {
+      ...info,
+      error: reason instanceof Error ? reason : undefined,
+      errorSummary:
+        reason instanceof Error ? undefined : String(reason).slice(0, 2000),
+    })
+  }
+
   /** Winston error log plus Slack error webhook (same payload shape as before). */
   private logPoliceFailureAndNotify(
     slackTitle: string,
@@ -342,14 +356,12 @@ export class PoliceService {
     info: { [key: string]: string | boolean | Date | undefined },
     reason: unknown,
   ): void {
-    const errorForSlack = this.reasonToError(reason)
-    this.logger.error(logMessage, {
-      ...info,
-      error: reason instanceof Error ? reason : undefined,
-      errorSummary:
-        reason instanceof Error ? undefined : String(reason).slice(0, 2000),
-    })
-    void this.eventService.postErrorEvent(slackTitle, info, errorForSlack)
+    this.logPoliceFailure(logMessage, info, reason)
+    void this.eventService.postErrorEvent(
+      slackTitle,
+      info,
+      this.reasonToError(reason),
+    )
   }
 
   private async throttleUploadPoliceCaseFile(
@@ -1291,8 +1303,10 @@ export class PoliceService {
 
       throw await res.text()
     } catch (error) {
-      this.logPoliceFailureAndNotify(
-        'Failed to create external police document file',
+      // Winston only - VerdictService.deliverVerdictToNationalCommissionersOffice
+      // posts the Slack error for a failed delivery, so notifying here too would
+      // double-post.
+      this.logPoliceFailure(
         `${createDocumentPath} - create external police document for file type code ${fileTypeCode} for case ${caseId}`,
         {
           caseId,
@@ -1457,8 +1471,10 @@ export class PoliceService {
 
       throw await res.text()
     } catch (error) {
-      this.logPoliceFailureAndNotify(
-        'Failed to create subpoena',
+      // Winston only - SubpoenaService.deliverSubpoenaToNationalCommissionersOffice
+      // posts the Slack error for a failed delivery, so notifying here too would
+      // double-post.
+      this.logPoliceFailure(
         `Failed create subpoena for case ${theCase.id}`,
         {
           caseId: theCase.id,

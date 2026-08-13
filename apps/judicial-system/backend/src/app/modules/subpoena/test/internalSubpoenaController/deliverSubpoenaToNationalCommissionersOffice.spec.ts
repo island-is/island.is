@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid'
 import { createTestingSubpoenaModule } from '../createTestingSubpoenaModule'
 
 import { PdfService } from '../../../case'
+import { EventService } from '../../../event'
 import { Case, Defendant, Subpoena } from '../../../repository'
 import { DeliverDto } from '../../dto/deliver.dto'
 import { DeliverResponse } from '../../models/deliver.response'
@@ -27,13 +28,15 @@ describe('InternalSubpoenaController - Deliver subpoena to national commissioner
   const transaction = undefined
 
   let mockPdfService: PdfService
+  let mockEventService: EventService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { pdfService, internalSubpoenaController } =
+    const { pdfService, eventService, internalSubpoenaController } =
       await createTestingSubpoenaModule()
 
     mockPdfService = pdfService
+    mockEventService = eventService
     const mockGetSubpoenaPdf = mockPdfService.getSubpoenaPdf as jest.Mock
     mockGetSubpoenaPdf.mockRejectedValue(new Error('Some error'))
 
@@ -75,6 +78,22 @@ describe('InternalSubpoenaController - Deliver subpoena to national commissioner
         subpoena,
       )
       // TODO: complete tests when all indictments are generated
+    })
+  })
+
+  describe('delivery fails', () => {
+    // The top-level beforeEach makes subpoena PDF generation reject, so the
+    // delivery fails.
+    beforeEach(async () => {
+      await givenWhenThen()
+    })
+
+    it('should report the failure to the Slack error channel', () => {
+      expect(mockEventService.postErrorEvent).toHaveBeenCalledWith(
+        'Villa við að senda fyrirkall til RLS',
+        { caseId, defendantId, subpoenaId },
+        expect.any(Error),
+      )
     })
   })
 })
