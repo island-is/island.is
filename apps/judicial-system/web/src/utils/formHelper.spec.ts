@@ -48,6 +48,8 @@ describe('removeErrorMessageIfValid', () => {
     )
 
     expect(setErrorMessage).toHaveBeenCalledWith('')
+    // The newly failing rule is not surfaced while typing — that waits for blur.
+    expect(setErrorMessage).not.toHaveBeenCalledWith(FORMAT)
   })
 
   it('should keep the message while the value still breaks the same validation', () => {
@@ -63,7 +65,7 @@ describe('removeErrorMessageIfValid', () => {
     expect(setErrorMessage).not.toHaveBeenCalled()
   })
 
-  it('should not surface a newly broken validation', () => {
+  it('should keep a format message while the value still breaks the format rule', () => {
     const setErrorMessage = jest.fn()
 
     removeErrorMessageIfValid(
@@ -73,13 +75,21 @@ describe('removeErrorMessageIfValid', () => {
       setErrorMessage,
     )
 
-    expect(setErrorMessage).not.toHaveBeenCalledWith(FORMAT)
+    expect(setErrorMessage).not.toHaveBeenCalled()
   })
 
   it('should do nothing when no message is displayed', () => {
     const setErrorMessage = jest.fn()
 
     removeErrorMessageIfValid(['empty'], '', '', setErrorMessage)
+
+    expect(setErrorMessage).not.toHaveBeenCalled()
+  })
+
+  it('should do nothing when the caller tracks no message at all', () => {
+    const setErrorMessage = jest.fn()
+
+    removeErrorMessageIfValid(['empty'], 'R-', undefined, setErrorMessage)
 
     expect(setErrorMessage).not.toHaveBeenCalled()
   })

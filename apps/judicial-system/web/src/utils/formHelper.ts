@@ -98,7 +98,9 @@ export const removeErrorMessageIfValid = (
   errorMessage?: string,
   errorMessageSetter?: (value: SetStateAction<string>) => void,
 ) => {
-  if (errorMessage === '' || !errorMessageSetter) {
+  // Nothing is displayed, so there is nothing to clear. An absent
+  // `errorMessage` means the caller does not track one at all.
+  if (!errorMessage || !errorMessageSetter) {
     return
   }
 
