@@ -17,13 +17,13 @@ import {
 } from '../../lib/utils'
 import { createPhotoComponent } from '../../fields/CreatePhoto'
 
-interface ThjodskraImage {
+export interface ThjodskraImage {
   biometricId: string
   content: string
   contentSpecification: string
 }
 
-interface PhotoSelectorSubSectionOptions {
+export interface PhotoSelectorSubSectionOptions {
   // Unique sub-section id (e.g. 'photoStepBE'). Kept per-product so form-node
   // ids stay stable and in-flight drafts are unaffected.
   id: string
@@ -39,6 +39,17 @@ interface PhotoSelectorSubSectionOptions {
   // Whether to show the "no usable photo" warning banner. BE omits it.
   withNoPhotoAlert: boolean
 }
+
+// The Þjóðskrá facial photos a person can pick from. Read in three places
+// below (banner, default value, options) — keep the path and the FACIAL
+// filter in one spot so they cannot drift apart.
+const getFacialPhotos = (externalData: Application['externalData']) =>
+  (
+    getValueViaPath<ThjodskraImage[]>(
+      externalData,
+      'allPhotosFromThjodskra.data.images',
+    ) ?? []
+  ).filter((p) => p.contentSpecification === 'FACIAL')
 
 /**
  * Shared builder for the redesign photo-selection step. BE, 65+, B-temp and
@@ -86,14 +97,8 @@ export const buildPhotoSelectorSubSection = ({
                     requirementsMessages.beLicenseQualityPhotoDescription,
                   alertType: 'warning',
                   condition: (_answers, externalData) => {
-                    const thjodskraPhotos =
-                      getValueViaPath<ThjodskraImage[]>(
-                        externalData,
-                        'allPhotosFromThjodskra.data.images',
-                      ) ?? []
-                    const hasThjodskraFacial = thjodskraPhotos.some(
-                      (p) => p.contentSpecification === 'FACIAL',
-                    )
+                    const hasThjodskraFacial =
+                      getFacialPhotos(externalData).length > 0
 
                     return (
                       !hasThjodskraFacial &&
@@ -110,15 +115,7 @@ export const buildPhotoSelectorSubSection = ({
             defaultValue: (application: Application) => {
               const { externalData } = application
 
-              const thjodskraPhotos =
-                getValueViaPath<ThjodskraImage[]>(
-                  externalData,
-                  'allPhotosFromThjodskra.data.images',
-                ) ?? []
-
-              const facialPhotos = thjodskraPhotos.filter(
-                (p) => p.contentSpecification === 'FACIAL',
-              )
+              const facialPhotos = getFacialPhotos(externalData)
 
               if (facialPhotos.length > 0) {
                 return facialPhotos[0].biometricId
@@ -138,17 +135,7 @@ export const buildPhotoSelectorSubSection = ({
               }> = []
 
               // Thjodskra facial photos
-              const thjodskraPhotos =
-                getValueViaPath<ThjodskraImage[]>(
-                  externalData,
-                  'allPhotosFromThjodskra.data.images',
-                ) ?? []
-
-              const facialPhotos = thjodskraPhotos.filter(
-                (p) => p.contentSpecification === 'FACIAL',
-              )
-
-              for (const photo of facialPhotos) {
+              for (const photo of getFacialPhotos(externalData)) {
                 options.push({
                   value: photo.biometricId,
                   label: m.usePassportImage,

@@ -747,6 +747,37 @@ describe('DrivingLicenseSubmissionService', () => {
       })
     })
 
+    it('sends null biometric IDs when the selected photo matches no FACIAL entry', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          isBFullRedesignEnabled: true,
+          // Selected in the draft but gone from Þjóðskrá temp storage by the
+          // time we submit — the defensive branch. Behaviour is deliberately
+          // log-and-continue (never throw): createLicense runs post-payment,
+          // so throwing would strand a paid application.
+          selectLicensePhoto: 'facial-gone',
+        },
+        externalData: thjodskraExternalData,
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      const res = await service.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
+      })
+
+      expect(res).toEqual({ success: true })
+      const [, input] = newDrivingLicense.mock.calls[0]
+      expect(input).toMatchObject({
+        photoBiometricsId: null,
+        signatureBiometricsId: null,
+      })
+    })
+
     it('sends null biometric IDs when the RLS quality photo is selected', async () => {
       const user = createCurrentUser()
       const application = createApplication({
