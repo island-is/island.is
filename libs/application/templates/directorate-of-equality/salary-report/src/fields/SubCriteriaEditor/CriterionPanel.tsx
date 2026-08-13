@@ -72,27 +72,40 @@ export const CriterionPanel: FC<Props> = ({
   // that no longer exists. useCascadeDelete persists the correction
   // immediately, since this screen's own "Continue" only saves the
   // `subCriteria` answer key.
+  //
+  // `subCriteria` rides along for the same reason it does in
+  // PersonalCriteriaList: the removal itself only lives in local form state
+  // until "Continue", so persisting the cleanup alone would let a reload bring
+  // the sub-criterion back while its assignments stay deleted — and
+  // mergeStepAssignments would then silently re-seed them at stepOrder 1,
+  // losing the chosen step.
   const removeFromAssignments = (deletedSubTitle: string) =>
     factorsKey === 'personalFactors'
-      ? employeesCascade.persist(deletedSubTitle, (employees) =>
-          employees.map((emp) => ({
-            ...emp,
-            personalStepAssignments: removeAssignment(
-              emp.personalStepAssignments ?? [],
-              criterionTitle,
-              deletedSubTitle,
-            ),
-          })),
+      ? employeesCascade.persist(
+          deletedSubTitle,
+          (employees) =>
+            employees.map((emp) => ({
+              ...emp,
+              personalStepAssignments: removeAssignment(
+                emp.personalStepAssignments ?? [],
+                criterionTitle,
+                deletedSubTitle,
+              ),
+            })),
+          ['subCriteria'],
         )
-      : rolesCascade.persist(deletedSubTitle, (roles) =>
-          roles.map((role) => ({
-            ...role,
-            stepAssignments: removeAssignment(
-              role.stepAssignments ?? [],
-              criterionTitle,
-              deletedSubTitle,
-            ),
-          })),
+      : rolesCascade.persist(
+          deletedSubTitle,
+          (roles) =>
+            roles.map((role) => ({
+              ...role,
+              stepAssignments: removeAssignment(
+                role.stepAssignments ?? [],
+                criterionTitle,
+                deletedSubTitle,
+              ),
+            })),
+          ['subCriteria'],
         )
 
   // Always hold the latest parsed data so the import effect never reads a

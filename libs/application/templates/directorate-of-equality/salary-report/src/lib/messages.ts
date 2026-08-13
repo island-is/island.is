@@ -21,6 +21,14 @@ export const messages = {
       id: 'doe.sr.application:errors.duplicateSubsidiary',
       defaultMessage: 'Þetta dótturfélag er þegar á listanum',
     },
+    duplicateCriterionTitle: {
+      id: 'doe.sr.application:errors.duplicateCriterionTitle',
+      defaultMessage: 'Þáttur með þessu heiti er þegar á listanum',
+    },
+    duplicateSubCriterionTitle: {
+      id: 'doe.sr.application:errors.duplicateSubCriterionTitle',
+      defaultMessage: 'Undirþáttur með þessu heiti er þegar á listanum',
+    },
     invalidCompany: {
       id: 'doe.sr.application:errors.invalidCompany',
       defaultMessage: 'Kennitala fyrirtækis er ekki gild',
@@ -396,6 +404,58 @@ export const messages = {
         id: 'doe.sr.application:aboutTheCompany.period.month',
         defaultMessage: 'Veldu mánuð',
       },
+      year: {
+        id: 'doe.sr.application:aboutTheCompany.period.year',
+        defaultMessage: 'Veldu ár',
+      },
+      january: {
+        id: 'doe.sr.application:aboutTheCompany.period.january',
+        defaultMessage: 'Janúar',
+      },
+      february: {
+        id: 'doe.sr.application:aboutTheCompany.period.february',
+        defaultMessage: 'Febrúar',
+      },
+      march: {
+        id: 'doe.sr.application:aboutTheCompany.period.march',
+        defaultMessage: 'Mars',
+      },
+      april: {
+        id: 'doe.sr.application:aboutTheCompany.period.april',
+        defaultMessage: 'Apríl',
+      },
+      may: {
+        id: 'doe.sr.application:aboutTheCompany.period.may',
+        defaultMessage: 'Maí',
+      },
+      june: {
+        id: 'doe.sr.application:aboutTheCompany.period.june',
+        defaultMessage: 'Júní',
+      },
+      july: {
+        id: 'doe.sr.application:aboutTheCompany.period.july',
+        defaultMessage: 'Júlí',
+      },
+      august: {
+        id: 'doe.sr.application:aboutTheCompany.period.august',
+        defaultMessage: 'Ágúst',
+      },
+      september: {
+        id: 'doe.sr.application:aboutTheCompany.period.september',
+        defaultMessage: 'September',
+      },
+      october: {
+        id: 'doe.sr.application:aboutTheCompany.period.october',
+        defaultMessage: 'Október',
+      },
+      november: {
+        id: 'doe.sr.application:aboutTheCompany.period.november',
+        defaultMessage: 'Nóvember',
+      },
+      december: {
+        id: 'doe.sr.application:aboutTheCompany.period.december',
+        defaultMessage: 'Desember',
+      },
     }),
   },
 
@@ -650,6 +710,10 @@ export const messages = {
         id: 'doe.sr.application:report.employees.intro',
         defaultMessage:
           'Hér þarf að fylla inn upplýsingar um starfsmenn fyrirtækisins sem skýrslugjöfin nær yfir. Athugið að fjöldi starfsmanna sem skráðir eru hér þarf að vera í samræmi við fjölda starfsmanna sem gefinn er upp í fyrra skrefi umsóknarinnar.',
+      },
+      paginationPageLabel: {
+        id: 'doe.sr.application:report.employees.paginationPageLabel',
+        defaultMessage: 'Fara á síðu {page}',
       },
       nameColumn: {
         id: 'doe.sr.application:report.employees.nameColumn',
@@ -912,29 +976,25 @@ export const messages = {
       },
     }),
     outlierGroup: defineMessages({
-      listTitle: {
-        id: 'doe.sr.application:salaryAnalysis.outlierGroup.listTitle',
-        defaultMessage: 'Frávik',
-      },
       employeeColumn: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.employeeColumn',
         defaultMessage: 'Auðkenni',
       },
-      roleColumn: {
-        id: 'doe.sr.application:salaryAnalysis.outlierGroup.roleColumn',
-        defaultMessage: 'Starf',
-      },
-      genderColumn: {
-        id: 'doe.sr.application:salaryAnalysis.outlierGroup.genderColumn',
-        defaultMessage: 'Kyn',
-      },
-      directionColumn: {
-        id: 'doe.sr.application:salaryAnalysis.outlierGroup.directionColumn',
-        defaultMessage: 'Átt',
-      },
       differenceColumn: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.differenceColumn',
         defaultMessage: 'Launamunur',
+      },
+      scoreColumn: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.scoreColumn',
+        defaultMessage: 'Stigaflokkur',
+      },
+      salaryColumn: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.salaryColumn',
+        defaultMessage: 'Laun',
+      },
+      medianSalaryColumn: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.medianSalaryColumn',
+        defaultMessage: 'Miðgildi launa í stigaflokki',
       },
       postponeCardTitle: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.postponeCardTitle',
@@ -948,22 +1008,6 @@ export const messages = {
       postponeCheckboxLabel: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.postponeCheckboxLabel',
         defaultMessage: 'Ég vil skila úrbótaáætlun seinna',
-      },
-      directionAbove: {
-        id: 'doe.sr.application:salaryAnalysis.outlierGroup.directionAbove',
-        defaultMessage: 'Yfir viðmiði',
-      },
-      directionBelow: {
-        id: 'doe.sr.application:salaryAnalysis.outlierGroup.directionBelow',
-        defaultMessage: 'Undir viðmiði',
-      },
-      directionEqual: {
-        id: 'doe.sr.application:salaryAnalysis.outlierGroup.directionEqual',
-        defaultMessage: 'Á viðmiði',
-      },
-      formTitle: {
-        id: 'doe.sr.application:salaryAnalysis.outlierGroup.formTitle',
-        defaultMessage: 'Skýring á frávikum',
       },
       reasonLabel: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.reasonLabel',
@@ -981,15 +1025,41 @@ export const messages = {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.signatureRoleLabel',
         defaultMessage: 'Starfstitill ábyrgðaraðila',
       },
-      formErrorWithPostponeOption: {
-        id: 'doe.sr.application:salaryAnalysis.outlierGroup.formErrorWithPostponeOption',
-        defaultMessage:
-          'Veldu að fresta úrbótaáætlun eða fylltu út eyðublaðið að neðan.',
+      createGroupButton: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.createGroupButton',
+        defaultMessage: 'Setja í frávikahóp',
       },
-      formErrorRequired: {
-        id: 'doe.sr.application:salaryAnalysis.outlierGroup.formErrorRequired',
+      // The two selection checkboxes carry no visible label (the column is
+      // just a checkbox), so they need an explicit accessible name.
+      selectAllLabel: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.selectAllLabel',
+        defaultMessage: 'Velja alla starfsmenn á þessari síðu',
+      },
+      selectEmployeeLabel: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.selectEmployeeLabel',
+        defaultMessage: 'Velja starfsmann {employee}',
+      },
+      groupHeading: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.groupHeading',
+        defaultMessage: 'Frávikahópur',
+      },
+      groupMembers: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.groupMembers',
+        defaultMessage: 'Starfsmenn í hóp',
+      },
+      removeGroupButton: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.removeGroupButton',
+        defaultMessage: 'Fjarlægja hóp',
+      },
+      unassignedWarning: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.unassignedWarning',
         defaultMessage:
-          'Eyðublaðið má ekki vera tómt. Vinsamlegast fylltu það út.',
+          'Öll frávik þurfa að vera hluti af frávikahópi til að halda áfram.',
+      },
+      incompleteGroupWarning: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.incompleteGroupWarning',
+        defaultMessage:
+          'Fylla þarf út allar upplýsingar fyrir hvern frávikahóp til að halda áfram.',
       },
     }),
   },
