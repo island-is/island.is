@@ -18,9 +18,10 @@ import {
 import { getPathValue } from '../../utils/answerHelpers'
 import { RolePanel } from './RolePanel'
 import {
+  buildMergedStepMetaByTitle,
   buildRolesFromEmployees,
-  buildStepMetaByTitle,
-  buildStepMetaFromSubCriteria,
+  buildStepAssignmentsFromSubCriteria,
+  mergeStepAssignments,
 } from './utils'
 
 const byTitle = sortAlpha<Role>('title')
@@ -39,15 +40,15 @@ export const JobClassificationEditor: FC<
       'parsedSalaryReport.data.criteria',
       [],
     )
-    const fromExternal = buildStepMetaByTitle(criteria)
-    if (Object.keys(fromExternal).length > 0) return fromExternal
-    // External data unavailable (stale right after import) — fall back to the
-    // sub-criteria in answers so the step dropdowns still render options.
-    const subCriteria = getPathValue<{
-      jobFactors?: SubCriterion[][]
-      personalFactors?: SubCriterion[][]
-    }>(application.answers, 'subCriteria', {})
-    return buildStepMetaFromSubCriteria(subCriteria)
+    // Live sub-criteria are the base (so a criterion added after import still
+    // gets metadata) — the imported external criteria overlay authoritative
+    // scores/weights for titles that exist in both.
+    const jobFactors = getPathValue<SubCriterion[][]>(
+      application.answers,
+      'subCriteria.jobFactors',
+      [],
+    )
+    return buildMergedStepMetaByTitle(criteria, jobFactors)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -56,23 +57,10 @@ export const JobClassificationEditor: FC<
   // are inferred from job titles + the manually-entered job-factor
   // sub-criteria). Sorted alphabetically (Icelandic collation) before the
   // seed effect below, so on-screen order and `roles.${roleIndex}` field
-  // paths stay in sync.
+  // paths stay in sync. Merges newly-added job criteria into every role
+  // regardless of which branch produced it, so criteria added after an
+  // import still get a row for already-imported/saved roles too.
   const roles = useMemo(() => {
-    const saved = getPathValue<Role[]>(application.answers, FIELD_NAME, [])
-    if (saved.length > 0) return [...saved].sort(byTitle)
-
-    const external = getPathValue<ParsedRoleDto[]>(
-      application.externalData,
-      'parsedSalaryReport.data.roles',
-      [],
-    )
-    if (external.length > 0) return [...external].sort(byTitle)
-
-    const employees = getPathValue<Employee[]>(
-      application.answers,
-      'employees',
-      [],
-    )
     const jobFactors = getPathValue<JobFactor[]>(
       application.answers,
       'criteria.jobFactors',
@@ -83,12 +71,43 @@ export const JobClassificationEditor: FC<
       'subCriteria.jobFactors',
       [],
     )
+    const defaultAssignments = buildStepAssignmentsFromSubCriteria(
+      jobFactors.map((f) => f.title),
+      subCriteriaJobFactors,
+    )
+    const mergeDefaults = (role: Role): Role => ({
+      ...role,
+      stepAssignments: mergeStepAssignments(
+        role.stepAssignments ?? [],
+        defaultAssignments,
+      ),
+    })
+
+    const saved = getPathValue<Role[]>(application.answers, FIELD_NAME, [])
+    if (saved.length > 0) return saved.map(mergeDefaults).sort(byTitle)
+
+    const external = getPathValue<ParsedRoleDto[]>(
+      application.externalData,
+      'parsedSalaryReport.data.roles',
+      [],
+    ) as Role[]
+    if (external.length > 0) return external.map(mergeDefaults).sort(byTitle)
+
+    // No import ever ran (fully manual entry) — there's no dedicated UI for
+    // creating roles, so derive them from the job titles already entered on
+    // the employees screen, paired with the manually-entered job-factor
+    // sub-criteria.
+    const employees = getPathValue<Employee[]>(
+      application.answers,
+      'employees',
+      [],
+    )
     const derived = buildRolesFromEmployees(
       employees.map((e) => e.roleTitle),
       jobFactors.map((f) => f.title),
       subCriteriaJobFactors,
     )
-    return [...derived].sort(byTitle)
+    return derived.map(mergeDefaults).sort(byTitle)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
