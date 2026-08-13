@@ -4,7 +4,6 @@ import './app.css'
 import React from 'react'
 import App from 'next/app'
 import { AppProps } from 'next/app'
-import getConfig from 'next/config'
 import { SessionProvider } from 'next-auth/react'
 
 import { ApolloProvider } from '@apollo/client'
@@ -14,18 +13,19 @@ import { client as initApollo } from '../graphql'
 import { AppLayout } from '../components/Layouts'
 import { appWithTranslation } from '../i18n'
 import { userMonitoring } from '@island.is/user-monitoring'
+import { getPublicRuntimeEnv } from '../environments/runtimeEnvironment'
 
-const {
-  publicRuntimeConfig: { ddLogsClientToken, appVersion, environment },
-} = getConfig()
+if (typeof window !== 'undefined') {
+  const { ddRumClientToken, appVersion, environment } = getPublicRuntimeEnv()
 
-if (ddLogsClientToken && typeof window !== 'undefined') {
-  userMonitoring.initDdLogs({
-    service: 'skilavottord',
-    clientToken: ddLogsClientToken,
-    env: environment,
-    version: appVersion,
-  })
+  if (ddRumClientToken) {
+    userMonitoring.initDdLogs({
+      service: 'skilavottord',
+      clientToken: ddRumClientToken,
+      env: environment,
+      version: appVersion,
+    })
+  }
 }
 
 class Skilavottord extends App<AppProps> {

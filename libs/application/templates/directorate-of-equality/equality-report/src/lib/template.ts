@@ -8,7 +8,6 @@ import {
   UserProfileApi,
   ApplicationConfigurations,
   IdentityApi,
-  defineTemplateApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import {
@@ -18,8 +17,9 @@ import {
   EqualityReportTemplateDocxApi,
   EqualityReportTemplateHtmlApi,
   PreviousEqualityReportContentApi,
+  SubmitEqualityReportApi,
 } from '../dataProviders'
-import { ApiActions, Events, Roles, States } from '../utils/constants'
+import { Events, Roles, States } from '../utils/constants'
 import { mapUserToRole } from '../utils/mapUserToRole'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
@@ -43,7 +43,8 @@ const template: ApplicationTemplate<
   featureFlag: Features.isDirectorateOfEqualityApplicationsEnabled,
   codeOwner: CodeOwners.Hugsmidjan,
   institution: messages.general.institution,
-  translationNamespaces: ApplicationConfigurations.EqualityReport.translation,
+  translationNamespaces:
+    ApplicationConfigurations[ApplicationTypes.EQUALITY_REPORT].translation,
   dataSchema,
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   requiredScopes: [ApiScope.directorateOfEquality],
@@ -122,6 +123,10 @@ const template: ApplicationTemplate<
               },
             ],
           },
+          // onExit (not onEntry on IN_REVIEW) so a failed submission blocks
+          // the transition instead of silently landing the applicant on a
+          // fake "in review" screen with a stale backend record.
+          onExit: SubmitEqualityReportApi,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -182,12 +187,6 @@ const template: ApplicationTemplate<
               },
             ],
           },
-          onEntry: defineTemplateApi({
-            action: ApiActions.submitEqualityReport,
-            namespace: 'DirectorateOfEquality',
-            shouldPersistToExternalData: true,
-            throwOnError: true,
-          }),
           roles: [
             {
               id: Roles.APPLICANT,

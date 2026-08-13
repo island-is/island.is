@@ -1,4 +1,4 @@
-import React, { Children, ReactNode } from 'react'
+import React, { Children, isValidElement, ReactNode } from 'react'
 import flattenChildren from 'react-keyed-flatten-children'
 import { Box } from '../Box/Box'
 import { BoxProps } from '../Box/types'
@@ -115,7 +115,7 @@ export const Stack = ({
       {Children.map(stackItems, (child, index) => {
         if (
           process.env.NODE_ENV !== 'production' &&
-          typeof child === 'object' &&
+          isValidElement(child) &&
           child.type === Hidden &&
           (child.props as HiddenProps).inline !== undefined
         ) {
