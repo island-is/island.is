@@ -86,7 +86,7 @@ export const requestHandlers = [
   }),
 
   // Captures the serialized body so tests can assert on the exact keys that
-  // reach RLS — `newCategoryRequestBody` holds the parsed JSON of the last call.
+  // reach RLS — see `lastNewCategoryRequest` above.
   rest.post(
     /api\/drivinglicense\/v5\/applications\/new\//,
     async (req, res, ctx) => {
