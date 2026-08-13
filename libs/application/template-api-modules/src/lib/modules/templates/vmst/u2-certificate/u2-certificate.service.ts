@@ -8,7 +8,6 @@ import type { Logger } from '@island.is/logging'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { errorMessages } from '@island.is/application/templates/vmst/u2-certificate'
-import { FetchError } from '@island.is/clients/middlewares'
 import { U2ErrorCode } from './constants'
 
 const isU2ErrorCode = (code: unknown): code is U2ErrorCode =>
@@ -40,7 +39,7 @@ export class U2CertificateService extends BaseTemplateApiService {
         500,
       )
     }
-    console.log(result)
+
     if (!result.isEligible) {
       const title =
         (currentUserLocale === 'is'
@@ -50,6 +49,7 @@ export class U2CertificateService extends BaseTemplateApiService {
       const reasonText =
         (currentUserLocale === 'is' ? result.reason : result.reasonEN) || ''
 
+      // TODO Remove so exeption is always shown
       const shouldAddException = isU2ErrorCode(result.code)
 
       const summary = shouldAddException
