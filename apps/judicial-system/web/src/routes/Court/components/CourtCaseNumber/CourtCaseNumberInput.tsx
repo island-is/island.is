@@ -39,13 +39,18 @@ export const CourtCaseNumberInput: FC<Props> = (props) => {
   const [createCourtCaseSuccess, setCreateCourtCaseSuccess] =
     useState<boolean>(false)
 
-  // The value the field held when it last gained focus, so blur can tell
-  // whether the user actually changed anything. Assigning a court case number
-  // is not an idempotent write: the backend reads an update carrying one on a
-  // submitted case as receiving the case, and a changed number resets case file
-  // states. Tabbing through the field, or typing and undoing, must send
-  // nothing.
+  // Assigning a court case number is not an idempotent write: the backend reads
+  // an update carrying one on a submitted case as receiving the case, and a
+  // changed number resets case file states. So blur persists only what the user
+  // actually did, guarded twice over:
+  //
+  // - `hasUserEdited` means a value that arrived from anywhere other than the
+  //   keyboard is never echoed back. That covers the working case being filled
+  //   in or refreshed while the field happens to hold focus.
+  // - `valueOnFocus` means typing something and undoing it within one focus
+  //   session sends nothing either.
   const valueOnFocus = useRef(courtCaseNumber ?? '')
+  const hasUserEdited = useRef(false)
 
   const validations: Validation[] = [
     'empty',
@@ -53,6 +58,7 @@ export const CourtCaseNumberInput: FC<Props> = (props) => {
   ]
 
   const handleChange = (value: string) => {
+    hasUserEdited.current = true
     setCreateCourtCaseSuccess(false)
     removeErrorMessageIfValid(validations, value, errorMessage, setErrorMessage)
     setCourtCaseNumber(value)
@@ -65,7 +71,7 @@ export const CourtCaseNumberInput: FC<Props> = (props) => {
       setErrorMessage,
     )
 
-    if (!isValid || value === valueOnFocus.current) {
+    if (!isValid || !hasUserEdited.current || value === valueOnFocus.current) {
       return
     }
 
