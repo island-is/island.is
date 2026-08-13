@@ -426,10 +426,14 @@ export const messages = {
         defaultMessage:
           '* Launajafnrétti\n\n* Jafnlaunastaðfesting eða jafnlaunavottun\n\n* Laus störf, starfsþjálfun, endurmenntun og símenntun\n\n* Samræming fjölskyldu- og atvinnulífs\n\n* Kynbundið ofbeldi, kynbundin áreitni og kynferðisleg áreitni (fyrirbyggjandi aðgerðir)',
       },
-      checkboxLabel: {
-        id: 'doe.er.application:equalityReport.information.checkboxLabel',
+      implementationTitle: {
+        id: 'doe.er.application:equalityReport.information.implementationTitle',
+        defaultMessage: 'Skipulag og framkvæmd',
+      },
+      implementationList: {
+        id: 'doe.er.application:equalityReport.information.implementationList#markdown',
         defaultMessage:
-          'Ég staðfesti að ég muni framfylgja markmiðum jafnréttisáætlunar',
+          '* Markmiðin eru skýr\n\n* Framkvæmdaáætlun er í samræmi við sett markmið\n\n* Aðgerðir hafa tímaramma\n\n* Áætlunin inniheldur árangursmat\n\n* Ábyrgð er skýr\n\n* Gildistími tilgreindur',
       },
       editorTitle: {
         id: 'doe.er.application:equalityReport.information.editorTitle',
