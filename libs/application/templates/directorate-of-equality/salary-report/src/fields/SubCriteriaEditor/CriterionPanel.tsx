@@ -20,6 +20,10 @@ import { SubCriterionItem } from './SubCriterionItem'
 type Props = {
   application: Application
   factorsKey: 'jobFactors' | 'personalFactors'
+  // Position of this criterion within `subCriteria[factorsKey]` — the cascade
+  // below has to write the whole `subCriteria` object back, so it needs to
+  // know which group slot it owns.
+  criterionIndex: number
   accordionId: string
   criterionTitle: string
   criterionWeight: string
@@ -44,6 +48,7 @@ const mapParsedToSubCriteria = (
 export const CriterionPanel: FC<Props> = ({
   application,
   factorsKey,
+  criterionIndex,
   accordionId,
   criterionTitle,
   criterionWeight,
@@ -67,10 +72,29 @@ export const CriterionPanel: FC<Props> = ({
   // that no longer exists. useCascadeDelete persists the correction
   // immediately, since this screen's own "Continue" only saves the
   // `subCriteria` answer key.
-  const removeFromAssignments = (deletedSubTitle: string) => {
+  //
+  // `subCriteria` goes out in the SAME payload as the assignment cleanup: the
+  // removal itself only lives in local form state until "Continue", so
+  // persisting the cleanup alone would let a reload bring the sub-criterion
+  // back while its assignments stay deleted — and mergeStepAssignments would
+  // then silently re-seed them at stepOrder 1, losing the chosen step.
+  // Written as the whole `subCriteria` object, not the nested path:
+  // updateApplication merges answers only one level deep.
+  const removeFromAssignments = (
+    deletedSubTitle: string,
+    remainingSubCriteria: SubCriterion[],
+  ) => {
+    const subCriteria = (getValues('subCriteria') as
+      | Record<Props['factorsKey'], SubCriterion[][]>
+      | undefined) ?? { jobFactors: [], personalFactors: [] }
+    const groups = [...(subCriteria[factorsKey] ?? [])]
+    groups[criterionIndex] = remainingSubCriteria
+    const nextSubCriteria = { ...subCriteria, [factorsKey]: groups }
+
     if (factorsKey === 'personalFactors') {
       const employees = (getValues('employees') as Employee[] | undefined) ?? []
       return persist(deletedSubTitle, {
+        subCriteria: nextSubCriteria,
         employees: employees.map((emp) => ({
           ...emp,
           personalStepAssignments: removeAssignment(
@@ -83,6 +107,7 @@ export const CriterionPanel: FC<Props> = ({
     }
     const roles = (getValues('roles') as Role[] | undefined) ?? []
     return persist(deletedSubTitle, {
+      subCriteria: nextSubCriteria,
       roles: roles.map((role) => ({
         ...role,
         stepAssignments: removeAssignment(
@@ -189,8 +214,14 @@ export const CriterionPanel: FC<Props> = ({
               const deletedSubTitle = getValues(
                 `${fieldName}.${i}.title`,
               ) as string
+              // Computed from the pre-removal value rather than re-read after
+              // `remove`, so the persisted payload never depends on when
+              // react-hook-form flushes the field array.
+              const remaining = (
+                (getValues(fieldName) as SubCriterion[] | undefined) ?? []
+              ).filter((_, index) => index !== i)
               remove(i)
-              void removeFromAssignments(deletedSubTitle)
+              void removeFromAssignments(deletedSubTitle, remaining)
             }}
           />
         ))}

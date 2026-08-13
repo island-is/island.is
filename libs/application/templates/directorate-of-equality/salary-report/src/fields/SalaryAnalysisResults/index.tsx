@@ -16,6 +16,8 @@ import {
 import { useLocale } from '@island.is/localization'
 import type { SalaryAnalysisResponseDto } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
+import { isOutlierGroupComplete } from '../../utils/outlierGroups'
+import type { OutlierGroupAnswer } from '../../utils/outlierGroups'
 import { formatCurrency } from '../EmployeesEditor/utils'
 import { OutlierGroupPanel } from './OutlierGroupPanel'
 
@@ -54,13 +56,9 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
   const postponed: string[] =
     useWatch({ name: 'salaryAnalysis.postponed' }) ?? []
   const isPostponed = postponed.includes(YES)
-  const watchedOutlierGroups: {
-    employeeOrdinals?: number[]
-    reason?: string
-    action?: string
-    signatureName?: string
-    signatureRole?: string
-  }[] = useWatch({ name: 'salaryAnalysis.outlierGroups' })
+  const watchedOutlierGroups: OutlierGroupAnswer[] = useWatch({
+    name: 'salaryAnalysis.outlierGroups',
+  })
   const outlierGroups = useMemo(() => watchedOutlierGroups ?? [], [
     watchedOutlierGroups,
   ])
@@ -151,7 +149,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
       const currentOutliers = result?.outliers ?? []
       if (!isPostponed && currentOutliers.length > 0) {
         const assignedOrdinals = new Set(
-          outlierGroups.flatMap((g) => g.employeeOrdinals ?? []),
+          outlierGroups.flatMap((g) => g.employeeOrdinals),
         )
         const allOutliersAssigned = currentOutliers.every((o) =>
           assignedOrdinals.has(o.employeeOrdinal),
@@ -164,15 +162,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
             ),
           ]
         }
-        const groupsComplete = outlierGroups
-          .filter((g) => (g.employeeOrdinals ?? []).length > 0)
-          .every(
-            (g) =>
-              g.reason?.trim() &&
-              g.action?.trim() &&
-              g.signatureName?.trim() &&
-              g.signatureRole?.trim(),
-          )
+        const groupsComplete = outlierGroups.every(isOutlierGroupComplete)
         if (!groupsComplete) {
           return [
             false,

@@ -1042,6 +1042,17 @@ export const messages = {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.createGroupButton',
         defaultMessage: 'Setja í frávikahóp',
       },
+      // The two selection checkboxes carry no visible label (the column is
+      // just a checkbox), so they need an explicit accessible name.
+      selectAllLabel: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.selectAllLabel',
+        defaultMessage: 'Velja alla starfsmenn á þessari síðu',
+      },
+      selectEmployeeLabel: {
+        id:
+          'doe.sr.application:salaryAnalysis.outlierGroup.selectEmployeeLabel',
+        defaultMessage: 'Velja starfsmann {employee}',
+      },
       groupHeading: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.groupHeading',
         defaultMessage: 'Frávikahópur',

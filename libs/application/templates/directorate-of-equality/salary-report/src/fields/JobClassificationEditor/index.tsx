@@ -15,7 +15,7 @@ import {
   type Role,
   type SubCriterion,
 } from '../../utils/types'
-import { getPathValue } from '../../utils/answerHelpers'
+import { getLiveOrSavedArray, getPathValue } from '../../utils/answerHelpers'
 import { RolePanel } from './RolePanel'
 import {
   buildMergedStepMetaByTitle,
@@ -35,18 +35,21 @@ export const JobClassificationEditor: FC<
   const { getValues, setValue } = useFormContext()
 
   const stepMetaByTitle = useMemo(() => {
+    // Job criteria only: the merge is keyed by sub-criterion title alone, so
+    // passing the personal criteria too would let a same-titled personal
+    // sub-criterion overwrite this screen's scores and weights.
     const criteria = getPathValue<ParsedCriterionDto[]>(
       application.externalData,
       'parsedSalaryReport.data.criteria',
       [],
-    )
+    ).filter((c) => c.type !== 'PERSONAL')
     // Live sub-criteria are the base (so a criterion added after import still
     // gets metadata) — the imported external criteria overlay authoritative
     // scores/weights for titles that exist in both.
-    const jobFactors = getPathValue<SubCriterion[][]>(
+    const jobFactors = getLiveOrSavedArray<SubCriterion[]>(
+      getValues,
       application.answers,
       'subCriteria.jobFactors',
-      [],
     )
     return buildMergedStepMetaByTitle(criteria, jobFactors)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -61,15 +64,15 @@ export const JobClassificationEditor: FC<
   // regardless of which branch produced it, so criteria added after an
   // import still get a row for already-imported/saved roles too.
   const roles = useMemo(() => {
-    const jobFactors = getPathValue<JobFactor[]>(
+    const jobFactors = getLiveOrSavedArray<JobFactor>(
+      getValues,
       application.answers,
       'criteria.jobFactors',
-      [],
     )
-    const subCriteriaJobFactors = getPathValue<SubCriterion[][]>(
+    const subCriteriaJobFactors = getLiveOrSavedArray<SubCriterion[]>(
+      getValues,
       application.answers,
       'subCriteria.jobFactors',
-      [],
     )
     const defaultAssignments = buildStepAssignmentsFromSubCriteria(
       jobFactors.map((f) => f.title),

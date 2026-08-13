@@ -20,19 +20,13 @@ import type {
 import { messages } from '../../lib/messages'
 import type { Employee } from '../../utils/types'
 import { getPathValue } from '../../utils/answerHelpers'
+import { isOutlierGroupComplete } from '../../utils/outlierGroups'
+import type { OutlierGroupAnswer } from '../../utils/outlierGroups'
 import { formatCurrency } from '../EmployeesEditor/utils'
 import { TablePagination } from '../TablePagination'
 
 const OUTLIERS_PAGE_SIZE = 10
 const SELECT_COLUMN_WIDTH = 40
-
-type OutlierGroupAnswer = {
-  reason?: string
-  action?: string
-  signatureName?: string
-  signatureRole?: string
-  employeeOrdinals: number[]
-}
 
 type Props = {
   application: Application
@@ -139,6 +133,7 @@ export const OutlierEditor: FC<Props> = ({
           >
             <Checkbox
               label=""
+              ariaLabel={formatMessage(m.selectAllLabel)}
               checked={allSelectedOnPage}
               disabled={pageRows.length === 0}
               onChange={() =>
@@ -164,6 +159,11 @@ export const OutlierEditor: FC<Props> = ({
           >
             <Checkbox
               label=""
+              ariaLabel={formatMessage(m.selectEmployeeLabel, {
+                employee: identifierForOrdinal(
+                  info.row.original.employeeOrdinal,
+                ),
+              })}
               checked={selected.has(info.row.original.employeeOrdinal)}
               onChange={() => toggleSelect(info.row.original.employeeOrdinal)}
             />
@@ -324,17 +324,8 @@ export const OutlierEditor: FC<Props> = ({
         </Box>
       )}
       {unassignedOutliers.length === 0 &&
-        watchedGroups.some((g) => (g.employeeOrdinals ?? []).length > 0) &&
-        watchedGroups.some((g) => {
-          const ordinals = g.employeeOrdinals ?? []
-          return (
-            ordinals.length > 0 &&
-            (!g.reason?.trim() ||
-              !g.action?.trim() ||
-              !g.signatureName?.trim() ||
-              !g.signatureRole?.trim())
-          )
-        }) && (
+        watchedGroups.some((g) => g.employeeOrdinals.length > 0) &&
+        watchedGroups.some((g) => !isOutlierGroupComplete(g)) && (
           <Box marginTop={2}>
             <Text variant="small" color="red600">
               {formatMessage(m.incompleteGroupWarning)}

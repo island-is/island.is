@@ -10,7 +10,7 @@ import {
   type PersonalFactor,
   type SubCriterion,
 } from '../../utils/types'
-import { getPathValue } from '../../utils/answerHelpers'
+import { getLiveOrSavedArray, getPathValue } from '../../utils/answerHelpers'
 import {
   buildMergedStepMetaByTitle,
   buildStepAssignmentsFromSubCriteria,
@@ -31,18 +31,21 @@ export const EmployeeClassificationEditor: FC<
   const [page, setPage] = useState(1)
 
   const stepMetaByTitle = useMemo(() => {
+    // Only the PERSONAL criteria: the merge is keyed by sub-criterion title
+    // alone, so passing the job criteria too would let a same-titled job
+    // sub-criterion overwrite this screen's scores and weights.
     const criteria = getPathValue<ParsedCriterionDto[]>(
       application.externalData,
       'parsedSalaryReport.data.criteria',
       [],
-    )
+    ).filter((c) => c.type === 'PERSONAL')
     // Live sub-criteria are the base (so a criterion added after import still
     // gets metadata) — the imported external criteria overlay authoritative
     // scores/weights for titles that exist in both.
-    const personalFactors = getPathValue<SubCriterion[][]>(
+    const personalFactors = getLiveOrSavedArray<SubCriterion[]>(
+      getValues,
       application.answers,
       'subCriteria.personalFactors',
-      [],
     )
     return buildMergedStepMetaByTitle(criteria, personalFactors)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -65,15 +68,15 @@ export const EmployeeClassificationEditor: FC<
     // no import to populate them from) — derive the defaults from the
     // manually-entered personal-factor sub-criteria so classification is
     // possible without ever uploading a workbook.
-    const personalFactors = getPathValue<PersonalFactor[]>(
+    const personalFactors = getLiveOrSavedArray<PersonalFactor>(
+      getValues,
       application.answers,
       'criteria.personalFactors',
-      [],
     )
-    const subCriteriaPersonalFactors = getPathValue<SubCriterion[][]>(
+    const subCriteriaPersonalFactors = getLiveOrSavedArray<SubCriterion[]>(
+      getValues,
       application.answers,
       'subCriteria.personalFactors',
-      [],
     )
     const defaultAssignments = buildStepAssignmentsFromSubCriteria(
       personalFactors.map((f) => f.title),

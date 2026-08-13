@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { useFormContext } from 'react-hook-form'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
@@ -27,6 +27,14 @@ export const useCascadeDelete = (application: Application) => {
     answers: RecordObject
   } | null>(null)
 
+  // Every cascade sends a FULL snapshot of the keys it touches, so two
+  // mutations in flight at once are order-sensitive: if a first delete's
+  // snapshot lands after a second delete's, the server ends up with the
+  // earlier state and the second deletion is resurrected. Chaining them keeps
+  // the last write the newest one. `send` never rejects (it catches into
+  // `failed`), so the chain can't be broken by a failure.
+  const queue = useRef<Promise<void>>(Promise.resolve())
+
   const send = async (title: string, answers: RecordObject) => {
     try {
       await updateApplication({
@@ -38,6 +46,11 @@ export const useCascadeDelete = (application: Application) => {
     }
   }
 
+  const enqueue = (title: string, answers: RecordObject) => {
+    queue.current = queue.current.then(() => send(title, answers))
+    return queue.current
+  }
+
   // `answers` must be keyed by TOP-LEVEL answer key: updateApplication merges
   // answers one level deep, so a nested path like
   // 'subCriteria.personalFactors' would land as a bogus flat answer instead
@@ -46,12 +59,12 @@ export const useCascadeDelete = (application: Application) => {
   const persist = async (deletedTitle: string, answers: RecordObject) => {
     if (!deletedTitle) return
     Object.entries(answers).forEach(([key, value]) => setValue(key, value))
-    await send(deletedTitle, answers)
+    await enqueue(deletedTitle, answers)
   }
 
   const retry = async () => {
     if (!failed) return
-    await send(failed.title, failed.answers)
+    await enqueue(failed.title, failed.answers)
   }
 
   return { persist, retry, saveError: failed?.title ?? null }
