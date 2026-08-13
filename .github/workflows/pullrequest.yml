@@ -267,6 +267,8 @@ jobs:
   typecheck:
     needs:
       - prepare
+    permissions:
+      contents: 'read'
     runs-on: arc-shared
     timeout-minutes: 35
     env:

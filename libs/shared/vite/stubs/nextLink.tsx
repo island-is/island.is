@@ -8,7 +8,7 @@ import type { AnchorHTMLAttributes, ReactNode } from 'react'
  */
 const Link = forwardRef<
   HTMLAnchorElement,
-  AnchorHTMLAttributes<HTMLAnchorElement> & {
+  Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'> & {
     href?: string | { pathname?: string }
     children?: ReactNode
     legacyBehavior?: boolean
