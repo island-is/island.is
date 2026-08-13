@@ -7,7 +7,7 @@ import {
   FileUploadStatus,
   InputFileUpload,
   Text,
-  UploadFile,
+  toast,
 } from '@island.is/island-ui/core'
 import {
   DEFENDER_INDICTMENT_CASE_ROUTE,
@@ -17,6 +17,7 @@ import {
   SIGNED_VERDICT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
+  isAppealFileDeletionLocked,
   isCompletedCase,
   isDefenceUser,
   isIndictmentCase,
@@ -142,8 +143,18 @@ const Statement = () => {
     workingCase.id,
   ])
 
-  const handleRemoveFile = (file: UploadFile) => {
+  const handleRemoveFile = (file: TUploadFile) => {
     if (file.key) {
+      // Files that have been sent to the court of appeals can no longer be
+      // deleted once it has registered its case number
+      if (isAppealFileDeletionLocked(file.category, targetAppealCase)) {
+        toast.error(
+          'Ekki er hægt að eyða gögnum eftir að Landsréttur hefur skráð málsnúmer',
+        )
+
+        return
+      }
+
       handleRemove(file, removeUploadFile)
     } else {
       removeUploadFile(file)

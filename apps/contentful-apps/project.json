@@ -10,7 +10,8 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/contentful-apps"
+        "outputPath": "dist/apps/contentful-apps",
+        "webpack": true
       },
       "configurations": {
         "development": {
@@ -48,7 +49,8 @@
       "options": {
         "buildTarget": "contentful-apps:build",
         "dev": true,
-        "customServerTarget": "contentful-apps:serve-custom-server"
+        "customServerTarget": "contentful-apps:serve-custom-server",
+        "webpack": true
       },
       "configurations": {
         "development": {
