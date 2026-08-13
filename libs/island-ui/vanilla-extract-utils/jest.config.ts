@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'island-ui-vanilla-extract-utils',
   preset: './jest.preset.js',
   rootDir: '../../..',

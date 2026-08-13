@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-housing-benefit-calculator',
   preset: '../../../jest.preset.js',
   testEnvironment: 'node',

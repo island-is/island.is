@@ -1,4 +1,4 @@
-import { useCallback, useContext, useMemo, useState } from 'react'
+import { type JSX, useCallback, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -230,10 +230,13 @@ export const Overview = () => {
             caseNumber: workingCase.courtCaseNumber,
             reviewer: selectedIndictmentReviewer?.label,
           })}
-          secondaryButton={{
-            text: fm(core.back),
-            onClick: () => router.push(getStandardUserDashboardRoute(user)),
-          }}
+          buttons={[
+            {
+              text: fm(core.back),
+              onClick: () => router.push(getStandardUserDashboardRoute(user)),
+              variant: 'ghost',
+            },
+          ]}
         />
       )}
     </PageLayout>

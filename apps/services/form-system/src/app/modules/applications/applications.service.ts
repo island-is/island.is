@@ -14,7 +14,6 @@ import type { Locale } from '@island.is/shared/types'
 import { AuthDelegationType } from '@island.is/shared/types'
 import {
   BadRequestException,
-  ConflictException,
   ForbiddenException,
   HttpException,
   Inject,
@@ -93,6 +92,12 @@ export class ApplicationsService {
 
     if (!form) {
       throw new NotFoundException(`Form with slug '${slug}' not found`)
+    }
+
+    if (form.isInaccessible) {
+      const responseDto = new ApplicationResponseDto()
+      responseDto.isInaccessible = true
+      return responseDto
     }
 
     const allowedLoginTypes = await this.getAllowedLoginTypes(form)
@@ -242,6 +247,10 @@ export class ApplicationsService {
       )
     }
 
+    if (form.isInaccessible || form.status === FormStatus.ARCHIVED) {
+      throw new ForbiddenException(`Form with id '${form.id}' is inaccessible`)
+    }
+
     const loginTypes = await this.getLoginTypes(user)
     const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
     if (
@@ -318,6 +327,10 @@ export class ApplicationsService {
       throw new NotFoundException(
         `Form with id '${application.formId}' not found.`,
       )
+    }
+
+    if (form.isInaccessible || form.status === FormStatus.ARCHIVED) {
+      throw new ForbiddenException(`Form with id '${form.id}' is inaccessible`)
     }
 
     if (user) {
@@ -539,6 +552,12 @@ export class ApplicationsService {
         slug,
       )
 
+      if (form.isInaccessible || form.status === FormStatus.ARCHIVED) {
+        const responseDto = new ApplicationResponseDto()
+        responseDto.isInaccessible = true
+        return responseDto
+      }
+
       const allowedLoginTypes = await this.getAllowedLoginTypes(form)
       if (user) {
         const loginTypes = await this.getLoginTypes(user)
@@ -568,6 +587,7 @@ export class ApplicationsService {
       const responseDto = new ApplicationResponseDto()
       responseDto.application = applicationDto
       responseDto.isLoginTypeAllowed = true
+      responseDto.isInaccessible = form.isInaccessible
 
       return responseDto
     } catch (error) {
@@ -598,6 +618,12 @@ export class ApplicationsService {
       throw new NotFoundException(`Form with slug '${slug}' not found`)
     }
 
+    if (form.isInaccessible) {
+      const responseDto = new ApplicationResponseDto()
+      responseDto.isInaccessible = true
+      return responseDto
+    }
+
     const allowedLoginTypes = await this.getAllowedLoginTypes(form)
 
     const loginTypes = await this.getLoginTypes(user)
@@ -622,6 +648,7 @@ export class ApplicationsService {
     const responseDto = new ApplicationResponseDto()
     responseDto.applications = existingApplications
     responseDto.isLoginTypeAllowed = true
+    responseDto.isInaccessible = form.isInaccessible
     return responseDto
   }
 
@@ -925,10 +952,6 @@ export class ApplicationsService {
       )
     }
 
-    if (form.status === FormStatus.ARCHIVED) {
-      throw new ConflictException(`Form with id '${formId}' is archived`)
-    }
-
     return form
   }
 
@@ -1013,6 +1036,10 @@ export class ApplicationsService {
       throw new NotFoundException(
         `Form with id '${application.formId}' not found`,
       )
+    }
+
+    if (form.isInaccessible || form.status === FormStatus.ARCHIVED) {
+      throw new ForbiddenException(`Form with id '${form.id}' is inaccessible`)
     }
 
     const loginTypes = await this.getLoginTypes(user)
@@ -1241,9 +1268,14 @@ export class ApplicationsService {
     }
     const fieldType = field.fieldType
 
+    const form = await this.getForm(slug)
+
+    if (form.isInaccessible) {
+      throw new ForbiddenException(`Form with id '${form.id}' is inaccessible`)
+    }
+
     // Ownership + access check: field must belong to the requested form,
     // and the current user's loginTypes must be allowed for that form.
-    const form = await this.getForm(slug)
     const allowedLoginTypes = await this.getAllowedLoginTypes(form)
     const loginTypes = await this.getLoginTypes(user)
     const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
@@ -1340,6 +1372,10 @@ export class ApplicationsService {
       throw new NotFoundException(
         `Form with id '${application.formId}' not found for application '${notificationDto.applicationId}'`,
       )
+    }
+
+    if (form.isInaccessible || form.status === FormStatus.ARCHIVED) {
+      throw new ForbiddenException(`Form with id '${form.id}' is inaccessible`)
     }
 
     const loginTypes = await this.getLoginTypes(user)

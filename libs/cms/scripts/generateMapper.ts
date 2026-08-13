@@ -59,7 +59,7 @@ const contentfulTypeToMap = (field: Field, imports: Imports) => {
       if (field.items.linkType === 'Entry' && items.length > 1) {
         const base = `${value}.map(${mapper})`
 
-        pushOnce('ApolloError', imports.apollo)
+        pushOnce('GraphQLError', imports.apollo)
 
         imports.slices.push(...items)
         imports.mappers.push(...items.map((name) => `map${upperFirst(name)}`))
@@ -167,9 +167,7 @@ export const getMapper = (
 
   const apolloImports =
     imports.apollo.length > 0
-      ? `import { ${imports.apollo.map(
-          (item) => item,
-        )} } from 'apollo-server-express'`
+      ? `import { ${imports.apollo.map((item) => item)} } from 'graphql'`
       : ''
 
   // We don't import the model within itself
@@ -194,7 +192,7 @@ export const getMapper = (
           .join('\n')}
 
         default:
-          throw new ApolloError(\`Cannot convert to slice: \${(slice.sys.contentType.sys as { id: string }).id}\`)
+          throw new GraphQLError(\`Cannot convert to slice: \${(slice.sys.contentType.sys as { id: string }).id}\`)
       }
     }`
       : ''

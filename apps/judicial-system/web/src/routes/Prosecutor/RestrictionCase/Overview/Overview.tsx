@@ -380,10 +380,13 @@ export const Overview = () => {
             })}
             text={modalText}
             onClose={() => router.push(getStandardUserDashboardRoute(user))}
-            secondaryButton={{
-              text: formatMessage(core.closeModal),
-              onClick: () => router.push(getStandardUserDashboardRoute(user)),
-            }}
+            buttons={[
+              {
+                text: formatMessage(core.closeModal),
+                onClick: () => router.push(getStandardUserDashboardRoute(user)),
+                variant: 'ghost',
+              },
+            ]}
             errorMessage={
               sendNotificationError
                 ? formatMessage(errors.sendNotification)
