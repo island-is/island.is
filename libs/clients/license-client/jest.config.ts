@@ -15,4 +15,5 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '<rootDir>/coverage/libs/clients/license-client',
+  testEnvironment: 'jest-environment-node',
 }

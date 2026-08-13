@@ -288,10 +288,10 @@ describe('DrivingLicenseSubmissionService', () => {
         primaryPhoneNumber: expect.any(String),
         studentEmail: 'mock@email.com',
         sendPlasticToPerson: true,
-        pickupPlasticAtDistrict: false,
         photoBiometricsId: null,
         signatureBiometricsId: null,
       })
+      expect(input).not.toHaveProperty('pickupPlasticAtDistrict')
       expect(input.contentList).toHaveLength(1)
       expect(input.contentList[0]).toMatchObject({
         fileName: 'cert.pdf',

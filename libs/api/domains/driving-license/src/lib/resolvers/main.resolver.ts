@@ -11,7 +11,7 @@ import {
   Scopes,
   BypassAuth,
 } from '@island.is/auth-nest-tools'
-import { DrivingLicenseService } from '../drivingLicense.service'
+import { DrivingLicenseService } from '../services/drivingLicense.service'
 export * from '@island.is/nest/audit'
 import {
   DrivingLicense,
@@ -19,13 +19,13 @@ import {
   StudentInformationResult,
   ApplicationEligibility,
   StudentAssessment,
-  ApplicationEligibilityInput,
   TeacherV4,
-} from './models'
+} from '../models'
 import { AuditService } from '@island.is/nest/audit'
-import { DrivingInstructorGuard } from './guards/drivingInstructor.guard'
-import { StudentCanGetPracticePermitInput } from './models/studentCanGetPracticePermit.input'
-import { StudentCanGetPracticePermit } from './models/studentCanGetPracticePermit.model'
+import { DrivingInstructorGuard } from '../guards/drivingInstructor.guard'
+import { ApplicationEligibilityInput } from '../dto/applicationEligibility.input'
+import { StudentCanGetPracticePermitInput } from '../dto/studentCanGetPracticePermit.input'
+import { StudentCanGetPracticePermit } from '../models/teaching/studentCanGetPracticePermit.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 const namespace = '@island.is/api/driving-license'

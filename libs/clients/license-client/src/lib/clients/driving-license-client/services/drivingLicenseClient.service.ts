@@ -1,7 +1,9 @@
 import { User } from '@island.is/auth-nest-tools'
 import {
+  DtoV5DeprivationDto,
   DtoV5DriverLicenseDto as DriversLicense,
   DrivingLicenseApi,
+  PenaltyPointsClientService,
   RemarkCode,
 } from '@island.is/clients/driving-license'
 import { FetchError } from '@island.is/clients/middlewares'
@@ -22,7 +24,10 @@ import {
   VerifyPkPassResult,
   Result,
 } from '../../../licenseClient.type'
-import { DrivingLicenseVerifyExtraData } from '../drivingLicenseClient.type'
+import {
+  DrivingLicenseVerifyExtraData,
+  DriversLicenseWithExtras,
+} from '../drivingLicenseClient.type'
 import { createPkPassDataInput } from '../drivingLicenseMapper'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 
@@ -38,6 +43,7 @@ export class DrivingLicenseClient
     private drivingApi: DrivingLicenseApi,
     private smartApi: SmartSolutionsApi,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly penaltyPointsClient: PenaltyPointsClientService,
   ) {}
 
   clientSupportsPkPass = true
@@ -149,15 +155,90 @@ export class DrivingLicenseClient
     return payload
   }
 
-  async getLicenses(user: User): Promise<Result<Array<DriversLicense>>> {
-    const licenseResponse = await this.fetchLicense(user)
+  private computeHasActiveDeprivation(
+    deprivations: Array<DtoV5DeprivationDto>,
+  ): boolean {
+    const mostRecentDeprivation = [...deprivations].sort((a, b) => {
+      const aTime = a.dateFrom ? new Date(a.dateFrom).getTime() : 0
+      const bTime = b.dateFrom ? new Date(b.dateFrom).getTime() : 0
+      return bTime - aTime
+    })[0]
+
+    return mostRecentDeprivation
+      ? !mostRecentDeprivation.dateTo ||
+          new Date(mostRecentDeprivation.dateTo) >= new Date()
+      : false
+  }
+
+  private async fetchPenaltyPointsAndDeprivations(user: User): Promise<{
+    totalPenaltyPoints?: number
+    hasActiveDeprivation?: boolean
+  }> {
+    const [penaltyPointsResult, deprivationsResult] = await Promise.allSettled([
+      this.penaltyPointsClient.penaltyPointDetails(user),
+      this.penaltyPointsClient.deprivations(user),
+    ])
+
+    let totalPenaltyPoints: number | undefined
+    if (penaltyPointsResult.status === 'fulfilled') {
+      totalPenaltyPoints = penaltyPointsResult.value.reduce(
+        (sum, detail) => sum + (detail.points ?? 0),
+        0,
+      )
+    } else {
+      this.logger.warn(
+        'Failed to fetch penalty point details for driving license',
+        {
+          error: penaltyPointsResult.reason,
+          category: LOG_CATEGORY,
+        },
+      )
+    }
+
+    let hasActiveDeprivation: boolean | undefined
+    if (deprivationsResult.status === 'fulfilled') {
+      hasActiveDeprivation = this.computeHasActiveDeprivation(
+        deprivationsResult.value,
+      )
+    } else {
+      this.logger.warn('Failed to fetch deprivations for driving license', {
+        error: deprivationsResult.reason,
+        category: LOG_CATEGORY,
+      })
+    }
+
+    return { totalPenaltyPoints, hasActiveDeprivation }
+  }
+
+  async getLicenses(
+    user: User,
+  ): Promise<Result<Array<DriversLicenseWithExtras>>> {
+    const [licenseResponse, { totalPenaltyPoints, hasActiveDeprivation }] =
+      await Promise.all([
+        this.fetchLicense(user),
+        this.fetchPenaltyPointsAndDeprivations(user),
+      ])
+
     if (!licenseResponse.ok) {
       return licenseResponse
     }
 
+    if (!licenseResponse.data) {
+      return {
+        ok: true,
+        data: [],
+      }
+    }
+
     return {
       ok: true,
-      data: licenseResponse.data ? [licenseResponse.data] : [],
+      data: [
+        {
+          ...licenseResponse.data,
+          totalPenaltyPoints,
+          hasActiveDeprivation,
+        },
+      ],
     }
   }
 
