@@ -11,7 +11,8 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/judicial-system/web"
+        "outputPath": "dist/apps/judicial-system/web",
+        "webpack": true
       },
       "configurations": {
         "development": {
@@ -49,7 +50,8 @@
       "options": {
         "buildTarget": "judicial-system-web:build",
         "dev": true,
-        "customServerTarget": "judicial-system-web:serve-custom-server"
+        "customServerTarget": "judicial-system-web:serve-custom-server",
+        "webpack": true
       },
       "configurations": {
         "development": {

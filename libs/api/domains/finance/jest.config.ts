@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'api-domains-finance',
   preset: './jest.preset.js',
   rootDir: '../../../..',

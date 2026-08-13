@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-aircraft-registry',
   preset: '../../../jest.preset.js',
   globals: {},

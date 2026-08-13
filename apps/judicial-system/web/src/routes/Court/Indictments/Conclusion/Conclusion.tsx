@@ -1080,27 +1080,30 @@ const Conclusion: FC = () => {
         <Modal
           title="Viltu kljúfa mál?"
           text={`Ákærði ${selectedDefendant.name} verður klofinn frá málinu og nýtt mál stofnað.`}
-          primaryButton={{
-            text: 'Já, kljúfa mál',
-            onClick: async () => {
-              const newCaseId = await splitDefendantFromCase(
-                workingCase.id,
-                selectedDefendant.id,
-              )
-
-              if (!newCaseId) {
-                return
-              }
-
-              setSplitCaseId(newCaseId)
-              setModalVisible('CREATE_COURT_CASE_NUMBER')
+          buttons={[
+            {
+              text: 'Hætta við',
+              onClick: () => setModalVisible(undefined),
+              variant: 'ghost',
             },
-            isLoading: isSplittingDefendantFromCase,
-          }}
-          secondaryButton={{
-            text: 'Hætta við',
-            onClick: () => setModalVisible(undefined),
-          }}
+            {
+              text: 'Já, kljúfa mál',
+              onClick: async () => {
+                const newCaseId = await splitDefendantFromCase(
+                  workingCase.id,
+                  selectedDefendant.id,
+                )
+
+                if (!newCaseId) {
+                  return
+                }
+
+                setSplitCaseId(newCaseId)
+                setModalVisible('CREATE_COURT_CASE_NUMBER')
+              },
+              isLoading: isSplittingDefendantFromCase,
+            },
+          ]}
           onClose={() => setModalVisible(undefined)}
         />
       )}
@@ -1109,17 +1112,19 @@ const Conclusion: FC = () => {
           title={`Nýtt mál - ${selectedDefendant?.name}`}
           text="Smelltu á hnappinn til að stofna nýtt mál eða skráðu inn málsnúmer sem er þegar til í Auði. Gögn ásamt sögu máls verða flutt á nýja málið."
           footerJustifyContent="flexEnd"
-          primaryButton={{
-            text: 'Staðfesta',
-            onClick: () => {
-              router.push(
-                `${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${workingCase.id}`,
-              )
+          buttons={[
+            {
+              text: 'Staðfesta',
+              onClick: () => {
+                router.push(
+                  `${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${workingCase.id}`,
+                )
+              },
+              isDisabled: !validate([
+                [splitCaseCourtCaseNumber, ['empty', 'S-case-number']],
+              ]).isValid,
             },
-            isDisabled: !validate([
-              [splitCaseCourtCaseNumber, ['empty', 'S-case-number']],
-            ]).isValid,
-          }}
+          ]}
         >
           <CourtCaseNumberInput
             caseId={splitCaseId}
@@ -1135,18 +1140,21 @@ const Conclusion: FC = () => {
           <Modal
             title="Skrá lyktir á aðila án þess að ljúka máli"
             text="Lyktir verða skráðar á valda aðila."
-            primaryButton={{
-              text: 'Halda áfram',
-              onClick: () => setModalVisible('CONFIRM_COMPLETION_FOR_SOME'),
-              isDisabled: !(
-                conclusionDate &&
-                validate([[conclusionDate, ['date-of-birth']]]).isValid
-              ),
-            }}
-            secondaryButton={{
-              text: 'Hætta við',
-              onClick: () => setModalVisible(undefined),
-            }}
+            buttons={[
+              {
+                text: 'Hætta við',
+                onClick: () => setModalVisible(undefined),
+                variant: 'ghost',
+              },
+              {
+                text: 'Halda áfram',
+                onClick: () => setModalVisible('CONFIRM_COMPLETION_FOR_SOME'),
+                isDisabled: !(
+                  conclusionDate &&
+                  validate([[conclusionDate, ['date-of-birth']]]).isValid
+                ),
+              },
+            ]}
             onClose={() => setModalVisible(undefined)}
           >
             <Box className={grid({ gap: 3, marginBottom: 3 })}>
@@ -1186,39 +1194,42 @@ const Conclusion: FC = () => {
         {modalVisible === 'CONFIRM_COMPLETION_FOR_SOME' && (
           <Modal
             title="Viltu staðfesta lyktir?"
-            primaryButton={{
-              text: 'Staðfesta',
-              onClick: async () => {
-                setIsSubmittingForSome(true)
-                try {
-                  const pendingFiles = uploadFiles.filter(
-                    (file) =>
-                      file.category === CaseFileCategory.DEFENDANT_RULING &&
-                      !file.key,
-                  )
-                  if (pendingFiles.length > 0) {
-                    const result = await handleUpload(
-                      pendingFiles,
-                      updateUploadFile,
-                    )
-                    if (result === 'NONE_SUCCEEDED') {
-                      return
-                    }
-                  }
-                  handleNavigationTo(
-                    DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
-                  )
-                } finally {
-                  setIsSubmittingForSome(false)
-                }
+            buttons={[
+              {
+                text: 'Hætta við',
+                onClick: () => setModalVisible(undefined),
+                variant: 'ghost',
               },
-              icon: 'checkmark',
-              isLoading: isSubmittingForSome || isUpdatingCase,
-            }}
-            secondaryButton={{
-              text: 'Hætta við',
-              onClick: () => setModalVisible(undefined),
-            }}
+              {
+                text: 'Staðfesta',
+                onClick: async () => {
+                  setIsSubmittingForSome(true)
+                  try {
+                    const pendingFiles = uploadFiles.filter(
+                      (file) =>
+                        file.category === CaseFileCategory.DEFENDANT_RULING &&
+                        !file.key,
+                    )
+                    if (pendingFiles.length > 0) {
+                      const result = await handleUpload(
+                        pendingFiles,
+                        updateUploadFile,
+                      )
+                      if (result === 'NONE_SUCCEEDED') {
+                        return
+                      }
+                    }
+                    handleNavigationTo(
+                      DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
+                    )
+                  } finally {
+                    setIsSubmittingForSome(false)
+                  }
+                },
+                icon: 'checkmark',
+                isLoading: isSubmittingForSome || isUpdatingCase,
+              },
+            ]}
             onClose={() => setModalVisible(undefined)}
           >
             <Box className={grid({ marginBottom: 3 })}>
