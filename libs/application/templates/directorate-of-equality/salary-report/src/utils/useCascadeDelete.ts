@@ -24,18 +24,41 @@ export const useCascadeDelete = <T>(
   // so the caller's retry button can rebuild the same filter and try again.
   const [saveError, setSaveError] = useState<string | null>(null)
 
-  const persist = async (deletedKey: string, filter: (items: T[]) => T[]) => {
-    if (!deletedKey) return
+  // `alsoPersist` lists further top-level answer keys the caller has already
+  // corrected in local form state and that the triggering screen doesn't save
+  // either. They're read back from form state rather than passed by value, so
+  // a retry re-sends whatever is current instead of re-applying an edit that
+  // isn't safe to run twice (an index-based splice, say). Sent in the same
+  // mutation as the cascade itself, so a delete lands as one update.
+  const persist = async (
+    deletedKey: string,
+    filter: (items: T[]) => T[],
+    alsoPersist: string[] = [],
+  ) => {
+    const answers: Record<string, unknown> = {}
+
     const current = (getValues(targetField) as T[] | undefined) ?? []
-    if (current.length === 0) return
-    const filtered = filter(current)
-    setValue(targetField, filtered)
+    if (deletedKey && current.length > 0) {
+      const filtered = filter(current)
+      setValue(targetField, filtered)
+      answers[targetField] = filtered
+    }
+
+    for (const key of alsoPersist) {
+      const value = getValues(key)
+      if (value !== undefined) {
+        answers[key] = value
+      }
+    }
+
+    if (Object.keys(answers).length === 0) return
+
     try {
       await updateApplication({
         variables: {
           input: {
             id: application.id,
-            answers: { [targetField]: filtered },
+            answers,
           },
           locale,
         },

@@ -36,7 +36,8 @@ export const PersonalCriteriaList = ({ application }: Props) => {
   // deleted one's leftover sub-criteria data at that index. Spliced directly
   // via getValues/setValue rather than useFieldArray — each element here is
   // itself an array (SubCriterion[][]), not an object, which useFieldArray's
-  // id-tracking isn't designed for.
+  // id-tracking isn't designed for. Only the local splice happens here; the
+  // delete handler below persists it (this screen saves `criteria` alone).
   const removeSubCriteria = (index: number) => {
     const current =
       (getValues('subCriteria.personalFactors') as
@@ -53,15 +54,20 @@ export const PersonalCriteriaList = ({ application }: Props) => {
   // longer exists. Matched by title, same as the rest of this template links
   // criteria to their step assignments. useCascadeDelete persists the
   // correction immediately, since this screen's own "Continue" only saves
-  // the `criteria` answer key.
+  // the `criteria` answer key — which is also why `subCriteria` rides along:
+  // removeSubCriteria's splice would otherwise sit in local form state and be
+  // undone by a reload, resurrecting the deleted criterion's sub-criteria.
   const removeFromEmployees = (deletedTitle: string) =>
-    persist(deletedTitle, (employees) =>
-      employees.map((emp) => ({
-        ...emp,
-        personalStepAssignments: (emp.personalStepAssignments ?? []).filter(
-          (a) => a.criterionTitle !== deletedTitle,
-        ),
-      })),
+    persist(
+      deletedTitle,
+      (employees) =>
+        employees.map((emp) => ({
+          ...emp,
+          personalStepAssignments: (emp.personalStepAssignments ?? []).filter(
+            (a) => a.criterionTitle !== deletedTitle,
+          ),
+        })),
+      ['subCriteria'],
     )
 
   return (

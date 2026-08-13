@@ -208,7 +208,12 @@ export const CriterionPanel: FC<Props> = ({
         </Button>
       </Box>
 
+      {/* Only meaningful once both sides exist: the parent criterion's own
+          weight can still be blank here (it's entered on the previous screen
+          for personal criteria), and `Number('') || 0` would otherwise make
+          this claim the sub-criteria must total 0%. */}
       {subCriteriaTotal !== 0 &&
+        expectedWeight !== 0 &&
         Math.abs(subCriteriaTotal - expectedWeight) > 0.001 && (
           <Box marginTop={3}>
             <Text color="red600">
