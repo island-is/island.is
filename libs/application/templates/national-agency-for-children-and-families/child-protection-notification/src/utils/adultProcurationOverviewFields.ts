@@ -9,7 +9,12 @@ import {
   protectiveFactorsMessages,
   reasonForNotificationMessages,
 } from '../lib/messages'
-import { isKnowsNationalId, isNoNationalId, isUnborn } from './conditionUtils'
+import {
+  isKnowsNationalId,
+  isNoNationalId,
+  isUnborn,
+  showParentsSection,
+} from './conditionUtils'
 import {
   getChildManualItems,
   getChildSafetyItems,
@@ -57,35 +62,38 @@ export const adultProcurationOverviewFields = (editable?: boolean) => [
     title: ({ answers }) =>
       isUnborn(answers)
         ? parentsMessages.expectantParents.sectionTitle
-        : isKnowsNationalId(answers) // TODO: Need to check if kerfiskennitala!
+        : isKnowsNationalId(answers)
         ? parentsMessages.custodians.sectionTitle
         : parentsMessages.guardians.sectionTitle,
     backId: editable ? 'parents' : undefined,
     items: getParentsPreItems,
+    condition: showParentsSection,
   }),
   buildOverviewField({
     id: 'overview.parent1',
     title: ({ answers }) =>
       isUnborn(answers)
         ? parentsMessages.expectantParents.parent1Title
-        : isKnowsNationalId(answers) // TODO: Need to check if kerfiskennitala!
+        : isKnowsNationalId(answers)
         ? parentsMessages.custodians.parent1Title
         : parentsMessages.guardians.parent1Title,
     backId: editable ? 'parents' : undefined,
     items: getParent1Items,
     hideIfEmpty: true,
+    condition: showParentsSection,
   }),
   buildOverviewField({
     id: 'overview.parent2',
     title: ({ answers }) =>
       isUnborn(answers)
         ? parentsMessages.expectantParents.parent2Title
-        : isKnowsNationalId(answers) // TODO: Need to check if kerfiskennitala!
+        : isKnowsNationalId(answers)
         ? parentsMessages.custodians.parent2Title
         : parentsMessages.guardians.parent2Title,
     backId: editable ? 'parents' : undefined,
     items: getParent2Items,
     hideIfEmpty: true,
+    condition: showParentsSection,
   }),
   buildOverviewField({
     id: 'overview.memmEducation',

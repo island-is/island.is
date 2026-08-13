@@ -1,11 +1,12 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
+import { Option } from '@island.is/clients/mms/frigg'
 import {
   DetailedDropDownDto,
   DropDownDto,
   ProtectiveFactorSectionDto,
 } from '@island.is/clients/national-agency-for-children-and-families'
-import { Option } from '@island.is/clients/mms/frigg'
+import { ChildNationalIdTypeCode } from './constants'
 import { Category } from './types'
 
 export const getApplicationExternalData = (
@@ -92,6 +93,11 @@ export const getApplicationExternalData = (
   const schoolTypes =
     getValueViaPath<DropDownDto[]>(externalData, 'schoolTypes.data') ?? []
 
+  const childNationalIdTypeCode = getValueViaPath<ChildNationalIdTypeCode>(
+    externalData,
+    'childNationalIdType.data.registryCode',
+  )
+
   return {
     applicantName,
     applicantNationalId,
@@ -111,5 +117,6 @@ export const getApplicationExternalData = (
     childUnknownNationalIdStates,
     guardianNotAwareReasons,
     schoolTypes,
+    childNationalIdTypeCode,
   }
 }
