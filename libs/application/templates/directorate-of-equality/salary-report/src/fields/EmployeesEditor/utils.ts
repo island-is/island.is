@@ -1,5 +1,60 @@
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
+import { SALARY_COMPONENT_KEYS } from '../../utils/constants'
+import type { Employee, SalaryComponentKey } from '../../utils/types'
+
+export type EmployeeFormValues = {
+  roleTitle: string
+  gender: string
+  field: string
+  department: string
+  startDate: string
+  workRatio: string
+  baseSalary: string
+} & Record<SalaryComponentKey, string>
+
+export const EMPTY_EMPLOYEE_FORM_VALUES: EmployeeFormValues = {
+  roleTitle: '',
+  gender: '',
+  field: '',
+  department: '',
+  startDate: '',
+  workRatio: '100',
+  baseSalary: '',
+  ...(Object.fromEntries(
+    SALARY_COMPONENT_KEYS.map((key) => [key, '']),
+  ) as Record<SalaryComponentKey, string>),
+}
+
+// The single place that maps between the salary-component keys and their
+// form/DTO representations — used both to populate the form from an existing
+// employee and to build the components back up on submit.
+export const toFormValues = (employee: Employee): EmployeeFormValues => ({
+  roleTitle: employee.roleTitle,
+  gender: employee.gender,
+  field: employee.field ?? '',
+  department: employee.department ?? '',
+  startDate: employee.startDate,
+  workRatio: String((employee.workRatio ?? 0) * 100),
+  baseSalary: String(employee.baseSalary ?? ''),
+  ...(Object.fromEntries(
+    SALARY_COMPONENT_KEYS.map((key) => {
+      const value = employee[key]
+      return [key, value == null ? '' : String(value)]
+    }),
+  ) as Record<SalaryComponentKey, string>),
+})
+
+// Empty component → null (the API treats each component as optional/nullable)
+export const componentsFromFormValues = (
+  data: EmployeeFormValues,
+): Record<SalaryComponentKey, number | null> =>
+  Object.fromEntries(
+    SALARY_COMPONENT_KEYS.map((key) => [
+      key,
+      data[key] === '' ? null : Number(data[key]) || 0,
+    ]),
+  ) as Record<SalaryComponentKey, number | null>
 
 export const formatCurrency = (value?: number | null): string =>
   `${(value ?? 0).toLocaleString('is-IS')} kr.`

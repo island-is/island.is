@@ -12,6 +12,7 @@ import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
 import { ApiActions } from '../utils/constants'
+import { escapeHtml } from '../utils/htmlHelpers'
 
 export const Editor = ({ application, errors }: FieldBaseProps) => {
   const { formatMessage } = useIntl()
@@ -54,7 +55,7 @@ export const Editor = ({ application, errors }: FieldBaseProps) => {
         const text = await file.text()
         html = text
           .split(/\n\n+/)
-          .map((p) => `<p>${p.replace(/\n/g, '<br />')}</p>`)
+          .map((p) => `<p>${escapeHtml(p).replace(/\n/g, '<br />')}</p>`)
           .join('')
       } else {
         toast.error(

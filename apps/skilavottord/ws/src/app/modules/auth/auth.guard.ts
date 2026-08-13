@@ -8,7 +8,7 @@ import {
   applyDecorators,
   forwardRef,
 } from '@nestjs/common'
-import { AuthenticationError } from 'apollo-server-express'
+import { GraphQLError } from 'graphql'
 import { jwtDecrypt } from 'jose'
 import { hkdf } from '@panva/hkdf'
 
@@ -50,12 +50,16 @@ export class AuthGuard implements CanActivate {
       : null
 
     if (!sessionToken) {
-      throw new AuthenticationError('Invalid user')
+      throw new GraphQLError('Invalid user', {
+        extensions: { code: 'UNAUTHENTICATED' },
+      })
     }
 
     const secret = process.env.NEXTAUTH_SECRET
     if (!secret) {
-      throw new AuthenticationError('NEXTAUTH_SECRET is not configured')
+      throw new GraphQLError('NEXTAUTH_SECRET is not configured', {
+        extensions: { code: 'UNAUTHENTICATED' },
+      })
     }
 
     const encryptionKey = await hkdf(

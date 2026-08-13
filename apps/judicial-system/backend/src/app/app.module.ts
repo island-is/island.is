@@ -108,7 +108,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(RequestContextMiddleware).forRoutes('*')
+    consumer.apply(RequestContextMiddleware).forRoutes('{*splat}')
     consumer
       .apply(CaseContextMiddleware)
       .forRoutes(
@@ -116,6 +116,6 @@ export class AppModule {
         '/api/internal/case/:caseId',
         '/api/internal/case/indictment/:caseId',
       )
-    consumer.apply(MessageMiddleware).forRoutes('*')
+    consumer.apply(MessageMiddleware).forRoutes('{*splat}')
   }
 }

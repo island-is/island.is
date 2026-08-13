@@ -97,7 +97,7 @@ export type RegulationsSearchSectionProps = {
   lawChapters: Readonly<LawChapterTree>
   texts: RegulationHomeTexts
   page?: number
-  anchorRef: React.RefObject<HTMLDivElement>
+  anchorRef: React.RefObject<HTMLDivElement | null>
 }
 
 export const RegulationsSearchSection = (
