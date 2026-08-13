@@ -1,11 +1,13 @@
 import { FC, useState } from 'react'
 import AnimateHeight from 'react-animate-height'
+import { useWatch } from 'react-hook-form'
 import { Box, Button, Stack, Table as T, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
 import { GENDER_LABELS } from '../../utils/constants'
-import type { Employee } from '../../utils/types'
+import type { Employee, StepAssignment } from '../../utils/types'
 import {
+  computeRoleScore,
   groupAssignmentsByCriterion,
   type StepMeta,
 } from '../JobClassificationEditor/utils'
@@ -26,6 +28,14 @@ export const EmployeeClassificationRow: FC<Props> = ({
   const { formatMessage } = useLocale()
   const [expanded, setExpanded] = useState(false)
   const m = messages.report.employees
+
+  // Live step orders for this employee drive the per-criterion score below
+  // each title.
+  const watched = useWatch({
+    name: `employees.${employeeIndex}.personalStepAssignments`,
+  }) as StepAssignment[] | undefined
+
+  const assignments = watched ?? employee.personalStepAssignments
 
   const background = expanded ? 'blue100' : 'transparent'
   const groups = groupAssignmentsByCriterion(employee.personalStepAssignments)
@@ -63,24 +73,39 @@ export const EmployeeClassificationRow: FC<Props> = ({
             {expanded && <div className={styles.line} />}
             <Box paddingX={3} paddingTop={3} paddingBottom={3}>
               <Stack space={3}>
-                {groups.map((group) => (
-                  <Box key={group.criterionTitle}>
-                    <Text variant="h5" marginBottom={2}>
-                      {group.criterionTitle}
-                    </Text>
-                    <Stack space={2}>
-                      {group.items.map(({ assignment, index }) => (
-                        <StepAssignmentItem
-                          key={`${assignment.subTitle}-${index}`}
-                          fieldName={`employees.${employeeIndex}.personalStepAssignments.${index}.stepOrder`}
-                          subTitle={assignment.subTitle}
-                          defaultStepOrder={assignment.stepOrder}
-                          meta={stepMetaByTitle[assignment.subTitle]}
-                        />
-                      ))}
-                    </Stack>
-                  </Box>
-                ))}
+                {groups.map((group) => {
+                  const groupAssignments = group.items.map(
+                    ({ assignment, index }) => assignments[index] ?? assignment,
+                  )
+                  const { score, max } = computeRoleScore(
+                    groupAssignments,
+                    stepMetaByTitle,
+                  )
+                  return (
+                    <Box key={group.criterionTitle}>
+                      <Text variant="h5" marginBottom={1}>
+                        {group.criterionTitle}
+                      </Text>
+                      <Text variant="small" color="dark400" marginBottom={2}>
+                        {formatMessage(
+                          messages.report.jobClassification.roleScore,
+                          { score, max },
+                        )}
+                      </Text>
+                      <Stack space={2}>
+                        {group.items.map(({ assignment, index }) => (
+                          <StepAssignmentItem
+                            key={`${assignment.subTitle}-${index}`}
+                            fieldName={`employees.${employeeIndex}.personalStepAssignments.${index}.stepOrder`}
+                            subTitle={assignment.subTitle}
+                            defaultStepOrder={assignment.stepOrder}
+                            meta={stepMetaByTitle[assignment.subTitle]}
+                          />
+                        ))}
+                      </Stack>
+                    </Box>
+                  )
+                })}
               </Stack>
             </Box>
           </AnimateHeight>

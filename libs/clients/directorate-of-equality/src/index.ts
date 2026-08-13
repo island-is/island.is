@@ -15,6 +15,7 @@ export type {
   ParsedEmployeeDto,
   ParsedRoleDto,
   ParsedReportDto,
+  ScoreBucketDto,
   SalaryAnalysisOutlierDto,
   SalaryAnalysisRequestDto,
   SalaryAnalysisResponseDto,

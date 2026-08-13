@@ -81,6 +81,11 @@ export const sheet = style({
 
   // Fallback for browsers without dvh
   maxHeight: `calc(100vh - ${drawerTop})`,
+  '@supports': {
+    '(height: 100dvh)': {
+      maxHeight: `calc(100dvh - ${drawerTop})`,
+    },
+  },
 
   transform: 'translateY(100%)',
   opacity: 0,
@@ -128,7 +133,6 @@ export const content = style({
   flex: 1,
   minHeight: 0,
   overflowY: 'auto',
-  WebkitOverflowScrolling: 'touch',
   overscrollBehavior: 'contain',
   padding: `0 ${theme.spacing['3']}`,
   paddingBottom: theme.spacing['8'],
@@ -165,9 +169,4 @@ globalStyle(`@supports (padding-bottom: env(safe-area-inset-bottom))`, {
   [content]: {
     paddingBottom: `calc(${theme.spacing['8']} + env(safe-area-inset-bottom))`,
   },
-})
-
-/* Small dvh upgrade when supported */
-globalStyle(`@supports (height: 100dvh)`, {
-  [sheet]: { maxHeight: `calc(100dvh - ${drawerTop})` },
 })

@@ -5,9 +5,8 @@ import {
   CasesLayout,
   PageHeader,
 } from '@island.is/judicial-system-web/src/components'
-import CasesCard from '@island.is/judicial-system-web/src/components/Cards/CasesCard'
+import StatisticsCard from '@island.is/judicial-system-web/src/components/Cards/StatisticsCard/StatisticsCard'
 import CasesDashboardLayout from '@island.is/judicial-system-web/src/components/Layouts/CasesDashboardLayout'
-import { CaseTableType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 const StatisticsOverview: FC = () => {
   const router = useRouter()
@@ -19,13 +18,11 @@ const StatisticsOverview: FC = () => {
         route: 'gogn/rannsoknarmal',
         title: 'Rannsóknarmál',
         description: 'Gögn úr rannsóknarmálum fyrir tölfræðigreiningu.',
-        type: CaseTableType.STATISTICS,
       },
       {
         route: 'gogn/sakamal',
         title: 'Sakamál',
         description: 'Gögn úr sakamálum fyrir tölfræðigreiningu.',
-        type: CaseTableType.STATISTICS,
       },
     ],
   }
@@ -35,12 +32,11 @@ const StatisticsOverview: FC = () => {
       <PageHeader title="Tölfræði" />
       <CasesDashboardLayout title={data.title}>
         {data.pages.map((t, idx) => (
-          <CasesCard
+          <StatisticsCard
             title={t.title}
             description={t.description}
             href={`${router.asPath}/${t.route}`}
             key={idx}
-            type={t.type}
           />
         ))}
       </CasesDashboardLayout>

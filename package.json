@@ -241,7 +241,7 @@
     "motion": "12.23.12",
     "msw": "1.3.5",
     "nest-winston": "1.10.2",
-    "next": "16.2.10",
+    "next": "patch:next@npm%3A16.2.10#~/.yarn/patches/next-npm-16.2.10-b49a746f8d.patch",
     "next-auth": "4.24.13",
     "next-cookies": "2.0.3",
     "next-usequerystate": "1.20.0",
@@ -277,7 +277,8 @@
     "react-html-parser": "2.0.2",
     "react-infinite-scroller": "^1.2.6",
     "react-intl": "5.13.1",
-    "react-keyed-flatten-children": "1.2.0",
+    "react-is": "19.2.7",
+    "react-keyed-flatten-children": "5.1.3",
     "react-modal": "3.15.1",
     "react-native-fs": "2.20.0",
     "react-native-url-polyfill": "2.0.0",
@@ -537,7 +538,8 @@
     "path-parse": "1.0.7",
     "@types/react": "19.2.17",
     "node-request-interceptor@^0.5.1": "patch:node-request-interceptor@npm%3A0.5.9#./.yarn/patches/node-request-interceptor-npm-0.5.9-77e9d9c058.patch",
-    "@types/node": "22.20.1"
+    "@types/node": "22.20.1",
+    "downshift/react-is": "19.2.7"
   },
   "volta": {
     "node": "22.22.3",

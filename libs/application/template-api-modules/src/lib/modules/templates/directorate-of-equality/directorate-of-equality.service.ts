@@ -151,7 +151,6 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
         ordinal: e.ordinal,
         identifier: e.identifier,
         roleTitle: e.roleTitle,
-        education: e.education as ParsedEmployeeDto['education'],
         gender: e.gender as ParsedEmployeeDto['gender'],
         field: e.field,
         department: e.department,
@@ -175,10 +174,18 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     return { criteria, roles, employees }
   }
 
-  async getCompanyData({ auth }: TemplateApiModuleActionProps) {
-    const company = await this.companyRegistryService.getCompany(
-      auth.nationalId,
-    )
+  async getCompanyData({ auth, application }: TemplateApiModuleActionProps) {
+    let company
+    try {
+      company = await this.companyRegistryService.getCompany(auth.nationalId)
+    } catch (error) {
+      this.logger.error('Failed to get company data from company registry', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...this.extractFetchErrorDetails(error),
+      })
+      throw error
+    }
 
     if (!company) {
       throw new TemplateApiError(
@@ -224,17 +231,43 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     }
   }
 
-  async getEqualityReportTemplateHtml({ auth }: TemplateApiModuleActionProps) {
-    return this.directorateOfEqualityService.getEqualityReportTemplateHtml(auth)
-  }
-
-  async getEqualityReportTemplateDocx({ auth }: TemplateApiModuleActionProps) {
-    const blob =
-      await this.directorateOfEqualityService.getEqualityReportTemplateDocx(
+  async getEqualityReportTemplateHtml({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    try {
+      return await this.directorateOfEqualityService.getEqualityReportTemplateHtml(
         auth,
       )
-    const arrayBuffer = await blob.arrayBuffer()
-    return { base64: Buffer.from(arrayBuffer).toString('base64') }
+    } catch (error) {
+      this.logger.error('Failed to get equality report template html', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...this.extractFetchErrorDetails(error),
+      })
+      throw error
+    }
+  }
+
+  async getEqualityReportTemplateDocx({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    try {
+      const blob =
+        await this.directorateOfEqualityService.getEqualityReportTemplateDocx(
+          auth,
+        )
+      const arrayBuffer = await blob.arrayBuffer()
+      return { base64: Buffer.from(arrayBuffer).toString('base64') }
+    } catch (error) {
+      this.logger.error('Failed to get equality report template docx', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...this.extractFetchErrorDetails(error),
+      })
+      throw error
+    }
   }
 
   async getPreviousEqualityReportContent({
@@ -467,7 +500,6 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
       const groups = (answers.salaryAnalysis?.outlierGroups ?? [])
         .filter((g) => g.employeeOrdinals.length > 0)
         .map((g) => ({
-          name: g.name,
           reason: g.reason ?? '',
           action: g.action ?? '',
           signatureName: g.signatureName ?? '',
@@ -545,6 +577,14 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
             postcode: answers.generalInformation?.postalCode ?? '',
             isatCategory: answers.generalInformation?.isatClassification ?? '',
           },
+          averageEmployeeFemaleCount: toNumberOrZero(
+            answers.employeeCount?.women,
+          ),
+          averageEmployeeMaleCount: toNumberOrZero(answers.employeeCount?.men),
+          averageEmployeeNeutralCount: toNumberOrZero(
+            answers.employeeCount?.nonBinary,
+          ),
+
           subsidiaries:
             answers.subsidiaries?.includesSubsidiaries === 'yes'
               ? subsidiaryList.map((s) => ({
@@ -571,4 +611,13 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
       )
     }
   }
+}
+
+const toNumberOrZero = (number: string | undefined) => {
+  if (!number) {
+    return 0
+  }
+
+  const parsed = Number(number)
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0
 }
