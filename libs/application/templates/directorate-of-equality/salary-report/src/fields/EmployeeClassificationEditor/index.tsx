@@ -12,9 +12,9 @@ import {
 } from '../../utils/types'
 import { getPathValue } from '../../utils/answerHelpers'
 import {
+  buildMergedStepMetaByTitle,
   buildStepAssignmentsFromSubCriteria,
-  buildStepMetaByTitle,
-  buildStepMetaFromSubCriteria,
+  mergeStepAssignments,
 } from '../JobClassificationEditor/utils'
 import { EmployeeClassificationRow } from './EmployeeClassificationRow'
 
@@ -33,15 +33,15 @@ export const EmployeeClassificationEditor: FC<
       'parsedSalaryReport.data.criteria',
       [],
     )
-    const fromExternal = buildStepMetaByTitle(criteria)
-    if (Object.keys(fromExternal).length > 0) return fromExternal
-    // External data unavailable (stale right after import) — fall back to the
-    // sub-criteria in answers so the step dropdowns still render options.
-    const subCriteria = getPathValue<{
-      jobFactors?: SubCriterion[][]
-      personalFactors?: SubCriterion[][]
-    }>(application.answers, 'subCriteria', {})
-    return buildStepMetaFromSubCriteria(subCriteria)
+    // Live sub-criteria are the base (so a criterion added after import still
+    // gets metadata) — the imported external criteria overlay authoritative
+    // scores/weights for titles that exist in both.
+    const personalFactors = getPathValue<SubCriterion[][]>(
+      application.answers,
+      'subCriteria.personalFactors',
+      [],
+    )
+    return buildMergedStepMetaByTitle(criteria, personalFactors)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -77,16 +77,13 @@ export const EmployeeClassificationEditor: FC<
       subCriteriaPersonalFactors,
     )
 
-    return source.map((emp) =>
-      emp.personalStepAssignments?.length
-        ? emp
-        : {
-            ...emp,
-            personalStepAssignments: defaultAssignments.map((a) => ({
-              ...a,
-            })),
-          },
-    )
+    return source.map((emp) => ({
+      ...emp,
+      personalStepAssignments: mergeStepAssignments(
+        emp.personalStepAssignments ?? [],
+        defaultAssignments,
+      ),
+    }))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
