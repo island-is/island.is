@@ -1,7 +1,7 @@
+import { Base64 } from 'js-base64'
 import { v4 as uuid } from 'uuid'
 
 import {
-  CaseFileCategory,
   CaseOrigin,
   CaseState,
   CaseType,
@@ -10,14 +10,13 @@ import {
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
-import { nowFactory } from '../../../../factories'
+import { getCustodyNoticePdfAsString } from '../../../../formatters'
 import { randomDate } from '../../../../test'
-import { FileService } from '../../../file'
-import { PoliceService } from '../../../police'
+import { PoliceDocumentType, PoliceService } from '../../../police'
 import { Case } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 
-jest.mock('../../../../factories')
+jest.mock('../../../../formatters/generatedPdfs/custodyNoticePdf')
 
 interface Then {
   result: DeliverResponse
@@ -26,26 +25,21 @@ interface Then {
 
 type GivenWhenThen = (caseId: string, theCase: Case) => Promise<Then>
 
-describe('InternalCaseController - Deliver indictment case to police', () => {
-  const date = randomDate()
+describe('InternalCaseController - Deliver custody notice to police', () => {
   const userId = uuid()
   const user = { id: userId } as User
 
-  let mockFileService: FileService
   let mockPoliceService: PoliceService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { fileService, policeService, internalCaseController } =
+    const { policeService, internalCaseController } =
       await createTestingCaseModule()
 
-    mockFileService = fileService
     mockPoliceService = policeService
 
-    const mockToday = nowFactory as jest.Mock
-    mockToday.mockReturnValueOnce(date)
-    const mockGetCaseFileFromS3 = fileService.getCaseFileFromS3 as jest.Mock
-    mockGetCaseFileFromS3.mockRejectedValue(new Error('Some error'))
+    const mockGetCustodyNotice = getCustodyNoticePdfAsString as jest.Mock
+    mockGetCustodyNotice.mockRejectedValue(new Error('Some error'))
     const mockUpdatePoliceCase = mockPoliceService.updatePoliceCase as jest.Mock
     mockUpdatePoliceCase.mockRejectedValue(new Error('Some error'))
 
@@ -53,7 +47,7 @@ describe('InternalCaseController - Deliver indictment case to police', () => {
       const then = {} as Then
 
       await internalCaseController
-        .deliverIndictmentCaseToPolice(caseId, theCase, { user })
+        .deliverCustodyNoticeToPolice(caseId, theCase, { user })
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -61,32 +55,33 @@ describe('InternalCaseController - Deliver indictment case to police', () => {
     }
   })
 
-  describe('deliver indictment case to police', () => {
+  describe('deliver custody notice to police', () => {
     const caseId = uuid()
+    const caseType = CaseType.CUSTODY
+    const caseState = CaseState.ACCEPTED
     const policeCaseNumber = uuid()
     const courtCaseNumber = uuid()
     const defendantNationalId = '0123456789'
-    const courtRecordFile = {
-      id: uuid(),
-      key: uuid(),
-      isKeyAccessible: true,
-      category: CaseFileCategory.COURT_RECORD,
-    }
+    const validToDate = randomDate()
+    const caseConclusion = 'test conclusion'
     const theCase = {
       id: caseId,
       origin: CaseOrigin.LOKE,
-      type: CaseType.INDICTMENT,
-      state: CaseState.COMPLETED,
+      type: caseType,
+      state: caseState,
       policeCaseNumbers: [policeCaseNumber],
       courtCaseNumber,
-      defendants: [{ nationalId: uuid() }],
-      caseFiles: [courtRecordFile],
+      validToDate,
+      conclusion: caseConclusion,
       policeDefendantNationalId: defendantNationalId,
     } as Case
+    const custodyNoticePdf = 'test custody notice'
 
     let then: Then
 
     beforeEach(async () => {
+      const mockGetCustodyNotice = getCustodyNoticePdfAsString as jest.Mock
+      mockGetCustodyNotice.mockResolvedValueOnce(custodyNoticePdf)
       const mockUpdatePoliceCase =
         mockPoliceService.updatePoliceCase as jest.Mock
       mockUpdatePoliceCase.mockResolvedValueOnce(true)
@@ -94,31 +89,39 @@ describe('InternalCaseController - Deliver indictment case to police', () => {
       then = await givenWhenThen(caseId, theCase)
     })
 
-    it('should update the police case without delivering any documents', () => {
-      expect(mockFileService.getCaseFileFromS3).not.toHaveBeenCalled()
+    it('should deliver the custody notice to police', async () => {
+      expect(getCustodyNoticePdfAsString).toHaveBeenCalledWith(
+        theCase,
+        expect.any(Function),
+      )
       expect(mockPoliceService.updatePoliceCase).toHaveBeenCalledWith(
         user,
         caseId,
-        CaseType.INDICTMENT,
-        CaseState.COMPLETED,
+        caseType,
+        caseState,
         policeCaseNumber,
         courtCaseNumber,
         defendantNationalId,
-        date,
-        '',
-        [],
+        validToDate,
+        caseConclusion,
+        [
+          {
+            type: PoliceDocumentType.RVVI,
+            courtDocument: Base64.btoa(custodyNoticePdf),
+          },
+        ],
       )
       expect(then.result.delivered).toEqual(true)
     })
   })
 
-  describe('deliver indictment case to police fails', () => {
+  describe('custody notice pdf generation fails', () => {
     const caseId = uuid()
     const theCase = {
       id: caseId,
       origin: CaseOrigin.LOKE,
-      type: CaseType.INDICTMENT,
-      state: CaseState.COMPLETED,
+      type: CaseType.CUSTODY,
+      state: CaseState.ACCEPTED,
       policeCaseNumbers: [uuid()],
     } as Case
 
@@ -128,7 +131,8 @@ describe('InternalCaseController - Deliver indictment case to police', () => {
       then = await givenWhenThen(caseId, theCase)
     })
 
-    it('should not deliver the case', () => {
+    it('should not deliver the custody notice', async () => {
+      expect(mockPoliceService.updatePoliceCase).not.toHaveBeenCalled()
       expect(then.result.delivered).toEqual(false)
     })
   })
