@@ -203,6 +203,8 @@ const indictmentCaseStateMachine: Map<
           state: CaseState.RECEIVED,
           indictmentDecision: IndictmentDecision.POSTPONING,
           postponedIndefinitelyExplanation: 'Mál enduropnað',
+          courtEndTime: null,
+          rulingDate: null,
           indictmentReviewerId: null,
           courtRecordHash: null,
         }
