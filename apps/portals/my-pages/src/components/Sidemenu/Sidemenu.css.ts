@@ -122,12 +122,18 @@ const dropdownBaseMD: StyleWithSelectors = {
 
 // Mobile browser chrome (address bar) resizes the visual viewport as the
 // user scrolls, which makes a static 100vh leave a gap at the bottom of
-// this fixed-position drawer. Small dvh upgrade when supported.
+// this fixed-position drawer. Small dvh upgrade when supported. Scoped to
+// below-md: the desktop dropdown is height:auto, and an unscoped @supports
+// block is emitted after the md media query so it would override it.
 const dvhUpgrade = {
   '@supports': {
     '(height: 100dvh)': {
-      height: `calc(100dvh - ${theme.headerHeight.small}px)`,
-      maxHeight: `calc(100dvh - ${theme.headerHeight.small}px)`,
+      '@media': {
+        [`screen and (max-width: ${theme.breakpoints.md - 1}px)`]: {
+          height: `calc(100dvh - ${theme.headerHeight.small}px)`,
+          maxHeight: `calc(100dvh - ${theme.headerHeight.small}px)`,
+        },
+      },
     },
   },
 }
