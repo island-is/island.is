@@ -23,6 +23,7 @@ import {
   isKnowsNationalId,
   isUnborn,
   knowsParentIds,
+  showParentsSection,
 } from '../../utils/conditionUtils'
 import { IS } from '../../utils/constants'
 import { getApplicationAnswers } from '../../utils/getApplicationAnswers'
@@ -62,7 +63,7 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
       title: ({ answers }) =>
         isUnborn(answers)
           ? parentsMessages.expectantParents.nameAgeGenderTitle
-          : isKnowsNationalId(answers) // TODO: Need to check if kerfiskennitala!
+          : isKnowsNationalId(answers)
           ? parentsMessages.custodians.nameAgeGenderTitle
           : parentsMessages.guardians.nameAgeGenderTitle,
       titleVariant: 'h5',
@@ -107,7 +108,7 @@ const buildParentFields = (parentKey: 'parent1' | 'parent2') => {
       title: ({ answers }) =>
         isUnborn(answers)
           ? parentsMessages.expectantParents.addressTitle
-          : isKnowsNationalId(answers) // TODO: Need to check if kerfiskennitala!
+          : isKnowsNationalId(answers)
           ? parentsMessages.custodians.addressTitle
           : parentsMessages.guardians.addressTitle,
       titleVariant: 'h5',
@@ -247,23 +248,23 @@ export const parentsSection = buildSection({
   title: ({ answers }) =>
     isUnborn(answers)
       ? parentsMessages.expectantParents.sectionTitle
-      : isKnowsNationalId(answers) // TODO: Need to check if kerfiskennitala!
+      : isKnowsNationalId(answers)
       ? parentsMessages.custodians.sectionTitle
       : parentsMessages.guardians.sectionTitle,
-  // TODO: Need to add condition here to check if kerfiskennitala if isKnowsNationalId()
+  condition: showParentsSection,
   children: [
     buildMultiField({
       id: 'parents',
       title: ({ answers }) =>
         isUnborn(answers)
           ? parentsMessages.expectantParents.sectionTitle
-          : isKnowsNationalId(answers) // TODO: Need to check if kerfiskennitala!
+          : isKnowsNationalId(answers)
           ? parentsMessages.custodians.title
           : parentsMessages.guardians.title,
       description: ({ answers }) =>
         isUnborn(answers)
           ? parentsMessages.expectantParents.description
-          : isKnowsNationalId(answers) // TODO: Need to check if kerfiskennitala!
+          : isKnowsNationalId(answers)
           ? parentsMessages.custodians.description
           : parentsMessages.guardians.description,
       children: [
@@ -272,7 +273,7 @@ export const parentsSection = buildSection({
           title: ({ answers }) =>
             isUnborn(answers)
               ? parentsMessages.expectantParents.radioLabel
-              : isKnowsNationalId(answers) // TODO: Need to check if kerfiskennitala!
+              : isKnowsNationalId(answers)
               ? parentsMessages.custodians.radioLabel
               : parentsMessages.guardians.radioLabel,
           required: true,
@@ -284,7 +285,7 @@ export const parentsSection = buildSection({
           title: ({ answers }) =>
             isUnborn(answers)
               ? parentsMessages.expectantParents.parent1Title
-              : isKnowsNationalId(answers) // TODO: Need to check if kerfiskennitala!
+              : isKnowsNationalId(answers)
               ? parentsMessages.custodians.parent1Title
               : parentsMessages.guardians.parent1Title,
           titleVariant: 'h5',
@@ -296,7 +297,7 @@ export const parentsSection = buildSection({
           title: ({ answers }) =>
             isUnborn(answers)
               ? parentsMessages.expectantParents.parent1Title
-              : isKnowsNationalId(answers) // TODO: Need to check if kerfiskennitala!
+              : isKnowsNationalId(answers)
               ? parentsMessages.custodians.parent1Title
               : parentsMessages.guardians.parent1Title,
           description: sharedMessages.fillByBestKnowledge,
@@ -310,7 +311,7 @@ export const parentsSection = buildSection({
           title: ({ answers }) =>
             isUnborn(answers)
               ? parentsMessages.expectantParents.parent2Title
-              : isKnowsNationalId(answers) // TODO: Need to check if kerfiskennitala!
+              : isKnowsNationalId(answers)
               ? parentsMessages.custodians.parent2Title
               : parentsMessages.guardians.parent2Title,
           titleVariant: 'h5',
@@ -322,7 +323,7 @@ export const parentsSection = buildSection({
           title: ({ answers }) =>
             isUnborn(answers)
               ? parentsMessages.expectantParents.parent2Title
-              : isKnowsNationalId(answers) // TODO: Need to check if kerfiskennitala!
+              : isKnowsNationalId(answers)
               ? parentsMessages.custodians.parent2Title
               : parentsMessages.guardians.parent2Title,
           description: sharedMessages.fillByBestKnowledge,
@@ -337,7 +338,7 @@ export const parentsSection = buildSection({
           message: ({ answers }) =>
             isUnborn(answers)
               ? parentsMessages.expectantParents.fetchedDataInfo
-              : isKnowsNationalId(answers) // TODO: Need to check if kerfiskennitala!
+              : isKnowsNationalId(answers)
               ? parentsMessages.custodians.fetchedDataInfo
               : parentsMessages.guardians.fetchedDataInfo,
           condition: (answers) => {

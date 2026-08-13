@@ -1,14 +1,16 @@
 import { NO, YES } from '@island.is/application/core'
 import { ExternalData, FormValue } from '@island.is/application/types'
 import { info } from 'kennitala'
+import { getSelectedReasonForNotificationCategoryCodes } from './childProtectionNotificationUtils'
 import {
+  ChildNationalIdTypeCode,
   KnowsNationalId,
   LanguageEnvironmentOptions,
   SCHOOL_TYPES,
   SHOW_LANGUAGE_SECTION_TYPES,
 } from './constants'
 import { getApplicationAnswers } from './getApplicationAnswers'
-import { getSelectedReasonForNotificationCategoryCodes } from './childProtectionNotificationUtils'
+import { getApplicationExternalData } from './getApplicationExternalData'
 
 export const isChildInPrimarySchoolAge = (nationalId: string): boolean => {
   const { birthday } = info(nationalId)
@@ -21,7 +23,6 @@ export const isChildInPrimarySchoolAge = (nationalId: string): boolean => {
 export const isKnowsNationalId = (answers: FormValue) =>
   getApplicationAnswers(answers).childKnowsNationalId === KnowsNationalId.YES
 
-//TODO: Do we also need to add in the showMemmSection to check if kerfiskennitala?
 export const showMemmSection = (
   answers: FormValue,
   _externalData: ExternalData,
@@ -120,3 +121,14 @@ export const showEmergencyWarning = (answers: FormValue) => {
     Number(childSafetyUrgencyLevel) <= 2
   )
 }
+
+export const isSystemNationalId = (externalData: ExternalData) =>
+  getApplicationExternalData(externalData).childNationalIdTypeCode ===
+  ChildNationalIdTypeCode.SYSTEM_NATIONAL_ID
+
+// Show the parents section when the child's national ID is not known, the child is unborn,
+// or when the known ID is a system national ID
+export const showParentsSection = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => !isKnowsNationalId(answers) || isSystemNationalId(externalData)

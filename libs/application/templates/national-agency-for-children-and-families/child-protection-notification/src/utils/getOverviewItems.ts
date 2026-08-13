@@ -1016,7 +1016,7 @@ export const getReasonNotificationHistoryItems = (
     },
     {
       width: 'full',
-      keyText: getHasDiscussedWithParentsTitle(answers),
+      keyText: getHasDiscussedWithParentsTitle(answers, externalData),
       valueText:
         hasDiscussedWithParents === YES
           ? sharedMessages.radioYes
@@ -1024,7 +1024,7 @@ export const getReasonNotificationHistoryItems = (
     },
     {
       width: 'full',
-      keyText: getAreParentsInformedTitle(answers),
+      keyText: getAreParentsInformedTitle(answers, externalData),
       valueText:
         areParentsInformed === YES
           ? sharedMessages.radioYes

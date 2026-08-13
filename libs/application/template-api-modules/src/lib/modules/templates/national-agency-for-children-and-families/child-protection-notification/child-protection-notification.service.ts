@@ -1,12 +1,14 @@
+import { getApplicationAnswers } from '@island.is/application/templates/national-agency-for-children-and-families/child-protection-notification'
 import { ApplicationTypes } from '@island.is/application/types'
-import { NationalAgencyForChildrenAndFamiliesClientService } from '@island.is/clients/national-agency-for-children-and-families'
 import { FriggClientService } from '@island.is/clients/mms/frigg'
+import { NationalAgencyForChildrenAndFamiliesClientService } from '@island.is/clients/national-agency-for-children-and-families'
 import { Injectable } from '@nestjs/common'
 
 import { NotificationsService } from '../../../../notification/notifications.service'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { SharedTemplateApiService } from '../../../shared'
+import { NationalRegistryV3Service } from '../../../shared/api/national-registry-v3/national-registry-v3.service'
 
 @Injectable()
 export class ChildProtectionNotificationService extends BaseTemplateApiService {
@@ -15,6 +17,7 @@ export class ChildProtectionNotificationService extends BaseTemplateApiService {
     private readonly notificationsService: NotificationsService,
     private readonly nationalAgencyForChildrenAndFamiliesClientService: NationalAgencyForChildrenAndFamiliesClientService,
     private readonly friggClientService: FriggClientService,
+    private readonly nationalRegistryV3Service: NationalRegistryV3Service,
   ) {
     super(ApplicationTypes.CHILD_PROTECTION_NOTIFICATION)
   }
@@ -105,5 +108,19 @@ export class ChildProtectionNotificationService extends BaseTemplateApiService {
     return {
       id: 1337,
     }
+  }
+
+  async getChildNationalIdType({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    const { childNationalId } = getApplicationAnswers(application.answers)
+
+    if (!childNationalId) return undefined
+
+    return this.nationalRegistryV3Service.getNationalIdType(
+      childNationalId,
+      auth,
+    )
   }
 }

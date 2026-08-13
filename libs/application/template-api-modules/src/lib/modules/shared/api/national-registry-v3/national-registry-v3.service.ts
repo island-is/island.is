@@ -17,6 +17,7 @@ import {
   NationalRegistryParent,
   ApplicantChildCustodyInformation,
   NationalRegistrySpouse,
+  NationalRegistryNationalIdType,
 } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import {
@@ -867,5 +868,12 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
     }
 
     return custodians
+  }
+
+  async getNationalIdType(
+    nationalId: string,
+    auth: User,
+  ): Promise<NationalRegistryNationalIdType | null> {
+    return this.nationalRegistryV3Api.getNationalIdType(nationalId, auth)
   }
 }
