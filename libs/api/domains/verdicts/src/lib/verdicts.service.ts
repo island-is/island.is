@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import type { ConfigType } from '@nestjs/config'
 import type { EnhancedFetchAPI } from '@island.is/clients/middlewares'
-import { JSDOM } from 'jsdom'
+import { parse } from 'node-html-parser'
 import { VerdictsClientService } from '@island.is/clients/verdicts'
 import { VerdictsInput } from './dto/verdicts.input'
 import { VerdictByIdResponse, VerdictsResponse } from './dto/verdicts.response'
@@ -122,14 +122,12 @@ export class VerdictsService {
 
     const response = await this.fetch(this.config.courtOfAppealAppealsUrl)
     const html = await response.text()
-    const dom = new JSDOM(html)
+    const dom = parse(html)
 
-    const cards = dom.window.document.querySelectorAll(
-      '.sentence.box.sentencelist.clearfix',
-    )
+    const cards = dom.querySelectorAll('.sentence.box.sentencelist.clearfix')
 
     for (let i = 0; i < cards.length; i++) {
-      const card = cards.item(i)
+      const card = cards[i]
 
       const caseNumber = card.querySelector('h2')?.textContent?.trim()
       if (!caseNumber) continue

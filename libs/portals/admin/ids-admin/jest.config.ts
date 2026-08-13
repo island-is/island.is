@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'portals-admin-ids-admin',
   preset: './jest.preset.js',
   rootDir: '../../../..',

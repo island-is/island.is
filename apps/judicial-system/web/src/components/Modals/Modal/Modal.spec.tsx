@@ -50,4 +50,54 @@ describe('Modal', () => {
     expect(alert).toHaveTextContent('Eitthvað fór úrskeiðis')
     expect(alert).toHaveAttribute('aria-live', 'assertive')
   })
+
+  it('renders buttons in order with per-button variants', async () => {
+    const onSecondary = jest.fn()
+    const onPrimary = jest.fn()
+
+    render(
+      <Modal
+        title="Titill"
+        buttons={[
+          {
+            text: 'Hætta við',
+            onClick: onSecondary,
+            variant: 'ghost',
+            dataTestId: 'modalSecondaryButton',
+          },
+          {
+            text: 'Staðfesta',
+            onClick: onPrimary,
+            dataTestId: 'modalPrimaryButton',
+          },
+        ]}
+      />,
+    )
+
+    const secondary = await screen.findByTestId('modalSecondaryButton')
+    const primary = await screen.findByTestId('modalPrimaryButton')
+
+    fireEvent.click(secondary)
+    fireEvent.click(primary)
+
+    expect(onSecondary).toHaveBeenCalledTimes(1)
+    expect(onPrimary).toHaveBeenCalledTimes(1)
+  })
+
+  it('generates unique default test ids for three or more buttons', async () => {
+    render(
+      <Modal
+        title="Titill"
+        buttons={[
+          { text: 'A', onClick: jest.fn(), variant: 'ghost' },
+          { text: 'B', onClick: jest.fn(), variant: 'ghost' },
+          { text: 'C', onClick: jest.fn() },
+        ]}
+      />,
+    )
+
+    expect(await screen.findByTestId('modalButton-0')).toHaveTextContent('A')
+    expect(await screen.findByTestId('modalButton-1')).toHaveTextContent('B')
+    expect(await screen.findByTestId('modalButton-2')).toHaveTextContent('C')
+  })
 })

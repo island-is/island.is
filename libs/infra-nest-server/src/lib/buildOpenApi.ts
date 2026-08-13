@@ -27,7 +27,14 @@ export const buildOpenApi = async ({
     if (enableVersioning) {
       app.enableVersioning()
     }
-    const document = SwaggerModule.createDocument(app, openApi)
+    const document = SwaggerModule.createDocument(app, openApi, {
+      // @nestjs/swagger 11 appends the controller version to operationIds
+      // (`_v1`), which would rename every generated client method for
+      // versioned controllers. Keep the pre-11 naming so generated clients
+      // stay stable.
+      operationIdFactory: (controllerKey, methodKey) =>
+        `${controllerKey}_${methodKey}`,
+    })
 
     writeFileSync(path, yaml.dump(document, { noRefs: true }))
 
