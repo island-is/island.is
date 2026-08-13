@@ -95,6 +95,24 @@ const criteria = z
         params: messages.report.criteria.weightSumError,
       })
     }
+    // Personal-factor titles are the key linking a criterion to the step
+    // assignments stored on each employee, and deleting a criterion cascades
+    // by that title — two criteria sharing one title would make the delete
+    // strip both. Job-factor titles come from a fixed set and can't collide.
+    const seen = new Set<string>()
+    ;(val.personalFactors ?? []).forEach((factor, i) => {
+      const title = factor.title?.trim()
+      if (!title) return
+      if (seen.has(title)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['personalFactors', i, 'title'],
+          params: messages.errors.duplicateCriterionTitle,
+        })
+      } else {
+        seen.add(title)
+      }
+    })
   })
 
 const period = z
@@ -186,10 +204,41 @@ const subCriterion = z.object({
   steps: z.array(subCriterionStep),
 })
 
+// Sub-criterion titles are the key linking a sub-criterion to the step
+// assignments on employees/roles, matched as a (criterionTitle, subTitle)
+// pair — so they only have to be unique within their own criterion's group,
+// not globally. Deleting a sub-criterion cascades by that pair, and a
+// duplicate title would make the delete strip both.
+const uniqueSubCriterionTitles = (
+  groups: { title: string }[][],
+  ctx: z.RefinementCtx,
+  factorsKey: 'jobFactors' | 'personalFactors',
+) =>
+  groups.forEach((group, groupIndex) => {
+    const seen = new Set<string>()
+    group.forEach((sub, i) => {
+      const title = sub.title?.trim()
+      if (!title) return
+      if (seen.has(title)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [factorsKey, groupIndex, i, 'title'],
+          params: messages.errors.duplicateSubCriterionTitle,
+        })
+      } else {
+        seen.add(title)
+      }
+    })
+  })
+
 const subCriteria = z
   .object({
     jobFactors: z.array(z.array(subCriterion)).optional(),
     personalFactors: z.array(z.array(subCriterion)).optional(),
+  })
+  .superRefine((val, ctx) => {
+    uniqueSubCriterionTitles(val.jobFactors ?? [], ctx, 'jobFactors')
+    uniqueSubCriterionTitles(val.personalFactors ?? [], ctx, 'personalFactors')
   })
   .optional()
 
@@ -235,8 +284,10 @@ const role = z.object({
 
 const roles = z.array(role).optional()
 
+// No `name`: the form doesn't let the applicant label a group, and the API
+// assigns a default server-side when it's omitted. Add it back alongside a
+// real input, not before.
 const outlierGroup = z.object({
-  name: z.string().optional(),
   reason: z.string().optional(),
   action: z.string().optional(),
   signatureName: z.string().optional(),

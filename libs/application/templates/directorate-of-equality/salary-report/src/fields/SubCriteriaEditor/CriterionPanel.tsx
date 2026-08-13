@@ -55,12 +55,7 @@ export const CriterionPanel: FC<Props> = ({
 }) => {
   const { formatMessage } = useLocale()
   const { control, getValues } = useFormContext()
-  const employeesCascade = useCascadeDelete<Employee>(application, 'employees')
-  const rolesCascade = useCascadeDelete<Role>(application, 'roles')
-  const saveError =
-    factorsKey === 'personalFactors'
-      ? employeesCascade.saveError
-      : rolesCascade.saveError
+  const { persist, retry, saveError } = useCascadeDelete(application)
 
   const { fields, append, remove, replace } = useFieldArray({
     control,
@@ -72,28 +67,32 @@ export const CriterionPanel: FC<Props> = ({
   // that no longer exists. useCascadeDelete persists the correction
   // immediately, since this screen's own "Continue" only saves the
   // `subCriteria` answer key.
-  const removeFromAssignments = (deletedSubTitle: string) =>
-    factorsKey === 'personalFactors'
-      ? employeesCascade.persist(deletedSubTitle, (employees) =>
-          employees.map((emp) => ({
-            ...emp,
-            personalStepAssignments: removeAssignment(
-              emp.personalStepAssignments ?? [],
-              criterionTitle,
-              deletedSubTitle,
-            ),
-          })),
-        )
-      : rolesCascade.persist(deletedSubTitle, (roles) =>
-          roles.map((role) => ({
-            ...role,
-            stepAssignments: removeAssignment(
-              role.stepAssignments ?? [],
-              criterionTitle,
-              deletedSubTitle,
-            ),
-          })),
-        )
+  const removeFromAssignments = (deletedSubTitle: string) => {
+    if (factorsKey === 'personalFactors') {
+      const employees = (getValues('employees') as Employee[] | undefined) ?? []
+      return persist(deletedSubTitle, {
+        employees: employees.map((emp) => ({
+          ...emp,
+          personalStepAssignments: removeAssignment(
+            emp.personalStepAssignments ?? [],
+            criterionTitle,
+            deletedSubTitle,
+          ),
+        })),
+      })
+    }
+    const roles = (getValues('roles') as Role[] | undefined) ?? []
+    return persist(deletedSubTitle, {
+      roles: roles.map((role) => ({
+        ...role,
+        stepAssignments: removeAssignment(
+          role.stepAssignments ?? [],
+          criterionTitle,
+          deletedSubTitle,
+        ),
+      })),
+    })
+  }
 
   // Always hold the latest parsed data so the import effect never reads a
   // stale closure value
@@ -224,18 +223,14 @@ export const CriterionPanel: FC<Props> = ({
         <Box marginTop={3}>
           <AlertMessage
             type="error"
-            message={formatMessage(
-              messages.report.subCriteria.deleteSaveError,
-            )}
+            message={formatMessage(messages.report.subCriteria.deleteSaveError)}
           />
           <Box marginTop={2}>
             <Button
               variant="ghost"
               size="small"
               icon="reload"
-              onClick={() =>
-                void removeFromAssignments(saveError)
-              }
+              onClick={() => void retry()}
             >
               {formatMessage(messages.report.subCriteria.retryButton)}
             </Button>

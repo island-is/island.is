@@ -78,7 +78,6 @@ export const mapAnswersToSalaryReportSubmission = ({
       : (answers.salaryAnalysis?.outlierGroups ?? [])
           .filter((g) => g.employeeOrdinals.length > 0)
           .map((g) => ({
-            name: g.name,
             reason: g.reason ?? '',
             action: g.action ?? '',
             signatureName: g.signatureName ?? '',

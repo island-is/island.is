@@ -11,8 +11,10 @@ type Props = {
   onPageChange: (page: number) => void
 }
 
-// Shared by the employee tables (Launagögn, Mat á einstaklingsbundnum þáttum).
-// Renders nothing below the fold when everything already fits on one page.
+// Shared by the employee tables (Launagögn, Mat á einstaklingsbundnum þáttum)
+// and the unassigned-outliers table on the analysis screen — page size is the
+// caller's business, this only renders the control. Renders nothing below the
+// fold when everything already fits on one page.
 export const TablePagination: FC<Props> = ({
   page,
   totalPages,

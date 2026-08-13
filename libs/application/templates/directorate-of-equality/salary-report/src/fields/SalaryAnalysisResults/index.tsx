@@ -51,14 +51,19 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
       ? (field.props['hidePostponeCheckbox'] as boolean)
       : false
   const { formatMessage, lang: locale } = useLocale()
-  const postponed: string[] = useWatch({ name: 'salaryAnalysis.postponed' }) ?? []
+  const postponed: string[] =
+    useWatch({ name: 'salaryAnalysis.postponed' }) ?? []
   const isPostponed = postponed.includes(YES)
-  const watchedOutlierGroups: { employeeOrdinals?: number[]; reason?: string; action?: string; signatureName?: string; signatureRole?: string }[] =
-    useWatch({ name: 'salaryAnalysis.outlierGroups' })
-  const outlierGroups = useMemo(
-    () => watchedOutlierGroups ?? [],
-    [watchedOutlierGroups],
-  )
+  const watchedOutlierGroups: {
+    employeeOrdinals?: number[]
+    reason?: string
+    action?: string
+    signatureName?: string
+    signatureRole?: string
+  }[] = useWatch({ name: 'salaryAnalysis.outlierGroups' })
+  const outlierGroups = useMemo(() => watchedOutlierGroups ?? [], [
+    watchedOutlierGroups,
+  ])
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [hasError, setHasError] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | undefined>()
@@ -96,9 +101,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
         },
       })
       const salaryAnalysisResult = res.data?.updateApplicationExternalData
-        .externalData?.salaryAnalysisResult as
-        | AnalysisExternalData
-        | undefined
+        .externalData?.salaryAnalysisResult as AnalysisExternalData | undefined
       if (
         salaryAnalysisResult?.status === 'success' &&
         salaryAnalysisResult.data
@@ -133,10 +136,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
     if (!setBeforeSubmitCallback) return
     setBeforeSubmitCallback(async () => {
       if (isAnalyzing) {
-        return [
-          false,
-          formatMessage(messages.salaryAnalysis.results.analyzing),
-        ]
+        return [false, formatMessage(messages.salaryAnalysis.results.analyzing)]
       }
       if (hasError) {
         return [
@@ -159,7 +159,9 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
         if (!allOutliersAssigned) {
           return [
             false,
-            formatMessage(messages.salaryAnalysis.outlierGroup.unassignedWarning),
+            formatMessage(
+              messages.salaryAnalysis.outlierGroup.unassignedWarning,
+            ),
           ]
         }
         const groupsComplete = outlierGroups

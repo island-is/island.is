@@ -21,6 +21,7 @@ import { messages } from '../../lib/messages'
 import type { Employee } from '../../utils/types'
 import { getPathValue } from '../../utils/answerHelpers'
 import { formatCurrency } from '../EmployeesEditor/utils'
+import { TablePagination } from '../TablePagination'
 
 const OUTLIERS_PAGE_SIZE = 10
 const SELECT_COLUMN_WIDTH = 40
@@ -89,7 +90,7 @@ export const OutlierEditor: FC<Props> = ({
   // group card owns it from then on. Removing a group frees its members
   // back into this list.
   const assignedOrdinals = new Set(
-    (fields as unknown as (OutlierGroupAnswer & { id: string })[]).flatMap(
+    ((fields as unknown) as (OutlierGroupAnswer & { id: string })[]).flatMap(
       (g) => g.employeeOrdinals,
     ),
   )
@@ -223,34 +224,13 @@ export const OutlierEditor: FC<Props> = ({
             mobileTitleKey="employee"
           />
 
-          {totalPages > 1 && (
-            <Box
-              marginTop={2}
-              display="flex"
-              justifyContent="spaceBetween"
-              alignItems="center"
-            >
-              <Button
-                variant="ghost"
-                size="small"
-                disabled={currentPage <= 1}
-                onClick={() => setPage(currentPage - 1)}
-              >
-                {'<'}
-              </Button>
-              <Text variant="small">
-                {currentPage} / {totalPages}
-              </Text>
-              <Button
-                variant="ghost"
-                size="small"
-                disabled={currentPage >= totalPages}
-                onClick={() => setPage(currentPage + 1)}
-              >
-                {'>'}
-              </Button>
-            </Box>
-          )}
+          <Box marginTop={2}>
+            <TablePagination
+              page={currentPage}
+              totalPages={totalPages}
+              onPageChange={setPage}
+            />
+          </Box>
 
           <Box marginTop={2} marginBottom={2}>
             <Button
@@ -268,7 +248,7 @@ export const OutlierEditor: FC<Props> = ({
 
       <Box>
         {fields.map((field, index) => {
-          const group = field as unknown as OutlierGroupAnswer & {
+          const group = (field as unknown) as OutlierGroupAnswer & {
             id: string
           }
           return (

@@ -95,8 +95,7 @@ export const mergeStepAssignments = (
 ): StepAssignment[] => {
   const isPresent = (a: StepAssignment) =>
     existing.some(
-      (e) =>
-        e.criterionTitle === a.criterionTitle && e.subTitle === a.subTitle,
+      (e) => e.criterionTitle === a.criterionTitle && e.subTitle === a.subTitle,
     )
   return [...existing, ...defaultAssignments.filter((a) => !isPresent(a))]
 }
@@ -106,7 +105,7 @@ export const mergeStepAssignments = (
 // unratable row for a sub-criterion that no longer exists. Generic over
 // StepAssignment/EmployeeStepAssignment, which share this shape.
 export const removeAssignment = <
-  T extends { criterionTitle: string; subTitle: string },
+  T extends { criterionTitle: string; subTitle: string }
 >(
   assignments: T[],
   criterionTitle: string,

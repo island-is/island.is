@@ -21,6 +21,14 @@ export const messages = {
       id: 'doe.sr.application:errors.duplicateSubsidiary',
       defaultMessage: 'Þetta dótturfélag er þegar á listanum',
     },
+    duplicateCriterionTitle: {
+      id: 'doe.sr.application:errors.duplicateCriterionTitle',
+      defaultMessage: 'Þáttur með þessu heiti er þegar á listanum',
+    },
+    duplicateSubCriterionTitle: {
+      id: 'doe.sr.application:errors.duplicateSubCriterionTitle',
+      defaultMessage: 'Undirþáttur með þessu heiti er þegar á listanum',
+    },
     invalidCompany: {
       id: 'doe.sr.application:errors.invalidCompany',
       defaultMessage: 'Kennitala fyrirtækis er ekki gild',
@@ -144,7 +152,8 @@ export const messages = {
     }),
     generalInformation: defineMessages({
       sectionTitle: {
-        id: 'doe.sr.application:aboutTheCompany.generalInformation.sectionTitle',
+        id:
+          'doe.sr.application:aboutTheCompany.generalInformation.sectionTitle',
         defaultMessage: 'Almennar upplýsingar',
       },
       title: {
@@ -173,15 +182,18 @@ export const messages = {
         defaultMessage: 'Póstnúmer',
       },
       municipality: {
-        id: 'doe.sr.application:aboutTheCompany.generalInformation.municipality',
+        id:
+          'doe.sr.application:aboutTheCompany.generalInformation.municipality',
         defaultMessage: 'Sveitarfélag',
       },
       numberOfEmployees: {
-        id: 'doe.sr.application:aboutTheCompany.generalInformation.numberOfEmployees',
+        id:
+          'doe.sr.application:aboutTheCompany.generalInformation.numberOfEmployees',
         defaultMessage: 'Fjöldi starfsmanna',
       },
       isatClassification: {
-        id: 'doe.sr.application:aboutTheCompany.generalInformation.isatClassification',
+        id:
+          'doe.sr.application:aboutTheCompany.generalInformation.isatClassification',
         defaultMessage: 'ÍSAT atvinnugreinarflokkun',
       },
     }),
@@ -212,7 +224,8 @@ export const messages = {
         defaultMessage: 'Netfang',
       },
       emailPlaceholder: {
-        id: 'doe.sr.application:aboutTheCompany.chiefExecutive.emailPlaceholder',
+        id:
+          'doe.sr.application:aboutTheCompany.chiefExecutive.emailPlaceholder',
         defaultMessage: 'Netfang æðsta stjórnanda',
       },
       jobTitle: {
@@ -220,7 +233,8 @@ export const messages = {
         defaultMessage: 'Starfstitill',
       },
       jobTitlePlaceholder: {
-        id: 'doe.sr.application:aboutTheCompany.chiefExecutive.jobTitlePlaceholder',
+        id:
+          'doe.sr.application:aboutTheCompany.chiefExecutive.jobTitlePlaceholder',
         defaultMessage: 'Starfstitill æðsta stjórnanda',
       },
       gender: {
@@ -325,7 +339,8 @@ export const messages = {
           'Hægt er að skila inn einni áætlun fyrir móður- og dótturfyrirtæki.',
       },
       includesSubsidiariesTitle: {
-        id: 'doe.sr.application:aboutTheCompany.subsidiaries.includesSubsidiariesTitle',
+        id:
+          'doe.sr.application:aboutTheCompany.subsidiaries.includesSubsidiariesTitle',
         defaultMessage: 'Nær launaskýrsla einnig til dótturfyrirtækja?',
       },
       yes: {
@@ -361,7 +376,8 @@ export const messages = {
         defaultMessage: 'Nafn fyrirtækis',
       },
       tableHeaderNationalId: {
-        id: 'doe.sr.application:aboutTheCompany.subsidiaries.tableHeaderNationalId',
+        id:
+          'doe.sr.application:aboutTheCompany.subsidiaries.tableHeaderNationalId',
         defaultMessage: 'Kennitala',
       },
     }),
@@ -758,11 +774,13 @@ export const messages = {
         defaultMessage: 'Föst yfirvinna',
       },
       additionalFixedCarAllowanceLabel: {
-        id: 'doe.sr.application:report.employees.additionalFixedCarAllowanceLabel',
+        id:
+          'doe.sr.application:report.employees.additionalFixedCarAllowanceLabel',
         defaultMessage: 'Föst bifreiðahlunnindi',
       },
       bonusOccasionalCarAllowanceLabel: {
-        id: 'doe.sr.application:report.employees.bonusOccasionalCarAllowanceLabel',
+        id:
+          'doe.sr.application:report.employees.bonusOccasionalCarAllowanceLabel',
         defaultMessage: 'Tilfallandi bifreiðahlunnindi',
       },
       bonusOccasionalOvertimeLabel: {
@@ -958,7 +976,8 @@ export const messages = {
         defaultMessage: '{count} frávik fundust',
       },
       outliersFoundDescription: {
-        id: 'doe.sr.application:salaryAnalysis.results.outliersFoundDescription',
+        id:
+          'doe.sr.application:salaryAnalysis.results.outliersFoundDescription',
         defaultMessage:
           'Farið er nánar yfir frávikin og skýringar á næsta skrefi, Úrbótaáætlun.',
       },
@@ -968,21 +987,9 @@ export const messages = {
       },
     }),
     outlierGroup: defineMessages({
-      listTitle: {
-        id: 'doe.sr.application:salaryAnalysis.outlierGroup.listTitle',
-        defaultMessage: 'Frávik',
-      },
       employeeColumn: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.employeeColumn',
         defaultMessage: 'Auðkenni',
-      },
-      roleColumn: {
-        id: 'doe.sr.application:salaryAnalysis.outlierGroup.roleColumn',
-        defaultMessage: 'Starf',
-      },
-      genderColumn: {
-        id: 'doe.sr.application:salaryAnalysis.outlierGroup.genderColumn',
-        defaultMessage: 'Kyn',
       },
       differenceColumn: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.differenceColumn',
@@ -1005,17 +1012,15 @@ export const messages = {
         defaultMessage: 'Fresta skilum á úrbótaáætlun',
       },
       postponeCardDescription: {
-        id: 'doe.sr.application:salaryAnalysis.outlierGroup.postponeCardDescription',
+        id:
+          'doe.sr.application:salaryAnalysis.outlierGroup.postponeCardDescription',
         defaultMessage:
           'Hægt er að skila úrbótaáætlun innan þriggja mánaða frá því að skýrslan er send inn.',
       },
       postponeCheckboxLabel: {
-        id: 'doe.sr.application:salaryAnalysis.outlierGroup.postponeCheckboxLabel',
+        id:
+          'doe.sr.application:salaryAnalysis.outlierGroup.postponeCheckboxLabel',
         defaultMessage: 'Ég vil skila úrbótaáætlun seinna',
-      },
-      formTitle: {
-        id: 'doe.sr.application:salaryAnalysis.outlierGroup.formTitle',
-        defaultMessage: 'Skýring á frávikum',
       },
       reasonLabel: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.reasonLabel',
@@ -1032,16 +1037,6 @@ export const messages = {
       signatureRoleLabel: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.signatureRoleLabel',
         defaultMessage: 'Starfstitill ábyrgðaraðila',
-      },
-      formErrorWithPostponeOption: {
-        id: 'doe.sr.application:salaryAnalysis.outlierGroup.formErrorWithPostponeOption',
-        defaultMessage:
-          'Veldu að fresta úrbótaáætlun eða fylltu út eyðublaðið að neðan.',
-      },
-      formErrorRequired: {
-        id: 'doe.sr.application:salaryAnalysis.outlierGroup.formErrorRequired',
-        defaultMessage:
-          'Eyðublaðið má ekki vera tómt. Vinsamlegast fylltu það út.',
       },
       createGroupButton: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.createGroupButton',
@@ -1065,7 +1060,8 @@ export const messages = {
           'Öll frávik þurfa að vera hluti af frávikahópi til að halda áfram.',
       },
       incompleteGroupWarning: {
-        id: 'doe.sr.application:salaryAnalysis.outlierGroup.incompleteGroupWarning',
+        id:
+          'doe.sr.application:salaryAnalysis.outlierGroup.incompleteGroupWarning',
         defaultMessage:
           'Fylla þarf út allar upplýsingar fyrir hvern frávikahóp til að halda áfram.',
       },
