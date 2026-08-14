@@ -241,69 +241,6 @@ describe('useDebouncedField', () => {
     })
   })
 
-  describe('resetKey', () => {
-    it('should re-adopt the persisted value and clear the error when the entity changes', () => {
-      const { result, rerender } = renderHook(
-        ({ value, resetKey }: { value: string; resetKey: string }) =>
-          useDebouncedField({
-            value,
-            resetKey,
-            onSave: jest.fn(),
-            validations: ['empty'],
-          }),
-        { initialProps: { value: 'first', resetKey: 'defendant-1' } },
-      )
-
-      act(() => result.current.onChange(''))
-      act(() => result.current.onBlur())
-
-      expect(result.current.value).toBe('')
-      expect(result.current.hasError).toBe(true)
-
-      rerender({ value: 'second', resetKey: 'defendant-2' })
-
-      expect(result.current.value).toBe('second')
-      expect(result.current.hasError).toBe(false)
-    })
-
-    it('should still save a pending edit to the previous entity', () => {
-      const firstOnSave = jest.fn()
-      const secondOnSave = jest.fn()
-
-      const { result, rerender } = renderHook(
-        ({
-          value,
-          resetKey,
-          onSave,
-        }: {
-          value: string
-          resetKey: string
-          onSave: (value: string) => void
-        }) => useDebouncedField({ value, resetKey, onSave }),
-        {
-          initialProps: {
-            value: 'first',
-            resetKey: 'defendant-1',
-            onSave: firstOnSave,
-          },
-        },
-      )
-
-      act(() => result.current.onChange('edited first'))
-
-      rerender({
-        value: 'second',
-        resetKey: 'defendant-2',
-        onSave: secondOnSave,
-      })
-      advance(DELAY)
-
-      expect(firstOnSave).toHaveBeenCalledWith('edited first')
-      expect(secondOnSave).not.toHaveBeenCalled()
-      expect(result.current.value).toBe('second')
-    })
-  })
-
   describe('binding the save at schedule time', () => {
     it('should save through the handler that was current when the user typed', () => {
       const firstOnSave = jest.fn()

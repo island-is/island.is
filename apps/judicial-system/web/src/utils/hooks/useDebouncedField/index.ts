@@ -14,6 +14,10 @@ interface UseDebouncedFieldParams {
    * `courtSession.location`, … Adopted into local state only while the user
    * has not edited, so server and autofill updates land but a response echo
    * can't clobber what is being typed.
+   *
+   * One instance drives one field. When the field belongs to a list row, give
+   * the component a `key` of the entity id so a reordered or deleted row
+   * remounts rather than inheriting the previous row's edit.
    */
   value: string | null | undefined
   /**
@@ -26,13 +30,6 @@ interface UseDebouncedFieldParams {
   onChange?: (value: string) => void
   validations?: Validation[]
   delay?: number
-  /**
-   * Identity of the entity this field belongs to (defendant id, indictment
-   * count id, …). When it changes, the hook stops considering itself mid-edit
-   * and re-adopts `value`, so a reused list slot can't keep showing the
-   * previous entity's text.
-   */
-  resetKey?: string
 }
 
 const useDebouncedField = ({
@@ -41,23 +38,10 @@ const useDebouncedField = ({
   onChange: onValueChange,
   validations = [],
   delay = 500,
-  resetKey,
 }: UseDebouncedFieldParams) => {
   const [value, setValue] = useState(persistedValue ?? '')
   const [errorMessage, setErrorMessage] = useState('')
   const [hasUserEdited, setHasUserEdited] = useState(false)
-  const [seenResetKey, setSeenResetKey] = useState(resetKey)
-
-  // A different entity now occupies this slot, so this instance is no longer
-  // mid-edit. Adjusting state during render is the supported way to respond to
-  // a changed input. Any already scheduled save is deliberately left alone: it
-  // is bound to the entity that was being edited and must still land there.
-  if (seenResetKey !== resetKey) {
-    setSeenResetKey(resetKey)
-    setHasUserEdited(false)
-    setValue(persistedValue ?? '')
-    setErrorMessage('')
-  }
 
   // Follow server and autofill updates until the user starts editing.
   useEffect(() => {
@@ -68,9 +52,9 @@ const useDebouncedField = ({
 
   // Passing the work as an argument keeps the debounced function's identity
   // stable — so `flush` stays meaningful — while the work itself is bound at
-  // the moment the user typed. That binding matters: if this instance is
-  // re-rendered with a different entity, a pending save still writes to the
-  // entity that was being edited rather than the new one.
+  // the moment the user typed rather than read back at fire time. That is what
+  // makes the unmount flush below safe: it runs the save the user's last
+  // keystroke asked for, against the entity that was on screen at the time.
   const debouncedSave = useMemo(
     () => debounce((save: () => void) => save(), delay),
     [delay],
