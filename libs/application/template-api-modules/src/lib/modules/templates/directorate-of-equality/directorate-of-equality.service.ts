@@ -152,10 +152,9 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
         identifier: e.identifier,
         roleTitle: e.roleTitle,
         gender: e.gender as ParsedEmployeeDto['gender'],
-        field: e.field ?? '', // Not collected in the form, but required by the API. // TODO: cleanup when backend changes
-        department: e.department ?? '', // Not collected in the form, but required by the API. // TODO: cleanup when backend changes
+        field: e.field,
+        department: e.department,
         startDate: e.startDate,
-        education: 'PROFESSIONAL', // Not collected in the form, but required by the API. // TODO: cleanup when backend changes
         workRatio: e.workRatio,
         baseSalary: e.baseSalary,
         additionalFixedOvertime: e.additionalFixedOvertime,
@@ -501,7 +500,6 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
       const groups = (answers.salaryAnalysis?.outlierGroups ?? [])
         .filter((g) => g.employeeOrdinals.length > 0)
         .map((g) => ({
-          name: g.name,
           reason: g.reason ?? '',
           action: g.action ?? '',
           signatureName: g.signatureName ?? '',

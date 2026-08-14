@@ -1117,7 +1117,7 @@ export class InternalCaseService {
       }
 
       const rulingDate =
-        deliverDto.rulingDate ?? theCase.created ?? theCase.rulingDate
+        deliverDto.rulingDate ?? theCase.rulingDate ?? theCase.created
 
       if (!rulingDate) {
         return { delivered: false }

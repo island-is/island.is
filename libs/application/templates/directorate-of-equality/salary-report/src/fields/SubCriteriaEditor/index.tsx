@@ -71,6 +71,8 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
               return (
                 <CriterionPanel
                   key={factor.type}
+                  application={application}
+                  factorsKey="jobFactors"
                   accordionId={`subCriteria-jobFactor-${factor.type}`}
                   criterionTitle={factor.title}
                   criterionWeight={factor.weight}
@@ -105,6 +107,8 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                 return (
                   <CriterionPanel
                     key={`personal-${i}`}
+                    application={application}
+                    factorsKey="personalFactors"
                     accordionId={`subCriteria-personalFactor-${i}`}
                     criterionTitle={factor.title}
                     criterionWeight={factor.weight}

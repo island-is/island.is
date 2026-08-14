@@ -470,9 +470,9 @@ export const addNumberedList = (
 
   for (const [i, item] of items.entries()) {
     const label = `${start + i}`
-    const textHeight = doc.heightOfString(label, {
+    // PDFKit wraps on whitespace and also splits oversized unbroken tokens.
+    const textHeight = doc.heightOfString(item, {
       width: wrapWidth,
-      height: 1.2,
     })
     const labelWidth = doc.widthOfString(label)
     const labelX = x + (labelBoxWidth - labelWidth)
@@ -482,8 +482,8 @@ export const addNumberedList = (
     }
     const y = doc.y
 
-    doc.text(label, labelX, y)
-    drawTextWithEllipsis(doc, ` ${item}`, itemX, y, wrapWidth)
+    doc.text(label, labelX, y, { lineBreak: false })
+    doc.text(item, itemX, y, { width: wrapWidth })
   }
 
   doc.x = originalX

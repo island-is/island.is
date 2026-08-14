@@ -538,7 +538,6 @@ export interface UpdateCase
     | 'sessionArrangements'
     | 'courtLocation'
     | 'courtStartDate'
-    | 'courtEndTime'
     | 'isClosedCourtHidden'
     | 'courtAttendees'
     | 'prosecutorDemands'
@@ -575,6 +574,7 @@ export interface UpdateCase
   state?: Case['state']
   policeCaseNumbers?: Case['policeCaseNumbers']
   defendantWaivesRightToCounsel?: Case['defendantWaivesRightToCounsel'] | null
+  courtEndTime?: Case['courtEndTime'] | null
   rulingDate?: Case['rulingDate'] | null
   courtCaseNumber?: Case['courtCaseNumber'] | null
   judgeId?: Case['judgeId'] | null
