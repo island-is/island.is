@@ -78,3 +78,21 @@ export class VmstApplicationsUnemploymentApplicationOverview {
   @Field(() => VmstJobSearchConfirmationStatus, { nullable: true })
   jobSearchConfirmationStatus?: VmstJobSearchConfirmationStatus
 }
+
+@ObjectType('VmstApplicationsActivationGrantApplicationOverview')
+export class VmstApplicationsActivationGrantApplicationOverview {
+  @Field(() => String, { nullable: true })
+  activationGrantApplicationId?: string | null
+
+  @Field(() => String, { nullable: true })
+  applicationStatusId?: string | null
+
+  @Field(() => String, { nullable: true })
+  applicationStatusName?: string | null
+
+  @Field(() => VmstApplicationStatus, { nullable: true })
+  applicationStatus?: VmstApplicationStatus
+
+  @Field(() => [VmstApplicationOverviewItem], { nullable: true })
+  overviewItems?: VmstApplicationOverviewItem[]
+}

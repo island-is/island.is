@@ -104,6 +104,7 @@ import { repositoryModuleConfig } from './repository.config'
     CourtDocumentRepositoryService,
     DefendantRepositoryService,
     DefendantEventLogRepositoryService,
+    InstitutionContactRepositoryService,
     MessageSuspensionRepositoryService,
     PoliceDigitalCaseFileRepositoryService,
     SubpoenaRepositoryService,

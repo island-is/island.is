@@ -3,7 +3,8 @@
   <head>
     <meta charset="utf-8" />
     <title>Mínar síður - Ísland.is</title>
-    <base href="/minarsidur" />
+    <!-- Trailing slash matters: relative asset URLs (./assets/...) resolve against it. -->
+    <base href="/minarsidur/" />
 
     <meta name="title" content="Mínar síður - Ísland.is" />
     <meta
@@ -48,5 +49,7 @@
   </head>
   <body>
     <div id="root"></div>
+    <script type="module" src="/src/polyfills.ts"></script>
+    <script type="module" src="/src/Main.tsx"></script>
   </body>
 </html>
