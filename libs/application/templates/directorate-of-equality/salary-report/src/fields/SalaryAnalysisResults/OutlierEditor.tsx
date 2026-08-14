@@ -26,7 +26,7 @@ import { formatCurrency } from '../EmployeesEditor/utils'
 import { TablePagination } from '../TablePagination'
 
 const OUTLIERS_PAGE_SIZE = 10
-const SELECT_COLUMN_WIDTH = 40
+const SELECT_COLUMN_WIDTH = 32
 // The header checkbox only reaches the current page, which is fine for a
 // couple of pages but not for a long table — past this many pages the
 // select-everything shortcut appears.
@@ -231,6 +231,7 @@ export const OutlierEditor: FC<Props> = ({
             columns={columns}
             data={pageRows}
             mobileTitleKey="employee"
+            cellPaddingX={2}
           />
 
           <Box marginTop={2}>
