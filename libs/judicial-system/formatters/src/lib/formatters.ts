@@ -110,9 +110,7 @@ export const formatFileSubmittedBy = (
 ): string => {
   const initials = getInitials(name)
 
-  return initials
-    ? `${role} (${initials}) lagði fram`
-    : `${role} lagði fram`
+  return initials ? `${role} (${initials}) lagði fram` : `${role} lagði fram`
 }
 
 export const formatPhoneNumber = (phoneNumber?: string | null) => {
