@@ -1032,8 +1032,7 @@ export const messages = {
       // Paging through many pages to select everything is tedious, so this
       // shortcut appears once the table spans more than a handful of pages.
       selectAllOutliersButton: {
-        id:
-          'doe.sr.application:salaryAnalysis.outlierGroup.selectAllOutliersButton',
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.selectAllOutliersButton',
         defaultMessage: 'Velja alla ({count})',
       },
       // The two selection checkboxes carry no visible label (the column is
@@ -1043,8 +1042,7 @@ export const messages = {
         defaultMessage: 'Velja alla starfsmenn á þessari síðu',
       },
       selectEmployeeLabel: {
-        id:
-          'doe.sr.application:salaryAnalysis.outlierGroup.selectEmployeeLabel',
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.selectEmployeeLabel',
         defaultMessage: 'Velja starfsmann {employee}',
       },
       groupHeading: {

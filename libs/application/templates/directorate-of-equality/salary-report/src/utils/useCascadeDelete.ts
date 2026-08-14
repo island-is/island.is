@@ -33,10 +33,7 @@ export const useCascadeDelete = <T>(
   // when the user clicked, not as it is when its turn comes.
   const queue = useRef<Promise<void>>(Promise.resolve())
 
-  const send = async (
-    deletedKey: string,
-    answers: Record<string, unknown>,
-  ) => {
+  const send = async (deletedKey: string, answers: Record<string, unknown>) => {
     try {
       await updateApplication({
         variables: {

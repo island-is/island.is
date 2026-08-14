@@ -3,6 +3,9 @@
   <head>
     <meta charset="utf-8" />
     <title>Umsóknir - Ísland.is</title>
+    <!-- The webpack build injected this from the baseHref option; trailing
+         slash matters for relative asset URLs. -->
+    <base href="/umsoknir/" />
 
     <meta name="title" content="Umsóknir - Ísland.is" />
 
@@ -49,5 +52,7 @@
   </head>
   <body>
     <div id="root"></div>
+    <script type="module" src="/src/polyfills.ts"></script>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
