@@ -93,12 +93,10 @@ const HealthConversationDetail = () => {
     refetchQueries: ['GetHealthConversationDetail'],
     onError: onMutationError,
   })
-  const [
-    replyToMessage,
-    { loading: replySending },
-  ] = useReplyToHealthConversationMutation({
-    refetchQueries: ['GetHealthConversationDetail'],
-  })
+  const [replyToMessage, { loading: replySending }] =
+    useReplyToHealthConversationMutation({
+      refetchQueries: ['GetHealthConversationDetail'],
+    })
 
   const item = data?.healthDirectorateHealthConversation
 

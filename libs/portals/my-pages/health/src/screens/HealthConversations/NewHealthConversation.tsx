@@ -47,20 +47,15 @@ const NewHealthConversation = () => {
   const [termsAccepted, setTermsAccepted] = useState(false)
   const [termsModalOpen, setTermsModalOpen] = useState(false)
 
-  const {
-    data,
-    loading,
-    error,
-  } = useGetHealthConversationRecipientsForNewQuery({
-    variables: { locale: lang === 'en' ? LocaleEnum.En : LocaleEnum.Is },
-  })
+  const { data, loading, error } =
+    useGetHealthConversationRecipientsForNewQuery({
+      variables: { locale: lang === 'en' ? LocaleEnum.En : LocaleEnum.Is },
+    })
 
-  const [
-    createMessage,
-    { loading: sending },
-  ] = useCreateHealthConversationMutation({
-    refetchQueries: ['GetHealthConversations'],
-  })
+  const [createMessage, { loading: sending }] =
+    useCreateHealthConversationMutation({
+      refetchQueries: ['GetHealthConversations'],
+    })
 
   const recipients = data?.healthDirectorateHealthConversationRecipients
   const recipient =
