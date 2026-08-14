@@ -81,18 +81,6 @@ describe('useDebouncedField', () => {
 
       expect(onSave).toHaveBeenCalledTimes(1)
     })
-
-    it('should not save when disabled', () => {
-      const onSave = jest.fn()
-      const { result } = renderHook(() =>
-        useDebouncedField({ value: '', onSave, disabled: true }),
-      )
-
-      act(() => result.current.onChange('abc'))
-      advance(DELAY)
-
-      expect(onSave).not.toHaveBeenCalled()
-    })
   })
 
   describe('clearing a field', () => {

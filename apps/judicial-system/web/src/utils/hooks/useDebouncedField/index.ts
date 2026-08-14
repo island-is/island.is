@@ -27,13 +27,6 @@ interface UseDebouncedFieldParams {
   validations?: Validation[]
   delay?: number
   /**
-   * Never persist — e.g. a confirmed court session or a read-only row. Read
-   * when the save is scheduled rather than when it fires, so an edit made
-   * while the field was still editable is not silently dropped by a later
-   * state change.
-   */
-  disabled?: boolean
-  /**
    * Identity of the entity this field belongs to (defendant id, indictment
    * count id, …). When it changes, the hook stops considering itself mid-edit
    * and re-adopts `value`, so a reused list slot can't keep showing the
@@ -48,7 +41,6 @@ const useDebouncedField = ({
   onChange: onValueChange,
   validations = [],
   delay = 500,
-  disabled = false,
   resetKey,
 }: UseDebouncedFieldParams) => {
   const [value, setValue] = useState(persistedValue ?? '')
@@ -115,10 +107,6 @@ const useDebouncedField = ({
     // There is deliberately no `nextValue === ''` guard here: clearing a
     // field has to persist. Required fields stay protected by `validations`.
     debouncedSave(() => {
-      if (disabled) {
-        return
-      }
-
       // Decide whether to persist without touching the error message. Errors
       // surface on blur, the same as every other input in the app — setting one
       // from here would make a required field complain mid-sentence, as soon as
