@@ -64,7 +64,7 @@ export const NarrowLayout = ({
   const { headerVisible, headerHeight } = useHeaderVisibility()
 
   // The takeover is only worth it at true phone widths — narrower than the
-  // `md` cutoff used for the sidebar/mobile-nav split elsewhere in this file.
+  // `md` cutoff isMobile uses.
   const isMobileTakeover =
     isPhoneWidth && isMobileTakeoverRoute(pathname, activeParent)
 
