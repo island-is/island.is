@@ -1,7 +1,28 @@
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
+import { sortAlpha } from '@island.is/shared/utils'
 import { SALARY_COMPONENT_KEYS } from '../../utils/constants'
 import type { Employee, SalaryComponentKey } from '../../utils/types'
+import { TABLE_PAGE_SIZE } from '../TablePagination'
+
+export const byRoleTitle = sortAlpha<Employee>('roleTitle')
+
+// Which page an employee lands on once the table re-sorts by role title.
+// `useFieldArray` doesn't refresh `fields` synchronously after append/update,
+// so callers hand us the list as it will be and we sort it ourselves rather
+// than waiting a render to find out where the row went.
+export const pageOfEmployee = (
+  employees: Employee[],
+  employee: Employee,
+): number => {
+  const position = [...employees]
+    .sort(byRoleTitle)
+    .findIndex((e) => e === employee)
+
+  if (position < 0) return 1
+
+  return Math.floor(position / TABLE_PAGE_SIZE) + 1
+}
 
 export type EmployeeFormValues = {
   roleTitle: string

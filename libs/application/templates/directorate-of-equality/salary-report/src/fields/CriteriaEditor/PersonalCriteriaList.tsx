@@ -1,17 +1,74 @@
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { InputController } from '@island.is/shared/form-fields'
-import { Box, Button, Text, Stack } from '@island.is/island-ui/core'
+import type { Application } from '@island.is/application/types'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  Text,
+  Stack,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
+import type { Employee, SubCriterion } from '../../utils/types'
+import { useCascadeDelete } from '../../utils/useCascadeDelete'
 
-export const PersonalCriteriaList = () => {
+type Props = {
+  application: Application
+}
+
+export const PersonalCriteriaList = ({ application }: Props) => {
   const { formatMessage } = useLocale()
-  const { control } = useFormContext()
+  const { control, getValues, setValue } = useFormContext()
+  const { persist, saveError } = useCascadeDelete<Employee>(
+    application,
+    'employees',
+  )
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'criteria.personalFactors',
   })
+
+  // subCriteria.personalFactors is kept parallel/position-indexed with
+  // criteria.personalFactors (no shared id), so deleting a criterion must also
+  // drop its sub-criteria slot or a later-added criterion inherits the
+  // deleted one's leftover sub-criteria data at that index. Spliced directly
+  // via getValues/setValue rather than useFieldArray — each element here is
+  // itself an array (SubCriterion[][]), not an object, which useFieldArray's
+  // id-tracking isn't designed for. Only the local splice happens here; the
+  // delete handler below persists it (this screen saves `criteria` alone).
+  const removeSubCriteria = (index: number) => {
+    const current =
+      (getValues('subCriteria.personalFactors') as
+        | SubCriterion[][]
+        | undefined) ?? []
+    const next = [...current]
+    next.splice(index, 1)
+    setValue('subCriteria.personalFactors', next)
+  }
+
+  // A deleted criterion's already-assigned steps (from the "Mat á
+  // einstaklingsbundnum þáttum" screen) must be dropped too, or every
+  // employee keeps a stale, unreachable assignment for a criterion that no
+  // longer exists. Matched by title, same as the rest of this template links
+  // criteria to their step assignments. useCascadeDelete persists the
+  // correction immediately, since this screen's own "Continue" only saves
+  // the `criteria` answer key — which is also why `subCriteria` rides along:
+  // removeSubCriteria's splice would otherwise sit in local form state and be
+  // undone by a reload, resurrecting the deleted criterion's sub-criteria.
+  const removeFromEmployees = (deletedTitle: string) =>
+    persist(
+      deletedTitle,
+      (employees) =>
+        employees.map((emp) => ({
+          ...emp,
+          personalStepAssignments: (emp.personalStepAssignments ?? []).filter(
+            (a) => a.criterionTitle !== deletedTitle,
+          ),
+        })),
+      ['subCriteria'],
+    )
 
   return (
     <Box marginTop={6}>
@@ -58,7 +115,14 @@ export const PersonalCriteriaList = () => {
                 variant="ghost"
                 icon="trash"
                 iconType="outline"
-                onClick={() => remove(i)}
+                onClick={() => {
+                  const deletedTitle = getValues(
+                    `criteria.personalFactors.${i}.title`,
+                  ) as string
+                  remove(i)
+                  removeSubCriteria(i)
+                  void removeFromEmployees(deletedTitle)
+                }}
               >
                 {formatMessage(messages.report.criteria.deleteButton)}
               </Button>
@@ -85,6 +149,25 @@ export const PersonalCriteriaList = () => {
           {formatMessage(messages.report.criteria.addCriterionButton)}
         </Button>
       </Box>
+
+      {saveError && (
+        <Box marginTop={3}>
+          <AlertMessage
+            type="error"
+            message={formatMessage(messages.report.criteria.deleteSaveError)}
+          />
+          <Box marginTop={2}>
+            <Button
+              variant="ghost"
+              size="small"
+              icon="reload"
+              onClick={() => void removeFromEmployees(saveError)}
+            >
+              {formatMessage(messages.report.criteria.retryButton)}
+            </Button>
+          </Box>
+        </Box>
+      )}
     </Box>
   )
 }
