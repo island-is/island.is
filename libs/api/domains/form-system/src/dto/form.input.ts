@@ -30,6 +30,18 @@ export class CreateFormInput {
   organizationNationalId?: string
 }
 
+@InputType('FormSystemCopyFormInput')
+export class CopyFormInput {
+  @Field(() => String, { nullable: true })
+  id?: string
+
+  @Field(() => String, { nullable: true })
+  organizationNationalId?: string
+
+  @Field(() => String, { nullable: true })
+  organizationId?: string
+}
+
 @InputType('FormSystemGetFormInput')
 export class GetFormInput {
   @Field(() => String, { nullable: true })

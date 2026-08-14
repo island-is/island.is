@@ -64,6 +64,7 @@ import { Section } from '../sections/models/section.model'
 import { FormDto } from './models/dto/form.dto'
 import { FormResponseDto } from './models/dto/form.response.dto'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
+import { CopyFormDto } from './models/dto/copyForm.dto'
 import { Form } from './models/form.model'
 import { OrganizationZendeskInstanceDto } from '../organizations/models/dto/organizationZendeskInstance.dto'
 import {
@@ -444,7 +445,12 @@ export class FormsService {
     })
   }
 
-  async copy(user: User, id: string): Promise<FormResponseDto> {
+  async copy(
+    user: User,
+    id: string,
+    copyFormDto: CopyFormDto,
+  ): Promise<FormResponseDto> {
+    const { organizationNationalId } = copyFormDto
     const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
 
     const form = await this.findById(id)
@@ -461,11 +467,19 @@ export class FormsService {
       )
     }
 
+    const copyToDifferentOrganization =
+      isAdmin && organizationNationalId !== formOwnerNationalId
+
+    const newSlug = copyToDifferentOrganization
+      ? `${organizationNationalId}-${form.slug}`
+      : `${form.slug}-afrit`
+
     const copyForm = await this.copyForm(
       id,
       false,
       form.isInaccessible,
-      `${form.slug}-afrit`,
+      newSlug,
+      copyToDifferentOrganization ? copyFormDto : undefined,
     )
     const formResponse = await this.buildFormResponse(copyForm)
 
@@ -578,7 +592,14 @@ export class FormsService {
       form.slug = `${form.slug}-archived-${Date.now()}`
       await form.save({ transaction })
 
-      copyForm = await this.copyForm(id, false, true, slug, transaction)
+      copyForm = await this.copyForm(
+        id,
+        false,
+        true,
+        slug,
+        undefined,
+        transaction,
+      )
     })
 
     if (!copyForm) {
@@ -668,6 +689,7 @@ export class FormsService {
       true,
       form.isInaccessible,
       `${form.slug}-i-breytingu`,
+      undefined,
     )
     const formResponse = await this.buildFormResponse(copyForm)
 
@@ -1189,6 +1211,7 @@ export class FormsService {
     isDerived: boolean,
     isBeingArchived: boolean,
     slug: string,
+    copyFormDto: CopyFormDto | undefined,
     transaction?: Transaction,
   ): Promise<Form> {
     const existingForm = await this.findById(id, transaction)
@@ -1201,6 +1224,9 @@ export class FormsService {
         `Cannot copy form that is in status ${FormStatus.PUBLISHED_BEING_CHANGED}`,
       )
     }
+
+    const { organizationNationalId, organizationId } = copyFormDto ?? {}
+    console.log('copy form dto', organizationNationalId, organizationId)
 
     let deps = existingForm.dependencies || []
 
@@ -1220,6 +1246,9 @@ export class FormsService {
     newForm.invalidationDate = isBeingArchived
       ? undefined
       : existingForm.invalidationDate
+    newForm.organizationNationalId =
+      organizationNationalId ?? existingForm.organizationNationalId
+    newForm.organizationId = organizationId ?? existingForm.organizationId
 
     const sections: Section[] = []
     const screens: Screen[] = []

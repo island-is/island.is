@@ -23,7 +23,7 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import { getStaticEnv } from '@island.is/shared/utils'
-import { Dispatch, SetStateAction, useMemo, useState } from 'react'
+import { Dispatch, SetStateAction, useContext, useMemo, useState } from 'react'
 import AnimateHeight from 'react-animate-height'
 import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -31,6 +31,7 @@ import { FormSystemPaths } from '../../../../lib/paths'
 import { hasEnglishForAllNameFields } from '../../../../lib/utils/validateNameTranslations'
 import { StatusTag } from '../../../StatusTag/StatusTag'
 import * as styles from './TableRow.css'
+import { FormsContext } from '../../../../context/FormsContext'
 
 interface Props {
   id?: string | null
@@ -73,6 +74,8 @@ export const TableRow = ({
   status,
   url,
 }: Props) => {
+  const { isAdmin, organizationId, organizationNationalId } =
+    useContext(FormsContext)
   const [isOpen, setIsOpen] = useState(false)
   const navigate = useNavigate()
   const { formatMessage, formatDate } = useIntl()
@@ -96,6 +99,8 @@ export const TableRow = ({
             variables: {
               input: {
                 id,
+                organizationNationalId,
+                organizationId,
               },
             },
           })
