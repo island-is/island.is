@@ -1005,6 +1005,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
               <Input
                 data-testid="courtAttendees"
                 name="courtAttendees"
+                label="Mættir eru"
                 value={courtSession.attendees ?? getInitialAttendees()}
                 placeholder="Skrifa hér..."
                 onChange={(event) => {
@@ -1868,15 +1869,18 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
             <Modal
               title="Ertu viss?"
               text={`Ertu viss um að þú viljir eyða þinghaldi ${index + 1}?`}
-              primaryButton={{
-                text: 'Já, eyða',
-                colorScheme: 'destructive',
-                onClick: () => handleDeleteCourtSession(courtSession.id),
-              }}
-              secondaryButton={{
-                text: 'Hætta við',
-                onClick: () => setModalVisible(undefined),
-              }}
+              buttons={[
+                {
+                  text: 'Hætta við',
+                  onClick: () => setModalVisible(undefined),
+                  variant: 'ghost',
+                },
+                {
+                  text: 'Já, eyða',
+                  colorScheme: 'destructive',
+                  onClick: () => handleDeleteCourtSession(courtSession.id),
+                },
+              ]}
             />
           )}
         </Box>

@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'edit-unemployment-information',
   preset: '../../../../../jest.preset.js',
   transform: {

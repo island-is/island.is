@@ -353,26 +353,6 @@ export class UpdateCaseDto {
   readonly endOfSessionBookings?: string
 
   @IsOptional()
-  @IsEnum(CaseAppealDecision)
-  @ApiPropertyOptional({ enum: CaseAppealDecision })
-  readonly accusedAppealDecision?: CaseAppealDecision
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String })
-  readonly accusedAppealAnnouncement?: string
-
-  @IsOptional()
-  @IsEnum(CaseAppealDecision)
-  @ApiPropertyOptional({ enum: CaseAppealDecision })
-  readonly prosecutorAppealDecision?: CaseAppealDecision
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String })
-  readonly prosecutorAppealAnnouncement?: string
-
-  @IsOptional()
   @Type(() => Date)
   @IsDate()
   @ApiPropertyOptional({ type: Date })

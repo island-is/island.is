@@ -1,8 +1,6 @@
 import { defineTemplateApi } from '@island.is/application/types'
 import { ApiActions } from '../utils/constants'
 
-export { IdentityApi, UserProfileApi } from '@island.is/application/types'
-
 // PREREQUISITES providers — independent of each other, order is inconsequential
 export const CompanyRegistryApi = defineTemplateApi({
   action: ApiActions.getCompanyData,
@@ -65,4 +63,11 @@ export const SubmitReportCommentApi = defineTemplateApi({
   namespace: 'DirectorateOfEquality',
   order: 0,
   throwOnError: false,
+})
+
+export const SubmitEqualityReportApi = defineTemplateApi({
+  action: ApiActions.submitEqualityReport,
+  namespace: 'DirectorateOfEquality',
+  shouldPersistToExternalData: true,
+  throwOnError: true,
 })

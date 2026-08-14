@@ -9,6 +9,7 @@ import {
 import {
   applyDativeCaseToCourtName,
   capitalize,
+  containsHtml,
   displayFirstPlusRemaining,
   formatAppeal,
   formatDate,
@@ -411,6 +412,27 @@ describe('sanitize', () => {
 
     // Assert
     expect(r).toBe('blabla.pdf')
+  })
+})
+
+describe('containsHtml', () => {
+  test('should detect html content', () => {
+    expect(containsHtml('<p>fyrir umferðarlagabrot</p>')).toBe(true)
+    expect(containsHtml('bla <strong>bla</strong> bla')).toBe(true)
+    expect(containsHtml('bla<br />bla')).toBe(true)
+  })
+
+  test('should not detect plain text as html', () => {
+    expect(containsHtml('fyrir umferðarlagabrot með því að hafa ekið')).toBe(
+      false,
+    )
+    expect(containsHtml('mældur hraði < 90 km/klst')).toBe(false)
+    expect(containsHtml('')).toBe(false)
+  })
+
+  test('should not detect angle-bracket placeholders as html', () => {
+    expect(containsHtml('ökumaðurinn <nafn ökumanns> ók')).toBe(false)
+    expect(containsHtml('með kennitöluna <kennitala>')).toBe(false)
   })
 })
 

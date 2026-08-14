@@ -1,5 +1,4 @@
 import { CaseType } from '@island.is/judicial-system/types'
-import { CaseTableType } from '@island.is/judicial-system/types'
 
 export const EXPIRES_IN_SECONDS = 4 * 60 * 60
 export const EXPIRES_IN_MILLISECONDS = EXPIRES_IN_SECONDS * 1000
@@ -247,7 +246,7 @@ export const ADMIN_MESSAGE_SUSPENSION_ROUTE = '/notendur/bidrod'
 
 //#region Case list routes
 export const CASE_TABLE_GROUPS_ROUTE = '/malalistar'
-export const PROSECUTION_INDICTMENTS_TO_REVIEW = `/malalistar/${CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_IN_REVIEW}`
+export const PROSECUTION_INDICTMENTS_TO_REVIEW = `${CASE_TABLE_GROUPS_ROUTE}/sakamal-til-yfirlestrar`
 //#endregion Case list routes
 
 //#region Shared routes

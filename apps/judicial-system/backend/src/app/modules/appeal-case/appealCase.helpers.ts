@@ -16,9 +16,22 @@ import {
   AppealDecision,
   AppealEventLog,
   Case,
+  CaseFile,
   CivilClaimant,
   Defendant,
 } from '../repository'
+
+// The appeal case a case file belongs to: the ruling-order appeal the file
+// carries in its rulingFileId, or the case-level appeal for files with none.
+export const findAppealCaseOfCaseFile = (
+  theCase: Case,
+  file: Pick<CaseFile, 'rulingFileId'>,
+): AppealCase | undefined =>
+  file.rulingFileId
+    ? theCase.rulingOrderAppealCases?.find(
+        (appealCase) => appealCase.rulingFileId === file.rulingFileId,
+      )
+    : theCase.appealCase
 
 // Resolves the appeal decision (Ákvörðun um kæru) recorded in court for the
 // party the user acts for - the prosecution, or the specific defendant / civil

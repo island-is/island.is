@@ -56,6 +56,7 @@ const template: ApplicationTemplate<
   dataSchema,
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   requiredScopes: [ApiScope.directorateOfEquality],
+  allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -298,7 +299,7 @@ const template: ApplicationTemplate<
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
             tag: {
-              label: coreMessages.tagsDone,
+              label: coreMessages.tagsApproved,
               variant: 'mint',
             },
           },

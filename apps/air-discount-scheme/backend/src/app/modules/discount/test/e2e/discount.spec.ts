@@ -50,7 +50,7 @@ beforeAll(async () => {
         .useValue({ canActivate: () => true }),
   })
   cacheManager = app.get<CacheManager>(CACHE_MANAGER)
-  cacheManager.store.ttl = () => Promise.resolve(0)
+  cacheManager.ttl = () => Promise.resolve(0)
   nationalRegistryService = app.get<NationalRegistryService>(
     NationalRegistryService,
   )
