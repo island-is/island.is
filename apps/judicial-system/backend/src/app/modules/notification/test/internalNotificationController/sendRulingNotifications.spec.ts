@@ -12,6 +12,7 @@ import {
   CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
+  DefendantEventType,
   RequestCaseNotificationType,
   User,
 } from '@island.is/judicial-system/types'
@@ -146,6 +147,82 @@ describe('InternalNotificationController - Send ruling notifications', () => {
           to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: 'Máli lokið 007-2022-07',
           html: `Máli 007-2022-07 hjá Héraðsdómi Reykjavíkur hefur verið lokið.<br /><br />Niðurstaða: Frávísun<br /><br />Skjöl málsins eru aðgengileg á ${expectedLink}yfirlitssíðu málsins í Réttarvörslugátt</a>.<br /><br />Hægt er að kæra úrskurðinn og senda greinargerðir og gögn í gegnum Réttarvörslugátt ef við á.`,
+        }),
+      )
+    })
+  })
+
+  describe('email to defenders when one defendant was previously dismissed', () => {
+    const caseId = uuid()
+    const prosecutor = {
+      name: testProsecutor.name,
+      email: testProsecutor.email,
+    }
+    const dismissedDefendantDefender = {
+      name: 'Verjandi A',
+      email: 'defender-a@omnitrix.is',
+    }
+    const remainingDefendantDefender = {
+      name: 'Verjandi B',
+      email: 'defender-b@omnitrix.is',
+    }
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      courtCaseNumber: '007-2022-07',
+      court: { name: 'Héraðsdómur Reykjavíkur' },
+      indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+      prosecutor,
+      defendants: [
+        {
+          isDefenderChoiceConfirmed: true,
+          defenderName: dismissedDefendantDefender.name,
+          defenderEmail: dismissedDefendantDefender.email,
+          eventLogs: [
+            {
+              eventType: DefendantEventType.INDICTMENT_CANCELLED,
+              created: new Date('2026-02-20T12:00:00.000Z'),
+            },
+          ],
+        },
+        {
+          isDefenderChoiceConfirmed: true,
+          defenderName: remainingDefendantDefender.name,
+          defenderEmail: remainingDefendantDefender.email,
+          eventLogs: [],
+        },
+      ],
+    } as Case
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, theCase, notificationDto)
+    })
+
+    it('should notify the remaining defendant defender but not the dismissed defendant defender', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(2)
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: prosecutor.name, address: prosecutor.email }],
+        }),
+      )
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [
+            {
+              name: remainingDefendantDefender.name,
+              address: remainingDefendantDefender.email,
+            },
+          ],
+        }),
+      )
+      expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [
+            {
+              name: dismissedDefendantDefender.name,
+              address: dismissedDefendantDefender.email,
+            },
+          ],
         }),
       )
     })
