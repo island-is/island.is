@@ -3,7 +3,7 @@ import { UserInfoLine } from '@island.is/portals/my-pages/core'
 import { useLocale } from '@island.is/localization'
 import { VmstApplicationStatus } from '@island.is/api/schema'
 import { VmstApplicationOverviewItem } from '@island.is/portals/my-pages/graphql'
-import { unemploymentBenefitsMessages as um } from '../../lib/messages/unemployment'
+import { sharedMessages } from '../../lib/messages/shared'
 import { resolveStatusTagVariant } from '../../lib/statusTagVariant'
 
 export type RowTagRenderer = () => React.ReactNode
@@ -68,11 +68,11 @@ export const OverviewTable = ({
         {dataRequested && (
           <>
             <UserInfoLine
-              label={formatMessage(um.statusDataLabel)}
-              content={formatMessage(um.statusDataContent)}
+              label={formatMessage(sharedMessages.statusDataLabel)}
+              content={formatMessage(sharedMessages.statusDataContent)}
               renderEnd={() => (
                 <Tag variant="red" outlined disabled>
-                  {formatMessage(um.statusDataMissing)}
+                  {formatMessage(sharedMessages.statusDataMissing)}
                 </Tag>
               )}
             />
