@@ -5,6 +5,8 @@ import { createCurrentUser } from '@island.is/testing/fixtures'
 import {
   ApplicationStatus,
   ApplicationTypes,
+  ExternalData,
+  FormValue,
 } from '@island.is/application/types'
 
 import { SharedTemplateApiService } from '../../../shared'
@@ -936,6 +938,151 @@ describe('DrivingLicenseSubmissionService', () => {
       expect(applyForBELicense).toHaveBeenCalledTimes(1)
       const [, , input] = applyForBELicense.mock.calls[0]
       expect(input.sendPlasticToPerson).toBe(false)
+    })
+  })
+
+  // Exercised through the BE branch because BE runs the shared resolver
+  // unflagged in production — the same helper serves 65+, B-full and B-temp.
+  describe('resolveSelectedPhotoBiometrics', () => {
+    let service: DrivingLicenseSubmissionService
+    let applyForBELicense: jest.Mock
+    let logSpy: jest.SpyInstance
+
+    const baseAnswers = {
+      applicationFor: 'BE',
+      email: 'mock@email.com',
+      phone: '9999999',
+    }
+
+    const submit = async (answers: FormValue, externalData: ExternalData) => {
+      await service.submitApplication({
+        application: createApplication({
+          answers: { ...baseAnswers, ...answers },
+          externalData,
+          typeId: ApplicationTypes.DRIVING_LICENSE,
+          status: ApplicationStatus.IN_PROGRESS,
+        }),
+        auth: createCurrentUser(),
+        currentUserLocale: 'is',
+      })
+      const [, , input] = applyForBELicense.mock.calls[0]
+      return input
+    }
+
+    const photoErrors = () =>
+      logSpy.mock.calls.filter(
+        ([lvl, message]) =>
+          lvl === 'error' && String(message).includes('quality photo'),
+      )
+
+    beforeEach(async () => {
+      applyForBELicense = jest.fn(async () => ({
+        success: true,
+        errorMessage: null,
+      }))
+      logSpy = jest.spyOn(logger, 'log')
+
+      const module = await Test.createTestingModule({
+        imports: [
+          ConfigModule.forRoot({ isGlobal: true, load: [emailModuleConfig] }),
+        ],
+        providers: [
+          DrivingLicenseSubmissionService,
+          EmailService,
+          AdapterService,
+          { provide: DrivingLicenseService, useValue: { applyForBELicense } },
+          { provide: LOGGER_PROVIDER, useValue: logger },
+          {
+            provide: ConfigService,
+            useClass: jest.fn(() => ({ get: () => 'http://localhost' })),
+          },
+          {
+            provide: AttachmentS3Service,
+            useValue: { getFiles: jest.fn(async () => []) },
+          },
+          {
+            provide: SharedTemplateApiService,
+            useClass: jest.fn(() => ({
+              async getPaymentStatus() {
+                return { fulfilled: true }
+              },
+              async sendEmail() {
+                return 'messageId'
+              },
+            })),
+          },
+        ],
+      }).compile()
+
+      service = module.get(DrivingLicenseSubmissionService)
+    })
+
+    afterEach(() => logSpy.mockRestore())
+
+    // A valid FACIAL with no paired SIGNATURE entry: the photo resolves, the
+    // signature does not. Previously untested in any of the four branches.
+    it('sends the photo ID with a null signature when no SIGNATURE entry exists', async () => {
+      const input = await submit(
+        { selectLicensePhoto: 'facial-1' },
+        {
+          allPhotosFromThjodskra: {
+            data: {
+              images: [
+                { biometricId: 'facial-1', contentSpecification: 'FACIAL' },
+              ],
+            },
+            status: 'success',
+            date: new Date(),
+          },
+        },
+      )
+
+      expect(input.photoBiometricsId).toBe('facial-1')
+      expect(input.signatureBiometricsId).toBeNull()
+    })
+
+    it('sends both IDs as null when the selection matches no FACIAL entry', async () => {
+      const input = await submit(
+        { selectLicensePhoto: 'facial-gone' },
+        {
+          allPhotosFromThjodskra: {
+            data: {
+              images: [
+                { biometricId: 'facial-1', contentSpecification: 'FACIAL' },
+              ],
+            },
+            status: 'success',
+            date: new Date(),
+          },
+        },
+      )
+
+      expect(input.photoBiometricsId).toBeNull()
+      expect(input.signatureBiometricsId).toBeNull()
+    })
+
+    // Legacy RLS records carry a valid imageId with no binary. The picker
+    // offers them, so selecting one is correct and must not log an error.
+    it('does not log an error for a legacy RLS record with imageId but no binary', async () => {
+      const input = await submit(
+        { selectLicensePhoto: 'qualityPhoto' },
+        {
+          qualityPhotoAndSignature: {
+            data: { imageId: 7, pohto: null },
+            status: 'success',
+            date: new Date(),
+          },
+        },
+      )
+
+      expect(input.photoBiometricsId).toBeNull()
+      expect(photoErrors()).toHaveLength(0)
+    })
+
+    it('still logs an error when no quality photo record exists at all', async () => {
+      await submit({ selectLicensePhoto: 'qualityPhoto' }, {})
+
+      expect(photoErrors()).toHaveLength(1)
     })
   })
 
