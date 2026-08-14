@@ -132,7 +132,14 @@ export const renderPieChartComponents = (
   activeLocale: Locale,
   customStyleConfig: CustomStyleConfig,
 ) => {
-  const pieData = data?.[0]?.statisticsForHeader ?? []
+  // Tooltips resolve the segment name from the data entries (nameKey),
+  // not from Cell props — without this they fall back to the entry index.
+  const pieData = (data?.[0]?.statisticsForHeader ?? []).map((entry) => ({
+    ...entry,
+    name:
+      components.find((c) => c.sourceDataKey === entry.key)?.label ??
+      entry.key,
+  }))
   const total = pieData.reduce(
     (total, { value }) => total + (value ? value : 0),
     0,
