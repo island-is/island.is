@@ -7,7 +7,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import { formatDate, getInitials } from '@island.is/judicial-system/formatters'
 import {
   isAppealFileDeletionLocked,
   isDefenceUser,
@@ -55,9 +55,17 @@ const isProsecutorCategory = (category: CaseFileCategory | undefined | null) =>
   ].includes(category) ||
     prosecutorDeleteCategories.includes(category))
 
+const formatSubmittedBy = (role: string, name?: string | null): string => {
+  const initials = getInitials(name)
+
+  return initials
+    ? `${role} (${initials}) lagði fram`
+    : `${role} lagði fram`
+}
+
 const getFileSubmittedByText = (file: CaseFile, workingCase: Case): string => {
   if (isProsecutorCategory(file.category)) {
-    return 'Sækjandi lagði fram'
+    return formatSubmittedBy('Sækjandi')
   }
 
   if (file.defendantId) {
@@ -66,7 +74,7 @@ const getFileSubmittedByText = (file: CaseFile, workingCase: Case): string => {
     )
 
     if (defendant?.defenderName) {
-      return `Verjandi ${defendant.defenderName} lagði fram`
+      return formatSubmittedBy('Verjandi', defendant.defenderName)
     }
   }
 
@@ -76,13 +84,14 @@ const getFileSubmittedByText = (file: CaseFile, workingCase: Case): string => {
     )
 
     if (civilClaimant?.spokespersonName) {
-      return `${
-        civilClaimant.spokespersonIsLawyer ? 'Lögmaður' : 'Réttargæslumaður'
-      } ${civilClaimant.spokespersonName} lagði fram`
+      return formatSubmittedBy(
+        civilClaimant.spokespersonIsLawyer ? 'Lögmaður' : 'Réttargæslumaður',
+        civilClaimant.spokespersonName,
+      )
     }
   }
 
-  return 'Varnaraðili lagði fram'
+  return formatSubmittedBy('Varnaraðili')
 }
 
 interface Props {
