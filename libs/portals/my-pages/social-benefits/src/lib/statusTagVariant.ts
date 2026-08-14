@@ -14,7 +14,9 @@ const statusTagVariantMap: Record<VmstApplicationStatus, TagVariant> = {
   [VmstApplicationStatus.rejected]: 'red',
   [VmstApplicationStatus.deregistered]: 'red',
   [VmstApplicationStatus.closedInvalid]: 'red',
-  [VmstApplicationStatus.unknown]: 'warn',
+  [VmstApplicationStatus.unknown]: 'purple',
+  [VmstApplicationStatus.suspensionMissingExplanation]: 'red',
+  [VmstApplicationStatus.previousStatus]: 'purple',
 }
 
 export const resolveStatusTagVariant = (
