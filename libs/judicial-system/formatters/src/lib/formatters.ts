@@ -104,6 +104,17 @@ export const getInitials = (name?: string | null): string | undefined => {
   return initials.toUpperCase()
 }
 
+export const formatFileSubmittedBy = (
+  role: string,
+  name?: string | null,
+): string => {
+  const initials = getInitials(name)
+
+  return initials
+    ? `${role} (${initials}) lagði fram`
+    : `${role} lagði fram`
+}
+
 export const formatPhoneNumber = (phoneNumber?: string | null) => {
   if (!phoneNumber) {
     return
