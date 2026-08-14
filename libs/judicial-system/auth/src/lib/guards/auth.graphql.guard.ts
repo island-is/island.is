@@ -1,4 +1,4 @@
-import { AuthenticationError } from 'apollo-server-express'
+import { GraphQLError } from 'graphql'
 
 import { ExecutionContext, Injectable } from '@nestjs/common'
 import { GqlExecutionContext } from '@nestjs/graphql'
@@ -15,7 +15,9 @@ export class JwtGraphQlAuthGuard extends AuthGuard('jwt') {
 
   handleRequest<TUser extends AuthUser>(err: Error, user?: TUser): TUser {
     if (err || !user) {
-      throw new AuthenticationError(err?.message ?? 'Unauthorized')
+      throw new GraphQLError(err?.message ?? 'Unauthorized', {
+        extensions: { code: 'UNAUTHENTICATED' },
+      })
     }
 
     return user

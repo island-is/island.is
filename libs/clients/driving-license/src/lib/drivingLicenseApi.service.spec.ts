@@ -8,7 +8,11 @@ import { DrivingLicenseApiModule } from './drivingLicenseApi.module'
 import { exportedApis } from './apiConfiguration'
 import { CodeTableV5 } from '../v5'
 
-import { MOCK_TOKEN, requestHandlers } from './__mock-data__/requestHandlers'
+import {
+  lastNewCategoryRequest,
+  MOCK_TOKEN,
+  requestHandlers,
+} from './__mock-data__/requestHandlers'
 
 startMocking(requestHandlers)
 describe('DrivingLicenseDuplicateService', () => {
@@ -65,6 +69,65 @@ describe('DrivingLicenseDuplicateService', () => {
         token: MOCK_TOKEN.LICENSE_B_CATEGORY,
       })
       expect(response).toBe(true)
+    })
+  })
+
+  describe('postCreateDrivingLicenseFull biometric wire shape', () => {
+    const baseParams = {
+      nationalIdApplicant: '0101302479',
+      willBringHealthCertificate: false,
+      willBringQualityPhoto: true,
+      jurisdictionId: 37,
+      sendLicenseInMail: 0,
+      sendLicenseToAddress: '',
+      category: 'B',
+    }
+
+    beforeEach(() => {
+      lastNewCategoryRequest.body = undefined
+    })
+
+    // The B-full redesign is flag-gated, and the safety argument for shipping it
+    // is that with the flag off the RLS request is unchanged. That guarantee
+    // lives here: the wrapper must pass `undefined` THROUGH so the keys are
+    // omitted. Coercing to null (e.g. `params.photoBiometricsId ?? null`) would
+    // silently add two keys to the live NewCategory request — this test is what
+    // catches that.
+    it('omits the biometric keys entirely when they are undefined (flag off)', async () => {
+      await service.postCreateDrivingLicenseFull(baseParams)
+
+      const body = lastNewCategoryRequest.body
+      expect(body).toBeDefined()
+      expect('photoBiometricsId' in (body as object)).toBe(false)
+      expect('signatureBiometricsId' in (body as object)).toBe(false)
+    })
+
+    it('sends the biometric keys when the redesign resolved them (flag on)', async () => {
+      await service.postCreateDrivingLicenseFull({
+        ...baseParams,
+        photoBiometricsId: 'facial-1',
+        signatureBiometricsId: 'sig-1',
+      })
+
+      expect(lastNewCategoryRequest.body).toMatchObject({
+        photoBiometricsId: 'facial-1',
+        signatureBiometricsId: 'sig-1',
+      })
+    })
+
+    // The RLS-quality-photo path deliberately sends explicit nulls; null and
+    // absent are NOT interchangeable here, so pin that they survive as keys.
+    it('preserves explicit nulls as present keys', async () => {
+      await service.postCreateDrivingLicenseFull({
+        ...baseParams,
+        photoBiometricsId: null,
+        signatureBiometricsId: null,
+      })
+
+      const body = lastNewCategoryRequest.body
+      expect('photoBiometricsId' in (body as object)).toBe(true)
+      expect(body?.photoBiometricsId).toBeNull()
+      expect(body?.signatureBiometricsId).toBeNull()
     })
   })
 

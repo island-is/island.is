@@ -68,12 +68,12 @@ export const renderChartComponent = ({
 }
 
 type CustomLabelProps = {
-  cx: number
-  cy: number
-  midAngle: number
-  outerRadius: number
-  innerRadius: number
-  percent: number
+  cx?: number
+  cy?: number
+  midAngle?: number
+  outerRadius?: number
+  innerRadius?: number
+  percent?: number
   payload?: {
     name?: string
     value?: string | number
@@ -84,13 +84,13 @@ type CustomLabelProps = {
 
 const RADIAN = Math.PI / 180
 const renderCustomizedLabel = ({
-  cx,
-  cy,
-  midAngle,
-  outerRadius,
-  innerRadius,
+  cx = 0,
+  cy = 0,
+  midAngle = 0,
+  outerRadius = 0,
+  innerRadius = 0,
   payload,
-  percent,
+  percent = 0,
   activeLocale,
   customStyleConfig,
 }: CustomLabelProps) => {
@@ -169,7 +169,6 @@ export const renderPieChartComponents = (
         renderCustomizedLabel({
           ...props,
           activeLocale,
-          total,
           customStyleConfig,
         })
       }

@@ -46,7 +46,7 @@ describe('PersonalTaxReturnController - Municipalities direct tax payments', () 
     })
 
     it('should call personal tax return api', () => {
-      expect(personalTaxReturnApi).toBeCalled()
+      expect(personalTaxReturnApi).toHaveBeenCalled()
     })
 
     it('should call personal tax return api with correct period', () => {

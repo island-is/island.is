@@ -6,11 +6,13 @@ import { ForbiddenException } from '@nestjs/common'
 
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
+  CaseFileCategory,
   CaseFileState,
   CaseIndictmentRulingDecision,
   CaseOrigin,
   CaseState,
   CaseTransition,
+  CaseType,
   completedIndictmentCaseStates,
   completedRequestCaseStates,
   DefendantEventType,
@@ -240,6 +242,37 @@ describe('CaseController - Transition', () => {
                   },
                   caseId,
                 },
+                {
+                  type: MessageType.DELIVERY_TO_POLICE_REQUEST,
+                  user: {
+                    ...defaultUser,
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
+                  },
+                  caseId,
+                },
+                {
+                  type: MessageType.DELIVERY_TO_POLICE_COURT_RECORD,
+                  user: {
+                    ...defaultUser,
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
+                  },
+                  caseId,
+                },
+                ...(newState === CaseState.ACCEPTED &&
+                [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY].includes(
+                  type,
+                )
+                  ? [
+                      {
+                        type: MessageType.DELIVERY_TO_POLICE_CUSTODY_NOTICE,
+                        user: {
+                          ...defaultUser,
+                          canConfirmIndictment: isIndictmentCase(theCase.type),
+                        },
+                        caseId,
+                      },
+                    ]
+                  : []),
               ])
             } else if (newState === CaseState.DELETED) {
               expect(mockQueuedMessages).toEqual([
@@ -317,12 +350,14 @@ describe('CaseController - Transition', () => {
             key: uuid(),
             isKeyAccessible: true,
             state: CaseFileState.STORED_IN_RVG,
+            category: CaseFileCategory.COURT_RECORD,
           },
           {
             id: caseFileId2,
             key: uuid(),
             isKeyAccessible: true,
             state: CaseFileState.STORED_IN_COURT,
+            category: CaseFileCategory.RULING,
           },
         ]
         const courtEndTime = randomDate()
@@ -380,6 +415,15 @@ describe('CaseController - Transition', () => {
           if (completedIndictmentCaseStates.includes(newState)) {
             expect(mockQueuedMessages).toEqual([
               {
+                type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
+                user: {
+                  ...defaultUser,
+                  canConfirmIndictment: isIndictmentCase(theCase.type),
+                },
+                caseId,
+                elementId: caseFileId1,
+              },
+              {
                 type: MessageType.NOTIFICATION,
                 user: {
                   ...defaultUser,
@@ -395,6 +439,16 @@ describe('CaseController - Transition', () => {
                   canConfirmIndictment: isIndictmentCase(theCase.type),
                 },
                 caseId,
+              },
+              {
+                // Only court records are delivered to police, not rulings
+                type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
+                user: {
+                  ...defaultUser,
+                  canConfirmIndictment: isIndictmentCase(theCase.type),
+                },
+                caseId,
+                elementId: caseFileId1,
               },
             ])
           } else if (

@@ -201,8 +201,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     caseModifiedExplanation
     rulingModifiedHistory
     caseResentExplanation
-    accusedAppealDecision
-    prosecutorAppealDecision
     isAppealDeadlineExpired
     canBeAppealed
     canDefenderAppeal

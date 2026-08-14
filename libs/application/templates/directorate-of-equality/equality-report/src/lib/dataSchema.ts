@@ -94,15 +94,6 @@ const subsidiaries = z.object({
   ),
 })
 
-const information = z.object({
-  checkbox: z
-    .array(z.string())
-    .nullish()
-    .refine((v) => v == null || v.includes('agree'), {
-      params: messages.errors.required,
-    }),
-})
-
 const goalsAndActions = z.object({
   customField: z.string().refine((v) => decodeEditorHtml(v).length > 0, {
     params: messages.errors.required,
@@ -118,7 +109,6 @@ export const dataSchema = z.object({
   contactPerson: contactPerson.optional(),
   employeeCount: employeeCount.optional(),
   subsidiaries: subsidiaries.optional(),
-  information: information.optional(),
   goalsAndActions: goalsAndActions.optional(),
 })
 

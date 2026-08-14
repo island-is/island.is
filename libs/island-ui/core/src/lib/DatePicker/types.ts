@@ -1,4 +1,4 @@
-import { ReactDatePickerProps } from 'react-datepicker'
+import { DatePickerProps as ReactDatePickerProps } from 'react-datepicker'
 import { dateFormat } from '@island.is/shared/constants'
 import is from 'date-fns/locale/is'
 import en from 'date-fns/locale/en-US'
@@ -60,7 +60,7 @@ export interface DatePickerProps {
    */
   maxYear?: number
   readOnly?: boolean
-  calendarStartDay?: number
+  calendarStartDay?: ReactDatePickerProps['calendarStartDay']
   /**
    * Whether the datepicker should allow selecting a range of dates
    */

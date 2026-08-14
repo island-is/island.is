@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'application-templates-id-card',
   preset: '../../../../jest.preset.js',
   transform: {
