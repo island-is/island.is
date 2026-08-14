@@ -1,5 +1,5 @@
-import { IsNotEmpty, IsString } from 'class-validator'
-import { ApiProperty } from '@nestjs/swagger'
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 export class CopyFormDto {
   @IsString()
@@ -8,7 +8,7 @@ export class CopyFormDto {
   organizationNationalId!: string
 
   @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
-  organizationId!: string
+  @IsOptional()
+  @ApiPropertyOptional()
+  organizationId?: string
 }

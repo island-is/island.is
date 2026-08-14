@@ -17,13 +17,22 @@ import {
   DropdownMenu,
   Icon,
   Inline,
+  ModalBase,
   GridRow as Row,
+  Select,
   Stack,
   Text,
   toast,
 } from '@island.is/island-ui/core'
 import { getStaticEnv } from '@island.is/shared/utils'
-import { Dispatch, SetStateAction, useContext, useMemo, useState } from 'react'
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from 'react'
 import AnimateHeight from 'react-animate-height'
 import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -74,9 +83,13 @@ export const TableRow = ({
   status,
   url,
 }: Props) => {
-  const { isAdmin, organizationId, organizationNationalId } =
+  const { isAdmin, organizations, organizationId, organizationNationalId } =
     useContext(FormsContext)
   const [isOpen, setIsOpen] = useState(false)
+  const [
+    selectedCopyOrganizationNationalId,
+    setSelectedCopyOrganizationNationalId,
+  ] = useState('')
   const navigate = useNavigate()
   const { formatMessage, formatDate } = useIntl()
   const [updateFormStatus] = useMutation(UPDATE_FORM_STATUS)
@@ -88,30 +101,164 @@ export const TableRow = ({
   const location = useLocation()
   const handleToggle = () => setIsOpen((prev) => !prev)
 
+  const sortedOrganizations = useMemo(
+    () =>
+      [...organizations].sort((a, b) =>
+        (a.label ?? '').localeCompare(b.label ?? '', 'is', {
+          sensitivity: 'base',
+        }),
+      ),
+    [organizations],
+  )
+
+  const selectedCopyOrganization = sortedOrganizations.find(
+    (org) => org.value === selectedCopyOrganizationNationalId,
+  )
+
+  const copyFormToOrganization = useCallback(
+    async (
+      copyOrganizationNationalId?: string,
+      copyOrganizationId?: string,
+      addCopiedFormToState = true,
+    ) => {
+      if (!id || !copyOrganizationNationalId) return
+
+      try {
+        const { data } = await copyForm({
+          variables: {
+            input: {
+              id,
+              organizationNationalId: copyOrganizationNationalId,
+              organizationId: copyOrganizationId,
+            },
+          },
+        })
+        if (!addCopiedFormToState) return
+
+        setFormsState((prevForms) => {
+          const returnedForm = data.copyFormSystemForm.form
+          return [returnedForm, ...prevForms]
+        })
+      } catch (error) {
+        // TODO: Add user-facing error notification
+      }
+    },
+    [copyForm, id, setFormsState],
+  )
+
   const dropdownItems = useMemo(() => {
     const copy = {
       title: formatMessage(m.copy),
       icon: 'copy' as const,
       iconType: 'outline' as const,
-      onClick: async () => {
-        try {
-          const { data } = await copyForm({
-            variables: {
-              input: {
-                id,
-                organizationNationalId,
-                organizationId,
-              },
-            },
-          })
-          setFormsState((prevForms) => {
-            const returnedForm = data.copyFormSystemForm.form
-            return [returnedForm, ...prevForms]
-          })
-        } catch (error) {
-          // TODO: Add user-facing error notification
-        }
-      },
+      onClick: async () =>
+        copyFormToOrganization(organizationNationalId, organizationId),
+    }
+
+    const copyToDifferentOrganization = {
+      title: formatMessage(m.copyToDifferentOrganization),
+      icon: 'copy' as const,
+      iconType: 'outline' as const,
+      render: () => (
+        <ModalBase
+          baseId={`copy-form-to-organization-${id}`}
+          modalLabel={formatMessage(m.copyToDifferentOrganization)}
+          className={styles.modal}
+          onVisibilityChange={(isVisible) => {
+            if (!isVisible) {
+              setSelectedCopyOrganizationNationalId('')
+            }
+          }}
+          disclosure={
+            <Box
+              display="flex"
+              alignItems="center"
+              width="full"
+              marginRight={2}
+              paddingY={2}
+              paddingLeft={1}
+              cursor="pointer"
+            >
+              <Box
+                marginX={2}
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <Icon icon="copy" size="small" color="blue400" type="outline" />
+              </Box>
+
+              <Text variant="eyebrow">
+                {formatMessage(m.copyToDifferentOrganization)}
+              </Text>
+            </Box>
+          }
+        >
+          {({ closeModal }: { closeModal: () => void }) => (
+            <Box
+              background="white"
+              paddingY={[3, 6, 12]}
+              paddingX={[3, 6, 12, 15]}
+            >
+              <Box className={styles.closeButton}>
+                <Button
+                  circle
+                  colorScheme="negative"
+                  icon="close"
+                  aria-label={formatMessage(m.cancel)}
+                  onClick={closeModal}
+                  size="large"
+                />
+              </Box>
+
+              <Text variant="h2" as="h2" marginBottom={3}>
+                {formatMessage(m.copyToDifferentOrganization)}
+              </Text>
+
+              <Select
+                name={`copy-organization-${id}`}
+                label={formatMessage(m.organization)}
+                options={sortedOrganizations}
+                size="sm"
+                value={selectedCopyOrganization}
+                onChange={(selected) => {
+                  setSelectedCopyOrganizationNationalId(selected?.value ?? '')
+                }}
+              />
+
+              <Box
+                marginTop={4}
+                display="flex"
+                flexDirection="row"
+                justifyContent="spaceBetween"
+              >
+                <Box paddingRight={2}>
+                  <Button variant="ghost" size="small" onClick={closeModal}>
+                    {formatMessage(m.cancel)}
+                  </Button>
+                </Box>
+                <Box>
+                  <Button
+                    variant="ghost"
+                    size="small"
+                    disabled={!selectedCopyOrganizationNationalId}
+                    onClick={async () => {
+                      await copyFormToOrganization(
+                        selectedCopyOrganizationNationalId,
+                        undefined,
+                        false,
+                      )
+                      closeModal()
+                    }}
+                  >
+                    {formatMessage(m.copy)}
+                  </Button>
+                </Box>
+              </Box>
+            </Box>
+          )}
+        </ModalBase>
+      ),
     }
 
     const changePublishedForm = {
@@ -374,19 +521,38 @@ export const TableRow = ({
     }
 
     if (status === FormStatus.PUBLISHED) {
-      return [getJson, copy, changePublishedForm, del]
+      return [
+        getJson,
+        copy,
+        ...(isAdmin ? [copyToDifferentOrganization] : []),
+        changePublishedForm,
+        del,
+      ]
     } else if (status === FormStatus.PUBLISHED_BEING_CHANGED) {
       return [test, getJson, publishChanged, del]
     }
 
-    return [test, getJson, copy, publish, del]
+    return [
+      test,
+      getJson,
+      copy,
+      ...(isAdmin ? [copyToDifferentOrganization] : []),
+      publish,
+      del,
+    ]
   }, [
     id,
     slug,
     status,
+    isAdmin,
     formatMessage,
     updateFormStatus,
-    copyForm,
+    copyFormToOrganization,
+    organizationNationalId,
+    organizationId,
+    selectedCopyOrganization,
+    selectedCopyOrganizationNationalId,
+    sortedOrganizations,
     setFormsState,
     name,
   ])

@@ -470,9 +470,23 @@ export class FormsService {
     const copyToDifferentOrganization =
       isAdmin && organizationNationalId !== formOwnerNationalId
 
-    const newSlug = copyToDifferentOrganization
+    if (copyToDifferentOrganization) {
+      const organization = await this.organizationModel.findOne({
+        where: { nationalId: organizationNationalId },
+      })
+      if (!organization) {
+        throw new NotFoundException(
+          `Organization with nationalId ${organizationNationalId} not found`,
+        )
+      }
+
+      copyFormDto.organizationId = organization.id
+    }
+
+    const newSlugBase = copyToDifferentOrganization
       ? `${organizationNationalId}-${form.slug}`
       : `${form.slug}-afrit`
+    const newSlug = await this.getUniqueCopySlug(newSlugBase)
 
     const copyForm = await this.copyForm(
       id,
@@ -544,6 +558,18 @@ export class FormsService {
     throw new BadRequestException(
       `Invalid status transition from '${currentStatus}' to '${newStatus}'`,
     )
+  }
+
+  private async getUniqueCopySlug(baseSlug: string): Promise<string> {
+    let slug = baseSlug
+    let suffix = 2
+
+    while (await this.formModel.count({ where: { slug } })) {
+      slug = `${baseSlug}-${suffix}`
+      suffix++
+    }
+
+    return slug
   }
 
   private async publishFormInDevelopment(
@@ -1226,7 +1252,8 @@ export class FormsService {
     }
 
     const { organizationNationalId, organizationId } = copyFormDto ?? {}
-    console.log('copy form dto', organizationNationalId, organizationId)
+    const copyToDifferentOrganization =
+      organizationNationalId !== undefined && organizationId !== undefined
 
     let deps = existingForm.dependencies || []
 
@@ -1246,9 +1273,30 @@ export class FormsService {
     newForm.invalidationDate = isBeingArchived
       ? undefined
       : existingForm.invalidationDate
-    newForm.organizationNationalId =
-      organizationNationalId ?? existingForm.organizationNationalId
-    newForm.organizationId = organizationId ?? existingForm.organizationId
+    newForm.organizationNationalId = copyToDifferentOrganization
+      ? organizationNationalId
+      : existingForm.organizationNationalId
+    newForm.organizationId = copyToDifferentOrganization
+      ? organizationId
+      : existingForm.organizationId
+    newForm.organizationDisplayName = copyToDifferentOrganization
+      ? { is: '', en: '' }
+      : existingForm.organizationDisplayName
+    newForm.submissionServiceUrl = copyToDifferentOrganization
+      ? ''
+      : existingForm.submissionServiceUrl
+    newForm.zendeskInternal = copyToDifferentOrganization
+      ? false
+      : existingForm.zendeskInternal
+    newForm.useValidate = copyToDifferentOrganization
+      ? false
+      : existingForm.useValidate
+    newForm.lastModifiedBy = copyToDifferentOrganization
+      ? undefined
+      : existingForm.lastModifiedBy
+    newForm.delegations = copyToDifferentOrganization
+      ? []
+      : existingForm.delegations
 
     const sections: Section[] = []
     const screens: Screen[] = []
