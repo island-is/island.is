@@ -1029,6 +1029,13 @@ export const messages = {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.createGroupButton',
         defaultMessage: 'Setja í frávikahóp',
       },
+      // Paging through many pages to select everything is tedious, so this
+      // shortcut appears once the table spans more than a handful of pages.
+      selectAllOutliersButton: {
+        id:
+          'doe.sr.application:salaryAnalysis.outlierGroup.selectAllOutliersButton',
+        defaultMessage: 'Velja alla ({count})',
+      },
       // The two selection checkboxes carry no visible label (the column is
       // just a checkbox), so they need an explicit accessible name.
       selectAllLabel: {
