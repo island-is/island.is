@@ -71,6 +71,7 @@ import {
   TUploadFile,
   useCourtDocuments,
   useCourtSessions,
+  useDebouncedField,
   useFileList,
   useOnceOn,
   useUsers,
@@ -79,8 +80,8 @@ import { reconcileAppealDecisionsForRulingFileChange } from '@island.is/judicial
 import { isCourtSessionValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { SelectRepresentative } from '../../../Shared/AddFiles/SelectCaseFileRepresentative'
-import CourtSessionAppealDecisions from './CourtSessionAppealDecisions'
 import { CourtSessionMergedCaseEntries } from './CourtSessionMergedCaseEntries'
+import CourtSessionRuling from './CourtSessionRuling'
 import * as styles from './CourtRecord.css'
 
 interface Props {
@@ -181,7 +182,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   const [readyForInitialization, setReadyForInitialization] = useState(false)
   const [locationErrorMessage, setLocationErrorMessage] = useState<string>('')
   const [entriesErrorMessage, setEntriesErrorMessage] = useState<string>('')
-  const [rulingErrorMessage, setRulingErrorMessage] = useState<string>('')
   const [draggedFileId, setDraggedFileId] = useState<string | null>(null)
   const [draggedMergeFileId, setDraggedMergeFileId] = useState<string | null>(
     null,
@@ -341,6 +341,16 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
 
     return `Mættir eru:\n${attendees.join('')}`
   }, [workingCase.prosecutor, workingCase.defendants])
+
+  // No guard against writing into a confirmed session is needed: a confirmed
+  // session renders this field disabled, so nothing can be pending, and
+  // confirming moves focus off the field, which flushes first.
+  const attendeesField = useDebouncedField({
+    value: courtSession.attendees ?? getInitialAttendees(),
+    onChange: (attendees) => patchSession(courtSession.id, { attendees }),
+    onSave: (attendees) =>
+      patchSession(courtSession.id, { attendees }, { persist: true }),
+  })
 
   const initialize = useCallback(() => {
     if (courtSession.startDate) {
@@ -1006,20 +1016,12 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 data-testid="courtAttendees"
                 name="courtAttendees"
                 label="Mættir eru"
-                value={courtSession.attendees ?? getInitialAttendees()}
+                value={attendeesField.value}
                 placeholder="Skrifa hér..."
-                onChange={(event) => {
-                  patchSession(courtSession.id, {
-                    attendees: event.target.value,
-                  })
-                }}
-                onBlur={(event) => {
-                  patchSession(
-                    courtSession.id,
-                    { attendees: event.target.value },
-                    { persist: true },
-                  )
-                }}
+                onChange={(event) =>
+                  attendeesField.onChange(event.target.value)
+                }
+                onBlur={(event) => attendeesField.onBlur(event.target.value)}
                 textarea
                 rows={7}
                 disabled={courtSession.isConfirmed || false}
@@ -1657,95 +1659,11 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 courtSession.rulingType ===
                   CourtSessionRulingType.DISMISSAL_ORDER ||
                 courtSession.rulingType === CourtSessionRulingType.ORDER) && (
-                <>
-                  <Box>
-                    <SectionHeading
-                      title={
-                        courtSession.rulingType ===
-                        CourtSessionRulingType.JUDGEMENT
-                          ? 'Dómsorð'
-                          : 'Úrskurðarorð'
-                      }
-                    />
-                    <Input
-                      data-testid="ruling"
-                      name="ruling"
-                      label={
-                        courtSession.rulingType ===
-                        CourtSessionRulingType.JUDGEMENT
-                          ? 'Dómsorð'
-                          : 'Úrskurðarorð'
-                      }
-                      value={courtSession.ruling || ''}
-                      placeholder={`Hvert er ${
-                        courtSession.rulingType ===
-                        CourtSessionRulingType.JUDGEMENT
-                          ? 'dómsorðið'
-                          : 'úrskurðarorðið'
-                      }?`}
-                      onChange={(event) => {
-                        setRulingErrorMessage('')
-
-                        patchSession(courtSession.id, {
-                          ruling: event.target.value,
-                        })
-                      }}
-                      onBlur={(event) => {
-                        validateAndSetErrorMessage(
-                          ['empty'],
-                          event.target.value,
-                          setRulingErrorMessage,
-                        )
-
-                        patchSession(
-                          courtSession.id,
-                          { ruling: event.target.value },
-                          { persist: true },
-                        )
-                      }}
-                      hasError={rulingErrorMessage !== ''}
-                      errorMessage={rulingErrorMessage}
-                      rows={15}
-                      disabled={courtSession.isConfirmed || false}
-                      textarea
-                      required
-                    />
-                  </Box>
-                  {showAppealDecisions &&
-                    courtSession.rulingType ===
-                      CourtSessionRulingType.ORDER && (
-                      <CourtSessionAppealDecisions
-                        courtSession={courtSession}
-                        workingCase={workingCase}
-                        setWorkingCase={setWorkingCase}
-                      />
-                    )}
-                  <Box>
-                    <SectionHeading title="Bókanir í lok þinghalds" />
-                    <Input
-                      data-testid="closingEntries"
-                      name="closingEntries"
-                      label="Bókanir í kjölfar dómsuppsögu eða uppkvaðningu úrskurðar"
-                      value={courtSession.closingEntries || ''}
-                      placeholder="T.d. Dómfelldi er ekki viðstaddur dómsuppsögu og verður lögreglu falið að birta dóminn fyrir honum..."
-                      onChange={(event) =>
-                        patchSession(courtSession.id, {
-                          closingEntries: event.target.value,
-                        })
-                      }
-                      onBlur={(event) =>
-                        patchSession(
-                          courtSession.id,
-                          { closingEntries: event.target.value },
-                          { persist: true },
-                        )
-                      }
-                      rows={15}
-                      disabled={courtSession.isConfirmed || false}
-                      textarea
-                    />
-                  </Box>
-                </>
+                <CourtSessionRuling
+                  courtSession={courtSession}
+                  showAppealDecisions={showAppealDecisions}
+                  patchSession={patchSession}
+                />
               )}
               <Box>
                 <SectionHeading title="Vottur" />
