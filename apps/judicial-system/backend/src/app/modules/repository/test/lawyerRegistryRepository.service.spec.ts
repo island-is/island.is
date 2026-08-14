@@ -22,6 +22,7 @@ describe('LawyerRegistryRepositoryService', () => {
   }
 
   let service: LawyerRegistryRepositoryService
+  let logger: { debug: jest.Mock; error: jest.Mock }
   let model: {
     destroy: jest.Mock
     bulkCreate: jest.Mock
@@ -30,6 +31,8 @@ describe('LawyerRegistryRepositoryService', () => {
   }
 
   beforeEach(async () => {
+    logger = { debug: jest.fn(), error: jest.fn() }
+
     model = {
       destroy: jest.fn().mockResolvedValue(0),
       bulkCreate: jest.fn().mockResolvedValue([]),
@@ -39,10 +42,7 @@ describe('LawyerRegistryRepositoryService', () => {
 
     const moduleRef = await Test.createTestingModule({
       providers: [
-        {
-          provide: LOGGER_PROVIDER,
-          useValue: { debug: jest.fn(), error: jest.fn() },
-        },
+        { provide: LOGGER_PROVIDER, useValue: logger },
         { provide: getModelToken(LawyerRegistry), useValue: model },
         LawyerRegistryRepositoryService,
       ],
@@ -126,6 +126,63 @@ describe('LawyerRegistryRepositoryService', () => {
       const result = await service.findByNationalId('9999999999')
 
       expect(result).toBeNull()
+    })
+  })
+
+  describe('error handling', () => {
+    const error = new Error('Some database error')
+
+    it('logs and rethrows when the delete fails', async () => {
+      model.destroy.mockRejectedValueOnce(error)
+
+      await expect(
+        service.replaceAll([lawyer], { transaction }),
+      ).rejects.toThrow(error)
+      expect(model.bulkCreate).not.toHaveBeenCalled()
+      expect(logger.error).toHaveBeenCalledWith(expect.any(String), { error })
+    })
+
+    it('logs and rethrows when the insert fails', async () => {
+      model.bulkCreate.mockRejectedValueOnce(error)
+
+      await expect(
+        service.replaceAll([lawyer], { transaction }),
+      ).rejects.toThrow(error)
+      expect(logger.error).toHaveBeenCalledWith(expect.any(String), { error })
+    })
+
+    it.each([
+      ['findAll', () => service.findAll()],
+      ['findAllLitigators', () => service.findAllLitigators()],
+    ])('logs and rethrows when %s fails', async (_name, call) => {
+      model.findAll.mockRejectedValueOnce(error)
+
+      await expect(call()).rejects.toThrow(error)
+      expect(logger.error).toHaveBeenCalledWith(expect.any(String), { error })
+    })
+
+    it('logs and rethrows when findByNationalId fails', async () => {
+      model.findOne.mockRejectedValueOnce(error)
+
+      await expect(service.findByNationalId(lawyer.nationalId)).rejects.toThrow(
+        error,
+      )
+      expect(logger.error).toHaveBeenCalledWith(expect.any(String), { error })
+    })
+
+    it('keeps national ids out of the logs', async () => {
+      model.findOne.mockRejectedValueOnce(error)
+
+      await expect(service.findByNationalId(lawyer.nationalId)).rejects.toThrow(
+        error,
+      )
+
+      const logged = [...logger.debug.mock.calls, ...logger.error.mock.calls]
+        .flat()
+        .map((argument) => JSON.stringify(argument))
+        .join(' ')
+
+      expect(logged).not.toContain(lawyer.nationalId)
     })
   })
 })
