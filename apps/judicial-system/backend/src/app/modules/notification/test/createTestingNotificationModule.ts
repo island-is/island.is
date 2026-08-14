@@ -28,7 +28,6 @@ import { DefendantService } from '../../defendant'
 import { eventModuleConfig, EventService } from '../../event'
 import { InstitutionService } from '../../institution'
 import {
-  InstitutionContact,
   InstitutionContactRepositoryService,
   Notification,
 } from '../../repository'
@@ -131,10 +130,6 @@ export const createTestingNotificationModule = async () => {
       },
       { provide: getModelToken(Notification), useValue: { create: jest.fn() } },
       {
-        provide: getModelToken(InstitutionContact),
-        useValue: { create: jest.fn() },
-      },
-      {
         provide: DefendantService,
         useValue: { isDefendantInActiveCustody: jest.fn() },
       },
@@ -182,9 +177,6 @@ export const createTestingNotificationModule = async () => {
     >(notificationModuleConfig.KEY),
     notificationModel: notificationModule.get<typeof Notification>(
       getModelToken(Notification),
-    ),
-    institutionContactModel: notificationModule.get<typeof InstitutionContact>(
-      getModelToken(InstitutionContact),
     ),
     notificationController: notificationModule.get(NotificationController),
     internalNotificationController: notificationModule.get(
