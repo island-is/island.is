@@ -1,7 +1,6 @@
-import { Locale } from '@island.is/shared/types'
-
 import {
   extractOrganizationSlugFromPathname,
+  getHeaderNavigationPropsFromUrl,
   pathIsProjectPage,
 } from './organization'
 
@@ -61,33 +60,28 @@ describe('extractOrganizationSlugFromPathname', () => {
   })
 })
 
-describe('header simplified-header rule', () => {
-  // Mirrors the layout's condition in main.tsx without importing it:
-  //   organizationSearchFilter = extractOrganizationSlugFromPathname(path, locale)
-  //   showHeaderNavigation = !organizationSearchFilter && !pathIsProjectPage(path)
-  const showHeaderNavigation = (path: string, locale: Locale): boolean => {
-    const organizationSearchFilter = extractOrganizationSlugFromPathname(
-      path,
-      locale,
-    )
-    return !organizationSearchFilter && !pathIsProjectPage(path)
-  }
+describe('getHeaderNavigationPropsFromUrl', () => {
+  it.each([
+    ['/s/blodbankinn', 'is', 'blodbankinn'],
+    ['/en/o/blodbankinn', 'en', 'blodbankinn'],
+    ['/_next/data/build-id/s/blodbankinn.json', 'is', 'blodbankinn'],
+    ['/v/thjodaratkvaedagreidsla-2026', 'is', ''],
+    ['/en/p/thjodaratkvaedagreidsla-2026', 'en', ''],
+    ['/_next/data/build-id/en/p/thjodaratkvaedagreidsla-2026.json', 'en', ''],
+  ] as const)(
+    'hides navigation for %s',
+    (url, locale, organizationSearchFilter) => {
+      expect(getHeaderNavigationPropsFromUrl(url, locale)).toEqual({
+        organizationSearchFilter,
+        showHeaderNavigation: false,
+      })
+    },
+  )
 
-  it('hides navigation on organization (stofnanavefir) pages', () => {
-    expect(showHeaderNavigation('/s/blodbankinn', 'is')).toBe(false)
-  })
-
-  it('hides navigation on project (verkefni) pages', () => {
-    expect(showHeaderNavigation('/v/thjodaratkvaedagreidsla-2026', 'is')).toBe(
-      false,
-    )
-  })
-
-  it('shows navigation on the front page', () => {
-    expect(showHeaderNavigation('/', 'is')).toBe(true)
-  })
-
-  it('shows navigation on a news article', () => {
-    expect(showHeaderNavigation('/frett/einhver-frett', 'is')).toBe(true)
+  it.each(['/', '/frett/einhver-frett'])('shows navigation for %s', (url) => {
+    expect(getHeaderNavigationPropsFromUrl(url, 'is')).toEqual({
+      organizationSearchFilter: '',
+      showHeaderNavigation: true,
+    })
   })
 })
