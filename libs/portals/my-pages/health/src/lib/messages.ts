@@ -2004,6 +2004,14 @@ export const messages = defineMessages({
     defaultMessage: 'Afboðað',
     id: 'sp.health:health-messages-video-call-canceled',
   },
+  healthConversationCertificateTag: {
+    defaultMessage: 'Vottorð',
+    id: 'sp.health:health-message-certificate-tag',
+  },
+  healthConversationCertificatePaymentPending: {
+    defaultMessage: 'Greiðslu vantar',
+    id: 'sp.health:health-message-certificate-payment-pending',
+  },
   healthConversationNotFound: {
     defaultMessage: 'Skilaboð fundust ekki',
     id: 'sp.health:health-message-not-found',

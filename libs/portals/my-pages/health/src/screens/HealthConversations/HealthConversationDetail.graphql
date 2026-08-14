@@ -24,6 +24,10 @@ fragment HealthConversationMessage on HealthDirectorateHealthConversationEntry {
   direction
   messageSentAt
   senderGroupName
+  certificateId
+  requiresPayment
+  paid
+  amountIsk
   content {
     __typename
     ...HealthConversationTextContent
