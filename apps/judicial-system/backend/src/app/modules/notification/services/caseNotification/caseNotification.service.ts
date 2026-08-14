@@ -585,6 +585,17 @@ export class CaseNotificationService extends BaseNotificationService {
       theCase.sessionArrangements,
     )
 
+    const overviewUrl = `${
+      isRestrictionCase(theCase.type)
+        ? `${this.config.clientUrl}${PROSECUTION_RESTRICTION_CASE_OVERVIEW_ROUTE}`
+        : `${this.config.clientUrl}${PROSECUTION_INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}`
+    }/${theCase.id}`
+
+    const html = `${body} ${this.formatMessage(notifications.emailTail, {
+      linkStart: `<a href="${overviewUrl}">`,
+      linkEnd: '</a>',
+    })}`
+
     const calendarInvite =
       theCase.sessionArrangements === SessionArrangements.NONE_PRESENT ||
       !arraignmentDate
@@ -593,7 +604,7 @@ export class CaseNotificationService extends BaseNotificationService {
 
     return this.sendEmail({
       subject,
-      html: body,
+      html,
       recipientName: theCase.prosecutor?.name,
       recipientEmail: theCase.prosecutor?.email,
       attachments: calendarInvite ? [calendarInvite] : undefined,
@@ -671,7 +682,7 @@ export class CaseNotificationService extends BaseNotificationService {
       : undefined
 
     const subject = `Fyrirtaka í máli ${theCase.courtCaseNumber}`
-    const html = formatDefenderCourtDateEmailNotification(
+    const body = formatDefenderCourtDateEmailNotification(
       this.formatMessage,
       theCase.court?.name,
       theCase.courtCaseNumber,
@@ -685,17 +696,28 @@ export class CaseNotificationService extends BaseNotificationService {
       defenderSubRole,
     )
 
+    const overviewUrl =
+      defenderNationalId &&
+      formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id)
+
+    const html = overviewUrl
+      ? `${body} ${this.formatMessage(notifications.emailTail, {
+          linkStart: `<a href="${overviewUrl}">`,
+          linkEnd: '</a>',
+        })}`
+      : body
+
     return this.sendEmail({
       subject,
       html,
       recipientName: defenderName,
       recipientEmail: defenderEmail,
       attachments: calendarInvite ? [calendarInvite] : undefined,
-      skipTail: !defenderNationalId,
+      skipTail: !overviewUrl,
     }).then((recipient) => {
       if (recipient.success) {
         // No need to wait
-        this.uploadEmailToCourt(theCase, subject, html, user, defenderEmail)
+        this.uploadEmailToCourt(theCase, subject, body, user, defenderEmail)
       }
 
       return recipient

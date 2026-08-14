@@ -3,7 +3,8 @@
   <head>
     <meta charset="utf-8" />
     <title>Stjórnborð - Ísland.is</title>
-    <base href="/stjornbord" />
+    <!-- Trailing slash matters: relative asset URLs (./assets/...) resolve against it. -->
+    <base href="/stjornbord/" />
 
     <meta name="title" content="Stjórnborð - Ísland.is" />
     <meta
@@ -49,5 +50,7 @@
   </head>
   <body>
     <div id="root"></div>
+    <script type="module" src="/src/polyfills.ts"></script>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
