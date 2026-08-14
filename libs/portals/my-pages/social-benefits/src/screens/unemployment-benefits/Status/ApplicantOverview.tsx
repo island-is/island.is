@@ -10,6 +10,7 @@ import { useLocale } from '@island.is/localization'
 import { useGetApplicantOverviewQuery } from './Status.generated'
 import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unemployment'
 import { Problem } from '@island.is/react-spa/shared'
+import type { ReactElement } from 'react'
 
 export const ApplicantOverview = () => {
   const { formatMessage, locale } = useLocale()
@@ -24,7 +25,7 @@ export const ApplicantOverview = () => {
 
   const items: Array<{
     label: string
-    value: string | JSX.Element | undefined
+    value: string | ReactElement | undefined
   }> = [
     {
       label: formatMessage(um.applicantPassCode),
@@ -94,7 +95,7 @@ export const ApplicantOverview = () => {
   ]
 
   const visibleItems = items.filter(
-    (item): item is { label: string; value: string | JSX.Element } =>
+    (item): item is { label: string; value: string | ReactElement } =>
       !!item.value,
   )
 
