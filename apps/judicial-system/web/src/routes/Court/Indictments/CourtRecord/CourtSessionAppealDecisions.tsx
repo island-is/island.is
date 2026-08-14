@@ -132,11 +132,11 @@ const CourtSessionAppealDecisions: FC<Props> = ({
         value: CaseAppealDecision.ACCEPT,
         label: `${nominative} unir úrskurðinum`,
       },
-      { value: CaseAppealDecision.NOT_APPLICABLE, label: 'Á ekki við' },
       {
         value: CaseAppealDecision.POSTPONE,
         label: `${nominative} tekur sér lögboðinn frest`,
       },
+      { value: CaseAppealDecision.NOT_APPLICABLE, label: 'Á ekki við' },
     ]
 
     // The announcement (yfirlýsing) becomes part of the court record, so picking
