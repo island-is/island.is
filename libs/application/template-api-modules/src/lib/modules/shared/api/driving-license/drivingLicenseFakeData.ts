@@ -57,7 +57,12 @@ export const buildFakeCurrentLicense = (fakeData: DrivingLicenseFakeData) => {
           buildCategory('B', FULL_VALIDTO_CODE),
           buildCategory('BE', FULL_VALIDTO_CODE),
         ]
-      : [buildCategory(currentLicense, currentLicense ? FULL_VALIDTO_CODE : null)]
+      : [
+          buildCategory(
+            currentLicense,
+            currentLicense ? FULL_VALIDTO_CODE : null,
+          ),
+        ]
 
   return {
     currentLicense,
