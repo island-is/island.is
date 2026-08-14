@@ -6,7 +6,6 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
-  Icon,
   Input,
   Text,
   toast,
@@ -21,6 +20,7 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { MessageActions } from './components/MessageActions'
 import ConversationAvatar from './components/ConversationAvatar'
+import ConversationBackButton from './components/ConversationBackButton'
 import ConversationCancelSubmit from './components/ConversationCancelSubmit'
 import ConversationMessageBody from './components/ConversationMessageBody'
 import MobileActionFooter from './components/MobileActionFooter'
@@ -113,7 +113,7 @@ const HealthConversationDetail = () => {
   if (loading) {
     return (
       <GridContainer>
-        <GridRow marginTop={2}>
+        <GridRow marginTop={[1, 0, 0]}>
           <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
             <Box padding={6}>
               <CardLoader />
@@ -127,7 +127,7 @@ const HealthConversationDetail = () => {
   if (error) {
     return (
       <GridContainer>
-        <GridRow marginTop={2}>
+        <GridRow marginTop={[1, 0, 0]}>
           <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
             <Box padding={6}>
               <Problem error={error} noBorder={false} />
@@ -141,7 +141,7 @@ const HealthConversationDetail = () => {
   if (!item) {
     return (
       <GridContainer>
-        <GridRow marginTop={2}>
+        <GridRow marginTop={[1, 0, 0]}>
           <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
             <Box padding={6}>
               <Problem
@@ -174,16 +174,36 @@ const HealthConversationDetail = () => {
   const lastMessageIsFromPatient =
     item.messages[item.messages.length - 1]?.direction === 'PATIENT'
 
+  /* There's no explicit "recipient" for an existing thread yet so we need this
+  to approximate it */
+  const latestStaffMessage = [...item.messages]
+    .reverse()
+    .find((msg) => msg.direction === 'STAFF')
+  const replyToName = latestStaffMessage
+    ? item.organization?.name ?? latestStaffMessage.senderGroupName ?? undefined
+    : undefined
+
+  const handleBack = () => {
+    /* On mobile, replying takes over the screen, so back should return to the
+    the thread first. On desktop the reply form is just appended below
+    the (still visible) thread, so back always leaves the conversation.  */
+    if (isMobileWidth && replyOpen) {
+      setReplyOpen(false)
+    } else {
+      navigate(HealthPaths.HealthConversations)
+    }
+  }
+
   return (
     <GridContainer>
-      <GridRow marginTop={[1, 1, 2]}>
+      <GridRow marginTop={[1, 0, 0]}>
         <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
           <Box
             className={styles.messageCard}
             background="white"
             paddingTop={[2, 2, 3]}
-            paddingBottom={[10, 10, 5]}
-            paddingX={[2, 2, 5]}
+            paddingBottom={[10, 5, 5]}
+            paddingX={[2, 5, 5]}
           >
             <Box
               display="flex"
@@ -192,21 +212,7 @@ const HealthConversationDetail = () => {
               marginBottom={1}
             >
               <Box className={styles.backButton}>
-                <Button
-                  variant="text"
-                  size="default"
-                  aria-label={formatMessage(m.goBack)}
-                  onClick={() => {
-                    if (replyOpen) {
-                      setReplyOpen(false)
-                    } else {
-                      navigate(HealthPaths.HealthConversations)
-                    }
-                  }}
-                  colorScheme="light"
-                >
-                  <Icon icon="arrowBack" type="filled" />
-                </Button>
+                <ConversationBackButton onClick={handleBack} />
               </Box>
               {!replyOpen && (
                 <MessageActions
@@ -239,127 +245,17 @@ const HealthConversationDetail = () => {
               {item.title}
             </Text>
 
-            {/* Message thread */}
-            {item.messages.map((msg, index) => {
-              const isPatient = msg.direction === 'PATIENT'
-              const senderName = isPatient
-                ? userInfo.profile.name ?? ''
-                : item.organization?.name ?? msg.senderGroupName ?? ''
-
-              return (
-                <Box key={msg.id}>
-                  {index > 0 && (
-                    <Box paddingY={1}>
-                      <Divider />
-                    </Box>
-                  )}
-
-                  {/* Sender info */}
-                  <Box
-                    display="flex"
-                    flexDirection="row"
-                    paddingTop={index > 0 ? 3 : 0}
-                    marginBottom={3}
-                  >
-                    {isPatient ? (
-                      <ConversationAvatar
-                        variant="user"
-                        name={userInfo.profile.name ?? ''}
-                      />
-                    ) : (
-                      <ConversationAvatar
-                        variant="organization"
-                        logoUrl={item.organization?.logoUrl ?? undefined}
-                      />
-                    )}
-                    <Box
-                      display="flex"
-                      flexDirection="column"
-                      marginLeft={2}
-                      justifyContent="center"
-                    >
-                      <Text variant="eyebrow" fontWeight="medium" truncate>
-                        {senderName}
-                      </Text>
-                      <Text variant="medium">
-                        {formatDateWithTime(msg.messageSentAt)}
-                      </Text>
-                    </Box>
-                  </Box>
-
-                  {/* Body */}
-                  <ConversationMessageBody message={msg} />
-
-                  {/* Attachments */}
-                  {msg.attachments.length > 0 && (
-                    <Box
-                      display="flex"
-                      flexWrap="wrap"
-                      columnGap={2}
-                      rowGap={1}
-                      marginBottom={3}
-                    >
-                      {msg.attachments.map((file) => (
-                        <Button
-                          key={file.id}
-                          variant="utility"
-                          icon="document"
-                          iconType="outline"
-                          onClick={() => formSubmit(file.downloadServiceURL)}
-                        >
-                          {file.fileName}
-                        </Button>
-                      ))}
-                    </Box>
-                  )}
-                </Box>
-              )
-            })}
-
-            {/* Sent confirmation banner */}
-            {justCreated && !replyOpen && (
-              <Box marginTop={4}>
-                <AlertMessage
-                  type="success"
-                  title={formatMessage(messages.healthConversationSentTitle)}
-                  message={formatMessage(messages.healthConversationSentText)}
-                />
-              </Box>
-            )}
-
-            {/* Reply form */}
-            {replyOpen && (
+            {replyOpen && isMobileWidth ? (
+              /* Mobile takes over the screen while replying: the thread is
+              hidden and only the recipient + reply form are shown. */
               <div ref={replyRef}>
-                <Box paddingY={1}>
-                  <Divider />
-                </Box>
-
-                <Box
-                  display="flex"
-                  flexDirection="row"
-                  paddingTop={3}
-                  marginBottom={3}
-                >
-                  <ConversationAvatar
-                    variant="user"
-                    name={userInfo.profile.name ?? ''}
-                  />
-                  <Box
-                    display="flex"
-                    flexDirection="column"
-                    marginLeft={2}
-                    justifyContent="center"
-                  >
-                    <Text variant="eyebrow" fontWeight="medium" truncate>
-                      {userInfo.profile.name ?? ''}
-                    </Text>
-                    <Text variant="medium">
-                      {formatMessage(messages.healthConversationTo, {
-                        arg: item.organization?.name ?? '',
-                      })}
-                    </Text>
-                  </Box>
-                </Box>
+                {replyToName && (
+                  <Text variant="medium" marginBottom={3}>
+                    {formatMessage(messages.healthConversationTo, {
+                      arg: replyToName,
+                    })}
+                  </Text>
+                )}
 
                 <Box marginBottom={3}>
                   <Input
@@ -374,6 +270,153 @@ const HealthConversationDetail = () => {
                   />
                 </Box>
               </div>
+            ) : (
+              <>
+                {/* Message thread */}
+                {item.messages.map((msg, index) => {
+                  const isPatient = msg.direction === 'PATIENT'
+                  const senderName = isPatient
+                    ? userInfo.profile.name ?? ''
+                    : item.organization?.name ?? msg.senderGroupName ?? ''
+
+                  return (
+                    <Box key={msg.id}>
+                      {index > 0 && (
+                        <Box paddingY={1}>
+                          <Divider />
+                        </Box>
+                      )}
+
+                      {/* Sender info */}
+                      <Box
+                        display="flex"
+                        flexDirection="row"
+                        paddingTop={index > 0 ? 3 : 0}
+                        marginBottom={3}
+                      >
+                        {isPatient ? (
+                          <ConversationAvatar
+                            variant="user"
+                            name={userInfo.profile.name ?? ''}
+                          />
+                        ) : (
+                          <ConversationAvatar
+                            variant="organization"
+                            logoUrl={item.organization?.logoUrl ?? undefined}
+                          />
+                        )}
+                        <Box
+                          display="flex"
+                          flexDirection="column"
+                          marginLeft={2}
+                          justifyContent="center"
+                        >
+                          <Text variant="eyebrow" fontWeight="medium" truncate>
+                            {senderName}
+                          </Text>
+                          <Text variant="medium">
+                            {formatDateWithTime(msg.messageSentAt)}
+                          </Text>
+                        </Box>
+                      </Box>
+
+                      {/* Body */}
+                      <ConversationMessageBody message={msg} />
+
+                      {/* Attachments */}
+                      {msg.attachments.length > 0 && (
+                        <Box
+                          display="flex"
+                          flexWrap="wrap"
+                          columnGap={2}
+                          rowGap={1}
+                          marginBottom={3}
+                        >
+                          {msg.attachments.map((file) => (
+                            <Button
+                              key={file.id}
+                              variant="utility"
+                              icon="document"
+                              iconType="outline"
+                              onClick={() =>
+                                formSubmit(file.downloadServiceURL)
+                              }
+                            >
+                              {file.fileName}
+                            </Button>
+                          ))}
+                        </Box>
+                      )}
+                    </Box>
+                  )
+                })}
+
+                {/* Sent confirmation banner */}
+                {justCreated && !replyOpen && (
+                  <Box marginTop={4}>
+                    <AlertMessage
+                      type="success"
+                      title={formatMessage(
+                        messages.healthConversationSentTitle,
+                      )}
+                      message={formatMessage(
+                        messages.healthConversationSentText,
+                      )}
+                    />
+                  </Box>
+                )}
+
+                {/* Reply form — desktop only; mobile branches above */}
+                {replyOpen && (
+                  <div ref={replyRef}>
+                    <Box paddingY={1}>
+                      <Divider />
+                    </Box>
+
+                    <Box
+                      display="flex"
+                      flexDirection="row"
+                      paddingTop={3}
+                      marginBottom={3}
+                    >
+                      <ConversationAvatar
+                        variant="user"
+                        name={userInfo.profile.name ?? ''}
+                      />
+                      <Box
+                        display="flex"
+                        flexDirection="column"
+                        marginLeft={2}
+                        justifyContent="center"
+                      >
+                        <Text variant="eyebrow" fontWeight="medium" truncate>
+                          {userInfo.profile.name ?? ''}
+                        </Text>
+                        {replyToName && (
+                          <Text variant="medium">
+                            {formatMessage(messages.healthConversationTo, {
+                              arg: replyToName,
+                            })}
+                          </Text>
+                        )}
+                      </Box>
+                    </Box>
+
+                    <Box marginBottom={3}>
+                      <Input
+                        textarea
+                        rows={6}
+                        name="reply-message"
+                        label={formatMessage(m.messages)}
+                        backgroundColor="blue"
+                        value={replyText}
+                        onChange={(e) => setReplyText(e.target.value)}
+                        ref={replyInputRef}
+                      />
+                    </Box>
+                  </div>
+                )}
+              </>
             )}
 
             <MobileActionFooter>
