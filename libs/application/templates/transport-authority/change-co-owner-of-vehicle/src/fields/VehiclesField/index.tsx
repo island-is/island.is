@@ -79,7 +79,6 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
             additionalErrors: true,
             fallbackErrorMessage:
               applicationCheck.validation.fallbackErrorMessage,
-            isNotDebtLessTag: information.labels.pickVehicle.isNotDebtLessTag,
             findPlatePlaceholder:
               information.labels.pickVehicle.findPlatePlaceholder,
             findVehicleButtonText: information.labels.pickVehicle.findButton,
@@ -103,7 +102,6 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
             itemList: currentVehicleList?.vehicles,
             getDetails: createGetVehicleDetailsWrapper(getVehicleDetails),
             shouldValidateErrorMessages: true,
-            shouldValidateDebtStatus: true,
             inputLabelText: information.labels.pickVehicle.vehicle,
             inputPlaceholderText: information.labels.pickVehicle.placeholder,
             alertMessageErrorTitle:
@@ -112,8 +110,6 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
             validationErrorFallbackMessage:
               applicationCheck.validation.fallbackErrorMessage,
             inputErrorMessage: error.requiredValidVehicle,
-            debtStatusErrorMessage:
-              information.labels.pickVehicle.isNotDebtLessTag,
           }}
         />
       ) : (
@@ -128,15 +124,12 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
             itemType: 'VEHICLE',
             itemList: currentVehicleList?.vehicles,
             shouldValidateErrorMessages: true,
-            shouldValidateDebtStatus: true,
             alertMessageErrorTitle:
               information.labels.pickVehicle.hasErrorTitle,
             validationErrorMessages: applicationCheck.validation,
             validationErrorFallbackMessage:
               applicationCheck.validation.fallbackErrorMessage,
             inputErrorMessage: error.requiredValidVehicle,
-            debtStatusErrorMessage:
-              information.labels.pickVehicle.isNotDebtLessTag,
           }}
         />
       )}
