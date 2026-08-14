@@ -50,8 +50,8 @@ export const reasonNotificationHistorySubSection = buildSubSection({
         }),
         buildSelectField({
           id: 'reasonNotificationHistory.biggestConcern',
-          title: reasonForNotificationMessages.description.subSectionTitle,
-          placeholder: reasonForNotificationMessages.shared.selectPlaceholder,
+          title: reasonForNotificationMessages.notificationHistory.explanation,
+          placeholder: reasonForNotificationMessages.notificationHistory.explanationPlaceholder,
           options: ({ externalData }) => {
             const { guardianNotAwareReasons } =
               getApplicationExternalData(externalData)

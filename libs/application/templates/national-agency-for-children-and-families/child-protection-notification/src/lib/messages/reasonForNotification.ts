@@ -131,5 +131,15 @@ export const reasonForNotificationMessages = {
       description:
         'Are the expectant parents informed that a report will be sent to child protection?',
     },
+    explanation: {
+      id: 'cpn.application:reasonForNotification.notificationHistory.explanation',
+      defaultMessage: 'Skýring',
+      description: 'Explanation label',
+    },
+    explanationPlaceholder: {
+      id: 'cpn.application:reasonForNotification.notificationHistory.explanationPlaceholder',
+      defaultMessage: 'Veldu skýringu',
+      description: 'Select explanation placeholder',
+    },
   }),
 }
