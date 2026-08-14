@@ -6,25 +6,25 @@ import {
 import { activationAllowanceMessages as am } from '../../../lib/messages/'
 import {
   useGetApplicantAvailableActionsQuery,
-  useGetUnemploymentApplicationOverviewQuery,
+  useGetActivationAllowanceApplicationOverviewQuery,
 } from './Status.generated'
 
 import { Box, SkeletonLoader, Tabs } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { OverviewTable } from './OverviewTable'
+import { OverviewTable } from '../../../components/shared/OverviewTable'
 import { ApplicantOverview } from './ApplicantOverview'
 import { Problem } from '@island.is/react-spa/shared'
 import { ActionButtons } from '../../unemployment-benefits/components/ActionButtons'
-import { VmstApplicationStatus } from '@island.is/api/schema'
 
-// Atvinnuleysi – Staðan þín
+// Virknistyrkur – Staðan þín
 const Status = () => {
-  useNamespaces('sp.social-benefits-unemployment')
+  useNamespaces('sp.social-benefits-activation-allowance')
   const { formatMessage, locale } = useLocale()
   const { isMobile } = useIsMobile()
-  const { data, loading, error } = useGetUnemploymentApplicationOverviewQuery({
-    variables: { locale },
-  })
+  const { data, loading, error } =
+    useGetActivationAllowanceApplicationOverviewQuery({
+      variables: { locale },
+    })
   const { data: actionsData, loading: actionsLoading } =
     useGetApplicantAvailableActionsQuery()
 
@@ -107,9 +107,7 @@ const Status = () => {
               <OverviewTable
                 overviewItems={overview?.overviewItems ?? []}
                 applicationStatusName={overview?.applicationStatusName}
-                applicationStatus={
-                  overview?.applicationStatusId as VmstApplicationStatus
-                } // TODO REMOVE THIS TYPE ASSERTION AND ASK VMST FOR STATUS INSTEAD OF ID
+                applicationStatus={overview?.applicationStatus}
               />
             ),
           },

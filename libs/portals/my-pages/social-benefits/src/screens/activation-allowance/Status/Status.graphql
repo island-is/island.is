@@ -1,8 +1,9 @@
-query getUnemploymentApplicationOverview($locale: String) {
+query getActivationAllowanceApplicationOverview($locale: String) {
   vmstApplicationsActivationGrantApplicationOverview(locale: $locale) {
     activationGrantApplicationId
     applicationStatusId
     applicationStatusName
+    applicationStatus
     overviewItems {
       key
       label

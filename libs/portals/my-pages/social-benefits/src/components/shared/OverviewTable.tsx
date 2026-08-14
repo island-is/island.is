@@ -1,61 +1,22 @@
 import { Box, Divider, Stack, Tag } from '@island.is/island-ui/core'
 import { UserInfoLine } from '@island.is/portals/my-pages/core'
 import { useLocale } from '@island.is/localization'
-import { Locale } from '@island.is/shared/types'
-import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unemployment'
 import { VmstApplicationStatus } from '@island.is/api/schema'
 import { VmstApplicationOverviewItem } from '@island.is/portals/my-pages/graphql'
-import { resolveStatusTagVariant } from '../../../lib/statusTagVariant'
+import { unemploymentBenefitsMessages as um } from '../../lib/messages/unemployment'
+import { resolveStatusTagVariant } from '../../lib/statusTagVariant'
+
+export type RowTagRenderer = () => React.ReactNode
 
 interface OverviewTableProps {
   overviewItems: VmstApplicationOverviewItem[]
   applicationStatusName?: string | null
   applicationStatus?: VmstApplicationStatus | null
   dataRequested?: boolean | null
-}
-
-const getJobSearchConfirmationDateRange = (locale: Locale): string => {
-  const now = new Date()
-  const year = now.getFullYear()
-  const month = now.getDate() > 25 ? now.getMonth() + 1 : now.getMonth()
-  const start = new Date(year, month, 20)
-  const end = new Date(year, month, 25)
-
-  const dateLocale = locale === 'is' ? 'is-IS' : 'en-GB'
-  const fmt = (d: Date) =>
-    `${d.getDate()}.${d.toLocaleString(dateLocale, { month: 'short' })}`
-
-  return `${fmt(start)}-${fmt(end)}`
-}
-
-const getRowTag = (
-  key: string | null | undefined,
-  applicationStatusName?: string | null,
-  applicationStatus?: VmstApplicationStatus | null,
-  dateRangeLabel?: string,
-): (() => React.ReactNode) | undefined => {
-  switch (key) {
-    case 'application-status': {
-      if (!applicationStatusName) return undefined
-      return () => (
-        <Tag
-          variant={resolveStatusTagVariant(applicationStatus)}
-          outlined
-          disabled
-        >
-          {applicationStatusName}
-        </Tag>
-      )
-    }
-    case 'last-job-search-confirmation-date':
-      return () => (
-        <Tag variant="blue" outlined disabled>
-          {dateRangeLabel}
-        </Tag>
-      )
-    default:
-      return undefined
-  }
+  /** Resolver for row tags beyond the built-in `application-status` row. */
+  getExtraRowTag?: (
+    key: string | null | undefined,
+  ) => RowTagRenderer | undefined
 }
 
 export const OverviewTable = ({
@@ -63,21 +24,32 @@ export const OverviewTable = ({
   applicationStatusName,
   applicationStatus,
   dataRequested,
+  getExtraRowTag,
 }: OverviewTableProps) => {
-  const { formatMessage, lang } = useLocale()
-  const dateRangeLabel = formatMessage(um.jobSearchConfirmationNextDate, {
-    dateRange: getJobSearchConfirmationDateRange(lang),
-  }) as string
+  const { formatMessage } = useLocale()
+
+  const getRowTag = (
+    key: string | null | undefined,
+  ): RowTagRenderer | undefined => {
+    if (key === 'application-status' && applicationStatusName) {
+      return () => (
+        <Tag
+          variant={resolveStatusTagVariant(applicationStatus)}
+          outlined
+          disabled
+        >
+          {applicationStatusName.replace('(VS)', '').trim()}
+        </Tag>
+      )
+    }
+    return getExtraRowTag?.(key)
+  }
+
   return (
     <Box paddingTop={4}>
       <Stack space={0}>
         {overviewItems.map((item, index) => {
-          const tag = getRowTag(
-            item.key,
-            applicationStatusName,
-            applicationStatus,
-            dateRangeLabel,
-          )
+          const tag = getRowTag(item.key)
           return (
             <Box key={item.key ?? index}>
               <UserInfoLine

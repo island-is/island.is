@@ -23,7 +23,7 @@ const getStatusTag = (
   statusName?: string | null,
   status?: VmstApplicationStatus | null,
 ) => ({
-  label: statusName || '',
+  label: statusName?.replace('(VS)', '').trim() || '',
   variant: resolveStatusTagVariant(status),
 })
 

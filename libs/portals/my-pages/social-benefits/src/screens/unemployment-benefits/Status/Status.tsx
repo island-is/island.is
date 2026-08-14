@@ -4,10 +4,7 @@ import {
   useIsMobile,
 } from '@island.is/portals/my-pages/core'
 import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unemployment'
-import {
-  useGetApplicantAvailableActionsQuery,
-  useGetUnemploymentApplicationOverviewQuery,
-} from './Status.generated'
+import { useGetUnemploymentApplicationOverviewQuery } from './Status.generated'
 
 import {
   ActionCard,
@@ -15,17 +12,23 @@ import {
   Box,
   SkeletonLoader,
   Tabs,
+  Tag,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { OverviewTable } from './OverviewTable'
+import {
+  OverviewTable,
+  RowTagRenderer,
+} from '../../../components/shared/OverviewTable'
 import { ApplicantOverview } from './ApplicantOverview'
 import { Problem } from '@island.is/react-spa/shared'
 import { ActionButtons } from '../components/ActionButtons'
+import { useGetApplicantAvailableActionsQuery } from '../MyData/MyData.generated'
+import { getJobSearchConfirmationDateRange } from './jobSearchConfirmation'
 
 // Atvinnuleysi – Staðan þín
 const Status = () => {
   useNamespaces('sp.social-benefits-unemployment')
-  const { formatMessage, locale } = useLocale()
+  const { formatMessage, locale, lang } = useLocale()
   const { isMobile } = useIsMobile()
   const { data, loading, error } = useGetUnemploymentApplicationOverviewQuery({
     variables: { locale },
@@ -37,6 +40,21 @@ const Status = () => {
   const availableActions = actionsData?.vmstApplicantAvailableActions
   const jobSearchConfirmationStatus = overview?.jobSearchConfirmationStatus
   const hasData = !!overview?.unemploymentApplicationId
+
+  const dateRangeLabel = formatMessage(um.jobSearchConfirmationNextDate, {
+    dateRange: getJobSearchConfirmationDateRange(lang),
+  }) as string
+
+  const getExtraRowTag = (
+    key: string | null | undefined,
+  ): RowTagRenderer | undefined =>
+    key === 'last-job-search-confirmation-date'
+      ? () => (
+          <Tag variant="blue" outlined disabled>
+            {dateRangeLabel}
+          </Tag>
+        )
+      : undefined
 
   if (!loading && error) {
     return (
@@ -146,6 +164,7 @@ const Status = () => {
                 applicationStatusName={overview?.applicationStatusName}
                 applicationStatus={overview?.applicationStatus}
                 dataRequested={overview?.dataRequested}
+                getExtraRowTag={getExtraRowTag}
               />
             ),
           },
