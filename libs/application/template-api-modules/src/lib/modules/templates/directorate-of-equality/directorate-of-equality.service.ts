@@ -558,7 +558,6 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
       return await this.directorateOfEqualityService.submitEqualityReport(
         auth,
         {
-          identifier: application.id,
           providerId: application.id,
           companyAdminName: answers.chiefExecutive?.name ?? '',
           companyAdminEmail: answers.chiefExecutive?.email ?? '',
@@ -614,11 +613,12 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
 
   async getReportComments({ auth, application }: TemplateApiModuleActionProps) {
     try {
-      const report = await this.directorateOfEqualityService.getReport(
-        auth,
-        application.id,
-      )
-      return report.externalComments
+      const comments =
+        await this.directorateOfEqualityService.getReportComments(
+          auth,
+          application.id,
+        )
+      return comments
     } catch (error) {
       this.logger.error('Failed to get report comments, falling back', {
         applicationId: application.id,

@@ -195,10 +195,19 @@ const template: ApplicationTemplate<
           // report — the report itself was already submitted via DRAFT's
           // onExit.
           onExit: EditOutliersApi,
+          // So the comment thread's non-empty check has fresh externalData —
+          // see the identical comment on States.DRAFT.
+          onEntry: GetReportCommentsApi,
           actionCard: {
             tag: {
               label: messages.postponed.tagLabel,
               variant: 'blueberry',
+            },
+            pendingAction: {
+              title: messages.postponed.pendingActionTitle,
+              content: messages.postponed.pendingActionContent,
+              button: messages.postponed.pendingActionButton,
+              displayStatus: 'info',
             },
             historyLogs: [
               {
@@ -220,13 +229,18 @@ const template: ApplicationTemplate<
               read: 'all',
               write: {
                 answers: ['salaryAnalysis', 'comment'],
-                externalData: ['salaryAnalysisResult'],
+                externalData: [
+                  'salaryAnalysisResult',
+                  'getReportComments',
+                  'submitReportComment',
+                ],
               },
               api: [
                 SalaryAnalysisApi,
                 GetReportCommentsApi,
                 SubmitReportCommentApi,
               ],
+              delete: true,
             },
           ],
         },
@@ -273,7 +287,10 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.inReviewForm),
                 ),
               read: 'all',
-              write: { answers: ['comment'] },
+              write: {
+                answers: ['comment'],
+                externalData: ['getReportComments', 'submitReportComment'],
+              },
               api: [GetReportCommentsApi, SubmitReportCommentApi],
               delete: true,
             },
@@ -286,8 +303,12 @@ const template: ApplicationTemplate<
           [DefaultEvents.REJECT]: {
             target: States.DENIED,
           },
+          // Targets POSTPONED (not DRAFT) so a case-worker-requested revision
+          // reuses the same restricted comments/outlier-plan-editing flow —
+          // there's no path back to the original company/employee/criteria
+          // data-entry screens from here, by design.
           [DefaultEvents.EDIT]: {
-            target: States.DRAFT,
+            target: States.POSTPONED,
           },
         },
       },
@@ -314,6 +335,7 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.approvedForm),
                 ),
               read: 'all',
+              write: { externalData: ['getReportComments'] },
               api: [GetReportCommentsApi],
               delete: true,
             },
@@ -343,6 +365,7 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.deniedForm),
                 ),
               read: 'all',
+              write: { externalData: ['getReportComments'] },
               api: [GetReportCommentsApi],
               delete: true,
             },

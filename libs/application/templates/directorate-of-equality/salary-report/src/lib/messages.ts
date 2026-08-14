@@ -1197,7 +1197,7 @@ export const messages = {
   postponed: defineMessages({
     tagLabel: {
       id: 'doe.sr.application:postponed.tagLabel',
-      defaultMessage: 'Úrbótaáætlun frestað',
+      defaultMessage: 'Úrbótaáætlun í vinnslu',
     },
     introSectionTitle: {
       id: 'doe.sr.application:postponed.introSectionTitle',
@@ -1240,6 +1240,19 @@ export const messages = {
     submitButton: {
       id: 'doe.sr.application:postponed.submitButton',
       defaultMessage: 'Senda inn úrbótaáætlun',
+    },
+    pendingActionTitle: {
+      id: 'doe.sr.application:postponed.pendingActionTitle',
+      defaultMessage: 'Beðið er eftir úrbótaáætlun',
+    },
+    pendingActionContent: {
+      id: 'doe.sr.application:postponed.pendingActionContent',
+      defaultMessage:
+        'Farðu yfir frávikin og skilaðu úrbótaáætlun til Jafnréttisstofu.',
+    },
+    pendingActionButton: {
+      id: 'doe.sr.application:postponed.pendingActionButton',
+      defaultMessage: 'Halda áfram',
     },
   }),
 
