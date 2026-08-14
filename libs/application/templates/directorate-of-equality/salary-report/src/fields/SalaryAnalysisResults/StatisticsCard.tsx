@@ -1,6 +1,6 @@
 import { Box, Text } from '@island.is/island-ui/core'
 
-type StatisticCardProps = {
+export type StatisticCardProps = {
   title: string
   content: string
   color?: 'blue' | 'purple'

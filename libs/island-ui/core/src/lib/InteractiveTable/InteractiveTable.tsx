@@ -20,7 +20,7 @@ import cn from 'classnames'
 import { helperStyles } from '@island.is/island-ui/theme'
 
 import { Box } from '../Box/Box'
-import { ResponsiveSpace } from '../Box/useBoxStyles'
+import type { ResponsiveSpace } from '../Box/useBoxStyles'
 import { Button } from '../Button/Button'
 import { FocusableBox } from '../FocusableBox/FocusableBox'
 import { Hidden } from '../Hidden/Hidden'
