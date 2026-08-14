@@ -6,29 +6,28 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
-  Input,
   Text,
   toast,
 } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   formSubmit,
   formatDateWithTime,
   m,
+  useIsPhoneWidth,
 } from '@island.is/portals/my-pages/core'
 import { MessageActions } from './components/MessageActions'
 import ConversationAvatar from './components/ConversationAvatar'
 import ConversationBackButton from './components/ConversationBackButton'
 import ConversationCancelSubmit from './components/ConversationCancelSubmit'
 import ConversationMessageBody from './components/ConversationMessageBody'
+import ConversationReplyForm from './components/ConversationReplyForm'
 import MobileActionFooter from './components/MobileActionFooter'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import { useWindowSize } from 'react-use'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import * as styles from './HealthConversations.css'
@@ -55,8 +54,7 @@ const HealthConversationDetail = () => {
   const location = useLocation()
   const justCreated =
     (location.state as { justCreated?: boolean } | null)?.justCreated ?? false
-  const { width } = useWindowSize()
-  const isMobileWidth = width < theme.breakpoints.sm
+  const { isPhoneWidth } = useIsPhoneWidth()
 
   const [replyOpen, setReplyOpen] = useState(false)
   const [replyText, setReplyText] = useState('')
@@ -95,10 +93,12 @@ const HealthConversationDetail = () => {
     refetchQueries: ['GetHealthConversationDetail'],
     onError: onMutationError,
   })
-  const [replyToMessage, { loading: replySending }] =
-    useReplyToHealthConversationMutation({
-      refetchQueries: ['GetHealthConversationDetail'],
-    })
+  const [
+    replyToMessage,
+    { loading: replySending },
+  ] = useReplyToHealthConversationMutation({
+    refetchQueries: ['GetHealthConversationDetail'],
+  })
 
   const item = data?.healthDirectorateHealthConversation
 
@@ -187,7 +187,7 @@ const HealthConversationDetail = () => {
     /* On mobile, replying takes over the screen, so back should return to the
     the thread first. On desktop the reply form is just appended below
     the (still visible) thread, so back always leaves the conversation.  */
-    if (isMobileWidth && replyOpen) {
+    if (isPhoneWidth && replyOpen) {
       setReplyOpen(false)
     } else {
       navigate(HealthPaths.HealthConversations)
@@ -245,31 +245,16 @@ const HealthConversationDetail = () => {
               {item.title}
             </Text>
 
-            {replyOpen && isMobileWidth ? (
+            {replyOpen && isPhoneWidth ? (
               /* Mobile takes over the screen while replying: the thread is
               hidden and only the recipient + reply form are shown. */
-              <div ref={replyRef}>
-                {replyToName && (
-                  <Text variant="medium" marginBottom={3}>
-                    {formatMessage(messages.healthConversationTo, {
-                      arg: replyToName,
-                    })}
-                  </Text>
-                )}
-
-                <Box marginBottom={3}>
-                  <Input
-                    textarea
-                    rows={6}
-                    name="reply-message"
-                    label={formatMessage(m.messages)}
-                    backgroundColor="blue"
-                    value={replyText}
-                    onChange={(e) => setReplyText(e.target.value)}
-                    ref={replyInputRef}
-                  />
-                </Box>
-              </div>
+              <ConversationReplyForm
+                ref={replyRef}
+                replyToName={replyToName}
+                value={replyText}
+                onChange={setReplyText}
+                inputRef={replyInputRef}
+              />
             ) : (
               <>
                 {/* Message thread */}
@@ -368,53 +353,15 @@ const HealthConversationDetail = () => {
 
                 {/* Reply form — desktop only; mobile branches above */}
                 {replyOpen && (
-                  <div ref={replyRef}>
-                    <Box paddingY={1}>
-                      <Divider />
-                    </Box>
-
-                    <Box
-                      display="flex"
-                      flexDirection="row"
-                      paddingTop={3}
-                      marginBottom={3}
-                    >
-                      <ConversationAvatar
-                        variant="user"
-                        name={userInfo.profile.name ?? ''}
-                      />
-                      <Box
-                        display="flex"
-                        flexDirection="column"
-                        marginLeft={2}
-                        justifyContent="center"
-                      >
-                        <Text variant="eyebrow" fontWeight="medium" truncate>
-                          {userInfo.profile.name ?? ''}
-                        </Text>
-                        {replyToName && (
-                          <Text variant="medium">
-                            {formatMessage(messages.healthConversationTo, {
-                              arg: replyToName,
-                            })}
-                          </Text>
-                        )}
-                      </Box>
-                    </Box>
-
-                    <Box marginBottom={3}>
-                      <Input
-                        textarea
-                        rows={6}
-                        name="reply-message"
-                        label={formatMessage(m.messages)}
-                        backgroundColor="blue"
-                        value={replyText}
-                        onChange={(e) => setReplyText(e.target.value)}
-                        ref={replyInputRef}
-                      />
-                    </Box>
-                  </div>
+                  <ConversationReplyForm
+                    ref={replyRef}
+                    withSenderHeader
+                    senderName={userInfo.profile.name ?? ''}
+                    replyToName={replyToName}
+                    value={replyText}
+                    onChange={setReplyText}
+                    inputRef={replyInputRef}
+                  />
                 )}
               </>
             )}
@@ -428,7 +375,7 @@ const HealthConversationDetail = () => {
                   onSubmit={handleReply}
                   submitDisabled={!replyText.trim()}
                   loading={replySending}
-                  fluid={isMobileWidth}
+                  fluid={isPhoneWidth}
                 />
               ) : item.patientCanReply === false ? (
                 <AlertMessage
@@ -446,7 +393,7 @@ const HealthConversationDetail = () => {
                   preTextIcon="undo"
                   preTextIconType="outline"
                   onClick={() => setReplyOpen(true)}
-                  fluid={isMobileWidth}
+                  fluid={isPhoneWidth}
                 >
                   {formatMessage(m.replyDocument)}
                 </Button>

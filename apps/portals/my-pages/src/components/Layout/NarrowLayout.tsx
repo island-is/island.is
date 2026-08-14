@@ -1,5 +1,4 @@
 import { Box, Hidden, Icon, NavigationItem } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { PortalNavigationItem } from '@island.is/portals/core'
 import { useHeaderVisibility } from '../../context/HeaderVisibilityContext'
@@ -9,23 +8,26 @@ import {
   ModuleAlertBannerSection,
   Navigation,
   ServicePortalNavigationItem,
+  useIsMobile,
+  useIsPhoneWidth,
 } from '@island.is/portals/my-pages/core'
-import { HealthPaths } from '@island.is/portals/my-pages/health'
 import { ReactNode } from 'react'
 import { Link as ReactLink, matchPath } from 'react-router-dom'
-import { useWindowSize } from 'react-use'
 import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBreadcrumbs'
 import Sticky from '../Sticky/Sticky'
 import * as styles from './Layout.css'
 import SidebarLayout from './SidebarLayout'
 
-// Health Conversations takes over the screen on mobile (hidden sub-nav and
-// breadcrumbs, fixed action footer) — mirrors the `isDocuments` pathname
-// special-case in FullWidthLayout.tsx, scoped to just these two routes.
-const MOBILE_TAKEOVER_PATHS = [
-  HealthPaths.HealthConversationsDetail,
-  HealthPaths.HealthConversationsNew,
-]
+// Modules opt in to the mobile takeover (hidden breadcrumbs, sub-nav and
+// sidebar footer at phone widths) per route via the `mobileTakeover` flag
+// on their navigation items — see PortalNavigationItem.
+const isMobileTakeoverRoute = (
+  pathname: string,
+  item?: PortalNavigationItem,
+): boolean =>
+  !!item &&
+  ((!!item.mobileTakeover && !!item.path && !!matchPath(item.path, pathname)) ||
+    !!item.children?.some((child) => isMobileTakeoverRoute(pathname, child)))
 
 interface NarrowLayoutProps {
   activeParent?: PortalNavigationItem
@@ -46,15 +48,14 @@ export const NarrowLayout = ({
 }: NarrowLayoutProps) => {
   const { formatMessage } = useLocale()
 
-  const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
+  const { isMobile } = useIsMobile()
+  const { isPhoneWidth } = useIsPhoneWidth()
   const { headerVisible, headerHeight } = useHeaderVisibility()
 
   // The takeover is only worth it at true phone widths — narrower than the
   // `md` cutoff used for the sidebar/mobile-nav split elsewhere in this file.
   const isMobileTakeover =
-    width < theme.breakpoints.sm &&
-    !!MOBILE_TAKEOVER_PATHS.find((route) => matchPath(route, pathname))
+    isPhoneWidth && isMobileTakeoverRoute(pathname, activeParent)
 
   // headerHeight is the measured height of the fixed header, so the sticky
   // menu clears whatever it contains (e.g. the delegation banner)

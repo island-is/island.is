@@ -9,13 +9,13 @@ import {
   Text,
   toast,
 } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   InlineLink,
   IntroWrapper,
   m,
+  useIsPhoneWidth,
 } from '@island.is/portals/my-pages/core'
 import ConversationAvailabilityAlert from './components/ConversationAvailabilityAlert'
 import ConversationBackButton from './components/ConversationBackButton'
@@ -26,7 +26,6 @@ import MobileActionFooter from './components/MobileActionFooter'
 import { Problem } from '@island.is/react-spa/shared'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useWindowSize } from 'react-use'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { LocaleEnum } from '@island.is/portals/my-pages/graphql'
@@ -41,23 +40,27 @@ const NewHealthConversation = () => {
   useNamespaces('sp.health')
   const { formatMessage, lang } = useLocale()
   const navigate = useNavigate()
-  const { width } = useWindowSize()
-  const isMobileWidth = width < theme.breakpoints.sm
+  const { isPhoneWidth } = useIsPhoneWidth()
 
   const [selectedTypeCode, setSelectedTypeCode] = useState<string | null>(null)
   const [messageText, setMessageText] = useState('')
   const [termsAccepted, setTermsAccepted] = useState(false)
   const [termsModalOpen, setTermsModalOpen] = useState(false)
 
-  const { data, loading, error } =
-    useGetHealthConversationRecipientsForNewQuery({
-      variables: { locale: lang === 'en' ? LocaleEnum.En : LocaleEnum.Is },
-    })
+  const {
+    data,
+    loading,
+    error,
+  } = useGetHealthConversationRecipientsForNewQuery({
+    variables: { locale: lang === 'en' ? LocaleEnum.En : LocaleEnum.Is },
+  })
 
-  const [createMessage, { loading: sending }] =
-    useCreateHealthConversationMutation({
-      refetchQueries: ['GetHealthConversations'],
-    })
+  const [
+    createMessage,
+    { loading: sending },
+  ] = useCreateHealthConversationMutation({
+    refetchQueries: ['GetHealthConversations'],
+  })
 
   const recipients = data?.healthDirectorateHealthConversationRecipients
   const recipient =
@@ -241,7 +244,7 @@ const NewHealthConversation = () => {
                   onSubmit={handleSubmit}
                   submitDisabled={!canSubmit}
                   loading={sending}
-                  fluid={isMobileWidth}
+                  fluid={isPhoneWidth}
                 />
               </MobileActionFooter>
             </Box>
