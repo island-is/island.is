@@ -259,39 +259,46 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
       updatedCourtSessionString: Pick<CourtSessionString, 'value'>,
       { persist = false } = {},
     ) => {
-      const targetCourtSessionString = courtSession.courtSessionStrings?.find(
-        (courtSessionString) =>
-          courtSessionString.courtSessionId === courtSessionId &&
-          courtSessionString.mergedCaseId === mergedCaseId &&
-          courtSessionString.stringType === CourtSessionStringType.ENTRIES,
-      )
-
-      const updatedCourtSessionsStrings = targetCourtSessionString
-        ? courtSession.courtSessionStrings?.map((courtSessionString) =>
-            courtSessionString.id === targetCourtSessionString?.id
-              ? {
-                  ...courtSessionString,
-                  value: updatedCourtSessionString.value,
-                }
-              : courtSessionString,
-          )
-        : [
-            ...(courtSession.courtSessionStrings ?? []),
-            {
-              caseId: workingCase.id,
-              courtSessionId,
-              mergedCaseId,
-              stringType: CourtSessionStringType.ENTRIES,
-              value: updatedCourtSessionString.value,
-            } as CourtSessionString,
-          ]
+      // The strings are read off `prev` rather than the render this call was
+      // created in. A debounced save fires up to `delay` after the keystroke
+      // that scheduled it, so a closed-over array can be stale by then - and
+      // rebuilding from it would revert an edit made to a sibling merged case
+      // in the meantime.
       setWorkingCase((prev) => ({
         ...prev,
-        courtSessions: prev.courtSessions?.map((session) =>
-          session.id === courtSessionId
-            ? { ...session, courtSessionStrings: updatedCourtSessionsStrings }
-            : session,
-        ),
+        courtSessions: prev.courtSessions?.map((session) => {
+          if (session.id !== courtSessionId) {
+            return session
+          }
+
+          const targetCourtSessionString = session.courtSessionStrings?.find(
+            (courtSessionString) =>
+              courtSessionString.mergedCaseId === mergedCaseId &&
+              courtSessionString.stringType === CourtSessionStringType.ENTRIES,
+          )
+
+          const courtSessionStrings = targetCourtSessionString
+            ? session.courtSessionStrings?.map((courtSessionString) =>
+                courtSessionString.id === targetCourtSessionString.id
+                  ? {
+                      ...courtSessionString,
+                      value: updatedCourtSessionString.value,
+                    }
+                  : courtSessionString,
+              )
+            : [
+                ...(session.courtSessionStrings ?? []),
+                {
+                  caseId: workingCase.id,
+                  courtSessionId,
+                  mergedCaseId,
+                  stringType: CourtSessionStringType.ENTRIES,
+                  value: updatedCourtSessionString.value,
+                } as CourtSessionString,
+              ]
+
+          return { ...session, courtSessionStrings }
+        }),
       }))
 
       if (persist) {
@@ -304,12 +311,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
         })
       }
     },
-    [
-      courtSession.courtSessionStrings,
-      setWorkingCase,
-      updateCourtSessionString,
-      workingCase.id,
-    ],
+    [setWorkingCase, updateCourtSessionString, workingCase.id],
   )
 
   const getInitialAttendees = useCallback(() => {
@@ -1329,7 +1331,11 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     )
 
                   return (
-                    <Box key={`merged-case-${courtCaseNumber}`}>
+                    // Keyed by merged case id, not court case number: the
+                    // number falls back to an empty string, so two unnumbered
+                    // merged cases would collide and React would hand one
+                    // row's debounced entries to the other.
+                    <Box key={`merged-case-${mergeDocumentsPerCase.caseId}`}>
                       <CourtSessionMergedCaseEntries
                         courtSessionId={courtSession.id}
                         courtCaseNumber={courtCaseNumber ?? ''}
