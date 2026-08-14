@@ -12,8 +12,6 @@ import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unempl
 import { Problem } from '@island.is/react-spa/shared'
 import type { ReactElement } from 'react'
 
-import type { JSX } from 'react'
-
 export const ApplicantOverview = () => {
   const { formatMessage, locale } = useLocale()
   const { data, loading, error } = useGetApplicantOverviewQuery({
@@ -42,22 +40,6 @@ export const ApplicantOverview = () => {
       value: overview?.bankAccount ?? undefined,
     },
     {
-      label: formatMessage(um.applicantUnion),
-      value: overview?.union ?? undefined,
-    },
-    {
-      label: formatMessage(um.applicantPensionFund),
-      value: overview?.pensionFund ?? undefined,
-    },
-    {
-      label: formatMessage(um.applicantUsedPersonalTaxCredit),
-      value: overview?.usedPersonalTaxCredit?.toString() ?? undefined,
-    },
-    {
-      label: formatMessage(um.applicantNumberOfChildren),
-      value: overview?.numberOfChildren?.toString() ?? undefined,
-    },
-    {
       label: formatMessage(um.applicantEmploymentHistory),
       value: overview?.employmentHistory?.join(', ') || undefined,
     },
@@ -83,16 +65,8 @@ export const ApplicantOverview = () => {
         ) : undefined,
     },
     {
-      label: formatMessage(um.applicantServiceArea),
-      value: overview?.serviceArea ?? undefined,
-    },
-    {
       label: formatMessage(um.applicantCurrentAddressDifferent),
       value: formatBoolean(overview?.currentAddressDifferent),
-    },
-    {
-      label: formatMessage(um.applicantSavedToEures),
-      value: formatBoolean(overview?.savedToEures),
     },
   ]
 
