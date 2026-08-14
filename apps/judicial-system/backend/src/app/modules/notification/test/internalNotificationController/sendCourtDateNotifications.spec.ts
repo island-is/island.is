@@ -4,7 +4,10 @@ import { ConfigType } from '@nestjs/config'
 
 import { EmailService } from '@island.is/email-service'
 
-import { DEFENDER_REQUEST_CASE_ROUTE, PROSECUTION_RESTRICTION_CASE_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
+import {
+  DEFENDER_REQUEST_CASE_ROUTE,
+  PROSECUTION_RESTRICTION_CASE_OVERVIEW_ROUTE,
+} from '@island.is/judicial-system/consts'
 import {
   CaseType,
   RequestCaseNotificationType,
