@@ -3,7 +3,6 @@ import {
   buildRadioField,
   buildSubSection,
   getValueViaPath,
-  YES,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { DrivingLicense } from '../../lib/types'
@@ -40,32 +39,15 @@ export const sectionApplicationFor = buildSubSection({
             const age = getApplicantAge(app.externalData, fakeData)
             const heldCategories = getHeldCategories(app.externalData, fakeData)
 
+            // Fake-vs-real is resolved by the CurrentLicense data provider, so
+            // this screen just reads the resolved license and stays agnostic to
+            // where the data came from.
             const currentLicenseData = getValueViaPath<DrivingLicense>(
               app.externalData,
               'currentLicense.data',
             )
-            let currentLicense = currentLicenseData?.currentLicense ?? null
-            let categories = currentLicenseData?.categories ?? null
-
-            if (fakeData?.useFakeData === YES) {
-              // 'none' must stay falsy: it is a string, so it would otherwise
-              // read as "has a license" and disable B-temp.
-              currentLicense =
-                fakeData.currentLicense && fakeData.currentLicense !== 'none'
-                  ? fakeData.currentLicense
-                  : null
-              categories =
-                fakeData.currentLicense === 'temp'
-                  ? [{ nr: 'B', validToCode: 8 }]
-                  : fakeData.currentLicense === 'B'
-                  ? [{ nr: 'B', validToCode: 9 }]
-                  : fakeData.currentLicense === 'BE'
-                  ? [
-                      { nr: 'B', validToCode: 9 },
-                      { nr: 'BE', validToCode: 9 },
-                    ]
-                  : []
-            }
+            const currentLicense = currentLicenseData?.currentLicense ?? null
+            const categories = currentLicenseData?.categories ?? null
 
             const options = [
               {

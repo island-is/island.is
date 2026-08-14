@@ -6,6 +6,7 @@ import { m } from '../../lib/messages'
 
 export const completedForm = buildForm({
   id: 'completedForm',
+  title: m.overviewSectionTitle,
   logo: DistrictCommissionersLogo,
   mode: FormModes.COMPLETED,
   children: [
