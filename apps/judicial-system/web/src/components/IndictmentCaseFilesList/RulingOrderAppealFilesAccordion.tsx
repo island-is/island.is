@@ -89,12 +89,14 @@ interface Props {
   appealCase: AppealCase
   rulingFile: CaseFile
   onOpenFile: (fileId: string) => void
+  hideTrailingSeparator?: boolean
 }
 
 const RulingOrderAppealFilesAccordion: FC<Props> = ({
   appealCase,
   rulingFile,
   onOpenFile,
+  hideTrailingSeparator = false,
 }) => {
   const { workingCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
@@ -136,7 +138,11 @@ const RulingOrderAppealFilesAccordion: FC<Props> = ({
       labelVariant="h3"
       labelUse="h3"
     >
-      <Box className={styles.filesList}>
+      <Box
+        className={
+          hideTrailingSeparator ? styles.filesListHideTrailing : undefined
+        }
+      >
         {files.map((file) => {
           const isDisabled = !file.isKeyAccessible
           const canDelete = canDeleteFile(file)
