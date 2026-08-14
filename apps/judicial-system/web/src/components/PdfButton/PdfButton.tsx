@@ -126,9 +126,7 @@ const PdfButton: FC<PropsWithChildren<Props>> = ({
             {title}
           </Text>
         </span>
-        {children && (
-          <Box className={styles.childrenContainer}>{children}</Box>
-        )}
+        {children && <Box className={styles.childrenContainer}>{children}</Box>}
       </Box>
       {subtitle && (
         <Box marginTop={1} display="flex" alignItems="center" columnGap={1}>

@@ -58,9 +58,7 @@ const isProsecutorCategory = (category: CaseFileCategory | undefined | null) =>
 const formatSubmittedBy = (role: string, name?: string | null): string => {
   const initials = getInitials(name)
 
-  return initials
-    ? `${role} (${initials}) lagði fram`
-    : `${role} lagði fram`
+  return initials ? `${role} (${initials}) lagði fram` : `${role} lagði fram`
 }
 
 const getFileSubmittedByText = (file: CaseFile, workingCase: Case): string => {
