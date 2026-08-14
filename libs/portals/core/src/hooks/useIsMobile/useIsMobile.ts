@@ -1,11 +1,9 @@
 import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
 
-export const useIsMobile = (
-  breakpoint: keyof typeof theme.breakpoints = 'md',
-) => {
+export const useIsMobile = () => {
   const { width } = useWindowSize()
-  const isMobile = width != null && width < theme.breakpoints[breakpoint]
+  const isMobile = width != null && width < theme.breakpoints.md
 
   return {
     isMobile,
@@ -17,8 +15,10 @@ export const useIsMobile = (
  * widths, as opposed to the default `md` cutoff of `useIsMobile`.
  */
 export const useIsPhoneWidth = () => {
-  const { isMobile } = useIsMobile('sm')
-  return { isPhoneWidth: isMobile }
+  const { width } = useWindowSize()
+  const isPhoneWidth = width != null && width < theme.breakpoints.sm
+
+  return { isPhoneWidth }
 }
 
 export default useIsMobile
