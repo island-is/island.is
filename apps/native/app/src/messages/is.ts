@@ -883,6 +883,9 @@ export const is = {
   'health.messages.compose.messagePlaceholder': 'Skrifaðu skilaboð hér',
   'health.messages.compose.termsAccept': 'Ég samþykki',
   'health.messages.compose.termsLink': 'skilmála',
+  'health.messages.compose.termsTitle': 'Skilmálar vegna skilaboða',
+  'health.messages.compose.termsBody':
+    '- Skilaboðum er svarað á opnunartíma, oftast innan þriggja virkra daga\n- Skilaboð og svör vistast sjálfkrafa í sjúkraskrá\n- Tegund skilaboða ræður hver svarar erindinu\n- Heilbrigðisstarfsmaður mun hafa aðgang að sjúkraskrá til að svara fyrirspurn',
   'health.messages.compose.send': 'Senda skilaboð',
   'health.messages.compose.sendError':
     'Ekki tókst að senda skilaboð. Vinsamlegast reyndu aftur síðar.',

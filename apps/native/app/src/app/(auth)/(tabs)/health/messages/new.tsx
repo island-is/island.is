@@ -279,9 +279,7 @@ export default function HealthMessageComposeScreen() {
                         weight="600"
                         color={theme.color.blue400}
                         style={{ textDecorationLine: 'underline' }}
-                        // TODO: Open the terms and conditions link once we
-                        // have the URL.
-                        onPress={() => undefined}
+                        onPress={() => router.push('/health/messages/terms')}
                       >
                         {intl.formatMessage({
                           id: 'health.messages.compose.termsLink',
