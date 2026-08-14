@@ -137,8 +137,7 @@ export const renderPieChartComponents = (
   const pieData = (data?.[0]?.statisticsForHeader ?? []).map((entry) => ({
     ...entry,
     name:
-      components.find((c) => c.sourceDataKey === entry.key)?.label ??
-      entry.key,
+      components.find((c) => c.sourceDataKey === entry.key)?.label ?? entry.key,
   }))
   const total = pieData.reduce(
     (total, { value }) => total + (value ? value : 0),
