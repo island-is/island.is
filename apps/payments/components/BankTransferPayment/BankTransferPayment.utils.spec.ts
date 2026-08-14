@@ -32,4 +32,10 @@ describe('validateBankAccountNumber', () => {
       'payments:bankTransfer.accountNumberInvalid',
     )
   })
+
+  it('rejects 12 digits with an extra letter', () => {
+    expect(validateBankAccountNumber('1234-56-789012a', formatMessage)).toBe(
+      'payments:bankTransfer.accountNumberInvalid',
+    )
+  })
 })

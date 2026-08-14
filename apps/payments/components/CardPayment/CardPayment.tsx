@@ -117,7 +117,10 @@ export const CardPayment = ({
           rules={{
             required: formatMessage(cardValidationError.cardNumber),
             validate: (value) => {
-              if (value.replace(/\D/g, '').length < 15) {
+              if (!/^[\d ]+$/.test(value)) {
+                return formatMessage(cardValidationError.invalidCardNumber)
+              }
+              if (value.replace(/ /g, '').length < 15) {
                 return formatMessage(cardValidationError.cardNumberTooShort)
               }
               return true
