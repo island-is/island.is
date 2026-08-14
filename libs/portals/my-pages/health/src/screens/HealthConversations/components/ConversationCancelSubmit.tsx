@@ -7,7 +7,6 @@ interface Props {
   onSubmit: () => void
   submitDisabled: boolean
   loading?: boolean
-  /** Split the two buttons evenly across the full row width (mobile). */
   fluid?: boolean
 }
 
