@@ -31,10 +31,12 @@ export const postponedIntroSection = buildSection({
     // kept here only to also skip the intro for the genuine first-time
     // postpone case once the applicant has actually filled the plan in.
     const hasComments =
-      ((getValueViaPath(
-        externalData,
-        'getReportComments.data',
-      ) as unknown[]) ?? []).length > 0
+      (
+        (getValueViaPath(
+          externalData,
+          'getReportComments.data',
+        ) as unknown[]) ?? []
+      ).length > 0
     const outlierGroups =
       getValueViaPath<OutlierGroupAnswer[]>(
         answers,
