@@ -22,7 +22,13 @@ export const ConversationCancelSubmit = ({
   return (
     <Box display="flex" justifyContent="spaceBetween" columnGap={2}>
       <Box flexGrow={fluid ? 1 : undefined}>
-        <Button variant="ghost" size="medium" onClick={onCancel} fluid={fluid}>
+        <Button
+          variant="ghost"
+          size="medium"
+          onClick={onCancel}
+          disabled={loading}
+          fluid={fluid}
+        >
           {cancelLabel}
         </Button>
       </Box>

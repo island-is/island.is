@@ -60,11 +60,19 @@ const HealthConversationDetail = () => {
   const [replyText, setReplyText] = useState('')
   const replyRef = useRef<HTMLDivElement>(null)
   const replyInputRef = useRef<HTMLTextAreaElement | null>(null)
+  const replyTriggerRef = useRef<HTMLElement | null>(null)
+
+  const openReply = () => {
+    replyTriggerRef.current = document.activeElement as HTMLElement | null
+    setReplyOpen(true)
+  }
 
   useEffect(() => {
     if (replyOpen) {
       replyRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
       replyInputRef.current?.focus()
+    } else {
+      replyTriggerRef.current?.focus()
     }
   }, [replyOpen])
 
@@ -217,9 +225,7 @@ const HealthConversationDetail = () => {
                   bookmarked={item.isStarred}
                   archived={item.isArchived}
                   onReply={
-                    item.patientCanReply !== false
-                      ? () => setReplyOpen(true)
-                      : undefined
+                    item.patientCanReply !== false ? openReply : undefined
                   }
                   onFav={() => {
                     if (item.isStarred) {
@@ -390,7 +396,7 @@ const HealthConversationDetail = () => {
                   size="medium"
                   preTextIcon="undo"
                   preTextIconType="outline"
-                  onClick={() => setReplyOpen(true)}
+                  onClick={openReply}
                   fluid={isPhoneWidth}
                 >
                   {formatMessage(m.replyDocument)}
