@@ -182,12 +182,14 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   // same change server-side. Swapping the ruling onto another file stays open at
   // every appeal state: it means the same ruling is now a different document, and
   // everything moves with it.
-  const rulingRemovalLocked = Boolean(
-    appealCorrectionLock(
-      rulingOrderAppealCase(workingCase, courtSession.rulingFileId),
-    ),
+  // The reason is kept, not just the boolean, so the section can say which of the
+  // two locks applies - the appeal decision cards next to it are behind a feature
+  // flag and cannot be relied on to explain these controls.
+  const rulingRemovalLock = appealCorrectionLock(
+    rulingOrderAppealCase(workingCase, courtSession.rulingFileId),
   )
-  const rulingRemovalDisabled = courtSession.isConfirmed || rulingRemovalLocked
+  const rulingRemovalDisabled =
+    courtSession.isConfirmed || Boolean(rulingRemovalLock)
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
   })
@@ -1534,6 +1536,21 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                   title="Er kveðinn upp dómur eða úrskurður í þinghaldinu?"
                   required
                 />
+                {/* Only shown while the session is open for correction - a
+                confirmed session disables everything anyway, and the reason is
+                then obvious. */}
+                {rulingRemovalLock && !courtSession.isConfirmed && (
+                  <Box marginBottom={2}>
+                    <AlertMessage
+                      type="info"
+                      message={`${
+                        rulingRemovalLock === 'OUT_OF_COURT'
+                          ? 'Úrskurðurinn hefur verið kærður utan þinghalds'
+                          : 'Kæra úrskurðarins er komin til Landsréttar'
+                      } og því er ekki hægt að fella úrskurðinn úr þingbókinni. Áfram er hægt að velja annað skjal fyrir úrskurðinn.`}
+                    />
+                  </Box>
+                )}
                 <BlueBox className={styles.grid}>
                   <RadioButton
                     name="result_verdict"
