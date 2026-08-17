@@ -1,11 +1,5 @@
 import { DefaultEvents } from '@island.is/application/types'
-import {
-  Employee,
-  JobFactor,
-  PersonalFactor,
-  SalaryComponentKey,
-  SubCriterion,
-} from './types'
+import { JobFactor, SalaryComponentKey, SubCriterion } from './types'
 
 export type Events = {
   type:
@@ -36,19 +30,45 @@ export enum ApiActions {
   getActiveEqualityReport = 'getActiveEqualityReport',
   getBlankExcelTemplate = 'getBlankExcelTemplate',
   presignImportUpload = 'presignImportUpload',
-  parseSalaryReportWorkbook = 'parseSalaryReportWorkbook',
+  createSalaryDraft = 'createSalaryDraft',
+  importSalaryDraftWorkbook = 'importSalaryDraftWorkbook',
   submitSalaryReport = 'submitSalaryReport',
   analyzeSalaryReport = 'analyzeSalaryReport',
   editOutliers = 'editOutliers',
   getReportComments = 'getReportComments',
   submitReportComment = 'submitReportComment',
+  getDraftHeader = 'getDraftHeader',
+  getDraftCriteriaTree = 'getDraftCriteriaTree',
+  listDraftRolesWithSteps = 'listDraftRolesWithSteps',
+  listDraftEmployeesWithSteps = 'listDraftEmployeesWithSteps',
+  listDraftCriteria = 'listDraftCriteria',
+  listDraftRoles = 'listDraftRoles',
+  listDraftEmployees = 'listDraftEmployees',
+  listDraftOutlierGroups = 'listDraftOutlierGroups',
 }
 
 export const PERIOD_ONE_MONTH = 'oneMonth'
 export const PERIOD_TWELVE_MONTHS = 'twelveMonths'
 
-export const DEFAULT_JOB_FACTORS: JobFactor[] = [
+// Mirrors the generated `SyncMethodEnum` from @island.is/clients/directorate-of-equality.
+// Duplicated locally rather than imported: that package's barrel also re-exports its
+// NestJS client module, which pulls in backend-only deps (auth, X-Road config, node
+// built-ins) that break the frontend bundle when this enum's runtime value is imported
+// as a value (its DTO types are import-type-only and erase fine, but this doesn't).
+export const SyncMethodEnum = {
+  CREATE: 'CREATE',
+  UPDATE: 'UPDATE',
+  REMOVE: 'REMOVE',
+} as const
+export type SyncMethodEnum = typeof SyncMethodEnum[keyof typeof SyncMethodEnum]
+
+// Builder functions, not fixed objects — every job/sub-criterion/step needs
+// its own client-minted UUID (the draft sync API's join key), so a shared
+// module-level constant would hand every application the same id. Called
+// fresh each time the defaults are seeded.
+export const createDefaultJobFactors = (): JobFactor[] => [
   {
+    id: crypto.randomUUID(),
     type: 'RESPONSIBILITY',
     title: 'Ábyrgð',
     description:
@@ -56,6 +76,7 @@ export const DEFAULT_JOB_FACTORS: JobFactor[] = [
     weight: '25',
   },
   {
+    id: crypto.randomUUID(),
     type: 'STRAIN',
     title: 'Álag',
     description:
@@ -63,6 +84,7 @@ export const DEFAULT_JOB_FACTORS: JobFactor[] = [
     weight: '25',
   },
   {
+    id: crypto.randomUUID(),
     type: 'CONDITION',
     title: 'Vinnuaðstæður',
     description:
@@ -70,6 +92,7 @@ export const DEFAULT_JOB_FACTORS: JobFactor[] = [
     weight: '25',
   },
   {
+    id: crypto.randomUUID(),
     type: 'COMPETENCE',
     title: 'Hæfni',
     description:
@@ -78,18 +101,20 @@ export const DEFAULT_JOB_FACTORS: JobFactor[] = [
   },
 ]
 
-export const DEFAULT_CRITERIA_ANSWERS = {
-  jobFactors: DEFAULT_JOB_FACTORS,
-  personalFactors: [] as PersonalFactor[],
-}
-
-export const DEFAULT_SUB_CRITERION: SubCriterion = {
+export const createDefaultSubCriterion = (
+  criterionId: string,
+): SubCriterion => ({
+  id: crypto.randomUUID(),
+  criterionId,
   title: '',
   description: '',
   weight: '',
   stepCount: '2',
-  steps: [{ description: '' }, { description: '' }],
-}
+  steps: [
+    { id: crypto.randomUUID(), description: '' },
+    { id: crypto.randomUUID(), description: '' },
+  ],
+})
 
 export const SALARY_COMPONENT_GROUPS: {
   group: 'additional' | 'bonus'
@@ -124,22 +149,3 @@ export const GENDER_OPTIONS: { value: string; label: string }[] = [
 export const GENDER_LABELS: Record<string, string> = Object.fromEntries(
   GENDER_OPTIONS.map((o) => [o.value, o.label]),
 )
-
-export const EMPTY_EMPLOYEE: Employee = {
-  ordinal: 0,
-  identifier: '',
-  roleTitle: '',
-  gender: '',
-  field: '',
-  department: '',
-  startDate: '',
-  workRatio: 1,
-  baseSalary: 0,
-  additionalFixedOvertime: null,
-  additionalFixedCarAllowance: null,
-  bonusOccasionalCarAllowance: null,
-  bonusOccasionalOvertime: null,
-  bonusPayments: null,
-  bonusOther: null,
-  personalStepAssignments: [],
-}

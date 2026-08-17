@@ -4,32 +4,38 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
 import {
   DirectorateOfEqualityClientService,
-  type ParsedCriterionDto,
-  type ParsedEmployeeDto,
-  type ParsedReportDto,
-  type ParsedRoleDto,
-  type ParsedSubCriterionDto,
+  ReportTypeEnum,
 } from '@island.is/clients/directorate-of-equality'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import {
+  coreErrorMessages,
+  getValueViaPath,
+  YES,
+} from '@island.is/application/core'
 import {
   Gender,
   dataSchema as equalityReportDataSchema,
 } from '@island.is/application/templates/directorate-of-equality/equality-report'
 import {
   dataSchema as salaryReportDataSchema,
-  type ApplicationAnswers as SalaryReportAnswers,
+  PERIOD_ONE_MONTH,
 } from '@island.is/application/templates/directorate-of-equality/salary-report'
 import { FetchError } from '@island.is/clients/middlewares'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { ZodTypeAny, z } from 'zod'
-import { mapAnswersToSalaryReportSubmission } from './directorate-of-equality.utils'
 
-// The evaluation model scores each sub-criterion out of `weight × 10` — a fixed
-// 1000-point total scale (the sub-criterion weights sum to 100). Mirrors the
-// frontend's JobClassificationEditor/utils.ts so submitted scores match what
-// the applicant saw on screen.
-const POINTS_PER_WEIGHT_PERCENT = 10
+// Employee reads are paginated (a report can carry thousands) — fetched this
+// many at a time while paging through the full set.
+const DRAFT_EMPLOYEE_PAGE_SIZE = 200
+
+const companyAdminGenderMap: Record<Gender, 'MALE' | 'FEMALE' | 'NEUTRAL'> = {
+  [Gender.MALE]: 'MALE',
+  [Gender.FEMALE]: 'FEMALE',
+  [Gender.NON_BINARY]: 'NEUTRAL',
+}
+
+const mapGender = (gender?: string): 'MALE' | 'FEMALE' | 'NEUTRAL' =>
+  companyAdminGenderMap[gender as Gender] ?? 'NEUTRAL'
 
 const LOGGING_CONTEXT = 'DirectorateOfEqualityService'
 
@@ -82,96 +88,6 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     return {
       message: error instanceof Error ? error.message : String(error),
     }
-  }
-
-  private mapSubCriterionToParsed(sc: {
-    title: string
-    description?: string
-    weight: string
-    stepCount: string
-    steps: { description: string }[]
-  }): ParsedSubCriterionDto {
-    const count = sc.steps?.length || Number(sc.stepCount) || 0
-    const weight = Number(sc.weight) || 0
-    const maxScore = weight * POINTS_PER_WEIGHT_PERCENT
-    const perStep = count > 0 ? maxScore / count : 0
-    return {
-      title: sc.title,
-      description: sc.description ?? '',
-      weight,
-      steps: Array.from({ length: count }, (_, i) => ({
-        order: i + 1,
-        description: sc.steps?.[i]?.description ?? '',
-        score: (i + 1) * perStep,
-      })),
-    }
-  }
-
-  private mapAnswersToParsedReport(
-    answers: SalaryReportAnswers,
-  ): ParsedReportDto {
-    const jobFactors = answers.criteria?.jobFactors ?? []
-    const personalFactors = answers.criteria?.personalFactors ?? []
-    const subCriteriaJobFactors = answers.subCriteria?.jobFactors ?? []
-    const subCriteriaPersonalFactors =
-      answers.subCriteria?.personalFactors ?? []
-
-    const criteria: ParsedCriterionDto[] = [
-      ...jobFactors.map((factor, i) => ({
-        type: factor.type as ParsedCriterionDto['type'],
-        title: factor.title,
-        description: factor.description,
-        weight: Number(factor.weight) || 0,
-        subCriteria: (subCriteriaJobFactors[i] ?? []).map((sc) =>
-          this.mapSubCriterionToParsed(sc),
-        ),
-      })),
-      ...personalFactors.map((factor, i) => ({
-        type: 'PERSONAL' as const,
-        title: factor.title,
-        description: factor.description ?? '',
-        weight: Number(factor.weight) || 0,
-        subCriteria: (subCriteriaPersonalFactors[i] ?? []).map((sc) =>
-          this.mapSubCriterionToParsed(sc),
-        ),
-      })),
-    ]
-
-    const roles: ParsedRoleDto[] = (answers.roles ?? []).map((role) => ({
-      title: role.title,
-      stepAssignments: role.stepAssignments.map((a) => ({
-        criterionTitle: a.criterionTitle,
-        subTitle: a.subTitle,
-        stepOrder: a.stepOrder,
-      })),
-    }))
-
-    const employees: ParsedEmployeeDto[] = (answers.employees ?? []).map(
-      (e) => ({
-        ordinal: e.ordinal,
-        identifier: e.identifier,
-        roleTitle: e.roleTitle,
-        gender: e.gender as ParsedEmployeeDto['gender'],
-        field: e.field,
-        department: e.department,
-        startDate: e.startDate,
-        workRatio: e.workRatio,
-        baseSalary: e.baseSalary,
-        additionalFixedOvertime: e.additionalFixedOvertime,
-        additionalFixedCarAllowance: e.additionalFixedCarAllowance,
-        bonusOccasionalCarAllowance: e.bonusOccasionalCarAllowance,
-        bonusOccasionalOvertime: e.bonusOccasionalOvertime,
-        bonusPayments: e.bonusPayments,
-        bonusOther: e.bonusOther,
-        personalStepAssignments: e.personalStepAssignments.map((a) => ({
-          criterionTitle: a.criterionTitle,
-          subTitle: a.subTitle,
-          stepOrder: a.stepOrder,
-        })),
-      }),
-    )
-
-    return { criteria, roles, employees }
   }
 
   async getCompanyData({ auth, application }: TemplateApiModuleActionProps) {
@@ -360,7 +276,38 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     }
   }
 
-  async parseSalaryReportWorkbook({
+  // Opens the DRAFT report at "initial contact" — idempotent on providerId
+  // (application.id), so re-entering this part of the form (including on
+  // reopen) safely returns the same draft rather than creating a duplicate.
+  async createSalaryDraft({ auth, application }: TemplateApiModuleActionProps) {
+    try {
+      return await this.directorateOfEqualityService.createDraft(auth, {
+        type: ReportTypeEnum.SALARY,
+        providerId: application.id,
+      })
+    } catch (error) {
+      const errorDetails = this.extractFetchErrorDetails(error)
+      this.logger.error('Failed to create salary report draft', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...errorDetails,
+      })
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary: coreErrorMessages.defaultTemplateApiError,
+        },
+        errorDetails.status ?? 500,
+      )
+    }
+  }
+
+  // Bulk-seeds the draft's scoring content from the uploaded workbook
+  // (REPLACE semantics on DMR's side). The response is only an ack — the UI
+  // re-reads the relevant screen-shaped draft actions afterwards rather than
+  // using this response to populate anything, so the parsed data is never
+  // written into applicationAnswers.
+  async importSalaryDraftWorkbook({
     auth,
     application,
   }: TemplateApiModuleActionProps) {
@@ -378,13 +325,14 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
       )
     }
     try {
-      return await this.directorateOfEqualityService.importSalaryReportWorkbook(
+      return await this.directorateOfEqualityService.importDraftWorkbook(
         auth,
-        key,
+        application.id,
+        { key },
       )
     } catch (error) {
       const errorDetails = this.extractFetchErrorDetails(error)
-      this.logger.error('Failed to parse salary report workbook', {
+      this.logger.error('Failed to import salary report draft workbook', {
         applicationId: application.id,
         context: LOGGING_CONTEXT,
         ...errorDetails,
@@ -399,20 +347,251 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     }
   }
 
+  // Screen-shaped draft reads — each one just calls the matching client
+  // method for the DMR draft (keyed by application.id as providerId).
+  // Replaces the old aggregated `getSalaryDraftContent`, which fanned out
+  // across DMR's per-collection paginated reads to assemble one big object;
+  // DMR has since added endpoints shaped for exactly what each screen needs.
+
+  async getDraftHeader({ auth, application }: TemplateApiModuleActionProps) {
+    try {
+      return await this.directorateOfEqualityService.getDraft(
+        auth,
+        application.id,
+      )
+    } catch (error) {
+      const errorDetails = this.extractFetchErrorDetails(error)
+      this.logger.error('Failed to get draft header', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...errorDetails,
+      })
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary: coreErrorMessages.defaultTemplateApiError,
+        },
+        errorDetails.status ?? 500,
+      )
+    }
+  }
+
+  async getDraftCriteriaTree({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    try {
+      return await this.directorateOfEqualityService.getDraftCriteriaTree(
+        auth,
+        application.id,
+      )
+    } catch (error) {
+      const errorDetails = this.extractFetchErrorDetails(error)
+      this.logger.error('Failed to get draft criteria tree', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...errorDetails,
+      })
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary: coreErrorMessages.defaultTemplateApiError,
+        },
+        errorDetails.status ?? 500,
+      )
+    }
+  }
+
+  async listDraftRolesWithSteps({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    try {
+      return await this.directorateOfEqualityService.listDraftRolesWithSteps(
+        auth,
+        application.id,
+      )
+    } catch (error) {
+      const errorDetails = this.extractFetchErrorDetails(error)
+      this.logger.error('Failed to list draft roles with steps', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...errorDetails,
+      })
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary: coreErrorMessages.defaultTemplateApiError,
+        },
+        errorDetails.status ?? 500,
+      )
+    }
+  }
+
+  async listDraftEmployeesWithSteps({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    const providerId = application.id
+    try {
+      const employees = []
+      let page = 1
+      for (;;) {
+        const res =
+          await this.directorateOfEqualityService.listDraftEmployeesWithSteps(
+            auth,
+            providerId,
+            page,
+            DRAFT_EMPLOYEE_PAGE_SIZE,
+          )
+        employees.push(...res.employees)
+        if (res.employees.length === 0 || !res.paging.hasNextPage) {
+          break
+        }
+        page += 1
+      }
+      return { employees }
+    } catch (error) {
+      const errorDetails = this.extractFetchErrorDetails(error)
+      this.logger.error('Failed to list draft employees with steps', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...errorDetails,
+      })
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary: coreErrorMessages.defaultTemplateApiError,
+        },
+        errorDetails.status ?? 500,
+      )
+    }
+  }
+
+  async listDraftCriteria({ auth, application }: TemplateApiModuleActionProps) {
+    try {
+      return await this.directorateOfEqualityService.listDraftCriteria(
+        auth,
+        application.id,
+      )
+    } catch (error) {
+      const errorDetails = this.extractFetchErrorDetails(error)
+      this.logger.error('Failed to list draft criteria', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...errorDetails,
+      })
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary: coreErrorMessages.defaultTemplateApiError,
+        },
+        errorDetails.status ?? 500,
+      )
+    }
+  }
+
+  async listDraftRoles({ auth, application }: TemplateApiModuleActionProps) {
+    try {
+      return await this.directorateOfEqualityService.listDraftRoles(
+        auth,
+        application.id,
+      )
+    } catch (error) {
+      const errorDetails = this.extractFetchErrorDetails(error)
+      this.logger.error('Failed to list draft roles', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...errorDetails,
+      })
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary: coreErrorMessages.defaultTemplateApiError,
+        },
+        errorDetails.status ?? 500,
+      )
+    }
+  }
+
+  async listDraftEmployees({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    const providerId = application.id
+    try {
+      const employees = []
+      let page = 1
+      for (;;) {
+        const res = await this.directorateOfEqualityService.listDraftEmployees(
+          auth,
+          providerId,
+          page,
+          DRAFT_EMPLOYEE_PAGE_SIZE,
+        )
+        employees.push(...res.employees)
+        if (res.employees.length === 0 || !res.paging.hasNextPage) {
+          break
+        }
+        page += 1
+      }
+      return { employees }
+    } catch (error) {
+      const errorDetails = this.extractFetchErrorDetails(error)
+      this.logger.error('Failed to list draft employees', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...errorDetails,
+      })
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary: coreErrorMessages.defaultTemplateApiError,
+        },
+        errorDetails.status ?? 500,
+      )
+    }
+  }
+
+  async listDraftOutlierGroups({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    try {
+      return await this.directorateOfEqualityService.listDraftOutlierGroups(
+        auth,
+        application.id,
+      )
+    } catch (error) {
+      const errorDetails = this.extractFetchErrorDetails(error)
+      this.logger.error('Failed to list draft outlier groups', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...errorDetails,
+      })
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary: coreErrorMessages.defaultTemplateApiError,
+        },
+        errorDetails.status ?? 500,
+      )
+    }
+  }
+
+  // Live outlier/gender-score preview computed from the draft's current
+  // scoring graph — no answers to map, DMR derives this from what's already
+  // on the draft (criteria/sub-criteria/steps/roles/employees, all synced
+  // there already).
   async analyzeSalaryReport({
     auth,
     application,
   }: TemplateApiModuleActionProps) {
-    const answers = this.parseAnswers(
-      salaryReportDataSchema,
-      application.answers,
-      application.id,
-    )
-    const parsed = this.mapAnswersToParsedReport(answers)
     try {
-      return await this.directorateOfEqualityService.analyzeSalaryReport(auth, {
-        parsed,
-      })
+      return await this.directorateOfEqualityService.getDraftAnalysis(
+        auth,
+        application.id,
+      )
     } catch (error) {
       const errorDetails = this.extractFetchErrorDetails(error)
       this.logger.error('Failed to analyze salary report', {
@@ -430,6 +609,10 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     }
   }
 
+  // Finalises the draft (DRAFT → SUBMITTED/POSTPONED). Everything past
+  // `dataEntry` already lives on the draft via `syncSalaryDraft`; only the
+  // pre-dataEntry answers (company/contact/headcount/period, still answers-
+  // backed) need patching onto the draft header before submit.
   async submitSalaryReport({
     auth,
     application,
@@ -454,23 +637,57 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
       )
     }
 
-    const parsed = this.mapAnswersToParsedReport(answers)
+    const providerId = application.id
+    const subsidiaryList = answers.subsidiaries?.list ?? []
+    const salaryDataBasis =
+      answers.period?.period === PERIOD_ONE_MONTH ? 'MONTH' : 'AVERAGE'
+    const salaryDataPeriod =
+      salaryDataBasis === 'MONTH' &&
+      answers.period?.year &&
+      answers.period.month
+        ? `${answers.period.year}-${answers.period.month.padStart(2, '0')}-01`
+        : null
 
     try {
-      return await this.directorateOfEqualityService.submitSalaryReport(
+      await this.directorateOfEqualityService.updateDraft(auth, providerId, {
+        companyAdminName: answers.chiefExecutive?.name ?? '',
+        companyAdminTitle: answers.chiefExecutive?.jobTitle ?? '',
+        companyAdminEmail: answers.chiefExecutive?.email ?? '',
+        companyAdminGender: mapGender(answers.chiefExecutive?.gender),
+        contactName: answers.contactPerson?.name ?? '',
+        contactEmail: answers.contactPerson?.email ?? '',
+        contactPhone: answers.contactPerson?.phone ?? '',
+        averageEmployeeMaleCount: Number(answers.employeeCount?.men) || 0,
+        averageEmployeeFemaleCount: Number(answers.employeeCount?.women) || 0,
+        averageEmployeeNeutralCount:
+          Number(answers.employeeCount?.nonBinary) || 0,
+        salaryDataBasis,
+        salaryDataPeriod,
+      })
+
+      return await this.directorateOfEqualityService.submitDraft(
         auth,
-        mapAnswersToSalaryReportSubmission({
-          answers,
+        providerId,
+        {
+          company: {
+            name: answers.generalInformation?.companyName ?? '',
+            nationalId: answers.generalInformation?.nationalId ?? '',
+            address: answers.generalInformation?.address ?? '',
+            city: answers.generalInformation?.municipality ?? '',
+            postcode: answers.generalInformation?.postalCode ?? '',
+            isatCategory: answers.generalInformation?.isatClassification ?? '',
+          },
+          subsidiaries:
+            answers.subsidiaries?.includesSubsidiaries === 'yes'
+              ? subsidiaryList.map((s) => ({
+                  name: s.nationalIdWithName.name,
+                  nationalId: s.nationalIdWithName.nationalId,
+                }))
+              : [],
           equalityReportId,
-          identifier: application.id,
-          importedFromExcel: Boolean(
-            getValueViaPath(
-              application.externalData,
-              'parsedSalaryReport.date',
-            ),
-          ),
-          parsed,
-        }),
+          outliersPostponed:
+            answers.salaryAnalysis?.postponed?.includes(YES) ?? false,
+        },
       )
     } catch (error) {
       const errorDetails = this.extractFetchErrorDetails(error)
@@ -558,7 +775,6 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
       return await this.directorateOfEqualityService.submitEqualityReport(
         auth,
         {
-          identifier: application.id,
           providerId: application.id,
           companyAdminName: answers.chiefExecutive?.name ?? '',
           companyAdminEmail: answers.chiefExecutive?.email ?? '',

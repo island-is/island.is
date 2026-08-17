@@ -19,6 +19,7 @@ import * as styles from './EmployeesEditor.css'
 
 type Props = {
   employee: Employee
+  roleTitleById: Record<string, string>
   onRemove: () => void
   onEdit: () => void
 }
@@ -47,7 +48,12 @@ const DetailItem: FC<{ label: string; value: string; highlight: boolean }> = ({
   </Box>
 )
 
-export const EmployeeRow: FC<Props> = ({ employee, onRemove, onEdit }) => {
+export const EmployeeRow: FC<Props> = ({
+  employee,
+  roleTitleById,
+  onRemove,
+  onEdit,
+}) => {
   const { formatMessage } = useLocale()
   const [expanded, setExpanded] = useState(false)
   const m = messages.report.employees
@@ -113,7 +119,9 @@ export const EmployeeRow: FC<Props> = ({ employee, onRemove, onEdit }) => {
           />
         </T.Data>
         <T.Data box={{ background }}>{employee.identifier}</T.Data>
-        <T.Data box={{ background }}>{employee.roleTitle}</T.Data>
+        <T.Data box={{ background }}>
+          {roleTitleById[employee.roleId] ?? ''}
+        </T.Data>
         <T.Data box={{ background }}>
           {GENDER_LABELS[employee.gender] ?? employee.gender}
         </T.Data>

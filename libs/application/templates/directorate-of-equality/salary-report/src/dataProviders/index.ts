@@ -41,11 +41,86 @@ export const ImportPresignApi = defineTemplateApi({
   throwOnError: false,
 })
 
-export const ParsedSalaryReportApi = defineTemplateApi({
-  action: ApiActions.parseSalaryReportWorkbook,
-  externalDataId: 'parsedSalaryReport',
+// Opens the DRAFT report (idempotent on the application id) — invoked once
+// on first entry to `dataEntry`, before anything else on that screen or
+// later can sync/import into it.
+export const CreateSalaryDraftApi = defineTemplateApi({
+  action: ApiActions.createSalaryDraft,
+  externalDataId: 'salaryDraft',
+  namespace: 'DirectorateOfEquality',
+  throwOnError: true,
+})
+
+// Bulk-seeds the draft from an uploaded workbook. REPLACE semantics — the
+// UI re-fetches the relevant screen-shaped draft reads afterwards rather
+// than using this response to populate the form.
+export const ImportSalaryDraftWorkbookApi = defineTemplateApi({
+  action: ApiActions.importSalaryDraftWorkbook,
+  externalDataId: 'importSalaryDraftWorkbook',
   namespace: 'DirectorateOfEquality',
   throwOnError: false,
+})
+
+// Screen-shaped reads of the draft's content, one per screen from
+// `dataEntry` onward — each populates its own narrower externalData key
+// used to populate the UI after import/manual seed AND to restore an
+// unfinished application on reopen. Re-invoked on mount by their respective
+// screens (see utils/useDraftQuery.ts), never persisted into
+// applicationAnswers.
+export const GetDraftHeaderApi = defineTemplateApi({
+  action: ApiActions.getDraftHeader,
+  externalDataId: 'draftHeader',
+  namespace: 'DirectorateOfEquality',
+  throwOnError: true,
+})
+
+export const GetDraftCriteriaTreeApi = defineTemplateApi({
+  action: ApiActions.getDraftCriteriaTree,
+  externalDataId: 'draftCriteriaTree',
+  namespace: 'DirectorateOfEquality',
+  throwOnError: true,
+})
+
+export const ListDraftRolesWithStepsApi = defineTemplateApi({
+  action: ApiActions.listDraftRolesWithSteps,
+  externalDataId: 'draftRolesWithSteps',
+  namespace: 'DirectorateOfEquality',
+  throwOnError: true,
+})
+
+export const ListDraftEmployeesWithStepsApi = defineTemplateApi({
+  action: ApiActions.listDraftEmployeesWithSteps,
+  externalDataId: 'draftEmployeesWithSteps',
+  namespace: 'DirectorateOfEquality',
+  throwOnError: true,
+})
+
+export const ListDraftCriteriaApi = defineTemplateApi({
+  action: ApiActions.listDraftCriteria,
+  externalDataId: 'draftCriteria',
+  namespace: 'DirectorateOfEquality',
+  throwOnError: true,
+})
+
+export const ListDraftRolesApi = defineTemplateApi({
+  action: ApiActions.listDraftRoles,
+  externalDataId: 'draftRoles',
+  namespace: 'DirectorateOfEquality',
+  throwOnError: true,
+})
+
+export const ListDraftEmployeesApi = defineTemplateApi({
+  action: ApiActions.listDraftEmployees,
+  externalDataId: 'draftEmployees',
+  namespace: 'DirectorateOfEquality',
+  throwOnError: true,
+})
+
+export const ListDraftOutlierGroupsApi = defineTemplateApi({
+  action: ApiActions.listDraftOutlierGroups,
+  externalDataId: 'draftOutlierGroups',
+  namespace: 'DirectorateOfEquality',
+  throwOnError: true,
 })
 
 export const SubmitSalaryReportApi = defineTemplateApi({

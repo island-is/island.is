@@ -1,11 +1,17 @@
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
-import { sortAlpha } from '@island.is/shared/utils'
 import { SALARY_COMPONENT_KEYS } from '../../utils/constants'
 import type { Employee, SalaryComponentKey } from '../../utils/types'
 import { TABLE_PAGE_SIZE } from '../TablePagination'
 
-export const byRoleTitle = sortAlpha<Employee>('roleTitle')
+// Roles are their own id-keyed collection now, so sorting by role title
+// needs the lookup rather than a literal field on Employee.
+export const byRoleTitle =
+  (roleTitleById: Record<string, string>) => (a: Employee, b: Employee) =>
+    (roleTitleById[a.roleId] ?? '').localeCompare(
+      roleTitleById[b.roleId] ?? '',
+      'is',
+    )
 
 // Which page an employee lands on once the table re-sorts by role title.
 // `useFieldArray` doesn't refresh `fields` synchronously after append/update,
@@ -14,9 +20,10 @@ export const byRoleTitle = sortAlpha<Employee>('roleTitle')
 export const pageOfEmployee = (
   employees: Employee[],
   employee: Employee,
+  roleTitleById: Record<string, string>,
 ): number => {
   const position = [...employees]
-    .sort(byRoleTitle)
+    .sort(byRoleTitle(roleTitleById))
     .findIndex((e) => e === employee)
 
   if (position < 0) return 1
@@ -24,7 +31,24 @@ export const pageOfEmployee = (
   return Math.floor(position / TABLE_PAGE_SIZE) + 1
 }
 
+// Finds an existing role by case-insensitive title, or mints a new
+// client-side role id for it. Employees reference roles by id
+// (`reportEmployeeRoleId` on the draft), but the form still collects a
+// free-text title — this is the seam between the two.
+export const findOrCreateRoleId = (
+  title: string,
+  roles: { id: string; title: string }[],
+): { id: string; isNew: boolean } => {
+  const existing = roles.find(
+    (r) => r.title.trim().toLowerCase() === title.trim().toLowerCase(),
+  )
+  if (existing) return { id: existing.id, isNew: false }
+  return { id: crypto.randomUUID(), isNew: true }
+}
+
 export type EmployeeFormValues = {
+  // Free-text role title — resolved to a role id (existing or newly minted)
+  // by the caller before the employee is stored. See findOrCreateRoleId.
   roleTitle: string
   gender: string
   field: string
@@ -49,9 +73,14 @@ export const EMPTY_EMPLOYEE_FORM_VALUES: EmployeeFormValues = {
 
 // The single place that maps between the salary-component keys and their
 // form/DTO representations — used both to populate the form from an existing
-// employee and to build the components back up on submit.
-export const toFormValues = (employee: Employee): EmployeeFormValues => ({
-  roleTitle: employee.roleTitle,
+// employee and to build the components back up on submit. `roleTitle` is
+// resolved from the employee's roleId via the local roles list — roles are
+// their own id-keyed collection on the draft, not a free-text field.
+export const toFormValues = (
+  employee: Employee,
+  roleTitleById: Record<string, string>,
+): EmployeeFormValues => ({
+  roleTitle: roleTitleById[employee.roleId] ?? '',
   gender: employee.gender,
   field: employee.field ?? '',
   department: employee.department ?? '',
@@ -82,25 +111,6 @@ export const formatCurrency = (value?: number | null): string =>
 
 export const formatWorkRatio = (ratio?: number | null): string =>
   `${Math.round((ratio ?? 0) * 100)}%`
-
-// The server masks each employee's national id with a per-application code
-// like "DTH-008" (shared prefix + ordinal). There's no separate code field in
-// the parsed report, so we derive the prefix from the existing employees'
-// identifiers. Falls back to "AAA" when there are none to derive from.
-export const deriveIdentifierPrefix = (
-  employees: { identifier?: string }[],
-): string => {
-  for (const e of employees) {
-    const match = e.identifier?.match(/^(.*?)(\d+)$/)
-    if (match) return match[1]
-  }
-  return 'AAA'
-}
-
-// Masked identifier for manually-added employees (the real national id is
-// never collected), using the same prefix as the imported employees.
-export const computeIdentifier = (prefix: string, ordinal: number): string =>
-  `${prefix}${String(ordinal).padStart(3, '0')}`
 
 export const formatStartDate = (value?: string): string => {
   if (!value) return ''

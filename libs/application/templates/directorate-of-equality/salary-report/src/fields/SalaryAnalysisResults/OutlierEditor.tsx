@@ -1,7 +1,7 @@
 import { FC, useMemo, useState } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import { getErrorViaPath } from '@island.is/application/core'
-import { Application, RecordObject } from '@island.is/application/types'
+import { RecordObject } from '@island.is/application/types'
 import {
   AccordionCard,
   Box,
@@ -18,8 +18,6 @@ import type {
   ScoreBucketDto,
 } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
-import type { Employee } from '../../utils/types'
-import { getPathValue } from '../../utils/answerHelpers'
 import { isOutlierGroupComplete } from '../../utils/outlierGroups'
 import type { OutlierGroupAnswer } from '../../utils/outlierGroups'
 import { formatCurrency } from '../EmployeesEditor/utils'
@@ -29,31 +27,34 @@ const OUTLIERS_PAGE_SIZE = 10
 const SELECT_COLUMN_WIDTH = 40
 
 type Props = {
-  application: Application
   outliers: SalaryAnalysisOutlierDto[]
   scoreBuckets: ScoreBucketDto[]
   errors?: RecordObject
+  // 'draft': pre-submit — persisted to the DMR draft via sync, keyed by
+  // employee id. 'postponed': post-submit improvement-plan explanation —
+  // unchanged, answers-backed, keyed by employee ordinal.
+  mode: 'draft' | 'postponed'
+  identifierForOrdinal: (ordinal: number) => string
 }
 
 const columnHelper = createColumnHelper<SalaryAnalysisOutlierDto>()
 
 export const OutlierEditor: FC<Props> = ({
-  application,
   outliers,
   scoreBuckets,
   errors,
+  mode,
+  identifierForOrdinal,
 }) => {
   const { formatMessage } = useLocale()
   const { control } = useFormContext()
   const m = messages.salaryAnalysis.outlierGroup
 
-  const employees = getPathValue<Employee[]>(
-    application.answers,
-    'employees',
-    [],
-  )
-  const identifierForOrdinal = (ordinal: number) =>
-    employees.find((e) => e.ordinal === ordinal)?.identifier ?? `#${ordinal}`
+  // Both modes store the same on-screen shape (`employeeOrdinals` +
+  // explanation fields) under the same field name — the draft mode just
+  // never persists it to applicationAnswers, and resolves ordinals to
+  // employee ids only at sync time (see OutlierGroupPanel).
+  const fieldName = 'salaryAnalysis.outlierGroups'
 
   const scoreRangeLabel = (outlier: SalaryAnalysisOutlierDto) =>
     `${outlier.scoreBucketRangeFrom}-${outlier.scoreBucketRangeTo}`
@@ -67,7 +68,7 @@ export const OutlierEditor: FC<Props> = ({
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: 'salaryAnalysis.outlierGroups',
+    name: fieldName,
   })
 
   // useFieldArray's `fields` only updates on structural changes (append/
@@ -75,7 +76,7 @@ export const OutlierEditor: FC<Props> = ({
   // inputs below. The completeness warning needs live values, so it reads
   // from useWatch instead.
   const watchedGroups: OutlierGroupAnswer[] =
-    useWatch({ name: 'salaryAnalysis.outlierGroups' }) ?? []
+    useWatch({ name: fieldName }) ?? []
 
   const [selected, setSelected] = useState<Set<number>>(new Set())
   const [page, setPage] = useState(1)
@@ -111,7 +112,13 @@ export const OutlierEditor: FC<Props> = ({
     })
 
   const handleCreateGroup = () => {
-    append({ employeeOrdinals: [...selected] } as OutlierGroupAnswer)
+    append({
+      // Draft mode needs a stable id from creation so later renames/removes
+      // track this group by id, not array position; harmless/unused in
+      // postponed mode.
+      id: mode === 'draft' ? crypto.randomUUID() : undefined,
+      employeeOrdinals: [...selected],
+    } as OutlierGroupAnswer)
     setSelected(new Set())
     // The current page may no longer exist once its rows leave the table.
     setPage(1)
@@ -203,15 +210,12 @@ export const OutlierEditor: FC<Props> = ({
       }),
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [pageRows, selected, allSelectedOnPage, employees, scoreBuckets],
+    [pageRows, selected, allSelectedOnPage, scoreBuckets],
   )
 
   const groupError = (index: number, suffix: string) =>
-    errors
-      ? getErrorViaPath(
-          errors,
-          `salaryAnalysis.outlierGroups.${index}.${suffix}`,
-        )
+    mode === 'postponed' && errors
+      ? getErrorViaPath(errors, `${fieldName}.${index}.${suffix}`)
       : undefined
 
   return (
@@ -273,8 +277,8 @@ export const OutlierEditor: FC<Props> = ({
                   </Button>
                 </Box>
                 <InputController
-                  id={`salaryAnalysis.outlierGroups.${index}.reason`}
-                  name={`salaryAnalysis.outlierGroups.${index}.reason`}
+                  id={`${fieldName}.${index}.reason`}
+                  name={`${fieldName}.${index}.reason`}
                   label={formatMessage(m.reasonLabel)}
                   textarea
                   backgroundColor="blue"
@@ -282,8 +286,8 @@ export const OutlierEditor: FC<Props> = ({
                 />
                 <Box marginTop={2}>
                   <InputController
-                    id={`salaryAnalysis.outlierGroups.${index}.action`}
-                    name={`salaryAnalysis.outlierGroups.${index}.action`}
+                    id={`${fieldName}.${index}.action`}
+                    name={`${fieldName}.${index}.action`}
                     label={formatMessage(m.actionLabel)}
                     textarea
                     backgroundColor="blue"
@@ -293,8 +297,8 @@ export const OutlierEditor: FC<Props> = ({
                 <Box marginTop={2} display="flex" columnGap={2}>
                   <Box style={{ flex: 1 }}>
                     <InputController
-                      id={`salaryAnalysis.outlierGroups.${index}.signatureName`}
-                      name={`salaryAnalysis.outlierGroups.${index}.signatureName`}
+                      id={`${fieldName}.${index}.signatureName`}
+                      name={`${fieldName}.${index}.signatureName`}
                       label={formatMessage(m.signatureNameLabel)}
                       backgroundColor="blue"
                       error={groupError(index, 'signatureName')}
@@ -302,8 +306,8 @@ export const OutlierEditor: FC<Props> = ({
                   </Box>
                   <Box style={{ flex: 1 }}>
                     <InputController
-                      id={`salaryAnalysis.outlierGroups.${index}.signatureRole`}
-                      name={`salaryAnalysis.outlierGroups.${index}.signatureRole`}
+                      id={`${fieldName}.${index}.signatureRole`}
+                      name={`${fieldName}.${index}.signatureRole`}
                       label={formatMessage(m.signatureRoleLabel)}
                       backgroundColor="blue"
                       error={groupError(index, 'signatureRole')}
