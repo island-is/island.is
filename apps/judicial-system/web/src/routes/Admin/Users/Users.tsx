@@ -71,24 +71,28 @@ export const Users = () => {
     [usersData?.users, selectedInstitutions],
   )
 
-  const { sortedData: users, requestSort, getClassNamesFor, isActiveColumn } =
-    useSort('name', 'ascending', filteredUsers, (entry, column) => {
-      if (column === 'role') {
-        return userRoleToString(entry.role)
-      }
+  const {
+    sortedData: users,
+    requestSort,
+    getClassNamesFor,
+    isActiveColumn,
+  } = useSort('name', 'ascending', filteredUsers, (entry, column) => {
+    if (column === 'role') {
+      return userRoleToString(entry.role)
+    }
 
-      if (column === 'institution') {
-        return entry.institution?.name ?? null
-      }
+    if (column === 'institution') {
+      return entry.institution?.name ?? null
+    }
 
-      const value = entry[column]
+    const value = entry[column]
 
-      if (typeof value === 'boolean') {
-        return value ? '1' : '0'
-      }
+    if (typeof value === 'boolean') {
+      return value ? '1' : '0'
+    }
 
-      return typeof value === 'string' ? value : null
-    })
+    return typeof value === 'string' ? value : null
+  })
 
   const createSortProps = (
     title: string,
@@ -223,9 +227,7 @@ export const Users = () => {
                 component="th"
                 paddingY={2}
                 paddingX={3}
-                aria-sort={
-                  getClassNamesFor('canConfirmIndictment') ?? 'none'
-                }
+                aria-sort={getClassNamesFor('canConfirmIndictment') ?? 'none'}
               >
                 <SortButton
                   {...createSortProps(
