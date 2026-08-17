@@ -93,12 +93,8 @@ const serializeService: SerializeMethod<HelmService> = async (
   }
   if (!hackListForNonExistentTracer.includes(serviceDef.name)) {
     result.env.NODE_OPTIONS += ' -r dd-trace/init'
-    // dd-trace 5.108 instruments global fetch twice (its fetch plugin plus the
-    // underlying http/undici layer), so every outbound fetch carries duplicated
-    // traceparent/x-datadog headers with conflicting span ids. Strict WAFs
-    // reject such requests as protocol violations — ValitorPay's F5 answers
-    // them with an HTML block page, which broke all card verifications on dev.
-    // The http-layer instrumentation still traces and injects exactly once.
+    // dd-trace 5.108 injects trace headers twice on outbound fetch (fetch +
+    // http layers); strict WAFs reject the duplicates (broke ValitorPay).
     result.env.DD_TRACE_DISABLED_INSTRUMENTATIONS = 'fetch'
   }
   // add healthCheck port if set in the service
