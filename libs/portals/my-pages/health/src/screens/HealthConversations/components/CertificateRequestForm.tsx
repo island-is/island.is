@@ -73,7 +73,7 @@ const CertificateRequestForm = ({ formState, onChange, disabled }: Props) => {
       </Box>
 
       <Text variant="h5" marginBottom={2}>
-        {formatMessage(messages.healthConversationsCertificateTypeTitle)} *
+        {formatMessage(messages.healthConversationsCertificateTypeTitle)}
       </Text>
       <GridRow marginBottom={3}>
         {certificateTypeOptions.map((option, index) => (
