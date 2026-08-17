@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const submitErrorMessages = defineMessages({
   unknown: {
     id: 'hb.application:submit.error.unknown',
-    defaultMessage: 'Óvænt villa kom upp við að innsendingu umsóknar.',
+    defaultMessage: 'Óvænt villa kom upp við innsendingu umsóknar.',
     description: 'HMS error code: unknown',
   },
   nullApplicationPayload: {
@@ -18,12 +18,12 @@ export const submitErrorMessages = defineMessages({
   },
   propertyNotFound: {
     id: 'hb.application:submit.error.propertyNotFound',
-    defaultMessage: 'Fasteign númer {propertyNumber} fannst ekki.',
+    defaultMessage: 'Fasteign með númer {propertyNumber} fannst ekki.',
     description: 'HMS error code: propertyNotFound',
   },
   leaseContractNotFound: {
     id: 'hb.application:submit.error.leaseContractNotFound',
-    defaultMessage: 'Leigusamningur númer {contractNumber} fannst ekki.',
+    defaultMessage: 'Leigusamningur með númer {contractNumber} fannst ekki.',
     description: 'HMS error code: leaseContractNotFound',
   },
   activeApplicationAlreadyExists: {
