@@ -344,7 +344,11 @@ query GetHealthConversationRecipients($locale: LocaleEnum) {
     name
     allowsMessaging
     isCurrentlyWithinWindow
+    messagingWindowOpen
+    messagingWindowClose
     patientReplyWindowDays
+    canCreateConversation
+    conversationBlockedReason
     allowedMessageTypes {
       patientInitiatedTypeCode
       title

@@ -888,6 +888,16 @@ export const en: TranslatedMessages = {
   'health.messages.compose.termsTitle': 'Terms for messages',
   'health.messages.compose.termsBody':
     '- Messages are answered during opening hours, usually within three business days\n- Messages and replies are automatically saved to your medical record\n- The type of message determines who answers your inquiry\n- A healthcare professional will have access to your medical record to answer your inquiry',
+  'health.messages.compose.closedTitle': 'Closed for new messages right now',
+  'health.messages.compose.closedText':
+    'It is {currentTime}. This service accepts messages from {openTime} to {closeTime}. You can send a message again at {openTime} tomorrow morning.',
+  'health.messages.compose.notAllowedTitle': 'Cannot send messages',
+  'health.messages.compose.notAllowedText':
+    'This service provider does not offer messaging on Ísland.is.',
+  'health.messages.compose.closingSoonTitle':
+    'Note: messaging is closing soon',
+  'health.messages.compose.closingSoonText':
+    'Send your message before it closes at {closeTime}. After that you cannot send a message until {hasOpenTime, select, false {tomorrow} other {{openTime} tomorrow}}.',
   'health.messages.compose.send': 'Send message',
   'health.messages.compose.sendError':
     'Failed to send message. Please try again later.',

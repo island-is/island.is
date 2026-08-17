@@ -4,6 +4,7 @@ import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native'
 import { router, useLocalSearchParams } from 'expo-router'
 import { useTheme } from 'styled-components/native'
 
+import { ConversationAvailabilityAlert } from '@/components/conversation-availability-alert'
 import { StackScreen } from '@/components/stack-screen'
 import { toast, ToastHost } from '@/components/toast'
 import {
@@ -119,9 +120,23 @@ export default function HealthMessageComposeScreen() {
 
   const sending = replying || creating
 
+  // The recipient can't be messaged right now (outside window, messaging
+  // disabled, etc.) — dim and disable the message inputs.
+  const isFormLocked =
+    !isReply && selectedRecipient?.canCreateConversation === false
+
+  // Any blocked reason means the patient can't message this recipient right now,
+  // so hide the send button. Closing-soon is only a warning (no blocked reason),
+  // so it keeps the button.
+  const hideSendButton = !!selectedRecipient?.conversationBlockedReason
+
   const canSend = isReply
     ? !!message.trim()
-    : !!message.trim() && !!selectedRecipient && !!typeCode && termsAccepted
+    : !!message.trim() &&
+      !!selectedRecipient &&
+      !!typeCode &&
+      termsAccepted &&
+      !isFormLocked
 
   const onSend = () => {
     if (isReply && conversationId) {
@@ -235,60 +250,70 @@ export default function HealthMessageComposeScreen() {
                   onSelect={setRecipientNodeId}
                 />
               )}
-              {!isReply && serviceOptions.length > 0 && (
-                <Select
+              <View
+                pointerEvents={isFormLocked ? 'none' : 'auto'}
+                style={{
+                  opacity: isFormLocked ? 0.5 : 1,
+                  rowGap: theme.spacing[2],
+                }}
+              >
+                {!isReply && serviceOptions.length > 0 && (
+                  <Select
+                    label={intl.formatMessage({
+                      id: 'health.messages.compose.selectService',
+                    })}
+                    placeholder={intl.formatMessage({
+                      id: 'health.messages.compose.selectServicePlaceholder',
+                    })}
+                    value={typeCode}
+                    options={serviceOptions.map((s) => ({
+                      label: s.title,
+                      value: s.patientInitiatedTypeCode,
+                    }))}
+                    onSelect={setTypeCode}
+                    disabled={isFormLocked}
+                  />
+                )}
+
+                <TextField
                   label={intl.formatMessage({
-                    id: 'health.messages.compose.selectService',
+                    id: 'health.messages.compose.messageLabel',
                   })}
                   placeholder={intl.formatMessage({
-                    id: 'health.messages.compose.selectServicePlaceholder',
+                    id: 'health.messages.compose.messagePlaceholder',
                   })}
-                  value={typeCode}
-                  options={serviceOptions.map((s) => ({
-                    label: s.title,
-                    value: s.patientInitiatedTypeCode,
-                  }))}
-                  onSelect={setTypeCode}
+                  value={message}
+                  onChangeText={setMessage}
+                  multiline
+                  numberOfLines={6}
+                  inputStyle={{ minHeight: 120 }}
+                  disabled={isFormLocked}
                 />
-              )}
 
-              <TextField
-                label={intl.formatMessage({
-                  id: 'health.messages.compose.messageLabel',
-                })}
-                placeholder={intl.formatMessage({
-                  id: 'health.messages.compose.messagePlaceholder',
-                })}
-                value={message}
-                onChangeText={setMessage}
-                multiline
-                numberOfLines={6}
-                inputStyle={{ minHeight: 120 }}
-              />
-
-              {!isReply && (
-                <Checkbox
-                  checked={termsAccepted}
-                  onPress={() => setTermsAccepted(!termsAccepted)}
-                  label={
-                    <>
-                      {intl.formatMessage({
-                        id: 'health.messages.compose.termsAccept',
-                      })}{' '}
-                      <Typography
-                        weight="600"
-                        color={theme.color.blue400}
-                        style={{ textDecorationLine: 'underline' }}
-                        onPress={() => router.push('/health/messages/terms')}
-                      >
+                {!isReply && (
+                  <Checkbox
+                    checked={termsAccepted}
+                    onPress={() => setTermsAccepted(!termsAccepted)}
+                    label={
+                      <>
                         {intl.formatMessage({
-                          id: 'health.messages.compose.termsLink',
-                        })}
-                      </Typography>
-                    </>
-                  }
-                />
-              )}
+                          id: 'health.messages.compose.termsAccept',
+                        })}{' '}
+                        <Typography
+                          weight="600"
+                          color={theme.color.blue400}
+                          style={{ textDecorationLine: 'underline' }}
+                          onPress={() => router.push('/health/messages/terms')}
+                        >
+                          {intl.formatMessage({
+                            id: 'health.messages.compose.termsLink',
+                          })}
+                        </Typography>
+                      </>
+                    }
+                  />
+                )}
+              </View>
             </>
           )}
         </ScrollView>
@@ -297,15 +322,21 @@ export default function HealthMessageComposeScreen() {
             style={{
               padding: theme.spacing[2],
               paddingBottom: theme.spacing[4],
+              rowGap: theme.spacing[2],
             }}
           >
-            <Button
-              title={intl.formatMessage({
-                id: 'health.messages.compose.send',
-              })}
-              onPress={onSend}
-              disabled={!canSend || sending}
-            />
+            {selectedRecipient && (
+              <ConversationAvailabilityAlert recipient={selectedRecipient} />
+            )}
+            {!hideSendButton && (
+              <Button
+                title={intl.formatMessage({
+                  id: 'health.messages.compose.send',
+                })}
+                onPress={onSend}
+                disabled={!canSend || sending}
+              />
+            )}
           </View>
         )}
       </KeyboardAvoidingView>
