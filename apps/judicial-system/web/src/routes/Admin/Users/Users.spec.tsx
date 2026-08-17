@@ -8,8 +8,9 @@ import {
   UserContextWrapper,
 } from '@island.is/judicial-system-web/src/utils/testHelpers'
 
-import { UsersDocument } from './users.generated'
 import { Users } from './Users'
+import { UsersDocument } from './users.generated'
+import * as usersCsv from './usersCsv'
 
 jest.mock('next/router', () => ({
   useRouter() {
@@ -31,6 +32,14 @@ jest.mock(
     }),
   }),
 )
+
+jest.mock('./usersCsv', () => {
+  const actual = jest.requireActual('./usersCsv')
+  return {
+    ...actual,
+    downloadUsersCsv: jest.fn(),
+  }
+})
 
 const users = [
   {
@@ -118,5 +127,47 @@ describe('Users', () => {
     expect(document.getElementById(describedBy ?? '')).toHaveTextContent(
       'Notendur',
     )
+  })
+
+  it('shows a CSV button that downloads the currently sorted list', async () => {
+    const user = userEvent.setup()
+    renderUsers()
+
+    await user.click(
+      await screen.findByRole('button', { name: 'Raða eftir dálki: Hlutverk' }),
+    )
+    await user.click(screen.getByRole('button', { name: 'Sækja CSV' }))
+
+    expect(usersCsv.downloadUsersCsv).toHaveBeenCalledTimes(1)
+    const exported = (usersCsv.downloadUsersCsv as jest.Mock).mock.calls[0][0]
+    expect(exported.map((u: { name: string }) => u.name)).toEqual([
+      'Björn',
+      'Cecilía',
+      'Anna',
+    ])
+  })
+
+  it('disables the CSV button when there are no users', async () => {
+    render(
+      <MockedProvider
+        mocks={[
+          {
+            request: { query: UsersDocument },
+            result: { data: { users: [] } },
+          },
+        ]}
+        addTypename={false}
+      >
+        <IntlProviderWrapper>
+          <UserContextWrapper userRole={UserRole.ADMIN}>
+            <Users />
+          </UserContextWrapper>
+        </IntlProviderWrapper>
+      </MockedProvider>,
+    )
+
+    expect(
+      await screen.findByRole('button', { name: 'Sækja CSV' }),
+    ).toBeDisabled()
   })
 })

@@ -39,6 +39,7 @@ import {
 
 import { userRoleToString } from '../userRoleToString'
 import { useUsersQuery } from './users.generated'
+import { UsersCsvButton } from './UsersCsvButton'
 import * as styles from './Users.css'
 
 export const Users = () => {
@@ -71,24 +72,28 @@ export const Users = () => {
     [usersData?.users, selectedInstitutions],
   )
 
-  const { sortedData: users, requestSort, getClassNamesFor, isActiveColumn } =
-    useSort('name', 'ascending', filteredUsers, (entry, column) => {
-      if (column === 'role') {
-        return userRoleToString(entry.role)
-      }
+  const {
+    sortedData: users,
+    requestSort,
+    getClassNamesFor,
+    isActiveColumn,
+  } = useSort('name', 'ascending', filteredUsers, (entry, column) => {
+    if (column === 'role') {
+      return userRoleToString(entry.role)
+    }
 
-      if (column === 'institution') {
-        return entry.institution?.name ?? null
-      }
+    if (column === 'institution') {
+      return entry.institution?.name ?? null
+    }
 
-      const value = entry[column]
+    const value = entry[column]
 
-      if (typeof value === 'boolean') {
-        return value ? '1' : '0'
-      }
+    if (typeof value === 'boolean') {
+      return value ? '1' : '0'
+    }
 
-      return typeof value === 'string' ? value : null
-    })
+    return typeof value === 'string' ? value : null
+  })
 
   const createSortProps = (
     title: string,
@@ -174,6 +179,9 @@ export const Users = () => {
           />
         </Box>
       </Box>
+      <Box display="flex" justifyContent="flexEnd" marginBottom={2}>
+        <UsersCsvButton users={users} />
+      </Box>
       {users.length > 0 ? (
         <table
           className={styles.userTable}
@@ -223,9 +231,7 @@ export const Users = () => {
                 component="th"
                 paddingY={2}
                 paddingX={3}
-                aria-sort={
-                  getClassNamesFor('canConfirmIndictment') ?? 'none'
-                }
+                aria-sort={getClassNamesFor('canConfirmIndictment') ?? 'none'}
               >
                 <SortButton
                   {...createSortProps(
