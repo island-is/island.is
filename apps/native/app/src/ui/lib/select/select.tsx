@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { Modal } from 'react-native'
-import styled, { css, useTheme } from 'styled-components/native'
+import { SelectionMenu } from 'react-native-platform-components'
+import styled, { css } from 'styled-components/native'
 
 import chevronDown from '../../assets/icons/chevron-down.png'
 import { dynamicColor } from '../../utils'
@@ -61,35 +61,6 @@ const Chevron = styled.Image`
   }))};
 `
 
-const Backdrop = styled.Pressable`
-  flex: 1;
-  justify-content: center;
-  padding: ${({ theme }) => theme.spacing[3]}px;
-  background-color: rgba(0, 0, 0, 0.4);
-`
-
-const OptionList = styled.View`
-  border-radius: 16px;
-  overflow: hidden;
-  background-color: ${dynamicColor((props) => ({
-    dark: 'shade100',
-    light: props.theme.color.white,
-  }))};
-`
-
-const Option = styled.Pressable<{ borderTop: boolean }>`
-  padding: ${({ theme }) => theme.spacing[2]}px;
-  border-top-width: ${({ theme, borderTop }) =>
-    borderTop ? theme.border.width.hairline : 0}px;
-  border-top-color: ${dynamicColor(
-    (props) => ({
-      dark: 'shade300',
-      light: props.theme.color.blue200,
-    }),
-    true,
-  )};
-`
-
 interface SelectOption {
   label: string
   value: string
@@ -112,7 +83,6 @@ export const Select = ({
   placeholder,
   disabled = false,
 }: SelectProps) => {
-  const theme = useTheme()
   const [open, setOpen] = useState(false)
   const selected = options.find((option) => option.value === value)
 
@@ -132,36 +102,21 @@ export const Select = ({
         </Content>
         {!disabled && <Chevron source={chevronDown} />}
       </Host>
-      <Modal
+      <SelectionMenu
+        presentation="modal"
         visible={open}
-        transparent
-        animationType="fade"
+        placeholder={placeholder ?? label}
+        options={options.map((option) => ({
+          label: option.label,
+          data: option.value,
+        }))}
+        selected={value ?? null}
+        onSelect={(data) => {
+          onSelect(data)
+          setOpen(false)
+        }}
         onRequestClose={() => setOpen(false)}
-      >
-        <Backdrop onPress={() => setOpen(false)}>
-          <OptionList>
-            {options.map((option, index) => (
-              <Option
-                key={option.value}
-                borderTop={index !== 0}
-                onPress={() => {
-                  onSelect(option.value)
-                  setOpen(false)
-                }}
-              >
-                <Typography
-                  variant={option.value === value ? 'heading5' : 'body'}
-                  color={
-                    option.value === value ? theme.color.blue400 : undefined
-                  }
-                >
-                  {option.label}
-                </Typography>
-              </Option>
-            ))}
-          </OptionList>
-        </Backdrop>
-      </Modal>
+      />
     </>
   )
 }
