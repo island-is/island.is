@@ -27,9 +27,9 @@ import ConversationTermsModal from './components/ConversationTermsModal'
 import MobileActionFooter from './components/MobileActionFooter'
 import CertificateRequestForm, {
   CertificateFormState,
+  toCertificateRequestInput,
 } from './components/CertificateRequestForm'
 import { Problem } from '@island.is/react-spa/shared'
-import format from 'date-fns/format'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { messages } from '../../lib/messages'
@@ -58,12 +58,11 @@ const NewHealthConversation = () => {
 
   const [selectedTypeCode, setSelectedTypeCode] = useState<string | null>(null)
   const [messageText, setMessageText] = useState('')
-  const [certificateForm, setCertificateForm] = useState<
-    CertificateFormState | undefined
-  >()
+  const [certificateForm, setCertificateForm] = useState<CertificateFormState>(
+    {},
+  )
   const [termsAccepted, setTermsAccepted] = useState(false)
   const [termsModalOpen, setTermsModalOpen] = useState(false)
-  const [submitAttempted, setSubmitAttempted] = useState(false)
 
   const { data, loading, error } =
     useGetHealthConversationRecipientsForNewQuery({
@@ -122,34 +121,37 @@ const NewHealthConversation = () => {
   const isFormLocked =
     recipient?.canCreateConversation === false || isCertificateBlocked
 
-  const certificateAlert: CertificateAlert | undefined = isCertificateBlocked
-    ? recipient?.certificateBlockedReason ===
-        HealthDirectorateHealthConversationRecipientBlockedReason.OUTSIDE_MESSAGING_WINDOW &&
-      windowInfo.windowOpenLabel &&
-      windowInfo.windowCloseLabel
-      ? {
-          type: 'info',
-          title: formatMessage(messages.healthConversationClosedTitle),
-          message: formatMessage(messages.healthConversationClosedText, {
-            currentTime: windowInfo.currentTimeLabel,
-            openTime: windowInfo.windowOpenLabel,
-            closeTime: windowInfo.windowCloseLabel,
-          }),
-        }
-      : {
-          type: 'warning',
-          message: formatMessage(
-            messages.healthConversationsCertificateBlockedText,
-          ),
-        }
-    : undefined
+  const certificateBlockedOutsideWindow =
+    recipient?.certificateBlockedReason ===
+      HealthDirectorateHealthConversationRecipientBlockedReason.OUTSIDE_MESSAGING_WINDOW &&
+    !!windowInfo.windowOpenLabel &&
+    !!windowInfo.windowCloseLabel
+
+  const certificateAlert: CertificateAlert | undefined = !isCertificateBlocked
+    ? undefined
+    : certificateBlockedOutsideWindow
+    ? {
+        type: 'info',
+        title: formatMessage(messages.healthConversationClosedTitle),
+        message: formatMessage(messages.healthConversationClosedText, {
+          currentTime: windowInfo.currentTimeLabel,
+          openTime: windowInfo.windowOpenLabel,
+          closeTime: windowInfo.windowCloseLabel,
+        }),
+      }
+    : {
+        type: 'warning',
+        message: formatMessage(
+          messages.healthConversationsCertificateBlockedText,
+        ),
+      }
+
+  // The single source of the certificate form's required-field rules: it is
+  // undefined until the form is complete.
+  const certificateInput = toCertificateRequestInput(certificateForm)
 
   const isFormValid = isCertificateSelected
-    ? !!certificateForm?.certificateType &&
-      !!certificateForm?.recipientName?.trim() &&
-      !!certificateForm?.startDate &&
-      !!certificateForm?.endDate &&
-      termsAccepted
+    ? !!certificateInput && termsAccepted
     : !!selectedTypeCode && !!messageText.trim() && termsAccepted
 
   const sendingAny = sending || sendingCertificate
@@ -159,51 +161,39 @@ const NewHealthConversation = () => {
   const handleTypeChange = (typeCode: string | null) => {
     setSelectedTypeCode(typeCode)
     setMessageText('')
-    setCertificateForm(undefined)
-    setSubmitAttempted(false)
+    setCertificateForm({})
+  }
+
+  const goToConversation = (conversationId?: string | null) => {
+    if (conversationId) {
+      navigate(
+        HealthPaths.HealthConversationsDetail.replace(':id', conversationId),
+        { state: { justCreated: true } },
+      )
+    } else {
+      navigate(HealthPaths.HealthConversations)
+    }
   }
 
   const handleSubmit = async () => {
-    setSubmitAttempted(true)
     if (!canSubmit || !recipient || !selectedTypeCode || !selectedType) return
 
     try {
       if (isCertificateSelected) {
-        if (
-          !certificateForm?.certificateType ||
-          !certificateForm?.startDate ||
-          !certificateForm?.endDate
-        ) {
-          return
-        }
+        if (!certificateInput) return
         const result = await createCertificateRequest({
           variables: {
             input: {
               nodeId: recipient.nodeId,
               groupId: recipient.groupId,
-              certificateType: certificateForm.certificateType,
-              recipientName: (certificateForm.recipientName ?? '').trim(),
-              // Local-time format keeps the picked calendar date intact;
-              // Date serialization would shift it across timezones.
-              startDate: format(certificateForm.startDate, 'yyyy-MM-dd'),
-              endDate: format(certificateForm.endDate, 'yyyy-MM-dd'),
-              note: certificateForm.note?.trim() || undefined,
+              ...certificateInput,
             },
           },
         })
-        const conversationId =
-          result.data?.healthDirectorateCreateCertificateRequest?.conversationId
-        if (conversationId) {
-          navigate(
-            HealthPaths.HealthConversationsDetail.replace(
-              ':id',
-              conversationId,
-            ),
-            { state: { justCreated: true } },
-          )
-        } else {
-          toast.error(formatMessage(m.errorTitle))
-        }
+        goToConversation(
+          result.data?.healthDirectorateCreateCertificateRequest
+            ?.conversationId,
+        )
         return
       }
 
@@ -218,14 +208,9 @@ const NewHealthConversation = () => {
           },
         },
       })
-      const id = result.data?.healthDirectorateCreateHealthConversation?.id
-      if (id) {
-        navigate(HealthPaths.HealthConversationsDetail.replace(':id', id), {
-          state: { justCreated: true },
-        })
-      } else {
-        navigate(HealthPaths.HealthConversations)
-      }
+      goToConversation(
+        result.data?.healthDirectorateCreateHealthConversation?.id,
+      )
     } catch {
       toast.error(formatMessage(m.errorTitle))
     }
@@ -316,9 +301,10 @@ const NewHealthConversation = () => {
               {isCertificateSelected ? (
                 <CertificateRequestForm
                   formState={certificateForm}
-                  setFormState={setCertificateForm}
+                  onChange={(patch) =>
+                    setCertificateForm((state) => ({ ...state, ...patch }))
+                  }
                   disabled={isFormLocked}
-                  submitAttempted={submitAttempted}
                 />
               ) : (
                 <Box>

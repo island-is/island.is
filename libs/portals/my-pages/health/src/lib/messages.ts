@@ -1975,18 +1975,6 @@ export const messages = defineMessages({
     defaultMessage: 'Skrifaðu stutta lýsingu á veikindunum',
     id: 'sp.health:health-messages-certificate-note-placeholder',
   },
-  healthConversationsCertificateTypeRequired: {
-    defaultMessage: 'Vinsamlegast veldu tegund vottorðs',
-    id: 'sp.health:health-messages-certificate-type-required',
-  },
-  healthConversationsCertificateRecipientNameRequired: {
-    defaultMessage: 'Vinsamlegast fylltu út nafn',
-    id: 'sp.health:health-messages-certificate-recipient-name-required',
-  },
-  healthConversationsCertificatePeriodRequired: {
-    defaultMessage: 'Vinsamlegast veldu tímabil',
-    id: 'sp.health:health-messages-certificate-period-required',
-  },
   healthConversationsNewTermsLabel: {
     defaultMessage: 'Ég samþykki <link>skilmála</link>',
     id: 'sp.health:health-messages-new-terms-label',

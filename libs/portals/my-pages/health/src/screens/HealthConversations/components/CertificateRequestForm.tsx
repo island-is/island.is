@@ -2,7 +2,6 @@ import {
   AlertMessage,
   Box,
   DatePicker,
-  ErrorMessage,
   GridColumn,
   GridRow,
   Input,
@@ -11,7 +10,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { HealthDirectorateCertificateType } from '@island.is/api/schema'
-import { Dispatch, SetStateAction } from 'react'
+import { formatDate } from '@island.is/portals/my-pages/core'
 import { messages } from '../../../lib/messages'
 
 export interface CertificateFormState {
@@ -22,19 +21,44 @@ export interface CertificateFormState {
   note?: string
 }
 
-interface Props {
-  formState?: CertificateFormState
-  setFormState: Dispatch<SetStateAction<CertificateFormState | undefined>>
-  disabled?: boolean
-  submitAttempted?: boolean
+/**
+ * The submit-ready shape of the form, or undefined while a required field is
+ * missing. Dates are serialized as local-time `yyyy-MM-dd` to keep the picked
+ * calendar date intact — Date serialization would shift it across timezones.
+ */
+export const toCertificateRequestInput = (state: CertificateFormState) => {
+  const { certificateType, recipientName, startDate, endDate, note } = state
+  if (!certificateType || !recipientName?.trim() || !startDate || !endDate) {
+    return undefined
+  }
+
+  return {
+    certificateType,
+    recipientName: recipientName.trim(),
+    startDate: formatDate(startDate, 'yyyy-MM-dd'),
+    endDate: formatDate(endDate, 'yyyy-MM-dd'),
+    note: note?.trim() || undefined,
+  }
 }
 
-const CertificateRequestForm = ({
-  formState,
-  setFormState,
-  disabled,
-  submitAttempted,
-}: Props) => {
+const certificateTypeOptions = [
+  {
+    value: HealthDirectorateCertificateType.work,
+    label: messages.healthConversationsCertificateTypeWork,
+  },
+  {
+    value: HealthDirectorateCertificateType.school,
+    label: messages.healthConversationsCertificateTypeSchool,
+  },
+]
+
+interface Props {
+  formState: CertificateFormState
+  onChange: (patch: Partial<CertificateFormState>) => void
+  disabled?: boolean
+}
+
+const CertificateRequestForm = ({ formState, onChange, disabled }: Props) => {
   const { formatMessage } = useLocale()
 
   return (
@@ -51,65 +75,28 @@ const CertificateRequestForm = ({
       <Text variant="h5" marginBottom={2}>
         {formatMessage(messages.healthConversationsCertificateTypeTitle)} *
       </Text>
-      <GridRow
-        marginBottom={submitAttempted && !formState?.certificateType ? 1 : 3}
-      >
-        <GridColumn
-          span={['12/12', '12/12', '12/12', '6/12']}
-          paddingBottom={[2, 2, 2, 0]}
-        >
-          <RadioButton
-            large
-            backgroundColor="blue"
-            id="certificate-type-work"
-            name="certificate-type"
-            label={formatMessage(
-              messages.healthConversationsCertificateTypeWork,
-            )}
-            checked={
-              formState?.certificateType ===
-              HealthDirectorateCertificateType.work
+      <GridRow marginBottom={3}>
+        {certificateTypeOptions.map((option, index) => (
+          <GridColumn
+            key={option.value}
+            span={['12/12', '12/12', '12/12', '6/12']}
+            paddingBottom={
+              index < certificateTypeOptions.length - 1 ? [2, 2, 2, 0] : 0
             }
-            disabled={disabled}
-            onChange={() =>
-              setFormState({
-                ...formState,
-                certificateType: HealthDirectorateCertificateType.work,
-              })
-            }
-          />
-        </GridColumn>
-        <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-          <RadioButton
-            large
-            backgroundColor="blue"
-            id="certificate-type-school"
-            name="certificate-type"
-            label={formatMessage(
-              messages.healthConversationsCertificateTypeSchool,
-            )}
-            checked={
-              formState?.certificateType ===
-              HealthDirectorateCertificateType.school
-            }
-            disabled={disabled}
-            onChange={() =>
-              setFormState({
-                ...formState,
-                certificateType: HealthDirectorateCertificateType.school,
-              })
-            }
-          />
-        </GridColumn>
+          >
+            <RadioButton
+              large
+              backgroundColor="blue"
+              id={`certificate-type-${option.value}`}
+              name="certificate-type"
+              label={formatMessage(option.label)}
+              checked={formState.certificateType === option.value}
+              disabled={disabled}
+              onChange={() => onChange({ certificateType: option.value })}
+            />
+          </GridColumn>
+        ))}
       </GridRow>
-
-      {submitAttempted && !formState?.certificateType && (
-        <Box marginBottom={3}>
-          <ErrorMessage>
-            {formatMessage(messages.healthConversationsCertificateTypeRequired)}
-          </ErrorMessage>
-        </Box>
-      )}
 
       <GridRow marginBottom={3}>
         <GridColumn
@@ -126,16 +113,10 @@ const CertificateRequestForm = ({
               messages.healthConversationsCertificateRecipientNamePlaceholder,
             )}
             backgroundColor="blue"
-            value={formState?.recipientName ?? ''}
-            onChange={(e) =>
-              setFormState({ ...formState, recipientName: e.target.value })
-            }
+            value={formState.recipientName ?? ''}
+            onChange={(e) => onChange({ recipientName: e.target.value })}
             disabled={disabled}
             required
-            hasError={submitAttempted && !formState?.recipientName?.trim()}
-            errorMessage={formatMessage(
-              messages.healthConversationsCertificateRecipientNameRequired,
-            )}
           />
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
@@ -144,12 +125,11 @@ const CertificateRequestForm = ({
             backgroundColor="blue"
             range
             selectedRange={{
-              startDate: formState?.startDate ?? null,
-              endDate: formState?.endDate ?? null,
+              startDate: formState.startDate ?? null,
+              endDate: formState.endDate ?? null,
             }}
             handleChange={(startDate, endDate) =>
-              setFormState({
-                ...formState,
+              onChange({
                 startDate: startDate ?? undefined,
                 endDate: endDate ?? undefined,
               })
@@ -158,12 +138,6 @@ const CertificateRequestForm = ({
             placeholderText={formatMessage(messages.choosePeriod)}
             disabled={disabled}
             required
-            hasError={
-              submitAttempted && (!formState?.startDate || !formState?.endDate)
-            }
-            errorMessage={formatMessage(
-              messages.healthConversationsCertificatePeriodRequired,
-            )}
           />
         </GridColumn>
       </GridRow>
@@ -181,8 +155,8 @@ const CertificateRequestForm = ({
             messages.healthConversationsCertificateNotePlaceholder,
           )}
           backgroundColor="blue"
-          value={formState?.note ?? ''}
-          onChange={(e) => setFormState({ ...formState, note: e.target.value })}
+          value={formState.note ?? ''}
+          onChange={(e) => onChange({ note: e.target.value })}
           disabled={disabled}
         />
       </Box>
