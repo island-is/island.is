@@ -7,6 +7,7 @@ import { messages } from '../../lib/messages'
 import type { ParsedCriterionDto } from '@island.is/clients/directorate-of-equality'
 import { DEFAULT_JOB_FACTORS } from '../../utils/constants'
 import type { JobFactor, PersonalFactor, SubCriterion } from '../../utils/types'
+import { getPathValue } from '../../utils/answerHelpers'
 import { CriterionPanel } from './CriterionPanel'
 
 export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
@@ -18,35 +19,39 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     'parsedSalaryReport.date',
   )
 
-  const parsedCriteria = (getValueViaPath<ParsedCriterionDto[]>(
+  const parsedCriteria = getPathValue<ParsedCriterionDto[]>(
     application.externalData,
     'parsedSalaryReport.data.criteria',
     [],
-  ) ?? []) as ParsedCriterionDto[]
+  )
 
-  const jobFactors = (getValueViaPath<JobFactor[]>(
+  const jobFactors = getPathValue<JobFactor[]>(
     application.answers,
     'criteria.jobFactors',
-  ) ?? DEFAULT_JOB_FACTORS) as JobFactor[]
+    DEFAULT_JOB_FACTORS,
+  )
 
-  const personalFactors = (getValueViaPath<PersonalFactor[]>(
+  const personalFactors = getPathValue<PersonalFactor[]>(
     application.answers,
     'criteria.personalFactors',
-  ) ?? []) as PersonalFactor[]
+    [],
+  )
 
   const parsedPersonalCriteria = parsedCriteria.filter(
     (c) => c.type === 'PERSONAL',
   )
 
-  const savedJobSubCriteria = (getValueViaPath<SubCriterion[][]>(
+  const savedJobSubCriteria = getPathValue<SubCriterion[][]>(
     application.answers,
     'subCriteria.jobFactors',
-  ) ?? []) as SubCriterion[][]
+    [],
+  )
 
-  const savedPersonalSubCriteria = (getValueViaPath<SubCriterion[][]>(
+  const savedPersonalSubCriteria = getPathValue<SubCriterion[][]>(
     application.answers,
     'subCriteria.personalFactors',
-  ) ?? []) as SubCriterion[][]
+    [],
+  )
 
   return (
     <Box>
@@ -66,6 +71,8 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
               return (
                 <CriterionPanel
                   key={factor.type}
+                  application={application}
+                  factorsKey="jobFactors"
                   accordionId={`subCriteria-jobFactor-${factor.type}`}
                   criterionTitle={factor.title}
                   criterionWeight={factor.weight}
@@ -100,6 +107,8 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                 return (
                   <CriterionPanel
                     key={`personal-${i}`}
+                    application={application}
+                    factorsKey="personalFactors"
                     accordionId={`subCriteria-personalFactor-${i}`}
                     criterionTitle={factor.title}
                     criterionWeight={factor.weight}

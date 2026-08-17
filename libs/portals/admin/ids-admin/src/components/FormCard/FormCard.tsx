@@ -93,7 +93,7 @@ export const FormCard = <Intent extends string>({
   const { formatMessage } = useLocale()
   const [allEnvironmentsCheck, setAllEnvironmentsCheck] = useState(inSync)
   const formRef = useRef<HTMLFormElement | null>(null)
-  const prevFormData = useRef<FormData | undefined>()
+  const prevFormData = useRef<FormData | undefined>(undefined)
   const [dirty, setDirty] = useState(false)
   const shouldSupportMultiEnv = useMultiEnvSupport(
     shouldSupportMultiEnvironment,

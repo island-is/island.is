@@ -470,9 +470,9 @@ export const addNumberedList = (
 
   for (const [i, item] of items.entries()) {
     const label = `${start + i}`
-    const textHeight = doc.heightOfString(label, {
+    // PDFKit wraps on whitespace and also splits oversized unbroken tokens.
+    const textHeight = doc.heightOfString(item, {
       width: wrapWidth,
-      height: 1.2,
     })
     const labelWidth = doc.widthOfString(label)
     const labelX = x + (labelBoxWidth - labelWidth)
@@ -482,8 +482,8 @@ export const addNumberedList = (
     }
     const y = doc.y
 
-    doc.text(label, labelX, y)
-    drawTextWithEllipsis(doc, ` ${item}`, itemX, y, wrapWidth)
+    doc.text(label, labelX, y, { lineBreak: false })
+    doc.text(item, itemX, y, { width: wrapWidth })
   }
 
   doc.x = originalX
@@ -512,6 +512,18 @@ const NON_HIGHLIGHT_BG = new Set([
   'none',
   '',
 ])
+
+// The editor stores highlights as hl-xxxxxx classes and indentation as
+// indent-N classes (see the web app's richTextNormalization.ts) — inline
+// styles cannot be used because the WAF in front of the API rejects request
+// bodies containing a style="..." attribute. Style parsing below is kept as a
+// fallback for legacy content saved before the switch to classes.
+const HIGHLIGHT_CLASS_REGEX = /(?:^|\s)hl-([0-9a-f]{6})(?:\s|$)/i
+const INDENT_CLASS_REGEX = /(?:^|\s)indent-(\d+)(?:\s|$)/
+
+// The editor indents 40px per level; 0.75 converts that to PDF points.
+const INDENT_LEVEL_PT = 30
+const MAX_INDENT_LEVEL = 10
 
 const extractBgColor = (style: string): string | null => {
   const m = style.match(/background-color:\s*([^;]+)/)
@@ -562,11 +574,15 @@ const collectRuns = (
       collectRuns(children, bold, true, highlight, result)
     } else if (
       el.name === 'span' &&
-      el.attribs?.style?.includes('background-color')
+      (el.attribs?.class || el.attribs?.style?.includes('background-color'))
     ) {
-      // A transparent/invalid background means no highlight, so inherit the
-      // current highlight state rather than forcing a fill.
-      const color = extractBgColor(el.attribs.style) ?? highlight
+      // A span without a highlight class, or with a transparent/invalid
+      // background, means no highlight, so inherit the current highlight
+      // state rather than forcing a fill.
+      const classMatch = el.attribs?.class?.match(HIGHLIGHT_CLASS_REGEX)
+      const color = classMatch
+        ? `#${classMatch[1].toLowerCase()}`
+        : (el.attribs?.style && extractBgColor(el.attribs.style)) || highlight
       collectRuns(children, bold, italic, color, result)
     } else if (el.name === 'br') {
       result.push({ text: '\n', bold: false, italic: false, highlight: false })
@@ -574,6 +590,14 @@ const collectRuns = (
       collectRuns(children, bold, italic, highlight, result)
     }
   }
+}
+
+const indentFromClass = (el: Element): number => {
+  const classMatch = el.attribs?.class?.match(INDENT_CLASS_REGEX)
+
+  return classMatch
+    ? Math.min(MAX_INDENT_LEVEL, parseInt(classMatch[1], 10)) * INDENT_LEVEL_PT
+    : 0
 }
 
 const collectBlocksFromNodes = (
@@ -600,7 +624,10 @@ const collectBlocksFromNodes = (
     if (el.name === 'p') {
       const style = el.attribs?.style ?? ''
       const paddingMatch = style.match(/padding-left:\s*(\d+(?:\.\d+)?)px/)
-      const pIndent = paddingMatch
+      const classIndent = indentFromClass(el)
+      const pIndent = classIndent
+        ? classIndent
+        : paddingMatch
         ? Math.round(parseFloat(paddingMatch[1]) * 0.75)
         : 0
 
@@ -626,7 +653,12 @@ const collectBlocksFromNodes = (
         })
       }
     } else {
-      blocks.push(...collectBlocksFromNodes(children, indent))
+      // The editor also puts indent-N on div/li/blockquote (legacy or pasted
+      // content), and its content CSS indents any element carrying the class —
+      // so carry the level down onto the blocks nested inside.
+      blocks.push(
+        ...collectBlocksFromNodes(children, indent + indentFromClass(el)),
+      )
     }
   }
 
@@ -707,6 +739,7 @@ export const addRichText = (
   doc: PDFKit.PDFDocument,
   html: string,
   lineGap = 0,
+  fontSize = baseFontSize,
 ): void => {
   const blocks = htmlToBlocks(html)
 
@@ -725,12 +758,12 @@ export const addRichText = (
 
     // All Times variants share their vertical metrics, so the line geometry
     // can be computed once per block.
-    doc.font('Times-Roman').fontSize(baseFontSize)
+    doc.font('Times-Roman').fontSize(fontSize)
     const lineHeight = doc.currentLineHeight(true)
     const lineAdvance = lineHeight + lineGap
     const visibleHeight = doc.currentLineHeight(false)
     // Shift rect up by half the descender height to centre around visible glyphs
-    const descender = (TIMES_DESCENDER / 1000) * baseFontSize
+    const descender = (TIMES_DESCENDER / 1000) * fontSize
     const hPad = 1
 
     let y = doc.y
@@ -781,7 +814,7 @@ export const addRichText = (
         doc.fillColor('black')
       }
       for (const fragment of lineFragments) {
-        doc.font(fragment.font).fontSize(baseFontSize)
+        doc.font(fragment.font).fontSize(fontSize)
         doc.text(fragment.text, fragment.x, y, { lineBreak: false })
       }
       lineFragments = []
@@ -802,7 +835,7 @@ export const addRichText = (
       }
 
       const font = getFontName(run)
-      doc.font(font).fontSize(baseFontSize)
+      doc.font(font).fontSize(fontSize)
 
       // Whitespace is already collapsed, so tokens are words with their
       // single trailing space attached, or a lone inter-run space.
@@ -856,4 +889,9 @@ export const addRichText = (
     doc.x = doc.page.margins.left
     doc.y = y + lineAdvance + paragraphGap
   }
+
+  // Fragment drawing leaves the document font on whatever the last run used
+  // (e.g. Times-Bold), and the plain-text helpers only set a font when given
+  // one explicitly — restore the default so it doesn't leak into them.
+  doc.font('Times-Roman')
 }

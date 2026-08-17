@@ -58,6 +58,11 @@ export const messageTypeToSuspensionCategory: Partial<
   [MessageType.DELIVERY_TO_POLICE_INDICTMENT_CASE]:
     MessageSuspensionCategory.POLICE,
   [MessageType.DELIVERY_TO_POLICE_INDICTMENT]: MessageSuspensionCategory.POLICE,
+  [MessageType.DELIVERY_TO_POLICE_REQUEST]: MessageSuspensionCategory.POLICE,
+  [MessageType.DELIVERY_TO_POLICE_COURT_RECORD]:
+    MessageSuspensionCategory.POLICE,
+  [MessageType.DELIVERY_TO_POLICE_CUSTODY_NOTICE]:
+    MessageSuspensionCategory.POLICE,
   [MessageType.DELIVERY_TO_POLICE_CASE_FILE]: MessageSuspensionCategory.POLICE,
   [MessageType.DELIVERY_TO_POLICE_CASE_FILES_RECORD]:
     MessageSuspensionCategory.POLICE,

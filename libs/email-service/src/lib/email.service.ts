@@ -1,5 +1,5 @@
-import { SES } from 'aws-sdk'
 import nodemailer from 'nodemailer'
+import * as aws from '@aws-sdk/client-ses'
 
 import { Inject } from '@nestjs/common'
 
@@ -55,16 +55,12 @@ export class EmailService {
 
     this.logger.debug('Using SES')
 
-    const cfg: SES.ClientConfiguration = {
-      apiVersion: '2010-12-01',
-    }
-
-    if (this.config.region) {
-      cfg.region = this.config.region
-    }
+    const ses = new aws.SES(
+      this.config.region ? { region: this.config.region } : {},
+    )
 
     return {
-      SES: new SES(cfg),
+      SES: { ses, aws },
     }
   }
 

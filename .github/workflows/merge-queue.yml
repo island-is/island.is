@@ -235,18 +235,49 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
 
+  typecheck:
+    needs:
+      - prepare
+    permissions:
+      contents: 'read'
+    runs-on: arc-shared
+    timeout-minutes: 35
+    env:
+      NODE_OPTIONS: --max-old-space-size=4096
+      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Fetch NX_BASE commit
+        run: git fetch --depth=1 origin ${{ needs.prepare.outputs.NX_BASE }}
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+
+      # The vite builds do not type check (unlike the webpack builds they
+      # replaced), so projects with a typecheck target are checked here.
+      - name: Type checking
+        run: yarn nx affected --target=typecheck
+
   success:
     runs-on: arc-shared
     if: ${{ !cancelled() }}
     needs:
       - prepare
       - tests
+      - typecheck
       - docker-build
     steps:
       - name: Check prepare success
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
       - name: Check tests success
         run: '[[ ${{ needs.tests.result }} != "failure" && ${{ needs.tests.result }} != "abandoned" && ${{ needs.tests.result }} != "cancelled" ]] || exit 1'
+      - name: Check typecheck success
+        run: '[[ ${{ needs.typecheck.result }} == "success" ]] || exit 1'
       - name: Check build success
         run: '[[ ${{ needs.docker-build.result }} != "failure" && ${{ needs.docker-build.result }} != "abandoned" && ${{ needs.docker-build.result }} != "cancelled" ]] || exit 1'
       - name: Get docker-build output

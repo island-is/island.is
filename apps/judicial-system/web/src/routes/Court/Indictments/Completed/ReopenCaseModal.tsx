@@ -77,33 +77,36 @@ const ReopenCaseModal: FC<Props> = ({ workingCase, onClose }) => {
           ))}
         </ul>
       }
-      secondaryButton={{
-        text: 'Hætta við',
-        onClick: onClose,
-      }}
-      primaryButton={{
-        text: 'Halda áfram',
-        colorScheme: 'destructive',
-        isDisabled: !reopenReason.trim() || isSubmitting,
-        onClick: async () => {
-          if (!reopenReason.trim()) {
-            return
-          }
-          setIsSubmitting(true)
-          try {
-            const updated = await updateCase(workingCase.id, {
-              reopenReason,
-            })
-            if (updated) {
-              router.push(
-                `${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${workingCase.id}`,
-              )
-            }
-          } finally {
-            setIsSubmitting(false)
-          }
+      buttons={[
+        {
+          text: 'Hætta við',
+          onClick: onClose,
+          variant: 'ghost',
         },
-      }}
+        {
+          text: 'Halda áfram',
+          colorScheme: 'destructive',
+          isDisabled: !reopenReason.trim() || isSubmitting,
+          onClick: async () => {
+            if (!reopenReason.trim()) {
+              return
+            }
+            setIsSubmitting(true)
+            try {
+              const updated = await updateCase(workingCase.id, {
+                reopenReason,
+              })
+              if (updated) {
+                router.push(
+                  `${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${workingCase.id}`,
+                )
+              }
+            } finally {
+              setIsSubmitting(false)
+            }
+          },
+        },
+      ]}
     >
       <Box marginBottom={4}>
         <Input

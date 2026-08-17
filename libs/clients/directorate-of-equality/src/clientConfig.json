@@ -920,6 +920,77 @@
       }
     },
     "/api/v1/application/reports/{providerId}/comments": {
+      "get": {
+        "description": "The report's external comment thread on its own, ordered oldest-first. Only comments with `EXTERNAL` visibility are returned — reviewer-internal notes are never exposed to the applicant. Use this instead of re-fetching the report detail when only the conversation is needed; the same list is embedded as `externalComments` in `GET /application/reports/:providerId`.",
+        "operationId": "getApplicationReportComments",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "description": "Upstream submission ID (e.g. the island.is application UUID).",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApplicationReportCommentDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      },
       "post": {
         "description": "Submits an external comment on a report owned by the authenticated company. Report is looked up by upstream `providerId`.",
         "operationId": "submitApplicationReportComment",
@@ -1353,21 +1424,9 @@
           "ordinal": { "type": "number" },
           "identifier": { "type": "string" },
           "roleTitle": { "type": "string" },
-          "education": {
-            "type": "string",
-            "enum": [
-              "COMPULSORY",
-              "UPPER_SECONDARY",
-              "VOCATIONAL",
-              "BACHELOR",
-              "MASTER",
-              "DOCTORATE",
-              "PROFESSIONAL"
-            ]
-          },
           "gender": { "type": "string", "enum": ["MALE", "FEMALE", "NEUTRAL"] },
-          "field": { "type": "string" },
-          "department": { "type": "string" },
+          "field": { "type": "string", "nullable": true },
+          "department": { "type": "string", "nullable": true },
           "startDate": { "type": "string" },
           "workRatio": { "type": "number" },
           "baseSalary": { "type": "number" },
@@ -1386,10 +1445,7 @@
           "ordinal",
           "identifier",
           "roleTitle",
-          "education",
           "gender",
-          "field",
-          "department",
           "startDate",
           "workRatio",
           "baseSalary",
@@ -1418,7 +1474,7 @@
         "type": "object",
         "properties": {
           "parsed": {
-            "description": "Parsed workbook payload from `POST /application/reports/excel/import`.",
+            "description": "Parsed workbook payload from an excel import endpoint.",
             "allOf": [{ "$ref": "#/components/schemas/ParsedReportDto" }]
           }
         },
@@ -1597,6 +1653,7 @@
         },
         "required": ["eligible"]
       },
+      "SalaryDataBasisEnum": { "type": "string", "enum": ["MONTH", "AVERAGE"] },
       "SubmitReportCompanyDto": {
         "type": "object",
         "properties": {
@@ -1661,6 +1718,11 @@
           "importedFromExcel": { "type": "boolean" },
           "providerId": { "type": "string" },
           "companyAdminName": { "type": "string" },
+          "companyAdminTitle": {
+            "type": "string",
+            "nullable": true,
+            "description": "Job title (starfsheiti) of the company executive."
+          },
           "companyAdminEmail": { "type": "string" },
           "companyAdminGender": {
             "type": "string",
@@ -1672,6 +1734,15 @@
           "averageEmployeeMaleCount": { "type": "number" },
           "averageEmployeeFemaleCount": { "type": "number" },
           "averageEmployeeNeutralCount": { "type": "number" },
+          "salaryDataBasis": {
+            "description": "Whether the salary data describes one specific payroll month (`MONTH`) or a twelve-month average (`AVERAGE`). The submittee must declare one.",
+            "allOf": [{ "$ref": "#/components/schemas/SalaryDataBasisEnum" }]
+          },
+          "salaryDataPeriod": {
+            "type": "string",
+            "nullable": true,
+            "description": "The payroll month the data is based on, as an ISO date (`YYYY-MM-DD`; any day within the month is accepted and normalised to the 1st). Required when `salaryDataBasis` is `MONTH`, ignored for `AVERAGE`. Must name a month that has already happened, no earlier than 36 months ago."
+          },
           "parsed": {
             "description": "Parsed workbook payload from `POST /reports/excel/import`. Contains the criteria tree, role list, and employee rows.",
             "allOf": [{ "$ref": "#/components/schemas/ParsedReportDto" }]
@@ -1708,6 +1779,7 @@
           "averageEmployeeMaleCount",
           "averageEmployeeFemaleCount",
           "averageEmployeeNeutralCount",
+          "salaryDataBasis",
           "parsed",
           "company"
         ]
@@ -1729,6 +1801,11 @@
           "identifier": { "type": "string" },
           "providerId": { "type": "string" },
           "companyAdminName": { "type": "string" },
+          "companyAdminTitle": {
+            "type": "string",
+            "nullable": true,
+            "description": "Job title (starfsheiti) of the company executive."
+          },
           "companyAdminEmail": { "type": "string" },
           "companyAdminGender": {
             "type": "string",
@@ -1739,9 +1816,11 @@
           "contactPhone": { "type": "string" },
           "equalityReportContent": {
             "type": "string",
-            "minLength": 1,
-            "description": "Narrative gender-equality plan. Persisted as `report.equality_report_content`."
+            "description": "Narrative gender-equality plan as base64-encoded HTML. Decoded server-side and persisted as `report.equality_report_content`."
           },
+          "averageEmployeeMaleCount": { "type": "number", "nullable": true },
+          "averageEmployeeFemaleCount": { "type": "number", "nullable": true },
+          "averageEmployeeNeutralCount": { "type": "number", "nullable": true },
           "company": { "$ref": "#/components/schemas/SubmitReportCompanyDto" },
           "subsidiaries": {
             "type": "array",
@@ -2063,6 +2142,16 @@
             ]
           },
           "equalityReportContent": { "type": "string", "nullable": true },
+          "salaryDataBasis": {
+            "nullable": true,
+            "description": "Salary-only. Whether the submitted salary data describes one specific payroll month (`MONTH`, with the month in `salaryDataPeriod`) or a twelve-month average (`AVERAGE`). Reads back the basis the applicant declared while drafting. Null on equality reports.",
+            "allOf": [{ "$ref": "#/components/schemas/SalaryDataBasisEnum" }]
+          },
+          "salaryDataPeriod": {
+            "type": "string",
+            "nullable": true,
+            "description": "The payroll month the salary data is based on, as an ISO date normalised to the 1st of that month (`YYYY-MM-01`). Set when `salaryDataBasis` is `MONTH`, null for `AVERAGE`."
+          },
           "outliersPostponed": {
             "type": "boolean",
             "nullable": true,

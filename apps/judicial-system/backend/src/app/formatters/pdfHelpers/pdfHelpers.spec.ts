@@ -1,6 +1,6 @@
 import PDFDocument from 'pdfkit'
 
-import { addRichText, htmlToBlocks } from './pdfHelpers'
+import { addNumberedList, addRichText, htmlToBlocks } from './pdfHelpers'
 
 describe('htmlToBlocks', () => {
   it('wraps plain text in a single block', () => {
@@ -124,6 +124,30 @@ describe('htmlToBlocks', () => {
     expect(blocks[0].runs[0]).toMatchObject({ highlight: '#fff066' })
   })
 
+  it('marks highlight for a span with a hl-xxxxxx class', () => {
+    // The editor stores highlights as classes — inline styles are blocked by
+    // the WAF in front of the API.
+    const blocks = htmlToBlocks(
+      '<p><span class="hl-ffff00">highlighted</span></p>',
+    )
+    expect(blocks[0].runs[0]).toMatchObject({ highlight: '#ffff00' })
+  })
+
+  it('finds the highlight class among other classes', () => {
+    const blocks = htmlToBlocks(
+      '<p><span class="other hl-008080 more">marked</span></p>',
+    )
+    expect(blocks[0].runs[0]).toMatchObject({ highlight: '#008080' })
+  })
+
+  it('does not highlight a span with an unrelated class', () => {
+    const blocks = htmlToBlocks('<p><span class="fancy">plain</span></p>')
+    expect(blocks[0].runs[0]).toMatchObject({
+      text: 'plain',
+      highlight: false,
+    })
+  })
+
   it('produces multiple runs within one paragraph', () => {
     const blocks = htmlToBlocks('<p>normal <strong>bold</strong> end</p>')
     expect(blocks[0].runs).toHaveLength(3)
@@ -135,6 +159,33 @@ describe('htmlToBlocks', () => {
   it('converts padding-left style to indent in points', () => {
     const blocks = htmlToBlocks('<p style="padding-left: 40px;">indented</p>')
     expect(blocks[0].indent).toBe(30)
+  })
+
+  it('converts an indent-N class to indent in points', () => {
+    // The editor stores indentation as classes — inline styles are blocked by
+    // the WAF in front of the API.
+    expect(htmlToBlocks('<p class="indent-1">x</p>')[0].indent).toBe(30)
+    expect(htmlToBlocks('<p class="indent-3">x</p>')[0].indent).toBe(90)
+  })
+
+  it('applies an indent-N class on other block tags to nested content', () => {
+    // The editor's content CSS indents any element carrying the class, not
+    // just paragraphs, so div/li/blockquote must indent here too.
+    expect(htmlToBlocks('<div class="indent-2">x</div>')[0].indent).toBe(60)
+    expect(
+      htmlToBlocks('<blockquote class="indent-1"><p>x</p></blockquote>')[0]
+        .indent,
+    ).toBe(30)
+    expect(
+      htmlToBlocks(
+        '<ul><li class="indent-1"><p class="indent-1">x</p></li></ul>',
+      )[0].indent,
+    ).toBe(60)
+  })
+
+  it('caps a class-based indent at the maximum level', () => {
+    const blocks = htmlToBlocks('<p class="indent-99">x</p>')
+    expect(blocks[0].indent).toBe(300)
   })
 
   it('emits an empty block for an empty paragraph', () => {
@@ -286,6 +337,7 @@ describe('addRichText highlight placement', () => {
     }
 
     const docInternals = doc as unknown as {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       _fragment: (text: string, x: number, y: number, options: unknown) => void
     }
     const originalFragment = docInternals._fragment.bind(doc)
@@ -381,6 +433,18 @@ describe('addRichText highlight placement', () => {
     doc.end()
   })
 
+  it('restores the default font after a block ending in a formatted run', () => {
+    const { doc } = createInstrumentedDoc()
+
+    addRichText(doc, '<p>plain <strong>bold</strong></p>', 2)
+
+    // The document font must not be left on Times-Bold, or subsequent text
+    // added without an explicit font would render bold.
+    const font = (doc as unknown as { _font: { name: string } })._font
+    expect(font.name).toBe('Times-Roman')
+    doc.end()
+  })
+
   it('keeps rect and text together when the block moves to a new page', () => {
     const { doc, rects, frags } = createInstrumentedDoc()
 
@@ -398,6 +462,120 @@ describe('addRichText highlight placement', () => {
     expect(rects).toHaveLength(1)
     expect(rects[0].page).toBe(frag.page)
     expect(Math.abs(rects[0].y - frag.y)).toBeLessThanOrEqual(Y_TOLERANCE)
+    doc.end()
+  })
+})
+
+describe('addNumberedList', () => {
+  interface Frag {
+    text: string
+    x: number
+    y: number
+    page: number
+  }
+
+  const createInstrumentedDoc = () => {
+    const doc = new PDFDocument({
+      size: 'A4',
+      margins: { top: 70, bottom: 70, left: 70, right: 70 },
+      bufferPages: true,
+    })
+    doc.font('Times-Roman').fontSize(11)
+
+    const frags: Frag[] = []
+    const currentPage = () => doc.bufferedPageRange().count
+
+    const docInternals = doc as unknown as {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      _fragment: (text: string, x: number, y: number, options: unknown) => void
+    }
+    const originalFragment = docInternals._fragment.bind(doc)
+    docInternals._fragment = (
+      text: string,
+      x: number,
+      y: number,
+      options: unknown,
+    ) => {
+      frags.push({ text: `${text}`, x, y, page: currentPage() })
+      return originalFragment(text, x, y, options)
+    }
+
+    return { doc, frags, currentPage }
+  }
+
+  const visibleText = (frags: Frag[]) => frags.map((f) => f.text).join('')
+
+  it('keeps a short name on one line without truncating', () => {
+    const { doc, frags } = createInstrumentedDoc()
+
+    addNumberedList(doc, ['Skjal.pdf'])
+
+    expect(visibleText(frags)).toContain('Skjal.pdf')
+    expect(visibleText(frags)).not.toContain('...')
+    const nameFrags = frags.filter((f) => f.text.includes('Skjal'))
+    const ys = [...new Set(nameFrags.map((f) => Math.round(f.y)))]
+    expect(ys).toHaveLength(1)
+    doc.end()
+  })
+
+  it('wraps a long name with spaces onto multiple lines', () => {
+    const { doc, frags } = createInstrumentedDoc()
+    const name = Array.from({ length: 20 }, (_, i) => `kafli${i}`).join(' ')
+
+    addNumberedList(doc, [name])
+
+    expect(visibleText(frags)).toContain('kafli0')
+    expect(visibleText(frags)).toContain('kafli19')
+    expect(visibleText(frags)).not.toContain('...')
+    expect(visibleText(frags)).not.toContain('\u200B')
+    const nameFrags = frags.filter((f) => /kafli\d+/.test(f.text))
+    const ys = [...new Set(nameFrags.map((f) => Math.round(f.y)))]
+    expect(ys.length).toBeGreaterThan(1)
+    doc.end()
+  })
+
+  it('wraps a long name with no spaces onto multiple lines via PDFKit', () => {
+    const { doc, frags } = createInstrumentedDoc()
+    const name = `${'a'.repeat(120)}.pdf`
+
+    addNumberedList(doc, [name])
+
+    expect(visibleText(frags)).toBe(`1${name}`)
+    expect(visibleText(frags)).not.toContain('...')
+    expect(visibleText(frags)).not.toContain('\u200B')
+    const nameFrags = frags.filter(
+      (f) => f.text.includes('a') || f.text.includes('.pdf'),
+    )
+    const ys = [...new Set(nameFrags.map((f) => Math.round(f.y)))]
+    expect(ys.length).toBeGreaterThan(1)
+
+    const rightEdge = doc.page.width - doc.page.margins.right
+    for (const frag of nameFrags) {
+      expect(frag.x + doc.widthOfString(frag.text)).toBeLessThanOrEqual(
+        rightEdge + 2,
+      )
+    }
+    doc.end()
+  })
+
+  it('moves a wrapping item to the next page instead of leaving an empty page gap', () => {
+    const { doc, frags, currentPage } = createInstrumentedDoc()
+    const name = `${'b'.repeat(120)}.pdf`
+
+    // Park near the bottom so a multi-line item cannot fit on this page.
+    doc.y = doc.page.height - doc.page.margins.bottom - 15
+    const pagesBefore = currentPage()
+
+    addNumberedList(doc, [name])
+
+    expect(currentPage()).toBeGreaterThan(pagesBefore)
+    const nameFrags = frags.filter(
+      (f) => f.text.includes('b') || f.text.includes('.pdf'),
+    )
+    expect(nameFrags.length).toBeGreaterThan(0)
+    expect(nameFrags.every((f) => f.page > pagesBefore)).toBe(true)
+    expect(visibleText(frags)).toContain(name)
+    expect(visibleText(frags)).not.toContain('\u200B')
     doc.end()
   })
 })

@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Tooltip, TooltipProps } from 'recharts'
+import { Tooltip, TooltipContentProps } from 'recharts'
 
 import { theme } from '@island.is/island-ui/theme'
 import { Chart } from '@island.is/web/graphql/schema'
@@ -16,7 +16,8 @@ interface ExtraTooltipProps {
   tickFormatter: (value: unknown) => string
 }
 
-type CustomTooltipProps = TooltipProps<string, number> & ExtraTooltipProps
+type CustomTooltipProps = TooltipContentProps<string, number> &
+  ExtraTooltipProps
 
 export const CustomTooltipRenderer = (props: CustomTooltipProps) => {
   const { active, payload } = props
@@ -62,11 +63,15 @@ export const CustomTooltipRenderer = (props: CustomTooltipProps) => {
             labelColor = theme.color.blue400
           }
 
+          const itemValue =
+            typeof item.value === 'number' || typeof item.value === 'string'
+              ? item.value
+              : undefined
           const value =
-            typeof item.value === 'number' || item.value
+            typeof itemValue === 'number' || itemValue
               ? formatValueForPresentation(
                   activeLocale,
-                  item.value,
+                  itemValue,
                   props.slice.reduceAndRoundValue ?? true,
                   1,
                 )
@@ -117,7 +122,7 @@ export const renderTooltip = ({
       }}
       content={(props) =>
         CustomTooltipRenderer({
-          ...(props as TooltipProps<string, number>),
+          ...(props as TooltipContentProps<string, number>),
           slice,
           componentsWithAddedProps,
           tickFormatter,

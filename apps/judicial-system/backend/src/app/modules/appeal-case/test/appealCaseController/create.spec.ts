@@ -12,6 +12,7 @@ import {
   AppealCaseState,
   AppealDecisionPartyRole,
   AppealEventType,
+  AppealOrigin,
   CaseAppealDecision,
   CaseFileCategory,
   CaseFileState,
@@ -31,7 +32,6 @@ import {
   AppealDecisionRepositoryService,
   AppealEventLogRepositoryService,
   Case,
-  CaseRepositoryService,
 } from '../../../repository'
 import { CreateAppealCaseDto } from '../../dto/createAppealCase.dto'
 
@@ -73,7 +73,6 @@ describe('AppealCaseController - Create', () => {
   let mockAppealCaseRepositoryService: AppealCaseRepositoryService
   let mockAppealDecisionRepositoryService: AppealDecisionRepositoryService
   let mockAppealEventLogRepositoryService: AppealEventLogRepositoryService
-  let mockCaseRepositoryService: CaseRepositoryService
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
@@ -85,14 +84,12 @@ describe('AppealCaseController - Create', () => {
       appealCaseRepositoryService,
       appealDecisionRepositoryService,
       appealEventLogRepositoryService,
-      caseRepositoryService,
       sequelize,
     } = await createTestingAppealCaseModule()
 
     mockAppealCaseRepositoryService = appealCaseRepositoryService
     mockAppealDecisionRepositoryService = appealDecisionRepositoryService
     mockAppealEventLogRepositoryService = appealEventLogRepositoryService
-    mockCaseRepositoryService = caseRepositoryService
 
     const mockNowFactory = nowFactory as jest.Mock
     mockNowFactory.mockReturnValue(now)
@@ -151,6 +148,7 @@ describe('AppealCaseController - Create', () => {
           caseId,
           appealCaseId,
           eventType: AppealEventType.APPEALED,
+          appealOrigin: AppealOrigin.OUT_OF_COURT,
           userRole: UserRole.PROSECUTOR,
           userId: prosecutor.id,
           nationalId: prosecutor.nationalId,
@@ -158,16 +156,6 @@ describe('AppealCaseController - Create', () => {
           userTitle: prosecutor.title,
           institutionName: prosecutor.institution?.name,
         },
-        { transaction },
-      )
-    })
-
-    it('should stamp the prosecutor postponed appeal date on the case', () => {
-      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
-        caseId,
-        expect.objectContaining({
-          prosecutorPostponedAppealDate: now,
-        }),
         { transaction },
       )
     })
@@ -181,28 +169,6 @@ describe('AppealCaseController - Create', () => {
             type: AppealCaseNotificationType.APPEAL_TO_COURT_OF_APPEALS,
           },
         }),
-      )
-    })
-  })
-
-  describe('defence user appeals a restriction case', () => {
-    const theCase = {
-      id: caseId,
-      type: CaseType.CUSTODY,
-      caseFiles: [],
-    } as unknown as Case
-
-    beforeEach(async () => {
-      await givenWhenThen(theCase, defender)
-    })
-
-    it('should stamp the accused postponed appeal date on the case', () => {
-      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
-        caseId,
-        expect.objectContaining({
-          accusedPostponedAppealDate: now,
-        }),
-        { transaction },
       )
     })
   })

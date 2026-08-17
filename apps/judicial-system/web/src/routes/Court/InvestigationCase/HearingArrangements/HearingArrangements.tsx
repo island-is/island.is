@@ -50,6 +50,7 @@ import { icHearingArrangements as m } from './HearingArrangements.strings'
 
 enum ModalButtonLoading {
   PRIMARY = 'PRIMARY',
+  SECONDARY = 'SECONDARY',
 }
 
 const HearingArrangements = () => {
@@ -140,8 +141,9 @@ const HearingArrangements = () => {
   )
 
   const isModalConfirming = modalButtonLoading === ModalButtonLoading.PRIMARY
-  const isModalLoading =
-    isModalConfirming && (isUpdatingCase || isSendingNotification)
+  const isModalDeferring = modalButtonLoading === ModalButtonLoading.SECONDARY
+  const isModalLoading = isModalConfirming && isUpdatingCase
+  const isModalDeferringLoading = isModalDeferring && isSendingNotification
 
   return (
     <PageLayout
@@ -388,40 +390,52 @@ const HearingArrangements = () => {
               ? `Fyrirtökutíma hefur verið breytt. Tilkynning um fyrirtöku verður send á ${recipients}.`
               : `Málið fer á dagskrá og tilkynning um fyrirtöku verður send á ${recipients}.`
           })()}
-          primaryButton={{
-            text: 'Já, staðfesta',
-            onClick: async () => {
-              setModalButtonLoading(ModalButtonLoading.PRIMARY)
+          buttons={[
+            {
+              text: 'Nei, staðfesta seinna',
+              isDisabled: isModalConfirming,
+              onClick: async () => {
+                setModalButtonLoading(ModalButtonLoading.SECONDARY)
 
-              const courtDateSaved = await sendCourtDateToServer()
+                // The arraignment date is not confirmed, so we only let registered
+                // advocates know that they are on the case. This is their only
+                // notification, so we do not navigate away until it has been sent.
+                const notificationSent = await sendNotification(
+                  workingCase.id,
+                  TrackedNotificationType.ADVOCATE_ASSIGNED,
+                )
 
-              if (!courtDateSaved) {
-                setModalButtonLoading(undefined)
-                return
-              }
+                if (!notificationSent) {
+                  setModalButtonLoading(undefined)
+                  return
+                }
 
-              const notificationSent = await sendNotification(
-                workingCase.id,
-                TrackedNotificationType.COURT_DATE,
-              )
-
-              if (notificationSent) {
                 router.push(`${navigateTo}/${workingCase.id}`)
-              } else {
-                setModalButtonLoading(undefined)
-              }
+              },
+              isLoading: isModalDeferringLoading,
+              variant: 'ghost',
             },
-            isLoading: isModalLoading,
-          }}
-          secondaryButton={{
-            text: 'Nei, staðfesta seinna',
-            isDisabled: isModalConfirming,
-            onClick: () => {
-              router.push(`${navigateTo}/${workingCase.id}`)
+            {
+              text: 'Já, staðfesta',
+              onClick: async () => {
+                setModalButtonLoading(ModalButtonLoading.PRIMARY)
+
+                // Saving the arraignment date triggers the court date notifications
+                const courtDateSaved = await sendCourtDateToServer()
+
+                if (!courtDateSaved) {
+                  setModalButtonLoading(undefined)
+                  return
+                }
+
+                router.push(`${navigateTo}/${workingCase.id}`)
+              },
+              isLoading: isModalLoading,
+              isDisabled: isModalDeferring,
             },
-          }}
+          ]}
           errorMessage={
-            modalButtonLoading && sendNotificationError
+            isModalDeferring && sendNotificationError
               ? formatMessage(errors.sendNotification)
               : undefined
           }

@@ -5,6 +5,7 @@ import { chiefExecutiveSubSection } from './chiefExecutiveSubSection'
 import { contactPersonSubSection } from './contactPersonSubSection'
 import { employeeCountSubSection } from './employeeCountSubSection'
 import { subsidiariesSubSection } from './subsidiariesSubSection'
+import { periodSubSection } from './periodSubSection'
 
 export const aboutTheCompanySection = buildSection({
   id: 'aboutTheCompany',
@@ -15,5 +16,6 @@ export const aboutTheCompanySection = buildSection({
     contactPersonSubSection,
     employeeCountSubSection,
     subsidiariesSubSection,
+    periodSubSection,
   ],
 })

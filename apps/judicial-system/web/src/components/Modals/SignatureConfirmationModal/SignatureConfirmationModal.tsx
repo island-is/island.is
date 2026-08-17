@@ -208,29 +208,34 @@ export const SignatureConfirmationModal: FC<
     <Modal
       title={getTitle()}
       text={getText()}
-      primaryButton={
-        signingProgress === 'error' || signingProgress === 'canceled'
-          ? {
-              text: formatMessage(signingModalStrings.primaryButtonErrorText),
-              onClick: handleClose,
-            }
-          : undefined
-      }
-      secondaryButton={
-        signingProgress === 'inProgress'
-          ? undefined
-          : {
-              text:
-                signingProgress === 'success'
-                  ? formatMessage(core.closeModal)
-                  : formatMessage(signingModalStrings.secondaryButtonErrorText),
-              onClick:
-                signingProgress === 'success' ? handleClose : handleRetry,
-            }
-      }
-      invertButtonColors={
-        signingProgress === 'canceled' || signingProgress === 'error'
-      }
+      buttons={[
+        ...(signingProgress === 'inProgress'
+          ? []
+          : [
+              {
+                text:
+                  signingProgress === 'success'
+                    ? formatMessage(core.closeModal)
+                    : formatMessage(
+                        signingModalStrings.secondaryButtonErrorText,
+                      ),
+                onClick:
+                  signingProgress === 'success' ? handleClose : handleRetry,
+                ...(signingProgress === 'success'
+                  ? { variant: 'ghost' as const }
+                  : {}),
+              },
+            ]),
+        ...(signingProgress === 'error' || signingProgress === 'canceled'
+          ? [
+              {
+                text: formatMessage(signingModalStrings.primaryButtonErrorText),
+                onClick: handleClose,
+                variant: 'ghost' as const,
+              },
+            ]
+          : []),
+      ]}
     />
   )
 }
