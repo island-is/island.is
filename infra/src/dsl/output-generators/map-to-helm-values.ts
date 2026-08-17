@@ -499,9 +499,8 @@ function serializeHTTPRoute(
     gatewayName = 'gateway-external'
   }
 
-  const hostnames = (typeof ingressConf.host === 'string'
-    ? [ingressConf.host]
-    : ingressConf.host
+  const hostnames = (
+    typeof ingressConf.host === 'string' ? [ingressConf.host] : ingressConf.host
   ).map((host) =>
     isPublic ? hostFullName(host, env) : internalHostFullName(host, env),
   )
