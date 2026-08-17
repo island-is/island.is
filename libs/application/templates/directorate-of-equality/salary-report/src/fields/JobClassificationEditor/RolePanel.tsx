@@ -4,10 +4,7 @@ import { AccordionCard, Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
 import type { DisplayAssignment, StepMeta } from '../../utils/types'
-import {
-  computeAssignmentScore,
-  groupAssignmentsByCriterion,
-} from './utils'
+import { computeAssignmentScore, groupAssignmentsByCriterion } from './utils'
 import { StepAssignmentItem } from './StepAssignmentItem'
 
 type Props = {

@@ -120,7 +120,9 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
     originalEmployeeIds.current = new Set(employees.map((e) => e.id))
     originalRoleIds.current = new Set(content.roles.map((r) => r.id))
-    setRoles(content.roles.map((r) => ({ id: r.id, title: r.title, stepIds: [] })))
+    setRoles(
+      content.roles.map((r) => ({ id: r.id, title: r.title, stepIds: [] })),
+    )
     methods.reset({ employees })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content])
@@ -193,7 +195,10 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   ): Employee => {
     const { id: roleId, isNew } = findOrCreateRoleId(values.roleTitle, roles)
     if (isNew) {
-      setRoles((prev) => [...prev, { id: roleId, title: values.roleTitle, stepIds: [] }])
+      setRoles((prev) => [
+        ...prev,
+        { id: roleId, title: values.roleTitle, stepIds: [] },
+      ])
       newRoleIds.current.add(roleId)
     }
     const components = componentsFromFormValues(values)
@@ -218,7 +223,13 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const handleAdd = (values: EmployeeFormValues) => {
     const employee = resolveEmployee(values)
     append(employee)
-    setPage(pageOfEmployee([...fields, employee] as Employee[], employee, roleTitleById))
+    setPage(
+      pageOfEmployee(
+        [...fields, employee] as Employee[],
+        employee,
+        roleTitleById,
+      ),
+    )
     setIsAdding(false)
   }
 

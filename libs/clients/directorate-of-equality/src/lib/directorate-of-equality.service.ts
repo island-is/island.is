@@ -301,7 +301,8 @@ export class DirectorateOfEqualityClientService {
   ): Promise<DraftDetailDto> {
     return this.unwrap(
       user,
-      () => importApplicationReportDraftWorkbook({ path: { providerId }, body }),
+      () =>
+        importApplicationReportDraftWorkbook({ path: { providerId }, body }),
       'Failed to import report draft workbook',
     )
   }

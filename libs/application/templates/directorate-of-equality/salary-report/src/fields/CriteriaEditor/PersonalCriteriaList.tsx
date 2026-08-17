@@ -17,9 +17,7 @@ export const PersonalCriteriaList = ({
   const { formatMessage } = useLocale()
 
   const updateFactor = (id: string, patch: Partial<PersonalFactor>) => {
-    onChange(
-      personalFactors.map((f) => (f.id === id ? { ...f, ...patch } : f)),
-    )
+    onChange(personalFactors.map((f) => (f.id === id ? { ...f, ...patch } : f)))
   }
 
   const addFactor = () => {

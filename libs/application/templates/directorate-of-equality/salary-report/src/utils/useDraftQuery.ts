@@ -24,7 +24,7 @@ type QueryExternalData<T> = {
 // present (or `ensureDraft` is set — used only by the one screen that also
 // needs to create the draft first), and again whenever the screen calls
 // `refetch` after its own sync, to pre-warm the next screen's externalData.
-export const useDraftQuery = <T,>(
+export const useDraftQuery = <T>(
   application: Application,
   actionId: string,
   externalDataId: string,
@@ -84,7 +84,14 @@ export const useDraftQuery = <T,>(
         if (!silent) setLoading(false)
       }
     },
-    [actionId, application.id, ensureDraft, externalDataId, locale, updateApplicationExternalData],
+    [
+      actionId,
+      application.id,
+      ensureDraft,
+      externalDataId,
+      locale,
+      updateApplicationExternalData,
+    ],
   )
 
   // Public refetch — used by screens after their sync to pre-warm the

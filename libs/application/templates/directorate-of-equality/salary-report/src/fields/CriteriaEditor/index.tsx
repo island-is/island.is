@@ -3,10 +3,7 @@ import { Box, LoadingDots, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useEffect, useRef, useState } from 'react'
 import { messages } from '../../lib/messages'
-import {
-  createDefaultJobFactors,
-  SyncMethodEnum,
-} from '../../utils/constants'
+import { createDefaultJobFactors, SyncMethodEnum } from '../../utils/constants'
 import type {
   JobFactor,
   PersonalFactor,

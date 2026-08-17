@@ -12,10 +12,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { useMutation } from '@apollo/client'
 import { FC, useEffect, useRef, useState } from 'react'
-import {
-  createDefaultJobFactors,
-  SyncMethodEnum,
-} from '../../utils/constants'
+import { createDefaultJobFactors, SyncMethodEnum } from '../../utils/constants'
 import type { ReportCriterionDto } from '../../utils/types'
 import { useDraftQuery } from '../../utils/useDraftQuery'
 import { useDraftSync } from '../../utils/useDraftSync'
@@ -154,8 +151,8 @@ export const ExcelTemplateDownload: FC<
         },
       })
 
-      const importData = result.data?.updateApplicationExternalData
-        .externalData?.importSalaryDraftWorkbook as
+      const importData = result.data?.updateApplicationExternalData.externalData
+        ?.importSalaryDraftWorkbook as
         | {
             status?: 'success' | 'failure'
             data?: { criteria?: { type?: string }[] }

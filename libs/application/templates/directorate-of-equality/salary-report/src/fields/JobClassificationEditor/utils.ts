@@ -18,9 +18,7 @@ export const buildStepMetaBySubCriterionId = (
   criteria.forEach((criterion) => {
     criterion.subCriteria.forEach((sc) => {
       const steps = sc.steps.slice().sort((a, b) => a.order - b.order)
-      const maxScore = steps.length
-        ? Math.max(...steps.map((s) => s.score))
-        : 0
+      const maxScore = steps.length ? Math.max(...steps.map((s) => s.score)) : 0
       map[sc.id] = {
         steps: steps.map((s) => ({ order: s.order, score: s.score })),
         totalSteps: steps.length,
@@ -63,10 +61,8 @@ export const resolveStepIds = (
   criteria: DraftCriterionWithSubCriteriaDto[],
   assignments: DisplayAssignment[],
 ): string[] => {
-  const stepsBySubCriterionId: Record<
-    string,
-    { id: string; order: number }[]
-  > = {}
+  const stepsBySubCriterionId: Record<string, { id: string; order: number }[]> =
+    {}
   criteria.forEach((criterion) => {
     criterion.subCriteria.forEach((sc) => {
       stepsBySubCriterionId[sc.id] = sc.steps

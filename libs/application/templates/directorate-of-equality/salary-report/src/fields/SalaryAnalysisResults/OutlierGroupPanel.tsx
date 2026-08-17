@@ -1,5 +1,10 @@
 import { FC, useEffect } from 'react'
-import { FormProvider, useFormContext, useWatch, UseFormReturn } from 'react-hook-form'
+import {
+  FormProvider,
+  useFormContext,
+  useWatch,
+  UseFormReturn,
+} from 'react-hook-form'
 import { YES } from '@island.is/application/core'
 import { Application, RecordObject } from '@island.is/application/types'
 import { Box, Text } from '@island.is/island-ui/core'

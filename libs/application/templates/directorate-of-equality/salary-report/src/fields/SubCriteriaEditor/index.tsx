@@ -24,13 +24,18 @@ const POINTS_PER_WEIGHT_PERCENT = 10
 
 export type SubCriteriaFormValues = Record<string, SubCriterion[]>
 
-export const SubCriteriaEditor: FC<
-  React.PropsWithChildren<FieldBaseProps>
-> = ({ application, setBeforeSubmitCallback }) => {
+export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+  setBeforeSubmitCallback,
+}) => {
   const { formatMessage } = useLocale()
   const { content, loading, refetch } = useDraftQuery<{
     criteria: DraftCriterionWithSubCriteriaDto[]
-  }>(application, 'DirectorateOfEquality.getDraftCriteriaTree', 'draftCriteriaTree')
+  }>(
+    application,
+    'DirectorateOfEquality.getDraftCriteriaTree',
+    'draftCriteriaTree',
+  )
   const { sync } = useDraftSync(application)
   const methods = useForm<SubCriteriaFormValues>({ defaultValues: {} })
 

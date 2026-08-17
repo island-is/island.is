@@ -1,9 +1,4 @@
-import {
-  AccordionCard,
-  Box,
-  Button,
-  Text,
-} from '@island.is/island-ui/core'
+import { AccordionCard, Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'

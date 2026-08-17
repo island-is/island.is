@@ -2,7 +2,12 @@ import { UseGuards } from '@nestjs/common'
 import { Args, Mutation, Resolver } from '@nestjs/graphql'
 
 import type { User } from '@island.is/auth-nest-tools'
-import { CurrentUser, IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 
