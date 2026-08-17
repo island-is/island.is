@@ -75,7 +75,7 @@ export const EmployeeClassificationRow: FC<Props> = ({
               <Stack space={3}>
                 {groups.map((group) => {
                   const groupAssignments = group.items.map(
-                    ({ index }) => assignments[index],
+                    ({ assignment, index }) => assignments[index] ?? assignment,
                   )
                   const { score, max } = computeRoleScore(
                     groupAssignments,

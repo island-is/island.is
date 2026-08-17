@@ -8,6 +8,7 @@ import {
   GridColumn,
   GridRow,
   Input,
+  Text,
 } from '@island.is/island-ui/core'
 import { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -41,6 +42,23 @@ export const RelevantParty = ({ applicantType, relevantApplicant }: Props) => {
 
   return (
     <Box paddingLeft={4} paddingTop={2}>
+      {(currentApplicant.fieldSettings?.applicantType ===
+        'INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL' ||
+        currentApplicant.fieldSettings?.applicantType ===
+          'INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY') && (
+        <GridRow marginBottom={1}>
+          <GridColumn span="6/10">
+            <Text variant="medium">
+              Sé þessi möguleiki valinn þá þarf að velja viðeigandi umboð
+              (scope) í umboðsflipanum vinstra megin sem innskráður
+              einstaklingur þarf að hafa til að mega sækja um þessa umsókn.{' '}
+              <br />
+              ATH. Umboð til einstaklinga eru veitt í gegnum umboðskerfið á
+              mínum síðum.
+            </Text>
+          </GridColumn>
+        </GridRow>
+      )}
       <GridRow>
         <GridColumn span="5/10">
           <Input
@@ -205,7 +223,7 @@ export const RelevantParty = ({ applicantType, relevantApplicant }: Props) => {
       </GridRow>
       {currentApplicant?.fieldSettings?.fetchEmailFromMyPages !== undefined &&
         currentApplicant?.fieldSettings?.fetchEmailFromMyPages !== null && (
-          <GridRow marginBottom={3}>
+          <GridRow marginBottom={1}>
             <GridColumn span="12/12">
               <Checkbox
                 label="Sækja persónulegt netfang af Mínum síðum innskráðs notanda"
