@@ -118,8 +118,9 @@ const NewHealthConversation = () => {
   const isCertificateBlocked =
     isCertificateSelected && recipient?.canRequestCertificate === false
 
-  const isFormLocked =
-    recipient?.canCreateConversation === false || isCertificateBlocked
+  const isConversationBlocked = recipient?.canCreateConversation === false
+
+  const isFormLocked = isConversationBlocked || isCertificateBlocked
 
   const certificateBlockedOutsideWindow =
     recipient?.certificateBlockedReason ===
@@ -286,7 +287,7 @@ const NewHealthConversation = () => {
                     backgroundColor="blue"
                     size="sm"
                     required
-                    isDisabled={isFormLocked}
+                    isDisabled={isConversationBlocked}
                   />
                 </GridColumn>
               </GridRow>
@@ -308,6 +309,7 @@ const NewHealthConversation = () => {
                     setCertificateForm((state) => ({ ...state, ...patch }))
                   }
                   disabled={isFormLocked}
+                  hidePaymentNotice={isCertificateBlocked}
                 />
               ) : (
                 <Box>

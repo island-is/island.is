@@ -56,25 +56,29 @@ export interface CertificateRequestFormProps {
   formState: CertificateFormState
   onChange: (patch: Partial<CertificateFormState>) => void
   disabled?: boolean
+  hidePaymentNotice?: boolean
 }
 
 const CertificateRequestForm = ({
   formState,
   onChange,
   disabled,
+  hidePaymentNotice,
 }: CertificateRequestFormProps) => {
   const { formatMessage } = useLocale()
 
   return (
     <Box marginBottom={3}>
-      <Box marginBottom={3}>
-        <AlertMessage
-          type="warning"
-          message={formatMessage(
-            messages.healthConversationsCertificatePaymentNotice,
-          )}
-        />
-      </Box>
+      {!hidePaymentNotice && (
+        <Box marginBottom={3}>
+          <AlertMessage
+            type="warning"
+            message={formatMessage(
+              messages.healthConversationsCertificatePaymentNotice,
+            )}
+          />
+        </Box>
+      )}
 
       <Text variant="h5" marginBottom={2}>
         {formatMessage(messages.healthConversationsCertificateTypeTitle)}
