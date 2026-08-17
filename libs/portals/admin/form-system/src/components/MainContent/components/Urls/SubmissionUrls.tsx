@@ -11,12 +11,14 @@ import {
   Box,
   Button,
   Checkbox,
-  GridColumn,
-  GridRow,
+  GridColumn as Column,
+  GridRow as Row,
+  Icon,
   Input,
   RadioButton,
   Stack,
   Text,
+  LinkV2,
 } from '@island.is/island-ui/core'
 import { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -137,9 +139,35 @@ export const SubmissionUrls = () => {
   }, [])
 
   return (
-    <Stack space={2}>
+    <>
+      <Box marginTop={2} />
+      <Row>
+        <Column span="8/10">
+          <Text variant="medium">
+            Hér velur þú hvert umsóknirnar fyrir þetta tiltekna form verða
+            sendar. Það er hægt að senda á Zendesk málakerfið eða sérsmíðaða
+            vefþjónustu stofnunar yfir X-Road.{' '}
+          </Text>
+          <Box marginTop={1} />
+          <Text variant="medium">
+            Ef notuð er vefþjónusta stofnunar yfir X-Road þá vinsamlega kynnið
+            ykkur þessar leiðbeiningar:
+          </Text>
+          <LinkV2
+            href="https://www.notion.so/Tengingar-vi-ytri-m-lakerfi-2a45a76701d680e3af0bee6e41786126"
+            newTab={true}
+            color="blue400"
+            underline="small"
+          >
+            Tengingar við ytri málakerfi
+            <Box component="span" marginLeft={1} display="inlineBlock">
+              <Icon icon="open" type="outline" size="small" />
+            </Box>
+          </LinkV2>
+        </Column>
+      </Row>
       {!showInput && !submissionUrlInput && (
-        <Box marginTop={7}>
+        <Box marginTop={5}>
           <Button
             onClick={() => setShowInput(true)}
             variant="ghost"
@@ -151,9 +179,9 @@ export const SubmissionUrls = () => {
       )}
 
       {(showInput || submissionUrlInput) && (
-        <GridRow>
-          <GridColumn>
-            <Box marginTop={7}>
+        <Row>
+          <Column>
+            <Box marginTop={5}>
               <Input
                 label={formatMessage(m.newFormUrlButton)}
                 placeholder="/r1/IS/..."
@@ -165,25 +193,19 @@ export const SubmissionUrls = () => {
                   setSubmissionUrlInput(e.target.value)
                 }}
               />
-              <Box marginTop={2}>
+              <Box marginTop={1} marginBottom={1}>
                 <Text variant="small">
                   {formatMessage(m.urlReuseEncouragement)}
                 </Text>
               </Box>
-              <Box marginTop={2}>
-                <Text variant="small">
-                  {formatMessage(m.urlFormatInstruction)}{' '}
-                  <strong>/r1/IS/</strong>
-                </Text>
-              </Box>
             </Box>
-          </GridColumn>
-        </GridRow>
+          </Column>
+        </Row>
       )}
 
       {submissionUrlInput && (
-        <GridRow>
-          <GridColumn span="10/10">
+        <Row>
+          <Column span="10/10">
             <RadioButton
               label={submissionUrlInput}
               large
@@ -209,119 +231,121 @@ export const SubmissionUrls = () => {
                 })
               }}
             />
-          </GridColumn>
-        </GridRow>
+          </Column>
+        </Row>
       )}
-
-      {submissionUrls?.map(
-        (url) =>
-          url !== submissionUrlInput && (
-            <GridRow>
-              <GridColumn span="10/10" key={url}>
-                <RadioButton
-                  label={url}
-                  large
-                  name="submissionUrl"
-                  id={`submission-url-${sanitizeId(url ?? '')}`}
-                  disabled={isReadOnly}
-                  checked={form.submissionServiceUrl === url}
-                  onChange={() => {
-                    controlDispatch({
-                      type: 'CHANGE_SUBMISSION_URL',
-                      payload: { value: url ?? '' },
-                    })
-                    formUpdate({ ...form, submissionServiceUrl: url ?? '' })
-                  }}
-                />
-              </GridColumn>
-            </GridRow>
-          ),
-      )}
-
-      <GridRow>
-        <GridColumn span="5/10">
-          <RadioButton
-            label="Zendesk"
-            large
-            name="submissionUrl"
-            id="zendesk"
-            checked={form.submissionServiceUrl === 'zendesk'}
-            disabled={isReadOnly}
-            onChange={async (e) => {
-              controlDispatch({
-                type: 'CHANGE_SUBMISSION_URL',
-                payload: { value: e.target.id, useValidate: false },
-              })
-
-              formUpdate({
-                ...form,
-                submissionServiceUrl: e.target.id,
-                useValidate: false,
-              })
-              await persistZendeskApplicantRequirements()
-            }}
-          />
-        </GridColumn>
-        {form.submissionServiceUrl === 'zendesk' && (
-          <GridColumn span="5/10">
-            <Blockquote>
-              <Text variant="small" whiteSpace="preWrap" lineHeight="sm">
-                <code>
-                  Zendesk instance:{' '}
-                  {form.organizationZendeskInstance?.zendeskInstance
-                    ? form.organizationZendeskInstance.zendeskInstance
-                    : 'digitaliceland'}
-                  .zendesk.com
-                </code>
-              </Text>
-              <Text variant="small" whiteSpace="preWrap" lineHeight="sm">
-                <code>
-                  Zendesk brand ID:{' '}
-                  {form.organizationZendeskInstance?.zendeskBrandId}
-                </code>
-              </Text>
-            </Blockquote>
-          </GridColumn>
+      <Box marginTop={3} />
+      <Stack space={2}>
+        {submissionUrls?.map(
+          (url) =>
+            url !== submissionUrlInput && (
+              <Row key={url}>
+                <Column span="10/10">
+                  <RadioButton
+                    label={url}
+                    large
+                    name="submissionUrl"
+                    id={`submission-url-${sanitizeId(url ?? '')}`}
+                    disabled={isReadOnly}
+                    checked={form.submissionServiceUrl === url}
+                    onChange={() => {
+                      controlDispatch({
+                        type: 'CHANGE_SUBMISSION_URL',
+                        payload: { value: url ?? '' },
+                      })
+                      formUpdate({ ...form, submissionServiceUrl: url ?? '' })
+                    }}
+                  />
+                </Column>
+              </Row>
+            ),
         )}
-      </GridRow>
 
-      {form.submissionServiceUrl === 'zendesk' && (
-        <GridRow>
-          <GridColumn span="9/10">
-            <Checkbox
-              label={formatMessage(m.zendeskPrivate)}
-              checked={!!form.zendeskInternal}
+        <Row>
+          <Column span="5/10">
+            <RadioButton
+              label="Zendesk"
+              large
+              name="submissionUrl"
+              id="zendesk"
+              checked={form.submissionServiceUrl === 'zendesk'}
               disabled={isReadOnly}
-              onChange={(e) => {
+              onChange={async (e) => {
                 controlDispatch({
-                  type: 'CHANGE_ZENDESK_INTERNAL',
-                  payload: { value: e.target.checked },
+                  type: 'CHANGE_SUBMISSION_URL',
+                  payload: { value: e.target.id, useValidate: false },
                 })
-                formUpdate({ ...form, zendeskInternal: e.target.checked })
+
+                formUpdate({
+                  ...form,
+                  submissionServiceUrl: e.target.id,
+                  useValidate: false,
+                })
+                await persistZendeskApplicantRequirements()
               }}
             />
-          </GridColumn>
-        </GridRow>
-      )}
+          </Column>
+          {form.submissionServiceUrl === 'zendesk' && (
+            <Column span="5/10">
+              <Blockquote>
+                <Text variant="small" whiteSpace="preWrap" lineHeight="sm">
+                  <code>
+                    Zendesk instance:{' '}
+                    {form.organizationZendeskInstance?.zendeskInstance
+                      ? form.organizationZendeskInstance.zendeskInstance
+                      : 'digitaliceland'}
+                    .zendesk.com
+                  </code>
+                </Text>
+                <Text variant="small" whiteSpace="preWrap" lineHeight="sm">
+                  <code>
+                    Zendesk brand ID:{' '}
+                    {form.organizationZendeskInstance?.zendeskBrandId}
+                  </code>
+                </Text>
+              </Blockquote>
+            </Column>
+          )}
+        </Row>
 
-      {form.submissionServiceUrl && form.submissionServiceUrl !== 'zendesk' && (
-        <GridRow>
-          <GridColumn span="10/10">
-            <Checkbox
-              label={formatMessage(m.useValidate)}
-              checked={!!form.useValidate}
-              disabled={isReadOnly}
-              onChange={(e) => {
-                controlDispatch({
-                  type: 'CHANGE_USE_VALIDATE',
-                  payload: { value: e.target.checked },
-                })
-                formUpdate({ ...form, useValidate: e.target.checked })
-              }}
-            />
-          </GridColumn>
-        </GridRow>
-      )}
-    </Stack>
+        {form.submissionServiceUrl === 'zendesk' && (
+          <Row>
+            <Column span="9/10">
+              <Checkbox
+                label={formatMessage(m.zendeskPrivate)}
+                checked={!!form.zendeskInternal}
+                disabled={isReadOnly}
+                onChange={(e) => {
+                  controlDispatch({
+                    type: 'CHANGE_ZENDESK_INTERNAL',
+                    payload: { value: e.target.checked },
+                  })
+                  formUpdate({ ...form, zendeskInternal: e.target.checked })
+                }}
+              />
+            </Column>
+          </Row>
+        )}
+
+        {form.submissionServiceUrl && form.submissionServiceUrl !== 'zendesk' && (
+          <Row>
+            <Column span="10/10">
+              <Checkbox
+                label={formatMessage(m.useValidate)}
+                checked={!!form.useValidate}
+                disabled={isReadOnly}
+                onChange={(e) => {
+                  controlDispatch({
+                    type: 'CHANGE_USE_VALIDATE',
+                    payload: { value: e.target.checked },
+                  })
+                  formUpdate({ ...form, useValidate: e.target.checked })
+                }}
+              />
+            </Column>
+          </Row>
+        )}
+      </Stack>
+    </>
   )
 }

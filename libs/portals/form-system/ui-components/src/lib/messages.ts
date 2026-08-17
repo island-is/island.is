@@ -254,10 +254,10 @@ export const m = defineMessages({
     defaultMessage: 'Einstaklingur í umboði lögaðila',
     description: 'Individual on behalf of a legal entity',
   },
-  legalGuardianOnBehalfOfIndividual: {
-    id: 'form.system:legal-guardian-on-behalf-of-individual',
-    defaultMessage: 'Forsjáraðili í umboði einstaklings',
-    description: 'Legal guardian on behalf of an individual',
+  legalGuardian: {
+    id: 'form.system:legal-guardian',
+    defaultMessage: 'Forsjáraðili',
+    description: 'Legal guardian',
   },
   individualWithPowerOfAttorney: {
     id: 'form.system:individual-with-power-of-attorney',
@@ -432,8 +432,8 @@ export const m = defineMessages({
   },
   submitUrls: {
     id: 'form.system:submitUrls',
-    defaultMessage: 'Veldu slóð',
-    description: 'Choose URL',
+    defaultMessage: 'Veldu slóð á vefþjónustu eða málakerfi',
+    description: 'Choose a URL for a web service or case management system',
   },
   permissions: {
     id: 'form.system:permissions',

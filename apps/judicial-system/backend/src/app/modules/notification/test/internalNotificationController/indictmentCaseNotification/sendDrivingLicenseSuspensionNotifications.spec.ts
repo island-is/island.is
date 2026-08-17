@@ -100,7 +100,7 @@ describe('IndictmentCaseService - sendDrivingLicenseSuspensionNotifications', ()
             },
           ],
           subject: `Svipting í máli ${courtCaseNumber}`,
-          html: `Skrá skal sviptingu ökuréttinda í ökuskírteinaskrá vegna máls ${courtCaseNumber} í Héraðsdómi Reykjavíkur. Einn af dómfelldu í málinu var sviptur ökuréttinda.<br><br>LÖKE númer: ${policeCaseNumbers.join(
+          html: `Skrá skal sviptingu ökuréttinda í ökuskírteinaskrá vegna máls ${courtCaseNumber} í Héraðsdómi Reykjavíkur.<br><br>LÖKE númer: ${policeCaseNumbers.join(
             ', ',
           )}.`,
         }),

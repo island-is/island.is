@@ -17,6 +17,7 @@ import {
   GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationValidationResponseDTO,
   UnemploymentApplicationValidatePaymentPage2Request,
   GaldurXRoadAPIModelsUnemploymentApplicationOverviewResponse,
+  GaldurXRoadAPIModelsActivationGrantApplicationOverviewResponse,
   GaldurXRoadAPIModelsApplicationApplicationOverviewItem,
   GaldurXRoadAPIModelsApplicantApplicantOverviewResponse,
   GaldurXRoadAPIModelsApplicantInfoResponse,
@@ -280,6 +281,38 @@ export class VmstUnemploymentClientService {
       await api.unemploymentApplicationGetLatestUnemploymentApplicationOverview(
         { ssn: auth.nationalId, language: lang },
       )
+
+    return {
+      ...response,
+      applicationStatus: resolveApplicationStatus(response.applicationStatusId),
+    }
+  }
+
+  /*
+    Fetches activation grant application information for the overview page on My Pages island.is
+  */
+  async getActivationGrantApplicationOverview(
+    auth: User,
+    language?: Locale,
+  ): Promise<
+    GaldurXRoadAPIModelsActivationGrantApplicationOverviewResponse & {
+      applicationStatus: VmstApplicationStatus
+    }
+  > {
+    const { applicantId } = await this.resolveApplicant(auth)
+
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+    )
+
+    const lang = language ? language.toUpperCase() : null
+
+    const response =
+      await api.applicantGetLatestActivationGrantApplicationOverview({
+        id: applicantId,
+        language: lang,
+      })
 
     return {
       ...response,
