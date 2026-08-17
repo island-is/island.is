@@ -9,6 +9,7 @@ import {
 import { LOGGER_PROVIDER, logger } from '@island.is/logging'
 import { HomeApi } from '@island.is/clients/hms-rental-agreement'
 import { HmsHousingBenefitsClientService } from '@island.is/clients/hms-housing-benefits'
+import { TemplateApiError } from '@island.is/nest/problem'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { HousingBenefitsService } from './housing-benefits.service'
 import {
@@ -588,6 +589,45 @@ describe('HousingBenefitsService notifications', () => {
           currentUserLocale: 'is',
         }),
       ).rejects.toThrow()
+    })
+
+    it('throws a generic error when HMS returns an empty error response', async () => {
+      const middlewarePkg = ['@island.is', 'clients', 'middlewares'].join('/')
+      const { FetchError } = jest.requireActual(middlewarePkg) as {
+        FetchError: {
+          buildMock: (init: { status: number }) => Promise<Error>
+        }
+      }
+      const fetchError = await FetchError.buildMock({ status: 500 })
+      createHousingBenefitsApplication.mockRejectedValueOnce(fetchError)
+      const application = createApplication()
+      const auth = createCurrentUser({ nationalId: APPLICANT_ID })
+
+      const thrown = await service
+        .submitApplication({
+          application,
+          auth,
+          currentUserLocale: 'is',
+        })
+        .then(
+          () => {
+            throw new Error('expected submitApplication to reject')
+          },
+          (error: unknown) => error,
+        )
+
+      expect(thrown).toBeInstanceOf(TemplateApiError)
+      expect(
+        (thrown as TemplateApiError).problem as {
+          errorReason?: { title?: string }
+        },
+      ).toEqual(
+        expect.objectContaining({
+          errorReason: expect.objectContaining({
+            title: 'Villa kom upp',
+          }),
+        }),
+      )
     })
   })
 
