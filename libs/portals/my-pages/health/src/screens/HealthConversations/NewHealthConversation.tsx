@@ -1,9 +1,9 @@
 import {
   Box,
-  Button,
   Checkbox,
   GridColumn,
   GridRow,
+  Hidden,
   Input,
   Select,
   Text,
@@ -15,9 +15,14 @@ import {
   InlineLink,
   IntroWrapper,
   m,
+  useIsPhoneWidth,
 } from '@island.is/portals/my-pages/core'
 import ConversationAvailabilityAlert from './components/ConversationAvailabilityAlert'
+import ConversationBackButton from './components/ConversationBackButton'
+import ConversationCancelSubmit from './components/ConversationCancelSubmit'
+import ConversationMobileBackHeader from './components/ConversationMobileBackHeader'
 import ConversationTermsModal from './components/ConversationTermsModal'
+import MobileActionFooter from './components/MobileActionFooter'
 import { Problem } from '@island.is/react-spa/shared'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -35,6 +40,7 @@ const NewHealthConversation = () => {
   useNamespaces('sp.health')
   const { formatMessage, lang } = useLocale()
   const navigate = useNavigate()
+  const { isPhoneWidth } = useIsPhoneWidth()
 
   const [selectedTypeCode, setSelectedTypeCode] = useState<string | null>(null)
   const [messageText, setMessageText] = useState('')
@@ -119,141 +125,132 @@ const NewHealthConversation = () => {
   }
 
   return (
-    <IntroWrapper
-      title={messages.healthConversationsNewTitle}
-      intro={introText}
-      desktopContentSpan="12/12"
-    >
-      <GridRow>
-        <GridColumn span={['12/12', '12/12', '12/12', '12/12', '10/12']}>
-          {loading && <CardLoader />}
-          {error && <Problem error={error} noBorder={false} />}
-          {!loading && !error && !recipient && (
-            <Problem
-              type="no_data"
-              noBorder={false}
-              title={formatMessage(messages.healthConversationsNoRecipient)}
-            />
-          )}
-          {!loading && !error && recipient && (
-            <ConversationAvailabilityAlert recipient={recipient} />
-          )}
-          {!loading && !error && recipient && (
-            <Box className={styles.messageCard} background="white">
+    <Box marginTop={[1, 0, 0]}>
+      <ConversationMobileBackHeader
+        onClick={() => navigate(HealthPaths.HealthConversations)}
+      />
+      <IntroWrapper
+        title={messages.healthConversationsNewTitle}
+        intro={introText}
+        desktopContentSpan="10/12"
+      >
+        {loading && <CardLoader />}
+        {error && <Problem error={error} noBorder={false} />}
+        {!loading && !error && !recipient && (
+          <Problem
+            type="no_data"
+            noBorder={false}
+            title={formatMessage(messages.healthConversationsNoRecipient)}
+          />
+        )}
+        {!loading && !error && recipient && (
+          <ConversationAvailabilityAlert recipient={recipient} />
+        )}
+        {!loading && !error && recipient && (
+          <Box className={styles.messageCard} background="white">
+            <Hidden below="sm">
               <Box
-                paddingX={[2, 2, 5]}
-                paddingTop={[2, 2, 3]}
+                paddingX={[0, 5, 5]}
+                paddingTop={[2, 3, 3]}
                 className={styles.backButton}
               >
-                <Button
-                  variant="text"
-                  icon="arrowBack"
-                  size="default"
-                  colorScheme="light"
-                  aria-label={formatMessage(m.goBack)}
+                <ConversationBackButton
                   onClick={() => navigate(HealthPaths.HealthConversations)}
                 />
               </Box>
-              <Box paddingX={[2, 2, 5]} paddingTop={1}>
-                <Text variant="h4" fontWeight="semiBold">
-                  {formatMessage(messages.healthConversationsCreate)}
-                </Text>
-                <Text variant="medium">
-                  {formatMessage(messages.healthConversationTo, {
-                    arg: recipient?.name ?? '',
-                  })}
-                </Text>
-              </Box>
-
-              <Box
-                paddingX={[2, 2, 5]}
-                paddingTop={[3, 3, 4]}
-                paddingBottom={[2, 2, 5]}
-              >
-                <GridRow marginBottom={3}>
-                  <GridColumn span={['12/12', '8/12']}>
-                    <Select
-                      name="service-type"
-                      label={formatMessage(
-                        messages.healthConversationsNewSelectService,
-                      )}
-                      placeholder={formatMessage(
-                        messages.healthConversationsNewSelectServicePlaceholder,
-                      )}
-                      options={typeOptions}
-                      value={selectedOption}
-                      onChange={(opt) =>
-                        setSelectedTypeCode(opt?.value ?? null)
-                      }
-                      backgroundColor="blue"
-                      size="sm"
-                      required
-                      isDisabled={isFormLocked}
-                    />
-                  </GridColumn>
-                </GridRow>
-
-                <Box>
-                  <Input
-                    textarea
-                    rows={8}
-                    name="message-body"
-                    label={formatMessage(m.messages)}
-                    placeholder={formatMessage(
-                      messages.healthConversationsNewBodyPlaceholder,
-                    )}
-                    backgroundColor="blue"
-                    value={messageText}
-                    onChange={(e) => setMessageText(e.target.value)}
-                    disabled={isFormLocked}
-                  />
-                </Box>
-
-                <Box marginTop={4} marginBottom={4}>
-                  <Checkbox
-                    id="terms-accept"
-                    checked={termsAccepted}
-                    onChange={(e) => setTermsAccepted(e.target.checked)}
-                    label={formatMessage(
-                      messages.healthConversationsNewTermsLabel,
-                      {
-                        link: (str: React.ReactNode) => (
-                          <InlineLink onClick={() => setTermsModalOpen(true)}>
-                            {str}
-                          </InlineLink>
-                        ),
-                      },
-                    )}
-                    disabled={isFormLocked}
-                  />
-                </Box>
-                <Box display="flex" justifyContent="spaceBetween" columnGap={2}>
-                  <Button
-                    variant="ghost"
-                    size="medium"
-                    onClick={() => navigate(HealthPaths.HealthConversations)}
-                  >
-                    {formatMessage(messages.cancel)}
-                  </Button>
-                  <Button
-                    onClick={handleSubmit}
-                    size="medium"
-                    loading={sending}
-                    disabled={!canSubmit}
-                  >
-                    {formatMessage(messages.healthConversationSend)}
-                  </Button>
-                </Box>
-              </Box>
+            </Hidden>
+            <Box paddingX={[0, 5, 5]} paddingTop={1}>
+              <Text variant="h4" fontWeight="semiBold">
+                {formatMessage(messages.healthConversationsCreate)}
+              </Text>
+              <Text variant="medium">
+                {formatMessage(messages.healthConversationTo, {
+                  arg: recipient?.name ?? '',
+                })}
+              </Text>
             </Box>
-          )}
-          <ConversationTermsModal
-            isOpen={termsModalOpen}
-            onClose={() => setTermsModalOpen(false)}
-          />
-        </GridColumn>
-      </GridRow>
-    </IntroWrapper>
+
+            <Box
+              paddingX={[0, 5, 5]}
+              paddingTop={[3, 3, 4]}
+              paddingBottom={[10, 5, 5]}
+            >
+              <GridRow marginBottom={3}>
+                <GridColumn span={['12/12', '8/12']}>
+                  <Select
+                    name="service-type"
+                    label={formatMessage(
+                      messages.healthConversationsNewSelectService,
+                    )}
+                    placeholder={formatMessage(
+                      messages.healthConversationsNewSelectServicePlaceholder,
+                    )}
+                    options={typeOptions}
+                    value={selectedOption}
+                    onChange={(opt) => setSelectedTypeCode(opt?.value ?? null)}
+                    backgroundColor="blue"
+                    size="sm"
+                    required
+                    isDisabled={isFormLocked}
+                  />
+                </GridColumn>
+              </GridRow>
+
+              <Box>
+                <Input
+                  textarea
+                  rows={8}
+                  name="message-body"
+                  label={formatMessage(m.messages)}
+                  placeholder={formatMessage(
+                    messages.healthConversationsNewBodyPlaceholder,
+                  )}
+                  backgroundColor="blue"
+                  value={messageText}
+                  onChange={(e) => setMessageText(e.target.value)}
+                  disabled={isFormLocked}
+                />
+              </Box>
+
+              <Box marginTop={4} marginBottom={4}>
+                <Checkbox
+                  id="terms-accept"
+                  checked={termsAccepted}
+                  onChange={(e) => setTermsAccepted(e.target.checked)}
+                  label={formatMessage(
+                    messages.healthConversationsNewTermsLabel,
+                    {
+                      link: (str: React.ReactNode) => (
+                        <InlineLink onClick={() => setTermsModalOpen(true)}>
+                          {str}
+                        </InlineLink>
+                      ),
+                    },
+                  )}
+                  disabled={isFormLocked}
+                />
+              </Box>
+
+              <MobileActionFooter>
+                <ConversationCancelSubmit
+                  cancelLabel={formatMessage(messages.cancel)}
+                  submitLabel={formatMessage(messages.healthConversationSend)}
+                  onCancel={() => navigate(HealthPaths.HealthConversations)}
+                  onSubmit={handleSubmit}
+                  submitDisabled={!canSubmit}
+                  loading={sending}
+                  fluid={isPhoneWidth}
+                />
+              </MobileActionFooter>
+            </Box>
+          </Box>
+        )}
+        <ConversationTermsModal
+          isOpen={termsModalOpen}
+          onClose={() => setTermsModalOpen(false)}
+        />
+      </IntroWrapper>
+    </Box>
   )
 }
 
