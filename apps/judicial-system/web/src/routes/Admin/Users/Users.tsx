@@ -73,6 +73,14 @@ export const Users = () => {
 
   const { sortedData: users, requestSort, getClassNamesFor, isActiveColumn } =
     useSort('name', 'ascending', filteredUsers, (entry, column) => {
+      if (column === 'role') {
+        return userRoleToString(entry.role)
+      }
+
+      if (column === 'institution') {
+        return entry.institution?.name ?? null
+      }
+
       const value = entry[column]
 
       if (typeof value === 'boolean') {
@@ -84,7 +92,7 @@ export const Users = () => {
 
   const createSortProps = (
     title: string,
-    column: 'name' | 'active' | 'canConfirmIndictment',
+    column: 'name' | 'role' | 'institution' | 'active' | 'canConfirmIndictment',
   ) => ({
     title,
     onClick: () => requestSort(column),
@@ -187,15 +195,21 @@ export const Users = () => {
                   Kennitala
                 </Text>
               </Box>
-              <Box component="th" paddingY={2} paddingX={3}>
-                <Text as="span" fontWeight="regular">
-                  Hlutverk
-                </Text>
+              <Box
+                component="th"
+                paddingY={2}
+                paddingX={3}
+                aria-sort={getClassNamesFor('role') ?? 'none'}
+              >
+                <SortButton {...createSortProps('Hlutverk', 'role')} />
               </Box>
-              <Box component="th" paddingY={2} paddingX={3}>
-                <Text as="span" fontWeight="regular">
-                  Stofnun
-                </Text>
+              <Box
+                component="th"
+                paddingY={2}
+                paddingX={3}
+                aria-sort={getClassNamesFor('institution') ?? 'none'}
+              >
+                <SortButton {...createSortProps('Stofnun', 'institution')} />
               </Box>
               <Box
                 component="th"
