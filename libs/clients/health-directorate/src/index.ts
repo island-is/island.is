@@ -45,7 +45,11 @@ export {
   SubmitQuestionnaireDto,
   CreateEuPatientConsentDto,
 } from './lib/clients'
+export type { CertificatePdfResult } from './lib/clients/health'
 export {
+  CertificateDto,
+  CertificateRequestDto,
+  CertificateTypeCode,
   ContentSegmentDto,
   ContentSegmentType,
   ConversationAttachmentDto,
@@ -55,11 +59,16 @@ export {
   ConversationMessageDto,
   ConversationReplyBlockedReason,
   ConversationStatusFilter,
+  CreateCertificatePaymentIntentDto,
+  CreateCertificateRequestBody,
+  CreateCertificateRequestDto,
   CreateConversationRequestDto,
   CreateReplyRequestDto,
   DispensationHistoryItemDto,
   MessageType,
   MessagingRecipientDto,
+  PaymentDto,
+  PaymentIntentDto,
   VideoConversationDto,
   RecipientCreateBlockedReason,
   UserVisibleAppointmentStatuses,

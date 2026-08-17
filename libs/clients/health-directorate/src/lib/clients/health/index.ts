@@ -1,4 +1,6 @@
 export { HealthDirectorateHealthService } from './health.service'
+export type { CertificatePdfResult } from './health.service'
 export * from './health.config'
 export * from './gen/fetch/types.gen'
 export { HealthDirectorateHealthModule } from './health.module'
+export { CreateCertificateRequestBody } from './dtos/createCertificateRequestBody.dto'
