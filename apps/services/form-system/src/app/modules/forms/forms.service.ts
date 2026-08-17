@@ -75,6 +75,8 @@ import {
 } from '../applications/models/dto/application.json.dto'
 import { FormDelegationDto } from './models/dto/formDelegation.dto'
 
+const MAX_COPY_SLUG_RETRIES = 5
+
 @Injectable()
 export class FormsService {
   constructor(
@@ -361,18 +363,36 @@ export class FormsService {
       if (error instanceof UniqueConstraintError) {
         const slug = updateFormDto.slug
         response.updateSuccess = false
-        response.errors = [
-          {
-            field: 'slug',
-            message: `slug '${slug}' er þegar í notkun. Vinsamlegast veldu annað slug.`,
-          } as UpdateFormError,
-        ]
+        response.errors = [this.getSlugError(slug)]
       } else {
         throw error
       }
     }
 
     return response
+  }
+
+  private getSlugError(slug?: string): UpdateFormError {
+    return {
+      field: 'slug',
+      message: `slug '${slug}' er þegar í notkun. Vinsamlegast veldu annað slug.`,
+    } as UpdateFormError
+  }
+
+  private isSlugUniqueConstraintError(
+    error: unknown,
+  ): error is UniqueConstraintError {
+    return (
+      error instanceof UniqueConstraintError &&
+      Object.keys(error.fields ?? {}).includes('slug')
+    )
+  }
+
+  private throwSlugConflict(slug?: string): never {
+    throw new BadRequestException({
+      updateSuccess: false,
+      errors: [this.getSlugError(slug)],
+    } as UpdateFormResponse)
   }
 
   async addDelegation(
@@ -486,15 +506,37 @@ export class FormsService {
     const newSlugBase = copyToDifferentOrganization
       ? `${organizationNationalId}-${form.slug}`
       : `${form.slug}-afrit`
-    const newSlug = await this.getUniqueCopySlug(newSlugBase)
 
-    const copyForm = await this.copyForm(
-      id,
-      false,
-      form.isInaccessible,
-      newSlug,
-      destinationOrganization,
-    )
+    let copyForm: Form | undefined
+    let newSlug: string | undefined
+
+    for (let retry = 0; retry < MAX_COPY_SLUG_RETRIES; retry++) {
+      newSlug = await this.getUniqueCopySlug(newSlugBase)
+
+      try {
+        copyForm = await this.copyForm(
+          id,
+          false,
+          form.isInaccessible,
+          newSlug,
+          destinationOrganization,
+        )
+        break
+      } catch (error) {
+        if (!this.isSlugUniqueConstraintError(error)) {
+          throw error
+        }
+
+        if (retry === MAX_COPY_SLUG_RETRIES - 1) {
+          this.throwSlugConflict(newSlug)
+        }
+      }
+    }
+
+    if (!copyForm) {
+      this.throwSlugConflict(newSlug)
+    }
+
     const formResponse = await this.buildFormResponse(copyForm)
 
     if (!formResponse) {
@@ -564,7 +606,7 @@ export class FormsService {
     let slug = baseSlug
     let suffix = 2
 
-    while (await this.formModel.count({ where: { slug } })) {
+    while (await this.formModel.unscoped().count({ where: { slug } })) {
       slug = `${baseSlug}-${suffix}`
       suffix++
     }
@@ -1396,6 +1438,10 @@ export class FormsService {
         await this.sequelize.transaction(createCopy)
       }
     } catch (error) {
+      if (this.isSlugUniqueConstraintError(error)) {
+        throw error
+      }
+
       this.logger.error(`Failed to copy form '${id}'`, error)
       throw new InternalServerErrorException(
         `Unexpected error copying form '${id}'`,
