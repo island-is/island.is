@@ -43,11 +43,11 @@ export const toCertificateRequestInput = (state: CertificateFormState) => {
 
 const certificateTypeOptions = [
   {
-    value: HealthDirectorateCertificateType.work,
+    value: HealthDirectorateCertificateType.WORK,
     label: messages.healthConversationsCertificateTypeWork,
   },
   {
-    value: HealthDirectorateCertificateType.school,
+    value: HealthDirectorateCertificateType.SCHOOL,
     label: messages.healthConversationsCertificateTypeSchool,
   },
 ]
