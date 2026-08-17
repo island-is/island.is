@@ -396,6 +396,78 @@ describe('Testing utility functions for applications', () => {
       ])
     })
 
+    it('Should append the pruneDate arg, daysBeforePrune days after the resolved date, when daysBeforePrune is set', async () => {
+      const applicationService = createMockApplicationService()
+      const application = createApplication()
+      const template = createTemplateWithScheduledNotifications({
+        template: 'HNIPP.TEST',
+        date: new Date('2026-08-08T23:59:00.000Z'),
+        daysBeforePrune: 2,
+      })
+
+      await handleScheduledNotifications(
+        applicationService,
+        application,
+        template,
+        'draft',
+      )
+
+      expect(
+        applicationService.createScheduledNotifications,
+      ).toHaveBeenCalledWith(application.id, 'draft', [
+        {
+          template: 'HNIPP.TEST',
+          schedule_time: new Date('2026-08-08T23:59:00.000Z'),
+          args: [
+            {
+              key: 'pruneDate',
+              value: new Date('2026-08-10T23:59:00.000Z').toISOString(),
+            },
+          ],
+        },
+      ])
+    })
+
+    it('Should append the pruneDate arg, daysBeforePrune days after the resolved delay, when daysBeforePrune is set', async () => {
+      const applicationService = createMockApplicationService()
+      const application = createApplication()
+      const DAY_MS = 24 * 3600 * 1000
+      const template = createTemplateWithScheduledNotifications({
+        template: 'HNIPP.TEST',
+        delayInMs: 5 * DAY_MS,
+        daysBeforePrune: 2,
+      })
+
+      jest.useFakeTimers()
+      jest.setSystemTime(new Date('2026-08-08T00:00:00.000Z'))
+
+      try {
+        await handleScheduledNotifications(
+          applicationService,
+          application,
+          template,
+          'draft',
+        )
+      } finally {
+        jest.useRealTimers()
+      }
+
+      expect(
+        applicationService.createScheduledNotifications,
+      ).toHaveBeenCalledWith(application.id, 'draft', [
+        {
+          template: 'HNIPP.TEST',
+          schedule_time: new Date('2026-08-13T00:00:00.000Z'),
+          args: [
+            {
+              key: 'pruneDate',
+              value: new Date('2026-08-15T00:00:00.000Z').toISOString(),
+            },
+          ],
+        },
+      ])
+    })
+
     it('Should leave args untouched when includeApplicationLink is not set', async () => {
       const applicationService = createMockApplicationService()
       const application = createApplication()

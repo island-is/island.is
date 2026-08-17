@@ -60,6 +60,12 @@ describe('schedulePruneReminderBefore', () => {
     expect(config.includeApplicationLink).toBe(true)
   })
 
+  it('should carry daysBefore through as daysBeforePrune, for the API to compute the pruneDate arg', () => {
+    const config = schedulePruneReminderBefore(new Date(), 2)
+
+    expect(config.daysBeforePrune).toBe(2)
+  })
+
   it('should carry the featureFlag through to the config', () => {
     const config = schedulePruneReminderBefore(
       new Date(),
@@ -87,6 +93,12 @@ describe('schedulePruneReminderAfterDays', () => {
     const config = schedulePruneReminderAfterDays(7 * DAY_MS, 2)
 
     expect(config.includeApplicationLink).toBe(true)
+  })
+
+  it('should carry daysBefore through as daysBeforePrune, for the API to compute the pruneDate arg', () => {
+    const config = schedulePruneReminderAfterDays(7 * DAY_MS, 2)
+
+    expect(config.daysBeforePrune).toBe(2)
   })
 
   it('should carry the featureFlag through to the config', () => {

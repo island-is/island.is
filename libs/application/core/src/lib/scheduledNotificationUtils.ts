@@ -29,45 +29,48 @@ export const endOfDayFromCreation = (
  */
 const pruneReminder = (
   timing: { date: Date } | { delayInMs: number },
+  daysBefore: number,
   featureFlag?: Features,
 ): ScheduledNotificationConfig => ({
   template:
     NotificationConfig[NotificationType.ApplicationPruneReminder].templateId,
   includeApplicationLink: true,
+  daysBeforePrune: daysBefore,
   featureFlag,
   ...timing,
 })
 
 /**
- * Returns a ScheduledNotificationConfig that fires `daysBefore` days before
+ * Returns a ScheduledNotificationConfig that fires `daysBeforePrune` days before
  * `anchorDate` (e.g. the prune date or a registration deadline). Pass
  * `featureFlag` to only schedule while the flag is enabled.
  */
 export const schedulePruneReminderBefore = (
   anchorDate: Date,
-  daysBefore: number,
+  daysBeforePrune: number,
   featureFlag?: Features,
 ): ScheduledNotificationConfig => {
   const date = new Date(anchorDate)
-  date.setUTCDate(date.getUTCDate() - daysBefore)
-  return pruneReminder({ date }, featureFlag)
+  date.setUTCDate(date.getUTCDate() - daysBeforePrune)
+  return pruneReminder({ date }, daysBeforePrune, featureFlag)
 }
 
 /**
- * Returns a ScheduledNotificationConfig that fires `daysBefore` days before
+ * Returns a ScheduledNotificationConfig that fires `daysBeforePrune` days before
  * `pruneAfterMs` (in milliseconds, e.g. `sevenDays` from a template's own
  * constants). Intended for states with pruneAt defined as a number. Pass
  * `featureFlag` to only schedule while the flag is enabled.
  */
 export const schedulePruneReminderAfterDays = (
   pruneAfterMs: number,
-  daysBefore: number,
+  daysBeforePrune: number,
   featureFlag?: Features,
 ): ScheduledNotificationConfig => {
   return pruneReminder(
     {
-      delayInMs: Math.max(0, pruneAfterMs - daysBefore * 24 * 3600 * 1000),
+      delayInMs: Math.max(0, pruneAfterMs - daysBeforePrune * 24 * 3600 * 1000),
     },
+    daysBeforePrune,
     featureFlag,
   )
 }
