@@ -448,7 +448,7 @@ export class HousingBenefitsService extends BaseTemplateApiService {
     }
 
     let handedInLastFiveYears = false
-    for (let year = lastYear - 1; year >= lastYear - 5; year--) {
+    for (let year = lastYear - 1; year > lastYear - 5; year--) {
       if (await this.checkTaxReturnFiledForYear(auth, year)) {
         handedInLastFiveYears = true
         break
