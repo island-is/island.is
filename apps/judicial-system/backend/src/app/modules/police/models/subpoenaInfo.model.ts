@@ -40,7 +40,7 @@ export class SubpoenaInfo {
     )
   }
 
-  @ApiProperty({ type: ServiceStatus })
+  @ApiProperty({ enum: ServiceStatus, enumName: 'ServiceStatus' })
   serviceStatus?: ServiceStatus
 
   @ApiPropertyOptional({ type: String })

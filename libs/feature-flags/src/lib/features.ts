@@ -70,6 +70,7 @@ export enum Features {
   isServicePortalHealthQuestionnairesPageEnabled = 'isServicePortalHealthQuestionnairesPageEnabled',
   isServicePortalFarmersLandsPageEnabled = 'isServicePortalFarmersLandsPageEnabled',
   isServicePortalUnemploymentBenefitsPageEnabled = 'isServicePortalUnemploymentBenefitsPageEnabled',
+  isServicePortalActivationAllowancePageEnabled = 'isServicePortalActivationAllowancePageEnabled',
 
   // Health Aid and Nutrition Renewal feature enabled
   servicePortalHealthAidAndNutritionRenewalEnabled = 'isServicePortalHealthAidAndNutritionRenewalEnabled',
@@ -204,6 +205,8 @@ export enum Features {
   isServicePortalPrimarySchoolPageEnabled = 'isServicePortalPrimarySchoolPageEnabled',
   // Primary school PDF viewer modal
   isServicePortalPrimarySchoolPdfViewerEnabled = 'isServicePortalPrimarySchoolPdfViewerEnabled',
+  // Switches between current and new primary-school PDF implementations in download-service
+  downloadServiceMmsPrimarySchoolImplementationTest = 'downloadServiceMmsPrimarySchoolImplementationTest',
   // New health overview page (incl. sidebar contact box)
   isNewHealthOverviewPageEnabled = 'isNewHealthOverviewPageEnabled',
   // University micro-credentials (örnám)

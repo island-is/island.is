@@ -9,6 +9,7 @@ import {
 import { LOGGER_PROVIDER, logger } from '@island.is/logging'
 import { HomeApi } from '@island.is/clients/hms-rental-agreement'
 import { HmsHousingBenefitsClientService } from '@island.is/clients/hms-housing-benefits'
+import { TemplateApiError } from '@island.is/nest/problem'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { HousingBenefitsService } from './housing-benefits.service'
 import {
@@ -85,12 +86,14 @@ describe('HousingBenefitsService notifications', () => {
   let service: HousingBenefitsService
   let sendNotification: jest.Mock
   let createHousingBenefitsApplication: jest.Mock
+  let hasTaxReturnForYear: jest.Mock
 
   beforeEach(async () => {
     sendNotification = jest.fn().mockResolvedValue({ id: 'notification-id' })
     createHousingBenefitsApplication = jest
       .fn()
       .mockResolvedValue({ applicationNumber: 4242, success: true })
+    hasTaxReturnForYear = jest.fn().mockResolvedValue(true)
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -123,7 +126,7 @@ describe('HousingBenefitsService notifications', () => {
           provide: HmsHousingBenefitsClientService,
           useValue: {
             createHousingBenefitsApplication,
-            hasTaxReturnForYear: jest.fn().mockResolvedValue(true),
+            hasTaxReturnForYear,
           },
         },
         {
@@ -586,6 +589,159 @@ describe('HousingBenefitsService notifications', () => {
           currentUserLocale: 'is',
         }),
       ).rejects.toThrow()
+    })
+
+    it('throws a generic error when HMS returns an empty error response', async () => {
+      const middlewarePkg = ['@island.is', 'clients', 'middlewares'].join('/')
+      const { FetchError } = jest.requireActual(middlewarePkg) as {
+        FetchError: {
+          buildMock: (init: { status: number }) => Promise<Error>
+        }
+      }
+      const fetchError = await FetchError.buildMock({ status: 500 })
+      createHousingBenefitsApplication.mockRejectedValueOnce(fetchError)
+      const application = createApplication()
+      const auth = createCurrentUser({ nationalId: APPLICANT_ID })
+
+      const thrown = await service
+        .submitApplication({
+          application,
+          auth,
+          currentUserLocale: 'is',
+        })
+        .then(
+          () => {
+            throw new Error('expected submitApplication to reject')
+          },
+          (error: unknown) => error,
+        )
+
+      expect(thrown).toBeInstanceOf(TemplateApiError)
+      expect(
+        (thrown as TemplateApiError).problem as {
+          errorReason?: { title?: string }
+        },
+      ).toEqual(
+        expect.objectContaining({
+          errorReason: expect.objectContaining({
+            title: 'Villa kom upp',
+          }),
+        }),
+      )
+    })
+  })
+
+  describe('getPersonalTaxReturn', () => {
+    it('returns empty mock without calling tax API when mock variant is emptySuccess', async () => {
+      hasTaxReturnForYear.mockRejectedValue(new Error('HMS tax API down'))
+      const application = createApplication({
+        answers: {
+          rentalAgreement: { answer: '123' },
+          devMockSettings: {
+            useMock: 'yes',
+            mockTaxReturn: ['yes'],
+            mockTaxReturnVariant: 'emptySuccess',
+          },
+        },
+      })
+      const auth = createCurrentUser({ nationalId: APPLICANT_ID })
+
+      const result = await service.getPersonalTaxReturn({
+        application,
+        auth,
+        currentUserLocale: 'is',
+      })
+
+      expect(result).toEqual({
+        handedInLastYear: false,
+        handedInLastFiveYears: false,
+      })
+      expect(hasTaxReturnForYear).not.toHaveBeenCalled()
+    })
+
+    it('returns sample mock without calling tax API when mock variant is withSampleData', async () => {
+      hasTaxReturnForYear.mockRejectedValue(new Error('HMS tax API down'))
+      const application = createApplication({
+        answers: {
+          rentalAgreement: { answer: '123' },
+          devMockSettings: {
+            useMock: 'yes',
+            mockTaxReturn: ['yes'],
+            mockTaxReturnVariant: 'withSampleData',
+          },
+        },
+      })
+      const auth = createCurrentUser({ nationalId: APPLICANT_ID })
+
+      const result = await service.getPersonalTaxReturn({
+        application,
+        auth,
+        currentUserLocale: 'is',
+      })
+
+      expect(result).toEqual({
+        handedInLastYear: true,
+        handedInLastFiveYears: true,
+      })
+      expect(hasTaxReturnForYear).not.toHaveBeenCalled()
+    })
+
+    it('returns fiveYears mock without calling tax API', async () => {
+      hasTaxReturnForYear.mockRejectedValue(new Error('HMS tax API down'))
+      const application = createApplication({
+        answers: {
+          rentalAgreement: { answer: '123' },
+          devMockSettings: {
+            useMock: 'yes',
+            mockTaxReturn: ['yes'],
+            mockTaxReturnVariant: 'filedWithinFiveYears',
+          },
+        },
+      })
+      const auth = createCurrentUser({ nationalId: APPLICANT_ID })
+
+      const result = await service.getPersonalTaxReturn({
+        application,
+        auth,
+        currentUserLocale: 'is',
+      })
+
+      expect(result).toEqual({
+        handedInLastYear: false,
+        handedInLastFiveYears: true,
+      })
+      expect(hasTaxReturnForYear).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('getAssigneePersonalTaxReturn', () => {
+    it('returns mock payload without calling tax API when assignee mock is enabled', async () => {
+      hasTaxReturnForYear.mockRejectedValue(new Error('HMS tax API down'))
+      const application = createApplication({
+        answers: {
+          rentalAgreement: { answer: '123' },
+          [ASSIGNEE_A]: {
+            assigneeDevMockSettings: {
+              useMock: 'yes',
+              mockTaxReturn: ['yes'],
+              mockTaxReturnVariant: 'emptySuccess',
+            },
+          },
+        },
+      })
+      const auth = createCurrentUser({ nationalId: ASSIGNEE_A })
+
+      const result = await service.getAssigneePersonalTaxReturn({
+        application,
+        auth,
+        currentUserLocale: 'is',
+      })
+
+      expect(result).toEqual({
+        handedInLastYear: false,
+        handedInLastFiveYears: false,
+      })
+      expect(hasTaxReturnForYear).not.toHaveBeenCalled()
     })
   })
 

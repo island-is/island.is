@@ -16,6 +16,7 @@ import {
   IndictmentSubtype,
   Offense,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { textToHtml } from '@island.is/judicial-system-web/src/utils/formatters'
 
 import { getIncidentDescriptionReason } from './getIncidentDescriptionReason'
 import { strings } from './getIncidentDescription.strings'
@@ -87,9 +88,11 @@ export const getIncidentDescription = (
       offenses[0].offense === IndictmentCountOffense.OTHER
 
     if (hasOnlyOtherOffense) {
-      return formatMessage(strings.incidentDescriptionShortAutofill, {
-        incidentDate,
-      })
+      return textToHtml(
+        formatMessage(strings.incidentDescriptionShortAutofill, {
+          incidentDate,
+        }),
+      )
     }
 
     const incidentDescriptionProps = getIncidentDescriptionProps(
@@ -105,30 +108,36 @@ export const getIncidentDescription = (
     const recordedSpeed = indictmentCount.recordedSpeed ?? '[Mældur hraði]'
     const speedLimit = indictmentCount.speedLimit ?? '[Leyfilegur hraði]'
 
-    return formatMessage(strings.incidentDescriptionAutofill, {
-      incidentDate,
-      vehicleRegistrationNumber: vehicleRegistration,
-      reason,
-      incidentLocation,
-      isSpeeding,
-      recordedSpeed,
-      speedLimit,
-    })
+    return textToHtml(
+      formatMessage(strings.incidentDescriptionAutofill, {
+        incidentDate,
+        vehicleRegistrationNumber: vehicleRegistration,
+        reason,
+        incidentLocation,
+        isSpeeding,
+        recordedSpeed,
+        speedLimit,
+      }),
+    )
   }
 
   if (subtypes.length === 1) {
-    return formatMessage(strings.indictmentDescriptionSubtypesAutofill, {
-      subtypes: indictmentSubtypes[subtypes[0]],
-      date: incidentDate,
-    })
+    return textToHtml(
+      formatMessage(strings.indictmentDescriptionSubtypesAutofill, {
+        subtypes: indictmentSubtypes[subtypes[0]],
+        date: incidentDate,
+      }),
+    )
   }
 
   const allSubtypes = indictmentCountSubtypes
     ?.map((subtype) => indictmentSubtypes[subtype])
     .join(', ')
 
-  return formatMessage(strings.indictmentDescriptionSubtypesAutofill, {
-    subtypes: allSubtypes,
-    date: incidentDate,
-  })
+  return textToHtml(
+    formatMessage(strings.indictmentDescriptionSubtypesAutofill, {
+      subtypes: allSubtypes,
+      date: incidentDate,
+    }),
+  )
 }

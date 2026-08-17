@@ -113,39 +113,54 @@ export class NotificationDispatchService {
     this.addMessagesForCriminalRecordFileUpdateToQueue(theCase)
   }
 
+  // The suspension takes effect without service of the verdict when the
+  // defendant was present at the ruling (NOT_APPLICABLE) or service is
+  // not required (NOT_REQUIRED)
+  private isDefendantReadyForDrivingLicenseSuspensionNotification(
+    defendant: NonNullable<Case['defendants']>[number],
+    isFine: boolean,
+  ): boolean {
+    if (!defendant.isDrivingLicenseSuspended) {
+      return false
+    }
+
+    if (isFine) {
+      return true
+    }
+
+    return (
+      defendant.verdicts?.some(
+        (verdict) =>
+          verdict.serviceRequirement === ServiceRequirement.NOT_APPLICABLE ||
+          verdict.serviceRequirement === ServiceRequirement.NOT_REQUIRED,
+      ) ?? false
+    )
+  }
+
   private dispatchIndictmentSentToPublicProsecutorNotifications(
     theCase: Case,
   ): void {
-    const hasDrivingLicenseSuspension = theCase.defendants?.some(
-      (defendant) => defendant.isDrivingLicenseSuspended,
-    )
-
-    // The suspension takes effect without service of the verdict when the
-    // defendant was present at the ruling (NOT_APPLICABLE) or service is
-    // not required (NOT_REQUIRED)
-    const hasVerdictThatDoesNotRequireService = theCase.defendants?.some(
-      (defendant) =>
-        defendant.verdicts?.some(
-          (verdict) =>
-            verdict.serviceRequirement === ServiceRequirement.NOT_APPLICABLE ||
-            verdict.serviceRequirement === ServiceRequirement.NOT_REQUIRED,
-        ),
-    )
-
     const isFine =
       theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
 
-    if (
-      hasDrivingLicenseSuspension &&
-      (isFine || hasVerdictThatDoesNotRequireService)
-    ) {
-      addMessagesToQueue({
-        type: MessageType.INDICTMENT_CASE_NOTIFICATION,
-        caseId: theCase.id,
-        body: {
-          type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
-        },
-      })
+    const readySuspendedDefendants =
+      theCase.defendants?.filter((defendant) =>
+        this.isDefendantReadyForDrivingLicenseSuspensionNotification(
+          defendant,
+          isFine,
+        ),
+      ) ?? []
+
+    if (readySuspendedDefendants.length > 0) {
+      addMessagesToQueue(
+        ...readySuspendedDefendants.map(() => ({
+          type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+          caseId: theCase.id,
+          body: {
+            type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
+          },
+        })),
+      )
     }
 
     this.addMessagesForCriminalRecordFileUpdateToQueue(theCase)

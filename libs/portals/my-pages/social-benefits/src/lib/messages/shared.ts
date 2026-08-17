@@ -39,4 +39,16 @@ export const sharedMessages = defineMessages({
     defaultMessage:
       'Villa kom upp í að sækja gögn frá Vinnumálastofnun, vinsamlegast reyndu aftur síðar.',
   },
+  statusDataLabel: {
+    id: 'sp.social-benefits-shared:statusDataLabel',
+    defaultMessage: 'Gögn',
+  },
+  statusDataContent: {
+    id: 'sp.social-benefits-shared:statusDataContent',
+    defaultMessage: 'Nánari upplýsingar má finna undir Mín gögn',
+  },
+  statusDataMissing: {
+    id: 'sp.social-benefits-shared:statusDataMissing',
+    defaultMessage: 'Vantar gögn',
+  },
 })

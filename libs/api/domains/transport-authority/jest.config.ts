@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'api-domains-transport-authority',
   preset: './jest.preset.js',
   rootDir: '../../../..',

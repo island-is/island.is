@@ -814,6 +814,8 @@ export class FileService {
           ? PoliceDocumentType.RVMV
           : file.category === CaseFileCategory.PROSECUTOR_CASE_FILE
           ? PoliceDocumentType.RVVS
+          : file.category === CaseFileCategory.COURT_RECORD
+          ? PoliceDocumentType.RVTB
           : // Should not happen, but we would rather deliver the file than throw an error
             PoliceDocumentType.RVMG
 
