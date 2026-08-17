@@ -50,6 +50,7 @@ export const periodSubSection = buildSubSection({
         buildSelectField({
           id: 'period.year',
           title: messages.aboutTheCompany.period.year,
+          required: true,
           width: 'half',
           clearOnChange: ['period.month'],
           condition: isOneMonth,
@@ -58,6 +59,7 @@ export const periodSubSection = buildSubSection({
         buildSelectField({
           id: 'period.month',
           title: messages.aboutTheCompany.period.month,
+          required: true,
           width: 'half',
           condition: isOneMonth,
           options: ({ answers }) =>
