@@ -107,4 +107,16 @@ describe('Users', () => {
 
     expect(rowNames()).toEqual(['Björn', 'Cecilía', 'Anna'])
   })
+
+  it('points aria-describedby at the table caption id', async () => {
+    renderUsers()
+
+    const table = await screen.findByTestId('users-table')
+    const describedBy = table.getAttribute('aria-describedby')
+
+    expect(describedBy).toBeTruthy()
+    expect(document.getElementById(describedBy ?? '')).toHaveTextContent(
+      'Notendur',
+    )
+  })
 })

@@ -178,7 +178,7 @@ export const Users = () => {
         <table
           className={styles.userTable}
           data-testid="users-table"
-          aria-describedby="tableCation"
+          aria-describedby="tableCaption"
         >
           <thead className={styles.thead}>
             <tr>
