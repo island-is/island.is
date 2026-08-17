@@ -18,6 +18,10 @@ import { formatFamilyDto, FamilyDto } from './types/family.dto'
 import { formatBirthplaceDto, BirthplaceDto } from './types/birthplace.dto'
 import { formatCitizenshipDto, CitizenshipDto } from './types/citizenship.dto'
 import {
+  formatNationalIdTypeDto,
+  NationalIdTypeDto,
+} from './types/national-id-type.dto'
+import {
   formatIndividualDto,
   formatIndividualLiteDto,
   IndividualDto,
@@ -277,5 +281,18 @@ export class NationalRegistryV3ApplicationsClientService {
     })
 
     return formatCitizenshipDto(res)
+  }
+
+  async getNationalIdType(
+    nationalId: string,
+    auth: User,
+  ): Promise<NationalIdTypeDto | null> {
+    const res = await this.einstaklingarApiWithAuth(
+      auth,
+    ).einstaklingarKennitalaKennitalaTegundGet({
+      kennitala: nationalId,
+    })
+
+    return formatNationalIdTypeDto(res)
   }
 }
