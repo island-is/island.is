@@ -467,10 +467,9 @@ export class FormsService {
       )
     }
 
-    const copyToDifferentOrganization =
-      isAdmin && organizationNationalId !== formOwnerNationalId
+    let destinationOrganization: Organization | undefined
 
-    if (copyToDifferentOrganization) {
+    if (isAdmin && organizationNationalId !== formOwnerNationalId) {
       const organization = await this.organizationModel.findOne({
         where: { nationalId: organizationNationalId },
       })
@@ -480,9 +479,10 @@ export class FormsService {
         )
       }
 
-      copyFormDto.organizationId = organization.id
+      destinationOrganization = organization
     }
 
+    const copyToDifferentOrganization = destinationOrganization !== undefined
     const newSlugBase = copyToDifferentOrganization
       ? `${organizationNationalId}-${form.slug}`
       : `${form.slug}-afrit`
@@ -493,7 +493,7 @@ export class FormsService {
       false,
       form.isInaccessible,
       newSlug,
-      copyToDifferentOrganization ? copyFormDto : undefined,
+      destinationOrganization,
     )
     const formResponse = await this.buildFormResponse(copyForm)
 
@@ -1237,7 +1237,7 @@ export class FormsService {
     isDerived: boolean,
     isBeingArchived: boolean,
     slug: string,
-    copyFormDto: CopyFormDto | undefined,
+    destinationOrganization: Organization | undefined,
     transaction?: Transaction,
   ): Promise<Form> {
     const existingForm = await this.findById(id, transaction)
@@ -1251,9 +1251,7 @@ export class FormsService {
       )
     }
 
-    const { organizationNationalId, organizationId } = copyFormDto ?? {}
-    const copyToDifferentOrganization =
-      organizationNationalId !== undefined && organizationId !== undefined
+    const copyToDifferentOrganization = destinationOrganization !== undefined
 
     let deps = existingForm.dependencies || []
 
@@ -1274,10 +1272,10 @@ export class FormsService {
       ? undefined
       : existingForm.invalidationDate
     newForm.organizationNationalId = copyToDifferentOrganization
-      ? organizationNationalId
+      ? destinationOrganization.nationalId
       : existingForm.organizationNationalId
     newForm.organizationId = copyToDifferentOrganization
-      ? organizationId
+      ? destinationOrganization.id
       : existingForm.organizationId
     newForm.organizationDisplayName = copyToDifferentOrganization
       ? { is: '', en: '' }
@@ -1352,8 +1350,25 @@ export class FormsService {
     }
     newForm.dependencies = deps
 
+    const destinationCertificationTypeIds = copyToDifferentOrganization
+      ? new Set(
+          (await this.getCertificationTypes(newForm.organizationId)).map(
+            (certificationType) => certificationType.id,
+          ),
+        )
+      : undefined
+
     if (existingForm.formCertificationTypes) {
       for (const certificationType of existingForm.formCertificationTypes) {
+        if (
+          destinationCertificationTypeIds &&
+          !destinationCertificationTypeIds.has(
+            certificationType.certificationTypeId,
+          )
+        ) {
+          continue
+        }
+
         const newFormCertificationType = certificationType.toJSON()
         newFormCertificationType.id = uuidV4()
         newFormCertificationType.formId = newForm.id

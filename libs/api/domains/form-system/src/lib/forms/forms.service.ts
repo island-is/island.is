@@ -60,7 +60,6 @@ export class FormsService {
       id: input.id,
       copyFormDto: {
         organizationNationalId: input.organizationNationalId,
-        organizationId: input.organizationId,
       },
     } as FormsControllerCopyRequest)
     return response as FormResponse

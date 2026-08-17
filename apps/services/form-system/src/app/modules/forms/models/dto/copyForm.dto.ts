@@ -6,9 +6,4 @@ export class CopyFormDto {
   @IsNotEmpty()
   @ApiProperty()
   organizationNationalId!: string
-
-  @IsString()
-  @IsOptional()
-  @ApiPropertyOptional()
-  organizationId?: string
 }

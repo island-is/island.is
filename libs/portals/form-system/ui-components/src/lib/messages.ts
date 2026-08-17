@@ -668,6 +668,11 @@ export const m = defineMessages({
     defaultMessage: 'Afrita á aðra stofnun',
     description: 'Copy to different organization',
   },
+  copyToDifferentOrganizationSuccess: {
+    id: 'form.system:copy-to-different-organization-success',
+    defaultMessage: 'Formið hefur verið afritað á {organization}',
+    description: 'Form copied to organization success message',
+  },
   publish: {
     id: 'form.system:publish',
     defaultMessage: 'Gefa út',

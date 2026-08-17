@@ -121,7 +121,7 @@ export const TableRow = ({
       copyOrganizationId?: string,
       addCopiedFormToState = true,
     ) => {
-      if (!id || !copyOrganizationNationalId) return
+      if (!id || !copyOrganizationNationalId) return false
 
       try {
         const { data } = await copyForm({
@@ -133,17 +133,28 @@ export const TableRow = ({
             },
           },
         })
-        if (!addCopiedFormToState) return
+        if (!addCopiedFormToState) return true
+
+        const returnedForm = data?.copyFormSystemForm?.form
+
+        if (!returnedForm) return false
 
         setFormsState((prevForms) => {
-          const returnedForm = data.copyFormSystemForm.form
           return [returnedForm, ...prevForms]
         })
+
+        return true
       } catch (error) {
-        // TODO: Add user-facing error notification
+        toast.error(
+          formatMessage({
+            id: 'copyFormError',
+            defaultMessage: 'Ekki tókst að afrita eyðublað.',
+          }),
+        )
+        return false
       }
     },
-    [copyForm, id, setFormsState],
+    [copyForm, formatMessage, id, setFormsState],
   )
 
   const dropdownItems = useMemo(() => {
@@ -243,11 +254,18 @@ export const TableRow = ({
                     size="small"
                     disabled={!selectedCopyOrganizationNationalId}
                     onClick={async () => {
-                      await copyFormToOrganization(
+                      const copySuccessful = await copyFormToOrganization(
                         selectedCopyOrganizationNationalId,
                         undefined,
                         false,
                       )
+                      if (copySuccessful && selectedCopyOrganization) {
+                        toast.success(
+                          formatMessage(m.copyToDifferentOrganizationSuccess, {
+                            organization: selectedCopyOrganization.label,
+                          }),
+                        )
+                      }
                       closeModal()
                     }}
                   >
