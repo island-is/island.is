@@ -2,8 +2,9 @@
   "extends": "./tsconfig.shared.json",
   "compilerOptions": {
     "paths": {
-      "@/*": [
-        "${configDir}/src/*"
+      "@/*": ["${configDir}/src/*"],
+      "@island.is/air-discount-scheme-web/*": [
+        "apps/air-discount-scheme/web/*"
       ],
       "@island.is/air-discount-scheme/consts": [
         "libs/air-discount-scheme/consts/src/index.ts"
@@ -50,20 +51,20 @@
       "@island.is/api/domains/company-registry": [
         "libs/api/domains/company-registry/src/index.ts"
       ],
-      "@island.is/api/domains/customs-calculator": [
-        "libs/api/domains/customs-calculator/src/index.ts"
-      ],
       "@island.is/api/domains/consultation-portal": [
         "libs/api/domains/consultation-portal/src/index.ts"
       ],
       "@island.is/api/domains/content-search": [
         "libs/api/domains/content-search/src/index.ts"
       ],
-      "@island.is/api/domains/customs-general": [
-        "libs/api/domains/customs-general/src/index.ts"
-      ],
       "@island.is/api/domains/course-charges": [
         "libs/api/domains/course-charges/src/index.ts"
+      ],
+      "@island.is/api/domains/customs-calculator": [
+        "libs/api/domains/customs-calculator/src/index.ts"
+      ],
+      "@island.is/api/domains/customs-general": [
+        "libs/api/domains/customs-general/src/index.ts"
       ],
       "@island.is/api/domains/directorate-of-labour": [
         "libs/api/domains/directorate-of-labour/src/index.ts"
@@ -400,6 +401,12 @@
       ],
       "@island.is/application/templates/data-protection-complaint/messages": [
         "libs/application/templates/data-protection-complaint/src/lib/messages/index.ts"
+      ],
+      "@island.is/application/templates/directorate-of-equality/equality-report": [
+        "libs/application/templates/directorate-of-equality/equality-report/src/index.ts"
+      ],
+      "@island.is/application/templates/directorate-of-equality/salary-report": [
+        "libs/application/templates/directorate-of-equality/salary-report/src/index.ts"
       ],
       "@island.is/application/templates/directorate-of-immigration/citizenship": [
         "libs/application/templates/directorate-of-immigration/citizenship/src/index.ts"
@@ -761,9 +768,6 @@
       "@island.is/clients/charge-fjs-v2": [
         "libs/clients/charge-fjs-v2/src/index.ts"
       ],
-      "@island.is/clients/rsk/customs/general": [
-        "libs/clients/rsk/customs/general/src/index.ts"
-      ],
       "@island.is/clients/cms": ["libs/clients/cms/src/index.ts"],
       "@island.is/clients/consultation-portal": [
         "libs/clients/consultation-portal/src/index.ts"
@@ -941,6 +945,9 @@
       ],
       "@island.is/clients/rsk/company-registry": [
         "libs/clients/rsk/company-registry/src/index.ts"
+      ],
+      "@island.is/clients/rsk/customs/general": [
+        "libs/clients/rsk/customs/general/src/index.ts"
       ],
       "@island.is/clients/rsk/personal-tax-return": [
         "libs/clients/rsk/personal-tax-return/src/index.ts"
@@ -1169,6 +1176,7 @@
       "@island.is/nest/sequelize": ["libs/nest/sequelize/src/index.ts"],
       "@island.is/nest/swagger": ["libs/nest/swagger/src/index.ts"],
       "@island.is/next-ids-auth": ["libs/next-ids-auth/src/index.ts"],
+      "@island.is/next/utils": ["libs/next/utils/src/index.ts"],
       "@island.is/nova-sms": ["libs/nova-sms/src/index.ts"],
       "@island.is/plausible": ["libs/plausible/src/index.ts"],
       "@island.is/portals/admin/air-discount-scheme": [

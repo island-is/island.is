@@ -1,4 +1,5 @@
 import '@island.is/api/mocks'
+import './styles.css'
 
 import { userMonitoring } from '@island.is/user-monitoring'
 import { StrictMode } from 'react'

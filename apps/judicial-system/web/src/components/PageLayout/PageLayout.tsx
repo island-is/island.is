@@ -216,7 +216,7 @@ const PageLayout: FC<PropsWithChildren<PageProps>> = ({
   const { isCreating } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
-  const hideBreadcrumbs = isDefenceUser(user) || isCreating
+  const hideBreadcrumbs = isCreating
 
   return (
     <>

@@ -14,7 +14,6 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
-  AppealCaseNotificationType,
   appealEventTypes,
   CaseFileCategory,
   CaseFileState,
@@ -42,6 +41,7 @@ import {
 } from '../file'
 import {
   AppealCase,
+  AppealDecision,
   AppealEventLog,
   Case,
   CaseDefendantPoliceCaseNumber,
@@ -58,7 +58,6 @@ import {
   EventLog,
   IndictmentCount,
   Institution,
-  Notification,
   Offense,
   Subpoena,
   User,
@@ -102,10 +101,6 @@ export const attributes: (keyof Case)[] = [
   'caseModifiedExplanation',
   'openedByDefender',
   'caseResentExplanation',
-  'accusedAppealDecision',
-  'prosecutorAppealDecision',
-  'accusedPostponedAppealDate',
-  'prosecutorPostponedAppealDate',
   'prosecutorsOfficeId',
   'indictmentDecision',
   'indictmentRulingDecision',
@@ -223,6 +218,12 @@ export const include: Includeable[] = [
         separate: true,
       },
     ],
+  },
+  {
+    model: AppealDecision,
+    as: 'appealDecisions',
+    required: false,
+    separate: true,
   },
   { model: Case, as: 'parentCase', attributes },
   { model: Case, as: 'childCase', attributes },

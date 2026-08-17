@@ -37,6 +37,8 @@ import { CardPaymentModuleConfig } from './cardPayment.config'
 import { paymentGatewayResponseCodes } from './cardPayment.constants'
 import { verifyApplePaySignature } from './applePaySignature'
 import {
+  buildVerificationBrowserData,
+  buildVerificationCardholderData,
   decryptApplePayPaymentToken,
   generateApplePayDecryptedChargeRequestOptions,
   generateApplePayValidationRequestOptions,
@@ -91,6 +93,26 @@ export class CardPaymentService {
     const correlationId = uuid()
 
     const { paymentFlowId } = verifyCardInput
+
+    // Visibility into requests that will go to the gateway without the
+    // documented-required 3DS data (e.g. an older frontend during rollout, or
+    // input the builders had to drop as invalid). Uses the same pure builders
+    // as the outgoing request so the log reflects what is actually sent.
+    const willSendBrowserData = !!buildVerificationBrowserData(
+      verifyCardInput.browserInfo,
+    )
+    const willSendCardholderData = !!buildVerificationCardholderData(
+      verifyCardInput.cardholderName,
+    )
+    if (!willSendBrowserData || !willSendCardholderData) {
+      this.logger.warn(
+        `[${paymentFlowId}] Card verification request sent without full 3DS data`,
+        {
+          hasBrowserData: willSendBrowserData,
+          hasCardholderData: willSendCardholderData,
+        },
+      )
+    }
 
     const md = generateMd({
       correlationId,

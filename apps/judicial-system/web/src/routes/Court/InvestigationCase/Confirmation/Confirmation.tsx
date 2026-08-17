@@ -7,7 +7,6 @@ import {
   DISTRICT_COURT_INVESTIGATION_CASE_COURT_RECORD_ROUTE,
   SIGNED_VERDICT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   isAcceptingCaseDecision,
   isCompletedCase,
@@ -187,33 +186,38 @@ const Confirmation: FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${DISTRICT_COURT_INVESTIGATION_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`}
-          nextUrl={getStandardUserDashboardRoute(user)}
-          nextIsLoading={isTransitioningCase}
-          nextButtonText={formatMessage(
-            isCompletedWithoutRuling
-              ? strings.continueButtonTextCompletedWithoutRuling
-              : workingCase.decision === CaseDecision.ACCEPTING
-              ? strings.continueButtonTextAccepting
-              : workingCase.decision === CaseDecision.REJECTING
-              ? strings.continueButtonTextRejecting
-              : workingCase.decision === CaseDecision.DISMISSING
-              ? strings.continueButtonTextDismissing
-              : strings.continueButtonTextAcceptingPartially,
-          )}
-          nextButtonIcon={
-            isAcceptingCaseDecision(workingCase.decision) ||
-            isCompletedWithoutRuling
-              ? 'checkmark'
-              : 'close'
+          actions={
+            hideNextButton
+              ? []
+              : [
+                  {
+                    text: formatMessage(
+                      isCompletedWithoutRuling
+                        ? strings.continueButtonTextCompletedWithoutRuling
+                        : workingCase.decision === CaseDecision.ACCEPTING
+                        ? strings.continueButtonTextAccepting
+                        : workingCase.decision === CaseDecision.REJECTING
+                        ? strings.continueButtonTextRejecting
+                        : workingCase.decision === CaseDecision.DISMISSING
+                        ? strings.continueButtonTextDismissing
+                        : strings.continueButtonTextAcceptingPartially,
+                    ),
+                    icon:
+                      isAcceptingCaseDecision(workingCase.decision) ||
+                      isCompletedWithoutRuling
+                        ? 'checkmark'
+                        : 'close',
+                    colorScheme:
+                      isAcceptingCaseDecision(workingCase.decision) ||
+                      isCompletedWithoutRuling
+                        ? 'default'
+                        : 'destructive',
+                    onClick: handleNextButtonClick,
+                    loading: isTransitioningCase,
+                    testId: 'continueButton',
+                  },
+                ]
           }
-          nextButtonColorScheme={
-            isAcceptingCaseDecision(workingCase.decision) ||
-            isCompletedWithoutRuling
-              ? 'default'
-              : 'destructive'
-          }
-          onNextButtonClick={handleNextButtonClick}
-          hideNextButton={hideNextButton}
           infoBoxText={
             hideNextButton
               ? formatMessage(strings.onlyAssigendJudgeCanSign)

@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'regulations',
   preset: './jest.preset.js',
   rootDir: '../..',

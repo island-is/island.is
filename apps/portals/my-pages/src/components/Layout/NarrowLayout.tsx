@@ -1,8 +1,6 @@
-import { Box, Icon, NavigationItem } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
+import { Box, Hidden, Icon, NavigationItem } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { SERVICE_PORTAL_HEADER_HEIGHT_SM } from '@island.is/portals/my-pages/constants'
 import { useHeaderVisibility } from '../../context/HeaderVisibilityContext'
 import {
   GoBack,
@@ -10,21 +8,44 @@ import {
   ModuleAlertBannerSection,
   Navigation,
   ServicePortalNavigationItem,
+  useIsMobile,
+  useIsPhoneWidth,
 } from '@island.is/portals/my-pages/core'
 import { ReactNode } from 'react'
-import { Link as ReactLink } from 'react-router-dom'
-import { useWindowSize } from 'react-use'
+import { Link as ReactLink, matchPath } from 'react-router-dom'
 import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBreadcrumbs'
 import Sticky from '../Sticky/Sticky'
 import * as styles from './Layout.css'
 import SidebarLayout from './SidebarLayout'
-import cn from 'classnames'
+
+/* Modules opt in to the mobile takeover (hidden breadcrumbs, sub-nav and
+   sidebar footer at phone widths) per route via the `mobileTakeover` flag
+   on their navigation items — see PortalNavigationItem. */
+const isMobileTakeoverRoute = (
+  pathname: string,
+  item?: PortalNavigationItem,
+): boolean => {
+  if (!item) {
+    return false
+  }
+
+  const matchesThisRoute =
+    item.mobileTakeover && item.path && matchPath(item.path, pathname)
+
+  return (
+    Boolean(matchesThisRoute) ||
+    (item.children ?? []).some((child) =>
+      isMobileTakeoverRoute(pathname, child),
+    )
+  )
+}
 
 interface NarrowLayoutProps {
   activeParent?: PortalNavigationItem
   pathname: string
   height: number
   children: ReactNode
+  sidebarFooter?: ReactNode
 }
 
 export type SubNavItemType = NavigationItem & { enabled?: boolean }
@@ -34,14 +55,22 @@ export const NarrowLayout = ({
   pathname,
   height,
   activeParent,
+  sidebarFooter,
 }: NarrowLayoutProps) => {
   const { formatMessage } = useLocale()
 
-  const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
-  const { headerVisible } = useHeaderVisibility()
+  const { isMobile } = useIsMobile()
+  const { isPhoneWidth } = useIsPhoneWidth()
+  const { headerVisible, headerHeight } = useHeaderVisibility()
 
-  const stickyHeight = headerVisible ? SERVICE_PORTAL_HEADER_HEIGHT_SM - 1 : -1 // -1 to hide the shadow
+  /* The takeover is only worth it at true phone widths — narrower than the
+   `md` cutoff isMobile uses. */
+  const isMobileTakeover =
+    isPhoneWidth && isMobileTakeoverRoute(pathname, activeParent)
+
+  // headerHeight is the measured height of the fixed header, so the sticky
+  // menu clears whatever it contains (e.g. the delegation banner)
+  const stickyHeight = headerVisible ? headerHeight - 1 : -1 // -1 to hide the shadow
 
   const mapChildren = (item: ServicePortalNavigationItem): SubNavItemType => {
     if (item.children) {
@@ -73,48 +102,67 @@ export const NarrowLayout = ({
       return mapChildren(item)
     })
 
-  return (
-    <SidebarLayout
-      isSticky={true}
-      sidebarContent={
-        <Sticky>
-          <Box style={{ marginTop: height }}>
-            <GoBack />
+  const sidebar = (
+    <Sticky>
+      <Box style={{ marginTop: height }} paddingBottom={4}>
+        <GoBack />
 
-            {subNavItems && subNavItems.length > 0 && (
-              <Box borderRadius="large" background="blue100">
-                <Navigation
-                  renderLink={(link, item: SubNavItemType | undefined) => {
-                    return item?.href ? (
-                      <ReactLink to={item?.href}>
-                        {link}
-                        {item.enabled === false && !item.items?.length && (
-                          <Icon
-                            color="blue600"
-                            type="filled"
-                            icon="lockClosed"
-                            size="small"
-                            className={styles.lock}
-                          />
-                        )}
-                      </ReactLink>
-                    ) : (
-                      link
-                    )
-                  }}
-                  asSpan
-                  baseId={'service-portal-navigation'}
-                  title={formatMessage(activeParent?.name ?? m.tableOfContents)}
-                  items={subNavItems ?? []}
-                  expand
-                  titleIcon={activeParent?.icon}
-                />
-              </Box>
-            )}
+        {subNavItems && subNavItems.length > 0 && (
+          <Box borderRadius="large" background="blue100">
+            <Navigation
+              renderLink={(link, item: SubNavItemType | undefined) => {
+                return item?.href ? (
+                  <ReactLink to={item?.href}>
+                    {link}
+                    {item.enabled === false && !item.items?.length && (
+                      <Icon
+                        color="blue600"
+                        type="filled"
+                        icon="lockClosed"
+                        size="small"
+                        className={styles.lock}
+                      />
+                    )}
+                  </ReactLink>
+                ) : (
+                  link
+                )
+              }}
+              asSpan
+              baseId={'service-portal-navigation'}
+              title={formatMessage(activeParent?.name ?? m.tableOfContents)}
+              items={subNavItems ?? []}
+              expand
+              titleIcon={activeParent?.icon}
+            />
           </Box>
-        </Sticky>
-      }
-    >
+        )}
+        {sidebarFooter}
+      </Box>
+    </Sticky>
+  )
+
+  /* Takeover routes render without the layout chrome at phone widths:
+  no breadcrumbs, mobile sub-nav or footer — the screen is expected to
+  provide its own back navigation. */
+  if (isMobileTakeover) {
+    return (
+      <SidebarLayout isSticky={true} sidebarContent={sidebar}>
+        <Box
+          as="main"
+          paddingBottom={9}
+          component="main"
+          style={{ marginTop: height }}
+        >
+          <ModuleAlertBannerSection />
+          {children}
+        </Box>
+      </SidebarLayout>
+    )
+  }
+
+  return (
+    <SidebarLayout isSticky={true} sidebarContent={sidebar}>
       <Box
         as="main"
         paddingBottom={9}
@@ -126,9 +174,7 @@ export const NarrowLayout = ({
           <Box
             paddingBottom={3}
             width="full"
-            className={cn(styles.mobileNav, {
-              [styles.mobileNavHidden]: !headerVisible,
-            })}
+            className={styles.mobileNav}
             style={{ top: stickyHeight }}
           >
             <Navigation
@@ -154,6 +200,7 @@ export const NarrowLayout = ({
         )}
         <ModuleAlertBannerSection />
         {children}
+        {sidebarFooter && <Hidden above="sm">{sidebarFooter}</Hidden>}
       </Box>
     </SidebarLayout>
   )

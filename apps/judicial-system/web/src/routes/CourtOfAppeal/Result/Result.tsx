@@ -184,8 +184,13 @@ const Result = () => {
         <FormContentContainer isFooter>
           <FormFooter
             previousUrl={getStandardUserDashboardRoute(user)}
-            nextButtonText={formatMessage(strings.nextButtonText)}
-            onNextButtonClick={() => setModalVisible('reopenCase')}
+            actions={[
+              {
+                text: formatMessage(strings.nextButtonText),
+                onClick: () => setModalVisible('reopenCase'),
+                testId: 'continueButton',
+              },
+            ]}
           />
         </FormContentContainer>
       </PageLayout>

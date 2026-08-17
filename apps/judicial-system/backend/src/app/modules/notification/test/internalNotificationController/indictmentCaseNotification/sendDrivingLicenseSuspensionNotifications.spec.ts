@@ -100,9 +100,9 @@ describe('IndictmentCaseService - sendDrivingLicenseSuspensionNotifications', ()
             },
           ],
           subject: `Svipting í máli ${courtCaseNumber}`,
-          html: expect.stringContaining(
-            `Skrá skal sviptingu ökuréttinda í ökuskírteinaskrá vegna máls ${courtCaseNumber}`,
-          ),
+          html: `Skrá skal sviptingu ökuréttinda í ökuskírteinaskrá vegna máls ${courtCaseNumber} í Héraðsdómi Reykjavíkur.<br><br>LÖKE númer: ${policeCaseNumbers.join(
+            ', ',
+          )}.`,
         }),
       )
     })

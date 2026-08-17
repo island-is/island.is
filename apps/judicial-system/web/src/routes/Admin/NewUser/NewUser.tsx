@@ -42,8 +42,16 @@ export const NewUser = () => {
   const [createUserMutation, { loading: userCreating }] = useCreateUserMutation(
     {
       onCompleted: () => router.push(ADMIN_USERS_ROUTE),
-      onError: () => {
-        toast.error(formatMessage(strings.createError))
+      onError: (error) => {
+        const code = error.graphQLErrors[0]?.extensions?.code
+
+        if (code === 'https://httpstatuses.org/409') {
+          toast.error(
+            'Notandi með þessa kennitölu, hlutverk og stofnun er nú þegar til',
+          )
+        } else {
+          toast.error(formatMessage(strings.createError))
+        }
       },
     },
   )

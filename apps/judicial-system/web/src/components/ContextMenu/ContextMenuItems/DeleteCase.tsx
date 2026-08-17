@@ -49,16 +49,19 @@ export const useDeleteCase = (onComplete: (caseId: string) => void) => {
     <Modal
       title="Afturkalla mál"
       text="Ertu viss um að þú viljir afturkalla þetta mál?"
-      primaryButton={{
-        text: 'Afturkalla',
-        onClick: handlePrimaryButtonClick,
-        colorScheme: 'destructive',
-        isLoading: isTransitioningCase,
-      }}
-      secondaryButton={{
-        text: 'Hætta við',
-        onClick: handleSecondaryButtonClick,
-      }}
+      buttons={[
+        {
+          text: 'Hætta við',
+          onClick: handleSecondaryButtonClick,
+          variant: 'ghost',
+        },
+        {
+          text: 'Afturkalla',
+          onClick: handlePrimaryButtonClick,
+          colorScheme: 'destructive',
+          isLoading: isTransitioningCase,
+        },
+      ]}
     />
   )
 

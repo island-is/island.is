@@ -231,25 +231,32 @@ const AppealToCourtOfAppeals = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={previousUrl}
-          onNextButtonClick={handleNextButtonClick}
-          nextButtonText={someFilesError ? 'Reyna aftur' : 'Senda kæru'}
-          nextIsDisabled={appealBriefFiles.length === 0 || isCreatingAppealCase}
-          nextIsLoading={!allFilesDoneOrError || isCreatingAppealCase}
-          nextButtonIcon={undefined}
-          nextButtonColorScheme={someFilesError ? 'destructive' : 'default'}
+          actions={[
+            {
+              text: someFilesError ? 'Reyna aftur' : 'Senda kæru',
+              colorScheme: someFilesError ? 'destructive' : 'default',
+              onClick: handleNextButtonClick,
+              disabled: appealBriefFiles.length === 0 || isCreatingAppealCase,
+              loading: !allFilesDoneOrError || isCreatingAppealCase,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
       {visibleModal === 'APPEAL_SENT' && (
         <Modal
           title="Kæra hefur verið send viðkomandi héraðsdómstól"
           text="Tilkynning um móttöku kæru verður send á aðila máls."
-          secondaryButton={{
-            text: formatMessage(core.closeModal),
-            onClick: () => {
-              refreshCase()
-              router.push(previousUrl)
+          buttons={[
+            {
+              text: formatMessage(core.closeModal),
+              onClick: () => {
+                refreshCase()
+                router.push(previousUrl)
+              },
+              variant: 'ghost',
             },
-          }}
+          ]}
         />
       )}
     </PageLayout>
