@@ -52,13 +52,17 @@ const certificateTypeOptions = [
   },
 ]
 
-interface Props {
+export interface CertificateRequestFormProps {
   formState: CertificateFormState
   onChange: (patch: Partial<CertificateFormState>) => void
   disabled?: boolean
 }
 
-const CertificateRequestForm = ({ formState, onChange, disabled }: Props) => {
+const CertificateRequestForm = ({
+  formState,
+  onChange,
+  disabled,
+}: CertificateRequestFormProps) => {
   const { formatMessage } = useLocale()
 
   return (

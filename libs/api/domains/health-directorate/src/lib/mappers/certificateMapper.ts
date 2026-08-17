@@ -16,28 +16,9 @@ export const toCertificateTypeCode = (
   }
 }
 
-export const fromCertificateTypeCode = (
-  value: CertificateTypeCode,
-): CertificateTypeEnum => {
-  switch (value) {
-    case CertificateTypeCode.WORK:
-      return CertificateTypeEnum.WORK
-    case CertificateTypeCode.SCHOOL:
-      return CertificateTypeEnum.SCHOOL
-  }
-}
-
 export const mapCertificateRequest = (
   dto: CertificateRequestDto,
 ): HealthDirectorateCertificateRequest => ({
   id: dto.id,
   conversationId: dto.conversationId,
-  certificateType: fromCertificateTypeCode(dto.certificateType),
-  recipientName: dto.recipientName,
-  startDate: dto.startDate,
-  endDate: dto.endDate,
-  note: dto.note,
-  status: dto.status,
-  isAutomatic: dto.isAutomatic,
-  requestedAt: dto.requestedAt,
 })

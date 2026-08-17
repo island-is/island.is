@@ -190,10 +190,13 @@ const NewHealthConversation = () => {
             },
           },
         })
-        goToConversation(
+        const certificateRequest =
           result.data?.healthDirectorateCreateCertificateRequest
-            ?.conversationId,
-        )
+        if (!certificateRequest) {
+          toast.error(formatMessage(m.errorTitle))
+          return
+        }
+        goToConversation(certificateRequest.conversationId)
         return
       }
 

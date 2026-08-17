@@ -1,38 +1,13 @@
-import { Field, GraphQLISODateTime, ID, ObjectType } from '@nestjs/graphql'
-import { CertificateTypeEnum } from './enums'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class HealthDirectorateCertificateRequest {
   @Field(() => ID)
   id!: string
 
-  @Field()
-  conversationId!: string
-
-  @Field(() => CertificateTypeEnum)
-  certificateType!: CertificateTypeEnum
-
-  @Field({ nullable: true })
-  recipientName?: string
-
-  @Field(() => GraphQLISODateTime)
-  startDate!: Date
-
-  @Field(() => GraphQLISODateTime)
-  endDate!: Date
-
-  @Field({ nullable: true })
-  note?: string
-
-  @Field()
-  status!: string
-
   @Field({
     description:
-      'True when the request was submitted as an automatic certificate request.',
+      'The conversation created for the certificate request — used to navigate to the thread.',
   })
-  isAutomatic!: boolean
-
-  @Field(() => GraphQLISODateTime)
-  requestedAt!: Date
+  conversationId!: string
 }
