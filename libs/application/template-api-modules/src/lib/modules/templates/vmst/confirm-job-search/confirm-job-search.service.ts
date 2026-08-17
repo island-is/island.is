@@ -29,7 +29,6 @@ export class ConfirmJobSearchService extends BaseTemplateApiService {
       application.externalData,
       'jobSearchEligibility.data.isQuestionaireEligible',
     )
-    console.log(shouldFetchQuestionnaire)
     if (shouldFetchQuestionnaire) {
       return await this.vmstUnemploymentClientService.getQuestionnaire()
     }
@@ -39,6 +38,7 @@ export class ConfirmJobSearchService extends BaseTemplateApiService {
   async completeApplication({
     auth,
     application,
+    currentUserLocale,
   }: TemplateApiModuleActionProps): Promise<boolean> {
     try {
       const appliedCompanies = (
@@ -54,12 +54,15 @@ export class ConfirmJobSearchService extends BaseTemplateApiService {
           'questionnaire',
         ) || {}
 
-      const questionaire = Object.fromEntries(
-        Object.entries(questionnaireAnswers).map(([key, value]) => [
-          key,
-          Number(value),
-        ]),
-      )
+      const questionaire = {
+        ...Object.fromEntries(
+          Object.entries(questionnaireAnswers).map(([key, value]) => [
+            key,
+            Number(value),
+          ]),
+        ),
+        chosenLanguage: currentUserLocale,
+      }
 
       await this.vmstUnemploymentClientService.submitJobSearchConfirmation(
         auth,
@@ -80,6 +83,7 @@ export class ConfirmJobSearchService extends BaseTemplateApiService {
     currentUserLocale,
   }: TemplateApiModuleActionProps) {
     let result
+    return { isQuestionaireEligible: true }
     try {
       result =
         await this.vmstUnemploymentClientService.checkJobSearchConfirmationEligibility(
