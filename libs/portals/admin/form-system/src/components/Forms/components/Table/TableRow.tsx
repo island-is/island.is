@@ -83,7 +83,7 @@ export const TableRow = ({
   status,
   url,
 }: Props) => {
-  const { isAdmin, organizations, organizationId, organizationNationalId } =
+  const { isAdmin, organizations, organizationNationalId } =
     useContext(FormsContext)
   const [isOpen, setIsOpen] = useState(false)
   const [
@@ -118,7 +118,6 @@ export const TableRow = ({
   const copyFormToOrganization = useCallback(
     async (
       copyOrganizationNationalId?: string,
-      copyOrganizationId?: string,
       addCopiedFormToState = true,
     ) => {
       if (!id || !copyOrganizationNationalId) return false
@@ -129,7 +128,6 @@ export const TableRow = ({
             input: {
               id,
               organizationNationalId: copyOrganizationNationalId,
-              organizationId: copyOrganizationId,
             },
           },
         })
@@ -162,8 +160,7 @@ export const TableRow = ({
       title: formatMessage(m.copy),
       icon: 'copy' as const,
       iconType: 'outline' as const,
-      onClick: async () =>
-        copyFormToOrganization(organizationNationalId, organizationId),
+      onClick: async () => copyFormToOrganization(organizationNationalId),
     }
 
     const copyToDifferentOrganization = {
@@ -256,7 +253,6 @@ export const TableRow = ({
                     onClick={async () => {
                       const copySuccessful = await copyFormToOrganization(
                         selectedCopyOrganizationNationalId,
-                        undefined,
                         false,
                       )
                       if (copySuccessful && selectedCopyOrganization) {
@@ -567,7 +563,6 @@ export const TableRow = ({
     updateFormStatus,
     copyFormToOrganization,
     organizationNationalId,
-    organizationId,
     selectedCopyOrganization,
     selectedCopyOrganizationNationalId,
     sortedOrganizations,

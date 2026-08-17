@@ -487,6 +487,12 @@ export class FormsService {
       )
     }
 
+    if (!isAdmin && organizationNationalId !== formOwnerNationalId) {
+      throw new ForbiddenException(
+        `User does not have permission to copy form to organization with nationalId '${organizationNationalId}'`,
+      )
+    }
+
     let destinationOrganization: Organization | undefined
 
     if (isAdmin && organizationNationalId !== formOwnerNationalId) {
