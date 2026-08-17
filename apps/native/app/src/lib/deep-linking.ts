@@ -60,6 +60,12 @@ const routes: Record<
     pathname: '/health/medicine/delegation/[id]',
     params: { id: id as string },
   }),
+  '/minarsidur/heilsa/skilabod': '/health/messages',
+  '/minarsidur/heilsa/skilabod/nytt': '/health/messages/new',
+  '/minarsidur/heilsa/skilabod/:id': ({ id }) => ({
+    pathname: '/health/messages/[id]',
+    params: { id: id as string },
+  }),
   // Family
   '/minarsidur/min-gogn/yfirlit': '/more/family',
   // Applications
