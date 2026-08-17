@@ -26,6 +26,8 @@ export enum ApiModuleActions {
   getDisabilityStatuses = 'getDisabilityStatuses',
   getChildUnknownNationalIdStates = 'getChildUnknownNationalIdStates',
   getGuardianNotAwareReasons = 'getGuardianNotAwareReasons',
+  getSchoolTypes = 'getSchoolTypes',
+  getChildNationalIdType = 'getChildNationalIdType',
   getSchools = 'getSchools',
   createNotification = 'createNotification',
   completeNotification = 'completeNotification',
@@ -59,3 +61,8 @@ export const SHOW_LANGUAGE_SECTION_TYPES = [
   LanguageEnvironmentOptions.ICELANDIC_AND_OTHER,
   LanguageEnvironmentOptions.ONLY_OTHER,
 ]
+
+export enum ChildNationalIdTypeCode {
+  SYSTEM_NATIONAL_ID = 'U',
+  NATIONAL_REGISTRY_NATIONAL_ID = 'Þ',
+}

@@ -13,6 +13,7 @@ import {
   DefaultEvents,
   FormModes,
   UserProfileApi,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { CodeOwners } from '@island.is/shared/constants'
 import { AuthDelegationType } from '@island.is/shared/types'
@@ -37,7 +38,7 @@ import {
   prerequisitesMessages,
   sharedMessages,
 } from '../lib/messages'
-import { Events, Roles, States } from '../utils/constants'
+import { ApiModuleActions, Events, Roles, States } from '../utils/constants'
 import { getApplicantRole } from '../utils/roleUtils'
 import { dataSchema } from './dataSchema'
 
@@ -73,6 +74,14 @@ const template: ApplicationTemplate<
               },
             ],
           },
+          onExit: [
+            defineTemplateApi({
+              action: ApiModuleActions.getChildNationalIdType,
+              externalDataId: 'childNationalIdType',
+              namespace: ApplicationTypes.CHILD_PROTECTION_NOTIFICATION,
+              throwOnError: true,
+            }),
+          ],
           roles: [
             ...[Roles.MINOR_APPLICANT, Roles.ADULT_PERSONAL_APPLICANT].map(
               (roleId) => ({

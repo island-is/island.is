@@ -1,16 +1,17 @@
 import { NO, YES } from '@island.is/application/core'
-import { FormValue } from '@island.is/application/types'
+import { ExternalData, FormValue } from '@island.is/application/types'
 import {
   memmMessages,
   reasonForNotificationMessages,
   sharedMessages,
 } from '../lib/messages'
-import { DO_NOT_KNOW, NOT_APPLICABLE } from './constants'
 import {
   isKnowsNationalId,
   isReasonForNotificationSubCategorySelected,
+  isSystemNationalId,
   isUnborn,
 } from './conditionUtils'
+import { DO_NOT_KNOW, NOT_APPLICABLE } from './constants'
 import { getApplicationAnswers } from './getApplicationAnswers'
 
 export const getYesNoOptions = () => [
@@ -63,20 +64,26 @@ export const getSelectedReasonForNotificationCategoryCodes = (
   )
 }
 
-export const getHasDiscussedWithParentsTitle = (answers: FormValue) =>
+export const getHasDiscussedWithParentsTitle = (
+  answers: FormValue,
+  externalData: ExternalData,
+) =>
   isUnborn(answers)
     ? reasonForNotificationMessages.notificationHistory
         .hasDiscussedWithExpectantParents
-    : isKnowsNationalId(answers) // TODO: Need to check if kerfiskennitala! (If kerfiskennitala, then it is a custodian, otherwise a guardian)
+    : isKnowsNationalId(answers) && isSystemNationalId(externalData)
     ? reasonForNotificationMessages.notificationHistory
         .hasDiscussedWithCustodians
     : reasonForNotificationMessages.notificationHistory
         .hasDiscussedWithGuardians
 
-export const getAreParentsInformedTitle = (answers: FormValue) =>
+export const getAreParentsInformedTitle = (
+  answers: FormValue,
+  externalData: ExternalData,
+) =>
   isUnborn(answers)
     ? reasonForNotificationMessages.notificationHistory
         .areExpectantParentsInformed
-    : isKnowsNationalId(answers) // TODO: Need to check if kerfiskennitala! (If kerfiskennitala, then it is a custodian, otherwise a guardian)
+    : isKnowsNationalId(answers) && isSystemNationalId(externalData)
     ? reasonForNotificationMessages.notificationHistory.areCustodiansInformed
     : reasonForNotificationMessages.notificationHistory.areGuardiansInformed
