@@ -1083,43 +1083,50 @@ export class CourtService {
         )
       }
 
-      await this.confidentintialClientApplication
-        .acquireTokenByClientCredential({
-          scopes: ['https://graph.microsoft.com/.default'],
-        })
-        .then((response) => {
-          if (!response) {
-            throw new Error('Failed to acquire token')
-          }
+      const tokenResponse =
+        await this.confidentintialClientApplication.acquireTokenByClientCredential(
+          { scopes: ['https://graph.microsoft.com/.default'] },
+        )
 
-          return fetch(
-            `https://graph.microsoft.com/v1.0/users/${this.config.courtRobotUser}/sendMail`,
-            {
-              method: 'POST',
-              body: JSON.stringify({
-                message: {
-                  toRecipients: [
-                    {
-                      emailAddress: {
-                        address: this.config.courtRobotEmail,
-                        name: this.config.courtRobotName,
-                      },
-                    },
-                  ],
-                  subject: subjectWithNumber,
-                  body: {
-                    contentType: 'Text',
-                    content,
+      if (!tokenResponse?.accessToken) {
+        throw new Error('Failed to acquire token')
+      }
+
+      const sendMailResponse = await fetch(
+        `https://graph.microsoft.com/v1.0/users/${this.config.courtRobotUser}/sendMail`,
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            message: {
+              toRecipients: [
+                {
+                  emailAddress: {
+                    address: this.config.courtRobotEmail,
+                    name: this.config.courtRobotName,
                   },
                 },
-              }),
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${response.accessToken}`,
+              ],
+              subject: subjectWithNumber,
+              body: {
+                contentType: 'Text',
+                content,
               },
             },
-          )
-        })
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${tokenResponse.accessToken}`,
+          },
+        },
+      )
+
+      // fetch resolves for error statuses, so the robot log would otherwise be
+      // marked delivered for a mail the Graph API rejected
+      if (!sendMailResponse.ok) {
+        throw new Error(
+          `Failed to send robot email through the Microsoft Graph API: ${sendMailResponse.status} ${sendMailResponse.statusText}`,
+        )
+      }
     } else {
       await this.emailService.sendEmail({
         from: {
