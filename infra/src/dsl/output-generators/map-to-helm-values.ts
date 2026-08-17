@@ -93,8 +93,6 @@ const serializeService: SerializeMethod<HelmService> = async (
   }
   if (!hackListForNonExistentTracer.includes(serviceDef.name)) {
     result.env.NODE_OPTIONS += ' -r dd-trace/init'
-    // dd-trace 5.108 injects trace headers twice on outbound fetch (fetch +
-    // http layers); strict WAFs reject the duplicates (broke ValitorPay).
     result.env.DD_TRACE_DISABLED_INSTRUMENTATIONS = 'fetch'
   }
   // add healthCheck port if set in the service
