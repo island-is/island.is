@@ -1,7 +1,12 @@
 import { Dispatch, FC, SetStateAction, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Input, RadioButton } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Input,
+  RadioButton,
+} from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { appealCorrectionLock } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
@@ -73,8 +78,10 @@ const AppealSections: FC<Props> = ({
   // The in-court decisions describe what happened at the ruling, so they may
   // only be edited while the court record still governs the appeal they produced
   // (see appealCorrectionLock). case.service.upsertCaseAppealDecision rejects the
-  // same cases server-side - this only keeps the UI from offering them.
-  const disabled = Boolean(appealCorrectionLock(workingCase.appealCase))
+  // same cases server-side - this only keeps the UI from offering them. The lock
+  // reason is kept so the section can say which of the two applies.
+  const lock = appealCorrectionLock(workingCase.appealCase)
+  const disabled = Boolean(lock)
 
   const handleChange = (update: {
     accusedAppealDecision?: CaseAppealDecision
@@ -157,6 +164,18 @@ const AppealSections: FC<Props> = ({
         title={formatMessage(m.titleV2)}
         description={formatMessage(m.disclaimerV2)}
       />
+      {lock && (
+        <Box marginBottom={3}>
+          <AlertMessage
+            type="info"
+            message={
+              lock === 'OUT_OF_COURT'
+                ? 'Úrskurðurinn hefur verið kærður utan þinghalds og því er ekki hægt að breyta ákvörðun um kæru.'
+                : 'Kæra úrskurðarins er komin til Landsréttar og því er ekki hægt að breyta ákvörðun um kæru.'
+            }
+          />
+        </Box>
+      )}
       <div className={grid({ gap: 3 })}>
         {workingCase.defendants && workingCase.defendants.length > 0 && (
           <BlueBox>
