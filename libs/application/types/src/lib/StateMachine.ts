@@ -109,13 +109,6 @@ export type ScheduledNotificationConfig = {
    */
   includeApplicationLink?: boolean
   /**
-   * When set, the API computes the actual prune date — this many days after
-   * the notification's own resolved fire time — and appends it as a
-   * `pruneDate` arg (ISO string). Note that the contentful Template must
-   * include a `{{pruneDate}}` placeholder for this to work.
-   */
-  daysBeforePrune?: number
-  /**
    * When set, the API only schedules this notification if the feature
    * flag evaluates to true at the time of scheduling.
    */

@@ -443,17 +443,6 @@ export const handleScheduledNotifications = async (
               },
             ]
           : []),
-        ...(config.daysBeforePrune !== undefined
-          ? [
-              {
-                key: 'pruneDate',
-                value: addMilliseconds(
-                  time,
-                  config.daysBeforePrune * 24 * 3600 * 1000,
-                ).toISOString(),
-              },
-            ]
-          : []),
       ]
 
       notificationsToSchedule.push({

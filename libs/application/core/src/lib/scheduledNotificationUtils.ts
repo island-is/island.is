@@ -29,30 +29,33 @@ export const endOfDayFromCreation = (
  */
 const pruneReminder = (
   timing: { date: Date } | { delayInMs: number },
-  daysBefore: number,
+  daysBeforePrune: number,
+  pruneDate: Date,
   featureFlag?: Features,
 ): ScheduledNotificationConfig => ({
   template:
     NotificationConfig[NotificationType.ApplicationPruneReminder].templateId,
   includeApplicationLink: true,
-  daysBeforePrune: daysBefore,
+  args: [
+    { key: 'pruneDate', value: pruneDate.toISOString() },
+    { key: 'daysBeforePrune', value: String(daysBeforePrune) },
+  ],
   featureFlag,
   ...timing,
 })
 
 /**
  * Returns a ScheduledNotificationConfig that fires `daysBeforePrune` days before
- * `anchorDate` (e.g. the prune date or a registration deadline). Pass
- * `featureFlag` to only schedule while the flag is enabled.
+ * `pruneDate`. Pass `featureFlag` to only schedule while the flag is enabled.
  */
 export const schedulePruneReminderBefore = (
-  anchorDate: Date,
+  pruneDate: Date,
   daysBeforePrune: number,
   featureFlag?: Features,
 ): ScheduledNotificationConfig => {
-  const date = new Date(anchorDate)
+  const date = new Date(pruneDate)
   date.setUTCDate(date.getUTCDate() - daysBeforePrune)
-  return pruneReminder({ date }, daysBeforePrune, featureFlag)
+  return pruneReminder({ date }, daysBeforePrune, pruneDate, featureFlag)
 }
 
 /**
@@ -66,11 +69,13 @@ export const schedulePruneReminderAfterDays = (
   daysBeforePrune: number,
   featureFlag?: Features,
 ): ScheduledNotificationConfig => {
+  const pruneDate = new Date(Date.now() + pruneAfterMs)
   return pruneReminder(
     {
       delayInMs: Math.max(0, pruneAfterMs - daysBeforePrune * 24 * 3600 * 1000),
     },
     daysBeforePrune,
+    pruneDate,
     featureFlag,
   )
 }

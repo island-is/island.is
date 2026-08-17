@@ -60,10 +60,14 @@ describe('schedulePruneReminderBefore', () => {
     expect(config.includeApplicationLink).toBe(true)
   })
 
-  it('should carry daysBefore through as daysBeforePrune, for the API to compute the pruneDate arg', () => {
-    const config = schedulePruneReminderBefore(new Date(), 2)
+  it('should carry pruneDate and daysBeforePrune through as args', () => {
+    const pruneDate = new Date('2026-08-10T23:59:00.000Z')
+    const config = schedulePruneReminderBefore(pruneDate, 2)
 
-    expect(config.daysBeforePrune).toBe(2)
+    expect(config.args).toEqual([
+      { key: 'pruneDate', value: pruneDate.toISOString() },
+      { key: 'daysBeforePrune', value: '2' },
+    ])
   })
 
   it('should carry the featureFlag through to the config', () => {
@@ -95,10 +99,23 @@ describe('schedulePruneReminderAfterDays', () => {
     expect(config.includeApplicationLink).toBe(true)
   })
 
-  it('should carry daysBefore through as daysBeforePrune, for the API to compute the pruneDate arg', () => {
-    const config = schedulePruneReminderAfterDays(7 * DAY_MS, 2)
+  it('should carry pruneDate and daysBeforePrune through as args', () => {
+    jest.useFakeTimers()
+    jest.setSystemTime(new Date('2026-08-08T00:00:00.000Z'))
 
-    expect(config.daysBeforePrune).toBe(2)
+    try {
+      const config = schedulePruneReminderAfterDays(7 * DAY_MS, 2)
+
+      expect(config.args).toEqual([
+        {
+          key: 'pruneDate',
+          value: new Date('2026-08-15T00:00:00.000Z').toISOString(),
+        },
+        { key: 'daysBeforePrune', value: '2' },
+      ])
+    } finally {
+      jest.useRealTimers()
+    }
   })
 
   it('should carry the featureFlag through to the config', () => {
