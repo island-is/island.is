@@ -894,8 +894,7 @@ export const en: TranslatedMessages = {
   'health.messages.compose.notAllowedTitle': 'Cannot send messages',
   'health.messages.compose.notAllowedText':
     'This service provider does not offer messaging on Ísland.is.',
-  'health.messages.compose.closingSoonTitle':
-    'Note: messaging is closing soon',
+  'health.messages.compose.closingSoonTitle': 'Note: messaging is closing soon',
   'health.messages.compose.closingSoonText':
     'Send your message before it closes at {closeTime}. After that you cannot send a message until {hasOpenTime, select, false {tomorrow} other {{openTime} tomorrow}}.',
   'health.messages.compose.send': 'Send message',
