@@ -8,8 +8,8 @@ import {
   UserContextWrapper,
 } from '@island.is/judicial-system-web/src/utils/testHelpers'
 
-import { UsersDocument } from './users.generated'
 import { Users } from './Users'
+import { UsersDocument } from './users.generated'
 
 jest.mock('next/router', () => ({
   useRouter() {
