@@ -22,6 +22,7 @@ import {
 } from '@/graphql/types/schema'
 import { useHealthMessagesFilterStore } from '@/stores/health-messages-filter-store'
 import { useOrganizationsStore } from '@/stores/organizations-store'
+import { pushOnce } from '@/utils/push-once'
 import { EmptyList, ListItem, ListItemSkeleton, Problem, SearchBar } from '@/ui'
 
 export default function HealthMessagesScreen() {
@@ -164,7 +165,7 @@ export default function HealthMessagesScreen() {
         renderItem={({ item }) => (
           <Pressable
             onPress={() =>
-              router.push({
+              pushOnce({
                 pathname: '/health/messages/[id]',
                 params: { id: item.id },
               })

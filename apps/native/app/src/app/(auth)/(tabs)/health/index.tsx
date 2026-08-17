@@ -51,6 +51,7 @@ import {
 } from '@/ui'
 import { AppointmentCard } from '../../../../components/appointment-card'
 import { StackScreen } from '../../../../components/stack-screen'
+import { pushOnce } from '@/utils/push-once'
 import { testIDs } from '@/utils/test-ids'
 import { MedicineHistoryCard } from '../../../../components/medicine-history-card'
 
@@ -617,7 +618,7 @@ export default function HealthOverviewScreen() {
                   <TouchableOpacity
                     key={message.id}
                     onPress={() =>
-                      router.navigate({
+                      pushOnce({
                         pathname: '/health/messages/[id]',
                         params: { id: message.id },
                       })
