@@ -18,9 +18,9 @@ import Sticky from '../Sticky/Sticky'
 import * as styles from './Layout.css'
 import SidebarLayout from './SidebarLayout'
 
-// Modules opt in to the mobile takeover (hidden breadcrumbs, sub-nav and
-// sidebar footer at phone widths) per route via the `mobileTakeover` flag
-// on their navigation items — see PortalNavigationItem.
+/* Modules opt in to the mobile takeover (hidden breadcrumbs, sub-nav and
+   sidebar footer at phone widths) per route via the `mobileTakeover` flag
+   on their navigation items — see PortalNavigationItem. */
 const isMobileTakeoverRoute = (
   pathname: string,
   item?: PortalNavigationItem,
@@ -63,8 +63,8 @@ export const NarrowLayout = ({
   const { isPhoneWidth } = useIsPhoneWidth()
   const { headerVisible, headerHeight } = useHeaderVisibility()
 
-  // The takeover is only worth it at true phone widths — narrower than the
-  // `md` cutoff used for the sidebar/mobile-nav split elsewhere in this file.
+  /* The takeover is only worth it at true phone widths — narrower than the
+   `md` cutoff isMobile uses. */
   const isMobileTakeover =
     isPhoneWidth && isMobileTakeoverRoute(pathname, activeParent)
 
@@ -142,9 +142,9 @@ export const NarrowLayout = ({
     </Sticky>
   )
 
-  // Takeover routes render without the layout chrome at phone widths:
-  // no breadcrumbs, mobile sub-nav or footer — the screen is expected to
-  // provide its own back navigation.
+  /* Takeover routes render without the layout chrome at phone widths:
+  no breadcrumbs, mobile sub-nav or footer — the screen is expected to
+  provide its own back navigation. */
   if (isMobileTakeover) {
     return (
       <SidebarLayout isSticky={true} sidebarContent={sidebar}>
