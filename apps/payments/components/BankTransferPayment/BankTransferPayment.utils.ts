@@ -7,7 +7,9 @@ export const validateBankAccountNumber = (
   value: string,
   formatMessage: FormatMessage,
 ) => {
-  if (!/^\d{12}$/.test(value)) {
+  // The form stores the masked value (0000-00-000000); accept only digits
+  // and the mask separators, then require exactly 12 digits.
+  if (!/^[\d-]+$/.test(value) || !/^\d{12}$/.test(value.replace(/-/g, ''))) {
     return formatMessage(bankTransfer.accountNumberInvalid)
   }
   return true
