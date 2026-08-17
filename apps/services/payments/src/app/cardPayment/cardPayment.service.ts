@@ -812,7 +812,27 @@ export class CardPaymentService {
       throw new BadRequestException(response.statusText)
     }
 
-    const rawData = await response.json()
+    let rawData: unknown
+
+    try {
+      rawData = await response.json()
+    } catch (parseError) {
+      // A 2xx non-JSON body means the response did not come from the gateway
+      // API itself (e.g. a maintenance page reached through a silent redirect).
+      // Log enough response metadata to identify the actual origin.
+      this.logger.error(
+        `${logPrefix}Payment gateway returned non-JSON response`,
+        {
+          status: response.status,
+          contentType: response.headers?.get?.('content-type'),
+          server: response.headers?.get?.('server'),
+          cfRay: response.headers?.get?.('cf-ray'),
+          finalUrl: response.url,
+          redirected: response.redirected,
+        },
+      )
+      throw parseError
+    }
 
     const successParsed = schema.safeParse(rawData)
 

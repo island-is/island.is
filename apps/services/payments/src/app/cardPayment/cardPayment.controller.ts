@@ -105,6 +105,13 @@ export class CardPaymentController {
         correlationId: correlationID,
       } as VerifyCardResponse
     } catch (e) {
+      // The update log below only keeps e.message, which cannot distinguish
+      // between the gateway call and the FJS/X-Road calls when both fail with
+      // a JSON parse error — the stack names the throwing module.
+      this.logger.error(`[${paymentFlowId}] Card verification failed`, {
+        error: e.message,
+        stack: e.stack,
+      })
       try {
         await this.paymentFlowService.logPaymentFlowUpdate({
           paymentFlowId: paymentFlowId,
