@@ -785,6 +785,12 @@ export const getApplicationType = (
   // if the child is a first grader and enrollment is open, set the application type
   // to enrollment in primary school. Otherwise, set the application type to new primary school
   if (yearOfBirth === firstGradeYear) {
+    // if the child is already registered in a primary school (e.g. moved up a grade
+    // early), this is a transfer rather than a first-time enrollment
+    if (childInformation?.primaryOrgId) {
+      return ApplicationType.NEW_PRIMARY_SCHOOL
+    }
+
     return isEnrollmentOpen
       ? ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
       : ApplicationType.NEW_PRIMARY_SCHOOL
