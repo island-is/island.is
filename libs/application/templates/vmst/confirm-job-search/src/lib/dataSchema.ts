@@ -9,6 +9,7 @@ export const dataSchema = z.object({
       }),
     )
     .optional(),
+  questionnaire: z.record(z.string(), z.string()).optional(),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

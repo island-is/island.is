@@ -1,7 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { SharedTemplateApiService } from '../../../shared'
 import { ApplicationTypes } from '@island.is/application/types'
-import { NotificationsService } from '../../../../notification/notifications.service'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { VmstUnemploymentClientService } from '@island.is/clients/vmst-unemployment'
 import { TemplateApiModuleActionProps } from '../../../../../lib/types'
@@ -21,11 +19,21 @@ type Tablerow = {
 export class ConfirmJobSearchService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly notificationsService: NotificationsService,
     private readonly vmstUnemploymentClientService: VmstUnemploymentClientService,
   ) {
     super(ApplicationTypes.CONFIRM_JOB_SEARCH)
+  }
+
+  async getQuestionnaire({ application }: TemplateApiModuleActionProps) {
+    const shouldFetchQuestionnaire = getValueViaPath<boolean>(
+      application.externalData,
+      'jobSearchEligibility.data.isQuestionaireEligible',
+    )
+    console.log(shouldFetchQuestionnaire)
+    if (shouldFetchQuestionnaire) {
+      return await this.vmstUnemploymentClientService.getQuestionnaire()
+    }
+    return []
   }
 
   async completeApplication({
@@ -40,9 +48,22 @@ export class ConfirmJobSearchService extends BaseTemplateApiService {
         .filter((item) => !item.isUnsaved)
         .map((item) => item.companyName)
 
+      const questionnaireAnswers =
+        getValueViaPath<Record<string, string>>(
+          application.answers,
+          'questionnaire',
+        ) || {}
+
+      const questionaire = Object.fromEntries(
+        Object.entries(questionnaireAnswers).map(([key, value]) => [
+          key,
+          Number(value),
+        ]),
+      )
+
       await this.vmstUnemploymentClientService.submitJobSearchConfirmation(
         auth,
-        { appliedCompanies },
+        { appliedCompanies, questionaire },
       )
 
       return true

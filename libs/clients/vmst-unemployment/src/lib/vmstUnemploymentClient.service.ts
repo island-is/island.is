@@ -575,20 +575,4 @@ export class VmstUnemploymentClientService {
     )
     return await api.jobSearchConfirmationGetQuestionaireSchema()
   }
-
-  async getQuestionnaireEligibility(
-    auth: User,
-  ): Promise<GaldurXRoadAPIModelsApplicantApplicantEligibilityResponse> {
-    const { applicantId } = await this.resolveApplicant(auth)
-
-    if (!applicantId) {
-      throw new Error('Failed to resolve applicantId')
-    }
-    const api = await this.createApiClient(
-      ApplicantApi,
-      'clients-vmst-unemployment',
-    )
-
-    return await api.applicantApplicantMinus3Eligibility({ applicantId })
-  }
 }

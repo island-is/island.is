@@ -3,18 +3,28 @@ import { defineMessages } from 'react-intl'
 export const questionnaire = defineMessages({
   sectionTitle: {
     id: 'vmst.cjs.application:questionnaire.sectionTitle',
-    defaultMessage: 'Staðfesta atvinnuleit',
+    defaultMessage: 'Spurningarlisti',
     description: 'Title of the questionnaire section and multi-field',
   },
   sectionStepTitle: {
     id: 'vmst.cjs.application:questionnaire.sectionStepTitle',
-    defaultMessage: 'Atvinnuleit',
+    defaultMessage: 'Spurningarlisti',
     description: 'Section step title of the questionnaire section',
   },
-  multiFieldDescription: {
-    id: 'vmst.cjs.application:questionnaire.multiFieldDescription',
+  alertInfoTitle: {
+    id: 'vmst.cjs.application:questionnaire.alertInfoTitle',
+    defaultMessage: 'Þú ert að staðfesta atvinnuleit í þriðja sinn',
+    description: 'alert info title above questionnaire section',
+  },
+  alertInfoMessage: {
+    id: 'vmst.cjs.application:questionnaire.alertInfoTitle',
     defaultMessage:
-      'Hér fyrir neðan geturðu skráð þau störf sem þú sóttir um í mánuðinum.',
-    description: 'Description shown below the questionnaire section title',
+      'Til þess að tryggja viðeigandi ráðgjöf í atvinnuleitinni þarf að svara nokkrum spurningum áður en þú getur staðfest atvinnuleitina.',
+    description: 'alert info message above questionnaire section',
+  },
+  requiredAnswerError: {
+    id: 'vmst.cjs.application:questionnaire.requiredAnswerError',
+    defaultMessage: 'Þessari spurningu þarf að svara',
+    description: 'Error shown on a required question that has no answer',
   },
 })

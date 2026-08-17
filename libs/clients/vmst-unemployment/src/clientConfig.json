@@ -2631,98 +2631,6 @@
         ]
       }
     },
-    "/api/applicants/{applicantId}/jobSearchConfirmations/questionaire": {
-      "post": {
-        "tags": [
-          "Applicant"
-        ],
-        "summary": "Create Applicant jobSearchConfirmation questionaire",
-        "operationId": "Applicant_CreateApplicantMinus3",
-        "parameters": [
-          {
-            "name": "applicantId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 1
-          }
-        ],
-        "requestBody": {
-          "x-name": "request",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_Minus3_CreateM3QuestionaireRequest"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 2
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
-    "/api/applicants/{applicantId}/jobSearchConfirmations/questionaire/eligibility": {
-      "get": {
-        "tags": [
-          "Applicant"
-        ],
-        "summary": "Applicant jobSearchConfirmation questionaire eligibility",
-        "operationId": "Applicant_ApplicantMinus3Eligibility",
-        "parameters": [
-          {
-            "name": "applicantId",
-            "in": "path",
-            "required": true,
-            "description": "Auðkenni umsækjanda.",
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 1
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Upplýsingar um hvort umsækjandi megi svara spurningalista.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Galdur_XRoad_API_Models_Applicant_ApplicantEligibilityResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": ""
-          }
-        },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
     "/api/applications/overview": {
       "post": {
         "tags": [
@@ -8219,6 +8127,9 @@
           "reasonEN": {
             "type": "string",
             "nullable": true
+          },
+          "isQuestionaireEligible": {
+            "type": "boolean"
           }
         }
       },
@@ -8246,6 +8157,55 @@
             "items": {
               "type": "string"
             }
+          },
+          "questionaire": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_Minus3_CreateM3QuestionaireRequest"
+              }
+            ]
+          }
+        }
+      },
+      "Galdur_External_Domain_Requests_Minus3_CreateM3QuestionaireRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "chosenLanguage": {
+            "type": "string"
+          },
+          "timeToFindNewJob": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "needAssistanceToFindNewJob": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "knowWhatToDoToFindNewJob": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "haveAppliedForJobs": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mostHaveConnections": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mentalCapacityForJob": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "physicalCapacityForJob": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "anySickness": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
@@ -8732,47 +8692,6 @@
             "type": "string",
             "format": "",
             "nullable": true
-          }
-        }
-      },
-      "Galdur_External_Domain_Requests_Minus3_CreateM3QuestionaireRequest": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "chosenLanguage": {
-            "type": "string"
-          },
-          "timeToFindNewJob": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "needAssistanceToFindNewJob": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "knowWhatToDoToFindNewJob": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "haveAppliedForJobs": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "mostHaveConnections": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "mentalCapacityForJob": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "physicalCapacityForJob": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "anySickness": {
-            "type": "integer",
-            "format": "int32"
           }
         }
       },
