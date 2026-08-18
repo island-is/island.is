@@ -396,12 +396,19 @@ const Subpoena: FC = () => {
         text: subpoenaText,
         primaryButtonText: formatMessage(strings.modalPrimaryButtonText),
       })
+    } else if (isSchedulingArraignmentDate) {
+      setModalContent({
+        title: strings.modalAlternativeServiceTitle,
+        text: strings.modalAlternativeServiceText,
+        primaryButtonText: strings.modalAlternativeServicePrimaryButtonText,
+      })
     }
   }, [
     navigateTo,
     isSkippingArraignmentSummons,
     isIssuingAlternativeServices,
     isIssuingSubpoenas,
+    isSchedulingArraignmentDate,
     formatMessage,
     modalContent,
     workingCase.civilClaimants,
