@@ -41,6 +41,16 @@ describe('areMergedCaseEntriesComplete', () => {
     ).toBe(false)
   })
 
+  // The backend rejects a whitespace-only booking, so enabling confirm here
+  // would only produce a failing confirm.
+  it('should be incomplete when a merged case has whitespace-only entries', () => {
+    expect(
+      areMergedCaseEntriesComplete(
+        session([document('case-1')], [entries('case-1', '   \n  ')]),
+      ),
+    ).toBe(false)
+  })
+
   it('should be complete when every merged case has entries', () => {
     expect(
       areMergedCaseEntriesComplete(

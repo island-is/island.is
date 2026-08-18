@@ -132,6 +132,23 @@ describe('CourtSessionRuling', () => {
       ])
     })
 
+    // Moving the session to "no ruling" clears the ruling on the server and
+    // unmounts this component. Pressing that radio moves focus off the textarea
+    // first, so the blur flushes the pending save and the unmount cleanup has
+    // nothing left to re-persist over the clear.
+    it('should not re-persist a typed ruling on an unmount that follows a blur', () => {
+      const { patchSession, view } = renderRuling()
+      const ruling = screen.getByTestId('ruling')
+
+      fireEvent.change(ruling, { target: { value: 'Ákærði er sýknaður' } })
+      fireEvent.blur(ruling)
+      view.unmount()
+
+      expect(persistedCalls(patchSession)).toEqual([
+        [COURT_SESSION_ID, { ruling: 'Ákærði er sýknaður' }, { persist: true }],
+      ])
+    })
+
     // Moving the session to "no ruling" clears the field on the server. A
     // debounced field ignores the persisted value once the user has typed, so
     // this only holds because the component unmounts with the ruling section.

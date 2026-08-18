@@ -76,7 +76,10 @@ import {
   useOnceOn,
   useUsers,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { reconcileAppealDecisionsForRulingFileChange } from '@island.is/judicial-system-web/src/utils/utils'
+import {
+  applyMergedCaseEntries,
+  reconcileAppealDecisionsForRulingFileChange,
+} from '@island.is/judicial-system-web/src/utils/utils'
 import { isCourtSessionValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { SelectRepresentative } from '../../../Shared/AddFiles/SelectCaseFileRepresentative'
@@ -271,33 +274,18 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
             return session
           }
 
-          const targetCourtSessionString = session.courtSessionStrings?.find(
-            (courtSessionString) =>
-              courtSessionString.mergedCaseId === mergedCaseId &&
-              courtSessionString.stringType === CourtSessionStringType.ENTRIES,
-          )
-
-          const courtSessionStrings = targetCourtSessionString
-            ? session.courtSessionStrings?.map((courtSessionString) =>
-                courtSessionString.id === targetCourtSessionString.id
-                  ? {
-                      ...courtSessionString,
-                      value: updatedCourtSessionString.value,
-                    }
-                  : courtSessionString,
-              )
-            : [
-                ...(session.courtSessionStrings ?? []),
-                {
-                  caseId: workingCase.id,
-                  courtSessionId,
-                  mergedCaseId,
-                  stringType: CourtSessionStringType.ENTRIES,
-                  value: updatedCourtSessionString.value,
-                } as CourtSessionString,
-              ]
-
-          return { ...session, courtSessionStrings }
+          return {
+            ...session,
+            courtSessionStrings: applyMergedCaseEntries(
+              session.courtSessionStrings,
+              {
+                caseId: workingCase.id,
+                courtSessionId,
+                mergedCaseId,
+                value: updatedCourtSessionString.value,
+              },
+            ),
+          }
         }),
       }))
 
