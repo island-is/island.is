@@ -10,12 +10,21 @@ export const USERS_CSV_FILENAME = 'notendur.csv'
 
 const yesNo = (value?: boolean | null): string => (value ? 'Já' : 'Nei')
 
+const FORMULA_PREFIX_PATTERN = /^[=+\-@]/
+
 const escapeCsvValue = (value: string): string => {
-  if (value.includes('"') || value.includes(',') || value.includes('\n')) {
-    return `"${value.replace(/"/g, '""')}"`
+  const sanitized = FORMULA_PREFIX_PATTERN.test(value) ? `'${value}` : value
+
+  if (
+    sanitized.includes('"') ||
+    sanitized.includes(',') ||
+    sanitized.includes('\n') ||
+    sanitized.includes('\r')
+  ) {
+    return `"${sanitized.replace(/"/g, '""')}"`
   }
 
-  return value
+  return sanitized
 }
 
 type Column = {

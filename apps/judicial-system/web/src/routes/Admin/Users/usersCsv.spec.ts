@@ -72,6 +72,30 @@ describe('usersToCsv', () => {
     expect(row.startsWith('"Björn, ""dómari""",')).toBe(true)
   })
 
+  it('prefixes values that start with formula characters', () => {
+    const user = {
+      ...anna,
+      name: '=1+1',
+      email: '+123',
+      mobileNumber: '-cmd',
+    }
+
+    const row = usersToCsv([user]).slice(1).split('\n')[1]
+
+    expect(row.startsWith("'=1+1,'+123,'-cmd,")).toBe(true)
+  })
+
+  it('quotes values that contain carriage returns', () => {
+    const user = {
+      ...anna,
+      name: 'Anna\rEvil',
+    }
+
+    const row = usersToCsv([user]).slice(1).split('\n')[1]
+
+    expect(row.startsWith('"Anna\rEvil",')).toBe(true)
+  })
+
   it('keeps row order and uses empty cells for missing optional fields', () => {
     const rows = usersToCsv([bjorn, anna]).slice(1).split('\n').slice(1)
 
