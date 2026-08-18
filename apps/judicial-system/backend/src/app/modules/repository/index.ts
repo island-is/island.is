@@ -51,6 +51,10 @@ export {
   LawyerRegistryData,
 } from './services/lawyerRegistryRepository.service'
 export { MessageSuspensionRepositoryService } from './services/messageSuspensionRepository.service'
+export {
+  NotificationRepositoryService,
+  CreateNotification,
+} from './services/notificationRepository.service'
 export { PoliceDigitalCaseFileRepositoryService } from './services/policeDigitalCaseFileRepository.service'
 export {
   RobotLogRepositoryService,

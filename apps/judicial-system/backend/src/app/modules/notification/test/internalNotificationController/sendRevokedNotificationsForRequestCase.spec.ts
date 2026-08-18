@@ -14,7 +14,11 @@ import {
   createTestUsers,
 } from '../createTestingNotificationModule'
 
-import { Case, Notification } from '../../../repository'
+import {
+  Case,
+  Notification,
+  NotificationRepositoryService,
+} from '../../../repository'
 import { CaseNotificationDto } from '../../dto/caseNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
 import { notificationModuleConfig } from '../../notification.config'
@@ -38,20 +42,20 @@ describe('InternalNotificationController - Send revoked notifications for reques
   const courtCaseNumber = 'R-369/2025'
 
   let mockEmailService: EmailService
-  let mockNotificationModel: typeof Notification
+  let mockNotificationRepositoryService: NotificationRepositoryService
   let mockConfig: ConfigType<typeof notificationModuleConfig>
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
       emailService,
-      notificationModel,
+      notificationRepositoryService,
       internalNotificationController,
       notificationConfig,
     } = await createTestingNotificationModule()
 
     mockEmailService = emailService
-    mockNotificationModel = notificationModel
+    mockNotificationRepositoryService = notificationRepositoryService
     mockConfig = notificationConfig
 
     givenWhenThen = async (theCase: object, notifications?: Notification[]) => {
@@ -106,7 +110,7 @@ describe('InternalNotificationController - Send revoked notifications for reques
           html: body,
         }),
       )
-      expect(mockNotificationModel.create).toHaveBeenCalledWith({
+      expect(mockNotificationRepositoryService.create).toHaveBeenCalledWith({
         caseId,
         type: RequestCaseNotificationType.REVOKED,
         recipients: [
@@ -146,7 +150,7 @@ describe('InternalNotificationController - Send revoked notifications for reques
           html: body,
         }),
       )
-      expect(mockNotificationModel.create).toHaveBeenCalledWith({
+      expect(mockNotificationRepositoryService.create).toHaveBeenCalledWith({
         caseId,
         type: RequestCaseNotificationType.REVOKED,
         recipients: [{ address: courtEmail, success: true }],
