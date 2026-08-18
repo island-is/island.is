@@ -344,6 +344,12 @@ const TinyMCE = ({
             paste_strip_class_attributes: 'all',
             content_style:
               "@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,700;1,300;1,700&display=swap'); body { font-family: 'IBM Plex Sans', sans-serif; font-size: 18px; font-weight: 300; } strong, b { font-weight: 700; } p { margin: 0; } " +
+              // Every nesting level keeps the same bullet. The browser default
+              // cycles disc/circle/square, but the PDF's standard Times fonts
+              // only carry the bullet glyph, so the editor is pinned to it too
+              // rather than showing markers the PDF cannot reproduce. An author
+              // rule beats the user-agent 'ul ul' default at any depth.
+              'ul { list-style-type: disc; } ' +
               CLASS_CONTENT_STYLE,
             branding: false,
             statusbar: false,
