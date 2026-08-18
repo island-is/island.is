@@ -7,6 +7,7 @@ import { EmailService } from '@island.is/email-service'
 import {
   CaseType,
   RequestCaseNotificationType,
+  TrackedNotificationType,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -30,7 +31,11 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send revoked notifications for request cases', () => {
-  const { judge, registrar } = createTestUsers(['judge', 'registrar'])
+  const { judge, registrar, defender } = createTestUsers([
+    'judge',
+    'registrar',
+    'defender',
+  ])
   const caseId = uuid()
   const courtId = 'd1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf'
   const prosecutorsOfficeName = uuid()
@@ -174,6 +179,102 @@ describe('InternalNotificationController - Send revoked notifications for reques
 
     it('should not send court email notification', () => {
       expect(mockEmailService.sendEmail).not.toHaveBeenCalled()
+      expect(then.result).toEqual({ delivered: true })
+    })
+  })
+
+  describe('when defender was previously notified', () => {
+    const theCase = {
+      id: caseId,
+      type: CaseType.TRAVEL_BAN,
+      courtId,
+      court: { name: courtName },
+      courtCaseNumber,
+      judge: { name: judge.name, email: judge.email },
+      creatingProsecutor: { institution: { name: prosecutorsOfficeName } },
+      defenderName: defender.name,
+      defenderEmail: defender.email,
+      defendants: [{ id: uuid() }],
+    }
+
+    const previousNotifications = [
+      {
+        type: TrackedNotificationType.READY_FOR_COURT,
+        recipients: [{ address: defender.email, success: true }],
+      } as Notification,
+    ]
+
+    describe('and the case has a court case number', () => {
+      let then: Then
+
+      beforeEach(async () => {
+        then = await givenWhenThen(theCase, previousNotifications)
+      })
+
+      it('should send the court revoked email to the defender without an RVG link', () => {
+        const subject = `Krafa afturkölluð í máli ${courtCaseNumber}`
+        const body = `${prosecutorsOfficeName} hefur afturkallað kröfu í máli ${courtCaseNumber}.`
+
+        expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+          expect.objectContaining({
+            to: [{ address: defender.email, name: defender.name }],
+            subject,
+            html: body,
+          }),
+        )
+        expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
+          expect.objectContaining({
+            to: [{ address: defender.email, name: defender.name }],
+            html: expect.stringContaining('rettarvorslugatt.island.is'),
+          }),
+        )
+        expect(then.result).toEqual({ delivered: true })
+      })
+    })
+
+    describe('and the case has no court case number', () => {
+      let then: Then
+
+      beforeEach(async () => {
+        then = await givenWhenThen(
+          { ...theCase, courtCaseNumber: undefined },
+          previousNotifications,
+        )
+      })
+
+      it('should not send a revoked email to the defender', () => {
+        expect(mockEmailService.sendEmail).not.toHaveBeenCalled()
+        expect(then.result).toEqual({ delivered: true })
+      })
+    })
+  })
+
+  describe('when defender was not previously notified', () => {
+    let then: Then
+
+    const theCase = {
+      id: caseId,
+      type: CaseType.CUSTODY,
+      courtId,
+      court: { name: courtName },
+      courtCaseNumber,
+      judge: { name: judge.name, email: judge.email },
+      creatingProsecutor: { institution: { name: prosecutorsOfficeName } },
+      defenderName: defender.name,
+      defenderEmail: defender.email,
+      defendants: [{ id: uuid() }],
+    }
+
+    beforeEach(async () => {
+      then = await givenWhenThen(theCase)
+    })
+
+    it('should not send a revoked email to the defender', () => {
+      expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ address: defender.email, name: defender.name }],
+        }),
+      )
       expect(then.result).toEqual({ delivered: true })
     })
   })

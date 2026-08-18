@@ -1706,17 +1706,12 @@ export class CaseNotificationService extends BaseNotificationService {
       theCase.notifications,
     )
 
-    if (defenderWasNotified && theCase.defendants) {
+    if (defenderWasNotified && theCase.defendants && theCase.courtCaseNumber) {
       promises.push(
-        this.sendRevokedEmailNotificationToDefender(
-          theCase.type,
-          theCase.id,
-          theCase.creatingProsecutor?.institution?.name,
+        this.sendRevokedEmailNotificationToCourtForRequestCase(
+          theCase,
           theCase.defenderName,
           theCase.defenderEmail,
-          theCase.defenderNationalId,
-          theCase.court?.name,
-          theCase.courtCaseNumber,
         ),
       )
     }
