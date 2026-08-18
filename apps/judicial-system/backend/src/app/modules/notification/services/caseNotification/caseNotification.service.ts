@@ -1626,7 +1626,7 @@ export class CaseNotificationService extends BaseNotificationService {
     })
   }
 
-  private sendRevokedEmailNotificationToCourtForRequestCase(
+  private sendRevokedEmailNotificationForRequestCase(
     theCase: Case,
     recipientName?: string,
     recipientEmail?: string,
@@ -1662,7 +1662,7 @@ export class CaseNotificationService extends BaseNotificationService {
     if (theCase.courtCaseNumber) {
       if (!theCase.judge && !theCase.registrar) {
         promises.push(
-          this.sendRevokedEmailNotificationToCourtForRequestCase(
+          this.sendRevokedEmailNotificationForRequestCase(
             theCase,
             theCase.court?.name,
             this.getCourtEmail(theCase.courtId),
@@ -1671,7 +1671,7 @@ export class CaseNotificationService extends BaseNotificationService {
       } else {
         if (theCase.judge) {
           promises.push(
-            this.sendRevokedEmailNotificationToCourtForRequestCase(
+            this.sendRevokedEmailNotificationForRequestCase(
               theCase,
               theCase.judge.name,
               theCase.judge.email,
@@ -1681,7 +1681,7 @@ export class CaseNotificationService extends BaseNotificationService {
 
         if (theCase.registrar) {
           promises.push(
-            this.sendRevokedEmailNotificationToCourtForRequestCase(
+            this.sendRevokedEmailNotificationForRequestCase(
               theCase,
               theCase.registrar.name,
               theCase.registrar.email,
@@ -1714,7 +1714,7 @@ export class CaseNotificationService extends BaseNotificationService {
 
       if (caseNumber) {
         promises.push(
-          this.sendRevokedEmailNotificationToCourtForRequestCase(
+          this.sendRevokedEmailNotificationForRequestCase(
             theCase,
             theCase.defenderName,
             theCase.defenderEmail,
