@@ -19,11 +19,44 @@ describe('CardPaymentSuccessSchema', () => {
     authorizationIdentifier: 'authId',
   }
 
-  it('accepts an approved charge with null market information fields', () => {
+  const fullMarketInformation = {
+    merchantCountry: 'IS',
+    marketName: 'Iceland',
+    acquirerRegion: 'EU',
+  }
+
+  it.each(['merchantCountry', 'marketName', 'acquirerRegion'] as const)(
+    'accepts an approved charge with null %s',
+    (field) => {
+      const result = CardPaymentSuccessSchema.safeParse({
+        ...approvedCharge,
+        marketInformation: { ...fullMarketInformation, [field]: null },
+      })
+
+      expect(result.success).toBe(true)
+    },
+  )
+
+  it.each(['merchantCountry', 'marketName', 'acquirerRegion'] as const)(
+    'accepts an approved charge with omitted %s',
+    (field) => {
+      const { [field]: _omitted, ...partialMarketInformation } =
+        fullMarketInformation
+
+      const result = CardPaymentSuccessSchema.safeParse({
+        ...approvedCharge,
+        marketInformation: partialMarketInformation,
+      })
+
+      expect(result.success).toBe(true)
+    },
+  )
+
+  it('accepts an approved charge with all market information fields null', () => {
     const result = CardPaymentSuccessSchema.safeParse({
       ...approvedCharge,
       marketInformation: {
-        merchantCountry: 'IS',
+        merchantCountry: null,
         marketName: null,
         acquirerRegion: null,
       },
