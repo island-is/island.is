@@ -21,11 +21,13 @@ export const MunicipalityApi = defineTemplateApi({
 
 export const TaxDataApi = defineTemplateApi({
   action: ApiActions.TAXDATA,
+  order: 1, // After national registry so municipalityCode is available
 })
 
 export const TaxDataSpouseApi = defineTemplateApi({
   action: ApiActions.TAXDATA,
   externalDataId: 'taxDataSpouse',
+  order: 1,
 })
 
 export const SendSpouseEmailApi = defineTemplateApi({

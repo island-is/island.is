@@ -489,6 +489,12 @@ export const serviceSetup = (services: {
         '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH',
       REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED:
         '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED',
+      PERSONAL_TAX_RETURN_AGENT_NATIONAL_ID:
+        '/k8s/application-system-api/PERSONAL_TAX_RETURN_AGENT_NATIONAL_ID',
+      PERSONAL_TAX_RETURN_AGENT_ID:
+        '/k8s/application-system-api/PERSONAL_TAX_RETURN_AGENT_ID',
+      PERSONAL_TAX_RETURN_URL:
+        '/k8s/application-system-api/PERSONAL_TAX_RETURN_URL',
     })
     .db()
     .migrations()

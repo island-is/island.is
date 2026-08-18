@@ -10,6 +10,7 @@ import {
   Employment,
   HomeCircumstances,
 } from '@island.is/financial-aid/shared/lib'
+import { isRvkMunicipalityCode } from '../lib/constants'
 
 export const hasSpouse = (_answers: FormValue, externalData: ExternalData) =>
   getValueViaPath<NationalRegistrySpouse>(
@@ -49,7 +50,7 @@ export const isRVKresident = (
     externalData,
     'nationalRegistry.data.address.municipalityCode',
   )
-  return municipalityCode === '0000' || municipalityCode === '1400'
+  return isRvkMunicipalityCode(municipalityCode)
 }
 
 export const taxSuccess = (_answers: FormValue, externalData: ExternalData) =>

@@ -5,6 +5,7 @@ import {
   CurrentApplication,
   FAApplication,
   findFamilyStatus,
+  isRvkMunicipalityCode,
   TaxData,
 } from '@island.is/application/templates/financial-aid'
 import type { Auth } from '@island.is/auth-nest-tools'
@@ -25,6 +26,7 @@ import {
   MunicipalityModel,
   PersonalTaxReturnApi,
 } from '@island.is/clients/municipalities-financial-aid'
+import { PersonalTaxReturnApi as RskPersonalTaxReturnApi } from '@island.is/clients/rsk/personal-tax-return'
 
 import {
   CreateApplicationOperationRequest,
@@ -50,9 +52,14 @@ import {
   MunicipalityModelChildrenAidEnum,
 } from '@island.is/clients/municipalities-financial-aid'
 import { AttachmentS3Service } from '../../shared/services'
+import {
+  fetchDirectTaxPaymentsFromRsk,
+  fetchPersonalTaxReturnFromRsk,
+  shouldFetchTaxDataFromRsk,
+} from './taxDataFromRsk'
 
 type Props = Omit<TemplateApiModuleActionProps, 'application'> & {
-  application: FAApplication
+  application: FAApplication & ApplicationWithAttachments
 }
 
 @Injectable()
@@ -62,6 +69,7 @@ export class FinancialAidService extends BaseTemplateApiService {
     private rvkApplicationsApi: rvkApplicationsApi,
     private municipalityApi: MunicipalityApi,
     private personalTaxReturnApi: PersonalTaxReturnApi,
+    private rskPersonalTaxReturnApi: RskPersonalTaxReturnApi,
     private readonly attachmentService: AttachmentS3Service,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
@@ -79,13 +87,7 @@ export class FinancialAidService extends BaseTemplateApiService {
   }
 
   municipalityCodeCheck(municipalityCode: string | null | undefined) {
-    if (
-      municipalityCode &&
-      (municipalityCode === '0000' || municipalityCode === '1400')
-    ) {
-      return true
-    }
-    return false
+    return isRvkMunicipalityCode(municipalityCode)
   }
   // End of mock data providers for testing
 
@@ -180,9 +182,6 @@ export class FinancialAidService extends BaseTemplateApiService {
     application,
     auth,
   }: Props): Promise<CurrentApplication> {
-    console.log('--------------------------------')
-    console.log('createApplication')
-    console.log('--------------------------------')
     const { id, answers, externalData } = application
 
     const municipalityCode =
@@ -301,9 +300,6 @@ export class FinancialAidService extends BaseTemplateApiService {
     let files: ApplicationAnswerFile[] = []
 
     if (this.municipalityCodeCheck(municipalityCode)) {
-      console.log('--------------------------------')
-      console.log('formatFilesRvk municipalityCode', municipalityCode)
-      console.log('--------------------------------')
       files = (
         await formatFilesRvk(answers.rvkTaxReturnFiles, FileType.TAXRETURN)
       )
@@ -384,10 +380,6 @@ export class FinancialAidService extends BaseTemplateApiService {
     }
 
     if (this.municipalityCodeCheck(municipalityCode)) {
-      console.log('--------------------------------')
-      console.log('createApplication municipalityCode', municipalityCode)
-      console.log('--------------------------------')
-
       const rvkRequest = {
         createApplicationRequest: {
           name: externalData.nationalRegistry.data.fullName,
@@ -435,11 +427,6 @@ export class FinancialAidService extends BaseTemplateApiService {
         xTenantIdentifier: 'reykjavik',
         xUserPermissions: 'finaid:write',
       } as CreateApplicationOperationRequest
-
-      console.log('--------------------------------')
-      console.log('rvkRequest')
-      console.dir(rvkRequest, { depth: null, colors: true })
-      console.log('--------------------------------')
 
       return await this.rvkApplicationsApiWithAuth(auth)
         .createApplication(rvkRequest)
@@ -511,6 +498,29 @@ export class FinancialAidService extends BaseTemplateApiService {
 
   async taxData({ auth, application }: Props): Promise<TaxData> {
     try {
+      const municipalityCode =
+        application.externalData.nationalRegistry.data.address?.municipalityCode
+
+      if (shouldFetchTaxDataFromRsk(municipalityCode)) {
+        const municipalitiesPersonalTaxReturn =
+          await fetchPersonalTaxReturnFromRsk(
+            this.rskPersonalTaxReturnApi,
+            this.attachmentService,
+            application,
+            auth.nationalId,
+          )
+        const municipalitiesDirectTaxPayments =
+          await fetchDirectTaxPaymentsFromRsk(
+            this.rskPersonalTaxReturnApi,
+            auth.nationalId,
+          )
+
+        return {
+          municipalitiesPersonalTaxReturn,
+          municipalitiesDirectTaxPayments,
+        }
+      }
+
       const personalTaxReturn = await this.personalTaxReturnApiWithAuth(
         auth,
       ).personalTaxReturnControllerMunicipalitiesPersonalTaxReturn({
