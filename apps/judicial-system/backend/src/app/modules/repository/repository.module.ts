@@ -21,6 +21,7 @@ import { Defendant } from './models/defendant.model'
 import { DefendantEventLog } from './models/defendantEventLog.model'
 import { EventLog } from './models/eventLog.model'
 import { IndictmentCount } from './models/indictmentCount.model'
+import { Institution } from './models/institution.model'
 import { InstitutionContact } from './models/institutionContact.model'
 import { LawyerRegistry } from './models/lawyerRegistry.model'
 import { MessageSuspension } from './models/messageSuspension.model'
@@ -40,6 +41,7 @@ import { CourtSessionRepositoryService } from './services/courtSessionRepository
 import { DefendantEventLogRepositoryService } from './services/defendantEventLogRepository.service'
 import { DefendantRepositoryService } from './services/defendantRepository.service'
 import { InstitutionContactRepositoryService } from './services/institutionContactRepository.service'
+import { InstitutionRepositoryService } from './services/institutionRepository.service'
 import { LawyerRegistryRepositoryService } from './services/lawyerRegistryRepository.service'
 import { MessageSuspensionRepositoryService } from './services/messageSuspensionRepository.service'
 import { PoliceDigitalCaseFileRepositoryService } from './services/policeDigitalCaseFileRepository.service'
@@ -67,6 +69,7 @@ import { repositoryModuleConfig } from './repository.config'
       DefendantEventLog,
       EventLog,
       IndictmentCount,
+      Institution,
       InstitutionContact,
       LawyerRegistry,
       MessageSuspension,
@@ -91,6 +94,7 @@ import { repositoryModuleConfig } from './repository.config'
     DefendantRepositoryService,
     DefendantEventLogRepositoryService,
     InstitutionContactRepositoryService,
+    InstitutionRepositoryService,
     LawyerRegistryRepositoryService,
     MessageSuspensionRepositoryService,
     PoliceDigitalCaseFileRepositoryService,
@@ -109,6 +113,7 @@ import { repositoryModuleConfig } from './repository.config'
     DefendantRepositoryService,
     DefendantEventLogRepositoryService,
     InstitutionContactRepositoryService,
+    InstitutionRepositoryService,
     LawyerRegistryRepositoryService,
     MessageSuspensionRepositoryService,
     PoliceDigitalCaseFileRepositoryService,

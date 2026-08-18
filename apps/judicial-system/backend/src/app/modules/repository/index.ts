@@ -46,6 +46,7 @@ export { CourtDocumentRepositoryService } from './services/courtDocumentReposito
 export { DefendantRepositoryService } from './services/defendantRepository.service'
 export { DefendantEventLogRepositoryService } from './services/defendantEventLogRepository.service'
 export { InstitutionContactRepositoryService } from './services/institutionContactRepository.service'
+export { InstitutionRepositoryService } from './services/institutionRepository.service'
 export {
   LawyerRegistryRepositoryService,
   LawyerRegistryData,
