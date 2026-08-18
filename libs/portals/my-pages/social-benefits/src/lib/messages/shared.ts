@@ -121,6 +121,6 @@ export const sharedMessages = defineMessages({
   },
   applicantEditInfoUrl: {
     id: 'sp.social-benefits-shared:applicantEditInfoUrl',
-    defaultMessage: 'https://island.is/umsoknir/breyta-upplysingum',
+    defaultMessage: 'https://island.is/umsoknir/vmst-breyta-upplysingum',
   },
 })
