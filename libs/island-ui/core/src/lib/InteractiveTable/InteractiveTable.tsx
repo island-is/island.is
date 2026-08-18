@@ -165,9 +165,7 @@ export const InteractiveTable = <TData extends object>({
 
   const hasFooter =
     data.length > 0 &&
-    table
-      .getAllColumns()
-      .some((col) => col.columnDef.footer !== undefined)
+    table.getAllColumns().some((col) => col.columnDef.footer !== undefined)
 
   const desktopTable = (
     <T.Table>
