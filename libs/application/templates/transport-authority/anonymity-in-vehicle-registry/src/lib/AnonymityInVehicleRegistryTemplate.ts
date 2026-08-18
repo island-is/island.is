@@ -21,7 +21,6 @@ import { AnonymityInVehicleRegistrySchema } from './dataSchema'
 import { application } from './messages'
 import { AnonymityStatusApi } from '../dataProviders'
 import { CodeOwners } from '@island.is/shared/constants'
-import { ApiScope } from '@island.is/auth/scopes'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -40,7 +39,6 @@ const template: ApplicationTemplate<
       type: AuthDelegationType.ProcurationHolder,
     },
   ],
-  requiredScopes: [ApiScope.samgongustofaVehicles],
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
