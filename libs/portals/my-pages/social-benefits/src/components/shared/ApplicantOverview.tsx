@@ -9,7 +9,7 @@ import { UserInfoLine, LinkButton } from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Problem } from '@island.is/react-spa/shared'
 import type { ReactElement } from 'react'
-import { sharedMessages as um } from '../../lib/messages/shared'
+import { sharedMessages as sm } from '../../lib/messages/shared'
 import {
   useGetApplicantOverviewQuery,
   GetApplicantOverviewQuery,
@@ -47,7 +47,7 @@ export const ApplicantOverview = ({ fields }: ApplicantOverviewProps) => {
   const overview = data?.vmstApplicantOverview
 
   const formatBoolean = (val?: boolean | null) =>
-    val == null ? undefined : val ? formatMessage(um.yes) : formatMessage(um.no)
+    val == null ? undefined : val ? formatMessage(sm.yes) : formatMessage(sm.no)
 
   const buildItem = (
     field: ApplicantOverviewField,
@@ -56,57 +56,57 @@ export const ApplicantOverview = ({ fields }: ApplicantOverviewProps) => {
     switch (field) {
       case 'passCode':
         return {
-          label: formatMessage(um.applicantPassCode),
+          label: formatMessage(sm.applicantPassCode),
           value: o?.passCode ?? undefined,
         }
       case 'preferredJobs':
         return {
-          label: formatMessage(um.applicantPreferredJobs),
+          label: formatMessage(sm.applicantPreferredJobs),
           value: o?.preferredJobs?.join(', ') || undefined,
         }
       case 'bankAccount':
         return {
-          label: formatMessage(um.applicantBankAccount),
+          label: formatMessage(sm.applicantBankAccount),
           value: o?.bankAccount ?? undefined,
         }
       case 'union':
         return {
-          label: formatMessage(um.applicantUnion),
+          label: formatMessage(sm.applicantUnion),
           value: o?.union ?? undefined,
         }
       case 'pensionFund':
         return {
-          label: formatMessage(um.applicantPensionFund),
+          label: formatMessage(sm.applicantPensionFund),
           value: o?.pensionFund ?? undefined,
         }
       case 'usedPersonalTaxCredit':
         return {
-          label: formatMessage(um.applicantUsedPersonalTaxCredit),
+          label: formatMessage(sm.applicantUsedPersonalTaxCredit),
           value: o?.usedPersonalTaxCredit?.toString() ?? undefined,
         }
       case 'numberOfChildren':
         return {
-          label: formatMessage(um.applicantNumberOfChildren),
+          label: formatMessage(sm.applicantNumberOfChildren),
           value: o?.numberOfChildren?.toString() ?? undefined,
         }
       case 'employmentHistory':
         return {
-          label: formatMessage(um.applicantEmploymentHistory),
+          label: formatMessage(sm.applicantEmploymentHistory),
           value: o?.employmentHistory?.join(', ') || undefined,
         }
       case 'educationHistory':
         return {
-          label: formatMessage(um.applicantEducationHistory),
+          label: formatMessage(sm.applicantEducationHistory),
           value: o?.educationHistory?.join(', ') || undefined,
         }
       case 'drivingLicenses':
         return {
-          label: formatMessage(um.applicantDrivingLicenses),
+          label: formatMessage(sm.applicantDrivingLicenses),
           value: o?.drivingLicenses?.join(', ') || undefined,
         }
       case 'languageAbilities':
         return {
-          label: formatMessage(um.applicantLanguageAbilities),
+          label: formatMessage(sm.applicantLanguageAbilities),
           value:
             o?.languageAbilities && o.languageAbilities.length > 0 ? (
               <Stack space={1}>
@@ -120,17 +120,17 @@ export const ApplicantOverview = ({ fields }: ApplicantOverviewProps) => {
         }
       case 'serviceArea':
         return {
-          label: formatMessage(um.applicantServiceArea),
+          label: formatMessage(sm.applicantServiceArea),
           value: o?.serviceArea ?? undefined,
         }
       case 'currentAddressDifferent':
         return {
-          label: formatMessage(um.applicantCurrentAddressDifferent),
+          label: formatMessage(sm.applicantCurrentAddressDifferent),
           value: formatBoolean(o?.currentAddressDifferent),
         }
       case 'savedToEures':
         return {
-          label: formatMessage(um.applicantSavedToEures),
+          label: formatMessage(sm.applicantSavedToEures),
           value: formatBoolean(o?.savedToEures),
         }
     }
@@ -163,9 +163,9 @@ export const ApplicantOverview = ({ fields }: ApplicantOverviewProps) => {
     <Box paddingTop={4}>
       <Box marginBottom={3} display="inlineBlock">
         <LinkButton
-          to={formatMessage(um.applicantEditInfoUrl)}
+          to={formatMessage(sm.applicantEditInfoUrl)}
           variant="utility"
-          text={formatMessage(um.applicantEditInfo)}
+          text={formatMessage(sm.applicantEditInfo)}
           size="small"
           icon="pencil"
         />
