@@ -16,15 +16,13 @@ import { PROT_FACTOR_UNBORN_SECTION } from '../../utils/constants'
 
 export const protectiveFactorsSection = buildSection({
   id: 'protectiveFactorsSection',
-  title: protectiveFactorsMessages.shared.sectionTitle,
+  title: protectiveFactorsMessages.sectionTitle,
+  condition: (answers) => !isUnborn(answers),
   children: [
     buildMultiField({
       id: 'protectiveFactors',
-      title: protectiveFactorsMessages.shared.sectionTitle,
-      description: ({ answers }) =>
-        isUnborn(answers)
-          ? protectiveFactorsMessages.unborn.description
-          : protectiveFactorsMessages.shared.description,
+      title: protectiveFactorsMessages.sectionTitle,
+      description: protectiveFactorsMessages.description,
       children: [
         buildAccordionField({
           id: 'protectiveFactors',
@@ -34,16 +32,12 @@ export const protectiveFactorsSection = buildSection({
               application.externalData,
             )
 
-            const unborn = isUnborn(application.answers)
-            const visibleSections = protectiveFactorSections.filter((section) =>
-              unborn
-                ? section.code === PROT_FACTOR_UNBORN_SECTION
-                : section.code !== PROT_FACTOR_UNBORN_SECTION,
+            const visibleSections = protectiveFactorSections.filter(
+              (section) => section.code !== PROT_FACTOR_UNBORN_SECTION,
             )
 
             return visibleSections.map((section) => ({
               itemTitle: section.name ?? '',
-              startExpanded: section.code === PROT_FACTOR_UNBORN_SECTION,
               children: [
                 ...(section.subCategories?.flatMap((subCategory, subIndex) => [
                   buildCheckboxField({
@@ -55,9 +49,8 @@ export const protectiveFactorsSection = buildSection({
                   }),
                   buildSelectField({
                     id: `protectiveFactors.${section.code}.sub${subIndex}Items`,
-                    title: protectiveFactorsMessages.shared.itemsLabel,
-                    placeholder:
-                      protectiveFactorsMessages.shared.itemsPlaceholder,
+                    title: protectiveFactorsMessages.itemsLabel,
+                    placeholder: protectiveFactorsMessages.itemsPlaceholder,
                     isMulti: true,
                     condition: (answers) =>
                       shouldShowProtectiveFactorSubItems(
