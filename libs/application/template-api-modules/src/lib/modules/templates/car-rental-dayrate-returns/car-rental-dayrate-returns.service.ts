@@ -76,30 +76,8 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
     const targetFromUtc = new Date(Date.UTC(targetYear, targetMonthIndex, 1))
     const targetToUtc = new Date(Date.UTC(targetYear, targetMonthIndex + 1, 0))
 
-    const context = { entityId: auth.nationalId, period }
-
     const [dayRateEntries, reportedRentalDays] = await Promise.all([
       this.rentalsApiWithAuth(auth)
-        .withPreMiddleware(async ({ url, init }) => {
-          const headers = init?.headers
-            ? Object.fromEntries(new Headers(init.headers).entries())
-            : undefined
-
-          const reqData = {
-            url,
-            method: init?.method,
-            headers: headers
-              ? {
-                  ...headers,
-                  authorization: headers.authorization
-                    ? '[REDACTED]'
-                    : undefined,
-                  cookie: headers.cookie ? '[REDACTED]' : undefined,
-                }
-              : undefined,
-          }
-          this.logger.info('RSK day-rate request', reqData)
-        })
         .apiDayRateEntriesEntityIdPeriodsPeriodGet({
           entityId: auth.nationalId,
           period,
@@ -107,7 +85,7 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
         .catch((error) => {
           this.logger.error(
             'Error getting previous period day rate entries from Skatturinn',
-            { ...context, endpoint: 'dayRateEntriesPeriodsGet', error },
+            { endpoint: 'dayRateEntriesPeriodsGet', error },
           )
           throw error
         }),
@@ -119,7 +97,7 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
         .catch((error) => {
           this.logger.error(
             'Error getting already reported rental days from Skatturinn',
-            { ...context, endpoint: 'rentalDaysPeriodsGet', error },
+            { endpoint: 'rentalDaysPeriodsGet', error },
           )
           throw error
         }),
@@ -129,7 +107,10 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
 
     return dayRateEntries
       .map<DayRateRecord | null>((entry) => {
-        if (!entry.fastnr || !entry.id) return null
+        // Only the vehicle registration number is required. `id` is optional on
+        // Skatturinn's side and optional on the return, so a missing one is no
+        // longer a reason to hide a vehicle the applicant has to report for.
+        if (!entry.fastnr) return null
 
         const entryValidFrom = entry.gildirFra
           ? new Date(entry.gildirFra)

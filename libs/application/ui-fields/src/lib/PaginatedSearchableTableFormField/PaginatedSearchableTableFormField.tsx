@@ -18,7 +18,15 @@ import {
   Table as T,
   Text,
 } from '@island.is/island-ui/core'
-import { ChangeEvent, FC, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  ChangeEvent,
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { useFormContext } from 'react-hook-form'
 
 const DEFAULT_PAGE_SIZE = 10
@@ -127,6 +135,22 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
     )
   }, [rowIdKey, rows])
 
+  const isRowDisabled = useCallback(
+    (row: PaginatedSearchableTableRow): boolean => {
+      if (!field.disabledKey) {
+        return false
+      }
+
+      // Always judge against the freshly built row: a row rehydrated from the
+      // answers can carry a flag from when it was persisted.
+      const rowId = getRowId(row, rowIdKey)
+      const currentRow = (rowId ? baseRowsById[rowId] : undefined) ?? row
+
+      return Boolean(currentRow[field.disabledKey])
+    },
+    [baseRowsById, field.disabledKey, rowIdKey],
+  )
+
   useEffect(() => {
     register(resolvedId)
     return () => unregister(resolvedId)
@@ -214,16 +238,18 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
 
     setBeforeSubmitCallback(
       async () => {
-        const rowsToPersist = changedRowsRef.current.map((row) => {
-          if (!field.savePropertyNames?.length) {
-            return row
-          }
+        const rowsToPersist = changedRowsRef.current
+          .filter((row) => !isRowDisabled(row))
+          .map((row) => {
+            if (!field.savePropertyNames?.length) {
+              return row
+            }
 
-          const propertiesToPersist = Array.from(
-            new Set([rowIdKey, ...field.savePropertyNames]),
-          )
-          return pickProperties(row, propertiesToPersist)
-        })
+            const propertiesToPersist = Array.from(
+              new Set([rowIdKey, ...field.savePropertyNames]),
+            )
+            return pickProperties(row, propertiesToPersist)
+          })
 
         setValue(resolvedId, rowsToPersist, {
           shouldDirty: true,
@@ -246,6 +272,7 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
     setBeforeSubmitCallback,
     setValue,
     formatMessage,
+    isRowDisabled,
   ])
 
   const handleEditableCellChange =
@@ -325,9 +352,7 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
               const rowId = getRowId(row, rowIdKey)
               const rowKey = rowId || `row-${page}-${rowIndex}`
               const rowWithChanges = rowId ? changedRowsById[rowId] : undefined
-              const isRowDisabled = field.disabledKey
-                ? Boolean(row[field.disabledKey])
-                : false
+              const rowDisabled = isRowDisabled(row)
 
               return (
                 <T.Row key={rowKey}>
@@ -337,7 +362,7 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
                     if (header.editable) {
                       // A disabled row stays listed and searchable so the
                       // applicant can see it exists, but cannot be filled in.
-                      if (isRowDisabled) {
+                      if (rowDisabled) {
                         return (
                           <T.Data key={header.key}>
                             <Text variant="small" color="dark300">
@@ -380,7 +405,7 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
 
                     return (
                       <T.Data key={header.key}>
-                        {isRowDisabled ? (
+                        {rowDisabled ? (
                           <Text color="dark300">{String(value) || '-'}</Text>
                         ) : (
                           String(value) || '-'
