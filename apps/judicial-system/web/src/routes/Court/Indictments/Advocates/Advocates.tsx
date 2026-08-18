@@ -48,6 +48,8 @@ const ConfirmationPendingWarning: FC<{
   >
     <TooltipProvider timeout={0}>
       <TooltipAnchor
+        tabIndex={0}
+        aria-label={tooltipText}
         render={
           <Box display="flex">
             <Icon icon="warning" size="large" color="red300" type="outline" />
