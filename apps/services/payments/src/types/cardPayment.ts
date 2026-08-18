@@ -41,10 +41,13 @@ const CardInformationSchema = z.object({
   cardProductCategory: z.string().optional().nullable(),
 })
 
+// Informational only (not consumed anywhere) — the gateway returns null for
+// these fields on some transactions, and an approved charge must never be
+// treated as failed because of them.
 const MarketInformationSchema = z.object({
-  merchantCountry: z.string(),
-  marketName: z.string(),
-  acquirerRegion: z.string(),
+  merchantCountry: z.string().optional().nullable(),
+  marketName: z.string().optional().nullable(),
+  acquirerRegion: z.string().optional().nullable(),
 })
 
 const PaymentGatewayApiResponseSchema = z.object({
