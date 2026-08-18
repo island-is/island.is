@@ -47,12 +47,14 @@ async function main(testContext = null) {
 
   core.setOutput(_KEY_COMMIT_MSG, getCommitMsg(context))
 
-  const _MANIFEST_PATHS = ['charts/features/deployments']
+  const _MANIFEST_PATHS = [
+    'charts/features/deployments',
+    'charts/ids-features/deployments',
+  ]
 
   const changedFiles = new Set()
 
-  const globPattern = `${_MANIFEST_PATHS.join(',')}/**/*.yaml`
-
+  const globPattern = _MANIFEST_PATHS.map((path) => `${path}/**/*.yaml`)
   const files = await glob(globPattern)
 
   for (const file of files) {
@@ -67,7 +69,12 @@ async function main(testContext = null) {
       content.image.repository &&
       typeof content.image.repository === 'string'
     ) {
-      content.image.tag = imageTag
+      if (file.includes('identity-server')) {
+        content.image.tag = 'main_20260522_VBHs2N1jBfMDePuv'
+      } else {
+        content.image.tag = imageTag
+      }
+
       fs.writeFileSync(file, jsyaml.dump(yamlContent), { encoding: 'utf-8' })
       console.log(`Changed file ${file}`)
       changedFiles.add(file)
@@ -83,9 +90,11 @@ async function main(testContext = null) {
   }
 
   if (changedFiles.size > 0) {
-    const bootstrapChart = await glob(
-      `${_MANIFEST_PATHS}/**/values.bootstrap.yaml`,
+    const bootstrapChartPaths = _MANIFEST_PATHS.map(
+      (path) => `${path}/**/values.bootstrap.yaml`,
     )
+
+    const bootstrapChart = await glob(bootstrapChartPaths)
 
     for (const file of bootstrapChart) {
       changedFiles.add(file)
