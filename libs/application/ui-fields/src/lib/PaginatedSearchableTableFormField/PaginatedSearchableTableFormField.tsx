@@ -343,7 +343,7 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
                             <Text variant="small" color="dark300">
                               {field.disabledReason
                                 ? formatText(
-                                    field.disabledReason,
+                                    field.disabledReason(row),
                                     application,
                                     formatMessage,
                                   )

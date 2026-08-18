@@ -1044,8 +1044,12 @@ export interface PaginatedSearchableTableField extends BaseField {
    * The row is still listed and searchable, it just cannot be filled in.
    */
   disabledKey?: string
-  /** Text shown in place of the editable cells of a disabled row. */
-  disabledReason?: FormText
+  /**
+   * Text shown in place of the editable cells of a disabled row. Receives the
+   * row so the reason can quote row specific values - return a StaticTextObject
+   * with `values` to interpolate them into the message.
+   */
+  disabledReason?: (row: PaginatedSearchableTableRow) => StaticText
 }
 
 export interface SliderField extends BaseField {

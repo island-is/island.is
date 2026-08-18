@@ -55,7 +55,10 @@ export const tableViewSelectionSection = buildSection({
             },
           ],
           disabledKey: 'disabled',
-          disabledReason: m.tableView.disabledTooRecentOnDayRate,
+          disabledReason: (row) => ({
+            ...m.tableView.disabledTooRecentOnDayRate,
+            values: { date: row.changeableFrom },
+          }),
           searchLabel: m.tableView.searchLabel,
           searchPlaceholder: m.tableView.searchPlaceholder,
           emptyState: m.tableView.emptyState,

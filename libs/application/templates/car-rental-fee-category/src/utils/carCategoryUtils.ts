@@ -1,5 +1,10 @@
+import format from 'date-fns/format'
 import { EntryModel, ValidVehicle } from '@island.is/clients-rental-day-rate'
-import { isDayRateEntryActive, is15DaysOrMoreFromDate } from './dayRateUtils'
+import {
+  isDayRateEntryActive,
+  is15DaysOrMoreFromDate,
+  getDayRateChangeableFromDate,
+} from './dayRateUtils'
 import { RateCategory } from './constants'
 import { CarCategoryError, CarCategoryRecord, CarMap } from './types'
 import { parseFileToCarCategory } from './UploadCarCategoryFileUtils'
@@ -41,14 +46,16 @@ export const buildCurrentCarMap = (
  * them made the overview counts look wrong to applicants - but they are marked
  * as not editable so it is clear why they cannot be changed yet.
  */
-const isTooRecentlyOnDayRate = (
+const getChangeableFrom = (
   car: CarMap[string],
   rateToChangeTo: RateCategory | undefined,
-): boolean => {
-  if (rateToChangeTo !== RateCategory.KMRATE) return false
+): Date | undefined => {
+  if (rateToChangeTo !== RateCategory.KMRATE) return undefined
 
   const validFromDate = car.activeDayRate?.validFrom
-  return !!validFromDate && !is15DaysOrMoreFromDate(validFromDate)
+  if (!validFromDate || is15DaysOrMoreFromDate(validFromDate)) return undefined
+
+  return getDayRateChangeableFromDate(validFromDate)
 }
 
 export const getManualMileageTableRows = (
@@ -59,17 +66,25 @@ export const getManualMileageTableRows = (
   latestMilage: undefined
   currentMilage: number | null
   disabled: boolean
+  changeableFrom: string | undefined
 }> => {
   if (!carMap) return []
 
   return Object.entries(carMap)
     .filter(([, car]) => car.category !== rateToChangeTo)
-    .map(([permno, car]) => ({
-      permno,
-      latestMilage: undefined,
-      currentMilage: car.mileage,
-      disabled: isTooRecentlyOnDayRate(car, rateToChangeTo),
-    }))
+    .map(([permno, car]) => {
+      const changeableFrom = getChangeableFrom(car, rateToChangeTo)
+
+      return {
+        permno,
+        latestMilage: undefined,
+        currentMilage: car.mileage,
+        disabled: !!changeableFrom,
+        changeableFrom: changeableFrom
+          ? format(changeableFrom, 'dd.MM.yyyy')
+          : undefined,
+      }
+    })
 }
 
 export const getUploadFileType = (

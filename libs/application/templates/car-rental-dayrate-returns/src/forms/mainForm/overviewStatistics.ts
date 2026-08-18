@@ -25,13 +25,25 @@ export const overviewStatistics = buildSection({
               ) ?? []
 
             const safeRates = Array.isArray(rates) ? rates : []
-            const carsOnDayRateLastMonth = safeRates.length
+            const carsThatRequireAnswers = safeRates.filter(
+              (rate) => rate.alreadyReportedDays === undefined,
+            ).length
+            const carsAlreadyReported =
+              safeRates.length - carsThatRequireAnswers
 
             return [
               [
                 m.overview.carsThatRequireAnswers,
-                carsOnDayRateLastMonth.toString(),
+                carsThatRequireAnswers.toString(),
               ],
+              ...(carsAlreadyReported > 0
+                ? [
+                    [
+                      m.overview.carsAlreadyReported,
+                      carsAlreadyReported.toString(),
+                    ],
+                  ]
+                : []),
             ]
           },
         }),

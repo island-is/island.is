@@ -289,7 +289,7 @@ export const m = {
     },
     disabledTooRecentOnDayRate: {
       id: 'rsk.crfc.application:table.view.disabled.too.recent.on.dayrate',
-      defaultMessage: 'Nýskráð á daggjald - breytanlegt eftir 15 daga',
+      defaultMessage: 'Nýskráð á daggjald - breytanlegt frá {date}',
       description:
         'Shown instead of the mileage input when a vehicle has been on the day rate for less than 15 days',
     },

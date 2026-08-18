@@ -131,10 +131,6 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
       .map<DayRateRecord | null>((entry) => {
         if (!entry.fastnr || !entry.id) return null
 
-        // Skatturinn already holds a rental day return for this vehicle and
-        // period, so there is nothing left for the applicant to report.
-        if (reportedDaysByPermno.has(entry.fastnr)) return null
-
         const entryValidFrom = entry.gildirFra
           ? new Date(entry.gildirFra)
           : targetFromUtc
@@ -157,6 +153,9 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
           permno: entry.fastnr,
           prevPeriodTotalDays: totalDays,
           dayRateEntryId: entry.id,
+          // Kept in the list rather than filtered out so the applicant can see
+          // the vehicle and why it needs nothing from them.
+          alreadyReportedDays: reportedDaysByPermno.get(entry.fastnr),
         }
       })
       .filter((entry): entry is DayRateRecord => entry !== null)
@@ -345,6 +344,11 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
 
         if (!permno || !dayRateRecord || Number.isNaN(usage) || usage < 0) {
           invalidRows.push(permno || '-')
+          return null
+        }
+
+        if (dayRateRecord.alreadyReportedDays !== undefined) {
+          invalidRows.push(permno)
           return null
         }
 
