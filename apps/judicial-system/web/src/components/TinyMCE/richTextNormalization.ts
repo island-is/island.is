@@ -151,7 +151,12 @@ const LEFT_OFFSET_REGEX = /(?:margin|padding)-left\s*:\s*([\d.]+)(pt|px)/i
 const BOLD_REGEX = /font-weight\s*:\s*(?:bold|bolder|[6-9]00)/i
 const ITALIC_REGEX = /font-style\s*:\s*(?:italic|oblique)/i
 
-const BLOCK_TAGS = new Set(['P', 'DIV', 'LI', 'BLOCKQUOTE'])
+// LI is deliberately absent: a list item's level is expressed by how deeply it
+// is nested, and Word indents its items with margin-left on top of that. Turning
+// that margin into an indent class would double the indentation — and because
+// the class pads the item itself, it would push the text away from its own
+// bullet or number rather than moving the whole item.
+const BLOCK_TAGS = new Set(['P', 'DIV', 'BLOCKQUOTE'])
 
 // Wrap an element's children (e.g. in strong/em) so inline-style bold/italic
 // survives as semantic markup once the style attribute is dropped.
@@ -216,6 +221,20 @@ export const normalizeRichTextHtml = (html: string): string => {
     // A span that carried nothing but now-dropped styles is just noise.
     if (el.tagName === 'SPAN' && el.attributes.length === 0) {
       el.replaceWith(...Array.from(el.childNodes))
+    }
+  }
+
+  // Migrate content saved while list items still received indent classes. The
+  // loop above only visits elements that carry a style attribute, so an item
+  // whose class was already written out has to be cleaned up separately.
+  for (const item of Array.from(doc.body.querySelectorAll('li[class]'))) {
+    for (const className of Array.from(item.classList)) {
+      if (levelFromIndentClass(className) !== null) {
+        item.classList.remove(className)
+      }
+    }
+    if (item.classList.length === 0) {
+      item.removeAttribute('class')
     }
   }
 
