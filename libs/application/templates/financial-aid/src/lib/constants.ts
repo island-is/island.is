@@ -81,6 +81,4 @@ export const RVK_MUNICIPALITY_CODES = ['0000', '1400']
 export const isRvkMunicipalityCode = (
   municipalityCode?: string | null,
 ): boolean =>
-  Boolean(
-    municipalityCode && RVK_MUNICIPALITY_CODES.includes(municipalityCode),
-  )
+  Boolean(municipalityCode && RVK_MUNICIPALITY_CODES.includes(municipalityCode))
