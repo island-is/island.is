@@ -1431,7 +1431,7 @@ export class CaseService {
         }
 
         // A real arraignment date always wins over a skipped summons
-        if (dateKey === 'arraignmentDate' && updateDateLog !== null) {
+        if (dateKey === 'arraignmentDate' && updateDateLog?.date) {
           update.isArraignmentSummonsSkipped = false
         }
 

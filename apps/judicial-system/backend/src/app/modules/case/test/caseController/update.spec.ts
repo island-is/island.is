@@ -1356,6 +1356,37 @@ describe('CaseController - Update', () => {
     })
   })
 
+  describe('indictment arraignment location updated while summons skipped', () => {
+    const caseToUpdate = {
+      arraignmentDate: { location: uuid() },
+      isArraignmentSummonsSkipped: true,
+    }
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce({
+        ...theCase,
+        type: CaseType.INDICTMENT,
+        isArraignmentSummonsSkipped: true,
+      })
+
+      await givenWhenThen(
+        caseId,
+        user,
+        { ...theCase, type: CaseType.INDICTMENT } as Case,
+        caseToUpdate,
+      )
+    })
+
+    it('should keep the skipped summons flag', () => {
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        { isArraignmentSummonsSkipped: true },
+        { transaction },
+      )
+    })
+  })
+
   describe('indictment court date updated', () => {
     const courtDate = { date: new Date(), location: uuid() }
     const caseToUpdate = { courtDate }
