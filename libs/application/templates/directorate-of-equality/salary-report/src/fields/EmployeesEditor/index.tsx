@@ -1,95 +1,278 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, Button, Stack, Table as T } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  LoadingDots,
+  Stack,
+  Table as T,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC, useEffect, useState } from 'react'
-import { useFieldArray, useFormContext } from 'react-hook-form'
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { FormProvider, useFieldArray, useForm } from 'react-hook-form'
 import { messages } from '../../lib/messages'
-import type { ApplicationAnswers } from '../../lib/dataSchema'
-import { type Employee } from '../../utils/types'
-import { getPathValue } from '../../utils/answerHelpers'
+import { SyncMethodEnum } from '../../utils/constants'
+import {
+  type Employee,
+  type ReportEmployeeDto,
+  type ReportEmployeeRoleDto,
+  type Role,
+} from '../../utils/types'
+import { useDraftQuery } from '../../utils/useDraftQuery'
+import { useDraftSync, type SyncCommand } from '../../utils/useDraftSync'
 import { EmployeeRow } from './EmployeeRow'
 import { EmployeeForm } from './EmployeeForm'
 import { TABLE_PAGE_SIZE, TablePagination } from '../TablePagination'
-import { byRoleTitle, deriveIdentifierPrefix, pageOfEmployee } from './utils'
+import {
+  byRoleTitle,
+  componentsFromFormValues,
+  findOrCreateRoleId,
+  pageOfEmployee,
+  type EmployeeFormValues,
+} from './utils'
 
 const FIELD_NAME = 'employees'
 
+type FormValues = { employees: Employee[] }
+
 export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
+  setBeforeSubmitCallback,
 }) => {
   const { formatMessage } = useLocale()
-  const { control, getValues } = useFormContext<ApplicationAnswers>()
   const m = messages.report.employees
+  const {
+    content: employeesContent,
+    loading: employeesLoading,
+    hasError: employeesHasError,
+    refetch: refetchEmployees,
+  } = useDraftQuery<{ employees: ReportEmployeeDto[] }>(
+    application,
+    'DirectorateOfEquality.listDraftEmployees',
+    'draftEmployees',
+  )
+  const {
+    content: rolesContent,
+    loading: rolesLoading,
+    hasError: rolesHasError,
+    refetch: refetchRoles,
+  } = useDraftQuery<{ roles: ReportEmployeeRoleDto[] }>(
+    application,
+    'DirectorateOfEquality.listDraftRoles',
+    'draftRoles',
+  )
+  const loading = employeesLoading || rolesLoading
+  const hasError = employeesHasError || rolesHasError
+  const content = useMemo(
+    () =>
+      employeesContent && rolesContent
+        ? { employees: employeesContent.employees, roles: rolesContent.roles }
+        : undefined,
+    [employeesContent, rolesContent],
+  )
+  const refetch = useCallback(
+    (options?: { silent?: boolean }) =>
+      Promise.all([refetchEmployees(options), refetchRoles(options)]),
+    [refetchEmployees, refetchRoles],
+  )
+  const { sync } = useDraftSync(application)
+  const methods = useForm<FormValues>({ defaultValues: { employees: [] } })
+  const { control, getValues } = methods
 
   const [isAdding, setIsAdding] = useState(false)
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
   const [page, setPage] = useState(1)
+  const [roles, setRoles] = useState<Role[]>([])
 
-  const { fields, append, remove, replace, update } = useFieldArray({
+  const originalEmployeeIds = useRef<Set<string>>(new Set())
+  const originalRoleIds = useRef<Set<string>>(new Set())
+  const newRoleIds = useRef<Set<string>>(new Set())
+  const seeded = useRef(false)
+
+  const { fields, append, remove, update } = useFieldArray({
     control,
     name: FIELD_NAME,
   })
 
-  // Seed with explicit priority: live form value > external data > empty.
-  // The live react-hook-form value (seeded from application.answers) wins so
-  // edits survive remounts; only fall back to the parsed Excel data when no
-  // answer exists yet. Reading getValues first also makes this idempotent
-  // under StrictMode's double-invoked effects.
   useEffect(() => {
-    const current = getValues(FIELD_NAME)
-    if (current && current.length > 0) return
+    if (!content || seeded.current) return
+    seeded.current = true
 
-    const externalEmployees = getPathValue<Employee[]>(
-      application.externalData,
-      'parsedSalaryReport.data.employees',
-      [],
+    const employees: Employee[] = content.employees.map((e) => ({
+      id: e.id,
+      ordinal: e.ordinal,
+      // The draft's employee model has no pseudonym identifier field — the
+      // client-minted id is used as the stable display handle instead, kept
+      // consistent across every screen/mount/reopen (unlike a locally
+      // recomputed label, which drifted between screens before this).
+      identifier: e.id,
+      roleId: e.reportEmployeeRoleId,
+      gender: e.gender,
+      field: e.field,
+      department: e.department,
+      startDate: e.startDate,
+      workRatio: e.workRatio,
+      baseSalary: e.baseSalary,
+      additionalFixedOvertime: e.additionalFixedOvertime,
+      additionalFixedCarAllowance: e.additionalFixedCarAllowance,
+      bonusOccasionalCarAllowance: e.bonusOccasionalCarAllowance,
+      bonusOccasionalOvertime: e.bonusOccasionalOvertime,
+      bonusPayments: e.bonusPayments,
+      bonusOther: e.bonusOther,
+      outlierGroupId: null,
+    }))
+
+    originalEmployeeIds.current = new Set(employees.map((e) => e.id))
+    originalRoleIds.current = new Set(content.roles.map((r) => r.id))
+    setRoles(
+      content.roles.map((r) => ({ id: r.id, title: r.title, stepIds: [] })),
     )
-
-    if (externalEmployees.length > 0) {
-      replace(externalEmployees)
-    }
+    methods.reset({ employees })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [content])
 
-  // Both handlers follow the row to wherever the role-title sort puts it, so
-  // the user sees the entry they just submitted instead of it vanishing onto
-  // some other page.
-  const handleAdd = (employee: Employee) => {
+  const roleTitleById: Record<string, string> = Object.fromEntries(
+    roles.map((r) => [r.id, r.title]),
+  )
+
+  useEffect(() => {
+    if (!setBeforeSubmitCallback) return
+    setBeforeSubmitCallback(async () => {
+      if (hasError) {
+        refetchEmployees()
+        refetchRoles()
+        return [false, formatMessage(messages.errors.draftLoadFailed)]
+      }
+      const employees = getValues(FIELD_NAME) as Employee[]
+      const finalIds = new Set(employees.map((e) => e.id))
+
+      const employeeCommands: SyncCommand[] = employees.map((e) => ({
+        method: originalEmployeeIds.current.has(e.id)
+          ? SyncMethodEnum.UPDATE
+          : SyncMethodEnum.CREATE,
+        id: e.id,
+        data: {
+          reportEmployeeRoleId: e.roleId,
+          gender: e.gender,
+          field: e.field ?? null,
+          department: e.department ?? null,
+          startDate: e.startDate,
+          workRatio: e.workRatio,
+          baseSalary: e.baseSalary,
+          additionalFixedOvertime: e.additionalFixedOvertime ?? null,
+          additionalFixedCarAllowance: e.additionalFixedCarAllowance ?? null,
+          bonusOccasionalCarAllowance: e.bonusOccasionalCarAllowance ?? null,
+          bonusOccasionalOvertime: e.bonusOccasionalOvertime ?? null,
+          bonusPayments: e.bonusPayments ?? null,
+          bonusOther: e.bonusOther ?? null,
+        },
+      }))
+      const removedEmployeeCommands: SyncCommand[] = [
+        ...originalEmployeeIds.current,
+      ]
+        .filter((id) => !finalIds.has(id))
+        .map((id) => ({ method: SyncMethodEnum.REMOVE, id }))
+
+      const roleCommands: SyncCommand[] = [...newRoleIds.current]
+        .filter((id) => roles.some((r) => r.id === id))
+        .map((id) => ({
+          method: SyncMethodEnum.CREATE,
+          id,
+          data: { title: roleTitleById[id] },
+        }))
+
+      try {
+        await sync({
+          roles: roleCommands.length > 0 ? roleCommands : undefined,
+          employees: [...employeeCommands, ...removedEmployeeCommands],
+        })
+        newRoleIds.current.clear()
+        // Silent: we're about to navigate away, so don't flash a loading state
+        // on the current screen.
+        await refetch({ silent: true })
+      } catch {
+        return [false, formatMessage(messages.errors.draftSyncFailed)]
+      }
+      return [true, null]
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    setBeforeSubmitCallback,
+    getValues,
+    roles,
+    sync,
+    refetch,
+    formatMessage,
+    hasError,
+    refetchEmployees,
+    refetchRoles,
+  ])
+
+  const resolveEmployee = (
+    values: EmployeeFormValues,
+    existing?: Employee,
+  ): Employee => {
+    const { id: roleId, isNew } = findOrCreateRoleId(values.roleTitle, roles)
+    if (isNew) {
+      setRoles((prev) => [
+        ...prev,
+        { id: roleId, title: values.roleTitle, stepIds: [] },
+      ])
+      newRoleIds.current.add(roleId)
+    }
+    const components = componentsFromFormValues(values)
+    const id = existing?.id ?? crypto.randomUUID()
+    return {
+      id,
+      ordinal: existing?.ordinal ?? 0,
+      // Mirrors `id` — see the seeding effect above for why.
+      identifier: id,
+      roleId,
+      gender: values.gender,
+      field: values.field,
+      department: values.department,
+      startDate: values.startDate,
+      workRatio: (Number(values.workRatio) || 0) / 100,
+      baseSalary: Number(values.baseSalary) || 0,
+      ...components,
+      outlierGroupId: existing?.outlierGroupId ?? null,
+    }
+  }
+
+  const handleAdd = (values: EmployeeFormValues) => {
+    const employee = resolveEmployee(values)
     append(employee)
-    setPage(pageOfEmployee([...fields, employee], employee))
+    setPage(
+      pageOfEmployee(
+        [...fields, employee] as Employee[],
+        employee,
+        roleTitleById,
+      ),
+    )
     setIsAdding(false)
   }
 
-  const handleSave = (index: number, employee: Employee) => {
+  const handleSave = (index: number, values: EmployeeFormValues) => {
+    const existing = fields[index] as unknown as Employee
+    const employee = resolveEmployee(values, existing)
     update(index, employee)
     setPage(
       pageOfEmployee(
-        fields.map((field, i) => (i === index ? employee : field)),
+        fields.map((field, i) =>
+          i === index ? employee : (field as unknown as Employee),
+        ) as Employee[],
         employee,
+        roleTitleById,
       ),
     )
     setEditingIndex(null)
   }
 
-  const employees = fields
-
-  const nextOrdinal =
-    employees.reduce((max, e) => Math.max(max, e.ordinal ?? 0), 0) + 1
-
-  const identifierPrefix = deriveIdentifierPrefix(employees)
-
-  // Table rows are sorted alphabetically by role title, but callbacks below
-  // still need the field's real index in `fields` — remove/update/editingIndex
-  // all key off that, not the sorted display position.
   const sortedFields = fields
-    .map((field, index) => ({ field, index }))
-    .sort((a, b) => byRoleTitle(a.field, b.field))
+    .map((field, index) => ({ field: field as unknown as Employee, index }))
+    .sort((a, b) => byRoleTitle(roleTitleById)(a.field, b.field))
 
   const totalPages = Math.ceil(sortedFields.length / TABLE_PAGE_SIZE)
-
-  // Deleting the last row on the final page would otherwise strand the user on
-  // an empty table. Clamp for this render, then write it back so a later add
-  // doesn't jump to the stale page.
   const currentPage = Math.min(page, Math.max(totalPages, 1))
 
   useEffect(() => {
@@ -101,71 +284,90 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     currentPage * TABLE_PAGE_SIZE,
   )
 
+  if (loading) {
+    return (
+      <Box display="flex" justifyContent="center" paddingY={5}>
+        <LoadingDots />
+      </Box>
+    )
+  }
+
   return (
-    <Box>
-      <Stack space={4}>
-        <T.Table>
-          <T.Head>
-            <T.Row>
-              <T.HeadData></T.HeadData>
-              <T.HeadData>{formatMessage(m.nameColumn)}</T.HeadData>
-              <T.HeadData>{formatMessage(m.roleColumn)}</T.HeadData>
-              <T.HeadData>{formatMessage(m.genderColumn)}</T.HeadData>
-              <T.HeadData></T.HeadData>
-            </T.Row>
-          </T.Head>
-          <T.Body>
-            {visibleFields.map(({ field, index }) =>
-              editingIndex === index ? (
-                <T.Row key={field.id}>
-                  <T.Data colSpan={5} style={{ padding: 0 }}>
-                    <EmployeeForm
-                      employee={field}
-                      nextOrdinal={nextOrdinal}
-                      identifierPrefix={identifierPrefix}
-                      onSubmit={(employee) => handleSave(index, employee)}
-                      onCancel={() => setEditingIndex(null)}
-                    />
-                  </T.Data>
-                </T.Row>
-              ) : (
-                <EmployeeRow
-                  key={field.id}
-                  employee={field}
-                  onRemove={() => remove(index)}
-                  onEdit={() => setEditingIndex(index)}
-                />
-              ),
-            )}
-          </T.Body>
-        </T.Table>
-
-        <TablePagination
-          page={currentPage}
-          totalPages={totalPages}
-          onPageChange={setPage}
-        />
-
-        {isAdding ? (
-          <EmployeeForm
-            nextOrdinal={nextOrdinal}
-            identifierPrefix={identifierPrefix}
-            onSubmit={handleAdd}
-            onCancel={() => setIsAdding(false)}
+    <>
+      {hasError && (
+        <Box marginBottom={3}>
+          <AlertMessage
+            type="error"
+            message={formatMessage(messages.errors.draftLoadFailed)}
           />
-        ) : (
-          <Box display="flex" justifyContent="flexStart">
-            <Button
-              variant="ghost"
-              type="button"
-              icon="add"
-              onClick={() => setIsAdding(true)}
-            >
-              {formatMessage(m.addButton)}
-            </Button>
-          </Box>
-        )}
-      </Stack>
-    </Box>
+        </Box>
+      )}
+      <FormProvider {...methods}>
+        <Box>
+          <Stack space={4}>
+            <T.Table>
+              <T.Head>
+                <T.Row>
+                  <T.HeadData></T.HeadData>
+                  <T.HeadData>{formatMessage(m.nameColumn)}</T.HeadData>
+                  <T.HeadData>{formatMessage(m.roleColumn)}</T.HeadData>
+                  <T.HeadData>{formatMessage(m.genderColumn)}</T.HeadData>
+                  <T.HeadData></T.HeadData>
+                </T.Row>
+              </T.Head>
+              <T.Body>
+                {visibleFields.map(({ field, index }) =>
+                  editingIndex === index ? (
+                    <T.Row key={field.id}>
+                      <T.Data colSpan={5} style={{ padding: 0 }}>
+                        <EmployeeForm
+                          employee={field}
+                          roleTitleById={roleTitleById}
+                          onSubmit={(values) => handleSave(index, values)}
+                          onCancel={() => setEditingIndex(null)}
+                        />
+                      </T.Data>
+                    </T.Row>
+                  ) : (
+                    <EmployeeRow
+                      key={field.id}
+                      employee={field}
+                      roleTitleById={roleTitleById}
+                      onRemove={() => remove(index)}
+                      onEdit={() => setEditingIndex(index)}
+                    />
+                  ),
+                )}
+              </T.Body>
+            </T.Table>
+
+            <TablePagination
+              page={currentPage}
+              totalPages={totalPages}
+              onPageChange={setPage}
+            />
+
+            {isAdding ? (
+              <EmployeeForm
+                roleTitleById={roleTitleById}
+                onSubmit={handleAdd}
+                onCancel={() => setIsAdding(false)}
+              />
+            ) : (
+              <Box display="flex" justifyContent="flexStart">
+                <Button
+                  variant="ghost"
+                  type="button"
+                  icon="add"
+                  onClick={() => setIsAdding(true)}
+                >
+                  {formatMessage(m.addButton)}
+                </Button>
+              </Box>
+            )}
+          </Stack>
+        </Box>
+      </FormProvider>
+    </>
   )
 }

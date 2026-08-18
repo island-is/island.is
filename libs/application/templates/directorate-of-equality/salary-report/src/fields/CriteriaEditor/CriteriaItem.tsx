@@ -1,16 +1,22 @@
-import { InputController } from '@island.is/shared/form-fields'
-import { Box, Divider, Text } from '@island.is/island-ui/core'
+import { Box, Divider, Input, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
 
 type Props = {
   title: string
   description: string
-  index: number
+  weight: string
+  onWeightChange: (weight: string) => void
   isLast: boolean
 }
 
-export const CriteriaItem = ({ title, description, index, isLast }: Props) => {
+export const CriteriaItem = ({
+  title,
+  description,
+  weight,
+  onWeightChange,
+  isLast,
+}: Props) => {
   const { formatMessage } = useLocale()
 
   return (
@@ -26,14 +32,14 @@ export const CriteriaItem = ({ title, description, index, isLast }: Props) => {
           <Text>{description}</Text>
         </Box>
         <Box style={{ width: 120, flexShrink: 0 }} marginLeft={3}>
-          <InputController
+          <Input
             size="sm"
-            id={`criteria.jobFactors.${index}.weight`}
-            name={`criteria.jobFactors.${index}.weight`}
-            label={formatMessage(messages.report.criteria.weightLabel)}
+            name="weight"
+            label={`${formatMessage(messages.report.criteria.weightLabel)} (%)`}
             type="number"
-            suffix="%"
             backgroundColor="blue"
+            value={weight}
+            onChange={(e) => onWeightChange(e.target.value)}
           />
         </Box>
       </Box>

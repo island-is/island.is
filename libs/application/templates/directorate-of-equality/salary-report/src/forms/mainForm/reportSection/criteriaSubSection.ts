@@ -4,8 +4,10 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { messages } from '../../../lib/messages'
-import { DEFAULT_CRITERIA_ANSWERS } from '../../../utils/constants'
 
+// Criteria are no longer persisted through applicationAnswers — this screen
+// reads/writes the DMR draft directly (see CriteriaEditor), so the field
+// carries no answer of its own to validate or default.
 export const criteriaSubSection = buildSubSection({
   id: 'criteria',
   title: messages.report.criteria.sectionTitle,
@@ -18,8 +20,7 @@ export const criteriaSubSection = buildSubSection({
         buildCustomField({
           id: 'criteria',
           component: 'CriteriaEditor',
-          doesNotRequireAnswer: false,
-          defaultValue: DEFAULT_CRITERIA_ANSWERS,
+          doesNotRequireAnswer: true,
         }),
       ],
     }),

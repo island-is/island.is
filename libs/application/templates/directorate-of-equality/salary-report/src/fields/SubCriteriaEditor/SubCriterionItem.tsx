@@ -37,6 +37,7 @@ export const SubCriterionItem: FC<Props> = ({
 
     if (count > currentSteps.length) {
       const extra = Array.from({ length: count - currentSteps.length }, () => ({
+        id: crypto.randomUUID(),
         description: '',
       }))
       setValue(`${fieldName}.steps`, [...currentSteps, ...extra])

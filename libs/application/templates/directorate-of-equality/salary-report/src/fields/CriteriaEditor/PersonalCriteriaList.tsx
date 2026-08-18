@@ -1,74 +1,31 @@
-import { useFieldArray, useFormContext } from 'react-hook-form'
-import { InputController } from '@island.is/shared/form-fields'
-import type { Application } from '@island.is/application/types'
-import {
-  AlertMessage,
-  Box,
-  Button,
-  Text,
-  Stack,
-} from '@island.is/island-ui/core'
+import { Box, Button, Input, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
-import type { Employee, SubCriterion } from '../../utils/types'
-import { useCascadeDelete } from '../../utils/useCascadeDelete'
+import type { PersonalFactor } from '../../utils/types'
 
 type Props = {
-  application: Application
+  personalFactors: PersonalFactor[]
+  onChange: (factors: PersonalFactor[]) => void
+  onRemove: (id: string) => void
 }
 
-export const PersonalCriteriaList = ({ application }: Props) => {
+export const PersonalCriteriaList = ({
+  personalFactors,
+  onChange,
+  onRemove,
+}: Props) => {
   const { formatMessage } = useLocale()
-  const { control, getValues, setValue } = useFormContext()
-  const { persist, saveError } = useCascadeDelete<Employee>(
-    application,
-    'employees',
-  )
 
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'criteria.personalFactors',
-  })
-
-  // subCriteria.personalFactors is kept parallel/position-indexed with
-  // criteria.personalFactors (no shared id), so deleting a criterion must also
-  // drop its sub-criteria slot or a later-added criterion inherits the
-  // deleted one's leftover sub-criteria data at that index. Spliced directly
-  // via getValues/setValue rather than useFieldArray — each element here is
-  // itself an array (SubCriterion[][]), not an object, which useFieldArray's
-  // id-tracking isn't designed for. Only the local splice happens here; the
-  // delete handler below persists it (this screen saves `criteria` alone).
-  const removeSubCriteria = (index: number) => {
-    const current =
-      (getValues('subCriteria.personalFactors') as
-        | SubCriterion[][]
-        | undefined) ?? []
-    const next = [...current]
-    next.splice(index, 1)
-    setValue('subCriteria.personalFactors', next)
+  const updateFactor = (id: string, patch: Partial<PersonalFactor>) => {
+    onChange(personalFactors.map((f) => (f.id === id ? { ...f, ...patch } : f)))
   }
 
-  // A deleted criterion's already-assigned steps (from the "Mat á
-  // einstaklingsbundnum þáttum" screen) must be dropped too, or every
-  // employee keeps a stale, unreachable assignment for a criterion that no
-  // longer exists. Matched by title, same as the rest of this template links
-  // criteria to their step assignments. useCascadeDelete persists the
-  // correction immediately, since this screen's own "Continue" only saves
-  // the `criteria` answer key — which is also why `subCriteria` rides along:
-  // removeSubCriteria's splice would otherwise sit in local form state and be
-  // undone by a reload, resurrecting the deleted criterion's sub-criteria.
-  const removeFromEmployees = (deletedTitle: string) =>
-    persist(
-      deletedTitle,
-      (employees) =>
-        employees.map((emp) => ({
-          ...emp,
-          personalStepAssignments: (emp.personalStepAssignments ?? []).filter(
-            (a) => a.criterionTitle !== deletedTitle,
-          ),
-        })),
-      ['subCriteria'],
-    )
+  const addFactor = () => {
+    onChange([
+      ...personalFactors,
+      { id: crypto.randomUUID(), title: '', description: '', weight: '' },
+    ])
+  }
 
   return (
     <Box marginTop={6}>
@@ -80,8 +37,8 @@ export const PersonalCriteriaList = ({ application }: Props) => {
       </Text>
 
       <Stack space={4} dividers={true}>
-        {fields.map((field, i) => (
-          <Box key={field.id} borderRadius="large">
+        {personalFactors.map((factor) => (
+          <Box key={factor.id} borderRadius="large">
             <Box
               display="flex"
               columnGap={2}
@@ -89,25 +46,32 @@ export const PersonalCriteriaList = ({ application }: Props) => {
               marginBottom={2}
             >
               <Box style={{ flex: 1 }}>
-                <InputController
+                <Input
                   size="sm"
-                  id={`criteria.personalFactors.${i}.title`}
-                  name={`criteria.personalFactors.${i}.title`}
+                  name={`personalFactor-${factor.id}-title`}
                   label={formatMessage(
                     messages.report.criteria.criterionNameLabel,
                   )}
                   backgroundColor="blue"
+                  value={factor.title}
+                  onChange={(e) =>
+                    updateFactor(factor.id, { title: e.target.value })
+                  }
                 />
               </Box>
               <Box style={{ width: 120, flexShrink: 0 }}>
-                <InputController
+                <Input
                   size="sm"
-                  id={`criteria.personalFactors.${i}.weight`}
-                  name={`criteria.personalFactors.${i}.weight`}
-                  label={formatMessage(messages.report.criteria.weightLabel)}
+                  name={`personalFactor-${factor.id}-weight`}
+                  label={`${formatMessage(
+                    messages.report.criteria.weightLabel,
+                  )} (%)`}
                   type="number"
-                  suffix="%"
                   backgroundColor="blue"
+                  value={factor.weight}
+                  onChange={(e) =>
+                    updateFactor(factor.id, { weight: e.target.value })
+                  }
                 />
               </Box>
               <Button
@@ -115,59 +79,31 @@ export const PersonalCriteriaList = ({ application }: Props) => {
                 variant="ghost"
                 icon="trash"
                 iconType="outline"
-                onClick={() => {
-                  const deletedTitle = getValues(
-                    `criteria.personalFactors.${i}.title`,
-                  ) as string
-                  remove(i)
-                  removeSubCriteria(i)
-                  void removeFromEmployees(deletedTitle)
-                }}
+                onClick={() => onRemove(factor.id)}
               >
                 {formatMessage(messages.report.criteria.deleteButton)}
               </Button>
             </Box>
-            <InputController
+            <Input
               size="sm"
-              id={`criteria.personalFactors.${i}.description`}
-              name={`criteria.personalFactors.${i}.description`}
+              name={`personalFactor-${factor.id}-description`}
               label={formatMessage(messages.report.criteria.descriptionLabel)}
               textarea
               backgroundColor="blue"
+              value={factor.description ?? ''}
+              onChange={(e) =>
+                updateFactor(factor.id, { description: e.target.value })
+              }
             />
           </Box>
         ))}
       </Stack>
 
       <Box marginTop={4}>
-        <Button
-          size="small"
-          variant="ghost"
-          icon="add"
-          onClick={() => append({ title: '', description: '', weight: '' })}
-        >
+        <Button size="small" variant="ghost" icon="add" onClick={addFactor}>
           {formatMessage(messages.report.criteria.addCriterionButton)}
         </Button>
       </Box>
-
-      {saveError && (
-        <Box marginTop={3}>
-          <AlertMessage
-            type="error"
-            message={formatMessage(messages.report.criteria.deleteSaveError)}
-          />
-          <Box marginTop={2}>
-            <Button
-              variant="ghost"
-              size="small"
-              icon="reload"
-              onClick={() => void removeFromEmployees(saveError)}
-            >
-              {formatMessage(messages.report.criteria.retryButton)}
-            </Button>
-          </Box>
-        </Box>
-      )}
     </Box>
   )
 }

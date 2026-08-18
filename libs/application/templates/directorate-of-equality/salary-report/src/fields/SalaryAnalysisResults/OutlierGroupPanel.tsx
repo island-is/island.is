@@ -1,5 +1,10 @@
 import { FC, useEffect } from 'react'
-import { useFormContext, useWatch } from 'react-hook-form'
+import {
+  FormProvider,
+  useFormContext,
+  useWatch,
+  UseFormReturn,
+} from 'react-hook-form'
 import { YES } from '@island.is/application/core'
 import { Application, RecordObject } from '@island.is/application/types'
 import { Box, Text } from '@island.is/island-ui/core'
@@ -10,6 +15,7 @@ import type {
   ScoreBucketDto,
 } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
+import type { OutlierGroupAnswer } from '../../utils/outlierGroups'
 import { OutlierEditor } from './OutlierEditor'
 
 type Props = {
@@ -20,9 +26,21 @@ type Props = {
   // to postpone earlier and can't un-postpone here, so the checkbox is
   // pointless — the form is dedicated to filling in the plan, and the
   // "postponed" answer is force-cleared so it stops being reported to the
-  // backend as still postponed once this plan is submitted.
+  // backend as still postponed once this plan is submitted. Also the signal
+  // for which persistence mode OutlierEditor uses (see its `mode` prop).
   hidePostponeCheckbox?: boolean
   errors?: RecordObject
+  identifierForOrdinal: (ordinal: number) => string
+  // Draft phase only: a local form scope for `OutlierEditor`'s
+  // `salaryAnalysis.outlierGroups` field, which isn't answers-backed
+  // pre-submit. Deliberately NOT used for the postponed checkbox below —
+  // that always binds to whatever ambient form context this component
+  // itself renders under (the real application-answers form), so it must
+  // stay outside any FormProvider this component introduces. Undefined in
+  // postponed-review mode, where OutlierEditor also uses the ambient form.
+  outlierGroupsFormMethods?: UseFormReturn<{
+    salaryAnalysis: { outlierGroups: OutlierGroupAnswer[] }
+  }>
 }
 
 // Rendered inline by SalaryAnalysisResults, sharing its already-fetched
@@ -30,11 +48,12 @@ type Props = {
 // application.externalData, since a sibling custom field reading that prop
 // can be stale relative to the mutation response the parent just received.
 export const OutlierGroupPanel: FC<Props> = ({
-  application,
   outliers,
   scoreBuckets,
   hidePostponeCheckbox,
   errors,
+  identifierForOrdinal,
+  outlierGroupsFormMethods,
 }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
@@ -86,14 +105,26 @@ export const OutlierGroupPanel: FC<Props> = ({
         </Box>
       )}
 
-      {!isPostponed && (
-        <OutlierEditor
-          application={application}
-          outliers={outliers}
-          scoreBuckets={scoreBuckets}
-          errors={errors}
-        />
-      )}
+      {!isPostponed &&
+        (outlierGroupsFormMethods ? (
+          <FormProvider {...outlierGroupsFormMethods}>
+            <OutlierEditor
+              outliers={outliers}
+              scoreBuckets={scoreBuckets}
+              errors={errors}
+              mode={hidePostponeCheckbox ? 'postponed' : 'draft'}
+              identifierForOrdinal={identifierForOrdinal}
+            />
+          </FormProvider>
+        ) : (
+          <OutlierEditor
+            outliers={outliers}
+            scoreBuckets={scoreBuckets}
+            errors={errors}
+            mode={hidePostponeCheckbox ? 'postponed' : 'draft'}
+            identifierForOrdinal={identifierForOrdinal}
+          />
+        ))}
     </Box>
   )
 }
