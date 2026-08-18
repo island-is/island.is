@@ -1169,6 +1169,24 @@
         "enum": ["UNKNOWN", "SMALL", "MEDIUM", "LARGE"]
       },
       "CompanyStatusEnum": { "type": "string", "enum": ["ACTIVE", "INACTIVE"] },
+      "IsatSectionDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "ÍSAT2008 section (bálkur) letter: \"A\"–\"U\", or \"X\" for unknown activity."
+          },
+          "description": {
+            "type": "string",
+            "description": "Icelandic description."
+          },
+          "descriptionEn": {
+            "type": "string",
+            "description": "English description."
+          }
+        },
+        "required": ["code", "description", "descriptionEn"]
+      },
       "IsatCategoryDto": {
         "type": "object",
         "properties": {
@@ -1187,9 +1205,33 @@
           "descriptionEn": {
             "type": "string",
             "description": "English description."
+          },
+          "section": {
+            "type": "string",
+            "description": "ÍSAT2008 section (bálkur) letter this leaf rolls up into: \"A\"–\"U\", or \"X\" for unknown activity."
+          },
+          "division": {
+            "type": "string",
+            "description": "ÍSAT2008 division — the 2-digit code prefix, e.g. \"01\"."
+          },
+          "isatSection": {
+            "nullable": true,
+            "description": "The resolved section, when it was joined in. Null when not loaded — read `section` for the letter itself.",
+            "allOf": [{ "$ref": "#/components/schemas/IsatSectionDto" }]
           }
         },
-        "required": ["code", "codeDotted", "description", "descriptionEn"]
+        "required": [
+          "code",
+          "codeDotted",
+          "description",
+          "descriptionEn",
+          "section",
+          "division"
+        ]
+      },
+      "CompanySectorEnum": {
+        "type": "string",
+        "enum": ["UNKNOWN", "PRIVATE", "PUBLIC"]
       },
       "CompanyReportStatusEnum": {
         "type": "string",
@@ -1254,6 +1296,24 @@
             "nullable": true,
             "allOf": [{ "$ref": "#/components/schemas/IsatCategoryDto" }]
           },
+          "sector": {
+            "description": "Ownership sector (private vs government/state), derived from the RSK legal form. UNKNOWN means unclassified — it does NOT mean private.",
+            "allOf": [{ "$ref": "#/components/schemas/CompanySectorEnum" }]
+          },
+          "sectorOverride": {
+            "type": "boolean",
+            "description": "True when an admin set the sector by hand; a backfill must not overwrite it."
+          },
+          "legalFormId": {
+            "type": "string",
+            "nullable": true,
+            "description": "RSK's raw legal-form code (rekstrarform), as returned."
+          },
+          "legalFormName": {
+            "type": "string",
+            "nullable": true,
+            "description": "RSK's raw legal-form name. Useful for seeing the form behind an UNKNOWN sector."
+          },
           "reportStatus": {
             "allOf": [
               { "$ref": "#/components/schemas/CompanyReportStatusEnum" }
@@ -1278,6 +1338,8 @@
           "salaryReportRequiredOverride",
           "finesStarted",
           "quarantined",
+          "sector",
+          "sectorOverride",
           "reportStatus",
           "equalityReportOverdue",
           "salaryReportOverdue"
@@ -1424,21 +1486,9 @@
           "ordinal": { "type": "number" },
           "identifier": { "type": "string" },
           "roleTitle": { "type": "string" },
-          "education": {
-            "type": "string",
-            "enum": [
-              "COMPULSORY",
-              "UPPER_SECONDARY",
-              "VOCATIONAL",
-              "BACHELOR",
-              "MASTER",
-              "DOCTORATE",
-              "PROFESSIONAL"
-            ]
-          },
           "gender": { "type": "string", "enum": ["MALE", "FEMALE", "NEUTRAL"] },
-          "field": { "type": "string" },
-          "department": { "type": "string" },
+          "field": { "type": "string", "nullable": true },
+          "department": { "type": "string", "nullable": true },
           "startDate": { "type": "string" },
           "workRatio": { "type": "number" },
           "baseSalary": { "type": "number" },
@@ -1457,10 +1507,7 @@
           "ordinal",
           "identifier",
           "roleTitle",
-          "education",
           "gender",
-          "field",
-          "department",
           "startDate",
           "workRatio",
           "baseSalary",
@@ -1668,6 +1715,7 @@
         },
         "required": ["eligible"]
       },
+      "SalaryDataBasisEnum": { "type": "string", "enum": ["MONTH", "AVERAGE"] },
       "SubmitReportCompanyDto": {
         "type": "object",
         "properties": {
@@ -1748,6 +1796,15 @@
           "averageEmployeeMaleCount": { "type": "number" },
           "averageEmployeeFemaleCount": { "type": "number" },
           "averageEmployeeNeutralCount": { "type": "number" },
+          "salaryDataBasis": {
+            "description": "Whether the salary data describes one specific payroll month (`MONTH`) or a twelve-month average (`AVERAGE`). The submittee must declare one.",
+            "allOf": [{ "$ref": "#/components/schemas/SalaryDataBasisEnum" }]
+          },
+          "salaryDataPeriod": {
+            "type": "string",
+            "nullable": true,
+            "description": "The payroll month the data is based on, as an ISO date (`YYYY-MM-DD`; any day within the month is accepted and normalised to the 1st). Required when `salaryDataBasis` is `MONTH`, ignored for `AVERAGE`. Must name a month that has already happened, no earlier than 36 months ago."
+          },
           "parsed": {
             "description": "Parsed workbook payload from `POST /reports/excel/import`. Contains the criteria tree, role list, and employee rows.",
             "allOf": [{ "$ref": "#/components/schemas/ParsedReportDto" }]
@@ -1784,6 +1841,7 @@
           "averageEmployeeMaleCount",
           "averageEmployeeFemaleCount",
           "averageEmployeeNeutralCount",
+          "salaryDataBasis",
           "parsed",
           "company"
         ]
@@ -2146,6 +2204,16 @@
             ]
           },
           "equalityReportContent": { "type": "string", "nullable": true },
+          "salaryDataBasis": {
+            "nullable": true,
+            "description": "Salary-only. Whether the submitted salary data describes one specific payroll month (`MONTH`, with the month in `salaryDataPeriod`) or a twelve-month average (`AVERAGE`). Reads back the basis the applicant declared while drafting. Null on equality reports.",
+            "allOf": [{ "$ref": "#/components/schemas/SalaryDataBasisEnum" }]
+          },
+          "salaryDataPeriod": {
+            "type": "string",
+            "nullable": true,
+            "description": "The payroll month the salary data is based on, as an ISO date normalised to the 1st of that month (`YYYY-MM-01`). Set when `salaryDataBasis` is `MONTH`, null for `AVERAGE`."
+          },
           "outliersPostponed": {
             "type": "boolean",
             "nullable": true,

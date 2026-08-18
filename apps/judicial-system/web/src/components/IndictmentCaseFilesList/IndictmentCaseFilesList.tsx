@@ -49,6 +49,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { isNonEmptyArray } from '../../utils/arrayHelpers'
+import { isAppealFileCategoryVisible } from '../../utils/utils'
 import { CaseFileTable } from '../Table'
 import RulingOrderAppealFilesAccordion from './RulingOrderAppealFilesAccordion'
 import RulingOrderConfirmation from './RulingOrderConfirmation'
@@ -855,22 +856,44 @@ const IndictmentCaseFilesList: FC<Props> = ({
               (workingCase.rulingOrderAppealCases?.length ?? 0) > 0 && (
                 <Box>
                   <Accordion dividerOnBottom={false} dividerOnTop={false}>
-                    {workingCase.rulingOrderAppealCases?.map((appealCase) => {
-                      const rulingFile = workingCase.caseFiles?.find(
-                        (f) => f.id === appealCase.rulingFileId,
-                      )
-                      if (!rulingFile) {
-                        return null
-                      }
-                      return (
-                        <RulingOrderAppealFilesAccordion
-                          key={appealCase.id}
-                          appealCase={appealCase}
-                          rulingFile={rulingFile}
-                          onOpenFile={onOpen}
-                        />
-                      )
-                    })}
+                    {(workingCase.rulingOrderAppealCases ?? [])
+                      .flatMap((appealCase) => {
+                        const rulingFile = workingCase.caseFiles?.find(
+                          (f) => f.id === appealCase.rulingFileId,
+                        )
+                        if (!rulingFile) {
+                          return []
+                        }
+
+                        const hasVisibleFiles = (
+                          workingCase.caseFiles ?? []
+                        ).some((file) =>
+                          isAppealFileCategoryVisible(
+                            workingCase,
+                            appealCase,
+                            file,
+                            user,
+                          ),
+                        )
+                        if (!hasVisibleFiles) {
+                          return []
+                        }
+
+                        return [{ appealCase, rulingFile }]
+                      })
+                      .map(
+                        ({ appealCase, rulingFile }, index, visibleCases) => (
+                          <RulingOrderAppealFilesAccordion
+                            key={appealCase.id}
+                            appealCase={appealCase}
+                            rulingFile={rulingFile}
+                            onOpenFile={onOpen}
+                            hideTrailingSeparator={
+                              index < visibleCases.length - 1
+                            }
+                          />
+                        ),
+                      )}
                   </Accordion>
                 </Box>
               )}

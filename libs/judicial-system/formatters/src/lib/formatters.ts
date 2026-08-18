@@ -104,6 +104,15 @@ export const getInitials = (name?: string | null): string | undefined => {
   return initials.toUpperCase()
 }
 
+export const formatFileSubmittedBy = (
+  role: string,
+  name?: string | null,
+): string => {
+  const initials = getInitials(name)
+
+  return initials ? `${role} (${initials}) lagði fram` : `${role} lagði fram`
+}
+
 export const formatPhoneNumber = (phoneNumber?: string | null) => {
   if (!phoneNumber) {
     return
@@ -632,3 +641,9 @@ export const getVerdictAppealDecision = (
       return 'Ekki skráð'
   }
 }
+
+// Recognizes only the tags the rich text editor produces, so plain text
+// containing angle-bracket placeholders (e.g. "<nafn ökumanns>") is not
+// mistaken for HTML.
+export const containsHtml = (str: string): boolean =>
+  /<\/?(?:p|strong|em|b|i|span|br)(?:[\s/>])/i.test(str)

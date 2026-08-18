@@ -8,6 +8,7 @@ import { VmstApplicationsBankInformationInput } from './dto/bankInformationInput
 import {
   VmstApplicationsValidationUnemploymentApplication,
   VmstApplicationsUnemploymentApplicationOverview,
+  VmstApplicationsActivationGrantApplicationOverview,
   VmstApplicationsOverview,
   VmstApplicationsApplicantOverview,
   VmstApplicationsApplicantRequestedAttachment,
@@ -82,6 +83,21 @@ export class VMSTApplicationsResolver {
     locale?: Locale,
   ): Promise<VmstApplicationsUnemploymentApplicationOverview | undefined> {
     return this.vmstApplicationsService.getApplicationOverview(auth, locale)
+  }
+
+  @Query(() => VmstApplicationsActivationGrantApplicationOverview, {
+    name: 'vmstApplicationsActivationGrantApplicationOverview',
+  })
+  @Audit()
+  async getActivationGrantApplicationOverview(
+    @CurrentUser() auth: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale?: Locale,
+  ): Promise<VmstApplicationsActivationGrantApplicationOverview | undefined> {
+    return this.vmstApplicationsService.getActivationGrantApplicationOverview(
+      auth,
+      locale,
+    )
   }
 
   @Query(() => VmstApplicationsOverview, {

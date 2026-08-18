@@ -470,9 +470,9 @@ export const addNumberedList = (
 
   for (const [i, item] of items.entries()) {
     const label = `${start + i}`
-    const textHeight = doc.heightOfString(label, {
+    // PDFKit wraps on whitespace and also splits oversized unbroken tokens.
+    const textHeight = doc.heightOfString(item, {
       width: wrapWidth,
-      height: 1.2,
     })
     const labelWidth = doc.widthOfString(label)
     const labelX = x + (labelBoxWidth - labelWidth)
@@ -482,8 +482,8 @@ export const addNumberedList = (
     }
     const y = doc.y
 
-    doc.text(label, labelX, y)
-    drawTextWithEllipsis(doc, ` ${item}`, itemX, y, wrapWidth)
+    doc.text(label, labelX, y, { lineBreak: false })
+    doc.text(item, itemX, y, { width: wrapWidth })
   }
 
   doc.x = originalX
@@ -739,6 +739,7 @@ export const addRichText = (
   doc: PDFKit.PDFDocument,
   html: string,
   lineGap = 0,
+  fontSize = baseFontSize,
 ): void => {
   const blocks = htmlToBlocks(html)
 
@@ -757,12 +758,12 @@ export const addRichText = (
 
     // All Times variants share their vertical metrics, so the line geometry
     // can be computed once per block.
-    doc.font('Times-Roman').fontSize(baseFontSize)
+    doc.font('Times-Roman').fontSize(fontSize)
     const lineHeight = doc.currentLineHeight(true)
     const lineAdvance = lineHeight + lineGap
     const visibleHeight = doc.currentLineHeight(false)
     // Shift rect up by half the descender height to centre around visible glyphs
-    const descender = (TIMES_DESCENDER / 1000) * baseFontSize
+    const descender = (TIMES_DESCENDER / 1000) * fontSize
     const hPad = 1
 
     let y = doc.y
@@ -813,7 +814,7 @@ export const addRichText = (
         doc.fillColor('black')
       }
       for (const fragment of lineFragments) {
-        doc.font(fragment.font).fontSize(baseFontSize)
+        doc.font(fragment.font).fontSize(fontSize)
         doc.text(fragment.text, fragment.x, y, { lineBreak: false })
       }
       lineFragments = []
@@ -834,7 +835,7 @@ export const addRichText = (
       }
 
       const font = getFontName(run)
-      doc.font(font).fontSize(baseFontSize)
+      doc.font(font).fontSize(fontSize)
 
       // Whitespace is already collapsed, so tokens are words with their
       // single trailing space attached, or a lone inter-run space.
@@ -888,4 +889,9 @@ export const addRichText = (
     doc.x = doc.page.margins.left
     doc.y = y + lineAdvance + paragraphGap
   }
+
+  // Fragment drawing leaves the document font on whatever the last run used
+  // (e.g. Times-Bold), and the plain-text helpers only set a font when given
+  // one explicitly — restore the default so it doesn't leak into them.
+  doc.font('Times-Roman')
 }
