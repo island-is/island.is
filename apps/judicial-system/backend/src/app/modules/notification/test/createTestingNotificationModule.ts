@@ -1,7 +1,6 @@
 import { mock } from 'jest-mock-extended'
 import { v4 as uuid } from 'uuid'
 
-import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { IntlService } from '@island.is/cms-translations'
@@ -29,7 +28,7 @@ import { eventModuleConfig, EventService } from '../../event'
 import { InstitutionService } from '../../institution'
 import {
   InstitutionContactRepositoryService,
-  Notification,
+  NotificationRepositoryService,
 } from '../../repository'
 import { UserService } from '../../user'
 import { InternalNotificationController } from '../internalNotification.controller'
@@ -128,7 +127,10 @@ export const createTestingNotificationModule = async () => {
           error: jest.fn(),
         },
       },
-      { provide: getModelToken(Notification), useValue: { create: jest.fn() } },
+      {
+        provide: NotificationRepositoryService,
+        useValue: { create: jest.fn() },
+      },
       {
         provide: DefendantService,
         useValue: { isDefendantInActiveCustody: jest.fn() },
@@ -175,8 +177,8 @@ export const createTestingNotificationModule = async () => {
     notificationConfig: notificationModule.get<
       ConfigType<typeof notificationModuleConfig>
     >(notificationModuleConfig.KEY),
-    notificationModel: notificationModule.get<typeof Notification>(
-      getModelToken(Notification),
+    notificationRepositoryService: notificationModule.get(
+      NotificationRepositoryService,
     ),
     notificationController: notificationModule.get(NotificationController),
     internalNotificationController: notificationModule.get(

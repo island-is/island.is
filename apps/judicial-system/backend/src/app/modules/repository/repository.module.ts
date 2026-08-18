@@ -25,6 +25,7 @@ import { Institution } from './models/institution.model'
 import { InstitutionContact } from './models/institutionContact.model'
 import { LawyerRegistry } from './models/lawyerRegistry.model'
 import { MessageSuspension } from './models/messageSuspension.model'
+import { Notification } from './models/notification.model'
 import { Offense } from './models/offense.model'
 import { PoliceDigitalCaseFile } from './models/policeDigitalCaseFile.model'
 import { RobotLog } from './models/robotLog.model'
@@ -46,6 +47,7 @@ import { InstitutionContactRepositoryService } from './services/institutionConta
 import { InstitutionRepositoryService } from './services/institutionRepository.service'
 import { LawyerRegistryRepositoryService } from './services/lawyerRegistryRepository.service'
 import { MessageSuspensionRepositoryService } from './services/messageSuspensionRepository.service'
+import { NotificationRepositoryService } from './services/notificationRepository.service'
 import { PoliceDigitalCaseFileRepositoryService } from './services/policeDigitalCaseFileRepository.service'
 import { RobotLogRepositoryService } from './services/robotLogRepository.service'
 import { SubpoenaRepositoryService } from './services/subpoenaRepository.service'
@@ -77,6 +79,7 @@ import { repositoryModuleConfig } from './repository.config'
       InstitutionContact,
       LawyerRegistry,
       MessageSuspension,
+      Notification,
       Offense,
       PoliceDigitalCaseFile,
       RobotLog,
@@ -103,6 +106,7 @@ import { repositoryModuleConfig } from './repository.config'
     InstitutionRepositoryService,
     LawyerRegistryRepositoryService,
     MessageSuspensionRepositoryService,
+    NotificationRepositoryService,
     PoliceDigitalCaseFileRepositoryService,
     RobotLogRepositoryService,
     SubpoenaRepositoryService,
@@ -124,6 +128,7 @@ import { repositoryModuleConfig } from './repository.config'
     InstitutionRepositoryService,
     LawyerRegistryRepositoryService,
     MessageSuspensionRepositoryService,
+    NotificationRepositoryService,
     PoliceDigitalCaseFileRepositoryService,
     RobotLogRepositoryService,
     SubpoenaRepositoryService,

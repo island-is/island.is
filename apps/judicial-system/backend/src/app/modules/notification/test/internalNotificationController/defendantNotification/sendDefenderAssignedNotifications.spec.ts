@@ -14,7 +14,11 @@ import {
   createTestUsers,
 } from '../../createTestingNotificationModule'
 
-import { Case, Defendant, Notification } from '../../../../repository'
+import {
+  Case,
+  Defendant,
+  NotificationRepositoryService,
+} from '../../../../repository'
 import { DefendantNotificationDto } from '../../../dto/defendantNotification.dto'
 import { DeliverResponse } from '../../../models/deliver.response'
 import { notificationModuleConfig } from '../../../notification.config'
@@ -43,7 +47,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
 
   let mockEmailService: EmailService
   let mockConfig: ConfigType<typeof notificationModuleConfig>
-  let mockNotificationModel: typeof Notification
+  let mockNotificationRepositoryService: NotificationRepositoryService
   let givenWhenThen: GivenWhenThen
 
   let defendantNotificationDTO: DefendantNotificationDto
@@ -53,7 +57,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
       emailService,
       notificationConfig,
       internalNotificationController,
-      notificationModel,
+      notificationRepositoryService,
     } = await createTestingNotificationModule()
 
     defendantNotificationDTO = {
@@ -62,7 +66,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
 
     mockEmailService = emailService
     mockConfig = notificationConfig
-    mockNotificationModel = notificationModel
+    mockNotificationRepositoryService = notificationRepositoryService
 
     givenWhenThen = async (
       caseId: string,
@@ -144,8 +148,8 @@ describe('InternalNotificationController - Send defender assigned notifications'
     })
 
     it('should record notification', () => {
-      expect(mockNotificationModel.create).toHaveBeenCalledTimes(1)
-      expect(mockNotificationModel.create).toHaveBeenCalledWith({
+      expect(mockNotificationRepositoryService.create).toHaveBeenCalledTimes(1)
+      expect(mockNotificationRepositoryService.create).toHaveBeenCalledWith({
         caseId,
         type: defendantNotificationDTO.type,
         recipients: [
@@ -184,7 +188,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
     })
 
     it('should not record notification', () => {
-      expect(mockNotificationModel.create).not.toHaveBeenCalled()
+      expect(mockNotificationRepositoryService.create).not.toHaveBeenCalled()
     })
   })
 

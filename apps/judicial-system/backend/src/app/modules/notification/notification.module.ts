@@ -1,11 +1,9 @@
 import { forwardRef, Module } from '@nestjs/common'
-import { SequelizeModule } from '@nestjs/sequelize'
 
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { EmailModule } from '@island.is/email-service'
 import { SmsModule } from '@island.is/nova-sms'
 
-import { Notification } from '../repository'
 import {
   CaseModule,
   CourtModule,
@@ -41,7 +39,6 @@ import { NotificationController } from './notification.controller'
     forwardRef(() => EventModule),
     forwardRef(() => DefendantModule),
     forwardRef(() => RepositoryModule),
-    SequelizeModule.forFeature([Notification]),
   ],
   controllers: [NotificationController, InternalNotificationController],
   providers: [
