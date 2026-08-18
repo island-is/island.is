@@ -472,11 +472,10 @@ export class StatisticsService {
 
     // get institutions that are not linked directly to a case but
     // are known to handle certain events
-    const institutions =
-      await this.institutionRepositoryService.findAllActiveByTypes([
-        InstitutionType.PRISON_ADMIN,
-        InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
-      ])
+    const institutions = await this.institutionRepositoryService.findAllActive([
+      InstitutionType.PRISON_ADMIN,
+      InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
+    ])
 
     // create events for data analytics for each case
     if (!period) return []

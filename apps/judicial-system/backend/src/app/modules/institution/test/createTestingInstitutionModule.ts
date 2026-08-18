@@ -25,9 +25,6 @@ export const createTestingInstitutionModule = async () => {
         useValue: {
           findById: jest.fn().mockRejectedValue(new Error('Some error')),
           findAllActive: jest.fn().mockRejectedValue(new Error('Some error')),
-          findAllActiveByTypes: jest
-            .fn()
-            .mockRejectedValue(new Error('Some error')),
         },
       },
       InstitutionService,

@@ -76,10 +76,10 @@ describe('InstitutionRepositoryService', () => {
       expect(result).toBe(institutions)
     })
 
-    it('narrows on the given types', async () => {
+    it('narrows on the given types, still active and ordered', async () => {
       await service.findAllActive([
-        InstitutionType.DISTRICT_COURT,
-        InstitutionType.COURT_OF_APPEALS,
+        InstitutionType.PRISON_ADMIN,
+        InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
       ])
 
       expect(model.findAll).toHaveBeenCalledWith({
@@ -87,8 +87,8 @@ describe('InstitutionRepositoryService', () => {
         where: {
           active: true,
           type: [
-            InstitutionType.DISTRICT_COURT,
-            InstitutionType.COURT_OF_APPEALS,
+            InstitutionType.PRISON_ADMIN,
+            InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
           ],
         },
       })
@@ -99,39 +99,6 @@ describe('InstitutionRepositoryService', () => {
       model.findAll.mockRejectedValueOnce(error)
 
       await expect(service.findAllActive()).rejects.toBe(error)
-      expect(logger.error).toHaveBeenCalled()
-    })
-  })
-
-  describe('findAllActiveByTypes', () => {
-    it('filters on active institutions of the given types, unordered', async () => {
-      const institutions = [{ id: institutionId }]
-      model.findAll.mockResolvedValueOnce(institutions)
-
-      const result = await service.findAllActiveByTypes([
-        InstitutionType.PRISON_ADMIN,
-        InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
-      ])
-
-      expect(model.findAll).toHaveBeenCalledWith({
-        where: {
-          active: true,
-          type: [
-            InstitutionType.PRISON_ADMIN,
-            InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
-          ],
-        },
-      })
-      expect(result).toBe(institutions)
-    })
-
-    it('logs and rethrows when the lookup fails', async () => {
-      const error = new Error('Some error')
-      model.findAll.mockRejectedValueOnce(error)
-
-      await expect(
-        service.findAllActiveByTypes([InstitutionType.PRISON_ADMIN]),
-      ).rejects.toBe(error)
       expect(logger.error).toHaveBeenCalled()
     })
   })
