@@ -347,6 +347,22 @@ export const withCaseLevelAppealDecision = (
 }
 
 /**
+ * The appeal of a specific ruling order, if it has one. A case can carry several
+ * ruling-order appeals at once, keyed by the ruling file they were made against
+ * - so anything acting on one ruling must resolve its own appeal rather than the
+ * case-level `appealCase`.
+ */
+export const rulingOrderAppealCase = (
+  workingCase: Case,
+  rulingFileId: string | null | undefined,
+): AppealCase | undefined =>
+  rulingFileId
+    ? workingCase.rulingOrderAppealCases?.find(
+        (appealCase) => appealCase.rulingFileId === rulingFileId,
+      )
+    : undefined
+
+/**
  * Returns a human-readable description of who appealed and when.
  *
  * Branches by case type, then by appeal kind for indictment cases. The
