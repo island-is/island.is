@@ -77,8 +77,8 @@ export const ApplicantTypeNames: ApplicantTypeName[] = [
   {
     id: ApplicantTypesEnum.WARD_OF_LEGAL_GUARDIAN,
     name: {
-      is: 'Umbjóðandi forsjáraðila',
-      en: 'Ward of legal guardian',
+      is: 'Barn forsjáraðila',
+      en: 'Child of legal guardian',
     },
   },
 ]

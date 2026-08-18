@@ -1937,6 +1937,44 @@ export const messages = defineMessages({
     defaultMessage: 'Sláðu inn skilaboð',
     id: 'sp.health:health-messages-new-body-placeholder',
   },
+  healthConversationsCertificateBlockedText: {
+    defaultMessage:
+      'Ekki er hægt að óska eftir vottorði hjá þessari stofnun núna.',
+    id: 'sp.health:health-messages-certificate-blocked-text',
+  },
+  healthConversationsCertificatePaymentNotice: {
+    defaultMessage:
+      'Athugið að greiða þarf fyrir atvinnurekenda og skólavottorð.',
+    id: 'sp.health:health-messages-certificate-payment-notice',
+  },
+  healthConversationsCertificateTypeTitle: {
+    defaultMessage: 'Vottorð sem óskað er eftir',
+    id: 'sp.health:health-messages-certificate-type-title',
+  },
+  healthConversationsCertificateTypeWork: {
+    defaultMessage: 'Atvinnurekendavottorð',
+    id: 'sp.health:health-messages-certificate-type-work',
+  },
+  healthConversationsCertificateTypeSchool: {
+    defaultMessage: 'Skólavottorð',
+    id: 'sp.health:health-messages-certificate-type-school',
+  },
+  healthConversationsCertificateRecipientNameLabel: {
+    defaultMessage: 'Nafn tengiliðar',
+    id: 'sp.health:health-messages-certificate-recipient-name-label',
+  },
+  healthConversationsCertificateRecipientNamePlaceholder: {
+    defaultMessage: 't.d. vinnuveitandi eða skóli',
+    id: 'sp.health:health-messages-certificate-recipient-name-placeholder',
+  },
+  healthConversationsCertificateNoteLabel: {
+    defaultMessage: 'Lýsing veikinda',
+    id: 'sp.health:health-messages-certificate-note-label',
+  },
+  healthConversationsCertificateNotePlaceholder: {
+    defaultMessage: 'Skrifaðu stutta lýsingu á veikindunum',
+    id: 'sp.health:health-messages-certificate-note-placeholder',
+  },
   healthConversationsNewTermsLabel: {
     defaultMessage: 'Ég samþykki <link>skilmála</link>',
     id: 'sp.health:health-messages-new-terms-label',
@@ -1965,10 +2003,6 @@ export const messages = defineMessages({
   healthConversationSend: {
     defaultMessage: 'Senda skilaboð',
     id: 'sp.health:health-message-send',
-  },
-  healthConversationCloseReply: {
-    defaultMessage: 'Loka svarglugga',
-    id: 'sp.health:health-message-close-reply',
   },
   healthConversationSentTitle: {
     defaultMessage: 'Skilaboð móttekin',
@@ -2009,6 +2043,15 @@ export const messages = defineMessages({
     defaultMessage:
       'Þessi þjónustuaðili býður ekki upp á skilaboð á Ísland.is.',
     id: 'sp.health:health-messages-messaging-not-allowed-text',
+  },
+  healthConversationReplyClosedText: {
+    defaultMessage:
+      'Ekki er hægt að svara þessum skilaboðum því sendandi hefur lokað fyrir frekari svör.',
+    id: 'sp.health:health-message-reply-closed-text',
+  },
+  healthConversationReplyClosedShortText: {
+    defaultMessage: 'Ekki er hægt að svara þessum skilaboðum',
+    id: 'sp.health:health-message-reply-closed-short-text',
   },
   myAppointments: {
     defaultMessage: 'Mínar tímabókanir',

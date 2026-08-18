@@ -21,15 +21,11 @@ const POINTS_PER_WEIGHT_PERCENT = 10
 // from the answers sub-criteria so the dropdowns AND the score totals work
 // without external data. Computing from the live weights also means the scores
 // reflect any weight edits the user makes on the sub-criteria screen.
-export const buildStepMetaFromSubCriteria = (subCriteria: {
-  jobFactors?: SubCriterion[][]
-  personalFactors?: SubCriterion[][]
-}): Record<string, StepMeta> => {
+export const buildStepMetaFromSubCriteria = (
+  subCriteriaGroups: SubCriterion[][],
+): Record<string, StepMeta> => {
   const map: Record<string, StepMeta> = {}
-  const all = [
-    ...(subCriteria.jobFactors ?? []).flat(),
-    ...(subCriteria.personalFactors ?? []).flat(),
-  ]
+  const all = subCriteriaGroups.flat()
   all.forEach((sc) => {
     if (!sc?.title) return
     const count = sc.steps?.length || Number(sc.stepCount) || 0
@@ -71,6 +67,53 @@ export const buildStepMetaByTitle = (
   })
   return map
 }
+
+// Combines the live sub-criteria (always has every current title, including
+// ones added after an Excel import) with the imported external criteria
+// (authoritative scores/weights, but frozen at import time) into a single
+// lookup. Live data is the base so nothing is silently dropped; external
+// values overlay it for titles present in both. Only pass the sub-criteria
+// group relevant to the calling screen (job or personal factors) — mixing
+// both groups risks title collisions between unrelated criteria.
+export const buildMergedStepMetaByTitle = (
+  externalCriteria: ParsedCriterionDto[],
+  factorSubCriteria: SubCriterion[][],
+): Record<string, StepMeta> => ({
+  ...buildStepMetaFromSubCriteria(factorSubCriteria),
+  ...buildStepMetaByTitle(externalCriteria),
+})
+
+// Merges newly-available default assignments into an existing assignment
+// list without disturbing what's already there — used so criteria added
+// after an Excel import still get a row for already-imported
+// employees/roles, while preserving any stepOrder already chosen. Matches on
+// the (criterionTitle, subTitle) pair rather than subTitle alone, since a
+// sub-criterion title could in principle repeat across criteria groups.
+export const mergeStepAssignments = (
+  existing: StepAssignment[],
+  defaultAssignments: StepAssignment[],
+): StepAssignment[] => {
+  const isPresent = (a: StepAssignment) =>
+    existing.some(
+      (e) => e.criterionTitle === a.criterionTitle && e.subTitle === a.subTitle,
+    )
+  return [...existing, ...defaultAssignments.filter((a) => !isPresent(a))]
+}
+
+// Drops a single (criterionTitle, subTitle) entry — used when a sub-criterion
+// itself is deleted, so already-assigned employees/roles don't keep a stale,
+// unratable row for a sub-criterion that no longer exists. Generic over
+// StepAssignment/EmployeeStepAssignment, which share this shape.
+export const removeAssignment = <
+  T extends { criterionTitle: string; subTitle: string },
+>(
+  assignments: T[],
+  criterionTitle: string,
+  subTitle: string,
+): T[] =>
+  assignments.filter(
+    (a) => !(a.criterionTitle === criterionTitle && a.subTitle === subTitle),
+  )
 
 // Builds step assignments (one per sub-criterion, defaulted to the first step)
 // from the manually-entered criteria/sub-criteria answers. Used both for

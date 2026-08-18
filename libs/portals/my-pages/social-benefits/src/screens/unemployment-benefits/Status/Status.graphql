@@ -6,13 +6,6 @@ query getUnemploymentApplicationOverview($locale: String) {
     applicationStatusName
     applicationStatus
     dataRequested
-    availableActions {
-      canContact
-      canSubmitDocuments
-      canReportWork
-      canReportTravel
-      canUnregister
-    }
     jobSearchConfirmationStatus {
       canConfirm
       hasConfirmed
@@ -25,24 +18,12 @@ query getUnemploymentApplicationOverview($locale: String) {
   }
 }
 
-query getApplicantOverview($locale: String) {
-  vmstApplicantOverview(locale: $locale) {
-    passCode
-    preferredJobs
-    bankAccount
-    union
-    pensionFund
-    usedPersonalTaxCredit
-    numberOfChildren
-    employmentHistory
-    educationHistory
-    drivingLicenses
-    languageAbilities {
-      name
-      proficiency
-    }
-    serviceArea
-    currentAddressDifferent
-    savedToEures
+query getApplicantAvailableActions {
+  vmstApplicantAvailableActions {
+    canContact
+    canSubmitDocuments
+    canReportWork
+    canReportTravel
+    canUnregister
   }
 }

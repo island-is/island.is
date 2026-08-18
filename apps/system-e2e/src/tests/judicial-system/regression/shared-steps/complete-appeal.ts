@@ -5,17 +5,24 @@ import { randomAppealCaseNumber, uploadDocument } from '../../utils/helpers'
 export const coaJudgesCompleteAppealCaseTest = async (
   page: Page,
   caseId: string,
+  appealCaseId?: string,
 ) => {
+  const appealCaseQuery = appealCaseId ? `?appealCaseId=${appealCaseId}` : ''
+
   await Promise.all([
-    page.goto(`/landsrettur/yfirlit/${caseId}`),
     verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    page.goto(`/landsrettur/yfirlit/${caseId}${appealCaseQuery}`),
   ])
 
-  // Overview
-  await expect(page).toHaveURL(`/landsrettur/yfirlit/${caseId}`)
+  // Overview — require the targeted appeal case when provided
+  await expect(page).toHaveURL(
+    appealCaseId
+      ? `/landsrettur/yfirlit/${caseId}?appealCaseId=${appealCaseId}`
+      : `/landsrettur/yfirlit/${caseId}`,
+  )
   await Promise.all([
-    page.getByTestId('continueButton').click(),
     verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    page.getByTestId('continueButton').click(),
   ])
 
   // Appeal case reception
@@ -36,8 +43,8 @@ export const coaJudgesCompleteAppealCaseTest = async (
   await page.locator('#react-select-judge-option-0').click()
   await page.getByTestId('continueButton').click()
   await Promise.all([
-    page.getByTestId('modalPrimaryButton').click(),
     verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    page.getByTestId('modalPrimaryButton').click(),
   ])
 
   // Ruling
@@ -61,8 +68,8 @@ export const coaJudgesCompleteAppealCaseTest = async (
     'TestNidurstadaLandsrettar.pdf',
   )
   await Promise.all([
-    page.getByTestId('continueButton').click(),
     verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    page.getByTestId('continueButton').click(),
   ])
 
   await expect(page).toHaveURL(

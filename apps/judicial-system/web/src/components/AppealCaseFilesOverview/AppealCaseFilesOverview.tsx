@@ -9,7 +9,10 @@ import {
   PROSECUTION_APPEAL_CASE_ADD_FILES_ROUTE,
   TIME_FORMAT,
 } from '@island.is/judicial-system/consts'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  formatFileSubmittedBy,
+} from '@island.is/judicial-system/formatters'
 import {
   isAppealFileDeletionLocked,
   isDefenceUser,
@@ -68,9 +71,9 @@ const getFileSubmittedByText = (file: CaseFile, workingCase: Case): string => {
   const prosecutorSubmitted = isProsecutorCategory(file.category)
 
   if (prosecutorSubmitted) {
-    return isIndictmentCase(workingCase.type)
-      ? 'Ákærandi lagði fram'
-      : 'Sækjandi lagði fram'
+    return formatFileSubmittedBy(
+      isIndictmentCase(workingCase.type) ? 'Ákærandi' : 'Sækjandi',
+    )
   }
 
   // For indictment cases, try to resolve the defender/spokesperson name
@@ -80,7 +83,7 @@ const getFileSubmittedByText = (file: CaseFile, workingCase: Case): string => {
     )
 
     if (defendant?.defenderName) {
-      return `Verjandi ${defendant.defenderName} lagði fram`
+      return formatFileSubmittedBy('Verjandi', defendant.defenderName)
     }
   }
 
@@ -92,13 +95,14 @@ const getFileSubmittedByText = (file: CaseFile, workingCase: Case): string => {
     )
 
     if (civilClaimant?.spokespersonName) {
-      return `${
-        civilClaimant.spokespersonIsLawyer ? 'Lögmaður' : 'Réttargæslumaður'
-      } ${civilClaimant.spokespersonName} lagði fram`
+      return formatFileSubmittedBy(
+        civilClaimant.spokespersonIsLawyer ? 'Lögmaður' : 'Réttargæslumaður',
+        civilClaimant.spokespersonName,
+      )
     }
   }
 
-  return 'Varnaraðili lagði fram'
+  return formatFileSubmittedBy('Varnaraðili')
 }
 
 const AppealCaseFilesOverview = () => {

@@ -994,6 +994,175 @@ describe('CaseController - Update', () => {
     },
   )
 
+  describe.each([CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY])(
+    'valid to date is updated for accepted %s case',
+    (type) => {
+      const validToDate = randomDate()
+      const modifiedValidToDate = new Date(validToDate.getTime() + 1000)
+      const originalCase = {
+        ...theCase,
+        type,
+        state: CaseState.ACCEPTED,
+        validToDate,
+      } as Case
+      const caseToUdate = {
+        caseModifiedExplanation: 'some explanation',
+        validToDate: modifiedValidToDate,
+      }
+      const updatedCase = {
+        ...originalCase,
+        origin: CaseOrigin.LOKE,
+        caseModifiedExplanation: 'some explanation',
+        validToDate: modifiedValidToDate,
+      }
+
+      beforeEach(async () => {
+        const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+        mockFindOne.mockResolvedValueOnce(updatedCase)
+
+        await givenWhenThen(caseId, user, originalCase, caseToUdate)
+      })
+
+      it('should post the case update and the custody notice to queue', async () => {
+        expect(mockQueuedMessages).toEqual([
+          {
+            type: MessageType.NOTIFICATION,
+            user,
+            caseId,
+            body: { type: RequestCaseNotificationType.MODIFIED },
+          },
+          { type: MessageType.DELIVERY_TO_POLICE_CASE, user, caseId },
+          {
+            type: MessageType.DELIVERY_TO_POLICE_CUSTODY_NOTICE,
+            user,
+            caseId,
+          },
+        ])
+      })
+    },
+  )
+
+  describe('isolation to date is updated for accepted custody case', () => {
+    const isolationToDate = randomDate()
+    const modifiedIsolationToDate = new Date(isolationToDate.getTime() + 1000)
+    const originalCase = {
+      ...theCase,
+      type: CaseType.CUSTODY,
+      state: CaseState.ACCEPTED,
+      validToDate: randomDate(),
+      isolationToDate,
+    } as Case
+    const caseToUdate = {
+      caseModifiedExplanation: 'some explanation',
+      isolationToDate: modifiedIsolationToDate,
+    }
+    const updatedCase = {
+      ...originalCase,
+      origin: CaseOrigin.LOKE,
+      caseModifiedExplanation: 'some explanation',
+      isolationToDate: modifiedIsolationToDate,
+    }
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(caseId, user, originalCase, caseToUdate)
+    })
+
+    it('should post the case update and the custody notice to queue', async () => {
+      expect(mockQueuedMessages).toEqual([
+        {
+          type: MessageType.NOTIFICATION,
+          user,
+          caseId,
+          body: { type: RequestCaseNotificationType.MODIFIED },
+        },
+        { type: MessageType.DELIVERY_TO_POLICE_CASE, user, caseId },
+        {
+          type: MessageType.DELIVERY_TO_POLICE_CUSTODY_NOTICE,
+          user,
+          caseId,
+        },
+      ])
+    })
+  })
+
+  describe('custody dates are not updated for accepted custody case', () => {
+    const originalCase = {
+      ...theCase,
+      type: CaseType.CUSTODY,
+      state: CaseState.ACCEPTED,
+      validToDate: randomDate(),
+      isolationToDate: randomDate(),
+    } as Case
+    const caseToUdate = { caseModifiedExplanation: 'some explanation' }
+    const updatedCase = {
+      ...originalCase,
+      origin: CaseOrigin.LOKE,
+      caseModifiedExplanation: 'some explanation',
+    }
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(caseId, user, originalCase, caseToUdate)
+    })
+
+    it('should not post the custody notice to queue', async () => {
+      expect(mockQueuedMessages).toEqual([
+        {
+          type: MessageType.NOTIFICATION,
+          user,
+          caseId,
+          body: { type: RequestCaseNotificationType.MODIFIED },
+        },
+        { type: MessageType.DELIVERY_TO_POLICE_CASE, user, caseId },
+      ])
+    })
+  })
+
+  describe('valid to date is updated for accepted travel ban case', () => {
+    const validToDate = randomDate()
+    const modifiedValidToDate = new Date(validToDate.getTime() + 1000)
+    const originalCase = {
+      ...theCase,
+      type: CaseType.TRAVEL_BAN,
+      state: CaseState.ACCEPTED,
+      validToDate,
+    } as Case
+    const caseToUdate = {
+      caseModifiedExplanation: 'some explanation',
+      validToDate: modifiedValidToDate,
+    }
+    const updatedCase = {
+      ...originalCase,
+      origin: CaseOrigin.LOKE,
+      caseModifiedExplanation: 'some explanation',
+      validToDate: modifiedValidToDate,
+    }
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(caseId, user, originalCase, caseToUdate)
+    })
+
+    it('should not post a custody notice to queue', async () => {
+      expect(mockQueuedMessages).toEqual([
+        {
+          type: MessageType.NOTIFICATION,
+          user,
+          caseId,
+          body: { type: RequestCaseNotificationType.MODIFIED },
+        },
+        { type: MessageType.DELIVERY_TO_POLICE_CASE, user, caseId },
+      ])
+    })
+  })
+
   describe('neither court case number nor defender email nor prosecutorId nor caseModifiedExplanation updated', () => {
     beforeEach(async () => {
       await givenWhenThen(caseId, user, theCase, {})
