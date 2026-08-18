@@ -3,15 +3,19 @@ import {
   Case,
   CaseAppealDecision,
   CourtSessionResponse,
+  DateLog,
+  Defendant,
   IndictmentCount,
   IndictmentCountOffense,
   IndictmentSubtype,
+  SubpoenaType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import {
   areAppealDecisionsComplete,
   getIndictmentCountWarningMessage,
   isIndictmentCountComplete,
+  isSubpoenaStepValid,
   validate,
 } from './validate'
 
@@ -491,5 +495,99 @@ describe('areAppealDecisionsComplete', () => {
     expect(
       areAppealDecisionsComplete({} as CourtSessionResponse, baseCase),
     ).toBe(false)
+  })
+})
+
+describe('isSubpoenaStepValid', () => {
+  const alternativeServiceDefendant = {
+    id: 'defendant-1',
+    isAlternativeService: true,
+    alternativeServiceDescription: 'Ákæra birt í þinghaldi',
+  } as Defendant
+
+  const subpoenaDefendant = {
+    id: 'defendant-2',
+    subpoenaType: SubpoenaType.ABSENCE,
+  } as Defendant
+
+  const arraignmentDate = {
+    date: '2026-09-01T10:00:00.000Z',
+    location: 'Dómsalur 1',
+  } as DateLog
+
+  test('returns true when an arraignment date and courtroom are registered', () => {
+    const workingCase = {
+      defendants: [subpoenaDefendant],
+      arraignmentDate,
+    } as Case
+
+    expect(isSubpoenaStepValid(workingCase)).toBe(true)
+  })
+
+  test('returns false when the arraignment date is missing', () => {
+    const workingCase = {
+      defendants: [subpoenaDefendant],
+      arraignmentDate: { location: 'Dómsalur 1' } as DateLog,
+    } as Case
+
+    expect(isSubpoenaStepValid(workingCase)).toBe(false)
+  })
+
+  test('returns false when the courtroom is missing', () => {
+    const workingCase = {
+      defendants: [subpoenaDefendant],
+      arraignmentDate: { date: '2026-09-01T10:00:00.000Z' } as DateLog,
+    } as Case
+
+    expect(isSubpoenaStepValid(workingCase)).toBe(false)
+  })
+
+  test('returns true without an arraignment date when the summons is skipped and every defendant is served by alternative means', () => {
+    const workingCase = {
+      defendants: [alternativeServiceDefendant],
+      isArraignmentSummonsSkipped: true,
+    } as Case
+
+    expect(isSubpoenaStepValid(workingCase)).toBe(true)
+  })
+
+  test('returns false when the summons is skipped but a defendant is still receiving a subpoena', () => {
+    const workingCase = {
+      defendants: [alternativeServiceDefendant, subpoenaDefendant],
+      isArraignmentSummonsSkipped: true,
+    } as Case
+
+    expect(isSubpoenaStepValid(workingCase)).toBe(false)
+  })
+
+  test('prefers the updated skip flag over the persisted one', () => {
+    const workingCase = { defendants: [alternativeServiceDefendant] } as Case
+
+    expect(
+      isSubpoenaStepValid(
+        workingCase,
+        [alternativeServiceDefendant],
+        null,
+        true,
+      ),
+    ).toBe(true)
+  })
+
+  test('returns false when an alternative service defendant has no description', () => {
+    const workingCase = {
+      defendants: [{ id: 'defendant-1', isAlternativeService: true }],
+      isArraignmentSummonsSkipped: true,
+    } as Case
+
+    expect(isSubpoenaStepValid(workingCase)).toBe(false)
+  })
+
+  test('returns false when the case has no defendants', () => {
+    const workingCase = {
+      defendants: [],
+      isArraignmentSummonsSkipped: true,
+    } as Case
+
+    expect(isSubpoenaStepValid(workingCase)).toBe(false)
   })
 })

@@ -27,7 +27,11 @@ import {
 
 import { isNonEmptyArray } from './arrayHelpers'
 import { isCivilClaimantDefendantSelectionValid } from './civilClaimantUtils'
-import { caseLevelAppealDecision, isBusiness } from './utils'
+import {
+  areAllDefendantsServedByAlternativeMeans,
+  caseLevelAppealDecision,
+  isBusiness,
+} from './utils'
 
 export type Validation =
   | 'empty'
@@ -611,9 +615,13 @@ export const isSubpoenaStepValid = (
   workingCase: Case,
   updatedDefendants?: Defendant[] | null,
   updatedArraignmentDate?: DateLog | null,
+  updatedIsArraignmentSummonsSkipped?: boolean | null,
 ): boolean => {
   const arraignmentDate = updatedArraignmentDate || workingCase.arraignmentDate
   const defendants = updatedDefendants || workingCase.defendants
+  const isArraignmentSummonsSkipped =
+    updatedIsArraignmentSummonsSkipped ??
+    Boolean(workingCase.isArraignmentSummonsSkipped)
 
   const validateDefendants = (defendants?: Defendant[] | null) => {
     const hasAtLeastOneDefendant = (defendants?.length ?? 0) > 0
@@ -628,12 +636,20 @@ export const isSubpoenaStepValid = (
     )
   }
 
-  return (
+  // The arraignment date and courtroom are only needed when the court is
+  // actually summoning to an arraignment
+  const isSkippingArraignmentSummons =
+    isArraignmentSummonsSkipped &&
+    areAllDefendantsServedByAlternativeMeans(defendants)
+
+  const isArraignmentDateValid =
+    isSkippingArraignmentSummons ||
     validate([
       [arraignmentDate?.date, ['empty', 'date-format']],
       [arraignmentDate?.location, ['empty']],
-    ]).isValid && Boolean(validateDefendants(defendants))
-  )
+    ]).isValid
+
+  return isArraignmentDateValid && Boolean(validateDefendants(defendants))
 }
 
 export const isDefenderStepValid = (workingCase: Case): boolean => {
