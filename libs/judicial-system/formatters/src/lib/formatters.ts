@@ -646,4 +646,4 @@ export const getVerdictAppealDecision = (
 // containing angle-bracket placeholders (e.g. "<nafn ökumanns>") is not
 // mistaken for HTML.
 export const containsHtml = (str: string): boolean =>
-  /<\/?(?:p|strong|em|b|i|span|br)(?:[\s/>])/i.test(str)
+  /<\/?(?:p|strong|em|b|i|span|br|ul|ol|li)(?:[\s/>])/i.test(str)
