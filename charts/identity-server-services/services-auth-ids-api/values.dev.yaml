@@ -28,6 +28,7 @@ env:
   DB_NAME: 'servicesauth'
   DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
   DB_USER: 'servicesauth'
+  DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
   IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   LOG_LEVEL: 'info'

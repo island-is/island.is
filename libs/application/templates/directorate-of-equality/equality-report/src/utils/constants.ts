@@ -42,4 +42,6 @@ export enum ApiActions {
   getEqualityReportTemplateDocx = 'getEqualityReportTemplateDocx',
   getPreviousEqualityReportContent = 'getPreviousEqualityReportContent',
   submitEqualityReport = 'submitEqualityReport',
+  getReportComments = 'getReportComments',
+  submitReportComment = 'submitReportComment',
 }

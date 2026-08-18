@@ -12,6 +12,7 @@ import {
   getApplicationEqualityReportTemplateHtml,
   getApplicationReport,
   getApplicationReportOutliers,
+  getApplicationReportComments,
   importApplicationSalaryReportWorkbook,
   presignApplicationImportUpload,
   submitApplicationEqualityReport,
@@ -108,6 +109,17 @@ export class DirectorateOfEqualityClientService {
       user,
       () => getApplicationReport({ path: { providerId } }),
       'Failed to get report',
+    )
+  }
+
+  async getReportComments(
+    user: User,
+    providerId: string,
+  ): Promise<ApplicationReportCommentDto[]> {
+    return this.unwrap(
+      user,
+      () => getApplicationReportComments({ path: { providerId } }),
+      'Failed to get report comments',
     )
   }
 
