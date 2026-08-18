@@ -48,7 +48,7 @@ export type TextFieldVariant =
   | 'tel'
   | 'textarea'
   | 'currency'
-type AlertType = 'default' | 'warning' | 'error' | 'info' | 'success'
+export type AlertType = 'default' | 'warning' | 'error' | 'info' | 'success'
 
 export type Context = {
   application: Application
@@ -712,7 +712,7 @@ export interface ExpandableDescriptionField extends BaseField {
 export interface AlertMessageField extends BaseField {
   readonly type: FieldTypes.ALERT_MESSAGE
   component: FieldComponents.ALERT_MESSAGE
-  alertType?: AlertType
+  alertType?: MaybeWithApplicationAndFieldAndLocale<AlertType>
   message?: FormTextWithLocale
   links?: AlertMessageLink[]
   shouldBlockInSetBeforeSubmitCallback?: boolean
