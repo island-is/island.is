@@ -11,6 +11,7 @@ import { FormLoader, FormText, StaticText } from './Form'
 import { Application, ActionCardTag } from './Application'
 import { Condition } from './Condition'
 import { TestSupport } from '@island.is/island-ui/utils'
+import { Features } from '@island.is/feature-flags'
 import { TemplateApi } from './template-api/TemplateApi'
 import { PruningApplication, PruningNotification } from './ApplicationLifecycle'
 
@@ -97,25 +98,37 @@ export type HistoryEventMessage<T extends EventObject = AnyEventObject> = {
     | ((role: ApplicationRole, nationalId: string, isAdmin: boolean) => boolean)
 }
 
-export type ScheduledNotificationConfig =
+export type ScheduledNotificationConfig = {
+  /** HNIPP template id, e.g. `HNIPP.AS.PRUNE.REMINDER`. */
+  template: string
+  /** Arguments substituted into the HNIPP template's `{{placeholders}}`. */
+  args?: Array<{ key: string; value: string }>
+  /**
+   * When true, the API appends an `applicationLink` arg pointing at the
+   * application when scheduling. Note that the contentful Template must include a `{{applicationLink}}` placeholder for this to work.
+   */
+  includeApplicationLink?: boolean
+  /**
+   * When set, the API only schedules this notification if the feature
+   * flag evaluates to true at the time of scheduling.
+   */
+  featureFlag?: Features
+} & (
   | {
-      template: string
       /**
        * Schedules the notification relative to the time the state is entered.
        * E.g. `delayInMs: 7 * 24 * 3600 * 1000` for 7 days later.
        */
-      args?: Array<{ key: string; value: string }>
       delayInMs: number | ((application: Application) => number)
     }
   | {
-      template: string
       /**
        * Schedules the notification at an exact point in time.
        * E.g. `date: (app) => new Date(app.answers.flightDate)`
        */
-      args?: Array<{ key: string; value: string }>
       date: Date | ((application: Application) => Date)
     }
+)
 
 export interface ApplicationStateMeta<
   T extends EventObject = AnyEventObject,
@@ -185,6 +198,7 @@ export interface ApplicationStateMeta<
   /**
    * Optional configuration to schedule notifications when entering the state.
    * Any unsent schedules for a state are automatically canceled when the state is left.
+   * To gate scheduling behind a feature flag, set `featureFlag` on the config.
    */
   scheduledNotifications?:
     | ScheduledNotificationConfig[]

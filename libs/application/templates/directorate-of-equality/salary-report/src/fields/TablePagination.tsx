@@ -5,7 +5,7 @@ import { messages } from '../lib/messages'
 
 export const TABLE_PAGE_SIZE = 50
 
-type Props = {
+export type TablePaginationProps = {
   page: number
   totalPages: number
   onPageChange: (page: number) => void
@@ -15,7 +15,7 @@ type Props = {
 // and the unassigned-outliers table on the analysis screen — page size is the
 // caller's business, this only renders the control. Renders nothing below the
 // fold when everything already fits on one page.
-export const TablePagination: FC<Props> = ({
+export const TablePagination: FC<TablePaginationProps> = ({
   page,
   totalPages,
   onPageChange,

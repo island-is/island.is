@@ -16,11 +16,11 @@ export const buildSalaryAnalysisSection = (fieldProps?: RecordObject) =>
     children: [
       buildSubSection({
         id: 'salaryAnalysisOverview',
-        title: messages.salaryAnalysis.overview.sectionTitle,
+        title: messages.salaryAnalysis.section.sectionTitle,
         children: [
           buildMultiField({
             id: 'salaryAnalysisOverviewMultiField',
-            title: messages.salaryAnalysis.overview.title,
+            title: messages.salaryAnalysis.section.sectionTitle,
             description: messages.salaryAnalysis.overview.intro,
             children: [
               buildCustomField(

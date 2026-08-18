@@ -26,7 +26,11 @@ import { formatCurrency } from '../EmployeesEditor/utils'
 import { TablePagination } from '../TablePagination'
 
 const OUTLIERS_PAGE_SIZE = 10
-const SELECT_COLUMN_WIDTH = 40
+const SELECT_COLUMN_WIDTH = 32
+// The header checkbox only reaches the current page, which is fine for a
+// couple of pages but not for a long table — past this many pages the
+// select-everything shortcut appears.
+const SELECT_ALL_PAGE_THRESHOLD = 5
 
 type Props = {
   application: Application
@@ -116,6 +120,11 @@ export const OutlierEditor: FC<Props> = ({
     // The current page may no longer exist once its rows leave the table.
     setPage(1)
   }
+
+  const handleSelectAll = () =>
+    setSelected(new Set(unassignedOutliers.map((o) => o.employeeOrdinal)))
+
+  const allSelected = selected.size === unassignedOutliers.length
 
   const allSelectedOnPage =
     pageRows.length > 0 &&
@@ -222,6 +231,7 @@ export const OutlierEditor: FC<Props> = ({
             columns={columns}
             data={pageRows}
             mobileTitleKey="employee"
+            cellPaddingX={2}
           />
 
           <Box marginTop={2}>
@@ -232,7 +242,13 @@ export const OutlierEditor: FC<Props> = ({
             />
           </Box>
 
-          <Box marginTop={2} marginBottom={2}>
+          <Box
+            marginTop={2}
+            marginBottom={2}
+            display="flex"
+            alignItems="center"
+            columnGap={2}
+          >
             <Button
               variant="ghost"
               size="small"
@@ -242,6 +258,18 @@ export const OutlierEditor: FC<Props> = ({
             >
               {formatMessage(m.createGroupButton)}
             </Button>
+            {totalPages > SELECT_ALL_PAGE_THRESHOLD && (
+              <Button
+                variant="text"
+                size="small"
+                disabled={allSelected}
+                onClick={handleSelectAll}
+              >
+                {formatMessage(m.selectAllOutliersButton, {
+                  count: unassignedOutliers.length,
+                })}
+              </Button>
+            )}
           </Box>
         </>
       )}
