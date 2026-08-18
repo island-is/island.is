@@ -319,6 +319,7 @@ query Case($input: CaseQueryInput!) {
       speedLimit
     }
     withCourtSessions
+    isArraignmentSummonsSkipped
     courtSessions {
       id
       created
