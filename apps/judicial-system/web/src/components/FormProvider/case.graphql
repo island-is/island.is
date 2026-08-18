@@ -447,6 +447,7 @@ query Case($input: CaseQueryInput!) {
       appealValidToDate
       isAppealCustodyIsolation
       appealIsolationToDate
+      rulingFileId
     }
     rulingOrderAppealCases {
       id

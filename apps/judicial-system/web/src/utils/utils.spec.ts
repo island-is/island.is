@@ -28,6 +28,7 @@ import {
   hasSentNotification,
   isAppealFileCategoryVisible,
   isCurrentAppellantRepresentative,
+  isMatchingAppealCourtFile,
   isSentToPublicProsecutor,
   mapStringToGender,
   reconcileAppealDecisionsForRulingFileChange,
@@ -1505,6 +1506,90 @@ describe('Utils', () => {
           undefined,
           file(CaseFileCategory.PROSECUTOR_APPEAL_BRIEF),
           otherUser,
+        ),
+      ).toBe(false)
+    })
+  })
+
+  describe('isMatchingAppealCourtFile', () => {
+    test('matches a case level appeal file when no ruling file id is given', () => {
+      expect(
+        isMatchingAppealCourtFile(
+          { category: CaseFileCategory.APPEAL_RULING, rulingFileId: null },
+          CaseFileCategory.APPEAL_RULING,
+          undefined,
+        ),
+      ).toBe(true)
+    })
+
+    test('matches a ruling order appeal file with the same ruling file id', () => {
+      expect(
+        isMatchingAppealCourtFile(
+          {
+            category: CaseFileCategory.APPEAL_RULING,
+            rulingFileId: 'ruling-1',
+          },
+          CaseFileCategory.APPEAL_RULING,
+          'ruling-1',
+        ),
+      ).toBe(true)
+    })
+
+    test('does not match a ruling order appeal file on a case level appeal', () => {
+      expect(
+        isMatchingAppealCourtFile(
+          {
+            category: CaseFileCategory.APPEAL_RULING,
+            rulingFileId: 'ruling-1',
+          },
+          CaseFileCategory.APPEAL_RULING,
+          null,
+        ),
+      ).toBe(false)
+    })
+
+    test('does not match a case level appeal file on a ruling order appeal', () => {
+      expect(
+        isMatchingAppealCourtFile(
+          { category: CaseFileCategory.APPEAL_RULING, rulingFileId: null },
+          CaseFileCategory.APPEAL_RULING,
+          'ruling-1',
+        ),
+      ).toBe(false)
+    })
+
+    test('does not match a file belonging to another ruling order appeal', () => {
+      expect(
+        isMatchingAppealCourtFile(
+          {
+            category: CaseFileCategory.APPEAL_RULING,
+            rulingFileId: 'ruling-1',
+          },
+          CaseFileCategory.APPEAL_RULING,
+          'ruling-2',
+        ),
+      ).toBe(false)
+    })
+
+    test('does not match another category on the same appeal', () => {
+      expect(
+        isMatchingAppealCourtFile(
+          {
+            category: CaseFileCategory.APPEAL_COURT_RECORD,
+            rulingFileId: 'ruling-1',
+          },
+          CaseFileCategory.APPEAL_RULING,
+          'ruling-1',
+        ),
+      ).toBe(false)
+    })
+
+    test('does not match a file without a category', () => {
+      expect(
+        isMatchingAppealCourtFile(
+          {},
+          CaseFileCategory.APPEAL_RULING,
+          undefined,
         ),
       ).toBe(false)
     })
