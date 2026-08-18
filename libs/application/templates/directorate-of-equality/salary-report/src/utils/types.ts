@@ -48,7 +48,8 @@ export type SalaryComponentKey =
 
 // Based on ParsedEmployeeDto from @island.is/clients/directorate-of-equality,
 // minus `education` (unused, see salary-report README), with `field`/
-// `department` relaxed to optional (genuinely optional in the form), and
+// `department` relaxed to optional/nullable (genuinely optional — the API
+// returns null for an empty cell, the form leaves it ''), and
 // `gender` widened to `string` (the form allows an unanswered '' draft state
 // before the API's stricter union applies). The full object is stored in
 // answers so the complete record is available at submission, even though
@@ -58,8 +59,8 @@ export type Employee = Omit<
   'education' | 'field' | 'department' | 'gender'
 > & {
   gender: string
-  field?: string
-  department?: string
+  field?: string | null
+  department?: string | null
 }
 
 // Based on ParsedRoleDto. Only stepOrder is editable on the "Flokkun starfa"

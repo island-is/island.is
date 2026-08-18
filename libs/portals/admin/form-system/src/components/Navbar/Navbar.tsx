@@ -24,6 +24,7 @@ import {
   lifetimeSettingsStep,
   urlSettingsStep,
   delegationSettingsStep,
+  deadlineSettingsStep,
 } from '../../lib/utils/customSections'
 import { baseSettingsStep } from '../../lib/utils/getBaseSettingsSection'
 import { ItemType } from '../../lib/utils/interfaces'
@@ -272,6 +273,16 @@ export const Navbar = () => {
           },
         },
       })
+    } else if (id === deadlineSettingsStep.id) {
+      controlDispatch({
+        type: 'SET_ACTIVE_ITEM',
+        payload: {
+          activeItem: {
+            type: 'Section',
+            data: deadlineSettingsStep,
+          },
+        },
+      })
     } else if (data) {
       controlDispatch({
         type: 'SET_ACTIVE_ITEM',
@@ -441,6 +452,15 @@ export const Navbar = () => {
           type="Section"
           data={delegationSettingsStep}
           active={activeItem.data?.id === delegationSettingsStep.id}
+          focusComponent={focusComponent}
+        />
+      </div>
+
+      <div>
+        <NavComponent
+          type="Section"
+          data={deadlineSettingsStep}
+          active={activeItem.data?.id === deadlineSettingsStep.id}
           focusComponent={focusComponent}
         />
       </div>

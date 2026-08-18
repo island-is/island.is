@@ -28,6 +28,7 @@ import { PreviewStepOrGroup } from './components/PreviewStepOrGroup/PreviewStepO
 import { RelevantParties } from './components/RelevantParties/RelevantParties'
 import { Urls } from './components/Urls/Urls'
 import { Delegation } from './components/Delegation/Delegation'
+import { Deadline } from './components/Deadline/Deadline'
 
 interface Props {
   openPreview: boolean
@@ -103,6 +104,9 @@ export const MainContent = ({ openPreview, setOpenPreview }: Props) => {
       ) : activeItem.type === 'Section' &&
         (activeItem.data as FormSystemSection).id === 'Delegation' ? (
         <Delegation />
+      ) : activeItem.type === 'Section' &&
+        (activeItem.data as FormSystemSection).id === 'Deadline' ? (
+        <Deadline />
       ) : (activeItem.data as FormSystemSection).sectionType ===
         SectionTypes.PAYMENT ? (
         <Payment />
@@ -226,7 +230,9 @@ export const MainContent = ({ openPreview, setOpenPreview }: Props) => {
                             (activeItem.data as FormSystemScreen).multiMax ?? 2,
                           ),
                         }}
-                        onChange={(e) => {
+                        onChange={(
+                          e: { label: string; value: string } | null,
+                        ) => {
                           controlDispatch({
                             type: 'CHANGE_MULTI_MAX',
                             payload: {

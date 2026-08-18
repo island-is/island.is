@@ -116,10 +116,6 @@ export class TransportAuthorityApi {
     const { vehicle, mileageReadings } =
       await this.fetchVehicleDataAndMileageForOwnerCoOwner(auth, permno)
 
-    // Get debt status
-    const debtStatus =
-      await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(auth, permno)
-
     // Get owner change validation
     const ownerChangeValidation =
       await this.vehicleOwnerChangeClient.validateVehicleForOwnerChange(
@@ -136,7 +132,7 @@ export class TransportAuthorityApi {
         requireMileage: vehicle.requiresMileageRegistration,
         mileageReading: mileageReadings?.[0]?.mileage?.toString() ?? '',
       },
-      isDebtLess: debtStatus.isDebtLess,
+      isDebtLess: true,
       validationErrorMessages: ownerChangeValidation?.hasError
         ? ownerChangeValidation.errorMessages
         : null,

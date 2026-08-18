@@ -1,6 +1,8 @@
 import { defineTemplateApi } from '@island.is/application/types'
 import { ApiActions } from '../utils/constants'
 
+export { IdentityApi, UserProfileApi } from '@island.is/application/types'
+
 // PREREQUISITES providers — independent of each other, order is inconsequential
 export const CompanyRegistryApi = defineTemplateApi({
   action: ApiActions.getCompanyData,
@@ -67,4 +69,23 @@ export const EditOutliersApi = defineTemplateApi({
   namespace: 'DirectorateOfEquality',
   shouldPersistToExternalData: true,
   throwOnError: true,
+})
+
+// Triggered manually from the CommentThread field for on-demand refresh, and
+// also wired as onEntry on DRAFT/POSTPONED/APPROVED/DENIED so externalData is
+// fresh on first render (e.g. for the postponedForm landing-screen decision).
+// Listed on a role's `api` array purely so updateApplicationExternalData is
+// permitted to invoke it for that role.
+export const GetReportCommentsApi = defineTemplateApi({
+  action: 'getReportComments',
+  externalDataId: 'getReportComments',
+  namespace: 'DirectorateOfEquality',
+  throwOnError: false,
+})
+
+export const SubmitReportCommentApi = defineTemplateApi({
+  action: 'submitReportComment',
+  externalDataId: 'submitReportComment',
+  namespace: 'DirectorateOfEquality',
+  throwOnError: false,
 })

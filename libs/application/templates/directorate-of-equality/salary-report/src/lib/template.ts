@@ -16,9 +16,11 @@ import {
   CompanyRegistryApi,
   DoeCompanyApi,
   EditOutliersApi,
+  GetReportCommentsApi,
   ImportPresignApi,
   ParsedSalaryReportApi,
   SalaryAnalysisApi,
+  SubmitReportCommentApi,
   SubmitSalaryReportApi,
 } from '../dataProviders'
 import { Events, Roles, States } from '../utils/constants'
@@ -30,7 +32,6 @@ import {
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
 import {
-  coreHistoryMessages,
   coreMessages,
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
@@ -132,10 +133,23 @@ const template: ApplicationTemplate<
           progress: 0.4,
           status: FormModes.DRAFT,
           lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: messages.inReview.sentHistoryLog,
+              },
+            ],
+          },
           // onExit (not onEntry on the target states) so a failed submission
           // blocks the transition instead of silently landing the applicant
           // on POSTPONED/COMPLETED with a stale backend record.
           onExit: SubmitSalaryReportApi,
+          // onEntry so the comment thread's non-empty check has fresh
+          // externalData to read on first render — role.api alone never
+          // auto-fetches outside PREREQUISITES, it only permits the on-demand
+          // call CommentThread makes from within the mounted field.
+          onEntry: GetReportCommentsApi,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -148,7 +162,12 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [ImportPresignApi, ParsedSalaryReportApi, SalaryAnalysisApi],
+              api: [
+                ImportPresignApi,
+                ParsedSalaryReportApi,
+                SalaryAnalysisApi,
+                GetReportCommentsApi,
+              ],
               delete: true,
             },
           ],
@@ -176,10 +195,19 @@ const template: ApplicationTemplate<
           // report — the report itself was already submitted via DRAFT's
           // onExit.
           onExit: EditOutliersApi,
+          // So the comment thread's non-empty check has fresh externalData —
+          // see the identical comment on States.DRAFT.
+          onEntry: GetReportCommentsApi,
           actionCard: {
             tag: {
               label: messages.postponed.tagLabel,
               variant: 'blueberry',
+            },
+            pendingAction: {
+              title: messages.postponed.pendingActionTitle,
+              content: messages.postponed.pendingActionContent,
+              button: messages.postponed.pendingActionButton,
+              displayStatus: 'info',
             },
             historyLogs: [
               {
@@ -200,10 +228,19 @@ const template: ApplicationTemplate<
               ],
               read: 'all',
               write: {
-                answers: ['salaryAnalysis'],
-                externalData: ['salaryAnalysisResult'],
+                answers: ['salaryAnalysis', 'comment'],
+                externalData: [
+                  'salaryAnalysisResult',
+                  'getReportComments',
+                  'submitReportComment',
+                ],
               },
-              api: [SalaryAnalysisApi],
+              api: [
+                SalaryAnalysisApi,
+                GetReportCommentsApi,
+                SubmitReportCommentApi,
+              ],
+              delete: true,
             },
           ],
         },
@@ -230,11 +267,15 @@ const template: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: coreHistoryMessages.applicationApproved,
+                logMessage: messages.inReview.approvedHistoryLog,
               },
               {
                 onEvent: DefaultEvents.REJECT,
-                logMessage: coreHistoryMessages.applicationRejected,
+                logMessage: messages.inReview.rejectedHistoryLog,
+              },
+              {
+                onEvent: DefaultEvents.EDIT,
+                logMessage: messages.inReview.editHistoryLog,
               },
             ],
           },
@@ -246,6 +287,11 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.inReviewForm),
                 ),
               read: 'all',
+              write: {
+                answers: ['comment'],
+                externalData: ['getReportComments', 'submitReportComment'],
+              },
+              api: [GetReportCommentsApi, SubmitReportCommentApi],
               delete: true,
             },
           ],
@@ -256,6 +302,13 @@ const template: ApplicationTemplate<
           },
           [DefaultEvents.REJECT]: {
             target: States.DENIED,
+          },
+          // Targets POSTPONED (not DRAFT) so a case-worker-requested revision
+          // reuses the same restricted comments/outlier-plan-editing flow —
+          // there's no path back to the original company/employee/criteria
+          // data-entry screens from here, by design.
+          [DefaultEvents.EDIT]: {
+            target: States.POSTPONED,
           },
         },
       },
@@ -271,6 +324,9 @@ const template: ApplicationTemplate<
               variant: 'mint',
             },
           },
+          // So the comment thread's non-empty check has fresh externalData —
+          // see the identical comment on States.DRAFT.
+          onEntry: GetReportCommentsApi,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -279,6 +335,8 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.approvedForm),
                 ),
               read: 'all',
+              write: { externalData: ['getReportComments'] },
+              api: [GetReportCommentsApi],
               delete: true,
             },
           ],
@@ -296,6 +354,9 @@ const template: ApplicationTemplate<
               variant: 'red',
             },
           },
+          // So the comment thread's non-empty check has fresh externalData —
+          // see the identical comment on States.DRAFT.
+          onEntry: GetReportCommentsApi,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -304,6 +365,8 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.deniedForm),
                 ),
               read: 'all',
+              write: { externalData: ['getReportComments'] },
+              api: [GetReportCommentsApi],
               delete: true,
             },
           ],

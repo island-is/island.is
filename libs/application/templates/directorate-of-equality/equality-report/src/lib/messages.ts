@@ -426,10 +426,14 @@ export const messages = {
         defaultMessage:
           '* Launajafnrétti\n\n* Jafnlaunastaðfesting eða jafnlaunavottun\n\n* Laus störf, starfsþjálfun, endurmenntun og símenntun\n\n* Samræming fjölskyldu- og atvinnulífs\n\n* Kynbundið ofbeldi, kynbundin áreitni og kynferðisleg áreitni (fyrirbyggjandi aðgerðir)',
       },
-      checkboxLabel: {
-        id: 'doe.er.application:equalityReport.information.checkboxLabel',
+      implementationTitle: {
+        id: 'doe.er.application:equalityReport.information.implementationTitle',
+        defaultMessage: 'Skipulag og framkvæmd',
+      },
+      implementationList: {
+        id: 'doe.er.application:equalityReport.information.implementationList#markdown',
         defaultMessage:
-          'Ég staðfesti að ég muni framfylgja markmiðum jafnréttisáætlunar',
+          '* Markmiðin eru skýr\n\n* Framkvæmdaáætlun er í samræmi við sett markmið\n\n* Aðgerðir hafa tímaramma\n\n* Áætlunin inniheldur árangursmat\n\n* Ábyrgð er skýr\n\n* Gildistími tilgreindur',
       },
       editorTitle: {
         id: 'doe.er.application:equalityReport.information.editorTitle',
@@ -594,6 +598,61 @@ export const messages = {
       id: 'doe.er.application:inReview.description',
       defaultMessage:
         'Við höfum móttekið jafnréttisáætlunina þína og hún verður yfirfarin af Jafnréttisstofu. Þú færð senda staðfestingu þegar yfirferð er lokið. Ef frekari upplýsingar vantar mun Jafnréttisstofa hafa samband við þig.',
+    },
+    sentHistoryLog: {
+      id: 'doe.er.application:inReview.sentHistoryLog',
+      defaultMessage: 'Jafnréttisáætlun send til Jafnréttisstofu',
+    },
+    approvedHistoryLog: {
+      id: 'doe.er.application:inReview.approvedHistoryLog',
+      defaultMessage: 'Jafnréttisáætlun samþykkt af Jafnréttisstofu',
+    },
+    rejectedHistoryLog: {
+      id: 'doe.er.application:inReview.rejectedHistoryLog',
+      defaultMessage: 'Jafnréttisáætlun hafnað af Jafnréttisstofu',
+    },
+    editHistoryLog: {
+      id: 'doe.er.application:inReview.editHistoryLog',
+      defaultMessage: 'Umsókn send aftur í vinnslu til lagfæringar',
+    },
+  }),
+
+  comments: defineMessages({
+    sectionTitle: {
+      id: 'doe.er.application:comments.sectionTitle',
+      defaultMessage: 'Samskipti',
+    },
+    title: {
+      id: 'doe.er.application:comments.title',
+      defaultMessage: 'Samskipti við Jafnréttisstofu',
+    },
+    emptyState: {
+      id: 'doe.er.application:comments.emptyState',
+      defaultMessage: 'Engin skilaboð hafa verið send.',
+    },
+    textareaLabel: {
+      id: 'doe.er.application:comments.textareaLabel',
+      defaultMessage: 'Skrifa skilaboð',
+    },
+    sendButton: {
+      id: 'doe.er.application:comments.sendButton',
+      defaultMessage: 'Senda',
+    },
+    reviewerLabel: {
+      id: 'doe.er.application:comments.reviewerLabel',
+      defaultMessage: 'Jafnréttisstofa',
+    },
+    companyLabel: {
+      id: 'doe.er.application:comments.companyLabel',
+      defaultMessage: 'Þú',
+    },
+    sendError: {
+      id: 'doe.er.application:comments.sendError',
+      defaultMessage: 'Ekki tókst að senda skilaboð, reyndu aftur.',
+    },
+    loadError: {
+      id: 'doe.er.application:comments.loadError',
+      defaultMessage: 'Ekki tókst að sækja skilaboð, reyndu aftur.',
     },
   }),
 }

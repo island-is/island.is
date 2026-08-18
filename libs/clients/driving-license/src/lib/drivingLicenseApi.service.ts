@@ -522,6 +522,8 @@ export class DrivingLicenseApi {
     sendLicenseInMail: number
     sendLicenseToAddress: string
     category: string
+    photoBiometricsId?: string | null
+    signatureBiometricsId?: string | null
   }): Promise<boolean> {
     const response =
       await this.v5.apiDrivinglicenseV5ApplicationsNewCategoryPost({
@@ -537,6 +539,8 @@ export class DrivingLicenseApi {
           bringsNewPhoto: params.willBringQualityPhoto ? 1 : 0,
           sendLicenseInMail: params.sendLicenseInMail,
           sendToAddress: params.sendLicenseToAddress,
+          photoBiometricsId: params.photoBiometricsId,
+          signatureBiometricsId: params.signatureBiometricsId,
         },
       })
 
