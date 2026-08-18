@@ -26,28 +26,17 @@ import type {
 } from '../../utils/types'
 import { useDraftQuery } from '../../utils/useDraftQuery'
 import { useDraftSync, type SyncCommand } from '../../utils/useDraftSync'
+import {
+  getActionErrorMessage,
+  type ActionExternalData,
+} from '../../utils/errors'
 import { OutlierGroupPanel } from './OutlierGroupPanel'
 
 interface Props extends FieldBaseProps {
   field: CustomField
 }
 
-// Shape written by templateApiActionRunner.service.ts's buildExternalData —
-// `reason` is already localized server-side (via formatMessage using the
-// application's locale) before it reaches the client.
-type AnalysisExternalData = {
-  status?: 'success' | 'failure'
-  data?: SalaryAnalysisResponseDto
-  reason?: { title?: string; summary?: string } | string[]
-}
-
-const getErrorMessage = (
-  reason: AnalysisExternalData['reason'],
-): string | undefined => {
-  if (!reason) return undefined
-  if (Array.isArray(reason)) return reason.join(', ')
-  return reason.summary || reason.title
-}
+type AnalysisExternalData = ActionExternalData<SalaryAnalysisResponseDto>
 
 // `postponed` is answers-backed and lives on the ambient global form in
 // both phases — it is NOT part of this local shape. Only `outlierGroups`
@@ -77,6 +66,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
   const { formatMessage, lang: locale } = useLocale()
   const {
     content: outlierGroupsContent,
+    hasError: outlierGroupsHasError,
     refetch: refetchOutlierGroups,
   } = useDraftQuery<{ groups: DraftOutlierGroupDto[] }>(
     application,
@@ -85,12 +75,16 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
   )
   const {
     content: employeesContent,
+    hasError: employeesHasError,
     refetch: refetchEmployees,
   } = useDraftQuery<{ employees: ReportEmployeeDto[] }>(
     application,
     'DirectorateOfEquality.listDraftEmployees',
     'draftEmployees',
   )
+  // Relevant in draft phase only — POSTPONED-review doesn't read the draft
+  // at all (see `isDraftPhase` below).
+  const hasDraftReadError = outlierGroupsHasError || employeesHasError
   const content = useMemo(
     () =>
       outlierGroupsContent && employeesContent
@@ -168,7 +162,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
       ) {
         setResult(salaryAnalysisResult.data)
       } else {
-        setErrorMessage(getErrorMessage(salaryAnalysisResult?.reason))
+        setErrorMessage(getActionErrorMessage(salaryAnalysisResult?.reason))
         setHasError(true)
       }
     } catch {
@@ -247,6 +241,14 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
           errorMessage ??
             formatMessage(messages.salaryAnalysis.results.analyzeError),
         ]
+      }
+      // Draft-phase reads failed — bail out here rather than falling through
+      // to the `isDraftPhase && content` sync block below, which silently
+      // skips syncing (and drops) the applicant's outlier-group work when
+      // `content` is undefined.
+      if (isDraftPhase && hasDraftReadError) {
+        refetch()
+        return [false, formatMessage(messages.errors.draftLoadFailed)]
       }
       // Postponing the improvement plan exempts the applicant from grouping
       // and explaining outliers here entirely.
@@ -370,6 +372,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
     draftForm,
     sync,
     refetch,
+    hasDraftReadError,
   ])
 
   const totals = result?.baseSalaryByGenderAndScoreAll?.totals
@@ -403,6 +406,15 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
               {formatMessage(messages.salaryAnalysis.results.recalculateButton)}
             </Button>
           </Box>
+        </Box>
+      )}
+
+      {isDraftPhase && hasDraftReadError && (
+        <Box marginBottom={3}>
+          <AlertMessage
+            type="error"
+            message={formatMessage(messages.errors.draftLoadFailed)}
+          />
         </Box>
       )}
 

@@ -1,6 +1,12 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, LoadingDots, Stack, Table as T } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  LoadingDots,
+  Stack,
+  Table as T,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useEffect, useMemo, useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -33,6 +39,7 @@ export const EmployeeClassificationEditor: FC<
   const {
     content: criteriaContent,
     loading: criteriaLoading,
+    hasError: criteriaHasError,
     refetch: refetchCriteria,
   } = useDraftQuery<{ criteria: DraftCriterionWithSubCriteriaDto[] }>(
     application,
@@ -42,6 +49,7 @@ export const EmployeeClassificationEditor: FC<
   const {
     content: employeesContent,
     loading: employeesLoading,
+    hasError: employeesHasError,
     refetch: refetchEmployees,
   } = useDraftQuery<{ employees: DraftEmployeeWithStepsDto[] }>(
     application,
@@ -54,6 +62,7 @@ export const EmployeeClassificationEditor: FC<
   const [page, setPage] = useState(1)
 
   const loading = criteriaLoading || employeesLoading
+  const hasError = criteriaHasError || employeesHasError
   const employees = employeesContent?.employees ?? []
 
   // Role titles are display-only here — read passively off externalData
@@ -97,10 +106,16 @@ export const EmployeeClassificationEditor: FC<
   }, [criteriaContent, employeesContent])
 
   useEffect(() => {
-    if (!setBeforeSubmitCallback || !criteriaContent || !employeesContent) {
-      return
-    }
+    if (!setBeforeSubmitCallback) return
     setBeforeSubmitCallback(async () => {
+      if (hasError) {
+        refetchCriteria()
+        refetchEmployees()
+        return [false, formatMessage(messages.errors.draftLoadFailed)]
+      }
+      if (!criteriaContent || !employeesContent) {
+        return [false, formatMessage(messages.errors.draftLoadFailed)]
+      }
       const values = methods.getValues().employees
       const employeeCommands: SyncCommand[] = values.map((entry) => ({
         method: SyncMethodEnum.UPDATE,
@@ -130,12 +145,24 @@ export const EmployeeClassificationEditor: FC<
     employeesContent,
     personalCriteria,
     formatMessage,
+    hasError,
   ])
 
-  if (loading || !criteriaContent || !employeesContent) {
+  if (loading) {
     return (
       <Box display="flex" justifyContent="center" paddingY={5}>
         <LoadingDots />
+      </Box>
+    )
+  }
+
+  if (hasError || !criteriaContent || !employeesContent) {
+    return (
+      <Box>
+        <AlertMessage
+          type="error"
+          message={formatMessage(messages.errors.draftLoadFailed)}
+        />
       </Box>
     )
   }

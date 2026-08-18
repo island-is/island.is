@@ -1,5 +1,5 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, LoadingDots, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, LoadingDots, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useEffect, useRef, useState } from 'react'
 import { messages } from '../../lib/messages'
@@ -23,7 +23,7 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   answerQuestions,
 }) => {
   const { formatMessage } = useLocale()
-  const { content, loading, refetch } = useDraftQuery<{
+  const { content, loading, hasError, refetch } = useDraftQuery<{
     criteria: ReportCriterionDto[]
   }>(application, 'DirectorateOfEquality.listDraftCriteria', 'draftCriteria')
   const { sync } = useDraftSync(application)
@@ -74,6 +74,12 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   useEffect(() => {
     if (!setBeforeSubmitCallback) return
     setBeforeSubmitCallback(async () => {
+      if (hasError) {
+        // The initial criteria read never loaded — retry it rather than
+        // syncing on top of unknown local state.
+        refetch()
+        return [false, formatMessage(messages.errors.draftLoadFailed)]
+      }
       if (totalWeight !== 0 && Math.abs(totalWeight - 100) > 0.001) {
         return [
           false,
@@ -137,6 +143,7 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     totalWeight,
     formatMessage,
     sync,
+    hasError,
   ])
 
   if (loading) {
@@ -149,6 +156,15 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   return (
     <Box>
+      {hasError && (
+        <Box marginBottom={3}>
+          <AlertMessage
+            type="error"
+            message={formatMessage(messages.errors.draftLoadFailed)}
+          />
+        </Box>
+      )}
+
       <Text variant="h4" marginBottom={2}>
         {formatMessage(messages.report.criteria.jobFactorTitle)}
       </Text>

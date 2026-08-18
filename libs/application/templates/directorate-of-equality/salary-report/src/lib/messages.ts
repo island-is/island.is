@@ -38,6 +38,13 @@ export const messages = {
       defaultMessage:
         'Ekki tókst að vista breytingarnar. Reyndu aftur áður en þú heldur áfram.',
     },
+    // Shown when a screen's draft read fails on load. No dedicated retry
+    // button — pressing "Halda áfram" retries the fetch itself.
+    draftLoadFailed: {
+      id: 'doe.sr.application:errors.draftLoadFailed',
+      defaultMessage:
+        'Ekki tókst að sækja gögnin. Prófaðu að halda áfram til að reyna aftur.',
+    },
   }),
 
   general: defineMessages({

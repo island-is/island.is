@@ -1,5 +1,5 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, LoadingDots, Stack, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, LoadingDots, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useEffect, useMemo, useRef } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -28,7 +28,7 @@ export const SubCriteriaEditor: FC<
   React.PropsWithChildren<FieldBaseProps>
 > = ({ application, setBeforeSubmitCallback }) => {
   const { formatMessage } = useLocale()
-  const { content, loading, refetch } = useDraftQuery<{
+  const { content, loading, hasError, refetch } = useDraftQuery<{
     criteria: DraftCriterionWithSubCriteriaDto[]
   }>(application, 'DirectorateOfEquality.getDraftCriteriaTree', 'draftCriteriaTree')
   const { sync } = useDraftSync(application)
@@ -96,6 +96,10 @@ export const SubCriteriaEditor: FC<
   useEffect(() => {
     if (!setBeforeSubmitCallback) return
     setBeforeSubmitCallback(async () => {
+      if (hasError) {
+        refetch()
+        return [false, formatMessage(messages.errors.draftLoadFailed)]
+      }
       const values = methods.getValues()
       const allGroups = Object.values(values).flat()
 
@@ -157,12 +161,23 @@ export const SubCriteriaEditor: FC<
       }
       return [true, null]
     })
-  }, [setBeforeSubmitCallback, methods, sync, refetch, formatMessage])
+  }, [setBeforeSubmitCallback, methods, sync, refetch, formatMessage, hasError])
 
-  if (loading || !content) {
+  if (loading) {
     return (
       <Box display="flex" justifyContent="center" paddingY={5}>
         <LoadingDots />
+      </Box>
+    )
+  }
+
+  if (hasError || !content) {
+    return (
+      <Box>
+        <AlertMessage
+          type="error"
+          message={formatMessage(messages.errors.draftLoadFailed)}
+        />
       </Box>
     )
   }

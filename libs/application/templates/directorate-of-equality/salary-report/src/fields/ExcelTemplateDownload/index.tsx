@@ -19,6 +19,7 @@ import {
 import type { ReportCriterionDto } from '../../utils/types'
 import { useDraftQuery } from '../../utils/useDraftQuery'
 import { useDraftSync } from '../../utils/useDraftSync'
+import { getActionErrorMessage, type ActionExternalData } from '../../utils/errors'
 import { messages } from '../../lib/messages'
 
 // The next screen in the flow — both upload and manual entry advance here.
@@ -32,6 +33,11 @@ export const ExcelTemplateDownload: FC<
   const [importStatus, setImportStatus] = useState<'success' | 'error' | null>(
     null,
   )
+  // DMR's own message when the presign/import/manual-entry-sync action gave
+  // one — falls back to the generic `m.importError` text when it didn't.
+  const [importErrorMessage, setImportErrorMessage] = useState<
+    string | undefined
+  >()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [updateApplicationExternalData] = useMutation(
@@ -42,7 +48,7 @@ export const ExcelTemplateDownload: FC<
   // screen of the part of the form the draft now owns. Shares the
   // `draftCriteria` externalData key with CriteriaEditor, so that screen
   // gets this read for free on first visit without its own refetch.
-  const { content, loading, refetch } = useDraftQuery<{
+  const { content, loading, hasError, refetch } = useDraftQuery<{
     criteria: ReportCriterionDto[]
   }>(application, 'DirectorateOfEquality.listDraftCriteria', 'draftCriteria', {
     ensureDraft: true,
@@ -83,6 +89,7 @@ export const ExcelTemplateDownload: FC<
 
     setIsImporting(true)
     setImportStatus(null)
+    setImportErrorMessage(undefined)
     try {
       // 1. Ask the server (authenticated against DMR) for a presigned upload
       //    URL. The resulting { url, key } lands in externalData.importPresign.
@@ -101,12 +108,14 @@ export const ExcelTemplateDownload: FC<
         },
       })
 
-      const presign = presignResult.data?.updateApplicationExternalData
-        .externalData?.importPresign?.data as
-        | { url: string; key: string }
+      const presignData = presignResult.data?.updateApplicationExternalData
+        .externalData?.importPresign as
+        | ActionExternalData<{ url: string; key: string }>
         | undefined
+      const presign = presignData?.data
 
       if (!presign?.url) {
+        setImportErrorMessage(getActionErrorMessage(presignData?.reason))
         setImportStatus('error')
         return
       }
@@ -156,13 +165,11 @@ export const ExcelTemplateDownload: FC<
 
       const importData = result.data?.updateApplicationExternalData
         .externalData?.importSalaryDraftWorkbook as
-        | {
-            status?: 'success' | 'failure'
-            data?: { criteria?: { type?: string }[] }
-          }
+        | ActionExternalData<{ criteria?: { type?: string }[] }>
         | undefined
 
       if (importData?.status !== 'success') {
+        setImportErrorMessage(getActionErrorMessage(importData?.reason))
         setImportStatus('error')
         return
       }
@@ -195,31 +202,16 @@ export const ExcelTemplateDownload: FC<
   // on. Existing draft content (from a prior import or manual entry) is left
   // untouched.
   const handleManualEntry = async () => {
-    if (!content || content.criteria.length === 0) {
-      const jobFactors = createDefaultJobFactors()
-      await sync({
-        criteria: jobFactors.map((factor) => ({
-          method: SyncMethodEnum.CREATE,
-          id: factor.id,
-          data: {
-            title: factor.title,
-            description: factor.description,
-            weight: Number(factor.weight) || 0,
-            type: factor.type,
-          },
-        })),
-      })
-      await refetch({ silent: true })
+    if (hasError) {
+      // The initial criteria read never loaded — retry it rather than
+      // syncing on top of unknown state. No dedicated retry button; this
+      // button doubles as one.
+      refetch()
+      setImportErrorMessage(undefined)
+      setImportStatus('error')
+      return
     }
-    goToScreen?.(NEXT_SCREEN_ID)
-  }
-
-  // Pressing the footer "Halda áfram" behaves the same as manual entry: if
-  // the draft has no criteria yet, seed the defaults before advancing;
-  // existing content (imported or manually entered) is preserved.
-  useEffect(() => {
-    if (!setBeforeSubmitCallback) return
-    setBeforeSubmitCallback(async () => {
+    try {
       if (!content || content.criteria.length === 0) {
         const jobFactors = createDefaultJobFactors()
         await sync({
@@ -236,10 +228,48 @@ export const ExcelTemplateDownload: FC<
         })
         await refetch({ silent: true })
       }
+      goToScreen?.(NEXT_SCREEN_ID)
+    } catch {
+      setImportErrorMessage(undefined)
+      setImportStatus('error')
+    }
+  }
+
+  // Pressing the footer "Halda áfram" behaves the same as manual entry: if
+  // the draft has no criteria yet, seed the defaults before advancing;
+  // existing content (imported or manually entered) is preserved. Also
+  // doubles as the retry action when the initial criteria read failed.
+  useEffect(() => {
+    if (!setBeforeSubmitCallback) return
+    setBeforeSubmitCallback(async () => {
+      if (hasError) {
+        refetch()
+        return [false, formatMessage(messages.errors.draftLoadFailed)]
+      }
+      if (!content || content.criteria.length === 0) {
+        const jobFactors = createDefaultJobFactors()
+        try {
+          await sync({
+            criteria: jobFactors.map((factor) => ({
+              method: SyncMethodEnum.CREATE,
+              id: factor.id,
+              data: {
+                title: factor.title,
+                description: factor.description,
+                weight: Number(factor.weight) || 0,
+                type: factor.type,
+              },
+            })),
+          })
+          await refetch({ silent: true })
+        } catch {
+          return [false, formatMessage(messages.errors.draftSyncFailed)]
+        }
+      }
       return [true, null]
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setBeforeSubmitCallback, content])
+  }, [setBeforeSubmitCallback, content, hasError])
 
   const m = messages.report.dataEntry
 
@@ -260,6 +290,15 @@ export const ExcelTemplateDownload: FC<
         style={{ display: 'none' }}
         onChange={handleFileSelected}
       />
+
+      {hasError && (
+        <Box marginBottom={3}>
+          <AlertMessage
+            type="error"
+            message={formatMessage(messages.errors.draftLoadFailed)}
+          />
+        </Box>
+      )}
 
       {base64Template && (
         <Box display="flex" justifyContent="flexEnd" marginBottom={3}>
@@ -307,7 +346,10 @@ export const ExcelTemplateDownload: FC<
 
       {importStatus === 'error' && (
         <Box marginTop={3}>
-          <AlertMessage type="error" message={formatMessage(m.importError)} />
+          <AlertMessage
+            type="error"
+            message={importErrorMessage ?? formatMessage(m.importError)}
+          />
         </Box>
       )}
     </Box>

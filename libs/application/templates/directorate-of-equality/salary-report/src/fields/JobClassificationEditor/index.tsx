@@ -29,6 +29,7 @@ export const JobClassificationEditor: FC<
   const {
     content: criteriaContent,
     loading: criteriaLoading,
+    hasError: criteriaHasError,
     refetch: refetchCriteria,
   } = useDraftQuery<{ criteria: DraftCriterionWithSubCriteriaDto[] }>(
     application,
@@ -38,6 +39,7 @@ export const JobClassificationEditor: FC<
   const {
     content: rolesContent,
     loading: rolesLoading,
+    hasError: rolesHasError,
     refetch: refetchRoles,
   } = useDraftQuery<{ roles: DraftRoleWithStepsDto[] }>(
     application,
@@ -49,6 +51,7 @@ export const JobClassificationEditor: FC<
   const seeded = useRef(false)
 
   const loading = criteriaLoading || rolesLoading
+  const hasError = criteriaHasError || rolesHasError
   const roles = rolesContent?.roles ?? []
 
   const jobCriteria = useMemo(
@@ -72,8 +75,16 @@ export const JobClassificationEditor: FC<
   }, [criteriaContent, rolesContent])
 
   useEffect(() => {
-    if (!setBeforeSubmitCallback || !criteriaContent || !rolesContent) return
+    if (!setBeforeSubmitCallback) return
     setBeforeSubmitCallback(async () => {
+      if (hasError) {
+        refetchCriteria()
+        refetchRoles()
+        return [false, formatMessage(messages.errors.draftLoadFailed)]
+      }
+      if (!criteriaContent || !rolesContent) {
+        return [false, formatMessage(messages.errors.draftLoadFailed)]
+      }
       const values = methods.getValues().roles
       const roleCommands: SyncCommand[] = values.map((entry) => ({
         method: SyncMethodEnum.UPDATE,
@@ -103,12 +114,24 @@ export const JobClassificationEditor: FC<
     rolesContent,
     jobCriteria,
     formatMessage,
+    hasError,
   ])
 
-  if (loading || !criteriaContent || !rolesContent) {
+  if (loading) {
     return (
       <Box display="flex" justifyContent="center" paddingY={5}>
         <LoadingDots />
+      </Box>
+    )
+  }
+
+  if (hasError || !criteriaContent || !rolesContent) {
+    return (
+      <Box>
+        <AlertMessage
+          type="error"
+          message={formatMessage(messages.errors.draftLoadFailed)}
+        />
       </Box>
     )
   }

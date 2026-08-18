@@ -1,5 +1,6 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import {
+  AlertMessage,
   Box,
   Button,
   LoadingDots,
@@ -43,6 +44,7 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const {
     content: employeesContent,
     loading: employeesLoading,
+    hasError: employeesHasError,
     refetch: refetchEmployees,
   } = useDraftQuery<{ employees: ReportEmployeeDto[] }>(
     application,
@@ -52,6 +54,7 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const {
     content: rolesContent,
     loading: rolesLoading,
+    hasError: rolesHasError,
     refetch: refetchRoles,
   } = useDraftQuery<{ roles: ReportEmployeeRoleDto[] }>(
     application,
@@ -59,6 +62,7 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     'draftRoles',
   )
   const loading = employeesLoading || rolesLoading
+  const hasError = employeesHasError || rolesHasError
   const content = useMemo(
     () =>
       employeesContent && rolesContent
@@ -132,6 +136,11 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   useEffect(() => {
     if (!setBeforeSubmitCallback) return
     setBeforeSubmitCallback(async () => {
+      if (hasError) {
+        refetchEmployees()
+        refetchRoles()
+        return [false, formatMessage(messages.errors.draftLoadFailed)]
+      }
       const employees = getValues(FIELD_NAME) as Employee[]
       const finalIds = new Set(employees.map((e) => e.id))
 
@@ -185,7 +194,17 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       return [true, null]
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setBeforeSubmitCallback, getValues, roles, sync, refetch, formatMessage])
+  }, [
+    setBeforeSubmitCallback,
+    getValues,
+    roles,
+    sync,
+    refetch,
+    formatMessage,
+    hasError,
+    refetchEmployees,
+    refetchRoles,
+  ])
 
   const resolveEmployee = (
     values: EmployeeFormValues,
@@ -263,71 +282,81 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   }
 
   return (
-    <FormProvider {...methods}>
-      <Box>
-        <Stack space={4}>
-          <T.Table>
-            <T.Head>
-              <T.Row>
-                <T.HeadData></T.HeadData>
-                <T.HeadData>{formatMessage(m.nameColumn)}</T.HeadData>
-                <T.HeadData>{formatMessage(m.roleColumn)}</T.HeadData>
-                <T.HeadData>{formatMessage(m.genderColumn)}</T.HeadData>
-                <T.HeadData></T.HeadData>
-              </T.Row>
-            </T.Head>
-            <T.Body>
-              {visibleFields.map(({ field, index }) =>
-                editingIndex === index ? (
-                  <T.Row key={field.id}>
-                    <T.Data colSpan={5} style={{ padding: 0 }}>
-                      <EmployeeForm
-                        employee={field}
-                        roleTitleById={roleTitleById}
-                        onSubmit={(values) => handleSave(index, values)}
-                        onCancel={() => setEditingIndex(null)}
-                      />
-                    </T.Data>
-                  </T.Row>
-                ) : (
-                  <EmployeeRow
-                    key={field.id}
-                    employee={field}
-                    roleTitleById={roleTitleById}
-                    onRemove={() => remove(index)}
-                    onEdit={() => setEditingIndex(index)}
-                  />
-                ),
-              )}
-            </T.Body>
-          </T.Table>
-
-          <TablePagination
-            page={currentPage}
-            totalPages={totalPages}
-            onPageChange={setPage}
+    <>
+      {hasError && (
+        <Box marginBottom={3}>
+          <AlertMessage
+            type="error"
+            message={formatMessage(messages.errors.draftLoadFailed)}
           />
+        </Box>
+      )}
+      <FormProvider {...methods}>
+        <Box>
+          <Stack space={4}>
+            <T.Table>
+              <T.Head>
+                <T.Row>
+                  <T.HeadData></T.HeadData>
+                  <T.HeadData>{formatMessage(m.nameColumn)}</T.HeadData>
+                  <T.HeadData>{formatMessage(m.roleColumn)}</T.HeadData>
+                  <T.HeadData>{formatMessage(m.genderColumn)}</T.HeadData>
+                  <T.HeadData></T.HeadData>
+                </T.Row>
+              </T.Head>
+              <T.Body>
+                {visibleFields.map(({ field, index }) =>
+                  editingIndex === index ? (
+                    <T.Row key={field.id}>
+                      <T.Data colSpan={5} style={{ padding: 0 }}>
+                        <EmployeeForm
+                          employee={field}
+                          roleTitleById={roleTitleById}
+                          onSubmit={(values) => handleSave(index, values)}
+                          onCancel={() => setEditingIndex(null)}
+                        />
+                      </T.Data>
+                    </T.Row>
+                  ) : (
+                    <EmployeeRow
+                      key={field.id}
+                      employee={field}
+                      roleTitleById={roleTitleById}
+                      onRemove={() => remove(index)}
+                      onEdit={() => setEditingIndex(index)}
+                    />
+                  ),
+                )}
+              </T.Body>
+            </T.Table>
 
-          {isAdding ? (
-            <EmployeeForm
-              roleTitleById={roleTitleById}
-              onSubmit={handleAdd}
-              onCancel={() => setIsAdding(false)}
+            <TablePagination
+              page={currentPage}
+              totalPages={totalPages}
+              onPageChange={setPage}
             />
-          ) : (
-            <Box display="flex" justifyContent="flexStart">
-              <Button
-                variant="ghost"
-                type="button"
-                icon="add"
-                onClick={() => setIsAdding(true)}
-              >
-                {formatMessage(m.addButton)}
-              </Button>
-            </Box>
-          )}
-        </Stack>
-      </Box>
-    </FormProvider>
+
+            {isAdding ? (
+              <EmployeeForm
+                roleTitleById={roleTitleById}
+                onSubmit={handleAdd}
+                onCancel={() => setIsAdding(false)}
+              />
+            ) : (
+              <Box display="flex" justifyContent="flexStart">
+                <Button
+                  variant="ghost"
+                  type="button"
+                  icon="add"
+                  onClick={() => setIsAdding(true)}
+                >
+                  {formatMessage(m.addButton)}
+                </Button>
+              </Box>
+            )}
+          </Stack>
+        </Box>
+      </FormProvider>
+    </>
   )
 }
