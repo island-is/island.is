@@ -1,8 +1,7 @@
 import addDays from 'date-fns/addDays'
-import { getSlugFromType, getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
 import {
   Application,
-  ApplicationTypes,
   ExternalData,
   FormValue,
   PruningApplication,
@@ -81,27 +80,11 @@ const getNotificationAddress = (
   return '—'
 }
 
-const getApplicationPath = (application: NotificationApplication): string =>
-  `/${getSlugFromType(ApplicationTypes.HOUSING_BENEFITS)}/${application.id}`
-
-const getApplicationLink = (application: NotificationApplication): string => {
-  const path = getApplicationPath(application)
-  const origin = (
-    process.env.CLIENT_LOCATION_ORIGIN ??
-    `http://localhost:${process.env.WEB_FRONTEND_PORT ?? '4242'}/umsoknir`
-  ).replace(/\/$/, '')
-  return `${origin}${path}`
-}
-
 const buildNotificationArgs = (
   application: NotificationApplication,
   daysRemaining?: number,
 ): Array<{ key: string; value: string }> => {
   const args: Array<{ key: string; value: string }> = [
-    {
-      key: 'applicationLink',
-      value: getApplicationLink(application),
-    },
     {
       key: 'expiryDate',
       value: getHousingBenefitsPruneDate(application).toISOString(),
@@ -138,6 +121,7 @@ export const getDraftPruneReminderScheduledNotifications = (
         template: templateId,
         delayInMs: testDelayMs,
         args: buildNotificationArgs(application, PRUNE_REMINDER_DAYS_BEFORE),
+        includeApplicationLink: true,
       },
     ]
   }
@@ -151,6 +135,7 @@ export const getDraftPruneReminderScheduledNotifications = (
       template: templateId,
       date: addDays(pruneDate, -daysRemaining),
       args: buildNotificationArgs(application, daysRemaining),
+      includeApplicationLink: true,
     }
   })
 }

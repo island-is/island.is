@@ -13,6 +13,7 @@ import {
   HealthConversationTextContentFragment,
   HealthConversationVideoContentFragment,
 } from '../HealthConversationDetail.generated'
+import { linkifyText } from '../utils/linkify'
 
 interface Props {
   message: HealthConversationMessageFragment
@@ -24,7 +25,17 @@ const TextContent = ({
   content: HealthConversationTextContentFragment
 }) => (
   <Box marginBottom={4} style={{ whiteSpace: 'pre-line' }}>
-    <Text fontWeight="light">{content.text}</Text>
+    <Text fontWeight="light">
+      {linkifyText(content.text).map((part, index) =>
+        part.type === 'link' && part.href ? (
+          <InlineLink key={index} to={part.href}>
+            {part.value}
+          </InlineLink>
+        ) : (
+          <span key={index}>{part.value}</span>
+        ),
+      )}
+    </Text>
   </Box>
 )
 
