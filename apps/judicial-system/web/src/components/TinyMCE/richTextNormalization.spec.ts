@@ -232,6 +232,51 @@ describe('normalizeRichTextHtml', () => {
         normalizeRichTextHtml('<span style="margin-left: 40px;">x</span>'),
       ).toBe('x')
     })
+
+    it('does not indent list items, whose level is their nesting', () => {
+      // Word indents items with margin-left as well as nesting them. An indent
+      // class here pads the item itself, pushing its text away from its own
+      // marker, and the PDF ignores it — so it must never be written.
+      expect(
+        normalizeRichTextHtml('<ol><li style="margin-left: 72pt;">x</li></ol>'),
+      ).toBe('<ol><li>x</li></ol>')
+    })
+
+    it('strips indent classes already saved on list items', () => {
+      expect(
+        normalizeRichTextHtml('<ul><li class="indent-2">x</li></ul>'),
+      ).toBe('<ul><li>x</li></ul>')
+    })
+
+    it('keeps other classes when stripping an indent class off an item', () => {
+      expect(
+        normalizeRichTextHtml('<ul><li class="indent-2 hl-ffff00">x</li></ul>'),
+      ).toBe('<ul><li class="hl-ffff00">x</li></ul>')
+    })
+
+    it('carries a suppressed list marker as a class', () => {
+      // The lists plugin marks the wrapper items it creates this way; the
+      // inline style must never reach the API.
+      expect(
+        normalizeRichTextHtml(
+          '<ul><li style="list-style-type: none;"><ul><li>x</li></ul></li></ul>',
+        ),
+      ).toBe('<ul><li class="marker-none"><ul><li>x</li></ul></li></ul>')
+    })
+
+    it('does not suppress markers on anything but a list item', () => {
+      expect(
+        normalizeRichTextHtml('<p style="list-style-type: none;">x</p>'),
+      ).toBe('<p>x</p>')
+    })
+
+    it('still indents paragraphs nested inside a list item', () => {
+      expect(
+        normalizeRichTextHtml(
+          '<ul><li><p style="margin-left: 36pt;">x</p></li></ul>',
+        ),
+      ).toBe('<ul><li><p class="indent-1">x</p></li></ul>')
+    })
   })
 
   describe('inline bold and italic', () => {
