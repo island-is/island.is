@@ -9,6 +9,12 @@ describe('validateBankAccountNumber', () => {
     expect(validateBankAccountNumber('123456789012', formatMessage)).toBe(true)
   })
 
+  it('accepts the masked input value', () => {
+    expect(validateBankAccountNumber('1234-56-789012', formatMessage)).toBe(
+      true,
+    )
+  })
+
   it('rejects fewer than 12 digits', () => {
     expect(validateBankAccountNumber('12345', formatMessage)).toBe(
       'payments:bankTransfer.accountNumberInvalid',
@@ -21,8 +27,14 @@ describe('validateBankAccountNumber', () => {
     )
   })
 
-  it('rejects non-digit characters', () => {
-    expect(validateBankAccountNumber('1234-56-7890', formatMessage)).toBe(
+  it('rejects letters among the digits', () => {
+    expect(validateBankAccountNumber('1234-56-78901a', formatMessage)).toBe(
+      'payments:bankTransfer.accountNumberInvalid',
+    )
+  })
+
+  it('rejects 12 digits with an extra letter', () => {
+    expect(validateBankAccountNumber('1234-56-789012a', formatMessage)).toBe(
       'payments:bankTransfer.accountNumberInvalid',
     )
   })
