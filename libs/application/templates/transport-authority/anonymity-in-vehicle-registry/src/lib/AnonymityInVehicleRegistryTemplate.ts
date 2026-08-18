@@ -16,10 +16,12 @@ import {
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { ApiActions } from '../shared'
+import { AuthDelegationType } from '@island.is/shared/types'
 import { AnonymityInVehicleRegistrySchema } from './dataSchema'
 import { application } from './messages'
 import { AnonymityStatusApi } from '../dataProviders'
 import { CodeOwners } from '@island.is/shared/constants'
+import { ApiScope } from '@island.is/auth/scopes'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -33,6 +35,12 @@ const template: ApplicationTemplate<
   translationNamespaces:
     ApplicationConfigurations.AnonymityInVehicleRegistry.translation,
   dataSchema: AnonymityInVehicleRegistrySchema,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+    },
+  ],
+  requiredScopes: [ApiScope.samgongustofaVehicles],
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
