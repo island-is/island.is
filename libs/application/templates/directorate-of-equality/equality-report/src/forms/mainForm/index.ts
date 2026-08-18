@@ -5,6 +5,7 @@ import { aboutTheCompanySection } from './aboutTheCompanySection'
 import { equalityReportSection } from './equalityReportSection'
 import { overviewSection } from './overview'
 import { messages } from '../../lib/messages'
+import { buildCommentThreadSection } from '../commentThreadSection'
 
 export const MainForm = buildForm({
   id: 'MainForm',
@@ -13,5 +14,10 @@ export const MainForm = buildForm({
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  children: [aboutTheCompanySection, equalityReportSection, overviewSection],
+  children: [
+    aboutTheCompanySection,
+    equalityReportSection,
+    overviewSection,
+    buildCommentThreadSection(),
+  ],
 })

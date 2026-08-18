@@ -12,6 +12,7 @@ import { buildSalaryAnalysisSection } from '../mainForm/salaryAnalysisSection'
 import { postponedIntroSection } from './postponedIntroSection'
 import { postponedReportSummarySection } from './postponedReportSummarySection'
 import { messages } from '../../lib/messages'
+import { buildCommentThreadSection } from '../commentThreadSection'
 
 export const postponedForm = buildForm({
   id: 'postponedForm',
