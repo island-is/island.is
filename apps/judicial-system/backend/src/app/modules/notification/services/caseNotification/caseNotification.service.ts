@@ -1635,13 +1635,14 @@ export class CaseNotificationService extends BaseNotificationService {
     })
   }
 
-  private sendRevokedEmailNotificationToCourtForRequestCase(
+  private sendRevokedEmailNotificationForRequestCase(
     theCase: Case,
     recipientName?: string,
     recipientEmail?: string,
+    caseNumber = theCase.courtCaseNumber,
   ): Promise<Recipient> {
-    const subject = `Krafa afturkölluð í máli ${theCase.courtCaseNumber}`
-    const body = `${theCase.creatingProsecutor?.institution?.name} hefur afturkallað kröfu í máli ${theCase.courtCaseNumber}.`
+    const subject = `Krafa afturkölluð í máli ${caseNumber}`
+    const body = `${theCase.creatingProsecutor?.institution?.name} hefur afturkallað kröfu í máli ${caseNumber}.`
 
     return this.sendEmail({
       subject,
@@ -1670,7 +1671,7 @@ export class CaseNotificationService extends BaseNotificationService {
     if (theCase.courtCaseNumber) {
       if (!theCase.judge && !theCase.registrar) {
         promises.push(
-          this.sendRevokedEmailNotificationToCourtForRequestCase(
+          this.sendRevokedEmailNotificationForRequestCase(
             theCase,
             theCase.court?.name,
             this.getCourtEmail(theCase.courtId),
@@ -1679,7 +1680,7 @@ export class CaseNotificationService extends BaseNotificationService {
       } else {
         if (theCase.judge) {
           promises.push(
-            this.sendRevokedEmailNotificationToCourtForRequestCase(
+            this.sendRevokedEmailNotificationForRequestCase(
               theCase,
               theCase.judge.name,
               theCase.judge.email,
@@ -1689,7 +1690,7 @@ export class CaseNotificationService extends BaseNotificationService {
 
         if (theCase.registrar) {
           promises.push(
-            this.sendRevokedEmailNotificationToCourtForRequestCase(
+            this.sendRevokedEmailNotificationForRequestCase(
               theCase,
               theCase.registrar.name,
               theCase.registrar.email,
@@ -1716,18 +1717,20 @@ export class CaseNotificationService extends BaseNotificationService {
     )
 
     if (defenderWasNotified && theCase.defendants) {
-      promises.push(
-        this.sendRevokedEmailNotificationToDefender(
-          theCase.type,
-          theCase.id,
-          theCase.creatingProsecutor?.institution?.name,
-          theCase.defenderName,
-          theCase.defenderEmail,
-          theCase.defenderNationalId,
-          theCase.court?.name,
-          theCase.courtCaseNumber,
-        ),
-      )
+      // We want to notify defenders even if the court case number has not been set yet, so we fall back to the police case number in that case
+      const caseNumber =
+        theCase.courtCaseNumber ?? theCase.policeCaseNumbers?.[0]
+
+      if (caseNumber) {
+        promises.push(
+          this.sendRevokedEmailNotificationForRequestCase(
+            theCase,
+            theCase.defenderName,
+            theCase.defenderEmail,
+            caseNumber,
+          ),
+        )
+      }
     }
 
     const recipients = await Promise.all(promises)
