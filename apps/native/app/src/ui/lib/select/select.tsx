@@ -6,6 +6,8 @@ import chevronDown from '../../assets/icons/chevron-down.png'
 import { dynamicColor } from '../../utils'
 import { Typography } from '../typography/typography'
 
+const Wrapper = styled.View``
+
 const Host = styled.Pressable`
   flex-direction: row;
   align-items: center;
@@ -87,7 +89,7 @@ export const Select = ({
   const selected = options.find((option) => option.value === value)
 
   return (
-    <>
+    <Wrapper>
       <Host disabled={disabled} onPress={() => setOpen(true)}>
         <Content>
           <Label variant="eyebrow">{label}</Label>
@@ -117,6 +119,6 @@ export const Select = ({
         }}
         onRequestClose={() => setOpen(false)}
       />
-    </>
+    </Wrapper>
   )
 }
