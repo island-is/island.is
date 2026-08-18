@@ -17,7 +17,9 @@
   "paths": {
     "/api/DayRate/entries/{EntityId}/eligible-vehicles": {
       "get": {
-        "tags": ["DayRate"],
+        "tags": [
+          "DayRate"
+        ],
         "parameters": [
           {
             "name": "EntityId",
@@ -70,7 +72,9 @@
     },
     "/api/DayRate/entries/{EntityId}": {
       "get": {
-        "tags": ["DayRate"],
+        "tags": [
+          "DayRate"
+        ],
         "parameters": [
           {
             "name": "EntityId",
@@ -123,7 +127,9 @@
     },
     "/api/DayRate/entries/{EntityId}/periods/{Period}": {
       "get": {
-        "tags": ["DayRate"],
+        "tags": [
+          "DayRate"
+        ],
         "parameters": [
           {
             "name": "EntityId",
@@ -185,7 +191,9 @@
     },
     "/api/DayRate/entries/{EntityId}/{Permno}": {
       "get": {
-        "tags": ["DayRate"],
+        "tags": [
+          "DayRate"
+        ],
         "parameters": [
           {
             "name": "EntityId",
@@ -237,7 +245,9 @@
     },
     "/api/DayRate/entries/{EntityId}/{Permno}/{Id}": {
       "get": {
-        "tags": ["DayRate"],
+        "tags": [
+          "DayRate"
+        ],
         "parameters": [
           {
             "name": "EntityId",
@@ -307,7 +317,9 @@
     },
     "/api/DayRate/entries/{EntityId}/register": {
       "post": {
-        "tags": ["DayRate"],
+        "tags": [
+          "DayRate"
+        ],
         "parameters": [
           {
             "name": "EntityId",
@@ -373,7 +385,9 @@
     },
     "/api/DayRate/entries/{EntityId}/deregister": {
       "post": {
-        "tags": ["DayRate"],
+        "tags": [
+          "DayRate"
+        ],
         "parameters": [
           {
             "name": "EntityId",
@@ -419,7 +433,9 @@
     },
     "/api/RentalDays/{EntityId}": {
       "post": {
-        "tags": ["RentalDays"],
+        "tags": [
+          "RentalDays"
+        ],
         "parameters": [
           {
             "name": "EntityId",
@@ -462,12 +478,62 @@
           }
         }
       }
+    },
+    "/api/RentalDays/{EntityId}/periods/{Period}": {
+      "get": {
+        "tags": [
+          "RentalDays"
+        ],
+        "parameters": [
+          {
+            "name": "EntityId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Period",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^\\d{4}-\\d{2}$",
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Api-Version",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RentalDaysEntry"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
       "DayRateEntry": {
-        "required": ["fastnr"],
+        "required": [
+          "fastnr"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -507,7 +573,9 @@
         "additionalProperties": false
       },
       "DayRateEntryModel": {
-        "required": ["id"],
+        "required": [
+          "id"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -535,7 +603,10 @@
         "additionalProperties": false
       },
       "DayRateRegistrationModel": {
-        "required": ["entries", "skraningaradili"],
+        "required": [
+          "entries",
+          "skraningaradili"
+        ],
         "type": "object",
         "properties": {
           "skraningaradili": {
@@ -553,7 +624,9 @@
         "additionalProperties": false
       },
       "DeregisterDayRateEntryModel": {
-        "required": ["permno"],
+        "required": [
+          "permno"
+        ],
         "type": "object",
         "properties": {
           "permno": {
@@ -572,7 +645,10 @@
         "additionalProperties": false
       },
       "DeregistrationModel": {
-        "required": ["afskraningaradili", "entries"],
+        "required": [
+          "afskraningaradili",
+          "entries"
+        ],
         "type": "object",
         "properties": {
           "afskraningaradili": {
@@ -590,7 +666,10 @@
         "additionalProperties": false
       },
       "EntryModel": {
-        "required": ["dayRateEntries", "permno"],
+        "required": [
+          "dayRateEntries",
+          "permno"
+        ],
         "type": "object",
         "properties": {
           "permno": {
@@ -608,7 +687,9 @@
         "additionalProperties": false
       },
       "InsertDayRateModel": {
-        "required": ["permno"],
+        "required": [
+          "permno"
+        ],
         "type": "object",
         "properties": {
           "permno": {
@@ -627,7 +708,10 @@
         "additionalProperties": false
       },
       "InsertRentalDaysModel": {
-        "required": ["dayRateEntryId", "numberOfDays", "permno"],
+        "required": [
+          "numberOfDays",
+          "permno"
+        ],
         "type": "object",
         "properties": {
           "permno": {
@@ -640,7 +724,8 @@
           },
           "dayRateEntryId": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -688,7 +773,11 @@
         "additionalProperties": false
       },
       "RentalDayRegistrationModel": {
-        "required": ["entries", "month", "year"],
+        "required": [
+          "entries",
+          "month",
+          "year"
+        ],
         "type": "object",
         "properties": {
           "year": {
@@ -732,7 +821,10 @@
         "additionalProperties": false
       },
       "ValidVehicle": {
-        "required": ["mileage", "permno"],
+        "required": [
+          "mileage",
+          "permno"
+        ],
         "type": "object",
         "properties": {
           "permno": {
