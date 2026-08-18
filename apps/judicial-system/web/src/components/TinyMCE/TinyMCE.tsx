@@ -14,6 +14,7 @@ import {
   INDENT_STEP_PX,
   indentClassFromLevel,
   levelFromIndentClass,
+  MARKER_NONE_CLASS,
   MAX_INDENT_LEVEL,
   normalizeRichTextHtml,
   WORD_HIGHLIGHT_COLORS,
@@ -327,6 +328,21 @@ const TinyMCE = ({
               editor.on('PastePreProcess', (args) => {
                 args.content = normalizeRichTextHtml(args.content)
               })
+              // Everything leaving the editor goes through getContent, so this
+              // is the one place that can guarantee the WAF invariant: no
+              // request body may contain a style attribute. The lists plugin
+              // writes an inline list-style-type on the wrapper items it
+              // creates, which would otherwise be saved verbatim. Rewriting
+              // here rather than in the editor's own DOM leaves the caret and
+              // the undo stack untouched.
+              editor.on('GetContent', (args) => {
+                if (
+                  args.format === 'html' &&
+                  typeof args.content === 'string'
+                ) {
+                  args.content = normalizeRichTextHtml(args.content)
+                }
+              })
               setupHighlightButton(editor)
               setupIndentButtons(editor)
             },
@@ -350,6 +366,7 @@ const TinyMCE = ({
               // rather than showing markers the PDF cannot reproduce. An author
               // rule beats the user-agent 'ul ul' default at any depth.
               'ul { list-style-type: disc; } ' +
+              `li.${MARKER_NONE_CLASS} { list-style-type: none; } ` +
               CLASS_CONTENT_STYLE,
             branding: false,
             statusbar: false,

@@ -146,6 +146,13 @@ export const findNearestHighlightColor = (cssColor: string): string => {
   return minDist <= HIGHLIGHT_DISTANCE_THRESHOLD ? nearest : fallback
 }
 
+// The lists plugin suppresses the marker on the wrapper items it creates — when
+// an item is indented past the nesting available to it — with an inline
+// list-style-type. That must not reach the API either, so it is carried as a
+// class like highlights and indentation are.
+export const MARKER_NONE_CLASS = 'marker-none'
+
+const MARKER_NONE_REGEX = /list-style-type\s*:\s*none/i
 const BACKGROUND_REGEX = /background(?:-color)?\s*:\s*([^;]+)/i
 const LEFT_OFFSET_REGEX = /(?:margin|padding)-left\s*:\s*([\d.]+)(pt|px)/i
 const BOLD_REGEX = /font-weight\s*:\s*(?:bold|bolder|[6-9]00)/i
@@ -197,6 +204,10 @@ export const normalizeRichTextHtml = (html: string): string => {
           findNearestHighlightColor(background[1].trim()),
         ),
       )
+    }
+
+    if (el.tagName === 'LI' && MARKER_NONE_REGEX.test(style)) {
+      el.classList.add(MARKER_NONE_CLASS)
     }
 
     const leftOffset = style.match(LEFT_OFFSET_REGEX)
