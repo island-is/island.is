@@ -14,6 +14,7 @@ import {
   CaseType,
   CourtSessionResponse,
   CourtSessionRulingType,
+  CourtSessionStringType,
   DateLog,
   Defendant,
   DefenderChoice,
@@ -689,6 +690,7 @@ export const isCourtSessionValid = (
     (courtSession.isAttestingWitness
       ? courtSession.attestingWitnessId
       : true) &&
+    areMergedCaseEntriesComplete(courtSession) &&
     validate([
       [courtSession.startDate, ['empty', 'date-format']],
       [courtSession.location, ['empty']],
@@ -697,6 +699,37 @@ export const isCourtSessionValid = (
       [courtSession.rulingType, ['empty']],
       [courtSession.endDate, ['empty', 'date-format']],
     ]).isValid
+  )
+}
+
+// Each merged case with documents in a session gets its own entries booking in
+// the court record, and each is required. The set is derived from the filed
+// documents rather than from the strings, so a merged case that has never been
+// written about is missing rather than absent. The value is trimmed because the
+// backend rejects a whitespace-only booking - without it the confirm button
+// would enable and the confirm itself would then fail.
+export const areMergedCaseEntriesComplete = (
+  courtSession: CourtSessionResponse,
+): boolean => {
+  const mergedCaseIds = new Set(
+    courtSession.mergedFiledDocuments?.map((document) => document.caseId),
+  )
+
+  return Array.from(mergedCaseIds).every(
+    (mergedCaseId) =>
+      validate([
+        [
+          courtSession.courtSessionStrings
+            ?.find(
+              (courtSessionString) =>
+                courtSessionString.mergedCaseId === mergedCaseId &&
+                courtSessionString.stringType ===
+                  CourtSessionStringType.ENTRIES,
+            )
+            ?.value?.trim(),
+          ['empty'],
+        ],
+      ]).isValid,
   )
 }
 

@@ -20,6 +20,8 @@ import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseFileCategory,
+  CourtSessionString,
+  CourtSessionStringType,
   Defendant,
   DefendantPlea,
   Gender,
@@ -719,6 +721,53 @@ export const reconcileAppealDecisionsForRulingFileChange = (
   return appealDecisions?.filter(
     (decision) => decision.rulingFileId !== previousRulingFileId,
   )
+}
+
+/**
+ * Applies an edit to a court session's entries booking for one merged case,
+ * appending the row when that merged case has not been written about yet.
+ *
+ * Rows are matched on the merged case rather than on `id`: a row appended here
+ * has no `id` until the case is refetched, so matching on `id` would make two
+ * freshly written merged cases collide on `undefined` and an edit to one would
+ * overwrite the other.
+ */
+export const applyMergedCaseEntries = (
+  courtSessionStrings: CourtSessionString[] | null | undefined,
+  {
+    caseId,
+    courtSessionId,
+    mergedCaseId,
+    value,
+  }: {
+    caseId: string
+    courtSessionId: string
+    mergedCaseId: string
+    value?: string | null
+  },
+): CourtSessionString[] => {
+  const isTarget = (courtSessionString: CourtSessionString) =>
+    courtSessionString.mergedCaseId === mergedCaseId &&
+    courtSessionString.stringType === CourtSessionStringType.ENTRIES
+
+  if (courtSessionStrings?.some(isTarget)) {
+    return courtSessionStrings.map((courtSessionString) =>
+      isTarget(courtSessionString)
+        ? { ...courtSessionString, value }
+        : courtSessionString,
+    )
+  }
+
+  return [
+    ...(courtSessionStrings ?? []),
+    {
+      caseId,
+      courtSessionId,
+      mergedCaseId,
+      stringType: CourtSessionStringType.ENTRIES,
+      value,
+    } as CourtSessionString,
+  ]
 }
 
 /**
