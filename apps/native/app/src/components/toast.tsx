@@ -6,9 +6,9 @@
 // need their OWN <ToastHost /> inside the modal — otherwise toasts fire but
 // render behind the modal where they're invisible. See settings.tsx and the
 // reply screen for examples.
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import styled, { useTheme } from 'styled-components/native'
-import { Image, Keyboard, Platform, View } from 'react-native'
+import { Image, Platform, View } from 'react-native'
 import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { usePathname } from 'expo-router'
@@ -19,6 +19,7 @@ import errorIcon from '@/ui/assets/icons/error.png'
 import infoIcon from '@/ui/assets/icons/info.png'
 import successIcon from '@/ui/assets/icons/check.png'
 import { screenWidth } from '@/utils/dimensions'
+import { useKeyboardHeight } from '@/hooks/use-keyboard-height'
 import { Typography } from '@/ui'
 
 // Standard system tab-bar heights: iOS UITabBar = 49pt, Android
@@ -70,6 +71,8 @@ const Host = styled(Animated.View)<{
 }>`
   min-height: 52px;
   position: absolute;
+  z-index: 9999;
+  elevation: 6;
   bottom: ${({ theme, bottomOffset }) =>
     (bottomOffset > 0 ? theme.spacing[2] : theme.spacing[3]) + bottomOffset}px;
   right: ${({ theme }) => theme.spacing[2]}px;
@@ -201,10 +204,10 @@ const hide = (id?: number) => {
   toastStore.setState({ current: null })
 }
 
-const variantShortcut =
-  (variant: ToastVariant) =>
-  (title: string, options?: ShowOptions): number =>
-    show({ variant, title, ...options })
+const variantShortcut = (variant: ToastVariant) => (
+  title: string,
+  options?: ShowOptions,
+): number => show({ variant, title, ...options })
 
 export const toast = {
   show,
@@ -215,28 +218,15 @@ export const toast = {
   info: variantShortcut('info'),
 }
 
-const useKeyboardHeight = () => {
-  const [height, setHeight] = useState(0)
-
-  useEffect(() => {
-    const showEvent =
-      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow'
-    const hideEvent =
-      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide'
-    const showSub = Keyboard.addListener(showEvent, (e) => {
-      setHeight(e.endCoordinates?.height ?? 0)
-    })
-    const hideSub = Keyboard.addListener(hideEvent, () => setHeight(0))
-    return () => {
-      showSub.remove()
-      hideSub.remove()
-    }
-  }, [])
-
-  return height
-}
-
-export const ToastHost = () => {
+export const ToastHost = ({
+  // Extra space below the toast, e.g. to clear a bottom action button.
+  bottomOffset: extraBottomOffset = 0,
+  // Set on modals over the tabs (tab-route path but no visible tab bar).
+  ignoreTabBar = false,
+}: {
+  bottomOffset?: number
+  ignoreTabBar?: boolean
+} = {}) => {
   const current = useToastStore((state) => state.current)
   const insets = useSafeAreaInsets()
   const pathname = usePathname()
@@ -254,11 +244,13 @@ export const ToastHost = () => {
   // On tab routes, the tab bar OR a bottom toolbar that replaces it (e.g.
   // bulk-select actions) sits at the bottom — both have roughly the same
   // height, so we always offset by the tab-bar height when on a tab route.
-  const tabBarOffset = isOnTabRoute ? TAB_BAR_CONTENT_HEIGHT + insets.bottom : 0
+  const tabBarOffset =
+    isOnTabRoute && !ignoreTabBar ? TAB_BAR_CONTENT_HEIGHT + insets.bottom : 0
   // Keyboard reports height from screen bottom (includes safe area on iOS).
   // When the keyboard is up it covers the tab bar, so we use whichever offset
   // pushes the toast higher.
-  const bottomOffset = Math.max(tabBarOffset, keyboardHeight)
+  const bottomOffset =
+    Math.max(tabBarOffset, keyboardHeight) + extraBottomOffset
 
   return (
     <Toast
