@@ -1,6 +1,6 @@
 import { Box, Divider, Stack, Tag } from '@island.is/island-ui/core'
 import { UserInfoLine } from '@island.is/portals/my-pages/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { VmstApplicationStatus } from '@island.is/api/schema'
 import { VmstApplicationOverviewItem } from '@island.is/portals/my-pages/graphql'
 import { sharedMessages } from '../../lib/messages/shared'
@@ -26,6 +26,7 @@ export const OverviewTable = ({
   dataRequested,
   getExtraRowTag,
 }: OverviewTableProps) => {
+  useNamespaces('sp.social-benefits-shared')
   const { formatMessage } = useLocale()
 
   const getRowTag = (
