@@ -76,7 +76,7 @@ const fieldMap: Partial<Record<string, FarmerLandSubsidyOrderField>> = {
 }
 
 export const Subsidies = ({ farmId }: Props) => {
-  const { formatMessage, locale } = useLocale()
+  const { formatMessage } = useLocale()
 
   const [filters, setFilters] = useState<SubsidiesState>({})
   const [sorting, setSorting] = useState<SortingState>([])
@@ -94,6 +94,7 @@ export const Subsidies = ({ farmId }: Props) => {
   const subsidies = useMemo(() => data?.farmerLandSubsidies?.data ?? [], [data])
   const filterOptions = (data ?? previousData)?.farmerLandSubsidies
     ?.filterOptions
+  const summary = (data ?? previousData)?.farmerLandSubsidies?.summary
 
   const contractItems = useMemo(
     () =>
@@ -157,6 +158,7 @@ export const Subsidies = ({ farmId }: Props) => {
           const value = getValue()
           return value ? new Date(value).toLocaleDateString('is-IS') : ''
         },
+        footer: () => `${formatMessage(m.total)}:`,
       }),
       columnHelper.accessor('paymentCategory', {
         header: formatMessage(m.type),
@@ -165,20 +167,22 @@ export const Subsidies = ({ farmId }: Props) => {
         header: formatMessage(m.amount),
         enableSorting: false,
         cell: ({ getValue }) => amountFormat(getValue()),
+        footer: () => amountFormat(summary?.grossAmount),
       }),
       columnHelper.accessor('offset', {
         header: formatMessage(fm.subsidyOffset),
         enableSorting: false,
         cell: ({ getValue }) => amountFormat(getValue() ?? 0),
+        footer: () => amountFormat(summary?.offset),
       }),
       columnHelper.accessor('netPaid', {
         header: formatMessage(fm.subsidyNetPaid),
         enableSorting: false,
         cell: ({ getValue }) => amountFormat(getValue()),
+        footer: () => amountFormat(summary?.netPaid),
       }),
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [locale],
+    [formatMessage, summary],
   )
 
   const renderExpandedRow = (row: Row<FarmerLandSubsidy>) => (
