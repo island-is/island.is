@@ -299,6 +299,33 @@ describe('htmlToBlocks', () => {
       expect(blocks[1].runs[0].text).toBe('inner')
     })
 
+    it('keeps a nested list marker when the parent item has no text', () => {
+      const blocks = htmlToBlocks('<ul><li><ul><li>inner</li></ul></li></ul>')
+      expect(blocks).toHaveLength(2)
+      expect(blocks[0]).toMatchObject({
+        marker: '\u2022',
+        indent: 30,
+        runs: [],
+      })
+      expect(blocks[1]).toMatchObject({ marker: '\u2022', indent: 60 })
+      expect(blocks[1].runs[0].text).toBe('inner')
+    })
+
+    it('keeps nested ordered numbering when the parent item has no text', () => {
+      const blocks = htmlToBlocks(
+        '<ul><li><ol start="3"><li>inner</li><li>next</li></ol></li></ul>',
+      )
+      expect(blocks).toHaveLength(3)
+      expect(blocks[0]).toMatchObject({
+        marker: '\u2022',
+        indent: 30,
+        runs: [],
+      })
+      expect(blocks[1]).toMatchObject({ marker: '3.', indent: 60 })
+      expect(blocks[1].runs[0].text).toBe('inner')
+      expect(blocks[2]).toMatchObject({ marker: '4.', indent: 60 })
+    })
+
     it('puts the marker on the first line of a paragraph-wrapped item', () => {
       const blocks = htmlToBlocks('<ul><li><p>wrapped</p></li></ul>')
       expect(blocks).toHaveLength(1)

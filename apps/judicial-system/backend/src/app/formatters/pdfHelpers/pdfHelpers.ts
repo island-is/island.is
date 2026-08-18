@@ -675,7 +675,16 @@ const collectListItemBlocks = (
   if (blocks.length === 0) {
     blocks.push({ runs: [], indent })
   }
-  blocks[0].marker = marker
+
+  // A marker on the first block means the item holds nothing but a nested
+  // list, whose own first item already owns that block. Give the item a
+  // marker-only line of its own instead of overwriting the child's marker,
+  // which would drop a nested ordered list's starting number.
+  if (blocks[0].marker) {
+    blocks.unshift({ runs: [], indent, marker })
+  } else {
+    blocks[0].marker = marker
+  }
 
   return blocks
 }
