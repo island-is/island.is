@@ -17,6 +17,7 @@ import {
   GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationValidationResponseDTO,
   UnemploymentApplicationValidatePaymentPage2Request,
   GaldurXRoadAPIModelsUnemploymentApplicationOverviewResponse,
+  GaldurXRoadAPIModelsActivationGrantApplicationOverviewResponse,
   GaldurXRoadAPIModelsApplicationApplicationOverviewItem,
   GaldurXRoadAPIModelsApplicantApplicantOverviewResponse,
   GaldurXRoadAPIModelsApplicantInfoResponse,
@@ -35,9 +36,9 @@ import {
   GaldurXRoadAPIModelsJobSearchConfirmationJobSearchConfirmationEligibilityResponse,
   ApplicantCreateApplicantRequestedAttachmentRequest,
   GaldurXRoadAPIModelsApplicantForeignTravelEligibilityResponse,
-  GaldurXRoadAPIModelsApplicantCreateAttachmentEligibilityResponse,
   GaldurDomainModelsBaseViewModel,
   GaldurXRoadAPIModelsApplicantApplicantAttachmentsResponse,
+  GaldurXRoadAPIModelsApplicantApplicantEligibilityResponse,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
@@ -284,6 +285,38 @@ export class VmstUnemploymentClientService {
     }
   }
 
+  /*
+    Fetches activation grant application information for the overview page on My Pages island.is
+  */
+  async getActivationGrantApplicationOverview(
+    auth: User,
+    language?: Locale,
+  ): Promise<
+    GaldurXRoadAPIModelsActivationGrantApplicationOverviewResponse & {
+      applicationStatus: VmstApplicationStatus
+    }
+  > {
+    const { applicantId } = await this.resolveApplicant(auth)
+
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+    )
+
+    const lang = language ? language.toUpperCase() : null
+
+    const response =
+      await api.applicantGetLatestActivationGrantApplicationOverview({
+        id: applicantId,
+        language: lang,
+      })
+
+    return {
+      ...response,
+      applicationStatus: resolveApplicationStatus(response.applicationStatusId),
+    }
+  }
+
   async submitApplication(
     request: UnemploymentApplicationCreateUnemploymentApplicationRequest,
   ): Promise<GaldurDomainModelsApplicationsUnemploymentApplicationsQueriesUnemploymentApplicationViewModel> {
@@ -469,7 +502,7 @@ export class VmstUnemploymentClientService {
   }
 
   async checkCreateAttachmentEligibility(auth: User): Promise<
-    GaldurXRoadAPIModelsApplicantCreateAttachmentEligibilityResponse & {
+    GaldurXRoadAPIModelsApplicantApplicantEligibilityResponse & {
       applicantId: string
     }
   > {

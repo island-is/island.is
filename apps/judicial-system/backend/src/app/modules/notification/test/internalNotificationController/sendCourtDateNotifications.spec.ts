@@ -5,6 +5,10 @@ import { ConfigType } from '@nestjs/config'
 import { EmailService } from '@island.is/email-service'
 
 import {
+  DEFENDER_REQUEST_CASE_ROUTE,
+  PROSECUTION_RESTRICTION_CASE_OVERVIEW_ROUTE,
+} from '@island.is/judicial-system/consts'
+import {
   CaseType,
   RequestCaseNotificationType,
   RequestSharedWhen,
@@ -99,6 +103,7 @@ describe('InternalNotificationController - Send court date notifications', () =>
       courtCaseNumber,
       defenderName: defender.name,
       defenderEmail: defender.email,
+      defenderNationalId: defender.nationalId,
     } as Case
 
     beforeEach(async () => {
@@ -110,7 +115,7 @@ describe('InternalNotificationController - Send court date notifications', () =>
         expect.objectContaining({
           to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: `Fyrirtaka í máli: ${courtCaseNumber}`,
-          html: `Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um gæsluvarðhald.<br /><br />Fyrirtaka mun fara fram á ótilgreindum tíma.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari hefur ekki verið skráður.<br /><br />Verjandi sakbornings: ${defender.name}. Hægt er að nálgast yfirlitssíðu málsins í <a href="${mockConfig.clientUrl}">Réttarvörslugátt</a>.`,
+          html: `Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um gæsluvarðhald.<br /><br />Fyrirtaka mun fara fram á ótilgreindum tíma.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari hefur ekki verið skráður.<br /><br />Verjandi sakbornings: ${defender.name}. Hægt er að nálgast yfirlitssíðu málsins í <a href="${mockConfig.clientUrl}${PROSECUTION_RESTRICTION_CASE_OVERVIEW_ROUTE}/${caseId}">Réttarvörslugátt</a>.`,
         }),
       )
 
@@ -118,7 +123,7 @@ describe('InternalNotificationController - Send court date notifications', () =>
         expect.objectContaining({
           to: [{ name: defender.name, address: defender.email }],
           subject: `Fyrirtaka í máli ${courtCaseNumber}`,
-          html: `Héraðsdómur Reykjavíkur hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram á ótilgreindum tíma.<br /><br />Málsnúmer: ${courtCaseNumber}.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari: .<br /><br />Sækjandi: ${prosecutor.name} ().`,
+          html: `Héraðsdómur Reykjavíkur hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram á ótilgreindum tíma.<br /><br />Málsnúmer: ${courtCaseNumber}.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari: .<br /><br />Sækjandi: ${prosecutor.name} (). Hægt er að nálgast yfirlitssíðu málsins í <a href="${mockConfig.clientUrl}${DEFENDER_REQUEST_CASE_ROUTE}/${caseId}">Réttarvörslugátt</a>.`,
         }),
       )
 

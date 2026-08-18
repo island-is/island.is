@@ -470,9 +470,9 @@ export const addNumberedList = (
 
   for (const [i, item] of items.entries()) {
     const label = `${start + i}`
-    const textHeight = doc.heightOfString(label, {
+    // PDFKit wraps on whitespace and also splits oversized unbroken tokens.
+    const textHeight = doc.heightOfString(item, {
       width: wrapWidth,
-      height: 1.2,
     })
     const labelWidth = doc.widthOfString(label)
     const labelX = x + (labelBoxWidth - labelWidth)
@@ -482,8 +482,8 @@ export const addNumberedList = (
     }
     const y = doc.y
 
-    doc.text(label, labelX, y)
-    drawTextWithEllipsis(doc, ` ${item}`, itemX, y, wrapWidth)
+    doc.text(label, labelX, y, { lineBreak: false })
+    doc.text(item, itemX, y, { width: wrapWidth })
   }
 
   doc.x = originalX
@@ -500,6 +500,8 @@ export interface RichTextBlock {
   runs: Run[]
   indent: number
   softBreak?: boolean
+  // List marker drawn in the gutter to the left of the block ("•" or "3.").
+  marker?: string
 }
 
 // Values that mean "no highlight" and must not be drawn as a filled rect.
@@ -524,6 +526,13 @@ const INDENT_CLASS_REGEX = /(?:^|\s)indent-(\d+)(?:\s|$)/
 // The editor indents 40px per level; 0.75 converts that to PDF points.
 const INDENT_LEVEL_PT = 30
 const MAX_INDENT_LEVEL = 10
+
+// Lists are indented one level per nesting depth, matching the browser's
+// default 40px padding on ul/ol. The marker is right-aligned in that gutter,
+// ending LIST_MARKER_GAP_PT before the item text.
+const LIST_INDENT_PT = INDENT_LEVEL_PT
+const LIST_MARKER_GAP_PT = 6
+const BULLET = '•'
 
 const extractBgColor = (style: string): string | null => {
   const m = style.match(/background-color:\s*([^;]+)/)
@@ -600,6 +609,118 @@ const indentFromClass = (el: Element): number => {
     : 0
 }
 
+// Split inline content on <br> and turn each segment into one block, the way a
+// paragraph's own children are laid out.
+const collectInlineBlocks = (
+  nodes: ChildNode[],
+  indent: number,
+): RichTextBlock[] => {
+  const segments: ChildNode[][] = [[]]
+  for (const child of nodes) {
+    if (child.type === 'tag' && (child as Element).name === 'br') {
+      segments.push([])
+    } else {
+      segments[segments.length - 1].push(child)
+    }
+  }
+  if (segments.length > 1 && segments[segments.length - 1].length === 0) {
+    segments.pop()
+  }
+
+  return segments.map((segment, s) => {
+    const runs: Run[] = []
+    collectRuns(segment, false, false, false, runs)
+
+    return { runs, indent, softBreak: s < segments.length - 1 }
+  })
+}
+
+// Tags that start a block of their own inside a list item, as opposed to inline
+// content that belongs on the marker's line.
+const BLOCK_LEVEL_TAGS = new Set(['p', 'div', 'blockquote', 'ul', 'ol', 'li'])
+
+// An indent-N class on the item itself is deliberately ignored: Word indents
+// its list items with margin-left as well as nesting them, so honouring both
+// would double the indentation of every nested level.
+const collectListItemBlocks = (
+  el: Element,
+  indent: number,
+  marker: string,
+): RichTextBlock[] => {
+  // An item is usually inline content, but it can also hold paragraphs or a
+  // nested list. Keep the two apart so inline formatting on the item's own text
+  // survives (collectRuns) while nested blocks recurse.
+  const inline: ChildNode[] = []
+  const nested: ChildNode[] = []
+  for (const child of el.children ?? []) {
+    if (child.type === 'tag' && BLOCK_LEVEL_TAGS.has((child as Element).name)) {
+      nested.push(child)
+    } else if (nested.length > 0) {
+      // Text trailing a nested list belongs after it, not on the marker line.
+      nested.push(child)
+    } else {
+      inline.push(child)
+    }
+  }
+
+  // Whitespace between an item's tags is not content — without this check an
+  // item that only wraps a paragraph would put its marker on a blank line.
+  const hasInlineContent = inline.some(
+    (node) => node.type !== 'text' || (node as Text).data.trim() !== '',
+  )
+
+  const blocks = hasInlineContent ? collectInlineBlocks(inline, indent) : []
+  blocks.push(...collectBlocksFromNodes(nested, indent))
+
+  if (blocks.length === 0) {
+    blocks.push({ runs: [], indent })
+  }
+
+  // A marker on the first block means the item holds nothing but a nested
+  // list, whose own first item already owns that block. Give the item a
+  // marker-only line of its own instead of overwriting the child's marker,
+  // which would drop a nested ordered list's starting number.
+  if (blocks[0].marker) {
+    blocks.unshift({ runs: [], indent, marker })
+  } else {
+    blocks[0].marker = marker
+  }
+
+  return blocks
+}
+
+const collectListBlocks = (el: Element, indent: number): RichTextBlock[] => {
+  const ordered = el.name === 'ol'
+  const start = parseInt(el.attribs?.start ?? '', 10)
+  let counter = Number.isFinite(start) ? start : 1
+
+  const itemIndent = indent + indentFromClass(el) + LIST_INDENT_PT
+  const blocks: RichTextBlock[] = []
+
+  for (const child of el.children ?? []) {
+    if (child.type !== 'tag') continue
+    const item = child as Element
+    // A nested list is a sibling of the items in some pasted markup; give it
+    // its own level rather than dropping it.
+    if (item.name === 'ul' || item.name === 'ol') {
+      blocks.push(...collectListBlocks(item, itemIndent))
+      continue
+    }
+    if (item.name !== 'li') continue
+
+    blocks.push(
+      ...collectListItemBlocks(
+        item,
+        itemIndent,
+        ordered ? `${counter}.` : BULLET,
+      ),
+    )
+    counter++
+  }
+
+  return blocks
+}
+
 const collectBlocksFromNodes = (
   nodes: ChildNode[],
   indent = 0,
@@ -631,27 +752,9 @@ const collectBlocksFromNodes = (
         ? Math.round(parseFloat(paddingMatch[1]) * 0.75)
         : 0
 
-      const segments: ChildNode[][] = [[]]
-      for (const child of children) {
-        if (child.type === 'tag' && (child as Element).name === 'br') {
-          segments.push([])
-        } else {
-          segments[segments.length - 1].push(child)
-        }
-      }
-      if (segments.length > 1 && segments[segments.length - 1].length === 0) {
-        segments.pop()
-      }
-
-      for (let s = 0; s < segments.length; s++) {
-        const runs: Run[] = []
-        collectRuns(segments[s], false, false, false, runs)
-        blocks.push({
-          runs,
-          indent: indent + pIndent,
-          softBreak: s < segments.length - 1,
-        })
-      }
+      blocks.push(...collectInlineBlocks(children, indent + pIndent))
+    } else if (el.name === 'ul' || el.name === 'ol') {
+      blocks.push(...collectListBlocks(el, indent))
     } else {
       // The editor also puts indent-N on div/li/blockquote (legacy or pasted
       // content), and its content CSS indents any element carrying the class —
@@ -739,6 +842,7 @@ export const addRichText = (
   doc: PDFKit.PDFDocument,
   html: string,
   lineGap = 0,
+  fontSize = baseFontSize,
 ): void => {
   const blocks = htmlToBlocks(html)
 
@@ -746,7 +850,9 @@ export const addRichText = (
     const isEmptyBlock =
       block.runs.length === 0 || block.runs.every((r) => !r.text.trim())
 
-    if (isEmptyBlock) {
+    // An empty list item still needs its marker drawn, so only blank blocks
+    // without one collapse to an empty line.
+    if (isEmptyBlock && !block.marker) {
       addEmptyLines(doc)
       continue
     }
@@ -757,12 +863,12 @@ export const addRichText = (
 
     // All Times variants share their vertical metrics, so the line geometry
     // can be computed once per block.
-    doc.font('Times-Roman').fontSize(baseFontSize)
+    doc.font('Times-Roman').fontSize(fontSize)
     const lineHeight = doc.currentLineHeight(true)
     const lineAdvance = lineHeight + lineGap
     const visibleHeight = doc.currentLineHeight(false)
     // Shift rect up by half the descender height to centre around visible glyphs
-    const descender = (TIMES_DESCENDER / 1000) * baseFontSize
+    const descender = (TIMES_DESCENDER / 1000) * fontSize
     const hPad = 1
 
     let y = doc.y
@@ -778,6 +884,20 @@ export const addRichText = (
       }
     }
     ensureRoom()
+
+    // The marker sits in the gutter opened up by the list indent, right-aligned
+    // so wider ordered-list labels ("10.") stay clear of the item text. It is
+    // drawn once, on the item's first line, after ensureRoom so it lands on the
+    // same page as that line.
+    if (block.marker) {
+      doc.font('Times-Roman').fontSize(fontSize)
+      const markerWidth = doc.widthOfString(block.marker)
+      const markerX = Math.max(
+        doc.page.margins.left,
+        leftX - LIST_MARKER_GAP_PT - markerWidth,
+      )
+      doc.text(block.marker, markerX, y, { lineBreak: false })
+    }
 
     const flushLine = () => {
       // Draw one rect per contiguous same-colored group, then the text on top.
@@ -813,7 +933,7 @@ export const addRichText = (
         doc.fillColor('black')
       }
       for (const fragment of lineFragments) {
-        doc.font(fragment.font).fontSize(baseFontSize)
+        doc.font(fragment.font).fontSize(fontSize)
         doc.text(fragment.text, fragment.x, y, { lineBreak: false })
       }
       lineFragments = []
@@ -834,7 +954,7 @@ export const addRichText = (
       }
 
       const font = getFontName(run)
-      doc.font(font).fontSize(baseFontSize)
+      doc.font(font).fontSize(fontSize)
 
       // Whitespace is already collapsed, so tokens are words with their
       // single trailing space attached, or a lone inter-run space.
@@ -888,4 +1008,9 @@ export const addRichText = (
     doc.x = doc.page.margins.left
     doc.y = y + lineAdvance + paragraphGap
   }
+
+  // Fragment drawing leaves the document font on whatever the last run used
+  // (e.g. Times-Bold), and the plain-text helpers only set a font when given
+  // one explicitly — restore the default so it doesn't leak into them.
+  doc.font('Times-Roman')
 }

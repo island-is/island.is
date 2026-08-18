@@ -3,7 +3,14 @@ import {
   CREATE_FORM_DELEGATION,
   DELETE_FORM_DELEGATION,
 } from '@island.is/form-system/graphql'
-import { Box, Checkbox, GridRow, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Checkbox,
+  GridRow as Row,
+  GridColumn as Column,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import { useContext, useEffect, useRef } from 'react'
 import { ControlContext } from '../../../../context/ControlContext'
 
@@ -79,22 +86,27 @@ export const Delegation = () => {
   }
 
   return (
-    <Stack space={2}>
-      <GridRow>
-        <Box
-          display="flex"
-          flexDirection="row"
-          alignItems="center"
-          columnGap={4}
-          marginLeft={2}
-        >
-          <Text variant="h3">
-            Veldu umboð sem umboðsaðilar þurfa að hafa til að sækja um þessa
-            umsókn
-          </Text>
+    <>
+      <Row>
+        <Box marginLeft={1}>
+          <Text variant="h3">Umboð (scopes)</Text>
         </Box>
-      </GridRow>
-
+      </Row>
+      <Box marginTop={2} />
+      <Row>
+        <Column span="6/10">
+          <Text variant="medium">
+            Veldu þau umboð sem umboðsaðilar þurfa að hafa til að sækja um þessa
+            umsókn. <br /> ATH. Umboð til einstaklinga eru veitt í gegnum
+            umboðskerfið á mínum síðum.
+            <br />
+            <br /> Ef umboðið sem þú vilt nota í þessari umsókn er ekki í
+            listanum hér að neðan en hefur verið stofnað í innskráningarþjóni
+            getur þú haft samband við island.is til að fá því bætt við.
+          </Text>
+        </Column>
+      </Row>
+      <Box marginTop={2} />
       <Stack space={2}>
         {organizationDelegations.map((delegation) => (
           <Checkbox
@@ -110,6 +122,6 @@ export const Delegation = () => {
           />
         ))}
       </Stack>
-    </Stack>
+    </>
   )
 }

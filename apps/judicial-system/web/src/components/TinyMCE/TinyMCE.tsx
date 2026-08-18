@@ -72,12 +72,17 @@ interface Props {
   label: string
   placeholder: string
   defaultValue?: string
+  // The current content as held by the caller. Unlike defaultValue, changes
+  // to this prop are synced into a mounted editor (unless it has focus), so
+  // callers that regenerate content outside the editor can keep it in sync.
+  value?: string
   onChange?: (html: string) => void
   onDebouncedChange?: (html: string) => void
   onBlur?: (html: string) => void
   disabled?: boolean
   errorMessage?: string
   required?: boolean
+  height?: number
   'data-testid'?: string
 }
 
@@ -85,12 +90,14 @@ const TinyMCE = ({
   label,
   placeholder,
   defaultValue,
+  value,
   onChange,
   onDebouncedChange,
   onBlur,
   disabled,
   errorMessage,
   required,
+  height = 450,
   'data-testid': dataTestId,
 }: Props) => {
   const editorId = useId()
@@ -101,6 +108,7 @@ const TinyMCE = ({
     left: 0,
   })
   const [selectedColor, setSelectedColor] = useState<string | null>(null)
+  const [editorReady, setEditorReady] = useState<boolean>(false)
   // Normalize on load so legacy content saved with inline styles is converted
   // to classes and saves cleanly from then on.
   const initialValueRef = useRef(normalizeRichTextHtml(defaultValue ?? ''))
@@ -130,6 +138,26 @@ const TinyMCE = ({
       debouncedSave.flush()
     }
   }, [debouncedSave])
+
+  // Sync externally-driven value changes (e.g. autofill regeneration) into
+  // the editor. Editor-originated changes round-trip through onChange and
+  // match getContent(), so this only writes on genuinely external updates.
+  // A focused editor is left alone so the user's typing isn't clobbered.
+  // The editor loads asynchronously, so depend on editorReady to replay a
+  // value change that arrived before init — otherwise it would be lost.
+  useEffect(() => {
+    const editor = editorRef.current
+    if (
+      !editorReady ||
+      value === undefined ||
+      !editor ||
+      editor.hasFocus() ||
+      value === editor.getContent()
+    ) {
+      return
+    }
+    editor.setContent(value)
+  }, [value, editorReady])
 
   useEffect(() => {
     highlightBtnApiRef.current?.setActive(pickerOpen)
@@ -205,6 +233,18 @@ const TinyMCE = ({
     const changeIndent = (delta: number) => () => {
       const blocks = editor.selection.getSelectedBlocks()
       if (blocks.length === 0) return
+
+      // Inside a list, indenting means nesting the item rather than padding it.
+      // The lists plugin restructures the list on Indent/Outdent, and the core
+      // indent command skips list content, so no inline style is produced.
+      if (
+        editor.queryCommandState('InsertUnorderedList') ||
+        editor.queryCommandState('InsertOrderedList')
+      ) {
+        editor.execCommand(delta > 0 ? 'Indent' : 'Outdent')
+        return
+      }
+
       editor.undoManager.transact(() => {
         blocks.forEach((block) => {
           const current = getIndentLevel(block)
@@ -258,12 +298,13 @@ const TinyMCE = ({
           tinymceScriptSrc="/tinymce/tinymce.min.js"
           onInit={(_, editor) => {
             editorRef.current = editor
+            setEditorReady(true)
           }}
           init={{
-            height: 450,
+            height,
             plugins: 'lists fullscreen paste',
             toolbar:
-              'bold italic blockindent blockoutdent highlightcolor fullscreen',
+              'bold italic bullist numlist blockindent blockoutdent highlightcolor fullscreen',
             toolbar_mode: 'wrap',
             menubar: false,
             formats: {
@@ -289,7 +330,10 @@ const TinyMCE = ({
               setupHighlightButton(editor)
               setupIndentButtons(editor)
             },
-            paste_word_valid_elements: 'p,b,strong,i,em,span,br',
+            // ul/ol/li are kept so bullet and numbered lists survive a Word
+            // paste — both the real lists Word sometimes emits and the ones the
+            // paste plugin rebuilds from Word's mso-list paragraphs.
+            paste_word_valid_elements: 'p,b,strong,i,em,span,br,ul,ol,li',
             // "background" (shorthand) is required: Word highlights arrive as
             // "background:yellow" and the paste plugin also maps mso-highlight
             // to "background". These retained styles never reach the content —

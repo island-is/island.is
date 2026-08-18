@@ -22,9 +22,11 @@ import { DefendantEventLog } from './models/defendantEventLog.model'
 import { EventLog } from './models/eventLog.model'
 import { IndictmentCount } from './models/indictmentCount.model'
 import { InstitutionContact } from './models/institutionContact.model'
+import { LawyerRegistry } from './models/lawyerRegistry.model'
 import { MessageSuspension } from './models/messageSuspension.model'
 import { Offense } from './models/offense.model'
 import { PoliceDigitalCaseFile } from './models/policeDigitalCaseFile.model'
+import { RobotLog } from './models/robotLog.model'
 import { Subpoena } from './models/subpoena.model'
 import { Verdict } from './models/verdict.model'
 import { Victim } from './models/victim.model'
@@ -39,8 +41,10 @@ import { CourtSessionRepositoryService } from './services/courtSessionRepository
 import { DefendantEventLogRepositoryService } from './services/defendantEventLogRepository.service'
 import { DefendantRepositoryService } from './services/defendantRepository.service'
 import { InstitutionContactRepositoryService } from './services/institutionContactRepository.service'
+import { LawyerRegistryRepositoryService } from './services/lawyerRegistryRepository.service'
 import { MessageSuspensionRepositoryService } from './services/messageSuspensionRepository.service'
 import { PoliceDigitalCaseFileRepositoryService } from './services/policeDigitalCaseFileRepository.service'
+import { RobotLogRepositoryService } from './services/robotLogRepository.service'
 import { SubpoenaRepositoryService } from './services/subpoenaRepository.service'
 import { VerdictRepositoryService } from './services/verdictRepository.service'
 import { repositoryModuleConfig } from './repository.config'
@@ -66,9 +70,11 @@ import { repositoryModuleConfig } from './repository.config'
       EventLog,
       IndictmentCount,
       InstitutionContact,
+      LawyerRegistry,
       MessageSuspension,
       Offense,
       PoliceDigitalCaseFile,
+      RobotLog,
       Subpoena,
       Verdict,
       Victim,
@@ -88,8 +94,10 @@ import { repositoryModuleConfig } from './repository.config'
     DefendantRepositoryService,
     DefendantEventLogRepositoryService,
     InstitutionContactRepositoryService,
+    LawyerRegistryRepositoryService,
     MessageSuspensionRepositoryService,
     PoliceDigitalCaseFileRepositoryService,
+    RobotLogRepositoryService,
     SubpoenaRepositoryService,
     VerdictRepositoryService,
   ],
@@ -104,8 +112,11 @@ import { repositoryModuleConfig } from './repository.config'
     CourtDocumentRepositoryService,
     DefendantRepositoryService,
     DefendantEventLogRepositoryService,
+    InstitutionContactRepositoryService,
+    LawyerRegistryRepositoryService,
     MessageSuspensionRepositoryService,
     PoliceDigitalCaseFileRepositoryService,
+    RobotLogRepositoryService,
     SubpoenaRepositoryService,
     VerdictRepositoryService,
   ],
