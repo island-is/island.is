@@ -1,7 +1,9 @@
 import {
+  buildCheckboxField,
   buildMultiField,
   buildSection,
   buildSubmitField,
+  YES,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 
@@ -18,6 +20,15 @@ export const overviewSection = buildSection({
       description: overviewMessages.description,
       children: [
         ...adultProcurationOverviewFields(true),
+        buildCheckboxField({
+          id: 'overviewAccuracyConfirmation',
+          options: [
+            {
+              value: YES,
+              label: overviewMessages.accuracyConfirmation,
+            },
+          ],
+        }),
         buildSubmitField({
           id: 'submit',
           actions: [
