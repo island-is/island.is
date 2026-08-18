@@ -69,10 +69,13 @@ export const mapToElAnswer = (
         entry.type === AnswerOptionType.scale ||
         entry.type === AnswerOptionType.thermometer
       ) {
-        const numericValue = parseFloat(answerValues[0])
-        // No real value entered - omit the reply instead of persisting a
+        const rawValue = answerValues[0].trim()
+        // Number() rejects partial parses like "12abc" that parseFloat
+        // would accept; the empty check must come first since Number('') is 0
+        const numericValue = Number(rawValue)
+        // No usable value entered - omit the reply instead of persisting a
         // fabricated 0, which is a valid, distinct answer from "unanswered"
-        if (isNaN(numericValue)) return []
+        if (!rawValue || !Number.isFinite(numericValue)) return []
 
         return {
           questionId,
