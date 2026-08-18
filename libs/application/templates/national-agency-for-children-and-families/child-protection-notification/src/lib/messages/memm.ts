@@ -202,7 +202,7 @@ export const memmMessages = {
     },
     wellbeingManagerLabel: {
       id: 'cpn.application:memm.wellbeing.wellbeingManagerLabel',
-      defaultMessage: 'Er barnið með málastjóra farsældar?',
+      defaultMessage: 'Er barnið með málstjóra farsældar?',
       description: 'Label for welfare manager radio field',
     },
     wellbeingManagerTooltip: {
@@ -213,12 +213,12 @@ export const memmMessages = {
     },
     wellbeingManagerEmail: {
       id: 'cpn.application:memm.wellbeing.wellbeingManagerEmail',
-      defaultMessage: 'Netfang málastjóra farsældar',
+      defaultMessage: 'Netfang málstjóra farsældar',
       description: 'Label for welfare manager email field',
     },
     wellbeingManagerName: {
       id: 'cpn.application:memm.wellbeing.wellbeingManagerName',
-      defaultMessage: 'Nafn málastjóra farsældar',
+      defaultMessage: 'Nafn málstjóra farsældar',
       description: 'Label for welfare manager name field',
     },
     disabilityLabel: {
