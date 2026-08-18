@@ -233,6 +233,18 @@ const TinyMCE = ({
     const changeIndent = (delta: number) => () => {
       const blocks = editor.selection.getSelectedBlocks()
       if (blocks.length === 0) return
+
+      // Inside a list, indenting means nesting the item rather than padding it.
+      // The lists plugin restructures the list on Indent/Outdent, and the core
+      // indent command skips list content, so no inline style is produced.
+      if (
+        editor.queryCommandState('InsertUnorderedList') ||
+        editor.queryCommandState('InsertOrderedList')
+      ) {
+        editor.execCommand(delta > 0 ? 'Indent' : 'Outdent')
+        return
+      }
+
       editor.undoManager.transact(() => {
         blocks.forEach((block) => {
           const current = getIndentLevel(block)
@@ -292,7 +304,7 @@ const TinyMCE = ({
             height,
             plugins: 'lists fullscreen paste',
             toolbar:
-              'bold italic blockindent blockoutdent highlightcolor fullscreen',
+              'bold italic bullist numlist blockindent blockoutdent highlightcolor fullscreen',
             toolbar_mode: 'wrap',
             menubar: false,
             formats: {
@@ -318,7 +330,10 @@ const TinyMCE = ({
               setupHighlightButton(editor)
               setupIndentButtons(editor)
             },
-            paste_word_valid_elements: 'p,b,strong,i,em,span,br',
+            // ul/ol/li are kept so bullet and numbered lists survive a Word
+            // paste — both the real lists Word sometimes emits and the ones the
+            // paste plugin rebuilds from Word's mso-list paragraphs.
+            paste_word_valid_elements: 'p,b,strong,i,em,span,br,ul,ol,li',
             // "background" (shorthand) is required: Word highlights arrive as
             // "background:yellow" and the paste plugin also maps mso-highlight
             // to "background". These retained styles never reach the content —

@@ -558,7 +558,6 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
       return await this.directorateOfEqualityService.submitEqualityReport(
         auth,
         {
-          identifier: application.id,
           providerId: application.id,
           companyAdminName: answers.chiefExecutive?.name ?? '',
           companyAdminEmail: answers.chiefExecutive?.email ?? '',
@@ -602,6 +601,64 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
         ...errorDetails,
       })
 
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary: coreErrorMessages.defaultTemplateApiError,
+        },
+        errorDetails.status ?? 500,
+      )
+    }
+  }
+
+  async getReportComments({ auth, application }: TemplateApiModuleActionProps) {
+    try {
+      const comments =
+        await this.directorateOfEqualityService.getReportComments(
+          auth,
+          application.id,
+        )
+      return comments
+    } catch (error) {
+      this.logger.error('Failed to get report comments, falling back', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...this.extractFetchErrorDetails(error),
+      })
+      return []
+    }
+  }
+
+  async submitReportComment({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    const body = getValueViaPath<string>(
+      application.answers,
+      'comment.newMessage',
+    )
+    if (!body) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary: coreErrorMessages.defaultTemplateApiError,
+        },
+        400,
+      )
+    }
+    try {
+      return await this.directorateOfEqualityService.submitReportComment(
+        auth,
+        application.id,
+        { body },
+      )
+    } catch (error) {
+      const errorDetails = this.extractFetchErrorDetails(error)
+      this.logger.error('Failed to submit report comment', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...errorDetails,
+      })
       throw new TemplateApiError(
         {
           title: coreErrorMessages.defaultTemplateApiError,
