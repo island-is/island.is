@@ -254,8 +254,7 @@ const Subpoena: FC = () => {
         ?.filter(
           (defendant) =>
             !defendant.isAlternativeService &&
-            (!hasArraignmentBeenSettled ||
-              newSubpoenas.includes(defendant.id)),
+            (!hasArraignmentBeenSettled || newSubpoenas.includes(defendant.id)),
         )
         .map((defendant) => defendant.id) ?? []
 
@@ -523,8 +522,7 @@ const Subpoena: FC = () => {
                     label="Ekki boða til þingfestingar"
                     checked={skipArraignmentSummons}
                     onChange={() => {
-                      const nextSkipArraignmentSummons =
-                        !skipArraignmentSummons
+                      const nextSkipArraignmentSummons = !skipArraignmentSummons
 
                       setSkipArraignmentSummons(nextSkipArraignmentSummons)
 
