@@ -26,6 +26,7 @@ import {
   CaseAppealDecision,
   CaseFileCategory,
   CourtSessionRulingType,
+  CourtSessionStringType,
   EventType,
   IndictmentCaseNotificationType,
   type User as TUser,
@@ -221,6 +222,10 @@ export class CourtSessionService {
         ? normalizedUpdate.rulingFileId
         : existingCourtSession.rulingFileId
 
+    if (becomingConfirmed) {
+      this.validateMergedCaseEntriesComplete(existingCourtSession)
+    }
+
     if (
       becomingConfirmed &&
       effectiveRulingType === CourtSessionRulingType.ORDER &&
@@ -301,6 +306,31 @@ export class CourtSessionService {
     }
 
     return updatedCourtSession
+  }
+
+  // Each merged case with documents in a session gets its own entries booking
+  // in the court record, and each is required before the session can be
+  // confirmed. The set is derived from the filed documents rather than from the
+  // strings, so a merged case nobody has written about is missing rather than
+  // absent. Mirrors areMergedCaseEntriesComplete in the web client.
+  private validateMergedCaseEntriesComplete(courtSession: CourtSession): void {
+    const mergedCaseIds = new Set(
+      courtSession.mergedFiledDocuments?.map((document) => document.caseId),
+    )
+
+    for (const mergedCaseId of mergedCaseIds) {
+      const entries = courtSession.courtSessionStrings?.find(
+        (courtSessionString) =>
+          courtSessionString.mergedCaseId === mergedCaseId &&
+          courtSessionString.stringType === CourtSessionStringType.ENTRIES,
+      )
+
+      if (!entries?.value?.trim()) {
+        throw new BadRequestException(
+          `Merged case ${mergedCaseId} must have entries before the court session can be confirmed`,
+        )
+      }
+    }
   }
 
   // Every party (each defendant, each civil claimant and the prosecution) must
