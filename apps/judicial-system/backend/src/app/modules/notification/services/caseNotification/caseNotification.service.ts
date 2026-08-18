@@ -1630,9 +1630,10 @@ export class CaseNotificationService extends BaseNotificationService {
     theCase: Case,
     recipientName?: string,
     recipientEmail?: string,
+    caseNumber = theCase.courtCaseNumber,
   ): Promise<Recipient> {
-    const subject = `Krafa afturkölluð í máli ${theCase.courtCaseNumber}`
-    const body = `${theCase.creatingProsecutor?.institution?.name} hefur afturkallað kröfu í máli ${theCase.courtCaseNumber}.`
+    const subject = `Krafa afturkölluð í máli ${caseNumber}`
+    const body = `${theCase.creatingProsecutor?.institution?.name} hefur afturkallað kröfu í máli ${caseNumber}.`
 
     return this.sendEmail({
       subject,
@@ -1706,14 +1707,21 @@ export class CaseNotificationService extends BaseNotificationService {
       theCase.notifications,
     )
 
-    if (defenderWasNotified && theCase.defendants && theCase.courtCaseNumber) {
-      promises.push(
-        this.sendRevokedEmailNotificationToCourtForRequestCase(
-          theCase,
-          theCase.defenderName,
-          theCase.defenderEmail,
-        ),
-      )
+    if (defenderWasNotified && theCase.defendants) {
+      // We want to notify defenders even if the court case number has not been set yet, so we fall back to the police case number in that case
+      const caseNumber =
+        theCase.courtCaseNumber ?? theCase.policeCaseNumbers?.[0]
+
+      if (caseNumber) {
+        promises.push(
+          this.sendRevokedEmailNotificationToCourtForRequestCase(
+            theCase,
+            theCase.defenderName,
+            theCase.defenderEmail,
+            caseNumber,
+          ),
+        )
+      }
     }
 
     const recipients = await Promise.all(promises)

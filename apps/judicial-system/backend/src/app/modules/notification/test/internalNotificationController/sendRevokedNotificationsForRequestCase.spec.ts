@@ -41,6 +41,7 @@ describe('InternalNotificationController - Send revoked notifications for reques
   const prosecutorsOfficeName = uuid()
   const courtName = uuid()
   const courtCaseNumber = 'R-369/2025'
+  const policeCaseNumber = '007-2026-01'
 
   let mockEmailService: EmailService
   let mockNotificationModel: typeof Notification
@@ -190,6 +191,7 @@ describe('InternalNotificationController - Send revoked notifications for reques
       courtId,
       court: { name: courtName },
       courtCaseNumber,
+      policeCaseNumbers: [policeCaseNumber],
       judge: { name: judge.name, email: judge.email },
       creatingProsecutor: { institution: { name: prosecutorsOfficeName } },
       defenderName: defender.name,
@@ -242,8 +244,22 @@ describe('InternalNotificationController - Send revoked notifications for reques
         )
       })
 
-      it('should not send a revoked email to the defender', () => {
-        expect(mockEmailService.sendEmail).not.toHaveBeenCalled()
+      it('should send the court revoked email to the defender using the main police case number', () => {
+        const subject = `Krafa afturkölluð í máli ${policeCaseNumber}`
+        const body = `${prosecutorsOfficeName} hefur afturkallað kröfu í máli ${policeCaseNumber}.`
+
+        expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+          expect.objectContaining({
+            to: [{ address: defender.email, name: defender.name }],
+            subject,
+            html: body,
+          }),
+        )
+        expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
+          expect.objectContaining({
+            to: [{ address: judge.email, name: judge.name }],
+          }),
+        )
         expect(then.result).toEqual({ delivered: true })
       })
     })
