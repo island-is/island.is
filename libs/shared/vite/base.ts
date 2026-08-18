@@ -79,7 +79,10 @@ export const injectDevSiEnvironment = (): Plugin => ({
 export const nodeBuiltinPolyfills = () =>
   nodePolyfills({
     include: ['crypto', 'stream', 'buffer', 'events', 'string_decoder', 'vm'],
-    globals: { Buffer: true, global: false, process: false },
+    // The polyfilled crypto/stream modules reference the process global at
+    // runtime (process.nextTick, process.browser) — without the shim the
+    // chunks that bundle them throw "process is not defined" on load.
+    globals: { Buffer: true, global: false, process: true },
   })
 
 const assetMimeTypes: Record<string, string> = {
