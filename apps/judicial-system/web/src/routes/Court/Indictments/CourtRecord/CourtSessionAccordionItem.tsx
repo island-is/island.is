@@ -38,7 +38,7 @@ import {
   lowercase,
   Word,
 } from '@island.is/judicial-system/formatters'
-import { Feature } from '@island.is/judicial-system/types'
+import { appealCorrectionLock, Feature } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   CheckboxList,
@@ -79,6 +79,7 @@ import {
 import {
   applyMergedCaseEntries,
   reconcileAppealDecisionsForRulingFileChange,
+  rulingOrderAppealCase,
 } from '@island.is/judicial-system-web/src/utils/utils'
 import { isCourtSessionValid } from '@island.is/judicial-system-web/src/utils/validate'
 
@@ -176,6 +177,21 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   const { features } = useContext(FeatureContext)
   // The in-court appeal decision UI is behind a flag until it's ready for prod.
   const showAppealDecisions = features.includes(Feature.APPEAL_RULING_ORDER)
+  // Moving the ruling type off ORDER removes the ruling, which discards its
+  // decisions and deletes the appeal it produced - not allowed once the appeal
+  // has left the court record's reach (a party filed it itself, or Landsréttur
+  // has the case). courtSession.service.validateRulingRemovalAllowed rejects the
+  // same change server-side. Swapping the ruling onto another file stays open at
+  // every appeal state: it means the same ruling is now a different document, and
+  // everything moves with it.
+  // The reason is kept, not just the boolean, so the section can say which of the
+  // two locks applies - the appeal decision cards next to it are behind a feature
+  // flag and cannot be relied on to explain these controls.
+  const rulingRemovalLock = appealCorrectionLock(
+    rulingOrderAppealCase(workingCase, courtSession.rulingFileId),
+  )
+  const rulingRemovalDisabled =
+    courtSession.isConfirmed || Boolean(rulingRemovalLock)
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
   })
@@ -1514,6 +1530,21 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                   title="Er kveðinn upp dómur eða úrskurður í þinghaldinu?"
                   required
                 />
+                {/* Only shown while the session is open for correction - a
+                confirmed session disables everything anyway, and the reason is
+                then obvious. */}
+                {rulingRemovalLock && !courtSession.isConfirmed && (
+                  <Box marginBottom={2}>
+                    <AlertMessage
+                      type="info"
+                      message={`${
+                        rulingRemovalLock === 'OUT_OF_COURT'
+                          ? 'Úrskurðurinn hefur verið kærður utan þinghalds'
+                          : 'Kæra úrskurðarins er komin til Landsréttar'
+                      } og því er ekki hægt að fella úrskurðinn úr þingbókinni. Áfram er hægt að velja annað skjal fyrir úrskurðinn.`}
+                    />
+                  </Box>
+                )}
                 <BlueBox className={styles.grid}>
                   <RadioButton
                     name="result_verdict"
@@ -1535,7 +1566,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                         { persist: true },
                       )
                     }
-                    disabled={courtSession.isConfirmed || false}
+                    disabled={rulingRemovalDisabled || false}
                     large
                   />
                   <RadioButton
@@ -1557,7 +1588,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                         { persist: true },
                       )
                     }
-                    disabled={courtSession.isConfirmed || false}
+                    disabled={rulingRemovalDisabled || false}
                     large
                   />
                   <RadioButton
@@ -1579,7 +1610,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                         { persist: true },
                       )
                     }
-                    disabled={courtSession.isConfirmed || false}
+                    disabled={rulingRemovalDisabled || false}
                     large
                   />
                   <RadioButton
@@ -1597,7 +1628,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                         { persist: true },
                       )
                     }
-                    disabled={courtSession.isConfirmed || false}
+                    disabled={rulingRemovalDisabled || false}
                     large
                   />
                   {courtSession.rulingType === CourtSessionRulingType.ORDER && (

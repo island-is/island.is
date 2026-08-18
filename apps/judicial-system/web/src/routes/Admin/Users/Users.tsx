@@ -39,6 +39,7 @@ import {
 
 import { userRoleToString } from '../userRoleToString'
 import { useUsersQuery } from './users.generated'
+import { UsersCsvButton } from './UsersCsvButton'
 import * as styles from './Users.css'
 
 export const Users = () => {
@@ -177,6 +178,9 @@ export const Users = () => {
             }
           />
         </Box>
+      </Box>
+      <Box display="flex" justifyContent="flexEnd" marginBottom={2}>
+        <UsersCsvButton users={users} />
       </Box>
       {users.length > 0 ? (
         <table
