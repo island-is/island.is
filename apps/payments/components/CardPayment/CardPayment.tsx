@@ -1,5 +1,5 @@
 import { useFormContext, Controller } from 'react-hook-form'
-import { format, InputMask } from '@react-input/mask'
+import { InputMask } from '@react-input/mask'
 
 import { Box, Input, Text, Divider } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -18,13 +18,6 @@ interface CardPaymentInput {
 }
 
 const MASK_REPLACEMENT = { _: /\d/ }
-
-// The form stores unmasked digits; the inputs display the masked value.
-const toMaskedValue = (value: string | undefined, mask: string) =>
-  format((value ?? '').replace(/\D/g, ''), {
-    mask,
-    replacement: MASK_REPLACEMENT,
-  })
 
 const CARD_MASK_BY_TYPE = {
   default: '____ ____ ____ ____',
@@ -124,7 +117,10 @@ export const CardPayment = ({
           rules={{
             required: formatMessage(cardValidationError.cardNumber),
             validate: (value) => {
-              if (value.length < 15) {
+              if (!/^[\d ]+$/.test(value)) {
+                return formatMessage(cardValidationError.invalidCardNumber)
+              }
+              if (value.replace(/ /g, '').length < 15) {
                 return formatMessage(cardValidationError.cardNumberTooShort)
               }
               return true
@@ -136,11 +132,9 @@ export const CardPayment = ({
               replacement={MASK_REPLACEMENT}
               component={Input}
               {...field}
-              value={toMaskedValue(field.value, cardMask)}
               onChange={(e) => {
-                const cardNumber = e.target.value.replace(/\s/g, '')
-                handleCardChange(cardNumber)
-                field.onChange(cardNumber)
+                handleCardChange(e.target.value.replace(/\D/g, ''))
+                field.onChange(e.target.value)
               }}
               backgroundColor="blue"
               label={formatMessage(card.cardNumber)}
@@ -170,10 +164,6 @@ export const CardPayment = ({
                   replacement={MASK_REPLACEMENT}
                   component={Input}
                   {...field}
-                  value={toMaskedValue(field.value, '__/__')}
-                  onChange={(e) =>
-                    field.onChange(e.target.value.replace(/\s/g, ''))
-                  }
                   backgroundColor="blue"
                   label={formatMessage(card.cardExpiry)}
                   placeholder={formatMessage(card.cardExpiryPlaceholder)}
@@ -197,7 +187,6 @@ export const CardPayment = ({
                   replacement={MASK_REPLACEMENT}
                   component={Input}
                   {...field}
-                  value={toMaskedValue(field.value, '___')}
                   backgroundColor="blue"
                   label={formatMessage(card.cardCVC)}
                   placeholder={formatMessage(card.cardCVCPlaceholder)}

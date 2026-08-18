@@ -7,7 +7,10 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  formatFileSubmittedBy,
+} from '@island.is/judicial-system/formatters'
 import {
   isAppealFileDeletionLocked,
   isDefenceUser,
@@ -57,7 +60,7 @@ const isProsecutorCategory = (category: CaseFileCategory | undefined | null) =>
 
 const getFileSubmittedByText = (file: CaseFile, workingCase: Case): string => {
   if (isProsecutorCategory(file.category)) {
-    return 'Sækjandi lagði fram'
+    return formatFileSubmittedBy('Sækjandi')
   }
 
   if (file.defendantId) {
@@ -66,7 +69,7 @@ const getFileSubmittedByText = (file: CaseFile, workingCase: Case): string => {
     )
 
     if (defendant?.defenderName) {
-      return `Verjandi ${defendant.defenderName} lagði fram`
+      return formatFileSubmittedBy('Verjandi', defendant.defenderName)
     }
   }
 
@@ -76,25 +79,28 @@ const getFileSubmittedByText = (file: CaseFile, workingCase: Case): string => {
     )
 
     if (civilClaimant?.spokespersonName) {
-      return `${
-        civilClaimant.spokespersonIsLawyer ? 'Lögmaður' : 'Réttargæslumaður'
-      } ${civilClaimant.spokespersonName} lagði fram`
+      return formatFileSubmittedBy(
+        civilClaimant.spokespersonIsLawyer ? 'Lögmaður' : 'Réttargæslumaður',
+        civilClaimant.spokespersonName,
+      )
     }
   }
 
-  return 'Varnaraðili lagði fram'
+  return formatFileSubmittedBy('Varnaraðili')
 }
 
 interface Props {
   appealCase: AppealCase
   rulingFile: CaseFile
   onOpenFile: (fileId: string) => void
+  hideTrailingSeparator?: boolean
 }
 
 const RulingOrderAppealFilesAccordion: FC<Props> = ({
   appealCase,
   rulingFile,
   onOpenFile,
+  hideTrailingSeparator = false,
 }) => {
   const { workingCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
@@ -136,7 +142,11 @@ const RulingOrderAppealFilesAccordion: FC<Props> = ({
       labelVariant="h3"
       labelUse="h3"
     >
-      <Box>
+      <Box
+        className={
+          hideTrailingSeparator ? styles.filesListHideTrailing : undefined
+        }
+      >
         {files.map((file) => {
           const isDisabled = !file.isKeyAccessible
           const canDelete = canDeleteFile(file)
