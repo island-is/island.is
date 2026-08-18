@@ -6,7 +6,7 @@ import { createTestingUserModule } from './createTestingUserModule'
 
 import { nowFactory } from '../../../factories'
 import { randomDate } from '../../../test'
-import { Institution, User } from '../../repository'
+import { User, UserRepositoryService } from '../../repository'
 
 jest.mock('../../../factories')
 
@@ -19,13 +19,14 @@ type GivenWhenThen = (nationalId: string) => Promise<Then>
 
 describe('UserController - Get by national id', () => {
   const date = randomDate()
-  let mockUserModel: typeof User
+  let mockUserRepositoryService: UserRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { userModel, userController } = await createTestingUserModule()
+    const { userRepositoryService, userController } =
+      await createTestingUserModule()
 
-    mockUserModel = userModel
+    mockUserRepositoryService = userRepositoryService
 
     const mockToday = nowFactory as jest.Mock
     mockToday.mockReturnValue(date)
@@ -76,17 +77,17 @@ describe('UserController - Get by national id', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFindOne = mockUserModel.findAll as jest.Mock
-      mockFindOne.mockResolvedValueOnce([user1, user2])
+      const mockFindActiveByNationalId =
+        mockUserRepositoryService.findActiveByNationalId as jest.Mock
+      mockFindActiveByNationalId.mockResolvedValueOnce([user1, user2])
 
       then = await givenWhenThen(nationalId)
     })
 
     it('should return the user', () => {
-      expect(mockUserModel.findAll).toHaveBeenCalledWith({
-        where: { nationalId, active: true },
-        include: [{ model: Institution, as: 'institution' }],
-      })
+      expect(
+        mockUserRepositoryService.findActiveByNationalId,
+      ).toHaveBeenCalledWith(nationalId)
       expect(then.result).toEqual([user1, user2])
     })
   })

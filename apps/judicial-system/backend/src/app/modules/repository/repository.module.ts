@@ -28,6 +28,7 @@ import { Offense } from './models/offense.model'
 import { PoliceDigitalCaseFile } from './models/policeDigitalCaseFile.model'
 import { RobotLog } from './models/robotLog.model'
 import { Subpoena } from './models/subpoena.model'
+import { User } from './models/user.model'
 import { Verdict } from './models/verdict.model'
 import { Victim } from './models/victim.model'
 import { AppealCaseRepositoryService } from './services/appealCaseRepository.service'
@@ -46,6 +47,7 @@ import { MessageSuspensionRepositoryService } from './services/messageSuspension
 import { PoliceDigitalCaseFileRepositoryService } from './services/policeDigitalCaseFileRepository.service'
 import { RobotLogRepositoryService } from './services/robotLogRepository.service'
 import { SubpoenaRepositoryService } from './services/subpoenaRepository.service'
+import { UserRepositoryService } from './services/userRepository.service'
 import { VerdictRepositoryService } from './services/verdictRepository.service'
 import { repositoryModuleConfig } from './repository.config'
 
@@ -76,6 +78,7 @@ import { repositoryModuleConfig } from './repository.config'
       PoliceDigitalCaseFile,
       RobotLog,
       Subpoena,
+      User,
       Verdict,
       Victim,
     ]),
@@ -99,6 +102,7 @@ import { repositoryModuleConfig } from './repository.config'
     PoliceDigitalCaseFileRepositoryService,
     RobotLogRepositoryService,
     SubpoenaRepositoryService,
+    UserRepositoryService,
     VerdictRepositoryService,
   ],
   exports: [
@@ -118,6 +122,7 @@ import { repositoryModuleConfig } from './repository.config'
     PoliceDigitalCaseFileRepositoryService,
     RobotLogRepositoryService,
     SubpoenaRepositoryService,
+    UserRepositoryService,
     VerdictRepositoryService,
   ],
 })
