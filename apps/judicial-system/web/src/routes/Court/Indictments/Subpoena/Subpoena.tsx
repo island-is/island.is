@@ -364,25 +364,42 @@ const Subpoena: FC = () => {
       return
     }
 
-    if (isIssuingAlternativeServices) {
+    const hasCivilClaimants =
+      workingCase.civilClaimants && workingCase.civilClaimants.length > 0
+    const subpoenaText = hasCivilClaimants
+      ? 'Ákæra, fyrirkall og bótakrafa verða send til ákæranda.\nÁkærða verður birt ákæran, fyrirkallið og bótakrafan rafrænt á island.is eða af lögreglu.'
+      : 'Ákæra og fyrirkall verða send til ákæranda.\nÁkærða verður birt ákæran og fyrirkallið rafrænt á island.is eða af lögreglu.'
+
+    if (isSkippingArraignmentSummons) {
+      setModalContent({
+        title: strings.modalAlternativeServiceTitle,
+        text: 'Ekki verður send boðun í þingfestingu.',
+        primaryButtonText: strings.modalAlternativeServicePrimaryButtonText,
+      })
+    } else if (isIssuingAlternativeServices && isIssuingSubpoenas) {
+      // Some defendants were served by other means while others are being
+      // summoned, so the modal has to cover both
+      setModalContent({
+        title: strings.modalAlternativeServiceTitle,
+        text: `${strings.modalAlternativeServiceText}\n\n${subpoenaText}`,
+        primaryButtonText: strings.modalAlternativeServicePrimaryButtonText,
+      })
+    } else if (isIssuingAlternativeServices) {
       setModalContent({
         title: strings.modalAlternativeServiceTitle,
         text: strings.modalAlternativeServiceText,
         primaryButtonText: strings.modalAlternativeServicePrimaryButtonText,
       })
     } else if (isIssuingSubpoenas) {
-      const hasCivilClaimants =
-        workingCase.civilClaimants && workingCase.civilClaimants.length > 0
       setModalContent({
         title: formatMessage(strings.modalTitle),
-        text: hasCivilClaimants
-          ? 'Ákæra, fyrirkall og bótakrafa verða send til ákæranda.\nÁkærða verður birt ákæran, fyrirkallið og bótakrafan rafrænt á island.is eða af lögreglu.'
-          : 'Ákæra og fyrirkall verða send til ákæranda.\nÁkærða verður birt ákæran og fyrirkallið rafrænt á island.is eða af lögreglu.',
+        text: subpoenaText,
         primaryButtonText: formatMessage(strings.modalPrimaryButtonText),
       })
     }
   }, [
     navigateTo,
+    isSkippingArraignmentSummons,
     isIssuingAlternativeServices,
     isIssuingSubpoenas,
     formatMessage,
