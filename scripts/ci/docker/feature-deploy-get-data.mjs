@@ -6,6 +6,8 @@ import fs, { readFileSync } from 'node:fs'
 import github from '@actions/github'
 import { findNestedObjectByKey } from './utils.mjs'
 import { isMainModule } from './utils.mjs'
+import AWS from 'aws-sdk'
+
 
 if (isMainModule(import.meta.url)) {
   main().catch((error) => {
@@ -20,6 +22,28 @@ function getCommitMsg(context) {
     return `Change from: ${pr.html_url}`
   }
   return `Change from: https://github.com/island-is/island.is/commit/${context.sha}`
+}
+
+async function getLatestIdsImageTag() {
+  const ecr = new AWS.ECR({ region: 'eu-west-1' });
+
+  const response = await ecr.describeImages({
+    repositoryName: 'identity-server',
+    filter: { tagStatus: 'TAGGED' },
+    maxResults: 1000,
+  }).promise();
+
+  const mainImages = response.imageDetails
+    ?.filter(img => {
+      return img.imageTags && img.imageTags.some(tag => tag.startsWith('main_'));
+    })
+    .sort((a, b) => {
+      const dateA = a.imagePushedAt ? new Date(a.imagePushedAt).getTime() : 0;
+      const dateB = b.imagePushedAt ? new Date(b.imagePushedAt).getTime() : 0;
+      return dateB - dateA;
+    });
+
+  return mainImages?.[0].imageTags?.[0];
 }
 
 async function main(testContext = null) {
@@ -69,8 +93,10 @@ async function main(testContext = null) {
       content.image.repository &&
       typeof content.image.repository === 'string'
     ) {
+
+      // TODO: && ids feature deploy is checked
       if (file.includes('identity-server')) {
-        content.image.tag = 'main_20260522_VBHs2N1jBfMDePuv'
+        content.image.tag = await getLatestIdsImageTag();
       } else {
         content.image.tag = imageTag
       }
