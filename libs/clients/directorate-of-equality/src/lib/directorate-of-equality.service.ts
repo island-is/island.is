@@ -18,6 +18,7 @@ import {
   getApplicationReportDraft,
   getApplicationReportOutliers,
   importApplicationReportDraftWorkbook,
+  getApplicationReportComments,
   importApplicationSalaryReportWorkbook,
   listApplicationDraftCriteria,
   listApplicationDraftEmployees,
@@ -136,6 +137,17 @@ export class DirectorateOfEqualityClientService {
       user,
       () => getApplicationReport({ path: { providerId } }),
       'Failed to get report',
+    )
+  }
+
+  async getReportComments(
+    user: User,
+    providerId: string,
+  ): Promise<ApplicationReportCommentDto[]> {
+    return this.unwrap(
+      user,
+      () => getApplicationReportComments({ path: { providerId } }),
+      'Failed to get report comments',
     )
   }
 

@@ -112,15 +112,64 @@ export const useMockRentalAgreements = (application: {
   return Array.isArray(rental) && rental.includes(YES)
 }
 
+/**
+ * Dev/local tax-return mock mode for the housing-benefits dataprovider.
+ *
+ * - `none`: call the real HMS tax API
+ * - `sample`: filed last year (and therefore also within last five years)
+ * - `empty`: never filed (manual income/asset declaration path)
+ * - `fiveYears`: filed within last five years, but not last year
+ *   (routes to the tax-return-required dead-end)
+ */
 export type PersonalTaxMockMode = 'none' | 'sample' | 'empty' | 'fiveYears'
 
+/** Any mock mode other than `none` — i.e. resolve locally, never hit the tax API. */
+export type EnabledPersonalTaxMockMode = Exclude<PersonalTaxMockMode, 'none'>
+
+/** Shape stored under `externalData.getPersonalTaxReturn` / assignee tax return. */
+export type PersonalTaxReturnResult = {
+  handedInLastYear: boolean
+  handedInLastFiveYears: boolean
+}
+
+/** Maps UI radio values (`emptySuccess`, `filedWithinFiveYears`, …) to mock modes. */
 const mapTaxVariant = (variant: string | undefined): PersonalTaxMockMode => {
   if (variant === 'emptySuccess') return 'empty'
   if (variant === 'filedWithinFiveYears') return 'fiveYears'
   return 'sample'
 }
 
-/** Real Skattur API unless legacy mock (sample) or new flow with tax mock + variant. */
+/** Type guard: true when a mock variant is selected and the tax API must be skipped. */
+export const isPersonalTaxMockEnabled = (
+  taxMockMode: PersonalTaxMockMode,
+): taxMockMode is EnabledPersonalTaxMockMode => taxMockMode !== 'none'
+
+/**
+ * Builds a successful tax dataprovider payload for the selected mock mode.
+ *
+ * Important: all non-`none` modes (including `sample` / `withSampleData`) must
+ * resolve here. Previously `sample` fell through to the real API, so 500s /
+ * connection failures still marked the provider as failed and blocked the UI
+ * even when the user had opted into mocking.
+ */
+export const resolveMockPersonalTaxReturn = (
+  taxMockMode: EnabledPersonalTaxMockMode,
+): PersonalTaxReturnResult => {
+  switch (taxMockMode) {
+    case 'empty':
+      return { handedInLastYear: false, handedInLastFiveYears: false }
+    case 'fiveYears':
+      return { handedInLastYear: false, handedInLastFiveYears: true }
+    case 'sample':
+    default:
+      return { handedInLastYear: true, handedInLastFiveYears: true }
+  }
+}
+
+/**
+ * Applicant mock mode from `devMockSettings.*` (or legacy `mockData`).
+ * Returns `none` unless mock is on and the tax checkbox is checked.
+ */
 export const getPersonalTaxMockMode = (application: {
   answers?: Record<string, unknown>
 }): PersonalTaxMockMode => {
@@ -139,7 +188,10 @@ export const getPersonalTaxMockMode = (application: {
   return mapTaxVariant(variant)
 }
 
-/** Assignee variant: reads from `<nationalId>.assigneeDevMockSettings.*`. */
+/**
+ * Assignee mock mode from `<nationalId>.assigneeDevMockSettings.*`
+ * (field ids are nationalId-prefixed via `nationalIdPreface`).
+ */
 export const getAssigneePersonalTaxMockMode = (
   application: { answers?: Record<string, unknown> },
   nationalId: string,

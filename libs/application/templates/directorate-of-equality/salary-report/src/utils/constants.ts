@@ -7,6 +7,7 @@ export type Events = {
     | DefaultEvents.ABORT
     | DefaultEvents.APPROVE
     | DefaultEvents.REJECT
+    | DefaultEvents.EDIT
 }
 
 export enum States {

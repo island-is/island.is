@@ -2712,6 +2712,7 @@
           "isatSection": {
             "nullable": true,
             "description": "The resolved section, when it was joined in. Null when not loaded — read `section` for the letter itself.",
+            "type": "object",
             "allOf": [{ "$ref": "#/components/schemas/IsatSectionDto" }]
           }
         },
@@ -2726,7 +2727,8 @@
       },
       "CompanySectorEnum": {
         "type": "string",
-        "enum": ["UNKNOWN", "PRIVATE", "PUBLIC"]
+        "enum": ["UNKNOWN", "PRIVATE", "PUBLIC"],
+        "description": "Ownership sector (private vs government/state), derived from the RSK legal form. UNKNOWN means unclassified — it does NOT mean private."
       },
       "CompanyReportStatusEnum": {
         "type": "string",
@@ -2789,6 +2791,7 @@
           },
           "isatCategory": {
             "nullable": true,
+            "type": "object",
             "allOf": [{ "$ref": "#/components/schemas/IsatCategoryDto" }]
           },
           "sector": {
@@ -3269,7 +3272,11 @@
         },
         "required": ["eligible"]
       },
-      "SalaryDataBasisEnum": { "type": "string", "enum": ["MONTH", "AVERAGE"] },
+      "SalaryDataBasisEnum": {
+        "type": "string",
+        "enum": ["MONTH", "AVERAGE"],
+        "description": "Whether the salary data describes one specific payroll month (`MONTH`) or a twelve-month average (`AVERAGE`). The submittee must declare one."
+      },
       "SubmitReportCompanyDto": {
         "type": "object",
         "properties": {
@@ -3749,6 +3756,7 @@
           },
           "equalityReport": {
             "nullable": true,
+            "type": "object",
             "allOf": [
               { "$ref": "#/components/schemas/EqualityReportSummaryDto" }
             ]
@@ -3775,6 +3783,7 @@
           },
           "result": {
             "nullable": true,
+            "type": "object",
             "allOf": [{ "$ref": "#/components/schemas/ReportResultDto" }]
           },
           "externalComments": {
@@ -4463,6 +4472,10 @@
           "reportEmployeeRoleId": { "type": "string", "format": "uuid" },
           "reportId": { "type": "string", "format": "uuid" },
           "score": { "type": "number", "nullable": true },
+          "roleTitle": {
+            "type": "string",
+            "description": "Title of the role this employee is assigned to, resolved from `reportEmployeeRoleId`. Saves joining against the roles list to label a row."
+          },
           "stepIds": {
             "description": "Ids of the personal (employee-specific) scoring steps assigned to this employee. Empty when the employee is scored purely through its role.",
             "type": "array",
@@ -4480,6 +4493,7 @@
           "gender",
           "reportEmployeeRoleId",
           "reportId",
+          "roleTitle",
           "stepIds"
         ]
       },

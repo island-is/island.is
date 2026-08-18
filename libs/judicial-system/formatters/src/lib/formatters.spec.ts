@@ -422,6 +422,13 @@ describe('containsHtml', () => {
     expect(containsHtml('bla<br />bla')).toBe(true)
   })
 
+  test('should detect a list that contains no other markup', () => {
+    // A list authored in the editor carries no <p>, so without ul/ol/li the
+    // markup was rendered as literal text instead of as rich text.
+    expect(containsHtml('<ul><li>eitt</li><li>tvö</li></ul>')).toBe(true)
+    expect(containsHtml('<ol><li>eitt</li></ol>')).toBe(true)
+  })
+
   test('should not detect plain text as html', () => {
     expect(containsHtml('fyrir umferðarlagabrot með því að hafa ekið')).toBe(
       false,
@@ -433,6 +440,8 @@ describe('containsHtml', () => {
   test('should not detect angle-bracket placeholders as html', () => {
     expect(containsHtml('ökumaðurinn <nafn ökumanns> ók')).toBe(false)
     expect(containsHtml('með kennitöluna <kennitala>')).toBe(false)
+    // Placeholders that merely start with a list tag's letters.
+    expect(containsHtml('<liður 1> og <ólöglegur akstur>')).toBe(false)
   })
 })
 
