@@ -355,6 +355,12 @@ const Subpoena: FC = () => {
   }, [workingCase])
 
   useEffect(() => {
+    if (!canSkipArraignmentSummons) {
+      setSkipArraignmentSummons(false)
+    }
+  }, [canSkipArraignmentSummons])
+
+  useEffect(() => {
     if (navigateTo === undefined) {
       setModalContent(undefined)
       return
