@@ -1937,6 +1937,44 @@ export const messages = defineMessages({
     defaultMessage: 'Sláðu inn skilaboð',
     id: 'sp.health:health-messages-new-body-placeholder',
   },
+  healthConversationsCertificateBlockedText: {
+    defaultMessage:
+      'Ekki er hægt að óska eftir vottorði hjá þessari stofnun núna.',
+    id: 'sp.health:health-messages-certificate-blocked-text',
+  },
+  healthConversationsCertificatePaymentNotice: {
+    defaultMessage:
+      'Athugið að greiða þarf fyrir atvinnurekenda og skólavottorð.',
+    id: 'sp.health:health-messages-certificate-payment-notice',
+  },
+  healthConversationsCertificateTypeTitle: {
+    defaultMessage: 'Vottorð sem óskað er eftir',
+    id: 'sp.health:health-messages-certificate-type-title',
+  },
+  healthConversationsCertificateTypeWork: {
+    defaultMessage: 'Atvinnurekendavottorð',
+    id: 'sp.health:health-messages-certificate-type-work',
+  },
+  healthConversationsCertificateTypeSchool: {
+    defaultMessage: 'Skólavottorð',
+    id: 'sp.health:health-messages-certificate-type-school',
+  },
+  healthConversationsCertificateRecipientNameLabel: {
+    defaultMessage: 'Nafn tengiliðar',
+    id: 'sp.health:health-messages-certificate-recipient-name-label',
+  },
+  healthConversationsCertificateRecipientNamePlaceholder: {
+    defaultMessage: 't.d. vinnuveitandi eða skóli',
+    id: 'sp.health:health-messages-certificate-recipient-name-placeholder',
+  },
+  healthConversationsCertificateNoteLabel: {
+    defaultMessage: 'Lýsing veikinda',
+    id: 'sp.health:health-messages-certificate-note-label',
+  },
+  healthConversationsCertificateNotePlaceholder: {
+    defaultMessage: 'Skrifaðu stutta lýsingu á veikindunum',
+    id: 'sp.health:health-messages-certificate-note-placeholder',
+  },
   healthConversationsNewTermsLabel: {
     defaultMessage: 'Ég samþykki <link>skilmála</link>',
     id: 'sp.health:health-messages-new-terms-label',

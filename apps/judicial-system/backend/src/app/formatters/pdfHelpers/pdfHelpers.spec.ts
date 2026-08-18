@@ -223,20 +223,6 @@ describe('htmlToBlocks', () => {
       expect(blocks[0].runs[0].text).toBe('text')
     })
 
-    it('strips <ul> and <li> and captures list item text as blocks', () => {
-      const blocks = htmlToBlocks('<ul><li>item one</li><li>item two</li></ul>')
-      const texts = blocks.map((b) => b.runs.map((r) => r.text).join(''))
-      expect(texts).toContain('item one')
-      expect(texts).toContain('item two')
-    })
-
-    it('strips <ol> and <li> and captures ordered list items as blocks', () => {
-      const blocks = htmlToBlocks('<ol><li>first</li><li>second</li></ol>')
-      const texts = blocks.map((b) => b.runs.map((r) => r.text).join(''))
-      expect(texts).toContain('first')
-      expect(texts).toContain('second')
-    })
-
     it('does not emit literal tag names as run text for <script>', () => {
       const blocks = htmlToBlocks('<script>alert("xss")</script>')
       const allText = blocks.flatMap((b) => b.runs.map((r) => r.text)).join('')
@@ -249,6 +235,122 @@ describe('htmlToBlocks', () => {
       const allText = blocks.flatMap((b) => b.runs.map((r) => r.text)).join('')
       expect(allText).not.toContain('<style>')
       expect(allText).not.toContain('</style>')
+    })
+  })
+
+  describe('lists', () => {
+    it('marks unordered list items with a bullet and indents them', () => {
+      const blocks = htmlToBlocks('<ul><li>item one</li><li>item two</li></ul>')
+      expect(blocks).toHaveLength(2)
+      expect(blocks[0]).toMatchObject({ marker: '•', indent: 30 })
+      expect(blocks[0].runs[0].text).toBe('item one')
+      expect(blocks[1]).toMatchObject({ marker: '•', indent: 30 })
+      expect(blocks[1].runs[0].text).toBe('item two')
+    })
+
+    it('numbers ordered list items', () => {
+      const blocks = htmlToBlocks('<ol><li>first</li><li>second</li></ol>')
+      expect(blocks.map((b) => b.marker)).toEqual(['1.', '2.'])
+      expect(blocks.map((b) => b.runs[0].text)).toEqual(['first', 'second'])
+    })
+
+    it('honours the start attribute on an ordered list', () => {
+      const blocks = htmlToBlocks('<ol start="3"><li>a</li><li>b</li></ol>')
+      expect(blocks.map((b) => b.marker)).toEqual(['3.', '4.'])
+    })
+
+    it('keeps inline formatting inside a list item on the same block', () => {
+      const blocks = htmlToBlocks(
+        '<ul><li>plain <strong>bold</strong> tail</li></ul>',
+      )
+      expect(blocks).toHaveLength(1)
+      expect(blocks[0].marker).toBe('•')
+      expect(blocks[0].runs).toEqual([
+        { text: 'plain ', bold: false, italic: false, highlight: false },
+        { text: 'bold', bold: true, italic: false, highlight: false },
+        { text: ' tail', bold: false, italic: false, highlight: false },
+      ])
+    })
+
+    it('keeps highlights inside a list item', () => {
+      const blocks = htmlToBlocks(
+        '<ul><li><span class="hl-ffff00">marked</span></li></ul>',
+      )
+      expect(blocks[0].runs[0]).toMatchObject({
+        text: 'marked',
+        highlight: '#ffff00',
+      })
+    })
+
+    it('indents nested lists one level deeper', () => {
+      const blocks = htmlToBlocks(
+        '<ul><li>outer<ul><li>inner</li></ul></li></ul>',
+      )
+      expect(blocks).toHaveLength(2)
+      expect(blocks[0]).toMatchObject({ marker: '•', indent: 30 })
+      expect(blocks[0].runs[0].text).toBe('outer')
+      expect(blocks[1]).toMatchObject({ marker: '•', indent: 60 })
+      expect(blocks[1].runs[0].text).toBe('inner')
+    })
+
+    it('indents a list nested directly inside a list', () => {
+      const blocks = htmlToBlocks('<ul><li>outer</li><ul><li>inner</li></ul>')
+      expect(blocks[1]).toMatchObject({ marker: '•', indent: 60 })
+      expect(blocks[1].runs[0].text).toBe('inner')
+    })
+
+    it('keeps a nested list marker when the parent item has no text', () => {
+      const blocks = htmlToBlocks('<ul><li><ul><li>inner</li></ul></li></ul>')
+      expect(blocks).toHaveLength(2)
+      expect(blocks[0]).toMatchObject({
+        marker: '\u2022',
+        indent: 30,
+        runs: [],
+      })
+      expect(blocks[1]).toMatchObject({ marker: '\u2022', indent: 60 })
+      expect(blocks[1].runs[0].text).toBe('inner')
+    })
+
+    it('keeps nested ordered numbering when the parent item has no text', () => {
+      const blocks = htmlToBlocks(
+        '<ul><li><ol start="3"><li>inner</li><li>next</li></ol></li></ul>',
+      )
+      expect(blocks).toHaveLength(3)
+      expect(blocks[0]).toMatchObject({
+        marker: '\u2022',
+        indent: 30,
+        runs: [],
+      })
+      expect(blocks[1]).toMatchObject({ marker: '3.', indent: 60 })
+      expect(blocks[1].runs[0].text).toBe('inner')
+      expect(blocks[2]).toMatchObject({ marker: '4.', indent: 60 })
+    })
+
+    it('puts the marker on the first line of a paragraph-wrapped item', () => {
+      const blocks = htmlToBlocks('<ul><li><p>wrapped</p></li></ul>')
+      expect(blocks).toHaveLength(1)
+      expect(blocks[0]).toMatchObject({ marker: '•', indent: 30 })
+      expect(blocks[0].runs[0].text).toBe('wrapped')
+    })
+
+    it('splits a list item on <br> and marks only its first line', () => {
+      const blocks = htmlToBlocks('<ul><li>one<br>two</li></ul>')
+      expect(blocks).toHaveLength(2)
+      expect(blocks[0]).toMatchObject({ marker: '•', softBreak: true })
+      expect(blocks[1].marker).toBeUndefined()
+      expect(blocks[1].runs[0].text).toBe('two')
+    })
+
+    it('carries an indent class on the list onto its items', () => {
+      const blocks = htmlToBlocks('<ul class="indent-1"><li>x</li></ul>')
+      expect(blocks[0].indent).toBe(60)
+    })
+
+    it('keeps an empty list item as a marker-only block', () => {
+      const blocks = htmlToBlocks('<ul><li></li><li>after</li></ul>')
+      expect(blocks).toHaveLength(2)
+      expect(blocks[0]).toMatchObject({ marker: '•', runs: [] })
+      expect(blocks[1].runs[0].text).toBe('after')
     })
   })
 
@@ -299,7 +401,7 @@ describe('htmlToBlocks', () => {
   })
 })
 
-describe('addRichText highlight placement', () => {
+describe('addRichText layout', () => {
   interface Rect {
     x: number
     y: number
@@ -462,6 +564,83 @@ describe('addRichText highlight placement', () => {
     expect(rects).toHaveLength(1)
     expect(rects[0].page).toBe(frag.page)
     expect(Math.abs(rects[0].y - frag.y)).toBeLessThanOrEqual(Y_TOLERANCE)
+    doc.end()
+  })
+
+  it('draws a bullet in the gutter beside each list item', () => {
+    const { doc, frags } = createInstrumentedDoc()
+
+    addRichText(doc, '<ul><li>fyrsta</li><li>annað</li></ul>', 2)
+
+    const bullets = frags.filter((f) => f.text.includes('•'))
+    expect(bullets).toHaveLength(2)
+
+    const first = findFragmentWith(frags, 'fyrsta')
+    const second = findFragmentWith(frags, 'annað')
+
+    // The marker shares the item's first line and sits left of its text, but
+    // never spills outside the page margin.
+    expect(bullets[0].y).toBe(first.y)
+    expect(bullets[1].y).toBe(second.y)
+    for (const [i, item] of [first, second].entries()) {
+      expect(bullets[i].x).toBeLessThan(item.x)
+      expect(bullets[i].x).toBeGreaterThanOrEqual(doc.page.margins.left)
+    }
+
+    // Item text is indented one list level past the margin.
+    expect(first.x).toBe(doc.page.margins.left + 30)
+    doc.end()
+  })
+
+  it('draws the number of each ordered list item', () => {
+    const { doc, frags } = createInstrumentedDoc()
+
+    addRichText(doc, '<ol><li>eitt</li><li>tvö</li></ol>', 2)
+
+    expect(frags.filter((f) => f.text.includes('1.'))).toHaveLength(1)
+    expect(frags.filter((f) => f.text.includes('2.'))).toHaveLength(1)
+    doc.end()
+  })
+
+  it('draws the bullet only once when a list item wraps', () => {
+    const { doc, frags } = createInstrumentedDoc()
+
+    const long = 'orðalengja '.repeat(40).trim()
+    addRichText(doc, `<ul><li>${long}</li></ul>`, 2)
+
+    expect(frags.filter((f) => f.text.includes('•'))).toHaveLength(1)
+    const lineYs = [
+      ...new Set(
+        frags
+          .filter((f) => f.text.includes('orðalengja'))
+          .map((f) => Math.round(f.y)),
+      ),
+    ]
+    expect(lineYs.length).toBeGreaterThan(1)
+    doc.end()
+  })
+
+  it('keeps the bullet on the same page as its item', () => {
+    const { doc, frags } = createInstrumentedDoc()
+
+    doc.y = doc.page.height - doc.page.margins.bottom - 5
+    addRichText(doc, '<ul><li>atriði</li></ul>', 2)
+
+    const bullet = findFragmentWith(frags, '•')
+    const item = findFragmentWith(frags, 'atriði')
+    expect(bullet.page).toBe(item.page)
+    expect(bullet.y).toBe(item.y)
+    doc.end()
+  })
+
+  it('indents a nested list one level deeper than its parent', () => {
+    const { doc, frags } = createInstrumentedDoc()
+
+    addRichText(doc, '<ul><li>ytra<ul><li>innra</li></ul></li></ul>', 2)
+
+    const outer = findFragmentWith(frags, 'ytra')
+    const inner = findFragmentWith(frags, 'innra')
+    expect(inner.x - outer.x).toBe(30)
     doc.end()
   })
 })

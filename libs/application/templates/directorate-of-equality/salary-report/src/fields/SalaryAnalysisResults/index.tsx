@@ -8,8 +8,6 @@ import {
   AlertMessage,
   Box,
   Button,
-  GridColumn,
-  GridRow,
   LoadingDots,
   Text,
 } from '@island.is/island-ui/core'
@@ -20,6 +18,7 @@ import { isOutlierGroupComplete } from '../../utils/outlierGroups'
 import type { OutlierGroupAnswer } from '../../utils/outlierGroups'
 import { formatCurrency } from '../EmployeesEditor/utils'
 import { OutlierGroupPanel } from './OutlierGroupPanel'
+import { StatisticCard } from './StatisticsCard'
 
 interface Props extends FieldBaseProps {
   field: CustomField
@@ -225,32 +224,32 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
           <Text variant="h4" marginBottom={2}>
             {formatMessage(messages.salaryAnalysis.results.totalsTitle)}
           </Text>
-          <GridRow rowGap={2}>
-            <GridColumn span={['12/12', '4/12']}>
-              <Text variant="eyebrow">
-                {formatMessage(messages.salaryAnalysis.results.maleLabel)}
-              </Text>
-              <Text variant="h3">
-                {formatCurrency(totals.maleAverageSalary)}
-              </Text>
-            </GridColumn>
-            <GridColumn span={['12/12', '4/12']}>
-              <Text variant="eyebrow">
-                {formatMessage(messages.salaryAnalysis.results.femaleLabel)}
-              </Text>
-              <Text variant="h3">
-                {formatCurrency(totals.femaleAverageSalary)}
-              </Text>
-            </GridColumn>
-          </GridRow>
-          {typeof totals.wageGapPercent === 'number' && (
-            <Box marginTop={3}>
-              <Text variant="eyebrow">
-                {formatMessage(messages.salaryAnalysis.results.wageGapLabel)}
-              </Text>
-              <Text variant="h3">{totals.wageGapPercent.toFixed(1)}%</Text>
-            </Box>
-          )}
+          <Box
+            display="flex"
+            columnGap={[0, 0, 0, 4]}
+            rowGap={[2, 2, 2, 0]}
+            marginTop={1}
+            flexDirection={['column', 'column', 'column', 'row']}
+          >
+            <StatisticCard
+              title={formatMessage(messages.salaryAnalysis.results.maleLabel)}
+              content={formatCurrency(totals.maleAverageSalary)}
+            />
+            <StatisticCard
+              title={formatMessage(messages.salaryAnalysis.results.femaleLabel)}
+              content={formatCurrency(totals.femaleAverageSalary)}
+            />
+
+            {typeof totals.wageGapPercent === 'number' && (
+              <StatisticCard
+                title={formatMessage(
+                  messages.salaryAnalysis.results.wageGapLabel,
+                )}
+                content={totals.wageGapPercent.toFixed(1) + '%'}
+                color="purple"
+              />
+            )}
+          </Box>
         </Box>
       )}
 

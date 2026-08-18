@@ -1,6 +1,5 @@
 import formatISO from 'date-fns/formatISO'
 import { Base64 } from 'js-base64'
-import { Op } from 'sequelize'
 import { ConfidentialClientApplication } from '@azure/msal-node'
 
 import {
@@ -9,7 +8,6 @@ import {
   PayloadTooLargeException,
   ServiceUnavailableException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import { EmailService } from '@island.is/email-service'
 import type { Logger } from '@island.is/logging'
@@ -36,7 +34,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { EventService } from '../event'
-import { RobotLog } from '../repository'
+import { RobotLogRepositoryService } from '../repository'
 import { courtModuleConfig } from './court.config'
 
 export enum CourtDocumentFolder {
@@ -78,7 +76,7 @@ export class CourtService {
     private readonly courtClientService: CourtClientService,
     private readonly emailService: EmailService,
     private readonly eventService: EventService,
-    @InjectModel(RobotLog) private readonly robotLogModel: typeof RobotLog,
+    private readonly robotLogRepositoryService: RobotLogRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     @Inject(courtModuleConfig.KEY)
     private readonly config: ConfigType<typeof courtModuleConfig>,
@@ -744,15 +742,11 @@ export class CourtService {
   }
 
   async hasPriorIndictmentJudgeAssignment(caseId: string): Promise<boolean> {
-    const assignment = await this.robotLogModel.findOne({
-      where: {
-        caseId,
-        type: RobotEmailType.INDICTMENT_CASE_ASSIGNED_ROLES,
-        elementId: { [Op.in]: INDICTMENT_JUDGE_ASSIGNMENT_ROLES },
-      },
-    })
-
-    return Boolean(assignment)
+    return await this.robotLogRepositoryService.existsForCaseTypeAndElements(
+      caseId,
+      RobotEmailType.INDICTMENT_CASE_ASSIGNED_ROLES,
+      INDICTMENT_JUDGE_ASSIGNMENT_ROLES,
+    )
   }
 
   async updateIndictmentCaseWithAssignedRoles(
@@ -1071,16 +1065,6 @@ export class CourtService {
     }
   }
 
-  private async createRobotLog(
-    type: RobotEmailType,
-    caseId: string,
-    elementId?: string,
-  ) {
-    return this.robotLogModel
-      .create({ type, caseId, elementId })
-      .then((log) => [log.id, log.seqNumber])
-  }
-
   private async sendToRobot(
     subject: string,
     content: string,
@@ -1088,8 +1072,9 @@ export class CourtService {
     caseId: string,
     elementId?: string,
   ) {
-    const [logId, nextval] = await this.createRobotLog(type, caseId, elementId)
-    const subjectWithNumber = `${subject} - ${nextval}`
+    const { id: logId, seqNumber } =
+      await this.robotLogRepositoryService.create({ type, caseId, elementId })
+    const subjectWithNumber = `${subject} - ${seqNumber}`
 
     if (this.config.useMicrosoftGraphApiForCourtRobot) {
       if (!this.confidentintialClientApplication) {
@@ -1098,53 +1083,52 @@ export class CourtService {
         )
       }
 
-      return this.confidentintialClientApplication
-        .acquireTokenByClientCredential({
-          scopes: ['https://graph.microsoft.com/.default'],
-        })
-        .then((response) => {
-          if (!response) {
-            throw new Error('Failed to acquire token')
-          }
+      const tokenResponse =
+        await this.confidentintialClientApplication.acquireTokenByClientCredential(
+          { scopes: ['https://graph.microsoft.com/.default'] },
+        )
 
-          return fetch(
-            `https://graph.microsoft.com/v1.0/users/${this.config.courtRobotUser}/sendMail`,
-            {
-              method: 'POST',
-              body: JSON.stringify({
-                message: {
-                  toRecipients: [
-                    {
-                      emailAddress: {
-                        address: this.config.courtRobotEmail,
-                        name: this.config.courtRobotName,
-                      },
-                    },
-                  ],
-                  subject: subjectWithNumber,
-                  body: {
-                    contentType: 'Text',
-                    content,
+      if (!tokenResponse?.accessToken) {
+        throw new Error('Failed to acquire token')
+      }
+
+      const sendMailResponse = await fetch(
+        `https://graph.microsoft.com/v1.0/users/${this.config.courtRobotUser}/sendMail`,
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            message: {
+              toRecipients: [
+                {
+                  emailAddress: {
+                    address: this.config.courtRobotEmail,
+                    name: this.config.courtRobotName,
                   },
                 },
-              }),
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${response.accessToken}`,
+              ],
+              subject: subjectWithNumber,
+              body: {
+                contentType: 'Text',
+                content,
               },
             },
-          )
-        })
-        .then(() =>
-          this.robotLogModel.update(
-            { delivered: true },
-            { where: { id: logId } },
-          ),
-        )
-    }
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${tokenResponse.accessToken}`,
+          },
+        },
+      )
 
-    return this.emailService
-      .sendEmail({
+      // fetch resolves for error statuses, so the robot log would otherwise be
+      // marked delivered for a mail the Graph API rejected
+      if (!sendMailResponse.ok) {
+        throw new Error(
+          `Failed to send robot email through the Microsoft Graph API: ${sendMailResponse.status} ${sendMailResponse.statusText}`,
+        )
+      }
+    } else {
+      await this.emailService.sendEmail({
         from: {
           name: this.config.fromName,
           address: this.config.fromEmail,
@@ -1162,12 +1146,9 @@ export class CourtService {
         subject: subjectWithNumber,
         text: content,
       })
-      .then(() =>
-        this.robotLogModel.update(
-          { delivered: true },
-          { where: { id: logId } },
-        ),
-      )
+    }
+
+    await this.robotLogRepositoryService.markDelivered(logId)
   }
 }
 

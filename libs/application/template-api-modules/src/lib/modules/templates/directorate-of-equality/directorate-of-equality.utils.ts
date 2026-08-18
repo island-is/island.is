@@ -42,7 +42,6 @@ export const mapAnswersToSalaryReportSubmission = ({
 
   return {
     equalityReportId,
-    identifier,
     importedFromExcel,
     providerId: identifier,
     companyAdminName: answers.chiefExecutive?.name ?? '',

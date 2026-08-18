@@ -8,6 +8,8 @@ fragment HealthConversationRecipient on HealthDirectorateHealthConversationRecip
   patientReplyWindowDays
   canCreateConversation
   conversationBlockedReason
+  canRequestCertificate
+  certificateBlockedReason
   allowedMessageTypes {
     patientInitiatedTypeCode
     title
@@ -26,5 +28,14 @@ mutation CreateHealthConversation(
 ) {
   healthDirectorateCreateHealthConversation(input: $input) {
     id
+  }
+}
+
+mutation CreateHealthCertificateRequest(
+  $input: HealthDirectorateCreateCertificateRequestInput!
+) {
+  healthDirectorateCreateCertificateRequest(input: $input) {
+    id
+    conversationId
   }
 }
