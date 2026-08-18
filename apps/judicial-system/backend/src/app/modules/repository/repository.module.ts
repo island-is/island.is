@@ -26,6 +26,7 @@ import { LawyerRegistry } from './models/lawyerRegistry.model'
 import { MessageSuspension } from './models/messageSuspension.model'
 import { Offense } from './models/offense.model'
 import { PoliceDigitalCaseFile } from './models/policeDigitalCaseFile.model'
+import { RobotLog } from './models/robotLog.model'
 import { Subpoena } from './models/subpoena.model'
 import { Verdict } from './models/verdict.model'
 import { Victim } from './models/victim.model'
@@ -43,6 +44,7 @@ import { InstitutionContactRepositoryService } from './services/institutionConta
 import { LawyerRegistryRepositoryService } from './services/lawyerRegistryRepository.service'
 import { MessageSuspensionRepositoryService } from './services/messageSuspensionRepository.service'
 import { PoliceDigitalCaseFileRepositoryService } from './services/policeDigitalCaseFileRepository.service'
+import { RobotLogRepositoryService } from './services/robotLogRepository.service'
 import { SubpoenaRepositoryService } from './services/subpoenaRepository.service'
 import { VerdictRepositoryService } from './services/verdictRepository.service'
 import { repositoryModuleConfig } from './repository.config'
@@ -72,6 +74,7 @@ import { repositoryModuleConfig } from './repository.config'
       MessageSuspension,
       Offense,
       PoliceDigitalCaseFile,
+      RobotLog,
       Subpoena,
       Verdict,
       Victim,
@@ -94,6 +97,7 @@ import { repositoryModuleConfig } from './repository.config'
     LawyerRegistryRepositoryService,
     MessageSuspensionRepositoryService,
     PoliceDigitalCaseFileRepositoryService,
+    RobotLogRepositoryService,
     SubpoenaRepositoryService,
     VerdictRepositoryService,
   ],
@@ -112,6 +116,7 @@ import { repositoryModuleConfig } from './repository.config'
     LawyerRegistryRepositoryService,
     MessageSuspensionRepositoryService,
     PoliceDigitalCaseFileRepositoryService,
+    RobotLogRepositoryService,
     SubpoenaRepositoryService,
     VerdictRepositoryService,
   ],
