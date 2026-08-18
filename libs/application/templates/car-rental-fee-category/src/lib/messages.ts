@@ -287,6 +287,12 @@ export const m = {
       defaultMessage: 'Ekkert fannst fyrir þessa leit.',
       description: 'Vehicle table empty state message',
     },
+    disabledTooRecentOnDayRate: {
+      id: 'rsk.crfc.application:table.view.disabled.too.recent.on.dayrate',
+      defaultMessage: 'Nýskráð á daggjald - breytanlegt eftir 15 daga',
+      description:
+        'Shown instead of the mileage input when a vehicle has been on the day rate for less than 15 days',
+    },
     submitErrorMessage: {
       id: 'rsk.crfc.application:table.view.submit.error',
       defaultMessage: 'Ekki tókst að vista kílómetrastöðu. Reyndu aftur.',

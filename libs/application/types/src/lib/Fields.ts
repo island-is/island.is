@@ -1010,7 +1010,7 @@ export interface StaticTableField extends BaseField {
 
 export type PaginatedSearchableTableRow = Record<
   string,
-  string | number | null | undefined
+  string | number | boolean | null | undefined
 >
 
 export type PaginatedSearchableTableHeader = {
@@ -1039,6 +1039,13 @@ export interface PaginatedSearchableTableField extends BaseField {
   savePropertyNames?: string[]
   pageSize?: number
   callbackId?: string
+  /**
+   * Row property whose truthy value makes that row's editable cells read only.
+   * The row is still listed and searchable, it just cannot be filled in.
+   */
+  disabledKey?: string
+  /** Text shown in place of the editable cells of a disabled row. */
+  disabledReason?: FormText
 }
 
 export interface SliderField extends BaseField {

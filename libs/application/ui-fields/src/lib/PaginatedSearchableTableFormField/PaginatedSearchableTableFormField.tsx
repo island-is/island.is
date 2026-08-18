@@ -325,6 +325,9 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
               const rowId = getRowId(row, rowIdKey)
               const rowKey = rowId || `row-${page}-${rowIndex}`
               const rowWithChanges = rowId ? changedRowsById[rowId] : undefined
+              const isRowDisabled = field.disabledKey
+                ? Boolean(row[field.disabledKey])
+                : false
 
               return (
                 <T.Row key={rowKey}>
@@ -332,6 +335,24 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
                     const value =
                       rowWithChanges?.[header.key] ?? row[header.key] ?? ''
                     if (header.editable) {
+                      // A disabled row stays listed and searchable so the
+                      // applicant can see it exists, but cannot be filled in.
+                      if (isRowDisabled) {
+                        return (
+                          <T.Data key={header.key}>
+                            <Text variant="small" color="dark300">
+                              {field.disabledReason
+                                ? formatText(
+                                    field.disabledReason,
+                                    application,
+                                    formatMessage,
+                                  )
+                                : '-'}
+                            </Text>
+                          </T.Data>
+                        )
+                      }
+
                       const placeholder = header.placeholderKey
                         ? String(row[header.placeholderKey] ?? '')
                         : undefined
@@ -358,7 +379,13 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
                     }
 
                     return (
-                      <T.Data key={header.key}>{String(value) || '-'}</T.Data>
+                      <T.Data key={header.key}>
+                        {isRowDisabled ? (
+                          <Text color="dark300">{String(value) || '-'}</Text>
+                        ) : (
+                          String(value) || '-'
+                        )}
+                      </T.Data>
                     )
                   })}
                 </T.Row>
