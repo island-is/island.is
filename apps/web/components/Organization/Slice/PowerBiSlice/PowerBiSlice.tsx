@@ -136,7 +136,7 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
           fiskistofaShipSearchTarget,
         )
       )
-        return
+        continue
 
       const response = await apolloClient.query({
         query: GET_SINGLE_SHIP,
