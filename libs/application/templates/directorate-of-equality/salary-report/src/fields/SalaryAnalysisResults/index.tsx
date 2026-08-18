@@ -20,10 +20,7 @@ import { isOutlierGroupComplete } from '../../utils/outlierGroups'
 import type { OutlierGroupAnswer } from '../../utils/outlierGroups'
 import { SyncMethodEnum } from '../../utils/constants'
 import { formatCurrency } from '../EmployeesEditor/utils'
-import type {
-  DraftOutlierGroupDto,
-  ReportEmployeeDto,
-} from '../../utils/types'
+import type { DraftOutlierGroupDto, ReportEmployeeDto } from '../../utils/types'
 import { useDraftQuery } from '../../utils/useDraftQuery'
 import { useDraftSync, type SyncCommand } from '../../utils/useDraftSync'
 import {
@@ -97,10 +94,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
   )
   const refetch = useCallback(
     (options?: { silent?: boolean }) =>
-      Promise.all([
-        refetchOutlierGroups(options),
-        refetchEmployees(options),
-      ]),
+      Promise.all([refetchOutlierGroups(options), refetchEmployees(options)]),
     [refetchOutlierGroups, refetchEmployees],
   )
   const { sync } = useDraftSync(application)
@@ -223,10 +217,11 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
     return (ordinal: number) => `#${ordinal}`
   }, [isDraftPhase, content])
 
-  const watchedOutlierGroups: OutlierGroupAnswer[] = useWatch({
-    name: 'salaryAnalysis.outlierGroups',
-    control: isDraftPhase ? draftForm.control : undefined,
-  }) ?? []
+  const watchedOutlierGroups: OutlierGroupAnswer[] =
+    useWatch({
+      name: 'salaryAnalysis.outlierGroups',
+      control: isDraftPhase ? draftForm.control : undefined,
+    }) ?? []
   const outlierGroups = watchedOutlierGroups
 
   useEffect(() => {
@@ -286,9 +281,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
         const employeeIdByOrdinal: Record<number, string> = Object.fromEntries(
           content.employees.map((e) => [e.ordinal, e.id]),
         )
-        const originalGroupIds = new Set(
-          content.outlierGroups.map((g) => g.id),
-        )
+        const originalGroupIds = new Set(content.outlierGroups.map((g) => g.id))
         const finalGroups = draftForm.getValues().salaryAnalysis.outlierGroups
         // Every group carries its own id from creation (see OutlierEditor's
         // handleCreateGroup) — identity tracks by id, not array position, so
@@ -297,20 +290,18 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
         // still safe — it's just treated as a new group (CREATE).
         const groupIds = finalGroups.map((g) => g.id ?? crypto.randomUUID())
 
-        const outlierGroupCommands: SyncCommand[] = finalGroups.map(
-          (g, i) => ({
-            method: originalGroupIds.has(groupIds[i])
-              ? SyncMethodEnum.UPDATE
-              : SyncMethodEnum.CREATE,
-            id: groupIds[i],
-            data: {
-              reason: g.reason || null,
-              action: g.action || null,
-              signatureName: g.signatureName || null,
-              signatureRole: g.signatureRole || null,
-            },
-          }),
-        )
+        const outlierGroupCommands: SyncCommand[] = finalGroups.map((g, i) => ({
+          method: originalGroupIds.has(groupIds[i])
+            ? SyncMethodEnum.UPDATE
+            : SyncMethodEnum.CREATE,
+          id: groupIds[i],
+          data: {
+            reason: g.reason || null,
+            action: g.action || null,
+            signatureName: g.signatureName || null,
+            signatureRole: g.signatureRole || null,
+          },
+        }))
         const keptGroupIds = new Set(groupIds)
         const removedGroupCommands: SyncCommand[] = [...originalGroupIds]
           .filter((id) => !keptGroupIds.has(id))

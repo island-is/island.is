@@ -1,5 +1,10 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import { AlertMessage, Box, LoadingDots, Stack } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  LoadingDots,
+  Stack,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useEffect, useMemo, useRef } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -55,7 +60,8 @@ export const JobClassificationEditor: FC<
   const roles = rolesContent?.roles ?? []
 
   const jobCriteria = useMemo(
-    () => (criteriaContent?.criteria ?? []).filter((c) => c.type !== 'PERSONAL'),
+    () =>
+      (criteriaContent?.criteria ?? []).filter((c) => c.type !== 'PERSONAL'),
     [criteriaContent],
   )
   const stepMetaBySubCriterionId = useMemo(
@@ -158,10 +164,7 @@ export const JobClassificationEditor: FC<
               key={role.id}
               roleTitle={role.title}
               roleIndex={index}
-              assignments={buildDisplayAssignments(
-                jobCriteria,
-                role.stepIds,
-              )}
+              assignments={buildDisplayAssignments(jobCriteria, role.stepIds)}
               stepMetaBySubCriterionId={stepMetaBySubCriterionId}
               startExpanded={index === 0}
             />

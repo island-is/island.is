@@ -28,7 +28,10 @@ import {
 import { EmployeeClassificationRow } from './EmployeeClassificationRow'
 import { TABLE_PAGE_SIZE, TablePagination } from '../TablePagination'
 
-type EmployeeFormEntry = { employeeId: string; assignments: DisplayAssignment[] }
+type EmployeeFormEntry = {
+  employeeId: string
+  assignments: DisplayAssignment[]
+}
 type FormValues = { employees: EmployeeFormEntry[] }
 
 export const EmployeeClassificationEditor: FC<

@@ -1,7 +1,10 @@
 import { DynamicModule, Module } from '@nestjs/common'
 
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import { ApplicationsApi, Configuration } from '@island.is/api/domains/application'
+import {
+  ApplicationsApi,
+  Configuration,
+} from '@island.is/api/domains/application'
 import { DirectorateOfEqualityClientModule } from '@island.is/clients/directorate-of-equality'
 
 import { DirectorateOfEqualityApplicationResolver } from './directorate-of-equality-application.resolver'

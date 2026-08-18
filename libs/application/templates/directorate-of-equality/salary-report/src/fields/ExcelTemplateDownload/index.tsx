@@ -12,14 +12,14 @@ import {
 import { useLocale } from '@island.is/localization'
 import { useMutation } from '@apollo/client'
 import { FC, useEffect, useRef, useState } from 'react'
-import {
-  createDefaultJobFactors,
-  SyncMethodEnum,
-} from '../../utils/constants'
+import { createDefaultJobFactors, SyncMethodEnum } from '../../utils/constants'
 import type { ReportCriterionDto } from '../../utils/types'
 import { useDraftQuery } from '../../utils/useDraftQuery'
 import { useDraftSync } from '../../utils/useDraftSync'
-import { getActionErrorMessage, type ActionExternalData } from '../../utils/errors'
+import {
+  getActionErrorMessage,
+  type ActionExternalData,
+} from '../../utils/errors'
 import { messages } from '../../lib/messages'
 
 // The next screen in the flow — both upload and manual entry advance here.
@@ -163,8 +163,8 @@ export const ExcelTemplateDownload: FC<
         },
       })
 
-      const importData = result.data?.updateApplicationExternalData
-        .externalData?.importSalaryDraftWorkbook as
+      const importData = result.data?.updateApplicationExternalData.externalData
+        ?.importSalaryDraftWorkbook as
         | ActionExternalData<{ criteria?: { type?: string }[] }>
         | undefined
 
