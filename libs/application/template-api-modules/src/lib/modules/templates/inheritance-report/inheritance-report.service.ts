@@ -77,10 +77,7 @@ export class InheritanceReportService extends BaseTemplateApiService {
     super(ApplicationTypes.INHERITANCE_REPORT)
   }
 
-  async checkReviewFlag({
-    application,
-    auth,
-  }: TemplateApiModuleActionProps) {
+  async checkReviewFlag({ application, auth }: TemplateApiModuleActionProps) {
     const rawValue = await this.featureFlagService.getValue(
       Features.inheritanceReportReviewEnabled,
       false,
