@@ -42,9 +42,9 @@ const CardInformationSchema = z.object({
 })
 
 const MarketInformationSchema = z.object({
-  merchantCountry: z.string().optional().nullable(),
-  marketName: z.string().optional().nullable(),
-  acquirerRegion: z.string().optional().nullable(),
+  merchantCountry: z.string(),
+  marketName: z.string().nullable(),
+  acquirerRegion: z.string(),
 })
 
 const PaymentGatewayApiResponseSchema = z.object({
