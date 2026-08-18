@@ -514,7 +514,7 @@ export const ApplicationConfigurations = {
     translation: ['hb.application', 'uiForms.application'],
   },
   [ApplicationTypes.EDIT_UNEMPLOYMENT_INFORMATION]: {
-    slug: 'breyta-upplysingum-atvinnuleysisbaetur',
+    slug: 'vmst-breyta-upplysingum',
     translation: ['vmst.eui.application', 'uiForms.application'],
   },
   [ApplicationTypes.CONFIRM_JOB_SEARCH]: {
@@ -522,7 +522,7 @@ export const ApplicationConfigurations = {
     translation: ['vmst.cjs', 'uiForms.application'],
   },
   [ApplicationTypes.DEREGISTER_UNEMPLOYMENT_BENEFITS]: {
-    slug: 'afskraning-atvinnuleysisbota',
+    slug: 'vmst-afskraning-bota',
     translation: ['vmst.dub.application', 'uiForms.application'],
   },
   [ApplicationTypes.VMST_SUBMIT_DOCUMENTS]: {
@@ -530,7 +530,7 @@ export const ApplicationConfigurations = {
     translation: ['vmst.vsd.application', 'uiForms.application'],
   },
   [ApplicationTypes.UNEMPLOYMENT_CONFIRM_TRAVEL]: {
-    slug: 'atvinnuleysisbaetur-stadfesting-ferda',
+    slug: 'vmst-tilkynning-ferda',
     translation: ['vmst.ct.application', 'uiForms.application'],
   },
   [ApplicationTypes.EQUALITY_REPORT]: {

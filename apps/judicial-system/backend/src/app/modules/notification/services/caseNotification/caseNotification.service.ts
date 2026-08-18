@@ -1264,10 +1264,19 @@ export class CaseNotificationService extends BaseNotificationService {
     const promises = [this.sendRulingEmailNotificationToProsecutor(theCase)]
 
     if (isIndictmentCase(theCase.type)) {
-      // DEFENDANTS
+      // DEFENDANTS — skip defenders of defendants whose indictment was
+      // already cancelled or dismissed while the case continued for others
       const uniqueDefendants = _uniqBy(
         theCase.defendants?.filter(
-          ({ isDefenderChoiceConfirmed }) => isDefenderChoiceConfirmed,
+          (defendant) =>
+            defendant.isDefenderChoiceConfirmed &&
+            !DefendantEventLog.getEventLogByEventType(
+              [
+                DefendantEventType.INDICTMENT_CANCELLED,
+                DefendantEventType.INDICTMENT_DISMISSED,
+              ],
+              defendant.eventLogs,
+            ),
         ) ?? [],
         ({ defenderEmail }) => defenderEmail,
       )
