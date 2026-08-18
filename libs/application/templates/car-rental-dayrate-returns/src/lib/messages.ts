@@ -1,16 +1,17 @@
 import { defineMessages } from 'react-intl'
 
 export const serviceErrors = {
-  missingDayRateEntry: defineMessages({
+  alreadyReported: defineMessages({
     title: {
-      id: 'rsk.crdr.application:serviceErrors.missingDayRateEntry.title',
-      defaultMessage: 'Missing day rate entry',
-      description: 'Title for missing day rate entry id error',
+      id: 'rsk.crdr.application:serviceErrors.alreadyReported.title',
+      defaultMessage: 'Rental days already registered',
+      description: 'Title for already reported rental days error',
     },
     summary: {
-      id: 'rsk.crdr.application:serviceErrors.missingDayRateEntry.summary',
-      defaultMessage: 'No dayRateEntryId for vehicle {vehicleId}',
-      description: 'Summary for missing day rate entry id error',
+      id: 'rsk.crdr.application:serviceErrors.alreadyReported.summary',
+      defaultMessage:
+        'Rental days for period {period} have already been registered for: {vehicles}',
+      description: 'Summary for already reported rental days error',
     },
   }),
   badRequest: defineMessages({
