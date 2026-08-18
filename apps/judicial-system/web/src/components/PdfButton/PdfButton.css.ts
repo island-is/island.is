@@ -16,6 +16,8 @@ export const pdfRowMain = style({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
+  width: '100%',
+  minWidth: 0,
 })
 
 export const cursor = style({ cursor: 'pointer' })
@@ -35,6 +37,12 @@ export const fileNameContainerWithChildren = style({
 })
 
 export const fileNameContainer = style({
+  flex: 1,
+  minWidth: 0,
   marginRight: theme.spacing[2],
   wordBreak: 'break-all',
+})
+
+export const childrenContainer = style({
+  flexShrink: 0,
 })
