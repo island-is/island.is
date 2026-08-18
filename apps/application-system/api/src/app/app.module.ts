@@ -81,6 +81,7 @@ import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
 import { RecyclingFundClientConfig } from '@island.is/clients/recycling-fund'
 import { DirectorateOfEqualityClientConfig } from '@island.is/clients/directorate-of-equality'
 import { NationalAgencyForChildrenAndFamiliesClientConfig } from '@island.is/clients/national-agency-for-children-and-families'
+import { DataGatewayClientConfig } from '@island.is/clients/mms/data-gateway'
 
 @Module({
   imports: [
@@ -159,6 +160,7 @@ import { NationalAgencyForChildrenAndFamiliesClientConfig } from '@island.is/cli
         RecyclingFundClientConfig,
         DirectorateOfEqualityClientConfig,
         NationalAgencyForChildrenAndFamiliesClientConfig,
+        DataGatewayClientConfig,
       ],
     }),
   ],

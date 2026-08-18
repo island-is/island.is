@@ -1,5 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
+import { SchoolDto } from '@island.is/clients/mms/data-gateway'
 import { Option } from '@island.is/clients/mms/frigg'
 import {
   DetailedDropDownDto,
@@ -98,6 +99,9 @@ export const getApplicationExternalData = (
     'childNationalIdType.data.registryCode',
   )
 
+  const schools =
+    getValueViaPath<SchoolDto[]>(externalData, 'schools.data') ?? []
+
   return {
     applicantName,
     applicantNationalId,
@@ -118,5 +122,6 @@ export const getApplicationExternalData = (
     guardianNotAwareReasons,
     schoolTypes,
     childNationalIdTypeCode,
+    schools,
   }
 }

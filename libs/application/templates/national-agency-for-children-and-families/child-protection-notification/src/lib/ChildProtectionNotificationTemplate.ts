@@ -30,7 +30,7 @@ import {
   PostalCodesApi,
   PronounsApi,
   ProtectiveFactorsApi,
-  SchoolTypesApi,
+  SchoolsApi,
 } from '../dataProviders'
 import {
   applicationCardMessages,
@@ -111,7 +111,7 @@ const template: ApplicationTemplate<
                   PostalCodesApi,
                   ChildUnknownNationalIdStatesApi,
                   GuardianNotAwareReasonsApi,
-                  SchoolTypesApi,
+                  SchoolsApi,
                   LanguageEnvironmentsApi,
                 ],
                 delete: true,
@@ -144,7 +144,7 @@ const template: ApplicationTemplate<
                 PostalCodesApi,
                 ChildUnknownNationalIdStatesApi,
                 GuardianNotAwareReasonsApi,
-                SchoolTypesApi,
+                SchoolsApi,
                 LanguageEnvironmentsApi,
               ],
               delete: true,
