@@ -827,6 +827,22 @@ export const isAppealFileCategoryVisible = (
   }
 }
 
+// The court of appeals' own documents (APPEAL_RULING / APPEAL_COURT_RECORD) also
+// belong to exactly one appeal-case row: case-level appeals own the files with
+// no rulingFileId, ruling-order appeals own the files tagged with their own
+// rulingFileId. isMatchingAppealCaseFile cannot be used here as it is scoped to
+// the parties' files (kærugögn) and rejects court of appeals users.
+export const isMatchingAppealCourtFile = (
+  file: {
+    category?: CaseFileCategory | null
+    rulingFileId?: string | null
+  },
+  category: CaseFileCategory,
+  rulingFileId?: string | null,
+): boolean =>
+  file.category === category &&
+  (file.rulingFileId ?? null) === (rulingFileId ?? null)
+
 export const isMatchingAppealCaseFile = (
   workingCase: Case,
   categories: CaseFileCategory[],

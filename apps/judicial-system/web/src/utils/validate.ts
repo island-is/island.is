@@ -27,7 +27,11 @@ import {
 
 import { isNonEmptyArray } from './arrayHelpers'
 import { isCivilClaimantDefendantSelectionValid } from './civilClaimantUtils'
-import { caseLevelAppealDecision, isBusiness } from './utils'
+import {
+  caseLevelAppealDecision,
+  isBusiness,
+  isMatchingAppealCourtFile,
+} from './utils'
 
 export type Validation =
   | 'empty'
@@ -852,8 +856,12 @@ export const isCourtOfAppealRulingStepValid = (
     isCourtOfAppealRulingStepFieldsValid(appealCase) &&
       (appealCase?.appealRulingDecision ===
         AppealCaseRulingDecision.DISCONTINUED ||
-        workingCase.caseFiles?.some(
-          (file) => file.category === CaseFileCategory.APPEAL_RULING,
+        workingCase.caseFiles?.some((file) =>
+          isMatchingAppealCourtFile(
+            file,
+            CaseFileCategory.APPEAL_RULING,
+            appealCase?.rulingFileId,
+          ),
         )),
   )
 }
