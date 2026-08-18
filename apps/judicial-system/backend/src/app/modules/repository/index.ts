@@ -57,6 +57,11 @@ export {
   CreateRobotLog,
 } from './services/robotLogRepository.service'
 export { SubpoenaRepositoryService } from './services/subpoenaRepository.service'
+export {
+  UserRepositoryService,
+  CreateUser,
+  UpdateUser,
+} from './services/userRepository.service'
 export { VerdictRepositoryService } from './services/verdictRepository.service'
 
 export {
