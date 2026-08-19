@@ -123,4 +123,16 @@ export class ChildProtectionNotificationService extends BaseTemplateApiService {
       auth,
     )
   }
+
+  async getNotifierRoles({ auth }: TemplateApiModuleActionProps) {
+    return await this.nationalAgencyForChildrenAndFamiliesClientService.getNotifierRoles(
+      auth,
+    )
+  }
+
+  async getNotifierRoleSubTypes({ auth }: TemplateApiModuleActionProps) {
+    return await this.nationalAgencyForChildrenAndFamiliesClientService.getNotifierRoleSubTypes(
+      auth,
+    )
+  }
 }

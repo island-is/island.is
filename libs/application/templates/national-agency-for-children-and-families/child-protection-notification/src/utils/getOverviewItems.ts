@@ -138,7 +138,7 @@ export const getOverviewItems = (
 
 export const getServiceProviderItems = (
   answers: FormValue,
-  _externalData: ExternalData,
+  externalData: ExternalData,
 ): Array<KeyValueItem> => {
   const {
     serviceProviderService,
@@ -150,19 +150,24 @@ export const getServiceProviderItems = (
     serviceProviderAddressCity,
   } = getApplicationAnswers(answers)
 
+  const { notifierRoles, notifierRoleSubTypes } =
+    getApplicationExternalData(externalData)
+
   return [
     {
-      // TODO: Need to update when data implementation is done (need to display the label, not the value)
       width: 'half',
       keyText: prerequisitesMessages.serviceProvider.service,
-      valueText: serviceProviderService ?? '',
+      valueText:
+        notifierRoles.find((n) => n.value === serviceProviderService)?.label ??
+        '',
       hideIfEmpty: true,
     },
     {
-      // TODO: Need to update when data implementation is done (need to display the label, not the value)
       width: 'half',
       keyText: prerequisitesMessages.serviceProvider.serviceType,
-      valueText: serviceProviderServiceType ?? '',
+      valueText:
+        notifierRoleSubTypes.find((n) => n.code === serviceProviderServiceType)
+          ?.label ?? '',
       hideIfEmpty: true,
     },
     {

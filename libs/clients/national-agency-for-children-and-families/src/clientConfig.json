@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Barnaverndargátt API",
-    "description": "Gátt fyrir aðila til að skila inn tilkynningum vegna barnaverndarmála.<br>Build time(version): 2026-08-12 11:21:20",
+    "description": "Gátt fyrir aðila til að skila inn tilkynningum vegna barnaverndarmála.<br>Build time(version): 2026-08-13 15:08:13",
     "contact": {
       "name": "Apró ehf.",
       "url": "https://www.apro.is/",
@@ -2406,8 +2406,8 @@
     "/api/external/dropdown/notifier-roles": {
       "get": {
         "tags": ["ExternalDropdown"],
-        "summary": "Get all notifier roles",
-        "description": "Returns notifier roles with integer code as value and Icelandic name as label. **Required Roles:** type:digital_iceland.",
+        "summary": "Get institutional notifier roles",
+        "description": "Returns all notifier roles. **Required Roles:** type:digital_iceland.",
         "operationId": "ExternalNotifierRoles",
         "responses": {
           "200": {
@@ -2938,6 +2938,48 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/DropDownDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/external/dropdown/notifier-role-subtypes": {
+      "get": {
+        "tags": ["ExternalDropdown"],
+        "summary": "Get notifier role sub-types",
+        "description": "Returns root-level notifier role sub-types grouped by notifier role code. Children are omitted from the external response. **Required Roles:** type:digital_iceland.",
+        "operationId": "ExternalNotifierRoleSubTypes",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExternalNotifierRoleSubTypeResponse"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExternalNotifierRoleSubTypeResponse"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExternalNotifierRoleSubTypeResponse"
                   }
                 }
               }
@@ -6591,6 +6633,31 @@
         },
         "additionalProperties": false
       },
+      "ExternalNotifierRoleSubTypeResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "label": {
+            "type": "string",
+            "nullable": true
+          },
+          "notifierRoleCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExternalNotifierRoleSubTypeResponse"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ExternalSubCategoryResponse": {
         "type": "object",
         "properties": {
@@ -7849,6 +7916,10 @@
           "additionalDescription": {
             "type": "string",
             "nullable": true
+          },
+          "subTypeCode": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -7861,6 +7932,10 @@
             "$ref": "#/components/schemas/NotifierRoleEnum"
           },
           "additionalDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "subTypeCode": {
             "type": "string",
             "nullable": true
           }
