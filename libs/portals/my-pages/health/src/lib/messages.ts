@@ -46,7 +46,7 @@ export const messages = defineMessages({
   },
   movementPrescriptionsIntro: {
     defaultMessage:
-      'Hreyfingarleysi er einn af mikilvægum áhrifaþáttum algengra sjúkdóma. Hreyfing er mikilvæg sem meðferð eða hluti meðferðar þessara sjúkdóma. Því hafa verið þróaðar ýmsar aðferðir til beita hreyfingu sem meðferð hjá þeim á því þurfa að halda.',
+      'Hreyfingarleysi er einn af mikilvægum áhrifaþáttum algengra sjúkdóma. Hreyfing er mikilvæg sem meðferð eða hluti meðferðar þessara sjúkdóma. Því hafa verið þróaðar ýmsar aðferðir til að beita hreyfingu sem meðferð hjá þeim sem á því þurfa að halda.',
     id: 'sp.health:movement-prescriptions-intro',
   },
   readAboutMovementPrescriptions: {
