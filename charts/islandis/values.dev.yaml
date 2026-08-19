@@ -2194,7 +2194,7 @@ payments:
     BASEPATH: '/greida'
     DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-internal'
@@ -2246,10 +2246,10 @@ payments:
   resources:
     limits:
       cpu: '200m'
-      memory: '256Mi'
+      memory: '512Mi'
     requests:
       cpu: '100m'
-      memory: '128Mi'
+      memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET: '/k8s/payments/PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET'

@@ -75,6 +75,16 @@ export const serviceSetup = (services: {
         paths: [basepath],
       },
     })
+    .resources({
+      limits: {
+        cpu: '200m',
+        memory: '512Mi',
+      },
+      requests: {
+        cpu: '100m',
+        memory: '256Mi',
+      },
+    })
     .readiness('/liveness')
     .liveness('/liveness')
     .grantNamespaces(
