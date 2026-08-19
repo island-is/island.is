@@ -48,6 +48,8 @@ export const updateFormFn = async (
             zendeskInternal: newForm.zendeskInternal,
             useValidate: newForm.useValidate,
             submissionServiceUrl: newForm.submissionServiceUrl,
+            zendeskBrandId:
+              newForm.organizationZendeskInstance?.zendeskBrandId ?? '',
             hasSummaryScreen: newForm.hasSummaryScreen,
             sectionInfo: {
               title: {

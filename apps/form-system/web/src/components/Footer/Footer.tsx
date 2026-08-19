@@ -131,7 +131,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
     state.currentSection.index === 0
       ? formatMessage(m.externalDataConfirmation)
       : onSubmit
-      ? formatMessage(m.submitApplication)
+      ? formatMessage(m.submit)
       : isCompletedSection
       ? formatMessage(m.openMyPages)
       : formatMessage(m.continue)

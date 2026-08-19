@@ -146,6 +146,7 @@ export class FormsService {
       'zendeskInternal',
       'useValidate',
       'submissionServiceUrl',
+      'zendeskBrandId',
       'isTranslated',
       'hasPayment',
       'beenPublished',
@@ -1082,6 +1083,7 @@ export class FormsService {
       'zendeskInternal',
       'useValidate',
       'submissionServiceUrl',
+      'zendeskBrandId',
       'hasSummaryScreen',
       'sectionInfo',
       'dependencies',
@@ -1197,7 +1199,7 @@ export class FormsService {
     formDto.organizationZendeskInstance.zendeskInstance =
       organization?.zendeskInstance ?? ''
     formDto.organizationZendeskInstance.zendeskBrandId =
-      organization?.zendeskBrandId ?? ''
+      form.zendeskBrandId ?? ''
 
     return formDto
   }
@@ -1331,6 +1333,9 @@ export class FormsService {
     newForm.submissionServiceUrl = copyToDifferentOrganization
       ? ''
       : existingForm.submissionServiceUrl
+    newForm.zendeskBrandId = copyToDifferentOrganization
+      ? ''
+      : existingForm.zendeskBrandId
     newForm.zendeskInternal = copyToDifferentOrganization
       ? false
       : existingForm.zendeskInternal

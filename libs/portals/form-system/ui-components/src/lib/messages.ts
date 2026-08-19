@@ -879,8 +879,8 @@ export const m = defineMessages({
     defaultMessage: 'Veldu mínútu',
     description: 'Pick minute',
   },
-  reviewApplication: {
-    id: 'form.system:review-application',
+  review: {
+    id: 'form.system:review',
     defaultMessage: 'Vinsamlega farðu vel yfir áður en þú sendir inn.',
     description: 'Please review before submitting.',
   },
@@ -972,8 +972,8 @@ export const m = defineMessages({
     defaultMessage: 'Umsókn í vinnslu hjá þér',
     description: 'Draft status for an application',
   },
-  submitApplication: {
-    id: 'form.system:submit-application',
+  submit: {
+    id: 'form.system:submit',
     defaultMessage: 'Senda inn',
     description: 'Submit',
   },
@@ -1323,6 +1323,13 @@ export const m = defineMessages({
       'Ekki er hægt að gefa út formið. Allir reitir með íslensku þurfa enska þýðingu.',
     description:
       'The form cannot be published. All name fields with Icelandic text require an English translation.',
+  },
+  zendeskSettingsNeededError: {
+    id: 'form.system:zendesk-settings-needed-error',
+    defaultMessage:
+      'Ekki er hægt að gefa út formið. Zendesk brand ID og Zendesk instance þurfa að vera skilgreind.',
+    description:
+      'The form cannot be published. Zendesk brand ID and Zendesk instance must be configured.',
   },
   copyFieldHover: {
     id: 'form.system:copy-field-hover',
