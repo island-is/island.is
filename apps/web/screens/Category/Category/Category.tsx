@@ -119,12 +119,9 @@ const Category: Screen<CategoryProps> = ({
   const handleAccordionClick = (groupSlug: string) => {
     const updatedArr = updateHashArray(hashArray, groupSlug)
     setHashArray(updatedArr)
-    window.location.href = `#${getHashString(updatedArr)}`
+    window.history.replaceState(null, '', `#${getHashString(updatedArr)}`)
   }
 
-  // Plain render function, not a component: defining a component inside the
-  // render gives it a new identity every render, remounting each AccordionCard
-  // on toggle and breaking the open/close animation.
   const renderPageGroup = (group: CategoryGroups[number], index: number) => {
     const groupSlug = group.slug
     const expanded = hashArray.includes(groupSlug)
