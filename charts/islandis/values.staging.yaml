@@ -1973,10 +1973,10 @@ payments:
     min: 1
   resources:
     limits:
-      cpu: '200m'
+      cpu: '400m'
       memory: '1024Mi'
     requests:
-      cpu: '100m'
+      cpu: '200m'
       memory: '512Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'

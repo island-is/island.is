@@ -77,11 +77,11 @@ export const serviceSetup = (services: {
     })
     .resources({
       limits: {
-        cpu: '200m',
+        cpu: '400m',
         memory: '1024Mi',
       },
       requests: {
-        cpu: '100m',
+        cpu: '200m',
         memory: '512Mi',
       },
     })
