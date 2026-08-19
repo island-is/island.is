@@ -67,7 +67,7 @@ export const messages = {
     description: {
       id: 'doe.sr.application:notAllowed.description',
       defaultMessage:
-        'Þú þarft að vera með gilda jafnréttisáætlun til þess að senda inn launagreiningu.',
+        'Þú þarft að vera með gilda [jafnréttisáætlun](/umsoknir/jafnrettisstofa-jafnrettisaaetlun) til þess að senda inn launagreiningu.',
     },
   }),
 
