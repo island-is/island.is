@@ -655,7 +655,9 @@ export default function InboxScreen() {
                   {renderHeaderIconSegment(
                     inboxReadIcon,
                     onMarkAllAsReadPress,
-                    intl.formatMessage({ id: 'inbox.markAllAsReadPromptConfirm' }),
+                    intl.formatMessage({
+                      id: 'inbox.markAllAsReadPromptConfirm',
+                    }),
                   )}
                 </>
               ),
