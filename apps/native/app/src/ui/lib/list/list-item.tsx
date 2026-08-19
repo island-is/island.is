@@ -76,6 +76,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
+    columnGap: theme.spacing.smallGutter,
     marginBottom: theme.spacing.smallGutter,
   },
   subtitleWrapper: {
@@ -110,6 +111,7 @@ interface ListItemProps {
   starred?: boolean
   urgent?: boolean
   replyable?: boolean
+  attachment?: boolean
   selectable?: boolean
   selected?: boolean
   onPressIcon?: () => void
@@ -126,6 +128,7 @@ export function ListItem({
   selectable = false,
   selected = false,
   replyable = false,
+  attachment = false,
   onPressIcon,
 }: ListItemProps) {
   const intl = useIntl()
@@ -167,9 +170,26 @@ export function ListItem({
                 variant="body3"
                 numberOfLines={1}
                 ellipsizeMode="tail"
+                style={{ flexShrink: 1 }}
               >
                 {title}
               </Typography>
+              {replyable && (
+                <UIIcon
+                  source={require('../../../assets/icons/reply.png')}
+                  width={12}
+                  height={12}
+                  tintColor="dark400"
+                />
+              )}
+              {attachment && (
+                <UIIcon
+                  source={require('../../../assets/icons/attachment.png')}
+                  width={16}
+                  height={16}
+                  tintColor="dark400"
+                />
+              )}
             </View>
             {date && (
               <Typography variant="body3">
@@ -184,14 +204,6 @@ export function ListItem({
               {subtitle}
             </Typography>
           </View>
-          {replyable && (
-            <UIIcon
-              source={require('../../../assets/icons/reply.png')}
-              width={12}
-              height={12}
-              tintColor="dark300"
-            />
-          )}
           <View style={styles.spacer} />
           {!hasTitle && date && (
             <Typography variant="body3">

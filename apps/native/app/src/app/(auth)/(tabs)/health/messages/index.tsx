@@ -177,6 +177,7 @@ export default function HealthMessagesScreen() {
               date={item.lastMessageSentAt ?? undefined}
               unread={!item.isRead}
               starred={item.isStarred}
+              attachment={item.hasAttachment}
               icon={getSenderLogo(item.organization, 75)}
             />
           </Pressable>

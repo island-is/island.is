@@ -9,6 +9,7 @@ import Animated, {
 } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 import documentIcon from '@/assets/icons/reader.png'
+import attachmentIcon from '@/assets/icons/attachment.png'
 import { PressableHighlight } from '@/components/pressable-highlight/pressable-highlight'
 import { useOrganizationsStore } from '@/stores/organizations-store'
 import { Avatar, Container, Icon, Typography } from '@/ui'
@@ -229,6 +230,14 @@ export const DocumentListItem = ({
                 ) : null}
               </MetaRow>
             </Content>
+            {attachments && attachments.length > 0 ? (
+              <Icon
+                source={attachmentIcon}
+                width={16}
+                height={16}
+                tintColor="dark400"
+              />
+            ) : null}
           </Host>
           <Animated.View style={bodyStyle}>
             <Body
