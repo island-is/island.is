@@ -2004,15 +2004,6 @@ export const messages = defineMessages({
     defaultMessage: 'Senda skilaboð',
     id: 'sp.health:health-message-send',
   },
-  healthConversationSentTitle: {
-    defaultMessage: 'Skilaboð móttekin',
-    id: 'sp.health:health-message-sent-title',
-  },
-  healthConversationSentText: {
-    defaultMessage:
-      'Við svörum á dagvinnutíma, yfirleitt innan þriggja virkra daga. Ef erindið er brátt og þarfnast svars í dag, hringdu í 1700. Ef um neyðartilfelli er að ræða, hringdu strax í 112.',
-    id: 'sp.health:health-message-sent-text',
-  },
   healthConversationsNoRecipient: {
     defaultMessage: 'Ekki er hægt að senda skilaboð eins og er',
     id: 'sp.health:health-messages-no-recipient',
@@ -2044,14 +2035,38 @@ export const messages = defineMessages({
       'Þessi þjónustuaðili býður ekki upp á skilaboð á Ísland.is.',
     id: 'sp.health:health-messages-messaging-not-allowed-text',
   },
-  healthConversationReplyClosedText: {
-    defaultMessage:
-      'Ekki er hægt að svara þessum skilaboðum því sendandi hefur lokað fyrir frekari svör.',
-    id: 'sp.health:health-message-reply-closed-text',
+  healthConversationReplyBlockedMissingRecipientText: {
+    defaultMessage: 'Ekki er hægt að svara þessum skilaboðum.',
+    id: 'sp.health:health-messages-reply-blocked-missing-recipient-text',
   },
-  healthConversationReplyClosedShortText: {
+  healthConversationReplyBlockedRepliesDisabledText: {
+    defaultMessage: 'Ekki er hægt að svara þessum skilaboðum.',
+    id: 'sp.health:health-messages-reply-blocked-replies-disabled-text',
+  },
+  healthConversationReplyBlockedNoReplyGroupText: {
     defaultMessage: 'Ekki er hægt að svara þessum skilaboðum',
-    id: 'sp.health:health-message-reply-closed-short-text',
+    id: 'sp.health:health-messages-reply-blocked-no-reply-group-text',
+  },
+  healthConversationReplyBlockedMessagingNotAllowedText: {
+    defaultMessage: 'Ekki er hægt að svara þessum skilaboðum',
+    id: 'sp.health:health-messages-reply-blocked-messaging-not-allowed-text',
+  },
+  healthConversationReplyBlockedOutsideWindowText: {
+    defaultMessage: 'Ekki er hægt að svara þessum skilaboðum',
+    id: 'sp.health:health-messages-reply-blocked-outside-window-text',
+  },
+  healthConversationReplyBlockedWindowExpiredText: {
+    defaultMessage: 'Ekki er hægt að svara þessum skilaboðum',
+    id: 'sp.health:health-messages-reply-blocked-window-expired-text',
+  },
+  healthConversationReplyBlockedAwaitingStaffReplyTitle: {
+    defaultMessage: 'Skilaboð móttekin',
+    id: 'sp.health:health-messages-reply-blocked-awaiting-staff-reply-title',
+  },
+  healthConversationReplyBlockedAwaitingStaffReplyText: {
+    defaultMessage:
+      'Við svörum á dagvinnutíma, yfirleitt innan þriggja virkra daga. Ef erindið er brátt og þarfnast svars í dag, hringdu í 1700. Ef um neyðartilfelli er að ræða, hringdu strax í 112.',
+    id: 'sp.health:health-messages-reply-blocked-awaiting-staff-reply-text',
   },
   myAppointments: {
     defaultMessage: 'Mínar tímabókanir',
