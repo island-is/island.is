@@ -541,4 +541,9 @@ export const institutionMapper = {
     slug: InstitutionTypes.STAFRAENT_ISLAND,
     contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
   },
+  [ApplicationTypes.PAY_DEBTS]: {
+    nationalId: InstitutionNationalIds.FJARSYSLA_RIKISINS,
+    slug: InstitutionTypes.FJARSYSLA_RIKISINS,
+    contentfulId: InstitutionContentfulIds.FJARSYSLA_RIKISINS,
+  }
 }
