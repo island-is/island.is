@@ -555,6 +555,16 @@ export const dataSchema = z.object({
           : true,
       { path: ['other', 'nationalId'], params: errorMessages.nationalId },
     ),
+}).superRefine(({ childNationalId, relatives }, ctx) => {
+  relatives.forEach((relative, index) => {
+    if (relative.nationalIdWithName?.nationalId === childNationalId) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        params: errorMessages.relativeSameAsChild,
+        path: ['relatives', index, 'nationalIdWithName', 'nationalId'],
+      })
+    }
+  })
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>
