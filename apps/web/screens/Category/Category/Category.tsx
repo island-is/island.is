@@ -330,7 +330,7 @@ const Category: Screen<CategoryProps> = ({
         </Box>
         <Stack space={2}>
           {groups.map((group, index) => (
-            <React.Fragment key={group.slug ?? index}>
+            <React.Fragment key={group.slug}>
               {renderPageGroup(group, index)}
             </React.Fragment>
           ))}
