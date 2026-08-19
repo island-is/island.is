@@ -20,6 +20,23 @@ export const isChildInPrimarySchoolAge = (nationalId: string): boolean => {
   return yearAge >= 6 && yearAge <= 16
 }
 
+export const isChildOver18 = (answers: FormValue): boolean => {
+  const { childNationalId, childName } = getApplicationAnswers(answers)
+  if (!childNationalId || !childName) return false
+  try {
+    const { birthday } = info(childNationalId)
+    const now = new Date()
+    const eighteenthBirthday = new Date(
+      birthday.getFullYear() + 18,
+      birthday.getMonth(),
+      birthday.getDate(),
+    )
+    return now >= eighteenthBirthday
+  } catch {
+    return false
+  }
+}
+
 export const isKnowsNationalId = (answers: FormValue) =>
   getApplicationAnswers(answers).childKnowsNationalId === KnowsNationalId.YES
 
