@@ -122,13 +122,10 @@ const Category: Screen<CategoryProps> = ({
     window.location.href = `#${getHashString(updatedArr)}`
   }
 
-  const PageGroupComponent = ({
-    group,
-    index,
-  }: {
-    group: CategoryGroups[number]
-    index: number
-  }) => {
+  // Plain render function, not a component: defining a component inside the
+  // render gives it a new identity every render, remounting each AccordionCard
+  // on toggle and breaking the open/close animation.
+  const renderPageGroup = (group: CategoryGroups[number], index: number) => {
     const groupSlug = group.slug
     const expanded = hashArray.includes(groupSlug)
 
@@ -336,7 +333,9 @@ const Category: Screen<CategoryProps> = ({
         </Box>
         <Stack space={2}>
           {groups.map((group, index) => (
-            <PageGroupComponent group={group} index={index} key={index} />
+            <React.Fragment key={group.slug ?? index}>
+              {renderPageGroup(group, index)}
+            </React.Fragment>
           ))}
           {lifeEvents.map(
             (
