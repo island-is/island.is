@@ -82,19 +82,21 @@ export default function HealthMessageDetailScreen() {
   const isArchived = archivedOverride ?? conversation?.isArchived ?? false
   const isStarred = starredOverride ?? conversation?.isStarred ?? false
 
-  // Keep the cached conversation entity in sync so the list (same normalized
-  // entity) reflects the change; membership of the filtered list is corrected
-  // by refetching GetHealthConversations.
+  // The list and detail queries normalize to separate cache entries, so keep
+  // both in sync. Filtered-list membership is corrected by refetching
+  // GetHealthConversations.
   const setConversationField = (
-    field: 'isArchived' | 'isStarred',
+    field: 'isArchived' | 'isStarred' | 'isRead',
     value: boolean,
   ) => {
-    const cacheId = client.cache.identify({
-      __typename: 'HealthDirectorateHealthConversation',
-      id,
-    })
-    if (cacheId) {
-      client.cache.modify({ id: cacheId, fields: { [field]: () => value } })
+    for (const __typename of [
+      'HealthDirectorateHealthConversation',
+      'HealthDirectorateHealthConversationDetail',
+    ] as const) {
+      const cacheId = client.cache.identify({ __typename, id })
+      if (cacheId) {
+        client.cache.modify({ id: cacheId, fields: { [field]: () => value } })
+      }
     }
   }
 
@@ -157,16 +159,10 @@ export default function HealthMessageDetailScreen() {
   }
 
   // Once the thread has rendered the user has seen it, so clear the unread
-  // state on the list's cache entry right away — rather than waiting for the mutation.
+  // state on the cache entries right away — rather than waiting for the mutation.
   useEffect(() => {
     if (conversation?.isRead === false) {
-      const cacheId = client.cache.identify({
-        __typename: 'HealthDirectorateHealthConversation',
-        id,
-      })
-      if (cacheId) {
-        client.cache.modify({ id: cacheId, fields: { isRead: () => true } })
-      }
+      setConversationField('isRead', true)
       markAsRead({ variables: { input: { id } } })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
