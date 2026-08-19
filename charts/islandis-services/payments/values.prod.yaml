@@ -26,7 +26,7 @@ env:
   BASEPATH: '/greida'
   DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
 grantNamespaces:
   - 'nginx-ingress-internal'
@@ -79,10 +79,10 @@ replicaCount:
 resources:
   limits:
     cpu: '200m'
-    memory: '512Mi'
+    memory: '1024Mi'
   requests:
     cpu: '100m'
-    memory: '256Mi'
+    memory: '512Mi'
 secrets:
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET: '/k8s/payments/PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET'

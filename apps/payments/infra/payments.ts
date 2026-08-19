@@ -78,11 +78,11 @@ export const serviceSetup = (services: {
     .resources({
       limits: {
         cpu: '200m',
-        memory: '512Mi',
+        memory: '1024Mi',
       },
       requests: {
         cpu: '100m',
-        memory: '256Mi',
+        memory: '512Mi',
       },
     })
     .readiness('/liveness')
