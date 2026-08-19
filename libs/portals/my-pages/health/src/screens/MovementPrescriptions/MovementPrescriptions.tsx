@@ -79,7 +79,7 @@ const MovementPrescriptions = () => {
           </Box>
         </Box>
         <img
-          src="./assets/images/autumn2.png"
+          src="./assets/images/autumn2.svg"
           alt=""
           className={problemTemplateImg}
         />
