@@ -1,4 +1,3 @@
-import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Stack, Table as T } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -10,13 +9,13 @@ import type {
   DisplayAssignment,
   DraftCriterionWithSubCriteriaDto,
   DraftEmployeeWithStepsDto,
-  DraftRoleWithStepsDto,
   SyncCommand,
 } from '../../utils/types'
 import { useDraftQuery } from '../../utils/useDraftQuery'
 import { useDraftSync } from '../../utils/useDraftSync'
 import { useSeedOnce } from '../../utils/useSeedOnce'
 import { DraftErrorState, DraftLoadingState } from '../../components/DraftScreenState'
+import { formatEmployeeIdentifier } from '../../utils/employeeIdentifier'
 import {
   buildDisplayAssignments,
   buildStepMetaBySubCriterionId,
@@ -63,22 +62,6 @@ export const EmployeeClassificationEditor: FC<
   const loading = criteriaLoading || employeesLoading
   const hasError = criteriaHasError || employeesHasError
   const employees = employeesContent?.employees ?? []
-
-  // Read passively off externalData — JobClassificationEditor (the prior
-  // screen) already fetched draftRolesWithSteps, so it's fresh here.
-  const roles = useMemo(
-    () =>
-      getValueViaPath<{ roles: DraftRoleWithStepsDto[] }>(
-        application.externalData,
-        'draftRolesWithSteps.data',
-        { roles: [] },
-      )?.roles ?? [],
-    [application.externalData],
-  )
-  const roleTitleById = useMemo(
-    () => Object.fromEntries(roles.map((r) => [r.id, r.title])),
-    [roles],
-  )
 
   const personalCriteria = useMemo(
     () =>
@@ -151,6 +134,9 @@ export const EmployeeClassificationEditor: FC<
   const totalPages = Math.ceil(employees.length / TABLE_PAGE_SIZE)
   const visibleEmployees = employees
     .map((employee, index) => ({ employee, index }))
+    .sort((a, b) =>
+      a.employee.roleTitle.localeCompare(b.employee.roleTitle, 'is'),
+    )
     .slice((page - 1) * TABLE_PAGE_SIZE, page * TABLE_PAGE_SIZE)
 
   return (
@@ -171,8 +157,12 @@ export const EmployeeClassificationEditor: FC<
                 <EmployeeClassificationRow
                   key={employee.id}
                   employee={employee}
+                  identifier={formatEmployeeIdentifier(
+                    application.id,
+                    employee.ordinal,
+                  )}
                   employeeIndex={index}
-                  roleTitle={roleTitleById[employee.reportEmployeeRoleId] ?? ''}
+                  roleTitle={employee.roleTitle}
                   assignments={buildDisplayAssignments(
                     personalCriteria,
                     employee.stepIds,

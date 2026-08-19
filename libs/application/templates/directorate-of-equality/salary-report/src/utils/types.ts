@@ -57,12 +57,11 @@ export type SalaryComponentKey =
   | 'bonusPayments'
   | 'bonusOther'
 
-// id is the client-minted UUID key; identifier is a separate, human-facing
-// pseudonym field from the DMR API, not a join key.
+// id is the client-minted UUID join key; the human-facing ABC-000 label is
+// derived from ordinal at display time (see utils/employeeIdentifier.ts).
 export type Employee = {
   id: string
   ordinal: number
-  identifier: string
   // Role's client-minted UUID (was roleTitle).
   roleId: string
   gender: string

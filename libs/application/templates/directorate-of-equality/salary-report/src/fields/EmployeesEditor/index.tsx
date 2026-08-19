@@ -17,6 +17,7 @@ import { useDraftSync } from '../../utils/useDraftSync'
 import { useSeedOnce } from '../../utils/useSeedOnce'
 import { buildUpsertRemoveCommands } from '../../utils/syncCommands'
 import { DraftErrorState, DraftLoadingState } from '../../components/DraftScreenState'
+import { formatEmployeeIdentifier } from '../../utils/employeeIdentifier'
 import { EmployeeRow } from './EmployeeRow'
 import { EmployeeForm } from './EmployeeForm'
 import { TABLE_PAGE_SIZE, TablePagination } from '../TablePagination'
@@ -95,9 +96,6 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     const employees: Employee[] = content.employees.map((e) => ({
       id: e.id,
       ordinal: e.ordinal,
-      // No pseudonym field on the draft, so the client-minted id doubles as
-      // the stable display handle (a recomputed label would drift instead).
-      identifier: e.id,
       roleId: e.reportEmployeeRoleId,
       gender: e.gender,
       field: e.field,
@@ -194,8 +192,6 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     return {
       id,
       ordinal: existing?.ordinal ?? 0,
-      // Mirrors `id` — see the seeding effect above for why.
-      identifier: id,
       roleId,
       gender: values.gender,
       field: values.field,
@@ -292,6 +288,10 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                   <EmployeeRow
                     key={field.id}
                     employee={field}
+                    identifier={formatEmployeeIdentifier(
+                      application.id,
+                      field.ordinal,
+                    )}
                     roleTitleById={roleTitleById}
                     onRemove={() => remove(index)}
                     onEdit={() => setEditingIndex(index)}

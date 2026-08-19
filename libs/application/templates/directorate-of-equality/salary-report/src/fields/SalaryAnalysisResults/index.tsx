@@ -20,6 +20,7 @@ import {
 } from '../../utils/outlierGroups'
 import type { OutlierGroupAnswer } from '../../utils/outlierGroups'
 import { formatCurrency } from '../EmployeesEditor/utils'
+import { formatEmployeeIdentifier } from '../../utils/employeeIdentifier'
 import type { DraftOutlierGroupDto, ReportEmployeeDto } from '../../utils/types'
 import { useDraftQuery } from '../../utils/useDraftQuery'
 import { useDraftSync } from '../../utils/useDraftSync'
@@ -194,16 +195,11 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDraftPhase, content])
 
-  const identifierForOrdinal = useMemo(() => {
-    // Draft phase: use the employee's client-minted id. Postponed phase: no resolved identifier source yet, falls back to ordinal.
-    if (isDraftPhase && content) {
-      const employeeIdByOrdinal: Record<number, string> = Object.fromEntries(
-        content.employees.map((e) => [e.ordinal, e.id]),
-      )
-      return (ordinal: number) => employeeIdByOrdinal[ordinal] ?? `#${ordinal}`
-    }
-    return (ordinal: number) => `#${ordinal}`
-  }, [isDraftPhase, content])
+  const identifierForOrdinal = useMemo(
+    () => (ordinal: number) =>
+      formatEmployeeIdentifier(application.id, ordinal),
+    [application.id],
+  )
 
   const watchedOutlierGroups: OutlierGroupAnswer[] =
     useWatch({
