@@ -51,6 +51,7 @@ export interface UpdateCourtSession {
   attestingWitnessId?: string
   closingEntries?: string
   isConfirmed?: boolean
+  notifiedRulingFileId?: string
 }
 
 @Injectable()
