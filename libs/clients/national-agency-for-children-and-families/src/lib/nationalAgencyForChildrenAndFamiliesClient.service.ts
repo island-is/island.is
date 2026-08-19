@@ -5,6 +5,7 @@ import {
   DropDownDto,
   ExternalCategoryResponse,
   ExternalDropdownApi,
+  ExternalNotifierRoleSubTypeResponse,
   ProtectiveFactorSectionDto,
 } from '../../gen/fetch'
 
@@ -65,5 +66,17 @@ export class NationalAgencyForChildrenAndFamiliesClientService {
 
   async getSchoolTypes(user: User): Promise<DropDownDto[]> {
     return await this.externalDropdownApiWithAuth(user).externalSchoolTypes()
+  }
+
+  async getNotifierRoles(user: User): Promise<DropDownDto[]> {
+    return await this.externalDropdownApiWithAuth(user).externalNotifierRoles()
+  }
+
+  async getNotifierRoleSubTypes(
+    user: User,
+  ): Promise<ExternalNotifierRoleSubTypeResponse[]> {
+    return await this.externalDropdownApiWithAuth(
+      user,
+    ).externalNotifierRoleSubTypes()
   }
 }

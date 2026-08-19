@@ -19,6 +19,23 @@ export const prerequisitesMessages = {
       defaultMessage: 'Eftirfarandi upplýsingar verða sóttar rafrænt',
       description: 'The following information will be retrieved electronically',
     },
+    nationalRegistryInformationTitle: {
+      id: 'cpn.application:prerequisites.externalData.nationalRegistryInformationTitle',
+      defaultMessage: 'Upplýsingar frá Þjóðskrá',
+      description: 'Information from Registers Iceland',
+    },
+    nationalRegistryInformationSubTitle: {
+      id: 'cpn.application:prerequisites.externalData.nationalRegistryInformationSubTitle',
+      defaultMessage:
+        'Upplýsingar um nafn og heimilisfang þjónustuveitanda sem og nafnið þitt.',
+      description:
+        'Information about the name and address of the service provider as well as your name.',
+    },
+    personalNationalRegistryInformationSubTitle: {
+      id: 'cpn.application:prerequisites.externalData.personalNationalRegistryInformationSubTitle',
+      defaultMessage: 'Upplýsingar um nafn þitt og kennitölu.',
+      description: 'Information about your name and national ID number.',
+    },
     checkboxProvider: {
       id: 'cpn.application:prerequisites.externalData.checkboxProvider',
       defaultMessage:
