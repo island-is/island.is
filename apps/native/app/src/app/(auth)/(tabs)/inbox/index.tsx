@@ -533,9 +533,12 @@ export default function InboxScreen() {
   const renderHeaderIconSegment = (
     icon: ImageSourcePropType,
     onPress: () => void,
+    accessibilityLabel: string,
   ) => (
     <Pressable
       onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
       style={{
         width: 46,
         height: 46,
@@ -637,15 +640,23 @@ export default function InboxScreen() {
                 </Pressable>
               ) : (
                 <>
-                  {renderHeaderIconSegment(filterIcon, () => {
-                    resetSelectState()
-                    inboxFilterStore.setState({
-                      availableSenders,
-                      availableCategories,
-                    })
-                    router.push('/inbox/filter')
-                  })}
-                  {renderHeaderIconSegment(inboxReadIcon, onMarkAllAsReadPress)}
+                  {renderHeaderIconSegment(
+                    filterIcon,
+                    () => {
+                      resetSelectState()
+                      inboxFilterStore.setState({
+                        availableSenders,
+                        availableCategories,
+                      })
+                      router.push('/inbox/filter')
+                    },
+                    intl.formatMessage({ id: 'inbox.filterButtonTitle' }),
+                  )}
+                  {renderHeaderIconSegment(
+                    inboxReadIcon,
+                    onMarkAllAsReadPress,
+                    intl.formatMessage({ id: 'inbox.markAllAsReadPromptConfirm' }),
+                  )}
                 </>
               ),
             ),

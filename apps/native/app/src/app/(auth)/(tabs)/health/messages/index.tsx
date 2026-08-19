@@ -90,9 +90,12 @@ export default function HealthMessagesScreen() {
   const renderHeaderIconSegment = (
     icon: ImageSourcePropType,
     onPress: () => void,
+    accessibilityLabel: string,
   ) => (
     <Pressable
       onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
       style={{
         width: 46,
         height: 46,
@@ -115,11 +118,15 @@ export default function HealthMessagesScreen() {
       {/* The custom `headerRight` opts out of the native header items, so the
           loading/offline indicator is rendered here instead. */}
       <OfflineIcon networkStatus={messagesRes.networkStatus} />
-      {renderHeaderIconSegment(filterIcon, () =>
-        router.push('/health/messages/filter'),
+      {renderHeaderIconSegment(
+        filterIcon,
+        () => router.push('/health/messages/filter'),
+        intl.formatMessage({ id: 'health.messages.filter.screenTitle' }),
       )}
-      {renderHeaderIconSegment(composeIcon, () =>
-        router.push('/health/messages/new'),
+      {renderHeaderIconSegment(
+        composeIcon,
+        () => router.push('/health/messages/new'),
+        intl.formatMessage({ id: 'health.messages.compose.newTitle' }),
       )}
     </View>
   )
