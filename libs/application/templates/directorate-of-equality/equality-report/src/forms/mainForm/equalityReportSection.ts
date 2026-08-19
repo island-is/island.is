@@ -1,6 +1,7 @@
 import {
   buildCustomField,
   buildDescriptionField,
+  buildDividerField,
   buildLinkField,
   buildMultiField,
   buildSection,
@@ -9,6 +10,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { messages } from '../../lib/messages'
+import { hasReviewerComment } from '../commentThreadSection'
 
 export const equalityReportSection = buildSection({
   id: 'equalityReport',
@@ -93,6 +95,13 @@ export const equalityReportSection = buildSection({
             buildCustomField({
               id: 'goalsAndActions.customField',
               component: 'Editor',
+            }),
+            buildDividerField({ condition: hasReviewerComment }),
+            buildCustomField({
+              id: 'commentThread',
+              title: '',
+              component: 'CommentThread',
+              condition: hasReviewerComment,
             }),
           ],
         }),
