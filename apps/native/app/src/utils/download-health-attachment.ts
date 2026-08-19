@@ -8,6 +8,8 @@ import {
 } from '@/stores/auth-store'
 import { isAndroid } from '@/utils/devices'
 
+const DOWNLOAD_TIMEOUT_MS = 30_000
+
 interface DownloadHealthAttachmentProps {
   /** Download-service URL from the attachment (accepts an authorized POST) */
   url: string
@@ -29,11 +31,17 @@ export const downloadHealthAttachment = async ({
     suppressLockScreen()
   }
 
+  // Bound the request so a stalled download can't leave the lock screen
+  // suppressed and the attachment chip stuck loading indefinitely.
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), DOWNLOAD_TIMEOUT_MS)
+
   try {
     const token = await getAndRefreshToken()
     const response = await fetch(url, {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` },
+      signal: controller.signal,
     })
     if (!response.ok) {
       throw new Error(`Failed to download attachment (${response.status})`)
@@ -51,6 +59,9 @@ export const downloadHealthAttachment = async ({
       UTI: mimeType, // For iOS, to specify the file type
     })
   } finally {
-    clearLockScreenSuppression()
+    clearTimeout(timeout)
+    if (isAndroid) {
+      clearLockScreenSuppression()
+    }
   }
 }
