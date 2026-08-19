@@ -669,6 +669,23 @@ const VerdictTimelineCard: FC<Props> = (props) => {
                   setWorkingCase,
                 )
 
+                // The closed date is derived from an event log created on the
+                // server, so it only arrives with a case refetch. Set it
+                // optimistically for immediate display - the server records
+                // the same moment.
+                setWorkingCase((prevWorkingCase) => ({
+                  ...prevWorkingCase,
+                  defendants: prevWorkingCase.defendants?.map((d) =>
+                    d.id === defendant.id
+                      ? {
+                          ...d,
+                          closedWithoutEnforcementDate:
+                            new Date().toISOString(),
+                        }
+                      : d,
+                  ),
+                }))
+
                 setModalVisible(undefined)
               },
               isLoading: isUpdatingDefendant,
