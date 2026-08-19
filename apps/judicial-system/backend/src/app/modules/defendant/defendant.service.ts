@@ -336,6 +336,21 @@ export class DefendantService {
       )
     }
 
+    if (
+      update.isClosedWithoutEnforcement &&
+      !defendant.isClosedWithoutEnforcement
+    ) {
+      await this.createDefendantEvent(
+        {
+          caseId: theCase.id,
+          defendantId: defendant.id,
+          eventType: DefendantEventType.CLOSED_WITHOUT_ENFORCEMENT,
+          user,
+        },
+        transaction,
+      )
+    }
+
     this.addMessagesForIndictmentCaseUpdateDefendantToQueue(
       theCase,
       updatedDefendant,

@@ -41,6 +41,10 @@ type VisibleModal =
       defendant: Defendant
     }
   | {
+      type: 'CLOSE_WITHOUT_ENFORCEMENT'
+      defendant: Defendant
+    }
+  | {
       type: 'CONFIRM_APPEAL_AFTER_DEADLINE'
       appealDate: Date
     }
@@ -78,7 +82,10 @@ const VerdictTimelineCard: FC<Props> = (props) => {
   const isServiceRequired =
     verdict?.serviceRequirement === ServiceRequirement.REQUIRED
 
-  const showDatePickers = !defendant.isSentToPrisonAdmin && !isFine
+  const showDatePickers =
+    !defendant.isSentToPrisonAdmin &&
+    !defendant.isClosedWithoutEnforcement &&
+    !isFine
 
   // The appeal date records when an appeal actually happened, which the public
   // prosecution office may well need to register after the deadline has run out
@@ -174,6 +181,16 @@ const VerdictTimelineCard: FC<Props> = (props) => {
       formatMessage(strings.sendToPrisonAdminDate, {
         date: formatDate(defendant.sentToPrisonAdminDate),
       }),
+    )
+
+    pushIf(
+      !!(
+        defendant.isClosedWithoutEnforcement &&
+        defendant.closedWithoutEnforcementDate
+      ),
+      `Máli lokið án fullnustu ${formatDate(
+        defendant.closedWithoutEnforcementDate,
+      )}`,
     )
 
     return texts
@@ -348,6 +365,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
           ...(!verdict?.isAcquittedByPublicProsecutionOffice &&
           !verdict?.defendantHasRequestedAppeal &&
           !defendant.isSentToPrisonAdmin &&
+          !defendant.isClosedWithoutEnforcement &&
           (defendant.indictmentReviewDecision ||
             (!isFine && verdict?.serviceDate && isServiceRequired))
             ? [
@@ -375,9 +393,24 @@ const VerdictTimelineCard: FC<Props> = (props) => {
                 },
               ]
             : []),
+          ...(!defendant.isSentToPrisonAdmin &&
+          !defendant.isClosedWithoutEnforcement
+            ? [
+                {
+                  title: 'Ljúka máli án fullnustu',
+                  onClick: () => {
+                    setModalVisible({
+                      type: 'CLOSE_WITHOUT_ENFORCEMENT',
+                      defendant,
+                    })
+                  },
+                },
+              ]
+            : []),
           ...(Boolean(verdict) &&
           !isFine &&
           !defendant.isSentToPrisonAdmin &&
+          !defendant.isClosedWithoutEnforcement &&
           !verdict?.defendantHasRequestedAppeal
             ? [
                 {
@@ -400,7 +433,9 @@ const VerdictTimelineCard: FC<Props> = (props) => {
                 },
               ]
             : []),
-          ...(Boolean(verdict) && !verdict?.isAcquittedByPublicProsecutionOffice
+          ...(Boolean(verdict) &&
+          !verdict?.isAcquittedByPublicProsecutionOffice &&
+          !defendant.isClosedWithoutEnforcement
             ? [
                 {
                   title: `${
@@ -574,7 +609,10 @@ const VerdictTimelineCard: FC<Props> = (props) => {
               <VerdictAppealDecisionChoice
                 defendant={defendant}
                 verdict={verdict}
-                disabled={!!defendant.isSentToPrisonAdmin}
+                disabled={
+                  !!defendant.isSentToPrisonAdmin ||
+                  !!defendant.isClosedWithoutEnforcement
+                }
               />
             </motion.div>
           )}
@@ -598,6 +636,35 @@ const VerdictTimelineCard: FC<Props> = (props) => {
                     caseId: workingCase.id,
                     defendantId: defendant.id,
                     isSentToPrisonAdmin: false,
+                  },
+                  setWorkingCase,
+                )
+
+                setModalVisible(undefined)
+              },
+              isLoading: isUpdatingDefendant,
+            },
+          ]}
+        />
+      )}
+      {modalVisible?.type === 'CLOSE_WITHOUT_ENFORCEMENT' && (
+        <Modal
+          title="Ljúka máli án fullnustu"
+          text={`Máli ${workingCase.courtCaseNumber} verður lokið án fullnustu gagnvart ákærða ${modalVisible.defendant.name}.\nAthugið að ekki er hægt að afturkalla þessa aðgerð.`}
+          buttons={[
+            {
+              text: formatMessage(core.cancel),
+              onClick: () => setModalVisible(undefined),
+              variant: 'ghost',
+            },
+            {
+              text: 'Ljúka máli',
+              onClick: () => {
+                setAndSendDefendantToServer(
+                  {
+                    caseId: workingCase.id,
+                    defendantId: defendant.id,
+                    isClosedWithoutEnforcement: true,
                   },
                   setWorkingCase,
                 )
