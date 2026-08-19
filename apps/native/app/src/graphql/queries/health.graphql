@@ -395,12 +395,6 @@ mutation ReplyToHealthConversation(
   }
 }
 
-mutation MarkHealthConversationAsRead(
-  $input: HealthDirectorateConversationIdInput!
-) {
-  healthDirectorateMarkHealthConversationAsRead(input: $input)
-}
-
 mutation StarHealthConversation($input: HealthDirectorateConversationIdInput!) {
   healthDirectorateStarHealthConversation(input: $input)
 }
