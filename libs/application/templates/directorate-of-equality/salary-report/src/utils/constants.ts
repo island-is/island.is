@@ -24,6 +24,7 @@ export enum States {
   DENIED = 'denied',
   POSTPONED = 'postponed',
   NOT_ALLOWED = 'notAllowed',
+  DRAFT_RETRY = 'draftRetry',
 }
 
 export enum Roles {

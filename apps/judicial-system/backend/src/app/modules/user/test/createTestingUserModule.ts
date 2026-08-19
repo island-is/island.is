@@ -1,6 +1,5 @@
 import { mock } from 'jest-mock-extended'
 
-import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -11,7 +10,7 @@ import {
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
 
-import { User } from '../../repository'
+import { UserRepositoryService } from '../../repository'
 import { userModuleConfig } from '../user.config'
 import { UserController } from '../user.controller'
 import { UserService } from '../user.service'
@@ -35,14 +34,22 @@ export const createTestingUserModule = async () => {
         },
       },
       {
-        provide: getModelToken(User),
+        provide: UserRepositoryService,
         useValue: {
-          findOne: jest.fn().mockRejectedValue(new Error('Some found')),
-          findAll: jest.fn().mockRejectedValue(new Error('Some found')),
-          create: jest.fn().mockRejectedValue(new Error('Some found')),
-          update: jest.fn().mockRejectedValue(new Error('Some found')),
-          destroy: jest.fn().mockRejectedValue(new Error('Some found')),
-          findByPk: jest.fn().mockRejectedValue(new Error('Some found')),
+          findById: jest.fn().mockRejectedValue(new Error('Some error')),
+          findActiveByNationalId: jest
+            .fn()
+            .mockRejectedValue(new Error('Some error')),
+          findAllActive: jest.fn().mockRejectedValue(new Error('Some error')),
+          findAllForAdmin: jest.fn().mockRejectedValue(new Error('Some error')),
+          findAllActiveWhoCanConfirmIndictments: jest
+            .fn()
+            .mockRejectedValue(new Error('Some error')),
+          findAllActiveProsecutors: jest
+            .fn()
+            .mockRejectedValue(new Error('Some error')),
+          create: jest.fn().mockRejectedValue(new Error('Some error')),
+          updateById: jest.fn().mockRejectedValue(new Error('Some error')),
         },
       },
       UserService,
@@ -55,7 +62,9 @@ export const createTestingUserModule = async () => {
     })
     .compile()
 
-  const userModel = await userModule.resolve<typeof User>(getModelToken(User))
+  const userRepositoryService = userModule.get<UserRepositoryService>(
+    UserRepositoryService,
+  )
 
   const userService = userModule.get<UserService>(UserService)
 
@@ -64,7 +73,7 @@ export const createTestingUserModule = async () => {
   userModule.close()
 
   return {
-    userModel,
+    userRepositoryService,
     userService,
     userController,
   }

@@ -299,31 +299,43 @@ describe('htmlToBlocks', () => {
       expect(blocks[1].runs[0].text).toBe('inner')
     })
 
-    it('keeps a nested list marker when the parent item has no text', () => {
+    it('draws no marker for an item wrapping only a nested list', () => {
+      // The editor builds such a wrapper when an item is indented past the
+      // nesting available to it, and renders it without a marker of its own.
       const blocks = htmlToBlocks('<ul><li><ul><li>inner</li></ul></li></ul>')
-      expect(blocks).toHaveLength(2)
-      expect(blocks[0]).toMatchObject({
-        marker: '\u2022',
-        indent: 30,
-        runs: [],
-      })
-      expect(blocks[1]).toMatchObject({ marker: '\u2022', indent: 60 })
-      expect(blocks[1].runs[0].text).toBe('inner')
+      expect(blocks).toHaveLength(1)
+      expect(blocks[0]).toMatchObject({ marker: '\u2022', indent: 60 })
+      expect(blocks[0].runs[0].text).toBe('inner')
     })
 
     it('keeps nested ordered numbering when the parent item has no text', () => {
       const blocks = htmlToBlocks(
         '<ul><li><ol start="3"><li>inner</li><li>next</li></ol></li></ul>',
       )
-      expect(blocks).toHaveLength(3)
-      expect(blocks[0]).toMatchObject({
-        marker: '\u2022',
-        indent: 30,
-        runs: [],
-      })
-      expect(blocks[1]).toMatchObject({ marker: '3.', indent: 60 })
-      expect(blocks[1].runs[0].text).toBe('inner')
-      expect(blocks[2]).toMatchObject({ marker: '4.', indent: 60 })
+      expect(blocks).toHaveLength(2)
+      expect(blocks[0]).toMatchObject({ marker: '3.', indent: 60 })
+      expect(blocks[0].runs[0].text).toBe('inner')
+      expect(blocks[1]).toMatchObject({ marker: '4.', indent: 60 })
+    })
+
+    it('draws one marker per item when an item is indented twice', () => {
+      // Exactly what the editor produces for "a / b / c" with b indented
+      // twice: b's item is reached through a marker-less wrapper.
+      const blocks = htmlToBlocks(
+        '<ul><li>a<ul><li style="list-style-type: none;">' +
+          '<ul><li>b</li></ul></li></ul></li><li>c</li></ul>',
+      )
+      expect(
+        blocks.map((b) => [
+          b.marker,
+          b.indent,
+          b.runs.map((r) => r.text).join(''),
+        ]),
+      ).toEqual([
+        ['\u2022', 30, 'a'],
+        ['\u2022', 90, 'b'],
+        ['\u2022', 30, 'c'],
+      ])
     })
 
     it('puts the marker on the first line of a paragraph-wrapped item', () => {

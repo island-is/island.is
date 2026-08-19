@@ -676,13 +676,13 @@ const collectListItemBlocks = (
     blocks.push({ runs: [], indent })
   }
 
-  // A marker on the first block means the item holds nothing but a nested
-  // list, whose own first item already owns that block. Give the item a
-  // marker-only line of its own instead of overwriting the child's marker,
-  // which would drop a nested ordered list's starting number.
-  if (blocks[0].marker) {
-    blocks.unshift({ runs: [], indent, marker })
-  } else {
+  // A marker on the first block means the item holds nothing but a nested list,
+  // whose own first item already owns that block. Such an item is a structural
+  // wrapper, not a line of its own: the editor creates one whenever an item is
+  // indented past the nesting available to it, and renders it without a marker.
+  // Leave the child's marker alone — overwriting it would drop a nested ordered
+  // list's starting number, and adding another would draw a stray bullet.
+  if (!blocks[0].marker) {
     blocks[0].marker = marker
   }
 

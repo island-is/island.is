@@ -27,6 +27,7 @@ import {
   CaseAppealDecision,
   CaseFileCategory,
   CourtSessionRulingType,
+  CourtSessionStringType,
   EventType,
   IndictmentCaseNotificationType,
   type User as TUser,
@@ -92,7 +93,7 @@ export class CourtSessionService {
 
   private addMessagesForConfirmedCourtRecordToQueue(
     caseId: string,
-    courtSession: CourtSession,
+    announcesRulingOrder: boolean,
     user: TUser,
   ): void {
     const messages: Message[] = [
@@ -105,7 +106,7 @@ export class CourtSessionService {
 
     // When a ruling order uploaded during the course of a case is pronounced
     // in a confirmed court session, the parties are notified about the ruling.
-    if (courtSession.rulingType === CourtSessionRulingType.ORDER) {
+    if (announcesRulingOrder) {
       messages.push({
         type: MessageType.NOTIFICATION,
         user,
@@ -222,6 +223,10 @@ export class CourtSessionService {
         ? normalizedUpdate.rulingFileId
         : existingCourtSession.rulingFileId
 
+    if (becomingConfirmed) {
+      this.validateMergedCaseEntriesComplete(existingCourtSession)
+    }
+
     if (
       becomingConfirmed &&
       effectiveRulingType === CourtSessionRulingType.ORDER &&
@@ -268,17 +273,34 @@ export class CourtSessionService {
       }
     }
 
+    // A ruling order is announced to the parties once. Correcting a confirmed
+    // court record and confirming it again repeats the confirmation, but the
+    // parties have already been told about the ruling pronounced in the session
+    // - and the announcement says nothing about what the correction changed - so
+    // it is only announced again when the session now pronounces a different
+    // ruling document. The announced ruling is remembered on the session as part
+    // of the same write.
+    const announcedRulingFileId =
+      becomingConfirmed &&
+      effectiveRulingType === CourtSessionRulingType.ORDER &&
+      effectiveRulingFileId &&
+      effectiveRulingFileId !== existingCourtSession.notifiedRulingFileId
+        ? effectiveRulingFileId
+        : undefined
+
     const updatedCourtSession = await this.courtSessionRepositoryService.update(
       theCase.id,
       existingCourtSession.id,
-      normalizedUpdate,
+      announcedRulingFileId
+        ? { ...normalizedUpdate, notifiedRulingFileId: announcedRulingFileId }
+        : normalizedUpdate,
       { transaction },
     )
 
     if (!existingCourtSession.isConfirmed && updatedCourtSession.isConfirmed) {
       this.addMessagesForConfirmedCourtRecordToQueue(
         theCase.id,
-        updatedCourtSession,
+        Boolean(announcedRulingFileId),
         user,
       )
 
@@ -306,6 +328,31 @@ export class CourtSessionService {
     }
 
     return updatedCourtSession
+  }
+
+  // Each merged case with documents in a session gets its own entries booking
+  // in the court record, and each is required before the session can be
+  // confirmed. The set is derived from the filed documents rather than from the
+  // strings, so a merged case nobody has written about is missing rather than
+  // absent. Mirrors areMergedCaseEntriesComplete in the web client.
+  private validateMergedCaseEntriesComplete(courtSession: CourtSession): void {
+    const mergedCaseIds = new Set(
+      courtSession.mergedFiledDocuments?.map((document) => document.caseId),
+    )
+
+    for (const mergedCaseId of mergedCaseIds) {
+      const entries = courtSession.courtSessionStrings?.find(
+        (courtSessionString) =>
+          courtSessionString.mergedCaseId === mergedCaseId &&
+          courtSessionString.stringType === CourtSessionStringType.ENTRIES,
+      )
+
+      if (!entries?.value?.trim()) {
+        throw new BadRequestException(
+          `Merged case ${mergedCaseId} must have entries before the court session can be confirmed`,
+        )
+      }
+    }
   }
 
   // Every party (each defendant, each civil claimant and the prosecution) must
