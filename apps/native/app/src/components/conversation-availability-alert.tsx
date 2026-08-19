@@ -49,15 +49,26 @@ export const ConversationAvailabilityAlert = ({
   }
 
   // The same availability text is always shown; only the title/colour change to
-  // reflect closed / closing-soon / open.
-  const availabilityText = intl.formatMessage(
-    { id: 'health.messages.compose.availabilityText' },
-    {
-      name: recipient.name,
-      openTime: windowInfo.windowOpenLabel ?? '',
-      closeTime: windowInfo.windowCloseLabel ?? '',
-    },
-  )
+  // reflect closed / closing-soon / open. The window sentence embeds the
+  // open/close times, so drop it when the recipient has no messaging window
+  // rather than render "from  to " with blanks.
+  const hasWindow =
+    !!windowInfo.windowOpenLabel && !!windowInfo.windowCloseLabel
+  const availabilityText = [
+    hasWindow
+      ? intl.formatMessage(
+          { id: 'health.messages.compose.availabilityWindow' },
+          {
+            name: recipient.name,
+            openTime: windowInfo.windowOpenLabel,
+            closeTime: windowInfo.windowCloseLabel,
+          },
+        )
+      : null,
+    intl.formatMessage({ id: 'health.messages.compose.availabilityInfo' }),
+  ]
+    .filter(Boolean)
+    .join(' ')
 
   const isClosed =
     blockedReason ===

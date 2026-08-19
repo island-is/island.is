@@ -896,8 +896,10 @@ export const en: TranslatedMessages = {
   'health.messages.compose.termsTitle': 'Terms for messages',
   'health.messages.compose.termsBody':
     '- Messages are answered during opening hours, usually within three business days\n- Messages and replies are automatically saved to your medical record\n- The type of message determines who answers your inquiry\n- A healthcare professional will have access to your medical record to answer your inquiry',
-  'health.messages.compose.availabilityText':
-    '{name} accepts messages every day from {openTime} to {closeTime}. Replies are usually within 3 business days. If your matter is urgent and you need a reply the same day, call 1700. In an emergency, call 112 immediately.',
+  'health.messages.compose.availabilityWindow':
+    '{name} accepts messages every day from {openTime} to {closeTime}.',
+  'health.messages.compose.availabilityInfo':
+    'Replies are usually within 3 business days. If your matter is urgent and you need a reply the same day, call 1700. In an emergency, call 112 immediately.',
   'health.messages.compose.closedTitle': 'Closed for new messages right now',
   'health.messages.compose.notAllowedTitle': 'Cannot send messages',
   'health.messages.compose.notAllowedText':

@@ -250,14 +250,23 @@ export default function HealthMessageComposeScreen() {
             title={intl.formatMessage({
               id: 'health.messages.compose.closedTitle',
             })}
-            message={intl.formatMessage(
-              { id: 'health.messages.compose.availabilityText' },
-              {
-                name: soleRecipient?.name,
-                openTime: soleWindowInfo.windowOpenLabel ?? '',
-                closeTime: soleWindowInfo.windowCloseLabel ?? '',
-              },
-            )}
+            message={[
+              soleWindowInfo.windowOpenLabel && soleWindowInfo.windowCloseLabel
+                ? intl.formatMessage(
+                    { id: 'health.messages.compose.availabilityWindow' },
+                    {
+                      name: soleRecipient?.name,
+                      openTime: soleWindowInfo.windowOpenLabel,
+                      closeTime: soleWindowInfo.windowCloseLabel,
+                    },
+                  )
+                : null,
+              intl.formatMessage({
+                id: 'health.messages.compose.availabilityInfo',
+              }),
+            ]
+              .filter(Boolean)
+              .join(' ')}
           />
         ) : soleNotAllowed ? (
           <Problem
