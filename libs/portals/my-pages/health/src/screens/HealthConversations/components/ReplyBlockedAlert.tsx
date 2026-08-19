@@ -53,12 +53,15 @@ const reasonMessageMap: Record<
     },
 }
 
+const fallbackAlert: ReasonAlert = {
+  type: 'info',
+  text: messages.healthConversationReplyBlockedGenericText,
+}
+
 const ReplyBlockedAlert = ({ reason }: Props) => {
   const { formatMessage } = useLocale()
 
-  if (!reason) return null
-
-  const entry = reasonMessageMap[reason]
+  const entry = (reason && reasonMessageMap[reason]) || fallbackAlert
 
   return (
     <Box marginTop={4}>

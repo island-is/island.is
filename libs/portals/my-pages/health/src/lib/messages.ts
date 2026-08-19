@@ -2059,6 +2059,10 @@ export const messages = defineMessages({
     defaultMessage: 'Ekki er hægt að svara þessum skilaboðum',
     id: 'sp.health:health-messages-reply-blocked-window-expired-text',
   },
+  healthConversationReplyBlockedGenericText: {
+    defaultMessage: 'Ekki er hægt að svara þessum skilaboðum',
+    id: 'sp.health:health-messages-reply-blocked-generic-text',
+  },
   healthConversationReplyBlockedAwaitingStaffReplyTitle: {
     defaultMessage: 'Skilaboð móttekin',
     id: 'sp.health:health-messages-reply-blocked-awaiting-staff-reply-title',
