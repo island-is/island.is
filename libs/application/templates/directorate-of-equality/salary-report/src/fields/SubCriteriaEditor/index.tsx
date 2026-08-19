@@ -4,7 +4,10 @@ import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import { messages } from '../../lib/messages'
-import type { ParsedCriterionDto } from '@island.is/clients/directorate-of-equality'
+import type {
+  ParsedCriterionDto,
+  SubCriterionCatalogEntryDto,
+} from '@island.is/clients/directorate-of-equality'
 import { DEFAULT_JOB_FACTORS } from '../../utils/constants'
 import type { JobFactor, PersonalFactor, SubCriterion } from '../../utils/types'
 import { getPathValue } from '../../utils/answerHelpers'
@@ -39,6 +42,12 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   const parsedPersonalCriteria = parsedCriteria.filter(
     (c) => c.type === 'PERSONAL',
+  )
+
+  const catalogEntries = getPathValue<SubCriterionCatalogEntryDto[]>(
+    application.externalData,
+    'subCriterionCatalog.data.entries',
+    [],
   )
 
   const savedJobSubCriteria = getPathValue<SubCriterion[][]>(
@@ -79,6 +88,9 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                   fieldName={`subCriteria.jobFactors.${i}`}
                   savedSubCriteria={savedJobSubCriteria[i] ?? []}
                   parsedSubCriteria={parsedCriterion?.subCriteria ?? []}
+                  catalogEntries={catalogEntries.filter(
+                    (e) => e.parentTitle === factor.title,
+                  )}
                   parsedSalaryReportDate={parsedSalaryReportDate}
                   startExpanded={i === 0}
                 />
@@ -115,6 +127,9 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                     fieldName={`subCriteria.personalFactors.${i}`}
                     savedSubCriteria={savedPersonalSubCriteria[i] ?? []}
                     parsedSubCriteria={parsedCriterion?.subCriteria ?? []}
+                    catalogEntries={catalogEntries.filter(
+                      (e) => e.parentTitle === factor.title,
+                    )}
                     parsedSalaryReportDate={parsedSalaryReportDate}
                     startExpanded={i === 0}
                   />
