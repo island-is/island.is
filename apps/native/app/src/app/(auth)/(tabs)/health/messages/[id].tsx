@@ -429,6 +429,7 @@ export default function HealthMessageDetailScreen() {
               ) : (
                 <Alert
                   type="info"
+                  size="small"
                   message={intl.formatMessage({
                     id: 'health.messages.cannotReply',
                   })}
