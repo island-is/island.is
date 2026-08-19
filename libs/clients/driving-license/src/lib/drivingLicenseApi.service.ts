@@ -516,8 +516,8 @@ export class DrivingLicenseApi {
     signatureBiometricsId?: string | null
   }) {
     try {
-      const response = await this.v5.apiDrivinglicenseV5ApplicationsNewTemporaryPost(
-        {
+      const response =
+        await this.v5.apiDrivinglicenseV5ApplicationsNewTemporaryPost({
           apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
           apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
           modelsV5PostTemporaryLicense: {
@@ -532,8 +532,7 @@ export class DrivingLicenseApi {
             photoBiometricsId: params.photoBiometricsId,
             signatureBiometricsId: params.signatureBiometricsId,
           },
-        },
-      )
+        })
       if (!response.result) {
         throw new Error(
           `POST apiOkuskirteiniApplicationsNewTemporaryPost was not successful, response was: ${response.errorCode}`,
@@ -575,8 +574,8 @@ export class DrivingLicenseApi {
     photoBiometricsId?: string | null
     signatureBiometricsId?: string | null
   }): Promise<boolean> {
-    const response = await this.v5.apiDrivinglicenseV5ApplicationsNewCategoryPost(
-      {
+    const response =
+      await this.v5.apiDrivinglicenseV5ApplicationsNewCategoryPost({
         apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
         apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
         category: params.category,
@@ -592,8 +591,7 @@ export class DrivingLicenseApi {
           photoBiometricsId: params.photoBiometricsId,
           signatureBiometricsId: params.signatureBiometricsId,
         },
-      },
-    )
+      })
 
     const handledResponse = handleCreateResponse(response)
 

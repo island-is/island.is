@@ -1161,7 +1161,7 @@ describe('DrivingLicenseSubmissionService', () => {
     })
 
     const reasonOf = (thrown: TemplateApiError) =>
-      ((thrown.problem as unknown) as { errorReason: ProviderErrorReason })
+      (thrown.problem as unknown as { errorReason: ProviderErrorReason })
         .errorReason
 
     // Capture the rejected TemplateApiError so we can run its reason through the

@@ -98,7 +98,7 @@ export class DrivingLicenseService {
     // The goal of this is to basically normalize the known semi-error responses
     // so both those who are not found and those who have invalid/expired licenses will return nothing
     if (e instanceof Error && e.name === 'FetchError') {
-      const err = (e as unknown) as FetchError
+      const err = e as unknown as FetchError
 
       if ([400, 404].includes(err.status)) {
         return null
@@ -256,11 +256,10 @@ export class DrivingLicenseService {
     type: DrivingLicenseApplicationType,
   ): Promise<ApplicationEligibility> {
     const assessmentResult = await this.getDrivingAssessmentResult(user)
-    const hasFinishedSchool = await this.drivingLicenseApi.getHasFinishedOkugerdi(
-      {
+    const hasFinishedSchool =
+      await this.drivingLicenseApi.getHasFinishedOkugerdi({
         auth: user,
-      },
-    )
+      })
 
     const residenceHistory = await this.nationalRegistryV3.getResidenceHistory(
       nationalId,
@@ -379,7 +378,8 @@ export class DrivingLicenseService {
     code: string,
   ): Promise<{ is: string | null; en: string | null } | null> {
     try {
-      const descriptions = await this.drivingLicenseApi.getErrorCodeDescriptions()
+      const descriptions =
+        await this.drivingLicenseApi.getErrorCodeDescriptions()
       const match = descriptions.find((d) => d.code === code)
       if (!match) {
         return null
@@ -530,8 +530,8 @@ export class DrivingLicenseService {
     auth: Auth,
     input: NewTemporaryDrivingLicenseInput,
   ): Promise<NewDrivingLicenseResult> {
-    const success = await this.drivingLicenseApi.postCreateDrivingLicenseTemporary(
-      {
+    const success =
+      await this.drivingLicenseApi.postCreateDrivingLicenseTemporary({
         willBringHealthCertificate: input.needsToPresentHealthCertificate,
         willBringQualityPhoto: input.needsToPresentQualityPhoto,
         jurisdictionId: input.jurisdictionId,
@@ -543,8 +543,7 @@ export class DrivingLicenseService {
         auth,
         photoBiometricsId: input.photoBiometricsId,
         signatureBiometricsId: input.signatureBiometricsId,
-      },
-    )
+      })
 
     return {
       success,
@@ -677,11 +676,10 @@ export class DrivingLicenseService {
   }
 
   async getQualitySignature(auth: Auth): Promise<QualitySignatureResult> {
-    const hasQualitySignature = await this.drivingLicenseApi.getHasQualitySignature(
-      {
+    const hasQualitySignature =
+      await this.drivingLicenseApi.getHasQualitySignature({
         auth,
-      },
-    )
+      })
 
     return {
       hasQualitySignature,

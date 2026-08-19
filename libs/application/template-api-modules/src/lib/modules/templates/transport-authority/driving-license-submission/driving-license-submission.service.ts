@@ -131,7 +131,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
 
       if (e instanceof Error && e.name === 'FetchError') {
         throw await this.toSubmissionError(
-          (e as unknown) as FetchError,
+          e as unknown as FetchError,
           currentUserLocale,
         )
       }
@@ -750,7 +750,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       }
     } catch (e) {
       if (e instanceof Error && e.name === 'FetchError') {
-        const err = (e as unknown) as FetchError
+        const err = e as unknown as FetchError
         throw new TemplateApiError(
           {
             title:
@@ -764,9 +764,8 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
   }
 
   async glassesCheck({ auth }: TemplateApiModuleActionProps): Promise<boolean> {
-    const licences: DriverLicenseWithoutImages[] = await this.drivingLicenseService.getAllDriverLicenses(
-      auth,
-    )
+    const licences: DriverLicenseWithoutImages[] =
+      await this.drivingLicenseService.getAllDriverLicenses(auth)
     const hasGlasses: boolean = licences.some((license) => {
       // Visual impairments comments on driving licenses are prefixed with "01."
       return !!license.comments?.some((comment) => comment.nr?.includes('01.'))

@@ -150,12 +150,11 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
       drivingLicense = buildFakeCurrentLicense(fakeData)
     } else {
       if (params?.useLegacyVersion) {
-        drivingLicense = await this.drivingLicenseService.legacyGetCurrentLicense(
-          {
+        drivingLicense =
+          await this.drivingLicenseService.legacyGetCurrentLicense({
             nationalId: auth.nationalId,
             auth,
-          },
-        )
+          })
       } else {
         drivingLicense = await this.drivingLicenseService.getCurrentLicense({
           auth,
@@ -236,11 +235,10 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
       return buildFakeQualitySignature(fakeData)
     }
 
-    const hasQualitySignature = await this.drivingLicenseService.getHasQualitySignature(
-      {
+    const hasQualitySignature =
+      await this.drivingLicenseService.getHasQualitySignature({
         auth,
-      },
-    )
+      })
     return {
       hasQualitySignature,
     }
@@ -260,11 +258,10 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     }
 
     try {
-      const result = await this.drivingLicenseService.getQualityPhotoAndSignature(
-        {
+      const result =
+        await this.drivingLicenseService.getQualityPhotoAndSignature({
           auth,
-        },
-      )
+        })
       // Some legacy RLS records return metadata + signature but no photo
       // binary. Submission still resolves the photo by imageId, but log the
       // case so we can spot patterns (image type, date range, frequency).
@@ -327,11 +324,10 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
 
     let teacherName: string | null
     if (assessment.nationalIdTeacher) {
-      const teacherLicense = await this.drivingLicenseService.legacyGetCurrentLicense(
-        {
+      const teacherLicense =
+        await this.drivingLicenseService.legacyGetCurrentLicense({
           nationalId: assessment.nationalIdTeacher,
-        },
-      )
+        })
       teacherName = teacherLicense?.name || null
     } else {
       teacherName = null
