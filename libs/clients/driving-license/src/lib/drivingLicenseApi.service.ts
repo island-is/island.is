@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { Auth, withAuthContext } from '@island.is/auth-nest-tools'
 import {
   CanApplyErrorCodeBFull,
   CanApplyForCategoryResult,
@@ -7,6 +8,7 @@ import {
 } from '..'
 import * as v4 from '../v4'
 import * as v5 from '../v5'
+import * as v6 from '../v6'
 import {
   CanApplyErrorCodeBTemporary,
   CanApplyErrorCodeRenewal65,
@@ -20,52 +22,63 @@ import {
 } from './drivingLicenseApi.types'
 import { handleCreateResponse } from './utils/handleCreateResponse'
 import {
-  DtoV5PracticePermitDto,
-  DtoV5DriverLicenseWithoutImagesDto,
+  DtoV6PracticePermitDto,
+  DtoV6DriverLicenseWithoutImagesDto,
   DtoImagesFromThjodskraDto,
-} from '../v5'
+} from '../v6'
 
 @Injectable()
 export class DrivingLicenseApi {
+  // v6 = caller-identity endpoints: RLS v6 dropped the jwttoken/ssn params and
+  // derives the subject from the forwarded X-Road end-user token (see the
+  // authSource:'context' v6 providers in apiConfiguration.ts).
+  // v4 is KEPT for by-SSN / cross-subject / token-less lookups that v6 cannot
+  // serve (getCurrentLicenseV4, getAllLicensesV4, getTeachersV4 and the
+  // legacyGetCurrentLicense path). v5 is KEPT solely for the legacy 65+ submit
+  // (postRenewLicenseOver65), whose endpoint was removed in v6 — drop it once
+  // is65RenewalRedesignEnabled is permanently ON in prod.
   constructor(
     private readonly v4: v4.ApiV4,
+    private readonly v6: v6.ApiV6,
+    private readonly applicationV6: v6.ApplicationApiV6,
+    private readonly v6CodeTable: v6.CodeTableV6,
+    private readonly imageApiV6: v6.ImageApiV6,
     private readonly v5: v5.ApiV5,
-    private readonly applicationV5: v5.ApplicationApiV5,
-    private readonly v5CodeTable: v5.CodeTableV5,
-    private readonly imageApiV5: v5.ImageApiV5,
   ) {}
 
   public async postTemporaryLicenseWithHealthDeclaratio(input: {
     nationalId: string
-    token?: string
-    healthDecleration: v5.ModelsV5PostTemporaryLicenseWithHealthDeclaration
-  }): Promise<v5.DtoV5NewTemporaryLicsenseDto> {
-    return this.v5.apiDrivinglicenseV5ApplicationsNewTemporarywithhealthdeclarationPost(
-      {
-        apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-        apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-        jwttoken: input.token ?? '',
-        modelsV5PostTemporaryLicenseWithHealthDeclaration:
-          input.healthDecleration,
-      },
+    auth: Auth
+    healthDecleration: v6.ModelsV6PostTemporaryLicenseWithHealthDeclaration
+  }): Promise<v6.DtoV6NewTemporaryLicsenseDto> {
+    return withAuthContext(input.auth, () =>
+      this.v6.apiDrivinglicenseV6ApplicationsNewTemporarywithhealthdeclarationPost(
+        {
+          apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+          apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
+          modelsV6PostTemporaryLicenseWithHealthDeclaration:
+            input.healthDecleration,
+        },
+      ),
     )
   }
 
   public notifyOnPkPassCreation(input: {
     nationalId: string
-    token?: string
+    auth: Auth
   }): Promise<void> {
-    return this.v5.apiDrivinglicenseV5DigitallicensecreatedPost({
-      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-      jwttoken: input.token ?? '',
-    })
+    return withAuthContext(input.auth, () =>
+      this.v6.apiDrivinglicenseV6DigitallicensecreatedPost({
+        apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+        apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
+      }),
+    )
   }
 
   public async getRemarksCodeTable(): Promise<RemarkCode[] | null> {
-    const codeTable = await this.v5CodeTable.apiCodetablesRemarksGet({
-      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+    const codeTable = await this.v6CodeTable.apiCodetablesV6RemarksGet({
+      apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+      apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
     })
     if (!codeTable) return null
     return codeTable.map((c) => ({
@@ -78,16 +91,16 @@ export class DrivingLicenseApi {
   // catalogue is memoised once per instance. Empty and failed responses are not
   // cached, so a transient blip retries on the next call rather than disabling
   // descriptions on this pod until restart.
-  private errorCodeDescriptionsCache?: Promise<v5.DtoErrorCodeDescriptionDto[]>
+  private errorCodeDescriptionsCache?: Promise<v6.DtoErrorCodeDescriptionDto[]>
 
   public async getErrorCodeDescriptions(): Promise<
-    v5.DtoErrorCodeDescriptionDto[]
+    v6.DtoErrorCodeDescriptionDto[]
   > {
     if (!this.errorCodeDescriptionsCache) {
-      this.errorCodeDescriptionsCache = this.v5CodeTable
-        .apiCodetablesErrorCodesGet({
-          apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-          apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      this.errorCodeDescriptionsCache = this.v6CodeTable
+        .apiCodetablesV6ErrorCodesGet({
+          apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+          apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
         })
         .then((codeTable) => {
           // A null/empty body (mirrors the guard in getRemarksCodeTable) is
@@ -107,21 +120,26 @@ export class DrivingLicenseApi {
     return this.errorCodeDescriptionsCache
   }
 
+  // NOTE: name retained for caller stability (license-client PkPass). Now hits
+  // v6 (caller-identity via forwarded token); rename to *V6 in the cleanup PR.
   public async getCurrentLicenseV5(input: {
     nationalId: string
-    token?: string
-  }): Promise<v5.DtoV5DriverLicenseDto | null> {
-    const skirteini = await this.v5.getCurrentLicenseV5({
-      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-      jwttoken: input.token ?? '',
-    })
+    auth: Auth
+  }): Promise<v6.DtoV6DriverLicenseDto | null> {
+    const skirteini = await withAuthContext(input.auth, () =>
+      this.v6.getCurrentLicenseV6({
+        apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+        apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
+      }),
+    )
     if (!skirteini || !skirteini.id) {
       return null
     }
     return skirteini
   }
 
+  // KEPT on v4: by-SSN lookup for token-less / cross-subject contexts
+  // (PkPass verify/pullUpdate). v6 has no by-SSN endpoint.
   public async getCurrentLicenseV4(input: {
     nationalId: string
   }): Promise<v4.DriverLicenseDto | null> {
@@ -137,13 +155,14 @@ export class DrivingLicenseApi {
   }
 
   public async getCurrentLicense(input: {
-    token: string
+    auth: Auth
   }): Promise<DriversLicense> {
-    const license = await this.v5.getCurrentLicenseV5({
-      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-      jwttoken: input.token?.replace('Bearer ', ''),
-    })
+    const license = await withAuthContext(input.auth, () =>
+      this.v6.getCurrentLicenseV6({
+        apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+        apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
+      }),
+    )
 
     if (license?.comments) {
       const remarks = await this.getRemarksCodeTable()
@@ -161,9 +180,10 @@ export class DrivingLicenseApi {
     return DrivingLicenseApi.normalizeDrivingLicenseDTO(license)
   }
 
+  // KEPT on v4: by-SSN lookup (teacher→student, token-less contexts).
   public async legacyGetCurrentLicense(input: {
     nationalId: string
-    token?: string
+    auth?: Auth
   }): Promise<DriversLicense | null> {
     try {
       const licenseRaw = await this.v4.getCurrentLicenseV4({
@@ -176,9 +196,9 @@ export class DrivingLicenseApi {
       }
       const license = DrivingLicenseApi.normalizeDrivingLicenseDTO(licenseRaw)
       if (licenseRaw.comments) {
-        const remarks = await this.v5CodeTable.apiCodetablesRemarksGet({
-          apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-          apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+        const remarks = await this.v6CodeTable.apiCodetablesV6RemarksGet({
+          apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+          apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
         })
         const licenseRemarks: Remark[] = licenseRaw.comments
           .filter((remark) => remark.id === licenseRaw.id && !!remark.nr)
@@ -238,9 +258,18 @@ export class DrivingLicenseApi {
           return false
         })
 
-        // Add disqualification to current license.
-        const deprivation = await this.getDeprivation(input)
-        if (currentLicense && deprivation.dateFrom && deprivation.dateTo) {
+        // Add disqualification to current license. getDeprivation is a v6
+        // caller-identity endpoint, so it can only be consulted when the caller
+        // supplied their own auth — the token-less teacher-lookup path skips
+        // the enrichment, as it effectively did before when it sent an empty
+        // jwttoken.
+        const deprivation = input.auth
+          ? await this.getDeprivation({
+              nationalId: input.nationalId,
+              auth: input.auth,
+            })
+          : null
+        if (currentLicense && deprivation?.dateFrom && deprivation?.dateTo) {
           currentLicense.disqualification = {
             from: deprivation.dateFrom,
             to: deprivation.dateTo,
@@ -285,6 +314,7 @@ export class DrivingLicenseApi {
     return normalizedLicense
   }
 
+  // KEPT on v4: by-SSN lookup (token-less student/admin contexts).
   public async getAllLicensesV4(input: {
     nationalId: string
   }): Promise<DriversLicense[]> {
@@ -297,6 +327,7 @@ export class DrivingLicenseApi {
     return response.map(DrivingLicenseApi.normalizeDrivingLicenseDTO)
   }
 
+  // KEPT on v4: reference data (driving instructors), no caller identity needed.
   public async getTeachersV4() {
     const teachers = await this.v4.apiDrivinglicenseV4DrivinginstructorsGet({
       apiVersion: v4.DRIVING_LICENSE_API_VERSION_V4,
@@ -312,21 +343,23 @@ export class DrivingLicenseApi {
 
   public async getDeprivation(input: {
     nationalId: string
-    token?: string
-  }): Promise<v5.DtoV5DeprivationDto> {
-    return await this.v5.apiDrivinglicenseV5DeprivationGet({
-      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-      jwttoken: input.token?.replace('Bearer ', '') ?? '',
-    })
+    auth: Auth
+  }): Promise<v6.DtoV6DeprivationDto> {
+    return await withAuthContext(input.auth, () =>
+      this.v6.apiDrivinglicenseV6DeprivationGet({
+        apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+        apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
+      }),
+    )
   }
 
-  public async getIsTeacher(params: { token: string }) {
-    const statusStr = await this.v5.apiDrivinglicenseV5HasteachingrightsGet({
-      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-      jwttoken: params.token.replace('Bearer ', ''),
-    })
+  public async getIsTeacher(params: { auth: Auth }) {
+    const statusStr = await withAuthContext(params.auth, () =>
+      this.v6.apiDrivinglicenseV6HasteachingrightsGet({
+        apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+        apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
+      }),
+    )
 
     // API says number, type says number, but deserialization happens with a text
     // deserializer (runtime.TextApiResponse).
@@ -339,15 +372,16 @@ export class DrivingLicenseApi {
   }
 
   public async getDrivingAssessment(params: {
-    token: string
+    auth: Auth
   }): Promise<DrivingAssessment | null> {
     let assessment
     try {
-      assessment = await this.v5.apiDrivinglicenseV5DrivingassessmentGet({
-        apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-        apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-        jwttoken: params.token.replace('Bearer ', ''),
-      })
+      assessment = await withAuthContext(params.auth, () =>
+        this.v6.apiDrivinglicenseV6DrivingassessmentGet({
+          apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+          apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
+        }),
+      )
     } catch (e) {
       if ((e as { status: number })?.status === 404) {
         return null
@@ -369,9 +403,9 @@ export class DrivingLicenseApi {
 
   public async getListOfJurisdictions(): Promise<Jurisdiction[]> {
     return (
-      await this.v5CodeTable.apiCodetablesDistrictsGet({
-        apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-        apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      await this.v6CodeTable.apiCodetablesV6DistrictsGet({
+        apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+        apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
       })
     ).map(({ nr, postnumer, nafn }) => ({
       id: nr || 0,
@@ -381,28 +415,29 @@ export class DrivingLicenseApi {
   }
 
   public async getHasFinishedOkugerdi(params: {
-    token: string
+    auth: Auth
   }): Promise<boolean> {
-    const res = await this.v5.apiDrivinglicenseV5Hasfinisheddrivingschool3Get({
-      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-      jwttoken: params.token.replace('Bearer ', ''),
-    })
+    const res = await withAuthContext(params.auth, () =>
+      this.v6.apiDrivinglicenseV6Hasfinisheddrivingschool3Get({
+        apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+        apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
+      }),
+    )
 
     return Boolean(res.hasFinishedDrivingSchool3)
   }
 
   public async getCanApplyForCategoryFull(params: {
     category: string
-    token: string
+    auth: Auth
   }): Promise<CanApplyForCategoryResult<CanApplyErrorCodeBFull>> {
-    const response =
-      await this.v5.apiDrivinglicenseV5CanapplyforCategoryFullGet({
-        apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-        apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+    const response = await withAuthContext(params.auth, () =>
+      this.v6.apiDrivinglicenseV6CanapplyforCategoryFullGet({
+        apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+        apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
         category: params.category,
-        jwttoken: params.token,
-      })
+      }),
+    )
 
     return {
       result: !!response.result,
@@ -413,13 +448,14 @@ export class DrivingLicenseApi {
   }
 
   public async getCanApplyForRenewal65(params: {
-    token: string
+    auth: Auth
   }): Promise<CanApplyForCategoryResult<CanApplyErrorCodeRenewal65>> {
-    const response = await this.v5.apiDrivinglicenseV5CanapplyforRenewal65Get({
-      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-      jwttoken: params.token,
-    })
+    const response = await withAuthContext(params.auth, () =>
+      this.applicationV6.apiApplicationsV6CanapplyRenewal65Get({
+        apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+        apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
+      }),
+    )
 
     return {
       result: !!response.result,
@@ -428,13 +464,14 @@ export class DrivingLicenseApi {
   }
 
   public async getCanApplyForCategoryTemporary(params: {
-    token: string
+    auth: Auth
   }): Promise<CanApplyForCategoryResult<CanApplyErrorCodeBTemporary>> {
-    const response = await this.v5.apiDrivinglicenseV5CanapplyforTemporaryGet({
-      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-      jwttoken: params.token,
-    })
+    const response = await withAuthContext(params.auth, () =>
+      this.v6.apiDrivinglicenseV6CanapplyforTemporaryGet({
+        apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+        apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
+      }),
+    )
     return {
       result: !!response.result,
       errorCode: response.errorCode
@@ -448,10 +485,10 @@ export class DrivingLicenseApi {
     nationalIdTeacher: string
     dateOfAssessment: Date
   }) {
-    return await this.v5.apiDrivinglicenseV5DrivingassessmentPost({
-      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-      modelsV5PostNewDrivingAssessment: {
+    return await this.v6.apiDrivinglicenseV6DrivingassessmentPost({
+      apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+      apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
+      modelsV6PostNewDrivingAssessment: {
         dateOfAssessment: params.dateOfAssessment,
         instructorSSN: params.nationalIdTeacher,
         ssn: params.nationalIdStudent,
@@ -459,6 +496,12 @@ export class DrivingLicenseApi {
     })
   }
 
+  // KEPT on v5: RLS reshaped the v6 request model so that the
+  // "will bring photo / will bring health certificate" flags no longer exist —
+  // v6 expects the health certificate itself (base64, `healthCertificate`),
+  // approved by an employee via `.../confirmdone/{applicationId}`. Until that
+  // flow is built and RLS confirms what the flags default to, this stays on v5
+  // so behaviour is unchanged. Same reasoning as `postRenewLicenseOver65`.
   public async postCreateDrivingLicenseTemporary(params: {
     nationalIdApplicant: string
     nationalIdTeacher: string
@@ -468,7 +511,7 @@ export class DrivingLicenseApi {
     sendLicenseInMail: boolean
     email: string
     phone: string
-    auth: string
+    auth: Auth
     photoBiometricsId?: string | null
     signatureBiometricsId?: string | null
   }) {
@@ -502,7 +545,7 @@ export class DrivingLicenseApi {
       // The generated api does not map the error correctly so we check if the canApply status has changed to "HAS_B_Category"
       if ((e as { status: number })?.status === 400) {
         const hasTemp = await this.getCanApplyForCategoryTemporary({
-          token: params.auth,
+          auth: params.auth,
         })
         return hasTemp.errorCode === 'HAS_B_CATEGORY'
       }
@@ -514,6 +557,12 @@ export class DrivingLicenseApi {
     }
   }
 
+  // KEPT on v5: RLS reshaped the v6 request model so that the
+  // "will bring photo / will bring health certificate" flags no longer exist —
+  // v6 expects the health certificate itself (base64, `healthCertificate`),
+  // approved by an employee via `.../confirmdone/{applicationId}`. Until that
+  // flow is built and RLS confirms what the flags default to, this stays on v5
+  // so behaviour is unchanged. Same reasoning as `postRenewLicenseOver65`.
   async postCreateDrivingLicenseFull(params: {
     nationalIdApplicant: string
     willBringHealthCertificate: boolean
@@ -556,43 +605,41 @@ export class DrivingLicenseApi {
   }
 
   async postApplyForRenewal65(params: {
-    token: string
+    auth: Auth
     districtId: number
     phoneNumber: string
     email: string
     pickupPlasticAtDistrict?: boolean
     sendPlasticToPerson?: boolean
-    contentList?: v5.ContractsRLSApplicationSystemRLSApplicationContentModel[]
+    contentList?: v6.ContractsRLSApplicationSystemRLSApplicationContentModel[]
     photoBiometricsId?: string | null
     signatureBiometricsId?: string | null
   }): Promise<boolean> {
-    const response =
-      await this.applicationV5.apiApplicationsV5ApplyforRenewal65Post({
-        apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-        apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-        jwttoken: params.token.replace('Bearer ', ''),
-        modelsV5PostRenewal65: {
+    const response = await withAuthContext(params.auth, () =>
+      this.applicationV6.apiApplicationsV6ApplyforRenewal65Post({
+        apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+        apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
+        modelsV6PostRenewal65: {
           districtId: params.districtId,
           primaryPhoneNumber: params.phoneNumber,
           email: params.email,
-          pickupPlasticAtDistrict: params.pickupPlasticAtDistrict,
           sendPlasticToPerson: params.sendPlasticToPerson,
           contentList: params.contentList,
           photoBiometricsId: params.photoBiometricsId,
           signatureBiometricsId: params.signatureBiometricsId,
-          renewalDate: new Date(),
-          userId: v5.DRIVING_LICENSE_API_USER_ID,
+          userId: v6.DRIVING_LICENSE_API_USER_ID,
         },
-      })
+      }),
+    )
 
     return response.result ?? false
   }
 
   // Legacy 65+ submit endpoint, used when `is65RenewalRedesignEnabled` is OFF.
-  // Removed from upstream spec briefly mid-Phase-B; restored at our request
-  // with `deprecated: true`. Will be deleted along with this method once the
-  // redesign flag has been fully ON in prod long enough that no flag-OFF
-  // 65+ submissions reach this branch.
+  // The v6 API removed this endpoint (and the PostRenewal65AndOver model), so
+  // this method stays on the v5 client until the redesign flag has been fully
+  // ON in prod long enough that no flag-OFF 65+ submissions reach this branch,
+  // at which point this method and the v5 injection can be deleted.
   async postRenewLicenseOver65(params: {
     token: string
     districtId: number
@@ -615,72 +662,74 @@ export class DrivingLicenseApi {
 
   async postApplyForBELicense(params: {
     nationalIdApplicant: string
-    token: string
+    auth: Auth
     jurisdictionId: number
     instructorSSN: string
     phoneNumber: string
     email: string
-    contentList?: v5.ContractsRLSApplicationSystemRLSApplicationContentModel[]
+    contentList?: v6.ContractsRLSApplicationSystemRLSApplicationContentModel[]
     photoBiometricsId?: string | null
     signatureBiometricsId?: string | null
     sendPlasticToPerson?: boolean
-    healthDeclarationModel: v5.ModelsHealthDeclarationModel
+    healthDeclarationModel: v6.ModelsHealthDeclarationModel
   }): Promise<boolean> {
-    const response = await this.applicationV5.apiApplicationsV5ApplyforBePost({
-      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-      jwttoken: params.token.replace('Bearer ', ''),
-      modelsV5PostApplicationForBEModel: {
-        districtId: params.jurisdictionId,
-        userId: v5.DRIVING_LICENSE_API_USER_ID,
-        instructorSSN: params.instructorSSN,
-        primaryPhoneNumber: params.phoneNumber,
-        studentEmail: params.email,
-        contentList: params.contentList,
-        photoBiometricsId: params.photoBiometricsId,
-        signatureBiometricsId: params.signatureBiometricsId,
-        sendPlasticToPerson: params.sendPlasticToPerson,
-        healthDeclarationModel: params.healthDeclarationModel,
-      },
-    })
+    const response = await withAuthContext(params.auth, () =>
+      this.applicationV6.apiApplicationsV6ApplyforBePost({
+        apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+        apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
+        modelsV6PostApplicationForBEModel: {
+          districtId: params.jurisdictionId,
+          instructorSSN: params.instructorSSN,
+          primaryPhoneNumber: params.phoneNumber,
+          studentEmail: params.email,
+          contentList: params.contentList,
+          photoBiometricsId: params.photoBiometricsId,
+          signatureBiometricsId: params.signatureBiometricsId,
+          sendPlasticToPerson: params.sendPlasticToPerson,
+          healthDeclaration: params.healthDeclarationModel,
+        },
+      }),
+    )
 
     return response.result ?? false
   }
 
   async postCanApplyForPracticePermit(params: {
-    token: string
+    auth: Auth
     studentSSN: string
-  }): Promise<DtoV5PracticePermitDto> {
-    return await this.v5.apiDrivinglicenseV5CanapplyforPracticepermitPost({
-      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-      jwttoken: params.token.replace('Bearer ', ''),
-      modelsV5PostPracticePermit: {
-        dateFrom: new Date(),
-        studentSSN: params.studentSSN,
-        userId: v5.DRIVING_LICENSE_API_USER_ID,
-      },
-    })
+  }): Promise<DtoV6PracticePermitDto> {
+    return await withAuthContext(params.auth, () =>
+      this.v6.apiDrivinglicenseV6CanapplyforPracticepermitPost({
+        apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+        apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
+        modelsV6PostPracticePermit: {
+          dateFrom: new Date(),
+          studentSSN: params.studentSSN,
+          userId: v6.DRIVING_LICENSE_API_USER_ID,
+        },
+      }),
+    )
   }
 
   async postPracticePermitApplication(params: {
-    token: string
+    auth: Auth
     studentSSN: string
-  }): Promise<DtoV5PracticePermitDto> {
-    return await this.v5.apiDrivinglicenseV5ApplicationsPracticepermitPost({
-      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-      jwttoken: params.token.replace('Bearer ', ''),
-      modelsV5PostPracticePermit: {
-        dateFrom: new Date(),
-        studentSSN: params.studentSSN,
-        userId: v5.DRIVING_LICENSE_API_USER_ID,
-      },
-    })
+  }): Promise<DtoV6PracticePermitDto> {
+    return await withAuthContext(params.auth, () =>
+      this.v6.apiDrivinglicenseV6ApplicationsPracticepermitPost({
+        apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+        apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
+        modelsV6PostPracticePermit: {
+          dateFrom: new Date(),
+          studentSSN: params.studentSSN,
+          userId: v6.DRIVING_LICENSE_API_USER_ID,
+        },
+      }),
+    )
   }
 
   async postApplicationNewCollaborative(params: {
-    token: string
+    auth: Auth
     districtId: number
     stolenOrLost: boolean
     pickUpLicense: boolean
@@ -689,85 +738,85 @@ export class DrivingLicenseApi {
   }): Promise<number> {
     const {
       districtId,
-      token,
       stolenOrLost,
       pickUpLicense,
       imageBiometricsId,
       signatureBiometricsId,
     } = params
-    return await this.v5.apiDrivinglicenseV5ApplicationsNewCollaborativePost({
-      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-      jwttoken: token.replace('Bearer ', ''),
-      modelsV5PostNewCollaborative: {
-        districtId,
-        licenseStolenOrLost: stolenOrLost,
-        userId: v5.DRIVING_LICENSE_API_USER_ID,
-        pickUpLicense,
-        imageBiometricsId,
-        signatureBiometricsId,
-      },
-    })
+    return await withAuthContext(params.auth, () =>
+      this.v6.apiDrivinglicenseV6ApplicationsNewCollaborativePost({
+        apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+        apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
+        modelsV6PostNewCollaborative: {
+          districtId,
+          licenseStolenOrLost: stolenOrLost,
+          userId: v6.DRIVING_LICENSE_API_USER_ID,
+          pickUpLicense,
+          photoBiometricsId: imageBiometricsId,
+          signatureBiometricsId,
+        },
+      }),
+    )
   }
 
-  async getHasQualityPhoto(params: { token: string }): Promise<boolean> {
-    const result = await this.v5.apiDrivinglicenseV5HasqualityphotoGet({
-      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-      jwttoken: params.token.replace('Bearer ', ''),
-    })
+  async getHasQualityPhoto(params: { auth: Auth }): Promise<boolean> {
+    const result = await withAuthContext(params.auth, () =>
+      this.imageApiV6.apiImagecontrollerV6HasqualityphotoGet({
+        apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+        apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
+      }),
+    )
 
     return result > 0
   }
 
-  async getQualityPhoto(params: {
-    token: string
-  }): Promise<QualityPhoto | null> {
-    const image = await this.v5.apiDrivinglicenseV5GetqualityphotoGet({
-      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-      jwttoken: params.token.replace('Bearer ', ''),
-    })
+  async getQualityPhoto(params: { auth: Auth }): Promise<QualityPhoto | null> {
+    const image = await withAuthContext(params.auth, () =>
+      this.imageApiV6.apiImagecontrollerV6GetqualityphotoGet({
+        apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+        apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
+      }),
+    )
 
     return {
       data: image,
     }
   }
 
-  async getHasQualitySignature(params: { token: string }): Promise<boolean> {
-    const result = await this.v5.apiDrivinglicenseV5HasqualitysignatureGet({
-      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-      jwttoken: params.token.replace('Bearer ', ''),
-    })
+  async getHasQualitySignature(params: { auth: Auth }): Promise<boolean> {
+    const result = await withAuthContext(params.auth, () =>
+      this.imageApiV6.apiImagecontrollerV6HasqualitysignatureGet({
+        apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+        apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
+      }),
+    )
     return result > 0
   }
 
   async getQualitySignature(params: {
-    token: string
+    auth: Auth
   }): Promise<QualitySignature | null> {
-    const image = await this.v5.apiDrivinglicenseV5GetqualitysignatureGet({
-      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-      jwttoken: params.token.replace('Bearer ', ''),
-    })
+    const image = await withAuthContext(params.auth, () =>
+      this.imageApiV6.apiImagecontrollerV6GetqualitysignatureGet({
+        apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+        apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
+      }),
+    )
     return {
       data: image,
     }
   }
 
   async getQualityPhotoAndSignature(params: {
-    token: string
+    auth: Auth
   }): Promise<QualityPhotoAndSignature | null> {
     try {
-      const res =
-        await this.imageApiV5.apiImagecontrollerV5GetqualityphotoandsignatureGet(
-          {
-            apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-            apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-            jwttoken: params.token.replace('Bearer ', ''),
-          },
-        )
+      const res = await withAuthContext(params.auth, () =>
+        this.imageApiV6.apiImagecontrollerV6GetqualityphotoandsignatureGet({
+          apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+          apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
+        }),
+      )
 
       return {
         imageId: res.imageId ?? null,
@@ -786,39 +835,40 @@ export class DrivingLicenseApi {
     }
   }
 
-  async getHasQualityScannedPhoto(params: { token: string }): Promise<boolean> {
-    const res =
-      await this.imageApiV5.apiImagecontrollerV5HasqualityscannedphotoGet({
-        apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-        apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-        jwttoken: params.token.replace('Bearer ', ''),
-      })
+  async getHasQualityScannedPhoto(params: { auth: Auth }): Promise<boolean> {
+    const res = await withAuthContext(params.auth, () =>
+      this.imageApiV6.apiImagecontrollerV6HasqualityscannedphotoGet({
+        apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+        apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
+      }),
+    )
 
     return res > 0
   }
 
   async getAllPhotosFromThjodskra(params: {
-    token: string
+    auth: Auth
   }): Promise<DtoImagesFromThjodskraDto> {
-    const res =
-      await this.imageApiV5.apiImagecontrollerV5FromnationalregistryWithagerestrictionGet(
+    const res = await withAuthContext(params.auth, () =>
+      this.imageApiV6.apiImagecontrollerV6FromnationalregistryWithagerestrictionGet(
         {
-          apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-          apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-          jwttoken: params.token.replace('Bearer ', ''),
+          apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+          apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
         },
-      )
+      ),
+    )
 
     return res
   }
 
   async getAllDriverLicenses(
-    token: string,
-  ): Promise<DtoV5DriverLicenseWithoutImagesDto[]> {
-    return await this.v5.apiDrivinglicenseV5AllGet({
-      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-      jwttoken: token.replace('Bearer ', ''),
-    })
+    auth: Auth,
+  ): Promise<DtoV6DriverLicenseWithoutImagesDto[]> {
+    return await withAuthContext(auth, () =>
+      this.v6.apiDrivinglicenseV6AllGet({
+        apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+        apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
+      }),
+    )
   }
 }
