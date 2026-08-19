@@ -26,7 +26,7 @@ import {
   MunicipalityModel,
   PersonalTaxReturnApi,
 } from '@island.is/clients/municipalities-financial-aid'
-import { PersonalTaxReturnApi as RskPersonalTaxReturnApi } from '@island.is/clients/rsk/personal-tax-return'
+// import { PersonalTaxReturnApi as RskPersonalTaxReturnApi } from '@island.is/clients/rsk/personal-tax-return'
 
 import {
   CreateApplicationOperationRequest,
@@ -52,11 +52,11 @@ import {
   MunicipalityModelChildrenAidEnum,
 } from '@island.is/clients/municipalities-financial-aid'
 import { AttachmentS3Service } from '../../shared/services'
-import {
-  fetchDirectTaxPaymentsFromRsk,
-  fetchPersonalTaxReturnFromRsk,
-  shouldFetchTaxDataFromRsk,
-} from './taxDataFromRsk'
+// import {
+//   fetchDirectTaxPaymentsFromRsk,
+//   fetchPersonalTaxReturnFromRsk,
+//   shouldFetchTaxDataFromRsk,
+// } from './taxDataFromRsk'
 
 type Props = Omit<TemplateApiModuleActionProps, 'application'> & {
   application: FAApplication & ApplicationWithAttachments
@@ -69,7 +69,7 @@ export class FinancialAidService extends BaseTemplateApiService {
     private rvkApplicationsApi: rvkApplicationsApi,
     private municipalityApi: MunicipalityApi,
     private personalTaxReturnApi: PersonalTaxReturnApi,
-    private rskPersonalTaxReturnApi: RskPersonalTaxReturnApi,
+    // private rskPersonalTaxReturnApi: RskPersonalTaxReturnApi,
     private readonly attachmentService: AttachmentS3Service,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
@@ -498,28 +498,29 @@ export class FinancialAidService extends BaseTemplateApiService {
 
   async taxData({ auth, application }: Props): Promise<TaxData> {
     try {
-      const municipalityCode =
-        application.externalData.nationalRegistry.data.address?.municipalityCode
-
-      if (shouldFetchTaxDataFromRsk(municipalityCode)) {
-        const municipalitiesPersonalTaxReturn =
-          await fetchPersonalTaxReturnFromRsk(
-            this.rskPersonalTaxReturnApi,
-            this.attachmentService,
-            application,
-            auth.nationalId,
-          )
-        const municipalitiesDirectTaxPayments =
-          await fetchDirectTaxPaymentsFromRsk(
-            this.rskPersonalTaxReturnApi,
-            auth.nationalId,
-          )
-
-        return {
-          municipalitiesPersonalTaxReturn,
-          municipalitiesDirectTaxPayments,
-        }
-      }
+      // RSK client calls disabled until PERSONAL_TAX_RETURN_* secrets exist in vault.
+      // const municipalityCode =
+      //   application.externalData.nationalRegistry.data.address?.municipalityCode
+      //
+      // if (shouldFetchTaxDataFromRsk(municipalityCode)) {
+      //   const municipalitiesPersonalTaxReturn =
+      //     await fetchPersonalTaxReturnFromRsk(
+      //       this.rskPersonalTaxReturnApi,
+      //       this.attachmentService,
+      //       application,
+      //       auth.nationalId,
+      //     )
+      //   const municipalitiesDirectTaxPayments =
+      //     await fetchDirectTaxPaymentsFromRsk(
+      //       this.rskPersonalTaxReturnApi,
+      //       auth.nationalId,
+      //     )
+      //
+      //   return {
+      //     municipalitiesPersonalTaxReturn,
+      //     municipalitiesDirectTaxPayments,
+      //   }
+      // }
 
       const personalTaxReturn = await this.personalTaxReturnApiWithAuth(
         auth,
