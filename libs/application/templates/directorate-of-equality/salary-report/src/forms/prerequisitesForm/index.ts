@@ -18,6 +18,7 @@ import {
   BlankExcelTemplateApi,
   CompanyRegistryApi,
   DoeCompanyApi,
+  SubCriterionCatalogApi,
 } from '../../dataProviders'
 import { messages } from '../../lib/messages'
 
@@ -53,6 +54,9 @@ export const Prerequisites = buildForm({
             }),
             buildDataProviderItem({
               provider: BlankExcelTemplateApi,
+            }),
+            buildDataProviderItem({
+              provider: SubCriterionCatalogApi,
             }),
             buildDataProviderItem({
               provider: ActiveEqualityReportApi,

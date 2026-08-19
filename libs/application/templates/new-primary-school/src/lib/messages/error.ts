@@ -16,6 +16,11 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Aðstandandi má ekki vera forsjáraðili',
     description: 'A relative may not be a guardian',
   },
+  relativeSameAsChild: {
+    id: 'nps.application:error.relativeSameAsChild',
+    defaultMessage: 'Barn getur ekki verið eigin aðstandandi',
+    description: 'A child cannot be their own relative',
+  },
   siblingsRequired: {
     id: 'nps.application:error.siblingsRequired',
     defaultMessage: 'Nauðsynlegt er að bæta við að minnsta kosti einu systkini',
