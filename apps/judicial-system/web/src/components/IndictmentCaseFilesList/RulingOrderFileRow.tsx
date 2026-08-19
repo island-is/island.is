@@ -42,6 +42,7 @@ import {
   getCurrentUserStatementDate,
   hasAcceptedRulingOrderInCourt,
   isCurrentAppellantRepresentative,
+  rulingOrderAppealCase,
   userHasActiveInCourtAppeal,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
@@ -69,9 +70,7 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
   const isDefence = isDefenceUser(user)
   const isDistrictCourt = isDistrictCourtUser(user)
 
-  const appealCase = workingCase.rulingOrderAppealCases?.find(
-    (a) => a.rulingFileId === file.id,
-  )
+  const appealCase = rulingOrderAppealCase(workingCase, file.id)
 
   const appealRoute = isDefence
     ? DEFENDER_APPEAL_CASE_APPEAL_ROUTE

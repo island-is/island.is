@@ -44,3 +44,18 @@ export const delegationSettingsStep: FormSystemSection = {
   isHidden: false,
   isCompleted: false,
 }
+
+export const deadlineSettingsStep: FormSystemSection = {
+  id: 'Deadline',
+  displayOrder: 0,
+  name: {
+    is: 'Umsóknarfrestur',
+    en: 'Application deadline',
+  },
+  waitingText: {
+    is: '',
+    en: '',
+  },
+  isHidden: false,
+  isCompleted: false,
+}

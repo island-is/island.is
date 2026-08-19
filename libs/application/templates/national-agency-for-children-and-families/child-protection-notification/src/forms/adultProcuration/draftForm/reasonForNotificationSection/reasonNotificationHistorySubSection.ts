@@ -32,7 +32,8 @@ export const reasonNotificationHistorySubSection = buildSubSection({
         }),
         buildRadioField({
           id: 'reasonNotificationHistory.hasDiscussedWithParents',
-          title: ({ answers }) => getHasDiscussedWithParentsTitle(answers),
+          title: ({ answers, externalData }) =>
+            getHasDiscussedWithParentsTitle(answers, externalData),
           required: true,
           width: 'half',
           space: 4,
@@ -40,7 +41,8 @@ export const reasonNotificationHistorySubSection = buildSubSection({
         }),
         buildRadioField({
           id: 'reasonNotificationHistory.areParentsInformed',
-          title: ({ answers }) => getAreParentsInformedTitle(answers),
+          title: ({ answers, externalData }) =>
+            getAreParentsInformedTitle(answers, externalData),
           required: true,
           width: 'half',
           space: 4,
@@ -48,8 +50,10 @@ export const reasonNotificationHistorySubSection = buildSubSection({
         }),
         buildSelectField({
           id: 'reasonNotificationHistory.biggestConcern',
-          title: reasonForNotificationMessages.description.subSectionTitle,
-          placeholder: reasonForNotificationMessages.shared.selectPlaceholder,
+          title: reasonForNotificationMessages.notificationHistory.explanation,
+          placeholder:
+            reasonForNotificationMessages.notificationHistory
+              .explanationPlaceholder,
           options: ({ externalData }) => {
             const { guardianNotAwareReasons } =
               getApplicationExternalData(externalData)

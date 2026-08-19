@@ -12,6 +12,7 @@ air-discount-scheme-backend:
     DB_NAME: 'air_discount_scheme_backend'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'air_discount_scheme_backend'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     ENVIRONMENT: 'dev'
     IDENTITY_SERVER_CLIENT_ID: '@vegagerdin.is/clients/air-discount-scheme'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
@@ -147,6 +148,7 @@ api:
     CONSULTATION_PORTAL_CLIENT_BASE_PATH: 'https://samradapi-test.devland.is'
     CONTACT_US_EMAIL: 's@kogk.is'
     CONTENTFUL_HOST: 'preview.contentful.com'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     DOWNLOAD_SERVICE_BASE_PATH: 'https://api.dev01.devland.is'
     ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
     ENDORSEMENT_SYSTEM_BASE_API_URL: 'http://endorsement-system-api.endorsement-system.svc.cluster.local'
@@ -526,6 +528,7 @@ application-system-api:
     DB_NAME: 'application_system_api'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'application_system_api'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     EHIC_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10007/SJUKRA-Protected/ehic'
     EMAIL_REGION: 'eu-west-1'
     ENDORSEMENTS_API_BASE_PATH: 'http://endorsement-system-api.endorsement-system.svc.cluster.local'
@@ -808,6 +811,7 @@ application-system-api-worker:
     DB_NAME: 'application_system_api'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'application_system_api'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     EHIC_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10007/SJUKRA-Protected/ehic'
     FILE_SERVICE_PRESIGN_BUCKET: 'island-is-dev-fs-presign-bucket'
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-dev-upload-api'
@@ -990,6 +994,7 @@ cms-importer-cms-cleanup:
     - 'node'
   enabled: true
   env:
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
@@ -1044,6 +1049,7 @@ cms-importer-energy-fund-import:
     - 'node'
   enabled: true
   env:
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     RANNIS_GRANTS_URL: 'https://sjodir.rannis.is/statistics/fund_schedule.php'
@@ -1099,6 +1105,7 @@ cms-importer-fsre-buildings-import:
     - 'node'
   enabled: true
   env:
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     RANNIS_GRANTS_URL: 'https://sjodir.rannis.is/statistics/fund_schedule.php'
@@ -1156,6 +1163,7 @@ cms-importer-web-sitemap:
     - 'node'
   enabled: true
   env:
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     S3_BUCKET: 'island-is-dev-cms-importer'
@@ -1220,6 +1228,7 @@ cms-importer-worker:
     - 'node'
   enabled: true
   env:
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     RANNIS_GRANTS_URL: 'https://sjodir.rannis.is/statistics/fund_schedule.php'
@@ -1275,6 +1284,7 @@ consultation-portal:
     BACKEND_DL_URL: 'https://samradapi-test.devland.is/api/Documents/'
     BASEPATH: '/consultation-portal'
     CODE_OWNER: 'Advania'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     ENVIRONMENT: 'dev'
     IDENTITY_SERVER_ISSUER_DOMAIN: 'identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
@@ -1349,6 +1359,7 @@ contentful-apps:
   enabled: true
   env:
     API_URL: 'http://api.islandis.svc.cluster.local'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     PUBLIC_API_URL: 'https://beta.dev01.devland.is'
@@ -1417,6 +1428,7 @@ contentful-apps:
 contentful-entry-tagger-service:
   enabled: true
   env:
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
@@ -1486,6 +1498,7 @@ contentful-entry-tagger-service:
 download-service:
   enabled: true
   env:
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     HMS_CONTRACTS_AUTH_CLIENT_ID: 'e2411f5c-436a-4c17-aa14-eab9c225bc06'
     HMS_CONTRACTS_AUTH_TENANT_ID: 'c7256472-2622-417e-8955-a54eeb0a110e'
     HMS_CONTRACTS_AUTH_TOKEN_ENDPOINT: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token'
@@ -1590,6 +1603,7 @@ download-service:
     REGULATIONS_FILE_UPLOAD_KEY_DRAFT: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_DRAFT'
     REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED'
     REGULATIONS_FILE_UPLOAD_KEY_PUBLISH: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH'
+    REQUEST_TIMEOUT_MS: '/k8s/download-service/REQUEST_TIMEOUT_MS'
     XROAD_HEALTH_INSURANCE_PASSWORD: '/k8s/health-insurance/XROAD-PASSWORD'
     XROAD_HEALTH_INSURANCE_USERNAME: '/k8s/health-insurance/XROAD-USER'
     XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD: '/k8s/api/HEALTH_INSURANCE_V2_XROAD_PASSWORD'
@@ -1617,6 +1631,7 @@ endorsement-system-api:
     DB_NAME: 'services_endorsements_api'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'services_endorsements_api'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     EMAIL_FROM_ADDRESS: 'development@island.is'
     EMAIL_FROM_NAME: 'devland.is'
     EMAIL_REGION: 'eu-west-1'
@@ -1879,6 +1894,7 @@ icelandic-names-registry-backend:
     DB_NAME: 'icelandic_names_registry_backend'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'icelandic_names_registry_backend'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
@@ -2034,6 +2050,7 @@ license-api:
   enabled: true
   env:
     CODE_OWNER: 'hugsmidjan'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     HUNTING_LICENSE_PASS_TEMPLATE_ID: '1da72d52-a93a-4d0f-8463-1933a2bd210b'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LICENSE_SERVICE_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
@@ -2175,6 +2192,7 @@ payments:
     API_INTERNAL_BASEPATH: 'http://api.islandis.svc.cluster.local'
     APP_EXTERNAL_BASEPATH: 'https://beta.dev01.devland.is'
     BASEPATH: '/greida'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
@@ -2325,6 +2343,7 @@ regulations-admin-backend:
     DB_NAME: 'regulations_admin_backend'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'regulations_admin_backend'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/regulations-admin-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
@@ -2444,6 +2463,7 @@ search-indexer-service:
     CONTENTFUL_ENVIRONMENT: 'master'
     CONTENTFUL_HOST: 'preview.contentful.com'
     CONTENTFUL_SPACE: '8k0h54kbe6bj'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     ELASTIC_INDEX: 'island-is'
     ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
     ENVIRONMENT: 'dev'
@@ -2656,6 +2676,7 @@ service-portal-api:
     DB_NAME: 'service_portal_api'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'service_portal_api'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
@@ -2789,6 +2810,7 @@ services-bff-portals-admin:
     BFF_PAR_SUPPORT_ENABLED: 'false'
     BFF_PROXY_API_ENDPOINT: 'http://api.islandis.svc.cluster.local/api/graphql'
     CODE_OWNER: 'core'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_CLIENT_ID: '@admin.island.is/bff-stjornbord'
     IDENTITY_SERVER_CLIENT_SCOPES: '["@admin.island.is/delegations","@admin.island.is/ads","@admin.island.is/regulations","@admin.island.is/regulations:manage","@admin.island.is/icelandic-names-registry","@admin.island.is/application-system:admin","@admin.island.is/application-system:institution","@admin.island.is/document-provider","@admin.island.is/document-provider:institution","@admin.island.is/auth","@admin.island.is/auth:admin","@admin.island.is/petitions","@admin.island.is/service-desk","@admin.island.is/ads:explicit","@admin.island.is/signature-collection:manage","@admin.island.is/signature-collection:process","@admin.island.is/signature-collection:municipality","@admin.island.is/form-system","@admin.island.is/form-system:admin","@admin.island.is/delegation-system","@admin.island.is/delegation-system:admin","@admin.island.is/payments"]'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
@@ -2875,6 +2897,7 @@ services-bff-portals-my-pages:
     BFF_NAME: 'minarsidur'
     BFF_PAR_SUPPORT_ENABLED: 'false'
     BFF_PROXY_API_ENDPOINT: 'http://api.islandis.svc.cluster.local/api/graphql'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/web'
     IDENTITY_SERVER_CLIENT_SCOPES: '["api_resource.scope","@island.is/applications:read","@island.is/applications:write","@island.is/user-profile:read","@island.is/user-profile:write","@island.is/auth/actor-delegations","@island.is/auth/delegations:write","@island.is/auth/consents","@skra.is/individuals","@island.is/documents","@island.is/endorsements","@admin.island.is/petitions","@island.is/assets/ip","@island.is/assets","@island.is/education","@island.is/education-license","@island.is/finance:overview","@island.is/finance/salary","@island.is/finance/schedule:read","@island.is/finance/loans","@island.is/internal","@island.is/internal:procuring","@island.is/me:details","@island.is/law-and-order","@island.is/licenses","@island.is/licenses:verify","@island.is/company","@island.is/ships","@island.is/vehicles","@island.is/work-machines","@island.is/health","@island.is/health/payments","@island.is/health/medicines","@island.is/health/assistive-devices-and-nutrition","@island.is/health/therapies","@island.is/health/healthcare","@island.is/health/rights-status","@island.is/health/dentists","@island.is/health/organ-donation","@island.is/health/vaccinations","@island.is/signature-collection","@island.is/applications/urvinnslusjodur","@island.is/applications/orkusjodur","@island.is/fishing-license","@island.is/applications/iceland-health","@island.is/applications/samgongustofa-vehicles","@island.is/applications/social-insurance-administration","@island.is/applications/rsk","@island.is/applications/ver","@island.is/applications/ver:accidents","@island.is/applications/mms","@island.is/applications/dmr:stjornartidindi","@island.is/applications/hms","@island.is/applications/directorate-of-equality","@samband.is/financial-aid/applicant","@samband.is/financial-aid:read","@samband.is/financial-aid:write"]'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
@@ -2953,6 +2976,7 @@ services-documents:
     DB_NAME: 'services_documents'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'services_documents'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
@@ -3042,6 +3066,7 @@ services-form-system-api:
     DB_NAME: 'services_form_system_api'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'services_form_system_api'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-dev-upload-api'
     FORM_SYSTEM_BUCKET: 'island-is-dev-form-system-presign-bucket'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
@@ -3186,6 +3211,7 @@ services-form-system-api-worker:
     DB_NAME: 'services_form_system_api'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'services_form_system_api'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-dev-upload-api'
     FORM_SYSTEM_BUCKET: 'island-is-dev-form-system-presign-bucket'
     LOG_LEVEL: 'info'
@@ -3256,6 +3282,7 @@ services-payment-flow-update-handler:
   enabled: true
   env:
     CODE_OWNER: 'stefna'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     LANDSPITALI_WEB_DIRECT_GRANT_PAYMENT_CONFIRMATION_EMAIL_SUBJECT: '[TEST] Beinn styrkur - Landspítali'
     LANDSPITALI_WEB_MEMORIAL_CARD_PAYMENT_CONFIRMATION_EMAIL_SUBJECT: '[TEST] Minningarkort - Landspítali'
     LANDSPITALI_WEB_PAYMENT_CONFIRMATION_SEND_FROM_EMAIL: 'development@island.is'
@@ -3338,6 +3365,7 @@ services-payments:
     DB_NAME: 'services_payments'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'services_payments'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/payments'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
@@ -3490,6 +3518,7 @@ services-payments-worker:
     DB_NAME: 'services_payments'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'services_payments'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/payments'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
@@ -3578,6 +3607,7 @@ services-sessions:
     DB_NAME: 'services_sessions'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'services_sessions_read'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -3661,6 +3691,7 @@ services-sessions-cleanup:
     DB_NAME: 'services_sessions'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'services_sessions'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
@@ -3726,6 +3757,7 @@ services-sessions-worker:
     DB_NAME: 'services_sessions'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'services_sessions'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -3822,6 +3854,7 @@ services-university-gateway:
     DB_NAME: 'services_university_gateway'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'services_university_gateway'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/university-gateway'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
@@ -3955,6 +3988,7 @@ services-university-gateway-worker:
     DB_NAME: 'services_university_gateway'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'services_university_gateway'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/university-gateway'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
@@ -4033,6 +4067,7 @@ skilavottord-web:
   enabled: true
   env:
     API_URL: 'http://skilavottord-ws'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     ENVIRONMENT: 'dev'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -4111,6 +4146,7 @@ skilavottord-ws:
     DB_NAME: 'skilavottord'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'skilavottord'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -4226,6 +4262,7 @@ user-notification:
     DB_NAME: 'user_notification'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'user_notification'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     EMAIL_DEAD_LETTER_QUEUE_NAME: 'user-notification-email-failure'
     EMAIL_FROM_ADDRESS: 'development@island.is'
@@ -4358,6 +4395,7 @@ user-notification-birthday-worker:
     DB_NAME: 'user_notification'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'user_notification'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     EMAIL_DEAD_LETTER_QUEUE_NAME: 'user-notification-email-failure'
     EMAIL_FROM_ADDRESS: 'development@island.is'
@@ -4467,6 +4505,7 @@ user-notification-cleanup-worker:
     DB_NAME: 'user_notification'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'user_notification'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
@@ -4567,6 +4606,7 @@ user-notification-worker:
     DB_NAME: 'user_notification'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'user_notification'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     EMAIL_DEAD_LETTER_QUEUE_NAME: 'user-notification-email-failure'
     EMAIL_FROM_ADDRESS: 'development@island.is'
@@ -4691,6 +4731,7 @@ web:
   env:
     API_URL: 'http://api'
     CODE_OWNER: 'stefna'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     DISABLE_API_CATALOGUE: 'false'
     DISABLE_ORGANIZATION_CHATBOT: 'false'
     DISABLE_SYSLUMENN_PAGE: 'false'
@@ -4775,6 +4816,7 @@ xroad-collector:
     - 'node'
   enabled: true
   env:
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'

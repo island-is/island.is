@@ -21,6 +21,7 @@ import {
   AppealCaseNotificationType,
   AppealCaseState,
   AppealCaseTransition,
+  appealCorrectionLock,
   AppealDecisionPartyRole,
   AppealEventType,
   CaseAppealDecision,
@@ -243,10 +244,10 @@ export class CourtSessionService {
     // separately from the new ruling's (see reconcileRulingLinkChange after the
     // write); both link changes need an up-front guard. A swap must target a
     // clean ruling file (re-keying onto one that already carries appeal data
-    // would collide or merge two appeals); a removal must not orphan a progressed
-    // appeal. Gated on the link change rather than on confirmation, because the
-    // file can be swapped in a non-confirming correction save before the session
-    // is re-confirmed.
+    // would collide or merge two appeals); a removal must not orphan or discard
+    // an appeal the court record no longer governs. Gated on the link change
+    // rather than on confirmation, because the file can be swapped in a
+    // non-confirming correction save before the session is re-confirmed.
     const previousRulingFileId = existingCourtSession.rulingFileId
     const rulingLinkChanged =
       !!previousRulingFileId && previousRulingFileId !== effectiveRulingFileId
@@ -259,7 +260,11 @@ export class CourtSessionService {
           transaction,
         )
       } else {
-        this.validateRulingRemovalAllowed(theCase, previousRulingFileId)
+        await this.validateRulingRemovalAllowed(
+          theCase,
+          previousRulingFileId,
+          transaction,
+        )
       }
     }
 
@@ -422,14 +427,27 @@ export class CourtSessionService {
   }
 
   // The session's ruling is being removed (the ruling type moved away from
-  // ORDER), so its in-court appeal cannot be carried onto a new file. An appeal
-  // that has progressed past the district court must not be silently discarded,
-  // so reject the change. A still-APPEALED appeal is cleaned up afterwards by
-  // reconcileRulingLinkChange.
-  private validateRulingRemovalAllowed(
+  // ORDER), so its appeal cannot be carried onto a new file the way a swap
+  // carries it. Reject the change whenever the court record no longer governs
+  // that appeal: one that has left the district court must not be silently
+  // discarded, and one a party filed itself was never the court record's to take
+  // away - reconciliation keeps it, but it would be left pointing at a ruling
+  // the record no longer says was pronounced, with its decisions deleted.
+  //
+  // A still-APPEALED in-court appeal is cleaned up afterwards by
+  // reconcileRulingLinkChange - it exists only because of the decisions recorded
+  // here, so removing the ruling legitimately removes it.
+  //
+  // Note this does NOT apply to a swap. Re-pointing the ruling onto another file
+  // means the same ruling is now represented by a new document (a re-upload, a
+  // corrected PDF): the appeal case, its decisions and the party filings all move
+  // with it and nothing is lost, so it stays allowed at every appeal state. The
+  // target file must still be clean - see validateRulingSwapAllowed.
+  private async validateRulingRemovalAllowed(
     theCase: Case,
     rulingFileId: string | null,
-  ): void {
+    transaction: Transaction,
+  ): Promise<void> {
     if (!rulingFileId) {
       return
     }
@@ -438,10 +456,30 @@ export class CourtSessionService {
       (appealCase) => appealCase.rulingFileId === rulingFileId,
     )
 
-    if (
-      existingAppealCase &&
-      existingAppealCase.appealState !== AppealCaseState.APPEALED
-    ) {
+    if (!existingAppealCase) {
+      return
+    }
+
+    const appealedEvents = await this.appealEventLogRepositoryService.findAll({
+      where: {
+        appealCaseId: existingAppealCase.id,
+        eventType: AppealEventType.APPEALED,
+      },
+      transaction,
+    })
+
+    const lock = appealCorrectionLock({
+      appealState: existingAppealCase.appealState,
+      appealedOutOfCourt: hasOutOfCourtAppeal(appealedEvents),
+    })
+
+    if (lock === 'OUT_OF_COURT') {
+      throw new BadRequestException(
+        'This ruling has been appealed out of court, so the ruling cannot be removed by correcting the court record',
+      )
+    }
+
+    if (lock === 'PROGRESSED') {
       throw new BadRequestException(
         'The appeal of this ruling has progressed past the district court, so the ruling cannot be removed by correcting the court record',
       )
@@ -700,7 +738,7 @@ export class CourtSessionService {
   //    uninterrupted and nothing is lost.
   //  - Removal (the ruling type moved away from ORDER, no new file): there is
   //    nothing to re-point onto, so a still-APPEALED appeal case is deleted (a
-  //    progressed one was rejected up front by validateRulingRemovalAllowed).
+  //    locked one was rejected up front by validateRulingRemovalAllowed).
   //    The decisions are left dormant rather than deleted.
   private async reconcileRulingLinkChange(
     theCase: Case,
@@ -928,6 +966,12 @@ export class CourtSessionService {
 
     this.validateAppealDecisionParty(theCase, update)
 
+    await this.validateAppealDecisionEditable(
+      theCase,
+      courtSession.rulingFileId,
+      transaction,
+    )
+
     const data: {
       decision?: CaseAppealDecision | null
       announcement?: string | null
@@ -970,6 +1014,55 @@ export class CourtSessionService {
       data,
       { transaction },
     )
+  }
+
+  // The decisions describe what happened when the ruling was pronounced, so they
+  // may only be edited while the court record still governs the appeal they
+  // produced. Correcting the record ("Leiðrétta þingbók") re-opens the whole
+  // session, and each decision persists on the click rather than at confirmation
+  // - so without this the record could be edited to contradict an appeal
+  // Landsréttur already has, leaving the session unconfirmable afterwards
+  // (validateAppealCorrectionAllowed rejects it) with the row already written.
+  // Locks the whole ruling, not just the appellant's own row: the appeal is one
+  // proceeding, and the parties' decisions are read together as the record of it.
+  // Mirrors the web, which disables the section on the same conditions.
+  private async validateAppealDecisionEditable(
+    theCase: Case,
+    rulingFileId: string,
+    transaction: Transaction,
+  ): Promise<void> {
+    const existingAppealCase = theCase.rulingOrderAppealCases?.find(
+      (appealCase) => appealCase.rulingFileId === rulingFileId,
+    )
+
+    if (!existingAppealCase) {
+      return
+    }
+
+    const appealedEvents = await this.appealEventLogRepositoryService.findAll({
+      where: {
+        appealCaseId: existingAppealCase.id,
+        eventType: AppealEventType.APPEALED,
+      },
+      transaction,
+    })
+
+    const lock = appealCorrectionLock({
+      appealState: existingAppealCase.appealState,
+      appealedOutOfCourt: hasOutOfCourtAppeal(appealedEvents),
+    })
+
+    if (lock === 'OUT_OF_COURT') {
+      throw new BadRequestException(
+        'This ruling has been appealed out of court, so the appeal decisions can no longer be changed',
+      )
+    }
+
+    if (lock === 'PROGRESSED') {
+      throw new BadRequestException(
+        'The appeal of this ruling has progressed past the district court, so the appeal decisions can no longer be changed',
+      )
+    }
   }
 
   private validateAppealDecisionParty(

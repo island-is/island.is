@@ -1,5 +1,6 @@
 import {
   Gender,
+  PERIOD_ONE_MONTH,
   type ApplicationAnswers as SalaryReportAnswers,
 } from '@island.is/application/templates/directorate-of-equality/salary-report'
 import type {
@@ -32,10 +33,15 @@ export const mapAnswersToSalaryReportSubmission = ({
   const subsidiaryList = answers.subsidiaries?.list ?? []
   const outliersPostponed =
     answers.salaryAnalysis?.postponed?.includes('yes') ?? false
+  const salaryDataBasis =
+    answers.period?.period === PERIOD_ONE_MONTH ? 'MONTH' : 'AVERAGE'
+  const salaryDataPeriod =
+    salaryDataBasis === 'MONTH' && answers.period?.year && answers.period.month
+      ? `${answers.period.year}-${answers.period.month.padStart(2, '0')}-01`
+      : null
 
   return {
     equalityReportId,
-    identifier,
     importedFromExcel,
     providerId: identifier,
     companyAdminName: answers.chiefExecutive?.name ?? '',
@@ -47,6 +53,8 @@ export const mapAnswersToSalaryReportSubmission = ({
     averageEmployeeMaleCount: Number(answers.employeeCount?.men) || 0,
     averageEmployeeFemaleCount: Number(answers.employeeCount?.women) || 0,
     averageEmployeeNeutralCount: Number(answers.employeeCount?.nonBinary) || 0,
+    salaryDataBasis,
+    salaryDataPeriod,
     parsed,
     company: {
       name: answers.generalInformation?.companyName ?? '',
@@ -69,7 +77,6 @@ export const mapAnswersToSalaryReportSubmission = ({
       : (answers.salaryAnalysis?.outlierGroups ?? [])
           .filter((g) => g.employeeOrdinals.length > 0)
           .map((g) => ({
-            name: g.name,
             reason: g.reason ?? '',
             action: g.action ?? '',
             signatureName: g.signatureName ?? '',

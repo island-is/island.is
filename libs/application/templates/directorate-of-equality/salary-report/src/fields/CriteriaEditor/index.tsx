@@ -122,7 +122,7 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         ))}
       </Box>
 
-      <PersonalCriteriaList />
+      <PersonalCriteriaList application={application} />
 
       {totalWeight !== 0 && totalWeight !== 100 && (
         <Box marginTop={3}>

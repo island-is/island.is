@@ -10,3 +10,19 @@ export const getPathValue = <T>(
   path: string,
   defaultValue: T,
 ): T => getValueViaPath<T>(source, path, defaultValue) ?? defaultValue
+
+// Reads an answer key that an EARLIER screen owns. The `application` prop can
+// be momentarily stale for those: useCascadeDelete persists corrections via a
+// raw updateApplication mutation that bypasses the form reducer, so a deleted
+// criterion can still be present in `application.answers` while the live form
+// value is already correct. Prefer the form; fall back to answers on first
+// load, before the owning screen has registered the key at all.
+export const getLiveOrSavedArray = <T>(
+  getValues: (name: string) => unknown,
+  answers: RecordObject,
+  path: string,
+): T[] => {
+  const live = getValues(path)
+  if (Array.isArray(live)) return live as T[]
+  return getPathValue<T[]>(answers, path, [])
+}
