@@ -3,9 +3,13 @@
   "info": {
     "title": "Finance Service  v3",
     "description": "Finance Service v3,   get customer records  ....",
-    "version": "3.0"
+    "version": "3.1"
   },
-  "servers": [{ "url": "/rad/TBRIslandis.api.v3:financeServiceApi_v3" }],
+  "servers": [
+    {
+      "url": "https://wmdev05.Dev.local:5000/rad/TBRIslandis.api.v3:financeServiceApi_v3"
+    }
+  ],
   "paths": {
     "/customerRecords/{nationalID}": {
       "get": {
@@ -16,19 +20,25 @@
             "name": "nationalID",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "dayFrom",
             "in": "query",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "dayTo",
             "in": "query",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "chargeTypeID",
@@ -36,13 +46,20 @@
             "required": true,
             "style": "form",
             "explode": true,
-            "schema": { "type": "array", "items": { "type": "string" } }
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           },
           {
             "name": "nextKey",
             "in": "query",
             "description": "next key if more data",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -56,7 +73,50 @@
               }
             }
           },
-          "401": { "description": "Access Denied", "content": {} }
+          "401": {
+            "description": "Access Denied",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/customerDebts/{nationalID}": {
+      "get": {
+        "description": "Returns chargeItemSubjects/periods  for nationalid/ assessment Year/charge type",
+        "operationId": "customerDebtsnationalID_GET_2",
+        "parameters": [
+          {
+            "name": "nationalID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "nextKey",
+            "in": "query",
+            "description": "next key if more data",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/customerDebtsnationalID_GET_response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access Denied",
+            "content": {}
+          }
         }
       }
     }
@@ -67,11 +127,42 @@
         "required": ["detail", "title"],
         "type": "object",
         "properties": {
-          "type": { "type": "string" },
-          "title": { "type": "string" },
-          "detail": { "type": "string" },
-          "param": { "type": "string" },
-          "traceId": { "type": "string" }
+          "type": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "param": {
+            "type": "string"
+          },
+          "traceId": {
+            "type": "string"
+          }
+        }
+      },
+      "customerDebts_output": {
+        "required": ["debts", "message", "nextkey", "timestamp"],
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          },
+          "nextkey": {
+            "type": "string"
+          },
+          "debts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/debts_details_dt"
+            }
+          }
         }
       },
       "ProblemDetails_DT": {
@@ -100,7 +191,9 @@
           },
           "errors": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/errors" }
+            "items": {
+              "$ref": "#/components/schemas/errors"
+            }
           }
         }
       },
@@ -130,8 +223,14 @@
             "type": "string",
             "description": "dagsetning færslu"
           },
-          "createTime": { "type": "string", "description": "tími færslu" },
-          "valueDate": { "type": "string", "description": "Gildisdagur" },
+          "createTime": {
+            "type": "string",
+            "description": "tími færslu"
+          },
+          "valueDate": {
+            "type": "string",
+            "description": "Gildisdagur"
+          },
           "performingOrganization": {
             "type": "string",
             "description": "Framkvæmdaraðili"
@@ -140,26 +239,106 @@
             "type": "string",
             "description": "Umsjónarmaður"
           },
-          "chargeType": { "type": "string", "description": "Gjaldflokkur" },
-          "itemCode": { "type": "string", "description": "Gjaldlidur" },
+          "chargeType": {
+            "type": "string",
+            "description": "Gjaldflokkur"
+          },
+          "itemCode": {
+            "type": "string",
+            "description": "Gjaldlidur"
+          },
           "chargeItemSubject": {
             "type": "string",
             "description": "Gjaldgrunnur"
           },
-          "periodType": { "type": "string", "description": "tegund tímabils" },
-          "period": { "type": "string", "description": "Álagningartímabil" },
-          "amount": { "type": "integer", "format": "int64" },
-          "category": { "type": "string", "description": "hreyfingarflokkur" },
-          "subCategory": { "type": "string", "description": "hreyfingargerð" },
+          "periodType": {
+            "type": "string",
+            "description": "tegund tímabils"
+          },
+          "period": {
+            "type": "string",
+            "description": "Álagningartímabil"
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "category": {
+            "type": "string",
+            "description": "hreyfingarflokkur"
+          },
+          "subCategory": {
+            "type": "string",
+            "description": "hreyfingargerð"
+          },
           "actionCategory": {
             "type": "string",
             "description": "Aðgerðaflokkur"
           },
-          "reference": { "type": "string", "description": "Skýring" },
-          "referenceToLevy": { "type": "string" },
+          "reference": {
+            "type": "string",
+            "description": "Skýring"
+          },
+          "referenceToLevy": {
+            "type": "string"
+          },
           "accountReference": {
             "type": "string",
             "description": "tilvísun í reikning"
+          }
+        }
+      },
+      "debts_details_dt": {
+        "required": [
+          "chargeItemSubject",
+          "chargeTypeId",
+          "chargeTypeName",
+          "debts",
+          "dueDate",
+          "finalDueDate",
+          "payID",
+          "timePeriod"
+        ],
+        "type": "object",
+        "properties": {
+          "chargeTypeId": {
+            "type": "string"
+          },
+          "chargeTypeName": {
+            "type": "string"
+          },
+          "chargeItemSubject": {
+            "type": "string",
+            "description": "gjaldgrunnur"
+          },
+          "timePeriod": {
+            "type": "string",
+            "description": "Álagningartímabil"
+          },
+          "dueDate": {
+            "type": "string"
+          },
+          "finalDueDate": {
+            "type": "string"
+          },
+          "debts": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "payID": {
+            "type": "string"
+          }
+        }
+      },
+      "customerDebtsnationalID_GET_response": {
+        "required": ["customerDebtsResult"],
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ProblemDetails_DT"
+          },
+          "customerDebtsResult": {
+            "$ref": "#/components/schemas/customerDebts_output"
           }
         }
       },
@@ -167,23 +346,38 @@
         "required": ["resultCustomerRecords"],
         "type": "object",
         "properties": {
-          "error": { "$ref": "#/components/schemas/ProblemDetails_DT" },
+          "error": {
+            "$ref": "#/components/schemas/ProblemDetails_DT"
+          },
           "resultCustomerRecords": {
             "$ref": "#/components/schemas/customerRercords_output_dt"
           }
         }
       },
       "customerRercords_output_dt": {
-        "required": ["message", "more", "nextKey", "pagesize", "records"],
+        "required": ["more", "pagesize"],
         "type": "object",
         "properties": {
-          "more": { "type": "boolean", "description": "true more data" },
-          "nextKey": { "type": "string", "description": "nextKey - next data" },
-          "message": { "type": "string" },
-          "pagesize": { "type": "integer", "format": "int64" },
+          "more": {
+            "type": "boolean",
+            "description": "true more data"
+          },
+          "nextKey": {
+            "type": "string",
+            "description": "nextKey - next data"
+          },
+          "message": {
+            "type": "string"
+          },
+          "pagesize": {
+            "type": "integer",
+            "format": "int64"
+          },
           "records": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/record" }
+            "items": {
+              "$ref": "#/components/schemas/record"
+            }
           }
         }
       }
