@@ -39,7 +39,12 @@ const MovementPrescriptions = () => {
         display="flex"
         alignItems="center"
         justifyContent="center"
-        flexDirection={['columnReverse', 'columnReverse', 'columnReverse', 'row']}
+        flexDirection={[
+          'columnReverse',
+          'columnReverse',
+          'columnReverse',
+          'row',
+        ]}
         columnGap={[2, 4, 8, 8, 12]}
         rowGap={[7, 7, 7, 0]}
         paddingY={[5, 8]}
