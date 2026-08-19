@@ -1,5 +1,12 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, LoadingDots, Stack, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  LoadingDots,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useEffect, useMemo, useRef } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -29,7 +36,7 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   setBeforeSubmitCallback,
 }) => {
   const { formatMessage } = useLocale()
-  const { content, loading, refetch } = useDraftQuery<{
+  const { content, loading, hasError, refetch } = useDraftQuery<{
     criteria: DraftCriterionWithSubCriteriaDto[]
   }>(
     application,
@@ -82,7 +89,7 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           stepCount: String(steps.length || 2),
           steps:
             steps.length > 0
-              ? steps
+              ? [...steps]
                   .sort((a, b) => a.order - b.order)
                   .map((s) => ({ id: s.id, description: s.description }))
               : [
@@ -164,10 +171,31 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     })
   }, [setBeforeSubmitCallback, methods, sync, refetch, formatMessage])
 
-  if (loading || !content) {
+  if (loading) {
     return (
       <Box display="flex" justifyContent="center" paddingY={5}>
         <LoadingDots />
+      </Box>
+    )
+  }
+
+  if (hasError || !content) {
+    return (
+      <Box>
+        <AlertMessage
+          type="error"
+          message={formatMessage(messages.errors.draftLoadFailed)}
+        />
+        <Box marginTop={2}>
+          <Button
+            variant="ghost"
+            size="small"
+            icon="reload"
+            onClick={() => refetch()}
+          >
+            {formatMessage(messages.errors.retryButton)}
+          </Button>
+        </Box>
       </Box>
     )
   }

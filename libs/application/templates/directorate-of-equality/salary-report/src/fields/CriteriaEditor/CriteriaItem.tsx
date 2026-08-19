@@ -3,6 +3,7 @@ import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
 
 type Props = {
+  id: string
   title: string
   description: string
   weight: string
@@ -11,6 +12,7 @@ type Props = {
 }
 
 export const CriteriaItem = ({
+  id,
   title,
   description,
   weight,
@@ -34,7 +36,7 @@ export const CriteriaItem = ({
         <Box style={{ width: 120, flexShrink: 0 }} marginLeft={3}>
           <Input
             size="sm"
-            name="weight"
+            name={`criterion-${id}-weight`}
             label={`${formatMessage(messages.report.criteria.weightLabel)} (%)`}
             type="number"
             backgroundColor="blue"

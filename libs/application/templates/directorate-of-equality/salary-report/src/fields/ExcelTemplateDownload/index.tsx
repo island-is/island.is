@@ -39,7 +39,7 @@ export const ExcelTemplateDownload: FC<
   // screen of the part of the form the draft now owns. Shares the
   // `draftCriteria` externalData key with CriteriaEditor, so that screen
   // gets this read for free on first visit without its own refetch.
-  const { content, loading, refetch } = useDraftQuery<{
+  const { content, loading, hasError, refetch } = useDraftQuery<{
     criteria: ReportCriterionDto[]
   }>(application, 'DirectorateOfEquality.listDraftCriteria', 'draftCriteria', {
     ensureDraft: true,
@@ -192,33 +192,16 @@ export const ExcelTemplateDownload: FC<
   // on. Existing draft content (from a prior import or manual entry) is left
   // untouched.
   const handleManualEntry = async () => {
+    // A failed read is indistinguishable from "no criteria yet" by content
+    // alone — bail out on hasError rather than risk seeding a duplicate set
+    // of job factors on top of criteria that already exist server-side.
+    if (hasError) {
+      setImportStatus('error')
+      return
+    }
     if (!content || content.criteria.length === 0) {
       const jobFactors = createDefaultJobFactors()
-      await sync({
-        criteria: jobFactors.map((factor) => ({
-          method: SyncMethodEnum.CREATE,
-          id: factor.id,
-          data: {
-            title: factor.title,
-            description: factor.description,
-            weight: Number(factor.weight) || 0,
-            type: factor.type,
-          },
-        })),
-      })
-      await refetch({ silent: true })
-    }
-    goToScreen?.(NEXT_SCREEN_ID)
-  }
-
-  // Pressing the footer "Halda áfram" behaves the same as manual entry: if
-  // the draft has no criteria yet, seed the defaults before advancing;
-  // existing content (imported or manually entered) is preserved.
-  useEffect(() => {
-    if (!setBeforeSubmitCallback) return
-    setBeforeSubmitCallback(async () => {
-      if (!content || content.criteria.length === 0) {
-        const jobFactors = createDefaultJobFactors()
+      try {
         await sync({
           criteria: jobFactors.map((factor) => ({
             method: SyncMethodEnum.CREATE,
@@ -232,11 +215,47 @@ export const ExcelTemplateDownload: FC<
           })),
         })
         await refetch({ silent: true })
+      } catch {
+        setImportStatus('error')
+        return
+      }
+    }
+    goToScreen?.(NEXT_SCREEN_ID)
+  }
+
+  // Pressing the footer "Halda áfram" behaves the same as manual entry: if
+  // the draft has no criteria yet, seed the defaults before advancing;
+  // existing content (imported or manually entered) is preserved.
+  useEffect(() => {
+    if (!setBeforeSubmitCallback) return
+    setBeforeSubmitCallback(async () => {
+      if (hasError) {
+        return [false, formatMessage(messages.errors.draftLoadFailed)]
+      }
+      if (!content || content.criteria.length === 0) {
+        const jobFactors = createDefaultJobFactors()
+        try {
+          await sync({
+            criteria: jobFactors.map((factor) => ({
+              method: SyncMethodEnum.CREATE,
+              id: factor.id,
+              data: {
+                title: factor.title,
+                description: factor.description,
+                weight: Number(factor.weight) || 0,
+                type: factor.type,
+              },
+            })),
+          })
+          await refetch({ silent: true })
+        } catch {
+          return [false, formatMessage(messages.errors.draftSyncFailed)]
+        }
       }
       return [true, null]
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setBeforeSubmitCallback, content])
+  }, [setBeforeSubmitCallback, content, hasError])
 
   const m = messages.report.dataEntry
 

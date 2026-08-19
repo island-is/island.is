@@ -38,6 +38,14 @@ export const messages = {
       defaultMessage:
         'Ekki tókst að vista breytingarnar. Reyndu aftur áður en þú heldur áfram.',
     },
+    draftLoadFailed: {
+      id: 'doe.sr.application:errors.draftLoadFailed',
+      defaultMessage: 'Ekki tókst að sækja gögnin. Reyndu aftur.',
+    },
+    retryButton: {
+      id: 'doe.sr.application:errors.retryButton',
+      defaultMessage: 'Reyna aftur',
+    },
   }),
 
   general: defineMessages({

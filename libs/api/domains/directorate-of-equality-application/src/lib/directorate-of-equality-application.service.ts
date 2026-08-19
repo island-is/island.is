@@ -1,19 +1,23 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import { ApplicationsApi } from '@island.is/api/domains/application'
 import { DirectorateOfEqualityClientService } from '@island.is/clients/directorate-of-equality'
 import type { SyncDraftDto } from '@island.is/clients/directorate-of-equality'
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { Locale } from '@island.is/shared/types'
 
 import { SyncSalaryReportDraftInput } from './dto/syncSalaryReportDraft.input'
+
+const LOGGING_CONTEXT = 'DirectorateOfEqualityApplicationService'
 
 @Injectable()
 export class DirectorateOfEqualityApplicationService {
   constructor(
     private readonly applicationsApi: ApplicationsApi,
     private readonly directorateOfEqualityService: DirectorateOfEqualityClientService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   private applicationApiWithAuth(auth: Auth) {
@@ -31,10 +35,18 @@ export class DirectorateOfEqualityApplicationService {
     user: User,
     locale: Locale,
   ): Promise<void> {
-    await this.applicationApiWithAuth(user).applicationControllerFindOne({
-      id: applicationId,
-      locale,
-    })
+    try {
+      await this.applicationApiWithAuth(user).applicationControllerFindOne({
+        id: applicationId,
+        locale,
+      })
+    } catch (error) {
+      this.logger.warn('Rejected draft sync: caller does not own application', {
+        applicationId,
+        context: LOGGING_CONTEXT,
+      })
+      throw error
+    }
   }
 
   // The island.is application UUID doubles as the DMR draft's `providerId` —

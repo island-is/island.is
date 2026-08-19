@@ -657,10 +657,13 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
         contactName: answers.contactPerson?.name ?? '',
         contactEmail: answers.contactPerson?.email ?? '',
         contactPhone: answers.contactPerson?.phone ?? '',
-        averageEmployeeMaleCount: Number(answers.employeeCount?.men) || 0,
-        averageEmployeeFemaleCount: Number(answers.employeeCount?.women) || 0,
-        averageEmployeeNeutralCount:
-          Number(answers.employeeCount?.nonBinary) || 0,
+        averageEmployeeMaleCount: toNumberOrZero(answers.employeeCount?.men),
+        averageEmployeeFemaleCount: toNumberOrZero(
+          answers.employeeCount?.women,
+        ),
+        averageEmployeeNeutralCount: toNumberOrZero(
+          answers.employeeCount?.nonBinary,
+        ),
         salaryDataBasis,
         salaryDataPeriod,
       })

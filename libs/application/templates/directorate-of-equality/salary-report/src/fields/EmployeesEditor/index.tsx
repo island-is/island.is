@@ -1,5 +1,6 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import {
+  AlertMessage,
   Box,
   Button,
   LoadingDots,
@@ -43,6 +44,7 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const {
     content: employeesContent,
     loading: employeesLoading,
+    hasError: employeesHasError,
     refetch: refetchEmployees,
   } = useDraftQuery<{ employees: ReportEmployeeDto[] }>(
     application,
@@ -52,6 +54,7 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const {
     content: rolesContent,
     loading: rolesLoading,
+    hasError: rolesHasError,
     refetch: refetchRoles,
   } = useDraftQuery<{ roles: ReportEmployeeRoleDto[] }>(
     application,
@@ -59,6 +62,7 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     'draftRoles',
   )
   const loading = employeesLoading || rolesLoading
+  const hasError = employeesHasError || rolesHasError
   const content = useMemo(
     () =>
       employeesContent && rolesContent
@@ -269,6 +273,27 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     return (
       <Box display="flex" justifyContent="center" paddingY={5}>
         <LoadingDots />
+      </Box>
+    )
+  }
+
+  if (hasError || !content) {
+    return (
+      <Box>
+        <AlertMessage
+          type="error"
+          message={formatMessage(messages.errors.draftLoadFailed)}
+        />
+        <Box marginTop={2}>
+          <Button
+            variant="ghost"
+            size="small"
+            icon="reload"
+            onClick={() => refetch()}
+          >
+            {formatMessage(messages.errors.retryButton)}
+          </Button>
+        </Box>
       </Box>
     )
   }

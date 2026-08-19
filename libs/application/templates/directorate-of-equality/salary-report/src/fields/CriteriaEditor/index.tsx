@@ -1,5 +1,11 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, LoadingDots, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  LoadingDots,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useEffect, useRef, useState } from 'react'
 import { messages } from '../../lib/messages'
@@ -20,7 +26,7 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   answerQuestions,
 }) => {
   const { formatMessage } = useLocale()
-  const { content, loading, refetch } = useDraftQuery<{
+  const { content, loading, hasError, refetch } = useDraftQuery<{
     criteria: ReportCriterionDto[]
   }>(application, 'DirectorateOfEquality.listDraftCriteria', 'draftCriteria')
   const { sync } = useDraftSync(application)
@@ -144,6 +150,27 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     )
   }
 
+  if (hasError || !content) {
+    return (
+      <Box>
+        <AlertMessage
+          type="error"
+          message={formatMessage(messages.errors.draftLoadFailed)}
+        />
+        <Box marginTop={2}>
+          <Button
+            variant="ghost"
+            size="small"
+            icon="reload"
+            onClick={() => refetch()}
+          >
+            {formatMessage(messages.errors.retryButton)}
+          </Button>
+        </Box>
+      </Box>
+    )
+  }
+
   return (
     <Box>
       <Text variant="h4" marginBottom={2}>
@@ -157,6 +184,7 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         {jobFactors.map((factor, i) => (
           <CriteriaItem
             key={factor.id}
+            id={factor.id}
             title={factor.title}
             description={factor.description}
             weight={factor.weight}

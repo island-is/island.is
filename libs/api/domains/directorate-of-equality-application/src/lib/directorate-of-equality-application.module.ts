@@ -6,6 +6,7 @@ import {
   Configuration,
 } from '@island.is/api/domains/application'
 import { DirectorateOfEqualityClientModule } from '@island.is/clients/directorate-of-equality'
+import { LoggingModule } from '@island.is/logging'
 
 import { DirectorateOfEqualityApplicationResolver } from './directorate-of-equality-application.resolver'
 import { DirectorateOfEqualityApplicationService } from './directorate-of-equality-application.service'
@@ -24,7 +25,7 @@ export class DirectorateOfEqualityApplicationModule {
   static register(config: Config): DynamicModule {
     return {
       module: DirectorateOfEqualityApplicationModule,
-      imports: [DirectorateOfEqualityClientModule],
+      imports: [DirectorateOfEqualityClientModule, LoggingModule],
       providers: [
         DirectorateOfEqualityApplicationResolver,
         DirectorateOfEqualityApplicationService,
