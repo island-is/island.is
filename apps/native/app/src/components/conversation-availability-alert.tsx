@@ -26,37 +26,17 @@ export const ConversationAvailabilityAlert = ({
     windowClose: recipient.messagingWindowClose,
   })
 
-  if (
-    blockedReason ===
-    HealthDirectorateHealthConversationRecipientBlockedReason.OutsideMessagingWindow
-  ) {
-    return (
-      <Alert
-        type="info"
-        hasBorder
-        title={intl.formatMessage({
-          id: 'health.messages.compose.closedTitle',
-        })}
-        message={
-          windowInfo.windowOpenLabel && windowInfo.windowCloseLabel
-            ? intl.formatMessage(
-                { id: 'health.messages.compose.closedText' },
-                {
-                  currentTime: windowInfo.currentTimeLabel,
-                  openTime: windowInfo.windowOpenLabel,
-                  closeTime: windowInfo.windowCloseLabel,
-                },
-              )
-            : undefined
-        }
-      />
-    )
-  }
+  // Messaging-not-allowed keeps its own dedicated message (no window text).
+  const isNotAllowed =
+    !!blockedReason &&
+    blockedReason !==
+      HealthDirectorateHealthConversationRecipientBlockedReason.OutsideMessagingWindow
 
-  if (blockedReason) {
+  if (isNotAllowed) {
     return (
       <Alert
         type="info"
+        size="small"
         hasBorder
         title={intl.formatMessage({
           id: 'health.messages.compose.notAllowedTitle',
@@ -68,25 +48,48 @@ export const ConversationAvailabilityAlert = ({
     )
   }
 
-  if (windowInfo.isClosingSoon) {
+  // The same availability text is always shown; only the title/colour change to
+  // reflect closed / closing-soon / open.
+  const availabilityText = intl.formatMessage(
+    { id: 'health.messages.compose.availabilityText' },
+    {
+      name: recipient.name,
+      openTime: windowInfo.windowOpenLabel ?? '',
+      closeTime: windowInfo.windowCloseLabel ?? '',
+    },
+  )
+
+  const isClosed =
+    blockedReason ===
+    HealthDirectorateHealthConversationRecipientBlockedReason.OutsideMessagingWindow
+
+  if (isClosed) {
     return (
       <Alert
-        type="warning"
+        type="info"
+        size="small"
         hasBorder
         title={intl.formatMessage({
-          id: 'health.messages.compose.closingSoonTitle',
+          id: 'health.messages.compose.closedTitle',
         })}
-        message={intl.formatMessage(
-          { id: 'health.messages.compose.closingSoonText' },
-          {
-            hasOpenTime: windowInfo.windowOpenLabel ? 'true' : 'false',
-            openTime: windowInfo.windowOpenLabel ?? '',
-            closeTime: windowInfo.windowCloseLabel ?? '',
-          },
-        )}
+        message={availabilityText}
       />
     )
   }
 
-  return null
+  if (windowInfo.isClosingSoon) {
+    return (
+      <Alert
+        type="warning"
+        size="small"
+        hasBorder
+        title={intl.formatMessage({
+          id: 'health.messages.compose.closingSoonTitle',
+        })}
+        message={availabilityText}
+      />
+    )
+  }
+
+  return <Alert type="info" size="small" hasBorder message={availabilityText} />
 }

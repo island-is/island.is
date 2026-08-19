@@ -886,16 +886,18 @@ export const is = {
   'health.messages.compose.termsTitle': 'Skilmálar vegna skilaboða',
   'health.messages.compose.termsBody':
     '- Skilaboðum er svarað á opnunartíma, oftast innan þriggja virkra daga\n- Skilaboð og svör vistast sjálfkrafa í sjúkraskrá\n- Tegund skilaboða ræður hver svarar erindinu\n- Heilbrigðisstarfsmaður mun hafa aðgang að sjúkraskrá til að svara fyrirspurn',
+  'health.messages.compose.availabilityText':
+    '{name} tekur við skilaboðum alla daga frá kl. {openTime} til {closeTime}. Venjulega er svarað innan 3 virkra daga. Ef erindið er brýnt og þú þarft svar sama dag skaltu hringja í 1700. Ef um neyðartilvik er að ræða skaltu hringja strax í 112.',
   'health.messages.compose.closedTitle': 'Lokað fyrir ný skilaboð núna',
-  'health.messages.compose.closedText':
-    'Klukkan er {currentTime}. Þjónustan tekur við skilaboðum frá kl. {openTime} til kl. {closeTime}. Þú getur sent skilaboð aftur kl. {openTime} í fyrramálið.',
   'health.messages.compose.notAllowedTitle': 'Ekki hægt að senda skilaboð',
   'health.messages.compose.notAllowedText':
     'Þessi þjónustuaðili býður ekki upp á skilaboð á Ísland.is.',
+  'health.messages.compose.soleBlockedTitle':
+    'Heilsugæslan þín er ekki með opið fyrir skilaboð',
+  'health.messages.compose.soleBlockedText':
+    '{name} býður ekki upp á skilaboðaþjónustu í gegnum Ísland.is',
   'health.messages.compose.closingSoonTitle':
     'Athugið: það lokar bráðlega fyrir skilaboð',
-  'health.messages.compose.closingSoonText':
-    'Sendu skilaboðin þín áður en lokað er kl. {closeTime}. Eftir það er ekki hægt að senda skilaboð fyrr en {hasOpenTime, select, false {á morgun} other {kl. {openTime} á morgun}}.',
   'health.messages.compose.send': 'Senda skilaboð',
   'health.messages.compose.sendError':
     'Ekki tókst að senda skilaboð. Vinsamlegast reyndu aftur síðar.',

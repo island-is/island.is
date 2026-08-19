@@ -8,12 +8,14 @@ import { ConversationAvailabilityAlert } from '@/components/conversation-availab
 import { StackScreen } from '@/components/stack-screen'
 import { toast, ToastHost } from '@/components/toast'
 import {
+  HealthDirectorateHealthConversationRecipientBlockedReason,
   LocaleEnum,
   useCreateHealthConversationMutation,
   useGetHealthConversationRecipientsQuery,
   useReplyToHealthConversationMutation,
 } from '@/graphql/types/schema'
 import { useKeyboardHeight } from '@/hooks/use-keyboard-height'
+import { getMessagingWindowInfo } from '@/utils/messaging-window'
 import { useLocale } from '@/hooks/use-locale'
 import {
   Button,
@@ -45,16 +47,37 @@ export default function HealthMessageComposeScreen() {
     variables: { locale: locale === 'is' ? LocaleEnum.Is : LocaleEnum.En },
     skip: isReply,
   })
+  const allRecipients = useMemo(
+    () =>
+      recipientsRes.data?.healthDirectorateHealthConversationRecipients ?? [],
+    [recipientsRes.data],
+  )
   // Only recipients that currently accept patient-initiated messages, and
   // only non-certificate message types, can start a new conversation
   const recipients = useMemo(
-    () =>
-      (
-        recipientsRes.data?.healthDirectorateHealthConversationRecipients ?? []
-      ).filter((r) => r.allowsMessaging),
-    [recipientsRes.data],
+    () => allRecipients.filter((r) => r.allowsMessaging),
+    [allRecipients],
   )
   const selectedRecipient = recipients.find((r) => r.nodeId === recipientNodeId)
+
+  // When the user has a single recipient that can't take messages (its window
+  // is closed, or it doesn't offer messaging at all), we replace the whole form
+  // with a full-screen explanation instead of a disabled form.
+  const soleRecipient =
+    !isReply && allRecipients.length === 1 ? allRecipients[0] : undefined
+  const soleWindowClosed =
+    soleRecipient?.conversationBlockedReason ===
+    HealthDirectorateHealthConversationRecipientBlockedReason.OutsideMessagingWindow
+  const soleNotAllowed =
+    !!soleRecipient &&
+    !soleWindowClosed &&
+    (!soleRecipient.allowsMessaging ||
+      !!soleRecipient.conversationBlockedReason)
+  const isSoleBlocked = soleWindowClosed || soleNotAllowed
+  const soleWindowInfo = getMessagingWindowInfo({
+    windowOpen: soleRecipient?.messagingWindowOpen,
+    windowClose: soleRecipient?.messagingWindowClose,
+  })
   const serviceOptions = (selectedRecipient?.allowedMessageTypes ?? []).filter(
     (s) => !s.isCertificate,
   )
@@ -196,13 +219,17 @@ export default function HealthMessageComposeScreen() {
           padding: theme.spacing[2],
           paddingBottom: theme.spacing[4],
           rowGap: theme.spacing[2],
+          // Let the full-screen "blocked" message fill the sheet.
+          ...(isSoleBlocked && { flexGrow: 1 }),
         }}
         keyboardShouldPersistTaps="handled"
         // iOS: inset for the keyboard so the Send button clears it (Android
         // uses adjustResize).
         automaticallyAdjustKeyboardInsets={Platform.OS === 'ios'}
       >
-        <Typography variant="heading3">{headerTitle}</Typography>
+        {!isSoleBlocked && (
+          <Typography variant="heading3">{headerTitle}</Typography>
+        )}
 
         {recipientsLoading ? (
           <View>
@@ -216,6 +243,32 @@ export default function HealthMessageComposeScreen() {
             message={intl.formatMessage({
               id: 'health.messages.errorMessage',
             })}
+          />
+        ) : soleWindowClosed ? (
+          <Problem
+            type="no_data"
+            title={intl.formatMessage({
+              id: 'health.messages.compose.closedTitle',
+            })}
+            message={intl.formatMessage(
+              { id: 'health.messages.compose.availabilityText' },
+              {
+                name: soleRecipient?.name,
+                openTime: soleWindowInfo.windowOpenLabel ?? '',
+                closeTime: soleWindowInfo.windowCloseLabel ?? '',
+              },
+            )}
+          />
+        ) : soleNotAllowed ? (
+          <Problem
+            type="no_data"
+            title={intl.formatMessage({
+              id: 'health.messages.compose.soleBlockedTitle',
+            })}
+            message={intl.formatMessage(
+              { id: 'health.messages.compose.soleBlockedText' },
+              { name: soleRecipient?.name },
+            )}
           />
         ) : noRecipients ? (
           <Problem
@@ -256,6 +309,9 @@ export default function HealthMessageComposeScreen() {
                 }))}
                 onSelect={setRecipientNodeId}
               />
+            )}
+            {selectedRecipient && (
+              <ConversationAvailabilityAlert recipient={selectedRecipient} />
             )}
             <View
               pointerEvents={isFormLocked ? 'none' : 'auto'}
@@ -321,9 +377,6 @@ export default function HealthMessageComposeScreen() {
                 />
               )}
             </View>
-            {selectedRecipient && (
-              <ConversationAvailabilityAlert recipient={selectedRecipient} />
-            )}
             {!hideSendButton && (
               <View
                 onLayout={(e) =>
