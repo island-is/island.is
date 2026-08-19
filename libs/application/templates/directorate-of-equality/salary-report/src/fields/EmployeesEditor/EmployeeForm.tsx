@@ -75,9 +75,7 @@ export const EmployeeForm: FC<Props> = ({
       methods.setError('startDate', { type: 'required', message: requiredMsg })
       return
     }
-    // The caller resolves roleTitle → roleId, mints an id/ordinal for new
-    // employees, and preserves step assignments for existing ones — this
-    // form only collects the editable fields.
+    // Caller resolves roleTitle/id/ordinal and preserves step assignments.
     onSubmit(data)
   }
 

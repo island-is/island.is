@@ -15,11 +15,7 @@ export interface Config {
   baseApiUrl: string
 }
 
-// `ApplicationModule` (`@island.is/api/domains/application`) doesn't export
-// its `ApplicationService`/`ApplicationsApi` providers (`exports: []`), so
-// the ownership check this module needs can't be borrowed via DI — it
-// configures its own `ApplicationsApi` instance the same way, pointed at the
-// same application-system base URL.
+// ApplicationModule doesn't export ApplicationsApi, so DI can't provide it here — we configure our own instance instead.
 @Module({})
 export class DirectorateOfEqualityApplicationModule {
   static register(config: Config): DynamicModule {

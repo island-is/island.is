@@ -34,9 +34,7 @@ type Props = {
   outliers: SalaryAnalysisOutlierDto[]
   scoreBuckets: ScoreBucketDto[]
   errors?: RecordObject
-  // 'draft': pre-submit — persisted to the DMR draft via sync, keyed by
-  // employee id. 'postponed': post-submit improvement-plan explanation —
-  // unchanged, answers-backed, keyed by employee ordinal.
+  // draft: pre-submit, DMR-synced, keyed by employee id. postponed: answers-backed, keyed by ordinal.
   mode: 'draft' | 'postponed'
   identifierForOrdinal: (ordinal: number) => string
 }
@@ -54,10 +52,7 @@ export const OutlierEditor: FC<Props> = ({
   const { control } = useFormContext()
   const m = messages.salaryAnalysis.outlierGroup
 
-  // Both modes store the same on-screen shape (`employeeOrdinals` +
-  // explanation fields) under the same field name — the draft mode just
-  // never persists it to applicationAnswers, and resolves ordinals to
-  // employee ids only at sync time (see OutlierGroupPanel).
+  // Same field name in both modes; draft mode just never persists it to applicationAnswers.
   const fieldName = 'salaryAnalysis.outlierGroups'
 
   const scoreRangeLabel = (outlier: SalaryAnalysisOutlierDto) =>
@@ -117,9 +112,7 @@ export const OutlierEditor: FC<Props> = ({
 
   const handleCreateGroup = () => {
     append({
-      // Draft mode needs a stable id from creation so later renames/removes
-      // track this group by id, not array position; harmless/unused in
-      // postponed mode.
+      // Draft mode needs a stable id from creation to track by id, not array position.
       id: mode === 'draft' ? crypto.randomUUID() : undefined,
       employeeOrdinals: [...selected],
     } as OutlierGroupAnswer)

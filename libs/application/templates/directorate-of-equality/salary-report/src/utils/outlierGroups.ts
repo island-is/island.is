@@ -8,10 +8,8 @@
 // groups are only ever created with their members, so a group without the key
 // is not a state the form can produce.
 export type OutlierGroupAnswer = {
-  // Draft-phase only: the group's client-minted DMR id, carried through
-  // useFieldArray so append/remove track identity by id rather than by
-  // array position — removing group #1 of 3 must not misattribute group
-  // #2's sync commands to group #1's id. Absent/unused in POSTPONED mode.
+  // Draft-phase id, tracked through useFieldArray so remove/append don't
+  // misattribute sync commands by array position. Unused in POSTPONED mode.
   id?: string
   reason?: string
   action?: string

@@ -14,13 +14,7 @@ import { Audit } from '@island.is/nest/audit'
 import { SyncSalaryReportDraftInput } from './dto/syncSalaryReportDraft.input'
 import { DirectorateOfEqualityApplicationService } from './directorate-of-equality-application.service'
 
-// Only the batched `sync` call needs a resolver: create/import/submit/reads
-// on the draft derive entirely from `application.answers`/`externalData`
-// already, so they stay ordinary `defineTemplateApi` providers. `sync` is the
-// one call that must carry an arbitrary, per-screen frontend-computed
-// payload — the provider mechanism (`updateApplicationExternalData`) has no
-// channel for that beyond `application.answers`, which is exactly what this
-// migration exists to stop writing to.
+// Only sync needs a resolver: it carries an arbitrary per-screen payload that defineTemplateApi providers have no channel for besides application.answers, which this migration is moving away from.
 @Scopes(ApiScope.directorateOfEquality)
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()

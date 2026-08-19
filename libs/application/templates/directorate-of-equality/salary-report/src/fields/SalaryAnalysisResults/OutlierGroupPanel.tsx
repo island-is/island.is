@@ -26,18 +26,12 @@ type Props = {
   // to postpone earlier and can't un-postpone here, so the checkbox is
   // pointless — the form is dedicated to filling in the plan, and the
   // "postponed" answer is force-cleared so it stops being reported to the
-  // backend as still postponed once this plan is submitted. Also the signal
-  // for which persistence mode OutlierEditor uses (see its `mode` prop).
+  // backend as still postponed once this plan is submitted. Also doubles as
+  // the persistence-mode signal for OutlierEditor's `mode` prop.
   hidePostponeCheckbox?: boolean
   errors?: RecordObject
   identifierForOrdinal: (ordinal: number) => string
-  // Draft phase only: a local form scope for `OutlierEditor`'s
-  // `salaryAnalysis.outlierGroups` field, which isn't answers-backed
-  // pre-submit. Deliberately NOT used for the postponed checkbox below —
-  // that always binds to whatever ambient form context this component
-  // itself renders under (the real application-answers form), so it must
-  // stay outside any FormProvider this component introduces. Undefined in
-  // postponed-review mode, where OutlierEditor also uses the ambient form.
+  // Draft phase only: local form scope for outlierGroups (not answers-backed pre-submit); the postponed checkbox stays on the ambient form regardless.
   outlierGroupsFormMethods?: UseFormReturn<{
     salaryAnalysis: { outlierGroups: OutlierGroupAnswer[] }
   }>

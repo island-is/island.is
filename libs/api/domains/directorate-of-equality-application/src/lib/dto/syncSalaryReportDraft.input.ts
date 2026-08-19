@@ -2,11 +2,7 @@ import { Field, InputType } from '@nestjs/graphql'
 
 import { SyncCommandInput } from './syncCommand.input'
 
-// Bulk-sync body for one screen's changes on a SALARY draft, forwarded to
-// `POST .../reports/:providerId/draft/sync`. `applicationId` is the island.is
-// application UUID — also the draft's `providerId` — used both to identify
-// the DMR draft and to verify the caller owns this application before
-// forwarding anything to DMR.
+// `applicationId` is both the island.is application UUID and the DMR draft's providerId, used to identify the draft and to verify ownership before forwarding to DMR.
 @InputType('DirectorateOfEqualitySyncSalaryReportDraftInput')
 export class SyncSalaryReportDraftInput {
   @Field(() => String)

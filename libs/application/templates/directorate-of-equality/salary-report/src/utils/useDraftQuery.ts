@@ -10,20 +10,10 @@ type QueryExternalData<T> = {
   data?: T
 }
 
-// Generic replacement for the deleted aggregated `useDraftContent` hook. Each
-// screen now reads its own narrower, screen-specific externalData key
-// (`externalDataId`) via its own `actionId`, rather than every screen sharing
-// one big `salaryDraftContent` key. Because each screen owns its own key,
-// its own `refetch` writing into that key already lands in
-// `application.externalData` via the mutation response — a plain
-// externalData-read-on-mount is sufficient, so (unlike the deleted hook)
-// no module-level cross-screen cache is needed here.
-//
-// DMR calls only happen when a screen actually needs fresh content: on
-// mount, if `application.externalData[externalDataId]` isn't already
-// present (or `ensureDraft` is set — used only by the one screen that also
-// needs to create the draft first), and again whenever the screen calls
-// `refetch` after its own sync, to pre-warm the next screen's externalData.
+// Each screen owns its own externalData key/actionId (no shared cross-screen
+// cache needed, since refetch's mutation response writes straight into
+// application.externalData). DMR is called only on mount when that key is
+// missing (or ensureDraft), and after a sync to pre-warm the next screen.
 export const useDraftQuery = <T>(
   application: Application,
   actionId: string,
@@ -94,10 +84,7 @@ export const useDraftQuery = <T>(
     ],
   )
 
-  // Public refetch — used by screens after their sync to pre-warm the
-  // externalData for the next screen. Pass silent=true from
-  // beforeSubmitCallback so the current screen doesn't flash a loading
-  // state while navigating away.
+  // silent=true (e.g. from beforeSubmitCallback) avoids a loading flash while navigating away.
   const refetch = useCallback(
     (options?: { silent?: boolean }) => fetchContent(options),
     [fetchContent],

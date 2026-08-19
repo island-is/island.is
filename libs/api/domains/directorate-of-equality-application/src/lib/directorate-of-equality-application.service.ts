@@ -24,12 +24,7 @@ export class DirectorateOfEqualityApplicationService {
     return this.applicationsApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  // Reuses the exact ownership check apps/application-system/api's
-  // ApplicationAccessService performs on its own REST endpoints (a 404/403
-  // from the generated client propagates the same way here) — this resolver
-  // sits outside that REST layer entirely, so nothing else establishes that
-  // the caller actually owns `applicationId` before we forward a batch to
-  // DMR on their behalf.
+  // Duplicates apps/application-system's ownership check since this resolver sits outside that REST layer and nothing else verifies the caller owns applicationId.
   private async assertOwnsApplication(
     applicationId: string,
     user: User,
@@ -49,9 +44,7 @@ export class DirectorateOfEqualityApplicationService {
     }
   }
 
-  // The island.is application UUID doubles as the DMR draft's `providerId` —
-  // the draft is created with `providerId: application.id`, so no separate
-  // lookup is needed here.
+  // The application UUID doubles as the DMR draft's providerId, so no separate lookup is needed.
   async syncSalaryReportDraft(
     input: SyncSalaryReportDraftInput,
     user: User,

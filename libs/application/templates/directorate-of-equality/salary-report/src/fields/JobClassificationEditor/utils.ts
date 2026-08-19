@@ -5,12 +5,8 @@ import type {
   StepMeta,
 } from '../../utils/types'
 
-// Builds the { subCriterionId: StepMeta } lookup driving every dropdown's
-// options + score display, straight from the criteria tree — no more
-// "parsed Excel vs. answers vs. defaults" precedence chain, since the draft
-// is the only copy of this data now. Callers pass the already-filtered set
-// of criteria they care about (job factors for JobClassificationEditor,
-// personal factors for EmployeeClassificationEditor).
+// { subCriterionId: StepMeta } lookup for dropdown options + score display;
+// callers must pre-filter to the criteria group they care about (job vs. personal).
 export const buildStepMetaBySubCriterionId = (
   criteria: DraftCriterionWithSubCriteriaDto[],
 ): Record<string, StepMeta> => {
@@ -31,8 +27,7 @@ export const buildStepMetaBySubCriterionId = (
   return map
 }
 
-// Every (role|employee, sub-criterion) pair needs a row, defaulted to step 1
-// unless a real assignment for that step already exists in `assignedStepIds`.
+// Every (role|employee, sub-criterion) pair gets a row, defaulted to step 1 unless already in `assignedStepIds`.
 export const buildDisplayAssignments = (
   criteria: DraftCriterionWithSubCriteriaDto[],
   assignedStepIds: string[],
@@ -55,8 +50,7 @@ export const buildDisplayAssignments = (
   return assignments
 }
 
-// Resolves each display assignment's chosen stepOrder back to the step's
-// real id — the shape the draft's `stepIds` (replace-all) actually wants.
+// Resolves each assignment's stepOrder back to the step's real id — the shape the draft's `stepIds` (replace-all) wants.
 export const resolveStepIds = (
   criteria: DraftCriterionWithSubCriteriaDto[],
   assignments: DisplayAssignment[],

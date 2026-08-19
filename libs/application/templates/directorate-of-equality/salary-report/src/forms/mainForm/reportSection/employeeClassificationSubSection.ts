@@ -9,9 +9,7 @@ export const employeeClassificationSubSection = buildSubSection({
   id: 'employeeClassification',
   title: messages.report.employeeClassification.sectionTitle,
   // Nothing to classify without personal criteria — skip the screen entirely.
-  // `hasPersonalCriteria` is a navigation-only answer, kept in sync by
-  // CriteriaEditor/ExcelTemplateDownload — see dataSchema.ts for why this
-  // can't be read directly off the DMR-backed externalData instead.
+  // `hasPersonalCriteria` is kept in sync by CriteriaEditor/ExcelTemplateDownload (see dataSchema.ts).
   condition: (answers) => answers.hasPersonalCriteria === true,
   children: [
     buildMultiField({

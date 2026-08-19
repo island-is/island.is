@@ -52,11 +52,8 @@ export enum ApiActions {
 export const PERIOD_ONE_MONTH = 'oneMonth'
 export const PERIOD_TWELVE_MONTHS = 'twelveMonths'
 
-// Mirrors the generated `SyncMethodEnum` from @island.is/clients/directorate-of-equality.
-// Duplicated locally rather than imported: that package's barrel also re-exports its
-// NestJS client module, which pulls in backend-only deps (auth, X-Road config, node
-// built-ins) that break the frontend bundle when this enum's runtime value is imported
-// as a value (its DTO types are import-type-only and erase fine, but this doesn't).
+// Duplicated from the client lib rather than imported — importing it as a value
+// pulls in that package's NestJS module (backend-only deps), breaking the frontend bundle.
 export const SyncMethodEnum = {
   CREATE: 'CREATE',
   UPDATE: 'UPDATE',
@@ -64,10 +61,7 @@ export const SyncMethodEnum = {
 } as const
 export type SyncMethodEnum = typeof SyncMethodEnum[keyof typeof SyncMethodEnum]
 
-// Builder functions, not fixed objects — every job/sub-criterion/step needs
-// its own client-minted UUID (the draft sync API's join key), so a shared
-// module-level constant would hand every application the same id. Called
-// fresh each time the defaults are seeded.
+// Builder function, not a constant — each application needs its own fresh client-minted UUIDs.
 export const createDefaultJobFactors = (): JobFactor[] => [
   {
     id: crypto.randomUUID(),

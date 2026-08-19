@@ -24,8 +24,7 @@ import { FetchError } from '@island.is/clients/middlewares'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { ZodTypeAny, z } from 'zod'
 
-// Employee reads are paginated (a report can carry thousands) — fetched this
-// many at a time while paging through the full set.
+// Page size for walking paginated employee reads to completion.
 const DRAFT_EMPLOYEE_PAGE_SIZE = 200
 
 const companyAdminGenderMap: Record<Gender, 'MALE' | 'FEMALE' | 'NEUTRAL'> = {
@@ -276,9 +275,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     }
   }
 
-  // Opens the DRAFT report at "initial contact" — idempotent on providerId
-  // (application.id), so re-entering this part of the form (including on
-  // reopen) safely returns the same draft rather than creating a duplicate.
+  // Idempotent on providerId — reopening this step returns the same draft.
   async createSalaryDraft({ auth, application }: TemplateApiModuleActionProps) {
     try {
       return await this.directorateOfEqualityService.createDraft(auth, {
@@ -302,11 +299,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     }
   }
 
-  // Bulk-seeds the draft's scoring content from the uploaded workbook
-  // (REPLACE semantics on DMR's side). The response is only an ack — the UI
-  // re-reads the relevant screen-shaped draft actions afterwards rather than
-  // using this response to populate anything, so the parsed data is never
-  // written into applicationAnswers.
+  // REPLACE semantics on DMR's side; response is just an ack, never stored in applicationAnswers.
   async importSalaryDraftWorkbook({
     auth,
     application,
@@ -347,12 +340,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     }
   }
 
-  // Screen-shaped draft reads — each one just calls the matching client
-  // method for the DMR draft (keyed by application.id as providerId).
-  // Replaces the old aggregated `getSalaryDraftContent`, which fanned out
-  // across DMR's per-collection paginated reads to assemble one big object;
-  // DMR has since added endpoints shaped for exactly what each screen needs.
-
+  // Screen-shaped draft reads, replacing the old aggregated getSalaryDraftContent.
   async getDraftHeader({ auth, application }: TemplateApiModuleActionProps) {
     try {
       return await this.directorateOfEqualityService.getDraft(
@@ -579,10 +567,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     }
   }
 
-  // Live outlier/gender-score preview computed from the draft's current
-  // scoring graph — no answers to map, DMR derives this from what's already
-  // on the draft (criteria/sub-criteria/steps/roles/employees, all synced
-  // there already).
+  // Live preview computed by DMR from the draft's current scoring graph — no answers to map.
   async analyzeSalaryReport({
     auth,
     application,
@@ -609,10 +594,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     }
   }
 
-  // Finalises the draft (DRAFT → SUBMITTED/POSTPONED). Everything past
-  // `dataEntry` already lives on the draft via `syncSalaryDraft`; only the
-  // pre-dataEntry answers (company/contact/headcount/period, still answers-
-  // backed) need patching onto the draft header before submit.
+  // Finalises the draft; only the pre-dataEntry answers need patching onto it first.
   async submitSalaryReport({
     auth,
     application,

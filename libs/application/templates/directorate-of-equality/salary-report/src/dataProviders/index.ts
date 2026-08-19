@@ -41,9 +41,7 @@ export const ImportPresignApi = defineTemplateApi({
   throwOnError: false,
 })
 
-// Opens the DRAFT report (idempotent on the application id) — invoked once
-// on first entry to `dataEntry`, before anything else on that screen or
-// later can sync/import into it.
+// Opens the DRAFT report; idempotent, invoked once on first entry to `dataEntry`.
 export const CreateSalaryDraftApi = defineTemplateApi({
   action: ApiActions.createSalaryDraft,
   externalDataId: 'salaryDraft',
@@ -51,9 +49,7 @@ export const CreateSalaryDraftApi = defineTemplateApi({
   throwOnError: true,
 })
 
-// Bulk-seeds the draft from an uploaded workbook. REPLACE semantics — the
-// UI re-fetches the relevant screen-shaped draft reads afterwards rather
-// than using this response to populate the form.
+// Bulk-seeds (REPLACE) the draft; UI re-fetches the draft reads afterward instead of using this response.
 export const ImportSalaryDraftWorkbookApi = defineTemplateApi({
   action: ApiActions.importSalaryDraftWorkbook,
   externalDataId: 'importSalaryDraftWorkbook',
@@ -61,12 +57,8 @@ export const ImportSalaryDraftWorkbookApi = defineTemplateApi({
   throwOnError: false,
 })
 
-// Screen-shaped reads of the draft's content, one per screen from
-// `dataEntry` onward — each populates its own narrower externalData key
-// used to populate the UI after import/manual seed AND to restore an
-// unfinished application on reopen. Re-invoked on mount by their respective
-// screens (see utils/useDraftQuery.ts), never persisted into
-// applicationAnswers.
+// Screen-shaped draft reads, one per screen from `dataEntry` onward — populate
+// the UI and restore an unfinished application on reopen; never persisted to applicationAnswers.
 export const GetDraftHeaderApi = defineTemplateApi({
   action: ApiActions.getDraftHeader,
   externalDataId: 'draftHeader',

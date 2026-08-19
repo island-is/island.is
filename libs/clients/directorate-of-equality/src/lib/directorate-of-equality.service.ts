@@ -253,8 +253,6 @@ export class DirectorateOfEqualityClientService {
     )
   }
 
-  // ── Draft lifecycle ─────────────────────────────────────────────────────
-
   async createDraft(
     user: User,
     body: CreateDraftReportDto,
@@ -319,8 +317,6 @@ export class DirectorateOfEqualityClientService {
     )
   }
 
-  // ── Bulk sync ────────────────────────────────────────────────────────────
-
   async syncDraft(
     user: User,
     providerId: string,
@@ -343,8 +339,6 @@ export class DirectorateOfEqualityClientService {
       'Failed to get draft analysis',
     )
   }
-
-  // ── Draft reads ──────────────────────────────────────────────────────────
 
   async listDraftRoles(
     user: User,

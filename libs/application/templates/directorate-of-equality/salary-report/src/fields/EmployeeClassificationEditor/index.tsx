@@ -69,11 +69,8 @@ export const EmployeeClassificationEditor: FC<
   const hasError = criteriaHasError || employeesHasError
   const employees = employeesContent?.employees ?? []
 
-  // Role titles are display-only here — read passively off externalData
-  // rather than calling listDraftRolesWithSteps again. JobClassificationEditor
-  // (one screen earlier in the flow) already populated `draftRolesWithSteps`
-  // with a live fetch, so it's fresh in application.externalData by the
-  // time this screen mounts.
+  // Read passively off externalData — JobClassificationEditor (the prior
+  // screen) already fetched draftRolesWithSteps, so it's fresh here.
   const roles = useMemo(
     () =>
       getValueViaPath<{ roles: DraftRoleWithStepsDto[] }>(
@@ -122,8 +119,7 @@ export const EmployeeClassificationEditor: FC<
       }))
       try {
         await sync({ employees: employeeCommands })
-        // Silent: we're about to navigate away, so don't flash a loading
-        // state on the current screen.
+        // Silent: about to navigate away, so skip the loading flash.
         await Promise.all([
           refetchCriteria({ silent: true }),
           refetchEmployees({ silent: true }),

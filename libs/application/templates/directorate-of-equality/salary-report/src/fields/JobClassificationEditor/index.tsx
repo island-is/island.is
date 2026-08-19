@@ -88,8 +88,7 @@ export const JobClassificationEditor: FC<
       }))
       try {
         await sync({ roles: roleCommands })
-        // Silent: we're about to navigate away, so don't flash a loading
-        // state on the current screen.
+        // Silent: about to navigate away, so don't flash a loading state.
         await Promise.all([
           refetchCriteria({ silent: true }),
           refetchRoles({ silent: true }),

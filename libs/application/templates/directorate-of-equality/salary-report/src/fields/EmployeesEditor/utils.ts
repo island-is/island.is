@@ -4,8 +4,7 @@ import { SALARY_COMPONENT_KEYS } from '../../utils/constants'
 import type { Employee, SalaryComponentKey } from '../../utils/types'
 import { TABLE_PAGE_SIZE } from '../TablePagination'
 
-// Roles are their own id-keyed collection now, so sorting by role title
-// needs the lookup rather than a literal field on Employee.
+// Roles are id-keyed now, so sorting by title needs this lookup.
 export const byRoleTitle =
   (roleTitleById: Record<string, string>) => (a: Employee, b: Employee) =>
     (roleTitleById[a.roleId] ?? '').localeCompare(
@@ -31,10 +30,7 @@ export const pageOfEmployee = (
   return Math.floor(position / TABLE_PAGE_SIZE) + 1
 }
 
-// Finds an existing role by case-insensitive title, or mints a new
-// client-side role id for it. Employees reference roles by id
-// (`reportEmployeeRoleId` on the draft), but the form still collects a
-// free-text title — this is the seam between the two.
+// Resolves a free-text role title to an existing role id, or mints a new one.
 export const findOrCreateRoleId = (
   title: string,
   roles: { id: string; title: string }[],
@@ -47,8 +43,7 @@ export const findOrCreateRoleId = (
 }
 
 export type EmployeeFormValues = {
-  // Free-text role title — resolved to a role id (existing or newly minted)
-  // by the caller before the employee is stored. See findOrCreateRoleId.
+  // Free text; resolved to a role id by the caller (see findOrCreateRoleId).
   roleTitle: string
   gender: string
   field: string
@@ -74,8 +69,7 @@ export const EMPTY_EMPLOYEE_FORM_VALUES: EmployeeFormValues = {
 // The single place that maps between the salary-component keys and their
 // form/DTO representations — used both to populate the form from an existing
 // employee and to build the components back up on submit. `roleTitle` is
-// resolved from the employee's roleId via the local roles list — roles are
-// their own id-keyed collection on the draft, not a free-text field.
+// resolved from roleId via the roles lookup.
 export const toFormValues = (
   employee: Employee,
   roleTitleById: Record<string, string>,

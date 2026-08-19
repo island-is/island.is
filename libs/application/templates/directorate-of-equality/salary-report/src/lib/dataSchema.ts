@@ -130,12 +130,8 @@ const subsidiaries = z
     }
   })
 
-// Only the POSTPONED-state improvement-plan explanation (reason/action/
-// signature) is answers-backed — the outlier GROUPING itself (which
-// employees belong to which group) is decided pre-submit, on the DMR draft,
-// via the per-screen draft reads/`syncSalaryDraft`. By the time POSTPONED is
-// reached the draft has already been submitted, so this key holds a fresh
-// explanation-only shape at that point (see OutlierGroupPanel/OutlierEditor).
+// Only the POSTPONED-state explanation is answers-backed; outlier grouping
+// itself is decided pre-submit on the DMR draft.
 const outlierGroup = z.object({
   reason: z.string().optional(),
   action: z.string().optional(),
@@ -189,12 +185,8 @@ const salaryAnalysis = z
   })
   .optional()
 
-// `criteria`, `subCriteria`, `employees`, and `roles` — everything from the
-// `dataEntry` (Excel upload) screen onward — are deliberately absent here.
-// That data lives exclusively on the DMR draft report (see the per-screen
-// utils/useDraftQuery.ts reads and utils/useDraftSync.ts writes, the latter
-// calling the custom directorateOfEqualitySyncSalaryReportDraft GraphQL
-// mutation); it is never written to or read from applicationAnswers.
+// criteria, subCriteria, employees, and roles live on the DMR draft report
+// (see utils/useDraftQuery.ts / useDraftSync.ts), never in applicationAnswers.
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((value) => value === true, {
     params: messages.prerequisites.errors.approveExternalData,
@@ -206,17 +198,9 @@ export const dataSchema = z.object({
   period: period.optional(),
   subsidiaries: subsidiaries.optional(),
   salaryAnalysis: salaryAnalysis,
-  // Navigation signal ONLY — not real form data, and deliberately not a
-  // mirror of any DMR content. `employeeClassificationSubSection`'s
-  // visibility needs to know "does a PERSONAL criterion exist" the instant
-  // CriteriaEditor/ExcelTemplateDownload create one, but that data lives on
-  // the DMR draft, and the reducer that computes section visibility holds
-  // its own stale copy of `externalData` that a plain
-  // `updateApplicationExternalData` call never reaches (only a full
-  // application refetch does, which resets in-flight navigation — see the
-  // `answerQuestions` calls in those two screens). Answers-backed state,
-  // by contrast, updates the reducer synchronously and safely via the same
-  // `ANSWER` action every other field already uses.
+  // Navigation-only signal (not mirrored DMR data): section visibility needs
+  // a synchronous update, but externalData writes don't reach the visibility
+  // reducer without a full refetch that would reset in-flight navigation.
   hasPersonalCriteria: z.boolean().optional(),
 })
 

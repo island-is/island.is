@@ -34,11 +34,8 @@ export const ExcelTemplateDownload: FC<
   const [updateApplicationExternalData] = useMutation(
     UPDATE_APPLICATION_EXTERNAL_DATA,
   )
-  // Ensures the DMR draft exists (idempotent) and fetches its criteria —
-  // this is the sole entry point that opens the draft, since it's the first
-  // screen of the part of the form the draft now owns. Shares the
-  // `draftCriteria` externalData key with CriteriaEditor, so that screen
-  // gets this read for free on first visit without its own refetch.
+  // Ensures the draft exists (idempotent); shares the 'draftCriteria' key
+  // with CriteriaEditor so that screen reuses this fetch.
   const { content, loading, hasError, refetch } = useDraftQuery<{
     criteria: ReportCriterionDto[]
   }>(application, 'DirectorateOfEquality.listDraftCriteria', 'draftCriteria', {
@@ -133,9 +130,8 @@ export const ExcelTemplateDownload: FC<
         return
       }
 
-      // 3. Trigger the import — the server reads the key from externalData and
-      //    calls DMR's `draft/import` with { key }. REPLACE semantics: the
-      //    draft's scoring content is bulk-seeded from the workbook there.
+      // 3. Trigger the import — REPLACE semantics: DMR bulk-seeds the draft's
+      //    scoring content from the workbook.
       const result = await updateApplicationExternalData({
         variables: {
           input: {
@@ -164,14 +160,9 @@ export const ExcelTemplateDownload: FC<
         return
       }
 
-      // 4. The import response is only an ack for the DRAFT content — the UI
-      //    still re-fetches the draft's criteria so downstream screens
-      //    populate from DMR, never from this response, and never into
-      //    applicationAnswers. The one exception is the "does a PERSONAL
-      //    criterion exist" navigation signal below: that's read straight
-      //    off this response since it's already right here, and it must be
-      //    answers-backed regardless (see `hasPersonalCriteria` in
-      //    dataSchema.ts for why).
+      // 4. Re-fetch so downstream screens read from DMR, not this response —
+      //    except the PERSONAL-criteria signal below, which must stay
+      //    answers-backed (see `hasPersonalCriteria` in dataSchema.ts).
       await refetch({ silent: true })
       answerQuestions?.({
         hasPersonalCriteria:
@@ -187,14 +178,11 @@ export const ExcelTemplateDownload: FC<
     }
   }
 
-  // Manual entry mirrors "continue without a workbook": seed the four fixed
-  // job factors onto the draft (via sync) if nothing is there yet, then move
-  // on. Existing draft content (from a prior import or manual entry) is left
-  // untouched.
+  // Manual entry mirrors "continue without a workbook": seed default job
+  // factors onto the draft if it's empty, then advance.
   const handleManualEntry = async () => {
-    // A failed read is indistinguishable from "no criteria yet" by content
-    // alone — bail out on hasError rather than risk seeding a duplicate set
-    // of job factors on top of criteria that already exist server-side.
+    // Bail on hasError rather than risk seeding duplicate job factors on top
+    // of criteria that may already exist server-side.
     if (hasError) {
       setImportStatus('error')
       return
@@ -223,9 +211,8 @@ export const ExcelTemplateDownload: FC<
     goToScreen?.(NEXT_SCREEN_ID)
   }
 
-  // Pressing the footer "Halda áfram" behaves the same as manual entry: if
-  // the draft has no criteria yet, seed the defaults before advancing;
-  // existing content (imported or manually entered) is preserved.
+  // Footer "Halda áfram" mirrors manual entry: seed defaults if the draft is
+  // empty, otherwise leave existing content alone.
   useEffect(() => {
     if (!setBeforeSubmitCallback) return
     setBeforeSubmitCallback(async () => {

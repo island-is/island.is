@@ -32,9 +32,7 @@ export type SubCriterionStep = {
 
 export type SubCriterion = {
   id: string
-  // Client-minted UUID of the parent criterion (job or personal factor) this
-  // sub-criterion belongs to — the join key the draft's sync API expects
-  // instead of a criterion title.
+  // Parent criterion's client-minted UUID — the sync API's join key, not a title.
   criterionId: string
   title: string
   description?: string
@@ -43,17 +41,12 @@ export type SubCriterion = {
   steps: SubCriterionStep[]
 }
 
-// Was `{criterionTitle, subTitle, stepOrder}` — the draft's sync API keys
-// role/employee step assignments by the step's own client-minted UUID
-// instead, so a flat id is all that's needed. Criterion/sub-criterion context
-// for display is looked up from the criteria/subCriteria collections by this
-// id, not carried alongside it.
+// Sync API keys step assignments by the step's own UUID; criterion/sub-criterion
+// context for display is looked up elsewhere, not carried here.
 export type StepAssignment = { stepId: string }
 
-// The API's per-key salary breakdown (see salary-report README): summing the
-// two `additionalFixed*` values reproduces the old flat `additionalSalary`;
-// summing the four bonus/occasional values reproduces the old `bonusSalary`.
-// We keep the breakdown in the UI and answers.
+// Per-key breakdown (see README): the two additionalFixed* values sum to the
+// old flat additionalSalary; the four bonus/occasional values sum to bonusSalary.
 export type SalaryComponentKey =
   | 'additionalFixedOvertime'
   | 'additionalFixedCarAllowance'
@@ -62,15 +55,13 @@ export type SalaryComponentKey =
   | 'bonusPayments'
   | 'bonusOther'
 
-// Employees are keyed by client-minted UUID (`id`) — `identifier` is a
-// separate, human-facing pseudonym field the DMR API also returns (distinct
-// from the draft's own `id`), not a join key.
+// id is the client-minted UUID key; identifier is a separate, human-facing
+// pseudonym field from the DMR API, not a join key.
 export type Employee = {
   id: string
   ordinal: number
   identifier: string
-  // Client-minted UUID of the role this employee is classified under
-  // (`reportEmployeeRoleId` on the draft). Was `roleTitle`.
+  // Role's client-minted UUID (was roleTitle).
   roleId: string
   gender: string
   field?: string | null
@@ -84,21 +75,18 @@ export type Employee = {
   bonusOccasionalOvertime?: number | null
   bonusPayments?: number | null
   bonusOther?: number | null
-  // Outlier-group membership (client-minted UUID of the group, or null).
   outlierGroupId?: string | null
 }
 
-// Roles are keyed by client-minted UUID; only `stepIds` (job-factor step
-// assignments) is editable on the "Flokkun starfa" screen, the rest is
-// read-only context.
+// Roles are keyed by client-minted UUID; only stepIds is editable on the
+// "Flokkun starfa" screen, the rest is read-only context.
 export type Role = {
   id: string
   title: string
   stepIds: string[]
 }
 
-// No `name` input in the UI yet (see salary-report README) — the API assigns
-// a default server-side when it's omitted.
+// No name input yet (see README) — API assigns a default server-side when omitted.
 export type OutlierGroup = {
   id: string
   name?: string
@@ -106,7 +94,7 @@ export type OutlierGroup = {
   action?: string
   signatureName?: string
   signatureRole?: string
-  // Client-minted UUIDs of member employees, replacing the old ordinal list.
+  // Member employee ids (replaces the old ordinal list).
   employeeIds: string[]
 }
 
@@ -116,8 +104,7 @@ export enum Gender {
   NON_BINARY = 'NON_BINARY',
 }
 
-// Moved from fields/JobClassificationEditor/utils.ts — shared by
-// JobClassificationEditor and EmployeeClassificationEditor.
+// Moved from fields/JobClassificationEditor/utils.ts — shared by both classification editors.
 
 export type StepMeta = {
   steps: { order: number; score: number }[]
@@ -127,11 +114,8 @@ export type StepMeta = {
   description: string
 }
 
-// A step assignment as displayed/edited on screen: grouped by criterion for
-// the UI, but keyed by the sub-criterion's real id so the chosen stepOrder
-// can be resolved back to a real step id at sync time (steps are their own
-// id-keyed collection on the draft — the UI still lets the applicant pick
-// "step 2 of 4" rather than a raw id).
+// UI-facing shape: keeps stepOrder (e.g. "step 2 of 4") instead of a raw step
+// id; resolved back to a real step id at sync time.
 export type DisplayAssignment = {
   criterionId: string
   criterionTitle: string

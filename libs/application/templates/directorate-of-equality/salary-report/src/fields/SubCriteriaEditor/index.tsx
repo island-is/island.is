@@ -23,10 +23,7 @@ import { useDraftQuery } from '../../utils/useDraftQuery'
 import { useDraftSync, type SyncCommand } from '../../utils/useDraftSync'
 import { CriterionPanel } from './CriterionPanel'
 
-// Fixed 1000-point scale (sub-criterion weights sum to 100): each step is an
-// equal fraction of `weight × 10`. Mirrors JobClassificationEditor/utils.ts
-// and the score DMR itself computes, so submitted scores match what the
-// applicant saw on screen.
+// Fixed 1000-point scale (weights sum to 100); mirrors JobClassificationEditor/utils.ts and DMR's own scoring.
 const POINTS_PER_WEIGHT_PERCENT = 10
 
 export type SubCriteriaFormValues = Record<string, SubCriterion[]>
@@ -46,9 +43,7 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const { sync } = useDraftSync(application)
   const methods = useForm<SubCriteriaFormValues>({ defaultValues: {} })
 
-  // Original sub-criterion / step ids present when the draft was loaded —
-  // anything no longer in the final form value at Continue time is a REMOVE;
-  // anything present but not in these sets is a CREATE.
+  // Diffed against the final form value at Continue time: missing => REMOVE, unseen => CREATE.
   const originalSubCriterionIds = useRef<Set<string>>(new Set())
   const originalStepIds = useRef<Set<string>>(new Set())
   const seeded = useRef(false)
@@ -161,8 +156,7 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           subCriteria: [...subCriteriaCommands, ...removedSubCriteriaCommands],
           steps: [...stepCommands, ...removedStepCommands],
         })
-        // Silent: we're about to navigate away, so don't flash a loading state
-        // on the current screen.
+        // Silent: about to navigate away, so don't flash a loading state.
         await refetch({ silent: true })
       } catch {
         return [false, formatMessage(messages.errors.draftSyncFailed)]

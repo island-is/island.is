@@ -37,9 +37,7 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const originalPersonalIds = useRef<Set<string>>(new Set())
   const seeded = useRef(false)
 
-  // Seed once, when the draft content first arrives — criteria are always
-  // present by the time this screen is reachable (ExcelTemplateDownload
-  // seeds the four job factors before advancing here).
+  // Seed once, when the draft content first arrives.
   useEffect(() => {
     if (!content || seeded.current) return
     seeded.current = true
@@ -117,16 +115,13 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         await sync({
           criteria: [...jobCommands, ...personalCommands, ...removeCommands],
         })
-        // Silent: we're about to navigate away, so don't flash a loading state
-        // on the current screen.
+        // Silent: about to navigate away, so don't flash a loading state.
         await refetch({ silent: true })
       } catch {
         return [false, formatMessage(messages.errors.draftSyncFailed)]
       }
-      // Answers-backed navigation signal for
-      // `employeeClassificationSubSection`'s visibility condition — see the
-      // comment on `hasPersonalCriteria` in dataSchema.ts for why this can't
-      // just be read off externalData directly.
+      // Answers-backed navigation signal (see `hasPersonalCriteria` in
+      // dataSchema.ts for why this can't be read off externalData directly).
       answerQuestions?.({ hasPersonalCriteria: personalFactors.length > 0 })
       return [true, null]
     })

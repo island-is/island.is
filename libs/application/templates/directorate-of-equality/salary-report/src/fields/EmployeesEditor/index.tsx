@@ -101,10 +101,8 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     const employees: Employee[] = content.employees.map((e) => ({
       id: e.id,
       ordinal: e.ordinal,
-      // The draft's employee model has no pseudonym identifier field — the
-      // client-minted id is used as the stable display handle instead, kept
-      // consistent across every screen/mount/reopen (unlike a locally
-      // recomputed label, which drifted between screens before this).
+      // No pseudonym field on the draft, so the client-minted id doubles as
+      // the stable display handle (a recomputed label would drift instead).
       identifier: e.id,
       roleId: e.reportEmployeeRoleId,
       gender: e.gender,
@@ -182,8 +180,7 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           employees: [...employeeCommands, ...removedEmployeeCommands],
         })
         newRoleIds.current.clear()
-        // Silent: we're about to navigate away, so don't flash a loading state
-        // on the current screen.
+        // Silent: about to navigate away, so skip the loading flash.
         await refetch({ silent: true })
       } catch {
         return [false, formatMessage(messages.errors.draftSyncFailed)]

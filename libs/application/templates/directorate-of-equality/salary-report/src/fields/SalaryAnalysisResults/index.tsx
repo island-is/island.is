@@ -45,9 +45,7 @@ const getErrorMessage = (
   return reason.summary || reason.title
 }
 
-// `postponed` is answers-backed and lives on the ambient global form in
-// both phases — it is NOT part of this local shape. Only `outlierGroups`
-// is local here, since it's DMR-synced rather than answers-backed pre-submit.
+// outlierGroups is DMR-synced pre-submit, unlike answers-backed `postponed`.
 type DraftOutlierFormValues = {
   salaryAnalysis: {
     outlierGroups: OutlierGroupAnswer[]
@@ -64,10 +62,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
     field?.props && typeof field.props['hidePostponeCheckbox'] === 'boolean'
       ? (field.props['hidePostponeCheckbox'] as boolean)
       : false
-  // Pre-submit (still DRAFT): outlier grouping is persisted to the DMR
-  // draft, in a local form scoped to this screen — never applicationAnswers.
-  // Post-submit (POSTPONED review): unchanged, answers-backed behavior via
-  // the ambient global form.
+  // Draft phase: outlierGroups synced to DMR via a local form. Postponed review: answers-backed via the ambient form.
   const isDraftPhase = !hidePostponeCheckbox
 
   const { formatMessage, lang: locale } = useLocale()
@@ -103,9 +98,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
     defaultValues: { salaryAnalysis: { outlierGroups: [] } },
   })
 
-  // `postponed` is answers-backed in both phases — always read/write it
-  // against the true ambient application form, never the local `draftForm`
-  // (which only exists for the not-answers-backed `outlierGroups`).
+  // postponed stays answers-backed in both phases — read from the ambient form, never draftForm.
   const { control: ambientControl } = useFormContext()
   const postponed: string[] =
     useWatch({
@@ -176,10 +169,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Draft-phase only: seed the local outlier-group form from the draft's
-  // current groups, mapping each member's employee id back to the ordinal
-  // the outlier table/UI works in (ordinal is what DMR's analysis response
-  // uses to identify an outlier row).
+  // Draft phase: seed the local outlier-group form, mapping member employee ids back to ordinals.
   useEffect(() => {
     if (!isDraftPhase || !content) return
     const employeeOrdinalById: Record<string, number> = Object.fromEntries(
@@ -203,12 +193,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
   }, [isDraftPhase, content])
 
   const identifierForOrdinal = useMemo(() => {
-    // Draft phase: the employee's own client-minted id is the stable,
-    // consistent-across-screens display handle (see EmployeesEditor).
-    // Postponed phase: the draft is gone (already submitted) — there's no
-    // resolved identifier source for the frozen submitted report yet, so
-    // this falls back to the ordinal. See the POSTPONED-analysis gap noted
-    // separately; whatever resolves that should also resolve this.
+    // Draft phase: use the employee's client-minted id. Postponed phase: no resolved identifier source yet, falls back to ordinal.
     if (isDraftPhase && content) {
       const employeeIdByOrdinal: Record<number, string> = Object.fromEntries(
         content.employees.map((e) => [e.ordinal, e.id]),
@@ -267,20 +252,14 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
         }
       }
 
-      // Draft-phase: persist the outlier grouping to DMR before continuing.
-      // Post-submit (POSTPONED): nothing to sync — the explanation fields
-      // stay answers-backed and are saved the normal way.
+      // Draft phase: persist the outlier grouping to DMR before continuing; postponed has nothing to sync.
       if (isDraftPhase && content) {
         const employeeIdByOrdinal: Record<number, string> = Object.fromEntries(
           content.employees.map((e) => [e.ordinal, e.id]),
         )
         const originalGroupIds = new Set(content.outlierGroups.map((g) => g.id))
         const finalGroups = draftForm.getValues().salaryAnalysis.outlierGroups
-        // Every group carries its own id from creation (see OutlierEditor's
-        // handleCreateGroup) — identity tracks by id, not array position, so
-        // removing an earlier group doesn't misattribute a later one's
-        // commands. Falling back to a fresh id if one is somehow missing is
-        // still safe — it's just treated as a new group (CREATE).
+        // Groups are tracked by id (from OutlierEditor's handleCreateGroup), not array position, so removals don't misattribute commands.
         const groupIds = finalGroups.map((g) => g.id ?? crypto.randomUUID())
 
         const outlierGroupCommands: SyncCommand[] = finalGroups.map((g, i) => ({
@@ -307,8 +286,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
             if (employeeId) memberOfGroup.set(employeeId, groupIds[i])
           })
         })
-        // Every employee that was a member of a removed/changed group and
-        // isn't a member of any surviving one gets cleared.
+        // Members of a removed/changed group with no surviving group get cleared.
         const employeeCommands: SyncCommand[] = content.outlierGroups.flatMap(
           (g) =>
             g.memberEmployeeIds.map((employeeId) => ({
@@ -332,8 +310,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
             outlierGroups: [...outlierGroupCommands, ...removedGroupCommands],
             employees: employeeCommands,
           })
-          // Refresh externalData now in case the applicant navigates back
-          // to an earlier screen later in this session.
+          // Refresh in case the applicant navigates back to an earlier screen this session.
           await refetch()
         } catch {
           return [false, formatMessage(messages.errors.draftSyncFailed)]
@@ -454,10 +431,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
         hidePostponeCheckbox={hidePostponeCheckbox}
         errors={errors}
         identifierForOrdinal={identifierForOrdinal}
-        // Draft phase only: gives OutlierEditor its own form scope for
-        // `outlierGroups` (not answers-backed pre-submit) without pulling
-        // the postponed checkbox in — that stays on the true ambient form,
-        // always (see the `postponed` useWatch above).
+        // Draft phase only: gives OutlierEditor its own form scope for outlierGroups, separate from the ambient postponed checkbox.
         outlierGroupsFormMethods={isDraftPhase ? draftForm : undefined}
       />
     </Box>

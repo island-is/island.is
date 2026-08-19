@@ -18,11 +18,8 @@ export type SyncBatch = {
   outlierGroups?: SyncCommand[]
 }
 
-// Calls the custom resolver added specifically for this migration
-// (libs/api/domains/directorate-of-equality-application) — the standard
-// `updateApplicationExternalData` provider mechanism has no channel for an
-// arbitrary, per-screen frontend-computed payload like a sync batch, only
-// `{actionId, order}`, so this bypasses it entirely.
+// Custom resolver, not the standard updateApplicationExternalData provider mechanism —
+// that only takes {actionId, order}, with no channel for an arbitrary sync-batch payload.
 const SYNC_SALARY_REPORT_DRAFT = gql`
   mutation DirectorateOfEqualitySyncSalaryReportDraft(
     $input: DirectorateOfEqualitySyncSalaryReportDraftInput!
@@ -34,10 +31,9 @@ const SYNC_SALARY_REPORT_DRAFT = gql`
 // DMR hard-caps employee commands at 1000 per call — chunk rather than fail.
 const EMPLOYEE_CHUNK_SIZE = 1000
 
-// Sync is deliberately synchronous-blocking: a screen's "Continue" must
-// await this and refuse to navigate on failure/rejection, per the agreed
-// save model — a failed sync means something is actually wrong with the
-// draft, not something to silently retry in the background.
+// Deliberately synchronous-blocking: "Continue" awaits this and refuses to
+// navigate on failure — a failed sync means something is genuinely wrong,
+// not something to silently retry.
 export const useDraftSync = (application: Application) => {
   const [mutate, { loading }] = useMutation(SYNC_SALARY_REPORT_DRAFT)
 
@@ -51,8 +47,8 @@ export const useDraftSync = (application: Application) => {
         return
       }
 
-      // First call carries every other collection plus the first employee
-      // chunk; subsequent calls carry only the remaining employee chunks.
+      // First call carries all other collections plus the first employee chunk;
+      // later calls carry only employees.
       const { employees: _drop, ...rest } = batch
       for (let i = 0; i < employees.length; i += EMPLOYEE_CHUNK_SIZE) {
         const chunk = employees.slice(i, i + EMPLOYEE_CHUNK_SIZE)
