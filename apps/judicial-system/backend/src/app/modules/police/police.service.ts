@@ -148,6 +148,12 @@ const formatCrimeScenePlace = (
   return address.trim()
 }
 
+const normalizeSubtypeMatchValue = (value?: string | null): string | undefined => {
+  const normalized = value?.trim().toLowerCase()
+
+  return normalized ? normalized : undefined
+}
+
 @Injectable()
 export class PoliceService {
   private xRoadPath: string
@@ -799,7 +805,10 @@ export class PoliceService {
       this.getRVMalseiningarResponseSchema.parse(responseJson)
     const caseUnits = await Promise.all(
       parsedCaseUnits.map(async (unit) => {
-        const subtype = await this.getSubtypeByArticle(unit.artalNrGreinLidur)
+        const subtype = await this.getSubtypeByArticle(
+          unit.artalNrGreinLidur,
+          unit.nanar,
+        )
         const key = Object.keys(IndictmentCaseSubtypes).find(
           (k) =>
             IndictmentCaseSubtypes[k as keyof typeof IndictmentCaseSubtypes] ===
@@ -1530,11 +1539,29 @@ export class PoliceService {
     }
   }
 
-  getSubtypeByArticle(
+  async getSubtypeByArticle(
     article?: string | null,
+    details?: string | null,
   ): Promise<IndictmentSubtype | null> {
-    return this.indictmentSubtypeModel.findOne({
+    const subtypes = await this.indictmentSubtypeModel.findAll({
       where: { article },
     })
+
+    if (subtypes.length <= 1) {
+      return subtypes[0] ?? null
+    }
+
+    const normalizedDetails = normalizeSubtypeMatchValue(details)
+
+    if (!normalizedDetails) {
+      return subtypes[0]
+    }
+
+    return (
+      subtypes.find(
+        (subtype) =>
+          normalizeSubtypeMatchValue(subtype.details) === normalizedDetails,
+      ) ?? subtypes[0]
+    )
   }
 }

@@ -71,6 +71,7 @@ export const createTestingPoliceModule = async () => {
       {
         provide: getModelToken(IndictmentSubtype),
         useValue: {
+          findAll: jest.fn(),
           findOne: jest.fn(),
         },
       },
@@ -118,6 +119,7 @@ export const createTestingPoliceModule = async () => {
   const indictmentCountService = policeModule.get<IndictmentCountService>(
     IndictmentCountService,
   )
+  const indictmentSubtypeModel = policeModule.get(getModelToken(IndictmentSubtype))
   const caseRepositoryService = policeModule.get<CaseRepositoryService>(
     CaseRepositoryService,
   )
@@ -131,6 +133,7 @@ export const createTestingPoliceModule = async () => {
     policeController,
     caseDefendantPoliceCaseNumberRepositoryService,
     indictmentCountService,
+    indictmentSubtypeModel,
     caseRepositoryService,
   }
 }
