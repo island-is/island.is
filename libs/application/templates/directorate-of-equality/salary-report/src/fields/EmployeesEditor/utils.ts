@@ -1,7 +1,9 @@
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
+import type { FormatMessage } from '@island.is/localization'
 import { SALARY_COMPONENT_KEYS } from '../../utils/constants'
 import type { Employee, SalaryComponentKey } from '../../utils/types'
+import { messages } from '../../lib/messages'
 import { TABLE_PAGE_SIZE } from '../TablePagination'
 
 // Roles are id-keyed now, so sorting by title needs this lookup.
@@ -99,6 +101,25 @@ export const componentsFromFormValues = (
       data[key] === '' ? null : Number(data[key]) || 0,
     ]),
   ) as Record<SalaryComponentKey, number | null>
+
+// Shared between EmployeeForm (editing) and EmployeeRow (display).
+export const getSalaryComponentLabels = (
+  formatMessage: FormatMessage,
+): Record<SalaryComponentKey, string> => {
+  const m = messages.report.employees
+  return {
+    additionalFixedOvertime: formatMessage(m.additionalFixedOvertimeLabel),
+    additionalFixedCarAllowance: formatMessage(
+      m.additionalFixedCarAllowanceLabel,
+    ),
+    bonusOccasionalCarAllowance: formatMessage(
+      m.bonusOccasionalCarAllowanceLabel,
+    ),
+    bonusOccasionalOvertime: formatMessage(m.bonusOccasionalOvertimeLabel),
+    bonusPayments: formatMessage(m.bonusPaymentsLabel),
+    bonusOther: formatMessage(m.bonusOtherLabel),
+  }
+}
 
 export const formatCurrency = (value?: number | null): string =>
   `${(value ?? 0).toLocaleString('is-IS')} kr.`

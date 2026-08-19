@@ -23,18 +23,10 @@ import {
 import { FetchError } from '@island.is/clients/middlewares'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { ZodTypeAny, z } from 'zod'
+import { mapGender, toNumberOrZero } from './directorate-of-equality.utils'
 
 // Page size for walking paginated employee reads to completion.
 const DRAFT_EMPLOYEE_PAGE_SIZE = 200
-
-const companyAdminGenderMap: Record<Gender, 'MALE' | 'FEMALE' | 'NEUTRAL'> = {
-  [Gender.MALE]: 'MALE',
-  [Gender.FEMALE]: 'FEMALE',
-  [Gender.NON_BINARY]: 'NEUTRAL',
-}
-
-const mapGender = (gender?: string): 'MALE' | 'FEMALE' | 'NEUTRAL' =>
-  companyAdminGenderMap[gender as Gender] ?? 'NEUTRAL'
 
 const LOGGING_CONTEXT = 'DirectorateOfEqualityService'
 
@@ -86,6 +78,31 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     }
     return {
       message: error instanceof Error ? error.message : String(error),
+    }
+  }
+
+  // Runs `action`, logging and rethrowing as the standard TemplateApiError on failure.
+  private async withTemplateApiError<T>(
+    applicationId: string,
+    errorMessage: string,
+    action: () => Promise<T>,
+  ): Promise<T> {
+    try {
+      return await action()
+    } catch (error) {
+      const errorDetails = this.extractFetchErrorDetails(error)
+      this.logger.error(errorMessage, {
+        applicationId,
+        context: LOGGING_CONTEXT,
+        ...errorDetails,
+      })
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary: coreErrorMessages.defaultTemplateApiError,
+        },
+        errorDetails.status ?? 500,
+      )
     }
   }
 
@@ -227,76 +244,43 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     auth,
     application,
   }: TemplateApiModuleActionProps) {
-    try {
-      const blob =
-        await this.directorateOfEqualityService.getBlankExcelTemplate(auth)
-      const arrayBuffer = await blob.arrayBuffer()
-      return {
-        base64: Buffer.from(arrayBuffer).toString('base64'),
-        filename: 'launagreining-sniðmát.xlsx',
-      }
-    } catch (error) {
-      const errorDetails = this.extractFetchErrorDetails(error)
-      this.logger.error('Failed to get blank Excel template', {
-        applicationId: application.id,
-        context: LOGGING_CONTEXT,
-        ...errorDetails,
-      })
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.defaultTemplateApiError,
-          summary: coreErrorMessages.defaultTemplateApiError,
-        },
-        errorDetails.status ?? 500,
-      )
-    }
+    return this.withTemplateApiError(
+      application.id,
+      'Failed to get blank Excel template',
+      async () => {
+        const blob =
+          await this.directorateOfEqualityService.getBlankExcelTemplate(auth)
+        const arrayBuffer = await blob.arrayBuffer()
+        return {
+          base64: Buffer.from(arrayBuffer).toString('base64'),
+          filename: 'launagreining-sniðmát.xlsx',
+        }
+      },
+    )
   }
 
   async presignImportUpload({
     auth,
     application,
   }: TemplateApiModuleActionProps) {
-    try {
-      return await this.directorateOfEqualityService.presignImportUpload(auth)
-    } catch (error) {
-      const errorDetails = this.extractFetchErrorDetails(error)
-      this.logger.error('Failed to presign import upload', {
-        applicationId: application.id,
-        context: LOGGING_CONTEXT,
-        ...errorDetails,
-      })
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.defaultTemplateApiError,
-          summary: coreErrorMessages.defaultTemplateApiError,
-        },
-        errorDetails.status ?? 500,
-      )
-    }
+    return this.withTemplateApiError(
+      application.id,
+      'Failed to presign import upload',
+      () => this.directorateOfEqualityService.presignImportUpload(auth),
+    )
   }
 
   // Idempotent on providerId — reopening this step returns the same draft.
   async createSalaryDraft({ auth, application }: TemplateApiModuleActionProps) {
-    try {
-      return await this.directorateOfEqualityService.createDraft(auth, {
-        type: ReportTypeEnum.SALARY,
-        providerId: application.id,
-      })
-    } catch (error) {
-      const errorDetails = this.extractFetchErrorDetails(error)
-      this.logger.error('Failed to create salary report draft', {
-        applicationId: application.id,
-        context: LOGGING_CONTEXT,
-        ...errorDetails,
-      })
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.defaultTemplateApiError,
-          summary: coreErrorMessages.defaultTemplateApiError,
-        },
-        errorDetails.status ?? 500,
-      )
-    }
+    return this.withTemplateApiError(
+      application.id,
+      'Failed to create salary report draft',
+      () =>
+        this.directorateOfEqualityService.createDraft(auth, {
+          type: ReportTypeEnum.SALARY,
+          providerId: application.id,
+        }),
+    )
   }
 
   // REPLACE semantics on DMR's side; response is just an ack, never stored in applicationAnswers.
@@ -317,103 +301,55 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
         400,
       )
     }
-    try {
-      return await this.directorateOfEqualityService.importDraftWorkbook(
-        auth,
-        application.id,
-        { key },
-      )
-    } catch (error) {
-      const errorDetails = this.extractFetchErrorDetails(error)
-      this.logger.error('Failed to import salary report draft workbook', {
-        applicationId: application.id,
-        context: LOGGING_CONTEXT,
-        ...errorDetails,
-      })
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.defaultTemplateApiError,
-          summary: coreErrorMessages.defaultTemplateApiError,
-        },
-        errorDetails.status ?? 500,
-      )
-    }
+    return this.withTemplateApiError(
+      application.id,
+      'Failed to import salary report draft workbook',
+      () =>
+        this.directorateOfEqualityService.importDraftWorkbook(
+          auth,
+          application.id,
+          { key },
+        ),
+    )
   }
 
   // Screen-shaped draft reads, replacing the old aggregated getSalaryDraftContent.
   async getDraftHeader({ auth, application }: TemplateApiModuleActionProps) {
-    try {
-      return await this.directorateOfEqualityService.getDraft(
-        auth,
-        application.id,
-      )
-    } catch (error) {
-      const errorDetails = this.extractFetchErrorDetails(error)
-      this.logger.error('Failed to get draft header', {
-        applicationId: application.id,
-        context: LOGGING_CONTEXT,
-        ...errorDetails,
-      })
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.defaultTemplateApiError,
-          summary: coreErrorMessages.defaultTemplateApiError,
-        },
-        errorDetails.status ?? 500,
-      )
-    }
+    return this.withTemplateApiError(
+      application.id,
+      'Failed to get draft header',
+      () => this.directorateOfEqualityService.getDraft(auth, application.id),
+    )
   }
 
   async getDraftCriteriaTree({
     auth,
     application,
   }: TemplateApiModuleActionProps) {
-    try {
-      return await this.directorateOfEqualityService.getDraftCriteriaTree(
-        auth,
-        application.id,
-      )
-    } catch (error) {
-      const errorDetails = this.extractFetchErrorDetails(error)
-      this.logger.error('Failed to get draft criteria tree', {
-        applicationId: application.id,
-        context: LOGGING_CONTEXT,
-        ...errorDetails,
-      })
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.defaultTemplateApiError,
-          summary: coreErrorMessages.defaultTemplateApiError,
-        },
-        errorDetails.status ?? 500,
-      )
-    }
+    return this.withTemplateApiError(
+      application.id,
+      'Failed to get draft criteria tree',
+      () =>
+        this.directorateOfEqualityService.getDraftCriteriaTree(
+          auth,
+          application.id,
+        ),
+    )
   }
 
   async listDraftRolesWithSteps({
     auth,
     application,
   }: TemplateApiModuleActionProps) {
-    try {
-      return await this.directorateOfEqualityService.listDraftRolesWithSteps(
-        auth,
-        application.id,
-      )
-    } catch (error) {
-      const errorDetails = this.extractFetchErrorDetails(error)
-      this.logger.error('Failed to list draft roles with steps', {
-        applicationId: application.id,
-        context: LOGGING_CONTEXT,
-        ...errorDetails,
-      })
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.defaultTemplateApiError,
-          summary: coreErrorMessages.defaultTemplateApiError,
-        },
-        errorDetails.status ?? 500,
-      )
-    }
+    return this.withTemplateApiError(
+      application.id,
+      'Failed to list draft roles with steps',
+      () =>
+        this.directorateOfEqualityService.listDraftRolesWithSteps(
+          auth,
+          application.id,
+        ),
+    )
   }
 
   async listDraftEmployeesWithSteps({
@@ -421,85 +357,53 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     application,
   }: TemplateApiModuleActionProps) {
     const providerId = application.id
-    try {
-      const employees = []
-      let page = 1
-      for (;;) {
-        const res =
-          await this.directorateOfEqualityService.listDraftEmployeesWithSteps(
-            auth,
-            providerId,
-            page,
-            DRAFT_EMPLOYEE_PAGE_SIZE,
-          )
-        employees.push(...res.employees)
-        if (res.employees.length === 0 || !res.paging.hasNextPage) {
-          break
+    return this.withTemplateApiError(
+      application.id,
+      'Failed to list draft employees with steps',
+      async () => {
+        const employees = []
+        let page = 1
+        for (;;) {
+          const res =
+            await this.directorateOfEqualityService.listDraftEmployeesWithSteps(
+              auth,
+              providerId,
+              page,
+              DRAFT_EMPLOYEE_PAGE_SIZE,
+            )
+          employees.push(...res.employees)
+          if (res.employees.length === 0 || !res.paging.hasNextPage) {
+            break
+          }
+          page += 1
         }
-        page += 1
-      }
-      return { employees }
-    } catch (error) {
-      const errorDetails = this.extractFetchErrorDetails(error)
-      this.logger.error('Failed to list draft employees with steps', {
-        applicationId: application.id,
-        context: LOGGING_CONTEXT,
-        ...errorDetails,
-      })
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.defaultTemplateApiError,
-          summary: coreErrorMessages.defaultTemplateApiError,
-        },
-        errorDetails.status ?? 500,
-      )
-    }
+        return { employees }
+      },
+    )
   }
 
   async listDraftCriteria({ auth, application }: TemplateApiModuleActionProps) {
-    try {
-      return await this.directorateOfEqualityService.listDraftCriteria(
-        auth,
-        application.id,
-      )
-    } catch (error) {
-      const errorDetails = this.extractFetchErrorDetails(error)
-      this.logger.error('Failed to list draft criteria', {
-        applicationId: application.id,
-        context: LOGGING_CONTEXT,
-        ...errorDetails,
-      })
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.defaultTemplateApiError,
-          summary: coreErrorMessages.defaultTemplateApiError,
-        },
-        errorDetails.status ?? 500,
-      )
-    }
+    return this.withTemplateApiError(
+      application.id,
+      'Failed to list draft criteria',
+      () =>
+        this.directorateOfEqualityService.listDraftCriteria(
+          auth,
+          application.id,
+        ),
+    )
   }
 
   async listDraftRoles({ auth, application }: TemplateApiModuleActionProps) {
-    try {
-      return await this.directorateOfEqualityService.listDraftRoles(
-        auth,
-        application.id,
-      )
-    } catch (error) {
-      const errorDetails = this.extractFetchErrorDetails(error)
-      this.logger.error('Failed to list draft roles', {
-        applicationId: application.id,
-        context: LOGGING_CONTEXT,
-        ...errorDetails,
-      })
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.defaultTemplateApiError,
-          summary: coreErrorMessages.defaultTemplateApiError,
-        },
-        errorDetails.status ?? 500,
-      )
-    }
+    return this.withTemplateApiError(
+      application.id,
+      'Failed to list draft roles',
+      () =>
+        this.directorateOfEqualityService.listDraftRoles(
+          auth,
+          application.id,
+        ),
+    )
   }
 
   async listDraftEmployees({
@@ -507,64 +411,44 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     application,
   }: TemplateApiModuleActionProps) {
     const providerId = application.id
-    try {
-      const employees = []
-      let page = 1
-      for (;;) {
-        const res = await this.directorateOfEqualityService.listDraftEmployees(
-          auth,
-          providerId,
-          page,
-          DRAFT_EMPLOYEE_PAGE_SIZE,
-        )
-        employees.push(...res.employees)
-        if (res.employees.length === 0 || !res.paging.hasNextPage) {
-          break
+    return this.withTemplateApiError(
+      application.id,
+      'Failed to list draft employees',
+      async () => {
+        const employees = []
+        let page = 1
+        for (;;) {
+          const res =
+            await this.directorateOfEqualityService.listDraftEmployees(
+              auth,
+              providerId,
+              page,
+              DRAFT_EMPLOYEE_PAGE_SIZE,
+            )
+          employees.push(...res.employees)
+          if (res.employees.length === 0 || !res.paging.hasNextPage) {
+            break
+          }
+          page += 1
         }
-        page += 1
-      }
-      return { employees }
-    } catch (error) {
-      const errorDetails = this.extractFetchErrorDetails(error)
-      this.logger.error('Failed to list draft employees', {
-        applicationId: application.id,
-        context: LOGGING_CONTEXT,
-        ...errorDetails,
-      })
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.defaultTemplateApiError,
-          summary: coreErrorMessages.defaultTemplateApiError,
-        },
-        errorDetails.status ?? 500,
-      )
-    }
+        return { employees }
+      },
+    )
   }
 
   async listDraftOutlierGroups({
     auth,
     application,
   }: TemplateApiModuleActionProps) {
-    try {
-      return await this.directorateOfEqualityService.listDraftOutlierGroups(
-        auth,
-        application.id,
-      )
-    } catch (error) {
-      const errorDetails = this.extractFetchErrorDetails(error)
-      this.logger.error('Failed to list draft outlier groups', {
-        applicationId: application.id,
-        context: LOGGING_CONTEXT,
-        ...errorDetails,
-      })
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.defaultTemplateApiError,
-          summary: coreErrorMessages.defaultTemplateApiError,
-        },
-        errorDetails.status ?? 500,
-      )
-    }
+    return this.withTemplateApiError(
+      application.id,
+      'Failed to list draft outlier groups',
+      () =>
+        this.directorateOfEqualityService.listDraftOutlierGroups(
+          auth,
+          application.id,
+        ),
+    )
   }
 
   // Live preview computed by DMR from the draft's current scoring graph — no answers to map.
@@ -572,26 +456,15 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     auth,
     application,
   }: TemplateApiModuleActionProps) {
-    try {
-      return await this.directorateOfEqualityService.getDraftAnalysis(
-        auth,
-        application.id,
-      )
-    } catch (error) {
-      const errorDetails = this.extractFetchErrorDetails(error)
-      this.logger.error('Failed to analyze salary report', {
-        applicationId: application.id,
-        context: LOGGING_CONTEXT,
-        ...errorDetails,
-      })
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.defaultTemplateApiError,
-          summary: coreErrorMessages.defaultTemplateApiError,
-        },
-        errorDetails.status ?? 500,
-      )
-    }
+    return this.withTemplateApiError(
+      application.id,
+      'Failed to analyze salary report',
+      () =>
+        this.directorateOfEqualityService.getDraftAnalysis(
+          auth,
+          application.id,
+        ),
+    )
   }
 
   // Finalises the draft; only the pre-dataEntry answers need patching onto it first.
@@ -630,107 +503,94 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
         ? `${answers.period.year}-${answers.period.month.padStart(2, '0')}-01`
         : null
 
-    try {
-      await this.directorateOfEqualityService.updateDraft(auth, providerId, {
-        companyAdminName: answers.chiefExecutive?.name ?? '',
-        companyAdminTitle: answers.chiefExecutive?.jobTitle ?? '',
-        companyAdminEmail: answers.chiefExecutive?.email ?? '',
-        companyAdminGender: mapGender(answers.chiefExecutive?.gender),
-        contactName: answers.contactPerson?.name ?? '',
-        contactEmail: answers.contactPerson?.email ?? '',
-        contactPhone: answers.contactPerson?.phone ?? '',
-        averageEmployeeMaleCount: toNumberOrZero(answers.employeeCount?.men),
-        averageEmployeeFemaleCount: toNumberOrZero(
-          answers.employeeCount?.women,
-        ),
-        averageEmployeeNeutralCount: toNumberOrZero(
-          answers.employeeCount?.nonBinary,
-        ),
-        salaryDataBasis,
-        salaryDataPeriod,
-      })
-
-      return await this.directorateOfEqualityService.submitDraft(
-        auth,
-        providerId,
-        {
-          company: {
-            name: answers.generalInformation?.companyName ?? '',
-            nationalId: answers.generalInformation?.nationalId ?? '',
-            address: answers.generalInformation?.address ?? '',
-            city: answers.generalInformation?.municipality ?? '',
-            postcode: answers.generalInformation?.postalCode ?? '',
-            isatCategory: answers.generalInformation?.isatClassification ?? '',
+    return this.withTemplateApiError(
+      application.id,
+      'Failed to submit salary report',
+      async () => {
+        await this.directorateOfEqualityService.updateDraft(
+          auth,
+          providerId,
+          {
+            companyAdminName: answers.chiefExecutive?.name ?? '',
+            companyAdminTitle: answers.chiefExecutive?.jobTitle ?? '',
+            companyAdminEmail: answers.chiefExecutive?.email ?? '',
+            companyAdminGender: mapGender(answers.chiefExecutive?.gender),
+            contactName: answers.contactPerson?.name ?? '',
+            contactEmail: answers.contactPerson?.email ?? '',
+            contactPhone: answers.contactPerson?.phone ?? '',
+            averageEmployeeMaleCount: toNumberOrZero(
+              answers.employeeCount?.men,
+            ),
+            averageEmployeeFemaleCount: toNumberOrZero(
+              answers.employeeCount?.women,
+            ),
+            averageEmployeeNeutralCount: toNumberOrZero(
+              answers.employeeCount?.nonBinary,
+            ),
+            salaryDataBasis,
+            salaryDataPeriod,
           },
-          subsidiaries:
-            answers.subsidiaries?.includesSubsidiaries === 'yes'
-              ? subsidiaryList.map((s) => ({
-                  name: s.nationalIdWithName.name,
-                  nationalId: s.nationalIdWithName.nationalId,
-                }))
-              : [],
-          equalityReportId,
-          outliersPostponed:
-            answers.salaryAnalysis?.postponed?.includes(YES) ?? false,
-        },
-      )
-    } catch (error) {
-      const errorDetails = this.extractFetchErrorDetails(error)
-      this.logger.error('Failed to submit salary report', {
-        applicationId: application.id,
-        context: LOGGING_CONTEXT,
-        ...errorDetails,
-      })
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.defaultTemplateApiError,
-          summary: coreErrorMessages.defaultTemplateApiError,
-        },
-        errorDetails.status ?? 500,
-      )
-    }
+        )
+
+        return await this.directorateOfEqualityService.submitDraft(
+          auth,
+          providerId,
+          {
+            company: {
+              name: answers.generalInformation?.companyName ?? '',
+              nationalId: answers.generalInformation?.nationalId ?? '',
+              address: answers.generalInformation?.address ?? '',
+              city: answers.generalInformation?.municipality ?? '',
+              postcode: answers.generalInformation?.postalCode ?? '',
+              isatCategory:
+                answers.generalInformation?.isatClassification ?? '',
+            },
+            subsidiaries:
+              answers.subsidiaries?.includesSubsidiaries === 'yes'
+                ? subsidiaryList.map((s) => ({
+                    name: s.nationalIdWithName.name,
+                    nationalId: s.nationalIdWithName.nationalId,
+                  }))
+                : [],
+            equalityReportId,
+            outliersPostponed:
+              answers.salaryAnalysis?.postponed?.includes(YES) ?? false,
+          },
+        )
+      },
+    )
   }
 
   async editOutliers({ auth, application }: TemplateApiModuleActionProps) {
-    try {
-      const answers = this.parseAnswers(
-        salaryReportDataSchema,
-        application.answers,
-        application.id,
-      )
+    return this.withTemplateApiError(
+      application.id,
+      'Failed to edit outliers',
+      async () => {
+        const answers = this.parseAnswers(
+          salaryReportDataSchema,
+          application.answers,
+          application.id,
+        )
 
-      const groups = (answers.salaryAnalysis?.outlierGroups ?? [])
-        .filter((g) => g.employeeOrdinals.length > 0)
-        .map((g) => ({
-          reason: g.reason ?? '',
-          action: g.action ?? '',
-          signatureName: g.signatureName ?? '',
-          signatureRole: g.signatureRole ?? '',
-          employeeOrdinals: g.employeeOrdinals,
-        }))
+        const groups = (answers.salaryAnalysis?.outlierGroups ?? [])
+          .filter((g) => g.employeeOrdinals.length > 0)
+          .map((g) => ({
+            reason: g.reason ?? '',
+            action: g.action ?? '',
+            signatureName: g.signatureName ?? '',
+            signatureRole: g.signatureRole ?? '',
+            employeeOrdinals: g.employeeOrdinals,
+          }))
 
-      await this.directorateOfEqualityService.editOutliers(
-        auth,
-        application.id,
-        {
-          groups,
-        },
-      )
-    } catch (error) {
-      const errorDetails = this.extractFetchErrorDetails(error)
-      this.logger.error('Failed to edit outliers', {
-        applicationId: application.id,
-        context: LOGGING_CONTEXT,
-        ...errorDetails,
-      })
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.defaultTemplateApiError,
-          summary: coreErrorMessages.defaultTemplateApiError,
-        },
-        errorDetails.status ?? 500,
-      )
-    }
+        await this.directorateOfEqualityService.editOutliers(
+          auth,
+          application.id,
+          {
+            groups,
+          },
+        )
+      },
+    )
   }
 
   async submitEqualityReport({
@@ -756,10 +616,11 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
 
     const subsidiaryList = answers.subsidiaries?.list ?? []
 
-    try {
-      return await this.directorateOfEqualityService.submitEqualityReport(
-        auth,
-        {
+    return this.withTemplateApiError(
+      application.id,
+      'Failed to submit equality report',
+      () =>
+        this.directorateOfEqualityService.submitEqualityReport(auth, {
           providerId: application.id,
           companyAdminName: answers.chiefExecutive?.name ?? '',
           companyAdminEmail: answers.chiefExecutive?.email ?? '',
@@ -793,24 +654,8 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
                   nationalId: s.nationalIdWithName.nationalId,
                 }))
               : [],
-        },
-      )
-    } catch (error) {
-      const errorDetails = this.extractFetchErrorDetails(error)
-      this.logger.error('Failed to submit equality report', {
-        applicationId: application.id,
-        context: LOGGING_CONTEXT,
-        ...errorDetails,
-      })
-
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.defaultTemplateApiError,
-          summary: coreErrorMessages.defaultTemplateApiError,
-        },
-        errorDetails.status ?? 500,
-      )
-    }
+        }),
+    )
   }
 
   async getReportComments({ auth, application }: TemplateApiModuleActionProps) {
@@ -848,35 +693,15 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
         400,
       )
     }
-    try {
-      return await this.directorateOfEqualityService.submitReportComment(
-        auth,
-        application.id,
-        { body },
-      )
-    } catch (error) {
-      const errorDetails = this.extractFetchErrorDetails(error)
-      this.logger.error('Failed to submit report comment', {
-        applicationId: application.id,
-        context: LOGGING_CONTEXT,
-        ...errorDetails,
-      })
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.defaultTemplateApiError,
-          summary: coreErrorMessages.defaultTemplateApiError,
-        },
-        errorDetails.status ?? 500,
-      )
-    }
+    return this.withTemplateApiError(
+      application.id,
+      'Failed to submit report comment',
+      () =>
+        this.directorateOfEqualityService.submitReportComment(
+          auth,
+          application.id,
+          { body },
+        ),
+    )
   }
-}
-
-const toNumberOrZero = (number: string | undefined) => {
-  if (!number) {
-    return 0
-  }
-
-  const parsed = Number(number)
-  return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0
 }

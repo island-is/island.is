@@ -1,26 +1,19 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import {
-  AlertMessage,
-  Box,
-  Button,
-  LoadingDots,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useEffect, useMemo, useRef } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { messages } from '../../lib/messages'
-import {
-  createDefaultSubCriterion,
-  SyncMethodEnum,
-} from '../../utils/constants'
+import { createDefaultSubCriterion } from '../../utils/constants'
 import type {
   DraftCriterionWithSubCriteriaDto,
   SubCriterion,
 } from '../../utils/types'
 import { useDraftQuery } from '../../utils/useDraftQuery'
-import { useDraftSync, type SyncCommand } from '../../utils/useDraftSync'
+import { useDraftSync } from '../../utils/useDraftSync'
+import { useSeedOnce } from '../../utils/useSeedOnce'
+import { buildUpsertRemoveCommands } from '../../utils/syncCommands'
+import { DraftErrorState, DraftLoadingState } from '../../components/DraftScreenState'
 import { CriterionPanel } from './CriterionPanel'
 
 // Fixed 1000-point scale (weights sum to 100); mirrors JobClassificationEditor/utils.ts and DMR's own scoring.
@@ -46,7 +39,6 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   // Diffed against the final form value at Continue time: missing => REMOVE, unseen => CREATE.
   const originalSubCriterionIds = useRef<Set<string>>(new Set())
   const originalStepIds = useRef<Set<string>>(new Set())
-  const seeded = useRef(false)
 
   const jobCriteria = useMemo(
     () => (content?.criteria ?? []).filter((c) => c.type !== 'PERSONAL'),
@@ -57,10 +49,8 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     [content],
   )
 
-  useEffect(() => {
-    if (!content || seeded.current) return
-    seeded.current = true
-
+  useSeedOnce(Boolean(content), () => {
+    if (!content) return
     const subIds = new Set<string>()
     const stepIds = new Set<string>()
     const values: SubCriteriaFormValues = {}
@@ -98,7 +88,7 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     originalSubCriterionIds.current = subIds
     originalStepIds.current = stepIds
     methods.reset(values)
-  }, [content, methods])
+  })
 
   useEffect(() => {
     if (!setBeforeSubmitCallback) return
@@ -106,55 +96,42 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       const values = methods.getValues()
       const allGroups = Object.values(values).flat()
 
-      const seenFinalSubIds = new Set(allGroups.map((sc) => sc.id))
-      const seenFinalStepIds = new Set(
-        allGroups.flatMap((sc) => sc.steps.map((s) => s.id)),
+      const subCriteriaCommands = buildUpsertRemoveCommands(
+        originalSubCriterionIds.current,
+        allGroups.map((sc) => ({
+          id: sc.id,
+          data: {
+            criterionId: sc.criterionId,
+            title: sc.title,
+            description: sc.description ?? '',
+            weight: Number(sc.weight) || 0,
+          },
+        })),
       )
 
-      const subCriteriaCommands: SyncCommand[] = allGroups.map((sc) => ({
-        method: originalSubCriterionIds.current.has(sc.id)
-          ? SyncMethodEnum.UPDATE
-          : SyncMethodEnum.CREATE,
-        id: sc.id,
-        data: {
-          criterionId: sc.criterionId,
-          title: sc.title,
-          description: sc.description ?? '',
-          weight: Number(sc.weight) || 0,
-        },
-      }))
-      const removedSubCriteriaCommands: SyncCommand[] = [
-        ...originalSubCriterionIds.current,
-      ]
-        .filter((id) => !seenFinalSubIds.has(id))
-        .map((id) => ({ method: SyncMethodEnum.REMOVE, id }))
-
-      const stepCommands: SyncCommand[] = allGroups.flatMap((sc) => {
-        const count = sc.steps.length
-        const weight = Number(sc.weight) || 0
-        const maxScore = weight * POINTS_PER_WEIGHT_PERCENT
-        const perStep = count > 0 ? maxScore / count : 0
-        return sc.steps.map((step, i) => ({
-          method: originalStepIds.current.has(step.id)
-            ? SyncMethodEnum.UPDATE
-            : SyncMethodEnum.CREATE,
-          id: step.id,
-          data: {
-            subCriterionId: sc.id,
-            order: i + 1,
-            description: step.description,
-            score: (i + 1) * perStep,
-          },
-        }))
-      })
-      const removedStepCommands: SyncCommand[] = [...originalStepIds.current]
-        .filter((id) => !seenFinalStepIds.has(id))
-        .map((id) => ({ method: SyncMethodEnum.REMOVE, id }))
+      const stepCommands = buildUpsertRemoveCommands(
+        originalStepIds.current,
+        allGroups.flatMap((sc) => {
+          const count = sc.steps.length
+          const weight = Number(sc.weight) || 0
+          const maxScore = weight * POINTS_PER_WEIGHT_PERCENT
+          const perStep = count > 0 ? maxScore / count : 0
+          return sc.steps.map((step, i) => ({
+            id: step.id,
+            data: {
+              subCriterionId: sc.id,
+              order: i + 1,
+              description: step.description,
+              score: (i + 1) * perStep,
+            },
+          }))
+        }),
+      )
 
       try {
         await sync({
-          subCriteria: [...subCriteriaCommands, ...removedSubCriteriaCommands],
-          steps: [...stepCommands, ...removedStepCommands],
+          subCriteria: subCriteriaCommands,
+          steps: stepCommands,
         })
         // Silent: about to navigate away, so don't flash a loading state.
         await refetch({ silent: true })
@@ -166,32 +143,11 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   }, [setBeforeSubmitCallback, methods, sync, refetch, formatMessage])
 
   if (loading) {
-    return (
-      <Box display="flex" justifyContent="center" paddingY={5}>
-        <LoadingDots />
-      </Box>
-    )
+    return <DraftLoadingState />
   }
 
   if (hasError || !content) {
-    return (
-      <Box>
-        <AlertMessage
-          type="error"
-          message={formatMessage(messages.errors.draftLoadFailed)}
-        />
-        <Box marginTop={2}>
-          <Button
-            variant="ghost"
-            size="small"
-            icon="reload"
-            onClick={() => refetch()}
-          >
-            {formatMessage(messages.errors.retryButton)}
-          </Button>
-        </Box>
-      </Box>
-    )
+    return <DraftErrorState onRetry={() => refetch()} />
   }
 
   return (

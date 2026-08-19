@@ -13,8 +13,13 @@ import {
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
 import { GENDER_LABELS, SALARY_COMPONENT_KEYS } from '../../utils/constants'
-import type { Employee, SalaryComponentKey } from '../../utils/types'
-import { formatCurrency, formatStartDate, formatWorkRatio } from './utils'
+import type { Employee } from '../../utils/types'
+import {
+  formatCurrency,
+  formatStartDate,
+  formatWorkRatio,
+  getSalaryComponentLabels,
+} from './utils'
 import * as styles from './EmployeesEditor.css'
 
 type Props = {
@@ -73,18 +78,7 @@ export const EmployeeRow: FC<Props> = ({
     },
   ]
 
-  const componentLabels: Record<SalaryComponentKey, string> = {
-    additionalFixedOvertime: formatMessage(m.additionalFixedOvertimeLabel),
-    additionalFixedCarAllowance: formatMessage(
-      m.additionalFixedCarAllowanceLabel,
-    ),
-    bonusOccasionalCarAllowance: formatMessage(
-      m.bonusOccasionalCarAllowanceLabel,
-    ),
-    bonusOccasionalOvertime: formatMessage(m.bonusOccasionalOvertimeLabel),
-    bonusPayments: formatMessage(m.bonusPaymentsLabel),
-    bonusOther: formatMessage(m.bonusOtherLabel),
-  }
+  const componentLabels = getSalaryComponentLabels(formatMessage)
 
   const rightItems = [
     {

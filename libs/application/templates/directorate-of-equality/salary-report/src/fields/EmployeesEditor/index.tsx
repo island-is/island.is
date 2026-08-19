@@ -1,12 +1,5 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import {
-  AlertMessage,
-  Box,
-  Button,
-  LoadingDots,
-  Stack,
-  Table as T,
-} from '@island.is/island-ui/core'
+import { Box, Button, Stack, Table as T } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form'
@@ -17,9 +10,13 @@ import {
   type ReportEmployeeDto,
   type ReportEmployeeRoleDto,
   type Role,
+  type SyncCommand,
 } from '../../utils/types'
 import { useDraftQuery } from '../../utils/useDraftQuery'
-import { useDraftSync, type SyncCommand } from '../../utils/useDraftSync'
+import { useDraftSync } from '../../utils/useDraftSync'
+import { useSeedOnce } from '../../utils/useSeedOnce'
+import { buildUpsertRemoveCommands } from '../../utils/syncCommands'
+import { DraftErrorState, DraftLoadingState } from '../../components/DraftScreenState'
 import { EmployeeRow } from './EmployeeRow'
 import { EmployeeForm } from './EmployeeForm'
 import { TABLE_PAGE_SIZE, TablePagination } from '../TablePagination'
@@ -87,17 +84,14 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const originalEmployeeIds = useRef<Set<string>>(new Set())
   const originalRoleIds = useRef<Set<string>>(new Set())
   const newRoleIds = useRef<Set<string>>(new Set())
-  const seeded = useRef(false)
 
   const { fields, append, remove, update } = useFieldArray({
     control,
     name: FIELD_NAME,
   })
 
-  useEffect(() => {
-    if (!content || seeded.current) return
-    seeded.current = true
-
+  useSeedOnce(Boolean(content), () => {
+    if (!content) return
     const employees: Employee[] = content.employees.map((e) => ({
       id: e.id,
       ordinal: e.ordinal,
@@ -126,8 +120,7 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       content.roles.map((r) => ({ id: r.id, title: r.title, stepIds: [] })),
     )
     methods.reset({ employees })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [content])
+  })
 
   const roleTitleById: Record<string, string> = Object.fromEntries(
     roles.map((r) => [r.id, r.title]),
@@ -137,34 +130,28 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     if (!setBeforeSubmitCallback) return
     setBeforeSubmitCallback(async () => {
       const employees = getValues(FIELD_NAME) as Employee[]
-      const finalIds = new Set(employees.map((e) => e.id))
 
-      const employeeCommands: SyncCommand[] = employees.map((e) => ({
-        method: originalEmployeeIds.current.has(e.id)
-          ? SyncMethodEnum.UPDATE
-          : SyncMethodEnum.CREATE,
-        id: e.id,
-        data: {
-          reportEmployeeRoleId: e.roleId,
-          gender: e.gender,
-          field: e.field ?? null,
-          department: e.department ?? null,
-          startDate: e.startDate,
-          workRatio: e.workRatio,
-          baseSalary: e.baseSalary,
-          additionalFixedOvertime: e.additionalFixedOvertime ?? null,
-          additionalFixedCarAllowance: e.additionalFixedCarAllowance ?? null,
-          bonusOccasionalCarAllowance: e.bonusOccasionalCarAllowance ?? null,
-          bonusOccasionalOvertime: e.bonusOccasionalOvertime ?? null,
-          bonusPayments: e.bonusPayments ?? null,
-          bonusOther: e.bonusOther ?? null,
-        },
-      }))
-      const removedEmployeeCommands: SyncCommand[] = [
-        ...originalEmployeeIds.current,
-      ]
-        .filter((id) => !finalIds.has(id))
-        .map((id) => ({ method: SyncMethodEnum.REMOVE, id }))
+      const employeeCommands = buildUpsertRemoveCommands(
+        originalEmployeeIds.current,
+        employees.map((e) => ({
+          id: e.id,
+          data: {
+            reportEmployeeRoleId: e.roleId,
+            gender: e.gender,
+            field: e.field ?? null,
+            department: e.department ?? null,
+            startDate: e.startDate,
+            workRatio: e.workRatio,
+            baseSalary: e.baseSalary,
+            additionalFixedOvertime: e.additionalFixedOvertime ?? null,
+            additionalFixedCarAllowance: e.additionalFixedCarAllowance ?? null,
+            bonusOccasionalCarAllowance: e.bonusOccasionalCarAllowance ?? null,
+            bonusOccasionalOvertime: e.bonusOccasionalOvertime ?? null,
+            bonusPayments: e.bonusPayments ?? null,
+            bonusOther: e.bonusOther ?? null,
+          },
+        })),
+      )
 
       const roleCommands: SyncCommand[] = [...newRoleIds.current]
         .filter((id) => roles.some((r) => r.id === id))
@@ -177,7 +164,7 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       try {
         await sync({
           roles: roleCommands.length > 0 ? roleCommands : undefined,
-          employees: [...employeeCommands, ...removedEmployeeCommands],
+          employees: employeeCommands,
         })
         newRoleIds.current.clear()
         // Silent: about to navigate away, so skip the loading flash.
@@ -267,32 +254,11 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   )
 
   if (loading) {
-    return (
-      <Box display="flex" justifyContent="center" paddingY={5}>
-        <LoadingDots />
-      </Box>
-    )
+    return <DraftLoadingState />
   }
 
   if (hasError || !content) {
-    return (
-      <Box>
-        <AlertMessage
-          type="error"
-          message={formatMessage(messages.errors.draftLoadFailed)}
-        />
-        <Box marginTop={2}>
-          <Button
-            variant="ghost"
-            size="small"
-            icon="reload"
-            onClick={() => refetch()}
-          >
-            {formatMessage(messages.errors.retryButton)}
-          </Button>
-        </Box>
-      </Box>
-    )
+    return <DraftErrorState onRetry={() => refetch()} />
   }
 
   return (

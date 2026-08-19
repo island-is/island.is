@@ -1,12 +1,7 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import {
-  AlertMessage,
-  Box,
-  LoadingDots,
-  Stack,
-} from '@island.is/island-ui/core'
+import { AlertMessage, Box, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC, useEffect, useMemo, useRef } from 'react'
+import { FC, useEffect, useMemo } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { messages } from '../../lib/messages'
 import { SyncMethodEnum } from '../../utils/constants'
@@ -14,9 +9,12 @@ import type {
   DisplayAssignment,
   DraftCriterionWithSubCriteriaDto,
   DraftRoleWithStepsDto,
+  SyncCommand,
 } from '../../utils/types'
 import { useDraftQuery } from '../../utils/useDraftQuery'
-import { useDraftSync, type SyncCommand } from '../../utils/useDraftSync'
+import { useDraftSync } from '../../utils/useDraftSync'
+import { useSeedOnce } from '../../utils/useSeedOnce'
+import { DraftLoadingState } from '../../components/DraftScreenState'
 import { RolePanel } from './RolePanel'
 import {
   buildDisplayAssignments,
@@ -51,7 +49,6 @@ export const JobClassificationEditor: FC<
   )
   const { sync } = useDraftSync(application)
   const methods = useForm<FormValues>({ defaultValues: { roles: [] } })
-  const seeded = useRef(false)
 
   const loading = criteriaLoading || rolesLoading
   const roles = rolesContent?.roles ?? []
@@ -66,16 +63,13 @@ export const JobClassificationEditor: FC<
     [jobCriteria],
   )
 
-  useEffect(() => {
-    if (!criteriaContent || !rolesContent || seeded.current) return
-    seeded.current = true
+  useSeedOnce(Boolean(criteriaContent && rolesContent), () => {
     const formRoles: RoleFormEntry[] = roles.map((role) => ({
       roleId: role.id,
       assignments: buildDisplayAssignments(jobCriteria, role.stepIds),
     }))
     methods.reset({ roles: formRoles })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [criteriaContent, rolesContent])
+  })
 
   useEffect(() => {
     if (!setBeforeSubmitCallback || !criteriaContent || !rolesContent) return
@@ -111,11 +105,7 @@ export const JobClassificationEditor: FC<
   ])
 
   if (loading || !criteriaContent || !rolesContent) {
-    return (
-      <Box display="flex" justifyContent="center" paddingY={5}>
-        <LoadingDots />
-      </Box>
-    )
+    return <DraftLoadingState />
   }
 
   if (roles.length === 0) {

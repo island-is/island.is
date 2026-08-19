@@ -14,13 +14,15 @@ import {
 import { useLocale } from '@island.is/localization'
 import type { SalaryAnalysisResponseDto } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
-import { isOutlierGroupComplete } from '../../utils/outlierGroups'
+import {
+  buildOutlierSyncCommands,
+  isOutlierGroupComplete,
+} from '../../utils/outlierGroups'
 import type { OutlierGroupAnswer } from '../../utils/outlierGroups'
-import { SyncMethodEnum } from '../../utils/constants'
 import { formatCurrency } from '../EmployeesEditor/utils'
 import type { DraftOutlierGroupDto, ReportEmployeeDto } from '../../utils/types'
 import { useDraftQuery } from '../../utils/useDraftQuery'
-import { useDraftSync, type SyncCommand } from '../../utils/useDraftSync'
+import { useDraftSync } from '../../utils/useDraftSync'
 import { OutlierGroupPanel } from './OutlierGroupPanel'
 import { StatisticCard } from './StatisticsCard'
 
@@ -254,62 +256,9 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
 
       // Draft phase: persist the outlier grouping to DMR before continuing; postponed has nothing to sync.
       if (isDraftPhase && content) {
-        const employeeIdByOrdinal: Record<number, string> = Object.fromEntries(
-          content.employees.map((e) => [e.ordinal, e.id]),
-        )
-        const originalGroupIds = new Set(content.outlierGroups.map((g) => g.id))
         const finalGroups = draftForm.getValues().salaryAnalysis.outlierGroups
-        // Groups are tracked by id (from OutlierEditor's handleCreateGroup), not array position, so removals don't misattribute commands.
-        const groupIds = finalGroups.map((g) => g.id ?? crypto.randomUUID())
-
-        const outlierGroupCommands: SyncCommand[] = finalGroups.map((g, i) => ({
-          method: originalGroupIds.has(groupIds[i])
-            ? SyncMethodEnum.UPDATE
-            : SyncMethodEnum.CREATE,
-          id: groupIds[i],
-          data: {
-            reason: g.reason || null,
-            action: g.action || null,
-            signatureName: g.signatureName || null,
-            signatureRole: g.signatureRole || null,
-          },
-        }))
-        const keptGroupIds = new Set(groupIds)
-        const removedGroupCommands: SyncCommand[] = [...originalGroupIds]
-          .filter((id) => !keptGroupIds.has(id))
-          .map((id) => ({ method: SyncMethodEnum.REMOVE, id }))
-
-        const memberOfGroup = new Map<string, string>()
-        finalGroups.forEach((g, i) => {
-          g.employeeOrdinals.forEach((ordinal) => {
-            const employeeId = employeeIdByOrdinal[ordinal]
-            if (employeeId) memberOfGroup.set(employeeId, groupIds[i])
-          })
-        })
-        // Members of a removed/changed group with no surviving group get cleared.
-        const employeeCommands: SyncCommand[] = content.outlierGroups.flatMap(
-          (g) =>
-            g.memberEmployeeIds.map((employeeId) => ({
-              method: SyncMethodEnum.UPDATE,
-              id: employeeId,
-              data: { outlierGroupId: memberOfGroup.get(employeeId) ?? null },
-            })),
-        )
-        memberOfGroup.forEach((groupId, employeeId) => {
-          if (!employeeCommands.some((c) => c.id === employeeId)) {
-            employeeCommands.push({
-              method: SyncMethodEnum.UPDATE,
-              id: employeeId,
-              data: { outlierGroupId: groupId },
-            })
-          }
-        })
-
         try {
-          await sync({
-            outlierGroups: [...outlierGroupCommands, ...removedGroupCommands],
-            employees: employeeCommands,
-          })
+          await sync(buildOutlierSyncCommands(content, finalGroups))
           // Refresh in case the applicant navigates back to an earlier screen this session.
           await refetch()
         } catch {

@@ -1,17 +1,7 @@
-import { FC, useMemo, useState } from 'react'
+import { FC, useState } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
-import { getErrorViaPath } from '@island.is/application/core'
 import { RecordObject } from '@island.is/application/types'
-import {
-  AccordionCard,
-  Box,
-  Button,
-  Checkbox,
-  createColumnHelper,
-  InteractiveTable,
-  Text,
-} from '@island.is/island-ui/core'
-import { InputController } from '@island.is/shared/form-fields'
+import { Box, Button, InteractiveTable, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import type {
   SalaryAnalysisOutlierDto,
@@ -20,11 +10,11 @@ import type {
 import { messages } from '../../lib/messages'
 import { isOutlierGroupComplete } from '../../utils/outlierGroups'
 import type { OutlierGroupAnswer } from '../../utils/outlierGroups'
-import { formatCurrency } from '../EmployeesEditor/utils'
 import { TablePagination } from '../TablePagination'
+import { useOutlierColumns } from './useOutlierColumns'
+import { OutlierGroupCard } from './OutlierGroupCard'
 
 const OUTLIERS_PAGE_SIZE = 10
-const SELECT_COLUMN_WIDTH = 32
 // The header checkbox only reaches the current page, which is fine for a
 // couple of pages but not for a long table — past this many pages the
 // select-everything shortcut appears.
@@ -39,8 +29,6 @@ type Props = {
   identifierForOrdinal: (ordinal: number) => string
 }
 
-const columnHelper = createColumnHelper<SalaryAnalysisOutlierDto>()
-
 export const OutlierEditor: FC<Props> = ({
   outliers,
   scoreBuckets,
@@ -54,16 +42,6 @@ export const OutlierEditor: FC<Props> = ({
 
   // Same field name in both modes; draft mode just never persists it to applicationAnswers.
   const fieldName = 'salaryAnalysis.outlierGroups'
-
-  const scoreRangeLabel = (outlier: SalaryAnalysisOutlierDto) =>
-    `${outlier.scoreBucketRangeFrom}-${outlier.scoreBucketRangeTo}`
-
-  const medianSalaryForOutlier = (outlier: SalaryAnalysisOutlierDto) =>
-    scoreBuckets.find(
-      (b) =>
-        b.rangeFrom === outlier.scoreBucketRangeFrom &&
-        b.rangeTo === outlier.scoreBucketRangeTo,
-    )?.overallMedianSalary
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -130,95 +108,16 @@ export const OutlierEditor: FC<Props> = ({
     pageRows.length > 0 &&
     pageRows.every((o) => selected.has(o.employeeOrdinal))
 
-  const columns = useMemo(
-    () => [
-      columnHelper.display({
-        id: 'select',
-        header: () => (
-          <Box
-            display="flex"
-            justifyContent="center"
-            style={{ maxWidth: SELECT_COLUMN_WIDTH }}
-          >
-            <Checkbox
-              label=""
-              ariaLabel={formatMessage(m.selectAllLabel)}
-              checked={allSelectedOnPage}
-              disabled={pageRows.length === 0}
-              onChange={() =>
-                setSelected((prev) => {
-                  const next = new Set(prev)
-                  pageRows.forEach((o) =>
-                    allSelectedOnPage
-                      ? next.delete(o.employeeOrdinal)
-                      : next.add(o.employeeOrdinal),
-                  )
-                  return next
-                })
-              }
-            />
-          </Box>
-        ),
-        meta: { type: 'interactive' },
-        cell: (info) => (
-          <Box
-            display="flex"
-            justifyContent="center"
-            style={{ maxWidth: SELECT_COLUMN_WIDTH }}
-          >
-            <Checkbox
-              label=""
-              ariaLabel={formatMessage(m.selectEmployeeLabel, {
-                employee: identifierForOrdinal(
-                  info.row.original.employeeOrdinal,
-                ),
-              })}
-              checked={selected.has(info.row.original.employeeOrdinal)}
-              onChange={() => toggleSelect(info.row.original.employeeOrdinal)}
-            />
-          </Box>
-        ),
-      }),
-      columnHelper.accessor('employeeOrdinal', {
-        id: 'employee',
-        header: formatMessage(m.employeeColumn),
-        cell: (info) => identifierForOrdinal(info.getValue()),
-      }),
-      columnHelper.accessor((row) => row.scoreBucketRangeFrom, {
-        id: 'score',
-        header: formatMessage(m.scoreColumn),
-        enableSorting: true,
-        cell: (info) => scoreRangeLabel(info.row.original),
-      }),
-      columnHelper.accessor('adjustedBaseSalary', {
-        id: 'salary',
-        header: formatMessage(m.salaryColumn),
-        cell: (info) => formatCurrency(info.getValue()),
-      }),
-      columnHelper.display({
-        id: 'medianSalary',
-        header: formatMessage(m.medianSalaryColumn),
-        cell: (info) =>
-          formatCurrency(medianSalaryForOutlier(info.row.original)),
-      }),
-      columnHelper.accessor('differencePercent', {
-        id: 'difference',
-        header: formatMessage(m.differenceColumn),
-        cell: (info) => {
-          const value = info.getValue()
-          const sign = value > 0 ? '+' : value < 0 ? '-' : ''
-          return `${sign}${Math.abs(value).toFixed(1)}%`
-        },
-      }),
-    ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [pageRows, selected, allSelectedOnPage, scoreBuckets],
-  )
-
-  const groupError = (index: number, suffix: string) =>
-    mode === 'postponed' && errors
-      ? getErrorViaPath(errors, `${fieldName}.${index}.${suffix}`)
-      : undefined
+  const columns = useOutlierColumns({
+    formatMessage,
+    scoreBuckets,
+    pageRows,
+    selected,
+    setSelected,
+    allSelectedOnPage,
+    identifierForOrdinal,
+    toggleSelect,
+  })
 
   return (
     <Box marginTop={4}>
@@ -277,66 +176,17 @@ export const OutlierEditor: FC<Props> = ({
             id: string
           }
           return (
-            <Box key={field.id} marginBottom={3}>
-              <AccordionCard
-                id={field.id}
-                label={`${formatMessage(m.groupHeading)} ${index + 1}`}
-                visibleContent={`${formatMessage(
-                  m.groupMembers,
-                )}: ${group.employeeOrdinals
-                  .map(identifierForOrdinal)
-                  .join(', ')}`}
-                startExpanded
-              >
-                <Box marginBottom={2} display="flex" justifyContent="flexEnd">
-                  <Button
-                    variant="text"
-                    size="small"
-                    onClick={() => remove(index)}
-                  >
-                    {formatMessage(m.removeGroupButton)}
-                  </Button>
-                </Box>
-                <InputController
-                  id={`${fieldName}.${index}.reason`}
-                  name={`${fieldName}.${index}.reason`}
-                  label={formatMessage(m.reasonLabel)}
-                  textarea
-                  backgroundColor="blue"
-                  error={groupError(index, 'reason')}
-                />
-                <Box marginTop={2}>
-                  <InputController
-                    id={`${fieldName}.${index}.action`}
-                    name={`${fieldName}.${index}.action`}
-                    label={formatMessage(m.actionLabel)}
-                    textarea
-                    backgroundColor="blue"
-                    error={groupError(index, 'action')}
-                  />
-                </Box>
-                <Box marginTop={2} display="flex" columnGap={2}>
-                  <Box style={{ flex: 1 }}>
-                    <InputController
-                      id={`${fieldName}.${index}.signatureName`}
-                      name={`${fieldName}.${index}.signatureName`}
-                      label={formatMessage(m.signatureNameLabel)}
-                      backgroundColor="blue"
-                      error={groupError(index, 'signatureName')}
-                    />
-                  </Box>
-                  <Box style={{ flex: 1 }}>
-                    <InputController
-                      id={`${fieldName}.${index}.signatureRole`}
-                      name={`${fieldName}.${index}.signatureRole`}
-                      label={formatMessage(m.signatureRoleLabel)}
-                      backgroundColor="blue"
-                      error={groupError(index, 'signatureRole')}
-                    />
-                  </Box>
-                </Box>
-              </AccordionCard>
-            </Box>
+            <OutlierGroupCard
+              key={field.id}
+              fieldId={field.id}
+              fieldName={fieldName}
+              index={index}
+              group={group}
+              mode={mode}
+              errors={errors}
+              identifierForOrdinal={identifierForOrdinal}
+              onRemove={() => remove(index)}
+            />
           )
         })}
       </Box>

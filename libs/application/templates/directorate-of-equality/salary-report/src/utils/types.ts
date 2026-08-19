@@ -1,3 +1,5 @@
+import type { SyncMethodEnum } from './constants'
+
 export type {
   DraftCriterionWithSubCriteriaDto,
   DraftEmployeeWithStepsDto,
@@ -128,4 +130,19 @@ export type AssignmentGroup = {
   criterionId: string
   criterionTitle: string
   items: { assignment: DisplayAssignment; index: number }[]
+}
+
+export type SyncCommand = {
+  method: SyncMethodEnum
+  id?: string
+  data?: Record<string, unknown>
+}
+
+export type SyncBatch = {
+  criteria?: SyncCommand[]
+  subCriteria?: SyncCommand[]
+  steps?: SyncCommand[]
+  roles?: SyncCommand[]
+  employees?: SyncCommand[]
+  outlierGroups?: SyncCommand[]
 }

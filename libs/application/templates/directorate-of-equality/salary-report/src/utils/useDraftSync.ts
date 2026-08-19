@@ -1,22 +1,7 @@
 import { useCallback } from 'react'
 import { gql, useMutation } from '@apollo/client'
 import type { Application } from '@island.is/application/types'
-import { SyncMethodEnum } from './constants'
-
-export type SyncCommand = {
-  method: SyncMethodEnum
-  id?: string
-  data?: Record<string, unknown>
-}
-
-export type SyncBatch = {
-  criteria?: SyncCommand[]
-  subCriteria?: SyncCommand[]
-  steps?: SyncCommand[]
-  roles?: SyncCommand[]
-  employees?: SyncCommand[]
-  outlierGroups?: SyncCommand[]
-}
+import type { SyncBatch } from './types'
 
 // Custom resolver, not the standard updateApplicationExternalData provider mechanism —
 // that only takes {actionId, order}, with no channel for an arbitrary sync-batch payload.

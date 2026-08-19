@@ -1,11 +1,5 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import {
-  AlertMessage,
-  Box,
-  Button,
-  LoadingDots,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useEffect, useRef, useState } from 'react'
 import { messages } from '../../lib/messages'
@@ -14,9 +8,12 @@ import type {
   JobFactor,
   PersonalFactor,
   ReportCriterionDto,
+  SyncCommand,
 } from '../../utils/types'
 import { useDraftQuery } from '../../utils/useDraftQuery'
-import { useDraftSync, type SyncCommand } from '../../utils/useDraftSync'
+import { useDraftSync } from '../../utils/useDraftSync'
+import { useSeedOnce } from '../../utils/useSeedOnce'
+import { DraftErrorState, DraftLoadingState } from '../../components/DraftScreenState'
 import { CriteriaItem } from './CriteriaItem'
 import { PersonalCriteriaList } from './PersonalCriteriaList'
 
@@ -35,13 +32,9 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const [personalFactors, setPersonalFactors] = useState<PersonalFactor[]>([])
   const [removedPersonalIds, setRemovedPersonalIds] = useState<string[]>([])
   const originalPersonalIds = useRef<Set<string>>(new Set())
-  const seeded = useRef(false)
 
-  // Seed once, when the draft content first arrives.
-  useEffect(() => {
-    if (!content || seeded.current) return
-    seeded.current = true
-
+  useSeedOnce(Boolean(content), () => {
+    if (!content) return
     const jobFromDraft = content.criteria
       .filter((c) => c.type !== 'PERSONAL')
       .map((c) => ({
@@ -65,7 +58,7 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     )
     setPersonalFactors(personalFromDraft)
     originalPersonalIds.current = new Set(personalFromDraft.map((f) => f.id))
-  }, [content])
+  })
 
   const totalWeight = [...jobFactors, ...personalFactors].reduce(
     (sum, f) => sum + (Number(f.weight) || 0),
@@ -138,32 +131,11 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   ])
 
   if (loading) {
-    return (
-      <Box display="flex" justifyContent="center" paddingY={5}>
-        <LoadingDots />
-      </Box>
-    )
+    return <DraftLoadingState />
   }
 
   if (hasError || !content) {
-    return (
-      <Box>
-        <AlertMessage
-          type="error"
-          message={formatMessage(messages.errors.draftLoadFailed)}
-        />
-        <Box marginTop={2}>
-          <Button
-            variant="ghost"
-            size="small"
-            icon="reload"
-            onClick={() => refetch()}
-          >
-            {formatMessage(messages.errors.retryButton)}
-          </Button>
-        </Box>
-      </Box>
-    )
+    return <DraftErrorState onRetry={() => refetch()} />
   }
 
   return (

@@ -16,10 +16,11 @@ import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { messages } from '../../lib/messages'
 import { GENDER_OPTIONS, SALARY_COMPONENT_GROUPS } from '../../utils/constants'
-import type { Employee, SalaryComponentKey } from '../../utils/types'
+import type { Employee } from '../../utils/types'
 import {
   EMPTY_EMPLOYEE_FORM_VALUES,
   type EmployeeFormValues,
+  getSalaryComponentLabels,
   toFormValues,
 } from './utils'
 
@@ -50,18 +51,7 @@ export const EmployeeForm: FC<Props> = ({
 
   const requiredMsg = formatMessage(messages.errors.required)
 
-  const componentLabels: Record<SalaryComponentKey, string> = {
-    additionalFixedOvertime: formatMessage(m.additionalFixedOvertimeLabel),
-    additionalFixedCarAllowance: formatMessage(
-      m.additionalFixedCarAllowanceLabel,
-    ),
-    bonusOccasionalCarAllowance: formatMessage(
-      m.bonusOccasionalCarAllowanceLabel,
-    ),
-    bonusOccasionalOvertime: formatMessage(m.bonusOccasionalOvertimeLabel),
-    bonusPayments: formatMessage(m.bonusPaymentsLabel),
-    bonusOther: formatMessage(m.bonusOtherLabel),
-  }
+  const componentLabels = getSalaryComponentLabels(formatMessage)
 
   const groupHeadings: Record<'additional' | 'bonus', string> = {
     additional: formatMessage(m.additionalSalaryLabel),

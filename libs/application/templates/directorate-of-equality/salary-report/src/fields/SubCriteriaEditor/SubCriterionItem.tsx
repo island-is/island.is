@@ -1,10 +1,11 @@
 import { InputController } from '@island.is/shared/form-fields'
 import { Box, Button, Divider, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC, useEffect, useState } from 'react'
-import { useFormContext, useWatch } from 'react-hook-form'
+import { FC, useState } from 'react'
+import { useWatch } from 'react-hook-form'
 import { messages } from '../../lib/messages'
 import type { SubCriterionStep } from '../../utils/types'
+import { useStepCountSync } from './useStepCountSync'
 
 type Props = {
   fieldName: string
@@ -21,31 +22,11 @@ export const SubCriterionItem: FC<Props> = ({
   onRemove,
 }) => {
   const { formatMessage } = useLocale()
-  const { setValue, getValues } = useFormContext()
   const [stepsExpanded, setStepsExpanded] = useState(true)
 
-  const stepCountStr: string =
-    useWatch({ name: `${fieldName}.stepCount` }) ?? '2'
+  useStepCountSync(fieldName)
   const steps: SubCriterionStep[] =
     useWatch({ name: `${fieldName}.steps` }) ?? []
-
-  useEffect(() => {
-    const count = Math.min(8, Math.max(2, Number(stepCountStr) || 2))
-    const currentSteps: SubCriterionStep[] =
-      getValues(`${fieldName}.steps`) ?? []
-    if (count === currentSteps.length) return
-
-    if (count > currentSteps.length) {
-      const extra = Array.from({ length: count - currentSteps.length }, () => ({
-        id: crypto.randomUUID(),
-        description: '',
-      }))
-      setValue(`${fieldName}.steps`, [...currentSteps, ...extra])
-    } else {
-      setValue(`${fieldName}.steps`, currentSteps.slice(0, count))
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stepCountStr])
 
   return (
     <Box>

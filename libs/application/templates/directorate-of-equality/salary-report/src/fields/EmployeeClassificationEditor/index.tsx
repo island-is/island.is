@@ -1,15 +1,8 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import {
-  AlertMessage,
-  Box,
-  Button,
-  LoadingDots,
-  Stack,
-  Table as T,
-} from '@island.is/island-ui/core'
+import { Box, Stack, Table as T } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC, useEffect, useMemo, useRef, useState } from 'react'
+import { FC, useEffect, useMemo, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { messages } from '../../lib/messages'
 import { SyncMethodEnum } from '../../utils/constants'
@@ -18,9 +11,12 @@ import type {
   DraftCriterionWithSubCriteriaDto,
   DraftEmployeeWithStepsDto,
   DraftRoleWithStepsDto,
+  SyncCommand,
 } from '../../utils/types'
 import { useDraftQuery } from '../../utils/useDraftQuery'
-import { useDraftSync, type SyncCommand } from '../../utils/useDraftSync'
+import { useDraftSync } from '../../utils/useDraftSync'
+import { useSeedOnce } from '../../utils/useSeedOnce'
+import { DraftErrorState, DraftLoadingState } from '../../components/DraftScreenState'
 import {
   buildDisplayAssignments,
   buildStepMetaBySubCriterionId,
@@ -62,7 +58,6 @@ export const EmployeeClassificationEditor: FC<
   )
   const { sync } = useDraftSync(application)
   const methods = useForm<FormValues>({ defaultValues: { employees: [] } })
-  const seeded = useRef(false)
   const [page, setPage] = useState(1)
 
   const loading = criteriaLoading || employeesLoading
@@ -95,16 +90,13 @@ export const EmployeeClassificationEditor: FC<
     [personalCriteria],
   )
 
-  useEffect(() => {
-    if (!criteriaContent || !employeesContent || seeded.current) return
-    seeded.current = true
+  useSeedOnce(Boolean(criteriaContent && employeesContent), () => {
     const formEmployees: EmployeeFormEntry[] = employees.map((emp) => ({
       employeeId: emp.id,
       assignments: buildDisplayAssignments(personalCriteria, emp.stepIds),
     }))
     methods.reset({ employees: formEmployees })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [criteriaContent, employeesContent])
+  })
 
   useEffect(() => {
     if (!setBeforeSubmitCallback || !criteriaContent || !employeesContent) {
@@ -142,34 +134,17 @@ export const EmployeeClassificationEditor: FC<
   ])
 
   if (loading) {
-    return (
-      <Box display="flex" justifyContent="center" paddingY={5}>
-        <LoadingDots />
-      </Box>
-    )
+    return <DraftLoadingState />
   }
 
   if (hasError || !criteriaContent || !employeesContent) {
     return (
-      <Box>
-        <AlertMessage
-          type="error"
-          message={formatMessage(messages.errors.draftLoadFailed)}
-        />
-        <Box marginTop={2}>
-          <Button
-            variant="ghost"
-            size="small"
-            icon="reload"
-            onClick={() => {
-              refetchCriteria()
-              refetchEmployees()
-            }}
-          >
-            {formatMessage(messages.errors.retryButton)}
-          </Button>
-        </Box>
-      </Box>
+      <DraftErrorState
+        onRetry={() => {
+          refetchCriteria()
+          refetchEmployees()
+        }}
+      />
     )
   }
 

@@ -178,8 +178,27 @@ export const ExcelTemplateDownload: FC<
     }
   }
 
-  // Manual entry mirrors "continue without a workbook": seed default job
-  // factors onto the draft if it's empty, then advance.
+  // Shared by manual entry and the footer button: seed the draft's default
+  // job factors if it's still empty, otherwise leave existing content alone.
+  const seedDefaultJobFactorsIfEmpty = async () => {
+    if (content && content.criteria.length > 0) return
+    const jobFactors = createDefaultJobFactors()
+    await sync({
+      criteria: jobFactors.map((factor) => ({
+        method: SyncMethodEnum.CREATE,
+        id: factor.id,
+        data: {
+          title: factor.title,
+          description: factor.description,
+          weight: Number(factor.weight) || 0,
+          type: factor.type,
+        },
+      })),
+    })
+    await refetch({ silent: true })
+  }
+
+  // Manual entry mirrors "continue without a workbook".
   const handleManualEntry = async () => {
     // Bail on hasError rather than risk seeding duplicate job factors on top
     // of criteria that may already exist server-side.
@@ -187,57 +206,26 @@ export const ExcelTemplateDownload: FC<
       setImportStatus('error')
       return
     }
-    if (!content || content.criteria.length === 0) {
-      const jobFactors = createDefaultJobFactors()
-      try {
-        await sync({
-          criteria: jobFactors.map((factor) => ({
-            method: SyncMethodEnum.CREATE,
-            id: factor.id,
-            data: {
-              title: factor.title,
-              description: factor.description,
-              weight: Number(factor.weight) || 0,
-              type: factor.type,
-            },
-          })),
-        })
-        await refetch({ silent: true })
-      } catch {
-        setImportStatus('error')
-        return
-      }
+    try {
+      await seedDefaultJobFactorsIfEmpty()
+    } catch {
+      setImportStatus('error')
+      return
     }
     goToScreen?.(NEXT_SCREEN_ID)
   }
 
-  // Footer "Halda áfram" mirrors manual entry: seed defaults if the draft is
-  // empty, otherwise leave existing content alone.
+  // Footer "Halda áfram" mirrors manual entry.
   useEffect(() => {
     if (!setBeforeSubmitCallback) return
     setBeforeSubmitCallback(async () => {
       if (hasError) {
         return [false, formatMessage(messages.errors.draftLoadFailed)]
       }
-      if (!content || content.criteria.length === 0) {
-        const jobFactors = createDefaultJobFactors()
-        try {
-          await sync({
-            criteria: jobFactors.map((factor) => ({
-              method: SyncMethodEnum.CREATE,
-              id: factor.id,
-              data: {
-                title: factor.title,
-                description: factor.description,
-                weight: Number(factor.weight) || 0,
-                type: factor.type,
-              },
-            })),
-          })
-          await refetch({ silent: true })
-        } catch {
-          return [false, formatMessage(messages.errors.draftSyncFailed)]
-        }
+      try {
+        await seedDefaultJobFactorsIfEmpty()
+      } catch {
+        return [false, formatMessage(messages.errors.draftSyncFailed)]
       }
       return [true, null]
     })
