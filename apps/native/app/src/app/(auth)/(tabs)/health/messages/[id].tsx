@@ -3,7 +3,9 @@ import { useApolloClient } from '@apollo/client'
 import { useIntl } from 'react-intl'
 import {
   FlatList,
+  Image,
   ListRenderItemInfo,
+  Pressable,
   RefreshControl,
   SafeAreaView,
   View,
@@ -12,11 +14,16 @@ import { router, useFocusEffect, useLocalSearchParams } from 'expo-router'
 
 import { StackScreen } from '@/components/stack-screen'
 import { ButtonDrawer } from '@/components/button-drawer'
+import { OfflineIcon } from '@/components/offline/offline-icon'
 import {
   GetHealthConversationQuery,
   HealthDirectorateHealthConversationDirection,
+  useArchiveHealthConversationMutation,
   useGetHealthConversationQuery,
   useMarkHealthConversationAsReadMutation,
+  useStarHealthConversationMutation,
+  useUnarchiveHealthConversationMutation,
+  useUnstarHealthConversationMutation,
 } from '@/graphql/types/schema'
 import { useAuthStore } from '@/stores/auth-store'
 import { uiStore } from '@/stores/ui-store'
@@ -62,6 +69,92 @@ export default function HealthMessageDetailScreen() {
     // Fire-and-forget: the server state self-corrects on the next load.
     onError: () => undefined,
   })
+
+  const [archiveConversation] = useArchiveHealthConversationMutation()
+  const [unarchiveConversation] = useUnarchiveHealthConversationMutation()
+  const [starConversation] = useStarHealthConversationMutation()
+  const [unstarConversation] = useUnstarHealthConversationMutation()
+
+  // Optimistic overrides so the header icon flips instantly on tap; fall back to
+  // the server value until the user toggles. Reverted if the mutation fails.
+  const [archivedOverride, setArchivedOverride] = useState<boolean | null>(null)
+  const [starredOverride, setStarredOverride] = useState<boolean | null>(null)
+  const isArchived = archivedOverride ?? conversation?.isArchived ?? false
+  const isStarred = starredOverride ?? conversation?.isStarred ?? false
+
+  // Keep the cached conversation entity in sync so the list (same normalized
+  // entity) reflects the change; membership of the filtered list is corrected
+  // by refetching GetHealthConversations.
+  const setConversationField = (
+    field: 'isArchived' | 'isStarred',
+    value: boolean,
+  ) => {
+    const cacheId = client.cache.identify({
+      __typename: 'HealthDirectorateHealthConversation',
+      id,
+    })
+    if (cacheId) {
+      client.cache.modify({ id: cacheId, fields: { [field]: () => value } })
+    }
+  }
+
+  const onToggleArchive = async () => {
+    const archive = !isArchived
+    setArchivedOverride(archive)
+    try {
+      const mutation = archive ? archiveConversation : unarchiveConversation
+      await mutation({
+        variables: { input: { id } },
+        refetchQueries: ['GetHealthConversations'],
+      })
+      setConversationField('isArchived', archive)
+      toast.success(
+        intl.formatMessage({
+          id: archive
+            ? 'health.messages.archiveSuccess'
+            : 'health.messages.unarchiveSuccess',
+        }),
+      )
+    } catch {
+      setArchivedOverride(!archive)
+      toast.error(
+        intl.formatMessage({
+          id: archive
+            ? 'health.messages.archiveError'
+            : 'health.messages.unarchiveError',
+        }),
+      )
+    }
+  }
+
+  const onToggleStar = async () => {
+    const star = !isStarred
+    setStarredOverride(star)
+    try {
+      const mutation = star ? starConversation : unstarConversation
+      await mutation({
+        variables: { input: { id } },
+        refetchQueries: ['GetHealthConversations'],
+      })
+      setConversationField('isStarred', star)
+      toast.success(
+        intl.formatMessage({
+          id: star
+            ? 'health.messages.starSuccess'
+            : 'health.messages.unstarSuccess',
+        }),
+      )
+    } catch {
+      setStarredOverride(!star)
+      toast.error(
+        intl.formatMessage({
+          id: star
+            ? 'health.messages.starError'
+            : 'health.messages.unstarError',
+        }),
+      )
+    }
+  }
 
   // Once the thread has rendered the user has seen it, so clear the unread
   // state on the list's cache entry right away — rather than waiting for the mutation.
@@ -224,6 +317,45 @@ export default function HealthMessageDetailScreen() {
         options={{
           title: conversation?.title ?? '',
           headerTitleAlign: 'center',
+          headerRight: conversation
+            ? () => (
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  {/* Custom headerRight opts out of the native items API, so the
+                      loading/offline indicator is rendered here instead. */}
+                  <OfflineIcon networkStatus={res.networkStatus} />
+                  <Pressable onPress={onToggleArchive} hitSlop={8}>
+                    <Image
+                      source={
+                        isArchived
+                          ? require('@/assets/icons/tray-filled.png')
+                          : require('@/assets/icons/tray.png')
+                      }
+                      style={{
+                        width: 24,
+                        height: 24,
+                        tintColor: theme.color.blue400,
+                        marginHorizontal: 8,
+                      }}
+                    />
+                  </Pressable>
+                  <Pressable onPress={onToggleStar} hitSlop={8}>
+                    <Image
+                      source={
+                        isStarred
+                          ? require('@/assets/icons/star-filled.png')
+                          : require('@/assets/icons/star.png')
+                      }
+                      style={{
+                        width: 24,
+                        height: 24,
+                        tintColor: theme.color.blue400,
+                        marginHorizontal: 8,
+                      }}
+                    />
+                  </Pressable>
+                </View>
+              )
+            : undefined,
         }}
       />
       <View style={{ flexDirection: 'column', flex: 1 }}>
