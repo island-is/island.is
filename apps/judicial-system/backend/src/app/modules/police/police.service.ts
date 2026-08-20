@@ -14,7 +14,7 @@ import {
   NotFoundException,
   ServiceUnavailableException,
 } from '@nestjs/common'
-import { InjectConnection, InjectModel } from '@nestjs/sequelize'
+import { InjectConnection } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -50,6 +50,7 @@ import {
   DateLog,
   Defendant,
   IndictmentSubtype,
+  IndictmentSubtypeRepositoryService,
 } from '../repository'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { CreateSubpoenaResponse } from './models/createSubpoena.response'
@@ -266,8 +267,7 @@ export class PoliceService {
 
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
-    @InjectModel(IndictmentSubtype)
-    private readonly indictmentSubtypeModel: typeof IndictmentSubtype,
+    private readonly indictmentSubtypeRepositoryService: IndictmentSubtypeRepositoryService,
     @Inject(policeModuleConfig.KEY)
     private readonly config: ConfigType<typeof policeModuleConfig>,
     @Inject(forwardRef(() => EventService))
@@ -1533,8 +1533,6 @@ export class PoliceService {
   getSubtypeByArticle(
     article?: string | null,
   ): Promise<IndictmentSubtype | null> {
-    return this.indictmentSubtypeModel.findOne({
-      where: { article },
-    })
+    return this.indictmentSubtypeRepositoryService.findByArticle(article)
   }
 }
