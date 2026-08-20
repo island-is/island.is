@@ -70,10 +70,13 @@ export const createApp = async ({
   // the X-Forwarded-For header before passing to internal services.
   app.set('trust proxy', JSON.parse(process.env.EXPRESS_TRUST_PROXY || 'false'))
 
-  // 'extended' (qs) parser, but with a raised arrayLimit — qs turns an array
-  // into an object past the default 20, breaking array query params.
+  // Express's 'extended' parser is qs with allowPrototypes: true; keep that and
+  // only raise arrayLimit — qs turns an array into an object past the default 20.
   app.set('query parser', (str: string) =>
-    qs.parse(str, { arrayLimit: MAX_QUERY_PARAM_ARRAY_SIZE }),
+    qs.parse(str, {
+      allowPrototypes: true,
+      arrayLimit: MAX_QUERY_PARAM_ARRAY_SIZE,
+    }),
   )
 
   // Enable validation of request DTOs globally.
