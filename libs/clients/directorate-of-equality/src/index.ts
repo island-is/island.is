@@ -27,6 +27,7 @@ export type {
   GetDraftStepsResponseDto,
   GetDraftSubCriteriaResponseDto,
   GetReportOutliersResponseDto,
+  Paging,
   ParsedCriterionDto,
   ParsedSubCriterionDto,
   ParsedEmployeeDto,

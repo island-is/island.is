@@ -1,53 +1,108 @@
+import { gql } from '@apollo/client'
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, Button, Stack, Table as T } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Button, Stack, Table as T } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { FormProvider, useFieldArray, useForm } from 'react-hook-form'
+import { FC, useState } from 'react'
 import { messages } from '../../lib/messages'
-import { SyncMethodEnum } from '../../utils/constants'
+import { DRAFT_EMPLOYEES_PAGE_SIZE, SyncMethodEnum } from '../../utils/constants'
 import {
   type Employee,
   type ReportEmployeeDto,
   type ReportEmployeeRoleDto,
   type Role,
-  type SyncCommand,
 } from '../../utils/types'
 import { useDraftQuery } from '../../utils/useDraftQuery'
+import { useDraftEmployeesQuery } from '../../utils/useDraftEmployeesQuery'
 import { useDraftSync } from '../../utils/useDraftSync'
-import { useSeedOnce } from '../../utils/useSeedOnce'
-import { buildUpsertRemoveCommands } from '../../utils/syncCommands'
 import { DraftErrorState, DraftLoadingState } from '../../components/DraftScreenState'
 import { formatEmployeeIdentifier } from '../../utils/employeeIdentifier'
 import { EmployeeRow } from './EmployeeRow'
 import { EmployeeForm } from './EmployeeForm'
-import { TABLE_PAGE_SIZE, TablePagination } from '../TablePagination'
+import { TablePagination } from '../TablePagination'
 import {
-  byRoleTitle,
   componentsFromFormValues,
   findOrCreateRoleId,
-  pageOfEmployee,
   type EmployeeFormValues,
 } from './utils'
 
-const FIELD_NAME = 'employees'
+const DRAFT_EMPLOYEES_QUERY = gql`
+  query DirectorateOfEqualityDraftEmployees(
+    $input: DirectorateOfEqualityDraftEmployeesInput!
+  ) {
+    directorateOfEqualityDraftEmployees(input: $input) {
+      employees {
+        id
+        ordinal
+        field
+        department
+        startDate
+        workRatio
+        baseSalary
+        additionalFixedOvertime
+        additionalFixedCarAllowance
+        bonusOccasionalCarAllowance
+        bonusOccasionalOvertime
+        bonusPayments
+        bonusOther
+        additionalSalary
+        bonusSalary
+        gender
+        reportEmployeeRoleId
+        reportId
+        score
+      }
+      paging {
+        page
+        totalPages
+        totalItems
+        nextPage
+        previousPage
+        pageSize
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`
 
-type FormValues = { employees: Employee[] }
+const toEmployee = (e: ReportEmployeeDto): Employee => ({
+  id: e.id,
+  ordinal: e.ordinal,
+  roleId: e.reportEmployeeRoleId,
+  gender: e.gender,
+  field: e.field,
+  department: e.department,
+  startDate: e.startDate,
+  workRatio: e.workRatio,
+  baseSalary: e.baseSalary,
+  additionalFixedOvertime: e.additionalFixedOvertime,
+  additionalFixedCarAllowance: e.additionalFixedCarAllowance,
+  bonusOccasionalCarAllowance: e.bonusOccasionalCarAllowance,
+  bonusOccasionalOvertime: e.bonusOccasionalOvertime,
+  bonusPayments: e.bonusPayments,
+  bonusOther: e.bonusOther,
+  outlierGroupId: null,
+})
 
 export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
-  setBeforeSubmitCallback,
 }) => {
   const { formatMessage } = useLocale()
   const m = messages.report.employees
+
+  const [page, setPage] = useState(1)
   const {
-    content: employeesContent,
+    employees: employeeDtos,
+    paging,
     loading: employeesLoading,
     hasError: employeesHasError,
     refetch: refetchEmployees,
-  } = useDraftQuery<{ employees: ReportEmployeeDto[] }>(
+  } = useDraftEmployeesQuery<ReportEmployeeDto>(
+    DRAFT_EMPLOYEES_QUERY,
+    'directorateOfEqualityDraftEmployees',
     application,
-    'DirectorateOfEquality.listDraftEmployees',
-    'draftEmployees',
+    page,
+    DRAFT_EMPLOYEES_PAGE_SIZE,
   )
   const {
     content: rolesContent,
@@ -59,274 +114,185 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     'DirectorateOfEquality.listDraftRoles',
     'draftRoles',
   )
-  const loading = employeesLoading || rolesLoading
-  const hasError = employeesHasError || rolesHasError
-  const content = useMemo(
-    () =>
-      employeesContent && rolesContent
-        ? { employees: employeesContent.employees, roles: rolesContent.roles }
-        : undefined,
-    [employeesContent, rolesContent],
-  )
-  const refetch = useCallback(
-    (options?: { silent?: boolean }) =>
-      Promise.all([refetchEmployees(options), refetchRoles(options)]),
-    [refetchEmployees, refetchRoles],
-  )
   const { sync } = useDraftSync(application)
-  const methods = useForm<FormValues>({ defaultValues: { employees: [] } })
-  const { control, getValues } = methods
 
   const [isAdding, setIsAdding] = useState(false)
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
-  const [page, setPage] = useState(1)
-  const [roles, setRoles] = useState<Role[]>([])
+  const [actionError, setActionError] = useState<string | undefined>()
 
-  const originalEmployeeIds = useRef<Set<string>>(new Set())
-  const originalRoleIds = useRef<Set<string>>(new Set())
-  const newRoleIds = useRef<Set<string>>(new Set())
+  const loading = employeesLoading || rolesLoading
+  const hasError = employeesHasError || rolesHasError
 
-  const { fields, append, remove, update } = useFieldArray({
-    control,
-    name: FIELD_NAME,
-  })
-
-  useSeedOnce(Boolean(content), () => {
-    if (!content) return
-    const employees: Employee[] = content.employees.map((e) => ({
-      id: e.id,
-      ordinal: e.ordinal,
-      roleId: e.reportEmployeeRoleId,
-      gender: e.gender,
-      field: e.field,
-      department: e.department,
-      startDate: e.startDate,
-      workRatio: e.workRatio,
-      baseSalary: e.baseSalary,
-      additionalFixedOvertime: e.additionalFixedOvertime,
-      additionalFixedCarAllowance: e.additionalFixedCarAllowance,
-      bonusOccasionalCarAllowance: e.bonusOccasionalCarAllowance,
-      bonusOccasionalOvertime: e.bonusOccasionalOvertime,
-      bonusPayments: e.bonusPayments,
-      bonusOther: e.bonusOther,
-      outlierGroupId: null,
-    }))
-
-    originalEmployeeIds.current = new Set(employees.map((e) => e.id))
-    originalRoleIds.current = new Set(content.roles.map((r) => r.id))
-    setRoles(
-      content.roles.map((r) => ({ id: r.id, title: r.title, stepIds: [] })),
-    )
-    methods.reset({ employees })
-  })
-
+  const roles: Role[] = (rolesContent?.roles ?? []).map((r) => ({
+    id: r.id,
+    title: r.title,
+    stepIds: [],
+  }))
   const roleTitleById: Record<string, string> = Object.fromEntries(
     roles.map((r) => [r.id, r.title]),
-  )
-
-  useEffect(() => {
-    if (!setBeforeSubmitCallback) return
-    setBeforeSubmitCallback(async () => {
-      const employees = getValues(FIELD_NAME) as Employee[]
-
-      const employeeCommands = buildUpsertRemoveCommands(
-        originalEmployeeIds.current,
-        employees.map((e) => ({
-          id: e.id,
-          data: {
-            reportEmployeeRoleId: e.roleId,
-            gender: e.gender,
-            field: e.field ?? null,
-            department: e.department ?? null,
-            startDate: e.startDate,
-            workRatio: e.workRatio,
-            baseSalary: e.baseSalary,
-            additionalFixedOvertime: e.additionalFixedOvertime ?? null,
-            additionalFixedCarAllowance: e.additionalFixedCarAllowance ?? null,
-            bonusOccasionalCarAllowance: e.bonusOccasionalCarAllowance ?? null,
-            bonusOccasionalOvertime: e.bonusOccasionalOvertime ?? null,
-            bonusPayments: e.bonusPayments ?? null,
-            bonusOther: e.bonusOther ?? null,
-          },
-        })),
-      )
-
-      const roleCommands: SyncCommand[] = [...newRoleIds.current]
-        .filter((id) => roles.some((r) => r.id === id))
-        .map((id) => ({
-          method: SyncMethodEnum.CREATE,
-          id,
-          data: { title: roleTitleById[id] },
-        }))
-
-      try {
-        await sync({
-          roles: roleCommands.length > 0 ? roleCommands : undefined,
-          employees: employeeCommands,
-        })
-        newRoleIds.current.clear()
-        // Silent: about to navigate away, so skip the loading flash.
-        await refetch({ silent: true })
-      } catch {
-        return [false, formatMessage(messages.errors.draftSyncFailed)]
-      }
-      return [true, null]
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setBeforeSubmitCallback, getValues, roles, sync, refetch, formatMessage])
-
-  const resolveEmployee = (
-    values: EmployeeFormValues,
-    existing?: Employee,
-  ): Employee => {
-    const { id: roleId, isNew } = findOrCreateRoleId(values.roleTitle, roles)
-    if (isNew) {
-      setRoles((prev) => [
-        ...prev,
-        { id: roleId, title: values.roleTitle, stepIds: [] },
-      ])
-      newRoleIds.current.add(roleId)
-    }
-    const components = componentsFromFormValues(values)
-    const id = existing?.id ?? crypto.randomUUID()
-    return {
-      id,
-      ordinal: existing?.ordinal ?? 0,
-      roleId,
-      gender: values.gender,
-      field: values.field,
-      department: values.department,
-      startDate: values.startDate,
-      workRatio: (Number(values.workRatio) || 0) / 100,
-      baseSalary: Number(values.baseSalary) || 0,
-      ...components,
-      outlierGroupId: existing?.outlierGroupId ?? null,
-    }
-  }
-
-  const handleAdd = (values: EmployeeFormValues) => {
-    const employee = resolveEmployee(values)
-    append(employee)
-    setPage(
-      pageOfEmployee(
-        [...fields, employee] as Employee[],
-        employee,
-        roleTitleById,
-      ),
-    )
-    setIsAdding(false)
-  }
-
-  const handleSave = (index: number, values: EmployeeFormValues) => {
-    const existing = fields[index] as unknown as Employee
-    const employee = resolveEmployee(values, existing)
-    update(index, employee)
-    setPage(
-      pageOfEmployee(
-        fields.map((field, i) =>
-          i === index ? employee : (field as unknown as Employee),
-        ) as Employee[],
-        employee,
-        roleTitleById,
-      ),
-    )
-    setEditingIndex(null)
-  }
-
-  const sortedFields = fields
-    .map((field, index) => ({ field: field as unknown as Employee, index }))
-    .sort((a, b) => byRoleTitle(roleTitleById)(a.field, b.field))
-
-  const totalPages = Math.ceil(sortedFields.length / TABLE_PAGE_SIZE)
-  const currentPage = Math.min(page, Math.max(totalPages, 1))
-
-  useEffect(() => {
-    if (currentPage !== page) setPage(currentPage)
-  }, [currentPage, page])
-
-  const visibleFields = sortedFields.slice(
-    (currentPage - 1) * TABLE_PAGE_SIZE,
-    currentPage * TABLE_PAGE_SIZE,
   )
 
   if (loading) {
     return <DraftLoadingState />
   }
 
-  if (hasError || !content) {
-    return <DraftErrorState onRetry={() => refetch()} />
+  if (hasError) {
+    return (
+      <DraftErrorState
+        onRetry={() => {
+          refetchEmployees()
+          refetchRoles()
+        }}
+      />
+    )
   }
 
+  const employees = employeeDtos.map(toEmployee)
+
+  // A new role title resolves to a client-minted id; sync it alongside the
+  // employee command so it exists before the employee references it.
+  const buildRoleCommand = (roleTitle: string) => {
+    const { id: roleId, isNew } = findOrCreateRoleId(roleTitle, roles)
+    return {
+      roleId,
+      roleCommand: isNew
+        ? {
+            method: SyncMethodEnum.CREATE,
+            id: roleId,
+            data: { title: roleTitle },
+          }
+        : undefined,
+    }
+  }
+
+  const employeeData = (values: EmployeeFormValues, roleId: string) => ({
+    reportEmployeeRoleId: roleId,
+    gender: values.gender,
+    field: values.field || null,
+    department: values.department || null,
+    startDate: values.startDate,
+    workRatio: (Number(values.workRatio) || 0) / 100,
+    baseSalary: Number(values.baseSalary) || 0,
+    ...componentsFromFormValues(values),
+  })
+
+  const runSync = async (batch: Parameters<typeof sync>[0]) => {
+    setActionError(undefined)
+    try {
+      await sync(batch)
+      if (batch.roles?.length) await refetchRoles({ silent: true })
+      await refetchEmployees()
+      return true
+    } catch {
+      setActionError(formatMessage(messages.errors.draftSyncFailed))
+      return false
+    }
+  }
+
+  const handleAdd = async (values: EmployeeFormValues) => {
+    const { roleId, roleCommand } = buildRoleCommand(values.roleTitle)
+    const ok = await runSync({
+      roles: roleCommand ? [roleCommand] : undefined,
+      employees: [
+        {
+          method: SyncMethodEnum.CREATE,
+          id: crypto.randomUUID(),
+          data: employeeData(values, roleId),
+        },
+      ],
+    })
+    if (ok) setIsAdding(false)
+  }
+
+  const handleSave = async (employee: Employee, values: EmployeeFormValues) => {
+    const { roleId, roleCommand } = buildRoleCommand(values.roleTitle)
+    const ok = await runSync({
+      roles: roleCommand ? [roleCommand] : undefined,
+      employees: [
+        {
+          method: SyncMethodEnum.UPDATE,
+          id: employee.id,
+          data: employeeData(values, roleId),
+        },
+      ],
+    })
+    if (ok) setEditingIndex(null)
+  }
+
+  const handleRemove = (employee: Employee) =>
+    runSync({
+      employees: [{ method: SyncMethodEnum.REMOVE, id: employee.id }],
+    })
+
   return (
-    <FormProvider {...methods}>
-      <Box>
-        <Stack space={4}>
-          <T.Table>
-            <T.Head>
-              <T.Row>
-                <T.HeadData></T.HeadData>
-                <T.HeadData>{formatMessage(m.nameColumn)}</T.HeadData>
-                <T.HeadData>{formatMessage(m.roleColumn)}</T.HeadData>
-                <T.HeadData>{formatMessage(m.genderColumn)}</T.HeadData>
-                <T.HeadData></T.HeadData>
-              </T.Row>
-            </T.Head>
-            <T.Body>
-              {visibleFields.map(({ field, index }) =>
-                editingIndex === index ? (
-                  <T.Row key={field.id}>
-                    <T.Data colSpan={5} style={{ padding: 0 }}>
-                      <EmployeeForm
-                        employee={field}
-                        roleTitleById={roleTitleById}
-                        onSubmit={(values) => handleSave(index, values)}
-                        onCancel={() => setEditingIndex(null)}
-                      />
-                    </T.Data>
-                  </T.Row>
-                ) : (
-                  <EmployeeRow
-                    key={field.id}
-                    employee={field}
-                    identifier={formatEmployeeIdentifier(
-                      application.id,
-                      field.ordinal,
-                    )}
-                    roleTitleById={roleTitleById}
-                    onRemove={() => remove(index)}
-                    onEdit={() => setEditingIndex(index)}
-                  />
-                ),
-              )}
-            </T.Body>
-          </T.Table>
+    <Box>
+      <Stack space={4}>
+        {actionError && <AlertMessage type="error" message={actionError} />}
+        <T.Table>
+          <T.Head>
+            <T.Row>
+              <T.HeadData></T.HeadData>
+              <T.HeadData>{formatMessage(m.nameColumn)}</T.HeadData>
+              <T.HeadData>{formatMessage(m.roleColumn)}</T.HeadData>
+              <T.HeadData>{formatMessage(m.genderColumn)}</T.HeadData>
+              <T.HeadData></T.HeadData>
+            </T.Row>
+          </T.Head>
+          <T.Body>
+            {employees.map((employee, index) =>
+              editingIndex === index ? (
+                <T.Row key={employee.id}>
+                  <T.Data colSpan={5} style={{ padding: 0 }}>
+                    <EmployeeForm
+                      employee={employee}
+                      roleTitleById={roleTitleById}
+                      onSubmit={(values) => handleSave(employee, values)}
+                      onCancel={() => setEditingIndex(null)}
+                    />
+                  </T.Data>
+                </T.Row>
+              ) : (
+                <EmployeeRow
+                  key={employee.id}
+                  employee={employee}
+                  identifier={formatEmployeeIdentifier(
+                    application.id,
+                    employee.ordinal,
+                  )}
+                  roleTitleById={roleTitleById}
+                  onRemove={() => handleRemove(employee)}
+                  onEdit={() => setEditingIndex(index)}
+                />
+              ),
+            )}
+          </T.Body>
+        </T.Table>
 
-          <TablePagination
-            page={currentPage}
-            totalPages={totalPages}
-            onPageChange={setPage}
+        <TablePagination
+          page={paging?.page ?? page}
+          totalPages={paging?.totalPages ?? 1}
+          onPageChange={setPage}
+        />
+
+        {isAdding ? (
+          <EmployeeForm
+            roleTitleById={roleTitleById}
+            onSubmit={handleAdd}
+            onCancel={() => setIsAdding(false)}
           />
-
-          {isAdding ? (
-            <EmployeeForm
-              roleTitleById={roleTitleById}
-              onSubmit={handleAdd}
-              onCancel={() => setIsAdding(false)}
-            />
-          ) : (
-            <Box display="flex" justifyContent="flexStart">
-              <Button
-                variant="ghost"
-                type="button"
-                icon="add"
-                onClick={() => setIsAdding(true)}
-              >
-                {formatMessage(m.addButton)}
-              </Button>
-            </Box>
-          )}
-        </Stack>
-      </Box>
-    </FormProvider>
+        ) : (
+          <Box display="flex" justifyContent="flexStart">
+            <Button
+              variant="ghost"
+              type="button"
+              icon="add"
+              onClick={() => setIsAdding(true)}
+            >
+              {formatMessage(m.addButton)}
+            </Button>
+          </Box>
+        )}
+      </Stack>
+    </Box>
   )
 }

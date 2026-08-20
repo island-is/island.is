@@ -1,19 +1,19 @@
+import { gql } from '@apollo/client'
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, Stack, Table as T } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Stack, Table as T } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { messages } from '../../lib/messages'
-import { SyncMethodEnum } from '../../utils/constants'
+import { DRAFT_EMPLOYEES_PAGE_SIZE, SyncMethodEnum } from '../../utils/constants'
 import type {
   DisplayAssignment,
   DraftCriterionWithSubCriteriaDto,
   DraftEmployeeWithStepsDto,
-  SyncCommand,
 } from '../../utils/types'
 import { useDraftQuery } from '../../utils/useDraftQuery'
+import { useDraftEmployeesQuery } from '../../utils/useDraftEmployeesQuery'
 import { useDraftSync } from '../../utils/useDraftSync'
-import { useSeedOnce } from '../../utils/useSeedOnce'
 import { DraftErrorState, DraftLoadingState } from '../../components/DraftScreenState'
 import { formatEmployeeIdentifier } from '../../utils/employeeIdentifier'
 import {
@@ -22,7 +22,49 @@ import {
   resolveStepIds,
 } from '../JobClassificationEditor/utils'
 import { EmployeeClassificationRow } from './EmployeeClassificationRow'
-import { TABLE_PAGE_SIZE, TablePagination } from '../TablePagination'
+import { TablePagination } from '../TablePagination'
+
+const DRAFT_EMPLOYEES_WITH_STEPS_QUERY = gql`
+  query DirectorateOfEqualityDraftEmployeesWithSteps(
+    $input: DirectorateOfEqualityDraftEmployeesInput!
+  ) {
+    directorateOfEqualityDraftEmployeesWithSteps(input: $input) {
+      employees {
+        id
+        ordinal
+        field
+        department
+        startDate
+        workRatio
+        baseSalary
+        additionalFixedOvertime
+        additionalFixedCarAllowance
+        bonusOccasionalCarAllowance
+        bonusOccasionalOvertime
+        bonusPayments
+        bonusOther
+        additionalSalary
+        bonusSalary
+        gender
+        reportEmployeeRoleId
+        reportId
+        score
+        roleTitle
+        stepIds
+      }
+      paging {
+        page
+        totalPages
+        totalItems
+        nextPage
+        previousPage
+        pageSize
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`
 
 type EmployeeFormEntry = {
   employeeId: string
@@ -45,23 +87,26 @@ export const EmployeeClassificationEditor: FC<
     'DirectorateOfEquality.getDraftCriteriaTree',
     'draftCriteriaTree',
   )
+  const [page, setPage] = useState(1)
   const {
-    content: employeesContent,
+    employees,
+    paging,
     loading: employeesLoading,
     hasError: employeesHasError,
     refetch: refetchEmployees,
-  } = useDraftQuery<{ employees: DraftEmployeeWithStepsDto[] }>(
+  } = useDraftEmployeesQuery<DraftEmployeeWithStepsDto>(
+    DRAFT_EMPLOYEES_WITH_STEPS_QUERY,
+    'directorateOfEqualityDraftEmployeesWithSteps',
     application,
-    'DirectorateOfEquality.listDraftEmployeesWithSteps',
-    'draftEmployeesWithSteps',
+    page,
+    DRAFT_EMPLOYEES_PAGE_SIZE,
   )
   const { sync } = useDraftSync(application)
   const methods = useForm<FormValues>({ defaultValues: { employees: [] } })
-  const [page, setPage] = useState(1)
+  const [actionError, setActionError] = useState<string | undefined>()
 
   const loading = criteriaLoading || employeesLoading
   const hasError = criteriaHasError || employeesHasError
-  const employees = employeesContent?.employees ?? []
 
   const personalCriteria = useMemo(
     () =>
@@ -73,54 +118,63 @@ export const EmployeeClassificationEditor: FC<
     [personalCriteria],
   )
 
-  useSeedOnce(Boolean(criteriaContent && employeesContent), () => {
+  // Re-seeds on every page turn — unlike a one-time seed, the form only ever
+  // holds the currently loaded page's employees.
+  useEffect(() => {
+    if (employeesLoading || !criteriaContent) return
     const formEmployees: EmployeeFormEntry[] = employees.map((emp) => ({
       employeeId: emp.id,
       assignments: buildDisplayAssignments(personalCriteria, emp.stepIds),
     }))
     methods.reset({ employees: formEmployees })
-  })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, employeesLoading, criteriaContent])
 
-  useEffect(() => {
-    if (!setBeforeSubmitCallback || !criteriaContent || !employeesContent) {
+  // Syncs whatever's currently in the form for the loaded page — used both on
+  // page turns (the form is about to be replaced with the next page's data)
+  // and on the whole-screen submit.
+  const syncCurrentPage = async () => {
+    const values = methods.getValues().employees
+    if (values.length === 0) return true
+    try {
+      await sync({
+        employees: values.map((entry) => ({
+          method: SyncMethodEnum.UPDATE,
+          id: entry.employeeId,
+          data: { stepIds: resolveStepIds(personalCriteria, entry.assignments) },
+        })),
+      })
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  const handlePageChange = async (nextPage: number) => {
+    const ok = await syncCurrentPage()
+    if (!ok) {
+      setActionError(formatMessage(messages.errors.draftSyncFailed))
       return
     }
+    setActionError(undefined)
+    setPage(nextPage)
+  }
+
+  useEffect(() => {
+    if (!setBeforeSubmitCallback) return
     setBeforeSubmitCallback(async () => {
-      const values = methods.getValues().employees
-      const employeeCommands: SyncCommand[] = values.map((entry) => ({
-        method: SyncMethodEnum.UPDATE,
-        id: entry.employeeId,
-        data: { stepIds: resolveStepIds(personalCriteria, entry.assignments) },
-      }))
-      try {
-        await sync({ employees: employeeCommands })
-        // Silent: about to navigate away, so skip the loading flash.
-        await Promise.all([
-          refetchCriteria({ silent: true }),
-          refetchEmployees({ silent: true }),
-        ])
-      } catch {
-        return [false, formatMessage(messages.errors.draftSyncFailed)]
-      }
+      const ok = await syncCurrentPage()
+      if (!ok) return [false, formatMessage(messages.errors.draftSyncFailed)]
       return [true, null]
     })
-  }, [
-    setBeforeSubmitCallback,
-    methods,
-    sync,
-    refetchCriteria,
-    refetchEmployees,
-    criteriaContent,
-    employeesContent,
-    personalCriteria,
-    formatMessage,
-  ])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setBeforeSubmitCallback, methods, sync, personalCriteria, formatMessage])
 
   if (loading) {
     return <DraftLoadingState />
   }
 
-  if (hasError || !criteriaContent || !employeesContent) {
+  if (hasError || !criteriaContent) {
     return (
       <DraftErrorState
         onRetry={() => {
@@ -131,18 +185,11 @@ export const EmployeeClassificationEditor: FC<
     )
   }
 
-  const totalPages = Math.ceil(employees.length / TABLE_PAGE_SIZE)
-  const visibleEmployees = employees
-    .map((employee, index) => ({ employee, index }))
-    .sort((a, b) =>
-      a.employee.roleTitle.localeCompare(b.employee.roleTitle, 'is'),
-    )
-    .slice((page - 1) * TABLE_PAGE_SIZE, page * TABLE_PAGE_SIZE)
-
   return (
     <FormProvider {...methods}>
       <Box>
         <Stack space={4}>
+          {actionError && <AlertMessage type="error" message={actionError} />}
           <T.Table>
             <T.Head>
               <T.Row>
@@ -153,7 +200,7 @@ export const EmployeeClassificationEditor: FC<
               </T.Row>
             </T.Head>
             <T.Body>
-              {visibleEmployees.map(({ employee, index }) => (
+              {employees.map((employee, index) => (
                 <EmployeeClassificationRow
                   key={employee.id}
                   employee={employee}
@@ -174,9 +221,9 @@ export const EmployeeClassificationEditor: FC<
           </T.Table>
 
           <TablePagination
-            page={page}
-            totalPages={totalPages}
-            onPageChange={setPage}
+            page={paging?.page ?? page}
+            totalPages={paging?.totalPages ?? 1}
+            onPageChange={handlePageChange}
           />
         </Stack>
       </Box>

@@ -80,13 +80,6 @@ export const ListDraftRolesWithStepsApi = defineTemplateApi({
   throwOnError: true,
 })
 
-export const ListDraftEmployeesWithStepsApi = defineTemplateApi({
-  action: ApiActions.listDraftEmployeesWithSteps,
-  externalDataId: 'draftEmployeesWithSteps',
-  namespace: 'DirectorateOfEquality',
-  throwOnError: true,
-})
-
 export const ListDraftCriteriaApi = defineTemplateApi({
   action: ApiActions.listDraftCriteria,
   externalDataId: 'draftCriteria',

@@ -25,7 +25,7 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { ZodTypeAny, z } from 'zod'
 import { mapGender, toNumberOrZero } from './directorate-of-equality.utils'
 
-// Page size for walking paginated employee reads to completion.
+// Page size for walking listDraftEmployees to completion (SalaryAnalysisResults only).
 const DRAFT_EMPLOYEE_PAGE_SIZE = 200
 
 const LOGGING_CONTEXT = 'DirectorateOfEqualityService'
@@ -352,36 +352,6 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     )
   }
 
-  async listDraftEmployeesWithSteps({
-    auth,
-    application,
-  }: TemplateApiModuleActionProps) {
-    const providerId = application.id
-    return this.withTemplateApiError(
-      application.id,
-      'Failed to list draft employees with steps',
-      async () => {
-        const employees = []
-        let page = 1
-        for (;;) {
-          const res =
-            await this.directorateOfEqualityService.listDraftEmployeesWithSteps(
-              auth,
-              providerId,
-              page,
-              DRAFT_EMPLOYEE_PAGE_SIZE,
-            )
-          employees.push(...res.employees)
-          if (res.employees.length === 0 || !res.paging.hasNextPage) {
-            break
-          }
-          page += 1
-        }
-        return { employees }
-      },
-    )
-  }
-
   async listDraftCriteria({ auth, application }: TemplateApiModuleActionProps) {
     return this.withTemplateApiError(
       application.id,
@@ -406,6 +376,9 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     )
   }
 
+  // Only SalaryAnalysisResults still uses this — outlier-group management
+  // needs the full id<->ordinal mapping across every employee, which can't be
+  // paginated (a group can reference employees from anywhere in the set).
   async listDraftEmployees({
     auth,
     application,
@@ -418,13 +391,12 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
         const employees = []
         let page = 1
         for (;;) {
-          const res =
-            await this.directorateOfEqualityService.listDraftEmployees(
-              auth,
-              providerId,
-              page,
-              DRAFT_EMPLOYEE_PAGE_SIZE,
-            )
+          const res = await this.directorateOfEqualityService.listDraftEmployees(
+            auth,
+            providerId,
+            page,
+            DRAFT_EMPLOYEE_PAGE_SIZE,
+          )
           employees.push(...res.employees)
           if (res.employees.length === 0 || !res.paging.hasNextPage) {
             break

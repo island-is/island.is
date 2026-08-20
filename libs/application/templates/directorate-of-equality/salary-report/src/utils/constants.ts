@@ -42,15 +42,20 @@ export enum ApiActions {
   getDraftHeader = 'getDraftHeader',
   getDraftCriteriaTree = 'getDraftCriteriaTree',
   listDraftRolesWithSteps = 'listDraftRolesWithSteps',
-  listDraftEmployeesWithSteps = 'listDraftEmployeesWithSteps',
   listDraftCriteria = 'listDraftCriteria',
   listDraftRoles = 'listDraftRoles',
+  // Only SalaryAnalysisResults still uses this — it needs the full id<->ordinal
+  // mapping across every employee to seed/sync outlier groups, which can't be
+  // paginated (a group can reference employees from anywhere in the set).
   listDraftEmployees = 'listDraftEmployees',
   listDraftOutlierGroups = 'listDraftOutlierGroups',
 }
 
 export const PERIOD_ONE_MONTH = 'oneMonth'
 export const PERIOD_TWELVE_MONTHS = 'twelveMonths'
+
+// Live server-paginated employee queries (EmployeesEditor, EmployeeClassificationEditor).
+export const DRAFT_EMPLOYEES_PAGE_SIZE = 25
 
 // Duplicated from the client lib rather than imported — importing it as a value
 // pulls in that package's NestJS module (backend-only deps), breaking the frontend bundle.

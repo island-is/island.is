@@ -6,6 +6,7 @@ export type {
   DraftOutlierGroupDto,
   DraftRoleWithStepsDto,
   DraftSubCriterionWithStepsDto,
+  Paging,
   ReportCriterionDto,
   ReportEmployeeDto,
   ReportEmployeeRoleDto,

@@ -4,33 +4,6 @@ import type { FormatMessage } from '@island.is/localization'
 import { SALARY_COMPONENT_KEYS } from '../../utils/constants'
 import type { Employee, SalaryComponentKey } from '../../utils/types'
 import { messages } from '../../lib/messages'
-import { TABLE_PAGE_SIZE } from '../TablePagination'
-
-// Roles are id-keyed now, so sorting by title needs this lookup.
-export const byRoleTitle =
-  (roleTitleById: Record<string, string>) => (a: Employee, b: Employee) =>
-    (roleTitleById[a.roleId] ?? '').localeCompare(
-      roleTitleById[b.roleId] ?? '',
-      'is',
-    )
-
-// Which page an employee lands on once the table re-sorts by role title.
-// `useFieldArray` doesn't refresh `fields` synchronously after append/update,
-// so callers hand us the list as it will be and we sort it ourselves rather
-// than waiting a render to find out where the row went.
-export const pageOfEmployee = (
-  employees: Employee[],
-  employee: Employee,
-  roleTitleById: Record<string, string>,
-): number => {
-  const position = [...employees]
-    .sort(byRoleTitle(roleTitleById))
-    .findIndex((e) => e === employee)
-
-  if (position < 0) return 1
-
-  return Math.floor(position / TABLE_PAGE_SIZE) + 1
-}
 
 // Resolves a free-text role title to an existing role id, or mints a new one.
 export const findOrCreateRoleId = (

@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common'
-import { Args, Mutation, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -11,10 +11,17 @@ import {
 import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 
+import { DraftEmployeesInput } from './dto/draftEmployees.input'
+import {
+  DraftEmployeesResponseModel,
+  DraftEmployeesWithStepsResponseModel,
+} from './dto/draftEmployeesResponse.model'
 import { SyncSalaryReportDraftInput } from './dto/syncSalaryReportDraft.input'
 import { DirectorateOfEqualityApplicationService } from './directorate-of-equality-application.service'
 
-// Only sync needs a resolver: it carries an arbitrary per-screen payload that defineTemplateApi providers have no channel for besides application.answers, which this migration is moving away from.
+// Sync carries an arbitrary per-screen payload, and the employee list queries
+// carry a live page number — neither has a channel through defineTemplateApi
+// providers (those only take a static actionId), hence a resolver of their own.
 @Scopes(ApiScope.directorateOfEquality)
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -33,6 +40,34 @@ export class DirectorateOfEqualityApplicationResolver {
     @CurrentUser() user: User,
   ) {
     return this.directorateOfEqualityApplicationService.syncSalaryReportDraft(
+      input,
+      user,
+    )
+  }
+
+  @Query(() => DraftEmployeesResponseModel, {
+    name: 'directorateOfEqualityDraftEmployees',
+  })
+  @Audit()
+  draftEmployees(
+    @Args('input') input: DraftEmployeesInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.directorateOfEqualityApplicationService.listDraftEmployees(
+      input,
+      user,
+    )
+  }
+
+  @Query(() => DraftEmployeesWithStepsResponseModel, {
+    name: 'directorateOfEqualityDraftEmployeesWithSteps',
+  })
+  @Audit()
+  draftEmployeesWithSteps(
+    @Args('input') input: DraftEmployeesInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.directorateOfEqualityApplicationService.listDraftEmployeesWithSteps(
       input,
       user,
     )

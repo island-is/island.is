@@ -4,10 +4,15 @@ import type { Auth, User } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import { ApplicationsApi } from '@island.is/api/domains/application'
 import { DirectorateOfEqualityClientService } from '@island.is/clients/directorate-of-equality'
-import type { SyncDraftDto } from '@island.is/clients/directorate-of-equality'
+import type {
+  GetDraftEmployeesResponseDto,
+  GetDraftEmployeesWithStepsResponseDto,
+  SyncDraftDto,
+} from '@island.is/clients/directorate-of-equality'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { Locale } from '@island.is/shared/types'
 
+import { DraftEmployeesInput } from './dto/draftEmployees.input'
 import { SyncSalaryReportDraftInput } from './dto/syncSalaryReportDraft.input'
 
 const LOGGING_CONTEXT = 'DirectorateOfEqualityApplicationService'
@@ -68,5 +73,31 @@ export class DirectorateOfEqualityApplicationService {
     )
 
     return true
+  }
+
+  async listDraftEmployees(
+    input: DraftEmployeesInput,
+    user: User,
+  ): Promise<GetDraftEmployeesResponseDto> {
+    await this.assertOwnsApplication(input.applicationId, user, 'is')
+    return this.directorateOfEqualityService.listDraftEmployees(
+      user,
+      input.applicationId,
+      input.page,
+      input.pageSize,
+    )
+  }
+
+  async listDraftEmployeesWithSteps(
+    input: DraftEmployeesInput,
+    user: User,
+  ): Promise<GetDraftEmployeesWithStepsResponseDto> {
+    await this.assertOwnsApplication(input.applicationId, user, 'is')
+    return this.directorateOfEqualityService.listDraftEmployeesWithSteps(
+      user,
+      input.applicationId,
+      input.page,
+      input.pageSize,
+    )
   }
 }
