@@ -90,6 +90,11 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     try {
       return await action()
     } catch (error) {
+      // Already a well-formed TemplateApiError (e.g. from parseAnswers) —
+      // preserve its own status/body instead of re-wrapping it as a 500.
+      if (error instanceof TemplateApiError) {
+        throw error
+      }
       const errorDetails = this.extractFetchErrorDetails(error)
       this.logger.error(errorMessage, {
         applicationId,

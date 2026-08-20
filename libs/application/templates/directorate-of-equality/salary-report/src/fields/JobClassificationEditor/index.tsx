@@ -14,7 +14,7 @@ import type {
 import { useDraftQuery } from '../../utils/useDraftQuery'
 import { useDraftSync } from '../../utils/useDraftSync'
 import { useSeedOnce } from '../../utils/useSeedOnce'
-import { DraftLoadingState } from '../../components/DraftScreenState'
+import { DraftErrorState, DraftLoadingState } from '../../components/DraftScreenState'
 import { RolePanel } from './RolePanel'
 import {
   buildDisplayAssignments,
@@ -32,6 +32,7 @@ export const JobClassificationEditor: FC<
   const {
     content: criteriaContent,
     loading: criteriaLoading,
+    hasError: criteriaHasError,
     refetch: refetchCriteria,
   } = useDraftQuery<{ criteria: DraftCriterionWithSubCriteriaDto[] }>(
     application,
@@ -41,6 +42,7 @@ export const JobClassificationEditor: FC<
   const {
     content: rolesContent,
     loading: rolesLoading,
+    hasError: rolesHasError,
     refetch: refetchRoles,
   } = useDraftQuery<{ roles: DraftRoleWithStepsDto[] }>(
     application,
@@ -51,6 +53,7 @@ export const JobClassificationEditor: FC<
   const methods = useForm<FormValues>({ defaultValues: { roles: [] } })
 
   const loading = criteriaLoading || rolesLoading
+  const hasError = criteriaHasError || rolesHasError
   const roles = rolesContent?.roles ?? []
 
   const jobCriteria = useMemo(
@@ -103,6 +106,17 @@ export const JobClassificationEditor: FC<
     jobCriteria,
     formatMessage,
   ])
+
+  if (hasError) {
+    return (
+      <DraftErrorState
+        onRetry={() => {
+          refetchCriteria()
+          refetchRoles()
+        }}
+      />
+    )
+  }
 
   if (loading || !criteriaContent || !rolesContent) {
     return <DraftLoadingState />

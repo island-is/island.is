@@ -180,22 +180,39 @@ export const ExcelTemplateDownload: FC<
 
   // Shared by manual entry and the footer button: seed the draft's default
   // job factors if it's still empty, otherwise leave existing content alone.
-  const seedDefaultJobFactorsIfEmpty = async () => {
-    if (content && content.criteria.length > 0) return
-    const jobFactors = createDefaultJobFactors()
-    await sync({
-      criteria: jobFactors.map((factor) => ({
-        method: SyncMethodEnum.CREATE,
-        id: factor.id,
-        data: {
-          title: factor.title,
-          description: factor.description,
-          weight: Number(factor.weight) || 0,
-          type: factor.type,
-        },
-      })),
-    })
-    await refetch({ silent: true })
+  // Both callers can fire close together (double-click, or manual entry then
+  // footer submit before `refetch` lands), so an in-flight seed is reused
+  // instead of racing a second `sync` that would double the factors.
+  const seededRef = useRef(false)
+  const seedPromiseRef = useRef<Promise<void> | null>(null)
+  const seedDefaultJobFactorsIfEmpty = () => {
+    if (seededRef.current) return Promise.resolve()
+    if (content && content.criteria.length > 0) {
+      seededRef.current = true
+      return Promise.resolve()
+    }
+    if (!seedPromiseRef.current) {
+      seedPromiseRef.current = (async () => {
+        const jobFactors = createDefaultJobFactors()
+        await sync({
+          criteria: jobFactors.map((factor) => ({
+            method: SyncMethodEnum.CREATE,
+            id: factor.id,
+            data: {
+              title: factor.title,
+              description: factor.description,
+              weight: Number(factor.weight) || 0,
+              type: factor.type,
+            },
+          })),
+        })
+        await refetch({ silent: true })
+        seededRef.current = true
+      })().finally(() => {
+        seedPromiseRef.current = null
+      })
+    }
+    return seedPromiseRef.current
   }
 
   // Manual entry mirrors "continue without a workbook".

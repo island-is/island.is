@@ -117,7 +117,7 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const { sync } = useDraftSync(application)
 
   const [isAdding, setIsAdding] = useState(false)
-  const [editingIndex, setEditingIndex] = useState<number | null>(null)
+  const [editingId, setEditingId] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | undefined>()
 
   const loading = employeesLoading || rolesLoading
@@ -140,8 +140,8 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     return (
       <DraftErrorState
         onRetry={() => {
-          refetchEmployees()
-          refetchRoles()
+          refetchEmployees().catch(() => undefined)
+          refetchRoles().catch(() => undefined)
         }}
       />
     )
@@ -216,7 +216,7 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         },
       ],
     })
-    if (ok) setEditingIndex(null)
+    if (ok) setEditingId(null)
   }
 
   const handleRemove = (employee: Employee) =>
@@ -239,15 +239,15 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             </T.Row>
           </T.Head>
           <T.Body>
-            {employees.map((employee, index) =>
-              editingIndex === index ? (
+            {employees.map((employee) =>
+              editingId === employee.id ? (
                 <T.Row key={employee.id}>
                   <T.Data colSpan={5} style={{ padding: 0 }}>
                     <EmployeeForm
                       employee={employee}
                       roleTitleById={roleTitleById}
                       onSubmit={(values) => handleSave(employee, values)}
-                      onCancel={() => setEditingIndex(null)}
+                      onCancel={() => setEditingId(null)}
                     />
                   </T.Data>
                 </T.Row>
@@ -261,7 +261,7 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                   )}
                   roleTitleById={roleTitleById}
                   onRemove={() => handleRemove(employee)}
-                  onEdit={() => setEditingIndex(index)}
+                  onEdit={() => setEditingId(employee.id)}
                 />
               ),
             )}
@@ -271,7 +271,10 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         <TablePagination
           page={paging?.page ?? page}
           totalPages={paging?.totalPages ?? 1}
-          onPageChange={setPage}
+          onPageChange={(newPage) => {
+            setEditingId(null)
+            setPage(newPage)
+          }}
         />
 
         {isAdding ? (

@@ -10,7 +10,10 @@ export const useStepCountSync = (fieldName: string) => {
     useWatch({ name: `${fieldName}.stepCount` }) ?? '2'
 
   useEffect(() => {
-    const count = Math.min(8, Math.max(2, Number(stepCountStr) || 2))
+    const count = Math.min(
+      8,
+      Math.max(2, Math.trunc(Number(stepCountStr)) || 2),
+    )
     const currentSteps: SubCriterionStep[] =
       getValues(`${fieldName}.steps`) ?? []
     if (count === currentSteps.length) return

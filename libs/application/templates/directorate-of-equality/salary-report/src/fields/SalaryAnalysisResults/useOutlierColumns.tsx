@@ -129,6 +129,6 @@ export const useOutlierColumns = ({
       }),
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [pageRows, selected, allSelectedOnPage, scoreBuckets],
+    [pageRows, selected, allSelectedOnPage, scoreBuckets, formatMessage],
   )
 }
