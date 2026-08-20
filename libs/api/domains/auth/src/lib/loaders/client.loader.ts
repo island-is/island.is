@@ -7,6 +7,7 @@ import { NestDataLoader } from '@island.is/nest/dataloader'
 import { ClientInput } from '../dto/client.input'
 import { Client } from '../models/client.model'
 import { ClientsService } from '../services/clients.service'
+import { MAX_QUERY_PARAM_ARRAY_SIZE } from '@island.is/shared/constants'
 
 export type ClientDataLoader = DataLoader<ClientInput, Client>
 
@@ -42,6 +43,9 @@ export class ClientLoader implements NestDataLoader<ClientInput, Client> {
   }
 
   generateDataLoader(ctx: GraphQLContext): ClientDataLoader {
-    return new DataLoader(this.loadClients.bind(this, ctx.req.user), { cacheKeyFn: this.keyFn, maxBatchSize: 20 })
+    return new DataLoader(this.loadClients.bind(this, ctx.req.user), {
+      cacheKeyFn: this.keyFn,
+      maxBatchSize: MAX_QUERY_PARAM_ARRAY_SIZE,
+    })
   }
 }
