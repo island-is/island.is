@@ -1,6 +1,6 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { ScrollView, View } from 'react-native'
+import { Platform, ScrollView, View } from 'react-native'
 import { useTheme } from 'styled-components/native'
 
 import { Typography } from '@/ui'
@@ -21,7 +21,7 @@ export default function HealthMessageTermsScreen() {
       alwaysBounceVertical={false}
       contentContainerStyle={{
         paddingHorizontal: theme.spacing[2],
-        paddingTop: 0,
+        paddingTop: Platform.OS === 'android' ? theme.spacing[3] : 0,
         paddingBottom: theme.spacing[4],
         rowGap: theme.spacing[3],
       }}
