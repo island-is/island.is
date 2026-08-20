@@ -103,6 +103,68 @@
         "tags": ["Application"]
       }
     },
+    "/api/v1/application/sub-criteria/catalog": {
+      "get": {
+        "description": "Jafnréttisstofa's catalog of standard sub-criteria (undirviðmið) — the same list the Excel template offers in its Undirviðmið dropdown, so the portal can present identical choices. Each entry carries its parent criterion, definition, step count and step wording, all of which the employer may overwrite; sub-criteria may also be registered as free text, so this is a starting point, not a closed set. Entries with a null `numSteps` ship with step 1 only and expect the employer to author the rest — `generalScale` gives the suggested generic wording for those. Static reference data: identical for every company and changes only when Jafnréttisstofa ships a new template. Company-scoped only because the controller is, hence the 404 when the authenticated kennitala has no company row yet.",
+        "operationId": "getApplicationSubCriterionCatalog",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetSubCriterionCatalogResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
     "/api/v1/application/reports/excel/presign": {
       "post": {
         "operationId": "presignApplicationImportUpload",
@@ -1149,11 +1211,1225 @@
         "summary": "",
         "tags": ["Application"]
       }
+    },
+    "/api/v1/application/reports/draft": {
+      "post": {
+        "description": "Opens a DRAFT report at \"initial contact\" (the applicant leaving the prerequisites step upstream). The report is invisible to reviewers until submitted; the portal builds it up via the bulk sync endpoint. Idempotent on the upstream (provider_type, provider_id) tuple — a retried call returns the existing draft. Auto-provisions the company on first contact.",
+        "operationId": "createApplicationReportDraft",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateDraftReportDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateReportResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/reports/{providerId}/draft": {
+      "get": {
+        "description": "Company-facing read of an in-progress DRAFT report: the report-level header plus child-collection counts. The children are fetched via their own paginated list endpoints. 404 if the draft does not exist, is not owned by the authenticated company, or has already been submitted.",
+        "operationId": "getApplicationReportDraft",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "description": "Upstream island.is application UUID (provider_id) of the draft.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DraftDetailDto" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      },
+      "patch": {
+        "description": "Patches report-level header fields (contact / admin / headcount / equality narrative) on a DRAFT report. PATCH semantics: omitted keys are left untouched, an explicit null clears the column. Returns the refreshed draft detail. 404 if the draft is not owned by the company or has already been submitted.",
+        "operationId": "updateApplicationReportDraft",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "description": "Upstream island.is application UUID (provider_id) of the draft.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateDraftDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DraftDetailDto" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      },
+      "delete": {
+        "description": "Permanently deletes a DRAFT report and all data under it (employees, criteria tree, assignments, outlier groups). Hard delete — nothing is retained. 404 if the draft is not owned by the company or has already been submitted (submitted reports are withdrawn via DELETE /application/reports/:providerId instead).",
+        "operationId": "deleteApplicationReportDraft",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "description": "Upstream island.is application UUID (provider_id) of the draft.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "204": { "description": "" },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/reports/{providerId}/draft/submit": {
+      "post": {
+        "description": "Finalises a DRAFT (DRAFT → SUBMITTED, or POSTPONED when a salary report's outliers are acknowledged but not yet explained). Freezes derived scores + the result snapshot, creates the company_report snapshot from the payload (parent + subsidiaries), and makes the report visible to reviewers. For salary reports, equalityReportId is required and must reference an APPROVED equality report.",
+        "operationId": "submitApplicationReportDraft",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "description": "Upstream island.is application UUID (provider_id) of the draft.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SubmitDraftDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateReportResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/reports/{providerId}/draft/import": {
+      "post": {
+        "description": "Bulk-populates a SALARY draft from an uploaded workbook. Presign + upload via POST /application/reports/excel/presign, then pass the object { key } here. REPLACE semantics — the draft's existing scoring content is cleared and replaced by the workbook (scores stay NULL until submit). Returns the refreshed draft detail. 400 on an equality draft or a malformed workbook.",
+        "operationId": "importApplicationReportDraftWorkbook",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "description": "Upstream island.is application UUID (provider_id) of the draft.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ImportKeyDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DraftDetailDto" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/reports/{providerId}/draft/sync": {
+      "post": {
+        "description": "Applies a batch of create/update/remove commands to the draft's content (criteria tree, roles, employees, outlier groups) in one atomic transaction — the single write path for the portal, flushed once per screen navigate. Ids are client-minted UUIDs, so a command may reference a sibling created in the same batch; a repeated CREATE is an idempotent upsert. Omitted collections are untouched; an empty array is a no-op. At most 1000 employee commands per call. 204 on success (the portal refetches the affected reads); 404 if the draft is not owned or already submitted; 400/409 on a malformed or referentially-inconsistent batch (the whole batch rolls back).",
+        "operationId": "syncApplicationReportDraft",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "description": "Upstream island.is application UUID (provider_id) of the draft.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SyncDraftDto" }
+            }
+          }
+        },
+        "responses": {
+          "204": { "description": "" },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/reports/{providerId}/draft/analysis": {
+      "get": {
+        "description": "Derived salary-analysis preview for a SALARY draft: outliers + the gender/score chart, computed on the fly from the draft's current scoring graph (employee scores are not yet persisted). 400 on an equality draft.",
+        "operationId": "getApplicationDraftAnalysis",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SalaryAnalysisResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/reports/{providerId}/draft/roles": {
+      "get": {
+        "description": "Lists the employee roles defined on a draft (by title).",
+        "operationId": "listApplicationDraftRoles",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDraftRolesResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/reports/{providerId}/draft/employees": {
+      "get": {
+        "description": "Paginated list of the draft's employees, ordered by ordinal. Scores are NULL until the report is submitted.",
+        "operationId": "listApplicationDraftEmployees",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": { "default": 1, "example": 1, "type": "number" }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": { "default": 10, "example": 10, "type": "number" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDraftEmployeesResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/reports/{providerId}/draft/criteria": {
+      "get": {
+        "description": "Lists the top-level criteria of a draft. Sub-criteria and steps are fetched via their own endpoints.",
+        "operationId": "listApplicationDraftCriteria",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDraftCriteriaResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/reports/{providerId}/draft/criteria/{criterionId}/sub-criteria": {
+      "get": {
+        "description": "Lists the sub-criteria of one criterion on a draft.",
+        "operationId": "listApplicationDraftSubCriteria",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "criterionId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDraftSubCriteriaResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/reports/{providerId}/draft/sub-criteria/{subCriterionId}/steps": {
+      "get": {
+        "description": "Lists the scoring steps of one sub-criterion on a draft.",
+        "operationId": "listApplicationDraftSteps",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "subCriterionId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDraftStepsResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/reports/{providerId}/draft/roles/{roleId}/steps": {
+      "get": {
+        "description": "Lists the step ids assigned to a role on a draft.",
+        "operationId": "getApplicationDraftRoleSteps",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "roleId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DraftAssignmentDto" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/reports/{providerId}/draft/employees/{employeeId}/steps": {
+      "get": {
+        "description": "Lists the personal step ids assigned to an employee on a draft.",
+        "operationId": "getApplicationDraftEmployeeSteps",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "employeeId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DraftAssignmentDto" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/reports/{providerId}/draft/outlier-groups": {
+      "get": {
+        "description": "Lists the outlier groups on a draft, each with the ids of its member employees.",
+        "operationId": "listApplicationDraftOutlierGroups",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDraftOutlierGroupsResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/reports/{providerId}/draft/employees/{employeeId}/outlier-group": {
+      "get": {
+        "description": "Returns the employee's current outlier-group membership (groupId null if unassigned).",
+        "operationId": "getApplicationDraftEmployeeOutlierGroup",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "employeeId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployeeOutlierGroupDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
     }
   },
   "info": {
     "title": "Directorate of Equality — Application API",
-    "description": "Public-facing API for equality report submissions through island.is. Covers company information lookup, Excel template download, workbook import, salary analysis, and equality report submission. Consumed by the island.is application system on behalf of employers.",
+    "description": "Public-facing API for equality report submissions through island.is. Covers company information lookup, Excel template download, workbook import, salary analysis, the draft-report lifecycle (create → bulk sync → submit) that holds report content the application system cannot store itself, and equality report submission. Consumed by the island.is application system on behalf of employers.",
     "version": "1.0",
     "contact": {}
   },
@@ -1387,6 +2663,65 @@
           "details": { "type": "array", "items": { "type": "string" } }
         },
         "required": ["statusCode", "timestamp"]
+      },
+      "SubCriterionCatalogEntryDto": {
+        "type": "object",
+        "properties": {
+          "criterionType": {
+            "type": "string",
+            "enum": [
+              "RESPONSIBILITY",
+              "STRAIN",
+              "CONDITION",
+              "COMPETENCE",
+              "PERSONAL"
+            ],
+            "description": "Top-level criterion this sub-criterion belongs under. The four job-based types are Jafnréttisstofa-controlled; `PERSONAL` covers the employer-authored ones."
+          },
+          "parentTitle": {
+            "type": "string",
+            "description": "Icelandic Yfirviðmið label as written in the workbook, e.g. `Hæfni` or `Einstaklingsbundinn þáttur`. Several distinct labels map to `PERSONAL`, so this is what to group by for display."
+          },
+          "title": { "type": "string" },
+          "description": {
+            "type": "string",
+            "description": "Skilgreining — what the sub-criterion measures."
+          },
+          "numSteps": {
+            "type": "number",
+            "description": "Fjöldi þrepa. Null on entries whose step scale the employer defines — those ship with step 1 only.",
+            "nullable": true
+          },
+          "steps": {
+            "description": "Step (þrep) descriptions, ordered from step 1.",
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "required": [
+          "criterionType",
+          "parentTitle",
+          "title",
+          "description",
+          "steps"
+        ]
+      },
+      "GetSubCriterionCatalogResponseDto": {
+        "type": "object",
+        "properties": {
+          "entries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SubCriterionCatalogEntryDto"
+            }
+          },
+          "generalScale": {
+            "description": "Generic step wording (`Almennur þrepakvarði`) suggested for sub-criteria with no step descriptions of their own, indexed from step 1. Each entry lists interchangeable phrasings for that step.",
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "required": ["entries", "generalScale"]
       },
       "PresignUploadResponseDto": {
         "type": "object",
@@ -1776,7 +3111,6 @@
             "format": "uuid",
             "description": "FK to the approved EQUALITY report this salary was audited against."
           },
-          "identifier": { "type": "string" },
           "importedFromExcel": { "type": "boolean" },
           "providerId": { "type": "string" },
           "companyAdminName": { "type": "string" },
@@ -1829,7 +3163,6 @@
         },
         "required": [
           "equalityReportId",
-          "identifier",
           "importedFromExcel",
           "providerId",
           "companyAdminName",
@@ -1860,7 +3193,6 @@
       "SubmitEqualityReportDto": {
         "type": "object",
         "properties": {
-          "identifier": { "type": "string" },
           "providerId": { "type": "string" },
           "companyAdminName": { "type": "string" },
           "companyAdminTitle": {
@@ -1892,7 +3224,6 @@
           }
         },
         "required": [
-          "identifier",
           "providerId",
           "companyAdminName",
           "companyAdminEmail",
@@ -2400,6 +3731,593 @@
           }
         },
         "required": ["groups"]
+      },
+      "CreateDraftCompanyDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Legal name of the authenticated company. Only a fallback: the name is normally read from the national registry, and this is what it is used instead when the registry has no entry for the kennitala. Never overwrites an already-known company's name."
+          }
+        }
+      },
+      "CreateDraftReportDto": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "enum": ["SALARY", "EQUALITY"] },
+          "providerId": {
+            "type": "string",
+            "description": "Upstream island.is application UUID, stored as the report provider_id."
+          },
+          "company": { "$ref": "#/components/schemas/CreateDraftCompanyDto" }
+        },
+        "required": ["type", "providerId"]
+      },
+      "DraftCountsDto": {
+        "type": "object",
+        "properties": {
+          "employees": { "type": "number" },
+          "criteria": { "type": "number" },
+          "outlierGroups": { "type": "number" }
+        },
+        "required": ["employees", "criteria", "outlierGroups"]
+      },
+      "DraftDetailDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "type": {
+            "allOf": [{ "$ref": "#/components/schemas/ReportTypeEnum" }]
+          },
+          "status": {
+            "allOf": [{ "$ref": "#/components/schemas/ReportStatusEnum" }]
+          },
+          "identifier": {
+            "type": "string",
+            "nullable": true,
+            "description": "Short pseudonymous handle (`KTPQZW`) used to refer to the report without quoting the company's kennitala. Always null while the report is a DRAFT — the server mints it at submit."
+          },
+          "companyAdminName": { "type": "string", "nullable": true },
+          "companyAdminTitle": {
+            "type": "string",
+            "nullable": true,
+            "description": "Job title (starfsheiti) of the company executive."
+          },
+          "companyAdminEmail": { "type": "string", "nullable": true },
+          "companyAdminGender": {
+            "nullable": true,
+            "allOf": [{ "$ref": "#/components/schemas/GenderEnum" }]
+          },
+          "contactName": { "type": "string", "nullable": true },
+          "contactEmail": { "type": "string", "nullable": true },
+          "contactPhone": { "type": "string", "nullable": true },
+          "averageEmployeeMaleCount": { "type": "number", "nullable": true },
+          "averageEmployeeFemaleCount": { "type": "number", "nullable": true },
+          "averageEmployeeNeutralCount": { "type": "number", "nullable": true },
+          "salaryDataBasis": {
+            "nullable": true,
+            "description": "Salary-only. Whether the salary data describes one specific payroll month (`MONTH`) or a twelve-month average (`AVERAGE`). Null until the applicant declares it; required to submit a salary report.",
+            "allOf": [{ "$ref": "#/components/schemas/SalaryDataBasisEnum" }]
+          },
+          "salaryDataPeriod": {
+            "type": "string",
+            "nullable": true,
+            "description": "The payroll month the salary data is based on (`YYYY-MM-01`). Set when `salaryDataBasis` is `MONTH`, always null for `AVERAGE`."
+          },
+          "equalityReportContent": { "type": "string", "nullable": true },
+          "counts": { "$ref": "#/components/schemas/DraftCountsDto" },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z",
+            "nullable": true
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z",
+            "nullable": true
+          }
+        },
+        "required": ["id", "type", "status", "counts"]
+      },
+      "UpdateDraftDto": {
+        "type": "object",
+        "properties": {
+          "companyAdminName": { "type": "string", "nullable": true },
+          "companyAdminTitle": {
+            "type": "string",
+            "nullable": true,
+            "description": "Job title (starfsheiti) of the company executive."
+          },
+          "companyAdminEmail": { "type": "string", "nullable": true },
+          "companyAdminGender": {
+            "nullable": true,
+            "allOf": [{ "$ref": "#/components/schemas/GenderEnum" }]
+          },
+          "contactName": { "type": "string", "nullable": true },
+          "contactEmail": { "type": "string", "nullable": true },
+          "contactPhone": { "type": "string", "nullable": true },
+          "averageEmployeeMaleCount": { "type": "number", "nullable": true },
+          "averageEmployeeFemaleCount": { "type": "number", "nullable": true },
+          "averageEmployeeNeutralCount": { "type": "number", "nullable": true },
+          "salaryDataBasis": {
+            "nullable": true,
+            "description": "Salary-only. Whether the salary data describes one specific payroll month (`MONTH`) or a twelve-month average (`AVERAGE`). Setting `AVERAGE` clears `salaryDataPeriod`, and so does clearing the basis itself. Required to submit a salary report.",
+            "allOf": [{ "$ref": "#/components/schemas/SalaryDataBasisEnum" }]
+          },
+          "salaryDataPeriod": {
+            "type": "string",
+            "nullable": true,
+            "description": "The payroll month the salary data is based on, as an ISO date (`YYYY-MM-DD`; any day within the month is accepted and normalised to the 1st). Must name a month that has already happened, no earlier than 36 months ago. Required alongside `salaryDataBasis: MONTH` by submit time; ignored while the stored basis is `AVERAGE`."
+          },
+          "equalityReportContent": {
+            "type": "string",
+            "description": "Narrative gender-equality plan as base64-encoded HTML. Decoded server-side and persisted as `report.equality_report_content`.",
+            "nullable": true
+          }
+        }
+      },
+      "SubmitDraftDto": {
+        "type": "object",
+        "properties": {
+          "company": { "$ref": "#/components/schemas/SubmitReportCompanyDto" },
+          "subsidiaries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SubmitReportSubsidiaryDto"
+            }
+          },
+          "equalityReportId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Required for SALARY reports: the APPROVED equality report this salary submission is audited against."
+          }
+        },
+        "required": ["company"]
+      },
+      "SyncMethodEnum": {
+        "type": "string",
+        "enum": ["CREATE", "UPDATE", "REMOVE"]
+      },
+      "ReportCriterionTypeEnum": {
+        "type": "string",
+        "enum": [
+          "RESPONSIBILITY",
+          "STRAIN",
+          "CONDITION",
+          "COMPETENCE",
+          "PERSONAL"
+        ]
+      },
+      "CriterionChangeDataDto": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string", "minLength": 1 },
+          "weight": {
+            "type": "number",
+            "description": "Relative weight of this criterion."
+          },
+          "description": { "type": "string" },
+          "type": {
+            "allOf": [
+              { "$ref": "#/components/schemas/ReportCriterionTypeEnum" }
+            ]
+          }
+        }
+      },
+      "ChangeCriterionDto": {
+        "type": "object",
+        "properties": {
+          "method": {
+            "allOf": [{ "$ref": "#/components/schemas/SyncMethodEnum" }]
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Client-minted UUID of the criterion."
+          },
+          "data": { "$ref": "#/components/schemas/CriterionChangeDataDto" }
+        },
+        "required": ["method"]
+      },
+      "SubCriterionChangeDataDto": {
+        "type": "object",
+        "properties": {
+          "criterionId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Id of the parent criterion on the same draft (CREATE)."
+          },
+          "title": { "type": "string", "minLength": 1 },
+          "description": { "type": "string" },
+          "weight": {
+            "type": "number",
+            "description": "Relative weight of this sub-criterion."
+          }
+        }
+      },
+      "ChangeSubCriterionDto": {
+        "type": "object",
+        "properties": {
+          "method": {
+            "allOf": [{ "$ref": "#/components/schemas/SyncMethodEnum" }]
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Client-minted UUID of the sub-criterion."
+          },
+          "data": { "$ref": "#/components/schemas/SubCriterionChangeDataDto" }
+        },
+        "required": ["method"]
+      },
+      "StepChangeDataDto": {
+        "type": "object",
+        "properties": {
+          "subCriterionId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Id of the parent sub-criterion on the same draft (CREATE)."
+          },
+          "order": {
+            "type": "number",
+            "description": "Ordering position of the step within its sub-criterion."
+          },
+          "description": { "type": "string" },
+          "score": {
+            "type": "number",
+            "description": "Score awarded when this step applies."
+          }
+        }
+      },
+      "ChangeStepDto": {
+        "type": "object",
+        "properties": {
+          "method": {
+            "allOf": [{ "$ref": "#/components/schemas/SyncMethodEnum" }]
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Client-minted UUID of the step."
+          },
+          "data": { "$ref": "#/components/schemas/StepChangeDataDto" }
+        },
+        "required": ["method"]
+      },
+      "RoleChangeDataDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Role/job title.",
+            "minLength": 1
+          },
+          "stepIds": {
+            "description": "Full set of step ids assigned to this role (replace-all). Every id must be a step on the same draft.",
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      },
+      "ChangeRoleDto": {
+        "type": "object",
+        "properties": {
+          "method": {
+            "allOf": [{ "$ref": "#/components/schemas/SyncMethodEnum" }]
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Client-minted UUID of the role."
+          },
+          "data": { "$ref": "#/components/schemas/RoleChangeDataDto" }
+        },
+        "required": ["method"]
+      },
+      "EmployeeChangeDataDto": {
+        "type": "object",
+        "properties": {
+          "reportEmployeeRoleId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Id of a role on the same draft."
+          },
+          "gender": {
+            "allOf": [{ "$ref": "#/components/schemas/GenderEnum" }]
+          },
+          "field": { "type": "string", "nullable": true },
+          "department": { "type": "string", "nullable": true },
+          "startDate": {
+            "type": "string",
+            "description": "Employment start date (YYYY-MM-DD)."
+          },
+          "workRatio": { "type": "number" },
+          "baseSalary": { "type": "number" },
+          "additionalFixedOvertime": { "type": "number", "nullable": true },
+          "additionalFixedCarAllowance": { "type": "number", "nullable": true },
+          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
+          "bonusOccasionalOvertime": { "type": "number", "nullable": true },
+          "bonusPayments": { "type": "number", "nullable": true },
+          "bonusOther": { "type": "number", "nullable": true },
+          "stepIds": {
+            "description": "Full set of personal step ids assigned to this employee (replace-all). Every id must be a step on the same draft.",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "outlierGroupId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "Outlier-group membership (null clears). Applied after detection; the employee must be a currently-detected outlier."
+          }
+        }
+      },
+      "ChangeEmployeeDto": {
+        "type": "object",
+        "properties": {
+          "method": {
+            "allOf": [{ "$ref": "#/components/schemas/SyncMethodEnum" }]
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Client-minted UUID of the employee."
+          },
+          "data": { "$ref": "#/components/schemas/EmployeeChangeDataDto" }
+        },
+        "required": ["method"]
+      },
+      "OutlierGroupChangeDataDto": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "reason": { "type": "string", "nullable": true },
+          "action": { "type": "string", "nullable": true },
+          "signatureName": { "type": "string", "nullable": true },
+          "signatureRole": { "type": "string", "nullable": true }
+        }
+      },
+      "ChangeOutlierGroupDto": {
+        "type": "object",
+        "properties": {
+          "method": {
+            "allOf": [{ "$ref": "#/components/schemas/SyncMethodEnum" }]
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Client-minted UUID of the outlier group."
+          },
+          "data": { "$ref": "#/components/schemas/OutlierGroupChangeDataDto" }
+        },
+        "required": ["method"]
+      },
+      "SyncDraftDto": {
+        "type": "object",
+        "properties": {
+          "criteria": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ChangeCriterionDto" }
+          },
+          "subCriteria": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ChangeSubCriterionDto" }
+          },
+          "steps": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ChangeStepDto" }
+          },
+          "roles": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ChangeRoleDto" }
+          },
+          "employees": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ChangeEmployeeDto" }
+          },
+          "outlierGroups": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ChangeOutlierGroupDto" }
+          }
+        }
+      },
+      "ReportEmployeeRoleDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string" },
+          "reportId": { "type": "string", "format": "uuid" }
+        },
+        "required": ["id", "title", "reportId"]
+      },
+      "GetDraftRolesResponseDto": {
+        "type": "object",
+        "properties": {
+          "roles": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ReportEmployeeRoleDto" }
+          }
+        },
+        "required": ["roles"]
+      },
+      "ReportEmployeeDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "ordinal": { "type": "number" },
+          "field": { "type": "string", "nullable": true },
+          "department": { "type": "string", "nullable": true },
+          "startDate": { "type": "string" },
+          "workRatio": { "type": "number" },
+          "baseSalary": { "type": "number" },
+          "additionalFixedOvertime": { "type": "number", "nullable": true },
+          "additionalFixedCarAllowance": { "type": "number", "nullable": true },
+          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
+          "bonusOccasionalOvertime": { "type": "number", "nullable": true },
+          "bonusPayments": { "type": "number", "nullable": true },
+          "bonusOther": { "type": "number", "nullable": true },
+          "additionalSalary": { "type": "number" },
+          "bonusSalary": { "type": "number" },
+          "gender": {
+            "allOf": [{ "$ref": "#/components/schemas/GenderEnum" }]
+          },
+          "reportEmployeeRoleId": { "type": "string", "format": "uuid" },
+          "reportId": { "type": "string", "format": "uuid" },
+          "score": { "type": "number", "nullable": true }
+        },
+        "required": [
+          "id",
+          "ordinal",
+          "startDate",
+          "workRatio",
+          "baseSalary",
+          "additionalSalary",
+          "bonusSalary",
+          "gender",
+          "reportEmployeeRoleId",
+          "reportId"
+        ]
+      },
+      "GetDraftEmployeesResponseDto": {
+        "type": "object",
+        "properties": {
+          "employees": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ReportEmployeeDto" }
+          },
+          "paging": { "$ref": "#/components/schemas/Paging" }
+        },
+        "required": ["employees", "paging"]
+      },
+      "ReportCriterionDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string" },
+          "weight": { "type": "number" },
+          "description": { "type": "string" },
+          "type": {
+            "allOf": [
+              { "$ref": "#/components/schemas/ReportCriterionTypeEnum" }
+            ]
+          },
+          "reportId": { "type": "string", "format": "uuid" }
+        },
+        "required": ["id", "title", "weight", "description", "type", "reportId"]
+      },
+      "GetDraftCriteriaResponseDto": {
+        "type": "object",
+        "properties": {
+          "criteria": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ReportCriterionDto" }
+          }
+        },
+        "required": ["criteria"]
+      },
+      "ReportSubCriterionDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "weight": { "type": "number" },
+          "reportCriterionId": { "type": "string", "format": "uuid" }
+        },
+        "required": [
+          "id",
+          "title",
+          "description",
+          "weight",
+          "reportCriterionId"
+        ]
+      },
+      "GetDraftSubCriteriaResponseDto": {
+        "type": "object",
+        "properties": {
+          "subCriteria": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ReportSubCriterionDto" }
+          }
+        },
+        "required": ["subCriteria"]
+      },
+      "ReportSubCriterionStepDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "order": { "type": "number" },
+          "description": { "type": "string" },
+          "reportSubCriterionId": { "type": "string", "format": "uuid" },
+          "score": { "type": "number" }
+        },
+        "required": [
+          "id",
+          "order",
+          "description",
+          "reportSubCriterionId",
+          "score"
+        ]
+      },
+      "GetDraftStepsResponseDto": {
+        "type": "object",
+        "properties": {
+          "steps": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportSubCriterionStepDto"
+            }
+          }
+        },
+        "required": ["steps"]
+      },
+      "DraftAssignmentDto": {
+        "type": "object",
+        "properties": {
+          "stepIds": {
+            "description": "Assigned step ids.",
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "required": ["stepIds"]
+      },
+      "DraftOutlierGroupDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "reportId": { "type": "string", "format": "uuid" },
+          "name": { "type": "string" },
+          "reason": { "type": "string", "nullable": true },
+          "action": { "type": "string", "nullable": true },
+          "signatureName": { "type": "string", "nullable": true },
+          "signatureRole": { "type": "string", "nullable": true },
+          "memberEmployeeIds": {
+            "description": "Ids of the employees in this group.",
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "required": ["id", "reportId", "name", "memberEmployeeIds"]
+      },
+      "GetDraftOutlierGroupsResponseDto": {
+        "type": "object",
+        "properties": {
+          "groups": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/DraftOutlierGroupDto" }
+          }
+        },
+        "required": ["groups"]
+      },
+      "EmployeeOutlierGroupDto": {
+        "type": "object",
+        "properties": {
+          "groupId": { "type": "string", "format": "uuid", "nullable": true }
+        }
       }
     }
   }

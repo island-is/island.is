@@ -247,6 +247,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       appealRulingDecision
       appealConclusion
       appealRulingModifiedHistory
+      rulingFileId
     }
     rulingOrderAppealCases {
       id
