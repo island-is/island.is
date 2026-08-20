@@ -5,7 +5,10 @@ import { useLocale } from '@island.is/localization'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { messages } from '../../lib/messages'
-import { DRAFT_EMPLOYEES_PAGE_SIZE, SyncMethodEnum } from '../../utils/constants'
+import {
+  DRAFT_EMPLOYEES_PAGE_SIZE,
+  SyncMethodEnum,
+} from '../../utils/constants'
 import type {
   DisplayAssignment,
   DraftCriterionWithSubCriteriaDto,
@@ -14,7 +17,10 @@ import type {
 import { useDraftQuery } from '../../utils/useDraftQuery'
 import { useDraftEmployeesQuery } from '../../utils/useDraftEmployeesQuery'
 import { useDraftSync } from '../../utils/useDraftSync'
-import { DraftErrorState, DraftLoadingState } from '../../components/DraftScreenState'
+import {
+  DraftErrorState,
+  DraftLoadingState,
+} from '../../components/DraftScreenState'
 import { formatEmployeeIdentifier } from '../../utils/employeeIdentifier'
 import {
   buildDisplayAssignments,
@@ -141,7 +147,9 @@ export const EmployeeClassificationEditor: FC<
         employees: values.map((entry) => ({
           method: SyncMethodEnum.UPDATE,
           id: entry.employeeId,
-          data: { stepIds: resolveStepIds(personalCriteria, entry.assignments) },
+          data: {
+            stepIds: resolveStepIds(personalCriteria, entry.assignments),
+          },
         })),
       })
       return true

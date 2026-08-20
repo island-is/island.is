@@ -392,10 +392,7 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
       application.id,
       'Failed to list draft roles',
       () =>
-        this.directorateOfEqualityService.listDraftRoles(
-          auth,
-          application.id,
-        ),
+        this.directorateOfEqualityService.listDraftRoles(auth, application.id),
     )
   }
 
@@ -414,12 +411,13 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
         const employees = []
         let page = 1
         for (;;) {
-          const res = await this.directorateOfEqualityService.listDraftEmployees(
-            auth,
-            providerId,
-            page,
-            DRAFT_EMPLOYEE_PAGE_SIZE,
-          )
+          const res =
+            await this.directorateOfEqualityService.listDraftEmployees(
+              auth,
+              providerId,
+              page,
+              DRAFT_EMPLOYEE_PAGE_SIZE,
+            )
           employees.push(...res.employees)
           if (res.employees.length === 0 || !res.paging.hasNextPage) {
             break
@@ -502,30 +500,24 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
       application.id,
       'Failed to submit salary report',
       async () => {
-        await this.directorateOfEqualityService.updateDraft(
-          auth,
-          providerId,
-          {
-            companyAdminName: answers.chiefExecutive?.name ?? '',
-            companyAdminTitle: answers.chiefExecutive?.jobTitle ?? '',
-            companyAdminEmail: answers.chiefExecutive?.email ?? '',
-            companyAdminGender: mapGender(answers.chiefExecutive?.gender),
-            contactName: answers.contactPerson?.name ?? '',
-            contactEmail: answers.contactPerson?.email ?? '',
-            contactPhone: answers.contactPerson?.phone ?? '',
-            averageEmployeeMaleCount: toNumberOrZero(
-              answers.employeeCount?.men,
-            ),
-            averageEmployeeFemaleCount: toNumberOrZero(
-              answers.employeeCount?.women,
-            ),
-            averageEmployeeNeutralCount: toNumberOrZero(
-              answers.employeeCount?.nonBinary,
-            ),
-            salaryDataBasis,
-            salaryDataPeriod,
-          },
-        )
+        await this.directorateOfEqualityService.updateDraft(auth, providerId, {
+          companyAdminName: answers.chiefExecutive?.name ?? '',
+          companyAdminTitle: answers.chiefExecutive?.jobTitle ?? '',
+          companyAdminEmail: answers.chiefExecutive?.email ?? '',
+          companyAdminGender: mapGender(answers.chiefExecutive?.gender),
+          contactName: answers.contactPerson?.name ?? '',
+          contactEmail: answers.contactPerson?.email ?? '',
+          contactPhone: answers.contactPerson?.phone ?? '',
+          averageEmployeeMaleCount: toNumberOrZero(answers.employeeCount?.men),
+          averageEmployeeFemaleCount: toNumberOrZero(
+            answers.employeeCount?.women,
+          ),
+          averageEmployeeNeutralCount: toNumberOrZero(
+            answers.employeeCount?.nonBinary,
+          ),
+          salaryDataBasis,
+          salaryDataPeriod,
+        })
 
         return await this.directorateOfEqualityService.submitDraft(
           auth,

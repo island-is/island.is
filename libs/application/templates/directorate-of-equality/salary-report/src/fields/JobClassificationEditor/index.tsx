@@ -14,7 +14,10 @@ import type {
 import { useDraftQuery } from '../../utils/useDraftQuery'
 import { useDraftSync } from '../../utils/useDraftSync'
 import { useSeedOnce } from '../../utils/useSeedOnce'
-import { DraftErrorState, DraftLoadingState } from '../../components/DraftScreenState'
+import {
+  DraftErrorState,
+  DraftLoadingState,
+} from '../../components/DraftScreenState'
 import { RolePanel } from './RolePanel'
 import {
   buildDisplayAssignments,

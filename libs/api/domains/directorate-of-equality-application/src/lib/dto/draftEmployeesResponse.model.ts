@@ -1,6 +1,9 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 
-import { DraftEmployeeModel, DraftEmployeeWithStepsModel } from './draftEmployee.model'
+import {
+  DraftEmployeeModel,
+  DraftEmployeeWithStepsModel,
+} from './draftEmployee.model'
 
 @ObjectType('DirectorateOfEqualityPaging')
 export class PagingModel {

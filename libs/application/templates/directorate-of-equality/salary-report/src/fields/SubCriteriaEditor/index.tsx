@@ -15,7 +15,10 @@ import { useDraftSync } from '../../utils/useDraftSync'
 import { useSeedOnce } from '../../utils/useSeedOnce'
 import { buildUpsertRemoveCommands } from '../../utils/syncCommands'
 import { getPathValue } from '../../utils/answerHelpers'
-import { DraftErrorState, DraftLoadingState } from '../../components/DraftScreenState'
+import {
+  DraftErrorState,
+  DraftLoadingState,
+} from '../../components/DraftScreenState'
 import { CriterionPanel } from './CriterionPanel'
 
 // Fixed 1000-point scale (weights sum to 100); mirrors JobClassificationEditor/utils.ts and DMR's own scoring.
