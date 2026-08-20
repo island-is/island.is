@@ -414,7 +414,7 @@ export class ApplicationsService {
         )
       }
       zendeskInstance = organization.zendeskInstance ?? ''
-      zendeskBrandId = organization.zendeskBrandId ?? ''
+      zendeskBrandId = form.zendeskBrandId ?? ''
     }
 
     const success = await this.serviceManager.send(
@@ -1319,12 +1319,11 @@ export class ApplicationsService {
         )
       }
 
-      const organizationInstance = await this.getOrganizationZendeskInfo(
-        orgNationalId,
-      )
+      const organizationInstance = await this.getOrganizationZendeskInfo(form)
 
       dataFromUrlRequestDto.zendeskInstance =
         organizationInstance.zendeskInstance
+      dataFromUrlRequestDto.zendeskBrandId = organizationInstance.zendeskBrandId
 
       response = await this.serviceManager.getListFromZendesk(
         fieldSettings,
@@ -1470,20 +1469,20 @@ export class ApplicationsService {
   }
 
   private async getOrganizationZendeskInfo(
-    organizationNationalId: string,
+    form: Form,
   ): Promise<{ zendeskInstance: string; zendeskBrandId: string }> {
     const organization = await this.organizationModel.findOne({
-      where: { nationalId: organizationNationalId },
+      where: { nationalId: form.organizationNationalId },
     })
 
     if (!organization) {
       throw new NotFoundException(
-        `Organization with nationalId '${organizationNationalId}' not found`,
+        `Organization with nationalId '${form.organizationNationalId}' not found`,
       )
     }
 
     const zendeskInstance = organization.zendeskInstance ?? ''
-    const zendeskBrandId = organization.zendeskBrandId ?? ''
+    const zendeskBrandId = form.zendeskBrandId ?? ''
     return { zendeskInstance, zendeskBrandId }
   }
 

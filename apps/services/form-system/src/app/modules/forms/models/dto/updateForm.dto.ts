@@ -58,6 +58,11 @@ export class UpdateFormDto {
   @ApiPropertyOptional()
   submissionServiceUrl?: string
 
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional()
+  zendeskBrandId?: string
+
   @IsBoolean()
   @IsOptional()
   @ApiPropertyOptional()

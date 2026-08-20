@@ -213,6 +213,24 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     }
   }
 
+  async getSubCriterionCatalog({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    try {
+      return await this.directorateOfEqualityService.getSubCriterionCatalog(
+        auth,
+      )
+    } catch (error) {
+      this.logger.error('Failed to get sub-criterion catalog, falling back', {
+        applicationId: application.id,
+        context: LOGGING_CONTEXT,
+        ...this.extractFetchErrorDetails(error),
+      })
+      return { entries: [], generalScale: [] }
+    }
+  }
+
   async getActiveEqualityReport({
     auth,
     application,
