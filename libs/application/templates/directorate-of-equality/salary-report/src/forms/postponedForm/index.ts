@@ -13,6 +13,7 @@ import { postponedIntroSection } from './postponedIntroSection'
 import { postponedReportSummarySection } from './postponedReportSummarySection'
 import { messages } from '../../lib/messages'
 import { buildCommentThreadSection } from '../commentThreadSection'
+import { buildDebugEventsSection } from '../debugEventsSection'
 
 export const postponedForm = buildForm({
   id: 'postponedForm',
@@ -98,5 +99,6 @@ export const postponedForm = buildForm({
         }),
       ],
     }),
+    buildDebugEventsSection(),
   ],
 })

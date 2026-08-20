@@ -4,6 +4,7 @@ import { FormModes } from '@island.is/application/types'
 import { DirectorateOfEqualityLogo } from '@island.is/application/assets/institution-logos'
 import { messages } from '../../lib/messages'
 import { buildCommentThreadSection } from '../commentThreadSection'
+import { buildDebugEventsSection } from '../debugEventsSection'
 
 export const deniedForm = buildForm({
   id: 'deniedForm',
@@ -18,5 +19,6 @@ export const deniedForm = buildForm({
       alertType: 'error',
     }),
     buildCommentThreadSection(),
+    buildDebugEventsSection(),
   ],
 })

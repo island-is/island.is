@@ -6,6 +6,7 @@ import { equalityReportSection } from './equalityReportSection'
 import { overviewSection } from './overview'
 import { messages } from '../../lib/messages'
 import { buildCommentThreadSection } from '../commentThreadSection'
+import { buildDebugEventsSection } from '../debugEventsSection'
 
 export const MainForm = buildForm({
   id: 'MainForm',
@@ -19,5 +20,6 @@ export const MainForm = buildForm({
     equalityReportSection,
     overviewSection,
     buildCommentThreadSection(),
+    buildDebugEventsSection(),
   ],
 })

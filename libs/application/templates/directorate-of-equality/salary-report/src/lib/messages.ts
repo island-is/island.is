@@ -1062,6 +1062,10 @@ export const messages = {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.groupHeading',
         defaultMessage: 'Frávikahópur',
       },
+      defaultGroupName: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.defaultGroupName',
+        defaultMessage: 'Sjálfgefinn hópur {index}',
+      },
       groupMembers: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.groupMembers',
         defaultMessage: 'Starfsmenn í hóp',

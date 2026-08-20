@@ -7,6 +7,7 @@ import {
 import { GuitarAndWheelchair } from '@island.is/application/assets/graphics'
 import { DirectorateOfEqualityLogo } from '@island.is/application/assets/institution-logos'
 import { messages } from '../../lib/messages'
+import { buildDebugEventsSection } from '../debugEventsSection'
 
 export const NotAllowedForm = buildForm({
   id: 'NotAllowedForm',
@@ -32,5 +33,6 @@ export const NotAllowedForm = buildForm({
         }),
       ],
     }),
+    buildDebugEventsSection(),
   ],
 })
