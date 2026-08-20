@@ -148,7 +148,9 @@ const formatCrimeScenePlace = (
   return address.trim()
 }
 
-const normalizeSubtypeMatchValue = (value?: string | null): string | undefined => {
+const normalizeSubtypeMatchValue = (
+  value?: string | null,
+): string | undefined => {
   const normalized = value?.trim().toLowerCase()
 
   return normalized ? normalized : undefined

@@ -119,7 +119,9 @@ export const createTestingPoliceModule = async () => {
   const indictmentCountService = policeModule.get<IndictmentCountService>(
     IndictmentCountService,
   )
-  const indictmentSubtypeModel = policeModule.get(getModelToken(IndictmentSubtype))
+  const indictmentSubtypeModel = policeModule.get(
+    getModelToken(IndictmentSubtype),
+  )
   const caseRepositoryService = policeModule.get<CaseRepositoryService>(
     CaseRepositoryService,
   )
