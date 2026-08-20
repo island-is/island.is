@@ -1,6 +1,12 @@
 import { gql } from '@apollo/client'
 import { FieldBaseProps } from '@island.is/application/types'
-import { AlertMessage, Box, Button, Stack, Table as T } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  Stack,
+  Table as T,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
 import { messages } from '../../lib/messages'
@@ -19,7 +25,10 @@ import {
 import { useDraftQuery } from '../../utils/useDraftQuery'
 import { useDraftEmployeesQuery } from '../../utils/useDraftEmployeesQuery'
 import { useDraftSync } from '../../utils/useDraftSync'
-import { DraftErrorState, DraftLoadingState } from '../../components/DraftScreenState'
+import {
+  DraftErrorState,
+  DraftLoadingState,
+} from '../../components/DraftScreenState'
 import { formatEmployeeIdentifier } from '../../utils/employeeIdentifier'
 import { EmployeeRow } from './EmployeeRow'
 import { EmployeeForm } from './EmployeeForm'

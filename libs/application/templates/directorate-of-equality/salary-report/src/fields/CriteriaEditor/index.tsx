@@ -18,7 +18,10 @@ import type {
 import { useDraftQuery } from '../../utils/useDraftQuery'
 import { useDraftSync } from '../../utils/useDraftSync'
 import { useSeedOnce } from '../../utils/useSeedOnce'
-import { DraftErrorState, DraftLoadingState } from '../../components/DraftScreenState'
+import {
+  DraftErrorState,
+  DraftLoadingState,
+} from '../../components/DraftScreenState'
 import { CriteriaItem } from './CriteriaItem'
 import { PersonalCriteriaList } from './PersonalCriteriaList'
 

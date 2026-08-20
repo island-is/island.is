@@ -11,7 +11,9 @@ export const buildUpsertRemoveCommands = (
   const finalIds = new Set(finalEntries.map((e) => e.id))
 
   const upsertCommands: SyncCommand[] = finalEntries.map((e) => ({
-    method: originalIds.has(e.id) ? SyncMethodEnum.UPDATE : SyncMethodEnum.CREATE,
+    method: originalIds.has(e.id)
+      ? SyncMethodEnum.UPDATE
+      : SyncMethodEnum.CREATE,
     id: e.id,
     data: e.data,
   }))
