@@ -71,7 +71,7 @@ export const createTestingPoliceModule = async () => {
       {
         provide: getModelToken(IndictmentSubtype),
         useValue: {
-          findAll: jest.fn(),
+          findAll: jest.fn().mockResolvedValue([]),
           findOne: jest.fn(),
         },
       },
