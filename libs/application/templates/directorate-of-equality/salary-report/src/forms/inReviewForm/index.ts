@@ -16,6 +16,6 @@ export const inReviewForm = buildForm({
       alertTitle: messages.inReview.alertTitle,
       alertMessage: messages.inReview.alertDescription,
     }),
-    buildCommentThreadSection({ alwaysShow: true }),
+    buildCommentThreadSection({ alwaysVisible: true }),
   ],
 })

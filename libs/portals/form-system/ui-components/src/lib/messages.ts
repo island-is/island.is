@@ -1324,6 +1324,13 @@ export const m = defineMessages({
     description:
       'The form cannot be published. All name fields with Icelandic text require an English translation.',
   },
+  zendeskSettingsNeededError: {
+    id: 'form.system:zendesk-settings-needed-error',
+    defaultMessage:
+      'Ekki er hægt að gefa út formið. Zendesk brand ID og Zendesk instance þurfa að vera skilgreind.',
+    description:
+      'The form cannot be published. Zendesk brand ID and Zendesk instance must be configured.',
+  },
   copyFieldHover: {
     id: 'form.system:copy-field-hover',
     defaultMessage: 'Afrita innslátt',

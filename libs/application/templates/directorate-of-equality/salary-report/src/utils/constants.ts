@@ -24,16 +24,19 @@ export enum States {
   DENIED = 'denied',
   POSTPONED = 'postponed',
   NOT_ALLOWED = 'notAllowed',
+  DRAFT_RETRY = 'draftRetry',
 }
 
 export enum Roles {
   APPLICANT = 'applicant',
   NOT_ALLOWED = 'notAllowed',
+  ASSIGNEE = 'assignee',
 }
 
 export enum ApiActions {
   getCompanyData = 'getCompanyData',
   getDoeCompany = 'getDoeCompany',
+  getSubCriterionCatalog = 'getSubCriterionCatalog',
   getActiveEqualityReport = 'getActiveEqualityReport',
   getBlankExcelTemplate = 'getBlankExcelTemplate',
   presignImportUpload = 'presignImportUpload',
