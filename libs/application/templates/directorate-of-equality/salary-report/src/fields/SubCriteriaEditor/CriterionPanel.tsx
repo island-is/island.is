@@ -2,6 +2,7 @@ import { AccordionCard, Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
+import type { SubCriterionCatalogEntryDto } from '@island.is/clients/directorate-of-equality'
 import { createDefaultSubCriterion } from '../../utils/constants'
 import type { SubCriterion } from '../../utils/types'
 import { messages } from '../../lib/messages'
@@ -12,6 +13,7 @@ type Props = {
   accordionId: string
   criterionTitle: string
   criterionWeight: string
+  catalogEntries: SubCriterionCatalogEntryDto[]
   startExpanded?: boolean
 }
 
@@ -20,6 +22,7 @@ export const CriterionPanel: FC<Props> = ({
   accordionId,
   criterionTitle,
   criterionWeight,
+  catalogEntries,
   startExpanded = false,
 }) => {
   const { formatMessage } = useLocale()
@@ -59,6 +62,7 @@ export const CriterionPanel: FC<Props> = ({
             index={i}
             isLast={i === fields.length - 1}
             canRemove={fields.length > 1}
+            catalogEntries={catalogEntries}
             onRemove={() => remove(i)}
           />
         ))}

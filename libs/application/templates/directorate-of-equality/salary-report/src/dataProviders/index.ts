@@ -16,6 +16,13 @@ export const DoeCompanyApi = defineTemplateApi({
   namespace: 'DirectorateOfEquality',
 })
 
+export const SubCriterionCatalogApi = defineTemplateApi({
+  action: ApiActions.getSubCriterionCatalog,
+  externalDataId: 'subCriterionCatalog',
+  namespace: 'DirectorateOfEquality',
+  throwOnError: false,
+})
+
 export const ActiveEqualityReportApi = defineTemplateApi({
   action: ApiActions.getActiveEqualityReport,
   externalDataId: 'activeEqualityReport',

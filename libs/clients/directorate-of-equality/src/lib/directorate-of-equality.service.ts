@@ -19,6 +19,7 @@ import {
   getApplicationReportOutliers,
   importApplicationReportDraftWorkbook,
   getApplicationReportComments,
+  getApplicationSubCriterionCatalog,
   importApplicationSalaryReportWorkbook,
   listApplicationDraftCriteria,
   listApplicationDraftEmployees,
@@ -53,6 +54,7 @@ import type {
   GetDraftRolesWithStepsResponseDto,
   GetReportOutliersResponseDto,
   ImportKeyDto,
+  GetSubCriterionCatalogResponseDto,
   ParsedReportDto,
   PresignUploadResponseDto,
   SalaryAnalysisRequestDto,
@@ -238,6 +240,16 @@ export class DirectorateOfEqualityClientService {
       user,
       () => editApplicationOutliers({ path: { providerId }, body }),
       'Failed to edit outliers',
+    )
+  }
+
+  async getSubCriterionCatalog(
+    user: User,
+  ): Promise<GetSubCriterionCatalogResponseDto> {
+    return this.unwrap(
+      user,
+      () => getApplicationSubCriterionCatalog(),
+      'Failed to get sub-criterion catalog',
     )
   }
 

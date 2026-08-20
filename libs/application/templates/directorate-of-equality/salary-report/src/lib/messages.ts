@@ -645,6 +645,14 @@ export const messages = {
         id: 'doe.sr.application:report.subCriteria.criterionWeightLabel',
         defaultMessage: 'Vægi yfirviðmiðs: {weight}%',
       },
+      catalogLabel: {
+        id: 'doe.sr.application:report.subCriteria.catalogLabel',
+        defaultMessage: 'Nota sniðmát',
+      },
+      catalogPlaceholder: {
+        id: 'doe.sr.application:report.subCriteria.catalogPlaceholder',
+        defaultMessage: 'Veldu sniðmát úr listanum',
+      },
       nameLabel: {
         id: 'doe.sr.application:report.subCriteria.nameLabel',
         defaultMessage: 'Undirviðmið',

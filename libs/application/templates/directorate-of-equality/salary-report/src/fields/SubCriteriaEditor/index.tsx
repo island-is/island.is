@@ -9,10 +9,12 @@ import type {
   DraftCriterionWithSubCriteriaDto,
   SubCriterion,
 } from '../../utils/types'
+import type { SubCriterionCatalogEntryDto } from '@island.is/clients/directorate-of-equality'
 import { useDraftQuery } from '../../utils/useDraftQuery'
 import { useDraftSync } from '../../utils/useDraftSync'
 import { useSeedOnce } from '../../utils/useSeedOnce'
 import { buildUpsertRemoveCommands } from '../../utils/syncCommands'
+import { getPathValue } from '../../utils/answerHelpers'
 import { DraftErrorState, DraftLoadingState } from '../../components/DraftScreenState'
 import { CriterionPanel } from './CriterionPanel'
 
@@ -35,6 +37,14 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   )
   const { sync } = useDraftSync(application)
   const methods = useForm<SubCriteriaFormValues>({ defaultValues: {} })
+
+  // Catalog is reference data (Jafnréttisstofa's own list), not draft state —
+  // still fetched via externalData rather than the live draft query.
+  const catalogEntries = getPathValue<SubCriterionCatalogEntryDto[]>(
+    application.externalData,
+    'subCriterionCatalog.data.entries',
+    [],
+  )
 
   // Diffed against the final form value at Continue time: missing => REMOVE, unseen => CREATE.
   const originalSubCriterionIds = useRef<Set<string>>(new Set())
@@ -169,6 +179,9 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                   accordionId={`subCriteria-job-${criterion.id}`}
                   criterionTitle={criterion.title}
                   criterionWeight={String(criterion.weight)}
+                  catalogEntries={catalogEntries.filter(
+                    (e) => e.parentTitle === criterion.title,
+                  )}
                   startExpanded={i === 0}
                 />
               ))}
@@ -195,6 +208,9 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                     accordionId={`subCriteria-personal-${criterion.id}`}
                     criterionTitle={criterion.title}
                     criterionWeight={String(criterion.weight)}
+                    catalogEntries={catalogEntries.filter(
+                      (e) => e.parentTitle === criterion.title,
+                    )}
                     startExpanded={i === 0}
                   />
                 ))}

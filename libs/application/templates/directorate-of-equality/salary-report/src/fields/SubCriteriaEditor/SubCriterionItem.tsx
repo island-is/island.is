@@ -1,9 +1,17 @@
 import { InputController } from '@island.is/shared/form-fields'
-import { Box, Button, Divider, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Divider,
+  Select,
+  Text,
+  type Option,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
-import { useWatch } from 'react-hook-form'
+import { useFormContext, useWatch } from 'react-hook-form'
 import { messages } from '../../lib/messages'
+import type { SubCriterionCatalogEntryDto } from '@island.is/clients/directorate-of-equality'
 import type { SubCriterionStep } from '../../utils/types'
 import { useStepCountSync } from './useStepCountSync'
 
@@ -12,6 +20,7 @@ type Props = {
   index: number
   isLast: boolean
   canRemove: boolean
+  catalogEntries: SubCriterionCatalogEntryDto[]
   onRemove: () => void
 }
 
@@ -19,10 +28,34 @@ export const SubCriterionItem: FC<Props> = ({
   fieldName,
   isLast,
   canRemove,
+  catalogEntries,
   onRemove,
 }) => {
   const { formatMessage } = useLocale()
+  const { setValue } = useFormContext()
   const [stepsExpanded, setStepsExpanded] = useState(true)
+
+  const catalogOptions = catalogEntries.map((entry) => ({
+    label: entry.title,
+    value: entry.title,
+  }))
+
+  const applyCatalogEntry = (title: string | undefined) => {
+    const entry = catalogEntries.find((e) => e.title === title)
+    if (!entry) return
+    setValue(`${fieldName}.title`, entry.title)
+    setValue(`${fieldName}.description`, entry.description)
+    if (entry.steps.length > 0) {
+      setValue(`${fieldName}.stepCount`, String(entry.steps.length))
+      setValue(
+        `${fieldName}.steps`,
+        entry.steps.map((description) => ({
+          id: crypto.randomUUID(),
+          description,
+        })),
+      )
+    }
+  }
 
   useStepCountSync(fieldName)
   const steps: SubCriterionStep[] =
@@ -30,6 +63,25 @@ export const SubCriterionItem: FC<Props> = ({
 
   return (
     <Box>
+      {catalogOptions.length > 0 && (
+        <Box marginBottom={2}>
+          <Select
+            size="sm"
+            name={`${fieldName}.catalogPicker`}
+            label={formatMessage(messages.report.subCriteria.catalogLabel)}
+            placeholder={formatMessage(
+              messages.report.subCriteria.catalogPlaceholder,
+            )}
+            options={catalogOptions}
+            value={null}
+            backgroundColor="blue"
+            onChange={(option) =>
+              applyCatalogEntry((option as Option<string> | null)?.value)
+            }
+          />
+        </Box>
+      )}
+
       {/* Header row: name input + delete */}
       <Box display="flex" columnGap={2} alignItems="flexEnd" marginBottom={2}>
         <Box style={{ flex: 1 }}>
@@ -126,7 +178,7 @@ export const SubCriterionItem: FC<Props> = ({
       )}
 
       {!isLast && (
-        <Box marginTop={4}>
+        <Box paddingBottom={3}>
           <Divider />
         </Box>
       )}
