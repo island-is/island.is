@@ -119,6 +119,19 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
 
     if (!report || isNaN(nr)) return
 
+    const response = await apolloClient.query({
+      query: GET_SINGLE_SHIP,
+      variables: {
+        input: {
+          shipNumber: nr,
+        },
+      },
+    })
+
+    const ship = response?.data?.fiskistofaGetSingleShip?.fiskistofaSingleShip
+
+    if (!ship?.name) return
+
     const page = await report.getActivePage()
 
     const slicers = await page.getSlicers()
@@ -138,18 +151,6 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
       )
         continue
 
-      const response = await apolloClient.query({
-        query: GET_SINGLE_SHIP,
-        variables: {
-          input: {
-            shipNumber: nr,
-          },
-        },
-      })
-
-      const ship = response?.data?.fiskistofaGetSingleShip?.fiskistofaSingleShip
-
-      if (!ship?.name) return
       slicer.setSlicerState({
         ...slicerState,
         filters: [
