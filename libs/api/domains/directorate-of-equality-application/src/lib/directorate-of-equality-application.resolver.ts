@@ -10,6 +10,11 @@ import {
 } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
+import {
+  FeatureFlag,
+  FeatureFlagGuard,
+  Features,
+} from '@island.is/nest/feature-flags'
 
 import { DraftEmployeesInput } from './dto/draftEmployees.input'
 import {
@@ -23,7 +28,8 @@ import { DirectorateOfEqualityApplicationService } from './directorate-of-equali
 // carry a live page number — neither has a channel through defineTemplateApi
 // providers (those only take a static actionId), hence a resolver of their own.
 @Scopes(ApiScope.directorateOfEquality)
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
+@FeatureFlag(Features.isDirectorateOfEqualityApplicationsEnabled)
 @Resolver()
 @Audit({ namespace: '@island.is/api/directorate-of-equality-application' })
 export class DirectorateOfEqualityApplicationResolver {
