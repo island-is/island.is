@@ -24,7 +24,6 @@ import { FiskistofaShipBasicInfoResponse } from './models/shipBasicInfo'
 const cacheTime = process.env.CACHE_TIME || 300
 const cacheControlDirective = (ms = cacheTime) => `@cacheControl(maxAge: ${ms})`
 
-// dummy touch to trigger feature deploy
 @Resolver()
 export class FiskistofaResolver {
   constructor(

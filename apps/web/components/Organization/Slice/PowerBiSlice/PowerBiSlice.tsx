@@ -68,7 +68,6 @@ interface PowerBiSliceProps {
   slice: PowerBiSliceSchema
 }
 
-// dummy touch to trigger feature deploy
 export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
   const router = useRouter()
   const [embeddedReport, setEmbeddedReport] = useState<Report | null>(null)
