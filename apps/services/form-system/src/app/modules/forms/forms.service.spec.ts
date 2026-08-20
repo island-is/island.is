@@ -1,4 +1,4 @@
-import { ForbiddenException } from '@nestjs/common'
+import { BadRequestException, ForbiddenException } from '@nestjs/common'
 
 import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
@@ -14,7 +14,8 @@ describe('FormsService', () => {
   const formId = 'form-id'
 
   let service: FormsService
-  let organizationModel: { findOne: jest.Mock }
+  let formModel: { findByPk: jest.Mock; unscoped: jest.Mock }
+  let organizationModel: { findByPk: jest.Mock; findOne: jest.Mock }
 
   const createUser = (nationalId: string, scope: string[] = []): User =>
     ({
@@ -23,12 +24,17 @@ describe('FormsService', () => {
     } as User)
 
   beforeEach(() => {
+    formModel = {
+      findByPk: jest.fn(),
+      unscoped: jest.fn(),
+    }
     organizationModel = {
+      findByPk: jest.fn(),
       findOne: jest.fn(),
     }
 
     service = new FormsService(
-      { unscoped: jest.fn() } as unknown as typeof Form,
+      formModel as unknown as typeof Form,
       {} as never,
       {} as never,
       {} as never,
@@ -40,6 +46,62 @@ describe('FormsService', () => {
       {} as never,
       {} as never,
     )
+  })
+
+  describe('updateStatus', () => {
+    it('rejects publishing a Zendesk form without a configured form brand ID', async () => {
+      const form = {
+        id: formId,
+        organizationId: 'organization-id',
+        organizationNationalId: sourceOrganizationNationalId,
+        status: 'IN_DEVELOPMENT',
+        submissionServiceUrl: 'zendesk',
+        zendeskBrandId: '',
+      } as Form
+      const publishFormInDevelopment = jest.spyOn(
+        service,
+        'publishFormInDevelopment' as never,
+      )
+
+      formModel.findByPk.mockResolvedValue(form)
+      organizationModel.findByPk.mockResolvedValue({
+        zendeskInstance: 'service-system.zendesk.com',
+      })
+
+      await expect(
+        service.updateStatus(createUser(sourceOrganizationNationalId), formId, {
+          newStatus: 'PUBLISHED',
+        }),
+      ).rejects.toBeInstanceOf(BadRequestException)
+
+      expect(publishFormInDevelopment).not.toHaveBeenCalled()
+    })
+
+    it('rejects publishing a Zendesk form without a configured organization Zendesk instance', async () => {
+      const form = {
+        id: formId,
+        organizationId: 'organization-id',
+        organizationNationalId: sourceOrganizationNationalId,
+        status: 'PUBLISHED_BEING_CHANGED',
+        submissionServiceUrl: 'zendesk',
+        zendeskBrandId: '123',
+      } as Form
+      const publishFormBeingChanged = jest.spyOn(
+        service,
+        'publishFormBeingChanged' as never,
+      )
+
+      formModel.findByPk.mockResolvedValue(form)
+      organizationModel.findByPk.mockResolvedValue({ zendeskInstance: ' ' })
+
+      await expect(
+        service.updateStatus(createUser(sourceOrganizationNationalId), formId, {
+          newStatus: 'PUBLISHED',
+        }),
+      ).rejects.toBeInstanceOf(BadRequestException)
+
+      expect(publishFormBeingChanged).not.toHaveBeenCalled()
+    })
   })
 
   describe('copy', () => {

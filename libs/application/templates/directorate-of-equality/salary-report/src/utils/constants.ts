@@ -30,11 +30,13 @@ export enum States {
 export enum Roles {
   APPLICANT = 'applicant',
   NOT_ALLOWED = 'notAllowed',
+  ASSIGNEE = 'assignee',
 }
 
 export enum ApiActions {
   getCompanyData = 'getCompanyData',
   getDoeCompany = 'getDoeCompany',
+  getSubCriterionCatalog = 'getSubCriterionCatalog',
   getActiveEqualityReport = 'getActiveEqualityReport',
   getBlankExcelTemplate = 'getBlankExcelTemplate',
   presignImportUpload = 'presignImportUpload',
