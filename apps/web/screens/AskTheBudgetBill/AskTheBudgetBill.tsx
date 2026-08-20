@@ -145,7 +145,9 @@ const AskTheBudgetBill: CustomScreen<AskTheBudgetBillProps> = ({
           displayName: toConversationTitle(question),
           lastUpdatedAt: Math.round(Date.now() / 1000),
         },
-        ...previous.filter((conversation) => conversation.id !== conversationId),
+        ...previous.filter(
+          (conversation) => conversation.id !== conversationId,
+        ),
       ])
 
       showConversation(conversationId)
