@@ -26,7 +26,7 @@ import type { ZodTypeAny, z } from 'zod'
 import { mapGender, toNumberOrZero } from './directorate-of-equality.utils'
 
 // Page size for walking listDraftEmployees to completion (SalaryAnalysisResults only).
-const DRAFT_EMPLOYEE_PAGE_SIZE = 200
+const DRAFT_EMPLOYEE_PAGE_SIZE = 100
 
 const LOGGING_CONTEXT = 'DirectorateOfEqualityService'
 
