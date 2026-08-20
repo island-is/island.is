@@ -5,7 +5,6 @@ import {
   AlertMessage,
   Box,
   Button,
-  Inline,
   LoadingDots,
   Text,
 } from '@island.is/island-ui/core'
@@ -15,11 +14,12 @@ import type { MessengerStatus } from './useZendeskMessenger'
 import * as styles from './ChatConversation.css'
 
 interface ChatConversationProps {
-  title: string
+  /** The question the chat was started from, when it is known */
+  question?: string
   status: MessengerStatus
   /** The always mounted element the Zendesk widget renders itself into */
   children: ReactNode
-  onBack: () => void
+  /** Clears the open conversation and returns to the question box */
   onNewChat: () => void
 }
 
@@ -29,16 +29,15 @@ interface ChatConversationProps {
  * and the visitor sees just the messages and the composer underneath them.
  */
 export const ChatConversation = ({
-  title,
+  question,
   status,
   children,
-  onBack,
   onNewChat,
 }: ChatConversationProps) => {
   const { formatMessage } = useIntl()
 
   return (
-    <>
+    <Box className={styles.conversation}>
       <Box
         className={styles.topBar}
         paddingX={[2, 3, 4]}
@@ -50,27 +49,22 @@ export const ChatConversation = ({
       >
         <Box className={styles.title}>
           <Text variant="h5" as="h1" truncate>
-            {title}
+            {formatMessage(m.chatTitle)}
           </Text>
+          {question && (
+            <Text variant="small" color="dark400" truncate>
+              {question}
+            </Text>
+          )}
         </Box>
-        <Inline space={1} alignY="center" flexWrap="nowrap">
-          <Button
-            variant="utility"
-            preTextIcon="arrowBack"
-            preTextIconType="outline"
-            onClick={onBack}
-          >
-            {formatMessage(m.allChats)}
-          </Button>
-          <Button
-            variant="utility"
-            preTextIcon="add"
-            preTextIconType="outline"
-            onClick={onNewChat}
-          >
-            {formatMessage(m.newChat)}
-          </Button>
-        </Inline>
+        <Button
+          variant="utility"
+          preTextIcon="add"
+          preTextIconType="outline"
+          onClick={onNewChat}
+        >
+          {formatMessage(m.newChat)}
+        </Button>
       </Box>
 
       <Box className={styles.widget}>
@@ -96,6 +90,6 @@ export const ChatConversation = ({
           {formatMessage(m.disclaimer)}
         </Text>
       </Box>
-    </>
+    </Box>
   )
 }

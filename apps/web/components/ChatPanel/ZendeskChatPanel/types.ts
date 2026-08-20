@@ -56,40 +56,11 @@ interface RenderConfig {
 }
 
 /**
- * Interface representing a conversation as it is returned by `fetchConversations`.
- *
- * Only the fields we rely on are typed, the widget returns a larger object.
- * @see https://developer.zendesk.com/api-reference/widget-messaging/web/core/#fetchconversations
- */
-export interface ZendeskConversation {
-  id: string
-  displayName?: string
-  description?: string
-  /** Unix timestamp in seconds of the most recent activity */
-  lastUpdatedAt?: number
-  businessLastRead?: number
-  messages?: {
-    id?: string
-    text?: string
-    role?: string
-    received?: number
-  }[]
-}
-
-/**
- * Interface representing the response of `fetchConversations`.
- */
-export interface FetchConversationsResponse {
-  conversations: ZendeskConversation[]
-  hasMore: boolean
-}
-
-/**
  * Interface representing the options passed to `newConversation`, where the
  * optional `message` becomes the first message of the conversation.
  * @see https://developer.zendesk.com/api-reference/widget-messaging/web/core/#newconversation
  */
-export interface NewConversationOptions {
+interface NewConversationOptions {
   displayName?: string
   description?: string
   iconUrl?: string
@@ -98,19 +69,20 @@ export interface NewConversationOptions {
 }
 
 /**
- * Interface representing the response of `newConversation`.
+ * Interface representing the response of `newConversation`, which is the
+ * created conversation itself rather than a wrapper around it.
+ * @see https://developer.zendesk.com/api-reference/widget-messaging/web/core/#newconversation
  */
 export interface NewConversationResponse {
-  conversation: {
-    id: string
-    displayName?: string
-  }
+  id: string
+  displayName?: string
 }
 
 /**
- * Interface representing a message sent on behalf of the end user.
+ * Interface representing the message a conversation is started with, sent on
+ * behalf of the end user.
  */
-export interface MessengerMessage {
+interface MessengerMessage {
   content: {
     type: 'text'
     text: string
@@ -134,7 +106,7 @@ export interface MessengerError {
  * since the widget header is inside a cross origin iframe and cannot be styled.
  * @see https://developer.zendesk.com/api-reference/widget-messaging/web/core/#customization
  */
-export interface MessengerCustomization {
+interface MessengerCustomization {
   common?: {
     hideHeader?: boolean
     contentScale?: number
@@ -158,7 +130,7 @@ export interface MessengerCustomization {
  * Only available while the account runs in multi conversation mode.
  * @see https://developer.zendesk.com/api-reference/widget-messaging/web/core/#navigation
  */
-export type MessengerNavigation =
+type MessengerNavigation =
   | { screen: 'ConversationList' }
   | { screen: 'Conversation'; options: { conversationId: string } }
 
@@ -303,20 +275,6 @@ export type ZendeskMessengerAPI = {
   (scope: 'messenger:set', method: 'conversationTags', value: string[]): void
 
   /**
-   * Returns up to ten of the end user's conversations, most recent first.
-   * @see https://developer.zendesk.com/api-reference/widget-messaging/web/core/#fetchconversations
-   */
-  (
-    scope: 'messenger',
-    method: 'fetchConversations',
-    offset: number,
-    callback: (
-      error: MessengerError | null,
-      response?: FetchConversationsResponse,
-    ) => void,
-  ): void
-
-  /**
    * Creates a conversation without navigating to it, optionally posting the
    * first message on behalf of the end user.
    * @see https://developer.zendesk.com/api-reference/widget-messaging/web/core/#newconversation
@@ -329,18 +287,6 @@ export type ZendeskMessengerAPI = {
       error: MessengerError | null,
       response?: NewConversationResponse,
     ) => void,
-  ): void
-
-  /**
-   * Sends a message on behalf of the end user to an existing conversation.
-   * @see https://developer.zendesk.com/api-reference/widget-messaging/web/core/#sendmessage
-   */
-  (
-    scope: 'messenger',
-    method: 'sendMessage',
-    message: MessengerMessage,
-    conversationId: string,
-    callback?: (error: MessengerError | null) => void,
   ): void
 
   // --- UI Methods (messenger:ui scope) ---

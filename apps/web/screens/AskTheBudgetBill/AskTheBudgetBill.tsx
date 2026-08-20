@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
 
@@ -9,7 +8,6 @@ import { CustomPageUniqueIdentifier as GraphQLCustomPageUniqueIdentifier } from 
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { withMainLayout } from '@island.is/web/layouts/main'
 
-import type { ZendeskConversation } from '../../components/ChatPanel/ZendeskChatPanel/types'
 import {
   type CustomScreen,
   withCustomPageWrapper,
@@ -17,11 +15,11 @@ import {
 import { ChatConversation } from './components/ChatConversation'
 import { ChatLauncher } from './components/ChatLauncher'
 import {
-  getConversationTitle,
+  getStoredConversationTitle,
+  storeConversationTitle,
   toConversationTitle,
 } from './components/conversations'
 import { useZendeskMessenger } from './components/useZendeskMessenger'
-import { m } from './translations.strings'
 import * as styles from './AskTheBudgetBill.css'
 
 /**
@@ -46,7 +44,6 @@ interface AskTheBudgetBillProps {
 const AskTheBudgetBill: CustomScreen<AskTheBudgetBillProps> = ({
   customPageData,
 }) => {
-  const { formatMessage } = useIntl()
   const router = useRouter()
 
   useContentfulId(customPageData?.id)
@@ -55,12 +52,17 @@ const AskTheBudgetBill: CustomScreen<AskTheBudgetBillProps> = ({
     (customPageData?.configJson?.zendeskSnippetUrl as string | undefined) ||
     DEFAULT_ZENDESK_SNIPPET_URL
 
-  const { status, fetchConversations, startConversation, openConversation } =
-    useZendeskMessenger({ snippetUrl, containerId: CONTAINER_ID })
+  const { status, startConversation, openConversation } = useZendeskMessenger({
+    snippetUrl,
+    containerId: CONTAINER_ID,
+  })
 
-  const [conversations, setConversations] = useState<ZendeskConversation[]>([])
-  const [isLoadingConversations, setIsLoadingConversations] = useState(true)
   const [isStarting, setIsStarting] = useState(false)
+  // The widget does not hand out the title of a conversation, so this holds
+  // the question the open chat was started from.
+  const [conversationTitle, setConversationTitle] = useState<string | null>(
+    null,
+  )
   // Accounts that are not in multi conversation mode cannot be told which
   // conversation to show, so the widget is opened on whatever it defaults to.
   const [isFallbackOpen, setIsFallbackOpen] = useState(false)
@@ -86,28 +88,6 @@ const AskTheBudgetBill: CustomScreen<AskTheBudgetBillProps> = ({
     return () => window.removeEventListener('resize', measure)
   }, [])
 
-  const refreshConversations = useCallback(async () => {
-    try {
-      setConversations(await fetchConversations())
-    } catch (error) {
-      // Accounts that are not in multi conversation mode reject this call. The
-      // chat itself still works, there is just no history to list.
-      console.error(error)
-      setConversations([])
-    } finally {
-      setIsLoadingConversations(false)
-    }
-  }, [fetchConversations])
-
-  useEffect(() => {
-    if (status !== 'ready') return
-    void refreshConversations()
-  }, [status, refreshConversations])
-
-  useEffect(() => {
-    if (status === 'error') setIsLoadingConversations(false)
-  }, [status])
-
   const showConversation = useCallback(
     (conversationId: string) => {
       openConversation(conversationId)
@@ -131,27 +111,24 @@ const AskTheBudgetBill: CustomScreen<AskTheBudgetBillProps> = ({
     openConversation(activeConversationId)
   }, [status, activeConversationId, openConversation])
 
+  // The title survives a reload through storage rather than the url, so that
+  // the visitor's question is not part of a link they might share.
+  useEffect(() => {
+    if (!activeConversationId) return
+    setConversationTitle(
+      (current) => current ?? getStoredConversationTitle(activeConversationId),
+    )
+  }, [activeConversationId])
+
   const handleAsk = async (question: string) => {
     setIsStarting(true)
     try {
       const conversationId = await startConversation(question)
+      const title = toConversationTitle(question)
       setIsFallbackOpen(false)
-
-      // Listed right away so the chat has a title before the widget has caught
-      // up, the refresh below then replaces it with what Zendesk reports.
-      setConversations((previous) => [
-        {
-          id: conversationId,
-          displayName: toConversationTitle(question),
-          lastUpdatedAt: Math.round(Date.now() / 1000),
-        },
-        ...previous.filter(
-          (conversation) => conversation.id !== conversationId,
-        ),
-      ])
-
+      setConversationTitle(title)
+      storeConversationTitle(conversationId, title)
       showConversation(conversationId)
-      void refreshConversations()
     } catch (error) {
       console.error(error)
       setIsFallbackOpen(true)
@@ -160,19 +137,12 @@ const AskTheBudgetBill: CustomScreen<AskTheBudgetBillProps> = ({
     }
   }
 
-  const goToLauncher = useCallback(() => {
+  /** Leaves the open conversation behind and returns to an empty question box */
+  const startNewChat = useCallback(() => {
     setIsFallbackOpen(false)
+    setConversationTitle(null)
     void router.push({ pathname: PATHNAME }, undefined, { shallow: true })
-    void refreshConversations()
-  }, [router, refreshConversations])
-
-  const activeConversation = conversations.find(
-    (conversation) => conversation.id === activeConversationId,
-  )
-
-  const conversationTitle = activeConversation
-    ? getConversationTitle(activeConversation, formatMessage(m.untitledChat))
-    : formatMessage(m.untitledChat)
+  }, [router])
 
   const isChatOpen = Boolean(activeConversationId) || isFallbackOpen
 
@@ -192,10 +162,9 @@ const AskTheBudgetBill: CustomScreen<AskTheBudgetBillProps> = ({
         aria-hidden={!isChatOpen}
       >
         <ChatConversation
-          title={conversationTitle}
+          question={conversationTitle ?? undefined}
           status={status}
-          onBack={goToLauncher}
-          onNewChat={goToLauncher}
+          onNewChat={startNewChat}
         >
           {/* Rendered into by Zendesk once, and kept mounted from then on */}
           <Box id={CONTAINER_ID} width="full" height="full" />
@@ -214,12 +183,9 @@ const AskTheBudgetBill: CustomScreen<AskTheBudgetBillProps> = ({
       >
         <Box className={styles.launcherInner}>
           <ChatLauncher
-            conversations={conversations}
-            isLoadingConversations={isLoadingConversations}
             isStarting={isStarting}
             status={status}
             onAsk={handleAsk}
-            onSelectConversation={showConversation}
           />
         </Box>
       </Box>

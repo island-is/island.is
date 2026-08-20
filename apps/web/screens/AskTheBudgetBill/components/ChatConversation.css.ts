@@ -37,3 +37,19 @@ export const loadingOverlay = style({
 export const footer = style({
   flexShrink: 0,
 })
+
+/**
+ * A conversation stretched across a desktop viewport reads badly, with the top
+ * bar's ends far apart and the messages a long way from the composer, so it is
+ * capped at about the width the question box has on the launcher and centred.
+ */
+export const conversation = style({
+  display: 'flex',
+  flexDirection: 'column',
+  flexGrow: 1,
+  minHeight: 0,
+  width: '100%',
+  maxWidth: '800px',
+  marginLeft: 'auto',
+  marginRight: 'auto',
+})

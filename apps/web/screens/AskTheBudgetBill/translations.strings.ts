@@ -62,31 +62,15 @@ export const m = defineMessages({
     defaultMessage: 'Hver er áætluð afkoma ríkissjóðs?',
     description: 'Tillaga að spurningu',
   },
-  previousChatsTitle: {
-    id: 'web.askTheBudgetBill:previousChatsTitle',
-    defaultMessage: 'Fyrri spjöll',
-    description: 'Titill á lista yfir fyrri samtöl',
-  },
-  noPreviousChats: {
-    id: 'web.askTheBudgetBill:noPreviousChats',
-    defaultMessage:
-      'Þegar þú hefur spurt fyrstu spurningarinnar birtast samtölin þín hér.',
-    description: 'Texti þegar engin fyrri samtöl eru til',
-  },
-  untitledChat: {
-    id: 'web.askTheBudgetBill:untitledChat',
-    defaultMessage: 'Spjall',
-    description: 'Heiti á samtali sem hefur engan titil',
+  chatTitle: {
+    id: 'web.askTheBudgetBill:chatTitle',
+    defaultMessage: 'Spjall um fjárlagafrumvarpið',
+    description: 'Titill efst í spjallglugganum',
   },
   newChat: {
     id: 'web.askTheBudgetBill:newChat',
     defaultMessage: 'Nýtt spjall',
     description: 'Merking á hnappi sem byrjar nýtt samtal',
-  },
-  allChats: {
-    id: 'web.askTheBudgetBill:allChats',
-    defaultMessage: 'Öll spjöll',
-    description: 'Merking á hnappi sem fer aftur á forsíðu spjallsins',
   },
   disclaimer: {
     id: 'web.askTheBudgetBill:disclaimer',

@@ -1,8 +1,6 @@
-import type { ZendeskConversation } from '../../../components/ChatPanel/ZendeskChatPanel/types'
-
 const TITLE_MAX_LENGTH = 60
 
-/** Cuts a question down to something that fits on one line in the history list */
+/** Cuts a question down to something that fits on one line as a chat title */
 export const toConversationTitle = (question: string) => {
   const trimmed = question.trim().replace(/\s+/g, ' ')
   return trimmed.length > TITLE_MAX_LENGTH
@@ -11,44 +9,41 @@ export const toConversationTitle = (question: string) => {
 }
 
 /**
- * Conversations started from this page carry the question as their display
- * name, but ones started before that, or from another entry point, do not. For
- * those the first message is used instead.
+ * The widget cannot be asked what a conversation is called, so the question a
+ * chat was started from is kept here and read back when the page is reloaded
+ * into that conversation. Only the most recent chats are worth remembering.
  */
-export const getConversationTitle = (
-  conversation: ZendeskConversation,
-  fallback: string,
-) => {
-  if (conversation.displayName) return conversation.displayName
+const TITLE_STORAGE_KEY = 'askTheBudgetBill:conversationTitles'
+const MAX_STORED_TITLES = 20
 
-  const firstMessage = conversation.messages?.find((message) =>
-    Boolean(message.text?.trim()),
-  )
-  if (firstMessage?.text) return toConversationTitle(firstMessage.text)
-
-  return fallback
+const readTitles = (): Record<string, string> => {
+  try {
+    const stored = window.localStorage.getItem(TITLE_STORAGE_KEY)
+    const parsed = stored ? JSON.parse(stored) : null
+    return parsed && typeof parsed === 'object' ? parsed : {}
+  } catch {
+    // Storage can be unavailable, or hold something this never wrote
+    return {}
+  }
 }
 
-/**
- * Zendesk reports timestamps in seconds. Today's conversations are shown as a
- * time and older ones as a date, the way a chat history usually reads.
- */
-export const formatConversationTimestamp = (
-  conversation: ZendeskConversation,
-  locale: string,
+export const getStoredConversationTitle = (conversationId: string) =>
+  readTitles()[conversationId]
+
+export const storeConversationTitle = (
+  conversationId: string,
+  title: string,
 ) => {
-  const seconds = conversation.lastUpdatedAt
-  if (!seconds) return null
-
-  const date = new Date(seconds * 1000)
-  if (Number.isNaN(date.getTime())) return null
-
-  const isToday = date.toDateString() === new Date().toDateString()
-
-  return new Intl.DateTimeFormat(
-    locale,
-    isToday
-      ? { hour: '2-digit', minute: '2-digit' }
-      : { day: 'numeric', month: 'short' },
-  ).format(date)
+  try {
+    const titles = Object.entries({
+      ...readTitles(),
+      [conversationId]: title,
+    }).slice(-MAX_STORED_TITLES)
+    window.localStorage.setItem(
+      TITLE_STORAGE_KEY,
+      JSON.stringify(Object.fromEntries(titles)),
+    )
+  } catch {
+    // Private browsing refuses storage, the chat falls back to a generic title
+  }
 }

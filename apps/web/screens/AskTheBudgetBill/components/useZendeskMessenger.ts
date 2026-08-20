@@ -3,10 +3,8 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useI18n } from '@island.is/web/i18n'
 
 import type {
-  FetchConversationsResponse,
   MessengerError,
   NewConversationResponse,
-  ZendeskConversation,
 } from '../../../components/ChatPanel/ZendeskChatPanel/types'
 import { toConversationTitle } from './conversations'
 
@@ -37,7 +35,7 @@ declare global {
 /**
  * Boots the Zendesk messaging widget in embedded mode with its own header
  * hidden, and exposes the commands the surrounding page needs to act as the
- * launcher: listing conversations, starting one and opening one.
+ * launcher: starting a conversation and opening one.
  *
  * The widget is rendered once into `containerId`, which must therefore stay
  * mounted for the lifetime of the page. Showing and hiding it is done by the
@@ -135,37 +133,6 @@ export const useZendeskMessenger = ({
     }
   }, [snippetUrl, containerId])
 
-  /**
-   * Lists the conversations the widget knows about for this browser. Anonymous
-   * visitors are recognised through the widget's own local storage, so this
-   * returns an empty list on a fresh browser rather than failing.
-   */
-  const fetchConversations = useCallback(
-    (offset = 0) =>
-      new Promise<ZendeskConversation[]>((resolve, reject) => {
-        if (!window.zE) {
-          resolve([])
-          return
-        }
-        // Accounts that are not in multi conversation mode never call back
-        const timeout = window.setTimeout(() => resolve([]), COMMAND_TIMEOUT_MS)
-        window.zE(
-          'messenger',
-          'fetchConversations',
-          offset,
-          (
-            error: MessengerError | null,
-            response?: FetchConversationsResponse,
-          ) => {
-            window.clearTimeout(timeout)
-            if (error) reject(error)
-            else resolve(response?.conversations ?? [])
-          },
-        )
-      }),
-    [],
-  )
-
   /** Starts a conversation whose first message is the visitor's question. */
   const startConversation = useCallback(
     (question: string) =>
@@ -182,7 +149,7 @@ export const useZendeskMessenger = ({
           'messenger',
           'newConversation',
           {
-            // Used as the title in the page's own conversation history
+            // Names the conversation for the agents who pick it up
             displayName: toConversationTitle(question),
             message: { content: { type: 'text', text: question } },
           },
@@ -191,7 +158,7 @@ export const useZendeskMessenger = ({
             response?: NewConversationResponse,
           ) => {
             window.clearTimeout(timeout)
-            const id = response?.conversation?.id
+            const id = response?.id
             if (error || !id) {
               reject(
                 error ?? new Error('Conversation was created without an id'),
@@ -213,32 +180,9 @@ export const useZendeskMessenger = ({
     })
   }, [])
 
-  const sendMessage = useCallback(
-    (conversationId: string, text: string) =>
-      new Promise<void>((resolve, reject) => {
-        if (!window.zE) {
-          reject(new Error('Zendesk messenger is not loaded'))
-          return
-        }
-        window.zE(
-          'messenger',
-          'sendMessage',
-          { content: { type: 'text', text } },
-          conversationId,
-          (error: MessengerError | null) => {
-            if (error) reject(error)
-            else resolve()
-          },
-        )
-      }),
-    [],
-  )
-
   return {
     status,
-    fetchConversations,
     startConversation,
     openConversation,
-    sendMessage,
   }
 }

@@ -2,25 +2,13 @@ import { style } from '@vanilla-extract/css'
 
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
+/** Capped at the width the conversation itself has, so that the question box
+ * does not move or change size when the chat opens on top of it. */
 export const content = style({
   width: '100%',
-  maxWidth: '1120px',
+  maxWidth: '800px',
   marginLeft: 'auto',
   marginRight: 'auto',
-})
-
-/** Question box on the left, previous conversations on the right from lg up */
-export const columns = style({
-  display: 'grid',
-  gridTemplateColumns: '1fr',
-  gap: theme.spacing[5],
-  ...themeUtils.responsiveStyle({
-    lg: {
-      gridTemplateColumns: 'minmax(0, 1fr) 320px',
-      gap: theme.spacing[8],
-      alignItems: 'start',
-    },
-  }),
 })
 
 /**
@@ -75,5 +63,41 @@ export const composerInput = style({
   }),
   '::placeholder': {
     color: theme.color.dark300,
+  },
+})
+
+/**
+ * The suggestions are whole questions rather than labels, so they are laid out
+ * as rows that read like something to press, not as pills.
+ */
+export const suggestion = style({
+  display: 'block',
+  width: '100%',
+  textAlign: 'left',
+  cursor: 'pointer',
+  padding: theme.spacing[2],
+  paddingLeft: theme.spacing[3],
+  borderRadius: theme.border.radius.large,
+  backgroundColor: theme.color.white,
+  border: `${theme.border.width.standard}px solid ${theme.color.blue200}`,
+  transition: 'background-color 150ms ease, border-color 150ms ease',
+  selectors: {
+    '&:hover:not(:disabled)': {
+      backgroundColor: theme.color.blue100,
+      borderColor: theme.color.blue400,
+    },
+    '&:focus-visible': {
+      outline: `${theme.border.width.large}px solid ${theme.color.mint400}`,
+      outlineOffset: '2px',
+    },
+    '&:disabled': {
+      cursor: 'default',
+      opacity: 0.5,
+    },
+  },
+  '@media': {
+    '(prefers-reduced-motion: reduce)': {
+      transition: 'none',
+    },
   },
 })
