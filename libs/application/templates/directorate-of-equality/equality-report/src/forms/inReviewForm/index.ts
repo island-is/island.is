@@ -3,6 +3,7 @@ import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { FormModes } from '@island.is/application/types'
 import { DirectorateOfEqualityLogo } from '@island.is/application/assets/institution-logos'
 import { messages } from '../../lib/messages'
+import { buildCommentThreadSection } from '../commentThreadSection'
 
 export const inReviewForm = buildForm({
   id: 'inReviewForm',
@@ -15,5 +16,6 @@ export const inReviewForm = buildForm({
       alertTitle: messages.inReview.alertTitle,
       alertMessage: messages.inReview.alertDescription,
     }),
+    buildCommentThreadSection({ alwaysVisible: true }),
   ],
 })

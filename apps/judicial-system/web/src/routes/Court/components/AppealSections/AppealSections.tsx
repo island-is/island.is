@@ -1,15 +1,20 @@
 import { Dispatch, FC, SetStateAction, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Input, RadioButton } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Input,
+  RadioButton,
+} from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
+import { appealCorrectionLock } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  AppealCaseState,
   AppealDecisionPartyRole,
   Case,
   CaseAppealDecision,
@@ -70,18 +75,13 @@ const AppealSections: FC<Props> = ({
     AppealDecisionPartyRole.PROSECUTOR,
   )
 
-  // The in-court decisions describe what happened at the ruling. Once an appeal
-  // no longer depends on them they must not be edited: a party that filed its own
-  // appeal did not get it from the court record and correcting the record cannot
-  // take it away, and an appeal that has left the district court is already part
-  // of the record Landsréttur received. Mirrors the backend guard in
-  // case.service.upsertCaseAppealDecision, which rejects the same cases.
-  const { appealCase } = workingCase
-  const disabled = Boolean(
-    appealCase &&
-      (appealCase.appealedOutOfCourt ||
-        appealCase.appealState !== AppealCaseState.APPEALED),
-  )
+  // The in-court decisions describe what happened at the ruling, so they may
+  // only be edited while the court record still governs the appeal they produced
+  // (see appealCorrectionLock). case.service.upsertCaseAppealDecision rejects the
+  // same cases server-side - this only keeps the UI from offering them. The lock
+  // reason is kept so the section can say which of the two applies.
+  const lock = appealCorrectionLock(workingCase.appealCase)
+  const disabled = Boolean(lock)
 
   const handleChange = (update: {
     accusedAppealDecision?: CaseAppealDecision
@@ -164,6 +164,18 @@ const AppealSections: FC<Props> = ({
         title={formatMessage(m.titleV2)}
         description={formatMessage(m.disclaimerV2)}
       />
+      {lock && (
+        <Box marginBottom={3}>
+          <AlertMessage
+            type="info"
+            message={
+              lock === 'OUT_OF_COURT'
+                ? 'Úrskurðurinn hefur verið kærður utan þinghalds og því er ekki hægt að breyta ákvörðun um kæru.'
+                : 'Kæra úrskurðarins er komin til Landsréttar og því er ekki hægt að breyta ákvörðun um kæru.'
+            }
+          />
+        </Box>
+      )}
       <div className={grid({ gap: 3 })}>
         {workingCase.defendants && workingCase.defendants.length > 0 && (
           <BlueBox>
