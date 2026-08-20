@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -rniE \"jafnrettisstofa|jafnrettisstofnun|directorate.{0,3}equality|equality.{0,3}directorate\" /Users/disa/code/island.is/libs --include=\"*.ts\" -l)",
+      "Bash(grep -i \"scope.ts$\")",
+      "Bash(echo \"exit: $?\")",
+      "Bash(echo \"exit code: $?\")",
+      "Bash(grep -rln \"externalData\" /Users/disa/code/island.is/libs -g '*.graphql')",
+      "Bash(yarn nx *)",
+      "Bash(:)",
+      "Bash(git -C /Users/disa/code/island.is diff -- libs/clients/directorate-of-equality/src/lib/directorate-of-equality.module.ts)",
+      "Skill(digital-iceland:develop-application-template)",
+      "Skill(digital-iceland:develop-application-template:*)",
+      "Bash(xargs -I{} sh -c 'echo \"=== {} ===\"; grep -B3 -A15 \"write:.'\"'\"'all'\"'\"',\" {} | grep -B10 \"^\\\\s*},\" | grep -c \"formLoader\"')",
+      "Skill(digital-iceland:review-application-template)",
+      "Skill(digital-iceland:review-application-template:*)",
+      "Bash(cd /Users/disa/code/dmr.is *)",
+      "Read(//Users/disa/code/dmr.is/**)",
+      "Skill(digital-iceland:investigate-issue)",
+      "Skill(digital-iceland:investigate-issue:*)",
+      "Bash(echo \"salary-report: $?\")",
+      "Bash(echo \"equality-report: $?\")",
+      "Bash(npx eslint *)",
+      "Read(//Users/disa/.claude/plugins/cache/hxm/digital-iceland/2.0.1/conventions/**)",
+      "Skill(digital-iceland:implement-application-template)",
+      "Skill(digital-iceland:implement-application-template:*)",
+      "Bash(xargs -I{} echo {})",
+      "Bash(npx prettier *)"
+    ],
+    "additionalDirectories": [
+      "/Users/disa/code/dmr.is/apps/directorate-of-equality-api/src/modules/application-system"
+    ]
+  }
+}
