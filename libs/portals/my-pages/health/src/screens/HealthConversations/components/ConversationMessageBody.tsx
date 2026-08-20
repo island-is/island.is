@@ -87,12 +87,7 @@ const VideoContent = ({
         </Box>
         {content.appointmentDate && (
           <Box display="flex" alignItems="center" columnGap={1}>
-            <Icon
-              icon="calendar"
-              size="small"
-              color="blue400"
-              type="outline"
-            />
+            <Icon icon="calendar" size="small" color="blue400" type="outline" />
             <Text>
               {weekday ? `${weekday}, ` : ''}
               {formatDate(content.appointmentDate)}
