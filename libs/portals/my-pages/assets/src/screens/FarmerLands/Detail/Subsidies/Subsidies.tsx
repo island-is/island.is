@@ -7,6 +7,7 @@ import {
   m,
   formatNationalId,
   amountFormat,
+  useIsMobile,
   type Row,
   type SortingState,
   type OnChangeFn,
@@ -19,6 +20,7 @@ import {
   FarmerLandSubsidyOrderField,
 } from '@island.is/api/schema'
 import { useFarmerLandSubsidiesQuery } from './FarmerLandSubsidies.generated'
+import * as styles from './Subsidies.css'
 
 interface Props {
   farmId: string
@@ -77,6 +79,7 @@ const fieldMap: Partial<Record<string, FarmerLandSubsidyOrderField>> = {
 
 export const Subsidies = ({ farmId }: Props) => {
   const { formatMessage } = useLocale()
+  const { isMobile } = useIsMobile()
 
   const [filters, setFilters] = useState<SubsidiesState>({})
   const [sorting, setSorting] = useState<SortingState>([])
@@ -95,6 +98,27 @@ export const Subsidies = ({ farmId }: Props) => {
   const filterOptions = (data ?? previousData)?.farmerLandSubsidies
     ?.filterOptions
   const summary = (data ?? previousData)?.farmerLandSubsidies?.summary
+
+  const statsItems = useMemo(
+    () =>
+      summary
+        ? [
+            {
+              label: formatMessage(fm.subsidyStatsGrossAmount),
+              value: amountFormat(summary.grossAmount),
+            },
+            {
+              label: formatMessage(fm.subsidyStatsOffset),
+              value: amountFormat(summary.offset),
+            },
+            {
+              label: formatMessage(fm.subsidyStatsNetPaid),
+              value: amountFormat(summary.netPaid),
+            },
+          ]
+        : null,
+    [summary, formatMessage],
+  )
 
   const contractItems = useMemo(
     () =>
@@ -222,6 +246,40 @@ export const Subsidies = ({ farmId }: Props) => {
 
   return (
     <Box marginTop={4}>
+      {statsItems && (
+        <Box
+          border="standard"
+          borderRadius="large"
+          padding={3}
+          display="flex"
+          flexWrap="wrap"
+          rowGap={3}
+          marginBottom={3}
+        >
+          {statsItems.map(({ label, value }, index) => (
+            <Box
+              key={label}
+              display="flex"
+              flexDirection="column"
+              rowGap={1}
+              paddingLeft={
+                (isMobile ? index % 2 !== 0 : index > 0) ? 4 : undefined
+              }
+              paddingRight={4}
+              borderLeftWidth={
+                (isMobile ? index % 2 !== 0 : index > 0)
+                  ? 'standard'
+                  : undefined
+              }
+              borderColor="blue200"
+              className={styles.statsItem}
+            >
+              <Text variant="small">{label}</Text>
+              <Text variant="h3">{value}</Text>
+            </Box>
+          ))}
+        </Box>
+      )}
       <Box marginBottom={3}>
         <SubsidiesFilter
           contractId={filters.contractId}
