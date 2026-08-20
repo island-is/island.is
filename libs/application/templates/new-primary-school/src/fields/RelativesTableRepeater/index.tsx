@@ -15,6 +15,7 @@ import { useFriggOptions } from '../../hooks/useFriggOptions'
 import { childrenNGuardiansMessages, sharedMessages } from '../../lib/messages'
 import { AgentType, OptionsType } from '../../utils/constants'
 import {
+  getApplicationAnswers,
   getApplicationExternalData,
   getOtherGuardian,
   getSelectedOptionLabel,
@@ -104,6 +105,12 @@ const RelativesTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             defaultValue: (application: Application) =>
               getOtherGuardian(application.answers, application.externalData)
                 ?.nationalId,
+          },
+          childNationalId: {
+            component: 'hiddenInput',
+            displayInTable: false,
+            defaultValue: (application: Application) =>
+              getApplicationAnswers(application.answers).childNationalId,
           },
         },
         table: {
