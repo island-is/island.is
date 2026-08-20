@@ -102,6 +102,10 @@ export const hasFiles = (
   const files = answers[
     fileType as keyof OverrideAnswerSchema
   ] as UploadFileDeprecated[]
+  console.log('--------------------------------')
+  console.log('hasFiles fileType', fileType)
+  console.log('files', files)
+  console.log('--------------------------------')
   return files && files.length > 0
 }
 

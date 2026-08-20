@@ -27,15 +27,25 @@ export enum Routes {
   BANKINFO = 'bankInfo',
   CONTACTINFO = 'contactInfo',
   TAXRETURNFILES = 'taxReturnFiles',
+  RVKTAXRETURNFILESDESCRIPTION = 'rvkTaxReturnFilesDescription',
+  RVKFINDTAXRETURNDESCRIPTION = 'rvkFindTaxReturnDescription',
+  RVKFINDDIRECTTAXPAYMENTSDESCRIPTION = 'rvkFindDirectTaxPaymentsDescription',
+  RVKTAXRETURNFILESALERT = 'rvkTaxReturnFilesAlert',
+  RVKTAXRETURNFILES = 'rvkTaxReturnFiles',
   INCOMEFILES = 'incomeFiles',
+  RVKINCOMEFILES = 'rvkIncomeFiles',
+  INCOMEFILESTAXSUCCESS = 'incomeFilesTaxSuccess',
   SUMMARY = 'summary',
   CONFIRMATION = 'confirmation',
   CHILDRENSCHOOLINFO = 'childrenSchoolInfo',
   CHILDRENFILES = 'childrenFiles',
+  RVKCHILDRENFILES = 'rvkChildrenFiles',
   SPOUSEACCECPTCONTRACT = 'spouseAcceptContract',
   SPOUSEINCOME = 'spouseIncome',
   SPOUSEINCOMEFILES = 'spouseIncomeFiles',
+  RVKSPOUSEINCOMEFILES = 'rvkSpouseIncomeFiles',
   SPOUSETAXRETURNFILES = 'spouseTaxReturnFiles',
+  RVKSPOUSETAXRETURNFILES = 'rvkSpouseTaxReturnFiles',
   SPOUSECONTACTINFO = 'spouseContactInfo',
   SPOUSESUMMARY = 'spouseSummary',
   SPOUSECONFIRMATION = 'spouseConfirmation',
@@ -65,3 +75,10 @@ export const UPLOAD_ACCEPT = [
   '.heic',
 ]
 export const FILE_SIZE_LIMIT = 10000000 // 10MB
+
+export const RVK_MUNICIPALITY_CODES = ['0000', '1400']
+
+export const isRvkMunicipalityCode = (
+  municipalityCode?: string | null,
+): boolean =>
+  Boolean(municipalityCode && RVK_MUNICIPALITY_CODES.includes(municipalityCode))

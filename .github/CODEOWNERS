@@ -157,6 +157,7 @@ codemagic.yaml                                                                  
 /libs/clients/hms/                                                                                                           @island-is/norda
 /libs/clients/hms-rental-agreement/                                                                                          @island-is/norda @island-is/hugsmidjan
 /libs/api/domains/hms/                                                                                                       @island-is/norda @island-is/hugsmidjan
+/libs/clients/rvk-financial-aid                                                                                              @island-is/norda
 
 /apps/download-service/                                                                                                      @island-is/hugsmidjan
 /apps/portals/my-pages*/                                                                                                     @island-is/hugsmidjan

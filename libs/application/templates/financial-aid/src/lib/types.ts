@@ -75,6 +75,10 @@ export type NestedType<T> = {
 export interface OverrideAnswerSchema extends answersSchema {
   incomeFiles: ApplicationAnswerFile[]
   taxReturnFiles: ApplicationAnswerFile[]
+  rvkTaxReturnFiles: ApplicationAnswerFile[]
+  rvkIncomeFiles: ApplicationAnswerFile[]
+  rvkSpouseIncomeFiles: ApplicationAnswerFile[]
+  rvkSpouseTaxReturnFiles: ApplicationAnswerFile[]
   spouseIncomeFiles: ApplicationAnswerFile[]
   spouseTaxReturnFiles: ApplicationAnswerFile[]
   childrenFiles: ApplicationAnswerFile[]
@@ -117,9 +121,13 @@ export type StatusProvider = 'failure' | 'success'
 export type UploadFileType =
   | 'otherFiles'
   | 'incomeFiles'
+  | 'rvkIncomeFiles'
   | 'taxReturnFiles'
+  | 'rvkTaxReturnFiles'
   | 'spouseIncomeFiles'
+  | 'rvkSpouseIncomeFiles'
   | 'spouseTaxReturnFiles'
+  | 'rvkSpouseTaxReturnFiles'
 
 export enum SummaryComment {
   FORMCOMMENT = 'formComment',
