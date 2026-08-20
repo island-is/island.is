@@ -8,8 +8,6 @@ import cors from 'cors'
 import type { Server } from 'http'
 import qs from 'qs'
 
-import { MAX_QUERY_PARAM_ARRAY_SIZE } from '@island.is/shared/constants'
-
 import {
   logger,
   LoggingModule,
@@ -70,13 +68,11 @@ export const createApp = async ({
   // the X-Forwarded-For header before passing to internal services.
   app.set('trust proxy', JSON.parse(process.env.EXPRESS_TRUST_PROXY || 'false'))
 
-  // Express's 'extended' parser is qs with allowPrototypes: true; keep that and
-  // only raise arrayLimit — qs turns an array into an object past the default 20.
+  // Express's 'extended' parser is qs with allowPrototypes: true. qs turns an
+  // array into an object past arrayLimit; keep it at 20 and cap dataloader
+  // batches to the same 20 so a batch never exceeds it.
   app.set('query parser', (str: string) =>
-    qs.parse(str, {
-      allowPrototypes: true,
-      arrayLimit: MAX_QUERY_PARAM_ARRAY_SIZE,
-    }),
+    qs.parse(str, { allowPrototypes: true, arrayLimit: 20 }),
   )
 
   // Enable validation of request DTOs globally.

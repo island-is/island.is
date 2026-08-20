@@ -13,7 +13,6 @@ import { ApiScopeInput } from '../dto/apiScope.input'
 import { ApiScope } from '../models/apiScope.model'
 import { ApiScopeService } from '../services/apiScope.service'
 import { ISLAND_DOMAIN } from '../services/constants'
-import { MAX_QUERY_PARAM_ARRAY_SIZE } from '@island.is/shared/constants'
 
 export type ApiScopeDataLoader = DataLoader<ApiScopeInput, ApiScope, string>
 
@@ -53,6 +52,6 @@ export class ApiScopeLoader implements NestDataLoader<ApiScopeInput, ApiScope> {
   }
 
   generateDataLoader(ctx: GraphQLContext): ApiScopeDataLoader {
-    return new DataLoader(this.loadApiScopes.bind(this, ctx.req.user), { cacheKeyFn: this.keyFn, maxBatchSize: MAX_QUERY_PARAM_ARRAY_SIZE })
+    return new DataLoader(this.loadApiScopes.bind(this, ctx.req.user), { cacheKeyFn: this.keyFn, maxBatchSize: 20 })
   }
 }
