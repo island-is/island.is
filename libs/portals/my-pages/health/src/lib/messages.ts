@@ -2027,6 +2027,10 @@ export const messages = defineMessages({
     defaultMessage: 'Afboðað',
     id: 'sp.health:health-messages-video-call-canceled',
   },
+  healthConversationVideoCallInstruction: {
+    defaultMessage: 'Smelltu á hnappinn til að hefja símtalið.',
+    id: 'sp.health:health-messages-video-call-instruction',
+  },
   healthConversationNotFound: {
     defaultMessage: 'Skilaboð fundust ekki',
     id: 'sp.health:health-message-not-found',

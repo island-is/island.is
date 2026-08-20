@@ -1,9 +1,10 @@
-import { Box, Tag, Text } from '@island.is/island-ui/core'
+import { Box, Icon, Stack, Tag, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   InlineLink,
   LinkButton,
-  formatDateWithTime,
+  formatDate,
+  getTime,
 } from '@island.is/portals/my-pages/core'
 import { HealthDirectorateHealthConversationSegmentType } from '@island.is/api/schema'
 import { messages } from '../../../lib/messages'
@@ -14,6 +15,7 @@ import {
   HealthConversationVideoContentFragment,
 } from '../HealthConversationDetail.generated'
 import { linkifyText } from '../utils/linkify'
+import { mapWeekday } from '../../../utils/mappers'
 
 interface Props {
   message: HealthConversationMessageFragment
@@ -66,37 +68,61 @@ const VideoContent = ({
   content: HealthConversationVideoContentFragment
 }) => {
   const { formatMessage } = useLocale()
+
+  const weekday = content.appointmentDate
+    ? mapWeekday(content.appointmentDate, formatMessage)
+    : undefined
+
   return (
-    <Box
-      borderColor="blue200"
-      borderWidth="standard"
-      borderRadius="large"
-      padding={3}
-      marginBottom={4}
-    >
-      <Box display="flex" alignItems="center" columnGap={2} marginBottom={1}>
-        <Text fontWeight="semiBold">
-          {formatMessage(messages.appointmentModalityVideo)}
-        </Text>
-        {content.isCanceled && (
-          <Tag variant="red" outlined disabled>
-            {formatMessage(messages.healthConversationVideoCallCanceled)}
-          </Tag>
+    <Box marginBottom={4}>
+      <Stack space={2}>
+        <Box display="flex" alignItems="center" columnGap={1}>
+          <Icon icon="videoCam" size="small" color="blue400" type="outline" />
+          <Text>{formatMessage(messages.appointmentModalityVideo)}</Text>
+          {content.isCanceled && (
+            <Tag variant="red" outlined disabled>
+              {formatMessage(messages.healthConversationVideoCallCanceled)}
+            </Tag>
+          )}
+        </Box>
+        {content.appointmentDate && (
+          <Box display="flex" alignItems="center" columnGap={1}>
+            <Icon
+              icon="calendar"
+              size="small"
+              color="blue400"
+              type="outline"
+            />
+            <Text>
+              {weekday ? `${weekday}, ` : ''}
+              {formatDate(content.appointmentDate)}
+            </Text>
+          </Box>
         )}
-      </Box>
-      {content.appointmentDate && (
-        <Text fontWeight="light">
-          {formatDateWithTime(content.appointmentDate)}
-        </Text>
-      )}
+        {content.appointmentDate && (
+          <Box display="flex" alignItems="center" columnGap={1}>
+            <Icon icon="time" size="small" color="blue400" type="outline" />
+            <Text>{getTime(content.appointmentDate)}</Text>
+          </Box>
+        )}
+      </Stack>
+
       {content.appointmentHostName && (
-        <Text fontWeight="light">{content.appointmentHostName}</Text>
+        <Text fontWeight="light" marginTop={2}>
+          {content.appointmentHostName}
+        </Text>
       )}
       {content.description && (
-        <Text fontWeight="light">{content.description}</Text>
+        <Text fontWeight="light" marginTop={2}>
+          {content.description}
+        </Text>
       )}
+
       {!content.isCanceled && (
-        <Box marginTop={2}>
+        <Box marginTop={3}>
+          <Text marginBottom={2}>
+            {formatMessage(messages.healthConversationVideoCallInstruction)}
+          </Text>
           <LinkButton
             to={content.url}
             text={formatMessage(messages.appointmentVideoCallLink)}
