@@ -2079,7 +2079,7 @@ export const messages = defineMessages({
     id: 'sp.health:book-appointment-title',
   },
   bookAppointmentIntro: {
-    defaultMessage: 'Hér getur þú bókað tíma',
+    defaultMessage: 'Hér mun vera hægt að bóka tíma',
     id: 'sp.health:book-appointment-intro',
   },
   bookAppointmentStillOnHeilsuveruTitle: {
