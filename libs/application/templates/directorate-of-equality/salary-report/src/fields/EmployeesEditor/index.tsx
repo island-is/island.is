@@ -4,7 +4,12 @@ import { AlertMessage, Box, Button, Stack, Table as T } from '@island.is/island-
 import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
 import { messages } from '../../lib/messages'
-import { DRAFT_EMPLOYEES_PAGE_SIZE, SyncMethodEnum } from '../../utils/constants'
+import {
+  ApiActions,
+  DRAFT_EMPLOYEES_PAGE_SIZE,
+  draftActionId,
+  SyncMethodEnum,
+} from '../../utils/constants'
 import {
   type Employee,
   type ReportEmployeeDto,
@@ -111,7 +116,7 @@ export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     refetch: refetchRoles,
   } = useDraftQuery<{ roles: ReportEmployeeRoleDto[] }>(
     application,
-    'DirectorateOfEquality.listDraftRoles',
+    draftActionId(ApiActions.listDraftRoles),
     'draftRoles',
   )
   const { sync } = useDraftSync(application)

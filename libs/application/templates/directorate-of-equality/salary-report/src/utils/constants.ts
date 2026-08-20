@@ -52,6 +52,13 @@ export enum ApiActions {
   listDraftOutlierGroups = 'listDraftOutlierGroups',
 }
 
+const DOE_NAMESPACE = 'DirectorateOfEquality'
+
+// Builds the `actionId` string the updateApplicationExternalData mutation expects,
+// from the same ApiActions enum the data providers and the service dispatch on —
+// a renamed action is then caught by the type checker at every call site.
+export const draftActionId = (action: ApiActions) => `${DOE_NAMESPACE}.${action}`
+
 export const PERIOD_ONE_MONTH = 'oneMonth'
 export const PERIOD_TWELVE_MONTHS = 'twelveMonths'
 

@@ -3,7 +3,12 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useEffect, useRef, useState } from 'react'
 import { messages } from '../../lib/messages'
-import { createDefaultJobFactors, SyncMethodEnum } from '../../utils/constants'
+import {
+  ApiActions,
+  createDefaultJobFactors,
+  draftActionId,
+  SyncMethodEnum,
+} from '../../utils/constants'
 import type {
   JobFactor,
   PersonalFactor,
@@ -25,7 +30,7 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const { formatMessage } = useLocale()
   const { content, loading, hasError, refetch } = useDraftQuery<{
     criteria: ReportCriterionDto[]
-  }>(application, 'DirectorateOfEquality.listDraftCriteria', 'draftCriteria')
+  }>(application, draftActionId(ApiActions.listDraftCriteria), 'draftCriteria')
   const { sync } = useDraftSync(application)
 
   const [jobFactors, setJobFactors] = useState<JobFactor[]>([])

@@ -4,6 +4,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import type { Application } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
+import { ApiActions, draftActionId } from './constants'
 
 type QueryExternalData<T> = {
   status?: 'success' | 'failure'
@@ -44,7 +45,7 @@ export const useDraftQuery = <T>(
         const dataProviders = ensureDraft
           ? [
               {
-                actionId: 'DirectorateOfEquality.createSalaryDraft',
+                actionId: draftActionId(ApiActions.createSalaryDraft),
                 order: 0,
               },
               { actionId, order: 1 },

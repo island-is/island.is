@@ -5,7 +5,12 @@ import { useLocale } from '@island.is/localization'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { messages } from '../../lib/messages'
-import { DRAFT_EMPLOYEES_PAGE_SIZE, SyncMethodEnum } from '../../utils/constants'
+import {
+  ApiActions,
+  DRAFT_EMPLOYEES_PAGE_SIZE,
+  draftActionId,
+  SyncMethodEnum,
+} from '../../utils/constants'
 import type {
   DisplayAssignment,
   DraftCriterionWithSubCriteriaDto,
@@ -84,7 +89,7 @@ export const EmployeeClassificationEditor: FC<
     refetch: refetchCriteria,
   } = useDraftQuery<{ criteria: DraftCriterionWithSubCriteriaDto[] }>(
     application,
-    'DirectorateOfEquality.getDraftCriteriaTree',
+    draftActionId(ApiActions.getDraftCriteriaTree),
     'draftCriteriaTree',
   )
   const [page, setPage] = useState(1)

@@ -49,10 +49,12 @@ export const ImportPresignApi = defineTemplateApi({
 })
 
 // Opens the DRAFT report; idempotent, invoked once on first entry to `dataEntry`.
+// Its response isn't read anywhere — callers only care that the draft now exists.
 export const CreateSalaryDraftApi = defineTemplateApi({
   action: ApiActions.createSalaryDraft,
   externalDataId: 'salaryDraft',
   namespace: 'DirectorateOfEquality',
+  shouldPersistToExternalData: false,
   throwOnError: true,
 })
 
@@ -61,6 +63,7 @@ export const ImportSalaryDraftWorkbookApi = defineTemplateApi({
   action: ApiActions.importSalaryDraftWorkbook,
   externalDataId: 'importSalaryDraftWorkbook',
   namespace: 'DirectorateOfEquality',
+  shouldPersistToExternalData: false,
   throwOnError: false,
 })
 
@@ -144,14 +147,14 @@ export const EditOutliersApi = defineTemplateApi({
 // Listed on a role's `api` array purely so updateApplicationExternalData is
 // permitted to invoke it for that role.
 export const GetReportCommentsApi = defineTemplateApi({
-  action: 'getReportComments',
+  action: ApiActions.getReportComments,
   externalDataId: 'getReportComments',
   namespace: 'DirectorateOfEquality',
   throwOnError: false,
 })
 
 export const SubmitReportCommentApi = defineTemplateApi({
-  action: 'submitReportComment',
+  action: ApiActions.submitReportComment,
   externalDataId: 'submitReportComment',
   namespace: 'DirectorateOfEquality',
   throwOnError: false,

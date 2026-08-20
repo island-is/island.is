@@ -14,6 +14,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import type { SalaryAnalysisResponseDto } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
+import { ApiActions, draftActionId } from '../../utils/constants'
 import {
   buildOutlierSyncCommands,
   isOutlierGroupComplete,
@@ -72,13 +73,13 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
   const { content: outlierGroupsContent, refetch: refetchOutlierGroups } =
     useDraftQuery<{ groups: DraftOutlierGroupDto[] }>(
       application,
-      'DirectorateOfEquality.listDraftOutlierGroups',
+      draftActionId(ApiActions.listDraftOutlierGroups),
       'draftOutlierGroups',
     )
   const { content: employeesContent, refetch: refetchEmployees } =
     useDraftQuery<{ employees: ReportEmployeeDto[] }>(
       application,
-      'DirectorateOfEquality.listDraftEmployees',
+      draftActionId(ApiActions.listDraftEmployees),
       'draftEmployees',
     )
   const content = useMemo(
@@ -137,7 +138,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
             id: application.id,
             dataProviders: [
               {
-                actionId: 'DirectorateOfEquality.analyzeSalaryReport',
+                actionId: draftActionId(ApiActions.analyzeSalaryReport),
                 order: 0,
               },
             ],

@@ -12,7 +12,12 @@ import {
 import { useLocale } from '@island.is/localization'
 import { useMutation } from '@apollo/client'
 import { FC, useEffect, useRef, useState } from 'react'
-import { createDefaultJobFactors, SyncMethodEnum } from '../../utils/constants'
+import {
+  ApiActions,
+  createDefaultJobFactors,
+  draftActionId,
+  SyncMethodEnum,
+} from '../../utils/constants'
 import type { ReportCriterionDto } from '../../utils/types'
 import { useDraftQuery } from '../../utils/useDraftQuery'
 import { useDraftSync } from '../../utils/useDraftSync'
@@ -38,7 +43,7 @@ export const ExcelTemplateDownload: FC<
   // with CriteriaEditor so that screen reuses this fetch.
   const { content, loading, hasError, refetch } = useDraftQuery<{
     criteria: ReportCriterionDto[]
-  }>(application, 'DirectorateOfEquality.listDraftCriteria', 'draftCriteria', {
+  }>(application, draftActionId(ApiActions.listDraftCriteria), 'draftCriteria', {
     ensureDraft: true,
   })
   const { sync } = useDraftSync(application)
@@ -86,7 +91,7 @@ export const ExcelTemplateDownload: FC<
             id: application.id,
             dataProviders: [
               {
-                actionId: 'DirectorateOfEquality.presignImportUpload',
+                actionId: draftActionId(ApiActions.presignImportUpload),
                 order: 0,
               },
             ],
@@ -138,7 +143,7 @@ export const ExcelTemplateDownload: FC<
             id: application.id,
             dataProviders: [
               {
-                actionId: 'DirectorateOfEquality.importSalaryDraftWorkbook',
+                actionId: draftActionId(ApiActions.importSalaryDraftWorkbook),
                 order: 0,
               },
             ],

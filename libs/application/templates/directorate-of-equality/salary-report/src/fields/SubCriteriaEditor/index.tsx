@@ -4,7 +4,11 @@ import { useLocale } from '@island.is/localization'
 import { FC, useEffect, useMemo, useRef } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { messages } from '../../lib/messages'
-import { createDefaultSubCriterion } from '../../utils/constants'
+import {
+  ApiActions,
+  createDefaultSubCriterion,
+  draftActionId,
+} from '../../utils/constants'
 import type {
   DraftCriterionWithSubCriteriaDto,
   SubCriterion,
@@ -32,7 +36,7 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     criteria: DraftCriterionWithSubCriteriaDto[]
   }>(
     application,
-    'DirectorateOfEquality.getDraftCriteriaTree',
+    draftActionId(ApiActions.getDraftCriteriaTree),
     'draftCriteriaTree',
   )
   const { sync } = useDraftSync(application)

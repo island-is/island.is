@@ -4,7 +4,7 @@ import { useLocale } from '@island.is/localization'
 import { FC, useEffect, useMemo } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { messages } from '../../lib/messages'
-import { SyncMethodEnum } from '../../utils/constants'
+import { ApiActions, draftActionId, SyncMethodEnum } from '../../utils/constants'
 import type {
   DisplayAssignment,
   DraftCriterionWithSubCriteriaDto,
@@ -36,7 +36,7 @@ export const JobClassificationEditor: FC<
     refetch: refetchCriteria,
   } = useDraftQuery<{ criteria: DraftCriterionWithSubCriteriaDto[] }>(
     application,
-    'DirectorateOfEquality.getDraftCriteriaTree',
+    draftActionId(ApiActions.getDraftCriteriaTree),
     'draftCriteriaTree',
   )
   const {
@@ -46,7 +46,7 @@ export const JobClassificationEditor: FC<
     refetch: refetchRoles,
   } = useDraftQuery<{ roles: DraftRoleWithStepsDto[] }>(
     application,
-    'DirectorateOfEquality.listDraftRolesWithSteps',
+    draftActionId(ApiActions.listDraftRolesWithSteps),
     'draftRolesWithSteps',
   )
   const { sync } = useDraftSync(application)

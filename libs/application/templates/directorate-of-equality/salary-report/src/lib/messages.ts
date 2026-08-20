@@ -21,14 +21,6 @@ export const messages = {
       id: 'doe.sr.application:errors.duplicateSubsidiary',
       defaultMessage: 'Þetta dótturfélag er þegar á listanum',
     },
-    duplicateCriterionTitle: {
-      id: 'doe.sr.application:errors.duplicateCriterionTitle',
-      defaultMessage: 'Þáttur með þessu heiti er þegar á listanum',
-    },
-    duplicateSubCriterionTitle: {
-      id: 'doe.sr.application:errors.duplicateSubCriterionTitle',
-      defaultMessage: 'Undirþáttur með þessu heiti er þegar á listanum',
-    },
     invalidCompany: {
       id: 'doe.sr.application:errors.invalidCompany',
       defaultMessage: 'Kennitala fyrirtækis er ekki gild',
