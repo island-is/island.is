@@ -401,14 +401,23 @@ export class DefendantService {
     // Closing without enforcement is only valid for indictment defendants and
     // is irreversible through this endpoint - reopening a case resets the flag
     // in the case reopen workflow.
-    if (
-      update.isClosedWithoutEnforcement !== undefined &&
-      (!isIndictmentCase(theCase.type) ||
-        update.isClosedWithoutEnforcement !== true)
-    ) {
-      throw new BadRequestException(
-        'Closed without enforcement can only be set for indictment case defendants',
-      )
+    if (update.isClosedWithoutEnforcement !== undefined) {
+      if (
+        !isIndictmentCase(theCase.type) ||
+        update.isClosedWithoutEnforcement !== true
+      ) {
+        throw new BadRequestException(
+          'Closed without enforcement can only be set for indictment case defendants',
+        )
+      }
+
+      // Enforcement is mutually exclusive with closing without enforcement -
+      // a defendant sent to prison admin must be withdrawn first.
+      if (defendant.isSentToPrisonAdmin || update.isSentToPrisonAdmin) {
+        throw new BadRequestException(
+          'Closed without enforcement cannot be set for a defendant sent to prison admin',
+        )
+      }
     }
 
     if (

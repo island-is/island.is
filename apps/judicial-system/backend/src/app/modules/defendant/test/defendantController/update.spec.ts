@@ -393,6 +393,46 @@ describe('DefendantController - Update', () => {
     })
   })
 
+  describe('defendant sent to prison admin is closed without enforcement', () => {
+    const defendantUpdate = { isClosedWithoutEnforcement: true }
+    const existingDefendant = {
+      ...defendant,
+      isSentToPrisonAdmin: true,
+    } as Defendant
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(
+        defendantUpdate,
+        CaseType.INDICTMENT,
+        caseId,
+        existingDefendant,
+      )
+    })
+
+    it('should reject the update', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(mockDefendantRepositoryService.update).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('defendant is sent to prison admin and closed without enforcement in the same update', () => {
+    const defendantUpdate = {
+      isClosedWithoutEnforcement: true,
+      isSentToPrisonAdmin: true,
+    }
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(defendantUpdate, CaseType.INDICTMENT, caseId)
+    })
+
+    it('should reject the update', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(mockDefendantRepositoryService.update).not.toHaveBeenCalled()
+    })
+  })
+
   describe('defendant update fails', () => {
     let then: Then
 
