@@ -5,6 +5,7 @@ import {
   FlatList,
   Image,
   ListRenderItemInfo,
+  Platform,
   Pressable,
   RefreshControl,
   SafeAreaView,
@@ -312,7 +313,9 @@ export default function HealthMessageDetailScreen() {
         networkStatus={res.networkStatus}
         options={{
           title: conversation?.title ?? '',
-          headerTitleAlign: 'center',
+          // Android centers a long title over the back arrow; left-align there
+          // so it truncates next to it instead. iOS reserves the button space.
+          headerTitleAlign: Platform.OS === 'android' ? 'left' : 'center',
           headerRight: conversation
             ? () => (
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
