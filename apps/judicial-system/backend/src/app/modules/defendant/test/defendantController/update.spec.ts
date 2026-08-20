@@ -1,6 +1,8 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
+import { BadRequestException } from '@nestjs/common'
+
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseType,
@@ -360,6 +362,34 @@ describe('DefendantController - Update', () => {
       expect(
         mockDefendantEventLogRepositoryService.create,
       ).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('defendant in request case is closed without enforcement', () => {
+    const defendantUpdate = { isClosedWithoutEnforcement: true }
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(defendantUpdate, CaseType.CUSTODY, caseId)
+    })
+
+    it('should reject the update', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(mockDefendantRepositoryService.update).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('defendant in indictment is reopened through a defendant update', () => {
+    const defendantUpdate = { isClosedWithoutEnforcement: false }
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(defendantUpdate, CaseType.INDICTMENT, caseId)
+    })
+
+    it('should reject the update', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(mockDefendantRepositoryService.update).not.toHaveBeenCalled()
     })
   })
 

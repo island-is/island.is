@@ -1,6 +1,6 @@
 import { literal, Op, Transaction } from 'sequelize'
 
-import { Inject, Injectable } from '@nestjs/common'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -398,6 +398,19 @@ export class DefendantService {
     user: User,
     transaction: Transaction,
   ): Promise<Defendant> {
+    // Closing without enforcement is only valid for indictment defendants and
+    // is irreversible through this endpoint - reopening a case resets the flag
+    // in the case reopen workflow.
+    if (
+      update.isClosedWithoutEnforcement !== undefined &&
+      (!isIndictmentCase(theCase.type) ||
+        update.isClosedWithoutEnforcement !== true)
+    ) {
+      throw new BadRequestException(
+        'Closed without enforcement can only be set for indictment case defendants',
+      )
+    }
+
     if (
       update.defenderNationalId === null &&
       !(

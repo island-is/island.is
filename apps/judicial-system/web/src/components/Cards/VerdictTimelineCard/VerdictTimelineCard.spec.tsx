@@ -1,5 +1,5 @@
 import faker from 'faker'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import { toast } from '@island.is/island-ui/core'
@@ -59,6 +59,18 @@ jest.mock(
       mockVerdictAppealDecisionChoice(props),
   }),
 )
+
+const mockUpdateDefendant = jest.fn()
+const mockSetAndSendDefendantToServer = jest.fn()
+
+jest.mock('../../../utils/hooks/useDefendants', () => ({
+  __esModule: true,
+  default: () => ({
+    updateDefendant: mockUpdateDefendant,
+    setAndSendDefendantToServer: mockSetAndSendDefendantToServer,
+    isUpdatingDefendant: false,
+  }),
+}))
 
 jest.mock('next/router', () => ({
   useRouter() {
@@ -206,6 +218,50 @@ describe('VerdictTimelineCard', () => {
         (content) =>
           content.includes('verður lokið án fullnustu gagnvart ákærða') &&
           content.includes('ekki er hægt að afturkalla'),
+      ),
+    ).toBeInTheDocument()
+  })
+
+  it('closes the modal after a successful close without enforcement update', async () => {
+    mockUpdateDefendant.mockResolvedValueOnce(true)
+
+    renderComponent(mockDefendant)
+
+    await userEvent.click(
+      await screen.findByRole('button', { name: `Valmynd fyrir ${name}` }),
+    )
+    await userEvent.click(await screen.findByText('Ljúka máli án fullnustu'))
+    await userEvent.click(screen.getByRole('button', { name: 'Ljúka máli' }))
+
+    expect(mockUpdateDefendant).toHaveBeenCalledWith({
+      caseId: 'test_id',
+      defendantId: mockDefendant.id,
+      isClosedWithoutEnforcement: true,
+    })
+    await waitFor(() =>
+      expect(
+        screen.queryByText((content) =>
+          content.includes('verður lokið án fullnustu gagnvart ákærða'),
+        ),
+      ).not.toBeInTheDocument(),
+    )
+  })
+
+  it('keeps the modal open when the close without enforcement update fails', async () => {
+    mockUpdateDefendant.mockResolvedValueOnce(false)
+
+    renderComponent(mockDefendant)
+
+    await userEvent.click(
+      await screen.findByRole('button', { name: `Valmynd fyrir ${name}` }),
+    )
+    await userEvent.click(await screen.findByText('Ljúka máli án fullnustu'))
+    await userEvent.click(screen.getByRole('button', { name: 'Ljúka máli' }))
+
+    expect(mockUpdateDefendant).toHaveBeenCalledTimes(1)
+    expect(
+      await screen.findByText((content) =>
+        content.includes('verður lokið án fullnustu gagnvart ákærða'),
       ),
     ).toBeInTheDocument()
   })

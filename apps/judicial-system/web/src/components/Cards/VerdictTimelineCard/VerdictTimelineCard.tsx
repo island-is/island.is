@@ -55,7 +55,8 @@ const VerdictTimelineCard: FC<Props> = (props) => {
   const { verdict } = defendant
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase } = useContext(FormContext)
-  const { setAndSendDefendantToServer, isUpdatingDefendant } = useDefendants()
+  const { setAndSendDefendantToServer, updateDefendant, isUpdatingDefendant } =
+    useDefendants()
   const { setAndSendVerdictToServer } = useVerdict()
 
   const hasMountedRef = useRef<boolean>(false)
@@ -659,15 +660,16 @@ const VerdictTimelineCard: FC<Props> = (props) => {
             },
             {
               text: 'Ljúka máli',
-              onClick: () => {
-                setAndSendDefendantToServer(
-                  {
-                    caseId: workingCase.id,
-                    defendantId: defendant.id,
-                    isClosedWithoutEnforcement: true,
-                  },
-                  setWorkingCase,
-                )
+              onClick: async () => {
+                const updated = await updateDefendant({
+                  caseId: workingCase.id,
+                  defendantId: defendant.id,
+                  isClosedWithoutEnforcement: true,
+                })
+
+                if (!updated) {
+                  return
+                }
 
                 // The closed date is derived from an event log created on the
                 // server, so it only arrives with a case refetch. Set it
@@ -679,6 +681,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
                     d.id === defendant.id
                       ? {
                           ...d,
+                          isClosedWithoutEnforcement: true,
                           closedWithoutEnforcementDate:
                             new Date().toISOString(),
                         }

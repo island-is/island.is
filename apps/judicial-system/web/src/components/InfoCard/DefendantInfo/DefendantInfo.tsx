@@ -208,6 +208,7 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
           </Text>
         )}
         {isPublicProsecutionOfficeUser(user) &&
+          defendant.isClosedWithoutEnforcement &&
           defendant.closedWithoutEnforcementDate && (
             <Text fontWeight="semiBold">
               {`Máli lokið án fullnustu ${formatDate(
