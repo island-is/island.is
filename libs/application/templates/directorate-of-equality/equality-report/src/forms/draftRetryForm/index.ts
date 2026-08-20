@@ -2,7 +2,6 @@ import { buildForm } from '@island.is/application/core'
 import { FormModes } from '@island.is/application/types'
 import { DirectorateOfEqualityLogo } from '@island.is/application/assets/institution-logos'
 import { buildCommentThreadSection } from '../commentThreadSection'
-import { buildDebugEventsSection } from '../debugEventsSection'
 import { draftRetryGoalsAndActionsSection } from './goalsAndActionsSection'
 
 export const draftRetryForm = buildForm({
@@ -16,6 +15,5 @@ export const draftRetryForm = buildForm({
     // below rather than embedded inline in it.
     buildCommentThreadSection({ alwaysVisible: true }),
     draftRetryGoalsAndActionsSection,
-    buildDebugEventsSection(),
   ],
 })

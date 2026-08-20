@@ -3,7 +3,6 @@ import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { FormModes } from '@island.is/application/types'
 import { DirectorateOfEqualityLogo } from '@island.is/application/assets/institution-logos'
 import { messages } from '../../lib/messages'
-import { buildDebugEventsSection } from '../debugEventsSection'
 
 export const approvedForm = buildForm({
   id: 'approvedForm',
@@ -16,6 +15,5 @@ export const approvedForm = buildForm({
       alertTitle: messages.approved.title,
       alertMessage: messages.approved.description,
     }),
-    buildDebugEventsSection(),
   ],
 })

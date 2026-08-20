@@ -3,7 +3,6 @@ import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { FormModes } from '@island.is/application/types'
 import { DirectorateOfEqualityLogo } from '@island.is/application/assets/institution-logos'
 import { messages } from '../../lib/messages'
-import { buildDebugEventsSection } from '../debugEventsSection'
 
 export const deniedForm = buildForm({
   id: 'deniedForm',
@@ -17,6 +16,5 @@ export const deniedForm = buildForm({
       alertMessage: messages.rejected.description,
       alertType: 'error',
     }),
-    buildDebugEventsSection(),
   ],
 })

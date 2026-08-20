@@ -3,7 +3,6 @@ import { FormModes } from '@island.is/application/types'
 import { DirectorateOfEqualityLogo } from '@island.is/application/assets/institution-logos'
 import { buildSalaryAnalysisSection } from '../mainForm/salaryAnalysisSection'
 import { buildCommentThreadSection } from '../commentThreadSection'
-import { buildDebugEventsSection } from '../debugEventsSection'
 import { draftRetryReportSummarySection } from './draftRetryReportSummarySection'
 import { messages } from '../../lib/messages'
 
@@ -30,6 +29,5 @@ export const draftRetryForm = buildForm({
     buildCommentThreadSection({ alwaysVisible: true }),
     buildSalaryAnalysisSection({ hidePostponeCheckbox: true }),
     draftRetryReportSummarySection,
-    buildDebugEventsSection(),
   ],
 })

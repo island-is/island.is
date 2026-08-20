@@ -21,7 +21,6 @@ import {
   SubCriterionCatalogApi,
 } from '../../dataProviders'
 import { messages } from '../../lib/messages'
-import { buildDebugEventsSection } from '../debugEventsSection'
 
 export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',
@@ -83,6 +82,5 @@ export const Prerequisites = buildForm({
         }),
       ],
     }),
-    buildDebugEventsSection(),
   ],
 })
