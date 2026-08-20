@@ -1,5 +1,5 @@
-import cn from 'classnames'
 import { useIntl } from 'react-intl'
+import cn from 'classnames'
 
 import { Box, SkeletonLoader, Stack, Text } from '@island.is/island-ui/core'
 

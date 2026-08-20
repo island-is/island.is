@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
-import { useIntl } from 'react-intl'
 
 import { Box } from '@island.is/island-ui/core'
 import { CustomPageUniqueIdentifier } from '@island.is/shared/types'
