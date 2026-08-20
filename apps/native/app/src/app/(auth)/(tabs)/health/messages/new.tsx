@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Platform, ScrollView, View } from 'react-native'
-import { router, useLocalSearchParams } from 'expo-router'
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router'
 import { useTheme } from 'styled-components/native'
 
 import { ConversationAvailabilityAlert } from '@/components/conversation-availability-alert'
@@ -15,6 +15,7 @@ import {
   useReplyToHealthConversationMutation,
 } from '@/graphql/types/schema'
 import { useKeyboardHeight } from '@/hooks/use-keyboard-height'
+import { uiStore } from '@/stores/ui-store'
 import { getMessagingWindowInfo } from '@/utils/messaging-window'
 import { useLocale } from '@/hooks/use-locale'
 import {
@@ -202,6 +203,20 @@ export default function HealthMessageComposeScreen() {
 
   // Keyboard up: lift the toast to 16px above the Send button (the Host adds its
   // own spacing[2] base gap). Keyboard down: rest it at the bottom.
+  // iOS presents this as a form sheet that already covers the tab bar; Android
+  // presents it in-place, so hide the tab bar while composing there.
+  useFocusEffect(
+    useCallback(() => {
+      if (Platform.OS !== 'android') {
+        return
+      }
+      uiStore.setState({ tabsHidden: true })
+      return () => {
+        uiStore.setState({ tabsHidden: false })
+      }
+    }, []),
+  )
+
   const keyboardHeight = useKeyboardHeight()
   const [sendButtonHeight, setSendButtonHeight] = useState(0)
   const toastBottomOffset =
