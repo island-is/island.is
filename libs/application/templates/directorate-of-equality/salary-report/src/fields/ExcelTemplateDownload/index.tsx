@@ -43,9 +43,14 @@ export const ExcelTemplateDownload: FC<
   // with CriteriaEditor so that screen reuses this fetch.
   const { content, loading, hasError, refetch } = useDraftQuery<{
     criteria: ReportCriterionDto[]
-  }>(application, draftActionId(ApiActions.listDraftCriteria), 'draftCriteria', {
-    ensureDraft: true,
-  })
+  }>(
+    application,
+    draftActionId(ApiActions.listDraftCriteria),
+    'draftCriteria',
+    {
+      ensureDraft: true,
+    },
+  )
   const { sync } = useDraftSync(application)
 
   const base64Template = getValueViaPath<string>(

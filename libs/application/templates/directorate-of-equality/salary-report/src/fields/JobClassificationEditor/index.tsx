@@ -4,7 +4,11 @@ import { useLocale } from '@island.is/localization'
 import { FC, useEffect, useMemo } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { messages } from '../../lib/messages'
-import { ApiActions, draftActionId, SyncMethodEnum } from '../../utils/constants'
+import {
+  ApiActions,
+  draftActionId,
+  SyncMethodEnum,
+} from '../../utils/constants'
 import type {
   DisplayAssignment,
   DraftCriterionWithSubCriteriaDto,
