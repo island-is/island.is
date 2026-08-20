@@ -4,7 +4,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { SelectController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
-import type { StepMeta } from './utils'
+import type { StepMeta } from '../../utils/types'
 
 type Props = {
   fieldName: string

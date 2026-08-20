@@ -1,3 +1,11 @@
+import type {
+  DraftOutlierGroupDto,
+  ReportEmployeeDto,
+  SyncCommand,
+} from './types'
+import { SyncMethodEnum } from './constants'
+import { buildUpsertRemoveCommands } from './syncCommands'
+
 // The outlier-group answer shape and its completeness rule live here because
 // two screens-worth of components depend on them: SalaryAnalysisResults gates
 // "Continue" on the rule, OutlierEditor renders the matching inline warning.
@@ -8,6 +16,9 @@
 // groups are only ever created with their members, so a group without the key
 // is not a state the form can produce.
 export type OutlierGroupAnswer = {
+  // Draft-phase id, tracked through useFieldArray so remove/append don't
+  // misattribute sync commands by array position. Unused in POSTPONED mode.
+  id?: string
   reason?: string
   action?: string
   signatureName?: string
@@ -25,3 +36,65 @@ export const isOutlierGroupComplete = (group: OutlierGroupAnswer): boolean =>
       group.signatureName?.trim() &&
       group.signatureRole?.trim(),
   )
+
+// Diffs the draft's current outlier groups against the edited form values and
+// builds the CREATE/UPDATE/REMOVE sync commands for both the groups and the
+// employees whose membership changed as a result.
+export const buildOutlierSyncCommands = (
+  content: {
+    outlierGroups: DraftOutlierGroupDto[]
+    employees: ReportEmployeeDto[]
+  },
+  finalGroups: OutlierGroupAnswer[],
+): { outlierGroups: SyncCommand[]; employees: SyncCommand[] } => {
+  const employeeIdByOrdinal: Record<number, string> = Object.fromEntries(
+    content.employees.map((e) => [e.ordinal, e.id]),
+  )
+  const originalGroupIds = new Set(content.outlierGroups.map((g) => g.id))
+  // Groups are tracked by id (from OutlierEditor's handleCreateGroup), not
+  // array position, so removals don't misattribute commands.
+  const groupIds = finalGroups.map((g) => g.id ?? crypto.randomUUID())
+
+  const outlierGroupCommands = buildUpsertRemoveCommands(
+    originalGroupIds,
+    finalGroups.map((g, i) => ({
+      id: groupIds[i],
+      data: {
+        reason: g.reason || null,
+        action: g.action || null,
+        signatureName: g.signatureName || null,
+        signatureRole: g.signatureRole || null,
+      },
+    })),
+  )
+
+  const memberOfGroup = new Map<string, string>()
+  finalGroups.forEach((g, i) => {
+    g.employeeOrdinals.forEach((ordinal) => {
+      const employeeId = employeeIdByOrdinal[ordinal]
+      if (employeeId) memberOfGroup.set(employeeId, groupIds[i])
+    })
+  })
+  // Members of a removed/changed group with no surviving group get cleared.
+  const employeeCommands: SyncCommand[] = content.outlierGroups.flatMap((g) =>
+    g.memberEmployeeIds.map((employeeId) => ({
+      method: SyncMethodEnum.UPDATE,
+      id: employeeId,
+      data: { outlierGroupId: memberOfGroup.get(employeeId) ?? null },
+    })),
+  )
+  memberOfGroup.forEach((groupId, employeeId) => {
+    if (!employeeCommands.some((c) => c.id === employeeId)) {
+      employeeCommands.push({
+        method: SyncMethodEnum.UPDATE,
+        id: employeeId,
+        data: { outlierGroupId: groupId },
+      })
+    }
+  })
+
+  return {
+    outlierGroups: outlierGroupCommands,
+    employees: employeeCommands,
+  }
+}
