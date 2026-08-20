@@ -110,6 +110,12 @@ export const healthNavigation: PortalNavigationItem = {
           navHide: true,
           breadcrumbHide: true,
         },
+        {
+          name: messages.bookAppointmentTitle,
+          path: HealthPaths.HealthBookAppointment,
+          navHide: true,
+          breadcrumbHide: true,
+        },
       ],
     },
     {

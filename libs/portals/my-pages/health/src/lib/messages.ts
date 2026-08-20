@@ -2070,6 +2070,39 @@ export const messages = defineMessages({
       'Hér finnur þú upplýsingar um bókaða tímann þinn. Þú getur bætt honum við dagatalið þitt, breytt bókuninni eða afbókað tíma ef þörf krefur.',
     id: 'sp.health:appointments-detail-intro',
   },
+  bookAppointmentButtonText: {
+    defaultMessage: 'Bóka tíma',
+    id: 'sp.health:book-appointment-button-text',
+  },
+  bookAppointmentTitle: {
+    defaultMessage: 'Bóka tíma',
+    id: 'sp.health:book-appointment-title',
+  },
+  bookAppointmentIntro: {
+    defaultMessage: 'Hér getur þú bókað tíma',
+    id: 'sp.health:book-appointment-intro',
+  },
+  bookAppointmentStillOnHeilsuveruTitle: {
+    defaultMessage: 'Tímabókanir eru enn á Heilsuveru',
+    id: 'sp.health:book-appointment-still-on-heilsuveru-title',
+  },
+  bookAppointmentStillOnHeilsuveruText: {
+    defaultMessage:
+      'Við erum að vinna að því að færa þessa þjónustu yfir á Mínar síður á Ísland.is. Þangað til getur þú farið á Heilsuveru til að bóka tíma.',
+    id: 'sp.health:book-appointment-still-on-heilsuveru-text',
+  },
+  viewBookAppointmentOnHeilsuveru: {
+    defaultMessage: 'Bóka tíma á Heilsuveru',
+    id: 'sp.health:view-book-appointment-on-heilsuveru',
+  },
+  bookAppointmentHeilsuveruLink: {
+    defaultMessage: 'https://minarsidur.heilsuvera.is/timabokun/boka-tima',
+    id: 'sp.health:book-appointment-heilsuveru-link',
+  },
+  landlaeknirAppointmentsTooltip: {
+    defaultMessage: 'Landlæknir hefur umsjón með gögnum um þínar tímabókanir.',
+    id: 'sp.health:landlaeknir-appointments-tooltip',
+  },
   myPregnancy: {
     defaultMessage: 'Meðgangan mín',
     id: 'sp.health:my-pregnancy',
