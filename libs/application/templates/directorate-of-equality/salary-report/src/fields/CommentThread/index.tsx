@@ -20,7 +20,7 @@ import type { ApplicationReportCommentDto } from '@island.is/clients/directorate
 import { ApiActions, draftActionId, States } from '../../utils/constants'
 import { messages } from '../../lib/messages'
 
-const SENDABLE_STATES: string[] = [States.IN_REVIEW, States.POSTPONED]
+const SENDABLE_STATES: string[] = [States.POSTPONED, States.DRAFT_RETRY]
 
 export const CommentThread = ({ application, field }: FieldBaseProps) => {
   const showEmptyState =

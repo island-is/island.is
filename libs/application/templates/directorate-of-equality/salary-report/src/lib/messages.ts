@@ -1279,10 +1279,54 @@ export const messages = {
     },
   }),
 
+  draftRetry: defineMessages({
+    tagLabel: {
+      id: 'doe.sr.application:draftRetry.tagLabel',
+      defaultMessage: 'Lagfæring óskast',
+    },
+    aboutTheCompanySectionTitle: {
+      id: 'doe.sr.application:draftRetry.aboutTheCompanySectionTitle',
+      defaultMessage: 'Upplýsingar um fyrirtækið',
+    },
+    reportSectionTitle: {
+      id: 'doe.sr.application:draftRetry.reportSectionTitle',
+      defaultMessage: 'Skýrsla',
+    },
+    reportSummarySectionTitle: {
+      id: 'doe.sr.application:draftRetry.reportSummarySectionTitle',
+      defaultMessage: 'Yfirlit skýrslu',
+    },
+    reportSummaryTitle: {
+      id: 'doe.sr.application:draftRetry.reportSummaryTitle',
+      defaultMessage: 'Yfirlit innsendrar skýrslu',
+    },
+    submitButton: {
+      id: 'doe.sr.application:draftRetry.submitButton',
+      defaultMessage: 'Senda inn aftur',
+    },
+    pendingActionTitle: {
+      id: 'doe.sr.application:draftRetry.pendingActionTitle',
+      defaultMessage: 'Beðið er eftir lagfæringu',
+    },
+    pendingActionContent: {
+      id: 'doe.sr.application:draftRetry.pendingActionContent',
+      defaultMessage:
+        'Farðu yfir athugasemdir frá Jafnréttisstofu og lagfærðu úrbótaáætlunina.',
+    },
+    pendingActionButton: {
+      id: 'doe.sr.application:draftRetry.pendingActionButton',
+      defaultMessage: 'Halda áfram',
+    },
+  }),
+
   historyLogs: defineMessages({
     postponed: {
       id: 'doe.sr.application:historyLogs.postponed',
-      defaultMessage: 'Salary report outliers postponed',
+      defaultMessage: 'Úrbótaáætlun frestað',
+    },
+    draftRetry: {
+      id: 'doe.sr.application:historyLogs.draftRetry',
+      defaultMessage: 'Úrbótaáætlun lagfærð og send aftur',
     },
   }),
 }

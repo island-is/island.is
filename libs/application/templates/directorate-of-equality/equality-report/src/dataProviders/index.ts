@@ -71,3 +71,13 @@ export const SubmitEqualityReportApi = defineTemplateApi({
   shouldPersistToExternalData: true,
   throwOnError: true,
 })
+
+// PUTs just the report's narrative content in place — used as DRAFT_RETRY's
+// onExit, since submitEqualityReport is a one-shot create call that a
+// revision can't safely re-invoke.
+export const EditEqualityContentApi = defineTemplateApi({
+  action: ApiActions.editEqualityContent,
+  namespace: 'DirectorateOfEquality',
+  shouldPersistToExternalData: true,
+  throwOnError: true,
+})

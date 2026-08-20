@@ -15,6 +15,7 @@ import {
   ActiveEqualityReportApi,
   CompanyRegistryApi,
   DoeCompanyApi,
+  EditEqualityContentApi,
   EqualityReportTemplateDocxApi,
   EqualityReportTemplateHtmlApi,
   GetReportCommentsApi,
@@ -224,11 +225,13 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.inReviewForm),
                 ),
               read: 'all',
-              write: {
-                answers: ['comment'],
-                externalData: ['getReportComments', 'submitReportComment'],
-              },
-              api: [GetReportCommentsApi, SubmitReportCommentApi],
+              // No real answers to write in this state (the comment thread
+              // was removed from this form) — an empty `answers` array is
+              // still required, not an absent `write`, so that normal
+              // screen-to-screen navigation's answers submission passes
+              // applicationTemplateValidation.service.ts's writable-answers
+              // check instead of being rejected outright.
+              write: { answers: [] },
               delete: true,
             },
             {
@@ -247,8 +250,81 @@ const template: ApplicationTemplate<
           [DefaultEvents.REJECT]: {
             target: States.DENIED,
           },
+          // Targets DRAFT_RETRY (not DRAFT) so a case-worker-requested
+          // revision lands on a screen built for that purpose — comments
+          // first, then the actual goalsAndActions content to fix — rather
+          // than dropping the applicant back onto the full mainForm.
           [DefaultEvents.EDIT]: {
-            target: States.DRAFT,
+            target: States.DRAFT_RETRY,
+          },
+        },
+      },
+      [States.DRAFT_RETRY]: {
+        meta: {
+          name: 'Lagfæring',
+          progress: 0.7,
+          status: FormModes.IN_PROGRESS,
+          lifecycle: DefaultStateLifeCycle,
+          // So the comment thread's non-empty check has fresh externalData —
+          // see the identical comment on States.DRAFT.
+          onEntry: GetReportCommentsApi,
+          // PUTs just the report's narrative content in place — NOT
+          // SubmitEqualityReportApi, which is a one-shot create call
+          // (POST .../reports/equality) that a revision can't safely
+          // re-invoke. Mirrors salary-report's EditOutliersApi/onExit here.
+          onExit: EditEqualityContentApi,
+          actionCard: {
+            tag: {
+              label: messages.draftRetry.tagLabel,
+              variant: 'purple',
+            },
+            pendingAction: {
+              title: messages.draftRetry.pendingActionTitle,
+              content: messages.draftRetry.pendingActionContent,
+              button: messages.draftRetry.pendingActionButton,
+              displayStatus: 'info',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: messages.historyLogs.draftRetry,
+              },
+            ],
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/draftRetryForm').then((module) =>
+                  Promise.resolve(module.draftRetryForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
+              ],
+              read: 'all',
+              write: {
+                answers: ['comment', 'goalsAndActions'],
+                externalData: ['getReportComments', 'submitReportComment'],
+              },
+              api: [GetReportCommentsApi, SubmitReportCommentApi],
+              delete: true,
+            },
+            {
+              id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
+              read: 'all',
+              write: 'all',
+              delete: false,
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: {
+            target: States.IN_REVIEW,
           },
         },
       },
@@ -264,9 +340,6 @@ const template: ApplicationTemplate<
               variant: 'mint',
             },
           },
-          // So the comment thread's non-empty check has fresh externalData —
-          // see the identical comment on States.DRAFT.
-          onEntry: GetReportCommentsApi,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -275,8 +348,13 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.approvedForm),
                 ),
               read: 'all',
-              write: { externalData: ['getReportComments'] },
-              api: [GetReportCommentsApi],
+              // No real answers to write in this state (the comment thread
+              // was removed from this form) — an empty `answers` array is
+              // still required, not an absent `write`, so that normal
+              // screen-to-screen navigation's answers submission passes
+              // applicationTemplateValidation.service.ts's writable-answers
+              // check instead of being rejected outright.
+              write: { answers: [] },
               delete: true,
             },
             {
@@ -301,9 +379,6 @@ const template: ApplicationTemplate<
               variant: 'red',
             },
           },
-          // So the comment thread's non-empty check has fresh externalData —
-          // see the identical comment on States.DRAFT.
-          onEntry: GetReportCommentsApi,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -312,8 +387,8 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.deniedForm),
                 ),
               read: 'all',
-              write: { externalData: ['getReportComments'] },
-              api: [GetReportCommentsApi],
+              // See the identical comment on States.APPROVED.
+              write: { answers: [] },
               delete: true,
             },
             {

@@ -655,4 +655,35 @@ export const messages = {
       defaultMessage: 'Ekki tókst að sækja skilaboð, reyndu aftur.',
     },
   }),
+
+  draftRetry: defineMessages({
+    tagLabel: {
+      id: 'doe.er.application:draftRetry.tagLabel',
+      defaultMessage: 'Lagfæring óskast',
+    },
+    submitButton: {
+      id: 'doe.er.application:draftRetry.submitButton',
+      defaultMessage: 'Senda inn aftur',
+    },
+    pendingActionTitle: {
+      id: 'doe.er.application:draftRetry.pendingActionTitle',
+      defaultMessage: 'Beðið er eftir lagfæringu',
+    },
+    pendingActionContent: {
+      id: 'doe.er.application:draftRetry.pendingActionContent',
+      defaultMessage:
+        'Farðu yfir athugasemdir frá Jafnréttisstofu og lagfærðu jafnréttisáætlunina.',
+    },
+    pendingActionButton: {
+      id: 'doe.er.application:draftRetry.pendingActionButton',
+      defaultMessage: 'Halda áfram',
+    },
+  }),
+
+  historyLogs: defineMessages({
+    draftRetry: {
+      id: 'doe.er.application:historyLogs.draftRetry',
+      defaultMessage: 'Jafnréttisáætlun lagfærð og send aftur',
+    },
+  }),
 }
