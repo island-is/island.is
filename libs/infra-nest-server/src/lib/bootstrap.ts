@@ -6,6 +6,9 @@ import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import type { Server } from 'http'
+import qs from 'qs'
+
+import { MAX_QUERY_PARAM_ARRAY_SIZE } from '@island.is/shared/constants'
 
 import {
   logger,
@@ -67,11 +70,11 @@ export const createApp = async ({
   // the X-Forwarded-For header before passing to internal services.
   app.set('trust proxy', JSON.parse(process.env.EXPRESS_TRUST_PROXY || 'false'))
 
-  // The 'extended' query parser exists for backward compatibility with
-  // external REST clients: e.g. axios's default serializer emits bracket
-  // arrays (?ids[]=1&ids[]=2), which the 'simple' parser would leave as a
-  // literal "ids[]" key. Internal code doesn't rely on it.
-  app.set('query parser', 'extended')
+  // 'extended' (qs) parser, but with a raised arrayLimit — qs turns an array
+  // into an object past the default 20, breaking array query params.
+  app.set('query parser', (str: string) =>
+    qs.parse(str, { arrayLimit: MAX_QUERY_PARAM_ARRAY_SIZE }),
+  )
 
   // Enable validation of request DTOs globally.
   app.useGlobalPipes(
