@@ -48,15 +48,17 @@ export const Filters = ({
   isSuperAdmin = false,
   useAdvancedSearch = false,
 }: Props) => {
-  const [typeId, setTypeId] = useState<string | undefined>(undefined)
-  const [nationalId, setNationalId] = useState('')
-  const [searchStr, setSearchStr] = useState('')
+  const [typeId, setTypeId] = useState<string | undefined>(
+    () => filters.typeIdValue,
+  )
+  const [nationalId, setNationalId] = useState(() => filters.nationalId ?? '')
+  const [searchStr, setSearchStr] = useState(() => filters.searchStr ?? '')
   const { formatMessage, locale: lang } = useLocale()
   const [isMobile, setIsMobile] = useState(false)
   const [isSmallDesktop, setIsSmallDesktop] = useState(false)
   const { width } = useWindowSize()
   const [chosenInstitutionNationalId, setChosenInstitutionNationalId] =
-    useState<string | undefined>(undefined)
+    useState<string | undefined>(() => filters.institution || undefined)
 
   const {
     data: institutionApplicationTypesData,
@@ -122,14 +124,13 @@ export const Filters = ({
     }
   }, [width])
 
+  // Keep local input state in sync with the filters prop so back/forward
+  // navigation and shared links populate the inputs correctly.
   useEffect(() => {
-    if (!filters.typeIdValue) setTypeId(undefined)
-    if (!filters.institution) {
-      setChosenInstitutionNationalId(undefined)
-    }
-
-    if (!filters.nationalId) setNationalId('')
-    if (!filters.searchStr) setSearchStr('')
+    setTypeId(filters.typeIdValue || undefined)
+    setChosenInstitutionNationalId(filters.institution || undefined)
+    setNationalId(filters.nationalId ?? '')
+    setSearchStr(filters.searchStr ?? '')
   }, [filters])
 
   const institutionTypeIds = useMemo(() => {

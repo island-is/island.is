@@ -107,6 +107,20 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:notFound',
     defaultMessage: 'Engar umsóknir fundust',
   },
+  pageLimitReachedTitle: {
+    id: 'admin-portal.application-system:pageLimitReachedTitle',
+    defaultMessage: 'Aðeins er hægt að fletta um fyrstu {count} umsóknirnar',
+  },
+  pageLimitReachedDescription: {
+    id: 'admin-portal.application-system:pageLimitReachedDescription',
+    defaultMessage:
+      'Notaðu síurnar hér að ofan til að þrengja niðurstöðurnar og finna eldri umsóknir.',
+  },
+  pageBeyondLimit: {
+    id: 'admin-portal.application-system:pageBeyondLimit',
+    defaultMessage:
+      'Eldri umsóknir eru faldar. Notaðu síurnar til að þrengja niðurstöðurnar.',
+  },
   openApplicationHistory: {
     id: 'admin-portal.application-system:openApplicationHistory',
     defaultMessage: 'Opna umsóknarsögu',

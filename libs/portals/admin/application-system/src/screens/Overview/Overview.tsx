@@ -1,5 +1,10 @@
-import { useEffect, useState } from 'react'
-import { Box, SkeletonLoader, Text } from '@island.is/island-ui/core'
+import { useState } from 'react'
+import {
+  AlertMessage,
+  Box,
+  SkeletonLoader,
+  Text,
+} from '@island.is/island-ui/core'
 import {
   useGetApplicationV2ApplicationsSuperAdminQuery,
   useGetApplicationV2ApplicationsInstitutionAdminQuery,
@@ -12,13 +17,8 @@ import { ApplicationsTable } from '../../components/ApplicationsTable/Applicatio
 import { ApplicationFilters } from '../../types/filters'
 import { Organization } from '@island.is/shared/types'
 import { AdminApplication } from '../../types/adminApplication'
-
-const defaultFilters: ApplicationFilters = {
-  nationalId: '',
-  period: {},
-  searchStr: '',
-  institution: '',
-}
+import { useOverviewUrlState } from './useOverviewUrlState'
+import { MAX_PAGE } from '../../lib/constants'
 
 interface OverviewProps {
   isSuperAdmin: boolean
@@ -34,8 +34,8 @@ const Overview = ({
   isLoadingOrganizations,
 }: OverviewProps) => {
   const { formatMessage } = useLocale()
-  const [page, setPage] = useState(1)
-  const [filters, setFilters] = useState(defaultFilters)
+  const { page, filters, setPage, setFilters, resetFilters } =
+    useOverviewUrlState()
   const [availableApplications, setAvailableApplications] = useState<string[]>()
 
   const useAdvancedSearch = !!filters.typeIdValue
@@ -110,6 +110,16 @@ const Overview = ({
   const applicationAdminList =
     applicationApplicationsAdmin as AdminApplication[]
 
+  const totalCount = isSuperAdmin
+    ? superApplicationsData?.applicationV2ApplicationsSuperAdmin?.count
+    : institutionApplicationsData?.applicationV2ApplicationsInstitutionAdmin
+        ?.count
+
+  const showPageLimitAlert =
+    typeof totalCount === 'number' &&
+    totalCount > MAX_PAGE * pageSize &&
+    page >= MAX_PAGE
+
   const handleSearchChange = (nationalId: string) => {
     const nationalIdWithoutDash = nationalId.replace('-', '')
     if (nationalIdWithoutDash.length === 10 || nationalId === '') {
@@ -151,26 +161,18 @@ const Overview = ({
   }
 
   const handleDateChange = (period: ApplicationFilters['period']) => {
-    const update = { ...filters.period, ...period }
     setFilters((prev) => ({
       ...prev,
-      period: update,
+      period: { ...prev.period, ...period },
     }))
   }
 
   const clearFilters = (categoryId?: string) => {
     if (!categoryId) {
-      setFilters(defaultFilters)
+      resetFilters()
       return
     }
   }
-
-  // Reset the page on filter change
-  // Note: Apollo will automatically refetch
-  // when commonVariables change due to the updated page/filters state
-  useEffect(() => {
-    setPage(1)
-  }, [filters])
 
   return (
     <Box>
@@ -192,15 +194,22 @@ const Overview = ({
         filters={filters}
         applications={availableApplications ?? []}
         organizations={availableOrganizations ?? []}
-        numberOfDocuments={
-          isSuperAdmin
-            ? superApplicationsData?.applicationV2ApplicationsSuperAdmin?.count
-            : institutionApplicationsData
-                ?.applicationV2ApplicationsInstitutionAdmin?.count
-        }
+        numberOfDocuments={totalCount}
         isSuperAdmin={isSuperAdmin}
         useAdvancedSearch={!!filters.typeIdValue}
       />
+
+      {showPageLimitAlert && (
+        <Box marginBottom={3}>
+          <AlertMessage
+            type="info"
+            title={formatMessage(m.pageLimitReachedTitle, {
+              count: MAX_PAGE * pageSize,
+            })}
+            message={formatMessage(m.pageLimitReachedDescription)}
+          />
+        </Box>
+      )}
 
       {isLoading ? (
         <SkeletonLoader
@@ -216,17 +225,12 @@ const Overview = ({
           page={page}
           setPage={setPage}
           pageSize={pageSize}
+          maxPage={MAX_PAGE}
           showAdminData={!!filters.typeIdValue}
           showInstitution={!filters.institution}
           shouldShowCardButtons={false}
           isSuperAdmin={isSuperAdmin}
-          numberOfItems={
-            isSuperAdmin
-              ? superApplicationsData?.applicationV2ApplicationsSuperAdmin
-                  ?.count
-              : institutionApplicationsData
-                  ?.applicationV2ApplicationsInstitutionAdmin?.count
-          }
+          numberOfItems={totalCount}
         />
       )}
     </Box>

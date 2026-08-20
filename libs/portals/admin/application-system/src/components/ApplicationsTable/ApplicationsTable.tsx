@@ -40,6 +40,7 @@ interface Props {
   showAdminData?: boolean
   showInstitution?: boolean
   isSuperAdmin: boolean
+  maxPage?: number
 }
 
 export const ApplicationsTable = ({
@@ -53,15 +54,18 @@ export const ApplicationsTable = ({
   showAdminData,
   showInstitution,
   isSuperAdmin,
+  maxPage,
 }: Props) => {
   const { formatMessage } = useLocale()
+
+  const rawTotalPages = numberOfItems
+    ? Math.ceil(numberOfItems / pageSize)
+    : Math.ceil(applications.length / pageSize)
 
   const pagedDocuments = {
     from: numberOfItems ? 0 : (page - 1) * pageSize,
     to: numberOfItems ? numberOfItems : pageSize * page,
-    totalPages: numberOfItems
-      ? Math.ceil(numberOfItems / pageSize)
-      : Math.ceil(applications.length / pageSize),
+    totalPages: maxPage ? Math.min(rawTotalPages, maxPage) : rawTotalPages,
   }
 
   const copyApplicationLink = (application: AdminApplication) => {
@@ -93,12 +97,16 @@ export const ApplicationsTable = ({
     copyApplicationLink(application)
   }
 
-  if (applications.length === 0)
+  if (applications.length === 0) {
+    const beyondCap = maxPage !== undefined && page > maxPage
     return (
       <Box display="flex" justifyContent="center" marginTop={[3, 3, 6]}>
-        <Text variant="h4">{formatMessage(m.notFound)}</Text>
+        <Text variant="h4">
+          {formatMessage(beyondCap ? m.pageBeyondLimit : m.notFound)}
+        </Text>
       </Box>
     )
+  }
 
   return (
     <>
