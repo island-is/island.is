@@ -12,6 +12,8 @@ import {
   getApplicationEqualityReportTemplateHtml,
   getApplicationReport,
   getApplicationReportOutliers,
+  getApplicationReportComments,
+  getApplicationSubCriterionCatalog,
   importApplicationSalaryReportWorkbook,
   presignApplicationImportUpload,
   submitApplicationEqualityReport,
@@ -27,6 +29,7 @@ import type {
   EditOutliersDto,
   EqualityReportSummaryDto,
   GetReportOutliersResponseDto,
+  GetSubCriterionCatalogResponseDto,
   ParsedReportDto,
   PresignUploadResponseDto,
   SalaryAnalysisRequestDto,
@@ -108,6 +111,17 @@ export class DirectorateOfEqualityClientService {
       user,
       () => getApplicationReport({ path: { providerId } }),
       'Failed to get report',
+    )
+  }
+
+  async getReportComments(
+    user: User,
+    providerId: string,
+  ): Promise<ApplicationReportCommentDto[]> {
+    return this.unwrap(
+      user,
+      () => getApplicationReportComments({ path: { providerId } }),
+      'Failed to get report comments',
     )
   }
 
@@ -198,6 +212,16 @@ export class DirectorateOfEqualityClientService {
       user,
       () => editApplicationOutliers({ path: { providerId }, body }),
       'Failed to edit outliers',
+    )
+  }
+
+  async getSubCriterionCatalog(
+    user: User,
+  ): Promise<GetSubCriterionCatalogResponseDto> {
+    return this.unwrap(
+      user,
+      () => getApplicationSubCriterionCatalog(),
+      'Failed to get sub-criterion catalog',
     )
   }
 

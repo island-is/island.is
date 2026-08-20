@@ -19243,7 +19243,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/qs@npm:*":
+"@types/qs@npm:*, @types/qs@npm:6.14.0":
   version: 6.14.0
   resolution: "@types/qs@npm:6.14.0"
   checksum: 10/1909205514d22b3cbc7c2314e2bd8056d5f05dfb21cf4377f0730ee5e338ea19957c41735d5e4806c746176563f50005bbab602d8358432e25d900bdf4970826
@@ -27047,9 +27047,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cypress@npm:15.9.0":
-  version: 15.9.0
-  resolution: "cypress@npm:15.9.0"
+"cypress@npm:15.14.0":
+  version: 15.14.0
+  resolution: "cypress@npm:15.14.0"
   dependencies:
     "@cypress/request": "npm:^3.0.10"
     "@cypress/xvfb": "npm:^1.2.4"
@@ -27079,7 +27079,7 @@ __metadata:
     hasha: "npm:5.2.2"
     is-installed-globally: "npm:~0.4.0"
     listr2: "npm:^3.8.3"
-    lodash: "npm:^4.17.21"
+    lodash: "npm:^4.17.23"
     log-symbols: "npm:^4.0.0"
     minimist: "npm:^1.2.8"
     ospath: "npm:^1.2.2"
@@ -27088,14 +27088,15 @@ __metadata:
     proxy-from-env: "npm:1.0.0"
     request-progress: "npm:^3.0.0"
     supports-color: "npm:^8.1.1"
-    systeminformation: "npm:^5.27.14"
+    systeminformation: "npm:^5.31.1"
     tmp: "npm:~0.2.4"
     tree-kill: "npm:1.2.2"
+    tslib: "npm:1.14.1"
     untildify: "npm:^4.0.0"
     yauzl: "npm:^2.10.0"
   bin:
     cypress: bin/cypress
-  checksum: 10/f561e7f9f8956e26a1eeb1dc98614b83abb63c1f83d008ffd26a03d96c15c25037980868f57e07f9821be4c41ace6886f8edf4de6d86a3b5de5f3c059b586ecd
+  checksum: 10/a49de9b3af2bca33e1895262a466745f65697f744aefe59c994c3929aa03f185eb3d4b61aa9c751aec4eb19a6cda2b9f1988f1d367700ba0303bdb5bec31691b
   languageName: node
   linkType: hard
 
@@ -35809,6 +35810,7 @@ __metadata:
     "@types/pg": "npm:8.6.4"
     "@types/prettier": "npm:2.6.2"
     "@types/pubsub-js": "npm:1.8.1"
+    "@types/qs": "npm:6.14.0"
     "@types/react": "npm:19.2.17"
     "@types/react-csv": "npm:1.1.1"
     "@types/react-dom": "npm:19.2.3"
@@ -35875,7 +35877,7 @@ __metadata:
     csstype: "npm:2.6.13"
     csv-parse: "npm:5.6.0"
     csv-stringify: "npm:5.6.5"
-    cypress: "npm:15.9.0"
+    cypress: "npm:15.14.0"
     cypress-file-upload: "npm:5.0.8"
     cypress-promise: "npm:1.1.0"
     dataloader: "npm:2.1.0"
@@ -35990,6 +35992,7 @@ __metadata:
     prom-client: "npm:14.1.0"
     pubsub-js: "npm:1.8.0"
     qrcode.react: "npm:4.2.0"
+    qs: "npm:6.14.0"
     react: "npm:19.2.7"
     react-alice-carousel: "npm:1.19.3"
     react-animate-height: "npm:3.1.2"
@@ -45810,7 +45813,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qs@npm:^6.11.0, qs@npm:^6.11.2, qs@npm:^6.12.3, qs@npm:^6.4.0, qs@npm:^6.5.1, qs@npm:^6.9.4":
+"qs@npm:6.14.0, qs@npm:^6.11.0, qs@npm:^6.11.2, qs@npm:^6.12.3, qs@npm:^6.4.0, qs@npm:^6.5.1, qs@npm:^6.9.4":
   version: 6.14.0
   resolution: "qs@npm:6.14.0"
   dependencies:
@@ -51636,12 +51639,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"systeminformation@npm:^5.27.14":
-  version: 5.31.7
-  resolution: "systeminformation@npm:5.31.7"
+"systeminformation@npm:^5.31.1":
+  version: 5.33.1
+  resolution: "systeminformation@npm:5.33.1"
   bin:
     systeminformation: lib/cli.js
-  checksum: 10/087924ee90d54c0175af0b5b88a0586d84b9aadfd19c23de8ae4a80dac14e2b414432d57721518a366bfd115092c32d71a170fc0aee49dd7ee74ba8b88d29904
+  checksum: 10/54e8749be385a91b32cd5de0a7dbd16478e60c7b679b173a58f9f447b1785d2f4820f4c642b25de1bc0e71611a38fad9905a75477fcb60cd36e7a389e6b56162
   conditions: (os=darwin | os=linux | os=win32 | os=freebsd | os=openbsd | os=netbsd | os=sunos | os=android)
   languageName: node
   linkType: hard
@@ -52695,6 +52698,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tslib@npm:1.14.1, tslib@npm:^1.10.0, tslib@npm:^1.11.1, tslib@npm:^1.9.0":
+  version: 1.14.1
+  resolution: "tslib@npm:1.14.1"
+  checksum: 10/7dbf34e6f55c6492637adb81b555af5e3b4f9cc6b998fb440dac82d3b42bdc91560a35a5fb75e20e24a076c651438234da6743d139e4feabf0783f3cdfe1dddb
+  languageName: node
+  linkType: hard
+
 "tslib@npm:2.6.2":
   version: 2.6.2
   resolution: "tslib@npm:2.6.2"
@@ -52713,13 +52723,6 @@ __metadata:
   version: 2.8.1
   resolution: "tslib@npm:2.8.1"
   checksum: 10/3e2e043d5c2316461cb54e5c7fe02c30ef6dccb3384717ca22ae5c6b5bc95232a6241df19c622d9c73b809bea33b187f6dbc73030963e29950c2141bc32a79f7
-  languageName: node
-  linkType: hard
-
-"tslib@npm:^1.10.0, tslib@npm:^1.11.1, tslib@npm:^1.9.0":
-  version: 1.14.1
-  resolution: "tslib@npm:1.14.1"
-  checksum: 10/7dbf34e6f55c6492637adb81b555af5e3b4f9cc6b998fb440dac82d3b42bdc91560a35a5fb75e20e24a076c651438234da6743d139e4feabf0783f3cdfe1dddb
   languageName: node
   linkType: hard
 

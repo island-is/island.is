@@ -141,7 +141,8 @@ export const usePaymentOrchestration = ({
           const [month, year] = cardExpiry.split('/')
           await cardPayment.processCardPayment({
             cardholderName,
-            number: card,
+            // The form stores the masked value; the processor needs digits.
+            number: card.replace(/\D/g, ''),
             expiryMonth: Number(month),
             expiryYear: Number(year),
             cvc: cardCVC,
@@ -158,7 +159,8 @@ export const usePaymentOrchestration = ({
             return
           }
           await bankTransferPayment.processBankTransferPayment(
-            bankAccountNumber,
+            // The form stores the masked value; the service needs digits.
+            bankAccountNumber.replace(/\D/g, ''),
           )
         }
       } catch (e: unknown) {

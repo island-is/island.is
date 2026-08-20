@@ -1,18 +1,20 @@
-import { theme } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 import { globalStyle, style } from '@vanilla-extract/css'
 
-export const messageCard = style({
-  borderStyle: theme.border.style.solid,
-  borderWidth: theme.border.width.standard,
-  borderColor: theme.color.blue200,
-  borderRadius: theme.border.radius.large,
-  '@media': {
-    [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
+export const messageCard = style(
+  themeUtils.responsiveStyle({
+    xs: {
       borderWidth: 0,
       borderRadius: 0,
     },
-  },
-})
+    sm: {
+      borderStyle: theme.border.style.solid,
+      borderWidth: theme.border.width.standard,
+      borderColor: theme.color.blue200,
+      borderRadius: theme.border.radius.large,
+    },
+  }),
+)
 
 export const backButton = style({})
 

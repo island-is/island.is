@@ -9,7 +9,10 @@ import { useLocale } from '@island.is/localization'
 import { FC, useEffect, useRef } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import type { Application } from '@island.is/application/types'
-import type { ParsedSubCriterionDto } from '@island.is/clients/directorate-of-equality'
+import type {
+  ParsedSubCriterionDto,
+  SubCriterionCatalogEntryDto,
+} from '@island.is/clients/directorate-of-equality'
 import { DEFAULT_SUB_CRITERION } from '../../utils/constants'
 import type { Employee, Role, SubCriterion } from '../../utils/types'
 import { useCascadeDelete } from '../../utils/useCascadeDelete'
@@ -27,6 +30,7 @@ type Props = {
   startExpanded?: boolean
   savedSubCriteria: SubCriterion[]
   parsedSubCriteria: ParsedSubCriterionDto[]
+  catalogEntries: SubCriterionCatalogEntryDto[]
   parsedSalaryReportDate: string | undefined
 }
 
@@ -50,6 +54,7 @@ export const CriterionPanel: FC<Props> = ({
   fieldName,
   savedSubCriteria,
   parsedSubCriteria,
+  catalogEntries,
   parsedSalaryReportDate,
   startExpanded = false,
 }) => {
@@ -199,6 +204,7 @@ export const CriterionPanel: FC<Props> = ({
             index={i}
             isLast={i === fields.length - 1}
             canRemove={fields.length > 1}
+            catalogEntries={catalogEntries}
             onRemove={() => {
               const deletedSubTitle = getValues(
                 `${fieldName}.${i}.title`,

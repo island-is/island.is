@@ -9,6 +9,8 @@ import {
   defineTemplateApi,
   FormModes,
   InstitutionNationalIds,
+  NotificationConfig,
+  NotificationType,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
@@ -16,6 +18,7 @@ import {
   corePendingActionMessages,
   pruneAfterDays,
 } from '@island.is/application/core'
+import { Features } from '@island.is/feature-flags'
 import {
   application as applicationMessage,
   historyMessages as applicationHistoryMessages,
@@ -45,17 +48,19 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
 import { assign } from 'xstate'
 import set from 'lodash/set'
-import { CodeOwners } from '@island.is/shared/constants'
+import format from 'date-fns/format'
+import { CodeOwners, dateFormat } from '@island.is/shared/constants'
 
-const pruneInDaysAfterRegistrationCloses = (
-  application: Application,
-  days: number,
-) => {
+/**
+ * Calculates a date that is a certain number of days after the last registration close date of the application.
+ * Passing in a negative number will return a date before the registration close date.
+ */
+const daysAfterRegistrationClose = (application: Application, days: number) => {
   const lastRegistrationEndDate = getLastRegistrationEndDate(
     application.answers,
   )
 
-  // add days to registration end date
+  // offset days from registration end date (positive = after close, negative = before close)
   const date = lastRegistrationEndDate
     ? new Date(lastRegistrationEndDate)
     : new Date()
@@ -64,6 +69,13 @@ const pruneInDaysAfterRegistrationCloses = (
   // set time to right before midnight
   return getEndOfDayUTCDate(date)
 }
+
+// date-fns formats using the server's local time; this carries a date's UTC
+// year/month/day into a local Date so formatting doesn't depend on server TZ.
+const toUTCDateOnly = (date: Date) =>
+  new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
+
+const pruneLifeTimeAfterSubmit = 90
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -220,7 +232,40 @@ const template: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: (application: Application) =>
-              pruneInDaysAfterRegistrationCloses(application, 2 * 30),
+              daysAfterRegistrationClose(application, pruneLifeTimeAfterSubmit),
+          },
+          scheduledNotifications: (application) => {
+            const registrationClose = daysAfterRegistrationClose(application, 0)
+            const weekBeforeClose = daysAfterRegistrationClose(application, -7)
+            const twoDaysBeforeClose = daysAfterRegistrationClose(
+              application,
+              -2,
+            )
+            return [weekBeforeClose, twoDaysBeforeClose].flatMap((sendDate) =>
+              sendDate.getTime() > Date.now()
+                ? [
+                    {
+                      template:
+                        NotificationConfig[
+                          NotificationType.ApplicationPeriodEndingReminder
+                        ].templateId,
+                      date: sendDate,
+                      includeApplicationLink: true,
+                      featureFlag:
+                        Features.secondarySchoolScheduledNotifications,
+                      args: [
+                        {
+                          key: 'registrationClose',
+                          value: format(
+                            toUTCDateOnly(registrationClose),
+                            dateFormat.is,
+                          ),
+                        },
+                      ],
+                    },
+                  ]
+                : [],
+            )
           },
           onExit: defineTemplateApi({
             action: ApiActions.submitApplication,
@@ -298,7 +343,7 @@ const template: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: (application: Application) =>
-              pruneInDaysAfterRegistrationCloses(application, 2 * 30),
+              daysAfterRegistrationClose(application, pruneLifeTimeAfterSubmit),
           },
           onDelete: defineTemplateApi({
             action: ApiActions.deleteApplication,
@@ -395,7 +440,7 @@ const template: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: (application: Application) =>
-              pruneInDaysAfterRegistrationCloses(application, 3 * 30),
+              daysAfterRegistrationClose(application, pruneLifeTimeAfterSubmit),
           },
           actionCard: {
             tag: {
@@ -473,7 +518,7 @@ const template: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: (application: Application) =>
-              pruneInDaysAfterRegistrationCloses(application, 3 * 30),
+              daysAfterRegistrationClose(application, pruneLifeTimeAfterSubmit),
           },
           actionCard: {
             tag: {
@@ -549,7 +594,7 @@ const template: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: (application: Application) =>
-              pruneInDaysAfterRegistrationCloses(application, 3 * 30),
+              daysAfterRegistrationClose(application, pruneLifeTimeAfterSubmit),
           },
           actionCard: {
             tag: {
@@ -583,7 +628,7 @@ const template: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: (application: Application) =>
-              pruneInDaysAfterRegistrationCloses(application, 3 * 30),
+              daysAfterRegistrationClose(application, pruneLifeTimeAfterSubmit),
           },
           actionCard: {
             tag: {
