@@ -68,9 +68,14 @@ export const createApp = async ({
   // the X-Forwarded-For header before passing to internal services.
   app.set('trust proxy', JSON.parse(process.env.EXPRESS_TRUST_PROXY || 'false'))
 
-  // Express's 'extended' parser is qs with allowPrototypes: true. qs turns an
-  // array into an object past arrayLimit; keep it at 20 and cap dataloader
-  // batches to the same 20 so a batch never exceeds it.
+  // The 'extended' query parser exists for backward compatibility with
+  // external REST clients: e.g. axios's default serializer emits bracket
+  // arrays (?ids[]=1&ids[]=2), which the 'simple' parser would leave as a
+  // literal "ids[]" key. Internal code doesn't rely on it.
+  //
+  // Inlined here (Express's 'extended' is qs with allowPrototypes: true) so we
+  // can pin arrayLimit: qs turns an array into an object past it, and we cap
+  // dataloader batches to the same 20 so a batch never exceeds it.
   app.set('query parser', (str: string) =>
     qs.parse(str, { allowPrototypes: true, arrayLimit: 20 }),
   )
