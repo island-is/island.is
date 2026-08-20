@@ -386,64 +386,70 @@ export const SubmissionUrls = () => {
                 </Text>
               </Column>
             </Row>
-            {displayedZendeskBrandIds.map((brandId) => (
-              <Row key={brandId || 'missing-zendesk-brand-id'}>
-                <Column span="6/10">
-                  <RadioButton
-                    label={
-                      <strong>
-                        Brand Id:{' '}
-                        {brandId || (
+            {displayedZendeskBrandIds.map((brandId, index) => {
+              const zendeskBrandInputId = `zendesk-brand-id-${
+                sanitizeId(brandId) || `missing-${index}`
+              }-${index}`
+
+              return (
+                <Row key={zendeskBrandInputId}>
+                  <Column span="6/10">
+                    <RadioButton
+                      label={
+                        <strong>
+                          Brand Id:{' '}
+                          {brandId || (
+                            <Text
+                              as="span"
+                              color="red600"
+                              variant="small"
+                              fontWeight="semiBold"
+                            >
+                              Zendesk brand Id vantar
+                            </Text>
+                          )}
+                        </strong>
+                      }
+                      large
+                      name="zendeskBrandId"
+                      id={zendeskBrandInputId}
+                      checked={selectedZendeskBrandId === brandId}
+                      disabled={isReadOnly || !brandId}
+                      onChange={() => {
+                        controlDispatch({
+                          type: 'CHANGE_ORGANIZATION_ZENDESK_INSTANCE',
+                          payload: {
+                            zendeskInstance: zendeskInstance ?? '',
+                            zendeskBrandId: brandId,
+                          },
+                        })
+                        formUpdate({
+                          ...form,
+                          organizationZendeskInstance: {
+                            zendeskInstance: zendeskInstance ?? '',
+                            zendeskBrandId: brandId,
+                          },
+                        })
+                      }}
+                      subLabel={
+                        zendeskInstance ? (
+                          `${zendeskInstance}.zendesk.com`
+                        ) : (
                           <Text
                             as="span"
                             color="red600"
                             variant="small"
                             fontWeight="semiBold"
                           >
-                            Zendesk brand Id vantar
+                            Zendesk instance vantar
                           </Text>
-                        )}
-                      </strong>
-                    }
-                    large
-                    name="zendeskBrandId"
-                    id={`zendesk-brand-id-${sanitizeId(brandId)}`}
-                    checked={selectedZendeskBrandId === brandId}
-                    disabled={isReadOnly || !brandId}
-                    onChange={() => {
-                      controlDispatch({
-                        type: 'CHANGE_ORGANIZATION_ZENDESK_INSTANCE',
-                        payload: {
-                          zendeskInstance: zendeskInstance ?? '',
-                          zendeskBrandId: brandId,
-                        },
-                      })
-                      formUpdate({
-                        ...form,
-                        organizationZendeskInstance: {
-                          zendeskInstance: zendeskInstance ?? '',
-                          zendeskBrandId: brandId,
-                        },
-                      })
-                    }}
-                    subLabel={
-                      zendeskInstance ? (
-                        `${zendeskInstance}.zendesk.com`
-                      ) : (
-                        <Text
-                          as="span"
-                          color="red600"
-                          variant="small"
-                          fontWeight="semiBold"
-                        >
-                          Zendesk instance vantar
-                        </Text>
-                      )
-                    }
-                  />
-                </Column>
-              </Row>
-            ))}
+                        )
+                      }
+                    />
+                  </Column>
+                </Row>
+              )
+            })}
 
             <Row>
               <Column span="9/10">

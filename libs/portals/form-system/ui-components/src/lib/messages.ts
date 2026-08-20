@@ -879,8 +879,8 @@ export const m = defineMessages({
     defaultMessage: 'Veldu mínútu',
     description: 'Pick minute',
   },
-  review: {
-    id: 'form.system:review',
+  reviewApplication: {
+    id: 'form.system:review-application',
     defaultMessage: 'Vinsamlega farðu vel yfir áður en þú sendir inn.',
     description: 'Please review before submitting.',
   },
@@ -972,8 +972,8 @@ export const m = defineMessages({
     defaultMessage: 'Umsókn í vinnslu hjá þér',
     description: 'Draft status for an application',
   },
-  submit: {
-    id: 'form.system:submit',
+  submitApplication: {
+    id: 'form.system:submit-application',
     defaultMessage: 'Senda inn',
     description: 'Submit',
   },

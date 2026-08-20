@@ -577,6 +577,10 @@ export class FormsService {
     const { newStatus } = updateFormStatusDto
     const currentStatus = form.status
 
+    if (newStatus === FormStatus.PUBLISHED) {
+      await this.validateZendeskSettingsForPublish(form)
+    }
+
     switch (currentStatus) {
       case FormStatus.IN_DEVELOPMENT:
         if (newStatus === FormStatus.PUBLISHED) {
@@ -607,6 +611,24 @@ export class FormsService {
     throw new BadRequestException(
       `Invalid status transition from '${currentStatus}' to '${newStatus}'`,
     )
+  }
+
+  private async validateZendeskSettingsForPublish(form: Form): Promise<void> {
+    if (form.submissionServiceUrl !== 'zendesk') {
+      return
+    }
+
+    const organization = await this.organizationModel.findByPk(
+      form.organizationId,
+    )
+    const zendeskBrandId = form.zendeskBrandId?.trim()
+    const zendeskInstance = organization?.zendeskInstance?.trim()
+
+    if (!zendeskBrandId || !zendeskInstance) {
+      throw new BadRequestException(
+        'Zendesk instance and brand ID must be configured before publishing a Zendesk form.',
+      )
+    }
   }
 
   private async getUniqueCopySlug(baseSlug: string): Promise<string> {
