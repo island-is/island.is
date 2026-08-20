@@ -12,7 +12,8 @@ export type DomainDataLoader = DataLoader<DomainInput, Domain | null, string>
 
 @Injectable()
 export class DomainLoader
-  implements NestDataLoader<DomainInput, Domain | null> {
+  implements NestDataLoader<DomainInput, Domain | null>
+{
   constructor(private readonly domainService: DomainService) {}
 
   keyFn(input: DomainInput): string {
