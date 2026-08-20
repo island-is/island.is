@@ -21,6 +21,41 @@ interface ConversationField {
 }
 
 /**
+ * Interface representing an error that occurs when the widget fails to render.
+ * @see https://developer.zendesk.com/api-reference/widget-messaging/web/core/#render
+ */
+interface RenderFailedError {
+  /** A descriptive message that explains the error */
+  message: string
+  /** Provides additional details on the cause of the render failure */
+  reason: string
+  /** Identifies the error type as `RenderFailedError` */
+  type: string
+}
+
+/**
+ * Interface representing a container that a widget component is rendered into.
+ */
+interface RenderTarget {
+  /** CSS selector of an element that must already exist in the DOM */
+  targetElement: string
+}
+
+/**
+ * Interface representing the configuration passed to the `render` method.
+ *
+ * In embedded mode at least one of `widget`, `conversationList` or
+ * `messageLog` must be provided.
+ * @see https://developer.zendesk.com/documentation/zendesk-web-widget-sdks/sdks/web/embedded-mode/
+ */
+interface RenderConfig {
+  mode: 'embedded' | 'floating'
+  widget?: RenderTarget
+  conversationList?: RenderTarget
+  messageLog?: RenderTarget
+}
+
+/**
  * Type definitions for the Zendesk Messenger Web Widget global function zE().
  *
  * It is a callable object with multiple overloads based on the scope and method arguments.
@@ -77,6 +112,18 @@ export type ZendeskMessengerAPI = {
    * @see https://developer.zendesk.com/api-reference/widget-messaging/web/core/#reset-widget
    */
   (scope: 'messenger', method: 'resetWidget', callback: () => void): void
+
+  /**
+   * Renders the widget into containers on the host page instead of the
+   * default floating overlay.
+   * @see https://developer.zendesk.com/documentation/zendesk-web-widget-sdks/sdks/web/embedded-mode/
+   */
+  (
+    scope: 'messenger',
+    method: 'render',
+    config: RenderConfig,
+    errorCallback?: (error: RenderFailedError | null) => void,
+  ): void
 
   // --- Event Methods (messenger:on scope) ---
 
