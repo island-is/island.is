@@ -110,8 +110,9 @@ const Content = styled.View`
   flex: 1;
 `
 
-const Title = styled(Typography)<{ size: AlertSize }>`
-  margin-bottom: ${({ size }) => (size === 'small' ? '2px' : '4px')};
+// Transient `$size` so it isn't forwarded to Typography's own `size` (fontSize).
+const Title = styled(Typography)<{ $size: AlertSize }>`
+  margin-bottom: ${({ $size }) => ($size === 'small' ? '2px' : '4px')};
 `
 
 const Close = styled(TouchableOpacity)`
@@ -212,7 +213,7 @@ export function Alert({
         {(message || title) && (
           <Content>
             {title && (
-              <Title variant={isSmall ? 'eyebrow' : 'heading5'} size={size}>
+              <Title variant={isSmall ? 'eyebrow' : 'heading5'} $size={size}>
                 {title}
               </Title>
             )}
