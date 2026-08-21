@@ -14,11 +14,6 @@ import {
 } from '../CustomPage/CustomPageWrapper'
 import { ChatConversation } from './components/ChatConversation'
 import { ChatLauncher } from './components/ChatLauncher'
-import {
-  getStoredConversationTitle,
-  storeConversationTitle,
-  toConversationTitle,
-} from './components/conversations'
 import { useZendeskMessenger } from './components/useZendeskMessenger'
 import * as styles from './AskTheBudgetBill.css'
 
@@ -58,11 +53,6 @@ const AskTheBudgetBill: CustomScreen<AskTheBudgetBillProps> = ({
   })
 
   const [isStarting, setIsStarting] = useState(false)
-  // The widget does not hand out the title of a conversation, so this holds
-  // the question the open chat was started from.
-  const [conversationTitle, setConversationTitle] = useState<string | null>(
-    null,
-  )
   // Accounts that are not in multi conversation mode cannot be told which
   // conversation to show, so the widget is opened on whatever it defaults to.
   const [isFallbackOpen, setIsFallbackOpen] = useState(false)
@@ -111,23 +101,11 @@ const AskTheBudgetBill: CustomScreen<AskTheBudgetBillProps> = ({
     openConversation(activeConversationId)
   }, [status, activeConversationId, openConversation])
 
-  // The title survives a reload through storage rather than the url, so that
-  // the visitor's question is not part of a link they might share.
-  useEffect(() => {
-    if (!activeConversationId) return
-    setConversationTitle(
-      (current) => current ?? getStoredConversationTitle(activeConversationId),
-    )
-  }, [activeConversationId])
-
   const handleAsk = async (question: string) => {
     setIsStarting(true)
     try {
       const conversationId = await startConversation(question)
-      const title = toConversationTitle(question)
       setIsFallbackOpen(false)
-      setConversationTitle(title)
-      storeConversationTitle(conversationId, title)
       showConversation(conversationId)
     } catch (error) {
       console.error(error)
@@ -140,7 +118,6 @@ const AskTheBudgetBill: CustomScreen<AskTheBudgetBillProps> = ({
   /** Leaves the open conversation behind and returns to an empty question box */
   const startNewChat = useCallback(() => {
     setIsFallbackOpen(false)
-    setConversationTitle(null)
     void router.push({ pathname: PATHNAME }, undefined, { shallow: true })
   }, [router])
 
@@ -161,11 +138,7 @@ const AskTheBudgetBill: CustomScreen<AskTheBudgetBillProps> = ({
         )}
         aria-hidden={!isChatOpen}
       >
-        <ChatConversation
-          question={conversationTitle ?? undefined}
-          status={status}
-          onNewChat={startNewChat}
-        >
+        <ChatConversation status={status} onNewChat={startNewChat}>
           {/* Rendered into by Zendesk once, and kept mounted from then on */}
           <Box id={CONTAINER_ID} width="full" height="full" />
         </ChatConversation>
@@ -184,6 +157,7 @@ const AskTheBudgetBill: CustomScreen<AskTheBudgetBillProps> = ({
         <Box className={styles.launcherInner}>
           <ChatLauncher
             isStarting={isStarting}
+            isVisible={!isChatOpen}
             status={status}
             onAsk={handleAsk}
           />

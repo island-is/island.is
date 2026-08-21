@@ -14,8 +14,6 @@ import type { MessengerStatus } from './useZendeskMessenger'
 import * as styles from './ChatConversation.css'
 
 interface ChatConversationProps {
-  /** The question the chat was started from, when it is known */
-  question?: string
   status: MessengerStatus
   /** The always mounted element the Zendesk widget renders itself into */
   children: ReactNode
@@ -29,7 +27,6 @@ interface ChatConversationProps {
  * and the visitor sees just the messages and the composer underneath them.
  */
 export const ChatConversation = ({
-  question,
   status,
   children,
   onNewChat,
@@ -49,13 +46,8 @@ export const ChatConversation = ({
       >
         <Box className={styles.title}>
           <Text variant="h5" as="h1" truncate>
-            {formatMessage(m.chatTitle)}
+            {formatMessage(m.heading)}
           </Text>
-          {question && (
-            <Text variant="small" color="dark400" truncate>
-              {question}
-            </Text>
-          )}
         </Box>
         <Button
           variant="utility"

@@ -5,27 +5,27 @@ import {
   AlertMessage,
   Box,
   Button,
-  LoadingDots,
+  Input,
   Stack,
   Text,
-  VisuallyHidden,
 } from '@island.is/island-ui/core'
 
 import { m } from '../translations.strings'
 import type { MessengerStatus } from './useZendeskMessenger'
 import * as styles from './ChatLauncher.css'
 
-const MAX_COMPOSER_HEIGHT_PX = 200
-
 interface ChatLauncherProps {
   /** True while a conversation is being created for the question just asked */
   isStarting: boolean
+  /** False while the launcher sits hidden underneath an open conversation */
+  isVisible: boolean
   status: MessengerStatus
   onAsk: (question: string) => void
 }
 
 export const ChatLauncher = ({
   isStarting,
+  isVisible,
   status,
   onAsk,
 }: ChatLauncherProps) => {
@@ -33,17 +33,17 @@ export const ChatLauncher = ({
   const [value, setValue] = useState('')
   const composerRef = useRef<HTMLTextAreaElement>(null)
 
-  // The textarea starts at one line and grows with the question, the way the
-  // composer inside the chat does.
+  // The launcher stays mounted underneath the conversation, so returning to it
+  // from an open chat has to hand the caret back to the question box. Only the
+  // return is focused, not the first render, so the page does not open with the
+  // mobile keyboard up.
+  const wasVisible = useRef(isVisible)
   useEffect(() => {
-    const composer = composerRef.current
-    if (!composer) return
-    composer.style.height = 'auto'
-    composer.style.height = `${Math.min(
-      composer.scrollHeight,
-      MAX_COMPOSER_HEIGHT_PX,
-    )}px`
-  }, [value])
+    if (isVisible && !wasVisible.current) {
+      composerRef.current?.focus()
+    }
+    wasVisible.current = isVisible
+  }, [isVisible])
 
   const isReady = status === 'ready'
   const canSubmit = isReady && !isStarting && Boolean(value.trim())
@@ -54,8 +54,6 @@ export const ChatLauncher = ({
     onAsk(question.trim())
   }
 
-  const suggestions = [m.suggestionOne, m.suggestionTwo, m.suggestionThree]
-
   return (
     <Box
       className={styles.content}
@@ -63,88 +61,47 @@ export const ChatLauncher = ({
       paddingY={[4, 4, 6]}
     >
       <Stack space={4}>
-        <Stack space={2}>
-          <Text variant="eyebrow" color="blue400">
-            {formatMessage(m.eyebrow)}
-          </Text>
-          <Text variant="h1" as="h1">
-            {formatMessage(m.heading)}
-          </Text>
-          <Text variant="intro" color="dark400">
-            {formatMessage(m.intro)}
-          </Text>
-        </Stack>
+        <Text variant="h1" as="h1">
+          {formatMessage(m.heading)}
+        </Text>
 
         <Stack space={2}>
-          <Box className={styles.composer}>
-            <VisuallyHidden>
-              <label htmlFor="budget-bill-question">
-                {formatMessage(m.inputLabel)}
-              </label>
-            </VisuallyHidden>
-            <textarea
-              id="budget-bill-question"
-              ref={composerRef}
-              rows={1}
-              className={styles.composerInput}
-              placeholder={formatMessage(m.inputPlaceholder)}
-              value={value}
-              disabled={isStarting}
-              onChange={(event) => setValue(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter' && !event.shiftKey) {
-                  event.preventDefault()
-                  submit(value)
-                }
-              }}
-            />
-            {isStarting ? (
-              <Box paddingX={2} paddingY={1}>
-                <LoadingDots />
-              </Box>
-            ) : (
-              <Button
-                circle
-                icon="arrowForward"
-                aria-label={formatMessage(m.send)}
-                disabled={!canSubmit}
-                onClick={() => submit(value)}
-              />
-            )}
+          <Input
+            name="budget-bill-question"
+            ref={composerRef}
+            textarea
+            rows={4}
+            label={formatMessage(m.inputLabel)}
+            placeholder={formatMessage(m.inputPlaceholder)}
+            value={value}
+            disabled={isStarting}
+            onChange={(event) => setValue(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault()
+                submit(value)
+              }
+            }}
+          />
+
+          <Box display="flex" justifyContent="flexEnd">
+            <Button
+              icon="arrowForward"
+              loading={isStarting}
+              disabled={!canSubmit}
+              onClick={() => submit(value)}
+            >
+              {formatMessage(m.send)}
+            </Button>
           </Box>
 
-          {status === 'error' ? (
+          {status === 'error' && (
             <AlertMessage
               type="warning"
               title={formatMessage(m.chatErrorTitle)}
               message={formatMessage(m.chatErrorMessage)}
             />
-          ) : (
-            <Text variant="small" color="dark400">
-              {formatMessage(m.inputHint)}
-            </Text>
           )}
-        </Stack>
-
-        <Stack space={2}>
-          <Text variant="eyebrow" color="dark400">
-            {formatMessage(m.suggestionsTitle)}
-          </Text>
-          <Stack space={1}>
-            {suggestions.map((suggestion) => (
-              <button
-                key={suggestion.id}
-                type="button"
-                className={styles.suggestion}
-                disabled={!isReady || isStarting}
-                onClick={() => submit(formatMessage(suggestion))}
-              >
-                <Text variant="medium" color="blue400">
-                  {formatMessage(suggestion)}
-                </Text>
-              </button>
-            ))}
-          </Stack>
         </Stack>
 
         <Text variant="small" color="dark400">

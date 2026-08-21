@@ -6,21 +6,10 @@ import { defineMessages } from 'react-intl'
  * default messages below.
  */
 export const m = defineMessages({
-  eyebrow: {
-    id: 'web.askTheBudgetBill:eyebrow',
-    defaultMessage: 'Gervigreindaraðstoð',
-    description: 'Lítill texti fyrir ofan fyrirsögnina',
-  },
   heading: {
     id: 'web.askTheBudgetBill:heading',
     defaultMessage: 'Spurðu fjárlagafrumvarpið',
     description: 'H1 titill á síðunni',
-  },
-  intro: {
-    id: 'web.askTheBudgetBill:intro',
-    defaultMessage:
-      'Spurðu um það sem þú vilt vita úr fjárlagafrumvarpinu og fáðu svar á mannamáli.',
-    description: 'Inngangstexti undir fyrirsögninni',
   },
   inputLabel: {
     id: 'web.askTheBudgetBill:inputLabel',
@@ -32,40 +21,10 @@ export const m = defineMessages({
     defaultMessage: 'Spurðu um fjárlagafrumvarpið...',
     description: 'Ábending í innsláttarreit',
   },
-  inputHint: {
-    id: 'web.askTheBudgetBill:inputHint',
-    defaultMessage: 'Enter sendir spurninguna, Shift + Enter byrjar nýja línu.',
-    description: 'Leiðbeining um lyklaborðsnotkun',
-  },
   send: {
     id: 'web.askTheBudgetBill:send',
     defaultMessage: 'Senda spurningu',
     description: 'Merking á sendihnappi',
-  },
-  suggestionsTitle: {
-    id: 'web.askTheBudgetBill:suggestionsTitle',
-    defaultMessage: 'Dæmi um spurningar',
-    description: 'Titill fyrir ofan tillögur að spurningum',
-  },
-  suggestionOne: {
-    id: 'web.askTheBudgetBill:suggestionOne',
-    defaultMessage: 'Hvernig breytast framlög til heilbrigðismála?',
-    description: 'Tillaga að spurningu',
-  },
-  suggestionTwo: {
-    id: 'web.askTheBudgetBill:suggestionTwo',
-    defaultMessage: 'Hvað segir frumvarpið um menntamál?',
-    description: 'Tillaga að spurningu',
-  },
-  suggestionThree: {
-    id: 'web.askTheBudgetBill:suggestionThree',
-    defaultMessage: 'Hver er áætluð afkoma ríkissjóðs?',
-    description: 'Tillaga að spurningu',
-  },
-  chatTitle: {
-    id: 'web.askTheBudgetBill:chatTitle',
-    defaultMessage: 'Spjall um fjárlagafrumvarpið',
-    description: 'Titill efst í spjallglugganum',
   },
   newChat: {
     id: 'web.askTheBudgetBill:newChat',
