@@ -16,9 +16,8 @@ import { webRichText } from '@island.is/web/utils/richText'
 // Delete this screen, its page, and the mock query/resolver/fixtures
 // together once real entries are reachable through normal slice embedding.
 const CalculatorPoc: Screen = () => {
-  const { data, loading, error } = useQuery<GetCalculatorMocksQuery>(
-    GET_CALCULATOR_MOCKS,
-  )
+  const { data, loading, error } =
+    useQuery<GetCalculatorMocksQuery>(GET_CALCULATOR_MOCKS)
 
   const mocks = data?.calculatorMocks ?? []
 
@@ -31,8 +30,7 @@ const CalculatorPoc: Screen = () => {
           </Text>
           <Text variant="intro">
             Dæmi um grein sem inniheldur reiknivélar (mocked Contentful data,
-            rendered via webRichText -- the same path a real article body
-            uses).
+            rendered via webRichText -- the same path a real article body uses).
           </Text>
           {loading && <Text>Loading…</Text>}
           {error && <Text color="red600">Failed to load mocks.</Text>}

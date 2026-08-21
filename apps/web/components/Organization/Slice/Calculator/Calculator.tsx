@@ -366,10 +366,14 @@ const Calculator = ({ slice }: CalculatorProps) => {
                   if (!isVisible) return undefined
                   return { field, span: sectionField.span }
                 })
-                .filter((entry): entry is {
-                  field: RskCalculatorField
-                  span: number
-                } => Boolean(entry))
+                .filter(
+                  (
+                    entry,
+                  ): entry is {
+                    field: RskCalculatorField
+                    span: number
+                  } => Boolean(entry),
+                )
 
               if (!sectionFields.length) return null
 

@@ -188,9 +188,7 @@ export const renderSlice = (
       return webRenderConnectedComponent(slice)
     case 'Calculator':
       return (
-        <TranslationNamespaceProvider
-          messages={slice.translationStrings ?? {}}
-        >
+        <TranslationNamespaceProvider messages={slice.translationStrings ?? {}}>
           <Calculator slice={slice} />
         </TranslationNamespaceProvider>
       )

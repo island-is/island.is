@@ -40,7 +40,9 @@ export const calculatorConfigSchema = z.object({
 })
 
 export type CalculatorSectionField = z.infer<typeof sectionFieldSchema>
-export type CalculatorFieldSection = z.infer<typeof calculatorFieldSectionSchema>
+export type CalculatorFieldSection = z.infer<
+  typeof calculatorFieldSectionSchema
+>
 export type CalculatorConfig = z.infer<typeof calculatorConfigSchema>
 
 const isLeafCondition = (

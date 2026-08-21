@@ -140,9 +140,7 @@ const RskCalculatorConfigField = () => {
 
   const removeField = (sectionIndex: number, fieldIndex: number) => {
     updateSection(sectionIndex, {
-      fields: sections[sectionIndex].fields.filter(
-        (_, i) => i !== fieldIndex,
-      ),
+      fields: sections[sectionIndex].fields.filter((_, i) => i !== fieldIndex),
     })
   }
 
@@ -151,7 +149,10 @@ const RskCalculatorConfigField = () => {
   // doesn't expose that -- only hand-editing the raw JSON can express it.
   const getConditionRows = (
     field: CalculatorSectionField,
-  ): { rows: { field: string; equals: string }[]; combinator: 'all' | 'any' } => {
+  ): {
+    rows: { field: string; equals: string }[]
+    combinator: 'all' | 'any'
+  } => {
     const condition = field.visibleWhen
     if (!condition) return { rows: [], combinator: 'all' }
     if ('field' in condition) return { rows: [condition], combinator: 'all' }
@@ -186,7 +187,9 @@ const RskCalculatorConfigField = () => {
       return
     }
     updateField(sectionIndex, fieldIndex, {
-      visibleWhen: { [combinator]: rows } as CalculatorSectionField['visibleWhen'],
+      visibleWhen: {
+        [combinator]: rows,
+      } as CalculatorSectionField['visibleWhen'],
     })
   }
 
@@ -269,7 +272,11 @@ const RskCalculatorConfigField = () => {
                     padding: 8,
                   }}
                 >
-                  <Stack flexDirection="row" alignItems="center" spacing="spacingXs">
+                  <Stack
+                    flexDirection="row"
+                    alignItems="center"
+                    spacing="spacingXs"
+                  >
                     <Select
                       value={field.key}
                       onChange={(ev) =>
@@ -282,17 +289,16 @@ const RskCalculatorConfigField = () => {
                       <Select.Option value="" isDisabled>
                         {loading ? 'Loading fields…' : 'Select a field'}
                       </Select.Option>
-                      {availableFields.map((availableField: {
-                        key: string
-                        label: string
-                      }) => (
-                        <Select.Option
-                          key={availableField.key}
-                          value={availableField.key}
-                        >
-                          {availableField.label}
-                        </Select.Option>
-                      ))}
+                      {availableFields.map(
+                        (availableField: { key: string; label: string }) => (
+                          <Select.Option
+                            key={availableField.key}
+                            value={availableField.key}
+                          >
+                            {availableField.label}
+                          </Select.Option>
+                        ),
+                      )}
                     </Select>
                     <TextInput
                       type="number"
@@ -321,9 +327,7 @@ const RskCalculatorConfigField = () => {
                       setConditionRows(
                         sectionIndex,
                         fieldIndex,
-                        hasCondition
-                          ? []
-                          : [{ field: '', equals: '' }],
+                        hasCondition ? [] : [{ field: '', equals: '' }],
                         combinator,
                       )
                     }
@@ -332,7 +336,11 @@ const RskCalculatorConfigField = () => {
                   </Checkbox>
 
                   {hasCondition && (
-                    <Stack flexDirection="column" alignItems="stretch" spacing="spacingXs">
+                    <Stack
+                      flexDirection="column"
+                      alignItems="stretch"
+                      spacing="spacingXs"
+                    >
                       {rows.length > 1 && (
                         <Select
                           value={combinator}
