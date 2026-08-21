@@ -160,6 +160,41 @@ describe('Validate police casenumber format', () => {
     expect(r.isValid).toEqual(false)
     expect(r.errorMessage).toEqual('Dæmi: 012-3456-7890')
   })
+
+  test('should fail if the last part is longer than six digits', () => {
+    // Arrange
+    const value = '007-2024-1234567'
+
+    // Act
+    const r = validate([[value, ['police-casenumber-format']]])
+
+    // Assert
+    expect(r.isValid).toEqual(false)
+    expect(r.errorMessage).toEqual('Dæmi: 012-3456-7890')
+  })
+
+  test('should fail if the number has not been finished', () => {
+    // Arrange
+    const value = '007-2024-'
+
+    // Act
+    const r = validate([[value, ['police-casenumber-format']]])
+
+    // Assert
+    expect(r.isValid).toEqual(false)
+    expect(r.errorMessage).toEqual('Dæmi: 012-3456-7890')
+  })
+
+  test.each(['007-2024-042535', '007-2024-1'])(
+    'should be valid for %s',
+    (value) => {
+      // Act
+      const r = validate([[value, ['police-casenumber-format']]])
+
+      // Assert
+      expect(r.isValid).toEqual(true)
+    },
+  )
 })
 
 describe('Validate time format', () => {
