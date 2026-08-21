@@ -26,9 +26,7 @@ export class IndictmentSubtypeRepositoryService {
     details?: string | null,
   ): Promise<IndictmentSubtype | null> {
     try {
-      this.logger.debug(
-        `Finding the indictment subtype for article ${article}`,
-      )
+      this.logger.debug(`Finding the indictment subtype for article ${article}`)
 
       const subtypes = await this.indictmentSubtypeModel.findAll({
         where: { article },
