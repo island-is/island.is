@@ -85,6 +85,7 @@ resources:
     memory: '192Mi'
 secrets:
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+  DD_CSP_REPORT_CLIENT_TOKEN: '/k8s/DD_CSP_REPORT_CLIENT_TOKEN'
   IDENTITYSERVER_SECRET: '/k8s/auth-admin-web/IDENTITYSERVER_SECRET'
   NEXTAUTH_SECRET: '/k8s/auth-admin-web/NEXTAUTH_SECRET'
 securityContext:
