@@ -2,29 +2,39 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
-  ApplicationRole,
   ApplicationStateSchema,
-  Application,
   DefaultEvents,
   FormModes,
   UserProfileApi,
   ApplicationConfigurations,
   IdentityApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
-import { isCompany } from 'kennitala'
 import {
   ActiveEqualityReportApi,
   BlankExcelTemplateApi,
   CompanyRegistryApi,
+  CreateSalaryDraftApi,
   DoeCompanyApi,
   EditOutliersApi,
+  GetDraftCriteriaTreeApi,
+  GetDraftHeaderApi,
+  GetReportCommentsApi,
   ImportPresignApi,
-  ParsedSalaryReportApi,
+  ImportSalaryDraftWorkbookApi,
+  ListDraftCriteriaApi,
+  ListDraftEmployeesApi,
+  ListDraftOutlierGroupsApi,
+  ListDraftRolesApi,
+  ListDraftRolesWithStepsApi,
   SalaryAnalysisApi,
+  SubCriterionCatalogApi,
+  SubmitReportCommentApi,
   SubmitSalaryReportApi,
 } from '../dataProviders'
 import { Events, Roles, States } from '../utils/constants'
+import { mapUserToRole } from '../utils/mapUserToRole'
 import {
   hasActiveEqualityReport,
   hasPostponedOutlierPlan,
@@ -32,6 +42,7 @@ import {
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
 import {
+  coreMessages,
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
   pruneAfterDays,
@@ -39,6 +50,8 @@ import {
 import { messages } from './messages'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
+import { assign } from 'xstate'
+import set from 'lodash/set'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -55,6 +68,18 @@ const template: ApplicationTemplate<
   dataSchema,
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   requiredScopes: [ApiScope.directorateOfEquality],
+  allowMultipleApplicationsInDraft: false,
+  stateMachineOptions: {
+    actions: {
+      assignToInstitution: assign((context) => {
+        const { application } = context
+        set(application, 'assignees', [
+          InstitutionNationalIds.DOMSMALA_RADUNEYTID,
+        ])
+        return context
+      }),
+    },
+  },
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -81,6 +106,7 @@ const template: ApplicationTemplate<
                 IdentityApi,
                 CompanyRegistryApi,
                 DoeCompanyApi,
+                SubCriterionCatalogApi,
                 ActiveEqualityReportApi,
                 BlankExcelTemplateApi,
               ],
@@ -126,15 +152,29 @@ const template: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
+        entry: 'assignToInstitution',
         meta: {
           name: 'Main form',
           progress: 0.4,
           status: FormModes.DRAFT,
           lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: messages.inReview.sentHistoryLog,
+              },
+            ],
+          },
           // onExit (not onEntry on the target states) so a failed submission
           // blocks the transition instead of silently landing the applicant
           // on POSTPONED/COMPLETED with a stale backend record.
           onExit: SubmitSalaryReportApi,
+          // onEntry so the comment thread's non-empty check has fresh
+          // externalData to read on first render — role.api alone never
+          // auto-fetches outside PREREQUISITES, it only permits the on-demand
+          // call CommentThread makes from within the mounted field.
+          onEntry: GetReportCommentsApi,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -147,8 +187,27 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [ImportPresignApi, ParsedSalaryReportApi, SalaryAnalysisApi],
+              api: [
+                ImportPresignApi,
+                CreateSalaryDraftApi,
+                ImportSalaryDraftWorkbookApi,
+                GetDraftHeaderApi,
+                GetDraftCriteriaTreeApi,
+                ListDraftRolesWithStepsApi,
+                ListDraftCriteriaApi,
+                ListDraftRolesApi,
+                ListDraftEmployeesApi,
+                ListDraftOutlierGroupsApi,
+                SalaryAnalysisApi,
+              ],
               delete: true,
+            },
+            {
+              id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
+              read: 'all',
+              write: 'all',
+              delete: false,
             },
           ],
         },
@@ -159,7 +218,7 @@ const template: ApplicationTemplate<
               cond: hasPostponedOutlierPlan,
             },
             {
-              target: States.COMPLETED,
+              target: States.IN_REVIEW,
             },
           ],
         },
@@ -175,11 +234,26 @@ const template: ApplicationTemplate<
           // report — the report itself was already submitted via DRAFT's
           // onExit.
           onExit: EditOutliersApi,
+          // So the comment thread's non-empty check has fresh externalData —
+          // see the identical comment on States.DRAFT.
+          onEntry: GetReportCommentsApi,
           actionCard: {
             tag: {
               label: messages.postponed.tagLabel,
               variant: 'blueberry',
             },
+            pendingAction: {
+              title: messages.postponed.pendingActionTitle,
+              content: messages.postponed.pendingActionContent,
+              button: messages.postponed.pendingActionButton,
+              displayStatus: 'info',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: messages.historyLogs.postponed,
+              },
+            ],
           },
           roles: [
             {
@@ -193,52 +267,181 @@ const template: ApplicationTemplate<
               ],
               read: 'all',
               write: {
-                answers: ['salaryAnalysis'],
-                externalData: ['salaryAnalysisResult'],
+                answers: ['salaryAnalysis', 'comment'],
+                externalData: [
+                  'salaryAnalysisResult',
+                  'getReportComments',
+                  'submitReportComment',
+                ],
               },
-              api: [SalaryAnalysisApi],
+              api: [
+                SalaryAnalysisApi,
+                GetReportCommentsApi,
+                SubmitReportCommentApi,
+              ],
+              delete: true,
+            },
+            {
+              id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
+              read: 'all',
+              write: 'all',
+              delete: false,
             },
           ],
         },
         on: {
           [DefaultEvents.SUBMIT]: {
-            target: States.COMPLETED,
+            target: States.IN_REVIEW,
           },
         },
       },
-      [States.COMPLETED]: {
+      [States.IN_REVIEW]: {
         meta: {
-          name: 'Completed form',
-          progress: 1,
-          status: FormModes.COMPLETED,
-          lifecycle: DefaultStateLifeCycle,
+          name: 'Til yfirferðar',
+          progress: 0.95,
+          status: FormModes.IN_PROGRESS,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: false,
+          },
+          actionCard: {
+            tag: {
+              label: coreMessages.tagsInProgress,
+              variant: 'blueberry',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: messages.inReview.approvedHistoryLog,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: messages.inReview.rejectedHistoryLog,
+              },
+              {
+                onEvent: DefaultEvents.EDIT,
+                logMessage: messages.inReview.editHistoryLog,
+              },
+            ],
+          },
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/completedForm').then((module) =>
-                  Promise.resolve(module.completedForm),
+                import('../forms/inReviewForm').then((module) =>
+                  Promise.resolve(module.inReviewForm),
                 ),
               read: 'all',
+              write: {
+                answers: ['comment'],
+                externalData: ['getReportComments', 'submitReportComment'],
+              },
+              api: [GetReportCommentsApi, SubmitReportCommentApi],
               delete: true,
+            },
+            {
+              id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
+              read: 'all',
+              write: 'all',
+              delete: false,
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.APPROVE]: {
+            target: States.APPROVED,
+          },
+          [DefaultEvents.REJECT]: {
+            target: States.DENIED,
+          },
+          // Targets POSTPONED (not DRAFT) so a case-worker-requested revision
+          // reuses the same restricted comments/outlier-plan-editing flow —
+          // there's no path back to the original company/employee/criteria
+          // data-entry screens from here, by design.
+          [DefaultEvents.EDIT]: {
+            target: States.POSTPONED,
+          },
+        },
+      },
+      [States.APPROVED]: {
+        meta: {
+          name: 'Samþykkt',
+          progress: 1,
+          status: FormModes.APPROVED,
+          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            tag: {
+              label: coreMessages.tagsApproved,
+              variant: 'mint',
+            },
+          },
+          // So the comment thread's non-empty check has fresh externalData —
+          // see the identical comment on States.DRAFT.
+          onEntry: GetReportCommentsApi,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/approvedForm').then((module) =>
+                  Promise.resolve(module.approvedForm),
+                ),
+              read: 'all',
+              write: { externalData: ['getReportComments'] },
+              api: [GetReportCommentsApi],
+              delete: true,
+            },
+            {
+              id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
+              read: 'all',
+              write: 'all',
+              delete: false,
+            },
+          ],
+        },
+      },
+      [States.DENIED]: {
+        meta: {
+          name: 'Hafnað',
+          progress: 1,
+          status: FormModes.REJECTED,
+          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            tag: {
+              label: coreMessages.tagsRejected,
+              variant: 'red',
+            },
+          },
+          // So the comment thread's non-empty check has fresh externalData —
+          // see the identical comment on States.DRAFT.
+          onEntry: GetReportCommentsApi,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/deniedForm').then((module) =>
+                  Promise.resolve(module.deniedForm),
+                ),
+              read: 'all',
+              write: { externalData: ['getReportComments'] },
+              api: [GetReportCommentsApi],
+              delete: true,
+            },
+            {
+              id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
+              read: 'all',
+              write: 'all',
+              delete: false,
             },
           ],
         },
       },
     },
   },
-  mapUserToRole(
-    nationalId: string,
-    application: Application,
-  ): ApplicationRole | undefined {
-    if (
-      isCompany(application.applicant) &&
-      nationalId === application.applicant
-    ) {
-      return Roles.APPLICANT
-    }
-    return Roles.NOT_ALLOWED
-  },
+  mapUserToRole,
 }
 
 export default template

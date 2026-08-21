@@ -1,5 +1,5 @@
 import cn from 'classnames'
-import React, { MouseEvent, ReactElement } from 'react'
+import React, { MouseEvent, ReactElement, useId } from 'react'
 import {
   Menu,
   MenuButton,
@@ -65,7 +65,12 @@ export const DropdownMenu = ({
   fixed = false,
   openOnHover = false,
 }: DropdownMenuProps) => {
+  // reakit defaults to a random baseId, which differs between server and
+  // client and trips React's hydration mismatch check — derive it from
+  // React's SSR-stable useId instead.
+  const baseId = `dropdown-menu-${useId().replace(/\W/g, '')}`
   const menu = useMenuState({
+    baseId,
     placement: 'bottom',
     gutter: 8,
     unstable_fixed: fixed,
@@ -122,6 +127,10 @@ export const DropdownMenu = ({
         aria-label={menuLabel}
         className={cn(styles.menu, menuBoxStyle, menuClassName)}
         {...hoverProps}
+        // Hover menus shouldn't yank focus back to the disclosure when they
+        // close. Menu (a Dialog) consumes this option; the disclosure button
+        // doesn't, so it must not go into the shared hoverProps spread.
+        unstable_autoFocusOnHide={!openOnHover}
       >
         {items.map((item, index) => {
           let anchorProps = {}

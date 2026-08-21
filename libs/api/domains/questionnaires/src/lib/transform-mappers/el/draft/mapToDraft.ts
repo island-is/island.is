@@ -122,30 +122,39 @@ export const mapDraftRepliesToAnswers = (
       }))
     } else if ('answer' in reply) {
       // Single value replies (String, Number, Boolean, Date)
-      let value: string
+      if (reply.answer === null || reply.answer === undefined) {
+        // No answer given yet - keep the draft entry empty rather than
+        // stringifying null/undefined into the literal text "null"/"undefined"
+        answerValue = []
+      } else {
+        let value: string
 
-      // Handle date formatting specifically
-      if (question.type === 'date' && reply.answer instanceof Date) {
-        // Format date as YYYY-MM-DD for DatePicker
-        value = reply.answer.toISOString().split('T')[0]
-      } else if (question.type === 'date' && typeof reply.answer === 'string') {
-        // If it's already a string, ensure it's in ISO format
-        try {
-          const date = new Date(reply.answer)
-          value = date.toISOString().split('T')[0]
-        } catch {
+        // Handle date formatting specifically
+        if (question.type === 'date' && reply.answer instanceof Date) {
+          // Format date as YYYY-MM-DD for DatePicker
+          value = reply.answer.toISOString().split('T')[0]
+        } else if (
+          question.type === 'date' &&
+          typeof reply.answer === 'string'
+        ) {
+          // If it's already a string, ensure it's in ISO format
+          try {
+            const date = new Date(reply.answer)
+            value = date.toISOString().split('T')[0]
+          } catch {
+            value = String(reply.answer)
+          }
+        } else {
           value = String(reply.answer)
         }
-      } else {
-        value = String(reply.answer)
-      }
 
-      answerValue = [
-        {
-          label: getOptionLabel(value),
-          value: value,
-        },
-      ]
+        answerValue = [
+          {
+            label: getOptionLabel(value),
+            value: value,
+          },
+        ]
+      }
     } else {
       // Skip invalid or unsupported replies (e.g., Attachment)
       return

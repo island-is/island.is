@@ -1,4 +1,7 @@
-const figmaTokens = require('./figmaTokens.json')
+import figmaTokensJson from './figmaTokens.json'
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const figmaTokens = figmaTokensJson as any
 
 // Primitives
 const primitives = figmaTokens[0]['00 Primitives'].modes['Mode 1']

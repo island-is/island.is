@@ -9,8 +9,12 @@ import {
   PROSECUTION_APPEAL_CASE_ADD_FILES_ROUTE,
   TIME_FORMAT,
 } from '@island.is/judicial-system/consts'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import {
+  formatDate,
+  formatFileSubmittedBy,
+} from '@island.is/judicial-system/formatters'
+import {
+  isAppealFileDeletionLocked,
   isDefenceUser,
   isIndictmentCase,
   isProsecutionUser,
@@ -67,9 +71,9 @@ const getFileSubmittedByText = (file: CaseFile, workingCase: Case): string => {
   const prosecutorSubmitted = isProsecutorCategory(file.category)
 
   if (prosecutorSubmitted) {
-    return isIndictmentCase(workingCase.type)
-      ? 'Ákærandi lagði fram'
-      : 'Sækjandi lagði fram'
+    return formatFileSubmittedBy(
+      isIndictmentCase(workingCase.type) ? 'Ákærandi' : 'Sækjandi',
+    )
   }
 
   // For indictment cases, try to resolve the defender/spokesperson name
@@ -79,7 +83,7 @@ const getFileSubmittedByText = (file: CaseFile, workingCase: Case): string => {
     )
 
     if (defendant?.defenderName) {
-      return `Verjandi ${defendant.defenderName} lagði fram`
+      return formatFileSubmittedBy('Verjandi', defendant.defenderName)
     }
   }
 
@@ -91,13 +95,14 @@ const getFileSubmittedByText = (file: CaseFile, workingCase: Case): string => {
     )
 
     if (civilClaimant?.spokespersonName) {
-      return `${
-        civilClaimant.spokespersonIsLawyer ? 'Lögmaður' : 'Réttargæslumaður'
-      } ${civilClaimant.spokespersonName} lagði fram`
+      return formatFileSubmittedBy(
+        civilClaimant.spokespersonIsLawyer ? 'Lögmaður' : 'Réttargæslumaður',
+        civilClaimant.spokespersonName,
+      )
     }
   }
 
-  return 'Varnaraðili lagði fram'
+  return formatFileSubmittedBy('Varnaraðili')
 }
 
 const AppealCaseFilesOverview = () => {
@@ -120,8 +125,16 @@ const AppealCaseFilesOverview = () => {
     : isDefenceUser(user)
     ? defenceDeleteCategories
     : []
+  // Files can no longer be deleted once the court of appeals has registered its
+  // case number, as they have been delivered to the court of appeals by then
   const canDeleteFile = (file: CaseFile) =>
-    isMatchingAppealCaseFile(workingCase, deleteCategories, file, user)
+    isMatchingAppealCaseFile(
+      workingCase,
+      deleteCategories,
+      file,
+      user,
+      targetAppealCase?.rulingFileId,
+    ) && !isAppealFileDeletionLocked(file.category, targetAppealCase)
 
   useEffect(() => {
     if (workingCase.caseFiles) {

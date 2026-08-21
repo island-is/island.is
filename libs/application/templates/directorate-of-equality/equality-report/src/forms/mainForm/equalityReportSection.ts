@@ -1,7 +1,7 @@
 import {
-  buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
+  buildDividerField,
   buildLinkField,
   buildMultiField,
   buildSection,
@@ -10,33 +10,12 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { messages } from '../../lib/messages'
+import { hasReviewerComment } from '../commentThreadSection'
 
 export const equalityReportSection = buildSection({
   id: 'equalityReport',
   title: messages.equalityReport.section.sectionTitle,
   children: [
-    buildSubSection({
-      id: 'previousEqualityPlan',
-      title: messages.equalityReport.previousEqualityPlan.sectionTitle,
-      condition: (_answers, externalData) =>
-        getValueViaPath(
-          externalData,
-          'activeEqualityReport.data.hasActiveEqualityReport',
-        ) === true,
-      children: [
-        buildMultiField({
-          id: 'previousEqualityPlanMultiField',
-          title: messages.equalityReport.previousEqualityPlan.title,
-          description: messages.equalityReport.previousEqualityPlan.intro,
-          children: [
-            buildCustomField({
-              id: 'previousEqualityPlan.content',
-              component: 'PreviousEqualityPlan',
-            }),
-          ],
-        }),
-      ],
-    }),
     buildSubSection({
       id: 'information',
       title: messages.equalityReport.information.sectionTitle,
@@ -62,14 +41,37 @@ export const equalityReportSection = buildSection({
               description: messages.equalityReport.information.list,
               marginBottom: 3,
             }),
-            buildCheckboxField({
-              id: 'information.checkbox',
-              options: [
-                {
-                  label: messages.equalityReport.information.checkboxLabel,
-                  value: 'agree',
-                },
-              ],
+            buildTitleField({
+              title: messages.equalityReport.information.implementationTitle,
+              marginBottom: 1,
+            }),
+            buildDescriptionField({
+              id: 'information.implementationPlaceholder',
+              description:
+                messages.equalityReport.information.implementationList,
+              marginBottom: 3,
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSubSection({
+      id: 'previousEqualityPlan',
+      title: messages.equalityReport.previousEqualityPlan.sectionTitle,
+      condition: (_answers, externalData) =>
+        getValueViaPath(
+          externalData,
+          'activeEqualityReport.data.hasActiveEqualityReport',
+        ) === true,
+      children: [
+        buildMultiField({
+          id: 'previousEqualityPlanMultiField',
+          title: messages.equalityReport.previousEqualityPlan.title,
+          description: messages.equalityReport.previousEqualityPlan.intro,
+          children: [
+            buildCustomField({
+              id: 'previousEqualityPlan.content',
+              component: 'PreviousEqualityPlan',
             }),
           ],
         }),
@@ -93,6 +95,13 @@ export const equalityReportSection = buildSection({
             buildCustomField({
               id: 'goalsAndActions.customField',
               component: 'Editor',
+            }),
+            buildDividerField({ condition: hasReviewerComment }),
+            buildCustomField({
+              id: 'commentThread',
+              title: '',
+              component: 'CommentThread',
+              condition: hasReviewerComment,
             }),
           ],
         }),

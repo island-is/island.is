@@ -300,20 +300,23 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
               : strings.confirmDefenderChoiceModalText,
             { defenderName: defendant?.defenderName },
           )}
-          primaryButton={{
-            text: formatMessage(strings.confirmModalPrimaryButtonText, {
-              isConfirming: !defendant.isDefenderChoiceConfirmed,
-            }),
-            onClick: () =>
-              toggleDefenderChoiceConfirmed(
-                defendant,
-                !defendant.isDefenderChoiceConfirmed,
-              ),
-          }}
-          secondaryButton={{
-            text: formatMessage(strings.confirmModalSecondaryButtonText),
-            onClick: () => setDisplayModal(false),
-          }}
+          buttons={[
+            {
+              text: formatMessage(strings.confirmModalSecondaryButtonText),
+              onClick: () => setDisplayModal(false),
+              variant: 'ghost',
+            },
+            {
+              text: formatMessage(strings.confirmModalPrimaryButtonText, {
+                isConfirming: !defendant.isDefenderChoiceConfirmed,
+              }),
+              onClick: () =>
+                toggleDefenderChoiceConfirmed(
+                  defendant,
+                  !defendant.isDefenderChoiceConfirmed,
+                ),
+            },
+          ]}
         />
       )}
     </Box>

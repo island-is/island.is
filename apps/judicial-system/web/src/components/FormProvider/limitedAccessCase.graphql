@@ -166,8 +166,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     isCustodyIsolation
     isolationToDate
     conclusion
-    accusedPostponedAppealDate
-    prosecutorPostponedAppealDate
     rulingDate
     rulingSignatureDate
     reopenReason
@@ -203,8 +201,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     caseModifiedExplanation
     rulingModifiedHistory
     caseResentExplanation
-    accusedAppealDecision
-    prosecutorAppealDecision
     isAppealDeadlineExpired
     canBeAppealed
     canDefenderAppeal
@@ -251,6 +247,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       appealRulingDecision
       appealConclusion
       appealRulingModifiedHistory
+      rulingFileId
     }
     rulingOrderAppealCases {
       id

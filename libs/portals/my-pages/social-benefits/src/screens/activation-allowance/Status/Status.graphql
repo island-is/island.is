@@ -1,0 +1,24 @@
+query getActivationAllowanceApplicationOverview($locale: String) {
+  vmstApplicationsActivationGrantApplicationOverview(locale: $locale) {
+    activationGrantApplicationId
+    applicationStatusId
+    applicationStatusName
+    applicationStatus
+    overviewItems {
+      key
+      label
+      value
+    }
+  }
+}
+
+query getApplicantAvailableActions {
+  vmstApplicantAvailableActions {
+    canContact
+    canSubmitDocuments
+    canReportWork
+    canReportTravel
+    canUnregister
+    canConfirmJobSearch
+  }
+}

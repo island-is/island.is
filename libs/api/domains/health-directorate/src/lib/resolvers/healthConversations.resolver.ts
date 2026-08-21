@@ -1,4 +1,12 @@
-import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql'
+import {
+  Args,
+  ID,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql'
 
 import { UseGuards } from '@nestjs/common'
 
@@ -10,9 +18,15 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
+import type {
+  LogoUrl,
+  OrganizationLogoByNationalIdDataLoader,
+} from '@island.is/cms'
+import { OrganizationLogoByNationalIdLoader } from '@island.is/cms'
 import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
 import { Audit } from '@island.is/nest/audit'
+import { Loader } from '@island.is/nest/dataloader'
 import {
   FeatureFlag,
   FeatureFlagGuard,
@@ -28,6 +42,7 @@ import { HealthDirectorateReplyToConversationInput } from '../dto/replyToHealthC
 import { HealthDirectorateHealthConversation } from '../models/healthConversation.model'
 import { HealthDirectorateHealthConversationDetail } from '../models/healthConversationDetail.model'
 import { HealthDirectorateHealthConversationRecipient } from '../models/healthConversationRecipient.model'
+import { HealthDirectorateConversationOrganization } from '../models/healthConversationOrganization.model'
 
 @CodeOwner(CodeOwners.Hugsmidjan)
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
@@ -41,7 +56,7 @@ export class HealthConversationsResolver {
     nullable: true,
   })
   @Audit()
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
   getHealthConversations(
     @Args('input', {
@@ -59,7 +74,7 @@ export class HealthConversationsResolver {
     nullable: true,
   })
   @Audit()
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
   getHealthConversation(
     @Args('id', { type: () => ID }) id: string,
@@ -73,7 +88,7 @@ export class HealthConversationsResolver {
     nullable: true,
   })
   @Audit()
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
   getHealthConversationRecipients(
     @Args('locale', { type: () => LocaleEnum, nullable: true })
@@ -88,7 +103,7 @@ export class HealthConversationsResolver {
     nullable: true,
   })
   @Audit()
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
   createHealthConversation(
     @Args('input') input: HealthDirectorateCreateConversationInput,
@@ -102,7 +117,7 @@ export class HealthConversationsResolver {
     nullable: true,
   })
   @Audit()
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
   replyToHealthConversation(
     @Args('input') input: HealthDirectorateReplyToConversationInput,
@@ -115,7 +130,7 @@ export class HealthConversationsResolver {
     name: 'healthDirectorateMarkHealthConversationAsRead',
   })
   @Audit()
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
   markHealthConversationAsRead(
     @Args('input') input: HealthDirectorateConversationIdInput,
@@ -128,7 +143,7 @@ export class HealthConversationsResolver {
     name: 'healthDirectorateArchiveHealthConversation',
   })
   @Audit()
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
   archiveHealthConversation(
     @Args('input') input: HealthDirectorateConversationIdInput,
@@ -141,7 +156,7 @@ export class HealthConversationsResolver {
     name: 'healthDirectorateUnarchiveHealthConversation',
   })
   @Audit()
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
   unarchiveHealthConversation(
     @Args('input') input: HealthDirectorateConversationIdInput,
@@ -154,7 +169,7 @@ export class HealthConversationsResolver {
     name: 'healthDirectorateStarHealthConversation',
   })
   @Audit()
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
   starHealthConversation(
     @Args('input') input: HealthDirectorateConversationIdInput,
@@ -167,12 +182,26 @@ export class HealthConversationsResolver {
     name: 'healthDirectorateUnstarHealthConversation',
   })
   @Audit()
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
   unstarHealthConversation(
     @Args('input') input: HealthDirectorateConversationIdInput,
     @CurrentUser() user: User,
   ): Promise<boolean> {
     return this.api.unstarHealthConversation(user, input.id)
+  }
+}
+
+@CodeOwner(CodeOwners.Hugsmidjan)
+@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
+@Resolver(() => HealthDirectorateConversationOrganization)
+export class HealthConversationOrganizationResolver {
+  @ResolveField('logoUrl', () => String, { nullable: true })
+  resolveLogoUrl(
+    @Loader(OrganizationLogoByNationalIdLoader)
+    organizationLogoLoader: OrganizationLogoByNationalIdDataLoader,
+    @Parent() organization: HealthDirectorateConversationOrganization,
+  ): Promise<LogoUrl> {
+    return organizationLogoLoader.load(organization.nationalId)
   }
 }

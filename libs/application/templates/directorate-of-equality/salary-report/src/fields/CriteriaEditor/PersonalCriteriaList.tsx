@@ -1,17 +1,31 @@
-import { useFieldArray, useFormContext } from 'react-hook-form'
-import { InputController } from '@island.is/shared/form-fields'
-import { Box, Button, Text, Stack } from '@island.is/island-ui/core'
+import { Box, Button, Input, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
+import type { PersonalFactor } from '../../utils/types'
 
-export const PersonalCriteriaList = () => {
+type Props = {
+  personalFactors: PersonalFactor[]
+  onChange: (factors: PersonalFactor[]) => void
+  onRemove: (id: string) => void
+}
+
+export const PersonalCriteriaList = ({
+  personalFactors,
+  onChange,
+  onRemove,
+}: Props) => {
   const { formatMessage } = useLocale()
-  const { control } = useFormContext()
 
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'criteria.personalFactors',
-  })
+  const updateFactor = (id: string, patch: Partial<PersonalFactor>) => {
+    onChange(personalFactors.map((f) => (f.id === id ? { ...f, ...patch } : f)))
+  }
+
+  const addFactor = () => {
+    onChange([
+      ...personalFactors,
+      { id: crypto.randomUUID(), title: '', description: '', weight: '' },
+    ])
+  }
 
   return (
     <Box marginTop={6}>
@@ -23,8 +37,8 @@ export const PersonalCriteriaList = () => {
       </Text>
 
       <Stack space={4} dividers={true}>
-        {fields.map((field, i) => (
-          <Box key={field.id} borderRadius="large">
+        {personalFactors.map((factor) => (
+          <Box key={factor.id} borderRadius="large">
             <Box
               display="flex"
               columnGap={2}
@@ -32,56 +46,61 @@ export const PersonalCriteriaList = () => {
               marginBottom={2}
             >
               <Box style={{ flex: 1 }}>
-                <InputController
+                <Input
                   size="sm"
-                  id={`criteria.personalFactors.${i}.title`}
-                  name={`criteria.personalFactors.${i}.title`}
+                  name={`personalFactor-${factor.id}-title`}
                   label={formatMessage(
                     messages.report.criteria.criterionNameLabel,
                   )}
                   backgroundColor="blue"
+                  value={factor.title}
+                  onChange={(e) =>
+                    updateFactor(factor.id, { title: e.target.value })
+                  }
                 />
               </Box>
               <Box style={{ width: 120, flexShrink: 0 }}>
-                <InputController
+                <Input
                   size="sm"
-                  id={`criteria.personalFactors.${i}.weight`}
-                  name={`criteria.personalFactors.${i}.weight`}
-                  label={formatMessage(messages.report.criteria.weightLabel)}
+                  name={`personalFactor-${factor.id}-weight`}
+                  label={`${formatMessage(
+                    messages.report.criteria.weightLabel,
+                  )} (%)`}
                   type="number"
-                  suffix="%"
                   backgroundColor="blue"
+                  value={factor.weight}
+                  onChange={(e) =>
+                    updateFactor(factor.id, { weight: e.target.value })
+                  }
                 />
               </Box>
               <Button
-                size="small"
+                size="default"
                 variant="ghost"
                 icon="trash"
                 iconType="outline"
-                onClick={() => remove(i)}
+                onClick={() => onRemove(factor.id)}
               >
                 {formatMessage(messages.report.criteria.deleteButton)}
               </Button>
             </Box>
-            <InputController
+            <Input
               size="sm"
-              id={`criteria.personalFactors.${i}.description`}
-              name={`criteria.personalFactors.${i}.description`}
+              name={`personalFactor-${factor.id}-description`}
               label={formatMessage(messages.report.criteria.descriptionLabel)}
               textarea
               backgroundColor="blue"
+              value={factor.description ?? ''}
+              onChange={(e) =>
+                updateFactor(factor.id, { description: e.target.value })
+              }
             />
           </Box>
         ))}
       </Stack>
 
       <Box marginTop={4}>
-        <Button
-          size="small"
-          variant="ghost"
-          icon="add"
-          onClick={() => append({ title: '', description: '', weight: '' })}
-        >
+        <Button size="small" variant="ghost" icon="add" onClick={addFactor}>
           {formatMessage(messages.report.criteria.addCriterionButton)}
         </Button>
       </Box>

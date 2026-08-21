@@ -26,6 +26,8 @@ import {
   SkipToMainContent,
 } from '@island.is/web/components'
 
+import { buildHeaderNavData } from '../components/Header/buildHeaderNavData'
+import type { HeaderNavData } from '../components/Header/headerNavData'
 import { OrganizationIslandFooter } from '../components/Organization/OrganizationIslandFooter'
 import { PRELOADED_FONTS } from '../constants'
 import { GlobalContextProvider } from '../context'
@@ -37,6 +39,7 @@ import {
   GetArticleCategoriesQuery,
   GetGroupedMenuQuery,
   GetNamespaceQuery,
+  GetOrganizationLogosQuery,
   GetOrganizationPageQuery,
   GetSingleArticleQuery,
   Menu,
@@ -44,6 +47,7 @@ import {
   QueryGetArticleCategoriesArgs,
   QueryGetGroupedMenuArgs,
   QueryGetNamespaceArgs,
+  QueryGetOrganizationsArgs,
 } from '../graphql/schema'
 import { useNamespace } from '../hooks'
 import {
@@ -56,12 +60,9 @@ import { getLocaleFromPath, useI18n } from '../i18n'
 import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../screens/queries'
 import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
 import { GET_GROUPED_MENU_QUERY } from '../screens/queries/Menu'
+import { GET_ORGANIZATION_LOGOS_QUERY } from '../screens/queries/Organization'
 import { Screen, ScreenContext } from '../types'
-import { extractOrganizationSlugFromPathname } from '../utils/organization'
-import {
-  formatMegaMenuCategoryLinks,
-  formatMegaMenuLinks,
-} from '../utils/processMenuData'
+import { getHeaderNavigationPropsFromUrl } from '../utils/organization'
 import Illustration from './Illustration'
 import * as styles from './main.css'
 
@@ -87,6 +88,7 @@ const absoluteUrl = (req, setLocalhost) => {
 
 export interface LayoutProps {
   showSearchInHeader?: boolean
+  showHeaderNavigation?: boolean
   organizationSearchFilter?: string
   wrapContent?: boolean
   showHeader?: boolean
@@ -115,9 +117,7 @@ export interface LayoutProps {
 
   // @ts-expect-error make web strict
   respOrigin
-
-  // @ts-expect-error make web strict
-  megaMenuData
+  headerNavData?: HeaderNavData | null
   customTopLoginButtonItem: LayoutComponentProps['customTopLoginButtonItem']
   children?: React.ReactNode
 }
@@ -147,7 +147,7 @@ const Layout: Screen<LayoutProps> = ({
   categories,
   topMenuCustomLinks,
   footerUpperInfo,
-  footerUpperContact,
+  footerUpperContact: _footerUpperContact,
   footerLowerMenu,
   footerMiddleMenu,
   footerTagsMenu,
@@ -160,7 +160,8 @@ const Layout: Screen<LayoutProps> = ({
   footerVersion = 'default',
   respOrigin,
   children,
-  megaMenuData,
+  headerNavData,
+  showHeaderNavigation: showHeaderNavigationOverride,
   customTopLoginButtonItem,
   languageToggleHrefOverride,
 }) => {
@@ -250,9 +251,12 @@ const Layout: Screen<LayoutProps> = ({
 
   const isServiceWeb = pathIsRoute(router.asPath, 'serviceweb', activeLocale)
 
-  const organizationSearchFilter =
-    organizationSearchFilterOverride ??
-    extractOrganizationSlugFromPathname(router.asPath, activeLocale)
+  // Route-derived defaults come from getProps so the server markup and first
+  // hydrated render agree. Explicit search filters and `false` remain one-way
+  // overrides that can hide navigation on additional pages.
+  const organizationSearchFilter = organizationSearchFilterOverride ?? ''
+  const showHeaderNavigation =
+    showHeaderNavigationOverride !== false && !organizationSearchFilter
 
   return (
     <GlobalContextProvider namespace={namespace} isServiceWeb={isServiceWeb}>
@@ -392,7 +396,8 @@ const Layout: Screen<LayoutProps> = ({
               <Header
                 buttonColorScheme={headerButtonColorScheme}
                 showSearchInHeader={showSearchInHeader}
-                megaMenuData={megaMenuData}
+                headerNavData={headerNavData}
+                showNavigation={showHeaderNavigation}
                 languageToggleQueryParams={languageToggleQueryParams}
                 organizationSearchFilter={organizationSearchFilter}
                 searchPlaceholder={
@@ -521,64 +526,90 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
 
   const { origin } = absoluteUrl(req, 'localhost:4200')
   const respOrigin = `${origin}`
-  const [categories, alertBanner, namespace, megaMenuData, footerMenuData] =
-    await Promise.all([
-      apolloClient
-        .query<GetArticleCategoriesQuery, QueryGetArticleCategoriesArgs>({
-          query: GET_CATEGORIES_QUERY,
-          variables: {
-            input: {
-              lang: locale as ContentLanguage,
-            },
+  const headerNavigationProps = getHeaderNavigationPropsFromUrl(
+    req?.url,
+    lang as Locale,
+  )
+  const [
+    categories,
+    alertBanner,
+    namespace,
+    footerMenuData,
+    headerNavMenuData,
+    headerNavOrganizations,
+  ] = await Promise.all([
+    apolloClient
+      .query<GetArticleCategoriesQuery, QueryGetArticleCategoriesArgs>({
+        query: GET_CATEGORIES_QUERY,
+        variables: {
+          input: {
+            lang: locale as ContentLanguage,
           },
-        })
-        .then((res) => res.data.getArticleCategories),
-      apolloClient
-        .query<GetAlertBannerQuery, QueryGetAlertBannerArgs>({
-          query: GET_ALERT_BANNER_QUERY,
-          variables: {
-            input: { id: '2foBKVNnRnoNXx9CfiM8to', lang },
+        },
+      })
+      .then((res) => res.data.getArticleCategories),
+    apolloClient
+      .query<GetAlertBannerQuery, QueryGetAlertBannerArgs>({
+        query: GET_ALERT_BANNER_QUERY,
+        variables: {
+          input: { id: '2foBKVNnRnoNXx9CfiM8to', lang },
+        },
+      })
+      .then((res) => res.data.getAlertBanner),
+    apolloClient
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'Global',
+            lang,
           },
-        })
-        .then((res) => res.data.getAlertBanner),
-      apolloClient
-        .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
-          query: GET_NAMESPACE_QUERY,
-          variables: {
-            input: {
-              namespace: 'Global',
-              lang,
-            },
-          },
-        })
-        .then((res) => {
-          // map data here to reduce data processing in component
-
-          // @ts-expect-error make web strict
-          return JSON.parse(res.data.getNamespace.fields)
-        }),
-      apolloClient
-        .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
-          query: GET_GROUPED_MENU_QUERY,
-          variables: {
-            input: { id: '5prHB8HLyh4Y35LI4bnhh2', lang },
-          },
-        })
-        .then((res) => res.data.getGroupedMenu),
-      apolloClient
-        .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
-          query: GET_GROUPED_MENU_QUERY,
-          variables: {
-            input: { id: '578dYm6sr8yihBDIClrQYe', lang },
-          },
-        })
-        .then((res) => res.data.getGroupedMenu),
-    ])
+        },
+      })
+      .then((res) => {
+        // map data here to reduce data processing in component
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error make web strict
+        return JSON.parse(res.data.getNamespace.fields)
+      }),
+    apolloClient
+      .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
+        query: GET_GROUPED_MENU_QUERY,
+        variables: {
+          input: { id: '578dYm6sr8yihBDIClrQYe', lang },
+        },
+      })
+      .then((res) => res.data.getGroupedMenu),
+    // Grouped menu that powers the new DesktopNav / MobileNav sections
+    // (Þjónustuflokkar / Lífsviðburðir / Stofnanir). Matching uses child
+    // menu IDs, so Contentful order does not affect the header order.
+    apolloClient
+      .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
+        query: GET_GROUPED_MENU_QUERY,
+        variables: {
+          input: { id: '1SCm5KnfQ3DrWT600MTt82', lang },
+        },
+      })
+      .then((res) => res.data.getGroupedMenu)
+      .catch(() => null),
+    // Organizations — joined client-side to attach a logo URL to each
+    // organizationPage link in the header nav. `MenuLink.link` resolves
+    // to `ReferenceLink { slug, type }`, not to the page union, so the
+    // logo can't be fetched inline via the grouped-menu query. Uses the
+    // slim logos-only query so the result stays small in every page's
+    // getProps payload.
+    apolloClient
+      .query<GetOrganizationLogosQuery, QueryGetOrganizationsArgs>({
+        query: GET_ORGANIZATION_LOGOS_QUERY,
+        variables: {
+          input: { lang: locale as ContentLanguage },
+        },
+      })
+      .then((res) => res.data.getOrganizations?.items ?? [])
+      .catch(() => []),
+  ])
 
   const alertBannerId = `alert-${stringHash(JSON.stringify(alertBanner))}`
-
-  // @ts-expect-error make web strict
-  const [asideTopLinksData, asideBottomLinksData] = megaMenuData.menus
 
   const mapLinks = (item: Menu) =>
     item.menuLinks
@@ -654,6 +685,12 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
     return menus
   }, initialFooterMenu)
 
+  const headerNavData = buildHeaderNavData(
+    headerNavMenuData,
+    headerNavOrganizations,
+    lang as Locale,
+  )
+
   return {
     categories,
     alertBannerContent: {
@@ -666,18 +703,8 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
     ...footerMenu,
     namespace,
     respOrigin,
-    megaMenuData: {
-      asideTopLinks: formatMegaMenuLinks(
-        lang as Locale,
-        asideTopLinksData.menuLinks,
-      ),
-      asideBottomTitle: asideBottomLinksData.title,
-      asideBottomLinks: formatMegaMenuLinks(
-        lang as Locale,
-        asideBottomLinksData.menuLinks,
-      ),
-      mainLinks: formatMegaMenuCategoryLinks(lang as Locale, categories),
-    },
+    headerNavData,
+    ...headerNavigationProps,
   }
 }
 
@@ -754,17 +781,26 @@ export const withMainLayout = <T, C extends ScreenContext>(
     const languageToggleHrefOverride =
       layoutComponentProps?.languageToggleHrefOverride
 
+    const mergedLayoutProps = {
+      ...layoutProps,
+      ...layoutConfig,
+      ...themeConfig,
+      organizationAlertBannerContent,
+      articleAlertBannerContent,
+      customAlertBannerContent,
+      languageToggleQueryParams,
+      customTopLoginButtonItem,
+      languageToggleHrefOverride,
+    }
+
+    // Route restrictions are authoritative. Page config may hide navigation
+    // elsewhere, but it cannot re-enable it on organization or project pages.
     return {
       layoutProps: {
-        ...layoutProps,
-        ...layoutConfig,
-        ...themeConfig,
-        organizationAlertBannerContent,
-        articleAlertBannerContent,
-        customAlertBannerContent,
-        languageToggleQueryParams,
-        customTopLoginButtonItem,
-        languageToggleHrefOverride,
+        ...mergedLayoutProps,
+        showHeaderNavigation:
+          layoutProps.showHeaderNavigation !== false &&
+          mergedLayoutProps.showHeaderNavigation !== false,
       },
       componentProps,
     }

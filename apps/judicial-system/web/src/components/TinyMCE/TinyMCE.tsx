@@ -9,32 +9,81 @@ import { ErrorMessage } from '@island.is/island-ui/core'
 import RequiredStar from '../RequiredStar/RequiredStar'
 import HighlightColorPicker from './HighlightColorPicker'
 import {
+  colorFromHighlightClass,
+  highlightClassFromColor,
   INDENT_STEP_PX,
-  normalizePastedHighlights,
-  normalizePastedIndentation,
+  indentClassFromLevel,
+  levelFromIndentClass,
+  MARKER_NONE_CLASS,
+  MAX_INDENT_LEVEL,
+  normalizeRichTextHtml,
   WORD_HIGHLIGHT_COLORS,
-} from './pasteNormalization'
+} from './richTextNormalization'
 import * as styles from './TinyMCE.css'
 
 type ToolbarToggleButtonInstanceApi = Ui.Toolbar.ToolbarToggleButtonInstanceApi
 
-const hexToRgb = (hex: string) => {
-  const r = parseInt(hex.slice(1, 3), 16)
-  const g = parseInt(hex.slice(3, 5), 16)
-  const b = parseInt(hex.slice(5, 7), 16)
-  return `rgb(${r}, ${g}, ${b})`
+// All formatting is class-based (see richTextNormalization.ts): the WAF in
+// front of the API blocks any request body containing a style="..." attribute,
+// so the editor must never emit inline styles. These rules make the classes
+// render inside the editor iframe.
+const CLASS_CONTENT_STYLE = [
+  ...WORD_HIGHLIGHT_COLORS.map(
+    ({ color }) =>
+      `.${highlightClassFromColor(color)} { background-color: ${color}; }`,
+  ),
+  ...Array.from(
+    { length: MAX_INDENT_LEVEL },
+    (_, i) =>
+      `.${indentClassFromLevel(i + 1)} { padding-left: ${
+        (i + 1) * INDENT_STEP_PX
+      }px; }`,
+  ),
+].join(' ')
+
+const HIGHLIGHT_FORMAT = 'classhighlight'
+
+// The formatter substitutes %value into class names on apply/match/remove,
+// so one format covers the whole palette (vars = hex without the '#').
+const removeHighlight = (editor: TinyMCEEditor) => {
+  WORD_HIGHLIGHT_COLORS.forEach(({ color }) =>
+    editor.formatter.remove(HIGHLIGHT_FORMAT, { value: color.slice(1) }),
+  )
+}
+
+const applyHighlight = (editor: TinyMCEEditor, color: string) => {
+  editor.undoManager.transact(() => {
+    // Remove any existing highlight first — applying a class format on top of
+    // another would stack both classes on the same span.
+    removeHighlight(editor)
+    editor.formatter.apply(HIGHLIGHT_FORMAT, { value: color.slice(1) })
+  })
+  editor.nodeChanged()
+}
+
+const getIndentLevel = (block: Element): number => {
+  for (const className of Array.from(block.classList)) {
+    const level = levelFromIndentClass(className)
+    if (level !== null) return level
+  }
+  return 0
 }
 
 interface Props {
   label: string
   placeholder: string
   defaultValue?: string
+  // The current content as held by the caller. Unlike defaultValue, changes
+  // to this prop are synced into a mounted editor (unless it has focus), so
+  // callers that regenerate content outside the editor can keep it in sync.
+  value?: string
   onChange?: (html: string) => void
   onDebouncedChange?: (html: string) => void
   onBlur?: (html: string) => void
   disabled?: boolean
   errorMessage?: string
   required?: boolean
+  height?: number
   'data-testid'?: string
 }
 
@@ -42,12 +91,14 @@ const TinyMCE = ({
   label,
   placeholder,
   defaultValue,
+  value,
   onChange,
   onDebouncedChange,
   onBlur,
   disabled,
   errorMessage,
   required,
+  height = 450,
   'data-testid': dataTestId,
 }: Props) => {
   const editorId = useId()
@@ -58,7 +109,10 @@ const TinyMCE = ({
     left: 0,
   })
   const [selectedColor, setSelectedColor] = useState<string | null>(null)
-  const initialValueRef = useRef(defaultValue ?? '')
+  const [editorReady, setEditorReady] = useState<boolean>(false)
+  // Normalize on load so legacy content saved with inline styles is converted
+  // to classes and saves cleanly from then on.
+  const initialValueRef = useRef(normalizeRichTextHtml(defaultValue ?? ''))
   const editorRef = useRef<TinyMCEEditor | null>(null)
   const highlightBtnApiRef = useRef<ToolbarToggleButtonInstanceApi | null>(null)
   const pickerRef = useRef<HTMLDivElement>(null)
@@ -85,6 +139,26 @@ const TinyMCE = ({
       debouncedSave.flush()
     }
   }, [debouncedSave])
+
+  // Sync externally-driven value changes (e.g. autofill regeneration) into
+  // the editor. Editor-originated changes round-trip through onChange and
+  // match getContent(), so this only writes on genuinely external updates.
+  // A focused editor is left alone so the user's typing isn't clobbered.
+  // The editor loads asynchronously, so depend on editorReady to replay a
+  // value change that arrived before init — otherwise it would be lost.
+  useEffect(() => {
+    const editor = editorRef.current
+    if (
+      !editorReady ||
+      value === undefined ||
+      !editor ||
+      editor.hasFocus() ||
+      value === editor.getContent()
+    ) {
+      return
+    }
+    editor.setContent(value)
+  }, [value, editorReady])
 
   useEffect(() => {
     highlightBtnApiRef.current?.setActive(pickerOpen)
@@ -116,15 +190,12 @@ const TinyMCE = ({
 
   const handleNodeChange =
     (editor: TinyMCEEditor) => (e: { element: Element }) => {
-      let node: HTMLElement | null = e.element as HTMLElement
+      let node: Element | null = e.element
       while (node && node !== editor.getBody()) {
-        const bg: string = node.style?.backgroundColor ?? ''
-        if (bg && bg !== 'transparent') {
-          const match = WORD_HIGHLIGHT_COLORS.map(({ color }) => color).find(
-            (color) => hexToRgb(color) === bg,
-          )
-          if (match) {
-            setSelectedColor(match)
+        for (const className of Array.from(node.classList)) {
+          const color = colorFromHighlightClass(className)
+          if (color) {
+            setSelectedColor(color)
             return
           }
         }
@@ -157,6 +228,51 @@ const TinyMCE = ({
     })
   }
 
+  // Class-based replacement for the built-in indent/outdent commands, which
+  // apply inline padding-left styles that the WAF would reject.
+  const setupIndentButtons = (editor: TinyMCEEditor) => {
+    const changeIndent = (delta: number) => () => {
+      const blocks = editor.selection.getSelectedBlocks()
+      if (blocks.length === 0) return
+
+      // Inside a list, indenting means nesting the item rather than padding it.
+      // The lists plugin restructures the list on Indent/Outdent, and the core
+      // indent command skips list content, so no inline style is produced.
+      if (
+        editor.queryCommandState('InsertUnorderedList') ||
+        editor.queryCommandState('InsertOrderedList')
+      ) {
+        editor.execCommand(delta > 0 ? 'Indent' : 'Outdent')
+        return
+      }
+
+      editor.undoManager.transact(() => {
+        blocks.forEach((block) => {
+          const current = getIndentLevel(block)
+          const next = Math.min(MAX_INDENT_LEVEL, Math.max(0, current + delta))
+          if (next === current) return
+          if (current > 0) {
+            editor.dom.removeClass(block, indentClassFromLevel(current))
+          }
+          if (next > 0) {
+            editor.dom.addClass(block, indentClassFromLevel(next))
+          }
+        })
+      })
+      editor.nodeChanged()
+    }
+    editor.ui.registry.addButton('blockindent', {
+      icon: 'indent',
+      tooltip: 'Increase indent',
+      onAction: changeIndent(1),
+    })
+    editor.ui.registry.addButton('blockoutdent', {
+      icon: 'outdent',
+      tooltip: 'Decrease indent',
+      onAction: changeIndent(-1),
+    })
+  }
+
   return (
     <div data-testid={dataTestId}>
       <div
@@ -183,14 +299,23 @@ const TinyMCE = ({
           tinymceScriptSrc="/tinymce/tinymce.min.js"
           onInit={(_, editor) => {
             editorRef.current = editor
+            setEditorReady(true)
           }}
           init={{
-            height: 450,
+            height,
             plugins: 'lists fullscreen paste',
-            toolbar: 'bold italic indent outdent highlightcolor fullscreen',
-            indentation: `${INDENT_STEP_PX}px`,
+            toolbar:
+              'bold italic bullist numlist blockindent blockoutdent highlightcolor fullscreen',
             toolbar_mode: 'wrap',
             menubar: false,
+            formats: {
+              [HIGHLIGHT_FORMAT]: {
+                inline: 'span',
+                classes: ['hl-%value'],
+                links: true,
+                remove_similar: true,
+              },
+            },
             setup: (editor) => {
               editor.on('focus', () => setFocused(true))
               editor.on('blur', () => {
@@ -201,22 +326,51 @@ const TinyMCE = ({
               })
               editor.on('NodeChange', handleNodeChange(editor))
               editor.on('PastePreProcess', (args) => {
-                args.content = normalizePastedIndentation(
-                  normalizePastedHighlights(args.content),
-                )
+                args.content = normalizeRichTextHtml(args.content)
+              })
+              // Everything leaving the editor goes through getContent, so this
+              // is the one place that can guarantee the WAF invariant: no
+              // request body may contain a style attribute. The lists plugin
+              // writes an inline list-style-type on the wrapper items it
+              // creates, which would otherwise be saved verbatim. Rewriting
+              // here rather than in the editor's own DOM leaves the caret and
+              // the undo stack untouched.
+              editor.on('GetContent', (args) => {
+                if (
+                  args.format === 'html' &&
+                  typeof args.content === 'string'
+                ) {
+                  args.content = normalizeRichTextHtml(args.content)
+                }
               })
               setupHighlightButton(editor)
+              setupIndentButtons(editor)
             },
-            paste_word_valid_elements: 'p,b,strong,i,em,span,br',
+            // ul/ol/li are kept so bullet and numbered lists survive a Word
+            // paste — both the real lists Word sometimes emits and the ones the
+            // paste plugin rebuilds from Word's mso-list paragraphs.
+            paste_word_valid_elements: 'p,b,strong,i,em,span,br,ul,ol,li',
             // "background" (shorthand) is required: Word highlights arrive as
             // "background:yellow" and the paste plugin also maps mso-highlight
-            // to "background" — both are normalized to a palette
-            // background-color in PastePreProcess below.
+            // to "background". These retained styles never reach the content —
+            // PastePreProcess converts them all to classes/semantic tags and
+            // strips every style attribute.
+            // text-indent is required too: Word's AutoFormat turns a Tab at
+            // the start of a paragraph into a first-line indent, which arrives
+            // as text-indent rather than margin-left.
             paste_retain_style_properties:
-              'font-weight,font-style,background,background-color,margin-left,padding-left',
+              'font-weight,font-style,background,background-color,margin-left,padding-left,text-indent',
             paste_strip_class_attributes: 'all',
             content_style:
-              "@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,700;1,300;1,700&display=swap'); body { font-family: 'IBM Plex Sans', sans-serif; font-size: 18px; font-weight: 300; } strong, b { font-weight: 700; } p { margin: 0; }",
+              "@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,700;1,300;1,700&display=swap'); body { font-family: 'IBM Plex Sans', sans-serif; font-size: 18px; font-weight: 300; } strong, b { font-weight: 700; } p { margin: 0; } " +
+              // Every nesting level keeps the same bullet. The browser default
+              // cycles disc/circle/square, but the PDF's standard Times fonts
+              // only carry the bullet glyph, so the editor is pinned to it too
+              // rather than showing markers the PDF cannot reproduce. An author
+              // rule beats the user-agent 'ul ul' default at any depth.
+              'ul { list-style-type: disc; } ' +
+              `li.${MARKER_NONE_CLASS} { list-style-type: none; } ` +
+              CLASS_CONTENT_STYLE,
             branding: false,
             statusbar: false,
             placeholder,
@@ -237,17 +391,18 @@ const TinyMCE = ({
               position={pickerPos}
               selectedColor={selectedColor}
               onSelectColor={(color) => {
-                editorRef.current?.execCommand('HiliteColor', false, color)
+                if (editorRef.current) {
+                  applyHighlight(editorRef.current, color)
+                }
                 setSelectedColor(color)
                 setPickerOpen(false)
               }}
               onRemoveColor={() => {
-                if (selectedColor) {
-                  editorRef.current?.execCommand(
-                    'HiliteColor',
-                    false,
-                    selectedColor,
-                  )
+                if (editorRef.current) {
+                  editorRef.current.undoManager.transact(() => {
+                    editorRef.current && removeHighlight(editorRef.current)
+                  })
+                  editorRef.current.nodeChanged()
                 }
                 setSelectedColor(null)
                 setPickerOpen(false)

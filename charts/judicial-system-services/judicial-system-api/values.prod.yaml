@@ -30,6 +30,7 @@ env:
   BACKEND_URL: 'http://web-judicial-system-backend'
   CONTENTFUL_ENVIRONMENT: 'master'
   CONTENTFUL_HOST: 'cdn.contentful.com'
+  DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
   HIDDEN_FEATURES: 'APPEAL_RULING_ORDER'
   IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
   LOG_LEVEL: 'info'

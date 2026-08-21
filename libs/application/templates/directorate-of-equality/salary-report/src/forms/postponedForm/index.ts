@@ -12,6 +12,7 @@ import { buildSalaryAnalysisSection } from '../mainForm/salaryAnalysisSection'
 import { postponedIntroSection } from './postponedIntroSection'
 import { postponedReportSummarySection } from './postponedReportSummarySection'
 import { messages } from '../../lib/messages'
+import { buildCommentThreadSection } from '../commentThreadSection'
 
 export const postponedForm = buildForm({
   id: 'postponedForm',
@@ -21,8 +22,11 @@ export const postponedForm = buildForm({
   renderLastScreenBackButton: true,
   children: [
     postponedIntroSection,
+    buildSalaryAnalysisSection(
+      { hidePostponeCheckbox: true },
+      { showComments: true },
+    ),
     postponedReportSummarySection,
-    buildSalaryAnalysisSection({ hidePostponeCheckbox: true }),
     buildSection({
       id: 'postponedSubmit',
       title: messages.postponed.sectionTitle,

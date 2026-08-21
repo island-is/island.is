@@ -1,8 +1,14 @@
 import { Dispatch, FC, SetStateAction, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Input, RadioButton } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Input,
+  RadioButton,
+} from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
+import { appealCorrectionLock } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -16,6 +22,10 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import useCaseAppealDecision from '@island.is/judicial-system-web/src/utils/hooks/useCaseAppealDecision'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import {
+  caseLevelAppealDecision,
+  withCaseLevelAppealDecision,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
 import useDebouncedAppealAnnouncement from './useDebouncedAppealAnnouncement'
 import { appealSections as m } from './AppealSections.strings'
@@ -49,14 +59,29 @@ const AppealSections: FC<Props> = ({
   const [checkedProsecutorRadio, setCheckedProsecutorRadio] =
     useState<CaseAppealDecision>()
 
+  const accusedAppealDecision = caseLevelAppealDecision(
+    workingCase.appealDecisions,
+    AppealDecisionPartyRole.DEFENDANT,
+  )
+  const prosecutorAppealDecision = caseLevelAppealDecision(
+    workingCase.appealDecisions,
+    AppealDecisionPartyRole.PROSECUTOR,
+  )
+
   const accusedAppealAnnouncementInput = useDebouncedAppealAnnouncement(
     AppealDecisionPartyRole.DEFENDANT,
-    'accusedAppealAnnouncement',
   )
   const prosecutorAppealAnnouncementInput = useDebouncedAppealAnnouncement(
     AppealDecisionPartyRole.PROSECUTOR,
-    'prosecutorAppealAnnouncement',
   )
+
+  // The in-court decisions describe what happened at the ruling, so they may
+  // only be edited while the court record still governs the appeal they produced
+  // (see appealCorrectionLock). case.service.upsertCaseAppealDecision rejects the
+  // same cases server-side - this only keeps the UI from offering them. The lock
+  // reason is kept so the section can say which of the two applies.
+  const lock = appealCorrectionLock(workingCase.appealCase)
+  const disabled = Boolean(lock)
 
   const handleChange = (update: {
     accusedAppealDecision?: CaseAppealDecision
@@ -64,9 +89,46 @@ const AppealSections: FC<Props> = ({
     prosecutorAppealDecision?: CaseAppealDecision
     prosecutorAppealAnnouncement?: string
   }) => {
-    // Optimistically update the legacy columns the UI still reads; the mutation
-    // writes the appeal_decision rows and reverse-mirrors the columns server-side.
-    setWorkingCase((prev) => ({ ...prev, ...update }))
+    // Optimistically update the case-level appeal_decision rows the UI reads;
+    // the mutation persists them server-side.
+    setWorkingCase((prev) => {
+      let appealDecisions = prev.appealDecisions
+      if (
+        update.accusedAppealDecision !== undefined ||
+        update.accusedAppealAnnouncement !== undefined
+      ) {
+        appealDecisions = withCaseLevelAppealDecision(
+          appealDecisions,
+          AppealDecisionPartyRole.DEFENDANT,
+          {
+            ...(update.accusedAppealDecision !== undefined
+              ? { decision: update.accusedAppealDecision }
+              : {}),
+            ...(update.accusedAppealAnnouncement !== undefined
+              ? { announcement: update.accusedAppealAnnouncement }
+              : {}),
+          },
+        )
+      }
+      if (
+        update.prosecutorAppealDecision !== undefined ||
+        update.prosecutorAppealAnnouncement !== undefined
+      ) {
+        appealDecisions = withCaseLevelAppealDecision(
+          appealDecisions,
+          AppealDecisionPartyRole.PROSECUTOR,
+          {
+            ...(update.prosecutorAppealDecision !== undefined
+              ? { decision: update.prosecutorAppealDecision }
+              : {}),
+            ...(update.prosecutorAppealAnnouncement !== undefined
+              ? { announcement: update.prosecutorAppealAnnouncement }
+              : {}),
+          },
+        )
+      }
+      return { ...prev, appealDecisions }
+    })
 
     if (
       update.accusedAppealDecision !== undefined ||
@@ -102,6 +164,18 @@ const AppealSections: FC<Props> = ({
         title={formatMessage(m.titleV2)}
         description={formatMessage(m.disclaimerV2)}
       />
+      {lock && (
+        <Box marginBottom={3}>
+          <AlertMessage
+            type="info"
+            message={
+              lock === 'OUT_OF_COURT'
+                ? 'Úrskurðurinn hefur verið kærður utan þinghalds og því er ekki hægt að breyta ákvörðun um kæru.'
+                : 'Kæra úrskurðarins er komin til Landsréttar og því er ekki hægt að breyta ákvörðun um kæru.'
+            }
+          />
+        </Box>
+      )}
       <div className={grid({ gap: 3 })}>
         {workingCase.defendants && workingCase.defendants.length > 0 && (
           <BlueBox>
@@ -126,8 +200,7 @@ const AppealSections: FC<Props> = ({
                 checked={
                   checkedAccusedRadio === CaseAppealDecision.APPEAL ||
                   (!checkedAccusedRadio &&
-                    workingCase.accusedAppealDecision ===
-                      CaseAppealDecision.APPEAL)
+                    accusedAppealDecision === CaseAppealDecision.APPEAL)
                 }
                 onChange={() => {
                   const update = {
@@ -148,6 +221,7 @@ const AppealSections: FC<Props> = ({
                 }}
                 large
                 backgroundColor="white"
+                disabled={disabled}
               />
               <RadioButton
                 name="accused-appeal-decision"
@@ -157,8 +231,7 @@ const AppealSections: FC<Props> = ({
                 checked={
                   checkedAccusedRadio === CaseAppealDecision.ACCEPT ||
                   (!checkedAccusedRadio &&
-                    workingCase.accusedAppealDecision ===
-                      CaseAppealDecision.ACCEPT)
+                    accusedAppealDecision === CaseAppealDecision.ACCEPT)
                 }
                 onChange={() => {
                   const update = {
@@ -170,6 +243,7 @@ const AppealSections: FC<Props> = ({
                 }}
                 large
                 backgroundColor="white"
+                disabled={disabled}
               />
             </div>
             <div className={styles.gridRow2fr1fr}>
@@ -181,8 +255,7 @@ const AppealSections: FC<Props> = ({
                 checked={
                   checkedAccusedRadio === CaseAppealDecision.POSTPONE ||
                   (!checkedAccusedRadio &&
-                    workingCase.accusedAppealDecision ===
-                      CaseAppealDecision.POSTPONE)
+                    accusedAppealDecision === CaseAppealDecision.POSTPONE)
                 }
                 onChange={() => {
                   const update = {
@@ -194,6 +267,7 @@ const AppealSections: FC<Props> = ({
                 }}
                 large
                 backgroundColor="white"
+                disabled={disabled}
               />
               <RadioButton
                 name="accused-appeal-decision"
@@ -203,8 +277,7 @@ const AppealSections: FC<Props> = ({
                 checked={
                   checkedAccusedRadio === CaseAppealDecision.NOT_APPLICABLE ||
                   (!checkedAccusedRadio &&
-                    workingCase.accusedAppealDecision ===
-                      CaseAppealDecision.NOT_APPLICABLE)
+                    accusedAppealDecision === CaseAppealDecision.NOT_APPLICABLE)
                 }
                 onChange={() => {
                   const update = {
@@ -216,11 +289,13 @@ const AppealSections: FC<Props> = ({
                 }}
                 large
                 backgroundColor="white"
+                disabled={disabled}
               />
             </div>
             <Input
               name="accusedAppealAnnouncement"
               data-testid="accusedAppealAnnouncement"
+              disabled={disabled}
               label={formatMessage(m.defendantAnnouncementLabelV2)}
               value={accusedAppealAnnouncementInput.value || ''}
               placeholder={formatMessage(m.defendantAnnouncementPlaceholderV2)}
@@ -256,8 +331,7 @@ const AppealSections: FC<Props> = ({
               checked={
                 checkedProsecutorRadio === CaseAppealDecision.APPEAL ||
                 (!checkedProsecutorRadio &&
-                  workingCase.prosecutorAppealDecision ===
-                    CaseAppealDecision.APPEAL)
+                  prosecutorAppealDecision === CaseAppealDecision.APPEAL)
               }
               onChange={() => {
                 const update = {
@@ -271,6 +345,7 @@ const AppealSections: FC<Props> = ({
               }}
               large
               backgroundColor="white"
+              disabled={disabled}
             />
             <RadioButton
               name="prosecutor-appeal-decision"
@@ -280,8 +355,7 @@ const AppealSections: FC<Props> = ({
               checked={
                 checkedProsecutorRadio === CaseAppealDecision.ACCEPT ||
                 (!checkedProsecutorRadio &&
-                  workingCase.prosecutorAppealDecision ===
-                    CaseAppealDecision.ACCEPT)
+                  prosecutorAppealDecision === CaseAppealDecision.ACCEPT)
               }
               onChange={() => {
                 const update = {
@@ -293,6 +367,7 @@ const AppealSections: FC<Props> = ({
               }}
               large
               backgroundColor="white"
+              disabled={disabled}
             />
           </div>
           <div className={styles.gridRow2fr1fr}>
@@ -304,8 +379,7 @@ const AppealSections: FC<Props> = ({
               checked={
                 checkedProsecutorRadio === CaseAppealDecision.POSTPONE ||
                 (!checkedProsecutorRadio &&
-                  workingCase.prosecutorAppealDecision ===
-                    CaseAppealDecision.POSTPONE)
+                  prosecutorAppealDecision === CaseAppealDecision.POSTPONE)
               }
               onChange={() => {
                 const update = {
@@ -317,6 +391,7 @@ const AppealSections: FC<Props> = ({
               }}
               large
               backgroundColor="white"
+              disabled={disabled}
             />
 
             <RadioButton
@@ -327,7 +402,7 @@ const AppealSections: FC<Props> = ({
               checked={
                 checkedProsecutorRadio === CaseAppealDecision.NOT_APPLICABLE ||
                 (!checkedProsecutorRadio &&
-                  workingCase.prosecutorAppealDecision ===
+                  prosecutorAppealDecision ===
                     CaseAppealDecision.NOT_APPLICABLE)
               }
               onChange={() => {
@@ -340,12 +415,14 @@ const AppealSections: FC<Props> = ({
               }}
               large
               backgroundColor="white"
+              disabled={disabled}
             />
           </div>
           <Box>
             <Input
               name="prosecutorAppealAnnouncement"
               data-testid="prosecutorAppealAnnouncement"
+              disabled={disabled}
               label={formatMessage(m.prosecutorAnnouncementLabelV2)}
               value={prosecutorAppealAnnouncementInput.value || ''}
               placeholder={formatMessage(m.prosecutorAnnouncementPlaceholderV2)}

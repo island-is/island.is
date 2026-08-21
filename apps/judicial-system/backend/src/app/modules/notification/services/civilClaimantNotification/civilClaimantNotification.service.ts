@@ -5,7 +5,6 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import { IntlService } from '@island.is/cms-translations'
 import { EmailService } from '@island.is/email-service'
@@ -25,7 +24,7 @@ import { EventService } from '../../../event'
 import {
   Case,
   CivilClaimant,
-  Notification,
+  NotificationRepositoryService,
   Recipient,
 } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
@@ -36,8 +35,7 @@ import { strings } from './civilClaimantNotification.strings'
 @Injectable()
 export class CivilClaimantNotificationService extends BaseNotificationService {
   constructor(
-    @InjectModel(Notification)
-    notificationModel: typeof Notification,
+    notificationRepositoryService: NotificationRepositoryService,
     @Inject(notificationModuleConfig.KEY)
     config: ConfigType<typeof notificationModuleConfig>,
     @Inject(LOGGER_PROVIDER) logger: Logger,
@@ -47,7 +45,7 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
     courtService: CourtService,
   ) {
     super(
-      notificationModel,
+      notificationRepositoryService,
       emailService,
       intlService,
       courtService,
@@ -137,7 +135,7 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
       TrackedNotificationType.SPOKESPERSON_COURT_DATE_FOLLOW_UP,
     )
 
-    if (!shouldSendCourtDateFollowUp || !user) {
+    if (!shouldSendCourtDateFollowUp) {
       // Nothing should be sent so we return a successful response
       return { delivered: true }
     }

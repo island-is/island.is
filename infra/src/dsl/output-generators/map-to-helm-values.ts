@@ -93,6 +93,7 @@ const serializeService: SerializeMethod<HelmService> = async (
   }
   if (!hackListForNonExistentTracer.includes(serviceDef.name)) {
     result.env.NODE_OPTIONS += ' -r dd-trace/init'
+    result.env.DD_TRACE_DISABLED_INSTRUMENTATIONS = 'fetch'
   }
   // add healthCheck port if set in the service
   if (serviceDef.healthPort) {

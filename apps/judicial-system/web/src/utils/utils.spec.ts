@@ -11,6 +11,8 @@ import {
   CaseFileCategory,
   CaseType,
   CivilClaimant,
+  CourtSessionString,
+  CourtSessionStringType,
   Defendant,
   Gender,
   InstitutionType,
@@ -22,12 +24,14 @@ import {
 
 import * as formatters from './formatters'
 import {
+  applyMergedCaseEntries,
   getAppealActorText,
   getDefaultDefendantGender,
   hasAcceptedRulingOrderInCourt,
   hasSentNotification,
   isAppealFileCategoryVisible,
   isCurrentAppellantRepresentative,
+  isMatchingAppealCourtFile,
   isSentToPublicProsecutor,
   mapStringToGender,
   reconcileAppealDecisionsForRulingFileChange,
@@ -419,9 +423,15 @@ describe('Utils', () => {
       test('returns "Sækjandi kærði í þinghaldi" when prosecutor appealed in court', () => {
         const workingCase = {
           type: CaseType.CUSTODY,
-          prosecutorAppealDecision: CaseAppealDecision.APPEAL,
+          appealDecisions: [
+            {
+              rulingFileId: null,
+              partyRole: AppealDecisionPartyRole.PROSECUTOR,
+              decision: CaseAppealDecision.APPEAL,
+            },
+          ],
           appealCase: { appealedByRole: UserRole.PROSECUTOR } as AppealCase,
-        } as Case
+        } as unknown as Case
 
         expect(getAppealActorText(workingCase)).toBe(
           'Sækjandi kærði í þinghaldi',
@@ -431,9 +441,15 @@ describe('Utils', () => {
       test('returns "Varnaraðili kærði í þinghaldi" when defender appealed in court', () => {
         const workingCase = {
           type: CaseType.CUSTODY,
-          accusedAppealDecision: CaseAppealDecision.APPEAL,
+          appealDecisions: [
+            {
+              rulingFileId: null,
+              partyRole: AppealDecisionPartyRole.DEFENDANT,
+              decision: CaseAppealDecision.APPEAL,
+            },
+          ],
           appealCase: { appealedByRole: UserRole.DEFENDER } as AppealCase,
-        } as Case
+        } as unknown as Case
 
         expect(getAppealActorText(workingCase)).toBe(
           'Varnaraðili kærði í þinghaldi',
@@ -443,12 +459,18 @@ describe('Utils', () => {
       test('returns "Kært af sækjanda {date}" for out-of-court prosecutor appeal', () => {
         const workingCase = {
           type: CaseType.CUSTODY,
-          prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
+          appealDecisions: [
+            {
+              rulingFileId: null,
+              partyRole: AppealDecisionPartyRole.PROSECUTOR,
+              decision: CaseAppealDecision.POSTPONE,
+            },
+          ],
           appealCase: {
             appealedByRole: UserRole.PROSECUTOR,
             appealedDate,
           } as AppealCase,
-        } as Case
+        } as unknown as Case
 
         expect(getAppealActorText(workingCase)).toBe(
           `Kært af sækjanda ${dateStr}`,
@@ -458,13 +480,19 @@ describe('Utils', () => {
       test('returns "Verjandi {name} kærði úrskurðinn {date}" for the case defender', () => {
         const workingCase = {
           type: CaseType.CUSTODY,
-          accusedAppealDecision: CaseAppealDecision.POSTPONE,
+          appealDecisions: [
+            {
+              rulingFileId: null,
+              partyRole: AppealDecisionPartyRole.DEFENDANT,
+              decision: CaseAppealDecision.POSTPONE,
+            },
+          ],
           defenderName: 'Jón Jónsson',
           appealCase: {
             appealedByRole: UserRole.DEFENDER,
             appealedDate,
           } as AppealCase,
-        } as Case
+        } as unknown as Case
 
         expect(getAppealActorText(workingCase)).toBe(
           `Verjandi Jón Jónsson kærði úrskurðinn ${dateStr}`,
@@ -474,7 +502,13 @@ describe('Utils', () => {
       test('falls back to "Kært af verjanda {date}" when the case has no defender name', () => {
         const workingCase = {
           type: CaseType.CUSTODY,
-          accusedAppealDecision: CaseAppealDecision.POSTPONE,
+          appealDecisions: [
+            {
+              rulingFileId: null,
+              partyRole: AppealDecisionPartyRole.DEFENDANT,
+              decision: CaseAppealDecision.POSTPONE,
+            },
+          ],
           defendants: [],
           civilClaimants: [],
           appealCase: {
@@ -614,6 +648,87 @@ describe('Utils', () => {
           `Verjandi kærði úrskurðinn ${dateStr}`,
         )
       })
+    })
+  })
+
+  describe('applyMergedCaseEntries', () => {
+    const entries = (
+      mergedCaseId: string,
+      value: string,
+      id?: string,
+    ): CourtSessionString =>
+      ({
+        id,
+        caseId: 'case-1',
+        courtSessionId: 'session-1',
+        mergedCaseId,
+        stringType: CourtSessionStringType.ENTRIES,
+        value,
+      } as CourtSessionString)
+
+    const edit = (mergedCaseId: string, value: string) => ({
+      caseId: 'case-1',
+      courtSessionId: 'session-1',
+      mergedCaseId,
+      value,
+    })
+
+    it('appends a row for a merged case that has not been written about', () => {
+      expect(
+        applyMergedCaseEntries(undefined, edit('merged-1', 'Bókað')),
+      ).toEqual([
+        {
+          caseId: 'case-1',
+          courtSessionId: 'session-1',
+          mergedCaseId: 'merged-1',
+          stringType: CourtSessionStringType.ENTRIES,
+          value: 'Bókað',
+        },
+      ])
+    })
+
+    it('updates the existing row of that merged case', () => {
+      expect(
+        applyMergedCaseEntries(
+          [entries('merged-1', 'Bókað', 'string-1')],
+          edit('merged-1', 'Leiðrétt'),
+        ),
+      ).toEqual([entries('merged-1', 'Leiðrétt', 'string-1')])
+    })
+
+    it('leaves the rows of other merged cases untouched', () => {
+      expect(
+        applyMergedCaseEntries(
+          [
+            entries('merged-1', 'Eitt', 'string-1'),
+            entries('merged-2', 'Tvö', 'string-2'),
+          ],
+          edit('merged-2', 'Tvö, leiðrétt'),
+        ),
+      ).toEqual([
+        entries('merged-1', 'Eitt', 'string-1'),
+        entries('merged-2', 'Tvö, leiðrétt', 'string-2'),
+      ])
+    })
+
+    // Rows appended here have no `id` until the case is refetched. Matching on
+    // `id` would make them collide on `undefined`, so an edit to one merged
+    // case would overwrite the other's booking.
+    it('does not overwrite a sibling row that has no id yet', () => {
+      const inserted = applyMergedCaseEntries(
+        applyMergedCaseEntries(undefined, edit('merged-1', 'Eitt')),
+        edit('merged-2', 'Tvö'),
+      )
+
+      expect(
+        applyMergedCaseEntries(inserted, edit('merged-1', 'Eitt, leiðrétt')),
+      ).toEqual([
+        expect.objectContaining({
+          mergedCaseId: 'merged-1',
+          value: 'Eitt, leiðrétt',
+        }),
+        expect.objectContaining({ mergedCaseId: 'merged-2', value: 'Tvö' }),
+      ])
     })
   })
 
@@ -1475,6 +1590,90 @@ describe('Utils', () => {
           undefined,
           file(CaseFileCategory.PROSECUTOR_APPEAL_BRIEF),
           otherUser,
+        ),
+      ).toBe(false)
+    })
+  })
+
+  describe('isMatchingAppealCourtFile', () => {
+    test('matches a case level appeal file when no ruling file id is given', () => {
+      expect(
+        isMatchingAppealCourtFile(
+          { category: CaseFileCategory.APPEAL_RULING, rulingFileId: null },
+          CaseFileCategory.APPEAL_RULING,
+          undefined,
+        ),
+      ).toBe(true)
+    })
+
+    test('matches a ruling order appeal file with the same ruling file id', () => {
+      expect(
+        isMatchingAppealCourtFile(
+          {
+            category: CaseFileCategory.APPEAL_RULING,
+            rulingFileId: 'ruling-1',
+          },
+          CaseFileCategory.APPEAL_RULING,
+          'ruling-1',
+        ),
+      ).toBe(true)
+    })
+
+    test('does not match a ruling order appeal file on a case level appeal', () => {
+      expect(
+        isMatchingAppealCourtFile(
+          {
+            category: CaseFileCategory.APPEAL_RULING,
+            rulingFileId: 'ruling-1',
+          },
+          CaseFileCategory.APPEAL_RULING,
+          null,
+        ),
+      ).toBe(false)
+    })
+
+    test('does not match a case level appeal file on a ruling order appeal', () => {
+      expect(
+        isMatchingAppealCourtFile(
+          { category: CaseFileCategory.APPEAL_RULING, rulingFileId: null },
+          CaseFileCategory.APPEAL_RULING,
+          'ruling-1',
+        ),
+      ).toBe(false)
+    })
+
+    test('does not match a file belonging to another ruling order appeal', () => {
+      expect(
+        isMatchingAppealCourtFile(
+          {
+            category: CaseFileCategory.APPEAL_RULING,
+            rulingFileId: 'ruling-1',
+          },
+          CaseFileCategory.APPEAL_RULING,
+          'ruling-2',
+        ),
+      ).toBe(false)
+    })
+
+    test('does not match another category on the same appeal', () => {
+      expect(
+        isMatchingAppealCourtFile(
+          {
+            category: CaseFileCategory.APPEAL_COURT_RECORD,
+            rulingFileId: 'ruling-1',
+          },
+          CaseFileCategory.APPEAL_RULING,
+          'ruling-1',
+        ),
+      ).toBe(false)
+    })
+
+    test('does not match a file without a category', () => {
+      expect(
+        isMatchingAppealCourtFile(
+          {},
+          CaseFileCategory.APPEAL_RULING,
+          undefined,
         ),
       ).toBe(false)
     })

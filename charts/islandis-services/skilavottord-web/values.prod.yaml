@@ -20,6 +20,7 @@ name: 'skilavottord-web'
 enabled: true
 env:
   API_URL: 'http://skilavottord-ws'
+  DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
   ENVIRONMENT: 'prod'
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'

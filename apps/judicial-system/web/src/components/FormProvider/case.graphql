@@ -195,12 +195,6 @@ query Case($input: CaseQueryInput!) {
     isolationToDate
     conclusion
     endOfSessionBookings
-    accusedAppealDecision
-    accusedAppealAnnouncement
-    prosecutorAppealDecision
-    prosecutorAppealAnnouncement
-    accusedPostponedAppealDate
-    prosecutorPostponedAppealDate
     rulingDate
     rulingSignatureDate
     judge {
@@ -414,6 +408,7 @@ query Case($input: CaseQueryInput!) {
       appealedByCivilClaimantId
       appealedByRole
       appealedDate
+      appealedOutOfCourt
       statementDeadline
       isStatementDeadlineExpired
       appealCaseNumber
@@ -452,6 +447,7 @@ query Case($input: CaseQueryInput!) {
       appealValidToDate
       isAppealCustodyIsolation
       appealIsolationToDate
+      rulingFileId
     }
     rulingOrderAppealCases {
       id
@@ -461,6 +457,7 @@ query Case($input: CaseQueryInput!) {
       appealedByRole
       appealedDate
       appealedInCourt
+      appealedOutOfCourt
       statementDeadline
       isStatementDeadlineExpired
       appealCaseNumber
@@ -680,6 +677,7 @@ query Case($input: CaseQueryInput!) {
         appealedByCivilClaimantId
         appealedByRole
         appealedInCourt
+        appealedOutOfCourt
         appealedDate
         statementDeadline
         isStatementDeadlineExpired

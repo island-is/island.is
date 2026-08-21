@@ -5,7 +5,6 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import { IntlService } from '@island.is/cms-translations'
 import { EmailService } from '@island.is/email-service'
@@ -36,7 +35,7 @@ import {
   DateLog,
   Defendant,
   InstitutionContactRepositoryService,
-  Notification,
+  NotificationRepositoryService,
   Recipient,
 } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
@@ -53,8 +52,7 @@ interface Attachment {
 @Injectable()
 export class IndictmentCaseNotificationService extends BaseNotificationService {
   constructor(
-    @InjectModel(Notification)
-    notificationModel: typeof Notification,
+    notificationRepositoryService: NotificationRepositoryService,
     @Inject(notificationModuleConfig.KEY)
     config: ConfigType<typeof notificationModuleConfig>,
     @Inject(LOGGER_PROVIDER) logger: Logger,
@@ -65,7 +63,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     private readonly institutionContactRepositoryService: InstitutionContactRepositoryService,
   ) {
     super(
-      notificationModel,
+      notificationRepositoryService,
       emailService,
       intlService,
       courtService,
@@ -185,7 +183,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
 
   private sendArraignmentDateEmailNotifications(
     theCase: Case,
-    user: UserDescriptor,
+    user: UserDescriptor | undefined,
     arraignmentDate: DateLog,
   ) {
     this.eventService.postEvent('SCHEDULE_ARRAIGNMENT_DATE', theCase)
@@ -257,7 +255,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
 
   private async sendPostponedCourtDateEmailNotification(
     theCase: Case,
-    user: UserDescriptor,
+    user: UserDescriptor | undefined,
     courtDate: DateLog,
     calendarInvite: Attachment | undefined,
     overviewUrl?: string,
@@ -281,7 +279,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     }).then((recipient) => {
       if (recipient.success) {
         // No need to wait
-        this.uploadEmailToCourt(theCase, user, subject, body, email)
+        this.uploadEmailToCourt(theCase, subject, body, user, email)
       }
 
       return recipient
@@ -291,7 +289,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
   private sendPostponedCourtDateEmailNotifications(
     theCase: Case,
     courtDate: DateLog,
-    user: UserDescriptor,
+    user: UserDescriptor | undefined,
   ): Promise<Recipient>[] {
     this.eventService.postEvent('SCHEDULE_COURT_DATE', theCase)
 
@@ -379,7 +377,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
 
   private sendCourtDateEmailNotification(
     theCase: Case,
-    user: UserDescriptor,
+    user: UserDescriptor | undefined,
   ): Promise<Recipient>[] {
     // check both regular court dates and arraignment date
     const courtDate = DateLog.courtDate(theCase.dateLogs)
@@ -407,13 +405,8 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
 
   private async sendCourtDateNotifications(
     theCase: Case,
-    user?: UserDescriptor,
+    user: UserDescriptor | undefined,
   ): Promise<DeliverResponse> {
-    if (!user) {
-      // nothing happens
-      return { delivered: true }
-    }
-
     const promises: Promise<Recipient>[] = this.sendCourtDateEmailNotification(
       theCase,
       user,

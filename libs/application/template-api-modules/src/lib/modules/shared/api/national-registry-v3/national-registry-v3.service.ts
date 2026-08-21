@@ -24,6 +24,7 @@ import {
   CitizenshipDto,
   CohabitationDto,
   IndividualDto,
+  NationalIdTypeDto,
 } from '@island.is/clients/national-registry-v3-applications'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages } from '@island.is/application/core'
@@ -85,7 +86,9 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
       if (children.length > 0) {
         let foundChildWithIcelandicCitizenship = false
         for (const child of children) {
-          const individual = await this.getIndividual(child, auth)
+          const individual = await this.getIndividual(child, auth, {
+            skipMaritalTitle: true,
+          })
           if (individual?.citizenship?.code === 'IS') {
             foundChildWithIcelandicCitizenship = true
             break
@@ -865,5 +868,12 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
     }
 
     return custodians
+  }
+
+  async getNationalIdType(
+    nationalId: string,
+    auth: User,
+  ): Promise<NationalIdTypeDto | null> {
+    return this.nationalRegistryV3Api.getNationalIdType(nationalId, auth)
   }
 }
