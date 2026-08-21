@@ -17,7 +17,7 @@ export const questionnaire = defineMessages({
     description: 'alert info title above questionnaire section',
   },
   alertInfoMessage: {
-    id: 'vmst.cjs.application:questionnaire.alertInfoTitle',
+    id: 'vmst.cjs.application:questionnaire.alertInfoMessage',
     defaultMessage:
       'Til þess að tryggja viðeigandi ráðgjöf í atvinnuleitinni þarf að svara nokkrum spurningum áður en þú getur staðfest atvinnuleitina.',
     description: 'alert info message above questionnaire section',
