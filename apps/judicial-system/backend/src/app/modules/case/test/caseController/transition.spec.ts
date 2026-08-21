@@ -606,6 +606,11 @@ describe('CaseController - Transition', () => {
       state: CaseState.RECEIVED,
       indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
       courtEndTime: randomDate(),
+      // completeTransitionRule requires the completing user to be the judge of
+      // an indictment case that ends in a ruling - guards do not run in
+      // controller unit tests, so without this the fixture describes a
+      // transition production would reject.
+      judgeId: userId,
       defendants,
     } as Case
 
