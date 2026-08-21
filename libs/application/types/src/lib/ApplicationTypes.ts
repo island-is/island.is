@@ -3,6 +3,7 @@ export enum ApplicationTypes {
   EXAMPLE_COMMON_ACTIONS = 'ExampleCommonActions',
   EXAMPLE_FOLDER_STRUCTURE_AND_CONVENTIONS = 'ExampleFolderStructureAndConventions',
   EXAMPLE_INPUTS = 'ExampleInputs',
+  EXAMPLE_INPUTS_SDF = 'ExampleInputsSdf',
   EXAMPLE_NO_INPUTS = 'ExampleNoInputs',
   EXAMPLE_PAYMENT = 'ExamplePayment',
   EXAMPLE_STATE_TRANSFERS = 'ExampleStateTransfers',
@@ -93,6 +94,7 @@ export enum ApplicationTypes {
   CAR_RENTAL_DAYRATE_RETURNS = 'CarRentalDayrateReturns',
   MEDICAL_AND_REHABILITATION_PAYMENTS = 'MedicalAndRehabilitationPayments',
   FIRE_COMPENSATION_APPRAISAL = 'FireCompensationAppraisal',
+  FIRE_COMPENSATION_APPRAISAL_SDF = 'FireCompensationAppraisalSdf',
   LEGAL_GAZETTE = 'LegalGazette',
   EXEMPTION_FOR_TRANSPORTATION = 'ExemptionForTransportation',
   REGISTRATION_OF_NEW_PROPERTY_NUMBERS = 'RegistrationOfNewPropertyNumbers',
@@ -108,7 +110,16 @@ export enum ApplicationTypes {
   SALARY_REPORT = 'SalaryReport',
 }
 
-export const ApplicationConfigurations = {
+export interface ApplicationConfiguration {
+  slug: string
+  translation: string | string[]
+  useSdf?: boolean
+}
+
+export const ApplicationConfigurations: Record<
+  string,
+  ApplicationConfiguration
+> = {
   [ApplicationTypes.EXAMPLE_COMMON_ACTIONS]: {
     slug: 'example-common-actions',
     translation: 'eca.application',
@@ -120,6 +131,11 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.EXAMPLE_INPUTS]: {
     slug: 'example-inputs',
     translation: ['exi.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.EXAMPLE_INPUTS_SDF]: {
+    slug: 'example-inputs-sdf',
+    translation: ['exi.application', 'uiForms.application'],
+    useSdf: true,
   },
   [ApplicationTypes.EXAMPLE_NO_INPUTS]: {
     slug: 'example-no-inputs',
@@ -488,6 +504,11 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.FIRE_COMPENSATION_APPRAISAL]: {
     slug: 'endurmat-brunabotamats',
     translation: ['fca.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.FIRE_COMPENSATION_APPRAISAL_SDF]: {
+    slug: 'endurmat-brunabotamats-sdf',
+    translation: ['fca.application', 'uiForms.application'],
+    useSdf: true,
   },
   [ApplicationTypes.LEGAL_GAZETTE]: {
     slug: 'logbirtingarblad',

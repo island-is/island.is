@@ -21,6 +21,10 @@
                 "onlyDependOnLibsWithTags": ["*"]
               },
               {
+                "sourceTag": "type:util",
+                "notDependOnLibsWithTags": ["type:ui", "type:feature"]
+              },
+              {
                 "sourceTag": "scope:api",
                 "onlyDependOnLibsWithTags": [
                   "lib:api",

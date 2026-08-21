@@ -1,6 +1,8 @@
 import {
   institutionMapper,
   ApplicationConfigurations,
+  ApplicationTypes,
+  getApplicationPath,
 } from '@island.is/application/types'
 import {
   ApplicationAdmin,
@@ -35,9 +37,12 @@ export const mapAppSystemCards = (
     progress: application.progress,
     slug: ApplicationConfigurations[application.typeId]?.slug,
     org: institutionMapper[application.typeId]?.slug,
-    applicationPath: `umsoknir/${
-      ApplicationConfigurations[application.typeId]?.slug
-    }/${application.id}`,
+    applicationPath: getApplicationPath(
+      // `typeId` is the generated DTO enum; its values match `ApplicationTypes`
+      // but the nominal types don't overlap, so bridge through `unknown`.
+      application.typeId as unknown as ApplicationTypes,
+      application.id,
+    ),
     orgContentfulId: institutionMapper[application.typeId]?.contentfulId,
     nationalId: institutionMapper[application.typeId]?.nationalId,
     actionCard: application.actionCard,
