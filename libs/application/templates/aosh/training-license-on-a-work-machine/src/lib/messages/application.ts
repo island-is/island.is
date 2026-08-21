@@ -11,6 +11,12 @@ export const application = defineMessages({
     defaultMessage: 'Vinnueftirlitið',
     description: `Institution's name`,
   },
+  pruneReason: {
+    id: 'aosh.tlwm.application:pruneReason',
+    defaultMessage: 'Bíður staðfestingar umsagnaraðila',
+    description:
+      'PLACEHOLDER — reason shown in the pre-prune reminder notification, needs content review',
+  },
   actionCardDraft: {
     id: 'aosh.tlwm.application:actionCardDraft',
     defaultMessage: 'Í vinnslu',

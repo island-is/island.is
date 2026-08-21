@@ -11,6 +11,12 @@ export const application = defineMessages({
     defaultMessage: 'Þjóðskrá',
     description: `Institution's name`,
   },
+  pruneReason: {
+    id: 'id.application:pruneReason',
+    defaultMessage: 'Bíður staðfestingar frá forsjáraðila 2',
+    description:
+      'PLACEHOLDER — reason shown in the pre-prune reminder notification, needs content review',
+  },
   actionCardPrerequisites: {
     id: 'id.application:actionCardPrerequisites',
     defaultMessage: 'Gagnaöflun',

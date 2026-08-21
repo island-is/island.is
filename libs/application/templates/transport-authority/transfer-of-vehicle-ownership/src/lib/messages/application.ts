@@ -11,6 +11,12 @@ export const application = defineMessages({
     defaultMessage: 'Samgöngustofa',
     description: `Institution's name`,
   },
+  pruneReason: {
+    id: 'ta.tvo.application:pruneReason',
+    defaultMessage: 'Bíður staðfestingar kaupanda og annarra hlutaðeigandi',
+    description:
+      'PLACEHOLDER — reason shown in the pre-prune reminder notification, needs content review',
+  },
   actionCardDraft: {
     id: 'ta.tvo.application:actionCardDraft',
     defaultMessage: 'Í vinnslu',
