@@ -12,6 +12,8 @@ server {
         absolute_redirect off;
         # We do not cache any of the assets
         add_header Cache-Control "no-store, no-cache, must-revalidate";
+        add_header Content-Security-Policy "$CONTENT_SECURITY_POLICY" always;
+        add_header Content-Security-Policy-Report-Only "$CONTENT_SECURITY_POLICY_REPORT_ONLY" always;
     }
 
     location ~ "^$BASEPATH(.+\.[0-9a-f]{16,20}\..+)$" {

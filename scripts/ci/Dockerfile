@@ -70,6 +70,13 @@ ENV CI=true \
 RUN --mount=type=secret,id=nx_cloud_access_token \
   NX_CLOUD_ACCESS_TOKEN="$(cat /run/secrets/nx_cloud_access_token)" yarn run build ${APP} --prod
 
+# Generate hashes only for images that consume static build artifacts.
+FROM builder AS static-builder
+
+ARG APP_DIST_HOME
+
+RUN node scripts/dockerfile-assets/csp/generate-csp-hashes.js "${APP_DIST_HOME}"
+
 # ------------------------------------------------
 # Minimal node base for outputs
 # ------------------------------------------------
@@ -185,8 +192,10 @@ ARG GIT_COMMIT_SHA
 ARG GIT_REPOSITORY_URL
 
 COPY scripts/dockerfile-assets/nginx/* /etc/nginx/templates
+COPY --chmod=755 scripts/dockerfile-assets/bash/05-content-security-policy.sh /docker-entrypoint.d/
+COPY scripts/dockerfile-assets/csp/merge-csp-hashes.js /docker-entrypoint.d/
 COPY scripts/dockerfile-assets/bash/extract-environment.* /docker-entrypoint.d/
-COPY --from=builder /build/${APP_DIST_HOME} /usr/share/nginx/html
+COPY --from=static-builder /build/${APP_DIST_HOME} /usr/share/nginx/html
 
 ENV GIT_BRANCH=${GIT_BRANCH} \
   GIT_COMMIT_SHA=${GIT_COMMIT_SHA} \
@@ -195,7 +204,10 @@ ENV GIT_BRANCH=${GIT_BRANCH} \
   DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} \
   DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL} \
   APP=${APP} \
-  BASEPATH=/
+  BASEPATH=/ \
+  CONTENT_SECURITY_POLICY= \
+  CONTENT_SECURITY_POLICY_HASH_DIRECTIVES= \
+  CONTENT_SECURITY_POLICY_REPORT_ONLY=
 
 LABEL branch=${GIT_BRANCH} commit=${GIT_COMMIT_SHA}
 

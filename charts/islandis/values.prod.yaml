@@ -915,6 +915,8 @@ application-system-form:
   enabled: true
   env:
     BASEPATH: '/umsoknir'
+    CONTENT_SECURITY_POLICY: "base-uri 'self'; connect-src 'self' https://plausible.io https://s3.eu-west-1.amazonaws.com https://*.s3.eu-west-1.amazonaws.com https://browser-intake-datadoghq.eu; default-src 'self'; font-src 'self' data:; form-action 'self'; frame-ancestors 'none'; frame-src 'none'; img-src 'self' data: blob: https://images.ctfassets.net https://s3.eu-west-1.amazonaws.com https://*.s3.eu-west-1.amazonaws.com https://adverts.stjornartidindi.is; manifest-src 'self'; media-src 'self' data: blob:; object-src 'none'; script-src 'self' https://plausible.io; script-src-attr 'none'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src-attr 'unsafe-inline'; style-src-elem 'self' https://cdnjs.cloudflare.com; worker-src 'self' blob:"
+    CONTENT_SECURITY_POLICY_HASH_DIRECTIVES: 'script-src style-src-elem'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -1739,6 +1741,8 @@ form-system-web:
   env:
     BASEPATH: '/form'
     CODE_OWNER: 'Advania'
+    CONTENT_SECURITY_POLICY: "base-uri 'self'; connect-src 'self' https://plausible.io https://s3.eu-west-1.amazonaws.com https://*.s3.eu-west-1.amazonaws.com https://browser-intake-datadoghq.eu; default-src 'self'; font-src 'self' data:; form-action 'self'; frame-ancestors 'none'; frame-src 'none'; img-src 'self' data: blob: https://images.ctfassets.net; manifest-src 'self'; media-src 'self' data: blob:; object-src 'none'; script-src 'self' https://plausible.io; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; style-src-attr 'unsafe-inline'; style-src-elem 'self'; worker-src 'self' blob:"
+    CONTENT_SECURITY_POLICY_HASH_DIRECTIVES: 'script-src style-src-elem'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -1920,6 +1924,8 @@ icelandic-names-registry-backend:
 island-ui-storybook:
   enabled: true
   env:
+    CONTENT_SECURITY_POLICY: "base-uri 'self'; connect-src 'self' https://fonts.googleapis.com; default-src 'self'; font-src 'self' data: https://fonts.gstatic.com; form-action 'self'; frame-ancestors 'self'; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; img-src 'self' data: blob: https://images.ctfassets.net https://www.stevensegallery.com; manifest-src 'self'; media-src 'self' data: blob:; object-src 'none'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; worker-src 'self' blob:"
+    CONTENT_SECURITY_POLICY_HASH_DIRECTIVES: 'script-src'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -2198,6 +2204,8 @@ portals-admin:
   enabled: true
   env:
     BASEPATH: '/stjornbord'
+    CONTENT_SECURITY_POLICY: "base-uri 'self'; connect-src 'self' https://plausible.io https://s3.eu-west-1.amazonaws.com https://*.s3.eu-west-1.amazonaws.com https://browser-intake-datadoghq.eu https://files.reglugerd.is https://innskra.island.is; default-src 'self'; font-src 'self' data:; form-action 'self'; frame-ancestors 'none'; frame-src 'none'; img-src 'self' data: blob: https://images.ctfassets.net https://files.reglugerd.is; manifest-src 'self'; media-src 'self' data: blob:; object-src 'none'; script-src 'self' https://plausible.io; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; style-src-attr 'unsafe-inline'; style-src-elem 'self'; worker-src 'self' blob:"
+    CONTENT_SECURITY_POLICY_HASH_DIRECTIVES: 'script-src style-src-elem'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -2527,6 +2535,8 @@ service-portal:
   enabled: true
   env:
     BASEPATH: '/minarsidur'
+    CONTENT_SECURITY_POLICY: "base-uri 'self'; connect-src 'self' https://plausible.io https://s3.eu-west-1.amazonaws.com https://*.s3.eu-west-1.amazonaws.com https://browser-intake-datadoghq.eu; default-src 'self'; font-src 'self' data:; form-action 'self'; frame-ancestors 'none'; frame-src blob:; img-src 'self' data: blob: https://images.ctfassets.net https://webapi.hugverk.is; manifest-src 'self'; media-src 'self' data: blob: https://webapi.hugverk.is; object-src 'none'; script-src 'self' https://plausible.io; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; style-src-attr 'unsafe-inline'; style-src-elem 'self'; worker-src 'self' blob:"
+    CONTENT_SECURITY_POLICY_HASH_DIRECTIVES: 'script-src style-src-elem'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'

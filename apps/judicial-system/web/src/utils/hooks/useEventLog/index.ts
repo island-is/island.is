@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { useIntl } from 'react-intl'
-import { toast } from 'react-toastify'
+import { toast } from 'react-toastify/unstyled'
 
 import { errors } from '@island.is/judicial-system-web/messages'
 import { CreateEventLogInput } from '@island.is/judicial-system-web/src/graphql/schema'

@@ -1384,7 +1384,10 @@
       "document-provider-dashboard": [
         "libs/clients/document-provider-dashboard/src/index.ts"
       ],
-      "my-pages": ["libs/api/domains/my-pages/src/index.ts"]
+      "my-pages": ["libs/api/domains/my-pages/src/index.ts"],
+      "react-toastify/unstyled": [
+        "node_modules/react-toastify/dist/unstyled"
+      ]
     },
     "resolveJsonModule": true
   }

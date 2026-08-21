@@ -86,6 +86,7 @@ jobs:
           DIRTYBOT_APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
         run: |
           (cd infra && yarn charts)
+          yarn prettier --check "charts/**/*.yaml"
           node scripts/ci/docker/git-check-dirty.mjs "charts/" "charts" "dirtybot"
 
   check-secrets:

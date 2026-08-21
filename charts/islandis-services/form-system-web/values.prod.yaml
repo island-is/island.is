@@ -21,6 +21,8 @@ enabled: true
 env:
   BASEPATH: '/form'
   CODE_OWNER: 'Advania'
+  CONTENT_SECURITY_POLICY: "base-uri 'self'; connect-src 'self' https://plausible.io https://s3.eu-west-1.amazonaws.com https://*.s3.eu-west-1.amazonaws.com https://browser-intake-datadoghq.eu; default-src 'self'; font-src 'self' data:; form-action 'self'; frame-ancestors 'none'; frame-src 'none'; img-src 'self' data: blob: https://images.ctfassets.net; manifest-src 'self'; media-src 'self' data: blob:; object-src 'none'; script-src 'self' https://plausible.io; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; style-src-attr 'unsafe-inline'; style-src-elem 'self'; worker-src 'self' blob:"
+  CONTENT_SECURITY_POLICY_HASH_DIRECTIVES: 'script-src style-src-elem'
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
