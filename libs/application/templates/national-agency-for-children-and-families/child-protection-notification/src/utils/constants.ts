@@ -1,0 +1,67 @@
+import { DefaultEvents } from '@island.is/application/types'
+
+export const RISK_TO_UNBORN = 'RiskToUnborn'
+export const IS = 'IS'
+
+export type Events = {
+  type: DefaultEvents.SUBMIT | DefaultEvents.ABORT
+}
+
+export enum States {
+  PREREQUISITES = 'prerequisites',
+  DRAFT = 'draft',
+  COMPLETED = 'completed',
+  PAYMENT = 'payment',
+  REVIEW = 'review',
+}
+
+export enum ApiModuleActions {
+  getCategories = 'getCategories',
+  getProtectiveFactors = 'getProtectiveFactors',
+  getGenders = 'getGenders',
+  getLanguageEnvironments = 'getLanguageEnvironments',
+  getChildSafetyLevels = 'getChildSafetyLevels',
+  getPostalCodes = 'getPostalCodes',
+  getPronouns = 'getPronouns',
+  getDisabilityStatuses = 'getDisabilityStatuses',
+  getChildUnknownNationalIdStates = 'getChildUnknownNationalIdStates',
+  getGuardianNotAwareReasons = 'getGuardianNotAwareReasons',
+  getSchoolTypes = 'getSchoolTypes',
+  getChildNationalIdType = 'getChildNationalIdType',
+  createNotification = 'createNotification',
+  completeNotification = 'completeNotification',
+}
+
+export enum Roles {
+  MINOR_APPLICANT = 'minorApplicant',
+  ADULT_PERSONAL_APPLICANT = 'adultPersonalApplicant',
+  ADULT_PROCURATION_APPLICANT = 'adultProcurationApplicant',
+}
+
+export enum KnowsNationalId {
+  YES = 'yes',
+  NO = 'no',
+  UNBORN = 'unborn',
+}
+
+export const DO_NOT_KNOW = 'doNotKnow'
+export const NOT_APPLICABLE = 'notApplicable'
+export const PROT_FACTOR_UNBORN_SECTION = 'ProtFactorUnbornSection'
+
+export const SCHOOL_TYPES = ['Leikskóli', 'Grunnskóli', 'Framhaldsskóli']
+
+export enum LanguageEnvironmentOptions {
+  ONLY_ICELANDIC = 'onlyIcelandic',
+  ICELANDIC_AND_OTHER = 'icelandicAndOther',
+  ONLY_OTHER = 'onlyOtherThanIcelandic',
+}
+
+export const SHOW_LANGUAGE_SECTION_TYPES = [
+  LanguageEnvironmentOptions.ICELANDIC_AND_OTHER,
+  LanguageEnvironmentOptions.ONLY_OTHER,
+]
+
+export enum ChildNationalIdTypeCode {
+  SYSTEM_NATIONAL_ID = 'U',
+  NATIONAL_REGISTRY_NATIONAL_ID = 'Þ',
+}
