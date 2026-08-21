@@ -20,6 +20,7 @@ import { Domain } from './models/domain.model'
 import { ResourceTranslationService } from './resource-translation.service'
 import { DelegationResourcesService } from './delegation-resources.service'
 import { mapToScopeTree } from './utils/scope-tree.mapper'
+import { municipalityNameKey } from './utils/municipality'
 
 const VIRTUAL_MUNICIPALITY_TAG_ID = 'virtual-mitt-sveitarfelag'
 const VIRTUAL_MUNICIPALITY_TAG_SLUG = 'mitt-sveitarfelag'
@@ -57,9 +58,15 @@ export class ScopeService {
 
   /**
    * Looks up the user's municipality from the National Registry and finds
-   * a matching domain by comparing against Domain.displayName.
+   * a matching domain among the candidates by comparing normalized
+   * municipality names against Domain.displayName. Normalization handles
+   * the National Registry and domains using different forms of the same
+   * name, e.g. "Reykjavík" vs "Reykjavíkurborg".
    */
-  private async getUserMunicipalDomain(user: User): Promise<string | null> {
+  private async getUserMunicipalDomain(
+    user: User,
+    candidateDomainNames: string[],
+  ): Promise<string | null> {
     let sveitarfelag: string | undefined
 
     try {
@@ -76,10 +83,15 @@ export class ScopeService {
 
     if (!sveitarfelag) return null
 
-    const domain = await this.domainModel.findOne({
-      attributes: ['name'],
-      where: { displayName: sveitarfelag },
+    const domains = await this.domainModel.findAll({
+      attributes: ['name', 'displayName'],
+      where: { name: { [Op.in]: candidateDomainNames } },
     })
+
+    const municipalityKey = municipalityNameKey(sveitarfelag)
+    const domain = domains.find(
+      (domain) => municipalityNameKey(domain.displayName) === municipalityKey,
+    )
 
     return domain?.name ?? null
   }
@@ -381,7 +393,13 @@ export class ScopeService {
     )
 
     if (sveitarfelagTag && sveitarfelagTag.scopes.length > 0) {
-      const municipalDomainName = await this.getUserMunicipalDomain(user)
+      const candidateDomainNames = [
+        ...new Set(sveitarfelagTag.scopes.map((scope) => scope.domainName)),
+      ]
+      const municipalDomainName = await this.getUserMunicipalDomain(
+        user,
+        candidateDomainNames,
+      )
 
       if (municipalDomainName) {
         const municipalScopes = sveitarfelagTag.scopes.filter(
