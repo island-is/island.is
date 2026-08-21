@@ -14,7 +14,9 @@ export const buildInstitutionAssignees = (existing: string[]): string[] => {
   const hmsInstitutionNationalId = kennitala.sanitize(
     InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
   )
-  const testerNationalId = kennitala.sanitize(DEV_INSTITUTION_TESTER_NATIONAL_ID)
+  const testerNationalId = kennitala.sanitize(
+    DEV_INSTITUTION_TESTER_NATIONAL_ID,
+  )
 
   const withoutTester = existing
     .map(sanitizeNationalId)

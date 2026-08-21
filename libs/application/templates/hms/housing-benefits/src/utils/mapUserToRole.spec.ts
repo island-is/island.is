@@ -1,4 +1,7 @@
-import { Application, InstitutionNationalIds } from '@island.is/application/types'
+import {
+  Application,
+  InstitutionNationalIds,
+} from '@island.is/application/types'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import * as kennitala from 'kennitala'
 import { DEV_INSTITUTION_TESTER_NATIONAL_ID, Roles } from './constants'
@@ -22,9 +25,7 @@ const TESTER_NATIONAL_ID = kennitala.sanitize(
 )
 const APPLICANT_ID = '0101303019'
 
-const createApplication = (
-  overrides: Partial<Application> = {},
-): Application =>
+const createApplication = (overrides: Partial<Application> = {}): Application =>
   ({
     id: 'app-id',
     applicant: APPLICANT_ID,
@@ -32,7 +33,7 @@ const createApplication = (
     answers: {},
     externalData: {},
     ...overrides,
-  }) as Application
+  } as Application)
 
 describe('mapUserToRole', () => {
   afterEach(() => {

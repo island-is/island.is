@@ -35,7 +35,11 @@ describe('buildInstitutionAssignees', () => {
     const result = buildInstitutionAssignees(['0101307789'])
 
     expect(result).toEqual(
-      expect.arrayContaining(['0101307789', HMS_NATIONAL_ID, TESTER_NATIONAL_ID]),
+      expect.arrayContaining([
+        '0101307789',
+        HMS_NATIONAL_ID,
+        TESTER_NATIONAL_ID,
+      ]),
     )
     expect(result).toHaveLength(3)
   })
@@ -56,10 +60,7 @@ describe('buildInstitutionAssignees', () => {
       .mocked(isRunningOnEnvironment)
       .mockImplementation((environment) => environment === 'production')
 
-    const result = buildInstitutionAssignees([
-      '0101307789',
-      TESTER_NATIONAL_ID,
-    ])
+    const result = buildInstitutionAssignees(['0101307789', TESTER_NATIONAL_ID])
 
     expect(result).toEqual(['0101307789', HMS_NATIONAL_ID])
     expect(result).not.toContain(TESTER_NATIONAL_ID)

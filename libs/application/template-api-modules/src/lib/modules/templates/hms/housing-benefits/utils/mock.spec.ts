@@ -51,15 +51,15 @@ describe('housing-benefits mock helpers', () => {
 
   describe('off production', () => {
     it('enables rental mock when flags are set', () => {
-      expect(
-        useMockRentalAgreements({ answers: applicantMockAnswers }),
-      ).toBe(true)
+      expect(useMockRentalAgreements({ answers: applicantMockAnswers })).toBe(
+        true,
+      )
     })
 
     it('returns tax mock mode when flags are set', () => {
-      expect(
-        getPersonalTaxMockMode({ answers: applicantMockAnswers }),
-      ).toBe('empty')
+      expect(getPersonalTaxMockMode({ answers: applicantMockAnswers })).toBe(
+        'empty',
+      )
     })
 
     it('returns assignee tax mock mode when flags are set', () => {
@@ -90,15 +90,15 @@ describe('housing-benefits mock helpers', () => {
     })
 
     it('does not use mock rental agreements', () => {
-      expect(
-        useMockRentalAgreements({ answers: applicantMockAnswers }),
-      ).toBe(false)
+      expect(useMockRentalAgreements({ answers: applicantMockAnswers })).toBe(
+        false,
+      )
     })
 
     it('returns none for personal tax mock mode', () => {
-      expect(
-        getPersonalTaxMockMode({ answers: applicantMockAnswers }),
-      ).toBe('none')
+      expect(getPersonalTaxMockMode({ answers: applicantMockAnswers })).toBe(
+        'none',
+      )
     })
 
     it('returns none for assignee tax mock mode', () => {

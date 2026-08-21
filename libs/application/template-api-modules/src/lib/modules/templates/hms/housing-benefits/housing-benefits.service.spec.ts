@@ -649,9 +649,11 @@ describe('HousingBenefitsService notifications', () => {
   describe('getPersonalTaxReturn', () => {
     afterEach(() => {
       const actual = jest.requireActual('@island.is/shared/utils')
-      jest.mocked(isRunningOnEnvironment).mockImplementation((environment) =>
-        actual.isRunningOnEnvironment(environment),
-      )
+      jest
+        .mocked(isRunningOnEnvironment)
+        .mockImplementation((environment) =>
+          actual.isRunningOnEnvironment(environment),
+        )
     })
 
     it('returns empty mock without calling tax API when mock variant is emptySuccess', async () => {
@@ -769,9 +771,11 @@ describe('HousingBenefitsService notifications', () => {
   describe('getAssigneePersonalTaxReturn', () => {
     afterEach(() => {
       const actual = jest.requireActual('@island.is/shared/utils')
-      jest.mocked(isRunningOnEnvironment).mockImplementation((environment) =>
-        actual.isRunningOnEnvironment(environment),
-      )
+      jest
+        .mocked(isRunningOnEnvironment)
+        .mockImplementation((environment) =>
+          actual.isRunningOnEnvironment(environment),
+        )
     })
 
     it('returns mock payload without calling tax API when assignee mock is enabled', async () => {
@@ -839,9 +843,11 @@ describe('HousingBenefitsService notifications', () => {
   describe('assigneeNationalRegistry', () => {
     afterEach(() => {
       const actual = jest.requireActual('@island.is/shared/utils')
-      jest.mocked(isRunningOnEnvironment).mockImplementation((environment) =>
-        actual.isRunningOnEnvironment(environment),
-      )
+      jest
+        .mocked(isRunningOnEnvironment)
+        .mockImplementation((environment) =>
+          actual.isRunningOnEnvironment(environment),
+        )
     })
 
     it('does not overlay Funafold address on production when mock checkbox is set', async () => {
