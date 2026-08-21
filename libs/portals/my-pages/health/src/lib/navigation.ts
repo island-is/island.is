@@ -249,6 +249,11 @@ export const healthNavigation: PortalNavigationItem = {
           description: m.aidsAndNutritionIntro,
           path: HealthPaths.HealthAidsAndNutrition,
         },
+        {
+          name: messages.movementPrescriptionsTitle,
+          description: messages.movementPrescriptionsIntro,
+          path: HealthPaths.HealthMovementPrescriptions,
+        },
       ],
     },
     {
