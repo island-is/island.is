@@ -1077,6 +1077,14 @@ export const getDefaultDefendantGender = (defendants?: Defendant[] | null) =>
     ? defendants[0].gender ?? Gender.MALE
     : Gender.MALE
 
+// The arraignment summons can only be skipped when nobody is receiving a
+// subpoena, since a subpoena has to state a time and place
+export const areAllDefendantsServedByAlternativeMeans = (
+  defendants?: { isAlternativeService?: boolean | null }[] | null,
+): boolean =>
+  (defendants?.length ?? 0) > 0 &&
+  Boolean(defendants?.every((defendant) => defendant.isAlternativeService))
+
 // Lets an element with role="button" be activated with the keyboard
 // (Enter or Space) the same way a native button is.
 export const onEnterOrSpace =

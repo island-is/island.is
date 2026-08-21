@@ -724,6 +724,15 @@ export class Case extends Model {
   withCourtSessions!: boolean
 
   /**********
+   * Indicates whether the court chose not to summon to an arraignment, for
+   * example because the case will be merged into an already arraigned case -
+   * optional
+   **********/
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  isArraignmentSummonsSkipped?: boolean
+
+  /**********
    * The case's court sessions
    **********/
   @HasMany(() => CourtSession, 'caseId')
