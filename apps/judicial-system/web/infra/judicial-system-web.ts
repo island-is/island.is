@@ -1,7 +1,5 @@
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import type { ServiceBuilder } from '../../../../infra/src/dsl/dsl'
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { ref, service } from '../../../../infra/src/dsl/dsl'
+import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (services: {
   api: ServiceBuilder<'judicial-system-api'>
