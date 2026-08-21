@@ -173,10 +173,126 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:statistics',
     defaultMessage: 'Tölfræði',
   },
+  translations: {
+    id: 'admin-portal.application-system:translations',
+    defaultMessage: 'Þýðingar',
+  },
+  translationsDescription: {
+    id: 'admin-portal.application-system:translationsDescription',
+    defaultMessage: 'Þýðingar á umsóknum',
+  },
+  translationProgress: {
+    id: 'admin-portal.application-system:translationProgress',
+    defaultMessage: '{translated} af {total} þýtt',
+  },
+  translationOpen: {
+    id: 'admin-portal.application-system:translationOpen',
+    defaultMessage: 'Opna þýðingar',
+  },
+  sharedTranslationSpaces: {
+    id: 'admin-portal.application-system:sharedTranslationSpaces',
+    defaultMessage: 'Sameiginleg þýðingasvæði',
+  },
+  sharedTranslationNamespace: {
+    id: 'admin-portal.application-system:sharedTranslationNamespace',
+    defaultMessage: 'Nafnarammi',
+  },
+  sharedTranslationUsedBy: {
+    id: 'admin-portal.application-system:sharedTranslationUsedBy',
+    defaultMessage: 'Notað af',
+  },
+  sharedTranslationNamespaceEmpty: {
+    id: 'admin-portal.application-system:sharedTranslationNamespaceEmpty',
+    defaultMessage: 'Engir þýðanlegar strengir fundust fyrir þetta svæði.',
+  },
+  translationBackToList: {
+    id: 'admin-portal.application-system:translationBackToList',
+    defaultMessage: 'Til baka',
+  },
+  translationSave: {
+    id: 'admin-portal.application-system:translationSave',
+    defaultMessage: 'Vista',
+  },
+  translationSaveAll: {
+    id: 'admin-portal.application-system:translationSaveAll',
+    defaultMessage: 'Vista allt',
+  },
+  translationStatesNavHide: {
+    id: 'admin-portal.application-system:translationStatesNavHide',
+    defaultMessage: 'Fela vallista yfir stöður',
+  },
+  translationStatesNavShow: {
+    id: 'admin-portal.application-system:translationStatesNavShow',
+    defaultMessage: 'Sýna vallista yfir stöður',
+  },
+  translationStatesNavDrawerAriaLabel: {
+    id: 'admin-portal.application-system:translationStatesNavDrawerAriaLabel',
+    defaultMessage: 'Yfirlit yfir stöður og skjái',
+  },
+  translationSaveFailed: {
+    id: 'admin-portal.application-system:translationSaveFailed',
+    defaultMessage: 'Ekki tókst að vista. {detail}',
+  },
+  translationValidationErrors: {
+    id: 'admin-portal.application-system:translationValidationErrors',
+    defaultMessage: 'Villumeldingar',
+  },
+  translationGoogleTranslate: {
+    id: 'admin-portal.application-system:translationGoogleTranslate',
+    defaultMessage: 'Þýða',
+  },
+  translationGoogleTranslateAll: {
+    id: 'admin-portal.application-system:translationGoogleTranslateAll',
+    defaultMessage: 'Þýða allt',
+  },
+  translationStringsScopeScreen: {
+    id: 'admin-portal.application-system:translationStringsScopeScreen',
+    defaultMessage: 'Texti á þessum skjá',
+  },
+  translationStringsScopeApplication: {
+    id: 'admin-portal.application-system:translationStringsScopeApplication',
+    defaultMessage: 'Texti í allri umsókninni',
+  },
+  translationStringsAllApplicationHeading: {
+    id: 'admin-portal.application-system:translationStringsAllApplicationHeading',
+    defaultMessage: 'Allur texti í umsókn',
+  },
+  translationReview: {
+    id: 'admin-portal.application-system:translationReview',
+    defaultMessage: 'Samþykkja',
+  },
+  translationReviewAll: {
+    id: 'admin-portal.application-system:translationReviewAll',
+    defaultMessage: 'Samþykkja allt',
+  },
   statisticsDescription: {
     id: 'admin-portal.application-system:statisticsDescription',
     defaultMessage:
       'Staður til að sækja tölfræði um umsóknir og skoða gröf tengd þeim.',
+  },
+  translationFieldsTab: {
+    id: 'admin-portal.application-system:translationFieldsTab',
+    defaultMessage: 'Reitir',
+  },
+  translationFieldAutofill: {
+    id: 'admin-portal.application-system:translationFieldAutofill',
+    defaultMessage: 'Sjálfvirk útfylling',
+  },
+  translationFieldShowError: {
+    id: 'admin-portal.application-system:translationFieldShowError',
+    defaultMessage: 'Birta villu',
+  },
+  translationFieldNoFields: {
+    id: 'admin-portal.application-system:translationFieldNoFields',
+    defaultMessage: 'Engir reitir á þessum skjá',
+  },
+  translationFieldPrevious: {
+    id: 'admin-portal.application-system:translationFieldPrevious',
+    defaultMessage: 'Fyrri',
+  },
+  translationFieldNext: {
+    id: 'admin-portal.application-system:translationFieldNext',
+    defaultMessage: 'Næsti',
   },
 
   // Filters
@@ -279,5 +395,94 @@ export const m = defineMessages({
   noData: {
     id: 'admin-portal.application-system:noData',
     defaultMessage: 'Engin gögn fundust á tímabilinu...',
+  },
+
+  // Translation workspace: draft / publish
+  translationSaveDraft: {
+    id: 'admin-portal.application-system:translationSaveDraft',
+    defaultMessage: 'Vista drög',
+  },
+  translationAutosaved: {
+    id: 'admin-portal.application-system:translationAutosaved',
+    defaultMessage: 'Sjálfvirk vistun kl. {time}',
+  },
+  translationPublish: {
+    id: 'admin-portal.application-system:translationPublish',
+    defaultMessage: 'Birta',
+  },
+  translationPublishConfirm: {
+    id: 'admin-portal.application-system:translationPublishConfirm',
+    defaultMessage:
+      'Ertu viss um að þú viljir birta þessar þýðingar? Þær verða sýnilegar notendum.',
+  },
+  translationPublishCancel: {
+    id: 'admin-portal.application-system:translationPublishCancel',
+    defaultMessage: 'Hætta við',
+  },
+  translationPublishSuccess: {
+    id: 'admin-portal.application-system:translationPublishSuccess',
+    defaultMessage: 'Þýðingar hafa verið birtar.',
+  },
+  translationPublishFailed: {
+    id: 'admin-portal.application-system:translationPublishFailed',
+    defaultMessage: 'Ekki tókst að birta þýðingar. {detail}',
+  },
+  translationPublishHistory: {
+    id: 'admin-portal.application-system:translationPublishHistory',
+    defaultMessage: 'Útgáfusaga',
+  },
+  translationRollback: {
+    id: 'admin-portal.application-system:translationRollback',
+    defaultMessage: 'Endurheimta',
+  },
+  translationRollbackConfirm: {
+    id: 'admin-portal.application-system:translationRollbackConfirm',
+    defaultMessage:
+      'Ertu viss um að þú viljir endurheimta þessa útgáfu? Núverandi birtar þýðingar verða yfirskrifaðar.',
+  },
+  translationRollbackSuccess: {
+    id: 'admin-portal.application-system:translationRollbackSuccess',
+    defaultMessage: 'Þýðingar hafa verið endurheimtar.',
+  },
+  translationRollbackFailed: {
+    id: 'admin-portal.application-system:translationRollbackFailed',
+    defaultMessage: 'Ekki tókst að endurheimta þýðingar. {detail}',
+  },
+  translationDraft: {
+    id: 'admin-portal.application-system:translationDraft',
+    defaultMessage: 'Drög',
+  },
+  translationPublished: {
+    id: 'admin-portal.application-system:translationPublished',
+    defaultMessage: 'Birt',
+  },
+  translationNoPublishHistory: {
+    id: 'admin-portal.application-system:translationNoPublishHistory',
+    defaultMessage: 'Engin útgáfusaga.',
+  },
+  translationCurrentVersion: {
+    id: 'admin-portal.application-system:translationCurrentVersion',
+    defaultMessage: 'Núverandi',
+  },
+  translationPublishedByLabel: {
+    id: 'admin-portal.application-system:translationPublishedByLabel',
+    defaultMessage: 'Kennitala: {nationalId}',
+  },
+  translationActorLabel: {
+    id: 'admin-portal.application-system:translationActorLabel',
+    defaultMessage: 'Umboðsaðili: {actorNationalId}',
+  },
+  translationWorkspaceOverviewPreviewHint: {
+    id: 'admin-portal.application-system:translationWorkspaceOverviewPreviewHint',
+    defaultMessage:
+      'Raðir í yfirliti koma fram út frá svörum í umsókn. Þýðingahamur sýnir aðeins útlit; texta sem birtist mögulega hér má finna undir "Strengir" -> "Texti í allri umsókninni"',
+  },
+  translationWorkspaceOverviewPreviewStubKey: {
+    id: 'admin-portal.application-system:translationWorkspaceOverviewPreviewStubKey',
+    defaultMessage: 'Dálkur',
+  },
+  translationWorkspaceOverviewPreviewStubValue: {
+    id: 'admin-portal.application-system:translationWorkspaceOverviewPreviewStubValue',
+    defaultMessage: 'Gildi',
   },
 })

@@ -16,7 +16,7 @@ import {
   formatBankInfo,
   formatCurrency,
   formatPhoneNumberWithIcelandicCountryCode,
-} from '@island.is/application/ui-components'
+} from '@island.is/application/ui-components/utilities/formatters'
 import * as m from '../lib/messages'
 import { getRejectedAssigneeNationalIdsFromAnswers } from './assigneeRejectionUtils'
 import {

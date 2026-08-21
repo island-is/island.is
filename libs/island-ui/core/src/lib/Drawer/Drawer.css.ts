@@ -24,6 +24,12 @@ export const drawer = style({
   }),
 })
 
+/** Re-enable hits on the panel when the backdrop uses `pointer-events: none`. */
+export const transparentBackdropPanel = style({
+  pointerEvents: 'auto',
+  zIndex: 1,
+})
+
 export const position = styleVariants({
   left: {
     left: 0,

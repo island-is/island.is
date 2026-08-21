@@ -8,6 +8,7 @@ import {
   Inline,
   GridContainer,
 } from '@island.is/island-ui/core'
+import { TranslationWorkspaceHeaderActions } from '@island.is/portals/admin/application-system'
 import { PortalPageLoader } from '@island.is/portals/core'
 import { UserMenu } from '@island.is/shared/components'
 
@@ -46,6 +47,9 @@ export const Header = () => {
                 flexWrap="nowrap"
                 marginLeft={1}
               >
+                <Hidden below="md">
+                  <TranslationWorkspaceHeaderActions />
+                </Hidden>
                 <UserMenu
                   showLanguageSwitcher={false}
                   iconOnlyMobile

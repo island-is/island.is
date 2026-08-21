@@ -30,6 +30,11 @@ export const backdropColor = styleVariants({
   dark: {
     backgroundColor: hexToRgba(theme.color.foregroundPrimary, 0.3),
   },
+  /** Full-size layer for positioning; clicks pass through to content behind. */
+  transparent: {
+    backgroundColor: 'transparent',
+    pointerEvents: 'none',
+  },
 })
 
 export const modal = style({

@@ -29,7 +29,7 @@ export const GridRow: FC<React.PropsWithChildren<Props>> = ({
       flexDirection={direction}
       justifyContent={align}
       alignItems={alignItems}
-      className={cn(className, styles.gridRow)}
+      className={cn(styles.gridRow, className)}
       {...props}
     >
       {children}

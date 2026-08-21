@@ -19,10 +19,24 @@ type UIFields = Record<
   string,
   FC<React.PropsWithChildren<FieldBaseProps | RepeaterProps>>
 >
+
+/**
+ * Message shape for optional `getCustomFieldMessageDescriptors` (admin Translation Workspace).
+ * Keys must match `CustomField.component` in the form; values are descriptors used only in that component subtree.
+ */
+export type CustomFieldMessageDescriptorInfo = {
+  id: string
+  defaultMessage?: string
+  description?: string
+}
+
 type TemplateLibraryModule = {
   default: unknown
   getDataProviders?: () => Promise<Record<string, new () => BasicDataProvider>>
   getFields?: () => Promise<UIFields>
+  getCustomFieldMessageDescriptors?: () => Promise<
+    Record<string, CustomFieldMessageDescriptorInfo[]>
+  >
 }
 const loadedTemplateLibs: Record<string, TemplateLibraryModule> = {}
 
@@ -77,6 +91,20 @@ export const getApplicationUIFields = async (
     return await templateLib.getFields()
   }
   return Promise.resolve({})
+}
+
+/**
+ * Optional manifest of translation descriptors for `CUSTOM` fields, keyed by `field.component`.
+ * Used by Translation Workspace introspection when `getCustomFieldMessageDescriptors` is exported from the template library.
+ */
+export const getApplicationCustomFieldMessageDescriptors = async (
+  templateId: ApplicationTypes,
+): Promise<Record<string, CustomFieldMessageDescriptorInfo[]>> => {
+  const templateLib = await loadTemplateLib(templateId)
+  if (templateLib.getCustomFieldMessageDescriptors) {
+    return await templateLib.getCustomFieldMessageDescriptors()
+  }
+  return {}
 }
 
 export const getApplicationDataProviders = async (
