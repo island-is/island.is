@@ -1836,9 +1836,78 @@
         "tags": ["Application"]
       }
     },
+    "/api/v1/application/reports/{providerId}/draft/roles-with-steps": {
+      "get": {
+        "description": "Lists the draft's employee roles with their assigned step ids inlined — the aggregate of GET …/draft/roles plus one GET …/draft/roles/:roleId/steps per role, so the portal does not have to stitch them together. Ordered by title. `stepIds` is empty for a role that has not been scored yet.",
+        "operationId": "listApplicationDraftRolesWithSteps",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDraftRolesWithStepsResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
     "/api/v1/application/reports/{providerId}/draft/employees": {
       "get": {
-        "description": "Paginated list of the draft's employees, ordered by ordinal. Scores are NULL until the report is submitted.",
+        "description": "Paginated list of the draft's employees, ordered by role title and then by the employee's ordinal within the report. Scores are NULL until the report is submitted.",
         "operationId": "listApplicationDraftEmployees",
         "parameters": [
           {
@@ -1917,6 +1986,87 @@
         "tags": ["Application"]
       }
     },
+    "/api/v1/application/reports/{providerId}/draft/employees-with-steps": {
+      "get": {
+        "description": "Same page as GET …/draft/employees (same role-title-then-ordinal ordering), with each employee's personal step ids inlined — the aggregate that replaces one GET …/draft/employees/:employeeId/steps per row. Paginated on the same terms (a report can carry thousands of employees); raise pageSize to fetch the whole set in one call. `stepIds` is empty for an employee scored purely through its role. Scores are NULL until the report is submitted.",
+        "operationId": "listApplicationDraftEmployeesWithSteps",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": { "default": 1, "example": 1, "type": "number" }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": { "default": 10, "example": 10, "type": "number" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDraftEmployeesWithStepsResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
     "/api/v1/application/reports/{providerId}/draft/criteria": {
       "get": {
         "description": "Lists the top-level criteria of a draft. Sub-criteria and steps are fetched via their own endpoints.",
@@ -1936,6 +2086,75 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/GetDraftCriteriaResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/reports/{providerId}/draft/criteria-tree": {
+      "get": {
+        "description": "The draft's complete criteria tree in one payload: every criterion, its sub-criteria, and each sub-criterion's scoring steps. Collapses the 1 + N + M fan-out over GET …/draft/criteria, …/criteria/:criterionId/sub-criteria and …/sub-criteria/:subCriterionId/steps. Unpaginated — the tree is capped by the workbook limits (5 criteria, 200 sub-criteria, 8 steps each). Criteria and sub-criteria come back in creation order, steps by `order` ascending; `subCriteria` and `steps` are empty arrays when nothing is defined yet.",
+        "operationId": "getApplicationDraftCriteriaTree",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDraftCriteriaTreeResponseDto"
                 }
               }
             }
@@ -2493,6 +2712,7 @@
           "isatSection": {
             "nullable": true,
             "description": "The resolved section, when it was joined in. Null when not loaded — read `section` for the letter itself.",
+            "type": "object",
             "allOf": [{ "$ref": "#/components/schemas/IsatSectionDto" }]
           }
         },
@@ -2507,7 +2727,8 @@
       },
       "CompanySectorEnum": {
         "type": "string",
-        "enum": ["UNKNOWN", "PRIVATE", "PUBLIC"]
+        "enum": ["UNKNOWN", "PRIVATE", "PUBLIC"],
+        "description": "Ownership sector (private vs government/state), derived from the RSK legal form. UNKNOWN means unclassified — it does NOT mean private."
       },
       "CompanyReportStatusEnum": {
         "type": "string",
@@ -2570,6 +2791,7 @@
           },
           "isatCategory": {
             "nullable": true,
+            "type": "object",
             "allOf": [{ "$ref": "#/components/schemas/IsatCategoryDto" }]
           },
           "sector": {
@@ -3050,7 +3272,11 @@
         },
         "required": ["eligible"]
       },
-      "SalaryDataBasisEnum": { "type": "string", "enum": ["MONTH", "AVERAGE"] },
+      "SalaryDataBasisEnum": {
+        "type": "string",
+        "enum": ["MONTH", "AVERAGE"],
+        "description": "Whether the salary data describes one specific payroll month (`MONTH`) or a twelve-month average (`AVERAGE`). The submittee must declare one."
+      },
       "SubmitReportCompanyDto": {
         "type": "object",
         "properties": {
@@ -3530,6 +3756,7 @@
           },
           "equalityReport": {
             "nullable": true,
+            "type": "object",
             "allOf": [
               { "$ref": "#/components/schemas/EqualityReportSummaryDto" }
             ]
@@ -3556,6 +3783,7 @@
           },
           "result": {
             "nullable": true,
+            "type": "object",
             "allOf": [{ "$ref": "#/components/schemas/ReportResultDto" }]
           },
           "externalComments": {
@@ -3873,6 +4101,10 @@
             "format": "uuid",
             "nullable": true,
             "description": "Required for SALARY reports: the APPROVED equality report this salary submission is audited against."
+          },
+          "outliersPostponed": {
+            "type": "boolean",
+            "description": "When true, defers the outlier explanations on this SALARY report: any detected outlier not already assigned to an outlier group is placed in a default group with an empty explanation, and the report lands in POSTPONED for the applicant to resolve later via PUT /application/reports/{providerId}/outliers. Defaults to false. All-or-none — postponement applies to the whole report, not individual rows. Requires at least one detected outlier, and is rejected on an EQUALITY report. When every detected outlier is already assigned to a fully explained group there is nothing to defer and the report is SUBMITTED as normal."
           }
         },
         "required": ["company"]
@@ -4143,6 +4375,30 @@
         },
         "required": ["roles"]
       },
+      "DraftRoleWithStepsDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string" },
+          "reportId": { "type": "string", "format": "uuid" },
+          "stepIds": {
+            "description": "Ids of the scoring steps assigned to this role. Empty when the role has not been scored yet.",
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "required": ["id", "title", "reportId", "stepIds"]
+      },
+      "GetDraftRolesWithStepsResponseDto": {
+        "type": "object",
+        "properties": {
+          "roles": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/DraftRoleWithStepsDto" }
+          }
+        },
+        "required": ["roles"]
+      },
       "ReportEmployeeDto": {
         "type": "object",
         "properties": {
@@ -4192,6 +4448,68 @@
         },
         "required": ["employees", "paging"]
       },
+      "DraftEmployeeWithStepsDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "ordinal": { "type": "number" },
+          "field": { "type": "string", "nullable": true },
+          "department": { "type": "string", "nullable": true },
+          "startDate": { "type": "string" },
+          "workRatio": { "type": "number" },
+          "baseSalary": { "type": "number" },
+          "additionalFixedOvertime": { "type": "number", "nullable": true },
+          "additionalFixedCarAllowance": { "type": "number", "nullable": true },
+          "bonusOccasionalCarAllowance": { "type": "number", "nullable": true },
+          "bonusOccasionalOvertime": { "type": "number", "nullable": true },
+          "bonusPayments": { "type": "number", "nullable": true },
+          "bonusOther": { "type": "number", "nullable": true },
+          "additionalSalary": { "type": "number" },
+          "bonusSalary": { "type": "number" },
+          "gender": {
+            "allOf": [{ "$ref": "#/components/schemas/GenderEnum" }]
+          },
+          "reportEmployeeRoleId": { "type": "string", "format": "uuid" },
+          "reportId": { "type": "string", "format": "uuid" },
+          "score": { "type": "number", "nullable": true },
+          "roleTitle": {
+            "type": "string",
+            "description": "Title of the role this employee is assigned to, resolved from `reportEmployeeRoleId`. Saves joining against the roles list to label a row."
+          },
+          "stepIds": {
+            "description": "Ids of the personal (employee-specific) scoring steps assigned to this employee. Empty when the employee is scored purely through its role.",
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "required": [
+          "id",
+          "ordinal",
+          "startDate",
+          "workRatio",
+          "baseSalary",
+          "additionalSalary",
+          "bonusSalary",
+          "gender",
+          "reportEmployeeRoleId",
+          "reportId",
+          "roleTitle",
+          "stepIds"
+        ]
+      },
+      "GetDraftEmployeesWithStepsResponseDto": {
+        "type": "object",
+        "properties": {
+          "employees": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DraftEmployeeWithStepsDto"
+            }
+          },
+          "paging": { "$ref": "#/components/schemas/Paging" }
+        },
+        "required": ["employees", "paging"]
+      },
       "ReportCriterionDto": {
         "type": "object",
         "properties": {
@@ -4214,6 +4532,91 @@
           "criteria": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/ReportCriterionDto" }
+          }
+        },
+        "required": ["criteria"]
+      },
+      "ReportSubCriterionStepDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "order": { "type": "number" },
+          "description": { "type": "string" },
+          "reportSubCriterionId": { "type": "string", "format": "uuid" },
+          "score": { "type": "number" }
+        },
+        "required": [
+          "id",
+          "order",
+          "description",
+          "reportSubCriterionId",
+          "score"
+        ]
+      },
+      "DraftSubCriterionWithStepsDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "weight": { "type": "number" },
+          "reportCriterionId": { "type": "string", "format": "uuid" },
+          "steps": {
+            "description": "The sub-criterion's scoring steps, ordered by `order` ascending. Empty when no steps have been defined yet.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportSubCriterionStepDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "description",
+          "weight",
+          "reportCriterionId",
+          "steps"
+        ]
+      },
+      "DraftCriterionWithSubCriteriaDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string" },
+          "weight": { "type": "number" },
+          "description": { "type": "string" },
+          "type": {
+            "allOf": [
+              { "$ref": "#/components/schemas/ReportCriterionTypeEnum" }
+            ]
+          },
+          "reportId": { "type": "string", "format": "uuid" },
+          "subCriteria": {
+            "description": "The criterion's sub-criteria in creation order, each with its scoring steps. Empty when none have been defined yet.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DraftSubCriterionWithStepsDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "weight",
+          "description",
+          "type",
+          "reportId",
+          "subCriteria"
+        ]
+      },
+      "GetDraftCriteriaTreeResponseDto": {
+        "type": "object",
+        "properties": {
+          "criteria": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DraftCriterionWithSubCriteriaDto"
+            }
           }
         },
         "required": ["criteria"]
@@ -4244,23 +4647,6 @@
           }
         },
         "required": ["subCriteria"]
-      },
-      "ReportSubCriterionStepDto": {
-        "type": "object",
-        "properties": {
-          "id": { "type": "string", "format": "uuid" },
-          "order": { "type": "number" },
-          "description": { "type": "string" },
-          "reportSubCriterionId": { "type": "string", "format": "uuid" },
-          "score": { "type": "number" }
-        },
-        "required": [
-          "id",
-          "order",
-          "description",
-          "reportSubCriterionId",
-          "score"
-        ]
       },
       "GetDraftStepsResponseDto": {
         "type": "object",

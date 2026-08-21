@@ -40,6 +40,41 @@ export const messages = defineMessages({
     defaultMessage: 'Hjálpartæki eða næringu',
     id: 'sp.health:aids-or-nutrition-variation',
   },
+  movementPrescriptionsTitle: {
+    defaultMessage: 'Hreyfiseðlar',
+    id: 'sp.health:movement-prescriptions-title',
+  },
+  movementPrescriptionsIntro: {
+    defaultMessage:
+      'Hreyfingarleysi er einn af mikilvægum áhrifaþáttum algengra sjúkdóma. Hreyfing er mikilvæg sem meðferð eða hluti meðferðar þessara sjúkdóma. Því hafa verið þróaðar ýmsar aðferðir til að beita hreyfingu sem meðferð hjá þeim sem á því þurfa að halda.',
+    id: 'sp.health:movement-prescriptions-intro',
+  },
+  readAboutMovementPrescriptions: {
+    defaultMessage: 'Lesa um hreyfiseðla',
+    id: 'sp.health:read-about-movement-prescriptions',
+  },
+  movementPrescriptionsLink: {
+    defaultMessage:
+      'https://www.heilsuvera.is/efnisflokkar/hreyfing/viltu-hreyfa-thig-meira/hreyfisedill/',
+    id: 'sp.health:movement-prescriptions-link',
+  },
+  movementPrescriptionsStillOnHeilsuveruTitle: {
+    defaultMessage: 'Hreyfiseðlar eru enn á Heilsuveru',
+    id: 'sp.health:movement-prescriptions-still-on-heilsuveru-title',
+  },
+  movementPrescriptionsStillOnHeilsuveruText: {
+    defaultMessage:
+      'Við erum að vinna að því að færa þessa þjónustu yfir á Mínar síður á Ísland.is. Þangað til getur þú farið á Heilsuveru til að skoða þína hreyfiseðla.',
+    id: 'sp.health:movement-prescriptions-still-on-heilsuveru-text',
+  },
+  viewMovementPrescriptionsOnHeilsuveru: {
+    defaultMessage: 'Skoða hreyfiseðla á Heilsuveru',
+    id: 'sp.health:view-movement-prescriptions-on-heilsuveru',
+  },
+  movementPrescriptionsHeilsuveruLink: {
+    defaultMessage: 'https://minarsidur.heilsuvera.is/',
+    id: 'sp.health:movement-prescriptions-heilsuveru-link',
+  },
   alert: {
     defaultMessage: 'Athugið',
     id: 'sp.health:alert',
@@ -2004,6 +2039,10 @@ export const messages = defineMessages({
   healthConversationVideoCallCanceled: {
     defaultMessage: 'Afboðað',
     id: 'sp.health:health-messages-video-call-canceled',
+  },
+  healthConversationVideoCallInstruction: {
+    defaultMessage: 'Smelltu á hnappinn til að hefja símtalið.',
+    id: 'sp.health:health-messages-video-call-instruction',
   },
   healthConversationNotFound: {
     defaultMessage: 'Skilaboð fundust ekki',

@@ -24,6 +24,7 @@ export enum HealthPaths {
   HealthTherapiesSpeech = `${therapiesAndAids}/thjalfun/talthjalfun`,
   HealthTherapiesOccupational = `${therapiesAndAids}/thjalfun/idjuthjalfun`,
   HealthAidsAndNutrition = `${therapiesAndAids}/hjalpartaeki-og-naering`,
+  HealthMovementPrescriptions = `${therapiesAndAids}/hreyfisedlar`,
 
   HealthPayments = `${payments}`,
   HealthPaymentParticipation = `${payments}/greidsluthatttaka`,

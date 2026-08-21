@@ -8,11 +8,12 @@ import {
   type Option,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC, useEffect, useState } from 'react'
+import { FC, useState } from 'react'
 import { useFormContext, useWatch } from 'react-hook-form'
 import { messages } from '../../lib/messages'
 import type { SubCriterionCatalogEntryDto } from '@island.is/clients/directorate-of-equality'
 import type { SubCriterionStep } from '../../utils/types'
+import { useStepCountSync } from './useStepCountSync'
 
 type Props = {
   fieldName: string
@@ -31,7 +32,7 @@ export const SubCriterionItem: FC<Props> = ({
   onRemove,
 }) => {
   const { formatMessage } = useLocale()
-  const { setValue, getValues } = useFormContext()
+  const { setValue } = useFormContext()
   const [stepsExpanded, setStepsExpanded] = useState(true)
 
   const catalogOptions = catalogEntries.map((entry) => ({
@@ -48,32 +49,17 @@ export const SubCriterionItem: FC<Props> = ({
       setValue(`${fieldName}.stepCount`, String(entry.steps.length))
       setValue(
         `${fieldName}.steps`,
-        entry.steps.map((description) => ({ description })),
+        entry.steps.map((description) => ({
+          id: crypto.randomUUID(),
+          description,
+        })),
       )
     }
   }
 
-  const stepCountStr: string =
-    useWatch({ name: `${fieldName}.stepCount` }) ?? '2'
+  useStepCountSync(fieldName)
   const steps: SubCriterionStep[] =
     useWatch({ name: `${fieldName}.steps` }) ?? []
-
-  useEffect(() => {
-    const count = Math.min(8, Math.max(2, Number(stepCountStr) || 2))
-    const currentSteps: SubCriterionStep[] =
-      getValues(`${fieldName}.steps`) ?? []
-    if (count === currentSteps.length) return
-
-    if (count > currentSteps.length) {
-      const extra = Array.from({ length: count - currentSteps.length }, () => ({
-        description: '',
-      }))
-      setValue(`${fieldName}.steps`, [...currentSteps, ...extra])
-    } else {
-      setValue(`${fieldName}.steps`, currentSteps.slice(0, count))
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stepCountStr])
 
   return (
     <Box>
