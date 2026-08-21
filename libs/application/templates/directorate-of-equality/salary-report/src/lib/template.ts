@@ -8,18 +8,28 @@ import {
   UserProfileApi,
   ApplicationConfigurations,
   IdentityApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import {
   ActiveEqualityReportApi,
   BlankExcelTemplateApi,
   CompanyRegistryApi,
+  CreateSalaryDraftApi,
   DoeCompanyApi,
   EditOutliersApi,
+  GetDraftCriteriaTreeApi,
+  GetDraftHeaderApi,
   GetReportCommentsApi,
   ImportPresignApi,
-  ParsedSalaryReportApi,
+  ImportSalaryDraftWorkbookApi,
+  ListDraftCriteriaApi,
+  ListDraftEmployeesApi,
+  ListDraftOutlierGroupsApi,
+  ListDraftRolesApi,
+  ListDraftRolesWithStepsApi,
   SalaryAnalysisApi,
+  SubCriterionCatalogApi,
   SubmitReportCommentApi,
   SubmitSalaryReportApi,
 } from '../dataProviders'
@@ -40,6 +50,8 @@ import {
 import { messages } from './messages'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
+import { assign } from 'xstate'
+import set from 'lodash/set'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -57,6 +69,17 @@ const template: ApplicationTemplate<
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   requiredScopes: [ApiScope.directorateOfEquality],
   allowMultipleApplicationsInDraft: false,
+  stateMachineOptions: {
+    actions: {
+      assignToInstitution: assign((context) => {
+        const { application } = context
+        set(application, 'assignees', [
+          InstitutionNationalIds.DOMSMALA_RADUNEYTID,
+        ])
+        return context
+      }),
+    },
+  },
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -83,6 +106,7 @@ const template: ApplicationTemplate<
                 IdentityApi,
                 CompanyRegistryApi,
                 DoeCompanyApi,
+                SubCriterionCatalogApi,
                 ActiveEqualityReportApi,
                 BlankExcelTemplateApi,
               ],
@@ -128,6 +152,7 @@ const template: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
+        entry: 'assignToInstitution',
         meta: {
           name: 'Main form',
           progress: 0.4,
@@ -164,11 +189,25 @@ const template: ApplicationTemplate<
               read: 'all',
               api: [
                 ImportPresignApi,
-                ParsedSalaryReportApi,
+                CreateSalaryDraftApi,
+                ImportSalaryDraftWorkbookApi,
+                GetDraftHeaderApi,
+                GetDraftCriteriaTreeApi,
+                ListDraftRolesWithStepsApi,
+                ListDraftCriteriaApi,
+                ListDraftRolesApi,
+                ListDraftEmployeesApi,
+                ListDraftOutlierGroupsApi,
                 SalaryAnalysisApi,
-                GetReportCommentsApi,
               ],
               delete: true,
+            },
+            {
+              id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
+              read: 'all',
+              write: 'all',
+              delete: false,
             },
           ],
         },
@@ -242,6 +281,13 @@ const template: ApplicationTemplate<
               ],
               delete: true,
             },
+            {
+              id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
+              read: 'all',
+              write: 'all',
+              delete: false,
+            },
           ],
         },
         on: {
@@ -294,6 +340,13 @@ const template: ApplicationTemplate<
               api: [GetReportCommentsApi, SubmitReportCommentApi],
               delete: true,
             },
+            {
+              id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
+              read: 'all',
+              write: 'all',
+              delete: false,
+            },
           ],
         },
         on: {
@@ -339,6 +392,13 @@ const template: ApplicationTemplate<
               api: [GetReportCommentsApi],
               delete: true,
             },
+            {
+              id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
+              read: 'all',
+              write: 'all',
+              delete: false,
+            },
           ],
         },
       },
@@ -368,6 +428,13 @@ const template: ApplicationTemplate<
               write: { externalData: ['getReportComments'] },
               api: [GetReportCommentsApi],
               delete: true,
+            },
+            {
+              id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
+              read: 'all',
+              write: 'all',
+              delete: false,
             },
           ],
         },

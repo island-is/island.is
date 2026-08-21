@@ -16,6 +16,13 @@ export const DoeCompanyApi = defineTemplateApi({
   namespace: 'DirectorateOfEquality',
 })
 
+export const SubCriterionCatalogApi = defineTemplateApi({
+  action: ApiActions.getSubCriterionCatalog,
+  externalDataId: 'subCriterionCatalog',
+  namespace: 'DirectorateOfEquality',
+  throwOnError: false,
+})
+
 export const ActiveEqualityReportApi = defineTemplateApi({
   action: ApiActions.getActiveEqualityReport,
   externalDataId: 'activeEqualityReport',
@@ -41,11 +48,74 @@ export const ImportPresignApi = defineTemplateApi({
   throwOnError: false,
 })
 
-export const ParsedSalaryReportApi = defineTemplateApi({
-  action: ApiActions.parseSalaryReportWorkbook,
-  externalDataId: 'parsedSalaryReport',
+// Opens the DRAFT report; idempotent, invoked once on first entry to `dataEntry`.
+// Its response isn't read anywhere — callers only care that the draft now exists.
+export const CreateSalaryDraftApi = defineTemplateApi({
+  action: ApiActions.createSalaryDraft,
+  externalDataId: 'salaryDraft',
   namespace: 'DirectorateOfEquality',
+  shouldPersistToExternalData: false,
+  throwOnError: true,
+})
+
+// Bulk-seeds (REPLACE) the draft; UI re-fetches the draft reads afterward instead of using this response.
+export const ImportSalaryDraftWorkbookApi = defineTemplateApi({
+  action: ApiActions.importSalaryDraftWorkbook,
+  externalDataId: 'importSalaryDraftWorkbook',
+  namespace: 'DirectorateOfEquality',
+  shouldPersistToExternalData: false,
   throwOnError: false,
+})
+
+// Screen-shaped draft reads, one per screen from `dataEntry` onward — populate
+// the UI and restore an unfinished application on reopen; never persisted to applicationAnswers.
+export const GetDraftHeaderApi = defineTemplateApi({
+  action: ApiActions.getDraftHeader,
+  externalDataId: 'draftHeader',
+  namespace: 'DirectorateOfEquality',
+  throwOnError: true,
+})
+
+export const GetDraftCriteriaTreeApi = defineTemplateApi({
+  action: ApiActions.getDraftCriteriaTree,
+  externalDataId: 'draftCriteriaTree',
+  namespace: 'DirectorateOfEquality',
+  throwOnError: true,
+})
+
+export const ListDraftRolesWithStepsApi = defineTemplateApi({
+  action: ApiActions.listDraftRolesWithSteps,
+  externalDataId: 'draftRolesWithSteps',
+  namespace: 'DirectorateOfEquality',
+  throwOnError: true,
+})
+
+export const ListDraftCriteriaApi = defineTemplateApi({
+  action: ApiActions.listDraftCriteria,
+  externalDataId: 'draftCriteria',
+  namespace: 'DirectorateOfEquality',
+  throwOnError: true,
+})
+
+export const ListDraftRolesApi = defineTemplateApi({
+  action: ApiActions.listDraftRoles,
+  externalDataId: 'draftRoles',
+  namespace: 'DirectorateOfEquality',
+  throwOnError: true,
+})
+
+export const ListDraftEmployeesApi = defineTemplateApi({
+  action: ApiActions.listDraftEmployees,
+  externalDataId: 'draftEmployees',
+  namespace: 'DirectorateOfEquality',
+  throwOnError: true,
+})
+
+export const ListDraftOutlierGroupsApi = defineTemplateApi({
+  action: ApiActions.listDraftOutlierGroups,
+  externalDataId: 'draftOutlierGroups',
+  namespace: 'DirectorateOfEquality',
+  throwOnError: true,
 })
 
 export const SubmitSalaryReportApi = defineTemplateApi({
@@ -77,14 +147,14 @@ export const EditOutliersApi = defineTemplateApi({
 // Listed on a role's `api` array purely so updateApplicationExternalData is
 // permitted to invoke it for that role.
 export const GetReportCommentsApi = defineTemplateApi({
-  action: 'getReportComments',
+  action: ApiActions.getReportComments,
   externalDataId: 'getReportComments',
   namespace: 'DirectorateOfEquality',
   throwOnError: false,
 })
 
 export const SubmitReportCommentApi = defineTemplateApi({
-  action: 'submitReportComment',
+  action: ApiActions.submitReportComment,
   externalDataId: 'submitReportComment',
   namespace: 'DirectorateOfEquality',
   throwOnError: false,

@@ -27,7 +27,7 @@ describe('PoliceController - Get police case info', () => {
   let givenWhenThen: GivenWhenThen
   let assignDefendantPoliceCaseNumbers: jest.Mock
   let findDistinctPoliceCaseNumbersByCaseIds: jest.Mock
-  let findAllIndictmentSubtypes: jest.Mock
+  let findIndictmentSubtypeByArticle: jest.Mock
 
   beforeEach(async () => {
     ;(fetch as jest.Mock).mockReset()
@@ -35,14 +35,15 @@ describe('PoliceController - Get police case info', () => {
     const {
       policeController,
       caseDefendantPoliceCaseNumberRepositoryService,
-      indictmentSubtypeModel,
+      indictmentSubtypeRepositoryService,
     } = await createTestingPoliceModule()
 
     assignDefendantPoliceCaseNumbers =
       caseDefendantPoliceCaseNumberRepositoryService.assignDefendantPoliceCaseNumbers as jest.Mock
     findDistinctPoliceCaseNumbersByCaseIds =
       caseDefendantPoliceCaseNumberRepositoryService.findDistinctPoliceCaseNumbersByCaseIds as jest.Mock
-    findAllIndictmentSubtypes = indictmentSubtypeModel.findAll as jest.Mock
+    findIndictmentSubtypeByArticle =
+      indictmentSubtypeRepositoryService.findByArticle as jest.Mock
 
     givenWhenThen = async (
       caseId: string,
@@ -187,24 +188,19 @@ describe('PoliceController - Get police case info', () => {
           },
         ],
       })
-      findAllIndictmentSubtypes.mockResolvedValueOnce([
-        {
-          offenseType: 'Eignaspjöll',
-          details: 'með óförum farar- eða flutningstækja',
-        },
-        {
-          offenseType: 'Hegningarlagabrot önnur',
-          details: 'með vatnsflóði',
-        },
-      ])
+      findIndictmentSubtypeByArticle.mockResolvedValueOnce({
+        offenseType: 'Hegningarlagabrot önnur',
+        details: 'með vatnsflóði',
+      })
 
       then = await givenWhenThen(caseId, theUser, theCase)
     })
 
-    it('should use nanar to pick the matching indictment subtype when article has multiple matches', () => {
-      expect(findAllIndictmentSubtypes).toHaveBeenCalledWith({
-        where: { article: '1940-019-165-001' },
-      })
+    it('should pass nanar to the indictment subtype lookup when article is present', () => {
+      expect(findIndictmentSubtypeByArticle).toHaveBeenCalledWith(
+        '1940-019-165-001',
+        '  MEÐ VATNSFLÓÐI ',
+      )
       expect(then.result).toEqual([
         {
           policeCaseNumber: '007-2021-000001',

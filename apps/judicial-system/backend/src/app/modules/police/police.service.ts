@@ -14,7 +14,7 @@ import {
   NotFoundException,
   ServiceUnavailableException,
 } from '@nestjs/common'
-import { InjectConnection, InjectModel } from '@nestjs/sequelize'
+import { InjectConnection } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -50,6 +50,7 @@ import {
   DateLog,
   Defendant,
   IndictmentSubtype,
+  IndictmentSubtypeRepositoryService,
 } from '../repository'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { CreateSubpoenaResponse } from './models/createSubpoena.response'
@@ -146,14 +147,6 @@ const formatCrimeScenePlace = (
   const address = `${formattedStreet ?? ''}${formattedMunicipality ?? ''}`
 
   return address.trim()
-}
-
-const normalizeSubtypeMatchValue = (
-  value?: string | null,
-): string | undefined => {
-  const normalized = value?.trim().toLowerCase()
-
-  return normalized ? normalized : undefined
 }
 
 @Injectable()
@@ -274,8 +267,8 @@ export class PoliceService {
 
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
-    @InjectModel(IndictmentSubtype)
-    private readonly indictmentSubtypeModel: typeof IndictmentSubtype,
+    @Inject(forwardRef(() => IndictmentSubtypeRepositoryService))
+    private readonly indictmentSubtypeRepositoryService: IndictmentSubtypeRepositoryService,
     @Inject(policeModuleConfig.KEY)
     private readonly config: ConfigType<typeof policeModuleConfig>,
     @Inject(forwardRef(() => EventService))
@@ -1541,29 +1534,13 @@ export class PoliceService {
     }
   }
 
-  async getSubtypeByArticle(
+  getSubtypeByArticle(
     article?: string | null,
     details?: string | null,
   ): Promise<IndictmentSubtype | null> {
-    const subtypes = await this.indictmentSubtypeModel.findAll({
-      where: { article },
-    })
-
-    if (subtypes.length <= 1) {
-      return subtypes[0] ?? null
-    }
-
-    const normalizedDetails = normalizeSubtypeMatchValue(details)
-
-    if (!normalizedDetails) {
-      return subtypes[0]
-    }
-
-    return (
-      subtypes.find(
-        (subtype) =>
-          normalizeSubtypeMatchValue(subtype.details) === normalizedDetails,
-      ) ?? subtypes[0]
+    return this.indictmentSubtypeRepositoryService.findByArticle(
+      article,
+      details,
     )
   }
 }

@@ -1,11 +1,5 @@
 import { DefaultEvents } from '@island.is/application/types'
-import {
-  Employee,
-  JobFactor,
-  PersonalFactor,
-  SalaryComponentKey,
-  SubCriterion,
-} from './types'
+import { JobFactor, SalaryComponentKey, SubCriterion } from './types'
 
 export type Events = {
   type:
@@ -30,27 +24,62 @@ export enum States {
 export enum Roles {
   APPLICANT = 'applicant',
   NOT_ALLOWED = 'notAllowed',
+  ASSIGNEE = 'assignee',
 }
 
 export enum ApiActions {
   getCompanyData = 'getCompanyData',
   getDoeCompany = 'getDoeCompany',
+  getSubCriterionCatalog = 'getSubCriterionCatalog',
   getActiveEqualityReport = 'getActiveEqualityReport',
   getBlankExcelTemplate = 'getBlankExcelTemplate',
   presignImportUpload = 'presignImportUpload',
-  parseSalaryReportWorkbook = 'parseSalaryReportWorkbook',
+  createSalaryDraft = 'createSalaryDraft',
+  importSalaryDraftWorkbook = 'importSalaryDraftWorkbook',
   submitSalaryReport = 'submitSalaryReport',
   analyzeSalaryReport = 'analyzeSalaryReport',
   editOutliers = 'editOutliers',
   getReportComments = 'getReportComments',
   submitReportComment = 'submitReportComment',
+  getDraftHeader = 'getDraftHeader',
+  getDraftCriteriaTree = 'getDraftCriteriaTree',
+  listDraftRolesWithSteps = 'listDraftRolesWithSteps',
+  listDraftCriteria = 'listDraftCriteria',
+  listDraftRoles = 'listDraftRoles',
+  // Only SalaryAnalysisResults still uses this — it needs the full id<->ordinal
+  // mapping across every employee to seed/sync outlier groups, which can't be
+  // paginated (a group can reference employees from anywhere in the set).
+  listDraftEmployees = 'listDraftEmployees',
+  listDraftOutlierGroups = 'listDraftOutlierGroups',
 }
+
+const DOE_NAMESPACE = 'DirectorateOfEquality'
+
+// Builds the `actionId` string the updateApplicationExternalData mutation expects,
+// from the same ApiActions enum the data providers and the service dispatch on —
+// a renamed action is then caught by the type checker at every call site.
+export const draftActionId = (action: ApiActions) =>
+  `${DOE_NAMESPACE}.${action}`
 
 export const PERIOD_ONE_MONTH = 'oneMonth'
 export const PERIOD_TWELVE_MONTHS = 'twelveMonths'
 
-export const DEFAULT_JOB_FACTORS: JobFactor[] = [
+// Live server-paginated employee queries (EmployeesEditor, EmployeeClassificationEditor).
+export const DRAFT_EMPLOYEES_PAGE_SIZE = 25
+
+// Duplicated from the client lib rather than imported — importing it as a value
+// pulls in that package's NestJS module (backend-only deps), breaking the frontend bundle.
+export const SyncMethodEnum = {
+  CREATE: 'CREATE',
+  UPDATE: 'UPDATE',
+  REMOVE: 'REMOVE',
+} as const
+export type SyncMethodEnum = typeof SyncMethodEnum[keyof typeof SyncMethodEnum]
+
+// Builder function, not a constant — each application needs its own fresh client-minted UUIDs.
+export const createDefaultJobFactors = (): JobFactor[] => [
   {
+    id: crypto.randomUUID(),
     type: 'RESPONSIBILITY',
     title: 'Ábyrgð',
     description:
@@ -58,6 +87,7 @@ export const DEFAULT_JOB_FACTORS: JobFactor[] = [
     weight: '25',
   },
   {
+    id: crypto.randomUUID(),
     type: 'STRAIN',
     title: 'Álag',
     description:
@@ -65,6 +95,7 @@ export const DEFAULT_JOB_FACTORS: JobFactor[] = [
     weight: '25',
   },
   {
+    id: crypto.randomUUID(),
     type: 'CONDITION',
     title: 'Vinnuaðstæður',
     description:
@@ -72,6 +103,7 @@ export const DEFAULT_JOB_FACTORS: JobFactor[] = [
     weight: '25',
   },
   {
+    id: crypto.randomUUID(),
     type: 'COMPETENCE',
     title: 'Hæfni',
     description:
@@ -80,18 +112,20 @@ export const DEFAULT_JOB_FACTORS: JobFactor[] = [
   },
 ]
 
-export const DEFAULT_CRITERIA_ANSWERS = {
-  jobFactors: DEFAULT_JOB_FACTORS,
-  personalFactors: [] as PersonalFactor[],
-}
-
-export const DEFAULT_SUB_CRITERION: SubCriterion = {
+export const createDefaultSubCriterion = (
+  criterionId: string,
+): SubCriterion => ({
+  id: crypto.randomUUID(),
+  criterionId,
   title: '',
   description: '',
   weight: '',
   stepCount: '2',
-  steps: [{ description: '' }, { description: '' }],
-}
+  steps: [
+    { id: crypto.randomUUID(), description: '' },
+    { id: crypto.randomUUID(), description: '' },
+  ],
+})
 
 export const SALARY_COMPONENT_GROUPS: {
   group: 'additional' | 'bonus'
@@ -126,22 +160,3 @@ export const GENDER_OPTIONS: { value: string; label: string }[] = [
 export const GENDER_LABELS: Record<string, string> = Object.fromEntries(
   GENDER_OPTIONS.map((o) => [o.value, o.label]),
 )
-
-export const EMPTY_EMPLOYEE: Employee = {
-  ordinal: 0,
-  identifier: '',
-  roleTitle: '',
-  gender: '',
-  field: '',
-  department: '',
-  startDate: '',
-  workRatio: 1,
-  baseSalary: 0,
-  additionalFixedOvertime: null,
-  additionalFixedCarAllowance: null,
-  bonusOccasionalCarAllowance: null,
-  bonusOccasionalOvertime: null,
-  bonusPayments: null,
-  bonusOther: null,
-  personalStepAssignments: [],
-}
