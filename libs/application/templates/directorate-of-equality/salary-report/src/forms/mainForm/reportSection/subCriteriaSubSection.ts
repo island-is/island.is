@@ -17,7 +17,7 @@ export const subCriteriaSubSection = buildSubSection({
         buildCustomField({
           id: 'subCriteria',
           component: 'SubCriteriaEditor',
-          doesNotRequireAnswer: false,
+          doesNotRequireAnswer: true,
         }),
       ],
     }),
