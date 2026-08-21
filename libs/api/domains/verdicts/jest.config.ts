@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'api-domains-verdicts',
   preset: '../../../../jest.preset.js',

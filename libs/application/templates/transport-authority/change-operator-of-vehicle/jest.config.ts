@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName:
     'application-templates-transport-authority-change-operator-of-vehicle',

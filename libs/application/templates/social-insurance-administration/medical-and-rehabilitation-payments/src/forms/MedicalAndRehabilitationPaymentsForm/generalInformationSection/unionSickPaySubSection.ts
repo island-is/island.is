@@ -110,7 +110,7 @@ export const unionSickPaySubSection = buildSubSection({
             return (
               data?.socialInsuranceGeneral?.unions
                 ?.map(({ name, nationalId }) => ({
-                  value: `${nationalId}::${name}` || '',
+                  value: `${nationalId}::${name}`,
                   label: name || '',
                 }))
                 .sort((a, b) => a.label.localeCompare(b.label)) ?? []

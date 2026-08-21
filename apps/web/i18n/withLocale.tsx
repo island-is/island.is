@@ -59,7 +59,7 @@ export const withLocale =
         translations,
       }
     }
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
     // @ts-expect-error make web strict
     return NewComponent
   }

@@ -1,4 +1,0 @@
-node_modules
-**/*.generated.ts
-**/.next/**
-**/next-env.d.ts
