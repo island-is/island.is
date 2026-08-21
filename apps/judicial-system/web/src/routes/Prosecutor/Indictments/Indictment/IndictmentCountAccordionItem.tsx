@@ -160,12 +160,6 @@ export const IndictmentCountAccordionItem: FC<Props> = ({
     controls.start(evt)
   }
 
-  const handleDragHandleClick = (evt: MouseEvent) => {
-    evt.preventDefault()
-    evt.stopPropagation()
-    suppressToggleClickRef.current = false
-  }
-
   const handleToggleClickCapture = (evt: MouseEvent) => {
     if (!suppressToggleClickRef.current) {
       return
@@ -204,34 +198,30 @@ export const IndictmentCountAccordionItem: FC<Props> = ({
         className={styles.itemWrapper}
         onClickCapture={handleToggleClickCapture}
       >
-        <Box className={styles.accordionWrapper}>
-          <AccordionItem
-            id={`indictmentCountAccordionItem-${indictmentCount.id}`}
-            expanded={expanded}
-            onToggle={onToggle}
-            label={
-              <Box display="flex" flexDirection="row">
-                <Box
-                  className={styles.dragHandle}
-                  data-testid="indictmentCountDragHandle"
-                  onPointerDown={handlePointerDown}
-                  onClick={handleDragHandleClick}
-                  style={isDragging ? { cursor: 'grabbing' } : undefined}
-                >
-                  <Icon icon="menu" color="blue400" />
-                </Box>
-                <IndictmentCountLabel
-                  index={index}
-                  policeCaseNumber={indictmentCount.policeCaseNumber}
-                  formattedDate={formattedDate}
-                  warningMessage={warningMessage}
-                />
+        <AccordionItem
+          id={`indictmentCountAccordionItem-${indictmentCount.id}`}
+          expanded={expanded}
+          onToggle={onToggle}
+          label={
+            <Box display="flex" flexDirection="row" alignItems="center">
+              <Box
+                className={styles.dragHandle}
+                data-testid="indictmentCountDragHandle"
+                onPointerDown={handlePointerDown}
+              >
+                <Icon icon="menu" color="blue400" />
               </Box>
-            }
-          >
-            {children}
-          </AccordionItem>
-        </Box>
+              <IndictmentCountLabel
+                index={index}
+                policeCaseNumber={indictmentCount.policeCaseNumber}
+                formattedDate={formattedDate}
+                warningMessage={warningMessage}
+              />
+            </Box>
+          }
+        >
+          {children}
+        </AccordionItem>
       </Box>
     </Reorder.Item>
   )
