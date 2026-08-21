@@ -1265,6 +1265,11 @@ export const m = defineMessages({
     defaultMessage: 'Fjarlægja',
     description: 'Remove',
   },
+  testApplicationBanner: {
+    id: 'form.system:test-application-banner',
+    defaultMessage: 'Þetta er prófunarumsókn',
+    description: 'This is a test application',
+  },
   applicationLifetime: {
     id: 'form.system:application-lifetime',
     defaultMessage: 'Líftími umsókna',

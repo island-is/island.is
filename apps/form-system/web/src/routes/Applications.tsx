@@ -14,11 +14,12 @@ import {
   Page,
   Text,
 } from '@island.is/island-ui/core'
-import { useNamespaces } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ErrorShell } from '../components/ErrorShell/ErrorShell'
+import { useHeaderInfo } from '../context/HeaderInfoProvider'
 
 interface Params {
   slug?: string
@@ -28,6 +29,8 @@ export const Applications = () => {
   useNamespaces('form.system')
   const { slug } = useParams() as Params
   const navigate = useNavigate()
+  const { lang } = useLocale()
+  const { setInfo } = useHeaderInfo()
   const [applications, setApplications] = useState<FormSystemApplication[]>([])
   const [loginAllowed, setLoginAllowed] = useState(true)
   const [hasRequiredDelegation, setHasRequiredDelegation] = useState(true)
@@ -142,15 +145,32 @@ export const Applications = () => {
     const run = async () => {
       setIsLoading(true)
       setCreateDisabled(false)
+      setInfo({
+        applicationName: undefined,
+        organisationName: undefined,
+        isTest: false,
+      })
       const responseDto = await fetchApplications(requestSlug, isCurrentRequest)
       if (!isCurrentRequest()) return
 
       if (!responseDto) {
+        setInfo({
+          applicationName: undefined,
+          organisationName: undefined,
+          isTest: false,
+        })
         setIsLoading(false)
         return
       }
 
       const apps: FormSystemApplication[] = responseDto.applications || []
+      const headerApplication = apps[0]
+      setInfo({
+        applicationName: headerApplication?.formName?.[lang] ?? '',
+        organisationName: headerApplication?.organizationName?.[lang] ?? '',
+        isTest: headerApplication?.isTest ?? false,
+      })
+
       if (apps.length > 0) {
         setApplications(
           apps.filter(
@@ -175,7 +195,7 @@ export const Applications = () => {
     return () => {
       cancelled = true
     }
-  }, [slug, createApplication, fetchApplications])
+  }, [slug, createApplication, fetchApplications, lang, setInfo])
 
   const [deleteApplicationMutation] = useMutation(DELETE_APPLICATION)
 

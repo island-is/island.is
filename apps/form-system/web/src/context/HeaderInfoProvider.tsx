@@ -10,6 +10,7 @@ import {
 interface FormInfo {
   applicationName?: string
   organisationName?: string
+  isTest?: boolean
 }
 
 interface HeaderInfoProvider {
@@ -21,6 +22,7 @@ export const HeaderInfoContext = createContext<HeaderInfoProvider>({
   info: {
     applicationName: undefined,
     organisationName: undefined,
+    isTest: undefined,
   },
   setInfo: () => undefined,
 })
@@ -29,6 +31,7 @@ export const HeaderInfoProvider = ({ children }: { children: ReactNode }) => {
   const [info, setInfo] = useState<FormInfo>({
     applicationName: undefined,
     organisationName: undefined,
+    isTest: undefined,
   })
 
   return (
