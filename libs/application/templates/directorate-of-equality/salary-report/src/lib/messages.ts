@@ -576,7 +576,7 @@ export const messages = {
       intro: {
         id: 'doe.sr.application:report.criteria.intro#markdown',
         defaultMessage:
-          'Næstu skref fela í sér starfaflokkun. Valin eru viðmið, þeim gefið vægi og fjöldi þrepa ákveðinn. Því næst eru slegnar inn upplýsingar um starfsfólk og laun. Að því búnu eru störf og starfsfólk metið á grundvelli þeirra viðmiða sem valin voru. Þannig flokkast saman sömu eða jafnverðmæt störf. *        Ef persónubundnir þættir hafa áhrif á launasetningu þá skal meta alla starfsmenn á sama hátt samkvæmt viðeigandi við yfir- og undirviðmiðum.',
+          'Næstu skref fela í sér starfaflokkun. Valin eru viðmið, þeim gefið vægi og fjöldi þrepa ákveðinn. Því næst eru slegnar inn upplýsingar um starfsfólk og laun. Að því búnu eru störf og starfsfólk metið á grundvelli þeirra viðmiða sem valin voru. Þannig flokkast saman sömu eða jafnverðmæt störf. \n\n*        Ef persónubundnir þættir hafa áhrif á launasetningu þá skal meta alla starfsmenn á sama hátt samkvæmt viðeigandi við yfir- og undirviðmiðum.',
       },
       jobFactorTitle: {
         id: 'doe.sr.application:report.criteria.jobFactorTitle',
@@ -585,7 +585,7 @@ export const messages = {
       jobFactorIntro: {
         id: 'doe.sr.application:report.criteria.jobFactorIntro#markdown',
         defaultMessage:
-          'Í þessu skrefi þarf að ákveða vægi (%) yfirviðmiða fyrir mat og flokkun á störfum. * Yfirviðmiðin fyrir störf eru ekki valkvæð, þau eru óbreytanleg. Samanlagt vægi starfsbundinna og einstaklingsbundinna yfirviðmiða er 100%. Að lágmarki skal meta störf út frá viðmiðum um ábyrgð, álag, hæfni og vinnuaðstæður.',
+          'Í þessu skrefi þarf að ákveða vægi (%) yfirviðmiða fyrir mat og flokkun á störfum. \n\n* Yfirviðmiðin fyrir störf eru ekki valkvæð, þau eru óbreytanleg. Samanlagt vægi starfsbundinna og einstaklingsbundinna yfirviðmiða er 100%. Að lágmarki skal meta störf út frá viðmiðum um ábyrgð, álag, hæfni og vinnuaðstæður.',
       },
       personalFactorTitle: {
         id: 'doe.sr.application:report.criteria.personalFactorTitle',
@@ -594,7 +594,7 @@ export const messages = {
       personalFactorIntro: {
         id: 'doe.sr.application:report.criteria.personalFactorIntro#markdown',
         defaultMessage:
-          'Í þessu skrefi þarf að ákveða einstaklingsbundin yfirviðmið og vægi þeirra. * Ef einstaklingsbundin hæfni starfsfólks er metin til launa þá þarftu að ákveða hlutlæg og kynhlutlaus yfirviðmið fyrir þá hæfni. *Samanlagt vægi starfsbundinna og einstaklingsbundinna yfirviðmiða þarf að vera 100%. Þú getur bætt við yfirviðmiðum fyrir einstaklingsbundna þætti eftir því sem við á.',
+          'Í þessu skrefi þarf að ákveða einstaklingsbundin yfirviðmið og vægi þeirra. \n\n* Ef einstaklingsbundin hæfni starfsfólks er metin til launa þá þarftu að ákveða hlutlæg og kynhlutlaus yfirviðmið fyrir þá hæfni. \n\n*Samanlagt vægi starfsbundinna og einstaklingsbundinna yfirviðmiða þarf að vera 100%. Þú getur bætt við yfirviðmiðum fyrir einstaklingsbundna þætti eftir því sem við á.',
       },
       personalFactorInstructions: {
         id: 'doe.sr.application:report.criteria.personalFactorInstructions',
@@ -701,7 +701,7 @@ export const messages = {
       jobFactorGroupIntro: {
         id: 'doe.sr.application:report.subCriteria.jobFactorGroupIntro#markdown',
         defaultMessage:
-          'Í þessu skrefi þarf að ákveða undirviðmið fyrir störf, vægi (%) þeirra og fjölda þrepa sem í boði eru fyrir hvert þeirra. * Hér að neðan færðu dæmi um valkvæð undirviðmið sem eru algeng á vinnumarkaði og tillögur að skilgreiningum, en þú getur bætt við eigin viðmiðum eftir því sem við á. Öll viðmiðin sem valin eru þurfa að vera málefnaleg og viðeigandi fyrir starfsemina sem um ræðir.* Veldu vægi fyrir hvert undirviðmið þannig að þau nái að fullu upp í vægi hvers yfirviðmiðs.*Þú getur breytt textanum í boxunum eða búið til nýjan eftir því sem við á.',
+          'Í þessu skrefi þarf að ákveða undirviðmið fyrir störf, vægi (%) þeirra og fjölda þrepa sem í boði eru fyrir hvert þeirra. \n\n* Hér að neðan færðu dæmi um valkvæð undirviðmið sem eru algeng á vinnumarkaði og tillögur að skilgreiningum, en þú getur bætt við eigin viðmiðum eftir því sem við á. Öll viðmiðin sem valin eru þurfa að vera málefnaleg og viðeigandi fyrir starfsemina sem um ræðir.\n\n* Veldu vægi fyrir hvert undirviðmið þannig að þau nái að fullu upp í vægi hvers yfirviðmiðs.\n\n*Þú getur breytt textanum í boxunum eða búið til nýjan eftir því sem við á.',
       },
       personalFactorGroupTitle: {
         id: 'doe.sr.application:report.subCriteria.personalFactorGroupTitle',
@@ -710,7 +710,7 @@ export const messages = {
       personalFactorGroupIntro: {
         id: 'doe.sr.application:report.subCriteria.personalFactorGroupIntro#markdown',
         defaultMessage:
-          'Í þessu skrefi þarf að ákveða einstaklingsbundin undirviðmið, vægi þeirra og fjölda þrepa sem í boði eru fyrir hvert þeirra. * Hér að neðan færðu dæmi um valkvæð undirviðmið sem eru algeng á vinnumarkaði en þú getur bætt við eigin viðmiðum eftir því sem við á.* Veldu vægi fyrir hvert undirviðmið þannig að þau nái að fullu upp í vægi hvers yfirviðmiðs.* Þú getur breytt textanum í boxunum eða búið til nýjan eftir því sem við á.',
+          'Í þessu skrefi þarf að ákveða einstaklingsbundin undirviðmið, vægi þeirra og fjölda þrepa sem í boði eru fyrir hvert þeirra. \n\n* Hér að neðan færðu dæmi um valkvæð undirviðmið sem eru algeng á vinnumarkaði en þú getur bætt við eigin viðmiðum eftir því sem við á.\n\n* Veldu vægi fyrir hvert undirviðmið þannig að þau nái að fullu upp í vægi hvers yfirviðmiðs.\n\n* Þú getur breytt textanum í boxunum eða búið til nýjan eftir því sem við á.',
       },
       weightSumError: {
         id: 'doe.sr.application:report.subCriteria.weightSumError',
@@ -739,7 +739,7 @@ export const messages = {
       intro: {
         id: 'doe.sr.application:report.employees.intro',
         defaultMessage:
-          'Nú hefurðu skilgreint yfir- og undirviðmið og vægi þeirra fyrir mat og flokkun starfa. Næsta skref er að skrá allar upplýsingar um störf og starfsfólk og gefa upp öll laun og launaliði á völdu tímabili launagreiningar. Starfsheiti munu flytjast sjálfkrafa yfir á næstu síðu.* Athugið að ef gögnum var hlaðið upp með Excel skjali ættu upplýsingar að hafa fyllst út sjálfkrafa.',
+          'Nú hefurðu skilgreint yfir- og undirviðmið og vægi þeirra fyrir mat og flokkun starfa. Næsta skref er að skrá allar upplýsingar um störf og starfsfólk og gefa upp öll laun og launaliði á völdu tímabili launagreiningar. Starfsheiti munu flytjast sjálfkrafa yfir á næstu síðu.\n\nAthugið að ef gögnum var hlaðið upp með Excel skjali ættu upplýsingar að hafa fyllst út sjálfkrafa.',
       },
       paginationPageLabel: {
         id: 'doe.sr.application:report.employees.paginationPageLabel',

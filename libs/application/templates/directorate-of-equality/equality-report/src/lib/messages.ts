@@ -107,7 +107,7 @@ export const messages = {
       },
       intro: {
         id: 'doe.er.application:prerequisites.section.intro',
-        defaultMessage: 'lorem',
+        defaultMessage: equalityReportIntro,
       },
       checkboxLabel: {
         id: 'doe.er.application:prerequisites.section.checkboxLabel',
