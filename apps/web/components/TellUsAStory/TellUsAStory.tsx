@@ -24,7 +24,7 @@ const getState = (
   return 'edit'
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
+ 
 interface TellUsAStoryProps
   extends Omit<TellUsAStoryFormProps, 'state' | 'onSubmit'> {}
 
