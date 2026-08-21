@@ -28,11 +28,9 @@ export const generateExcelSheet = (
   ]
   const headers = locale === 'is' ? icelandicHeaders : englishHeaders
 
-  const rows = dayRateRecords.map((record) => [
-    record.permno,
-    record.prevPeriodTotalDays,
-    '',
-  ])
+  const rows = dayRateRecords
+    .filter((record) => record.alreadyReportedDays === undefined)
+    .map((record) => [record.permno, record.prevPeriodTotalDays, ''])
 
   const sheetData = [headers, ...rows]
 

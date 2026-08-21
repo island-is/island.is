@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   fileToObjectDeprecated,
+  FileUploadStatus,
   InputFileUpload,
 } from '@island.is/island-ui/core'
 import { Dispatch, useEffect, useState } from 'react'
@@ -53,11 +54,20 @@ export const UploadCarDayRateUsage = ({
   const { locale, lang, formatMessage } = useLocale()
 
   const { setValue, setError, clearErrors, watch } = useFormContext()
-  const uploadedMeta = watch('carDayRateUsageFile')
+  const uploadedMeta = watch('carDayRateUsageFile') as
+    | { name: string; key: string }[]
+    | undefined
+
+  // Drive the dropzone off the answers, not local state, so the file shown
+  // always matches what validation and submit will use after a remount
+  const uploadedFiles = (uploadedMeta ?? []).map(({ name, key }) => ({
+    name,
+    key,
+    status: FileUploadStatus.done,
+  }))
 
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
 
-  const [uploadedFile, setUploadedFile] = useState<File | null>()
   const [uploadErrorMessage, setUploadErrorMessage] = useState<string | null>(
     null,
   )
@@ -186,16 +196,13 @@ export const UploadCarDayRateUsage = ({
     }
   }
 
-  const handleOnInputFileUploadRemove = () => {
-    setUploadedFile(null)
+  const handleOnInputFileUploadRemove = async () => {
     setUploadErrorMessage(null)
     setErrorFile(null)
-    setValue('carDayRateUsageCount', undefined)
-    setValue('carDayRateUsageFile', undefined)
+    await persistUploadAnswers(undefined, undefined)
   }
 
   const handleOnInputFileUploadChange = async (files: File[]) => {
-    setUploadedFile(null)
     setUploadErrorMessage(null)
 
     const file = fileToObjectDeprecated(files[0])
@@ -217,7 +224,6 @@ export const UploadCarDayRateUsage = ({
       if (dataToPost !== null) {
         const uploadedMeta = await uploadAndStoreFile(file.originalFileObj)
         await persistUploadAnswers(dataToPost, uploadedMeta)
-        setUploadedFile(file.originalFileObj)
       }
     }
   }
@@ -253,12 +259,13 @@ export const UploadCarDayRateUsage = ({
   }
 
   const persistUploadAnswers = async (
-    carDayRateUsageCount: number,
-    uploadedMeta: { name: string; key: string },
+    carDayRateUsageCount: number | undefined,
+    uploadedMeta: { name: string; key: string } | undefined,
   ) => {
     // Store only metadata in answers (small payload)
+    const carDayRateUsageFile = uploadedMeta ? [uploadedMeta] : []
     setValue('carDayRateUsageCount', carDayRateUsageCount)
-    setValue('carDayRateUsageFile', [uploadedMeta])
+    setValue('carDayRateUsageFile', carDayRateUsageFile)
     await updateApplication({
       variables: {
         input: {
@@ -266,7 +273,7 @@ export const UploadCarDayRateUsage = ({
           answers: {
             ...application.answers,
             carDayRateUsageCount,
-            carDayRateUsageFile: [uploadedMeta],
+            carDayRateUsageFile,
           },
         },
         locale,
@@ -303,7 +310,7 @@ export const UploadCarDayRateUsage = ({
         </Button>
       </Box>
       <InputFileUpload
-        files={uploadedFile ? [uploadedFile] : []}
+        files={uploadedFiles}
         title={
           !uploadErrorMessage
             ? formatMessage(m.multiUpload.uploadTitle)

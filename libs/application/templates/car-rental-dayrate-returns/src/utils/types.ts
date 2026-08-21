@@ -9,7 +9,13 @@ export interface CarUsageRecord {
 export interface DayRateRecord {
   permno: string
   prevPeriodTotalDays: number
-  dayRateEntryId: number
+  /** Optional: Skatturinn resolves the active entry when it is not supplied. */
+  dayRateEntryId?: number
+  /**
+   * Days already registered with Skatturinn for the period. Set when the return
+   * has been filed, in which case the vehicle is listed but cannot be edited.
+   */
+  alreadyReportedDays?: number
 }
 
 export interface CarUsageError {

@@ -48,10 +48,22 @@ export const parseFileToCarDayRateUsage = async (
       const carNr = row[carNumberIndex]
       const prevPeriodTotalDaysStr = row[prevPeriodTotalDaysIndex]?.trim()
       const prevPeriodUsageStr = row[prevPeriodUsageIndex]?.trim()
-      if (!dayRateRecords.has(carNr)) {
+      const dayRateRecord = dayRateRecords.get(carNr)
+
+      if (!dayRateRecord) {
         return {
           code: 1,
           message: m.multiUploadErrors.carNotFound,
+          carNr,
+        }
+      }
+
+      // Listed so the applicant can see it, but Skatturinn already has the
+      // return for this period so it must not be filed again.
+      if (dayRateRecord.alreadyReportedDays !== undefined) {
+        return {
+          code: 1,
+          message: m.multiUploadErrors.alreadyReported,
           carNr,
         }
       }

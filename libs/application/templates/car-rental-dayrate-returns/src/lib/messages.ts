@@ -1,16 +1,17 @@
 import { defineMessages } from 'react-intl'
 
 export const serviceErrors = {
-  missingDayRateEntry: defineMessages({
+  alreadyReported: defineMessages({
     title: {
-      id: 'rsk.crdr.application:serviceErrors.missingDayRateEntry.title',
-      defaultMessage: 'Missing day rate entry',
-      description: 'Title for missing day rate entry id error',
+      id: 'rsk.crdr.application:serviceErrors.alreadyReported.title',
+      defaultMessage: 'Rental days already registered',
+      description: 'Title for already reported rental days error',
     },
     summary: {
-      id: 'rsk.crdr.application:serviceErrors.missingDayRateEntry.summary',
-      defaultMessage: 'No dayRateEntryId for vehicle {vehicleId}',
-      description: 'Summary for missing day rate entry id error',
+      id: 'rsk.crdr.application:serviceErrors.alreadyReported.summary',
+      defaultMessage:
+        'Rental days for period {period} have already been registered for: {vehicles}',
+      description: 'Summary for already reported rental days error',
     },
   }),
   badRequest: defineMessages({
@@ -205,6 +206,11 @@ export const m = {
       defaultMessage: 'Fjöldi bifreiða sem þarf að skrá nýtingu fyrir',
       description: 'Cars that require answers count label',
     },
+    carsAlreadyReported: {
+      id: 'rsk.crdr.application:overview.cars.already.reported',
+      defaultMessage: 'Fjöldi bifreiða sem þegar hefur verið skilað fyrir',
+      description: 'Cars already reported for the period count label',
+    },
     dayRateCount: {
       id: 'rsk.crdr.application:overview.dayrate.count',
       defaultMessage: 'Fjöldi bifreiða á daggjaldi',
@@ -296,6 +302,12 @@ export const m = {
       id: 'rsk.crdr.application:table.view.empty.state',
       defaultMessage: 'Ekkert fannst fyrir þessa leit.',
       description: 'Vehicle table empty state message',
+    },
+    disabledAlreadyReported: {
+      id: 'rsk.crdr.application:table.view.disabled.already.reported',
+      defaultMessage: 'Þegar skilað - {days} útleigudagar',
+      description:
+        'Shown instead of the usage input when rental days for the period have already been filed',
     },
   }),
 
@@ -437,11 +449,11 @@ export const m = {
   }),
 
   multiUploadErrors: defineMessages({
-    dayRateMin30Days: {
-      id: 'rsk.crdr.application:multi.upload.error.dayrate.min30days',
+    alreadyReported: {
+      id: 'rsk.crdr.application:multi.upload.error.already.reported',
       defaultMessage:
-        'Bílar þurfa að vera skráðir á daggjald í amk 30 daga áður en hægt er að breyta til baka!',
-      description: 'Changing from day rate to km rate too soon',
+        'Útleigudögum fyrir þennan bíl hefur þegar verið skilað fyrir tímabilið',
+      description: 'Rental days for this vehicle were already filed',
     },
     carNotFound: {
       id: 'rsk.crdr.application:multi.upload.error.car.not.found',
