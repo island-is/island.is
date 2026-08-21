@@ -188,7 +188,7 @@ export const coreMessages = defineMessages({
   },
   tagsDraft: {
     id: 'application.system:tags.draft',
-    defaultMessage: 'Drög',
+    defaultMessage: 'Umsókn í vinnslu hjá þér',
     description: 'Draft status for an application',
   },
   tagsRequiresAction: {
