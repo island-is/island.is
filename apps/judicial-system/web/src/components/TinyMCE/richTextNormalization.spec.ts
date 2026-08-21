@@ -234,6 +234,43 @@ describe('normalizeRichTextHtml', () => {
       ).toBe('<p class="indent-1">x</p>')
     })
 
+    it('converts a Word first-line indent (Tab at line start) to an indent class', () => {
+      // Word's AutoFormat turns a Tab at the start of a paragraph into a
+      // first-line indent, emitted as text-indent instead of margin-left.
+      expect(
+        normalizeRichTextHtml('<p style="text-indent:36.0pt;">x</p>'),
+      ).toBe('<p class="indent-1">x</p>')
+    })
+
+    it('converts a double-Tab first-line indent (72pt) to two levels', () => {
+      expect(
+        normalizeRichTextHtml('<p style="text-indent:72.0pt;">x</p>'),
+      ).toBe('<p class="indent-2">x</p>')
+    })
+
+    it('sums margin-left and text-indent into one indent level', () => {
+      expect(
+        normalizeRichTextHtml(
+          '<p style="margin-left:36.0pt;text-indent:36.0pt;">x</p>',
+        ),
+      ).toBe('<p class="indent-2">x</p>')
+    })
+
+    it('subtracts a hanging indent (negative text-indent) from the margin', () => {
+      // 36pt - 18pt = 18pt = 24px, which rounds to one indent step.
+      expect(
+        normalizeRichTextHtml(
+          '<p style="margin-left:36.0pt;text-indent:-18.0pt;">x</p>',
+        ),
+      ).toBe('<p class="indent-1">x</p>')
+    })
+
+    it('removes a negative text-indent without a margin', () => {
+      expect(normalizeRichTextHtml('<p style="text-indent:-18pt;">x</p>')).toBe(
+        '<p>x</p>',
+      )
+    })
+
     it('removes margins smaller than half an indent step', () => {
       expect(normalizeRichTextHtml('<p style="margin-left: 10px;">x</p>')).toBe(
         '<p>x</p>',
