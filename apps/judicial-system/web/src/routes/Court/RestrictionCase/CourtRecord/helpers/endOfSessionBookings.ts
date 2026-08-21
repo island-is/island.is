@@ -1,9 +1,9 @@
-import { IntlShape } from 'react-intl'
+import type { IntlShape } from 'react-intl'
 
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import { rcCourtRecord } from '@island.is/judicial-system-web/messages'
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  Case,
   CaseDecision,
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'

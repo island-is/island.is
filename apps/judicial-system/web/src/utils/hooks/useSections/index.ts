@@ -68,25 +68,27 @@ import {
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { core, sections } from '@island.is/judicial-system-web/messages'
-import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
+import type { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
 import { formatCaseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
+import type {
+  Case,
+  User,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseState,
-  Case,
   CaseState,
   CaseType,
   Gender,
   IndictmentDecision,
   InstitutionType,
-  User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-
-import { stepValidations, stepValidationsType } from '../../formHelper'
+import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { stepValidations } from '@island.is/judicial-system-web/src/utils/formHelper'
+import useTargetAppealCaseByAppealCaseId from '@island.is/judicial-system-web/src/utils/hooks/useTargetAppealCaseByAppealCaseId'
 import {
   appendAppealCaseIdQuery,
   shouldUseAppealWithdrawnRoutes,
-} from '../../utils'
-import useTargetAppealCaseByAppealCaseId from '../useTargetAppealCaseByAppealCaseId'
+} from '@island.is/judicial-system-web/src/utils/utils'
 
 const useSections = (
   isValid = true,

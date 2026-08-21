@@ -1,12 +1,12 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { formatDOB } from '@island.is/judicial-system/formatters'
-import { CivilClaimant } from '@island.is/judicial-system-web/src/graphql/schema'
+import RenderPersonalData from '@island.is/judicial-system-web/src/components/InfoCard/RenderPersonalInfo/RenderPersonalInfo'
+import { strings as infoCardStrings } from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems.strings'
+import type { CivilClaimant } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import RenderPersonalData from '../RenderPersonalInfo/RenderPersonalInfo'
-import { strings as infoCardStrings } from '../useInfoCardItems.strings'
 import { strings } from './CivilClaimantInfo.strings'
 
 interface CivilClaimantInfoProps {

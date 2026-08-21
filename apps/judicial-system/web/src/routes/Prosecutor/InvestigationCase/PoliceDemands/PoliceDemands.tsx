@@ -1,5 +1,6 @@
 import { useCallback, useContext } from 'react'
-import { MessageDescriptor, useIntl } from 'react-intl'
+import type { MessageDescriptor } from 'react-intl'
+import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import { Box, Input } from '@island.is/island-ui/core'
