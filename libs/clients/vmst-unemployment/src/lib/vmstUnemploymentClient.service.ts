@@ -39,6 +39,8 @@ import {
   GaldurDomainModelsBaseViewModel,
   GaldurXRoadAPIModelsApplicantApplicantAttachmentsResponse,
   GaldurXRoadAPIModelsApplicantApplicantEligibilityResponse,
+  JobSearchConfirmationApi,
+  GaldurXRoadAPIModelsJobSearchConfirmationQuestionaireSchemaResponse,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
@@ -61,6 +63,7 @@ type VmstApis =
   | ApplicantApi
   | ApplicationApi
   | SupportDataApi
+  | JobSearchConfirmationApi
 
 @Injectable()
 export class VmstUnemploymentClientService {
@@ -596,5 +599,13 @@ export class VmstUnemploymentClientService {
       id: attachmentId,
       includeData: true,
     })
+  }
+
+  async getQuestionnaire(): Promise<GaldurXRoadAPIModelsJobSearchConfirmationQuestionaireSchemaResponse> {
+    const api = await this.createApiClient(
+      JobSearchConfirmationApi,
+      'clients-vmst-unemployment',
+    )
+    return await api.jobSearchConfirmationGetQuestionaireSchema()
   }
 }

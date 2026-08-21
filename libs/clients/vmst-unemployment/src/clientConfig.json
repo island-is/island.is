@@ -2749,6 +2749,33 @@
         ]
       }
     },
+    "/api/jobSearchConfirmations/questionaire": {
+      "get": {
+        "tags": ["JobSearchConfirmation"],
+        "summary": "Sækir uppbyggingu spurningalista (skimun) sem fylgir staðfestingu atvinnuleitar.\nSkilar spurningum og svarmöguleikum á íslensku og ensku ásamt gildum sem senda skal inn.\nAthugið að tungumálaval (chosenLanguage) er sent inn sem tungumálakóði og er því ekki hluti af skemanu.",
+        "operationId": "JobSearchConfirmation_GetQuestionaireSchema",
+        "responses": {
+          "200": {
+            "description": "Spurningar og svarmöguleikar spurningalistans.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_XRoad_API_Models_JobSearchConfirmation_QuestionaireSchemaResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
     "/api/SupportData/delistingReasons": {
       "get": {
         "tags": ["SupportData"],
@@ -2836,7 +2863,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Galdur_XRoad_API_Models_Applicant_ApplicantEligibilityResponse"
+                  "$ref": "#/components/schemas/Galdur_XRoad_API_Models_Applicant_U2EligibilityResponse"
                 }
               }
             }
@@ -7906,6 +7933,9 @@
           "reasonEN": {
             "type": "string",
             "nullable": true
+          },
+          "isQuestionaireEligible": {
+            "type": "boolean"
           }
         }
       },
@@ -7933,6 +7963,55 @@
             "items": {
               "type": "string"
             }
+          },
+          "questionaire": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_Minus3_CreateM3QuestionaireRequest"
+              }
+            ]
+          }
+        }
+      },
+      "Galdur_External_Domain_Requests_Minus3_CreateM3QuestionaireRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "chosenLanguage": {
+            "type": "string"
+          },
+          "timeToFindNewJob": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "needAssistanceToFindNewJob": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "knowWhatToDoToFindNewJob": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "haveAppliedForJobs": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mostHaveConnections": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mentalCapacityForJob": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "physicalCapacityForJob": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "anySickness": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
@@ -8744,6 +8823,75 @@
           }
         }
       },
+      "Galdur_XRoad_API_Models_JobSearchConfirmation_QuestionaireSchemaResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "questions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_XRoad_API_Models_JobSearchConfirmation_QuestionaireSchemaQuestion"
+            }
+          }
+        }
+      },
+      "Galdur_XRoad_API_Models_JobSearchConfirmation_QuestionaireSchemaQuestion": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "field": {
+            "type": "string"
+          },
+          "order": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "questionIS": {
+            "type": "string"
+          },
+          "questionEN": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "minValue": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "maxValue": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "answers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_XRoad_API_Models_JobSearchConfirmation_QuestionaireSchemaAnswer"
+            }
+          }
+        }
+      },
+      "Galdur_XRoad_API_Models_JobSearchConfirmation_QuestionaireSchemaAnswer": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "value": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "textIS": {
+            "type": "string"
+          },
+          "textEN": {
+            "type": "string"
+          }
+        }
+      },
       "Galdur_External_Domain_Models_SupportData_DelistingReasonDTO": {
         "allOf": [
           {
@@ -8773,6 +8921,35 @@
             }
           }
         ]
+      },
+      "Galdur_XRoad_API_Models_Applicant_U2EligibilityResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isEligible": {
+            "type": "boolean"
+          },
+          "reasonTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "reasonTitleEN": {
+            "type": "string",
+            "nullable": true
+          },
+          "reason": {
+            "type": "string",
+            "nullable": true
+          },
+          "reasonEN": {
+            "type": "string",
+            "nullable": true
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          }
+        }
       },
       "Galdur_External_Domain_Requests_U2Certificate_CreateU2CertificateRequest": {
         "type": "object",
