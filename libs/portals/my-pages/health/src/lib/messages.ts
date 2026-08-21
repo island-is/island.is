@@ -1922,8 +1922,13 @@ export const messages = defineMessages({
   },
   healthConversationsNewIntroWithWindow: {
     defaultMessage:
-      'Heilsugæslan tekur við skilaboðum alla daga frá kl. {openTime} til {closeTime}. Venjulega er svarað innan {days, plural, one {eins virks dags} other {# virkra daga}}. Ef erindið er brýnt og þú þarft svar sama dag skaltu hringja í 1700. Ef um neyðartilvik er að ræða skaltu hringja strax í 112.',
+      '{name} tekur við skilaboðum alla daga frá kl. {openTime} til {closeTime}. Venjulega er svarað innan {days, plural, one {eins virks dags} other {# virkra daga}}. Ef erindið er brýnt og þú þarft svar sama dag skaltu hringja í 1700. Ef um neyðartilvik er að ræða skaltu hringja strax í 112.',
     id: 'sp.health:health-messages-new-intro-with-window',
+  },
+  healthConversationsNewIntroWithRecipient: {
+    defaultMessage:
+      '{name} svarar skilaboðum yfirleitt innan þriggja virkra daga. Ef erindið er brátt og þarfnast svars í dag, hringdu í 1700. Ef um neyðartilfelli er að ræða, hringdu strax í 112.',
+    id: 'sp.health:health-messages-new-intro-with-recipient',
   },
   healthConversationsNewSelectService: {
     defaultMessage: 'Veldu þjónustu',
@@ -1932,6 +1937,14 @@ export const messages = defineMessages({
   healthConversationsNewSelectServicePlaceholder: {
     defaultMessage: 'Veldu þjónustu úr fellilistanum',
     id: 'sp.health:health-messages-new-select-service-placeholder',
+  },
+  healthConversationsNewSelectRecipient: {
+    defaultMessage: 'Veldu viðtakanda',
+    id: 'sp.health:health-messages-new-select-recipient',
+  },
+  healthConversationsNewSelectRecipientPlaceholder: {
+    defaultMessage: 'Veldu viðtakanda úr fellilistanum',
+    id: 'sp.health:health-messages-new-select-recipient-placeholder',
   },
   healthConversationsNewBodyPlaceholder: {
     defaultMessage: 'Sláðu inn skilaboð',
