@@ -101,6 +101,25 @@ describe('indent class helpers', () => {
 })
 
 describe('normalizeRichTextHtml', () => {
+  describe('blank content', () => {
+    it('normalizes markup without visible text to an empty string', () => {
+      expect(normalizeRichTextHtml('<p>&nbsp;&nbsp;</p>')).toBe('')
+      expect(normalizeRichTextHtml('<p>   </p>')).toBe('')
+      expect(normalizeRichTextHtml('<p>&nbsp; </p><p></p>')).toBe('')
+      expect(normalizeRichTextHtml('<p><br></p>')).toBe('')
+    })
+
+    it('passes an empty string through unchanged', () => {
+      expect(normalizeRichTextHtml('')).toBe('')
+    })
+
+    it('keeps markup that contains visible text', () => {
+      expect(normalizeRichTextHtml('<p>&nbsp;a&nbsp;</p>')).toBe(
+        '<p>&nbsp;a&nbsp;</p>',
+      )
+    })
+  })
+
   describe('highlights', () => {
     it('converts the Word "background" shorthand to a highlight class', () => {
       // Word emits highlights as "background:yellow" — the shorthand, a

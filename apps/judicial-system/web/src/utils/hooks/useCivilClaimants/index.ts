@@ -10,6 +10,7 @@ import {
   UpdateCivilClaimantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { normalizeBlankStrings } from '../../formatters'
 import { useCreateCivilClaimantMutation } from './createCivilClaimant.generated'
 import { useDeleteCivilClaimantMutation } from './deleteCivilClaimant.generated'
 import { useUpdateCivilClaimantMutation } from './updateCivilClaimant.generated'
@@ -28,7 +29,7 @@ const useCivilClaimants = () => {
         if (!isCreatingCivilClaimant) {
           const { data } = await createCivilClaimantMutation({
             variables: {
-              input: civilClaimant,
+              input: normalizeBlankStrings(civilClaimant),
             },
           })
 
@@ -66,7 +67,7 @@ const useCivilClaimants = () => {
       try {
         const { data } = await updateCivilClaimantMutation({
           variables: {
-            input: updateCivilClaimant,
+            input: normalizeBlankStrings(updateCivilClaimant),
           },
         })
 

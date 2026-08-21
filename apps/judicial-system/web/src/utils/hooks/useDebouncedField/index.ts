@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import debounce from 'lodash/debounce'
 
-import { replaceTabs } from '../../formatters'
+import { normalizeBlankString, replaceTabs } from '../../formatters'
 import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
@@ -22,8 +22,9 @@ interface UseDebouncedFieldParams {
   value: string | null | undefined
   /**
    * Persist. Called once, `delay` ms after the last keystroke, on blur, or on
-   * unmount. Keep value coercion (`trim`, `|| null`, `parseInt`) in here —
-   * this hook only deals in strings.
+   * unmount. Whitespace-only values arrive normalized to '' — keep any other
+   * value coercion (`|| null`, `parseInt`) in here; this hook only deals in
+   * strings.
    */
   onSave: (value: string) => void
   /** Optimistic local write. Called on every keystroke. */
@@ -91,15 +92,20 @@ const useDebouncedField = ({
     // There is deliberately no `nextValue === ''` guard here: clearing a
     // field has to persist. Required fields stay protected by `validations`.
     debouncedSave(() => {
+      // Whitespace-only input is persisted as '' so the server field is
+      // cleared. Only the save is normalized — the local value keeps the
+      // user's spaces.
+      const valueToSave = normalizeBlankString(nextValue)
+
       // Decide whether to persist without touching the error message. Errors
       // surface on blur, the same as every other input in the app — setting one
       // from here would make a required field complain mid-sentence, as soon as
       // the user cleared it to retype.
-      if (!validate([[nextValue, validations]]).isValid) {
+      if (!validate([[valueToSave, validations]]).isValid) {
         return
       }
 
-      onSave(nextValue)
+      onSave(valueToSave)
     })
   }
 
