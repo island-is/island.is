@@ -83,7 +83,6 @@ export class ConfirmJobSearchService extends BaseTemplateApiService {
     currentUserLocale,
   }: TemplateApiModuleActionProps) {
     let result
-    return { isQuestionaireEligible: true }
     try {
       result =
         await this.vmstUnemploymentClientService.checkJobSearchConfirmationEligibility(
