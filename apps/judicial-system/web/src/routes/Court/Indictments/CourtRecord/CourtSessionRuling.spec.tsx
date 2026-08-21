@@ -60,7 +60,6 @@ describe('CourtSessionRuling', () => {
         <FormContextWrapper theCase={workingCase}>
           <CourtSessionRuling
             courtSession={courtSession(overrides)}
-            showAppealDecisions={false}
             patchSession={patchSession}
           />
         </FormContextWrapper>
