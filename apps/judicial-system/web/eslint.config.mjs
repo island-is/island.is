@@ -77,11 +77,6 @@ export default [
     },
   },
   {
-    files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
-    // Override or add rules here
-    rules: {},
-  },
-  {
     files: ['**/*.spec.ts', '**/*.spec.tsx'],
     rules: {
       '@typescript-eslint/no-var-requires': 'off',

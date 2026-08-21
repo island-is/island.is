@@ -21,16 +21,6 @@ export default [
       '@next/next/no-html-link-for-pages': ['error', 'apps/payments/pages'],
     },
   },
-  {
-    files: ['**/*.ts', '**/*.tsx'],
-    // Override or add rules here
-    rules: {},
-  },
-  {
-    files: ['**/*.js', '**/*.jsx'],
-    // Override or add rules here
-    rules: {},
-  },
   ...compat
     .config({
       env: {
