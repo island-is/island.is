@@ -32,6 +32,8 @@ describe('buildInstitutionAssignees', () => {
   })
 
   it('includes HMS and the tester off production', () => {
+    jest.mocked(isRunningOnEnvironment).mockImplementation(() => false)
+
     const result = buildInstitutionAssignees(['0101307789'])
 
     expect(result).toEqual(

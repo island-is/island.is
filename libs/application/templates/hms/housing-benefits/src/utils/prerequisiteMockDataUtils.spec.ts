@@ -30,6 +30,8 @@ describe('shouldRenderMockDataSection', () => {
   })
 
   it('is true off production', () => {
+    jest.mocked(isRunningOnEnvironment).mockImplementation(() => false)
+
     expect(shouldRenderMockDataSection()).toBe(true)
   })
 })

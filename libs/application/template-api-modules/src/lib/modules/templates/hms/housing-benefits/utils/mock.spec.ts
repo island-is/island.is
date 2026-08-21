@@ -50,6 +50,10 @@ describe('housing-benefits mock helpers', () => {
   })
 
   describe('off production', () => {
+    beforeEach(() => {
+      jest.mocked(isRunningOnEnvironment).mockImplementation(() => false)
+    })
+
     it('enables rental mock when flags are set', () => {
       expect(useMockRentalAgreements({ answers: applicantMockAnswers })).toBe(
         true,
