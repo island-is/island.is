@@ -16,10 +16,13 @@ import {
   EphemeralStateLifeCycle,
   coreHistoryMessages,
   corePendingActionMessages,
+  endOfDayFromCreation,
   getReviewStatePendingAction,
   getValueViaPath,
   pruneAfterDays,
+  schedulePruneReminderBefore,
 } from '@island.is/application/core'
+import { Features } from '@island.is/feature-flags'
 import { Events, States, Roles } from './constants'
 import {
   ApiActions,
@@ -48,13 +51,8 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
 import { CodeOwners } from '@island.is/shared/constants'
 
-const pruneInDaysAtMidnight = (application: Application, days: number) => {
-  const date = new Date(application.created)
-  date.setDate(date.getDate() + days)
-  const pruneDate = new Date(date)
-  pruneDate.setUTCHours(23, 59, 59)
-  return pruneDate
-}
+// days until application gets pruned when in review state
+const pruneLifeTimeInReview = 7
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
   const plate = getValueViaPath(
@@ -233,7 +231,7 @@ const template: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: (application: Application) =>
-              pruneInDaysAtMidnight(application, 7),
+              endOfDayFromCreation(application, pruneLifeTimeInReview),
             shouldDeleteChargeIfPaymentFulfilled: true,
             pruneMessage: (application) => {
               const plate = getValueViaPath(
@@ -250,6 +248,12 @@ const template: ApplicationTemplate<
               }
             },
           },
+          scheduledNotifications: (application) =>
+            schedulePruneReminderBefore(
+              endOfDayFromCreation(application, pruneLifeTimeInReview),
+              2,
+              Features.changeCoOwnerOfVehicleScheduledNotifications,
+            ),
           onDelete: defineTemplateApi({
             action: ApiActions.deleteApplication,
           }),

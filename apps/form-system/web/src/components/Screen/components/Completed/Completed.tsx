@@ -1,4 +1,5 @@
 import { FormSystemSectionInfo } from '@island.is/api/schema'
+import coverImage from '../../../../assets/images/cover.png'
 import { m } from '@island.is/form-system/ui'
 import {
   Accordion,
@@ -111,7 +112,7 @@ export const Completed = () => {
 
       <Hidden below="md">
         <img
-          src={require('../../../../assets/images/cover.png')}
+          src={coverImage}
           alt="Cover"
           style={{ width: '100%', height: 'auto' }}
         />

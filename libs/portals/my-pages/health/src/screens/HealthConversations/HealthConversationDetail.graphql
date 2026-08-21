@@ -46,6 +46,7 @@ query GetHealthConversationDetail($id: ID!) {
     isStarred
     isArchived
     patientCanReply
+    replyBlockedReason
     isRead
     organization {
       ...HealthConversationOrganizationFragment

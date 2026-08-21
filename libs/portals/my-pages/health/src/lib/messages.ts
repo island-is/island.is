@@ -40,6 +40,41 @@ export const messages = defineMessages({
     defaultMessage: 'Hjálpartæki eða næringu',
     id: 'sp.health:aids-or-nutrition-variation',
   },
+  movementPrescriptionsTitle: {
+    defaultMessage: 'Hreyfiseðlar',
+    id: 'sp.health:movement-prescriptions-title',
+  },
+  movementPrescriptionsIntro: {
+    defaultMessage:
+      'Hreyfingarleysi er einn af mikilvægum áhrifaþáttum algengra sjúkdóma. Hreyfing er mikilvæg sem meðferð eða hluti meðferðar þessara sjúkdóma. Því hafa verið þróaðar ýmsar aðferðir til að beita hreyfingu sem meðferð hjá þeim sem á því þurfa að halda.',
+    id: 'sp.health:movement-prescriptions-intro',
+  },
+  readAboutMovementPrescriptions: {
+    defaultMessage: 'Lesa um hreyfiseðla',
+    id: 'sp.health:read-about-movement-prescriptions',
+  },
+  movementPrescriptionsLink: {
+    defaultMessage:
+      'https://www.heilsuvera.is/efnisflokkar/hreyfing/viltu-hreyfa-thig-meira/hreyfisedill/',
+    id: 'sp.health:movement-prescriptions-link',
+  },
+  movementPrescriptionsStillOnHeilsuveruTitle: {
+    defaultMessage: 'Hreyfiseðlar eru enn á Heilsuveru',
+    id: 'sp.health:movement-prescriptions-still-on-heilsuveru-title',
+  },
+  movementPrescriptionsStillOnHeilsuveruText: {
+    defaultMessage:
+      'Við erum að vinna að því að færa þessa þjónustu yfir á Mínar síður á Ísland.is. Þangað til getur þú farið á Heilsuveru til að skoða þína hreyfiseðla.',
+    id: 'sp.health:movement-prescriptions-still-on-heilsuveru-text',
+  },
+  viewMovementPrescriptionsOnHeilsuveru: {
+    defaultMessage: 'Skoða hreyfiseðla á Heilsuveru',
+    id: 'sp.health:view-movement-prescriptions-on-heilsuveru',
+  },
+  movementPrescriptionsHeilsuveruLink: {
+    defaultMessage: 'https://minarsidur.heilsuvera.is/',
+    id: 'sp.health:movement-prescriptions-heilsuveru-link',
+  },
   alert: {
     defaultMessage: 'Athugið',
     id: 'sp.health:alert',
@@ -1937,6 +1972,44 @@ export const messages = defineMessages({
     defaultMessage: 'Sláðu inn skilaboð',
     id: 'sp.health:health-messages-new-body-placeholder',
   },
+  healthConversationsCertificateBlockedText: {
+    defaultMessage:
+      'Ekki er hægt að óska eftir vottorði hjá þessari stofnun núna.',
+    id: 'sp.health:health-messages-certificate-blocked-text',
+  },
+  healthConversationsCertificatePaymentNotice: {
+    defaultMessage:
+      'Athugið að greiða þarf fyrir atvinnurekenda og skólavottorð.',
+    id: 'sp.health:health-messages-certificate-payment-notice',
+  },
+  healthConversationsCertificateTypeTitle: {
+    defaultMessage: 'Vottorð sem óskað er eftir',
+    id: 'sp.health:health-messages-certificate-type-title',
+  },
+  healthConversationsCertificateTypeWork: {
+    defaultMessage: 'Atvinnurekendavottorð',
+    id: 'sp.health:health-messages-certificate-type-work',
+  },
+  healthConversationsCertificateTypeSchool: {
+    defaultMessage: 'Skólavottorð',
+    id: 'sp.health:health-messages-certificate-type-school',
+  },
+  healthConversationsCertificateRecipientNameLabel: {
+    defaultMessage: 'Nafn tengiliðar',
+    id: 'sp.health:health-messages-certificate-recipient-name-label',
+  },
+  healthConversationsCertificateRecipientNamePlaceholder: {
+    defaultMessage: 't.d. vinnuveitandi eða skóli',
+    id: 'sp.health:health-messages-certificate-recipient-name-placeholder',
+  },
+  healthConversationsCertificateNoteLabel: {
+    defaultMessage: 'Lýsing veikinda',
+    id: 'sp.health:health-messages-certificate-note-label',
+  },
+  healthConversationsCertificateNotePlaceholder: {
+    defaultMessage: 'Skrifaðu stutta lýsingu á veikindunum',
+    id: 'sp.health:health-messages-certificate-note-placeholder',
+  },
   healthConversationsNewTermsLabel: {
     defaultMessage: 'Ég samþykki <link>skilmála</link>',
     id: 'sp.health:health-messages-new-terms-label',
@@ -1954,6 +2027,10 @@ export const messages = defineMessages({
     defaultMessage: 'Afboðað',
     id: 'sp.health:health-messages-video-call-canceled',
   },
+  healthConversationVideoCallInstruction: {
+    defaultMessage: 'Smelltu á hnappinn til að hefja símtalið.',
+    id: 'sp.health:health-messages-video-call-instruction',
+  },
   healthConversationNotFound: {
     defaultMessage: 'Skilaboð fundust ekki',
     id: 'sp.health:health-message-not-found',
@@ -1965,19 +2042,6 @@ export const messages = defineMessages({
   healthConversationSend: {
     defaultMessage: 'Senda skilaboð',
     id: 'sp.health:health-message-send',
-  },
-  healthConversationCloseReply: {
-    defaultMessage: 'Loka svarglugga',
-    id: 'sp.health:health-message-close-reply',
-  },
-  healthConversationSentTitle: {
-    defaultMessage: 'Skilaboð móttekin',
-    id: 'sp.health:health-message-sent-title',
-  },
-  healthConversationSentText: {
-    defaultMessage:
-      'Við svörum á dagvinnutíma, yfirleitt innan þriggja virkra daga. Ef erindið er brátt og þarfnast svars í dag, hringdu í 1700. Ef um neyðartilfelli er að ræða, hringdu strax í 112.',
-    id: 'sp.health:health-message-sent-text',
   },
   healthConversationsNoRecipient: {
     defaultMessage: 'Ekki er hægt að senda skilaboð eins og er',
@@ -2009,6 +2073,43 @@ export const messages = defineMessages({
     defaultMessage:
       'Þessi þjónustuaðili býður ekki upp á skilaboð á Ísland.is.',
     id: 'sp.health:health-messages-messaging-not-allowed-text',
+  },
+  healthConversationReplyBlockedMissingRecipientText: {
+    defaultMessage: 'Ekki er hægt að svara þessum skilaboðum.',
+    id: 'sp.health:health-messages-reply-blocked-missing-recipient-text',
+  },
+  healthConversationReplyBlockedRepliesDisabledText: {
+    defaultMessage: 'Ekki er hægt að svara þessum skilaboðum.',
+    id: 'sp.health:health-messages-reply-blocked-replies-disabled-text',
+  },
+  healthConversationReplyBlockedNoReplyGroupText: {
+    defaultMessage: 'Ekki er hægt að svara þessum skilaboðum',
+    id: 'sp.health:health-messages-reply-blocked-no-reply-group-text',
+  },
+  healthConversationReplyBlockedMessagingNotAllowedText: {
+    defaultMessage: 'Ekki er hægt að svara þessum skilaboðum',
+    id: 'sp.health:health-messages-reply-blocked-messaging-not-allowed-text',
+  },
+  healthConversationReplyBlockedOutsideWindowText: {
+    defaultMessage: 'Ekki er hægt að svara þessum skilaboðum',
+    id: 'sp.health:health-messages-reply-blocked-outside-window-text',
+  },
+  healthConversationReplyBlockedWindowExpiredText: {
+    defaultMessage: 'Ekki er hægt að svara þessum skilaboðum',
+    id: 'sp.health:health-messages-reply-blocked-window-expired-text',
+  },
+  healthConversationReplyBlockedGenericText: {
+    defaultMessage: 'Ekki er hægt að svara þessum skilaboðum',
+    id: 'sp.health:health-messages-reply-blocked-generic-text',
+  },
+  healthConversationReplyBlockedAwaitingStaffReplyTitle: {
+    defaultMessage: 'Skilaboð móttekin',
+    id: 'sp.health:health-messages-reply-blocked-awaiting-staff-reply-title',
+  },
+  healthConversationReplyBlockedAwaitingStaffReplyText: {
+    defaultMessage:
+      'Við svörum á dagvinnutíma, yfirleitt innan þriggja virkra daga. Ef erindið er brátt og þarfnast svars í dag, hringdu í 1700. Ef um neyðartilfelli er að ræða, hringdu strax í 112.',
+    id: 'sp.health:health-messages-reply-blocked-awaiting-staff-reply-text',
   },
   myAppointments: {
     defaultMessage: 'Mínar tímabókanir',

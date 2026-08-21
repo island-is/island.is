@@ -36,6 +36,7 @@ import {
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   AppealCaseState,
+  appealCorrectionLock,
   AppealDecisionPartyRole,
   AppealEventType,
   CaseAppealDecision,
@@ -742,6 +743,14 @@ export class CaseService {
     }
   }
 
+  // A custody notice is only generated for accepted custody and admission to facility cases
+  private hasCustodyNoticeForPolice(theCase: Case): boolean {
+    return (
+      theCase.state === CaseState.ACCEPTED &&
+      [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY].includes(theCase.type)
+    )
+  }
+
   private addMessagesForCompletedCaseToQueue(theCase: Case, user: TUser): void {
     addMessagesToQueue(
       {
@@ -776,11 +785,33 @@ export class CaseService {
     }
 
     if (theCase.origin === CaseOrigin.LOKE) {
-      addMessagesToQueue({
-        type: MessageType.DELIVERY_TO_POLICE_CASE,
-        user,
-        caseId: theCase.id,
-      })
+      // The case update and each of its documents are delivered separately,
+      // so that each of them can be retried on its own
+      addMessagesToQueue(
+        {
+          type: MessageType.DELIVERY_TO_POLICE_CASE,
+          user,
+          caseId: theCase.id,
+        },
+        {
+          type: MessageType.DELIVERY_TO_POLICE_REQUEST,
+          user,
+          caseId: theCase.id,
+        },
+        {
+          type: MessageType.DELIVERY_TO_POLICE_COURT_RECORD,
+          user,
+          caseId: theCase.id,
+        },
+      )
+
+      if (this.hasCustodyNoticeForPolice(theCase)) {
+        addMessagesToQueue({
+          type: MessageType.DELIVERY_TO_POLICE_CUSTODY_NOTICE,
+          user,
+          caseId: theCase.id,
+        })
+      }
     }
 
     // kept as part of the ruling case notification type since this is a court decision to complete the case with no ruling
@@ -852,28 +883,74 @@ export class CaseService {
     }
 
     if (updatedCase.origin === CaseOrigin.LOKE) {
+      // The case update and each of its documents are delivered separately,
+      // so that each of them can be retried on its own
       addMessagesToQueue({
         type: MessageType.DELIVERY_TO_POLICE_INDICTMENT_CASE,
         user,
         caseId: updatedCase.id,
       })
+
+      for (const caseFile of updatedCase.caseFiles ?? []) {
+        if (
+          caseFile.category === CaseFileCategory.COURT_RECORD &&
+          caseFile.isKeyAccessible
+        ) {
+          addMessagesToQueue({
+            type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
+            user,
+            caseId: updatedCase.id,
+            elementId: caseFile.id,
+          })
+        }
+      }
+
+      if (updatedCase.withCourtSessions) {
+        addMessagesToQueue({
+          type: MessageType.DELIVERY_TO_POLICE_COURT_RECORD,
+          user,
+          caseId: updatedCase.id,
+        })
+      }
     }
   }
 
-  private addMessagesForModifiedCaseToQueue(theCase: Case, user: TUser): void {
+  private addMessagesForModifiedCaseToQueue(
+    theCase: Case,
+    updatedCase: Case,
+    user: TUser,
+  ): void {
     addMessagesToQueue({
       type: MessageType.NOTIFICATION,
       user,
-      caseId: theCase.id,
+      caseId: updatedCase.id,
       body: { type: RequestCaseNotificationType.MODIFIED },
     })
 
-    if (theCase.origin === CaseOrigin.LOKE) {
+    if (updatedCase.origin === CaseOrigin.LOKE) {
       addMessagesToQueue({
         type: MessageType.DELIVERY_TO_POLICE_CASE,
         user,
-        caseId: theCase.id,
+        caseId: updatedCase.id,
       })
+
+      const areCustodyDatesModified =
+        updatedCase.validToDate?.getTime() !== theCase.validToDate?.getTime() ||
+        updatedCase.isolationToDate?.getTime() !==
+          theCase.isolationToDate?.getTime()
+
+      // The other documents of the case are unchanged,
+      // but the custody notice includes the custody and isolation periods
+      if (
+        areCustodyDatesModified &&
+        this.hasCustodyNoticeForPolice(updatedCase)
+      ) {
+        addMessagesToQueue({
+          type: MessageType.DELIVERY_TO_POLICE_CUSTODY_NOTICE,
+          user,
+          caseId: updatedCase.id,
+        })
+      }
     }
   }
 
@@ -1033,7 +1110,7 @@ export class CaseService {
       updatedCase.caseModifiedExplanation !== theCase.caseModifiedExplanation
     ) {
       // Case to dates modified
-      this.addMessagesForModifiedCaseToQueue(updatedCase, user)
+      this.addMessagesForModifiedCaseToQueue(theCase, updatedCase, user)
     }
 
     if (updatedCase.courtCaseNumber) {
@@ -1438,13 +1515,18 @@ export class CaseService {
         },
       )
 
-      if (hasOutOfCourtAppeal(appealedEvents)) {
+      const lock = appealCorrectionLock({
+        appealState: existingAppealCase.appealState,
+        appealedOutOfCourt: hasOutOfCourtAppeal(appealedEvents),
+      })
+
+      if (lock === 'OUT_OF_COURT') {
         throw new BadRequestException(
           'This case has been appealed out of court, so the appeal decisions can no longer be changed',
         )
       }
 
-      if (existingAppealCase.appealState !== AppealCaseState.APPEALED) {
+      if (lock === 'PROGRESSED') {
         throw new BadRequestException(
           'The appeal of this case has progressed past the district court, so the appeal decisions can no longer be changed',
         )

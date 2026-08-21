@@ -64,6 +64,7 @@ import { Section } from '../sections/models/section.model'
 import { FormDto } from './models/dto/form.dto'
 import { FormResponseDto } from './models/dto/form.response.dto'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
+import { CopyFormDto } from './models/dto/copyForm.dto'
 import { Form } from './models/form.model'
 import { OrganizationZendeskInstanceDto } from '../organizations/models/dto/organizationZendeskInstance.dto'
 import {
@@ -73,6 +74,8 @@ import {
   ApplicationJsonValueDto,
 } from '../applications/models/dto/application.json.dto'
 import { FormDelegationDto } from './models/dto/formDelegation.dto'
+
+const MAX_COPY_SLUG_RETRIES = 5
 
 @Injectable()
 export class FormsService {
@@ -143,6 +146,7 @@ export class FormsService {
       'zendeskInternal',
       'useValidate',
       'submissionServiceUrl',
+      'zendeskBrandId',
       'isTranslated',
       'hasPayment',
       'beenPublished',
@@ -360,18 +364,36 @@ export class FormsService {
       if (error instanceof UniqueConstraintError) {
         const slug = updateFormDto.slug
         response.updateSuccess = false
-        response.errors = [
-          {
-            field: 'slug',
-            message: `slug '${slug}' er þegar í notkun. Vinsamlegast veldu annað slug.`,
-          } as UpdateFormError,
-        ]
+        response.errors = [this.getSlugError(slug)]
       } else {
         throw error
       }
     }
 
     return response
+  }
+
+  private getSlugError(slug?: string): UpdateFormError {
+    return {
+      field: 'slug',
+      message: `slug '${slug}' er þegar í notkun. Vinsamlegast veldu annað slug.`,
+    } as UpdateFormError
+  }
+
+  private isSlugUniqueConstraintError(
+    error: unknown,
+  ): error is UniqueConstraintError {
+    return (
+      error instanceof UniqueConstraintError &&
+      Object.keys(error.fields ?? {}).includes('slug')
+    )
+  }
+
+  private throwSlugConflict(slug?: string): never {
+    throw new BadRequestException({
+      updateSuccess: false,
+      errors: [this.getSlugError(slug)],
+    } as UpdateFormResponse)
   }
 
   async addDelegation(
@@ -444,7 +466,12 @@ export class FormsService {
     })
   }
 
-  async copy(user: User, id: string): Promise<FormResponseDto> {
+  async copy(
+    user: User,
+    id: string,
+    copyFormDto: CopyFormDto,
+  ): Promise<FormResponseDto> {
+    const { organizationNationalId } = copyFormDto
     const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
 
     const form = await this.findById(id)
@@ -461,12 +488,62 @@ export class FormsService {
       )
     }
 
-    const copyForm = await this.copyForm(
-      id,
-      false,
-      form.isInaccessible,
-      `${form.slug}-afrit`,
-    )
+    if (!isAdmin && organizationNationalId !== formOwnerNationalId) {
+      throw new ForbiddenException(
+        `User does not have permission to copy form to organization with nationalId '${organizationNationalId}'`,
+      )
+    }
+
+    let destinationOrganization: Organization | undefined
+
+    if (isAdmin && organizationNationalId !== formOwnerNationalId) {
+      const organization = await this.organizationModel.findOne({
+        where: { nationalId: organizationNationalId },
+      })
+      if (!organization) {
+        throw new NotFoundException(
+          `Organization with nationalId ${organizationNationalId} not found`,
+        )
+      }
+
+      destinationOrganization = organization
+    }
+
+    const copyToDifferentOrganization = destinationOrganization !== undefined
+    const newSlugBase = copyToDifferentOrganization
+      ? `${organizationNationalId}-${form.slug}`
+      : `${form.slug}-afrit`
+
+    let copyForm: Form | undefined
+    let newSlug: string | undefined
+
+    for (let retry = 0; retry < MAX_COPY_SLUG_RETRIES; retry++) {
+      newSlug = await this.getUniqueCopySlug(newSlugBase)
+
+      try {
+        copyForm = await this.copyForm(
+          id,
+          false,
+          form.isInaccessible,
+          newSlug,
+          destinationOrganization,
+        )
+        break
+      } catch (error) {
+        if (!this.isSlugUniqueConstraintError(error)) {
+          throw error
+        }
+
+        if (retry === MAX_COPY_SLUG_RETRIES - 1) {
+          this.throwSlugConflict(newSlug)
+        }
+      }
+    }
+
+    if (!copyForm) {
+      this.throwSlugConflict(newSlug)
+    }
+
     const formResponse = await this.buildFormResponse(copyForm)
 
     if (!formResponse) {
@@ -500,6 +577,10 @@ export class FormsService {
     const { newStatus } = updateFormStatusDto
     const currentStatus = form.status
 
+    if (newStatus === FormStatus.PUBLISHED) {
+      await this.validateZendeskSettingsForPublish(form)
+    }
+
     switch (currentStatus) {
       case FormStatus.IN_DEVELOPMENT:
         if (newStatus === FormStatus.PUBLISHED) {
@@ -530,6 +611,36 @@ export class FormsService {
     throw new BadRequestException(
       `Invalid status transition from '${currentStatus}' to '${newStatus}'`,
     )
+  }
+
+  private async validateZendeskSettingsForPublish(form: Form): Promise<void> {
+    if (form.submissionServiceUrl !== 'zendesk') {
+      return
+    }
+
+    const organization = await this.organizationModel.findByPk(
+      form.organizationId,
+    )
+    const zendeskBrandId = form.zendeskBrandId?.trim()
+    const zendeskInstance = organization?.zendeskInstance?.trim()
+
+    if (!zendeskBrandId || !zendeskInstance) {
+      throw new BadRequestException(
+        'Zendesk instance and brand ID must be configured before publishing a Zendesk form.',
+      )
+    }
+  }
+
+  private async getUniqueCopySlug(baseSlug: string): Promise<string> {
+    let slug = baseSlug
+    let suffix = 2
+
+    while (await this.formModel.unscoped().count({ where: { slug } })) {
+      slug = `${baseSlug}-${suffix}`
+      suffix++
+    }
+
+    return slug
   }
 
   private async publishFormInDevelopment(
@@ -578,7 +689,14 @@ export class FormsService {
       form.slug = `${form.slug}-archived-${Date.now()}`
       await form.save({ transaction })
 
-      copyForm = await this.copyForm(id, false, true, slug, transaction)
+      copyForm = await this.copyForm(
+        id,
+        false,
+        true,
+        slug,
+        undefined,
+        transaction,
+      )
     })
 
     if (!copyForm) {
@@ -668,6 +786,7 @@ export class FormsService {
       true,
       form.isInaccessible,
       `${form.slug}-i-breytingu`,
+      undefined,
     )
     const formResponse = await this.buildFormResponse(copyForm)
 
@@ -986,6 +1105,7 @@ export class FormsService {
       'zendeskInternal',
       'useValidate',
       'submissionServiceUrl',
+      'zendeskBrandId',
       'hasSummaryScreen',
       'sectionInfo',
       'dependencies',
@@ -1101,7 +1221,7 @@ export class FormsService {
     formDto.organizationZendeskInstance.zendeskInstance =
       organization?.zendeskInstance ?? ''
     formDto.organizationZendeskInstance.zendeskBrandId =
-      organization?.zendeskBrandId ?? ''
+      form.zendeskBrandId ?? ''
 
     return formDto
   }
@@ -1189,6 +1309,7 @@ export class FormsService {
     isDerived: boolean,
     isBeingArchived: boolean,
     slug: string,
+    destinationOrganization: Organization | undefined,
     transaction?: Transaction,
   ): Promise<Form> {
     const existingForm = await this.findById(id, transaction)
@@ -1201,6 +1322,8 @@ export class FormsService {
         `Cannot copy form that is in status ${FormStatus.PUBLISHED_BEING_CHANGED}`,
       )
     }
+
+    const copyToDifferentOrganization = destinationOrganization !== undefined
 
     let deps = existingForm.dependencies || []
 
@@ -1220,6 +1343,33 @@ export class FormsService {
     newForm.invalidationDate = isBeingArchived
       ? undefined
       : existingForm.invalidationDate
+    newForm.organizationNationalId = copyToDifferentOrganization
+      ? destinationOrganization.nationalId
+      : existingForm.organizationNationalId
+    newForm.organizationId = copyToDifferentOrganization
+      ? destinationOrganization.id
+      : existingForm.organizationId
+    newForm.organizationDisplayName = copyToDifferentOrganization
+      ? { is: '', en: '' }
+      : existingForm.organizationDisplayName
+    newForm.submissionServiceUrl = copyToDifferentOrganization
+      ? ''
+      : existingForm.submissionServiceUrl
+    newForm.zendeskBrandId = copyToDifferentOrganization
+      ? ''
+      : existingForm.zendeskBrandId
+    newForm.zendeskInternal = copyToDifferentOrganization
+      ? false
+      : existingForm.zendeskInternal
+    newForm.useValidate = copyToDifferentOrganization
+      ? false
+      : existingForm.useValidate
+    newForm.lastModifiedBy = copyToDifferentOrganization
+      ? undefined
+      : existingForm.lastModifiedBy
+    newForm.delegations = copyToDifferentOrganization
+      ? []
+      : existingForm.delegations
 
     const sections: Section[] = []
     const screens: Screen[] = []
@@ -1275,8 +1425,25 @@ export class FormsService {
     }
     newForm.dependencies = deps
 
+    const destinationCertificationTypeIds = copyToDifferentOrganization
+      ? new Set(
+          (await this.getCertificationTypes(newForm.organizationId)).map(
+            (certificationType) => certificationType.id,
+          ),
+        )
+      : undefined
+
     if (existingForm.formCertificationTypes) {
       for (const certificationType of existingForm.formCertificationTypes) {
+        if (
+          destinationCertificationTypeIds &&
+          !destinationCertificationTypeIds.has(
+            certificationType.certificationTypeId,
+          )
+        ) {
+          continue
+        }
+
         const newFormCertificationType = certificationType.toJSON()
         newFormCertificationType.id = uuidV4()
         newFormCertificationType.formId = newForm.id
@@ -1304,6 +1471,10 @@ export class FormsService {
         await this.sequelize.transaction(createCopy)
       }
     } catch (error) {
+      if (this.isSlugUniqueConstraintError(error)) {
+        throw error
+      }
+
       this.logger.error(`Failed to copy form '${id}'`, error)
       throw new InternalServerErrorException(
         `Unexpected error copying form '${id}'`,

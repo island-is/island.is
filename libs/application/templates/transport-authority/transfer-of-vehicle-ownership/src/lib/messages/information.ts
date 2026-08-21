@@ -72,11 +72,6 @@ export const information = {
         defaultMessage: 'Ekki er hægt að selja þessa bifreið vegna:',
         description: 'Pick vehicle has an error title',
       },
-      isNotDebtLessTag: {
-        id: 'ta.tvo.application:information.labels.pickVehicle.isNotDebtLessTag',
-        defaultMessage: 'Ógreidd bifreiðagjöld',
-        description: 'Pick vehicle is not debt less tag',
-      },
     }),
     vehicle: defineMessages({
       sectionTitle: {

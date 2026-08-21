@@ -6,6 +6,7 @@ import {
 } from '@island.is/application/core'
 import { isTaxReturnNotFiled } from '../../utils/utils'
 import { draftMessages } from '../../lib/messages/draftMessages'
+import { MAX_TEXT_LENGTH } from '../../utils/constants'
 
 const m = draftMessages.assetsDeclarationSection
 
@@ -32,6 +33,7 @@ export const assetsDeclarationSection = buildSection({
           title: m.textFieldDescription,
           variant: 'textarea',
           rows: 10,
+          maxLength: MAX_TEXT_LENGTH,
           required: true,
         }),
       ],

@@ -1,123 +1,133 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { AlertMessage, Box, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { sortAlpha } from '@island.is/shared/utils'
 import { FC, useEffect, useMemo } from 'react'
-import { useFormContext } from 'react-hook-form'
-import type {
-  ParsedCriterionDto,
-  ParsedRoleDto,
-} from '@island.is/clients/directorate-of-equality'
+import { FormProvider, useForm } from 'react-hook-form'
 import { messages } from '../../lib/messages'
 import {
-  type Employee,
-  type JobFactor,
-  type Role,
-  type SubCriterion,
+  ApiActions,
+  draftActionId,
+  SyncMethodEnum,
+} from '../../utils/constants'
+import type {
+  DisplayAssignment,
+  DraftCriterionWithSubCriteriaDto,
+  DraftRoleWithStepsDto,
+  SyncCommand,
 } from '../../utils/types'
-import { getPathValue } from '../../utils/answerHelpers'
+import { useDraftQuery } from '../../utils/useDraftQuery'
+import { useDraftSync } from '../../utils/useDraftSync'
+import { useSeedOnce } from '../../utils/useSeedOnce'
+import {
+  DraftErrorState,
+  DraftLoadingState,
+} from '../../components/DraftScreenState'
 import { RolePanel } from './RolePanel'
 import {
-  buildRolesFromEmployees,
-  buildStepMetaByTitle,
-  buildStepMetaFromSubCriteria,
+  buildDisplayAssignments,
+  buildStepMetaBySubCriterionId,
+  resolveStepIds,
 } from './utils'
 
-const byTitle = sortAlpha<Role>('title')
-
-const FIELD_NAME = 'roles'
+type RoleFormEntry = { roleId: string; assignments: DisplayAssignment[] }
+type FormValues = { roles: RoleFormEntry[] }
 
 export const JobClassificationEditor: FC<
   React.PropsWithChildren<FieldBaseProps>
-> = ({ application }) => {
+> = ({ application, setBeforeSubmitCallback }) => {
   const { formatMessage } = useLocale()
-  const { getValues, setValue } = useFormContext()
+  const {
+    content: criteriaContent,
+    loading: criteriaLoading,
+    hasError: criteriaHasError,
+    refetch: refetchCriteria,
+  } = useDraftQuery<{ criteria: DraftCriterionWithSubCriteriaDto[] }>(
+    application,
+    draftActionId(ApiActions.getDraftCriteriaTree),
+    'draftCriteriaTree',
+  )
+  const {
+    content: rolesContent,
+    loading: rolesLoading,
+    hasError: rolesHasError,
+    refetch: refetchRoles,
+  } = useDraftQuery<{ roles: DraftRoleWithStepsDto[] }>(
+    application,
+    draftActionId(ApiActions.listDraftRolesWithSteps),
+    'draftRolesWithSteps',
+  )
+  const { sync } = useDraftSync(application)
+  const methods = useForm<FormValues>({ defaultValues: { roles: [] } })
 
-  const stepMetaByTitle = useMemo(() => {
-    const criteria = getPathValue<ParsedCriterionDto[]>(
-      application.externalData,
-      'parsedSalaryReport.data.criteria',
-      [],
-    )
-    const fromExternal = buildStepMetaByTitle(criteria)
-    if (Object.keys(fromExternal).length > 0) return fromExternal
-    // External data unavailable (stale right after import) — fall back to the
-    // sub-criteria in answers so the step dropdowns still render options.
-    const subCriteria = getPathValue<{
-      jobFactors?: SubCriterion[][]
-      personalFactors?: SubCriterion[][]
-    }>(application.answers, 'subCriteria', {})
-    return buildStepMetaFromSubCriteria(subCriteria)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const loading = criteriaLoading || rolesLoading
+  const hasError = criteriaHasError || rolesHasError
+  const roles = rolesContent?.roles ?? []
 
-  // Structure (titles + assignments): answers > external > derived from the
-  // employees screen (manual entry has no dedicated "add role" UI, so roles
-  // are inferred from job titles + the manually-entered job-factor
-  // sub-criteria). Sorted alphabetically (Icelandic collation) before the
-  // seed effect below, so on-screen order and `roles.${roleIndex}` field
-  // paths stay in sync.
-  const roles = useMemo(() => {
-    const saved = getPathValue<Role[]>(application.answers, FIELD_NAME, [])
-    if (saved.length > 0) return [...saved].sort(byTitle)
+  const jobCriteria = useMemo(
+    () =>
+      (criteriaContent?.criteria ?? []).filter((c) => c.type !== 'PERSONAL'),
+    [criteriaContent],
+  )
+  const stepMetaBySubCriterionId = useMemo(
+    () => buildStepMetaBySubCriterionId(jobCriteria),
+    [jobCriteria],
+  )
 
-    const external = getPathValue<ParsedRoleDto[]>(
-      application.externalData,
-      'parsedSalaryReport.data.roles',
-      [],
-    )
-    if (external.length > 0) return [...external].sort(byTitle)
+  useSeedOnce(Boolean(criteriaContent && rolesContent), () => {
+    const formRoles: RoleFormEntry[] = roles.map((role) => ({
+      roleId: role.id,
+      assignments: buildDisplayAssignments(jobCriteria, role.stepIds),
+    }))
+    methods.reset({ roles: formRoles })
+  })
 
-    const employees = getPathValue<Employee[]>(
-      application.answers,
-      'employees',
-      [],
-    )
-    const jobFactors = getPathValue<JobFactor[]>(
-      application.answers,
-      'criteria.jobFactors',
-      [],
-    )
-    const subCriteriaJobFactors = getPathValue<SubCriterion[][]>(
-      application.answers,
-      'subCriteria.jobFactors',
-      [],
-    )
-    const derived = buildRolesFromEmployees(
-      employees.map((e) => e.roleTitle),
-      jobFactors.map((f) => f.title),
-      subCriteriaJobFactors,
-    )
-    return [...derived].sort(byTitle)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  // Seed the full roles object into the form so the complete record (title,
-  // criterionTitle, subTitle, stepOrder) is submitted — the per-step Select
-  // controllers only register `stepOrder`. Always rebuilds from the seed
-  // source, overlaying any stepOrder already in the form (matched by role
-  // title) so in-session edits survive. Idempotent under StrictMode.
   useEffect(() => {
-    if (roles.length === 0) return
-    const current = getValues(FIELD_NAME) as Role[] | undefined
-    const currentByTitle = new Map(
-      (current ?? []).map((role) => [role.title, role]),
-    )
-    const merged = roles.map((role) => {
-      const currentRole = currentByTitle.get(role.title)
-      return {
-        ...role,
-        stepAssignments: role.stepAssignments.map((assignment, ai) => ({
-          ...assignment,
-          stepOrder:
-            currentRole?.stepAssignments?.[ai]?.stepOrder ??
-            assignment.stepOrder,
-        })),
+    if (!setBeforeSubmitCallback || !criteriaContent || !rolesContent) return
+    setBeforeSubmitCallback(async () => {
+      const values = methods.getValues().roles
+      const roleCommands: SyncCommand[] = values.map((entry) => ({
+        method: SyncMethodEnum.UPDATE,
+        id: entry.roleId,
+        data: { stepIds: resolveStepIds(jobCriteria, entry.assignments) },
+      }))
+      try {
+        await sync({ roles: roleCommands })
+        // Silent: about to navigate away, so don't flash a loading state.
+        await Promise.all([
+          refetchCriteria({ silent: true }),
+          refetchRoles({ silent: true }),
+        ])
+      } catch {
+        return [false, formatMessage(messages.errors.draftSyncFailed)]
       }
+      return [true, null]
     })
-    setValue(FIELD_NAME, merged)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [
+    setBeforeSubmitCallback,
+    methods,
+    sync,
+    refetchCriteria,
+    refetchRoles,
+    criteriaContent,
+    rolesContent,
+    jobCriteria,
+    formatMessage,
+  ])
+
+  if (hasError) {
+    return (
+      <DraftErrorState
+        onRetry={() => {
+          refetchCriteria()
+          refetchRoles()
+        }}
+      />
+    )
+  }
+
+  if (loading || !criteriaContent || !rolesContent) {
+    return <DraftLoadingState />
+  }
 
   if (roles.length === 0) {
     return (
@@ -133,18 +143,21 @@ export const JobClassificationEditor: FC<
   }
 
   return (
-    <Box>
-      <Stack space={2}>
-        {roles.map((role, index) => (
-          <RolePanel
-            key={`${role.title}-${index}`}
-            role={role}
-            roleIndex={index}
-            stepMetaByTitle={stepMetaByTitle}
-            startExpanded={index === 0}
-          />
-        ))}
-      </Stack>
-    </Box>
+    <FormProvider {...methods}>
+      <Box>
+        <Stack space={2}>
+          {roles.map((role, index) => (
+            <RolePanel
+              key={role.id}
+              roleTitle={role.title}
+              roleIndex={index}
+              assignments={buildDisplayAssignments(jobCriteria, role.stepIds)}
+              stepMetaBySubCriterionId={stepMetaBySubCriterionId}
+              startExpanded={index === 0}
+            />
+          ))}
+        </Stack>
+      </Box>
+    </FormProvider>
   )
 }

@@ -252,9 +252,19 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
   }
 
   const getMergeCaseValue = () => {
+    const mergeCaseId = workingCase.mergeCase?.id
     const internalCourtCaseNumber = workingCase.mergeCase?.courtCaseNumber
     if (internalCourtCaseNumber) {
-      return internalCourtCaseNumber
+      return mergeCaseId ? (
+        <LinkComponent
+          href={`${ROUTE_HANDLER_ROUTE}/${mergeCaseId}`}
+          key={mergeCaseId}
+        >
+          {internalCourtCaseNumber}
+        </LinkComponent>
+      ) : (
+        internalCourtCaseNumber
+      )
     }
 
     const externalCourtCaseNumber = workingCase.mergeCaseNumber
@@ -283,7 +293,16 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
   const mergedCaseCourtCaseNumber = (mergedCase: Case): Item => ({
     id: 'merged-case-court-case-number-item',
     title: formatMessage(strings.mergedFromTitle),
-    values: [mergedCase.courtCaseNumber],
+    values: mergedCase.courtCaseNumber
+      ? [
+          <LinkComponent
+            href={`${ROUTE_HANDLER_ROUTE}/${mergedCase.id}`}
+            key={mergedCase.id}
+          >
+            {mergedCase.courtCaseNumber}
+          </LinkComponent>,
+        ]
+      : [],
   })
 
   const mergedCaseProsecutor = (mergedCase: Case): Item => ({

@@ -254,10 +254,10 @@ export const m = defineMessages({
     defaultMessage: 'Einstaklingur í umboði lögaðila',
     description: 'Individual on behalf of a legal entity',
   },
-  legalGuardianOnBehalfOfIndividual: {
-    id: 'form.system:legal-guardian-on-behalf-of-individual',
-    defaultMessage: 'Forsjáraðili í umboði einstaklings',
-    description: 'Legal guardian on behalf of an individual',
+  legalGuardian: {
+    id: 'form.system:legal-guardian',
+    defaultMessage: 'Forsjáraðili',
+    description: 'Legal guardian',
   },
   individualWithPowerOfAttorney: {
     id: 'form.system:individual-with-power-of-attorney',
@@ -432,8 +432,8 @@ export const m = defineMessages({
   },
   submitUrls: {
     id: 'form.system:submitUrls',
-    defaultMessage: 'Veldu slóð',
-    description: 'Choose URL',
+    defaultMessage: 'Veldu slóð á vefþjónustu eða málakerfi',
+    description: 'Choose a URL for a web service or case management system',
   },
   permissions: {
     id: 'form.system:permissions',
@@ -662,6 +662,16 @@ export const m = defineMessages({
     id: 'form.system:copy',
     defaultMessage: 'Afrita',
     description: 'Copy',
+  },
+  copyToDifferentOrganization: {
+    id: 'form.system:copy-to-different-organization',
+    defaultMessage: 'Afrita á aðra stofnun',
+    description: 'Copy to different organization',
+  },
+  copyToDifferentOrganizationSuccess: {
+    id: 'form.system:copy-to-different-organization-success',
+    defaultMessage: 'Formið hefur verið afritað á {organization}',
+    description: 'Form copied to organization success message',
   },
   publish: {
     id: 'form.system:publish',
@@ -1313,6 +1323,13 @@ export const m = defineMessages({
       'Ekki er hægt að gefa út formið. Allir reitir með íslensku þurfa enska þýðingu.',
     description:
       'The form cannot be published. All name fields with Icelandic text require an English translation.',
+  },
+  zendeskSettingsNeededError: {
+    id: 'form.system:zendesk-settings-needed-error',
+    defaultMessage:
+      'Ekki er hægt að gefa út formið. Zendesk brand ID og Zendesk instance þurfa að vera skilgreind.',
+    description:
+      'The form cannot be published. Zendesk brand ID and Zendesk instance must be configured.',
   },
   copyFieldHover: {
     id: 'form.system:copy-field-hover',

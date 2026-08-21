@@ -1,0 +1,81 @@
+import {
+  Application,
+  NotificationConfig,
+  NotificationType,
+  ScheduledNotificationConfig,
+} from '@island.is/application/types'
+import { Features } from '@island.is/feature-flags'
+
+/**
+ * Returns end-of-day, `days` days after the application was created.
+ */
+export const endOfDayFromCreation = (
+  application: Application,
+  days: number,
+): Date => {
+  const date = new Date(application.created)
+  date.setUTCDate(date.getUTCDate() + days)
+  const pruneDate = new Date(date)
+  pruneDate.setUTCHours(23, 59, 59, 999)
+  return pruneDate
+}
+
+// Past-dated configs are sent immediately by the worker — callers must guard against this if unwanted.
+
+/**
+ * Shared base for the prune reminder variants below: the single
+ * ApplicationPruneReminder HNIPP template, which links back to the
+ * application via the `applicationLink` arg the API injects when scheduling.
+ */
+const pruneReminder = (
+  timing: { date: Date } | { delayInMs: number },
+  daysBeforePrune: number,
+  pruneDate: Date,
+  featureFlag?: Features,
+): ScheduledNotificationConfig => ({
+  template:
+    NotificationConfig[NotificationType.ApplicationPruneReminder].templateId,
+  includeApplicationLink: true,
+  args: [
+    { key: 'pruneDate', value: pruneDate.toISOString() },
+    { key: 'daysBeforePrune', value: String(daysBeforePrune) },
+  ],
+  featureFlag,
+  ...timing,
+})
+
+/**
+ * Returns a ScheduledNotificationConfig that fires `daysBeforePrune` days before
+ * `pruneDate`. Pass `featureFlag` to only schedule while the flag is enabled.
+ */
+export const schedulePruneReminderBefore = (
+  pruneDate: Date,
+  daysBeforePrune: number,
+  featureFlag?: Features,
+): ScheduledNotificationConfig => {
+  const date = new Date(pruneDate)
+  date.setUTCDate(date.getUTCDate() - daysBeforePrune)
+  return pruneReminder({ date }, daysBeforePrune, pruneDate, featureFlag)
+}
+
+/**
+ * Returns a ScheduledNotificationConfig that fires `daysBeforePrune` days before
+ * `pruneAfterMs` (in milliseconds, e.g. `sevenDays` from a template's own
+ * constants). Intended for states with pruneAt defined as a number. Pass
+ * `featureFlag` to only schedule while the flag is enabled.
+ */
+export const schedulePruneReminderAfterDays = (
+  pruneAfterMs: number,
+  daysBeforePrune: number,
+  featureFlag?: Features,
+): ScheduledNotificationConfig => {
+  const pruneDate = new Date(Date.now() + pruneAfterMs)
+  return pruneReminder(
+    {
+      delayInMs: Math.max(0, pruneAfterMs - daysBeforePrune * 24 * 3600 * 1000),
+    },
+    daysBeforePrune,
+    pruneDate,
+    featureFlag,
+  )
+}

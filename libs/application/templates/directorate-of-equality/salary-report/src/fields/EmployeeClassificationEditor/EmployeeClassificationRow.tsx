@@ -5,25 +5,34 @@ import { Box, Button, Stack, Table as T, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
 import { GENDER_LABELS } from '../../utils/constants'
-import type { Employee, StepAssignment } from '../../utils/types'
+import type {
+  DisplayAssignment,
+  DraftEmployeeWithStepsDto,
+  StepMeta,
+} from '../../utils/types'
 import {
-  computeRoleScore,
+  computeAssignmentScore,
   groupAssignmentsByCriterion,
-  type StepMeta,
 } from '../JobClassificationEditor/utils'
 import { StepAssignmentItem } from '../JobClassificationEditor/StepAssignmentItem'
 import * as styles from '../EmployeesEditor/EmployeesEditor.css'
 
 type Props = {
-  employee: Employee
+  employee: DraftEmployeeWithStepsDto
+  identifier: string
   employeeIndex: number
-  stepMetaByTitle: Record<string, StepMeta>
+  roleTitle: string
+  assignments: DisplayAssignment[]
+  stepMetaBySubCriterionId: Record<string, StepMeta>
 }
 
 export const EmployeeClassificationRow: FC<Props> = ({
   employee,
+  identifier,
   employeeIndex,
-  stepMetaByTitle,
+  roleTitle,
+  assignments,
+  stepMetaBySubCriterionId,
 }) => {
   const { formatMessage } = useLocale()
   const [expanded, setExpanded] = useState(false)
@@ -32,13 +41,13 @@ export const EmployeeClassificationRow: FC<Props> = ({
   // Live step orders for this employee drive the per-criterion score below
   // each title.
   const watched = useWatch({
-    name: `employees.${employeeIndex}.personalStepAssignments`,
-  }) as StepAssignment[] | undefined
+    name: `employees.${employeeIndex}.assignments`,
+  }) as DisplayAssignment[] | undefined
 
-  const assignments = watched ?? employee.personalStepAssignments
+  const currentAssignments = watched ?? assignments
 
   const background = expanded ? 'blue100' : 'transparent'
-  const groups = groupAssignmentsByCriterion(employee.personalStepAssignments)
+  const groups = groupAssignmentsByCriterion(assignments)
 
   return (
     <>
@@ -57,8 +66,8 @@ export const EmployeeClassificationRow: FC<Props> = ({
             title={formatMessage(m.nameColumn)}
           />
         </T.Data>
-        <T.Data box={{ background }}>{employee.identifier}</T.Data>
-        <T.Data box={{ background }}>{employee.roleTitle}</T.Data>
+        <T.Data box={{ background }}>{identifier}</T.Data>
+        <T.Data box={{ background }}>{roleTitle}</T.Data>
         <T.Data box={{ background }}>
           {GENDER_LABELS[employee.gender] ?? employee.gender}
         </T.Data>
@@ -75,14 +84,15 @@ export const EmployeeClassificationRow: FC<Props> = ({
               <Stack space={3}>
                 {groups.map((group) => {
                   const groupAssignments = group.items.map(
-                    ({ index }) => assignments[index],
+                    ({ assignment, index }) =>
+                      currentAssignments[index] ?? assignment,
                   )
-                  const { score, max } = computeRoleScore(
+                  const { score, max } = computeAssignmentScore(
                     groupAssignments,
-                    stepMetaByTitle,
+                    stepMetaBySubCriterionId,
                   )
                   return (
-                    <Box key={group.criterionTitle}>
+                    <Box key={group.criterionId}>
                       <Text variant="h5" marginBottom={1}>
                         {group.criterionTitle}
                       </Text>
@@ -95,11 +105,15 @@ export const EmployeeClassificationRow: FC<Props> = ({
                       <Stack space={2}>
                         {group.items.map(({ assignment, index }) => (
                           <StepAssignmentItem
-                            key={`${assignment.subTitle}-${index}`}
-                            fieldName={`employees.${employeeIndex}.personalStepAssignments.${index}.stepOrder`}
+                            key={assignment.subCriterionId}
+                            fieldName={`employees.${employeeIndex}.assignments.${index}.stepOrder`}
                             subTitle={assignment.subTitle}
                             defaultStepOrder={assignment.stepOrder}
-                            meta={stepMetaByTitle[assignment.subTitle]}
+                            meta={
+                              stepMetaBySubCriterionId[
+                                assignment.subCriterionId
+                              ]
+                            }
                           />
                         ))}
                       </Stack>
