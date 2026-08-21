@@ -14,6 +14,7 @@ import {
   INDENT_STEP_PX,
   indentClassFromLevel,
   levelFromIndentClass,
+  MARKER_NONE_CLASS,
   MAX_INDENT_LEVEL,
   normalizeRichTextHtml,
   WORD_HIGHLIGHT_COLORS,
@@ -233,6 +234,18 @@ const TinyMCE = ({
     const changeIndent = (delta: number) => () => {
       const blocks = editor.selection.getSelectedBlocks()
       if (blocks.length === 0) return
+
+      // Inside a list, indenting means nesting the item rather than padding it.
+      // The lists plugin restructures the list on Indent/Outdent, and the core
+      // indent command skips list content, so no inline style is produced.
+      if (
+        editor.queryCommandState('InsertUnorderedList') ||
+        editor.queryCommandState('InsertOrderedList')
+      ) {
+        editor.execCommand(delta > 0 ? 'Indent' : 'Outdent')
+        return
+      }
+
       editor.undoManager.transact(() => {
         blocks.forEach((block) => {
           const current = getIndentLevel(block)
@@ -292,7 +305,7 @@ const TinyMCE = ({
             height,
             plugins: 'lists fullscreen paste',
             toolbar:
-              'bold italic blockindent blockoutdent highlightcolor fullscreen',
+              'bold italic bullist numlist blockindent blockoutdent highlightcolor fullscreen',
             toolbar_mode: 'wrap',
             menubar: false,
             formats: {
@@ -315,20 +328,48 @@ const TinyMCE = ({
               editor.on('PastePreProcess', (args) => {
                 args.content = normalizeRichTextHtml(args.content)
               })
+              // Everything leaving the editor goes through getContent, so this
+              // is the one place that can guarantee the WAF invariant: no
+              // request body may contain a style attribute. The lists plugin
+              // writes an inline list-style-type on the wrapper items it
+              // creates, which would otherwise be saved verbatim. Rewriting
+              // here rather than in the editor's own DOM leaves the caret and
+              // the undo stack untouched.
+              editor.on('GetContent', (args) => {
+                if (
+                  args.format === 'html' &&
+                  typeof args.content === 'string'
+                ) {
+                  args.content = normalizeRichTextHtml(args.content)
+                }
+              })
               setupHighlightButton(editor)
               setupIndentButtons(editor)
             },
-            paste_word_valid_elements: 'p,b,strong,i,em,span,br',
+            // ul/ol/li are kept so bullet and numbered lists survive a Word
+            // paste — both the real lists Word sometimes emits and the ones the
+            // paste plugin rebuilds from Word's mso-list paragraphs.
+            paste_word_valid_elements: 'p,b,strong,i,em,span,br,ul,ol,li',
             // "background" (shorthand) is required: Word highlights arrive as
             // "background:yellow" and the paste plugin also maps mso-highlight
             // to "background". These retained styles never reach the content —
             // PastePreProcess converts them all to classes/semantic tags and
             // strips every style attribute.
+            // text-indent is required too: Word's AutoFormat turns a Tab at
+            // the start of a paragraph into a first-line indent, which arrives
+            // as text-indent rather than margin-left.
             paste_retain_style_properties:
-              'font-weight,font-style,background,background-color,margin-left,padding-left',
+              'font-weight,font-style,background,background-color,margin-left,padding-left,text-indent',
             paste_strip_class_attributes: 'all',
             content_style:
               "@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,700;1,300;1,700&display=swap'); body { font-family: 'IBM Plex Sans', sans-serif; font-size: 18px; font-weight: 300; } strong, b { font-weight: 700; } p { margin: 0; } " +
+              // Every nesting level keeps the same bullet. The browser default
+              // cycles disc/circle/square, but the PDF's standard Times fonts
+              // only carry the bullet glyph, so the editor is pinned to it too
+              // rather than showing markers the PDF cannot reproduce. An author
+              // rule beats the user-agent 'ul ul' default at any depth.
+              'ul { list-style-type: disc; } ' +
+              `li.${MARKER_NONE_CLASS} { list-style-type: none; } ` +
               CLASS_CONTENT_STYLE,
             branding: false,
             statusbar: false,

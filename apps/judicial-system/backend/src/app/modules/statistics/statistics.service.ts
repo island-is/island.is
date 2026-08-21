@@ -6,7 +6,6 @@ import isEqual from 'date-fns/isEqual'
 import { col, fn, Includeable, literal, Op, WhereOptions } from 'sequelize'
 
 import { Inject, Injectable } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -37,6 +36,7 @@ import {
   EventLog,
   IndictmentCount,
   Institution,
+  InstitutionRepositoryService,
   Offense,
   Subpoena,
   SubpoenaRepositoryService,
@@ -118,8 +118,7 @@ export const partition = <T>(
 @Injectable()
 export class StatisticsService {
   constructor(
-    @InjectModel(Institution)
-    private readonly institutionModel: typeof Institution,
+    private readonly institutionRepositoryService: InstitutionRepositoryService,
     private readonly subpoenaRepositoryService: SubpoenaRepositoryService,
     private readonly caseRepositoryService: CaseRepositoryService,
     private readonly awsS3Service: AwsS3Service,
@@ -473,15 +472,10 @@ export class StatisticsService {
 
     // get institutions that are not linked directly to a case but
     // are known to handle certain events
-    const institutions = await this.institutionModel.findAll({
-      where: {
-        active: true,
-        type: [
-          InstitutionType.PRISON_ADMIN,
-          InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
-        ],
-      },
-    })
+    const institutions = await this.institutionRepositoryService.findAllActive([
+      InstitutionType.PRISON_ADMIN,
+      InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
+    ])
 
     // create events for data analytics for each case
     if (!period) return []

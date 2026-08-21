@@ -19,6 +19,7 @@ export enum States {
 export enum Roles {
   APPLICANT = 'applicant',
   NOT_ALLOWED = 'notAllowed',
+  ASSIGNEE = 'assignee',
 }
 
 export enum Gender {
@@ -42,4 +43,6 @@ export enum ApiActions {
   getEqualityReportTemplateDocx = 'getEqualityReportTemplateDocx',
   getPreviousEqualityReportContent = 'getPreviousEqualityReportContent',
   submitEqualityReport = 'submitEqualityReport',
+  getReportComments = 'getReportComments',
+  submitReportComment = 'submitReportComment',
 }

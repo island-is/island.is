@@ -1,4 +1,3 @@
-import { Op } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import {
@@ -9,7 +8,7 @@ import {
 
 import { createTestingUserModule } from './createTestingUserModule'
 
-import { Institution, User } from '../../repository'
+import { User, UserRepositoryService } from '../../repository'
 
 interface Then {
   result: User[]
@@ -19,13 +18,14 @@ interface Then {
 type GivenWhenThen = (role: UserRole) => Promise<Then>
 
 describe('UserController - Get all', () => {
-  let mockUserModel: typeof User
+  let mockUserRepositoryService: UserRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { userModel, userController } = await createTestingUserModule()
+    const { userRepositoryService, userController } =
+      await createTestingUserModule()
 
-    mockUserModel = userModel
+    mockUserRepositoryService = userRepositoryService
 
     givenWhenThen = async (role: UserRole) => {
       const then = {} as Then
@@ -47,21 +47,18 @@ describe('UserController - Get all', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFindAll = mockUserModel.findAll as jest.Mock
-      mockFindAll.mockResolvedValueOnce(users)
+      const mockFindAllForAdmin =
+        mockUserRepositoryService.findAllForAdmin as jest.Mock
+      mockFindAllForAdmin.mockResolvedValueOnce(users)
 
       then = await givenWhenThen(UserRole.ADMIN)
     })
 
     it('should return all users', () => {
-      expect(mockUserModel.findAll).toHaveBeenCalledWith({
-        order: ['name'],
-        include: [{ model: Institution, as: 'institution' }],
-        where: {
-          role: { [Op.not]: UserRole.ADMIN },
-          '$institution.type$': Object.values(InstitutionType),
-        },
-      })
+      expect(mockUserRepositoryService.findAllForAdmin).toHaveBeenCalledWith(
+        UserRole.ADMIN,
+        Object.values(InstitutionType),
+      )
       expect(then.result).toEqual(users)
     })
   })
@@ -71,21 +68,18 @@ describe('UserController - Get all', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFindAll = mockUserModel.findAll as jest.Mock
-      mockFindAll.mockResolvedValueOnce(users)
+      const mockFindAllForAdmin =
+        mockUserRepositoryService.findAllForAdmin as jest.Mock
+      mockFindAllForAdmin.mockResolvedValueOnce(users)
 
       then = await givenWhenThen(UserRole.LOCAL_ADMIN)
     })
 
     it('should return all users', () => {
-      expect(mockUserModel.findAll).toHaveBeenCalledWith({
-        order: ['name'],
-        include: [{ model: Institution, as: 'institution' }],
-        where: {
-          role: { [Op.not]: UserRole.LOCAL_ADMIN },
-          '$institution.type$': [InstitutionType.POLICE_PROSECUTORS_OFFICE],
-        },
-      })
+      expect(mockUserRepositoryService.findAllForAdmin).toHaveBeenCalledWith(
+        UserRole.LOCAL_ADMIN,
+        [InstitutionType.POLICE_PROSECUTORS_OFFICE],
+      )
       expect(then.result).toEqual(users)
     })
   })
@@ -99,18 +93,15 @@ describe('UserController - Get all', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFindAll = mockUserModel.findAll as jest.Mock
-      mockFindAll.mockResolvedValueOnce(users)
+      const mockFindAllActive =
+        mockUserRepositoryService.findAllActive as jest.Mock
+      mockFindAllActive.mockResolvedValueOnce(users)
 
       then = await givenWhenThen(role)
     })
 
     it('should return all active users', () => {
-      expect(mockUserModel.findAll).toHaveBeenCalledWith({
-        order: ['name'],
-        where: { active: true },
-        include: [{ model: Institution, as: 'institution' }],
-      })
+      expect(mockUserRepositoryService.findAllActive).toHaveBeenCalled()
       expect(then.result).toEqual(users)
     })
   })

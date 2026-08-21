@@ -1,12 +1,14 @@
 import { Dispatch, FC, SetStateAction } from 'react'
 
 import {
+  AlertMessage,
   Box,
   GridColumn,
   GridRow,
   Input,
   RadioButton,
 } from '@island.is/island-ui/core'
+import { appealCorrectionLock } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   SectionHeading,
@@ -18,6 +20,7 @@ import {
   CourtSessionResponse,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCourtSessions } from '@island.is/judicial-system-web/src/utils/hooks'
+import { rulingOrderAppealCase } from '@island.is/judicial-system-web/src/utils/utils'
 
 interface Props {
   courtSession: CourtSessionResponse
@@ -56,7 +59,16 @@ const CourtSessionAppealDecisions: FC<Props> = ({
     return null
   }
 
-  const disabled = Boolean(courtSession.isConfirmed)
+  // Correcting the court record re-opens the session, so isConfirmed alone stops
+  // guarding the decisions from that point on. Once the appeal they produced has
+  // left the court record's reach - a party filed its own appeal, or Landsréttur
+  // has the case - they stay locked through the correction (see
+  // appealCorrectionLock). courtSession.service.upsertAppealDecision rejects the
+  // same cases server-side.
+  const lock = appealCorrectionLock(
+    rulingOrderAppealCase(workingCase, rulingFileId),
+  )
+  const disabled = Boolean(courtSession.isConfirmed) || Boolean(lock)
 
   const findDecision = (party: PartyKey) =>
     workingCase.appealDecisions?.find(
@@ -132,11 +144,11 @@ const CourtSessionAppealDecisions: FC<Props> = ({
         value: CaseAppealDecision.ACCEPT,
         label: `${nominative} unir úrskurðinum`,
       },
-      { value: CaseAppealDecision.NOT_APPLICABLE, label: 'Á ekki við' },
       {
         value: CaseAppealDecision.POSTPONE,
         label: `${nominative} tekur sér lögboðinn frest`,
       },
+      { value: CaseAppealDecision.NOT_APPLICABLE, label: 'Á ekki við' },
     ]
 
     // The announcement (yfirlýsing) becomes part of the court record, so picking
@@ -219,6 +231,20 @@ const CourtSessionAppealDecisions: FC<Props> = ({
         title="Ákvörðun um kæru"
         description="Dómari kynnir rétt til að kæra úrskurð og um kærufrest skv. 193. gr. laga nr. 88/2008."
       />
+      {/* Only shown while the session is open for correction - a confirmed
+      session disables everything anyway, and the reason is then obvious. */}
+      {lock && !courtSession.isConfirmed && (
+        <Box marginBottom={3}>
+          <AlertMessage
+            type="info"
+            message={
+              lock === 'OUT_OF_COURT'
+                ? 'Úrskurðurinn hefur verið kærður utan þinghalds og því er ekki hægt að breyta ákvörðun um kæru.'
+                : 'Kæra úrskurðarins er komin til Landsréttar og því er ekki hægt að breyta ákvörðun um kæru.'
+            }
+          />
+        </Box>
+      )}
       <Box display="flex" flexDirection="column" rowGap={3}>
         {workingCase.defendants?.map((defendant) =>
           renderCard(

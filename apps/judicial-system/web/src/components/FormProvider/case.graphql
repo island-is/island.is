@@ -448,6 +448,7 @@ query Case($input: CaseQueryInput!) {
       appealValidToDate
       isAppealCustodyIsolation
       appealIsolationToDate
+      rulingFileId
     }
     rulingOrderAppealCases {
       id
@@ -457,6 +458,7 @@ query Case($input: CaseQueryInput!) {
       appealedByRole
       appealedDate
       appealedInCourt
+      appealedOutOfCourt
       statementDeadline
       isStatementDeadlineExpired
       appealCaseNumber
@@ -676,6 +678,7 @@ query Case($input: CaseQueryInput!) {
         appealedByCivilClaimantId
         appealedByRole
         appealedInCourt
+        appealedOutOfCourt
         appealedDate
         statementDeadline
         isStatementDeadlineExpired

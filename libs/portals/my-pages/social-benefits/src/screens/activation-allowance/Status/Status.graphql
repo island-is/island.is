@@ -12,22 +12,6 @@ query getActivationAllowanceApplicationOverview($locale: String) {
   }
 }
 
-query getApplicantOverview($locale: String) {
-  vmstApplicantOverview(locale: $locale) {
-    passCode
-    preferredJobs
-    bankAccount
-    employmentHistory
-    educationHistory
-    drivingLicenses
-    languageAbilities {
-      name
-      proficiency
-    }
-    currentAddressDifferent
-  }
-}
-
 query getApplicantAvailableActions {
   vmstApplicantAvailableActions {
     canContact
