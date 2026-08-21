@@ -306,7 +306,18 @@ export const PoliceCase: FC<Props> = ({
             },
           })
         }
-        onBlur={() => updatePoliceCase()}
+        onBlur={() => {
+          const { place } = policeCaseNumberCrimeScene
+
+          // A whitespace-only place is persisted as '' - pass the normalized
+          // update explicitly so the working case (and with it the displayed
+          // value) matches what the server stores.
+          updatePoliceCase(
+            place && place.trim() === ''
+              ? { crimeScene: { ...policeCaseNumberCrimeScene, place: '' } }
+              : undefined,
+          )
+        }}
       />
       <DateTime
         name={crimeSceneDateId}

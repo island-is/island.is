@@ -253,4 +253,38 @@ describe('validateAndSendToServer', () => {
     // Assert
     expect(spy).not.toHaveBeenCalled()
   })
+
+  test('should not call the updateCase function with a whitespace-only value for a required field', () => {
+    // Arrange
+    const spy = jest.fn()
+    const setErrorMessage = jest.fn()
+    const theCase = { id: faker.datatype.uuid() } as Case
+
+    // Act
+    validateAndSendToServer(
+      'comments',
+      '   ',
+      ['empty'],
+      theCase,
+      spy,
+      setErrorMessage,
+    )
+
+    // Assert
+    expect(spy).not.toHaveBeenCalled()
+    expect(setErrorMessage).toHaveBeenCalledWith('Reitur má ekki vera tómur')
+  })
+
+  test('should persist a whitespace-only value as an empty string for an optional field', () => {
+    // Arrange
+    const spy = jest.fn()
+    const id = faker.datatype.uuid()
+    const theCase = { id } as Case
+
+    // Act
+    validateAndSendToServer('comments', '   ', [], theCase, spy)
+
+    // Assert
+    expect(spy).toHaveBeenCalledWith(id, { comments: '' })
+  })
 })

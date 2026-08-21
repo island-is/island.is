@@ -259,17 +259,21 @@ const DefendantInfo: FC<Props> = (props) => {
           )
         }}
         onBlur={(evt) => {
-          validateAndSetErrorMessage(
+          const isValid = validateAndSetErrorMessage(
             ['empty'],
             evt.target.value,
             setAccusedAddressErrorMessage,
           )
 
-          onChange({
-            caseId: workingCase.id,
-            defendantId: defendant.id,
-            address: evt.target.value.trim(),
-          })
+          // Gate the save on validity, like InputName does for the name: a
+          // required field that fails validation is flagged, not persisted.
+          if (isValid) {
+            onChange({
+              caseId: workingCase.id,
+              defendantId: defendant.id,
+              address: evt.target.value.trim(),
+            })
+          }
         }}
         required
       />

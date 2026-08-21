@@ -54,7 +54,10 @@ const InputName: FC<InputProps> = (props) => {
   const handleChange = (
     evt: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    if (evt.target.value) {
+    // Clear the error as soon as the problem it describes is fixed, the same
+    // as removeErrorMessageIfValid does for other inputs - a whitespace-only
+    // value is still empty, so the message stays until real content arrives.
+    if (validate([[evt.target.value, ['empty']]]).isValid) {
       setErrorMessage(undefined)
     }
 
@@ -67,7 +70,13 @@ const InputName: FC<InputProps> = (props) => {
       return
     }
 
-    setErrorMessage(undefined)
+    // The parent echoes every keystroke back through `value`, so apply the
+    // same rule as handleChange: a whitespace-only value is still empty and
+    // keeps its error.
+    if (validate([[value, ['empty']]]).isValid) {
+      setErrorMessage(undefined)
+    }
+
     setInputValue(value)
   }, [value])
 
