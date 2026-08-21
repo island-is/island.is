@@ -558,6 +558,11 @@ export const messages = {
         defaultMessage:
           'Villa kom upp við innflutning. Vinsamlegast reyndu aftur.',
       },
+      excelTemplateDownloadDescription: {
+        id: 'doe.sr.application:report.dataEntry.excelTemplateDownloadDescription',
+        defaultMessage:
+          'Athugið að bein tenging við vefþjónustu Jafnréttisstofu til að einfalda stór gagnaskil er væntanleg.',
+      },
     }),
     criteria: defineMessages({
       sectionTitle: {
