@@ -1,5 +1,5 @@
 import { Inject, UseGuards } from '@nestjs/common'
-import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Resolver } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -15,12 +15,14 @@ import {
 import type { User } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
+import { AppealDecisionResponse } from './dto/appealDecision.response'
 import { CourtSessionResponse } from './dto/courtSession.response'
 import { CourtSessionString } from './dto/courtSessionString.response'
 import { CreateCourtSessionInput } from './dto/createCourtSession.input'
 import { DeleteCourtSessionInput } from './dto/deleteCourtSession.input'
 import { DeleteCourtSessionResponse } from './dto/deleteCourtSession.response'
 import { UpdateCourtSessionInput } from './dto/updateCourtSession.input'
+import { UpdateCourtSessionAppealDecisionInput } from './dto/updateCourtSessionAppealDecision.input'
 import { UpdateCourtSessionStringInput } from './dto/updateCourtSessionString.input'
 
 @UseGuards(JwtGraphQlAuthUserGuard)
@@ -30,6 +32,7 @@ export class CourtSessionResolver {
     private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly backendService: BackendService,
   ) {}
 
   @Mutation(() => CourtSessionResponse, { nullable: true })
@@ -37,8 +40,6 @@ export class CourtSessionResolver {
     @Args('input', { type: () => CreateCourtSessionInput })
     input: CreateCourtSessionInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<CourtSessionResponse> {
     const { caseId, ...createCourtSession } = input
 
@@ -47,7 +48,7 @@ export class CourtSessionResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_COURT_SESSION,
-      backendService.createCourtSession(caseId, createCourtSession),
+      this.backendService.createCourtSession(caseId, createCourtSession),
       (theCourtSession) => theCourtSession.id,
     )
   }
@@ -57,8 +58,6 @@ export class CourtSessionResolver {
     @Args('input', { type: () => UpdateCourtSessionInput })
     input: UpdateCourtSessionInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<CourtSessionResponse> {
     const { caseId, courtSessionId, ...updateCourtSession } = input
 
@@ -69,7 +68,7 @@ export class CourtSessionResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_COURT_SESSION,
-      backendService.updateCourtSession(
+      this.backendService.updateCourtSession(
         caseId,
         courtSessionId,
         updateCourtSession,
@@ -83,8 +82,6 @@ export class CourtSessionResolver {
     @Args('input', { type: () => UpdateCourtSessionStringInput })
     input: UpdateCourtSessionStringInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<CourtSessionString> {
     const { caseId, courtSessionId, ...updateCourtSessionString } = input
 
@@ -95,10 +92,34 @@ export class CourtSessionResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_COURT_SESSION,
-      backendService.updateCourtSessionString(
+      this.backendService.updateCourtSessionString(
         caseId,
         courtSessionId,
         updateCourtSessionString,
+      ),
+      courtSessionId,
+    )
+  }
+
+  @Mutation(() => AppealDecisionResponse, { nullable: true })
+  updateCourtSessionAppealDecision(
+    @Args('input', { type: () => UpdateCourtSessionAppealDecisionInput })
+    input: UpdateCourtSessionAppealDecisionInput,
+    @CurrentGraphQlUser() user: User,
+  ): Promise<AppealDecisionResponse> {
+    const { caseId, courtSessionId, ...updateAppealDecision } = input
+
+    this.logger.debug(
+      `Updating appeal decision in court session ${courtSessionId} for case ${caseId}`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.UPDATE_COURT_SESSION,
+      this.backendService.updateCourtSessionAppealDecision(
+        caseId,
+        courtSessionId,
+        updateAppealDecision,
       ),
       courtSessionId,
     )
@@ -109,8 +130,6 @@ export class CourtSessionResolver {
     @Args('input', { type: () => DeleteCourtSessionInput })
     input: DeleteCourtSessionInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<DeleteCourtSessionResponse> {
     const { caseId, courtSessionId } = input
 
@@ -121,7 +140,7 @@ export class CourtSessionResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.DELETE_COURT_SESSION,
-      backendService.deleteCourtSession(caseId, courtSessionId),
+      this.backendService.deleteCourtSession(caseId, courtSessionId),
       courtSessionId,
     )
   }

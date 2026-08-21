@@ -1,3 +1,5 @@
+import { KeyboardEvent } from 'react'
+
 import { TagVariant } from '@island.is/island-ui/core'
 import {
   formatDate,
@@ -13,10 +15,13 @@ import {
 import {
   AppealCase,
   AppealCaseState,
+  AppealDecisionPartyRole,
   Case,
   CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseFileCategory,
+  CourtSessionString,
+  CourtSessionStringType,
   Defendant,
   DefendantPlea,
   Gender,
@@ -120,6 +125,16 @@ export const hasSentNotification = (
     date: notificationsOfType[0].created,
   }
 }
+
+// Whether the indictment has been sent to the public prosecutor after its
+// latest completion/correction
+export const isSentToPublicProsecutor = (workingCase: Case): boolean =>
+  Boolean(
+    workingCase.indictmentCompletedDate &&
+      workingCase.indictmentSentToPublicProsecutorDate &&
+      workingCase.indictmentSentToPublicProsecutorDate >
+        workingCase.indictmentCompletedDate,
+  )
 
 export const isReopenedCOACase = (
   appealCase: AppealCase | undefined | null,
@@ -265,6 +280,90 @@ export const getDefenceUserPartyIds = (
   return {}
 }
 
+// The case-level appeal_decision row of a party - the one with no rulingFileId.
+const caseLevelAppealDecisionRow = (
+  appealDecisions: Case['appealDecisions'],
+  partyRole: AppealDecisionPartyRole,
+) =>
+  appealDecisions?.find(
+    (decision) => !decision.rulingFileId && decision.partyRole === partyRole,
+  )
+
+/**
+ * The in-court appeal decision (Ákvörðun um kæru) recorded for a case-level
+ * party - the collective defence (DEFENDANT) or the prosecution (PROSECUTOR).
+ * Case-level decisions are the appeal_decision rows with no rulingFileId.
+ */
+export const caseLevelAppealDecision = (
+  appealDecisions: Case['appealDecisions'],
+  partyRole: AppealDecisionPartyRole,
+): CaseAppealDecision | undefined =>
+  caseLevelAppealDecisionRow(appealDecisions, partyRole)?.decision ?? undefined
+
+/**
+ * The in-court appeal announcement (free text) recorded for a case-level party.
+ * Same case-level row (no rulingFileId) as caseLevelAppealDecision.
+ */
+export const caseLevelAppealAnnouncement = (
+  appealDecisions: Case['appealDecisions'],
+  partyRole: AppealDecisionPartyRole,
+): string | undefined =>
+  caseLevelAppealDecisionRow(appealDecisions, partyRole)?.announcement ??
+  undefined
+
+/**
+ * Returns a new appeal-decisions array where the case-level (no rulingFileId)
+ * row for `partyRole` has the provided `decision` / `announcement` applied -
+ * appending a fresh case-level row when none exists yet. Only the keys present
+ * on `update` are overwritten, so an announcement-only update leaves the
+ * decision intact and vice versa. Used for optimistic local updates while the
+ * mutation persists the rows server-side.
+ */
+export const withCaseLevelAppealDecision = (
+  appealDecisions: Case['appealDecisions'],
+  partyRole: AppealDecisionPartyRole,
+  update: { decision?: CaseAppealDecision; announcement?: string },
+): Case['appealDecisions'] => {
+  const decisions = appealDecisions ?? []
+  const patch = {
+    ...('decision' in update ? { decision: update.decision } : {}),
+    ...('announcement' in update ? { announcement: update.announcement } : {}),
+  }
+
+  const index = decisions.findIndex(
+    (decision) => !decision.rulingFileId && decision.partyRole === partyRole,
+  )
+
+  if (index === -1) {
+    return [
+      ...decisions,
+      { partyRole, rulingFileId: null, ...patch } as NonNullable<
+        Case['appealDecisions']
+      >[number],
+    ]
+  }
+
+  return decisions.map((decision, i) =>
+    i === index ? { ...decision, ...patch } : decision,
+  )
+}
+
+/**
+ * The appeal of a specific ruling order, if it has one. A case can carry several
+ * ruling-order appeals at once, keyed by the ruling file they were made against
+ * - so anything acting on one ruling must resolve its own appeal rather than the
+ * case-level `appealCase`.
+ */
+export const rulingOrderAppealCase = (
+  workingCase: Case,
+  rulingFileId: string | null | undefined,
+): AppealCase | undefined =>
+  rulingFileId
+    ? workingCase.rulingOrderAppealCases?.find(
+        (appealCase) => appealCase.rulingFileId === rulingFileId,
+      )
+    : undefined
+
 /**
  * Returns a human-readable description of who appealed and when.
  *
@@ -287,8 +386,14 @@ export const getAppealActorText = (
 ): string => {
   if (isRequestCase(workingCase.type)) {
     const appealedInCourt =
-      workingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
-      workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
+      caseLevelAppealDecision(
+        workingCase.appealDecisions,
+        AppealDecisionPartyRole.PROSECUTOR,
+      ) === CaseAppealDecision.APPEAL ||
+      caseLevelAppealDecision(
+        workingCase.appealDecisions,
+        AppealDecisionPartyRole.DEFENDANT,
+      ) === CaseAppealDecision.APPEAL
 
     if (appealedInCourt) {
       return appealCase?.appealedByRole === UserRole.PROSECUTOR
@@ -302,13 +407,9 @@ export const getAppealActorText = (
       return `Kært af sækjanda ${dateStr}`
     }
 
-    const party = getAppealingPartyInfo(
-      workingCase,
-      appealCase?.appealedByNationalId,
-    )
-
-    return party
-      ? `${party.role} ${party.name} kærði úrskurðinn ${dateStr}`
+    // Request-case defence is collective - name the case's current defender.
+    return workingCase.defenderName
+      ? `Verjandi ${workingCase.defenderName} kærði úrskurðinn ${dateStr}`
       : `Kært af verjanda ${dateStr}`
   }
 
@@ -316,13 +417,20 @@ export const getAppealActorText = (
   if (appealCase?.rulingFileId) {
     const dateStr = formatDate(appealCase.appealedDate, 'PPPp')
 
+    // In-court ruling-order appeal: any number of parties may have appealed in
+    // the þingbók, so the court of appeals shows it without naming who appealed.
+    if (appealCase.appealedInCourt) {
+      return `Kært í þinghaldi ${dateStr}`
+    }
+
     if (appealCase.appealedByRole === UserRole.PROSECUTOR) {
       return `Ákærandi kærði úrskurðinn ${dateStr}`
     }
 
     const party = getAppealingPartyInfo(
       workingCase,
-      appealCase.appealedByNationalId,
+      appealCase.appealedByDefendantId,
+      appealCase.appealedByCivilClaimantId,
     )
 
     return party
@@ -339,7 +447,8 @@ export const getAppealActorText = (
 
   const party = getAppealingPartyInfo(
     workingCase,
-    appealCase?.appealedByNationalId,
+    appealCase?.appealedByDefendantId,
+    appealCase?.appealedByCivilClaimantId,
   )
 
   return party
@@ -348,55 +457,317 @@ export const getAppealActorText = (
 }
 
 /**
- * Given an appealedByNationalId, find the appealing party among confirmed
- * defenders and civil claimant spokespersons.
+ * Given the appealing party (defendant or civil claimant, as recorded on the
+ * appeal case's event log), return its role label and *current* representative's
+ * name - so it follows a defender / spokesperson reassignment.
  *
- * Search order: confirmed defenders first, then confirmed civil claimant
- * spokespersons.
- *
- * Returns the role label and name, or undefined if not found.
+ * Returns the role label and name, or undefined if the party is not found.
  */
 export const getAppealingPartyInfo = (
   workingCase: Case,
-  appealedByNationalId?: string | null,
+  appealedByDefendantId?: string | null,
+  appealedByCivilClaimantId?: string | null,
 ): { role: string; name: string } | undefined => {
-  if (!appealedByNationalId) {
-    return undefined
+  if (appealedByDefendantId) {
+    const defendant = workingCase.defendants?.find(
+      (d) => d.id === appealedByDefendantId,
+    )
+
+    if (defendant) {
+      return { role: 'Verjandi', name: defendant.defenderName ?? '' }
+    }
   }
 
-  const normalizedId = normalizeAndFormatNationalId(appealedByNationalId)
+  if (appealedByCivilClaimantId) {
+    const civilClaimant = workingCase.civilClaimants?.find(
+      (cc) => cc.id === appealedByCivilClaimantId,
+    )
 
-  // Check confirmed defenders first
-  const defender = workingCase.defendants?.find(
-    (defendant) =>
-      defendant.isDefenderChoiceConfirmed &&
-      defendant.defenderNationalId &&
-      normalizedId.includes(defendant.defenderNationalId),
-  )
-
-  if (defender) {
-    return { role: 'Verjandi', name: defender.defenderName ?? '' }
-  }
-
-  // Then check confirmed civil claimant spokespersons
-  const civilClaimant = workingCase.civilClaimants?.find(
-    (cc) =>
-      cc.hasSpokesperson &&
-      cc.isSpokespersonConfirmed &&
-      cc.spokespersonNationalId &&
-      normalizedId.includes(cc.spokespersonNationalId),
-  )
-
-  if (civilClaimant) {
-    return {
-      role: civilClaimant.spokespersonIsLawyer
-        ? 'Lögmaður'
-        : 'Réttargæslumaður',
-      name: civilClaimant.spokespersonName ?? '',
+    if (civilClaimant) {
+      return {
+        role: civilClaimant.spokespersonIsLawyer
+          ? 'Lögmaður'
+          : 'Réttargæslumaður',
+        name: civilClaimant.spokespersonName ?? '',
+      }
     }
   }
 
   return undefined
+}
+
+/**
+ * True when the user is the *current* confirmed representative (defender /
+ * spokesperson) of the out-of-court appellant party - the web mirror of the
+ * backend `userIsAppellant` indictment-defence check, so it follows a
+ * defender / spokesperson reassignment.
+ */
+export const isCurrentAppellantRepresentative = (
+  workingCase: Case,
+  appealCase: AppealCase,
+  userNationalId?: string | null,
+): boolean => {
+  if (!userNationalId) {
+    return false
+  }
+
+  if (appealCase.appealedByDefendantId) {
+    const defendant = workingCase.defendants?.find(
+      (d) => d.id === appealCase.appealedByDefendantId,
+    )
+
+    return Boolean(
+      defendant?.isDefenderChoiceConfirmed &&
+        defendant.defenderNationalId === userNationalId,
+    )
+  }
+
+  if (appealCase.appealedByCivilClaimantId) {
+    const civilClaimant = workingCase.civilClaimants?.find(
+      (cc) => cc.id === appealCase.appealedByCivilClaimantId,
+    )
+
+    return Boolean(
+      civilClaimant?.hasSpokesperson &&
+        civilClaimant.isSpokespersonConfirmed &&
+        civilClaimant.spokespersonNationalId === userNationalId,
+    )
+  }
+
+  return false
+}
+
+/**
+ * Resolves the in-court appeal decision (Ákvörðun um kæru) recorded for the
+ * party the current user acts for - the prosecution, or the defendant / civil
+ * claimant the defence user is the confirmed representative of. Mirrors the
+ * backend helper (appealCase.helpers.findUserRulingOrderAppealDecision).
+ */
+const findUserRulingOrderAppealDecision = (
+  workingCase: Case,
+  user: User | undefined,
+  rulingFileId: string,
+) => {
+  if (!user) {
+    return undefined
+  }
+
+  let partyRole: AppealDecisionPartyRole
+  let defendantId: string | undefined
+  let civilClaimantId: string | undefined
+
+  if (isProsecutionUser(user)) {
+    partyRole = AppealDecisionPartyRole.PROSECUTOR
+  } else if (isDefenceUser(user)) {
+    const defendant = workingCase.defendants?.find(
+      (d) =>
+        d.isDefenderChoiceConfirmed &&
+        d.defenderNationalId &&
+        d.defenderNationalId === user.nationalId,
+    )
+    const civilClaimant = workingCase.civilClaimants?.find(
+      (c) =>
+        c.isSpokespersonConfirmed &&
+        c.spokespersonNationalId &&
+        c.spokespersonNationalId === user.nationalId,
+    )
+
+    if (defendant) {
+      partyRole = AppealDecisionPartyRole.DEFENDANT
+      defendantId = defendant.id
+    } else if (civilClaimant) {
+      partyRole = AppealDecisionPartyRole.CIVIL_CLAIMANT
+      civilClaimantId = civilClaimant.id
+    } else {
+      return undefined
+    }
+  } else {
+    return undefined
+  }
+
+  return workingCase.appealDecisions?.find(
+    (appealDecision) =>
+      appealDecision.rulingFileId === rulingFileId &&
+      appealDecision.partyRole === partyRole &&
+      (appealDecision.defendantId ?? null) === (defendantId ?? null) &&
+      (appealDecision.civilClaimantId ?? null) === (civilClaimantId ?? null),
+  )
+}
+
+/**
+ * True iff the current user's party recorded an in-court ACCEPT ("unir
+ * úrskurðinum") for this ruling order. Such a party has waived its right to
+ * appeal it, so the appeal action is hidden. Mirrors the backend
+ * (appealCase.service.hasAcceptedRulingOrderInCourt).
+ */
+export const hasAcceptedRulingOrderInCourt = (
+  workingCase: Case,
+  user: User | undefined,
+  rulingFileId: string,
+): boolean =>
+  findUserRulingOrderAppealDecision(workingCase, user, rulingFileId)
+    ?.decision === CaseAppealDecision.ACCEPT
+
+/**
+ * Every in-court appeal decision for this ruling that belongs to a party the
+ * current user confirmedly acts for: the prosecution's decision, or - for a
+ * defence user - the decision of every defendant / civil claimant they are the
+ * confirmed representative of. Unlike findUserRulingOrderAppealDecision (a single
+ * party) this covers a lawyer with several clients. Mirrors the backend helper
+ * (appealCase.helpers.userRulingOrderAppealDecisions).
+ */
+const userRulingOrderAppealDecisions = (
+  workingCase: Case,
+  user: User | undefined,
+  rulingFileId: string,
+) => {
+  if (!user) {
+    return []
+  }
+
+  const decisions = (workingCase.appealDecisions ?? []).filter(
+    (decision) => decision.rulingFileId === rulingFileId,
+  )
+
+  if (isProsecutionUser(user)) {
+    return decisions.filter(
+      (decision) => decision.partyRole === AppealDecisionPartyRole.PROSECUTOR,
+    )
+  }
+
+  if (!isDefenceUser(user)) {
+    return []
+  }
+
+  return decisions.filter((decision) => {
+    if (
+      decision.partyRole === AppealDecisionPartyRole.DEFENDANT &&
+      decision.defendantId
+    ) {
+      return Boolean(
+        workingCase.defendants?.some(
+          (d) =>
+            d.id === decision.defendantId &&
+            d.isDefenderChoiceConfirmed &&
+            d.defenderNationalId === user.nationalId,
+        ),
+      )
+    }
+
+    if (
+      decision.partyRole === AppealDecisionPartyRole.CIVIL_CLAIMANT &&
+      decision.civilClaimantId
+    ) {
+      return Boolean(
+        workingCase.civilClaimants?.some(
+          (c) =>
+            c.id === decision.civilClaimantId &&
+            c.hasSpokesperson &&
+            c.isSpokespersonConfirmed &&
+            c.spokespersonNationalId === user.nationalId,
+        ),
+      )
+    }
+
+    return false
+  })
+}
+
+/**
+ * True iff any party the current user acts for appealed this ruling order in
+ * court and has not yet withdrawn - i.e. the user may withdraw its appeal.
+ * Resolves across every represented party, so a lawyer with several clients may
+ * withdraw as long as at least one of them still has a standing in-court appeal.
+ * Mirrors the backend (appealCase.helpers.userHasActiveInCourtAppeal).
+ */
+export const userHasActiveInCourtAppeal = (
+  workingCase: Case,
+  user: User | undefined,
+  rulingFileId: string,
+): boolean =>
+  userRulingOrderAppealDecisions(workingCase, user, rulingFileId).some(
+    (decision) =>
+      decision.decision === CaseAppealDecision.APPEAL &&
+      !decision.withdrawnDate,
+  )
+
+/**
+ * Mirrors the backend's ruling-link reconciliation on the working case so the
+ * in-court appeal decision cards stay in sync when a court session's ruling
+ * order file changes:
+ * - swap (old -> new file): re-key the ruling's decisions onto the new file;
+ * - removal (old -> none, ruling type left ORDER): drop the ruling's decisions.
+ * Decisions are matched on `rulingFileId`, so without this the cards would look
+ * empty after a change even though the rows still exist (under the new file) or
+ * were deleted on the server.
+ */
+export const reconcileAppealDecisionsForRulingFileChange = (
+  appealDecisions: Case['appealDecisions'],
+  previousRulingFileId: string | null | undefined,
+  nextRulingFileId: string | null | undefined,
+): Case['appealDecisions'] => {
+  if (!previousRulingFileId || previousRulingFileId === nextRulingFileId) {
+    return appealDecisions
+  }
+
+  if (nextRulingFileId) {
+    return appealDecisions?.map((decision) =>
+      decision.rulingFileId === previousRulingFileId
+        ? { ...decision, rulingFileId: nextRulingFileId }
+        : decision,
+    )
+  }
+
+  return appealDecisions?.filter(
+    (decision) => decision.rulingFileId !== previousRulingFileId,
+  )
+}
+
+/**
+ * Applies an edit to a court session's entries booking for one merged case,
+ * appending the row when that merged case has not been written about yet.
+ *
+ * Rows are matched on the merged case rather than on `id`: a row appended here
+ * has no `id` until the case is refetched, so matching on `id` would make two
+ * freshly written merged cases collide on `undefined` and an edit to one would
+ * overwrite the other.
+ */
+export const applyMergedCaseEntries = (
+  courtSessionStrings: CourtSessionString[] | null | undefined,
+  {
+    caseId,
+    courtSessionId,
+    mergedCaseId,
+    value,
+  }: {
+    caseId: string
+    courtSessionId: string
+    mergedCaseId: string
+    value?: string | null
+  },
+): CourtSessionString[] => {
+  const isTarget = (courtSessionString: CourtSessionString) =>
+    courtSessionString.mergedCaseId === mergedCaseId &&
+    courtSessionString.stringType === CourtSessionStringType.ENTRIES
+
+  if (courtSessionStrings?.some(isTarget)) {
+    return courtSessionStrings.map((courtSessionString) =>
+      isTarget(courtSessionString)
+        ? { ...courtSessionString, value }
+        : courtSessionString,
+    )
+  }
+
+  return [
+    ...(courtSessionStrings ?? []),
+    {
+      caseId,
+      courtSessionId,
+      mergedCaseId,
+      stringType: CourtSessionStringType.ENTRIES,
+      value,
+    } as CourtSessionString,
+  ]
 }
 
 /**
@@ -448,37 +819,12 @@ export const isAppealFileCategoryVisible = (
       if (isRequestCase(workingCase.type)) {
         return true
       }
-      // Indictment: the appellant's national id must match the confirmed
-      // defender of the file's defendant, or the confirmed spokesperson of
-      // the file's civil claimant.
-      if (!appealCase.appealedByNationalId) {
-        return false
-      }
-      const normalizedAppellantId = normalizeAndFormatNationalId(
-        appealCase.appealedByNationalId,
-      )
+      // Indictment: the file's party must be the party that appealed.
       if (file.defendantId) {
-        const defendant = workingCase.defendants?.find(
-          (d) => d.id === file.defendantId,
-        )
-        return Boolean(
-          defendant?.isDefenderChoiceConfirmed &&
-            defendant.defenderNationalId &&
-            normalizedAppellantId.includes(defendant.defenderNationalId),
-        )
+        return file.defendantId === appealCase.appealedByDefendantId
       }
       if (file.civilClaimantId) {
-        const civilClaimant = workingCase.civilClaimants?.find(
-          (cc) => cc.id === file.civilClaimantId,
-        )
-        return Boolean(
-          civilClaimant?.hasSpokesperson &&
-            civilClaimant.isSpokespersonConfirmed &&
-            civilClaimant.spokespersonNationalId &&
-            normalizedAppellantId.includes(
-              civilClaimant.spokespersonNationalId,
-            ),
-        )
+        return file.civilClaimantId === appealCase.appealedByCivilClaimantId
       }
       return false
     }
@@ -529,6 +875,22 @@ export const isAppealFileCategoryVisible = (
       return false
   }
 }
+
+// The court of appeals' own documents (APPEAL_RULING / APPEAL_COURT_RECORD) also
+// belong to exactly one appeal-case row: case-level appeals own the files with
+// no rulingFileId, ruling-order appeals own the files tagged with their own
+// rulingFileId. isMatchingAppealCaseFile cannot be used here as it is scoped to
+// the parties' files (kærugögn) and rejects court of appeals users.
+export const isMatchingAppealCourtFile = (
+  file: {
+    category?: CaseFileCategory | null
+    rulingFileId?: string | null
+  },
+  category: CaseFileCategory,
+  rulingFileId?: string | null,
+): boolean =>
+  file.category === category &&
+  (file.rulingFileId ?? null) === (rulingFileId ?? null)
 
 export const isMatchingAppealCaseFile = (
   workingCase: Case,
@@ -714,6 +1076,16 @@ export const getDefaultDefendantGender = (defendants?: Defendant[] | null) =>
   defendants && defendants.length === 1
     ? defendants[0].gender ?? Gender.MALE
     : Gender.MALE
+
+// Lets an element with role="button" be activated with the keyboard
+// (Enter or Space) the same way a native button is.
+export const onEnterOrSpace =
+  (handler: () => void) => (event: KeyboardEvent) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      handler()
+    }
+  }
 
 export const isPartiallyVisible = (el: HTMLElement): boolean => {
   const rect = el.getBoundingClientRect()

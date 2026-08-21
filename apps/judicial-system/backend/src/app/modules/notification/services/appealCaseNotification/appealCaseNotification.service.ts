@@ -3,7 +3,6 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import { IntlService } from '@island.is/cms-translations'
 import { EmailService } from '@island.is/email-service'
@@ -42,13 +41,14 @@ import {
   formatDefenderRoute,
 } from '../../../../formatters'
 import { notifications } from '../../../../messages'
+import { appellantRepresentativeNationalIds } from '../../../appeal-case'
 import { CourtService } from '../../../court'
 import { DefendantService } from '../../../defendant'
 import { EventService } from '../../../event'
 import {
   type AppealCase,
   type Case,
-  Notification,
+  NotificationRepositoryService,
   Recipient,
 } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
@@ -64,8 +64,7 @@ interface RecipientInfo {
 @Injectable()
 export class AppealCaseNotificationService extends BaseNotificationService {
   constructor(
-    @InjectModel(Notification)
-    notificationModel: typeof Notification,
+    notificationRepositoryService: NotificationRepositoryService,
     @Inject(notificationModuleConfig.KEY)
     config: ConfigType<typeof notificationModuleConfig>,
     @Inject(LOGGER_PROVIDER) logger: Logger,
@@ -77,7 +76,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     private readonly defendantService: DefendantService,
   ) {
     super(
-      notificationModel,
+      notificationRepositoryService,
       emailService,
       intlService,
       courtService,
@@ -135,7 +134,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
 
   private getIndictmentDefenceRecipients(
     theCase: Case,
-    excludeNationalId?: string,
+    excludeNationalIds?: Set<string>,
   ) {
     const recipients: {
       name?: string
@@ -153,8 +152,8 @@ export class AppealCaseNotificationService extends BaseNotificationService {
           !seen.has(defendant.defenderEmail)
         ) {
           if (
-            excludeNationalId &&
-            defendant.defenderNationalId === excludeNationalId
+            defendant.defenderNationalId &&
+            excludeNationalIds?.has(defendant.defenderNationalId)
           ) {
             continue
           }
@@ -178,8 +177,8 @@ export class AppealCaseNotificationService extends BaseNotificationService {
           !seen.has(civilClaimant.spokespersonEmail)
         ) {
           if (
-            excludeNationalId &&
-            civilClaimant.spokespersonNationalId === excludeNationalId
+            civilClaimant.spokespersonNationalId &&
+            excludeNationalIds?.has(civilClaimant.spokespersonNationalId)
           ) {
             continue
           }
@@ -469,7 +468,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
 
       const defenceRecipients = this.getIndictmentDefenceRecipients(
         theCase,
-        appealCase.appealedByNationalId,
+        appellantRepresentativeNationalIds(theCase, appealCase),
       )
 
       for (const recipient of defenceRecipients) {
@@ -480,6 +479,9 @@ export class AppealCaseNotificationService extends BaseNotificationService {
           strings.caseAppealedToCourtOfAppeals.body,
           {
             userHasAccessToRVG: Boolean(defenderUrl),
+            court: applyDativeCaseToCourtName(
+              theCase.court?.name || 'héraðsdómi',
+            ),
             courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
             linkStart: `<a href="${defenderUrl}">`,
             linkEnd: '</a>',
@@ -873,7 +875,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
 
       const defenceRecipients = this.getIndictmentDefenceRecipients(
         theCase,
-        user.nationalId,
+        new Set([user.nationalId]),
       )
 
       for (const recipient of defenceRecipients) {
@@ -1158,7 +1160,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
 
       const defenceRecipients = this.getIndictmentDefenceRecipients(
         theCase,
-        user.nationalId,
+        new Set([user.nationalId]),
       )
 
       for (const recipient of defenceRecipients) {
@@ -1761,7 +1763,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
       // Notify all OTHER defenders and civil claimant lawyers
       const defenceRecipients = this.getIndictmentDefenceRecipients(
         theCase,
-        appealCase.appealedByNationalId,
+        appellantRepresentativeNationalIds(theCase, appealCase),
       )
 
       for (const recipient of defenceRecipients) {

@@ -81,6 +81,7 @@ import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
 import { TranslationModule } from './modules/translation/translation.module'
 import { ApplicationTranslationRuntimeModule } from '@island.is/application/api/core'
 import { RecyclingFundClientConfig } from '@island.is/clients/recycling-fund'
+import { DirectorateOfEqualityClientConfig } from '@island.is/clients/directorate-of-equality'
 
 @Module({
   imports: [
@@ -159,6 +160,7 @@ import { RecyclingFundClientConfig } from '@island.is/clients/recycling-fund'
         ExemptionForTransportationClientConfig,
         ZendeskServiceConfig,
         RecyclingFundClientConfig,
+        DirectorateOfEqualityClientConfig,
       ],
     }),
   ],

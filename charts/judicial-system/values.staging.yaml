@@ -30,6 +30,7 @@ judicial-system-api:
     BACKEND_URL: 'http://web-judicial-system-backend'
     CONTENTFUL_ENVIRONMENT: 'test'
     CONTENTFUL_HOST: 'cdn.contentful.com'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     HIDDEN_FEATURES: 'APPEAL_RULING_ORDER'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
@@ -55,7 +56,7 @@ judicial-system-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 8
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -82,7 +83,7 @@ judicial-system-api:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -121,6 +122,7 @@ judicial-system-backend:
     DB_NAME: 'judicial_system'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'judicial_system'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     DOKOBIT_URL: 'https://developers.dokobit.com'
     EMAIL_REGION: 'eu-west-1'
     LOG_LEVEL: 'info'
@@ -166,7 +168,7 @@ judicial-system-backend:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-backend'
@@ -202,7 +204,7 @@ judicial-system-backend:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -263,6 +265,7 @@ judicial-system-digital-mailbox-api:
     AUDIT_TRAIL_REGION: 'eu-west-1'
     AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
     BACKEND_URL: 'http://web-judicial-system-backend'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -286,7 +289,7 @@ judicial-system-digital-mailbox-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -309,7 +312,7 @@ judicial-system-digital-mailbox-api:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -339,6 +342,7 @@ judicial-system-message-handler:
   enabled: true
   env:
     BACKEND_URL: 'http://web-judicial-system-backend'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
@@ -364,7 +368,7 @@ judicial-system-message-handler:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-message-handler'
@@ -377,7 +381,7 @@ judicial-system-message-handler:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -405,6 +409,7 @@ judicial-system-scheduler:
   enabled: true
   env:
     BACKEND_URL: 'http://web-judicial-system-backend'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
@@ -431,7 +436,7 @@ judicial-system-scheduler:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-scheduler'
@@ -444,7 +449,7 @@ judicial-system-scheduler:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -469,6 +474,7 @@ judicial-system-web:
   enabled: true
   env:
     API_URL: 'https://judicial-system.staging01.devland.is'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     INTERNAL_API_URL: 'http://web-judicial-system-api'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -492,7 +498,7 @@ judicial-system-web:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -513,7 +519,7 @@ judicial-system-web:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:
@@ -537,6 +543,7 @@ judicial-system-xrd-api:
     AUDIT_TRAIL_REGION: 'eu-west-1'
     AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
     BACKEND_URL: 'http://web-judicial-system-backend'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
@@ -559,7 +566,7 @@ judicial-system-xrd-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 2
         min: 1
   httpRoute:
     primary-gw:
@@ -582,7 +589,7 @@ judicial-system-xrd-api:
   pvcs: []
   replicaCount:
     default: 1
-    max: 3
+    max: 2
     min: 1
   resources:
     limits:

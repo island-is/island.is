@@ -23,6 +23,7 @@ import {
   MessageType,
 } from '@island.is/judicial-system/message'
 import {
+  CaseType,
   indictmentCases,
   investigationCases,
   restrictionCases,
@@ -704,12 +705,99 @@ export class InternalCaseController {
   ): Promise<DeliverResponse> {
     this.logger.debug(`Delivering indictment case ${caseId} to police`)
 
+    return this.internalCaseService.deliverIndictmentCaseToPolice(
+      theCase,
+      deliverDto.user,
+    )
+  }
+
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    CaseCompletedGuard,
+  )
+  @Post(
+    `case/:caseId/${messageEndpoint[MessageType.DELIVERY_TO_POLICE_REQUEST]}`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers a request to police',
+  })
+  deliverRequestToPolice(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(`Delivering the request for case ${caseId} to police`)
+
+    return this.internalCaseService.deliverRequestToPolice(
+      theCase,
+      deliverDto.user,
+    )
+  }
+
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard([
+      ...restrictionCases,
+      ...investigationCases,
+      ...indictmentCases,
+    ]),
+    CaseCompletedGuard,
+  )
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[MessageType.DELIVERY_TO_POLICE_COURT_RECORD]
+    }`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers a court record to police',
+  })
+  deliverCourtRecordToPolice(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering the court record for case ${caseId} to police`,
+    )
+
     return this.sequelize.transaction(async (transaction) =>
-      this.internalCaseService.deliverIndictmentCaseToPolice(
+      this.internalCaseService.deliverCourtRecordToPolice(
         theCase,
         deliverDto.user,
         transaction,
       ),
+    )
+  }
+
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard([CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY]),
+    CaseCompletedGuard,
+  )
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[MessageType.DELIVERY_TO_POLICE_CUSTODY_NOTICE]
+    }`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers a custody notice to police',
+  })
+  deliverCustodyNoticeToPolice(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering the custody notice for case ${caseId} to police`,
+    )
+
+    return this.internalCaseService.deliverCustodyNoticeToPolice(
+      theCase,
+      deliverDto.user,
     )
   }
 

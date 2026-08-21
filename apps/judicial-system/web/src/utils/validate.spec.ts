@@ -1,12 +1,20 @@
 import {
+  AppealCase,
+  AppealCaseRulingDecision,
+  AppealDecisionPartyRole,
   Case,
+  CaseAppealDecision,
+  CaseFileCategory,
+  CourtSessionResponse,
   IndictmentCount,
   IndictmentCountOffense,
   IndictmentSubtype,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import {
+  areAppealDecisionsComplete,
   getIndictmentCountWarningMessage,
+  isCourtOfAppealRulingStepValid,
   isIndictmentCountComplete,
   validate,
 } from './validate'
@@ -410,4 +418,138 @@ describe('Validate court case number', () => {
       expect(result.errorMessage).toEqual('Dæmi: S-1234/2020')
     },
   )
+})
+
+describe('areAppealDecisionsComplete', () => {
+  const rulingFileId = 'ruling-file-id'
+  const courtSession = { rulingFileId } as CourtSessionResponse
+
+  const decisionFor = (
+    party: {
+      partyRole: AppealDecisionPartyRole
+      defendantId?: string
+      civilClaimantId?: string
+    },
+    decision: CaseAppealDecision | null = CaseAppealDecision.ACCEPT,
+  ) => ({ rulingFileId, decision, ...party })
+
+  const baseCase = {
+    defendants: [{ id: 'd1' }],
+    civilClaimants: [{ id: 'c1' }],
+  } as Case
+
+  it('is true when every party has a decision', () => {
+    const workingCase = {
+      ...baseCase,
+      appealDecisions: [
+        decisionFor({ partyRole: AppealDecisionPartyRole.PROSECUTOR }),
+        decisionFor({
+          partyRole: AppealDecisionPartyRole.DEFENDANT,
+          defendantId: 'd1',
+        }),
+        decisionFor({
+          partyRole: AppealDecisionPartyRole.CIVIL_CLAIMANT,
+          civilClaimantId: 'c1',
+        }),
+      ],
+    } as Case
+
+    expect(areAppealDecisionsComplete(courtSession, workingCase)).toBe(true)
+  })
+
+  it('is false when a defendant has no decision', () => {
+    const workingCase = {
+      ...baseCase,
+      appealDecisions: [
+        decisionFor({ partyRole: AppealDecisionPartyRole.PROSECUTOR }),
+        decisionFor({
+          partyRole: AppealDecisionPartyRole.CIVIL_CLAIMANT,
+          civilClaimantId: 'c1',
+        }),
+      ],
+    } as Case
+
+    expect(areAppealDecisionsComplete(courtSession, workingCase)).toBe(false)
+  })
+
+  it('is false when a party has an announcement but no decision', () => {
+    const workingCase = {
+      ...baseCase,
+      appealDecisions: [
+        decisionFor({ partyRole: AppealDecisionPartyRole.PROSECUTOR }, null),
+        decisionFor({
+          partyRole: AppealDecisionPartyRole.DEFENDANT,
+          defendantId: 'd1',
+        }),
+        decisionFor({
+          partyRole: AppealDecisionPartyRole.CIVIL_CLAIMANT,
+          civilClaimantId: 'c1',
+        }),
+      ],
+    } as Case
+
+    expect(areAppealDecisionsComplete(courtSession, workingCase)).toBe(false)
+  })
+
+  it('is false when the session has no ruling file', () => {
+    expect(
+      areAppealDecisionsComplete({} as CourtSessionResponse, baseCase),
+    ).toBe(false)
+  })
+})
+
+describe('isCourtOfAppealRulingStepValid', () => {
+  const appealCase = {
+    appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
+    appealConclusion: 'Niðurstaða',
+  } as AppealCase
+
+  const appealRulingFile = (rulingFileId: string | null) => ({
+    category: CaseFileCategory.APPEAL_RULING,
+    rulingFileId,
+  })
+
+  it('is true when the case level appeal has its own appeal ruling', () => {
+    const workingCase = { caseFiles: [appealRulingFile(null)] } as Case
+
+    expect(isCourtOfAppealRulingStepValid(workingCase, appealCase)).toBe(true)
+  })
+
+  it('is false when the only appeal ruling belongs to a ruling order appeal', () => {
+    const workingCase = { caseFiles: [appealRulingFile('ruling-1')] } as Case
+
+    expect(isCourtOfAppealRulingStepValid(workingCase, appealCase)).toBe(false)
+  })
+
+  it('is true when the ruling order appeal has its own appeal ruling', () => {
+    const workingCase = { caseFiles: [appealRulingFile('ruling-1')] } as Case
+
+    expect(
+      isCourtOfAppealRulingStepValid(workingCase, {
+        ...appealCase,
+        rulingFileId: 'ruling-1',
+      } as AppealCase),
+    ).toBe(true)
+  })
+
+  it('is false when the appeal ruling belongs to another ruling order appeal', () => {
+    const workingCase = { caseFiles: [appealRulingFile('ruling-1')] } as Case
+
+    expect(
+      isCourtOfAppealRulingStepValid(workingCase, {
+        ...appealCase,
+        rulingFileId: 'ruling-2',
+      } as AppealCase),
+    ).toBe(false)
+  })
+
+  it('does not require an appeal ruling when the appeal was discontinued', () => {
+    const workingCase = { caseFiles: [] } as unknown as Case
+
+    expect(
+      isCourtOfAppealRulingStepValid(workingCase, {
+        appealRulingDecision: AppealCaseRulingDecision.DISCONTINUED,
+      } as AppealCase),
+    ).toBe(true)
+  })
 })

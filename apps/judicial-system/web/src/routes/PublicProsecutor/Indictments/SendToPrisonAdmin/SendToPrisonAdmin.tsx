@@ -150,10 +150,15 @@ const SendToPrisonAdmin: FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE}/${workingCase.id}`}
-          nextButtonText={formatMessage(strings.nextButtonText)}
-          onNextButtonClick={handleNextButtonClick}
+          actions={[
+            {
+              text: formatMessage(strings.nextButtonText),
+              icon: 'arrowForward',
+              onClick: handleNextButtonClick,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
       {modalVisible === AvailableModal.SUCCESS && defendant && (
@@ -163,15 +168,18 @@ const SendToPrisonAdmin: FC = () => {
             courtCaseNumber: workingCase.courtCaseNumber,
             defendant: defendant.name,
           })}
-          primaryButton={{
-            text: formatMessage(strings.modalNextButtonText),
-            onClick: handlePrimaryButtonClick,
-            isLoading: isUpdatingDefendant,
-          }}
-          secondaryButton={{
-            text: formatMessage(core.back),
-            onClick: handleSecondaryButtonClick,
-          }}
+          buttons={[
+            {
+              text: formatMessage(core.back),
+              onClick: handleSecondaryButtonClick,
+              variant: 'ghost',
+            },
+            {
+              text: formatMessage(strings.modalNextButtonText),
+              onClick: handlePrimaryButtonClick,
+              isLoading: isUpdatingDefendant,
+            },
+          ]}
           onClose={handleSecondaryButtonClick}
           loading={isUpdatingDefendant}
           errorMessage={uploadFileError}

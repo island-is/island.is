@@ -40,6 +40,10 @@ import {
 import {
   getAppealActorText,
   getCurrentUserStatementDate,
+  hasAcceptedRulingOrderInCourt,
+  isCurrentAppellantRepresentative,
+  rulingOrderAppealCase,
+  userHasActiveInCourtAppeal,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { ContextMenuItem } from '../ContextMenu/ContextMenu'
@@ -66,9 +70,7 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
   const isDefence = isDefenceUser(user)
   const isDistrictCourt = isDistrictCourtUser(user)
 
-  const appealCase = workingCase.rulingOrderAppealCases?.find(
-    (a) => a.rulingFileId === file.id,
-  )
+  const appealCase = rulingOrderAppealCase(workingCase, file.id)
 
   const appealRoute = isDefence
     ? DEFENDER_APPEAL_CASE_APPEAL_ROUTE
@@ -123,19 +125,34 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
     user,
   )
 
-  const isAppellant =
+  // Who may withdraw the appeal. In-court appeals are per party: any party that
+  // appealed in court and has not yet withdrawn (mirrors the backend
+  // userHasActiveInCourtAppeal). Out-of-court appeals: the single recorded
+  // appellant.
+  const canWithdrawAppeal =
     hasBeenAppealed &&
     user &&
-    ((appealCase.appealedByRole === UserRole.PROSECUTOR && isProsecution) ||
-      (appealCase.appealedByRole === UserRole.DEFENDER &&
-        isDefence &&
-        Boolean(user.nationalId) &&
-        user.nationalId === appealCase.appealedByNationalId))
+    (appealCase.appealedInCourt
+      ? userHasActiveInCourtAppeal(workingCase, user, file.id)
+      : (appealCase.appealedByRole === UserRole.PROSECUTOR && isProsecution) ||
+        (appealCase.appealedByRole === UserRole.DEFENDER &&
+          isDefence &&
+          isCurrentAppellantRepresentative(
+            workingCase,
+            appealCase,
+            user.nationalId,
+          )))
 
   const items: ContextMenuItem[] = []
 
   if (!hasBeenAppealed) {
-    if (file.canBeAppealed && (isProsecution || isDefence)) {
+    // A party that accepted the ruling in court has waived its appeal right
+    // (enforced on the backend); hide the action for it too.
+    if (
+      file.canBeAppealed &&
+      (isProsecution || isDefence) &&
+      !hasAcceptedRulingOrderInCourt(workingCase, user, file.id)
+    ) {
       items.push({
         title: 'Senda inn kæru',
         icon: 'document',
@@ -163,7 +180,7 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
         icon: 'add',
         onClick: () => router.push(filesHref),
       })
-      if (isAppellant) {
+      if (canWithdrawAppeal) {
         items.push(withdrawAppeal(workingCase.id, appealCase.id))
       }
     } else if (
@@ -188,8 +205,15 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
     undefined
 
   if (!hasBeenAppealed) {
-    // Pre-appeal: only the appealing-eligible parties see the deadline.
-    if ((isProsecution || isDefence) && !isCompletedCase(workingCase.state)) {
+    // Pre-appeal: only the appealing-eligible parties see the deadline. A party
+    // that accepted the ruling in court has waived its appeal right, so it sees
+    // no status until another party appeals (which moves the row out of this
+    // pre-appeal branch).
+    if (
+      (isProsecution || isDefence) &&
+      !isCompletedCase(workingCase.state) &&
+      !hasAcceptedRulingOrderInCourt(workingCase, user, file.id)
+    ) {
       statusText = `Kærufrestur ${
         file.isAppealDeadlineExpired ? 'rann' : 'rennur'
       } út ${formatDate(file.appealDeadline, 'PPPp')}`

@@ -98,7 +98,7 @@ export class DelegationIndexController {
         {
           ...parsedDelegationInfo,
           provider: auth.delegationProvider,
-          validTo: body.validTo,
+          validTo: body?.validTo,
         },
         auth,
       ),

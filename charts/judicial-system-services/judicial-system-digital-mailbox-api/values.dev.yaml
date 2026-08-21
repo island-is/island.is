@@ -23,6 +23,7 @@ env:
   AUDIT_TRAIL_REGION: 'eu-west-1'
   AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
   BACKEND_URL: 'http://web-judicial-system-backend'
+  DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -46,7 +47,7 @@ hpa:
       cpuAverageUtilization: 90
       nginxRequestsIrate: 5
     replicas:
-      max: 3
+      max: 2
       min: 1
 httpRoute:
   primary-gw:
@@ -69,7 +70,7 @@ podSecurityContext:
 pvcs: []
 replicaCount:
   default: 1
-  max: 3
+  max: 2
   min: 1
 resources:
   limits:

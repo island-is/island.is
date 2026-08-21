@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
@@ -23,18 +23,23 @@ import {
 import { getAdminUserInstitutionScope } from '@island.is/judicial-system/types'
 import { errors, titles } from '@island.is/judicial-system-web/messages'
 import {
-  Loading,
+  LoadingDots,
   PageHeader,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { SortButton } from '@island.is/judicial-system-web/src/components/Table'
 import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useInstitution,
+  useSort,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { userRoleToString } from '../userRoleToString'
 import { useUsersQuery } from './users.generated'
+import { UsersCsvButton } from './UsersCsvButton'
 import * as styles from './Users.css'
 
 export const Users = () => {
@@ -57,10 +62,48 @@ export const Users = () => {
     errorPolicy: 'all',
   })
 
-  const users = usersData?.users?.filter((u) => {
-    return selectedInstitutions.length > 0
-      ? u.institution?.id && selectedInstitutions.includes(u.institution.id)
-      : true
+  const filteredUsers = useMemo(
+    () =>
+      usersData?.users?.filter((u) =>
+        selectedInstitutions.length > 0
+          ? u.institution?.id && selectedInstitutions.includes(u.institution.id)
+          : true,
+      ) ?? [],
+    [usersData?.users, selectedInstitutions],
+  )
+
+  const {
+    sortedData: users,
+    requestSort,
+    getClassNamesFor,
+    isActiveColumn,
+  } = useSort('name', 'ascending', filteredUsers, (entry, column) => {
+    if (column === 'role') {
+      return userRoleToString(entry.role)
+    }
+
+    if (column === 'institution') {
+      return entry.institution?.name ?? null
+    }
+
+    const value = entry[column]
+
+    if (typeof value === 'boolean') {
+      return value ? '1' : '0'
+    }
+
+    return typeof value === 'string' ? value : null
+  })
+
+  const createSortProps = (
+    title: string,
+    column: 'name' | 'role' | 'institution' | 'active' | 'canConfirmIndictment',
+  ) => ({
+    title,
+    onClick: () => requestSort(column),
+    sortAsc: getClassNamesFor(column) === 'ascending',
+    sortDes: getClassNamesFor(column) === 'descending',
+    isActive: isActiveColumn(column),
   })
 
   const handleClick = (user: User): void => {
@@ -136,43 +179,66 @@ export const Users = () => {
           />
         </Box>
       </Box>
-      {users && users.length > 0 ? (
+      <Box display="flex" justifyContent="flexEnd" marginBottom={2}>
+        <UsersCsvButton users={users} />
+      </Box>
+      {users.length > 0 ? (
         <table
           className={styles.userTable}
           data-testid="users-table"
-          aria-describedby="tableCation"
+          aria-describedby="tableCaption"
         >
           <thead className={styles.thead}>
             <tr>
-              <Box component="th" paddingY={2} paddingX={3}>
-                <Text as="span" fontWeight="regular">
-                  Nafn
-                </Text>
+              <Box
+                component="th"
+                paddingY={2}
+                paddingX={3}
+                aria-sort={getClassNamesFor('name') ?? 'none'}
+              >
+                <SortButton {...createSortProps('Nafn', 'name')} />
               </Box>
               <Box component="th" paddingY={2} paddingX={3}>
                 <Text as="span" fontWeight="regular">
                   Kennitala
                 </Text>
               </Box>
-              <Box component="th" paddingY={2} paddingX={3}>
-                <Text as="span" fontWeight="regular">
-                  Hlutverk
-                </Text>
+              <Box
+                component="th"
+                paddingY={2}
+                paddingX={3}
+                aria-sort={getClassNamesFor('role') ?? 'none'}
+              >
+                <SortButton {...createSortProps('Hlutverk', 'role')} />
               </Box>
-              <Box component="th" paddingY={2} paddingX={3}>
-                <Text as="span" fontWeight="regular">
-                  Stofnun
-                </Text>
+              <Box
+                component="th"
+                paddingY={2}
+                paddingX={3}
+                aria-sort={getClassNamesFor('institution') ?? 'none'}
+              >
+                <SortButton {...createSortProps('Stofnun', 'institution')} />
               </Box>
-              <Box component="th" paddingY={2} paddingX={3}>
-                <Text as="span" fontWeight="regular">
-                  Virkur
-                </Text>
+              <Box
+                component="th"
+                paddingY={2}
+                paddingX={3}
+                aria-sort={getClassNamesFor('active') ?? 'none'}
+              >
+                <SortButton {...createSortProps('Virkur', 'active')} />
               </Box>
-              <Box component="th" paddingY={2} paddingX={3}>
-                <Text as="span" fontWeight="regular">
-                  Getur staðfest ákærur
-                </Text>
+              <Box
+                component="th"
+                paddingY={2}
+                paddingX={3}
+                aria-sort={getClassNamesFor('canConfirmIndictment') ?? 'none'}
+              >
+                <SortButton
+                  {...createSortProps(
+                    'Getur staðfest ákærur',
+                    'canConfirmIndictment',
+                  )}
+                />
               </Box>
               <Box component="th" paddingY={2} paddingX={3}>
                 <Text as="span" fontWeight="regular">
@@ -240,7 +306,7 @@ export const Users = () => {
       )}
       {(institutionsLoading || usersLoading) && (
         <Box width="full">
-          <Loading />
+          <LoadingDots />
         </Box>
       )}
       {usersError && (

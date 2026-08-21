@@ -1,3 +1,4 @@
+import faker from 'faker'
 import { NextApiRequest, NextApiResponse } from 'next'
 
 import { NationalRegistryResponsePerson } from '@island.is/judicial-system-web/src/types'
@@ -19,6 +20,22 @@ const getPersonByNationalId = async (
   return await response.json()
 }
 
+const createFakePerson = () => {
+  const street = faker.address.streetAddress()
+  const town = faker.address.city()
+
+  return {
+    ...fakePerson,
+    name: faker.name.findName(),
+    permanent_address: {
+      ...fakePerson.permanent_address,
+      street: { nominative: street, dative: street },
+      postal_code: faker.datatype.number({ min: 101, max: 902 }),
+      town: { nominative: town, dative: town },
+    },
+  }
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -30,7 +47,7 @@ export default async function handler(
   const people: NationalRegistryResponsePerson =
     process.env.NODE_ENV === 'production'
       ? await getPersonByNationalId(nationalId)
-      : { items: [fakePerson] }
+      : { items: [createFakePerson()] }
 
   res.status(200).json(people)
 }

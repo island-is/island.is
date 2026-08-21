@@ -5,7 +5,7 @@ import {
   DELETE_APPLICANT,
 } from '@island.is/form-system/graphql'
 import { m } from '@island.is/form-system/ui'
-import { Stack, Text } from '@island.is/island-ui/core'
+import { Stack, Text, GridRow as Row, Box } from '@island.is/island-ui/core'
 import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { ControlContext } from '../../../../context/ControlContext'
@@ -113,7 +113,11 @@ export const RelevantParties = () => {
 
   return (
     <Stack space={2}>
-      <Text variant="h3">{formatMessage(m.selectIndividuals)}</Text>
+      <Row>
+        <Box marginLeft={1}>
+          <Text variant="h3">{formatMessage(m.selectIndividuals)}</Text>
+        </Box>
+      </Row>
 
       <PartyType
         groupApplicantTypes={applicantTypeGroups.individual}
@@ -133,7 +137,7 @@ export const RelevantParties = () => {
         handleCheckboxChange={handleCheckboxChange}
       />
 
-      {/* <PartyType
+      <PartyType
         groupApplicantTypes={applicantTypeGroups.individualDelegation}
         label={formatMessage(m.individualOnBehalfPerson)}
         formApplicantFields={applicantFields.filter(
@@ -153,12 +157,12 @@ export const RelevantParties = () => {
 
       <PartyType
         groupApplicantTypes={applicantTypeGroups.legalGuardian}
-        label={formatMessage(m.legalGuardianOnBehalfOfIndividual)}
+        label={formatMessage(m.legalGuardian)}
         formApplicantFields={applicantFields.filter(
           (f) => f.fieldType === 'APPLICANT',
         )}
         handleCheckboxChange={handleCheckboxChange}
-      /> */}
+      />
     </Stack>
   )
 }

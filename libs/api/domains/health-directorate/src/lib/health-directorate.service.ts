@@ -3,7 +3,7 @@ import {
   ConversationAttachmentDto,
   ConversationDetailDto,
   ConversationMessageDto,
-  ConversationStatusFilter,
+  CreateCertificateRequestBody,
   CreateConversationRequestDto,
   CreateEuPatientConsentDto,
   CreateReplyRequestDto,
@@ -17,13 +17,14 @@ import type { ConfigType } from '@island.is/nest/config'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
-import { Inject, Injectable } from '@nestjs/common'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import sortBy from 'lodash/sortBy'
 import { PATIENT_PERMIT_CODE } from './constants'
 import {
   HealthDirectorateAppointmentInput,
   HealthDirectorateAppointmentsInput,
 } from './dto/appointments.input'
+import { HealthDirectorateCreateCertificateRequestInput } from './dto/createCertificateRequest.input'
 import { HealthDirectorateCreateConversationInput } from './dto/createHealthConversation.input'
 import { HealthDirectorateReplyToConversationInput } from './dto/replyToHealthConversation.input'
 import {
@@ -33,6 +34,7 @@ import {
 import { PermitInput } from './dto/permit.input'
 import { HealthDirectorateResponse } from './dto/response.dto'
 import {
+  getAppointmentLinkActivationWindow,
   mapAppointmentStatus,
   toAppointmentAssigneeTypeEnum,
   toAppointmentLinkTypeEnum,
@@ -41,9 +43,18 @@ import {
   mapStatusIdToColor,
   mapReferralStatusValueToStatus,
   mapVaccinationStatus,
-  toConversationDirectionEnum,
-  toConversationStatusFilter,
 } from './mappers/basicInformationMapper'
+import {
+  mapConversationMessageContent,
+  mapMessagingRecipient,
+  toConversationDirectionEnum,
+  toConversationReplyBlockedReasonEnum,
+  toConversationStatusFilter,
+} from './mappers/conversationMapper'
+import {
+  mapCertificateRequest,
+  toCertificateTypeCode,
+} from './mappers/certificateMapper'
 import {
   mapDelegationStatus,
   mapDispensationItem,
@@ -85,9 +96,10 @@ import { Waitlist, Waitlists } from './models/waitlists.model'
 import { HealthDirectorateHealthConversation } from './models/healthConversation.model'
 import { HealthDirectorateHealthConversationAttachment } from './models/healthConversationAttachment.model'
 import { HealthDirectorateHealthConversationDetail } from './models/healthConversationDetail.model'
+import { HealthDirectorateConversationOrganization } from './models/healthConversationOrganization.model'
 import { HealthDirectorateHealthConversationEntry } from './models/healthConversationEntry.model'
-import { HealthDirectorateHealthConversationType } from './models/healthConversationType.model'
 import { HealthDirectorateHealthConversationRecipient } from './models/healthConversationRecipient.model'
+import { HealthDirectorateCertificateRequest } from './models/certificateRequest.model'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -703,7 +715,14 @@ export class HealthDirectorateService {
       links: item.links
         ?.map((l) => {
           const type = toAppointmentLinkTypeEnum(l.type)
-          return type ? { type, url: l.url } : null
+          if (!type) {
+            return null
+          }
+          return {
+            type,
+            url: l.url,
+            ...getAppointmentLinkActivationWindow(type, item.startTime),
+          }
         })
         .filter(isDefined),
     }
@@ -724,6 +743,20 @@ export class HealthDirectorateService {
     }
   }
 
+  private mapConversationOrganization(c: {
+    organizationNationalId?: string
+    organizationName?: string
+    departmentName?: string
+  }): HealthDirectorateConversationOrganization | undefined {
+    return c.organizationNationalId
+      ? {
+          nationalId: c.organizationNationalId,
+          name: c.organizationName,
+          departmentName: c.departmentName,
+        }
+      : undefined
+  }
+
   private mapConversationEntry(
     m: ConversationMessageDto,
     conversationId: string,
@@ -733,6 +766,7 @@ export class HealthDirectorateService {
       direction: toConversationDirectionEnum(m.direction),
       messageSentAt: m.messageSentAt,
       messageTextContent: m.messageTextContent,
+      content: mapConversationMessageContent(m),
       senderGroupName: m.senderGroupName,
       attachments: m.attachments.map((a) =>
         this.mapConversationAttachment(a, conversationId, m.id),
@@ -751,10 +785,14 @@ export class HealthDirectorateService {
       messageCount: c.messageCount,
       lastMessageSentAt: c.lastMessageSentAt,
       lastSenderGroupName: c.lastSenderGroupName,
+      organization: this.mapConversationOrganization(c),
       hasAttachment: c.hasAttachment,
       isStarred: c.isStarred,
       isArchived: c.isArchived,
       patientCanReply: c.patientCanReply,
+      replyBlockedReason: toConversationReplyBlockedReasonEnum(
+        c.replyBlockedReason,
+      ),
       isRead: !c.unread,
       messages: c.messages.map((m) => this.mapConversationEntry(m, c.id)),
     }
@@ -779,6 +817,7 @@ export class HealthDirectorateService {
       messageCount: c.messageCount,
       lastMessageSentAt: c.lastMessageSentAt,
       lastSenderGroupName: c.lastSenderGroupName,
+      organization: this.mapConversationOrganization(c),
       hasAttachment: c.hasAttachment,
       isStarred: c.isStarred,
       isArchived: c.isArchived,
@@ -861,25 +900,32 @@ export class HealthDirectorateService {
     const items = await this.healthApi.getMessagingRecipients(auth, locale)
     if (!items) return null
 
-    return items.map(
-      (r): HealthDirectorateHealthConversationRecipient => ({
-        nodeId: r.nodeId,
-        groupId: r.groupId,
-        name: r.name,
-        allowsMessaging: r.allowsMessaging,
-        messagingWindowOpen: r.messagingWindowOpen,
-        messagingWindowClose: r.messagingWindowClose,
-        isCurrentlyWithinWindow: r.isCurrentlyWithinWindow,
-        patientReplyWindowDays: r.patientReplyWindowDays,
-        allowedMessageTypes: r.allowedConversationTypes.map(
-          (t): HealthDirectorateHealthConversationType => ({
-            patientInitiatedTypeCode: t.patientInitiatedTypeCode,
-            title: t.title,
-            description: t.description,
-            isCertificate: t.isCertificate,
-          }),
-        ),
-      }),
-    )
+    return items.map(mapMessagingRecipient)
+  }
+
+  /* Certificates */
+
+  async createCertificateRequest(
+    auth: Auth,
+    input: HealthDirectorateCreateCertificateRequestInput,
+  ): Promise<HealthDirectorateCertificateRequest | null> {
+    if (input.endDate < input.startDate) {
+      throw new BadRequestException('endDate must be on or after startDate')
+    }
+
+    const body: CreateCertificateRequestBody = {
+      nodeId: input.nodeId,
+      groupId: input.groupId,
+      certificateType: toCertificateTypeCode(input.certificateType),
+      recipientName: input.recipientName,
+      startDate: input.startDate,
+      endDate: input.endDate,
+      note: input.note,
+    }
+
+    const request = await this.healthApi.createCertificateRequest(auth, body)
+    if (!request) return null
+
+    return mapCertificateRequest(request)
   }
 }

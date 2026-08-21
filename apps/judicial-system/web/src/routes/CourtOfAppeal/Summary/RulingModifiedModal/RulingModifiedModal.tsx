@@ -2,6 +2,7 @@ import { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { RulingModifiedModal as BaseModal } from '@island.is/judicial-system-web/src/components'
+import { useTargetAppealCaseByAppealCaseId } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './RulingModifiedModal.strings'
 
@@ -17,6 +18,7 @@ const RulingModifiedModal: FC<Props> = ({
   continueDisabled,
 }) => {
   const { formatMessage } = useIntl()
+  const targetAppealCase = useTargetAppealCaseByAppealCaseId()
 
   return (
     <BaseModal
@@ -26,6 +28,7 @@ const RulingModifiedModal: FC<Props> = ({
       description={formatMessage(strings.description)}
       defaultExplanation={formatMessage(strings.autofill)}
       fieldToModify="appealRulingModifiedHistory"
+      appealCaseId={targetAppealCase?.id}
     />
   )
 }

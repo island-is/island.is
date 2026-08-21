@@ -254,10 +254,10 @@ export const m = defineMessages({
     defaultMessage: 'Einstaklingur í umboði lögaðila',
     description: 'Individual on behalf of a legal entity',
   },
-  legalGuardianOnBehalfOfIndividual: {
-    id: 'form.system:legal-guardian-on-behalf-of-individual',
-    defaultMessage: 'Forsjáraðili í umboði einstaklings',
-    description: 'Legal guardian on behalf of an individual',
+  legalGuardian: {
+    id: 'form.system:legal-guardian',
+    defaultMessage: 'Forsjáraðili',
+    description: 'Legal guardian',
   },
   individualWithPowerOfAttorney: {
     id: 'form.system:individual-with-power-of-attorney',
@@ -432,8 +432,8 @@ export const m = defineMessages({
   },
   submitUrls: {
     id: 'form.system:submitUrls',
-    defaultMessage: 'Veldu slóð',
-    description: 'Choose URL',
+    defaultMessage: 'Veldu slóð á vefþjónustu eða málakerfi',
+    description: 'Choose a URL for a web service or case management system',
   },
   permissions: {
     id: 'form.system:permissions',
@@ -663,6 +663,16 @@ export const m = defineMessages({
     defaultMessage: 'Afrita',
     description: 'Copy',
   },
+  copyToDifferentOrganization: {
+    id: 'form.system:copy-to-different-organization',
+    defaultMessage: 'Afrita á aðra stofnun',
+    description: 'Copy to different organization',
+  },
+  copyToDifferentOrganizationSuccess: {
+    id: 'form.system:copy-to-different-organization-success',
+    defaultMessage: 'Formið hefur verið afritað á {organization}',
+    description: 'Form copied to organization success message',
+  },
   publish: {
     id: 'form.system:publish',
     defaultMessage: 'Gefa út',
@@ -854,6 +864,11 @@ export const m = defineMessages({
     defaultMessage: 'Ógilt fasteignanúmer',
     description: 'Invalid property number',
   },
+  propertySearchFailed: {
+    id: 'form.system:property-search-failed',
+    defaultMessage: 'Leit að fasteign skilaði ekki niðurstöðu',
+    description: 'Property search did not return a successful response',
+  },
   pickHour: {
     id: 'form.system:pick-hour',
     defaultMessage: 'Veldu klukkustund',
@@ -866,9 +881,8 @@ export const m = defineMessages({
   },
   reviewApplication: {
     id: 'form.system:review-application',
-    defaultMessage:
-      'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
-    description: 'Please review the application before submitting it.',
+    defaultMessage: 'Vinsamlega farðu vel yfir áður en þú sendir inn.',
+    description: 'Please review before submitting.',
   },
   externalDataTitle: {
     id: 'form.system:external-data-title',
@@ -960,8 +974,8 @@ export const m = defineMessages({
   },
   submitApplication: {
     id: 'form.system:submit-application',
-    defaultMessage: 'Senda inn umsókn',
-    description: 'Submit application',
+    defaultMessage: 'Senda inn',
+    description: 'Submit',
   },
   openMyPages: {
     id: 'form.system:open-my-pages',
@@ -1108,6 +1122,27 @@ export const m = defineMessages({
     id: 'form.system:application-does-not-permit-login',
     defaultMessage: 'Þessi umsókn styður ekki þessa tegund innskráningar.',
     description: 'This application does not support this type of login.',
+  },
+  delegationRequired: {
+    id: 'form.system:delegation-required',
+    defaultMessage: 'Rangt umboð',
+    description: 'Wrong delegation',
+  },
+  applicationRequiresDelegation: {
+    id: 'form.system:application-requires-delegation',
+    defaultMessage: 'Þú hefur ekki rétt umboð til að opna þessa umsóknartegund',
+    description:
+      'You do not have the correct delegation to open this application type',
+  },
+  applicationInaccessibleHeader: {
+    id: 'form.system:application-inaccessible-header',
+    defaultMessage: 'Umsóknartegundin er ekki aðgengileg',
+    description: 'The application type is not accessible',
+  },
+  applicationInaccessibleDescription: {
+    id: 'form.system:application-inaccessible-description',
+    defaultMessage: 'Þessi umsóknartegund hefur verið tekin úr notkun.',
+    description: 'This application type has been deprecated.',
   },
   errorFetchingApplication: {
     id: 'form.system:error-fetching-application',
@@ -1288,6 +1323,13 @@ export const m = defineMessages({
       'Ekki er hægt að gefa út formið. Allir reitir með íslensku þurfa enska þýðingu.',
     description:
       'The form cannot be published. All name fields with Icelandic text require an English translation.',
+  },
+  zendeskSettingsNeededError: {
+    id: 'form.system:zendesk-settings-needed-error',
+    defaultMessage:
+      'Ekki er hægt að gefa út formið. Zendesk brand ID og Zendesk instance þurfa að vera skilgreind.',
+    description:
+      'The form cannot be published. Zendesk brand ID and Zendesk instance must be configured.',
   },
   copyFieldHover: {
     id: 'form.system:copy-field-hover',

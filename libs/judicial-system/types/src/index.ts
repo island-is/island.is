@@ -64,16 +64,20 @@ export {
   defendantEventTypes,
   AppealEventType,
   appealEventTypes,
+  AppealOrigin,
+  appealOrigins,
 } from './lib/eventLog'
 
 export {
   AppealCaseState,
   AppealCaseRulingDecision,
   AppealCaseTransition,
+  appealCorrectionLock,
   AppealDecisionPartyRole,
   getStatementDeadline,
   CaseAppealDecision,
 } from './lib/appealCase'
+export type { AppealCorrectionLock } from './lib/appealCase'
 
 export { DateType, dateTypes } from './lib/dateLog'
 
@@ -85,6 +89,8 @@ export {
   CaseFileState,
   CaseFileCategory,
   HashAlgorithm,
+  partyAppealFileCategories,
+  isAppealFileDeletionLocked,
   PoliceFileTypeCode,
 } from './lib/file'
 

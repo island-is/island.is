@@ -2,6 +2,7 @@ import { ApplicationService } from '@island.is/application/api/core'
 import { HistoryService } from '@island.is/application/api/history'
 import { IntlService } from '@island.is/cms-translations'
 import { Injectable } from '@nestjs/common'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { TemplateApiActionRunner } from './tools/templateApiActionRunner.service'
 import type { Unwrap, Locale } from '@island.is/shared/types'
 import {
@@ -32,6 +33,7 @@ export class ApplicationActionService {
     private templateApiActionRunner: TemplateApiActionRunner,
     private applicationService: ApplicationService,
     private historyService: HistoryService,
+    private featureFlagService: FeatureFlagService,
   ) {}
 
   async performActionOnApplication(
@@ -224,6 +226,8 @@ export class ApplicationActionService {
           updatedApplication,
           template,
           newState,
+          this.featureFlagService,
+          auth,
         ),
       ])
     } catch (e) {

@@ -39,6 +39,7 @@ env:
   CONSULTATION_PORTAL_CLIENT_BASE_PATH: 'https://samradapi-test.devland.is'
   CONTACT_US_EMAIL: 's@kogk.is'
   CONTENTFUL_HOST: 'preview.contentful.com'
+  DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
   DOWNLOAD_SERVICE_BASE_PATH: 'https://api.dev01.devland.is'
   ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
   ENDORSEMENT_SYSTEM_BASE_API_URL: 'http://endorsement-system-api.endorsement-system.svc.cluster.local'
@@ -227,7 +228,7 @@ hpa:
       cpuAverageUtilization: 70
       nginxRequestsIrate: 5
     replicas:
-      max: 3
+      max: 2
       min: 1
 httpRoute:
   primary-gw:
@@ -251,7 +252,7 @@ podSecurityContext:
 pvcs: []
 replicaCount:
   default: 1
-  max: 3
+  max: 2
   min: 1
 resources:
   limits:

@@ -516,9 +516,16 @@ export default function HomeScreen() {
         keyExtractor={keyExtractor}
         data={data}
         renderItem={renderItem}
-        style={{ flex: 1 }}
+        style={{
+          flex: 1,
+          backgroundColor:
+            Platform.OS === 'ios' ? theme.color.blue100 : undefined,
+        }}
         contentContainerStyle={{
           paddingBottom: insets.bottom + (Platform.OS === 'android' ? 0 : 30),
+          backgroundColor:
+            Platform.OS === 'ios' ? theme.color.white : undefined,
+          flexGrow: Platform.OS === 'ios' ? 1 : undefined,
         }}
         refreshControl={
           <RefreshControl refreshing={refetching} onRefresh={refetch} />

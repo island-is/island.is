@@ -77,6 +77,7 @@ export enum BankTransferErrorCode {
   MissingBankAccountNumber = 'MissingBankAccountNumber',
   FailedToFetchBankTransfer = 'FailedToFetchBankTransfer',
   BankTransferAlreadyInProgress = 'BankTransferAlreadyInProgress',
+  BankTransferCannotCancel = 'BankTransferCannotCancel',
   BankTransferNotFound = 'BankTransferNotFound',
   UnknownBankTransferError = 'UnknownBankTransferError',
   BankTransferRejected = 'BankTransferRejected',

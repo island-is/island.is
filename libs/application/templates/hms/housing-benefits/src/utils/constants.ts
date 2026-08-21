@@ -45,4 +45,7 @@ export enum Roles {
   INSTITUTION = 'institution',
 }
 
-export const UPLOAD_ACCEPT = '.pdf,.doc,.docx'
+export const UPLOAD_ACCEPT = '.pdf,.doc,.docx,.rtf,.jpg,.jpeg,.png,.heic'
+
+export const MAX_TEXT_LENGTH = 500
+export const MAX_NUMBER_LENGTH = 10

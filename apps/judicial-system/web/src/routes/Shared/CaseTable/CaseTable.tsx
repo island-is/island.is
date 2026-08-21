@@ -11,7 +11,11 @@ import {
   TagVariant,
   Text,
 } from '@island.is/island-ui/core'
-import { caseTables, getCaseTableType } from '@island.is/judicial-system/types'
+import {
+  caseTables,
+  getCaseTableType,
+  isDefenceUser,
+} from '@island.is/judicial-system/types'
 import {
   CasesLayout,
   Logo,
@@ -226,8 +230,24 @@ const CaseTable: FC = () => {
     const cells = r.cells
     const contextMenuItems = getContextMenuItems()
     const { onClick, isDisabled, isLoading } = getRowClickAction()
+    // Build a descriptive accessible name for the row from its leading
+    // cell values (e.g. case number and defendant) so screen reader users
+    // can tell rows apart.
+    const label = r.cells
+      .map((c) => c.sortValue)
+      .filter((v): v is string => Boolean(v))
+      .slice(0, 2)
+      .join(', ')
 
-    return { id, cells, contextMenuItems, onClick, isDisabled, isLoading }
+    return {
+      id,
+      cells,
+      contextMenuItems,
+      onClick,
+      isDisabled,
+      isLoading,
+      label,
+    }
   }
 
   const errorMessage = (
@@ -257,7 +277,16 @@ const CaseTable: FC = () => {
         </Button>
       </Box>
       <div className={styles.logoContainer}>
-        <Logo />
+        {isDefenceUser(user) ? (
+          <SectionHeading
+            heading="h1"
+            variant="h1"
+            marginBottom={0}
+            title="Málin þín"
+          />
+        ) : (
+          <Logo />
+        )}
       </div>
       {/* If we cannot get the user, then we cannot determine which table to show and only show an error message */}
       {hasError && errorMessage}

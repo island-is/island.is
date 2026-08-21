@@ -2,7 +2,7 @@ import { FormSystemSection } from '@island.is/api/schema'
 
 export const urlSettingsStep: FormSystemSection = {
   id: 'Urls',
-  displayOrder: 4,
+  displayOrder: 0,
   name: {
     is: 'Slóðir',
     en: 'Urls',
@@ -17,10 +17,40 @@ export const urlSettingsStep: FormSystemSection = {
 
 export const lifetimeSettingsStep: FormSystemSection = {
   id: 'Lifetime',
-  displayOrder: 5,
+  displayOrder: 0,
   name: {
     is: 'Líftími umsókna',
     en: 'Application Lifetime',
+  },
+  waitingText: {
+    is: '',
+    en: '',
+  },
+  isHidden: false,
+  isCompleted: false,
+}
+
+export const delegationSettingsStep: FormSystemSection = {
+  id: 'Delegation',
+  displayOrder: 0,
+  name: {
+    is: 'Umboð',
+    en: 'Delegation',
+  },
+  waitingText: {
+    is: '',
+    en: '',
+  },
+  isHidden: false,
+  isCompleted: false,
+}
+
+export const deadlineSettingsStep: FormSystemSection = {
+  id: 'Deadline',
+  displayOrder: 0,
+  name: {
+    is: 'Umsóknarfrestur',
+    en: 'Application deadline',
   },
   waitingText: {
     is: '',

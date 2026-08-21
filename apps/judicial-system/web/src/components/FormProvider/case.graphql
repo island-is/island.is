@@ -195,12 +195,6 @@ query Case($input: CaseQueryInput!) {
     isolationToDate
     conclusion
     endOfSessionBookings
-    accusedAppealDecision
-    accusedAppealAnnouncement
-    prosecutorAppealDecision
-    prosecutorAppealAnnouncement
-    accusedPostponedAppealDate
-    prosecutorPostponedAppealDate
     rulingDate
     rulingSignatureDate
     judge {
@@ -410,54 +404,11 @@ query Case($input: CaseQueryInput!) {
     appealCase {
       id
       appealState
-      appealedByNationalId
+      appealedByDefendantId
+      appealedByCivilClaimantId
       appealedByRole
       appealedDate
-      statementDeadline
-      isStatementDeadlineExpired
-      appealCaseNumber
-      appealReceivedByCourtDate
-      appealRulingDate
-      prosecutorStatementDate
-      defendantStatementDate
-      defendantStatementDates {
-        defendantId
-        statementDate
-      }
-      civilClaimantStatementDates {
-        civilClaimantId
-        statementDate
-      }
-      appealAssistant {
-        id
-        name
-      }
-      appealJudge1 {
-        id
-        name
-      }
-      appealJudge2 {
-        id
-        name
-      }
-      appealJudge3 {
-        id
-        name
-      }
-      appealRulingDecision
-      appealConclusion
-      appealRulingModifiedHistory
-      requestAppealRulingNotToBePublished
-      appealValidToDate
-      isAppealCustodyIsolation
-      appealIsolationToDate
-    }
-    rulingOrderAppealCases {
-      id
-      appealState
-      appealedByNationalId
-      appealedByRole
-      appealedDate
+      appealedOutOfCourt
       statementDeadline
       isStatementDeadlineExpired
       appealCaseNumber
@@ -497,6 +448,65 @@ query Case($input: CaseQueryInput!) {
       isAppealCustodyIsolation
       appealIsolationToDate
       rulingFileId
+    }
+    rulingOrderAppealCases {
+      id
+      appealState
+      appealedByDefendantId
+      appealedByCivilClaimantId
+      appealedByRole
+      appealedDate
+      appealedInCourt
+      appealedOutOfCourt
+      statementDeadline
+      isStatementDeadlineExpired
+      appealCaseNumber
+      appealReceivedByCourtDate
+      appealRulingDate
+      prosecutorStatementDate
+      defendantStatementDate
+      defendantStatementDates {
+        defendantId
+        statementDate
+      }
+      civilClaimantStatementDates {
+        civilClaimantId
+        statementDate
+      }
+      appealAssistant {
+        id
+        name
+      }
+      appealJudge1 {
+        id
+        name
+      }
+      appealJudge2 {
+        id
+        name
+      }
+      appealJudge3 {
+        id
+        name
+      }
+      appealRulingDecision
+      appealConclusion
+      appealRulingModifiedHistory
+      requestAppealRulingNotToBePublished
+      appealValidToDate
+      isAppealCustodyIsolation
+      appealIsolationToDate
+      rulingFileId
+    }
+    appealDecisions {
+      id
+      rulingFileId
+      partyRole
+      defendantId
+      civilClaimantId
+      decision
+      announcement
+      withdrawnDate
     }
     indictmentDeniedExplanation
     arraignmentDate {
@@ -663,8 +673,11 @@ query Case($input: CaseQueryInput!) {
       rulingOrderAppealCases {
         id
         appealState
-        appealedByNationalId
+        appealedByDefendantId
+        appealedByCivilClaimantId
         appealedByRole
+        appealedInCourt
+        appealedOutOfCourt
         appealedDate
         statementDeadline
         isStatementDeadlineExpired

@@ -40,8 +40,8 @@ export class UpdateFormDto {
 
   @IsDateString()
   @IsOptional()
-  @ApiPropertyOptional({ type: Date })
-  invalidationDate?: Date
+  @ApiPropertyOptional({ type: Date, nullable: true })
+  invalidationDate?: Date | null
 
   @IsBoolean()
   @IsOptional()
@@ -57,6 +57,11 @@ export class UpdateFormDto {
   @IsOptional()
   @ApiPropertyOptional()
   submissionServiceUrl?: string
+
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional()
+  zendeskBrandId?: string
 
   @IsBoolean()
   @IsOptional()
@@ -91,6 +96,11 @@ export class UpdateFormDto {
   @IsOptional()
   @ApiPropertyOptional()
   allowProceedOnValidationFail?: boolean
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiPropertyOptional()
+  isInaccessible?: boolean
 
   @IsBoolean()
   @IsOptional()

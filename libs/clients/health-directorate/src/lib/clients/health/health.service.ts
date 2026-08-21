@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 
 import { Auth, withAuthContext } from '@island.is/auth-nest-tools'
-import { data } from '@island.is/clients/middlewares'
+import { data, dataOr404Null } from '@island.is/clients/middlewares'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
@@ -17,6 +17,7 @@ import {
   donationExceptionControllerGetOrgansV1,
   meAppointmentControllerGetPatientAppointmentsV1,
   meAppointmentControllerGetPatientAppointmentByIdV1,
+  meCertificateControllerCreateCertificateRequestV1,
   meConversationControllerArchiveConversationV1,
   meConversationControllerCreateConversationV1,
   meConversationControllerGetConversationByIdV1,
@@ -53,10 +54,12 @@ import {
 import {
   AppointmentBaseDto,
   AppointmentDetailDto,
+  CertificateRequestDto,
   ConsentCountryDto,
   ConversationBaseDto,
   ConversationDetailDto,
   ConversationStatusFilter,
+  CreateCertificateRequestDto,
   CreateConversationRequestDto,
   CreateEuPatientConsentDto,
   CreateOrUpdatePrescriptionCommissionDto,
@@ -74,6 +77,8 @@ import {
   SubmitQuestionnaireResponseDto,
   UserVisibleAppointmentStatuses,
 } from './gen/fetch/types.gen'
+
+import { CreateCertificateRequestBody } from './dtos/createCertificateRequestBody.dto'
 
 @Injectable()
 export class HealthDirectorateHealthService {
@@ -565,7 +570,7 @@ export class HealthDirectorateHealthService {
     id: string,
   ): Promise<AppointmentDetailDto | null> {
     const appointment = await withAuthContext(auth, () =>
-      data(
+      dataOr404Null(
         meAppointmentControllerGetPatientAppointmentByIdV1({
           path: { id },
         }),
@@ -704,5 +709,23 @@ export class HealthDirectorateHealthService {
     )
 
     return recipients ?? null
+  }
+
+  /* Certificates */
+
+  public async createCertificateRequest(
+    auth: Auth,
+    input: CreateCertificateRequestBody,
+  ): Promise<CertificateRequestDto | null> {
+    const request = await withAuthContext(auth, () =>
+      data(
+        meCertificateControllerCreateCertificateRequestV1({
+          // See CreateCertificateRequestBody for why this cast is safe.
+          body: input as unknown as CreateCertificateRequestDto,
+        }),
+      ),
+    )
+
+    return request ?? null
   }
 }

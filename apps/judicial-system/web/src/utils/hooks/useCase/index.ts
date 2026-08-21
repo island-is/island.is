@@ -6,7 +6,9 @@ import { errors } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
+  CaseIndictmentRulingDecision,
   CaseTransition,
+  IndictmentDecision,
   TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -15,10 +17,6 @@ import { useCreateCaseMutation } from './createCase.generated'
 import { useCreateCourtCaseMutation } from './createCourtCase.generated'
 import { useDuplicateIndictmentCaseMutation } from './duplicateIndictmentCase.generated'
 import { useExtendCaseMutation } from './extendCase.generated'
-import {
-  LimitedAccessTransitionCaseMutation,
-  useLimitedAccessTransitionCaseMutation,
-} from './limitedAccessTransitionCase.generated'
 import {
   LimitedAccessUpdateCaseMutation,
   useLimitedAccessUpdateCaseMutation,
@@ -56,11 +54,6 @@ const useCase = () => {
 
   const [transitionCaseMutation, { loading: isTransitioningCase }] =
     useTransitionCaseMutation()
-
-  const [
-    limitedAccessTransitionCaseMutation,
-    { loading: isLimitedAccessTransitioningCase },
-  ] = useLimitedAccessTransitionCaseMutation()
 
   const [
     sendNotificationMutation,
@@ -210,30 +203,26 @@ const useCase = () => {
         caseId: string,
         transition: CaseTransition,
         setWorkingCase?: Dispatch<SetStateAction<Case>>,
+        transitionUpdate?: {
+          indictmentDecision?: IndictmentDecision | null
+          indictmentRulingDecision?: CaseIndictmentRulingDecision | null
+        },
       ): Promise<boolean> => {
-        const mutation = limitedAccess
-          ? limitedAccessTransitionCaseMutation
-          : transitionCaseMutation
-
-        const resultType = limitedAccess
-          ? 'limitedAccessTransitionCase'
-          : 'transitionCase'
-
         try {
-          const { data } = await mutation({
+          const { data } = await transitionCaseMutation({
             variables: {
               input: {
                 id: caseId,
                 transition,
+                ...transitionUpdate,
               },
             },
           })
 
-          const res = data as TransitionCaseMutation &
-            LimitedAccessTransitionCaseMutation
+          const res = data as TransitionCaseMutation
 
-          const state = res?.[resultType]?.state
-          const appealState = res?.[resultType]?.appealCase?.appealState
+          const state = res?.transitionCase?.state
+          const appealState = res?.transitionCase?.appealCase?.appealState
 
           if (!state && !appealState) {
             return false
@@ -242,7 +231,7 @@ const useCase = () => {
           if (setWorkingCase) {
             setWorkingCase((prevWorkingCase) => ({
               ...prevWorkingCase,
-              ...(res[resultType] as Case),
+              ...(res.transitionCase as Case),
             }))
           }
 
@@ -253,12 +242,7 @@ const useCase = () => {
           return false
         }
       },
-    [
-      limitedAccess,
-      limitedAccessTransitionCaseMutation,
-      transitionCaseMutation,
-      formatMessage,
-    ],
+    [transitionCaseMutation, formatMessage],
   )
 
   const sendNotification = useMemo(
@@ -266,7 +250,6 @@ const useCase = () => {
       async (
         id: string,
         notificationType: TrackedNotificationType,
-        eventOnly?: boolean,
       ): Promise<boolean> => {
         try {
           const { data } = await sendNotificationMutation({
@@ -274,7 +257,6 @@ const useCase = () => {
               input: {
                 caseId: id,
                 type: notificationType,
-                eventOnly,
               },
             },
           })
@@ -401,8 +383,7 @@ const useCase = () => {
     updateUnlimitedAccessCase,
     isUpdatingCase: isUpdatingCase || isLimitedAccessUpdatingCase,
     transitionCase,
-    isTransitioningCase:
-      isTransitioningCase || isLimitedAccessTransitioningCase,
+    isTransitioningCase,
     sendNotification,
     isSendingNotification,
     sendNotificationError,

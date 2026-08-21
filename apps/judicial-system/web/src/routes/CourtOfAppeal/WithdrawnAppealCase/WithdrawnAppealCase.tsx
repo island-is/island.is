@@ -24,7 +24,10 @@ import {
   useTargetAppealCaseByAppealCaseId,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { appendAppealCaseIdQuery } from '@island.is/judicial-system-web/src/utils/utils'
+import {
+  appendAppealCaseIdQuery,
+  isMatchingAppealCourtFile,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
 import { CaseNumberInput } from '../components'
 import { strings } from './WithdrawnAppealCase.strings'
@@ -73,8 +76,12 @@ const WithdrawnAppealCase = () => {
           </Text>
           <InputFileUpload
             name="appealCourtRecord"
-            files={uploadFiles.filter(
-              (file) => file.category === CaseFileCategory.APPEAL_COURT_RECORD,
+            files={uploadFiles.filter((file) =>
+              isMatchingAppealCourtFile(
+                file,
+                CaseFileCategory.APPEAL_COURT_RECORD,
+                targetAppealCase?.rulingFileId,
+              ),
             )}
             accept={'application/pdf'}
             title={formatMessage(strings.uploadBoxTitle)}
@@ -86,6 +93,7 @@ const WithdrawnAppealCase = () => {
               handleUpload(
                 addUploadFiles(files, {
                   category: CaseFileCategory.APPEAL_COURT_RECORD,
+                  rulingFileId: targetAppealCase?.rulingFileId,
                 }),
                 updateUploadFile,
               )
@@ -102,17 +110,22 @@ const WithdrawnAppealCase = () => {
             `${COURT_OF_APPEAL_OVERVIEW_ROUTE}/${workingCase.id}`,
             targetAppealCase?.id,
           )}
-          onNextButtonClick={async () => {
-            router.push(
-              appendAppealCaseIdQuery(
-                `${COURT_OF_APPEAL_SUMMARY_ROUTE}/${workingCase.id}`,
-                targetAppealCase?.id,
-              ),
-            )
-          }}
-          nextButtonText={formatMessage(strings.continueButton)}
-          nextIsDisabled={!isStepValid}
-          nextButtonIcon="arrowForward"
+          actions={[
+            {
+              text: formatMessage(strings.continueButton),
+              icon: 'arrowForward',
+              onClick: async () => {
+                router.push(
+                  appendAppealCaseIdQuery(
+                    `${COURT_OF_APPEAL_SUMMARY_ROUTE}/${workingCase.id}`,
+                    targetAppealCase?.id,
+                  ),
+                )
+              },
+              disabled: !isStepValid,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>
