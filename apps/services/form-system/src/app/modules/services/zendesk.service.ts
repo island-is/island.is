@@ -503,7 +503,10 @@ export class ZendeskService {
                   field.fieldType === FieldTypesEnum.APPLICANT &&
                   (key === 'delegationType' ||
                     key === 'isLoggedInUser' ||
-                    key === 'applicantType')
+                    key === 'applicantType' ||
+                    key === 'address' ||
+                    key === 'postalCode' ||
+                    key === 'municipality')
                 ) {
                   continue
                 } else if (
