@@ -1269,6 +1269,27 @@ export class CaseService {
     return theCase
   }
 
+  /**
+   * Reads a live case with its row locked for the rest of the transaction. Used
+   * by `CaseExistsForUpdateGuard` so that a mutating route decides its
+   * mutation against a case row no one else can change until it commits.
+   */
+  async findByIdForUpdate(
+    caseId: string,
+    transaction: Transaction,
+  ): Promise<Case> {
+    const theCase = await this.caseRepositoryService.findLiveByIdForUpdate(
+      caseId,
+      transaction,
+    )
+
+    if (!theCase) {
+      throw new NotFoundException(`Case ${caseId} does not exist`)
+    }
+
+    return theCase
+  }
+
   async findMinimalById(id: string): Promise<MinimalCase> {
     const minimalCase = await this.caseRepositoryService.findOne({
       where: {
