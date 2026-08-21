@@ -272,6 +272,9 @@ export default [
         'warn',
         { allowInterfaces: 'with-single-extends' },
       ],
+      // superseded by no-empty-object-type; the nx preset still turns it on at
+      // error, without the allowSingleExtends the old config relied on
+      '@typescript-eslint/no-empty-interface': 'off',
       '@typescript-eslint/no-unsafe-function-type': 'warn',
       '@typescript-eslint/no-wrapper-object-types': 'warn',
       '@typescript-eslint/no-unused-vars': [
