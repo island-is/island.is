@@ -1,0 +1,212 @@
+import type { NextFunction, Request, Response } from 'express'
+import type { Transaction } from 'sequelize'
+import type { Sequelize } from 'sequelize-typescript'
+
+import { InternalServerErrorException } from '@nestjs/common'
+
+import type { Logger } from '@island.is/logging'
+
+import {
+  getOrCreateTransaction,
+  getTransaction,
+  getTransactionContext,
+  markSettled,
+  registerAfterCommit,
+  TransactionContextMiddleware,
+} from '../transactionContext.middleware'
+
+const createTransaction = () =>
+  ({
+    commit: jest.fn().mockResolvedValue(undefined),
+    rollback: jest.fn().mockResolvedValue(undefined),
+  } as unknown as Transaction & { rollback: jest.Mock; commit: jest.Mock })
+
+const createResponse = () => {
+  const listeners: Record<string, () => Promise<void> | void> = {}
+
+  return {
+    on: (event: string, listener: () => Promise<void> | void) => {
+      listeners[event] = listener
+    },
+    emit: async (event: string) => await listeners[event]?.(),
+  }
+}
+
+describe('TransactionContextMiddleware', () => {
+  const logger = {
+    debug: jest.fn(),
+    info: jest.fn(),
+    error: jest.fn(),
+  } as unknown as Logger
+  const middleware = new TransactionContextMiddleware(logger)
+
+  // Runs work inside a request that the middleware has wrapped, and hands back
+  // the response so that the test can end the request afterwards.
+  const givenARequest = async (work: () => Promise<void> | void) => {
+    const res = createResponse()
+
+    await new Promise<void>((resolve, reject) => {
+      middleware.use(
+        {} as Request,
+        res as unknown as Response,
+        (() => {
+          Promise.resolve(work()).then(resolve, reject)
+        }) as NextFunction,
+      )
+    })
+
+    return res
+  }
+
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
+  describe('outside a request', () => {
+    it('should have no transaction', () => {
+      expect(getTransactionContext()).toBeUndefined()
+      expect(getTransaction()).toBeUndefined()
+    })
+
+    it('should refuse to settle or register a callback', () => {
+      expect(() => markSettled()).toThrow(InternalServerErrorException)
+      expect(() => registerAfterCommit(async () => undefined)).toThrow(
+        InternalServerErrorException,
+      )
+    })
+  })
+
+  describe('inside a request', () => {
+    it('should expose an empty slot', async () => {
+      await givenARequest(() => {
+        expect(getTransactionContext()).toEqual({
+          transaction: null,
+          settled: false,
+          afterCommit: [],
+          creating: null,
+        })
+        expect(getTransaction()).toBeUndefined()
+      })
+    })
+
+    it('should open one transaction and reuse it', async () => {
+      const transaction = createTransaction()
+      const sequelize = {
+        transaction: jest.fn().mockResolvedValue(transaction),
+      } as unknown as Sequelize
+
+      await givenARequest(async () => {
+        const first = await getOrCreateTransaction(sequelize)
+        const second = await getOrCreateTransaction(sequelize)
+
+        expect(first).toBe(transaction)
+        expect(second).toBe(transaction)
+        expect(getTransaction()).toBe(transaction)
+        expect(sequelize.transaction).toHaveBeenCalledTimes(1)
+      })
+    })
+
+    it('should open one transaction for concurrent callers', async () => {
+      const transaction = createTransaction()
+      const sequelize = {
+        transaction: jest.fn().mockResolvedValue(transaction),
+      } as unknown as Sequelize
+
+      await givenARequest(async () => {
+        const transactions = await Promise.all([
+          getOrCreateTransaction(sequelize),
+          getOrCreateTransaction(sequelize),
+        ])
+
+        expect(transactions).toEqual([transaction, transaction])
+        expect(sequelize.transaction).toHaveBeenCalledTimes(1)
+      })
+    })
+
+    it('should collect after commit callbacks in registration order', async () => {
+      const first = async () => undefined
+      const second = async () => undefined
+
+      await givenARequest(() => {
+        registerAfterCommit(first)
+        registerAfterCommit(second)
+
+        expect(getTransactionContext()?.afterCommit).toEqual([first, second])
+      })
+    })
+  })
+
+  describe('when the response ends', () => {
+    it('should roll back an open transaction', async () => {
+      const transaction = createTransaction()
+      const sequelize = {
+        transaction: jest.fn().mockResolvedValue(transaction),
+      } as unknown as Sequelize
+
+      const res = await givenARequest(async () => {
+        await getOrCreateTransaction(sequelize)
+      })
+
+      await res.emit('close')
+
+      expect(transaction.rollback).toHaveBeenCalledTimes(1)
+    })
+
+    it('should not roll back a settled transaction', async () => {
+      const transaction = createTransaction()
+      const sequelize = {
+        transaction: jest.fn().mockResolvedValue(transaction),
+      } as unknown as Sequelize
+
+      const res = await givenARequest(async () => {
+        await getOrCreateTransaction(sequelize)
+        markSettled()
+      })
+
+      await res.emit('close')
+
+      expect(transaction.rollback).not.toHaveBeenCalled()
+    })
+
+    it('should not roll back twice', async () => {
+      const transaction = createTransaction()
+      const sequelize = {
+        transaction: jest.fn().mockResolvedValue(transaction),
+      } as unknown as Sequelize
+
+      const res = await givenARequest(async () => {
+        await getOrCreateTransaction(sequelize)
+      })
+
+      await res.emit('close')
+      await res.emit('close')
+
+      expect(transaction.rollback).toHaveBeenCalledTimes(1)
+    })
+
+    it('should do nothing when no transaction was opened', async () => {
+      const res = await givenARequest(() => undefined)
+
+      await expect(res.emit('close')).resolves.toBeUndefined()
+    })
+
+    it('should log a failed rollback rather than throw', async () => {
+      const error = new Error('Some error')
+      const transaction = createTransaction()
+      transaction.rollback.mockRejectedValueOnce(error)
+      const sequelize = {
+        transaction: jest.fn().mockResolvedValue(transaction),
+      } as unknown as Sequelize
+
+      const res = await givenARequest(async () => {
+        await getOrCreateTransaction(sequelize)
+      })
+
+      await expect(res.emit('close')).resolves.toBeUndefined()
+      expect(logger.error).toHaveBeenCalledWith(
+        'Failed to roll back request transaction',
+        { error },
+      )
+    })
+  })
+})
