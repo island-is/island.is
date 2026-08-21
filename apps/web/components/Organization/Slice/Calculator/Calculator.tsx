@@ -37,7 +37,6 @@ import {
   GET_RSK_CALCULATOR_FIELDS,
 } from '@island.is/web/screens/queries/RSKCalculator'
 import { formatCurrency } from '@island.is/web/utils/currency'
-import { TranslationNamespaceProvider } from '@island.is/web/utils/richText'
 
 import { messages } from './messages'
 
@@ -347,108 +346,102 @@ const Calculator = ({ slice }: CalculatorProps) => {
   const hasCalculated = called && !calculationError
 
   return (
-    <TranslationNamespaceProvider messages={slice.translationStrings ?? {}}>
-      <Stack space={5}>
-        <Box background="overlay" borderRadius="large" padding={6}>
-          <Stack space={5}>
-            {title && (
-              <Text variant="h3" as="h3">
-                {title}
-              </Text>
-            )}
-            <Stack space={6}>
-              {sections.map((section) => {
-                const sectionFields = section.fields
-                  .map((sectionField) => {
-                    const field = fieldsByKey.get(sectionField.key)
-                    if (!field) return undefined
-                    const isVisible =
-                      !sectionField.visibleWhen ||
-                      evaluateCondition(sectionField.visibleWhen, watchedValues)
-                    if (!isVisible) return undefined
-                    return { field, span: sectionField.span }
-                  })
-                  .filter(
-                    (
-                      entry,
-                    ): entry is { field: RskCalculatorField; span: number } =>
-                      Boolean(entry),
-                  )
+    <Stack space={5}>
+      <Box background="overlay" borderRadius="large" padding={6}>
+        <Stack space={5}>
+          {title && (
+            <Text variant="h3" as="h3">
+              {title}
+            </Text>
+          )}
+          <Stack space={6}>
+            {sections.map((section) => {
+              const sectionFields = section.fields
+                .map((sectionField) => {
+                  const field = fieldsByKey.get(sectionField.key)
+                  if (!field) return undefined
+                  const isVisible =
+                    !sectionField.visibleWhen ||
+                    evaluateCondition(sectionField.visibleWhen, watchedValues)
+                  if (!isVisible) return undefined
+                  return { field, span: sectionField.span }
+                })
+                .filter((entry): entry is {
+                  field: RskCalculatorField
+                  span: number
+                } => Boolean(entry))
 
-                if (!sectionFields.length) return null
+              if (!sectionFields.length) return null
 
-                return (
-                  <Stack key={section.key} space={3}>
-                    {(section.title || section.description) && (
-                      <Stack space={1}>
-                        {section.title && (
-                          <Text variant="h4" as="h4">
-                            {formatMessage(getSectionTitleMessage(section))}
-                          </Text>
-                        )}
-                        {section.description && (
-                          <Text variant="medium">
-                            {formatMessage(
-                              getSectionDescriptionMessage(section),
-                            )}
-                          </Text>
-                        )}
-                      </Stack>
-                    )}
-                    <GridRow rowGap={3}>
-                      {sectionFields.map(({ field, span }) => (
-                        <GridColumn key={field.key} span={spanToGridColumn(span)}>
-                          <CalculatorFieldInput
-                            field={field}
-                            control={control}
-                            label={formatMessage(getFieldLabelMessage(field))}
-                          />
-                        </GridColumn>
-                      ))}
-                    </GridRow>
-                  </Stack>
-                )
-              })}
-            </Stack>
-            {disclaimer && (
-              <Text variant="small" lineHeight="lg">
-                {disclaimer}
-              </Text>
-            )}
-            <Box>
-              <Button
-                loading={calculating}
-                onClick={calculate}
-                icon={hasCalculated ? 'reload' : undefined}
-              >
-                {formatMessage(
-                  hasCalculated ? messages.recalculate : messages.calculate,
-                )}
-              </Button>
-            </Box>
+              return (
+                <Stack key={section.key} space={3}>
+                  {(section.title || section.description) && (
+                    <Stack space={1}>
+                      {section.title && (
+                        <Text variant="h4" as="h4">
+                          {formatMessage(getSectionTitleMessage(section))}
+                        </Text>
+                      )}
+                      {section.description && (
+                        <Text variant="medium">
+                          {formatMessage(getSectionDescriptionMessage(section))}
+                        </Text>
+                      )}
+                    </Stack>
+                  )}
+                  <GridRow rowGap={3}>
+                    {sectionFields.map(({ field, span }) => (
+                      <GridColumn key={field.key} span={spanToGridColumn(span)}>
+                        <CalculatorFieldInput
+                          field={field}
+                          control={control}
+                          label={formatMessage(getFieldLabelMessage(field))}
+                        />
+                      </GridColumn>
+                    ))}
+                  </GridRow>
+                </Stack>
+              )
+            })}
+          </Stack>
+          {disclaimer && (
+            <Text variant="small" lineHeight="lg">
+              {disclaimer}
+            </Text>
+          )}
+          <Box>
+            <Button
+              loading={calculating}
+              onClick={calculate}
+              icon={hasCalculated ? 'reload' : undefined}
+            >
+              {formatMessage(
+                hasCalculated ? messages.recalculate : messages.calculate,
+              )}
+            </Button>
+          </Box>
+        </Stack>
+      </Box>
+      {hasCalculated && results.length > 0 && (
+        <Box background="purple100" borderRadius="large" padding={6}>
+          <Stack space={3}>
+            <Text variant="h2" as="h2">
+              {headlineRow
+                ? `${headlineRow.label}: ${formatResultValue(headlineRow)}`
+                : formatMessage(messages.results)}
+            </Text>
+            <CalculatorResults results={groupedResults} />
           </Stack>
         </Box>
-        {hasCalculated && results.length > 0 && (
-          <Box background="purple100" borderRadius="large" padding={6}>
-            <Stack space={3}>
-              <Text variant="h2" as="h2">
-                {headlineRow
-                  ? `${headlineRow.label}: ${formatResultValue(headlineRow)}`
-                  : formatMessage(messages.results)}
-              </Text>
-              <CalculatorResults results={groupedResults} />
-            </Stack>
-          </Box>
-        )}
-        {!calculating && called && calculationError && (
-          <AlertMessage
-            type="error"
-            title={formatMessage(messages.errorOccurredTitle)}
-            message={formatMessage(messages.errorOccurredMessage)}
-          />
-        )}
-      </Stack>
-    </TranslationNamespaceProvider>
+      )}
+      {!calculating && called && calculationError && (
+        <AlertMessage
+          type="error"
+          title={formatMessage(messages.errorOccurredTitle)}
+          message={formatMessage(messages.errorOccurredMessage)}
+        />
+      )}
+    </Stack>
   )
 }
 

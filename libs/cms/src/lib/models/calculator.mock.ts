@@ -20,6 +20,19 @@ const withholdingTaxOnWagesEntry: ICalculator = {
   fields: {
     title: 'Staðgreiðsla launa (mock)',
     calculatorType: 'withholdingTaxOnWages',
+    // `title`/`disclaimer` messages default to an empty string (there's no
+    // GraphQL-provided default the way field labels have) -- without a
+    // translation-namespace override, react-intl falls back to rendering
+    // the raw message id. Real entries set this via the linked namespace.
+    translationNamespace: {
+      fields: {
+        strings: {
+          'web.rsk.calculator:title': 'Reiknivél staðgreiðslu',
+          'web.rsk.calculator:disclaimer':
+            'Niðurstöður eru til viðmiðunar og eru ekki bindandi.',
+        },
+      },
+    },
     configJson: {
       calculatorType: 'withholdingTaxOnWages',
       sections: [
@@ -86,6 +99,15 @@ const childBenefitEntry: ICalculator = {
   fields: {
     title: 'Barnabætur (mock)',
     calculatorType: 'childBenefit',
+    translationNamespace: {
+      fields: {
+        strings: {
+          'web.rsk.calculator:title': 'Reiknivél barnabóta',
+          'web.rsk.calculator:disclaimer':
+            'Niðurstöður eru til viðmiðunar og eru ekki bindandi.',
+        },
+      },
+    },
     configJson: {
       calculatorType: 'childBenefit',
       sections: [
