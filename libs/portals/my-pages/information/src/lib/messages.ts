@@ -740,9 +740,17 @@ export const contractsMessages = defineMessages({
     id: 'sp.contracts:hide-inactive-contracts',
     defaultMessage: 'Fela óvirka samninga',
   },
-  downloadAsPdf: {
-    id: 'sp.contracts:download-as-pdf',
-    defaultMessage: 'Sækja sem PDF',
+  downloadFiles: {
+    id: 'sp.contracts:download-files',
+    defaultMessage: 'Sækja skjöl',
+  },
+  downloadFilesMenu: {
+    id: 'sp.contracts:download-files-menu',
+    defaultMessage: 'Skjalaskrá',
+  },
+  terminationDate: {
+    id: 'sp.contracts:termination-date',
+    defaultMessage: 'Uppsagnardagur',
   },
   terminateRentalAgreement: {
     id: 'sp.contracts:terminate-rental-agreement',
