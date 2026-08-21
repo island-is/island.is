@@ -169,7 +169,6 @@ const NewHealthConversation = () => {
     if (conversationId) {
       navigate(
         HealthPaths.HealthConversationsDetail.replace(':id', conversationId),
-        { state: { justCreated: true } },
       )
     } else {
       navigate(HealthPaths.HealthConversations)

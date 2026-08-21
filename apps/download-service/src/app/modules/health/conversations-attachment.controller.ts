@@ -21,7 +21,7 @@ import { ApiOkResponse } from '@nestjs/swagger'
 import { Response } from 'express'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.health)
+@Scopes(ApiScope.internal, ApiScope.health)
 @Controller('health/conversations')
 export class HealthConversationsAttachmentController {
   constructor(
