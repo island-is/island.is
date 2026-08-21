@@ -1,14 +1,13 @@
-import { FC, useContext } from 'react'
+import type { FC } from 'react'
+import { useContext } from 'react'
 
 import { Box, Input } from '@island.is/island-ui/core'
 import {
   FormContext,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  CourtSessionResponse,
-  CourtSessionRulingType,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { CourtSessionResponse } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CourtSessionRulingType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDebouncedField } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import CourtSessionAppealDecisions from './CourtSessionAppealDecisions'
