@@ -23,7 +23,6 @@ const getState = (
   return 'edit'
 }
 
- 
 interface ContactUsProps
   extends Omit<ContactUsFormProps, 'state' | 'onSubmit'> {}
 

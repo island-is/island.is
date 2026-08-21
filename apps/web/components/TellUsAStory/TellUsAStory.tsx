@@ -24,7 +24,6 @@ const getState = (
   return 'edit'
 }
 
- 
 interface TellUsAStoryProps
   extends Omit<TellUsAStoryFormProps, 'state' | 'onSubmit'> {}
 

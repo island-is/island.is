@@ -37,7 +37,7 @@ export const useDraftSync = (application: Application) => {
       const { employees: _drop, ...rest } = batch
       for (let i = 0; i < employees.length; i += EMPLOYEE_CHUNK_SIZE) {
         const chunk = employees.slice(i, i + EMPLOYEE_CHUNK_SIZE)
-         
+
         await mutate({
           variables: {
             input: {

@@ -568,7 +568,7 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
       })
       .then((res) => {
         // map data here to reduce data processing in component
-         
+
         // @ts-expect-error make web strict
         return JSON.parse(res.data.getNamespace.fields)
       }),
