@@ -155,8 +155,18 @@ export const MARKER_NONE_CLASS = 'marker-none'
 const MARKER_NONE_REGEX = /list-style-type\s*:\s*none/i
 const BACKGROUND_REGEX = /background(?:-color)?\s*:\s*([^;]+)/i
 const LEFT_OFFSET_REGEX = /(?:margin|padding)-left\s*:\s*([\d.]+)(pt|px)/i
+// Word's AutoFormat turns a Tab at the start of a paragraph into a first-line
+// indent, which reaches the clipboard as text-indent (in pt) — indenting a
+// multi-paragraph selection uses margin-left instead. It can be negative
+// (hanging indents), so the sign is captured and the offsets are summed.
+const TEXT_INDENT_REGEX = /text-indent\s*:\s*(-?[\d.]+)(pt|px)/i
 const BOLD_REGEX = /font-weight\s*:\s*(?:bold|bolder|[6-9]00)/i
 const ITALIC_REGEX = /font-style\s*:\s*(?:italic|oblique)/i
+
+const offsetToPx = (offset: RegExpMatchArray): number => {
+  const numeric = parseFloat(offset[1])
+  return offset[2].toLowerCase() === 'pt' ? numeric * (96 / 72) : numeric
+}
 
 // LI is deliberately absent: a list item's level is expressed by how deeply it
 // is nested, and Word indents its items with margin-left on top of that. Turning
@@ -210,10 +220,14 @@ export const normalizeRichTextHtml = (html: string): string => {
       el.classList.add(MARKER_NONE_CLASS)
     }
 
+    // Word paragraphs are one line each, so a first-line indent (text-indent)
+    // is visually a block indent and both offsets add up.
     const leftOffset = style.match(LEFT_OFFSET_REGEX)
-    if (leftOffset && BLOCK_TAGS.has(el.tagName)) {
-      const numeric = parseFloat(leftOffset[1])
-      const px = leftOffset[2] === 'pt' ? numeric * (96 / 72) : numeric
+    const textIndent = style.match(TEXT_INDENT_REGEX)
+    if ((leftOffset || textIndent) && BLOCK_TAGS.has(el.tagName)) {
+      const px =
+        (leftOffset ? offsetToPx(leftOffset) : 0) +
+        (textIndent ? offsetToPx(textIndent) : 0)
       const level = Math.min(MAX_INDENT_LEVEL, Math.round(px / INDENT_STEP_PX))
       if (level > 0) {
         el.classList.add(indentClassFromLevel(level))
