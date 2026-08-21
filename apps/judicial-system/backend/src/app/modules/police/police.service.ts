@@ -267,6 +267,7 @@ export class PoliceService {
 
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
+    @Inject(forwardRef(() => IndictmentSubtypeRepositoryService))
     private readonly indictmentSubtypeRepositoryService: IndictmentSubtypeRepositoryService,
     @Inject(policeModuleConfig.KEY)
     private readonly config: ConfigType<typeof policeModuleConfig>,

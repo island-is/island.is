@@ -45,6 +45,9 @@ export enum Roles {
   INSTITUTION = 'institution',
 }
 
+/** Gervimaður Bretland — institution UI tester; never assigned or mapped on production. */
+export const DEV_INSTITUTION_TESTER_NATIONAL_ID = '0101304929'
+
 export const UPLOAD_ACCEPT = '.pdf,.doc,.docx,.rtf,.jpg,.jpeg,.png,.heic'
 
 export const MAX_TEXT_LENGTH = 500

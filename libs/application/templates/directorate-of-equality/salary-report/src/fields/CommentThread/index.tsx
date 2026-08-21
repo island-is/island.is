@@ -17,7 +17,7 @@ import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
 import type { ApplicationReportCommentDto } from '@island.is/clients/directorate-of-equality'
-import { States } from '../../utils/constants'
+import { ApiActions, draftActionId, States } from '../../utils/constants'
 import { messages } from '../../lib/messages'
 
 const SENDABLE_STATES: string[] = [States.IN_REVIEW, States.POSTPONED]
@@ -57,7 +57,10 @@ export const CommentThread = ({ application, field }: FieldBaseProps) => {
         input: {
           id: application.id,
           dataProviders: [
-            { actionId: 'DirectorateOfEquality.getReportComments', order: 0 },
+            {
+              actionId: draftActionId(ApiActions.getReportComments),
+              order: 0,
+            },
           ],
         },
         locale,
@@ -97,7 +100,7 @@ export const CommentThread = ({ application, field }: FieldBaseProps) => {
             id: application.id,
             dataProviders: [
               {
-                actionId: 'DirectorateOfEquality.submitReportComment',
+                actionId: draftActionId(ApiActions.submitReportComment),
                 order: 0,
               },
             ],

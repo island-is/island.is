@@ -21,17 +21,22 @@ export const messages = {
       id: 'doe.sr.application:errors.duplicateSubsidiary',
       defaultMessage: 'Þetta dótturfélag er þegar á listanum',
     },
-    duplicateCriterionTitle: {
-      id: 'doe.sr.application:errors.duplicateCriterionTitle',
-      defaultMessage: 'Þáttur með þessu heiti er þegar á listanum',
-    },
-    duplicateSubCriterionTitle: {
-      id: 'doe.sr.application:errors.duplicateSubCriterionTitle',
-      defaultMessage: 'Undirþáttur með þessu heiti er þegar á listanum',
-    },
     invalidCompany: {
       id: 'doe.sr.application:errors.invalidCompany',
       defaultMessage: 'Kennitala fyrirtækis er ekki gild',
+    },
+    draftSyncFailed: {
+      id: 'doe.sr.application:errors.draftSyncFailed',
+      defaultMessage:
+        'Ekki tókst að vista breytingarnar. Reyndu aftur áður en þú heldur áfram.',
+    },
+    draftLoadFailed: {
+      id: 'doe.sr.application:errors.draftLoadFailed',
+      defaultMessage: 'Ekki tókst að sækja gögnin. Reyndu aftur.',
+    },
+    retryButton: {
+      id: 'doe.sr.application:errors.retryButton',
+      defaultMessage: 'Reyna aftur',
     },
   }),
 
@@ -54,7 +59,7 @@ export const messages = {
     description: {
       id: 'doe.sr.application:notAllowed.description',
       defaultMessage:
-        'Þú þarft að vera með gilda jafnréttisáætlun til þess að senda inn launagreiningu.',
+        'Þú þarft að vera með gilda [jafnréttisáætlun](/umsoknir/jafnrettisstofa-jafnrettisaaetlun) til þess að senda inn launagreiningu.',
     },
   }),
 
