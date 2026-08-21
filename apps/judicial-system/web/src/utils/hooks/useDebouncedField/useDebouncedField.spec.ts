@@ -159,10 +159,11 @@ describe('useDebouncedField', () => {
     })
 
     it('should keep the typed whitespace on blur for a required field', () => {
+      const onSave = jest.fn()
       const { result } = renderHook(() =>
         useDebouncedField({
           value: 'Jón',
-          onSave: jest.fn(),
+          onSave,
           validations: ['empty'],
         }),
       )
@@ -170,6 +171,7 @@ describe('useDebouncedField', () => {
       act(() => result.current.onChange('   '))
       act(() => result.current.onBlur())
 
+      expect(onSave).not.toHaveBeenCalled()
       expect(result.current.value).toBe('   ')
       expect(result.current.hasError).toBe(true)
     })
