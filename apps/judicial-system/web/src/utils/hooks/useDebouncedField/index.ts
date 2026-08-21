@@ -116,6 +116,18 @@ const useDebouncedField = ({
   // so local state is authoritative.
   const handleBlur = (_value?: string) => {
     debouncedSave.flush()
+
+    // The flushed save persists a whitespace-only value as '' (unless
+    // `validations` blocked it), so snap the displayed value to match — the
+    // field shouldn't keep showing spaces the server no longer has. A
+    // required field keeps the typed spaces alongside its error message,
+    // since nothing was saved.
+    const normalized = normalizeBlankString(value)
+    if (normalized !== value && validate([[normalized, validations]]).isValid) {
+      setValue(normalized)
+      onValueChange?.(normalized)
+    }
+
     validateAndSetErrorMessage(validations, value, setErrorMessage)
   }
 
