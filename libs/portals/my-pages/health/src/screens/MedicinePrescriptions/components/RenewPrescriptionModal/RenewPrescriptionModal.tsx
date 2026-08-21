@@ -103,6 +103,10 @@ const RenewPrescriptionModal: React.FC<Props> = ({
       title: formatMessage(messages.prescribedAmount),
       value: activePrescription.totalPrescribedAmount ?? '',
     },
+    {
+      title: formatMessage(messages.primaryCareClinic),
+      value: activePrescription.primaryCareClinic ?? '',
+    },
   ]
 
   const closeModal = () => {
