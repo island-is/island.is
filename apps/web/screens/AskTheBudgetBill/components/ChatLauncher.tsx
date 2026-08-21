@@ -1,11 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
   AlertMessage,
   Box,
   Button,
-  Input,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -13,6 +12,9 @@ import {
 import { m } from '../translations.strings'
 import type { MessengerStatus } from './useZendeskMessenger'
 import * as styles from './ChatLauncher.css'
+
+/** The delays the caret is handed back over, see the effect below */
+const FOCUS_RETRY_DELAYS_MS = [0, 50, 150, 300, 600]
 
 interface ChatLauncherProps {
   /** True while a conversation is being created for the question just asked */
@@ -31,19 +33,40 @@ export const ChatLauncher = ({
 }: ChatLauncherProps) => {
   const { formatMessage } = useIntl()
   const [value, setValue] = useState('')
+  const rootRef = useRef<HTMLDivElement>(null)
   const composerRef = useRef<HTMLTextAreaElement>(null)
+
+  const focusComposer = useCallback(() => {
+    const active = document.activeElement
+    // Focus the visitor moved elsewhere within the launcher themselves, onto
+    // the send button for instance, is left where it is.
+    if (
+      active &&
+      active !== composerRef.current &&
+      rootRef.current?.contains(active)
+    ) {
+      return
+    }
+    composerRef.current?.focus({ preventScroll: true })
+  }, [])
 
   // The launcher stays mounted underneath the conversation, so returning to it
   // from an open chat has to hand the caret back to the question box. Only the
   // return is focused, not the first render, so the page does not open with the
-  // mobile keyboard up.
+  // mobile keyboard up. The widget takes focus into its iframe while the
+  // conversation it was showing goes away, so this is retried for a moment
+  // rather than done once.
   const wasVisible = useRef(isVisible)
   useEffect(() => {
-    if (isVisible && !wasVisible.current) {
-      composerRef.current?.focus()
-    }
+    const isReturning = isVisible && !wasVisible.current
     wasVisible.current = isVisible
-  }, [isVisible])
+    if (!isReturning) return
+
+    const timeouts = FOCUS_RETRY_DELAYS_MS.map((delay) =>
+      window.setTimeout(focusComposer, delay),
+    )
+    return () => timeouts.forEach(window.clearTimeout)
+  }, [isVisible, focusComposer])
 
   const isReady = status === 'ready'
   const canSubmit = isReady && !isStarting && Boolean(value.trim())
@@ -56,6 +79,7 @@ export const ChatLauncher = ({
 
   return (
     <Box
+      ref={rootRef}
       className={styles.content}
       paddingX={[3, 3, 5, 6]}
       paddingY={[4, 4, 6]}
@@ -66,33 +90,34 @@ export const ChatLauncher = ({
         </Text>
 
         <Stack space={2}>
-          <Input
-            name="budget-bill-question"
-            ref={composerRef}
-            textarea
-            rows={4}
-            label={formatMessage(m.inputLabel)}
-            placeholder={formatMessage(m.inputPlaceholder)}
-            value={value}
-            disabled={isStarting}
-            onChange={(event) => setValue(event.target.value)}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault()
-                submit(value)
-              }
-            }}
-          />
+          <Box className={styles.composer}>
+            <textarea
+              ref={composerRef}
+              className={styles.textarea}
+              name="budget-bill-question"
+              aria-label={formatMessage(m.inputLabel)}
+              placeholder={formatMessage(m.inputPlaceholder)}
+              value={value}
+              disabled={isStarting}
+              onChange={(event) => setValue(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' && !event.shiftKey) {
+                  event.preventDefault()
+                  submit(value)
+                }
+              }}
+            />
 
-          <Box display="flex" justifyContent="flexEnd">
-            <Button
-              icon="arrowForward"
-              loading={isStarting}
-              disabled={!canSubmit}
-              onClick={() => submit(value)}
-            >
-              {formatMessage(m.send)}
-            </Button>
+            <Box className={styles.submit}>
+              <Button
+                circle
+                icon="arrowUp"
+                title={formatMessage(m.send)}
+                loading={isStarting}
+                disabled={!canSubmit}
+                onClick={() => submit(value)}
+              />
+            </Box>
           </Box>
 
           {status === 'error' && (
