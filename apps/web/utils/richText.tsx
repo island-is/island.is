@@ -24,6 +24,7 @@ import {
   AircraftSearch,
   AlcoholLicencesList,
   BrokersList,
+  Calculator,
   CatchQuotaCalculator,
   Chart,
   ChartNumberBox,
@@ -63,6 +64,7 @@ import {
 } from '@island.is/web/components'
 import {
   AccordionSlice as AccordionSliceSchema,
+  Calculator as CalculatorSchema,
   Chart as ChartSchema,
   ChartNumberBox as ChartNumberBoxSchema,
   ConnectedComponent,
@@ -423,6 +425,7 @@ const defaultRenderComponent = {
     slice.accordionItems && <AccordionSlice slice={slice} />,
   ConnectedComponent: (slice: ConnectedComponent) =>
     webRenderConnectedComponent(slice),
+  Calculator: (slice: CalculatorSchema) => <Calculator slice={slice} />,
   GraphCard: (chart: ChartsCardsProps['chart']) => <ChartsCard chart={chart} />,
   OneColumnText: (slice: OneColumnText) => <OneColumnTextSlice slice={slice} />,
   TwoColumnText: (slice: TwoColumnText) => <TwoColumnTextSlice slice={slice} />,

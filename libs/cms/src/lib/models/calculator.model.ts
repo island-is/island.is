@@ -1,5 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { GraphQLJSONObject } from 'graphql-type-json'
+import graphqlTypeJson, { GraphQLJSONObject } from 'graphql-type-json'
 import { CacheField } from '@island.is/nest/graphql'
 import { SystemMetadata } from '@island.is/shared/types'
 import { ICalculator } from '../generated/contentfulTypes'
@@ -20,7 +20,12 @@ export class Calculator {
   @Field({ nullable: true })
   calculatorType?: string
 
-  @CacheField(() => GraphQLJSONObject, { nullable: true })
+  // `graphqlTypeJson` (the `JSON` scalar), not `GraphQLJSONObject` -- both
+  // Calculator and ConnectedComponent are members of the `Slice` union and
+  // both expose a `configJson` field; GraphQL's overlapping-fields-can-be-
+  // merged validation rejects two differently-scoped scalars sharing a field
+  // name across union members, so this must match ConnectedComponent's type.
+  @Field(() => graphqlTypeJson, { nullable: true })
   configJson?: Record<string, any> | null
 
   @CacheField(() => GraphQLJSONObject, { nullable: true })
