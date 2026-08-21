@@ -202,7 +202,14 @@ export const aboutTheCompanySection = buildSection({
               width: 'full',
               required: true,
               defaultValue: (application: Application) =>
-                getValueViaPath(application.externalData, 'identity.data.name'),
+                getValueViaPath(
+                  application.externalData,
+                  'identity.data.actor.name',
+                ) ??
+                getValueViaPath(
+                  application.externalData,
+                  'identity.data.name',
+                ),
             }),
             buildTextField({
               id: 'contactPerson.email',

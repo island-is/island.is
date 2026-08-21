@@ -1,18 +1,18 @@
-import {
-  buildDescriptionField,
-  buildMultiField,
-  buildSection,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
 import { messages } from '../../lib/messages'
 import {
   isOutlierGroupComplete,
   OutlierGroupAnswer,
 } from '../../utils/outlierGroups'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 
-export const postponedIntroSection = buildSection({
-  id: 'postponedIntro',
-  title: messages.postponed.introSectionTitle,
+export const postponedIntroSection = buildFormConclusionSection({
+  sectionTitle: messages.postponed.sectionTitle,
+  tabTitle: messages.postponed.sectionTitle,
+  alertTitle: messages.postponed.alertTitle,
+  expandableIntro: messages.postponed.expandableIntro,
+  expandableDescription: messages.postponed.expandableDescription,
+
   condition: (answers) => {
     // EDIT no longer ever targets POSTPONED (both IN_REVIEW's and
     // POSTPONED's own EDIT now target DRAFT_RETRY instead), so POSTPONED is
@@ -28,16 +28,4 @@ export const postponedIntroSection = buildSection({
       outlierGroups.length > 0 && outlierGroups.every(isOutlierGroupComplete)
     return !outlierPlanComplete
   },
-  children: [
-    buildMultiField({
-      id: 'postponedIntroMultiField',
-      title: messages.postponed.introTitle,
-      children: [
-        buildDescriptionField({
-          id: 'postponedIntroDescription',
-          description: messages.postponed.introDescription,
-        }),
-      ],
-    }),
-  ],
 })

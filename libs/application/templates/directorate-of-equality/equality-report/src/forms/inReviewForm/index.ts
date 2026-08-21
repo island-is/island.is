@@ -13,7 +13,8 @@ export const inReviewForm = buildForm({
       sectionTitle: messages.inReview.sectionTitle,
       tabTitle: messages.inReview.sectionTitle,
       alertTitle: messages.inReview.alertTitle,
-      alertMessage: messages.inReview.alertDescription,
+      expandableIntro: messages.inReview.expandableIntro,
+      expandableDescription: messages.inReview.expandableDescription,
     }),
   ],
 })

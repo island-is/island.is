@@ -1,5 +1,9 @@
-import { defineTemplateApi } from '@island.is/application/types'
+import { defineTemplateApi, IdentityApi } from '@island.is/application/types'
 import { ApiActions } from '../utils/constants'
+
+export const IdentityApiProvider = IdentityApi.configure({
+  params: { includeActorInfo: true },
+})
 
 // PREREQUISITES providers — independent of each other, order is inconsequential
 export const CompanyRegistryApi = defineTemplateApi({
