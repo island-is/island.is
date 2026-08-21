@@ -140,11 +140,6 @@ const template: ApplicationTemplate<
               },
             ],
           },
-          // So the comment thread's non-empty check has fresh externalData on
-          // first render — role.api alone never auto-fetches outside
-          // PREREQUISITES, it only permits the on-demand call CommentThread
-          // makes from within the mounted field.
-          onEntry: GetReportCommentsApi,
           // onExit (not onEntry on IN_REVIEW) so a failed submission blocks
           // the transition instead of silently landing the applicant on a
           // fake "in review" screen with a stale backend record.
@@ -169,7 +164,6 @@ const template: ApplicationTemplate<
                 EqualityReportTemplateHtmlApi,
                 EqualityReportTemplateDocxApi,
                 PreviousEqualityReportContentApi,
-                GetReportCommentsApi,
               ],
               delete: true,
             },
@@ -199,7 +193,7 @@ const template: ApplicationTemplate<
           },
           actionCard: {
             tag: {
-              label: coreMessages.tagsInProgress,
+              label: messages.inReview.tagLabel,
               variant: 'blueberry',
             },
             historyLogs: [
@@ -336,7 +330,7 @@ const template: ApplicationTemplate<
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
             tag: {
-              label: coreMessages.tagsDone,
+              label: coreMessages.tagsApproved,
               variant: 'mint',
             },
           },

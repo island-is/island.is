@@ -389,7 +389,7 @@ const template: ApplicationTemplate<
           },
           actionCard: {
             tag: {
-              label: coreMessages.tagsInProgress,
+              label: messages.inReview.tagLabel,
               variant: 'blueberry',
             },
             historyLogs: [

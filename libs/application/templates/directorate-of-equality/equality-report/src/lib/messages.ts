@@ -586,6 +586,10 @@ export const messages = {
   }),
 
   inReview: defineMessages({
+    tagLabel: {
+      id: 'doe.er.application:inReview.tagLabel',
+      defaultMessage: 'Í vinnslu hjá ritstjórn',
+    },
     sectionTitle: {
       id: 'doe.er.application:inReview.sectionTitle',
       defaultMessage: 'Umsókn móttekin',

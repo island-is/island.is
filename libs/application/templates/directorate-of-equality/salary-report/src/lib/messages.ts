@@ -1141,6 +1141,10 @@ export const messages = {
   }),
 
   inReview: defineMessages({
+    tagLabel: {
+      id: 'doe.sr.application:inReview.tagLabel',
+      defaultMessage: 'Í vinnslu hjá ritstjórn',
+    },
     sectionTitle: {
       id: 'doe.sr.application:inReview.sectionTitle',
       defaultMessage: 'Umsókn móttekin',
@@ -1229,7 +1233,7 @@ export const messages = {
   postponed: defineMessages({
     tagLabel: {
       id: 'doe.sr.application:postponed.tagLabel',
-      defaultMessage: 'Úrbótaáætlun í vinnslu',
+      defaultMessage: 'Úrbótaáætlun frestað',
     },
     introSectionTitle: {
       id: 'doe.sr.application:postponed.introSectionTitle',
