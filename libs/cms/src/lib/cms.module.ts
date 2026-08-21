@@ -20,6 +20,7 @@ import {
   GenericListResolver,
   FeaturedGenericListItemsResolver,
   OrganizationResolver,
+  CalculatorMockResolver,
 } from './cms.resolver'
 import { CmsContentfulService } from './cms.contentful.service'
 import { ContentfulRepository } from './contentful.repository'
@@ -58,6 +59,7 @@ import {
   ],
   providers: [
     CmsResolver,
+    CalculatorMockResolver,
     ArticleResolver,
     ElasticService,
     CmsContentfulService,

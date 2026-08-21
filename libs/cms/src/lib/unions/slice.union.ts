@@ -16,6 +16,7 @@ import {
   IFaqList,
   ISliceConnectedComponent,
   IEmbeddedVideo,
+  ICalculator,
   ISectionWithImage,
   ITabSection,
   ITeamList,
@@ -83,6 +84,7 @@ import {
   mapConnectedComponent,
 } from '../models/connectedComponent.model'
 import { EmbeddedVideo, mapEmbeddedVideo } from '../models/embeddedVideo.model'
+import { Calculator, mapCalculator } from '../models/calculator.model'
 import {
   mapSectionWithImage,
   SectionWithImage,
@@ -187,6 +189,7 @@ export type SliceTypes =
   | IFaqList
   | ISliceConnectedComponent
   | IEmbeddedVideo
+  | ICalculator
   | ISectionWithImage
   | ISectionWithVideo
   | ITabSection
@@ -242,6 +245,7 @@ export const SliceUnion = createUnionType({
     FaqList,
     ConnectedComponent,
     EmbeddedVideo,
+    Calculator,
     SectionWithImage,
     SectionWithVideo,
     TabSection,
@@ -316,6 +320,8 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapConnectedComponent(slice as ISliceConnectedComponent)
     case 'embeddedVideo':
       return mapEmbeddedVideo(slice as IEmbeddedVideo)
+    case 'calculator':
+      return mapCalculator(slice as ICalculator)
     case 'sectionWithImage':
       return mapSectionWithImage(slice as ISectionWithImage)
     case 'sectionWithVideo':
