@@ -1,7 +1,4 @@
-import {
-  defineTemplateApi,
-  DefaultEvents,
-} from '@island.is/application/types'
+import { defineTemplateApi, DefaultEvents } from '@island.is/application/types'
 import { ApiActions } from '../utils/constants'
 
 export { IdentityApi, UserProfileApi } from '@island.is/application/types'
