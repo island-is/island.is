@@ -1,9 +1,11 @@
 import {
   FC,
+  MouseEvent,
   PointerEvent,
   ReactNode,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react'
 import {
@@ -129,6 +131,8 @@ export const IndictmentCountAccordionItem: FC<Props> = ({
   const boxShadow = useRaisedShadow(y)
   const controls = useDragControls()
   const [isDragging, setIsDragging] = useState(false)
+  // AccordionItem toggles on click; handle is inside that button.
+  const suppressToggleClickRef = useRef(false)
 
   const formattedDate = useMemo(() => {
     const policeCaseNumber = indictmentCount.policeCaseNumber
@@ -150,8 +154,26 @@ export const IndictmentCountAccordionItem: FC<Props> = ({
 
   const handlePointerDown = (evt: PointerEvent) => {
     evt.preventDefault()
+    evt.stopPropagation()
+    suppressToggleClickRef.current = true
     setIsDragging(true)
     controls.start(evt)
+  }
+
+  const handleDragHandleClick = (evt: MouseEvent) => {
+    evt.preventDefault()
+    evt.stopPropagation()
+    suppressToggleClickRef.current = false
+  }
+
+  const handleToggleClickCapture = (evt: MouseEvent) => {
+    if (!suppressToggleClickRef.current) {
+      return
+    }
+
+    evt.preventDefault()
+    evt.stopPropagation()
+    suppressToggleClickRef.current = false
   }
 
   const handlePointerUp = () => {
@@ -159,6 +181,9 @@ export const IndictmentCountAccordionItem: FC<Props> = ({
       onReorder()
     }
     setIsDragging(false)
+    window.setTimeout(() => {
+      suppressToggleClickRef.current = false
+    }, 0)
   }
 
   return (
@@ -175,27 +200,33 @@ export const IndictmentCountAccordionItem: FC<Props> = ({
       onPointerUp={handlePointerUp}
       drag
     >
-      <Box className={styles.itemWrapper}>
-        <Box
-          className={styles.dragHandle}
-          data-testid="indictmentCountDragHandle"
-          onPointerDown={handlePointerDown}
-          style={isDragging ? { cursor: 'grabbing' } : undefined}
-        >
-          <Icon icon="menu" color="blue400" />
-        </Box>
+      <Box
+        className={styles.itemWrapper}
+        onClickCapture={handleToggleClickCapture}
+      >
         <Box className={styles.accordionWrapper}>
           <AccordionItem
             id={`indictmentCountAccordionItem-${indictmentCount.id}`}
             expanded={expanded}
             onToggle={onToggle}
             label={
-              <IndictmentCountLabel
-                index={index}
-                policeCaseNumber={indictmentCount.policeCaseNumber}
-                formattedDate={formattedDate}
-                warningMessage={warningMessage}
-              />
+              <Box display="flex" flexDirection="row">
+                <Box
+                  className={styles.dragHandle}
+                  data-testid="indictmentCountDragHandle"
+                  onPointerDown={handlePointerDown}
+                  onClick={handleDragHandleClick}
+                  style={isDragging ? { cursor: 'grabbing' } : undefined}
+                >
+                  <Icon icon="menu" color="blue400" />
+                </Box>
+                <IndictmentCountLabel
+                  index={index}
+                  policeCaseNumber={indictmentCount.policeCaseNumber}
+                  formattedDate={formattedDate}
+                  warningMessage={warningMessage}
+                />
+              </Box>
             }
           >
             {children}
