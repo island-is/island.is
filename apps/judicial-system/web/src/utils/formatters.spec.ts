@@ -45,6 +45,23 @@ describe('normalizeBlankStrings', () => {
       numbers: ['012-3456-7890'],
     })
   })
+
+  test('should normalize strings inside plain nested objects', () => {
+    expect(
+      normalizeBlankStrings({ substances: { ALCOHOL: '   ', OTHER: '1,10' } }),
+    ).toEqual({ substances: { ALCOHOL: '', OTHER: '1,10' } })
+  })
+
+  test('should leave class instances such as Date untouched', () => {
+    const date = new Date('2026-08-21T13:37:00Z')
+
+    const result = normalizeBlankStrings({
+      crimeScenes: { '007-2026-1': { place: '   ', date } },
+    })
+
+    expect(result.crimeScenes['007-2026-1'].place).toBe('')
+    expect(result.crimeScenes['007-2026-1'].date).toBe(date)
+  })
 })
 
 describe('textToHtml', () => {

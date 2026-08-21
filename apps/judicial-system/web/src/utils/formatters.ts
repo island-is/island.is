@@ -9,14 +9,27 @@ export const replaceTabs = (str: string) =>
 export const normalizeBlankString = (value: string): string =>
   value.trim() === '' ? '' : value
 
+const isPlainObject = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' &&
+  value !== null &&
+  (Object.getPrototypeOf(value) === Object.prototype ||
+    Object.getPrototypeOf(value) === null)
+
 // Applies normalizeBlankString to every string-valued property of a mutation
-// input. Safe for mixed payloads: enums, ISO dates and ids are strings but
-// never whitespace-only; other value types are untouched.
+// input, recursing into plain nested objects so user-entered strings one
+// level down (e.g. substance amounts, crime scene places) are covered too.
+// Safe for mixed payloads: enums, ISO dates and ids are strings but never
+// whitespace-only, and arrays and class instances such as Date are left
+// untouched.
 export const normalizeBlankStrings = <T extends object>(input: T): T =>
   Object.fromEntries(
     Object.entries(input).map(([key, value]) => [
       key,
-      typeof value === 'string' ? normalizeBlankString(value) : value,
+      typeof value === 'string'
+        ? normalizeBlankString(value)
+        : isPlainObject(value)
+        ? normalizeBlankStrings(value)
+        : value,
     ]),
   ) as T
 

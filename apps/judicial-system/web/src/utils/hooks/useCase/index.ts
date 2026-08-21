@@ -93,7 +93,7 @@ const useCase = () => {
 
             const { data } = await createCaseMutation({
               variables: {
-                input: {
+                input: normalizeBlankStrings({
                   type: theCase.type,
                   indictmentSubtypes: theCase.indictmentSubtypes,
                   description: theCase.description,
@@ -106,7 +106,7 @@ const useCase = () => {
                   leadInvestigator: theCase.leadInvestigator,
                   crimeScenes: theCase.crimeScenes,
                   prosecutorId: theCase.prosecutor?.id,
-                },
+                }),
               },
             })
 
