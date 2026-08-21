@@ -195,7 +195,12 @@ export const CommentThread = ({ application, field }: FieldBaseProps) => {
               rows={3}
             />
           </Box>
-          <Button onClick={handleSend} loading={isSending}>
+          <Button
+            onClick={handleSend}
+            loading={isSending}
+            variant="ghost"
+            size="small"
+          >
             {formatMessage(messages.comments.sendButton)}
           </Button>
         </Box>

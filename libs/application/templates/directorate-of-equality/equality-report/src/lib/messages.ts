@@ -601,19 +601,19 @@ export const messages = {
     },
     sentHistoryLog: {
       id: 'doe.er.application:inReview.sentHistoryLog',
-      defaultMessage: 'Jafnréttisáætlun send til Jafnréttisstofu',
+      defaultMessage: 'Jafnréttisáætlun innsend',
     },
     approvedHistoryLog: {
       id: 'doe.er.application:inReview.approvedHistoryLog',
-      defaultMessage: 'Jafnréttisáætlun samþykkt af Jafnréttisstofu',
+      defaultMessage: 'Jafnréttisáætlun samþykkt',
     },
     rejectedHistoryLog: {
       id: 'doe.er.application:inReview.rejectedHistoryLog',
-      defaultMessage: 'Jafnréttisáætlun hafnað af Jafnréttisstofu',
+      defaultMessage: 'Jafnréttisáætlun hafnað',
     },
     editHistoryLog: {
       id: 'doe.er.application:inReview.editHistoryLog',
-      defaultMessage: 'Umsókn send aftur í vinnslu til lagfæringar',
+      defaultMessage: 'Skilaboð frá Jafnréttisstofu',
     },
   }),
 
@@ -636,7 +636,7 @@ export const messages = {
     },
     sendButton: {
       id: 'doe.er.application:comments.sendButton',
-      defaultMessage: 'Senda',
+      defaultMessage: 'Senda skilaboð',
     },
     reviewerLabel: {
       id: 'doe.er.application:comments.reviewerLabel',
@@ -659,7 +659,7 @@ export const messages = {
   draftRetry: defineMessages({
     tagLabel: {
       id: 'doe.er.application:draftRetry.tagLabel',
-      defaultMessage: 'Lagfæring óskast',
+      defaultMessage: 'Þín bíða skilaboð',
     },
     submitButton: {
       id: 'doe.er.application:draftRetry.submitButton',
@@ -672,7 +672,7 @@ export const messages = {
     pendingActionContent: {
       id: 'doe.er.application:draftRetry.pendingActionContent',
       defaultMessage:
-        'Farðu yfir athugasemdir frá Jafnréttisstofu og lagfærðu jafnréttisáætlunina.',
+        'Farðu yfir skilaboð frá Jafnréttisstofu og lagfærðu jafnréttisáætlunina.',
     },
     pendingActionButton: {
       id: 'doe.er.application:draftRetry.pendingActionButton',

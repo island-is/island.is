@@ -61,6 +61,15 @@ export const messages = {
       defaultMessage:
         'Þú þarft að vera með gilda [jafnréttisáætlun](/umsoknir/jafnrettisstofa-jafnrettisaaetlun) til þess að senda inn launagreiningu.',
     },
+    notCompanyTitle: {
+      id: 'doe.sr.application:notAllowed.notCompanyTitle',
+      defaultMessage: 'Þú hefur ekki aðgang að þessari umsókn',
+    },
+    notCompanyDescription: {
+      id: 'doe.sr.application:notAllowed.notCompanyDescription',
+      defaultMessage:
+        'Vinsamlegast skráðu þig inn í umboði fyrirtækis til að senda inn launagreiningu.',
+    },
   }),
 
   approved: defineMessages({
@@ -1147,19 +1156,19 @@ export const messages = {
     },
     sentHistoryLog: {
       id: 'doe.sr.application:inReview.sentHistoryLog',
-      defaultMessage: 'Launagreiningarskýrsla send til Jafnréttisstofu',
+      defaultMessage: 'Launagreiningarskýrsla innsend',
     },
     approvedHistoryLog: {
       id: 'doe.sr.application:inReview.approvedHistoryLog',
-      defaultMessage: 'Launagreiningarskýrsla samþykkt af Jafnréttisstofu',
+      defaultMessage: 'Launagreiningarskýrsla samþykkt',
     },
     rejectedHistoryLog: {
       id: 'doe.sr.application:inReview.rejectedHistoryLog',
-      defaultMessage: 'Launagreiningarskýrsla hafnað af Jafnréttisstofu',
+      defaultMessage: 'Launagreiningarskýrsla hafnað',
     },
     editHistoryLog: {
       id: 'doe.sr.application:inReview.editHistoryLog',
-      defaultMessage: 'Umsókn send aftur í vinnslu til lagfæringar',
+      defaultMessage: 'Skilaboð frá Jafnréttisstofu',
     },
   }),
 
@@ -1182,7 +1191,7 @@ export const messages = {
     },
     sendButton: {
       id: 'doe.sr.application:comments.sendButton',
-      defaultMessage: 'Senda',
+      defaultMessage: 'Senda skilaboð',
     },
     reviewerLabel: {
       id: 'doe.sr.application:comments.reviewerLabel',
@@ -1282,7 +1291,7 @@ export const messages = {
   draftRetry: defineMessages({
     tagLabel: {
       id: 'doe.sr.application:draftRetry.tagLabel',
-      defaultMessage: 'Lagfæring óskast',
+      defaultMessage: 'Þín bíða skilaboð',
     },
     aboutTheCompanySectionTitle: {
       id: 'doe.sr.application:draftRetry.aboutTheCompanySectionTitle',
@@ -1311,7 +1320,7 @@ export const messages = {
     pendingActionContent: {
       id: 'doe.sr.application:draftRetry.pendingActionContent',
       defaultMessage:
-        'Farðu yfir athugasemdir frá Jafnréttisstofu og lagfærðu úrbótaáætlunina.',
+        'Farðu yfir skilaboð frá Jafnréttisstofu og lagfærðu úrbótaáætlunina.',
     },
     pendingActionButton: {
       id: 'doe.sr.application:draftRetry.pendingActionButton',

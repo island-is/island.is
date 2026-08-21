@@ -159,6 +159,10 @@ const template: ApplicationTemplate<
           status: FormModes.DRAFT,
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
+            tag: {
+              label: coreMessages.tagsDraft,
+              variant: 'blue',
+            },
             historyLogs: [
               {
                 onEvent: DefaultEvents.SUBMIT,
@@ -357,7 +361,7 @@ const template: ApplicationTemplate<
                 GetReportCommentsApi,
                 SubmitReportCommentApi,
               ],
-              delete: true,
+              delete: false,
             },
             {
               id: Roles.ASSIGNEE,
@@ -418,7 +422,7 @@ const template: ApplicationTemplate<
               // applicationTemplateValidation.service.ts's writable-answers
               // check instead of being rejected outright.
               write: { answers: [] },
-              delete: true,
+              delete: false,
             },
             {
               id: Roles.ASSIGNEE,
@@ -473,7 +477,7 @@ const template: ApplicationTemplate<
               // applicationTemplateValidation.service.ts's writable-answers
               // check instead of being rejected outright.
               write: { answers: [] },
-              delete: true,
+              delete: false,
             },
             {
               id: Roles.ASSIGNEE,
@@ -507,7 +511,7 @@ const template: ApplicationTemplate<
               read: 'all',
               // See the identical comment on States.APPROVED.
               write: { answers: [] },
-              delete: true,
+              delete: false,
             },
             {
               id: Roles.ASSIGNEE,
