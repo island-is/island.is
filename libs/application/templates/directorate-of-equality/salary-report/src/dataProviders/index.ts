@@ -1,4 +1,7 @@
-import { defineTemplateApi } from '@island.is/application/types'
+import {
+  defineTemplateApi,
+  DefaultEvents,
+} from '@island.is/application/types'
 import { ApiActions } from '../utils/constants'
 
 export { IdentityApi, UserProfileApi } from '@island.is/application/types'
@@ -133,12 +136,16 @@ export const SalaryAnalysisApi = defineTemplateApi({
   throwOnError: false,
 })
 
+// triggerEvent: SUBMIT only — POSTPONED and DRAFT_RETRY both exit via SUBMIT
+// (their intended resubmit), but POSTPONED also exits via an admin-dispatched
+// EDIT that must not PUT unedited outlier data before the applicant revises it.
 export const EditOutliersApi = defineTemplateApi({
   action: ApiActions.editOutliers,
   externalDataId: 'editOutliers',
   namespace: 'DirectorateOfEquality',
   shouldPersistToExternalData: true,
   throwOnError: true,
+  triggerEvent: DefaultEvents.SUBMIT,
 })
 
 // Triggered manually from the CommentThread field for on-demand refresh, and
