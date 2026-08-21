@@ -719,14 +719,11 @@ export const areMergedCaseEntriesComplete = (
     (mergedCaseId) =>
       validate([
         [
-          courtSession.courtSessionStrings
-            ?.find(
-              (courtSessionString) =>
-                courtSessionString.mergedCaseId === mergedCaseId &&
-                courtSessionString.stringType ===
-                  CourtSessionStringType.ENTRIES,
-            )
-            ?.value,
+          courtSession.courtSessionStrings?.find(
+            (courtSessionString) =>
+              courtSessionString.mergedCaseId === mergedCaseId &&
+              courtSessionString.stringType === CourtSessionStringType.ENTRIES,
+          )?.value,
           ['empty'],
         ],
       ]).isValid,
