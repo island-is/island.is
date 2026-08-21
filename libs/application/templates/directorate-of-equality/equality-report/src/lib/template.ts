@@ -76,7 +76,7 @@ const template: ApplicationTemplate<
           lifecycle: EphemeralStateLifeCycle,
           actionCard: {
             tag: {
-              label: coreMessages.tagsDraft,
+              label: messages.general.tagDraft,
               variant: 'blue',
             },
           },
@@ -130,7 +130,7 @@ const template: ApplicationTemplate<
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
             tag: {
-              label: coreMessages.tagsDraft,
+              label: messages.general.tagDraft,
               variant: 'blue',
             },
             historyLogs: [

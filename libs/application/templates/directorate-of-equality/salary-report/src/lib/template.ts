@@ -160,7 +160,7 @@ const template: ApplicationTemplate<
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
             tag: {
-              label: coreMessages.tagsDraft,
+              label: messages.general.tagDraft,
               variant: 'blue',
             },
             historyLogs: [
