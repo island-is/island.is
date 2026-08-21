@@ -164,5 +164,20 @@ describe('TransactionCommitInterceptor', () => {
       expect(sequelize.transaction).not.toHaveBeenCalled()
       expect(value).toBe('some value')
     })
+
+    it('should still run the after commit callbacks', async () => {
+      const callback = jest.fn()
+      const next: CallHandler = { handle: () => of('some value') }
+
+      await runInRequestContext(async () => {
+        registerAfterCommit(callback)
+
+        await lastValueFrom(interceptor.intercept(context, next))
+      })
+
+      // There is nothing to wait for, but the request succeeded - dropping the
+      // callback would lose the side effect silently.
+      expect(callback).toHaveBeenCalledTimes(1)
+    })
   })
 })

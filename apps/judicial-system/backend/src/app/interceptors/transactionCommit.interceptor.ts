@@ -11,7 +11,7 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { getTransactionContext, markSettled } from '../middleware'
+import { getTransactionContext } from '../middleware'
 
 /**
  * Commits the transaction owned by `TransactionContextMiddleware` on the
@@ -29,16 +29,18 @@ export class TransactionCommitInterceptor implements NestInterceptor {
   private async commit() {
     const context = getTransactionContext()
 
-    if (!context?.transaction || context.settled) {
+    if (!context || context.settled) {
       return
     }
 
     try {
-      await context.transaction.commit()
+      // A request that never opened a transaction has nothing to commit, but
+      // its callbacks still belong to a successful request.
+      await context.transaction?.commit()
     } finally {
       // Settled either way, so the middleware does not roll back a transaction
-      // whose commit has already failed.
-      markSettled()
+      // whose commit has already failed, and the callbacks below run once.
+      context.settled = true
     }
 
     for (const callback of context.afterCommit) {

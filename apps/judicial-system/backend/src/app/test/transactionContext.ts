@@ -23,9 +23,17 @@ export const runInRequestContext = async <T>(
   const middleware = new TransactionContextMiddleware(silentLogger)
   const response = { on: () => undefined } as unknown as Response
 
-  return await new Promise<T>((resolve, reject) => {
-    middleware.use({} as Request, response, (() => {
-      work().then(resolve, reject)
-    }) as NextFunction)
-  })
+  // The middleware calls next() synchronously inside its ALS store, so the
+  // promise work() returns is available as soon as use() has returned.
+  let result: Promise<T> | undefined
+
+  middleware.use({} as Request, response, (() => {
+    result = work()
+  }) as NextFunction)
+
+  if (!result) {
+    throw new Error('TransactionContextMiddleware did not call next()')
+  }
+
+  return await result
 }

@@ -73,7 +73,14 @@ export const getOrCreateTransaction = async (
   }
 
   if (!context.creating) {
-    context.creating = sequelize.transaction()
+    // Clear the slot on failure, so that a caller which handles the error can
+    // try again instead of awaiting the same rejected promise for the rest of
+    // the request.
+    context.creating = sequelize.transaction().catch((error) => {
+      context.creating = null
+
+      throw error
+    })
   }
 
   context.transaction = await context.creating
@@ -87,9 +94,10 @@ export const markSettled = () => {
 }
 
 /**
- * Registers a callback to run after the request's transaction has committed.
- * Use it for side effects that assert that something happened - announcing
- * one before commit risks claiming an outcome the database never accepted.
+ * Registers a callback to run after the request's transaction has committed, or
+ * on the way out of a successful request that opened none. Use it for side
+ * effects that assert that something happened - announcing one before commit
+ * risks claiming an outcome the database never accepted.
  */
 export const registerAfterCommit = (callback: AfterCommitCallback) => {
   getContext().afterCommit.push(callback)

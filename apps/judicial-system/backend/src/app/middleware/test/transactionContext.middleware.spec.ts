@@ -45,15 +45,19 @@ describe('TransactionContextMiddleware', () => {
   const givenARequest = async (work: () => Promise<void> | void) => {
     const res = createResponse()
 
-    await new Promise<void>((resolve, reject) => {
-      middleware.use(
-        {} as Request,
-        res as unknown as Response,
-        (() => {
-          Promise.resolve(work()).then(resolve, reject)
-        }) as NextFunction,
-      )
-    })
+    // The middleware calls next() synchronously inside its ALS store, so the
+    // promise work() returns is available as soon as use() has returned.
+    let result: Promise<void> | undefined
+
+    middleware.use(
+      {} as Request,
+      res as unknown as Response,
+      (() => {
+        result = Promise.resolve(work())
+      }) as NextFunction,
+    )
+
+    await result
 
     return res
   }
@@ -120,6 +124,27 @@ describe('TransactionContextMiddleware', () => {
 
         expect(transactions).toEqual([transaction, transaction])
         expect(sequelize.transaction).toHaveBeenCalledTimes(1)
+      })
+    })
+
+    it('should let a caller retry after a failed transaction open', async () => {
+      const error = new Error('Some error')
+      const transaction = createTransaction()
+      const sequelize = {
+        transaction: jest
+          .fn()
+          .mockRejectedValueOnce(error)
+          .mockResolvedValueOnce(transaction),
+      } as unknown as Sequelize
+
+      await givenARequest(async () => {
+        await expect(getOrCreateTransaction(sequelize)).rejects.toBe(error)
+
+        // The rejected promise must not stay in the slot, or every later
+        // caller in this request awaits the same failure.
+        await expect(getOrCreateTransaction(sequelize)).resolves.toBe(
+          transaction,
+        )
       })
     })
 
