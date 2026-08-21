@@ -40,7 +40,7 @@ export const OverviewAssets: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   // Real estate
   const realEstateDataRow = getRealEstateDataRow(answers)
   const totalRealEstate = formatCurrency(
-    String(getValueViaPath(answers, 'assets.realEstate.total')) ?? '',
+    String(getValueViaPath(answers, 'assets.realEstate.total') ?? ''),
   )
 
   includeRealEstate &&
@@ -57,7 +57,7 @@ export const OverviewAssets: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     // Vehicles
     const vehiclesDataRow = getVehiclesDataRow(answers)
     const vehiclesDataTotal = formatCurrency(
-      String(getValueViaPath(answers, 'assets.vehicles.total')) ?? '',
+      String(getValueViaPath(answers, 'assets.vehicles.total') ?? ''),
     )
 
     sections.push({
@@ -70,7 +70,7 @@ export const OverviewAssets: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     // Guns
     const gunsDataRow = getGunsDataRow(answers)
     const gunsDataTotal = formatCurrency(
-      String(getValueViaPath(answers, 'assets.guns.total')) ?? '',
+      String(getValueViaPath(answers, 'assets.guns.total') ?? ''),
     )
 
     sections.push({
@@ -83,7 +83,7 @@ export const OverviewAssets: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     // Inventory
     const inventoryDataRow = getInventoryDataRow(answers)
     const inventoryDataTotal = formatCurrency(
-      String(getValueViaPath(answers, 'assets.inventory.value')) ?? '',
+      String(getValueViaPath(answers, 'assets.inventory.value') ?? ''),
     )
 
     sections.push({
@@ -97,7 +97,7 @@ export const OverviewAssets: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     // Bank accounts
     const bankAccountsDataRow = getBankAccountsDataRow(answers)
     const bankAccountsDataTotal = formatCurrency(
-      String(getValueViaPath(answers, 'assets.bankAccounts.total')) ?? '',
+      String(getValueViaPath(answers, 'assets.bankAccounts.total') ?? ''),
     )
 
     sections.push({
@@ -109,7 +109,7 @@ export const OverviewAssets: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
     // Claims
     const claimsDataTotal = formatCurrency(
-      String(getValueViaPath(answers, 'assets.claims.total')) ?? '',
+      String(getValueViaPath(answers, 'assets.claims.total') ?? ''),
     )
 
     sections.push({
@@ -122,7 +122,7 @@ export const OverviewAssets: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   // Stocks
   const stocksDataRow = getStocksDataRow(answers)
   const totalStocks = formatCurrency(
-    String(getValueViaPath(answers, 'assets.stocks.total')) ?? '',
+    String(getValueViaPath(answers, 'assets.stocks.total') ?? ''),
   )
 
   includeStocks &&
@@ -145,7 +145,7 @@ export const OverviewAssets: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   // Other assets
   const otherAssetsDataRow = getOtherAssetsDataRow(answers)
   const totalOtherAssets = formatCurrency(
-    String(getValueViaPath(answers, 'assets.otherAssets.total')) ?? '',
+    String(getValueViaPath(answers, 'assets.otherAssets.total') ?? ''),
   )
 
   includeOtherAssets &&

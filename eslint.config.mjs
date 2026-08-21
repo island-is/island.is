@@ -353,9 +353,6 @@ export default [
         },
       ],
       'no-extra-semi': 'off',
-      // new in the ESLint 9 recommended set and not clean across the monorepo;
-      // warn until the existing hits are triaged
-      'no-constant-binary-expression': 'warn',
     },
   },
   ...nx.configs['flat/javascript'],
@@ -365,7 +362,6 @@ export default [
       'no-extra-semi': 'error',
       // not enabled by the pre-flat-config preset chain; keep parity
       '@typescript-eslint/no-unused-expressions': 'off',
-      'no-constant-binary-expression': 'warn',
     },
   },
   {

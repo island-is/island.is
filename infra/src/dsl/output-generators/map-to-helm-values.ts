@@ -394,7 +394,7 @@ function serializeVolumes(
     ReadOnly: 'ReadOnlyMany',
     ReadWrite: 'ReadWriteMany',
   }
-  if (volumes.some((v) => typeof v.name === undefined) && volumes.length > 1) {
+  if (volumes.some((v) => v.name === undefined) && volumes.length > 1) {
     return { errors: ['Must set volume name if more than one'], volumes: [] }
   }
 

@@ -611,7 +611,7 @@ const CustomHeader = ({
                 value: year,
               }}
               onChange={(selectedOption) =>
-                changeYear(Number(selectedOption?.value) ?? year)
+                changeYear(Number(selectedOption?.value ?? year))
               }
               options={years.map((option) => ({
                 label: option.toString(),

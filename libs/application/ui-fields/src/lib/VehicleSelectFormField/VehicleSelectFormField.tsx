@@ -207,7 +207,7 @@ export const VehicleSelectFormField: FC<React.PropsWithChildren<Props>> = ({
     for (const [index, vehicle] of vehicles.entries()) {
       options.push({
         value: index.toString(),
-        label: `${vehicle.make} - ${vehicle.permno}` || '',
+        label: `${vehicle.make} - ${vehicle.permno}`,
       })
     }
 
