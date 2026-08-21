@@ -1251,6 +1251,43 @@ export interface IEmbeddedVideo extends Entry<IEmbeddedVideoFields> {
   }
 }
 
+// HAND-AUTHORED, NOT GENERATED — delete this block once codegenContentful.ts
+// has run against a real 'calculator' content type in Contentful. The
+// 'calculator' content type does not exist yet in any Contentful environment;
+// this stub unblocks TS compilation for the calculator-config PoC. The
+// `sys.contentType.sys.id` below MUST match whatever API Identifier is
+// actually typed in when the content type is created.
+export interface ICalculatorFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Calculator Type */
+  calculatorType?: string | undefined
+
+  /** Config JSON */
+  configJson?: Record<string, any> | undefined
+
+  /** Translation namespace */
+  translationNamespace?: INamespace | undefined
+}
+
+export interface ICalculator extends Entry<ICalculatorFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'calculator'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IEnhancedAssetFields {
   /** Title */
   title?: string | undefined
@@ -4690,6 +4727,7 @@ export interface ISliceConnectedComponentFields {
     | 'VERAnnouncementCalculator'
     | 'Lyfjastofnun/Pharmacies'
     | 'ECOI/Calculator'
+    | 'RSK/Calculator'
     | undefined
 
   /** Localized JSON */

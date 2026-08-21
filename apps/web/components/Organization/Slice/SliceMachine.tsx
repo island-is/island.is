@@ -9,6 +9,7 @@ import {
   ResponsiveSpace,
 } from '@island.is/island-ui/core'
 import {
+  Calculator,
   EmailSignup,
   GenericListWrapper,
   IntroLinkImageSlice,
@@ -20,7 +21,10 @@ import {
   Slice,
   TeamList,
 } from '@island.is/web/graphql/schema'
-import { webRenderConnectedComponent } from '@island.is/web/utils/richText'
+import {
+  TranslationNamespaceProvider,
+  webRenderConnectedComponent,
+} from '@island.is/web/utils/richText'
 
 import { FeaturedSupportQNAs } from '../../FeaturedSupportQNAs'
 import { OrganizationParentSubpageListSlice } from './OrganizationParentSubpageListSlice/OrganizationParentSubpageListSlice'
@@ -182,6 +186,12 @@ export const renderSlice = (
       return <EmailSignup slice={slice} marginLeft={[0, 0, 0, 6]} />
     case 'ConnectedComponent':
       return webRenderConnectedComponent(slice)
+    case 'Calculator':
+      return (
+        <TranslationNamespaceProvider messages={slice.translationStrings ?? {}}>
+          <Calculator slice={slice} />
+        </TranslationNamespaceProvider>
+      )
     case 'FeaturedSupportQNAs':
       return <FeaturedSupportQNAs slice={slice} />
     case 'PowerBiSlice':

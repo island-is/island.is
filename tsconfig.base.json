@@ -241,6 +241,9 @@
       "@island.is/api/domains/rights-portal": [
         "libs/api/domains/rights-portal/src/index.ts"
       ],
+      "@island.is/api/domains/rsk-calculators": [
+        "libs/api/domains/rsk-calculators/src/index.ts"
+      ],
       "@island.is/api/domains/secondary-school": [
         "libs/api/domains/secondary-school/src/index.ts"
       ],
@@ -955,6 +958,9 @@
       "@island.is/clients/rsk/personal-tax-return": [
         "libs/clients/rsk/personal-tax-return/src/index.ts"
       ],
+      "@island.is/clients/rsk/reiknivelar": [
+        "libs/clients/rsk/reiknivelar/src/index.ts"
+      ],
       "@island.is/clients/secondary-school": [
         "libs/clients/secondary-school/src/index.ts"
       ],
@@ -1341,6 +1347,9 @@
         "libs/services/auth/testing/src/index.ts"
       ],
       "@island.is/services/license": ["libs/services/license/src/index.ts"],
+      "@island.is/shared/calculator-config": [
+        "libs/shared/calculator-config/src/index.ts"
+      ],
       "@island.is/shared/components": ["libs/shared/components/src/index.ts"],
       "@island.is/shared/connected": ["libs/shared/connected/src/index.ts"],
       "@island.is/shared/constants": ["libs/shared/constants/src/index.ts"],
