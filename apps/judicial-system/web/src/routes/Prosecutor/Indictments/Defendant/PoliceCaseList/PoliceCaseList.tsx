@@ -1,4 +1,4 @@
-import { useContext, useMemo, useRef } from 'react'
+import { useContext, useEffect, useMemo, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import equal from 'fast-deep-equal'
 import { AnimatePresence, motion } from 'motion/react'
@@ -72,6 +72,13 @@ export const PoliceCaseList = () => {
 
   const policeCaseIds = useRef<{ [key: string]: string }>({})
   const checkpoint = useRef<Checkpoint>({})
+  const focusNewPoliceCase = useRef(false)
+
+  // The police case added by the user is focused when it appears, and only
+  // then - the effects of the police cases run before this one
+  useEffect(() => {
+    focusNewPoliceCase.current = false
+  })
 
   const gender = useMemo(
     () => getDefaultDefendantGender(workingCase.defendants),
@@ -306,18 +313,36 @@ export const PoliceCaseList = () => {
     }))
   }
 
+  // A police case which has not been given a number yet only lives in the
+  // client. The server drops empty police case numbers when it stores them,
+  // but still counts them as new police cases and adds an indictment count
+  // for each of them, so an empty number must never be sent to the server.
+  const hasUnnumberedPoliceCase = (update: WorkingCaseUpdate) =>
+    update.policeCaseNumbers.some((policeCaseNumber) => policeCaseNumber === '')
+
+  const setPoliceCasesInClient = (update: WorkingCaseUpdate) => {
+    setWorkingCase((prevWorkingCase) => ({ ...prevWorkingCase, ...update }))
+  }
+
   const handleCreatePoliceCases = (newPoliceCases: TPoliceCase[]) => {
-    const { policeCaseNumbers, indictmentSubtypes, crimeScenes } =
-      getWorkingCaseUpdates([...policeCases, ...newPoliceCases])
+    const update = getWorkingCaseUpdates([...policeCases, ...newPoliceCases])
+
+    if (hasUnnumberedPoliceCase(update)) {
+      setPoliceCasesInClient(update)
+
+      return
+    }
 
     setAndSendCaseToServer(
-      [{ policeCaseNumbers, indictmentSubtypes, crimeScenes, force: true }],
+      [{ ...update, force: true }],
       workingCase,
       setWorkingCase,
     )
   }
 
   const handleCreatePoliceCase = () => {
+    focusNewPoliceCase.current = true
+
     handleCreatePoliceCases([{ number: '' }])
   }
 
@@ -406,32 +431,40 @@ export const PoliceCaseList = () => {
       return
     }
 
+    const update = { policeCaseNumbers, indictmentSubtypes, crimeScenes }
+
+    if (hasUnnumberedPoliceCase(update)) {
+      // Keep the changes in the client until every police case has a number
+      setPoliceCasesInClient(update)
+
+      return
+    }
+
     await setAndSendCaseToServer(
-      [{ policeCaseNumbers, indictmentSubtypes, crimeScenes, force: true }],
+      [{ ...update, force: true }],
       workingCase,
       setWorkingCase,
     )
 
-    handleUpdateIndictmentCounts(
-      old,
-      { policeCaseNumbers, indictmentSubtypes, crimeScenes },
-      unsavedUpdates,
-    )
+    handleUpdateIndictmentCounts(old, update, unsavedUpdates)
 
     refreshCase()
   }
 
   const handleDeletePoliceCase = async (index: number) => {
-    const { policeCaseNumbers, indictmentSubtypes, crimeScenes } =
-      getWorkingCaseUpdates(
-        policeCases.slice(0, index).concat(policeCases.slice(index + 1)),
-      )
-
-    setAndSendCaseToServer(
-      [{ policeCaseNumbers, indictmentSubtypes, crimeScenes, force: true }],
-      workingCase,
-      setWorkingCase,
+    const update = getWorkingCaseUpdates(
+      policeCases.slice(0, index).concat(policeCases.slice(index + 1)),
     )
+
+    if (hasUnnumberedPoliceCase(update)) {
+      setPoliceCasesInClient(update)
+    } else {
+      setAndSendCaseToServer(
+        [{ ...update, force: true }],
+        workingCase,
+        setWorkingCase,
+      )
+    }
 
     // We need to remove all indictment counts which are associated
     // with the deleted police case from the working case.
@@ -539,6 +572,9 @@ export const PoliceCaseList = () => {
                   index={index}
                   policeCaseNumber={policeCase.number}
                   mainLokePoliceCaseNumber={mainLokePoliceCaseNumber}
+                  autoFocus={
+                    focusNewPoliceCase.current && policeCase.number === ''
+                  }
                   setPoliceCase={(update: PoliceCaseUpdate) =>
                     handleSetPoliceCase({ index, update })
                   }
