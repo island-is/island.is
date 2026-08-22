@@ -2128,6 +2128,36 @@ export const messages = defineMessages({
       'Hér finnur þú upplýsingar um bókaða tímann þinn. Þú getur bætt honum við dagatalið þitt, breytt bókuninni eða afbókað tíma ef þörf krefur.',
     id: 'sp.health:appointments-detail-intro',
   },
+  cancelAppointment: {
+    defaultMessage: 'Afbóka tíma',
+    id: 'sp.health:cancel-appointment',
+  },
+  cancelAppointmentModalTitle: {
+    defaultMessage: 'Ertu viss um að þú viljir afbóka tímann?',
+    id: 'sp.health:cancel-appointment-modal-title',
+  },
+  cancelAppointmentModalText: {
+    defaultMessage:
+      'Þú ert að fara afbóka eftirfarandi tíma sem þú átt pantaðan:',
+    id: 'sp.health:cancel-appointment-modal-text',
+  },
+  cancelAppointmentSuccess: {
+    defaultMessage: 'Tími hefur verið afbókaður',
+    id: 'sp.health:cancel-appointment-success',
+  },
+  cancelAppointmentError: {
+    defaultMessage: 'Ekki tókst að framkvæma aðgerð, reyndu aftur',
+    id: 'sp.health:cancel-appointment-error',
+  },
+  cancelAppointmentNotAllowedTitle: {
+    defaultMessage: 'Ekki hægt að afbóka tíma samdægurs',
+    id: 'sp.health:cancel-appointment-not-allowed-title',
+  },
+  cancelAppointmentNotAllowedText: {
+    defaultMessage:
+      'Ekki er hægt að afbóka tíma samdægurs. Hringdu í stofnunina ef þú þarft að afbóka eða breyta tímanum.',
+    id: 'sp.health:cancel-appointment-not-allowed-text',
+  },
   myPregnancy: {
     defaultMessage: 'Meðgangan mín',
     id: 'sp.health:my-pregnancy',

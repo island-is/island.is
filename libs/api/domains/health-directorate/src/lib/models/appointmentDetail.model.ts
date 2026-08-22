@@ -45,4 +45,15 @@ export class AppointmentDetail {
 
   @Field(() => Int, { nullable: true, description: 'Duration in minutes' })
   duration?: number
+
+  @Field({
+    description: 'Whether the patient may request cancellation right now',
+  })
+  canCancel!: boolean
+
+  @Field(() => GraphQLISODateTime, {
+    nullable: true,
+    description: 'Deadline after which cancellation is no longer accepted',
+  })
+  canCancelBefore?: Date
 }

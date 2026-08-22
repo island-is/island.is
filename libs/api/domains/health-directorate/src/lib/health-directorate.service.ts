@@ -725,7 +725,16 @@ export class HealthDirectorateService {
           }
         })
         .filter(isDefined),
+      canCancel: item.canCancel,
+      canCancelBefore: item.canCancelBefore,
     }
+  }
+
+  public async cancelAppointment(
+    auth: Auth,
+    input: HealthDirectorateAppointmentInput,
+  ): Promise<boolean> {
+    return this.healthApi.cancelAppointment(auth, input.id)
   }
 
   /* Health Conversations */
@@ -780,7 +789,6 @@ export class HealthDirectorateService {
     return {
       id: c.id,
       title: c.title,
-      status: c.status,
       startDate: c.conversationStartDate,
       messageCount: c.messageCount,
       lastMessageSentAt: c.lastMessageSentAt,
@@ -813,7 +821,6 @@ export class HealthDirectorateService {
     return items.map((c) => ({
       id: c.id,
       title: c.title,
-      status: c.status,
       messageCount: c.messageCount,
       lastMessageSentAt: c.lastMessageSentAt,
       lastSenderGroupName: c.lastSenderGroupName,

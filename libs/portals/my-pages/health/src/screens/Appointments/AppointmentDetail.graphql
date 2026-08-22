@@ -6,6 +6,8 @@ fragment AppointmentDetailFields on HealthDirectorateAppointmentDetail {
   duration
   modality
   practitioners
+  canCancel
+  canCancelBefore
   assignees {
     type
     name
@@ -45,4 +47,8 @@ query getAppointmentDetail($id: String!) {
     __typename
     ...AppointmentDetailFields
   }
+}
+
+mutation cancelAppointment($id: String!) {
+  healthDirectorateCancelAppointment(id: $id)
 }
