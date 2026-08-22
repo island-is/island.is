@@ -99,6 +99,7 @@ const AppointmentDetail = () => {
               size="small"
               variant="utility"
               icon="calendarCancel"
+              iconType="outline"
               onClick={onCancelButtonClick}
             >
               {formatMessage(messages.cancelAppointment)}
