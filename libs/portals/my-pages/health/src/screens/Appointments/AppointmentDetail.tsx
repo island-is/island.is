@@ -28,6 +28,9 @@ const AppointmentDetail = () => {
   const { id } = useParams<{ id: string }>()
   const [cancelModalVisible, setCancelModalVisible] = useState(false)
   const [notAllowedModalVisible, setNotAllowedModalVisible] = useState(false)
+  const [notAllowedReason, setNotAllowedReason] = useState<
+    'deadlinePassed' | 'generic'
+  >('generic')
 
   const { data, loading, error } = useGetAppointmentDetailQuery({
     variables: { id: id ?? '' },
@@ -41,14 +44,15 @@ const AppointmentDetail = () => {
 
   const appointment = data?.healthDirectorateAppointment
 
-  const cancelDeadlinePassed = appointment?.canCancelBefore
-    ? new Date(appointment.canCancelBefore).getTime() < Date.now()
-    : false
-
   const onCancelButtonClick = () => {
-    if (appointment?.canCancel) {
+    const deadlinePassed = appointment?.canCancelBefore
+      ? new Date(appointment.canCancelBefore).getTime() < Date.now()
+      : false
+
+    if (appointment?.canCancel && !deadlinePassed) {
       setCancelModalVisible(true)
     } else {
+      setNotAllowedReason(deadlinePassed ? 'deadlinePassed' : 'generic')
       setNotAllowedModalVisible(true)
     }
   }
@@ -147,7 +151,7 @@ const AppointmentDetail = () => {
 
           <CancelAppointmentNotAllowedModal
             visible={notAllowedModalVisible}
-            reason={cancelDeadlinePassed ? 'deadlinePassed' : 'generic'}
+            reason={notAllowedReason}
             onClose={() => setNotAllowedModalVisible(false)}
           />
         </>
