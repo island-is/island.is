@@ -507,7 +507,7 @@ export class HealthDirectorateHealthService {
     // Convert object with numeric keys to array
     if (typeof countries === 'object' && !Array.isArray(countries)) {
       return Object.values(
-        (countries as unknown) as Record<string, ConsentCountryDto>,
+        countries as unknown as Record<string, ConsentCountryDto>,
       )
     }
 
@@ -734,7 +734,7 @@ export class HealthDirectorateHealthService {
       data(
         meCertificateControllerCreateCertificateRequestV1({
           // See CreateCertificateRequestBody for why this cast is safe.
-          body: (input as unknown) as CreateCertificateRequestDto,
+          body: input as unknown as CreateCertificateRequestDto,
         }),
       ),
     )
