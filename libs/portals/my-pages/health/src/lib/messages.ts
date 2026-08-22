@@ -2901,21 +2901,17 @@ export const messages = defineMessages({
     id: 'sp.health:heilsuvera-chat-link',
     defaultMessage: 'https://direct.lc.chat/15092154',
   },
-  contactPhone: {
-    id: 'sp.health:contact-phone',
+  contactNow: {
+    id: 'sp.health:contact-now',
     defaultMessage: 'Fyrir aðstoð samdægurs',
   },
-  contactPhoneNumber: {
-    id: 'sp.health:contact-phone-number',
-    defaultMessage: '+3545131700',
-  },
-  contactPhoneDesc: {
-    id: 'sp.health:contact-phone-desc',
+  contactNowDesc: {
+    id: 'sp.health:contact-now-desc',
     defaultMessage:
       'Símaráðgjöf vegna bráðra veikinda eða slysa er opin allan sólarhringinn í síma 1700.',
   },
-  contactPhoneEmergencyDesc: {
-    id: 'sp.health:contact-phone-emergency-desc',
+  contactNowEmergencyDesc: {
+    id: 'sp.health:contact-now-emergency-desc',
     defaultMessage: 'Í neyð skal hringja í 112.',
   },
   contactSendMessage: {

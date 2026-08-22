@@ -125,13 +125,13 @@ const ContactLinks = () => {
         marginTop={3}
       >
         <Text variant="h5" as="h3" lineHeight="lg">
-          {formatMessage(messages.contactPhone)}
+          {formatMessage(messages.contactNow)}
         </Text>
         <Text variant="medium" fontWeight="light" lineHeight="lg" color="dark400">
-          {formatMessage(messages.contactPhoneDesc)}
+          {formatMessage(messages.contactNowDesc)}
         </Text>
         <Text variant="medium" fontWeight="light" lineHeight="lg" color="red600">
-          {formatMessage(messages.contactPhoneEmergencyDesc)}
+          {formatMessage(messages.contactNowEmergencyDesc)}
         </Text>
       </Box>
     </>
