@@ -9,7 +9,6 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { LinkResolver } from '@island.is/portals/my-pages/core'
-import { NotificationsBox } from '@island.is/portals/my-pages/information'
 import { DelegationPaths } from '@island.is/portals/shared-modules/delegations'
 import subYears from 'date-fns/subYears'
 import { useWindowSize } from 'react-use'
@@ -35,6 +34,7 @@ import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import Appointments from './components/Appointments'
 import BasicInformation from './components/BasicInformation'
 import ContactLinks from './components/ContactLinks'
+import HealthConversationsBox from './components/HealthConversationsBox/HealthConversationsBox'
 import PaymentsAndRights from './components/PaymentsAndRights'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 import * as styles from './HealthOverview.css'
@@ -188,11 +188,7 @@ export const HealthOverview = () => {
         <GridRow marginBottom={SECTION_GAP}>
           <GridColumn span={isStackedLayout ? '8/8' : '5/8'}>
             <Box marginBottom={isStackedLayout ? CONTENT_GAP_LG : 0}>
-              <NotificationsBox
-                limit={3}
-                title={formatMessage(messages.healthNotificationsTitle)}
-                showViewAllArrow={false}
-              />
+              <HealthConversationsBox limit={3} />
             </Box>
           </GridColumn>
           <GridColumn span={isStackedLayout ? '8/8' : '3/8'}>
