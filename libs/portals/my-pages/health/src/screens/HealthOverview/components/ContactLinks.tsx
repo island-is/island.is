@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, Icon, IconMapIcon, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { LinkResolver, parseFullNumber } from '@island.is/portals/my-pages/core'
+import { LinkResolver } from '@island.is/portals/my-pages/core'
 import { messages } from '../../..'
 import { HealthPaths } from '../../../lib/paths'
 import * as styles from './ContactLinks.css'
@@ -23,15 +23,6 @@ const ContactLinks = () => {
       description: formatMessage(messages.contactChatDesc),
       href: formatMessage(messages.heilsuveraChatLink),
       icon: 'open',
-    },
-    {
-      title: formatMessage(messages.contactPhone),
-      description: formatMessage(messages.contactPhoneDesc),
-      emergencyDescription: formatMessage(messages.contactPhoneEmergencyDesc),
-      href: `tel:${parseFullNumber(
-        formatMessage(messages.contactPhoneNumber),
-      )}`,
-      icon: 'call',
     },
     {
       title: formatMessage(messages.contactSendMessage),
@@ -107,22 +98,43 @@ const ContactLinks = () => {
   )
 
   return (
-    <Box
-      borderWidth="standard"
-      borderColor="blue200"
-      borderRadius="large"
-      background="white"
-    >
-      {links.map((link, index) => (
-        <Box
-          key={index}
-          borderTopWidth={index > 0 ? 'standard' : undefined}
-          borderColor="blue200"
-        >
-          {renderRowContent(link)}
-        </Box>
-      ))}
-    </Box>
+    <>
+      <Box
+        borderWidth="standard"
+        borderColor="blue200"
+        borderRadius="large"
+        background="white"
+      >
+        {links.map((link, index) => (
+          <Box
+            key={index}
+            borderTopWidth={index > 0 ? 'standard' : undefined}
+            borderColor="blue200"
+          >
+            {renderRowContent(link)}
+          </Box>
+        ))}
+      </Box>
+      <Box
+        borderWidth="standard"
+        borderColor="blue200"
+        borderRadius="large"
+        background="white"
+        paddingX={3}
+        paddingY={3}
+        marginTop={3}
+      >
+        <Text variant="h5" as="h3" lineHeight="lg">
+          {formatMessage(messages.contactPhone)}
+        </Text>
+        <Text variant="medium" fontWeight="light" lineHeight="lg" color="dark400">
+          {formatMessage(messages.contactPhoneDesc)}
+        </Text>
+        <Text variant="medium" fontWeight="light" lineHeight="lg" color="red600">
+          {formatMessage(messages.contactPhoneEmergencyDesc)}
+        </Text>
+      </Box>
+    </>
   )
 }
 
