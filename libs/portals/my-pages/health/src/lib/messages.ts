@@ -2158,6 +2158,14 @@ export const messages = defineMessages({
       'Ekki er hægt að afbóka tíma samdægurs. Hringdu í stofnunina ef þú þarft að afbóka eða breyta tímanum.',
     id: 'sp.health:cancel-appointment-not-allowed-text',
   },
+  cancelAppointmentNotAllowedGenericTitle: {
+    defaultMessage: 'Ekki hægt að afbóka hér',
+    id: 'sp.health:cancel-appointment-not-allowed-generic-title',
+  },
+  cancelAppointmentNotAllowedGenericText: {
+    defaultMessage: 'Hafðu samband við stofnunina til að afbóka tímann.',
+    id: 'sp.health:cancel-appointment-not-allowed-generic-text',
+  },
   myPregnancy: {
     defaultMessage: 'Meðgangan mín',
     id: 'sp.health:my-pregnancy',

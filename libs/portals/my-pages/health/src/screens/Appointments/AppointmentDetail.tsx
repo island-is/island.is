@@ -34,10 +34,16 @@ const AppointmentDetail = () => {
     skip: !id,
   })
 
-  const [cancelAppointment, { loading: cancelLoading }] =
-    useCancelAppointmentMutation()
+  const [
+    cancelAppointment,
+    { loading: cancelLoading },
+  ] = useCancelAppointmentMutation()
 
   const appointment = data?.healthDirectorateAppointment
+
+  const cancelDeadlinePassed = appointment?.canCancelBefore
+    ? new Date(appointment.canCancelBefore).getTime() < Date.now()
+    : false
 
   const onCancelButtonClick = () => {
     if (appointment?.canCancel) {
@@ -141,6 +147,7 @@ const AppointmentDetail = () => {
 
           <CancelAppointmentNotAllowedModal
             visible={notAllowedModalVisible}
+            reason={cancelDeadlinePassed ? 'deadlinePassed' : 'generic'}
             onClose={() => setNotAllowedModalVisible(false)}
           />
         </>
