@@ -126,12 +126,9 @@ export const HealthConversationsBox = ({ limit, title }: Props) => {
         />
       )}
 
-      {!loading &&
-        hasHealthScope &&
-        !error &&
-        conversations.length === 0 && (
-          <Problem type="no_data" size="small" noBorder />
-        )}
+      {!loading && hasHealthScope && !error && conversations.length === 0 && (
+        <Problem type="no_data" size="small" noBorder />
+      )}
 
       {!loading &&
         hasHealthScope &&
