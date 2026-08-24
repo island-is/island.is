@@ -175,6 +175,12 @@ export const createApplePayPaymentSaga = (
     execute: async (ctx) => {
       const { paymentResult } = requireStepResult(ctx, 'CHARGE_APPLE_PAY')
 
+      await paymentFlowService.logChargeCodeDistribution(
+        ctx.paymentFlowId,
+        'paid',
+        'apple_pay',
+      )
+
       await paymentFlowService.logPaymentFlowUpdate(
         {
           paymentFlowId: ctx.paymentFlowId,
