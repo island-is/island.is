@@ -20,7 +20,7 @@ import cn from 'classnames'
 import { helperStyles } from '@island.is/island-ui/theme'
 
 import { Box } from '../Box/Box'
-import type { ResponsiveSpace } from '../Box/useBoxStyles'
+import type { UseBoxStylesProps } from '../Box/useBoxStyles'
 import { Button } from '../Button/Button'
 import { FocusableBox } from '../FocusableBox/FocusableBox'
 import { Hidden } from '../Hidden/Hidden'
@@ -70,8 +70,11 @@ type BaseInteractiveTableProps<TData extends object> = {
   srCaption?: string
   sortHint?: string
   meta?: TableMeta<TData>
-  /** Override the default horizontal cell/header padding (defaults to the `Table` component's own default of `3`). */
-  cellPaddingX?: ResponsiveSpace
+  /** Style overrides merged into every header/body cell's `box` props (e.g. padding, background). */
+  cellBox?: {
+    header?: Omit<UseBoxStylesProps, 'component'>
+    body?: Omit<UseBoxStylesProps, 'component'>
+  }
 }
 
 export type InteractiveTableProps<TData extends object> =
@@ -95,7 +98,7 @@ export const InteractiveTable = <TData extends object>({
   srCaption = 'Table with sortable columns.',
   sortHint = 'Activate to sort.',
   meta,
-  cellPaddingX,
+  cellBox,
 }: InteractiveTableProps<TData>) => {
   const resolvedExpanderLabel = expanderLabel ?? ''
   const [internalSorting, setInternalSorting] = useState<SortingState>(
@@ -200,11 +203,7 @@ export const InteractiveTable = <TData extends object>({
                     textAlign: header.column.columnDef.meta.align,
                   }),
                 }}
-                box={
-                  cellPaddingX !== undefined
-                    ? { paddingLeft: cellPaddingX, paddingRight: cellPaddingX }
-                    : undefined
-                }
+                box={cellBox?.header}
               >
                 {header.column.getCanSort() ? (
                   <FocusableBox
@@ -277,12 +276,9 @@ export const InteractiveTable = <TData extends object>({
                     <T.Data
                       key={cell.id}
                       box={{
-                        position: 'relative',
                         paddingY: 2,
-                        ...(cellPaddingX !== undefined && {
-                          paddingLeft: cellPaddingX,
-                          paddingRight: cellPaddingX,
-                        }),
+                        ...cellBox?.body,
+                        position: 'relative',
                         background: rowBackground,
                         borderBottomWidth:
                           isExpanded || isCollapsing ? undefined : 'standard',
@@ -330,10 +326,7 @@ export const InteractiveTable = <TData extends object>({
                       key={cell.id}
                       box={{
                         paddingY: 2,
-                        ...(cellPaddingX !== undefined && {
-                          paddingLeft: cellPaddingX,
-                          paddingRight: cellPaddingX,
-                        }),
+                        ...cellBox?.body,
                         background: rowBackground,
                         borderBottomWidth:
                           isExpanded || isCollapsing ? undefined : 'standard',
