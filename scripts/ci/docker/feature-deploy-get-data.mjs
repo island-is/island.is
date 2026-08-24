@@ -34,6 +34,7 @@ async function getLatestIdsImageTag() {
     })
     .promise()
 
+  
   const mainImages = response.imageDetails
     ?.filter((img) => {
       return (
@@ -45,6 +46,7 @@ async function getLatestIdsImageTag() {
       const dateB = b.imagePushedAt ? new Date(b.imagePushedAt).getTime() : 0
       return dateB - dateA
     })
+    
 
   return mainImages?.[0].imageTags?.[0]
 }
