@@ -1,4 +1,5 @@
-import { FC, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import type { FC } from 'react'
+import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { InputMask } from '@react-input/mask'
 
@@ -18,10 +19,8 @@ import {
   capitalize,
   indictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import {
-  CrimeScene,
-  deprecatedIndictmentSubtypes,
-} from '@island.is/judicial-system/types'
+import type { CrimeScene } from '@island.is/judicial-system/types'
+import { deprecatedIndictmentSubtypes } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   DateTime,

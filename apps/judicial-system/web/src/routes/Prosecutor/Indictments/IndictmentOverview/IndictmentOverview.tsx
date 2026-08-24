@@ -1,11 +1,5 @@
-import {
-  FC,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import type { FC } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -40,24 +34,24 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import InputPenalties from '@island.is/judicial-system-web/src/components/Inputs/InputPenalties'
 import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
+import type { IndictmentCaseReviewDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseState,
   CaseIndictmentRulingDecision,
   CaseState,
-  IndictmentCaseReviewDecision,
   IndictmentDecision,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useAppealCaseBanner } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-
-import { ReviewDecision } from '../../../PublicProsecutor/components/ReviewDecision/ReviewDecision'
+import { ReviewDecision } from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/ReviewDecision/ReviewDecision'
+import type { ModalId } from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/utils'
 import {
   CONFIRM_PROSECUTOR_DECISION,
   DUPLICATE_INDICTMENT,
   isDuplicateIndictmentModal,
-  ModalId,
-} from '../../../PublicProsecutor/components/utils'
+} from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/utils'
+import { useAppealCaseBanner } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+
 import { strings } from './IndictmentOverview.strings'
 
 const IndictmentOverview: FC = () => {
