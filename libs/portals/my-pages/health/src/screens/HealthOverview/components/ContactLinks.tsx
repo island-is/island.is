@@ -120,8 +120,7 @@ const ContactLinks = () => {
         borderColor="blue200"
         borderRadius="large"
         background="white"
-        paddingX={3}
-        paddingY={3}
+        padding={3}
         marginTop={3}
       >
         <Text variant="h5" as="h3" lineHeight="lg">
