@@ -1,6 +1,7 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 
-import { Tag, TagVariant } from '@island.is/island-ui/core'
+import type { TagVariant } from '@island.is/island-ui/core'
+import { Tag } from '@island.is/island-ui/core'
 
 interface Props {
   color: TagVariant

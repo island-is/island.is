@@ -663,6 +663,16 @@ export const m = defineMessages({
     defaultMessage: 'Afrita',
     description: 'Copy',
   },
+  copyToDifferentOrganization: {
+    id: 'form.system:copy-to-different-organization',
+    defaultMessage: 'Afrita á aðra stofnun',
+    description: 'Copy to different organization',
+  },
+  copyToDifferentOrganizationSuccess: {
+    id: 'form.system:copy-to-different-organization-success',
+    defaultMessage: 'Formið hefur verið afritað á {organization}',
+    description: 'Form copied to organization success message',
+  },
   publish: {
     id: 'form.system:publish',
     defaultMessage: 'Gefa út',
@@ -1313,6 +1323,13 @@ export const m = defineMessages({
       'Ekki er hægt að gefa út formið. Allir reitir með íslensku þurfa enska þýðingu.',
     description:
       'The form cannot be published. All name fields with Icelandic text require an English translation.',
+  },
+  zendeskSettingsNeededError: {
+    id: 'form.system:zendesk-settings-needed-error',
+    defaultMessage:
+      'Ekki er hægt að gefa út formið. Zendesk brand ID og Zendesk instance þurfa að vera skilgreind.',
+    description:
+      'The form cannot be published. Zendesk brand ID and Zendesk instance must be configured.',
   },
   copyFieldHover: {
     id: 'form.system:copy-field-hover',

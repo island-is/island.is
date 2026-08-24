@@ -8,6 +8,7 @@ import {
   UserProfileApi,
   ApplicationConfigurations,
   IdentityApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import {
@@ -16,7 +17,9 @@ import {
   DoeCompanyApi,
   EqualityReportTemplateDocxApi,
   EqualityReportTemplateHtmlApi,
+  GetReportCommentsApi,
   PreviousEqualityReportContentApi,
+  SubmitReportCommentApi,
   SubmitEqualityReportApi,
 } from '../dataProviders'
 import { Events, Roles, States } from '../utils/constants'
@@ -24,7 +27,6 @@ import { mapUserToRole } from '../utils/mapUserToRole'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
 import {
-  coreHistoryMessages,
   coreMessages,
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
@@ -32,6 +34,8 @@ import {
 import { messages } from './messages'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
+import { assign } from 'xstate'
+import set from 'lodash/set'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -49,6 +53,17 @@ const template: ApplicationTemplate<
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   requiredScopes: [ApiScope.directorateOfEquality],
   allowMultipleApplicationsInDraft: false,
+  stateMachineOptions: {
+    actions: {
+      assignToInstitution: assign((context) => {
+        const { application } = context
+        set(application, 'assignees', [
+          InstitutionNationalIds.DOMSMALA_RADUNEYTID,
+        ])
+        return context
+      }),
+    },
+  },
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -106,6 +121,7 @@ const template: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
+        entry: 'assignToInstitution',
         meta: {
           name: 'Main form',
           progress: 0.4,
@@ -119,10 +135,15 @@ const template: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.SUBMIT,
-                logMessage: coreHistoryMessages.applicationSent,
+                logMessage: messages.inReview.sentHistoryLog,
               },
             ],
           },
+          // So the comment thread's non-empty check has fresh externalData on
+          // first render — role.api alone never auto-fetches outside
+          // PREREQUISITES, it only permits the on-demand call CommentThread
+          // makes from within the mounted field.
+          onEntry: GetReportCommentsApi,
           // onExit (not onEntry on IN_REVIEW) so a failed submission blocks
           // the transition instead of silently landing the applicant on a
           // fake "in review" screen with a stale backend record.
@@ -147,8 +168,16 @@ const template: ApplicationTemplate<
                 EqualityReportTemplateHtmlApi,
                 EqualityReportTemplateDocxApi,
                 PreviousEqualityReportContentApi,
+                GetReportCommentsApi,
               ],
               delete: true,
+            },
+            {
+              id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
+              read: 'all',
+              write: 'all',
+              delete: false,
             },
           ],
         },
@@ -175,15 +204,15 @@ const template: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: coreHistoryMessages.applicationApproved,
+                logMessage: messages.inReview.approvedHistoryLog,
               },
               {
                 onEvent: DefaultEvents.REJECT,
-                logMessage: coreHistoryMessages.applicationRejected,
+                logMessage: messages.inReview.rejectedHistoryLog,
               },
               {
                 onEvent: DefaultEvents.EDIT,
-                logMessage: 'Application sent back to draft for editing',
+                logMessage: messages.inReview.editHistoryLog,
               },
             ],
           },
@@ -195,7 +224,19 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.inReviewForm),
                 ),
               read: 'all',
+              write: {
+                answers: ['comment'],
+                externalData: ['getReportComments', 'submitReportComment'],
+              },
+              api: [GetReportCommentsApi, SubmitReportCommentApi],
               delete: true,
+            },
+            {
+              id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
+              read: 'all',
+              write: 'all',
+              delete: false,
             },
           ],
         },
@@ -223,6 +264,9 @@ const template: ApplicationTemplate<
               variant: 'mint',
             },
           },
+          // So the comment thread's non-empty check has fresh externalData —
+          // see the identical comment on States.DRAFT.
+          onEntry: GetReportCommentsApi,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -231,7 +275,16 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.approvedForm),
                 ),
               read: 'all',
+              write: { externalData: ['getReportComments'] },
+              api: [GetReportCommentsApi],
               delete: true,
+            },
+            {
+              id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
+              read: 'all',
+              write: 'all',
+              delete: false,
             },
           ],
         },
@@ -248,6 +301,9 @@ const template: ApplicationTemplate<
               variant: 'red',
             },
           },
+          // So the comment thread's non-empty check has fresh externalData —
+          // see the identical comment on States.DRAFT.
+          onEntry: GetReportCommentsApi,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -256,7 +312,16 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.deniedForm),
                 ),
               read: 'all',
+              write: { externalData: ['getReportComments'] },
+              api: [GetReportCommentsApi],
               delete: true,
+            },
+            {
+              id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
+              read: 'all',
+              write: 'all',
+              delete: false,
             },
           ],
         },

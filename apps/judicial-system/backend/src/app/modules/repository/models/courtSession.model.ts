@@ -153,4 +153,15 @@ export class CourtSession extends Model {
   @Column({ type: DataType.BOOLEAN, allowNull: true })
   @ApiPropertyOptional({ type: Boolean })
   isConfirmed?: boolean
+
+  // The ruling order the parties have already been told about. A ruling is
+  // announced once, but correcting a confirmed court record and confirming it
+  // again repeats the confirmation, so the announcement is remembered here
+  // rather than derived from the confirmation itself.
+  //
+  // Deliberately not a foreign key: it records what was announced, so it must
+  // survive the file being deleted - and unlike rulingFileId it must not block
+  // that deletion. Internal to the backend, so it is not part of the API schema.
+  @Column({ type: DataType.UUID, allowNull: true })
+  notifiedRulingFileId?: string
 }

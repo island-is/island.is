@@ -21,17 +21,22 @@ export const messages = {
       id: 'doe.sr.application:errors.duplicateSubsidiary',
       defaultMessage: 'Þetta dótturfélag er þegar á listanum',
     },
-    duplicateCriterionTitle: {
-      id: 'doe.sr.application:errors.duplicateCriterionTitle',
-      defaultMessage: 'Þáttur með þessu heiti er þegar á listanum',
-    },
-    duplicateSubCriterionTitle: {
-      id: 'doe.sr.application:errors.duplicateSubCriterionTitle',
-      defaultMessage: 'Undirþáttur með þessu heiti er þegar á listanum',
-    },
     invalidCompany: {
       id: 'doe.sr.application:errors.invalidCompany',
       defaultMessage: 'Kennitala fyrirtækis er ekki gild',
+    },
+    draftSyncFailed: {
+      id: 'doe.sr.application:errors.draftSyncFailed',
+      defaultMessage:
+        'Ekki tókst að vista breytingarnar. Reyndu aftur áður en þú heldur áfram.',
+    },
+    draftLoadFailed: {
+      id: 'doe.sr.application:errors.draftLoadFailed',
+      defaultMessage: 'Ekki tókst að sækja gögnin. Reyndu aftur.',
+    },
+    retryButton: {
+      id: 'doe.sr.application:errors.retryButton',
+      defaultMessage: 'Reyna aftur',
     },
   }),
 
@@ -54,7 +59,7 @@ export const messages = {
     description: {
       id: 'doe.sr.application:notAllowed.description',
       defaultMessage:
-        'Þú þarft að vera með gilda jafnréttisáætlun til þess að senda inn launagreiningu.',
+        'Þú þarft að vera með gilda [jafnréttisáætlun](/umsoknir/jafnrettisstofa-jafnrettisaaetlun) til þess að senda inn launagreiningu.',
     },
   }),
 
@@ -632,6 +637,14 @@ export const messages = {
         id: 'doe.sr.application:report.subCriteria.criterionWeightLabel',
         defaultMessage: 'Vægi yfirviðmiðs: {weight}%',
       },
+      catalogLabel: {
+        id: 'doe.sr.application:report.subCriteria.catalogLabel',
+        defaultMessage: 'Nota sniðmát',
+      },
+      catalogPlaceholder: {
+        id: 'doe.sr.application:report.subCriteria.catalogPlaceholder',
+        defaultMessage: 'Veldu sniðmát úr listanum',
+      },
       nameLabel: {
         id: 'doe.sr.application:report.subCriteria.nameLabel',
         defaultMessage: 'Undirviðmið',
@@ -1029,6 +1042,12 @@ export const messages = {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.createGroupButton',
         defaultMessage: 'Setja í frávikahóp',
       },
+      // Paging through many pages to select everything is tedious, so this
+      // shortcut appears once the table spans more than a handful of pages.
+      selectAllOutliersButton: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.selectAllOutliersButton',
+        defaultMessage: 'Velja alla ({count})',
+      },
       // The two selection checkboxes carry no visible label (the column is
       // just a checkbox), so they need an explicit accessible name.
       selectAllLabel: {
@@ -1122,6 +1141,61 @@ export const messages = {
       defaultMessage:
         'Við höfum móttekið launagreiningarskýrsluna þína og hún verður yfirfarin af Jafnréttisstofu. Þú færð senda staðfestingu þegar yfirferð er lokið. Ef frekari upplýsingar vantar mun Jafnréttisstofa hafa samband við þig.',
     },
+    sentHistoryLog: {
+      id: 'doe.sr.application:inReview.sentHistoryLog',
+      defaultMessage: 'Launagreiningarskýrsla send til Jafnréttisstofu',
+    },
+    approvedHistoryLog: {
+      id: 'doe.sr.application:inReview.approvedHistoryLog',
+      defaultMessage: 'Launagreiningarskýrsla samþykkt af Jafnréttisstofu',
+    },
+    rejectedHistoryLog: {
+      id: 'doe.sr.application:inReview.rejectedHistoryLog',
+      defaultMessage: 'Launagreiningarskýrsla hafnað af Jafnréttisstofu',
+    },
+    editHistoryLog: {
+      id: 'doe.sr.application:inReview.editHistoryLog',
+      defaultMessage: 'Umsókn send aftur í vinnslu til lagfæringar',
+    },
+  }),
+
+  comments: defineMessages({
+    sectionTitle: {
+      id: 'doe.sr.application:comments.sectionTitle',
+      defaultMessage: 'Samskipti',
+    },
+    title: {
+      id: 'doe.sr.application:comments.title',
+      defaultMessage: 'Samskipti við Jafnréttisstofu',
+    },
+    emptyState: {
+      id: 'doe.sr.application:comments.emptyState',
+      defaultMessage: 'Engin skilaboð hafa verið send.',
+    },
+    textareaLabel: {
+      id: 'doe.sr.application:comments.textareaLabel',
+      defaultMessage: 'Skrifa skilaboð',
+    },
+    sendButton: {
+      id: 'doe.sr.application:comments.sendButton',
+      defaultMessage: 'Senda',
+    },
+    reviewerLabel: {
+      id: 'doe.sr.application:comments.reviewerLabel',
+      defaultMessage: 'Jafnréttisstofa',
+    },
+    companyLabel: {
+      id: 'doe.sr.application:comments.companyLabel',
+      defaultMessage: 'Þú',
+    },
+    sendError: {
+      id: 'doe.sr.application:comments.sendError',
+      defaultMessage: 'Ekki tókst að senda skilaboð, reyndu aftur.',
+    },
+    loadError: {
+      id: 'doe.sr.application:comments.loadError',
+      defaultMessage: 'Ekki tókst að sækja skilaboð, reyndu aftur.',
+    },
   }),
 
   rejected: defineMessages({
@@ -1142,7 +1216,7 @@ export const messages = {
   postponed: defineMessages({
     tagLabel: {
       id: 'doe.sr.application:postponed.tagLabel',
-      defaultMessage: 'Úrbótaáætlun frestað',
+      defaultMessage: 'Úrbótaáætlun í vinnslu',
     },
     introSectionTitle: {
       id: 'doe.sr.application:postponed.introSectionTitle',
@@ -1185,6 +1259,19 @@ export const messages = {
     submitButton: {
       id: 'doe.sr.application:postponed.submitButton',
       defaultMessage: 'Senda inn úrbótaáætlun',
+    },
+    pendingActionTitle: {
+      id: 'doe.sr.application:postponed.pendingActionTitle',
+      defaultMessage: 'Beðið er eftir úrbótaáætlun',
+    },
+    pendingActionContent: {
+      id: 'doe.sr.application:postponed.pendingActionContent',
+      defaultMessage:
+        'Farðu yfir frávikin og skilaðu úrbótaáætlun til Jafnréttisstofu.',
+    },
+    pendingActionButton: {
+      id: 'doe.sr.application:postponed.pendingActionButton',
+      defaultMessage: 'Halda áfram',
     },
   }),
 

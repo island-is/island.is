@@ -27,25 +27,3 @@ query getApplicantAvailableActions {
     canUnregister
   }
 }
-
-query getApplicantOverview($locale: String) {
-  vmstApplicantOverview(locale: $locale) {
-    passCode
-    preferredJobs
-    bankAccount
-    union
-    pensionFund
-    usedPersonalTaxCredit
-    numberOfChildren
-    employmentHistory
-    educationHistory
-    drivingLicenses
-    languageAbilities {
-      name
-      proficiency
-    }
-    serviceArea
-    currentAddressDifferent
-    savedToEures
-  }
-}

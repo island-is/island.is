@@ -1,17 +1,17 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import {
+import type {
   Case,
   CaseFile,
-  CaseFileState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-
+import { CaseFileState } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   ApolloProviderWrapper,
   FormContextWrapper,
   IntlProviderWrapper,
-} from '../../../utils/testHelpers'
+} from '@island.is/judicial-system-web/src/utils/testHelpers'
+
 import CaseFileTable from './CaseFileTable'
 
 jest.mock('next/router', () => ({

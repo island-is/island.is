@@ -52,6 +52,9 @@ export class FormDto {
   submissionServiceUrl!: string
 
   @ApiProperty()
+  zendeskBrandId!: string
+
+  @ApiProperty()
   hasPayment!: boolean
 
   @ApiProperty()
