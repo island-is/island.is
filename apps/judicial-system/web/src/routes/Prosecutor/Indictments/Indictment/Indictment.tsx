@@ -1,5 +1,6 @@
 import { useCallback, useContext } from 'react'
-import { IntlShape, useIntl } from 'react-intl'
+import type { IntlShape } from 'react-intl'
+import { useIntl } from 'react-intl'
 import { applyCase as applyCaseToAddress } from 'beygla/addresses'
 import { applyCase } from 'beygla/strict'
 import router from 'next/router'
@@ -28,18 +29,21 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import InputPenalties from '@island.is/judicial-system-web/src/components/Inputs/InputPenalties'
-import {
-  CaseOrigin,
+import type {
   Defendant,
   IndictmentCount as TIndictmentCount,
-  IndictmentCountOffense,
   Institution,
   Maybe,
   Offense,
   PoliceCaseInfo,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  UpdateIndictmentCount,
+  CaseOrigin,
+  IndictmentCountOffense,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { usePoliceCaseInfoQuery } from '@island.is/judicial-system-web/src/routes/Prosecutor/Indictments/Defendant/PoliceCaseList/PoliceCaseInfo/policeCaseInfo.generated'
+import type { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
   useCase,
   useDebouncedInput,
   useIndictmentCounts,
@@ -48,7 +52,6 @@ import {
 import { getDefaultDefendantGender } from '@island.is/judicial-system-web/src/utils/utils'
 import { isIndictmentStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { usePoliceCaseInfoQuery } from '../Defendant/PoliceCaseList/PoliceCaseInfo/policeCaseInfo.generated'
 import { IndictmentCountsList } from './IndictmentCountsList'
 import { strings } from './Indictment.strings'
 import * as styles from './Indictment.css'

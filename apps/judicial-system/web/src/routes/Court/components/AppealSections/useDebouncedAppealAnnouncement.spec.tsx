@@ -1,11 +1,9 @@
-import { FC, PropsWithChildren } from 'react'
+import type { FC, PropsWithChildren } from 'react'
 import { act, renderHook } from '@testing-library/react'
 
 import { FormContext } from '@island.is/judicial-system-web/src/components'
-import {
-  AppealDecisionPartyRole,
-  Case,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import { AppealDecisionPartyRole } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import useDebouncedAppealAnnouncement from './useDebouncedAppealAnnouncement'
 

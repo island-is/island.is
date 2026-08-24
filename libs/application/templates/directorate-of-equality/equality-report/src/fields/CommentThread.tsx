@@ -46,7 +46,7 @@ export const CommentThread = ({ application, field }: FieldBaseProps) => {
   const hasReviewerComment = comments.some(
     (comment) => comment.authorKind === 'REVIEWER',
   )
-  const canSend = application.state === States.IN_REVIEW && hasReviewerComment
+  const canSend = application.state === States.DRAFT_RETRY && hasReviewerComment
 
   useEffect(() => {
     updateApplicationExternalData({
@@ -192,7 +192,12 @@ export const CommentThread = ({ application, field }: FieldBaseProps) => {
               rows={3}
             />
           </Box>
-          <Button onClick={handleSend} loading={isSending}>
+          <Button
+            onClick={handleSend}
+            loading={isSending}
+            variant="ghost"
+            size="small"
+          >
             {formatMessage(messages.comments.sendButton)}
           </Button>
         </Box>

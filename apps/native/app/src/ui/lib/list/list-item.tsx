@@ -59,6 +59,9 @@ const styles = StyleSheet.create({
     marginTop: theme.spacing[3],
     marginRight: theme.spacing[2],
   },
+  contentCentered: {
+    justifyContent: 'center',
+  },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -73,6 +76,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
+    columnGap: theme.spacing.smallGutter,
     marginBottom: theme.spacing.smallGutter,
   },
   subtitleWrapper: {
@@ -107,6 +111,7 @@ interface ListItemProps {
   starred?: boolean
   urgent?: boolean
   replyable?: boolean
+  attachment?: boolean
   selectable?: boolean
   selected?: boolean
   onPressIcon?: () => void
@@ -123,9 +128,21 @@ export function ListItem({
   selectable = false,
   selected = false,
   replyable = false,
+  attachment = false,
   onPressIcon,
 }: ListItemProps) {
   const intl = useIntl()
+  const hasTitle = !!title
+  const iconImage = (
+    <Image
+      source={
+        selectable && selected ? checkmarkIcon : (icon as ImageSourcePropType)
+      }
+      style={
+        selectable && selected ? styles.selectedIconImage : styles.iconImage
+      }
+    />
+  )
   return (
     <SafeAreaView style={[styles.host, unread && styles.hostUnread]}>
       <View
@@ -135,49 +152,64 @@ export function ListItem({
           selectable && !selected && styles.iconSelectable,
         ]}
       >
-        <Pressable hitSlop={24} onPress={onPressIcon}>
-          <Image
-            source={
-              selectable && selected
-                ? checkmarkIcon
-                : (icon as ImageSourcePropType)
-            }
-            style={
-              selectable && selected
-                ? styles.selectedIconImage
-                : styles.iconImage
-            }
-          />
-        </Pressable>
+        {/* Only wrap in a Pressable when the icon has its own action —
+            otherwise it would swallow taps meant for the whole row. */}
+        {onPressIcon ? (
+          <Pressable hitSlop={24} onPress={onPressIcon}>
+            {iconImage}
+          </Pressable>
+        ) : (
+          iconImage
+        )}
       </View>
-      <View style={styles.content}>
-        <View style={styles.row}>
-          <View style={styles.title}>
-            <Typography variant="body3" numberOfLines={1} ellipsizeMode="tail">
-              {title}
-            </Typography>
+      <View style={[styles.content, !hasTitle && styles.contentCentered]}>
+        {hasTitle && (
+          <View style={styles.row}>
+            <View style={styles.title}>
+              <Typography
+                variant="body3"
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={{ flexShrink: 1 }}
+              >
+                {title}
+              </Typography>
+              {replyable && (
+                <UIIcon
+                  source={require('../../../assets/icons/reply.png')}
+                  width={12}
+                  height={12}
+                  tintColor="dark400"
+                />
+              )}
+              {attachment && (
+                <UIIcon
+                  source={require('../../../assets/icons/attachment.png')}
+                  width={16}
+                  height={16}
+                  tintColor="dark400"
+                />
+              )}
+            </View>
+            {date && (
+              <Typography variant="body3">
+                <FormattedDate value={date} />
+              </Typography>
+            )}
           </View>
-          {date && (
-            <Typography variant="body3">
-              <FormattedDate value={date} />
-            </Typography>
-          )}
-        </View>
+        )}
         <View style={[styles.row, styles.lowerRow]}>
           <View style={styles.subtitleWrapper}>
             <Typography variant="heading5" numberOfLines={1}>
               {subtitle}
             </Typography>
           </View>
-          {replyable && (
-            <UIIcon
-              source={require('../../../assets/icons/reply.png')}
-              width={12}
-              height={12}
-              tintColor="dark300"
-            />
-          )}
           <View style={styles.spacer} />
+          {!hasTitle && date && (
+            <Typography variant="body3">
+              <FormattedDate value={date} />
+            </Typography>
+          )}
           {starred && (
             <Image source={starFilledIcon} style={styles.starImage} />
           )}

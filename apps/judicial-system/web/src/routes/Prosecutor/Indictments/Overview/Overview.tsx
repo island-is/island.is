@@ -1,4 +1,5 @@
-import { FC, useContext, useState } from 'react'
+import type { FC } from 'react'
+import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
@@ -21,6 +22,7 @@ import {
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
+import type { FormFooterAction } from '@island.is/judicial-system-web/src/components'
 import {
   AllIndictmentCaseFiles,
   AppealRulingModifiedAlert,
@@ -30,7 +32,6 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
-  FormFooterAction,
   IndictmentCaseScheduledCard,
   // IndictmentsLawsBrokenAccordionItem, NOTE: Temporarily hidden while list of laws broken is not complete
   InfoCardActiveIndictment,

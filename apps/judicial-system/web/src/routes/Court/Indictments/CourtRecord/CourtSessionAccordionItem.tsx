@@ -1,6 +1,5 @@
+import type { FC, ForwardedRef } from 'react'
 import {
-  FC,
-  ForwardedRef,
   forwardRef,
   useCallback,
   useContext,
@@ -50,24 +49,26 @@ import {
   SectionHeading,
   TinyMCE,
 } from '@island.is/judicial-system-web/src/components'
-import EditableCaseFile, {
-  Supplement,
-} from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
+import type { Supplement } from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
+import EditableCaseFile from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
+import type {
+  CourtDocumentResponse,
+  CourtSessionResponse,
+  CourtSessionString,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseFileCategory,
-  CourtDocumentResponse,
   CourtDocumentType,
   CourtSessionClosedLegalBasis,
-  CourtSessionResponse,
   CourtSessionRulingType,
-  CourtSessionString,
   CourtSessionStringType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { SelectRepresentative } from '@island.is/judicial-system-web/src/routes/Shared/AddFiles/SelectCaseFileRepresentative'
 import { api } from '@island.is/judicial-system-web/src/services'
 import { validateAndSetErrorMessage } from '@island.is/judicial-system-web/src/utils/formHelper'
+import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   formatDateForServer,
-  TUploadFile,
   useCourtDocuments,
   useCourtSessions,
   useDebouncedField,
@@ -82,7 +83,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/utils'
 import { isCourtSessionValid } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { SelectRepresentative } from '../../../Shared/AddFiles/SelectCaseFileRepresentative'
 import { CourtSessionMergedCaseEntries } from './CourtSessionMergedCaseEntries'
 import CourtSessionRuling from './CourtSessionRuling'
 import * as styles from './CourtRecord.css'

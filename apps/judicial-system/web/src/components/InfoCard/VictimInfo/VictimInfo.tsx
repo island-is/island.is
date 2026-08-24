@@ -1,10 +1,9 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 
 import { Text } from '@island.is/island-ui/core'
 import { formatDOB } from '@island.is/judicial-system/formatters'
-import { Victim } from '@island.is/judicial-system-web/src/graphql/schema'
-
-import RenderPersonalData from '../RenderPersonalInfo/RenderPersonalInfo'
+import RenderPersonalData from '@island.is/judicial-system-web/src/components/InfoCard/RenderPersonalInfo/RenderPersonalInfo'
+import type { Victim } from '@island.is/judicial-system-web/src/graphql/schema'
 
 interface VictimInfoProps {
   victim: Victim

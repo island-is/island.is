@@ -1,7 +1,15 @@
-import { defineTemplateApi } from '@island.is/application/types'
+import {
+  defineTemplateApi,
+  DefaultEvents,
+  IdentityApi,
+} from '@island.is/application/types'
 import { ApiActions } from '../utils/constants'
 
-export { IdentityApi, UserProfileApi } from '@island.is/application/types'
+export { UserProfileApi } from '@island.is/application/types'
+
+export const IdentityApiProvider = IdentityApi.configure({
+  params: { includeActorInfo: true },
+})
 
 // PREREQUISITES providers — independent of each other, order is inconsequential
 export const CompanyRegistryApi = defineTemplateApi({
@@ -133,17 +141,22 @@ export const SalaryAnalysisApi = defineTemplateApi({
   throwOnError: false,
 })
 
+// triggerEvent: SUBMIT only — POSTPONED and DRAFT_RETRY both exit via SUBMIT
+// (their intended resubmit), but POSTPONED also exits via an admin-dispatched
+// EDIT that must not PUT unedited outlier data before the applicant revises it.
 export const EditOutliersApi = defineTemplateApi({
   action: ApiActions.editOutliers,
   externalDataId: 'editOutliers',
   namespace: 'DirectorateOfEquality',
   shouldPersistToExternalData: true,
   throwOnError: true,
+  triggerEvent: DefaultEvents.SUBMIT,
 })
 
 // Triggered manually from the CommentThread field for on-demand refresh, and
-// also wired as onEntry on DRAFT/POSTPONED/APPROVED/DENIED so externalData is
-// fresh on first render (e.g. for the postponedForm landing-screen decision).
+// also wired as onEntry on DRAFT/POSTPONED/DRAFT_RETRY/APPROVED/DENIED so
+// externalData is fresh on first render (e.g. for the postponedForm
+// landing-screen decision).
 // Listed on a role's `api` array purely so updateApplicationExternalData is
 // permitted to invoke it for that role.
 export const GetReportCommentsApi = defineTemplateApi({
