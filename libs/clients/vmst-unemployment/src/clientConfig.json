@@ -1474,6 +1474,7 @@
             "description": ""
           }
         },
+        "deprecated": true,
         "security": [
           {
             "JWT": []
@@ -2218,6 +2219,7 @@
             "description": ""
           }
         },
+        "deprecated": true,
         "security": [
           {
             "JWT": []
@@ -2246,6 +2248,47 @@
         "responses": {
           "200": {
             "description": "Yfirlit yfir hvort umsækjandi geti dregið virknistyrksumsókn til baka.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_External_Domain_Requests_WithdrawOverviewResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        },
+        "deprecated": true,
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/applicants/{id}/withdraw/overview": {
+      "get": {
+        "tags": ["Applicant"],
+        "summary": "Sækir upplýsingar um hvort umsækjandi geti dregið nýjustu virku umsókn sína til baka og hvaða umsókn það á við um.\nBótaumsókn er skoðuð fyrst, síðan virknistyrksumsókn.",
+        "operationId": "Applicant_GetWithdrawOverview",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Auðkenni umsækjanda.",
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Yfirlit yfir hvort umsækjandi geti dregið umsókn til baka.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2517,6 +2560,87 @@
         ]
       }
     },
+    "/api/applicants/{applicantId}/withdraw": {
+      "post": {
+        "tags": ["Applicant"],
+        "summary": "Afskráir virkar umsóknir umsækjanda, bæði atvinnuleysisumsókn og virknistyrksumsókn ef þær eru til staðar.",
+        "operationId": "Applicant_WithdrawLatestApplication",
+        "parameters": [
+          {
+            "name": "applicantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_WithdrawLatestApplicationRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "BaseViewModel",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_External_Domain_Models_Common_ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_External_Domain_Models_Common_ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_External_Domain_Models_Common_ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
     "/api/applications/overview": {
       "post": {
         "tags": ["Application"],
@@ -2749,6 +2873,33 @@
         ]
       }
     },
+    "/api/jobSearchConfirmations/questionaire": {
+      "get": {
+        "tags": ["JobSearchConfirmation"],
+        "summary": "Sækir uppbyggingu spurningalista (skimun) sem fylgir staðfestingu atvinnuleitar.",
+        "operationId": "JobSearchConfirmation_GetQuestionaireSchema",
+        "responses": {
+          "200": {
+            "description": "Spurningar og svarmöguleikar spurningalistans.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_XRoad_API_Models_JobSearchConfirmation_QuestionaireSchemaResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
     "/api/SupportData/delistingReasons": {
       "get": {
         "tags": ["SupportData"],
@@ -2836,7 +2987,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Galdur_XRoad_API_Models_Applicant_ApplicantEligibilityResponse"
+                  "$ref": "#/components/schemas/Galdur_XRoad_API_Models_Applicant_U2EligibilityResponse"
                 }
               }
             }
@@ -3333,6 +3484,7 @@
             "description": ""
           }
         },
+        "deprecated": true,
         "security": [
           {
             "JWT": []
@@ -7906,6 +8058,9 @@
           "reasonEN": {
             "type": "string",
             "nullable": true
+          },
+          "isQuestionaireEligible": {
+            "type": "boolean"
           }
         }
       },
@@ -7933,6 +8088,55 @@
             "items": {
               "type": "string"
             }
+          },
+          "questionaire": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_Minus3_CreateM3QuestionaireRequest"
+              }
+            ]
+          }
+        }
+      },
+      "Galdur_External_Domain_Requests_Minus3_CreateM3QuestionaireRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "chosenLanguage": {
+            "type": "string"
+          },
+          "timeToFindNewJob": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "needAssistanceToFindNewJob": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "knowWhatToDoToFindNewJob": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "haveAppliedForJobs": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mostHaveConnections": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mentalCapacityForJob": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "physicalCapacityForJob": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "anySickness": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
@@ -8422,6 +8626,20 @@
           }
         }
       },
+      "Galdur_External_Domain_Requests_WithdrawLatestApplicationRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "withdrawDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "reasonId": {
+            "type": "string",
+            "format": "guid"
+          }
+        }
+      },
       "Galdur_XRoad_API_Models_Application_GetApplicationsOverviewRequest": {
         "type": "object",
         "additionalProperties": false,
@@ -8744,6 +8962,75 @@
           }
         }
       },
+      "Galdur_XRoad_API_Models_JobSearchConfirmation_QuestionaireSchemaResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "questions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_XRoad_API_Models_JobSearchConfirmation_QuestionaireSchemaQuestion"
+            }
+          }
+        }
+      },
+      "Galdur_XRoad_API_Models_JobSearchConfirmation_QuestionaireSchemaQuestion": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "field": {
+            "type": "string"
+          },
+          "order": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "questionIS": {
+            "type": "string"
+          },
+          "questionEN": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "minValue": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "maxValue": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "answers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_XRoad_API_Models_JobSearchConfirmation_QuestionaireSchemaAnswer"
+            }
+          }
+        }
+      },
+      "Galdur_XRoad_API_Models_JobSearchConfirmation_QuestionaireSchemaAnswer": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "value": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "textIS": {
+            "type": "string"
+          },
+          "textEN": {
+            "type": "string"
+          }
+        }
+      },
       "Galdur_External_Domain_Models_SupportData_DelistingReasonDTO": {
         "allOf": [
           {
@@ -8773,6 +9060,35 @@
             }
           }
         ]
+      },
+      "Galdur_XRoad_API_Models_Applicant_U2EligibilityResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isEligible": {
+            "type": "boolean"
+          },
+          "reasonTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "reasonTitleEN": {
+            "type": "string",
+            "nullable": true
+          },
+          "reason": {
+            "type": "string",
+            "nullable": true
+          },
+          "reasonEN": {
+            "type": "string",
+            "nullable": true
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          }
+        }
       },
       "Galdur_External_Domain_Requests_U2Certificate_CreateU2CertificateRequest": {
         "type": "object",
@@ -8946,6 +9262,15 @@
             "oneOf": [
               {
                 "$ref": "#/components/schemas/Galdur_Domain_Models_Applicants_ApplicantProfile_DTOs_JobCareer"
+              }
+            ]
+          },
+          "companyOwnership": {
+            "description": "Eignarhald á fyrirtækjum eða félögum",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Galdur_Domain_Models_Applicants_ApplicantProfile_DTOs_CompanyOwnership"
               }
             ]
           },
@@ -9565,6 +9890,51 @@
             "type": "boolean",
             "description": "Vill pappír",
             "nullable": true
+          }
+        }
+      },
+      "Galdur_Domain_Models_Applicants_ApplicantProfile_DTOs_CompanyOwnership": {
+        "type": "object",
+        "description": "Eignarhald á fyrirtækjum eða félögum",
+        "additionalProperties": false,
+        "properties": {
+          "isCompanyOwner": {
+            "type": "boolean",
+            "description": "Ertu eigandi eða kemur þú að rekstri fyrirtækis eða félags?"
+          },
+          "companyOwnerships": {
+            "type": "array",
+            "description": "Fyrirtæki eða félög sem umsækjandi á eða kemur að rekstri á",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Galdur_Domain_Models_Applicants_ApplicantProfile_DTOs_CompanyOwnershipDTO"
+            }
+          }
+        }
+      },
+      "Galdur_Domain_Models_Applicants_ApplicantProfile_DTOs_CompanyOwnershipDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "companySSN": {
+            "type": "string",
+            "description": "Kennitala fyrirtækis",
+            "nullable": true
+          },
+          "companyName": {
+            "type": "string",
+            "description": "Nafn fyrirtækis",
+            "nullable": true
+          },
+          "ownershipPercentage": {
+            "type": "integer",
+            "description": "Eignarhlutfall",
+            "format": "int32"
           }
         }
       },
@@ -10741,6 +11111,15 @@
             "oneOf": [
               {
                 "$ref": "#/components/schemas/Galdur_Domain_Models_Applicants_ApplicantProfile_DTOs_JobCareer"
+              }
+            ]
+          },
+          "companyOwnership": {
+            "description": "Eignarhald á fyrirtækjum eða félögum",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Galdur_Domain_Models_Applicants_ApplicantProfile_DTOs_CompanyOwnership"
               }
             ]
           },
