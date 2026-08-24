@@ -365,6 +365,11 @@ export const serviceSetup = (services: {
         staging: 'hh_env_staging',
         prod: 'hh_env_prod',
       },
+      PERSONAL_TAX_RETURN_URL: {
+        dev: 'https://vefurp.rsk.is/ws/Ums/USStadgreidslaFramtalGogn.svc',
+        staging: 'https://vefurp.rsk.is/ws/Ums/USStadgreidslaFramtalGogn.svc',
+        prod: 'https://vefurp.rsk.is/ws/Ums/USStadgreidslaFramtalGogn.svc',
+      },
       REDIS_NODES: {
         dev: json([
           'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
@@ -489,6 +494,10 @@ export const serviceSetup = (services: {
         '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH',
       REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED:
         '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED',
+      PERSONAL_TAX_RETURN_AGENT_NATIONAL_ID:
+        '/k8s/application-system/api/PERSONAL_TAX_RETURN_AGENT_NATIONAL_ID',
+      PERSONAL_TAX_RETURN_AGENT_ID:
+        '/k8s/application-system/api/PERSONAL_TAX_RETURN_AGENT_ID',
     })
     .db()
     .migrations()
