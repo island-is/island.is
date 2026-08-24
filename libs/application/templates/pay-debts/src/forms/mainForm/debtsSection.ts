@@ -4,14 +4,14 @@ import {
   buildSection,
   buildTextField,
 } from '@island.is/application/core'
-import { firstSection as messages } from '../../lib/messages'
+import { debts as messages } from '../../lib/messages'
 
-export const firstSection = buildSection({
-  id: 'firstSection',
+export const debtsSection = buildSection({
+  id: 'debtsSection',
   title: messages.general.sectionTitle,
   children: [
     buildMultiField({
-      id: 'firstSection',
+      id: 'debtsSection',
       title: messages.general.sectionTitle,
       children: [
         buildDescriptionField({

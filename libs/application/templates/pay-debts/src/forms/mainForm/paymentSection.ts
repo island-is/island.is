@@ -4,34 +4,34 @@ import {
   buildRadioField,
   buildSection,
 } from '@island.is/application/core'
+import { payment as messages } from '../../lib/messages'
 
-export const secondSection = buildSection({
-  id: 'secondSection',
-  title: 'Second section',
+export const paymentSection = buildSection({
+  id: 'paymentSection',
+  title: messages.general.sectionTitle,
   children: [
     buildMultiField({
-      id: 'secondSection',
-      title: 'Second section',
+      id: 'paymentSection',
+      title: messages.general.sectionTitle,
       children: [
         buildDescriptionField({
           id: 'description',
-          title: 'Description',
-          description: 'This is a description, should come from messages.ts',
+          title: messages.description.title,
+          description: messages.description.description,
         }),
         buildRadioField({
           id: 'radio',
-          title: 'Radio',
-          description:
-            'This is a radio desctiption, should come from messages.ts',
+          title: messages.radio.title,
+          description: messages.radio.description,
           options: [
             // Best practice is to import options from utils/options.ts
             // Making the template more readable and easier to maintain
             {
-              label: 'Option 1',
+              label: messages.radio.option1Label,
               value: 'option1',
             },
             {
-              label: 'Option 2',
+              label: messages.radio.option2Label,
               value: 'option2',
             },
           ],
