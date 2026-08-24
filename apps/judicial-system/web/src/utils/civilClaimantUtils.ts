@@ -1,4 +1,4 @@
-import {
+import type {
   CivilClaimant,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'

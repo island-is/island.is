@@ -3,17 +3,20 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseState,
-  Case,
   CaseFileCategory,
   CaseState,
   CaseType,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { mockCaseFile } from '@island.is/judicial-system-web/src/utils/mocks'
+import {
+  FormContextWrapper,
+  UserContextWrapper,
+} from '@island.is/judicial-system-web/src/utils/testHelpers'
 
-import { mockCaseFile } from '../../utils/mocks'
-import { FormContextWrapper, UserContextWrapper } from '../../utils/testHelpers'
 import AppealCaseFilesOverview from './AppealCaseFilesOverview'
 
 let mockRouterQuery: Record<string, string> = {}

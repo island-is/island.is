@@ -128,24 +128,14 @@ export class GrantImportService {
                 key: 'grantDateTo',
                 value: parsedGrantDateTo.date,
               },
-              parsedGrantDateFrom.hour
-                ? {
-                    key: 'grantOpenFromHour',
-                    value:
-                      parsedGrantDateFrom.hour === 0
-                        ? undefined
-                        : parsedGrantDateFrom.hour,
-                  }
-                : undefined,
-              parsedGrantDateTo.hour
-                ? {
-                    key: 'grantOpenToHour',
-                    value:
-                      parsedGrantDateTo.hour === 0
-                        ? undefined
-                        : parsedGrantDateTo.hour,
-                  }
-                : undefined,
+              {
+                key: 'grantOpenFromHour',
+                value: parsedGrantDateFrom.hour,
+              },
+              {
+                key: 'grantOpenToHour',
+                value: parsedGrantDateTo.hour,
+              },
             ].filter(isDefined),
           },
         }

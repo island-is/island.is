@@ -18,9 +18,9 @@ import {
 import AnimateHeight from 'react-animate-height'
 import cn from 'classnames'
 import { helperStyles } from '@island.is/island-ui/theme'
-import { theme } from '@island.is/island-ui/theme'
 
 import { Box } from '../Box/Box'
+import type { UseBoxStylesProps } from '../Box/useBoxStyles'
 import { Button } from '../Button/Button'
 import { FocusableBox } from '../FocusableBox/FocusableBox'
 import { Hidden } from '../Hidden/Hidden'
@@ -70,6 +70,10 @@ type BaseInteractiveTableProps<TData extends object> = {
   srCaption?: string
   sortHint?: string
   meta?: TableMeta<TData>
+  cellBox?: {
+    header?: Omit<UseBoxStylesProps, 'component'>
+    body?: Omit<UseBoxStylesProps, 'component'>
+  }
 }
 
 export type InteractiveTableProps<TData extends object> =
@@ -93,6 +97,7 @@ export const InteractiveTable = <TData extends object>({
   srCaption = 'Table with sortable columns.',
   sortHint = 'Activate to sort.',
   meta,
+  cellBox,
 }: InteractiveTableProps<TData>) => {
   const resolvedExpanderLabel = expanderLabel ?? ''
   const [internalSorting, setInternalSorting] = useState<SortingState>(
@@ -197,6 +202,7 @@ export const InteractiveTable = <TData extends object>({
                     textAlign: header.column.columnDef.meta.align,
                   }),
                 }}
+                box={cellBox?.header}
               >
                 {header.column.getCanSort() ? (
                   <FocusableBox
@@ -268,8 +274,9 @@ export const InteractiveTable = <TData extends object>({
                   i === 0 && renderExpandedRow ? (
                     <T.Data
                       key={cell.id}
-                      style={{ padding: theme.spacing[2] + 'px' }}
                       box={{
+                        paddingY: 2,
+                        ...cellBox?.body,
                         position: 'relative',
                         background: rowBackground,
                         borderBottomWidth:
@@ -316,11 +323,9 @@ export const InteractiveTable = <TData extends object>({
                   ) : (
                     <T.Data
                       key={cell.id}
-                      style={{
-                        padding: theme.spacing[2] + 'px',
-                        background: rowBackground,
-                      }}
                       box={{
+                        paddingY: 2,
+                        ...cellBox?.body,
                         background: rowBackground,
                         borderBottomWidth:
                           isExpanded || isCollapsing ? undefined : 'standard',

@@ -1,5 +1,6 @@
 import { useCallback, useContext } from 'react'
-import { IntlShape, useIntl } from 'react-intl'
+import type { IntlShape } from 'react-intl'
+import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, Input, Text } from '@island.is/island-ui/core'
@@ -28,19 +29,21 @@ import {
   ProsecutorCaseInfo,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
+import type {
+  CaseDecision,
+  Defendant,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseCustodyRestrictions,
-  CaseDecision,
   CaseType,
-  Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   setCheckboxAndSendToServer,
   toggleInArray,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import type { UpdateCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   formatDateForServer,
-  UpdateCase,
   useCase,
   useDebouncedInput,
   useOnceOn,

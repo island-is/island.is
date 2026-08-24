@@ -2,7 +2,7 @@ import { useCallback } from 'react'
 
 import { toast } from '@island.is/island-ui/core'
 import { isSuccessfulServiceStatus } from '@island.is/judicial-system/types'
-import { Subpoena } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { Subpoena } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useCreateSubpoenasMutation } from './createSubpoenas.generated'
 import { useSubpoenaQuery } from './subpoena.generated'

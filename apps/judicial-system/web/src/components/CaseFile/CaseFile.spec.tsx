@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import { StatusColor } from '@island.is/island-ui/core'
+import type { StatusColor } from '@island.is/island-ui/core'
 
 import CaseFile from './CaseFile'
 

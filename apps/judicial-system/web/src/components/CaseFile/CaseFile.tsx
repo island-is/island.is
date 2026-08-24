@@ -1,12 +1,15 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import cn from 'classnames'
 
-import { IconMapIcon } from '@island.is/island-ui/core'
-import { Box, Icon, StatusColor, Text } from '@island.is/island-ui/core'
-import { Colors } from '@island.is/island-ui/theme'
+import type { IconMapIcon, StatusColor } from '@island.is/island-ui/core'
+import { Box, Icon, Text } from '@island.is/island-ui/core'
+import type { Colors } from '@island.is/island-ui/theme'
 import { IconButton } from '@island.is/judicial-system-web/src/components'
+import {
+  fileSize,
+  onEnterOrSpace,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
-import { fileSize, onEnterOrSpace } from '../../utils/utils'
 import * as styles from './CaseFile.css'
 
 interface Props {
