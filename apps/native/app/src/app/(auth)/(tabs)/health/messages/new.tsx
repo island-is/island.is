@@ -29,6 +29,8 @@ import {
   Typography,
 } from '@/ui'
 
+const MESSAGE_MAX_LENGTH = 300
+
 export default function HealthMessageComposeScreen() {
   const { conversationId, recipientName, subject } = useLocalSearchParams<{
     conversationId?: string
@@ -373,20 +375,30 @@ export default function HealthMessageComposeScreen() {
 
               {!isCertificateSelected && (
                 <>
-                  <TextField
-                    label={intl.formatMessage({
-                      id: 'health.messages.compose.messageLabel',
-                    })}
-                    placeholder={intl.formatMessage({
-                      id: 'health.messages.compose.messagePlaceholder',
-                    })}
-                    value={message}
-                    onChangeText={setMessage}
-                    multiline
-                    numberOfLines={6}
-                    inputStyle={{ minHeight: 120 }}
-                    disabled={isFormLocked}
-                  />
+                  <View style={{ rowGap: theme.spacing.smallGutter }}>
+                    <TextField
+                      label={intl.formatMessage({
+                        id: 'health.messages.compose.messageLabel',
+                      })}
+                      placeholder={intl.formatMessage({
+                        id: 'health.messages.compose.messagePlaceholder',
+                      })}
+                      value={message}
+                      onChangeText={setMessage}
+                      multiline
+                      numberOfLines={6}
+                      inputStyle={{ minHeight: 120 }}
+                      maxLength={MESSAGE_MAX_LENGTH}
+                      disabled={isFormLocked}
+                    />
+                    <Typography
+                      variant="body3"
+                      color={theme.color.dark300}
+                      textAlign="right"
+                    >
+                      {`${message.length}/${MESSAGE_MAX_LENGTH}`}
+                    </Typography>
+                  </View>
 
                   {!isReply && (
                     <Checkbox
