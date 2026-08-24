@@ -14,7 +14,7 @@ export const m = defineMessages({
   inputLabel: {
     id: 'web.askTheBudgetBill:inputLabel',
     defaultMessage: 'Spurning',
-    description: 'Merking á innsláttarreit, falin sjónrænt',
+    description: 'Merking á innsláttarreit',
   },
   inputPlaceholder: {
     id: 'web.askTheBudgetBill:inputPlaceholder',
@@ -23,8 +23,8 @@ export const m = defineMessages({
   },
   send: {
     id: 'web.askTheBudgetBill:send',
-    defaultMessage: 'Senda spurningu',
-    description: 'Merking á sendihnappi',
+    defaultMessage: 'Spyrja',
+    description: 'Texti á hnappi sem sendir spurninguna',
   },
   newChat: {
     id: 'web.askTheBudgetBill:newChat',
@@ -35,7 +35,8 @@ export const m = defineMessages({
     id: 'web.askTheBudgetBill:disclaimer',
     defaultMessage:
       'Svörin eru búin til af gervigreind og geta verið ónákvæm. Þau eru ekki bindandi og koma ekki í stað fjárlagafrumvarpsins sjálfs.',
-    description: 'Fyrirvari um svör gervigreindarinnar',
+    description:
+      'Fyrirvari um svör gervigreindarinnar. Texti sem er vafinn í <link> verður hlekkur á slóðina í disclaimerLinkHref í configJson síðunnar, t.d. á skilmála.',
   },
   chatErrorTitle: {
     id: 'web.askTheBudgetBill:chatErrorTitle',

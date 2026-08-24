@@ -47,6 +47,11 @@ const AskTheBudgetBill: CustomScreen<AskTheBudgetBillProps> = ({
     (customPageData?.configJson?.zendeskSnippetUrl as string | undefined) ||
     DEFAULT_ZENDESK_SNIPPET_URL
 
+  /** Where the <link> tag in the disclaimer text points, the terms for instance */
+  const disclaimerLinkHref = customPageData?.configJson?.disclaimerLinkHref as
+    | string
+    | undefined
+
   const { status, startConversation, openConversation } = useZendeskMessenger({
     snippetUrl,
     containerId: CONTAINER_ID,
@@ -160,6 +165,7 @@ const AskTheBudgetBill: CustomScreen<AskTheBudgetBillProps> = ({
             isVisible={!isChatOpen}
             status={status}
             onAsk={handleAsk}
+            disclaimerLinkHref={disclaimerLinkHref}
           />
         </Box>
       </Box>

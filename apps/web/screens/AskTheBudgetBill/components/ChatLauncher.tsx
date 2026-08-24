@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useIntl } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 
 import {
   AlertMessage,
   Box,
   Button,
+  Input,
+  LinkV2,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -16,6 +18,8 @@ import * as styles from './ChatLauncher.css'
 /** The delays the caret is handed back over, see the effect below */
 const FOCUS_RETRY_DELAYS_MS = [0, 50, 150, 300, 600]
 
+const COMPOSER_ROWS = 4
+
 interface ChatLauncherProps {
   /** True while a conversation is being created for the question just asked */
   isStarting: boolean
@@ -23,6 +27,8 @@ interface ChatLauncherProps {
   isVisible: boolean
   status: MessengerStatus
   onAsk: (question: string) => void
+  /** Target of the <link> tag in the disclaimer, if the text has one */
+  disclaimerLinkHref?: string
 }
 
 export const ChatLauncher = ({
@@ -30,11 +36,12 @@ export const ChatLauncher = ({
   isVisible,
   status,
   onAsk,
+  disclaimerLinkHref,
 }: ChatLauncherProps) => {
   const { formatMessage } = useIntl()
   const [value, setValue] = useState('')
   const rootRef = useRef<HTMLDivElement>(null)
-  const composerRef = useRef<HTMLTextAreaElement>(null)
+  const composerRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null)
 
   const focusComposer = useCallback(() => {
     const active = document.activeElement
@@ -90,34 +97,32 @@ export const ChatLauncher = ({
         </Text>
 
         <Stack space={2}>
-          <Box className={styles.composer}>
-            <textarea
-              ref={composerRef}
-              className={styles.textarea}
-              name="budget-bill-question"
-              aria-label={formatMessage(m.inputLabel)}
-              placeholder={formatMessage(m.inputPlaceholder)}
-              value={value}
-              disabled={isStarting}
-              onChange={(event) => setValue(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter' && !event.shiftKey) {
-                  event.preventDefault()
-                  submit(value)
-                }
-              }}
-            />
+          <Input
+            ref={composerRef}
+            name="budget-bill-question"
+            label={formatMessage(m.inputLabel)}
+            placeholder={formatMessage(m.inputPlaceholder)}
+            textarea
+            rows={COMPOSER_ROWS}
+            value={value}
+            disabled={isStarting}
+            onChange={(event) => setValue(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault()
+                submit(value)
+              }
+            }}
+          />
 
-            <Box className={styles.submit}>
-              <Button
-                circle
-                icon="arrowUp"
-                title={formatMessage(m.send)}
-                loading={isStarting}
-                disabled={!canSubmit}
-                onClick={() => submit(value)}
-              />
-            </Box>
+          <Box display="flex" justifyContent="flexEnd">
+            <Button
+              loading={isStarting}
+              disabled={!canSubmit}
+              onClick={() => submit(value)}
+            >
+              {formatMessage(m.send)}
+            </Button>
           </Box>
 
           {status === 'error' && (
@@ -130,7 +135,29 @@ export const ChatLauncher = ({
         </Stack>
 
         <Text variant="small" color="dark400">
-          {formatMessage(m.disclaimer)}
+          <FormattedMessage
+            {...m.disclaimer}
+            values={{
+              // The disclaimer is editable in Contentful, so the text can wrap
+              // a term in <link> to point it at the url from the page config.
+              // Without a url configured the wrapped text is left as plain text
+              // rather than rendered as a dead link.
+              link: (chunks) =>
+                disclaimerLinkHref ? (
+                  <LinkV2
+                    href={disclaimerLinkHref}
+                    color="blue400"
+                    underline="small"
+                    underlineVisibility="always"
+                    newTab
+                  >
+                    {chunks}
+                  </LinkV2>
+                ) : (
+                  <>{chunks}</>
+                ),
+            }}
+          />
         </Text>
       </Stack>
     </Box>
