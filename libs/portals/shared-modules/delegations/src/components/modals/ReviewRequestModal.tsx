@@ -1,6 +1,7 @@
+import add from 'date-fns/add'
 import format from 'date-fns/format'
 
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text, toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Modal } from '@island.is/react/components'
 import { m as coreMessages, formatNationalId } from '@island.is/portals/core'
@@ -8,7 +9,12 @@ import { m as coreMessages, formatNationalId } from '@island.is/portals/core'
 import { m } from '../../lib/messages'
 import { IdentityCard } from '../IdentityCard/IdentityCard'
 import { RequestScopesTable } from '../delegationRequests/RequestScopesTable'
-import { AuthDelegationRequestsIncomingQuery } from '../delegationRequests/DelegationRequests.generated'
+import { useCreateAuthDelegationsMutation } from '../../screens/GrantAccessNew/GrantAccessNew.generated'
+import {
+  useFulfillAuthDelegationRequestMutation,
+  AuthDelegationRequestsIncomingDocument,
+  AuthDelegationRequestsIncomingQuery,
+} from '../delegationRequests/DelegationRequests.generated'
 
 type IncomingRequest =
   AuthDelegationRequestsIncomingQuery['authDelegationRequestsIncoming'][number]
@@ -16,20 +22,73 @@ type IncomingRequest =
 /**
  * Review an incoming delegation request: who is asking, their stated
  * relationship and reason, and the scopes as the rows they would become
- * once granted — with approve/reject actions.
+ * once granted — with approve/reject actions. Approving grants the
+ * delegation directly (the modal already shows everything the grant wizard
+ * would re-ask) and the new delegation appears in the tables on the page.
  */
 export const ReviewRequestModal = ({
   request,
   onClose,
-  onApprove,
   onReject,
 }: {
   request: IncomingRequest | null
   onClose: () => void
-  onApprove: (request: IncomingRequest) => void
   onReject: (request: IncomingRequest) => void
 }) => {
   const { formatMessage } = useLocale()
+
+  const [createAuthDelegations, { loading: approveLoading }] =
+    useCreateAuthDelegationsMutation()
+  const [fulfillDelegationRequest] = useFulfillAuthDelegationRequestMutation({
+    refetchQueries: [
+      { query: AuthDelegationRequestsIncomingDocument },
+      'AuthDelegationsGroupedByIdentityOutgoing',
+    ],
+  })
+
+  const onApprove = async (request: IncomingRequest) => {
+    if (request.scopes.some((scope) => !scope.domainName)) {
+      toast.error(formatMessage(m.requestApproveError))
+      return
+    }
+
+    const scopes = request.scopes.map((scope) => ({
+      name: scope.scopeName,
+      // Fall back to the standard one year validity when the requester
+      // didn't ask for a specific end date.
+      validTo: scope.validTo
+        ? new Date(scope.validTo)
+        : add(new Date(), { days: 365 }),
+      domainName: scope.domainName ?? '',
+    }))
+
+    try {
+      const result = await createAuthDelegations({
+        variables: {
+          input: {
+            toNationalIds: [request.to.nationalId],
+            scopes,
+          },
+        },
+      })
+      const createdDelegationId = result.data?.createAuthDelegations?.[0]?.id
+      if (!createdDelegationId) {
+        throw new Error('No delegation created')
+      }
+      await fulfillDelegationRequest({
+        variables: {
+          input: {
+            requestId: request.id,
+            delegationId: createdDelegationId,
+          },
+        },
+      })
+      toast.success(formatMessage(m.requestApproveSuccess))
+      onClose()
+    } catch {
+      toast.error(formatMessage(m.requestApproveError))
+    }
+  }
 
   return (
     <Modal
@@ -97,6 +156,7 @@ export const ReviewRequestModal = ({
               <Button
                 variant="primary"
                 icon="checkmark"
+                loading={approveLoading}
                 onClick={() => onApprove(request)}
               >
                 {formatMessage(m.requestApprove)}

@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import format from 'date-fns/format'
 
 import {
@@ -17,8 +16,6 @@ import { Modal } from '@island.is/react/components'
 import { m as coreMessages, formatNationalId } from '@island.is/portals/core'
 
 import { m } from '../../lib/messages'
-import { DelegationPaths } from '../../lib/paths'
-import { useDelegationForm } from '../../context'
 import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
 import { ReviewRequestModal } from '../modals/ReviewRequestModal'
 import {
@@ -33,14 +30,6 @@ type IncomingRequest =
 
 export const IncomingRequests = () => {
   const { formatMessage } = useLocale()
-  const navigate = useNavigate()
-  const {
-    setIdentities,
-    setPendingRequestId,
-    setRequestedScopeNames,
-    clearForm,
-    skipNextClear,
-  } = useDelegationForm()
 
   const { data, loading } = useAuthDelegationRequestsIncomingQuery({
     fetchPolicy: 'cache-and-network',
@@ -69,19 +58,6 @@ export const IncomingRequests = () => {
       .then(() => toast.success(formatMessage(m.requestRejectSuccess)))
       .catch(() => toast.error(formatMessage(m.requestRejectError)))
       .finally(() => setRequestToReject(null))
-  }
-
-  const onApprove = (request: IncomingRequest) => {
-    // Reset any stale wizard state before seeding it, but keep the seeded
-    // values across the navigation (clearForm runs on unmount).
-    clearForm()
-    setIdentities([
-      { nationalId: request.to.nationalId, name: request.to.name },
-    ])
-    setRequestedScopeNames(request.scopes.map((scope) => scope.scopeName))
-    setPendingRequestId(request.id)
-    skipNextClear()
-    navigate(DelegationPaths.DelegationsGrantNew)
   }
 
   if (loading && !data) {
@@ -174,10 +150,6 @@ export const IncomingRequests = () => {
       <ReviewRequestModal
         request={requestToReview}
         onClose={() => setRequestToReview(null)}
-        onApprove={(request) => {
-          setRequestToReview(null)
-          onApprove(request)
-        }}
         onReject={(request) => {
           setRequestToReview(null)
           setRequestToReject(request)

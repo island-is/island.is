@@ -784,6 +784,15 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:request-review-button',
     defaultMessage: 'Skoða',
   },
+  requestApproveSuccess: {
+    id: 'sp.access-control-delegations:request-approve-success',
+    defaultMessage: 'Umboð veitt',
+  },
+  requestApproveError: {
+    id: 'sp.access-control-delegations:request-approve-error',
+    defaultMessage:
+      'Ekki tókst að samþykkja beiðnina. Vinsamlegast reyndu aftur.',
+  },
   requestReviewTitle: {
     id: 'sp.access-control-delegations:request-review-title',
     defaultMessage: 'Beiðni um umboð',

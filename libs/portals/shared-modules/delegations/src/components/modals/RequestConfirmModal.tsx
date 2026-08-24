@@ -1,9 +1,12 @@
+import { useState } from 'react'
+
 import { Modal } from '@island.is/react/components'
 import { useLocale } from '@island.is/localization'
-import { Box, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import { m as coreMessages } from '@island.is/portals/core'
 
 import { m } from '../../lib/messages'
+import { getCreateRequestErrorMessage } from '../../lib/delegationRequestErrors'
 import { useDelegationForm } from '../../context'
 import { ScopesTable } from '../ScopesTable/ScopesTable'
 import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
@@ -16,17 +19,16 @@ export const RequestConfirmModal = ({
   relationship,
   reason,
   onSuccess,
-  onError,
 }: {
   isVisible: boolean
   onClose: () => void
   relationship: string
   reason: string
   onSuccess: () => void
-  onError: (error?: unknown) => void
 }) => {
   const { formatMessage } = useLocale()
   const { identities, selectedScopes } = useDelegationForm()
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const [createRequest, { loading }] = useCreateAuthDelegationRequestMutation()
 
@@ -34,10 +36,11 @@ export const RequestConfirmModal = ({
 
   const handleConfirm = () => {
     if (!granter) {
-      onError()
+      setErrorMessage(formatMessage(m.requestError))
       return
     }
 
+    setErrorMessage(null)
     createRequest({
       variables: {
         input: {
@@ -52,7 +55,11 @@ export const RequestConfirmModal = ({
       },
     })
       .then(() => onSuccess())
-      .catch((error) => onError(error))
+      .catch((error) => {
+        // Keep the modal open with a persistent explanation — guardrail
+        // errors (pending cap, rejection lock) need more than a toast.
+        setErrorMessage(formatMessage(getCreateRequestErrorMessage(error)))
+      })
   }
 
   return (
@@ -89,6 +96,7 @@ export const RequestConfirmModal = ({
           </Text>
           <ScopesTable showDate editableDates={false} />
         </Box>
+        {errorMessage && <AlertMessage type="error" message={errorMessage} />}
       </Box>
 
       <Box position="sticky" bottom={0}>

@@ -15,7 +15,6 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { IntroHeader, m as coreMessages } from '@island.is/portals/core'
 
 import { m } from '../../lib/messages'
-import { getCreateRequestErrorMessage } from '../../lib/delegationRequestErrors'
 import { DelegationPaths } from '../../lib/paths'
 import { useDelegationForm } from '../../context'
 import { AccessScopes } from '../../components/GrantAccessSteps/AccessScopes'
@@ -181,10 +180,6 @@ const RequestDelegation = () => {
           onClose={() => setIsConfirmModalVisible(false)}
           relationship={detailsMethods.getValues('relationship')}
           reason={detailsMethods.getValues('reason')}
-          onError={(error) => {
-            toast.error(formatMessage(getCreateRequestErrorMessage(error)))
-            setIsConfirmModalVisible(false)
-          }}
           onSuccess={() => {
             toast.success(formatMessage(m.requestSuccess))
             navigate(DelegationPaths.DelegationsNew)
