@@ -89,7 +89,6 @@ describe('TransactionContextMiddleware', () => {
           transaction: null,
           settled: false,
           afterCommit: [],
-          creating: null,
         })
       })
     })
@@ -106,7 +105,9 @@ describe('TransactionContextMiddleware', () => {
 
         expect(first).toBe(transaction)
         expect(second).toBe(transaction)
-        expect(getTransactionContext()?.transaction).toBe(transaction)
+        await expect(getTransactionContext()?.transaction).resolves.toBe(
+          transaction,
+        )
         expect(sequelize.transaction).toHaveBeenCalledTimes(1)
       })
     })
@@ -221,6 +222,65 @@ describe('TransactionContextMiddleware', () => {
       const res = await givenARequest(() => undefined)
 
       await expect(res.emit('close')).resolves.toBeUndefined()
+    })
+
+    it('should roll back a transaction that is still opening', async () => {
+      const transaction = createTransaction()
+      let openTransaction: (transaction: Transaction) => void = () => undefined
+      const sequelize = {
+        transaction: jest.fn().mockReturnValue(
+          new Promise<Transaction>((resolve) => {
+            openTransaction = resolve
+          }),
+        ),
+      } as unknown as Sequelize
+
+      // The request asks for a transaction and the response ends before the
+      // database has handed one over - the case that would otherwise leave an
+      // open transaction nothing ever settles.
+      let opening: Promise<Transaction> | undefined
+
+      const res = await givenARequest(() => {
+        opening = getOrCreateTransaction(sequelize)
+      })
+
+      const closed = res.emit('close')
+
+      openTransaction(transaction)
+
+      await closed
+
+      expect(transaction.rollback).toHaveBeenCalledTimes(1)
+      await expect(opening).resolves.toBe(transaction)
+    })
+
+    it('should not report a failure to open as a failure to roll back', async () => {
+      const error = new Error('Some error')
+      let failToOpen: (error: Error) => void = () => undefined
+      const sequelize = {
+        transaction: jest.fn().mockReturnValue(
+          new Promise<Transaction>((_, reject) => {
+            failToOpen = reject
+          }),
+        ),
+      } as unknown as Sequelize
+
+      let opening: Promise<Transaction> | undefined
+
+      const res = await givenARequest(() => {
+        opening = getOrCreateTransaction(sequelize)
+      })
+
+      const closed = res.emit('close')
+
+      failToOpen(error)
+
+      await closed
+
+      // Nothing was opened, so there is nothing to roll back, and the error
+      // belongs to the caller that asked for the transaction.
+      await expect(opening).rejects.toBe(error)
+      expect(logger.error).not.toHaveBeenCalled()
     })
 
     it('should log a failed rollback rather than throw', async () => {

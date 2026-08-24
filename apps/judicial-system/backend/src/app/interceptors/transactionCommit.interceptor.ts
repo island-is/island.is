@@ -35,8 +35,13 @@ export class TransactionCommitInterceptor implements NestInterceptor {
 
     try {
       // A request that never opened a transaction has nothing to commit, but
-      // its callbacks still belong to a successful request.
-      await context.transaction?.commit()
+      // its callbacks still belong to a successful request. The slot holds the
+      // opening call rather than the transaction, so it is awaited here: on the
+      // success path it has long since resolved, unless something asked for a
+      // transaction without waiting for it.
+      const transaction = await context.transaction
+
+      await transaction?.commit()
     } finally {
       // Settled either way, so the middleware does not roll back a transaction
       // whose commit has already failed, and the callbacks below run once.

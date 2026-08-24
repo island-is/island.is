@@ -16,18 +16,18 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 export type AfterCommitCallback = () => Promise<void>
 
 export interface TransactionContext {
-  /** The transaction owned by this request, once something has asked for one. */
-  transaction: Transaction | null
+  /**
+   * The transaction owned by this request, once something has asked for one,
+   * held as the promise that opens it rather than as the transaction itself.
+   * Two concurrent callers therefore share one transaction instead of leaking
+   * a second one that nothing will ever settle, and a request that ends while
+   * the transaction is still opening still has something to settle.
+   */
+  transaction: Promise<Transaction> | null
   /** True once the transaction has been committed or rolled back. */
   settled: boolean
   /** Callbacks to run after a successful commit, in registration order. */
   afterCommit: AfterCommitCallback[]
-  /**
-   * The in-flight `sequelize.transaction()` call, so that two concurrent
-   * `getOrCreateTransaction` callers share one transaction instead of leaking
-   * a second one that nothing will ever settle.
-   */
-  creating: Promise<Transaction> | null
 }
 
 const transactionStorage = new AsyncLocalStorage<TransactionContext>()
@@ -64,24 +64,20 @@ export const getOrCreateTransaction = async (
 ): Promise<Transaction> => {
   const context = requireTransactionContext()
 
-  if (context.transaction) {
-    return context.transaction
+  if (!context.transaction) {
+    context.transaction = sequelize.transaction()
   }
 
-  if (!context.creating) {
+  try {
+    return await context.transaction
+  } catch (error) {
     // Clear the slot on failure, so that a caller which handles the error can
     // try again instead of awaiting the same rejected promise for the rest of
-    // the request.
-    context.creating = sequelize.transaction().catch((error) => {
-      context.creating = null
+    // the request. Concurrent callers all clear it, which is harmless.
+    context.transaction = null
 
-      throw error
-    })
+    throw error
   }
-
-  context.transaction = await context.creating
-
-  return context.transaction
 }
 
 /**
@@ -103,7 +99,6 @@ export class TransactionContextMiddleware implements NestMiddleware {
       transaction: null,
       settled: false,
       afterCommit: [],
-      creating: null,
     }
 
     return transactionStorage.run(context, () => {
@@ -123,8 +118,26 @@ export class TransactionContextMiddleware implements NestMiddleware {
 
         context.settled = true
 
+        // The slot holds the opening call, which may still be in flight: a
+        // request that ends while its transaction is opening is exactly the
+        // case that would otherwise leak one nothing settles. Waiting for it
+        // can leave the caller holding a transaction that is rolled back
+        // underneath it, which is the right outcome for a request whose
+        // response has already ended.
+        //
+        let transaction: Transaction
+
         try {
-          await context.transaction.rollback()
+          transaction = await context.transaction
+        } catch {
+          // An opening call that failed has nothing to roll back, and its
+          // error belongs to the caller that asked for the transaction, so it
+          // is not reported again here.
+          return
+        }
+
+        try {
+          await transaction.rollback()
         } catch (error) {
           this.logger.error('Failed to roll back request transaction', {
             error,
