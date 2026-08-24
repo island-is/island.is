@@ -882,7 +882,8 @@ export const en: TranslatedMessages = {
   'health.messages.videoCall': 'Video call',
   'health.messages.videoCallCanceled': 'Canceled',
   'health.messages.startVideoCall': 'Start video call',
-  'health.messages.replyBlocked.default': "You can't reply to this conversation.",
+  'health.messages.replyBlocked.default':
+    "You can't reply to this conversation.",
   'health.messages.replyBlocked.repliesDisabled':
     "You can't reply to this conversation because the sender has closed further replies in it.",
   'health.messages.replyBlocked.outsideWindow':
