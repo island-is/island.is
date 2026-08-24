@@ -1,5 +1,5 @@
 import { Inject, Module } from '@nestjs/common'
-import { ConfigType } from '@nestjs/config'
+import { ConfigModule, ConfigType } from '@nestjs/config'
 import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { client } from '../../gen/fetch/client.gen'
@@ -7,6 +7,11 @@ import { FinanceClientV3Config } from './financeV3.config'
 import { FinanceClientV3Service } from './financeV3.service'
 
 @Module({
+  imports: [
+    ConfigModule.forFeature(FinanceClientV3Config),
+    ConfigModule.forFeature(XRoadConfig),
+    ConfigModule.forFeature(IdsClientConfig),
+  ],
   providers: [FinanceClientV3Service],
   exports: [FinanceClientV3Service],
 })

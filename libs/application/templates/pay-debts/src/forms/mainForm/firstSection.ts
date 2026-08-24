@@ -4,24 +4,25 @@ import {
   buildSection,
   buildTextField,
 } from '@island.is/application/core'
+import { firstSection as messages } from '../../lib/messages'
 
 export const firstSection = buildSection({
   id: 'firstSection',
-  title: 'First section',
+  title: messages.general.sectionTitle,
   children: [
     buildMultiField({
       id: 'firstSection',
-      title: 'First section',
+      title: messages.general.sectionTitle,
       children: [
         buildDescriptionField({
           id: 'description',
-          title: 'Description',
-          description: 'This is a description, should come from messages.ts',
+          title: messages.description.title,
+          description: messages.description.description,
         }),
         buildTextField({
           id: 'input',
-          title: 'Input',
-          description: 'This is an input, should come from messages.ts',
+          title: messages.input.title,
+          description: messages.input.description,
         }),
       ],
     }),
