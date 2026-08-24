@@ -54,12 +54,16 @@ export class ConfirmJobSearchService extends BaseTemplateApiService {
           'questionnaire',
         ) || {}
 
+      // Drop empty/nullish entries so unanswered non-required questions
+      // aren't submitted to VMST as 0 via Number('').
       const questionaire = {
         ...Object.fromEntries(
-          Object.entries(questionnaireAnswers).map(([key, value]) => [
-            key,
-            Number(value),
-          ]),
+          Object.entries(questionnaireAnswers)
+            .filter(
+              ([, value]) =>
+                value !== '' && value !== null && value !== undefined,
+            )
+            .map(([key, value]) => [key, Number(value)]),
         ),
         chosenLanguage: currentUserLocale,
       }

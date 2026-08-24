@@ -53,7 +53,13 @@ export const Questionnaire: FC<FieldBaseProps> = ({
       {sorted.map((question) => {
         const id = `${ANSWERS_PREFIX}.${question.field}`
         const label = lang === 'en' ? question.questionEN : question.questionIS
-        const error = errors && getErrorViaPath(errors, id)
+        // getErrorViaPath returns the raw value at the path; RHF's setError
+        // writes a { type, message, ref } object, so normalize to a string.
+        const rawError = errors && getErrorViaPath(errors, id)
+        const error =
+          typeof rawError === 'object' && rawError !== null
+            ? (rawError as { message?: string }).message
+            : (rawError as string | undefined)
         const defaultValue = getValueViaPath<string | number>(
           application.answers,
           id,
@@ -63,7 +69,12 @@ export const Questionnaire: FC<FieldBaseProps> = ({
           return (
             <Box key={id}>
               <Text variant="h4" as="h4" marginBottom={2}>
-                {label}
+                {label}{' '}
+                {question.required && (
+                  <Text as="span" variant="eyebrow" color="red400">
+                    *
+                  </Text>
+                )}
               </Text>
               <RadioController
                 id={id}
@@ -89,14 +100,14 @@ export const Questionnaire: FC<FieldBaseProps> = ({
             <Box key={id}>
               <Controller
                 name={id}
-                defaultValue={defaultValue ?? null}
+                defaultValue={defaultValue ?? ''}
                 render={({ field: { onChange, value } }) => (
                   <Scale
                     id={id}
                     label={label}
                     min={min}
                     max={max}
-                    value={value != null ? String(value) : null}
+                    value={value ? String(value) : null}
                     onChange={(val: string) => {
                       clearErrors(id)
                       onChange(val)
