@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react'
 
 import { ROUTE_HANDLER_ROUTE } from '@island.is/judicial-system/consts'
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  Case,
   CaseType,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'

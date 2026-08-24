@@ -1,11 +1,13 @@
 import { fireEvent, render, screen, within } from '@testing-library/react'
 
+import type {
+  Case,
+  CourtSessionResponse,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseState,
   AppealDecisionPartyRole,
-  Case,
   CaseAppealDecision,
-  CourtSessionResponse,
   CourtSessionRulingType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { IntlProviderWrapper } from '@island.is/judicial-system-web/src/utils/testHelpers'

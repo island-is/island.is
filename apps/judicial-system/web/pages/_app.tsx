@@ -1,12 +1,11 @@
-import App, { AppContext, AppProps } from 'next/app'
+import type { AppContext, AppProps } from 'next/app'
+import App from 'next/app'
 import Head from 'next/head'
 import { ApolloProvider } from '@apollo/client'
 
-import { Query, QueryGetTranslationsArgs } from '@island.is/api/schema'
+import type { Query, QueryGetTranslationsArgs } from '@island.is/api/schema'
 import { Box, ToastContainer } from '@island.is/island-ui/core'
-import { GET_TRANSLATIONS, LocaleProvider } from '@island.is/localization'
-
-import client from '../graphql/client'
+import client from '@island.is/judicial-system-web/graphql/client'
 import {
   FeatureProvider,
   FormProvider,
@@ -15,7 +14,8 @@ import {
   ServiceInterruptionBanner,
   UserProvider,
   ViewportProvider,
-} from '../src/components'
+} from '@island.is/judicial-system-web/src/components'
+import { GET_TRANSLATIONS, LocaleProvider } from '@island.is/localization'
 
 const getTranslationStrings = (apolloClient: typeof client) => {
   if (!apolloClient) {
