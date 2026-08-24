@@ -72,8 +72,7 @@ export const HealthConversationsBox = ({ limit }: Props) => {
       borderRadius="large"
       borderWidth="standard"
       borderColor="blue200"
-      paddingTop={3}
-      paddingBottom={3}
+      paddingY={3}
       height="full"
     >
       {!loading && !hasHealthScope && (
