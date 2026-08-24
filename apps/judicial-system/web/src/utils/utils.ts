@@ -1,6 +1,6 @@
-import { KeyboardEvent } from 'react'
+import type { KeyboardEvent } from 'react'
 
-import { TagVariant } from '@island.is/island-ui/core'
+import type { TagVariant } from '@island.is/island-ui/core'
 import {
   formatDate,
   normalizeAndFormatNationalId,
@@ -12,22 +12,24 @@ import {
   isProsecutionUser,
   isRequestCase,
 } from '@island.is/judicial-system/types'
-import {
+import type {
   AppealCase,
-  AppealCaseState,
-  AppealDecisionPartyRole,
   Case,
-  CaseAppealDecision,
-  CaseCustodyRestrictions,
-  CaseFileCategory,
   CourtSessionString,
-  CourtSessionStringType,
   Defendant,
-  DefendantPlea,
-  Gender,
   Notification,
   TrackedNotificationType,
   User,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  AppealCaseState,
+  AppealDecisionPartyRole,
+  CaseAppealDecision,
+  CaseCustodyRestrictions,
+  CaseFileCategory,
+  CourtSessionStringType,
+  DefendantPlea,
+  Gender,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 

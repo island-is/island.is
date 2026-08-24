@@ -1,4 +1,5 @@
-import { FC, useContext, useEffect, useRef, useState } from 'react'
+import type { FC } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Button, Text } from '@island.is/island-ui/core'
@@ -15,20 +16,22 @@ import {
   core,
   signedVerdictOverview as m,
 } from '@island.is/judicial-system-web/messages'
+import type { SignatureType } from '@island.is/judicial-system-web/src/components'
 import {
   FormContext,
   PdfButton,
   SectionHeading,
-  SignatureType,
   SignedDocument,
   SigningMethodSelectionModal,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
+import type {
   CaseDecision,
+  RequestSignatureResponse,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
   CaseState,
   CaseType,
-  RequestSignatureResponse,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 const showCustodyNotice = (

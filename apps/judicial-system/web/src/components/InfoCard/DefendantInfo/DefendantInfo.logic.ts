@@ -1,4 +1,4 @@
-import { IntlShape } from 'react-intl'
+import type { IntlShape } from 'react-intl'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {

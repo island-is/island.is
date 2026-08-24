@@ -1,11 +1,10 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Input } from '@island.is/island-ui/core'
 import { commentsInput as strings } from '@island.is/judicial-system-web/messages/Core/commentsInput'
-
-import { useDebouncedInput } from '../../utils/hooks'
-import SectionHeading from '../SectionHeading/SectionHeading'
+import SectionHeading from '@island.is/judicial-system-web/src/components/SectionHeading/SectionHeading'
+import { useDebouncedInput } from '@island.is/judicial-system-web/src/utils/hooks'
 
 const CommentsInput: FC = () => {
   const { formatMessage } = useIntl()
