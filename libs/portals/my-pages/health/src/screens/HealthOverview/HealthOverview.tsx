@@ -6,7 +6,6 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { LinkResolver } from '@island.is/portals/my-pages/core'
 import { DelegationPaths } from '@island.is/portals/shared-modules/delegations'
@@ -49,7 +48,6 @@ export const HealthOverview = () => {
   const { formatMessage, locale } = useLocale()
   const { width } = useWindowSize()
   const isStackedLayout = width < 1100
-  const isBiggestScreen = width >= theme.breakpoints.xl
   const { value: showAppointments } = useFeatureFlag(
     Features.isServicePortalHealthAppointmentsPageEnabled,
     false,
@@ -188,16 +186,12 @@ export const HealthOverview = () => {
       </GridRow>
       {isNewHealthOverviewPageEnabled && (
         <GridRow marginBottom={SECTION_GAP}>
-          <GridColumn
-            span={isStackedLayout ? '8/8' : isBiggestScreen ? '7/12' : '7/12'}
-          >
+          <GridColumn span={isStackedLayout ? '8/8' : '7/12'}>
             <Box marginBottom={isStackedLayout ? CONTENT_GAP_LG : 0}>
               <HealthConversationsBox limit={3} />
             </Box>
           </GridColumn>
-          <GridColumn
-            span={isStackedLayout ? '8/8' : isBiggestScreen ? '5/12' : '5/12'}
-          >
+          <GridColumn span={isStackedLayout ? '8/8' : '5/12'}>
             <ContactLinks />
             <Box marginTop={2}>
               <SameDayHelpBox />
