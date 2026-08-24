@@ -182,6 +182,7 @@ export const OutlierEditor: FC<Props> = ({
               fieldName={fieldName}
               index={index}
               group={group}
+              liveName={watchedGroups[index]?.name}
               mode={mode}
               errors={errors}
               identifierForOrdinal={identifierForOrdinal}

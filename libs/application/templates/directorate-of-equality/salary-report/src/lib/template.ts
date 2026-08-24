@@ -187,18 +187,23 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
+              // Ordered in groups: same order runs concurrently via
+              // Promise.all, so every provider reading/seeding the draft
+              // must be strictly after CreateSalaryDraftApi — otherwise a
+              // GetDraft*/ListDraft* read races the draft-create POST and
+              // 404s before the row is committed.
               api: [
-                ImportPresignApi,
-                CreateSalaryDraftApi,
-                ImportSalaryDraftWorkbookApi,
-                GetDraftHeaderApi,
-                GetDraftCriteriaTreeApi,
-                ListDraftRolesWithStepsApi,
-                ListDraftCriteriaApi,
-                ListDraftRolesApi,
-                ListDraftEmployeesApi,
-                ListDraftOutlierGroupsApi,
-                SalaryAnalysisApi,
+                ImportPresignApi.configure({ order: 0 }),
+                CreateSalaryDraftApi.configure({ order: 0 }),
+                ImportSalaryDraftWorkbookApi.configure({ order: 1 }),
+                GetDraftHeaderApi.configure({ order: 2 }),
+                GetDraftCriteriaTreeApi.configure({ order: 2 }),
+                ListDraftRolesWithStepsApi.configure({ order: 2 }),
+                ListDraftCriteriaApi.configure({ order: 2 }),
+                ListDraftRolesApi.configure({ order: 2 }),
+                ListDraftEmployeesApi.configure({ order: 2 }),
+                ListDraftOutlierGroupsApi.configure({ order: 2 }),
+                SalaryAnalysisApi.configure({ order: 2 }),
               ],
               delete: true,
             },
