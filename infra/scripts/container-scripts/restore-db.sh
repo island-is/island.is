@@ -2,12 +2,12 @@
 set -euo pipefail
 
 # Get DB password from SSM
-DB_PASSWORD=$(node secrets get "$DB_PASSWORD_KEY")
-export PGPASSWORD="$DB_PASSWORD"
+DB_MASTER_PASSWORD=$(node secrets get "$PGPASSWORD_KEY")
+export PGPASSWORD="$DB_MASTER_PASSWORD"
 
 # Check if database already has tables (skip if restored)
 echo "Checking if database has existing tables..."
-TABLE_COUNT=$(psql -h "$PGHOST" -U "$DB_USER" -d "$DB_NAME" -t -c \
+TABLE_COUNT=$(psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -t -c \
   "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public'" || echo "0")
 
 if [ "$TABLE_COUNT" -gt 0 ]; then
@@ -28,10 +28,18 @@ aws s3 cp \
 
 # Restore dump
 echo "Restoring database from dump..."
-gunzip -c "$DUMP_FILE" | psql -h "$PGHOST" -U "$DB_USER" -d "$DB_NAME"
+gunzip -c "$DUMP_FILE" | psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -v ON_ERROR_STOP=0
+
+psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -c "ALTER SCHEMA public OWNER TO \"$DB_USER\""
+psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -c "GRANT USAGE, CREATE ON SCHEMA public TO \"$DB_USER\""
+psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -c "REASSIGN OWNED BY \"$PGUSER\" TO \"$DB_USER\""
+psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO \"$DB_USER\""
+psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -c "GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO \"$DB_USER\""
+psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO \"$DB_USER\""
+psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO \"$DB_USER\""
 
 # Verify
-TABLE_COUNT_AFTER=$(psql -h "$PGHOST" -U "$DB_USER" -d "$DB_NAME" -t -c \
+TABLE_COUNT_AFTER=$(psql -h "$PGHOST" -U "$PGUSER" -d "$DB_NAME" -t -c \
   "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public'")
 
 if [ "$TABLE_COUNT_AFTER" -gt 0 ]; then
