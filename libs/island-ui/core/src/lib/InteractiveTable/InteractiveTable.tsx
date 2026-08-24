@@ -420,52 +420,9 @@ export const InteractiveTable = <TData extends object>({
                               })
                             }
                           }}
-                        />
-                      </Box>
-                    </T.Data>
-                  ) : (
-                    <T.Data
-                      key={cell.id}
-                      box={{
-                        paddingY: 2,
-                        ...cellBox?.body,
-                        background: rowBackground,
-                        borderBottomWidth:
-                          isExpanded || isCollapsing ? undefined : 'standard',
-                      }}
-                    >
-                      {cell.column.columnDef.meta?.type === 'interactive' ? (
-                        mobileTitleKey && cell.column.id === mobileTitleKey ? (
-                          <Box id={`${tableId}-row-title-${row.id}`}>
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext(),
-                            )}
-                          </Box>
-                        ) : (
-                          flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                          )
-                        )
-                      ) : (
-                        <Text
-                          variant="medium"
-                          id={
-                            mobileTitleKey && cell.column.id === mobileTitleKey
-                              ? `${tableId}-row-title-${row.id}`
-                              : undefined
-                          }
-                          textAlign={cell.column.columnDef.meta?.align}
                         >
-                          {(isExpanded || isCollapsing) && (
-                            <>
-                              <div className={styles.line} />
-                              <Box marginLeft={3} marginBottom={3}>
-                                {renderExpandedRow(row)}
-                              </Box>
-                            </>
-                          )}
+                          {(isExpanded || isCollapsing) &&
+                            renderExpandedRow(row)}
                         </AnimateHeight>
                       </T.Data>
                     </tr>
