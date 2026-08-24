@@ -10,8 +10,3 @@ export const titleText = style({
     },
   },
 })
-
-export const telLink = style({
-  color: 'inherit',
-  textDecoration: 'none',
-})

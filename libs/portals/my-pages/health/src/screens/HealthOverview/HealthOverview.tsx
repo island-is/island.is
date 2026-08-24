@@ -242,8 +242,8 @@ export const HealthOverview = () => {
           error: !!healthCenterError,
         }}
         dentists={{
-          data: dentistsData?.rightsPortalUserDentistRegistration?.dentist
-            ?.name,
+          data:
+            dentistsData?.rightsPortalUserDentistRegistration?.dentist?.name,
           loading: dentistsLoading,
           error: !!dentistsError,
         }}

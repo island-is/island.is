@@ -12,7 +12,6 @@ import * as styles from './HealthConversationsBox.css'
 
 interface Props {
   limit: number
-  title?: string
 }
 
 const StateMessage = ({
@@ -46,7 +45,7 @@ const StateMessage = ({
   </Box>
 )
 
-export const HealthConversationsBox = ({ limit, title }: Props) => {
+export const HealthConversationsBox = ({ limit }: Props) => {
   const { formatMessage } = useLocale()
   const userInfo = useUserInfo()
   const hasHealthScope = !!userInfo?.scopes?.includes(ApiScope.health)
@@ -93,7 +92,7 @@ export const HealthConversationsBox = ({ limit, title }: Props) => {
           >
             <Icon icon="mail" type="outline" color="blue400" size="medium" />
             <Text variant="h4" as="h2" color="blue400" truncate>
-              {title ?? formatMessage(messages.healthConversationsBoxTitle)}
+              {formatMessage(messages.healthConversationsBoxTitle)}
             </Text>
           </Box>
         </LinkResolver>
