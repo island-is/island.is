@@ -10,6 +10,7 @@ import {
 } from '../constants'
 import {
   AppointmentAssigneeTypeEnum,
+  AppointmentCancelBlockedReasonEnum,
   AppointmentLinkTypeEnum,
   AppointmentModalityEnum,
   AppointmentStatusEnum,
@@ -99,6 +100,21 @@ export const toAppointmentLinkTypeEnum = (
     default:
       return undefined
   }
+}
+
+export const toAppointmentCancelBlockedReason = (
+  canCancel: boolean,
+  canCancelBefore?: Date,
+): AppointmentCancelBlockedReasonEnum | undefined => {
+  if (canCancel) {
+    return undefined
+  }
+
+  if (canCancelBefore && canCancelBefore.getTime() < Date.now()) {
+    return AppointmentCancelBlockedReasonEnum.DeadlinePassed
+  }
+
+  return AppointmentCancelBlockedReasonEnum.NotAllowed
 }
 
 /*

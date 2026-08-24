@@ -37,6 +37,7 @@ import {
   getAppointmentLinkActivationWindow,
   mapAppointmentStatus,
   toAppointmentAssigneeTypeEnum,
+  toAppointmentCancelBlockedReason,
   toAppointmentLinkTypeEnum,
   toAppointmentModalityEnum,
   toAppointmentStatusEnum,
@@ -726,7 +727,10 @@ export class HealthDirectorateService {
         })
         .filter(isDefined),
       canCancel: item.canCancel,
-      canCancelBefore: item.canCancelBefore,
+      cancelBlockedReason: toAppointmentCancelBlockedReason(
+        item.canCancel,
+        item.canCancelBefore,
+      ),
     }
   }
 

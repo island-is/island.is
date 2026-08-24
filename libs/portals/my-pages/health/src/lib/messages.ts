@@ -2138,7 +2138,7 @@ export const messages = defineMessages({
   },
   cancelAppointmentModalText: {
     defaultMessage:
-      'Þú ert að fara afbóka eftirfarandi tíma sem þú átt pantaðan:',
+      'Þú ert að fara að afbóka eftirfarandi tíma sem þú átt pantaðan:',
     id: 'sp.health:cancel-appointment-modal-text',
   },
   cancelAppointmentSuccess: {

@@ -1,5 +1,9 @@
 import { Field, ObjectType, Int, GraphQLISODateTime, ID } from '@nestjs/graphql'
-import { AppointmentStatusEnum, AppointmentModalityEnum } from './enums'
+import {
+  AppointmentCancelBlockedReasonEnum,
+  AppointmentStatusEnum,
+  AppointmentModalityEnum,
+} from './enums'
 import {
   AppointmentLocation,
   AppointmentAssignee,
@@ -51,9 +55,9 @@ export class AppointmentDetail {
   })
   canCancel!: boolean
 
-  @Field(() => GraphQLISODateTime, {
+  @Field(() => AppointmentCancelBlockedReasonEnum, {
     nullable: true,
-    description: 'Deadline after which cancellation is no longer accepted',
+    description: 'Reason cancellation is blocked; only set when canCancel is false',
   })
-  canCancelBefore?: Date
+  cancelBlockedReason?: AppointmentCancelBlockedReasonEnum
 }

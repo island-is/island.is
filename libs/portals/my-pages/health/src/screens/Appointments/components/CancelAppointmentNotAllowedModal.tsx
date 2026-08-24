@@ -1,3 +1,4 @@
+import { HealthDirectorateAppointmentCancelBlockedReason } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { Modal } from '@island.is/portals/my-pages/core'
 import React from 'react'
@@ -5,7 +6,7 @@ import { messages } from '../../../lib/messages'
 
 interface Props {
   visible: boolean
-  reason: 'deadlinePassed' | 'generic'
+  reason?: HealthDirectorateAppointmentCancelBlockedReason
   onClose: () => void
 }
 
@@ -17,7 +18,7 @@ const CancelAppointmentNotAllowedModal: React.FC<Props> = ({
   const { formatMessage } = useLocale()
 
   const [title, text] =
-    reason === 'deadlinePassed'
+    reason === HealthDirectorateAppointmentCancelBlockedReason.DeadlinePassed
       ? [
           messages.cancelAppointmentNotAllowedTitle,
           messages.cancelAppointmentNotAllowedText,
