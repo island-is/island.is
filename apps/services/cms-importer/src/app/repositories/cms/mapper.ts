@@ -1,10 +1,12 @@
 import { isDefined } from '@island.is/shared/utils'
+import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types'
 import { LOCALE, EN_LOCALE } from '../../constants'
 import {
   CmsRichTextDocument,
   EntryCreationDto,
   Localized,
   RichTextParagraph,
+  RichTextValue,
 } from './cms.types'
 
 interface Props {
@@ -16,6 +18,8 @@ interface Props {
     tagIds?: string[]
     cardIntro?: Localized<Array<RichTextParagraph>>
     content?: Localized<Array<RichTextParagraph>>
+    assetId?: Localized<string>
+    externalLinkId?: Localized<string>
   }
   ownerTags: string[]
 }
@@ -25,7 +29,16 @@ export const generateGenericListItem = ({
   ownerTags,
   properties,
 }: Props): EntryCreationDto | undefined => {
-  const { internalTitle, title, slug, tagIds, cardIntro, content } = properties
+  const {
+    internalTitle,
+    title,
+    slug,
+    tagIds,
+    cardIntro,
+    content,
+    assetId,
+    externalLinkId,
+  } = properties
 
   const newEntry: EntryCreationDto['fields'] = {
     genericList: mapLocalizedValue<unknown>({
@@ -35,7 +48,7 @@ export const generateGenericListItem = ({
       },
     }),
     ...(cardIntro && {
-      cardIntro: mapLocalizedRichTextDocument(cardIntro['is-IS'], cardIntro.en),
+      cardIntro: mapLocalizedRichTextDocument(cardIntro[LOCALE], cardIntro.en),
     }),
     internalTitle: mapLocalizedValue(internalTitle),
     ...(tagIds && {
@@ -51,7 +64,13 @@ export const generateGenericListItem = ({
     title,
     slug,
     ...(content && {
-      content: mapLocalizedRichTextDocument(content['is-IS'], content.en),
+      content: mapLocalizedRichTextDocument(content[LOCALE], content.en),
+    }),
+    ...(assetId && {
+      asset: mapLocalizedLinkId(assetId, 'Asset'),
+    }),
+    ...(externalLinkId && {
+      externalLink: mapLocalizedLinkId(externalLinkId, 'Entry'),
     }),
     fullWidthImageInContent: mapLocalizedValue(false),
   }
@@ -69,43 +88,74 @@ export const generateGenericListItem = ({
   }
 }
 
+const buildInlineNode = (item: RichTextValue) => {
+  const textNode = {
+    data: {},
+    nodeType: 'text' as const,
+    marks: item.isBold ? [{ type: MARKS.BOLD }] : [],
+    value: item.value,
+  }
+
+  if (!item.link) {
+    return textNode
+  }
+
+  if (item.link.type === 'hyperlink') {
+    return {
+      data: { uri: item.link.uri },
+      nodeType: INLINES.HYPERLINK,
+      content: [textNode],
+    }
+  }
+
+  return {
+    data: {
+      target: {
+        sys: {
+          type: 'Link' as const,
+          linkType: 'Asset' as const,
+          id: item.link.assetId,
+        },
+      },
+    },
+    nodeType: INLINES.ASSET_HYPERLINK,
+    content: [textNode],
+  }
+}
+
+const buildRichTextDocument = (
+  paragraphs: Array<RichTextParagraph>,
+): CmsRichTextDocument => ({
+  data: {},
+  nodeType: BLOCKS.DOCUMENT,
+  content: paragraphs.map((paragraph) => ({
+    data: {},
+    nodeType: BLOCKS.PARAGRAPH,
+    content: paragraph.values.map(buildInlineNode),
+  })),
+})
+
 export const mapLocalizedRichTextDocument = (
   isContent: Array<RichTextParagraph>,
   enContent?: Array<RichTextParagraph>,
 ): Localized<CmsRichTextDocument> => {
   return {
     ...(enContent && {
-      [EN_LOCALE]: {
-        data: {},
-        nodeType: 'document',
-        content: enContent.map((paragraph) => ({
-          data: {},
-          nodeType: 'paragraph',
-          content: paragraph.values.map((item) => ({
-            data: {},
-            marks: item.isBold ? [{ type: 'bold' }] : [],
-            value: item.value,
-            nodeType: 'text',
-          })),
-        })),
-      },
+      [EN_LOCALE]: buildRichTextDocument(enContent),
     }),
-    [LOCALE]: {
-      data: {},
-      nodeType: 'document',
-      content: isContent.map((paragraph) => ({
-        data: {},
-        nodeType: 'paragraph',
-        content: paragraph.values.map((item) => ({
-          data: {},
-          marks: item.isBold ? [{ type: 'bold' }] : [],
-          value: item.value,
-          nodeType: 'text',
-        })),
-      })),
-    },
+    [LOCALE]: buildRichTextDocument(isContent),
   }
 }
+
+const mapLocalizedLinkId = (
+  ids: Localized<string>,
+  linkType: 'Asset' | 'Entry',
+): Localized<unknown> => ({
+  [LOCALE]: { sys: { id: ids[LOCALE], linkType } },
+  ...(ids[EN_LOCALE] && {
+    [EN_LOCALE]: { sys: { id: ids[EN_LOCALE], linkType } },
+  }),
+})
 
 export const mapLocalizedValue = <T>(isValue: T, enValue?: T): Localized<T> => {
   if (enValue) {
