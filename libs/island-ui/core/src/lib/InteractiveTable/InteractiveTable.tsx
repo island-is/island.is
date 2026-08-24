@@ -206,7 +206,6 @@ export const InteractiveTable = <TData extends object>({
                       textAlign: header.column.columnDef.meta.align,
                     }),
                   }}
-                  }}
                   box={cellBox?.header}
                 >
                   {header.column.getCanSort() ? (
