@@ -30,6 +30,8 @@ export const debtsSection = buildSection({
           description: messages.description.description,
         }),
         buildStaticTableField({
+          id: 'selectedDebts',
+          selectable: true,
           header: [
             messages.table.chargeTypeNameHeader,
             messages.table.dueDateHeader,

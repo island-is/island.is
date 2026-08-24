@@ -1006,6 +1006,7 @@ export interface StaticTableField extends BaseField {
   summary?:
     | { label: StaticText; value: StaticText }[]
     | ((application: Application) => { label: StaticText; value: StaticText }[])
+  selectable?: boolean
 }
 
 export type PaginatedSearchableTableRow = Record<

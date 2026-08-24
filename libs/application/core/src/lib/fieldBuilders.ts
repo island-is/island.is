@@ -1089,9 +1089,16 @@ export const buildStaticTableField = (
     | 'defaultValue'
     | 'disabled'
     | 'width'
-  >,
+  > & {
+    /**
+     * Only needed when `selectable` is true — this is where selected row
+     * indices are stored in `application.answers`.
+     */
+    id?: string
+  },
 ): StaticTableField => {
   const {
+    id = '',
     header,
     condition,
     dataTestId,
@@ -1102,13 +1109,14 @@ export const buildStaticTableField = (
     marginBottom,
     marginTop = 2,
     titleVariant = 'h4',
+    selectable = false,
   } = data
 
   return {
-    id: '',
+    id,
     title,
     width: 'full',
-    doesNotRequireAnswer: true,
+    doesNotRequireAnswer: !selectable,
     condition,
     description,
     dataTestId,
@@ -1121,6 +1129,7 @@ export const buildStaticTableField = (
     marginTop,
     marginBottom,
     titleVariant,
+    selectable,
   }
 }
 
