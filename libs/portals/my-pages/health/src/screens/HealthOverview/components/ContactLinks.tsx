@@ -50,16 +50,16 @@ const ContactLinks = () => {
   )
 
   const renderRowContent = (link: ContactLinkItem) => (
-    <Box
-      display="flex"
-      justifyContent="spaceBetween"
-      alignItems="flexStart"
-      paddingX={3}
-      paddingY={2}
-      width="full"
-    >
-      <Box flexGrow={1} minWidth={0}>
-        <LinkResolver href={link.href}>
+    <LinkResolver href={link.href} className={styles.rowLink}>
+      <Box
+        display="flex"
+        justifyContent="spaceBetween"
+        alignItems="flexStart"
+        paddingX={3}
+        paddingY={2}
+        width="full"
+      >
+        <Box flexGrow={1} minWidth={0}>
           <Text
             variant="medium"
             fontWeight="semiBold"
@@ -69,20 +69,18 @@ const ContactLinks = () => {
           >
             {link.title}
           </Text>
-        </LinkResolver>
-        {renderDescription(link)}
-      </Box>
-      <Box
-        flexShrink={0}
-        marginLeft={2}
-        display="flex"
-        style={{ minWidth: 16, minHeight: 16, alignItems: 'center' }}
-      >
-        <LinkResolver href={link.href}>
+          {renderDescription(link)}
+        </Box>
+        <Box
+          flexShrink={0}
+          marginLeft={2}
+          display="flex"
+          style={{ minWidth: 16, minHeight: 16, alignItems: 'center' }}
+        >
           <Icon icon={link.icon} type="outline" color="blue400" size="small" />
-        </LinkResolver>
+        </Box>
       </Box>
-    </Box>
+    </LinkResolver>
   )
 
   return (

@@ -1,6 +1,6 @@
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { messages } from '../../..'
+import { messages } from '../../../lib/messages'
 
 const SameDayHelpBox = () => {
   const { formatMessage } = useLocale()
