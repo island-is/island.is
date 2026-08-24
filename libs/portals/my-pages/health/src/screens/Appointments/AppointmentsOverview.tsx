@@ -6,11 +6,13 @@ import {
   formatDate,
   HEALTH_DIRECTORATE_SLUG,
   IntroWrapper,
+  LinkButton,
   m,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { useState } from 'react'
 import { messages } from '../../lib/messages'
+import { HealthPaths } from '../../lib/paths'
 import { DEFAULT_APPOINTMENTS_STATUS } from '../../utils/constants'
 import Appointments from '../HealthOverview/components/Appointments'
 import { useGetAppointmentsQuery } from './Appointments.generated'
@@ -72,23 +74,36 @@ const AppointmentsOverview = () => {
       intro={messages.appointmentsIntro}
       serviceProvider={{
         slug: HEALTH_DIRECTORATE_SLUG,
-        tooltip: formatMessage(messages.landlaeknirMedicineDelegationTooltip),
+        tooltip: formatMessage(messages.landlaeknirAppointmentsTooltip),
       }}
     >
       <Box
+        display={['inlineFlex', 'inlineFlex', 'inlineFlex', 'none']}
+        marginBottom={4}
+      >
+        <LinkButton
+          to={HealthPaths.HealthBookAppointment}
+          text={formatMessage(messages.bookAppointmentButtonText)}
+          variant="primary"
+          size="small"
+          icon="time"
+        />
+      </Box>
+      <Box
         display="flex"
         flexDirection="row"
-        justifyContent="spaceBetween"
         alignItems="center"
         flexWrap={['wrap', 'wrap', 'nowrap']}
+        columnGap={4}
         rowGap={2}
+        marginBottom={3}
       >
         {!loading &&
           !error &&
           (hasAppointments ||
             filter.statuses.length > 0 ||
             filter.dates?.from) && (
-            <Box marginBottom={[1, 1, 3]}>
+            <Box>
               <Filter
                 labelClearAll={formatMessage(m.clearAllFilters)}
                 labelClear={formatMessage(m.clearFilter)}
@@ -182,6 +197,18 @@ const AppointmentsOverview = () => {
               </Filter>
             </Box>
           )}
+        <Box
+          display={['none', 'none', 'none', 'block']}
+          style={{ whiteSpace: 'nowrap', flexShrink: 0 }}
+        >
+          <LinkButton
+            to={HealthPaths.HealthBookAppointment}
+            text={formatMessage(messages.bookAppointmentButtonText)}
+            variant="primary"
+            size="small"
+            icon="time"
+          />
+        </Box>
       </Box>
       {!loading && error && (
         <Problem type="internal_service_error" noBorder={false} error={error} />

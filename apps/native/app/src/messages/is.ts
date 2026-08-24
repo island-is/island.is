@@ -859,6 +859,66 @@ export const is = {
   'health.appointments.minutesFormat': '{minutes} mínútur',
   'health.appointments.moreInfo': 'Nánari upplýsingar',
 
+  // health - messages
+  'health.messages.screenTitle': 'Skilaboð',
+  'health.messages.errorMessage':
+    'Ekki tókst að sækja skilaboð. Vinsamlegast reyndu aftur síðar.',
+  'health.messages.noMessagesTitle': 'Engin skilaboð',
+  'health.messages.noMessagesText': 'Þegar þú færð skilaboð birtast þau hér.',
+  'health.messages.searchPlaceholder': 'Leita',
+  'health.messages.filter.screenTitle': 'Sía skilaboð',
+  'health.messages.replyButton': 'Svara skilaboðum',
+  'health.messages.archiveSuccess': 'Skilaboð sett í geymslu',
+  'health.messages.unarchiveSuccess': 'Skilaboð tekin úr geymslu',
+  'health.messages.archiveError': 'Ekki tókst að setja skilaboð í geymslu',
+  'health.messages.unarchiveError': 'Ekki tókst að taka skilaboð úr geymslu',
+  'health.messages.starSuccess': 'Skilaboð stjörnumerkt',
+  'health.messages.unstarSuccess': 'Stjörnumerking fjarlægð',
+  'health.messages.starError': 'Ekki tókst að stjörnumerkja skilaboð',
+  'health.messages.unstarError': 'Ekki tókst að fjarlægja stjörnumerkingu',
+  'health.messages.videoCall': 'Myndsímtal',
+  'health.messages.videoCallCanceled': 'Afboðað',
+  'health.messages.startVideoCall': 'Hefja myndsímtal',
+  'health.messages.cannotReply':
+    'Ekki er hægt að svara þessum skilaboðum því sendandi hefur lokað fyrir frekari svör í þessu samtali.',
+  'health.messages.compose.newTitle': 'Ný skilaboð',
+  'health.messages.compose.selectRecipient': 'Veldu viðtakanda',
+  'health.messages.compose.selectService': 'Veldu þjónustu',
+  'health.messages.compose.selectServicePlaceholder':
+    'Veldu þjónustu úr fellilistanum',
+  'health.messages.compose.to': 'Til: {name}',
+  'health.messages.compose.messageLabel': 'Skilaboð',
+  'health.messages.compose.messagePlaceholder': 'Skrifaðu skilaboð hér',
+  'health.messages.compose.termsAccept': 'Ég samþykki',
+  'health.messages.compose.termsLink': 'skilmála',
+  'health.messages.compose.termsTitle': 'Skilmálar vegna skilaboða',
+  'health.messages.compose.termsBody':
+    '- Skilaboðum er svarað á opnunartíma, oftast innan þriggja virkra daga\n- Skilaboð og svör vistast sjálfkrafa í sjúkraskrá\n- Tegund skilaboða ræður hver svarar erindinu\n- Heilbrigðisstarfsmaður mun hafa aðgang að sjúkraskrá til að svara fyrirspurn',
+  'health.messages.compose.availabilityWindow':
+    '{name} tekur við skilaboðum alla daga frá kl. {openTime} til {closeTime}.',
+  'health.messages.compose.availabilityInfo':
+    'Venjulega er svarað innan 3 virkra daga. Ef erindið er brýnt og þú þarft svar sama dag skaltu hringja í 1700. Ef um neyðartilvik er að ræða skaltu hringja strax í 112.',
+  'health.messages.compose.closedTitle': 'Lokað fyrir ný skilaboð núna',
+  'health.messages.compose.notAllowedTitle': 'Ekki hægt að senda skilaboð',
+  'health.messages.compose.notAllowedText':
+    'Þessi þjónustuaðili býður ekki upp á skilaboð á Ísland.is.',
+  'health.messages.compose.soleBlockedTitle':
+    'Heilsugæslan þín er ekki með opið fyrir skilaboð',
+  'health.messages.compose.soleBlockedText':
+    '{name} býður ekki upp á skilaboðaþjónustu í gegnum Ísland.is',
+  'health.messages.compose.closingSoonTitle':
+    'Athugið: það lokar bráðlega fyrir skilaboð',
+  'health.messages.compose.send': 'Senda skilaboð',
+  'health.messages.compose.sendError':
+    'Ekki tókst að senda skilaboð. Vinsamlegast reyndu aftur síðar.',
+  'health.messages.compose.noRecipient':
+    'Ekki er hægt að senda skilaboð eins og er',
+  'health.messages.attachmentError':
+    'Ekki tókst að sækja skjalið. Vinsamlegast reyndu aftur síðar.',
+  'health.messages.sentTitle': 'Skilaboð móttekin',
+  'health.messages.sentText':
+    'Við svörum á dagvinnutíma, yfirleitt innan þriggja virkra daga. Ef erindið er brátt og þarfnast svars í dag, hringdu í 1700. Ef um neyðartilfelli er að ræða, hringdu strax í 112.',
+
   // health - organ donation
   'health.organDonation': 'Líffæragjöf',
   'health.organDonation.change': 'Breyta afstöðu',
