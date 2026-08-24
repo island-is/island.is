@@ -19,9 +19,18 @@ export const Questionnaire: FC<FieldBaseProps> = ({
   const { lang, formatMessage } = useLocale()
   const { clearErrors, setError, setValue, getValues } = useFormContext()
 
-  const questions =
+  const rawQuestions =
     getValueViaPath<Question[]>(application.externalData, QUESTIONS_PATH, []) ??
     []
+
+  // Drop unrenderable questions so a required one can't invisibly block submit.
+  const questions = rawQuestions.filter((q) => {
+    if (!q?.field) return false
+    if (q.type === 'scale') return true
+    if (q.type === 'radio')
+      return Array.isArray(q.answers) && q.answers.length > 0
+    return false
+  })
 
   const sorted = [...questions].sort((a, b) => a.order - b.order)
 
@@ -107,7 +116,11 @@ export const Questionnaire: FC<FieldBaseProps> = ({
                     label={label}
                     min={min}
                     max={max}
-                    value={value ? String(value) : null}
+                    value={
+                      value !== '' && value !== null && value !== undefined
+                        ? String(value)
+                        : null
+                    }
                     onChange={(val: string) => {
                       clearErrors(id)
                       onChange(val)
