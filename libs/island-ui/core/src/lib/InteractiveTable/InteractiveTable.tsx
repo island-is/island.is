@@ -70,20 +70,14 @@ type BaseInteractiveTableProps<TData extends object> = {
   srCaption?: string
   sortHint?: string
   meta?: TableMeta<TData>
-  /**
-   * Style overrides merged into every header/body cell's `box` props (e.g. padding).
-   * `background` and `borderBottomWidth` on `body` are reserved for the row-expansion
-   * highlight and are always overridden internally — they cannot be set here.
-   */
   cellBox?: {
     header?: Omit<UseBoxStylesProps, 'component'>
     body?: Omit<UseBoxStylesProps, 'component'>
   }
 }
 
-export type InteractiveTableProps<
-  TData extends object
-> = BaseInteractiveTableProps<TData> & (WithExpander<TData> | WithoutExpander)
+export type InteractiveTableProps<TData extends object> =
+  BaseInteractiveTableProps<TData> & (WithExpander<TData> | WithoutExpander)
 
 export const InteractiveTable = <TData extends object>({
   columns: providedColumns,
