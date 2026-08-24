@@ -21,6 +21,7 @@ query GetMedicinePrescriptions($locale: String) {
       renewalStatus
       renewResponseMessage
       amountRemaining
+      primaryCareClinic
       medCardDrugId
       medCardDrugCategory
       dispensations {
