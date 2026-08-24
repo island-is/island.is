@@ -915,6 +915,11 @@ export const en: TranslatedMessages = {
     'Failed to send message. Please try again later.',
   'health.messages.compose.noRecipient':
     'It is not possible to send messages at the moment',
+  'health.messages.compose.certificateTitle':
+    'Certificates cannot be requested in the app',
+  'health.messages.compose.certificateText':
+    'It is currently not possible to request certificates through the Ísland.is app. Please request certificates through Ísland.is My Pages.',
+  'health.messages.compose.certificateLink': 'Request a certificate',
   'health.messages.attachmentError':
     'Failed to download the document. Please try again later.',
   'health.messages.sentTitle': 'Message received',

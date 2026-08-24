@@ -5,6 +5,7 @@ import { router, useFocusEffect, useLocalSearchParams } from 'expo-router'
 import { useTheme } from 'styled-components/native'
 
 import { ConversationAvailabilityAlert } from '@/components/conversation-availability-alert'
+import { getConfig } from '@/config'
 import { StackScreen } from '@/components/stack-screen'
 import { toast, ToastHost } from '@/components/toast'
 import {
@@ -53,8 +54,8 @@ export default function HealthMessageComposeScreen() {
       recipientsRes.data?.healthDirectorateHealthConversationRecipients ?? [],
     [recipientsRes.data],
   )
-  // Only recipients that currently accept patient-initiated messages, and
-  // only non-certificate message types, can start a new conversation
+  // Only recipients that currently accept patient-initiated messages can start
+  // a new conversation.
   const recipients = useMemo(
     () => allRecipients.filter((r) => r.allowsMessaging),
     [allRecipients],
@@ -79,9 +80,16 @@ export default function HealthMessageComposeScreen() {
     windowOpen: soleRecipient?.messagingWindowOpen,
     windowClose: soleRecipient?.messagingWindowClose,
   })
-  const serviceOptions = (selectedRecipient?.allowedMessageTypes ?? []).filter(
-    (s) => !s.isCertificate,
+  // Certificate types are shown in the dropdown too, but they can't be
+  // submitted from the app — selecting one swaps the form for a notice that
+  // links to My Pages (see the certificate branch in the render below).
+  const serviceOptions = selectedRecipient?.allowedMessageTypes ?? []
+  const selectedType = serviceOptions.find(
+    (s) => s.patientInitiatedTypeCode === typeCode,
   )
+  const isCertificateSelected = !isReply && !!selectedType?.isCertificate
+  const origin = getConfig().apiUrl.replace(/\/api$/, '')
+  const certificateUrl = `${origin}/minarsidur/heilsa/skilabod/nytt`
 
   const recipientsLoading = !isReply && recipientsRes.loading
   const recipientsError =
@@ -160,6 +168,7 @@ export default function HealthMessageComposeScreen() {
     : !!message.trim() &&
       !!selectedRecipient &&
       !!typeCode &&
+      !isCertificateSelected &&
       termsAccepted &&
       !isFormLocked
 
@@ -172,10 +181,10 @@ export default function HealthMessageComposeScreen() {
       })
       return
     }
+    if (isCertificateSelected) {
+      return
+    }
     if (selectedRecipient && typeCode) {
-      const selectedType = serviceOptions.find(
-        (s) => s.patientInitiatedTypeCode === typeCode,
-      )
       createConversation({
         variables: {
           input: {
@@ -362,46 +371,72 @@ export default function HealthMessageComposeScreen() {
                 />
               )}
 
-              <TextField
-                label={intl.formatMessage({
-                  id: 'health.messages.compose.messageLabel',
-                })}
-                placeholder={intl.formatMessage({
-                  id: 'health.messages.compose.messagePlaceholder',
-                })}
-                value={message}
-                onChangeText={setMessage}
-                multiline
-                numberOfLines={6}
-                inputStyle={{ minHeight: 120 }}
-                disabled={isFormLocked}
-              />
+              {!isCertificateSelected && (
+                <>
+                  <TextField
+                    label={intl.formatMessage({
+                      id: 'health.messages.compose.messageLabel',
+                    })}
+                    placeholder={intl.formatMessage({
+                      id: 'health.messages.compose.messagePlaceholder',
+                    })}
+                    value={message}
+                    onChangeText={setMessage}
+                    multiline
+                    numberOfLines={6}
+                    inputStyle={{ minHeight: 120 }}
+                    disabled={isFormLocked}
+                  />
 
-              {!isReply && (
-                <Checkbox
-                  checked={termsAccepted}
-                  onPress={() => setTermsAccepted(!termsAccepted)}
-                  label={
-                    <>
-                      {intl.formatMessage({
-                        id: 'health.messages.compose.termsAccept',
-                      })}{' '}
-                      <Typography
-                        weight="600"
-                        color={theme.color.blue400}
-                        style={{ textDecorationLine: 'underline' }}
-                        onPress={() => router.push('/health/messages/terms')}
-                      >
-                        {intl.formatMessage({
-                          id: 'health.messages.compose.termsLink',
-                        })}
-                      </Typography>
-                    </>
-                  }
-                />
+                  {!isReply && (
+                    <Checkbox
+                      checked={termsAccepted}
+                      onPress={() => setTermsAccepted(!termsAccepted)}
+                      label={
+                        <>
+                          {intl.formatMessage({
+                            id: 'health.messages.compose.termsAccept',
+                          })}{' '}
+                          <Typography
+                            weight="600"
+                            color={theme.color.blue400}
+                            style={{ textDecorationLine: 'underline' }}
+                            onPress={() =>
+                              router.push('/health/messages/terms')
+                            }
+                          >
+                            {intl.formatMessage({
+                              id: 'health.messages.compose.termsLink',
+                            })}
+                          </Typography>
+                        </>
+                      }
+                    />
+                  )}
+                </>
               )}
             </View>
-            {!hideSendButton && (
+            {/* Certificate requests aren't supported in the app — point the
+                user to My Pages instead of a send form. Rendered outside the
+                lockable form wrapper so the link is always tappable. */}
+            {isCertificateSelected && (
+              <Problem
+                type="no_data"
+                title={intl.formatMessage({
+                  id: 'health.messages.compose.certificateTitle',
+                })}
+                message={intl.formatMessage({
+                  id: 'health.messages.compose.certificateText',
+                })}
+                detailLink={{
+                  text: intl.formatMessage({
+                    id: 'health.messages.compose.certificateLink',
+                  }),
+                  url: certificateUrl,
+                }}
+              />
+            )}
+            {!hideSendButton && !isCertificateSelected && (
               <View
                 onLayout={(e) =>
                   setSendButtonHeight(e.nativeEvent.layout.height)

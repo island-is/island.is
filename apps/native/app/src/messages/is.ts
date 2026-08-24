@@ -913,6 +913,11 @@ export const is = {
     'Ekki tókst að senda skilaboð. Vinsamlegast reyndu aftur síðar.',
   'health.messages.compose.noRecipient':
     'Ekki er hægt að senda skilaboð eins og er',
+  'health.messages.compose.certificateTitle':
+    'Ekki hægt að sækja um vottorð í gegnum appið',
+  'health.messages.compose.certificateText':
+    'Eins og er er ekki hægt að sækja um vottorð í gegnum Ísland.is appið. Vinsamlegast sækið um vottorð í gegnum Mínar síður Ísland.is.',
+  'health.messages.compose.certificateLink': 'Sækja um vottorð',
   'health.messages.attachmentError':
     'Ekki tókst að sækja skjalið. Vinsamlegast reyndu aftur síðar.',
   'health.messages.sentTitle': 'Skilaboð móttekin',
