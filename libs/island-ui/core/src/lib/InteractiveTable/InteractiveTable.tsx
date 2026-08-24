@@ -20,7 +20,7 @@ import cn from 'classnames'
 import { helperStyles } from '@island.is/island-ui/theme'
 
 import { Box } from '../Box/Box'
-import type { ResponsiveSpace } from '../Box/useBoxStyles'
+import type { UseBoxStylesProps } from '../Box/useBoxStyles'
 import { Button } from '../Button/Button'
 import { FocusableBox } from '../FocusableBox/FocusableBox'
 import { Hidden } from '../Hidden/Hidden'
@@ -72,8 +72,10 @@ type BaseInteractiveTableProps<TData extends object> = {
   sortHint?: string
   meta?: TableMeta<TData>
   colorScheme?: 'default' | 'negative'
-  /** Override the default horizontal cell/header padding (defaults to the `Table` component's own default of `3`). */
-  cellPaddingX?: ResponsiveSpace
+  cellBox?: {
+    header?: Omit<UseBoxStylesProps, 'component'>
+    body?: Omit<UseBoxStylesProps, 'component'>
+  }
 }
 
 export type InteractiveTableProps<TData extends object> =
@@ -98,7 +100,7 @@ export const InteractiveTable = <TData extends object>({
   sortHint = 'Activate to sort.',
   meta,
   colorScheme = 'default',
-  cellPaddingX,
+  cellBox,
 }: InteractiveTableProps<TData>) => {
   const resolvedExpanderLabel = expanderLabel ?? ''
   const [internalSorting, setInternalSorting] = useState<SortingState>(
@@ -204,6 +206,8 @@ export const InteractiveTable = <TData extends object>({
                       textAlign: header.column.columnDef.meta.align,
                     }),
                   }}
+                  }}
+                  box={cellBox?.header}
                 >
                   {header.column.getCanSort() ? (
                     <FocusableBox
@@ -291,8 +295,9 @@ export const InteractiveTable = <TData extends object>({
                         i === 0 && renderExpandedRow ? (
                           <T.Data
                             key={cell.id}
-                            style={{ padding: theme.spacing[2] + 'px' }}
                             box={{
+                              paddingY: 2,
+                               ...cellBox?.body,
                               position: 'relative',
                               background: rowBackground,
                               borderBottomWidth:
@@ -343,11 +348,9 @@ export const InteractiveTable = <TData extends object>({
                         ) : (
                           <T.Data
                             key={cell.id}
-                            style={{
-                              padding: theme.spacing[2] + 'px',
-                              background: rowBackground,
-                            }}
                             box={{
+                              paddingY: 2,
+                               ...cellBox?.body,
                               background: rowBackground,
                               borderBottomWidth:
                                 isExpanded || isCollapsing
@@ -418,6 +421,43 @@ export const InteractiveTable = <TData extends object>({
                               })
                             }
                           }}
+                        />
+                      </Box>
+                    </T.Data>
+                  ) : (
+                    <T.Data
+                      key={cell.id}
+                      box={{
+                        paddingY: 2,
+                        ...cellBox?.body,
+                        background: rowBackground,
+                        borderBottomWidth:
+                          isExpanded || isCollapsing ? undefined : 'standard',
+                      }}
+                    >
+                      {cell.column.columnDef.meta?.type === 'interactive' ? (
+                        mobileTitleKey && cell.column.id === mobileTitleKey ? (
+                          <Box id={`${tableId}-row-title-${row.id}`}>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext(),
+                            )}
+                          </Box>
+                        ) : (
+                          flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )
+                        )
+                      ) : (
+                        <Text
+                          variant="medium"
+                          id={
+                            mobileTitleKey && cell.column.id === mobileTitleKey
+                              ? `${tableId}-row-title-${row.id}`
+                              : undefined
+                          }
+                          textAlign={cell.column.columnDef.meta?.align}
                         >
                           {(isExpanded || isCollapsing) && (
                             <>

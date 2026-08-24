@@ -127,7 +127,10 @@ export const OutlierEditor: FC<Props> = ({
             columns={columns}
             data={pageRows}
             mobileTitleKey="employee"
-            cellPaddingX={2}
+            cellBox={{
+              header: { paddingLeft: 2, paddingRight: 2 },
+              body: { paddingLeft: 2, paddingRight: 2 },
+            }}
           />
 
           <Box marginTop={2}>
