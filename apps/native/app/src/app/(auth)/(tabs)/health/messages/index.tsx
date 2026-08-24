@@ -207,19 +207,28 @@ export default function HealthMessagesScreen() {
               />
             </View>
           ) : (
-            <EmptyList
-              title={<FormattedMessage id="health.messages.noMessagesTitle" />}
-              description={
-                <FormattedMessage id="health.messages.noMessagesText" />
-              }
-              image={
-                <Image
-                  source={illustrationSrc}
-                  style={{ width: 134, height: 204 }}
-                  resizeMode="contain"
-                />
-              }
-            />
+            <View
+              style={{
+                marginTop: theme.spacing[15],
+                paddingHorizontal: theme.spacing[2],
+              }}
+            >
+              <EmptyList
+                title={
+                  <FormattedMessage id="health.messages.noMessagesTitle" />
+                }
+                description={
+                  <FormattedMessage id="health.messages.noMessagesText" />
+                }
+                image={
+                  <Image
+                    source={illustrationSrc}
+                    style={{ width: 134, height: 204 }}
+                    resizeMode="contain"
+                  />
+                }
+              />
+            </View>
           )
         }
       />

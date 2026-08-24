@@ -866,7 +866,8 @@ export const en: TranslatedMessages = {
   'health.messages.errorMessage':
     'Failed to fetch messages. Please try again later.',
   'health.messages.noMessagesTitle': 'No messages',
-  'health.messages.noMessagesText': 'You have no messages.',
+  'health.messages.noMessagesText':
+    'When you receive messages, they will appear here.',
   'health.messages.searchPlaceholder': 'Search',
   'health.messages.filter.screenTitle': 'Filter messages',
   'health.messages.replyButton': 'Reply to message',

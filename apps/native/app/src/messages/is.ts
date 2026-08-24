@@ -864,7 +864,7 @@ export const is = {
   'health.messages.errorMessage':
     'Ekki tókst að sækja skilaboð. Vinsamlegast reyndu aftur síðar.',
   'health.messages.noMessagesTitle': 'Engin skilaboð',
-  'health.messages.noMessagesText': 'Þú ert ekki með nein skilaboð.',
+  'health.messages.noMessagesText': 'Þegar þú færð skilaboð birtast þau hér.',
   'health.messages.searchPlaceholder': 'Leita',
   'health.messages.filter.screenTitle': 'Sía skilaboð',
   'health.messages.replyButton': 'Svara skilaboðum',
