@@ -307,8 +307,8 @@ type InputSettingsActions =
   | {
       type: 'CHANGE_LIST_ITEM'
       payload: {
-        property: 'label' | 'description'
-        lang: 'is' | 'en'
+        property: 'label' | 'description' | 'value'
+        lang?: 'is' | 'en'
         value: string
         id: UniqueIdentifier
       }
@@ -1546,10 +1546,13 @@ export const controlReducer = (
 
       const newListItem = {
         ...listItem,
-        [property]: {
-          ...listItem[property],
-          [lang]: value,
-        },
+        [property]:
+          property === 'value'
+            ? value
+            : {
+                ...listItem[property],
+                [lang ?? 'is']: value,
+              },
       }
 
       const newField = {
