@@ -296,7 +296,7 @@ export const InteractiveTable = <TData extends object>({
                             key={cell.id}
                             box={{
                               paddingY: 2,
-                               ...cellBox?.body,
+                              ...cellBox?.body,
                               position: 'relative',
                               background: rowBackground,
                               borderBottomWidth:
@@ -349,7 +349,7 @@ export const InteractiveTable = <TData extends object>({
                             key={cell.id}
                             box={{
                               paddingY: 2,
-                               ...cellBox?.body,
+                              ...cellBox?.body,
                               background: rowBackground,
                               borderBottomWidth:
                                 isExpanded || isCollapsing
