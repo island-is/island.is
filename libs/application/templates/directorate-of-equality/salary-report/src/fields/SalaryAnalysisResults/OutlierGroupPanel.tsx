@@ -10,10 +10,7 @@ import { Application, RecordObject } from '@island.is/application/types'
 import { Box, Text } from '@island.is/island-ui/core'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
-import type {
-  SalaryAnalysisOutlierDto,
-  ScoreBucketDto,
-} from '@island.is/clients/directorate-of-equality'
+import type { SalaryAnalysisOutlierDto } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
 import type { OutlierGroupAnswer } from '../../utils/outlierGroups'
 import { OutlierEditor } from './OutlierEditor'
@@ -21,7 +18,6 @@ import { OutlierEditor } from './OutlierEditor'
 type Props = {
   application: Application
   outliers: SalaryAnalysisOutlierDto[]
-  scoreBuckets: ScoreBucketDto[]
   // True on the POSTPONED-state review screen: the applicant already chose
   // to postpone earlier and can't un-postpone here, so the checkbox is
   // pointless — the form is dedicated to filling in the plan, and the
@@ -43,7 +39,6 @@ type Props = {
 // can be stale relative to the mutation response the parent just received.
 export const OutlierGroupPanel: FC<Props> = ({
   outliers,
-  scoreBuckets,
   hidePostponeCheckbox,
   errors,
   identifierForOrdinal,
@@ -104,7 +99,6 @@ export const OutlierGroupPanel: FC<Props> = ({
           <FormProvider {...outlierGroupsFormMethods}>
             <OutlierEditor
               outliers={outliers}
-              scoreBuckets={scoreBuckets}
               errors={errors}
               mode={hidePostponeCheckbox ? 'postponed' : 'draft'}
               identifierForOrdinal={identifierForOrdinal}
@@ -113,7 +107,6 @@ export const OutlierGroupPanel: FC<Props> = ({
         ) : (
           <OutlierEditor
             outliers={outliers}
-            scoreBuckets={scoreBuckets}
             errors={errors}
             mode={hidePostponeCheckbox ? 'postponed' : 'draft'}
             identifierForOrdinal={identifierForOrdinal}

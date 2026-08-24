@@ -20,13 +20,15 @@ import {
   isOutlierGroupComplete,
 } from '../../utils/outlierGroups'
 import type { OutlierGroupAnswer } from '../../utils/outlierGroups'
-import { formatCurrency } from '../EmployeesEditor/utils'
+import { formatHourlyWage } from '../EmployeesEditor/utils'
+import { deriveWageGapState, formatPercentMagnitude } from '../../utils/wageGap'
 import { formatEmployeeIdentifier } from '../../utils/employeeIdentifier'
 import type { DraftOutlierGroupDto, ReportEmployeeDto } from '../../utils/types'
 import { useDraftQuery } from '../../utils/useDraftQuery'
 import { useDraftSync } from '../../utils/useDraftSync'
 import { OutlierGroupPanel } from './OutlierGroupPanel'
 import { StatisticCard } from './StatisticsCard'
+import { SalaryDistributionChart } from './SalaryDistributionChart'
 
 interface Props extends FieldBaseProps {
   field: CustomField
@@ -285,8 +287,21 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
     refetch,
   ])
 
-  const totals = result?.baseSalaryByGenderAndScoreAll?.totals
+  const totals = result?.regularHourlyWageByScoreAll?.totals
+  const decomposition = result?.wageGapDecomposition
   const outlierCount = result?.outliers?.length ?? 0
+  const gapState = deriveWageGapState(decomposition, outlierCount)
+  const r = messages.salaryAnalysis.results
+
+  // Magnitude plus an explicit direction word — never the signed figure. The
+  // old card rendered totals.wageGapPercent, the asymmetric (male − female) /
+  // male form, which reads -4,2% when women out-earn men.
+  const rawGapDirectionLabel =
+    decomposition?.rawGapDirection === 'FEMALE'
+      ? formatMessage(messages.salaryAnalysis.results.directionWomen)
+      : decomposition?.rawGapDirection === 'MALE'
+      ? formatMessage(messages.salaryAnalysis.results.directionMen)
+      : formatMessage(messages.salaryAnalysis.results.directionNone)
 
   const body = (
     <Box>
@@ -333,51 +348,89 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
           >
             <StatisticCard
               title={formatMessage(messages.salaryAnalysis.results.maleLabel)}
-              content={formatCurrency(totals.maleAverageSalary)}
+              content={formatHourlyWage(totals.maleAverageSalary)}
             />
             <StatisticCard
               title={formatMessage(messages.salaryAnalysis.results.femaleLabel)}
-              content={formatCurrency(totals.femaleAverageSalary)}
+              content={formatHourlyWage(totals.femaleAverageSalary)}
             />
 
-            {typeof totals.wageGapPercent === 'number' && (
-              <StatisticCard
-                title={formatMessage(
-                  messages.salaryAnalysis.results.wageGapLabel,
-                )}
-                content={totals.wageGapPercent.toFixed(1) + '%'}
-                color="purple"
-              />
-            )}
+            {decomposition?.rawGapAvailable &&
+              typeof decomposition.rawGapPercent === 'number' && (
+                <StatisticCard
+                  title={formatMessage(
+                    messages.salaryAnalysis.results.wageGapLabel,
+                  )}
+                  content={formatMessage(
+                    messages.salaryAnalysis.results.gapWithDirection,
+                    {
+                      value: formatPercentMagnitude(
+                        decomposition.rawGapPercent,
+                      ),
+                      direction: rawGapDirectionLabel,
+                    },
+                  )}
+                  color="purple"
+                />
+              )}
           </Box>
         </Box>
       )}
 
-      {result &&
-        (outlierCount > 0 ? (
-          <AlertMessage
-            type="warning"
-            title={formatMessage(
-              messages.salaryAnalysis.results.outliersFoundTitle,
-              { count: outlierCount },
-            )}
-            message={formatMessage(
-              messages.salaryAnalysis.results.outliersFoundDescription,
-            )}
-          />
-        ) : (
-          <AlertMessage
-            type="success"
-            message={formatMessage(
-              messages.salaryAnalysis.results.noOutliersFound,
-            )}
-          />
-        ))}
+      {result && (
+        <AlertMessage
+          type={
+            gapState.kind === 'withinBenchmark'
+              ? 'success'
+              : gapState.kind === 'notComputable' || gapState.kind === 'unknown'
+              ? 'info'
+              : 'warning'
+          }
+          title={formatMessage(r[`${gapState.kind}Title`])}
+          message={
+            gapState.kind === 'withinBenchmark'
+              ? formatMessage(r.withinBenchmarkMessage, {
+                  benchmark: formatPercentMagnitude(gapState.benchmarkPercent),
+                })
+              : gapState.kind === 'overBenchmark'
+              ? formatMessage(r.overBenchmarkMessage, {
+                  benchmark: formatPercentMagnitude(gapState.benchmarkPercent),
+                  count: gapState.outlierCount,
+                })
+              : gapState.kind === 'overBenchmarkNoList'
+              ? formatMessage(
+                  gapState.reason === 'noCarriers'
+                    ? r.overBenchmarkNoCarriersMessage
+                    : r.overBenchmarkAllOvershootMessage,
+                  {
+                    benchmark: formatPercentMagnitude(
+                      gapState.benchmarkPercent,
+                    ),
+                  },
+                )
+              : gapState.kind === 'notComputable'
+              ? formatMessage(
+                  gapState.blockers.includes('EMPTY_FEMALE_COHORT')
+                    ? r.notComputableNoWomenMessage
+                    : r.notComputableNoMenMessage,
+                  {
+                    male: gapState.counts.male,
+                    female: gapState.counts.female,
+                  },
+                )
+              : formatMessage(r.unknownMessage)
+          }
+        />
+      )}
+
+      <SalaryDistributionChart
+        dataPoints={result?.regularHourlyWageByScoreAll?.dataPoints ?? []}
+        pooledFit={decomposition?.pooledFit}
+      />
 
       <OutlierGroupPanel
         application={application}
         outliers={result?.outliers ?? []}
-        scoreBuckets={result?.baseSalaryByGenderAndScoreAll?.scoreBuckets ?? []}
         hidePostponeCheckbox={hidePostponeCheckbox}
         errors={errors}
         identifierForOrdinal={identifierForOrdinal}

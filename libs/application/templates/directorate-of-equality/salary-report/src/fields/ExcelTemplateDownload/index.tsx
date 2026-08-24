@@ -26,11 +26,29 @@ import { messages } from '../../lib/messages'
 // The next screen in the flow — both upload and manual entry advance here.
 const NEXT_SCREEN_ID = 'criteriaMultiField'
 
+// Mirrors getErrorMessage in SalaryAnalysisResults — the template-api layer
+// hands back `reason` in whichever of these shapes the failure produced.
+const getImportErrorMessage = (
+  reason?: string | string[] | { title?: string; summary?: string },
+): string | undefined => {
+  if (!reason) return undefined
+  if (typeof reason === 'string') return reason
+  if (Array.isArray(reason)) return reason.join(', ')
+  return reason.summary || reason.title
+}
+
 export const ExcelTemplateDownload: FC<
   React.PropsWithChildren<FieldBaseProps>
 > = ({ application, goToScreen, setBeforeSubmitCallback, answerQuestions }) => {
   const { formatMessage, lang: locale } = useLocale()
   const [isImporting, setIsImporting] = useState(false)
+  // The API rejects an out-of-date workbook with one specific reason
+  // ("Sniðmátið er af eldri útgáfu … Sæktu nýjasta sniðmátið") rather than
+  // per-row data errors, so the generic importError alone would leave the
+  // likeliest failure unexplained.
+  const [importErrorMessage, setImportErrorMessage] = useState<
+    string | undefined
+  >()
   const [importStatus, setImportStatus] = useState<'success' | 'error' | null>(
     null,
   )
@@ -87,6 +105,7 @@ export const ExcelTemplateDownload: FC<
 
     setIsImporting(true)
     setImportStatus(null)
+    setImportErrorMessage(undefined)
     try {
       // 1. Ask the server (authenticated against DMR) for a presigned upload
       //    URL. The resulting { url, key } lands in externalData.importPresign.
@@ -162,10 +181,12 @@ export const ExcelTemplateDownload: FC<
         | {
             status?: 'success' | 'failure'
             data?: { criteria?: { type?: string }[] }
+            reason?: string | string[] | { title?: string; summary?: string }
           }
         | undefined
 
       if (importData?.status !== 'success') {
+        setImportErrorMessage(getImportErrorMessage(importData?.reason))
         setImportStatus('error')
         return
       }
@@ -325,7 +346,10 @@ export const ExcelTemplateDownload: FC<
 
       {importStatus === 'error' && (
         <Box marginTop={3}>
-          <AlertMessage type="error" message={formatMessage(m.importError)} />
+          <AlertMessage
+            type="error"
+            message={importErrorMessage ?? formatMessage(m.importError)}
+          />
         </Box>
       )}
     </Box>
