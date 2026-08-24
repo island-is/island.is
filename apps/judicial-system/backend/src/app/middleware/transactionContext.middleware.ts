@@ -32,7 +32,7 @@ export interface TransactionContext {
 
 const transactionStorage = new AsyncLocalStorage<TransactionContext>()
 
-const getContext = (): TransactionContext => {
+const requireTransactionContext = (): TransactionContext => {
   const context = transactionStorage.getStore()
 
   if (!context) {
@@ -44,17 +44,13 @@ const getContext = (): TransactionContext => {
   return context
 }
 
-/** The request's transaction slot, or undefined outside a request. */
+/**
+ * The request's transaction slot, or undefined outside a request. Reading it is
+ * deliberately tolerant: on an unflagged route nobody opens a transaction, and
+ * that is an answer rather than a failure.
+ */
 export const getTransactionContext = (): TransactionContext | undefined =>
   transactionStorage.getStore()
-
-/**
- * The request's transaction, if one has been opened. This is what a converted
- * handler or repository call reads instead of threading a transaction through
- * its arguments.
- */
-export const getTransaction = (): Transaction | undefined =>
-  transactionStorage.getStore()?.transaction ?? undefined
 
 /**
  * Opens the request's transaction, or returns the one already open.
@@ -66,7 +62,7 @@ export const getTransaction = (): Transaction | undefined =>
 export const getOrCreateTransaction = async (
   sequelize: Sequelize,
 ): Promise<Transaction> => {
-  const context = getContext()
+  const context = requireTransactionContext()
 
   if (context.transaction) {
     return context.transaction
@@ -88,11 +84,6 @@ export const getOrCreateTransaction = async (
   return context.transaction
 }
 
-/** Marks the request's transaction as committed or rolled back. */
-export const markSettled = () => {
-  getContext().settled = true
-}
-
 /**
  * Registers a callback to run after the request's transaction has committed, or
  * on the way out of a successful request that opened none. Use it for side
@@ -100,7 +91,7 @@ export const markSettled = () => {
  * risks claiming an outcome the database never accepted.
  */
 export const registerAfterCommit = (callback: AfterCommitCallback) => {
-  getContext().afterCommit.push(callback)
+  requireTransactionContext().afterCommit.push(callback)
 }
 
 @Injectable()

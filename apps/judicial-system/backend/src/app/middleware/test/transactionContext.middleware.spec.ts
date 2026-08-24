@@ -8,9 +8,7 @@ import type { Logger } from '@island.is/logging'
 
 import {
   getOrCreateTransaction,
-  getTransaction,
   getTransactionContext,
-  markSettled,
   registerAfterCommit,
   TransactionContextMiddleware,
 } from '../transactionContext.middleware'
@@ -67,16 +65,20 @@ describe('TransactionContextMiddleware', () => {
   })
 
   describe('outside a request', () => {
-    it('should have no transaction', () => {
+    it('should have no slot', () => {
       expect(getTransactionContext()).toBeUndefined()
-      expect(getTransaction()).toBeUndefined()
     })
 
-    it('should refuse to settle or register a callback', () => {
-      expect(() => markSettled()).toThrow(InternalServerErrorException)
+    it('should refuse to open a transaction or register a callback', async () => {
+      const sequelize = { transaction: jest.fn() } as unknown as Sequelize
+
+      await expect(getOrCreateTransaction(sequelize)).rejects.toBeInstanceOf(
+        InternalServerErrorException,
+      )
       expect(() => registerAfterCommit(async () => undefined)).toThrow(
         InternalServerErrorException,
       )
+      expect(sequelize.transaction).not.toHaveBeenCalled()
     })
   })
 
@@ -89,7 +91,6 @@ describe('TransactionContextMiddleware', () => {
           afterCommit: [],
           creating: null,
         })
-        expect(getTransaction()).toBeUndefined()
       })
     })
 
@@ -105,7 +106,7 @@ describe('TransactionContextMiddleware', () => {
 
         expect(first).toBe(transaction)
         expect(second).toBe(transaction)
-        expect(getTransaction()).toBe(transaction)
+        expect(getTransactionContext()?.transaction).toBe(transaction)
         expect(sequelize.transaction).toHaveBeenCalledTimes(1)
       })
     })
@@ -185,7 +186,14 @@ describe('TransactionContextMiddleware', () => {
 
       const res = await givenARequest(async () => {
         await getOrCreateTransaction(sequelize)
-        markSettled()
+
+        // The interceptor settles the slot it already holds; the middleware
+        // only has to respect the flag.
+        const context = getTransactionContext()
+
+        if (context) {
+          context.settled = true
+        }
       })
 
       await res.emit('close')
